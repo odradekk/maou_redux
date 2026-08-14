@@ -1,0 +1,1024 @@
+;FileName_SYSTEM_DEBUG_Universal.ERB -------------------------------- Ver1.00
+;启动调试模式: @DEBUG_MENU_U
+;使用例子:
+;ELSEIF RESULT == 9988
+;	CALL DEBUG_MENU_U
+;原作者：Tsubasa (2015/5/28 4th Version)
+;源文件: SYSTEM_DEBUG_Universal_eraTW.ERB
+;魔改:star
+;=============================================================================
+;用于显示角色列表的命令安装群
+;=============================================================================
+;-------------------------------------------------
+;用于设置列表角色数据的函数
+;-------------------------------------------------
+;CALLF SET_LIST, [リスト位置], [キャラ番号]
+@SET_LIST(ARG, ARG:1)
+#FUNCTION
+RETURNF LIST_DATA("SET", ARG, ARG:1)
+
+;-------------------------------------------------
+;用于设置列表角色数据的函数
+;-------------------------------------------------
+;[変数等] = GET_LIST([リスト位置])
+@GET_LIST(ARG)
+#FUNCTION
+RETURNF LIST_DATA("GET", ARG)
+
+;-------------------------------------------------
+;内部使用的函数
+;-------------------------------------------------
+;直接これを呼び出す必要はない
+@LIST_DATA(ARGS, ARG, ARG:1)
+#FUNCTION
+IF ARGS == "SET"
+	LOCAL:ARG = ARG:1
+	RETURNF ARG:1
+ELSEIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+ELSEIF ARGS == "CLEAR"
+	VARSET LOCAL, 0
+	RETURNF -1
+ELSE
+	RETURNF -1
+ENDIF
+
+;-------------------------------------------------
+;清除列表的函数
+;-------------------------------------------------
+;CALLF CLEAR_LIST
+@CLEAR_LIST
+#FUNCTION
+RETURNF LIST_DATA("CLEAR")
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;用于调试模式的特殊指令
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;以下焼き芋弁当パッチ用のデバッグモードを起動しているときに使える特殊な処理をここで一括で管理
+;大きく分けて調教中に使えるものとメイン菜單(SHOP)が開いているときに使用できるものに分かれる
+;=============================================================================
+;調教中に使用可能な指令
+;=============================================================================
+@DEBUG_MENU_U
+IF 是否到访过大书库 == 1
+	IF 是否启用背景音乐 == 1
+		PLAYBGM @"大书库.mp3"
+		SETBGMVOLUME 背景音乐音量
+	ELSEIF 是否启用背景音乐 == 0
+	ENDIF
+	PRINTFORMW “哦呀哦呀，魔王大人您又来啦？”
+	PRINTFORMW “此次前来又是为何呢？”
+	PRINTFORMW %小白的名字%将手上的书合上放在一旁，扶着膝歪头向你问道
+	GOTO 再次见面后的事情
+ELSEIF 是否到访过大书库 == 0
+ENDIF
+PRINTFORMW 偶然间，你来到了位于哪怕是地下城最底层还要最深处的房间，出现在你面前的是尘封已久的大门
+PRINTFORMW 上面的封印，历经不知多少岁月依旧深刻
+PRINTFORMW 但这封印………貌似不会影响你的进出？
+PRINTFORMW 怎么样？要进去看看吗？
+PRINTLCD [ 0] - 还是算了吧
+PRINTLCD [ 1] - 进去看看
+INPUT
+IF RESULT == 0
+	CLEARLINE 2
+ 	PRINTFORMW 还是算了吧，还有更重要的事情等着我去做呢
+ 	RETURN 0
+ELSEIF RESULT == 1
+	CLEARLINE 2
+	IF 是否启用背景音乐 == 1
+		PLAYBGM @"大书库.mp3"
+		SETBGMVOLUME 背景音乐音量
+	ELSEIF 是否启用背景音乐 == 0
+	ENDIF
+	是否到访过大书库 ++
+ENDIF
+PRINTFORMW 你催动魔力化作一双大手，将这扇门缓缓推开
+PRINTFORMW 映入你眼帘的是…哪怕被魔力加持的你的眼睛，亦无法看到尽头的大书库
+PRINTFORMW 古典而又端庄，地上散落着各种各样的书籍，而整个书库的正中心坐落着一位少女？
+PRINTFORMW 对方察觉到了你的视线，转身从高脚凳上站起身来
+PRINTFORMW 那是一位穿着白色连衣裙，披着一看就能知道是相当豪华的学院式披风，脚踩着蓝白条纹相间的长筒袜
+PRINTFORMW 头上还长着一对长长的像是狐狸的耳朵？奇怪，狐狸是什么？
+PRINTFORMW 总而言之，看样子是一位专攻魔法系的半兽人族
+PRINTFORMW “哦呀哦呀！这不是魔王大人吗？”
+PRINTFORMW “上次见面都是几千年前的事情了呢！”
+PRINTFORMW “没想到魔王大人还记得呀”	
+PRINTFORMW “什么？魔王大人问吾是谁？”
+PRINTFORMW “吾乃是，魔王军御用大魔法师”
+PRINTFORMW “曾因为掌握的权能会招致不幸，被先代王分配至此处”
+PRINTFORMW “以及………”
+PRINTFORMW 你打断了对方的话语，那…名字呢？
+PRINTFORMW “真的是十分抱歉，在成千上万年的岁月里那种微不足道的事情，人家已经忘掉了…”
+PRINTFORMW “但倘若魔王大人想要知道的话，吾会努力回想的！”
+PRINTFORMW “如果魔王大人需要的话，那就请赐吾一个名字吧！”
+PRINTFORMW 对方恳切的目光让你不太好意思拒绝…那…你就先叫……
+INPUTS
+小白的名字 = %RESULTS%
+PRINTFORMW 那…你就先叫%小白的名字%吧！
+PRINTFORMW “感谢魔王大人为%小白的名字%赐予名字！”
+PRINTFORMW “所以呢，魔王大人至此，是想要做些什么呢？”
+PRINTFORMW “啊，只是随便看看吗？啊，好吧…”
+PRINTFORMW 啊，那…你都会什么魔法呢？
+PRINTFORMW “什么都会哦？完全恢复的魔法，时间魔法啊之类的？”
+PRINTFORMW “但是相对应的……使用这些魔法可是会招惹不幸的哦？”
+PRINTFORMW “所以先代王给吾施加了除非是魔王的命令，否则不能施展魔法的诅咒呢”
+PRINTFORMW “怎么样？做好心理上的准备了吗？魔王大人∽”
+$再次见面后的事情
+DRAWLINE
+PRINTFORML 魔王大人今天是第{DAY}天
+TARGET = 0
+IF TARGET >= 0
+	PRINTFORM %CALLNAME% 选择中　
+ENDIF
+PRINTFORML (现有${MONEY})
+DRAWLINE
+PRINTL 魔王大人有什么吩咐？
+PRINTL 
+PRINTLCD [ 0] - 角色编辑
+PRINTLCD [ 1] - 发动修改金钱的魔法
+PRINTL 
+PRINTLCD [ 2] - FLAG操作
+PRINTLCD [ 3] - 发动完全恢复的魔法
+PRINTL
+PRINTLCD [ 4] - 发动可以生成任何生物以及物品的魔法（ITEM）
+PRINTLCD [ 5] - TFLAG编辑
+PRINTL 
+PRINTLCD [ 6] - 闲聊
+PRINTLCD [99] - 利用时间魔法穿越到下一天
+PRINTL 
+PRINTLCD [100] - 离开
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	LOCAL = MASTER
+	LOCAL:1 = TARGET
+	LOCAL:2 = ASSI
+	CALL EDIT_CHARA
+	MASTER = LOCAL
+	TARGET = LOCAL:1
+	ASSI = LOCAL:2
+ELSEIF RESULT == 1
+	CALL EDIT_MONEY
+ELSEIF RESULT == 2
+	CALL EDIT_FLAG
+ELSEIF RESULT == 3
+	CALL EDIT_HEAL_ALL
+ELSEIF RESULT == 4
+	CALL EDIT_ITEM
+ELSEIF RESULT == 5
+	CALL EDIT_TFLAG
+ELSEIF RESULT == 6
+	IF FLAG:82 == 1 && 小白的主线对话进度 == 0 ;人间界陷落后的闲聊(无差分)
+				PRINTFORMW 《人间界陷落后的闲聊》
+				PRINTFORMW “话说回来，魔王大人前些日子是把人间界给打下来了吧？”
+				PRINTFORMW 确有此事，怎么了
+				PRINTFORMW “恭喜魔王大人呢？踏出了重新统治世界的第一步”
+				PRINTFORMW 你似乎看出了对方眼中充满了喜悦与期待的感情？
+				PRINTFORMW “那个…魔王大人能跟我讲讲，这一步走下来的感触吗？”
+				PRINTFORMW 无妨
+				PRINTFORMW 你让身体向下坐去，对方也心领神会地打了个响指。随即，在你身下的地方属于魔王精致华贵的王位凭空出现了
+				PRINTFORMW 你接起一旁与王位一同出现在半空中的盛满前些日子攻下的人间界缴获的高级葡萄酒的玻璃杯
+				PRINTFORMW 辍饮酒的汁，透过这玻璃杯，看着对方的脸在自己的眼中被杯中的酒染上色彩，缓缓言出了自己的见解
+				PRINTFORMW 他们的军队里边，有人为了能够在敌人面前活下来，便卑躬屈膝的帮敌人舔性器
+				PRINTFORMW 至于他们的贵族？更是一群酒囊饭袋，只知道欺骗自己，认不清现实的废物，到最后，还妄想着怎么榨干这个国家，然后远走高飞
+				PRINTFORMW 你察觉到了%小白的名字%的脸上露出了复杂与一丝伤感的情绪吗？
+				PRINTFORMW 至于他们的王，更是连魔畜都不如，为了苟活于世，竟然真的连自己的女儿都能奉上啊！？
+				PRINTFORMW 【想想也是，%小白的名字%，或许在数万年以前，也是人类的一员吧？听到如今人间界的惨状，有所动容也是正常的？】
+				PRINTFORMW “但这一切，不都是……”
+				PRINTFORMW 但这一切又跟我有什么关系呢？我可是「魔王」啊！
+				PRINTFORMW “哈啊…果然，这个世界的支配者还得是魔王大人您”
+				PRINTFORMW “再次恭喜您了”对方面带微笑看着你，仅一个人，鼓起了掌来庆祝你所创造的丰功伟业
+				小白的主线对话进度 ++
+				GOTO 再次见面后的事情
+	ELSEIF DAY > 5 && 小白的对话进度 == 0 && 是否到访过大书库 == 1 ;关于狂王所在地的情报(含差分)
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 《关于狂王所在地的情报其1》
+				PRINTFORMW “万分抱歉，卑职无能！”
+				PRINTFORMW 怎么了？突然说这样的话
+				PRINTFORMW “前些日子……魔王大人让我做的探查工作有结果了…”
+				PRINTFORMW 哦？怎么说？
+				PRINTFORMW “在下…这几日一直在用…‘确认世界地表状况的魔法’……但最后终究是无疾而终………”
+				PRINTFORMW 这样啊……
+				PRINTFORMW “在下……斗胆推测，说不定狂王也建造了地下城……”
+				PRINTFORMW “全怪属下无能！属下属下……这就以死谢罪！”
+				PRINTFORMW 那倒不至于？你回绝了对方冲动的谢罪
+				PRINTFORMW 探查地下城的魔法，你有吗？
+				PRINTFORMW “有的……‘确认世界地表之下的魔法’但是…效率会很慢……”
+				PRINTFORMW 那就继续探查吧，有情报汇报给我
+				PRINTFORMW “是…”
+				小白的对话进度 ++
+				GOTO 再次见面后的事情
+			CASE 1
+				PRINTFORMW 《关于狂王所在地的情报其1.？》
+				PRINTFORMW “万分抱歉，卑职无能！”
+				PRINTFORMW 怎么了？突然说这样的话
+				PRINTFORMW “前些日子……魔王大人让我做的探查工作有结果了…”
+				PRINTFORMW 哦？怎么说？
+				PRINTFORMW “在下…这几日一直在用…‘确认世界地表状况的魔法’……但最后终究是无疾而终………”
+				PRINTFORMW 这样啊……
+				PRINTFORMW “在下……斗胆推测，说不定狂王也建造了地下城……”
+				PRINTFORMW “全怪属下无能！属下属下……这就以死谢罪！”
+				PRINTFORMW 那倒不至于？你回绝了对方冲动的谢罪
+				PRINTFORMW 探查地下城的魔法，你有吗？
+				PRINTFORMW “有的……‘确认世界地表之下的魔法’但是…效率会很慢……”
+				PRINTFORMW 你似乎在对方的眼神中看出了一丝遗憾与绝望？但你并没有太多在意
+				PRINTFORMW 那就继续探查吧，有情报汇报给我
+				PRINTFORMW “是…”
+				小白的对话进度 ++
+				GOTO 再次见面后的事情
+		ENDSELECT
+	ELSEIF DAY > -1
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 《在看的书其1》
+				PRINTFORMW 对了，%小白的名字%，你一直在看的书，讲的是什么啊？
+				PRINTFORMW “这本嘛？嘛…这本确实蛮符合魔王大人您的”
+				PRINTFORMW 此话怎讲？
+				PRINTFORMW “那我稍微给魔王大人讲一段序言听听吗？”
+				PRINTFORMW 好
+				PRINTFORMW “在这个世上，每个人的命运是否真的被某种法则所控制”
+				PRINTFORMW “所谓的伟大而又崇高的神明”
+				PRINTFORMW “又是否真的存在呢……”
+				PRINTFORMW “但至少可以肯定的是…”
+				PRINTFORMW “我们每个人”
+				PRINTFORMW “但意志上的自由也得不到”
+				PRINTFORMW 对方声情并茂的为你朗读了这段序言，兴许你真的因此感受到了那本书中的主角的所思所想吗？
+				PRINTFORMW 这样啊…
+				PRINTFORMW “魔王大人…您又是怎么看的呢？”
+				PRINTFORMW 什么？
+				PRINTFORMW “就是法则啊什么的，神明啊什么的，自由啊什么的？”
+				PRINTFORMW 这个啊，不值一提吧？
+				PRINTFORMW “？”
+				PRINTFORMW 因为倘若真的有那些东西存在的话…我的命运真的被那些东西所掌控的话…
+				PRINTFORMW 那我又能改变什么呢？
+				PRINTFORMW 所以与其去想那些有的没的…还不如去做那些对于我心中更重要的事情一一一
+				PRINTFORMW “这样啊…我明白您的意思了…”
+				PRINTFORMW 嗯…
+				GOTO 再次见面后的事情
+			CASE 1
+				PRINTFORMW 《决战前的闲聊？未完成版，只是放在这儿当个乐子给大家看》
+				PRINTFORMW “魔王大人，您要上了吗？！”
+				PRINTFORMW 啊，是的呢
+				PRINTFORMW 如果狂王的人太强的话，可能会有点难呢
+				PRINTFORMW “会赢吗？”
+				PRINTFORMW 会赢的
+				GOTO 再次见面后的事情
+		ENDSELECT
+	ENDIF
+ELSEIF RESULT == 99
+PRINTFORMW “我明白了，那么请魔王大人闭上眼睛，不要乱动”
+PRINTFORMW “以免卷入时间的洪流之中……”
+PRINTFORMW ………………………………………………
+PRINTFORMW ………………………………
+	CALL NEXTDAY
+PRINTFORMW ………………？
+PRINTFORMW 从你的耳边传来了%小白的名字%的声音
+PRINTFORMW “好啦，已经可以了哦”
+PRINTFORMW 几乎是一瞬间？你便又睁开了眼睛，出现在你面前的是…第二天的世界吗？
+GOTO 再次见面后的事情
+PRINTL 
+ELSEIF RESULT == 100
+	PRINTFORMW “要走了吗？”
+	PRINTFORMW “…”
+	PRINTFORMW “好哦，下次见哦”
+	PRINTFORMW 你慢慢退出了门去，你最后看到的是…%小白的名字%慢慢的拿起了放在一旁的书
+	STOPBGM
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;所持金変更処理
+;--------------------------------------------------
+@EDIT_MONEY
+PRINTFORML (持有${MONEY:0} or 持有${MONEY:1} or 持有${MONEY:2})
+DRAWLINE
+FOR LOCAL, 0, 3
+	PRINTFORML [{LOCAL, 3}]MONEY:{LOCAL, 3}  = {MONEY:LOCAL}
+NEXT
+PRINTLC [200]返回
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 3
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	DRAWLINE
+	PRINTFORML MONEY:{LOCAL} 修改为：(现在{MONEY:LOCAL})
+	PRINTFORML 请输入数值[0-99999999]（输入无效数值则取消）
+	INPUT
+	SIF RESULT < 0 || RESULT > 99999999
+		RESTART
+	MONEY:LOCAL = RESULT
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;全角色全回复
+;--------------------------------------------------
+@EDIT_HEAL_ALL
+REPEAT CHARANUM
+	BASE:COUNT:0 = MAXBASE:COUNT:0
+	BASE:COUNT:1 = MAXBASE:COUNT:1
+REND
+PRINTFORMW %RESULTS%的魔法散发的光瞬间笼罩了整个世界！
+PRINTFORMW 全员完全恢复了！
+
+;--------------------------------------------------
+;キャラ書き換え
+;--------------------------------------------------
+@EDIT_CHARA
+;前后のキャラを表示できるか判定
+LOCAL:1 = -1
+LOCAL:2 = -1
+FOR LOCAL, 0, CHARANUM
+	SIF LOCAL == TARGET
+		CONTINUE
+	IF LOCAL < TARGET
+		LOCAL:1 = LOCAL
+	ELSE
+		LOCAL:2 = LOCAL
+		BREAK
+	ENDIF
+NEXT
+
+DRAWLINE
+PRINTFORML \@(TARGET < 0) ? 请选择对象 # 现在「%CALLNAME%」选择中\@
+DRAWLINE
+PRINTFORMLC [  0] - \@(TARGET >= 0) ? 对象变更 # 对象选择\@
+IF TARGET >= 0
+	;PRINTLC [  1] - 对象情报
+	PRINTLC [  2] - ABL编辑
+	PRINTLC [  3] - EXP编辑
+	PRINTLC [  4] - MARK编辑
+	PRINTL
+	PRINTLC [  5] - TALENT编辑
+	PRINTLC [  6] - JUEL编辑
+	PRINTLC [  7] - CFLAG操作
+	PRINTLC [  8] - PALAM编辑
+	PRINTL
+	PRINTLC [  9] - BASE编辑
+	PRINTLC [ 10] - MAXBASE编辑
+ENDIF
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL:1 < 0) ? %" " * 16% # [1011]%CALLNAME:(LOCAL:1)% 编辑\@
+PRINTFORMLC [1000]返回
+PRINTFORMLC \@(LOCAL:2 < 0) ? %" " * 16% # [1019]%CALLNAME:(LOCAL:2)% 编辑\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1011 && LOCAL:1 >= 0
+	TARGET = LOCAL:1
+ELSEIF RESULT == 1019 && LOCAL:2 >= 0
+	TARGET = LOCAL:2
+ELSEIF RESULT == 0
+	CALL SELECT_TARGET_大书库
+ELSEIF TARGET < 0
+	PRINTW 对象已编辑。
+;ELSEIF RESULT == 1
+	;CALL SINGLE_CHARA_STATE(TARGET,1)
+ELSEIF RESULT == 2
+	CALL EDIT_ABL
+ELSEIF RESULT == 3
+	CALL EDIT_EXP
+ELSEIF RESULT == 4
+	CALL EDIT_MARK
+ELSEIF RESULT == 5
+	CALL EDIT_TALENT
+ELSEIF RESULT == 6
+	CALL EDIT_JUEL
+ELSEIF RESULT == 7
+	CALL EDIT_CFLAG
+ELSEIF RESULT == 8
+	CALL EDIT_PALAM
+ELSEIF RESULT == 9
+	CALL EDIT_BASE
+ELSEIF RESULT == 10
+	CALL EDIT_MAX_BASE
+ENDIF
+RESTART
+
+@SELECT_TARGET_大书库
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+LOCAL:1 = CHARANUM / 20
+
+$PRINT_LIST
+DRAWLINE
+SIF TARGET >= 0
+	PRINTFORML 现在选择角色是:%CALLNAME:TARGET%
+PRINTFORML 你要选择哪个对象？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT CHARANUM
+	SIF COUNT >= LOCAL * 20 && COUNT < (LOCAL+1) * 20
+		PRINTFORML [{COUNT}]%NAME:COUNT%
+REND
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前页\@
+PRINTLC [1000]返回
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次页\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM
+	GOTO INPUT_LOOP
+ENDIF
+
+TARGET = RESULT
+PRINTFORML %CALLNAME:TARGET% 已选择
+
+;--------------------------------------------------
+; PALAM操作
+;--------------------------------------------------
+@EDIT_PALAM
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF STRLENS(PALAMNAME:LOCAL) == 0
+		CONTINUE
+	PRINTFORML [{LOCAL, 3}]%PALAMNAME:LOCAL% ({PALAM:LOCAL}) 
+NEXT
+PRINTLC [199]PALAM 重置
+PRINTLC [200]返回
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT == 199
+	VARSET PALAM, 0
+	PRINTW PALAM已全部重置
+	RESTART
+ELSEIF RESULT < 0 || RESULT > 99
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	SIF STRLENS(PALAMNAME:LOCAL) == 0
+		GOTO INPUT_LOOP
+	DRAWLINE
+	PRINTFORML %PALAMNAME:LOCAL%修改为：(现在{PALAM:LOCAL})
+	PRINTFORML 请输入数值[0-9999999]（无效数值则取消）
+	INPUT
+	SIF RESULT < 0 || RESULT > 9999999
+		RESTART
+	PALAM:LOCAL = RESULT
+ENDIF
+RESTART
+
+;--------------------------------------------------
+; BASE操作
+;--------------------------------------------------
+@EDIT_BASE
+Z = 0
+DRAWLINE
+FOR LOCAL, 0, 100
+	PRINTFORMLC [{LOCAL, 3}] \@ (STRLENS(BASENAME:LOCAL) == 0) ? BASE:{LOCAL, 3} # %BASENAME:LOCAL%\@ = {BASE:LOCAL}
+    CALL CHECK_NEWLINEDEBUG
+NEXT
+PRINTLC [199]BASE重置
+PRINTLC [200]返回
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT == 199
+	VARSET BASE, 0
+	PRINTW BASE已全部重置
+	RESTART
+ELSEIF RESULT < 0 || RESULT > 99
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	SIF STRLENS(BASENAME:LOCAL) == 0
+		GOTO INPUT_LOOP
+	DRAWLINE
+	PRINTFORML \@ (STRLENS(BASENAME:LOCAL) == 0) ? BASE:{LOCAL} # %BASENAME:LOCAL%\@ 修改为：(现在{BASE:LOCAL})
+;	PRINTFORML %BASENAME:LOCAL%的变更(现在{BASE:LOCAL})
+	PRINTFORML 请输入数值[0-9999999]（无效数值则取消）
+	INPUT
+	SIF RESULT < 0 || RESULT > 9999999
+		RESTART
+	BASE:LOCAL = RESULT
+ENDIF
+RESTART
+
+
+;--------------------------------------------------
+; ABL操作
+;--------------------------------------------------
+;ABL変更
+@EDIT_ABL
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF STRLENS(ABLNAME:LOCAL) == 0
+		CONTINUE
+	PRINTFORML [{LOCAL, 3}]%ABLNAME:LOCAL%LV ({ABL:LOCAL})
+NEXT
+PRINTL
+PRINTLC [200]返回
+PRINTLC [201]全ABL修改为99
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT == 201
+	FOR LOCAL, 0, 100
+	SIF STRLENS(ABLNAME:LOCAL) == 0
+		CONTINUE
+	ABL:LOCAL = 99
+	NEXT
+	PRINTW ABL 全部修改为99了
+	RESTART
+SIF RESULT < 0 || RESULT > 107
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	DRAWLINE
+	PRINTFORML %ABLNAME:LOCAL%LV修改为(现在{ABL:LOCAL})
+	PRINTFORML 请输入数值[-999-999]（无效数值则取消）
+	INPUT
+	SIF RESULT < -999|| RESULT > 999
+		RESTART
+	ABL:LOCAL = RESULT
+ENDIF
+
+RESTART
+
+;--------------------------------------------------
+;素質編集
+;--------------------------------------------------
+@EDIT_TALENT
+LOCAL = 0
+LOCAL:1 = 5
+CALLF CLEAR_LIST
+;表示させる素質を抽出
+REPEAT 1000
+	;存在しない素質は排除
+	STRLENS TALENTNAME:COUNT
+	SIF RESULT == 0
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+REND
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 要修改哪个素质呢？ ＜page.{LOCAL+1}＞
+DRAWLINE
+E = 0
+REPEAT 60
+	LOCAL:2 = COUNT + LOCAL * 60
+	SIF GET_LIST(LOCAL:2) == 0
+		CONTINUE
+	IF TALENT:(LOCAL:2) == 0
+		PRINTFORMLC [{LOCAL:2, 3}]×【%TALENTNAME:(LOCAL:2)%】
+	ELSEIF TALENT:(LOCAL:2) == 1
+		PRINTFORMLC [{LOCAL:2, 3}]◎【%TALENTNAME:(LOCAL:2)%】
+	ELSEIF TALENT:(LOCAL:2) > 1
+		PRINTFORMLC [{LOCAL:2, 3}]○【%TALENTNAME:(LOCAL:2)%】
+	ENDIF
+	E += 1
+    IF E % 4 == 0
+    	PRINTL
+    ENDIF
+REND
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前页\@
+PRINTLC [9999]返回
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次页\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 9999
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT > 1000
+	GOTO INPUT_LOOP
+ELSEIF GET_LIST(RESULT) == 0
+	GOTO INPUT_LOOP
+ENDIF
+SIF STRLENS(TALENTNAME:RESULT) == 0
+	GOTO INPUT_LOOP
+PRINTLC [9999]返回
+LOCAL:1 = RESULT
+PRINTL
+DRAWLINE
+PRINTFORML %TALENTNAME:(RESULT)%修改为
+PRINTFORML 请输入数值（-999 - 999, 请参照CSV文件进行）
+INPUT
+SIF RESULT < -999 || RESULT > 999
+	RESTART
+TALENT:(LOCAL:1) = RESULT
+GOTO PRINT_LIST
+
+
+;--------------------------------------------------
+; MARK操作
+;--------------------------------------------------
+;MARK変更
+@EDIT_MARK
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF STRLENS(MARKNAME:LOCAL) == 0
+		CONTINUE
+	PRINTFORML [{LOCAL, 3}]%MARKNAME:LOCAL% ({MARK:LOCAL})
+NEXT
+PRINTLC [100]返回
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+SIF STRLENS(MARKNAME:LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %MARKNAME:LOCAL%LV修改为(现在{MARK:LOCAL})
+PRINTFORML 请输入数值[0-3]（无效数值则取消）
+INPUT
+SIF RESULT < 0 || RESULT >3
+	RESTART
+MARK:LOCAL = RESULT
+
+RESTART
+
+;--------------------------------------------------
+; EXP操作
+;--------------------------------------------------
+;EXP変更
+@EDIT_EXP
+Z = 0
+DRAWLINE
+PRINTFORML 要修改哪个经验呢？ ＜page.{LOCAL+1}＞
+DRAWLINE
+FOR LOCAL:1, 0, 100
+	LOCAL = LOCAL:1
+	SIF STRLENS(EXPNAME:LOCAL) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}]%EXPNAME:LOCAL% ({EXP:LOCAL})　
+    CALL CHECK_NEWLINEDEBUG
+NEXT
+PRINTL
+DRAWLINE
+PRINTLC [9999]返回
+PRINTLC [9998]EXP全部为999
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 9999
+	RETURN 0
+ELSEIF RESULT == 9998
+	FOR LOCAL, 0, 100
+	SIF STRLENS(EXPNAME:LOCAL) == 0
+		CONTINUE
+	EXP:LOCAL = 999
+	NEXT
+	PRINTW EXP 全部最大化处理
+	RESTART
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ELSE
+LOCAL = RESULT
+SIF STRLENS(EXPNAME:LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %EXPNAME:LOCAL%修改为(现在{EXP:LOCAL})
+PRINTFORML 请输入数值（负数则取消）
+INPUT
+SIF RESULT < 0
+	RESTART
+EXP:LOCAL = RESULT
+ENDIF
+RESTART
+
+;--------------------------------------------------
+; JUEL操作
+;--------------------------------------------------
+;JUEL変更
+@EDIT_JUEL
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF STRLENS(PALAMNAME:LOCAL) == 0
+		CONTINUE
+	PRINTFORML [{LOCAL, 3}]%PALAMNAME:LOCAL%之珠({JUEL:LOCAL})
+NEXT
+PRINTLC [200]返回
+PRINTLC [201]JUEL全部9999999
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT == 201
+	FOR LOCAL, 0, 100
+	SIF STRLENS(PALAMNAME:LOCAL) == 0
+		CONTINUE
+	JUEL:LOCAL = 9999999
+	NEXT
+	PRINTW JUEL最大化处理完毕
+	RESTART
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ELSE
+LOCAL = RESULT
+SIF STRLENS(PALAMNAME:LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %PALAMNAME:LOCAL%之珠修改为：(现在{JUEL:LOCAL})
+PRINTFORML 请输入数值（负数则取消）
+INPUT
+SIF RESULT < 0
+	RESTART
+JUEL:LOCAL = RESULT
+ENDIF
+RESTART
+
+
+;--------------------------------------------------
+; CFLAG操作
+;--------------------------------------------------
+@EDIT_CFLAG
+Z = 0
+LOCAL = 0
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 现在目前的CFLAG (MAX = 1000)
+PRINTFORML 哪些需要修改？ ;＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 1000
+	SIF STRLENS(CFLAGNAME:COUNT) == 0
+		CONTINUE
+	PRINTFORMLC [{COUNT, 3}] \@ (STRLENS(CFLAGNAME:COUNT) == 0) ? CFLAG:{COUNT, 3} # %CFLAGNAME:COUNT%\@ = {CFLAG:COUNT}
+    CALL CHECK_NEWLINEDEBUG
+REND
+PRINTL 
+DRAWLINE
+PRINTLC [1000]返回
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+
+ELSEIF RESULT < 0 || RESULT > 10000
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL:1 = RESULT
+DRAWLINE
+PRINTFORML \@ (STRLENS(CFLAGNAME:RESULT) == 0) ? CFLAG:{RESULT} # %CFLAGNAME:RESULT%\@ 修改为(现在{CFLAG:RESULT})
+PRINTFORML 请输入数值（数值-999则取消）
+INPUT
+SIF RESULT == -999
+	RESTART
+CFLAG:(LOCAL:1) = RESULT
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+;TFLAG編集
+;--------------------------------------------------
+@EDIT_TFLAG
+Z = 0
+LOCAL = 0
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 现在目前的TFLAG
+PRINTFORML 哪些需要修改？; ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 1000
+	SIF STRLENS(TFLAGNAME:COUNT) == 0
+		CONTINUE
+	PRINTFORMLC [{COUNT, 3}] \@ (STRLENS(TFLAGNAME:COUNT) == 0) ? TFLAG:{COUNT, 3} # %TFLAGNAME:COUNT%\@ = {TFLAG:COUNT}
+    CALL CHECK_NEWLINEDEBUG
+REND
+PRINTL 
+DRAWLINE
+PRINTLC [1000]返回
+PRINTLC [1010]调教FLAG全部重置(要注意)
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1010
+	VARSET TFLAG, 0
+	PRINTW 调教FLAG已全部重置
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT > 1000
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL:1 = RESULT
+DRAWLINE
+PRINTFORML \@ (STRLENS(TFLAGNAME:RESULT) == 0) ? TFLAG:{RESULT} # %TFLAGNAME:RESULT%\@ 修改为(现在{TFLAG:RESULT})
+PRINTFORML 请输入数值（负数为取消）
+INPUT
+SIF RESULT < 0
+	RESTART
+TFLAG:(LOCAL:1) = RESULT
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+;FLAG編集
+;--------------------------------------------------
+;説明付与
+@DEFINE_FLAG, ARG
+IF STRLENS(FLAGNAME:ARG) > 0
+	PRINTS FLAGNAME:ARG
+ELSE
+	PRINT ――
+ENDIF
+
+@EDIT_FLAG
+Z = 0
+VARSET LOCAL, 0
+LOCAL:1 = 199
+LOCAL:3 = 0
+$PRINT_LIST
+IF LOCAL:3
+	DRAWLINE
+	PRINTFORML 现在目前的FLAG
+	PRINTFORML 哪些需要修改？
+	DRAWLINE
+	REPEAT 10000
+		SIF STRLENS(FLAGNAME:COUNT) == 0
+			CONTINUE
+		PRINTFORMLC [{COUNT, 4}] \@ (STRLENS(FLAGNAME:COUNT) == 0) ? FLAG:{COUNT, 4} # %FLAGNAME:COUNT%\@ = {FLAG:COUNT}
+        CALL CHECK_NEWLINEDEBUG
+	REND
+	PRINTL 
+	DRAWLINE
+	PRINTLC [10000]返回
+	PRINTL
+	PRINTLC [10020]切换显示（全部/有效）
+	PRINTL 
+ELSE
+	DRAWLINE
+	PRINTFORML 现在目前的FLAG
+	PRINTFORML 哪些需要修改？ ＜page.{LOCAL+1}＞
+	DRAWLINE
+	REPEAT 10000
+		SIF COUNT < LOCAL * 60 || COUNT >= (LOCAL + 1) * 60
+			CONTINUE
+		PRINTFORMLC [{COUNT, 4}] \@ (STRLENS(FLAGNAME:COUNT) == 0) ? FLAG:{COUNT, 4} # %FLAGNAME:COUNT%\@ = {FLAG:COUNT}
+		;PRINTFORML [{COUNT, 4}] FLAG:{COUNT, 4} = {FLAG:COUNT}
+        CALL CHECK_NEWLINEDEBUG
+		
+	REND
+	PRINTL 
+	DRAWLINE
+	PRINTFORMLC \@(LOCAL <= 0) ? %" " * 17% # [10001]前页\@
+	PRINTLC [10000]返回
+	PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 17% # [10009]次页\@
+	PRINTL 
+	PRINTFORMLC \@(LOCAL/10 <= 0) ? %" " * 17% # [10011]10页以前\@
+	PRINTFORMLC %" " * 17%
+	PRINTFORMLC \@(LOCAL/10 >= LOCAL:1/10) ? %" " * 17% # [10019]10页以后\@
+	PRINTL
+	PRINTL [10020]切换显示（全部/有效）
+	PRINTL 
+
+ENDIF
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 10000
+	RETURN 0
+ELSEIF RESULT == 10001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 10009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 10011 && LOCAL/10 > 0
+	LOCAL -= 10
+	GOTO PRINT_LIST
+ELSEIF RESULT == 10019 && LOCAL/10 < LOCAL:1/10
+	LOCAL += 10
+	GOTO PRINT_LIST
+ELSEIF RESULT == 10020
+	IF LOCAL:3
+		LOCAL:3=0
+	ELSE
+		LOCAL:3=1
+	ENDIF
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT > 10000
+	GOTO INPUT_LOOP
+
+ENDIF
+LOCAL:2 = RESULT
+DRAWLINE
+PRINTFORM FLAG:{LOCAL:2}(
+CALL DEFINE_FLAG, LOCAL:2
+PRINTFORML )修改为(现在{FLAG:(LOCAL:2)})
+PRINTFORML 请输入数值（负数则取消）
+INPUT
+SIF RESULT < 0
+	RESTART
+FLAG:(LOCAL:2) = RESULT
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+; MAXBASE操作
+;--------------------------------------------------
+@EDIT_MAX_BASE
+Z = 0
+DRAWLINE
+FOR LOCAL, 0, 100
+	PRINTFORMLC [{LOCAL, 3}] \@ (STRLENS(BASENAME:LOCAL) == 0) ? MAXBASE:{LOCAL, 3} # %BASENAME:LOCAL%\@ = {MAXBASE:LOCAL}
+    CALL CHECK_NEWLINEDEBUG
+NEXT
+PRINTLC [200]返回
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 99
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	DRAWLINE
+	PRINTFORMLCD \@ (STRLENS(BASENAME:LOCAL) == 0) ? MAXBASE:{LOCAL} # %BASENAME:LOCAL%\@ の上限修改(现在{MAXBASE:LOCAL})
+	PRINTFORML 请输入数值[0-9999999]（无效数值则取消）
+	INPUT
+	SIF RESULT < 0 || RESULT > 9999999
+		RESTART
+	MAXBASE:LOCAL = RESULT
+ENDIF
+RESTART
+
+;--------------------------------------------------
+; ITEM操作
+;--------------------------------------------------
+;ITEMの有無をCSVから取得
+@DISP_ITEM(ARG)
+#FUNCTION
+RETURNF (STRLENS(ITEMNAME:ARG)) ? 1 # 0
+
+;ITEM変更
+@EDIT_ITEM
+DRAWLINE
+FOR LOCAL:1, 0, 1000
+	LOCAL = LOCAL:1
+	SIF DISP_ITEM(LOCAL) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}]%ITEMNAME:LOCAL% ({ITEM:LOCAL})　
+	SIF LOCAL:1 % 3 == 0
+		PRINTL
+NEXT
+PRINTLC [9999]返回
+PRINTL 
+$INPUT_LOOP
+INPUT
+SIF RESULT == 9999
+	RETURN 0
+SIF RESULT < 0 || RESULT > 1000
+	GOTO INPUT_LOOP
+LOCAL = RESULT
+SIF STRLENS(ITEMNAME:LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %ITEMNAME:LOCAL%修改为(现在{ITEM:LOCAL})
+PRINTFORML 请输入数值（负数则取消）
+INPUT
+SIF RESULT < 0
+	RESTART
+ITEM:LOCAL = RESULT
+RESTART
+
+;--------------------------------------------------
+;NEXTDAY
+;--------------------------------------------------
+@NEXTDAY
+DAY += 1
+BEGIN AFTERTRAIN
+
+@CHECK_NEWLINEDEBUG
+Z += 1
+IF Z == 3
+	PRINTL
+	Z = 0
+ENDIF

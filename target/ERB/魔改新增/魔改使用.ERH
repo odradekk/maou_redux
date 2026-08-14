@@ -1,0 +1,17 @@
+﻿
+#DIM GLOBAL SAVEDATA 冒險者性別
+
+#DIM SAVEDATA 卖淫影响
+
+#DIM SAVEDATA 立绘
+;立绘开关
+
+#DIM SAVEDATA CHARADATA NO_SP
+;取消SP圖片使用的變數開關
+
+#DIM 赤森奴隶
+;选招赤森奴隶时的开关
+
+#DIM SAVEDATA 反作弊
+;反作弊开关
+

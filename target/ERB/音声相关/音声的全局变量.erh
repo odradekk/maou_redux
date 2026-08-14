@@ -1,0 +1,6 @@
+#DIM GLOBAL SAVEDATA 是否启用标题音乐 = 1
+#DIM GLOBAL SAVEDATA 标题音乐音量 =66
+#DIM SAVEDATA 是否启用背景音乐
+#DIM SAVEDATA 背景音乐音量 = 66
+#DIM SAVEDATA 是否启用语音
+#DIM SAVEDATA 语音音量 = 66

@@ -1,0 +1,6 @@
+﻿;小白娘相关
+;此处不是您应所至之地，回去吧？
+#DIM SAVEDATA 是否到访过大书库
+#DIM SAVEDATA 小白的对话进度
+#DIM SAVEDATA 小白的主线对话进度 ;每攻略完一个区域且去和小白娘闲聊后+1
+#DIMS SAVEDATA 小白的名字

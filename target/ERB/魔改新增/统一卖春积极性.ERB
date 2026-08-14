@@ -1,0 +1,76 @@
+﻿
+@统一卖春积极性
+	N:9 = 0
+	PRINTFORML 统一设置迷宫内角色的"卖春积极性"
+	PRINTBUTTON "[ 全侵攻中的勇者 ]  ", 2000
+	PRINTBUTTON "  [ 全迎击中的奴隶 ]  ", 2001
+	PRINTBUTTON "  [ 所有侵攻与迎击者 ]  ", 2002
+	PRINTBUTTON "  [ 取消設置 ]  ", 2003
+	PRINTFORML
+	INPUT
+	IF RESULT == 2000
+		PRINTFORML 要将积极性设置为多少？
+		PRINTBUTTON "[ 0 ]  ", 0
+		PRINTBUTTON "  [ 1 ]  ", 1
+		PRINTBUTTON "  [ 2 ]  ", 2
+		PRINTBUTTON "  [ 3 ]  ", 3
+		PRINTBUTTON "  [ 4 ]  ", 4
+		PRINTBUTTON "  [ 5 ]  ", 5
+		PRINTFORML
+		INPUT
+		IF  RESULT < 6 
+			N:9 = RESULT
+			REPEAT CHARANUM
+				SIF COUNT == MASTER
+					CONTINUE
+				IF CFLAG:COUNT:1 == 2
+					CFLAG:COUNT:120 = N:9
+				ENDIF	
+			REND
+		ENDIF
+		PRINTFORMW 已将当前迷宫侵攻中的勇者（不含以後出现的新勇者），卖春积极性全设置为{N:9}了
+	ELSEIF RESULT == 2001
+		PRINTFORML 要将积极性设置为多少？
+		PRINTBUTTON "[ 0 ]  ", 0
+		PRINTBUTTON "  [ 1 ]  ", 1
+		PRINTBUTTON "  [ 2 ]  ", 2
+		PRINTBUTTON "  [ 3 ]  ", 3
+		PRINTBUTTON "  [ 4 ]  ", 4
+		PRINTBUTTON "  [ 5 ]  ", 5
+		PRINTFORML
+		INPUT
+		IF  RESULT < 6 
+			N:9 = RESULT
+			REPEAT CHARANUM
+				SIF COUNT == MASTER
+					CONTINUE
+				IF CFLAG:COUNT:1 == 3
+					CFLAG:COUNT:120 = N:9
+				ENDIF	
+			REND
+		ENDIF
+		PRINTFORMW 已将当前迷宫全迎击中的奴隶（不含以後追加的新奴隶），卖春积极性全设置为{N:9}了
+	ELSEIF RESULT == 2002
+		PRINTFORML 要将积极性设置为多少？
+		PRINTBUTTON "[ 0 ]  ", 0
+		PRINTBUTTON "  [ 1 ]  ", 1
+		PRINTBUTTON "  [ 2 ]  ", 2
+		PRINTBUTTON "  [ 3 ]  ", 3
+		PRINTBUTTON "  [ 4 ]  ", 4
+		PRINTBUTTON "  [ 5 ]  ", 5
+		PRINTFORML
+		INPUT
+		IF  RESULT < 6 
+			N:9 = RESULT
+			REPEAT CHARANUM
+				SIF COUNT == MASTER
+					CONTINUE
+				IF CFLAG:COUNT:1 == 2 || CFLAG:COUNT:1 == 3
+					CFLAG:COUNT:120 = N:9
+				ENDIF	
+			REND
+		ENDIF
+		PRINTFORMW 已将当前迷宫所有侵攻与迎击者（不含以後新入迷宫的对象），卖春积极性全设置为{N:9}了
+	ELSE
+	ENDIF
+	JUMP CHARA_INFO

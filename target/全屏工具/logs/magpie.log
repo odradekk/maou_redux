@@ -1,0 +1,511 @@
+2024-05-29 21:45:14.270|info|main.cpp:77|wWinMain|程序启动
+	版本: v0.11.0
+	管理员: 否
+2024-05-29 21:45:14.431|info|AppSettings.cpp:231|Initialize|便携模式: 否
+2024-05-29 21:45:14.431|info|AppSettings.cpp:234|Initialize|不存在配置文件
+2024-05-29 21:45:14.564|error|UpdateService.cpp:73|CheckForUpdatesAsync|检查更新失败: 无法解析服务器的名称或地址
+	HRESULT: 0x80072EE7
+2024-05-29 21:45:35.719|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:45:35.719|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:45:35.719|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:45:35.725|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:45:35.726|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:45:35.757|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:45:35.758|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:45:35.761|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:45:35.781|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:45:35.781|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:45:35.900|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:45:35.901|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 105,134,1263,884
+2024-05-29 21:45:35.901|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:45:36.227|info|EffectCacheManager.cpp:235|Save|已保存缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:45:36.227|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 326.66302 毫秒
+2024-05-29 21:45:36.322|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:45:36.373|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:45:38.687|info|CursorDrawer.cpp:525|_ResolveCursor|已解析单色光标
+2024-05-29 21:46:00.572|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:46:01.961|info|ScalingWindow.cpp:476|_CheckSrcState|前台窗口已改变
+2024-05-29 21:46:01.961|info|ScalingWindow.cpp:318|Render|源窗口状态改变，退出全屏
+2024-05-29 21:47:05.599|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:05.600|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:47:05.600|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:47:05.605|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:05.606|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:05.637|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:05.637|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:47:05.640|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:47:05.661|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:05.661|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:47:05.754|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:47:05.754|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 333,207,1491,957
+2024-05-29 21:47:05.754|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:47:05.755|info|EffectCacheManager.cpp:134|_LoadFromMemCache|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:47:05.755|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 0.24300002 毫秒
+2024-05-29 21:47:05.758|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:47:05.817|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:47:07.225|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:08.065|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:08.067|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:47:08.067|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:47:08.072|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:08.073|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:08.096|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:08.096|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:47:08.099|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:47:08.120|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:08.120|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:47:08.209|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:47:08.209|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 333,207,1491,957
+2024-05-29 21:47:08.209|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:47:08.209|info|EffectCacheManager.cpp:134|_LoadFromMemCache|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:47:08.209|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 0.273 毫秒
+2024-05-29 21:47:08.214|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:47:08.270|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:47:09.337|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:10.111|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:10.112|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:47:10.112|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:47:10.118|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:10.119|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:10.140|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:10.140|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:47:10.143|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:47:10.162|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:10.162|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:47:10.243|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:47:10.243|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 333,207,1491,957
+2024-05-29 21:47:10.243|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:47:10.243|info|EffectCacheManager.cpp:134|_LoadFromMemCache|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:47:10.243|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 0.21400002 毫秒
+2024-05-29 21:47:10.246|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:47:10.299|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:47:11.196|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:14.811|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:14.812|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:47:14.812|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:47:14.818|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:14.819|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:14.841|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:14.841|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:47:14.845|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:47:14.865|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:14.865|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:47:14.964|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:47:14.964|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 333,207,1491,957
+2024-05-29 21:47:14.964|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:47:14.964|info|EffectCacheManager.cpp:134|_LoadFromMemCache|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:47:14.964|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 0.21000001 毫秒
+2024-05-29 21:47:14.969|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:47:15.016|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:47:15.494|info|ScalingWindow.cpp:476|_CheckSrcState|前台窗口已改变
+2024-05-29 21:47:15.494|info|ScalingWindow.cpp:318|Render|源窗口状态改变，退出全屏
+2024-05-29 21:47:18.616|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:47:18.617|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:47:18.617|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:47:18.621|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:18.623|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:47:18.645|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:18.645|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:47:18.648|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:47:18.668|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:47:18.668|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:47:18.683|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:47:18.683|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 333,207,1491,957
+2024-05-29 21:47:18.683|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:47:18.683|info|EffectCacheManager.cpp:134|_LoadFromMemCache|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:47:18.683|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 0.23700002 毫秒
+2024-05-29 21:47:18.687|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:47:18.743|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:47:19.910|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:47:20.504|info|ScalingWindow.cpp:476|_CheckSrcState|前台窗口已改变
+2024-05-29 21:47:20.504|info|ScalingWindow.cpp:318|Render|源窗口状态改变，退出全屏
+2024-05-29 21:48:21.781|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:48:21.782|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-05-29 21:48:21.782|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-05-29 21:48:21.788|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:48:21.789|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-05-29 21:48:21.814|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:48:21.814|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-05-29 21:48:21.818|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-05-29 21:48:21.839|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-05-29 21:48:21.839|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-05-29 21:48:21.853|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-05-29 21:48:21.853|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 333,207,1491,957
+2024-05-29 21:48:21.853|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-05-29 21:48:21.854|info|EffectCacheManager.cpp:134|_LoadFromMemCache|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-05-29 21:48:21.854|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 0.24900001 毫秒
+2024-05-29 21:48:21.857|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-05-29 21:48:21.914|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-05-29 21:48:22.685|info|CursorDrawer.cpp:525|_ResolveCursor|已解析单色光标
+2024-05-29 21:48:40.293|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-05-29 21:49:47.543|info|XamlApp.cpp:271|_QuitWithoutMainWindow|程序退出
+2024-05-29 21:53:08.280|info|main.cpp:77|wWinMain|程序启动
+	版本: v0.11.0
+	管理员: 否
+2024-05-29 21:53:08.379|info|AppSettings.cpp:231|Initialize|便携模式: 否
+2024-05-29 21:54:18.976|info|XamlApp.cpp:271|_QuitWithoutMainWindow|程序退出
+2024-05-29 21:59:55.985|info|main.cpp:77|wWinMain|程序启动
+	版本: v0.11.0
+	管理员: 否
+2024-05-29 21:59:56.092|info|AppSettings.cpp:231|Initialize|便携模式: 否
+2024-05-29 22:00:56.848|info|XamlApp.cpp:271|_QuitWithoutMainWindow|程序退出
+2024-08-27 20:35:07.169|info|main.cpp:77|wWinMain|程序启动
+	版本: v0.11.0
+	管理员: 否
+2024-08-27 20:35:07.499|info|AppSettings.cpp:231|Initialize|便携模式: 否
+2024-08-27 20:35:54.669|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-08-27 20:35:54.671|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-08-27 20:35:54.672|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-08-27 20:35:54.676|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-08-27 20:35:54.677|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-08-27 20:35:54.718|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-08-27 20:35:54.718|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-08-27 20:35:54.723|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-08-27 20:35:54.745|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-08-27 20:35:54.745|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-08-27 20:35:54.905|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-08-27 20:35:54.905|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 169,198,1327,948
+2024-08-27 20:35:54.905|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-08-27 20:35:54.907|info|Win32Utils.cpp:155|ReadFile|读取文件: cache\Lanczos_0512d5783a6678bf3
+2024-08-27 20:35:54.919|info|EffectCacheManager.cpp:171|Load|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-08-27 20:35:54.919|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 14.0060005 毫秒
+2024-08-27 20:35:55.032|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-08-27 20:35:55.082|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-08-27 20:36:20.446|info|ScalingWindow.cpp:476|_CheckSrcState|前台窗口已改变
+2024-08-27 20:36:20.446|info|ScalingWindow.cpp:318|Render|源窗口状态改变，退出全屏
+2024-10-06 17:14:05.559|info|main.cpp:77|wWinMain|程序启动
+	版本: v0.11.0
+	管理员: 否
+2024-10-06 17:14:05.723|info|AppSettings.cpp:231|Initialize|便携模式: 否
+2024-10-06 17:14:16.872|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-10-06 17:14:16.873|info|ScalingOptions.cpp:40|Log|缩放选项
+	IsWindowResizingDisabled: false
+	IsDebugMode: false
+	IsEffectCacheDisabled: false
+	IsFontCacheDisabled: false
+	IsSaveEffectSources: false
+	IsWarningsAreErrors: false
+	IsAllowScalingMaximized: false
+	IsSimulateExclusiveFullscreen: false
+	Is3DGameMode: false
+	IsShowFPS: false
+	IsCaptureTitleBar: false
+	IsAdjustCursorSpeed: true
+	IsDrawCursor: true
+	IsDirectFlipDisabled: false
+	IsStatisticsForDynamicDetectionEnabled: false
+	IsTouchSupportEnabled: false
+	cropping: 0,0,0,0
+	graphicsCard: -1
+	maxFrameRate: 0
+	cursorScaling: 1
+	captureMethod: 0
+	multiMonitorUsage: 0
+	cursorInterpolationMode: 0
+	duplicateFrameDetectionMode: 1
+	effects: 
+		Lanczos
+			scalingType: 1
+			scale: 1,1
+			parameters: 无
+2024-10-06 17:14:16.873|info|ScalingWindow.cpp:167|Create|缩放窗口边界: 0,0,1920,1080
+2024-10-06 17:14:16.881|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-10-06 17:14:16.881|info|DeviceResources.cpp:32|Initialize|可变刷新率支持: 是
+2024-10-06 17:14:16.912|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-10-06 17:14:16.912|info|Renderer.cpp:76|LogAdapter|当前图形适配器: 
+	VendorId: 0x1002
+	DeviceId: 0x15d8
+	Description: AMD Radeon(TM) Vega 8 Graphics
+2024-10-06 17:14:16.917|info|Renderer.cpp:255|_CreateSwapChain|Multiplane Overlay 支持: 否
+2024-10-06 17:14:16.934|info|DeviceResources.cpp:174|_TryCreateD3DDevice|已创建 D3D 设备
+	功能级别: 11.1
+2024-10-06 17:14:16.934|info|Renderer.cpp:426|_InitFrameSource|当前捕获模式: Graphics Capture
+2024-10-06 17:14:17.064|info|GraphicsCaptureFrameSource.cpp:90|_Initialize|GraphicsCaptureFrameSource 初始化完成
+2024-10-06 17:14:17.064|info|Renderer.cpp:434|_InitFrameSource|源窗口边界: 169,198,1327,948
+2024-10-06 17:14:17.064|info|Renderer.cpp:440|_InitFrameSource|捕获尺寸: 1158x750
+2024-10-06 17:14:17.065|info|Win32Utils.cpp:155|ReadFile|读取文件: cache\Lanczos_0512d5783a6678bf3
+2024-10-06 17:14:17.069|info|EffectCacheManager.cpp:171|Load|已读取缓存 cache\Lanczos_0512d5783a6678bf3
+2024-10-06 17:14:17.069|info|Renderer.cpp:475|CompileEffect|编译 Lanczos.hlsl 用时 4.6190004 毫秒
+2024-10-06 17:14:17.167|info|CursorManager.cpp:154|Initialize|CursorManager 初始化完成
+2024-10-06 17:14:17.211|info|CursorDrawer.cpp:525|_ResolveCursor|已解析彩色光标
+2024-10-06 17:14:19.915|info|ShortcutService.cpp:207|operator ()|热键 Scale 激活（Keyboard Hook）
+2024-10-06 17:14:27.622|error|UpdateService.cpp:73|CheckForUpdatesAsync|检查更新失败: 操作超时
+	HRESULT: 0x80072EE2
+2024-12-19 14:21:26.106|info|main.cpp:77|wWinMain|程序启动
+	版本: v0.11.0
+	管理员: 否
+2024-12-19 14:21:26.247|info|AppSettings.cpp:231|Initialize|便携模式: 否
+2024-12-19 14:21:26.247|info|AppSettings.cpp:234|Initialize|不存在配置文件

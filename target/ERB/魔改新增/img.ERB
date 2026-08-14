@@ -1,0 +1,251 @@
+﻿;-------------------------------------------------------------------------
+;HTML_PRINT 圖片調用指令
+;shape type='space  繪製空白方塊 space後面數字指定方塊的寬度 (藉此調整圖片的X軸位置)
+;img src='圖片名' 繪製圖片 width='寬' height='高' 控制圖片變形的大小 如果圖片原始大小為10X10 ;那麼輸入width='40' height='40'才會與原始圖片同比例 width為負數則圖片水平翻轉   height為負數則垂直翻轉
+;ypos='100' 調整圖片顯示的高度(Y軸位置)
+;使用CSTR:50紀錄角色臉圖名稱
+;-------------------------------------------------------------------------
+@CHA_IMG(ARG)
+SIF !立绘
+	RETURN 0
+SIF ARG > CHARANUM
+	RETURN 0
+SIF NO:ARG == 0
+	RETURN 0
+F:99 = RAND:11
+
+SIF NO_SP == 0 && SP(ARG)
+	CSTR:ARG:50 = 
+
+IF !STRLENS(CSTR:ARG:50)
+	;特殊人物立繪
+	IF TALENT:ARG:165
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP17_1
+		ELSE
+			CSTR:ARG:50 = SP17_0
+		ENDIF
+	ELSEIF TALENT:ARG:167
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP20_1
+		ELSE
+			CSTR:ARG:50 = SP20_0
+		ENDIF
+	ELSEIF TALENT:ARG:168
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP21_1
+		ELSE
+			CSTR:ARG:50 = SP21_0
+		ENDIF
+	ELSEIF TALENT:ARG:169 
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP22_1
+		ELSE
+			CSTR:ARG:50 = SP22_0
+		ENDIF
+	ELSEIF TALENT:ARG:170
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP23_1
+		ELSE
+			CSTR:ARG:50 = SP23_0
+		ENDIF
+	ELSEIF TALENT:ARG:171 
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP24_1
+		ELSE
+			CSTR:ARG:50 = SP24_0
+		ENDIF
+	ELSEIF EX_TALENT:ARG:101
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP31_1
+		ELSE
+			CSTR:ARG:50 = SP31_0
+		ENDIF
+	ELSEIF EX_TALENT:ARG:102
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP32_1
+		ELSE
+			CSTR:ARG:50 = SP32_0
+		ENDIF
+	ELSEIF EX_TALENT:ARG:103
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP33_1
+		ELSE
+			CSTR:ARG:50 = SP33_0
+		ENDIF
+	ELSEIF EX_TALENT:ARG:4 
+			CSTR:ARG:50 = SP34_0
+	ELSEIF EX_TALENT:ARG:104
+		IF TALENT:ARG:76 || TALENT:ARG:85
+			CSTR:ARG:50 = SP35_1
+		ELSE
+			CSTR:ARG:50 = SP35_0
+		ENDIF
+	;通用立繪，由髮色隨機決定
+	ELSEIF TALENT:ARG:300 == 1
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_金%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 金%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 2
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_栗%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 栗%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 3
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_黑%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 黑%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 4
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_紅%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 紅%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 5
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_銀%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 銀%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 6
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_藍%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 藍%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 7
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_綠%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 綠%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 8
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_紫%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 紫%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 9
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_白%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 白%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 10
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_暗金%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 暗金%TOSTR(F:99)%
+		ENDIF
+	ELSEIF TALENT:ARG:300 == 11
+		IF TALENT:ARG:122
+			CSTR:ARG:50 = M_粉%TOSTR(F:99)%
+		ELSE
+			CSTR:ARG:50 = 粉%TOSTR(F:99)%
+		ENDIF
+	ENDIF
+ENDIF
+IF ARG == ASSI
+	LOCALS '= "<shape type='space' param='2800'><img src='" + CSTR:ARG:50 + "' height='450' ypos='-185'>"
+ELSEIF F:98 == 1
+	LOCALS '= "<shape type='space' param='50'><img src='" + CSTR:ARG:50 + "' height='450' ypos='-120'>"
+ELSE
+	LOCALS '= "<shape type='space' param='100'><img src='" + CSTR:ARG:50 + "' height='450' ypos='-85'>"
+ENDIF
+HTML_PRINT LOCALS
+F:98 = 0
+F:99 = 0
+
+;迷宫中询问是否凌辱勇者时显示脸图
+@CHA_IMG2(ARG)
+	LOCALS '= "<shape type='space' param='10'><img src='" + CSTR:ARG:50 + "' height='330' ypos='-50'>"
+	HTML_PRINT LOCALS
+@更换立绘(ARG)
+#DIMS sPrint_Text
+#DIMS HAIR
+#DIM iEnter_Con
+
+T = TARGET
+TARGET = ARG
+
+sPrint_Text = <p align='LEFT'>
+iEnter_Con = 0
+PRINTFORML 要替换成哪张立绘？（请点选图片上的编号）
+SETCOLOR 255,215,0
+PRINTFORML ※若更换立绘失败，建议将目标设为调教对象，再进行更换
+RESETCOLOR
+PRINTFORML
+COUNT = 0
+FOR COUNT, 0, 11
+		IF TALENT:ARG:300 == 1
+			HAIR = 金
+		ELSEIF TALENT:ARG:300 == 2
+			HAIR = 栗
+		ELSEIF TALENT:ARG:300 == 3
+			HAIR = 黑
+		ELSEIF TALENT:ARG:300 == 4
+			HAIR = 紅
+		ELSEIF TALENT:ARG:300 == 5
+			HAIR = 銀
+		ELSEIF TALENT:ARG:300 == 6
+			HAIR = 藍
+		ELSEIF TALENT:ARG:300 == 7
+			HAIR = 綠
+		ELSEIF TALENT:ARG:300 == 8
+			HAIR = 紫
+		ELSEIF TALENT:ARG:300 == 9
+			HAIR = 白
+		ELSEIF TALENT:ARG:300 == 10
+			HAIR = 暗金
+		ELSEIF TALENT:ARG:300 == 11
+			HAIR = 粉
+		ENDIF
+	PRINTFORM [   {COUNT}   ]
+	IF TALENT:ARG:122
+		sPrint_Text += @"<shape type='space' param='20'><img src='M_" + HAIR + "" + TOSTR(COUNT) + "' height='435'>"
+	ELSE
+		sPrint_Text += @"<shape type='space' param='20'><img src='" + HAIR + "" + TOSTR(COUNT) + "' height='435'>"
+	ENDIF
+	iEnter_Con ++
+NEXT
+	HTML_PRINT sPrint_Text
+	iEnter_Con = 1
+	PRINTFORML
+	PRINTFORML
+	PRINTFORML
+	PRINTFORML
+	SIF SP(ARG)
+		PRINTFORML  [ 98 ]使用初始的专属立绘
+	PRINTFORML  [ 99 ]保持原样
+$LOOP  
+INPUT
+IF RESULT == 99
+	RETURN 0
+ELSEIF RESULT == 98
+	CSTR:ARG:50 =
+	NO_SP = 0
+	PRINTFORMW 已恢复成初始的专属立绘！
+ELSEIF RESULT >= 0 &&  RESULT <= 10
+	SELECTCASE  NO:ARG
+		CASE 17,20 TO 24,31 TO 35
+			NO_SP = 1
+	ENDSELECT
+	IF TALENT:ARG:122
+		CSTR:ARG:50 = M_%HAIR%%TOSTR(RESULT)%
+	ELSE
+		CSTR:ARG:50 = %HAIR%%TOSTR(RESULT)%
+	ENDIF
+	PRINTFORMW 已经完成替换！
+ELSE
+	GOTO LOOP
+ENDIF
+	TARGET = T
+
+@SP(ARG)
+#FUNCTION
+RETURNF TALENT:ARG:165 || TALENT:ARG:167  || TALENT:ARG:168  || TALENT:ARG:169  || TALENT:ARG:170  || TALENT:ARG:171  || EX_TALENT:ARG:101 || EX_TALENT:ARG:102 || EX_TALENT:ARG:103 || EX_TALENT:ARG:104 || EX_TALENT:ARG:4

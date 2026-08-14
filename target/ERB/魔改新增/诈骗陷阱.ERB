@@ -1,0 +1,231 @@
+﻿
+;------------------------------
+@诈骗陷阱
+;------------------------------
+IF FLAG:5 & 32
+	SELECTCASE  RAND:3
+		CASE 0
+			CALL 诈骗剧情1
+		CASE 1
+			CALL 诈骗剧情2
+		CASEELSE
+			CALL 诈骗剧情3
+	ENDSELECT
+ENDIF
+RETURN 0
+@诈骗剧情1
+#DIM COST
+	PRINTFORM 一个骨瘦如柴的
+	PRINTDATAL
+		DATAFORM 老太太正向%SAVESTR:A%求救，
+		DATAFORM 老先生正向%SAVESTR:A%求救，
+		DATAFORM 流浪汉正向%SAVESTR:A%求救，
+		DATAFORM 小孩子正向%SAVESTR:A%求救，
+	ENDDATA
+	PRINTFORM 声称自己
+	PRINTDATAL
+		DATAFORM 迷路了，已经好几天没有吃饭
+		DATAFORM 被抢劫了，身无分文又和家人分散了
+		DATAFORM 被掳来这里，想逃走又迷路了
+		DATAFORM 失亿了，不知为何出现在满是怪物的迷宫里
+	ENDDATA
+	;善恶值判定
+	IF CFLAG:A:151 > 100
+		COST = CFLAG:A:151 * CFLAG:A:9 / 2 + (FLAG:85*20)
+		SIF  COST > (CFLAG:A:580 / 2)
+			COST = CFLAG:A:580 / 2
+		PRINTFORML 正义感很高的%SAVESTR:A%，非常同情对方的处境
+		IF CFLAG:A:580 <100
+			PRINTFORML 尽管想帮助对方，但自己身上也所剩无几，只能爱莫能助了……
+		ELSE
+			PRINTFORM 将自己的所持金分了
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 给对方……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:580 -= COST
+		ENDIF
+	ELSEIF CFLAG:A:151 > 0
+		COST = CFLAG:A:151 * CFLAG:A:9 / 2 + (FLAG:85*10)
+		SIF  COST > (CFLAG:A:580 / 3)
+			COST = CFLAG:A:580 / 3
+		PRINTFORML %SAVESTR:A%虽然有点半信半疑，最後还是选择相信对方
+		IF CFLAG:A:580 <100
+			PRINTFORML 不过因为自己身上也所剩无几，只能爱莫能助了……
+		ELSE
+			PRINTFORM 将自己的所持金分了
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 给对方……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:580 -= COST
+		ENDIF
+	ELSEIF  CFLAG:A:151 > -50
+		COST = CFLAG:A:9 * (RAND:5 + 1) + (FLAG:85*5)
+		SIF  COST > (CFLAG:A:580 / 5)
+			COST = CFLAG:A:580 / 5
+		PRINTFORML %SAVESTR:A%很怀疑这么危险的地方居然会出现平民
+		IF CFLAG:A:580 < 100
+			PRINTFORML 不过因为自己身上也所剩无几，只能爱莫能助了……
+		ELSE
+			PRINTFORM 犹豫了一番，最後还是将自己的所持金分了
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 给对方……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:580 -= COST
+		ENDIF
+	ELSE
+		PRINTFORML %SAVESTR:A%认为这一定是陷阱，於是漠不关心地转身离开了……
+	ENDIF
+@诈骗剧情2
+#DIM COST
+	PRINTFORM 一个
+	PRINTDATAL
+		DATAFORM 看似老练的冒险者正向%SAVESTR:A%搭话，
+		DATAFORM 精明干练的女勇者正向%SAVESTR:A%搭话，
+		DATAFORM 热情洋溢的商人正向%SAVESTR:A%搭话，
+		DATAFORM 睿智慈祥的老者正向%SAVESTR:A%搭话，
+	ENDDATA
+	PRINTFORM 声称自己正打算筹备一个
+	PRINTDATAL
+		DATAFORM 讨伐魔王的公会
+		DATAFORM 补助失亲儿童的基金会
+		DATAFORM 协助战後重建的组织
+		DATAFORM 加强村镇防护的魔法阵
+	ENDDATA
+	PRINTFORML 所以正到处筹募捐款，希望勇者也能共襄盛举
+	;善恶值判定
+	IF CFLAG:A:151 > 100
+		COST = CFLAG:A:151 * CFLAG:A:9 / 2 + (FLAG:85*20)
+		SIF  COST > (CFLAG:A:580 / 2)
+			COST = CFLAG:A:580 / 2
+		PRINTFORML 正义感很高的%SAVESTR:A%，觉得对方提出的建议非常有意义
+		IF  COST < 2000
+			COST -= RAND:100
+			SIF COST <= 0
+				COST = RAND:500 + 200
+			PRINTFORM 虽然自己身上也所剩无几，但是很高兴地签下了
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 的借条参与活动了……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:582 -= COST	
+		ELSE
+			PRINTFORM 於是兴高采烈地拿出所持金
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 给对方了……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:580 -= COST
+		ENDIF
+	ELSEIF CFLAG:A:151 > 0
+		COST = CFLAG:A:151 * CFLAG:A:9 / 2 + (FLAG:85*10)
+		SIF  COST > (CFLAG:A:580 / 3)
+			COST = CFLAG:A:580 / 3
+		PRINTFORML %SAVESTR:A%虽然有点半信半疑，但是最後还是被对方说动了
+		IF COST < 1000
+			COST -= RAND:100
+			SIF COST <= 0
+				COST = RAND:200 + 100
+			PRINTFORM 不过因为自己身上也所剩无几，只能先签下
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 的借条参与活动了……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:582 -= COST	
+		ELSE
+			PRINTFORM 拿出所持金
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 给对方了……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:580 -= COST
+		ENDIF
+	ELSEIF  CFLAG:A:151 > -50
+		COST = CFLAG:A:9 * (RAND:5 + 1) + (FLAG:85*5)
+		SIF  COST > (CFLAG:A:580 / 5)
+			COST = CFLAG:A:580 / 5
+		PRINTFORML %SAVESTR:A%很怀疑对方的真实性，但是又无法完全否决
+		IF COST < 500
+			COST -= RAND:100
+			SIF COST <= 0
+				COST = RAND:100 + 50
+			PRINTFORM 因为自己身上也所剩无几，在对方多次劝说保证之下，签下
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 的借条了……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:582 -= COST
+		ELSE
+			PRINTFORM 犹豫了一番，最後还是拿出所持金
+			SETCOLORBYNAME LightSalmon
+			PRINTFORM {COST}
+			RESETCOLOR
+			PRINTFORML 给对方了……
+			MONEY += COST
+			EX_FLAG:4444 += COST
+			CFLAG:A:580 -= COST
+		ENDIF
+	ELSE
+		PRINTFORML %SAVESTR:A%认为这一定是陷阱，於是漠不关心地转身离开了……
+	ENDIF
+@诈骗剧情3
+#DIM COST
+	PRINTFORM 一个
+	PRINTDATAL
+		DATAFORM 笑容满面的冒险者正向%SAVESTR:A%搭话，
+		DATAFORM 热情洋溢的冒险者正向%SAVESTR:A%搭话，
+		DATAFORM 和蔼可亲的冒险者正向%SAVESTR:A%搭话，
+		DATAFORM 诚恳隨和的冒险者正向%SAVESTR:A%搭话，
+	ENDDATA
+	PRINTFORML 说自己特地千里迢迢过来给勇者送上家乡的冒险基金
+	PRINTFORML 然後要求%SAVESTR:A%在文件上进行签收
+	;善恶值判定
+	IF CFLAG:A:151 > 100
+		COST = CFLAG:A:151 * CFLAG:A:9 / 2 + (FLAG:85*20)
+		SIF  COST < 1500
+			COST = 1500 + RAND:100
+			PRINTFORML 正义感很高的%SAVESTR:A%，轻易就相信了对方的说辞	
+	ELSEIF CFLAG:A:151 > 0
+		COST = CFLAG:A:151 * CFLAG:A:9 / 2 + (FLAG:85*10)
+		SIF COST < 1000
+			COST = 1000 + RAND:100
+			PRINTFORML %SAVESTR:A%虽然有点半信半疑，但是最後接受了对方的金钱援助
+	ELSE
+		COST = CFLAG:A:9 * (RAND:5 + 1) + (FLAG:85*5)
+		SIF COST < 500
+			COST = 500 + RAND:100
+		PRINTFORML %SAVESTR:A%很怀疑对方的真实性，但是送上门的钱不要白不要
+	ENDIF
+	PRINTFORM 收下了
+	SETCOLORBYNAME SkyBlue
+	PRINTFORM {COST}
+	RESETCOLOR
+	PRINTFORML 的冒险基金
+	PRINTFORML 然而，那张签收条其实底下是张双倍冒险基金的欠条……
+	PRINTFORM %SAVESTR:A%的债务增加了
+	SETCOLORBYNAME LightSalmon
+	PRINTFORM {COST*2}
+	RESETCOLOR
+	PRINTFORML 点了……
+	MONEY += COST
+	EX_FLAG:4444 += COST
+	CFLAG:A:580 += COST	
+	CFLAG:A:582 -= COST*2

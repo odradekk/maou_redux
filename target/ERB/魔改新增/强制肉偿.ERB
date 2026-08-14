@@ -1,0 +1,117 @@
+﻿
+@强制肉偿(ARG)
+#DIM PLAY
+#DIM COST
+#DIMS ORAL
+#DIMS  ANAL
+#DIMS  SEX
+PLAY = 0
+COST = 0 
+	PRINTFORMW 由於%SAVESTR:ARG%欠的债务实在太高了，在休息的时候%SAVESTR:ARG%被某位的债主绑架了！
+SELECTCASE  RAND:4
+	CASE 0
+		PRINTFORML %SAVESTR:ARG%被强制灌了媚药並换上只有几根吊带之外什么也没有的淫荡内衣
+		PRINTFORML 然後几乎跟全裸没什么两样的%SAVESTR:ARG%，被丢入乱交派对里进行还债。
+		PRINTFORML 昏昏沉沉的%SAVESTR:ARG%带着迷茫的媚笑，就这样跟派对里的男男女女一直交媾着……
+		IF ABL:ARG:11 >= 3 || ABL:ARG:37 || EXP:ARG:20 >= 30
+			PRINTFORMW %SAVESTR:ARG%那幅晃腰摆臀的淫荡模样，大大取悦了派对的宾客们
+			PLAY = RAND:20 + 10
+			COST = PLAY*100 + RAND:1000 + 1000
+		ELSE
+			PRINTFORMW %SAVESTR:ARG%那青涩懵懂的模样，让派对的宾客们感到新鲜
+			PLAY = RAND:10 + 5
+			COST = PLAY*100 + RAND:500 + 500
+		ENDIF
+	CASE 1
+		PRINTFORML %SAVESTR:ARG%被蒙上了眼睛并除去下半身的衣物，然後固定在一个壁洞上
+		PRINTFORML 也不知道是在城里的那个位置，就这样开始了壁洞公共便所的PLAY……
+		PRINTFORML 什么也看不见的%SAVESTR:ARG%，除了能听见不知是谁的污言秽语与指指点点之外
+		PRINTFORML 就只能感受到炙热的肉棒在身後及嘴巴里来来回回进出着……
+		IF ABL:ARG:11 >= 3 || ABL:ARG:37 || EXP:ARG:20 >= 30
+			PRINTFORMW 即使不知对象是谁，%SAVESTR:ARG%那淫荡的身体居然因为这样的PLAY兴奋了
+			PRINTFORMW 让围在这个壁洞"消遣"的人们络绎不绝……
+			PLAY = RAND:20 + 10
+			COST = PLAY*100 + RAND:1000 + 1000
+		ELSE
+			PRINTFORMW 即使不知对象是谁，%SAVESTR:ARG%那青涩懵懂的身体也因为这样的PLAY渐渐兴奋了起来
+			PRINTFORMW 让围在这个壁洞"消遣"的人们络绎不绝……
+			PLAY = RAND:10 + 5
+			COST = PLAY*100 + RAND:500 + 500
+		ENDIF
+	CASE 2
+		PRINTFORML %SAVESTR:ARG%被蒙上了眼睛并除去全身的衣物，然後固定在一个十字架上
+		PRINTFORML 这难道是在在城里的哪个教堂吗？茫然的%SAVESTR:ARG%就这样开始被审判了……
+		PRINTFORML 什么也看不见的%SAVESTR:ARG%，能听见底下不知是谁的祈祷声与窃窃私语
+		PRINTFORML 欠债过多的%SAVESTR:ARG%最後被判决了犯了"贪婪"的罪名，并需要立即接受教徒的"净化"
+		PRINTFORML 基於神的仁爱，教徒们决定用滚烫的肉棒代替了烙铁，在%SAVESTR:ARG%的身体，嘴巴里进进出出着……
+		IF ABL:ARG:11 >= 3 || ABL:ARG:37 || EXP:ARG:20 >= 30
+			PRINTFORMW 在受刑时，%SAVESTR:ARG%那淫荡的身体反应，让教徒们更加地谴责
+			PRINTFORMW 为了彻底纠正%SAVESTR:ARG%的淫行，只好一直追加"刑罚"的数量了……
+			PLAY = RAND:20 + 10
+			COST = PLAY*100 + RAND:1000 + 1000
+		ELSE
+			PRINTFORMW 在受刑时，%SAVESTR:ARG%那青涩懵懂的身体不停挣扎着，被教徒们认定为是不服从审判的反应
+			PRINTFORMW 为了让%SAVESTR:ARG%认清自己的罪行，只好一直追加"刑罚"的数量了……
+			PLAY = RAND:10 + 5
+			COST = PLAY*100 + RAND:500 + 500
+		ENDIF
+	CASE 3
+		PRINTFORML %SAVESTR:ARG%被剥除全身的衣物，然後丢入牢房中进行"安抚"犯人们的活动
+		PRINTFORML 为了降低牢狱的暴动率，维护社会的秩序，果然还是需要人挺身而出进行奉献
+		PRINTFORML 就这样%SAVESTR:ARG%变成了犯人们的泄欲工具，上上下下的洞口全被被不停地轮奸着……
+		IF ABL:ARG:11 >= 3 || ABL:ARG:37 || EXP:ARG:20 >= 30
+			PRINTFORMW %SAVESTR:ARG%那积极的服务精神，连牢头都赞赏不已，甚至加入了体验的行列……
+			PLAY = RAND:20 + 10
+			COST = PLAY*100 + RAND:1000 + 1000
+		ELSE
+			PRINTFORMW 在服务时，%SAVESTR:ARG%那青涩懵懂的身体不停挣扎着，连牢头看了都摇头不已
+			PRINTFORMW 最後只好将%SAVESTR:ARG%铐在栏杆上，让他好好为整个牢狱进行贡献……
+			PLAY = RAND:10 + 5
+			COST = PLAY*100 + RAND:500 + 500
+		ENDIF
+ENDSELECT
+	IF (CFLAG:ARG:582 +  COST) >= 0
+		CFLAG:ARG:582 = 0
+	ELSE
+		CFLAG:ARG:582 += COST
+	ENDIF
+	PRINTFORM 被强制用肉体偿债的%SAVESTR:ARG%抵销了
+	SETCOLORBYNAME SkyBlue
+	PRINTFORM {COST}
+	RESETCOLOR
+	PRINTFORM 点的债务，当前欠金变为
+	SETCOLORBYNAME LightSalmon
+	PRINTFORM {CFLAG:ARG:582}
+	RESETCOLOR
+	PRINTFORMW 点……
+	;1/3机率被拍片纪录，增加还债的金额
+	IF !RAND:3
+		PRINTFORMW %SAVESTR:ARG%用肉体还债的过程被人拍下来了！
+		PRINTFORM 这部淫荡煽情的影像以
+		SETCOLORBYNAME SkyBlue
+		PRINTFORM {COST*1/3 + RAND:100}
+		RESETCOLOR
+		PRINTFORMW 的金额，被人买下收藏了
+		CFLAG:ARG:582 += (COST*1/3 + RAND:100)
+		PRINTFORM 当前欠金变为
+		SETCOLORBYNAME LightSalmon
+		PRINTFORM {CFLAG:ARG:582}
+		RESETCOLOR
+		PRINTFORMW 点……
+		PRINTFORML %SAVESTR:ARG%的%EXPNAME:50%，%EXPNAME:70% 经验值上升了 1
+		EXP:ARG:50 += 1
+		EXP:ARG:70 += 1
+	ENDIF
+	CALL EXP_BITCH(ARG,, ORAL, PLAY)
+	IF  TALENT:ARG:122
+		CALL EXP_BITCH(ARG,, ANAL, PLAY)
+		PRINTFORML %SAVESTR:ARG%的%EXPNAME:22%，%EXPNAME:20%，%EXPNAME:74%，%EXPNAME:1%，%EXPNAME:5%经验值上升了{PLAY}
+		PRINTFORML %SAVESTR:ARG%的%PALAMNAME:2%点数＋{PLAY*10}，%PALAMNAME:5%点数＋{PLAY*20}，%PALAMNAME:7%点数＋{PLAY}
+	ELSE
+		CALL EXP_BITCH(ARG,, SEX, PLAY)
+		PRINTFORML %SAVESTR:ARG%的%EXPNAME:22%，%EXPNAME:20%，%EXPNAME:74%，%EXPNAME:0%，%EXPNAME:5%经验值上升了{PLAY}
+		PRINTFORML %SAVESTR:ARG%的%PALAMNAME:1%点数＋{PLAY*10}，%PALAMNAME:5%点数＋{PLAY*20}，%PALAMNAME:7%点数＋{PLAY}
+	ENDIF
+	LOCAL = -1 * PLAY / 4
+	PRINTFORMW （善恶值减少了：{LOCAL}）
+	CALL KARMA, ARG, LOCAL
