@@ -1,10 +1,7 @@
+# git 采用最后一条匹配规则，故顺序即优先级：先定通用，再定例外。
+
 # 默认：由 git 自行判定文本/二进制，不强制改写换行符
 * -text
-
-# 移植源是只读基准，十二个决议按行号引用它，且含一个 Shift-JIS 文件
-# （ERB/調教相關/COMF90_ニプルファック.ERB）与 332 个 UTF-8 BOM 文件。
-# 一律按二进制原样存取，禁止任何换行符或编码转换。
-target/** binary
 
 # 我们自己写的源码与文档：仓库内统一 LF，检出时按平台
 # （.prettierrc 与 .eslintrc.js 均为 endOfLine: auto，不与此冲突）
@@ -14,5 +11,11 @@ target/** binary
 *.yml text eol=lf
 *.csv text eol=lf
 
-# 引擎 SDK 取自上游，保持原样以便与上游比对（须置于 *.js 规则之后才生效）
+# 引擎 SDK 取自上游，保持原样以便与上游比对
 ere/era-electron.js -text
+
+# 移植源是只读基准，十二个决议按行号引用它，且含一个 Shift-JIS 文件
+# （ERB/調教相關/COMF90_ニプルファック.ERB）与 332 个 UTF-8 BOM 文件。
+# 一律按二进制原样存取，禁止任何换行符或编码转换。
+# 必须置于上述扩展名规则之后，否则 target/ 下的 .csv 会被按文本归一化。
+target/** binary
