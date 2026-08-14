@@ -1,0 +1,11 @@
+node_modules/
+ere.config.json
+sav/*.sav
+!sav/.gitkeep
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 引擎运行时（314MB 第三方二进制，可从上游获取，勿入库）
+# 版本见 AGENTS.md 与 ere/era-electron.js 的 sdk 字段
+ere-4.8.0-win-x64/
