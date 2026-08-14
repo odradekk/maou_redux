@@ -1,0 +1,11 @@
+# 移植源，只读参考资料，禁止格式化
+target/
+
+# 引擎运行时，第三方产物
+ere-4.8.0-win-x64/
+
+# 引擎官方手册，上游材料
+dev-guides/
+
+node_modules/
+sav/
