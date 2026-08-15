@@ -47,7 +47,7 @@ D:\Code\era\
 
 ## 运行与调试
 
-引擎是 GUI 程序，**没有命令行启动方式**，也没有 npm scripts：
+引擎是 GUI 程序，**没有命令行启动方式**（npm script 只有测试，见本节末尾）：
 
 1. 启动 `ere-4.8.0-win-x64\ERA-Electron - 重量级ERA引擎.exe`
 2. 菜单【游戏】→【打开游戏】，选择仓库根目录 `D:\Code\era`
@@ -57,11 +57,17 @@ D:\Code\era\
 
 配置优先级：`csv/_fixed.json` > `ere.config.json` > `csv/_config.json` > 引擎默认值。
 
-代码检查（`package.json` 无 scripts，直接用 npx）：
+代码检查（直接用 npx）：
 
 ```
 npx eslint .          # 格式 + 代码错误，--fix 可自动修
 npx prettier --write . # 仅格式
+```
+
+测试（Node 内置 test runner，**零第三方依赖**；夹具在 `test/helpers/era-fixture.js`，是全项目唯一的一处缝，见 issue #16）：
+
+```
+npm test              # 等价 node --test；test/ 目录下所有 .js 都会被执行，helpers/ 无用例、无副作用，无害
 ```
 
 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则中**各写了一份且取值相同**（单引号、分号、尾逗号 `all`、`endOfLine: auto`），两条命令不会打架。改格式约定时**必须同时改这两处**，否则 eslint 与 prettier 会给出互相矛盾的结果。
