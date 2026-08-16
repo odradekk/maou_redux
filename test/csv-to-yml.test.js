@@ -19,6 +19,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const {
+  REPO_ROOT,
   convert,
   convert_chara,
   engine_get_number,
@@ -520,4 +521,21 @@ test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', 
       ),
     );
   });
+});
+
+// —— 同步守护：入库产物与源 CSV 的转换结果不得漂移 ——
+//
+// 引擎对拍（test/chara-yml.test.js）对 `基礎`/`素質` 这类预设行天然盲：
+// Base/Talent 表尚未进 yml/，引擎装载时两侧同样丢弃它们，产物里的值改坏也
+// 看不出来（验收变异实测：把 "素質" 的 1 改成 0，129 条测试全绿）。本用例
+// 不经引擎、直接比对转换结果，把产物的每一个字节钉住。
+test('同步守护：yml/Chara0.yml 与 target 源 CSV 的转换结果逐字节一致', () => {
+  const source = path.join(REPO_ROOT, 'target', 'CSV', 'Chara', 'Chara0.csv');
+  const product = path.join(REPO_ROOT, 'yml', 'Chara0.yml');
+
+  const { text } = read_text(source);
+  const { groups } = parse_chara_csv(text);
+  const expected = to_chara_yaml(groups, { source: 'Chara0.csv' });
+
+  assert.equal(fs.readFileSync(product, 'utf8'), expected);
 });
