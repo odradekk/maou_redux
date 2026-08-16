@@ -7,10 +7,10 @@
  *     target/ERB/其他/DRAW_EXT_COMM.ERB  @MENU_BUTTON（:2，按钮明暗的近似）
  *
  * 本票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
- * 点选的分发归 #24）、防御性修正（:20-39 照实移植）。作用域外，各留注释或
+ * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。作用域外，各留注释或
  * 存根：BGM（:11-17）、调教目标名/助手名按钮与生命条（:100-145）、四个
- * 子面板的内容（:190-197 的分发照搬、函数体存根）、指令面板（:203-319，
- * 渲染与 @USERSHOP 分发一体，归 #24）。
+ * 子面板的内容（:190-197 的分发照搬、函数体存根）、指令面板的渲染
+ * （:203-319，随首个指令子系统票；分发本体在 page-shop.js 的 usershop）。
  */
 
 const era = require('#/era-electron');
@@ -19,13 +19,17 @@ const era_flag = require('#/era-utils/era-flag');
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 对账钉死）——后续票据此认领工作；名单变动必须同步清单。
+ *
+ * 注：DRAW_MAINMENU 指 @DRAW_MAINMENU 的指令面板段（:208-319，[100]-[888]
+ * 按钮渲染）——函数本体的骨架已实现（#23），占位的是这一段；输入分发本体
+ * 在 page/page-shop.js 的 usershop（#24）。
  */
 const STUBBED_CALLS = [
   'DRAW_HAVEITEMS',
   'DRAW_HAVETRAPS',
   'DRAW_DUNGEON_OVERVIEW',
   'DRAW_DUNGEON_DAILY',
-  'USERSHOP',
+  'DRAW_MAINMENU',
 ];
 
 // 原文排版里的全角空格（UNICODE 0x3000）。以转义书写并集中定义：ESLint
@@ -67,7 +71,8 @@ const PANEL_STUBS = {
 };
 
 // 存根的运行时占位：一行可见反馈，正文含原作函数名（可检索、可断言）。
-// 文案样式沿用 event-first.js 的占位先例（#22）。
+// 文案样式沿用 event-first.js 的占位先例（#22）。page-shop.js 的输入分发
+// 存根（#24）复用本函数，保持全项目占位文案同一形状。
 function stub_line(erb_name, label, owner) {
   era.print(
     `（${label}尚未移植，此处为占位——原作 @${erb_name}，${owner}，见 docs/stub-registry.md。）`,
@@ -143,6 +148,26 @@ function apply_bug_guards() {
   if (era_flag.assi >= 1 && (era.get(`cflag:${era_flag.assi}:1`) || 0) !== 0) {
     era_flag.assi = -1;
   }
+}
+
+/**
+ * A：可选的奴隶数（@DRAW_MAINMENU :208-216 的 A/B 计数段之 A）。
+ *
+ * 判据 1:1：已加入角色中 CFLAG:x:1 == 0（未占用）且 x != 0（排除魔王自己）
+ * 的计数。原作在渲染指令面板前算出，@USERSHOP 的 100/496/497 守卫读它
+ * （SHOP ver1.0.2.ERB:59/:152/:154，ere 侧消费方是 page-shop.js 的
+ * usershop）；渲染与分发两次求值之间无写入路径，分发时重算等价。
+ *
+ * ere 侧按角色 ID 寻址（#21），与原作的 CHARANUM 序号世界等价。B
+ * （CFLAG:x:0 > 0 的已调教计数，[106] 贩卖奴隶的可用性判据）无当前消费者，
+ * 随指令面板段渲染（:208-319）一并落地。
+ *
+ * @returns {number}
+ */
+function count_selectable_slaves() {
+  return era
+    .getAddedCharacters()
+    .filter((id) => id !== 0 && (era.get(`cflag:${id}:1`) || 0) === 0).length;
 }
 
 /**
@@ -243,12 +268,24 @@ function draw_main_menu() {
   // :206-207 行首一枚全角空格 + ▌Commands（粗体）
   era.print([{ content: `${FULL_WIDTH_SPACE}▌Commands`, fontWeight: 'bold' }]);
 
-  // :208-319 指令面板（[100]-[888] 的可用性依角色计数与 FLAG 状态）与
-  // @USERSHOP 的输入分发一体，渲染与分发都归 #24；此处占位。
-  stub_line('USERSHOP', '指令面板与输入分发', '归 issue #24');
+  // :208-319 指令面板（[100]-[888] 按钮的渲染，可用性依 A/B 计数与 FLAG
+  // 状态）：按钮渲染随首个指令子系统票落地——A 的计算已前移为本文件的
+  // count_selectable_slaves，届时直接复用。输入分发本体已在 page-shop.js
+  // 的 usershop（#24，壳占位见彼处）；本段只欠渲染。
+  stub_line(
+    'DRAW_MAINMENU',
+    '指令面板（[100]-[888] 按钮）渲染',
+    '随首个指令子系统票',
+  );
 
   // :320 底部双线
   era.drawLine({ isSolid: true });
 }
 
-module.exports = { draw_main_menu, reset_out_of_range_pointers, STUBBED_CALLS };
+module.exports = {
+  draw_main_menu,
+  reset_out_of_range_pointers,
+  count_selectable_slaves,
+  stub_line,
+  STUBBED_CALLS,
+};

@@ -250,7 +250,8 @@ test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位'
   assert.equal(dividers[dividers.length - 1].border, 'solid');
   assert(dividers.slice(1, -1).every((d) => d.border === 'dashed'));
 
-  // :207 ▌Commands 标题（粗体）+ 指令面板占位（归 #24）
+  // :207 ▌Commands 标题（粗体）+ 指令面板渲染占位（随首个指令子系统票；
+  // 输入分发本体在 page-shop.js，#24）
   const title = fixture.text_lines().find((line) => line.includes('Commands'));
   assert.ok(title);
   const title_record = fixture.lines.find((line) =>
@@ -258,8 +259,8 @@ test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位'
   );
   assert(title_record.content.every((frag) => frag.fontWeight === 'bold'));
   assert(
-    fixture.text_lines().some((line) => line.includes('@USERSHOP')),
-    '指令面板占位行必须含 @USERSHOP（可检索）',
+    fixture.text_lines().some((line) => line.includes('@DRAW_MAINMENU')),
+    '指令面板占位行必须含 @DRAW_MAINMENU（可检索）',
   );
 });
 
@@ -270,7 +271,7 @@ test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1
   // date 钳成 1——还原开局现场（month 也一并钳，照搬 :33-36 两条 SIF）
   era_flag.month = 0;
   era_flag.date = 0;
-  const run_shop = fixture.load_module('page/page-shop');
+  const { run_shop } = fixture.load_module('page/page-shop');
 
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.equal(era_flag.month, 1);
@@ -288,7 +289,7 @@ test('@SHOW_SHOP 日期钳制：正常日期不动', async () => {
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.month = 5;
   era_flag.date = 20;
-  const run_shop = fixture.load_module('page/page-shop');
+  const { run_shop } = fixture.load_module('page/page-shop');
 
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.equal(era_flag.month, 5);
@@ -312,7 +313,7 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', a
     'DRAW_HAVETRAPS',
     'DRAW_DUNGEON_OVERVIEW',
     'DRAW_DUNGEON_DAILY',
-    'USERSHOP',
+    'DRAW_MAINMENU',
   ]);
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
   for (const name of STUBBED_CALLS) {
