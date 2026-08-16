@@ -239,15 +239,9 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
   // 新游戏四件套的前两件：RESETDATA（:100，#22 接通 era.resetData——清掉
   // 上一局的会话数据）与 ADDCHARA 0（:101）。真初始化在 @EVENTFIRST
-  // （test/event-first.test.js），此处证标题侧的接线。
-  assert(
-    fixture.calls.some((c) => c.api === 'resetData'),
-    '必须先清档（原作 :100 RESETDATA）',
-  );
-  assert(
-    fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
-    '必须加入初始角色 0（原作 :101 ADDCHARA 0）',
-  );
+  // （test/event-first.test.js），此处证标题侧的接线。#23 起这两个 API 由
+  // 夹具实装（已加入角色列表），列表终值 [0] 同时钉住「先清后加」的顺序。
+  assert.deepEqual(fixture.added_characters, [0], '必须先清档再加入角色 0');
   // 标题侧变量写入恰为 CHARA_EX_0 的魔王素质一条，此外零写入——全量断言，
   // 任何混入的意外写入都会当场暴露
   assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);

@@ -21,6 +21,7 @@
 const { BeginSignal, STATE } = require('#/system/flow/begin-signal');
 const { emit } = require('#/system/event/registry');
 const run_title_page = require('#/page/page-title');
+const run_shop = require('#/page/page-shop');
 // 顶层副作用：注册 @EVENTFIRST 处理器（issue #22 真身）。后续事件的
 // 处理器模块随各自所属票在此追加 require。
 require('#/event/event-first');
@@ -29,8 +30,8 @@ require('#/event/event-first');
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
  * 直接 begin() 抛信号（非事件路径）同样有效，见 enter_state。
  *
- * 本票只打通 FIRST（#20 范围）；SHOP/TRAIN/AFTERTRAIN/TURNEND 归曳光弹
- * 后续票，进入即报错，不静默。
+ * 已接线：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）。TRAIN/AFTERTRAIN/
+ * TURNEND 归曳光弹后续票，进入即报错，不静默。
  */
 const STATE_HANDLERS = {
   [STATE.TITLE]: run_title_page,
@@ -40,6 +41,10 @@ const STATE_HANDLERS = {
   // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发
   // 信号时兜住引擎行为。
   [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
+  // 原作 BEGIN SHOP → 引擎调 @EVENTSHOP 一次，随后 @SHOW_SHOP 绘制 →
+  // 输入 → @USERSHOP 分发循环（SHOP ver1.0.2.ERB；ere 侧整体收进
+  // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24）。
+  [STATE.SHOP]: run_shop,
 };
 
 /**

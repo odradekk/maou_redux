@@ -235,11 +235,9 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
     (e) => e instanceof BeginSignal && e.state === STATE.FIRST,
   );
 
-  // 原作 :101 ADDCHARA 0：加入初始角色
-  assert(
-    fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
-    '必须加入初始角色 0',
-  );
+  // 原作 :101 ADDCHARA 0：加入初始角色（#23 起夹具实装已加入列表，
+  // 断言列表内容即断言调用）
+  assert.deepEqual(fixture.added_characters, [0], '必须加入初始角色 0');
   // 原作 :102 CALL @ADDCHARA_EX → TRYCALLFORM CHARA_EX_0 → @CHARA_EX_0：
   // 分发真实发生的证据 = 角色 0 专属初始化的写入（EX_TALENT:200 = 魔王），
   // 且此前零写入（全量断言，任何意外写入都会暴露）

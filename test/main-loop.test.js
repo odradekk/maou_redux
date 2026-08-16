@@ -1,5 +1,5 @@
 /**
- * ere/system/flow/main-loop.js 的行为测试（issue #20 起，#22 更新）：
+ * ere/system/flow/main-loop.js 的行为测试（issue #20 起，#22/#23 更新）：
  * 状态机对两条 BEGIN 路径的统一接驳，以及「标题 → 新游戏初始化 → SHOP」
  * 的端到端转场。
  *
@@ -7,9 +7,8 @@
  * 标题画面的用例先 preset_gamebase（helpers/gamebase.js，标题从静态表读
  * GameBase）。
  *
- * 终止方式：主循环是常驻循环。新游戏路径以「SHOP 守卫报错」终止（@EVENTFIRST
- * 真身出口 BEGIN SHOP，主菜单渲染归 #23——报错即到站）；读档路径以「预置
- * 输入耗尽抛错」终止（夹具既定设计）。
+ * 终止方式：主循环是常驻循环，一律以「预置输入耗尽抛错」终止（夹具既定
+ * 设计）。新游戏路径在 SHOP 渲染主菜单、消费掉队列里的输入后到站。
  *
  * 已知未测行：STATE.FIRST 处理器的 `?? STATE.SHOP` 兜底（链无人 BEGIN 时
  * 默认进商店轮，#20 验收移交的 Emuera 语义）。真身处理器必然 begin(SHOP)，
@@ -26,7 +25,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
 
-test('端到端：标题选「新的猎物」→ FIRST 初始化 → 转入 SHOP（守卫报错即到站）', async () => {
+test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染主菜单', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.set_inputs(1);
@@ -35,19 +34,39 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → 转入 SHOP
   // 流程：标题画面（消费输入 1，resetData + 加入角色 0，BEGIN FIRST 信号
   // 上抛）→ 主循环进 FIRST → emit('EVENTFIRST')：真身完成初始化、开场
   // 叙事读键 7 次、begin(SHOP)（事件路径，链内信号由 emit 捕获暂存）→
-  // 主循环进入尚未移植的 SHOP，守卫报错。初始化细节的逐项断言在
-  // test/event-first.test.js，此处只证主循环的转场接驳。
-  await assert.rejects(() => main(), /游戏状态 SHOP 的处理器尚未移植/);
+  // 主循环进入 SHOP（#23 已接线）：绘制主菜单 → era.input() 队列已空，
+  // 抛「预置输入已耗尽」上抛终止。初始化细节的逐项断言在
+  // test/event-first.test.js，此处证主循环的转场接驳与到站画面。
+  await assert.rejects(() => main(), /预置输入已耗尽/);
 
-  // 标题恰消费一次输入；此后至报错为止只有叙事读键（不再回标题重绘）
+  // 标题恰消费一次输入；此后至报错为止只有叙事读键（主菜单的 input 在
+  // 取数前抛错，不记入已消费）
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 },
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
   ]);
-  // 到站证据：标题只画过转场前的那一次（FIRST 之后没有回标题重绘），
-  // 最后的输出内容是初始化流程的
+
+  // 到站证据一：主菜单已渲染——状态行数值取自真实变量（初始化产出 +
+  // @SHOW_SHOP 的日期钳制：开局即「第 0 年 1 月 1 日（第 1 日）」），六个
+  // 入口齐备（细节断言在 test/page-main-menu.test.js）
   const texts = fixture.text_lines();
+  const status = texts.find((line) => line.includes('所持金'));
+  // \u3000 = 全角空格（原作排版字符，仓库约定转义书写）
+  assert(status.includes('第0年\u30001月1日（第1日）'));
+  assert(status.includes('上午'));
+  assert(status.includes('(所持金：10000 pts.)'));
+  for (const accelerator of [496, 497, 500, 501, 504, 505]) {
+    assert(
+      fixture.lines.some(
+        (line) => line.type === 'button' && line.accelerator === accelerator,
+      ),
+      `入口 ${accelerator} 必须出现在主菜单`,
+    );
+  }
+
+  // 到站证据二：初始化流程的占位仍在（FIRST 确实跑完才进的 SHOP）
   assert(texts.some((line) => line.includes('@RAND_CHARA_MAKE')));
+  // 到站证据三：标题只画过转场前的那一次（FIRST 之后没有回标题重绘）
   assert.equal(
     texts.filter((line) => line === '伪Ver93.106立绘版').length,
     1,
@@ -72,17 +91,23 @@ test('端到端：读档分支（旧的奴隶）维持 #19 占位，不经状态
   assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
 });
 
-test('未实现状态：进入 SHOP 即报错并点名状态，不静默（后续票的守卫）', async () => {
+test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 #23 改制）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.set_inputs(1);
   const { on, TIER } = fixture.load_module('system/event/registry');
   const { begin, STATE } = fixture.load_module('system/flow/begin-signal');
   // 真身出口本就 begin(SHOP)；再追加一个 LATER 档处理器重复 begin(SHOP)，
-  // 验证链内后写胜出（#6 语义）后主循环仍正确进入未移植状态——守卫必须
-  // 立即报错并点名状态，而非 undefined 处理器被调用之类的隐秘失效
+  // 验证链内后写胜出（#6 语义）后主循环进入 SHOP。#22 时代此处断言「进入
+  // 即报错的守卫」；SHOP 接线（#23）后守卫退役，改为断言真实渲染恰一次
+  // ——重复进入或未进入都会在计数上暴露。
   on('EVENTFIRST', async () => begin(STATE.SHOP), TIER.LATER);
   const main = fixture.load_module('main');
 
-  await assert.rejects(() => main(), /游戏状态 SHOP 的处理器尚未移植/);
+  await assert.rejects(() => main(), /预置输入已耗尽/);
+  assert.equal(
+    fixture.text_lines().filter((line) => line.includes('所持金')).length,
+    1,
+    '主菜单状态行应恰出现一次（SHOP 恰进入并渲染一次）',
+  );
 });

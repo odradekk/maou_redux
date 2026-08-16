@@ -98,7 +98,7 @@ function create_era_fixture() {
   };
 
   const push_text = (content) =>
-    push_line({ type: 'text', text: normalize_content(content) });
+    push_line({ type: 'text', text: normalize_content(content), content });
 
   // —— 输出 ——
   era.print = (content) => push_text(content);
@@ -108,6 +108,10 @@ function create_era_fixture() {
     push_line({
       type: 'divider',
       text: normalize_content(config?.content ?? ''),
+      // 引擎渲染层（app.asar）：content 是分隔线中央的标签文字而非线型字符，
+      // isSolid 决定 el-divider 的 border-style（solid/dashed）。原作
+      // DRAWLINEFORM 的双线 ═ / 单线 ─ 以 solid/dashed 近似，断言线型看这里。
+      border: config?.isSolid ? 'solid' : 'dashed',
     });
   era.printButton = (content, accelerator, config) => {
     const text = normalize_content(content);
@@ -124,6 +128,9 @@ function create_era_fixture() {
         ? `[${accelerator}] ${text}`
         : `[${text}]`
       ).replace(/\s+/g, ' '),
+      // config.color 直通 el-button 的 --el-button-text-color（app.asar 实证，
+      // 按钮明暗一类断言看这里；未给 color 时为 undefined）
+      color: config?.color,
     });
   };
   era.replaceText = (content) => {
@@ -159,6 +166,24 @@ function create_era_fixture() {
     store.set(var_name, next);
     var_writes.push({ name: var_name, value: next });
     return next;
+  };
+
+  // —— 角色（已加入列表 = Emuera CHARANUM 的等价物，主菜单防御性修正与
+  // 后续的角色选择都读它）——
+  // 近似说明：真实引擎的 addCharacter 需要角色静态表（yml/ 尚无，#35——
+  // 实机当前一个角色都加不进来）；夹具不校验、照单全收，让指针钳制与选择
+  // 逻辑可在「有角色」的世界里被测试。resetData 只清已加入列表（引擎语义
+  // 会清全部存档数据；store 里静态预置与存档数据未分离，全面清空属 #35
+  // 的缝补强范围）。
+  const added_characters = [];
+  era.addCharacter = (id) => {
+    added_characters.push(id);
+    return undefined;
+  };
+  era.getAddedCharacters = () => [...added_characters];
+  era.resetData = () => {
+    added_characters.length = 0;
+    return undefined;
   };
 
   // —— 输入 ——
@@ -205,6 +230,9 @@ function create_era_fixture() {
     'add',
     'input',
     'waitAnyKey',
+    'addCharacter',
+    'getAddedCharacters',
+    'resetData',
   ]);
   Object.keys(era).forEach((key) => {
     if (
@@ -239,6 +267,8 @@ function create_era_fixture() {
     store,
     /** logger 记录 [{level, msg}] */
     logs,
+    /** 已加入角色列表（addCharacter 追加、resetData 清空；近似说明见上） */
+    added_characters,
     /** 已消费的输入 [{api, value?}] */
     inputs_consumed,
     /** 预置一串输入，等待输入的 API 依次消费 */
