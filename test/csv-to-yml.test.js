@@ -19,12 +19,16 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const {
+  REPO_ROOT,
   convert,
+  convert_chara,
   engine_get_number,
   main,
   map_gamebase_key,
+  parse_chara_csv,
   parse_gamebase_csv,
   read_text,
+  to_chara_yaml,
   to_gamebase_yaml,
 } = require('../tools/csv-to-yml');
 
@@ -381,4 +385,157 @@ test('空输入拒绝写出（GameBase 缺失引擎会拒绝启动）', async ()
     assert.throws(() => convert({ input, output }), /没有可用的 GameBase 条目/);
     assert.ok(!fs.existsSync(output));
   });
+});
+
+// —— 角色表（issue #35）——
+
+// 角色表形状的样例输入：两列标量（番号/名前）、两列带缺省（素質,1,）、
+// 三列（基礎/称呼）、同键多行（素質 折嵌套）
+const chara_csv_sample = [
+  '番号,0,',
+  '名前,你,',
+  '呼び名,你,',
+  '基礎,0,10000',
+  '基礎,1,10000',
+  '素質,1,',
+  '素質,122,',
+  '称呼,3,主人',
+].join('\r\n');
+
+test('角色表：两列折标量、同键多行折嵌套、缺省值显式写出', () => {
+  const { groups, warnings } = parse_chara_csv(chara_csv_sample);
+  assert.deepEqual(warnings, []);
+
+  const by_key = Object.fromEntries(
+    groups.map((group) => [group.raw_key, group]),
+  );
+  assert.equal(by_key['番号'].kind, 'scalar');
+  assert.equal(by_key['名前'].value, '你');
+  assert.equal(by_key['素質'].kind, 'nested');
+  // 两列行（素質,1,）折嵌套时显式写引擎缺省值 1；cstr 键的缺省是 ''
+  assert.deepEqual(
+    [...by_key['素質'].entries],
+    [
+      ['1', 1],
+      ['122', 1],
+    ],
+  );
+  assert.deepEqual(
+    [...by_key['基礎'].entries],
+    [
+      ['0', 10000],
+      ['1', 10000],
+    ],
+  );
+  assert.deepEqual([...by_key['称呼'].entries], [['3', '主人']]);
+
+  // 键名一律双引号；嵌套块风格缩进两空格；数值裸写、字符串加引号
+  const yaml = to_chara_yaml(groups, { source: 'Chara0.csv' });
+  assert.ok(yaml.includes('"番号": 0'));
+  assert.ok(yaml.includes('"名前": "你"'));
+  assert.ok(yaml.includes('"素質":\n  "1": 1\n  "122": 1'));
+  assert.ok(yaml.includes('"称呼":\n  "3": "主人"'));
+});
+
+test('角色表：callname 混用两列/三列行拒绝转换（YAML 形状无法等价表达）', () => {
+  assert.throws(
+    () => parse_chara_csv('呼び名,X\n呼び名,1,同学\n'),
+    /无法等价表达/,
+  );
+});
+
+test('角色表：产物已存在默认不覆盖，--force 才重写（产物边界同样适用）', async () => {
+  await with_temp_dir((dir) => {
+    const input = write_file(dir, 'Chara0.csv', chara_csv_sample);
+    const out_dir = path.join(dir, 'yml');
+    fs.mkdirSync(out_dir);
+    const output = write_file(out_dir, 'Chara0.yml', '人工修改过的产物');
+
+    const skipped = convert_chara({ input, output });
+    assert.equal(skipped.status, 'skipped');
+    assert.equal(fs.readFileSync(output, 'utf8'), '人工修改过的产物');
+
+    const written = convert_chara({ input, output, force: true });
+    assert.equal(written.status, 'written');
+    assert.ok(fs.readFileSync(output, 'utf8').includes('"番号": 0'));
+  });
+});
+
+test('角色表：空输入拒绝写出', async () => {
+  await with_temp_dir((dir) => {
+    const input = write_file(dir, 'Chara0.csv', '; 只有注释\n');
+    const output = path.join(dir, 'yml', 'Chara0.yml');
+    assert.throws(
+      () => convert_chara({ input, output }),
+      /没有可用的角色预设行/,
+    );
+    assert.ok(!fs.existsSync(output));
+  });
+});
+
+test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', async () => {
+  await with_temp_dir((dir) => {
+    write_file(dir, 'Chara0.csv', chara_csv_sample);
+    const out_dir = path.join(dir, 'yml');
+
+    const skipped = capture_console(() =>
+      main(['--chara', '0'], { chara_dir: dir, chara_out_dir: out_dir }),
+    );
+    assert.equal(skipped.result, 0);
+    const product = path.join(out_dir, 'Chara0.yml');
+    assert.ok(fs.readFileSync(product, 'utf8').includes('"番号": 0'));
+    assert.ok(
+      skipped.captured.some(
+        (entry) => entry.level === 'log' && entry.text.includes('写出 1 个'),
+      ),
+    );
+
+    // 已存在 → 跳过且内容不动；--force → 重写
+    fs.writeFileSync(product, '人工修改过的产物', 'utf8');
+    const skipped_again = capture_console(() =>
+      main(['--chara', '0'], { chara_dir: dir, chara_out_dir: out_dir }),
+    );
+    assert.equal(skipped_again.result, 0);
+    assert.equal(fs.readFileSync(product, 'utf8'), '人工修改过的产物');
+    assert.ok(
+      skipped_again.captured.some(
+        (entry) => entry.level === 'log' && entry.text.includes('跳过 1 个'),
+      ),
+    );
+
+    const forced = capture_console(() =>
+      main(['--chara', '0', '--force'], {
+        chara_dir: dir,
+        chara_out_dir: out_dir,
+      }),
+    );
+    assert.equal(forced.result, 0);
+    assert.ok(fs.readFileSync(product, 'utf8').includes('"番号": 0'));
+
+    // --chara 不带参数 → 用法错误（退出码 2）
+    const no_arg = capture_console(() => main(['--chara']));
+    assert.equal(no_arg.result, 2);
+    assert.ok(
+      no_arg.captured.some(
+        (entry) => entry.level === 'error' && entry.text.includes('--chara'),
+      ),
+    );
+  });
+});
+
+// —— 同步守护：入库产物与源 CSV 的转换结果不得漂移 ——
+//
+// 引擎对拍（test/chara-yml.test.js）对 `基礎`/`素質` 这类预设行天然盲：
+// Base/Talent 表尚未进 yml/，引擎装载时两侧同样丢弃它们，产物里的值改坏也
+// 看不出来（验收变异实测：把 "素質" 的 1 改成 0，129 条测试全绿）。本用例
+// 不经引擎、直接比对转换结果，把产物的每一个字节钉住。
+test('同步守护：yml/Chara0.yml 与 target 源 CSV 的转换结果逐字节一致', () => {
+  const source = path.join(REPO_ROOT, 'target', 'CSV', 'Chara', 'Chara0.csv');
+  const product = path.join(REPO_ROOT, 'yml', 'Chara0.yml');
+
+  const { text } = read_text(source);
+  const { groups } = parse_chara_csv(text);
+  const expected = to_chara_yaml(groups, { source: 'Chara0.csv' });
+
+  assert.equal(fs.readFileSync(product, 'utf8'), expected);
 });

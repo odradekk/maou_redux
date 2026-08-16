@@ -1,19 +1,25 @@
 /**
- * @file 静态表转换器：ere 版 GameBase CSV → 引擎 YAML（issue #17）。
+ * @file 静态表转换器：CSV → 引擎 YAML（issue #17 GameBase，issue #35 角色表）。
  *
  * 一次性转换、默认不覆盖（issue #10 的产物边界规则）：产物进 git、归人工维护，
  * 已存在时一律跳过，重写必须显式 --force。规则有测试钉死，防止一句清理代码
  * 让它失效（#10 的原型曾因此销毁人工修改）。
  *
- * 用法：node tools/csv-to-yml.js [--force]
+ * 用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>]
  *   默认输入 csv/GameBase.csv，输出 yml/GameBase.yml（相对仓库根目录）。
+ *   csv/ 目录已随 #17 迁移移除，默认路径仅供 --force 重转时参考（原始输入
+ *   从 git 历史取回）。
+ *   --chara 0       转换 target/CSV/Chara/Chara0.csv → yml/Chara0.yml，
+ *                   编号可逗号分隔（--chara 31,32）；all 为全部 45 个。
  *
  * 解析逻辑逐行镜像引擎（ere-4.8.0 的 background.js，parseDataFile 模块），
  * 保证「引擎读 CSV 得到什么，本脚本就拿到什么」；YAML 侧的等价性由
- * test/csv-to-yml.test.js 用引擎两条加载路径的镜像互证。
+ * test/csv-to-yml.test.js 与 test/chara-yml.test.js 验证——后者直接驱动
+ * 引擎自己的解析器与装载循环对拍（#17 的实机验证手法固化为测试，#35）。
  *
  * 零第三方依赖；编码识别用内置 TextDecoder（Shift-JIS 兜底，issue #10 陷阱一）。
- * 注意：转换的输入是 ere 版 CSV（csv/GameBase.csv），不是 target/ 的 Emuera 原版。
+ * 注意：GameBase 转换的输入是 ere 版 CSV（csv/GameBase.csv）；角色表转换的
+ * 输入是 target/ 的 Emuera 原版（只读输入，未删）。
  */
 
 const fs = require('node:fs');
@@ -61,6 +67,62 @@ const REQUIRED_GAMEBASE_FIELDS = [
   'version',
   'allowVersion',
 ];
+
+// 引擎的角色表键名映射（background.js 模块 676 的 nameMapping.chara 原样摘录，
+// issue #35）。第一列可用「名称/变量名/别名」任一，未列出的表名（如 cstr、
+// 扩展表）原样通过。#35 实测 45 个源文件只用到其中一小部分。
+const CHARA_NAME_MAPPING = {
+  番号: 'id',
+  角色编号: 'id',
+  名前: 'name',
+  姓名: 'name',
+  あだ名: 'title',
+  别名: 'title',
+  称号: 'title',
+  呼び名: 'callname',
+  默认称呼: 'callname',
+  callname_to: 'callname',
+  称呼: 'callname',
+  基础属性: 'base',
+  基礎: 'base',
+  技能: 'abl',
+  能力: 'abl',
+  特性: 'talent',
+  特质: 'talent',
+  素質: 'talent',
+  角色flag: 'cflag',
+  フラグ: 'cflag',
+  角色str: 'cstr',
+  信赖: 'relation',
+  相性: 'relation',
+  装备: 'equip',
+  装着物: 'equip',
+  刻印: 'mark',
+  经验: 'exp',
+  経験: 'exp',
+  珠: 'juel',
+  宝珠: 'juel',
+  jewel: 'juel',
+};
+
+// 引擎装载循环认可的全部规范名（映射表的值即全部内置表名 + id/name/title，
+// 引擎对未列出的键按小写原样当表名用，故无需另列）。
+// 用于「未知键」告警——引擎对未知键走到 default 分支后因缺表记一条错误。
+const KNOWN_CHARA_KEYS = new Set(Object.values(CHARA_NAME_MAPPING));
+
+// 键名 → 规范名，与引擎装载循环同构：nameMapping.chara[小写键] || 小写键
+function map_chara_key(key) {
+  const lower = String(key).toLowerCase();
+  return CHARA_NAME_MAPPING[lower] ?? lower;
+}
+
+// 两列行折进嵌套映射时的显式值 = 引擎装载循环的缺省（background.js：
+// null != o || (o = "cstr" === i ? "" : 1)）。CSV 的两列行第三列为空、被
+// 过滤掉，引擎靠这条缺省补 1（cstr 表补 ''）；YAML 的嵌套映射必然写出第
+// 三列，显式写同一个缺省值即逐字段等价。
+function chara_default_value(raw_key) {
+  return map_chara_key(raw_key) === 'cstr' ? '' : 1;
+}
 
 // 引擎认可的全部键名（小写）：映射表的键 + 规范名。
 // 引擎启动时还会把「规范名的小写 → 规范名」（如 gamecode → gameCode）补进
@@ -183,6 +245,150 @@ function to_gamebase_yaml(entries) {
   return `${lines.join('\n')}\n`;
 }
 
+// —— 角色表（issue #35）——
+//
+// CSV 形状：同一个第一列会重复出现多行（引擎 csv 分支对 chara 表不截断、
+// 保留全部列）；两列行 `[键, 变量]` 的值列是引擎缺省（talent 等 → 1、
+// cstr → ''），三列行 `[键, 变量, 值]` 是完整预设。
+//
+// YAML 形状（引擎 yml 分支 s() 的 chara case，dev-guides/09-static.md 的
+// Chara0000.yml 示例同款）：顶层标量 → 两列行；顶层嵌套映射 → 每个条目
+// 一条三列行。故分组规则：
+//   恰好一行且为两列 → 顶层标量（如 番号/名前/呼び名）；
+//   其余（多行、或含三列行）→ 嵌套映射，两列行折成 `变量: 缺省值`。
+//
+// 不可表达即拒绝：callname/relation 的两列行走 r[i]=t[1]、三列行落
+// relationship 表，折成嵌套后两列行会被改道，语义无法保真——转换器直接
+// 抛错而不是产出不等价的 YAML（实测 45 个源文件没有这种形状）。
+
+// 解析角色表 CSV，产出有序分组：[{ key, kind: 'scalar', value } |
+// { key, kind: 'nested', entries: Map<变量, 值> }]，附告警
+function parse_chara_csv(text) {
+  const warnings = [];
+  const rows = [];
+  const stripped = text.replace(/\s*;[^\n]*/g, '');
+  for (const line of stripped.split('\n')) {
+    const cols = line
+      .split(',')
+      .map((cell) => cell.replace(/(^\s+|\s+$)/, ''))
+      .filter(Boolean)
+      .map(engine_get_number);
+    if (cols.length < 2) {
+      continue; // 引擎丢弃单元素行
+    }
+    if (cols.length > 3) {
+      warnings.push(
+        `「${cols[0]}」一行超过三列，第 4 列起被忽略（引擎装载循环只读第 2/3 列）`,
+      );
+    }
+    rows.push(cols.slice(0, 3));
+  }
+
+  const groups = new Map(); // 第一列（String）→ { kind, value?, entries?, two_cell, three_cell }
+  const to_nested = (group) => {
+    if (group.kind !== 'nested') {
+      // 首个两列行记录在 value 里；转嵌套时它折成 `value: 缺省`
+      const first = group.value;
+      group.kind = 'nested';
+      group.entries = new Map();
+      if (first !== undefined) {
+        group.entries.set(String(first), chara_default_value(group.raw_key));
+      }
+    }
+    return group;
+  };
+  const set_two_cell = (group, second) => {
+    const key = String(second);
+    const value = chara_default_value(group.raw_key);
+    if (group.entries.has(key) && group.entries.get(key) !== value) {
+      warnings.push(
+        `键「${group.raw_key}」的变量「${second}」重复且取值不同，后者覆盖前者（引擎对象语义）`,
+      );
+    }
+    group.entries.set(key, value);
+  };
+
+  for (const [raw_key, second, third] of rows) {
+    const key = String(raw_key);
+    let group = groups.get(key);
+    if (!group) {
+      group = { raw_key: key, kind: 'pending', two_cell: 0, three_cell: 0 };
+      groups.set(key, group);
+    }
+    if (third === undefined) {
+      group.two_cell += 1;
+      if (group.kind === 'pending') {
+        group.kind = 'scalar';
+        group.value = second;
+      } else {
+        set_two_cell(to_nested(group), second);
+      }
+    } else {
+      group.three_cell += 1;
+      const nested = to_nested(group);
+      const sub_key = String(second);
+      if (
+        nested.entries.has(sub_key) &&
+        nested.entries.get(sub_key) !== third
+      ) {
+        warnings.push(
+          `键「${key}」的变量「${second}」重复且取值不同，后者覆盖前者（引擎对象语义）`,
+        );
+      }
+      nested.entries.set(sub_key, third);
+    }
+  }
+
+  const result = [];
+  for (const group of groups.values()) {
+    if (!KNOWN_CHARA_KEYS.has(map_chara_key(group.raw_key))) {
+      warnings.push(
+        `键「${group.raw_key}」不在引擎的角色表键名表内，装载时按扩展表名处理`,
+      );
+    }
+    const mapped = map_chara_key(group.raw_key);
+    const is_multi = group.two_cell + group.three_cell > 1;
+    if (
+      (mapped === 'callname' || mapped === 'relation') &&
+      is_multi &&
+      group.kind === 'nested'
+    ) {
+      throw new Error(
+        `键「${group.raw_key}」（${mapped}）混用两列/三列行或多行重复，` +
+          'YAML 形状无法等价表达（两列行会改道），拒绝转换',
+      );
+    }
+    if (is_multi && ['id', 'name', 'title'].includes(mapped)) {
+      warnings.push(
+        `键「${group.raw_key}」（${mapped}）出现多行，按引擎语义后者覆盖前者`,
+      );
+    }
+    result.push(group);
+  }
+  return { groups: result, warnings };
+}
+
+// 角色表 YAML：键名一律双引号（JSON.stringify，同 GameBase 约定）；数值裸写、
+// 字符串双引号。嵌套映射用块风格、两空格缩进（dev-guides 示例同款）。
+function to_chara_yaml(groups, { source = '' } = {}) {
+  const lines = [
+    `# 转换自 target/CSV/Chara/${source}（tools/csv-to-yml.js，issue #35）`,
+    '# 本文件归人工维护：转换器重跑默认不覆盖，需要重新生成请加 --force --chara <编号>',
+  ];
+  for (const group of groups) {
+    const key = JSON.stringify(group.raw_key);
+    if (group.kind === 'scalar') {
+      lines.push(`${key}: ${JSON.stringify(group.value)}`);
+    } else {
+      lines.push(`${key}:`);
+      for (const [sub_key, value] of group.entries) {
+        lines.push(`  ${JSON.stringify(sub_key)}: ${JSON.stringify(value)}`);
+      }
+    }
+  }
+  return `${lines.join('\n')}\n`;
+}
+
 // 产物写出（产物边界规则的核心）：已存在且无 force 一律跳过。
 // 除此之外不做任何清理——#10 的教训：一句无条件删除就能让本检查形同虚设。
 function write_product(target, content, { force = false } = {}) {
@@ -205,12 +411,35 @@ function convert({ input, output, force = false }) {
   return { status: result.status, output, warnings, enc };
 }
 
+// 组装一次角色表转换。空表拒绝写出（无番号的预设文件装载时整组被引擎丢弃，
+// 产物没有意义）；无法等价表达的形状在上游 parse_chara_csv 抛错。
+function convert_chara({ input, output, force = false }) {
+  const { text, enc } = read_text(input);
+  const { groups, warnings } = parse_chara_csv(text);
+  if (groups.length === 0) {
+    throw new Error('输入中没有可用的角色预设行，检查文件内容与格式');
+  }
+  const source = path.basename(input);
+  const result = write_product(output, to_chara_yaml(groups, { source }), {
+    force,
+  });
+  return { status: result.status, output, warnings, enc };
+}
+
 // 解析命令行参数；未知参数报用法
 function parse_args(argv) {
-  const options = { force: false };
-  for (const arg of argv) {
+  const options = { force: false, chara: [] };
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
     if (arg === '--force' || arg === '-f') {
       options.force = true;
+    } else if (arg === '--chara') {
+      const value = argv[i + 1];
+      if (value === undefined) {
+        throw new Error('--chara 需要一个参数：角色编号（逗号分隔）或 all');
+      }
+      options.chara.push(...value.split(',').map((item) => item.trim()));
+      i += 1;
     } else {
       throw new Error(`未知参数：${arg}`);
     }
@@ -218,53 +447,92 @@ function parse_args(argv) {
   return options;
 }
 
+const USAGE = '用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>]';
+
 // CLI 入口。overrides 供测试注入临时路径，默认相对仓库根。
-function main(argv, { input, output } = {}) {
+function main(argv, overrides = {}) {
+  const { input, output, chara_dir, chara_out_dir } = overrides;
   let options;
   try {
     options = parse_args(argv);
   } catch (error) {
     console.error(`错误：${error.message}`);
-    console.error('用法：node tools/csv-to-yml.js [--force]');
+    console.error(USAGE);
     return 2;
   }
 
-  const resolved_input = input ?? path.join(REPO_ROOT, 'csv', 'GameBase.csv');
-  const resolved_output = output ?? path.join(REPO_ROOT, 'yml', 'GameBase.yml');
-
-  let report;
+  const reports = [];
   try {
-    report = convert({
-      input: resolved_input,
-      output: resolved_output,
-      force: options.force,
-    });
+    if (options.chara.length > 0) {
+      // 角色表模式：target/CSV/Chara/Chara<编号>.csv → yml/Chara<编号>.yml
+      const src_dir =
+        chara_dir ?? path.join(REPO_ROOT, 'target', 'CSV', 'Chara');
+      const out_dir = chara_out_dir ?? path.join(REPO_ROOT, 'yml');
+      const ids = options.chara.includes('all')
+        ? fs
+            .readdirSync(src_dir)
+            .filter((name) => /^Chara\d+\.csv$/i.test(name))
+            .map((name) => /^Chara(\d+)\.csv$/i.exec(name)[1])
+        : options.chara;
+      for (const id of ids) {
+        reports.push(
+          convert_chara({
+            input: path.join(src_dir, `Chara${id}.csv`),
+            output: path.join(out_dir, `Chara${id}.yml`),
+            force: options.force,
+          }),
+        );
+      }
+    } else {
+      const resolved_input =
+        input ?? path.join(REPO_ROOT, 'csv', 'GameBase.csv');
+      const resolved_output =
+        output ?? path.join(REPO_ROOT, 'yml', 'GameBase.yml');
+      reports.push(
+        convert({
+          input: resolved_input,
+          output: resolved_output,
+          force: options.force,
+        }),
+      );
+    }
   } catch (error) {
     console.error(`错误：${error.message}`);
     return 1;
   }
 
-  report.warnings.forEach((warning) => console.warn(`警告：${warning}`));
-  const written = report.status === 'written' ? 1 : 0;
+  let written = 0;
+  for (const report of reports) {
+    report.warnings.forEach((warning) => console.warn(`警告：${warning}`));
+    if (report.status === 'written') {
+      written += 1;
+    }
+    console.log(
+      `[csv-to-yml] 编码 ${report.enc}；写出 ${report.status === 'written' ? 1 : 0} 个 → ${report.output}` +
+        (report.status === 'skipped'
+          ? '（已存在，默认不覆盖；重写需 --force）'
+          : ''),
+    );
+  }
   console.log(
-    `[csv-to-yml] 编码 ${report.enc}；写出 ${written} 个 / 跳过 ${
-      1 - written
-    } 个 → ${resolved_output}` +
-      (report.status === 'skipped'
-        ? '（已存在，默认不覆盖；重写需 --force）'
-        : ''),
+    `[csv-to-yml] 合计：写出 ${written} 个 / 跳过 ${reports.length - written} 个`,
   );
   return 0;
 }
 
 module.exports = {
   REPO_ROOT,
+  CHARA_NAME_MAPPING,
   convert,
+  convert_chara,
   engine_get_number,
   main,
+  map_chara_key,
   map_gamebase_key,
+  parse_chara_csv,
   parse_gamebase_csv,
   read_text,
+  to_chara_yaml,
   to_gamebase_yaml,
   write_product,
 };

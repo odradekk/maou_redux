@@ -4,7 +4,7 @@
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。主菜单
  * 不读 gamebase，无须 preset_gamebase；角色数（CHARANUM 的等价物）经夹具的
- * added_characters 预置。
+ * seed_chara 预置。
  *
  * 覆盖：
  *   1. 状态行：年/月/日/第几日/时段/所持金取自真实变量（包装层），整行
@@ -44,6 +44,14 @@ function button_of(fixture, accelerator) {
   return fixture.lines.find(
     (line) => line.type === 'button' && line.accelerator === accelerator,
   );
+}
+
+// 严格夹具下加入角色要先有预设（#35 镜像的引擎守卫）。本文件只关心「角色在
+// 不在已加入列表里」，预设取最小形状即可；真实预设的正确性由
+// test/chara-yml.test.js 用引擎代码对拍。
+function join_chara(fixture, id) {
+  fixture.seed_chara(id, { id, name: `角色${id}` });
+  fixture.era.addCharacter(id);
 }
 
 test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整行粗体', () => {
@@ -145,9 +153,9 @@ test('入口明暗：未选中调暗（@MENU_BUTTON 近似），选中正常色'
   // 已选择：加入两个可选角色，target=31、assi=100、面板切到 4（地城概况）
   //（指针值必须取自已加入列表，否则先被防御性修正钳掉）
   const chosen = draw_menu_with((fixture, era_flag) => {
-    fixture.era.addCharacter(0);
-    fixture.era.addCharacter(31);
-    fixture.era.addCharacter(100);
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+    join_chara(fixture, 100);
     era_flag.target = 31;
     era_flag.assi = 100;
     fixture.store.set('flag:36', 4);
@@ -161,7 +169,7 @@ test('入口明暗：未选中调暗（@MENU_BUTTON 近似），选中正常色'
 
 test('防御性修正：编号不在已加入角色列表时重置为未选择', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
-    fixture.era.addCharacter(0); // CHARANUM = 1：序号世界里合法的只有 0
+    join_chara(fixture, 0); // CHARANUM = 1：序号世界里合法的只有 0
     era_flag.target = 5; // 越界（原作 :20-21 TARGET > CHARANUM-1）
     era_flag.assi = 3; // 越界（原作 :23-25）
   });
@@ -171,8 +179,8 @@ test('防御性修正：编号不在已加入角色列表时重置为未选择',
   // ID 语义：已加入 [0, 31] 时 ID 31 合法（原作序号判据会误杀，ere 侧按
   // 「不在已加入列表」移植，见 page-main-menu.js 的说明）
   const id_world = draw_menu_with((fixture, era_flag) => {
-    fixture.era.addCharacter(0);
-    fixture.era.addCharacter(31);
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
     era_flag.target = 31;
     era_flag.assi = 0;
   });
@@ -181,8 +189,8 @@ test('防御性修正：编号不在已加入角色列表时重置为未选择',
 
 test('防御性修正：调教目标与助手指向同一人时重置助手', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
-    fixture.era.addCharacter(0);
-    fixture.era.addCharacter(31);
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
     era_flag.target = 31;
     era_flag.assi = 31;
   });
@@ -193,9 +201,9 @@ test('防御性修正：调教目标与助手指向同一人时重置助手', ()
 
 test('防御性修正：所指角色被占用（CFLAG:x:1 != 0）时重置', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
-    fixture.era.addCharacter(0);
-    fixture.era.addCharacter(1);
-    fixture.era.addCharacter(31);
+    join_chara(fixture, 0);
+    join_chara(fixture, 1);
+    join_chara(fixture, 31);
     era_flag.target = 31;
     era_flag.assi = 1;
     fixture.store.set('cflag:31:1', 2); // 目标被占用

@@ -57,6 +57,30 @@ test('无专门实现的 API 走兜底记录，不抛错', () => {
   ]);
 });
 
+test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预设才加（issue #35）', () => {
+  const fixture = create_era_fixture();
+
+  // #21/#22 漏过的场景：调了 addCharacter，但（当时的）yml/ 没有角色表，
+  // 引擎第一步就短路——空壳夹具记下调用后断言全绿，实机一个角色都没加
+  assert.equal(fixture.era.addCharacter(0), false);
+  assert.deepEqual(fixture.chara_no, []);
+  // 调用仍被记录（接线层面的断言不受影响）
+  assert.deepEqual(fixture.calls, [{ api: 'addCharacter', args: [0] }]);
+
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  assert.equal(fixture.era.addCharacter(0), true);
+  assert.deepEqual(fixture.chara_no, [0]);
+
+  // 重复加入：引擎先滤同号再入列，列表不重复
+  assert.equal(fixture.era.addCharacter(0), true);
+  assert.deepEqual(fixture.chara_no, [0]);
+
+  // 双参数形态 [目标号, 源数据号]：以 1 号预设重建 0 号，仍是 0 号
+  fixture.seed_chara(1, { id: 1, name: '壹' });
+  assert.equal(fixture.era.addCharacter([0, 1]), true);
+  assert.deepEqual(fixture.chara_no, [0]);
+});
+
 test('logger 被记录且不自递归', () => {
   const fixture = create_era_fixture();
   // 若只置 version.engine 而不整体替换 logger，
@@ -111,19 +135,26 @@ test('clear 清空输出', async () => {
 
 test('已加入角色列表：addCharacter 追加、resetData 清空（CHARANUM 等价物）', () => {
   const fixture = create_era_fixture();
+  // 严格夹具：先预置才加得进（#35 的引擎守卫）
+  fixture.seed_chara(0, { id: 0, name: '你' });
+  fixture.seed_chara(31, { id: 31, name: '琼' });
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(31);
 
-  assert.deepEqual(fixture.added_characters, [0, 31]);
+  assert.deepEqual(fixture.chara_no, [0, 31]);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31]);
   // 返回副本：外部篡改不影响列表本体
   fixture.era.getAddedCharacters().pop();
-  assert.deepEqual(fixture.added_characters, [0, 31]);
+  assert.deepEqual(fixture.chara_no, [0, 31]);
 
   fixture.era.resetData();
-  assert.deepEqual(fixture.added_characters, []);
-  // 这些 API 已实装，不再走兜底记录
-  assert.deepEqual(fixture.calls, []);
+  assert.deepEqual(fixture.chara_no, []);
+  // 两者虽有专门实现，仍显式留痕：用例要能断言「先清档再加人」的顺序
+  assert.deepEqual(fixture.calls, [
+    { api: 'addCharacter', args: [0] },
+    { api: 'addCharacter', args: [31] },
+    { api: 'resetData', args: [] },
+  ]);
 });
 
 test('printButton 记录 config.color（按钮明暗断言的落点）', () => {

@@ -22,6 +22,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
+const { preset_chara_0 } = require('./helpers/chara');
 
 // ere/ 的绝对路径（require.cache 键以此为前缀），独立性用例用它断言
 // 「载入 A 不连带动入 B」
@@ -223,6 +224,8 @@ test('add_chara_ex(999)：编号空间外 → 抛错（拼写错误）', async (
 test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表分发到专属初始化', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  preset_chara_0(fixture);
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
   const { BeginSignal, STATE } = fixture.load_module(
@@ -237,7 +240,7 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
 
   // 原作 :101 ADDCHARA 0：加入初始角色（#23 起夹具实装已加入列表，
   // 断言列表内容即断言调用）
-  assert.deepEqual(fixture.added_characters, [0], '必须加入初始角色 0');
+  assert.deepEqual(fixture.chara_no, [0], '必须加入初始角色 0');
   // 原作 :102 CALL @ADDCHARA_EX → TRYCALLFORM CHARA_EX_0 → @CHARA_EX_0：
   // 分发真实发生的证据 = 角色 0 专属初始化的写入（EX_TALENT:200 = 魔王），
   // 且此前零写入（全量断言，任何意外写入都会暴露）

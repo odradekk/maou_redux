@@ -24,10 +24,13 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
+const { preset_chara_0 } = require('./helpers/chara');
 
 test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染主菜单', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  preset_chara_0(fixture);
   fixture.set_inputs(1);
   const main = fixture.load_module('main');
 
@@ -77,6 +80,8 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
 test('端到端：读档分支（旧的奴隶）维持 #19 占位，不经状态机转场', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  preset_chara_0(fixture);
   fixture.set_inputs(0);
   const main = fixture.load_module('main');
 
@@ -94,6 +99,8 @@ test('端到端：读档分支（旧的奴隶）维持 #19 占位，不经状态
 test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 #23 改制）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  preset_chara_0(fixture);
   fixture.set_inputs(1);
   const { on, TIER } = fixture.load_module('system/event/registry');
   const { begin, STATE } = fixture.load_module('system/flow/begin-signal');
