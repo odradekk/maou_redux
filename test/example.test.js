@@ -10,16 +10,24 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { preset_gamebase } = require('./helpers/gamebase');
 
-test('示例：游戏入口输出文本', async () => {
+test('示例：游戏入口 main 已接到标题画面（入口冒烟）', async () => {
   const fixture = create_era_fixture();
+
+  // 标题画面从静态表读 GameBase：预置 yml/GameBase.yml 的运行时形状
+  // （形状与字段对应见 helpers/gamebase.js）
+  preset_gamebase(fixture);
 
   // 经 '#/' 加载游戏入口，与引擎的加载路径一致
   const main = fixture.load_module('main');
-  await main();
+
+  // 标题画面是常驻循环（原作 RESTART 语义）：预置输入耗尽 = 循环仍在等待
+  // 下一次交互，夹具以抛错终止（issue #16 的既定设计，测循环必用）
+  await assert.rejects(() => main(), /预置输入已耗尽/);
 
   // 断言「输出了哪些文本」
-  assert.deepEqual(fixture.text_lines(), ['Hello World!']);
+  assert(fixture.text_lines().some((line) => line.includes('Ver93.106')));
 });
 
 test('示例：变量读写被记录', () => {
