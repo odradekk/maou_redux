@@ -109,12 +109,23 @@ function create_era_fixture() {
       type: 'divider',
       text: normalize_content(config?.content ?? ''),
     });
-  era.printButton = (content, accelerator) =>
-    push_line({
+  era.printButton = (content, accelerator, config) => {
+    const text = normalize_content(content);
+    return push_line({
       type: 'button',
-      text: normalize_content(content),
+      text,
       accelerator,
+      // 引擎实际显示的文本。showAcc 默认为 true（判定是 !== false），引擎会
+      // 自动拼上 `[快捷键] `，并把文本里的连续空白折叠成一个空格；showAcc 为
+      // false 时显示 `[按钮文本]`。公式抄自引擎 app.asar 的按钮渲染层。
+      // 断言按钮外观必须看这个字段：只看 text 会漏掉手写前缀与引擎前缀撞车
+      // （实机曾渲染出「[0] [0] 旧的奴隶」）。
+      rendered: (config?.showAcc !== false
+        ? `[${accelerator}] ${text}`
+        : `[${text}]`
+      ).replace(/\s+/g, ' '),
     });
+  };
   era.replaceText = (content) => {
     // 语义：替换最后一行。夹具按「弹掉最后一行再压入新文本行」近似
     lines.pop();

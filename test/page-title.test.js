@@ -50,12 +50,20 @@ test('首屏：标题、版本行、作者、年份、展开名单、信息行�
   );
   assert(texts.includes('版本推进出问题 '));
 
-  // 按钮：accelerator 沿用原作编号 0/1/8/9，文本照原作（含前置空格）
+  // 按钮：accelerator 沿用原作编号 0/1/8/9。断言看 rendered（引擎实际显示的
+  // 文本，含引擎自动拼的 [快捷键] 前缀）——只断言 text 会漏掉手写前缀与引擎
+  // 前缀撞车，实机曾渲染出「[0] [0] 旧的奴隶」。
   const buttons = fixture.lines.filter((line) => line.type === 'button');
-  assert(buttons.some((b) => b.accelerator === 0 && b.text === '[0] 旧的奴隶'));
-  assert(buttons.some((b) => b.accelerator === 1 && b.text === '[1] 新的猎物'));
-  assert(buttons.some((b) => b.accelerator === 9 && b.text === ' <<'));
-  assert(buttons.some((b) => b.accelerator === 8 && b.text === '>>'));
+  assert(
+    buttons.some((b) => b.accelerator === 0 && b.rendered === '[0] 旧的奴隶'),
+  );
+  assert(
+    buttons.some((b) => b.accelerator === 1 && b.rendered === '[1] 新的猎物'),
+  );
+  assert(buttons.some((b) => b.accelerator === 9 && b.rendered === '[9] <<'));
+  assert(buttons.some((b) => b.accelerator === 8 && b.rendered === '[8] >>'));
+  // 没有任何按钮的正文自带 [编号] 前缀（前缀是引擎的职责）
+  assert(buttons.every((b) => !/^\s*\[\d+\]/.test(b.text)));
 });
 
 test('版本号按原作公式算自静态表，不硬编码', async () => {
@@ -70,7 +78,7 @@ test('版本号按原作公式算自静态表，不硬编码', async () => {
   assert(!fixture.text_lines().some((line) => line.includes('93.106')));
 });
 
-test('GLOBAL:99 非 0 → 折叠致辞 + 按钮「 >>」', async () => {
+test('GLOBAL:99 非 0 → 折叠致辞 + 按钮「>>」', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.store.set('global:99', 1);
@@ -94,11 +102,13 @@ test('GLOBAL:99 非 0 → 折叠致辞 + 按钮「 >>」', async () => {
   // 展开版独有的行不得出现
   assert(!texts.some((line) => line.includes('Delicious基于')));
   assert(!texts.some((line) => line.includes('敬请见证')));
-  // 按钮 9 在折叠态显示「 >>」
+  // 按钮 9 在折叠态显示「>>」（引擎前缀后即 [9] >>）
   assert(
     fixture.lines.some(
       (line) =>
-        line.type === 'button' && line.accelerator === 9 && line.text === ' >>',
+        line.type === 'button' &&
+        line.accelerator === 9 &&
+        line.rendered === '[9] >>',
     ),
   );
 });
@@ -117,7 +127,9 @@ test('GLOBAL:98 非 0 → 联系方式 + 按钮「<<」', async () => {
   assert(
     fixture.lines.some(
       (line) =>
-        line.type === 'button' && line.accelerator === 8 && line.text === '<<',
+        line.type === 'button' &&
+        line.accelerator === 8 &&
+        line.rendered === '[8] <<',
     ),
   );
 });

@@ -100,16 +100,18 @@ function draw_title_screen() {
       : GREETING_COLLAPSED_LINES;
   greeting_lines.forEach((line) => era.print(line));
   // 致辞末行在原作不换行（PRINTFORM），按钮 9 直接跟在同一行；ere 的按钮
-  // 独占一行（dev-guides/06-output.md），无法完全同行，文本保留原作的前置
-  // 空格（" <<" / " >>"；下面联系段的按钮 8 同此约束）
-  era.printButton(era_global.greeting_collapsed === 0 ? ' <<' : ' >>', 9);
+  // 独占一行（dev-guides/06-output.md），无法完全同行。
+  // 原作 PRINTBUTTON " <<" 的前置空格不移植：引擎渲染时会把按钮文本里的连续
+  // 空白折叠成一个空格（见下方 printButton 的前缀说明），留了也无效。
+  era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);
   era.println(); // 原作 :73/:80 按钮后的 PRINTL
 
   // 原作 :73 PRINTFORM %GAMEBASE_INFO% 不换行、由联系段的 PRINTFORML 补行尾；
   // ere 的每次 print 独占一行（dev-guides/06-output.md），两行布局等效
   era.print(gamebase.info);
   // 原作 :74-81 联系方式段：GLOBAL:98 == 0 显示「版本推进出问题 」、非 0 显示
-  // 联系方式，按钮 8 切换。前者的尾部空格照原作（与按钮同行的间距）。
+  // 联系方式，按钮 8 切换。前者的尾部空格照原作（这是普通文本行，不受按钮的
+  // 空白折叠影响）。
   if (era_global.contact_info_shown === 0) {
     era.print('版本推进出问题 ');
     era.printButton('>>', 8);
@@ -121,9 +123,13 @@ function draw_title_screen() {
   era.println(); // 原作 :84 PRINTFORML（空行）
   era.drawLine(); // 原作 :86 DRAWLINE
   // 原作 :89-90 [0]/[1] 原为纯文本 + INPUT 收数字；ere 侧改为可点按钮（可点可
-  // 键入），accelerator 沿用原作编号，文本保留 [0]/[1] 前缀贴近原排版
-  era.printButton('[0] 旧的奴隶', 0);
-  era.printButton('[1] 新的猎物', 1);
+  // 键入），accelerator 沿用原作编号。
+  //
+  // 按钮文本一律不写 [编号] 前缀：引擎的 showAcc 默认为 true，渲染时自动拼成
+  // `[快捷键] 按钮文本`（且把文本里的连续空白折叠成一个空格），手写前缀会得到
+  // 「[0] [0] 旧的奴隶」。方括号编号归引擎，本文件只给正文。
+  era.printButton('旧的奴隶', 0);
+  era.printButton('新的猎物', 1);
 }
 
 /**
