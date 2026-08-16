@@ -237,13 +237,19 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   );
   // 不再读键回标题：BEGIN 结束函数，分支内没有 waitAnyKey
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
-  // 新游戏分支的副作用恰为角色 0 的加入与专属初始化（issue #21）；变量
-  // 写入恰为 CHARA_EX_0 的魔王素质一条，此外零写入（RESETDATA 等其余初始
-  // 化归 #22）——全量断言，任何混入的意外写入都会当场暴露
+  // 新游戏四件套的前两件：RESETDATA（:100，#22 接通 era.resetData——清掉
+  // 上一局的会话数据）与 ADDCHARA 0（:101）。真初始化在 @EVENTFIRST
+  // （test/event-first.test.js），此处证标题侧的接线。
+  assert(
+    fixture.calls.some((c) => c.api === 'resetData'),
+    '必须先清档（原作 :100 RESETDATA）',
+  );
   assert(
     fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
     '必须加入初始角色 0（原作 :101 ADDCHARA 0）',
   );
+  // 标题侧变量写入恰为 CHARA_EX_0 的魔王素质一条，此外零写入——全量断言，
+  // 任何混入的意外写入都会当场暴露
   assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);
 });
 

@@ -1,0 +1,41 @@
+# flag 表：Emuera 内置 FLAG 数组 + 并入 flag 的 Emuera 内置变量（#5 决议）。
+#
+# id 分配约定（两层，互不重叠）：
+#   - 原作 FLAG:N 条目按原下标 1:1 落表（实用下标 104 个、最大 9001，随各
+#     子系统票渐进声明——本表先只立曳光弹路径用到的部分）；
+#   - 10000 起为保留区：ere 无对应表的 Emuera 内置变量并入 flag（DAY/TIME/
+#     MONEY）与角色指针占 flag 槽位（TARGET/ASSI，ere-kanon 同做法，#5
+#     决议第六条）。原作 FLAG 实用下标最大 9001，10000 起无撞号风险。
+#
+# 本表为人工产出（与 Global.yml 同一先例，issue #18）：target/CSV 没有
+# flag 名表，原作 flag 语义只散见于注释与 資料_非必要無須解壓/ 的说明。
+# 包装层产物：ere/era-utils/era-flag.js（tools/gen-wrapper.js 生成初稿）。
+# 各变量在原作中的语义与来源见该文件手写区补注。
+"天数":
+  id: 10000
+  name: "day_count"
+  type: "number"
+"月":
+  id: 10001
+  name: "month"
+  type: "number"
+"日":
+  id: 10002
+  name: "date"
+  type: "number"
+"时段":
+  id: 10003
+  name: "time"
+  type: "number"
+"所持金":
+  id: 10004
+  name: "money"
+  type: "number"
+"目标":
+  id: 10005
+  name: "target"
+  type: "number"
+"助手":
+  id: 10006
+  name: "assi"
+  type: "number"
