@@ -191,10 +191,27 @@ test('全部 37 个缺失编号逐个分发：不抛错、返回 0、零写入�
 });
 
 test('add_chara_ex(5)：编号 1-16 被守卫拦下（原作 :28 SIF 的设计，非遗漏）', async () => {
-  const { fixture, add_chara_ex } = load_chara_ex();
+  const { fixture, add_chara_ex, chara_ex } = load_chara_ex();
+
+  // 编号 1-16 当前都没有实现，光断言「返回 0、零写入」无法区分「被守卫拦下」
+  // 与「走了缺失路径」——两条路的可观测结果完全相同，守卫删掉用例照样绿。
+  // 故临时给 5 号注册一个实现：守卫在，它绝不会被调到。
+  let called = false;
+  chara_ex.register(5, () => {
+    called = true;
+  });
 
   assert.equal(await add_chara_ex(5), 0);
+  assert.equal(called, false, '守卫应在分发前拦下编号 1-16，实现不得被调用');
   assert.deepEqual(fixture.var_writes, []);
+
+  // 对照：同一个实现在守卫放行的编号上确实会被调到，证明上面的 false 不是
+  // 因为注册本身没生效
+  chara_ex.register(17, () => {
+    called = true;
+  });
+  await add_chara_ex(17);
+  assert.equal(called, true);
 });
 
 test('add_chara_ex(999)：编号空间外 → 抛错（拼写错误）', async () => {
