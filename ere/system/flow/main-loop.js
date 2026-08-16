@@ -21,7 +21,7 @@
 const { BeginSignal, STATE } = require('#/system/flow/begin-signal');
 const { emit } = require('#/system/event/registry');
 const run_title_page = require('#/page/page-title');
-const run_shop = require('#/page/page-shop');
+const { run_shop } = require('#/page/page-shop');
 // 顶层副作用：注册 @EVENTFIRST 处理器（issue #22 真身）。后续事件的
 // 处理器模块随各自所属票在此追加 require。
 require('#/event/event-first');
@@ -43,7 +43,7 @@ const STATE_HANDLERS = {
   [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
   // 原作 BEGIN SHOP → 引擎调 @EVENTSHOP 一次，随后 @SHOW_SHOP 绘制 →
   // 输入 → @USERSHOP 分发循环（SHOP ver1.0.2.ERB；ere 侧整体收进
-  // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24）。
+  // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已落地）。
   [STATE.SHOP]: run_shop,
 };
 
