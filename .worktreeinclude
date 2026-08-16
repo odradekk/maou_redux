@@ -1,0 +1,6 @@
+# Orca 会把下列 gitignored 文件复制进每个新建 worktree（官方文档：https://www.onorca.dev/docs/model/worktrees）
+# 引擎本地配置：缺失时引擎默认无 system.static 键，静态目录从 yml 起步搜索，
+# 因此 worktree 里没有这个文件也能跑；复制只为保留窗口大小等本地设置。
+# 注意：本文件一旦写着 "static": "csv" 就会被原样复制进每个新 worktree，
+# 而 csv/ 已随 issue #17 迁移移除——引擎会报「静态数据文件夹不存在」。详见 AGENTS.md。
+ere.config.json
