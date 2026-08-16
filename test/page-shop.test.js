@@ -327,3 +327,33 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
 });
+
+test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计入', async () => {
+  // 验收变异实测：把 count_selectable_slaves 的 `CFLAG:x:1 == 0` 条件删掉，
+  // 143 条测试全绿——因为在场用例里「已加入的奴隶」与「可选的奴隶」恰好
+  // 总是同一批，判据的这一半从未被观察到。本用例造出两者不同的局面。
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31);
+  // 原作 DRAW_MAINMENU.ERB:215 的 SIF CFLAG:COUNT:1 == 0 —— 非 0 = 该奴隶
+  // 当前不可选（占用中），A 不计它
+  fixture.store.set('cflag:31:1', 2);
+  fixture.set_inputs(496);
+  const { run_shop } = fixture.load_module('page/page-shop');
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+
+  assert(
+    !fixture.text_lines().some((line) => line.includes('@SELECT_TARGET')),
+    '唯一的奴隶被占用时 A 应为 0，496 进不去',
+  );
+
+  // 对照：同样一个奴隶、未被占用时 496 确实进得去，排除「因为别的原因没进」
+  const control = create_era_fixture();
+  join_selectable_slave(control, 31);
+  control.set_inputs(496);
+  const { run_shop: run_control } = control.load_module('page/page-shop');
+  await assert.rejects(() => run_control(), /预置输入已耗尽/);
+  assert(
+    control.text_lines().some((line) => line.includes('@SELECT_TARGET')),
+    '未占用的奴隶应让 A > 0',
+  );
+});
