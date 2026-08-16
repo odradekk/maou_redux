@@ -135,19 +135,26 @@ test('clear 清空输出', async () => {
 
 test('已加入角色列表：addCharacter 追加、resetData 清空（CHARANUM 等价物）', () => {
   const fixture = create_era_fixture();
+  // 严格夹具：先预置才加得进（#35 的引擎守卫）
+  fixture.seed_chara(0, { id: 0, name: '你' });
+  fixture.seed_chara(31, { id: 31, name: '琼' });
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(31);
 
-  assert.deepEqual(fixture.added_characters, [0, 31]);
+  assert.deepEqual(fixture.chara_no, [0, 31]);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31]);
   // 返回副本：外部篡改不影响列表本体
   fixture.era.getAddedCharacters().pop();
-  assert.deepEqual(fixture.added_characters, [0, 31]);
+  assert.deepEqual(fixture.chara_no, [0, 31]);
 
   fixture.era.resetData();
-  assert.deepEqual(fixture.added_characters, []);
-  // 这些 API 已实装，不再走兜底记录
-  assert.deepEqual(fixture.calls, []);
+  assert.deepEqual(fixture.chara_no, []);
+  // 两者虽有专门实现，仍显式留痕：用例要能断言「先清档再加人」的顺序
+  assert.deepEqual(fixture.calls, [
+    { api: 'addCharacter', args: [0] },
+    { api: 'addCharacter', args: [31] },
+    { api: 'resetData', args: [] },
+  ]);
 });
 
 test('printButton 记录 config.color（按钮明暗断言的落点）', () => {

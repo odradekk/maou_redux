@@ -219,6 +219,9 @@ function create_era_fixture() {
   // 引擎 resetData 会清空全部存档数据；夹具只清已加入列表——store 里静态
   // 预置与存档数据尚未分离，全面清空需要先做那层区分。
   era.resetData = () => {
+    // 与 addCharacter 同样留痕：有专门实现的 API 不走兜底记录层，不显式
+    // push 的话 fixture.calls 里就看不见它（用例断言「先清档」要读这里）
+    calls.push({ api: 'resetData', args: [] });
     chara_no.length = 0;
     return undefined;
   };

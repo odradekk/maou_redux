@@ -19,6 +19,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
+const { preset_chara_0 } = require('./helpers/chara');
 
 // 原作 @EVENTFIRST 直线赋值的完整期望（SYSTEM ver1.0.3.ERB:11-62，按语句
 // 顺序；:11-12/:42/:53/:56 的不可落地项不在内，见 docs/stub-registry.md）。
@@ -51,6 +52,8 @@ function expected_init_writes() {
 test('端到端：新的猎物 → 初始化 → 转向 SHOP 渲染主菜单（#23 已接线）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  preset_chara_0(fixture);
   fixture.set_inputs(1);
   const main = fixture.load_module('main');
 
@@ -62,7 +65,7 @@ test('端到端：新的猎物 → 初始化 → 转向 SHOP 渲染主菜单（#
   // 新游戏四件套（标题侧）：清档、加角色 0、分发 CHARA_EX_0（#21）。
   // addCharacter/resetData 自 #23 起由夹具实装（已加入角色列表），不再走
   // 兜底记录——resetData 的清空语义在这里一并被钉住。
-  assert.deepEqual(fixture.added_characters, [0]);
+  assert.deepEqual(fixture.chara_no, [0]);
   assert(
     fixture.var_writes.some(
       (w) => w.name === 'ex_talent:0:200' && w.value === 1,
