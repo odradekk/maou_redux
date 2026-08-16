@@ -31,7 +31,9 @@ const GENERATED_END = '// GENERATED END';
 
 // 目前支持渲染成一维访问器的表。二维角色表（base/abl/cflag/…）需要带角色
 // 参数的模板，等对应子系统的票再扩展；不在白名单的变量表只会得到告警。
-const RENDERABLE_ONE_DIM_TABLES = new Set(['global']);
+// flag 自 issue #22 起入白名单：#5 决议把 DAY/TIME/MONEY 与角色指针并入
+// flag 条目（id 10000 保留区，见 yml/Flag.yml 头注）。
+const RENDERABLE_ONE_DIM_TABLES = new Set(['global', 'flag']);
 
 // 变量字段行：id / name / type（引擎三字段，见 #5 决议与 18-tools.md）
 const FIELD_RE = /^\s+(id|name|type):\s*(.+?)\s*$/;

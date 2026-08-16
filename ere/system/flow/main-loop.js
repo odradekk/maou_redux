@@ -21,7 +21,7 @@
 const { BeginSignal, STATE } = require('#/system/flow/begin-signal');
 const { emit } = require('#/system/event/registry');
 const run_title_page = require('#/page/page-title');
-// 顶层副作用：注册 @EVENTFIRST 处理器（issue #22 换真身）。后续事件的
+// 顶层副作用：注册 @EVENTFIRST 处理器（issue #22 真身）。后续事件的
 // 处理器模块随各自所属票在此追加 require。
 require('#/event/event-first');
 
@@ -35,9 +35,11 @@ require('#/event/event-first');
 const STATE_HANDLERS = {
   [STATE.TITLE]: run_title_page,
   // 原作 BEGIN FIRST → @EVENTFIRST 事件链（SYSTEM ver1.0.3.ERB:1）。
-  // #22 注意：原作在该链无人 BEGIN 时自动进商店轮（SHOP），不是报错——
-  // 换真身时需在本处理器里补「emit 返回 undefined 则默认 SHOP」。
-  [STATE.FIRST]: async () => emit('EVENTFIRST'),
+  // 链无人 BEGIN 时默认进 SHOP：Emuera 在 @EVENTFIRST 跑完而无转场时自动
+  // 进入商店轮，不是报错（#20 验收移交的语义，本票落地）。防御性兜底——
+  // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发
+  // 信号时兜住引擎行为。
+  [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
 };
 
 /**
