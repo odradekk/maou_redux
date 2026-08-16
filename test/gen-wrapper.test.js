@@ -22,6 +22,7 @@ const { test } = require('node:test');
 const {
   GENERATED_END,
   GENERATED_START,
+  RENDERABLE_ONE_DIM_TABLES,
   REPO_ROOT,
   extract_generated_section,
   generate,
@@ -297,25 +298,33 @@ test('变量表但不在渲染白名单（如二维角色表）：告警跳过�
   });
 });
 
-// —— 同步守护：仓库产物与 yml/Global.yml 不得漂移 ——
+// —— 同步守护：仓库产物与其 yml 输入不得漂移 ——
+//
+// 逐表遍历渲染白名单，而不是每加一张表就手抄一条用例：#22 加入 flag 表时，
+// 原先只盯 global 的守护对 era-flag.js 视而不见，改了 Flag.yml 不重生成也
+// 不会红。白名单是生成器自己的真相，从它出发就不会再漏。
+for (const table of RENDERABLE_ONE_DIM_TABLES) {
+  const yml_name = `${table[0].toUpperCase()}${table.slice(1)}.yml`;
+  const product_name = `era-${table}.js`;
 
-test('同步守护：ere/era-utils/era-global.js 的生成区与 yml/Global.yml 渲染结果一致', () => {
-  const yml_text = fs.readFileSync(
-    path.join(REPO_ROOT, 'yml', 'Global.yml'),
-    'utf8',
-  );
-  const product = fs.readFileSync(
-    path.join(REPO_ROOT, 'ere', 'era-utils', 'era-global.js'),
-    'utf8',
-  );
+  test(`同步守护：ere/era-utils/${product_name} 的生成区与 yml/${yml_name} 渲染结果一致`, () => {
+    const yml_text = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', yml_name),
+      'utf8',
+    );
+    const product = fs.readFileSync(
+      path.join(REPO_ROOT, 'ere', 'era-utils', product_name),
+      'utf8',
+    );
 
-  const expected = render_generated_section(
-    'global',
-    parse_variable_yml(yml_text),
-    { source_file: 'Global.yml' },
-  );
-  assert.equal(extract_generated_section(product), expected);
-});
+    const expected = render_generated_section(
+      table,
+      parse_variable_yml(yml_text),
+      { source_file: yml_name },
+    );
+    assert.equal(extract_generated_section(product), expected);
+  });
+}
 
 // —— CLI ——
 
