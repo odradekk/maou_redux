@@ -168,24 +168,6 @@ function create_era_fixture() {
     return next;
   };
 
-  // —— 角色（已加入列表 = Emuera CHARANUM 的等价物，主菜单防御性修正与
-  // 后续的角色选择都读它）——
-  // 近似说明：真实引擎的 addCharacter 需要角色静态表（yml/ 尚无，#35——
-  // 实机当前一个角色都加不进来）；夹具不校验、照单全收，让指针钳制与选择
-  // 逻辑可在「有角色」的世界里被测试。resetData 只清已加入列表（引擎语义
-  // 会清全部存档数据；store 里静态预置与存档数据未分离，全面清空属 #35
-  // 的缝补强范围）。
-  const added_characters = [];
-  era.addCharacter = (id) => {
-    added_characters.push(id);
-    return undefined;
-  };
-  era.getAddedCharacters = () => [...added_characters];
-  era.resetData = () => {
-    added_characters.length = 0;
-    return undefined;
-  };
-
   // —— 输入 ——
   const take_input = (api) => {
     if (input_queue.length === 0) {
@@ -201,6 +183,44 @@ function create_era_fixture() {
   era.waitAnyKey = async () => {
     // 任意键继续：立即放行、只留痕。预置输入只供 era.input 消费，此处不取
     inputs_consumed.push({ api: 'waitAnyKey' });
+  };
+
+  // —— 角色：addCharacter 有专门实现，不再是只记录的空壳（issue #35）——
+  //
+  // 引擎语义（app.asar 的 EraApi.addCharacter）：第一步就是
+  // `!!staticData.chara[源编号]` 的短路——无预设数据时返回 false、一个字段
+  // 都不写、不报错。#21/#22 的验收正是被空壳夹具放过：断言只证「调了」，
+  // 证不了「引擎接受了」。夹具镜像这条守卫与加入动作；预设数据由用例经
+  // seed_chara 提供（夹具不读 yml/——静态表正确性由 test/chara-yml.test.js
+  // 直接驱动引擎代码对拍，两层不重复）。
+  const chara_presets = new Map(); // 源编号 → 预设对象（对应引擎 staticData.chara）
+  const chara_no = []; // 已加入角色（对应引擎 data.no：先滤同号再入列）
+  era.addCharacter = (...chara_ids) => {
+    calls.push({ api: 'addCharacter', args: chara_ids });
+    const results = chara_ids.map((arg) => {
+      // 双参数形态 [目标号, 源数据号]；单参数两者同号
+      const [target, source] = Array.isArray(arg) ? arg : [arg, arg];
+      if (!chara_presets.has(source)) {
+        return false; // 引擎短路：无预设数据不加
+      }
+      const index = chara_no.indexOf(target);
+      if (index >= 0) {
+        chara_no.splice(index, 1);
+      }
+      chara_no.push(target);
+      return true;
+    });
+    return chara_ids.length === 1 ? results[0] : results;
+  };
+
+  // CHARANUM 的等价物：主菜单的指针钳制读它（page-main-menu.js）。
+  // 返回副本，调用方改不动夹具内部状态。
+  era.getAddedCharacters = () => [...chara_no];
+  // 引擎 resetData 会清空全部存档数据；夹具只清已加入列表——store 里静态
+  // 预置与存档数据尚未分离，全面清空需要先做那层区分。
+  era.resetData = () => {
+    chara_no.length = 0;
+    return undefined;
   };
 
   // —— logger：必须整对象替换。
@@ -267,14 +287,18 @@ function create_era_fixture() {
     store,
     /** logger 记录 [{level, msg}] */
     logs,
-    /** 已加入角色列表（addCharacter 追加、resetData 清空；近似说明见上） */
-    added_characters,
     /** 已消费的输入 [{api, value?}] */
     inputs_consumed,
     /** 预置一串输入，等待输入的 API 依次消费 */
     set_inputs(...values) {
       input_queue.push(...values);
     },
+    /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
+    seed_chara(chara_id, preset) {
+      chara_presets.set(chara_id, preset);
+    },
+    /** 已加入的角色（对应引擎 data.no）；无预设的 addCharacter 不会进这里 */
+    chara_no,
     /** 经 '#/' 加载游戏模块，与引擎的加载路径一致 */
     load_module(name) {
       return require(`#/${name}`);

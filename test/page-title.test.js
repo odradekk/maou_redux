@@ -18,6 +18,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { preset_chara_0 } = require('./helpers/chara');
 const { preset_gamebase } = require('./helpers/gamebase');
 
 test('首屏：标题、版本行、作者、年份、展开名单、信息行与四个按钮', async () => {
@@ -214,6 +215,9 @@ test('无法识别的输入：重绘标题画面，不崩溃（原作 ELSE → R
 test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函数（issue #20）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 预置角色 0（yml/Chara0.yml 的运行时形状）：夹具的 addCharacter 镜像
+  // 引擎守卫（无预设不加，#35），预置后下面的「加入成功」断言才是引擎语义
+  preset_chara_0(fixture);
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
   const { BeginSignal, STATE } = fixture.load_module(
@@ -239,9 +243,22 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
   // 新游戏四件套的前两件：RESETDATA（:100，#22 接通 era.resetData——清掉
   // 上一局的会话数据）与 ADDCHARA 0（:101）。真初始化在 @EVENTFIRST
-  // （test/event-first.test.js），此处证标题侧的接线。#23 起这两个 API 由
-  // 夹具实装（已加入角色列表），列表终值 [0] 同时钉住「先清后加」的顺序。
-  assert.deepEqual(fixture.added_characters, [0], '必须先清档再加入角色 0');
+  // （test/event-first.test.js），此处证标题侧的接线。
+  assert(
+    fixture.calls.some((c) => c.api === 'resetData'),
+    '必须先清档（原作 :100 RESETDATA）',
+  );
+  assert(
+    fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
+    '必须加入初始角色 0（原作 :101 ADDCHARA 0）',
+  );
+  // #35：调了 addCharacter 之外，还要证明引擎语义上的「真的加进去了」——
+  // 夹具镜像引擎守卫，缺角色表时这里会失败（#21/#22 的假绿不会再放行）
+  assert.deepEqual(
+    fixture.chara_no,
+    [0],
+    '初始角色 0 必须通过引擎守卫、真的被加入',
+  );
   // 标题侧变量写入恰为 CHARA_EX_0 的魔王素质一条，此外零写入——全量断言，
   // 任何混入的意外写入都会当场暴露
   assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);

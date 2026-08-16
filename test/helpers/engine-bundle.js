@@ -1,0 +1,260 @@
+/**
+ * @file 引擎代码测试助手：从 app.asar 解包 background.js，把引擎自己的
+ * 解析器、装载循环与 EraApi 方法直接交给测试用（issue #35）。
+ *
+ * 为什么需要它：test/helpers/era-fixture.js 的记录层只能证明「我们调了这个
+ * API」，证不了「引擎接受了这次调用」——#21/#22 的「初始角色被加入」验收
+ * 正是这样漏过实机的（yml/ 缺角色表时 addCharacter 整段短路，测试却全绿）。
+ * 自写的解析镜像又会漂移。这里的做法是把 #17 实机验证的手法固化成测试：
+ * 用引擎自己的代码当基准。
+ *
+ * 手法（均为 app.asar 的实测结构）：
+ *   1. asar 头是一段 JSON 目录（前 16 字节是两个 UInt32 的 pickle 长度），
+ *      按 offset/size 切出 background.js（webpack bundle）；
+ *   2. 把入口调用 `r(r.s=311)` 替换成暴露 webpack require——入口模块是
+ *      Electron 装配代码，不执行它，其余模块全部惰性、可按号取用；
+ *   3. `new Function('require', …)` 求值（模块里的外部依赖走 Node 的
+ *      require，本助手用到的模块树不需要 Electron）。
+ *
+ * 模块号是 ere-4.8.0 的实测值（见各字段注释），引擎升版后编号漂移会在这里
+ * 抛错——那是重新核读新版的信号，不是本助手的缺陷。
+ *
+ * asar 定位顺序：环境变量 ERE_ENGINE_ASAR → 仓库内 ere-4.8.0-win-x64/
+ * （全新克隆按 AGENTS.md 放置引擎运行时即命中）→ D:\Code\era 主 checkout。
+ * 三处都没有时 load_engine_bundle() 返回 undefined，依赖它的用例以
+ * test.skip 退场并留一行警告——引擎对拍是加强项，不该让无引擎的裸克隆
+ * 连 npm test 都跑不过。
+ */
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
+
+// asar 候选位置（按顺序取第一个存在的）
+function locate_asar() {
+  const candidates = [
+    process.env.ERE_ENGINE_ASAR,
+    path.join(REPO_ROOT, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
+  ].filter(Boolean);
+  return candidates.find((candidate) => fs.existsSync(candidate));
+}
+
+// 从 asar 里切出单个文件的内容；头结构见文件头注释
+function read_asar_file(asar_path, name) {
+  const buf = fs.readFileSync(asar_path);
+  const header_size = buf.readUInt32LE(12);
+  const header = JSON.parse(buf.slice(16, 16 + header_size).toString('utf8'));
+  const walk = (node) => {
+    for (const [file_name, entry] of Object.entries(node.files || {})) {
+      if (file_name === name && entry.offset !== undefined) {
+        const start = 16 + header_size + Number(entry.offset);
+        return buf.slice(start, start + entry.size).toString('utf8');
+      }
+      if (entry.files) {
+        const found = walk(entry);
+        if (found !== undefined) {
+          return found;
+        }
+      }
+    }
+    return undefined;
+  };
+  return walk(header);
+}
+
+let cached_bundle;
+
+/**
+ * 加载引擎 bundle，返回引擎函数。找不到 asar 时返回 undefined（用例自行 skip）。
+ * 进程内记忆化：44MB 的 asar 与 1MB 的 bundle 每个测试进程只读一次。
+ */
+function load_engine_bundle() {
+  if (cached_bundle !== undefined) {
+    return cached_bundle;
+  }
+  const asar_path = locate_asar();
+  if (!asar_path) {
+    console.warn(
+      '[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎对拍用例将跳过',
+    );
+    cached_bundle = null;
+    return cached_bundle;
+  }
+  const bundle_src = read_asar_file(asar_path, 'background.js');
+  if (!bundle_src || !bundle_src.includes('r(r.s=311)')) {
+    throw new Error(
+      `app.asar 的 background.js 不是已知形状（入口 r(r.s=311) 缺失）：${asar_path}`,
+    );
+  }
+  const patched = bundle_src.replace(
+    'r(r.s=311)}',
+    'globalThis.__ere_wp = r;}',
+  );
+  const bootstrap = new Function(
+    'require',
+    `${patched}; return globalThis.__ere_wp;`,
+  );
+  const wp = bootstrap(require);
+
+  cached_bundle = {
+    /** 引擎静态表解析器（模块 677）：parseDataFile(文本, 'csv'|'yml', 表名) → 行数组 */
+    parse_data_file: wp(677),
+    /** 引擎键名映射（模块 676）：{ _replace, chara, gamebase } */
+    name_mapping: wp(676),
+    /** 引擎工具（模块 65）：getNumber / toLowerCase / safeUndefinedCheck 等 */
+    engine_utils: wp(65),
+    /** EraApi 类（模块 183）：addCharacter 是未绑定方法，须以假 this 调用 */
+    era_api: wp(183),
+    /** 引擎变量寻址（模块 648）：setVar.call(this, varName, val, isAdd)，get 同路 */
+    set_var: wp(648),
+  };
+  return cached_bundle;
+}
+
+/**
+ * 新建一份「角色预设装载状态」，并给出与 eraStart 同构的装载入口。
+ *
+ * 装载循环是 app.asar background.js eraStart 段的逐句转写（this.* 换成局部
+ * state、this.error 换成 errors.push；callname 三列行落入 relation 分支的
+ * switch fallthrough 是引擎原样，勿“修复”）。staticData 只含 chara/
+ * relationship/gamebase——当前 yml/ 还没有 Base/Talent 等表，缺表行两侧
+ * 同样落 errors，等价性不受影响。
+ *
+ * @returns {{ static_data: object, errors: string[], load_rows: (rows: Array) => void }}
+ */
+function create_chara_loader() {
+  const engine = load_engine_bundle();
+  if (!engine) {
+    return undefined;
+  }
+  const { toLowerCase, safeUndefinedCheck } = engine.engine_utils;
+  const { chara: chara_mapping } = engine.name_mapping;
+  const { tableType } = engine.era_api;
+
+  const static_data = {
+    chara: {},
+    relationship: { callname: {}, relation: {} },
+    gamebase: { defaultChara: 0 },
+  };
+  const extended_tables = {};
+  const errors = [];
+
+  return {
+    static_data,
+    errors,
+    load_rows(rows) {
+      const preset = {};
+      let mapped, second, value;
+      rows.forEach((row) => {
+        row[0] = toLowerCase(row[0]);
+        mapped = safeUndefinedCheck(chara_mapping[row[0]], row[0]);
+        if (
+          'item' !== mapped &&
+          'flag' !== mapped &&
+          'global' !== mapped &&
+          extended_tables[mapped] !== tableType.normal
+        ) {
+          switch (mapped) {
+            case 'id':
+            case 'name':
+            case 'title':
+              preset[mapped] = row[1];
+              break;
+            case 'callname':
+              if (!row[2]) {
+                preset[mapped] = row[1];
+                break;
+              }
+            /* falls through */
+            case 'relation':
+              static_data.relationship[mapped][`${preset.id}|${row[1]}`] =
+                row[2];
+              break;
+            default:
+              second = toLowerCase(row[1]);
+              value = row[2];
+              null != value || (value = 'cstr' === mapped ? '' : 1);
+              if (static_data[mapped]) {
+                second = safeUndefinedCheck(
+                  static_data[mapped][second],
+                  second,
+                );
+                (preset[mapped] || (preset[mapped] = {}))[second] = value;
+              } else {
+                errors.push(`角色数据表不存在: ${mapped}!`);
+              }
+          }
+        }
+      });
+      if (void 0 !== preset.id) {
+        if (static_data.chara[preset.id]) {
+          const existing = static_data.chara[preset.id];
+          Object.keys(preset).forEach((key) => {
+            if (typeof preset[key] === 'object' && existing[key]) {
+              Object.keys(preset[key]).forEach((sub) => {
+                existing[key][sub] = preset[key][sub];
+              });
+            } else {
+              existing[key] = preset[key];
+            }
+          });
+        } else {
+          static_data.chara[preset.id] = preset;
+        }
+      }
+    },
+  };
+}
+
+/**
+ * 以「假 this + 真方法」驱动引擎的 addCharacter（模块 183 的原型方法）。
+ *
+ * 方法体只依赖 this.staticData / this.data / this.era.extendedTables 与模块
+ * 闭包里的工具函数——闭包是真的，this 是按字段清单最小构造的。返回的
+ * data.no / data.callname 即引擎内部数据层本身，不是替身。
+ *
+ * @param {object} static_data 预设数据（create_chara_loader().static_data）
+ * @returns {{ data: object, add: (id: number) => boolean }}
+ */
+function create_add_character(static_data) {
+  const engine = load_engine_bundle();
+  if (!engine) {
+    return undefined;
+  }
+  // data 的表清单抄自 addCharacter 方法体首段的逐表赋值
+  const data = {
+    no: [],
+    maxbase: {},
+    base: {},
+    abl: {},
+    talent: {},
+    cflag: {},
+    cstr: {},
+    equip: {},
+    mark: {},
+    exp: {},
+    juel: {},
+    callname: {},
+    relation: {},
+    love: {},
+  };
+  const fake_this = {
+    staticData: static_data,
+    data,
+    era: { extendedTables: {} },
+  };
+  return {
+    data,
+    add: (chara_id) =>
+      engine.era_api.prototype.addCharacter.call(fake_this, chara_id),
+  };
+}
+
+module.exports = {
+  create_add_character,
+  create_chara_loader,
+  load_engine_bundle,
+  locate_asar,
+};
