@@ -18,15 +18,18 @@
  *     文本输出标题，满足「标题画面显示游戏标题」的验收。
  *   - RESTART 的语义是重跑本函数，ere 侧写成 for(;;) 循环，不用递归。
  *   - :93/:103 CLEARLINE 1（清除输入回显行）不镜像：ere 的输入不经回显成行。
- *   - 新游戏：:103 BEGIN FIRST 的转场已接通（issue #20）——选「新的猎物」
- *     即发出转场信号、结束本函数，信号由主循环接住（system/flow/main-loop.js）。
- *     其前的 RESETDATA/ADDCHARA 0/CALL @ADDCHARA_EX（:100-102）仍归 issue #22，
- *     由 @EVENTFIRST 的存根给出可见反馈（event/event-first.js）。
+ *   - 新游戏：:101-102 ADDCHARA 0 / CALL @ADDCHARA_EX 自 T6 接通（issue
+ *     #21）——加入初始角色 0 并经分发注册表执行其专属初始化（ere/chara/
+ *     chara-ex.js）。:100 RESETDATA 归 issue #22（会话内重开局的清档）。
+ *     :103 BEGIN FIRST 的转场已接通（issue #20）——发出转场信号、结束本
+ *     函数，信号由主循环接住（system/flow/main-loop.js），@EVENTFIRST 的
+ *     存根给出可见反馈（event/event-first.js）。
  *   - 读档（CALL @SYSTEM_LOADGAME）未移植（归后续存档票），维持占位反馈。
  */
 
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
+const { add_chara_ex } = require('#/chara/chara-ex');
 const era_global = require('#/era-utils/era-global');
 
 // 原作 :58-73：GLOBAL:99 == 0 时展开的完整制作名单。末行「※特别鸣谢…※」在
@@ -155,10 +158,15 @@ async function run_title_page() {
       era.print('即使前路已经破碎，也请魔王大人当上这世界的王……');
       era.drawLine();
       era.setAlign('left'); // 原作 :99 ALIGNMENT LEFT
-      // 原作 :100-102 RESETDATA/ADDCHARA 0/CALL @ADDCHARA_EX 归 issue #22；
-      // :103 BEGIN FIRST 已接通——发出转场信号并当场结束本函数（begin 只
-      // throw 不返回，下方语句与循环的下一轮都不再执行），信号由主循环
-      // 的 enter_state 接住转入 FIRST 状态。
+      // 原作 :100-103 新游戏四件套。RESETDATA 归 issue #22（会话内重开局
+      // 的清档）；ADDCHARA 0 与 CALL @ADDCHARA_EX 自 T6 接通（issue #21）：
+      // 加入初始角色 0、经分发注册表执行其专属初始化——原作以注册序
+      // CHARANUM-1 传入再换算 NO:ARG，ere 以角色号 0 直接寻址。之后 :103
+      // BEGIN FIRST——发出转场信号并当场结束本函数（begin 只 throw 不
+      // 返回，下方语句与循环的下一轮都不再执行），信号由主循环的
+      // enter_state 接住转入 FIRST 状态。
+      era.addCharacter(0);
+      await add_chara_ex(0);
       begin(STATE.FIRST);
     }
 

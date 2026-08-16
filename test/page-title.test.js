@@ -237,8 +237,14 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   );
   // 不再读键回标题：BEGIN 结束函数，分支内没有 waitAnyKey
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
-  // 转场不写任何变量（RESETDATA/ADDCHARA 归 #22）
-  assert.deepEqual(fixture.var_writes, []);
+  // 新游戏分支的副作用恰为角色 0 的加入与专属初始化（issue #21）；变量
+  // 写入恰为 CHARA_EX_0 的魔王素质一条，此外零写入（RESETDATA 等其余初始
+  // 化归 #22）——全量断言，任何混入的意外写入都会当场暴露
+  assert(
+    fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
+    '必须加入初始角色 0（原作 :101 ADDCHARA 0）',
+  );
+  assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);
 });
 
 test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () => {
