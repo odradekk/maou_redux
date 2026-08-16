@@ -20,9 +20,9 @@
 | `yml/`                       | 只有 `GameBase.yml`，变量表尚未建立                                                                                |
 | `res/`                       | 只有 `.gitkeep`                                                                                                    |
 | `sav/global.sav`             | 由引擎自动生成，已 gitignore；**删掉即可，引擎会重建**                                                             |
-| git                          | 仓库尚无任何提交                                                                                                   |
+| git                          | `master` 为主干，已有提交历史                                                                                      |
 
-引擎已验证可加载本仓库并输出 `Hello World!`（见 issue #2，彼时静态表还在 `csv/`）。**迁移到 `yml/`（issue #17）后尚未实机复验**——已做的是引擎源码核读与两条加载路径的等价互证（见 `test/csv-to-yml.test.js`），首次启动引擎时按「静态数据目录」一节步骤确认。
+引擎已验证可加载本仓库并输出 `Hello World!`（见 issue #2，彼时静态表还在 `csv/`）。**迁移到 `yml/`（issue #17）后尚未实机复验**：已证的是数据侧——用引擎自带的 yaml 解析器与 `parseDataFile` 直接跑 `yml/GameBase.yml`，与迁移前 CSV 得到逐字段相同的 gamebase 对象（`gameCode` 两侧同为数值 `931060`）；未证的是启动全程（`main.js` 执行、存档校验等）。首次启动引擎时按「静态数据目录」一节确认。
 
 **`sav/global.sav` 是引擎产物，不是仓库资产。** 它盖着游戏标识（当前 `931060`），与 `yml/GameBase.yml` 的【游戏标识】不一致时引擎会**拒绝启动并报错**，而不是静默重置（`dev-guides/11-saves.md:55`；第 56 行的「重置」只适用于版本号过低的情形）。改动【游戏标识】后必须删掉这个文件。
 
@@ -63,9 +63,11 @@ D:\Code\era\
 静态表是 **YAML 格式的 `yml/`**，由 ere 版 `csv/GameBase.csv` 一次性迁移而来（`csv/` 已随之清空移除，仓库不留两份真相）。两条引擎行为（#13 读 `background.js` 源码确认）决定了迁移形态：
 
 - 静态目录**整个二选一**：引擎按 `yml > json > csv` 的优先级挑**一个**目录读取，不存在逐文件混读；
-- `system.static` 只是**搜索起点**：所指目录不存在时会顺次回落，全都不存在则找不到 `GameBase`，拒绝启动。
+- `system.static` 只是**搜索起点**，且**只向低优先级方向回落**：从它所指的档位起沿 `yml → json → csv` 往后找第一个存在的目录，**不会往回找**。故起点写 `"csv"` 时后面已无档位可退。
 
-**克隆本仓库后必须把本地 `ere.config.json` 的 `system.static` 设为 `"yml"`**（该文件不进 git；引擎每次启动会把合并后的配置写回它）。若沿用旧的 `"csv"`，`csv/` 目录已不存在，引擎将找不到 `GameBase` 而无法启动。
+**全新克隆无须任何配置**：`ere.config.json` 不进 git，缺失时引擎默认没有 `system.static` 键，搜索从 `yml` 起步，直接命中本仓库的 `yml/`。
+
+**但本地已有旧 `ere.config.json` 且写着 `"static": "csv"` 时，引擎会硬失败**——`csv/` 已随迁移移除，起点之后无档位可退，引擎报「静态数据文件夹 (yml / json / csv) 不存在! 游戏数据载入失败!」并放弃加载。改法二选一：把该键改成 `"yml"`，或**直接删掉 `ere.config.json`**（引擎启动时会按解析出的档位重新写回，值即 `"yml"`）。
 
 `yml/` 的产物由 `tools/csv-to-yml.js` 生成（纯 Node、零依赖；解析逻辑逐行镜像引擎）。**产物进 git、归人工维护：转换器重跑默认不覆盖已存在的产物，重新生成必须显式 `node tools/csv-to-yml.js --force`**（issue #10 的产物边界规则，有测试钉死）。默认输入 `csv/GameBase.csv` 已随迁移删除——`GameBase.yml` 此后以人工修改为准，如需从头重转，先从 git 历史取回该文件。YAML 键名一律加引号：引擎自带的转换器裸写键名，键含 `:` / `#` 或首尾空格时会产出无法解析的 YAML（#10 实测）。
 
