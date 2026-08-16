@@ -33,7 +33,9 @@ function expected_init_writes() {
     { name: 'flag:10005', value: -1 }, // :26 TARGET = -1（指针槽）
     { name: 'flag:5', value: 17179934119 }, // :31 战斗日志显示设置
     { name: 'flag:10001', value: 1 }, // :33 DAY:1 = 1（月）
-    { name: 'itemsales:53', value: 1 }, // :35 53 号道具上架
+    // :35 ITEMSALES:53 = 1 不在此列：item 系寻址在 Item 表落地前会让引擎
+    // 硬崩（PR #34），已登记 docs/stub-registry.md 的变量级欠账。本数组是
+    // 全量断言，恢复该写入时这里会红——那正是提醒「先确认 Item 表已就位」。
     ...Array.from({ length: 8 }, (_, k) => ({
       name: `flag:${200 + k}`,
       value: 1,
