@@ -5,8 +5,8 @@
  * 循环跑到标题画面的用例先 preset_gamebase（helpers/gamebase.js）。
  *
  * 覆盖四层：
- *   1. 端到端：标题选「新的猎物」→ 初始化 → 转向 SHOP（守卫报错即到站，
- *      主菜单渲染归 #23）；
+ *   1. 端到端：标题选「新的猎物」→ 初始化 → 转向 SHOP（#23 起主菜单真实
+ *      渲染，以预置输入耗尽到站）；
  *   2. 初始化写入：与原作开局值逐项一致（全量断言，意外写入当场暴露）；
  *   3. era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml 的 id 上；
  *   4. 存根清单：docs/stub-registry.md 可检索且与本文件的存根对账。
@@ -48,7 +48,7 @@ function expected_init_writes() {
   ];
 }
 
-test('端到端：新的猎物 → 初始化 → 转向 SHOP（守卫报错即到站，#23 的前置）', async () => {
+test('端到端：新的猎物 → 初始化 → 转向 SHOP 渲染主菜单（#23 已接线）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.set_inputs(1);
@@ -56,14 +56,13 @@ test('端到端：新的猎物 → 初始化 → 转向 SHOP（守卫报错即�
 
   // 流程：标题消费输入 1（resetData + 加入角色 0 + 专属初始化）→ BEGIN
   // FIRST → @EVENTFIRST 真身：存根占位、直线赋值、开场叙事（7 次读键）→
-  // BEGIN SHOP → 主循环进入尚未移植的 SHOP，守卫报错点名状态——本票到站。
-  await assert.rejects(() => main(), /游戏状态 SHOP 的处理器尚未移植/);
+  // BEGIN SHOP → 主循环进 SHOP：绘制主菜单 → era.input() 输入耗尽抛错到站。
+  await assert.rejects(() => main(), /预置输入已耗尽/);
 
-  // 新游戏四件套（标题侧）：清档、加角色 0、分发 CHARA_EX_0（#21）
-  assert(fixture.calls.some((c) => c.api === 'resetData'));
-  assert(
-    fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
-  );
+  // 新游戏四件套（标题侧）：清档、加角色 0、分发 CHARA_EX_0（#21）。
+  // addCharacter/resetData 自 #23 起由夹具实装（已加入角色列表），不再走
+  // 兜底记录——resetData 的清空语义在这里一并被钉住。
+  assert.deepEqual(fixture.added_characters, [0]);
   assert(
     fixture.var_writes.some(
       (w) => w.name === 'ex_talent:0:200' && w.value === 1,
@@ -72,6 +71,7 @@ test('端到端：新的猎物 → 初始化 → 转向 SHOP（守卫报错即�
   );
 
   // 读键恰为开场叙事的 7 次（:91 WAIT + :193-198 六次 PRINTW），无多余等待
+  // （主菜单的 input 在取数前抛错，不记入已消费）
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 },
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
@@ -93,13 +93,16 @@ test('端到端：新的猎物 → 初始化 → 转向 SHOP（守卫报错即�
     );
   }
 
-  // 初始化后的开局值（验收项：日期与金钱取原作开局值）
+  // 初始化后的开局值（验收项：日期与金钱取原作开局值）。
+  // 注意 date：@EVENTFIRST 本身不初始化、留 0（1:1 照搬），但主菜单到站前
+  // @SHOW_SHOP 的防御性钳制（SHOP ver1.0.2.ERB:33-36）已把它修成 1——
+  // 玩家看到的开局是「第 0 年 1 月 1 日」，修正只发生在 SHOP 侧。
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.month, 1);
   assert.equal(era_flag.money, 10000);
-  // 原作不初始化、留 0 的读数源（勿补成 1 月 1 日/第 1 天，1:1 照搬）
+  // 原作不初始化、留 0 的读数源（勿在初始化侧补成 1，1:1 照搬）
   assert.equal(era_flag.day_count, 0);
-  assert.equal(era_flag.date, 0);
+  assert.equal(era_flag.date, 1, 'date 应已被 @SHOW_SHOP 钳成 1');
   assert.equal(era_flag.time, 0);
   assert.equal(era_flag.target, -1);
 });

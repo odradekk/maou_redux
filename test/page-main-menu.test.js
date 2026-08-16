@@ -1,0 +1,323 @@
+/**
+ * ere/page/page-main-menu.js 与 ere/page/page-shop.js 的行为测试
+ * （issue #23：主菜单骨架）。
+ *
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。主菜单
+ * 不读 gamebase，无须 preset_gamebase；角色数（CHARANUM 的等价物）经夹具的
+ * added_characters 预置。
+ *
+ * 覆盖：
+ *   1. 状态行：年/月/日/第几日/时段/所持金取自真实变量（包装层），整行
+ *      粗体、右对齐、满月之日黄色标注；
+ *   2. 六个功能入口：编号、正文、引擎渲染文本、明暗（@MENU_BUTTON 近似）；
+ *   3. 防御性修正（@DRAW_MAINMENU :20-39 / @EVENTSHOP :7-12）：越界、
+ *      同人、占用三态重置；
+ *   4. 四个子面板与指令面板的存根占位；
+ *   5. @SHOW_SHOP 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
+ *   6. 存根清单对账（docs/stub-registry.md）。
+ *
+ * 已知未测行（变异测试实证，勿误当守卫）：page-shop.js 的 eventshop() 里
+ * @EVENTSHOP :7-12 的指针钳制——删掉它 115 条全绿（假绿）。原因：run_shop
+ * 里紧随其后的 draw_main_menu 自带同一份钳制（原作同构，@SHOW_SHOP 恒调
+ * @DRAW_MAINMENU，两份钳制互为冗余兜底），不设钩子无法在两者之间观测。
+ * 它是 1:1 保真，行为守卫由 draw 侧的三条防御性修正用例承担。
+ */
+
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { test } = require('node:test');
+
+const { create_era_fixture } = require('./helpers/era-fixture');
+
+// 便捷：预设状态后画一次主菜单，返回夹具
+function draw_menu_with(preset) {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  preset(fixture, era_flag);
+  fixture.load_module('page/page-main-menu').draw_main_menu();
+  return { fixture, era_flag };
+}
+
+// 按编号取按钮记录（rendered = 引擎实际显示的文本）
+function button_of(fixture, accelerator) {
+  return fixture.lines.find(
+    (line) => line.type === 'button' && line.accelerator === accelerator,
+  );
+}
+
+test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整行粗体', () => {
+  const { fixture } = draw_menu_with((_, era_flag) => {
+    era_flag.day_count = 730; // 730/365 = 2 → 第2年；第731日
+    era_flag.month = 3;
+    era_flag.date = 2;
+    era_flag.time = 0;
+    era_flag.money = 12345;
+  });
+
+  const status = fixture.text_lines().find((line) => line.includes('所持金'));
+  assert.ok(status, '状态行必须输出');
+  // 数值全部来自包装层变量（变异任一读数来源都会在此红）
+  assert(status.includes('第2年'));
+  assert(status.includes('3月2日'));
+  assert(status.includes('第731日'));
+  assert(status.includes('上午'));
+  assert(status.includes('(所持金：12345 pts.)'));
+
+  // :48 FONTBOLD 整行粗体（片段级携带）；:49 ALIGNMENT RIGHT 后还原左对齐
+  const record = fixture.lines.find((line) => line.text?.includes('所持金'));
+  assert(record.content.every((frag) => frag.fontWeight === 'bold'));
+  assert(
+    fixture.calls.some((c) => c.api === 'setAlign' && c.args[0] === 'right'),
+  );
+  assert(
+    fixture.calls.some((c) => c.api === 'setAlign' && c.args[0] === 'left'),
+  );
+});
+
+test('状态行：TIME != 0 显示下午', () => {
+  const { fixture } = draw_menu_with((_, era_flag) => {
+    era_flag.day_count = 0;
+    era_flag.month = 1;
+    era_flag.date = 1;
+    era_flag.time = 1;
+    era_flag.money = 10000;
+  });
+
+  const status = fixture.text_lines().find((line) => line.includes('所持金'));
+  assert(status.includes('第0年'));
+  assert(status.includes('下午'));
+  assert(!status.includes('上午'));
+});
+
+test('满月之日：DAY:2 == 15 时追加黄色《满月》', () => {
+  const full_moon = draw_menu_with((_, era_flag) => {
+    era_flag.month = 1;
+    era_flag.date = 15;
+  });
+  const record = full_moon.fixture.lines.find((line) =>
+    line.text?.includes('所持金'),
+  );
+  assert(record.text.includes('《满月》'));
+  // SETCOLORBYNAME Yellow：标注片段带颜色、其余片段无色
+  const marked = record.content.find((frag) => frag.content === '《满月》');
+  assert.equal(marked.color, 'yellow');
+
+  const not_full = draw_menu_with((_, era_flag) => {
+    era_flag.month = 1;
+    era_flag.date = 14;
+  });
+  assert(!not_full.fixture.text_lines().some((l) => l.includes('《满月》')));
+});
+
+test('六个功能入口：编号、正文与引擎渲染文本（不写手写 [编号] 前缀）', () => {
+  const { fixture } = draw_menu_with(() => {});
+
+  const expected = [
+    [496, '▌调教目标'],
+    [497, '▌助手'],
+    [500, '▌物品/技能'],
+    [501, '▌持有陷阱'],
+    [504, '▌地城概况'],
+    [505, '▌地城日常'],
+  ];
+  for (const [accelerator, text] of expected) {
+    const button = button_of(fixture, accelerator);
+    assert.ok(button, `入口 ${accelerator} 必须显示`);
+    assert.equal(button.text, text);
+    // showAcc 默认为真：引擎自动拼 `[快捷键] 正文`；手写前缀会得到双编号
+    // （PR #30 的教训，断言 rendered 即可钉死）
+    assert.equal(button.rendered, `[${accelerator}] ${text}`);
+  }
+});
+
+test('入口明暗：未选中调暗（@MENU_BUTTON 近似），选中正常色', () => {
+  // 开局常态：TARGET=-1 / ASSI=0 / FLAG:36=0 → 496、497 暗，500 亮
+  const fresh = draw_menu_with((fixture) => {
+    fixture.store.set('flag:10005', -1); // target
+    fixture.store.set('flag:10006', 0); // assi
+  });
+  assert.equal(button_of(fresh.fixture, 496).color, '#bbbbbb');
+  assert.equal(button_of(fresh.fixture, 497).color, '#bbbbbb');
+  assert.equal(button_of(fresh.fixture, 500).color, undefined);
+  assert.equal(button_of(fresh.fixture, 501).color, '#bbbbbb');
+
+  // 已选择：加入两个可选角色，target=31、assi=100、面板切到 4（地城概况）
+  //（指针值必须取自已加入列表，否则先被防御性修正钳掉）
+  const chosen = draw_menu_with((fixture, era_flag) => {
+    fixture.era.addCharacter(0);
+    fixture.era.addCharacter(31);
+    fixture.era.addCharacter(100);
+    era_flag.target = 31;
+    era_flag.assi = 100;
+    fixture.store.set('flag:36', 4);
+  });
+  assert.equal(button_of(chosen.fixture, 496).color, undefined);
+  assert.equal(button_of(chosen.fixture, 497).color, undefined);
+  assert.equal(button_of(chosen.fixture, 504).color, undefined);
+  assert.equal(button_of(chosen.fixture, 500).color, '#bbbbbb');
+  assert.equal(button_of(chosen.fixture, 505).color, '#bbbbbb');
+});
+
+test('防御性修正：编号不在已加入角色列表时重置为未选择', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    fixture.era.addCharacter(0); // CHARANUM = 1：序号世界里合法的只有 0
+    era_flag.target = 5; // 越界（原作 :20-21 TARGET > CHARANUM-1）
+    era_flag.assi = 3; // 越界（原作 :23-25）
+  });
+  assert.equal(era_flag.target, -1);
+  assert.equal(era_flag.assi, -1);
+
+  // ID 语义：已加入 [0, 31] 时 ID 31 合法（原作序号判据会误杀，ere 侧按
+  // 「不在已加入列表」移植，见 page-main-menu.js 的说明）
+  const id_world = draw_menu_with((fixture, era_flag) => {
+    fixture.era.addCharacter(0);
+    fixture.era.addCharacter(31);
+    era_flag.target = 31;
+    era_flag.assi = 0;
+  });
+  assert.equal(id_world.era_flag.target, 31, '合法 ID 不被误杀');
+});
+
+test('防御性修正：调教目标与助手指向同一人时重置助手', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    fixture.era.addCharacter(0);
+    fixture.era.addCharacter(31);
+    era_flag.target = 31;
+    era_flag.assi = 31;
+  });
+  // 原作 :27-29 SIF ASSI == TARGET → ASSI = -1；TARGET 保留
+  assert.equal(era_flag.assi, -1);
+  assert.equal(era_flag.target, 31);
+});
+
+test('防御性修正：所指角色被占用（CFLAG:x:1 != 0）时重置', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    fixture.era.addCharacter(0);
+    fixture.era.addCharacter(1);
+    fixture.era.addCharacter(31);
+    era_flag.target = 31;
+    era_flag.assi = 1;
+    fixture.store.set('cflag:31:1', 2); // 目标被占用
+    fixture.store.set('cflag:1:1', 0); // 助手未占用
+  });
+  assert.equal(era_flag.target, -1, 'CFLAG:TARGET:1 != 0 → TARGET = -1');
+  assert.equal(era_flag.assi, 1, '未占用的助手保留');
+});
+
+test('四个子面板存根：按 FLAG:36 分发，各带原作函数名与归属', () => {
+  const cases = [
+    [0, 'DRAW_HAVEITEMS', '物品/技能面板'],
+    [1, 'DRAW_HAVETRAPS', '持有陷阱面板'],
+    [4, 'DRAW_DUNGEON_OVERVIEW', '地城概况面板'],
+    [5, 'DRAW_DUNGEON_DAILY', '地城日常面板'],
+    // ELSE 分支（:197-198）：未知值回落物品/技能面板
+    [2, 'DRAW_HAVEITEMS', '物品/技能面板'],
+  ];
+  for (const [flag_value, erb_name, label] of cases) {
+    const { fixture } = draw_menu_with((f) => {
+      f.store.set('flag:36', flag_value);
+    });
+    const stubs = fixture
+      .text_lines()
+      .filter((line) => line.includes('docs/stub-registry.md'));
+    assert(
+      stubs.some((line) => line.includes(`@${erb_name}`)),
+      `FLAG:36=${flag_value} 应占位 @${erb_name}，实际 ${stubs}`,
+    );
+    assert(
+      stubs.some((line) => line.includes(label)),
+      `占位行应标注面板名 ${label}`,
+    );
+  }
+});
+
+test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位', () => {
+  const { fixture } = draw_menu_with(() => {});
+
+  const dividers = fixture.lines.filter((line) => line.type === 'divider');
+  // :45/:320 双线 ═ 以 solid 近似，中间三条单线 ─ 以 dashed 近似
+  assert.equal(dividers.length, 5);
+  assert.equal(dividers[0].border, 'solid');
+  assert.equal(dividers[dividers.length - 1].border, 'solid');
+  assert(dividers.slice(1, -1).every((d) => d.border === 'dashed'));
+
+  // :207 ▌Commands 标题（粗体）+ 指令面板占位（归 #24）
+  const title = fixture.text_lines().find((line) => line.includes('Commands'));
+  assert.ok(title);
+  const title_record = fixture.lines.find((line) =>
+    line.text?.includes('Commands'),
+  );
+  assert(title_record.content.every((frag) => frag.fontWeight === 'bold'));
+  assert(
+    fixture.text_lines().some((line) => line.includes('@USERSHOP')),
+    '指令面板占位行必须含 @USERSHOP（可检索）',
+  );
+});
+
+test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1日）', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  // @EVENTFIRST 只初始化 month=1，date/day_count/time 留 0；SHOW_SHOP 再把
+  // date 钳成 1——还原开局现场（month 也一并钳，照搬 :33-36 两条 SIF）
+  era_flag.month = 0;
+  era_flag.date = 0;
+  const run_shop = fixture.load_module('page/page-shop');
+
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  assert.equal(era_flag.month, 1);
+  assert.equal(era_flag.date, 1);
+  // 主菜单确实画出来了（含状态行与入口）
+  assert(
+    fixture.text_lines().some((line) => line.includes('所持金')),
+    'SHOP 处理器必须绘制主菜单',
+  );
+  assert(button_of(fixture, 496));
+});
+
+test('@SHOW_SHOP 日期钳制：正常日期不动', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.month = 5;
+  era_flag.date = 20;
+  const run_shop = fixture.load_module('page/page-shop');
+
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  assert.equal(era_flag.month, 5);
+  assert.equal(era_flag.date, 20);
+});
+
+test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', async () => {
+  const fixture = create_era_fixture();
+  const { STUBBED_CALLS } = fixture.load_module('page/page-main-menu');
+  const registry_path = path.resolve(
+    __dirname,
+    '..',
+    'docs',
+    'stub-registry.md',
+  );
+  const registry = fs.readFileSync(registry_path, 'utf8');
+
+  // 先钉死名单本身（漏登记会在此红，#22 验收抓过的假绿形态），再对账清单
+  assert.deepEqual(STUBBED_CALLS, [
+    'DRAW_HAVEITEMS',
+    'DRAW_HAVETRAPS',
+    'DRAW_DUNGEON_OVERVIEW',
+    'DRAW_DUNGEON_DAILY',
+    'USERSHOP',
+  ]);
+  // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
+  for (const name of STUBBED_CALLS) {
+    assert(registry.includes(name), `存根清单缺少 ${name}`);
+  }
+  // 登记型欠账（无运行时占位，只注释 + 清单）：page-shop.js 的商店段
+  for (const name of [
+    'CLEAR_SHOP',
+    'ITEM_SHOP',
+    'ITEM_SHOP_TRAP',
+    'SAVESTR:0',
+    '是否启用背景音乐',
+  ]) {
+    assert(registry.includes(name), `存根清单缺少 ${name}`);
+  }
+});

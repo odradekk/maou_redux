@@ -108,3 +108,55 @@ test('clear 清空输出', async () => {
   assert.equal(await fixture.era.clear(), 0);
   assert.deepEqual(fixture.text_lines(), []);
 });
+
+test('已加入角色列表：addCharacter 追加、resetData 清空（CHARANUM 等价物）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(31);
+
+  assert.deepEqual(fixture.added_characters, [0, 31]);
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31]);
+  // 返回副本：外部篡改不影响列表本体
+  fixture.era.getAddedCharacters().pop();
+  assert.deepEqual(fixture.added_characters, [0, 31]);
+
+  fixture.era.resetData();
+  assert.deepEqual(fixture.added_characters, []);
+  // 这些 API 已实装，不再走兜底记录
+  assert.deepEqual(fixture.calls, []);
+});
+
+test('printButton 记录 config.color（按钮明暗断言的落点）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.printButton('▌调教目标', 496, { color: '#bbbbbb' });
+  fixture.era.printButton('▌助手', 497);
+
+  const [dim, normal] = fixture.lines;
+  assert.equal(dim.type, 'button');
+  assert.equal(dim.color, '#bbbbbb');
+  assert.equal(normal.color, undefined);
+});
+
+test('drawLine 记录线型（isSolid → solid，默认 dashed）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.drawLine({ isSolid: true });
+  fixture.era.drawLine();
+
+  assert.deepEqual(
+    fixture.lines.map((line) => line.border),
+    ['solid', 'dashed'],
+  );
+});
+
+test('文本行保留原始片段（样式断言的落点，text 是压平结果）', () => {
+  const fixture = create_era_fixture();
+  const fragments = [
+    { content: '《满月》', color: 'yellow', fontWeight: 'bold' },
+  ];
+  fixture.era.print(fragments);
+
+  const record = fixture.lines[0];
+  assert.equal(record.type, 'text');
+  assert.equal(record.text, '《满月》');
+  assert.equal(record.content, fragments);
+});
