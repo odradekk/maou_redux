@@ -1,10 +1,13 @@
 /**
  * @file 游戏入口：引擎读完静态数据与脚本后执行本文件导出的异步函数
- * （dev-guides/01-basic.md）。当前唯一的页面是标题画面（issue #19）；主菜单
- * 等页面随曳光弹后续票接入（issue #15）。
+ * （dev-guides/01-basic.md）。
+ *
+ * 主循环与转场状态机在 system/flow/main-loop.js（issue #20）：标题画面是
+ * 初始状态，「新的猎物」经 BEGIN FIRST 转入新游戏初始化；其余页面随曳光弹
+ * 后续票接入（issue #15）。
  */
-const run_title_page = require('#/page/page-title');
+const run_main_loop = require('#/system/flow/main-loop');
 
 module.exports = async () => {
-  await run_title_page();
+  await run_main_loop();
 };

@@ -3,10 +3,12 @@
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。
  *
- * 标题画面是常驻交互循环（原作 RESTART 语义），没有自然退出点：测试用预置
- * 输入驱动交互，输入耗尽时 era.input() 抛错即是终止信号（夹具的既定设计），
- * 断言落在「耗尽瞬间的最后一块屏幕」与变量/调用记录上。画布每轮重绘时会被
- * clear 清空，故中途分支的文本反馈以 waitAnyKey 留痕与变量写入来证明。
+ * 标题画面是常驻交互循环（原作 RESTART 语义），没有自然退出点。两种终止
+ * 方式：多数用例以预置输入驱动交互，输入耗尽时 era.input() 抛错即是终止信
+ * 号（夹具的既定设计），断言落在「耗尽瞬间的最后一块屏幕」与变量/调用记
+ * 录上；「新的猎物」分支自 issue #20 起改为发出 BEGIN FIRST 转场信号，对
+ * 应用例直接捕获 BeginSignal 终止。画布每轮重绘时会被 clear 清空，故中途
+ * 分支的文本反馈以 waitAnyKey 留痕与变量写入来证明。
  *
  * 开关的持久化在单元层证到「写 global:<id> + 显式 saveGlobal」（#18 定下的
  * 口径）；跨局实机往返（重启引擎开关仍生效）由派单人在合并后实机验收。
@@ -209,24 +211,34 @@ test('无法识别的输入：重绘标题画面，不崩溃（原作 ELSE → R
   assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
 });
 
-test('选项 1（新的猎物）：送行句 + 占位反馈，读键后回标题', async () => {
+test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函数（issue #20）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
 
-  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+  // BEGIN 的 JS 等价物是异常（#6）：新游戏分支以信号终止本函数，取代
+  // #19 的占位反馈 + 读键 + continue。信号由此处的直接调用方（主循环的
+  // enter_state）接住——本用例亲自扮演接住者。
+  await assert.rejects(
+    () => run_title_page(),
+    (e) => e instanceof BeginSignal && e.state === STATE.FIRST,
+  );
 
-  // 分支次序：消费输入 1 → 打印反馈并等任意键 → 重绘 → 下一轮输入耗尽。
-  // 反馈文本在重绘时被清掉，以 waitAnyKey 留痕证明分支确已走到。
-  assert.deepEqual(fixture.inputs_consumed, [
-    { api: 'input', value: 1 },
-    { api: 'waitAnyKey' },
-  ]);
-  // 未误触开关变量（新游戏占位不得有副作用）
+  // 送行句在转场前输出，且未被重绘清掉：函数在信号处结束，循环没有跑
+  // 下一轮——这就是「流程离开标题画面」的画面级证据
+  assert(
+    fixture
+      .text_lines()
+      .includes('即使前路已经破碎，也请魔王大人当上这世界的王……'),
+  );
+  // 不再读键回标题：BEGIN 结束函数，分支内没有 waitAnyKey
+  assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
+  // 转场不写任何变量（RESETDATA/ADDCHARA 归 #22）
   assert.deepEqual(fixture.var_writes, []);
-  // 读键后回到标题画面
-  assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
 });
 
 test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () => {

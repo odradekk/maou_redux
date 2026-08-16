@@ -18,11 +18,15 @@
  *     文本输出标题，满足「标题画面显示游戏标题」的验收。
  *   - RESTART 的语义是重跑本函数，ere 侧写成 for(;;) 循环，不用递归。
  *   - :93/:103 CLEARLINE 1（清除输入回显行）不镜像：ere 的输入不经回显成行。
- *   - 新游戏（RESETDATA/ADDCHARA/BEGIN FIRST，归 issue #22）与读档
- *     （CALL @SYSTEM_LOADGAME，归后续存档票）均未移植，只留占位反馈。
+ *   - 新游戏：:103 BEGIN FIRST 的转场已接通（issue #20）——选「新的猎物」
+ *     即发出转场信号、结束本函数，信号由主循环接住（system/flow/main-loop.js）。
+ *     其前的 RESETDATA/ADDCHARA 0/CALL @ADDCHARA_EX（:100-102）仍归 issue #22，
+ *     由 @EVENTFIRST 的存根给出可见反馈（event/event-first.js）。
+ *   - 读档（CALL @SYSTEM_LOADGAME）未移植（归后续存档票），维持占位反馈。
  */
 
 const era = require('#/era-electron');
+const { begin, STATE } = require('#/system/flow/begin-signal');
 const era_global = require('#/era-utils/era-global');
 
 // 原作 :58-73：GLOBAL:99 == 0 时展开的完整制作名单。末行「※特别鸣谢…※」在
@@ -146,15 +150,16 @@ async function run_title_page() {
     const result = await era.input();
 
     if (result === 1) {
-      // 原作 :92-101 新游戏：送行句与分割线照原作，其后 RESETDATA/ADDCHARA 0/
-      // CALL @ADDCHARA_EX/BEGIN FIRST 未移植（issue #22），只留占位反馈；
-      // 首句 STOPBGM（无音乐可停）与 CLEARLINE 1（输入不回显）均不镜像。
+      // 原作 :92-101 新游戏：送行句与分割线照原作；首句 STOPBGM（无音乐可
+      // 停）与 CLEARLINE 1（输入不回显）不镜像。
       era.print('即使前路已经破碎，也请魔王大人当上这世界的王……');
       era.drawLine();
       era.setAlign('left'); // 原作 :99 ALIGNMENT LEFT
-      era.print('（新游戏流程尚未移植，此处为占位反馈——见 issue #22。）');
-      await era.waitAnyKey();
-      continue; // 占位近似：读键后重绘标题（原作此处 BEGIN FIRST 进游戏）
+      // 原作 :100-102 RESETDATA/ADDCHARA 0/CALL @ADDCHARA_EX 归 issue #22；
+      // :103 BEGIN FIRST 已接通——发出转场信号并当场结束本函数（begin 只
+      // throw 不返回，下方语句与循环的下一轮都不再执行），信号由主循环
+      // 的 enter_state 接住转入 FIRST 状态。
+      begin(STATE.FIRST);
     }
 
     if (result === 0) {
@@ -185,8 +190,9 @@ async function run_title_page() {
     }
 
     // 原作 :114-115 ELSE → RESTART：无法识别的输入重绘标题画面，不报错。
-    // （原作函数尾的 RETURN RESULT 只在 BEGIN/CALL 转场路径上到达；本移植的
-    // 转场未接，循环常驻，等价于标题画面不退出。）
+    // （原作函数尾的 RETURN RESULT 只在 BEGIN/CALL 转场路径上到达；本移植
+    // 的转场经 begin() 以信号退出函数——循环仅在信号抛出时离开，其余输入
+    // 都回到循环头重绘，等价于标题画面不退出。）
   }
 }
 
