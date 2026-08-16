@@ -157,17 +157,31 @@ orca worktree create --name t<N>-<slug> --no-parent --agent droid --prompt "<简
 - 在 `--repo` 省略时 Orca 从当前 worktree 推断仓库；跨仓库才需要 `orca repo list --json` 取 id。
 - 记下返回里的 `worktree.id`（形如 `<repoId>::<绝对路径>`，**两段都要，只给 repoId 不是 worktree id**）与 `startupTerminal.handle`。
 
-`--prompt` 的简报模板：
+`--prompt` 的简报模板。**第一行必须是 `/implement` 加一个空格再接任务描述**——斜杠命令后没有空格不会被识别为技能调用；写成「请用 /implement 技能……」是在**请求**它调用，不如直接调用稳：
 
 ```
-先读仓库根 AGENTS.md。
-用 /implement 技能实现 issue #<N>：<标题>。
+/implement issue #<N>：<标题>
 工单正文与验收清单：gh issue view <N> --repo odradekk/maou_redux --comments
-完成后自检 npm test、npx eslint .、npx prettier --check .，逐条对照验收清单，
-按 Conventional Commits 提交（scope 见 AGENTS.md「代码约定」）。不要自行合并。
+父票（本票在整体中的位置与测试策略）：gh issue view 15 --repo odradekk/maou_redux
+相关决议，动手前请读：#<a>、#<b>
+
+<三到五条它自己查会很贵、且容易查错的既有事实，直接给结论>
+
+自检与提交：
+- npm test、npx eslint .、npx prettier --check . 全绿
+- 逐条对照验收清单
+- 验收里写着「且此行为有测试」的每一条，做变异测试自证：把被测规则改坏，
+  确认真的有用例失败（本项目在 #10 吃过亏——测试全绿但规则已失效）
+- 按 Conventional Commits 提交，scope 用 <scope>
+- 不要自行合并，也不要开 PR，完成后停下等验收
 ```
 
-**必须要求 agent 走 `/implement`。** 它内部驱动 `tdd` 一次一个红绿切片，收尾跑 `code-review` 的两轴审查（Standards + Spec）再提交。绕过它就少了这层自检，交上来的东西得从头人工复核。
+两条写法约定：
+
+- **不必让它读 `AGENTS.md`**——agent 会自动加载本文件，写进简报只是浪费开头的注意力。
+- **简报里要给结论，不要给线索。** 让它自己去 `target/`（315,953 行）或引擎源码里重查一件已经查实的事，既慢又容易得出与既有决议矛盾的结果。但**属于本票自己要解决的设计问题不要替它决定**，只要求它把判断依据写在 issue 上。
+
+`/implement` 内部驱动 `tdd` 一次一个红绿切片，收尾跑 `code-review` 的两轴审查（Standards + Spec）再提交。绕过它就少了这层自检，交上来的东西得从头人工复核。
 
 ### 4. 监督
 
