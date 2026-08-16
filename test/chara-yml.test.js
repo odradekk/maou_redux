@@ -26,6 +26,10 @@ const {
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 const {
+  attach_variable_tables,
+  load_repo_variable_tables,
+} = require('./helpers/static-tables');
+const {
   parse_chara_csv,
   read_text,
   to_chara_yaml,
@@ -41,9 +45,17 @@ const SOURCE_FILES = fs
   .filter((name) => /^Chara\d+\.csv$/i.test(name))
   .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
 
+// 入库的变量表（#38：Base/Talent/Item，用引擎代码装载 yml/ 产物）。
+// 表落地前，基礎/素質 预设行在两条加载路径上同样被丢弃（#35 验收时的
+// 对拍盲区）；表落地后挂上真表，这些字段进入对拍视野——装载循环把
+// staticData.base/talent 的 name→id 翻译用在预设行上，45 文件对拍因此
+// 从「两侧同错」升级为「两侧同生效」。
+const repo_tables = load_repo_variable_tables();
+
 // 走一遍完整装载：源 CSV 文本 →（引擎 csv 路径 → 装载循环）
 function load_source_csv(csv_text) {
   const loader = create_chara_loader();
+  attach_variable_tables(loader, repo_tables);
   loader.load_rows(engine.parse_data_file(csv_text, 'csv', 'chara'));
   return loader;
 }
@@ -51,6 +63,7 @@ function load_source_csv(csv_text) {
 // 走另一条：同一文件的转换产物 →（引擎 yml 路径 → 同一装载循环）
 function load_product_yml(yml_text) {
   const loader = create_chara_loader();
+  attach_variable_tables(loader, repo_tables);
   loader.load_rows(engine.parse_data_file(yml_text, 'yml', 'chara'));
   return loader;
 }
@@ -116,12 +129,15 @@ engine_test(
     assert.deepEqual(from_yml.static_data, from_csv.static_data);
     assert.deepEqual(from_yml.errors, from_csv.errors);
     // 基础字段直接点名：番号/名前/呼び名（引擎规范名 id/name/callname）。
-    // 基礎/素質 行在 Base/Talent 表落地前被引擎丢弃（errors 两侧一致），
-    // 落表后由上面的全量对拍继续兜底。
+    // #38 起变量表在场，基礎/素質 预设不再被丢弃（错误清单为空、预设
+    // 落进 preset.base/talent），由上方全量对拍兜底。
+    assert.deepEqual(from_yml.errors, []);
     assert.deepEqual(from_yml.static_data.chara[0], {
       id: 0,
       name: '你',
       callname: '你',
+      base: { 0: 10000, 1: 10000, 2: 10000 },
+      talent: { 1: 1, 122: 1 },
     });
   },
 );
@@ -161,32 +177,63 @@ engine_test(
   },
 );
 
-// —— 预设值的折叠缺省：Base/Talent 在场时的引擎对拍（表落地场景的前置证明）——
+// —— 预设落点：表在场后基礎/素質 真的进变量（#38 验收项） ——
 
 engine_test(
-  '两列行的缺省值经引擎装载落在预设上（Base/Talent 表在场时）',
+  '引擎 addCharacter：基礎 0/1/2 与 素質 1/122 落到 base/maxbase/talent 上',
   () => {
-    // 当前 yml/ 还没有 Base/Talent 表，45 文件对拍里这些行两侧同样被丢弃、
-    // 折叠缺省值是否写对对装载结果不可见。本用例预置两张表（形状为
-    // 变量名→序号，eraStart 变量表分支的 staticData[i][o]=n），把这段语义
-    // 也置于引擎对拍之下——表落地后产物无需改动，此处即其前置证明。
-    // 第二列两种写法各占一行：序号形（素質,1）与名称形（基礎,体力，经
-    // staticData 翻译回序号）。
+    // #35 时代 Base/Talent 缺表，这两个初始化循环被 `void 0 !==` 守卫
+    // 整段跳过（本文件上一条用例是其回归锁）；#38 表落地后预设值必须
+    // 真正落进引擎数据层。基礎预设同时落 base 与 maxbase（dev-guide：
+    // 基础属性预设的是最大值；引擎 addCharacter 对两表取同一预设）。
+    const product = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', 'Chara0.yml'),
+      'utf8',
+    );
+    const loader = load_product_yml(product);
+    const adder = create_add_character(loader.static_data);
+    assert.equal(adder.add(0), true);
+
+    // base 表 6 个下标全量：预设的 0/1/2 = 10000，其余初始化为 0
+    assert.deepEqual(adder.data.base[0], {
+      0: 10000,
+      1: 10000,
+      2: 10000,
+      3: 0,
+      4: 0,
+      10: 0,
+    });
+    assert.deepEqual(adder.data.maxbase[0], {
+      0: 10000,
+      1: 10000,
+      2: 10000,
+      3: 0,
+      4: 0,
+      10: 0,
+    });
+    // talent 只点名预设项（267 个下标全量初始化，0 值不逐条抄）
+    assert.equal(adder.data.talent[0][1], 1);
+    assert.equal(adder.data.talent[0][122], 1);
+    assert.equal(adder.data.talent[0][0], 0, '未预设的素质初始化为 0');
+  },
+);
+
+// —— 预设值的折叠缺省：经引擎装载落在预设上（两列行缺省值 + 名称形翻译）——
+
+engine_test(
+  '两列行的缺省值经引擎装载落在预设上（挂入库的 Base/Talent 表）',
+  () => {
+    // #35 时代此用例以手工预置的两张表钉住「折叠缺省值」语义（当时 yml/
+    // 还没有 Base/Talent，45 文件对拍对这些行天然盲）；#38 表落地后改挂
+    // 入库产物，语义钉住不变：第二列两种写法各占一行——序号形（素質,1）
+    // 与名称形（基礎,体力，经 staticData 翻译回序号 0）。
     const csv_text = '番号,7\n素質,1,\n素質,122,\n基礎,体力,500\n';
     const { groups, warnings } = parse_chara_csv(csv_text);
     assert.deepEqual(warnings, []);
     const yml_text = to_chara_yaml(groups, { source: 'probe.csv' });
 
-    const load_with_tables = (text, suffix) => {
-      const loader = create_chara_loader();
-      loader.static_data.talent = { 処女: 1, 悪魔: 122 };
-      loader.static_data.base = { 体力: 0 };
-      loader.load_rows(engine.parse_data_file(text, suffix, 'chara'));
-      return loader;
-    };
-
-    const from_csv = load_with_tables(csv_text, 'csv');
-    const from_yml = load_with_tables(yml_text, 'yml');
+    const from_csv = load_source_csv(csv_text);
+    const from_yml = load_product_yml(yml_text);
 
     assert.deepEqual(
       from_yml.static_data.chara,
@@ -202,10 +249,10 @@ engine_test(
   },
 );
 
-// —— 引擎寻址：era.get('chara') / era.get('callname:0:-1')（验收项）——
+// —— 引擎寻址：era.get('chara') / era.get('callname:0:-1') / 预设变量（验收项）——
 
 engine_test(
-  '引擎 setVar 寻址：get("chara") 为 [0]，get("callname:0:-1") 为「你」',
+  '引擎 setVar 寻址：get("chara") 为 [0]，预设的 base/talent 变量可寻址',
   () => {
     const product = fs.readFileSync(
       path.join(REPO_ROOT, 'yml', 'Chara0.yml'),
@@ -216,15 +263,27 @@ engine_test(
     assert.equal(adder.add(0), true);
 
     // setVar 是 get/set 共用的寻址实现（get(e){return this.set(e)}）；
-    // this 字段按两处用到的最小集合构造
+    // this 字段按两处用到的最小集合构造（*name 寻址读 fieldNames）
     const era_get = (var_name) =>
       engine.set_var.call(
-        { data: adder.data, staticData: loader.static_data, global: {} },
+        {
+          data: adder.data,
+          staticData: loader.static_data,
+          fieldNames: repo_tables.field_names,
+          global: {},
+        },
         var_name,
       );
 
     assert.deepEqual(era_get('chara'), [0], 'era.get("chara") 不再为空');
     assert.equal(era_get('callname:0:-1'), '你');
     assert.equal(era_get('callname:0:-2'), '你');
+    // #38 验收：预设值经引擎寻址可读（数值下标与名称下标各测一条）
+    assert.equal(era_get('base:0:0'), 10000);
+    assert.equal(era_get('base:0:体力'), 10000);
+    assert.equal(era_get('maxbase:0:2'), 10000);
+    assert.equal(era_get('talent:0:122'), 1);
+    assert.equal(era_get('talentname:122'), '男人');
+    assert.equal(era_get('basename:0'), '体力');
   },
 );

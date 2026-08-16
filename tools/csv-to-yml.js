@@ -1,25 +1,30 @@
 /**
- * @file 静态表转换器：CSV → 引擎 YAML（issue #17 GameBase，issue #35 角色表）。
+ * @file 静态表转换器：CSV → 引擎 YAML（#17 GameBase，#35 角色表，#38 变量表）。
  *
  * 一次性转换、默认不覆盖（issue #10 的产物边界规则）：产物进 git、归人工维护，
  * 已存在时一律跳过，重写必须显式 --force。规则有测试钉死，防止一句清理代码
  * 让它失效（#10 的原型曾因此销毁人工修改）。
  *
- * 用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>]
+ * 用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>] [--table <表名>]
  *   默认输入 csv/GameBase.csv，输出 yml/GameBase.yml（相对仓库根目录）。
  *   csv/ 目录已随 #17 迁移移除，默认路径仅供 --force 重转时参考（原始输入
  *   从 git 历史取回）。
  *   --chara 0       转换 target/CSV/Chara/Chara0.csv → yml/Chara0.yml，
  *                   编号可逗号分隔（--chara 31,32）；all 为全部 45 个。
+ *   --table talent  转换 target/CSV/Talent.csv → yml/Talent.yml（表名不分
+ *                   大小写，按磁盘文件名解析），可逗号分隔（--table talent,item）。
+ *                   item 表是唯一带第三列（价格）的变量表（引擎 parseDataFile
+ *                   对非 chara/item/res 表一律截断为前两列）。
  *
  * 解析逻辑逐行镜像引擎（ere-4.8.0 的 background.js，parseDataFile 模块），
  * 保证「引擎读 CSV 得到什么，本脚本就拿到什么」；YAML 侧的等价性由
- * test/csv-to-yml.test.js 与 test/chara-yml.test.js 验证——后者直接驱动
- * 引擎自己的解析器与装载循环对拍（#17 的实机验证手法固化为测试，#35）。
+ * test/csv-to-yml.test.js、test/chara-yml.test.js 与 test/variable-yml.test.js
+ * 验证——后两者直接驱动引擎自己的解析器与装载循环对拍（#17 的实机验证手法
+ * 固化为测试，#35/#38）。
  *
  * 零第三方依赖；编码识别用内置 TextDecoder（Shift-JIS 兜底，issue #10 陷阱一）。
- * 注意：GameBase 转换的输入是 ere 版 CSV（csv/GameBase.csv）；角色表转换的
- * 输入是 target/ 的 Emuera 原版（只读输入，未删）。
+ * 注意：GameBase 转换的输入是 ere 版 CSV（csv/GameBase.csv）；角色表与变量表
+ * 转换的输入是 target/ 的 Emuera 原版（只读输入，未删）。
  */
 
 const fs = require('node:fs');
@@ -389,6 +394,146 @@ function to_chara_yaml(groups, { source = '' } = {}) {
   return `${lines.join('\n')}\n`;
 }
 
+// —— 变量表（issue #38）——
+//
+// CSV 形状：每行 [序号, 名称]（item 表额外带第三列价格；引擎 csv 分支对非
+// chara/item/res 表截断为前两列，item 表保留全列——第 4 列起会被装载循环
+// 记进 fieldNames 的开发套件键 k）。
+//
+// YAML 形状（dev-guides/09-static.md 的变量数据表示例，引擎 yml 分支 s()
+// 把 {名称: {id, price}} 展开为行 [id, 名称, price]）：顶层键 = 变量名，
+// 值为嵌套映射，item 表带 price。#5 决议的 name/type 元数据字段本形状不写
+// ——渐进命名，等对应子系统移植时再补。
+//
+// 装载语义（eraStart 变量表分支，逐句镜像）：
+//   - 序号重复：从给定序号起自增到第一个空位（引擎 s() 函数），告警；
+//   - 名称重复：name→id 后者覆盖前者、序号各自保留（引擎对象语义）。
+//     yml 以名称为键，同名双序号无法表达——产物保留后者（与 name→id 语义
+//     一致），先出现的序号记入 dropped 并告警。实测 Item.csv 有 5 对重名
+//     （1000-1004 与 1005-1009，名称与价格完全相同），引擎自带的格式转换
+//     器（app.asar 模块 682）对这种形状同样有损（同名键写两遍，yml 解析
+//     先者胜），非本转换器引入的偏差，详见 issue #38 评论。
+
+// 解析变量表 CSV，产出 { entries, dropped, warnings }：
+//   entries 按首次出现的位置排序、同名取后者的值（对象键序语义）；
+//   dropped 是被同名后者顶掉的前行（仅告警与产物头注用，不写进 YAML）
+function parse_variable_csv(text, { table } = {}) {
+  const is_item = table === 'item';
+  const warnings = [];
+  const rows = [];
+  const stripped = text.replace(/\s*;[^\n]*/g, '');
+  for (const line of stripped.split('\n')) {
+    const cols = line
+      .split(',')
+      .map((cell) => cell.replace(/(^\s+|\s+$)/, ''))
+      .filter(Boolean)
+      .map(engine_get_number);
+    if (cols.length < 2) {
+      continue; // 引擎丢弃单元素行
+    }
+    if (!is_item && cols.length > 2) {
+      warnings.push(
+        `序号 ${cols[0]} 一行第 3 列起被引擎截断（非 item 变量表只读前两列）`,
+      );
+    }
+    if (is_item && cols.length > 3) {
+      warnings.push(
+        `序号 ${cols[0]}「${cols[1]}」第 4 列「${cols[3]}」非注释文本：` +
+          '引擎装载会把它记进 fieldNames 的开发套件键（k），产物按文档形状' +
+          `不写该列，k 回落为缺省 item${cols[0]}（仅影响开发套件命名）`,
+      );
+    }
+    if (is_item && cols.length === 2) {
+      warnings.push(
+        `序号 ${cols[0]}「${cols[1]}」缺价格列：引擎 csv 路径记 undefined、` +
+          'yml 路径记 null，产物不写 price 字段以贴近 csv 侧',
+      );
+    }
+    rows.push(is_item ? cols.slice(0, 3) : cols.slice(0, 2));
+  }
+
+  // 序号去重：镜像引擎 s()——被占用则自增到第一个空位，告警原文同构
+  const taken_names = new Map(); // 序号(String) → 名称，对应引擎 fieldNames 的占用
+  const entries = [];
+  const index_by_name = new Map();
+  const dropped = [];
+  for (const [raw_id, name, price] of rows) {
+    let id = raw_id;
+    while (taken_names.has(String(id))) {
+      id = engine_get_number(Number(id) + 1);
+    }
+    if (String(id) !== String(raw_id)) {
+      warnings.push(
+        `${table}.csv 出现重复变量序号! 变量 ${name} 的序号 ${raw_id} ` +
+          `已被分配给 ${taken_names.get(String(raw_id))}! 序号重置为 ${id}`,
+      );
+    }
+    taken_names.set(String(id), name);
+
+    const entry = is_item
+      ? { id, name, ...(price !== undefined ? { price } : {}) }
+      : { id, name };
+    if (index_by_name.has(String(name))) {
+      const old_index = index_by_name.get(String(name));
+      const old = entries[old_index];
+      dropped.push(old);
+      warnings.push(
+        `名称「${name}」重复（序号 ${old.id} 与 ${id}）：引擎 name→id ` +
+          '后者覆盖前者、序号各自保留；yml 以名称为键无法表达双序号，产物' +
+          `保留后者，序号 ${old.id} 的 *name/*price 寻址将不可用`,
+      );
+      entries[old_index] = entry; // 保持首次出现的位置（对象键序语义）
+    } else {
+      index_by_name.set(String(name), entries.length);
+      entries.push(entry);
+    }
+  }
+  return { entries, dropped, warnings };
+}
+
+// 变量表 YAML：键名一律双引号（同 GameBase/角色表约定）；id/price 数值裸写。
+// 重名合并的先例写进头注（产物归人工维护，偏差必须自文档化）。
+function to_variable_yaml(entries, dropped, { table, source } = {}) {
+  const lines = [
+    `# 转换自 target/CSV/${source}（tools/csv-to-yml.js，issue #38）`,
+    `# 本文件归人工维护：转换器重跑默认不覆盖，需要重新生成请加 --force --table ${table}`,
+  ];
+  if (dropped.length > 0) {
+    lines.push(
+      '#',
+      '# 重名合并（yml 以名称为键，同名双序号无法表达；引擎 name→id 语义是',
+      '# 后者覆盖，故保留较大序号，依据见 issue #38 评论）：',
+    );
+    for (const item of dropped) {
+      lines.push(`#   序号 ${item.id}「${item.name}」并入后者的名称键`);
+    }
+  }
+  for (const entry of entries) {
+    lines.push(`${JSON.stringify(entry.name)}:`);
+    lines.push(`  id: ${entry.id}`);
+    if (entry.price !== undefined) {
+      lines.push(`  price: ${entry.price}`);
+    }
+  }
+  return `${lines.join('\n')}\n`;
+}
+
+// 组装一次变量表转换。空表拒绝写出（变量表为空意味着装载时整表缺失）。
+function convert_variable({ table, input, output, force = false }) {
+  const { text, enc } = read_text(input);
+  const { entries, dropped, warnings } = parse_variable_csv(text, { table });
+  if (entries.length === 0) {
+    throw new Error('输入中没有可用的变量表条目，检查文件内容与格式');
+  }
+  const source = path.basename(input);
+  const result = write_product(
+    output,
+    to_variable_yaml(entries, dropped, { table, source }),
+    { force },
+  );
+  return { status: result.status, output, warnings, enc, dropped };
+}
+
 // 产物写出（产物边界规则的核心）：已存在且无 force 一律跳过。
 // 除此之外不做任何清理——#10 的教训：一句无条件删除就能让本检查形同虚设。
 function write_product(target, content, { force = false } = {}) {
@@ -428,7 +573,7 @@ function convert_chara({ input, output, force = false }) {
 
 // 解析命令行参数；未知参数报用法
 function parse_args(argv) {
-  const options = { force: false, chara: [] };
+  const options = { force: false, chara: [], table: [] };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--force' || arg === '-f') {
@@ -440,6 +585,15 @@ function parse_args(argv) {
       }
       options.chara.push(...value.split(',').map((item) => item.trim()));
       i += 1;
+    } else if (arg === '--table') {
+      const value = argv[i + 1];
+      if (value === undefined) {
+        throw new Error(
+          '--table 需要一个参数：变量表名（逗号分隔），如 talent,item',
+        );
+      }
+      options.table.push(...value.split(',').map((item) => item.trim()));
+      i += 1;
     } else {
       throw new Error(`未知参数：${arg}`);
     }
@@ -447,11 +601,32 @@ function parse_args(argv) {
   return options;
 }
 
-const USAGE = '用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>]';
+const USAGE =
+  '用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>] [--table <表名>]';
+
+// 变量表源文件解析：表名不分大小写，按 target/CSV 下的磁盘文件名匹配
+// （引擎同样以 toLowerCase 归一表名）。找不到即报错，绝不猜路径。
+function resolve_table_source(table, csv_dir) {
+  const wanted = `${table.toLowerCase()}.csv`;
+  const match = fs
+    .readdirSync(csv_dir)
+    .find((name) => name.toLowerCase() === wanted);
+  if (!match) {
+    throw new Error(`target/CSV 下没有 ${wanted}（--table ${table}）`);
+  }
+  return match;
+}
 
 // CLI 入口。overrides 供测试注入临时路径，默认相对仓库根。
 function main(argv, overrides = {}) {
-  const { input, output, chara_dir, chara_out_dir } = overrides;
+  const {
+    input,
+    output,
+    chara_dir,
+    chara_out_dir,
+    table_csv_dir,
+    table_out_dir,
+  } = overrides;
   let options;
   try {
     options = parse_args(argv);
@@ -479,6 +654,21 @@ function main(argv, overrides = {}) {
           convert_chara({
             input: path.join(src_dir, `Chara${id}.csv`),
             output: path.join(out_dir, `Chara${id}.yml`),
+            force: options.force,
+          }),
+        );
+      }
+    } else if (options.table.length > 0) {
+      // 变量表模式：target/CSV/<表名>.csv → yml/<表名>.yml（大小写随源文件）
+      const src_dir = table_csv_dir ?? path.join(REPO_ROOT, 'target', 'CSV');
+      const out_dir = table_out_dir ?? path.join(REPO_ROOT, 'yml');
+      for (const table of options.table) {
+        const source_name = resolve_table_source(table, src_dir);
+        reports.push(
+          convert_variable({
+            table: table.toLowerCase(),
+            input: path.join(src_dir, source_name),
+            output: path.join(out_dir, source_name.replace(/\.csv$/i, '.yml')),
             force: options.force,
           }),
         );
@@ -525,15 +715,19 @@ module.exports = {
   CHARA_NAME_MAPPING,
   convert,
   convert_chara,
+  convert_variable,
   engine_get_number,
   main,
   map_chara_key,
   map_gamebase_key,
   parse_chara_csv,
   parse_gamebase_csv,
+  parse_variable_csv,
   read_text,
+  resolve_table_source,
   to_chara_yaml,
   to_gamebase_yaml,
+  to_variable_yaml,
   write_product,
 };
 
