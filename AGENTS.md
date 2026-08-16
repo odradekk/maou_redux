@@ -12,19 +12,19 @@
 
 脚手架已能启动，**游戏本身还没有任何内容**：
 
-| 项                           | 状态                                                              |
-| ---------------------------- | ----------------------------------------------------------------- |
-| `ere/main.js`                | 只有 `era.print('Hello World!')`                                  |
-| `ere/era-electron.js`（SDK） | 已就位，`sdk: '4.8.0'`，与运行时版本一致                          |
-| `csv/GameBase.csv`           | 已就位，8 行；游戏标识 `931060`、版本 `93106`、最低支持版本同版本 |
-| `csv/`                       | 只有 `GameBase.csv`，变量表尚未建立                               |
-| `res/`                       | 只有 `.gitkeep`                                                   |
-| `sav/global.sav`             | 由引擎自动生成，已 gitignore；**删掉即可，引擎会重建**            |
-| git                          | 仓库尚无任何提交                                                  |
+| 项                           | 状态                                                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ere/main.js`                | 只有 `era.print('Hello World!')`                                                                                   |
+| `ere/era-electron.js`（SDK） | 已就位，`sdk: '4.8.0'`，与运行时版本一致                                                                           |
+| `yml/GameBase.yml`           | 已就位，8 个字段；游戏标识 `931060`、版本 `93106`、最低支持版本同版本（由 `csv/GameBase.csv` 迁移而来，issue #17） |
+| `yml/`                       | 只有 `GameBase.yml`，变量表尚未建立                                                                                |
+| `res/`                       | 只有 `.gitkeep`                                                                                                    |
+| `sav/global.sav`             | 由引擎自动生成，已 gitignore；**删掉即可，引擎会重建**                                                             |
+| git                          | 仓库尚无任何提交                                                                                                   |
 
 引擎已验证可加载本仓库并输出 `Hello World!`（见 issue #2）。
 
-**`sav/global.sav` 是引擎产物，不是仓库资产。** 它盖着游戏标识（当前 `931060`），与 `csv/GameBase.csv` 的【游戏标识】不一致时引擎会**拒绝启动并报错**，而不是静默重置（`dev-guides/11-saves.md:55`；第 56 行的「重置」只适用于版本号过低的情形）。改动【游戏标识】后必须删掉这个文件。
+**`sav/global.sav` 是引擎产物，不是仓库资产。** 它盖着游戏标识（当前 `931060`），与 `yml/GameBase.yml` 的【游戏标识】不一致时引擎会**拒绝启动并报错**，而不是静默重置（`dev-guides/11-saves.md:55`；第 56 行的「重置」只适用于版本号过低的情形）。改动【游戏标识】后必须删掉这个文件。
 
 ## 目录结构
 
@@ -34,7 +34,8 @@ D:\Code\era\
 │   ├── main.js              #   导出 async 函数，引擎启动后调用它
 │   ├── era-electron.js      #   引擎 SDK（4.8.0，取自引擎仓库，勿改名或移动）
 │   └── jsconfig.json        #   路径别名 #/* → ere/*
-├── csv/                     # ← 静态数据表（ere.config.json 的 static 指向此处）
+├── yml/                     # ← 静态数据表，YAML 格式（ere.config.json 的 static 须指向此处，见下）
+├── tools/                   # ← 离线转换脚本（纯 Node、零第三方依赖，不受 ere/ 的依赖限制）
 ├── res/                     # ← 图片/音频资源（当前 resource: false，未启用）
 ├── sav/                     # ← 存档（*.sav 已 gitignore，保留 .gitkeep）
 ├── ere.config.json          # 引擎配置（已 gitignore，属本地工作文件）
@@ -43,7 +44,7 @@ D:\Code\era\
 └── target/                  # ← 移植源：Emuera 版《ERA魔王》，只读，不要改
 ```
 
-`target/` 是移植的**输入**，视为只读参考资料。移植产物一律写进 `ere/`、`csv/`、`res/`。
+`target/` 是移植的**输入**，视为只读参考资料。移植产物一律写进 `ere/`、`yml/`、`res/`。
 
 ## 运行与调试
 
@@ -53,9 +54,20 @@ D:\Code\era\
 2. 菜单【游戏】→【打开游戏】，选择仓库根目录 `D:\Code\era`
 3. 改完代码按 `Ctrl+R`（或【游戏】→【重载游戏】）热重载
 
-引擎启动顺序：读配置 → 读 `csv/*.csv`（**`GameBase.csv` 必需**）→ 读 `res/` → 以 `ere/main.js` 为入口加载脚本 → 注入 SDK → 读 `sav/` → 执行 `main.js` 导出的函数。
+引擎启动顺序：读配置 → 读 `yml/*.yml`（**`GameBase.yml` 必需**）→ 读 `res/` → 以 `ere/main.js` 为入口加载脚本 → 注入 SDK → 读 `sav/` → 执行 `main.js` 导出的函数。
 
-配置优先级：`csv/_fixed.json` > `ere.config.json` > `csv/_config.json` > 引擎默认值。
+配置优先级：`yml/_fixed.json` > `ere.config.json` > `yml/_config.json` > 引擎默认值（`_fixed.json` / `_config.json` 从静态数据目录读取，当前均不存在）。
+
+### 静态数据目录：`yml/`（issue #17）
+
+静态表是 **YAML 格式的 `yml/`**，由 ere 版 `csv/GameBase.csv` 一次性迁移而来（`csv/` 已随之清空移除，仓库不留两份真相）。两条引擎行为（#13 读 `background.js` 源码确认）决定了迁移形态：
+
+- 静态目录**整个二选一**：引擎按 `yml > json > csv` 的优先级挑**一个**目录读取，不存在逐文件混读；
+- `system.static` 只是**搜索起点**：所指目录不存在时会顺次回落，全都不存在则找不到 `GameBase`，拒绝启动。
+
+**克隆本仓库后必须把本地 `ere.config.json` 的 `system.static` 设为 `"yml"`**（该文件不进 git；引擎每次启动会把合并后的配置写回它）。若沿用旧的 `"csv"`，`csv/` 目录已不存在，引擎将找不到 `GameBase` 而无法启动。
+
+`yml/` 的产物由 `tools/csv-to-yml.js` 生成（纯 Node、零依赖；解析逻辑逐行镜像引擎）。**产物进 git、归人工维护：转换器重跑默认不覆盖已存在的产物，重新生成必须显式 `node tools/csv-to-yml.js --force`**（issue #10 的产物边界规则，有测试钉死）。默认输入 `csv/GameBase.csv` 已随迁移删除——`GameBase.yml` 此后以人工修改为准，如需从头重转，先从 git 历史取回该文件。YAML 键名一律加引号：引擎自带的转换器裸写键名，键含 `:` / `#` 或首尾空格时会产出无法解析的 YAML（#10 实测）。
 
 代码检查（直接用 npx）：
 
@@ -72,7 +84,7 @@ npm test              # 等价 node --test；test/ 目录下所有 .js 都会被
 
 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则中**各写了一份且取值相同**（单引号、分号、尾逗号 `all`、`endOfLine: auto`），两条命令不会打架。改格式约定时**必须同时改这两处**，否则 eslint 与 prettier 会给出互相矛盾的结果。
 
-`.prettierignore` 排除了 `target/`、`ere-4.8.0-win-x64/`、`dev-guides/`、`sav/`。**别删它**：prettier 默认扫描全仓库，没有它 `npx prettier --write .` 会重写只读移植源 `target/` 里的 68MB 文件（且会在其中的 Shift-JIS 日文 HTML 上直接报错退出）。
+`.prettierignore` 排除了 `target/`、`ere-4.8.0-win-x64/`、`dev-guides/`、`sav/`、`yml/`（产物键名双引号是转换器约定，prettier 的 `singleQuote` 风格会把它改坏）。**别删它**：prettier 默认扫描全仓库，没有它 `npx prettier --write .` 会重写只读移植源 `target/` 里的 68MB 文件（且会在其中的 Shift-JIS 日文 HTML 上直接报错退出）。
 
 ## 引擎 API 与硬约束
 
