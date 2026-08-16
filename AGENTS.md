@@ -85,7 +85,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
 - **文件名** kebab-case 带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
-- **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `utils` / `data` / `i18n`。
+- **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `chara` / `utils` / `data` / `i18n`（`chara` = 角色域代码，如 `#/chara/chara-ex`，T6 引入）。
 - **变量语义必须注释**——最关键的一条，`era.get('global:3')` 本身不可读：
 
   ```js

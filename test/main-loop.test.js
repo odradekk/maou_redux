@@ -36,8 +36,10 @@ test('端到端：标题选「新的猎物」→ FIRST 转场 → 存根可见�
   ]);
   // 终态画面是标题（存根把流程送回标题后重绘）
   assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
-  // 转场全程无变量副作用（新游戏真初始化归 #22）
-  assert.deepEqual(fixture.var_writes, []);
+  // 新游戏路径的变量副作用恰为角色 0 专属初始化的一条写入（ADDCHARA 0 →
+  // 经分发注册表 → CHARA_EX_0，issue #21）；RESETDATA 等真初始化归 #22。
+  // 全量断言，任何混入的意外写入都会当场暴露
+  assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);
 });
 
 test('FIRST 存根（@EVENTFIRST，真身归 #22）：可见反馈 + 读键 + 暂存回标题', async () => {
