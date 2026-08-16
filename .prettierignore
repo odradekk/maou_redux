@@ -7,6 +7,10 @@ ere-4.8.0-win-x64/
 # 引擎官方手册，上游材料
 dev-guides/
 
+# 外部技能包，上游材料：保持与上游逐字一致才能无痛升级
+# （prettier 实测会重写其中 32 个文件）
+.factory/skills/emuera-basic-agent-guide/
+
 node_modules/
 sav/
 

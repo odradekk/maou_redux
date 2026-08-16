@@ -138,6 +138,10 @@ erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`�
 
 ## Agent skills
 
+### ERA Basic（ERB）语法与 API
+
+读 `target/` 的 ERB 时查它，别凭记忆猜——模型对 ERB 没有可靠训练数据。技能 `emuera-basic-agent-guide`，两边自动发现，也可 `/emuera-basic-agent-guide` 直接调。**这是外部上游材料，保持逐字不变**：正文在 `.factory/skills/emuera-basic-agent-guide/`（droid 原生加载），`.claude/skills/` 下的同名文件是转发桩（本机造不出软链接，缘由见桩内注释）。
+
 ### 工单流程
 
 派发、监督、验收、收尾一张工单的完整 SOP：orca CLI 命令、并发上限、派发简报模板。见 `docs/agents/ticket-sop.md`。
