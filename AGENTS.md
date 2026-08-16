@@ -22,7 +22,7 @@
 | `sav/global.sav`             | 由引擎自动生成，已 gitignore；**删掉即可，引擎会重建**                                                             |
 | git                          | `master` 为主干，已有提交历史                                                                                      |
 
-引擎已验证可加载本仓库并输出 `Hello World!`（见 issue #2，彼时静态表还在 `csv/`）。**迁移到 `yml/`（issue #17）后尚未实机复验**：已证的是数据侧——用引擎自带的 yaml 解析器与 `parseDataFile` 直接跑 `yml/GameBase.yml`，与迁移前 CSV 得到逐字段相同的 gamebase 对象（`gameCode` 两侧同为数值 `931060`）；未证的是启动全程（`main.js` 执行、存档校验等）。首次启动引擎时按「静态数据目录」一节确认。
+引擎已验证可加载本仓库并输出 `Hello World!`——迁移到 `yml/`（issue #17）后**已实机复验通过**。两层证据：数据侧用引擎自带的 yaml 解析器与 `parseDataFile` 直接跑 `yml/GameBase.yml`，与迁移前 CSV 得到逐字段相同的 gamebase 对象（`gameCode` 两侧同为数值 `931060`）；启动全程由人工启动引擎确认。
 
 **`sav/global.sav` 是引擎产物，不是仓库资产。** 它盖着游戏标识（当前 `931060`），与 `yml/GameBase.yml` 的【游戏标识】不一致时引擎会**拒绝启动并报错**，而不是静默重置（`dev-guides/11-saves.md:55`；第 56 行的「重置」只适用于版本号过低的情形）。改动【游戏标识】后必须删掉这个文件。
 
@@ -36,9 +36,11 @@ D:\Code\era\
 │   └── jsconfig.json        #   路径别名 #/* → ere/*
 ├── yml/                     # ← 静态数据表，YAML 格式（ere.config.json 的 static 须指向此处，见下）
 ├── tools/                   # ← 离线转换脚本（纯 Node、零第三方依赖，不受 ere/ 的依赖限制）
+├── test/                    # ← 测试，node --test；helpers/era-fixture.js 是全项目唯一的缝
 ├── res/                     # ← 图片/音频资源（当前 resource: false，未启用）
 ├── sav/                     # ← 存档（*.sav 已 gitignore，保留 .gitkeep）
 ├── ere.config.json          # 引擎配置（已 gitignore，属本地工作文件）
+├── .worktreeinclude         # Orca 建 worktree 时要复制进去的 gitignored 文件（见「工单流程」）
 ├── ere-4.8.0-win-x64/       # 引擎运行时 4.8.0，含 ERA-Electron - 重量级ERA引擎.exe
 ├── dev-guides/              # 引擎官方手册，25 篇，简体中文 ← 权威参考
 └── target/                  # ← 移植源：Emuera 版《ERA魔王》，只读，不要改
@@ -112,6 +114,98 @@ npm test              # 等价 node --test；test/ 目录下所有 .js 都会被
   ```
 
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（如 `train` / `ero` / `event` / `chara` / `page` / `data` / `util`），参考 erauma 的 `CONTRIBUTING.md`。
+
+## 工单流程（SOP）
+
+工单在 GitHub Issues（`odradekk/maou_redux`），操作约定见 `docs/agents/issue-tracker.md`；当前的票序与阻塞关系见 issue #15。**一张工单 = 一个 Orca worktree = 一个 droid 会话**，全程用 `orca` CLI 驱动。
+
+### 0. 环境前提（先读，否则后面每一步都会踩）
+
+- Windows 上 CLI 就是 `orca`（Linux 下必须用 `orca-ide`，裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑；agent 驱动的调用一律带 `--json`。
+- **本机 Orca 的 `commandSourcePolicy` 是 `local-only`，仓库里的 `orca.yaml` 钩子不会执行**（实测：带 `--run-hooks` 删 worktree，仓库脚本一行没跑）。所以仓库里**不放** `orca.yaml`；worktree 的 setup 钩子（`npm install`）配在 Orca 的 **Settings → Repository → Hooks**。
+- 推论：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了。所以凡是要留下的东西，删 worktree 前必须已经推走。
+- `.worktreeinclude` 会把主 checkout 的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**主 checkout 那份必须是 `"static": "yml"`**，否则每个新 worktree 一开就是坏的。
+
+### 1. 选票与认领
+
+前沿 = `open` + 没有未关闭的阻塞票 + 没有 assignee，按编号序取第一个。
+
+```
+gh issue list --repo odradekk/maou_redux --state open --label ready-for-agent --json number,title,assignees
+gh issue edit <n> --repo odradekk/maou_redux --add-assignee @me
+```
+
+认领是本次会话的第一次写操作，先认领再动手，并发会话才不会撞车。
+
+### 2. 并发上限：同时最多 5 个工单
+
+无依赖关系的票可以同时开多个 worktree；**有阻塞边的票必须等阻塞方合并进 `master` 之后再建 worktree**，否则它的基线里没有前置代码。派新单之前先数一遍在跑的（不含主 checkout `master` 那个）：
+
+```
+orca worktree ps --json
+```
+
+### 3. 建 worktree 并派 droid
+
+```
+orca worktree create --name t<N>-<slug> --no-parent --agent droid --prompt "<简报>" --json
+```
+
+- 命名 `t<N>-<slug>`，`<N>` 对应工单标题里的 T 编号。
+- `--no-parent`：工单彼此独立，不要串父子。**不传 `--base-branch`**，用仓库默认 base（`origin/master`）。
+- `--agent droid`：droid 直接落在 worktree 的第一个终端。**不要「先裸建 worktree 再 `terminal create` 同一个 agent」**——那会多出一个没人用的空壳 shell。
+- 在 `--repo` 省略时 Orca 从当前 worktree 推断仓库；跨仓库才需要 `orca repo list --json` 取 id。
+- 记下返回里的 `worktree.id`（形如 `<repoId>::<绝对路径>`，**两段都要，只给 repoId 不是 worktree id**）与 `startupTerminal.handle`。
+
+`--prompt` 的简报模板：
+
+```
+先读仓库根 AGENTS.md。
+用 /implement 技能实现 issue #<N>：<标题>。
+工单正文与验收清单：gh issue view <N> --repo odradekk/maou_redux --comments
+完成后自检 npm test、npx eslint .、npx prettier --check .，逐条对照验收清单，
+按 Conventional Commits 提交（scope 见 AGENTS.md「代码约定」）。不要自行合并。
+```
+
+**必须要求 agent 走 `/implement`。** 它内部驱动 `tdd` 一次一个红绿切片，收尾跑 `code-review` 的两轴审查（Standards + Spec）再提交。绕过它就少了这层自检，交上来的东西得从头人工复核。
+
+### 4. 监督
+
+```
+orca terminal read --terminal <handle> --json
+orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 300000 --json
+orca terminal send --terminal <handle> --text "<追加指示>" --enter --json
+orca worktree set --worktree id:<repoId>::<路径> --comment "<一句话进展>" --workspace-status in-review --json
+```
+
+发消息前先 `read`；等 TUI 就绪必须带 `--timeout-ms`，否则输入可能丢在启动过程里。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，**不要新旧双发**。
+
+### 5. 验收：不要照单全收 agent 的自述
+
+在 worktree 目录里自己跑一遍，逐条对照 issue 的验收清单：
+
+1. `npm test`、`npx eslint .`、`npx prettier --check .`（worktree 若没有 `node_modules`，`npx eslint` 会去拉 v9 并因找不到 `eslint.config.js` 报错——那是环境问题不是代码问题，先确认 setup 钩子跑过）
+2. 凡是验收清单里写着「此行为**必须有测试**」的，**做变异测试**：把那条规则改坏，确认真的有用例失败。#10 的原型曾因一句无条件删除让规则失效，而测试全绿。
+3. 声称「与引擎行为一致」的，尽量用引擎自己的代码验证，而不是自己写的镜像（解包 `ere-4.8.0-win-x64/resources/app.asar` 可以直接调用引擎的解析器，#17 用过这招）。
+4. 1:1 移植的改动，抽查文件头的来源注释是否真指到 `target/` 里存在的文件与函数。
+
+### 6. 收尾
+
+```
+gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<conventional commit>" --body-file -
+gh pr merge <pr> --repo odradekk/maou_redux --squash --delete-branch
+git -C D:/Code/era pull --ff-only origin master
+orca worktree rm --worktree "id:<repoId>::<路径>" --force --json
+gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
+```
+
+- PR 正文以 `Closes #<n>` 结尾，合并即自动关票。
+- **删 worktree 前确认没有未推送的提交**——本机没有归档钩子，删了不可恢复。
+- **需要启动引擎的手工验收，一律在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，且 worktree 的存档不会保留。
+
+### 7. 决议留痕
+
+实现中若发现某条既有决议站不住，**回对应 issue 补勘误评论**，不要在实现里悄悄绕过（#3 被 #6 推翻即是先例）。地图 issue #1 自此只读，不改写历史。
 
 ## 移植源：`target/`
 
