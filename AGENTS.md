@@ -22,7 +22,7 @@
 | `sav/global.sav`             | 由引擎自动生成，已 gitignore；**删掉即可，引擎会重建**                                                             |
 | git                          | 仓库尚无任何提交                                                                                                   |
 
-引擎已验证可加载本仓库并输出 `Hello World!`（见 issue #2）。
+引擎已验证可加载本仓库并输出 `Hello World!`（见 issue #2，彼时静态表还在 `csv/`）。**迁移到 `yml/`（issue #17）后尚未实机复验**——已做的是引擎源码核读与两条加载路径的等价互证（见 `test/csv-to-yml.test.js`），首次启动引擎时按「静态数据目录」一节步骤确认。
 
 **`sav/global.sav` 是引擎产物，不是仓库资产。** 它盖着游戏标识（当前 `931060`），与 `yml/GameBase.yml` 的【游戏标识】不一致时引擎会**拒绝启动并报错**，而不是静默重置（`dev-guides/11-saves.md:55`；第 56 行的「重置」只适用于版本号过低的情形）。改动【游戏标识】后必须删掉这个文件。
 
@@ -100,7 +100,7 @@ npm test              # 等价 node --test；test/ 目录下所有 .js 都会被
 
 - **文件名** kebab-case，带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
 - **标识符** snake_case（`get_display_name`、`birth_list`）。注意引擎 API 自身是 camelCase（`era.printMultiColumns`），不要混淆两者。
-- **`#/` 别名** 引用项目内模块，不要用相对路径 `../../`。
+- **`#/` 别名** 引用项目内模块，不要用相对路径 `../../`（别名只覆盖 `ere/`；`tools/`、`test/` 等目录之间用相对路径）。
 - **导入分组排序**：`era` 置顶，其后按 `system` / `page` / `event` / `utils` / `data` / `i18n` 分组。
 - **变量语义必须注释**。这是最关键的一条 —— `era.get('global:3')` 本身不可读：
 
