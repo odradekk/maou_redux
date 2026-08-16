@@ -34,9 +34,9 @@ function expected_init_writes() {
     { name: 'flag:10005', value: -1 }, // :26 TARGET = -1（指针槽）
     { name: 'flag:5', value: 17179934119 }, // :31 战斗日志显示设置
     { name: 'flag:10001', value: 1 }, // :33 DAY:1 = 1（月）
-    // :35 ITEMSALES:53 = 1 不在此列：item 系寻址在 Item 表落地前会让引擎
-    // 硬崩（PR #34），已登记 docs/stub-registry.md 的变量级欠账。本数组是
-    // 全量断言，恢复该写入时这里会红——那正是提醒「先确认 Item 表已就位」。
+    { name: 'itemsales:53', value: 1 }, // :35 53 号道具开局上架（#38 恢复：
+    // Item 表已落地，item* 硬崩支消除；进商店轮时 @EVENTSHOP 的清零循环
+    // 会再把它清 0——原作语义，见端到端用例的尾部断言）
     ...Array.from({ length: 8 }, (_, k) => ({
       name: `flag:${200 + k}`,
       value: 1,
@@ -108,6 +108,32 @@ test('端到端：新的猎物 → 初始化 → 转向 SHOP 渲染主菜单（#
   assert.equal(era_flag.date, 1, 'date 应已被 @SHOW_SHOP 钳成 1');
   assert.equal(era_flag.time, 0);
   assert.equal(era_flag.target, -1);
+
+  // @EVENTSHOP 的清零循环（#38 恢复）：进商店轮时 ITEMSALES:0..99 依序
+  // 清 0。两层 1:1 写入都要在：EVENTFIRST 先置 53 号 = 1，清零块随后把它
+  // 清回 0（原作语义，在售位由商店侧重新点亮）；清零块完整且连续，紧随
+  // 其后的是 @SHOW_SHOP 的日期钳制（清零在绘制之前）。
+  const writes = fixture.var_writes;
+  const set_53 = writes.findIndex(
+    (w) => w.name === 'itemsales:53' && w.value === 1,
+  );
+  assert.ok(set_53 >= 0, '@EVENTFIRST 必须先置 itemsales:53 = 1');
+  const zero_start = writes.findIndex(
+    (w) => w.name === 'itemsales:0' && w.value === 0,
+  );
+  assert.ok(
+    zero_start > set_53,
+    '清零循环必须在 EVENTFIRST 的上架写入之后（BEGIN SHOP 才执行）',
+  );
+  assert.deepEqual(
+    writes.slice(zero_start, zero_start + 100),
+    Array.from({ length: 100 }, (_, k) => ({
+      name: `itemsales:${k}`,
+      value: 0,
+    })),
+    '@EVENTSHOP 必须依序清 100 个道具上架位',
+  );
+  assert.deepEqual(writes[zero_start + 100], { name: 'flag:10002', value: 1 });
 });
 
 test('初始化写入：与原作开局值逐项一致（全量断言，意外写入当场暴露）', async () => {

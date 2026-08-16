@@ -118,9 +118,10 @@ function load_engine_bundle() {
  *
  * 装载循环是 app.asar background.js eraStart 段的逐句转写（this.* 换成局部
  * state、this.error 换成 errors.push；callname 三列行落入 relation 分支的
- * switch fallthrough 是引擎原样，勿“修复”）。staticData 只含 chara/
- * relationship/gamebase——当前 yml/ 还没有 Base/Talent 等表，缺表行两侧
- * 同样落 errors，等价性不受影响。
+ * switch fallthrough 是引擎原样，勿“修复”）。static_data 只含 chara/
+ * relationship/gamebase——变量表（Base/Talent/Item 等）由调用方按需挂载
+ * （test/helpers/static-tables.js，#38）：表不在时缺表行两侧同样落 errors，
+ * 表在场时预设经 name→id 翻译真正落进 preset。
  *
  * @returns {{ static_data: object, errors: string[], load_rows: (rows: Array) => void }}
  */
@@ -209,6 +210,84 @@ function create_chara_loader() {
 }
 
 /**
+ * 新建一份「变量表装载状态」，并给出与 eraStart 同构的装载入口。
+ *
+ * 装载循环是 app.asar background.js eraStart 变量表分支的逐句转写
+ * （this.staticData/this.fieldNames 换成局部 state、this.log 的序号去重
+ * 告警换进 warnings；s() 序号去重函数与 item 特例分支均取引擎原语义）。
+ * 与 create_chara_loader 配合即可复现「变量表 + 角色预设」的完整装载：
+ * 先 load_rows 变量表、再把 static_data 挂到角色装载器的 state 上。
+ *
+ * @returns {{ static_data: object, field_names: object, warnings: string[],
+ *            load_rows: (rows: Array, table: string) => void }}
+ */
+function create_variable_loader() {
+  const engine = load_engine_bundle();
+  if (!engine) {
+    return undefined;
+  }
+
+  const static_data = {};
+  const field_names = {};
+  const warnings = [];
+
+  // eraStart 的 s()：序号被占用则自增到第一个空位，告警原文同构
+  const dedup_id = (table, id, name) => {
+    let next = id;
+    while (field_names[table][next]) {
+      next += 1;
+    }
+    if (next !== id) {
+      warnings.push(
+        `${table}.yml 出现重复变量序号! 变量 ${name} 的序号 ${id} 已被分配给 ` +
+          `${field_names[table][id].n}! 序号重置为 ${next}`,
+      );
+    }
+    return next;
+  };
+
+  return {
+    static_data,
+    field_names,
+    warnings,
+    load_rows(rows, table) {
+      if (table === 'item') {
+        // item 特例分支：name/price 双映射（引擎原文同构）
+        static_data.item = { name: {}, price: {} };
+        field_names[table] = {};
+        rows.forEach((row) => {
+          const raw_id = row[0];
+          const name = row[1];
+          const id = dedup_id(table, raw_id, name);
+          static_data.item.name[name] = id;
+          static_data.item.price[id] = row[2];
+          field_names[table][id] = {
+            n: name,
+            k: row[3] ?? `item${id}`,
+            t: 'number',
+          };
+        });
+      } else {
+        // default 分支：名称 → 序号映射 + fieldNames 的 k/t 缺省（引擎原文）
+        static_data[table] = {};
+        field_names[table] = {};
+        rows.forEach((row) => {
+          const raw_id = row[0];
+          const name = row[1];
+          const id = dedup_id(table, raw_id, name);
+          static_data[table][name] = id;
+          field_names[table][id] = {
+            n: name,
+            k: row[3] ?? `${table}${id}`,
+            t: row[4] ?? (table === 'cstr' ? 'string' : 'number'),
+          };
+        });
+      }
+    },
+  };
+}
+
+/**
  * 以「假 this + 真方法」驱动引擎的 addCharacter（模块 183 的原型方法）。
  *
  * 方法体只依赖 this.staticData / this.data / this.era.extendedTables 与模块
@@ -255,6 +334,7 @@ function create_add_character(static_data) {
 module.exports = {
   create_add_character,
   create_chara_loader,
+  create_variable_loader,
   load_engine_bundle,
   locate_asar,
 };

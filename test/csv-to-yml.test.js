@@ -22,14 +22,17 @@ const {
   REPO_ROOT,
   convert,
   convert_chara,
+  convert_variable,
   engine_get_number,
   main,
   map_gamebase_key,
   parse_chara_csv,
   parse_gamebase_csv,
+  parse_variable_csv,
   read_text,
   to_chara_yaml,
   to_gamebase_yaml,
+  to_variable_yaml,
 } = require('../tools/csv-to-yml');
 
 // 迁移前 csv/GameBase.csv 的内容（ere 版，#2 落地；实测 UTF-8 无 BOM、LF）。
@@ -527,15 +530,244 @@ test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', 
 //
 // 引擎对拍（test/chara-yml.test.js）对 `基礎`/`素質` 这类预设行天然盲：
 // Base/Talent 表尚未进 yml/，引擎装载时两侧同样丢弃它们，产物里的值改坏也
-// 看不出来（验收变异实测：把 "素質" 的 1 改成 0，129 条测试全绿）。本用例
+// 看不出来（验收变异实测：把 "素質" 的 1 改成 0，129 条全绿）。本用例
 // 不经引擎、直接比对转换结果，把产物的每一个字节钉住。
-test('同步守护：yml/Chara0.yml 与 target 源 CSV 的转换结果逐字节一致', () => {
-  const source = path.join(REPO_ROOT, 'target', 'CSV', 'Chara', 'Chara0.csv');
-  const product = path.join(REPO_ROOT, 'yml', 'Chara0.yml');
+// #38 起 Base/Talent 已入库，引擎对拍不再盲，但守护继续留守：它盯的是
+// 字节而非装载结果，能在「表被人工改坏、恰好两条装载路径同错」时报警。
+// 变量表（Talent/Item）同样适用；Base.yml 是人工表、无 CSV 源，不在其列。
+const SYNC_GUARD_PAIRS = [
+  {
+    yml: 'Chara0.yml',
+    convert: () => {
+      const { text } = read_text(
+        path.join(REPO_ROOT, 'target', 'CSV', 'Chara', 'Chara0.csv'),
+      );
+      return to_chara_yaml(parse_chara_csv(text).groups, {
+        source: 'Chara0.csv',
+      });
+    },
+  },
+  {
+    yml: 'Talent.yml',
+    convert: () => {
+      const { text } = read_text(
+        path.join(REPO_ROOT, 'target', 'CSV', 'Talent.csv'),
+      );
+      const { entries, dropped } = parse_variable_csv(text, {
+        table: 'talent',
+      });
+      return to_variable_yaml(entries, dropped, {
+        table: 'talent',
+        source: 'Talent.csv',
+      });
+    },
+  },
+  {
+    yml: 'Item.yml',
+    convert: () => {
+      const { text } = read_text(
+        path.join(REPO_ROOT, 'target', 'CSV', 'Item.csv'),
+      );
+      const { entries, dropped } = parse_variable_csv(text, { table: 'item' });
+      return to_variable_yaml(entries, dropped, {
+        table: 'item',
+        source: 'Item.csv',
+      });
+    },
+  },
+];
 
-  const { text } = read_text(source);
-  const { groups } = parse_chara_csv(text);
-  const expected = to_chara_yaml(groups, { source: 'Chara0.csv' });
+for (const pair of SYNC_GUARD_PAIRS) {
+  test(`同步守护：yml/${pair.yml} 与 target 源 CSV 的转换结果逐字节一致`, () => {
+    const product = path.join(REPO_ROOT, 'yml', pair.yml);
+    assert.equal(fs.readFileSync(product, 'utf8'), pair.convert());
+  });
+}
 
-  assert.equal(fs.readFileSync(product, 'utf8'), expected);
+// —— 变量表（issue #38）——
+
+test('变量表：; 注释/空行剥除、id+名称读出、item 额外带价格', () => {
+  const talent_csv = [
+    '; 整行注释',
+    '0,处女,;第三列注释会被引擎截断',
+    '9,崩坏,',
+    '',
+  ].join('\r\n');
+  const { entries, dropped, warnings } = parse_variable_csv(talent_csv, {
+    table: 'talent',
+  });
+  assert.deepEqual(entries, [
+    { id: 0, name: '处女' },
+    { id: 9, name: '崩坏' },
+  ]);
+  assert.deepEqual(dropped, []);
+  assert.deepEqual(warnings, [], '第三列注释经 ; 剥除后不剩列，不应告警');
+
+  const item_csv = '0,振动宝石,200,;注释\n28,魔力源,500\n';
+  const item = parse_variable_csv(item_csv, { table: 'item' });
+  assert.deepEqual(item.entries, [
+    { id: 0, name: '振动宝石', price: 200 },
+    { id: 28, name: '魔力源', price: 500 },
+  ]);
+  assert.deepEqual(item.warnings, []);
+
+  // 产出形状：引号键 + 缩进 id/price，数值裸写（引擎 yml 分支的文档形状）
+  const yaml = to_variable_yaml(item.entries, item.dropped, {
+    table: 'item',
+    source: 'Item.csv',
+  });
+  assert.ok(yaml.includes('"振动宝石":\n  id: 0\n  price: 200'));
+  assert.ok(yaml.endsWith('\n'));
+  assert.ok(!yaml.includes('\r'));
+});
+
+test('变量表：重名取后者（对象键序语义）、前者记入 dropped 并告警', () => {
+  const { entries, dropped, warnings } = parse_variable_csv(
+    '1000,十字军战士,1\n1005,十字军战士,2\n7,魁梧,3\n',
+    { table: 'item' },
+  );
+  // 名称重复：产物保留后者（1005，与引擎 name→id 后者覆盖语义一致），
+  // 前者记入 dropped；位置保持首次出现处（对象键序）
+  assert.deepEqual(entries, [
+    { id: 1005, name: '十字军战士', price: 2 },
+    { id: 7, name: '魁梧', price: 3 },
+  ]);
+  assert.deepEqual(dropped, [{ id: 1000, name: '十字军战士', price: 1 }]);
+  assert.equal(
+    warnings.filter((warning) => warning.includes('重复')).length,
+    1,
+  );
+
+  // 头注自文档化：dropped 写进产物注释
+  const yaml = to_variable_yaml(entries, dropped, {
+    table: 'item',
+    source: 'Item.csv',
+  });
+  assert.ok(yaml.includes('#   序号 1000「十字军战士」并入后者的名称键'));
+});
+
+test('变量表：序号重复镜像引擎 s()——自增到第一个空位并告警', () => {
+  const { entries, warnings } = parse_variable_csv('0,甲\n0,乙\n', {
+    table: 'talent',
+  });
+  // 引擎语义：第二个 0 号被挤到 1（s() 从给定序号起自增到空位）
+  assert.deepEqual(entries, [
+    { id: 0, name: '甲' },
+    { id: 1, name: '乙' },
+  ]);
+  assert.ok(warnings.some((warning) => warning.includes('重复变量序号')));
+});
+
+test('变量表：非 item 表第 4 列 / item 表非注释第 4 列都告警，不静默丢弃', () => {
+  const talent = parse_variable_csv('0,甲,1,备注\n', { table: 'talent' });
+  assert.equal(
+    talent.warnings.filter((warning) => warning.includes('截断')).length,
+    1,
+  );
+
+  const item = parse_variable_csv('28,甲,500,非注释文本\n', { table: 'item' });
+  assert.deepEqual(item.entries, [{ id: 28, name: '甲', price: 500 }]);
+  assert.equal(
+    item.warnings.filter((warning) => warning.includes('第 4 列')).length,
+    1,
+  );
+
+  // item 缺价格列：告警且不写 price 字段（贴近 csv 侧 undefined）
+  const no_price = parse_variable_csv('5,乙,\n', { table: 'item' });
+  assert.deepEqual(no_price.entries, [{ id: 5, name: '乙' }]);
+  assert.ok(no_price.warnings.some((warning) => warning.includes('缺价格')));
+});
+
+test('变量表：产物已存在默认不覆盖，--force 才重写（产物边界同样适用）', async () => {
+  await with_temp_dir((dir) => {
+    const input = write_file(dir, 'Talent.csv', '0,处女\n');
+    const out_dir = path.join(dir, 'yml');
+    fs.mkdirSync(out_dir);
+    const output = write_file(out_dir, 'Talent.yml', '人工修改过的产物');
+
+    const skipped = convert_variable({
+      table: 'talent',
+      input,
+      output,
+    });
+    assert.equal(skipped.status, 'skipped');
+    assert.equal(fs.readFileSync(output, 'utf8'), '人工修改过的产物');
+
+    const written = convert_variable({
+      table: 'talent',
+      input,
+      output,
+      force: true,
+    });
+    assert.equal(written.status, 'written');
+    assert.ok(fs.readFileSync(output, 'utf8').includes('"处女":'));
+  });
+});
+
+test('变量表：空输入拒绝写出', async () => {
+  await with_temp_dir((dir) => {
+    const input = write_file(dir, 'Talent.csv', '; 只有注释\n');
+    const output = path.join(dir, 'yml', 'Talent.yml');
+    assert.throws(
+      () => convert_variable({ table: 'talent', input, output }),
+      /没有可用的变量表条目/,
+    );
+    assert.ok(!fs.existsSync(output));
+  });
+});
+
+test('CLI：--table 走变量表路径（skip/force/表名大小写不敏感/未知表名报错）', async () => {
+  await with_temp_dir((dir) => {
+    write_file(dir, 'Talent.csv', '0,处女\n');
+    const out_dir = path.join(dir, 'yml');
+
+    // 表名小写解析磁盘上的 Talent.csv；产物名随源文件
+    const written = capture_console(() =>
+      main(['--table', 'talent'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(written.result, 0);
+    const product = path.join(out_dir, 'Talent.yml');
+    assert.ok(fs.readFileSync(product, 'utf8').includes('"处女":'));
+    assert.ok(
+      written.captured.some(
+        (entry) => entry.level === 'log' && entry.text.includes('写出 1 个'),
+      ),
+    );
+
+    // 已存在 → 跳过且内容不动；--force → 重写
+    fs.writeFileSync(product, '人工修改过的产物', 'utf8');
+    const skipped = capture_console(() =>
+      main(['--table', 'talent'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(skipped.result, 0);
+    assert.equal(fs.readFileSync(product, 'utf8'), '人工修改过的产物');
+
+    const forced = capture_console(() =>
+      main(['--table', 'TALENT', '--force'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(forced.result, 0);
+    assert.ok(fs.readFileSync(product, 'utf8').includes('"处女":'));
+
+    // 未知表名 → 退出码 1；--table 不带参数 → 用法错误（退出码 2）
+    const missing = capture_console(() =>
+      main(['--table', 'nope'], { table_csv_dir: dir, table_out_dir: out_dir }),
+    );
+    assert.equal(missing.result, 1);
+    assert.ok(
+      missing.captured.some(
+        (entry) => entry.level === 'error' && entry.text.includes('nope.csv'),
+      ),
+    );
+    const no_arg = capture_console(() => main(['--table']));
+    assert.equal(no_arg.result, 2);
+  });
 });

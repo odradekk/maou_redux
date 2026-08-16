@@ -1,0 +1,58 @@
+# base 表（同时定义 base 与 maxbase 两个表）：角色的基础属性。#5 决议的
+# 二维角色表，Base.yml 共同定义（引擎将 MaxBase.yml 列为受保护表名）。
+#
+# 字段形状与引擎自带转换器的产出一致（同 Global.yml / Flag.yml 先例）：
+#   键    = 中文显示名（#5 决议三层命名的第一层）
+#   name  = 英文 snake_case 标识符（JS 侧访问器名，渐进命名）
+#   id    = 数字下标，与 Emuera 原下标 1:1（底层寻址一律用它，#5 决议）
+#
+# 本表为人工产出（与 Flag.yml 同一先例，issue #38）：target/CSV 没有
+# Base.csv，原作依赖 Emuera 内置行为、游戏内 BASENAME 为空——
+# DEBUG小白娘2024ver0.0.14.ERB:492/510/513 的 STRLENS(BASENAME:LOCAL) == 0
+# 判空是直接证据。全库实际用到 6 个下标（0/1/2/3/4/10，(MAX)?BASE 全量
+# 统计），逐个定名如下；六个均有据可查，无「依据不足」项。
+# 基礎预设（Chara*.yml 的 基礎,序号,值）装载时同时落 base 与 maxbase
+# （引擎 addCharacter/fillData 的 base 分支），本表落地后 Chara0.yml 的
+# 基礎 0/1/2 = 10000 自动生效（此前被引擎逐行记「角色数据表不存在」丢弃）。
+"体力":
+  id: 0
+  name: "stamina"
+  type: "number"
+  # 依据：其他/DATA_FIX.ERB:36-37 日文注释「最大体力は600まで下がる（それ
+  # 以下にはならない）」——MAXBASE:A:0 即最大体力；全库 623 处引用。
+"气力":
+  id: 1
+  name: "willpower"
+  type: "number"
+  # 依据：其他/DATA_FIX.ERB:39-40 日文注释「最大気力は100まで下がる」——
+  # MAXBASE:A:1 即最大気力；汉化文本作「气力」（如迷宮/DUNGEON_TRAP.ERB
+  # 「（气力-10）」），键名从汉化用字。
+"射精槽":
+  id: 2
+  name: "ejaculation_gauge"
+  type: "number"
+  # 依据：資料_非必要無須解壓/eramaouフラグまとめ - Delicious.txt（GBK
+  # 编码，按 GB18030 读取）「BASE:2 = 射精ゲージ&player非男性或扶她时的
+  # 高潮槽」——原作 flag 说明文档，唯一成文的下标语义。
+"母乳槽":
+  id: 3
+  name: "milk_gauge"
+  type: "number"
+  # 依据：SYSTEM/SYSTEM_SOURCE_SUB1.ERB:580-633 噴乳判定——BASE:3 累积
+  # 泌乳量、与 MAXBASE:3 比较分级，超限触发「乳头喷出了大量的母乳」并
+  # 清槽（与射精槽同构的计量槽）。
+"触手射精槽":
+  id: 4
+  name: "tentacle_ejaculation_gauge"
+  type: "number"
+  # 依据：調教相關/COMF100_触手召喚.ERB:112-225 射精チェック——
+  # BASE:PLAYER:4 按技巧/顺从/欲情等累积、与 MAXBASE:PLAYER:4 比较，
+  # 触发「触手射精/大量射精」（MAXBASE:PLAYER:4 为 0 时整段跳过）。
+"寿命":
+  id: 10
+  name: "lifespan"
+  type: "number"
+  # 依据：SHOP/SHOP_ITEM.ERB:674/717——WG电池（道具 33，Item.csv 注释
+  # 「キャラの寿命を延ばす」）以 BASE:RESULT:10 > 0 为可用条件、用后置 0
+  # 「不再有寿命限制了」；EVENT/GET_SPECIALTALENT.ERB:96-97「寿命持ちの
+  # 場合は残り寿命を表示……生命还剩下{D}天」。

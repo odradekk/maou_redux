@@ -80,14 +80,15 @@ on('EVENTFIRST', async () => {
   // 留 0，勿补成 1 月 1 日（era-flag.js 手写区有注）。
   era_flag.month = 1;
 
-  // :35 ITEMSALES:53 = 1 —— 53 号道具上架。**暂不写**：item 系寻址是引擎里
-  // 唯一在静态表缺失时会硬崩的一支（app.asar 的 set：`a.startsWith("item")`
-  // 分支无守卫，直接 `this.staticData.item.name[u]`，而 yml/ 尚无 Item 表），
-  // 实机点「新的猎物」即抛 Cannot read properties of undefined (reading
-  // 'name')。其余表缺失都是静默的：三段寻址有 `if(!this.data[a]||
-  // !this.data[a][c])return`，二段 flag 走 safeUndefinedCheck。
-  // 道具在售是商店的事，不影响主菜单显示（#22 判据）——登记为变量级欠账，
-  // Item 表进 yml/ 后恢复本行。见 docs/stub-registry.md。
+  // :35 ITEMSALES:53 = 1 —— 53 号道具开局上架。Item 表已随 #38 落地，
+  // item* 寻址在静态表缺席时的硬崩（app.asar 的 set：`a.startsWith("item")`
+  // 分支无守卫，直接 `this.staticData.item.name[u]`，PR #34 实机撞见）已随
+  // 表消除——引擎行为本身不变（写未声明的 item 变量仍会崩），变的是本表
+  // 在场。test/variable-yml.test.js 有「表缺席即抛 reading 'name'」的
+  // 引擎级回归锁。原作顺序上，进商店轮时 @EVENTSHOP 的清零循环会把本位
+  // 一并清 0（SHOP ver1.0.2.ERB:15-18），在售位由商店侧重新点亮——1:1
+  // 照搬，两层都保留。
+  era.set('itemsales:53', 1);
 
   // :36-40 A=200; REPEAT 8：FLAG:200..207 = 1
   for (let i = 200; i < 200 + 8; i += 1) {
