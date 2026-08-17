@@ -431,7 +431,8 @@ function to_chara_yaml(groups, { source = '' } = {}) {
 //      一致，故 Juel 不单独成表、由 Palam.yml 覆盖；
 //   3. 以 name 结尾的表名会被寻址层拆解为「取 <去 name 后缀> 表的名字」
 //      （trainname:0 → fieldNames.train[0]），train 表因第 1 条永远不存在，
-//      寻址直接抛错——#10 的处方 TrainName.yml 同样是死表。
+//      寻址落到兜底分支、引擎调 era.error 报 `key error in getter/setter`——
+//      #10 的处方 TrainName.yml 同样是死表。
 // 调教指令表因此按内容命名为 traincommand（CONTEXT.md：「调教」「指令」），
 // 三种寻址全通：traincommand:0（值）、traincommand:爱抚（名称→序号）、
 // traincommandname:0（序号→名称）。
@@ -450,7 +451,7 @@ const FORBIDDEN_TABLES = new Map([
   [
     'trainname',
     '以 name 结尾的表名会被寻址层拆成「train 表的名字查询」，而 train 表不存在（弃用名），' +
-      'trainname:* 寻址直接抛错；调教指令表请用 --table traincommand',
+      'trainname:* 寻址落到引擎兜底分支报 key error in getter/setter；调教指令表请用 --table traincommand',
   ],
 ]);
 

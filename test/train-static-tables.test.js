@@ -16,7 +16,8 @@
  *      issue #43 评论与 dev-guides/09-static.md:298-305）；
  *   2. **调教指令表叫 traincommand**：train 是引擎弃用表名（装载时警告并
  *      跳过）、trainname 会被寻址层的 name 后缀规则拆成「train 表的名字
- *      查询」而 train 表不存在（寻址直接抛错）——#5 的 Train.yml 与 #10
+ *      查询」而 train 表不存在（寻址落到兜底分支、引擎报 key error in
+ *      getter/setter）——#5 的 Train.yml 与 #10
  *      的 TrainName.yml 都是死表，实测留痕见 issue #43 评论。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告。
@@ -201,7 +202,7 @@ engine_test(
     };
     // 指令菜单渲染的三种读法：按序号取值、按名称翻序号、按序号取名称。
     // 表名若叫 train（弃用名）产物整个不装载；若叫 trainname（name 后缀
-    // 被寻址层拆解）前两种直接抛错——两者都给不出这三行断言
+    // 被寻址层拆解）前两种落到引擎兜底分支报 key error——两者都给不出这三行断言
     assert.equal(engine.set_var.call(fake_this, 'traincommand:0'), 7);
     assert.equal(
       engine.set_var.call(fake_this, 'traincommand:爱抚'),
