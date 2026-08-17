@@ -218,6 +218,12 @@ function create_chara_loader() {
  * 与 create_chara_loader 配合即可复现「变量表 + 角色预设」的完整装载：
  * 先 load_rows 变量表、再把 static_data 挂到角色装载器的 state 上。
  *
+ * #43 增补两处转写（此前用不到、故未写）：进入内层 switch 前引擎统一把
+ * 名称列小写（o.map(e=>(e[1]=toLowerCase(e[1]),e))）；param/palam 两个
+ * 表名落到同一分支、装进 staticData.juel 一张名字表（juel/jewel/delta 等
+ * 文件名受保护不可用，Emuera 里 JUEL 与 PALAM 共用名字表在引擎侧同样成立，
+ * 缺省开发套件键 k 的前缀是 param 而非表名）。
+ *
  * @returns {{ static_data: object, field_names: object, warnings: string[],
  *            load_rows: (rows: Array, table: string) => void }}
  */
@@ -226,21 +232,24 @@ function create_variable_loader() {
   if (!engine) {
     return undefined;
   }
+  const { toLowerCase } = engine.engine_utils;
 
   const static_data = {};
   const field_names = {};
   const warnings = [];
 
-  // eraStart 的 s()：序号被占用则自增到第一个空位，告警原文同构
-  const dedup_id = (table, id, name) => {
+  // eraStart 的 s()：序号被占用则自增到第一个空位，告警原文同构。
+  // names_key 是占用表在 field_names 里的键（param/palam 分支是 juel），
+  // label 是告警文本里的表名（引擎用文件表名 i）。
+  const dedup_id = (names_key, label, id, name) => {
     let next = id;
-    while (field_names[table][next]) {
+    while (field_names[names_key][next]) {
       next += 1;
     }
     if (next !== id) {
       warnings.push(
-        `${table}.yml 出现重复变量序号! 变量 ${name} 的序号 ${id} 已被分配给 ` +
-          `${field_names[table][id].n}! 序号重置为 ${next}`,
+        `${label}.yml 出现重复变量序号! 变量 ${name} 的序号 ${id} 已被分配给 ` +
+          `${field_names[names_key][id].n}! 序号重置为 ${next}`,
       );
     }
     return next;
@@ -251,14 +260,31 @@ function create_variable_loader() {
     field_names,
     warnings,
     load_rows(rows, table) {
-      if (table === 'item') {
+      // 引擎在进入内层 switch 前统一把名称列小写（逐句转写，原地改写）
+      rows.forEach((row) => {
+        row[1] = toLowerCase(row[1]);
+      });
+      if (table === 'param' || table === 'palam') {
+        // param/palam 分支（引擎原文同构）：共用名字表 juel，k 缺省前缀 param
+        static_data.juel = {};
+        field_names.juel = {};
+        rows.forEach((row) => {
+          const id = dedup_id('juel', table, row[0], row[1]);
+          static_data.juel[row[1]] = id;
+          field_names.juel[id] = {
+            n: row[1],
+            k: row[3] ?? `param${id}`,
+            t: row[4] ?? 'number',
+          };
+        });
+      } else if (table === 'item') {
         // item 特例分支：name/price 双映射（引擎原文同构）
         static_data.item = { name: {}, price: {} };
         field_names[table] = {};
         rows.forEach((row) => {
           const raw_id = row[0];
           const name = row[1];
-          const id = dedup_id(table, raw_id, name);
+          const id = dedup_id(table, table, raw_id, name);
           static_data.item.name[name] = id;
           static_data.item.price[id] = row[2];
           field_names[table][id] = {
@@ -274,7 +300,7 @@ function create_variable_loader() {
         rows.forEach((row) => {
           const raw_id = row[0];
           const name = row[1];
-          const id = dedup_id(table, raw_id, name);
+          const id = dedup_id(table, table, raw_id, name);
           static_data[table][name] = id;
           field_names[table][id] = {
             n: name,

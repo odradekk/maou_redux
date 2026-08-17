@@ -535,6 +535,8 @@ test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', 
 // #38 起 Base/Talent 已入库，引擎对拍不再盲，但守护继续留守：它盯的是
 // 字节而非装载结果，能在「表被人工改坏、恰好两条装载路径同错」时报警。
 // 变量表（Talent/Item）同样适用；Base.yml 是人工表、无 CSV 源，不在其列。
+// #43 起调教域六张表（Palam/Source/Abl/Exp/Mark/TrainCommand）纳入同一
+// 守护——「两条装载路径同错」的盲区对逐字段对拍仍然存在，字节层不留窗。
 const SYNC_GUARD_PAIRS = [
   {
     yml: 'Chara0.yml',
@@ -575,6 +577,26 @@ const SYNC_GUARD_PAIRS = [
       });
     },
   },
+  // #43 六张：源文件名 → 表名/产物名（traincommand 与源名不同，头注票据 #43）
+  ...[
+    ['Palam.csv', 'palam', 'Palam.yml'],
+    ['source.csv', 'source', 'Source.yml'],
+    ['Abl.csv', 'abl', 'Abl.yml'],
+    ['exp.csv', 'exp', 'Exp.yml'],
+    ['Mark.csv', 'mark', 'Mark.yml'],
+    ['Train.csv', 'traincommand', 'TrainCommand.yml'],
+  ].map(([source, table, yml]) => ({
+    yml,
+    convert: () => {
+      const { text } = read_text(path.join(REPO_ROOT, 'target', 'CSV', source));
+      const { entries, dropped } = parse_variable_csv(text, { table });
+      return to_variable_yaml(entries, dropped, {
+        table,
+        source,
+        ticket: '#43',
+      });
+    },
+  })),
 ];
 
 for (const pair of SYNC_GUARD_PAIRS) {
@@ -721,7 +743,7 @@ test('CLI：--table 走变量表路径（skip/force/表名大小写不敏感/未
     write_file(dir, 'Talent.csv', '0,处女\n');
     const out_dir = path.join(dir, 'yml');
 
-    // 表名小写解析磁盘上的 Talent.csv；产物名随源文件
+    // 表名小写解析磁盘上的 Talent.csv；产物名取源文件名首字母大写（#43 起）
     const written = capture_console(() =>
       main(['--table', 'talent'], {
         table_csv_dir: dir,
@@ -769,5 +791,119 @@ test('CLI：--table 走变量表路径（skip/force/表名大小写不敏感/未
     );
     const no_arg = capture_console(() => main(['--table']));
     assert.equal(no_arg.result, 2);
+  });
+});
+
+// —— 调教域表的特殊表名与产物边界（issue #43）——
+
+test('CLI：--table train / trainname 显式拒绝（产出即死表，报错优于静默生成）', async () => {
+  await with_temp_dir((dir) => {
+    write_file(dir, 'Train.csv', '0,爱抚\n');
+    const out_dir = path.join(dir, 'yml');
+    for (const table of ['train', 'trainname', 'TRAINNAME']) {
+      const rejected = capture_console(() =>
+        main(['--table', table], {
+          table_csv_dir: dir,
+          table_out_dir: out_dir,
+        }),
+      );
+      assert.equal(rejected.result, 1, `--table ${table} 必须被拒绝`);
+      assert.ok(
+        rejected.captured.some(
+          (entry) =>
+            entry.level === 'error' && entry.text.includes('traincommand'),
+        ),
+        `拒绝理由必须指向 --table traincommand（--table ${table}）`,
+      );
+    }
+    // 拒绝发生在解析阶段，一个字节都不写
+    assert.ok(!fs.existsSync(out_dir));
+  });
+});
+
+test('CLI：--table traincommand 解析 Train.csv，产物名 TrainCommand.yml（别名登记）', async () => {
+  await with_temp_dir((dir) => {
+    write_file(dir, 'Train.csv', '0,爱抚\n1,舔阴\n');
+    const out_dir = path.join(dir, 'yml');
+    const written = capture_console(() =>
+      main(['--table', 'traincommand'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(written.result, 0);
+    // 用目录清单断言产物名的精确大小写：Windows 文件系统大小写不敏感，
+    // 直接 existsSync('TrainCommand.yml') 对错误大小写也会通过
+    assert.deepEqual(fs.readdirSync(out_dir), ['TrainCommand.yml']);
+    const product = fs.readFileSync(
+      path.join(out_dir, 'TrainCommand.yml'),
+      'utf8',
+    );
+    assert.ok(product.includes('"爱抚":'));
+    assert.ok(product.includes('issue #43'), '新表头注引用本票');
+    assert.ok(product.includes('--force --table traincommand'));
+
+    // 表名大小写不敏感（与既有 --table 行为一致）
+    const again = capture_console(() =>
+      main(['--table', 'TrainCommand', '--force'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(again.result, 0);
+    assert.ok(
+      again.captured.some(
+        (entry) => entry.level === 'log' && entry.text.includes('写出 1 个'),
+      ),
+    );
+  });
+});
+
+test('CLI：小写源文件名的产物首字母大写（exp.csv → Exp.yml，随 yml/ 既有风格）', async () => {
+  await with_temp_dir((dir) => {
+    write_file(dir, 'exp.csv', '0,私处经验\n');
+    const out_dir = path.join(dir, 'yml');
+    const written = capture_console(() =>
+      main(['--table', 'exp'], { table_csv_dir: dir, table_out_dir: out_dir }),
+    );
+    assert.equal(written.result, 0);
+    assert.deepEqual(
+      fs.readdirSync(out_dir),
+      ['Exp.yml'],
+      '产物名必须首字母大写（目录清单断言，防大小写不敏感文件系统糊弄）',
+    );
+  });
+});
+
+test('CLI：--table palam 产物已存在默认跳过，--force 才重写（产物边界对新表同样生效）', async () => {
+  await with_temp_dir((dir) => {
+    write_file(dir, 'Palam.csv', '0,阴核\n');
+    const out_dir = path.join(dir, 'yml');
+    fs.mkdirSync(out_dir, { recursive: true });
+    const product = path.join(out_dir, 'Palam.yml');
+    fs.writeFileSync(product, '人工修改过的产物', 'utf8');
+
+    const skipped = capture_console(() =>
+      main(['--table', 'palam'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(skipped.result, 0);
+    assert.equal(fs.readFileSync(product, 'utf8'), '人工修改过的产物');
+    assert.ok(
+      skipped.captured.some(
+        (entry) => entry.level === 'log' && entry.text.includes('跳过 1 个'),
+      ),
+    );
+
+    const forced = capture_console(() =>
+      main(['--table', 'palam', '--force'], {
+        table_csv_dir: dir,
+        table_out_dir: out_dir,
+      }),
+    );
+    assert.equal(forced.result, 0);
+    assert.ok(fs.readFileSync(product, 'utf8').includes('"阴核":'));
   });
 });
