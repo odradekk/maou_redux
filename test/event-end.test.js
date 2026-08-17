@@ -17,6 +17,7 @@ const { join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：@EVENTTRAIN 已跑过的调教后状态——目标 31、记录值与暂存值就位、
 // 体力/气力由用例另置。tflag/palam/ex 寻址有夹具守卫，先 beginTrain 开表。
+// #47 起 @EVENTEND 内联 @JUEL_CHECK（读键 + 一枚输入退出交互循环）。
 function seed_world(fixture, { assi = -1 } = {}) {
   join_slave_chara(fixture, 31, '温妮');
   if (assi >= 0) {
@@ -42,7 +43,7 @@ async function run_eventend(fixture) {
   return emit('EVENTEND');
 }
 
-test('主体：复位/记录/结算存根/尾部还原，出口转场 TURNEND', async () => {
+test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture, { assi: 32 });
   fixture.store.set('base:31:0', 2000); // 存活
@@ -50,6 +51,8 @@ test('主体：复位/记录/结算存根/尾部还原，出口转场 TURNEND', 
   fixture.store.set('maxbase:0:1', 10000); // 气力上限（回复用）
   // 中途被对换调教搞乱的指针：复位段读暂存还原
   era_flag.target = 999;
+  // @JUEL_CHECK 交互循环的退出键（#47：内联于 :421 的普通 CALL）
+  fixture.set_inputs(999);
 
   const pending = await run_eventend(fixture);
 
@@ -64,7 +67,7 @@ test('主体：复位/记录/结算存根/尾部还原，出口转场 TURNEND', 
   // :334-336 前回指针记录（FLAG:1/FLAG:2）
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
-  // 结算存根各打一行占位（可检索）
+  // 存根各打一行占位（可检索）
   for (const name of [
     'CHARADEAD_CHECK',
     'SELF_CHECK',
@@ -73,13 +76,15 @@ test('主体：复位/记录/结算存根/尾部还原，出口转场 TURNEND', 
     'SELL_FIGHTMONEY',
     'AFTERTRAIN_CLOTH', // FLAG:37 = 1（着衣）且存活 → 着衣分支可达
     'RE_CLOTHED',
-    'JUEL_CHECK',
   ]) {
     assert(
       fixture.text_lines().some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印含函数名的占位行`,
     );
   }
+  // :421 @JUEL_CHECK 已是真身（#47）：结算表落地、不再是占位行
+  assert(fixture.text_lines().includes('以上的点数变化了。'));
+  assert(!fixture.text_lines().some((line) => line.includes('@JUEL_CHECK')));
   // 尾部还原（:423-425）：ASSI = ASSI:1、TARGET = TARGET:1——复位段（:321）
   // 与尾部各还原一次，末值都是记录值 31/32
   const target_writes = fixture.var_writes.filter(
@@ -96,6 +101,7 @@ test('失神旗标：TFLAG:860 = 1 → FLAG:7 = 1 并清零', async () => {
   seed_world(fixture);
   fixture.store.set('base:31:0', 2000);
   fixture.store.set('tflag:860', 1);
+  fixture.set_inputs(999); // @JUEL_CHECK 交互循环退出键
 
   await run_eventend(fixture);
 
@@ -129,15 +135,15 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
     'DELCHARA 必须除名角色 31',
   );
   assert(!fixture.era.getAddedCharacters().includes(31));
-  // BEGIN 截断：其后的善恶值/时常发情/气力回复/JUEL_CHECK/指针还原整段
+  // BEGIN 截断：其后的善恶值/时常发情/气力回复/珠结算/指针还原整段
   // 不执行（#6 语义：BEGIN 结束当前函数）
   assert(
     !fixture.var_writes.some((w) => w.name === 'cflag:31:81'),
     '死亡分支后的时常发情蓄积不得执行',
   );
   assert(
-    !fixture.text_lines().some((line) => line.includes('@JUEL_CHECK')),
-    '死亡分支后的珠结算存根不得出现',
+    !fixture.text_lines().some((line) => line.includes('以上的点数变化了。')),
+    '死亡分支后的珠结算不得执行',
   );
 });
 
@@ -148,6 +154,7 @@ test('时常发情蓄积：润滑/欲情各按万分比进 CFLAG:81/82，不足�
   fixture.store.set('palam:31:3', 25000); // 润滑 → +2
   fixture.store.set('palam:31:5', 5000); // 欲情不足 10000 → 清 0
   fixture.store.set('cflag:31:81', 3); // 已有蓄积 → 3 + 2 = 5
+  fixture.set_inputs(999);
 
   await run_eventend(fixture);
 
@@ -168,6 +175,7 @@ test('气力回复：FLAG:400 开、目标爱慕 → 魔王气力 +700 并钳上
   fixture.store.set('talent:31:85', 1); // 爱慕
   fixture.store.set('base:0:1', 300); // 魔王现有气力
   fixture.store.set('maxbase:0:1', 10000);
+  fixture.set_inputs(999);
 
   await run_eventend(fixture);
 
@@ -185,6 +193,7 @@ test('气力回复钳上限：超上限回落 MAXBASE', async () => {
   fixture.store.set('talent:31:85', 0); // 无爱慕 → +500
   fixture.store.set('base:0:1', 9800);
   fixture.store.set('maxbase:0:1', 10000); // 9800 + 500 > 10000 → 钳回
+  fixture.set_inputs(999);
 
   await run_eventend(fixture);
 
@@ -214,7 +223,6 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
     'NAME_RESET',
     'MAOU_TENSHIN',
     'KARMA',
-    'JUEL_CHECK',
   ]);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);

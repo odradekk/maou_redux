@@ -222,6 +222,169 @@ const MUTATIONS = [
     tests: ['event-end'],
     expect_only: '主体',
   },
+  {
+    desc: 'M21 珠梯子：PALAMLV:3*2 档丢失乘数（3000 档直接给 100）',
+    file: 'ere/system/train/juel-check.js',
+    find: '  [PALAMLV[3] * 2, 100],',
+    replace: '  [PALAMLV[3], 100],',
+    tests: ['juel-check'],
+    expect_only: '26 个边界',
+  },
+  {
+    desc: 'M22 绝顶加成：EX:0 的 ×1000 改 ×100',
+    file: 'ere/system/train/juel-check.js',
+    find: '      era.set(`gotjuel:${cid}:0`, gain + (era.get(`ex:${cid}:0`) || 0) * 1000);',
+    replace:
+      '      era.set(`gotjuel:${cid}:0`, gain + (era.get(`ex:${cid}:0`) || 0) * 100);',
+    tests: ['juel-check'],
+    expect_only: '结算表第 0 行',
+  },
+  {
+    desc: 'M23 加算对象混入 3（润滑不是保有珠）',
+    file: 'ere/system/train/juel-check.js',
+    find: 'const OWNED_JUEL_KEYS = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];',
+    replace:
+      'const OWNED_JUEL_KEYS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];',
+    tests: ['juel-check'],
+    expect_only: '职责划分',
+  },
+  {
+    desc: 'M24 双重结算：删掉结算尾部的 gotjuel 清零',
+    file: 'ere/system/train/juel-check.js',
+    find: `  for (const key of OWNED_JUEL_KEYS) {
+    era.set(\`gotjuel:\${cid}:\${key}\`, 0);
+  }
+  return 0; // :740 RETURN 0`,
+    replace: `  return 0; // :740 RETURN 0`,
+    tests: ['juel-check'],
+    expect_only: '职责划分',
+  },
+  {
+    desc: 'M25 相殺取量：否定余量减半改三分之一',
+    file: 'ere/system/train/juel-check.js',
+    find: '    let take = Math.floor(negative() / 2); // LOCAL:1 = JUEL:100 / 2',
+    replace:
+      '    let take = Math.floor(negative() / 3); // LOCAL:1 = JUEL:100 / 2',
+    tests: ['juel-check'],
+    expect_only: '逐轮减半',
+  },
+  {
+    desc: 'M26 相殺钳制：池子存量不足不再整池扣走',
+    file: 'ere/system/train/juel-check.js',
+    find: `    if (pool_value(pick) < take) {
+      take = pool_value(pick); // :631-632 池子存量不足就整池扣走
+    }`,
+    replace: `    // 变异：不按池子存量钳制`,
+    tests: ['juel-check'],
+    expect_only: '池子存量不足',
+  },
+  {
+    desc: 'M27 相殺兜底：余量取半为 0 时改扣 2（原作扣 1）',
+    file: 'ere/system/train/juel-check.js',
+    find: '      take = 1; // :629-630 否定未清零时至少扣 1',
+    replace: '      take = 2; // :629-630 否定未清零时至少扣 1',
+    tests: ['juel-check'],
+    expect_only: '改扣 1',
+  },
+  {
+    desc: 'M28 TFLAG 快照：槽位错一格（+51 改 +52）',
+    file: 'ere/system/train/juel-check.js',
+    find: '    era.set(`tflag:${count + 51}`, era.get(`juel:${cid}:${count + 4}`) || 0);',
+    replace:
+      '    era.set(`tflag:${count + 52}`, era.get(`juel:${cid}:${count + 4}`) || 0);',
+    tests: ['juel-check'],
+    expect_only: 'TFLAG 快照',
+  },
+  {
+    desc: 'M29 TFLAG:58：否定快照读错槽（juel:100 改 juel:99）',
+    file: 'ere/system/train/juel-check.js',
+    find: "  era.set('tflag:58', era.get(`juel:${cid}:100`) || 0); // :624",
+    replace: "  era.set('tflag:58', era.get(`juel:${cid}:99`) || 0); // :624",
+    tests: ['juel-check'],
+    expect_only: 'TFLAG 快照',
+  },
+  {
+    desc: 'M30 相殺两组先后：LABEL_1/LABEL_2 对调',
+    file: 'ere/system/train/juel-check.js',
+    find: `  offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_1 恭顺/欲情/屈服
+  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_2 耻情/苦痛/恐怖`,
+    replace: `  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_1 恭顺/欲情/屈服
+  offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_2 耻情/苦痛/恐怖`,
+    tests: ['juel-check'],
+    expect_only: '两组先后',
+  },
+  {
+    desc: 'M31 交互循环出口：999 改 998（退出键失效）',
+    file: 'ere/system/train/juel-check.js',
+    find: `    if (result === 999) {
+      break; // :540-541 → $LABEL_EXIT（能力值提高结束）
+    }`,
+    replace: `    if (result === 998) {
+      break; // :540-541 → $LABEL_EXIT（能力值提高结束）
+    }`,
+    tests: ['juel-check', 'train-loop'],
+    expect_only: '选 999 退出',
+  },
+  {
+    desc: 'M32 自动升级开关：GETBIT 位 35 改 34',
+    file: 'ere/system/train/juel-check.js',
+    find: "    if (getbit(era.get('flag:5'), 35)) {",
+    replace: "    if (getbit(era.get('flag:5'), 34)) {",
+    tests: ['juel-check'],
+    expect_only: '自动升级',
+  },
+  {
+    desc: 'M33 基础行格式：) 与 = 之间的 12 空格少 2 格',
+    file: 'ere/system/train/juel-check.js',
+    find: '      { content: \')            = \' }, // :687 PRINT ) + 12 空格 + "= "',
+    replace:
+      '      { content: \')          = \' }, // :687 PRINT ) + 12 空格 + "= "',
+    tests: ['juel-check'],
+    expect_only: '结算表第 0 行',
+  },
+  {
+    desc: 'M34 FIGURE_INDENT：8 位右对齐改 7 位',
+    file: 'ere/system/train/juel-check.js',
+    find: 'const figure_indent = (n) => String(n).padStart(8);',
+    replace: 'const figure_indent = (n) => String(n).padStart(7);',
+    tests: ['juel-check'],
+    expect_only: '结算表第 0 行',
+  },
+  {
+    desc: 'M35 SHOW_JUEL 数值列：右对齐宽 6 改 5',
+    file: 'ere/page/page-ablup.js',
+    find: '    row += ` ${name}点数：${String(value).padStart(6)}`; // {JUEL,6,RIGHT}',
+    replace:
+      '    row += ` ${name}点数：${String(value).padStart(5)}`; // {JUEL,6,RIGHT}',
+    tests: ['juel-check'],
+    expect_only: 'SHOW_JUEL 三行',
+  },
+  {
+    desc: 'M36 等级行公式：本级需求 lv*10+10 改 lv*10+5',
+    file: 'ere/page/page-info-exp.js',
+    find: `    // :1051-1053 其余
+    need = lv * 10 + 10;`,
+    replace: `    // :1051-1053 其余
+    need = lv * 10 + 5;`,
+    tests: ['juel-check'],
+    expect_only: 'SHOW_INFO_EXP 的经验行',
+  },
+  {
+    desc: 'M37 否定汇入：GOTJUEL:100 的累加改覆盖（反感/不快/抑郁只剩其一）',
+    file: 'ere/system/train/juel-check.js',
+    find: '      era.add(`gotjuel:${cid}:100`, gain);',
+    replace: '      era.set(`gotjuel:${cid}:100`, gain);',
+    tests: ['juel-check'],
+    expect_only: '结算表第 11 行',
+  },
+  {
+    desc: 'M38 能力分支：命中表判假（@ABLUPxx 占位不再出现）',
+    file: 'ere/system/train/juel-check.js',
+    find: '    if (ABLUP_IDS.includes(result)) {',
+    replace: '    if (false && ABLUP_IDS.includes(result)) {',
+    tests: ['juel-check'],
+    expect_only: '能力分支',
+  },
 ];
 
 function run_one(m, index) {
