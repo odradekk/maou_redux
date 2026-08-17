@@ -33,4 +33,21 @@ function preset_chara_17(fixture) {
   fixture.seed_chara(17, CHARA_17_SHAPE);
 }
 
-module.exports = { preset_chara_0, preset_chara_17 };
+/**
+ * 预置并加入一个可调教的奴隶角色（调教域测试的世界底座，issue #44）。
+ *
+ * 做两件事：seed 预设（#35 镜像的引擎守卫）、addCharacter 入列。callname
+ * 寻址键（callname:x:-1/-2，SAVESTR:x 与 NAME:x 的读数源）由夹具的
+ * addCharacter 从预设镜像写入（引擎行为，见 era-fixture.js）。CFLAG:x:1
+ *（占用标志）保持未写 = 0（可选）。
+ *
+ * @param fixture create_era_fixture() 的返回值
+ * @param {number} [id=31] 角色 ID（31 = 琼，随机奴隶的常见编号）
+ * @param {string} [name] 显示名（默认 `奴隶${id}`）
+ */
+function join_slave_chara(fixture, id = 31, name = `奴隶${id}`) {
+  fixture.seed_chara(id, { id, name, callname: name });
+  fixture.era.addCharacter(id);
+}
+
+module.exports = { preset_chara_0, preset_chara_17, join_slave_chara };

@@ -81,6 +81,67 @@ test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预
   assert.deepEqual(fixture.chara_no, [0]);
 });
 
+test('addCharacter 落 callname 键（引擎数据层行为，#44）：姓名 -1 / 称呼 -2', () => {
+  const fixture = create_era_fixture();
+  // 名前 ≠ 呼び名 的角色：两个键重合的世界里，写反了也断言不出来
+  fixture.seed_chara(31, { id: 31, name: '温妮', callname: '小温' });
+  fixture.era.addCharacter(31);
+
+  // 引擎 addCharacter 方法体（app.asar）：
+  //   callname[id][-1] = staticData.chara[id].name
+  //   callname[id][-2] = staticData.chara[id].callname ?? name
+  assert.equal(fixture.store.get('callname:31:-1'), '温妮');
+  assert.equal(fixture.store.get('callname:31:-2'), '小温');
+  // 数据层初始化不走记录层（游戏代码的调用意图由 var_writes 断言）
+  assert.deepEqual(fixture.var_writes, []);
+});
+
+test('removeCharacter 镜像引擎过滤删除（DELCHARA 等价物，#44）', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(31);
+
+  assert.equal(fixture.era.removeCharacter(31), true);
+  assert.deepEqual(fixture.chara_no, [0]);
+  assert.deepEqual(fixture.calls, [
+    { api: 'addCharacter', args: [0] },
+    { api: 'addCharacter', args: [31] },
+    { api: 'removeCharacter', args: [31] },
+  ]);
+});
+
+test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边界', () => {
+  const fixture = create_era_fixture();
+
+  // 引擎寻址层（app.asar 模块 648）的镜像：二段 tflag 在 data.tflag 不存在
+  // 时落到兜底分支报 key error；三段 palam 在角色子表缺失时静默丢弃。
+  // 引擎侧证据由 test/train-loop.test.js 的引擎对拍用例锁定
+  assert.throws(() => fixture.era.set('tflag:0', 1), /key error/);
+  assert.equal(fixture.era.set('palam:31:3', 1), undefined);
+
+  fixture.era.beginTrain(0, 31);
+  assert.equal(fixture.era.set('tflag:0', 1), 1);
+  // 角色未入列（31 之外）仍静默丢弃
+  assert.equal(fixture.era.set('palam:99:3', 5), undefined);
+  assert.deepEqual(
+    fixture.var_writes.filter((w) => w.name === 'palam:99:3'),
+    [],
+  );
+  fixture.era.addCharacterForTrain(99);
+  assert.equal(fixture.era.set('palam:99:3', 5), 5);
+
+  // 常驻表（flag/base 等）不受调教开闭影响
+  assert.equal(fixture.era.set('flag:36', 1), 1);
+
+  // getCharactersInTrain / endTrain
+  assert.deepEqual(fixture.era.getCharactersInTrain(), [0, 31, 99]);
+  fixture.era.endTrain();
+  assert.deepEqual(fixture.era.getCharactersInTrain(), []);
+  assert.throws(() => fixture.era.set('tflag:0', 2), /key error/);
+});
+
 test('logger 被记录且不自递归', () => {
   const fixture = create_era_fixture();
   // 若只置 version.engine 而不整体替换 logger，

@@ -26,6 +26,7 @@
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
+const { stub_line } = require('#/utils/stub-line');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { ask_initial_slave } = require('#/event/first-setting');
 const { add_chara_ex } = require('#/chara/chara-ex');
@@ -44,14 +45,6 @@ const STUBBED_CALLS = [
   'CHARA_NAME_DEFINE',
   'CHAR_BODY_GENERATE_WAPPED',
 ];
-
-// 存根的运行时占位：一行可见反馈，正文含原作函数名（可检索、可断言）。
-// 文案样式沿用 page-title.js 的读档占位（#19 先例）。
-function stub_line(erb_name, note) {
-  era.print(
-    `（${note}尚未移植，此处为占位——原作 @${erb_name}，见 docs/stub-registry.md。）`,
-  );
-}
 
 // 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
 // 函数体内调用，#6 的两条硬规则之二）。普通档：原作 @EVENTFIRST 的其他

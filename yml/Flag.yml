@@ -39,3 +39,47 @@
   id: 10006
   name: "assi"
   type: "number"
+# 以下七项 + 三项暂存是调教域的 Emuera 内置变量（ASSIPLAY/PLAYER/PREVCOM/
+# NEXTCOM/SELECTCOM 与指针数组元素 TARGET:1/ASSI:1、单字母数组 T:10-12 的
+# 调教路径用法），随 #44（T14 调教回合骨架）并入保留区；语义注释见
+# ere/era-utils/era-flag.js 手写区。
+"助手参与调教":
+  id: 10007
+  name: "assiplay"
+  type: "number"
+"调教者":
+  id: 10008
+  name: "player"
+  type: "number"
+"上次指令":
+  id: 10009
+  name: "prevcom"
+  type: "number"
+"下次指令":
+  id: 10010
+  name: "nextcom"
+  type: "number"
+"当前指令":
+  id: 10011
+  name: "selectcom"
+  type: "number"
+"记录调教对象":
+  id: 10012
+  name: "target_record"
+  type: "number"
+"记录助手":
+  id: 10013
+  name: "assi_record"
+  type: "number"
+"暂存主人":
+  id: 10014
+  name: "master_backup"
+  type: "number"
+"暂存目标":
+  id: 10015
+  name: "target_backup"
+  type: "number"
+"暂存助手":
+  id: 10016
+  name: "assi_backup"
+  type: "number"

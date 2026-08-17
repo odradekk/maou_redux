@@ -150,17 +150,89 @@ function create_era_fixture() {
   };
 
   // —— 变量 ——
+  // 调教域表的引擎守卫镜像（app.asar 寻址层 648 的实测语义，issue #44）：
+  //   - tflag/tequip/tcvar/palam/param/delta/gotjuel/deltabase/ex/nowex/stain
+  //     在 beginTrain 前不存在：二段寻址（tflag:0）落到兜底分支，引擎报
+  //     「key error in getter/setter」——夹具同款抛错；
+  //   - 三段寻址（palam:0:3）在角色未入调教时静默丢弃写入（引擎
+  //     `if(!this.data[a]||!this.data[a][c])return;`），source 表虽随 resetData
+  //     预建、角色子表仍只有 addCharacterForTrain 才建——同一守卫；
+  //   - juel/flag/base 等常驻表不受限。
+  // 「我们调了 era.set」证明不了「引擎接受了」——#21/#22 的教训，此处镜像
+  // 引擎侧守卫，让 beginTrain 的时序错误在夹具里同样炸出来。
+  const TRAIN_ONLY_TABLES = new Set([
+    'tflag',
+    'tequip',
+    'tcvar',
+    'palam',
+    'param',
+    'delta',
+    'gotjuel',
+    'gotjewel',
+    'deltabase',
+    'ex',
+    'nowex',
+    'stain',
+  ]);
+  const TRAIN_CHAR_GUARD_TABLES = new Set([...TRAIN_ONLY_TABLES, 'source']);
+  let train_open = false;
+  const chars_in_train = new Set();
+
+  // 引擎的表名归一：param→palam、*jewel→*juel（寻址层 648 原文同款）
+  function normalize_table_name(var_name) {
+    let table = String(var_name).split(':')[0].toLowerCase();
+    if (table === 'param') {
+      table = 'palam';
+    }
+    if (table.endsWith('jewel')) {
+      table = `${table.slice(0, -5)}juel`;
+    }
+    return table;
+  }
+
+  // 按引擎守卫检查一次寻址：越界抛错 / 静默丢弃返回 false，正常放行 true
+  function train_table_allows(var_name) {
+    const table = normalize_table_name(var_name);
+    if (!TRAIN_CHAR_GUARD_TABLES.has(table)) {
+      return true;
+    }
+    const segments = String(var_name).split(':');
+    if (!train_open) {
+      // 二段 tflag:0 → 引擎兜底分支报错；三段 palam:0:3 → data.palam 整表
+      // 缺失，同样走 `if(!this.data[a]||...)return;` 静默丢弃
+      if (segments.length <= 2) {
+        throw new Error(`key error in getter/setter! key (${var_name})`);
+      }
+      return false;
+    }
+    if (segments.length >= 3) {
+      // 三段寻址要求角色已 addCharacterForTrain：子表不在即静默丢弃
+      return chars_in_train.has(Number(segments[1]));
+    }
+    return true;
+  }
+
   era.get = (var_name) => {
+    if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
+      var_reads.push({ name: var_name, value: undefined });
+      return undefined;
+    }
     const value = store.get(var_name);
     var_reads.push({ name: var_name, value });
     return value;
   };
   era.set = (var_name, value) => {
+    if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
+      return undefined; // 引擎静默丢弃：不落盘、不留写记录
+    }
     store.set(var_name, value);
     var_writes.push({ name: var_name, value });
     return value;
   };
   era.add = (var_name, value) => {
+    if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
+      return undefined;
+    }
     // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算
     const next = (store.get(var_name) ?? 0) + value;
     store.set(var_name, next);
@@ -225,6 +297,37 @@ function create_era_fixture() {
   // CHARANUM 的等价物：主菜单的指针钳制读它（page-main-menu.js）。
   // 返回副本，调用方改不动夹具内部状态。
   era.getAddedCharacters = () => [...chara_no];
+
+  // —— 调教 API：镜像引擎 beginTrain/endTrain 一族的数据层语义（#44）——
+  // beginTrain 创建仅限调教的表并把 tflag 静态条目清 0（表只建一次）、
+  // endTrain 结算 gotjuel 后删表；两者间 getCharactersInTrain 读已入列角色。
+  // 结算/删除的实际数值语义（gotjuel→juel、delta→palam 等）不在此镜像：
+  // 夹具的 store 是平表，per-chara 子表结构不存在——那层对拍归引擎
+  // bundle 用例（test/train-loop.test.js 的寻址锁）。这里只镜像「何时可寻址」
+  // 与调用留痕，让时序错误（beginTrain 之前写 tflag）当场暴露。
+  era.beginTrain = (...chara_ids) => {
+    calls.push({ api: 'beginTrain', args: chara_ids });
+    train_open = true; // 引擎：表已存在时跳过重建，此处等价（守卫只看开闭）
+    chara_ids.forEach((id) => chars_in_train.add(id));
+    return undefined;
+  };
+  era.addCharacterForTrain = (...chara_ids) => {
+    calls.push({ api: 'addCharacterForTrain', args: chara_ids });
+    chara_ids.forEach((id) => chars_in_train.add(id));
+    return undefined;
+  };
+  era.getCharactersInTrain = () => [...chars_in_train];
+  era.nextTurnInTrain = () => {
+    calls.push({ api: 'nextTurnInTrain', args: [] });
+    return undefined;
+  };
+  era.endTrain = () => {
+    calls.push({ api: 'endTrain', args: [] });
+    train_open = false;
+    chars_in_train.clear();
+    return undefined;
+  };
+
   // 引擎 resetData 会清空全部存档数据；夹具只清已加入列表——store 里静态
   // 预置与存档数据尚未分离，全面清空需要先做那层区分。
   era.resetData = () => {
@@ -233,6 +336,18 @@ function create_era_fixture() {
     calls.push({ api: 'resetData', args: [] });
     chara_no.length = 0;
     return undefined;
+  };
+  // removeCharacter（DELCHARA 的引擎等价物，#44 的 @EVENTEND 死亡分支用）：
+  // 镜像引擎的过滤删除（data.no.filter，命中即出列）；其余角色表的清理在
+  // 平表 store 里天然发生（键带着旧角色 ID，不再被读到）。
+  era.removeCharacter = (...chara_ids) => {
+    calls.push({ api: 'removeCharacter', args: chara_ids });
+    const kept = chara_no.filter((id) => !chara_ids.includes(id));
+    chara_no.length = 0;
+    chara_no.push(...kept);
+    return chara_ids.length === 1
+      ? !chara_no.includes(chara_ids[0])
+      : undefined;
   };
 
   // —— logger：必须整对象替换。
@@ -265,6 +380,12 @@ function create_era_fixture() {
     'addCharacter',
     'getAddedCharacters',
     'resetData',
+    'beginTrain',
+    'addCharacterForTrain',
+    'getCharactersInTrain',
+    'nextTurnInTrain',
+    'endTrain',
+    'removeCharacter',
   ]);
   Object.keys(era).forEach((key) => {
     if (

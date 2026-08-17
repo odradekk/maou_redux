@@ -101,6 +101,136 @@ const era_flag = {
   set assi(v) {
     era.set('flag:10006', v);
   },
+  /**
+   * 助手参与调教（flag:10007 ↔ FLAG:10007）
+   * @returns {number}
+   */
+  get assiplay() {
+    return era.get('flag:10007') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set assiplay(v) {
+    era.set('flag:10007', v);
+  },
+  /**
+   * 调教者（flag:10008 ↔ FLAG:10008）
+   * @returns {number}
+   */
+  get player() {
+    return era.get('flag:10008') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set player(v) {
+    era.set('flag:10008', v);
+  },
+  /**
+   * 上次指令（flag:10009 ↔ FLAG:10009）
+   * @returns {number}
+   */
+  get prevcom() {
+    return era.get('flag:10009') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set prevcom(v) {
+    era.set('flag:10009', v);
+  },
+  /**
+   * 下次指令（flag:10010 ↔ FLAG:10010）
+   * @returns {number}
+   */
+  get nextcom() {
+    return era.get('flag:10010') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set nextcom(v) {
+    era.set('flag:10010', v);
+  },
+  /**
+   * 当前指令（flag:10011 ↔ FLAG:10011）
+   * @returns {number}
+   */
+  get selectcom() {
+    return era.get('flag:10011') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set selectcom(v) {
+    era.set('flag:10011', v);
+  },
+  /**
+   * 记录调教对象（flag:10012 ↔ FLAG:10012）
+   * @returns {number}
+   */
+  get target_record() {
+    return era.get('flag:10012') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set target_record(v) {
+    era.set('flag:10012', v);
+  },
+  /**
+   * 记录助手（flag:10013 ↔ FLAG:10013）
+   * @returns {number}
+   */
+  get assi_record() {
+    return era.get('flag:10013') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set assi_record(v) {
+    era.set('flag:10013', v);
+  },
+  /**
+   * 暂存主人（flag:10014 ↔ FLAG:10014）
+   * @returns {number}
+   */
+  get master_backup() {
+    return era.get('flag:10014') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set master_backup(v) {
+    era.set('flag:10014', v);
+  },
+  /**
+   * 暂存目标（flag:10015 ↔ FLAG:10015）
+   * @returns {number}
+   */
+  get target_backup() {
+    return era.get('flag:10015') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set target_backup(v) {
+    era.set('flag:10015', v);
+  },
+  /**
+   * 暂存助手（flag:10016 ↔ FLAG:10016）
+   * @returns {number}
+   */
+  get assi_backup() {
+    return era.get('flag:10016') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set assi_backup(v) {
+    era.set('flag:10016', v);
+  },
 };
 // GENERATED END
 
@@ -126,6 +256,31 @@ const era_flag = {
 //       显式传参、不隐式读全局）：-1=未选中。开局置 -1（同文件 :26）。
 //   assi       ASSI   助手指针：0=无。原作开局不显式初始化（Emuera 零值），
 //       照搬留 0。
+//
+// 调教域内置变量（#44 T14 并入；生成区的「↔ FLAG:100xx」注释同样失真，
+// 以此处为准）：
+//   assiplay     ASSIPLAY:0  助手是否参与调教：0=主人亲自调教、1=助手调教。
+//       BEGIN TRAIN 时引擎清 0（train-loop.js 的引擎初始化段镜像）。
+//   player       PLAYER      当前调教者（视角角色）：@EVENTTRAIN 依 ASSIPLAY
+//       置 MASTER 或 ASSI（TRAIN_MAIN.ERB:45-49）；@USERCOM 的 102/112
+//       分支会切换（随指令票）。
+//   prevcom      PREVCOM:0   上次调教指令编号：BEGIN TRAIN 时引擎置 -1，
+//       指令执行后由引擎更新为 SELECTCOM；@SHOW_USERCOM 的「上次的调教
+//       指令」读它（> -1 才显示）。
+//   nextcom      NEXTCOM:0   下次指令编号：BEGIN TRAIN 时引擎置 -1。Emuera
+//       官方标注有已知缺陷、不推荐使用（system-flow.md 注意事项 3），ere
+//       侧只镜像初始化，暂无消费者。
+//   selectcom    SELECTCOM   当前回合玩家选定的指令编号：回合循环的输入
+//       检查设定（train-loop.js），口上与指令实现读它。
+//   target_record  TARGET:1  @EVENTTRAIN 记录的调教对象（TRAIN_MAIN.ERB:52，
+//       「以备人物切换」）；@EVENTEND 写回 FLAG:1 并在尾部还原指针。
+//   assi_record    ASSI:1    同上，记录的助手（:51）。
+//   master_backup  T:10      @PRITRAIN_MESSAGE 开头暂存的 MASTER
+//       （EVENT_BEFORETRAIN.ERB:11-13，注释「避免角色错乱的暂存纪录」）；
+//       @EVENTEND 复位角色时读回（TRAIN_MAIN.ERB:320）。T 是 Emuera 单字母
+//       内置数组，这里只落调教路径用到的三个元素。
+//   target_backup  T:11      同上，暂存的 TARGET（:321 复位）。
+//   assi_backup    T:12      同上，暂存的 ASSI（:323 复位；SIF ASSI 才写）。
 //
 // 原作 FLAG:N 条目（0-9999）随各子系统票按原下标 1:1 增补进 yml/Flag.yml
 // 后重生成；底层直写未声明下标也能落（flag 是引擎内嵌表，app.asar 实证），
