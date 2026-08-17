@@ -1,5 +1,5 @@
 /**
- * @file 角色表迁移的引擎对拍测试（issue #35）。
+ * @file 角色表迁移的引擎对拍测试（issue #35；#50 增 Chara17 村娘与 CFlag 表）。
  *
  * 与 test/csv-to-yml.test.js 的分工：那边测转换器自身的契约（产物边界、
  * 解析镜像的行为锁），这边回答验收的核心问题——**引擎自己的代码**读到产物
@@ -285,5 +285,135 @@ engine_test(
     assert.equal(era_get('talent:0:122'), 1);
     assert.equal(era_get('talentname:122'), '男人');
     assert.equal(era_get('basename:0'), '体力');
+  },
+);
+
+// —— #50：村娘（Chara17，初期奴隶）——
+//
+// 验收三条：入库产物经引擎 yml 路径装载零告警零丢弃（フラグ 行依赖
+// CFlag.yml 建出的 staticData.cflag，缺表即整行丢弃——下方有回归锁）；
+// addCharacter 真把 17 加进去；callname 寻址取到「玛奥」（村娘分支囚禁
+// 播报的读数源）。
+
+engine_test(
+  '入库的 yml/Chara17.yml：引擎装载零告警零丢弃，预设与源 CSV 逐字段一致',
+  () => {
+    const product = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', 'Chara17.yml'),
+      'utf8',
+    );
+    const { text } = read_text(path.join(CHARA_DIR, 'Chara17.csv'));
+
+    const from_yml = load_product_yml(product);
+    const from_csv = load_source_csv(text);
+
+    // 零告警零丢弃：缺表行（如 フラグ → cflag）会在这里逐行点名
+    assert.deepEqual(from_yml.errors, []);
+    // 预设逐字段（フラグ,1,1 依赖 CFlag.yml 落进 cflag）
+    assert.deepEqual(from_yml.static_data.chara[17], {
+      id: 17,
+      name: '玛奥',
+      callname: '玛奥',
+      base: { 0: 1500, 1: 1500 },
+      talent: {
+        0: 1,
+        16: 1,
+        62: 1,
+        69: 1,
+        107: 1,
+        109: 1,
+        152: 1,
+        165: 1,
+        253: 1,
+        300: 4,
+        301: 5,
+        302: 1,
+        303: 2,
+        304: 1,
+        305: 2,
+        306: 2,
+        307: 3,
+        308: 1,
+        309: 1,
+        310: 1,
+        311: 1,
+        312: 20,
+        313: 17,
+        314: 0,
+        315: 3,
+        316: 0,
+        317: 8,
+      },
+      cflag: { 1: 1 },
+    });
+    // 与源 CSV 路径逐字段一致
+    assert.deepEqual(from_yml.static_data, from_csv.static_data);
+    assert.deepEqual(from_yml.errors, from_csv.errors);
+  },
+);
+
+engine_test(
+  '缺 CFlag 名字表时 フラグ 行被整行丢弃并报错（yml/CFlag.yml 存在理由的回归锁）',
+  () => {
+    const product = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', 'Chara17.yml'),
+      'utf8',
+    );
+    // 模拟 yml/ 没有 CFlag.yml 的世界（#50 前的装载状态）
+    const loader = create_chara_loader();
+    attach_variable_tables(loader, repo_tables);
+    delete loader.static_data.cflag;
+    loader.load_rows(engine.parse_data_file(product, 'yml', 'chara'));
+
+    assert.deepEqual(loader.errors, ['角色数据表不存在: cflag!']);
+    assert.equal(
+      loader.static_data.chara[17].cflag,
+      undefined,
+      'フラグ 预设行必须被丢弃（引擎行为），而非静默保留',
+    );
+  },
+);
+
+engine_test(
+  '引擎 addCharacter：装载 Chara17.yml 后角色 17 进入 data.no，callname 同步',
+  () => {
+    const product = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', 'Chara17.yml'),
+      'utf8',
+    );
+    const loader = load_product_yml(product);
+    const adder = create_add_character(loader.static_data);
+
+    assert.equal(adder.add(17), true);
+    assert.deepEqual(adder.data.no, [17], '角色 17 必须进入引擎的 data.no');
+    // 村娘分支囚禁播报的读数源（#5：SAVESTR/CSTR 名字承载）
+    assert.equal(adder.data.callname[17][-1], '玛奥');
+    assert.equal(adder.data.callname[17][-2], '玛奥');
+    // 基礎 0/1 = 1500 同时落 base 与 maxbase，其余基础位初始化 0
+    assert.deepEqual(adder.data.base[17], {
+      0: 1500,
+      1: 1500,
+      2: 0,
+      3: 0,
+      4: 0,
+      10: 0,
+    });
+    assert.deepEqual(adder.data.maxbase[17], {
+      0: 1500,
+      1: 1500,
+      2: 0,
+      3: 0,
+      4: 0,
+      10: 0,
+    });
+    // 素质预设点名三条：0 处女（两列行缺省 1）、300 头发颜色 = 4、
+    // 314 种族 = 0（三列行的显式 0 值，防止「0 值被当空值丢掉」的偏差）
+    assert.equal(adder.data.talent[17][0], 1);
+    assert.equal(adder.data.talent[17][300], 4);
+    assert.equal(adder.data.talent[17][314], 0);
+    // 引擎行为留痕：initCharaTable 的预设拷贝只覆盖名字表内登记的下标，
+    // cflag 名字表为空 → 预设 cflag 不落 data（CFlag.yml 头注释的依据）；
+    // 村娘分支随后写 cflag:17:1 = 0 覆盖预设位，无行为差异。
+    assert.deepEqual(adder.data.cflag[17], {});
   },
 );

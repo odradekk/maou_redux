@@ -1,0 +1,15 @@
+# 本文件不是转换器产物：原作没有 CFLAG 名字表（target/CSV 下不存在 CFlag.csv，
+# 原作对 CFLAG 一律用数字下标），无从转换。
+#
+# 它的存在只有一个目的：让引擎装载循环（app.asar 的 eraStart）建出
+# staticData.cflag——引擎的 staticData 初始为空（{}），角色预设文件里的
+# 「フラグ」行（映射到 cflag，如 Chara17.yml）在 staticData.cflag 缺位时报
+# 「角色数据表不存在: cflag!」并整行丢弃（issue #50 用引擎代码实测）。本文件
+# 装载后 staticData.cflag = {}，预设行零错落地；预设第二列是数字下标，名字
+# 翻译为恒等（引擎 safeUndefinedCheck），空表即够用，不需要名字条目。
+#
+# 已知边界（引擎行为，app.asar 的 addCharacter 实测）：预设的 cflag 值不会随
+# addCharacter 落进 data——引擎的 initCharaTable 初始化只覆盖名字表内登记的
+# 下标。Chara17 的 フラグ,1,1（初始占用）随即被 @EVENTFIRST 村娘分支的
+# CFLAG:1 = 0 覆盖（SYSTEM ver1.0.3.ERB:113），无行为差异。将来若某个角色的
+# 预设 cflag 值需要在加入时直接生效，在此补「名称: id」条目即可。
