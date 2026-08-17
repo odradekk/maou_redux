@@ -23,6 +23,8 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TRAIN_MAIN = 'target/ERB/調教相關/TRAIN_MAIN.ERB';
 const BEFORE_TRAIN = 'target/ERB/EVENT/EVENT_BEFORETRAIN.ERB';
 const USERCOM = 'target/ERB/調教相關/USERCOM.ERB';
+const ABL = 'target/ERB/ABL/ABL.ERB';
+const CHARA_INFO_SHOW = 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB';
 const SHOP = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
 const SHOP_FUNCTION = 'target/ERB/SHOP/SHOP_FUNCTION.ERB';
 const TURNEND = 'target/ERB/EVENT/EVENT_TURNEND.ERB';
@@ -433,6 +435,464 @@ const FILES = [
       { src: USERCOM, ref: '177', any: [/^RETURN 0$/m] },
     ],
   },
+
+  {
+    js: 'ere/system/train/juel-check.js',
+    refs: [
+      // TRAIN_MAIN.ERB @JUEL_CHECK
+      {
+        src: TRAIN_MAIN,
+        ref: '435-549',
+        any: [/^@JUEL_CHECK\s*$/m, /^\s*\$INPUT_LOOP_1\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '437', any: [/^CALL JUEL_CHECK_MAIN\s*$/m] },
+      { src: TRAIN_MAIN, ref: '440', any: [/^WAIT\s*$/m] },
+      { src: TRAIN_MAIN, ref: '443', any: [/^\s*\$INPUT_LOOP_1\s*$/m] },
+      { src: TRAIN_MAIN, ref: '444', any: [/^CUSTOMDRAWLINE ‥\s*$/m] },
+      { src: TRAIN_MAIN, ref: '445', any: [/^CALL SHOW_INFO_EXP\s*$/m] },
+      { src: TRAIN_MAIN, ref: '446', any: [/^CALL SHOW_JUEL\s*$/m] },
+      { src: TRAIN_MAIN, ref: '450', any: [/^IF GETBIT\(FLAG:5,35\)\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '452-455',
+        any: [
+          /^\s*CALL AUTO_ABLUP/m,
+          /^\s*CALL AUTO_ABLUP, ASSI\s*$/m,
+          /^\s*CALL AUTO_ABLUP, MASTER\s*$/m,
+        ],
+      },
+      { src: TRAIN_MAIN, ref: '457', any: [/^\s*GOTO LABEL_EXIT\s*$/m] },
+      { src: TRAIN_MAIN, ref: '459', any: [/^CALL SHOW_ABLUP_SELECT\s*$/m] },
+      { src: TRAIN_MAIN, ref: '461', any: [/^INPUT\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '463-539',
+        any: [/^\s*IF RESULT == 0\s*$/m, /^\s*ELSEIF RESULT == 100\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '540', any: [/^\s*ELSEIF RESULT == 999\s*$/m] },
+      { src: TRAIN_MAIN, ref: '541', any: [/^\s*\$LABEL_EXIT\s*$/m] },
+      { src: TRAIN_MAIN, ref: '542', any: [/^\s*CALL YOKUBO_UP_CHECK\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '543',
+        any: [/^\s*CALL CHECK_SELLASSIABLE\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '544',
+        any: [/^\s*CALL CHECK_SPECIALSKIL, 1\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '545', any: [/^\s*LOCAL = TARGET\s*$/m] },
+      // TRAIN_MAIN.ERB @JUEL_CHECK_MAIN
+      {
+        src: TRAIN_MAIN,
+        ref: '552-740',
+        any: [/^@JUEL_CHECK_MAIN\s*$/m, /^RETURN 0\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '558', any: [/^FOR JUEL_COUNT,0,16\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '559-585',
+        any: [
+          /^\s*IF PALAM:JUEL_COUNT < PALAMLV:1\s*$/m,
+          /^\s*GET_JUEL = 12000\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '587-588',
+        any: [
+          /^\s*IF JUEL_COUNT == 0\s*$/m,
+          /^\s*GOTJUEL:JUEL_COUNT = GET_JUEL \+ EX:0 \* 1000\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '589-590',
+        any: [/^\s*ELSEIF JUEL_COUNT == 1\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '591-592',
+        any: [/^\s*ELSEIF JUEL_COUNT == 2\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '593-594',
+        any: [/^\s*ELSEIF JUEL_COUNT == 14\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '595-596',
+        any: [/^\s*ELSEIF JUEL_COUNT == 15\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '597-598',
+        any: [
+          /^\s*ELSEIF JUEL_COUNT < 11 && JUEL_COUNT != 14 && JUEL_COUNT != 15\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '599-600',
+        any: [/^\s*GOTJUEL:100 \+= GET_JUEL\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '604-613',
+        any: [/现在保有する珠に今回獲得した珠を加算/],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '606-613',
+        any: [/^FOR JUEL_COUNT,0,11\s*$/m, /^\s*JUEL:14 \+= GOTJUEL:14\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '615-624',
+        any: [/否定の珠による相殺を計算/, /^TFLAG:58 = JUEL:100\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '626-637',
+        any: [/^\$LABEL_1\s*$/m, /GOTO LABEL_1/],
+      },
+      { src: TRAIN_MAIN, ref: '627', any: [/^\s*LOCAL:0 = RAND:3 \+ 4\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '629-630',
+        any: [
+          /^\s*SIF LOCAL:1 == 0 && JUEL:100 > 0\s*$/m,
+          /^\s*LOCAL:1 = 1\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '631-632',
+        any: [
+          /^\s*SIF JUEL:\(LOCAL:0\) < LOCAL:1\s*$/m,
+          /^\s*LOCAL:1 = JUEL:\(LOCAL:0\)\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '633',
+        any: [/^\s*JUEL:\(LOCAL:0\) -= LOCAL:1\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '634', any: [/^\s*JUEL:100 -= LOCAL:1\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '636',
+        any: [
+          /^\s*SIF JUEL:100 > 0 && \(JUEL:4 \+ JUEL:5 \+ JUEL:6\) > 0\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '639-649',
+        any: [/^\$LABEL_2\s*$/m, /GOTO LABEL_2/],
+      },
+      { src: TRAIN_MAIN, ref: '640', any: [/^\s*LOCAL:0 = RAND:3 \+ 8\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '648',
+        any: [
+          /^\s*SIF JUEL:100 > 0 && \(JUEL:8 \+ JUEL:9 \+ JUEL:10\) > 0\s*$/m,
+        ],
+      },
+      { src: TRAIN_MAIN, ref: '651', any: [/^\s*DRAWLINE\s*$/m] },
+      { src: TRAIN_MAIN, ref: '652', any: [/^PRINTFORM 调教结果：\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '652-654',
+        any: [
+          /^\s*SIF TFLAG:58 > 0\s*$/m,
+          /PRINTFORM 否定点数\{TFLAG:58\}个抵消。/,
+        ],
+      },
+      { src: TRAIN_MAIN, ref: '656', any: [/^CUSTOMDRAWLINE ‥\s*$/m] },
+      { src: TRAIN_MAIN, ref: '658', any: [/^FOR JUEL_COUNT,0,13\s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '659',
+        any: [
+          /^\s*IF JUEL_COUNT <= 3 \|\| JUEL_COUNT == 7 \|\| JUEL_COUNT == 12\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '660-666',
+        any: [/^\s*IF JUEL_COUNT == 3\s*$/m, /^\s*LOCAL:0 = 15\s*$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '667-674',
+        any: [
+          /^\s*IF JUEL_COUNT == 12\s*$/m,
+          /PRINTFORM 癖好点数：\(/,
+          /PRINTFORM %CSTR:7%点数：\(/,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '676-679',
+        any: [/^\s*N = JUEL:\(LOCAL:0\) - GOTJUEL:\(LOCAL:0\)\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '681', any: [/PRINT  \+ \s*$/m] },
+      { src: TRAIN_MAIN, ref: '687', any: [/PRINT \)            = /] },
+      {
+        src: TRAIN_MAIN,
+        ref: '694-700',
+        any: [
+          /^\s*IF JUEL_COUNT == 11\s*$/m,
+          /^\s*LOCAL:0 = 58\s*$/m,
+          /^\s*LOCAL:0 = JUEL_COUNT \+ 47\s*$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '701',
+        any: [/PRINTFORM %PALAMNAME:\(LOCAL:1\)%点数：\(/],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '702-705',
+        any: [
+          /^\s*N = TFLAG:\(LOCAL:0\) - GOTJUEL:\(LOCAL:1\)\s*$/m,
+          /^\s*SETCOLORBYNAME SkyBlue\s*$/m,
+        ],
+      },
+      { src: TRAIN_MAIN, ref: '713', any: [/PRINT \) - \s*$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '714-717',
+        any: [/^\s*SETCOLORBYNAME LightSalmon\s*$/m],
+      },
+      { src: TRAIN_MAIN, ref: '719', any: [/PRINT  = \s*$/m] },
+      { src: TRAIN_MAIN, ref: '728', any: [/PRINTL \|/] },
+      { src: TRAIN_MAIN, ref: '736', any: [/^CUSTOMDRAWLINE ‥\s*$/m] },
+      { src: TRAIN_MAIN, ref: '737', any: [/^PRINTL 以上的点数变化了。\s*$/m] },
+      // TRAIN_MAIN.ERB @FIGURE_INDENT
+      {
+        src: TRAIN_MAIN,
+        ref: '743-758',
+        any: [/^@FIGURE_INDENT\s*$/m, /^\s*SIF N < 10000000\s*$/m],
+      },
+    ],
+  },
+  {
+    js: 'ere/page/page-ablup.js',
+    refs: [
+      // ABL.ERB @SHOW_JUEL
+      { src: ABL, ref: '3-27', any: [/^@SHOW_JUEL\s*$/m] },
+      { src: ABL, ref: '4', any: [/^CUSTOMDRAWLINE ‥\s*$/m] },
+      { src: ABL, ref: '5', any: [/^FOR COUNT, 0, 12\s*$/m] },
+      {
+        src: ABL,
+        ref: '6-14',
+        any: [
+          /^\s*IF COUNT == 3\s*$/m,
+          /^\s*ELSEIF COUNT == 11\s*$/m,
+          /^\s*ELSEIF COUNT == 12\s*$/m,
+        ],
+      },
+      {
+        src: ABL,
+        ref: '15-18',
+        any: [
+          /^\s*IF COUNT == 0 && TALENT:TARGET:122\s*$/m,
+          /阴茎点数：\{JUEL:LOCAL, 6, RIGHT\}/,
+          /PRINTFORM  %PALAMNAME:LOCAL%点数：\{JUEL:LOCAL, 6, RIGHT\}/,
+        ],
+      },
+      { src: ABL, ref: '21-24', any: [/IF \(COUNT\+1\)%4 == 0/] },
+      { src: ABL, ref: '26', any: [/^PRINTL\s*$/m] },
+      { src: ABL, ref: '27', any: [/^CUSTOMDRAWLINE ‥\s*$/m] },
+      // ABL.ERB @SHOW_ABLUP_SELECT
+      {
+        src: ABL,
+        ref: '29-111',
+        any: [
+          /^@SHOW_ABLUP_SELECT\s*$/m,
+          /^PRINTL \[999\] - 能力值提高结束\s*$/m,
+        ],
+      },
+      { src: ABL, ref: '30', any: [/^U = 0\s*$/m] },
+      { src: ABL, ref: '31', any: [/^REPEAT 40\s*$/m] },
+      {
+        src: ABL,
+        ref: '32-41',
+        any: [
+          /^\s*SIF COUNT >= 4 && COUNT <=9\s*$/m,
+          /^\s*SIF COUNT == 38\s*$/m,
+        ],
+      },
+      {
+        src: ABL,
+        ref: '44-48',
+        any: [
+          /^\s*SIF TALENT:122 && \(COUNT == 2 \|\| COUNT == 22 \|\| COUNT == 33\)\s*$/m,
+          /^\s*SIF TALENT:122 == 0 && \(COUNT == 23 \|\| COUNT == 34\)\s*$/m,
+        ],
+      },
+      {
+        src: ABL,
+        ref: '51-65',
+        any: [
+          /^\s*IF X == 0 && TALENT:101 & 2\s*$/m,
+          /^\s*PRINT \[―\]\s*$/m,
+          /^\s*SETCOLOR 128, 128, 128\s*$/m,
+          /PRINTFORM \[\{X, 2\}\]/,
+        ],
+      },
+      {
+        src: ABL,
+        ref: '66-69',
+        any: [
+          /^\s*IF X == 0 && TALENT:122\s*$/m,
+          /PRINTFORM 阴茎感觉 /,
+          /PRINTFORM %ABLNAME:X,9,LEFT%/,
+        ],
+      },
+      { src: ABL, ref: '77', any: [/PRINTFORM - LV\{ABL:X,2\}/] },
+      { src: ABL, ref: '78', any: [/^\s*CALL DECIDE_ABLUP\s*$/m] },
+      { src: ABL, ref: '80', any: [/^\s*U \+= 1\s*$/m] },
+      { src: ABL, ref: '81-83', any: [/^\s*IF U % 4 == 0\s*$/m] },
+      { src: ABL, ref: '85-86', any: [/^REND \s*$/m, /^SIF U % 4 != 0\s*$/m] },
+      {
+        src: ABL,
+        ref: '88-91',
+        any: [
+          /PRINTFORM  \[99\]%MARKNAME:3% - LV\{MARK:3,2\}/,
+          /^\s*CALL DECIDE_ABLUP99\s*$/m,
+        ],
+      },
+      {
+        src: ABL,
+        ref: '92-101',
+        any: [
+          /^\s*SIF CSTR:7 != ""\s*$/m,
+          /PRINTFORM   \[ 4\] %CSTR:7%感覚/,
+          /^\s*CALL DECIDE_ABLUP4\s*$/m,
+          /PRINTFORM   \[40\] %CSTR:7%中毒/,
+          /^\s*CALL DECIDE_ABLUP40\s*$/m,
+        ],
+      },
+      {
+        src: ABL,
+        ref: '102-108',
+        any: [/^\[IF_DEBUG\]\s*$/m, /^\[ENDIF\]\s*$/m],
+      },
+      { src: ABL, ref: '109', any: [/^PRINTL \s*$/m] },
+      { src: ABL, ref: '110', any: [/^CUSTOMDRAWLINE ‥\s*$/m] },
+      { src: ABL, ref: '111', any: [/^PRINTL \[999\] - 能力值提高结束\s*$/m] },
+    ],
+  },
+  {
+    js: 'ere/page/page-info-exp.js',
+    refs: [
+      { src: CHARA_INFO_SHOW, ref: '1022-1122', any: [/^@SHOW_INFO_EXP /] },
+      { src: CHARA_INFO_SHOW, ref: '1032', any: [/^REPEAT 82\s*$/m] },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1033-1034',
+        any: [/^\s*SIF EXP:COUNT == 0\s*$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1035',
+        any: [
+          /PRINTFORM 　%SUBSTRING\(EXPNAME:COUNT, 0,8\),8,LEFT%:\{EXP:COUNT,6,RIGHT\}/,
+        ],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1037-1039',
+        any: [/^\s*IF U % 4 == 0\s*$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1042-1043',
+        any: [/^\s*SIF !LINEISEMPTY\(\)\s*$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1045-1054',
+        any: [
+          /^IF TARGET == 0\s*$/m,
+          /^\s*ELSEIF TALENT:220 == 1\s*$/m,
+          /X = CFLAG:9 \* 100 \+ 10/,
+        ],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1055',
+        any: [/PRINTFORML 　%SAVESTR:TARGET%当前是Lv\{CFLAG:TARGET:9\}/],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1057-1122',
+        any: [/^PRINT 　\s*$/m, /^\s*IF CFLAG:16 > -1\s*$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1059-1061',
+        any: [/^\s*LOCAL = CFLAG:16 - 1\s*$/m, /PRINT \[初吻对象：不明\]/],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1062-1063',
+        any: [
+          /^\s*ELSEIF CFLAG:16 == 992\s*$/m,
+          /PRINTFORM \[初吻对象：%CSTR:4%\]/,
+        ],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1076-1077',
+        any: [/^\s*ELSEIF CFLAG:16 == 999\s*$/m, /PRINT \[初吻对象：触手\]/],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1078-1087',
+        any: [
+          /PRINTFORM \[初吻对象：%CSTR:4%的/,
+          /^\s*IF CFLAG:16 < 100\s*$/m,
+          /PRINT 肛门\]/,
+        ],
+      },
+      { src: CHARA_INFO_SHOW, ref: '1092', any: [/^IF CFLAG:15 > 0\s*$/m] },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1093',
+        any: [/^\s*LOCAL = CFLAG:15 - 1\s*$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1106-1107',
+        any: [/^\s*ELSEIF CFLAG:15 == 105\s*$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1110-1111',
+        any: [
+          /^\s*ELSEIF LOCAL == 0\s*$/m,
+          /PRINTFORM \[初体验对象：%CSTR:3%\]/,
+        ],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1118-1122',
+        any: [
+          /^PRINTL\s*$/m,
+          /^IF CFLAG:16 > -1 \|\| CFLAG:15 > 0\s*$/m,
+          /^CLEARLINE 1\s*$/m,
+        ],
+      },
+    ],
+  },
+
   {
     js: 'ere/page/page-select-target.js',
     refs: [

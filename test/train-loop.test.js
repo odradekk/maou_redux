@@ -201,6 +201,7 @@ test('999 → @USERCOM → AFTERTRAIN：run_aftertrain 跑 @EVENTEND 并收尾 e
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.era.beginTrain(0, 31);
+  fixture.store.set('base:31:0', 2000); // 存活——死亡分支会跳过其后的珠结算
   // 失神旗标（TFLAG:860）：@EVENTEND 体内要写 tflag——endTrain 若先跑（删表），
   // 这笔写入会被守卫拦下（引擎寻址语义），flag:7 落不了盘。以此钉死
   //「链后收尾」的顺序
@@ -208,8 +209,9 @@ test('999 → @USERCOM → AFTERTRAIN：run_aftertrain 跑 @EVENTEND 并收尾 e
   fixture.load_module('event/event-train');
   fixture.load_module('event/event-end');
   fixture.load_module('page/page-usercom');
-  // 直接驱动两段状态处理器（主循环接驳在端到端用例证）
-  fixture.set_inputs(999);
+  // 直接驱动两段状态处理器（主循环接驳在端到端用例证）；第二枚 999 是
+  // @JUEL_CHECK 交互循环的退出键（#47）
+  fixture.set_inputs(999, 999);
   const { run_train, run_aftertrain } = fixture.load_module(
     'system/train/train-loop',
   );
@@ -225,6 +227,9 @@ test('999 → @USERCOM → AFTERTRAIN：run_aftertrain 跑 @EVENTEND 并收尾 e
   const call_names = fixture.calls.map((c) => c.api);
   assert(call_names.indexOf('endTrain') > call_names.indexOf('beginTrain'));
   assert(fixture.text_lines().includes('调教结束了。'));
+  // @JUEL_CHECK 已是真身（#47）：结算表在 @EVENTEND 链内落地（gotjuel 的
+  // 读写都要求火车表仍在，endTrain 在其后收尾——上一条 tflag 断言同构）
+  assert(fixture.text_lines().includes('以上的点数变化了。'));
 });
 
 test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 → 回主菜单（一条用例）', async () => {
@@ -242,18 +247,19 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
 
   // 初期奴隶问答（#50）夹在标题与开场叙事之间：选 0 = 随机，随机路径仍是
   // RAND_CHARA_MAKE 存根，奴隶由上面的 LATER 处理器播种——本用例要的是
-  // 「开局就有奴隶 31」，不走村娘（那会引入角色 17 与另一串读键）
-  fixture.set_inputs(1, 0, 100, 31, 999);
+  // 「开局就有奴隶 31」，不走村娘（那会引入角色 17 与另一串读键）。
+  // 末尾两枚：999 = 调教菜单退出、999 = @JUEL_CHECK 交互循环退出（#47）
+  fixture.set_inputs(1, 0, 100, 31, 999, 999);
   const main = fixture.load_module('main');
 
   // 标题(1) → FIRST → SHOP → 100 → SELECT_TARGET(31) → TRAIN 一回合
-  //（SHOW_STATUS + 菜单）→ 999 → AFTERTRAIN → TURNEND → SHOP 重绘 →
-  // 下一次 input 队列已空，抛「预置输入已耗尽」到站
+  //（SHOW_STATUS + 菜单）→ 999 → AFTERTRAIN（@EVENTEND + @JUEL_CHECK）
+  // → TURNEND → SHOP 重绘 → 下一次 input 队列已空，抛「预置输入已耗尽」到站
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
   // 消费序列：标题(1) → 初期奴隶问答(0，#50) → 开场叙事读键 ×7
   //（@EVENTFIRST）→ 菜单 100 → 选人 31 → PRITRAIN 存根读键 → 999 →
-  // @EVENTEND 读键
+  // @EVENTEND 读键 → @JUEL_CHECK 的 WAIT 读键 → 999（能力值提高结束）
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 },
     { api: 'input', value: 0 },
@@ -263,6 +269,8 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     { api: 'waitAnyKey' },
     { api: 'input', value: 999 },
     { api: 'waitAnyKey' },
+    { api: 'waitAnyKey' },
+    { api: 'input', value: 999 },
   ]);
 
   const texts = fixture.text_lines();
@@ -274,9 +282,19 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
       (line) => line.type === 'button' && line.accelerator === 999,
     ),
   );
-  // 出过调教：@EVENTEND 消息 + 回合结算壳 + 回到主菜单（状态行恰两次：
-  // 100 之前一次、回程重绘一次）
+  // 出过调教：@EVENTEND 消息 + 珠结算表（#47）+ 回合结算壳 + 回到主菜单
+  //（状态行恰两次：100 之前一次、回程重绘一次）
   assert(texts.includes('调教结束了。'));
+  assert(texts.includes('以上的点数变化了。'));
+  assert(
+    fixture.lines.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 999 &&
+        line.rendered === '[999] - 能力值提高结束',
+    ),
+    '@JUEL_CHECK 的退出键必须是按钮（PR #53）',
+  );
   assert(texts.some((line) => line.includes('回合结算尚未移植')));
   assert.equal(
     texts.filter((line) => line.includes('所持金')).length,

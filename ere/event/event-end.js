@@ -10,13 +10,15 @@
  *
  * 存根（docs/stub-registry.md 函数表）：CHARADEAD_CHECK / SELF_CHECK /
  * SELL_MILK / SELL_VIDEO / SELL_FIGHTMONEY / AFTERTRAIN_CLOTH /
- * RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET / MAOU_TENSHIN / KARMA /
- * JUEL_CHECK（一次性珠结算，实现归 #47——它不是引擎回调，是普通 CALL）。
+ * RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET / MAOU_TENSHIN / KARMA。
+ * @JUEL_CHECK（:421 的一次性珠结算）已随 #47 实现
+ * （system/train/juel-check.js，含与 era.endTrain 的职责划分定案）。
  */
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
+const { run_juel_check } = require('#/system/train/juel-check');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 
@@ -36,7 +38,6 @@ const STUBBED_CALLS = [
   'NAME_RESET',
   'MAOU_TENSHIN',
   'KARMA',
-  'JUEL_CHECK',
 ];
 
 on(
@@ -170,10 +171,10 @@ on(
       era.set('base:0:1', max_willpower);
     }
 
-    // :420-421 何点数を得られたか（一次性珠结算，存根化；实现归 #47，
-    // 非引擎回调，是普通 CALL——注意其游戏侧结算与 run_aftertrain 的
-    // era.endTrain 都碰 gotjuel，#47 落地时防双重累加）
-    stub_line('JUEL_CHECK', '珠结算');
+    // :420-421 何点数を得られたか（一次性珠结算，#47 实现——普通 CALL
+    // 非引擎回调；结算本体与 era.endTrain 的职责划分见 juel-check.js
+    // 文件头：gotjuel 已在结算尾部清零，链后的 endTrain 只删表、不加算）
+    await run_juel_check();
 
     // :424-426 切换回原来的目标与助手（@EVENTTRAIN 记录的 TARGET:1/ASSI:1）
     era_flag.assi = era_flag.assi_record;
