@@ -55,13 +55,13 @@ test('主体：复位/记录/结算存根/尾部还原，出口转场 TURNEND', 
 
   // 出口：:429 BEGIN TURNEND
   assert.equal(pending, 'TURNEND');
-  // :315 消息 + :316 WAIT
+  // :316 消息 + :317 WAIT
   assert(fixture.text_lines().includes('调教结束了。'));
   assert(fixture.inputs_consumed.some((c) => c.api === 'waitAnyKey'));
-  // :320-323 复位（TARGET = T:11；SIF ASSI（32 非零）→ ASSI = T:12）
+  // :319-323 复位（TARGET = T:11；SIF ASSI（32 非零）→ ASSI = T:12）
   assert.equal(era_flag.target, 31);
   assert.equal(era_flag.assi, 32);
-  // :333-334 前回指针记录（FLAG:1/FLAG:2）
+  // :334-336 前回指针记录（FLAG:1/FLAG:2）
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
   // 结算存根各打一行占位（可检索）
@@ -114,7 +114,7 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
   const pending = await run_eventend(fixture);
 
   assert.equal(pending, 'TURNEND');
-  // :359-364 死亡标记 + 指针清空
+  // :365-371 死亡标记 + 指针清空
   assert(
     fixture.var_writes.some((w) => w.name === 'flag:230' && w.value === 1),
     'FLAG:NO+199（31+199=230）死亡标记必须置位',
@@ -123,7 +123,7 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
   assert.equal(era_flag.target, -1);
   assert.equal(era_flag.assi, -1);
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === -1));
-  // :371 DELCHARA → 引擎等价物 removeCharacter：从已加入列表除名
+  // :373 DELCHARA → 引擎等价物 removeCharacter：从已加入列表除名
   assert(
     fixture.calls.some((c) => c.api === 'removeCharacter' && c.args[0] === 31),
     'DELCHARA 必须除名角色 31',

@@ -44,7 +44,7 @@ const MUTATIONS = [
     desc: 'M3 999 出口：@USERCOM 不再发起 BEGIN AFTERTRAIN',
     file: 'ere/page/page-usercom.js',
     find: `  if (result === 999) {
-    // :157-159 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
+    // :173-175 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
     begin(STATE.AFTERTRAIN);
   }`,
     replace: `  if (result === 999) {
@@ -65,7 +65,7 @@ const MUTATIONS = [
     desc: 'M5 EVENTCOMEND 助手衰弱分支：凭空加 FLAG:35 守卫（原作无）',
     file: 'ere/event/event-comend.js',
     find: `  } else if (stamina < 500) {
-    // :302-308 衰弱（无 FLAG:35 守卫——开关只管目标侧）`,
+    // :302-307 衰弱（无 FLAG:35 守卫——开关只管目标侧）`,
     replace: `  } else if (stamina < 500 && era.get('flag:35')) {
     // 变异：加了原作没有的 FLAG:35 守卫`,
     tests: ['event-comend'],
@@ -74,9 +74,9 @@ const MUTATIONS = [
   {
     desc: 'M6 EVENTTRAIN 全量：删掉一笔直线赋值（BASE:MASTER:4 = 0）',
     file: 'ere/event/event-train.js',
-    find: `    // :20 BASE:MASTER:4 = 0（触手射精槽）
+    find: `    // :22 BASE:MASTER:4 = 0（触手射精槽）
     era.set('base:0:4', 0);`,
-    replace: `    // :20 BASE:MASTER:4 = 0（触手射精槽）——变异：删除`,
+    replace: `    // :22 BASE:MASTER:4 = 0（触手射精槽）——变异：删除`,
     tests: ['event-train'],
     expect_only: '全量断言',
   },
@@ -96,7 +96,7 @@ const MUTATIONS = [
     desc: 'M8 SELECT_TARGET 取消：999 返回 1（假选中）',
     file: 'ere/page/page-select-target.js',
     find: `    if (result === 999) {
-      // :287-288 返回 → RETURN 0
+      // :294-296 返回 → RETURN 0
       return 0;
     }`,
     replace: `    if (result === 999) {
@@ -120,11 +120,11 @@ const MUTATIONS = [
   {
     desc: 'M10 IS_TRAINABLE：删掉占用判据（CFLAG:x:1）',
     file: 'ere/page/page-select-target.js',
-    find: `  // :109-110 SIF CFLAG:ARG:1 != 0 → 2
+    find: `  // :111-112 SIF CFLAG:ARG:1 != 0 → 2
   if ((era.get(\`cflag:\${cid}:1\`) || 0) !== 0) {
     return 2;
   }`,
-    replace: `  // :109-110 变异：删掉占用判据`,
+    replace: `  // :111-112 变异：删掉占用判据`,
     tests: ['page-select-target'],
     expect_only: 'IS_TRAINABLE',
   },

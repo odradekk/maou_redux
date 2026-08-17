@@ -137,9 +137,9 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
   await run_show_status(fixture);
 
   const texts = fixture.text_lines();
-  // :62-66 {DAY+1}日(午前)——TIME 0
+  // :62-68 {DAY+1}日(午前)——TIME 0
   assert(texts.includes('1日(午前)'));
-  // :68 目标行：呼び名 调教中 调教者:主人姓名（浅蓝），行尾三空格
+  // :69 目标行：呼び名 调教中 调教者:主人姓名（浅蓝），行尾三空格
   const header = fixture.lines.find(
     (line) => line.type === 'text' && line.text.includes('调教中'),
   );
@@ -152,7 +152,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
       (frag) => frag.content === '你' && frag.color === '#87cefa',
     ),
   );
-  // :82-125 绝顶计数：EX 全零 → 整段静默
+  // :95-124 绝顶计数：EX 全零 → 整段静默
   assert(!texts.some((line) => line.includes('绝顶')));
   // 存根各占位一行（可检索）
   for (const name of [
@@ -167,7 +167,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
       `存根 ${name} 必须打印占位行`,
     );
   }
-  // :128-137 MAXBASE 修正：目标与主人的射精槽上限缺省补 10000
+  // :128-142 MAXBASE 修正：目标与主人的射精槽上限缺省补 10000
   assert(
     fixture.var_writes.some(
       (w) => w.name === 'maxbase:31:2' && w.value === 10000,

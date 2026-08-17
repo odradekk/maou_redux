@@ -8,7 +8,7 @@
  *     以本文件的 print_palam 承载）
  *
  * 骨架范围（工单：循环骨架不是完整状态画面）：@SHOW_STATUS 的子调用除
- * PRINT_PALAM 外一律存根化；射精/母乳/触手槽条段（:139-233）的 TALENT /
+ * PRINT_PALAM 外一律存根化；射精/母乳/触手槽条段（:144-252）的 TALENT /
  * TEQUIP 守卫在零指令下不可达，整段以注释占位（docs/stub-registry.md）。
  * 其余直线代码（日期行、目标行、绝顶计数、MAXBASE 修正）1:1 照搬。
  */
@@ -103,7 +103,7 @@ function print_palam(cid) {
   }
 }
 
-// @SHOW_STATUS 的绝顶计数段（:82-125）：EX:0-5 的方括号行，有任一非零才成行
+// @SHOW_STATUS 的绝顶计数段（:95-124）：EX:0-5 的方括号行，有任一非零才成行
 function print_ex_counters(cid) {
   // 未声明读值 undefined → || 0（#13）；EX 全零（零指令空转）时整段静默
   const ex = Array.from(
@@ -111,7 +111,7 @@ function print_ex_counters(cid) {
     (_, i) => era.get(`ex:${cid}:${i}`) || 0,
   );
   const parts = [];
-  // :84-92 EX:0：阴茎（TALENT:121 扶她 / 122 男人）或阴蒂
+  // :95-103 EX:0：阴茎（TALENT:121 扶她 / 122 男人）或阴蒂
   if (ex[0] > 0) {
     const organ =
       era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)
@@ -119,23 +119,23 @@ function print_ex_counters(cid) {
         : '阴蒂';
     parts.push(`[${organ}绝顶：${ex[0]}次]  `);
   }
-  // :93-94 EX:1 私处
+  // :104-105 EX:1 私处
   if (ex[1] > 0) {
     parts.push(`[私处绝顶：${ex[1]}次]  `);
   }
-  // :95-96 EX:2 肛门
+  // :106-107 EX:2 肛门
   if (ex[2] > 0) {
     parts.push(`[肛门绝顶：${ex[2]}次]  `);
   }
-  // :97-98 EX:3 乳房
+  // :108-109 EX:3 乳房
   if (ex[3] > 0) {
     parts.push(`[乳房绝顶：${ex[3]}次]  `);
   }
-  // :99-100 EX:4（%CSTR:7% = 癖好名，未落表读空）
+  // :110-111 EX:4（%CSTR:7% = 癖好名，未落表读空）
   if (ex[4] > 0) {
     parts.push(`[${era.get(`cstr:${cid}:7`) ?? ''}绝顶：${ex[4]}次]  `);
   }
-  // :101-117 EX:5：阴茎侧「射精（喷乳）」（TALENT:130 母乳体质）/「射精」，
+  // :112-122 EX:5：阴茎侧「射精（喷乳）」（TALENT:130 母乳体质）/「射精」，
   // 否则「喷乳」
   if (ex[5] > 0) {
     if (era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)) {
@@ -149,13 +149,13 @@ function print_ex_counters(cid) {
     }
   }
   if (parts.length > 0) {
-    // :118-119 SIF EX 任一非零 → PRINTL（拼行 + 补换行；各段尾自带双空格，
+    // :123-124 SIF EX 任一非零 → PRINTL（拼行 + 补换行；各段尾自带双空格，
     // 与原作逐字一致，对拍归 #48）
     era.print(parts.join(''));
   }
 }
 
-// @SHOW_STATUS 的 MAXBASE 修正段（:128-137）：射精槽（BASE:2）上限缺省
+// @SHOW_STATUS 的 MAXBASE 修正段（:128-142）：射精槽（BASE:2）上限缺省
 // 10000、早泄（TALENT:133）压到 5000；三处（目标/主人/助手）判据各有微差
 // （助手档是 ELSEIF MAXBASE:2 != 0 && TALENT:133，与另两处的 != 5000 不同，
 // 1:1 保留）
@@ -173,12 +173,12 @@ on('SHOW_STATUS', async () => {
 
   // :61 DRAWLINE
   era.drawLine();
-  // :62-66 {DAY+1}日 (午前/午后)（TIME：0=午前）
+  // :62-68 {DAY+1}日 (午前/午后)（TIME：0=午前）
   era.print(
     `${era_flag.day_count + 1}日${era_flag.time === 0 ? '(午前)' : '(午后)'}`,
   );
 
-  // :68-77 %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
+  // :69-82 %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
   // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格照原作）
   const header = [{ content: `${chara_callname(target)} 调教中   调教者:` }];
   if (era_flag.assiplay !== 0) {
@@ -192,44 +192,44 @@ on('SHOW_STATUS', async () => {
   if (era_flag.assi > 0 && era_flag.assiplay === 0) {
     header.push({ content: `  助手:${chara_callname(era_flag.assi)}` });
   }
-  header.push({ content: '   ' }); // :77 PRINT（行尾三空格）
+  header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
   era.print(header);
 
-  // :69-70 CALL SHOW_EQUIP_2 / LIFE_BAR / VITAL_BAR —— 存根
+  // :84-86 CALL SHOW_EQUIP_2 / LIFE_BAR / VITAL_BAR —— 存根
   stub_line('SHOW_EQUIP_2', '装备显示', '随装备票');
   stub_line('LIFE_BAR', '生命条', '随状态画面票');
   stub_line('VITAL_BAR', '气力条', '随状态画面票');
 
-  // :71-78 調教時ステータス画面に服装表示を捻じ込んでみた：【PRINT_CLOTHTYPE】
+  // :87-91 調教時ステータス画面に服装表示を捻じ込んでみた：【PRINT_CLOTHTYPE】
   // （INLINE 占位：原作在同一行内嵌服装名，存根文案并入括号保持单行结构）
   era.print(
     `【服装表示尚未移植（原作 @PRINT_CLOTHTYPE，随服装票，见 docs/stub-registry.md。）】`,
   );
-  era.println(); // :80 PRINTL
+  era.println(); // :93 PRINTL
 
-  // :82-125 绝顶计数（直线段，1:1）
+  // :95-124 绝顶计数（直线段，1:1）
   print_ex_counters(target);
 
   // :126 PRINT_PALAM TARGET（引擎内建命令的移植，参数条——指令菜单之外
   // 玩家唯一的反馈，工单点名保留）
   print_palam(target);
 
-  // :128-137 MAXBASE 修正（目标/主人/助手三处；助手档判据差异见函数头）
+  // :128-142 MAXBASE 修正（目标/主人/助手三处；助手档判据差异见函数头）
   fix_maxbase(target);
   fix_maxbase(0);
   if (era_flag.assi >= 0) {
     fix_maxbase(era_flag.assi, true);
   }
 
-  // :139-233 射精（主人/助手/目标三段）· 母乳（三段）· 触手/死斗场（TEQUIP
+  // :144-252 射精（主人/助手/目标三段）· 母乳（三段）· 触手/死斗场（TEQUIP
   // 89/90/55）槽条段：TALENT:121/122/130/135 与 TEQUIP 守卫在零指令空转下
   // 全部不可达，整段以注释占位——正文随首条指令/装备票移植（已登记
   // docs/stub-registry.md「SHOW_STATUS 射精/母乳/触手槽条段」行）。
 
-  // :235 CALL SHOW_EQUIP_1 —— 存根
+  // :253 CALL SHOW_EQUIP_1 —— 存根
   stub_line('SHOW_EQUIP_1', '装备一览', '随装备票');
 
-  // :238 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；本票
+  // :255-256 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；本票
   // 移植——引擎 LINECOUNT 的等价物 getLineCount 直通）
   era.set('tflag:999', era.getLineCount());
 });

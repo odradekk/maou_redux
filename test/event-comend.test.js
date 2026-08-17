@@ -103,7 +103,7 @@ test('分支 3：助手体力 <= 0 → 助手死亡消息（代词与 TEQUIP 都
   seed_world(fixture, { assi: 32 });
   fixture.store.set('base:31:0', 2000); // 目标健在
   fixture.store.set('base:32:0', 0);
-  // 原作 :294-295 的 SIF TEQUIP:53 无角色前缀 = TEQUIP:TARGET:53（1:1：
+  // 原作 :296-297 的 SIF TEQUIP:53 无角色前缀 = TEQUIP:TARGET:53（1:1：
   // 助手死时查的是**目标**的录像装备——可疑但照搬，勿「修好」）
   fixture.store.set('tequip:31:53', 1); // 只预置目标的录像标志
 
@@ -112,7 +112,7 @@ test('分支 3：助手体力 <= 0 → 助手死亡消息（代词与 TEQUIP 都
   assert.equal(pending, 'AFTERTRAIN');
   const texts = fixture.text_lines();
   assert(texts.includes('助手桑一动也不动，'));
-  // 原作 :298 用 SHE(TARGET)（笔误）：助手分支的代词取目标侧
+  // 原作 :299 用 SHE(TARGET)（笔误）：助手分支的代词取目标侧
   assert(texts.includes('对她做什么都不再有反应了……'));
   assert(
     fixture.var_writes.some((w) => w.name === 'tflag:34' && w.value === 1),
@@ -136,7 +136,7 @@ test('分支 4：助手体力 < 500 → 衰弱结束，无 FLAG:35 条件（开�
   seed_world(fixture, { assi: 32 });
   fixture.store.set('base:31:0', 2000);
   fixture.store.set('base:32:0', 300);
-  // 助手衰弱分支（:302）没有 FLAG:35 守卫——开关关同样触发
+  // 助手衰弱分支（:303）没有 FLAG:35 守卫——开关关同样触发
   fixture.store.set('flag:35', 0);
 
   const pending = await run_comend(fixture);

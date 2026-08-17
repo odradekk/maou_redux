@@ -103,7 +103,7 @@ function show_shop() {
 }
 
 /**
- * @SELECT_ASSI（SHOP ver1.0.2.ERB:337-421）：助手选择画面。
+ * @SELECT_ASSI（SHOP ver1.0.2.ERB:331-421）：助手选择画面。
  *
  * 与 @SELECT_TARGET 同构（判据换 IS_ASSISTABLE）；返回 0/1/2 = 无助手/
  * 选中/取消。函数体未移植，占位、返回 0（无助手语义）——100 分支的助手
@@ -120,7 +120,7 @@ function select_assi() {
  * @USERSHOP（:40-229）：主菜单输入分发（issue #24；100 分支随 #44 补全）。
  *
  * 结构 1:1：整条 IF/ELSEIF 链照原作顺序搬，**没有 ELSE**——认不出的输入
- * （含被守卫拦下的 100/496/497，A == 0 时）落到函数尾（对应 :228 的
+ * （含被守卫拦下的 100/496/497，A == 0 时）落到函数尾（对应 :229 的
  * RETURN 0），回循环重绘，不提示、不报错（原作行为）。
  *
  * 作用域外的指令分支按原作结构留壳：运行时打一行占位（原作调用名可检
@@ -144,14 +144,14 @@ async function usershop(result) {
   if (result === 100 && selectable_count > 0) {
     // 进调教（:59-101，#44 补全）。
     if (era_flag.target <= 0) {
-      // :63-68 目标未选 → CALL SELECT_TARGET（真身见 page-select-target.js）；
+      // :65-68 目标未选 → CALL SELECT_TARGET（真身见 page-select-target.js）；
       // SIF RESULT == 0（取消/列表为空）→ RETURN 0
       const selected = await select_target();
       if (selected === 0) {
         return; // :67-68
       }
     }
-    // $SELECT_ASSI_LOOP（:70-97）：助手候选计数 TEMP:3——CFLAG:x:0 == 2
+    // $SELECT_ASSI_LOOP（:71-97）：助手候选计数 TEMP:3——CFLAG:x:0 == 2
     //（助手役）且 x != 0 且 CFLAG:x:1 == 0（未占用）且 x != TARGET。单奴隶
     // 路径 TEMP:3 == 0 → 跳过 CALL SELECT_ASSI（存根，不可达登记）；
     // TARGET == ASSI 时助手作废、GOTO 回标签重查（循环等价物：continue 跳过
@@ -170,15 +170,15 @@ async function usershop(result) {
               era_flag.target !== cid,
           ).length;
         if (assi_candidates >= 1) {
-          select_assi(); // :81-82 CALL SELECT_ASSI（存根：恒 0，无助手）
+          select_assi(); // :79-80 CALL SELECT_ASSI（存根：恒 0，无助手）
         }
-        // :83-84 SIF RESULT == 2 → RETURN 0（存根恒 0，不触发）
-        // :85-86 SIF ASSI == 0 → ASSI = -1
+        // :81-82 SIF RESULT == 2 → RETURN 0（存根恒 0，不触发）
+        // :83-84 SIF ASSI == 0 → ASSI = -1
         if (era_flag.assi === 0) {
           era_flag.assi = -1;
         }
         if (era_flag.target === era_flag.assi) {
-          // :87-90 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
+          // :85-88 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
           era_flag.assi = -1;
           select_assi_loop = true;
           continue;
@@ -189,7 +189,7 @@ async function usershop(result) {
         era_flag.assi = -1;
       }
     }
-    // :93-96 育儿室判定：CFLAG:MASTER:1 == 10 → 报文 RETURN 0
+    // :94-97 育儿室判定：CFLAG:MASTER:1 == 10 → 报文 RETURN 0
     if ((era.get('cflag:0:1') || 0) === 10) {
       era.print('育儿室中的你不能进行调教……'); // %CALLNAME:MASTER%（恒「你」）
       await era.waitAnyKey(); // PRINTFORMW 的读键
@@ -200,7 +200,7 @@ async function usershop(result) {
     if (era_flag.target >= 1 && era_flag.target !== era_flag.assi) {
       begin(STATE.TRAIN);
     }
-    // :100 RETURN 1 —— BEGIN 已结束原作函数，ere 侧 begin() 抛出后同样
+    // :101 RETURN 1 —— BEGIN 已结束原作函数，ere 侧 begin() 抛出后同样
     // 到不了这里；守卫不成立时（理论上不可达）落到链尾 RETURN 0
   } else if (result === 101) {
     // 能力显示（:102-106）：CALL CHARA_INFO，返回 1 才 BEGIN TURNEND
@@ -315,7 +315,7 @@ async function usershop(result) {
   if (result === 7788) {
     stub_line('RELATION_DEBUGPRINT', '关系调试打印', '随调试票');
   }
-  // :228 RETURN 0：认不出 / 守卫拦下的输入一律落到这里，回 @SHOW_SHOP
+  // :229 RETURN 0：认不出 / 守卫拦下的输入一律落到这里，回 @SHOW_SHOP
   // 重绘（run_shop 的下一轮循环）。原作的 RETURN 0/1 都被引擎循环忽略、
   // 恒重绘，ere 侧无需区分。
 }
