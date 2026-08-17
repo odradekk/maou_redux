@@ -3,8 +3,9 @@
  *
  * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @EVENTSHOP（:4-20，BEGIN SHOP 后
  *     最先执行一次）/@SHOW_SHOP（:22-38，绘制）/@USERSHOP（:40-229，输入
- *     分发，#24 落地；其调用的 @SELECT_TARGET :236 / @SELECT_ASSI :337 在
- *     同文件，函数体未移植、占位）
+ *     分发，#24 落地；100 分支的助手循环与 BEGIN TRAIN 随 #44 补全）/
+ *     @SELECT_ASSI（:337-421，函数体存根占位）；@SELECT_TARGET（:236-330）
+ *     的真身在 page/page-select-target.js（#44）
  *
  * Emuera 语义（引擎行为，非 ERB 函数）：BEGIN SHOP 后引擎先调 @EVENTSHOP
  * 一次，随后循环「@SHOW_SHOP 绘制 → 等输入 → @USERSHOP 分发」。ere 侧把
@@ -12,23 +13,24 @@
  */
 
 const era = require('#/era-electron');
+const { begin, STATE } = require('#/system/flow/begin-signal');
 const {
   draw_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
   stub_line,
 } = require('#/page/page-main-menu');
+const { select_target } = require('#/page/page-select-target');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
- * 本文件存根化的原作调用名（@SELECT_TARGET/@SELECT_ASSI 的函数体，与
- * 作用域外指令分支的壳占位）。docs/stub-registry.md 必须收录每一个
- * （test/page-shop.test.js 对账钉死）；名单变动必须同步清单。
+ * 本文件存根化的原作调用名（@SELECT_ASSI 的函数体与作用域外指令分支的壳
+ * 占位）。docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 对账
+ * 钉死）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
+ * 自 #44 起为真身/真转场，移出本名单。
  */
 const STUBBED_CALLS = [
-  'SELECT_TARGET',
   'SELECT_ASSI',
-  'BEGIN TRAIN',
   'CHARA_INFO',
   'DUNGEON_INFO2',
   '批量处刑',
@@ -101,25 +103,11 @@ function show_shop() {
 }
 
 /**
- * @SELECT_TARGET（SHOP ver1.0.2.ERB:236-330）：调教目标选择画面。
- *
- * 分页列出可选奴隶、输入循环选人，选中置 TARGET 与 FLAG:1（前回调教
- * 目标）。函数体未移植，占位；返回 0 对应原作「列表为空 / 玩家取消」的
- * RETURN 0——两个调用点（usershop 的 :67-68 与 :153）都按「无选择」处理，
- * 回循环重绘。真身落地（随角色选择票）时改为 async 输入循环。
- *
- * @returns {number} 恒 0（取消语义）
- */
-function select_target() {
-  stub_line('SELECT_TARGET', '调教目标选择画面', '随角色选择票');
-  return 0;
-}
-
-/**
  * @SELECT_ASSI（SHOP ver1.0.2.ERB:337-421）：助手选择画面。
  *
  * 与 @SELECT_TARGET 同构（判据换 IS_ASSISTABLE）；返回 0/1/2 = 无助手/
- * 选中/取消。占位同上，返回 0（无助手）。
+ * 选中/取消。函数体未移植，占位、返回 0（无助手语义）——100 分支的助手
+ * 循环在单奴隶路径不可达（TEMP:3 == 0 跳过 CALL），497 入口随助手票落地。
  *
  * @returns {number} 恒 0（无助手语义）
  */
@@ -129,28 +117,23 @@ function select_assi() {
 }
 
 /**
- * @USERSHOP（:40-229）：主菜单输入分发（issue #24）。
+ * @USERSHOP（:40-229）：主菜单输入分发（issue #24；100 分支随 #44 补全）。
  *
  * 结构 1:1：整条 IF/ELSEIF 链照原作顺序搬，**没有 ELSE**——认不出的输入
  * （含被守卫拦下的 100/496/497，A == 0 时）落到函数尾（对应 :228 的
- * RETURN 0），回循环重绘，不提示、不报错（原作行为；工单正文「得到提示」
- * 以原作为准修正——原作没有提示，#24 派单核实事实 #5）。
+ * RETURN 0），回循环重绘，不提示、不报错（原作行为）。
  *
- * 作用域外的指令分支（各子系统调用）按原作结构留壳：运行时打一行占位
- * （原作调用名可检索），真行为整支欠着，docs/stub-registry.md 的
- * 「@USERSHOP 指令分支欠账」节整组登记；落地一张子系统票就把对应壳换成
- * 真调用并销账。壳内的 BEGIN TRAIN / BEGIN TURNEND 是主菜单仅有的两个
- * 出口，目标状态未移植——本票不接 begin()（#24 派单核实事实 #7），未来
- * 接通后主循环进站即报错点名，那是预期行为，不得兜住（核实事实 #6）。
+ * 作用域外的指令分支按原作结构留壳：运行时打一行占位（原作调用名可检
+ * 索），真行为整支欠着，docs/stub-registry.md 整组登记。100 分支自 #44 起
+ * 是真身（SELECT_TARGET 真身 + BEGIN TRAIN 真转场）；壳内的 BEGIN TURNEND
+ * 仍是出口欠账（回合结算票），接通前主循环进站即报错点名，那是预期行为。
  *
  * @param {number} result 玩家输入（原作 RESULT，即 era.input() 的返回值）
  */
-function usershop(result) {
+async function usershop(result) {
   // :44-57 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 跳
   // 商店）：BOUGHT 是 builtin 标量、无 ere 落点（恒 -1 语义，变量级欠账表
-  // 已登记），四个条件全部不成立、整段不可达，不搬——键入 999 因此与原作
-  // （BOUGHT == -1 时）一致地落到链尾 :222 的调试菜单分支。商店票落地时
-  // 恢复本段。
+  // 已登记），四个条件全部不成立、整段不可达，不搬——商店票落地时恢复。
   //
   // A（可选奴隶数）：原作在 @DRAW_MAINMENU :208-216 算出，:59/:152/:154
   // 的守卫读它；渲染与分发两次求值之间无写入路径，分发时重算等价。实机
@@ -159,16 +142,66 @@ function usershop(result) {
   const selectable_count = count_selectable_slaves();
 
   if (result === 100 && selectable_count > 0) {
-    // 进调教（:59-101）。本票只移植第一层：无目标（TARGET <= 0）时 CALL
-    // SELECT_TARGET，占位恒 0（取消）→ 原作 :67-68 的 SIF RESULT == 0 →
-    // RETURN 0，回循环重绘——存根语义下与原作逐行为一致；其后的助手选择
-    // 循环（:70-90）、育儿室判定（:91-94）与 :99 的 BEGIN TRAIN 随调教票
-    // 落地。已有目标（TARGET >= 1）的直入路径同随调教票，此处占位。
+    // 进调教（:59-101，#44 补全）。
     if (era_flag.target <= 0) {
-      select_target();
-      return; // :67-68 SIF RESULT == 0 → RETURN 0
+      // :63-68 目标未选 → CALL SELECT_TARGET（真身见 page-select-target.js）；
+      // SIF RESULT == 0（取消/列表为空）→ RETURN 0
+      const selected = await select_target();
+      if (selected === 0) {
+        return; // :67-68
+      }
     }
-    stub_line('BEGIN TRAIN', '调教转场', '随调教票');
+    // $SELECT_ASSI_LOOP（:70-97）：助手候选计数 TEMP:3——CFLAG:x:0 == 2
+    //（助手役）且 x != 0 且 CFLAG:x:1 == 0（未占用）且 x != TARGET。单奴隶
+    // 路径 TEMP:3 == 0 → 跳过 CALL SELECT_ASSI（存根，不可达登记）；
+    // TARGET == ASSI 时助手作废、GOTO 回标签重查（循环等价物：continue 跳过
+    // 尾检查，与原作 GOTO 直达标签一致）
+    let select_assi_loop = true;
+    while (select_assi_loop) {
+      select_assi_loop = false;
+      if (era_flag.assi <= 0) {
+        const assi_candidates = era
+          .getAddedCharacters()
+          .filter(
+            (cid) =>
+              cid !== 0 &&
+              (era.get(`cflag:${cid}:0`) || 0) === 2 &&
+              (era.get(`cflag:${cid}:1`) || 0) === 0 &&
+              era_flag.target !== cid,
+          ).length;
+        if (assi_candidates >= 1) {
+          select_assi(); // :81-82 CALL SELECT_ASSI（存根：恒 0，无助手）
+        }
+        // :83-84 SIF RESULT == 2 → RETURN 0（存根恒 0，不触发）
+        // :85-86 SIF ASSI == 0 → ASSI = -1
+        if (era_flag.assi === 0) {
+          era_flag.assi = -1;
+        }
+        if (era_flag.target === era_flag.assi) {
+          // :87-90 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
+          era_flag.assi = -1;
+          select_assi_loop = true;
+          continue;
+        }
+      }
+      // :91-92 SIF ASSI >= 1 && TARGET == ASSI → ASSI = -1（循环外尾检查）
+      if (era_flag.assi >= 1 && era_flag.target === era_flag.assi) {
+        era_flag.assi = -1;
+      }
+    }
+    // :93-96 育儿室判定：CFLAG:MASTER:1 == 10 → 报文 RETURN 0
+    if ((era.get('cflag:0:1') || 0) === 10) {
+      era.print('育儿室中的你不能进行调教……'); // %CALLNAME:MASTER%（恒「你」）
+      await era.waitAnyKey(); // PRINTFORMW 的读键
+      return;
+    }
+    // :98-99 SIF TARGET >= 1 && TARGET != ASSI → BEGIN TRAIN（#44 接通：
+    // 信号上抛，主循环进 TRAIN 状态——train-loop.js）
+    if (era_flag.target >= 1 && era_flag.target !== era_flag.assi) {
+      begin(STATE.TRAIN);
+    }
+    // :100 RETURN 1 —— BEGIN 已结束原作函数，ere 侧 begin() 抛出后同样
+    // 到不了这里；守卫不成立时（理论上不可达）落到链尾 RETURN 0
   } else if (result === 101) {
     // 能力显示（:102-106）：CALL CHARA_INFO，返回 1 才 BEGIN TURNEND
     // （:105，出口之一）
@@ -233,8 +266,9 @@ function usershop(result) {
     // LABO（:148；面板无此按钮，2D 迷宫地质相关的隐入口）
     stub_line('LABO', '2D 迷宫实验室', '随迷宫票');
   } else if (result === 496 && selectable_count > 0) {
-    // 调教目标（:152-153）：CALL SELECT_TARGET（占位，见上）
-    select_target();
+    // 调教目标（:152-153）：CALL SELECT_TARGET（真身见 page-select-target.js，
+    // 原作此调用点忽略返回值——只开选择画面）
+    await select_target();
   } else if (result === 497 && selectable_count > 0) {
     // 助手（:154-155）：CALL SELECT_ASSI（占位，见上）
     select_assi();
@@ -276,8 +310,8 @@ function usershop(result) {
   }
 
   // :226-227 链外尾检查（SIF，非 ELSEIF）：未被链上分支提前 RETURN 的
-  // 输入再查一次 7788。本链唯一的提前 return 在 100 的取消路径（同原作
-  // :68），其余分支落到这里时 result 必非 7788，判定等价。
+  // 输入再查一次 7788。链上的提前 return 都在 100 分支内（取消 :68 与
+  // 育儿室 :96，同原作），其余分支落到这里时 result 必非 7788，判定等价。
   if (result === 7788) {
     stub_line('RELATION_DEBUGPRINT', '关系调试打印', '随调试票');
   }
@@ -289,9 +323,9 @@ function usershop(result) {
 /**
  * STATE.SHOP 的处理器：@EVENTSHOP 一次 + 「@SHOW_SHOP 绘制 → INPUT →
  * @USERSHOP 分发」的循环。正常情况下永不返回（菜单是游戏的中枢，经 BEGIN
- * 转场离开，如原作 @USERSHOP :99 的 BEGIN TRAIN——随调教票接线后，
- * begin() 的 BeginSignal 从本循环自然上抛、由主循环接站；本模块不写
- * try/catch，不会吞信号，#6 硬约束）。
+ * 转场离开，如原作 @USERSHOP :99 的 BEGIN TRAIN——#44 已接线，begin() 的
+ * BeginSignal 从本循环自然上抛、由主循环接站；本模块不写 try/catch，
+ * 不会吞信号，#6 硬约束）。
  */
 async function run_shop() {
   eventshop();
@@ -300,7 +334,7 @@ async function run_shop() {
     // 引擎侧：玩家点按钮（printButton 的快捷键）或直接键入编号；INPUT 的
     // 返回值即原作 RESULT，交 @USERSHOP 的等价物分发（原作引擎把结果放
     // RESULT 调 @USERSHOP，ere 侧收进 usershop 的形参）。
-    usershop(await era.input());
+    await usershop(await era.input());
     // 分发完回 @SHOW_SHOP 重绘（原作循环结构）：面板切换类分支（500 等）
     // 的反馈就是这一次重绘；无效输入同路，无提示。
   }

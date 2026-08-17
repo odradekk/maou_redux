@@ -91,30 +91,83 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（不叠�
   );
 });
 
-test('496/497（A > 0）：SELECT_TARGET/SELECT_ASSI 占位反馈，不选人', async () => {
+test('496（A > 0）：SELECT_TARGET 真身列表可取消，497 仍为存根占位', async () => {
   const fixture = create_era_fixture();
   join_selectable_slave(fixture, 31);
-  fixture.set_inputs(496, 497);
+  fixture.set_inputs(496, 999, 497);
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
   const texts = fixture.text_lines();
-  assert(
-    texts.some((line) => line.includes('@SELECT_TARGET')),
-    '496 应占位 @SELECT_TARGET',
-  );
+  // 496：真身选择画面（列表 + 999 取消——取消不选人、回主菜单重绘）
+  assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
+  assert(texts.some((line) => line.includes('[31] 奴隶31')));
   assert(
     texts.some((line) => line.includes('@SELECT_ASSI')),
     '497 应占位 @SELECT_ASSI',
   );
-  // 占位不选人：TARGET/ASSI 保持守卫重置后的 -1（指针 0/-1 不在已加入
-  // 列表，每轮绘制前的防御性修正都会钳回 -1）——若占位伪造了选中，这里
-  // 会是 31。不能断言写历史：绘制侧守卫本来就写指针，与分发无关（#23）
   const era_flag = fixture.load_module('era-utils/era-flag');
-  assert.equal(era_flag.target, -1, '占位不得选中目标');
-  assert.equal(era_flag.assi, -1, '占位不得选中助手');
-  // 分发完回主菜单：两次输入后仍有第 3 轮重绘
-  assert.equal(rounds_drawn(fixture), 3);
+  assert.equal(era_flag.target, -1, '取消不得选中目标');
+  assert.equal(era_flag.assi, -1, '存根不得选中助手');
+});
+
+test('100（A > 0）无目标：SELECT_TARGET 取消（返回 0）后回循环，不进调教', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31);
+  fixture.set_inputs(100, 999);
+  const { run_shop } = fixture.load_module('page/page-shop');
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+
+  // :67-68 SIF RESULT == 0 → RETURN 0：取消路径不转场（主菜单重绘到耗尽）
+  const texts = fixture.text_lines();
+  assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
+  assert(
+    !texts.some((line) => line.includes('调教中')),
+    '取消路径不得进入调教画面',
+  );
+  // 主菜单画了两轮：首绘（输入 100 前）+ 取消回循环后的重绘（其下一次
+  // input 抛耗尽到站）
+  assert.equal(rounds_drawn(fixture), 2);
+});
+
+test('100（A > 0）已有目标：begin(TRAIN) 信号上抛（#44 接通，主循环接站）', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  fixture.set_inputs(100);
+  const { run_shop } = fixture.load_module('page/page-shop');
+  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
+
+  // :99 BEGIN TRAIN —— 原作引擎行为：BEGIN 结束当前函数。ere 侧 begin() 抛
+  // 信号、run_shop 不捕获自然上抛，由主循环接站（端到端见
+  // test/train-loop.test.js）
+  await assert.rejects(
+    () => run_shop(),
+    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+  );
+  // 助手循环已跑过：ASSI == 0 → -1（单奴隶路径 TEMP:3 = 0，SELECT_ASSI
+  // 不可达——:85-86 的空操作照搬）
+  assert.equal(era_flag.assi, -1);
+});
+
+test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转场', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31; // 已有目标：直入助手循环段
+  fixture.store.set('cflag:0:1', 10); // 魔王在育儿室（CFLAG:MASTER:1）
+  fixture.set_inputs(100);
+  const { run_shop } = fixture.load_module('page/page-shop');
+
+  // :93-96 PRINTFORMW 育儿室中的%CALLNAME:MASTER%不能进行调教…… → RETURN 0
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  const texts = fixture.text_lines();
+  assert(texts.some((line) => line.includes('育儿室中的你不能进行调教')));
+  assert(
+    !texts.some((line) => line.includes('调教中')),
+    '育儿室守卫拦下后不得进调教画面',
+  );
 });
 
 test('守卫 A == 0：496/497/100 与无效输入同路——无反馈、只重绘（原作行为）', async () => {
@@ -152,30 +205,41 @@ test('无效输入：不抛错、无提示，画面重绘（原作无 ELSE，:22
 test('连续多轮混合操作后状态一致', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
-  // 加入可选奴隶 31（A = 1）：496 会真进分支（占位不选人）；更重要的是
-  // 指针若被某个分支污染成 31，能活过绘制侧的越界守卫（31 在已加入列表
-  // 里）——不加角色的话守卫会把一切脏值洗回 -1，污染不可观测（变异测试
-  // 抓到的假绿形态）
+  // 加入可选奴隶 31（A = 1）：496 会真进分支（真身选择画面，不选人）；
+  // 更重要的是指针若被某个分支污染成 31，能活过绘制侧的越界守卫（31 在
+  // 已加入列表里）——不加角色的话守卫会把一切脏值洗回 -1，污染不可观测
+  //（变异测试抓到的假绿形态）
   join_selectable_slave(fixture, 31);
   era_flag.money = 10000;
   era_flag.day_count = 0;
   era_flag.month = 1;
   era_flag.target = -1;
+  // 496 起进入真身 SELECT_TARGET：尾随的 500/501 是选择画面的两次无效输入
+  //（重绘不选人），在画面内耗尽输入
   fixture.set_inputs(501, 42, 504, 9999, 505, 496, 500, 501);
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
-  assert.equal(fixture.store.get('flag:36'), 1, '最后一次面板输入是 501');
-  // 无效输入（42/9999）、守卫放行的 496（占位不选人）、面板切换都不碰
-  // 游戏状态——指针保持 -1（31 是合法 ID，若被写会活过守卫、在此暴露）
+  assert.equal(fixture.store.get('flag:36'), 5, '最后一次面板输入是 505');
+  // 无效输入（42/9999）、496 的选择画面（两次无效输入后取消态耗尽）、
+  // 面板切换都不碰游戏状态——指针保持 -1（31 是合法 ID，若被写会活过
+  // 守卫、在此暴露）
   assert.equal(era_flag.money, 10000);
   assert.equal(era_flag.day_count, 0);
   assert.equal(era_flag.target, -1);
   assert.equal(era_flag.assi, -1);
   assert.deepEqual(fixture.era.getAddedCharacters(), [31]);
-  // 8 次输入全部消费、9 轮重绘——玩家全程停在主菜单，状态不错乱
+  // 8 次输入全部消费；主菜单重绘 6 轮（首轮 + 501/42/504/9999/505 五次
+  // 输入），其后玩家停在选择画面内（画面自己的重绘不画主菜单按钮）——
+  // 状态不错乱
   assert.equal(fixture.inputs_consumed.length, 8);
-  assert.equal(rounds_drawn(fixture), 9);
+  assert.equal(rounds_drawn(fixture), 6);
+  assert(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('请魔王大人选择将要调教的奴隶人选')),
+    '496 应进入真身选择画面',
+  );
 });
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
@@ -254,35 +318,6 @@ test('498/499 无守卫：指针未选也照原作进分支', async () => {
   );
 });
 
-test('100（A > 0）无目标：SELECT_TARGET 占位（取消语义）后回循环', async () => {
-  const fixture = create_era_fixture();
-  join_selectable_slave(fixture, 31);
-  fixture.set_inputs(100);
-  const { run_shop } = fixture.load_module('page/page-shop');
-  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
-  // 存根恒 0（取消）→ 原作 :67-68 SIF RESULT == 0 → RETURN 0：不占位转场
-  assert(fixture.text_lines().some((line) => line.includes('@SELECT_TARGET')));
-  assert(
-    !fixture.text_lines().some((line) => line.includes('@BEGIN TRAIN')),
-    '取消路径不得走到转场占位',
-  );
-  assert.equal(rounds_drawn(fixture), 2);
-});
-
-test('100（A > 0）已有目标：转场占位（BEGIN TRAIN 随调教票，本票不接 begin）', async () => {
-  const fixture = create_era_fixture();
-  join_selectable_slave(fixture, 31);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  fixture.set_inputs(100);
-  const { run_shop } = fixture.load_module('page/page-shop');
-  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
-  assert(
-    fixture.text_lines().some((line) => line.includes('@BEGIN TRAIN')),
-    '已有目标的直入路径应占位转场',
-  );
-});
-
 test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-shop');
@@ -294,11 +329,10 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
 
-  // 先钉死名单本身（漏登记会在此红，#22 验收抓过的假绿形态），再对账清单
+  // 先钉死名单本身（漏登记会在此红，#22 验收抓过的假绿形态），再对账清单。
+  // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44 起为真身/真转场，已移出
   assert.deepEqual(STUBBED_CALLS, [
-    'SELECT_TARGET',
     'SELECT_ASSI',
-    'BEGIN TRAIN',
     'CHARA_INFO',
     'DUNGEON_INFO2',
     '批量处刑',
@@ -342,18 +376,23 @@ test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计�
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
   assert(
-    !fixture.text_lines().some((line) => line.includes('@SELECT_TARGET')),
+    !fixture
+      .text_lines()
+      .some((line) => line.includes('请魔王大人选择将要调教的奴隶人选')),
     '唯一的奴隶被占用时 A 应为 0，496 进不去',
   );
 
-  // 对照：同样一个奴隶、未被占用时 496 确实进得去，排除「因为别的原因没进」
+  // 对照：同样一个奴隶、未被占用时 496 确实进得去（真身选择画面），
+  // 排除「因为别的原因没进」——只喂 496 时选择画面等输入到耗尽，同为拒因
   const control = create_era_fixture();
   join_selectable_slave(control, 31);
-  control.set_inputs(496);
+  control.set_inputs(496, 999);
   const { run_shop: run_control } = control.load_module('page/page-shop');
   await assert.rejects(() => run_control(), /预置输入已耗尽/);
   assert(
-    control.text_lines().some((line) => line.includes('@SELECT_TARGET')),
+    control
+      .text_lines()
+      .some((line) => line.includes('请魔王大人选择将要调教的奴隶人选')),
     '未占用的奴隶应让 A > 0',
   );
 });

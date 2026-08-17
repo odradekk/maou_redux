@@ -14,6 +14,10 @@
  * 初始状态固定 TITLE（原作由引擎启动直接进 @SYSTEM_TITLE；ere 侧把入口也
  * 收进状态机，STATE.TITLE 是本地扩展，见 begin-signal.js）。
  *
+ * 已接线的状态：TITLE / FIRST / SHOP（曳光弹）与 TRAIN / AFTERTRAIN /
+ * TURNEND（#44——调教闭环「主菜单 → 调教 → 回合结算 → 回主菜单」）。其余
+ * 目标（无）不存在：原作全库只有这六种 BEGIN 目标（begin-signal.js）。
+ *
  * 【硬约束 #6】本模块的 catch 已按约定首行放行 BeginSignal；业务代码新写
  * 任何 try/catch 都必须同样处理（见 begin-signal.js 文件头）。
  */
@@ -22,16 +26,28 @@ const { BeginSignal, STATE } = require('#/system/flow/begin-signal');
 const { emit } = require('#/system/event/registry');
 const run_title_page = require('#/page/page-title');
 const { run_shop } = require('#/page/page-shop');
+const { run_train, run_aftertrain } = require('#/system/train/train-loop');
 // 顶层副作用：注册 @EVENTFIRST 处理器（issue #22 真身）。后续事件的
-// 处理器模块随各自所属票在此追加 require。
+// 处理器模块随各自所属票在此追加 require——调教域（#44）：EVENTTRAIN /
+// EVENTCOM / EVENTCOMEND / EVENTEND / EVENTTURNEND 与画面 SHOW_STATUS /
+// SHOW_USERCOM / USERCOM。
 require('#/event/event-first');
+require('#/event/event-train');
+require('#/event/event-com');
+require('#/event/event-comend');
+require('#/event/event-end');
+require('#/event/event-turnend');
+require('#/page/page-train');
+require('#/page/page-usercom');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
  * 直接 begin() 抛信号（非事件路径）同样有效，见 enter_state。
  *
- * 已接线：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）。TRAIN/AFTERTRAIN/
- * TURNEND 归曳光弹后续票，进入即报错，不静默。
+ * 已接线：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）/ TRAIN、AFTERTRAIN
+ * （#44，处理器在 system/train/train-loop.js）/ TURNEND（#44 薄转发：仅
+ * emit @EVENTTURNEND 链——真身只有 #PRI 壳，回合结算本体欠账，
+ * event/event-turnend.js）。
  */
 const STATE_HANDLERS = {
   [STATE.TITLE]: run_title_page,
@@ -45,6 +61,17 @@ const STATE_HANDLERS = {
   // 输入 → @USERSHOP 分发循环（SHOP ver1.0.2.ERB；ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已落地）。
   [STATE.SHOP]: run_shop,
+  // 原作 BEGIN TRAIN → 引擎初始化调教数据 → @EVENTTRAIN 链 → 回合循环
+  //（引擎行为，ere 侧手写——system/train/train-loop.js，issue #44）。
+  [STATE.TRAIN]: run_train,
+  // 原作 BEGIN AFTERTRAIN → @EVENTEND 链（TRAIN_MAIN.ERB:314-429，尾部
+  // BEGIN TURNEND）→ 引擎收尾调教数据（ere 侧 era.endTrain）。
+  [STATE.AFTERTRAIN]: run_aftertrain,
+  // 原作 BEGIN TURNEND → @EVENTTURNEND 链。当前链上只有 #PRI 壳（出口
+  // BEGIN SHOP 真实，本体欠账）——链无人 BEGIN 时与 FIRST 同理按引擎行为
+  // 兜底 SHOP？不：Emuera 对 TURNEND 无「自动进商店轮」的文档语义，且 #PRI
+  // 壳必发 BEGIN SHOP，兜底只会掩盖壳被误删的回归，保持 undefined 报错。
+  [STATE.TURNEND]: async () => await emit('EVENTTURNEND'),
 };
 
 /**
