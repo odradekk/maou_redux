@@ -296,6 +296,34 @@ test('初期奴隶问答：无效输入重问，两个取值都由玩家选择�
   assert.equal(pending, STATE.SHOP);
 });
 
+test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重问（:135-150）', async () => {
+  const fixture = create_era_fixture();
+  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  const { emit } = fixture.load_module('system/event/registry');
+
+  // 村娘 → 搬运方式先给越界的 3（原作 GOTO INPUT_LOOP 重问）、再选 2 拖拽
+  fixture.set_inputs(1, 3, 2);
+  await emit('EVENTFIRST');
+
+  assert.deepEqual(
+    fixture.inputs_consumed.filter((e) => e.api === 'input'),
+    [
+      { api: 'input', value: 1 },
+      { api: 'input', value: 3 },
+      { api: 'input', value: 2 },
+    ],
+  );
+
+  // 拖拽分支的四行（:144-147）在，抱起分支的五行（:138-142）一行都不在——
+  // 两个分支的可观测结果必须能区分，否则改坏任一支都不会红
+  const texts = fixture.text_lines();
+  assert(texts.includes('对于这种小丫头没必要小心翼翼的―――'));
+  assert(texts.includes('结果她直到被扔进牢房都没有醒过来。'));
+  assert(
+    !texts.some((line) => line.includes('村女比想象中要轻')),
+    '选 2 时不得输出抱起分支的文本',
+  );
+});
 test('era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml 的 id 上', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');

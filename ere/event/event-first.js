@@ -194,8 +194,10 @@ on('EVENTFIRST', async () => {
     // 17）。逐项语义：420 玛奥专属标记（全库只写不读，唯二定值点均为初始
     // 化玛奥，CHARA_CUSTOM ver1.0.1.ERB CASE 17 同款）；9 等级（@SAVEINFO
     // 的 LV{CFLAG:MASTER:9}、SHOW_LIST_TRAINABLE 的 LV 列）；1 占用/调教中
-    // （IS_TRAINABLE 以 CFLAG:ARG:1 != 0 拒绝，预设 フラグ,1,1 先占、此处
-    // 写 0 解除，她由此可被选为调教目标）；11-14 战斗数值
+    // （IS_TRAINABLE 以 CFLAG:ARG:1 != 0 拒绝。注意预设 フラグ,1,1 并未落进
+    // data——引擎 initCharaTable 只拷贝名字表内登记的下标，而 cflag 名字表为空
+    // （yml/CFlag.yml 头注释），所以此处的 0 与默认值同值、是 1:1 照搬的冗余
+    // 写入，不是「解除占用」的必要步骤）；11-14 战斗数值
     // （DUNGEON_TRAP「攻击力和防御力」减半/清零的是 11/12，處刑改寫「攻击/
     // 防御」减半的是 13/14，两组各 15）；16 未定状态位（-1 = 未设定，迷宫
     // 代码在 -1 时临时改写 995，FIRST_SETTING 对魔王同置 -1）；450 一人称
@@ -256,7 +258,7 @@ on('EVENTFIRST', async () => {
       await era.waitAnyKey();
     } else {
       // :144-147 四行 PRINTFORMW
-      era.print('对于这种小丫头没有必要小心翼翼的―――');
+      era.print('对于这种小丫头没必要小心翼翼的―――');
       await era.waitAnyKey();
       era.print('你抓着村女的脚踝一路拖進了牢房。');
       await era.waitAnyKey();
