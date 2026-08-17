@@ -1,5 +1,6 @@
 /**
- * @file 静态表转换器：CSV → 引擎 YAML（#17 GameBase，#35 角色表，#38 变量表）。
+ * @file 静态表转换器：CSV → 引擎 YAML（#17 GameBase，#35 角色表，#38 变量表，
+ * #43 调教域变量表 Palam/Source/Abl/Exp/Mark/TrainCommand）。
  *
  * 一次性转换、默认不覆盖（issue #10 的产物边界规则）：产物进 git、归人工维护，
  * 已存在时一律跳过，重写必须显式 --force。规则有测试钉死，防止一句清理代码
@@ -15,6 +16,9 @@
  *                   大小写，按磁盘文件名解析），可逗号分隔（--table talent,item）。
  *                   item 表是唯一带第三列（价格）的变量表（引擎 parseDataFile
  *                   对非 chara/item/res 表一律截断为前两列）。
+ *   --table traincommand  调教指令表：源文件是 target/CSV/Train.csv，产物
+ *                   TrainCommand.yml（表名与源名不同，见 TABLE_SOURCE_ALIASES
+ *                   的注释；--table train 与 --table trainname 被显式拒绝）。
  *
  * 解析逻辑逐行镜像引擎（ere-4.8.0 的 background.js，parseDataFile 模块），
  * 保证「引擎读 CSV 得到什么，本脚本就拿到什么」；YAML 侧的等价性由
@@ -414,6 +418,53 @@ function to_chara_yaml(groups, { source = '' } = {}) {
 //     器（app.asar 模块 682）对这种形状同样有损（同名键写两遍，yml 解析
 //     先者胜），非本转换器引入的偏差，详见 issue #38 评论。
 
+// —— 变量表的特殊表名（issue #43，依据见该票评论的引擎实测留痕）——
+//
+// 引擎（ere-4.8.0 background.js）对静态表文件名有三道闸，直接决定本票两张表
+// 的命名：
+//   1. 弃用表名（variablesize/str/strname/globals/train）：装载循环打警告
+//      「已弃用表名」并跳过——产物叫 Train.yml 等于不存在；
+//   2. 受保护表名（maxbase/juel/jewel/delta/gotjuel/gotjewel/nowex 等）：
+//      警告后同样不读——独立的 Juel.yml 不可产。而 param/palam 两个文件名落
+//      到装载循环同一分支、共同装进 staticData.juel 一张名字表（寻址层
+//      palam/param/jewel 同查它），与 Emuera 里 JUEL 与 PALAM 共用名字表
+//      一致，故 Juel 不单独成表、由 Palam.yml 覆盖；
+//   3. 以 name 结尾的表名会被寻址层拆解为「取 <去 name 后缀> 表的名字」
+//      （trainname:0 → fieldNames.train[0]），train 表因第 1 条永远不存在，
+//      寻址落到兜底分支、引擎调 era.error 报 `key error in getter/setter`——
+//      #10 的处方 TrainName.yml 同样是死表。
+// 调教指令表因此按内容命名为 traincommand（CONTEXT.md：「调教」「指令」），
+// 三种寻址全通：traincommand:0（值）、traincommand:爱抚（名称→序号）、
+// traincommandname:0（序号→名称）。
+const TABLE_SOURCE_ALIASES = {
+  // 表名 → { 源文件名（target/CSV 下，小写）、产物文件名 }
+  // 目前唯一一例源名 ≠ 表名：train 源名弃用、trainname 不可寻址
+  traincommand: { source: 'train.csv', output: 'TrainCommand.yml' },
+};
+
+// 显式拒绝的表名 → 拒绝理由。产出即死表的已知形态，报错优于静默生成。
+const FORBIDDEN_TABLES = new Map([
+  [
+    'train',
+    'train 是引擎弃用表名（装载时警告并跳过），产物不可用；调教指令表请用 --table traincommand',
+  ],
+  [
+    'trainname',
+    '以 name 结尾的表名会被寻址层拆成「train 表的名字查询」，而 train 表不存在（弃用名），' +
+      'trainname:* 寻址落到引擎兜底分支报 key error in getter/setter；调教指令表请用 --table traincommand',
+  ],
+]);
+
+// 各变量表产物头注里的票据号：#38 是变量表形状的首张票，#43 起的新表逐张登记。
+const TABLE_TICKETS = {
+  palam: '#43',
+  source: '#43',
+  abl: '#43',
+  exp: '#43',
+  mark: '#43',
+  traincommand: '#43',
+};
+
 // 解析变量表 CSV，产出 { entries, dropped, warnings }：
 //   entries 按首次出现的位置排序、同名取后者的值（对象键序语义）；
 //   dropped 是被同名后者顶掉的前行（仅告警与产物头注用，不写进 YAML）
@@ -493,9 +544,14 @@ function parse_variable_csv(text, { table } = {}) {
 
 // 变量表 YAML：键名一律双引号（同 GameBase/角色表约定）；id/price 数值裸写。
 // 重名合并的先例写进头注（产物归人工维护，偏差必须自文档化）。
-function to_variable_yaml(entries, dropped, { table, source } = {}) {
+// ticket 是产物头注引用的票据号（TABLE_TICKETS），缺省 #38（变量表形状首票）。
+function to_variable_yaml(
+  entries,
+  dropped,
+  { table, source, ticket = '#38' } = {},
+) {
   const lines = [
-    `# 转换自 target/CSV/${source}（tools/csv-to-yml.js，issue #38）`,
+    `# 转换自 target/CSV/${source}（tools/csv-to-yml.js，issue ${ticket}）`,
     `# 本文件归人工维护：转换器重跑默认不覆盖，需要重新生成请加 --force --table ${table}`,
   ];
   if (dropped.length > 0) {
@@ -519,7 +575,7 @@ function to_variable_yaml(entries, dropped, { table, source } = {}) {
 }
 
 // 组装一次变量表转换。空表拒绝写出（变量表为空意味着装载时整表缺失）。
-function convert_variable({ table, input, output, force = false }) {
+function convert_variable({ table, input, output, force = false, ticket }) {
   const { text, enc } = read_text(input);
   const { entries, dropped, warnings } = parse_variable_csv(text, { table });
   if (entries.length === 0) {
@@ -528,7 +584,7 @@ function convert_variable({ table, input, output, force = false }) {
   const source = path.basename(input);
   const result = write_product(
     output,
-    to_variable_yaml(entries, dropped, { table, source }),
+    to_variable_yaml(entries, dropped, { table, source, ticket }),
     { force },
   );
   return { status: result.status, output, warnings, enc, dropped };
@@ -606,8 +662,15 @@ const USAGE =
 
 // 变量表源文件解析：表名不分大小写，按 target/CSV 下的磁盘文件名匹配
 // （引擎同样以 toLowerCase 归一表名）。找不到即报错，绝不猜路径。
+// 显式拒绝的表名（FORBIDDEN_TABLES）先于文件查找报错；源名 ≠ 表名的表
+// （TABLE_SOURCE_ALIASES，如 traincommand → train.csv）走别名。
 function resolve_table_source(table, csv_dir) {
-  const wanted = `${table.toLowerCase()}.csv`;
+  const key = table.toLowerCase();
+  const forbidden = FORBIDDEN_TABLES.get(key);
+  if (forbidden) {
+    throw new Error(`--table ${table}：${forbidden}`);
+  }
+  const wanted = TABLE_SOURCE_ALIASES[key]?.source ?? `${key}.csv`;
   const match = fs
     .readdirSync(csv_dir)
     .find((name) => name.toLowerCase() === wanted);
@@ -615,6 +678,18 @@ function resolve_table_source(table, csv_dir) {
     throw new Error(`target/CSV 下没有 ${wanted}（--table ${table}）`);
   }
   return match;
+}
+
+// 变量表产物文件名：别名表用登记的产物名（源名 ≠ 表名），其余取源文件名
+// 首字母大写（yml/ 既有产物全部首字母大写；引擎按小写匹配表名，大小写
+// 只影响仓库观感与跨大小写敏感文件系统的一致性——exp.csv → Exp.yml）。
+function variable_product_name(table, source_name) {
+  const alias = TABLE_SOURCE_ALIASES[table.toLowerCase()];
+  if (alias) {
+    return alias.output;
+  }
+  const base = source_name.replace(/\.csv$/i, '');
+  return `${base[0].toUpperCase()}${base.slice(1)}.yml`;
 }
 
 // CLI 入口。overrides 供测试注入临时路径，默认相对仓库根。
@@ -659,17 +734,23 @@ function main(argv, overrides = {}) {
         );
       }
     } else if (options.table.length > 0) {
-      // 变量表模式：target/CSV/<表名>.csv → yml/<表名>.yml（大小写随源文件）
+      // 变量表模式：target/CSV/<源文件> → yml/<产物名>（见 variable_product_name；
+      // 表名与源名可以不同，如 traincommand ← Train.csv → TrainCommand.yml）
       const src_dir = table_csv_dir ?? path.join(REPO_ROOT, 'target', 'CSV');
       const out_dir = table_out_dir ?? path.join(REPO_ROOT, 'yml');
       for (const table of options.table) {
+        const key = table.toLowerCase();
         const source_name = resolve_table_source(table, src_dir);
         reports.push(
           convert_variable({
-            table: table.toLowerCase(),
+            table: key,
             input: path.join(src_dir, source_name),
-            output: path.join(out_dir, source_name.replace(/\.csv$/i, '.yml')),
+            output: path.join(
+              out_dir,
+              variable_product_name(table, source_name),
+            ),
             force: options.force,
+            ticket: TABLE_TICKETS[key],
           }),
         );
       }
@@ -713,6 +794,9 @@ function main(argv, overrides = {}) {
 module.exports = {
   REPO_ROOT,
   CHARA_NAME_MAPPING,
+  FORBIDDEN_TABLES,
+  TABLE_SOURCE_ALIASES,
+  TABLE_TICKETS,
   convert,
   convert_chara,
   convert_variable,
@@ -728,6 +812,7 @@ module.exports = {
   to_chara_yaml,
   to_gamebase_yaml,
   to_variable_yaml,
+  variable_product_name,
   write_product,
 };
 
