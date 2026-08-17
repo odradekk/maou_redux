@@ -208,6 +208,15 @@ function create_era_fixture() {
         chara_no.splice(index, 1);
       }
       chara_no.push(target);
+      // 引擎 addCharacter 方法体的两条赋值（app.asar，test/chara-yml.test.js
+      // 用引擎真方法对拍锁定）：callname[id][-1] = 预设 name、
+      // [id][-2] = 预设 callname ?? name。游戏代码读 callname:${id}:-1/-2
+      // 由此取值（#5 决议：SAVESTR/CSTR 的名字承载）。直接写 store 不经
+      // era.set：引擎侧这是数据层赋值、不经 setVar，var_writes 只收录游戏
+      // 代码经 era.set 的写入（全量断言的写清单不被引擎内部动作混入）。
+      const preset = chara_presets.get(source);
+      store.set(`callname:${target}:-1`, preset.name);
+      store.set(`callname:${target}:-2`, preset.callname ?? preset.name);
       return true;
     });
     return chara_ids.length === 1 ? results[0] : results;

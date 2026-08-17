@@ -13,9 +13,12 @@
  *     丽塔启动！——全部登记在 docs/stub-registry.md 的「变量级欠账」；
  *   - 约二十处调用绝大部分存根化：可达路径上的存根各打一行占位（含原作
  *     函数名，可检索可断言），不可达分支体内的调用仅登记不打印；
- *   - 被 FIRST_SETTING（存根）钉死在默认值的分支体以注释占位：村娘分支
- *   （FLAG:501，:95-187）与丽塔块（丽塔启动！，:152-166/:205-215）——
- *   开局设置票落地后两者才可达，正文随彼票移植。
+ *   - 被 FIRST_SETTING 钉在默认值的分支体：村娘分支（FLAG:501，:95-187）
+ *     已随 #50 落地（ADDCHARA 17、CFLAG 一组、搬运/拖拽二选一、囚禁播报
+ *     与自己的 BEGIN SHOP 出口，全部按角色 ID 寻址；FLAG:501 由
+ *     first-setting.js 的初期奴隶一问产生）；丽塔块（丽塔启动！，
+ *     :152-166/:205-215）仍以注释占位——SAVEDATA 变量无 ere 落点、恒非
+ *     1，随开局设置票。
  *
  * 出口：begin(STATE.SHOP)（:231）。主菜单渲染归 #23，主循环进入 SHOP 时
  * 的守卫报错（点名状态）即本票的到站标记。
@@ -24,6 +27,8 @@
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
+const { ask_initial_slave } = require('#/event/first-setting');
+const { add_chara_ex } = require('#/chara/chara-ex');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
@@ -31,12 +36,13 @@ const era_flag = require('#/era-utils/era-flag');
  * 对账钉死）——后续票据此认领工作；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'FIRST_SETTING',
   'GEO_TEST',
   'SET_VIL',
   'CHARA_NAME_INIT',
   'EX_TALENTNAME_INIT',
   'RAND_CHARA_MAKE',
+  'CHARA_NAME_DEFINE',
+  'CHAR_BODY_GENERATE_WAPPED',
 ];
 
 // 存根的运行时占位：一行可见反馈，正文含原作函数名（可检索、可断言）。
@@ -59,10 +65,12 @@ on('EVENTFIRST', async () => {
   // :15 FLAG:500 = 2 —— 狂王初期性别：扶她
   era.set('flag:500', 2);
 
-  // :19 CALL FIRST_SETTING —— 交互式开局设置（存根）。原作借此让玩家改
-  // 魔王性别/初期奴隶/2D 模式/丽塔开关；存根即全默认：FLAG:501=0 随机、
-  // FLAG:502=0 通常、丽塔启动！=0 关闭——下方两个分支由此不可达。
-  stub_line('FIRST_SETTING', '开局设置');
+  // :19 CALL FIRST_SETTING —— 交互式开局设置。#50 起部分实现：仅「初期
+  // 奴隶」一问（FLAG:501：0 随机 / 1 村娘，问答见 event/first-setting.js，
+  // 置法决议与依据在 issue #50），其余各问维持默认（FLAG:500 已在 :15 置
+  // 2、FLAG:502 = 0 通常、丽塔启动！= 0 关闭），占位行随问答打印。FLAG:502
+  // 分支与丽塔块仍不可达。
+  await ask_initial_slave();
 
   // :21-24 REPEAT 14：FLAG:60..73 = -1（男性冒险者用着素质展示位等）
   for (let i = 60; i < 60 + 14; i += 1) {
@@ -145,13 +153,139 @@ on('EVENTFIRST', async () => {
   await era.waitAnyKey(); // :91 WAIT
   era.drawLine(); // :92 DRAWLINE
 
-  // :95-187 IF FLAG:501 == 1 —— 村娘分支，整段以注释占位（FIRST_SETTING
-  // 存根使其不可达）。正文含：ADDCHARA 17 + ADDCHARA_EX、CFLAG 批量
-  //（420/9/1/11-14/16/450 等）、CHAR_BODY_GENERATE_WAPPED、搬运/拖拽二选
-  // 一的输入环（:112-151）、丽塔块（:152-166）、囚禁播报与自己的
-  // BEGIN SHOP 出口（:187）。随开局设置票与初始奴隶票移植；涉及的调用
-  // 已登记 docs/stub-registry.md（CHARA_NAME_DEFINE、
-  // CHAR_BODY_GENERATE_WAPPED）。
+  // :95-187 IF FLAG:501 == 1 —— 村娘分支（#50 落地）。序号陷阱：此时已
+  // 加入列表为 [0, 17]，分支内原作写的「1」全部是已加入序号 1（= 角色 ID
+  // 17），ere 侧一律按角色 ID 寻址（CONTEXT.md 末节）；照抄数字 1 会写到
+  // 角色 ID 1 头上，有「序号≠ID」场景的测试钉死。
+  if ((era.get('flag:501') || 0) === 1) {
+    // :96-100 五行 PRINTW（各带读键）
+    era.print('首先，要奖励一下唤醒了我沉睡的愚蠢女人啊……');
+    await era.waitAnyKey();
+    era.print('魔王俯视着被吸取了能量用于破坏封印的村女');
+    await era.waitAnyKey();
+    era.print('………');
+    await era.waitAnyKey();
+    era.print('……');
+    await era.waitAnyKey();
+    era.print('…');
+    await era.waitAnyKey();
+
+    // :102 ADDCHARA 17 —— 预设 yml/Chara17.yml（名字玛奥，不是「村娘」
+    // ——后者只是叙述用词）。引擎守卫：无预设整段短路（#35 假绿教训），
+    // 装载零告警零丢弃由 test/chara-yml.test.js 用引擎代码对拍钉死。
+    era.addCharacter(17);
+    // :103 CALL ADDCHARA_EX, CHARANUM-1 —— 角色专属初始化分发（ere 侧直
+    // 接传角色 ID）。@CHARA_EX_17 在原作不存在：守卫 NO >= 17 放行、
+    // TRYCALLFORM 落空，是分发族「空间内缺失」的合法情形（#7），返回调用
+    // 点缺省 0——不是缺陷、不必实现。
+    await add_chara_ex(17);
+
+    // :105 SAVESTR:1 = %NAME:1%、:109 CSTR:1 = %NAME:1% —— 角色名暂存
+    // 两处。#5 已决由内置 callname 承载：引擎 addCharacter(17) 已写
+    // callname:17:-1（预设 name）与 callname:17:-2（预设 callname），无需
+    // 再写；下方 :169-170 囚禁播报（原作读 SAVESTR:1）改读 callname:17:-1。
+    // 欠账表（docs/stub-registry.md 变量级）村娘侧随之销账，丽塔侧仍欠。
+
+    // :107 TARGET = 1 —— 原作写的是已加入序号 1；ere 指针槽存角色 ID
+    // （#21，主菜单的钳制/计数同语义），故写 17。
+    era_flag.target = 17;
+
+    // :110-119 CFLAG 一组（原作无下标 = 隐式指向 TARGET = 序号 1 = 角色
+    // 17）。逐项语义：420 玛奥专属标记（全库只写不读，唯二定值点均为初始
+    // 化玛奥，CHARA_CUSTOM ver1.0.1.ERB CASE 17 同款）；9 等级（@SAVEINFO
+    // 的 LV{CFLAG:MASTER:9}、SHOW_LIST_TRAINABLE 的 LV 列）；1 占用/调教中
+    // （IS_TRAINABLE 以 CFLAG:ARG:1 != 0 拒绝，预设 フラグ,1,1 先占、此处
+    // 写 0 解除，她由此可被选为调教目标）；11-14 战斗数值
+    // （DUNGEON_TRAP「攻击力和防御力」减半/清零的是 11/12，處刑改寫「攻击/
+    // 防御」减半的是 13/14，两组各 15）；16 未定状态位（-1 = 未设定，迷宫
+    // 代码在 -1 时临时改写 995，FIRST_SETTING 对魔王同置 -1）；450 一人称
+    // （自称）编号（SELF_CALL.ERB 一个人称設定，31 = 表内编号）。
+    era.set('cflag:17:420', 1);
+    // :111 CALL CHARA_NAME_DEFINE —— 角色称呼定义（存根，随开局设置票）
+    stub_line('CHARA_NAME_DEFINE', '角色称呼定义');
+    era.set('cflag:17:9', 1);
+    era.set('cflag:17:1', 0);
+    era.set('cflag:17:11', 15);
+    era.set('cflag:17:12', 15);
+    era.set('cflag:17:13', 15);
+    era.set('cflag:17:14', 15);
+    era.set('cflag:17:16', -1);
+    era.set('cflag:17:450', 31);
+
+    // :121 CALL CHAR_BODY_GENERATE_WAPPED, 1 —— 角色身体生成（存根；
+    // FLAG:26/27 种族年龄表的唯一消费者，随角色身体票）
+    stub_line('CHAR_BODY_GENERATE_WAPPED', '角色身体生成');
+
+    // :126-129 四行角色描写（PRINTFORMW，各带读键）
+    era.print('因为破坏封印時魔力的涌流，村女的衣服全都剥落了。');
+    await era.waitAnyKey();
+    era.print('村女还是少女体型，有个性的红色头发剪得短短的。');
+    await era.waitAnyKey();
+    era.print('还有气息，胸部静静地起伏，润泽的褐色肌肤仿佛在等待着蹂躪。');
+    await era.waitAnyKey();
+    era.print('就在这里尽情凌辱一番也不錯，不过还是暂且………');
+    await era.waitAnyKey();
+
+    // :130-133 空行 + 搬运/拖拽二选一（原作 PRINTL 纯文本 + INPUT 收数字；
+    // ere 改按钮，accelerator 沿用原作编号，正文不写 [编号] 前缀——PR #30）
+    // + 分隔线
+    era.println();
+    era.printButton('抱起来搬到牢房里', 1);
+    era.printButton('抓着脚踝拖到牢房里', 2);
+    era.drawLine();
+
+    // :135-150 $INPUT_LOOP：1 = 抱起 / 2 = 拖拽，其余 GOTO 重问
+    let carry;
+    for (;;) {
+      carry = await era.input();
+      if (carry === 1 || carry === 2) {
+        break;
+      }
+    }
+    if (carry === 1) {
+      // :138-142 五行 PRINTFORMW
+      era.print('村女比想象中要轻。少女的体香混合着农民的土地气息。');
+      await era.waitAnyKey();
+      era.print('身材尚不丰满，不过应该足以承受魔王的蹂躪了。');
+      await era.waitAnyKey();
+      era.print('许久没有尝过女人的味道，你正打算就这样帯回自己房间侵犯………');
+      await era.waitAnyKey();
+      era.print('「姐……姐………」');
+      await era.waitAnyKey();
+      era.print('村女的呻吟声打消了你的邪念。');
+      await era.waitAnyKey();
+    } else {
+      // :144-147 四行 PRINTFORMW
+      era.print('对于这种小丫头没有必要小心翼翼的―――');
+      await era.waitAnyKey();
+      era.print('你抓着村女的脚踝一路拖進了牢房。');
+      await era.waitAnyKey();
+      era.print('虽然这里那里都擦伤了不过舔舔也就好了………');
+      await era.waitAnyKey();
+      era.print('结果她直到被扔进牢房都没有醒过来。');
+      await era.waitAnyKey();
+    }
+
+    // :152-166 IF 丽塔启动！== 1 —— 丽塔块（ADDCHARA 223 + 称呼/身体）。
+    // 丽塔启动！是 SAVEDATA 自定义变量、无 ere 落点（恒非 1），不可达；
+    // 正文随开局设置票（docs/stub-registry.md 丽塔行与变量级欠账表）。
+
+    // :168-172 囚禁播报。原作 PRINT 村娘 + PRINTS SAVESTR:1 + PRINTL 被囚
+    // 禁…拼成一行；ere 的 print 独占一行，读 callname:17:-1（引擎
+    // addCharacter 已写）合并输出。无兜底：读不到名字即预设装载失败的信
+    // 号（#35 的静默降级教训），不该被掩盖。
+    era.print('*****************************************');
+    era.print(`村娘${era.get('callname:17:-1')}被囚禁在了地牢里`);
+    era.print('*****************************************');
+
+    // :175 WAIT
+    await era.waitAnyKey();
+
+    // :187 BEGIN SHOP —— 村娘分支自己的出口（BEGIN 即结束当前函数，原作
+    // 的随机路径因此不再执行；ere 侧 begin() 抛信号离开本处理器，下方代码
+    // 同样被跳过）。
+    begin(STATE.SHOP);
+  }
 
   // :190-201 随机分支开场（默认路径）：六行 PRINTW（各带读键）+ 三行省略号
   era.print('首先，要奖励一下唤醒了我沉睡的愚蠢女人啊……');

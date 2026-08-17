@@ -18,11 +18,14 @@ const {
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 // 入库变量表清单：文件 → 表名（eraStart 用的归一表名）。后续表（Abl/Exp/…）
-// 随各自的数据管线票入库时在此登记。
+// 随各自的数据管线票入库时在此登记。CFlag.yml 不是转换器产物（原作无
+// CFLAG 名表，见该文件头注释），登记在此使对拍与实机装载一致：缺它时
+// 角色预设的 フラグ 行报「角色数据表不存在: cflag!」并被丢弃（#50 实测）。
 const TABLE_FILES = [
   ['Base.yml', 'base'],
   ['Talent.yml', 'talent'],
   ['Item.yml', 'item'],
+  ['CFlag.yml', 'cflag'],
 ];
 
 /**
