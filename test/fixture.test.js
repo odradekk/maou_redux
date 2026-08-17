@@ -81,13 +81,17 @@ test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预
   assert.deepEqual(fixture.chara_no, [0]);
 });
 
-test('addCharacter 落 callname 键（引擎数据层行为，#44）：姓名 -2 / 称呼 -1', () => {
+test('addCharacter 落 callname 键（引擎数据层行为，#44）：姓名 -1 / 称呼 -2', () => {
   const fixture = create_era_fixture();
+  // 名前 ≠ 呼び名 的角色：两个键重合的世界里，写反了也断言不出来
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '小温' });
   fixture.era.addCharacter(31);
 
-  assert.equal(fixture.store.get('callname:31:-2'), '温妮');
-  assert.equal(fixture.store.get('callname:31:-1'), '小温');
+  // 引擎 addCharacter 方法体（app.asar）：
+  //   callname[id][-1] = staticData.chara[id].name
+  //   callname[id][-2] = staticData.chara[id].callname ?? name
+  assert.equal(fixture.store.get('callname:31:-1'), '温妮');
+  assert.equal(fixture.store.get('callname:31:-2'), '小温');
   // 数据层初始化不走记录层（游戏代码的调用意图由 var_writes 断言）
   assert.deepEqual(fixture.var_writes, []);
 });

@@ -240,7 +240,10 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   const { on, TIER } = fixture.load_module('system/event/registry');
   on('EVENTFIRST', async () => fixture.era.addCharacter(31), TIER.LATER);
 
-  fixture.set_inputs(1, 100, 31, 999);
+  // 初期奴隶问答（#50）夹在标题与开场叙事之间：选 0 = 随机，随机路径仍是
+  // RAND_CHARA_MAKE 存根，奴隶由上面的 LATER 处理器播种——本用例要的是
+  // 「开局就有奴隶 31」，不走村娘（那会引入角色 17 与另一串读键）
+  fixture.set_inputs(1, 0, 100, 31, 999);
   const main = fixture.load_module('main');
 
   // 标题(1) → FIRST → SHOP → 100 → SELECT_TARGET(31) → TRAIN 一回合
@@ -248,10 +251,12 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 下一次 input 队列已空，抛「预置输入已耗尽」到站
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
-  // 消费序列：标题(1) → 开场叙事读键 ×7（@EVENTFIRST）→ 菜单 100 → 选人 31
-  // → PRITRAIN 存根读键 → 999 → @EVENTEND 读键
+  // 消费序列：标题(1) → 初期奴隶问答(0，#50) → 开场叙事读键 ×7
+  //（@EVENTFIRST）→ 菜单 100 → 选人 31 → PRITRAIN 存根读键 → 999 →
+  // @EVENTEND 读键
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 },
+    { api: 'input', value: 0 },
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
     { api: 'input', value: 100 },
     { api: 'input', value: 31 },
