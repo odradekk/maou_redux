@@ -101,7 +101,13 @@ test('496（A > 0）：SELECT_TARGET 真身列表可取消，497 仍为存根占
   const texts = fixture.text_lines();
   // 496：真身选择画面（列表 + 999 取消——取消不选人、回主菜单重绘）
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
-  assert(texts.some((line) => line.includes('[31] 奴隶31')));
+  // 奴隶行是按钮（#44 验收后实机修正）：断言看引擎渲染文本
+  assert(
+    fixture.lines.some(
+      (line) => line.type === 'button' && line.rendered === '[31] 奴隶31',
+    ),
+    '奴隶行必须是可点击按钮，accelerator = 角色 ID',
+  );
   assert(
     texts.some((line) => line.includes('@SELECT_ASSI')),
     '497 应占位 @SELECT_ASSI',

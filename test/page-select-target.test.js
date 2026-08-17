@@ -17,6 +17,14 @@ function load_page(fixture) {
   return fixture.load_module('page/page-select-target');
 }
 
+// 列表行自 #44 验收后是按钮（实机上纯文本点不动）：断言要看引擎实际渲染的
+// 文本——fixture 的 button.rendered 抄的是引擎公式 `[快捷键] 正文`。
+function rendered_lines(fixture) {
+  return fixture.lines
+    .filter((line) => line.type === 'text' || line.type === 'button')
+    .map((line) => (line.type === 'button' ? line.rendered : line.text));
+}
+
 test('IS_TRAINABLE：范围外/魔王/占用/可选四态（ID 语义判据）', () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31);
@@ -63,9 +71,12 @@ test('选中：输入角色 ID → 置 TARGET 与 FLAG:1，返回 1', async () =
     'FLAG:1（前回调教目标）必须随选中置位',
   );
   // 列表渲染：标题 + 行（编号即角色 ID）
-  const texts = fixture.text_lines();
+  const texts = rendered_lines(fixture);
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
-  assert(texts.some((line) => line.includes('[31] 温妮')));
+  assert(
+    texts.includes('[31] 温妮'),
+    '奴隶行必须是按钮（accelerator = 角色 ID），前缀由引擎拼',
+  );
 });
 
 test('取消：输入 999 → 返回 0，不置任何指针（回主菜单、不进调教）', async () => {
@@ -119,11 +130,11 @@ test('翻页：27 人超过每页 26，[1001] 翻出第 27 人；[1000] 翻回',
   fixture.set_inputs(1001, 1000, 999);
 
   assert.equal(await select_target(), 0);
-  const texts = fixture.text_lines();
+  const texts = rendered_lines(fixture);
   // 首页：1..26（27 号不在）；第二页：只有 27 号；翻回：又是 1 号开头
-  const first_draw = texts.findIndex((l) => l.includes('[ 1] 奴隶1'));
+  const first_draw = texts.findIndex((l) => l === '[1] 奴隶1');
   assert.ok(first_draw >= 0);
-  const page2_at = texts.findIndex((l) => l.includes('[27] 奴隶27'));
+  const page2_at = texts.findIndex((l) => l === '[27] 奴隶27');
   assert.ok(page2_at > first_draw, '第 27 人只能在翻页后出现');
   // 第二页不含 1 号（截取第 26 行到 27 号行之间的渲染）
   const between = texts.slice(texts.lastIndexOf('[26] 奴隶26'), page2_at);
@@ -142,9 +153,9 @@ test('页首不再退：第一页输入 [1000] 维持原页', async () => {
   fixture.set_inputs(1000, 999);
 
   assert.equal(await select_target(), 0);
-  const texts = fixture.text_lines();
+  const texts = rendered_lines(fixture);
   // 两轮都显示同一人（页码没有变成 -1 导致列表消失）
-  assert.equal(texts.filter((l) => l.includes('[31] 温妮')).length, 2);
+  assert.equal(texts.filter((l) => l === '[31] 温妮').length, 2);
 });
 
 test('1002 其它：MONSTER_PLAY 存根占位，返回 0（取消语义透传）', async () => {
