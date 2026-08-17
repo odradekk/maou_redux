@@ -15,6 +15,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -70,14 +71,8 @@ const PANEL_STUBS = {
   },
 };
 
-// 存根的运行时占位：一行可见反馈，正文含原作函数名（可检索、可断言）。
-// 文案样式沿用 event-first.js 的占位先例（#22）。page-shop.js 的输入分发
-// 存根（#24）复用本函数，保持全项目占位文案同一形状。
-function stub_line(erb_name, label, owner) {
-  era.print(
-    `（${label}尚未移植，此处为占位——原作 @${erb_name}，${owner}，见 docs/stub-registry.md。）`,
-  );
-}
+// 存根占位自 #44 起收敛到 utils/stub-line.js（本文件是 #23 的先例、
+// page-shop.js 自 #24 起经本文件的 re-export 使用——导出保持，调用点不动）
 
 /**
  * @MENU_BUTTON（DRAW_EXT_COMM.ERB:2）的等价物：打印一个菜单按钮，未选中时
