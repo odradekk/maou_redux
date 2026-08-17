@@ -92,9 +92,17 @@ function show_list_trainable(no_page, num_page) {
     // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，
     // 按可训练序号开窗——原作缺陷的修正移植，见文件头）
     if (index >= no_page * num_page && index < (no_page + 1) * num_page) {
-      // 原作行：[{COUNT,2}] %SAVESTR:COUNT,12,LEFT% + 富化列（欠账）。
-      // 编号即角色 ID（输入侧凭它选人）
-      era.print(`[${String(cid).padStart(2, ' ')}] ${chara_callname(cid)}`);
+      // 原作行：PRINTFORM [{COUNT,2}] %SAVESTR:COUNT,12,LEFT% + 富化列（职业/
+      // LV/HP 条/调教回数/爱慕·淫乱·未沦陷/收藏标记，整组欠账）。
+      //
+      // 原作是纯文本 + INPUT 收数字；ere 侧改按钮，与本画面下方的翻页/返回
+      // 四个按钮、以及 page-title、first-setting 的同款先例一致（实机上纯
+      // 文本行点不动，玩家只能靠猜去敲编号）。accelerator 沿用原作编号 =
+      // 角色 ID，输入侧的判定不变。
+      //
+      // 按钮正文不写 [编号] 前缀：引擎 showAcc 默认为真、自动拼成
+      // `[快捷键] 正文`，手写会得到「[17] [17] 玛奥」（PR #30 实机踩过）。
+      era.printButton(chara_callname(cid), cid);
     }
   });
   return trainable.length;
