@@ -190,11 +190,13 @@ test('守卫 A == 0：496/497/100 与无效输入同路——无反馈、只重�
   );
   // 三次输入都被守卫拦下后落到链尾，回循环重绘（3 次输入 + 首轮 = 4 轮）
   assert.equal(rounds_drawn(fixture), 4);
-  // 除每轮固定的两行存根外无任何新增输出；文本行总数钉死为每轮 4 行
-  //（状态行 + 面板存根 + Commands 标题 + 指令面板存根）——多打任何一行
-  //（含给守卫拦下的输入加「提示」）都会在此红
+  // 除每轮固定的两行存根外无任何新增输出；文本行总数钉死为每轮 5 行
+  //（状态行 + 面板存根 + Commands 标题 + [---] 不可选占位 + 指令面板存根）
+  //——多打任何一行（含给守卫拦下的输入加「提示」）都会在此红。A == 0 时
+  // [100] 调教退化为灰色 [---] 文本（原作 :229-231），A > 0 时它是按钮、
+  // 不计入文本行
   assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 4 * 2);
-  assert.equal(texts.length, 4 * 4);
+  assert.equal(texts.length, 4 * 5);
 });
 
 test('无效输入：不抛错、无提示，画面重绘（原作无 ELSE，:228 RETURN 0）', async () => {
@@ -203,9 +205,10 @@ test('无效输入：不抛错、无提示，画面重绘（原作无 ELSE，:22
   assert.equal(rounds_drawn(fixture), 5);
   const texts = fixture.text_lines();
   // 原作不打提示（派单核实事实 #5）：除每轮固定两行存根外零新增输出，
-  // 文本行总数钉死为每轮 4 行——给无效输入加「提示」会在此红
+  // 文本行总数钉死为每轮 5 行（含 A == 0 时的 [---] 占位）——给无效输入
+  // 加「提示」会在此红
   assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 5 * 2);
-  assert.equal(texts.length, 5 * 4);
+  assert.equal(texts.length, 5 * 5);
 });
 
 test('连续多轮混合操作后状态一致', async () => {

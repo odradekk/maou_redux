@@ -263,14 +263,30 @@ function draw_main_menu() {
   // :206-207 行首一枚全角空格 + ▌Commands（粗体）
   era.print([{ content: `${FULL_WIDTH_SPACE}▌Commands`, fontWeight: 'bold' }]);
 
-  // :208-319 指令面板（[100]-[888] 按钮的渲染，可用性依 A/B 计数与 FLAG
-  // 状态）：按钮渲染随首个指令子系统票落地——A 的计算已前移为本文件的
-  // count_selectable_slaves，届时直接复用。输入分发本体已在 page-shop.js
-  // 的 usershop（#24，壳占位见彼处）；本段只欠渲染。
+  // :211-219 A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
+  // B（被调教过的奴隶数）随用到它的入口。
+  //
+  // :226-231 [100] 调教 —— 指令面板里**唯一已接线**的入口：分发本体在
+  // page-shop.js 的 usershop（#24），调教域自 #44/#45/#47 起可用。原作
+  // `PRINTLCD [100] 调教` 是列排版文本 + INPUT，ere 侧改按钮（PR #53 通则：
+  // 纯文本行在实机上点不动）；正文不写 [100] 前缀，交给引擎的 showAcc
+  // 拼（PR #30）。A == 0 时原作退化为灰色 `[---]` 占位、不可选，此处以
+  // 同色不可点文本复现。
+  //
+  // 没有这一枚按钮，调教入口在实机上根本不存在——SELECT_TARGET 只能经
+  // [496] 选人、选完仍回主菜单，玩家无从进入调教（实机撞见）。
+  if (count_selectable_slaves() > 0) {
+    era.printButton('调教', 100);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
+  // :232-319 指令面板其余各项（[101]-[888]，可用性依 A/B 计数与 FLAG
+  // 状态）：随各自子系统票落地。
   stub_line(
     'DRAW_MAINMENU',
-    '指令面板（[100]-[888] 按钮）渲染',
-    '随首个指令子系统票',
+    '指令面板其余各项（[101]-[888] 按钮）渲染',
+    '随各自指令子系统票',
   );
 
   // :320 底部双线

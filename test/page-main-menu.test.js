@@ -264,6 +264,39 @@ test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位'
   );
 });
 
+test('[100] 调教：A > 0 时是可点按钮，A == 0 时退化为灰色 [---] 占位', () => {
+  // A > 0：加入一名未被占用的奴隶（魔王不计入）
+  const on = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+  });
+  const enter = button_of(on.fixture, 100);
+  assert.ok(
+    enter,
+    'A > 0 时 [100] 调教必须是按钮——没有它，调教入口在实机上不存在',
+  );
+  assert.equal(enter.rendered, '[100] 调教');
+  assert.equal(
+    enter.text,
+    '调教',
+    '按钮正文不得手写 [100] 前缀（引擎的 showAcc 会拼，PR #30）',
+  );
+
+  // A == 0：只有魔王，原作 :229-231 退化为灰色 [---]（不可选）
+  const off = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+  });
+  assert.equal(
+    button_of(off.fixture, 100),
+    undefined,
+    'A == 0 时不得渲染可点的 [100]',
+  );
+  const placeholder = off.fixture.lines.find((line) =>
+    line.text?.includes('[---]'),
+  );
+  assert.ok(placeholder, 'A == 0 时必须留灰色 [---] 占位（原作 PRINTLC）');
+});
+
 test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1日）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
