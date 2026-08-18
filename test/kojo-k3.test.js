@@ -5,6 +5,8 @@
  * 高貴性格角色——实机复现不了，测试播种素质 163）。覆盖：
  *   - 首次与二次以后走不同分支（验收项「此行为有测试」）；
  *   - CFLAG:301 状态机的逐阶段推进（2xx/3xx/4xx 三条链 + 各自的随机尾）；
+ *   - 3xx 支的附加门槛 MARK:1 == 3（:1021——Lv2 屈服而无快乐刻印时
+ *     3xx 与 2xx 两支皆不命中、一句不出；验收变异补）；
  *   - MARK:1/2 刻印分档、TALENT:76/85 素质分支；
  *   - 随机分支可控可重复（rand 定值序注入，RAND:3 → RAND:2 定序）；
  *   - 三种插值（角色名 %SAVESTR% / 自称 %SELF_CALL% / 心形 %UNICODE%）；
@@ -299,6 +301,19 @@ test('屈服Lv2＆快乐Lv3 链（3xx）：301/302/303 逐格推进后随机尾'
     '「这~、这样~…嗯~、明明被，当成玩具来…呼嗯~、呜啊啊~……！」',
   ]);
   assert.equal(tail.store.get('cflag:31:301'), 303);
+});
+
+test('3xx 支的附加门槛 MARK:1 == 3：Lv2 屈服而无快乐刻印时两支皆不命中', async () => {
+  // :1021 ELSEIF MARK:2 == 2 && MARK:1 == 3 —— 删掉 MARK:1 臂会让本状态
+  // 误入 3xx（验收变异实测的假绿位）：MARK:2 == 2 且 MARK:1 != 3 时，
+  // 3xx（要 MARK:1 == 3）与 2xx（要 MARK:2 <= 1）都不命中，原作一句不出
+  const fixture = await setup_k3((f) => {
+    f.store.set('mark:31:2', 2);
+    f.store.set('cflag:31:301', 1); // mark:31:1 保持 0（≠ 3）
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:31:301'), 1); // 状态不动
 });
 
 test('阈值闸：FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声', async () => {

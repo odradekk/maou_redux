@@ -676,6 +676,41 @@ const MUTATIONS = [
     tests: ['kojo-k3'],
     expect_only: '自称',
   },
+  // —— #46 验收整改（三处假绿的覆盖缺口：行为用例 + kojo-text-fidelity 锁）——
+  {
+    desc: 'M74 K3 3xx 支的附加条件删除（MARK:1 == 3 臂拿掉）',
+    file: 'ere/kojo/kojo-k3.js',
+    find: `      // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
+      mark(2) === 2 &&
+      mark(1) === 3 &&
+      (cflag301() <= 299 || flag7() === 2)`,
+    replace: `      // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
+      mark(2) === 2 &&
+      (cflag301() <= 299 || flag7() === 2)`,
+    tests: ['kojo-k3'],
+    expect_only: 'MARK:1 == 3',
+  },
+  {
+    desc: 'M75 K3 的 PRINTFORML 映射错变体（:944 print 改 printAndWait）',
+    file: 'ere/kojo/kojo-k3.js',
+    find: `        era.print(
+          \`\${player_name}开始爱抚后、\${target_name}立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。\`,
+        ); // :944 PRINTFORML`,
+    replace: `        await era.printAndWait(
+          \`\${player_name}开始爱抚后、\${target_name}立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。\`,
+        ); // :944 PRINTFORML`,
+    tests: ['kojo-text-fidelity'],
+    expect_only: 'W/L',
+  },
+  {
+    desc: 'M76 K3 插值填错孔（:1076 player 与 target 互换）',
+    file: 'ere/kojo/kojo-k3.js',
+    find: '`${player_name}轻轻地抚摸了一下${target_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,',
+    replace:
+      '`${target_name}轻轻地抚摸了一下${player_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,',
+    tests: ['kojo-text-fidelity', 'kojo-k3'],
+    expect_only: '槽位序',
+  },
 ];
 
 function run_one(m, index) {
