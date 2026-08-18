@@ -138,6 +138,64 @@ function create_era_fixture() {
     lines.pop();
     return push_text(content);
   };
+  // —— 多列输出族（#48 对拍录制）：printMultiColumns / printInColRows 的
+  //    GridObject 逐格压平成既有条目类型（button/text/divider/image），
+  //    printImage 压 image 条目。引擎渲染是一行多列，对拍关心的是「输出了
+  //    什么」而非「怎么排」——归一化器两侧同构拆条（tools/compare/
+  //    normalize.js），这里不做列布局。progress 无文本语义，整体留痕。
+  const record_grid_object = (obj) => {
+    if (obj?.type === 'button') {
+      const text = normalize_content(obj.content);
+      return push_line({
+        type: 'button',
+        text,
+        accelerator: obj.accelerator,
+        rendered: (obj.config?.showAcc !== false
+          ? `[${obj.accelerator}] ${text}`
+          : `[${text}]`
+        ).replace(/\s+/g, ' '),
+        color: obj.config?.color,
+      });
+    }
+    if (obj?.type === 'text') {
+      return push_text(obj.content);
+    }
+    if (obj?.type === 'divider') {
+      return push_line({
+        type: 'divider',
+        text: normalize_content(obj.config?.content ?? ''),
+        border: obj.config?.isSolid ? 'solid' : 'dashed',
+      });
+    }
+    if (obj?.type === 'image' || obj?.type === 'image.whole') {
+      return push_line({ type: 'image', names: obj.names });
+    }
+    if (obj?.type === 'progress') {
+      return push_line({
+        type: 'progress',
+        percentage: obj.percentage,
+        text: normalize_content(obj.inContent ?? ''),
+      });
+    }
+    return push_line({ type: 'text', text: normalize_content(obj?.content) });
+  };
+  era.printMultiColumns = (columnObjects) => {
+    (columnObjects ?? []).forEach(record_grid_object);
+    return lines.length - 1;
+  };
+  era.printInColRows = (...columnObjects) => {
+    // 实参形如 ColumnObject({columns: GridObject[]}) 或裸 GridObject[]，
+    // 与 SDK 的 @param {...ColumnObject|GridObject[]} 一致
+    columnObjects.forEach((arg) => {
+      if (Array.isArray(arg)) {
+        arg.forEach(record_grid_object);
+      } else {
+        (arg?.columns ?? []).forEach(record_grid_object);
+      }
+    });
+    return lines.length - 1;
+  };
+  era.printImage = (...names) => push_line({ type: 'image', names });
   era.getLineCount = () => lines.length;
   era.clear = async (line_count) => {
     // 不带参数清空全部；带参数清除最近 N 行
@@ -370,6 +428,9 @@ function create_era_fixture() {
     'drawLine',
     'printButton',
     'replaceText',
+    'printMultiColumns',
+    'printInColRows',
+    'printImage',
     'getLineCount',
     'clear',
     'get',
