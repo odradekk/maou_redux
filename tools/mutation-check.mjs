@@ -767,6 +767,19 @@ const MUTATIONS = [
     tests: ['lang-normalize'],
     expect_only: '奴隷',
   },
+  {
+    desc: 'M83 生成器去归一（csv-to-yml 不再自应用归一表——验收实测的退回路径）',
+    file: 'tools/csv-to-yml.js',
+    find: `function emit_product_lines(lines) {
+  return to_simplified_yaml(\`\${lines.join('\\n')}\\n\`);
+}`,
+    replace: `function emit_product_lines(lines) {
+  // 变异：生成期归一删除——产物与库内（已归一）不再一致
+  return \`\${lines.join('\\n')}\\n\`;
+}`,
+    tests: ['csv-to-yml'],
+    expect_only: '逐字节一致',
+  },
 ];
 
 function run_one(m, index) {

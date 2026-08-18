@@ -35,6 +35,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { TextDecoder } = require('node:util');
 
+// T20 归一表（issue #60）：产物名在生成期归一为简体（唯一出口见
+// emit_product_lines）。tools/ 内部相对引用，不进 ere/ 的 #/ 别名体系。
+const { to_simplified_yaml } = require('./lang-normalize');
+
 // 仓库根目录：tools/ 的上一级
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -238,6 +242,16 @@ function parse_gamebase_csv(text) {
   return { entries, warnings };
 }
 
+// 产物文本的唯一出口（三个组装函数共用）：行数组 → 最终文本，途中过 T20
+// 归一表（issue #60）——玩家可见名（如 滅焰呪印→灭焰咒印、搾乳器→榨乳器）
+// 在**生成期**就是简体，重跑 --force 得到的产物与库内逐字节一致，不会退回
+// 繁/日原名；引擎列名键（素質/名前/呼び名…）由 to_simplified_yaml 以占位符
+// 保护、原样保留。「产物长什么样」的规格在此、不在测试：同步守护
+// （test/csv-to-yml.test.js）只做直比。
+function emit_product_lines(lines) {
+  return to_simplified_yaml(`${lines.join('\n')}\n`);
+}
+
 // YAML 标量输出：数值裸写（YAML 原生 Number）；字符串一律双引号。
 // 引擎的 yml 分支解析后对字符串还会过一遍 getNumber，因此数值两种写法殊途同归，
 // 但裸写与 CSV 路径的类型推断一致，直接采用。
@@ -251,7 +265,7 @@ function to_gamebase_yaml(entries) {
   for (const [key, value] of entries) {
     lines.push(`${JSON.stringify(key)}: ${JSON.stringify(value)}`);
   }
-  return `${lines.join('\n')}\n`;
+  return emit_product_lines(lines);
 }
 
 // —— 角色表（issue #35）——
@@ -395,7 +409,7 @@ function to_chara_yaml(groups, { source = '' } = {}) {
       }
     }
   }
-  return `${lines.join('\n')}\n`;
+  return emit_product_lines(lines);
 }
 
 // —— 变量表（issue #38）——
@@ -571,7 +585,7 @@ function to_variable_yaml(
       lines.push(`  price: ${entry.price}`);
     }
   }
-  return `${lines.join('\n')}\n`;
+  return emit_product_lines(lines);
 }
 
 // 组装一次变量表转换。空表拒绝写出（变量表为空意味着装载时整表缺失）。

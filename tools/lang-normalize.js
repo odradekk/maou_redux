@@ -123,7 +123,8 @@ function to_simplified(text, tbl = load_table()) {
 /**
  * 归一一段 yml 产物文本，**保护引擎列名键**（素質/名前/呼び名…——引擎按名
  * 读取的接口，不是文案，见 lang-table.js 的 ENGINE_COLUMN_KEYS）。
- * 用占位符把键罩住再归一。csv-to-yml 的同步守护与 #10 的生成期归一用这个。
+ * 用占位符把键罩住再归一。csv-to-yml 在生成期对产物文本自应用（唯一出口
+ * emit_product_lines，#60），#10 的转译器生成 yml 时同用这个。
  */
 function to_simplified_yaml(text, tbl = load_table()) {
   const guards = [];

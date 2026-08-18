@@ -34,6 +34,9 @@ const {
   read_text,
   to_chara_yaml,
 } = require('../tools/csv-to-yml');
+// T20 归一表（#60）：产物名在生成期归一为简体（csv-to-yml 的
+// emit_product_lines），CSV 侧过同一张表再装载——对拍语义是「产物 = 归一(源)」
+const { to_simplified_yaml } = require('../tools/lang-normalize');
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
@@ -52,11 +55,16 @@ const SOURCE_FILES = fs
 // 从「两侧同错」升级为「两侧同生效」。
 const repo_tables = load_repo_variable_tables();
 
-// 走一遍完整装载：源 CSV 文本 →（引擎 csv 路径 → 装载循环）
+// 走一遍完整装载：源 CSV 文本 →（引擎 csv 路径 → 装载循环）。
+// T20 缝（#60）：CSV 文本先过 to_simplified_yaml（与生成器对产物文本用的
+// 同一个函数、同一份引擎列名键保护）——两侧同变换后逐字段一致即
+// 「产物 = 归一(源)」；名字差异只能来自表，不能来自装载。
 function load_source_csv(csv_text) {
   const loader = create_chara_loader();
   attach_variable_tables(loader, repo_tables);
-  loader.load_rows(engine.parse_data_file(csv_text, 'csv', 'chara'));
+  loader.load_rows(
+    engine.parse_data_file(to_simplified_yaml(csv_text), 'csv', 'chara'),
+  );
   return loader;
 }
 

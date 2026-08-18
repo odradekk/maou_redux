@@ -34,8 +34,6 @@ const {
   to_gamebase_yaml,
   to_variable_yaml,
 } = require('../tools/csv-to-yml');
-// T20 归一表（#60）：同步守护用（产物 = 归一后的转换结果，引擎列名键受保护）
-const { to_simplified_yaml } = require('../tools/lang-normalize');
 
 // 迁移前 csv/GameBase.csv 的内容（ere 版，#2 落地；实测 UTF-8 无 BOM、LF）。
 // 转换正确性的基准，不依赖仓库里已删除的那个文件。
@@ -539,6 +537,9 @@ test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', 
 // 变量表（Talent/Item）同样适用；Base.yml 是人工表、无 CSV 源，不在其列。
 // #43 起调教域六张表（Palam/Source/Abl/Exp/Mark/TrainCommand）纳入同一
 // 守护——「两条装载路径同错」的盲区对逐字段对拍仍然存在，字节层不留窗。
+// #60 起**直比**：T20 归一（繁/日产物名→简体）在生成器内部完成
+// （csv-to-yml.js 的 emit_product_lines），「产物长什么样」的规格在生成器、
+// 不在测试——本守护因此不再替转换结果补归一，生成器漏归一会直接红。
 const SYNC_GUARD_PAIRS = [
   {
     yml: 'Chara0.yml',
@@ -604,14 +605,9 @@ const SYNC_GUARD_PAIRS = [
 for (const pair of SYNC_GUARD_PAIRS) {
   test(`同步守护：yml/${pair.yml} 与 target 源 CSV 的转换结果逐字节一致`, () => {
     const product = path.join(REPO_ROOT, 'yml', pair.yml);
-    // #60（T20）：玩家可见产物名经归一表离机归一（如 滅焰呪印→灭焰咒印），
-    // 引擎列名键（素質/名前…）受保护。守护对「归一后的转换结果」逐字节钉住
-    // ——人工偏离只能来自表、不能是任意手改；长期归宿是 csv-to-yml 生成期
-    // 自应用归一表（约束见 #60 留言）。
-    assert.equal(
-      fs.readFileSync(product, 'utf8'),
-      to_simplified_yaml(pair.convert()),
-    );
+    // #60（T20）起直比：归一在生成器内部（emit_product_lines）完成，本守护
+    // 不再替转换结果补归一——生成器漏归一、或产物被手改，都在这里直接红。
+    assert.equal(fs.readFileSync(product, 'utf8'), pair.convert());
   });
 }
 
