@@ -910,6 +910,15 @@ const MUTATIONS = [
     tests: ['trace-check'],
     expect_only: '已不存在',
   },
+  {
+    desc: 'M98 豁免条目发霉（main-loop 的 :231 改号——台账对账必须红）',
+    file: 'ere/system/flow/main-loop.js',
+    find: '  // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发',
+    replace:
+      '  // 真身出口显式 begin(STATE.SHOP)（:232），此行只在未来的处理器们都不发',
+    tests: ['trace-check'],
+    expect_only: '清单只能变短',
+  },
 ];
 
 function run_one(m, index) {
