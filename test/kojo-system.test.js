@@ -195,8 +195,8 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   await com_family.call(0);
   await emit('SOURCE_CHECK');
   assert.ok(
-    fixture.text_lines().includes('「你這個變態…別、別碰我！」'),
-    'K5 首次台词经真实调用点出现在输出里',
+    fixture.text_lines().includes('「你这个变态…别、别碰我！」'),
+    'K5 首次台词经真实调用点出现在输出里（#60 归一为简体）',
   );
   assert.equal(fixture.store.get('cflag:17:301'), 1, '状态机推进');
 });

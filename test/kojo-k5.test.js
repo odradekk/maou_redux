@@ -53,8 +53,8 @@ test('首次（CFLAG:301 == 0 且 MARK:2 < 2）：两句拒绝 + 状态推进到
   const fixture = await setup_k5();
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '「你這個變態…別、別碰我！」',
-    '（現在如果發出奇怪的聲音的話…隻會讓這傢夥感到高興、一定要忍耐…！）',
+    '「你这个变态…别、别碰我！」',
+    '（现在如果发出奇怪的声音的话…只会让这家伙感到高兴、一定要忍耐…！）',
   ]);
   assert.equal(fixture.store.get('cflag:17:301'), 1);
 });
@@ -63,8 +63,8 @@ test('二次以后走それ以外支（MARK:2 <= 1）：与首次不同分支，
   const fixture = await setup_k5((f) => f.store.set('cflag:17:301', 1));
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '「不要、那、那裏…不要…碰那裏…啊！」',
-    '玛奥不停地扭動著身體進行反抗………',
+    '「不要、那、那里…不要…碰那里…啊！」',
+    '玛奥不停地扭动着身体进行反抗………',
   ]);
   assert.equal(fixture.store.get('cflag:17:301'), 2);
 });
@@ -72,7 +72,7 @@ test('二次以后走それ以外支（MARK:2 <= 1）：与首次不同分支，
 test('首次的刻印分档（MARK:2 >= 2）：只出一句', async () => {
   const fixture = await setup_k5((f) => f.store.set('mark:17:2', 2));
   await speak_k5(fixture);
-  assert.deepEqual(fixture.text_lines(), ['「咕…嗚嗚…啊！」']);
+  assert.deepEqual(fixture.text_lines(), ['「咕…呜呜…啊！」']);
   assert.equal(fixture.store.get('cflag:17:301'), 1);
 });
 
@@ -83,9 +83,9 @@ test('淫乱分支（TALENT:76）：三句 + 插值（角色名 / 调教者名 /
   });
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '「嗯…啊…主人的手指好厲害…♡」',
-    '玛奥彎曲著身體、把你的手夾在自己的大腿間。',
-    '「請讓我的H小穴…變得更加淫亂吧♡」',
+    '「嗯…啊…主人的手指好厉害…♡」',
+    '玛奥弯曲着身体、把你的手夹在自己的大腿间。',
+    '「请让我的H小穴…变得更加淫乱吧♡」',
   ]);
   assert.equal(fixture.store.get('cflag:17:301'), 6);
 });
@@ -99,8 +99,8 @@ test('爱慕分支（TALENT:85）优先于刻印档：推进到 5', async () => 
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '「啊…啊哈…啊♡不要嗯♡」',
-    '故意發出尖叫的玛奥顯得十分的可愛。',
-    '「主人、再多摸摸我嘛♡ 舒服的我都要叫出來了啦♡」',
+    '故意发出尖叫的玛奥显得十分的可爱。',
+    '「主人、再多摸摸我嘛♡ 舒服的我都要叫出来了啦♡」',
   ]);
   assert.equal(fixture.store.get('cflag:17:301'), 5);
 });
@@ -112,7 +112,7 @@ test('屈服刻印 Lv3 / Lv2 分档：各推进到 4 / 3', async () => {
   });
   await speak_k5(lv3);
   assert.deepEqual(lv3.text_lines().slice(0, 1), [
-    '「哈…嗚…嗯咕♡…啊…啊…嗯♡……」',
+    '「哈…呜…嗯咕♡…啊…啊…嗯♡……」',
   ]);
   assert.equal(lv3.store.get('cflag:17:301'), 4);
 
@@ -122,8 +122,8 @@ test('屈服刻印 Lv3 / Lv2 分档：各推进到 4 / 3', async () => {
   });
   await speak_k5(lv2);
   assert.deepEqual(lv2.text_lines(), [
-    '「啊…啊咕…嗚嗚…嗯咕…！」',
-    '玛奥感受到了從未體驗過的愉悅在沸騰著、忍不住皺起了臉………',
+    '「啊…啊咕…呜呜…嗯咕…！」',
+    '玛奥感受到了从未体验过的愉悦在沸腾着、忍不住皱起了脸………',
   ]);
   assert.equal(lv2.store.get('cflag:17:301'), 3);
 });

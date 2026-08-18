@@ -537,6 +537,9 @@ test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', 
 // 变量表（Talent/Item）同样适用；Base.yml 是人工表、无 CSV 源，不在其列。
 // #43 起调教域六张表（Palam/Source/Abl/Exp/Mark/TrainCommand）纳入同一
 // 守护——「两条装载路径同错」的盲区对逐字段对拍仍然存在，字节层不留窗。
+// #60 起**直比**：T20 归一（繁/日产物名→简体）在生成器内部完成
+// （csv-to-yml.js 的 emit_product_lines），「产物长什么样」的规格在生成器、
+// 不在测试——本守护因此不再替转换结果补归一，生成器漏归一会直接红。
 const SYNC_GUARD_PAIRS = [
   {
     yml: 'Chara0.yml',
@@ -602,6 +605,8 @@ const SYNC_GUARD_PAIRS = [
 for (const pair of SYNC_GUARD_PAIRS) {
   test(`同步守护：yml/${pair.yml} 与 target 源 CSV 的转换结果逐字节一致`, () => {
     const product = path.join(REPO_ROOT, 'yml', pair.yml);
+    // #60（T20）起直比：归一在生成器内部（emit_product_lines）完成，本守护
+    // 不再替转换结果补归一——生成器漏归一、或产物被手改，都在这里直接红。
     assert.equal(fs.readFileSync(product, 'utf8'), pair.convert());
   });
 }

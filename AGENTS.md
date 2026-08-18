@@ -72,7 +72,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
 
 配置优先级：`yml/_fixed.json` > `ere.config.json` > `yml/_config.json` > 引擎默认值。
 
-`yml/` 的产物由 `tools/csv-to-yml.js` 生成，遵守**产物边界**（issue #10）：产物进 git、归人工维护，转换器重跑默认跳过已存在的产物，重写必须显式 `--force`——这条规则有测试钉死。YAML 键名一律加引号，键含 `:` / `#` 或首尾空格时裸键名会产出无法解析的 YAML。`GameBase.yml` 的原始输入已随迁移删除，要重转先从 git 历史取回 `csv/GameBase.csv`。
+`yml/` 的产物由 `tools/csv-to-yml.js` 生成，遵守**产物边界**（issue #10）：产物进 git、归人工维护，转换器重跑默认跳过已存在的产物，重写必须显式 `--force`——这条规则有测试钉死。产物名在**生成期**经归一表（`tools/lang-table.js`，issue #60）归一为简体（引擎列名键如 素質/名前 受保护、原样保留）——`--force` 重跑得到的产物与库内逐字节一致，不会退回源 CSV 的繁/日原名；同步守护因此只做直比，生成器漏归一即红。YAML 键名一律加引号，键含 `:` / `#` 或首尾空格时裸键名会产出无法解析的 YAML。`GameBase.yml` 的原始输入已随迁移删除，要重转先从 git 历史取回 `csv/GameBase.csv`。
 
 ## 引擎 API 与硬约束
 
@@ -102,6 +102,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
   ```
 
 - **1:1 追溯** 靠文件头注释而非目录镜像（issue #11）：`// 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE`。
+- **玩家可见文本一律简体**（issue #60，对 1:1 的**有意偏离**）：`target/` 汉化本身三种文字混用，照抄会把混乱带给玩家。归一表 `tools/lang-table.js` 是唯一真相源（字级繁/日→简机械映射、词级人工译法、整串豁免名单三栏，勿混），离线转换用 `node tools/lang-normalize.js [--write] <js 文件…>`——运行时不做任何转换。两道锁钉死：`test/output-lang-lock.test.js` 扫 `ere/` 全部字符串字面量与 `yml/` 产物串（引擎列名豁免见表内清单），表外非简体字符即红；`test/kojo-text-fidelity.test.js` 锁 D 对 ERB 侧归一后比对。新字种/词条必须先在语料实证再进表，**表只能有意识地长**。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
 
 ## 移植源：`target/`

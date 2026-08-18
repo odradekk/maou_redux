@@ -21,7 +21,13 @@
  *   C. 插值槽位序：ERB 行内的 %...% 记号序列与 JS 同语句的 ${...} 序列
  *      各自归一（TARGET/PLAYER/ASSI/MASTER/SC/SCF/HEARTn）后逐项相等；
  *   D. 字面量片段双向：ERB 片段（按 %...% 切开）⊂ JS 语句文本，JS 字面量
- *      片段（按 ${...} 切开）⊂ ERB 行文本——防手抄错漏。
+ *      片段（按 ${...} 切开）⊂ ERB 行文本——防手抄错漏。**#60 起归一**：
+ *      ERB 侧先经 tools/lang-table.js 归一（繁/日 → 简，词级优先）再比对，
+ *      JS 侧保持原文——游戏语言统一为简体是产品决定（对 1:1 的有意偏离），
+ *      K5 的移植源是繁体、JS 存简体。归一后锁力不减：抄错字、空格丢失
+ *      照样红（归一是确定性映射，片段要么两边一致要么对不上）；且**多守
+ *      一类**——JS 侧若还留着非简体字符（忘了转换），归一后的 ERB 片段
+ *      在 JS 原文里找不到、反向比对即红。
  *
  * 锚绑定两条路：语句收尾行的尾锚（`; // :N`）优先；否则看语句前一行的
  * 纯注释（如 K3 的 `// :925`、`// :1062-1063 …`），且仅当该行号窗口在源
@@ -43,6 +49,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
+
+// 归一表（#60）：tools/ 与 test/ 之间用相对路径（AGENTS.md「代码约定」）
+const { to_simplified } = require('../tools/lang-normalize');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const KOJO_DIR = path.join(REPO_ROOT, 'ere', 'kojo');
@@ -499,36 +508,45 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
   );
 });
 
-// —— 锁 D：字面量片段双向 ——
+// —— 锁 D：字面量片段双向（#60 起 ERB 侧先归一） ——
 
-test('字面量片段双向：ERB 片段在 JS 语句里、JS 片段在 ERB 行里', () => {
+test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片段在归一后的 ERB 行里', () => {
   const problems = [];
   let erb_checked = 0;
   let js_checked = 0;
+  let normalized_hits = 0;
   for (const mod of MODULES) {
     for (const stmt of mod.statements) {
       if (!stmt.printform) {
         continue;
       }
       const where = `${mod.name} :${stmt.binding.label}（ERB :${stmt.printform.line_no}）`;
-      // 正向：ERB 字面量片段（按 %…% 切开）⊂ JS 语句文本
-      for (const seg of stmt.printform.arg.split(/%[^%]+%/)) {
+      // ERB 侧归一（繁/日 → 简，词级优先；tools/lang-table.js 唯一真相源）。
+      // JS 侧不归一——它必须本来就是简体（忘了转换在这里红，见文件头）。
+      const erb_arg = to_simplified(stmt.printform.arg);
+      if (erb_arg !== stmt.printform.arg) {
+        normalized_hits += 1;
+      }
+      // 正向：ERB 字面量片段（按 %…% 切开、归一后）⊂ JS 语句原文
+      for (const seg of erb_arg.split(/%[^%]+%/)) {
         if (seg.trim().length >= SEGMENT_MIN) {
           erb_checked += 1;
           if (!stmt.raw.includes(seg)) {
-            problems.push(`${where}: ERB 片段未见于 JS：「${seg}」`);
+            problems.push(`${where}: ERB 片段（归一后）未见于 JS：「${seg}」`);
           }
         }
       }
-      // 反向：JS 字面量片段（按 ${…} 切开）⊂ ERB 行文本
+      // 反向：JS 字面量片段（按 ${…} 切开、原文）⊂ 归一后的 ERB 行文本
       for (const s of stmt.strings) {
         const parts =
           s.quote === '`' ? s.content.split(/\$\{[^}]*\}/) : [s.content];
         for (const part of parts) {
           if (part.trim().length >= SEGMENT_MIN) {
             js_checked += 1;
-            if (!stmt.printform.arg.includes(part)) {
-              problems.push(`${where}: JS 片段未见于 ERB：「${part}」`);
+            if (!erb_arg.includes(part)) {
+              problems.push(
+                `${where}: JS 片段未见于 ERB（归一后）：「${part}」`,
+              );
             }
           }
         }
@@ -540,9 +558,14 @@ test('字面量片段双向：ERB 片段在 JS 语句里、JS 片段在 ERB 行�
     `正向片段只有 ${erb_checked} 条，扫描八成失效了`,
   );
   assert.ok(js_checked >= 60, `反向片段只有 ${js_checked} 条，扫描八成失效了`);
+  // 归一确实在被使用（K5 是繁体源）：至少有一条语句的 ERB 行归一后变了样
+  assert.ok(
+    normalized_hits >= 8,
+    `只有 ${normalized_hits} 条语句的 ERB 行归一后发生变化——K5 是繁体源，归一没生效的话正向比对早该全红；此断言防「to_simplified 被换成了恒等」`,
+  );
   assert.deepEqual(
     problems,
     [],
-    `字面量片段错漏（手抄错漏与行尾空格丢失都在这里红）：\n  ${problems.join('\n  ')}`,
+    `字面量片段错漏（手抄错漏、空格丢失、JS 侧残留非简体都在这里红）：\n  ${problems.join('\n  ')}`,
   );
 });
