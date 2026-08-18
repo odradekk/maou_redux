@@ -102,6 +102,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
   ```
 
 - **1:1 追溯** 靠文件头注释而非目录镜像（issue #11）：`// 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE`。
+- **玩家可见文本一律简体**（issue #60，对 1:1 的**有意偏离**）：`target/` 汉化本身三种文字混用，照抄会把混乱带给玩家。归一表 `tools/lang-table.js` 是唯一真相源（字级繁/日→简机械映射、词级人工译法、整串豁免名单三栏，勿混），离线转换用 `node tools/lang-normalize.js [--write] <js 文件…>`——运行时不做任何转换。两道锁钉死：`test/output-lang-lock.test.js` 扫 `ere/` 全部字符串字面量与 `yml/` 产物串（引擎列名豁免见表内清单），表外非简体字符即红；`test/kojo-text-fidelity.test.js` 锁 D 对 ERB 侧归一后比对。新字种/词条必须先在语料实证再进表，**表只能有意识地长**。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
 
 ## 移植源：`target/`

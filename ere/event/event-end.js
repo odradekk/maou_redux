@@ -158,10 +158,10 @@ on(
       (era.get('flag:400') || 0) !== 0 &&
       era.get(`talent:${era_flag.target}:85`)
     ) {
-      era.print('*因奴隷的愛而回復了気力*'); // :410
+      era.print('*因奴隶的爱而恢复了气力*'); // :410
       recover = 700; // :411
     } else if ((era.get('flag:400') || 0) !== 0) {
-      era.print('*因調教奴隷而回復了気力*'); // :413
+      era.print('*因调教奴隶而恢复了气力*'); // :413
       recover = 500; // :414
     }
     // BASE:0:1 = 魔王（角色 0）的气力，回复后钳到上限（:416-418）

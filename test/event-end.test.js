@@ -179,7 +179,7 @@ test('气力回复：FLAG:400 开、目标爱慕 → 魔王气力 +700 并钳上
 
   await run_eventend(fixture);
 
-  assert(fixture.text_lines().includes('*因奴隷的愛而回復了気力*'));
+  assert(fixture.text_lines().includes('*因奴隶的爱而恢复了气力*'));
   assert(
     fixture.var_writes.some((w) => w.name === 'base:0:1' && w.value === 1000),
   );

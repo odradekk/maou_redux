@@ -34,6 +34,8 @@ const {
   to_gamebase_yaml,
   to_variable_yaml,
 } = require('../tools/csv-to-yml');
+// T20 归一表（#60）：同步守护用（产物 = 归一后的转换结果，引擎列名键受保护）
+const { to_simplified_yaml } = require('../tools/lang-normalize');
 
 // 迁移前 csv/GameBase.csv 的内容（ere 版，#2 落地；实测 UTF-8 无 BOM、LF）。
 // 转换正确性的基准，不依赖仓库里已删除的那个文件。
@@ -602,7 +604,14 @@ const SYNC_GUARD_PAIRS = [
 for (const pair of SYNC_GUARD_PAIRS) {
   test(`同步守护：yml/${pair.yml} 与 target 源 CSV 的转换结果逐字节一致`, () => {
     const product = path.join(REPO_ROOT, 'yml', pair.yml);
-    assert.equal(fs.readFileSync(product, 'utf8'), pair.convert());
+    // #60（T20）：玩家可见产物名经归一表离机归一（如 滅焰呪印→灭焰咒印），
+    // 引擎列名键（素質/名前…）受保护。守护对「归一后的转换结果」逐字节钉住
+    // ——人工偏离只能来自表、不能是任意手改；长期归宿是 csv-to-yml 生成期
+    // 自应用归一表（约束见 #60 留言）。
+    assert.equal(
+      fs.readFileSync(product, 'utf8'),
+      to_simplified_yaml(pair.convert()),
+    );
   });
 }
 

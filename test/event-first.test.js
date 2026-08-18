@@ -118,7 +118,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   const texts = fixture.text_lines();
   assert(texts.includes('今天，又有纯洁无垢的勇者敲响了地下城的大门……'));
   assert(texts.includes('魔王俯视着被吸取了能量用于破坏封印的村女'));
-  assert(texts.includes('因为破坏封印時魔力的涌流，村女的衣服全都剥落了。'));
+  assert(texts.includes('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。'));
   // 囚禁播报读 callname:17:-1（引擎 addCharacter 写入的预设名）
   assert(texts.includes('村娘玛奥被囚禁在了地牢里'));
   for (const name of [

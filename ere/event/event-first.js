@@ -212,13 +212,13 @@ on('EVENTFIRST', async () => {
     stub_line('CHAR_BODY_GENERATE_WAPPED', '角色身体生成');
 
     // :126-129 四行角色描写（PRINTFORMW，各带读键）
-    era.print('因为破坏封印時魔力的涌流，村女的衣服全都剥落了。');
+    era.print('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。');
     await era.waitAnyKey();
     era.print('村女还是少女体型，有个性的红色头发剪得短短的。');
     await era.waitAnyKey();
-    era.print('还有气息，胸部静静地起伏，润泽的褐色肌肤仿佛在等待着蹂躪。');
+    era.print('还有气息，胸部静静地起伏，润泽的褐色肌肤仿佛在等待着蹂躏。');
     await era.waitAnyKey();
-    era.print('就在这里尽情凌辱一番也不錯，不过还是暂且………');
+    era.print('就在这里尽情凌辱一番也不错，不过还是暂且………');
     await era.waitAnyKey();
 
     // :130-133 空行 + 搬运/拖拽二选一（原作 PRINTL 纯文本 + INPUT 收数字；
@@ -241,9 +241,9 @@ on('EVENTFIRST', async () => {
       // :138-142 五行 PRINTFORMW
       era.print('村女比想象中要轻。少女的体香混合着农民的土地气息。');
       await era.waitAnyKey();
-      era.print('身材尚不丰满，不过应该足以承受魔王的蹂躪了。');
+      era.print('身材尚不丰满，不过应该足以承受魔王的蹂躏了。');
       await era.waitAnyKey();
-      era.print('许久没有尝过女人的味道，你正打算就这样帯回自己房间侵犯………');
+      era.print('许久没有尝过女人的味道，你正打算就这样带回自己房间侵犯………');
       await era.waitAnyKey();
       era.print('「姐……姐………」');
       await era.waitAnyKey();
@@ -253,7 +253,7 @@ on('EVENTFIRST', async () => {
       // :144-147 四行 PRINTFORMW
       era.print('对于这种小丫头没必要小心翼翼的―――');
       await era.waitAnyKey();
-      era.print('你抓着村女的脚踝一路拖進了牢房。');
+      era.print('你抓着村女的脚踝一路拖进了牢房。');
       await era.waitAnyKey();
       era.print('虽然这里那里都擦伤了不过舔舔也就好了………');
       await era.waitAnyKey();

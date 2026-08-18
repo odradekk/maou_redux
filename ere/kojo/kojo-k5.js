@@ -8,10 +8,14 @@
  *     且兽奸支是静默跳过、无 DOG_KOJO 调用；爱抚 CFLAG:301 状态机
  *     :802-848）
  *
- * == 正文是繁体中文（「這個變態」「隻會」「傢夥」） ==
+ * == 正文已归一为简体（issue #60） ==
  *
- * 移植源本身的翻译不一致（K3 简体、K5 繁体），**照抄不统一**——1:1 的
- * 意思包括这个，统一化是对源的人工修订、不属于移植。
+ * 移植源本身是繁体（K3 简体、K5 繁体，汉化不一致），照抄会把这份混乱原样
+ * 带给玩家。游戏语言统一为简体是产品决定（对 1:1 的有意偏离）：本文件的
+ * 口上正文经 tools/lang-normalize.js 离线归一，对照依据是 tools/lang-table.js
+ * （唯一真相源）；保真锁（test/kojo-text-fidelity.test.js 锁 D）对 ERB 侧
+ * 应用同一张表归一后比对，简体锁（test/output-lang-lock.test.js）保证 JS
+ * 侧不再残留非简体字符。
  *
  * == 状态机（CFLAG:301，个位数推进） ==
  *
@@ -117,11 +121,11 @@ async function kojo_message_com_5() {
     if (cflag301() === 0) {
       // :805-812 屈服刻印Lv2以上
       if (mark(2) >= 2) {
-        await era.printAndWait('「咕…嗚嗚…啊！」'); // :807
+        await era.printAndWait('「咕…呜呜…啊！」'); // :807
       } else {
-        await era.printAndWait('「你這個變態…別、別碰我！」'); // :810
+        await era.printAndWait('「你这个变态…别、别碰我！」'); // :810
         await era.printAndWait(
-          '（現在如果發出奇怪的聲音的話…隻會讓這傢夥感到高興、一定要忍耐…！）',
+          '（现在如果发出奇怪的声音的话…只会让这家伙感到高兴、一定要忍耐…！）',
         ); // :811
       }
       set_cflag301(1); // :813
@@ -134,11 +138,11 @@ async function kojo_message_com_5() {
       era.get(`talent:${target}:76`) === 1 &&
       (cflag301() <= 5 || flag7() === 2)
     ) {
-      await era.printAndWait(`「嗯…啊…主人的手指好厲害…${heart(1)}」`); // :819
+      await era.printAndWait(`「嗯…啊…主人的手指好厉害…${heart(1)}」`); // :819
       await era.printAndWait(
-        `${target_name}彎曲著身體、把${player_name}的手夾在自己的大腿間。`,
+        `${target_name}弯曲着身体、把${player_name}的手夹在自己的大腿间。`,
       ); // :820
-      await era.printAndWait(`「請讓我的H小穴…變得更加淫亂吧${heart(1)}」`); // :821
+      await era.printAndWait(`「请让我的H小穴…变得更加淫乱吧${heart(1)}」`); // :821
       set_cflag301(6); // :822
     } else if (
       // :823-828 愛慕（TALENT:85）
@@ -146,9 +150,9 @@ async function kojo_message_com_5() {
       (cflag301() <= 4 || flag7() === 2)
     ) {
       await era.printAndWait(`「啊…啊哈…啊${heart(1)}不要嗯${heart(1)}」`); // :825
-      await era.printAndWait(`故意發出尖叫的${target_name}顯得十分的可愛。`); // :826
+      await era.printAndWait(`故意发出尖叫的${target_name}显得十分的可爱。`); // :826
       await era.printAndWait(
-        `「主人、再多摸摸我嘛${heart(1)} 舒服的我都要叫出來了啦${heart(1)}」`,
+        `「主人、再多摸摸我嘛${heart(1)} 舒服的我都要叫出来了啦${heart(1)}」`,
       ); // :827
       set_cflag301(5); // :828
     } else if (
@@ -156,18 +160,18 @@ async function kojo_message_com_5() {
       mark(2) === 3 &&
       (cflag301() <= 3 || flag7() === 2)
     ) {
-      await era.printAndWait(`「哈…嗚…嗯咕${heart(1)}…啊…啊…嗯${heart(1)}……」`); // :831
-      await era.printAndWait(`${target_name}的嘴裏不住地發出甜美的嬌喘。`); // :832
-      await era.printAndWait('（明明衹是被觸摸而已…聲音…卻…忍不住了…啦）'); // :833
+      await era.printAndWait(`「哈…呜…嗯咕${heart(1)}…啊…啊…嗯${heart(1)}……」`); // :831
+      await era.printAndWait(`${target_name}的嘴里不住地发出甜美的娇喘。`); // :832
+      await era.printAndWait('（明明只是被触摸而已…声音…却…忍不住了…啦）'); // :833
       set_cflag301(4); // :834
     } else if (
       // :835-839 屈服刻印Lv2
       mark(2) === 2 &&
       (cflag301() <= 2 || flag7() === 2)
     ) {
-      await era.printAndWait('「啊…啊咕…嗚嗚…嗯咕…！」'); // :837
+      await era.printAndWait('「啊…啊咕…呜呜…嗯咕…！」'); // :837
       await era.printAndWait(
-        `${target_name}感受到了從未體驗過的愉悅在沸騰著、忍不住皺起了臉………`,
+        `${target_name}感受到了从未体验过的愉悦在沸腾着、忍不住皱起了脸………`,
       ); // :838
       set_cflag301(3); // :839
     } else if (
@@ -175,8 +179,8 @@ async function kojo_message_com_5() {
       mark(2) <= 1 &&
       (cflag301() <= 1 || flag7() === 2)
     ) {
-      await era.printAndWait('「不要、那、那裏…不要…碰那裏…啊！」'); // :842
-      await era.printAndWait(`${target_name}不停地扭動著身體進行反抗………`); // :843
+      await era.printAndWait('「不要、那、那里…不要…碰那里…啊！」'); // :842
+      await era.printAndWait(`${target_name}不停地扭动着身体进行反抗………`); // :843
       set_cflag301(2); // :844
     }
     return 0; // :846

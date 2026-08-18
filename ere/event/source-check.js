@@ -1836,7 +1836,7 @@ function palam_up_check() {
         upid === 15
           ? `${era.get(`cstr:${cid}:7`) ?? ''}`
           : upid === 0 && tal(122)
-            ? '陰莖'
+            ? '阴茎'
             : `${era.get(`palamname:${upid}`) ?? ''}`;
       const old = palam(upid);
       const u = up(upid);
@@ -2130,7 +2130,7 @@ on('SOURCE_CHECK', async () => {
   const max1 = era.get(`maxbase:${cid}:1`) || 0;
   if (base0 > 0 && lose0 > 0) {
     era.print(
-      `${loss_bar('体力', base0, max0, lose0, false)} -${lose0} ${base0 < 500 ? '★瀕死★' : ''}`,
+      `${loss_bar('体力', base0, max0, lose0, false)} -${lose0} ${base0 < 500 ? '★濒死★' : ''}`,
     );
   } else if (base0 < 1) {
     era.print(` 体力[${'.'.repeat(32)}] -${lose0} ★死亡★`);

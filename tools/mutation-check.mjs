@@ -711,6 +711,62 @@ const MUTATIONS = [
     tests: ['kojo-text-fidelity', 'kojo-k3'],
     expect_only: '槽位序',
   },
+  // —— #60 T20 语言统一：归一表与两道锁的自证 ——
+  {
+    desc: 'M77 归一表删一个实测字种（著→着）',
+    file: 'tools/lang-table.js',
+    find: "  著: '着',",
+    replace: '  // 变异：著→着 删除',
+    tests: ['lang-normalize', 'kojo-text-fidelity'],
+    expect_only: '缺映射',
+  },
+  {
+    desc: 'M78 K5 台词改回繁体（简体锁 + 锁 D 反向 + 行为断言三处红）',
+    file: 'ere/kojo/kojo-k5.js',
+    find: "        await era.printAndWait('「你这个变态…别、别碰我！」'); // :810",
+    replace:
+      "        await era.printAndWait('「你這個變態…別、別碰我！」'); // :810",
+    tests: ['output-lang-lock', 'kojo-text-fidelity', 'kojo-k5'],
+    expect_only: '非简体',
+  },
+  {
+    desc: 'M79 豁免名单删華胥の亡靈条（简体锁必须点名致谢行）',
+    file: 'tools/lang-table.js',
+    find: `  {
+    value:
+      '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
+    where: 'ere/page/page-title.js',
+    why: '口上组致谢名单整行。華胥の亡靈 是贡献者 ID（含日文の与繁体華/靈），其余名字同理不译——对人名/ID 做字符归一会改名。豁免到「字符串整体」，这行被改写时失配变红，改者须有意识地同步本表。',
+  },`,
+    replace: '  // 变异：豁免条目删除',
+    tests: ['output-lang-lock'],
+    expect_only: '華胥の亡靈',
+  },
+  {
+    desc: 'M80 K5 抄错字（归一后锁 D 仍抓：正向片段找不到）',
+    file: 'ere/kojo/kojo-k5.js',
+    find: "        await era.printAndWait('「咕…呜呜…啊！」'); // :807",
+    replace: "        await era.printAndWait('「咕…呜呜…啊呀！」'); // :807",
+    tests: ['kojo-text-fidelity'],
+    expect_only: '未见于 JS',
+  },
+  {
+    desc: 'M81 K5 句中空格丢失（归一后锁 D 仍抓：片段含前导空格）',
+    file: 'ere/kojo/kojo-k5.js',
+    find: '`「主人、再多摸摸我嘛${heart(1)} 舒服的我都要叫出来了啦${heart(1)}」`',
+    replace:
+      '`「主人、再多摸摸我嘛${heart(1)}舒服的我都要叫出来了啦${heart(1)}」`',
+    tests: ['kojo-text-fidelity'],
+    expect_only: '未见于 JS',
+  },
+  {
+    desc: 'M82 词级译法删奴隷→奴隶（转换用例必须红）',
+    file: 'tools/lang-table.js',
+    find: "  { source: '奴隷', target: '奴隶' },",
+    replace: '  // 变异：奴隷 词删除',
+    tests: ['lang-normalize'],
+    expect_only: '奴隷',
+  },
 ];
 
 function run_one(m, index) {

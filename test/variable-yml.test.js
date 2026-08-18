@@ -28,6 +28,28 @@ const {
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 const { parse_variable_csv, read_text } = require('../tools/csv-to-yml');
+// T20 归一表（#60）：产物名经离线归一（如 滅焰呪印→灭焰咒印）。对拍缝在
+// **名字面**（对象键与 fieldNames 的 n）——两侧同过一张表后比对；k（含
+// item 第 4 列的日文注释，引擎元数据非文案）与 t 原样不动
+const { to_simplified } = require('../tools/lang-normalize');
+
+/** 深拷贝并把「名字面」过归一表：对象键、n 值；k（含日文注释）/t/数字原样 */
+const simplify_display = (value, key = null) => {
+  if (key === 'n' && typeof value === 'string') {
+    return to_simplified(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => simplify_display(item));
+  }
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[to_simplified(k)] = simplify_display(v, k);
+    }
+    return out;
+  }
+  return value;
+};
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
@@ -82,9 +104,15 @@ engine_test('Talent：产物经引擎装载的结果与源 CSV 逐字段一致',
   const from_yml = load_yml_table(product, 'talent');
 
   // 名称 → 序号（staticData：era.get('talent:名称') 的翻译层）
-  assert.deepEqual(from_yml.static_data.talent, from_csv.static_data.talent);
+  assert.deepEqual(
+    simplify_display(from_yml.static_data.talent),
+    simplify_display(from_csv.static_data.talent),
+  );
   // 序号 → 名称 + 开发套件 k/t（fieldNames：itemname/*name 寻址的数据源）
-  assert.deepEqual(from_yml.field_names.talent, from_csv.field_names.talent);
+  assert.deepEqual(
+    simplify_display(from_yml.field_names.talent),
+    simplify_display(from_csv.field_names.talent),
+  );
   // 点名几条：id 1 = 童贞（Chara0 的素質 1 预设指向它）
   assert.equal(from_yml.static_data.talent['童贞'], 1);
   assert.equal(from_yml.static_data.talent['男人'], 122);
@@ -127,14 +155,17 @@ engine_test(
     );
     const from_csv = load_csv_table(text, 'item');
     const from_yml = load_yml_table(product, 'item');
+    // T20 缝（#60）：名字面（键与 n）过归一表后再比对；k 断言用原始侧
+    const csv_n = simplify_display(from_csv);
+    const yml_n = simplify_display(from_yml);
 
     // 名称 → 序号：两条路径完全一致（含重名对取后者的语义）
     assert.deepEqual(
-      from_yml.static_data.item.name,
-      from_csv.static_data.item.name,
-      'name→id 映射必须逐字段一致（含 5 对重名取后者）',
+      yml_n.static_data.item.name,
+      csv_n.static_data.item.name,
+      'name→id 映射必须逐字段一致（含 5 对重名取后者；名字面归一后比对）',
     );
-    assert.equal(from_yml.static_data.item.name['十字军战士'], 1005);
+    assert.equal(yml_n.static_data.item.name['十字军战士'], 1005);
 
     // 序号 → 价格 / fieldNames 的实际差集必须恰好等于预报差集（两类）：
     //   a) 重名合并——被并入后者的 5 个序号在 yml 路径整体消失；
@@ -157,22 +188,19 @@ engine_test(
       return diffs.sort((a, b) => a - b);
     };
     assert.deepEqual(
-      diff_ids(
-        from_yml.static_data.item.price,
-        from_csv.static_data.item.price,
-      ),
+      diff_ids(yml_n.static_data.item.price, csv_n.static_data.item.price),
       [...dropped_ids].sort((a, b) => a - b),
       '价格映射的差集必须恰好是重名合并集',
     );
     assert.deepEqual(
-      diff_ids(from_yml.field_names.item, from_csv.field_names.item),
+      diff_ids(yml_n.field_names.item, csv_n.field_names.item),
       [28, ...[...dropped_ids].sort((a, b) => a - b)],
       'fieldNames 的差集必须恰好是 {k 差异的 28} ∪ 重名合并集',
     );
     // 偏差 a 的形态：被合并序号在 yml 路径确实不可寻址（偏差是真实的）
     assert.equal(from_yml.field_names.item[1000], undefined);
     assert.equal(from_yml.static_data.item.price[1000], undefined);
-    assert.equal(from_yml.field_names.item[1005].n, '十字军战士');
+    assert.equal(yml_n.field_names.item[1005].n, '十字军战士');
     // 偏差 b 的形态：28 号仅 k 不同（csv 侧是第 4 列原文，yml 侧是缺省键）
     assert.equal(
       from_csv.field_names.item[28].k,
@@ -180,8 +208,9 @@ engine_test(
     );
     assert.equal(from_yml.field_names.item[28].k, 'item28');
     assert.equal(
-      from_yml.field_names.item[28].n,
-      from_csv.field_names.item[28].n,
+      yml_n.field_names.item[28].n,
+      csv_n.field_names.item[28].n,
+      'n（名字面）归一后一致',
     );
     assert.equal(
       from_yml.field_names.item[28].t,
