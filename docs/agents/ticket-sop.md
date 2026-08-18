@@ -2,7 +2,9 @@
 
 一张工单 = 一个 Orca worktree = 一个 droid 会话，全程用 `orca` CLI 驱动。
 
-工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；票序与阻塞关系见 issue #15，移植决议的索引见地图 issue #1（只读）。
+工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；移植决议的索引见地图 issue #1（只读）。
+
+票序与阻塞关系写在**当前那颗曳光弹的父票**里（第一颗 #15、第二颗 #42，均已关闭）。两颗曳光弹之后没有常设的票序索引——新工作按 `docs/stub-registry.md` 认领，阻塞关系写在各票的正文里。
 
 ## 0. 环境前提
 
