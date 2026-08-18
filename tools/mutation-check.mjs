@@ -15,19 +15,21 @@ const REPO = new URL('..', import.meta.url).pathname.replace(
 
 const MUTATIONS = [
   {
-    desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_STATUS 之前',
+    desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
     file: 'ere/system/train/train-loop.js',
-    find: `    // 5. 遍历 @COM_ABLExx：可执行指令表。本票零指令且按钮渲染欠账——
-    // 结果只喂输入检查（步骤 9），菜单可见项见 @SHOW_USERCOM
+    find: `    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
+    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();
 
-    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束）
-    const usercom_draw = await emit('SHOW_USERCOM');`,
-    replace: `    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束）
-    const usercom_draw = await emit('SHOW_USERCOM');
+    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
+    // 可执行指令表透传给按钮渲染）
+    const usercom_draw = await emit('SHOW_USERCOM', usable);`,
+    replace: `    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
+    // 可执行指令表透传给按钮渲染）
+    const usercom_draw = await emit('SHOW_USERCOM', []);
 
-    // 5. 遍历 @COM_ABLExx：可执行指令表。本票零指令且按钮渲染欠账——
-    // 结果只喂输入检查（步骤 9），菜单可见项见 @SHOW_USERCOM
+    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
+    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();`,
     tests: ['train-loop'],
     expect_only: '回调顺序',
@@ -384,6 +386,157 @@ const MUTATIONS = [
     replace: '    if (false && ABLUP_IDS.includes(result)) {',
     tests: ['juel-check'],
     expect_only: '能力分支',
+  },
+  // —— #45（指令 0 爱抚 + @SOURCE_CHECK）——
+  {
+    desc: 'M39 COM_ABLE0 爱抚系过滤：FLAG:25 & 1 判据删掉',
+    file: 'ere/system/train/com0-caress.js',
+    find: `  if ((era.get('flag:25') || 0) & 1) {
+    return 0;
+  }`,
+    replace: '  // 变异：过滤判据删除',
+    tests: ['com0-caress'],
+    expect_only: 'COM_ABLE0',
+  },
+  {
+    desc: 'M40 COM_ABLE0 决斗中判据删掉（TEQUIP:55）',
+    file: 'ere/system/train/com0-caress.js',
+    find: '  if (era.get(`tequip:${era_flag.target}:55`)) {\n    return 0;\n  }',
+    replace: '  // 变异：决斗判据删除',
+    tests: ['com0-caress'],
+    expect_only: 'COM_ABLE0',
+  },
+  {
+    desc: 'M41 ABL:0 分档表错一格（1200 改 1201）',
+    file: 'ere/system/train/com0-caress.js',
+    find: '  [1200, 100],',
+    replace: '  [1201, 100],',
+    tests: ['com0-caress'],
+    expect_only: '= 3 档',
+  },
+  {
+    desc: 'M42 ABL:1 分档表错一格（300 改 301）',
+    file: 'ere/system/train/com0-caress.js',
+    find: '  [300, 80],',
+    replace: '  [301, 80],',
+    tests: ['com0-caress'],
+    expect_only: '= 2 档',
+  },
+  {
+    desc: 'M43 初吻回避判据取反（CFLAG:16 === -1 改 !== -1）',
+    file: 'ere/system/train/com0-caress.js',
+    find: '  if ((era.get(`cflag:${target}:16`) || 0) === -1) {',
+    replace: '  if ((era.get(`cflag:${target}:16`) || 0) !== -1) {',
+    tests: ['com0-caress'],
+    expect_only: '初吻未体验',
+  },
+  {
+    desc: 'M44 爱慕的加倍删掉（SOURCE:3 × 2）',
+    file: 'ere/system/train/com0-caress.js',
+    find: '      set_src(3, src(3) * 2);',
+    replace: '      // 变异：加倍删除',
+    tests: ['com0-caress'],
+    expect_only: '爱慕',
+  },
+  {
+    desc: 'M45 百合经验的性别判定短路',
+    file: 'ere/system/train/com0-caress.js',
+    find: '  if (!target_male && !player_male) {',
+    replace: '  if (false) {',
+    tests: ['com0-caress'],
+    expect_only: '百合经验',
+  },
+  {
+    desc: 'M46 调教者技巧阶梯废掉（恒 ×1.0）',
+    file: 'ere/event/source-check.js',
+    find: '  const rate = pabl(12) >= 5 ? rates[5] : rates[pabl(12)];',
+    replace: '  const rate = 1.0;',
+    tests: ['source-check'],
+    expect_only: '技巧',
+  },
+  {
+    desc: 'M47 欲情系数的边界改为含下界（< 改 <=）',
+    file: 'ere/event/source-check.js',
+    find: '    if (p5 < PALAMLV[table[i][0]]) {',
+    replace: '    if (p5 <= PALAMLV[table[i][0]]) {',
+    tests: ['source-check'],
+    expect_only: '欲情系数',
+  },
+  {
+    desc: 'M48 ABL>5 的放大算式错一格（+5 改 +4）',
+    file: 'ere/event/source-check.js',
+    find: '  local0 = idiv(local0 * (abl(0) + 5), 10);',
+    replace: '  local0 = idiv(local0 * (abl(0) + 4), 10);',
+    tests: ['source-check'],
+    expect_only: '技巧 0 档',
+  },
+  {
+    desc: 'M49 绝顶阈值错档（PALAMLV[4] 改 PALAMLV[3]）',
+    file: 'ere/event/source-check.js',
+    find: '  const LV4 = PALAMLV[4]; // 10000',
+    replace: '  const LV4 = PALAMLV[3]; // 变异：阈值错档',
+    tests: ['source-check'],
+    expect_only: '阴蒂绝顶',
+  },
+  {
+    desc: 'M50 NOWEX 只写不并被破坏（直接并进 EX → 与引擎双重累加）',
+    file: 'ere/event/source-check.js',
+    find: '  era.set(`nowex:${cid}:0`, ex_c);',
+    replace: '  era.add(`ex:${cid}:0`, ex_c);',
+    tests: ['source-check'],
+    expect_only: 'NOWEX',
+  },
+  {
+    desc: 'M51 体力气力扣减的去零钳制删掉',
+    file: 'ere/event/source-check.js',
+    find: '        next = Math.max(Math.min(next, max), 0);',
+    replace: '        next = next;',
+    tests: ['source-check'],
+    expect_only: '气力耗尽',
+  },
+  {
+    desc: 'M52 TFLAG:59 读了新 PREVCOM（应为旧值）',
+    file: 'ere/event/source-check.js',
+    find: "  era.set('tflag:59', era_flag.prevcom);",
+    replace: "  era.set('tflag:59', era_flag.selectcom);",
+    tests: ['source-check'],
+    expect_only: '黄金样本',
+  },
+  {
+    desc: 'M53 参数行的缺段空格错一（DOWN 缺段 7 改 8）',
+    file: 'ere/event/source-check.js',
+    find: "          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(7)) +",
+    replace:
+      "          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(8)) +",
+    tests: ['source-check'],
+    expect_only: '黄金样本',
+  },
+  {
+    desc: 'M54 PRINTW 点线错一（39 改 38）',
+    file: 'ere/event/source-check.js',
+    find: "  era.print('‥'.repeat(39));",
+    replace: "  era.print('‥'.repeat(38));",
+    tests: ['source-check'],
+    expect_only: '黄金样本',
+  },
+  {
+    desc: 'M55 回合循环的 SOURCE_CHECK 槽位删掉',
+    file: 'ere/system/train/train-loop.js',
+    find: `      const source_pending = await emit('SOURCE_CHECK');
+      if (source_pending !== undefined) {
+        return source_pending;
+      }`,
+    replace: '      // 变异：SOURCE_CHECK 槽位删除',
+    tests: ['source-check'],
+    expect_only: '端到端',
+  },
+  {
+    desc: 'M56 指令按钮渲染删掉（回到 [999] 单按钮）',
+    file: 'ere/page/page-usercom.js',
+    find: "    era.printButton(`${era.get(`traincommandname:${id}`) ?? ''}`, id);",
+    replace: '    // 变异：按钮渲染删除',
+    tests: ['source-check'],
+    expect_only: '端到端',
   },
 ];
 

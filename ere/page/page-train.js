@@ -18,6 +18,9 @@ const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+// PALAMLV/palam_level 自 #45 起收敛在 era-utils/palam-level.js（SOURCE_CHECK
+// 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
+const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -31,12 +34,6 @@ const STUBBED_CALLS = [
   'SHOW_EQUIP_1',
 ];
 
-// PALAMLV の初期値（Emuera 默认，_replace.csv 未改此键）：参数等级阈值。
-// PRINT_PALAM 的条形以「下一个阈值」为满刻度
-const PALAMLV = [
-  0, 100, 500, 3000, 10000, 30000, 60000, 100000, 150000, 250000,
-];
-
 // 条形填充字符按当前等级爬坡：LV0 '-'、LV1 '='、LV2 '>'、LV3+ '*'。
 // 依据 = target/emuera.log 的实机渲染（润滑 2915[>>>>>>>>>.] LV2、屈服 100
 // [==........] LV1、抑郁 24[--........] LV0、阴核 5540[*****.....] LV3 …
@@ -48,19 +45,6 @@ const PALAM_BAR_WIDTH = 10;
 const PALAM_COLUMNS = 3;
 const PALAM_GAP = '      ';
 const PALAM_VALUE_WIDTH = 5;
-
-/**
- * GETPALAMLV 的等价物：值达到的最高等级（阈值含下界）。
- * @param {number} value
- * @returns {number}
- */
-function palam_level(value) {
-  let level = 0;
-  while (level + 1 < PALAMLV.length && value >= PALAMLV[level + 1]) {
-    level += 1;
-  }
-  return level;
-}
 
 /**
  * PRINT_PALAM（引擎内建命令）的移植：一角色的参数条画面。

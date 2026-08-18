@@ -40,11 +40,19 @@
  *    12. 对应 @COMxx（com_family 分发）。未实现 → 引擎「重新要求输入」
  *        语义（同 @ABLUP 未定义，system-flow.md）：丢弃本次输入回循环头，
  *        不结算、不进 @EVENTCOMEND。EVENTCOM 先于该判定是本移植的解读
- *        （引擎未明文），#45 落首条指令时对 Emuera 实机核对
+ *        （引擎未明文），#45 已核——CALLTRAIN 段（system-flow.md:100-105）
+ *        证得 SOURCE_CHECK→EVENTCOMEND 是执行链尾，缺失路径无观察差异，
+ *        维持本序（详见 issue #45 留言）
+ *    12.5 @SOURCE_CHECK 事件链（引擎回调：@COMxx 之后、UPCHECK 之前；
+ *        函数体在 event/source-check.js，#45——源→参数换算、绝顶、刻印、
+ *        结算展示）
  *    13. 指令执行后：PREVCOM = SELECTCOM（引擎行为，「检查 SOURCE、UPCHECK
- *        等」的一环）→ era.nextTurnInTrain()（UPCHECK 的 ere 等价：delta→
- *        palam、nowex→ex、deltabase→base 并清 source/delta/nowex；SOURCE
- *        检查的 @SOURCE_CHECK 归 #45）→ @EVENTCOMEND 事件链
+ *        等」的一环；原作在 @SOURCE_CHECK :545 自做，ere 侧统一由本循环承
+ *        载）→ era.nextTurnInTrain()（UPCHECK 的 ere 等价：delta→
+ *        palam、nowex→ex、deltabase→base 并清 source/delta/nowex；#45 起
+ *        SOURCE_CHECK 对 palam/base 当场结算、delta/deltabase 清零，本步
+ *        对已结算行为成为无操作——防双重累加的职责划分见 source-check.js
+ *        文件头）→ @EVENTCOMEND 事件链
  *    14. 回到 4
  *   非指令输入（含 999）→ @USERCOM 事件链（999 = 调教结束 → BEGIN
  *   AFTERTRAIN，page/page-usercom.js）；链内 BEGIN 的暂存目标作为本状态
@@ -114,6 +122,16 @@ async function run_train() {
   // 显式；不重复初始化已入列角色——引擎语义，多次 beginTrain 不重置）
   era.beginTrain(...era.getAddedCharacters());
 
+  // 【已知差异的补偿，#45】Emuera 在 BEGIN TRAIN 时把 STAIN 置初始值
+  // 0,0,2,1,8（system-flow.md 初始化 5），ere 引擎只清 0（app.asar 实证，
+  // #44 遗留）。首个消费者是指令的污垢移动（com0 的 V/B 口），在此补齐：
+  // 口/手 0、Ｐ 2、Ｖ 1、Ａ 8
+  for (const cid of era.getCharactersInTrain()) {
+    era.set(`stain:${cid}:2`, 2);
+    era.set(`stain:${cid}:3`, 1);
+    era.set(`stain:${cid}:4`, 8);
+  }
+
   // @EVENTTRAIN 事件链（@EVENTTRAIN 函数体在 event/event-train.js）
   const init_pending = await emit('EVENTTRAIN');
   if (init_pending !== undefined) {
@@ -128,12 +146,13 @@ async function run_train() {
       return status_pending;
     }
 
-    // 5. 遍历 @COM_ABLExx：可执行指令表。本票零指令且按钮渲染欠账——
-    // 结果只喂输入检查（步骤 9），菜单可见项见 @SHOW_USERCOM
+    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
+    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();
 
-    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束）
-    const usercom_draw = await emit('SHOW_USERCOM');
+    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
+    // 可执行指令表透传给按钮渲染）
+    const usercom_draw = await emit('SHOW_USERCOM', usable);
     if (usercom_draw !== undefined) {
       return usercom_draw;
     }
@@ -160,6 +179,13 @@ async function run_train() {
       });
       if (com_result === COM_MISSING) {
         continue;
+      }
+      // 12.5 @SOURCE_CHECK（引擎回调：@COMxx 之后、UPCHECK 之前；函数体在
+      // event/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
+      // 结算展示都在链上；未注册时静默通过（空链语义）
+      const source_pending = await emit('SOURCE_CHECK');
+      if (source_pending !== undefined) {
+        return source_pending;
       }
       // 13. PREVCOM 更新（引擎行为）→ UPCHECK 等价结算 → @EVENTCOMEND
       era_flag.prevcom = result;

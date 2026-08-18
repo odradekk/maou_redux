@@ -29,7 +29,8 @@ function parse_yml_ids(file) {
 }
 
 /**
- * 播种 #47 用到的四张名字表：palam / abl / mark / exp（*keys + *name:N）。
+ * 播种名字表：palam / abl / mark / exp（#47）+ traincommand（#45 的指令
+ * 按钮与「上次的调教指令」行读 `traincommandname:${id}`）。
  * @param {ReturnType<import('./era-fixture').create_era_fixture>} fixture
  */
 function seed_static_names(fixture) {
@@ -38,6 +39,7 @@ function seed_static_names(fixture) {
     ['abl', 'Abl.yml'],
     ['mark', 'Mark.yml'],
     ['exp', 'Exp.yml'],
+    ['traincommand', 'TrainCommand.yml'],
   ]) {
     const map = parse_yml_ids(file);
     fixture.store.set(
