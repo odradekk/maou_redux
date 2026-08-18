@@ -14,6 +14,7 @@
 
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
+const { on, emit, TIER } = require('#/system/event/registry');
 const {
   draw_main_menu,
   reset_out_of_range_pointers,
@@ -57,23 +58,31 @@ const STUBBED_CALLS = [
 
 /**
  * @EVENTSHOP（:4-20）：每轮 BEGIN SHOP 进入时执行一次。
+ *
+ * 普通档注册进事件链（#46 起 @EVENTSHOP 是多定义事件：口上系统的
+ * EVENT_K.ERB:12-15 挂 #PRI 档置口上总开关，先于本处理器跑——Emuera 的
+ * #PRI 语义，system/event/registry.js）。
  */
-function eventshop() {
-  // :7-12 バグ対策：指针越界钳制（判据的 ID 语义移植说明见
-  // page-main-menu.js 的 reset_out_of_range_pointers）。
-  reset_out_of_range_pointers();
+on(
+  'EVENTSHOP',
+  () => {
+    // :7-12 バグ対策：指针越界钳制（判据的 ID 语义移植说明见
+    // page-main-menu.js 的 reset_out_of_range_pointers）。
+    reset_out_of_range_pointers();
 
-  // :15-18 REPEAT 100: ITEMSALES:COUNT = 0（清道具上架位）。Item 表已随
-  // #38 落地，item* 寻址的硬崩支（PR #34）已消除；注意清零范围 0..99 覆盖
-  // @EVENTFIRST :35 置 1 的 53 号——原作即如此（清空后由商店侧重新点亮
-  // 在售位），1:1 照搬两层写入。
-  for (let i = 0; i < 100; i += 1) {
-    era.set(`itemsales:${i}`, 0);
-  }
+    // :15-18 REPEAT 100: ITEMSALES:COUNT = 0（清道具上架位）。Item 表已随
+    // #38 落地，item* 寻址的硬崩支（PR #34）已消除；注意清零范围 0..99 覆盖
+    // @EVENTFIRST :35 置 1 的 53 号——原作即如此（清空后由商店侧重新点亮
+    // 在售位），1:1 照搬两层写入。
+    for (let i = 0; i < 100; i += 1) {
+      era.set(`itemsales:${i}`, 0);
+    }
 
-  // :20 BOUGHT = -1：BOUGHT 是 builtin 标量、无 ere 落点，仍登记
-  // docs/stub-registry.md 变量级欠账（本处是第二个定值点）。
-}
+    // :20 BOUGHT = -1：BOUGHT 是 builtin 标量、无 ere 落点，仍登记
+    // docs/stub-registry.md 变量级欠账（本处是第二个定值点）。
+  },
+  TIER.NORMAL,
+);
 
 /**
  * @SHOW_SHOP（:22-38）：绘制一轮主菜单。
@@ -328,7 +337,9 @@ async function usershop(result) {
  * 不会吞信号，#6 硬约束）。
  */
 async function run_shop() {
-  eventshop();
+  // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
+  // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
+  await emit('EVENTSHOP');
   for (;;) {
     show_shop();
     // 引擎侧：玩家点按钮（printButton 的快捷键）或直接键入编号；INPUT 的
