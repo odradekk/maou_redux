@@ -81,7 +81,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
 - 异步 API 必须 `await`：`printAndWait`、`input`、`clear`、`waitAnyKey`、`delay`、存档系列。漏 `await` 造成的时序错乱极难排查。
 - 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读未声明的序号返回 `undefined` 而非 0**，且能静默写入并存进存档（issue #13）——拼错下标不会报错，只会凭空造出一个变量，所以包装层的 getter 一律 `|| 0` 兜底。
 - 文件编码用 **UTF-8 或 UTF-8 BOM**。`target/` 里有一个 Shift-JIS 异类且是活代码（`ERB/調教相關/COMF90_ニプルファック.ERB`），批量读取的脚本必须按内容判定编码。
-- **写一个变量前，先确认它所属的静态表已经在 `yml/` 里。** 缺表的后果不统一：三段寻址（`cflag:0:451`）与二段的 `flag:*` 都静默通过，而 **`item*` 一支无守卫、直接硬崩**（`staticData.item.name`，实机撞见，PR #34）。「别的表这么写没事」推不出「这张表也没事」。
+- **写一个变量前，先确认它所属的静态表已经在 `yml/` 里。** 决定行为的不是「几段寻址」，而是**名字表在不在**与 **data 桶在不在**的组合（引擎 setVar，PR #57 逐族实测）：名字表在 + 桶在 → 通过（未声明下标回落成数字）；名字表在 + 桶不在 → 静默丢弃；**名字表不在 + 桶在 → 硬崩**，二段三段皆然（实机撞见两次：`item*` 见 PR #34，`stain`/`ex`/`cstr`/`tequip`/`tflag` 见 PR #57）。`test/static-table-coverage.test.js` 从源码扫出寻址族逐个探，新族忘了配表会在那里红——但**别把它当免检**，它只覆盖 `era.get/set/add` 的字面量前缀。
 - **输出类 API 会二次加工你给的参数，第一次用之前先去引擎渲染层看一眼。** 手册只讲参数含义，不讲引擎拿到参数后画成什么样；夹具只记录调用，也不模拟渲染。两边都看不见的东西，只有实机能发现。已知一例：`printButton` 的 `showAcc` 默认为真，引擎自动拼出 `[快捷键] 正文` 并把正文里的连续空白折叠成一个空格——**按钮正文一律不写 `[编号]` 前缀**，写了会得到 `[0] [0] 旧的奴隶`（实机撞见，PR #30）。
   查法：`ere-4.8.0-win-x64/resources/app.asar` 是 webpack bundle，直接按 API 名或配置项名搜字符串就能读到渲染公式（bundle 里带未压缩的原始源码副本）。查到的变换补进 `test/helpers/era-fixture.js` 的对应记录字段，让它此后可断言。
 - **「引擎接受」与「我们调了」是两回事，验收夹具证明不了前者。** 夹具的记录层只证调用；引擎侧的短路（如 `addCharacter` 对无预设角色直接返回 false，#21/#22 的假绿）只有引擎自己的代码能暴露。`test/helpers/engine-bundle.js` 把 app.asar 里的解析器、装载循环与 `EraApi` 方法（真方法 + 最小假 this）直接交给测试驱动，静态表产物与引擎行为的对拍从此不必手抄镜像；asar 三处定位（env `ERE_ENGINE_ASAR` / 仓库内 / `D:\Code\era`），缺引擎时相关用例 skip 并留警告。
