@@ -1,0 +1,16 @@
+# 本文件不是转换器产物：原作没有 EX / NOWEX 的名字表（target/CSV 下无对应 CSV，
+# 原作一律用数字下标），无从转换。
+#
+# 内容：绝顶计数。**nowex 也查本表**（引擎寻址层：case"nowex" → staticData.ex）。原作下标全是数字（SHOW_STATUS 用 EX:0 阴蒂·阴茎 / 1 私处 / 2 肛门 / 3 乳房 / 4 %CSTR:7% / 5 射精·喷乳），无 Ex.csv 可转。
+#
+# 它的存在只有一个目的：让引擎装载循环建出 `staticData.ex`。引擎的
+# 三段寻址在 `data[表][角色]` 存在、而 `staticData[表]` 缺位时**直接抛错**
+# （app.asar 的 setVar 兜底分支 `u = i(this.staticData[a][u], u)`，无守卫）——
+# 调教域的表由 beginTrain/addCharacter 按角色开桶，所以桶一定在、崩就崩在
+# 名字表这一侧。实机撞见：调教开始时写 `stain:31:2` 报
+# `Cannot read properties of undefined (reading '2')`。
+#
+# 空表即够用：下标是数字，引擎的 safeUndefinedCheck 在名字表查不到时原样
+# 回落到该数字。将来若要按名寻址，在此补「名称: 序号」条目即可——但注意
+# 登记进名字表的下标会被 addCharacter 的 initCharaTable 预置为 0，行为随之
+# 改变，补之前先确认那是想要的。
