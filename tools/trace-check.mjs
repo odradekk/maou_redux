@@ -1,17 +1,22 @@
-// 内联行号引用校核器（issue #44 验收整改）。
+// 内联行号引用校核器（issue #44 验收整改；#48 验收整改起纳入 emuera.log）。
 //
-// 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释。文件头的「源: 文件
-// @函数」在历次验收里靠人核对了，但正文内联引用数量大、成片偏移靠人眼查
-// 不出来（本票验收实测：偏早 2~30 行、且同文件内两段偏移量不同）。
+// 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释，以及 #48 起
+// tools/compare 等处指向黄金样本 target/emuera.log 的 `log:N` 注释。文件头
+// 的「源: 文件 @函数」在历次验收里靠人核对了，但正文内联引用数量大、成片
+// 偏移靠人眼查不出来（#44 实测：偏早 2~30 行；#48 实测：emuera.log 引用
+// 26/42 处错——数值读对、行号指错，同一款亏）。
 //
 // 怎么守：输入一张「js 文件 → 源 ERB」映射 + 每条引用的锚（源文件在所引
 // 行上应含的内容）。对每条：
 //   1. js 文件里必须仍写着这条 `:N`（引用被删/被改，先红在这里）；
 //   2. 源文件的第 N..M 行必须命中锚（行号偏移、源文件漂移，红在这里）。
+// emuera.log 引用（LOG_REFS）同款两道，外加第三道**扫描完整性**：
+//   3. ere/ tools/ test/ 全部 .js/.mjs 里出现的每个 log:N / emuera.log:N
+//      （含区间）都必须在 LOG_REFS 登记——新增引用不登记即红，防绕过。
+// 行号一律以原始文件为准（emuera.log 是 UTF-8 BOM + CRLF，BOM 不占行）。
 // 后来者改代码动了引用：把表里的 ref/锚一起更新，锚对着 target/ 原文
 // 重新落位——表本身以源文件为准，不以致动者的记忆为准。
 //
-// 范围：仅 issue #44 新增的 ere/ 文件（后续票扩充本表即可）。
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
 
 import fs from 'node:fs';
@@ -1520,6 +1525,106 @@ const FILES = [
   },
 ];
 
+// —— emuera.log 行号引用表（#48 验收整改起纳入） ——
+//
+// src 固定为 target/emuera.log；ref/any 与 ERB 锚同款（区间 N-M 取区间内
+// 任一行命中任一锚）。锚的写法对着原始行钉死（条形字符数、数值、标签），
+// 行号漂移或样本被换，红在这里。既有引用（kojo-k3 的 26、juel-check 的
+// 236-260）实测无误，一并进锁。
+
+const EMUERA_LOG = 'target/emuera.log';
+
+const LOG_REFS = [
+  {
+    js: 'tools/compare/replay.js',
+    refs: [
+      // PALAM_SEED 头注的三个区间：算式区 / 首屏条形 / 回合后参数网格
+      { ref: '34-44', any: [/^阴核\s+5240\+/m, /^反感\s+3379\+/m] },
+      {
+        ref: '1-4',
+        any: [/屈服\[==\.\.\.\.\.\.\.\.\]/, /局部\[\.{10}\]\s+0/],
+      },
+      {
+        ref: '52-57',
+        any: [/阴核\[\*{5}\.{5}\]\s+5540/, /局部\[\.{10}\]\s+0/],
+      },
+      // 逐条种子值的证据行
+      { ref: '34', any: [/^阴核\s+5240\+\s+300/m] },
+      { ref: '52', any: [/私处\[\.{10}\]\s+0/, /肛门\[\.{10}\]\s+0/] },
+      { ref: '37', any: [/^润滑\s+2854\+/m] },
+      { ref: '39', any: [/^恭顺\s+6\+/m] },
+      { ref: '40', any: [/^欲情\s+2378\+/m] },
+      { ref: '1', any: [/屈服\[==\.\.\.\.\.\.\.\.\]\s+100/] },
+      { ref: '41', any: [/^习得\s+204\+/m] },
+      { ref: '42', any: [/^耻情\s+1654\+/m] },
+      { ref: '44', any: [/^反感\s+3379\+/m] },
+      { ref: '3', any: [/抑郁\[--\.{8}\]\s+24/] },
+      { ref: '35', any: [/^乳房\s+42\+/m] },
+      {
+        ref: '48-49',
+        any: [
+          /体力\[\.{14}\]\(1445\/2000\)/,
+          /气力\[\*{5}\.{27}\]\(\s*360\/2000\)/,
+        ],
+      },
+      {
+        ref: '32-33',
+        any: [/体力\[[-=.]+\]\s+-5\s*$/, /气力\[[-=.]+\]\s+-50\s*$/],
+      },
+      { ref: '31', any: [/^阴核\(300\)乳房\(7\)/m] },
+      { ref: '26', any: [/「哈呜、温妮、可是，一心地/] },
+      { ref: '25', any: [/^隔着紧身衣＆裙甲、你仔细爱抚着温妮的身体/m] },
+      { ref: '51', any: [/\[阴蒂绝顶：1次\]/] },
+      { ref: '46', any: [/^3日\(午后\)/m] },
+      { ref: '47', any: [/温妮 调教中\s+调教者:你/] },
+    ],
+  },
+  {
+    js: 'tools/compare/rules.js',
+    refs: [{ ref: '66', any: [/打屁股\[ 39\]/] }],
+  },
+  {
+    js: 'test/compare-first-turn.test.js',
+    refs: [
+      { ref: '26', any: [/「哈呜、温妮、可是，一心地/] },
+      { ref: '29', any: [/^但温妮的身体却像被轻微电击一样/m] },
+      { ref: '31', any: [/^阴核\(300\)乳房\(7\)/m] },
+      { ref: '46-51', any: [/^3日\(午后\)/m, /\[阴蒂绝顶：1次\]/] },
+      { ref: '74', any: [/^＜上次的调教指令：爱抚＞/m] },
+    ],
+  },
+  {
+    js: 'test/compare-diff.test.js',
+    refs: [
+      { ref: '26', any: [/「哈呜、温妮、可是，一心地/] },
+      { ref: '22', any: [/^0$/m] },
+    ],
+  },
+  {
+    js: 'ere/kojo/kojo-k3.js',
+    refs: [{ ref: '26', any: [/「哈呜、温妮、可是，一心地/] }],
+  },
+  {
+    js: 'test/kojo-k3.test.js',
+    refs: [{ ref: '26', any: [/「哈呜、温妮、可是，一心地/] }],
+  },
+  {
+    js: 'test/juel-check.test.js',
+    refs: [
+      {
+        ref: '236-260',
+        any: [/^调教结果：否定点数208个抵消。/m, /阴核点数：\s+3479/],
+      },
+    ],
+  },
+  {
+    // 变异驱动器的 find 串逐字引用 replay.js 的证据注释——引用的引用同样
+    // 进锁：find 里的行号被改错，这里先红（比驱动器的「出现次数≠1」更早）
+    js: 'tools/mutation-check.mjs',
+    refs: [{ ref: '34', any: [/^阴核\s+5240\+\s+300/m] }],
+  },
+];
+
 // —— 校核 ——
 
 const source_cache = new Map();
@@ -1558,6 +1663,87 @@ for (const { js, refs } of FILES) {
     if (!any.some((anchor) => anchor.test(slice))) {
       console.log(
         `✗ ${label} —— 源文件 ${a}${b === a ? '' : `-${b}`} 行未命中任何锚`,
+      );
+      failures += 1;
+    }
+  }
+}
+
+// —— emuera.log 引用：同款两道校验（presence 用带 log: 前缀的更严形态，
+//    单值引用不得被区间引用的「log:N-M」前缀冒名满足）——
+
+const js_text_cache = new Map();
+function load_js_text(rel) {
+  if (!js_text_cache.has(rel)) {
+    js_text_cache.set(rel, fs.readFileSync(path.join(REPO, rel), 'utf8'));
+  }
+  return js_text_cache.get(rel);
+}
+
+for (const { js, refs } of LOG_REFS) {
+  const js_text = load_js_text(js);
+  for (const { ref, any } of refs) {
+    checked += 1;
+    const label = `${js} log:${ref} ↔ ${EMUERA_LOG}`;
+    const presence = new RegExp(`log:${ref}(?!-?\\d)`);
+    if (!presence.test(js_text)) {
+      console.log(
+        `✗ ${label} —— js 里已不存在「log:${ref}」（引用被删或被改？同步更新本表）`,
+      );
+      failures += 1;
+      continue;
+    }
+    const lines = load_source(EMUERA_LOG);
+    const [a, b = a] = ref.split('-').map(Number);
+    const slice = lines.slice(a - 1, b).join('\n');
+    if (!any.some((anchor) => anchor.test(slice))) {
+      console.log(
+        `✗ ${label} —— 样本 ${a}${b === a ? '' : `-${b}`} 行未命中任何锚`,
+      );
+      failures += 1;
+    }
+  }
+}
+
+// —— 扫描完整性：ere/ tools/ test/ 全部 .js/.mjs 里的 log:N 引用都必须
+//    在 LOG_REFS 登记（防新增引用绕过锚表——本锁的存在理由就是 #48 的
+//    26 处无人看守的偏移） ——
+
+const LOG_REF_RE = /(?:emuera\.)?log:(\d+)(?:-(\d+))?/g;
+
+function list_js_files(dir_rel) {
+  const out = [];
+  const stack = [dir_rel];
+  while (stack.length > 0) {
+    const cur = stack.pop();
+    for (const name of fs.readdirSync(path.join(REPO, cur))) {
+      if (name === 'node_modules' || name.startsWith('.')) {
+        continue;
+      }
+      const rel = `${cur}/${name}`;
+      if (fs.statSync(path.join(REPO, rel)).isDirectory()) {
+        stack.push(rel);
+      } else if (/\.(js|mjs)$/.test(name)) {
+        out.push(rel);
+      }
+    }
+  }
+  return out;
+}
+
+const tabled_by_file = new Map(
+  LOG_REFS.map(({ js, refs }) => [js, new Set(refs.map((r) => r.ref))]),
+);
+for (const rel of ['ere', 'tools', 'test'].flatMap(list_js_files)) {
+  const found = new Set(
+    [...load_js_text(rel).matchAll(LOG_REF_RE)].map((m) =>
+      m[2] ? `${m[1]}-${m[2]}` : m[1],
+    ),
+  );
+  for (const ref of found) {
+    if (!tabled_by_file.get(rel)?.has(ref)) {
+      console.log(
+        `✗ ${rel} log:${ref} —— 未登记进 LOG_REFS（登记后才能过锚校验）`,
       );
       failures += 1;
     }

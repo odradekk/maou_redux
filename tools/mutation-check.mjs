@@ -840,8 +840,8 @@ const MUTATIONS = [
   {
     desc: 'M90 回放播种改错（阴核初值 5240 → 5200——变量层断言的靶心）',
     file: 'tools/compare/replay.js',
-    find: '[0, 5240], // 阴核 5240+300=5540（log:33）',
-    replace: '[0, 5200], // 变异：播种值错',
+    find: '[0, 5240], // 阴核 5240+300=5540（log:34）',
+    replace: '[0, 5200], // 变异：播种值错（log:34）',
     tests: ['compare-first-turn'],
     expect_only: '日志算式断言',
   },

@@ -73,8 +73,8 @@ test('首回合对拍：未解释差异为零，分类计数与当前欠账清�
 test('首回合对拍：黄金样本侧逐条文本全部被 ere 侧复现（除两处服装欠账）', async () => {
   const { report, golden_window } = await build_comparison();
   // 黄金窗口的 text 条目里，只有服装前缀句与【紧身衣＆裙甲的姿态】两句
-  // 进了差异（stub），其余全部匹配——口上（log:25）、A 文（log:28）、
-  // 源一览（log:30）、日期/目标/绝顶计数（log:43-48）、上次指令（log:76）
+  // 进了差异（stub），其余全部匹配——口上（log:26）、A 文（log:29）、
+  // 源一览（log:31）、日期/目标/绝顶计数（log:46-51）、上次指令（log:74）
   const diff_texts = report.diffs
     .filter((d) => d.side === 'golden' && d.entry.kind === 'text')
     .map((d) => d.entry.text);

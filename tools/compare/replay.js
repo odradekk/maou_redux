@@ -68,35 +68,35 @@ function seed_winnie_world(fixture) {
   //    再调是幂等无操作 ——
   fixture.era.beginTrain(0, 31);
 
-  // —— PALAM 初值（算式行 from 侧 + 首屏条形，log:33-41 / log:1-4 / log:49-55）——
+  // —— PALAM 初值（算式行 from 侧 + 首屏条形，log:34-44 / log:1-4 / log:52-57）——
   const PALAM_SEED = [
-    [0, 5240], // 阴核 5240+300=5540（log:33）
-    [1, 0], // 私处：回合后网格 0（log:49）
+    [0, 5240], // 阴核 5240+300=5540（log:34）
+    [1, 0], // 私处：回合后网格 0（log:52）
     [2, 0], // 肛门：同上
-    [3, 2854], // 润滑 2854+61=2915（log:35）
-    [4, 6], // 恭顺 6+1=7（log:37）
-    [5, 2378], // 欲情 2378+47=2425（log:38）
+    [3, 2854], // 润滑 2854+61=2915（log:37）
+    [4, 6], // 恭顺 6+1=7（log:39）
+    [5, 2378], // 欲情 2378+47=2425（log:40）
     [6, 100], // 屈服：首屏 [==........] 100（log:1），本回合无算式行
-    [7, 204], // 习得 204+34=238（log:39）
-    [8, 1654], // 耻情 1654+70=1724（log:40）
+    [7, 204], // 习得 204+34=238（log:41）
+    [8, 1654], // 耻情 1654+70=1724（log:42）
     [9, 0], // 苦痛：网格 0
     [10, 0], // 恐怖：同上
-    [11, 3379], // 反感 3379+50=3429（log:41）
+    [11, 3379], // 反感 3379+50=3429（log:44）
     [12, 0], // 不快：同上
     [13, 24], // 抑郁：首屏 [--........] 24（log:3），无算式行
-    [14, 42], // 乳房 42+7=49（log:34）
+    [14, 42], // 乳房 42+7=49（log:35）
     [15, 0], // 局部：网格 0
   ];
   PALAM_SEED.forEach(([id, v]) => fixture.store.set(`palam:31:${id}`, v));
 
-  // —— BASE/MAXBASE（回合后状态条 + 损耗回推：log:45-46 的 (1445/2000)
-  //    (360/2000) 加上损耗条 -5/-50（log:31-32）——
+  // —— BASE/MAXBASE（回合后状态条 + 损耗回推：log:48-49 的 (1445/2000)
+  //    (360/2000) 加上损耗条 -5/-50（log:32-33）——
   fixture.store.set('maxbase:31:0', 2000);
   fixture.store.set('maxbase:31:1', 2000);
   fixture.store.set('base:31:0', 1450); // 1445 + 5
   fixture.store.set('base:31:1', 410); // 360 + 50
 
-  // —— ABL（源一览 log:30 的反解，见 docs/output-diff.md 推导表）——
+  // —— ABL（源一览 log:31 的反解，见 docs/output-diff.md 推导表）——
   fixture.store.set('abl:31:0', 3); // 阴蒂感觉 LV3：阴核(300) = 1200档/2(初吻)×0.5(技巧0)
   fixture.store.set('abl:31:1', 0); // 乳房感觉 LV0：乳房(7) = 15档×0.5
   fixture.store.set('abl:31:11', 1); // 欲望 LV1：欲情+47 = 300×0.15 + 7×0.15 + 31×0.05
@@ -104,10 +104,10 @@ function seed_winnie_world(fixture) {
   // 恭顺 +1 = 31×0.1×0.95×0.7(刻印) 证 顺从/侍奉 0；露出 0 支证 露出癖 0
 
   // —— 素质/刻印/CFLAG（文本与换算的反解）——
-  fixture.store.set('talent:31:163', 1); // 高貴（K3 口上：台词 log:25 出自 EVENT_K3_高貴.ERB:1097）
+  fixture.store.set('talent:31:163', 1); // 高貴（K3 口上：台词 log:26 出自 EVENT_K3_高貴.ERB:1097）
   // TALENT:31:76/85 不写：K3 走 2xx 支（无淫乱/爱慕台词）
   // TALENT:31:32/34/71 不写：无抑鬱算式行（快感否定会产出 UP:13）
-  // 体型/肤色（135/100/115/244/253/255）不写：B 文无描述段（log:24）
+  // 体型/肤色（135/100/115/244/253/255）不写：B 文无描述段（log:25）
   fixture.store.set('mark:31:3', 1); // 反抗刻印LV1：恭顺 +1 的 0.7 系数（否则 +2）
   fixture.store.set('mark:31:4', 1); // 反抗刻印取次位（MARK_GOT 的升格判据用）
   // MARK:31:2（屈服刻印）不写 = 0：K3 2xx 支门槛 MARK:2 <= 1
@@ -116,12 +116,12 @@ function seed_winnie_world(fixture) {
   // CFLAG:31:2（好感）不写 = 0：情爱(31) 未吃到 ≥100 档的 ×1.1
 
   // —— EX / 世界指针 ——
-  fixture.store.set('ex:31:0', 1); // [阴蒂绝顶：1次]（log:48）
+  fixture.store.set('ex:31:0', 1); // [阴蒂绝顶：1次]（log:51）
   const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.day_count = 2; // 3日（log:43：DAY+1 = 3）
-  era_flag.time = 1; // (午后)（log:43）
+  era_flag.day_count = 2; // 3日（log:46：DAY+1 = 3）
+  era_flag.time = 1; // (午后)（log:46）
   era_flag.target = 31;
-  era_flag.assi = -1; // 无「助手:名」段（log:44），调教者 = 主人
+  era_flag.assi = -1; // 无「助手:名」段（log:47），调教者 = 主人
 
   // —— 静态名表：实机由引擎装载 yml/ 时注入，夹具不读 yml/（静态表正确性
   //    另有 chara-yml / variable-yml 对拍），回放按同一产物补进 store ——

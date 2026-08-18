@@ -25,7 +25,7 @@ const path = require('node:path');
 const VERSION_SKEW_IDS = new Set([54, 55, 56, 89, 110]);
 
 // —— 同族漂移的**标签移位**（本票首跑对拍新发现，勘误二「0-39 全部吻合」
-//    的例外）：黄金样本 打屁股[39]（log:64），Train.csv 打屁股=40——target
+//    的例外）：黄金样本 打屁股[39]（log:66），Train.csv 打屁股=40——target
 //    在 39-53 段插过指令、其后编号整体 +1。按 (标签, 侧, 编号) 精确配对，
 //    不放宽到裸编号（裸 40 会吞掉真正的 COM_ABLE 回归）。
 const MENU_LABEL_SHIFT = [{ key: '打屁股', golden: 39, ere: 40 }];
