@@ -36,6 +36,12 @@ const MESSAGE_A = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB';
 const SOURCE = 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB';
 const SUB1 = 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB';
 const SUB2 = 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB';
+const SHOP_VER = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
+const EVENT_K = 'target/ERB/EVENT/EVENT_K.ERB';
+const K3 = 'target/ERB/口上/EVENT_K3_高貴.ERB';
+const K5 = 'target/ERB/口上/EVENT_K5_マオ.ERB';
+const EXCOM = 'target/ERB/其他/EXCOM.ERB';
+const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -1265,6 +1271,251 @@ const FILES = [
       { src: SUB2, ref: '242', any: [/@SOURCE_GAY_SEX_CHECK/] },
       { src: SUB2, ref: '324', any: [/@INCEST/] },
       { src: SUB2, ref: '350', any: [/@SOUL_DISLOCATION_DEBUFF/] },
+    ],
+  },
+  // —— #46（口上切片：K3 高貴 + K5 マオ）——
+  {
+    js: 'ere/page/page-shop.js',
+    refs: [
+      // @EVENTSHOP 自身（#46 起挂事件链，普通档；EVENT_K.ERB 的 #PRI 档在
+      // kojo-system.js——见下一条目）
+      { src: SHOP_VER, ref: '4-20', any: [/^@EVENTSHOP/m, /REPEAT 100/] },
+      { src: SHOP_VER, ref: '7-12', any: [/バグ対策/] },
+      { src: SHOP_VER, ref: '15-18', any: [/ITEMSALES:COUNT = 0/] },
+    ],
+  },
+  {
+    js: 'ere/kojo/kojo-system.js',
+    refs: [
+      {
+        src: EVENT_K,
+        ref: '12-15',
+        any: [/^@EVENTSHOP/m, /^SIF FLAG:7 == 0$/m],
+      },
+      {
+        src: EVENT_K,
+        ref: '86-144',
+        any: [/^@GET_KOJO_NUM/m, /^RETURNF LOCAL$/m],
+      },
+      {
+        src: EVENT_K,
+        ref: '89-91',
+        any: [/^LOCAL = 0$/m, /^\tARG = TARGET$/m],
+      },
+      { src: EVENT_K, ref: '135', any: [/GET_EX_KOJO_NUM\(ARG\)/] },
+      {
+        src: EVENT_K,
+        ref: '137-140',
+        any: [/^FOR COUNT,160,180$/m, /^\t\tLOCAL = COUNT - 60$/m],
+      },
+      { src: EVENT_K, ref: '139', any: [/^\t\tLOCAL = COUNT - 60$/m] },
+      {
+        src: EVENT_K,
+        ref: '150-162',
+        any: [/^@KOJO_MESSAGE_COM$/m, /TRYCALLFORM KOJO_MESSAGE_COM_/],
+      },
+      { src: EVENT_K, ref: '151-152', any: [/^SIF FLAG:7 <= 0$/m] },
+      {
+        src: EVENT_K,
+        ref: '155-157',
+        any: [
+          /^\tLOCAL = GET_KOJO_NUM\(\)$/m,
+          /^SIF FLAG:LOCAL == 0 && EX_FLAG:\(LOCAL - 900\) == 0$/m,
+        ],
+      },
+      { src: EVENT_K, ref: '156', any: [/EX_FLAG:\(LOCAL - 900\) == 0/] },
+      {
+        src: EVENT_K,
+        ref: '160-161',
+        any: [/^\tTRYCALLFORM KOJO_MESSAGE_COM_\{LOCAL - 100\}$/m],
+      },
+      // EX 口上欠账的两处源引用（文件头说明）
+      {
+        src: EXCOM,
+        ref: '31-38',
+        any: [/^@GET_EX_KOJO_NUM\(ARG\)$/m, /^FOR COUNT,101,801$/m],
+      },
+    ],
+  },
+  {
+    js: 'ere/kojo/kojo-text.js',
+    refs: [
+      {
+        src: SELF_CALL_ERB,
+        ref: '400-408',
+        any: [/^@SELF_CALL, ARG:0, ARG:1$/m, /RETURNF LOCALS/],
+      },
+      {
+        src: SELF_CALL_ERB,
+        ref: '412-419',
+        any: [/^@SELF_CALL_FIRST, ARG = -1$/m],
+      },
+      {
+        src: SELF_CALL_ERB,
+        ref: '406',
+        any: [/STRLENS\(CSTR:ARG:60\) \? %CSTR:ARG:60% # 我/],
+      },
+      { src: SELF_CALL_ERB, ref: '402', any: [/;ARG:1\s*废弃/] },
+    ],
+  },
+  {
+    js: 'ere/kojo/kojo-k3.js',
+    refs: [
+      { src: K3, ref: '81-85', any: [/^@EVENTTRAIN$/m, /^FLAG:103 = 1$/m] },
+      { src: K3, ref: '87-89', any: [/^@EVENTEND$/m, /^FLAG:103 = 0$/m] },
+      { src: K3, ref: '887-1105', any: [/^@KOJO_MESSAGE_COM_3$/m] },
+      {
+        src: K3,
+        ref: '888-892',
+        any: [/死斗场中は専用口上/, /^\tCALL COLOSSEUM_KOJO_3$/m],
+      },
+      { src: K3, ref: '894-895', any: [/SIF ASSI > 0 && ASSIPLAY/] },
+      { src: K3, ref: '897-898', any: [/SIF TEQUIP:45 && SELECTCOM != 45/] },
+      { src: K3, ref: '900-901', any: [/SIF TFLAG:899/] },
+      {
+        src: K3,
+        ref: '903-906',
+        any: [/兽奸PLAY中は専用口上/, /^\tCALL DOG_KOJO_3$/m],
+      },
+      { src: K3, ref: '908-909', any: [/SIF TALENT:TARGET:9 == 1/] },
+      { src: K3, ref: '911-912', any: [/SIF TEQUIP:90/] },
+      { src: K3, ref: '920', any: [/^IF SELECTCOM == 0$/m] },
+      { src: K3, ref: '921-931', any: [/^\tIF CFLAG:301 == 0$/m] },
+      { src: K3, ref: '923-929', any: [/^\t\tIF MARK:2 >= 2$/m] },
+      {
+        src: K3,
+        ref: '934-953',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 599 \|\| FLAG:7 == 2\)$/m,
+          /^\t\t\tCFLAG:301 = 600$/m,
+        ],
+      },
+      {
+        src: K3,
+        ref: '944',
+        any: [/^\t\t\t\tPRINTFORML %SAVESTR:PLAYER%开始爱抚后、/],
+      },
+      {
+        src: K3,
+        ref: '955-975',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 499 \|\| FLAG:7 == 2\)$/m,
+          /^\t\t\tCFLAG:301 = 500$/m,
+        ],
+      },
+      { src: K3, ref: '959', any: [/每当被%NAME:MASTER%触摸后都会发出娇喘/] },
+      {
+        src: K3,
+        ref: '977-1019',
+        any: [
+          /^\t\tELSEIF MARK:2 == 3 && \(CFLAG:301 <= 399 \|\| FLAG:7 == 2\)$/m,
+          /^\t\t\t\tCFLAG:301 = 403$/m,
+        ],
+      },
+      {
+        src: K3,
+        ref: '982',
+        any: [/SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的……身体/],
+      },
+      {
+        src: K3,
+        ref: '1013',
+        any: [/%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET, 1\)%、已经……嗯嗯~！/],
+      },
+      {
+        src: K3,
+        ref: '1021-1050',
+        any: [
+          /^\t\tELSEIF MARK:2 == 2 && MARK:1 == 3 && \(CFLAG:301 <= 299 \|\| FLAG:7 == 2\)$/m,
+          /^\t\t\t\tCFLAG:301 = 303$/m,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1052-1102',
+        any: [
+          /^\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)$/m,
+          /^\t\t\t\tCFLAG:301 = 203$/m,
+        ],
+      },
+      { src: K3, ref: '1067', any: [/^\t\t\t\tCFLAG:301 = 201$/m] },
+      { src: K3, ref: '1091', any: [/^\t\t\t\tCFLAG:301 = 203$/m] },
+      {
+        src: K3,
+        ref: '1097',
+        any: [/哈呜、%SAVESTR:TARGET%、可是，一心地，想要杀了/],
+      },
+      { src: K3, ref: '1103', any: [/^\t\tRETURN 0$/m] },
+      { src: K3, ref: '1105', any: [/^ENDIF$/m] },
+    ],
+  },
+  {
+    js: 'ere/kojo/kojo-k5.js',
+    refs: [
+      { src: K5, ref: '80-84', any: [/^@EVENTTRAIN$/m, /^FLAG:105 = 1$/m] },
+      { src: K5, ref: '86-88', any: [/^@EVENTEND$/m, /^FLAG:105 = 0$/m] },
+      { src: K5, ref: '770-848', any: [/^@KOJO_MESSAGE_COM_5$/m] },
+      {
+        src: K5,
+        ref: '771-793',
+        any: [/SIF ASSI > 0 && ASSIPLAY/, /^\tCALL COLOSSEUM_KOJO_5$/m],
+      },
+      { src: K5, ref: '775-776', any: [/SIF TEQUIP:45 && SELECTCOM != 45/] },
+      { src: K5, ref: '778-779', any: [/SIF TFLAG:899/] },
+      {
+        src: K5,
+        ref: '781-782',
+        any: [/獣姦プレイ中は口上をスキップする/, /SIF TEQUIP:89/],
+      },
+      { src: K5, ref: '784-785', any: [/SIF TEQUIP:90/] },
+      {
+        src: K5,
+        ref: '787-790',
+        any: [/コロシアム中は専用口上/, /^\tCALL COLOSSEUM_KOJO_5$/m],
+      },
+      { src: K5, ref: '792-793', any: [/SIF TALENT:TARGET:9 == 1/] },
+      {
+        src: K5,
+        ref: '802-848',
+        any: [/^IF SELECTCOM == 0$/m, /^\t\t\tCFLAG:301 = 6$/m],
+      },
+      { src: K5, ref: '803-814', any: [/^\tIF CFLAG:301 == 0$/m] },
+      { src: K5, ref: '805-812', any: [/^\t\tIF MARK:2 >= 2$/m] },
+      {
+        src: K5,
+        ref: '817-822',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K5,
+        ref: '823-828',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K5,
+        ref: '829-834',
+        any: [
+          /^\t\tELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K5,
+        ref: '835-839',
+        any: [
+          /^\t\tELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K5,
+        ref: '840-844',
+        any: [
+          /^\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
     ],
   },
 ];

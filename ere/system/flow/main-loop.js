@@ -42,6 +42,12 @@ require('#/page/page-train');
 require('#/page/page-usercom');
 // @COM0 与 @COM_ABLE0 的实现（#45——首条真实指令；注册进 COM 分发族）
 require('#/system/train/com0-caress');
+// 口上（#46）：公共底座（@EVENTSHOP 总开关 / @GET_KOJO_NUM / 指令口上
+// 分发族）与两个口上模块（K3 高貴、K5 マオ——各带 @EVENTTRAIN 存在标志
+// 与 @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层目录（docs/skeleton.md）
+require('#/kojo/kojo-system');
+require('#/kojo/kojo-k3');
+require('#/kojo/kojo-k5');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。

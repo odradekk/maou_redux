@@ -48,8 +48,9 @@
  *   - EXP_GOT_CHECK / SOKUOCHI_CHECK：生效分支的门槛（TFLAG:100、UP:2/
  *     UP:9 ≥ 阈值、TALENT:73）在当前写入面下全为 0/无预设，整支登记；
  *   - 膣内射精チェック（:419-473，TFLAG:19/2/6/10 族）；
- *   - KOJO_MESSAGE_COM / PALAMCNG / MARKCNG（:11-12/:504/:512，FLAG:7 > 0
- *     才达，口上归 #46，本票只留运行时占位）。
+ *   - KOJO_MESSAGE_PALAMCNG / MARKCNG（:504/:512，FLAG:7 > 0 才达，口上
+ *     触发点欠账随各自口上票）；指令口上 KOJO_MESSAGE_COM（:11-12）已随
+ *     #46 接真身（kojo/kojo-system.js）。
  * 其余无条件代码（含全部 SOURCE_CHECK_UP_*、UP_TALENT 两函数、PLAYER/
  * MASTER_SKILL、EX_CHECK、MARK_GOT、MASTER_FLAG 的好感度累积）都在爱抚
  * 的执行路径上，1:1 移植。
@@ -61,13 +62,13 @@ const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { train_message_a } = require('#/system/train/train-message');
+const { kojo_message_com } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个；名单
  * 变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'KOJO_MESSAGE_COM',
   'KOJO_MESSAGE_PALAMCNG',
   'KOJO_MESSAGE_MARKCNG',
   'EQUIP_COM',
@@ -1902,9 +1903,10 @@ on('SOURCE_CHECK', async () => {
   player = era_flag.player;
   down_map.clear();
 
-  // :11-12 指令口上（FLAG:7 > 0 才达；口上归 #46，本票只留占位）
+  // :11-12 指令口上（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM——真身在
+  // kojo/kojo-system.js，#46：总开关 + 存在判定 + 性格分发，K3/K5 已实现）
   if ((era.get('flag:7') || 0) > 0) {
-    stub_line('KOJO_MESSAGE_COM', '指令口上', '随口上票 #46');
+    await kojo_message_com();
   }
 
   // :19-51 避孕套判定（TEQUIP:35/36——装备无写入路径，整组登记）
