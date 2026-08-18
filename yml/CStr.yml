@@ -1,0 +1,16 @@
+# 本文件不是转换器产物：原作没有 CSTR 的名字表（target/CSV 下无对应 CSV，
+# 原作一律用数字下标），无从转换。
+#
+# 内容：角色的自定义字串（CSTR:7 = 癖好名，珠结算的癖好行读它）。原作下标全是数字，target/CSV/Str.csv 是 STR 表、与本表无关（且 str/strname 是引擎弃用表名）。
+#
+# 它的存在只有一个目的：让引擎装载循环建出 `staticData.cstr`。引擎的
+# 三段寻址在 `data[表][角色]` 存在、而 `staticData[表]` 缺位时**直接抛错**
+# （app.asar 的 setVar 兜底分支 `u = i(this.staticData[a][u], u)`，无守卫）——
+# 调教域的表由 beginTrain/addCharacter 按角色开桶，所以桶一定在、崩就崩在
+# 名字表这一侧。实机撞见：调教开始时写 `stain:31:2` 报
+# `Cannot read properties of undefined (reading '2')`。
+#
+# 空表即够用：下标是数字，引擎的 safeUndefinedCheck 在名字表查不到时原样
+# 回落到该数字。将来若要按名寻址，在此补「名称: 序号」条目即可——但注意
+# 登记进名字表的下标会被 addCharacter 的 initCharaTable 预置为 0，行为随之
+# 改变，补之前先确认那是想要的。
