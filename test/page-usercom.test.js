@@ -70,6 +70,7 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
     'COMSEQ_SHOW',
     'COMSEQ_TRAIN',
     'SHOW_COMMENU',
+    'P_C', // #45：TRAIN_NAME 定制名（静态名路径已实现）
   ]);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);

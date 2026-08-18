@@ -37,8 +37,11 @@ require('#/event/event-com');
 require('#/event/event-comend');
 require('#/event/event-end');
 require('#/event/event-turnend');
+require('#/event/source-check');
 require('#/page/page-train');
 require('#/page/page-usercom');
+// @COM0 与 @COM_ABLE0 的实现（#45——首条真实指令；注册进 COM 分发族）
+require('#/system/train/com0-caress');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
