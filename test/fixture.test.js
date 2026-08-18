@@ -252,3 +252,58 @@ test('文本行保留原始片段（样式断言的落点，text 是压平结果
   assert.equal(record.text, '《满月》');
   assert.equal(record.content, fragments);
 });
+
+// —— 多列输出族的录制（#48 对拍录制器：print 系全部输出 API 有专门记录，
+//    不落兜底 calls——「文本层录制器覆盖 print 系全部输出 API」的落点） ——
+
+test('printMultiColumns：GridObject 逐格压平成既有条目类型', () => {
+  const fixture = create_era_fixture();
+  fixture.era.printMultiColumns([
+    { type: 'button', content: '爱抚', accelerator: 0 },
+    { type: 'text', content: '一行说明' },
+    { type: 'divider', config: { isSolid: true } },
+    { type: 'image', names: 'res-a' },
+  ]);
+
+  assert.deepEqual(
+    fixture.lines.map((l) => l.type),
+    ['button', 'text', 'divider', 'image'],
+  );
+  // 按钮条目与 printButton 同款：rendered 是引擎前缀公式（app.asar）
+  assert.equal(fixture.lines[0].text, '爱抚');
+  assert.equal(fixture.lines[0].accelerator, 0);
+  assert.equal(fixture.lines[0].rendered, '[0] 爱抚');
+  assert.equal(fixture.lines[2].border, 'solid');
+  assert.deepEqual(fixture.lines[3].names, 'res-a');
+  // 已实现集：不落兜底 calls
+  assert.deepEqual(fixture.calls, []);
+});
+
+test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记录', () => {
+  const fixture = create_era_fixture();
+  fixture.era.printInColRows(
+    { columns: [{ type: 'text', content: '列组形态' }] },
+    [{ type: 'button', content: '裸数组形态', accelerator: 7 }],
+  );
+
+  assert.deepEqual(fixture.lines, [
+    { type: 'text', text: '列组形态', content: '列组形态' },
+    {
+      type: 'button',
+      text: '裸数组形态',
+      accelerator: 7,
+      rendered: '[7] 裸数组形态',
+      color: undefined,
+    },
+  ]);
+});
+
+test('printImage：记 image 条目（无文本，对拍只留痕）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.printImage('res-x', 'res-y');
+
+  assert.deepEqual(fixture.lines, [
+    { type: 'image', names: ['res-x', 'res-y'] },
+  ]);
+  assert.deepEqual(fixture.calls, []);
+});

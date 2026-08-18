@@ -780,6 +780,101 @@ const MUTATIONS = [
     tests: ['csv-to-yml'],
     expect_only: '逐字节一致',
   },
+  // —— #48 T18 输出对拍：录制器 / 归一化器 / 差异引擎 / 回放的自证 ——
+  {
+    desc: 'M84 夹具 printButton 不记 accelerator（菜单对拍失去编号键）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    return push_line({
+      type: 'button',
+      text,
+      accelerator,`,
+    replace: `    return push_line({
+      type: 'button',
+      text,
+      accelerator: undefined, // 变异：不记编号`,
+    tests: ['compare-first-turn', 'page-usercom'],
+    expect_only: '分类计数与当前欠账清单一致',
+  },
+  {
+    desc: 'M85 归一化器样本侧去归一（黄金样本不再过 #60 归一表）',
+    file: 'tools/compare/normalize.js',
+    find: '.map((l) => to_simplified(l));',
+    replace: '.map((l) => l); // 变异：样本侧去归一',
+    tests: ['compare-normalize'],
+    expect_only: '繁/日键名',
+  },
+  {
+    desc: 'M86 归一化器菜单编号解析坏（Number → -1）',
+    file: 'tools/compare/normalize.js',
+    find: "cells.push({ kind: 'menu', key: name, val: Number(inner.trim()) });",
+    replace:
+      "cells.push({ kind: 'menu', key: name, val: -1 }); // 变异：编号解析坏",
+    tests: ['compare-normalize'],
+    expect_only: 'menu 条目',
+  },
+  {
+    desc: 'M87 差异引擎 calc 键忽略全部数值（植入算式缺陷抓不到——检验3b 的靶心）',
+    file: 'tools/compare/diff.js',
+    find: 'return `calc:${entry.key}|${entry.from}|+${entry.add}|-${entry.sub}|=${entry.to}|${entry.phrase}`;',
+    replace: 'return `calc:${entry.key}|${entry.phrase}`; // 变异：数值不进键',
+    tests: ['compare-diff'],
+    expect_only: '加数漂移',
+  },
+  {
+    desc: 'M88 差异引擎 menu 键回退常数（同编号异名被吞——真缺陷出口焊死）',
+    file: 'tools/compare/diff.js',
+    find: '      return `menu:${entry.key}|${entry.val}`;',
+    replace: "      return 'menu:?'; // 变异：标签与编号不进键",
+    tests: ['compare-diff', 'compare-first-turn'],
+    expect_only: '真缺陷出口',
+  },
+  {
+    desc: 'M89 归因规则删 体力 条键（golden 基础条变未解释差异）',
+    file: 'tools/compare/rules.js',
+    find: "const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);",
+    replace:
+      "const STUB_GAUGE_KEYS = new Set(['气力', '射精（你）']); // 变异：体力 删",
+    tests: ['compare-first-turn'],
+    expect_only: '分类计数与当前欠账清单一致',
+  },
+  {
+    desc: 'M90 回放播种改错（阴核初值 5240 → 5200——变量层断言的靶心）',
+    file: 'tools/compare/replay.js',
+    find: '[0, 5240], // 阴核 5240+300=5540（log:33）',
+    replace: '[0, 5200], // 变异：播种值错',
+    tests: ['compare-first-turn'],
+    expect_only: '日志算式断言',
+  },
+  {
+    desc: 'M91 回放随机源取错支（RAND_FIX 落到别的台词——确定性回放的靶心）',
+    file: 'tools/compare/replay.js',
+    find: 'const RAND_FIX = 0.4;',
+    replace: 'const RAND_FIX = 0.9; // 变异：错支',
+    tests: ['compare-first-turn'],
+    expect_only: '逐条文本',
+  },
+  {
+    desc: 'M92 回放输入标记不落 lines（窗口两侧不再同构）',
+    file: 'tools/compare/replay.js',
+    find: "    fixture.lines.push({ type: 'input', text: String(value) });",
+    replace: '    // 变异：输入标记不落 lines',
+    tests: ['compare-first-turn'],
+    expect_only: '对拍窗口不完整',
+  },
+  {
+    desc: 'M93 夹具 printMultiColumns 不再记录（print 系覆盖的缺口）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.printMultiColumns = (columnObjects) => {
+    (columnObjects ?? []).forEach(record_grid_object);
+    return lines.length - 1;
+  };`,
+    replace: `  era.printMultiColumns = (columnObjects) => {
+    // 变异：不记录
+    return lines.length - 1;
+  };`,
+    tests: ['fixture'],
+    expect_only: 'printMultiColumns',
+  },
 ];
 
 function run_one(m, index) {
