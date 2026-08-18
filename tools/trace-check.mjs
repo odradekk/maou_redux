@@ -1,4 +1,5 @@
-// 内联行号引用校核器（issue #44 验收整改；#48 验收整改起纳入 emuera.log）。
+// 内联行号引用校核器（issue #44 验收整改；#48 验收整改起纳入 emuera.log；
+// #63 起 ERB 侧补齐同款扫描完整性）。
 //
 // 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释，以及 #48 起
 // tools/compare 等处指向黄金样本 target/emuera.log 的 `log:N` 注释。文件头
@@ -13,15 +14,31 @@
 // emuera.log 引用（LOG_REFS）同款两道，外加第三道**扫描完整性**：
 //   3. ere/ tools/ test/ 全部 .js/.mjs 里出现的每个 log:N / emuera.log:N
 //      （含区间）都必须在 LOG_REFS 登记——新增引用不登记即红，防绕过。
-// 行号一律以原始文件为准（emuera.log 是 UTF-8 BOM + CRLF，BOM 不占行）。
-// 后来者改代码动了引用：把表里的 ref/锚一起更新，锚对着 target/ 原文
-// 重新落位——表本身以源文件为准，不以致动者的记忆为准。
+// ERB 侧同款第三道（#63 起）：
+//   4. ere/ 全部 .js 注释里出现的每个 :N / :N-M 都必须在 FILES 登记或在
+//      tools/trace-exempt.mjs 豁免——新增引用静默失守即红（#63 之前，
+//      page-main-menu.js 零登记、三条引用指错无人看见，两颗曳光弹都没
+//      抓到）。引用形态统一定义为「注释内、冒号前不是词字符/点号/花括号的
+//      :数字」——覆盖工单点名的三种写法（行尾 `// :N`、块注释 `* :N`、
+//      括号 `（:N）`/`(:N)`）及其复合（斜杠链 `:A/:B`、`@函数名 :N`），
+//      同时天然排除 `era.get('base:0:0')` 与注释里的 `deltabase:${cid}:0`
+//      一类变量寻址（花括号排除 `}:0` 形态）与 `ERB:2` 一类
+//      文件名:行号（后者不进锁：改写它会连坐 mutation-check 的 find 串）。
+//      代码侧（注释外）一律不扫：三段寻址 `cflag:${id}:1` 无法与引用区分。
+// 豁免清单是 #63 冻结的存量欠账（未审计、行号对错未知）：只能变短
+//   （test/trace-check.test.js 的基线副本钉死）、不许发霉（条目对应的
+//   js 引用消失也红）。行号一律以原始文件为准（emuera.log 是 UTF-8 BOM
+//   + CRLF，BOM 不占行）。后来者改代码动了引用：把表里的 ref/锚一起更新，
+//   锚对着 target/ 原文重新落位——表本身以源文件为准，不以致动者的记忆
+//   为准。
 //
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { ERB_EXEMPT } from './trace-exempt.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -47,6 +64,8 @@ const K3 = 'target/ERB/口上/EVENT_K3_高貴.ERB';
 const K5 = 'target/ERB/口上/EVENT_K5_マオ.ERB';
 const EXCOM = 'target/ERB/其他/EXCOM.ERB';
 const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
+const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
+const DRAW_EXT_COMM = 'target/ERB/其他/DRAW_EXT_COMM.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -1020,6 +1039,130 @@ const FILES = [
       },
     ],
   },
+  // —— #63（ERB 侧完整性锁的登记示范：page-main-menu 原为零登记，
+  //    实审 45 条查出 7 条错引用——状态行块整体偏早 4~5 行（:48→:53、
+  //    :49→:54、:50-55→:55-59、:56-58→:60-62、:59-66→:64-71、:71→:72）
+  //    与 :190-198 截尾（ELSE 兜底臂在 198-199），注释已订正；代码与
+  //    正确行段一致，属注释烂、非移植缺陷。多来源：主源 DRAW_MAINMENU +
+  //    按钮明暗 EXT_COMM + A 计数守卫 SHOP）——
+  {
+    js: 'ere/page/page-main-menu.js',
+    refs: [
+      // @DRAW_MAINMENU 骨架与文件头注明的四个子面板函数（函数体存根）
+      { src: DRAW_MAINMENU, ref: '5-325', any: [/^@DRAW_MAINMENU\s*$/m] },
+      { src: DRAW_MAINMENU, ref: '331', any: [/^@DRAW_HAVEITEMS/m] },
+      { src: DRAW_MAINMENU, ref: '400', any: [/^@DRAW_HAVETRAPS/m] },
+      {
+        src: DRAW_MAINMENU,
+        ref: '427',
+        any: [/^@DRAW_DUNGEON_OVERVIEW\s*$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '583', any: [/^@DRAW_DUNGEON_DAILY\s*$/m] },
+      // BGM 段（未接，随音频票）
+      { src: DRAW_MAINMENU, ref: '11-17', any: [/PLAYBGM/] },
+      // 防御性修正（バグ対策）与 @EVENTSHOP 的同型段
+      {
+        src: DRAW_MAINMENU,
+        ref: '20-39',
+        any: [/^SIF TARGET > CHARANUM - 1$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '20-25',
+        any: [/^SIF (TARGET|ASSI) > CHARANUM - 1$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '20-21',
+        any: [/^SIF TARGET > CHARANUM - 1$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '23-25', any: [/^SIF ASSI > CHARANUM - 1$/m] },
+      { src: DRAW_MAINMENU, ref: '27-29', any: [/^SIF ASSI == TARGET$/m] },
+      { src: DRAW_MAINMENU, ref: '31-34', any: [/^IF TARGET >= 1$/m] },
+      { src: DRAW_MAINMENU, ref: '36-39', any: [/^IF ASSI >= 1$/m] },
+      { src: DRAW_MAINMENU, ref: '41', any: [/^REDRAW 0$/m] },
+      { src: SHOP, ref: '7-12', any: [/バグ対策/] },
+      // 状态行（:45-75）——#63 订正块：六条原引用整体偏早
+      { src: DRAW_MAINMENU, ref: '45-75', any: [/^ALIGNMENT RIGHT$/m] },
+      {
+        src: DRAW_MAINMENU,
+        ref: '45',
+        any: [/^DRAWLINEFORM %UNICODE\(0x2550\)%$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLD$/m] },
+      { src: DRAW_MAINMENU, ref: '54', any: [/^ALIGNMENT RIGHT$/m] },
+      { src: DRAW_MAINMENU, ref: '55-59', any: [/第\{DAY\/365\}年/] },
+      { src: DRAW_MAINMENU, ref: '60-62', any: [/SIF DAY:2 == 15/] },
+      {
+        src: DRAW_MAINMENU,
+        ref: '64-71',
+        any: [/^IF TIME == 0$/m, /PRINTFORM \(所持金：\{MONEY\} pts\.\)/],
+      },
+      { src: DRAW_MAINMENU, ref: '72', any: [/^ALIGNMENT LEFT$/m] },
+      // 入口按钮两纽与四钮
+      {
+        src: DRAW_MAINMENU,
+        ref: '77',
+        any: [/^DRAWLINEFORM %UNICODE\(0x2500\)%$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '78-98', any: [/调教目标", 496/] },
+      { src: DRAW_MAINMENU, ref: '80-85', any: [/^IF Target >= 1$/m] },
+      { src: DRAW_MAINMENU, ref: '88-93', any: [/助手", 497/] },
+      {
+        src: DRAW_MAINMENU,
+        ref: '100-145',
+        any: [/PRINTBUTTON @"%SAVESTR:TARGET%", 498/],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '148',
+        any: [/^DRAWLINEFORM %UNICODE\(0x2500\)%$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '149-188', any: [/物品\/技能", 500/] },
+      // A 计数的消费方守卫（@USERSHOP 的 100/496/497）
+      { src: SHOP, ref: '152', any: [/ELSEIF RESULT == 496 && A > 0/] },
+      { src: SHOP, ref: '154', any: [/ELSEIF RESULT == 497 && A > 0/] },
+      // 子面板分发与指令面板
+      {
+        src: DRAW_MAINMENU,
+        ref: '190-197',
+        any: [/^\t*CALL DRAW_HAVEITEMS$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '190-200',
+        any: [/CALL DRAW_DUNGEON_DAILY/],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '203-207',
+        any: [/^PRINTFORML %UNICODE\(0x258c\)%Commands$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '203-319',
+        any: [/^PRINTFORML %UNICODE\(0x258c\)%Commands$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '206-207', any: [/Commands/] },
+      { src: DRAW_MAINMENU, ref: '208-216', any: [/^A = 0$/m] },
+      { src: DRAW_MAINMENU, ref: '208-319', any: [/PRINTLCD \[100\] 调教/] },
+      { src: DRAW_MAINMENU, ref: '211-219', any: [/^A = 0$/m] },
+      { src: DRAW_MAINMENU, ref: '226-231', any: [/PRINTLCD \[100\] 调教/] },
+      {
+        src: DRAW_MAINMENU,
+        ref: '232-319',
+        any: [/PRINTLCD \[101\] 能力显示/],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '320',
+        any: [/^DRAWLINEFORM %UNICODE\(0x2550\)%$/m],
+      },
+      { src: DRAW_MAINMENU, ref: '323', any: [/^REDRAW 1$/m] },
+      // 按钮明暗近似的外源
+      { src: DRAW_EXT_COMM, ref: '2', any: [/^@MENU_BUTTON/m] },
+    ],
+  },
   // —— #45（指令 0 爱抚 + @SOURCE_CHECK）——
   {
     js: 'ere/system/train/com0-caress.js',
@@ -1750,9 +1893,75 @@ for (const rel of ['ere', 'tools', 'test'].flatMap(list_js_files)) {
   }
 }
 
+// —— ERB 侧扫描完整性（#63）：ere/ 全部 .js 注释里的 :N / :N-M 引用都
+//    必须在 FILES 登记或在 ERB_EXEMPT 豁免——与 log 侧第三道同款，防
+//    新增引用绕过锚表。引用形态见文件头第 4 条；豁免清单只能变短、
+//    不许发霉（见 tools/trace-exempt.mjs 头注） ——
+
+const ERB_REF_RE = /(?<![A-Za-z0-9_.{}]):(\d+)(?:-(\d+))?/g;
+
+/** 扫单个 js 文本里的 ERB 行号引用（注释侧；代码侧不扫，见文件头） */
+function scan_erb_refs(text) {
+  const found = new Set();
+  for (const line of text.split(/\r?\n/)) {
+    const parts = [];
+    // 块注释行（jsdoc 的 * 续行与 /* 起始行）整行可扫
+    if (/^\s*\*/.test(line) || /^\s*\/\*/.test(line)) {
+      parts.push(line);
+    }
+    // 行注释：只扫 // 之后的部分（前面是代码，含三段寻址）
+    const ci = line.indexOf('//');
+    if (ci >= 0) {
+      parts.push(line.slice(ci));
+    }
+    // 行内 /* … */ 段（本仓库罕用，出现即扫）
+    for (const m of line.matchAll(/\/\*(.*?)\*\//g)) {
+      parts.push(m[1]);
+    }
+    for (const part of parts) {
+      for (const m of part.matchAll(ERB_REF_RE)) {
+        found.add(m[2] ? `${m[1]}-${m[2]}` : m[1]);
+      }
+    }
+  }
+  return found;
+}
+
+const erb_registered_by_file = new Map(
+  FILES.map(({ js, refs }) => [js, new Set(refs.map((r) => r.ref))]),
+);
+let erb_found_total = 0;
+let erb_exempt_total = 0;
+for (const rel of list_js_files('ere')) {
+  if (rel === 'ere/era-electron.js') {
+    continue; // 引擎 SDK：JSDoc 示例不是移植注释
+  }
+  const found = scan_erb_refs(load_js_text(rel));
+  erb_found_total += found.size;
+  const registered = erb_registered_by_file.get(rel);
+  const exempt = ERB_EXEMPT[rel] ?? [];
+  erb_exempt_total += exempt.length;
+  for (const ref of found) {
+    if (!registered?.has(ref) && !exempt.includes(ref)) {
+      console.log(
+        `✗ ${rel} :${ref} —— 未登记进 FILES（新引用必须登记锚表；豁免清单是 #63 冻结的存量，不收新条目）`,
+      );
+      failures += 1;
+    }
+  }
+  for (const ref of exempt) {
+    if (!found.has(ref)) {
+      console.log(
+        `✗ ${rel} :${ref} —— 豁免条目在 js 里已不存在（引用被删/改号？同步删本条，清单只能变短）`,
+      );
+      failures += 1;
+    }
+  }
+}
+
 console.log(
   failures === 0
-    ? `✓ ${checked} 条内联行号引用全部与源文件一致`
-    : `✗ ${failures}/${checked} 条引用对不上`,
+    ? `✓ ${checked} 条内联行号引用全部与源文件一致；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免存量 ${erb_exempt_total} 条，见 tools/trace-exempt.mjs）`
+    : `✗ ${failures}/${checked} 条引用对不上（另有 ERB 完整性失守计入 failures）`,
 );
 process.exit(failures === 0 ? 0 : 1);
