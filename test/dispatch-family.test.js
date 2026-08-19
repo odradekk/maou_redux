@@ -23,6 +23,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
 const { preset_chara_0 } = require('./helpers/chara');
+const { preset_audio_seeded } = require('./helpers/audio');
 
 // ere/ 的绝对路径（require.cache 键以此为前缀），独立性用例用它断言
 // 「载入 A 不连带动入 B」
@@ -226,7 +227,7 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
   preset_gamebase(fixture);
   // 预置标题音乐默认值播种标记（#69），让全量 var_writes 断言只看见分发写入；
   // 播种自身的用例在 test/page-title.test.js
-  fixture.store.set('global:2', 1);
+  preset_audio_seeded(fixture);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
   fixture.set_inputs(1);

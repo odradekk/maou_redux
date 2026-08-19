@@ -20,6 +20,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0 } = require('./helpers/chara');
 const { preset_gamebase } = require('./helpers/gamebase');
+const { preset_audio_seeded } = require('./helpers/audio');
 
 test('首屏：标题、版本行、作者、年份、展开名单、信息行与四个按钮', async () => {
   const fixture = create_era_fixture();
@@ -181,7 +182,7 @@ test('按钮 9 两次：(n+1)%2 往返，回到展开态', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 预置播种标记：避免 #69 的默认值播种在本用例多出一次 saveGlobal
-  fixture.store.set('global:2', 1);
+  preset_audio_seeded(fixture);
   fixture.set_inputs(9, 9);
   const run_title_page = fixture.load_module('page/page-title');
 
@@ -219,7 +220,7 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   preset_gamebase(fixture);
   // 预置播种标记：跳过标题音乐默认值播种（#69，播种自身的用例在文件尾），
   // 让本用例的全量 var_writes 断言只看见新游戏路径的写入
-  fixture.store.set('global:2', 1);
+  preset_audio_seeded(fixture);
   // 预置角色 0（yml/Chara0.yml 的运行时形状）：夹具的 addCharacter 镜像
   // 引擎守卫（无预设不加，#35），预置后下面的「加入成功」断言才是引擎语义
   preset_chara_0(fixture);
@@ -273,7 +274,7 @@ test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () 
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 同上：预置播种标记，避开 #69 的默认值播种写入
-  fixture.store.set('global:2', 1);
+  preset_audio_seeded(fixture);
   fixture.set_inputs(0);
   const run_title_page = fixture.load_module('page/page-title');
 
@@ -328,7 +329,7 @@ test('标题音乐：开关关着（播种过、用户关掉）不播；资源�
   preset_gamebase(fixture);
   // 用户关掉音乐：标记在、开关 0；且不 seed_res——资源未注册时 playMusic
   // 根本不该被调（守卫在前）
-  fixture.store.set('global:2', 1);
+  preset_audio_seeded(fixture);
   fixture.store.set('global:0', 0);
   const run_title_page = fixture.load_module('page/page-title');
 
@@ -341,7 +342,7 @@ test('标题音乐：开关关着（播种过、用户关掉）不播；资源�
 test('离开标题停曲：新游戏与读档占位两分支都 STOPBGM（原作 :95/:105）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
-  fixture.store.set('global:2', 1); // 跳过播种（音乐开关随之为 0，不影响停曲断言）
+  preset_audio_seeded(fixture); // 跳过播种（音乐开关随之为 0，不影响停曲断言）
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
   const { BeginSignal, STATE } = fixture.load_module(
@@ -356,7 +357,7 @@ test('离开标题停曲：新游戏与读档占位两分支都 STOPBGM（原作
 
   const second = create_era_fixture();
   preset_gamebase(second);
-  second.store.set('global:2', 1);
+  preset_audio_seeded(second);
   second.set_inputs(0);
   const run_again = second.load_module('page/page-title');
   await assert.rejects(() => run_again(), /预置输入已耗尽/);
