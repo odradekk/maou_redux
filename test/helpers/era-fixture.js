@@ -210,13 +210,29 @@ function create_era_fixture() {
     };
   };
 
-  // printProgress 与多列进度条对象共用：inContent/outContent 都留字段
-  const make_progress_entry = (percentage, in_content, out_content) => ({
-    type: 'progress',
-    percentage,
-    text: normalize_content(in_content ?? ''),
-    out: normalize_content(out_content ?? ''),
-  });
+  // printProgress 与多列进度条对象共用：inContent/outContent 都留字段。
+  // barWidth 镜像（#74 发回整改，app.vue 渲染层原始源码副本逐字）：
+  //   <el-col :span="line.barWidth"><el-progress>条内文字</el-progress></el-col>
+  //   <el-col v-if="line.outContent" :span="24 - line.barWidth">条后文字</el-col>
+  //   barWidth: data.config.barWidth ?? 24        ← 引擎缺省 24
+  // barWidth=24 时第二列 span=0（el-col-0 = display:none）——**条后数值整列
+  // 不渲染，而 24 正是缺省值**：不传 config 就吞掉数值（AGENTS.md「输出类
+  // API 会二次加工参数」的又一例）。故夹具把默认物化进记录（bar_width 恒为
+  // 数字、不留 undefined——留 undefined 等于没镜像），并派生 out_visible＝
+  // 「条后文字真的会渲染出来」的可断言形态：span>0（barWidth<24）且引擎的
+  // v-if="line.outContent" 命中（out 非空）。
+  const make_progress_entry = (percentage, in_content, out_content, config) => {
+    const out = normalize_content(out_content ?? '');
+    const bar_width = config?.barWidth ?? 24;
+    return {
+      type: 'progress',
+      percentage,
+      text: normalize_content(in_content ?? ''),
+      out,
+      bar_width,
+      out_visible: bar_width < 24 && out !== '',
+    };
+  };
 
   // —— 输出 ——
   era.print = (content) => push_row([make_text_entry(content)]);
@@ -263,7 +279,12 @@ function create_era_fixture() {
       return { type: 'image', names: obj.names };
     }
     if (obj?.type === 'progress') {
-      return make_progress_entry(obj.percentage, obj.inContent, obj.outContent);
+      return make_progress_entry(
+        obj.percentage,
+        obj.inContent,
+        obj.outContent,
+        obj.config,
+      );
     }
     return { type: 'text', text: normalize_content(obj?.content) };
   };
@@ -286,8 +307,13 @@ function create_era_fixture() {
     push_row(collect_col_rows_cells(columnObjects));
   era.replaceInColRows = (...columnObjects) =>
     replace_row(collect_col_rows_cells(columnObjects));
-  era.printProgress = (percentage, in_content, out_content) =>
-    push_row([make_progress_entry(percentage, in_content, out_content)]);
+  // SDK 签名 printProgress(percentage, inContent, outContent, config?)——
+  // 第四参数是 ProgressConfig（barWidth 等），#74 发回：此前夹具丢掉整个
+  // config，barWidth 从不进记录
+  era.printProgress = (percentage, in_content, out_content, config) =>
+    push_row([
+      make_progress_entry(percentage, in_content, out_content, config),
+    ]);
 
   // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析/计行语义的镜像 ——
   //

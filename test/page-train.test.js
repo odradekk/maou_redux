@@ -179,6 +179,34 @@ test('PRINT_PALAM：最高等级（LV9）满档 100；断档序号（100 否定�
   );
 });
 
+test('PRINT_PALAM：条后数值列必须真实渲染（barWidth<24——引擎缺省 24 吞掉数值列）', () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  const { print_palam } = load_module_safe(fixture);
+
+  print_palam(31);
+
+  // #74 发回：app.vue 渲染层 el-col :span="24 - barWidth"——barWidth=24 时
+  // span=0（display:none），**条后数值整列不渲染，而 24 正是引擎缺省值**。
+  // 两个已知破坏形态（PALAM_PROGRESS_BAR_WIDTH 改 24 / 删掉 config 整行
+  // 吃缺省）都使 out_visible 翻 false，本用例当场红——夹具已把引擎公式
+  // 镜像进记录（bar_width/out_visible，见 test/fixture.test.js 的镜像用例）。
+  const bars = fixture.lines;
+  assert.ok(bars.length === 16);
+  assert.ok(
+    bars.every((l) => Number.isInteger(l.bar_width) && l.bar_width >= 1),
+    'bar_width 必须物化进记录（缺省 24 也得是数字，不是 undefined）',
+  );
+  assert.ok(
+    bars.every((l) => l.bar_width < 24),
+    'barWidth＝24 时数值列 el-col-0 不渲染——参数条的数值承载不得被吞',
+  );
+  assert.ok(
+    bars.every((l) => l.out_visible === true),
+    '每格的条后数值（palam 原值）必须真实渲染——它是对拍与玩家共用的语义值',
+  );
+});
+
 test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点，1:1 骨架', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);

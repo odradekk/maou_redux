@@ -1517,6 +1517,22 @@ const MUTATIONS = [
     tests: ['page-train'],
     expect_only: '重复执行同一指令',
   },
+  {
+    desc: 'M907 barWidth 改 24（引擎缺省值——el-col-0 吞掉全部条后数值，验收实测的全绿假象）',
+    file: 'ere/page/page-train.js',
+    find: 'const PALAM_PROGRESS_BAR_WIDTH = 16;',
+    replace: 'const PALAM_PROGRESS_BAR_WIDTH = 24; // 变异：吞数值列',
+    tests: ['page-train'],
+    expect_only: '条后数值列必须真实渲染',
+  },
+  {
+    desc: 'M908 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M907 形态）',
+    file: 'ere/page/page-train.js',
+    find: '      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },',
+    replace: '      // 变异：config 删除，吃引擎缺省 24',
+    tests: ['page-train'],
+    expect_only: '条后数值列必须真实渲染',
+  },
 ];
 
 function run_one(m, index) {
