@@ -186,3 +186,40 @@ engine_test(
     assert.deepEqual(fake_this.data.audio, { 0: 1, 1: 66 });
   },
 );
+
+// —— 版本库默认配置（#69 重开补的交付项）：资源开关进 git ——
+//
+// `resource: true` 不能只写本机 ere.config.json（gitignore，全新克隆落到引擎
+// 默认 resource:false，一张图一个音都不加载——issue #69 重开评论的裁定）。
+// 落点是 yml/_config.json：进 git 的默认值、用户仍可在配置 UI 覆盖（与
+// _fixed.json 的结构性锁定不同类，extendedCharaTables 留在 _fixed.json）。
+
+test('版本库默认配置开着资源：yml/_config.json 的 system.resource 为 true', () => {
+  const config = JSON.parse(
+    fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
+  );
+  assert.equal(
+    config?.system?.resource,
+    true,
+    '全新克隆的资源默认值来自 _config.json（ere.config.json 不进 git）',
+  );
+});
+
+engine_test(
+  'yml/_config.json 是引擎默认配置整份 + 唯一偏离 resource:true',
+  () => {
+    // 缺键调研（app.asar 实证）：_config.json 存在时 defaultConfig 整个是它，
+    // getEmptyConfigForm() 只在文件缺失/解析失败时兜底、不做逐键合并；
+    // syncConfig 又把 config 合并 _fixed.json 后整份写回 ere.config.json——
+    // _config.json 没写的键从此不存在（window.audio 缺失 = 静默没声音一类坑）。
+    // 故必须写全：与 getEmptyConfigForm() 逐键一致，唯一偏离 resource。
+    const defaults = engine.engine_utils.getEmptyConfigForm();
+    const config = JSON.parse(
+      fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
+    );
+    assert.deepEqual(config, {
+      ...defaults,
+      system: { ...defaults.system, resource: true },
+    });
+  },
+);
