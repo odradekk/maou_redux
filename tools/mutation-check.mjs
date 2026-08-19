@@ -876,6 +876,7 @@ const MUTATIONS = [
     expect_only: 'printMultiColumns',
   },
   // —— #68 测试缝的 Row 保真：归并 / 计数 / 删除 / 替换的自证 ——
+  // （#73 给 push_row 补了 lines_history 记录，find/replace 随之同步）
   {
     desc: 'M103 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
     file: 'test/helpers/era-fixture.js',
@@ -884,6 +885,7 @@ const MUTATIONS = [
     entries.forEach((entry) => {
       entry.row = row;
       lines.push(entry);
+      lines_history.push(entry);
     });
     total_rows += 1;
     return total_rows;
@@ -893,6 +895,7 @@ const MUTATIONS = [
     entries.forEach((entry) => {
       entry.row = row;
       lines.push(entry);
+      lines_history.push(entry);
       total_rows += 1; // 变异：逐格计数
     });
     return total_rows;
@@ -1231,6 +1234,78 @@ const MUTATIONS = [
     replace: `    "autoMax": false,`,
     tests: ['resource-media'],
     expect_only: '引擎默认配置整份',
+  },
+  // —— #73（画面组件最小集与主菜单迁入）——
+  // 注：编号 M900+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
+  // 按实际情况统一改号；前四票曾因各自从 M99 起编撞号四次）。
+  {
+    desc: 'M900 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
+    file: 'ere/page/components/screen-block.js',
+    find: '    const span = era.getLineCount() - this.anchor_row;',
+    replace: '    const span = this.row_count;',
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '上方内容完好',
+  },
+  {
+    desc: 'M901 重绘不清屏直接重画（退回追加式——屏幕随交互增长）',
+    file: 'ere/page/components/screen-block.js',
+    find: `    const span = era.getLineCount() - this.anchor_row;
+    if (span > 0) {`,
+    replace: `    const span = era.getLineCount() - this.anchor_row;
+    if (span > 0 && false) {`,
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '上方内容完好',
+  },
+  {
+    desc: 'M902 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
+    file: 'ere/page/components/screen-block.js',
+    find: `    this.anchor_row = era.getLineCount();
+    await this.draw_content();`,
+    replace: `    await this.draw_content();
+    this.anchor_row = era.getLineCount();`,
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '上方内容完好',
+  },
+  {
+    desc: 'M903 行数不测量（row_count 恒 0——「组件自知占几行」失守）',
+    file: 'ere/page/components/screen-block.js',
+    find: '    this.row_count = era.getLineCount() - this.anchor_row;',
+    replace: '    this.row_count = 0;',
+    tests: ['screen-block'],
+    expect_only: '行数测量',
+  },
+  {
+    desc: 'M904 menu_button 删调暗色（未选中态与选中态同色）',
+    file: 'ere/page/components/menu-button.js',
+    find: '    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,',
+    replace: '    undefined,',
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '调暗',
+  },
+  {
+    desc: 'M905 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
+    file: 'ere/page/components/menu-button.js',
+    find: '    `▌${label}`,',
+    replace: '    `[${accelerator}] ▌${label}`,',
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '编号前缀',
+  },
+  {
+    desc: 'M906 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
+    file: 'ere/page/page-shop.js',
+    find: '  return main_menu.redraw();',
+    replace: '  return main_menu.draw();',
+    tests: ['page-main-menu'],
+    expect_only: '不涨屏',
+  },
+  {
+    desc: 'M907 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
+    file: 'ere/page/page-shop.js',
+    find: '  const main_menu = create_main_menu();',
+    replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
+  const main_menu = main_menu_singleton;`,
+    tests: ['page-main-menu'],
+    expect_only: '跨会话',
   },
 ];
 

@@ -84,6 +84,10 @@ function create_era_fixture() {
 
   // —— 记录层状态（每个夹具独立） ——
   const lines = []; // 输出行记录：print 系列（逐格；一次多列调用的格子共享 row）
+  // 全量行史（被动记录，只增不删）：clear/replace 从 lines 删掉的条目仍留
+  // 在这里——#73 起主菜单就地重绘，终态只留最后一轮，「哪轮画过什么」的
+  // 取证看这份（与 var_reads 同类的观测记录，不影响 lines 的对拍语义）
+  const lines_history = [];
   const calls = []; // 无专门实现的 API 的兜底调用记录
   const var_reads = []; // 变量读记录
   const var_writes = []; // 变量写记录
@@ -122,6 +126,7 @@ function create_era_fixture() {
     entries.forEach((entry) => {
       entry.row = row;
       lines.push(entry);
+      lines_history.push(entry);
     });
     total_rows += 1;
     return total_rows;
@@ -143,6 +148,7 @@ function create_era_fixture() {
     entries.forEach((entry) => {
       entry.row = Math.max(0, row);
       lines.push(entry);
+      lines_history.push(entry);
     });
     return total_rows;
   };
@@ -653,6 +659,9 @@ function create_era_fixture() {
     text_lines() {
       return lines.filter((line) => line.type === 'text').map((l) => l.text);
     },
+    /** 全量行史（含已被 clear/replace 删掉的条目；#73 起就地重绘的取证层）。
+     *  条目形状与 lines 相同；对拍归一化器只读 lines，不看这里 */
+    lines_history,
     /** 兜底调用记录 [{api, args}] */
     calls,
     /** 变量读记录 [{name, value}] */

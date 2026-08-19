@@ -4,7 +4,6 @@
  * 源: target/ERB/SHOP/DRAW_MAINMENU.ERB  @DRAW_MAINMENU（:5-325；末尾另附
  *     四个子面板函数 @DRAW_HAVEITEMS :331 / @DRAW_HAVETRAPS :400 /
  *     @DRAW_DUNGEON_OVERVIEW :427 / @DRAW_DUNGEON_DAILY :583，本票全部存根）
- *     target/ERB/其他/DRAW_EXT_COMM.ERB  @MENU_BUTTON（:2，按钮明暗的近似）
  *
  * 本票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
  * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。作用域外，各留注释或
@@ -12,9 +11,19 @@
  * 名/助手名按钮与生命条（:100-145）、四个子面板的内容（:190-197 的分发照搬、
  * 函数体存根）、指令面板的渲染（:203-319，随首个指令子系统票；分发本体在
  * page-shop.js 的 usershop）。
+ *
+ * #73 起本画面迁入组件层：menu_button 排版助手收敛到
+ * page/components/menu-button.js（两条 UI 结论的唯一权威落点），整屏由
+ * create_main_menu() 包装为画面组件（page/components/screen-block.js），
+ * 商店轮（page-shop.js 的 run_shop）每轮就地重绘。
  */
 
 const era = require('#/era-electron');
+const { ScreenBlock } = require('#/page/components/screen-block');
+const {
+  menu_button,
+  MENU_BUTTON_DIM_COLOR,
+} = require('#/page/components/menu-button');
 const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const { stub_line } = require('#/utils/stub-line');
@@ -39,14 +48,6 @@ const STUBBED_CALLS = [
 // 的 no-irregular-whitespace 拦裸写，prettier 会把字符串里的裸全角空格当
 // 可删空白吃掉。
 const FULL_WIDTH_SPACE = '\u3000';
-
-// @MENU_BUTTON（DRAW_EXT_COMM.ERB:2-13）的近似：未选中（ARG:2 == 1）时
-// SETCOLOR(GETDEFCOLOR() - 0x444444) 把颜色调暗，打印后 RESETCOLOR。ere 侧
-// 以按钮 color 配置近似——引擎渲染层实测（app.asar）：color 直通 el-button
-// 的 --el-button-text-color，须为 CSS 颜色串（hover 态会在其后拼透明度后缀，
-// 命名色会拼出非法值，故用十六进制）。GETDEFCOLOR() 取 Emuera 默认前景色白
-// 0xFFFFFF，按通道减 0x444444 = 0xBBBBBB。
-const MENU_BUTTON_DIM_COLOR = '#bbbbbb';
 
 // :190-197 四个子面板的分发表：FLAG:36 的取值 → 原作函数。owner 是认领该
 // 面板的子系统（票号未定，见 docs/stub-registry.md 的归属列）。
@@ -76,25 +77,8 @@ const PANEL_STUBS = {
 // 存根占位自 #44 起收敛到 utils/stub-line.js（本文件是 #23 的先例、
 // page-shop.js 自 #24 起经本文件的 re-export 使用——导出保持，调用点不动）
 
-/**
- * @MENU_BUTTON（DRAW_EXT_COMM.ERB:2）的等价物：打印一个菜单按钮，未选中时
- * 调暗（近似的说明见 MENU_BUTTON_DIM_COLOR）。
- *
- * 按钮正文一律不写 [编号] 前缀：引擎 showAcc 默认为真，渲染时自动拼成
- * `[快捷键] 正文`，手写前缀会得到「[496] [496] ▌调教目标」（PR #30）。
- * 原作正文里的 ▌ 是 UNICODE(0x258c)，保留。
- *
- * @param {string} label 按钮正文（不含 ▌，本函数统一加）
- * @param {number} accelerator 按钮编号（原作 ARG:3，输入分发用）
- * @param {boolean} dim 未选中标志（原作 ARG:2：真 = 调暗）
- */
-function menu_button(label, accelerator, dim) {
-  era.printButton(
-    `▌${label}`,
-    accelerator,
-    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,
-  );
-}
+// menu_button 自 #73 起收敛到 page/components/menu-button.js（本文件原是
+// 它的唯一发明方；近似依据与两条 UI 结论的说明都在那边）。
 
 /**
  * 指针越界钳制：@DRAW_MAINMENU :20-25 / @EVENTSHOP :7-12 共用的「バグ対策」。
@@ -210,9 +194,11 @@ function draw_status_line() {
 /**
  * 绘制据点主菜单（@DRAW_MAINMENU 的骨架）。
  *
- * @SHOW_SHOP 每轮调用（ere 侧见 page/page-shop.js）；本函数自身不循环、
- * 不清屏（Emuera 控制台追加式滚动，ere 同构）。原作 :41/:323 的 REDRAW
- * 0/1（抑制逐行重绘防闪烁）无 ere 对应语义，不镜像。
+ * 本函数是画面组件的内容函数（create_main_menu 包装）：只输出、不清屏，
+ * 清行/重绘归组件的 redraw。原作引擎在 @USERSHOP 返回后重画主菜单（追加
+ * 式滚动），ere 侧自 #73 起改为就地重绘（ADR-0003；重绘只发生在玩家交互
+ * 之后——调用点在 page-shop.js 的商店轮）。原作 :41/:323 的 REDRAW 0/1
+ * （抑制逐行重绘防闪烁）无 ere 对应语义，不镜像。
  */
 function draw_main_menu() {
   // :11-17 BGM 自 #69 起接通：IF 是否启用背景音乐 == 1 → PLAYBGM "据点2.mp3"
@@ -298,8 +284,22 @@ function draw_main_menu() {
   era.drawLine({ isSolid: true });
 }
 
+/**
+ * 主菜单画面组件（#73）：包装 draw_main_menu 的 ScreenBlock。
+ *
+ * 随 SHOP 状态的进入创建（锚点是会话态——模块级单例会在 TRAIN 转场/重开
+ * 后拿上一局的锚点清掉本局内容，page-shop.js 的 run_shop 每次进入时新建，
+ * 跨会话测试钉死这一条）。每轮 redraw 由商店轮发起（玩家交互之后）。
+ *
+ * @returns {ScreenBlock} 未绘制过的主菜单组件（首绘不清屏）
+ */
+function create_main_menu() {
+  return new ScreenBlock(draw_main_menu);
+}
+
 module.exports = {
   draw_main_menu,
+  create_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
   stub_line,

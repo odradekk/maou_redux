@@ -1176,8 +1176,28 @@ const FILES = [
         any: [/^DRAWLINEFORM %UNICODE\(0x2550\)%$/m],
       },
       { src: DRAW_MAINMENU, ref: '323', any: [/^REDRAW 1$/m] },
-      // 按钮明暗近似的外源
+    ],
+  },
+  // —— #73（画面组件最小集与主菜单迁入）——
+  {
+    js: 'ere/page/components/menu-button.js',
+    refs: [
+      // 按钮明暗近似的外源（menu_button 自 page-main-menu.js 收敛，#73）
       { src: DRAW_EXT_COMM, ref: '2', any: [/^@MENU_BUTTON/m] },
+    ],
+  },
+  {
+    js: 'ere/page/components/screen-block.js',
+    refs: [
+      // 就地重绘清行习语的原作出处（SHOP ver1.0.2.ERB @SELECT_TARGET 的
+      // L_LCOUNT = LINECOUNT → 画 → CLEARLINE LINECOUNT-L_LCOUNT）
+      { src: SHOP, ref: '274', any: [/^L_LCOUNT = LINECOUNT$/m] },
+      {
+        src: SHOP,
+        ref: '280',
+        any: [/^L_LCOUNT = LINECOUNT - L_LCOUNT$/m],
+      },
+      { src: SHOP, ref: '314', any: [/CLEARLINE LINECOUNT-L_LCOUNT/] },
     ],
   },
   // —— #45（指令 0 爱抚 + @SOURCE_CHECK）——

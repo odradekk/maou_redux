@@ -16,7 +16,7 @@ const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, emit, TIER } = require('#/system/event/registry');
 const {
-  draw_main_menu,
+  create_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
   stub_line,
@@ -86,8 +86,11 @@ on(
 
 /**
  * @SHOW_SHOP（:22-38）：绘制一轮主菜单。
+ *
+ * @param {import('#/page/components/screen-block').ScreenBlock} main_menu
+ *   主菜单画面组件（run_shop 进入 SHOP 状态时创建；本函数即组件的每轮重入）
  */
-function show_shop() {
+function show_shop(main_menu) {
   // :24 SAVESTR:0 = 你（魔王的存档名字串）：SAVESTR 未落表，消费者（名字
   // 按钮 498/499 等）随角色数据票——登记 docs/stub-registry.md 变量级欠账
   // （#5 已决由内置 callname 承载，接线随彼票）。
@@ -107,8 +110,12 @@ function show_shop() {
   }
 
   // :38 CALL DRAW_MAINMENU（本体在 DRAW_MAINMENU.ERB，ere 侧同构拆分到
-  // page/page-main-menu.js）
-  draw_main_menu();
+  // page/page-main-menu.js）。自 #73 起主菜单是画面组件：本函数每轮的重入
+  // ＝组件的就地重绘——清锚点跨度（自身行 + input 回显行 + 分发期临时输出）
+  // 再重画，等价于原作引擎在 @USERSHOP 返回后重画主菜单；首绘（组件未画过）
+  // 不清屏，保住上方内容（送行句/分割线等）。重绘只发生在玩家交互之后：
+  // 本函数只在 run_shop 的循环里被调，输入先行（ADR-0003 的约定落点）。
+  return main_menu.redraw();
 }
 
 /**
@@ -340,8 +347,11 @@ async function run_shop() {
   // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
   // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
   await emit('EVENTSHOP');
+  // 主菜单画面组件：随 SHOP 状态的进入创建（create_main_menu 的注释说明
+  // 为什么不做模块级单例——锚点是会话态，跨会话复用会拿旧锚点清本局内容）
+  const main_menu = create_main_menu();
   for (;;) {
-    show_shop();
+    await show_shop(main_menu);
     // 引擎侧：玩家点按钮（printButton 的快捷键）或直接键入编号；INPUT 的
     // 返回值即原作 RESULT，交 @USERSHOP 的等价物分发（原作引擎把结果放
     // RESULT 调 @USERSHOP，ere 侧收进 usershop 的形参）。
