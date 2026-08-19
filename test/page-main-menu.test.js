@@ -72,7 +72,7 @@ test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整
   assert(status.includes('上午'));
   assert(status.includes('(所持金：12345 pts.)'));
 
-  // :48 FONTBOLD 整行粗体（片段级携带）；:49 ALIGNMENT RIGHT 后还原左对齐
+  // :53 FONTBOLD 整行粗体（片段级携带）；:54 ALIGNMENT RIGHT 后还原左对齐
   const record = fixture.lines.find((line) => line.text?.includes('所持金'));
   assert(record.content.every((frag) => frag.fontWeight === 'bold'));
   assert(

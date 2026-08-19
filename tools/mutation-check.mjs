@@ -875,6 +875,50 @@ const MUTATIONS = [
     tests: ['fixture'],
     expect_only: 'printMultiColumns',
   },
+  // —— #63 T21 trace 完整性：ERB 侧第三道 + 豁免台账的自证 ——
+  {
+    desc: 'M94 ERB 完整性门焊死（未登记引用不再红——探针用例必须抓到失明）',
+    file: 'tools/trace-check.mjs',
+    find: '    if (!registered?.has(ref) && !exempt.includes(ref)) {',
+    replace:
+      '    if (false && !registered?.has(ref) && !exempt.includes(ref)) {',
+    tests: ['trace-check'],
+    expect_only: '完整性门对后来者失明',
+  },
+  {
+    desc: 'M95 豁免清单偷偷变长（新条目必须撞基线锁）',
+    file: 'tools/trace-exempt.mjs',
+    find: "    '1076',",
+    replace: "    '1076',\n    '999993',",
+    tests: ['trace-check'],
+    expect_only: '只能变短',
+  },
+  {
+    desc: 'M96 锚校验：把 :53 的锚改错（FONTBOLD→FONTBOLDX，行号对但锚不命中）',
+    file: 'tools/trace-check.mjs',
+    find: "      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLD$/m] },",
+    replace: "      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLDX$/m] },",
+    tests: ['trace-check'],
+    expect_only: '未命中任何锚',
+  },
+  {
+    desc: 'M97 引用行号改坏（:53→:48 死代码行——在册校验 + 完整性双红）',
+    file: 'ere/page/page-main-menu.js',
+    find: "      fontWeight: 'bold', // :53 FONTBOLD（整行粗体，片段级携带）",
+    replace:
+      "      fontWeight: 'bold', // :48 FONTBOLD（整行粗体，片段级携带）",
+    tests: ['trace-check'],
+    expect_only: '已不存在',
+  },
+  {
+    desc: 'M98 豁免条目发霉（main-loop 的 :231 改号——台账对账必须红）',
+    file: 'ere/system/flow/main-loop.js',
+    find: '  // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发',
+    replace:
+      '  // 真身出口显式 begin(STATE.SHOP)（:232），此行只在未来的处理器们都不发',
+    tests: ['trace-check'],
+    expect_only: '清单只能变短',
+  },
 ];
 
 function run_one(m, index) {

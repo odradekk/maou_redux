@@ -177,16 +177,16 @@ function draw_status_line() {
   // 单线；逐字对拍归 #9。
   era.drawLine({ isSolid: true });
 
-  era.setAlign('right'); // :49 ALIGNMENT RIGHT（仅本行右对齐）
+  era.setAlign('right'); // :54 ALIGNMENT RIGHT（仅本行右对齐）
   const fragments = [
     {
-      // :50-55 行首两枚全角空格，随后
+      // :55-59 行首两枚全角空格，随后
       // 第{DAY/365}年+全角空格+{DAY:1}月{DAY:2}日（第{DAY+1}日）
       content: `${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}第${Math.floor(era_flag.day_count / 365)}年${FULL_WIDTH_SPACE}${era_flag.month}月${era_flag.date}日（第${era_flag.day_count + 1}日）`,
-      fontWeight: 'bold', // :48 FONTBOLD（整行粗体，片段级携带）
+      fontWeight: 'bold', // :53 FONTBOLD（整行粗体，片段级携带）
     },
   ];
-  // :56-58 SIF DAY:2 == 15 → PRINT 《满月》（SETCOLORBYNAME Yellow；'yellow'
+  // :60-62 SIF DAY:2 == 15 → PRINT 《满月》（SETCOLORBYNAME Yellow；'yellow'
   // 是合法 CSS 颜色名，文本片段的 color 直通 span 样式，app.asar 实证）
   if (era_flag.date === 15) {
     fragments.push({
@@ -195,14 +195,14 @@ function draw_status_line() {
       fontWeight: 'bold',
     });
   }
-  // :59-66 TIME == 0 → 上午、ELSE → 下午（前导一个半角空格是 PRINT 的
+  // :64-71 TIME == 0 → 上午、ELSE → 下午（前导一个半角空格是 PRINT 的
   // 分隔符后残文）；随后两枚全角空格 + (所持金：{MONEY} pts.) + 两枚全角空格
   fragments.push({
     content: ` ${era_flag.time === 0 ? '上午' : '下午'}${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}(所持金：${era_flag.money} pts.)${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}`,
     fontWeight: 'bold',
   });
   era.print(fragments);
-  era.setAlign('left'); // :71 ALIGNMENT LEFT（还原，后续行左对齐）
+  era.setAlign('left'); // :72 ALIGNMENT LEFT（还原，后续行左对齐）
 }
 
 /**
@@ -252,7 +252,7 @@ function draw_main_menu() {
   menu_button('地城概况', 504, active_panel !== 4);
   menu_button('地城日常', 505, active_panel !== 5);
 
-  // :190-198 四个子面板的分发（FLAG:36 → 专用函数，ELSE → 物品/技能）。
+  // :190-200 四个子面板的分发（FLAG:36 → 专用函数，ELSE → 物品/技能）。
   // 面板内容全部存根：各打一行占位、标注归属（#23 验收）；函数体
   // （DRAW_MAINMENU.ERB:331-601）随各自子系统的票移植。
   const panel = PANEL_STUBS[active_panel] ?? PANEL_STUBS[0];
