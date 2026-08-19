@@ -1,0 +1,265 @@
+# 区段所有权表（FLAG，一维表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table flag
+#
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 415（动态/表级 50 未归类；注释掉的写入 174 另计）；
+# 实活下标 82 个 → 区间 47 条；跨域写入 57 条（见 flag-cross-domain-writes.yml）。
+"0-2":
+  owner: event
+  writes: 88
+  by_domain:
+    event: 50
+    chara: 10
+    stronghold: 9
+    patch: 8
+    system: 6
+    train: 3
+    invasion: 2
+"5":
+  owner: dungeon
+  writes: 2
+  by_domain:
+    dungeon: 1
+    system: 1
+"7":
+  owner: kojo
+  writes: 24
+  by_domain:
+    kojo: 21
+    train: 2
+    event: 1
+"9":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 2
+"22":
+  owner: train
+  writes: 11
+  by_domain:
+    train: 11
+"25":
+  owner: train
+  writes: 10
+  by_domain:
+    train: 10
+"26-27":
+  owner: chara
+  writes: 13
+  by_domain:
+    chara: 11
+    system: 2
+"30-31":
+  owner: event
+  writes: 3
+  by_domain:
+    event: 3
+"32":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"33":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 2
+"35":
+  owner: system
+  writes: 2
+  by_domain:
+    system: 2
+"36":
+  owner: stronghold
+  writes: 4
+  by_domain:
+    stronghold: 4
+"37-38":
+  owner: system
+  writes: 3
+  by_domain:
+    system: 3
+"60":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 1
+    patch: 1
+"61":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 1
+    event: 1
+"62":
+  owner: train
+  writes: 21
+  by_domain:
+    train: 21
+"63":
+  owner: dungeon
+  writes: 6
+  by_domain:
+    dungeon: 4
+    train: 2
+"64":
+  owner: train
+  writes: 18
+  by_domain:
+    train: 18
+"71":
+  owner: train
+  writes: 11
+  by_domain:
+    train: 11
+"76":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"80":
+  owner: event
+  writes: 9
+  by_domain:
+    event: 6
+    patch: 2
+    chara: 1
+"81":
+  owner: system
+  writes: 4
+  by_domain:
+    system: 4
+"82":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"83":
+  owner: invasion
+  writes: 6
+  by_domain:
+    invasion: 2
+    stronghold: 1
+    dungeon: 1
+    event: 1
+    patch: 1
+"84":
+  owner: event
+  writes: 10
+  by_domain:
+    event: 10
+"85":
+  owner: stronghold
+  writes: 1
+  by_domain:
+    stronghold: 1
+"86":
+  owner: system
+  writes: 4
+  by_domain:
+    system: 4
+"87":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 2
+"88":
+  owner: system
+  writes: 4
+  by_domain:
+    system: 4
+"89":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 2
+"90":
+  owner: system
+  writes: 4
+  by_domain:
+    system: 4
+"91":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 2
+"92-93":
+  owner: invasion
+  writes: 14
+  by_domain:
+    invasion: 14
+"99":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"100-115":
+  owner: kojo
+  writes: 32
+  by_domain:
+    kojo: 32
+"119":
+  owner: kojo
+  writes: 2
+  by_domain:
+    kojo: 2
+"223":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"224":
+  owner: chara
+  writes: 2
+  by_domain:
+    chara: 1
+    event: 1
+"400-401":
+  owner: invasion
+  writes: 10
+  by_domain:
+    invasion: 10
+"402":
+  owner: chara
+  writes: 2
+  by_domain:
+    chara: 2
+"500-501":
+  owner: system
+  writes: 3
+  by_domain:
+    system: 3
+"502":
+  owner: dungeon
+  writes: 2
+  by_domain:
+    dungeon: 1
+    system: 1
+"550":
+  owner: train
+  writes: 3
+  by_domain:
+    train: 3
+"600-609":
+  owner: event
+  writes: 10
+  by_domain:
+    event: 10
+"611-613":
+  owner: event
+  writes: 3
+  by_domain:
+    event: 3
+"2807":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"2815-2816":
+  owner: event
+  writes: 4
+  by_domain:
+    event: 4

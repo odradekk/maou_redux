@@ -1,0 +1,67 @@
+# 区段所有权表（CSTR，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cstr
+#
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 167（动态/表级 3 未归类；注释掉的写入 4 另计）；
+# 实活下标 11 个 → 区间 9 条；跨域写入 38 条（见 cstr-cross-domain-writes.yml）。
+"1":
+  owner: chara
+  writes: 15
+  by_domain:
+    chara: 4
+    invasion: 4
+    system: 3
+    stronghold: 2
+    event: 2
+"2":
+  owner: event
+  writes: 5
+  by_domain:
+    event: 3
+    system: 2
+"3-4":
+  owner: train
+  writes: 53
+  by_domain:
+    train: 34
+    chara: 8
+    system: 4
+    kojo: 3
+    dungeon: 2
+    event: 2
+"5":
+  owner: event
+  writes: 8
+  by_domain:
+    event: 4
+    stronghold: 3
+    patch: 1
+"6-7":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 2
+"30":
+  owner: event
+  writes: 4
+  by_domain:
+    event: 2
+    patch: 2
+"50":
+  owner: patch
+  writes: 46
+  by_domain:
+    patch: 46
+"60":
+  owner: chara
+  writes: 29
+  by_domain:
+    chara: 29
+"99":
+  owner: system
+  writes: 2
+  by_domain:
+    system: 2

@@ -1,0 +1,24 @@
+# 区段所有权表（MARK，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table mark
+#
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 30（动态/表级 2 未归类；注释掉的写入 3 另计）；
+# 实活下标 6 个 → 区间 2 条；跨域写入 11 条（见 mark-cross-domain-writes.yml）。
+"0-4":
+  owner: system
+  writes: 26
+  by_domain:
+    system: 15
+    stronghold: 5
+    train: 2
+    patch: 2
+    dungeon: 1
+    event: 1
+"10":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 2
