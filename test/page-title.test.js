@@ -259,9 +259,13 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
     [0],
     '初始角色 0 必须通过引擎守卫、真的被加入',
   );
-  // 标题侧变量写入恰为 CHARA_EX_0 的魔王素质一条，此外零写入——全量断言，
-  // 任何混入的意外写入都会当场暴露
-  assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);
+  // 标题侧变量写入恰为 CHARA_EX_0 的魔王素质一条 + 移植自建的 portcflag
+  // 版本戳（#67，非原作动作），此外零写入——全量断言，任何混入的意外写入
+  // 都会当场暴露
+  assert.deepEqual(fixture.var_writes, [
+    { name: 'ex_talent:0:200', value: 1 },
+    { name: 'portcflag:0:数据版本', value: 1 },
+  ]);
 });
 
 test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () => {

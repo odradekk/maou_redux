@@ -1035,6 +1035,90 @@ const MUTATIONS = [
     tests: ['ownership-scan'],
     expect_only: '逐条具名',
   },
+
+  // —— #67 自造扩展表 portcflag：接入 / 预设 / 登记 / 名字表的自证 ——
+  {
+    desc: 'M108 村娘加入点漏盖版本戳（init_portcflag 调用删除）',
+    file: 'ere/event/event-first.js',
+    find: `    // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+    // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
+    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码对拍）
+    init_portcflag(17);`,
+    replace: '    // 变异：portcflag 版本戳不盖',
+    tests: ['event-first'],
+    expect_only: 'portcflag:17:数据版本',
+  },
+  {
+    desc: 'M109 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
+    file: 'ere/page/page-title.js',
+    find: `      // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+      // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
+      init_portcflag(0);`,
+    replace: '      // 变异：portcflag 版本戳不盖',
+    tests: ['page-title'],
+    expect_only: 'portcflag:0:数据版本',
+  },
+  {
+    desc: 'M110 版本戳盖错值（PORT_DATA_VERSION 1 改 2）',
+    file: 'ere/chara/chara-portcflag.js',
+    find: 'const PORT_DATA_VERSION = 1;',
+    replace: 'const PORT_DATA_VERSION = 2;',
+    tests: ['event-first', 'page-title'],
+    expect_only: 'portcflag',
+  },
+  {
+    desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机硬崩）',
+    file: 'ere/chara/chara-portcflag.js',
+    find: '  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);',
+    replace: '  return era.set(`portflag:${cid}:数据版本`, PORT_DATA_VERSION);',
+    tests: ['event-first', 'page-title'],
+    expect_only: 'portcflag',
+  },
+  {
+    desc: 'M112 Chara17 预设行被删（预设生效用例必须红）',
+    file: 'yml/Chara17.yml',
+    find: `"portcflag":
+  "数据版本": 0`,
+    replace: '# 变异：portcflag 预设行删除',
+    tests: ['portcflag-table'],
+    expect_only: '预设',
+  },
+  {
+    desc: 'M113 Chara17 预设基线改坏（0 改 3）',
+    file: 'yml/Chara17.yml',
+    find: `"portcflag":
+  "数据版本": 0`,
+    replace: `"portcflag":
+  "数据版本": 3`,
+    tests: ['portcflag-table'],
+    expect_only: '预设',
+  },
+  {
+    desc: 'M114 登记被删（_fixed.json 清空——契约锁必须红）',
+    file: 'yml/_fixed.json',
+    find: `{
+  "system": {
+    "extendedCharaTables": ["portcflag"]
+  }
+}`,
+    replace: `{
+  "system": {
+    "extendedCharaTables": []
+  }
+}`,
+    tests: ['portcflag-table'],
+    expect_only: '登记',
+  },
+  {
+    desc: 'M115 名字表 id 改坏（数据版本 id 0 改 3——装载/寻址/预设全红）',
+    file: 'yml/PortCFlag.yml',
+    find: `"数据版本":
+  id: 0`,
+    replace: `"数据版本":
+  id: 3`,
+    tests: ['portcflag-table'],
+    expect_only: '名字表',
+  },
 ];
 
 function run_one(m, index) {
