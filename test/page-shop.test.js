@@ -126,6 +126,10 @@ test('496（A > 0）：SELECT_TARGET 真身列表可取消，497 仍为存根占
     texts.some((line) => line.includes('@SELECT_ASSI')),
     '497 应占位 @SELECT_ASSI',
   );
+  assert(
+    fixture.waits.some((w) => w.waited),
+    '497 的分发期存根必须等键（玩家先看到再被重绘清掉）',
+  );
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, -1, '取消不得选中目标');
   assert.equal(era_flag.assi, -1, '存根不得选中助手');
@@ -268,8 +272,8 @@ test('连续多轮混合操作后状态一致', async () => {
 });
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
+  // 七次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史
   const fixture = await run_shop_with(101, 777, 200, 888, 199, 525, 7788);
-  // 壳占位是分发期输出，被下一轮重绘消费——取证在行史
   const texts = history_texts(fixture);
   for (const name of [
     '@CHARA_INFO',

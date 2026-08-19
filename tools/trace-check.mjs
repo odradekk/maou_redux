@@ -68,6 +68,7 @@ const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
 const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
 const DRAW_EXT_COMM = 'target/ERB/其他/DRAW_EXT_COMM.ERB';
 const TITLE = 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB';
+const SHOP_2 = 'target/ERB/SHOP/SHOP_2.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -1198,6 +1199,17 @@ const FILES = [
         any: [/^L_LCOUNT = LINECOUNT - L_LCOUNT$/m],
       },
       { src: SHOP, ref: '314', any: [/CLEARLINE LINECOUNT-L_LCOUNT/] },
+    ],
+  },
+  {
+    js: 'ere/utils/stub-line.js',
+    refs: [
+      // 分发期等键 = 原作 PRINTW 习语（print + 读键后清行回循环）
+      {
+        src: SHOP_2,
+        ref: '124-126',
+        any: [/PRINTW 数值已超出允许范围外/],
+      },
     ],
   },
   // —— #45（指令 0 爱抚 + @SOURCE_CHECK）——

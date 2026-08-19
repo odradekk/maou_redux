@@ -888,6 +888,7 @@ const MUTATIONS = [
       lines_history.push(entry);
     });
     total_rows += 1;
+    allow_wait = true;
     return total_rows;
   };`,
     replace: `  const push_row = (entries) => {
@@ -898,6 +899,7 @@ const MUTATIONS = [
       lines_history.push(entry);
       total_rows += 1; // 变异：逐格计数
     });
+    allow_wait = true;
     return total_rows;
   };`,
     tests: ['fixture'],
@@ -945,6 +947,7 @@ const MUTATIONS = [
     file: 'test/helpers/era-fixture.js',
     find: `    if (input_echo_adds_row(config)) {
       total_rows += 1; // this.print(回显值)：+1 Row
+      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
     }`,
     replace: '    // 变异：回显不计行',
     tests: ['fixture'],
@@ -1406,6 +1409,36 @@ const MUTATIONS = [
   const main_menu = main_menu_singleton;`,
     tests: ['page-main-menu'],
     expect_only: '跨会话',
+  },
+  // —— #73 发回整改：分发期输出必须被玩家看到再被重绘清掉 ——
+  {
+    desc: 'M908 分发期存根退回纯 print（stub_line_wait 丢掉等键——玩家看不到）',
+    file: 'ere/utils/stub-line.js',
+    find: `async function stub_line_wait(erb_name, note, owner) {
+  era.print(stub_text(erb_name, note, owner));
+  await era.waitAnyKey();
+}`,
+    replace: `async function stub_line_wait(erb_name, note, owner) {
+  era.print(stub_text(erb_name, note, owner));
+}`,
+    tests: ['page-main-menu'],
+    expect_only: '玩家先看到',
+  },
+  {
+    desc: 'M909 waitAnyKey 无条件等（无输出也记等待——夹具 allowWait 镜像失守）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    const waited = allow_wait || Boolean(force);',
+    replace: '    const waited = true; // 变异：无条件等',
+    tests: ['fixture'],
+    expect_only: '无输出跳过',
+  },
+  {
+    desc: 'M910 输出不再置位 allowWait（有输出也不等——玩家看不到存根）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    allow_wait = true;\n    return total_rows;',
+    replace: '    return total_rows;',
+    tests: ['fixture', 'page-main-menu'],
+    expect_only: '有输出才等键',
   },
 ];
 

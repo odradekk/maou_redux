@@ -444,15 +444,32 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
   assert.equal(one_round.era.getLineCount(), two_rounds.era.getLineCount());
 });
 
-test('分发期临时输出（存根行）随重绘消费：点未移植入口不留残行', async () => {
+test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
   const stub_round = await run_shop_rounds([102, 500]); // 102 = 地下城（存根）
   const plain = await run_shop_rounds([500, 500]);
 
-  // usershop 的 102 分支打过一行存根占位，但被下一轮重绘的锚点跨度连同
-  // 回显一并清掉——原作对应形态是子画面接管整屏后返回，菜单回到原位；
-  // 终态与无存根轮逐行同高（不留残行）
+  // 分发打了存根 → waitAnyKey 等键时屏幕上最新行就是存根（玩家看得到）→
+  // 下一轮重绘才清掉。waits.rows_at_wait 是调用瞬间的行数，直接钉住
+  // 「看到」发生在「消失」之前（#73 发回的验收项）。
+  const waited = stub_round.waits.filter((w) => w.waited);
+  assert.equal(waited.length, 1, '102 分支必须等一次键');
+  const at_wait = stub_round.lines_history.filter(
+    (l) => l.row !== undefined && l.row < waited[0].rows_at_wait,
+  );
+  assert(
+    at_wait.some((l) => l.text?.includes('DUNGEON_INFO2')),
+    '等键时存根行必须已在屏幕上',
+  );
+  // 重绘之后才消失：终态与无存根轮逐行同高、屏幕上看不见存根
   assert(!stub_round.text_lines().some((l) => l.includes('DUNGEON_INFO2')));
   assert.equal(stub_round.era.getLineCount(), plain.era.getLineCount());
+});
+
+test('无分发输出的一轮（面板切换）零等待：菜单重绘本身不得卡键', async () => {
+  // 500 只写 FLAG:36、不打存根。allowWait 镜像下菜单重绘会置位，但本轮
+  // 没有 waitAnyKey 调用——无条件等键会让每轮都卡一次（验收点名禁止）
+  const fixture = await run_shop_rounds([500]);
+  assert.equal(fixture.waits.length, 0);
 });
 
 test('跨会话锚点：TRAIN 转场后重进 SHOP，上方内容不被旧锚点清掉', async () => {
