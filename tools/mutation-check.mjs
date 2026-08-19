@@ -1215,6 +1215,23 @@ const MUTATIONS = [
     tests: ['fixture'],
     expect_only: '不占 Row',
   },
+  {
+    desc: 'M126 默认配置的资源开关被关掉（resource true→false——#69 重开的交付项）',
+    file: 'yml/_config.json',
+    find: '"resource": true,',
+    replace: '"resource": false,',
+    tests: ['resource-media'],
+    expect_only: '版本库默认配置',
+  },
+  {
+    desc: 'M127 默认配置漏键（删 window.audio——缺键被 syncConfig 永久物化的坑）',
+    file: 'yml/_config.json',
+    find: `    "audio": 100,
+    "autoMax": false,`,
+    replace: `    "autoMax": false,`,
+    tests: ['resource-media'],
+    expect_only: '引擎默认配置整份',
+  },
 ];
 
 function run_one(m, index) {
