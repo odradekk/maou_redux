@@ -142,9 +142,11 @@ function seed_winnie_world(fixture) {
  * 回放调教首回合（输入 0 爱抚），返回两侧对拍所需的全部素材。
  *
  * 输入标记：包装 fixture.era.input，输入返回后向 lines 压一条 {type:
- * 'input'} 标记——与输出行精确交错（归一化器据此切窗口）。副作用是
- * getLineCount 会多数一行（SET_CLEAR_POINT 的 tflag:999 差一），该值
- * 不进对拍窗口，无观察差异。
+ * 'input'} 标记——与输出行精确交错（归一化器据此切窗口）。行数口径由
+ * 夹具的计数器镜像（#68 整改：input() 回显默认 +1 Row，三段短路逐字
+ * 对齐引擎），标记只是条目层的对拍注记——不带 row、不推回显条目：条目
+ * 层若再记一行回显，会与标记各产生一次 input 事件，把对拍窗口的输入
+ * 边界翻倍。SET_CLEAR_POINT 的 tflag:999 本就在快照忽略清单。
  *
  * @returns {Promise<{fixture: object, next_state: string,
  *   before: Record<string, any>, after: Record<string, any>}>}

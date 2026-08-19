@@ -286,14 +286,17 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
     [{ type: 'button', content: '裸数组形态', accelerator: 7 }],
   );
 
+  // 两个 ColumnObject 的全部格子共享同一个 Row 号（引擎渲染层把整次调用
+  // 装进一个 inColRows 行对象，#68 实证）
   assert.deepEqual(fixture.lines, [
-    { type: 'text', text: '列组形态', content: '列组形态' },
+    { type: 'text', text: '列组形态', content: '列组形态', row: 0 },
     {
       type: 'button',
       text: '裸数组形态',
       accelerator: 7,
       rendered: '[7] 裸数组形态',
       color: undefined,
+      row: 0,
     },
   ]);
 });
@@ -303,7 +306,224 @@ test('printImage：记 image 条目（无文本，对拍只留痕）', () => {
   fixture.era.printImage('res-x', 'res-y');
 
   assert.deepEqual(fixture.lines, [
-    { type: 'image', names: ['res-x', 'res-y'] },
+    { type: 'image', names: ['res-x', 'res-y'], row: 0 },
   ]);
   assert.deepEqual(fixture.calls, []);
+});
+
+// —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎口径一致 ——
+// 引擎证据（app.asar）：主进程 EraApi 每次输出调用恰好一次 addTotalLines()；
+// 渲染层把 printMultiCols / printInColRows 整次调用各装进一个行对象。
+
+test('一次多列输出算一个 Row：getLineCount 增量为 1，clear(1) 只删本行', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('上一行');
+  const before = era.getLineCount();
+
+  era.printMultiColumns([
+    { type: 'button', content: '调教', accelerator: 1 },
+    { type: 'button', content: '外出', accelerator: 2 },
+    { type: 'text', content: '状态' },
+    { type: 'text', content: '更多' },
+  ]);
+
+  // ADR 0003 的缺陷场景：若按条目计数，增量是 4、组件 clear(4) 会连带
+  // 抹掉上面三行无关内容——Row 口径下增量必须是 1
+  assert.equal(era.getLineCount() - before, 1);
+  // 全部格子共享同一 Row 号
+  const rows = new Set(fixture.lines.slice(1).map((l) => l.row));
+  assert.equal(rows.size, 1);
+
+  assert.equal(await era.clear(1), 1);
+  assert.deepEqual(fixture.text_lines(), ['上一行']);
+  assert.equal(era.getLineCount(), 1);
+});
+
+test('printInColRows 整次调用一个 Row（多 ColumnObject 不拆行）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.printInColRows(
+    { columns: [{ type: 'text', content: '左' }] },
+    { columns: [{ type: 'text', content: '右' }] },
+  );
+
+  assert.equal(era.getLineCount(), 1);
+  assert.deepEqual(
+    fixture.lines.map((l) => l.row),
+    [0, 0],
+  );
+  await era.clear(1);
+  assert.deepEqual(fixture.lines, []);
+});
+
+test('逐行输出 API 各占一个 Row：print/println/printButton/drawLine/printImage', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('a');
+  era.println();
+  era.printButton('按钮', 0);
+  era.drawLine();
+  era.printImage('res');
+
+  assert.deepEqual(
+    fixture.lines.map((l) => l.row),
+    [0, 1, 2, 3, 4],
+  );
+  assert.equal(era.getLineCount(), 5);
+});
+
+test("print 的 '\\n' 与 {isBr} 是显示级换行：编程上仍一个 Row", () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('第一行\n第二行');
+  era.print([{ content: '前' }, { isBr: 1 }, '后']);
+
+  assert.equal(era.getLineCount(), 2);
+  assert.deepEqual(
+    fixture.lines.map((l) => l.row),
+    [0, 1],
+  );
+});
+
+test('clear 越界按整屏清空（渲染层公式），clear(0) 无操作', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('a');
+  era.printMultiColumns([
+    { type: 'text', content: 'x' },
+    { type: 'text', content: 'y' },
+  ]);
+  era.print('b');
+
+  assert.equal(await era.clear(0), 3); // 0 行 → 无操作，返回当前行数
+  assert.equal(era.getLineCount(), 3);
+  assert.equal(await era.clear(99), 0); // 越界 → 整屏清空
+  assert.deepEqual(fixture.lines, []);
+});
+
+test('replaceText 换掉最后一个 Row 的全部条目，行数不增', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('标题');
+  era.printMultiColumns([
+    { type: 'button', content: '甲', accelerator: 1 },
+    { type: 'button', content: '乙', accelerator: 2 },
+  ]);
+
+  assert.equal(era.replaceText('改写'), 2); // 引擎返回 totalLines 原值
+  assert.equal(era.getLineCount(), 2);
+  // 多列 Row 的两个格子一起消失，新文本占据同一 Row 号
+  assert.deepEqual(
+    fixture.lines.map((l) => [l.type, l.row]),
+    [
+      ['text', 0],
+      ['text', 1],
+    ],
+  );
+  assert.deepEqual(fixture.text_lines(), ['标题', '改写']);
+});
+
+test('replaceInColRows 与 replaceText 同口径：整行换、不增行', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.printMultiColumns([
+    { type: 'button', content: '甲', accelerator: 1 },
+    { type: 'text', content: '乙' },
+  ]);
+  era.print('下一行');
+
+  const ret = era.replaceInColRows(
+    { columns: [{ type: 'text', content: '左' }] },
+    [{ type: 'text', content: '右' }],
+  );
+
+  assert.equal(ret, 2);
+  assert.equal(era.getLineCount(), 2);
+  // 替换的是最后一个 Row（'下一行'）：row 0 的多列格子原样保留，
+  // 替换条目全部落在 row 1
+  assert.deepEqual(
+    fixture.lines.map((l) => [l.type, l.row]),
+    [
+      ['button', 0],
+      ['text', 0],
+      ['text', 1],
+      ['text', 1],
+    ],
+  );
+});
+
+test('printProgress 记 progress 条目并占一个 Row（顶层形态）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.printProgress(50, '内部文本', '外部文本');
+
+  assert.deepEqual(fixture.lines, [
+    {
+      type: 'progress',
+      percentage: 50,
+      text: '内部文本',
+      out: '外部文本',
+      row: 0,
+    },
+  ]);
+  assert.equal(fixture.era.getLineCount(), 1);
+  assert.deepEqual(fixture.calls, []);
+});
+
+test('空 printMultiColumns 仍占一个 Row（引擎无条件 addTotalLines）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('a');
+  era.printMultiColumns([]);
+
+  assert.equal(era.getLineCount(), 2); // 没有条目，但 Row 存在
+  assert.equal(await era.clear(1), 1);
+  assert.deepEqual(fixture.text_lines(), ['a']);
+});
+
+// —— input 回显计行（#68 整改）——
+// 引擎主进程 input()（app.asar）：
+//   v(this.config,"system.hideUserInput") || e.hideInput || e.any
+//     || this.print(i)
+// 普通 input() 的回显 print → addTotalLines → +1 Row；三段短路任一命中则
+// 不 print。夹具只调计数器、不推条目（条目层的回显由对拍标记承载）。
+
+test('input 回显计一行：画 3 行 → input → clear(3) → 组件首行残留（重绘主路径）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('第一行');
+  era.print('第二行');
+  era.print('第三行');
+  fixture.set_inputs(0);
+  await era.input();
+
+  // 引擎：回显 print 计 +1 Row → 总 4 行；条目层不新增（回显不推条目）
+  assert.equal(era.getLineCount(), 4);
+  assert.equal(fixture.lines.length, 3);
+
+  // ADR-0003 的重绘纪律「重绘只发生在玩家交互之后」——交互就是 input。
+  // 组件按绘制时量得的 3 行 clear(3)，引擎实机清掉的是「回显 + 组件后两
+  // 行」，组件首行残留。行数口径若与引擎不一致（回显不计），组件在夹具
+  // 里被完整清掉、实机上却留一行——本票要消灭的正是这类缺陷
+  assert.equal(await era.clear(3), 1);
+  assert.deepEqual(fixture.text_lines(), ['第一行']);
+});
+
+test('input 回显三段短路：hideInput / any / system.hideUserInput 任一命中即不计行', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('a');
+  fixture.set_inputs(1, 2, 3);
+  await era.input({ hideInput: true });
+  await era.input({ any: true });
+  fixture.system_config.hideUserInput = true;
+  await era.input();
+
+  assert.equal(era.getLineCount(), 1); // 三次输入都未触发回显计行
+
+  // 短路解除（默认配置）→ 回显计行恢复
+  fixture.system_config.hideUserInput = false;
+  fixture.set_inputs(4);
+  await era.input();
+  assert.equal(era.getLineCount(), 2);
 });
