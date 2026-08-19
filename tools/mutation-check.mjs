@@ -1043,7 +1043,7 @@ const MUTATIONS = [
 
   // —— #70 全表实测：新写形 / 词边界 / 名字下标 / ignored 语义 / 跨域读汇总 ——
   {
-    desc: 'M116 词边界负向后行被砍（EX_CFLAG 的假写回流——词边界用例必须红）',
+    desc: 'M128 词边界负向后行被砍（EX_CFLAG 的假写回流——词边界用例必须红）',
     file: 'tools/ownership-scan.js',
     find: "  return new RegExp(\n    `(?<![0-9A-Za-z_])(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
     replace:
@@ -1060,7 +1060,7 @@ const MUTATIONS = [
     expect_only: '字符串赋值',
   },
   {
-    desc: 'M118 后缀 ++/-- 不再算写入（ABL/MARK/CFLAG 自增丢失——写形用例必须红）',
+    desc: 'M129 后缀 ++/-- 不再算写入（ABL/MARK/CFLAG 自增丢失——写形用例必须红）',
     file: 'tools/ownership-scan.js',
     find: '    if (ASSIGN_OP_RE.test(rest) || POSTFIX_OP_RE.test(rest)) {',
     replace: '    if (ASSIGN_OP_RE.test(rest)) {',
@@ -1068,7 +1068,7 @@ const MUTATIONS = [
     expect_only: '后缀',
   },
   {
-    desc: 'M119 TIMES 不再算写入（SOURCE 乘法赋值全丢——TIMES 用例必须红）',
+    desc: 'M130 TIMES 不再算写入（SOURCE 乘法赋值全丢——TIMES 用例必须红）',
     file: 'tools/ownership-scan.js',
     find: "  if (command === 'TIMES') {",
     replace: "  if (command === 'TIMES_NEVER') {",
@@ -1076,7 +1076,7 @@ const MUTATIONS = [
     expect_only: 'TIMES',
   },
   {
-    desc: 'M120 VARSET 区间右端改包含（止端下标也写入——左闭右开用例必须红）',
+    desc: 'M131 VARSET 区间右端改包含（止端下标也写入——左闭右开用例必须红）',
     file: 'tools/ownership-scan.js',
     find: '      for (let i = Number(start); i < Number(end); i += 1) {',
     replace: '      for (let i = Number(start); i <= Number(end); i += 1) {',
@@ -1084,7 +1084,7 @@ const MUTATIONS = [
     expect_only: '左闭右开',
   },
   {
-    desc: 'M121 名字下标不再归一（繁/日形态查不到表——归一用例必须红）',
+    desc: 'M132 名字下标不再归一（繁/日形态查不到表——归一用例必须红）',
     file: 'tools/ownership-scan.js',
     find: "const { to_simplified } = require('./lang-normalize');",
     replace: 'const { to_simplified } = { to_simplified: (x) => x };',
@@ -1092,7 +1092,7 @@ const MUTATIONS = [
     expect_only: '归一',
   },
   {
-    desc: 'M122 跨域读判定反接（只统计本域读——同步守护与跨域读者锚点必须红）',
+    desc: 'M133 跨域读判定反接（只统计本域读——同步守护与跨域读者锚点必须红）',
     file: 'tools/ownership-scan.js',
     find: '        if (reader !== owner) {\n          cross_total += count;',
     replace: '        if (reader === owner) {\n          cross_total += count;',
@@ -1100,7 +1100,7 @@ const MUTATIONS = [
     expect_only: '逐字节一致',
   },
   {
-    desc: 'M123 ignored 文件不再跳过测量（TITLE.ERB 死代码写入回流——ignored 用例必须红）',
+    desc: 'M134 ignored 文件不再跳过测量（TITLE.ERB 死代码写入回流——ignored 用例必须红）',
     file: 'tools/ownership-scan.js',
     find: '    if (rel.length === 1 && ignored.has(rel[0])) {\n      continue; // 死代码：引擎不装载，整体跳过\n    }',
     replace: '    void ignored;',
@@ -1108,7 +1108,7 @@ const MUTATIONS = [
     expect_only: 'ignored',
   },
   {
-    desc: 'M124 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
+    desc: 'M135 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
     file: 'tools/ownership-scan.js',
     find: `  const missing_ignored = domains.ignored_files.filter(
     (name) => !root_files.includes(name),
@@ -1123,7 +1123,7 @@ const MUTATIONS = [
     expect_only: '声明了不存在的文件',
   },
   {
-    desc: 'M125 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
+    desc: 'M136 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
     file: 'tools/ownership-scan.js',
     find: `  const unclaimed = top_dirs.filter((dir) => !domains.dir_to_domain.has(dir));
   if (unclaimed.length > 0) {
