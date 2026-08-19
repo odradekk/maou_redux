@@ -78,6 +78,18 @@ npx prettier --check .   # 仅格式，--write 可自动改
 
 配置优先级：`yml/_fixed.json` > `ere.config.json` > `yml/_config.json` > 引擎默认值。
 
+**但「优先级」不是逐键分层，是整份替换**（#69 实测引擎代码）：
+
+```js
+try { this.defaultConfig = JSON.parse(…readFileSync(join(staticPath,"./_config.json"))) }
+catch(e) { this.defaultConfig = getEmptyConfigForm() }
+if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))), …)
+```
+
+- **`yml/_config.json` 是整份默认配置，不是补丁。** 它存在时 `defaultConfig` 整个就是它，引擎默认值只在文件缺失/解析失败时兜底——**没写的键不会回落默认，是直接缺失**。而缺键不中性：各消费点自行兜底且口径不一（`saveFiles` 有 `||10`、`window.*` 交渲染层、`resource` 直接 falsy 关闸）。所以这份文件必须写全 `getEmptyConfigForm()` 的形状，只标出有意偏离的那几个键。`test/resource-media.test.js` 有引擎对拍锁：逐键 deepEqual 引擎默认形状、只许 `resource` 一处偏离。
+- **已有 `ere.config.json` 的机器吃不到新默认值**：第二行的 `||` 短路——`this.config` 已由 `ere.config.json` 填好，`_config.json` 整份不参与。改了默认值要在本机生效，得手工改该键或删掉 `ere.config.json` 让引擎按新默认重建。
+- **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会硬崩或静默降级）放 `_fixed.json`——它赢过用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`——放 `_fixed.json` 会让 UI 开关点了没反应。
+
 `yml/` 的产物由 `tools/csv-to-yml.js` 生成，遵守**产物边界**（issue #10）：产物进 git、归人工维护，转换器重跑默认跳过已存在的产物，重写必须显式 `--force`——这条规则有测试钉死。产物名在**生成期**经归一表（`tools/lang-table.js`，issue #60）归一为简体（引擎列名键如 素質/名前 受保护、原样保留）——`--force` 重跑得到的产物与库内逐字节一致，不会退回源 CSV 的繁/日原名；同步守护因此只做直比，生成器漏归一即红。YAML 键名一律加引号，键含 `:` / `#` 或首尾空格时裸键名会产出无法解析的 YAML。`GameBase.yml` 的原始输入已随迁移删除，要重转先从 git 历史取回 `csv/GameBase.csv`。
 
 ## 引擎 API 与硬约束

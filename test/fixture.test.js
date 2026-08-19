@@ -48,11 +48,11 @@ test('两次夹具拿到的是不同 SDK 实例（ere/ 模块缓存已清）', (
 
 test('无专门实现的 API 走兜底记录，不抛错', () => {
   const fixture = create_era_fixture();
-  fixture.era.playMusic('bgm-title');
+  fixture.era.setAlign('center');
   fixture.era.setTitle('ERA魔王');
 
   assert.deepEqual(fixture.calls, [
-    { api: 'playMusic', args: ['bgm-title'] },
+    { api: 'setAlign', args: ['center'] },
     { api: 'setTitle', args: ['ERA魔王'] },
   ]);
 });
@@ -305,10 +305,115 @@ test('printImage：记 image 条目（无文本，对拍只留痕）', () => {
   const fixture = create_era_fixture();
   fixture.era.printImage('res-x', 'res-y');
 
+  // 空 resolved 不挂（#69 与 #68 的合并口径）：条目保持裸形状
   assert.deepEqual(fixture.lines, [
     { type: 'image', names: ['res-x', 'res-y'], row: 0 },
   ]);
   assert.deepEqual(fixture.calls, []);
+});
+
+// —— 媒体缝（issue #69）：注册表查名与解析语义镜像 app.asar 实测行为 ——
+
+test('媒体注册表：查名统一小写（引擎装载与查名两侧都小写）', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_res('TITLE');
+  fixture.seed_res('TFM-003A_17.mp3', 'audio');
+
+  // 注册名带大写，查询任意大小写都命中（引擎 eraStart 落表即小写）
+  assert.equal(fixture.era.checkImage('TITLE'), true);
+  assert.equal(fixture.era.checkImage('title'), true);
+  assert.deepEqual(fixture.era.checkImage('Tfm-003A_17.MP3', 'TITLE'), [
+    false,
+    true,
+  ]);
+});
+
+test('checkImage 只认 image 类型（音频经 playMusic 命中，引擎代码为准）', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_res('据点2.mp3', 'audio');
+
+  // dev-guides/16 宣称 checkImage 可查音乐，但 app.asar 的 checkImage 只放行
+  // image 类型——夹具按代码镜像，不按手册
+  assert.equal(fixture.era.checkImage('据点2.mp3'), false);
+  // 零参返回 false（引擎原文 `if(0===e.length)return!1`）
+  assert.equal(fixture.era.checkImage(), false);
+});
+
+test('playMusic：config 非对象重置为 {loop:false}、取第一个注册音频、落空返回 false', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_res('TITLE'); // 图片：即使排在前面也不命中（引擎只认 audio 类型）
+  fixture.seed_res('据点2.mp3', 'audio');
+
+  // 已注册的图片名在前、已注册的音频在后 → 播后者（引擎逐名找第一个音频）
+  assert.equal(
+    fixture.era.playMusic(['TITLE', '据点2.mp3'], { loop: true }),
+    true,
+  );
+  assert.deepEqual(fixture.music, [
+    {
+      api: 'play',
+      names: ['title', '据点2.mp3'],
+      config: { loop: true },
+      played: '据点2.mp3',
+    },
+  ]);
+
+  // config 缺省 → 引擎重置为 {loop: false}（Emuera PLAYBGM 默认循环，ere 相反）
+  fixture.era.playMusic('据点2.mp3');
+  assert.deepEqual(fixture.music[1].config, { loop: false });
+
+  // 全部落空：返回 false、不抛错（resource: false 时的静默回退）
+  assert.equal(fixture.era.playMusic('不存在.mp3'), false);
+  assert.equal(fixture.music[2].played, null);
+});
+
+test('stopMusic / resumeMusic 留痕（音乐事件记录面）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.stopMusic();
+  fixture.era.resumeMusic();
+
+  assert.deepEqual(fixture.music, [{ api: 'stop' }, { api: 'resume' }]);
+  // 已实现集：不落兜底 calls
+  assert.deepEqual(fixture.calls, []);
+});
+
+test('printWholeImage：\\t 容错链与空层丢弃都记进 resolved', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_res('heart');
+  fixture.seed_res('heart_r');
+
+  // 一层容错（第一个未注册、第二个命中）+ 一层全落空（该层被引擎丢弃）
+  fixture.era.printWholeImage(['HEART_X\tHEART_R\tHEART', '幽灵层\t鬼影层']);
+  const entry = fixture.lines[0];
+  assert.equal(entry.type, 'image.whole');
+  // 每层只解析出一个名字：首层取容错链第二个 heart_r，次层整体丢弃
+  assert.deepEqual(entry.resolved, ['heart_r']);
+  // falsy config 被引擎重置为 {}
+  assert.deepEqual(entry.config, {});
+});
+
+test('音乐 API 不占 Row（引擎只 connect、不调 addTotalLines）；printImage 占 1 Row', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  fixture.seed_res('据点2.mp3', 'audio');
+  fixture.seed_res('TITLE');
+  era.print('基准行');
+  const before = era.getLineCount();
+
+  // 反侧：三个音乐 API 都不改变行数（app.asar 实测：playMusic/stopMusic/
+  // resumeMusic 只 connect，无 addTotalLines）。music[] 里的三条事件证明
+  // 「行数没变」不是因为调用没发生——否则这条用例只是在测「什么都没发生」。
+  era.playMusic('据点2.mp3', { loop: true });
+  era.stopMusic();
+  era.resumeMusic();
+  assert.equal(era.getLineCount(), before);
+  assert.equal(fixture.music.length, 3);
+
+  // 正侧：同一场景下 printImage 计 1 Row（引擎结尾恰好一次 addTotalLines）
+  era.printImage('TITLE');
+  assert.equal(era.getLineCount(), before + 1);
+  // 音乐误算成行是活风险：#73 画面组件的重绘算术全靠 Row 计数，多计一行
+  // = 实机上多清一行。此用例即守住该判断的回归锁（#68 验收通则）。
 });
 
 // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎口径一致 ——

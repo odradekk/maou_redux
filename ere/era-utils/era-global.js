@@ -37,6 +37,19 @@ const era_global = {
     era.set('global:1', v);
   },
   /**
+   * 音频默认值已落盘（global:2 ↔ GLOBAL:2）
+   * @returns {number}
+   */
+  get audio_defaults_seeded() {
+    return era.get('global:2') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set audio_defaults_seeded(v) {
+    era.set('global:2', v);
+  },
+  /**
    * 联系方式开关（global:98 ↔ GLOBAL:98）
    * @returns {number}
    */
@@ -73,22 +86,43 @@ const era_global = {
 //       0=不播。原作声明默认 1。源: target/ERB/音声相关/音声的全局变量.erh
 //       「#DIM GLOBAL SAVEDATA 是否启用标题音乐 = 1」。
 //   title_music_volume   GLOBAL:1  标题音乐音量（SETBGMVOLUME 的实参）。原作声明
-//       默认 66。源同上「#DIM GLOBAL SAVEDATA 标题音乐音量 = 66」。
+//       默认 66。源同上「#DIM GLOBAL SAVEDATA 标题音乐音量 = 66」。ere 侧无逐曲
+//       音量 API（playMusic 只有 loop/fade），值只为存档保真落盘、暂无消费者。
+//   audio_defaults_seeded GLOBAL:2 ere 侧机制槽（非原作变量，issue #69）：原作
+//       随包 global.sav 预置上面两个默认值，而 ere 全新 global.sav 把声明槽位
+//       一律置 0——「原作发行态」由 seed_title_music_defaults() 一次性播种，
+//       本槽即播种标记（1=已播过，用户此后改开关不被覆盖）。
 //   contact_info_shown   GLOBAL:98 联系方式开关：0=显示「版本推进出问题」、
 //       1=显示联系方式；标题画面按钮 8 切换。源: target/ERB/SYSTEM/
 //       TITLE ver1.0.8.ERB @SYSTEM_TITLE（IF GLOBAL:98 == 0 分支）。
 //   greeting_collapsed   GLOBAL:99 致辞折叠开关：0=展开完整制作名单、1=折叠为
 //       三行摘要；标题画面按钮 9 切换。源同上（IF GLOBAL:99 == 0 分支）。
 //
-// 已知缺口（移交标题页票，见 issue #18 决议说明）：ere 引擎全新 global.sav 把
-// 声明变量一律初始化为 0（dev-guides/11-saves.md loadGlobal），原作的两个声明
-// 默认值（音乐开关 1、音量 66）引擎不会自动落盘——两个默认值有原作随包
-// global.sav 的实证（target/Sav/global.sav 按「名字」存了 是否启用标题音乐=1、
-// 标题音乐音量=66）——需要标题页初始化时显式补写，否则首局进标题没有 BGM。
-//
 // 持久化：global 表即公共存档 global.sav 的主体，引擎在每次脚本启动前自动
 // loadGlobal、在特定存档保存/读取等时机自动 saveGlobal。标题页改完开关后应像
 // 原作 SAVEGLOBAL 一样显式 await era.saveGlobal()（本模块不代劳，保持 setter 纯净）。
+
+/**
+ * 一次性播种原作发行态的标题音乐默认值（issue #69 落地 #18 移交的缺口）。
+ *
+ * 判据：global:2（播种标记）非 1 即播——全新 global.sav 的声明槽位全是 0，
+ * 本票之前生成的旧档无此槽（引擎 loadGlobal 对缺失/为假的声明槽补 0），
+ * 两者都落在「未播种」分支。播完置标记并显式 saveGlobal（原作的等价物是
+ * 随包 global.sav，ere 只能运行时补）。此后用户经设定界面关掉标题音乐，
+ * 标记仍为 1，不会被重新覆盖。
+ *
+ * @returns {Promise<boolean>} 本次是否执行了播种
+ */
+async function seed_title_music_defaults() {
+  if (era_global.audio_defaults_seeded === 1) {
+    return false;
+  }
+  era_global.title_music_enabled = 1;
+  era_global.title_music_volume = 66;
+  era_global.audio_defaults_seeded = 1;
+  await era.saveGlobal();
+  return true;
+}
 
 /**
  * 切换联系方式开关（镜像原作 GLOBAL:98 = (GLOBAL:98 + 1) % 2，按钮 8）。
@@ -107,5 +141,7 @@ era_global.toggle_greeting = () => {
   era_global.greeting_collapsed = (era_global.greeting_collapsed + 1) % 2;
   return era_global.greeting_collapsed;
 };
+
+era_global.seed_title_music_defaults = seed_title_music_defaults;
 
 module.exports = era_global;

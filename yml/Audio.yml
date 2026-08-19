@@ -1,0 +1,26 @@
+# 音频设置表（issue #69）：原作「音声的全局变量.erh」里 #DIM SAVEDATA 一族
+# （随游戏存档的音声设置）的 ere 落点。与标题音乐那对 GLOBAL 变量（yml/
+# Global.yml id 0/1）不同类：GLOBAL 走公共存档、跨局共享，SAVEDATA 随
+# saveData/resetData 存清——引擎侧由扩展普通表自动承载（app.asar eraStart：
+# 非内建表名落 yml 即注册为扩展普通表，fillData 自动建 data 桶并把声明槽位
+# 置 0；saveData 整存 this.data、resetData 重建桶——存清语义与 #DIM SAVEDATA
+# 一致。引擎自己的 setVar 已实测接受 audio:0 与 audio:中文名 两种寻址）。
+#
+# 本表为人工产出（先例：Global.yml，issue #18），不经 csv-to-yml 生成。
+# 条目与 id 分配：
+#   id 0/1 = 是否启用背景音乐 / 背景音乐音量（主菜单 BGM 的开关与音量，
+#   DRAW_MAINMENU.ERB:12-14 的读点）。开关无声明默认值（新档 0=不播，原作
+#   新档本来也不播 BGM——MOD_SWITCH 是唯一写点，见资源级欠账）；音量原作
+#   声明默认 66，但 ere 侧无逐曲音量 API（playMusic 只有 loop/fade），留待
+#   首个消费者（设定票）落地时播种。
+#   语音对（是否启用语音 / 语音音量，erh:5-6）随语音子系统票增补。
+#
+# 包装层产物：ere/era-utils/era-audio.js（tools/gen-wrapper.js 生成初稿）。
+"是否启用背景音乐":
+  id: 0
+  name: "bgm_enabled"
+  type: "number"
+"背景音乐音量":
+  id: 1
+  name: "bgm_volume"
+  type: "number"

@@ -20,6 +20,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0 } = require('./helpers/chara');
 const { preset_gamebase } = require('./helpers/gamebase');
+const { preset_audio_seeded } = require('./helpers/audio');
 
 test('首屏：标题、版本行、作者、年份、展开名单、信息行与四个按钮', async () => {
   const fixture = create_era_fixture();
@@ -180,6 +181,8 @@ test('按钮 8：切换联系方式开关 → 写 global:98、存公共存档、
 test('按钮 9 两次：(n+1)%2 往返，回到展开态', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 预置播种标记：避免 #69 的默认值播种在本用例多出一次 saveGlobal
+  preset_audio_seeded(fixture);
   fixture.set_inputs(9, 9);
   const run_title_page = fixture.load_module('page/page-title');
 
@@ -215,6 +218,9 @@ test('无法识别的输入：重绘标题画面，不崩溃（原作 ELSE → R
 test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函数（issue #20）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 预置播种标记：跳过标题音乐默认值播种（#69，播种自身的用例在文件尾），
+  // 让本用例的全量 var_writes 断言只看见新游戏路径的写入
+  preset_audio_seeded(fixture);
   // 预置角色 0（yml/Chara0.yml 的运行时形状）：夹具的 addCharacter 镜像
   // 引擎守卫（无预设不加，#35），预置后下面的「加入成功」断言才是引擎语义
   preset_chara_0(fixture);
@@ -271,6 +277,8 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
 test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 同上：预置播种标记，避开 #69 的默认值播种写入
+  preset_audio_seeded(fixture);
   fixture.set_inputs(0);
   const run_title_page = fixture.load_module('page/page-title');
 
@@ -282,4 +290,103 @@ test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () 
   ]);
   assert.deepEqual(fixture.var_writes, []);
   assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
+});
+
+// —— 标题音乐与标题图（issue #69：原作 :3-7 / :22-23 / :95 / :105）——
+
+test('标题音乐：全新 global.sav 播种后进标题即播 TFM-003A_17（循环）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  fixture.seed_res('TFM-003A_17.mp3', 'audio');
+  const run_title_page = fixture.load_module('page/page-title');
+
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+
+  // 播种（global:0=1/66/标记）先于播放；PLAYBGM 在 Emuera 默认循环，ere 的
+  // playMusic 缺省不循环，必须显式 {loop: true}（app.asar 实证）
+  assert.equal(fixture.store.get('global:0'), 1);
+  assert.deepEqual(fixture.music, [
+    {
+      api: 'play',
+      names: ['tfm-003a_17.mp3'],
+      config: { loop: true },
+      played: 'tfm-003a_17.mp3',
+    },
+  ]);
+});
+
+test('标题音乐：RESTART 重绘不重播（PLAYBGM 在 $PRINT_TITLE 标签之前，只播一次）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  fixture.seed_res('TFM-003A_17.mp3', 'audio');
+  // 无法识别的输入 → 原作 RESTART 重绘，两轮循环后仍只有一次播放
+  fixture.set_inputs(42, 42);
+  const run_title_page = fixture.load_module('page/page-title');
+
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+
+  assert.equal(fixture.music.length, 1);
+});
+
+test('标题音乐：开关关着（播种过、用户关掉）不播；资源未启用也不报错', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  // 用户关掉音乐：标记在、开关 0；且不 seed_res——资源未注册时 playMusic
+  // 根本不该被调（守卫在前）
+  preset_audio_seeded(fixture);
+  fixture.store.set('global:0', 0);
+  const run_title_page = fixture.load_module('page/page-title');
+
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+
+  assert.deepEqual(fixture.music, []);
+  assert.deepEqual(fixture.var_writes, []);
+});
+
+test('离开标题停曲：新游戏与读档占位两分支都 STOPBGM（原作 :95/:105）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  preset_audio_seeded(fixture); // 跳过播种（音乐开关随之为 0，不影响停曲断言）
+  fixture.set_inputs(1);
+  const run_title_page = fixture.load_module('page/page-title');
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
+
+  await assert.rejects(
+    () => run_title_page(),
+    (e) => e instanceof BeginSignal && e.state === STATE.FIRST,
+  );
+  assert.deepEqual(fixture.music, [{ api: 'stop' }]);
+
+  const second = create_era_fixture();
+  preset_gamebase(second);
+  preset_audio_seeded(second);
+  second.set_inputs(0);
+  const run_again = second.load_module('page/page-title');
+  await assert.rejects(() => run_again(), /预置输入已耗尽/);
+  assert.deepEqual(second.music, [{ api: 'stop' }]);
+});
+
+test('标题图：资源在场时显示 TITLE 全图，缺席时纯文本兜底（原作 :23）', async () => {
+  const with_image = create_era_fixture();
+  preset_gamebase(with_image);
+  with_image.seed_res('TITLE');
+  const run_with = with_image.load_module('page/page-title');
+  await assert.rejects(() => run_with(), /预置输入已耗尽/);
+
+  // image.whole 条目 + resolved 记录引擎解析出的注册名（小写）
+  const entry = with_image.lines.find((line) => line.type === 'image.whole');
+  assert.ok(entry, '资源在场必须输出标题图');
+  assert.equal(entry.names, 'TITLE');
+  assert.deepEqual(entry.resolved, ['title']);
+
+  const without_image = create_era_fixture();
+  preset_gamebase(without_image);
+  const run_without = without_image.load_module('page/page-title');
+  await assert.rejects(() => run_without(), /预置输入已耗尽/);
+
+  // resource: false（未注册）时 checkImage 恒假——无图可显、纯文本标题兜底
+  assert(!without_image.lines.some((line) => line.type === 'image.whole'));
+  assert(without_image.text_lines().includes('伪Ver93.106立绘版'));
 });

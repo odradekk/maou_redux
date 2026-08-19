@@ -26,13 +26,15 @@ test('未初始化读取返回 0 而非 undefined（#13 引擎行为 + 包装层
   // 序号的行为一致）。包装层不得把 undefined 漏给调用方。
   assert.equal(era_global.title_music_enabled, 0);
   assert.equal(era_global.title_music_volume, 0);
+  assert.equal(era_global.audio_defaults_seeded, 0);
   assert.equal(era_global.contact_info_shown, 0);
   assert.equal(era_global.greeting_collapsed, 0);
 
-  // 四个访问器读的都是数字（undefined + 1 === NaN 类事故的根）
+  // 各访问器读的都是数字（undefined + 1 === NaN 类事故的根）
   for (const value of [
     era_global.title_music_enabled,
     era_global.title_music_volume,
+    era_global.audio_defaults_seeded,
     era_global.contact_info_shown,
     era_global.greeting_collapsed,
   ]) {
@@ -88,4 +90,51 @@ test('手写区业务方法与生成区访问器共存：toggle 0↔1 往返', (
   // 切换落盘到对应序号
   assert.equal(fixture.store.get('global:99'), 0);
   assert.equal(fixture.store.get('global:98'), 0);
+});
+
+// —— 标题音乐默认值播种（issue #69 落地 #18 移交的缺口）——
+//
+// 原作随包 global.sav 预置 是否启用标题音乐=1、标题音乐音量=66；ere 引擎
+// 全新 global.sav 把声明槽位一律置 0，且本票之前生成的旧档没有 global:2
+// 槽（loadGlobal 对缺失声明槽补 0）——两种档都应落在「未播种」分支。
+
+test('seed_title_music_defaults：未播种的档补写 1/66 并置标记、显式落公共存档', async () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+
+  assert.equal(await era_global.seed_title_music_defaults(), true);
+  // 播种恰为三个槽：开关 1、音量 66、标记 1（变异任一默认值在此红）
+  assert.deepEqual(fixture.var_writes, [
+    { name: 'global:0', value: 1 },
+    { name: 'global:1', value: 66 },
+    { name: 'global:2', value: 1 },
+  ]);
+  assert.equal(fixture.store.get('global:0'), 1);
+  // 原作的等价物是随包 global.sav，ere 只能运行时补 + 显式保存
+  assert(fixture.calls.some((c) => c.api === 'saveGlobal'));
+});
+
+test('seed_title_music_defaults：标记已置则不播（用户关掉的标题音乐不被覆盖）', async () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+  // 播种过、但用户（经原作设定菜单）把音乐关了
+  fixture.store.set('global:2', 1);
+  fixture.store.set('global:0', 0);
+
+  assert.equal(await era_global.seed_title_music_defaults(), false);
+  assert.deepEqual(fixture.var_writes, []);
+  assert(!fixture.calls.some((c) => c.api === 'saveGlobal'));
+  // 用户偏好原样保留
+  assert.equal(era_global.title_music_enabled, 0);
+});
+
+test('seed_title_music_defaults：本票之前的旧档（无 global:2 槽）也落在播种分支', async () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+  // 旧档形态：只有 0/98/99 槽，2 槽缺失（读值得 undefined → 兜底 0）
+  fixture.store.set('global:98', 1);
+
+  assert.equal(await era_global.seed_title_music_defaults(), true);
+  assert.equal(fixture.store.get('global:0'), 1);
+  assert.equal(fixture.store.get('global:2'), 1);
 });

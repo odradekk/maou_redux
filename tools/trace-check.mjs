@@ -67,6 +67,7 @@ const EXCOM = 'target/ERB/其他/EXCOM.ERB';
 const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
 const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
 const DRAW_EXT_COMM = 'target/ERB/其他/DRAW_EXT_COMM.ERB';
+const TITLE = 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -1047,6 +1048,21 @@ const FILES = [
   //    正确行段一致，属注释烂、非移植缺陷。多来源：主源 DRAW_MAINMENU +
   //    按钮明暗 EXT_COMM + A 计数守卫 SHOP）——
   {
+    // 标题画面（#69 新审计的引用：音乐与标题图接线；其余存量在豁免表）
+    js: 'ere/page/page-title.js',
+    refs: [
+      // 标题音乐：音量无引擎等价物，值仅为存档保真播种（era-global）
+      { src: TITLE, ref: '5', any: [/SETBGMVOLUME 标题音乐音量/] },
+      // 标题图：HTML_PRINT <img src='TITLE'>（:22 旧引用偏早一行，#63 同款）
+      { src: TITLE, ref: '23', any: [/img src='TITLE'/] },
+      // 图下两个空行（旧引用 :23-24 同样偏早，随 #69 审计订正）
+      { src: TITLE, ref: '26-27', any: [/^PRINTL\s*$/m] },
+      // 离开标题停曲：新游戏（RESULT==1）与读档（RESULT==0）两分支
+      { src: TITLE, ref: '95', any: [/^\s*STOPBGM\s*$/m] },
+      { src: TITLE, ref: '105', any: [/^\s*STOPBGM\s*$/m] },
+    ],
+  },
+  {
     js: 'ere/page/page-main-menu.js',
     refs: [
       // @DRAW_MAINMENU 骨架与文件头注明的四个子面板函数（函数体存根）
@@ -1059,7 +1075,7 @@ const FILES = [
         any: [/^@DRAW_DUNGEON_OVERVIEW\s*$/m],
       },
       { src: DRAW_MAINMENU, ref: '583', any: [/^@DRAW_DUNGEON_DAILY\s*$/m] },
-      // BGM 段（未接，随音频票）
+      // BGM 段（#69 起接通：开关开时播据点2.mp3，音量无引擎等价物）
       { src: DRAW_MAINMENU, ref: '11-17', any: [/PLAYBGM/] },
       // 防御性修正（バグ対策）与 @EVENTSHOP 的同型段
       {
@@ -2274,8 +2290,6 @@ const ERB_EXEMPT_BASELINE = {
     '17',
     '19',
     '20-21',
-    '22',
-    '23-24',
     '25-26',
     '27',
     '29-35',
