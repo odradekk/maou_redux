@@ -1,12 +1,12 @@
-# 区段所有权表（CFLAG）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #66）
+# 区段所有权表（CFLAG，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cflag
 #
-# 口径：写入 = 赋值与复合赋值（寻址段允许括号角色槽），剥除 ; 注释后的实活代码；
-#       读取不入本表。区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间；
-#       区间内分布按区间聚合，逐下标明细可由重跑复算（同步守护逐字节直比）。
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
 # 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
-# 实活写入 11435（动态下标 19 未归类；注释掉的写入 305 另计）；
-# 实活下标 248 个 → 区间 106 条；跨域写入 736 条（见 cflag-cross-domain-writes.yml）。
+# 实活写入 11439（动态/表级 19 未归类；注释掉的写入 307 另计）；
+# 实活下标 247 个 → 区间 104 条；跨域写入 740 条（见 cflag-cross-domain-writes.yml）。
 "0":
   owner: stronghold
   writes: 4
@@ -15,12 +15,12 @@
     event: 1
 "1":
   owner: invasion
-  writes: 135
+  writes: 139
   by_domain:
     invasion: 45
     dungeon: 37
+    system: 19
     chara: 18
-    system: 15
     event: 11
     stronghold: 5
     patch: 4
@@ -208,11 +208,6 @@
   by_domain:
     train: 4
     event: 4
-"99":
-  owner: system
-  writes: 1
-  by_domain:
-    system: 1
 "100":
   owner: event
   writes: 1
@@ -281,9 +276,9 @@
     dungeon: 1
 "130-131":
   owner: dungeon
-  writes: 2
+  writes: 3
   by_domain:
-    dungeon: 2
+    dungeon: 3
 "151-152":
   owner: chara
   writes: 17
@@ -375,10 +370,9 @@
     kojo: 1
 "400":
   owner: kojo
-  writes: 2
+  writes: 1
   by_domain:
     kojo: 1
-    patch: 1
 "420":
   owner: chara
   writes: 3
@@ -482,23 +476,16 @@
     system: 5
     chara: 2
     event: 2
-"508":
-  owner: event
-  writes: 10
-  by_domain:
-    event: 3
-    dungeon: 2
-    invasion: 2
-    chara: 1
-    system: 1
-    patch: 1
-"509":
+"508-509":
   owner: dungeon
-  writes: 11
+  writes: 22
   by_domain:
-    dungeon: 9
-    invasion: 1
-    system: 1
+    dungeon: 12
+    invasion: 3
+    event: 3
+    system: 2
+    chara: 1
+    patch: 1
 "510-511":
   owner: event
   writes: 8

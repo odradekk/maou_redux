@@ -992,48 +992,148 @@ const MUTATIONS = [
     expect_only: '清单只能变短',
   },
   // —— #66 T22 区段所有权扫描器：产物边界 / 同步守护 / 属主决胜 / 跨域滤芯 ——
+  // （#70 重构后 find 同步到新代码；被测规则不变）
   {
     desc: 'M99 产物边界失效：所有权表永远强制重写（人工修改不再幸存）',
     file: 'tools/ownership-scan.js',
-    find: `    write_product(
-      path.join(out_dir, TABLES[table].ownership_product),
-      result.ownership_yaml,
-      {
-        force,
-      },
-    ),`,
-    replace: `    write_product(
-      path.join(out_dir, TABLES[table].ownership_product),
-      result.ownership_yaml,
-      { force: true },
-    ),`,
+    find: `    reports.push(
+      write_product(
+        path.join(out_dir, \`\${key}-ownership.yml\`),
+        result.tables.get(key).ownership_yaml,
+        {
+          force,
+        },
+      ),
+    );`,
+    replace: `    reports.push(
+      write_product(
+        path.join(out_dir, \`\${key}-ownership.yml\`),
+        result.tables.get(key).ownership_yaml,
+        { force: true },
+      ),
+    );`,
     tests: ['ownership-scan'],
     expect_only: '人工修改幸存',
   },
   {
-    desc: 'M100 括号角色槽寻址被砍掉（退回工单正则口径——同步守护必须红）',
+    desc: 'M100 寻址段字符集退回 ASCII（名字下标与 CJK 槽位全丢——同步守护必须红）',
     file: 'tools/ownership-scan.js',
-    find: "    addr_re: new RegExp(\n      `${variable}:(?:\\\\([^)]*\\\\)|[0-9A-Za-z_]+)(?::(?:\\\\([^)]*\\\\)|[0-9A-Za-z_]+))*`,\n      'g',\n    ),",
-    replace:
-      "    addr_re: new RegExp(\n      `${variable}:[0-9A-Za-z_]+(?::[0-9A-Za-z_]+)*`,\n      'g',\n    ),",
+    find: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_\\u3000-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\uFF00-\\uFFEF]+)`;',
+    replace: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_]+)`;',
     tests: ['ownership-scan'],
     expect_only: '逐字节一致',
   },
   {
-    desc: 'M101 属主决胜反转：并列改取后声明者（下标 400 的 kojo/patch 并列翻转）',
+    desc: 'M101 属主决胜反转：并列改取后声明者（tflag 夹具的 1:1 并列翻转）',
     file: 'tools/ownership-scan.js',
     find: '      if (count > best) {',
     replace: '      if (count >= best) {',
     tests: ['ownership-scan'],
-    expect_only: '逐字节一致',
+    expect_only: '属主判定',
   },
   {
     desc: 'M102 跨域滤芯反接（只收属主自己的写入——清单测试必须红）',
     file: 'tools/ownership-scan.js',
-    find: '        owner_of_index.get(entry.index) !== entry.domain,',
-    replace: '        owner_of_index.get(entry.index) === entry.domain,',
+    find: '          entry.index !== null &&\n          owner_of_index.get(entry.index) !== entry.domain,',
+    replace:
+      '          entry.index !== null &&\n          owner_of_index.get(entry.index) === entry.domain,',
     tests: ['ownership-scan'],
-    expect_only: '逐条具名',
+    expect_only: '跨域写入清单',
+  },
+
+  // —— #70 全表实测：新写形 / 词边界 / 名字下标 / ignored 语义 / 跨域读汇总 ——
+  {
+    desc: 'M128 词边界负向后行被砍（EX_CFLAG 的假写回流——词边界用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "  return new RegExp(\n    `(?<![0-9A-Za-z_])(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
+    replace:
+      "  return new RegExp(\n    `(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
+    tests: ['ownership-scan'],
+    expect_only: '词边界',
+  },
+  {
+    desc: "M117 字符串赋值 '= 不再算写入（CSTR 写形用例必须红）",
+    file: 'tools/ownership-scan.js',
+    find: "const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^']|<<|>>)?=[ \\t]*[^=]/;",
+    replace: 'const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^]|<<|>>)?=[ \\t]*[^=]/;',
+    tests: ['ownership-scan'],
+    expect_only: '字符串赋值',
+  },
+  {
+    desc: 'M129 后缀 ++/-- 不再算写入（ABL/MARK/CFLAG 自增丢失——写形用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '    if (ASSIGN_OP_RE.test(rest) || POSTFIX_OP_RE.test(rest)) {',
+    replace: '    if (ASSIGN_OP_RE.test(rest)) {',
+    tests: ['ownership-scan'],
+    expect_only: '后缀',
+  },
+  {
+    desc: 'M130 TIMES 不再算写入（SOURCE 乘法赋值全丢——TIMES 用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "  if (command === 'TIMES') {",
+    replace: "  if (command === 'TIMES_NEVER') {",
+    tests: ['ownership-scan'],
+    expect_only: 'TIMES',
+  },
+  {
+    desc: 'M131 VARSET 区间右端改包含（止端下标也写入——左闭右开用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '      for (let i = Number(start); i < Number(end); i += 1) {',
+    replace: '      for (let i = Number(start); i <= Number(end); i += 1) {',
+    tests: ['ownership-scan'],
+    expect_only: '左闭右开',
+  },
+  {
+    desc: 'M132 名字下标不再归一（繁/日形态查不到表——归一用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "const { to_simplified } = require('./lang-normalize');",
+    replace: 'const { to_simplified } = { to_simplified: (x) => x };',
+    tests: ['ownership-scan'],
+    expect_only: '归一',
+  },
+  {
+    desc: 'M133 跨域读判定反接（只统计本域读——同步守护与跨域读者锚点必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '        if (reader !== owner) {\n          cross_total += count;',
+    replace: '        if (reader === owner) {\n          cross_total += count;',
+    tests: ['ownership-scan'],
+    expect_only: '逐字节一致',
+  },
+  {
+    desc: 'M134 ignored 文件不再跳过测量（TITLE.ERB 死代码写入回流——ignored 用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '    if (rel.length === 1 && ignored.has(rel[0])) {\n      continue; // 死代码：引擎不装载，整体跳过\n    }',
+    replace: '    void ignored;',
+    tests: ['ownership-scan'],
+    expect_only: 'ignored',
+  },
+  {
+    desc: 'M135 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: `  const missing_ignored = domains.ignored_files.filter(
+    (name) => !root_files.includes(name),
+  );
+  if (missing_ignored.length > 0) {
+    throw new Error(
+      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据发霉，删掉或改对）\`,
+    );
+  }`,
+    replace: '  void root_files;',
+    tests: ['ownership-scan'],
+    expect_only: '声明了不存在的文件',
+  },
+  {
+    desc: 'M136 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: `  const unclaimed = top_dirs.filter((dir) => !domains.dir_to_domain.has(dir));
+  if (unclaimed.length > 0) {
+    throw new Error(
+      \`ERB 根下有未被域清单认领的一级目录：\${unclaimed.join('、')}（在 ownership/domains.yml 里给它们归属一个域）\`,
+    );
+  }`,
+    replace: '  void top_dirs;',
+    tests: ['ownership-scan'],
+    expect_only: '未认领',
   },
 
   // —— #67 自造扩展表 portcflag：接入 / 预设 / 登记 / 名字表的自证 ——

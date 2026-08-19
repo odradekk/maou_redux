@@ -1,0 +1,73 @@
+# 区段所有权表（TEQUIP，一维表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table tequip
+#
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 67（动态/表级 0 未归类；注释掉的写入 2 另计）；
+# 实活下标 29 个 → 区间 12 条；跨域写入 8 条（见 tequip-cross-domain-writes.yml）。
+"11":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 2
+"13-19":
+  owner: train
+  writes: 13
+  by_domain:
+    train: 13
+"21":
+  owner: train
+  writes: 1
+  by_domain:
+    train: 1
+"22":
+  owner: system
+  writes: 6
+  by_domain:
+    system: 4
+    train: 2
+"35":
+  owner: event
+  writes: 6
+  by_domain:
+    event: 3
+    train: 2
+    system: 1
+"36-37":
+  owner: train
+  writes: 6
+  by_domain:
+    train: 3
+    system: 3
+"43-47":
+  owner: train
+  writes: 8
+  by_domain:
+    train: 8
+"49":
+  owner: train
+  writes: 1
+  by_domain:
+    train: 1
+"53-55":
+  owner: train
+  writes: 9
+  by_domain:
+    train: 9
+"57-59":
+  owner: train
+  writes: 6
+  by_domain:
+    train: 6
+"88-90":
+  owner: train
+  writes: 6
+  by_domain:
+    train: 6
+"98":
+  owner: train
+  writes: 3
+  by_domain:
+    train: 3

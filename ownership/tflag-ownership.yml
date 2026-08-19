@@ -1,0 +1,279 @@
+# 区段所有权表（TFLAG，一维表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table tflag
+#
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 1035（动态/表级 6 未归类；注释掉的写入 21 另计）；
+# 实活下标 248 个 → 区间 45 条；跨域写入 163 条（见 tflag-cross-domain-writes.yml）。
+"0-9":
+  owner: train
+  writes: 128
+  by_domain:
+    train: 100
+    system: 18
+    event: 10
+"10-11":
+  owner: system
+  writes: 9
+  by_domain:
+    system: 5
+    train: 2
+    event: 2
+"12-15":
+  owner: train
+  writes: 101
+  by_domain:
+    train: 50
+    kojo: 20
+    event: 14
+    system: 13
+    stronghold: 4
+"16":
+  owner: event
+  writes: 11
+  by_domain:
+    event: 6
+    train: 3
+    patch: 2
+"17":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 1
+    event: 1
+"18":
+  owner: dungeon
+  writes: 19
+  by_domain:
+    dungeon: 13
+    train: 3
+    system: 2
+    event: 1
+"19-20":
+  owner: train
+  writes: 37
+  by_domain:
+    train: 35
+    event: 2
+"21-24":
+  owner: system
+  writes: 20
+  by_domain:
+    system: 12
+    train: 4
+    event: 4
+"25-28":
+  owner: train
+  writes: 12
+  by_domain:
+    train: 4
+    event: 4
+    system: 4
+"29":
+  owner: system
+  writes: 4
+  by_domain:
+    system: 2
+    train: 1
+    event: 1
+"30":
+  owner: train
+  writes: 41
+  by_domain:
+    train: 36
+    system: 4
+    event: 1
+"31":
+  owner: event
+  writes: 16
+  by_domain:
+    event: 15
+    system: 1
+"32":
+  owner: kojo
+  writes: 127
+  by_domain:
+    kojo: 124
+    train: 1
+    event: 1
+    system: 1
+"33":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"34":
+  owner: train
+  writes: 3
+  by_domain:
+    train: 2
+    event: 1
+"35":
+  owner: system
+  writes: 3
+  by_domain:
+    system: 2
+    event: 1
+"36-37":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 2
+"38":
+  owner: train
+  writes: 25
+  by_domain:
+    train: 24
+    event: 1
+"39":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"40-42":
+  owner: train
+  writes: 29
+  by_domain:
+    train: 26
+    event: 3
+"43-44":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 2
+"45":
+  owner: system
+  writes: 18
+  by_domain:
+    system: 17
+    event: 1
+"46-49":
+  owner: event
+  writes: 4
+  by_domain:
+    event: 4
+"50":
+  owner: system
+  writes: 3
+  by_domain:
+    system: 2
+    event: 1
+"51-57":
+  owner: event
+  writes: 7
+  by_domain:
+    event: 7
+"58":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 1
+    event: 1
+"59-99":
+  owner: event
+  writes: 46
+  by_domain:
+    event: 43
+    system: 3
+"100":
+  owner: train
+  writes: 45
+  by_domain:
+    train: 34
+    stronghold: 10
+    event: 1
+"101-102":
+  owner: stronghold
+  writes: 16
+  by_domain:
+    stronghold: 14
+    event: 2
+"103-119":
+  owner: event
+  writes: 19
+  by_domain:
+    event: 18
+    train: 1
+"120-121":
+  owner: system
+  writes: 6
+  by_domain:
+    system: 4
+    event: 2
+"122-149":
+  owner: event
+  writes: 28
+  by_domain:
+    event: 28
+"150":
+  owner: system
+  writes: 5
+  by_domain:
+    system: 4
+    event: 1
+"151-199":
+  owner: event
+  writes: 49
+  by_domain:
+    event: 49
+"200":
+  owner: train
+  writes: 49
+  by_domain:
+    train: 42
+    system: 6
+    event: 1
+"204":
+  owner: train
+  writes: 3
+  by_domain:
+    train: 3
+"224":
+  owner: train
+  writes: 5
+  by_domain:
+    train: 5
+"400-402":
+  owner: train
+  writes: 42
+  by_domain:
+    train: 39
+    stronghold: 2
+    event: 1
+"500":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"510":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"520":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"530":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"860":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 2
+"864-899":
+  owner: train
+  writes: 81
+  by_domain:
+    train: 81
+"999":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 2

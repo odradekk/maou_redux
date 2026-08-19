@@ -1,0 +1,123 @@
+# 区段所有权表（ABL，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table abl
+#
+# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
+#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。
+#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 208（动态/表级 3 未归类；注释掉的写入 0 另计）；
+# 实活下标 41 个 → 区间 16 条；跨域写入 87 条（见 abl-cross-domain-writes.yml）。
+"0-3":
+  owner: system
+  writes: 33
+  by_domain:
+    system: 22
+    train: 8
+    patch: 3
+"4-9":
+  owner: train
+  writes: 7
+  by_domain:
+    train: 6
+    stronghold: 1
+"10-12":
+  owner: system
+  writes: 53
+  by_domain:
+    system: 28
+    train: 14
+    stronghold: 4
+    event: 3
+    patch: 3
+    dungeon: 1
+"13-15":
+  owner: train
+  writes: 12
+  by_domain:
+    train: 6
+    stronghold: 3
+    patch: 3
+"16-17":
+  owner: system
+  writes: 19
+  by_domain:
+    system: 10
+    train: 4
+    stronghold: 2
+    patch: 2
+    chara: 1
+"18-19":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 2
+"20":
+  owner: train
+  writes: 4
+  by_domain:
+    train: 2
+    chara: 1
+    stronghold: 1
+"21":
+  owner: system
+  writes: 9
+  by_domain:
+    system: 5
+    train: 2
+    chara: 1
+    stronghold: 1
+"22":
+  owner: chara
+  writes: 16
+  by_domain:
+    chara: 8
+    system: 5
+    train: 2
+    stronghold: 1
+"23":
+  owner: system
+  writes: 11
+  by_domain:
+    system: 5
+    train: 2
+    chara: 2
+    stronghold: 1
+    patch: 1
+"24-29":
+  owner: stronghold
+  writes: 6
+  by_domain:
+    stronghold: 6
+"30-33":
+  owner: train
+  writes: 19
+  by_domain:
+    train: 9
+    stronghold: 4
+    patch: 3
+    chara: 1
+    invasion: 1
+    event: 1
+"34-36":
+  owner: stronghold
+  writes: 3
+  by_domain:
+    stronghold: 3
+"37":
+  owner: train
+  writes: 5
+  by_domain:
+    train: 2
+    dungeon: 2
+    stronghold: 1
+"38":
+  owner: stronghold
+  writes: 1
+  by_domain:
+    stronghold: 1
+"39-40":
+  owner: train
+  writes: 5
+  by_domain:
+    train: 3
+    stronghold: 2

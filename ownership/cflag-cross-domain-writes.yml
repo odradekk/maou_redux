@@ -1,9 +1,9 @@
-# 跨域写入清单（CFLAG）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #66）
+# 跨域写入清单（CFLAG）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cflag
 #
-# 定义：写入者域 ≠ 该下标属主域 的每一次写入（属主判定见 cflag-ownership.yml），
-#       按「下标、文件、行号」排序。动态下标的写入无属主可比，不入本清单。
-# 共 736 条。
+# 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
+#       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
+# 共 740 条。
 - index: 0
   writer: event
   owner: stronghold
@@ -223,6 +223,21 @@
   writer: system
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
+  line: 556
+- index: 1
+  writer: system
+  owner: invasion
+  file: "target/ERB/其他/NINSIN.ERB"
+  line: 621
+- index: 1
+  writer: system
+  owner: invasion
+  file: "target/ERB/其他/NINSIN.ERB"
+  line: 623
+- index: 1
+  writer: system
+  owner: invasion
+  file: "target/ERB/其他/NINSIN.ERB"
   line: 874
 - index: 1
   writer: system
@@ -239,6 +254,11 @@
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 1093
+- index: 1
+  writer: system
+  owner: invasion
+  file: "target/ERB/其他/NINSIN.ERB"
+  line: 1094
 - index: 1
   writer: system
   owner: invasion
@@ -2374,11 +2394,6 @@
   owner: chara
   file: "target/ERB/魔改新增/處刑改寫.ERB"
   line: 349
-- index: 400
-  writer: patch
-  owner: kojo
-  file: "target/ERB/MOD/mod开关ver1.0.11/MOD_SWITCH ver1.0.11.ERB"
-  line: 75
 - index: 420
   writer: stronghold
   owner: chara
@@ -3005,38 +3020,43 @@
   file: "target/ERB/迷宮/LABO_DUNGEON_MAP.ERB"
   line: 218
 - index: 508
+  writer: event
+  owner: dungeon
+  file: "target/ERB/EVENT/ENTER_ENEMY.ERB"
+  line: 300
+- index: 508
+  writer: event
+  owner: dungeon
+  file: "target/ERB/EVENT/ENTER_ENEMY.ERB"
+  line: 385
+- index: 508
   writer: chara
-  owner: event
+  owner: dungeon
   file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
   line: 128
 - index: 508
   writer: invasion
-  owner: event
+  owner: dungeon
   file: "target/ERB/侵略/AGENT/AGENT.ERB"
   line: 220
 - index: 508
   writer: invasion
-  owner: event
+  owner: dungeon
   file: "target/ERB/侵略/AGENT/AGENT.ERB"
   line: 236
 - index: 508
   writer: system
-  owner: event
+  owner: dungeon
   file: "target/ERB/其他/NTR.ERB"
   line: 31
 - index: 508
-  writer: dungeon
-  owner: event
-  file: "target/ERB/迷宮/DUNGEON.ERB"
-  line: 219
-- index: 508
-  writer: dungeon
-  owner: event
-  file: "target/ERB/迷宮/DUNGEON.ERB"
-  line: 260
+  writer: event
+  owner: dungeon
+  file: "target/ERB/處刑相關/EXECUTION.ERB"
+  line: 301
 - index: 508
   writer: patch
-  owner: event
+  owner: dungeon
   file: "target/ERB/魔改新增/處刑改寫.ERB"
   line: 346
 - index: 509
