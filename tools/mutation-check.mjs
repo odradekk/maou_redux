@@ -1342,7 +1342,7 @@ const MUTATIONS = [
   // 注：编号 M900+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
   // 按实际情况统一改号；前四票曾因各自从 M99 起编撞号四次）。
   {
-    desc: 'M900 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
+    desc: 'M137 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
     file: 'ere/page/components/screen-block.js',
     find: '    const span = era.getLineCount() - this.anchor_row;',
     replace: '    const span = this.row_count;',
@@ -1350,7 +1350,7 @@ const MUTATIONS = [
     expect_only: '上方内容完好',
   },
   {
-    desc: 'M901 重绘不清屏直接重画（退回追加式——屏幕随交互增长）',
+    desc: 'M138 重绘不清屏直接重画（退回追加式——屏幕随交互增长）',
     file: 'ere/page/components/screen-block.js',
     find: `    const span = era.getLineCount() - this.anchor_row;
     if (span > 0) {`,
@@ -1360,7 +1360,7 @@ const MUTATIONS = [
     expect_only: '上方内容完好',
   },
   {
-    desc: 'M902 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
+    desc: 'M139 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
     file: 'ere/page/components/screen-block.js',
     find: `    this.anchor_row = era.getLineCount();
     await this.draw_content();`,
@@ -1370,7 +1370,7 @@ const MUTATIONS = [
     expect_only: '上方内容完好',
   },
   {
-    desc: 'M903 行数不测量（row_count 恒 0——「组件自知占几行」失守）',
+    desc: 'M140 行数不测量（row_count 恒 0——「组件自知占几行」失守）',
     file: 'ere/page/components/screen-block.js',
     find: '    this.row_count = era.getLineCount() - this.anchor_row;',
     replace: '    this.row_count = 0;',
@@ -1378,7 +1378,7 @@ const MUTATIONS = [
     expect_only: '行数测量',
   },
   {
-    desc: 'M904 menu_button 删调暗色（未选中态与选中态同色）',
+    desc: 'M141 menu_button 删调暗色（未选中态与选中态同色）',
     file: 'ere/page/components/menu-button.js',
     find: '    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,',
     replace: '    undefined,',
@@ -1386,7 +1386,7 @@ const MUTATIONS = [
     expect_only: '调暗',
   },
   {
-    desc: 'M905 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
+    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
     file: 'ere/page/components/menu-button.js',
     find: '    `▌${label}`,',
     replace: '    `[${accelerator}] ▌${label}`,',
@@ -1394,7 +1394,7 @@ const MUTATIONS = [
     expect_only: '编号前缀',
   },
   {
-    desc: 'M906 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
+    desc: 'M143 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
     file: 'ere/page/page-shop.js',
     find: '  return main_menu.redraw();',
     replace: '  return main_menu.draw();',
@@ -1402,7 +1402,7 @@ const MUTATIONS = [
     expect_only: '不涨屏',
   },
   {
-    desc: 'M907 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
+    desc: 'M144 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
     file: 'ere/page/page-shop.js',
     find: '  const main_menu = create_main_menu();',
     replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
@@ -1412,7 +1412,7 @@ const MUTATIONS = [
   },
   // —— #73 发回整改：分发期输出必须被玩家看到再被重绘清掉 ——
   {
-    desc: 'M908 分发期存根退回纯 print（stub_line_wait 丢掉等键——玩家看不到）',
+    desc: 'M145 分发期存根退回纯 print（stub_line_wait 丢掉等键——玩家看不到）',
     file: 'ere/utils/stub-line.js',
     find: `async function stub_line_wait(erb_name, note, owner) {
   era.print(stub_text(erb_name, note, owner));
@@ -1425,7 +1425,7 @@ const MUTATIONS = [
     expect_only: '玩家先看到',
   },
   {
-    desc: 'M909 waitAnyKey 无条件等（无输出也记等待——夹具 allowWait 镜像失守）',
+    desc: 'M146 waitAnyKey 无条件等（无输出也记等待——夹具 allowWait 镜像失守）',
     file: 'test/helpers/era-fixture.js',
     find: '    const waited = allow_wait || Boolean(force);',
     replace: '    const waited = true; // 变异：无条件等',
@@ -1433,7 +1433,7 @@ const MUTATIONS = [
     expect_only: '无输出跳过',
   },
   {
-    desc: 'M910 输出不再置位 allowWait（有输出也不等——玩家看不到存根）',
+    desc: 'M147 输出不再置位 allowWait（有输出也不等——玩家看不到存根）',
     file: 'test/helpers/era-fixture.js',
     find: '    allow_wait = true;\n    return total_rows;',
     replace: '    return total_rows;',
