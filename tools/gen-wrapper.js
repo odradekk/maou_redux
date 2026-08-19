@@ -29,8 +29,9 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const GENERATED_START = '// GENERATED START';
 const GENERATED_END = '// GENERATED END';
 
-// 目前支持渲染成一维访问器的表。二维角色表（base/abl/cflag/…）需要带角色
-// 参数的模板，等对应子系统的票再扩展；不在白名单的变量表只会得到告警。
+// 目前支持渲染成一维访问器的表。按域分组的门面（chara(cid).<域> /
+// game.<域>）在 tools/gen-facade.js（issue #71），本文件继续维护扁平
+// era_flag / era_global / era_audio，两者并存。一维重切不强制迁移。
 // flag 自 issue #22 起入白名单：#5 决议把 DAY/TIME/MONEY 与角色指针并入
 // flag 条目（id 10000 保留区，见 yml/Flag.yml 头注）。
 // audio 自 issue #69 起入白名单：音声 SAVEDATA 一族（主菜单 BGM 开关/音量）
@@ -275,9 +276,9 @@ function generate({ yml_dir, out_dir, force = false }) {
     }
     const table = path.basename(file, path.extname(file)).toLowerCase();
     if (!RENDERABLE_ONE_DIM_TABLES.has(table)) {
-      const message = `yml/${file} 是变量表但「${table}」不在渲染白名单（一维：${[
+      const message = `yml/${file} 是变量表但「${table}」不在本生成器白名单（一维扁平：${[
         ...RENDERABLE_ONE_DIM_TABLES,
-      ].join('/')}），已跳过——二维角色表等待对应子系统的票扩展模板`;
+      ].join('/')}），已跳过——按域门面走 tools/gen-facade.js`;
       warnings.push(message);
       results.push({ file, table, status: 'unsupported' });
       continue;

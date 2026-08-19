@@ -31,10 +31,12 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
-const { chara_callname } = require('#/utils/callname-utils');
-const { heart } = require('#/kojo/kojo-text');
 const { kojo_message_com_family } = require('#/kojo/kojo-system');
+const { heart } = require('#/kojo/kojo-text');
+const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
+const { chara_callname } = require('#/utils/callname-utils');
+const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -46,9 +48,9 @@ const STUBBED_CALLS = ['COLOSSEUM_KOJO_5', 'KOJO_MESSAGE_COM_5'];
 on(
   'EVENTTRAIN',
   () => {
-    era.set('flag:105', 1); // :82 FLAG:105 = 1（K5 口上存在标志）
-    if ((era.get('flag:7') || 0) === 0) {
-      era.set('flag:7', 2); // :83-84
+    game.kojo.口上存在_5 = 1; // :82 FLAG:105 = 1（K5 口上存在标志）
+    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2; // :83-84
     }
   },
   TIER.PRI,
@@ -58,7 +60,7 @@ on(
 on(
   'EVENTEND',
   () => {
-    era.set('flag:105', 0); // :88
+    game.kojo.口上存在_5 = 0; // :88
   },
   TIER.LATER,
 );
@@ -79,6 +81,7 @@ async function kojo_message_com_5() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const kojo = chara(target).kojo;
 
   // :772-773 助手が調教した時に口上をスキップする
   if (era_flag.assi > 0 && era_flag.assiplay) {
@@ -88,8 +91,8 @@ async function kojo_message_com_5() {
   if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {
     return 0;
   }
-  // :778-779 失神時（TFLAG:899）
-  if (era.get('tflag:899') || 0) {
+  // :778-779 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (game.train.失神) {
     return 0;
   }
   // :781-782 獣姦プレイ中（K5 是静默跳过，无 DOG_KOJO 调用）
@@ -112,13 +115,10 @@ async function kojo_message_com_5() {
 
   // :802 IF SELECTCOM == 0（爱抚）。其余指令分支随各自指令票
   if (era_flag.selectcom === 0) {
-    const cflag301 = () => era.get(`cflag:${target}:301`) || 0;
-    const set_cflag301 = (v) => era.set(`cflag:${target}:301`, v);
     const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
-    const flag7 = () => era.get('flag:7') || 0;
 
     // :803-814 初めて（CFLAG:301 == 0）
-    if (cflag301() === 0) {
+    if (kojo.爱抚 === 0) {
       // :805-812 屈服刻印Lv2以上
       if (mark(2) >= 2) {
         await era.printAndWait('「咕…呜呜…啊！」'); // :807
@@ -128,7 +128,7 @@ async function kojo_message_com_5() {
           '（现在如果发出奇怪的声音的话…只会让这家伙感到高兴、一定要忍耐…！）',
         ); // :811
       }
-      set_cflag301(1); // :813
+      kojo.爱抚 = 1; // :813
       return 0; // :814
     }
 
@@ -136,52 +136,52 @@ async function kojo_message_com_5() {
     // :817-822 淫乱（TALENT:76）
     if (
       era.get(`talent:${target}:76`) === 1 &&
-      (cflag301() <= 5 || flag7() === 2)
+      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait(`「嗯…啊…主人的手指好厉害…${heart(1)}」`); // :819
       await era.printAndWait(
         `${target_name}弯曲着身体、把${player_name}的手夹在自己的大腿间。`,
       ); // :820
       await era.printAndWait(`「请让我的H小穴…变得更加淫乱吧${heart(1)}」`); // :821
-      set_cflag301(6); // :822
+      kojo.爱抚 = 6; // :822
     } else if (
       // :823-828 愛慕（TALENT:85）
       era.get(`talent:${target}:85`) === 1 &&
-      (cflag301() <= 4 || flag7() === 2)
+      (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait(`「啊…啊哈…啊${heart(1)}不要嗯${heart(1)}」`); // :825
       await era.printAndWait(`故意发出尖叫的${target_name}显得十分的可爱。`); // :826
       await era.printAndWait(
         `「主人、再多摸摸我嘛${heart(1)} 舒服的我都要叫出来了啦${heart(1)}」`,
       ); // :827
-      set_cflag301(5); // :828
+      kojo.爱抚 = 5; // :828
     } else if (
       // :829-834 屈服刻印Lv3
       mark(2) === 3 &&
-      (cflag301() <= 3 || flag7() === 2)
+      (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait(`「哈…呜…嗯咕${heart(1)}…啊…啊…嗯${heart(1)}……」`); // :831
       await era.printAndWait(`${target_name}的嘴里不住地发出甜美的娇喘。`); // :832
       await era.printAndWait('（明明只是被触摸而已…声音…却…忍不住了…啦）'); // :833
-      set_cflag301(4); // :834
+      kojo.爱抚 = 4; // :834
     } else if (
       // :835-839 屈服刻印Lv2
       mark(2) === 2 &&
-      (cflag301() <= 2 || flag7() === 2)
+      (kojo.爱抚 <= 2 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait('「啊…啊咕…呜呜…嗯咕…！」'); // :837
       await era.printAndWait(
         `${target_name}感受到了从未体验过的愉悦在沸腾着、忍不住皱起了脸………`,
       ); // :838
-      set_cflag301(3); // :839
+      kojo.爱抚 = 3; // :839
     } else if (
       // :840-844 それ以外（MARK:2 <= 1）
       mark(2) <= 1 &&
-      (cflag301() <= 1 || flag7() === 2)
+      (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait('「不要、那、那里…不要…碰那里…啊！」'); // :842
       await era.printAndWait(`${target_name}不停地扭动着身体进行反抗………`); // :843
-      set_cflag301(2); // :844
+      kojo.爱抚 = 2; // :844
     }
     return 0; // :846
   }

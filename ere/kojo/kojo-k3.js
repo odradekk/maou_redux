@@ -24,10 +24,12 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
-const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { kojo_message_com_family } = require('#/kojo/kojo-system');
+const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
+const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
+const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -39,9 +41,9 @@ const STUBBED_CALLS = ['COLOSSEUM_KOJO_3', 'DOG_KOJO_3', 'KOJO_MESSAGE_COM_3'];
 on(
   'EVENTTRAIN',
   () => {
-    era.set('flag:103', 1); // :83 FLAG:103 = 1（K3 口上存在标志）
-    if ((era.get('flag:7') || 0) === 0) {
-      era.set('flag:7', 2); // :84-85
+    game.kojo.口上存在_3 = 1; // :83 FLAG:103 = 1（K3 口上存在标志）
+    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2; // :84-85
     }
   },
   TIER.PRI,
@@ -51,7 +53,7 @@ on(
 on(
   'EVENTEND',
   () => {
-    era.set('flag:103', 0); // :89
+    game.kojo.口上存在_3 = 0; // :89
   },
   TIER.LATER,
 );
@@ -71,6 +73,7 @@ async function kojo_message_com_3(rand) {
   const master_name = chara_name(0); // %NAME:MASTER%（MASTER 恒角色 0）
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   const scf = () => self_call_first(target); // %SELF_CALL_FIRST(TARGET)%
+  const kojo = chara(target).kojo;
 
   // :888-892 死斗场中は専用口上
   if (era.get(`tequip:${target}:55`)) {
@@ -85,8 +88,8 @@ async function kojo_message_com_3(rand) {
   if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {
     return 0;
   }
-  // :900-901 失神時（TFLAG:899）
-  if (era.get('tflag:899') || 0) {
+  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (game.train.失神) {
     return 0;
   }
   // :903-906 兽奸PLAY中は専用口上
@@ -105,13 +108,10 @@ async function kojo_message_com_3(rand) {
 
   // :920 IF SELECTCOM == 0（爱抚）。其余指令分支随各自指令票
   if (era_flag.selectcom === 0) {
-    const cflag301 = () => era.get(`cflag:${target}:301`) || 0;
-    const set_cflag301 = (v) => era.set(`cflag:${target}:301`, v);
     const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
-    const flag7 = () => era.get('flag:7') || 0;
 
     // :921-931 初めて（CFLAG:301 == 0）
-    if (cflag301() === 0) {
+    if (kojo.爱抚 === 0) {
       // :923-929 屈服刻印Lv2以上
       if (mark(2) >= 2) {
         // :925
@@ -122,7 +122,7 @@ async function kojo_message_com_3(rand) {
         // :928
         await era.printAndWait('「不，不要触摸…呃呜…呜呃呜~~~………」');
       }
-      set_cflag301(1); // :930
+      kojo.爱抚 = 1; // :930
       return 0; // :931
     }
 
@@ -130,7 +130,7 @@ async function kojo_message_com_3(rand) {
     // :934-953 淫乱（TALENT:76）
     if (
       era.get(`talent:${target}:76`) === 1 &&
-      (cflag301() <= 599 || flag7() === 2)
+      (kojo.爱抚 <= 599 || game.kojo.口上开关 === 2)
     ) {
       // :936 ;;ランダムで口上が変化する
       if (rand_n(3) === 0) {
@@ -173,11 +173,11 @@ async function kojo_message_com_3(rand) {
           `「啊啊~！请将${sc()}下流的身体、玩弄地翻来覆去吧……........直到坏掉为止......！」`,
         ); // :951
       }
-      set_cflag301(600); // :953
+      kojo.爱抚 = 600; // :953
     } else if (
       // :955-975 爱慕（TALENT:85）
       era.get(`talent:${target}:85`) === 1 &&
-      (cflag301() <= 499 || flag7() === 2)
+      (kojo.爱抚 <= 499 || game.kojo.口上开关 === 2)
     ) {
       // :956 ;;ランダムで口上が変化する
       if (rand_n(3) === 0) {
@@ -224,14 +224,14 @@ async function kojo_message_com_3(rand) {
           `「呜啊~、嗯~…${sc()}会……任由这只手的摆布的……被这只手引导的话、不管堕落到哪里都愿意……${heart(1)}」`,
         ); // :973
       }
-      set_cflag301(500); // :975
+      kojo.爱抚 = 500; // :975
     } else if (
       // :977-1019 屈服刻印Lv3（百位 4xx 阶段，个位数推进）
       mark(2) === 3 &&
-      (cflag301() <= 399 || flag7() === 2)
+      (kojo.爱抚 <= 399 || game.kojo.口上开关 === 2)
     ) {
       // :978 ;;追記者／回数で口上が進む
-      if (cflag301() <= 400) {
+      if (kojo.爱抚 <= 400) {
         // :980-988 ;;快乐刻印Lv3
         if (mark(1) === 3) {
           await era.printAndWait(
@@ -251,8 +251,8 @@ async function kojo_message_com_3(rand) {
             '「哈啊…啊~…嗯~…啊呃嗯~…为、为什么…会那么舒服的…呢……啊~♪」',
           ); // :987
         }
-        set_cflag301(401); // :989
-      } else if (cflag301() === 401) {
+        kojo.爱抚 = 401; // :989
+      } else if (kojo.爱抚 === 401) {
         // :991-1002 ;;快乐刻印Lv3
         if (mark(1) === 3) {
           await era.printAndWait(
@@ -279,8 +279,8 @@ async function kojo_message_com_3(rand) {
             `「但，但是…如果可以做得到的话、请温柔地……${sc()}也会、害怕疼的……啊哈嗯、啊嗯~…嗯嗯、嗯~……」`,
           ); // :1001
         }
-        set_cflag301(402); // :1003
-      } else if (cflag301() === 402) {
+        kojo.爱抚 = 402; // :1003
+      } else if (kojo.爱抚 === 402) {
         await era.printAndWait(
           '「啊、啊嗯~、啊……哈啊…哈啊……啊哈唔！？嗯~、突、突然，变快的话……啊呼嗯呜~！」',
         ); // :1005
@@ -293,7 +293,7 @@ async function kojo_message_com_3(rand) {
         await era.printAndWait(
           `「哈呜嗯~！嗯~、那…那个手在……将${sc()}的身体、弄出了下流的声音了……啊、嗯…${player_name}的…啊~！」`,
         ); // :1008
-        set_cflag301(403); // :1009
+        kojo.爱抚 = 403; // :1009
       } else {
         // :1010-1019 ;;ランダムで口上が変化する
         if (rand_n(3) === 0) {
@@ -314,10 +314,10 @@ async function kojo_message_com_3(rand) {
       // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
       mark(2) === 2 &&
       mark(1) === 3 &&
-      (cflag301() <= 299 || flag7() === 2)
+      (kojo.爱抚 <= 299 || game.kojo.口上开关 === 2)
     ) {
       // :1022 ;;追記者／回数で口上が進む
-      if (cflag301() <= 300) {
+      if (kojo.爱抚 <= 300) {
         await era.printAndWait(
           '「哈呜呜嗯~…嗯~、嗯…不、不行…要、要忍不住了…啊~、啊……！」',
         ); // :1024
@@ -330,8 +330,8 @@ async function kojo_message_com_3(rand) {
         await era.printAndWait(
           '「啊~、啊……！不行~、忍…忍不……忍不住……了啊…哈啊嗯~…！」',
         ); // :1027
-        set_cflag301(301); // :1028
-      } else if (cflag301() === 301) {
+        kojo.爱抚 = 301; // :1028
+      } else if (kojo.爱抚 === 301) {
         await era.printAndWait(
           '「请，请原…哈呜啊~！请原谅…嗯~！原谅了……！再这样…再这样、被抚摸了的话……」',
         ); // :1030
@@ -344,8 +344,8 @@ async function kojo_message_com_3(rand) {
         await era.printAndWait(
           `「请，请不要…改变……再这样下去、${sc()}就要…啊、这个……哼啊~、那个…太舒服了……啊啊~……」`,
         ); // :1033
-        set_cflag301(302); // :1034
-      } else if (cflag301() === 302) {
+        kojo.爱抚 = 302; // :1034
+      } else if (kojo.爱抚 === 302) {
         await era.printAndWait(
           '「啊、啊啊…已经、不行……已经…忍…不住了……啊、嗯、啊啊~……！」',
         ); // :1036
@@ -358,7 +358,7 @@ async function kojo_message_com_3(rand) {
         await era.printAndWait(
           `「再，再这样下去的话……${sc()}…${scf()}、${sc()}要……啊嗯~、嗯~…嗯哈呜嗯~……！」`,
         ); // :1039
-        set_cflag301(303); // :1040
+        kojo.爱抚 = 303; // :1040
       } else {
         // :1042-1049 ;;ランダムで口上が変化する
         if (rand_n(3) === 0) {
@@ -378,10 +378,10 @@ async function kojo_message_com_3(rand) {
     } else if (
       // :1052-1102 それ以外（百位 2xx 阶段；黄金样本 :1097 在此）
       mark(2) <= 1 &&
-      (cflag301() <= 1 || flag7() === 2)
+      (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
     ) {
       // :1053 ;;追記者／回数で口上が進む
-      if (cflag301() <= 200) {
+      if (kojo.爱抚 <= 200) {
         // :1056-1066 ;;快乐刻印Lv3 分档（ELSEIF MARK:2 == 2 在本支门槛
         // MARK:2 <= 1 下不可达，1:1 保留）
         if (mark(1) === 3) {
@@ -403,8 +403,8 @@ async function kojo_message_com_3(rand) {
         } else {
           await era.printAndWait('「感觉真恶心…不要在…这样…触，触碰了…！」'); // :1065
         }
-        set_cflag301(201); // :1067
-      } else if (cflag301() === 201) {
+        kojo.爱抚 = 201; // :1067
+      } else if (kojo.爱抚 === 201) {
         // :1069-1078 ;;快乐刻印Lv3
         if (mark(1) === 3) {
           await era.printAndWait(
@@ -420,8 +420,8 @@ async function kojo_message_com_3(rand) {
           `${player_name}轻轻地抚摸了一下${target_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,
         ); // :1076
         await era.printAndWait('「啊呜…！呃呜、呜~…怎、怎么……嗯嗯~！」'); // :1077
-        set_cflag301(202); // :1078
-      } else if (cflag301() === 202) {
+        kojo.爱抚 = 202; // :1078
+      } else if (kojo.爱抚 === 202) {
         // :1080-1091 ;;快乐刻印Lv3
         if (mark(1) === 3) {
           await era.printAndWait(
@@ -445,7 +445,7 @@ async function kojo_message_com_3(rand) {
         await era.printAndWait(
           '「为、为什么…啊~、这…这样……这样的、事情……啊嗯~……」',
         ); // :1090
-        set_cflag301(203); // :1091
+        kojo.爱抚 = 203; // :1091
       } else {
         // :1093-1101 ;;ランダムで口上が変化する——黄金样本 emuera.log:26
         if (rand_n(3) === 0) {
