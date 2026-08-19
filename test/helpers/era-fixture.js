@@ -110,8 +110,9 @@ function create_era_fixture() {
   //     短路（system.hideUserInput / hideInput / any）任一命中则不增，
   //     只调计数器不推条目。waitAnyKey 不占行的机制同源：引擎内部走
   //     input({any:true})，e.any 命中回显短路。
-  // 以下已查实但本夹具暂不实现（游戏代码未用，随用随补）：printWholeImage /
-  //   printLineChart / setToBottom（各 +1 Row）、notify（无行）。
+  // 以下已查实但本夹具暂不实现（游戏代码未用，随用随补）：printLineChart /
+  //   setToBottom（各 +1 Row）、notify（无行）。printWholeImage 自 #69 起随
+  //   媒体资源落地（+1 Row，见「媒体资源」段）。
   let total_rows = 0; // 引擎 totalLines 的等价物：计数器，非从 lines 派生
 
   // 一次输出调用的全部条目共用当前 Row 号，调用尾计数 +1。
@@ -252,7 +253,89 @@ function create_era_fixture() {
     replace_row(collect_col_rows_cells(columnObjects));
   era.printProgress = (percentage, in_content, out_content) =>
     push_row([make_progress_entry(percentage, in_content, out_content)]);
-  era.printImage = (...names) => push_row([{ type: 'image', names }]);
+
+  // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析/计行语义的镜像 ——
+  //
+  // 以下语义全部抄自 app.asar（EraApi 模块 183 与 eraStart 资源装载段）：
+  //   - 注册名装载时统一小写落表（eraStart：`const s = toLowerCase(t[0])`），
+  //     查名同样先小写——HEART 注册进引擎就是 'heart'，checkImage('HEART')
+  //     能否命中取决于小写后的键；
+  //   - playMusic(names, config)：config 非对象一律重置为 {loop: false}——
+  //     引擎的「缺省不循环」，与 Emuera PLAYBGM 默认循环相反，想循环必须
+  //     显式 {loop: true}；names 收 String 或 String[]，逐个小写后取第一个
+  //     注册为音频的条目播放，命中返回 true，全落空返回 false（不报错）；
+  //   - 计行（#68 的 Row 口径，app.asar 逐字实测）：playMusic / stopMusic /
+  //     resumeMusic 只 connect、不调 addTotalLines——**不占 Row**，只进
+  //     music[] 事件记录；printImage / printWholeImage 结尾各调一次
+  //     addTotalLines——各 +1 Row，走 push_row；
+  //   - checkImage(...names)：零参返回 false；单参返回布尔、多参返回布尔
+  //     数组；判定是「已注册 **且类型为 image**」——dev-guides/16 宣称它可
+  //     查音乐存在性，与引擎代码冲突（代码只放行 image 类型），以代码为
+  //     准；要探音频是否已注册，用 playMusic 的返回值；
+  //   - printImage/printWholeImage 的 names 每层（数组元素或整串）按 '\t'
+  //     切开取第一个已注册的 image 条目（引擎 getImageObject/getWholeImage
+  //     的容错链），整层全落空则该层被引擎丢弃、不输出——resolved 字段
+  //     （仅非空时挂上）记录每层实际解析出的注册名（小写）。空 resolved
+  //     不挂是刻意的：#68 的逐条 deepEqual 用例钉了 image 条目的裸形状；
+  //     make_grid_entry 的多列 image 格同样暂不带 resolved（游戏代码未用，
+  //     随用随补）。
+  const res_registry = new Map(); // 小写注册名 → 'image' | 'audio'
+  const music = []; // 音乐事件记录：{api:'play'|'stop'|'resume', ...}
+
+  /** 引擎 getImageObject/getWholeImage 的逐层解析：返回命中的小写注册名或 null */
+  function resolve_image_layer(layer) {
+    const spec = typeof layer === 'string' ? { names: layer } : (layer ?? {});
+    const candidates = String(spec.names ?? '').split('\t');
+    for (const name of candidates) {
+      const key = name.toLowerCase();
+      if (res_registry.get(key) === 'image') {
+        return key;
+      }
+    }
+    return null;
+  }
+
+  era.checkImage = (...names) => {
+    if (names.length === 0) {
+      return false;
+    }
+    const results = names.map(
+      (name) => res_registry.get(String(name).toLowerCase()) === 'image',
+    );
+    return names.length === 1 ? results[0] : results;
+  };
+  era.playMusic = (names, config) => {
+    const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置
+    const list = (Array.isArray(names) ? names : [names]).map((name) =>
+      String(name).toLowerCase(),
+    );
+    const played =
+      list.find((name) => res_registry.get(name) === 'audio') ?? null;
+    music.push({ api: 'play', names: list, config: cfg, played });
+    return played !== null;
+  };
+  era.stopMusic = () => {
+    music.push({ api: 'stop' });
+  };
+  era.resumeMusic = () => {
+    music.push({ api: 'resume' });
+  };
+  era.printImage = (...names) => {
+    const resolved = names.map(resolve_image_layer).filter(Boolean);
+    const entry =
+      resolved.length > 0
+        ? { type: 'image', names, resolved }
+        : { type: 'image', names };
+    return push_row([entry]);
+  };
+  era.printWholeImage = (names, config) => {
+    const resolved = (Array.isArray(names) ? names : [names])
+      .map(resolve_image_layer)
+      .filter(Boolean);
+    // 引擎：falsy config 重置为 {}
+    const base = { type: 'image.whole', names, config: config || {} };
+    return push_row([resolved.length > 0 ? { ...base, resolved } : base]);
+  };
   era.getLineCount = () => total_rows;
   era.clear = async (line_count) => {
     // 渲染层公式（app.vue 的 clear）：Number(lineCount) 为 NaN（含无参）或
@@ -524,6 +607,11 @@ function create_era_fixture() {
     'replaceInColRows',
     'printProgress',
     'printImage',
+    'printWholeImage',
+    'checkImage',
+    'playMusic',
+    'stopMusic',
+    'resumeMusic',
     'getLineCount',
     'clear',
     'get',
@@ -575,11 +663,22 @@ function create_era_fixture() {
     store,
     /** logger 记录 [{level, msg}] */
     logs,
+    /** 音乐事件记录 [{api: 'play'|'stop'|'resume', ...}]（issue #69） */
+    music,
     /** 已消费的输入 [{api, value?}] */
     inputs_consumed,
-    /** 预置一串输入，等待输入的 API 依次消费 */
+    /**
+     * 预置一串输入，等待输入的 API 依次消费
+     */
     set_inputs(...values) {
       input_queue.push(...values);
+    },
+    /**
+     * 预置已注册的媒体资源（对应引擎 res 注册表，注册名自动小写——与
+     * eraStart 的装载行为一致）。type 取 'image'（默认）或 'audio'。
+     */
+    seed_res(name, type = 'image') {
+      res_registry.set(String(name).toLowerCase(), type);
     },
     /** 引擎 system.hideUserInput 配置的镜像（默认 false＝input 回显计
      *  Row；置 true 后回显不计行，覆盖三段短路第一段，见「输入」段注释） */

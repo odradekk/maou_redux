@@ -8,13 +8,15 @@
  *
  * 本票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
  * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。作用域外，各留注释或
- * 存根：BGM（:11-17）、调教目标名/助手名按钮与生命条（:100-145）、四个
- * 子面板的内容（:190-197 的分发照搬、函数体存根）、指令面板的渲染
- * （:203-319，随首个指令子系统票；分发本体在 page-shop.js 的 usershop）。
+ * 存根：BGM 段（:11-17）自 #69 起接通（见 draw_main_menu 首段）、调教目标
+ * 名/助手名按钮与生命条（:100-145）、四个子面板的内容（:190-197 的分发照搬、
+ * 函数体存根）、指令面板的渲染（:203-319，随首个指令子系统票；分发本体在
+ * page-shop.js 的 usershop）。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const era_audio = require('#/era-utils/era-audio');
 const { stub_line } = require('#/utils/stub-line');
 
 /**
@@ -213,14 +215,17 @@ function draw_status_line() {
  * 0/1（抑制逐行重绘防闪烁）无 ere 对应语义，不镜像。
  */
 function draw_main_menu() {
-  // :11-17 BGM：IF 是否启用背景音乐 == 1 → PLAYBGM "据点2.mp3" +
-  // SETBGMVOLUME 背景音乐音量。整段不接：res/ 为空、resource: false，
-  // 音频领域未决议（issue #23 作用域外，与标题画面 #19 同裁决）。开关变量
-  // 本身也无处落：是否启用背景音乐/背景音乐音量 是 #DIM SAVEDATA（随存档
-  // 的自定义变量，音声的全局变量.erh:3-4）而非 GLOBAL——与标题音乐的
-  // GLOBAL 不同类，按 EX_FLAG 先例登记 docs/stub-registry.md 变量级欠账，
-  // 音频票落表后在此接 playMusic。另：该开关无声明默认值（新档 0 = 不播），
-  // 原作新档本来也不播 BGM，缺此段不改变开局行为。
+  // :11-17 BGM 自 #69 起接通：IF 是否启用背景音乐 == 1 → PLAYBGM "据点2.mp3"
+  // （注册名即文件名，res/sound/sound.csv）+ SETBGMVOLUME 背景音乐音量。
+  // 开关/音量落扩展普通表 yml/Audio.yml（ere/era-utils/era-audio.js；引擎侧
+  // data 桶与存清语义见该表头注）。音量无引擎等价物（playMusic 只有
+  // loop/fade，欠账见 docs/stub-registry.md）。PLAYBGM 循环 → 显式 loop。
+  // 开关无声明默认值（音声的全局变量.erh:3，新档 0=不播，原作新档本来也不
+  // 播）——开关的写点是设定菜单 MOD_SWITCH，随设定票落地。资源未启用时
+  // playMusic 静默返回 false，主菜单照常渲染。
+  if (era_audio.bgm_enabled === 1) {
+    era.playMusic('据点2.mp3', { loop: true });
+  }
   apply_bug_guards();
 
   draw_status_line();

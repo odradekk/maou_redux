@@ -13,6 +13,11 @@
 #   没有序号。故 0/1 是 ere 侧给命名变量的落表序号（取空闲低端，自洽即可，
 #   旧存档兼容 out of scope）；98/99 则是 TITLE ver1.0.8.ERB 序号直寻的硬事实。
 # 未收录：「冒險者性別」（魔改使用.ERH，不在标题路径，留给魔改子系统票）。
+#   id 2（音频默认值已落盘）是 ere 侧机制槽（issue #69），非原作变量：原作随包
+#   global.sav 预置 是否启用标题音乐=1、标题音乐音量=66，而 ere 引擎全新
+#   global.sav 把声明槽位一律置 0（app.asar loadGlobal：缺失/为假的声明槽补
+#   0）——「原作发行态」只能由代码一次性播种。该槽即播种标记：1=已按原作
+#   默认值落盘过，此后不再播种（用户经设定界面关掉标题音乐后不被覆盖）。
 #
 # 包装层产物：ere/era-utils/era-global.js（tools/gen-wrapper.js 生成初稿）。
 # 各变量在原作中的语义与来源见该文件手写区补注。
@@ -23,6 +28,10 @@
 "标题音乐音量":
   id: 1
   name: "title_music_volume"
+  type: "number"
+"音频默认值已落盘":
+  id: 2
+  name: "audio_defaults_seeded"
   type: "number"
 "联系方式开关":
   id: 98

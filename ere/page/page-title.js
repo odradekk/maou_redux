@@ -7,15 +7,24 @@
  * 移植说明（对照原作行号）：
  *   - :2 LOADGLOBAL 不镜像：ere 引擎在每次脚本启动前自动读取公共存档
  *     （dev-guides/11-saves.md），原作的显式加载在 ere 侧是引擎行为。
- *   - :3-7 标题音乐（PLAYBGM "TFM-003A_17.mp3" / SETBGMVOLUME）不接：res/ 为
- *     空、资源未启用，音频属未决议领域（issue #19 作用域外）。开关与音量变量
- *     的访问器已在 era-utils/era-global.js 就位；注意 ere 全新 global.sav 把它
- *     们初始化为 0，原作声明的默认值 1/66 由音频票落地时补写（#18 决议说明
- *     移交的已知缺口）。
+ *   - :3-7 标题音乐自 #69 起接通：GLOBAL:0 == 1 时播 TFM-003A_17.mp3（注册名
+ *     即文件名，res/sound/sound.csv）。PLAYBGM 在 Emuera 默认循环，ere 侧
+ *     playMusic 的缺省 config 是 {loop: false}（app.asar 实证），须显式
+ *     {loop: true}。:5 SETBGMVOLUME 标题音乐音量 无引擎等价物（playMusic
+ *     只有 loop/fade；window.audio 是全局音量非逐曲），值仅为存档保真由
+ *     era-global 的播种落 66，欠账登记 docs/stub-registry.md。原作的默认值
+ *     1/66 来自随包 global.sav，ere 侧由 seed_title_music_defaults() 一次性
+ *     播种（#18 移交的缺口，#69 落地）。
  *   - :13-15 调试残留（[IF_DEBUG] 分支与被注释的 CLEARLINE）不移植。
- *   - :22 HTML_PRINT 标题图不接（res/ 为空）；其下两行空行保留纵向间距。
- *   - :27 %GAMEBASE_TITLE% 在原作被注释（标题由图片承载）；图片不接后改为
- *     文本输出标题，满足「标题画面显示游戏标题」的验收。
+ *   - :23 标题图自 #69 起接通：原作 HTML_PRINT <img src='TITLE'>，ere 侧
+ *     等价物 printWholeImage('TITLE')（全图、随网格缩放）。资源未启用时
+ *     （resource: false 或未注册）checkImage 为假、退回纯文本标题——组件
+ *     必须知道自己能不能用图（ADR-0003）；其下两行空行（:26-27）保留纵向
+ *     间距。
+ *   - :27 %GAMEBASE_TITLE% 在原作被注释（标题由图片承载）；图片缺席的回退
+ *     路径仍是文本输出标题，满足「标题画面显示游戏标题」的验收（#19）。
+ *   - :95/:105 STOPBGM 自 #69 起镜像为 era.stopMusic()（新的猎物/旧的奴隶
+ *     两分支各一处；读档占位分支原作也停曲，照搬）。
  *   - RESTART 的语义是重跑本函数，ere 侧写成 for(;;) 循环，不用递归。
  *   - :93/:103 CLEARLINE 1（清除输入回显行）不镜像：ere 的输入不经回显成行。
  *   - 新游戏：:100 RESETDATA 自 #22 起接通——ere 等价物 era.resetData()，
@@ -81,7 +90,14 @@ function draw_title_screen() {
 
   era.setAlign('center'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中
   era.drawLine(); // 原作 :19 DRAWLINE
-  era.println(); // 原作 :23-24 图片下两个空行（图片缺席，保留纵向间距）
+
+  // 原作 :23 HTML_PRINT <img src='TITLE'>：标题图。资源在场才显示
+  // （resource: false 时 checkImage 恒假，纯文本标题兜底）；printWholeImage
+  // 是 ere 的全图等价物（整图随网格缩放，宽高由引擎注册时自动读取）。
+  if (era.checkImage('TITLE')) {
+    era.printWholeImage('TITLE');
+  }
+  era.println(); // 原作 :26-27 图片下两个空行（图片缺席，保留纵向间距）
   era.println();
 
   // 原作 :25-26 SETFONT "ARIEL BLACK"/FONTBOLD、:82 SETFONT：ere 无全局字体
@@ -147,6 +163,17 @@ function draw_title_screen() {
  * $PRINT_TITLE … RESTART 结构。循环即「RESTART 重跑本函数」的等价物。
  */
 async function run_title_page() {
+  // 原作 :3-7 标题音乐：在 $PRINT_TITLE 循环标签之前，每次进标题状态只执行
+  // 一次（RESTART 重绘不重播）。播种先于播放：全新 global.sav 的开关是 0，
+  // 先补上原作随包默认值 1/66（#18 移交、#69 落地），否则首局进标题没 BGM。
+  await era_global.seed_title_music_defaults();
+  if (era_global.title_music_enabled === 1) {
+    // PLAYBGM 在 Emuera 默认循环；ere 的 playMusic 缺省 config 是
+    // {loop: false}（app.asar 实证），显式 loop。资源未启用时引擎查无此名、
+    // 静默返回 false——不停机、不报错，与 resource: false 的回退一致。
+    era.playMusic('TFM-003A_17.mp3', { loop: true });
+  }
+
   for (;;) {
     // 主界面整屏重绘（RESTART 语义）：清屏后从头输出标题画面
     await era.clear();
@@ -156,8 +183,11 @@ async function run_title_page() {
     const result = await era.input();
 
     if (result === 1) {
-      // 原作 :92-101 新游戏：送行句与分割线照原作；首句 STOPBGM（无音乐可
-      // 停）与 CLEARLINE 1（输入不回显）不镜像。
+      // 原作 :95 STOPBGM：离开标题（新游戏路径）停曲——之后的主菜单是否
+      // 换曲由 @DRAW_MAINMENU 的开关决定（page-main-menu.js，#69）
+      era.stopMusic();
+      // 原作 :92-101 新游戏：送行句与分割线照原作；CLEARLINE 1（输入不回显）
+      // 不镜像。
       era.print('即使前路已经破碎，也请魔王大人当上这世界的王……');
       era.drawLine();
       era.setAlign('left'); // 原作 :99 ALIGNMENT LEFT
@@ -179,6 +209,8 @@ async function run_title_page() {
     }
 
     if (result === 0) {
+      // 原作 :105 STOPBGM：离开标题（读档路径）同样停曲；读档占位分支照搬
+      era.stopMusic();
       // 原作 :102-107 读档：分割线后 CALL @SYSTEM_LOADGAME 未移植（归后续
       // 存档票），只留占位反馈；原作调用返回后 RESTART 回标题。
       era.drawLine();

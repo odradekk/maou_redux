@@ -83,6 +83,47 @@ test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整
   );
 });
 
+// —— BGM（issue #69：原作 :11-17 是否启用背景音乐 == 1 → PLAYBGM 据点2）——
+
+test('BGM：开关开时播据点2（循环），新档默认（0）不播', () => {
+  // 新档默认：audio:0 无声明默认值（erh:3），恒 0 → 不播（原作新档同款）
+  const silent = draw_menu_with(() => {});
+  assert.deepEqual(silent.fixture.music, []);
+
+  // 开关开：PLAYBGM "据点2.mp3"（注册名即文件名）+ Emuera 默认循环 → 显式 loop
+  const playing = draw_menu_with((fixture) => {
+    fixture.store.set('audio:0', 1);
+    fixture.seed_res('据点2.mp3', 'audio');
+  });
+  assert.deepEqual(playing.fixture.music, [
+    {
+      api: 'play',
+      names: ['据点2.mp3'],
+      config: { loop: true },
+      played: '据点2.mp3',
+    },
+  ]);
+});
+
+test('BGM：资源未启用时静默落空，主菜单照常渲染（resource: false 回退）', () => {
+  const { fixture } = draw_menu_with((fixture) => {
+    fixture.store.set('audio:0', 1);
+    // 不 seed_res：引擎 res 表为空 → playMusic 找不到注册音频、返回 false
+  });
+
+  // 播放意图已记录、但 played 为空（引擎语义：查无注册音频不报错）
+  assert.deepEqual(fixture.music, [
+    {
+      api: 'play',
+      names: ['据点2.mp3'],
+      config: { loop: true },
+      played: null,
+    },
+  ]);
+  // 画面不受影响：状态行照常输出
+  assert(fixture.text_lines().some((line) => line.includes('所持金')));
+});
+
 test('状态行：TIME != 0 显示下午', () => {
   const { fixture } = draw_menu_with((_, era_flag) => {
     era_flag.day_count = 0;
