@@ -1,20 +1,31 @@
 /**
  * @file 调教状态画面：@SHOW_STATUS 的处理器 + 引擎内建 PRINT_PALAM 的移植
- * （issue #44）。
+ * （issue #44；#74 起整页为画面组件、参数条换引擎原生进度条）。
  *
  * 源: target/ERB/調教相關/TRAIN_MAIN.ERB  @SHOW_STATUS（:60-259，无标记
  *     = 普通档事件）
  *     PRINT_PALAM（Emuera 内建命令，PRINT_STATUS 系——非 ERB 函数，ere 侧
  *     以本文件的 print_palam 承载）
+ *     USERCOM.ERB :179-186 —— @SET_CLEAR_POINT/@CLEAR_TO_POINT：锚点跨度
+ *     重绘的原作习语（@SHOW_STATUS 尾部记锚点、清回锚点重画），ere 侧由
+ *     ScreenBlock（page/components/screen-block.js，#73）承载
  *
  * 骨架范围（工单：循环骨架不是完整状态画面）：@SHOW_STATUS 的子调用除
  * PRINT_PALAM 外一律存根化；射精/母乳/触手槽条段（:144-252）的 TALENT /
  * TEQUIP 守卫在零指令下不可达，整段以注释占位（docs/stub-registry.md）。
  * 其余直线代码（日期行、目标行、绝顶计数、MAXBASE 修正）1:1 照搬。
+ *
+ * #74 的两条换皮（对拍都在旁边看着——本画面在黄金样本覆盖内）：
+ *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
+ *     语义值（参数名 + palam 原值）在条内/条后文字里，归一化器零解析直取
+ *     （tools/compare/normalize.js 的 progress 分支）；percentage 纯表现。
+ *   - 整页＝一个 ScreenBlock（@SHOW_STATUS 函数粒度，原作锚点也在函数尾）。
+ *     重绘时机见 SHOW_STATUS 处理器的 prevcom 判据。
  */
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
+const { ScreenBlock } = require('#/page/components/screen-block');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -34,27 +45,31 @@ const STUBBED_CALLS = [
   'SHOW_EQUIP_1',
 ];
 
-// 条形填充字符按当前等级爬坡：LV0 '-'、LV1 '='、LV2 '>'、LV3+ '*'。
-// 依据 = target/emuera.log 的实机渲染（润滑 2915[>>>>>>>>>.] LV2、屈服 100
-// [==........] LV1、抑郁 24[--........] LV0、阴核 5540[*****.....] LV3 …
-// 十二处样本全吻合）；逐字对拍归 #48
-const PALAM_FILL_BY_LEVEL = ['-', '=', '>', '*'];
-
-// 条形宽度 10、每行 3 列、行首与列间各 6 空格、数值右对齐宽 5（log 实测）
-const PALAM_BAR_WIDTH = 10;
+// 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
+//   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的
+//     数值（原作 PRINT_PALAM 数值列的同款形状，log 实测）；
+//   - PALAM_PROGRESS_BAR_WIDTH：24 格网格里条占 16、条后文字占 8——
+//     ProgressConfig 的 barWidth 取 24 时**不显示条后文字**（dev-guides/08），
+//     语义值必须玩家可见，故 < 24；
+//   - 每行 3 格（printMultiColumns 一次 3 格＝1 Row，与原作三列排版同构）。
 const PALAM_COLUMNS = 3;
-const PALAM_GAP = '      ';
+const PALAM_PROGRESS_BAR_WIDTH = 16;
 const PALAM_VALUE_WIDTH = 5;
 
 /**
  * PRINT_PALAM（引擎内建命令）的移植：一角色的参数条画面。
  *
- * 渲染规则（emuera.log 实测钉死，见文件头依据）：
+ * 渲染规则（#74 换皮：printMultiColumns 的 progress 格）：
  *   - 枚举 palam 名字表从 0 起的连续序号（Palam.yml 的 0..15；100「否定」
  *     是珠侧专用，参数条不显示——连续段在 16 断开即止）；
- *   - 每条：`名前[10 格条]` + 空格 + 右对齐宽 5 的数值；
- *   - 条形满刻度 = 下一等级阈值，填充数 = floor(10 × 值 / 下一阈值)，
- *     已达最高等级（LV9）则满格；填充字符按等级爬坡（PALAM_FILL_BY_LEVEL）。
+ *   - 每格：条内文字＝参数名、条后文字＝右对齐宽 5 的数值、percentage＝
+ *     100 × 值 / 下一等级阈值（LV9 满档 100，连续值不取整——原作
+ *     floor(10*值/下一阈值) 的格数填充没有等价物，也不需要）；
+ *   - 每行 3 格。
+ *
+ * percentage 是**纯表现**：对拍两侧归一的语义值＝条后数值（palam 原值），
+ * 条形几何（字符条格数 vs 百分比）不进事件流——「换皮不砸对拍」的裁定
+ * 本体，见 tools/compare/normalize.js 的 progress 分支与 docs/output-diff.md。
  *
  * @param {number} cid 角色 ID（原作实参 TARGET）
  */
@@ -70,20 +85,19 @@ function print_palam(cid) {
     const value = era.get(`palam:${cid}:${index}`) || 0;
     const level = palam_level(value);
     const next_threshold = PALAMLV[level + 1];
-    const filled =
-      next_threshold === undefined
-        ? PALAM_BAR_WIDTH
-        : Math.floor((PALAM_BAR_WIDTH * value) / next_threshold);
-    const fill_char = PALAM_FILL_BY_LEVEL[Math.min(level, 3)];
-    const bar = fill_char.repeat(filled) + '.'.repeat(PALAM_BAR_WIDTH - filled);
-    const value_text = String(value).padStart(PALAM_VALUE_WIDTH, ' ');
-    return `${name}[${bar}] ${value_text}`;
+    const percentage =
+      next_threshold === undefined ? 100 : (100 * value) / next_threshold;
+    return {
+      type: 'progress',
+      percentage,
+      inContent: name,
+      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),
+      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },
+    };
   });
 
   for (let row = 0; row < cells.length; row += PALAM_COLUMNS) {
-    era.print(
-      PALAM_GAP + cells.slice(row, row + PALAM_COLUMNS).join(PALAM_GAP),
-    );
+    era.printMultiColumns(cells.slice(row, row + PALAM_COLUMNS));
   }
 }
 
@@ -152,9 +166,25 @@ function fix_maxbase(cid, assi_variant = false) {
   }
 }
 
-on('SHOW_STATUS', async () => {
-  const target = era_flag.target;
+// —— 状态画面组件（#74）：整页一个 ScreenBlock ——
+//
+// 会话态：BEGIN TRAIN 的事件链（EVENTTRAIN）重建——锚点跨会话复用会拿上一
+// 局的锚点清掉本局内容（#73 主菜单同款裁定，跨会话测试钉死）。本处理器不
+// 输出任何行，与链上其他 EVENTTRAIN 处理器（PRITRAIN 头部等）无序依赖。
+let status_block = null;
+// 「本轮指令路径执行过」探针（重绘判据）。PREVCOM 的**值差**不能当判据：
+// 重复执行同一指令时 train-loop 步骤 13 同值直写，值不变的指令轮会被误判
+// 成无指令轮、重绘吃掉当轮叙述（评审探针实证）。EVENTCOM 是指令路径的
+// 必经事件（步骤 11：输入命中可执行指令即发射，与指令编号无关）；本
+// 处理器零输出，只翻标志。
+let command_path_seen = false;
 
+/**
+ * @SHOW_STATUS 的绘制内容（:60-256 的直线段；ScreenBlock 的 draw_content，
+ * 只输出、不清屏——清行归 redraw）。
+ * @param {number} target 调教目标角色 ID
+ */
+async function draw_status_screen(target) {
   // :61 DRAWLINE
   era.drawLine();
   // :62-68 {DAY+1}日 (午前/午后)（TIME：0=午前）
@@ -216,6 +246,43 @@ on('SHOW_STATUS', async () => {
   // :255-256 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；本票
   // 移植——引擎 LINECOUNT 的等价物 getLineCount 直通）
   era.set('tflag:999', era.getLineCount());
+}
+
+// BEGIN TRAIN 初始化链（run_train 步骤 3，先于首个 SHOW_STATUS）：重建
+// 本会话的状态画面组件
+on('EVENTTRAIN', () => {
+  status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
+  command_path_seen = false;
+});
+
+// 指令路径探针（步骤 11）：输入命中可执行指令即翻标志——含 @COMxx 未
+// 实现的编号（引擎「重新要求输入」路径，原作同样整屏重画 @SHOW_STATUS）
+on('EVENTCOM', () => {
+  command_path_seen = true;
+});
+
+on('SHOW_STATUS', async () => {
+  // 首绘兜底：未经 EVENTTRAIN 直发 SHOW_STATUS（如测试直驱）时惰性建块；
+  // 真实流程恒经 EVENTTRAIN 重建（跨会话锚点作废）
+  status_block ??= new ScreenBlock(() => draw_status_screen(era_flag.target));
+
+  if (command_path_seen) {
+    // 指令轮（含重复同指令）：追加绘制（原作 @SHOW_STATUS 本款是追加
+    // 滚动，无 CLEARLINE）。就地重绘会清掉玩家还没读的指令结果（叙述/
+    // 算式行在锚点跨度内）——「分发期输出必须被玩家看到再被重绘清掉」
+    //（#73 定档）要求等键，而等键属叙述所属的指令模块（train-message/
+    // SOURCE_CHECK，本票边界外），状态画面侧不加每轮按键（工单事实 7）
+    // 就只能不吃叙述。
+    await status_block.draw();
+  } else {
+    // 无指令轮（无效输入回环）：锚点跨度内只有指令菜单与输入回显——
+    // 都已被那一次输入消费，就地重绘（#73 锚点跨度；重绘只发生在玩家
+    // 交互之后——本重入必经一次输入）。首绘（组件未画过）时 redraw
+    // 等价 draw，不清屏、保住上方内容。未来 USERCOM 分支若输出子画面，
+    // 其可见性归它自己的 stub_line_wait（#73 习语），不归本判据。
+    await status_block.redraw();
+  }
+  command_path_seen = false;
 });
 
 module.exports = {

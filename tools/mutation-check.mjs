@@ -131,20 +131,20 @@ const MUTATIONS = [
     expect_only: 'IS_TRAINABLE',
   },
   {
-    desc: 'M11 PRINT_PALAM 条形：满刻度改用当前等级阈值（而非下一级）',
+    desc: 'M11 PRINT_PALAM 百分比：满刻度改用当前等级阈值（而非下一级）',
     file: 'ere/page/page-train.js',
     find: '    const next_threshold = PALAMLV[level + 1];',
     replace: '    const next_threshold = PALAMLV[level];',
     tests: ['page-train'],
-    expect_only: '逐字一致',
+    expect_only: '手算基线',
   },
   {
-    desc: 'M12 PRINT_PALAM 填充字符：等级爬坡表打乱',
+    desc: 'M12 PRINT_PALAM 条后数值丢失（outContent 空——语义值载体没了，对拍未解释）',
     file: 'ere/page/page-train.js',
-    find: "const PALAM_FILL_BY_LEVEL = ['-', '=', '>', '*'];",
-    replace: "const PALAM_FILL_BY_LEVEL = ['-', '-', '-', '-'];",
-    tests: ['page-train'],
-    expect_only: '逐字一致',
+    find: "      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),",
+    replace: "      outContent: '', // 变异：数值丢失",
+    tests: ['page-train', 'compare-first-turn'],
+    expect_only: '条后数值',
   },
   {
     desc: 'M13 回合循环：删掉全角色 NOWEX 清零（步骤 10）',
@@ -1439,6 +1439,83 @@ const MUTATIONS = [
     replace: '    return total_rows;',
     tests: ['fixture', 'page-main-menu'],
     expect_only: '有输出才等键',
+  },
+  // —— #74（归一化器吃结构化记录 + 调教状态画面组件化）——
+  // 注：编号 M900+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
+  // 统一改号；#73 首次实践零冲突）。
+  {
+    desc: 'M900 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
+    file: 'tools/compare/normalize.js',
+    find: '        val: Number(record.out),',
+    replace: '        val: record.percentage, // 变异：语义值读错',
+    tests: ['compare-normalize', 'compare-first-turn'],
+    expect_only: 'percentage 不进事件流',
+  },
+  {
+    desc: 'M901 归一化器 progress 分支删除（结构化记录从事件流消失——对拍未解释）',
+    file: 'tools/compare/normalize.js',
+    find: "    } else if (record.type === 'progress') {",
+    replace:
+      "    } else if (record.type === 'progress_never') { // 变异：分支删除",
+    tests: ['compare-normalize', 'compare-first-turn'],
+    expect_only: 'progress 记录',
+  },
+  {
+    desc: 'M902 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
+    file: 'ere/page/page-train.js',
+    find: '  if (command_path_seen) {',
+    replace: '  if (!command_path_seen) { // 变异：判据反接',
+    tests: ['page-train'],
+    expect_only: '指令轮追加绘制',
+  },
+  {
+    desc: 'M903 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
+    file: 'ere/page/page-train.js',
+    find: `on('EVENTTRAIN', () => {
+  status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
+  command_path_seen = false;
+});`,
+    replace: `on('EVENTTRAIN', () => {
+  // 变异：组件不重建
+  command_path_seen = false;
+});`,
+    tests: ['page-train'],
+    expect_only: '跨会话',
+  },
+  {
+    desc: 'M904 旁路清行自校验删除（重绘行数未回锚点不留痕）',
+    file: 'ere/page/components/screen-block.js',
+    find: `      const remaining = await era.clear(span);
+      if (remaining !== this.anchor_row) {
+        era.logger.warn(
+          \`画面组件重绘后行数 \${remaining} 未回到锚点 \${this.anchor_row}（清行跨度 \${span}）——存在旁路清行\`,
+        );
+      }`,
+    replace: '      await era.clear(span); // 变异：自校验删除',
+    tests: ['page-train'],
+    expect_only: '旁路清行',
+  },
+  {
+    desc: 'M905 参数条逐格平铺（一次一格——Row 分组丢失，16 格占 16 行）',
+    file: 'ere/page/page-train.js',
+    find: `  for (let row = 0; row < cells.length; row += PALAM_COLUMNS) {
+    era.printMultiColumns(cells.slice(row, row + PALAM_COLUMNS));
+  }`,
+    replace:
+      '  cells.forEach((cell) => era.printMultiColumns([cell])); // 变异：逐格平铺',
+    tests: ['page-train'],
+    expect_only: '16 格原生进度条',
+  },
+  {
+    desc: 'M906 EVENTCOM 探针不翻标志（重复同指令轮被误判成无指令轮——重绘吃叙述）',
+    file: 'ere/page/page-train.js',
+    find: `on('EVENTCOM', () => {
+  command_path_seen = true;
+});`,
+    replace: `on('EVENTCOM', () => {
+  // 变异：探针失灵`,
+    tests: ['page-train'],
+    expect_only: '重复执行同一指令',
   },
 ];
 
