@@ -784,11 +784,15 @@ const MUTATIONS = [
   {
     desc: 'M84 夹具 printButton 不记 accelerator（菜单对拍失去编号键）',
     file: 'test/helpers/era-fixture.js',
-    find: `    return push_line({
+    find: `  const make_button_entry = (content, accelerator, config) => {
+    const text = normalize_content(content);
+    return {
       type: 'button',
       text,
       accelerator,`,
-    replace: `    return push_line({
+    replace: `  const make_button_entry = (content, accelerator, config) => {
+    const text = normalize_content(content);
+    return {
       type: 'button',
       text,
       accelerator: undefined, // 变异：不记编号`,
@@ -864,16 +868,84 @@ const MUTATIONS = [
   {
     desc: 'M93 夹具 printMultiColumns 不再记录（print 系覆盖的缺口）',
     file: 'test/helpers/era-fixture.js',
-    find: `  era.printMultiColumns = (columnObjects) => {
-    (columnObjects ?? []).forEach(record_grid_object);
-    return lines.length - 1;
-  };`,
-    replace: `  era.printMultiColumns = (columnObjects) => {
-    // 变异：不记录
-    return lines.length - 1;
-  };`,
+    find: `  era.printMultiColumns = (columnObjects) =>
+    push_row((columnObjects ?? []).map(make_grid_entry));`,
+    replace: `  era.printMultiColumns = (columnObjects) =>
+    push_row([]); // 变异：不记录`,
     tests: ['fixture'],
     expect_only: 'printMultiColumns',
+  },
+  // —— #68 测试缝的 Row 保真：归并 / 计数 / 删除 / 替换的自证 ——
+  {
+    desc: 'M103 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const push_row = (entries) => {
+    const row = total_rows;
+    entries.forEach((entry) => {
+      entry.row = row;
+      lines.push(entry);
+    });
+    total_rows += 1;
+    return total_rows;
+  };`,
+    replace: `  const push_row = (entries) => {
+    const row = total_rows;
+    entries.forEach((entry) => {
+      entry.row = row;
+      lines.push(entry);
+      total_rows += 1; // 变异：逐格计数
+    });
+    return total_rows;
+  };`,
+    tests: ['fixture'],
+    expect_only: '算一个 Row',
+  },
+  {
+    desc: 'M104 clear 按 Row 删改坏：退回按条目数切（clear(1) 误伤邻行）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const cut = lines.findIndex(
+      (l) => l.row !== undefined && l.row >= total_rows,
+    );
+    if (cut >= 0) {
+      lines.splice(cut);
+    }`,
+    replace: `    lines.splice(Math.max(0, lines.length - n)); // 变异：按条目数删`,
+    tests: ['fixture'],
+    expect_only: 'clear(1) 只删本行',
+  },
+  {
+    desc: 'M105 替换系改坏：replace_row 只弹一条（多列 Row 换不干净）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (row >= 0) {
+      for (let i = lines.length - 1; i >= 0; i -= 1) {
+        if (lines[i].row === row) {
+          lines.splice(i, 1);
+        }
+      }
+    }`,
+    replace: `    if (row >= 0) {
+      lines.pop(); // 变异：只弹一条
+    }`,
+    tests: ['fixture'],
+    expect_only: 'replaceText 换掉最后一个 Row',
+  },
+  {
+    desc: 'M106 getLineCount 改回条目数（多列 Row 计数虚高）',
+    file: 'test/helpers/era-fixture.js',
+    find: '  era.getLineCount = () => total_rows;',
+    replace: '  era.getLineCount = () => lines.length; // 变异：条目数',
+    tests: ['fixture'],
+    expect_only: '算一个 Row',
+  },
+  {
+    desc: 'M107 input 回显计行删除（组件重绘差一行的主路径缺陷回归）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (input_echo_adds_row(config)) {
+      total_rows += 1; // this.print(回显值)：+1 Row
+    }`,
+    replace: '    // 变异：回显不计行',
+    tests: ['fixture'],
+    expect_only: '组件首行残留',
   },
   // —— #63 T21 trace 完整性：ERB 侧第三道 + 豁免台账的自证 ——
   {
@@ -919,9 +991,52 @@ const MUTATIONS = [
     tests: ['trace-check'],
     expect_only: '清单只能变短',
   },
+  // —— #66 T22 区段所有权扫描器：产物边界 / 同步守护 / 属主决胜 / 跨域滤芯 ——
+  {
+    desc: 'M99 产物边界失效：所有权表永远强制重写（人工修改不再幸存）',
+    file: 'tools/ownership-scan.js',
+    find: `    write_product(
+      path.join(out_dir, TABLES[table].ownership_product),
+      result.ownership_yaml,
+      {
+        force,
+      },
+    ),`,
+    replace: `    write_product(
+      path.join(out_dir, TABLES[table].ownership_product),
+      result.ownership_yaml,
+      { force: true },
+    ),`,
+    tests: ['ownership-scan'],
+    expect_only: '人工修改幸存',
+  },
+  {
+    desc: 'M100 括号角色槽寻址被砍掉（退回工单正则口径——同步守护必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "    addr_re: new RegExp(\n      `${variable}:(?:\\\\([^)]*\\\\)|[0-9A-Za-z_]+)(?::(?:\\\\([^)]*\\\\)|[0-9A-Za-z_]+))*`,\n      'g',\n    ),",
+    replace:
+      "    addr_re: new RegExp(\n      `${variable}:[0-9A-Za-z_]+(?::[0-9A-Za-z_]+)*`,\n      'g',\n    ),",
+    tests: ['ownership-scan'],
+    expect_only: '逐字节一致',
+  },
+  {
+    desc: 'M101 属主决胜反转：并列改取后声明者（下标 400 的 kojo/patch 并列翻转）',
+    file: 'tools/ownership-scan.js',
+    find: '      if (count > best) {',
+    replace: '      if (count >= best) {',
+    tests: ['ownership-scan'],
+    expect_only: '逐字节一致',
+  },
+  {
+    desc: 'M102 跨域滤芯反接（只收属主自己的写入——清单测试必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '        owner_of_index.get(entry.index) !== entry.domain,',
+    replace: '        owner_of_index.get(entry.index) === entry.domain,',
+    tests: ['ownership-scan'],
+    expect_only: '逐条具名',
   // —— #67 自造扩展表 portcflag：接入 / 预设 / 登记 / 名字表的自证 ——
   {
-    desc: 'M99 村娘加入点漏盖版本戳（init_portcflag 调用删除）',
+    desc: 'M108 村娘加入点漏盖版本戳（init_portcflag 调用删除）',
     file: 'ere/event/event-first.js',
     find: `    // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
     // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
@@ -932,7 +1047,7 @@ const MUTATIONS = [
     expect_only: 'portcflag:17:数据版本',
   },
   {
-    desc: 'M100 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
+    desc: 'M109 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
     file: 'ere/page/page-title.js',
     find: `      // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
       // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
@@ -942,7 +1057,7 @@ const MUTATIONS = [
     expect_only: 'portcflag:0:数据版本',
   },
   {
-    desc: 'M101 版本戳盖错值（PORT_DATA_VERSION 1 改 2）',
+    desc: 'M110 版本戳盖错值（PORT_DATA_VERSION 1 改 2）',
     file: 'ere/chara/chara-portcflag.js',
     find: 'const PORT_DATA_VERSION = 1;',
     replace: 'const PORT_DATA_VERSION = 2;',
@@ -950,7 +1065,7 @@ const MUTATIONS = [
     expect_only: 'portcflag',
   },
   {
-    desc: 'M102 寻址族拼错（portcflag 改 portflag——族缺名字表时实机硬崩）',
+    desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机硬崩）',
     file: 'ere/chara/chara-portcflag.js',
     find: '  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);',
     replace: '  return era.set(`portflag:${cid}:数据版本`, PORT_DATA_VERSION);',
@@ -958,7 +1073,7 @@ const MUTATIONS = [
     expect_only: 'portcflag',
   },
   {
-    desc: 'M103 Chara17 预设行被删（预设生效用例必须红）',
+    desc: 'M112 Chara17 预设行被删（预设生效用例必须红）',
     file: 'yml/Chara17.yml',
     find: `"portcflag":
   "数据版本": 0`,
@@ -967,7 +1082,7 @@ const MUTATIONS = [
     expect_only: '预设',
   },
   {
-    desc: 'M104 Chara17 预设基线改坏（0 改 3）',
+    desc: 'M113 Chara17 预设基线改坏（0 改 3）',
     file: 'yml/Chara17.yml',
     find: `"portcflag":
   "数据版本": 0`,
@@ -977,7 +1092,7 @@ const MUTATIONS = [
     expect_only: '预设',
   },
   {
-    desc: 'M105 登记被删（_fixed.json 清空——契约锁必须红）',
+    desc: 'M114 登记被删（_fixed.json 清空——契约锁必须红）',
     file: 'yml/_fixed.json',
     find: `{
   "system": {
@@ -993,7 +1108,7 @@ const MUTATIONS = [
     expect_only: '登记',
   },
   {
-    desc: 'M106 名字表 id 改坏（数据版本 id 0 改 3——装载/寻址/预设全红）',
+    desc: 'M115 名字表 id 改坏（数据版本 id 0 改 3——装载/寻址/预设全红）',
     file: 'yml/PortCFlag.yml',
     find: `"数据版本":
   id: 0`,

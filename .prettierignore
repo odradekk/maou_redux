@@ -17,3 +17,7 @@ sav/
 # 静态数据产物：键名一律双引号是转换器约定（tools/csv-to-yml.js，issue #17），
 # prettier 的 singleQuote 风格会把它改坏，勿格式化
 yml/
+
+# 区段所有权产物：与 yml/ 同规格的生成物（tools/ownership-scan.js，issue #66），
+# 键名双引号 + 固定排序是扫描器约定，勿格式化
+ownership/
