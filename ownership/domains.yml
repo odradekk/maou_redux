@@ -1,0 +1,60 @@
+# 域清单（区段所有权测量的输入数据；issue #66，决议 ADR-0002）
+#
+# 这是数据不是代码：二次开发加域、改目录归属，只改本文件，工具零改动。
+# 域的排列顺序是属主并列时的决胜序——写入次数打平时取先声明者。
+# 目录名是 target/ERB/ 下的一级目录；扫描器要求每个一级目录被恰好一个域认领
+# （新增目录未认领即报错），递归子目录（MOD/魔界银行、侵略/AGENT 等）随一级
+# 目录归属。域清单与九域之外的裁定依据见 issue #66 评论。
+
+kojo:
+  label: 口上
+  dirs: 口上
+
+train:
+  label: 调教
+  # ABL.ERB 的 SHOW_JUEL / SHOW_ABLUP_SELECT 与 ABLUP* 全在调教结算（JUEL_CHECK）流程内
+  dirs: 調教相關, ABL
+
+chara:
+  label: 角色
+  # 關係設置 = RELATION 系初始化
+  dirs: キャラ関数, 關係設置
+
+stronghold:
+  label: 据点
+  # 售卻相關（卖奴隶/母乳/影像/决斗金）是据点经济循环，从 @EVENTEND 与 SHOP 入口调用
+  dirs: SHOP, 售卻相關
+
+dungeon:
+  label: 迷宫
+  # 怪物相關：SUMMON_MONSTER 的主调用方是 DUNGEON_TRAP 与日循环；
+  # MONSTER_PLAY 的 SHOP 入口（SELECT_TARGET）记为跨域流量，由跨域写入清单显式
+  dirs: 迷宮, 怪物相關
+
+invasion:
+  label: 侵略
+  dirs: 侵略
+
+event:
+  label: 事件
+  # 處刑相關：EXECUTION_MINI / NAEDOKO 从日循环（EVENT_NEXTDAY / SYSTEM）调用，属日程内容事件
+  dirs: EVENT, 處刑相關
+
+system:
+  label: 系统
+  # 其他 = 杂项兜底（含 EXCOM 的 EX 口上扩展，#70 全表实测后可单独裁定）
+  # 音声相关只有音量设置的全局变量声明，无 .ERB
+  dirs: SYSTEM, 其他, 音声相关
+
+patch:
+  label: 补丁
+  # 后加的三个补丁目录单列（不并入玩法域）：写入必须计入——它们占用高位下标正是
+  # ADR-0001「原作空闲区段不可信」的事实依据；并入任何玩法域都会污染该域的归属
+  # 判定。patch 区段的门面政策由后续票裁定。
+  dirs: DEBUG小白娘2024ver0.0.14, MOD, 魔改新增
+
+# 引擎不装载的根目录源文件（issue #12：根 TITLE.ERB 被引擎忽略，ERB/SYSTEM/
+# 下的同名文件才是真身；实测其 CFLAG 写入为零）。忽略是显式声明：这些文件里
+# 若出现写入，扫描器报错。
+ignored_files:
+  - TITLE.ERB

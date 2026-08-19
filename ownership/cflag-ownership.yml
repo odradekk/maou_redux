@@ -1,0 +1,683 @@
+# 区段所有权表（CFLAG）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #66）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cflag
+#
+# 口径：写入 = 赋值与复合赋值（寻址段允许括号角色槽），剥除 ; 注释后的实活代码；
+#       读取不入本表。区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间；
+#       区间内分布按区间聚合，逐下标明细可由重跑复算（同步守护逐字节直比）。
+# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
+# 实活写入 11435（动态下标 19 未归类；注释掉的写入 305 另计）；
+# 实活下标 248 个 → 区间 106 条；跨域写入 736 条（见 cflag-cross-domain-writes.yml）。
+"0":
+  owner: stronghold
+  writes: 4
+  by_domain:
+    stronghold: 3
+    event: 1
+"1":
+  owner: invasion
+  writes: 135
+  by_domain:
+    invasion: 45
+    dungeon: 37
+    chara: 18
+    system: 15
+    event: 11
+    stronghold: 5
+    patch: 4
+"2":
+  owner: chara
+  writes: 45
+  by_domain:
+    chara: 29
+    dungeon: 6
+    event: 4
+    system: 3
+    stronghold: 2
+    patch: 1
+"3-5":
+  owner: train
+  writes: 9
+  by_domain:
+    train: 7
+    system: 2
+"6":
+  owner: chara
+  writes: 13
+  by_domain:
+    chara: 8
+    invasion: 4
+    event: 1
+"7":
+  owner: train
+  writes: 3
+  by_domain:
+    train: 3
+"9":
+  owner: chara
+  writes: 13
+  by_domain:
+    chara: 7
+    system: 3
+    stronghold: 1
+    dungeon: 1
+    event: 1
+"10":
+  owner: stronghold
+  writes: 3
+  by_domain:
+    stronghold: 2
+    event: 1
+"11":
+  owner: chara
+  writes: 86
+  by_domain:
+    chara: 34
+    dungeon: 31
+    invasion: 11
+    system: 10
+"12":
+  owner: dungeon
+  writes: 96
+  by_domain:
+    dungeon: 39
+    chara: 27
+    invasion: 18
+    system: 12
+"13-14":
+  owner: chara
+  writes: 69
+  by_domain:
+    chara: 34
+    dungeon: 15
+    system: 14
+    stronghold: 2
+    event: 2
+    patch: 2
+"15-16":
+  owner: train
+  writes: 206
+  by_domain:
+    train: 101
+    chara: 30
+    dungeon: 25
+    system: 25
+    event: 19
+    kojo: 3
+    stronghold: 2
+    invasion: 1
+"21":
+  owner: kojo
+  writes: 2
+  by_domain:
+    kojo: 2
+"22":
+  owner: train
+  writes: 1
+  by_domain:
+    train: 1
+"31":
+  owner: event
+  writes: 5
+  by_domain:
+    event: 4
+    train: 1
+"32":
+  owner: train
+  writes: 2
+  by_domain:
+    train: 1
+    event: 1
+"40-41":
+  owner: system
+  writes: 83
+  by_domain:
+    system: 45
+    train: 31
+    stronghold: 3
+    event: 3
+    chara: 1
+"42":
+  owner: chara
+  writes: 7
+  by_domain:
+    chara: 3
+    system: 2
+    stronghold: 1
+    event: 1
+"43":
+  owner: system
+  writes: 5
+  by_domain:
+    system: 3
+    train: 1
+    stronghold: 1
+"44-45":
+  owner: stronghold
+  writes: 12
+  by_domain:
+    stronghold: 5
+    train: 3
+    system: 3
+    chara: 1
+"46-47":
+  owner: system
+  writes: 18
+  by_domain:
+    system: 9
+    stronghold: 5
+    train: 3
+    chara: 1
+"48-49":
+  owner: stronghold
+  writes: 6
+  by_domain:
+    stronghold: 3
+    event: 2
+    system: 1
+"50":
+  owner: event
+  writes: 4
+  by_domain:
+    event: 2
+    dungeon: 1
+    invasion: 1
+"61":
+  owner: train
+  writes: 8
+  by_domain:
+    train: 7
+    event: 1
+"62":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"70-71":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 2
+"74":
+  owner: train
+  writes: 1
+  by_domain:
+    train: 1
+"81-82":
+  owner: train
+  writes: 8
+  by_domain:
+    train: 4
+    event: 4
+"99":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"100":
+  owner: event
+  writes: 1
+  by_domain:
+    event: 1
+"101":
+  owner: system
+  writes: 4
+  by_domain:
+    system: 3
+    event: 1
+"102":
+  owner: event
+  writes: 11
+  by_domain:
+    event: 6
+    train: 5
+"103-105":
+  owner: system
+  writes: 10
+  by_domain:
+    system: 10
+"106-107":
+  owner: dungeon
+  writes: 33
+  by_domain:
+    dungeon: 24
+    system: 7
+    event: 2
+"108":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"109":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 1
+    event: 1
+"110-111":
+  owner: event
+  writes: 29
+  by_domain:
+    event: 24
+    system: 3
+    chara: 2
+"112":
+  owner: dungeon
+  writes: 3
+  by_domain:
+    dungeon: 2
+    system: 1
+"113":
+  owner: train
+  writes: 31
+  by_domain:
+    train: 30
+    system: 1
+"120":
+  owner: patch
+  writes: 6
+  by_domain:
+    patch: 4
+    chara: 1
+    dungeon: 1
+"130-131":
+  owner: dungeon
+  writes: 2
+  by_domain:
+    dungeon: 2
+"151-152":
+  owner: chara
+  writes: 17
+  by_domain:
+    chara: 10
+    event: 3
+    stronghold: 2
+    system: 1
+    patch: 1
+"190":
+  owner: system
+  writes: 1
+  by_domain:
+    system: 1
+"201-204":
+  owner: kojo
+  writes: 338
+  by_domain:
+    kojo: 338
+"214":
+  owner: kojo
+  writes: 1
+  by_domain:
+    kojo: 1
+"221-230":
+  owner: kojo
+  writes: 180
+  by_domain:
+    kojo: 180
+"261-265":
+  owner: kojo
+  writes: 343
+  by_domain:
+    kojo: 343
+"271-274":
+  owner: kojo
+  writes: 100
+  by_domain:
+    kojo: 100
+"297-318":
+  owner: kojo
+  writes: 2488
+  by_domain:
+    kojo: 2488
+"320-339":
+  owner: kojo
+  writes: 3037
+  by_domain:
+    kojo: 3037
+"341-348":
+  owner: kojo
+  writes: 1400
+  by_domain:
+    kojo: 1400
+"356-357":
+  owner: kojo
+  writes: 260
+  by_domain:
+    kojo: 260
+"360-367":
+  owner: kojo
+  writes: 556
+  by_domain:
+    kojo: 556
+"369-370":
+  owner: kojo
+  writes: 45
+  by_domain:
+    kojo: 45
+"372":
+  owner: kojo
+  writes: 63
+  by_domain:
+    kojo: 63
+"374-381":
+  owner: kojo
+  writes: 505
+  by_domain:
+    kojo: 505
+"385-387":
+  owner: kojo
+  writes: 130
+  by_domain:
+    kojo: 130
+"391":
+  owner: kojo
+  writes: 1
+  by_domain:
+    kojo: 1
+"400":
+  owner: kojo
+  writes: 2
+  by_domain:
+    kojo: 1
+    patch: 1
+"420":
+  owner: chara
+  writes: 3
+  by_domain:
+    chara: 1
+    stronghold: 1
+    system: 1
+"444":
+  owner: kojo
+  writes: 48
+  by_domain:
+    kojo: 48
+"450-459":
+  owner: chara
+  writes: 57
+  by_domain:
+    chara: 32
+    stronghold: 8
+    invasion: 7
+    system: 7
+    event: 3
+"491":
+  owner: train
+  writes: 5
+  by_domain:
+    train: 3
+    stronghold: 2
+"493":
+  owner: stronghold
+  writes: 1
+  by_domain:
+    stronghold: 1
+"495-496":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 2
+"498":
+  owner: stronghold
+  writes: 1
+  by_domain:
+    stronghold: 1
+"499":
+  owner: train
+  writes: 3
+  by_domain:
+    train: 3
+"500":
+  owner: stronghold
+  writes: 2
+  by_domain:
+    stronghold: 1
+    dungeon: 1
+"501":
+  owner: dungeon
+  writes: 28
+  by_domain:
+    dungeon: 10
+    invasion: 8
+    event: 5
+    chara: 2
+    stronghold: 1
+    system: 1
+    patch: 1
+"502":
+  owner: event
+  writes: 17
+  by_domain:
+    event: 5
+    dungeon: 4
+    invasion: 3
+    chara: 2
+    stronghold: 1
+    system: 1
+    patch: 1
+"503":
+  owner: dungeon
+  writes: 42
+  by_domain:
+    dungeon: 24
+    invasion: 17
+    system: 1
+"504":
+  owner: stronghold
+  writes: 1
+  by_domain:
+    stronghold: 1
+"505":
+  owner: dungeon
+  writes: 8
+  by_domain:
+    dungeon: 5
+    invasion: 2
+    stronghold: 1
+"506-507":
+  owner: invasion
+  writes: 85
+  by_domain:
+    invasion: 41
+    dungeon: 35
+    system: 5
+    chara: 2
+    event: 2
+"508":
+  owner: event
+  writes: 10
+  by_domain:
+    event: 3
+    dungeon: 2
+    invasion: 2
+    chara: 1
+    system: 1
+    patch: 1
+"509":
+  owner: dungeon
+  writes: 11
+  by_domain:
+    dungeon: 9
+    invasion: 1
+    system: 1
+"510-511":
+  owner: event
+  writes: 8
+  by_domain:
+    event: 6
+    dungeon: 2
+"512-514":
+  owner: dungeon
+  writes: 15
+  by_domain:
+    dungeon: 11
+    invasion: 4
+"520":
+  owner: dungeon
+  writes: 31
+  by_domain:
+    dungeon: 17
+    invasion: 14
+"521":
+  owner: invasion
+  writes: 6
+  by_domain:
+    invasion: 4
+    dungeon: 2
+"530-540":
+  owner: dungeon
+  writes: 117
+  by_domain:
+    dungeon: 91
+    invasion: 24
+    system: 2
+"550":
+  owner: chara
+  writes: 70
+  by_domain:
+    chara: 40
+    invasion: 14
+    event: 7
+    stronghold: 3
+    dungeon: 3
+    patch: 2
+    system: 1
+"551-552":
+  owner: event
+  writes: 20
+  by_domain:
+    event: 12
+    patch: 4
+    chara: 2
+    system: 2
+"570":
+  owner: system
+  writes: 7
+  by_domain:
+    system: 4
+    chara: 2
+    dungeon: 1
+"571":
+  owner: dungeon
+  writes: 17
+  by_domain:
+    dungeon: 11
+    invasion: 6
+"580-581":
+  owner: dungeon
+  writes: 38
+  by_domain:
+    dungeon: 24
+    patch: 8
+    chara: 3
+    invasion: 1
+    event: 1
+    system: 1
+"582":
+  owner: patch
+  writes: 14
+  by_domain:
+    patch: 7
+    dungeon: 6
+    chara: 1
+"600":
+  owner: train
+  writes: 1
+  by_domain:
+    train: 1
+"601-602":
+  owner: chara
+  writes: 12
+  by_domain:
+    chara: 9
+    dungeon: 3
+"603":
+  owner: dungeon
+  writes: 6
+  by_domain:
+    dungeon: 6
+"604-605":
+  owner: chara
+  writes: 7
+  by_domain:
+    chara: 7
+"606-608":
+  owner: system
+  writes: 8
+  by_domain:
+    system: 7
+    chara: 1
+"609":
+  owner: chara
+  writes: 5
+  by_domain:
+    chara: 5
+"610":
+  owner: system
+  writes: 2
+  by_domain:
+    system: 2
+"621":
+  owner: chara
+  writes: 2
+  by_domain:
+    chara: 2
+"650-657":
+  owner: kojo
+  writes: 207
+  by_domain:
+    kojo: 207
+"661-665":
+  owner: event
+  writes: 15
+  by_domain:
+    event: 15
+"666":
+  owner: train
+  writes: 6
+  by_domain:
+    train: 5
+    system: 1
+"667":
+  owner: event
+  writes: 2
+  by_domain:
+    event: 2
+"680-681":
+  owner: dungeon
+  writes: 8
+  by_domain:
+    dungeon: 8
+"682":
+  owner: system
+  writes: 6
+  by_domain:
+    system: 4
+    dungeon: 2
+"700":
+  owner: chara
+  writes: 2
+  by_domain:
+    chara: 2
+"777":
+  owner: patch
+  writes: 7
+  by_domain:
+    patch: 4
+    event: 2
+    chara: 1
+"800":
+  owner: system
+  writes: 2
+  by_domain:
+    system: 2
+"820":
+  owner: chara
+  writes: 2
+  by_domain:
+    chara: 1
+    event: 1
+"999":
+  owner: stronghold
+  writes: 1
+  by_domain:
+    stronghold: 1
