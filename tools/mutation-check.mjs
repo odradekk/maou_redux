@@ -919,6 +919,50 @@ const MUTATIONS = [
     tests: ['trace-check'],
     expect_only: '清单只能变短',
   },
+  // —— #66 T22 区段所有权扫描器：产物边界 / 同步守护 / 属主决胜 / 跨域滤芯 ——
+  {
+    desc: 'M99 产物边界失效：所有权表永远强制重写（人工修改不再幸存）',
+    file: 'tools/ownership-scan.js',
+    find: `    write_product(
+      path.join(out_dir, TABLES[table].ownership_product),
+      result.ownership_yaml,
+      {
+        force,
+      },
+    ),`,
+    replace: `    write_product(
+      path.join(out_dir, TABLES[table].ownership_product),
+      result.ownership_yaml,
+      { force: true },
+    ),`,
+    tests: ['ownership-scan'],
+    expect_only: '人工修改幸存',
+  },
+  {
+    desc: 'M100 括号角色槽寻址被砍掉（退回工单正则口径——同步守护必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "    addr_re: new RegExp(\n      `${variable}:(?:\\\\([^)]*\\\\)|[0-9A-Za-z_]+)(?::(?:\\\\([^)]*\\\\)|[0-9A-Za-z_]+))*`,\n      'g',\n    ),",
+    replace:
+      "    addr_re: new RegExp(\n      `${variable}:[0-9A-Za-z_]+(?::[0-9A-Za-z_]+)*`,\n      'g',\n    ),",
+    tests: ['ownership-scan'],
+    expect_only: '逐字节一致',
+  },
+  {
+    desc: 'M101 属主决胜反转：并列改取后声明者（下标 400 的 kojo/patch 并列翻转）',
+    file: 'tools/ownership-scan.js',
+    find: '      if (count > best) {',
+    replace: '      if (count >= best) {',
+    tests: ['ownership-scan'],
+    expect_only: '逐字节一致',
+  },
+  {
+    desc: 'M102 跨域滤芯反接（只收属主自己的写入——清单测试必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '        owner_of_index.get(entry.index) !== entry.domain,',
+    replace: '        owner_of_index.get(entry.index) === entry.domain,',
+    tests: ['ownership-scan'],
+    expect_only: '逐条具名',
+  },
 ];
 
 function run_one(m, index) {
