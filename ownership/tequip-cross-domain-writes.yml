@@ -1,0 +1,46 @@
+# 跨域写入清单（TEQUIP）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table tequip
+#
+# 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
+#       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
+# 共 8 条。
+- index: 22
+  writer: train
+  owner: system
+  file: "target/ERB/調教相關/COMF52_利尿剤.ERB"
+  line: 65
+- index: 22
+  writer: train
+  owner: system
+  file: "target/ERB/調教相關/COMF85_放尿.ERB"
+  line: 204
+- index: 35
+  writer: system
+  owner: event
+  file: "target/ERB/SYSTEM/SYSTEM_SOURCE.ERB"
+  line: 21
+- index: 35
+  writer: train
+  owner: event
+  file: "target/ERB/調教相關/COMF_CONDOM.ERB"
+  line: 87
+- index: 35
+  writer: train
+  owner: event
+  file: "target/ERB/調教相關/COMF_CONDOM.ERB"
+  line: 116
+- index: 36
+  writer: system
+  owner: train
+  file: "target/ERB/SYSTEM/SYSTEM_SOURCE.ERB"
+  line: 34
+- index: 36
+  writer: system
+  owner: train
+  file: "target/ERB/SYSTEM/SYSTEM_SOURCE.ERB"
+  line: 49
+- index: 37
+  writer: system
+  owner: train
+  file: "target/ERB/SYSTEM/SYSTEM_SOURCE.ERB"
+  line: 429

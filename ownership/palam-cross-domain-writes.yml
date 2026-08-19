@@ -1,0 +1,16 @@
+# 跨域写入清单（PALAM）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table palam
+#
+# 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
+#       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
+# 共 2 条。
+- index: 3
+  writer: event
+  owner: train
+  file: "target/ERB/EVENT/EVENT_AUTOTRAIN.ERB"
+  line: 81
+- index: 5
+  writer: event
+  owner: train
+  file: "target/ERB/EVENT/EVENT_AUTOTRAIN.ERB"
+  line: 82

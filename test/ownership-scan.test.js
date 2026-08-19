@@ -1,17 +1,19 @@
 /**
- * @file tools/ownership-scan.js 的契约测试（issue #66）。
+ * @file tools/ownership-scan.js 的契约测试（issue #66 单表 → #70 全表实测）。
  *
- * 五个重点：
- *   1. 写入/读取分类——小段源文本直接驱动（含括号角色槽、比较形态排除、
- *      动态下标、注释剥离），不依赖真实 target/；
- *   2. 域清单是数据——夹具域清单带一个工具从没见过的域，证明加域不改工具
- *      （工单的硬约束）；目录归属校验对未认领/发霉/未处置的目录一律报错；
- *   3. 产物边界——默认不覆盖、--force 才覆盖（issue #10 规则对新产物同样生效，
- *      必须有测试）；
- *   4. 同步守护——重跑真实 target/ 的生成结果与库内两份产物逐字节一致；
- *   5. 锚点复现——工单实测结论在本口径下成立（2xx+3xx 口上独占、实活 9447、
- *      零外部写入者；1xx/4xx/6xx 混用）。工单口径（含注释、无括号形态）的
- *      对账见 issue #66 评论，不在测试里复算。
+ * 六个重点：
+ *   1. 写入/读取分类 v2——小段源文本直接驱动：赋值/复合赋值/字符串赋值'/后缀
+ *      ++--/TIMES/VARSET 全形态，含词边界（EX_CFLAG 等前缀变量不算表寻址）、
+ *      名字下标（归一 + 解析 + 散文容忍）、VARSET 区间左闭右开；
+ *   2. ignored_files 语义（#70 改判）——声明的文件必须存在（发霉即报），
+ *      其内容整体跳过测量（引擎不装载 = 死代码，TITLE.ERB 里的写入不算）；
+ *   3. 域清单是数据——夹具域清单带一个工具从没见过的域；目录归属校验照旧；
+ *   4. 产物边界——默认不覆盖、--force 才覆盖；--table 单表只写该表两份产物，
+ *      reads-summary 只在 all 时写出；
+ *   5. 同步守护——重跑真实 target/ 的 33 份产物逐字节一致；
+ *   6. 锚点复现——#66 的 CFLAG 锚点在 v2 口径下完好（2xx+3xx 口上独占
+ *      9447、零外部写入者），全表锚点（SOURCE/PALAM/STAIN 单域、GLOBAL
+ *      仅系统、口上是最大的跨域读者）与 #66→#70 的口径对账数字钉死。
  */
 
 const assert = require('node:assert/strict');
@@ -22,14 +24,17 @@ const { test } = require('node:test');
 
 const {
   REPO_ROOT,
-  build_matchers,
+  TABLES,
+  TABLE_KEYS,
+  build_addr_re,
   classify_line,
   generate,
+  load_name_maps,
   main,
   parse_domains,
 } = require('../tools/ownership-scan');
 
-// —— 测试小工具（与 csv-to-yml.test.js 同款惯例）——
+// —— 测试小工具 ——
 
 async function with_temp_dir(run) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-ownership-scan-'));
@@ -84,51 +89,99 @@ const FIXTURE_DOMAINS = [
   '  - TITLE.ERB',
 ].join('\n');
 
-// 域清单声明的目录都建出来（空目录即可）——归属校验要求声明与实存一致，
-// 夹具树只建用到的目录会触发「数据发霉」报错（那正是该校验的职责）
+// 域清单声明的目录与 ignored 文件都建出来（空内容即可）——归属校验要求
+// 声明与实存一致：只建用到的目录会触发「数据发霉」报错（那正是该校验的职责）
 function ensure_domain_dirs(erb_root, domain_text) {
+  let section = '';
   for (const line of domain_text.split('\n')) {
-    const match = /^ {2}dirs: (.+)$/.exec(line);
-    if (!match) {
+    const top = /^([a-z_]+):$/.exec(line.trim());
+    if (top) {
+      section = top[1];
       continue;
     }
-    for (const dir of match[1]
-      .split(',')
-      .map((entry) => entry.trim())
-      .filter(Boolean)) {
-      fs.mkdirSync(path.join(erb_root, dir), { recursive: true });
+    const dirs = /^ {2}dirs: (.+)$/.exec(line);
+    if (dirs) {
+      for (const dir of dirs[1]
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter(Boolean)) {
+        fs.mkdirSync(path.join(erb_root, dir), { recursive: true });
+      }
+    }
+    const item = section === 'ignored_files' ? /^ {2}- (.+)$/.exec(line) : null;
+    if (item && !fs.existsSync(path.join(erb_root, item[1].trim()))) {
+      fs.writeFileSync(path.join(erb_root, item[1].trim()), '', 'utf8');
     }
   }
 }
 
-// 在夹具树上跑一次完整生成
-async function generate_on_fixture(tree, domain_text = FIXTURE_DOMAINS) {
+// 夹具名字表目录：16 张表的名字表文件都要在（load_name_maps 缺文件即报），
+// entries 只给需要的表喂条目，其余为空表（与 CFlag/TFlag 的空名字表同形）。
+function make_name_dir(dir, entries) {
+  const name_dir = path.join(dir, 'yml');
+  fs.mkdirSync(name_dir, { recursive: true });
+  for (const key of TABLE_KEYS) {
+    const lines = entries[key] ? entries[key] : [];
+    fs.writeFileSync(
+      path.join(name_dir, TABLES[key].name_file),
+      lines.map(([name, id]) => `"${name}":\n  id: ${id}\n`).join(''),
+      'utf8',
+    );
+  }
+  return name_dir;
+}
+
+// 在夹具树上跑一次完整生成（tables 参数选单表可缩小断言面）
+async function generate_on_fixture(
+  tree,
+  { domains = FIXTURE_DOMAINS, names = {} } = {},
+) {
   return with_fixture_tree(tree, async ({ dir, erb_root }) => {
     const domain_file = path.join(dir, 'domains.yml');
-    fs.writeFileSync(domain_file, domain_text, 'utf8');
-    ensure_domain_dirs(erb_root, domain_text);
-    const result = generate({ domain_file, erb_root });
-    return { result, dir, erb_root, domain_file };
+    fs.writeFileSync(domain_file, domains, 'utf8');
+    ensure_domain_dirs(erb_root, domains);
+    const name_dir = make_name_dir(dir, names);
+    const result = generate({ domain_file, erb_root, name_dir });
+    return { result, dir, erb_root, domain_file, name_dir };
   });
 }
 
-// —— 写入/读取分类 ——
+// 单行分类的快捷断言（默认 cflag 表；名字表条目按需注入）。
+// 用全表联合正则——与真实扫描同一形态（TFLAG/FLAG 的词边界交互靠它暴露）。
+const COMBINED_ADDR_RE = build_addr_re(
+  TABLE_KEYS.map((key) => TABLES[key].variable),
+);
+function classify(source, { table = 'cflag', names = {} } = {}) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-cls-'));
+  try {
+    const name_dir = make_name_dir(dir, names);
+    const { writes, reads } = classify_line(
+      source,
+      COMBINED_ADDR_RE,
+      load_name_maps(name_dir),
+      null,
+      '',
+    );
+    const pick = (list) => list.filter((e) => e.table === table);
+    return { writes: pick(writes), reads: pick(reads) };
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// —— 写入/读取分类：直接寻址 ——
 
 test('写入判定：赋值与复合赋值计入，比较形态（== >= <= != < >）不计', () => {
-  const matchers = build_matchers('CFLAG');
-  assert.deepEqual(classify_line('CFLAG:322 = 1', matchers), {
-    writes: [322],
-    reads: 0,
-  });
-  assert.deepEqual(
-    classify_line('CFLAG:TARGET:344 += 1', matchers).writes,
-    [344],
-  );
-  // 括号角色槽：工单正则会漏掉的第三种寻址形态
-  assert.deepEqual(
-    classify_line('CFLAG:(ARG:0):13 *= 2', matchers).writes,
-    [13],
-  );
+  assert.deepEqual(classify('CFLAG:322 = 1').writes, [
+    { table: 'cflag', index: 322 },
+  ]);
+  assert.deepEqual(classify('CFLAG:TARGET:344 += 1').writes, [
+    { table: 'cflag', index: 344 },
+  ]);
+  // 括号角色槽：#66 口径就有的第三种寻址形态
+  assert.deepEqual(classify('CFLAG:(ARG:0):13 *= 2').writes, [
+    { table: 'cflag', index: 13 },
+  ]);
   for (const [source, expected] of [
     ['CFLAG:301 -= 5', 301],
     ['CFLAG:301 /= 2', 301],
@@ -138,17 +191,14 @@ test('写入判定：赋值与复合赋值计入，比较形态（== >= <= != < 
     ['CFLAG:301 <<= 1', 301],
     ['CFLAG:301 >>= 1', 301],
   ]) {
-    assert.deepEqual(
-      classify_line(source, matchers).writes,
-      [expected],
-      source,
-    );
+    assert.deepEqual(classify(source).writes, [
+      { table: 'cflag', index: expected },
+    ]);
   }
 
-  assert.deepEqual(classify_line('IF CFLAG:301 == 1', matchers), {
-    writes: [],
-    reads: 1,
-  });
+  assert.deepEqual(classify('IF CFLAG:301 == 1').reads, [
+    { table: 'cflag', index: 301 },
+  ]);
   for (const source of [
     'SIF CFLAG:5 >= 3',
     'SIF CFLAG:5 <= 3',
@@ -157,81 +207,224 @@ test('写入判定：赋值与复合赋值计入，比较形态（== >= <= != < 
     'SIF CFLAG:5 > 3',
   ]) {
     assert.deepEqual(
-      classify_line(source, matchers),
-      { writes: [], reads: 1 },
+      classify(source).reads,
+      [{ table: 'cflag', index: 5 }],
       source,
     );
   }
 });
 
+test("写入判定 v2：字符串赋值 '= 与后缀 ++/--（有无空格）都计入", () => {
+  // '= 字符串赋值：CSTR/NINSIN 的活代码形态
+  assert.deepEqual(
+    classify(`CSTR:ARG:2 '= SAVESTR:L_父亲`, { table: 'cstr' }).writes,
+    [{ table: 'cstr', index: 2 }],
+  );
+  // 后缀 ++/--：#66 负检查只对 CFLAG 字面量形态成立，ABL/MARK/CFLAG 上实存
+  assert.deepEqual(classify('ABL:15 ++', { table: 'abl' }).writes, [
+    { table: 'abl', index: 15 },
+  ]);
+  assert.deepEqual(classify('ABL:3++', { table: 'abl' }).writes, [
+    { table: 'abl', index: 3 },
+  ]);
+  assert.deepEqual(classify('MARK:3 --', { table: 'mark' }).writes, [
+    { table: 'mark', index: 3 },
+  ]);
+  assert.deepEqual(classify('CFLAG:PM:508 --').writes, [
+    { table: 'cflag', index: 508 },
+  ]);
+  // 算术负检查：单 + / 单 - 不是自增
+  assert.deepEqual(classify('CFLAG:3 + 1').writes, []);
+  assert.deepEqual(classify('CFLAG:3 - 1').writes, []);
+});
+
 test('读取判定：右值、PRINTFORM 引用计入；同行的写入目标不计读', () => {
-  const matchers = build_matchers('CFLAG');
-  assert.deepEqual(classify_line('CFLAG:301 = CFLAG:302 + 1', matchers), {
-    writes: [301],
-    reads: 1,
-  });
-  assert.deepEqual(classify_line('LOCAL = CFLAG:301', matchers), {
-    writes: [],
-    reads: 1,
-  });
-  assert.deepEqual(classify_line('PRINTFORM {CFLAG:301,3}', matchers).reads, 1);
+  assert.deepEqual(classify('CFLAG:301 = CFLAG:302 + 1').writes, [
+    { table: 'cflag', index: 301 },
+  ]);
+  assert.deepEqual(classify('CFLAG:301 = CFLAG:302 + 1').reads, [
+    { table: 'cflag', index: 302 },
+  ]);
+  assert.deepEqual(classify('LOCAL = CFLAG:301').reads, [
+    { table: 'cflag', index: 301 },
+  ]);
+  assert.deepEqual(classify('PRINTFORM {CFLAG:301,3}').reads, [
+    { table: 'cflag', index: 301 },
+  ]);
 });
 
-test('动态下标：写入计入但下标为 null（无测量事实可归属）', () => {
-  const matchers = build_matchers('CFLAG');
-  assert.deepEqual(classify_line('CFLAG:COUNT = 0', matchers), {
-    writes: [null],
-    reads: 0,
-  });
+test('动态下标：ASCII 标识符与括号表达式计入但下标为 null（无归属事实）', () => {
+  assert.deepEqual(classify('CFLAG:COUNT = 0').writes, [
+    { table: 'cflag', index: null },
+  ]);
+  assert.deepEqual(classify('CFLAG:ARG:(LOCAL:1) = 0').writes, [
+    { table: 'cflag', index: null },
+  ]);
 });
 
-test('编码按内容判定：Shift-JIS 文件里的写入不漏（工单陷阱四）', async () => {
-  await with_fixture_tree({ '(root)': [] }, async ({ dir, erb_root }) => {
-    fs.mkdirSync(path.join(erb_root, '甲'), { recursive: true });
-    // 夹具：首行注释含 Shift-JIS 专有字节（あ = 82 A0，不是合法 UTF-8），
-    // 按扩展名假定 UTF-8 会乱码；第二行是活写入
-    fs.writeFileSync(
-      path.join(erb_root, '甲', 'SJIS.ERB'),
-      Buffer.concat([
-        Buffer.from([0x3b, 0x82, 0xa0, 0x0d, 0x0a]),
-        Buffer.from('CFLAG:322 = 7\r\n', 'ascii'),
-      ]),
-    );
-    const domain_file = path.join(dir, 'domains.yml');
-    fs.writeFileSync(domain_file, FIXTURE_DOMAINS, 'utf8');
-    ensure_domain_dirs(erb_root, FIXTURE_DOMAINS);
-    const result = generate({ domain_file, erb_root });
-    assert.equal(result.scan.shift_jis_files.length, 1);
-    assert.ok(result.scan.shift_jis_files[0].endsWith('甲/SJIS.ERB'));
-    assert.equal(result.scan.writes_total, 1);
-    assert.equal(result.scan.per_index.get(322)?.get('alpha'), 1);
-  });
+test('词边界：包含表名的其他变量不算本表寻址（EX_CFLAG/LOSEBASE/NOWEX/TFLAG）', () => {
+  // 语料实证：EX_CFLAG:A:99 = CFLAG:A:800（其他/DATA_FIX.ERB:94）——#66 把
+  // 其中的 CFLAG:A:99 记成了 CFLAG 写入；正确结果只有右值一次读（800）
+  const ex = classify('EX_CFLAG:A:99 = CFLAG:A:800');
+  assert.deepEqual(ex.writes, []);
+  assert.deepEqual(ex.reads, [{ table: 'cflag', index: 800 }]);
+  assert.deepEqual(classify('NOWEX:5 = 1', { table: 'ex' }).writes, []);
+  assert.deepEqual(classify('LOSEBASE:0 = 1', { table: 'base' }).writes, []);
+  assert.deepEqual(classify('LOVE_EXP:0 = 1', { table: 'exp' }).writes, []);
+  assert.deepEqual(classify('SELECT_FLAG:1 = 1', { table: 'flag' }).writes, []);
+  // TFLAG 不是 FLAG：表名前是词字符（T）即被负向后行挡住
+  assert.deepEqual(classify('TFLAG:1 = 1', { table: 'flag' }).writes, []);
+  assert.deepEqual(classify('TFLAG:1 = 1', { table: 'tflag' }).writes, [
+    { table: 'tflag', index: 1 },
+  ]);
+  // CJK 变量名槽位（#66 漏写形态：CFLAG:L_孩子:1 = 0）
+  assert.deepEqual(classify('CFLAG:L_孩子:1 = 0').writes, [
+    { table: 'cflag', index: 1 },
+  ]);
 });
 
-test('注释掉的写入是死代码：计入统计，不进区间与跨域清单', async () => {
+// —— 名字下标 ——
+
+test('名字下标：解析为名字表下标；代码里的繁/日形态先归一再查表', () => {
+  const names = {
+    talent: [
+      ['甲素质', 7],
+      ['恢复', 42],
+    ],
+  };
+  assert.deepEqual(
+    classify('TALENT:TARGET:甲素质 = 1', { table: 'talent', names }).writes,
+    [{ table: 'talent', index: 7 }],
+  );
+  // 语料实证：代码写 精巣妊娠、名字表存 精巢妊娠；此处用词级映射 回復→恢复
+  assert.deepEqual(
+    classify('TALENT:TARGET:回復 = 1', { table: 'talent', names }).writes,
+    [{ table: 'talent', index: 42 }],
+  );
+  // 算术贴附：段在 - 处断开，名字照常解析（语料形态：(TALENT:头发长度-1)/100）
+  assert.deepEqual(
+    classify('CALL X((TALENT:甲素质-1)/100)', { table: 'talent', names }).reads,
+    [{ table: 'talent', index: 7 }],
+  );
+});
+
+test('名字下标：归一后查不到 = 实活代码报错、注释散文跳过', async () => {
+  await assert.rejects(
+    generate_on_fixture({
+      甲: [['A.ERB', 'TALENT:TARGET:甲素质 = 1\n']],
+    }),
+    /名字下标.*甲素质/,
+  );
+  // 注释里的散文（;CFLAG:0が1=売却可）不算注释写入，也不算读
   const { result } = await generate_on_fixture({
-    甲: [['A.ERB', ';CFLAG:301 = 1\nCFLAG:302 = 2\n']],
+    甲: [['A.ERB', ';CFLAG:0が1=売却可\nCFLAG:2 = 1\n']],
   });
-  assert.equal(result.scan.commented_writes, 1);
-  assert.equal(result.scan.writes_total, 1);
-  assert.deepEqual([...result.scan.per_index.keys()], [302]);
-  assert.ok(result.ownership_yaml.includes('"302":'));
-  assert.ok(!result.ownership_yaml.includes('301'));
-  assert.equal(result.cross.length, 0);
+  assert.equal(result.tables.get('cflag').scan.commented_writes, 0);
+  assert.equal(result.tables.get('cflag').scan.writes_total, 1);
 });
 
-// —— 区间与属主 ——
+// —— VARSET / CVARSET / TIMES ——
+
+test('VARSET：字面量区间逐下标计入，[起, 止) 左闭右开；槽位维不入测量', async () => {
+  const { result } = await generate_on_fixture({
+    甲: [['A.ERB', 'VARSET TFLAG, 0, 0, 30\nVARSET TALENT:A:0, 0, 160, 180\n']],
+  });
+  const tflag = result.tables.get('tflag').scan;
+  assert.equal(tflag.writes_total, 30);
+  assert.ok(tflag.per_index.has(0));
+  assert.ok(tflag.per_index.has(29));
+  assert.ok(!tflag.per_index.has(30)); // 止端排除（引擎手册：结束索引不包含）
+  const talent = result.tables.get('talent').scan;
+  assert.equal(talent.writes_total, 20);
+  assert.ok(talent.per_index.has(160));
+  assert.ok(!talent.per_index.has(180));
+  // 命令行的目标寻址不再计读
+  assert.equal(tflag.reads_total, 0);
+});
+
+test('VARSET：整表/动态区间只计总数与按域，不进下标聚合', async () => {
+  const { result } = await generate_on_fixture({
+    甲: [
+      ['A.ERB', 'VARSET PALAM, 0\nVARSET FLAG, 0, X, Y\nVARSET L_CHARAS, -1\n'],
+    ],
+  });
+  const palam = result.tables.get('palam').scan;
+  assert.equal(palam.writes_total, 1);
+  assert.equal(palam.per_index.size, 0);
+  const flag = result.tables.get('flag').scan;
+  assert.equal(flag.writes_total, 1); // VARSET FLAG, 0, X, Y → 动态区间
+  assert.equal(flag.per_index.size, 0);
+});
+
+test('CVARSET：元素索引维计入（语料只落在未落地表，此处钉通用行为）', async () => {
+  const { result } = await generate_on_fixture({
+    甲: [['A.ERB', 'CVARSET MARK, 3, 0\n']],
+  });
+  const mark = result.tables.get('mark').scan;
+  assert.equal(mark.writes_total, 1);
+  assert.equal(mark.per_index.get(3)?.get('alpha'), 1);
+});
+
+test('TIMES：乘法赋值计入写入、不计读', async () => {
+  const { result } = await generate_on_fixture({
+    甲: [['A.ERB', 'TIMES SOURCE:13 , 3.00\nTIMES LOCAL, 2.00\n']],
+  });
+  const source = result.tables.get('source').scan;
+  assert.equal(source.writes_total, 1);
+  assert.equal(source.reads_total, 0);
+  assert.equal(source.per_index.get(13)?.get('alpha'), 1);
+});
+
+// —— ignored_files 语义（#70 改判）——
+
+test('ignored 文件：整体跳过测量（死代码），声明了不存在的文件报错', async () => {
+  const { result } = await generate_on_fixture({
+    甲: [['A.ERB', 'CFLAG:1 = 1\n']],
+    '(root)': [['TITLE.ERB', 'GLOBAL:98 = 1\nCFLAG:9 = 9\n']],
+  });
+  assert.equal(result.tables.get('global').scan.writes_total, 0);
+  assert.equal(result.tables.get('cflag').scan.writes_total, 1);
+
+  // 声明了不存在的文件 = 数据发霉（不走 ensure_domain_dirs——它会替清单
+  // 把声明的文件建出来，而本用例要的正是「声明了但不存在」）
+  await with_fixture_tree(
+    { 甲: [['A.ERB', '']] },
+    async ({ dir, erb_root }) => {
+      fs.mkdirSync(path.join(erb_root, '乙'), { recursive: true });
+      const domain_file = path.join(dir, 'domains.yml');
+      fs.writeFileSync(
+        domain_file,
+        FIXTURE_DOMAINS.replace('  - TITLE.ERB', '  - TITLE.ERB\n  - GONE.ERB'),
+        'utf8',
+      );
+      fs.writeFileSync(path.join(erb_root, 'TITLE.ERB'), '', 'utf8');
+      assert.throws(
+        () =>
+          generate({
+            domain_file,
+            erb_root,
+            name_dir: make_name_dir(dir, {}),
+          }),
+        /不存在.*GONE/,
+      );
+    },
+  );
+});
+
+// —— 区间与属主（#66 裁定沿用）——
 
 test('区间合并：相邻同属主合并、未写入的下标断开、单下标不写区间号', async () => {
   const { result } = await generate_on_fixture({
     甲: [['A.ERB', 'CFLAG:1 = 1\nCFLAG:2 = 1\nCFLAG:3 = 1\nCFLAG:5 = 1\n']],
   });
   assert.deepEqual(
-    result.ranges.map((range) =>
-      range.start === range.end
-        ? `${range.start}`
-        : `${range.start}-${range.end}`,
-    ),
+    result.tables
+      .get('cflag')
+      .ranges.map((range) =>
+        range.start === range.end
+          ? `${range.start}`
+          : `${range.start}-${range.end}`,
+      ),
     ['1-3', '5'],
   );
 });
@@ -242,25 +435,39 @@ test('属主判定：写入次数最多者胜；并列按域清单声明序取�
     乙: [['B.ERB', 'CFLAG:9 = 1\nCFLAG:9 = 1\nCFLAG:8 = 1\n']],
   });
   const owner_of = Object.fromEntries(
-    result.ranges.map((range) => [range.start, range.owner]),
+    result.tables
+      .get('cflag')
+      .ranges.map((range) => [range.start, range.owner]),
   );
   assert.equal(owner_of[9], 'beta'); // 2 比 1 多
   assert.equal(owner_of[8], 'alpha'); // 1 比 1 并列，alpha 声明在先
 });
 
-test('跨域写入清单：非属主写入逐条具名（下标/域/属主/文件/行号），排序确定', async () => {
+test('跨域写入清单：非属主写入逐条具名，排序确定；VARSET 展开的写入同列', async () => {
   const { result } = await generate_on_fixture({
-    乙: [['B.ERB', 'CFLAG:5 = 1\nCFLAG:5 = 1\n']],
-    甲: [['A.ERB', 'CFLAG:5 = 1\nCFLAG:6 = 1\n']],
+    乙: [['B.ERB', 'CFLAG:5 = 1\nCFLAG:5 = 1\nVARSET TFLAG, 0, 0, 3\n']],
+    甲: [['A.ERB', 'CFLAG:5 = 1\nCFLAG:6 = 1\nTFLAG:0 = 1\n']],
   });
-  // 下标 5 属主 beta（2 次），alpha 的 1 次是跨域；下标 6 只有 alpha 写，不是跨域
-  assert.equal(result.cross.length, 1);
-  const [entry] = result.cross;
+  const cflag = result.tables.get('cflag');
+  assert.equal(cflag.cross.length, 1);
+  const [entry] = cflag.cross;
   assert.equal(entry.index, 5);
   assert.equal(entry.domain, 'alpha');
   assert.equal(entry.owner, 'beta');
   assert.ok(entry.file.endsWith('甲/A.ERB'));
   assert.equal(entry.line, 1);
+  // tflag 0-2：beta 的 VARSET 各 1 次、alpha 的 TFLAG:0 = 1 次——下标 0 并列
+  // 1:1，按声明序属主 alpha，beta 的 VARSET 写入即为跨域（VARSET 展开同列清单）
+  const tflag = result.tables.get('tflag');
+  assert.equal(tflag.cross.length, 1);
+  assert.deepEqual(
+    {
+      index: tflag.cross[0].index,
+      writer: tflag.cross[0].domain,
+      owner: tflag.cross[0].owner,
+    },
+    { index: 0, writer: 'beta', owner: 'alpha' },
+  );
 });
 
 // —— 域清单是数据（工单硬约束）——
@@ -276,10 +483,11 @@ test('域清单是数据：工具没见过的域照常归属，加域不改工�
   ].join('\n');
   const { result } = await generate_on_fixture(
     { 丙: [['C.ERB', 'CFLAG:322 = 1\n']] },
-    domains,
+    { domains },
   );
-  assert.equal(result.scan.writes_by_domain.get('custom'), 1);
-  assert.equal(result.ranges[0].owner, 'custom');
+  const cflag = result.tables.get('cflag');
+  assert.equal(cflag.scan.writes_by_domain.get('custom'), 1);
+  assert.equal(cflag.ranges[0].owner, 'custom');
 });
 
 test('域清单解析：非 snake_case 标识、目录重复认领、缺字段都报错', () => {
@@ -310,8 +518,6 @@ test('目录归属校验：未认领的一级目录报错（后来者自动纳�
 });
 
 test('目录归属校验：认领了不存在的目录报错（数据发霉）', async () => {
-  // 不走 generate_on_fixture：它会替域清单把声明的目录建出来，而本用例
-  // 要的正是「声明了不存在的目录」
   await with_fixture_tree(
     { 甲: [['A.ERB', '']] },
     async ({ dir, erb_root }) => {
@@ -321,7 +527,11 @@ test('目录归属校验：认领了不存在的目录报错（数据发霉）',
         'alpha:\n  label: 甲域\n  dirs: 甲, 戊\n',
         'utf8',
       );
-      assert.throws(() => generate({ domain_file, erb_root }), /不存在.*戊/);
+      assert.throws(
+        () =>
+          generate({ domain_file, erb_root, name_dir: make_name_dir(dir, {}) }),
+        /不存在.*戊/,
+      );
     },
   );
 });
@@ -336,14 +546,30 @@ test('目录归属校验：根目录源文件未处置报错', async () => {
   );
 });
 
-test('目录归属校验：被忽略文件出现写入报错（忽略声明发霉）', async () => {
-  await assert.rejects(
-    generate_on_fixture({
-      甲: [['A.ERB', '']],
-      '(root)': [['TITLE.ERB', 'CFLAG:1 = 1\n']], // 在 ignored_files 里却有写入
-    }),
-    /发霉/,
-  );
+test('编码按内容判定：Shift-JIS 文件里的写入不漏（工单陷阱）', async () => {
+  await with_fixture_tree({ '(root)': [] }, async ({ dir, erb_root }) => {
+    fs.mkdirSync(path.join(erb_root, '甲'), { recursive: true });
+    fs.writeFileSync(
+      path.join(erb_root, '甲', 'SJIS.ERB'),
+      Buffer.concat([
+        Buffer.from([0x3b, 0x82, 0xa0, 0x0d, 0x0a]),
+        Buffer.from('CFLAG:322 = 7\r\n', 'ascii'),
+      ]),
+    );
+    const domain_file = path.join(dir, 'domains.yml');
+    fs.writeFileSync(domain_file, FIXTURE_DOMAINS, 'utf8');
+    ensure_domain_dirs(erb_root, FIXTURE_DOMAINS);
+    const result = generate({
+      domain_file,
+      erb_root,
+      name_dir: make_name_dir(dir, {}),
+    });
+    const cflag = result.tables.get('cflag');
+    assert.equal(result.scan.shift_jis_files.length, 1);
+    assert.ok(result.scan.shift_jis_files[0].endsWith('甲/SJIS.ERB'));
+    assert.equal(cflag.scan.writes_total, 1);
+    assert.equal(cflag.scan.per_index.get(322)?.get('alpha'), 1);
+  });
 });
 
 // —— 产物边界与 CLI ——
@@ -354,17 +580,20 @@ test('产物边界：已存在默认跳过（人工修改幸存），--force 才
     const domain_file = path.join(dir, 'domains.yml');
     fs.writeFileSync(domain_file, FIXTURE_DOMAINS, 'utf8');
     ensure_domain_dirs(erb_root, FIXTURE_DOMAINS);
+    const name_dir = make_name_dir(dir, {});
     const out_dir = path.join(dir, 'ownership');
     fs.mkdirSync(out_dir, { recursive: true });
     for (const name of [
       'cflag-ownership.yml',
       'cflag-cross-domain-writes.yml',
+      'reads-summary.yml',
     ]) {
       fs.writeFileSync(path.join(out_dir, name), '人工修改过的产物', 'utf8');
     }
 
+    // --table cflag：只碰该表两份产物，reads-summary 不动
     const skipped = capture_console(() =>
-      main([], { domain_file, erb_root, out_dir }),
+      main(['--table', 'cflag'], { domain_file, erb_root, name_dir, out_dir }),
     );
     assert.equal(skipped.result, 0);
     assert.equal(
@@ -378,7 +607,12 @@ test('产物边界：已存在默认跳过（人工修改幸存），--force 才
     );
 
     const forced = capture_console(() =>
-      main(['--force'], { domain_file, erb_root, out_dir }),
+      main(['--force', '--table', 'cflag'], {
+        domain_file,
+        erb_root,
+        name_dir,
+        out_dir,
+      }),
     );
     assert.equal(forced.result, 0);
     const rewritten = fs.readFileSync(
@@ -392,6 +626,25 @@ test('产物边界：已存在默认跳过（人工修改幸存），--force 才
         (entry) => entry.level === 'log' && entry.text.includes('写出 2 个'),
       ),
     );
+    // reads-summary 仍幸存（--table all 才写它）
+    assert.equal(
+      fs.readFileSync(path.join(out_dir, 'reads-summary.yml'), 'utf8'),
+      '人工修改过的产物',
+    );
+
+    const all = capture_console(() =>
+      main(['--force'], { domain_file, erb_root, name_dir, out_dir }),
+    );
+    assert.equal(all.result, 0);
+    assert.notEqual(
+      fs.readFileSync(path.join(out_dir, 'reads-summary.yml'), 'utf8'),
+      '人工修改过的产物',
+    );
+    assert.ok(
+      all.captured.some(
+        (entry) => entry.level === 'log' && entry.text.includes('写出 33 个'),
+      ),
+    );
   });
 });
 
@@ -403,46 +656,48 @@ test('CLI：未知表名报错（退出码 1），未知参数与缺参数报用
   const no_value = capture_console(() => main(['--table']));
   assert.equal(no_value.result, 2);
 
-  const unknown_table = capture_console(() => main(['--table', 'tflag']));
+  const unknown_table = capture_console(() => main(['--table', 'nosuch']));
   assert.equal(unknown_table.result, 1);
   assert.ok(
     unknown_table.captured.some((entry) => entry.text.includes('未知表名')),
   );
 });
 
-// —— 真实 target/：同步守护与锚点复现 ——
+// —— 真实 target/：同步守护与锚点 ——
 //
-// 全树扫描较慢，整个文件共享一次生成结果（target/ 只读，结果稳定）。
+// 全树扫描一次约 1s，整个文件共享一次生成结果（target/ 只读，结果稳定）。
 let cached_real = null;
 function real_generate() {
   cached_real ??= generate({});
   return cached_real;
 }
 
-test('同步守护：cflag-ownership.yml 与重跑生成结果逐字节一致', () => {
+test('同步守护：16 张表的所有权表与跨域清单、reads-summary 与重跑逐字节一致', () => {
   const result = real_generate();
-  assert.equal(
-    fs.readFileSync(
-      path.join(REPO_ROOT, 'ownership', 'cflag-ownership.yml'),
-      'utf8',
-    ),
-    result.ownership_yaml,
-  );
+  const files = [
+    ...TABLE_KEYS.flatMap((key) => [
+      `${key}-ownership.yml`,
+      `${key}-cross-domain-writes.yml`,
+    ]),
+    'reads-summary.yml',
+  ];
+  assert.equal(files.length, 33);
+  for (const name of files) {
+    assert.equal(
+      fs.readFileSync(path.join(REPO_ROOT, 'ownership', name), 'utf8'),
+      name.endsWith('ownership.yml')
+        ? result.tables.get(name.replace(/-ownership\.yml$/, '')).ownership_yaml
+        : name === 'reads-summary.yml'
+          ? result.reads_summary_yaml
+          : result.tables.get(name.replace(/-cross-domain-writes\.yml$/, ''))
+              .cross_yaml,
+      `${name} 与重跑结果不一致`,
+    );
+  }
 });
 
-test('同步守护：cflag-cross-domain-writes.yml 与重跑生成结果逐字节一致', () => {
-  const result = real_generate();
-  assert.equal(
-    fs.readFileSync(
-      path.join(REPO_ROOT, 'ownership', 'cflag-cross-domain-writes.yml'),
-      'utf8',
-    ),
-    result.cross_yaml,
-  );
-});
-
-test('锚点复现：2xx+3xx 口上独占——实活 9447 次写入、零外部写入者', () => {
-  const { scan } = real_generate();
+test('锚点复现：CFLAG 2xx+3xx 口上独占——实活 9447 次写入、零外部写入者（v2 口径完好）', () => {
+  const { scan } = real_generate().tables.get('cflag');
   let kojo_writes = 0;
   const outsiders = [];
   for (const [index, per] of scan.per_index) {
@@ -462,7 +717,7 @@ test('锚点复现：2xx+3xx 口上独占——实活 9447 次写入、零外部
 });
 
 test('锚点复现：1xx/4xx/6xx 是混用段（各有多域写入者）', () => {
-  const { scan } = real_generate();
+  const { scan } = real_generate().tables.get('cflag');
   for (const [lo, hi, name] of [
     [100, 199, '1xx'],
     [400, 499, '4xx'],
@@ -484,14 +739,100 @@ test('锚点复现：1xx/4xx/6xx 是混用段（各有多域写入者）', () =>
   }
 });
 
-test('锚点复现：全量数字与编码（实活 11435、注释 305、动态 19、区间 106、Shift-JIS 恰好一个）', () => {
-  const { scan, ranges } = real_generate();
-  assert.equal(scan.writes_total, 11435);
-  assert.equal(scan.commented_writes, 305);
+test('锚点复现：CFLAG 全量数字与编码（#66→#70 口径对账后的值）', () => {
+  const { scan, ranges, cross } = real_generate().tables.get('cflag');
+  // 对账（issue #70 评论）：11435 → 11439 = −2 假写（EX_CFLAG 词边界）
+  // +4 漏写（CJK 槽位变量 L_孩子）+2 后缀 ++/--；读 15543 → 15529 同源。
+  assert.equal(scan.writes_total, 11439);
+  assert.equal(scan.commented_writes, 307);
   assert.equal(scan.dynamic_writes, 19);
-  assert.equal(scan.per_index.size, 248);
-  assert.equal(ranges.length, 106);
-  assert.deepEqual(scan.shift_jis_files, [
+  assert.equal(scan.reads_total, 15529);
+  assert.equal(scan.per_index.size, 247);
+  assert.equal(ranges.length, 104);
+  assert.equal(cross.length, 740);
+  assert.deepEqual(real_generate().scan.shift_jis_files, [
     'target/ERB/調教相關/COMF90_ニプルファック.ERB',
   ]);
+});
+
+test('锚点复现：调教四表近乎私有（SOURCE/PALAM/STAIN 全区间属主 train）', () => {
+  const result = real_generate();
+  for (const key of ['source', 'palam', 'stain']) {
+    const owners = new Set(
+      result.tables.get(key).ranges.map((range) => range.owner),
+    );
+    assert.deepEqual([...owners], ['train'], `${key} 应为 train 私有`);
+  }
+  // TEQUIP 12 区间里 10 个属 train（系统/事件各 1 个外溢）
+  const tequip = result.tables.get('tequip');
+  const by_owner = new Map();
+  for (const range of tequip.ranges) {
+    by_owner.set(range.owner, (by_owner.get(range.owner) ?? 0) + 1);
+  }
+  assert.equal(by_owner.get('train'), 10);
+});
+
+test('锚点复现：GLOBAL 只有系统域写入（TITLE.ERB 的死代码写入已跳过）', () => {
+  const { scan, ranges } = real_generate().tables.get('global');
+  assert.equal(scan.writes_total, 2);
+  assert.deepEqual([...scan.writes_by_domain.entries()], [['system', 2]]);
+  assert.deepEqual(
+    ranges.map((range) => range.owner),
+    ['system'],
+  );
+});
+
+test('锚点复现：九域都拥有真实区段（无纯客户端域）——八域划分成立', () => {
+  const result = real_generate();
+  const owned = new Map();
+  for (const [, table] of result.tables) {
+    for (const range of table.ranges) {
+      owned.set(range.owner, (owned.get(range.owner) ?? 0) + 1);
+    }
+  }
+  // 九域 = 八玩法域 + patch（#66 单列）；各自至少 5 个区段
+  assert.deepEqual([...owned.keys()].sort(), [
+    'chara',
+    'dungeon',
+    'event',
+    'invasion',
+    'kojo',
+    'patch',
+    'stronghold',
+    'system',
+    'train',
+  ]);
+  for (const [domain, count] of owned) {
+    assert.ok(
+      count >= 5,
+      `域 ${domain} 只拥有 ${count} 个区段（应为有实义的最少 5 个）`,
+    );
+  }
+});
+
+test('锚点复现：口上是最大的跨域读者（跨域读放行决议的数据面）', () => {
+  const result = real_generate();
+  const by_reader = new Map();
+  for (const [, table] of result.tables) {
+    const { scan, owner_of_index } = table;
+    for (const [index, per] of scan.reads_by_index) {
+      const owner = owner_of_index.get(index);
+      if (owner === undefined) {
+        continue;
+      }
+      for (const [reader, count] of per) {
+        if (reader !== owner) {
+          by_reader.set(reader, (by_reader.get(reader) ?? 0) + count);
+        }
+      }
+    }
+  }
+  const ranked = [...by_reader.entries()].sort((a, b) => b[1] - a[1]);
+  assert.equal(ranked[0][0], 'kojo');
+  // 与跨域写的量级对照：读 ~4.3 万次、写 ~2.7 千次——放行读、具名写的依据
+  const total = ranked.reduce((sum, [, count]) => sum + count, 0);
+  assert.ok(
+    total > 40000 && total < 45000,
+    `跨域读总量 ${total} 应在 4 万–4.5 万`,
+  );
 });
