@@ -877,7 +877,7 @@ const MUTATIONS = [
   },
   // —— #68 测试缝的 Row 保真：归并 / 计数 / 删除 / 替换的自证 ——
   {
-    desc: 'M99 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
+    desc: 'M103 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
     file: 'test/helpers/era-fixture.js',
     find: `  const push_row = (entries) => {
     const row = total_rows;
@@ -901,7 +901,7 @@ const MUTATIONS = [
     expect_only: '算一个 Row',
   },
   {
-    desc: 'M100 clear 按 Row 删改坏：退回按条目数切（clear(1) 误伤邻行）',
+    desc: 'M104 clear 按 Row 删改坏：退回按条目数切（clear(1) 误伤邻行）',
     file: 'test/helpers/era-fixture.js',
     find: `    const cut = lines.findIndex(
       (l) => l.row !== undefined && l.row >= total_rows,
@@ -914,7 +914,7 @@ const MUTATIONS = [
     expect_only: 'clear(1) 只删本行',
   },
   {
-    desc: 'M101 替换系改坏：replace_row 只弹一条（多列 Row 换不干净）',
+    desc: 'M105 替换系改坏：replace_row 只弹一条（多列 Row 换不干净）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (row >= 0) {
       for (let i = lines.length - 1; i >= 0; i -= 1) {
@@ -930,7 +930,7 @@ const MUTATIONS = [
     expect_only: 'replaceText 换掉最后一个 Row',
   },
   {
-    desc: 'M102 getLineCount 改回条目数（多列 Row 计数虚高）',
+    desc: 'M106 getLineCount 改回条目数（多列 Row 计数虚高）',
     file: 'test/helpers/era-fixture.js',
     find: '  era.getLineCount = () => total_rows;',
     replace: '  era.getLineCount = () => lines.length; // 变异：条目数',
@@ -938,7 +938,7 @@ const MUTATIONS = [
     expect_only: '算一个 Row',
   },
   {
-    desc: 'M103 input 回显计行删除（组件重绘差一行的主路径缺陷回归）',
+    desc: 'M107 input 回显计行删除（组件重绘差一行的主路径缺陷回归）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (input_echo_adds_row(config)) {
       total_rows += 1; // this.print(回显值)：+1 Row
