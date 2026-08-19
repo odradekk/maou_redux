@@ -14,7 +14,9 @@
  *      同人、占用三态重置；
  *   4. 四个子面板与指令面板的存根占位；
  *   5. @SHOW_SHOP 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
- *   6. 存根清单对账（docs/stub-registry.md）。
+ *   6. 存根清单对账（docs/stub-registry.md）；
+ *   7. #73 画面组件迁入：商店轮的就地重绘（不涨屏、上方内容完好、分发期
+ *      临时输出被消费、跨会话锚点重新起算）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：page-shop.js 的 eventshop() 里
  * @EVENTSHOP :7-12 的指针钳制——删掉它 115 条全绿（假绿）。原因：run_shop
@@ -403,4 +405,100 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', a
   ]) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
+});
+
+// —— #73：主菜单画面组件的就地重绘（商店轮集成）——
+// 组件层单元（行数测量、Row 口径、回显跨度）在 test/screen-block.test.js；
+// 这里钉调用点：重绘只发生在玩家交互之后、锚点不越过上方内容。
+
+// 预置两行上方内容后跑 n 轮商店轮；输入队列耗尽时按预期炸出，返回终态夹具
+async function run_shop_rounds(inputs) {
+  const fixture = create_era_fixture();
+  fixture.era.print('上方一');
+  fixture.era.print('上方二');
+  const { run_shop } = fixture.load_module('page/page-shop');
+  fixture.set_inputs(...inputs);
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  return fixture;
+}
+
+test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重绘只在交互之后）', async () => {
+  const one_round = await run_shop_rounds([500]);
+  const two_rounds = await run_shop_rounds([500, 500]);
+
+  for (const fixture of [one_round, two_rounds]) {
+    // 上方内容原样：锚点之上不被重绘触碰（Row 口径错误的破坏形态正是
+    // 上方内容被连带抹掉——组件层已有直接断言，这里在真实调用点上再钉）
+    assert.deepEqual(
+      fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
+      ['上方一', '上方二'],
+    );
+    // 菜单只此一份：就地重绘不追加第二份
+    assert.equal(
+      fixture.lines.filter((l) => l.text?.includes('Commands')).length,
+      1,
+    );
+  }
+  // 一轮与两轮的终态行数一致：每轮的 input 回显行被锚点跨度消费，
+  // 屏幕不随交互次数增长（重绘前必有交互——无输入不会推进到重绘）
+  assert.equal(one_round.era.getLineCount(), two_rounds.era.getLineCount());
+});
+
+test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
+  const stub_round = await run_shop_rounds([102, 500]); // 102 = 地下城（存根）
+  const plain = await run_shop_rounds([500, 500]);
+
+  // 分发打了存根 → waitAnyKey 等键时屏幕上最新行就是存根（玩家看得到）→
+  // 下一轮重绘才清掉。waits.rows_at_wait 是调用瞬间的行数，直接钉住
+  // 「看到」发生在「消失」之前（#73 发回的验收项）。
+  const waited = stub_round.waits.filter((w) => w.waited);
+  assert.equal(waited.length, 1, '102 分支必须等一次键');
+  const at_wait = stub_round.lines_history.filter(
+    (l) => l.row !== undefined && l.row < waited[0].rows_at_wait,
+  );
+  assert(
+    at_wait.some((l) => l.text?.includes('DUNGEON_INFO2')),
+    '等键时存根行必须已在屏幕上',
+  );
+  // 重绘之后才消失：终态与无存根轮逐行同高、屏幕上看不见存根
+  assert(!stub_round.text_lines().some((l) => l.includes('DUNGEON_INFO2')));
+  assert.equal(stub_round.era.getLineCount(), plain.era.getLineCount());
+});
+
+test('无分发输出的一轮（面板切换）零等待：菜单重绘本身不得卡键', async () => {
+  // 500 只写 FLAG:36、不打存根。allowWait 镜像下菜单重绘会置位，但本轮
+  // 没有 waitAnyKey 调用——无条件等键会让每轮都卡一次（验收点名禁止）
+  const fixture = await run_shop_rounds([500]);
+  assert.equal(fixture.waits.length, 0);
+});
+
+test('跨会话锚点：TRAIN 转场后重进 SHOP，上方内容不被旧锚点清掉', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  join_chara(fixture, 0);
+  join_chara(fixture, 31);
+  era_flag.target = 31; // 100 分支无需选人，直达 BEGIN TRAIN
+  const { run_shop } = fixture.load_module('page/page-shop');
+
+  // 第一局：100 → BEGIN TRAIN 信号上抛，商店轮随之结束
+  fixture.set_inputs(100);
+  await assert.rejects(() => run_shop(), /BEGIN TRAIN/);
+
+  // 状态画面整屏清空 + 新局的上方内容（EVENTFIRST 产物的形态）
+  await fixture.era.clear();
+  fixture.era.print('新局上方一');
+  fixture.era.print('新局上方二');
+
+  // 重进 SHOP：菜单组件随状态进入新建、锚点重新起算——上方内容完好、
+  // 菜单纯此一份（模块级单例会拿第一局的旧锚点把这两行清掉）
+  fixture.set_inputs(500);
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  assert.deepEqual(
+    fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
+    ['新局上方一', '新局上方二'],
+  );
+  assert.equal(
+    fixture.lines.filter((l) => l.text?.includes('Commands')).length,
+    1,
+  );
 });
