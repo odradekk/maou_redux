@@ -78,15 +78,29 @@ function list_owned_indexes(
 
 function entries_for(table, domain, ownership_dir, lookup = get_name) {
   const indexes = list_owned_indexes(table, domain, ownership_dir);
-  return indexes.map((index) => {
+  const named_entries = [];
+  const skipped = [];
+  for (const index of indexes) {
     const named = lookup(table, index);
     if (!named) {
-      throw new Error(
-        `命名表缺 ${table}:${index}（属主 ${domain}）——先补 tools/facade-names.js，绝不静默用数字当下标名`,
-      );
+      skipped.push({ table, index, domain });
+      continue;
     }
-    return { table, index, name: named.name, source: named.source };
-  });
+    named_entries.push({
+      table,
+      index,
+      name: named.name,
+      source: named.source,
+    });
+  }
+  if (table === 'cflag' && domain === 'kojo' && skipped.length > 0) {
+    throw new Error(
+      `口上域切片缺名：${skipped
+        .map((item) => `${item.table}:${item.index}`)
+        .join(', ')}——先补 tools/facade-names.js`,
+    );
+  }
+  return { entries: named_entries, skipped };
 }
 
 function assert_unique_names(groups, where) {
@@ -384,9 +398,12 @@ function root_specs(facades) {
 
 function build_facades(ownership_dir) {
   const facades = [];
+  const skipped = [];
+  const kojo = entries_for('cflag', 'kojo', ownership_dir);
+  skipped.push(...kojo.skipped);
   const kojo_cflag = {
     table: 'cflag',
-    entries: entries_for('cflag', 'kojo', ownership_dir),
+    entries: kojo.entries,
   };
   facades.push({
     kind: 'chara',
@@ -399,9 +416,10 @@ function build_facades(ownership_dir) {
   for (const domain of DOMAINS) {
     const groups = [];
     for (const table of ONE_DIM_TABLES) {
-      const entries = entries_for(table, domain, ownership_dir);
-      if (entries.length > 0) {
-        groups.push({ table, entries });
+      const result = entries_for(table, domain, ownership_dir);
+      skipped.push(...result.skipped);
+      if (result.entries.length > 0) {
+        groups.push({ table, entries: result.entries });
       }
     }
     if (groups.length === 0) {
@@ -416,7 +434,7 @@ function build_facades(ownership_dir) {
       entries: groups[0].entries,
     });
   }
-  return facades;
+  return { facades, skipped };
 }
 
 function generate({
@@ -424,7 +442,7 @@ function generate({
   out_dir = path.join(REPO_ROOT, 'ere', 'facade'),
   force = false,
 } = {}) {
-  const facades = build_facades(ownership_dir);
+  const { facades, skipped } = build_facades(ownership_dir);
   const results = [];
   const warnings = [];
   fs.mkdirSync(out_dir, { recursive: true });
@@ -466,7 +484,7 @@ function generate({
     );
     results.push({ file: spec.file, status: 'updated', target });
   }
-  return { results, warnings, facades };
+  return { results, warnings, facades, skipped };
 }
 
 function parse_args(argv) {
@@ -499,6 +517,22 @@ function main(argv, overrides = {}) {
   }
   const report = generate({ ...overrides, force: options.force });
   report.warnings.forEach((warning) => console.warn(`警告：${warning}`));
+  if (report.skipped.length > 0) {
+    const by_domain = new Map();
+    for (const item of report.skipped) {
+      const key = `${item.domain}/${item.table}`;
+      if (!by_domain.has(key)) {
+        by_domain.set(key, []);
+      }
+      by_domain.get(key).push(item.index);
+    }
+    console.warn(
+      `[gen-facade] 未命名属主下标跳过 ${report.skipped.length} 个（ownership 仍登记，门面等属主票带语义）：`,
+    );
+    for (const [key, indexes] of by_domain) {
+      console.warn(`  ${key}: ${indexes.join(',')}`);
+    }
+  }
   for (const result of report.results) {
     const where = result.target
       ? ` → ${path.relative(REPO_ROOT, result.target)}`
@@ -510,7 +544,9 @@ function main(argv, overrides = {}) {
   return report.results.some((result) => result.status === 'rejected') ? 1 : 0;
 }
 
-const FACADES = build_facades(path.join(REPO_ROOT, 'ownership'));
+const { facades: FACADES, skipped: SKIPPED } = build_facades(
+  path.join(REPO_ROOT, 'ownership'),
+);
 
 module.exports = {
   DOMAINS,
@@ -519,6 +555,7 @@ module.exports = {
   GENERATED_START,
   ONE_DIM_TABLES,
   REPO_ROOT,
+  SKIPPED,
   build_facades,
   entries_for,
   extract_generated_section,

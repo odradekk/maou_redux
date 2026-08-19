@@ -14,7 +14,7 @@ class KojoFacade {
 
   /**
    * 肉亲_0（cflag:cid:21 ↔ CFLAG:21）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:21～25 肉亲关系
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:21～25 肉亲关系
    * @returns {number}
    */
   get 肉亲_0() {
@@ -29,7 +29,7 @@ class KojoFacade {
 
   /**
    * 初调教（cflag:cid:201 ↔ CFLAG:201）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行57 初调教时
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行57 初调教时
    * @returns {number}
    */
   get 初调教() {
@@ -44,7 +44,7 @@ class KojoFacade {
 
   /**
    * 简易助手_0（cflag:cid:202 ↔ CFLAG:202）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行123 简易助手口上 CFLAG:202～210
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行123 简易助手口上 CFLAG:202～210
    * @returns {number}
    */
   get 简易助手_0() {
@@ -59,7 +59,7 @@ class KojoFacade {
 
   /**
    * 简易助手_1（cflag:cid:203 ↔ CFLAG:203）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行123
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行123
    * @returns {number}
    */
   get 简易助手_1() {
@@ -74,7 +74,7 @@ class KojoFacade {
 
   /**
    * 简易助手_2（cflag:cid:204 ↔ CFLAG:204）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行123
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行123
    * @returns {number}
    */
   get 简易助手_2() {
@@ -89,7 +89,7 @@ class KojoFacade {
 
   /**
    * 首次C绝顶_K14（cflag:cid:214 ↔ CFLAG:214）
-   * 源: 口上/EVENT_K14_貴公子.ERB 初めてC絶頂 CFLAG:214
+   * 源: target/ERB/口上/EVENT_K14_貴公子.ERB 初めてC絶頂 CFLAG:214
    * @returns {number}
    */
   get 首次C绝顶_K14() {
@@ -104,7 +104,7 @@ class KojoFacade {
 
   /**
    * 首次润滑Lv2（cflag:cid:221 ↔ CFLAG:221）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次润滑Lv2
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次润滑Lv2
    * @returns {number}
    */
   get 首次润滑Lv2() {
@@ -119,7 +119,7 @@ class KojoFacade {
 
   /**
    * 首次欲情Lv2（cflag:cid:222 ↔ CFLAG:222）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次欲情Lv2
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次欲情Lv2
    * @returns {number}
    */
   get 首次欲情Lv2() {
@@ -134,7 +134,7 @@ class KojoFacade {
 
   /**
    * 首次耻情Lv2（cflag:cid:223 ↔ CFLAG:223）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次耻情Lv2
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次耻情Lv2
    * @returns {number}
    */
   get 首次耻情Lv2() {
@@ -149,7 +149,7 @@ class KojoFacade {
 
   /**
    * 首次恐怖Lv2（cflag:cid:224 ↔ CFLAG:224）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次恐怖Lv2
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次恐怖Lv2
    * @returns {number}
    */
   get 首次恐怖Lv2() {
@@ -164,7 +164,7 @@ class KojoFacade {
 
   /**
    * 首次C绝顶（cflag:cid:225 ↔ CFLAG:225）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次C绝顶
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次C绝顶
    * @returns {number}
    */
   get 首次C绝顶() {
@@ -179,7 +179,7 @@ class KojoFacade {
 
   /**
    * 首次V绝顶（cflag:cid:226 ↔ CFLAG:226）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次V绝顶
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次V绝顶
    * @returns {number}
    */
   get 首次V绝顶() {
@@ -194,7 +194,7 @@ class KojoFacade {
 
   /**
    * 首次A绝顶（cflag:cid:227 ↔ CFLAG:227）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次A绝顶
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次A绝顶
    * @returns {number}
    */
   get 首次A绝顶() {
@@ -209,7 +209,7 @@ class KojoFacade {
 
   /**
    * 首次B绝顶（cflag:cid:228 ↔ CFLAG:228）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次B绝顶
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；首次B绝顶
    * @returns {number}
    */
   get 首次B绝顶() {
@@ -224,7 +224,7 @@ class KojoFacade {
 
   /**
    * 处女丧失（cflag:cid:229 ↔ CFLAG:229）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；处女丧失
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4076 参数变动时 CFLAG:221～260；处女丧失
    * @returns {number}
    */
   get 处女丧失() {
@@ -239,7 +239,7 @@ class KojoFacade {
 
   /**
    * 寄生（cflag:cid:230 ↔ CFLAG:230）
-   * 源: 口上/EVENT_K3_高貴.ERB 寄生 CFLAG:230
+   * 源: target/ERB/口上/EVENT_K3_高貴.ERB 寄生 CFLAG:230
    * @returns {number}
    */
   get 寄生() {
@@ -254,7 +254,7 @@ class KojoFacade {
 
   /**
    * 调教后自慰（cflag:cid:261 ↔ CFLAG:261）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4327
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4327
    * @returns {number}
    */
   get 调教后自慰() {
@@ -269,7 +269,7 @@ class KojoFacade {
 
   /**
    * 百合PLAY（cflag:cid:262 ↔ CFLAG:262）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4362 レズプレイ
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4362 レズプレイ
    * @returns {number}
    */
   get 百合PLAY() {
@@ -284,7 +284,7 @@ class KojoFacade {
 
   /**
    * 朝口交（cflag:cid:263 ↔ CFLAG:263）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4389
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4389
    * @returns {number}
    */
   get 朝口交() {
@@ -299,7 +299,7 @@ class KojoFacade {
 
   /**
    * 调教后性交（cflag:cid:264 ↔ CFLAG:264）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4412
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4412
    * @returns {number}
    */
   get 调教后性交() {
@@ -314,7 +314,7 @@ class KojoFacade {
 
   /**
    * 夜袭（cflag:cid:265 ↔ CFLAG:265）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4427
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4427
    * @returns {number}
    */
   get 夜袭() {
@@ -329,7 +329,7 @@ class KojoFacade {
 
   /**
    * 妊娠发觉（cflag:cid:271 ↔ CFLAG:271）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4457
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4457
    * @returns {number}
    */
   get 妊娠发觉() {
@@ -344,7 +344,7 @@ class KojoFacade {
 
   /**
    * 生产（cflag:cid:272 ↔ CFLAG:272）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4477
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4477
    * @returns {number}
    */
   get 生产() {
@@ -359,7 +359,7 @@ class KojoFacade {
 
   /**
    * 育儿室（cflag:cid:273 ↔ CFLAG:273）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4497
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4497
    * @returns {number}
    */
   get 育儿室() {
@@ -374,7 +374,7 @@ class KojoFacade {
 
   /**
    * 亲离（cflag:cid:274 ↔ CFLAG:274）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4511
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4511
    * @returns {number}
    */
   get 亲离() {
@@ -389,7 +389,7 @@ class KojoFacade {
 
   /**
    * 苦痛刻印Lv3（cflag:cid:297 ↔ CFLAG:297）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4270
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4270
    * @returns {number}
    */
   get 苦痛刻印Lv3() {
@@ -404,7 +404,7 @@ class KojoFacade {
 
   /**
    * 快乐刻印Lv3（cflag:cid:298 ↔ CFLAG:298）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4283
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4283
    * @returns {number}
    */
   get 快乐刻印Lv3() {
@@ -419,7 +419,7 @@ class KojoFacade {
 
   /**
    * 屈服刻印Lv3（cflag:cid:299 ↔ CFLAG:299）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4296
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4296
    * @returns {number}
    */
   get 屈服刻印Lv3() {
@@ -434,7 +434,7 @@ class KojoFacade {
 
   /**
    * 反抗刻印Lv3（cflag:cid:300 ↔ CFLAG:300）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4309
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行4309
    * @returns {number}
    */
   get 反抗刻印Lv3() {
@@ -449,7 +449,7 @@ class KojoFacade {
 
   /**
    * 爱抚（cflag:cid:301 ↔ CFLAG:301）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行340
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行340
    * @returns {number}
    */
   get 爱抚() {
@@ -464,7 +464,7 @@ class KojoFacade {
 
   /**
    * 舔阴（cflag:cid:302 ↔ CFLAG:302）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行382
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行382
    * @returns {number}
    */
   get 舔阴() {
@@ -479,7 +479,7 @@ class KojoFacade {
 
   /**
    * 肛门爱抚（cflag:cid:303 ↔ CFLAG:303）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行420
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行420
    * @returns {number}
    */
   get 肛门爱抚() {
@@ -494,7 +494,7 @@ class KojoFacade {
 
   /**
    * 自慰（cflag:cid:304 ↔ CFLAG:304）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行461
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行461
    * @returns {number}
    */
   get 自慰() {
@@ -509,7 +509,7 @@ class KojoFacade {
 
   /**
    * 口交_主（cflag:cid:305 ↔ CFLAG:305）
-   * 源: 口上/EVENT_K10_クラブ.ERB 口交 CFLAG:305（指令 4）
+   * 源: target/ERB/口上/EVENT_K10_クラブ.ERB 口交 CFLAG:305（指令 4）
    * @returns {number}
    */
   get 口交_主() {
@@ -524,7 +524,7 @@ class KojoFacade {
 
   /**
    * 胸爱抚（cflag:cid:306 ↔ CFLAG:306）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行543
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行543
    * @returns {number}
    */
   get 胸爱抚() {
@@ -539,7 +539,7 @@ class KojoFacade {
 
   /**
    * 接吻（cflag:cid:307 ↔ CFLAG:307）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行581
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行581
    * @returns {number}
    */
   get 接吻() {
@@ -554,7 +554,7 @@ class KojoFacade {
 
   /**
    * 自己扒开（cflag:cid:308 ↔ CFLAG:308）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行636
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行636
    * @returns {number}
    */
   get 自己扒开() {
@@ -569,7 +569,7 @@ class KojoFacade {
 
   /**
    * 插入手指（cflag:cid:309 ↔ CFLAG:309）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行677
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行677
    * @returns {number}
    */
   get 插入手指() {
@@ -584,7 +584,7 @@ class KojoFacade {
 
   /**
    * 舔肛（cflag:cid:310 ↔ CFLAG:310）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行718
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行718
    * @returns {number}
    */
   get 舔肛() {
@@ -599,7 +599,7 @@ class KojoFacade {
 
   /**
    * 振动宝石（cflag:cid:311 ↔ CFLAG:311）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行759
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行759
    * @returns {number}
    */
   get 振动宝石() {
@@ -614,7 +614,7 @@ class KojoFacade {
 
   /**
    * 壶虫（cflag:cid:312 ↔ CFLAG:312）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行800
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行800
    * @returns {number}
    */
   get 壶虫() {
@@ -629,7 +629,7 @@ class KojoFacade {
 
   /**
    * 振动杖（cflag:cid:313 ↔ CFLAG:313）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行873
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行873
    * @returns {number}
    */
   get 振动杖() {
@@ -644,7 +644,7 @@ class KojoFacade {
 
   /**
    * 肛门虫（cflag:cid:314 ↔ CFLAG:314）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行914
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行914
    * @returns {number}
    */
   get 肛门虫() {
@@ -659,7 +659,7 @@ class KojoFacade {
 
   /**
    * 阴蒂夹（cflag:cid:315 ↔ CFLAG:315）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行984
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行984
    * @returns {number}
    */
   get 阴蒂夹() {
@@ -674,7 +674,7 @@ class KojoFacade {
 
   /**
    * 乳头夹（cflag:cid:316 ↔ CFLAG:316）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1038
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1038
    * @returns {number}
    */
   get 乳头夹() {
@@ -689,7 +689,7 @@ class KojoFacade {
 
   /**
    * 榨乳器（cflag:cid:317 ↔ CFLAG:317）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1092
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1092
    * @returns {number}
    */
   get 榨乳器() {
@@ -704,7 +704,7 @@ class KojoFacade {
 
   /**
    * 飞机杯（cflag:cid:318 ↔ CFLAG:318）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1146
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1146
    * @returns {number}
    */
   get 飞机杯() {
@@ -719,7 +719,7 @@ class KojoFacade {
 
   /**
    * 肛珠（cflag:cid:320 ↔ CFLAG:320）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1200
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1200
    * @returns {number}
    */
   get 肛珠() {
@@ -734,7 +734,7 @@ class KojoFacade {
 
   /**
    * 正常位（cflag:cid:321 ↔ CFLAG:321）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1270
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1270
    * @returns {number}
    */
   get 正常位() {
@@ -749,7 +749,7 @@ class KojoFacade {
 
   /**
    * 背后位（cflag:cid:322 ↔ CFLAG:322）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1329
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1329
    * @returns {number}
    */
   get 背后位() {
@@ -764,7 +764,7 @@ class KojoFacade {
 
   /**
    * 对面座位（cflag:cid:323 ↔ CFLAG:323）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1403
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1403
    * @returns {number}
    */
   get 对面座位() {
@@ -779,7 +779,7 @@ class KojoFacade {
 
   /**
    * 背面座位（cflag:cid:324 ↔ CFLAG:324）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1474
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1474
    * @returns {number}
    */
   get 背面座位() {
@@ -794,7 +794,7 @@ class KojoFacade {
 
   /**
    * 逆强奸（cflag:cid:325 ↔ CFLAG:325）
-   * 源: 口上/EVENT_K3_高貴.ERB 逆强奸 CFLAG:325（指令 24）
+   * 源: target/ERB/口上/EVENT_K3_高貴.ERB 逆强奸 CFLAG:325（指令 24）
    * @returns {number}
    */
   get 逆强奸() {
@@ -809,7 +809,7 @@ class KojoFacade {
 
   /**
    * 逆肛门强奸（cflag:cid:326 ↔ CFLAG:326）
-   * 源: 口上/EVENT_K10_クラブ.ERB 逆肛门强奸 CFLAG:326
+   * 源: target/ERB/口上/EVENT_K10_クラブ.ERB 逆肛门强奸 CFLAG:326
    * @returns {number}
    */
   get 逆肛门强奸() {
@@ -824,7 +824,7 @@ class KojoFacade {
 
   /**
    * 正常位肛交（cflag:cid:327 ↔ CFLAG:327）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1545
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1545
    * @returns {number}
    */
   get 正常位肛交() {
@@ -839,7 +839,7 @@ class KojoFacade {
 
   /**
    * 背后位肛交（cflag:cid:328 ↔ CFLAG:328）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1604
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1604
    * @returns {number}
    */
   get 背后位肛交() {
@@ -854,7 +854,7 @@ class KojoFacade {
 
   /**
    * 对面座位肛交（cflag:cid:329 ↔ CFLAG:329）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1649
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1649
    * @returns {number}
    */
   get 对面座位肛交() {
@@ -869,7 +869,7 @@ class KojoFacade {
 
   /**
    * 背面座位肛交（cflag:cid:330 ↔ CFLAG:330）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1708
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1708
    * @returns {number}
    */
   get 背面座位肛交() {
@@ -884,7 +884,7 @@ class KojoFacade {
 
   /**
    * 手淫（cflag:cid:331 ↔ CFLAG:331）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1765
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1765
    * @returns {number}
    */
   get 手淫() {
@@ -899,7 +899,7 @@ class KojoFacade {
 
   /**
    * 口交_奴（cflag:cid:332 ↔ CFLAG:332）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1821
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1821
    * @returns {number}
    */
   get 口交_奴() {
@@ -914,7 +914,7 @@ class KojoFacade {
 
   /**
    * 乳交（cflag:cid:333 ↔ CFLAG:333）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1871
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1871
    * @returns {number}
    */
   get 乳交() {
@@ -929,7 +929,7 @@ class KojoFacade {
 
   /**
    * 股间性交（cflag:cid:334 ↔ CFLAG:334）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1927
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1927
    * @returns {number}
    */
   get 股间性交() {
@@ -944,7 +944,7 @@ class KojoFacade {
 
   /**
    * 骑乘位（cflag:cid:335 ↔ CFLAG:335）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行1974
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行1974
    * @returns {number}
    */
   get 骑乘位() {
@@ -959,7 +959,7 @@ class KojoFacade {
 
   /**
    * 全身擦洗（cflag:cid:336 ↔ CFLAG:336）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2059
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2059
    * @returns {number}
    */
   get 全身擦洗() {
@@ -974,7 +974,7 @@ class KojoFacade {
 
   /**
    * 骑乘位肛交（cflag:cid:337 ↔ CFLAG:337）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2097
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2097
    * @returns {number}
    */
   get 骑乘位肛交() {
@@ -989,7 +989,7 @@ class KojoFacade {
 
   /**
    * 肛门侍奉（cflag:cid:338 ↔ CFLAG:338）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2154
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2154
    * @returns {number}
    */
   get 肛门侍奉() {
@@ -1004,7 +1004,7 @@ class KojoFacade {
 
   /**
    * 足交（cflag:cid:339 ↔ CFLAG:339）
-   * 源: 口上/EVENT_K3_高貴.ERB 足交 CFLAG:339（指令 38）
+   * 源: target/ERB/口上/EVENT_K3_高貴.ERB 足交 CFLAG:339（指令 38）
    * @returns {number}
    */
   get 足交() {
@@ -1019,7 +1019,7 @@ class KojoFacade {
 
   /**
    * 打屁股（cflag:cid:341 ↔ CFLAG:341）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2192
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2192
    * @returns {number}
    */
   get 打屁股() {
@@ -1034,7 +1034,7 @@ class KojoFacade {
 
   /**
    * 鞭（cflag:cid:342 ↔ CFLAG:342）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2226
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2226
    * @returns {number}
    */
   get 鞭() {
@@ -1049,7 +1049,7 @@ class KojoFacade {
 
   /**
    * 针（cflag:cid:343 ↔ CFLAG:343）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2283
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2283
    * @returns {number}
    */
   get 针() {
@@ -1064,7 +1064,7 @@ class KojoFacade {
 
   /**
    * 眼罩（cflag:cid:344 ↔ CFLAG:344）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2340
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2340
    * @returns {number}
    */
   get 眼罩() {
@@ -1079,7 +1079,7 @@ class KojoFacade {
 
   /**
    * 绳子（cflag:cid:345 ↔ CFLAG:345）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2414
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2414
    * @returns {number}
    */
   get 绳子() {
@@ -1094,7 +1094,7 @@ class KojoFacade {
 
   /**
    * 口塞（cflag:cid:346 ↔ CFLAG:346）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2488
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2488
    * @returns {number}
    */
   get 口塞() {
@@ -1109,7 +1109,7 @@ class KojoFacade {
 
   /**
    * 灌肠肛塞（cflag:cid:347 ↔ CFLAG:347）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2562
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2562
    * @returns {number}
    */
   get 灌肠肛塞() {
@@ -1124,7 +1124,7 @@ class KojoFacade {
 
   /**
    * 穿环（cflag:cid:348 ↔ CFLAG:348）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行3017
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行3017
    * @returns {number}
    */
   get 穿环() {
@@ -1139,7 +1139,7 @@ class KojoFacade {
 
   /**
    * 放置PLAY（cflag:cid:356 ↔ CFLAG:356）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2612 何もしない
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2612 何もしない
    * @returns {number}
    */
   get 放置PLAY() {
@@ -1154,7 +1154,7 @@ class KojoFacade {
 
   /**
    * 交谈（cflag:cid:357 ↔ CFLAG:357）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2646
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2646
    * @returns {number}
    */
   get 交谈() {
@@ -1169,7 +1169,7 @@ class KojoFacade {
 
   /**
    * 乳夹口交（cflag:cid:360 ↔ CFLAG:360）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2714
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2714
    * @returns {number}
    */
   get 乳夹口交() {
@@ -1184,7 +1184,7 @@ class KojoFacade {
 
   /**
    * 口交时自慰（cflag:cid:361 ↔ CFLAG:361）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2757
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2757
    * @returns {number}
    */
   get 口交时自慰() {
@@ -1199,7 +1199,7 @@ class KojoFacade {
 
   /**
    * 手搓口交（cflag:cid:362 ↔ CFLAG:362）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2801
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2801
    * @returns {number}
    */
   get 手搓口交() {
@@ -1214,7 +1214,7 @@ class KojoFacade {
 
   /**
    * 真空口交（cflag:cid:363 ↔ CFLAG:363）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2845
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2845
    * @returns {number}
    */
   get 真空口交() {
@@ -1229,7 +1229,7 @@ class KojoFacade {
 
   /**
    * 六九式（cflag:cid:364 ↔ CFLAG:364）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2888
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2888
    * @returns {number}
    */
   get 六九式() {
@@ -1244,7 +1244,7 @@ class KojoFacade {
 
   /**
    * 深喉（cflag:cid:365 ↔ CFLAG:365）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2932
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2932
    * @returns {number}
    */
   get 深喉() {
@@ -1259,7 +1259,7 @@ class KojoFacade {
 
   /**
    * 侵犯助手（cflag:cid:366 ↔ CFLAG:366）
-   * 源: 口上/EVENT_K11_リリィ.ERB 助手を犯させる CFLAG:366
+   * 源: target/ERB/口上/EVENT_K11_リリィ.ERB 助手を犯させる CFLAG:366
    * @returns {number}
    */
   get 侵犯助手() {
@@ -1274,7 +1274,7 @@ class KojoFacade {
 
   /**
    * 双人口交（cflag:cid:367 ↔ CFLAG:367）
-   * 源: 口上/EVENT_K11_リリィ.ERB 二本フェラ CFLAG:367
+   * 源: target/ERB/口上/EVENT_K11_リリィ.ERB 二本フェラ CFLAG:367
    * @returns {number}
    */
   get 双人口交() {
@@ -1289,7 +1289,7 @@ class KojoFacade {
 
   /**
    * 双人侍奉口交（cflag:cid:369 ↔ CFLAG:369）
-   * 源: 口上/EVENT_K11_リリィ.ERB ダブルフェラ CFLAG:369
+   * 源: target/ERB/口上/EVENT_K11_リリィ.ERB ダブルフェラ CFLAG:369
    * @returns {number}
    */
   get 双人侍奉口交() {
@@ -1304,7 +1304,7 @@ class KojoFacade {
 
   /**
    * 魔族化（cflag:cid:370 ↔ CFLAG:370）
-   * 源: 口上/EVENT_K7_ハート.ERB 等 魔族化 CFLAG:370
+   * 源: target/ERB/口上/EVENT_K7_ハート.ERB 等 魔族化 CFLAG:370
    * @returns {number}
    */
   get 魔族化() {
@@ -1319,7 +1319,7 @@ class KojoFacade {
 
   /**
    * 壶虫着脱（cflag:cid:372 ↔ CFLAG:372）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行14 壶虫 CFLAG:312 CFLAG:372
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行14 壶虫 CFLAG:312 CFLAG:372
    * @returns {number}
    */
   get 壶虫着脱() {
@@ -1334,7 +1334,7 @@ class KojoFacade {
 
   /**
    * 肛门虫着脱（cflag:cid:374 ↔ CFLAG:374）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行15
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行15
    * @returns {number}
    */
   get 肛门虫着脱() {
@@ -1349,7 +1349,7 @@ class KojoFacade {
 
   /**
    * 阴蒂夹着脱（cflag:cid:375 ↔ CFLAG:375）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行16
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行16
    * @returns {number}
    */
   get 阴蒂夹着脱() {
@@ -1364,7 +1364,7 @@ class KojoFacade {
 
   /**
    * 乳头夹着脱（cflag:cid:376 ↔ CFLAG:376）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行17
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行17
    * @returns {number}
    */
   get 乳头夹着脱() {
@@ -1379,7 +1379,7 @@ class KojoFacade {
 
   /**
    * 榨乳器着脱（cflag:cid:377 ↔ CFLAG:377）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行18
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行18
    * @returns {number}
    */
   get 榨乳器着脱() {
@@ -1394,7 +1394,7 @@ class KojoFacade {
 
   /**
    * 飞机杯着脱（cflag:cid:378 ↔ CFLAG:378）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行19
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行19
    * @returns {number}
    */
   get 飞机杯着脱() {
@@ -1409,7 +1409,7 @@ class KojoFacade {
 
   /**
    * 肛珠着脱（cflag:cid:379 ↔ CFLAG:379）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行20
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行20
    * @returns {number}
    */
   get 肛珠着脱() {
@@ -1424,7 +1424,7 @@ class KojoFacade {
 
   /**
    * 眼罩着脱（cflag:cid:380 ↔ CFLAG:380）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行21
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行21
    * @returns {number}
    */
   get 眼罩着脱() {
@@ -1439,7 +1439,7 @@ class KojoFacade {
 
   /**
    * 强制口交（cflag:cid:381 ↔ CFLAG:381）
-   * 源: yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释 行2976
+   * 源: yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释 行2976
    * @returns {number}
    */
   get 强制口交() {
@@ -1454,7 +1454,7 @@ class KojoFacade {
 
   /**
    * 绳子着脱（cflag:cid:385 ↔ CFLAG:385）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行22
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行22
    * @returns {number}
    */
   get 绳子着脱() {
@@ -1469,7 +1469,7 @@ class KojoFacade {
 
   /**
    * 口塞着脱（cflag:cid:386 ↔ CFLAG:386）
-   * 源: 资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行23
+   * 源: target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 行23
    * @returns {number}
    */
   get 口塞着脱() {
@@ -1484,7 +1484,7 @@ class KojoFacade {
 
   /**
    * 灌肠肛塞着脱（cflag:cid:387 ↔ CFLAG:387）
-   * 源: 口上/EVENT_K3_高貴.ERB 灌肠+肛塞 CFLAG:387
+   * 源: target/ERB/口上/EVENT_K3_高貴.ERB 灌肠+肛塞 CFLAG:387
    * @returns {number}
    */
   get 灌肠肛塞着脱() {
@@ -1499,7 +1499,7 @@ class KojoFacade {
 
   /**
    * 三人PLAY（cflag:cid:391 ↔ CFLAG:391）
-   * 源: 口上/EVENT_K11_リリィ.ERB 3P CFLAG:391
+   * 源: target/ERB/口上/EVENT_K11_リリィ.ERB 3P CFLAG:391
    * @returns {number}
    */
   get 三人PLAY() {
@@ -1514,7 +1514,7 @@ class KojoFacade {
 
   /**
    * 魔族化_K11（cflag:cid:400 ↔ CFLAG:400）
-   * 源: 口上/EVENT_K11_リリィ.ERB 魔族化 CFLAG:400
+   * 源: target/ERB/口上/EVENT_K11_リリィ.ERB 魔族化 CFLAG:400
    * @returns {number}
    */
   get 魔族化_K11() {
@@ -1529,7 +1529,7 @@ class KojoFacade {
 
   /**
    * 兽奸眼罩（cflag:cid:444 ↔ CFLAG:444）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:444 獣姦アイマスク时口上
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:444 獣姦アイマスク时口上
    * @returns {number}
    */
   get 兽奸眼罩() {
@@ -1544,7 +1544,7 @@ class KojoFacade {
 
   /**
    * NTR再捕获（cflag:cid:650 ↔ CFLAG:650）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR再捕获() {
@@ -1559,7 +1559,7 @@ class KojoFacade {
 
   /**
    * NTR_651（cflag:cid:651 ↔ CFLAG:651）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_651() {
@@ -1574,7 +1574,7 @@ class KojoFacade {
 
   /**
    * NTR_652（cflag:cid:652 ↔ CFLAG:652）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_652() {
@@ -1589,7 +1589,7 @@ class KojoFacade {
 
   /**
    * NTR_653（cflag:cid:653 ↔ CFLAG:653）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_653() {
@@ -1604,7 +1604,7 @@ class KojoFacade {
 
   /**
    * NTR_654（cflag:cid:654 ↔ CFLAG:654）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_654() {
@@ -1619,7 +1619,7 @@ class KojoFacade {
 
   /**
    * NTR_655（cflag:cid:655 ↔ CFLAG:655）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_655() {
@@ -1634,7 +1634,7 @@ class KojoFacade {
 
   /**
    * NTR_656（cflag:cid:656 ↔ CFLAG:656）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_656() {
@@ -1649,7 +1649,7 @@ class KojoFacade {
 
   /**
    * NTR_657（cflag:cid:657 ↔ CFLAG:657）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:650～660 NTR 旗标
    * @returns {number}
    */
   get NTR_657() {

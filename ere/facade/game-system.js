@@ -11,7 +11,7 @@ class SystemGame {
   // —— flag ——
   /**
    * 爱之奴隶所生（flag:32 ↔ FLAG:32）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:32
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:32
    * @returns {number}
    */
   get 爱之奴隶所生() {
@@ -26,7 +26,7 @@ class SystemGame {
 
   /**
    * 濒死自动结束调教（flag:35 ↔ FLAG:35）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:35
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:35
    * @returns {number}
    */
   get 濒死自动结束调教() {
@@ -41,7 +41,7 @@ class SystemGame {
 
   /**
    * 着衣系统（flag:37 ↔ FLAG:37）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:37
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:37
    * @returns {number}
    */
   get 着衣系统() {
@@ -55,23 +55,8 @@ class SystemGame {
   }
 
   /**
-   * flag_38（flag:38 ↔ FLAG:38）
-   * 源: ownership/flag-ownership.yml；语义随系统票补
-   * @returns {number}
-   */
-  get flag_38() {
-    return era.get('flag:38') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set flag_38(v) {
-    era.set('flag:38', v);
-  }
-
-  /**
    * 外来勇者等级上限（flag:76 ↔ FLAG:76）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:76
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:76
    * @returns {number}
    */
   get 外来勇者等级上限() {
@@ -86,7 +71,7 @@ class SystemGame {
 
   /**
    * 人间界侵攻度（flag:81 ↔ FLAG:81）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:81
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:81
    * @returns {number}
    */
   get 人间界侵攻度() {
@@ -101,7 +86,7 @@ class SystemGame {
 
   /**
    * 精灵领域侵攻度（flag:86 ↔ FLAG:86）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:86
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:86
    * @returns {number}
    */
   get 精灵领域侵攻度() {
@@ -116,7 +101,7 @@ class SystemGame {
 
   /**
    * 龙山侵攻度（flag:88 ↔ FLAG:88）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:88
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:88
    * @returns {number}
    */
   get 龙山侵攻度() {
@@ -131,7 +116,7 @@ class SystemGame {
 
   /**
    * 天界侵攻度（flag:90 ↔ FLAG:90）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:90
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:90
    * @returns {number}
    */
   get 天界侵攻度() {
@@ -145,23 +130,8 @@ class SystemGame {
   }
 
   /**
-   * flag_99（flag:99 ↔ FLAG:99）
-   * 源: ownership/flag-ownership.yml；语义随系统票补
-   * @returns {number}
-   */
-  get flag_99() {
-    return era.get('flag:99') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set flag_99(v) {
-    era.set('flag:99', v);
-  }
-
-  /**
    * 狂王性别（flag:500 ↔ FLAG:500）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:500
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:500
    * @returns {number}
    */
   get 狂王性别() {
@@ -176,7 +146,7 @@ class SystemGame {
 
   /**
    * 初期奴隶类型（flag:501 ↔ FLAG:501）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:501
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:501
    * @returns {number}
    */
   get 初期奴隶类型() {
@@ -189,25 +159,10 @@ class SystemGame {
     era.set('flag:501', v);
   }
 
-  /**
-   * flag_2807（flag:2807 ↔ FLAG:2807）
-   * 源: ownership/flag-ownership.yml 属主 system
-   * @returns {number}
-   */
-  get flag_2807() {
-    return era.get('flag:2807') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set flag_2807(v) {
-    era.set('flag:2807', v);
-  }
-
   // —— tflag ——
   /**
    * 对象射精（tflag:10 ↔ TFLAG:10）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:10
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:10
    * @returns {number}
    */
   get 对象射精() {
@@ -222,7 +177,7 @@ class SystemGame {
 
   /**
    * 对象喷乳（tflag:11 ↔ TFLAG:11）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:11
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:11
    * @returns {number}
    */
   get 对象喷乳() {
@@ -237,7 +192,7 @@ class SystemGame {
 
   /**
    * 反抗刻印变动（tflag:21 ↔ TFLAG:21）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:21
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:21
    * @returns {number}
    */
   get 反抗刻印变动() {
@@ -252,7 +207,7 @@ class SystemGame {
 
   /**
    * 苦痛刻印变动（tflag:22 ↔ TFLAG:22）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:22
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:22
    * @returns {number}
    */
   get 苦痛刻印变动() {
@@ -267,7 +222,7 @@ class SystemGame {
 
   /**
    * 快乐刻印变动（tflag:23 ↔ TFLAG:23）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:23
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:23
    * @returns {number}
    */
   get 快乐刻印变动() {
@@ -282,7 +237,7 @@ class SystemGame {
 
   /**
    * 屈服刻印变动（tflag:24 ↔ TFLAG:24）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:24
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:24
    * @returns {number}
    */
   get 屈服刻印变动() {
@@ -297,7 +252,7 @@ class SystemGame {
 
   /**
    * 绝顶强度（tflag:29 ↔ TFLAG:29）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:29
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:29
    * @returns {number}
    */
   get 绝顶强度() {
@@ -312,7 +267,7 @@ class SystemGame {
 
   /**
    * 榨乳中（tflag:35 ↔ TFLAG:35）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:35
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:35
    * @returns {number}
    */
   get 榨乳中() {
@@ -327,7 +282,7 @@ class SystemGame {
 
   /**
    * 下装穿不上（tflag:45 ↔ TFLAG:45）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:45
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:45
    * @returns {number}
    */
   get 下装穿不上() {
@@ -342,7 +297,7 @@ class SystemGame {
 
   /**
    * 上次调教者是助手（tflag:50 ↔ TFLAG:50）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:50
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:50
    * @returns {number}
    */
   get 上次调教者是助手() {
@@ -357,7 +312,7 @@ class SystemGame {
 
   /**
    * V虫产卵（tflag:120 ↔ TFLAG:120）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:120
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:120
    * @returns {number}
    */
   get V虫产卵() {
@@ -372,7 +327,7 @@ class SystemGame {
 
   /**
    * A虫产卵（tflag:121 ↔ TFLAG:121）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:121
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:121
    * @returns {number}
    */
   get A虫产卵() {
@@ -387,7 +342,7 @@ class SystemGame {
 
   /**
    * 反抗刻印回避（tflag:150 ↔ TFLAG:150）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:150
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:150
    * @returns {number}
    */
   get 反抗刻印回避() {

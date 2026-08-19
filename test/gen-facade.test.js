@@ -17,6 +17,7 @@ const { NAMES } = require('../tools/facade-names');
 const {
   FACADES,
   REPO_ROOT,
+  SKIPPED,
   entries_for,
   extract_generated_section,
   generate,
@@ -238,7 +239,7 @@ test('同步守护：仓库产物生成区与现渲染结果一致', () => {
   );
 });
 
-test('命名表缺属主下标时生成器报错，不静默用数字当名字', () => {
+test('口上域切片缺名时生成器报错，不静默用数字当名字', () => {
   const names = require('../tools/facade-names');
   assert.equal(names.get_name('cflag', 9999), undefined);
   const lookup = (table, index) =>
@@ -247,8 +248,46 @@ test('命名表缺属主下标时生成器报错，不静默用数字当名字',
       : names.get_name(table, index);
   assert.throws(
     () => entries_for('cflag', 'kojo', undefined, lookup),
-    /命名表缺 cflag:301/,
+    /口上域切片缺名：cflag:301/,
   );
+});
+
+test('一维未命名属主下标跳过并报告，不进产物', () => {
+  assert.ok(SKIPPED.length > 0, 'ownership 里确有未命名下标要跳过');
+  assert.ok(
+    SKIPPED.some((item) => item.table === 'tflag' && item.index === 33),
+    'tflag:33 无语义，应跳过',
+  );
+  assert.ok(
+    !SKIPPED.some((item) => item.table === 'tflag' && item.index === 204),
+    'TFLAG:204 有 COM_REGISTER 注释，应收录',
+  );
+  const event_tflag = path.join(REPO_ROOT, 'ere', 'facade', 'game-event.js');
+  const text = fs.readFileSync(event_tflag, 'utf8');
+  assert.ok(!text.includes('get tflag_'));
+  assert.ok(!text.includes('tflag:33'));
+  const { entries, skipped } = entries_for('tflag', 'event');
+  assert.ok(skipped.length > 0);
+  assert.ok(entries.every((entry) => !/^tflag_\d+$/.test(entry.name)));
+});
+
+test('出处路径指向仓库里存在的 target/ 文件', () => {
+  const names = require('../tools/facade-names');
+  assert.ok(
+    fs.existsSync(
+      path.join(REPO_ROOT, names.SRC_FLAG.replace(/\//g, path.sep)),
+    ),
+  );
+  assert.ok(
+    fs.existsSync(path.join(REPO_ROOT, names.SRC_KXX.replace(/\//g, path.sep))),
+  );
+  const product = fs.readFileSync(
+    path.join(REPO_ROOT, 'ere', 'facade', 'chara-kojo.js'),
+    'utf8',
+  );
+  assert.ok(product.includes('target/資料_非必要無須解壓/'));
+  assert.ok(!product.includes('target/资料_非必要無須解壓/'));
+  assert.ok(!product.includes('源: 资料_非必要無須解壓/'));
 });
 
 test('tequip 不进一维门面：JS 侧是三段寻址，按一维切会写错地址', () => {

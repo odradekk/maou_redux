@@ -1374,7 +1374,7 @@ const MUTATIONS = [
     find: '.filter(([, owner]) => owner === domain)',
     replace: '.filter(() => true)',
     tests: ['gen-facade'],
-    expect_only: '命名表缺',
+    expect_only: '口上域切片缺名',
   },
 ];
 

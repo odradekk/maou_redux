@@ -11,7 +11,7 @@ class DungeonGame {
   // —— flag ——
   /**
    * 游戏设定（flag:5 ↔ FLAG:5）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:5 ビット演算
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:5 ビット演算
    * @returns {number}
    */
   get 游戏设定() {
@@ -26,7 +26,7 @@ class DungeonGame {
 
   /**
    * 肉便器常识改写（flag:63 ↔ FLAG:63）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:63
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:63
    * @returns {number}
    */
   get 肉便器常识改写() {
@@ -41,7 +41,7 @@ class DungeonGame {
 
   /**
    * 迷宫模式（flag:502 ↔ FLAG:502）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:502
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:502
    * @returns {number}
    */
   get 迷宫模式() {
@@ -57,7 +57,7 @@ class DungeonGame {
   // —— tflag ——
   /**
    * 足交射精或处遇口上（tflag:18 ↔ TFLAG:18）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:18
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:18
    * @returns {number}
    */
   get 足交射精或处遇口上() {

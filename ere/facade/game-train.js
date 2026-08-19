@@ -11,7 +11,7 @@ class TrainGame {
   // —— flag ——
   /**
    * 录像开始状况（flag:22 ↔ FLAG:22）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:22
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:22
    * @returns {number}
    */
   get 录像开始状况() {
@@ -26,7 +26,7 @@ class TrainGame {
 
   /**
    * 指令过滤（flag:25 ↔ FLAG:25）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:25
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:25
    * @returns {number}
    */
   get 指令过滤() {
@@ -41,7 +41,7 @@ class TrainGame {
 
   /**
    * 肉便器行动（flag:62 ↔ FLAG:62）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:62
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:62
    * @returns {number}
    */
   get 肉便器行动() {
@@ -56,7 +56,7 @@ class TrainGame {
 
   /**
    * 肉便器侍奉对象（flag:64 ↔ FLAG:64）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:64
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:64
    * @returns {number}
    */
   get 肉便器侍奉对象() {
@@ -71,7 +71,7 @@ class TrainGame {
 
   /**
    * 自由调教跳转（flag:71 ↔ FLAG:71）
-   * 源: 調教相關/COMF_JUMP.ERB FLAG:71
+   * 源: target/ERB/調教相關/COMF_JUMP.ERB FLAG:71
    * @returns {number}
    */
   get 自由调教跳转() {
@@ -86,7 +86,7 @@ class TrainGame {
 
   /**
    * 指令菜单长度（flag:550 ↔ FLAG:550）
-   * 源: 調教相關/COM_REGISTER.ERB:7 FLAG:550 菜单の長さ
+   * 源: target/ERB/調教相關/COM_REGISTER.ERB 行7 FLAG:550 菜单の長さ
    * @returns {number}
    */
   get 指令菜单长度() {
@@ -102,7 +102,7 @@ class TrainGame {
   // —— tflag ——
   /**
    * 口中射精（tflag:0 ↔ TFLAG:0）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:0
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:0
    * @returns {number}
    */
   get 口中射精() {
@@ -117,7 +117,7 @@ class TrainGame {
 
   /**
    * 手中射精（tflag:1 ↔ TFLAG:1）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:1
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:1
    * @returns {number}
    */
   get 手中射精() {
@@ -132,7 +132,7 @@ class TrainGame {
 
   /**
    * 性交射精（tflag:2 ↔ TFLAG:2）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:2
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:2
    * @returns {number}
    */
   get 性交射精() {
@@ -147,7 +147,7 @@ class TrainGame {
 
   /**
    * 处女丧失（tflag:3 ↔ TFLAG:3）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:3
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:3
    * @returns {number}
    */
   get 处女丧失() {
@@ -162,7 +162,7 @@ class TrainGame {
 
   /**
    * 接吻射精（tflag:4 ↔ TFLAG:4）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:4
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:4
    * @returns {number}
    */
   get 接吻射精() {
@@ -177,7 +177,7 @@ class TrainGame {
 
   /**
    * 舔阴射精（tflag:5 ↔ TFLAG:5）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:5
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:5
    * @returns {number}
    */
   get 舔阴射精() {
@@ -192,7 +192,7 @@ class TrainGame {
 
   /**
    * 助手射精（tflag:6 ↔ TFLAG:6）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:6
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:6
    * @returns {number}
    */
   get 助手射精() {
@@ -207,7 +207,7 @@ class TrainGame {
 
   /**
    * 主人犯助手射精（tflag:7 ↔ TFLAG:7）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:7
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:7
    * @returns {number}
    */
   get 主人犯助手射精() {
@@ -222,7 +222,7 @@ class TrainGame {
 
   /**
    * 口交射精后（tflag:8 ↔ TFLAG:8）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:8
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:8
    * @returns {number}
    */
   get 口交射精后() {
@@ -237,7 +237,7 @@ class TrainGame {
 
   /**
    * 股间射精（tflag:9 ↔ TFLAG:9）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:9
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:9
    * @returns {number}
    */
   get 股间射精() {
@@ -252,7 +252,7 @@ class TrainGame {
 
   /**
    * 逆强奸射精（tflag:12 ↔ TFLAG:12）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:12
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:12
    * @returns {number}
    */
   get 逆强奸射精() {
@@ -267,7 +267,7 @@ class TrainGame {
 
   /**
    * 初吻与自我口上（tflag:13 ↔ TFLAG:13）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:13
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:13
    * @returns {number}
    */
   get 初吻与自我口上() {
@@ -282,7 +282,7 @@ class TrainGame {
 
   /**
    * 近亲与自我口上（tflag:14 ↔ TFLAG:14）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:14
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:14
    * @returns {number}
    */
   get 近亲与自我口上() {
@@ -297,7 +297,7 @@ class TrainGame {
 
   /**
    * 怪物射精或购入金（tflag:15 ↔ TFLAG:15）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:15
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:15
    * @returns {number}
    */
   get 怪物射精或购入金() {
@@ -312,7 +312,7 @@ class TrainGame {
 
   /**
    * 童贞丧失_未使用（tflag:17 ↔ TFLAG:17）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:17 未使用
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:17 未使用
    * @returns {number}
    */
   get 童贞丧失_未使用() {
@@ -327,7 +327,7 @@ class TrainGame {
 
   /**
    * 伴V经验指令（tflag:19 ↔ TFLAG:19）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:19
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:19
    * @returns {number}
    */
   get 伴V经验指令() {
@@ -342,7 +342,7 @@ class TrainGame {
 
   /**
    * 主人导致处女丧失（tflag:20 ↔ TFLAG:20）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:20
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:20
    * @returns {number}
    */
   get 主人导致处女丧失() {
@@ -357,7 +357,7 @@ class TrainGame {
 
   /**
    * 压抑抵抗消灭（tflag:25 ↔ TFLAG:25）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:25
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:25
    * @returns {number}
    */
   get 压抑抵抗消灭() {
@@ -372,7 +372,7 @@ class TrainGame {
 
   /**
    * 侍奉快乐经验（tflag:26 ↔ TFLAG:26）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:26
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:26
    * @returns {number}
    */
   get 侍奉快乐经验() {
@@ -387,7 +387,7 @@ class TrainGame {
 
   /**
    * 被虐快乐经验（tflag:27 ↔ TFLAG:27）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:27
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:27
    * @returns {number}
    */
   get 被虐快乐经验() {
@@ -402,7 +402,7 @@ class TrainGame {
 
   /**
    * A快乐经验（tflag:28 ↔ TFLAG:28）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:28
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:28
    * @returns {number}
    */
   get A快乐经验() {
@@ -417,7 +417,7 @@ class TrainGame {
 
   /**
    * 主人经验（tflag:30 ↔ TFLAG:30）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:30
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:30
    * @returns {number}
    */
   get 主人经验() {
@@ -432,7 +432,7 @@ class TrainGame {
 
   /**
    * 死亡时在录像（tflag:34 ↔ TFLAG:34）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:34
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:34
    * @returns {number}
    */
   get 死亡时在录像() {
@@ -447,7 +447,7 @@ class TrainGame {
 
   /**
    * 对象膣内射精（tflag:38 ↔ TFLAG:38）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:38
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:38
    * @returns {number}
    */
   get 对象膣内射精() {
@@ -462,7 +462,7 @@ class TrainGame {
 
   /**
    * 三人PLAY主人部位（tflag:40 ↔ TFLAG:40）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:40
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:40
    * @returns {number}
    */
   get 三人PLAY主人部位() {
@@ -477,7 +477,7 @@ class TrainGame {
 
   /**
    * 三人PLAY助手部位（tflag:41 ↔ TFLAG:41）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:41
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:41
    * @returns {number}
    */
   get 三人PLAY助手部位() {
@@ -492,7 +492,7 @@ class TrainGame {
 
   /**
    * 三人PLAY持续（tflag:42 ↔ TFLAG:42）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:42
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:42
    * @returns {number}
    */
   get 三人PLAY持续() {
@@ -507,7 +507,7 @@ class TrainGame {
 
   /**
    * 珠结算_7（tflag:58 ↔ TFLAG:58）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58
    * @returns {number}
    */
   get 珠结算_7() {
@@ -522,7 +522,7 @@ class TrainGame {
 
   /**
    * 快乐经验（tflag:100 ↔ TFLAG:100）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:100
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:100
    * @returns {number}
    */
   get 快乐经验() {
@@ -537,7 +537,7 @@ class TrainGame {
 
   /**
    * 屈服刻印结算（tflag:200 ↔ TFLAG:200）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:200
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:200
    * @returns {number}
    */
   get 屈服刻印结算() {
@@ -551,38 +551,38 @@ class TrainGame {
   }
 
   /**
-   * tflag_204（tflag:204 ↔ TFLAG:204）
-   * 源: ownership/tflag-ownership.yml 属主 train
+   * 当前选择的调教指令编号（tflag:204 ↔ TFLAG:204）
+   * 源: target/ERB/調教相關/COM_REGISTER.ERB 行5 TFLAG:204 主に現在選択している調教指令番号の一時的な保存
    * @returns {number}
    */
-  get tflag_204() {
+  get 当前选择的调教指令编号() {
     return era.get('tflag:204') || 0;
   }
   /**
    * @param {number} v
    */
-  set tflag_204(v) {
+  set 当前选择的调教指令编号(v) {
     era.set('tflag:204', v);
   }
 
   /**
-   * tflag_224（tflag:224 ↔ TFLAG:224）
-   * 源: ownership/tflag-ownership.yml 属主 train
+   * 索求口上抑制（tflag:224 ↔ TFLAG:224）
+   * 源: target/ERB/調教相關/COM_REGISTER.ERB 行6 TFLAG:224 おねだり口上抑制フラグ
    * @returns {number}
    */
-  get tflag_224() {
+  get 索求口上抑制() {
     return era.get('tflag:224') || 0;
   }
   /**
    * @param {number} v
    */
-  set tflag_224(v) {
+  set 索求口上抑制(v) {
     era.set('tflag:224', v);
   }
 
   /**
    * 死斗场敌种（tflag:400 ↔ TFLAG:400）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:400
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:400
    * @returns {number}
    */
   get 死斗场敌种() {
@@ -597,7 +597,7 @@ class TrainGame {
 
   /**
    * 死斗场陷落（tflag:401 ↔ TFLAG:401）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:401
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:401
    * @returns {number}
    */
   get 死斗场陷落() {
@@ -612,7 +612,7 @@ class TrainGame {
 
   /**
    * 死斗场收入（tflag:402 ↔ TFLAG:402）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:402
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:402
    * @returns {number}
    */
   get 死斗场收入() {
@@ -627,7 +627,7 @@ class TrainGame {
 
   /**
    * 失神口上开关（tflag:860 ↔ TFLAG:860）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:860
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:860
    * @returns {number}
    */
   get 失神口上开关() {
@@ -642,7 +642,7 @@ class TrainGame {
 
   /**
    * 失神_864（tflag:864 ↔ TFLAG:864）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_864() {
@@ -657,7 +657,7 @@ class TrainGame {
 
   /**
    * 失神_865（tflag:865 ↔ TFLAG:865）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_865() {
@@ -672,7 +672,7 @@ class TrainGame {
 
   /**
    * 失神_866（tflag:866 ↔ TFLAG:866）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_866() {
@@ -687,7 +687,7 @@ class TrainGame {
 
   /**
    * 失神_867（tflag:867 ↔ TFLAG:867）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_867() {
@@ -702,7 +702,7 @@ class TrainGame {
 
   /**
    * 失神_868（tflag:868 ↔ TFLAG:868）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_868() {
@@ -717,7 +717,7 @@ class TrainGame {
 
   /**
    * 失神_869（tflag:869 ↔ TFLAG:869）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_869() {
@@ -732,7 +732,7 @@ class TrainGame {
 
   /**
    * 失神_870（tflag:870 ↔ TFLAG:870）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_870() {
@@ -747,7 +747,7 @@ class TrainGame {
 
   /**
    * 失神_871（tflag:871 ↔ TFLAG:871）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_871() {
@@ -762,7 +762,7 @@ class TrainGame {
 
   /**
    * 失神_872（tflag:872 ↔ TFLAG:872）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_872() {
@@ -777,7 +777,7 @@ class TrainGame {
 
   /**
    * 失神_873（tflag:873 ↔ TFLAG:873）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_873() {
@@ -792,7 +792,7 @@ class TrainGame {
 
   /**
    * 失神_874（tflag:874 ↔ TFLAG:874）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_874() {
@@ -807,7 +807,7 @@ class TrainGame {
 
   /**
    * 失神_875（tflag:875 ↔ TFLAG:875）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_875() {
@@ -822,7 +822,7 @@ class TrainGame {
 
   /**
    * 失神_876（tflag:876 ↔ TFLAG:876）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_876() {
@@ -837,7 +837,7 @@ class TrainGame {
 
   /**
    * 失神_877（tflag:877 ↔ TFLAG:877）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_877() {
@@ -852,7 +852,7 @@ class TrainGame {
 
   /**
    * 失神_878（tflag:878 ↔ TFLAG:878）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_878() {
@@ -867,7 +867,7 @@ class TrainGame {
 
   /**
    * 失神_879（tflag:879 ↔ TFLAG:879）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_879() {
@@ -882,7 +882,7 @@ class TrainGame {
 
   /**
    * 失神_880（tflag:880 ↔ TFLAG:880）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_880() {
@@ -897,7 +897,7 @@ class TrainGame {
 
   /**
    * 失神_881（tflag:881 ↔ TFLAG:881）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_881() {
@@ -912,7 +912,7 @@ class TrainGame {
 
   /**
    * 失神_882（tflag:882 ↔ TFLAG:882）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_882() {
@@ -927,7 +927,7 @@ class TrainGame {
 
   /**
    * 失神_883（tflag:883 ↔ TFLAG:883）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_883() {
@@ -942,7 +942,7 @@ class TrainGame {
 
   /**
    * 失神_884（tflag:884 ↔ TFLAG:884）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_884() {
@@ -957,7 +957,7 @@ class TrainGame {
 
   /**
    * 失神_885（tflag:885 ↔ TFLAG:885）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_885() {
@@ -972,7 +972,7 @@ class TrainGame {
 
   /**
    * 失神_886（tflag:886 ↔ TFLAG:886）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_886() {
@@ -987,7 +987,7 @@ class TrainGame {
 
   /**
    * 失神_887（tflag:887 ↔ TFLAG:887）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_887() {
@@ -1002,7 +1002,7 @@ class TrainGame {
 
   /**
    * 失神_888（tflag:888 ↔ TFLAG:888）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_888() {
@@ -1017,7 +1017,7 @@ class TrainGame {
 
   /**
    * 失神_889（tflag:889 ↔ TFLAG:889）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_889() {
@@ -1032,7 +1032,7 @@ class TrainGame {
 
   /**
    * 失神_890（tflag:890 ↔ TFLAG:890）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_890() {
@@ -1047,7 +1047,7 @@ class TrainGame {
 
   /**
    * 失神_891（tflag:891 ↔ TFLAG:891）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_891() {
@@ -1062,7 +1062,7 @@ class TrainGame {
 
   /**
    * 失神_892（tflag:892 ↔ TFLAG:892）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_892() {
@@ -1077,7 +1077,7 @@ class TrainGame {
 
   /**
    * 失神_893（tflag:893 ↔ TFLAG:893）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_893() {
@@ -1092,7 +1092,7 @@ class TrainGame {
 
   /**
    * 失神_894（tflag:894 ↔ TFLAG:894）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_894() {
@@ -1107,7 +1107,7 @@ class TrainGame {
 
   /**
    * 失神_895（tflag:895 ↔ TFLAG:895）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_895() {
@@ -1122,7 +1122,7 @@ class TrainGame {
 
   /**
    * 失神_896（tflag:896 ↔ TFLAG:896）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_896() {
@@ -1137,7 +1137,7 @@ class TrainGame {
 
   /**
    * 失神_897（tflag:897 ↔ TFLAG:897）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_897() {
@@ -1152,7 +1152,7 @@ class TrainGame {
 
   /**
    * 失神_898（tflag:898 ↔ TFLAG:898）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:864～899 失神补丁
    * @returns {number}
    */
   get 失神_898() {
@@ -1167,7 +1167,7 @@ class TrainGame {
 
   /**
    * 失神（tflag:899 ↔ TFLAG:899）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:899
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:899
    * @returns {number}
    */
   get 失神() {
@@ -1182,7 +1182,7 @@ class TrainGame {
 
   /**
    * 清屏锚点（tflag:999 ↔ TFLAG:999）
-   * 源: yml/TFlag.yml 头注；調教相關/USERCOM.ERB TFLAG:999
+   * 源: yml/TFlag.yml 头注；target/ERB/調教相關/USERCOM.ERB TFLAG:999
    * @returns {number}
    */
   get 清屏锚点() {

@@ -11,7 +11,7 @@ class KojoGame {
   // —— flag ——
   /**
    * 口上开关（flag:7 ↔ FLAG:7）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:7 口上显示/频率
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:7 口上显示/频率
    * @returns {number}
    */
   get 口上开关() {
@@ -26,7 +26,7 @@ class KojoGame {
 
   /**
    * 口上存在_0（flag:100 ↔ FLAG:100）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_0() {
@@ -41,7 +41,7 @@ class KojoGame {
 
   /**
    * 口上存在_1（flag:101 ↔ FLAG:101）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_1() {
@@ -56,7 +56,7 @@ class KojoGame {
 
   /**
    * 口上存在_2（flag:102 ↔ FLAG:102）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_2() {
@@ -71,7 +71,7 @@ class KojoGame {
 
   /**
    * 口上存在_3（flag:103 ↔ FLAG:103）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_3() {
@@ -86,7 +86,7 @@ class KojoGame {
 
   /**
    * 口上存在_4（flag:104 ↔ FLAG:104）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_4() {
@@ -101,7 +101,7 @@ class KojoGame {
 
   /**
    * 口上存在_5（flag:105 ↔ FLAG:105）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_5() {
@@ -116,7 +116,7 @@ class KojoGame {
 
   /**
    * 口上存在_6（flag:106 ↔ FLAG:106）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_6() {
@@ -131,7 +131,7 @@ class KojoGame {
 
   /**
    * 口上存在_7（flag:107 ↔ FLAG:107）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_7() {
@@ -146,7 +146,7 @@ class KojoGame {
 
   /**
    * 口上存在_8（flag:108 ↔ FLAG:108）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_8() {
@@ -161,7 +161,7 @@ class KojoGame {
 
   /**
    * 口上存在_9（flag:109 ↔ FLAG:109）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_9() {
@@ -176,7 +176,7 @@ class KojoGame {
 
   /**
    * 口上存在_10（flag:110 ↔ FLAG:110）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_10() {
@@ -191,7 +191,7 @@ class KojoGame {
 
   /**
    * 口上存在_11（flag:111 ↔ FLAG:111）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_11() {
@@ -206,7 +206,7 @@ class KojoGame {
 
   /**
    * 口上存在_12（flag:112 ↔ FLAG:112）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_12() {
@@ -221,7 +221,7 @@ class KojoGame {
 
   /**
    * 口上存在_13（flag:113 ↔ FLAG:113）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_13() {
@@ -236,7 +236,7 @@ class KojoGame {
 
   /**
    * 口上存在_14（flag:114 ↔ FLAG:114）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_14() {
@@ -251,7 +251,7 @@ class KojoGame {
 
   /**
    * 口上存在_15（flag:115 ↔ FLAG:115）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx 口上文件存在判定
    * @returns {number}
    */
   get 口上存在_15() {
@@ -266,7 +266,7 @@ class KojoGame {
 
   /**
    * 口上存在_19（flag:119 ↔ FLAG:119）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1xx
    * @returns {number}
    */
   get 口上存在_19() {
@@ -282,7 +282,7 @@ class KojoGame {
   // —— tflag ——
   /**
    * 录像内容（tflag:32 ↔ TFLAG:32）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:32 亦为自我口上旗标
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:32 亦为自我口上旗标
    * @returns {number}
    */
   get 录像内容() {

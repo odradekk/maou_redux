@@ -10,7 +10,7 @@ const era = require('#/era-electron');
 class InvasionGame {
   /**
    * 肉便器数（flag:83 ↔ FLAG:83）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:83
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:83
    * @returns {number}
    */
   get 肉便器数() {
@@ -25,7 +25,7 @@ class InvasionGame {
 
   /**
    * 亲卫队砦侵攻度（flag:92 ↔ FLAG:92）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:92
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:92
    * @returns {number}
    */
   get 亲卫队砦侵攻度() {
@@ -40,7 +40,7 @@ class InvasionGame {
 
   /**
    * 人间界侵攻事件（flag:93 ↔ FLAG:93）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:93
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:93
    * @returns {number}
    */
   get 人间界侵攻事件() {
@@ -55,7 +55,7 @@ class InvasionGame {
 
   /**
    * 活动迷宫（flag:400 ↔ FLAG:400）
-   * 源: 迷宮/DUNGEON.ERB:125 FLAG:400 イベントダンジョン
+   * 源: target/ERB/迷宮/DUNGEON.ERB 行125 FLAG:400 イベントダンジョン
    * @returns {number}
    */
   get 活动迷宫() {
@@ -66,21 +66,6 @@ class InvasionGame {
    */
   set 活动迷宫(v) {
     era.set('flag:400', v);
-  }
-
-  /**
-   * flag_401（flag:401 ↔ FLAG:401）
-   * 源: ownership/flag-ownership.yml 属主 invasion
-   * @returns {number}
-   */
-  get flag_401() {
-    return era.get('flag:401') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set flag_401(v) {
-    era.set('flag:401', v);
   }
 }
 const facade = new InvasionGame();

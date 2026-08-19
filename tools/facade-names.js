@@ -5,17 +5,19 @@
  * 判据：审校者手边摊着 ERB，能不能一眼确认生成码对不对。因此：
  *   - 字段名用中文（对得上 ERB 注释与指令名表），不是英文 snake_case；
  *   - 每个名字带出处（模板 / 旗标一览 / 角色口上文件行号）；
- *   - 未收录的属主下标生成器必须报错（绝不静默用数字当名字）。
+ *   - 未收录的属主下标不进门面（ownership 仍完整登记）。生成器跳过并按域
+ *     报告跳过清单，绝不静默用数字当名字，也不预填 `tflag_N`。
  *
- * 表键 = 引擎表名小写；内层键 = 数字下标。fallback 形态 `tflag_N` 只用于
- * 旗标一览没有给出语义、且本票没有口上消费者的下标——语义随属主子系统票补。
+ * 表键 = 引擎表名小写；内层键 = 数字下标。
  */
 
 'use strict';
 
-const SRC_FLAG = '资料_非必要無須解壓/eramaouフラグまとめ.txt';
-const SRC_KXX = '资料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB';
-const SRC_TRAIN = 'yml/TrainCommand.yml（指令名）+ EVENT_KXX.ERB 注释';
+const SRC_FLAG = 'target/資料_非必要無須解壓/eramaouフラグまとめ.txt';
+const SRC_KXX = 'target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB';
+const SRC_TRAIN =
+  'yml/TrainCommand.yml（指令名）+ target/資料_非必要無須解壓/口上テンプレ/EVENT_KXX.ERB 注释';
+const SRC_ERB = 'target/ERB';
 
 function src(path, extra) {
   return extra ? `${path} ${extra}` : path;
@@ -33,8 +35,8 @@ function named(name, source) {
   return { name, source };
 }
 
-function fallback(table, index, source) {
-  return named(`${table}_${index}`, source);
+function erb(rel, extra) {
+  return src(`${SRC_ERB}/${rel}`, extra);
 }
 
 // —— CFLAG：口上域切片（ownership 属主 kojo 的 110 个下标）——
@@ -47,7 +49,7 @@ const cflag = {
   204: named('简易助手_2', src(SRC_KXX, ':123')),
   214: named(
     '首次C绝顶_K14',
-    '口上/EVENT_K14_貴公子.ERB 初めてC絶頂 CFLAG:214',
+    erb('口上/EVENT_K14_貴公子.ERB', '初めてC絶頂 CFLAG:214'),
   ),
   ...fill(221, 230, (i) => {
     const labels = {
@@ -64,7 +66,7 @@ const cflag = {
     };
     const where =
       i === 230
-        ? '口上/EVENT_K3_高貴.ERB 寄生 CFLAG:230'
+        ? erb('口上/EVENT_K3_高貴.ERB', '寄生 CFLAG:230')
         : src(SRC_KXX, `:4076 参数变动时 CFLAG:221～260；${labels[i]}`);
     return named(labels[i], where);
   }),
@@ -87,7 +89,10 @@ const cflag = {
   302: named('舔阴', src(SRC_TRAIN, ':382')),
   303: named('肛门爱抚', src(SRC_TRAIN, ':420')),
   304: named('自慰', src(SRC_TRAIN, ':461')),
-  305: named('口交_主', '口上/EVENT_K10_クラブ.ERB 口交 CFLAG:305（指令 4）'),
+  305: named(
+    '口交_主',
+    erb('口上/EVENT_K10_クラブ.ERB', '口交 CFLAG:305（指令 4）'),
+  ),
   306: named('胸爱抚', src(SRC_TRAIN, ':543')),
   307: named('接吻', src(SRC_TRAIN, ':581')),
   308: named('自己扒开', src(SRC_TRAIN, ':636')),
@@ -106,8 +111,14 @@ const cflag = {
   322: named('背后位', src(SRC_TRAIN, ':1329')),
   323: named('对面座位', src(SRC_TRAIN, ':1403')),
   324: named('背面座位', src(SRC_TRAIN, ':1474')),
-  325: named('逆强奸', '口上/EVENT_K3_高貴.ERB 逆强奸 CFLAG:325（指令 24）'),
-  326: named('逆肛门强奸', '口上/EVENT_K10_クラブ.ERB 逆肛门强奸 CFLAG:326'),
+  325: named(
+    '逆强奸',
+    erb('口上/EVENT_K3_高貴.ERB', '逆强奸 CFLAG:325（指令 24）'),
+  ),
+  326: named(
+    '逆肛门强奸',
+    erb('口上/EVENT_K10_クラブ.ERB', '逆肛门强奸 CFLAG:326'),
+  ),
   327: named('正常位肛交', src(SRC_TRAIN, ':1545')),
   328: named('背后位肛交', src(SRC_TRAIN, ':1604')),
   329: named('对面座位肛交', src(SRC_TRAIN, ':1649')),
@@ -120,7 +131,10 @@ const cflag = {
   336: named('全身擦洗', src(SRC_TRAIN, ':2059')),
   337: named('骑乘位肛交', src(SRC_TRAIN, ':2097')),
   338: named('肛门侍奉', src(SRC_TRAIN, ':2154')),
-  339: named('足交', '口上/EVENT_K3_高貴.ERB 足交 CFLAG:339（指令 38）'),
+  339: named(
+    '足交',
+    erb('口上/EVENT_K3_高貴.ERB', '足交 CFLAG:339（指令 38）'),
+  ),
   341: named('打屁股', src(SRC_TRAIN, ':2192')),
   342: named('鞭', src(SRC_TRAIN, ':2226')),
   343: named('针', src(SRC_TRAIN, ':2283')),
@@ -137,13 +151,19 @@ const cflag = {
   363: named('真空口交', src(SRC_TRAIN, ':2845')),
   364: named('六九式', src(SRC_TRAIN, ':2888')),
   365: named('深喉', src(SRC_TRAIN, ':2932')),
-  366: named('侵犯助手', '口上/EVENT_K11_リリィ.ERB 助手を犯させる CFLAG:366'),
-  367: named('双人口交', '口上/EVENT_K11_リリィ.ERB 二本フェラ CFLAG:367'),
+  366: named(
+    '侵犯助手',
+    erb('口上/EVENT_K11_リリィ.ERB', '助手を犯させる CFLAG:366'),
+  ),
+  367: named(
+    '双人口交',
+    erb('口上/EVENT_K11_リリィ.ERB', '二本フェラ CFLAG:367'),
+  ),
   369: named(
     '双人侍奉口交',
-    '口上/EVENT_K11_リリィ.ERB ダブルフェラ CFLAG:369',
+    erb('口上/EVENT_K11_リリィ.ERB', 'ダブルフェラ CFLAG:369'),
   ),
-  370: named('魔族化', '口上/EVENT_K7_ハート.ERB 等 魔族化 CFLAG:370'),
+  370: named('魔族化', erb('口上/EVENT_K7_ハート.ERB', '等 魔族化 CFLAG:370')),
   372: named('壶虫着脱', src(SRC_KXX, ':14 壶虫 CFLAG:312　CFLAG:372')),
   374: named('肛门虫着脱', src(SRC_KXX, ':15')),
   375: named('阴蒂夹着脱', src(SRC_KXX, ':16')),
@@ -155,9 +175,15 @@ const cflag = {
   381: named('强制口交', src(SRC_TRAIN, ':2976')),
   385: named('绳子着脱', src(SRC_KXX, ':22')),
   386: named('口塞着脱', src(SRC_KXX, ':23')),
-  387: named('灌肠肛塞着脱', '口上/EVENT_K3_高貴.ERB 灌肠+肛塞 CFLAG:387'),
-  391: named('三人PLAY', '口上/EVENT_K11_リリィ.ERB 3P CFLAG:391'),
-  400: named('魔族化_K11', '口上/EVENT_K11_リリィ.ERB 魔族化 CFLAG:400'),
+  387: named(
+    '灌肠肛塞着脱',
+    erb('口上/EVENT_K3_高貴.ERB', '灌肠+肛塞 CFLAG:387'),
+  ),
+  391: named('三人PLAY', erb('口上/EVENT_K11_リリィ.ERB', '3P CFLAG:391')),
+  400: named(
+    '魔族化_K11',
+    erb('口上/EVENT_K11_リリィ.ERB', '魔族化 CFLAG:400'),
+  ),
   444: named('兽奸眼罩', src(SRC_FLAG, 'CFLAG:444 獣姦アイマスク时口上')),
   ...fill(650, 657, (i) =>
     named(
@@ -187,13 +213,13 @@ const flag = {
   35: named('濒死自动结束调教', src(SRC_FLAG, 'FLAG:35')),
   36: named('显示模式', src(SRC_FLAG, 'FLAG:36')),
   37: named('着衣系统', src(SRC_FLAG, 'FLAG:37')),
-  38: fallback('flag', 38, 'ownership/flag-ownership.yml；语义随系统票补'),
+
   60: named('勇者基础等级修正', src(SRC_FLAG, 'FLAG:60')),
   61: named('每日香料购买数', src(SRC_FLAG, 'FLAG:61')),
   62: named('肉便器行动', src(SRC_FLAG, 'FLAG:62')),
   63: named('肉便器常识改写', src(SRC_FLAG, 'FLAG:63')),
   64: named('肉便器侍奉对象', src(SRC_FLAG, 'FLAG:64')),
-  71: named('自由调教跳转', '調教相關/COMF_JUMP.ERB FLAG:71'),
+  71: named('自由调教跳转', erb('調教相關/COMF_JUMP.ERB', 'FLAG:71')),
   76: named('外来勇者等级上限', src(SRC_FLAG, 'FLAG:76')),
   80: named('处刑勇者数', src(SRC_FLAG, 'FLAG:80')),
   81: named('人间界侵攻度', src(SRC_FLAG, 'FLAG:81')),
@@ -209,20 +235,24 @@ const flag = {
   91: named('天界征服完了', src(SRC_FLAG, 'FLAG:91')),
   92: named('亲卫队砦侵攻度', src(SRC_FLAG, 'FLAG:92')),
   93: named('人间界侵攻事件', src(SRC_FLAG, 'FLAG:93')),
-  99: fallback('flag', 99, 'ownership/flag-ownership.yml；语义随系统票补'),
+
   ...fill(100, 115, (i) =>
     named(`口上存在_${i - 100}`, src(SRC_FLAG, 'FLAG:1xx 口上文件存在判定')),
   ),
   119: named('口上存在_19', src(SRC_FLAG, 'FLAG:1xx')),
   223: named('勇者入场_23', src(SRC_FLAG, 'FLAG:200～ 勇者入场旗标')),
   224: named('勇者入场_24', src(SRC_FLAG, 'FLAG:200～')),
-  400: named('活动迷宫', '迷宮/DUNGEON.ERB:125 FLAG:400 イベントダンジョン'),
-  401: fallback('flag', 401, 'ownership/flag-ownership.yml 属主 invasion'),
-  402: fallback('flag', 402, 'ownership/flag-ownership.yml 属主 chara'),
+  400: named(
+    '活动迷宫',
+    erb('迷宮/DUNGEON.ERB', '行125 FLAG:400 イベントダンジョン'),
+  ),
   500: named('狂王性别', src(SRC_FLAG, 'FLAG:500')),
   501: named('初期奴隶类型', src(SRC_FLAG, 'FLAG:501')),
   502: named('迷宫模式', src(SRC_FLAG, 'FLAG:502')),
-  550: named('指令菜单长度', '調教相關/COM_REGISTER.ERB:7 FLAG:550 菜单の長さ'),
+  550: named(
+    '指令菜单长度',
+    erb('調教相關/COM_REGISTER.ERB', '行7 FLAG:550 菜单の長さ'),
+  ),
   600: named('石像数', src(SRC_FLAG, 'FLAG:600')),
   601: named('剥制数', src(SRC_FLAG, 'FLAG:601')),
   602: named('蜡像数', src(SRC_FLAG, 'FLAG:602')),
@@ -236,9 +266,6 @@ const flag = {
   611: named('喷水像_石', src(SRC_FLAG, 'FLAG:611')),
   612: named('喷水像_金属', src(SRC_FLAG, 'FLAG:612')),
   613: named('人间牧场竿役', src(SRC_FLAG, 'FLAG:613')),
-  2807: fallback('flag', 2807, 'ownership/flag-ownership.yml 属主 system'),
-  2815: fallback('flag', 2815, 'ownership/flag-ownership.yml 属主 event'),
-  2816: fallback('flag', 2816, 'ownership/flag-ownership.yml 属主 event'),
 };
 
 // —— TFLAG：一维按域重切（ownership 248 个下标）——
@@ -277,7 +304,7 @@ const tflag_named = {
   30: named('主人经验', src(SRC_FLAG, 'TFLAG:30')),
   31: named('本次调教处女丧失', src(SRC_FLAG, 'TFLAG:31')),
   32: named('录像内容', src(SRC_FLAG, 'TFLAG:32 亦为自我口上旗标')),
-  33: fallback('tflag', 33, 'ownership/tflag-ownership.yml 属主 event'),
+
   34: named('死亡时在录像', src(SRC_FLAG, 'TFLAG:34')),
   35: named('榨乳中', src(SRC_FLAG, 'TFLAG:35')),
   38: named('对象膣内射精', src(SRC_FLAG, 'TFLAG:38')),
@@ -301,8 +328,17 @@ const tflag_named = {
   121: named('A虫产卵', src(SRC_FLAG, 'TFLAG:121')),
   150: named('反抗刻印回避', src(SRC_FLAG, 'TFLAG:150')),
   200: named('屈服刻印结算', src(SRC_FLAG, 'TFLAG:200')),
-  204: fallback('tflag', 204, 'ownership/tflag-ownership.yml 属主 train'),
-  224: fallback('tflag', 224, 'ownership/tflag-ownership.yml 属主 train'),
+  204: named(
+    '当前选择的调教指令编号',
+    erb(
+      '調教相關/COM_REGISTER.ERB',
+      '行5 TFLAG:204 主に現在選択している調教指令番号の一時的な保存',
+    ),
+  ),
+  224: named(
+    '索求口上抑制',
+    erb('調教相關/COM_REGISTER.ERB', '行6 TFLAG:224 おねだり口上抑制フラグ'),
+  ),
   400: named('死斗场敌种', src(SRC_FLAG, 'TFLAG:400')),
   401: named('死斗场陷落', src(SRC_FLAG, 'TFLAG:401')),
   402: named('死斗场收入', src(SRC_FLAG, 'TFLAG:402')),
@@ -315,75 +351,13 @@ const tflag_named = {
     named(`失神_${i}`, src(SRC_FLAG, 'TFLAG:864～899 失神补丁')),
   ),
   899: named('失神', src(SRC_FLAG, 'TFLAG:899')),
-  999: named('清屏锚点', 'yml/TFlag.yml 头注；調教相關/USERCOM.ERB TFLAG:999'),
+  999: named(
+    '清屏锚点',
+    'yml/TFlag.yml 头注；target/ERB/調教相關/USERCOM.ERB TFLAG:999',
+  ),
 };
 
-const tflag_owned = [
-  ...range_list([
-    [0, 9],
-    [10, 11],
-    [12, 15],
-    [16, 16],
-    [17, 17],
-    [18, 18],
-    [19, 20],
-    [21, 24],
-    [25, 28],
-    [29, 29],
-    [30, 30],
-    [31, 31],
-    [32, 32],
-    [33, 33],
-    [34, 34],
-    [35, 35],
-    [36, 37],
-    [38, 38],
-    [39, 39],
-    [40, 42],
-    [43, 44],
-    [45, 45],
-    [46, 49],
-    [50, 50],
-    [51, 57],
-    [58, 58],
-    [59, 99],
-    [100, 100],
-    [101, 102],
-    [103, 119],
-    [120, 121],
-    [122, 149],
-    [150, 150],
-    [151, 199],
-    [200, 200],
-    [204, 204],
-    [224, 224],
-    [400, 402],
-    [500, 500],
-    [510, 510],
-    [520, 520],
-    [530, 530],
-    [860, 860],
-    [864, 899],
-    [999, 999],
-  ]),
-];
-
-function range_list(pairs) {
-  const out = [];
-  for (const [start, end] of pairs) {
-    for (let i = start; i <= end; i += 1) {
-      out.push(i);
-    }
-  }
-  return out;
-}
-
-const tflag = {};
-for (const index of tflag_owned) {
-  tflag[index] =
-    tflag_named[index] ??
-    fallback('tflag', index, 'ownership/tflag-ownership.yml；语义随属主票补');
-}
+const tflag = tflag_named;
 
 // —— ITEM / GLOBAL ——
 

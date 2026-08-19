@@ -10,7 +10,7 @@ const era = require('#/era-electron');
 class CharaGame {
   /**
    * 种族年龄设定_0（flag:26 ↔ FLAG:26）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:26～27
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:26～27
    * @returns {number}
    */
   get 种族年龄设定_0() {
@@ -25,7 +25,7 @@ class CharaGame {
 
   /**
    * 种族年龄设定_1（flag:27 ↔ FLAG:27）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:26～27
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:26～27
    * @returns {number}
    */
   get 种族年龄设定_1() {
@@ -40,7 +40,7 @@ class CharaGame {
 
   /**
    * 勇者入场_24（flag:224 ↔ FLAG:224）
-   * 源: 资料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:200～
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:200～
    * @returns {number}
    */
   get 勇者入场_24() {
@@ -51,21 +51,6 @@ class CharaGame {
    */
   set 勇者入场_24(v) {
     era.set('flag:224', v);
-  }
-
-  /**
-   * flag_402（flag:402 ↔ FLAG:402）
-   * 源: ownership/flag-ownership.yml 属主 chara
-   * @returns {number}
-   */
-  get flag_402() {
-    return era.get('flag:402') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set flag_402(v) {
-    era.set('flag:402', v);
   }
 }
 const facade = new CharaGame();
