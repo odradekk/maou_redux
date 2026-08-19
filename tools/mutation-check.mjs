@@ -1034,6 +1034,8 @@ const MUTATIONS = [
     replace: '        owner_of_index.get(entry.index) === entry.domain,',
     tests: ['ownership-scan'],
     expect_only: '逐条具名',
+  },
+
   // —— #67 自造扩展表 portcflag：接入 / 预设 / 登记 / 名字表的自证 ——
   {
     desc: 'M108 村娘加入点漏盖版本戳（init_portcflag 调用删除）',
