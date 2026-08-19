@@ -195,7 +195,80 @@ function create_era_fixture() {
     });
     return lines.length - 1;
   };
-  era.printImage = (...names) => push_line({ type: 'image', names });
+
+  // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析语义的镜像 ——
+  //
+  // 以下语义全部抄自 app.asar（EraApi 模块 183 与 eraStart 资源装载段）：
+  //   - 注册名装载时统一小写落表（eraStart：`const s = toLowerCase(t[0])`），
+  //     查名同样先小写——HEART 注册进引擎就是 'heart'，checkImage('HEART')
+  //     能否命中取决于小写后的键；
+  //   - playMusic(names, config)：config 非对象一律重置为 {loop: false}——
+  //     引擎的「缺省不循环」，与 Emuera PLAYBGM 默认循环相反，想循环必须
+  //     显式 {loop: true}；names 收 String 或 String[]，逐个小写后取第一个
+  //     注册为音频的条目播放，命中返回 true，全落空返回 false（不报错）；
+  //   - checkImage(...names)：零参返回 false；单参返回布尔、多参返回布尔
+  //     数组；判定是「已注册 **且类型为 image**」——dev-guides/16 宣称可查
+  //     音乐存在性，但引擎代码只放行 image 类型（以代码为准）；
+  //   - printImage/printWholeImage 的 names 每层（数组元素或整串）按 '\t'
+  //     切开取第一个已注册的 image 条目（引擎 getImageObject/getWholeImage
+  //     的容错链），整层全落空则该层被丢弃、不输出——resolved 字段记录
+  //     每层实际解析出的注册名（小写），空层不出现在 resolved 里。
+  const res_registry = new Map(); // 小写注册名 → 'image' | 'audio'
+  const music = []; // 音乐事件记录：{api:'play'|'stop'|'resume', ...}
+
+  /** 引擎 getImageObject/getWholeImage 的逐层解析：返回命中的小写注册名或 null */
+  function resolve_image_layer(layer) {
+    const spec = typeof layer === 'string' ? { names: layer } : (layer ?? {});
+    const candidates = String(spec.names ?? '').split('\t');
+    for (const name of candidates) {
+      const key = name.toLowerCase();
+      if (res_registry.get(key) === 'image') {
+        return key;
+      }
+    }
+    return null;
+  }
+
+  era.checkImage = (...names) => {
+    if (names.length === 0) {
+      return false;
+    }
+    const results = names.map(
+      (name) => res_registry.get(String(name).toLowerCase()) === 'image',
+    );
+    return names.length === 1 ? results[0] : results;
+  };
+  era.playMusic = (names, config) => {
+    const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置
+    const list = (Array.isArray(names) ? names : [names]).map((name) =>
+      String(name).toLowerCase(),
+    );
+    const played =
+      list.find((name) => res_registry.get(name) === 'audio') ?? null;
+    music.push({ api: 'play', names: list, config: cfg, played });
+    return played !== null;
+  };
+  era.stopMusic = () => {
+    music.push({ api: 'stop' });
+  };
+  era.resumeMusic = () => {
+    music.push({ api: 'resume' });
+  };
+  era.printImage = (...names) =>
+    push_line({
+      type: 'image',
+      names,
+      resolved: names.map(resolve_image_layer).filter(Boolean),
+    });
+  era.printWholeImage = (names, config) =>
+    push_line({
+      type: 'image.whole',
+      names,
+      config: config || {}, // 引擎：falsy config 重置为 {}
+      resolved: (Array.isArray(names) ? names : [names])
+        .map(resolve_image_layer)
+        .filter(Boolean),
+    });
   era.getLineCount = () => lines.length;
   era.clear = async (line_count) => {
     // 不带参数清空全部；带参数清除最近 N 行
@@ -431,6 +504,11 @@ function create_era_fixture() {
     'printMultiColumns',
     'printInColRows',
     'printImage',
+    'printWholeImage',
+    'checkImage',
+    'playMusic',
+    'stopMusic',
+    'resumeMusic',
     'getLineCount',
     'clear',
     'get',
@@ -481,11 +559,22 @@ function create_era_fixture() {
     store,
     /** logger 记录 [{level, msg}] */
     logs,
+    /** 音乐事件记录 [{api: 'play'|'stop'|'resume', ...}]（issue #69） */
+    music,
     /** 已消费的输入 [{api, value?}] */
     inputs_consumed,
-    /** 预置一串输入，等待输入的 API 依次消费 */
+    /**
+     * 预置一串输入，等待输入的 API 依次消费
+     */
     set_inputs(...values) {
       input_queue.push(...values);
+    },
+    /**
+     * 预置已注册的媒体资源（对应引擎 res 注册表，注册名自动小写——与
+     * eraStart 的装载行为一致）。type 取 'image'（默认）或 'audio'。
+     */
+    seed_res(name, type = 'image') {
+      res_registry.set(String(name).toLowerCase(), type);
     },
     /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
     seed_chara(chara_id, preset) {

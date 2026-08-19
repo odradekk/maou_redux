@@ -919,6 +919,90 @@ const MUTATIONS = [
     tests: ['trace-check'],
     expect_only: '清单只能变短',
   },
+  // —— #69（美术与音频进场）的变异自证 ——
+  {
+    desc: 'M99 标题音乐播错曲（TFM-003A_17 → 据点2）',
+    file: 'ere/page/page-title.js',
+    find: "    era.playMusic('TFM-003A_17.mp3', { loop: true });",
+    replace: "    era.playMusic('据点2.mp3', { loop: true });",
+    tests: ['page-title'],
+    expect_only: 'TFM-003A_17',
+  },
+  {
+    desc: 'M100 标题音乐丢循环（{loop:true} → {}——Emuera PLAYBGM 默认循环）',
+    file: 'ere/page/page-title.js',
+    find: "    era.playMusic('TFM-003A_17.mp3', { loop: true });",
+    replace: "    era.playMusic('TFM-003A_17.mp3', {});",
+    tests: ['page-title'],
+    expect_only: '（循环）',
+  },
+  {
+    desc: 'M101 主菜单 BGM 守卫删掉（开关恒真，新档也播）',
+    file: 'ere/page/page-main-menu.js',
+    find: `  if (era_audio.bgm_enabled === 1) {
+    era.playMusic('据点2.mp3', { loop: true });
+  }`,
+    replace: `  era.playMusic('据点2.mp3', { loop: true });`,
+    tests: ['page-main-menu'],
+    expect_only: '新档默认',
+  },
+  {
+    desc: 'M102 播种默认值改坏（音量 66 → 0，原作随包 global.sav 实证 66）',
+    file: 'ere/era-utils/era-global.js',
+    find: '  era_global.title_music_volume = 66;',
+    replace: '  era_global.title_music_volume = 0;',
+    tests: ['era-global', 'page-title'],
+    expect_only: '66',
+  },
+  {
+    desc: 'M103 播种标记守卫删掉（每次进标题都重播、覆盖用户偏好）',
+    file: 'ere/era-utils/era-global.js',
+    find: `  if (era_global.audio_defaults_seeded === 1) {
+    return false;
+  }`,
+    replace: '  // 变异：无标记守卫，每次都播种',
+    tests: ['era-global'],
+    expect_only: '不被覆盖',
+  },
+  {
+    desc: 'M104 标题图守卫删掉（资源未启用也硬输出图片行）',
+    file: 'ere/page/page-title.js',
+    find: `  if (era.checkImage('TITLE')) {
+    era.printWholeImage('TITLE');
+  }`,
+    replace: "  era.printWholeImage('TITLE');",
+    tests: ['page-title'],
+    expect_only: '纯文本兜底',
+  },
+  {
+    desc: 'M105 夹具 playMusic 不再校验类型（图片名也能命中——引擎只认 audio）',
+    file: 'test/helpers/era-fixture.js',
+    find: "    const played =\n      list.find((name) => res_registry.get(name) === 'audio') ?? null;",
+    replace:
+      '    const played = list.find((name) => res_registry.has(name)) ?? null;',
+    tests: ['fixture'],
+    expect_only: '第一个注册音频',
+  },
+  {
+    desc: 'M106 夹具查名不再小写（注册与查名两侧小写是引擎实测语义）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const results = names.map(
+      (name) => res_registry.get(String(name).toLowerCase()) === 'image',
+    );`,
+    replace: `    const results = names.map(
+      (name) => res_registry.get(String(name)) === 'image',
+    );`,
+    tests: ['fixture'],
+    expect_only: '小写',
+  },
+  {
+    desc: 'M107 注册表漏行（img.csv 删掉 TITLE 注册，引擎装载与引用锁双红）',
+    file: 'res/img.csv',
+    find: 'TITLE,TITLE.png\n',
+    replace: '',
+    tests: ['resource-media'],
+    expect_only: 'TITLE',
+  },
 ];
 
 function run_one(m, index) {

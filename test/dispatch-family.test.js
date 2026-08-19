@@ -224,6 +224,9 @@ test('add_chara_ex(999)：编号空间外 → 抛错（拼写错误）', async (
 test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表分发到专属初始化', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
+  // 预置标题音乐默认值播种标记（#69），让全量 var_writes 断言只看见分发写入；
+  // 播种自身的用例在 test/page-title.test.js
+  fixture.store.set('global:2', 1);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
   fixture.set_inputs(1);

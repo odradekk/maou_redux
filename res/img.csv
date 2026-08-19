@@ -1,0 +1,13 @@
+;====菜单通用====
+; UI 图标注册表，源: target/resources/img.csv 的「菜单通用」节（issue #69）。
+; 行内容逐字节照抄原表；头像素材节（243 个注册名）不在本票范围，裁定与
+; 依据见 issue #69 评论——登记会连带搬运与繁体注册名归一两个决定，一并
+; 留给纸娃娃合成系统的票。
+; 引擎装载行为（app.asar eraStart 实证）：注册名统一小写落表；查名
+; （playMusic/checkImage/printImage/printWholeImage）同样先小写再查。
+HEART,HEART.png
+HEART_R,HEART_R.png
+HEART_B,HEART_B.png
+TITLE,TITLE.png
+COVER_WHITE,COVER_WHITE.PNG
+ROW_WHITE,WHITE_L.PNG
