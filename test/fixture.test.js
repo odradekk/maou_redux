@@ -480,3 +480,50 @@ test('空 printMultiColumns 仍占一个 Row（引擎无条件 addTotalLines）'
   assert.equal(await era.clear(1), 1);
   assert.deepEqual(fixture.text_lines(), ['a']);
 });
+
+// —— input 回显计行（#68 整改）——
+// 引擎主进程 input()（app.asar）：
+//   v(this.config,"system.hideUserInput") || e.hideInput || e.any
+//     || this.print(i)
+// 普通 input() 的回显 print → addTotalLines → +1 Row；三段短路任一命中则
+// 不 print。夹具只调计数器、不推条目（条目层的回显由对拍标记承载）。
+
+test('input 回显计一行：画 3 行 → input → clear(3) → 组件首行残留（重绘主路径）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('第一行');
+  era.print('第二行');
+  era.print('第三行');
+  fixture.set_inputs(0);
+  await era.input();
+
+  // 引擎：回显 print 计 +1 Row → 总 4 行；条目层不新增（回显不推条目）
+  assert.equal(era.getLineCount(), 4);
+  assert.equal(fixture.lines.length, 3);
+
+  // ADR-0003 的重绘纪律「重绘只发生在玩家交互之后」——交互就是 input。
+  // 组件按绘制时量得的 3 行 clear(3)，引擎实机清掉的是「回显 + 组件后两
+  // 行」，组件首行残留。行数口径若与引擎不一致（回显不计），组件在夹具
+  // 里被完整清掉、实机上却留一行——本票要消灭的正是这类缺陷
+  assert.equal(await era.clear(3), 1);
+  assert.deepEqual(fixture.text_lines(), ['第一行']);
+});
+
+test('input 回显三段短路：hideInput / any / system.hideUserInput 任一命中即不计行', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('a');
+  fixture.set_inputs(1, 2, 3);
+  await era.input({ hideInput: true });
+  await era.input({ any: true });
+  fixture.system_config.hideUserInput = true;
+  await era.input();
+
+  assert.equal(era.getLineCount(), 1); // 三次输入都未触发回显计行
+
+  // 短路解除（默认配置）→ 回显计行恢复
+  fixture.system_config.hideUserInput = false;
+  fixture.set_inputs(4);
+  await era.input();
+  assert.equal(era.getLineCount(), 2);
+});

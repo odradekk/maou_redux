@@ -937,6 +937,16 @@ const MUTATIONS = [
     tests: ['fixture'],
     expect_only: '算一个 Row',
   },
+  {
+    desc: 'M103 input 回显计行删除（组件重绘差一行的主路径缺陷回归）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (input_echo_adds_row(config)) {
+      total_rows += 1; // this.print(回显值)：+1 Row
+    }`,
+    replace: '    // 变异：回显不计行',
+    tests: ['fixture'],
+    expect_only: '组件首行残留',
+  },
   // —— #63 T21 trace 完整性：ERB 侧第三道 + 豁免台账的自证 ——
   {
     desc: 'M94 ERB 完整性门焊死（未登记引用不再红——探针用例必须抓到失明）',

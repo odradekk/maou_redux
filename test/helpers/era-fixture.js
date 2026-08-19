@@ -106,11 +106,10 @@ function create_era_fixture() {
   //     ColumnObject 不拆成多个 Row，与 printMultiColumns 同口径。
   //   不增行：replaceText / replaceInColRows 返回 totalLines 原值（渲染层
   //     handleChange 把最后一个行对象整个换掉）；notify 无行。
-  //   input 回显（已查实、暂不镜像）：主进程 input() 在未开 system.
-  //     hideUserInput 且非 hideInput/any 入参时会对回显值 this.print()——
-  //     计数 +1 Row。夹具不镜像它：#48 对拍以注入的输入标记承载输入交错
-  //     （tools/compare/replay.js），镜像回显会把对拍窗口的输入边界翻倍；
-  //     当前无游戏代码依赖回显行，画面组件（#73）按清除点清屏时再补。
+  //   input 回显（已镜像，见「输入」段）：普通 input() 计 +1 Row；三段
+  //     短路（system.hideUserInput / hideInput / any）任一命中则不增，
+  //     只调计数器不推条目。waitAnyKey 不占行的机制同源：引擎内部走
+  //     input({any:true})，e.any 命中回显短路。
   // 以下已查实但本夹具暂不实现（游戏代码未用，随用随补）：printWholeImage /
   //   printLineChart / setToBottom（各 +1 Row）、notify（无行）。
   let total_rows = 0; // 引擎 totalLines 的等价物：计数器，非从 lines 派生
@@ -378,9 +377,32 @@ function create_era_fixture() {
     inputs_consumed.push({ api, value });
     return value;
   };
-  era.input = async () => take_input('input');
+  // 引擎 system.hideUserInput 配置（ere.config.json 的键，游戏代码不能改）
+  // 的镜像：默认 false＝回显计行；测试翻转以覆盖三段短路的第一段
+  const system_config = { hideUserInput: false };
+  // 引擎 input() 回显计行的三段短路，逐字镜像（app.asar 主进程 input）：
+  //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
+  //     || this.print(i)
+  // 即普通 input() 对回显值 print → addTotalLines → +1 Row；任一短路命中
+  // 则不 print。夹具只调计数器、不推条目——条目层的回显由对拍回放的输入
+  // 标记承载（tools/compare/replay.js），再推条目会把对拍窗口的输入边界
+  // 翻倍（回显行与标记各产生一次 input 事件）。waitAnyKey 不占行的机制
+  // 也在这条短路上：引擎 waitAnyKey 内部走 input({any:true})，e.any 命中
+  // 第三段、回显 print 不发生——不是另一套独立实现（夹具的 waitAnyKey
+  // 仍是不取输入的留痕桩，见下，机制同源）。
+  const input_echo_adds_row = (config) =>
+    !system_config.hideUserInput && !config?.hideInput && !config?.any;
+  era.input = async (config) => {
+    const value = take_input('input');
+    if (input_echo_adds_row(config)) {
+      total_rows += 1; // this.print(回显值)：+1 Row
+    }
+    return value;
+  };
   era.waitAnyKey = async () => {
-    // 任意键继续：立即放行、只留痕。预置输入只供 era.input 消费，此处不取
+    // 任意键继续：立即放行、只留痕。预置输入只供 era.input 消费，此处不取；
+    // 不占 Row 的机制见上方 input 回显注释（引擎经 input({any:true}) 短路
+    // 掉回显 print，夹具桩同口径）
     inputs_consumed.push({ api: 'waitAnyKey' });
   };
 
@@ -559,6 +581,9 @@ function create_era_fixture() {
     set_inputs(...values) {
       input_queue.push(...values);
     },
+    /** 引擎 system.hideUserInput 配置的镜像（默认 false＝input 回显计
+     *  Row；置 true 后回显不计行，覆盖三段短路第一段，见「输入」段注释） */
+    system_config,
     /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
     seed_chara(chara_id, preset) {
       chara_presets.set(chara_id, preset);
