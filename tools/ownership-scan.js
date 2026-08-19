@@ -234,26 +234,29 @@ const POSTFIX_OP_RE = /^[ \t]*(?:\+\+|--)/;
 // 含非 ASCII 字符（CJK 名字下标的判定）——\p{ASCII} 属性类，免写控制字符区间
 const NON_ASCII_RE = /[^\p{ASCII}]/u;
 
-// 下标解析：数字 → 数字；含非 ASCII → 名字下标（归一后查名字表，查不到报错）；
-// 其余（ASCII 标识符/括号）→ null（动态下标，无测量事实可归属）。
-// errors 传 null = 容忍模式（注释段用）：名字查不到不作错误，返回 null。
-function resolve_index(seg, table_key, name_maps, errors, where) {
+// 下标解析（纯函数，无副作用）：
+//   数字 → 数字；含非 ASCII → 名字下标，归一后查名字表（查不到返回 undefined）；
+//   其余（ASCII 标识符/括号）→ null（动态下标，无测量事实可归属）。
+// 「查不到」与「动态」是两种不同的事实，处置策略由调用方定——
+//   寻址表达式里（classify_line）：查不到 = 不是寻址（散文），整条跳过；
+//   命令目标（classify_command 的 TIMES）：查不到 = 异常态，按动态计。
+function resolve_index(seg, table_key, name_maps) {
   if (/^\d+$/.test(seg)) {
     return Number(seg);
   }
   if (NON_ASCII_RE.test(seg)) {
-    const resolved = name_maps.get(table_key).get(to_simplified(seg));
-    if (resolved === undefined) {
-      if (errors) {
-        errors.push(
-          `${where}：表 ${table_key} 的名字下标「${seg}」归一后不在名字表`,
-        );
-      }
-      return null;
-    }
-    return resolved;
+    return name_maps.get(table_key).get(to_simplified(seg));
   }
   return null;
+}
+
+// 名字查不到时记错误（errors 为 null = 注释段的容忍模式，只跳过不记）
+function note_unresolved_name(errors, where, table_key, seg) {
+  if (errors) {
+    errors.push(
+      `${where}：表 ${table_key} 的名字下标「${seg}」归一后不在名字表`,
+    );
+  }
 }
 
 // 命令行（VARSET/CVARSET/TIMES）：返回 [{table, indexes:[...]|null}] 或 null（目标不是落地表）。
@@ -284,9 +287,14 @@ function classify_command(code, name_maps, errors, where) {
 
   if (command === 'TIMES') {
     const match = new RegExp(`^${SEG}$`).exec(index_part);
-    const index = match
-      ? resolve_index(match[0], table_key, name_maps, errors, where)
-      : null;
+    let index = null;
+    if (match) {
+      index = resolve_index(match[0], table_key, name_maps);
+      if (index === undefined) {
+        note_unresolved_name(errors, where, table_key, match[0]);
+        index = null;
+      }
+    }
     return {
       command,
       target_table: table_key,
@@ -362,25 +370,12 @@ function classify_line(code, addr_re, name_maps, errors, where) {
     const rest = code.slice(match.index + match[0].length);
     const segments = match[2].split(':');
     const seg = segments[segments.length - 1];
-    // 下标解析：数字 → 数字；ASCII 标识符/括号 → 动态（null）；含非 ASCII →
-    // 名字下标，归一后查名字表——查不到就不是寻址（实活代码 = 报错素材；
-    // 注释里的「CFLAG:0が1=売却可」是散文，宽容跳过）
-    let index;
-    if (/^\d+$/.test(seg)) {
-      index = Number(seg);
-    } else if (NON_ASCII_RE.test(seg)) {
-      const resolved = name_maps.get(table_key).get(to_simplified(seg));
-      if (resolved === undefined) {
-        if (errors) {
-          errors.push(
-            `${where}：表 ${table_key} 的名字下标「${seg}」归一后不在名字表`,
-          );
-        }
-        continue;
-      }
-      index = resolved;
-    } else {
-      index = null;
+    // 查不到名字 = 不是寻址（实活代码记错误、扫描末尾统一抛；注释里的
+    // 「CFLAG:0が1=売却可」是散文，容忍模式直接跳过）
+    const index = resolve_index(seg, table_key, name_maps);
+    if (index === undefined) {
+      note_unresolved_name(errors, where, table_key, seg);
+      continue;
     }
     if (ASSIGN_OP_RE.test(rest) || POSTFIX_OP_RE.test(rest)) {
       writes.push({ table: table_key, index });
@@ -453,7 +448,7 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
   const addr_re = build_addr_re(TABLE_KEYS.map((key) => TABLES[key].variable));
   const errors = [];
 
-  const blank = () => ({
+  const blank_stats = () => ({
     per_index: new Map(), // 下标 → Map<域, 写入次数>
     reads_by_index: new Map(), // 下标 → Map<域, 读取次数>
     write_entries: [], // { index, domain, file, line }（含动态/表级 index=null）
@@ -465,7 +460,7 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
     reads_total: 0,
     dynamic_reads: 0,
   });
-  const per_table = new Map(TABLE_KEYS.map((key) => [key, blank()]));
+  const per_table = new Map(TABLE_KEYS.map((key) => [key, blank_stats()]));
   const enc_counts = new Map();
   const shift_jis_files = [];
 
@@ -742,13 +737,9 @@ function to_reads_summary_yaml(table_results, meta) {
 
 // —— 组装一次生成（读域清单 → 单遍扫描 → 每表属主/区间/跨域 → 产物文本）——
 
-function generate({
-  tables = TABLE_KEYS,
-  domain_file,
-  erb_root,
-  name_dir,
-} = {}) {
-  const wanted = tables === 'all' ? TABLE_KEYS : [tables].flat();
+// 'all' → 全部表；否则按名取一表（或一组）。未知表名在这里统一报错。
+function wanted_tables(tables) {
+  const wanted = tables === 'all' ? [...TABLE_KEYS] : [tables].flat();
   for (const key of wanted) {
     if (!TABLES[key]) {
       throw new Error(
@@ -756,6 +747,16 @@ function generate({
       );
     }
   }
+  return wanted;
+}
+
+function generate({
+  tables = TABLE_KEYS,
+  domain_file,
+  erb_root,
+  name_dir,
+} = {}) {
+  wanted_tables(tables); // 只为校验：扫描始终单遍全表（见文件头注）
   const domains = parse_domains(
     read_text(domain_file ?? path.join(REPO_ROOT, 'ownership', 'domains.yml'))
       .text,
@@ -853,7 +854,7 @@ function main(argv, overrides = {}) {
   }
 
   const { scan, domains } = result;
-  const wanted = table === 'all' ? TABLE_KEYS : [table];
+  const wanted = wanted_tables(table);
   const enc_report = [...scan.enc_counts.entries()]
     .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
     .map(([enc, count]) => `${enc} ${count}`)

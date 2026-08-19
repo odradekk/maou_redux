@@ -1107,6 +1107,34 @@ const MUTATIONS = [
     tests: ['ownership-scan'],
     expect_only: 'ignored',
   },
+  {
+    desc: 'M124 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: `  const missing_ignored = domains.ignored_files.filter(
+    (name) => !root_files.includes(name),
+  );
+  if (missing_ignored.length > 0) {
+    throw new Error(
+      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据发霉，删掉或改对）\`,
+    );
+  }`,
+    replace: '  void root_files;',
+    tests: ['ownership-scan'],
+    expect_only: '声明了不存在的文件',
+  },
+  {
+    desc: 'M125 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: `  const unclaimed = top_dirs.filter((dir) => !domains.dir_to_domain.has(dir));
+  if (unclaimed.length > 0) {
+    throw new Error(
+      \`ERB 根下有未被域清单认领的一级目录：\${unclaimed.join('、')}（在 ownership/domains.yml 里给它们归属一个域）\`,
+    );
+  }`,
+    replace: '  void top_dirs;',
+    tests: ['ownership-scan'],
+    expect_only: '未认领',
+  },
 
   // —— #67 自造扩展表 portcflag：接入 / 预设 / 登记 / 名字表的自证 ——
   {
