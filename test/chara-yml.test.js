@@ -353,9 +353,20 @@ engine_test(
         317: 8,
       },
       cflag: { 1: 1 },
+      // #67 人工增补（非转换内容，见 Chara17.yml 头注）：移植自建扩展表的
+      // 预设基线，装载翻译落在 portcflag.0
+      portcflag: { 0: 0 },
     });
-    // 与源 CSV 路径逐字段一致
-    assert.deepEqual(from_yml.static_data, from_csv.static_data);
+    // 与源 CSV 路径逐字段一致——#67 起口径为「源 + 登记在案的移植增补」：
+    // 剥离 portcflag 增补键后预设与源一致；增补本身的装载、登记与落桶
+    // 由 test/portcflag-table.test.js 单独钉住
+    const preset_17 = { ...from_yml.static_data.chara[17] };
+    delete preset_17.portcflag;
+    assert.deepEqual(preset_17, from_csv.static_data.chara[17]);
+    assert.deepEqual(
+      from_yml.static_data.relationship,
+      from_csv.static_data.relationship,
+    );
     assert.deepEqual(from_yml.errors, from_csv.errors);
   },
 );

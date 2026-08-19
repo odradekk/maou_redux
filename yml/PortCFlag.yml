@@ -1,0 +1,30 @@
+# 移植角色旗标表（portcflag）：移植版自建的二维角色扩展表（issue #67，
+# ADR-0001「新字段落在自造扩展表」的第一个实例）。原作没有这张表——它不是
+# 转换器产物，是移植工程的自有数据，二次开发新增的按角色字段一律落此，
+# 不占原作表的空闲区段（原作「空闲」不可信，见 ADR-0001）。
+#
+# 二维生效靠登记：yml/_fixed.json 的 system.extendedCharaTables 含
+# "portcflag"。引擎读表在先、按叶子键合并 _fixed.json 在前（app.asar 的
+# syncConfig，fixed 赢），登记先于静态表装载——未登记的表会被引擎按一维
+# 自动生效（extendedTables[name] = tableType.normal），后果：三段寻址的
+# 角色桶永不创建、写入静默丢弃、角色数据表的预设行被装载循环跳过。
+# test/portcflag-table.test.js 的登记契约锁钉住「表在场 ⇔ 已登记」。
+#
+# 字段形状与引擎自带转换器的产出一致（同 Base.yml 人工表先例）：
+#   键    = 中文显示名（#5 决议三层命名的第一层）
+#   name  = 英文 snake_case 标识符（JS 侧访问器名）
+#   id    = 数字下标（底层寻址一律用它）
+#
+# 区段规划：0 起归移植自建字段；后续票据按域认领区段（同 CFLAG 的区段
+# 所有权思路，#65/#70），不预先划段。
+"数据版本":
+  id: 0
+  name: "data_version"
+  type: "number"
+  # 语义：该角色数据的移植口径版本。预设基线 0 = 原作口径（现有角色预设
+  # 是纯 1:1 转换）；角色加入时由 ere/chara/chara-portcflag.js 盖当时的
+  # PORT_DATA_VERSION。消费场景：Chara*.yml 是人工维护的产物，而引擎
+  # addCharacter 只在加入时套预设、存档里的老角色永不刷新（yml/CFlag.yml
+  # 头注记录的引擎行为）——预设演进后的刷新/迁移据此判定「哪个角色需要
+  # 补哪些值」。寻址示例：era.get(`portcflag:17:数据版本`)——具名与序号
+  # （:0）同槽，引擎 staticData.portcflag 翻译。

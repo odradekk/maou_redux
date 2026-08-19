@@ -123,9 +123,18 @@ function load_engine_bundle() {
  * （test/helpers/static-tables.js，#38）：表不在时缺表行两侧同样落 errors，
  * 表在场时预设经 name→id 翻译真正落进 preset。
  *
+ * #67 起 extended_tables 可传二维扩展表登记（引擎侧是
+ * `this.extendedTables`，eraStart 由 config 的 extendedCharaTables 填成
+ * `表名 → EraApi.tableType.chara`）。装载循环的守卫
+ * `extended_tables[mapped] !== tableType.normal` 用它区分：已登记（chara）
+ * 与内置表一样进 switch，预设行可落；未登记的自定义表是 normal，预设行
+ * 整行跳过（一维表没有按角色预设）。
+ *
+ * @param {{ extended_tables?: Object<string, number> }} [options]
+ *   extended_tables：表名 → EraApi.tableType.chara（2）的登记表
  * @returns {{ static_data: object, errors: string[], load_rows: (rows: Array) => void }}
  */
-function create_chara_loader() {
+function create_chara_loader({ extended_tables = {} } = {}) {
   const engine = load_engine_bundle();
   if (!engine) {
     return undefined;
@@ -139,7 +148,6 @@ function create_chara_loader() {
     relationship: { callname: {}, relation: {} },
     gamebase: { defaultChara: 0 },
   };
-  const extended_tables = {};
   const errors = [];
 
   return {
@@ -320,10 +328,16 @@ function create_variable_loader() {
  * 闭包里的工具函数——闭包是真的，this 是按字段清单最小构造的。返回的
  * data.no / data.callname 即引擎内部数据层本身，不是替身。
  *
+ * #67 起 options.extended_tables 可传二维扩展表登记（表名 →
+ * EraApi.tableType.chara）：引擎的 fillData 会给登记表建顶层桶
+ * （`data[表] ||= {}`，eraStart 实证），addCharacter 的扩展表段在顶层桶
+ * 上按角色建桶并预填——两处都在这里镜像，未登记时不建（引擎同款）。
+ *
  * @param {object} static_data 预设数据（create_chara_loader().static_data）
+ * @param {{ extended_tables?: Object<string, number> }} [options]
  * @returns {{ data: object, add: (id: number) => boolean }}
  */
-function create_add_character(static_data) {
+function create_add_character(static_data, { extended_tables = {} } = {}) {
   const engine = load_engine_bundle();
   if (!engine) {
     return undefined;
@@ -345,10 +359,17 @@ function create_add_character(static_data) {
     relation: {},
     love: {},
   };
+  // fillData 的扩展表分支镜像：登记为 chara 且名字表在场的表建顶层桶
+  // （`data[表] ||= {}`）；normal（一维）不建角色桶，跳过
+  for (const [name, type] of Object.entries(extended_tables)) {
+    if (type === engine.era_api.tableType.chara && static_data[name]) {
+      data[name] = {};
+    }
+  }
   const fake_this = {
     staticData: static_data,
     data,
-    era: { extendedTables: {} },
+    era: { extendedTables: extended_tables },
   };
   return {
     data,

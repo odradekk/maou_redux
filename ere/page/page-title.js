@@ -32,6 +32,7 @@
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { add_chara_ex } = require('#/chara/chara-ex');
+const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_global = require('#/era-utils/era-global');
 
 // 原作 :58-73：GLOBAL:99 == 0 时展开的完整制作名单。末行「※特别鸣谢…※」在
@@ -171,6 +172,9 @@ async function run_title_page() {
       era.resetData();
       era.addCharacter(0);
       await add_chara_ex(0);
+      // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+      // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
+      init_portcflag(0);
       begin(STATE.FIRST);
     }
 
