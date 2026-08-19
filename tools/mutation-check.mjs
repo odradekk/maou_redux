@@ -1204,6 +1204,17 @@ const MUTATIONS = [
     tests: ['resource-media'],
     expect_only: 'TITLE',
   },
+  {
+    desc: 'M125 playMusic 误计一行（引擎只 connect 不调 addTotalLines——不占 Row 的判断要有用例守）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.playMusic = (names, config) => {
+    const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
+    replace: `  era.playMusic = (names, config) => {
+    push_row([]); // 变异：音乐误算一行（派单人独立变异复现过的假绿形态）
+    const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
+    tests: ['fixture'],
+    expect_only: '不占 Row',
+  },
 ];
 
 function run_one(m, index) {

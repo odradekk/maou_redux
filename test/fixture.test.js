@@ -392,6 +392,30 @@ test('printWholeImage：\\t 容错链与空层丢弃都记进 resolved', () => {
   assert.deepEqual(entry.config, {});
 });
 
+test('音乐 API 不占 Row（引擎只 connect、不调 addTotalLines）；printImage 占 1 Row', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  fixture.seed_res('据点2.mp3', 'audio');
+  fixture.seed_res('TITLE');
+  era.print('基准行');
+  const before = era.getLineCount();
+
+  // 反侧：三个音乐 API 都不改变行数（app.asar 实测：playMusic/stopMusic/
+  // resumeMusic 只 connect，无 addTotalLines）。music[] 里的三条事件证明
+  // 「行数没变」不是因为调用没发生——否则这条用例只是在测「什么都没发生」。
+  era.playMusic('据点2.mp3', { loop: true });
+  era.stopMusic();
+  era.resumeMusic();
+  assert.equal(era.getLineCount(), before);
+  assert.equal(fixture.music.length, 3);
+
+  // 正侧：同一场景下 printImage 计 1 Row（引擎结尾恰好一次 addTotalLines）
+  era.printImage('TITLE');
+  assert.equal(era.getLineCount(), before + 1);
+  // 音乐误算成行是活风险：#73 画面组件的重绘算术全靠 Row 计数，多计一行
+  // = 实机上多清一行。此用例即守住该判断的回归锁（#68 验收通则）。
+});
+
 // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎口径一致 ——
 // 引擎证据（app.asar）：主进程 EraApi 每次输出调用恰好一次 addTotalLines()；
 // 渲染层把 printMultiCols / printInColRows 整次调用各装进一个行对象。
