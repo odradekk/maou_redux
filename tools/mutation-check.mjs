@@ -784,11 +784,15 @@ const MUTATIONS = [
   {
     desc: 'M84 夹具 printButton 不记 accelerator（菜单对拍失去编号键）',
     file: 'test/helpers/era-fixture.js',
-    find: `    return push_line({
+    find: `  const make_button_entry = (content, accelerator, config) => {
+    const text = normalize_content(content);
+    return {
       type: 'button',
       text,
       accelerator,`,
-    replace: `    return push_line({
+    replace: `  const make_button_entry = (content, accelerator, config) => {
+    const text = normalize_content(content);
+    return {
       type: 'button',
       text,
       accelerator: undefined, // 变异：不记编号`,
@@ -864,16 +868,74 @@ const MUTATIONS = [
   {
     desc: 'M93 夹具 printMultiColumns 不再记录（print 系覆盖的缺口）',
     file: 'test/helpers/era-fixture.js',
-    find: `  era.printMultiColumns = (columnObjects) => {
-    (columnObjects ?? []).forEach(record_grid_object);
-    return lines.length - 1;
-  };`,
-    replace: `  era.printMultiColumns = (columnObjects) => {
-    // 变异：不记录
-    return lines.length - 1;
-  };`,
+    find: `  era.printMultiColumns = (columnObjects) =>
+    push_row((columnObjects ?? []).map(make_grid_entry));`,
+    replace: `  era.printMultiColumns = (columnObjects) =>
+    push_row([]); // 变异：不记录`,
     tests: ['fixture'],
     expect_only: 'printMultiColumns',
+  },
+  // —— #68 测试缝的 Row 保真：归并 / 计数 / 删除 / 替换的自证 ——
+  {
+    desc: 'M99 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const push_row = (entries) => {
+    const row = total_rows;
+    entries.forEach((entry) => {
+      entry.row = row;
+      lines.push(entry);
+    });
+    total_rows += 1;
+    return total_rows;
+  };`,
+    replace: `  const push_row = (entries) => {
+    const row = total_rows;
+    entries.forEach((entry) => {
+      entry.row = row;
+      lines.push(entry);
+      total_rows += 1; // 变异：逐格计数
+    });
+    return total_rows;
+  };`,
+    tests: ['fixture'],
+    expect_only: '算一个 Row',
+  },
+  {
+    desc: 'M100 clear 按 Row 删改坏：退回按条目数切（clear(1) 误伤邻行）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const cut = lines.findIndex(
+      (l) => l.row !== undefined && l.row >= total_rows,
+    );
+    if (cut >= 0) {
+      lines.splice(cut);
+    }`,
+    replace: `    lines.splice(Math.max(0, lines.length - n)); // 变异：按条目数删`,
+    tests: ['fixture'],
+    expect_only: 'clear(1) 只删本行',
+  },
+  {
+    desc: 'M101 替换系改坏：replace_row 只弹一条（多列 Row 换不干净）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (row >= 0) {
+      for (let i = lines.length - 1; i >= 0; i -= 1) {
+        if (lines[i].row === row) {
+          lines.splice(i, 1);
+        }
+      }
+    }`,
+    replace: `    if (row >= 0) {
+      lines.pop(); // 变异：只弹一条
+    }`,
+    tests: ['fixture'],
+    expect_only: 'replaceText 换掉最后一个 Row',
+  },
+  {
+    desc: 'M102 getLineCount 改回条目数（多列 Row 计数虚高）',
+    file: 'test/helpers/era-fixture.js',
+    find: '  era.getLineCount = () => total_rows;',
+    replace: '  era.getLineCount = () => lines.length; // 变异：条目数',
+    tests: ['fixture'],
+    expect_only: '算一个 Row',
   },
   // —— #63 T21 trace 完整性：ERB 侧第三道 + 豁免台账的自证 ——
   {
