@@ -83,7 +83,7 @@ function create_era_fixture() {
   era.version.engine = era.version.sdk;
 
   // —— 记录层状态（每个夹具独立） ——
-  const lines = []; // 输出行记录：print 系列
+  const lines = []; // 输出行记录：print 系列（逐格；一次多列调用的格子共享 row）
   const calls = []; // 无专门实现的 API 的兜底调用记录
   const var_reads = []; // 变量读记录
   const var_writes = []; // 变量写记录
@@ -92,30 +92,71 @@ function create_era_fixture() {
   const input_queue = []; // 预置输入队列，等待输入的 API 依次消费
   const store = new Map(); // 变量存储
 
-  const push_line = (entry) => {
-    lines.push(entry);
-    return lines.length - 1;
+  // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎口径一致 ——
+  //
+  // 引擎侧证据（app.asar 两处实测，非手册推断）：
+  //   主进程 EraApi（模块 183）：print / printAndWait(经 print) / println /
+  //     printButton / printMultiColumns / printInColRows / printProgress /
+  //     drawLine / printImage / printWholeImage / printLineChart / setToBottom
+  //     每次调用结尾恰好调一次 addTotalLines()（++totalLines）；空内容
+  //     print 落到 println 分支，同样 +1。print('\n' 多行) 与片段数组的
+  //     {isBr} 是显示级换行，编程上仍是一个 Row。
+  //   渲染层 app.vue：printMultiCols / printInColRows 各自把整次调用装进
+  //     **一个**行对象（multiCol / inColRows 类型）——printInColRows 的多个
+  //     ColumnObject 不拆成多个 Row，与 printMultiColumns 同口径。
+  //   不增行：replaceText / replaceInColRows 返回 totalLines 原值（渲染层
+  //     handleChange 把最后一个行对象整个换掉）；notify 无行。
+  //   input 回显（已镜像，见「输入」段）：普通 input() 计 +1 Row；三段
+  //     短路（system.hideUserInput / hideInput / any）任一命中则不增，
+  //     只调计数器不推条目。waitAnyKey 不占行的机制同源：引擎内部走
+  //     input({any:true})，e.any 命中回显短路。
+  // 以下已查实但本夹具暂不实现（游戏代码未用，随用随补）：printLineChart /
+  //   setToBottom（各 +1 Row）、notify（无行）。printWholeImage 自 #69 起随
+  //   媒体资源落地（+1 Row，见「媒体资源」段）。
+  let total_rows = 0; // 引擎 totalLines 的等价物：计数器，非从 lines 派生
+
+  // 一次输出调用的全部条目共用当前 Row 号，调用尾计数 +1。
+  // 返回值 = 引擎 addTotalLines() 的结果：输出后的行数
+  const push_row = (entries) => {
+    const row = total_rows;
+    entries.forEach((entry) => {
+      entry.row = row;
+      lines.push(entry);
+    });
+    total_rows += 1;
+    return total_rows;
   };
 
-  const push_text = (content) =>
-    push_line({ type: 'text', text: normalize_content(content), content });
-
-  // —— 输出 ——
-  era.print = (content) => push_text(content);
-  era.printAndWait = async (content) => push_text(content);
-  era.println = () => push_line({ type: 'br', text: '' });
-  era.drawLine = (config) =>
-    push_line({
-      type: 'divider',
-      text: normalize_content(config?.content ?? ''),
-      // 引擎渲染层（app.asar）：content 是分隔线中央的标签文字而非线型字符，
-      // isSolid 决定 el-divider 的 border-style（solid/dashed）。原作
-      // DRAWLINEFORM 的双线 ═ / 单线 ─ 以 solid/dashed 近似，断言线型看这里。
-      border: config?.isSolid ? 'solid' : 'dashed',
+  // 替换系（replaceText / replaceInColRows）：换掉最后一个 Row 的全部条目，
+  // 计数不动（引擎返回 totalLines 原值）。最后一行是多列 Row 时整行消失。
+  // total_rows === 0 时引擎主/渲染两层分歧（渲染层会凭空插入一行、计数仍
+  // 0），此处按主进程口径：条目记到 row 0、计数不动
+  const replace_row = (entries) => {
+    const row = total_rows - 1;
+    if (row >= 0) {
+      for (let i = lines.length - 1; i >= 0; i -= 1) {
+        if (lines[i].row === row) {
+          lines.splice(i, 1);
+        }
+      }
+    }
+    entries.forEach((entry) => {
+      entry.row = Math.max(0, row);
+      lines.push(entry);
     });
-  era.printButton = (content, accelerator, config) => {
+    return total_rows;
+  };
+
+  const make_text_entry = (content) => ({
+    type: 'text',
+    text: normalize_content(content),
+    content,
+  });
+
+  // printButton 与多列按钮对象共用：按钮条目的引擎渲染公式（app.asar）
+  const make_button_entry = (content, accelerator, config) => {
     const text = normalize_content(content);
-    return push_line({
+    return {
       type: 'button',
       text,
       accelerator,
@@ -131,72 +172,89 @@ function create_era_fixture() {
       // config.color 直通 el-button 的 --el-button-text-color（app.asar 实证，
       // 按钮明暗一类断言看这里；未给 color 时为 undefined）
       color: config?.color,
-    });
+    };
   };
-  era.replaceText = (content) => {
-    // 语义：替换最后一行。夹具按「弹掉最后一行再压入新文本行」近似
-    lines.pop();
-    return push_text(content);
-  };
-  // —— 多列输出族（#48 对拍录制）：printMultiColumns / printInColRows 的
-  //    GridObject 逐格压平成既有条目类型（button/text/divider/image），
-  //    printImage 压 image 条目。引擎渲染是一行多列，对拍关心的是「输出了
-  //    什么」而非「怎么排」——归一化器两侧同构拆条（tools/compare/
-  //    normalize.js），这里不做列布局。progress 无文本语义，整体留痕。
-  const record_grid_object = (obj) => {
+
+  // printProgress 与多列进度条对象共用：inContent/outContent 都留字段
+  const make_progress_entry = (percentage, in_content, out_content) => ({
+    type: 'progress',
+    percentage,
+    text: normalize_content(in_content ?? ''),
+    out: normalize_content(out_content ?? ''),
+  });
+
+  // —— 输出 ——
+  era.print = (content) => push_row([make_text_entry(content)]);
+  era.printAndWait = async (content) => push_row([make_text_entry(content)]);
+  era.println = () => push_row([{ type: 'br', text: '' }]);
+  era.drawLine = (config) =>
+    push_row([
+      {
+        type: 'divider',
+        text: normalize_content(config?.content ?? ''),
+        // 引擎渲染层（app.asar）：content 是分隔线中央的标签文字而非线型字符，
+        // isSolid 决定 el-divider 的 border-style（solid/dashed）。原作
+        // DRAWLINEFORM 的双线 ═ / 单线 ─ 以 solid/dashed 近似，断言线型看这里。
+        border: config?.isSolid ? 'solid' : 'dashed',
+      },
+    ]);
+  era.printButton = (content, accelerator, config) =>
+    push_row([make_button_entry(content, accelerator, config)]);
+  era.replaceText = (content) => replace_row([make_text_entry(content)]);
+  // —— 多列输出族（#48 对拍录制 + #68 Row 归并）：printMultiColumns /
+  //    printInColRows 的 GridObject 逐格压平成既有条目类型（button/text/
+  //    divider/image/progress），printImage 压 image 条目——对拍关心的是
+  //    「输出了什么」，这里不做列布局；同时整次调用共用一个 Row 号（引擎
+  //    渲染层把整次调用装进一个行对象，见 Row 记账注释），getLineCount /
+  //    clear / replace 系按 Row 计——画面组件要知道自己占几行，看的是这层。
+  //    替换系（replaceInColRows）与顶层 printProgress 虽暂无游戏代码调用，
+  //    仍先落地：它们是 Row 语义（整行替换 / +1 Row）的直接断言靶点，
+  //    #68 点名「替换系、进度条」查明即录。
+  const make_grid_entry = (obj) => {
     if (obj?.type === 'button') {
-      const text = normalize_content(obj.content);
-      return push_line({
-        type: 'button',
-        text,
-        accelerator: obj.accelerator,
-        rendered: (obj.config?.showAcc !== false
-          ? `[${obj.accelerator}] ${text}`
-          : `[${text}]`
-        ).replace(/\s+/g, ' '),
-        color: obj.config?.color,
-      });
+      return make_button_entry(obj.content, obj.accelerator, obj.config);
     }
     if (obj?.type === 'text') {
-      return push_text(obj.content);
+      return make_text_entry(obj.content);
     }
     if (obj?.type === 'divider') {
-      return push_line({
+      return {
         type: 'divider',
         text: normalize_content(obj.config?.content ?? ''),
         border: obj.config?.isSolid ? 'solid' : 'dashed',
-      });
+      };
     }
     if (obj?.type === 'image' || obj?.type === 'image.whole') {
-      return push_line({ type: 'image', names: obj.names });
+      return { type: 'image', names: obj.names };
     }
     if (obj?.type === 'progress') {
-      return push_line({
-        type: 'progress',
-        percentage: obj.percentage,
-        text: normalize_content(obj.inContent ?? ''),
-      });
+      return make_progress_entry(obj.percentage, obj.inContent, obj.outContent);
     }
-    return push_line({ type: 'text', text: normalize_content(obj?.content) });
+    return { type: 'text', text: normalize_content(obj?.content) };
   };
-  era.printMultiColumns = (columnObjects) => {
-    (columnObjects ?? []).forEach(record_grid_object);
-    return lines.length - 1;
-  };
-  era.printInColRows = (...columnObjects) => {
-    // 实参形如 ColumnObject({columns: GridObject[]}) 或裸 GridObject[]，
-    // 与 SDK 的 @param {...ColumnObject|GridObject[]} 一致
+  // printInColRows / replaceInColRows 的实参：ColumnObject({columns}) 或裸
+  // GridObject[]，与 SDK 的 @param {...ColumnObject|GridObject[]} 一致
+  const collect_col_rows_cells = (columnObjects) => {
+    const cells = [];
     columnObjects.forEach((arg) => {
       if (Array.isArray(arg)) {
-        arg.forEach(record_grid_object);
+        arg.forEach((obj) => cells.push(make_grid_entry(obj)));
       } else {
-        (arg?.columns ?? []).forEach(record_grid_object);
+        (arg?.columns ?? []).forEach((obj) => cells.push(make_grid_entry(obj)));
       }
     });
-    return lines.length - 1;
+    return cells;
   };
+  era.printMultiColumns = (columnObjects) =>
+    push_row((columnObjects ?? []).map(make_grid_entry));
+  era.printInColRows = (...columnObjects) =>
+    push_row(collect_col_rows_cells(columnObjects));
+  era.replaceInColRows = (...columnObjects) =>
+    replace_row(collect_col_rows_cells(columnObjects));
+  era.printProgress = (percentage, in_content, out_content) =>
+    push_row([make_progress_entry(percentage, in_content, out_content)]);
 
-  // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析语义的镜像 ——
+  // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析/计行语义的镜像 ——
   //
   // 以下语义全部抄自 app.asar（EraApi 模块 183 与 eraStart 资源装载段）：
   //   - 注册名装载时统一小写落表（eraStart：`const s = toLowerCase(t[0])`），
@@ -206,13 +264,21 @@ function create_era_fixture() {
   //     引擎的「缺省不循环」，与 Emuera PLAYBGM 默认循环相反，想循环必须
   //     显式 {loop: true}；names 收 String 或 String[]，逐个小写后取第一个
   //     注册为音频的条目播放，命中返回 true，全落空返回 false（不报错）；
+  //   - 计行（#68 的 Row 口径，app.asar 逐字实测）：playMusic / stopMusic /
+  //     resumeMusic 只 connect、不调 addTotalLines——**不占 Row**，只进
+  //     music[] 事件记录；printImage / printWholeImage 结尾各调一次
+  //     addTotalLines——各 +1 Row，走 push_row；
   //   - checkImage(...names)：零参返回 false；单参返回布尔、多参返回布尔
-  //     数组；判定是「已注册 **且类型为 image**」——dev-guides/16 宣称可查
-  //     音乐存在性，但引擎代码只放行 image 类型（以代码为准）；
+  //     数组；判定是「已注册 **且类型为 image**」——dev-guides/16 宣称它可
+  //     查音乐存在性，与引擎代码冲突（代码只放行 image 类型），以代码为
+  //     准；要探音频是否已注册，用 playMusic 的返回值；
   //   - printImage/printWholeImage 的 names 每层（数组元素或整串）按 '\t'
   //     切开取第一个已注册的 image 条目（引擎 getImageObject/getWholeImage
-  //     的容错链），整层全落空则该层被丢弃、不输出——resolved 字段记录
-  //     每层实际解析出的注册名（小写），空层不出现在 resolved 里。
+  //     的容错链），整层全落空则该层被引擎丢弃、不输出——resolved 字段
+  //     （仅非空时挂上）记录每层实际解析出的注册名（小写）。空 resolved
+  //     不挂是刻意的：#68 的逐条 deepEqual 用例钉了 image 条目的裸形状；
+  //     make_grid_entry 的多列 image 格同样暂不带 resolved（游戏代码未用，
+  //     随用随补）。
   const res_registry = new Map(); // 小写注册名 → 'image' | 'audio'
   const music = []; // 音乐事件记录：{api:'play'|'stop'|'resume', ...}
 
@@ -254,30 +320,42 @@ function create_era_fixture() {
   era.resumeMusic = () => {
     music.push({ api: 'resume' });
   };
-  era.printImage = (...names) =>
-    push_line({
-      type: 'image',
-      names,
-      resolved: names.map(resolve_image_layer).filter(Boolean),
-    });
-  era.printWholeImage = (names, config) =>
-    push_line({
-      type: 'image.whole',
-      names,
-      config: config || {}, // 引擎：falsy config 重置为 {}
-      resolved: (Array.isArray(names) ? names : [names])
-        .map(resolve_image_layer)
-        .filter(Boolean),
-    });
-  era.getLineCount = () => lines.length;
+  era.printImage = (...names) => {
+    const resolved = names.map(resolve_image_layer).filter(Boolean);
+    const entry =
+      resolved.length > 0
+        ? { type: 'image', names, resolved }
+        : { type: 'image', names };
+    return push_row([entry]);
+  };
+  era.printWholeImage = (names, config) => {
+    const resolved = (Array.isArray(names) ? names : [names])
+      .map(resolve_image_layer)
+      .filter(Boolean);
+    // 引擎：falsy config 重置为 {}
+    const base = { type: 'image.whole', names, config: config || {} };
+    return push_row([resolved.length > 0 ? { ...base, resolved } : base]);
+  };
+  era.getLineCount = () => total_rows;
   era.clear = async (line_count) => {
-    // 不带参数清空全部；带参数清除最近 N 行
-    if (line_count === undefined) {
-      lines.length = 0;
-    } else {
-      lines.splice(Math.max(0, lines.length - line_count));
+    // 渲染层公式（app.vue 的 clear）：Number(lineCount) 为 NaN（含无参）或
+    // 大于现有行数 → 整屏清空；0 → 无操作；否则删最近 n 个 Row。返回清屏
+    // 后的行数（主进程 setTotalLines(渲染层回传值)，getLineCount 读同一
+    // 计数）。条目删除按 row >= 剩余行数切尾——不带 row 的条目（对拍回放
+    // 注入的输入标记）不是 Row，只在整屏清空时随之消失。
+    const n = Number(line_count);
+    if (Number.isNaN(n) || n > total_rows) {
+      total_rows = 0;
+    } else if (n > 0) {
+      total_rows -= n;
     }
-    return lines.length;
+    const cut = lines.findIndex(
+      (l) => l.row !== undefined && l.row >= total_rows,
+    );
+    if (cut >= 0) {
+      lines.splice(cut);
+    }
+    return total_rows;
   };
 
   // —— 变量 ——
@@ -382,9 +460,32 @@ function create_era_fixture() {
     inputs_consumed.push({ api, value });
     return value;
   };
-  era.input = async () => take_input('input');
+  // 引擎 system.hideUserInput 配置（ere.config.json 的键，游戏代码不能改）
+  // 的镜像：默认 false＝回显计行；测试翻转以覆盖三段短路的第一段
+  const system_config = { hideUserInput: false };
+  // 引擎 input() 回显计行的三段短路，逐字镜像（app.asar 主进程 input）：
+  //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
+  //     || this.print(i)
+  // 即普通 input() 对回显值 print → addTotalLines → +1 Row；任一短路命中
+  // 则不 print。夹具只调计数器、不推条目——条目层的回显由对拍回放的输入
+  // 标记承载（tools/compare/replay.js），再推条目会把对拍窗口的输入边界
+  // 翻倍（回显行与标记各产生一次 input 事件）。waitAnyKey 不占行的机制
+  // 也在这条短路上：引擎 waitAnyKey 内部走 input({any:true})，e.any 命中
+  // 第三段、回显 print 不发生——不是另一套独立实现（夹具的 waitAnyKey
+  // 仍是不取输入的留痕桩，见下，机制同源）。
+  const input_echo_adds_row = (config) =>
+    !system_config.hideUserInput && !config?.hideInput && !config?.any;
+  era.input = async (config) => {
+    const value = take_input('input');
+    if (input_echo_adds_row(config)) {
+      total_rows += 1; // this.print(回显值)：+1 Row
+    }
+    return value;
+  };
   era.waitAnyKey = async () => {
-    // 任意键继续：立即放行、只留痕。预置输入只供 era.input 消费，此处不取
+    // 任意键继续：立即放行、只留痕。预置输入只供 era.input 消费，此处不取；
+    // 不占 Row 的机制见上方 input 回显注释（引擎经 input({any:true}) 短路
+    // 掉回显 print，夹具桩同口径）
     inputs_consumed.push({ api: 'waitAnyKey' });
   };
 
@@ -503,6 +604,8 @@ function create_era_fixture() {
     'replaceText',
     'printMultiColumns',
     'printInColRows',
+    'replaceInColRows',
+    'printProgress',
     'printImage',
     'printWholeImage',
     'checkImage',
@@ -543,7 +646,8 @@ function create_era_fixture() {
   return {
     /** 注入了记录层的真实 SDK 对象 */
     era,
-    /** 输出行记录 [{type, text, ...}]，含 text/br/divider/button */
+    /** 输出行记录 [{type, text, row, ...}]，含 text/br/divider/button；
+     * 一次多列输出的全部格子共享同一 row 号（#68，对拍看格、组件看 Row） */
     lines,
     /** 仅取文本行（type === 'text'）的纯文本，最常用的断言入口 */
     text_lines() {
@@ -576,6 +680,9 @@ function create_era_fixture() {
     seed_res(name, type = 'image') {
       res_registry.set(String(name).toLowerCase(), type);
     },
+    /** 引擎 system.hideUserInput 配置的镜像（默认 false＝input 回显计
+     *  Row；置 true 后回显不计行，覆盖三段短路第一段，见「输入」段注释） */
+    system_config,
     /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
     seed_chara(chara_id, preset) {
       chara_presets.set(chara_id, preset);

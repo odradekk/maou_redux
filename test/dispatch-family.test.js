@@ -247,8 +247,12 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
   assert.deepEqual(fixture.chara_no, [0], '必须加入初始角色 0');
   // 原作 :102 CALL @ADDCHARA_EX → TRYCALLFORM CHARA_EX_0 → @CHARA_EX_0：
   // 分发真实发生的证据 = 角色 0 专属初始化的写入（EX_TALENT:200 = 魔王），
-  // 且此前零写入（全量断言，任何意外写入都会暴露）
-  assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);
+  // 此外的唯一写入是移植自建的 portcflag 版本戳（#67，非原作动作；全量
+  // 断言，任何意外写入都会暴露）
+  assert.deepEqual(fixture.var_writes, [
+    { name: 'ex_talent:0:200', value: 1 },
+    { name: 'portcflag:0:数据版本', value: 1 },
+  ]);
 });
 
 // —— 独立性：分发注册表与事件注册表是两套机制（#7 的边界判断）——

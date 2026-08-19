@@ -30,6 +30,7 @@ const { stub_line } = require('#/utils/stub-line');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { ask_initial_slave } = require('#/event/first-setting');
 const { add_chara_ex } = require('#/chara/chara-ex');
+const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
@@ -172,6 +173,10 @@ on('EVENTFIRST', async () => {
     // TRYCALLFORM 落空，是分发族「空间内缺失」的合法情形（#7），返回调用
     // 点缺省 0——不是缺陷、不必实现。
     await add_chara_ex(17);
+    // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+    // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
+    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码对拍）
+    init_portcflag(17);
 
     // :105 SAVESTR:1 = %NAME:1%、:109 CSTR:1 = %NAME:1% —— 角色名暂存
     // 两处。#5 已决由内置 callname 承载：引擎 addCharacter(17) 已写
