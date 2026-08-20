@@ -131,9 +131,11 @@ function create_era_fixture() {
   //     —— isContinue（右键快进）时，非 0 的 clear 在清屏前强制等键
   //   clearScreen 监听器末尾 setTotalLines(r)：totalLines!==r 时**再置位**
   //   input 的回显 this.print(i) 同样经 addTotalLines 置位
-  // 已查实、有意不镜像（各由注释或用例钉住）：setBack/setOverlay 的独立
+  // 已查实、有意不镜像的分歧（#91 起逐条冻结在 tools/engine-contract-ledger.mjs，
+  // 检查器两道门守「只能变短、不许发霉」；disableClear 短路 #91 起已镜像，
+  // 见 clear 处）：setBack/setOverlay 的独立
   //   置位（游戏代码未用这两个 API）；fromClear/useRule（渲染层簿记参数）；
-  //   disableClear 短路（#68 注释已记）；printAndWait 的内部等待（引擎 =
+  //   printAndWait 的内部等待（引擎 =
   //   print + waitAnyKey 两步组合）不进 inputs_consumed——缝对「等待」的
   //   观测统一走显式 waitAnyKey 的记录，该契约由 fixture 用例钉住。
   let allow_wait = false;
@@ -399,6 +401,13 @@ function create_era_fixture() {
   };
   era.getLineCount = () => total_rows;
   era.clear = async (line_count) => {
+    // 引擎 clear 的第一段短路（app.asar 逐字）：system.disableClear 配置开着
+    // 时整体无操作、返回当前行数——不清、不等、不置位。#68 时裁定「已查实
+    // 不镜像」，#91 起进缝（契约测试逐步对拍守卫链，缺它第一层对不齐），
+    // 旋钮在 system_config.disableClear（默认 false，与引擎默认一致）
+    if (system_config.disableClear) {
+      return total_rows;
+    }
     // 引擎 clear 的 isContinue 短路（app.asar 逐字）：0!==e && isContinue →
     // 清屏前强制等键（waitAnyKey(!0)——右键快进在清屏前的打断点，ADR-0003
     // 「快进遇 era.clear 会停下」的机制本体）。e 是原始实参（clear(0) 不等，
@@ -534,9 +543,11 @@ function create_era_fixture() {
     inputs_consumed.push({ api, value });
     return value;
   };
-  // 引擎 system.hideUserInput 配置（ere.config.json 的键，游戏代码不能改）
-  // 的镜像：默认 false＝回显计行；测试翻转以覆盖三段短路的第一段
-  const system_config = { hideUserInput: false };
+  // 引擎 system.hideUserInput / system.disableClear 配置（ere.config.json 的
+  // 键，游戏代码不能改）的镜像：hideUserInput 默认 false＝回显计行、
+  // disableClear 默认 false＝clear 正常清——测试翻转以覆盖 input 回显三段
+  // 短路的第一段与 clear 的第一段短路（#91 契约测试的探针旋钮）
+  const system_config = { hideUserInput: false, disableClear: false };
   // 引擎 input() 回显计行的三段短路，逐字镜像（app.asar 主进程 input）：
   //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
   //     || this.print(i)
@@ -754,6 +765,12 @@ function create_era_fixture() {
     /** 全部 waitAnyKey 调用记录 [{waited, rows_at_wait, forced}]（含跳过的；
      *  rows_at_wait = 调用瞬间的行数，#73 分发期可见性的直接证据） */
     waits,
+    /** 引擎 allowWait 的只读观测面（#91 契约测试逐步对拍用）：每一步比对
+     *  {行数, allowWait}，行为本体仍在 push_row / waitAnyKey / input / clear
+     *  的镜像里——这里只开观测，不开写口 */
+    get allow_wait() {
+      return allow_wait;
+    },
     /** 引擎 isContinue（右键快进态）的代位旋钮：置 true 后非 0 的 clear
      *  在清屏前强制等键（引擎语义见 clear 处注释；默认 false = 非快进） */
     set is_continue(value) {
@@ -777,8 +794,9 @@ function create_era_fixture() {
     seed_res(name, type = 'image') {
       res_registry.set(String(name).toLowerCase(), type);
     },
-    /** 引擎 system.hideUserInput 配置的镜像（默认 false＝input 回显计
-     *  Row；置 true 后回显不计行，覆盖三段短路第一段，见「输入」段注释） */
+    /** 引擎 system 配置的镜像（hideUserInput / disableClear，默认与引擎
+     *  一致为 false）：置 true 后 input 回显不计 Row / clear 整体无操作，
+     *  覆盖两条引擎短路的对应段，见「输入」段与 clear 处注释 */
     system_config,
     /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
     seed_chara(chara_id, preset) {

@@ -1630,9 +1630,118 @@ const MUTATIONS = [
     tests: ['domain-check'],
     expect_only: '目录逃生门',
   },
-  // —— #90（issue #90）：二维门面按属主域铺开 + source-check 跨域写迁移 ——
+  // —— #91（引擎语义契约对拍与锚点校核）——
+  // 注：M167–M178 由集成方在合并时从占位号 M900+ 顺延而来。
   {
-    desc: 'M900 yml 合流被拆（YML_NAME_FILES 删 mark，mark 名字只剩手写表）',
+    desc: 'M167 夹具 addTotalLines 镜像不置位（任何输出后 allowWait 恒假）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    total_rows += 1;
+    allow_wait = true;
+    return total_rows;`,
+    replace: `    total_rows += 1;
+    return total_rows;`,
+    tests: ['engine-contract'],
+    expect_only: '逐步一致',
+  },
+  {
+    desc: 'M168 夹具 waitAnyKey 不清零 allowWait（等待消费被漏）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const waited = allow_wait || Boolean(force);
+    allow_wait = false;`,
+    replace: `    const waited = allow_wait || Boolean(force);`,
+    tests: ['engine-contract', 'fixture'],
+    expect_only: '中途分叉（一）',
+  },
+  {
+    desc: 'M169 夹具 clear 的 setTotalLines 再置位被删（清屏不算新内容）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (total_rows !== before) {
+      allow_wait = true;
+    }`,
+    replace: `    // 变异：清屏不再置位`,
+    tests: ['engine-contract'],
+    expect_only: '中途分叉（二）',
+  },
+  {
+    desc: 'M170 夹具 input 回显不计行不置位（#68 形态：Row 记账错位）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      total_rows += 1; // this.print(回显值)：+1 Row
+      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）`,
+    replace: `      // 变异：回显不计行不置位`,
+    tests: ['engine-contract', 'fixture'],
+    expect_only: '#68 形态',
+  },
+  {
+    desc: 'M171 夹具 clear 的 disableClear 短路被拆（配置开着也照清）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (system_config.disableClear) {
+      return total_rows;
+    }`,
+    replace: `    // 变异：disableClear 短路被拆`,
+    tests: ['engine-contract'],
+    expect_only: 'disableClear 下 clear 整体无操作',
+  },
+  {
+    desc: 'M172 调用点规则的界值检查被拆（只查下界，barWidth=24 放行）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '      } else if (value < rule.min || value > rule.max) {',
+    replace: '      } else if (value < rule.min) {',
+    tests: ['engine-contract-check'],
+    expect_only: '改成 24',
+  },
+  {
+    desc: 'M173 锚点门被拆（字面消失不红，引擎升版当天守护无声消失）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '      if (!renderer_source.includes(anchor)) {',
+    replace: '      if (false) { // 变异：锚点门拆除',
+    tests: ['engine-contract-check'],
+    expect_only: '锚点失配',
+  },
+  {
+    desc: 'M174 退出码语义被拆（失守也退 0——工具只会打印不会红）',
+    file: 'tools/engine-contract-check.mjs',
+    find: 'process.exit(run() === 0 ? 0 : 1);',
+    replace: 'process.exit(0); // 变异：退出码语义拆除',
+    tests: ['engine-contract-check'],
+    expect_only: '锚点失配',
+  },
+  {
+    desc: 'M175 台账基线门被拆（基线外新条目不再红）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '    if (!LEDGER_BASELINE.includes(entry.id)) {',
+    replace: '    if (false) { // 变异：基线门拆除',
+    tests: ['engine-contract-check'],
+    expect_only: '只能变短',
+  },
+  {
+    desc: 'M176 台账发霉门被拆（见证注释消失不再红）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '    if (!fixture_source.includes(entry.witness)) {',
+    replace: '    if (false) { // 变异：发霉门拆除',
+    tests: ['engine-contract-check'],
+    expect_only: '发霉',
+  },
+  {
+    desc: 'M177 锚点定位器退化成写死哈希文件名（渲染包换名即失明）',
+    file: 'tools/engine-contract-check.mjs',
+    find: 'const RENDERER_MAP_RE = /^js\\/app\\.[0-9a-f]+\\.js\\.map$/;',
+    replace:
+      'const RENDERER_MAP_RE = /^js\\/app\\.2cccec57\\.js\\.map$/; // 变异：写死哈希',
+    tests: ['engine-contract-check'],
+    expect_only: '仍能定位',
+  },
+  {
+    desc: 'M178 engine-bundle 模块号漂移守卫被拆（漂移时炸 TypeError 而非说清引擎变了）',
+    file: 'test/helpers/engine-bundle.js',
+    find: '    !ERA_API_METHODS.every(',
+    replace: '    false && !ERA_API_METHODS.every(',
+    tests: ['engine-contract'],
+    expect_only: '引擎变了',
+  },
+  // —— #90（二维门面按属主域铺开 + source-check 跨域写迁移）——
+  // 注：M179–M185 由集成方在合并时从占位号 M900+ 顺延而来。
+  {
+    desc: 'M179 yml 合流被拆（YML_NAME_FILES 删 mark，mark 名字只剩手写表）',
     file: 'tools/gen-facade.js',
     find: "  mark: 'Mark.yml',\n",
     replace: '',
@@ -1640,7 +1749,7 @@ const MUTATIONS = [
     expect_only: '两源合流',
   },
   {
-    desc: 'M901 两源冲突检查被拆（名字不一致时静默择手写，不再报错）',
+    desc: 'M180 两源冲突检查被拆（名字不一致时静默择手写，不再报错）',
     file: 'tools/gen-facade.js',
     find: `    if (from_yml !== manual.name) {
       throw new Error(
@@ -1654,7 +1763,7 @@ const MUTATIONS = [
     expect_only: '名字不一致',
   },
   {
-    desc: 'M902 delta 属主裁定被改（train → system，切片落错域文件）',
+    desc: 'M181 delta 属主裁定被改（train → system，切片落错域文件）',
     file: 'tools/facade-names.js',
     find: `const PORT_TABLE_OWNERS = {
   delta: 'train',`,
@@ -1664,7 +1773,7 @@ const MUTATIONS = [
     expect_only: '移植自建表门面',
   },
   {
-    desc: 'M903 cflag 好感度补名下标错位（2 → 3，写进别的槽）',
+    desc: 'M182 cflag 好感度补名下标错位（2 → 3，写进别的槽）',
     file: 'tools/facade-names.js',
     find: "  2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
     replace:
@@ -1673,7 +1782,7 @@ const MUTATIONS = [
     expect_only: '好感度',
   },
   {
-    desc: 'M904 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
+    desc: 'M183 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
     file: 'ere/event/source-check.js',
     find: 'game.train.屈服刻印结算 = 1; // 屈服刻印１相当',
     replace: "era.set('tflag:200', 1); // 屈服刻印１相当",
@@ -1681,7 +1790,7 @@ const MUTATIONS = [
     expect_only: '跨域写走门面',
   },
   {
-    desc: 'M905 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
+    desc: 'M184 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
     file: 'ere/event/source-check.js',
     find: 'chara(cid).system.反抗刻印 = 1;',
     replace: 'era.set(`mark:${cid}:3`, 1);',
@@ -1689,7 +1798,7 @@ const MUTATIONS = [
     expect_only: '跨域写走门面',
   },
   {
-    desc: 'M906 产物出处路径指向不存在的文件（#71 翻过车的一类）',
+    desc: 'M185 产物出处路径指向不存在的文件（#71 翻过车的一类）',
     file: 'ere/facade/chara-train.js',
     find: '   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
     replace:

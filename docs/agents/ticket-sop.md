@@ -59,7 +59,7 @@ orca worktree create --name t<N>-<slug> --no-parent --agent droid --prompt "<简
 <三到五条它自己查会很贵、且容易查错的既有事实，直接给结论>
 
 自检与提交：
-- 自检三件套全绿（npm test、npx eslint .、npx prettier --check .）
+- 自检三件套全绿（npm test、npx eslint . --max-warnings 0、npx prettier --check .）
 - 逐条对照验收清单
 - 验收里写着「且此行为有测试」的每一条，做变异测试自证：把被测规则改坏，
   确认真的有用例失败（本项目在 #10 吃过亏——测试全绿但规则已失效）

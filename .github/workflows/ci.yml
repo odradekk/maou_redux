@@ -1,0 +1,42 @@
+# 无引擎档 CI（issue #92）：自检三件套在干净 Linux 环境上的自动执行点。
+# 边界：CI 机器不放置引擎（ere-4.8.0-win-x64 不入库），引擎对拍用例按
+# test/engine-skip-baseline.txt 的基线整组跳过，跳过数由守护步对账——
+# 偏离基线即红，覆盖面的收缩必须是一次有意识的提交。变异检查
+# （tools/mutation-check.mjs，Windows 专用）归 #89，不在本档。
+# Runner 选型（ubuntu：计费 1x）与按月分钟数估算见 issue #92 的实现评论。
+name: 无引擎档 CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+# 连推/PR 连更时取消陈旧运行：私有库按分钟计费，旧运行的结果不再有信息量
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engineless:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: 安装依赖
+        run: npm ci
+      - name: 测试（无引擎；spec 进日志，TAP 落盘供守护对账）
+        run: npm run test:ci
+      - name: 跳过数守护（引擎缺失的代价必须是看得见的数字）
+        run: node tools/skip-count-check.mjs test-report.tap
+      - name: ESLint（零警告，与本地三件套同口径）
+        run: npx eslint . --max-warnings 0
+      - name: Prettier（格式对拍）
+        run: npx prettier --check .
