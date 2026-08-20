@@ -513,7 +513,17 @@ async function execute_jobs(args) {
     for (let i = 0; i < jobs; i += 1) {
       if (controls[i].code !== 0) {
         console.log(`✗ 副本 ${i} 对照运行即红（副本环境破损，非变异拦截）：`);
-        console.log(controls[i].output.split('\n').slice(-12).join('\n'));
+        // 先点名失败的测试（not ok / ✖ / 非零 fail 计数），没有再退回
+        // 尾部 60 行——对照失败必须能定位到用例，尾 12 行连测试名都露不出
+        const lines = controls[i].output.split('\n');
+        const failures = lines.filter((l) =>
+          /^(not ok|✖|# fail\s+[1-9])/.test(l),
+        );
+        console.log(
+          failures.length > 0
+            ? failures.slice(0, 20).join('\n')
+            : lines.slice(-60).join('\n'),
+        );
         return { caught: 0, skipped: 0, red: 1 };
       }
     }
