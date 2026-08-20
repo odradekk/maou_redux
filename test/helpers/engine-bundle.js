@@ -98,6 +98,33 @@ function load_engine_bundle() {
   );
   const wp = bootstrap(require);
 
+  // 模块号漂移守卫（#91）：4.8.0 实测 EraApi 是模块 183——引擎升版后编号
+  // 漂移时 wp(183) 会取到别的模块，下游在 undefined 上炸出不知所云的
+  // TypeError。这里就地抛「引擎变了」，与「引擎缺失 → 返回 undefined 让
+  // 用例 skip」区分开：asar 在场而模块对不上 = 镜像要重核的时刻，硬红。
+  const era_api = wp(183);
+  const ERA_API_METHODS = [
+    'addTotalLines',
+    'setTotalLines',
+    'waitAnyKey',
+    'getLineCount',
+    'clear',
+    'print',
+    'input',
+    'playMusic',
+    'printProgress',
+    'addCharacter',
+  ];
+  if (
+    !ERA_API_METHODS.every(
+      (method) => typeof era_api?.prototype?.[method] === 'function',
+    )
+  ) {
+    throw new Error(
+      '引擎变了：app.asar 的模块 183 不再是 EraApi（原型方法缺失）——重新核读 test/helpers/engine-bundle.js 的模块号映射，并核对 docs/adr/0005 的三层可达性判定是否仍成立',
+    );
+  }
+
   cached_bundle = {
     /** 引擎静态表解析器（模块 677）：parseDataFile(文本, 'csv'|'yml', 表名) → 行数组 */
     parse_data_file: wp(677),
@@ -105,8 +132,8 @@ function load_engine_bundle() {
     name_mapping: wp(676),
     /** 引擎工具（模块 65）：getNumber / toLowerCase / safeUndefinedCheck 等 */
     engine_utils: wp(65),
-    /** EraApi 类（模块 183）：addCharacter 是未绑定方法，须以假 this 调用 */
-    era_api: wp(183),
+    /** EraApi 类（模块 183，已过形状守卫）：addCharacter 是未绑定方法，须以假 this 调用 */
+    era_api,
     /** 引擎变量寻址（模块 648）：setVar.call(this, varName, val, isAdd)，get 同路 */
     set_var: wp(648),
   };
