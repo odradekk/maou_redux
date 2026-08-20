@@ -5,6 +5,10 @@
  * run_shop 驱动（公开接口）：预置一串输入，循环以「预置输入耗尽抛错」终止
  * （夹具既定设计），再对输出行、变量读写与角色列表断言。
  *
+ * 取证口径（#73 起）：主菜单就地重绘，终态 lines 只留最后一轮——「哪轮
+ * 画过什么 / 进没进过哪个分支」的断言一律看夹具的全量行史 lines_history
+ * （含被重绘清掉的条目）；「屏幕现在是什么」的断言仍看 lines/text_lines。
+ *
  * 覆盖（对应 #24 验收清单）：
  *   1. 六个入口：496/497（守卫 A > 0，SELECT_TARGET/SELECT_ASSI 占位反馈）、
  *      500/501/504/505（FLAG:36 切换 + 重绘即反馈，不叠占位文本——派单
@@ -42,11 +46,19 @@ async function run_shop_with(...inputs) {
   return fixture;
 }
 
-// 主菜单画了几轮 = 按钮 496 出现几次（每轮 @SHOW_SHOP 恰画一个）
+// 主菜单画了几轮 = 按钮 496 在全量行史里出现几次（每轮 @SHOW_SHOP 恰画
+// 一个；就地重绘会把上一轮清掉，终态数不出轮数——取证在行史）
 function rounds_drawn(fixture) {
-  return fixture.lines.filter(
+  return fixture.lines_history.filter(
     (line) => line.type === 'button' && line.accelerator === 496,
   ).length;
+}
+
+// 全量行史的文本行（含已被重绘清掉的）——「发生过什么」的断言入口
+function history_texts(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((line) => line.text);
 }
 
 // 加入一个可选奴隶（x != 0 且 CFLAG:x:1 == 0 → 计入 A）。须先 seed 预设
@@ -65,14 +77,15 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（不叠�
   );
   assert.equal(fixture.store.get('flag:36'), 0);
   // 重绘即反馈：每轮恰两行占位（子面板存根 + 指令面板渲染存根），没有为
-  // 面板按钮多打一行「占位反馈」——叠了会在此红（派单核实事实 #2）
+  // 面板按钮多打一行「占位反馈」——叠了会在此红（派单核实事实 #2）。
+  // 就地重绘下逐轮取证看行史：每轮的占位数与轮数的积不变
   assert.equal(rounds_drawn(fixture), 5);
   assert.equal(
-    fixture.text_lines().filter((line) => line.includes('尚未移植')).length,
+    history_texts(fixture).filter((line) => line.includes('尚未移植')).length,
     5 * 2,
   );
   // 切换后的重绘确实换到了对应面板：第 2/3/4 轮的面板存根各自可见
-  const texts = fixture.text_lines();
+  const texts = history_texts(fixture);
   for (const erb_name of [
     'DRAW_HAVETRAPS',
     'DRAW_DUNGEON_OVERVIEW',
@@ -98,12 +111,13 @@ test('496（A > 0）：SELECT_TARGET 真身列表可取消，497 仍为存根占
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
-  const texts = fixture.text_lines();
-  // 496：真身选择画面（列表 + 999 取消——取消不选人、回主菜单重绘）
+  const texts = history_texts(fixture);
+  // 496：真身选择画面（列表 + 999 取消——取消不选人、回主菜单重绘；选择
+  // 画面作为分发期输出被就地重绘消费，取证在行史）
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
   // 奴隶行是按钮（#44 验收后实机修正）：断言看引擎渲染文本
   assert(
-    fixture.lines.some(
+    fixture.lines_history.some(
       (line) => line.type === 'button' && line.rendered === '[31] 奴隶31',
     ),
     '奴隶行必须是可点击按钮，accelerator = 角色 ID',
@@ -111,6 +125,10 @@ test('496（A > 0）：SELECT_TARGET 真身列表可取消，497 仍为存根占
   assert(
     texts.some((line) => line.includes('@SELECT_ASSI')),
     '497 应占位 @SELECT_ASSI',
+  );
+  assert(
+    fixture.waits.some((w) => w.waited),
+    '497 的分发期存根必须等键（玩家先看到再被重绘清掉）',
   );
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, -1, '取消不得选中目标');
@@ -124,8 +142,9 @@ test('100（A > 0）无目标：SELECT_TARGET 取消（返回 0）后回循环�
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
-  // :67-68 SIF RESULT == 0 → RETURN 0：取消路径不转场（主菜单重绘到耗尽）
-  const texts = fixture.text_lines();
+  // :67-68 SIF RESULT == 0 → RETURN 0：取消路径不转场（主菜单重绘到耗尽；
+  // 选择画面被重绘消费，取证在行史）
+  const texts = history_texts(fixture);
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
   assert(
     !texts.some((line) => line.includes('调教中')),
@@ -167,8 +186,9 @@ test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转
   const { run_shop } = fixture.load_module('page/page-shop');
 
   // :93-96 PRINTFORMW 育儿室中的%CALLNAME:MASTER%不能进行调教…… → RETURN 0
+  //（报文行是分发期输出，被下一轮重绘消费——取证在行史）
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
-  const texts = fixture.text_lines();
+  const texts = history_texts(fixture);
   assert(texts.some((line) => line.includes('育儿室中的你不能进行调教')));
   assert(
     !texts.some((line) => line.includes('调教中')),
@@ -179,7 +199,7 @@ test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转
 test('守卫 A == 0：496/497/100 与无效输入同路——无反馈、只重绘（原作行为）', async () => {
   // 不加任何可选奴隶（A 只数 x != 0 的未占用角色）：A 恒 0
   const fixture = await run_shop_with(496, 497, 100);
-  const texts = fixture.text_lines();
+  const texts = history_texts(fixture);
   assert(
     !texts.some((line) => line.includes('@SELECT_')),
     'A == 0 时不得进 496/497 分支',
@@ -190,7 +210,7 @@ test('守卫 A == 0：496/497/100 与无效输入同路——无反馈、只重�
   );
   // 三次输入都被守卫拦下后落到链尾，回循环重绘（3 次输入 + 首轮 = 4 轮）
   assert.equal(rounds_drawn(fixture), 4);
-  // 除每轮固定的两行存根外无任何新增输出；文本行总数钉死为每轮 5 行
+  // 除每轮固定的两行存根外无任何新增输出；行史文本行总数钉死为每轮 5 行
   //（状态行 + 面板存根 + Commands 标题 + [---] 不可选占位 + 指令面板存根）
   //——多打任何一行（含给守卫拦下的输入加「提示」）都会在此红。A == 0 时
   // [100] 调教退化为灰色 [---] 文本（原作 :229-231），A > 0 时它是按钮、
@@ -203,10 +223,10 @@ test('无效输入：不抛错、无提示，画面重绘（原作无 ELSE，:22
   const fixture = await run_shop_with(42, 531, 9999, -7);
   // 活到输入耗尽 = 分发没抛错也没退出；4 次输入 + 首轮 = 5 轮重绘
   assert.equal(rounds_drawn(fixture), 5);
-  const texts = fixture.text_lines();
+  const texts = history_texts(fixture);
   // 原作不打提示（派单核实事实 #5）：除每轮固定两行存根外零新增输出，
-  // 文本行总数钉死为每轮 5 行（含 A == 0 时的 [---] 占位）——给无效输入
-  // 加「提示」会在此红
+  // 行史文本行总数钉死为每轮 5 行（含 A == 0 时的 [---] 占位）——给无效
+  // 输入加「提示」会在此红
   assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 5 * 2);
   assert.equal(texts.length, 5 * 5);
 });
@@ -252,8 +272,9 @@ test('连续多轮混合操作后状态一致', async () => {
 });
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
+  // 七次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史
   const fixture = await run_shop_with(101, 777, 200, 888, 199, 525, 7788);
-  const texts = fixture.text_lines();
+  const texts = history_texts(fixture);
   for (const name of [
     '@CHARA_INFO',
     '@CONFIG',
@@ -275,11 +296,11 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
   // 两守卫都不成立
   const off = await run_shop_with(110, 111);
   assert(
-    !off.text_lines().some((line) => line.includes('@SECRET_LABO')),
+    !history_texts(off).some((line) => line.includes('@SECRET_LABO')),
     '守卫不成立不得进 110',
   );
   assert(
-    !off.text_lines().some((line) => line.includes('@INFRASTRUCTURE')),
+    !history_texts(off).some((line) => line.includes('@INFRASTRUCTURE')),
     '守卫不成立不得进 111',
   );
 
@@ -290,11 +311,11 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
   const { run_shop } = on.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert(
-    on.text_lines().some((line) => line.includes('@SECRET_LABO')),
+    history_texts(on).some((line) => line.includes('@SECRET_LABO')),
     '守卫成立应进 110',
   );
   assert(
-    on.text_lines().some((line) => line.includes('@INFRASTRUCTURE')),
+    history_texts(on).some((line) => line.includes('@INFRASTRUCTURE')),
     '守卫成立应进 111',
   );
 });
@@ -302,7 +323,8 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
 test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 520）', async () => {
   const fixture = await run_shop_with(520, 531, 530);
   assert.equal(
-    fixture.text_lines().filter((line) => line.includes('@SHOW_FLOOR')).length,
+    history_texts(fixture).filter((line) => line.includes('@SHOW_FLOOR'))
+      .length,
     1,
     '仅 530 命中（原作 :168 RESULT > 520 && RESULT <= 530）',
   );
@@ -311,7 +333,7 @@ test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 5
 test('键入 999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达）', async () => {
   const fixture = await run_shop_with(999);
   assert(
-    fixture.text_lines().some((line) => line.includes('@DEBUG_MENU_U')),
+    history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
     '999 应占位 @DEBUG_MENU_U（与原作 BOUGHT == -1 时同路径）',
   );
 });
@@ -319,9 +341,9 @@ test('键入 999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达�
 test('498/499 无守卫：指针未选也照原作进分支', async () => {
   const fixture = await run_shop_with(498, 499);
   assert.equal(
-    fixture
-      .text_lines()
-      .filter((line) => line.includes('@CHARA_INFO_INDIVIDUAL_WAPPED')).length,
+    history_texts(fixture).filter((line) =>
+      line.includes('@CHARA_INFO_INDIVIDUAL_WAPPED'),
+    ).length,
     2,
     '498/499 各占位一次（原作 :156-159 无 A 守卫）',
   );
@@ -385,23 +407,23 @@ test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计�
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
   assert(
-    !fixture
-      .text_lines()
-      .some((line) => line.includes('请魔王大人选择将要调教的奴隶人选')),
+    !history_texts(fixture).some((line) =>
+      line.includes('请魔王大人选择将要调教的奴隶人选'),
+    ),
     '唯一的奴隶被占用时 A 应为 0，496 进不去',
   );
 
   // 对照：同样一个奴隶、未被占用时 496 确实进得去（真身选择画面），
-  // 排除「因为别的原因没进」——只喂 496 时选择画面等输入到耗尽，同为拒因
+  // 排除「因为别的原因没进」——选择画面被就地重绘消费，取证在行史
   const control = create_era_fixture();
   join_selectable_slave(control, 31);
   control.set_inputs(496, 999);
   const { run_shop: run_control } = control.load_module('page/page-shop');
   await assert.rejects(() => run_control(), /预置输入已耗尽/);
   assert(
-    control
-      .text_lines()
-      .some((line) => line.includes('请魔王大人选择将要调教的奴隶人选')),
+    history_texts(control).some((line) =>
+      line.includes('请魔王大人选择将要调教的奴隶人选'),
+    ),
     '未占用的奴隶应让 A > 0',
   );
 });

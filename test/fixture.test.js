@@ -166,10 +166,61 @@ test('printAndWait 输出计入 lines', async () => {
   assert.deepEqual(fixture.text_lines(), ['按任意键继续']);
 });
 
-test('waitAnyKey 立即返回并留痕', async () => {
+test('printAndWait 不进 waits（缝对等待的观测统一走显式 waitAnyKey）', async () => {
+  // 引擎 printAndWait = print + waitAnyKey 两步组合（app.asar 逐字）。夹具
+  // 有意不镜像内部等待：inputs_consumed / waits 只记录显式 waitAnyKey，
+  // 否则 kojo 全链的消费序列会把「打印+等」翻倍。这条钉住「故意不镜像」
+  // （#68 验收通则：已查实暂不镜像的判断本身要当成待测行为）。
   const fixture = create_era_fixture();
+  await fixture.era.printAndWait('按任意键继续');
+  assert.deepEqual(fixture.waits, []);
+  assert.deepEqual(fixture.inputs_consumed, []);
+});
+
+test('waitAnyKey：无输出跳过；有输出才等键并清零', async () => {
+  const fixture = create_era_fixture();
+  // 引擎：(this.allowWait||e)&&(this.allowWait=!1, await this.input({any:!0}))
+  // 空屏 / 无输出 → 跳过。旧桩「立即返回并留痕」会把跳过记成等了，本用例
+  // 钉住「等了和没等」的区分（#73 发回：夹具必须镜像 allowWait）。
   await fixture.era.waitAnyKey();
+  assert.deepEqual(fixture.waits, [
+    { waited: false, rows_at_wait: 0, forced: false },
+  ]);
+  assert.deepEqual(fixture.inputs_consumed, []);
+
+  fixture.era.print('有输出');
+  await fixture.era.waitAnyKey();
+  assert.equal(fixture.waits[1].waited, true);
+  assert.equal(fixture.waits[1].rows_at_wait, 1);
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'waitAnyKey' }]);
+
+  // 等待消费清零：第二次裸调跳过
+  await fixture.era.waitAnyKey();
+  assert.equal(fixture.waits[2].waited, false);
+});
+
+test('waitAnyKey：input 回显同样置位 allowWait', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(42);
+  await fixture.era.input(); // 回显经 print → addTotalLines 置位
+  await fixture.era.waitAnyKey();
+  assert.equal(fixture.waits[0].waited, true);
+  assert.equal(fixture.waits[0].rows_at_wait, 1); // 回显 +1 Row
+});
+
+test('clear 在 isContinue 时强制等键（非 0 实参）；clear(0) 不等', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.print('行');
+  await fixture.era.waitAnyKey(); // 消费掉输出置位
+  fixture.is_continue = true;
+
+  await fixture.era.clear(0); // 0!==e 不成立，不等
+  assert.equal(fixture.waits.length, 1);
+
+  await fixture.era.clear(1); // 强制 waitAnyKey(true)，再清行并再置位
+  const forced = fixture.waits.find((w) => w.forced);
+  assert.ok(forced, 'isContinue 下非 0 的 clear 必须强制等键');
+  assert.equal(forced.waited, true);
 });
 
 test('文本片段数组被压平为纯文本', () => {
@@ -562,17 +613,65 @@ test('printProgress 记 progress 条目并占一个 Row（顶层形态）', () =
   const fixture = create_era_fixture();
   fixture.era.printProgress(50, '内部文本', '外部文本');
 
+  // 不传 config → 引擎缺省 barWidth 24 物化进记录，且条后文字**不渲染**
+  //（el-col-0 = display:none）——危险的默认值，夹具按 app.vue 渲染层逐字
+  // 镜像（#74 发回整改）
   assert.deepEqual(fixture.lines, [
     {
       type: 'progress',
       percentage: 50,
       text: '内部文本',
       out: '外部文本',
+      bar_width: 24,
+      out_visible: false,
       row: 0,
     },
   ]);
   assert.equal(fixture.era.getLineCount(), 1);
   assert.deepEqual(fixture.calls, []);
+});
+
+// —— barWidth 镜像（#74 发回整改）：app.vue 渲染层公式 ——
+
+test('progress 的 barWidth 镜像：顶层与多列格两条路径、空 out 的 v-if', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  // 路径 1（顶层 printProgress 的第四参数）：barWidth<24 → 条后文字渲染
+  era.printProgress(50, '阴核', ' 5540', { barWidth: 16 });
+  // 路径 2（printMultiColumns 的 progress 格，config 随 GridObject 走）：
+  // 不给 config → 缺省 24 物化，条后文字整列不渲染
+  era.printMultiColumns([
+    {
+      type: 'progress',
+      percentage: 50,
+      inContent: '阴核',
+      outContent: ' 5540',
+    },
+    {
+      type: 'progress',
+      percentage: 50,
+      inContent: '阴核',
+      outContent: ' 5540',
+      config: { barWidth: 8 },
+    },
+  ]);
+
+  assert.deepEqual(
+    fixture.lines.map((l) => [l.bar_width, l.out_visible]),
+    [
+      [16, true], // 顶层 + config.barWidth=16
+      [24, false], // 多列格无 config：缺省即危险值
+      [8, true], // 多列格 + config.barWidth=8
+    ],
+  );
+
+  // 引擎渲染层 v-if="line.outContent"：out 为空串时即使 span>0 也不渲染
+  era.printProgress(100, '满档', '', { barWidth: 16 });
+  const last = fixture.lines.at(-1);
+  assert.equal(last.bar_width, 16);
+  assert.equal(last.out, '');
+  assert.equal(last.out_visible, false);
 });
 
 test('空 printMultiColumns 仍占一个 Row（引擎无条件 addTotalLines）', async () => {

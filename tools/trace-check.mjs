@@ -68,6 +68,7 @@ const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
 const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
 const DRAW_EXT_COMM = 'target/ERB/其他/DRAW_EXT_COMM.ERB';
 const TITLE = 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB';
+const SHOP_2 = 'target/ERB/SHOP/SHOP_2.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -366,6 +367,14 @@ const FILES = [
   {
     js: 'ere/page/page-train.js',
     refs: [
+      // @SHOW_STATUS 整函数（#74 组件化后的 draw_status_screen 全量）
+      { src: TRAIN_MAIN, ref: '60-256', any: [/^@SHOW_STATUS$/m] },
+      // 锚点跨度重绘的原作习语（#74：ScreenBlock 承载的 ere 侧等价物）
+      {
+        src: USERCOM,
+        ref: '179-186',
+        any: [/^@SET_CLEAR_POINT$/m, /^@CLEAR_TO_POINT$/m],
+      },
       { src: TRAIN_MAIN, ref: '61', any: [/^DRAWLINE$/m] },
       {
         src: TRAIN_MAIN,
@@ -1176,8 +1185,39 @@ const FILES = [
         any: [/^DRAWLINEFORM %UNICODE\(0x2550\)%$/m],
       },
       { src: DRAW_MAINMENU, ref: '323', any: [/^REDRAW 1$/m] },
-      // 按钮明暗近似的外源
+    ],
+  },
+  // —— #73（画面组件最小集与主菜单迁入）——
+  {
+    js: 'ere/page/components/menu-button.js',
+    refs: [
+      // 按钮明暗近似的外源（menu_button 自 page-main-menu.js 收敛，#73）
       { src: DRAW_EXT_COMM, ref: '2', any: [/^@MENU_BUTTON/m] },
+    ],
+  },
+  {
+    js: 'ere/page/components/screen-block.js',
+    refs: [
+      // 就地重绘清行习语的原作出处（SHOP ver1.0.2.ERB @SELECT_TARGET 的
+      // L_LCOUNT = LINECOUNT → 画 → CLEARLINE LINECOUNT-L_LCOUNT）
+      { src: SHOP, ref: '274', any: [/^L_LCOUNT = LINECOUNT$/m] },
+      {
+        src: SHOP,
+        ref: '280',
+        any: [/^L_LCOUNT = LINECOUNT - L_LCOUNT$/m],
+      },
+      { src: SHOP, ref: '314', any: [/CLEARLINE LINECOUNT-L_LCOUNT/] },
+    ],
+  },
+  {
+    js: 'ere/utils/stub-line.js',
+    refs: [
+      // 分发期等键 = 原作 PRINTW 习语（print + 读键后清行回循环）
+      {
+        src: SHOP_2,
+        ref: '124-126',
+        any: [/PRINTW 数值已超出允许范围外/],
+      },
     ],
   },
   // —— #45（指令 0 爱抚 + @SOURCE_CHECK）——
@@ -1774,6 +1814,17 @@ const LOG_REFS = [
       {
         ref: '236-260',
         any: [/^调教结果：否定点数208个抵消。/m, /阴核点数：\s+3479/],
+      },
+    ],
+  },
+  {
+    // #74：print_palam 换原生进度条后，条后数值仍以样本第二屏（回合后参数
+    // 网格）为对齐证据
+    js: 'test/page-train.test.js',
+    refs: [
+      {
+        ref: '52-57',
+        any: [/阴核\[\*{5}\.{5}\]\s+5540/, /局部\[\.{10}\]\s+0/],
       },
     ],
   },

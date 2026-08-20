@@ -84,6 +84,10 @@ function create_era_fixture() {
 
   // —— 记录层状态（每个夹具独立） ——
   const lines = []; // 输出行记录：print 系列（逐格；一次多列调用的格子共享 row）
+  // 全量行史（被动记录，只增不删）：clear/replace 从 lines 删掉的条目仍留
+  // 在这里——#73 起主菜单就地重绘，终态只留最后一轮，「哪轮画过什么」的
+  // 取证看这份（与 var_reads 同类的观测记录，不影响 lines 的对拍语义）
+  const lines_history = [];
   const calls = []; // 无专门实现的 API 的兜底调用记录
   const var_reads = []; // 变量读记录
   const var_writes = []; // 变量写记录
@@ -115,15 +119,45 @@ function create_era_fixture() {
   //   媒体资源落地（+1 Row，见「媒体资源」段）。
   let total_rows = 0; // 引擎 totalLines 的等价物：计数器，非从 lines 派生
 
+  // —— allowWait 镜像（app.asar 逐字，#73 发回整改）——
+  // 引擎（EraApi 主进程侧）：
+  //   addTotalLines(){return this.allowWait=!0,++this.totalLines}
+  //     —— 任何输出（addTotalLines 收尾的 print 系）都置位
+  //   async waitAnyKey(e){(this.allowWait||e)&&(this.allowWait=!1,
+  //     await this.input({any:!0,fromClear:e,useRule:!1}))}
+  //     —— 有输出（或强制 e）才等键，等待即消费清零
+  //   async clear(e){…disableClear 短路…:(0!==e&&this.isContinue&&
+  //     await this.waitAnyKey(!0), await this.clearScreen(e))}
+  //     —— isContinue（右键快进）时，非 0 的 clear 在清屏前强制等键
+  //   clearScreen 监听器末尾 setTotalLines(r)：totalLines!==r 时**再置位**
+  //   input 的回显 this.print(i) 同样经 addTotalLines 置位
+  // 已查实、有意不镜像（各由注释或用例钉住）：setBack/setOverlay 的独立
+  //   置位（游戏代码未用这两个 API）；fromClear/useRule（渲染层簿记参数）；
+  //   disableClear 短路（#68 注释已记）；printAndWait 的内部等待（引擎 =
+  //   print + waitAnyKey 两步组合）不进 inputs_consumed——缝对「等待」的
+  //   观测统一走显式 waitAnyKey 的记录，该契约由 fixture 用例钉住。
+  let allow_wait = false;
+  // 引擎 isContinue 由渲染层 input 回包的 continue 字段维护（右键快进态）；
+  // 夹具的 take_input 只回纯值，以本旋钮代位（默认 false = 非快进）
+  let is_continue = false;
+  // 全部 waitAnyKey 调用的观测记录（含未等待的）：{waited, rows_at_wait,
+  // forced}。rows_at_wait = 调用瞬间的行数——「等待发生时屏幕上最新的是
+  // 哪一行」的直接证据（#73：分发期输出必须在重绘前被玩家看到）
+  const waits = [];
+
   // 一次输出调用的全部条目共用当前 Row 号，调用尾计数 +1。
-  // 返回值 = 引擎 addTotalLines() 的结果：输出后的行数
+  // 返回值 = 引擎 addTotalLines() 的结果：输出后的行数。
+  // addTotalLines 的副作用 allowWait=!0 一并镜像（任何输出都置位——引擎
+  // waitAnyKey 据此判定「有输出才等键」，见 allowWait 镜像注释）
   const push_row = (entries) => {
     const row = total_rows;
     entries.forEach((entry) => {
       entry.row = row;
       lines.push(entry);
+      lines_history.push(entry);
     });
     total_rows += 1;
+    allow_wait = true;
     return total_rows;
   };
 
@@ -143,6 +177,7 @@ function create_era_fixture() {
     entries.forEach((entry) => {
       entry.row = Math.max(0, row);
       lines.push(entry);
+      lines_history.push(entry);
     });
     return total_rows;
   };
@@ -175,13 +210,29 @@ function create_era_fixture() {
     };
   };
 
-  // printProgress 与多列进度条对象共用：inContent/outContent 都留字段
-  const make_progress_entry = (percentage, in_content, out_content) => ({
-    type: 'progress',
-    percentage,
-    text: normalize_content(in_content ?? ''),
-    out: normalize_content(out_content ?? ''),
-  });
+  // printProgress 与多列进度条对象共用：inContent/outContent 都留字段。
+  // barWidth 镜像（#74 发回整改，app.vue 渲染层原始源码副本逐字）：
+  //   <el-col :span="line.barWidth"><el-progress>条内文字</el-progress></el-col>
+  //   <el-col v-if="line.outContent" :span="24 - line.barWidth">条后文字</el-col>
+  //   barWidth: data.config.barWidth ?? 24        ← 引擎缺省 24
+  // barWidth=24 时第二列 span=0（el-col-0 = display:none）——**条后数值整列
+  // 不渲染，而 24 正是缺省值**：不传 config 就吞掉数值（AGENTS.md「输出类
+  // API 会二次加工参数」的又一例）。故夹具把默认物化进记录（bar_width 恒为
+  // 数字、不留 undefined——留 undefined 等于没镜像），并派生 out_visible＝
+  // 「条后文字真的会渲染出来」的可断言形态：span>0（barWidth<24）且引擎的
+  // v-if="line.outContent" 命中（out 非空）。
+  const make_progress_entry = (percentage, in_content, out_content, config) => {
+    const out = normalize_content(out_content ?? '');
+    const bar_width = config?.barWidth ?? 24;
+    return {
+      type: 'progress',
+      percentage,
+      text: normalize_content(in_content ?? ''),
+      out,
+      bar_width,
+      out_visible: bar_width < 24 && out !== '',
+    };
+  };
 
   // —— 输出 ——
   era.print = (content) => push_row([make_text_entry(content)]);
@@ -228,7 +279,12 @@ function create_era_fixture() {
       return { type: 'image', names: obj.names };
     }
     if (obj?.type === 'progress') {
-      return make_progress_entry(obj.percentage, obj.inContent, obj.outContent);
+      return make_progress_entry(
+        obj.percentage,
+        obj.inContent,
+        obj.outContent,
+        obj.config,
+      );
     }
     return { type: 'text', text: normalize_content(obj?.content) };
   };
@@ -251,8 +307,13 @@ function create_era_fixture() {
     push_row(collect_col_rows_cells(columnObjects));
   era.replaceInColRows = (...columnObjects) =>
     replace_row(collect_col_rows_cells(columnObjects));
-  era.printProgress = (percentage, in_content, out_content) =>
-    push_row([make_progress_entry(percentage, in_content, out_content)]);
+  // SDK 签名 printProgress(percentage, inContent, outContent, config?)——
+  // 第四参数是 ProgressConfig（barWidth 等），#74 发回：此前夹具丢掉整个
+  // config，barWidth 从不进记录
+  era.printProgress = (percentage, in_content, out_content, config) =>
+    push_row([
+      make_progress_entry(percentage, in_content, out_content, config),
+    ]);
 
   // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析/计行语义的镜像 ——
   //
@@ -338,11 +399,19 @@ function create_era_fixture() {
   };
   era.getLineCount = () => total_rows;
   era.clear = async (line_count) => {
+    // 引擎 clear 的 isContinue 短路（app.asar 逐字）：0!==e && isContinue →
+    // 清屏前强制等键（waitAnyKey(!0)——右键快进在清屏前的打断点，ADR-0003
+    // 「快进遇 era.clear 会停下」的机制本体）。e 是原始实参（clear(0) 不等，
+    // clear(undefined)/clear(n) 在快进态等），判据不用 Number 归一。
+    if (line_count !== 0 && is_continue) {
+      await era.waitAnyKey(true);
+    }
     // 渲染层公式（app.vue 的 clear）：Number(lineCount) 为 NaN（含无参）或
     // 大于现有行数 → 整屏清空；0 → 无操作；否则删最近 n 个 Row。返回清屏
     // 后的行数（主进程 setTotalLines(渲染层回传值)，getLineCount 读同一
     // 计数）。条目删除按 row >= 剩余行数切尾——不带 row 的条目（对拍回放
     // 注入的输入标记）不是 Row，只在整屏清空时随之消失。
+    const before = total_rows;
     const n = Number(line_count);
     if (Number.isNaN(n) || n > total_rows) {
       total_rows = 0;
@@ -354,6 +423,11 @@ function create_era_fixture() {
     );
     if (cut >= 0) {
       lines.splice(cut);
+    }
+    // 引擎 setTotalLines(r)：行数有变时再置位 allowWait（clearScreen 监听器
+    // 末尾的收尾动作——清屏本身算一次「屏幕有新内容」）
+    if (total_rows !== before) {
+      allow_wait = true;
     }
     return total_rows;
   };
@@ -479,14 +553,23 @@ function create_era_fixture() {
     const value = take_input('input');
     if (input_echo_adds_row(config)) {
       total_rows += 1; // this.print(回显值)：+1 Row
+      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
     }
     return value;
   };
-  era.waitAnyKey = async () => {
-    // 任意键继续：立即放行、只留痕。预置输入只供 era.input 消费，此处不取；
-    // 不占 Row 的机制见上方 input 回显注释（引擎经 input({any:true}) 短路
-    // 掉回显 print，夹具桩同口径）
-    inputs_consumed.push({ api: 'waitAnyKey' });
+  // 引擎 waitAnyKey(e) 的逐字镜像：((allowWait || e) && (allowWait = !1,
+  // await input({any:true})))——有输出（或强制 e）才等键、等待即消费清零。
+  // 「等待」在本桩里的可观测面：waited=true 时记 inputs_consumed 一条
+  // {api:'waitAnyKey'}（与既有取证兼容），全部调用（含跳过的）进 waits
+  // 观测记录。不取输入队列（既定桩策略）；不占 Row（input({any:true}) 的
+  // e.any 命中回显短路，见上方注释）。
+  era.waitAnyKey = async (force) => {
+    const waited = allow_wait || Boolean(force);
+    allow_wait = false;
+    waits.push({ waited, rows_at_wait: total_rows, forced: Boolean(force) });
+    if (waited) {
+      inputs_consumed.push({ api: 'waitAnyKey' });
+    }
   };
 
   // —— 角色：addCharacter 有专门实现，不再是只记录的空壳（issue #35）——
@@ -653,6 +736,9 @@ function create_era_fixture() {
     text_lines() {
       return lines.filter((line) => line.type === 'text').map((l) => l.text);
     },
+    /** 全量行史（含已被 clear/replace 删掉的条目；#73 起就地重绘的取证层）。
+     *  条目形状与 lines 相同；对拍归一化器只读 lines，不看这里 */
+    lines_history,
     /** 兜底调用记录 [{api, args}] */
     calls,
     /** 变量读记录 [{name, value}] */
@@ -665,6 +751,17 @@ function create_era_fixture() {
     logs,
     /** 音乐事件记录 [{api: 'play'|'stop'|'resume', ...}]（issue #69） */
     music,
+    /** 全部 waitAnyKey 调用记录 [{waited, rows_at_wait, forced}]（含跳过的；
+     *  rows_at_wait = 调用瞬间的行数，#73 分发期可见性的直接证据） */
+    waits,
+    /** 引擎 isContinue（右键快进态）的代位旋钮：置 true 后非 0 的 clear
+     *  在清屏前强制等键（引擎语义见 clear 处注释；默认 false = 非快进） */
+    set is_continue(value) {
+      is_continue = Boolean(value);
+    },
+    get is_continue() {
+      return is_continue;
+    },
     /** 已消费的输入 [{api, value?}] */
     inputs_consumed,
     /**

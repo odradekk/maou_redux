@@ -6,7 +6,9 @@
  *     #60 归一表 to_simplified——样本是原文、繁/日混用，不过表即满屏假差异）；
  *   - ere 侧：test/helpers/era-fixture.js 的 lines 记录（#16 的缝，本工具
  *     链的录制器——#9 原设的「print 代理」由夹具承载，见 docs/output-diff.md
- *     的裁定）。
+ *     的裁定）。#74 起 progress 记录（printProgress / printMultiColumns 的
+ *     progress 格）直接映射成 gauge——键与值来自参数、零解析，percentage
+ *     纯表现不进事件流（见 fixture_stream 的 progress 分支注释）。
  *
  * 条目类型（#9 定案：menu 与 gauge 拆成独立条目，消掉列布局与图形差异）：
  *   { kind: 'text',    text }                      叙述文本（空白压缩后比对）
@@ -189,8 +191,10 @@ function golden_stream(log_text) {
 
 /**
  * 夹具记录 → 事件流（ere 侧）。#16 夹具的 lines 条目类型映射：
- *   text → classify_line（与样本同一套分类器——print 出的组合串同构）
+ *   text → classify_line（与样本同一套分类器——损耗条等组合串仍走此路，
+ *     #74 裁定：解析器为 SOURCE_CHECK 的合成串保留）
  *   button → menu 条目（标签 + accelerator）
+ *   progress → gauge 条目（键＝条内文字、值＝条后数值；#74 零解析直映射）
  *   input → 夹具 lines 里的输入标记（对拍回放器注入，见 replay.js）
  *   br / divider → 丢弃（换行与分隔线是排版）
  *   image → image 条目（无文本可比，保留留痕）
@@ -218,6 +222,24 @@ function fixture_stream(fixture_lines) {
         kind: 'menu',
         key: compress_ws(record.text),
         val: record.accelerator,
+        line: line_no,
+      });
+    } else if (record.type === 'progress') {
+      // 结构化进度条 → gauge（#74 裁定，零解析）：
+      //   key ＝条内文字（inContent＝参数名）、val ＝条后数值（outContent＝
+      //   palam 原值，右对齐宽 5 的填充由 Number 剥掉；空串归一成 0 而非
+      //   NaN——错误值与黄金侧不符照样红，M12 变异证对拍能拦）。
+      //   percentage **不进事件流**：它是纯表现（原作 10 格字符条
+      //   floor(10*值/下一阈值) vs 引擎百分比条的取整口径差异由「不比对」
+      //   吸收）——两侧归一的语义值是条后数值，这是「换皮不砸对拍」的
+      //   机制本体（print_palam 换 printMultiColumns 的 progress 格后，
+      //   事件流与合成串时代逐字节同构）。
+      //   max 不映射：palam 条无上限；`(cur/max)` 形态的基础条
+      //   （LIFE_BAR/VITAL_BAR，仍是存根）随那张票扩。
+      entries.push({
+        kind: 'gauge',
+        key: compress_ws(record.text),
+        val: Number(record.out),
         line: line_no,
       });
     } else if (record.type === 'input') {

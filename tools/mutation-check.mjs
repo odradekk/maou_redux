@@ -131,20 +131,20 @@ const MUTATIONS = [
     expect_only: 'IS_TRAINABLE',
   },
   {
-    desc: 'M11 PRINT_PALAM 条形：满刻度改用当前等级阈值（而非下一级）',
+    desc: 'M11 PRINT_PALAM 百分比：满刻度改用当前等级阈值（而非下一级）',
     file: 'ere/page/page-train.js',
     find: '    const next_threshold = PALAMLV[level + 1];',
     replace: '    const next_threshold = PALAMLV[level];',
     tests: ['page-train'],
-    expect_only: '逐字一致',
+    expect_only: '手算基线',
   },
   {
-    desc: 'M12 PRINT_PALAM 填充字符：等级爬坡表打乱',
+    desc: 'M12 PRINT_PALAM 条后数值丢失（outContent 空——语义值载体没了，对拍未解释）',
     file: 'ere/page/page-train.js',
-    find: "const PALAM_FILL_BY_LEVEL = ['-', '=', '>', '*'];",
-    replace: "const PALAM_FILL_BY_LEVEL = ['-', '-', '-', '-'];",
-    tests: ['page-train'],
-    expect_only: '逐字一致',
+    find: "      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),",
+    replace: "      outContent: '', // 变异：数值丢失",
+    tests: ['page-train', 'compare-first-turn'],
+    expect_only: '条后数值',
   },
   {
     desc: 'M13 回合循环：删掉全角色 NOWEX 清零（步骤 10）',
@@ -878,6 +878,7 @@ const MUTATIONS = [
     expect_only: 'printMultiColumns',
   },
   // —— #68 测试缝的 Row 保真：归并 / 计数 / 删除 / 替换的自证 ——
+  // （#73 给 push_row 补了 lines_history 记录，find/replace 随之同步）
   {
     desc: 'M103 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
     file: 'test/helpers/era-fixture.js',
@@ -886,8 +887,10 @@ const MUTATIONS = [
     entries.forEach((entry) => {
       entry.row = row;
       lines.push(entry);
+      lines_history.push(entry);
     });
     total_rows += 1;
+    allow_wait = true;
     return total_rows;
   };`,
     replace: `  const push_row = (entries) => {
@@ -895,8 +898,10 @@ const MUTATIONS = [
     entries.forEach((entry) => {
       entry.row = row;
       lines.push(entry);
+      lines_history.push(entry);
       total_rows += 1; // 变异：逐格计数
     });
+    allow_wait = true;
     return total_rows;
   };`,
     tests: ['fixture'],
@@ -944,6 +949,7 @@ const MUTATIONS = [
     file: 'test/helpers/era-fixture.js',
     find: `    if (input_echo_adds_row(config)) {
       total_rows += 1; // this.print(回显值)：+1 Row
+      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
     }`,
     replace: '    // 变异：回显不计行',
     tests: ['fixture'],
@@ -1334,8 +1340,205 @@ const MUTATIONS = [
     tests: ['resource-media'],
     expect_only: '引擎默认配置整份',
   },
+  // —— #73（画面组件最小集与主菜单迁入）——
+  // 注：编号 M157+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
+  // 按实际情况统一改号；前四票曾因各自从 M99 起编撞号四次）。
   {
-    desc: 'M900 生成区/手写区：--force 重写整文件而不经标记替换',
+    desc: 'M137 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
+    file: 'ere/page/components/screen-block.js',
+    find: '    const span = era.getLineCount() - this.anchor_row;',
+    replace: '    const span = this.row_count;',
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '上方内容完好',
+  },
+  {
+    desc: 'M138 重绘不清屏直接重画（退回追加式——屏幕随交互增长）',
+    file: 'ere/page/components/screen-block.js',
+    find: `    const span = era.getLineCount() - this.anchor_row;
+    if (span > 0) {`,
+    replace: `    const span = era.getLineCount() - this.anchor_row;
+    if (span > 0 && false) {`,
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '上方内容完好',
+  },
+  {
+    desc: 'M139 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
+    file: 'ere/page/components/screen-block.js',
+    find: `    this.anchor_row = era.getLineCount();
+    await this.draw_content();`,
+    replace: `    await this.draw_content();
+    this.anchor_row = era.getLineCount();`,
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '上方内容完好',
+  },
+  {
+    desc: 'M140 行数不测量（row_count 恒 0——「组件自知占几行」失守）',
+    file: 'ere/page/components/screen-block.js',
+    find: '    this.row_count = era.getLineCount() - this.anchor_row;',
+    replace: '    this.row_count = 0;',
+    tests: ['screen-block'],
+    expect_only: '行数测量',
+  },
+  {
+    desc: 'M141 menu_button 删调暗色（未选中态与选中态同色）',
+    file: 'ere/page/components/menu-button.js',
+    find: '    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,',
+    replace: '    undefined,',
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '调暗',
+  },
+  {
+    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
+    file: 'ere/page/components/menu-button.js',
+    find: '    `▌${label}`,',
+    replace: '    `[${accelerator}] ▌${label}`,',
+    tests: ['screen-block', 'page-main-menu'],
+    expect_only: '编号前缀',
+  },
+  {
+    desc: 'M143 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
+    file: 'ere/page/page-shop.js',
+    find: '  return main_menu.redraw();',
+    replace: '  return main_menu.draw();',
+    tests: ['page-main-menu'],
+    expect_only: '不涨屏',
+  },
+  {
+    desc: 'M144 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
+    file: 'ere/page/page-shop.js',
+    find: '  const main_menu = create_main_menu();',
+    replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
+  const main_menu = main_menu_singleton;`,
+    tests: ['page-main-menu'],
+    expect_only: '跨会话',
+  },
+  // —— #73 发回整改：分发期输出必须被玩家看到再被重绘清掉 ——
+  {
+    desc: 'M145 分发期存根退回纯 print（stub_line_wait 丢掉等键——玩家看不到）',
+    file: 'ere/utils/stub-line.js',
+    find: `async function stub_line_wait(erb_name, note, owner) {
+  era.print(stub_text(erb_name, note, owner));
+  await era.waitAnyKey();
+}`,
+    replace: `async function stub_line_wait(erb_name, note, owner) {
+  era.print(stub_text(erb_name, note, owner));
+}`,
+    tests: ['page-main-menu'],
+    expect_only: '玩家先看到',
+  },
+  {
+    desc: 'M146 waitAnyKey 无条件等（无输出也记等待——夹具 allowWait 镜像失守）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    const waited = allow_wait || Boolean(force);',
+    replace: '    const waited = true; // 变异：无条件等',
+    tests: ['fixture'],
+    expect_only: '无输出跳过',
+  },
+  {
+    desc: 'M147 输出不再置位 allowWait（有输出也不等——玩家看不到存根）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    allow_wait = true;\n    return total_rows;',
+    replace: '    return total_rows;',
+    tests: ['fixture', 'page-main-menu'],
+    expect_only: '有输出才等键',
+  },
+  // —— #74（归一化器吃结构化记录 + 调教状态画面组件化）——
+  // 注：M148–M156 由集成方在合并时从占位号 M157+ 顺延而来（并发分支不从
+  // master 最大号续编；#73 首次实践零冲突，本票第二次）。
+  {
+    desc: 'M148 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
+    file: 'tools/compare/normalize.js',
+    find: '        val: Number(record.out),',
+    replace: '        val: record.percentage, // 变异：语义值读错',
+    tests: ['compare-normalize', 'compare-first-turn'],
+    expect_only: 'percentage 不进事件流',
+  },
+  {
+    desc: 'M149 归一化器 progress 分支删除（结构化记录从事件流消失——对拍未解释）',
+    file: 'tools/compare/normalize.js',
+    find: "    } else if (record.type === 'progress') {",
+    replace:
+      "    } else if (record.type === 'progress_never') { // 变异：分支删除",
+    tests: ['compare-normalize', 'compare-first-turn'],
+    expect_only: 'progress 记录',
+  },
+  {
+    desc: 'M150 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
+    file: 'ere/page/page-train.js',
+    find: '  if (command_path_seen) {',
+    replace: '  if (!command_path_seen) { // 变异：判据反接',
+    tests: ['page-train'],
+    expect_only: '指令轮追加绘制',
+  },
+  {
+    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
+    file: 'ere/page/page-train.js',
+    find: `on('EVENTTRAIN', () => {
+  status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
+  command_path_seen = false;
+});`,
+    replace: `on('EVENTTRAIN', () => {
+  // 变异：组件不重建
+  command_path_seen = false;
+});`,
+    tests: ['page-train'],
+    expect_only: '跨会话',
+  },
+  {
+    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不留痕）',
+    file: 'ere/page/components/screen-block.js',
+    find: `      const remaining = await era.clear(span);
+      if (remaining !== this.anchor_row) {
+        era.logger.warn(
+          \`画面组件重绘后行数 \${remaining} 未回到锚点 \${this.anchor_row}（清行跨度 \${span}）——存在旁路清行\`,
+        );
+      }`,
+    replace: '      await era.clear(span); // 变异：自校验删除',
+    tests: ['page-train'],
+    expect_only: '旁路清行',
+  },
+  {
+    desc: 'M153 参数条逐格平铺（一次一格——Row 分组丢失，16 格占 16 行）',
+    file: 'ere/page/page-train.js',
+    find: `  for (let row = 0; row < cells.length; row += PALAM_COLUMNS) {
+    era.printMultiColumns(cells.slice(row, row + PALAM_COLUMNS));
+  }`,
+    replace:
+      '  cells.forEach((cell) => era.printMultiColumns([cell])); // 变异：逐格平铺',
+    tests: ['page-train'],
+    expect_only: '16 格原生进度条',
+  },
+  {
+    desc: 'M154 EVENTCOM 探针不翻标志（重复同指令轮被误判成无指令轮——重绘吃叙述）',
+    file: 'ere/page/page-train.js',
+    find: `on('EVENTCOM', () => {
+  command_path_seen = true;
+});`,
+    replace: `on('EVENTCOM', () => {
+  // 变异：探针失灵`,
+    tests: ['page-train'],
+    expect_only: '重复执行同一指令',
+  },
+  {
+    desc: 'M155 barWidth 改 24（引擎缺省值——el-col-0 吞掉全部条后数值，验收实测的全绿假象）',
+    file: 'ere/page/page-train.js',
+    find: 'const PALAM_PROGRESS_BAR_WIDTH = 16;',
+    replace: 'const PALAM_PROGRESS_BAR_WIDTH = 24; // 变异：吞数值列',
+    tests: ['page-train'],
+    expect_only: '条后数值列必须真实渲染',
+  },
+  {
+    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155 形态）',
+    file: 'ere/page/page-train.js',
+    find: '      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },',
+    replace: '      // 变异：config 删除，吃引擎缺省 24',
+    tests: ['page-train'],
+    expect_only: '条后数值列必须真实渲染',
+  },
+  // —— #71（门面生成器：一维按域重切 + 口上域二维切片）——
+  // 注：M157–M160 由集成方在合并时从占位号 M900+ 顺延而来。
+  {
+    desc: 'M157 生成区/手写区：--force 重写整文件而不经标记替换',
     file: 'tools/gen-facade.js',
     find: '      replace_generated_section(existing, spec.section()),',
     replace: '      spec.body,',
@@ -1343,7 +1546,7 @@ const MUTATIONS = [
     expect_only: '只替换生成区',
   },
   {
-    desc: 'M901 未声明下标读兜底被删（undefined 泄漏给调用方）',
+    desc: 'M158 未声明下标读兜底被删（undefined 泄漏给调用方）',
     file: 'ere/facade/chara-kojo.js',
     find: '    return era.get(`cflag:${this.cid}:301`) || 0;',
     replace: '    return era.get(`cflag:${this.cid}:301`);',
@@ -1351,7 +1554,7 @@ const MUTATIONS = [
     expect_only: '读写落到正确寻址',
   },
   {
-    desc: 'M902 角色视图不再按 ID 缓存（每次 chara(cid) 新对象）',
+    desc: 'M159 角色视图不再按 ID 缓存（每次 chara(cid) 新对象）',
     file: 'ere/facade/chara.js',
     find: `function chara(cid) {
   const key = Number(cid);
@@ -1369,7 +1572,7 @@ const MUTATIONS = [
     expect_only: '按 ID 缓存',
   },
   {
-    desc: 'M903 字段同时出现在非属主域（属主过滤被掏空）',
+    desc: 'M160 字段同时出现在非属主域（属主过滤被掏空）',
     file: 'tools/gen-facade.js',
     find: '.filter(([, owner]) => owner === domain)',
     replace: '.filter(() => true)',
