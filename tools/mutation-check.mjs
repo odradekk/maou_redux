@@ -1441,10 +1441,10 @@ const MUTATIONS = [
     expect_only: '有输出才等键',
   },
   // —— #74（归一化器吃结构化记录 + 调教状态画面组件化）——
-  // 注：编号 M900+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
-  // 统一改号；#73 首次实践零冲突）。
+  // 注：M148–M156 由集成方在合并时从占位号 M900+ 顺延而来（并发分支不从
+  // master 最大号续编；#73 首次实践零冲突，本票第二次）。
   {
-    desc: 'M900 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
+    desc: 'M148 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
     file: 'tools/compare/normalize.js',
     find: '        val: Number(record.out),',
     replace: '        val: record.percentage, // 变异：语义值读错',
@@ -1452,7 +1452,7 @@ const MUTATIONS = [
     expect_only: 'percentage 不进事件流',
   },
   {
-    desc: 'M901 归一化器 progress 分支删除（结构化记录从事件流消失——对拍未解释）',
+    desc: 'M149 归一化器 progress 分支删除（结构化记录从事件流消失——对拍未解释）',
     file: 'tools/compare/normalize.js',
     find: "    } else if (record.type === 'progress') {",
     replace:
@@ -1461,7 +1461,7 @@ const MUTATIONS = [
     expect_only: 'progress 记录',
   },
   {
-    desc: 'M902 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
+    desc: 'M150 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
     file: 'ere/page/page-train.js',
     find: '  if (command_path_seen) {',
     replace: '  if (!command_path_seen) { // 变异：判据反接',
@@ -1469,7 +1469,7 @@ const MUTATIONS = [
     expect_only: '指令轮追加绘制',
   },
   {
-    desc: 'M903 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
+    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
     file: 'ere/page/page-train.js',
     find: `on('EVENTTRAIN', () => {
   status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
@@ -1483,7 +1483,7 @@ const MUTATIONS = [
     expect_only: '跨会话',
   },
   {
-    desc: 'M904 旁路清行自校验删除（重绘行数未回锚点不留痕）',
+    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不留痕）',
     file: 'ere/page/components/screen-block.js',
     find: `      const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {
@@ -1496,7 +1496,7 @@ const MUTATIONS = [
     expect_only: '旁路清行',
   },
   {
-    desc: 'M905 参数条逐格平铺（一次一格——Row 分组丢失，16 格占 16 行）',
+    desc: 'M153 参数条逐格平铺（一次一格——Row 分组丢失，16 格占 16 行）',
     file: 'ere/page/page-train.js',
     find: `  for (let row = 0; row < cells.length; row += PALAM_COLUMNS) {
     era.printMultiColumns(cells.slice(row, row + PALAM_COLUMNS));
@@ -1507,7 +1507,7 @@ const MUTATIONS = [
     expect_only: '16 格原生进度条',
   },
   {
-    desc: 'M906 EVENTCOM 探针不翻标志（重复同指令轮被误判成无指令轮——重绘吃叙述）',
+    desc: 'M154 EVENTCOM 探针不翻标志（重复同指令轮被误判成无指令轮——重绘吃叙述）',
     file: 'ere/page/page-train.js',
     find: `on('EVENTCOM', () => {
   command_path_seen = true;
@@ -1518,7 +1518,7 @@ const MUTATIONS = [
     expect_only: '重复执行同一指令',
   },
   {
-    desc: 'M907 barWidth 改 24（引擎缺省值——el-col-0 吞掉全部条后数值，验收实测的全绿假象）',
+    desc: 'M155 barWidth 改 24（引擎缺省值——el-col-0 吞掉全部条后数值，验收实测的全绿假象）',
     file: 'ere/page/page-train.js',
     find: 'const PALAM_PROGRESS_BAR_WIDTH = 16;',
     replace: 'const PALAM_PROGRESS_BAR_WIDTH = 24; // 变异：吞数值列',
@@ -1526,7 +1526,7 @@ const MUTATIONS = [
     expect_only: '条后数值列必须真实渲染',
   },
   {
-    desc: 'M908 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M907 形态）',
+    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155 形态）',
     file: 'ere/page/page-train.js',
     find: '      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },',
     replace: '      // 变异：config 删除，吃引擎缺省 24',

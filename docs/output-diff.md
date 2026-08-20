@@ -86,7 +86,7 @@ ere 侧的 gauge 来源自此分两路：
 的机器证明。ere 侧手绘合成串的**产出端**就此消失（一整类 ere 侧 gauge
 正则误判随产出端消失），黄金样本侧的解析原样保留（Emuera 只有合成串）。
 
-归一化器变异自证：M900（val 误读 percentage）/ M901（progress 分支删除）
+归一化器变异自证：M148（val 误读 percentage）/ M149（progress 分支删除）
 均由 `test/compare-normalize.test.js` 与首回合对拍拦截。
 
 ## 差异归因（rules.js，白名单形态）
