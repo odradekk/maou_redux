@@ -6,11 +6,25 @@
 
 // GENERATED START —— tools/gen-facade.js 装配角色视图，勿手改
 const KojoFacade = require('#/facade/chara-kojo');
+const TrainFacade = require('#/facade/chara-train');
+const CharaFacade = require('#/facade/chara-chara');
+const StrongholdFacade = require('#/facade/chara-stronghold');
+const DungeonFacade = require('#/facade/chara-dungeon');
+const EventFacade = require('#/facade/chara-event');
+const SystemFacade = require('#/facade/chara-system');
+const PatchFacade = require('#/facade/chara-patch');
 
 class CharaView {
   constructor(cid) {
     this.cid = cid;
     this.kojo = new KojoFacade(cid);
+    this.train = new TrainFacade(cid);
+    this.chara = new CharaFacade(cid);
+    this.stronghold = new StrongholdFacade(cid);
+    this.dungeon = new DungeonFacade(cid);
+    this.event = new EventFacade(cid);
+    this.system = new SystemFacade(cid);
+    this.patch = new PatchFacade(cid);
   }
 }
 

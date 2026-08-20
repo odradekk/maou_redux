@@ -64,12 +64,17 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   assert.ok(indexes.includes(301));
   assert.ok(indexes.includes(201));
   assert.ok(!indexes.includes(1));
+  // #90 起 cflag 在 kojo 之外按补名逐个进门面：NAMES.cflag = kojo 切片 +
+  // 已补名的他域下标（当前仅 chara 域的 cflag:2 好感度）
+  const manual_keys = Object.keys(NAMES.cflag)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const slice = indexes.slice().sort((a, b) => a - b);
   assert.deepEqual(
-    indexes.slice().sort((a, b) => a - b),
-    Object.keys(NAMES.cflag)
-      .map(Number)
-      .sort((a, b) => a - b),
+    manual_keys.filter((i) => i !== 2),
+    slice,
   );
+  assert.ok(manual_keys.includes(2));
 });
 
 test('一维按域重切：flag 下标分属七域，不是整表毯子', () => {
@@ -354,4 +359,135 @@ test('无 Proxy：访问器是类原型上的属性描述符', () => {
     Object.getOwnPropertyDescriptor(Object.getPrototypeOf(view.kojo), '爱抚'),
   );
   assert.equal(view.kojo.不存在的字段, undefined);
+});
+
+// —— #90：二维按属主域铺开 + 两源合流 ——
+
+test('两源合流：yml 列名进二维门面，跳过的缺口不进产物', () => {
+  const read = (file) =>
+    fs.readFileSync(path.join(REPO_ROOT, 'ere', 'facade', file), 'utf8');
+  // yml 列名直进（system 域：abl/mark/exp/talent 各表切片同文件分组）
+  const system_text = read('chara-system.js');
+  assert.ok(system_text.includes('get 顺从()'));
+  assert.ok(system_text.includes('era.get(`abl:${this.cid}:10`)'));
+  assert.ok(system_text.includes('get 苦痛刻印()'));
+  assert.ok(system_text.includes('era.set(`mark:${this.cid}:0`, v);'));
+  assert.ok(system_text.includes('源: yml/Mark.yml id 0'));
+  assert.ok(system_text.includes('get 妊娠()')); // talent 也在 system 域
+  // 手补缺口：mark:4 原作无列名，出处指向 ERB
+  assert.ok(system_text.includes('get 反抗刻印履历()'));
+  assert.ok(system_text.includes('era.set(`mark:${this.cid}:4`, v);'));
+  // dungeon 域：exp 切片（yml 列名）
+  const dungeon_text = read('chara-dungeon.js');
+  assert.ok(dungeon_text.includes('get 绝顶经验()'));
+  assert.ok(dungeon_text.includes('era.get(`exp:${this.cid}:2`) || 0;'));
+  assert.ok(dungeon_text.includes('get 施虐快乐经验()'));
+  // train 域：source/palam 走 yml 列名，delta/deltabase 走手写名
+  const train_text = read('chara-train.js');
+  assert.ok(train_text.includes('get 阴核快感()'));
+  assert.ok(train_text.includes('era.get(`source:${this.cid}:0`) || 0;'));
+  assert.ok(train_text.includes('get 润滑()'));
+  assert.ok(train_text.includes('get 阴核增量()'));
+  assert.ok(train_text.includes('era.set(`delta:${this.cid}:0`, v);'));
+  assert.ok(train_text.includes('get 体力损耗()'));
+  // cflag 的 kojo 外切片：按补名逐个进入（当前仅好感度）
+  const chara_text = read('chara-chara.js');
+  assert.ok(chara_text.includes('get 好感度()'));
+  assert.ok(chara_text.includes('era.set(`cflag:${this.cid}:2`, v);'));
+  // 跳过并报告：yml 缺名（train/abl:5）、无测量名（event/talent:19）、
+  // 列名不可作标识符（talent:281「常识改变【战斗】」属 chara 域）
+  assert.ok(
+    SKIPPED.some(
+      (item) =>
+        item.table === 'abl' && item.index === 5 && item.domain === 'train',
+    ),
+  );
+  assert.ok(
+    SKIPPED.some(
+      (item) =>
+        item.table === 'talent' && item.index === 19 && item.domain === 'event',
+    ),
+  );
+  assert.ok(
+    SKIPPED.some(
+      (item) =>
+        item.table === 'talent' &&
+        item.index === 281 &&
+        item.domain === 'chara',
+    ),
+    'yml 列名不是合法标识符 → 跳过（#71 裁定三同款）',
+  );
+  assert.ok(!chara_text.includes('常识改变'));
+  assert.ok(!chara_text.includes('村娘'), '全角字母列名同款跳过');
+  assert.ok(!train_text.includes('abl:5'), '缺名下标不进产物');
+});
+
+test('两源合流：同一下标两源名字不一致即报错；一致时手写出处胜出', () => {
+  const gen = require('../tools/gen-facade');
+  const names = require('../tools/facade-names');
+  // 注入冲突：abl:10 的 yml 列名是「顺从」
+  names.NAMES.abl = { 10: { name: '服从', source: '测试注入' } };
+  assert.throws(() => gen.merged_name('abl', 10), /两源名字不一致 abl:10/);
+  // 名字一致：手写（更精）出处胜出
+  names.NAMES.abl = { 10: { name: '顺从', source: '测试注入的更精出处' } };
+  const merged = gen.merged_name('abl', 10);
+  assert.equal(merged.name, '顺从');
+  assert.equal(merged.source, '测试注入的更精出处');
+  delete names.NAMES.abl;
+  // 纯 yml 来源：默认出处指向 yml 名字表
+  const yml_only = gen.merged_name('mark', 0);
+  assert.equal(yml_only.name, '苦痛刻印');
+  assert.equal(yml_only.source, 'yml/Mark.yml id 0');
+});
+
+test('出处路径全部真实存在：扫产物源注释里的路径 token', () => {
+  const dir = path.join(REPO_ROOT, 'ere', 'facade');
+  const checked = new Set();
+  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.js'))) {
+    const text = fs.readFileSync(path.join(dir, file), 'utf8');
+    for (const line of text.split('\n')) {
+      if (!line.includes('* 源: ')) {
+        continue;
+      }
+      for (const token of line.matchAll(
+        /(?:target|yml|docs|CONTEXT\.md)\/?[^\s（）；;，]+/g,
+      )) {
+        checked.add(token[0]);
+      }
+    }
+  }
+  assert.ok(
+    checked.size >= 5,
+    `扫描应有产出，实得 ${[...checked].join(' | ')}`,
+  );
+  const missing = [...checked].filter(
+    (rel) => !fs.existsSync(path.join(REPO_ROOT, rel)),
+  );
+  assert.deepEqual(missing, [], '#71 翻过车的一类：出处指向不存在的文件');
+});
+
+test('移植自建表门面：delta/deltabase 归 train，读写落对寻址', () => {
+  const fixture = create_era_fixture();
+  const { chara } = fixture.load_module('facade/chara');
+  fixture.era.beginTrain(31); // 调教域表在 beginTrain 前不可寻址（引擎守卫）
+  assert.equal(chara(31).train.阴核增量, 0);
+  chara(31).train.阴核增量 = 12;
+  assert.equal(fixture.store.get('delta:31:0'), 12);
+  assert.equal(chara(31).train.阴核增量, 12);
+  chara(31).train.体力损耗 = -20;
+  assert.equal(fixture.store.get('deltabase:31:0'), -20);
+  // 属主裁定的可观测面：delta 只出现在 train 域切片
+  const system_text = fs.readFileSync(
+    path.join(REPO_ROOT, 'ere', 'facade', 'chara-system.js'),
+    'utf8',
+  );
+  assert.ok(!system_text.includes('delta:'));
+});
+
+test('cflag 跨 kojo 域切片：好感度走 chara(cid).chara', () => {
+  const fixture = create_era_fixture();
+  const { chara } = fixture.load_module('facade/chara');
+  chara(31).chara.好感度 = 3;
+  assert.equal(fixture.store.get('cflag:31:2'), 3);
+  assert.equal(chara(31).chara.好感度, 3);
 });

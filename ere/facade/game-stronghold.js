@@ -6,7 +6,7 @@
 
 const era = require('#/era-electron');
 
-// GENERATED START —— tools/gen-facade.js 自 ownership + tools/facade-names.js 生成，勿手改
+// GENERATED START —— tools/gen-facade.js 自 ownership + yml 列名 + tools/facade-names.js 生成，勿手改
 class StrongholdGame {
   // —— flag ——
   /**
