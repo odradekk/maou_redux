@@ -424,3 +424,53 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
   // 组级登记（EQUIP_COM 是整组的代表名，清单里须有装备持续效果组行）
   assert.ok(registry.includes('装备持续效果'), '装备持续效果组行');
 });
+
+// —— #90：跨域写走门面（台账 22 条清零的契约锁）——
+
+test('跨域写走门面：22 条台账寻址串的字面量 era.set/add 清零', () => {
+  const text = fs.readFileSync(
+    path.resolve(__dirname, '..', 'ere', 'event', 'source-check.js'),
+    'utf8',
+  );
+  // 写侧零残留：#72 台账里的 22 个寻址串，字面量形态的 era.set/era.add
+  // 都必须消失（读侧 era.get 放行是 #70 决议，不在本锁范围）
+  const gone = [
+    'era.set(`mark:',
+    'era.set(`abl:',
+    'era.add(`exp:',
+    'era.add(`cflag:',
+    'era.set(`talent:${cid}:13`',
+    "era.set('tflag:14'",
+    "era.set('tflag:150'",
+    "era.set('tflag:200'",
+    "era.set('tflag:21'",
+    "era.set('tflag:22'",
+    "era.set('tflag:23'",
+    "era.set('tflag:24'",
+    "era.set('tflag:25'",
+    "era.set('tflag:29'",
+    "era.set('tflag:30'",
+    "era.set('tflag:50'",
+  ];
+  for (const pattern of gone) {
+    assert.ok(!text.includes(pattern), `跨域写必须走门面，仍见 ${pattern}`);
+  }
+  // 正面样本：属主域路径可检索（mark/abl 归 system、exp 归 dungeon、
+  // cflag:2 归 chara、tflag 按属主分属 train/system）
+  for (const sample of [
+    'chara(cid).system.反抗刻印 = 1;',
+    'chara(cid).system.顺从 = 0;',
+    'chara(cid).system.欲望 = ex_l;',
+    'chara(cid).dungeon.绝顶经验 +=',
+    'chara(cid).dungeon.施虐快乐经验 += 1;',
+    'chara(cid).chara.好感度 += r;',
+    'chara(cid).chara.坦率 = 1;',
+    'game.train.屈服刻印结算 = 1;',
+    'game.train.主人经验 = 0;',
+    'game.train.近亲与自我口上 = 0;',
+    'game.system.反抗刻印回避 = 0;',
+    'game.system.上次调教者是助手 =',
+  ]) {
+    assert.ok(text.includes(sample), `应包含门面写 ${sample}`);
+  }
+});

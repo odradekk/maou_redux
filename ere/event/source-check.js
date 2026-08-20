@@ -63,6 +63,8 @@ const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { train_message_a } = require('#/system/train/train-message');
 const { kojo_message_com } = require('#/kojo/kojo-system');
+const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个；名单
@@ -105,6 +107,21 @@ const up = (i) => era.get(`delta:${cid}:${i}`) || 0;
 const add_up = (i, v) => era.add(`delta:${cid}:${i}`, v);
 const set_up = (i, v) => era.set(`delta:${cid}:${i}`, v);
 const tflag = (i) => era.get(`tflag:${i}`) || 0;
+
+// —— 上面这组本地闭包（mini-facade）的留存说明（#90），别当漏网 ——
+
+// 本票（#90）只把**跨域写**改走门面（chara(cid).<域>.<字段> / game.<域>.
+// <字段>）；这组闭包承载其余约 900 次调用，活着的理由：
+//   1. 读侧全部留此——跨域读放行是 #70/#72 的实测决议（跨域读 42,741 次、
+//      高度分散，强制具名 = 约 4.3 万处样板被口上转译器再复制一万次）；
+//   2. 写侧闭包（set_src/add_up/set_up/add_lose/set_lose）吃**变量下标**
+//      （`src(0)` 到 `set_up(k, …)` 的 k 是循环变量），具名属性形态在结构
+//      上无法承载；它们对 domain-check 是「动态下标」盲区，不是漏判。
+// 何时该死：source-check 拆域票（把 @SOURCE_CHECK 从 event 域拆进 train
+// 域）或读侧全量迁移票。届时 97.7% 的字面量调用改具名访问器；残留的 4 个
+// 循环点（[91,92] 素质组、[4,5,6,8,10,11,12,13] 感情减半、ORDER 结算序、
+// count 0-4 射精系）是字面量列表与真计数器，展开与否届时裁——本票不碰
+// （工单口径：小尾巴，不是主命题）。
 
 /** TIMES X, m：整数乘小数后截断（math-etc.md） */
 const times = (v, m) => Math.floor(v * m);
@@ -255,7 +272,7 @@ function master_skill_check() {
 // @INCEST_SEX_CHECK（SUB1:222-263）：近亲判定归 INCEST（登记；relation
 // 表无数据，TFLAG:14 恒 0，其后的乘算分支自然不达）
 function incest_sex_check() {
-  era.set('tflag:14', 0);
+  game.train.近亲与自我口上 = 0;
   stub_line('INCEST', '亲族关系判定', '随亲族票');
 }
 
@@ -1124,7 +1141,7 @@ const set_down = (k, v) => down_map.set(k, v);
 
 // @ECST_CHECK（SUB1:1555）：绝顶强度的快照
 function ecst_check(arg) {
-  era.set('tflag:29', arg);
+  game.system.绝顶强度 = arg;
 }
 
 // @YOKUBO_UP_CHECK（SUB1:1088）：欲望 ≥ 3 时压抑/抵抗消失
@@ -1142,7 +1159,7 @@ function yokubo_up_check() {
     era.print('失去了');
     era.print('否定点数减半');
     era.set(`juel:${cid}:100`, idiv(era.get(`juel:${cid}:100`) || 0, 2));
-    era.set('tflag:25', 1);
+    game.train.压抑抵抗消灭 = 1;
   }
 }
 
@@ -1152,7 +1169,7 @@ function jujun_up_check() {
     era.print(`${era.get(`callname:${cid}:-1`) ?? ''}的【反抗心】失去了，`);
     era.print('【坦率】获得。');
     era.set(`talent:${cid}:11`, 0);
-    era.set(`talent:${cid}:13`, 1);
+    chara(cid).chara.坦率 = 1;
   }
 }
 
@@ -1290,7 +1307,7 @@ function ex_check_up() {
       add_lose(1, 10);
     }
     if (ex_c === 2 && tflag(200) < 1) {
-      era.set('tflag:200', 1); // 屈服刻印１相当
+      game.train.屈服刻印结算 = 1; // 屈服刻印１相当
     }
   }
   if (ex_v) {
@@ -1306,9 +1323,9 @@ function ex_check_up() {
       add_lose(1, 20);
     }
     if (ex_v === 1 && tflag(200) < 1) {
-      era.set('tflag:200', 1);
+      game.train.屈服刻印结算 = 1;
     } else if (ex_v === 2 && tflag(200) < 2) {
-      era.set('tflag:200', 2);
+      game.train.屈服刻印结算 = 2;
     }
   }
   if (ex_a) {
@@ -1324,7 +1341,7 @@ function ex_check_up() {
       add_lose(1, 30);
     }
     if (tflag(200) < 3) {
-      era.set('tflag:200', 3);
+      game.train.屈服刻印结算 = 3;
     }
   }
   if (ex_b) {
@@ -1338,7 +1355,7 @@ function ex_check_up() {
       add_lose(1, 10);
     }
     if (ex_b === 2 && tflag(200) < 1) {
-      era.set('tflag:200', 1);
+      game.train.屈服刻印结算 = 1;
     }
   }
   if (ex_f) {
@@ -1349,7 +1366,7 @@ function ex_check_up() {
     add_lose(0, 60);
     add_lose(1, 30);
     if (tflag(200) < 3) {
-      era.set('tflag:200', 3);
+      game.train.屈服刻印结算 = 3;
     }
   }
 
@@ -1377,7 +1394,7 @@ function ex_check_up() {
     ex_l -= 1; // 自制心 / 一線越えない
   }
   if (abl(11) < ex_l) {
-    era.set(`abl:${cid}:11`, ex_l);
+    chara(cid).system.欲望 = ex_l;
     era.print(`获得${era.get(`ablname:11`) ?? ''}LV${ex_l}`);
     if (ex_l >= 3) {
       yokubo_up_check();
@@ -1391,14 +1408,14 @@ function ex_check_up() {
   era.set(`nowex:${cid}:3`, ex_b);
   era.set(`nowex:${cid}:4`, ex_f);
   // 绝顶经验（EXP:2）
-  era.add(`exp:${cid}:2`, ex_c + ex_v + ex_a + ex_b + ex_f);
+  chara(cid).dungeon.绝顶经验 += ex_c + ex_v + ex_a + ex_b + ex_f;
 }
 
 // —— @MASTER_FLAG_CHECK（SUB1:1615-1711）：好感度累积 ——
 
 function master_flag_check() {
   // 绝顶强度的累计（TFLAG:29/30）
-  era.set('tflag:29', tflag(29) + tflag(10) + tflag(11));
+  game.system.绝顶强度 = tflag(29) + tflag(10) + tflag(11);
   let q = 0;
   for (let i = 0; i <= 3; i += 1) {
     if ((era.get(`nowex:${cid}:${i}`) || 0) > 0) {
@@ -1411,16 +1428,16 @@ function master_flag_check() {
   if (tflag(11) > 0) {
     q += 1;
   }
-  era.set('tflag:30', tflag(30) + tflag(29) * q);
+  game.train.主人经验 = tflag(30) + tflag(29) * q;
 
   // :1633-1640 射精系 TFLAG 的经验加算（TFLAG:0-4/9 恒 0，循环 1:1 保留）
   for (let count = 0; count < 5; count += 1) {
     if (tflag(count) > 0 && (era.get(`exp:${cid}:20`) || 0) >= PALAMLV[2]) {
-      era.set('tflag:30', tflag(30) + tflag(count));
+      game.train.主人经验 = tflag(30) + tflag(count);
     }
   }
   if (tflag(9) > 0 && (era.get(`exp:${cid}:20`) || 0) >= PALAMLV[2]) {
-    era.set('tflag:30', tflag(30) + tflag(9));
+    game.train.主人经验 = tflag(30) + tflag(9);
   }
 
   // :1642-1707 主人亲自调教时的好感度（CFLAG:2）累积
@@ -1487,14 +1504,14 @@ function master_flag_check() {
     if (relation !== 0) {
       r = idiv(r * relation, 100);
     }
-    era.add(`cflag:${cid}:2`, r);
+    chara(cid).chara.好感度 += r;
     // 好感测定仪（ITEM:37）持有时的显示
     if (era.get('item:37')) {
       era.print(`好感度上升:${idiv(r, 10)}.${r % 10}％`);
       era.print(`好感度合计:${idiv(era.get(`cflag:${cid}:2`) || 0, 10)}％`);
     }
   }
-  era.set('tflag:30', 0);
+  game.train.主人经验 = 0;
 }
 
 // —— @MARK_GOT_CHECK（SUB1:941-1080）：刻印取得 ——
@@ -1505,9 +1522,9 @@ function mark_got_check() {
     const local = up(11) + up(12);
     const mark4 = era.get(`mark:${cid}:4`) || 0;
     if (local >= 500 && local < 1200 && mark4 <= 0 && tflag(150) === 0) {
-      era.set(`mark:${cid}:3`, 1);
-      era.set(`mark:${cid}:4`, 1);
-      era.set('tflag:21', 1);
+      chara(cid).system.反抗刻印 = 1;
+      chara(cid).system.反抗刻印履历 = 1;
+      game.system.反抗刻印变动 = 1;
       era.print('获得反抗刻印LV1');
     } else if (
       local >= 1200 &&
@@ -1515,60 +1532,60 @@ function mark_got_check() {
       mark4 <= 1 &&
       tflag(150) === 0
     ) {
-      era.set(`mark:${cid}:3`, 2);
-      era.set(`mark:${cid}:4`, 2);
-      era.set('tflag:21', 2);
+      chara(cid).system.反抗刻印 = 2;
+      chara(cid).system.反抗刻印履历 = 2;
+      game.system.反抗刻印变动 = 2;
       era.print('获得反抗刻印LV2');
       if (abl(10) === 1 && !tal(22)) {
         era.print('顺从下降到LV0');
-        era.set(`abl:${cid}:10`, 0);
+        chara(cid).system.顺从 = 0;
       } else if (abl(10) === 2 && !tal(22)) {
         era.print('顺从下降到LV1');
-        era.set(`abl:${cid}:10`, 1);
+        chara(cid).system.顺从 = 1;
       }
     } else if (local >= 3000 && mark4 <= 2 && tflag(150) === 0) {
-      era.set(`mark:${cid}:3`, 3);
-      era.set(`mark:${cid}:4`, 3);
-      era.set('tflag:21', 3);
+      chara(cid).system.反抗刻印 = 3;
+      chara(cid).system.反抗刻印履历 = 3;
+      game.system.反抗刻印变动 = 3;
       era.print('获得反抗刻印LV3');
       if (abl(10) > 0 && abl(10) <= 2 && !tal(22)) {
         era.print('顺从下降到LV0');
-        era.set(`abl:${cid}:10`, 0);
+        chara(cid).system.顺从 = 0;
       } else if (abl(10) === 3 && !tal(22)) {
         era.print('顺从下降到LV1');
-        era.set(`abl:${cid}:10`, 2);
+        chara(cid).system.顺从 = 2;
       }
     }
   }
-  era.set('tflag:150', 0);
+  game.system.反抗刻印回避 = 0;
 
   // 苦痛刻印（UP:9 阈值）
   const mark0 = era.get(`mark:${cid}:0`) || 0;
   if (up(9) >= 500 && up(9) < 1500 && mark0 <= 0) {
-    era.set(`mark:${cid}:0`, 1);
-    era.set('tflag:22', 1);
+    chara(cid).system.苦痛刻印 = 1;
+    game.system.苦痛刻印变动 = 1;
     era.print('获得苦痛刻印LV1');
   } else if (up(9) >= 1500 && up(9) < 3000 && mark0 <= 1) {
-    era.set(`mark:${cid}:0`, 2);
-    era.set('tflag:22', 2);
+    chara(cid).system.苦痛刻印 = 2;
+    game.system.苦痛刻印变动 = 2;
     era.print('获得苦痛刻印LV2');
     if (abl(10) === 0 && !tal(12) && !tal(22)) {
       era.print('然后，顺从提升到LV1');
-      era.set(`abl:${cid}:10`, 1);
+      chara(cid).system.顺从 = 1;
       jujun_up_check();
     }
   } else if (up(9) >= 3000 && mark0 <= 2) {
-    era.set(`mark:${cid}:0`, 3);
-    era.set('tflag:22', 3);
+    chara(cid).system.苦痛刻印 = 3;
+    game.system.苦痛刻印变动 = 3;
     era.print('获得苦痛刻印LV3');
     if (abl(10) === 0 && !tal(12) && !tal(22)) {
       era.print('然后，顺从提升到LV1');
-      era.set(`abl:${cid}:10`, 1);
+      chara(cid).system.顺从 = 1;
       jujun_up_check();
     }
     if (ptal(83)) {
       era.print('施虐快乐经验＋1');
-      era.add(`exp:${cid}:33`, 1);
+      chara(cid).dungeon.施虐快乐经验 += 1;
     }
   }
 
@@ -1576,20 +1593,20 @@ function mark_got_check() {
   const pleasure = up(0) + up(1) + up(2) + up(14);
   const mark1 = era.get(`mark:${cid}:1`) || 0;
   if (pleasure >= 500 && pleasure < 1500 && mark1 <= 0) {
-    era.set(`mark:${cid}:1`, 1);
-    era.set('tflag:23', 1);
+    chara(cid).system.快乐刻印 = 1;
+    game.system.快乐刻印变动 = 1;
     era.print('获得快乐刻印LV1');
   } else if (pleasure >= 1500 && pleasure < 3000 && mark1 <= 1) {
-    era.set(`mark:${cid}:1`, 2);
-    era.set('tflag:23', 2);
+    chara(cid).system.快乐刻印 = 2;
+    game.system.快乐刻印变动 = 2;
     era.print('获得快乐刻印LV2');
   } else if (pleasure >= 3000 && mark1 <= 2) {
-    era.set(`mark:${cid}:1`, 3);
-    era.set('tflag:23', 3);
+    chara(cid).system.快乐刻印 = 3;
+    game.system.快乐刻印变动 = 3;
     era.print('获得快乐刻印LV3');
     if (abl(10) === 0 && !tal(20) && !tal(22)) {
       era.print('顺从提升到LV1');
-      era.set(`abl:${cid}:10`, 1);
+      chara(cid).system.顺从 = 1;
       jujun_up_check();
     }
   }
@@ -1598,25 +1615,25 @@ function mark_got_check() {
   const tflag200 = tflag(200);
   const mark2 = era.get(`mark:${cid}:2`) || 0;
   if (tflag200 === 1 && mark2 <= 0) {
-    era.set(`mark:${cid}:2`, 1);
-    era.set('tflag:24', 1);
+    chara(cid).system.屈服刻印 = 1;
+    game.system.屈服刻印变动 = 1;
     era.print('获得屈服刻印LV1');
   } else if (tflag200 === 2 && mark2 <= 1) {
-    era.set(`mark:${cid}:2`, 2);
-    era.set('tflag:24', 2);
+    chara(cid).system.屈服刻印 = 2;
+    game.system.屈服刻印变动 = 2;
     era.print('获得屈服刻印LV2');
     if (abl(10) === 0 && !tal(22)) {
       era.print('然后，顺从提升到LV1');
-      era.set(`abl:${cid}:10`, 1);
+      chara(cid).system.顺从 = 1;
       jujun_up_check();
     }
   } else if (tflag200 === 3 && mark2 <= 2) {
-    era.set(`mark:${cid}:2`, 3);
-    era.set('tflag:24', 3);
+    chara(cid).system.屈服刻印 = 3;
+    game.system.屈服刻印变动 = 3;
     era.print('获得屈服刻印LV3');
     if (abl(10) <= 1 && !tal(22)) {
       era.print('然后，顺从提升到LV2');
-      era.set(`abl:${cid}:10`, 2);
+      chara(cid).system.顺从 = 2;
       jujun_up_check();
     }
   }
@@ -2119,7 +2136,7 @@ on('SOURCE_CHECK', async () => {
 
   // :545 PREVCOM = SELECTCOM —— 由回合循环承载（train-loop 步骤 13），
   // 此处不重复写；:547-549 TFLAG:50（上次调教者是主人还是助手）
-  era.set('tflag:50', era_flag.assiplay ? 1 : 0);
+  game.system.上次调教者是助手 = era_flag.assiplay ? 1 : 0;
 
   // :552-567 体力气力损耗条（含濒死/死亡星标；死亡档显示 BAR 0）——条与
   // 「 -N 」拼为一行（原作 PRINT/PRINTFORM 同行累积 + PRINTL 收行）。

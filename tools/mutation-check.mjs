@@ -1673,6 +1673,22 @@ const MUTATIONS = [
     expect_only: '好感度',
   },
   {
+    desc: 'M904 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
+    file: 'ere/event/source-check.js',
+    find: 'game.train.屈服刻印结算 = 1; // 屈服刻印１相当',
+    replace: "era.set('tflag:200', 1); // 屈服刻印１相当",
+    tests: ['source-check'],
+    expect_only: '跨域写走门面',
+  },
+  {
+    desc: 'M905 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
+    file: 'ere/event/source-check.js',
+    find: 'chara(cid).system.反抗刻印 = 1;',
+    replace: 'era.set(`mark:${cid}:3`, 1);',
+    tests: ['source-check'],
+    expect_only: '跨域写走门面',
+  },
+  {
     desc: 'M906 产物出处路径指向不存在的文件（#71 翻过车的一类）',
     file: 'ere/facade/chara-train.js',
     find: '   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
