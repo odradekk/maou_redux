@@ -367,6 +367,14 @@ const FILES = [
   {
     js: 'ere/page/page-train.js',
     refs: [
+      // @SHOW_STATUS 整函数（#74 组件化后的 draw_status_screen 全量）
+      { src: TRAIN_MAIN, ref: '60-256', any: [/^@SHOW_STATUS$/m] },
+      // 锚点跨度重绘的原作习语（#74：ScreenBlock 承载的 ere 侧等价物）
+      {
+        src: USERCOM,
+        ref: '179-186',
+        any: [/^@SET_CLEAR_POINT$/m, /^@CLEAR_TO_POINT$/m],
+      },
       { src: TRAIN_MAIN, ref: '61', any: [/^DRAWLINE$/m] },
       {
         src: TRAIN_MAIN,
@@ -1806,6 +1814,17 @@ const LOG_REFS = [
       {
         ref: '236-260',
         any: [/^调教结果：否定点数208个抵消。/m, /阴核点数：\s+3479/],
+      },
+    ],
+  },
+  {
+    // #74：print_palam 换原生进度条后，条后数值仍以样本第二屏（回合后参数
+    // 网格）为对齐证据
+    js: 'test/page-train.test.js',
+    refs: [
+      {
+        ref: '52-57',
+        any: [/阴核\[\*{5}\.{5}\]\s+5540/, /局部\[\.{10}\]\s+0/],
       },
     ],
   },

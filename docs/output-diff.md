@@ -60,6 +60,35 @@
   差额是本分类器把 palam_up 的 31 字符短分隔线也计入 divider）。量级与
   结论不变：比对它们只产生噪音。
 
+## 增补裁定：结构化进度条记录 → gauge（#74，换皮不砸对拍的机制）
+
+ere 侧的 gauge 来源自此分两路：
+
+- **文本记录仍走 `classify_line`**（与黄金样本同一套分类器）。它不能随
+  #74 删除：损耗条（`体力[...] -5` 行）仍由 SOURCE_CHECK 以合成串产出，
+  owner 在调教循环侧（#74 边界外）；损耗条票据把它结构化之日，才是 ere
+  路径网格解析退役之时。菜单侧自 #48 起就走 button 记录，与文本路径无关。
+- **progress 记录（printProgress / printMultiColumns 的 progress 格）零
+  解析直映射**：
+
+  ```js
+  { kind: 'gauge', key: 条内文字 /* 参数名 */, val: Number(条后数值) }
+  ```
+
+  键与值来自参数，右对齐填充由 `Number` 剥掉（outContent 为空串时归一成
+  val=0 而非 NaN——值与黄金侧不符照样红，M12 变异证明对拍能拦）。
+
+**percentage 永不进事件流。** 它是渲染口径（原作 10 格字符条
+`floor(10×值/下一阈值)` vs 引擎百分比条的取整差异），两侧归一的语义值是
+**条后数值**（palam 原值）。`print_palam` 换 printMultiColumns 的 progress
+格（#74）后，事件流与手绘合成串时代逐字节同构——首回合对拍基线
+（匹配 54 / 版本 10 + 存根 112 + 未解释 0）不动，这正是「换皮不砸对拍」
+的机器证明。ere 侧手绘合成串的**产出端**就此消失（一整类 ere 侧 gauge
+正则误判随产出端消失），黄金样本侧的解析原样保留（Emuera 只有合成串）。
+
+归一化器变异自证：M148（val 误读 percentage）/ M149（progress 分支删除）
+均由 `test/compare-normalize.test.js` 与首回合对拍拦截。
+
 ## 差异归因（rules.js，白名单形态）
 
 | 类别        | 规则（每条带理由写死在 rules.js）                                                                                                                                                                                                                          |

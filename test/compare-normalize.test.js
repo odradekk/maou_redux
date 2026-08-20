@@ -202,6 +202,44 @@ test('夹具记录映射：button → menu、text → 同一分类器、br/divid
   assert.equal(stream[0].val, 0);
 });
 
+// —— #74：结构化进度条记录 → gauge（换皮不砸对拍的机制本体）——
+
+test('progress 记录 → gauge：键=条内文字、值=条后数值，percentage 不进事件流', () => {
+  const stream = fixture_stream([
+    { type: 'progress', percentage: 55.4, text: '阴核', out: ' 5540', row: 0 },
+    { type: 'progress', percentage: 0, text: '私处', out: '    0', row: 0 },
+    { type: 'progress', percentage: 100, text: '阴核', out: '250000', row: 5 },
+  ]);
+  assert.deepEqual(
+    stream.map((e) => ({ kind: e.kind, key: e.key, val: e.val })),
+    [
+      { kind: 'gauge', key: '阴核', val: 5540 },
+      { kind: 'gauge', key: '私处', val: 0 },
+      { kind: 'gauge', key: '阴核', val: 250000 },
+    ],
+  );
+  // percentage 是渲染口径（10 格字符条 floor vs 百分比条），不随条目下传——
+  // 表现变更不产生差异由这条保证
+  assert.ok(stream.every((e) => !('percentage' in e)));
+  // 右对齐填充由 Number 剥掉（与黄金侧正则抽数值同值）
+  assert.ok(stream.every((e) => Number.isInteger(e.val)));
+});
+
+test('ere 侧文本仍过网格解析：损耗条合成串照旧成 lossbar（#74 裁定保留）', () => {
+  // parse_grid_line 不随 #74 删除：损耗条（体力/气力 -N 行）仍由
+  // SOURCE_CHECK 以合成串产出（owner 在调教循环侧，本票边界外）。
+  const stream = fixture_stream([
+    {
+      type: 'text',
+      text: ' 体力[=======================-........] -5 ',
+      content: '',
+    },
+  ]);
+  assert.equal(stream[0].kind, 'lossbar');
+  assert.equal(stream[0].key, '体力');
+  assert.equal(stream[0].val, 5);
+});
+
 test('窗口边界：缺第二次输入即报错（两侧同构的纪律）', () => {
   const stream = [
     { kind: 'input', text: '0' },

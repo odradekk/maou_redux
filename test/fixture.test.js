@@ -613,17 +613,65 @@ test('printProgress 记 progress 条目并占一个 Row（顶层形态）', () =
   const fixture = create_era_fixture();
   fixture.era.printProgress(50, '内部文本', '外部文本');
 
+  // 不传 config → 引擎缺省 barWidth 24 物化进记录，且条后文字**不渲染**
+  //（el-col-0 = display:none）——危险的默认值，夹具按 app.vue 渲染层逐字
+  // 镜像（#74 发回整改）
   assert.deepEqual(fixture.lines, [
     {
       type: 'progress',
       percentage: 50,
       text: '内部文本',
       out: '外部文本',
+      bar_width: 24,
+      out_visible: false,
       row: 0,
     },
   ]);
   assert.equal(fixture.era.getLineCount(), 1);
   assert.deepEqual(fixture.calls, []);
+});
+
+// —— barWidth 镜像（#74 发回整改）：app.vue 渲染层公式 ——
+
+test('progress 的 barWidth 镜像：顶层与多列格两条路径、空 out 的 v-if', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  // 路径 1（顶层 printProgress 的第四参数）：barWidth<24 → 条后文字渲染
+  era.printProgress(50, '阴核', ' 5540', { barWidth: 16 });
+  // 路径 2（printMultiColumns 的 progress 格，config 随 GridObject 走）：
+  // 不给 config → 缺省 24 物化，条后文字整列不渲染
+  era.printMultiColumns([
+    {
+      type: 'progress',
+      percentage: 50,
+      inContent: '阴核',
+      outContent: ' 5540',
+    },
+    {
+      type: 'progress',
+      percentage: 50,
+      inContent: '阴核',
+      outContent: ' 5540',
+      config: { barWidth: 8 },
+    },
+  ]);
+
+  assert.deepEqual(
+    fixture.lines.map((l) => [l.bar_width, l.out_visible]),
+    [
+      [16, true], // 顶层 + config.barWidth=16
+      [24, false], // 多列格无 config：缺省即危险值
+      [8, true], // 多列格 + config.barWidth=8
+    ],
+  );
+
+  // 引擎渲染层 v-if="line.outContent"：out 为空串时即使 span>0 也不渲染
+  era.printProgress(100, '满档', '', { barWidth: 16 });
+  const last = fixture.lines.at(-1);
+  assert.equal(last.bar_width, 16);
+  assert.equal(last.out, '');
+  assert.equal(last.out_visible, false);
 });
 
 test('空 printMultiColumns 仍占一个 Row（引擎无条件 addTotalLines）', async () => {
