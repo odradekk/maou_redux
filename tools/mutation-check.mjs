@@ -1580,9 +1580,9 @@ const MUTATIONS = [
     expect_only: '口上域切片缺名',
   },
   // —— #72（域边界检查器与存量台账）——
-  // 注：M900+ 为派单占位号，合并时由集成方统一顺延（#70 撞号教训）。
+  // 注：M161–M166 由集成方在合并时从占位号 M900+ 顺延而来。
   {
-    desc: 'M900 跨域判定被掏空：属主等于本域恒真，跨域写永不成立',
+    desc: 'M161 跨域判定被掏空：属主等于本域恒真，跨域写永不成立',
     file: 'tools/domain-check.mjs',
     find: '      if (owner === domain) {',
     replace: '      if (true) {',
@@ -1590,7 +1590,7 @@ const MUTATIONS = [
     expect_only: '必须红且点名（新文件自动纳入）',
   },
   {
-    desc: 'M901 判定依据脱离产物：所有权区间坍缩为单下标，区间尾段全部失主',
+    desc: 'M162 判定依据脱离产物：所有权区间坍缩为单下标，区间尾段全部失主',
     file: 'tools/domain-check.mjs',
     find: '    const end = match[2] ? Number(match[2]) : start;',
     replace: '    const end = start;',
@@ -1598,7 +1598,7 @@ const MUTATIONS = [
     expect_only: '必须红且点名（新文件自动纳入）',
   },
   {
-    desc: 'M902 台账发霉门被拆（count > actual 恒假，消化存量后忘删条目不再红）',
+    desc: 'M163 台账发霉门被拆（count > actual 恒假，消化存量后忘删条目不再红）',
     file: 'tools/domain-check.mjs',
     find: '      if (count > actual) {',
     replace: '      if (false) {',
@@ -1606,7 +1606,7 @@ const MUTATIONS = [
     expect_only: '发霉',
   },
   {
-    desc: 'M903 基线计数门被拆（count > baseline 恒假，抬计数吸收新增欠账不再红）',
+    desc: 'M164 基线计数门被拆（count > baseline 恒假，抬计数吸收新增欠账不再红）',
     file: 'tools/domain-check.mjs',
     find: '      } else if (count > baseline) {',
     replace: '      } else if (false) {',
@@ -1614,7 +1614,7 @@ const MUTATIONS = [
     expect_only: '不得超基线',
   },
   {
-    desc: 'M904 基线键门被拆（baseline === undefined 恒假，基线外新条目不再红）',
+    desc: 'M165 基线键门被拆（baseline === undefined 恒假，基线外新条目不再红）',
     file: 'tools/domain-check.mjs',
     find: '      if (baseline === undefined) {',
     replace: '      if (false) {',
@@ -1622,7 +1622,7 @@ const MUTATIONS = [
     expect_only: '只能变短',
   },
   {
-    desc: 'M905 包装层白名单退化成目录口子（ere/facade/ 整目录跳过扫描）',
+    desc: 'M166 包装层白名单退化成目录口子（ere/facade/ 整目录跳过扫描）',
     file: 'tools/domain-check.mjs',
     find: '    if (rel === SDK_FILE || WRAPPER_FILES.includes(rel)) {',
     replace:
