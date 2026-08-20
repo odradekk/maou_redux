@@ -1,12 +1,22 @@
 /**
- * @file 门面字段命名表（issue #71）：所有权切片之后，每个下标的中文访问器名
- * 与原作出处。手维护的输入数据，生成器只读。
+ * @file 门面字段命名表（issue #71；#90 起与 yml/ 名字表合流）：所有权切片
+ * 之后，每个下标的中文访问器名与原作出处。手维护的输入数据，生成器只读。
  *
  * 判据：审校者手边摊着 ERB，能不能一眼确认生成码对不对。因此：
  *   - 字段名用中文（对得上 ERB 注释与指令名表），不是英文 snake_case；
  *   - 每个名字带出处（模板 / 旗标一览 / 角色口上文件行号）；
  *   - 未收录的属主下标不进门面（ownership 仍完整登记）。生成器跳过并按域
  *     报告跳过清单，绝不静默用数字当名字，也不预填 `tflag_N`。
+ *
+ * 两源合流（#90 裁定，依据见 issue #90）：talent/source/abl/palam/mark/exp
+ * 六张表的名字以 `yml/` 列名（引擎名字表，#43 转出、#60 归一简体）为唯一
+ * 真相，生成器直接读 yml——本文件对这六张表**只收 yml 没有的缺口**（如
+ * mark:4）或名字一致时的更精出处；同一下标两源名字不一致，生成器报错，
+ * 宁可红也不静默择一。cflag/tflag/item/global 的 yml 表是空表（引擎建桶
+ * 用、无列名），名字仍全部来自本文件。
+ *
+ * 移植自建表（delta/deltabase）没有 yml 表也没有 ownership/ 产物（target/
+ * 侧无源、测不出属主），名字与属主都在本文件声明，见 PORT_TABLE_OWNERS。
  *
  * 表键 = 引擎表名小写；内层键 = 数字下标。
  */
@@ -40,8 +50,11 @@ function erb(rel, extra) {
 }
 
 // —— CFLAG：口上域切片（ownership 属主 kojo 的 110 个下标）——
+// cflag 的 yml 表是空表（引擎建桶用），名字只能手收。#90 起属主 kojo 之外
+// 的域也按补名逐个进门面（其余属主下标仍跳过并报告，随各自子系统票）。
 
 const cflag = {
+  2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),
   202: named('简易助手_0', src(SRC_KXX, ':123 简易助手口上 CFLAG:202～210')),
@@ -380,7 +393,81 @@ const global = {
   99: named('致辞折叠开关', 'yml/Global.yml id 99'),
 };
 
-const NAMES = { cflag, flag, tflag, item, global };
+// —— MARK：只收 yml 缺口（#90）——
+// Mark.yml 列名覆盖 0-3/10；mark:4 原作侧无列名，语义从 @MARK_GOT_CHECK
+// 的用法读出：与 MARK:3 同值连写、只升不降（`MARK:4 <= N` 是取得门限），
+// 即反抗刻印的历史最高档，防降档后重取低级刻印。
+
+const mark = {
+  4: named(
+    '反抗刻印履历',
+    erb(
+      'SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
+      ':961-981 MARK:4 取得门限，与 MARK:3 同值连写（Mark.yml 无此列，人工命名）',
+    ),
+  ),
+};
+
+// —— DELTA：UP/DOWN 的 ere 等价物（移植自建，#90）——
+// 名字 = Palam.yml 同下标列名 +「增量」——审校者对着 @SOURCE_CHECK_UP_* 的
+// `UP:N += …` 与 palam 面板行就能确认。原作侧 UP/DOWN 是 Emuera 内建变量
+// 族，没有列名可引。
+
+const SRC_DELTA = 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB :666 起';
+
+const src_delta = (i) =>
+  src(SRC_DELTA, `UP:${i}（UP/DOWN→delta，CONTEXT.md 变量族）`);
+
+const delta = {
+  0: named('阴核增量', src_delta(0)),
+  1: named('私处增量', src_delta(1)),
+  2: named('肛门增量', src_delta(2)),
+  3: named('润滑增量', src_delta(3)),
+  4: named('恭顺增量', src_delta(4)),
+  5: named('欲情增量', src_delta(5)),
+  6: named('屈服增量', src_delta(6)),
+  7: named('习得增量', src_delta(7)),
+  8: named('耻情增量', src_delta(8)),
+  9: named('苦痛增量', src_delta(9)),
+  10: named('恐怖增量', src_delta(10)),
+  11: named('反感增量', src_delta(11)),
+  12: named('不快增量', src_delta(12)),
+  13: named('抑郁增量', src_delta(13)),
+  14: named('乳房增量', src_delta(14)),
+  15: named('局部增量', src_delta(15)),
+};
+
+// —— DELTABASE：LOSEBASE 的 ere 等价物，存负值（移植自建，#90）——
+// Base.yml 列名（体力/气力）+「损耗」；getter 返回的是负数（com0 写
+// -5/-50），正数语义由读方换号（source-check 的 lose() 即此）。
+
+const src_losebase = (i) =>
+  src(
+    'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB :411',
+    `LOSEBASE:${i}（LOSEBASE→deltabase 存负值，CONTEXT.md 变量族）`,
+  );
+
+const deltabase = {
+  0: named('体力损耗', src_losebase(0)),
+  1: named('气力损耗', src_losebase(1)),
+};
+
+// —— 移植自建表的属主声明（#90 裁定，依据见 issue #90）——
+// 这些表 target/ 侧没有源（UP/DOWN、LOSEBASE 是 Emuera 内建变量族），测量
+// 不出属主，只能人定；与名字同处声明，因为两者都是「测不出来、人工定」的
+// 决定。delta/deltabase 归 train：生命周期与 tflag 一致——回合内有效、由
+// 调教结算写入（@SOURCE_CHECK 累加）、回合末由调教结算消费清零（ere 侧
+// PALAM_UP_CHECK 当场结算 + 引擎 nextTurnInTrain 兜底）。
+// portcflag 同机制适用，但暂不声明属主：当前唯一字段「数据版本」由
+// ere/chara/chara-portcflag.js 的 init_portcflag 在角色加入点写入，单字段
+// 门面只是搬家不是收敛；第二个字段进来时随字段语义在此声明（ADR-0001 的
+// 「宁宽勿新」意味着 portcflag 会长出多域字段，属主随字段定，非一表一主）。
+const PORT_TABLE_OWNERS = {
+  delta: 'train',
+  deltabase: 'train',
+};
+
+const NAMES = { cflag, flag, tflag, item, global, mark, delta, deltabase };
 
 /** 合法访问器名：中文或英文 snake_case，可含数字下划线 */
 const NAME_RE = /^[A-Za-z\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*$/;
@@ -424,6 +511,7 @@ function get_name(table, index) {
 module.exports = {
   NAME_RE,
   NAMES,
+  PORT_TABLE_OWNERS,
   SRC_FLAG,
   SRC_KXX,
   get_name,

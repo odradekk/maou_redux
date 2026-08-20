@@ -1738,6 +1738,74 @@ const MUTATIONS = [
     tests: ['engine-contract'],
     expect_only: '引擎变了',
   },
+  // —— #90（二维门面按属主域铺开 + source-check 跨域写迁移）——
+  // 注：M179–M185 由集成方在合并时从占位号 M900+ 顺延而来。
+  {
+    desc: 'M179 yml 合流被拆（YML_NAME_FILES 删 mark，mark 名字只剩手写表）',
+    file: 'tools/gen-facade.js',
+    find: "  mark: 'Mark.yml',\n",
+    replace: '',
+    tests: ['gen-facade'],
+    expect_only: '两源合流',
+  },
+  {
+    desc: 'M180 两源冲突检查被拆（名字不一致时静默择手写，不再报错）',
+    file: 'tools/gen-facade.js',
+    find: `    if (from_yml !== manual.name) {
+      throw new Error(
+        \`两源名字不一致 \${table}:\${index}：yml 列名「\${from_yml}」vs facade-names「\${manual.name}」——yml 列名是唯一真相，先对齐再生成\`,
+      );
+    }`,
+    replace: `    if (from_yml !== manual.name) {
+      return manual;
+    }`,
+    tests: ['gen-facade'],
+    expect_only: '名字不一致',
+  },
+  {
+    desc: 'M181 delta 属主裁定被改（train → system，切片落错域文件）',
+    file: 'tools/facade-names.js',
+    find: `const PORT_TABLE_OWNERS = {
+  delta: 'train',`,
+    replace: `const PORT_TABLE_OWNERS = {
+  delta: 'system',`,
+    tests: ['gen-facade'],
+    expect_only: '移植自建表门面',
+  },
+  {
+    desc: 'M182 cflag 好感度补名下标错位（2 → 3，写进别的槽）',
+    file: 'tools/facade-names.js',
+    find: "  2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
+    replace:
+      "  3: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
+    tests: ['gen-facade'],
+    expect_only: '好感度',
+  },
+  {
+    desc: 'M183 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
+    file: 'ere/event/source-check.js',
+    find: 'game.train.屈服刻印结算 = 1; // 屈服刻印１相当',
+    replace: "era.set('tflag:200', 1); // 屈服刻印１相当",
+    tests: ['source-check'],
+    expect_only: '跨域写走门面',
+  },
+  {
+    desc: 'M184 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
+    file: 'ere/event/source-check.js',
+    find: 'chara(cid).system.反抗刻印 = 1;',
+    replace: 'era.set(`mark:${cid}:3`, 1);',
+    tests: ['source-check'],
+    expect_only: '跨域写走门面',
+  },
+  {
+    desc: 'M185 产物出处路径指向不存在的文件（#71 翻过车的一类）',
+    file: 'ere/facade/chara-train.js',
+    find: '   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
+    replace:
+      '   * 源: target/ERB/SYSTEM/__NOPE__.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
+    tests: ['gen-facade'],
+    expect_only: '出处路径',
+  },
 ];
 
 function run_one(m, index) {
