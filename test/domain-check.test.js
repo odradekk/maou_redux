@@ -24,9 +24,15 @@
  *   6. 台账不许发霉：条目在代码里已不存在（访问被删或改写）也红。
  *
  * 探针条目选零计数/独立文案的靶子，各门的报错文案互不重叠——变异拆掉
- * 哪条门，对应用例就因「红或文案缺失」而失败（M900–M905）。
+ * 哪条门，对应用例就因「红或文案缺失」而失败（M161–M166）。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
+ *
+ * 写坏型探针一律住在**临时仓库副本**里（#89 整改的阻断 2，两轮）：就
+ * 地写工作树会与 node --test 的并行读者撞车（#91 勘误），而整棵递归拷贝
+ * 又会被并行探针的文件增删打成 ENOENT——副本按清单最小拷贝（ere/ 全树
+ * + ownership/ 产物 + 工具与台账，判定面与真树一致），进程内单例、文件
+ * 内用例串行复用，探针残骸先清、台账改动 finally 清单回拷还原。
  */
 
 'use strict';
@@ -35,20 +41,14 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
-const { test } = require('node:test');
+const { after, test } = require('node:test');
+
+const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'domain-check.mjs');
-const LEDGER = path.join(REPO_ROOT, 'tools', 'domain-ledger.mjs');
-const PROBE = path.join(REPO_ROOT, 'ere', '__domain_probe__.js');
-const FACADE_PROBE = path.join(
-  REPO_ROOT,
-  'ere',
-  'facade',
-  '__domain_probe__.js',
-);
 
-/** 跑一遍工具，返回 { status, output } */
+/** 跑一遍真树工具，返回 { status, output }（只读的对照用例用） */
 function run_tool() {
   const r = spawnSync(process.execPath, [TOOL], {
     cwd: REPO_ROOT,
@@ -58,7 +58,45 @@ function run_tool() {
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
-/** 探针模块正文：一处 tflag:899（train 属主）的裸跨域写。注释不含 :数字（trace-check 的 ERB 完整性锁并行在扫 ere/） */
+// 探针副本清单（最小集）+ 进程内单例：域扫描的判定面 = ere/ 全树（扫描 +
+// facade 访问器解析）+ ownership/ 产物 + 工具与其台账，绿/红判定与真树
+// 平移。副本的 tools/ 运行时从真树拷入，变异到工具本体的条目仍传得进。
+const PROBE_REPO_ENTRIES = [
+  'ere',
+  'ownership',
+  'tools/domain-check.mjs',
+  'tools/domain-ledger.mjs',
+];
+
+let probe_repo_cache;
+
+/** 单例副本（本文件全部写坏型探针共用一份；文件内用例串行） */
+function probe_repo() {
+  probe_repo_cache ??= make_probe_repo(PROBE_REPO_ENTRIES);
+  return probe_repo_cache;
+}
+
+after(() => {
+  if (probe_repo_cache) {
+    fs.rmSync(probe_repo_cache, { recursive: true, force: true });
+  }
+});
+
+/** 跑副本里的工具（写坏型探针用，与 run_tool 同款返回） */
+function run_tool_in(root) {
+  const r = spawnSync(
+    process.execPath,
+    [path.join(root, 'tools', 'domain-check.mjs')],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      maxBuffer: 16 * 1024 * 1024,
+    },
+  );
+  return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
+}
+
+/** 探针模块正文：一处 tflag:899（train 属主）的裸跨域写。住在副本里，trace-check 等并行扫描器看不见它；注释仍不含 :数字，保持与就地探针时代同形状 */
 const PROBE_BODY = [
   '// 探针模块（test/domain-check.test.js 写入，跑完即删）：',
   '// 一处未登记的裸跨域写，域边界检查器的靶子。',
@@ -78,15 +116,17 @@ test('domain-check 全绿（跨域写全数在账 + 台账与基线对账，退�
 });
 
 test('探针：往 ere/ 塞未登记跨域写的模块，domain-check 必须红且点名（新文件自动纳入）', () => {
+  const root = probe_repo();
+  const probe = path.join(root, 'ere', '__domain_probe__.js');
   const cleanup = () => {
-    if (fs.existsSync(PROBE)) {
-      fs.unlinkSync(PROBE);
+    if (fs.existsSync(probe)) {
+      fs.unlinkSync(probe);
     }
   };
   cleanup(); // 上一次异常退出留下的残骸先清
   try {
-    fs.writeFileSync(PROBE, PROBE_BODY, 'utf8');
-    const { status, output } = run_tool();
+    fs.writeFileSync(probe, PROBE_BODY, 'utf8');
+    const { status, output } = run_tool_in(root);
     assert.notEqual(
       status,
       0,
@@ -105,24 +145,26 @@ test('探针：往 ere/ 塞未登记跨域写的模块，domain-check 必须红�
     cleanup();
   }
   // 删净之后复绿（也证明探针真的进过扫描）
-  const restored = run_tool();
+  const restored = run_tool_in(root);
   assert.equal(
     restored.status,
     0,
-    `探针删了还红——文件系统或工具有一边不对：\n${restored.output}`,
+    `探针删了还红——副本或工具有一边不对：\n${restored.output}`,
   );
 });
 
 test('探针：包装层不是目录逃生门——往 ere/facade/ 塞未登记文件也红', () => {
+  const root = probe_repo();
+  const facade_probe = path.join(root, 'ere', 'facade', '__domain_probe__.js');
   const cleanup = () => {
-    if (fs.existsSync(FACADE_PROBE)) {
-      fs.unlinkSync(FACADE_PROBE);
+    if (fs.existsSync(facade_probe)) {
+      fs.unlinkSync(facade_probe);
     }
   };
   cleanup();
   try {
-    fs.writeFileSync(FACADE_PROBE, PROBE_BODY, 'utf8');
-    const { status, output } = run_tool();
+    fs.writeFileSync(facade_probe, PROBE_BODY, 'utf8');
+    const { status, output } = run_tool_in(root);
     assert.notEqual(
       status,
       0,
@@ -139,16 +181,18 @@ test('探针：包装层不是目录逃生门——往 ere/facade/ 塞未登记�
   } finally {
     cleanup();
   }
-  const restored = run_tool();
+  const restored = run_tool_in(root);
   assert.equal(
     restored.status,
     0,
-    `探针删了还红——文件系统或工具有一边不对：\n${restored.output}`,
+    `探针删了还红——副本或工具有一边不对：\n${restored.output}`,
   );
 });
 
 test('台账只能变短：塞基线外新条目进台账，工具必须红且点名', () => {
-  const original = fs.readFileSync(LEDGER, 'utf8');
+  const root = probe_repo();
+  const ledger = path.join(root, 'tools', 'domain-ledger.mjs');
+  const original = fs.readFileSync(ledger, 'utf8');
   // 探针条目选零计数：不会触发发霉门（0 不大于代码实际 0），唯一会红的
   // 就是「不在 #72 基线内」——文案隔离，变异拆门时可被单独打死。
   const anchor = "  'ere/event/event-com.js': {\n    'tflag:100': 1,\n  },";
@@ -158,8 +202,8 @@ test('台账只能变短：塞基线外新条目进台账，工具必须红且�
   const probe_block =
     "  'ere/event/event-com.js': {\n    'tflag:100': 1,\n    'flag:9': 0,\n  },";
   try {
-    fs.writeFileSync(LEDGER, original.replace(anchor, probe_block), 'utf8');
-    const { status, output } = run_tool();
+    fs.writeFileSync(ledger, original.replace(anchor, probe_block), 'utf8');
+    const { status, output } = run_tool_in(root);
     assert.notEqual(
       status,
       0,
@@ -170,18 +214,20 @@ test('台账只能变短：塞基线外新条目进台账，工具必须红且�
       `探针条目未被以基线名义点名：\n${output}`,
     );
   } finally {
-    fs.writeFileSync(LEDGER, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
+  const restored = run_tool_in(root);
   assert.equal(
     restored.status,
     0,
-    `台账还原后还红——文件系统或工具有一边不对：\n${restored.output}`,
+    `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
   );
 });
 
 test('台账计数不得超基线：抬升既有条目计数，工具必须红且点名', () => {
-  const original = fs.readFileSync(LEDGER, 'utf8');
+  const root = probe_repo();
+  const ledger = path.join(root, 'tools', 'domain-ledger.mjs');
+  const original = fs.readFileSync(ledger, 'utf8');
   // 抬计数会同时触发发霉（计数大于代码实际），故断言盯「超 #72 基线」
   // 文案——证明基线这道门本身在退出码里，而不只是发霉门的影子。
   const anchor = "    'tflag:34': 2,";
@@ -190,11 +236,11 @@ test('台账计数不得超基线：抬升既有条目计数，工具必须红�
   }
   try {
     fs.writeFileSync(
-      LEDGER,
+      ledger,
       original.replace(anchor, "    'tflag:34': 3,"),
       'utf8',
     );
-    const { status, output } = run_tool();
+    const { status, output } = run_tool_in(root);
     assert.notEqual(
       status,
       0,
@@ -205,38 +251,40 @@ test('台账计数不得超基线：抬升既有条目计数，工具必须红�
       `探针条目未被以基线名义点名：\n${output}`,
     );
   } finally {
-    fs.writeFileSync(LEDGER, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
+  const restored = run_tool_in(root);
   assert.equal(
     restored.status,
     0,
-    `台账还原后还红——文件系统或工具有一边不对：\n${restored.output}`,
+    `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
   );
 });
 
 test('台账不许发霉：条目在代码里已不存在也红', () => {
-  const original = fs.readFileSync(LEDGER, 'utf8');
+  const root = probe_repo();
+  const ledger = path.join(root, 'tools', 'domain-ledger.mjs');
+  const original = fs.readFileSync(ledger, 'utf8');
   // 计数 1 的虚构条目：基线门与发霉门都会红，断言盯「发霉」文案——
   // 变异拆掉发霉门时，本用例因文案缺失而失败。
   const anchor = "  'ere/event/event-com.js': {\n    'tflag:100': 1,\n  },";
   const probe_block =
     "  'ere/event/event-com.js': {\n    'tflag:100': 1,\n    'flag:9': 1,\n  },";
   try {
-    fs.writeFileSync(LEDGER, original.replace(anchor, probe_block), 'utf8');
-    const { status, output } = run_tool();
+    fs.writeFileSync(ledger, original.replace(anchor, probe_block), 'utf8');
+    const { status, output } = run_tool_in(root);
     assert.notEqual(status, 0, '发霉条目必须让工具非 0');
     assert.ok(
       output.includes('flag:9') && output.includes('条目发霉'),
       `发霉条目未被逐条点名：\n${output}`,
     );
   } finally {
-    fs.writeFileSync(LEDGER, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
+  const restored = run_tool_in(root);
   assert.equal(
     restored.status,
     0,
-    `台账还原后还红——文件系统或工具有一边不对：\n${restored.output}`,
+    `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
   );
 });

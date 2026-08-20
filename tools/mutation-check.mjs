@@ -46,13 +46,15 @@
 // 工具会声称自己在守、退出码却是 0）。
 //
 // 无引擎环境（CI runner）：变异靶的测试若整组引擎门控（engine-bundle
-// 找不到 asar 时逐用例 skip 并打警告），该条分类为「跳过（无引擎）」，
-// 总数对 ENGINE_SKIP_BASELINE 对账、偏离即红——引擎对拍的覆盖面收缩
-// 必须是有意识的提交（与 test/engine-skip-baseline.txt 同一口径）。
+// 找不到 asar 时逐用例 skip 并打警告），该条分类为「跳过（门控测试绿 +
+// 缺引擎警告）」——分类是纯输出判定，不掺环境；总数对 ENGINE_SKIP_
+// BASELINE 对账、偏离即红——引擎对拍的覆盖面收缩必须是有意识的提交
+// （与 test/engine-skip-baseline.txt 同一口径）。
 // **对账只在全量档生效**：基线是全量口径的不变量，抽样/切片子集没有
-// 期望跳过数，不对账（见 verdict_problems）。引擎在场时跳过数必须为
-// 0，该分类在任何档位都是硬判。CI 的「跳过」仍是弱路径：无引擎处
-// 真假绿分不清，硬口径以有引擎的本地全量为准。
+// 期望跳过数，不对账（见 verdict_problems）。**引擎在场时跳过数必须为
+// 0，任何档位都是硬判**——这条否决权集中在 verdict_problems，与分类
+// 分离，行为锁可直接钉（#89 二次验收的探针 G）。CI 的「跳过」仍是弱
+// 路径：无引擎处真假绿分不清，硬口径以有引擎的本地全量为准。
 //
 // 并行模式（--jobs K）用隔离临时副本：主树只读，每个子进程在自己那份
 // 副本里就地变异（副本 = ere/yml/res/test/tools/ownership/target 等白名单
@@ -322,9 +324,17 @@ process.on('SIGINT', () => {
 });
 
 /**
+ * 单条分类是**纯输出判定**（不掺环境）：门控测试整组绿 + 输出含缺引擎
+ * 警告 = engine-skip。「引擎在场时跳过必须为 0」的否决权全部集中在
+ * verdict_problems——分类与判定分离后，这条不变量从 CLI 可观测、可测
+ * （#89 二次验收的探针 G：判定若被抽样档短路，行为锁当场红）。真实
+ * 跑动里父进程与子测试的引擎判定总是一致，两侧行为不变；只有 --asar
+ * 错配（父进程说有引擎、子测试看不到）的夹具形态会走到「在场却跳过」，
+ * 由 verdict 拦下。
+ *
  * @returns {'caught'|'miss'|'engine-skip'|'find-mismatch'|'restore-fail'}
  */
-function run_one(root, engine_present, m) {
+function run_one(root, m) {
   const full = path.join(root, m.file);
   const original = fs.readFileSync(full, 'utf8');
   const count = original.split(m.find).length - 1;
@@ -366,12 +376,10 @@ function run_one(root, engine_present, m) {
     );
     return 'caught';
   }
-  if (
-    !failed_as_expected &&
-    !engine_present &&
-    output.includes(ENGINE_WARN_MARKER)
-  ) {
-    console.log(`⏭ [${stable_id(m.desc)}] ${m.desc} — 跳过（无引擎）`);
+  if (!failed_as_expected && output.includes(ENGINE_WARN_MARKER)) {
+    console.log(
+      `⏭ [${stable_id(m.desc)}] ${m.desc} — 跳过（门控测试绿 + 缺引擎警告）`,
+    );
     return 'engine-skip';
   }
   console.log(
@@ -399,10 +407,10 @@ function select_entries(entries, args) {
   return entries;
 }
 
-function execute(entries, args, engine_present) {
+function execute(entries, args) {
   const tally = { caught: 0, skipped: 0, red: 0 };
   for (const m of select_entries(entries, args)) {
-    const r = run_one(args.root, engine_present, m);
+    const r = run_one(args.root, m);
     if (r === 'caught') tally.caught += 1;
     else if (r === 'engine-skip') tally.skipped += 1;
     else tally.red += 1;
@@ -576,9 +584,7 @@ async function main() {
   }
   const started = Date.now();
   const tally =
-    args.jobs > 1
-      ? await execute_jobs(args)
-      : execute(entries, args, engine_present);
+    args.jobs > 1 ? await execute_jobs(args) : execute(entries, args);
   const elapsed = ((Date.now() - started) / 1000).toFixed(1);
   const problems = verdict_problems(tally, args, engine_present);
   console.log(

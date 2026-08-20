@@ -1,5 +1,5 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「台账对得上」，十条
+ * @file mutation-check 的行为锁（issue #89）：工具不只「台账对得上」，十一条
  * 行为在此钉死。全部通过临时目录夹具驱动（--root/--ledger-dir/--baseline/
  * --asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
@@ -27,6 +27,10 @@
  *      CI 的 PR 档正是 ubuntu 无引擎 + --sample 12）。
  *  10. 抽样含门控条目同样退 0：该条按「跳过（无引擎）」放行，不得因
  *      跳过数 ≠ 全量基线而红（全量档的对账由用例 8 锁）。
+ *  11. 引擎在场的硬判不被抽样档短路：引擎「在场」+ 抽样 + 门控条目
+ *      跳过 = 未拦截，任何档位都必须退 1（#89 二次验收的探针 G——
+ *      「引擎在场时跳过必须为 0」这条不变量声称任何档位不变，此前
+ *      没有测试守它）。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -350,7 +354,7 @@ test('无引擎跳过分类：引擎缺失按跳过放行对账；引擎在场�
       `无引擎 + 门控测试 = 跳过且对账过，实际退出 ${engineless.status}：\n${engineless.output}`,
     );
     assert.ok(
-      engineless.output.includes('跳过（无引擎）'),
+      engineless.output.includes('跳过（门控测试绿 + 缺引擎警告）'),
       `应点名跳过分类：\n${engineless.output}`,
     );
 
@@ -452,6 +456,58 @@ test('抽样含门控条目同样退 0：抽样档不对账，门控条目按跳
     assert.ok(
       output.includes('SUMMARY caught=1 skipped=1 red=0'),
       `应报告 1 拦 / 1 跳 / 0 红：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('引擎在场的硬判不被抽样档短路：sample + 门控条目跳过也必须退 1', () => {
+  // #89 二次验收的探针 G：把「引擎在场时跳过必须为 0」也按 is_partial
+  // 短路（tally.skipped > 0 && !is_partial(args)）时，十条锁全绿——这条
+  // 声称「任何档位不变」的不变量没有测试守。本条补上：引擎「在场」的
+  // 抽样档里，门控测试整组 skip 的条目就是未拦截（红=false），必须退 1。
+  const root = make_fixture();
+  try {
+    fs.writeFileSync(
+      path.join(root, 'test', 'gated.test.js'),
+      [
+        "const { test } = require('node:test');",
+        "console.warn('[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎对拍用例将跳过');",
+        "test('门控用例', { skip: true }, () => {});",
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'T7 引擎门控条目', tests: ['gated'] },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '1',
+      '--asar',
+      path.join(root, 'lib', 'calc.js'), // 任意存在文件：引擎「在场」
+      '--sample',
+      '1',
+      '--seed',
+      'g',
+    ]);
+    assert.notEqual(
+      status,
+      0,
+      '引擎在场 + 抽样 + 门控条目被跳过 = 未拦截，抽样档不得放宽硬判',
+    );
+    assert.ok(
+      output.includes('SUMMARY caught=0 skipped=1 red=0'),
+      `应报告 0 拦 / 1 跳 / 0 红（分类是输出判定，否决权在 verdict）：\n${output}`,
+    );
+    assert.ok(
+      output.includes('引擎在场'),
+      `应以「引擎在场」名义点红跳过分类：\n${output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

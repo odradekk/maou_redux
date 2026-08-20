@@ -10,15 +10,17 @@
  * 伪造引擎用 test/helpers/fake-asar.js 构造的最小 asar（同款头结构），
  * 不碰真实引擎。
  *
- * 写坏型探针一律住在**临时仓库副本**里（#89 发回整改的阻断 2）：node --test
- * 并行跑测试文件，就地改 ere/page/page-train.js 这类工作树文件会与并行读者
- * （page-train 行为测试要 require 该模块、mutation-check 快档的 --verify 要
- * 读全部靶文件）撞车——实测 16 核 Linux 上 node --test 五跑四红，master 就有
- * 的缺陷，--jobs 4 的对照运行把它放大成硬失败。副本带齐工具按 REPO 读的
- * 三处（ere/ 扫描、tools/ 本体与数据、test/helpers/era-fixture.js 见证），
- * 探针改副本、跑副本里的工具，进程怎么死都污染不到仓库（与 #92 探针残留
- * 教训同一条原则：夹具住临时目录）。只读型探针（伪造 asar、全绿对照）
- * 仍跑真树真工具——它们不写任何东西，无竞态可言。
+ * 写坏型探针一律住在**临时仓库副本**里（#89 整改的阻断 2，两轮）：node
+ * --test 并行跑测试文件，就地改 ere/page/page-train.js 这类工作树文件会
+ * 与并行读者撞车（16 核 Linux 五跑四红）；而副本若整棵拷 ere/，递归拷贝
+ * 在乎的不是内容是「条目在不在」，并行的探针在 ere/ 里增删文件会让
+ * cpSync 中途 ENOENT（Windows npm test 7/9 红的回归形态）。故副本按
+ * **清单最小拷贝**（PROBE_REPO_ENTRIES：工具本体 + 事实表 + 台账 + 全仓
+ * 唯一的 progress 调用点 + 见证所在的夹具——门 A 在副本里扫 ere/ 只见
+ * page-train.js，调用点 1 处与真树合计一致，判定可平移）；副本进程内
+ * 单例、文件内用例串行复用，finally 用清单回拷还原。副本的 tools/ 在
+ * 运行时从真树拷入，变异到工具本体的条目仍传得进副本。只读型探针
+ * （伪造 asar、全绿对照）仍跑真树真工具——它们不写任何东西，无竞态可言。
  */
 
 'use strict';
@@ -28,9 +30,10 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { test } = require('node:test');
+const { after, test } = require('node:test');
 
 const { build_asar, build_renderer_map } = require('./helpers/fake-asar');
+const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'engine-contract-check.mjs');
@@ -50,21 +53,28 @@ function run_tool(args = [], extra_env = {}) {
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
-/** 临时仓库副本：探针的写坏靶子。跑的是副本里的工具（REPO = 副本根）。 */
-function make_probe_repo() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-probe-'));
-  for (const dir of ['ere', 'tools']) {
-    fs.cpSync(path.join(REPO_ROOT, dir), path.join(root, dir), {
-      recursive: true,
-    });
-  }
-  fs.mkdirSync(path.join(root, 'test', 'helpers'), { recursive: true });
-  fs.cpSync(
-    path.join(REPO_ROOT, 'test', 'helpers', 'era-fixture.js'),
-    path.join(root, 'test', 'helpers', 'era-fixture.js'),
-  );
-  return root;
+// 探针副本清单（最小集）+ 进程内单例：写坏型探针的私有地
+const PROBE_REPO_ENTRIES = [
+  'tools/engine-contract-check.mjs',
+  'tools/engine-contract-facts.mjs',
+  'tools/engine-contract-ledger.mjs',
+  'ere/page/page-train.js',
+  'test/helpers/era-fixture.js',
+];
+
+let probe_repo_cache;
+
+/** 单例副本（本文件全部写坏型探针共用一份；文件内用例串行） */
+function probe_repo() {
+  probe_repo_cache ??= make_probe_repo(PROBE_REPO_ENTRIES);
+  return probe_repo_cache;
 }
+
+after(() => {
+  if (probe_repo_cache) {
+    fs.rmSync(probe_repo_cache, { recursive: true, force: true });
+  }
+});
 
 /** 跑副本里的工具（写坏型探针用，与 run_tool 同款返回） */
 function run_tool_in(root, args = []) {
@@ -107,7 +117,7 @@ test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 台账两道�
 });
 
 test('调用点规则：barWidth 常量改成 24 必须红且点名（#74 形态的守门）', () => {
-  const root = make_probe_repo();
+  const root = probe_repo();
   try {
     const page_train = path.join(root, 'ere', 'page', 'page-train.js');
     const original = fs.readFileSync(page_train, 'utf8');
@@ -138,12 +148,12 @@ test('调用点规则：barWidth 常量改成 24 必须红且点名（#74 形态
       `探针还原后还红——副本或真树有一边不对：\n${restored.output}`,
     );
   } finally {
-    fs.rmSync(root, { recursive: true, force: true });
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
 });
 
 test('调用点规则：删掉 config（不显式传 barWidth）必须红', () => {
-  const root = make_probe_repo();
+  const root = probe_repo();
   try {
     const page_train = path.join(root, 'ere', 'page', 'page-train.js');
     const original = fs.readFileSync(page_train, 'utf8');
@@ -161,14 +171,14 @@ test('调用点规则：删掉 config（不显式传 barWidth）必须红', () =
       `探针未被点名：\n${output}`,
     );
   } finally {
-    fs.rmSync(root, { recursive: true, force: true });
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
 });
 
 test('规则阈值来自事实表（同一条事实不抄两遍）：改表里的 max，规则跟着变', () => {
   // 把事实表的 max 从 23 放宽到 24，再把调用点改成 24——工具必须转绿：
   // 证明阈值读的是共享事实表，检查器里没有第二份数字
-  const root = make_probe_repo();
+  const root = probe_repo();
   try {
     const facts = path.join(root, 'tools', 'engine-contract-facts.mjs');
     const page_train = path.join(root, 'ere', 'page', 'page-train.js');
@@ -202,7 +212,7 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
       `max 放宽到 24 后 barWidth=24 应放行（阈值与事实表同源）：\n${output}`,
     );
   } finally {
-    fs.rmSync(root, { recursive: true, force: true });
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
 });
 
@@ -284,7 +294,7 @@ test('引擎缺失 → 退 0 并警告（skip 语义，不是失守）', () => {
 });
 
 test('台账只能变短：基线外新条目必须红且点名', () => {
-  const root = make_probe_repo();
+  const root = probe_repo();
   try {
     const ledger = path.join(root, 'tools', 'engine-contract-ledger.mjs');
     const original = fs.readFileSync(ledger, 'utf8');
@@ -314,12 +324,12 @@ test('台账只能变短：基线外新条目必须红且点名', () => {
       `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
     );
   } finally {
-    fs.rmSync(root, { recursive: true, force: true });
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
 });
 
 test('台账不许发霉：见证注释不在夹具里的条目必须红', () => {
-  const root = make_probe_repo();
+  const root = probe_repo();
   try {
     const ledger = path.join(root, 'tools', 'engine-contract-ledger.mjs');
     const original = fs.readFileSync(ledger, 'utf8');
@@ -351,6 +361,6 @@ test('台账不许发霉：见证注释不在夹具里的条目必须红', () =>
       `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
     );
   } finally {
-    fs.rmSync(root, { recursive: true, force: true });
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
 });
