@@ -59,7 +59,7 @@ D:\Code\era\
 
 ```
 npm test                 # node --test，零第三方依赖
-npx eslint .             # 格式 + 代码错误，--fix 可自动修
+npx eslint . --max-warnings 0   # 格式 + 代码错误，零警告口径（与 CI 一致），--fix 可自动修
 npx prettier --check .   # 仅格式，--write 可自动改
 ```
 
@@ -68,6 +68,10 @@ npx prettier --check .   # 仅格式，--write 可自动改
 - 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则里**各写了一份且取值相同**。改格式约定必须同时改这两处，否则两条命令会给出互相矛盾的结果。
 - `.prettierignore` 是必需品：prettier 默认扫描全仓库，没有它 `--write` 会重写只读的 `target/`（68MB，且在其中的 Shift-JIS 日文 HTML 上直接报错退出），也会把 `yml/` 产物的双引号键名改成单引号。
 - 新 worktree 若还没装 `node_modules`，`npx eslint` 会去拉 v9 并因找不到 `eslint.config.js` 报错——那是环境问题，先 `npm ci`。
+
+### CI（无引擎档）
+
+`.github/workflows/ci.yml`（#92）在 PR 与 push 到 master 时于 ubuntu runner 上复跑三件套（`npm run test:ci` → `npx eslint . --max-warnings 0` → `npx prettier --check .`），外加一条**跳过数守护**：CI 机器没有引擎，引擎依赖用例按 `test/engine-skip-baseline.txt` 的基线数跳过（数字以该文件为唯一真相，定档勘误见 #92），跳过数偏离基线即红。**新增引擎依赖用例必须同步改基线**，让覆盖面的收缩是一次有意识的提交。两条边界：**引擎对拍与 `tools/mutation-check.mjs`（Windows 专用，归 #89）不在 CI 内；CI 绿 ≠ 本地全过。** 守护只在无引擎环境有意义——引擎在场时跳过数为 0，对基线必然红。
 
 ### 静态数据目录
 

@@ -2,6 +2,10 @@ node_modules/
 ere.config.json
 sav/*.sav
 !sav/.gitkeep
+
+# test:ci 落盘的 TAP 报告（CI 与本地的临时产物，供跳过数守护对账）
+test-report.tap
+
 .DS_Store
 Thumbs.db
 desktop.ini
