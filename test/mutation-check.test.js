@@ -1,5 +1,5 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「台账对得上」，八条
+ * @file mutation-check 的行为锁（issue #89）：工具不只「台账对得上」，十条
  * 行为在此钉死。全部通过临时目录夹具驱动（--root/--ledger-dir/--baseline/
  * --asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
@@ -22,6 +22,11 @@
  *   8. 无引擎跳过分类：引擎缺失（--asar none）时整组门控的变异按「跳过」
  *      放行且计入对账；引擎在场（--asar 指到存在文件）时同场景必须红
  *      ——跳过分类只在无引擎处成立，硬口径不因此松动。
+ *   9. 抽样档不对账跳过基线：无引擎 + 抽样全拦 → 退 0（#89 发回整改的
+ *      阻断 1——ENGINE_SKIP_BASELINE 是全量不变量，子集没有期望跳过数；
+ *      CI 的 PR 档正是 ubuntu 无引擎 + --sample 12）。
+ *  10. 抽样含门控条目同样退 0：该条按「跳过（无引擎）」放行，不得因
+ *      跳过数 ≠ 全量基线而红（全量档的对账由用例 8 锁）。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -360,6 +365,93 @@ test('无引擎跳过分类：引擎缺失按跳过放行对账；引擎在场�
       with_engine.status,
       0,
       '引擎在场时未被拦截必须非 0——跳过分类不掩盖真假绿',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('抽样档不对账跳过基线：无引擎 + 抽样全拦（没抽中门控条目）→ 退 0（CI PR 档形态）', () => {
+  // #89 发回整改的阻断 1：ENGINE_SKIP_BASELINE 是全量口径的不变量，
+  // 抽样子集没有期望跳过数——拿全量基线对账抽样必然假红（干净 Linux 上
+  // --sample 3 三条全拦仍退 1，同命令在有引擎的 Windows 上试不出来）。
+  // 本用例不传 --skip-baseline：锁的是抽样档默认就不对账。
+  const root = make_fixture();
+  try {
+    const entries = [1, 2, 3, 4].map((i) => ({
+      ...GOOD_ENTRY,
+      desc: `T${i} 加倍系数改坏（抽样样本 ${i}）`,
+    }));
+    const ledger = write_ledger(root, entries);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '4',
+      '--asar',
+      'none',
+      '--sample',
+      '3',
+      '--seed',
+      'ci',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `无引擎 + 抽样 3 条全拦应退 0，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('SUMMARY caught=3 skipped=0 red=0'),
+      `应报告 3 拦 / 0 跳 / 0 红：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('抽样含门控条目同样退 0：抽样档不对账，门控条目按跳过放行', () => {
+  // 抽样子集恰好含引擎门控条目时，该条分类「跳过（无引擎）」；子集没有
+  // 期望跳过数，不得因跳过数 ≠ 全量基线而红。全量档的对账另有用例在锁。
+  const root = make_fixture();
+  try {
+    fs.writeFileSync(
+      path.join(root, 'test', 'gated.test.js'),
+      [
+        "const { test } = require('node:test');",
+        "console.warn('[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎对拍用例将跳过');",
+        "test('门控用例', { skip: true }, () => {});",
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'T5 加倍系数改坏（普通条目）' },
+      { ...GOOD_ENTRY, desc: 'T6 引擎门控条目', tests: ['gated'] },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '2',
+      '--asar',
+      'none',
+      '--sample',
+      '2',
+      '--seed',
+      'ci',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `抽样含门控条目（1 拦 + 1 跳）应退 0，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('SUMMARY caught=1 skipped=1 red=0'),
+      `应报告 1 拦 / 1 跳 / 0 红：\n${output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

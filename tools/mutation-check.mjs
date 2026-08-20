@@ -49,8 +49,10 @@
 // 找不到 asar 时逐用例 skip 并打警告），该条分类为「跳过（无引擎）」，
 // 总数对 ENGINE_SKIP_BASELINE 对账、偏离即红——引擎对拍的覆盖面收缩
 // 必须是有意识的提交（与 test/engine-skip-baseline.txt 同一口径）。
-// 引擎在场时跳过数必须为 0，该分类恒为硬判。CI 的「跳过」仍是弱路径：
-// 无引擎处真假绿分不清，硬口径以有引擎的本地全量为准。
+// **对账只在全量档生效**：基线是全量口径的不变量，抽样/切片子集没有
+// 期望跳过数，不对账（见 verdict_problems）。引擎在场时跳过数必须为
+// 0，该分类在任何档位都是硬判。CI 的「跳过」仍是弱路径：无引擎处
+// 真假绿分不清，硬口径以有引擎的本地全量为准。
 //
 // 并行模式（--jobs K）用隔离临时副本：主树只读，每个子进程在自己那份
 // 副本里就地变异（副本 = ere/yml/res/test/tools/ownership/target 等白名单
@@ -408,6 +410,11 @@ function execute(entries, args, engine_present) {
   return tally;
 }
 
+/** 本轮是否只执行台账的一个子集（抽样 / 切片） */
+function is_partial(args) {
+  return args.sample !== undefined || args.slice !== undefined;
+}
+
 function verdict_problems(tally, args, engine_present) {
   const problems = [];
   if (tally.red > 0) {
@@ -417,7 +424,12 @@ function verdict_problems(tally, args, engine_present) {
     if (tally.skipped > 0) {
       problems.push(`引擎在场却有 ${tally.skipped} 条按「跳过」处理（不允许）`);
     }
-  } else if (args.skip_baseline !== 'off') {
+  } else if (!is_partial(args) && args.skip_baseline !== 'off') {
+    // ENGINE_SKIP_BASELINE 是全量口径的不变量（7/186 恰好引擎门控）。
+    // 抽样/切片是子集，没有「期望跳过数」——抽 12 条命中 7 条门控的概率
+    // 约为零，拿全量基线对账子集必然假红（#89 发回整改的阻断 1：干净
+    // Linux 上 --sample 3 三条全拦仍退 1）。子集档不对账；跳过数的对账
+    // 由全量档执行（CI master push / 手动触发 / 本地全量）。
     const baseline =
       args.skip_baseline === undefined
         ? ENGINE_SKIP_BASELINE
