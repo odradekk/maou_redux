@@ -59,7 +59,7 @@ D:\Code\era\
 
 ```
 npm test                 # node --test，零第三方依赖
-npx eslint .             # 格式 + 代码错误，--fix 可自动修
+npx eslint . --max-warnings 0   # 格式 + 代码错误，零警告口径（与 CI 一致），--fix 可自动修
 npx prettier --check .   # 仅格式，--write 可自动改
 ```
 

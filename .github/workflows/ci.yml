@@ -36,7 +36,7 @@ jobs:
         run: npm run test:ci
       - name: 跳过数守护（引擎缺失的代价必须是看得见的数字）
         run: node tools/skip-count-check.mjs test-report.tap
-      - name: ESLint（CI 口径：零警告）
+      - name: ESLint（零警告，与本地三件套同口径）
         run: npx eslint . --max-warnings 0
       - name: Prettier（格式对拍）
         run: npx prettier --check .
