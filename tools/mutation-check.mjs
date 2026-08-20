@@ -566,16 +566,16 @@ const MUTATIONS = [
   {
     desc: 'M60 K5 首次状态推进写错（CFLAG:301 = 1 改 2）',
     file: 'ere/kojo/kojo-k5.js',
-    find: '      set_cflag301(1); // :813',
-    replace: '      set_cflag301(2); // :813（变异）',
+    find: '      kojo.爱抚 = 1; // :813',
+    replace: '      kojo.爱抚 = 2; // :813（变异）',
     tests: ['kojo-k5', 'kojo-system'],
     expect_only: '推进到 1',
   },
   {
     desc: 'M61 K3 首次状态推进写错（CFLAG:301 = 1 改 2）',
     file: 'ere/kojo/kojo-k3.js',
-    find: '      set_cflag301(1); // :930',
-    replace: '      set_cflag301(2); // :930（变异）',
+    find: '      kojo.爱抚 = 1; // :930',
+    replace: '      kojo.爱抚 = 2; // :930（变异）',
     tests: ['kojo-k3'],
     expect_only: '推进到 1',
   },
@@ -606,8 +606,8 @@ const MUTATIONS = [
   {
     desc: 'M65 K5 淫乱门槛的 FLAG:7 == 2 旁路失效（改 === 3）',
     file: 'ere/kojo/kojo-k5.js',
-    find: '      (cflag301() <= 5 || flag7() === 2)',
-    replace: '      (cflag301() <= 5 || flag7() === 3)',
+    find: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 3)',
     tests: ['kojo-k5'],
     expect_only: '阈值闸',
   },
@@ -631,8 +631,8 @@ const MUTATIONS = [
   {
     desc: 'M68 K3 淫乱阶段推进写错（CFLAG:301 = 600 改 500）',
     file: 'ere/kojo/kojo-k3.js',
-    find: '      set_cflag301(600); // :953',
-    replace: '      set_cflag301(500); // :953（变异）',
+    find: '      kojo.爱抚 = 600; // :953',
+    replace: '      kojo.爱抚 = 500; // :953（变异）',
     tests: ['kojo-k3'],
     expect_only: '淫乱分支',
   },
@@ -647,7 +647,7 @@ const MUTATIONS = [
   {
     desc: 'M70 K5 @EVENTEND #LATER 清标志删除',
     file: 'ere/kojo/kojo-k5.js',
-    find: "    era.set('flag:105', 0); // :88",
+    find: '    game.kojo.口上存在_5 = 0; // :88',
     replace: '    // 变异：清标志删除',
     tests: ['kojo-system'],
     expect_only: '清 0',
@@ -655,8 +655,10 @@ const MUTATIONS = [
   {
     desc: 'M71 K3 失神守卫删除（TFLAG:899 改恒 false）',
     file: 'ere/kojo/kojo-k3.js',
-    find: "  if (era.get('tflag:899') || 0) {",
-    replace: '  if (false) { // 变异：失神守卫删除',
+    find: `  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (game.train.失神) {`,
+    replace: `  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (false) { // 变异：失神守卫删除`,
     tests: ['kojo-k3'],
     expect_only: '静默跳过',
   },
@@ -683,10 +685,10 @@ const MUTATIONS = [
     find: `      // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
       mark(2) === 2 &&
       mark(1) === 3 &&
-      (cflag301() <= 299 || flag7() === 2)`,
+      (kojo.爱抚 <= 299 || game.kojo.口上开关 === 2)`,
     replace: `      // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
       mark(2) === 2 &&
-      (cflag301() <= 299 || flag7() === 2)`,
+      (kojo.爱抚 <= 299 || game.kojo.口上开关 === 2)`,
     tests: ['kojo-k3'],
     expect_only: 'MARK:1 == 3',
   },
@@ -1339,7 +1341,7 @@ const MUTATIONS = [
     expect_only: '引擎默认配置整份',
   },
   // —— #73（画面组件最小集与主菜单迁入）——
-  // 注：编号 M900+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
+  // 注：编号 M157+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
   // 按实际情况统一改号；前四票曾因各自从 M99 起编撞号四次）。
   {
     desc: 'M137 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
@@ -1441,7 +1443,7 @@ const MUTATIONS = [
     expect_only: '有输出才等键',
   },
   // —— #74（归一化器吃结构化记录 + 调教状态画面组件化）——
-  // 注：M148–M156 由集成方在合并时从占位号 M900+ 顺延而来（并发分支不从
+  // 注：M148–M156 由集成方在合并时从占位号 M157+ 顺延而来（并发分支不从
   // master 最大号续编；#73 首次实践零冲突，本票第二次）。
   {
     desc: 'M148 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
@@ -1532,6 +1534,50 @@ const MUTATIONS = [
     replace: '      // 变异：config 删除，吃引擎缺省 24',
     tests: ['page-train'],
     expect_only: '条后数值列必须真实渲染',
+  },
+  // —— #71（门面生成器：一维按域重切 + 口上域二维切片）——
+  // 注：M157–M160 由集成方在合并时从占位号 M900+ 顺延而来。
+  {
+    desc: 'M157 生成区/手写区：--force 重写整文件而不经标记替换',
+    file: 'tools/gen-facade.js',
+    find: '      replace_generated_section(existing, spec.section()),',
+    replace: '      spec.body,',
+    tests: ['gen-facade'],
+    expect_only: '只替换生成区',
+  },
+  {
+    desc: 'M158 未声明下标读兜底被删（undefined 泄漏给调用方）',
+    file: 'ere/facade/chara-kojo.js',
+    find: '    return era.get(`cflag:${this.cid}:301`) || 0;',
+    replace: '    return era.get(`cflag:${this.cid}:301`);',
+    tests: ['gen-facade'],
+    expect_only: '读写落到正确寻址',
+  },
+  {
+    desc: 'M159 角色视图不再按 ID 缓存（每次 chara(cid) 新对象）',
+    file: 'ere/facade/chara.js',
+    find: `function chara(cid) {
+  const key = Number(cid);
+  let view = cache.get(key);
+  if (!view) {
+    view = new CharaView(key);
+    cache.set(key, view);
+  }
+  return view;
+}`,
+    replace: `function chara(cid) {
+  return new CharaView(Number(cid));
+}`,
+    tests: ['gen-facade'],
+    expect_only: '按 ID 缓存',
+  },
+  {
+    desc: 'M160 字段同时出现在非属主域（属主过滤被掏空）',
+    file: 'tools/gen-facade.js',
+    find: '.filter(([, owner]) => owner === domain)',
+    replace: '.filter(() => true)',
+    tests: ['gen-facade'],
+    expect_only: '口上域切片缺名',
   },
 ];
 
