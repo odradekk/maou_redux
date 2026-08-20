@@ -28,9 +28,13 @@
 // 不判定的写（只计数进报告，不红）：动态下标（`tflag:${i}`，静态无法
 // 知道写了哪些下标——与 test/static-table-coverage 只扫字面量前缀同款
 // 口径）；表无所有权产物（juel / delta / ex_talent 等 #70 未测量或引擎
-// 内建表，测量补齐前无判定依据）；下标无测量事实（如 flag:10000+ 保留
-// 区，#70 只对原作实写下标给出属主）。这不与「写变量前所属静态表必须已
-// 落地」（名字表不在 + 桶在 → 硬崩）混为一谈——那是引擎表覆盖问题
+// 内建表，测量补齐前无判定依据——表清单也从 ownership/ 目录推导，产物
+// 落地即自动纳入）；下标无测量事实（如 flag:10000+ 保留区，#70 只对
+// 原作实写下标给出属主）。拼接/变量首参（`'flag:' + n`）静态连寻址串都
+// 拿不到，清点为「不可见」逐处点名进报告——不判定，但必须被看见。
+// cid 段认字面量与模板两种形态（`base:0:2` 与 `base:${cid}:2` 同判，
+// 属主与角色无关）。这不与「写变量前所属静态表必须已落地」（名字表不
+// 在 + 桶在 → 硬崩）混为一谈——那是引擎表覆盖问题
 // （test/static-table-coverage.test.js），这里是域边界问题。
 //
 // 包装层的排除按角色显式声明（不是目录逃生门）：WRAPPER_FILES 逐文件
@@ -55,25 +59,18 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // —— 配置常量（显式声明，改动即版本库差异）——
 
-/** 所有权产物覆盖的表（ownership/<表>-ownership.yml，#70 全表实测） */
-const OWNERSHIP_TABLES = [
-  'abl',
-  'base',
-  'cflag',
-  'cstr',
-  'ex',
-  'exp',
-  'flag',
-  'global',
-  'item',
-  'mark',
-  'palam',
-  'source',
-  'stain',
-  'talent',
-  'tequip',
-  'tflag',
-];
+/**
+ * 所有权产物覆盖的表：从 ownership/ 目录推导（* -ownership.yml），不逐张
+ * 硬编码——测量补齐新表（juel 等）时产物落地即自动纳入判定（代码审查
+ * c-3：表清单也是「来自产物」的一部分）。
+ */
+function list_ownership_tables() {
+  return fs
+    .readdirSync(path.join(REPO, 'ownership'))
+    .filter((name) => name.endsWith('-ownership.yml'))
+    .map((name) => name.slice(0, -'-ownership.yml'.length))
+    .sort();
+}
 
 /** 引擎 SDK：不是游戏代码，整体跳过（trace-check 同款口径） */
 const SDK_FILE = 'ere/era-electron.js';
@@ -137,20 +134,32 @@ const LEDGER_BASELINE = {
     'tflag:34': 2,
   },
   'ere/event/event-end.js': {
+    'base:1': 2,
     'cflag:81': 2,
     'cflag:82': 2,
     'flag:7': 2,
     'tflag:860': 2,
   },
   'ere/event/event-first.js': {
+    'cflag:1': 1,
+    'cflag:11': 1,
+    'cflag:12': 1,
+    'cflag:13': 1,
+    'cflag:14': 1,
+    'cflag:16': 1,
+    'cflag:420': 1,
+    'cflag:450': 1,
+    'cflag:451': 1,
+    'cflag:9': 1,
     'flag:35': 1,
     'flag:37': 1,
     'flag:5': 1,
     'flag:500': 1,
   },
   'ere/event/event-train.js': {
-    'base:2': 2,
+    'base:2': 3,
     'base:3': 1,
+    'base:4': 1,
     'cflag:10': 1,
     'palam:3': 1,
     'palam:5': 1,
@@ -296,9 +305,10 @@ function parse_accessors() {
 }
 
 /**
- * 扫单个 js 文本里的 era.get/set/add 调用。只认字符串首参（实测 ere/
- * 全部 1067 处都是字面量或模板串，无变量寻址）；多行调用按整文件正则
- * 捕获，行号用换行计数回算。
+ * 扫单个 js 文本里的 era.get/set/add 调用。字符串首参（字面量或模板串）
+ * 逐处解析；cid 段认 `${...}` 与字面量数字两种形态（`base:0:2` 与
+ * `base:${cid}:2` 同判——代码审查实证曾有 14 处字面量 cid 写被当成动态
+ * 下标漏出台账）；多行调用按整文件正则捕获，行号用换行计数回算。
  * 返回 [{ op, table, index | null, line }]：index 为 null = 动态下标
  * （模板串下标位含 ${} 或名字下标）。
  */
@@ -313,11 +323,11 @@ function scan_calls(text) {
     const parts = raw.split(':');
     const table = /^[a-z][a-z0-9_]*$/.test(parts[0]) ? parts[0] : null;
     const index_part = parts[parts.length - 1];
-    const shape_ok =
-      table !== null &&
-      (parts.length === 2 ||
-        (parts.length === 3 && /^\$\{.*\}$/.test(parts[1]))) &&
-      /^-?\d+$/.test(index_part);
+    const cid_ok =
+      parts.length === 2 ||
+      (parts.length === 3 &&
+        (/^\$\{.*\}$/.test(parts[1]) || /^\d+$/.test(parts[1])));
+    const shape_ok = table !== null && cid_ok && /^-?\d+$/.test(index_part);
     calls.push({
       op,
       table,
@@ -328,16 +338,45 @@ function scan_calls(text) {
   return calls;
 }
 
+/**
+ * 清点扫描正则看不见的调用：首参是拼接（`'flag:' + n`）或变量等非纯串
+ * 形态。当前存量实测为零；一旦出现即计入「动态/不可见」——拼接下标静态
+ * 无法判定属主，但必须被看见，不许静默逃逸（代码审查 c-2）。
+ * 返回 [{ op, line }]。
+ */
+function scan_invisible_calls(text) {
+  const invisible = [];
+  const openers = /era\.(get|set|add)\s*\(/g;
+  const strings = /era\.(get|set|add)\s*\(\s*(`[^`]*`|'[^']*'|"[^"]*")\s*[,)]/g;
+  const seen = new Set();
+  let match;
+  while ((match = strings.exec(text))) {
+    seen.add(match.index);
+  }
+  while ((match = openers.exec(text))) {
+    if (!seen.has(match.index)) {
+      invisible.push({
+        op: match[1],
+        line: text.slice(0, match.index).split('\n').length,
+      });
+    }
+  }
+  return invisible;
+}
+
 /** 实测：跨域写按文件 → 寻址串 → 次数；其余类别只计数 */
 function measure() {
   const accessors = parse_accessors();
+  const ownership_tables = list_ownership_tables();
   const cross_writes = new Map(); // file -> Map(key -> count)
-  const cross_write_sites = new Map(); // `${file} ${key}` -> line（报错指位用）
+  // `${file} ${key}` -> 行号数组（按出现序，报错逐处指位）
+  const cross_write_sites = new Map();
   const stats = {
     files: 0,
     reads: { intra: 0, cross: 0, dynamic: 0, no_table: 0, no_fact: 0 },
     writes: { intra: 0, dynamic: 0, no_table: 0, no_fact: 0 },
     cross_read_by_table: new Map(),
+    invisible_sites: [],
     unmapped: [],
   };
   for (const rel of list_js_files('ere')) {
@@ -350,16 +389,20 @@ function measure() {
       continue;
     }
     stats.files += 1;
-    for (const call of scan_calls(
-      fs.readFileSync(path.join(REPO, rel), 'utf8'),
-    )) {
+    const text = fs.readFileSync(path.join(REPO, rel), 'utf8');
+    // 拼接/变量首参：看不见的调用先清点（不判定，但必须可见）
+    for (const { op, line } of scan_invisible_calls(text)) {
+      (op === 'get' ? stats.reads : stats.writes).dynamic += 1;
+      stats.invisible_sites.push(`${rel}:${line} ${op}（拼接/变量首参）`);
+    }
+    for (const call of scan_calls(text)) {
       const is_write = call.op !== 'get';
       const kind = is_write ? stats.writes : stats.reads;
       if (call.table === null || call.index === null) {
         kind.dynamic += 1;
         continue;
       }
-      if (!OWNERSHIP_TABLES.includes(call.table)) {
+      if (!ownership_tables.includes(call.table)) {
         kind.no_table += 1;
         continue;
       }
@@ -379,7 +422,11 @@ function measure() {
         }
         const bucket = cross_writes.get(rel);
         bucket.set(key, (bucket.get(key) ?? 0) + 1);
-        cross_write_sites.set(`${rel} ${key}`, call.line);
+        const sites_key = `${rel} ${key}`;
+        if (!cross_write_sites.has(sites_key)) {
+          cross_write_sites.set(sites_key, []);
+        }
+        cross_write_sites.get(sites_key).push(call.line);
       } else {
         stats.reads.cross += 1;
         stats.cross_read_by_table.set(
@@ -430,15 +477,16 @@ function run() {
     }
   }
 
-  // 1) 代码侧：每处跨域写都必须在台账里，且次数对得上
+  // 1) 代码侧：每处跨域写都必须在台账里，且次数对得上（逐处指位）
   for (const [rel, bucket] of cross_writes) {
     const ledger = DOMAIN_LEDGER[rel] ?? {};
     for (const [key, actual] of bucket) {
       const ledger_count = ledger[key] ?? 0;
       if (actual > ledger_count) {
+        const sites = cross_write_sites.get(`${rel} ${key}`);
         for (let n = ledger_count; n < actual; n += 1) {
           console.log(
-            `✗ ${rel}:${cross_write_sites.get(`${rel} ${key}`)} 裸跨域写 ${key}（${n + 1}/${actual}）不在台账——${remedy_for(accessors, key)}`,
+            `✗ ${rel}:${sites[n]} 裸跨域写 ${key}（第 ${n + 1}/${actual} 处）不在台账——${remedy_for(accessors, key)}`,
           );
           failures += 1;
         }
@@ -496,13 +544,16 @@ function run() {
   const w = stats.writes;
   const r = stats.reads;
   if (failures === 0) {
-    console.log(
-      [
-        `✓ 域边界：${stats.files} 个游戏文件，跨域写 ${cross_write_total} 处全数在账（台账 ${ledger_entries} 条，#72 基线内只减不增）`,
-        `  写：域内 ${w.intra} · 在账 ${cross_write_total} · 不判定 ${w.dynamic + w.no_table + w.no_fact}（动态 ${w.dynamic} · 无所有权表 ${w.no_table} · 无测量事实 ${w.no_fact}）`,
-        `  读：域内 ${r.intra} · 跨域放行 ${r.cross}（前五表：${top_reads}）· 不判定 ${r.dynamic + r.no_table + r.no_fact}`,
-      ].join('\n'),
-    );
+    const report = [
+      `✓ 域边界：${stats.files} 个游戏文件，跨域写 ${cross_write_total} 处全数在账（台账 ${ledger_entries} 条，#72 基线内只减不增）`,
+      `  写：域内 ${w.intra} · 在账 ${cross_write_total} · 不判定 ${w.dynamic + w.no_table + w.no_fact}（动态 ${w.dynamic} · 无所有权表 ${w.no_table} · 无测量事实 ${w.no_fact}）`,
+      `  读：域内 ${r.intra} · 跨域放行 ${r.cross}（前五表：${top_reads}）· 不判定 ${r.dynamic + r.no_table + r.no_fact}`,
+    ];
+    // 拼接/变量首参：存量应为零；出现即逐处点名，不留静默逃生口
+    for (const site of stats.invisible_sites) {
+      report.push(`  ⚠ ${site} —— 静态不可判定，须改字面量/模板串或走门面`);
+    }
+    console.log(report.join('\n'));
   } else {
     // 汇总不枚举门名：哪条门触发了，上方逐条消息已经写明；枚举会让
     // 「文案断言」型的测试被未触发的门名误满足（M902 曾因此漏网）
