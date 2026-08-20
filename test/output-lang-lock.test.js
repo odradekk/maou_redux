@@ -174,9 +174,12 @@ test('探针：往 ere/ 塞违规模块，锁必须点名它（自动纳入后�
       'utf8',
     );
     const { problems, js_files } = scan_repo();
-    assert.equal(
-      js_files,
-      before_count + 1,
+    // 并行容忍：node --test 并行跑测试文件，trace-check 等探针也会往 ere/
+    // 塞临时文件——两次全目录计数之间多出别人的探针不是失明（#92 在无引擎
+    // Linux 复跑时实测撞过：前 52 后 54）。本探针在 scan_repo 时必然在场，
+    // 故取 >=；真正「锁对新增文件不失明」的证明在下面 probe_hits 的点名。
+    assert.ok(
+      js_files >= before_count + 1,
       `探针没被扫到（前 ${before_count} 后 ${js_files}）——锁对新增文件失明`,
     );
     const probe_hits = problems.filter((p) =>
