@@ -71,7 +71,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
 
 ### CI（无引擎档）
 
-`.github/workflows/ci.yml`（#92）在 PR 与 push 到 master 时于 ubuntu runner 上复跑三件套（`npm run test:ci` → `npx eslint . --max-warnings 0` → `npx prettier --check .`），外加一条**跳过数守护**：CI 机器没有引擎，引擎依赖用例按 `test/engine-skip-baseline.txt` 的基线数跳过（数字以该文件为唯一真相，定档勘误见 #92），跳过数偏离基线即红。**新增引擎依赖用例必须同步改基线**，让覆盖面的收缩是一次有意识的提交。两条边界：**引擎对拍与 `tools/mutation-check.mjs`（Windows 专用，归 #89）不在 CI 内；CI 绿 ≠ 本地全过。** 守护只在无引擎环境有意义——引擎在场时跳过数为 0，对基线必然红。
+`.github/workflows/ci.yml`（#92）在 PR 与 push 到 master 时于 ubuntu runner 上复跑三件套（`npm run test:ci` → `npx eslint . --max-warnings 0` → `npx prettier --check .`），外加一条**跳过数守护**：CI 机器没有引擎，引擎依赖用例按 `test/engine-skip-baseline.txt` 的基线数跳过（数字以该文件为唯一真相，定档勘误见 #92），跳过数偏离基线即红。**新增引擎依赖用例必须同步改基线**，让覆盖面的收缩是一次有意识的提交。**变异检查（#89）自本票起跨平台并有三层执行点**：快档（台账三道门）随 `test/mutation-check.test.js` 进 npm test；PR 档在 mutation job 抽样 12 条轮转；master push 与手动触发（workflow_dispatch）跑全量（隔离副本并行；无引擎处引擎门控条目按「跳过」对账工具内嵌的 `ENGINE_SKIP_BASELINE`，偏离即红）。**引擎对拍不在 CI 内；CI 绿 ≠ 本地全过——变异的硬口径（全拦、零跳过）仍须有引擎的本地全量。** 守护只在无引擎环境有意义——引擎在场时跳过数为 0，对基线必然红。
 
 ### 静态数据目录
 

@@ -1,0 +1,326 @@
+// 变异台账切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
+// 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
+// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+export default [
+  {
+    desc: 'M94 ERB 完整性门焊死（未登记引用不再红——探针用例必须抓到失明）',
+    file: 'tools/trace-check.mjs',
+    find: '    if (!registered?.has(ref) && !exempt.includes(ref)) {',
+    replace:
+      '    if (false && !registered?.has(ref) && !exempt.includes(ref)) {',
+    tests: ['trace-check'],
+    must_mention: '完整性门对后来者失明',
+  },
+  {
+    desc: 'M95 豁免清单偷偷变长（新条目必须撞基线锁）',
+    file: 'tools/trace-exempt.mjs',
+    find: "    '1076',",
+    replace: "    '1076',\n    '999993',",
+    tests: ['trace-check'],
+    must_mention: '只能变短',
+  },
+  {
+    desc: 'M96 锚校验：把 :53 的锚改错（FONTBOLD→FONTBOLDX，行号对但锚不命中）',
+    file: 'tools/trace-check.mjs',
+    find: "      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLD$/m] },",
+    replace: "      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLDX$/m] },",
+    tests: ['trace-check'],
+    must_mention: '未命中任何锚',
+  },
+  {
+    desc: 'M99 产物边界失效：所有权表永远强制重写（人工修改不再幸存）',
+    file: 'tools/ownership-scan.js',
+    find: `    reports.push(
+      write_product(
+        path.join(out_dir, \`\${key}-ownership.yml\`),
+        result.tables.get(key).ownership_yaml,
+        {
+          force,
+        },
+      ),
+    );`,
+    replace: `    reports.push(
+      write_product(
+        path.join(out_dir, \`\${key}-ownership.yml\`),
+        result.tables.get(key).ownership_yaml,
+        { force: true },
+      ),
+    );`,
+    tests: ['ownership-scan'],
+    must_mention: '人工修改幸存',
+  },
+  {
+    desc: 'M100 寻址段字符集退回 ASCII（名字下标与 CJK 槽位全丢——同步守护必须红）',
+    file: 'tools/ownership-scan.js',
+    find: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_\\u3000-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\uFF00-\\uFFEF]+)`;',
+    replace: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_]+)`;',
+    tests: ['ownership-scan'],
+    must_mention: '逐字节一致',
+  },
+  {
+    desc: 'M101 属主决胜反转：并列改取后声明者（tflag 夹具的 1:1 并列翻转）',
+    file: 'tools/ownership-scan.js',
+    find: '      if (count > best) {',
+    replace: '      if (count >= best) {',
+    tests: ['ownership-scan'],
+    must_mention: '属主判定',
+  },
+  {
+    desc: 'M102 跨域滤芯反接（只收属主自己的写入——清单测试必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '          entry.index !== null &&\n          owner_of_index.get(entry.index) !== entry.domain,',
+    replace:
+      '          entry.index !== null &&\n          owner_of_index.get(entry.index) === entry.domain,',
+    tests: ['ownership-scan'],
+    must_mention: '跨域写入清单',
+  },
+  {
+    desc: 'M128 词边界负向后行被砍（EX_CFLAG 的假写回流——词边界用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "  return new RegExp(\n    `(?<![0-9A-Za-z_])(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
+    replace:
+      "  return new RegExp(\n    `(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
+    tests: ['ownership-scan'],
+    must_mention: '词边界',
+  },
+  {
+    desc: "M117 字符串赋值 '= 不再算写入（CSTR 写形用例必须红）",
+    file: 'tools/ownership-scan.js',
+    find: "const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^']|<<|>>)?=[ \\t]*[^=]/;",
+    replace: 'const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^]|<<|>>)?=[ \\t]*[^=]/;',
+    tests: ['ownership-scan'],
+    must_mention: '字符串赋值',
+  },
+  {
+    desc: 'M129 后缀 ++/-- 不再算写入（ABL/MARK/CFLAG 自增丢失——写形用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '    if (ASSIGN_OP_RE.test(rest) || POSTFIX_OP_RE.test(rest)) {',
+    replace: '    if (ASSIGN_OP_RE.test(rest)) {',
+    tests: ['ownership-scan'],
+    must_mention: '后缀',
+  },
+  {
+    desc: 'M130 TIMES 不再算写入（SOURCE 乘法赋值全丢——TIMES 用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "  if (command === 'TIMES') {",
+    replace: "  if (command === 'TIMES_NEVER') {",
+    tests: ['ownership-scan'],
+    must_mention: 'TIMES',
+  },
+  {
+    desc: 'M131 VARSET 区间右端改包含（止端下标也写入——左闭右开用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '      for (let i = Number(start); i < Number(end); i += 1) {',
+    replace: '      for (let i = Number(start); i <= Number(end); i += 1) {',
+    tests: ['ownership-scan'],
+    must_mention: '左闭右开',
+  },
+  {
+    desc: 'M132 名字下标不再归一（繁/日形态查不到表——归一用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: "const { to_simplified } = require('./lang-normalize');",
+    replace: 'const { to_simplified } = { to_simplified: (x) => x };',
+    tests: ['ownership-scan'],
+    must_mention: '归一',
+  },
+  {
+    desc: 'M133 跨域读判定反接（只统计本域读——同步守护与跨域读者锚点必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '        if (reader !== owner) {\n          cross_total += count;',
+    replace: '        if (reader === owner) {\n          cross_total += count;',
+    tests: ['ownership-scan'],
+    must_mention: '逐字节一致',
+  },
+  {
+    desc: 'M134 ignored 文件不再跳过测量（TITLE.ERB 死代码写入回流——ignored 用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: '    if (rel.length === 1 && ignored.has(rel[0])) {\n      continue; // 死代码：引擎不装载，整体跳过\n    }',
+    replace: '    void ignored;',
+    tests: ['ownership-scan'],
+    must_mention: 'ignored',
+  },
+  {
+    desc: 'M135 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: `  const missing_ignored = domains.ignored_files.filter(
+    (name) => !root_files.includes(name),
+  );
+  if (missing_ignored.length > 0) {
+    throw new Error(
+      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据发霉，删掉或改对）\`,
+    );
+  }`,
+    replace: '  void root_files;',
+    tests: ['ownership-scan'],
+    must_mention: '声明了不存在的文件',
+  },
+  {
+    desc: 'M136 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
+    file: 'tools/ownership-scan.js',
+    find: `  const unclaimed = top_dirs.filter((dir) => !domains.dir_to_domain.has(dir));
+  if (unclaimed.length > 0) {
+    throw new Error(
+      \`ERB 根下有未被域清单认领的一级目录：\${unclaimed.join('、')}（在 ownership/domains.yml 里给它们归属一个域）\`,
+    );
+  }`,
+    replace: '  void top_dirs;',
+    tests: ['ownership-scan'],
+    must_mention: '未认领',
+  },
+  {
+    desc: 'M157 生成区/手写区：--force 重写整文件而不经标记替换',
+    file: 'tools/gen-facade.js',
+    find: '      replace_generated_section(existing, spec.section()),',
+    replace: '      spec.body,',
+    tests: ['gen-facade'],
+    must_mention: '只替换生成区',
+  },
+  {
+    desc: 'M160 字段同时出现在非属主域（属主过滤被掏空）',
+    file: 'tools/gen-facade.js',
+    find: '.filter(([, owner]) => owner === domain)',
+    replace: '.filter(() => true)',
+    tests: ['gen-facade'],
+    must_mention: '口上域切片缺名',
+  },
+  {
+    desc: 'M161 跨域判定被掏空：属主等于本域恒真，跨域写永不成立',
+    file: 'tools/domain-check.mjs',
+    find: '      if (owner === domain) {',
+    replace: '      if (true) {',
+    tests: ['domain-check'],
+    must_mention: '必须红且点名（新文件自动纳入）',
+  },
+  {
+    desc: 'M162 判定依据脱离产物：所有权区间坍缩为单下标，区间尾段全部失主',
+    file: 'tools/domain-check.mjs',
+    find: '    const end = match[2] ? Number(match[2]) : start;',
+    replace: '    const end = start;',
+    tests: ['domain-check'],
+    must_mention: '必须红且点名（新文件自动纳入）',
+  },
+  {
+    desc: 'M163 台账发霉门被拆（count > actual 恒假，消化存量后忘删条目不再红）',
+    file: 'tools/domain-check.mjs',
+    find: '      if (count > actual) {',
+    replace: '      if (false) {',
+    tests: ['domain-check'],
+    must_mention: '发霉',
+  },
+  {
+    desc: 'M164 基线计数门被拆（count > baseline 恒假，抬计数吸收新增欠账不再红）',
+    file: 'tools/domain-check.mjs',
+    find: '      } else if (count > baseline) {',
+    replace: '      } else if (false) {',
+    tests: ['domain-check'],
+    must_mention: '不得超基线',
+  },
+  {
+    desc: 'M165 基线键门被拆（baseline === undefined 恒假，基线外新条目不再红）',
+    file: 'tools/domain-check.mjs',
+    find: '      if (baseline === undefined) {',
+    replace: '      if (false) {',
+    tests: ['domain-check'],
+    must_mention: '只能变短',
+  },
+  {
+    desc: 'M166 包装层白名单退化成目录口子（ere/facade/ 整目录跳过扫描）',
+    file: 'tools/domain-check.mjs',
+    find: '    if (rel === SDK_FILE || WRAPPER_FILES.includes(rel)) {',
+    replace:
+      "    if (rel === SDK_FILE || rel.startsWith('ere/facade/') || WRAPPER_FILES.includes(rel)) {",
+    tests: ['domain-check'],
+    must_mention: '目录逃生门',
+  },
+  {
+    desc: 'M172 调用点规则的界值检查被拆（只查下界，barWidth=24 放行）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '      } else if (value < rule.min || value > rule.max) {',
+    replace: '      } else if (value < rule.min) {',
+    tests: ['engine-contract-check'],
+    must_mention: '改成 24',
+  },
+  {
+    desc: 'M173 锚点门被拆（字面消失不红，引擎升版当天守护无声消失）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '      if (!renderer_source.includes(anchor)) {',
+    replace: '      if (false) { // 变异：锚点门拆除',
+    tests: ['engine-contract-check'],
+    must_mention: '锚点失配',
+  },
+  {
+    desc: 'M174 退出码语义被拆（失守也退 0——工具只会打印不会红）',
+    file: 'tools/engine-contract-check.mjs',
+    find: 'process.exit(run() === 0 ? 0 : 1);',
+    replace: 'process.exit(0); // 变异：退出码语义拆除',
+    tests: ['engine-contract-check'],
+    must_mention: '锚点失配',
+  },
+  {
+    desc: 'M175 台账基线门被拆（基线外新条目不再红）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '    if (!LEDGER_BASELINE.includes(entry.id)) {',
+    replace: '    if (false) { // 变异：基线门拆除',
+    tests: ['engine-contract-check'],
+    must_mention: '只能变短',
+  },
+  {
+    desc: 'M176 台账发霉门被拆（见证注释消失不再红）',
+    file: 'tools/engine-contract-check.mjs',
+    find: '    if (!fixture_source.includes(entry.witness)) {',
+    replace: '    if (false) { // 变异：发霉门拆除',
+    tests: ['engine-contract-check'],
+    must_mention: '发霉',
+  },
+  {
+    desc: 'M177 锚点定位器退化成写死哈希文件名（渲染包换名即失明）',
+    file: 'tools/engine-contract-check.mjs',
+    find: 'const RENDERER_MAP_RE = /^js\\/app\\.[0-9a-f]+\\.js\\.map$/;',
+    replace:
+      'const RENDERER_MAP_RE = /^js\\/app\\.2cccec57\\.js\\.map$/; // 变异：写死哈希',
+    tests: ['engine-contract-check'],
+    must_mention: '仍能定位',
+  },
+  {
+    desc: 'M179 yml 合流被拆（YML_NAME_FILES 删 mark，mark 名字只剩手写表）',
+    file: 'tools/gen-facade.js',
+    find: "  mark: 'Mark.yml',\n",
+    replace: '',
+    tests: ['gen-facade'],
+    must_mention: '两源合流',
+  },
+  {
+    desc: 'M180 两源冲突检查被拆（名字不一致时静默择手写，不再报错）',
+    file: 'tools/gen-facade.js',
+    find: `    if (from_yml !== manual.name) {
+      throw new Error(
+        \`两源名字不一致 \${table}:\${index}：yml 列名「\${from_yml}」vs facade-names「\${manual.name}」——yml 列名是唯一真相，先对齐再生成\`,
+      );
+    }`,
+    replace: `    if (from_yml !== manual.name) {
+      return manual;
+    }`,
+    tests: ['gen-facade'],
+    must_mention: '名字不一致',
+  },
+  {
+    desc: 'M181 delta 属主裁定被改（train → system，切片落错域文件）',
+    file: 'tools/facade-names.js',
+    find: `const PORT_TABLE_OWNERS = {
+  delta: 'train',`,
+    replace: `const PORT_TABLE_OWNERS = {
+  delta: 'system',`,
+    tests: ['gen-facade'],
+    must_mention: '移植自建表门面',
+  },
+  {
+    desc: 'M182 cflag 好感度补名下标错位（2 → 3，写进别的槽）',
+    file: 'tools/facade-names.js',
+    find: "  2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
+    replace:
+      "  3: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
+    tests: ['gen-facade'],
+    must_mention: '好感度',
+  },
+];

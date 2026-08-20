@@ -14,7 +14,8 @@
 | `cli.js`        | 命令行入口：`node tools/compare/cli.js`                                                   |
 
 测试：`test/compare-*.test.js`（分类器 / 差异引擎 / 快照 / 断言 / 首回合
-真对拍）。变异自证：`tools/mutation-check.mjs` 的 M84–M93。
+真对拍）。变异自证：变异台账 `tools/mutations/pipeline.mjs` 的 M84–M93
+（#89 起台账分片住在 `tools/mutations/`，驱动器是 `tools/mutation-check.mjs`）。
 
 ## 硬边界
 
