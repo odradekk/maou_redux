@@ -45,10 +45,12 @@ jobs:
 
   # 变异检查（#89）：「验证其余检查器守得住」的检查器的执行层。第三层
   # 快档（台账三道门 --verify）已随 test/mutation-check.test.js 进上面
-  # job 的 npm test。本 job：PR 抽样 12 条按运行号轮转（约 +25s）；master
-  # push 与手动触发跑全量（--jobs 4 隔离临时副本并行，主树不写）。测试零
-  # 第三方依赖，无需 npm ci。无引擎处，引擎门控条目按「跳过」对账工具
-  # 内嵌的 ENGINE_SKIP_BASELINE，偏离即红。计费估算见 issue #89 实现评论。
+  # job 的 npm test。本 job：PR 抽样 12 条按运行号轮转（干净 Linux 实测
+  # 4–48s，取决于抽中条目——抽中重靶如回放对拍则一条 ~40s）；master push
+  # 与手动触发跑全量（--jobs 4 隔离临时副本并行，实测 ~112s，主树不写）。
+  # 测试零第三方依赖，无需 npm ci。无引擎处，引擎门控条目按「跳过」放行；
+  # 跳过数对账 ENGINE_SKIP_BASELINE 只在全量档生效（子集没有期望跳过数，
+  # #89 整改的阻断 1），偏离即红。计费估算见 issue #89 实现评论。
   mutation:
     runs-on: ubuntu-latest
     timeout-minutes: 15
