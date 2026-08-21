@@ -48,5 +48,5 @@ Object.entries(this.era.extendedTables).filter(e => void 0 !== this.staticData[e
 ## 后果
 
 - 门面接口一旦被转译器复制，改动成本极高——**形状必须在转译器上场前定稿**。
-- 既有 466 处变量访问里 424 处是裸字符串寻址（包装层只覆盖 `flag` 与 `global`，42 处）。存量随票迁移、冻结成只能变短的台账，不一次性大修。
+- 既有 466 处变量访问里 424 处是裸字符串寻址（包装层只覆盖 `flag` 与 `global`，42 处）。现有的这些随票迁移，冻结成一张只能变短的清单，不做一次性大修。
 - `ere.config.json` 的 `extendedCharaTables` 目前是 `[]`，这条路一次没走过，得先用一张小表跑通。
