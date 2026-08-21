@@ -1,10 +1,10 @@
-// 变异台账切片：test/helpers/（测试夹具与引擎对拍助手的镜像语义）。
+// 变异条目表切片：test/helpers/（测试夹具与引擎比对助手的镜像语义）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
-    desc: 'M84 夹具 printButton 不记 accelerator（菜单对拍失去编号键）',
+    desc: 'M84 夹具 printButton 不记 accelerator（菜单比对失去编号键）',
     file: 'test/helpers/era-fixture.js',
     find: `  const make_button_entry = (content, accelerator, config) => {
     const text = normalize_content(content);
@@ -19,7 +19,7 @@ export default [
       text,
       accelerator: undefined, // 变异：不记编号`,
     tests: ['compare-first-turn', 'page-usercom'],
-    must_mention: '分类计数与当前欠账清单一致',
+    must_mention: '分类计数与当前待办清单一致',
   },
   {
     desc: 'M93 夹具 printMultiColumns 不再记录（print 系覆盖的缺口）',
@@ -134,7 +134,7 @@ export default [
     find: `  era.playMusic = (names, config) => {
     const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
     replace: `  era.playMusic = (names, config) => {
-    push_row([]); // 变异：音乐误算一行（派单人独立变异复现过的假绿形态）
+    push_row([]); // 变异：音乐误算一行（派单人独立变异复现过的误报通过形态）
     const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
     tests: ['fixture'],
     must_mention: '不占 Row',
@@ -186,10 +186,10 @@ export default [
     must_mention: '中途分叉（二）',
   },
   {
-    // 注：must_mention 原为「#68 形态」（#91 落地时的短语，住在引擎门控的
+    // 注：must_mention 原为「#68 形态」（#91 落地时的短语，住在依赖引擎的
     // engine-contract.test.js 里——无引擎执行点（CI，#89）暴露：该用例跳过
-    // 时 fixture.test.js 侧虽红但文案不含短语，被误判假绿。改指 fixture
-    // 侧也在场的「回显计一行」，两侧环境都能点名，无弱化。
+    // 时 fixture.test.js 侧虽红但文案不含短语，被误判误报通过。改指 fixture
+    // 侧也在场的「回显计一行」，两侧环境都能报出，无弱化。
     desc: 'M170 夹具 input 回显不计行不置位（#68 形态：Row 记账错位）',
     file: 'test/helpers/era-fixture.js',
     find: `      total_rows += 1; // this.print(回显值)：+1 Row

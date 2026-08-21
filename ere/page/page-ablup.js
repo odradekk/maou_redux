@@ -9,10 +9,10 @@
  * 按 PR #53 通则一律改按钮：正文不写 [编号] 前缀（引擎 showAcc 自动拼
  * `[快捷键] 正文` 并折叠连续空白），断言看夹具的 button.rendered。原作
  * 的 2 位编号补位（[ 0]）与 9 宽名字列是字符终端排版，按钮化后由引擎
- * 排版接管——对拍差异登记在 #47，逐字对拍归 #48。
+ * 排版接管——比对差异登记在 #47，逐字比对归 #48。
  *
- * 欠账（docs/stub-registry.md）：@DECIDE_ABLUP 族（可提升标记 `*` 的
- * 判定与渲染）未接线——升级规则超出 #47 范围，本画面不渲染 `*` 标记。
+ * 待办（docs/stub-registry.md）：@DECIDE_ABLUP 族（可提升标记 `*` 的
+ * 判定与渲染）未接入——升级规则超出 #47 范围，本画面不渲染 `*` 标记。
  */
 
 const era = require('#/era-electron');
@@ -91,7 +91,7 @@ function show_ablup_select(cid) {
       count,
       lost ? { color: GRAY } : undefined,
     );
-    // :78 CALL DECIDE_ABLUP 的 `*` 可提升标记未接线（文件头欠账）
+    // :78 CALL DECIDE_ABLUP 的 `*` 可提升标记未接入（文件头待办）
     u += 1; // :80
     if (u % 4 === 0) {
       era.println(); // :81-83 每 4 条换行
@@ -101,7 +101,7 @@ function show_ablup_select(cid) {
     era.println(); // :85-86 末行不足 4 条也收行
   }
 
-  // :88-91 [99] 反抗刻印（DECIDE_ABLUP99 的 `*` 未接线）
+  // :88-91 [99] 反抗刻印（DECIDE_ABLUP99 的 `*` 未接入）
   const mark3 = era.get(`mark:${cid}:3`) || 0;
   era.printButton(`${era.get('markname:3')} - LV ${mark3}`, 99);
   // :92-101 癖好（CSTR:7 定制了才有）：[4] 癖好感觉与 [40] 癖好中毒

@@ -1,9 +1,9 @@
 // 引擎契约检查器（issue #91，ADR-0005 第二层）：锚点校核 + 调用点规则 +
-// 欠账台账两道门。独立于 trace-check，不并入——两者都用锚，但失配的含义
+// 待办条目表两项检查。独立于 trace-check，不并入——两者都用锚，但失配的含义
 // 相反：trace-check 的锚失配是「我们的行号写错了」，本工具的锚失配是
 // 「引擎变了、镜像要重核」，处置动作不同，混用会让退出码语义变糊。
 //
-// 三道门：
+// 三项检查：
 //   A 调用点规则（无需引擎，永远跑）：按 tools/engine-contract-facts.mjs 里
 //     带 rule 的事实，静态扫 ere/ 的输出 API 调用点。首日唯一一条：progress
 //     格必须显式传 1..23 的 barWidth（不传 = 引擎缺省 24 = 条后数值整列
@@ -11,18 +11,18 @@
 //   B 锚点校核（需要 app.asar）：断言渲染层源码（js/app.*.js.map 的
 //     sourcesContent）仍含每条事实的字面。定位器按模式匹配渲染包，不写死
 //     带内容哈希的文件名（引擎升版即变）。
-//   C 台账两道门（无需引擎）：tools/engine-contract-ledger.mjs 的条目只能
-//     变短（#91 基线内嵌在本工具）、不许发霉（witness 必须仍在夹具注释里）。
+//   C 条目表两项检查（无需引擎）：tools/engine-contract-ledger.mjs 的条目只能
+//     变短（#91 基线内嵌在本工具）、不许过期失效（witness 必须仍在夹具注释里）。
 //
 // 退出码与三种环境的语义（与自述一致，测试驱动工具看退出码）：
 //   全绿 0；任何失配 1。**引擎缺失不是失配**——找不到 app.asar 时锚点校核
-//   跳过并留警告（加强项语义，与 engine-bundle / test 侧的 skip 同口径），
-//   规则与台账照跑照红。**锚点失配与渲染包漂移是硬红**，文案以「引擎变了」
+//   跳过并留警告（加强项语义，与 engine-bundle / test 侧的 skip 同一标准），
+//   规则与条目表照跑照红。**锚点失配与渲染包漂移是直接判失败**，文案以「引擎变了」
 //   开头并指路重读——静默 skip 会让守护在引擎升版当天无声消失。
 //
 // 用法：node tools/engine-contract-check.mjs [--asar <path>]
 //   --asar 显式指路（测试与诊断用）：给了就不再三址回落；所指不存在按
-//   「引擎缺失」处理（跳过锚点门并警告，不静默换一个引擎来查）。
+//   「引擎缺失」处理（跳过锚点检查并警告，不静默换一个引擎来查）。
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -40,8 +40,8 @@ const SDK_FILE = 'ere/era-electron.js'; // 引擎 SDK，不是游戏代码，跳
 const RENDERER_MAP_RE = /^js\/app\.[0-9a-f]+\.js\.map$/;
 
 /**
- * 台账冻结基线（issue #91 首冻）：台账条目必须逐条落在基线内——只能
- * 变短。消化存量 = 删条目；新增分歧确需冻结，必须显式改这份常量。
+ * 条目表冻结基线（issue #91 首冻）：条目表条目必须逐条落在基线内——只能
+ * 变短。消化现有条目 = 删条目；新增分歧确需冻结，必须显式改这份常量。
  */
 const LEDGER_BASELINE = [
   'printAndWait-internal-wait',
@@ -280,7 +280,7 @@ function check_anchors(asar_path) {
   };
 }
 
-// —— 门 C：台账两道门 ——
+// —— 门 C：条目表两项检查 ——
 
 function check_ledger() {
   const violations = [];
@@ -288,12 +288,12 @@ function check_ledger() {
   for (const entry of ENGINE_CONTRACT_LEDGER) {
     if (!LEDGER_BASELINE.includes(entry.id)) {
       violations.push(
-        `台账条目 ${entry.id} 不在 #91 基线内（只能变短：消化存量 = 删条目；新增分歧确需冻结，必须显式改 engine-contract-check.mjs 的 LEDGER_BASELINE，在版本库差异里看得见）`,
+        `条目表条目 ${entry.id} 不在 #91 基线内（只能变短：消化现有条目 = 删条目；新增分歧确需冻结，必须显式改 engine-contract-check.mjs 的 LEDGER_BASELINE，在版本库差异里看得见）`,
       );
     }
     if (!fixture_source.includes(entry.witness)) {
       violations.push(
-        `台账条目 ${entry.id} 发霉：见证注释「${entry.witness}」已不在 ${FIXTURE_FILE} 里——分歧要么已被修复（镜像补上了，删本条），要么注释被挪（同步更新 witness）`,
+        `条目表条目 ${entry.id} 过期失效：见证注释「${entry.witness}」已不在 ${FIXTURE_FILE} 里——分歧要么已被修复（镜像补上了，删本条），要么注释被挪（同步更新 witness）`,
       );
     }
   }
@@ -324,7 +324,7 @@ function run() {
   const asar_path = locate_asar(explicit_asar);
   if (!asar_path) {
     console.warn(
-      '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / D:\\Code\\era 四处都没命中）——锚点校核跳过（引擎对拍是加强项，与 test 侧 skip 同口径）；调用点规则与台账两道门照跑',
+      '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / D:\\Code\\era 四处都没命中）——锚点校核跳过（引擎比对是加强项，与 test 侧 skip 同一标准）；调用点规则与条目表两项检查照跑',
     );
   } else {
     const result = check_anchors(asar_path);
@@ -336,7 +336,7 @@ function run() {
     }
   }
 
-  // 门 C：台账两道门
+  // 门 C：条目表两项检查
   for (const message of check_ledger()) {
     console.log(`✗ ${message}`);
     failures += 1;
@@ -344,11 +344,11 @@ function run() {
 
   if (failures === 0) {
     console.log(
-      `✓ 引擎契约：调用点规则 ${facts_with_rule.length} 条 × 调用点 ${targets_checked} 处全数在界内 · ${anchor_report} · 台账 ${ENGINE_CONTRACT_LEDGER.length} 条两道门全过`,
+      `✓ 引擎契约：调用点规则 ${facts_with_rule.length} 条 × 调用点 ${targets_checked} 处全数在界内 · ${anchor_report} · 条目表 ${ENGINE_CONTRACT_LEDGER.length} 条两项检查全过`,
     );
   } else {
-    // 汇总不枚举门名：哪条门触发了，上方逐条消息已写明（domain-check 同款
-    // 口径——枚举会让「文案断言」型测试被未触发的门名误满足）
+    // 汇总不枚举检查项名：哪项检查触发了，上方逐条消息已写明（domain-check 同款
+    // 标准——枚举会让「文案断言」型测试被未触发的检查项名误满足）
     console.log(`✗ ${failures} 处引擎契约失守（逐条见上）`);
   }
   return failures;

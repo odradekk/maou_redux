@@ -24,7 +24,7 @@ const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
   'CHARADEAD_CHECK',

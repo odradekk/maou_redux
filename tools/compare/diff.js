@@ -1,5 +1,5 @@
 /**
- * @file T18 输出对拍·差异引擎（issue #48，验证决议 #9）。
+ * @file T18 输出比对·差异引擎（issue #48，验证决议 #9）。
  *
  * 两段比对（#9 的设计落地）：
  *   1. menu / gauge 条目按 (kind, val/key) **集合比对**——菜单与状态条是
@@ -25,7 +25,7 @@ function token(entry) {
       return `input:${entry.text}`;
     case 'menu':
       // 标签与编号都进键：同编号异名（指令改名/漂移）必须红，不能被
-      // 「编号恰好相同」吞掉（单测抓到的假绿形态）
+      // 「编号恰好相同」吞掉（单测抓到的误报通过形态）
       return `menu:${entry.key}|${entry.val}`;
     case 'calc':
       return `calc:${entry.key}|${entry.from}|+${entry.add}|-${entry.sub}|=${entry.to}|${entry.phrase}`;
@@ -107,7 +107,7 @@ function attribute(entry, side, other, context) {
 }
 
 /**
- * 全量对拍：golden 窗口 vs ere 窗口。
+ * 全量比对：golden 窗口 vs ere 窗口。
  *
  * @param {Array<object>} golden window_between_inputs 的黄金样本窗口
  * @param {Array<object>} ere 同构的 ere 窗口
@@ -250,7 +250,7 @@ function diff_streams(golden, ere, context = {}) {
 /** 报告渲染（CLI 与测试失败信息共用） */
 function format_report({ matched, diffs, summary }) {
   const lines = [
-    `对拍结果：匹配 ${matched} 条；差异 ${diffs.length} 条 = ` +
+    `比对结果：匹配 ${matched} 条；差异 ${diffs.length} 条 = ` +
       `版本 ${summary.version} + 存根 ${summary.stub} + 未解释 ${summary.unexplained}`,
   ];
   const order = { version: 0, stub: 1, unexplained: 2 };

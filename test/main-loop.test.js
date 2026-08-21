@@ -3,7 +3,7 @@
  * 状态机对两条 BEGIN 路径的统一接驳，以及「标题 → 新游戏初始化 → SHOP」
  * 的端到端转场。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。凡渲染
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。凡渲染
  * 标题画面的用例先 preset_gamebase（helpers/gamebase.js，标题从静态表读
  * GameBase）。
  *
@@ -15,7 +15,7 @@
  * 兜底在当前注册表下不可达、无法不设钩子地观测——它是防御性的引擎行为
  * 镜像，留待未来出现「可无 BEGIN 的 EVENTFIRST 处理器组合」时再证。
  * 交互提醒（变异测试者须知）：整删 event-first 的 begin(SHOP) 后端到端
- * 仍绿（兜底按 Emuera 语义接住，非假绿），但 emit 层用例
+ * 仍绿（兜底按 Emuera 语义接住，非误报通过），但 emit 层用例
  * （test/event-first.test.js 的 pending 断言）会红——那才是出口的守卫。
  */
 
@@ -38,7 +38,7 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   // 上抛）→ 主循环进 FIRST → emit('EVENTFIRST')：初期奴隶问答（消费输入 0
   // 选随机，#50）、真身完成初始化、开场叙事与随机路径读键共 7 次、
   // begin(SHOP)（事件路径，链内信号由 emit 捕获暂存）→ 主循环进入 SHOP
-  // （#23 已接线）：绘制主菜单 → era.input() 队列已空，抛「预置输入已耗尽」
+  // （#23 已接入）：绘制主菜单 → era.input() 队列已空，抛「预置输入已耗尽」
   // 上抛终止。初始化细节的逐项断言在 test/event-first.test.js，此处证主
   // 循环的转场接驳与到站画面。
   await assert.rejects(() => main(), /预置输入已耗尽/);
@@ -108,7 +108,7 @@ test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 
   const { begin, STATE } = fixture.load_module('system/flow/begin-signal');
   // 真身出口本就 begin(SHOP)；再追加一个 LATER 档处理器重复 begin(SHOP)，
   // 验证链内后写胜出（#6 语义）后主循环进入 SHOP。#22 时代此处断言「进入
-  // 即报错的守卫」；SHOP 接线（#23）后守卫退役，改为断言真实渲染恰一次
+  // 即报错的守卫」；SHOP 接入（#23）后守卫退役，改为断言真实渲染恰一次
   // ——重复进入或未进入都会在计数上暴露。
   on('EVENTFIRST', async () => begin(STATE.SHOP), TIER.LATER);
   const main = fixture.load_module('main');

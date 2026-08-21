@@ -1,13 +1,13 @@
 /**
- * @file T18 输出对拍·差异归因规则（issue #48）。
+ * @file T18 输出比对·差异归因规则（issue #48）。
  *
  * #9 的定案：忽略规则每条都要注明理由——否则忽略规则会逐渐变成掩盖缺陷
  * 的地毯。规则只认「有名字的差异」：
  *   - version：黄金样本录自比 target/ 更早的构建（#9 勘误二），54/55/56/
  *     89/110 五个编号的指令菜单差异是构建漂移、不是移植缺陷；
- *   - stub：docs/stub-registry.md 已登记的欠账（存根占位行、状态画面未
+ *   - stub：docs/stub-registry.md 已登记的待办（存根占位行、状态画面未
  *     移植的条段、COM_ABLE 未移植导致的按钮未过滤、SHOW_USERCOM 按钮组）；
- *   - 其余一律 unexplained——真缺陷候选，当次对拍必须归零或开票处置。
+ *   - 其余一律 unexplained——真缺陷候选，当次比对必须归零或开票处置。
  *
  * 规则表是**白名单**形态：命中才豁免，改一个字就失配变红，逼改动者有
  * 意识地同步本表（与 #60 豁免名单同一设计哲学）。
@@ -18,20 +18,20 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-// —— 指令菜单的构建漂移（#9 勘误二 + 本票新证）——
+// —— 指令菜单的构建漂移（#9 勘误二 + 本次新查出）——
 // 日志侧：放置PLAY=54、交谈=55、穿脱衣服=89；target 侧：野外PLAY=54、
 // 放置PLAY=55、交谈=56、兽奸PLAY=89、穿脱衣服=110。两构建在这些编号上
 // 必然对不齐，追它们没有意义。
 const VERSION_SKEW_IDS = new Set([54, 55, 56, 89, 110]);
 
-// —— 同族漂移的**标签移位**（本票首跑对拍新发现，勘误二「0-39 全部吻合」
+// —— 同族漂移的**标签移位**（这张票首跑比对新发现，勘误二「0-39 全部吻合」
 //    的例外）：黄金样本 打屁股[39]（log:66），Train.csv 打屁股=40——target
 //    在 39-53 段插过指令、其后编号整体 +1。按 (标签, 侧, 编号) 精确配对，
 //    不放宽到裸编号（裸 40 会吞掉真正的 COM_ABLE 回归）。
 const MENU_LABEL_SHIFT = [{ key: '打屁股', golden: 39, ere: 40 }];
 
 // —— @SHOW_USERCOM 的按钮组标签（docs/stub-registry.md「指令菜单按钮渲染」
-//    行：[100]-[990] 组未挂载）。golden 侧出现这些标签 = 已登记欠账 ——
+//    行：[100]-[990] 组未挂载）。golden 侧出现这些标签 = 已登记待办 ——
 const USERCOM_BUTTON_LABELS = new Set([
   '能力表示',
   '污秽表示',
@@ -51,15 +51,15 @@ const USERCOM_BUTTON_LABELS = new Set([
 
 // —— 存根占位行的自报形状（ere/utils/stub-line.js 与 page 内联占位）——
 // 存根占位行自愿声明「尚未移植」并给出原作函数名/清单出处；本项目所有
-// 占位行都含这个词，正文台词不含（output-lang-lock 同款口径）。
+// 占位行都含这个词，正文台词不含（output-lang-lock 同款标准）。
 const STUB_TEXT_RE = /尚未移植/;
 
-// —— 状态条欠账的 golden 侧键名（SHOW_STATUS 存根登记行）——
+// —— 状态条待办的 golden 侧键名（SHOW_STATUS 存根登记行）——
 //   体力/气力：LIFE_BAR / VITAL_BAR（待认领·状态画面）；
 //   射精（你）：SHOW_STATUS 射精/母乳/触手槽条段（登记，随指令/装备票）。
 const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);
 
-// —— golden 侧文本的成对差异（服装系统欠账）——
+// —— golden 侧文本的成对差异（服装系统待办）——
 //   TRAIN_MESSAGE_B 的服装前缀（PRINT_CLOTHTYPE_SPECIAL，登记随服装票）：
 //   golden 带「隔着紧身衣＆裙甲、」前缀，ere 侧没有；ere 侧的裸文本与
 //   golden 去前缀后逐字一致才豁免（成对豁免，单边不成立）。
@@ -109,7 +109,7 @@ function classify_entry(entry, side, context) {
     if (shift) {
       return {
         category: 'version',
-        reason: `标签移位：${shift.key} 在黄金样本是 ${shift.golden}、Train.csv 是 ${shift.ere}（勘误二「0-39 吻合」的例外，本票实证）`,
+        reason: `标签移位：${shift.key} 在黄金样本是 ${shift.golden}、Train.csv 是 ${shift.ere}（勘误二「0-39 吻合」的例外，这张票实证）`,
       };
     }
     if (side === 'golden' && USERCOM_BUTTON_LABELS.has(entry.key)) {
@@ -123,7 +123,7 @@ function classify_entry(entry, side, context) {
       tc_ids.has(entry.val) &&
       !USERCOM_BUTTON_LABELS.has(entry.key) &&
       // 编号与 golden 侧同一指令撞名（change 对）时必须由对侧规则归因：
-      // golden 是按钮组标签 → 存根欠账；否则同编号异名 = unexplained
+      // golden 是按钮组标签 → 存根待办；否则同编号异名 = unexplained
       context.counterpart !== undefined &&
       USERCOM_BUTTON_LABELS.has(context.counterpart.key)
     ) {

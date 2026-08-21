@@ -21,7 +21,7 @@
   id: 0
   name: "data_version"
   type: "number"
-  # 语义：该角色数据的移植口径版本。预设基线 0 = 原作口径（现有角色预设
+  # 语义：该角色数据的移植版本。预设基线 0 = 原作的算法（现有角色预设
   # 是纯 1:1 转换）；角色加入时由 ere/chara/chara-portcflag.js 盖当时的
   # PORT_DATA_VERSION。消费场景：Chara*.yml 是人工维护的产物，而引擎
   # addCharacter 只在加入时套预设、存档里的老角色永不刷新（yml/CFlag.yml

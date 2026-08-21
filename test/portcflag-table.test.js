@@ -1,7 +1,7 @@
 /**
  * @file 自造扩展表 portcflag 的全套验证（issue #67）。
  *
- * ADR-0001「新字段落在自造扩展表」的第一个实例。验证面按验收清单铺开，
+ * ADR-0001「新字段落在自造扩展表」的第一个实例。验证面按验收清单推广，
  * 全部驱动引擎自己的代码（test/helpers/engine-bundle.js），不用自写镜像：
  *
  *   - 登记契约（无引擎也跑）：_fixed.json 的登记 ⇔ yml/ 名字表在场。
@@ -11,7 +11,7 @@
  *     预设行被装载循环整行跳过。
  *   - 名字表装载：PortCFlag.yml 经引擎 parseDataFile + 变量表装载循环。
  *   - 预设生效：库内 yml/Chara17.yml 的 portcflag 行（人工增补，非转换
- *     内容——被丢即红，--force 重跑丢行的守门员在这里）经角色装载循环落
+ *     内容——被丢即红，--force 重跑丢行的把关的在这里）经角色装载循环落
  *     预设、经真 addCharacter 落桶；未登记（一维模式）的反面同证。
  *   - 寻址：具名 portcflag:17:数据版本 与序号 portcflag:17:0 同槽。
  *   - PR#57 判据重证：名字表在/不在 × 桶在/不在 的三种组合在新表上与
@@ -56,7 +56,7 @@ function read_yml(name) {
 
 // —— 登记契约（仓库文件层，无引擎也跑）——
 
-test('登记契约：_fixed.json 登记的每个二维扩展表都有 yml 名字表（缺表即 addCharacter 硬崩）', () => {
+test('登记契约：_fixed.json 登记的每个二维扩展表都有 yml 名字表（缺表即 addCharacter 直接崩溃）', () => {
   const fixed = JSON.parse(read_yml('_fixed.json'));
   const registered = fixed?.system?.extendedCharaTables ?? [];
   assert.ok(
@@ -67,7 +67,7 @@ test('登记契约：_fixed.json 登记的每个二维扩展表都有 yml 名字
   for (const name of registered) {
     assert.ok(
       yml_files.includes(`${name.toLowerCase()}.yml`),
-      `_fixed.json 登记了 ${name}，但 yml/ 里没有对应名字表——引擎 addCharacter 会在建顶层桶时硬崩`,
+      `_fixed.json 登记了 ${name}，但 yml/ 里没有对应名字表——引擎 addCharacter 会在建顶层桶时直接崩溃`,
     );
   }
 });
@@ -184,7 +184,7 @@ engine_test(
 );
 
 engine_test(
-  '判据重证（PR#57）：名字表在＋桶在 → 通过；名字表不在＋桶在 → 硬崩；桶不在 → 静默 undefined',
+  '判据重证（PR#57）：名字表在＋桶在 → 通过；名字表不在＋桶在 → 直接崩溃；桶不在 → 静默 undefined',
   () => {
     const loader = load_portcflag_table();
     // 组合一：全部在场 → 写入通过（与内置表同路）

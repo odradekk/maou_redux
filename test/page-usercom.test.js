@@ -1,8 +1,8 @@
 /**
  * ere/page/page-usercom.js 的行为测试（issue #44：@SHOW_USERCOM / @USERCOM）。
  *
- * 缝 = test/helpers/era-fixture.js。本票菜单只挂 [999] 调教结束（工单事实
- * #2），其余按钮与处理器整组欠账——欠账面由存根清单对账钉死。
+ * 缝 = test/helpers/era-fixture.js。这张票菜单只挂 [999] 调教结束（工单事实
+ * #2），其余按钮与处理器整组待办——待办面由存根清单核对固定。
  */
 
 const assert = require('node:assert/strict');
@@ -27,7 +27,7 @@ test('@SHOW_USERCOM：只挂 [999] 调教结束，其余按钮组一行占位', 
   assert.deepEqual(
     buttons.map((b) => [b.accelerator, b.text]),
     [[999, '调教结束']],
-    '本票菜单只挂 [999]（按钮正文不带编号前缀，引擎自动拼）',
+    '这张票菜单只挂 [999]（按钮正文不带编号前缀，引擎自动拼）',
   );
   assert(
     fixture.text_lines().some((line) => line.includes('@SHOW_USERCOM')),
@@ -48,13 +48,13 @@ test('@USERCOM：未挂载的编号落到链尾 RETURN 0，无输出无转场', 
   const fixture = create_era_fixture();
   const { emit } = load_page(fixture);
 
-  const pending = await emit('USERCOM', 100); // 能力表示：按钮未挂、处理器欠账
+  const pending = await emit('USERCOM', 100); // 能力表示：按钮未挂、处理器待办
 
   assert.equal(pending, undefined);
   assert.deepEqual(fixture.lines, [], '未挂载输入不得有任何反馈（重绘即反馈）');
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-usercom');
   const registry = fs.readFileSync(

@@ -3,14 +3,14 @@
  * ——谁驱动、回调顺序、SELECTCOM 从哪来）。
  *
  * 缝 = test/helpers/era-fixture.js。**回调顺序与 Emuera 一致**是验收项
- *（顺序错了不报错、只会静默改变游戏行为）：用探针处理器钉死
+ *（顺序错了不报错、只会静默改变游戏行为）：用探针处理器固定
  * @SHOW_STATUS → COM_ABLE 扫描 → @SHOW_USERCOM → 输入 → SELECTCOM →
  * NOWEX 清零 → @EVENTCOM → @COMxx → 结算 → @EVENTCOMEND 的完整顺序。
  * 另含：引擎初始化（beginTrain 先于一切火车表写入）、COM_ABLE 未定义即
  * 可执行、@COMxx 未定义重新要求输入、999 经 @USERCOM 退出、AFTERTRAIN
  * 收尾 endTrain，以及「主菜单 → 调教 → 回主菜单」的端到端闭环。
  *
- * 引擎对拍：夹具的调教域表守卫（beginTrain 前写 tflag 报错）在此用引擎
+ * 引擎比对：夹具的调教域表守卫（beginTrain 前写 tflag 报错）在此用引擎
  * 自己的寻址代码锁定（app.asar，engine-bundle）——夹具镜像的是这里的证据。
  */
 
@@ -57,7 +57,7 @@ test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色�
   );
 });
 
-test('回合循环的回调顺序：与 Emuera 逐条一致（探针钉死）', async () => {
+test('回合循环的回调顺序：与 Emuera 逐条一致（探针固定）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.era.beginTrain(0, 31); // 探针世界：表已开（run_train 会再调，幂等）
@@ -91,7 +91,7 @@ test('回合循环的回调顺序：与 Emuera 逐条一致（探针钉死）', 
     probe.push('eventcomend');
   });
 
-  // 上一回合结算（nextTurnInTrain）夹具留痕在 calls，顺序看探针
+  // 上一回合结算（nextTurnInTrain）夹具记录在 calls，顺序看探针
   fixture.store.set('exkeys', [0, 1]);
   fixture.store.set('nowex:31:0', 7); // 待清零的 NOWEX
   fixture.set_inputs(0, 999);
@@ -111,7 +111,7 @@ test('回合循环的回调顺序：与 Emuera 逐条一致（探针钉死）', 
     // 输入 999：非指令 → USERCOM（page-usercom 的 999 → BEGIN AFTERTRAIN）
   ]);
   // SELECTCOM 与 PREVCOM 的来源（写记录为准——包装层的 || 0 兜底会把
-  //「没写」伪装成 0，变异测试抓过的假绿形态）：
+  //「没写」伪装成 0，变异测试抓过的误报通过形态）：
   const flag_writes = (id) =>
     fixture.var_writes.filter((w) => w.name === id).map((w) => w.value);
   assert.deepEqual(flag_writes('flag:10011'), [0], 'SELECTCOM = 玩家输入');
@@ -203,7 +203,7 @@ test('999 → @USERCOM → AFTERTRAIN：run_aftertrain 跑 @EVENTEND 并收尾 e
   fixture.era.beginTrain(0, 31);
   fixture.store.set('base:31:0', 2000); // 存活——死亡分支会跳过其后的珠结算
   // 失神旗标（TFLAG:860）：@EVENTEND 体内要写 tflag——endTrain 若先跑（删表），
-  // 这笔写入会被守卫拦下（引擎寻址语义），flag:7 落不了盘。以此钉死
+  // 这笔写入会被守卫拦下（引擎寻址语义），flag:7 落不了盘。以此固定
   //「链后收尾」的顺序
   fixture.store.set('tflag:860', 1);
   fixture.load_module('event/event-train');
@@ -314,7 +314,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   assert.equal(fixture.calls.filter((c) => c.api === 'endTrain').length, 1);
 });
 
-// —— 夹具守卫的引擎对拍：调教域表的寻址前置条件是真引擎行为 ——
+// —— 夹具守卫的引擎比对：调教域表的寻址前置条件是真引擎行为 ——
 
 const { load_engine_bundle } = require('./helpers/engine-bundle');
 
@@ -322,7 +322,7 @@ const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 engine_test(
-  '引擎对拍：beginTrain 前 tflag 寻址落到兜底报错，palam 三段静默丢弃',
+  '引擎比对：beginTrain 前 tflag 寻址落到兜底报错，palam 三段静默丢弃',
   () => {
     const { set_var } = engine;
     const errors = [];

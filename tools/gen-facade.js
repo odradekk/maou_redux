@@ -1,5 +1,5 @@
 /**
- * @file 域门面生成器（issue #71；#90 扩为二维按属主域铺开）：按区段所有权
+ * @file 域门面生成器（issue #71；#90 扩为二维按属主域推广）：按区段所有权
  * 把变量访问器切成 `chara(cid).<域>.<字段>` 与 `game.<域>.<字段>`。
  *
  * #71 落了两块：一维表（flag/tflag/item/global）按域重切——与既有
@@ -7,7 +7,7 @@
  * （cflag 属主 kojo 的 110 个下标）。
  *
  * #90 起（依据与裁定见 issue #90）：
- *   1. 二维表按属主域全量铺开——talent/source/abl/palam/mark/exp 各自的
+ *   1. 二维表按属主域全量推广——talent/source/abl/palam/mark/exp 各自的
  *      属主域切片合成 chara-<域>.js（一域一文件、域内多表分组），cflag 在
  *      kojo 之外按补名逐个进入（其余跳过并报告），delta/deltabase 按
  *      PORT_TABLE_OWNERS 声明的属主切片；
@@ -41,7 +41,7 @@ const GENERATED_END = '// GENERATED END';
 
 const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 
-// 二维角色表（#90 按属主域铺开）：cflag 的 yml 表为空、名字走 facade-names；
+// 二维角色表（#90 按属主域推广）：cflag 的 yml 表为空、名字走 facade-names；
 // 中间六张 yml 有列名；delta/deltabase 是移植自建表，属主见 PORT_TABLE_OWNERS。
 const TWO_DIM_TABLES = [
   'cflag',
@@ -384,7 +384,7 @@ function render_wrapper(spec) {
     '/**',
     ` * @file 一维变量的${spec.domain}域门面（tools/gen-facade.js）。`,
     ' *',
-    ` * 形状：game.${spec.domain}.<字段>。与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本本票已迁。`,
+    ` * 形状：game.${spec.domain}.<字段>。与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本这张票已迁。`,
     ' */',
     '',
     "const era = require('#/era-electron');",
@@ -467,7 +467,7 @@ function render_game_root(game_specs) {
     '/**',
     ' * @file 一维门面入口：game.<域>.<字段>（tools/gen-facade.js，issue #71）。',
     ' *',
-    ' * 与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本本票已迁。域切片文件在 game-<域>.js。',
+    ' * 与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本这张票已迁。域切片文件在 game-<域>.js。',
     ' */',
     '',
     '',
@@ -509,7 +509,7 @@ function root_specs(facades) {
 function build_facades(ownership_dir) {
   const facades = [];
   const skipped = [];
-  // 二维角色表按属主域铺开（#90）：一域一张 chara-<域>.js，域内多表按
+  // 二维角色表按属主域推广（#90）：一域一张 chara-<域>.js，域内多表按
   // TWO_DIM_TABLES 序分组；未命名的属主下标跳过并报告（cflag 的 kojo 切片
   // 仍是 #71 的全量真名门，缺名即抛错）。
   for (const domain of DOMAINS) {

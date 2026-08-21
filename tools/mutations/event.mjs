@@ -1,6 +1,6 @@
-// 变异台账切片：ere/event/（调教事件链与 SOURCE_CHECK）。
+// 变异条目表切片：ere/event/（调教事件链与 SOURCE_CHECK）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
@@ -149,7 +149,7 @@ export default [
     file: 'ere/event/event-first.js',
     find: `    // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
     // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
-    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码对拍）
+    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码比对）
     init_portcflag(17);`,
     replace: '    // 变异：portcflag 版本戳不盖',
     tests: ['event-first'],

@@ -1,7 +1,7 @@
 /**
- * @file T18 输出对拍·ere 侧回放器（issue #48，验证决议 #9）。
+ * @file T18 输出比对·ere 侧回放器（issue #48，验证决议 #9）。
  *
- * 对拍起点的裁定（工单留给本票的第一个设计问题）——**手工播种等价角色**，
+ * 比对起点的裁定（工单留给这张票的第一个设计问题）——**手工播种等价角色**，
  * 不解析 target/Sav/save00.sav。依据（详见 docs/output-diff.md 与 #48 评论）：
  *
  *   1. 首回合的全部初始值**可从日志自身推导**：PALAM 初值 = 算式行的 from
@@ -9,7 +9,7 @@
  *      与换算结果的反解（下方种子表逐条注明证据行）。
  *   2. save00.sav 与日志窗口的**时间对齐关系不可知**（日志是环形缓冲尾部
  *      5000 行、存档是同场次的某一时刻），解析它得到的不是「窗口起点」；
- *      二进制格式解析还是独立工作量，解析器自身的 bug 会伪装成对拍噪音
+ *      二进制格式解析还是独立工作量，解析器自身的 bug 会伪装成比对噪音
  *      （#9 原型的教训）。
  *   3. 播种复用 #16 夹具的既有机制（seed_chara + store 预置），零新增
  *      采集机制；每个种子值带证据注释，本身就是可审计的产物。
@@ -124,7 +124,7 @@ function seed_winnie_world(fixture) {
   era_flag.assi = -1; // 无「助手:名」段（log:47），调教者 = 主人
 
   // —— 静态名表：实机由引擎装载 yml/ 时注入，夹具不读 yml/（静态表正确性
-  //    另有 chara-yml / variable-yml 对拍），回放按同一产物补进 store ——
+  //    另有 chara-yml / variable-yml 比对），回放按同一产物补进 store ——
   //    消费点：print_palam（palamkeys/palamname）、指令按钮与「上次的调教
   //    指令」（traincommandname）、palam_up_check 的算式名（palamname）。
   const palam = parse_name_ids('yml/Palam.yml');
@@ -139,13 +139,13 @@ function seed_winnie_world(fixture) {
 }
 
 /**
- * 回放调教首回合（输入 0 爱抚），返回两侧对拍所需的全部素材。
+ * 回放调教首回合（输入 0 爱抚），返回两侧比对所需的全部素材。
  *
  * 输入标记：包装 fixture.era.input，输入返回后向 lines 压一条 {type:
- * 'input'} 标记——与输出行精确交错（归一化器据此切窗口）。行数口径由
+ * 'input'} 标记——与输出行精确交错（归一化器据此切窗口）。行数的计法由
  * 夹具的计数器镜像（#68 整改：input() 回显默认 +1 Row，三段短路逐字
- * 对齐引擎），标记只是条目层的对拍注记——不带 row、不推回显条目：条目
- * 层若再记一行回显，会与标记各产生一次 input 事件，把对拍窗口的输入
+ * 对齐引擎），标记只是条目层的比对注记——不带 row、不推回显条目：条目
+ * 层若再记一行回显，会与标记各产生一次 input 事件，把比对窗口的输入
  * 边界翻倍。SET_CLEAR_POINT 的 tflag:999 本就在快照忽略清单。
  *
  * @returns {Promise<{fixture: object, next_state: string,

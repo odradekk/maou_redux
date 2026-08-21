@@ -13,9 +13,9 @@
  *   - ere/ 目录下全部 .js 的**全部字符串字面量**（era-electron.js 除外：引擎
  *     SDK，其 JSDoc 不是游戏代码）。不区分「是否输出 API 的实参」——
  *     source-check.js 的 '陰莖' 是三元表达式的值、先赋变量再输出，按
- *     print 实参扫会漏（工单点名的坑）；ere/ 的含 CJK 字面量按构造即玩家
+ *     print 实参扫会漏（工单指出的坑）；ere/ 的含 CJK 字面量按构造即玩家
  *     可见文本（寻址串是 ASCII）。
- *   - 模板字面量的 ${…} 内容原样进扫描——里面的非简体同样点名。
+ *   - 模板字面量的 ${…} 内容原样进扫描——里面的非简体同样报出。
  *   - yml/*.yml 的全部带引号串（键与值都扫）：表产物的中文名在**键**位、
  *     照样是玩家可见文本；引擎要求的日文列名（名前/呼び名/基礎/素質/フラグ）
  *     在表的 ENGINE_COLUMN_KEYS 放行——它们是引擎接口，不是文案。注释行
@@ -24,7 +24,7 @@
  *     （专有名词，已知一例：page-title.js 致谢名单里的贡献者 ID 華胥の亡靈）。
  *
  * 探针自证（#46 验收的做法固化成测试）：锁跑绿之后，往 ere/ 塞一个带违规
- * 输出的探针模块、重扫、必须红且点名探针文件——证明「新塞进 ere/ 的模块
+ * 输出的探针模块、重扫、必须红且报出探针文件——证明「新塞进 ere/ 的模块
  * 自动受锁」，而不是只在既有文件上凑绿。探针住**临时副本**（#89 三轮整改：
  * 就地写真树 ere/ 会与并行测试的递归拷贝撞车——cpSync 枚举后条目消失即
  * ENOENT），副本按清单只拷 ere/，用完 try/finally 还原（清单回拷）。
@@ -167,7 +167,7 @@ after(() => {
   }
 });
 
-test('探针：往 ere/ 塞违规模块，锁必须点名它（自动纳入后来者）', () => {
+test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后来者）', () => {
   const root = probe_repo();
   const ere_copy = path.join(root, 'ere');
   const probe = path.join(ere_copy, '__lang_lock_probe__.js');
@@ -207,15 +207,15 @@ test('探针：往 ere/ 塞违规模块，锁必须点名它（自动纳入后�
     );
     assert.ok(
       probe_hits.some((p) => p.includes('char:這') || p.includes('char:別')),
-      '字级命中未点名',
+      '字级命中未报出',
     );
     assert.ok(
       probe_hits.some((p) => p.includes('word:奴隷')),
-      '词级命中未点名',
+      '词级命中未报出',
     );
     assert.ok(
       probe_hits.some((p) => p.includes('kana:の')),
-      '假名命中未点名',
+      '假名命中未报出',
     );
   } finally {
     cleanup();

@@ -1,5 +1,5 @@
 /**
- * @file T18 输出对拍·归一化器（issue #48，验证决议 #9）。
+ * @file T18 输出比对·归一化器（issue #48，验证决议 #9）。
  *
  * 职责：把两侧的原始输出归一成同一套「事件流」——
  *   - 黄金样本侧：target/emuera.log 的文本行（UTF-8 BOM + CRLF，逐行过
@@ -17,10 +17,10 @@
  *   { kind: 'gauge',   key, val, max? }             状态条：抽数值（max 有则带）
  *   { kind: 'lossbar', key, val }                   损耗条：label[..] -N → 抠损耗值
  *   { kind: 'calc',    key, from, add, sub?, to, phrase? } 参数算式行
- *   { kind: 'image',   names }                      图片输出（无文本可比，留痕）
+ *   { kind: 'image',   names }                      图片输出（无文本可比，记录）
  *
  * 装饰性行整体丢弃（#9：分割线、省略号、空行——实占比见 line_stats，
- * 本票在 5000 行样本上复核过 #9 的 21.2%）。丢弃是归一化的一部分、不是
+ * 这张票在 5000 行样本上复核过 #9 的 21.2%）。丢弃是归一化的一部分、不是
  * 忽略规则：两边排版能力不同，比对它们只产生噪音。
  */
 
@@ -195,11 +195,11 @@ function golden_stream(log_text) {
  *     #74 裁定：解析器为 SOURCE_CHECK 的合成串保留）
  *   button → menu 条目（标签 + accelerator）
  *   progress → gauge 条目（键＝条内文字、值＝条后数值；#74 零解析直映射）
- *   input → 夹具 lines 里的输入标记（对拍回放器注入，见 replay.js）
+ *   input → 夹具 lines 里的输入标记（比对回放器注入，见 replay.js）
  *   br / divider → 丢弃（换行与分隔线是排版）
- *   image → image 条目（无文本可比，保留留痕）
- * 侧不做 to_simplified：ere 侧必须本就是简体（output-lang-lock 钉死），
- * 对拍再扫一遍等于给同一规则上了两把锁——真出了繁体，这里应当红。
+ *   image → image 条目（无文本可比，保留记录）
+ * 侧不做 to_simplified：ere 侧必须本就是简体（output-lang-lock 固定），
+ * 比对再扫一遍等于给同一规则上了两把锁——真出了繁体，这里应当红。
  *
  * @param {Array<object>} fixture_lines 夹具的 lines 数组
  * @returns {Array<object>} 事件流
@@ -228,10 +228,10 @@ function fixture_stream(fixture_lines) {
       // 结构化进度条 → gauge（#74 裁定，零解析）：
       //   key ＝条内文字（inContent＝参数名）、val ＝条后数值（outContent＝
       //   palam 原值，右对齐宽 5 的填充由 Number 剥掉；空串归一成 0 而非
-      //   NaN——错误值与黄金侧不符照样红，M12 变异证对拍能拦）。
+      //   NaN——错误值与黄金侧不符照样红，M12 变异证比对能拦）。
       //   percentage **不进事件流**：它是纯表现（原作 10 格字符条
-      //   floor(10*值/下一阈值) vs 引擎百分比条的取整口径差异由「不比对」
-      //   吸收）——两侧归一的语义值是条后数值，这是「换皮不砸对拍」的
+      //   floor(10*值/下一阈值) vs 引擎百分比条的取整统计差异异由「不比对」
+      //   吸收）——两侧归一的语义值是条后数值，这是「换掉表现层不影响比对」的
       //   机制本体（print_palam 换 printMultiColumns 的 progress 格后，
       //   事件流与合成串时代逐字节同构）。
       //   max 不映射：palam 条无上限；`(cur/max)` 形态的基础条
@@ -252,7 +252,7 @@ function fixture_stream(fixture_lines) {
 }
 
 /**
- * 取「第 n 次输入 → 第 n+1 次输入」之间的事件流（对拍窗口）。
+ * 取「第 n 次输入 → 第 n+1 次输入」之间的事件流（比对窗口）。
  * 黄金样本是环形缓冲尾部、首屏被截断，窗口从首个输入回显起才算两侧同构
  * （ere 侧回放从全新 BEGIN TRAIN 起，窗口前的首屏本来就不比）。
  *
@@ -271,7 +271,7 @@ function window_between_inputs(stream, n = 0) {
   const end = input_positions[n + 1];
   if (start === undefined || end === undefined) {
     throw new Error(
-      `对拍窗口不完整：需要第 ${n + 1}、${n + 2} 次输入作边界（实得 ${input_positions.length} 次）`,
+      `比对窗口不完整：需要第 ${n + 1}、${n + 2} 次输入作边界（实得 ${input_positions.length} 次）`,
     );
   }
   return stream
@@ -280,7 +280,7 @@ function window_between_inputs(stream, n = 0) {
 }
 
 /**
- * 丢弃行统计（#9 的 21.2% 复核口径：divider + ellipsis + blank 占全行比）。
+ * 丢弃行统计（#9 的 21.2% 复核标准：divider + ellipsis + blank 占全行比）。
  *
  * @param {string} log_text emuera.log 全文
  * @returns {{total: number, blank: number, divider: number, ellipsis: number,

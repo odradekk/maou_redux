@@ -14,7 +14,7 @@
  * 初始状态固定 TITLE（原作由引擎启动直接进 @SYSTEM_TITLE；ere 侧把入口也
  * 收进状态机，STATE.TITLE 是本地扩展，见 begin-signal.js）。
  *
- * 已接线的状态：TITLE / FIRST / SHOP（曳光弹）与 TRAIN / AFTERTRAIN /
+ * 已接入的状态：TITLE / FIRST / SHOP（贯通验证）与 TRAIN / AFTERTRAIN /
  * TURNEND（#44——调教闭环「主菜单 → 调教 → 回合结算 → 回主菜单」）。其余
  * 目标（无）不存在：原作全库只有这六种 BEGIN 目标（begin-signal.js）。
  *
@@ -53,16 +53,16 @@ require('#/kojo/kojo-k5');
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
  * 直接 begin() 抛信号（非事件路径）同样有效，见 enter_state。
  *
- * 已接线：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）/ TRAIN、AFTERTRAIN
+ * 已接入：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）/ TRAIN、AFTERTRAIN
  * （#44，处理器在 system/train/train-loop.js）/ TURNEND（#44 薄转发：仅
- * emit @EVENTTURNEND 链——真身只有 #PRI 壳，回合结算本体欠账，
+ * emit @EVENTTURNEND 链——真身只有 #PRI 壳，回合结算本体待办，
  * event/event-turnend.js）。
  */
 const STATE_HANDLERS = {
   [STATE.TITLE]: run_title_page,
   // 原作 BEGIN FIRST → @EVENTFIRST 事件链（SYSTEM ver1.0.3.ERB:1）。
   // 链无人 BEGIN 时默认进 SHOP：Emuera 在 @EVENTFIRST 跑完而无转场时自动
-  // 进入商店轮，不是报错（#20 验收移交的语义，本票落地）。防御性兜底——
+  // 进入商店轮，不是报错（#20 验收移交的语义，这张票落地）。防御性兜底——
   // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发
   // 信号时兜住引擎行为。
   [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
@@ -77,7 +77,7 @@ const STATE_HANDLERS = {
   // BEGIN TURNEND）→ 引擎收尾调教数据（ere 侧 era.endTrain）。
   [STATE.AFTERTRAIN]: run_aftertrain,
   // 原作 BEGIN TURNEND → @EVENTTURNEND 链。当前链上只有 #PRI 壳（出口
-  // BEGIN SHOP 真实，本体欠账）——链无人 BEGIN 时与 FIRST 同理按引擎行为
+  // BEGIN SHOP 真实，本体待办）——链无人 BEGIN 时与 FIRST 同理按引擎行为
   // 兜底 SHOP？不：Emuera 对 TURNEND 无「自动进商店轮」的文档语义，且 #PRI
   // 壳必发 BEGIN SHOP，兜底只会掩盖壳被误删的回归，保持 undefined 报错。
   [STATE.TURNEND]: async () => await emit('EVENTTURNEND'),
@@ -92,7 +92,7 @@ async function enter_state(state) {
   const handler = STATE_HANDLERS[state];
   if (handler === undefined) {
     throw new Error(
-      `游戏状态 ${state} 的处理器尚未移植（曳光弹后续票，见 issue #15）`,
+      `游戏状态 ${state} 的处理器尚未移植（贯通验证后续票，见 issue #15）`,
     );
   }
   try {

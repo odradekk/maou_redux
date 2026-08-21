@@ -1,8 +1,8 @@
 /**
  * @file engine-contract-check 的行为锁（issue #91）：工具不只「报告对得上」，
- * 三道门的每一条都要在退出码里生效——探针写坏规则靶子 / 伪造引擎 / 改坏
- * 台账，工具必须非 0 且点名；引擎缺失时必须退 0 并警告（skip 语义）。
- * 本文件不持事实表、基线或台账的副本（数据只在 tools/ 的三份源文件与工具
+ * 三项检查的每一条都要在退出码里生效——探针写坏规则靶子 / 伪造引擎 / 改坏
+ * 条目表，工具必须非 0 且报出位置；引擎缺失时必须退 0 并警告（skip 语义）。
+ * 本文件不持事实表、基线或条目表的副本（数据只在 tools/ 的三份源文件与工具
  * 内嵌基线里），只验行为——「规则写在测试里而工具声称自己在守、退出码却是
  * 0」是 trace-check 整改时的教训。
  *
@@ -15,7 +15,7 @@
  * 与并行读者撞车（16 核 Linux 五跑四红）；而副本若整棵拷 ere/，递归拷贝
  * 在乎的不是内容是「条目在不在」，并行的探针在 ere/ 里增删文件会让
  * cpSync 中途 ENOENT（Windows npm test 7/9 红的回归形态）。故副本按
- * **清单最小拷贝**（PROBE_REPO_ENTRIES：工具本体 + 事实表 + 台账 + 全仓
+ * **清单最小拷贝**（PROBE_REPO_ENTRIES：工具本体 + 事实表 + 条目表 + 全仓
  * 唯一的 progress 调用点 + 见证所在的夹具——门 A 在副本里扫 ere/ 只见
  * page-train.js，调用点 1 处与真树合计一致，判定可平移）；副本进程内
  * 单例、文件内用例串行复用，finally 用清单回拷还原。副本的 tools/ 在
@@ -104,7 +104,7 @@ function write_fake_asar(files) {
   return asar_path;
 }
 
-test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 台账两道门，退出码 0）', () => {
+test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 条目表两项检查，退出码 0）', () => {
   const { status, output } = run_tool();
   if (status !== 0) {
     // 引擎缺失的裸克隆：工具按 skip 语义退 0，这里的非 0 只可能是真失守
@@ -113,10 +113,10 @@ test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 台账两道�
     );
   }
   assert.ok(output.includes('锚点') || output.includes('跳过'), output);
-  assert.ok(output.includes('台账'), `报告应包含台账判定：\n${output}`);
+  assert.ok(output.includes('条目表'), `报告应包含条目表判定：\n${output}`);
 });
 
-test('调用点规则：barWidth 常量改成 24 必须红且点名（#74 形态的守门）', () => {
+test('调用点规则：barWidth 常量改成 24 必须红且报出位置（#74 形态的拦截）', () => {
   const root = probe_repo();
   try {
     const page_train = path.join(root, 'ere', 'page', 'page-train.js');
@@ -136,7 +136,7 @@ test('调用点规则：barWidth 常量改成 24 必须红且点名（#74 形态
     );
     assert.ok(
       output.includes('page-train') && output.includes('barWidth = 24'),
-      `探针未被点名：\n${output}`,
+      `探针未被报出：\n${output}`,
     );
     assert.ok(output.includes('越界'), `报错应说明越界（1..23）：\n${output}`);
     // 还原副本后再跑必须绿——证明上面的红确实来自探针，不是副本本身破损
@@ -168,7 +168,7 @@ test('调用点规则：删掉 config（不显式传 barWidth）必须红', () =
     );
     assert.ok(
       output.includes('未显式传 barWidth') && output.includes('page-train'),
-      `探针未被点名：\n${output}`,
+      `探针未被报出：\n${output}`,
     );
   } finally {
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);
@@ -200,8 +200,8 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
       ),
       'utf8',
     );
-    // 引擎缺失环境下锚点门本就跳过，此探针只看规则门：显式指一个不存在的
-    // asar，把锚点门摘出去
+    // 引擎缺失环境下锚点检查本就跳过，此探针只看规则门：显式指一个不存在的
+    // asar，把锚点检查摘出去
     const { status, output } = run_tool_in(root, [
       '--asar',
       'Z:\\definitely\\missing.asar',
@@ -216,7 +216,7 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
   }
 });
 
-test('锚点失配 → 硬红报「引擎变了」并点名事实（伪造 asar 探针）', () => {
+test('锚点失配 → 直接判失败报「引擎变了」并报出事实（伪造 asar 探针）', () => {
   const asar_path = write_fake_asar({
     'js/app.2cccec57.js.map': build_renderer_map(
       all_anchor_literals().filter(
@@ -234,7 +234,7 @@ test('锚点失配 → 硬红报「引擎变了」并点名事实（伪造 asar 
     assert.ok(
       output.includes('引擎变了') &&
         output.includes('progress-bar-width-default'),
-      `报错必须以「引擎变了」开头并点名事实 id：\n${output}`,
+      `报错必须以「引擎变了」开头并报出事实 id：\n${output}`,
     );
     assert.ok(
       output.includes('era-fixture'),
@@ -262,7 +262,7 @@ test('锚点定位器按模式匹配渲染包：换了内容哈希的文件名�
   }
 });
 
-test('渲染包缺失 → 硬红报「引擎变了」（引擎在场而形状漂移，不是环境缺失）', () => {
+test('渲染包缺失 → 直接判失败报「引擎变了」（引擎在场而形状漂移，不是环境缺失）', () => {
   const asar_path = write_fake_asar({ 'background.js': 'x' });
   try {
     const { status, output } = run_tool(['--asar', asar_path]);
@@ -284,22 +284,25 @@ test('引擎缺失 → 退 0 并警告（skip 语义，不是失守）', () => {
   assert.equal(
     status,
     0,
-    `--asar 显式指路而所指不存在 = 引擎缺失，必须退 0（规则与台账照跑）：\n${output}`,
+    `--asar 显式指路而所指不存在 = 引擎缺失，必须退 0（规则与条目表照跑）：\n${output}`,
   );
   assert.ok(
     output.includes('未找到 app.asar') && output.includes('跳过'),
-    `应留警告说明锚点门跳过：\n${output}`,
+    `应留警告说明锚点检查跳过：\n${output}`,
   );
-  assert.ok(output.includes('台账'), `规则与台账照跑照判：\n${output}`);
+  assert.ok(output.includes('条目表'), `规则与条目表照跑照判：\n${output}`);
 });
 
-test('台账只能变短：基线外新条目必须红且点名', () => {
+test('条目表只能变短：基线外新条目必须红且报出位置', () => {
   const root = probe_repo();
   try {
     const ledger = path.join(root, 'tools', 'engine-contract-ledger.mjs');
     const original = fs.readFileSync(ledger, 'utf8');
     const anchor = "  {\n    id: 'waitanykey-fromclear-useRule',";
-    assert.ok(original.includes(anchor), '探针锚行不在台账里——台账结构变了？');
+    assert.ok(
+      original.includes(anchor),
+      '探针锚行不在条目表里——条目表结构变了？',
+    );
     const probe = `  {\n    id: 'probe-outside-baseline',\n    desc: '探针：基线外条目',\n    witness: '不存在的见证串',\n  },\n${anchor}`;
     fs.writeFileSync(ledger, original.replace(anchor, probe), 'utf8');
     const { status, output } = run_tool_in(root, [
@@ -309,32 +312,35 @@ test('台账只能变短：基线外新条目必须红且点名', () => {
     assert.notEqual(
       status,
       0,
-      '基线外新条目必须非 0——吸收欠账须显式改 LEDGER_BASELINE',
+      '基线外新条目必须非 0——吸收待办须显式改 LEDGER_BASELINE',
     );
     assert.ok(
       output.includes('probe-outside-baseline') &&
         output.includes('不在 #91 基线内'),
-      `探针条目未被以基线名义点名：\n${output}`,
+      `探针条目未被以基线名义报出：\n${output}`,
     );
     fs.writeFileSync(ledger, original, 'utf8');
     const restored = run_tool_in(root);
     assert.equal(
       restored.status,
       0,
-      `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
+      `条目表还原后还红——副本或真树有一边不对：\n${restored.output}`,
     );
   } finally {
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
 });
 
-test('台账不许发霉：见证注释不在夹具里的条目必须红', () => {
+test('条目表不许过期失效：见证注释不在夹具里的条目必须红', () => {
   const root = probe_repo();
   try {
     const ledger = path.join(root, 'tools', 'engine-contract-ledger.mjs');
     const original = fs.readFileSync(ledger, 'utf8');
     const anchor = "witness: 'setBack/setOverlay 的独立',";
-    assert.ok(original.includes(anchor), '探针锚行不在台账里——台账结构变了？');
+    assert.ok(
+      original.includes(anchor),
+      '探针锚行不在条目表里——条目表结构变了？',
+    );
     fs.writeFileSync(
       ledger,
       original.replace(anchor, "witness: '不在夹具里的见证串 xyz',"),
@@ -347,18 +353,19 @@ test('台账不许发霉：见证注释不在夹具里的条目必须红', () =>
     assert.notEqual(
       status,
       0,
-      '见证注释消失的条目必须非 0——分歧已变而台账没跟',
+      '见证注释消失的条目必须非 0——分歧已变而条目表没跟',
     );
     assert.ok(
-      output.includes('setback-setoverlay-rearm') && output.includes('发霉'),
-      `发霉条目未被逐条点名：\n${output}`,
+      output.includes('setback-setoverlay-rearm') &&
+        output.includes('过期失效'),
+      `过期失效条目未被逐条报出：\n${output}`,
     );
     fs.writeFileSync(ledger, original, 'utf8');
     const restored = run_tool_in(root);
     assert.equal(
       restored.status,
       0,
-      `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
+      `条目表还原后还红——副本或真树有一边不对：\n${restored.output}`,
     );
   } finally {
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);

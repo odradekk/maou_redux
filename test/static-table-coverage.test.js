@@ -111,7 +111,7 @@ function load_all_products() {
 }
 
 engine_test(
-  '游戏代码用到的每个三段寻址族，yml/ 都有对应名字表（缺表即实机硬崩）',
+  '游戏代码用到的每个三段寻址族，yml/ 都有对应名字表（缺表即实机直接崩溃）',
   () => {
     const loader = load_all_products();
     const addressed = collect_addressed_tables();
@@ -140,7 +140,7 @@ engine_test(
   },
 );
 
-engine_test('引擎实证：缺名字表时三段寻址硬崩（本锁存在的理由）', () => {
+engine_test('引擎实证：缺名字表时三段寻址直接崩溃（本锁存在的理由）', () => {
   const loader = load_all_products();
   const cid = 31;
   const data = { stain: { [cid]: {} } };

@@ -2,7 +2,7 @@
  * @file 工作树写入锁（#89 三轮整改的结构性守护）：测试不得写仓库工作树。
  *
  * 缘由：#89 三轮验收各揪出一个写真树的测试（#91 的 page-train 就地改、
- * domain/trace 的台账就地改与 ere/ 探针、lang-lock 的 ere/ 探针）——在
+ * domain/trace 的条目表就地改与 ere/ 探针、lang-lock 的 ere/ 探针）——在
  * #89 落成「探针住临时副本」纪律之前，这只是口头约定，而本仓三次证明：
  * 没有工具守着的约定会退化。本锁把约定变成规则：扫 test/ 全部 .js
  * （含 helpers）的**源码文本**，凡写族调用（writeFileSync / appendFileSync
@@ -18,8 +18,8 @@
  * 「测试进程不写工作树」。tests 之外的未来写者（脚本、CI）如有需要另立
  * 锁，不在此扩面。
  *
- * 自证：合成的违规样本（临时目录里的假测试文件，写族调用靶向
- * path.join(REPO_ROOT, 'ere', …)）必须被点名——证明锁对「后来者」不失明，
+ * 自证：合成的违规样本（临时目录里的假测试文件，写族调用指向
+ * path.join(REPO_ROOT, 'ere', …)）必须被报出——证明锁对「后来者」不失明，
  * 而不是只在现有文件上凑绿。样本文本用占位符拼接构造，避免本文件自己
  * 含有可被本锁匹配的字面调用形态。
  */
@@ -105,7 +105,7 @@ function top_args(text, from) {
 }
 
 /**
- * 扫一个目录树的全部 .js，返回写族调用靶向仓库根的违规清单。
+ * 扫一个目录树的全部 .js，返回写族调用指向仓库根的违规清单。
  * @param {string} dir 要扫的目录（测试用例可传临时目录做自证）
  * @returns {string[]} 违规描述（文件:行 + 调用）
  */
@@ -131,7 +131,7 @@ function scan_dir_for_worktree_writes(dir) {
           if (arg !== '' && is_repo_rooted(arg, const_map)) {
             const line = text.slice(0, m.index).split(/\r?\n/).length;
             violations.push(
-              `${path.relative(dir, full).replace(/\\/g, '/')}:${line} ${m[1]}(${arg.slice(0, 60)}…) 靶向仓库根——写坏型探针一律住临时副本（test/helpers/probe-repo.js）`,
+              `${path.relative(dir, full).replace(/\\/g, '/')}:${line} ${m[1]}(${arg.slice(0, 60)}…) 指向仓库根——写坏型探针一律住临时副本（test/helpers/probe-repo.js）`,
             );
           }
         }
@@ -142,7 +142,7 @@ function scan_dir_for_worktree_writes(dir) {
   return violations;
 }
 
-test('测试不写工作树：test/ 全部源码无靶向仓库根的写族调用', () => {
+test('测试不写工作树：test/ 全部源码无指向仓库根的写族调用', () => {
   const violations = scan_dir_for_worktree_writes(path.join(REPO_ROOT, 'test'));
   assert.deepEqual(
     violations,
@@ -153,7 +153,7 @@ test('测试不写工作树：test/ 全部源码无靶向仓库根的写族调�
   );
 });
 
-test('自证：合成违规样本（临时目录）必须被点名——锁对后来者不失明', () => {
+test('自证：合成违规样本（临时目录）必须被报出——锁对后来者不失明', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-write-lock-'));
   try {
     // 占位符拼接：本文件自身不得含有可被本锁匹配的字面调用形态
@@ -197,7 +197,7 @@ test('自证：合成违规样本（临时目录）必须被点名——锁对�
     assert.equal(
       violations.length,
       5,
-      `应恰好点名 5 处违规：\n${violations.join('\n')}`,
+      `应恰好报出 5 处违规：\n${violations.join('\n')}`,
     );
     assert.ok(
       violations.every((v) => v.startsWith('__offender__.test.js:')),

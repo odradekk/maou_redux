@@ -10,7 +10,7 @@
 // 收录判据（工单边界）：只收「夹具行为真的依赖它」且可断言的事实——
 // anchors 能在渲染层源码里逐字钉住的才进表；「引擎主/渲染两层在 0 行时
 // 分歧」一类背景叙述不进表。第一层（background.js 的 allowWait 状态机）
-// 不在本表：它由 test/engine-contract.test.js 以真方法逐步对拍守——
+// 不在本表：它由 test/engine-contract.test.js 以真方法逐步比对守——
 // **可执行的不锚定，锚定的不执行**，两层不重复设防。
 //
 // anchors 是渲染层 sourcesContent 的字面子串（非正则）：锚点校核的语义

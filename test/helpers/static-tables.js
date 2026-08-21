@@ -1,7 +1,7 @@
 /**
  * @file 入库变量表（yml/Base.yml、Talent.yml、Item.yml）的装载助手（issue #38）。
  *
- * 与 test/helpers/chara.js 同类：给页面/对拍用例提供「引擎装载后的真实表
+ * 与 test/helpers/chara.js 同类：给页面/比对用例提供「引擎装载后的真实表
  * 形状」。装载全程用引擎自己的 parseDataFile 与 eraStart 变量表分支转写
  * （test/helpers/engine-bundle.js），不经自写镜像。缺引擎（无 app.asar）
  * 时 load_repo_variable_tables 返回 undefined，用例自行 skip。
@@ -19,7 +19,7 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 // 入库变量表清单：文件 → 表名（eraStart 用的归一表名）。后续表（Abl/Exp/…）
 // 随各自的数据管线票入库时在此登记。CFlag.yml 不是转换器产物（原作无
-// CFLAG 名表，见该文件头注释），登记在此使对拍与实机装载一致：缺它时
+// CFLAG 名表，见该文件头注释），登记在此使比对与实机装载一致：缺它时
 // 角色预设的 フラグ 行报「角色数据表不存在: cflag!」并被丢弃（#50 实测）。
 // PortCFlag.yml 同为人工表（移植自建扩展表，#67）：登记在此使 Chara17.yml
 // 的 portcflag 预设行在装载循环里可翻译（名字表缺位同样报错丢弃）。

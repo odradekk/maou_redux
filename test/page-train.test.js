@@ -1,11 +1,11 @@
 /**
  * ere/page/page-train.js 的行为测试（issue #44：@SHOW_STATUS 骨架 +
- * PRINT_PALAM 引擎内建命令的移植；#74：整页画面组件 + 原生进度条换皮）。
+ * PRINT_PALAM 引擎内建命令的移植；#74：整页画面组件 + 原生进度条换表现层）。
  *
  * 缝 = test/helpers/era-fixture.js。#74 起参数条是 printMultiColumns 的
  * progress 格——语义值（参数名/palam 原值）与表现（percentage）的分离
- * 在这里钉死：数值对齐 emuera.log 实机样本，百分比按「下一等级阈值」
- * 手算基线（不镜像实现），行分组按 #68 的 Row 口径（一次调用 3 格＝1 Row）。
+ * 在这里固定：数值对齐 emuera.log 实机样本，百分比按「下一等级阈值」
+ * 手算基线（不镜像实现），行分组按 #68 的 Row 的计法（一次调用 3 格＝1 Row）。
  */
 
 const assert = require('node:assert/strict');
@@ -153,7 +153,7 @@ test('PRINT_PALAM：16 格原生进度条——条内名、条后数值与样本
       `${l.text} 的 percentage 应为 ${expected_pct[l.text]}，实得 ${l.percentage}`,
     );
   });
-  // Row 分组：一次 printMultiColumns 3 格＝1 Row（#68 口径），16 格 → 6 行
+  // Row 分组：一次 printMultiColumns 3 格＝1 Row（#68 标准），16 格 → 6 行
   assert.deepEqual(
     progress.map((l) => l.row),
     [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5],
@@ -203,7 +203,7 @@ test('PRINT_PALAM：条后数值列必须真实渲染（barWidth<24——引擎�
   );
   assert.ok(
     bars.every((l) => l.out_visible === true),
-    '每格的条后数值（palam 原值）必须真实渲染——它是对拍与玩家共用的语义值',
+    '每格的条后数值（palam 原值）必须真实渲染——它是比对与玩家共用的语义值',
   );
 });
 
@@ -308,7 +308,7 @@ test('@SHOW_STATUS 组件化：无指令轮就地重绘（菜单与回显被锚�
   // 行数回到块自身（锚点跨度清掉 旧状态画面+菜单+回显 后重画）
   assert.equal(fixture.era.getLineCount(), block_rows);
   assert(!fixture.text_lines().includes('指令菜单占位'), '旧菜单行应被清掉');
-  // 「发生过什么」留痕在行史（#73 的取证层）
+  // 「发生过什么」记录在行史（#73 的取证层）
   assert(fixture.lines_history.some((l) => l.text === '指令菜单占位'));
 });
 
@@ -387,7 +387,7 @@ test('@SHOW_STATUS 组件化：跨会话重建（旧锚点不得清掉新局内�
 
   assert(
     fixture.text_lines().includes('商店主菜单占位行0'),
-    '新局上方的商店内容必须幸存（跨会话旧锚点是 #73 钉死的坑）',
+    '新局上方的商店内容必须幸存（跨会话旧锚点是 #73 固定的坑）',
   );
   assert(
     fixture.text_lines().includes('商店主菜单占位行9'),
@@ -395,7 +395,7 @@ test('@SHOW_STATUS 组件化：跨会话重建（旧锚点不得清掉新局内�
   );
 });
 
-test('旁路清行：重绘后行数未回锚点须留痕并重锚恢复（#73 转来的欠账）', async () => {
+test('旁路清行：重绘后行数未回锚点须记录并重锚恢复（#73 转来的待办）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   await run_show_status(fixture);
@@ -416,12 +416,12 @@ test('旁路清行：重绘后行数未回锚点须留痕并重锚恢复（#73 �
     fixture.era.clear = original_clear;
   }
 
-  // 自校验必须留痕（去掉自校验本用例全绿——#73 验收点名的空覆盖）
+  // 自校验必须记录（去掉自校验本用例全绿——#73 验收报出的空覆盖）
   assert(
     fixture.logs.some((l) => l.level === 'warn' && l.msg.includes('旁路清行')),
-    '重绘后行数未回锚点必须 warn 留痕',
+    '重绘后行数未回锚点必须 warn 记录',
   );
-  // 恢复力：组件据真实行数重锚，下一次（无漂移）重绘干净通过、不再留痕
+  // 恢复力：组件据真实行数重锚，下一次（无漂移）重绘干净通过、不再记录
   fixture.era.print('指令菜单占位');
   fixture.set_inputs(777);
   await fixture.era.input();
@@ -433,7 +433,7 @@ test('旁路清行：重绘后行数未回锚点须留痕并重锚恢复（#73 �
   );
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = load_module_safe(fixture);
   const registry = fs.readFileSync(

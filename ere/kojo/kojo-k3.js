@@ -4,7 +4,7 @@
  * 源: target/ERB/口上/EVENT_K3_高貴.ERB  @EVENTTRAIN #PRI（:81-85，存在
  *     标志 FLAG:103）@EVENTEND #LATER（:87-89，清标志）
  *     @KOJO_MESSAGE_COM_3（:887；七道跳过判定 :888-912；爱抚 CFLAG:301
- *     状态机 :920-1105——工单点名的 190 行切片，黄金样本 emuera.log:26
+ *     状态机 :920-1105——工单指出的 190 行切片，黄金样本 emuera.log:26
  *     出自 :1097）
  *
  * == 状态机（CFLAG:301，:918 注释「コマンド実行時のセリフ CFLAG 301～400
@@ -17,7 +17,7 @@
  * 4xx/3xx/2xx，一支内再用个位数计数——:978/:1022/:1053 的追記者注释：
  * 「百の桁は大別、一の桁が回数」）。推进到阶段末尾后停在随机三选一。
  *
- * 本票存根（docs/stub-registry.md）：COLOSSEUM_KOJO_3 / DOG_KOJO_3（守卫
+ * 这张票存根（docs/stub-registry.md）：COLOSSEUM_KOJO_3 / DOG_KOJO_3（守卫
  * 岔开的专用口上）与 SELECTCOM != 0 的其余指令分支（随各自指令票）。
  */
 
@@ -33,7 +33,7 @@ const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = ['COLOSSEUM_KOJO_3', 'DOG_KOJO_3', 'KOJO_MESSAGE_COM_3'];
 
@@ -453,7 +453,7 @@ async function kojo_message_com_3(rand) {
         } else if (rand_n(2) === 0) {
           await era.printAndWait(
             `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,
-          ); // :1097 黄金样本逐字对拍（test/kojo-k3.test.js）
+          ); // :1097 黄金样本逐字比对（test/kojo-k3.test.js）
         } else {
           await era.printAndWait(
             '「嗯~、嗯~嗯~……明明…说了、快住手了……啊嗯~……」',
@@ -464,7 +464,7 @@ async function kojo_message_com_3(rand) {
     return 0; // :1103
   }
 
-  // :1105 ENDIF（IF SELECTCOM == 0 的收口）——其余指令欠账，占位一行
+  // :1105 ENDIF（IF SELECTCOM == 0 的收口）——其余指令待办，占位一行
   stub_line(
     'KOJO_MESSAGE_COM_3',
     `指令 ${era_flag.selectcom} 的口上`,

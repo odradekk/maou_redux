@@ -1,6 +1,6 @@
-// 变异台账切片：ere/facade、ere/era-utils、ere/chara、ere/utils（门面与包装层）。
+// 变异条目表切片：ere/facade、ere/era-utils、ere/chara、ere/utils（门面与包装层）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
@@ -12,7 +12,7 @@ export default [
     must_mention: 'portcflag',
   },
   {
-    desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机硬崩）',
+    desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机直接崩溃）',
     file: 'ere/chara/chara-portcflag.js',
     find: '  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);',
     replace: '  return era.set(`portflag:${cid}:数据版本`, PORT_DATA_VERSION);',

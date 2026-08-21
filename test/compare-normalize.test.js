@@ -3,7 +3,7 @@
  *
  * 覆盖：行分类器的每一类（含网格行的多单元解析与值跨度）、黄金样本侧的
  * #60 归一、真实 emuera.log 上的首窗口形状、装饰行占比复核（#9 的 21.2%
- * 口径）。
+ * 标准）。
  */
 
 const assert = require('node:assert/strict');
@@ -172,7 +172,7 @@ test('真实样本：参数条网格逐格拆条（turn-2 的 16 格全在窗口
   );
 });
 
-test('装饰行占比复核：#9 的 21.2% 口径在 5000 行样本上成立（本分类器 21.7%）', () => {
+test('装饰行占比复核：#9 的 21.2% 统计在 5000 行样本上成立（本分类器 21.7%）', () => {
   const stats = line_stats(LOG);
   assert.equal(stats.total, 5000);
   // #9 手工分类：divider 437 + ellipsis 364 + blank 261 = 21.2%。本分类器
@@ -202,7 +202,7 @@ test('夹具记录映射：button → menu、text → 同一分类器、br/divid
   assert.equal(stream[0].val, 0);
 });
 
-// —— #74：结构化进度条记录 → gauge（换皮不砸对拍的机制本体）——
+// —— #74：结构化进度条记录 → gauge（换掉表现层不影响比对的机制本体）——
 
 test('progress 记录 → gauge：键=条内文字、值=条后数值，percentage 不进事件流', () => {
   const stream = fixture_stream([
@@ -218,7 +218,7 @@ test('progress 记录 → gauge：键=条内文字、值=条后数值，percenta
       { kind: 'gauge', key: '阴核', val: 250000 },
     ],
   );
-  // percentage 是渲染口径（10 格字符条 floor vs 百分比条），不随条目下传——
+  // percentage 是渲染层的算法（10 格字符条 floor vs 百分比条），不随条目下传——
   // 表现变更不产生差异由这条保证
   assert.ok(stream.every((e) => !('percentage' in e)));
   // 右对齐填充由 Number 剥掉（与黄金侧正则抽数值同值）
@@ -227,7 +227,7 @@ test('progress 记录 → gauge：键=条内文字、值=条后数值，percenta
 
 test('ere 侧文本仍过网格解析：损耗条合成串照旧成 lossbar（#74 裁定保留）', () => {
   // parse_grid_line 不随 #74 删除：损耗条（体力/气力 -N 行）仍由
-  // SOURCE_CHECK 以合成串产出（owner 在调教循环侧，本票边界外）。
+  // SOURCE_CHECK 以合成串产出（owner 在调教循环侧，这张票边界外）。
   const stream = fixture_stream([
     {
       type: 'text',
@@ -245,5 +245,5 @@ test('窗口边界：缺第二次输入即报错（两侧同构的纪律）', ()
     { kind: 'input', text: '0' },
     { kind: 'text', text: 'x' },
   ];
-  assert.throws(() => window_between_inputs(stream, 0), /对拍窗口不完整/);
+  assert.throws(() => window_between_inputs(stream, 0), /比对窗口不完整/);
 });

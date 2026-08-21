@@ -1,7 +1,7 @@
 # 跨域读汇总（全部表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table all
 #
-# 口径：读取 = 非写入的寻址命中（比较/右值/PRINTFORM/CALL 实参），ignored 文件不计；
+# 标准：读取 = 非写入的寻址命中（比较/右值/PRINTFORM/CALL 实参），ignored 文件不计；
 #       跨域读 = 读取者域 ≠ 该下标属主域（#65 决议「跨域读放行」；本表只给数据）。
 #       by_pair 按「读取者->属主」聚合；top10_indexes 取跨域读最多的十个下标；
 #       indexes_covering_80pct = 覆盖 80% 跨域读所需下标数（越小越集中）。

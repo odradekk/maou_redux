@@ -22,7 +22,7 @@
  * asar 定位顺序：环境变量 ERE_ENGINE_ASAR → 仓库内 ere-4.8.0-win-x64/
  * （全新克隆按 AGENTS.md 放置引擎运行时即命中）→ D:\Code\era 主 checkout。
  * 三处都没有时 load_engine_bundle() 返回 undefined，依赖它的用例以
- * test.skip 退场并留一行警告——引擎对拍是加强项，不该让无引擎的裸克隆
+ * test.skip 退场并留一行警告——引擎比对是加强项，不该让无引擎的裸克隆
  * 连 npm test 都跑不过。
  */
 
@@ -77,7 +77,7 @@ function load_engine_bundle() {
   const asar_path = locate_asar();
   if (!asar_path) {
     console.warn(
-      '[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎对拍用例将跳过',
+      '[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过',
     );
     cached_bundle = null;
     return cached_bundle;
@@ -101,7 +101,7 @@ function load_engine_bundle() {
   // 模块号漂移守卫（#91）：4.8.0 实测 EraApi 是模块 183——引擎升版后编号
   // 漂移时 wp(183) 会取到别的模块，下游在 undefined 上炸出不知所云的
   // TypeError。这里就地抛「引擎变了」，与「引擎缺失 → 返回 undefined 让
-  // 用例 skip」区分开：asar 在场而模块对不上 = 镜像要重核的时刻，硬红。
+  // 用例 skip」区分开：asar 在场而模块对不上 = 镜像要重核的时刻，直接判失败。
   const era_api = wp(183);
   const ERA_API_METHODS = [
     'addTotalLines',

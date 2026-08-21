@@ -1,16 +1,16 @@
-// 变异台账切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
+// 变异条目表切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
-    desc: 'M94 ERB 完整性门焊死（未登记引用不再红——探针用例必须抓到失明）',
+    desc: 'M94 ERB 完整性检查焊死（未登记引用不再红——探针用例必须抓到失明）',
     file: 'tools/trace-check.mjs',
     find: '    if (!registered?.has(ref) && !exempt.includes(ref)) {',
     replace:
       '    if (false && !registered?.has(ref) && !exempt.includes(ref)) {',
     tests: ['trace-check'],
-    must_mention: '完整性门对后来者失明',
+    must_mention: '完整性检查对后来者失明',
   },
   {
     desc: 'M95 豁免清单偷偷变长（新条目必须撞基线锁）',
@@ -141,14 +141,14 @@ export default [
     must_mention: 'ignored',
   },
   {
-    desc: 'M135 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
+    desc: 'M135 ignored_files 存在性守卫被删（过期失效声明不再报错——过期失效用例必须红）',
     file: 'tools/ownership-scan.js',
     find: `  const missing_ignored = domains.ignored_files.filter(
     (name) => !root_files.includes(name),
   );
   if (missing_ignored.length > 0) {
     throw new Error(
-      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据发霉，删掉或改对）\`,
+      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据过期失效，删掉或改对）\`,
     );
   }`,
     replace: '  void root_files;',
@@ -190,7 +190,7 @@ export default [
     find: '      if (owner === domain) {',
     replace: '      if (true) {',
     tests: ['domain-check'],
-    must_mention: '必须红且点名（新文件自动纳入）',
+    must_mention: '必须红且报出位置（新文件自动纳入）',
   },
   {
     desc: 'M162 判定依据脱离产物：所有权区间坍缩为单下标，区间尾段全部失主',
@@ -198,18 +198,18 @@ export default [
     find: '    const end = match[2] ? Number(match[2]) : start;',
     replace: '    const end = start;',
     tests: ['domain-check'],
-    must_mention: '必须红且点名（新文件自动纳入）',
+    must_mention: '必须红且报出位置（新文件自动纳入）',
   },
   {
-    desc: 'M163 台账发霉门被拆（count > actual 恒假，消化存量后忘删条目不再红）',
+    desc: 'M163 条目表过期失效检查被拆（count > actual 恒假，消化现有条目后忘删条目不再红）',
     file: 'tools/domain-check.mjs',
     find: '      if (count > actual) {',
     replace: '      if (false) {',
     tests: ['domain-check'],
-    must_mention: '发霉',
+    must_mention: '过期失效',
   },
   {
-    desc: 'M164 基线计数门被拆（count > baseline 恒假，抬计数吸收新增欠账不再红）',
+    desc: 'M164 基线计数检查被拆（count > baseline 恒假，抬计数吸收新增待办不再红）',
     file: 'tools/domain-check.mjs',
     find: '      } else if (count > baseline) {',
     replace: '      } else if (false) {',
@@ -231,7 +231,7 @@ export default [
     replace:
       "    if (rel === SDK_FILE || rel.startsWith('ere/facade/') || WRAPPER_FILES.includes(rel)) {",
     tests: ['domain-check'],
-    must_mention: '目录逃生门',
+    must_mention: '目录逃生口',
   },
   {
     desc: 'M172 调用点规则的界值检查被拆（只查下界，barWidth=24 放行）',
@@ -242,10 +242,10 @@ export default [
     must_mention: '改成 24',
   },
   {
-    desc: 'M173 锚点门被拆（字面消失不红，引擎升版当天守护无声消失）',
+    desc: 'M173 锚点检查被拆（字面消失不红，引擎升版当天守护无声消失）',
     file: 'tools/engine-contract-check.mjs',
     find: '      if (!renderer_source.includes(anchor)) {',
-    replace: '      if (false) { // 变异：锚点门拆除',
+    replace: '      if (false) { // 变异：锚点检查拆除',
     tests: ['engine-contract-check'],
     must_mention: '锚点失配',
   },
@@ -258,20 +258,20 @@ export default [
     must_mention: '锚点失配',
   },
   {
-    desc: 'M175 台账基线门被拆（基线外新条目不再红）',
+    desc: 'M175 条目表基线检查被拆（基线外新条目不再红）',
     file: 'tools/engine-contract-check.mjs',
     find: '    if (!LEDGER_BASELINE.includes(entry.id)) {',
-    replace: '    if (false) { // 变异：基线门拆除',
+    replace: '    if (false) { // 变异：基线检查拆除',
     tests: ['engine-contract-check'],
     must_mention: '只能变短',
   },
   {
-    desc: 'M176 台账发霉门被拆（见证注释消失不再红）',
+    desc: 'M176 条目表过期失效检查被拆（见证注释消失不再红）',
     file: 'tools/engine-contract-check.mjs',
     find: '    if (!fixture_source.includes(entry.witness)) {',
-    replace: '    if (false) { // 变异：发霉门拆除',
+    replace: '    if (false) { // 变异：过期失效检查拆除',
     tests: ['engine-contract-check'],
-    must_mention: '发霉',
+    must_mention: '过期失效',
   },
   {
     desc: 'M177 锚点定位器退化成写死哈希文件名（渲染包换名即失明）',

@@ -168,7 +168,7 @@ test('1002 其它：MONSTER_PLAY 存根占位，返回 0（取消语义透传）
   assert(fixture.text_lines().some((line) => line.includes('@MONSTER_PLAY')));
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = load_page(fixture);
   const registry = fs.readFileSync(

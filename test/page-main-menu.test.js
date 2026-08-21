@@ -2,7 +2,7 @@
  * ere/page/page-main-menu.js 与 ere/page/page-shop.js 的行为测试
  * （issue #23：主菜单骨架）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。主菜单
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。主菜单
  * 不读 gamebase，无须 preset_gamebase；角色数（CHARANUM 的等价物）经夹具的
  * seed_chara 预置。
  *
@@ -14,12 +14,12 @@
  *      同人、占用三态重置；
  *   4. 四个子面板与指令面板的存根占位；
  *   5. @SHOW_SHOP 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
- *   6. 存根清单对账（docs/stub-registry.md）；
+ *   6. 存根清单核对（docs/stub-registry.md）；
  *   7. #73 画面组件迁入：商店轮的就地重绘（不涨屏、上方内容完好、分发期
  *      临时输出被消费、跨会话锚点重新起算）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：page-shop.js 的 eventshop() 里
- * @EVENTSHOP :7-12 的指针钳制——删掉它 115 条全绿（假绿）。原因：run_shop
+ * @EVENTSHOP :7-12 的指针钳制——删掉它 115 条全绿（误报通过）。原因：run_shop
  * 里紧随其后的 draw_main_menu 自带同一份钳制（原作同构，@SHOW_SHOP 恒调
  * @DRAW_MAINMENU，两份钳制互为冗余兜底），不设钩子无法在两者之间观测。
  * 它是 1:1 保真，行为守卫由 draw 侧的三条防御性修正用例承担。
@@ -50,7 +50,7 @@ function button_of(fixture, accelerator) {
 
 // 严格夹具下加入角色要先有预设（#35 镜像的引擎守卫）。本文件只关心「角色在
 // 不在已加入列表里」，预设取最小形状即可；真实预设的正确性由
-// test/chara-yml.test.js 用引擎代码对拍。
+// test/chara-yml.test.js 用引擎代码比对。
 function join_chara(fixture, id) {
   fixture.seed_chara(id, { id, name: `角色${id}` });
   fixture.era.addCharacter(id);
@@ -177,7 +177,7 @@ test('六个功能入口：编号、正文与引擎渲染文本（不写手写 [
     assert.ok(button, `入口 ${accelerator} 必须显示`);
     assert.equal(button.text, text);
     // showAcc 默认为真：引擎自动拼 `[快捷键] 正文`；手写前缀会得到双编号
-    // （PR #30 的教训，断言 rendered 即可钉死）
+    // （PR #30 的教训，断言 rendered 即可固定）
     assert.equal(button.rendered, `[${accelerator}] ${text}`);
   }
 });
@@ -372,7 +372,7 @@ test('@SHOW_SHOP 日期钳制：正常日期不动', async () => {
   assert.equal(era_flag.date, 20);
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部待办', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-main-menu');
   const registry_path = path.resolve(
@@ -383,7 +383,7 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', a
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
 
-  // 先钉死名单本身（漏登记会在此红，#22 验收抓过的假绿形态），再对账清单
+  // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单
   assert.deepEqual(STUBBED_CALLS, [
     'DRAW_HAVEITEMS',
     'DRAW_HAVETRAPS',
@@ -395,7 +395,7 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', a
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
-  // 登记型欠账（无运行时占位，只注释 + 清单）：page-shop.js 的商店段
+  // 登记型待办（无运行时占位，只注释 + 清单）：page-shop.js 的商店段
   for (const name of [
     'CLEAR_SHOP',
     'ITEM_SHOP',
@@ -408,7 +408,7 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部欠账', a
 });
 
 // —— #73：主菜单画面组件的就地重绘（商店轮集成）——
-// 组件层单元（行数测量、Row 口径、回显跨度）在 test/screen-block.test.js；
+// 组件层单元（行数测量、Row 的计法、回显跨度）在 test/screen-block.test.js；
 // 这里钉调用点：重绘只发生在玩家交互之后、锚点不越过上方内容。
 
 // 预置两行上方内容后跑 n 轮商店轮；输入队列耗尽时按预期炸出，返回终态夹具
@@ -427,7 +427,7 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
   const two_rounds = await run_shop_rounds([500, 500]);
 
   for (const fixture of [one_round, two_rounds]) {
-    // 上方内容原样：锚点之上不被重绘触碰（Row 口径错误的破坏形态正是
+    // 上方内容原样：锚点之上不被重绘触碰（Row 的计法错误的破坏形态正是
     // 上方内容被连带抹掉——组件层已有直接断言，这里在真实调用点上再钉）
     assert.deepEqual(
       fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
@@ -467,7 +467,7 @@ test('分发期输出玩家先看到再被重绘清掉：点未移植入口不�
 
 test('无分发输出的一轮（面板切换）零等待：菜单重绘本身不得卡键', async () => {
   // 500 只写 FLAG:36、不打存根。allowWait 镜像下菜单重绘会置位，但本轮
-  // 没有 waitAnyKey 调用——无条件等键会让每轮都卡一次（验收点名禁止）
+  // 没有 waitAnyKey 调用——无条件等键会让每轮都卡一次（验收报出禁止）
   const fixture = await run_shop_rounds([500]);
   assert.equal(fixture.waits.length, 0);
 });

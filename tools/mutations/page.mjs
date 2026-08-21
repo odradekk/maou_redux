@@ -1,6 +1,6 @@
-// 变异台账切片：ere/page/（画面与交互组件）。
+// 变异条目表切片：ere/page/（画面与交互组件）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
@@ -61,7 +61,7 @@ export default [
     must_mention: '手算基线',
   },
   {
-    desc: 'M12 PRINT_PALAM 条后数值丢失（outContent 空——语义值载体没了，对拍未解释）',
+    desc: 'M12 PRINT_PALAM 条后数值丢失（outContent 空——语义值载体没了，比对未解释）',
     file: 'ere/page/page-train.js',
     find: "      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),",
     replace: "      outContent: '', // 变异：数值丢失",
@@ -259,7 +259,7 @@ export default [
     must_mention: '跨会话',
   },
   {
-    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不留痕）',
+    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不记录）',
     file: 'ere/page/components/screen-block.js',
     find: `      const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {

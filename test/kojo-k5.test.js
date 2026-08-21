@@ -8,7 +8,7 @@
  *   - FLAG:7 == 1 的阈值闸（每阶段一次）与 == 2 的旁路（每次出声）；
  *   - 七道跳过判定（含 K5 特有：兽奸静默无 DOG_KOJO、死斗场占位行）；
  *   - 插值（%SAVESTR:TARGET/PLAYER% 与心形 ♡；繁体正文照抄不统一）；
- *   - 存根清单对账（docs/stub-registry.md）。
+ *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
@@ -208,9 +208,9 @@ test('死斗场（TEQUIP:55）：岔进专用口上的占位行', async () => {
   ]);
 });
 
-// —— 存根清单对账 ——
+// —— 存根清单核对 ——
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k5');
   const registry = fs.readFileSync(

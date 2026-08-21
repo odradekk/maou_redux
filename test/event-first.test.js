@@ -2,7 +2,7 @@
  * ere/event/event-first.js 的行为测试（issue #22：@EVENTFIRST 真身；
  * #50：村娘分支与 FLAG:501 初期奴隶一问）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。凡经主
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。凡经主
  * 循环跑到标题画面的用例先 preset_gamebase（helpers/gamebase.js）；要走到
  * 村娘分支的用例再 preset_chara_17（helpers/chara.js，严格夹具下无预设
  * 加不进角色，#35 教训）。
@@ -13,9 +13,9 @@
  *   2. 初始化写入：随机/村娘两条路径与原作开局值逐项一致（全量断言，
  *      意外写入当场暴露）；
  *   3. 序号 vs 角色 ID：村娘分支的写入必须落在角色 ID 17 上，用「序号 1
- *      ≠ ID 17」的开局世界钉死（#50 最易错处）；
+ *      ≠ ID 17」的开局世界固定（#50 最易错处）；
  *   4. era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml 的 id 上；
- *   5. 存根清单：docs/stub-registry.md 可检索且与本文件两处存根对账。
+ *   5. 存根清单：docs/stub-registry.md 可检索且与本文件两处存根核对。
  */
 
 const assert = require('node:assert/strict');
@@ -45,7 +45,7 @@ function expected_init_writes(initial_slave) {
     { name: 'flag:5', value: 17179934119 }, // :31 战斗日志显示设置
     { name: 'flag:10001', value: 1 }, // :33 DAY:1 = 1（月）
     { name: 'itemsales:53', value: 1 }, // :35 53 号道具开局上架（#38 恢复：
-    // Item 表已落地，item* 硬崩支消除；进商店轮时 @EVENTSHOP 的清零循环
+    // Item 表已落地，item* 直接崩溃支消除；进商店轮时 @EVENTSHOP 的清零循环
     // 会再把它清 0——原作语义，见端到端用例的尾部断言）
     ...Array.from({ length: 8 }, (_, k) => ({
       name: `flag:${200 + k}`,
@@ -212,7 +212,7 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   // 出口：随机路径的共用出口 :231 BEGIN SHOP
   assert.equal(pending, STATE.SHOP);
   assert.deepEqual(fixture.var_writes, expected_init_writes(0));
-  // 存根清单对账用的导出（6 个：FIRST_SETTING 移交 first-setting.js 的
+  // 存根清单核对用的导出（6 个：FIRST_SETTING 移交 first-setting.js 的
   // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）
   assert.deepEqual(STUBBED_CALLS, [
     'GEO_TEST',
@@ -245,7 +245,7 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   // 序号≠ID 的开局世界：已加入 [0, 17]——村娘的已加入序号是 1、角色 ID 是
   // 17，两者不重合；角色 ID 1 是另一个（不存在的）角色。照抄原作数字 1 的
   // 移植（cflag:1:*、target = 1）在本世界里会把全部状态写到一个空角色头上，
-  // 与正确行为可区分——这正是要钉死的那类错。
+  // 与正确行为可区分——这正是要固定的那类错。
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_17(fixture);
@@ -358,7 +358,7 @@ test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用'
   for (const name of [...STUBBED_CALLS, ...SETTING_STUBS]) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
-  // 工单点名的优先项 + 既有存根（page-title 的读档）也必须可检索
+  // 工单指出的优先项 + 既有存根（page-title 的读档）也必须可检索
   for (const name of ['PARTY_UNITE', 'SYSTEM_LOADGAME']) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

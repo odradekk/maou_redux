@@ -11,7 +11,7 @@
  *     只承载「谁驱动、回调顺序、SELECTCOM 从哪来」。
  *
  * 回调顺序（与 Emuera 逐条对应，顺序错了不报错、只会静默改变游戏行为，
- * test/train-loop.test.js 钉死）：
+ * test/train-loop.test.js 固定）：
  *
  *   BEGIN TRAIN 初始化（引擎行为镜像）
  *     1. ASSIPLAY:0 = 0 / PREVCOM:0 = -1 / NEXTCOM:0 = -1（flag 保留区槽位）
@@ -27,7 +27,7 @@
  *     4. @SHOW_STATUS 事件链
  *     5. 遍历 @COM_ABLExx 列出可执行指令（com_able_family 探测，未定义即
  *        可执行——whenMissing: 1，_replace.csv 的「COM_ABLE初期値」默认值，
- *        本项目未改此键）。**指令按钮的渲染是欠账**（本票零指令，菜单只挂
+ *        本项目未改此键）。**指令按钮的渲染是待办**（这张票零指令，菜单只挂
  *        [999]，见 page/page-usercom.js 与 docs/stub-registry.md）
  *     6. @SHOW_USERCOM 事件链
  *     7. UP/DOWN/LOSEBASE/CUP/CDOWN 初始化——ere 等价物（delta/deltabase）

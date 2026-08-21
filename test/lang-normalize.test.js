@@ -9,13 +9,13 @@
  *      其中每一个，且普查本身仍然可复现（每个字今天仍能在 target/ 的
  *      PRINT 行里数到——防止 MEASURED 集自己抄错字，2026-08 勘测时靠这一
  *      步抓出过三处误记）；
- *   3. **转换行为**：ere/ 现存非简体串的归一结果逐条钉死（词级优先于字级、
- *      五条歧义字的裁定、幂等、豁免按整串放行、假名单独点名）。
+ *   3. **转换行为**：ere/ 现存非简体串的归一结果逐条固定（词级优先于字级、
+ *      五条歧义字的裁定、幂等、豁免按整串放行、假名单独报出）。
  *
- * 工单「机械映射覆盖当前实测的 133 字种」的口径差：工单只数 A 类繁体行
+ * 工单「机械映射覆盖当前实测的 133 字种」的统计差异：工单只数 A 类繁体行
  * （1,818 行 / 67 文件，得 133 字种 / 4,305 字次）；本测试的普查数全部
  * PRINT* 行（含日文汉字行、简体行里的个别繁体字），得 492 / 7,330——
- * 是工单口径的超集，下界断言仍按工单的 133 钉死。
+ * 是工单给的超集，下界断言仍按工单的 133 固定。
  */
 
 'use strict';
@@ -50,7 +50,7 @@ const MEASURED_WORDS = { 奴隷: 426, 気力: 169, 回復: 85 };
 
 // —— 表不变量 ——
 
-test('load_table：合法表载入即过，形状各不变量逐条点名', () => {
+test('load_table：合法表载入即过，形状各不变量逐条报出', () => {
   const tbl = load_table();
   assert.ok(tbl.char_map.size >= 500, '字级条目意外地少，表八成没载全');
   assert.ok(tbl.word_map.length >= 3);
@@ -162,10 +162,10 @@ test('机械映射覆盖 target/ PRINT 行实测的全部字种（普查可复�
   );
   assert.deepEqual(missing_jp, [], `日文字种缺映射：${missing_jp.join('')}`);
 
-  // 工单口径的下界钉死：133 字种 / 4,305 字次（A 类繁体行口径）
+  // 工单给的下界固定：133 字种 / 4,305 字次（A 类繁体行标准）
   assert.ok(
     new Set(MEASURED_TRAD).size >= 133,
-    `实测繁体字种 ${new Set(MEASURED_TRAD).size} 个，低于工单口径的 133——普查退化`,
+    `实测繁体字种 ${new Set(MEASURED_TRAD).size} 个，低于工单给的 133——普查退化`,
   );
   const trad_occurrences = [...new Set(MEASURED_TRAD)].reduce(
     (sum, ch) => sum + (freq.get(ch) ?? 0),
@@ -173,7 +173,7 @@ test('机械映射覆盖 target/ PRINT 行实测的全部字种（普查可复�
   );
   assert.ok(
     trad_occurrences >= 4305,
-    `实测繁体字次 ${trad_occurrences}，低于工单口径的 4,305——普查退化`,
+    `实测繁体字次 ${trad_occurrences}，低于工单给的 4,305——普查退化`,
   );
 });
 
@@ -191,7 +191,7 @@ test('词级译法的三个词条语料里真实存在（实测次数逐条登�
         }
       }
     };
-    walk(path.join(REPO_ROOT, 'target')); // 全库口径：含 target 根下的散装 ERB
+    walk(path.join(REPO_ROOT, 'target')); // 全库标准：含 target 根下的散装 ERB
     return hits;
   };
   for (const { source } of tbl.word_map) {
@@ -210,7 +210,7 @@ test('词级译法的三个词条语料里真实存在（实测次数逐条登�
 
 // —— 转换行为 ——
 
-test('ere/ 现存非简体串的归一结果逐条钉死（词级优先、字级兜底）', () => {
+test('ere/ 现存非简体串的归一结果逐条固定（词级优先、字级兜底）', () => {
   assert.equal(
     to_simplified('*因奴隷的愛而回復了気力*'),
     '*因奴隶的爱而恢复了气力*',
@@ -268,7 +268,7 @@ test('to_simplified 幂等：K5 口上全部 PRINTFORM 行两趟一致', () => {
   assert.ok(checked >= 400, `K5 只数到 ${checked} 条 PRINTFORM，语料不对劲`);
 });
 
-test('find_offenders：字级/词级/假名分别点名，豁免按整串放行', () => {
+test('find_offenders：字级/词级/假名分别报出，豁免按整串放行', () => {
   const tbl = load_table();
   assert.deepEqual(find_offenders('你是变态', tbl), []);
   const kinds = find_offenders('你這個變態', tbl).map((h) => h.kind);

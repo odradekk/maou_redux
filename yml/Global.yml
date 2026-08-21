@@ -7,7 +7,7 @@
 #   id    = 数字下标，与 Emuera 原下标 1:1（底层寻址一律用它，#5 决议）
 #
 # 本表为人工产出（issue #18）：target/CSV 没有全局表，变量来自 ERH 的
-# #DIM GLOBAL SAVEDATA 声明与 TITLE 的序号直寻。id 分配依据（issue #18 留痕）：
+# #DIM GLOBAL SAVEDATA 声明与 TITLE 的序号直寻。id 分配依据（issue #18 记录）：
 #   命名变量在 Emuera 侧按「名字」存取——target/Sav/global.sav 实证存的是
 #   「是否启用标题音乐」=1、「标题音乐音量」=66、「冒險者性別」无值，原作侧
 #   没有序号。故 0/1 是 ere 侧给命名变量的落表序号（取空闲低端，自洽即可，

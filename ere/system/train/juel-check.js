@@ -13,7 +13,7 @@
  * == 与引擎 endTrain() 的职责划分（#47 定案，依据 app.asar 的 endTrain 源码）==
  *
  * 引擎收尾 era.endTrain()（train-loop.js 的 run_aftertrain 在 @EVENTEND 链
- * **之后**调用，#44 钉死的顺序）做两件事：
+ * **之后**调用，#44 固定的顺序）做两件事：
  *   1. 对调教列里的每个角色，把 gotjuel 的**每一个键**加进 juel
  *      （`Object.entries(data.gotjuel[e])` 全键遍历）；
  *   2. 删掉调教域表（palam/gotjuel/tflag/ex/source/delta…）。
@@ -36,7 +36,7 @@
  *     gotjuel:3 加进 juel:3、偏离原作——这笔写不落。
  *   - RAND:3（:627/:640）ere 无对应 API，默认均匀三选一（Math.random）；
  *     随机源以参数注入（juel_check_main / offset_negative_group 的 rng
- *     形参，RAND:3 语义 = 池序号整数），供测试钉死相殺的逐步数值，
+ *     形参，RAND:3 语义 = 池序号整数），供测试固定住相殺的逐步数值，
  *     生产路径不传参。
  */
 
@@ -48,7 +48,7 @@ const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）；名单变动必须同步清单。ABLUPxx 是 @JUEL_CHECK 输入分发的
+ * 核对固定）；名单变动必须同步清单。ABLUPxx 是 @JUEL_CHECK 输入分发的
  * 全部目标（:463-539），升级规则本体超出本段代码（工单「不在范围」）。
  */
 const ABLUP_IDS = [
@@ -135,7 +135,7 @@ function getbit(value, bit) {
  * $LABEL_1 / $LABEL_2（:626-637 / :639-649）：否定の珠による相殺。
  *
  * 两组池子（恭顺 4/欲情 5/屈服 6 与 耻情 8/苦痛 9/恐怖 10）各跑同一个
- * GOTO 循环：每轮随机挑一池，扣 min(否定余量的一半, 该池存量)——否定
+ * GOTO 循环：每轮随机挑一池，扣 min(否定余量的一半, 该池现有)——否定
  * 余量取半为 0 且未清零时改扣 1；直到否定清零或该组池子全空。习得
  * （juel:7）与两组之外的项目不参与抵消。
  *
@@ -173,7 +173,7 @@ function offset_negative_group(cid, pools, rng) {
       take = 1; // :629-630 否定未清零时至少扣 1
     }
     if (pool_value(pick) < take) {
-      take = pool_value(pick); // :631-632 池子存量不足就整池扣走
+      take = pool_value(pick); // :631-632 池子里不够就整池扣走
     }
     era.set(`juel:${cid}:${pick}`, pool_value(pick) - take); // :633
     era.set(`juel:${cid}:100`, negative() - take); // :634
@@ -352,7 +352,7 @@ async function run_juel_check() {
       break; // :540-541 → $LABEL_EXIT（能力值提高结束）
     }
     if (ABLUP_IDS.includes(result)) {
-      // :463-539 各能力分支（升级规则本体欠账，随能力提升票）
+      // :463-539 各能力分支（升级规则本体待办，随能力提升票）
       stub_line(`ABLUP${result}`, '能力提升处理');
     }
     // 其余输入无分支命中 → :549 GOTO INPUT_LOOP_1（重绘再来）

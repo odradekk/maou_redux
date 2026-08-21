@@ -86,7 +86,7 @@ function create_era_fixture() {
   const lines = []; // 输出行记录：print 系列（逐格；一次多列调用的格子共享 row）
   // 全量行史（被动记录，只增不删）：clear/replace 从 lines 删掉的条目仍留
   // 在这里——#73 起主菜单就地重绘，终态只留最后一轮，「哪轮画过什么」的
-  // 取证看这份（与 var_reads 同类的观测记录，不影响 lines 的对拍语义）
+  // 取证看这份（与 var_reads 同类的观测记录，不影响 lines 的比对语义）
   const lines_history = [];
   const calls = []; // 无专门实现的 API 的兜底调用记录
   const var_reads = []; // 变量读记录
@@ -96,7 +96,7 @@ function create_era_fixture() {
   const input_queue = []; // 预置输入队列，等待输入的 API 依次消费
   const store = new Map(); // 变量存储
 
-  // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎口径一致 ——
+  // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎标准一致 ——
   //
   // 引擎侧证据（app.asar 两处实测，非手册推断）：
   //   主进程 EraApi（模块 183）：print / printAndWait(经 print) / println /
@@ -107,7 +107,7 @@ function create_era_fixture() {
   //     {isBr} 是显示级换行，编程上仍是一个 Row。
   //   渲染层 app.vue：printMultiCols / printInColRows 各自把整次调用装进
   //     **一个**行对象（multiCol / inColRows 类型）——printInColRows 的多个
-  //     ColumnObject 不拆成多个 Row，与 printMultiColumns 同口径。
+  //     ColumnObject 不拆成多个 Row，与 printMultiColumns 同一标准。
   //   不增行：replaceText / replaceInColRows 返回 totalLines 原值（渲染层
   //     handleChange 把最后一个行对象整个换掉）；notify 无行。
   //   input 回显（已镜像，见「输入」段）：普通 input() 计 +1 Row；三段
@@ -132,7 +132,7 @@ function create_era_fixture() {
   //   clearScreen 监听器末尾 setTotalLines(r)：totalLines!==r 时**再置位**
   //   input 的回显 this.print(i) 同样经 addTotalLines 置位
   // 已查实、有意不镜像的分歧（#91 起逐条冻结在 tools/engine-contract-ledger.mjs，
-  // 检查器两道门守「只能变短、不许发霉」；disableClear 短路 #91 起已镜像，
+  // 检查器两项检查守「只能变短、不许过期失效」；disableClear 短路 #91 起已镜像，
   // 见 clear 处）：setBack/setOverlay 的独立
   //   置位（游戏代码未用这两个 API）；fromClear/useRule（渲染层簿记参数）；
   //   printAndWait 的内部等待（引擎 =
@@ -166,7 +166,7 @@ function create_era_fixture() {
   // 替换系（replaceText / replaceInColRows）：换掉最后一个 Row 的全部条目，
   // 计数不动（引擎返回 totalLines 原值）。最后一行是多列 Row 时整行消失。
   // total_rows === 0 时引擎主/渲染两层分歧（渲染层会凭空插入一行、计数仍
-  // 0），此处按主进程口径：条目记到 row 0、计数不动
+  // 0），此处按主进程标准：条目记到 row 0、计数不动
   const replace_row = (entries) => {
     const row = total_rows - 1;
     if (row >= 0) {
@@ -254,15 +254,15 @@ function create_era_fixture() {
   era.printButton = (content, accelerator, config) =>
     push_row([make_button_entry(content, accelerator, config)]);
   era.replaceText = (content) => replace_row([make_text_entry(content)]);
-  // —— 多列输出族（#48 对拍录制 + #68 Row 归并）：printMultiColumns /
+  // —— 多列输出族（#48 比对录制 + #68 Row 归并）：printMultiColumns /
   //    printInColRows 的 GridObject 逐格压平成既有条目类型（button/text/
-  //    divider/image/progress），printImage 压 image 条目——对拍关心的是
+  //    divider/image/progress），printImage 压 image 条目——比对关心的是
   //    「输出了什么」，这里不做列布局；同时整次调用共用一个 Row 号（引擎
   //    渲染层把整次调用装进一个行对象，见 Row 记账注释），getLineCount /
   //    clear / replace 系按 Row 计——画面组件要知道自己占几行，看的是这层。
   //    替换系（replaceInColRows）与顶层 printProgress 虽暂无游戏代码调用，
   //    仍先落地：它们是 Row 语义（整行替换 / +1 Row）的直接断言靶点，
-  //    #68 点名「替换系、进度条」查明即录。
+  //    #68 命中「替换系、进度条」查明即录。
   const make_grid_entry = (obj) => {
     if (obj?.type === 'button') {
       return make_button_entry(obj.content, obj.accelerator, obj.config);
@@ -327,7 +327,7 @@ function create_era_fixture() {
   //     引擎的「缺省不循环」，与 Emuera PLAYBGM 默认循环相反，想循环必须
   //     显式 {loop: true}；names 收 String 或 String[]，逐个小写后取第一个
   //     注册为音频的条目播放，命中返回 true，全落空返回 false（不报错）；
-  //   - 计行（#68 的 Row 口径，app.asar 逐字实测）：playMusic / stopMusic /
+  //   - 计行（#68 的 Row 的计法，app.asar 逐字实测）：playMusic / stopMusic /
   //     resumeMusic 只 connect、不调 addTotalLines——**不占 Row**，只进
   //     music[] 事件记录；printImage / printWholeImage 结尾各调一次
   //     addTotalLines——各 +1 Row，走 push_row；
@@ -403,7 +403,7 @@ function create_era_fixture() {
   era.clear = async (line_count) => {
     // 引擎 clear 的第一段短路（app.asar 逐字）：system.disableClear 配置开着
     // 时整体无操作、返回当前行数——不清、不等、不置位。#68 时裁定「已查实
-    // 不镜像」，#91 起进缝（契约测试逐步对拍守卫链，缺它第一层对不齐），
+    // 不镜像」，#91 起进缝（契约测试逐步比对守卫链，缺它第一层对不齐），
     // 旋钮在 system_config.disableClear（默认 false，与引擎默认一致）
     if (system_config.disableClear) {
       return total_rows;
@@ -418,7 +418,7 @@ function create_era_fixture() {
     // 渲染层公式（app.vue 的 clear）：Number(lineCount) 为 NaN（含无参）或
     // 大于现有行数 → 整屏清空；0 → 无操作；否则删最近 n 个 Row。返回清屏
     // 后的行数（主进程 setTotalLines(渲染层回传值)，getLineCount 读同一
-    // 计数）。条目删除按 row >= 剩余行数切尾——不带 row 的条目（对拍回放
+    // 计数）。条目删除按 row >= 剩余行数切尾——不带 row 的条目（比对回放
     // 注入的输入标记）不是 Row，只在整屏清空时随之消失。
     const before = total_rows;
     const n = Number(line_count);
@@ -552,12 +552,12 @@ function create_era_fixture() {
   //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
   //     || this.print(i)
   // 即普通 input() 对回显值 print → addTotalLines → +1 Row；任一短路命中
-  // 则不 print。夹具只调计数器、不推条目——条目层的回显由对拍回放的输入
-  // 标记承载（tools/compare/replay.js），再推条目会把对拍窗口的输入边界
+  // 则不 print。夹具只调计数器、不推条目——条目层的回显由比对回放的输入
+  // 标记承载（tools/compare/replay.js），再推条目会把比对窗口的输入边界
   // 翻倍（回显行与标记各产生一次 input 事件）。waitAnyKey 不占行的机制
   // 也在这条短路上：引擎 waitAnyKey 内部走 input({any:true})，e.any 命中
   // 第三段、回显 print 不发生——不是另一套独立实现（夹具的 waitAnyKey
-  // 仍是不取输入的留痕桩，见下，机制同源）。
+  // 仍是不取输入的记录桩，见下，机制同源）。
   const input_echo_adds_row = (config) =>
     !system_config.hideUserInput && !config?.hideInput && !config?.any;
   era.input = async (config) => {
@@ -590,7 +590,7 @@ function create_era_fixture() {
   // 都不写、不报错。#21/#22 的验收正是被空壳夹具放过：断言只证「调了」，
   // 证不了「引擎接受了」。夹具镜像这条守卫与加入动作；预设数据由用例经
   // seed_chara 提供（夹具不读 yml/——静态表正确性由 test/chara-yml.test.js
-  // 直接驱动引擎代码对拍，两层不重复）。
+  // 直接驱动引擎代码比对，两层不重复）。
   const chara_presets = new Map(); // 源编号 → 预设对象（对应引擎 staticData.chara）
   const chara_no = []; // 已加入角色（对应引擎 data.no：先滤同号再入列）
   era.addCharacter = (...chara_ids) => {
@@ -607,7 +607,7 @@ function create_era_fixture() {
       }
       chara_no.push(target);
       // 引擎 addCharacter 方法体的两条赋值（app.asar，test/chara-yml.test.js
-      // 用引擎真方法对拍锁定）：callname[id][-1] = 预设 name、
+      // 用引擎真方法比对锁定）：callname[id][-1] = 预设 name、
       // [id][-2] = 预设 callname ?? name。游戏代码读 callname:${id}:-1/-2
       // 由此取值（#5 决议：SAVESTR/CSTR 的名字承载）。直接写 store 不经
       // era.set：引擎侧这是数据层赋值、不经 setVar，var_writes 只收录游戏
@@ -628,9 +628,9 @@ function create_era_fixture() {
   // beginTrain 创建仅限调教的表并把 tflag 静态条目清 0（表只建一次）、
   // endTrain 结算 gotjuel 后删表；两者间 getCharactersInTrain 读已入列角色。
   // 结算/删除的实际数值语义（gotjuel→juel、delta→palam 等）不在此镜像：
-  // 夹具的 store 是平表，per-chara 子表结构不存在——那层对拍归引擎
+  // 夹具的 store 是平表，per-chara 子表结构不存在——那层比对归引擎
   // bundle 用例（test/train-loop.test.js 的寻址锁）。这里只镜像「何时可寻址」
-  // 与调用留痕，让时序错误（beginTrain 之前写 tflag）当场暴露。
+  // 与调用记录，让时序错误（beginTrain 之前写 tflag）当场暴露。
   era.beginTrain = (...chara_ids) => {
     calls.push({ api: 'beginTrain', args: chara_ids });
     train_open = true; // 引擎：表已存在时跳过重建，此处等价（守卫只看开闭）
@@ -657,7 +657,7 @@ function create_era_fixture() {
   // 引擎 resetData 会清空全部存档数据；夹具只清已加入列表——store 里静态
   // 预置与存档数据尚未分离，全面清空需要先做那层区分。
   era.resetData = () => {
-    // 与 addCharacter 同样留痕：有专门实现的 API 不走兜底记录层，不显式
+    // 与 addCharacter 同样记录：有专门实现的 API 不走兜底记录层，不显式
     // push 的话 fixture.calls 里就看不见它（用例断言「先清档」要读这里）
     calls.push({ api: 'resetData', args: [] });
     chara_no.length = 0;
@@ -741,14 +741,14 @@ function create_era_fixture() {
     /** 注入了记录层的真实 SDK 对象 */
     era,
     /** 输出行记录 [{type, text, row, ...}]，含 text/br/divider/button；
-     * 一次多列输出的全部格子共享同一 row 号（#68，对拍看格、组件看 Row） */
+     * 一次多列输出的全部格子共享同一 row 号（#68，比对看格、组件看 Row） */
     lines,
     /** 仅取文本行（type === 'text'）的纯文本，最常用的断言入口 */
     text_lines() {
       return lines.filter((line) => line.type === 'text').map((l) => l.text);
     },
     /** 全量行史（含已被 clear/replace 删掉的条目；#73 起就地重绘的取证层）。
-     *  条目形状与 lines 相同；对拍归一化器只读 lines，不看这里 */
+     *  条目形状与 lines 相同；比对归一化器只读 lines，不看这里 */
     lines_history,
     /** 兜底调用记录 [{api, args}] */
     calls,
@@ -765,7 +765,7 @@ function create_era_fixture() {
     /** 全部 waitAnyKey 调用记录 [{waited, rows_at_wait, forced}]（含跳过的；
      *  rows_at_wait = 调用瞬间的行数，#73 分发期可见性的直接证据） */
     waits,
-    /** 引擎 allowWait 的只读观测面（#91 契约测试逐步对拍用）：每一步比对
+    /** 引擎 allowWait 的只读观测面（#91 契约测试逐步比对用）：每一步比对
      *  {行数, allowWait}，行为本体仍在 push_row / waitAnyKey / input / clear
      *  的镜像里——这里只开观测，不开写口 */
     get allow_wait() {

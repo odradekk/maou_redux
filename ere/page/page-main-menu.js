@@ -3,9 +3,9 @@
  *
  * 源: target/ERB/SHOP/DRAW_MAINMENU.ERB  @DRAW_MAINMENU（:5-325；末尾另附
  *     四个子面板函数 @DRAW_HAVEITEMS :331 / @DRAW_HAVETRAPS :400 /
- *     @DRAW_DUNGEON_OVERVIEW :427 / @DRAW_DUNGEON_DAILY :583，本票全部存根）
+ *     @DRAW_DUNGEON_OVERVIEW :427 / @DRAW_DUNGEON_DAILY :583，这张票全部存根）
  *
- * 本票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
+ * 这张票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
  * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。作用域外，各留注释或
  * 存根：BGM 段（:11-17）自 #69 起接通（见 draw_main_menu 首段）、调教目标
  * 名/助手名按钮与生命条（:100-145）、四个子面板的内容（:190-197 的分发照搬、
@@ -30,7 +30,7 @@ const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）——后续票据此认领工作；名单变动必须同步清单。
+ * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
  *
  * 注：DRAW_MAINMENU 指 @DRAW_MAINMENU 的指令面板段（:208-319，[100]-[888]
  * 按钮渲染）——函数本体的骨架已实现（#23），占位的是这一段；输入分发本体
@@ -160,7 +160,7 @@ function draw_status_line() {
   // :45 DRAWLINEFORM %UNICODE(0x2550)%（全宽 ═ 双线）。引擎 drawLine 的
   // content 是分隔线中央的标签文字、不是线型字符（app.asar 实证：el-divider
   // 的 border-style 只有 solid/dashed），故以 isSolid 近似双线、默认虚线近似
-  // 单线；逐字对拍归 #9。
+  // 单线；逐字比对归 #9。
   era.drawLine({ isSolid: true });
 
   era.setAlign('right'); // :54 ALIGNMENT RIGHT（仅本行右对齐）
@@ -205,7 +205,7 @@ function draw_main_menu() {
   // （注册名即文件名，res/sound/sound.csv）+ SETBGMVOLUME 背景音乐音量。
   // 开关/音量落扩展普通表 yml/Audio.yml（ere/era-utils/era-audio.js；引擎侧
   // data 桶与存清语义见该表头注）。音量无引擎等价物（playMusic 只有
-  // loop/fade，欠账见 docs/stub-registry.md）。PLAYBGM 循环 → 显式 loop。
+  // loop/fade，待办见 docs/stub-registry.md）。PLAYBGM 循环 → 显式 loop。
   // 开关无声明默认值（音声的全局变量.erh:3，新档 0=不播，原作新档本来也不
   // 播）——开关的写点是设定菜单 MOD_SWITCH，随设定票落地。资源未启用时
   // playMusic 静默返回 false，主菜单照常渲染。
@@ -228,7 +228,7 @@ function draw_main_menu() {
 
   // :100-145 调教目标名/助手名按钮（498/499，点进各自状态画面，正文取
   // SAVESTR:TARGET/ASSI）与生命条（@LIFE_BAR）：随角色数据落地（#35 前
-  // 实机无角色可显示，本票留空；SAVESTR 的承载见 #5 已决的 callname）。
+  // 实机无角色可显示，这张票留空；SAVESTR 的承载见 #5 已决的 callname）。
 
   // :148 分隔线
   era.drawLine();
@@ -257,7 +257,7 @@ function draw_main_menu() {
   // :211-219 A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
   // B（被调教过的奴隶数）随用到它的入口。
   //
-  // :226-231 [100] 调教 —— 指令面板里**唯一已接线**的入口：分发本体在
+  // :226-231 [100] 调教 —— 指令面板里**唯一已接入**的入口：分发本体在
   // page-shop.js 的 usershop（#24），调教域自 #44/#45/#47 起可用。原作
   // `PRINTLCD [100] 调教` 是列排版文本 + INPUT，ere 侧改按钮（PR #53 通则：
   // 纯文本行在实机上点不动）；正文不写 [100] 前缀，交给引擎的 showAcc
@@ -289,7 +289,7 @@ function draw_main_menu() {
  *
  * 随 SHOP 状态的进入创建（锚点是会话态——模块级单例会在 TRAIN 转场/重开
  * 后拿上一局的锚点清掉本局内容，page-shop.js 的 run_shop 每次进入时新建，
- * 跨会话测试钉死这一条）。每轮 redraw 由商店轮发起（玩家交互之后）。
+ * 跨会话测试固定住这一条）。每轮 redraw 由商店轮发起（玩家交互之后）。
  *
  * @returns {ScreenBlock} 未绘制过的主菜单组件（首绘不清屏）
  */

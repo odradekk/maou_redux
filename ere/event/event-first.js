@@ -10,7 +10,7 @@
  *     #13 的「静默建变量」在写入侧是可用的通道，读侧仍须兜底；
  *   - 落不进去的不装样子写（表未声明，写了即静默 no-op），注释说明去向：
  *     FLAG:26/27（种族年龄表）、EX_FLAG、PBAND、BOUGHT、冒險者性別、
- *     丽塔启动！——全部登记在 docs/stub-registry.md 的「变量级欠账」；
+ *     丽塔启动！——全部登记在 docs/stub-registry.md 的「变量级待办」；
  *   - 约二十处调用绝大部分存根化：可达路径上的存根各打一行占位（含原作
  *     函数名，可检索可断言），不可达分支体内的调用仅登记不打印；
  *   - 被 FIRST_SETTING 钉在默认值的分支体：村娘分支（FLAG:501，:95-187）
@@ -21,7 +21,7 @@
  *     1，随开局设置票。
  *
  * 出口：begin(STATE.SHOP)（:231）。主菜单渲染归 #23，主循环进入 SHOP 时
- * 的守卫报错（点名状态）即本票的到站标记。
+ * 的守卫报错（报出状态）即这张票的到站标记。
  */
 
 const era = require('#/era-electron');
@@ -35,7 +35,7 @@ const era_flag = require('#/era-utils/era-flag');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）——后续票据此认领工作；名单变动必须同步清单。
+ * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
   'GEO_TEST',
@@ -83,7 +83,7 @@ on('EVENTFIRST', async () => {
   era_flag.month = 1;
 
   // :35 ITEMSALES:53 = 1 —— 53 号道具开局上架。Item 表已随 #38 落地，
-  // item* 寻址在静态表缺席时的硬崩（app.asar 的 set：`a.startsWith("item")`
+  // item* 寻址在静态表缺席时的直接崩溃（app.asar 的 set：`a.startsWith("item")`
   // 分支无守卫，直接 `this.staticData.item.name[u]`，PR #34 实机撞见）已随
   // 表消除——引擎行为本身不变（写未声明的 item 变量仍会崩），变的是本表
   // 在场。test/variable-yml.test.js 有「表缺席即抛 reading 'name'」的
@@ -150,7 +150,7 @@ on('EVENTFIRST', async () => {
   // :95-187 IF FLAG:501 == 1 —— 村娘分支（#50 落地）。序号陷阱：此时已
   // 加入列表为 [0, 17]，分支内原作写的「1」全部是已加入序号 1（= 角色 ID
   // 17），ere 侧一律按角色 ID 寻址（CONTEXT.md 末节）；照抄数字 1 会写到
-  // 角色 ID 1 头上，有「序号≠ID」场景的测试钉死。
+  // 角色 ID 1 头上，有「序号≠ID」场景的测试固定住。
   if ((era.get('flag:501') || 0) === 1) {
     // :96-100 五行 PRINTW（各带读键）
     era.print('首先，要奖励一下唤醒了我沉睡的愚蠢女人啊……');
@@ -165,8 +165,8 @@ on('EVENTFIRST', async () => {
     await era.waitAnyKey();
 
     // :102 ADDCHARA 17 —— 预设 yml/Chara17.yml（名字玛奥，不是「村娘」
-    // ——后者只是叙述用词）。引擎守卫：无预设整段短路（#35 假绿教训），
-    // 装载零告警零丢弃由 test/chara-yml.test.js 用引擎代码对拍钉死。
+    // ——后者只是叙述用词）。引擎守卫：无预设整段短路（#35 误报通过教训），
+    // 装载零告警零丢弃由 test/chara-yml.test.js 用引擎代码比对固定。
     era.addCharacter(17);
     // :103 CALL ADDCHARA_EX, CHARANUM-1 —— 角色专属初始化分发（ere 侧直
     // 接传角色 ID）。@CHARA_EX_17 在原作不存在：守卫 NO >= 17 放行、
@@ -175,14 +175,14 @@ on('EVENTFIRST', async () => {
     await add_chara_ex(17);
     // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
     // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
-    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码对拍）
+    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码比对）
     init_portcflag(17);
 
     // :105 SAVESTR:1 = %NAME:1%、:109 CSTR:1 = %NAME:1% —— 角色名暂存
     // 两处。#5 已决由内置 callname 承载：引擎 addCharacter(17) 已写
     // callname:17:-1（预设 name）与 callname:17:-2（预设 callname），无需
     // 再写；下方 :169-170 囚禁播报（原作读 SAVESTR:1）改读 callname:17:-1。
-    // 欠账表（docs/stub-registry.md 变量级）村娘侧随之销账，丽塔侧仍欠。
+    // 待办表（docs/stub-registry.md 变量级）村娘侧随之划掉，丽塔侧仍欠。
 
     // :107 TARGET = 1 —— 原作写的是已加入序号 1；ere 指针槽存角色 ID
     // （#21，主菜单的钳制/计数同语义），故写 17。
@@ -268,7 +268,7 @@ on('EVENTFIRST', async () => {
 
     // :152-166 IF 丽塔启动！== 1 —— 丽塔块（ADDCHARA 223 + 称呼/身体）。
     // 丽塔启动！是 SAVEDATA 自定义变量、无 ere 落点（恒非 1），不可达；
-    // 正文随开局设置票（docs/stub-registry.md 丽塔行与变量级欠账表）。
+    // 正文随开局设置票（docs/stub-registry.md 丽塔行与变量级待办表）。
 
     // :168-172 囚禁播报。原作 PRINT 村娘 + PRINTS SAVESTR:1 + PRINTL 被囚
     // 禁…拼成一行；ere 的 print 独占一行，读 callname:17:-1（引擎
@@ -314,7 +314,7 @@ on('EVENTFIRST', async () => {
 
   // :231 BEGIN SHOP —— 初始化完成，转入据点主菜单。事件链内信号由 emit
   // 捕获暂存，链跑完交给主循环；主循环进入 SHOP 的守卫报错（#23 未落地）
-  // 是本票到站的预期结果。
+  // 是这张票到站的预期结果。
   begin(STATE.SHOP);
 });
 

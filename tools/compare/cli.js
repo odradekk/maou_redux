@@ -1,18 +1,18 @@
 /**
- * @file T18 输出对拍·命令行入口（issue #48）。
+ * @file T18 输出比对·命令行入口（issue #48）。
  *
  * 用法：node tools/compare/cli.js
  *
- * 跑一次「黄金样本 vs ere 回放」的首回合对拍，打印：
- *   1. 装饰行占比复核（#9 的 21.2% 口径）；
- *   2. 全日志算式断言统计（自校验 / 链一致性，#9 的 400 条口径）；
- *   3. 首回合事件流对拍报告（version/stub/unexplained 三类）；
+ * 跑一次「黄金样本 vs ere 回放」的首回合比对，打印：
+ *   1. 装饰行占比复核（#9 的 21.2% 这个数）；
+ *   2. 全日志算式断言统计（自校验 / 链一致性，#9 的 400 条标准）；
+ *   3. 首回合事件流比对报告（version/stub/unexplained 三类）；
  *   4. 变量层：算式断言核对 + 回合前后快照差异。
  *
  * 退出码：unexplained > 0、断言自校验/链有无法解释项、或变量核对失败 → 1。
  *
- * 硬边界（必须随任何「对拍通过」的表述一起说）：黄金样本只覆盖调教这一
- * 段，「对拍通过」目前只等于「调教的这一段对得上」（#9 勘误一）。
+ * 硬边界（必须随任何「比对通过」的表述一起说）：黄金样本只覆盖调教这一
+ * 段，「比对通过」目前只等于「调教的这一段对得上」（#9 勘误一）。
  */
 
 'use strict';
@@ -45,7 +45,7 @@ async function main() {
   const stats = line_stats(log_text);
   console.log(
     `[装饰行复核] 全 ${stats.total} 行：空行 ${stats.blank} + 分割线 ${stats.divider} + 省略号 ${stats.ellipsis}` +
-      ` = ${stats.dropped}（${(stats.ratio * 100).toFixed(1)}%，#9 原口径 21.2%）`,
+      ` = ${stats.dropped}（${(stats.ratio * 100).toFixed(1)}%，#9 原标准 21.2%）`,
   );
 
   // 2. 全日志算式断言统计（自校验 + 链一致性）
@@ -58,7 +58,7 @@ async function main() {
       `链：首尾相接 ${self_check.chain.chained} / 归零 ${self_check.chain.reset} / 无法解释 ${self_check.chain.unexplained.length}`,
   );
 
-  // 3. 首回合对拍
+  // 3. 首回合比对
   const { replay_first_turn } = require('./replay');
   const { fixture, before, after } = await replay_first_turn();
   const golden_window = window_between_inputs(full_stream, 0);
@@ -67,7 +67,7 @@ async function main() {
     traincommand_ids: load_traincommand_ids(),
   });
   console.log(
-    `[首回合对拍] golden 窗口 ${golden_window.length} 条 vs ere 窗口 ${ere_window.length} 条`,
+    `[首回合比对] golden 窗口 ${golden_window.length} 条 vs ere 窗口 ${ere_window.length} 条`,
   );
   console.log(format_report(report));
 

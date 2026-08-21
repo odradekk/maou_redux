@@ -28,7 +28,7 @@
  * 合法（未移植的性格不发一言）；重复注册启动即炸（#14：原作 23 个口上
  * 函数被同名遮蔽的真实事故）。
  *
- * == EX 口上欠账（登记 docs/stub-registry.md，随 EX 口上票） ==
+ * == EX 口上待办（登记 docs/stub-registry.md，随 EX 口上票） ==
  *
  * @GET_KOJO_NUM 的 LOCAL = GET_EX_KOJO_NUM(ARG)（EXCOM.ERB:31-38，扫
  * EX_TALENT 101-800，命中 +900）与 @KOJO_MESSAGE_COM 存在判定的
@@ -64,7 +64,7 @@ const DECLARED_KOJO_COM_IDS = [
   ...Array.from({ length: 700 }, (_, i) => i + 901),
 ];
 
-/** @KOJO_MESSAGE_COM_{N}：指令口上族（本票注册 3 与 5，见 kojo-k3/k5） */
+/** @KOJO_MESSAGE_COM_{N}：指令口上族（这张票注册 3 与 5，见 kojo-k3/k5） */
 const kojo_message_com_family = new DispatchFamily(
   'KOJO_MESSAGE_COM',
   DECLARED_KOJO_COM_IDS,
@@ -76,7 +76,7 @@ const kojo_message_com_family = new DispatchFamily(
  * :137-140 FOR COUNT,160,180：素质 160-179（慈愛..貴公子等性格素质）逐格
  * 探测，**最后一格命中者胜**（原作无 BREAK，后写覆盖先写）。性格素质 →
  * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 半边
- * （:135 GET_EX_KOJO_NUM）欠账，见文件头。
+ * （:135 GET_EX_KOJO_NUM）待办，见文件头。
  *
  * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）
  * @returns {number} 口上编号（100-119；无性格素质时 0）
@@ -95,12 +95,12 @@ function get_kojo_num(arg = -1) {
 /**
  * @KOJO_MESSAGE_COM（:150-162）：指令执行时的口上入口。
  *
- * 两道守卫（:151-152 总开关；:155-157 存在判定——EX_FLAG 臂欠账见文件头，
+ * 两道守卫（:151-152 总开关；:155-157 存在判定——EX_FLAG 臂待办见文件头，
  * 普通口上化简为 FLAG:LOCAL == 0）之后按编号分发（:160-161）。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源（返回 [0, n) 的
  *   整数；缺省均匀随机）。以参数注入而非测试钩子——随机源本就是引擎外
- *   概念（#47 的 juel-check 先例），测试注入定值序钉死随机分支
+ *   概念（#47 的 juel-check 先例），测试注入定值序固定随机分支
  * @returns {Promise<number>} 0（:152/:157/:161 的 RETURN 0；调用方不读）
  */
 async function kojo_message_com(rand) {

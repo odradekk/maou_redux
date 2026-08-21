@@ -48,7 +48,7 @@ const era_audio = {
 //       0=不播。源: target/ERB/音声相关/音声的全局变量.erh:3
 //       「#DIM SAVEDATA 是否启用背景音乐」（无声明默认值 → 新档 0=不播，
 //       原作新档本来也不播——唯一写点是设定菜单 MOD_SWITCH，见
-//       docs/stub-registry.md 资源级欠账）。
+//       docs/stub-registry.md 资源级待办）。
 //   bgm_volume   背景音乐音量  SAVEDATA。原作声明默认 66（erh:4
 //       「#DIM SAVEDATA 背景音乐音量 = 66」，SETBGMVOLUME 的实参）。ere 侧无
 //       逐曲音量 API，值暂无消费者；声明默认值的播种随首个消费者（设定票）。

@@ -1,24 +1,24 @@
 /**
- * @file 引擎语义的契约对拍（issue #91，ADR-0005 第一层）。
+ * @file 引擎语义的契约比对（issue #91，ADR-0005 第一层）。
  *
  * 夹具（era-fixture.js）对引擎 allowWait 状态机的镜像，此前只有人读
- * app.asar 后写下的注释背书——注释不会在回归时说话（#68 input 回显 +1
+ * app.asar 后写下的注释背书——注释不会在回归时报错（#68 input 回显 +1
  * Row、#69 playMusic 不占 Row，两次都是测试全绿、实机出错）。本文件把
  * engine-bundle 取到的**真 EraApi 方法**（模块 183 的原型方法，闭包是真
- * 的、this 是最小假体）与夹具镜像放在同一串调用序列下**逐步**对拍：每
- * 一步比对 {行数, allowWait} 与 waits 观测记录，而不是只比末态——三次
- * 缺陷的共同形态是「某一步的副作用被漏掉」，末态对拍在副作用互相抵消时
+ * 的、this 是最小假体）与夹具镜像放在同一串调用序列下**逐步**比对：每
+ * 一步比对 {行数, allowWait} 与 waits 观测记录，而不是只比最终状态——三次
+ * 缺陷的共同形态是「某一步的副作用被漏掉」，最终状态比对在副作用互相抵消时
  * 静默通过。
  *
  * 边界（工单已查实，勿重查）：clear 横跨两层——守卫链（disableClear
  * 短路、isContinue 强制等键、setTotalLines 再置位）在 background.js，
- * 行数算术在渲染层。这里只对拍守卫链：引擎侧的 clearScreen 用「假渲染
+ * 行数算术在渲染层。这里只比对守卫链：引擎侧的 clearScreen 用「假渲染
  * 层」打桩（era.connect/listen 立即按渲染层公式应答剩余行数），两侧的
  * 算术同源、不比；第二层（渲染变换）不执行——锚点校核在
  * tools/engine-contract-check.mjs。
  *
- * 引擎缺失（无 app.asar）时对拍用例整组 skip 并留警告（engine-bundle
- * 内建）；模块号漂移则硬红（load_engine_bundle 的形状守卫 + 本文件的
+ * 引擎缺失（无 app.asar）时比对用例整组 skip 并留警告（engine-bundle
+ * 内建）；模块号漂移则直接判失败（load_engine_bundle 的形状守卫 + 本文件的
  * 探针用例）。
  */
 
@@ -208,7 +208,7 @@ function create_fixture_side() {
 /**
  * 跑同一串步骤，产出逐步轨迹 [{step, rows, allowWait, …额外记录}]。
  * 步骤的 run 返回的键并入该步记录（wait / returned 等）——deepEqual 整条
- * 轨迹即「逐步对拍」。
+ * 轨迹即「逐步比对」。
  */
 async function run_sequence(make_side, steps) {
   const side = make_side();
@@ -225,7 +225,7 @@ const noop = () => {};
 
 // —— 主序列：allowWait 状态机全部转移 + 三次缺陷的形态 ——
 //
-// 序列按 waits[] 现有观测面（{waited, rows_at_wait, forced}）与每步的
+// 序列按 waits[] 当前的观测面（{waited, rows_at_wait, forced}）与每步的
 // {行数, allowWait} 设计，判据是三次缺陷的形态能否被跑出来：
 //   #68 input 回显 +1 Row → 「input() 回显」步：行数必须 +1（漏镜像即错位）；
 //   #69 playMusic 不占 Row → 「playMusic」步：行数与 allowWait 都不动；
@@ -301,7 +301,7 @@ const MAIN_SEQUENCE = [
 ];
 
 engine_test(
-  '契约对拍：真 EraApi 与夹具镜像在同一串调用下逐步一致（allowWait 状态机全转移）',
+  '契约比对：真 EraApi 与夹具镜像在同一串调用下逐步一致（allowWait 状态机全转移）',
   async () => {
     const engine_trace = await run_sequence(create_engine_side, MAIN_SEQUENCE);
     const fixture_trace = await run_sequence(
@@ -345,13 +345,13 @@ engine_test(
   },
 );
 
-// —— 末态相同但中途分叉的序列（验收：此行为有测试）——
-// 两条序列的共同点：**正确实现下两侧的末态本来就一致**，把断言换成
-// 「只比末态」它们永远绿——中途的 allowWait 分歧被后续副作用抹平，只有
-// 逐步对拍抓得住。变异 M901/M902 分别拆掉对应镜像，此处必须红。
+// —— 最终状态相同但中途分叉的序列（验收：此行为有测试）——
+// 两条序列的共同点：**正确实现下两侧的最终状态本来就一致**，把断言换成
+// 「只比最终状态」它们永远绿——中途的 allowWait 分歧被后续副作用抹平，只有
+// 逐步比对抓得住。变异 M901/M902 分别拆掉对应镜像，此处必须红。
 
 engine_test(
-  '末态相同但中途分叉（一）：清屏再置位抹平「waitAnyKey 不清零」的分歧',
+  '最终状态相同但中途分叉（一）：清屏再置位抹平「waitAnyKey 不清零」的分歧',
   async () => {
     const steps = [
       { name: '初态', run: noop },
@@ -362,8 +362,8 @@ engine_test(
       },
       { name: 'clear() 整屏清空并再置位', run: async (s) => await s.clear() },
     ];
-    // 末态两侧同为 {rows:0, allowWait:true}（清屏的行数变化把 allowWait 再
-    // 置位，抹平了上一步「消费」的分歧）——只比末态对「waitAnyKey 不清零」
+    // 最终状态两侧同为 {rows:0, allowWait:true}（清屏的行数变化把 allowWait 再
+    // 置位，抹平了上一步「消费」的分歧）——只比最终状态对「waitAnyKey 不清零」
     // 的变异是盲的；逐步轨迹在「waitAnyKey 消费」一步分叉（F vs T）
     const engine_trace = await run_sequence(create_engine_side, steps);
     const fixture_trace = await run_sequence(create_fixture_side, steps);
@@ -380,7 +380,7 @@ engine_test(
 );
 
 engine_test(
-  '末态相同但中途分叉（二）：等键消费抹平「clear 不再置位」的分歧',
+  '最终状态相同但中途分叉（二）：等键消费抹平「clear 不再置位」的分歧',
   async () => {
     const steps = [
       { name: '初态', run: noop },
@@ -391,8 +391,8 @@ engine_test(
         run: async (s) => ({ wait: await s.wait_any_key() }),
       },
     ];
-    // 末态两侧同为 {rows:0, allowWait:false}（等键把 clear 的再置位消费掉，
-    // 抹平了「clear 后」那一步的分歧）——只比末态对「clear 的 setTotalLines
+    // 最终状态两侧同为 {rows:0, allowWait:false}（等键把 clear 的再置位消费掉，
+    // 抹平了「clear 后」那一步的分歧）——只比最终状态对「clear 的 setTotalLines
     // 再置位被删」的变异是盲的；逐步轨迹在「clear 后」分叉（T vs F），且
     // 等键记录本身分叉（waited 真 vs 假）
     const engine_trace = await run_sequence(create_engine_side, steps);
@@ -407,12 +407,12 @@ engine_test(
   },
 );
 
-// —— 模块号漂移 → 硬红（不依赖真实引擎：伪造 asar 探针）——
+// —— 模块号漂移 → 直接判失败（不依赖真实引擎：伪造 asar 探针）——
 //
 // background.js 造形成「入口标记仍在、模块 183 不是 EraApi」的形状——
 // 即引擎升版后最可能的样子。load_engine_bundle 的形状守卫必须抛
 // 「引擎变了」，而不是让下游炸 TypeError 或静默 skip。
-test('模块号漂移 → 硬红报「引擎变了」（engine-bundle 形状守卫）', () => {
+test('模块号漂移 → 直接判失败报「引擎变了」（engine-bundle 形状守卫）', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-'));
   const asar_path = path.join(dir, 'app.asar');
   // 形状要点：含入口标记 `r(r.s=311)}`（engine-bundle 据此切 webpack

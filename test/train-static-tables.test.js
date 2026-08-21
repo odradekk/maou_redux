@@ -1,5 +1,5 @@
 /**
- * @file 调教域静态表的引擎对拍测试（issue #43）。
+ * @file 调教域静态表的引擎比对测试（issue #43）。
  *
  * 与 test/variable-yml.test.js 同构的验证路线：不用夹具（记录层证明不了
  * 「引擎接受」），不用自写镜像（会漂移），全部经 test/helpers/engine-bundle.js
@@ -18,7 +18,7 @@
  *      跳过）、trainname 会被寻址层的 name 后缀规则拆成「train 表的名字
  *      查询」而 train 表不存在（寻址落到兜底分支、引擎报 key error in
  *      getter/setter）——#5 的 Train.yml 与 #10
- *      的 TrainName.yml 都是死表，实测留痕见 issue #43 评论。
+ *      的 TrainName.yml 都是死表，实测记录见 issue #43 评论。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告。
  */
@@ -139,7 +139,7 @@ engine_test(
 );
 
 engine_test(
-  '寻址对拍：palam/param/jewel 三族寻址都经 juel 名字表翻译名称（JUEL 不落表的运行时证据）',
+  '寻址比对：palam/param/jewel 三族寻址都经 juel 名字表翻译名称（JUEL 不落表的运行时证据）',
   () => {
     const product_text = fs.readFileSync(
       path.join(REPO_ROOT, 'yml', 'Palam.yml'),
@@ -180,7 +180,7 @@ engine_test(
   },
 );
 
-// —— TrainCommand：表名可寻址性的对拍锁 ——
+// —— TrainCommand：表名可寻址性的比对锁 ——
 
 engine_test(
   'TrainCommand：三种寻址全通（train/trainname 两个死名的反例见 issue #43）',

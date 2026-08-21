@@ -1,6 +1,6 @@
-// 变异台账切片：tools/compare、tools/lang-*、tools/csv-to-yml（数据管线与输出对拍）。
+// 变异条目表切片：tools/compare、tools/lang-*、tools/csv-to-yml（数据管线与输出比对）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
@@ -12,7 +12,7 @@ export default [
     must_mention: '缺映射',
   },
   {
-    desc: 'M79 豁免名单删華胥の亡靈条（简体锁必须点名致谢行）',
+    desc: 'M79 豁免名单删華胥の亡靈条（简体锁必须报出致谢行）',
     file: 'tools/lang-table.js',
     find: `  {
     value:
@@ -85,7 +85,7 @@ export default [
     replace:
       "const STUB_GAUGE_KEYS = new Set(['气力', '射精（你）']); // 变异：体力 删",
     tests: ['compare-first-turn'],
-    must_mention: '分类计数与当前欠账清单一致',
+    must_mention: '分类计数与当前待办清单一致',
   },
   {
     desc: 'M90 回放播种改错（阴核初值 5240 → 5200——变量层断言的靶心）',
@@ -109,7 +109,7 @@ export default [
     find: "    fixture.lines.push({ type: 'input', text: String(value) });",
     replace: '    // 变异：输入标记不落 lines',
     tests: ['compare-first-turn'],
-    must_mention: '对拍窗口不完整',
+    must_mention: '比对窗口不完整',
   },
   {
     desc: 'M148 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
@@ -120,7 +120,7 @@ export default [
     must_mention: 'percentage 不进事件流',
   },
   {
-    desc: 'M149 归一化器 progress 分支删除（结构化记录从事件流消失——对拍未解释）',
+    desc: 'M149 归一化器 progress 分支删除（结构化记录从事件流消失——比对未解释）',
     file: 'tools/compare/normalize.js',
     find: "    } else if (record.type === 'progress') {",
     replace:

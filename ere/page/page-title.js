@@ -12,7 +12,7 @@
  *     playMusic 的缺省 config 是 {loop: false}（app.asar 实证），须显式
  *     {loop: true}。:5 SETBGMVOLUME 标题音乐音量 无引擎等价物（playMusic
  *     只有 loop/fade；window.audio 是全局音量非逐曲），值仅为存档保真由
- *     era-global 的播种落 66，欠账登记 docs/stub-registry.md。原作的默认值
+ *     era-global 的播种落 66，待办登记 docs/stub-registry.md。原作的默认值
  *     1/66 来自随包 global.sav，ere 侧由 seed_title_music_defaults() 一次性
  *     播种（#18 移交的缺口，#69 落地）。
  *   - :13-15 调试残留（[IF_DEBUG] 分支与被注释的 CLEARLINE）不移植。

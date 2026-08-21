@@ -2,7 +2,7 @@
  * @file 口上文本保真回归锁（issue #46 验收整改）：ere/kojo/ 全部模块的口上
  * 输出与 ERB 原文逐行对核。
  *
- * 缘由（#46 验收的独立变异，两处假绿是本文件的直接动因）：
+ * 缘由（#46 验收的独立变异，两处误报通过是本文件的直接动因）：
  *   - PRINTFORMW/PRINTFORML 的 W/L 之别在行为测试里**不可观测**——夹具的
  *     push_text 对 print 与 printAndWait 记录完全相同（W = 输出后等待按键、
  *     L = 输出后换行，映射错了表现为排版错乱与卡顿感，#8 列为转译器验证面）；
@@ -82,7 +82,7 @@ const JS_TOKEN_RULES = [
   [/^scf\(\)$/, 'SCF'],
 ];
 
-/** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 点名） */
+/** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
 function norm_erb_token(raw) {
   const tok = raw.trim();
   for (const [re, name] of ERB_TOKEN_RULES) {
@@ -111,7 +111,7 @@ function norm_js_token(raw) {
  *
  * 字符串内容不透明（含模板字面量：${} 里的括号不参与配对）；行注释与块
  * 注释跳过（注释里的 era.print 不算调用）。捕获 print 与 printAndWait
- * 两种，其余 print 族（println/printButton…）记录但不捕获——锁 A 会点名。
+ * 两种，其余 print 族（println/printButton…）记录但不捕获——锁 A 会报出。
  *
  * @param {string} text 模块全文
  * @returns {{statements: object[], print_calls: object[], lines: string[],

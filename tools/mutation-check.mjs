@@ -1,66 +1,66 @@
-// 变异测试驱动器（issue #44 建立；#89 重构为「台账 sidecar + 分层执行点」）。
+// 变异测试驱动器（issue #44 建立；#89 重构为「条目表 sidecar + 分层执行点」）。
 //
 // 守什么：测试是否真的守得住它声称守护的行为——把被测代码改坏一小块
-// （变异），对应测试必须红；红不了 = 假绿。它因此是「验证其余检查器
+// （变异），对应测试必须红；红不了 = 误报通过。它因此是「验证其余检查器
 // 真的守得住」的那一个：trace-check / domain-check / engine-contract-check /
-// compare 的行为锁各有变异条目钉在台账里。
+// compare 的行为锁各有变异条目钉在条目表里。
 //
 // 形态（#89 两问之「形态」）：
-//   变异记录按靶文件目录分片住在 tools/mutations/*.mjs（加载时动态收账，
+//   变异记录按靶文件目录分片住在 tools/mutations/*.mjs（加载时动态汇总，
 //   新增分片文件即入账，无需登记）。desc 里的 M 编号是历史惯性编号
 //   （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配——引用
 //   变异时用运行时生成的稳定短号 [M-xxxxxxxx]（desc 内容哈希）或直接
 //   引 desc。字段：
 //     { desc, file, find, replace, tests, must_mention }
-//   - find 必须在靶文件中恰好出现 1 次（失配 = 硬红：靶代码被重构后，
+//   - find 必须在靶文件中恰好出现 1 次（失配 = 直接判失败：靶代码被重构后，
 //     工具当场红而不是静默失守——这条安全性质不许拆）；
 //   - tests = 应变红的测试文件名（不含 test/ 前缀与 .test.js 后缀）；
 //   - must_mention = 测试输出里必须能找到的片段，证明红的正是被测行为。
 //     语义是「输出包含该片段」，不是「只有它红了」——按实义命名
-//     （旧名 expect_only 名不副实，#89 改名），必填，无弱路径。
+//     （旧名 expect_only 名不副实，#89 改名），必填，无宽松判定。
 //
-// 台账三道门（照 #72 domain-check 的两道门形状，多一道测试文件存在性）：
-//   1. 计数门：台账条数必须等于 LEDGER_COUNT_BASELINE——增删条目必须
+// 条目表三项检查（照 #72 domain-check 的两项检查形状，多一道测试文件存在性）：
+//   1. 计数检查：条目表条数必须等于 LEDGER_COUNT_BASELINE——增删条目必须
 //      显式改这份常量，搬家丢条目、悄悄混条目都在版本库差异里看得见；
-//   2. 失配门：每条 find 在靶文件中恰好 1 次，靶文件必须存在；
-//   3. 测试文件门：tests 引用的 test/<名字>.test.js 必须存在——文件
+//   2. 失配检查：每条 find 在靶文件中恰好 1 次，靶文件必须存在；
+//   3. 测试文件检查：tests 引用的 test/<名字>.test.js 必须存在——文件
 //      不存在时 node --test 因「找不到文件」退出非 0，形同假拦截。
 //
 // 用法：
 //   node tools/mutation-check.mjs                        全量（串行，就地变异+还原）
-//   node tools/mutation-check.mjs --verify               只跑三道门（秒级；进 npm test 的快档）
-//   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（CI 的 PR 档）
+//   node tools/mutation-check.mjs --verify               只跑三项检查（秒级；进 npm test 的快速模式）
+//   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（CI 的抽样模式）
 //   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档）
 //   --root <dir>            变异所在的仓库根（默认本工具的上级；测试夹具用）
-//   --ledger-dir <dir>      台账目录（默认 tools/mutations；测试夹具用）
-//   --baseline <n>          覆盖计数门基线（测试夹具用）
+//   --ledger-dir <dir>      条目表目录（默认 tools/mutations；测试夹具用）
+//   --baseline <n>          覆盖计数检查基线（测试夹具用）
 //   --skip-baseline <n|off> 覆盖无引擎跳过基线（测试夹具与并行子进程用）
 //   --slice <i> <k>         只跑 sha1(desc) % k === i 的条目（并行子进程用）
 //   --asar <path|none>      显式指引擎 asar（none = 视为无引擎；给了就不再
 //                           三址回落，所指不存在按无引擎处理——测试与诊断
-//                           用，与 tools/engine-contract-check.mjs 同款口径）
+//                           用，与 tools/engine-contract-check.mjs 同款标准）
 //
 // 退出码：全拦 = 0（无引擎环境下另允许「跳过数恰等于基线」）；任何
-// 失配、假绿、还原失败、副本破损 = 1。测试驱动工具看退出码，不在测试
+// 失配、误报通过、还原失败、副本破损 = 1。测试驱动工具看退出码，不在测试
 // 里复制基线（trace-check 的整改教训：规则写在测试里而不在工具里，
 // 工具会声称自己在守、退出码却是 0）。
 //
-// 无引擎环境（CI runner）：变异靶的测试若整组引擎门控（engine-bundle
-// 找不到 asar 时逐用例 skip 并打警告），该条分类为「跳过（门控测试绿 +
+// 无引擎环境（CI runner）：变异靶的测试若整组依赖引擎（engine-bundle
+// 找不到 asar 时逐用例 skip 并打警告），该条分类为「跳过（依赖引擎的测试绿 +
 // 缺引擎警告）」——分类是纯输出判定，不掺环境；总数对 ENGINE_SKIP_
-// BASELINE 对账、偏离即红——引擎对拍的覆盖面收缩必须是有意识的提交
-// （与 test/engine-skip-baseline.txt 同一口径）。
-// **对账只在全量档生效**：基线是全量口径的不变量，抽样/切片子集没有
-// 期望跳过数，不对账（见 verdict_problems）。**引擎在场时跳过数必须为
+// BASELINE 核对、偏离即红——引擎比对的覆盖面收缩必须是有意识的提交
+// （与 test/engine-skip-baseline.txt 同一标准）。
+// **核对只在全量模式生效**：基线是全量模式的不变量，抽样/切片子集没有
+// 期望跳过数，不核对（见 verdict_problems）。**引擎在场时跳过数必须为
 // 0，任何档位都是硬判**——这条否决权集中在 verdict_problems，与分类
 // 分离，行为锁可直接钉（#89 二次验收的探针 G）。CI 的「跳过」仍是弱
-// 路径：无引擎处真假绿分不清，硬口径以有引擎的本地全量为准。
+// 路径：无引擎处真误报通过分不清，严格标准以有引擎的本地全量为准。
 //
 // 并行模式（--jobs K）用隔离临时副本：主树只读，每个子进程在自己那份
 // 副本里就地变异（副本 = ere/yml/res/test/tools/ownership/target 等白名单
 // 条目，测试零第三方依赖，node_modules 与引擎不进副本）。副本先跑一遍
 // 不变异的对照全量——副本缺文件会表现为测试红，不先对照会被误判成
-// 「变异被拦截」，是并行模式假绿的最大来源。
+// 「变异被拦截」，是并行模式误报通过的最大来源。
 
 import { spawn, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -74,16 +74,16 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 
 /**
- * 台账计数基线（门 1）：条数只能通过显式改这份常量来变。
+ * 条目表计数基线（门 1）：条数只能通过显式改这份常量来变。
  * 增 = 新变异落地（公告）；减 = 变异被删（也应是公告）。
  */
 const LEDGER_COUNT_BASELINE = 186;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
- * 门控的条目数。当前 7 条 = M112/M113/M115（portcflag 预设对拍）+
- * M127（资源缺省配置对拍）+ M167/M169/M171（夹具的引擎镜像语义）。
- * 新变异若只被引擎对拍用例守护，此数会涨——那意味着该变异在 CI 上只被
+ * 依赖引擎的条目数。当前 7 条 = M112/M113/M115（portcflag 预设比对）+
+ * M127（资源缺省配置比对）+ M167/M169/M171（夹具的引擎镜像语义）。
+ * 新变异若只被引擎比对用例守护，此数会涨——那意味着该变异在 CI 上只被
  * 「跳过」覆盖，改这份常量时想清楚。
  */
 const ENGINE_SKIP_BASELINE = 7;
@@ -95,7 +95,7 @@ const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
  * 并行副本不携带的顶层条目（拒绝清单而非白名单：仓库里凡测试可能读到
  * 的数据目录——docs/、ownership/、target/ 等——一律自动入副本；漏带会
  * 表现为对照运行红，而不是变异被误判拦截）。引擎目录与 node_modules
- * 体积大且测试不依赖（测试零第三方依赖，引擎对拍走三址回落）。
+ * 体积大且测试不依赖（测试零第三方依赖，引擎比对走三址回落）。
  */
 const COPY_DENY = new Set([
   '.git',
@@ -142,7 +142,7 @@ function parse_args(argv) {
   return out;
 }
 
-// —— 台账装载与稳定短号 ——
+// —— 条目表装载与稳定短号 ——
 
 /** desc 的内容哈希短号：引用锚点 [M-xxxxxxxx]，desc 变则号变，无需人工分配 */
 function stable_id(desc) {
@@ -162,7 +162,7 @@ async function load_ledger(dir) {
     .filter((n) => n.endsWith('.mjs'))
     .sort();
   if (names.length === 0) {
-    throw new Error(`台账目录 ${dir} 里没有 .mjs 分片`);
+    throw new Error(`条目表目录 ${dir} 里没有 .mjs 分片`);
   }
   const entries = [];
   for (const name of names) {
@@ -175,7 +175,7 @@ async function load_ledger(dir) {
   return entries;
 }
 
-// —— 三道门 ——
+// —— 三项检查 ——
 
 function gate_shape(entries) {
   const errors = [];
@@ -199,7 +199,7 @@ function gate_shape(entries) {
       errors.push(`[${m.desc}] tests 必须是非空数组`);
     }
     if (typeof m.must_mention !== 'string' || !m.must_mention) {
-      errors.push(`[${m.desc}] 缺 must_mention（无弱路径，必填）`);
+      errors.push(`[${m.desc}] 缺 must_mention（无宽松判定，必填）`);
     }
   }
   return errors;
@@ -211,7 +211,7 @@ function gate_count(entries, baseline) {
       entries.length > baseline
         ? `多出 ${entries.length - baseline} 条（新变异落地须显式抬基线）`
         : `少了 ${baseline - entries.length} 条（条目丢失或被删，须显式降基线）`;
-    return [`台账条数 ${entries.length} ≠ 基线 ${baseline}：${dir}`];
+    return [`条目表条数 ${entries.length} ≠ 基线 ${baseline}：${dir}`];
   }
   return [];
 }
@@ -298,8 +298,8 @@ function locate_asar(root, explicit) {
 /**
  * 孙进程环境消毒：node --test 给测试文件传 NODE_TEST_CONTEXT，原样漏进
  * 再起的 node --test 会让后者误入「测试子进程上报模式」、静默退 0——
- * 快档（npm test 内驱动本工具，工具再起 node --test）必踩，红不了
- * 还会被误判成假绿。所有内部 spawn 一律剔掉 NODE_TEST* 键。
+ * 快速模式（npm test 内驱动本工具，工具再起 node --test）必踩，红不了
+ * 还会被误判成误报通过。所有内部 spawn 一律剔掉 NODE_TEST* 键。
  */
 function clean_env() {
   const env = { ...process.env };
@@ -324,7 +324,7 @@ process.on('SIGINT', () => {
 });
 
 /**
- * 单条分类是**纯输出判定**（不掺环境）：门控测试整组绿 + 输出含缺引擎
+ * 单条分类是**纯输出判定**（不掺环境）：依赖引擎的测试整组绿 + 输出含缺引擎
  * 警告 = engine-skip。「引擎在场时跳过必须为 0」的否决权全部集中在
  * verdict_problems——分类与判定分离后，这条不变量从 CLI 可观测、可测
  * （#89 二次验收的探针 G：判定若被抽样档短路，行为锁当场红）。真实
@@ -340,7 +340,7 @@ function run_one(root, m) {
   const count = original.split(m.find).length - 1;
   if (count !== 1) {
     console.log(
-      `✗ [${stable_id(m.desc)}] ${m.desc} — find 出现 ${count} 次（要求恰 1 次），先修正台账`,
+      `✗ [${stable_id(m.desc)}] ${m.desc} — find 出现 ${count} 次（要求恰 1 次），先修正条目表`,
     );
     return 'find-mismatch';
   }
@@ -372,18 +372,18 @@ function run_one(root, m) {
   const saw_named_failure = output.includes(m.must_mention);
   if (failed_as_expected && saw_named_failure) {
     console.log(
-      `✓ [${stable_id(m.desc)}] ${m.desc} — 红=true 点名「${m.must_mention}」=true`,
+      `✓ [${stable_id(m.desc)}] ${m.desc} — 红=true 命中「${m.must_mention}」=true`,
     );
     return 'caught';
   }
   if (!failed_as_expected && output.includes(ENGINE_WARN_MARKER)) {
     console.log(
-      `⏭ [${stable_id(m.desc)}] ${m.desc} — 跳过（门控测试绿 + 缺引擎警告）`,
+      `⏭ [${stable_id(m.desc)}] ${m.desc} — 跳过（依赖引擎的测试绿 + 缺引擎警告）`,
     );
     return 'engine-skip';
   }
   console.log(
-    `✗ [${stable_id(m.desc)}] ${m.desc} — 红=${failed_as_expected} 点名「${m.must_mention}」=${saw_named_failure}`,
+    `✗ [${stable_id(m.desc)}] ${m.desc} — 红=${failed_as_expected} 命中「${m.must_mention}」=${saw_named_failure}`,
   );
   return 'miss';
 }
@@ -418,7 +418,7 @@ function execute(entries, args) {
   return tally;
 }
 
-/** 本轮是否只执行台账的一个子集（抽样 / 切片） */
+/** 本轮是否只执行条目表的一个子集（抽样 / 切片） */
 function is_partial(args) {
   return args.sample !== undefined || args.slice !== undefined;
 }
@@ -433,11 +433,11 @@ function verdict_problems(tally, args, engine_present) {
       problems.push(`引擎在场却有 ${tally.skipped} 条按「跳过」处理（不允许）`);
     }
   } else if (!is_partial(args) && args.skip_baseline !== 'off') {
-    // ENGINE_SKIP_BASELINE 是全量口径的不变量（7/186 恰好引擎门控）。
-    // 抽样/切片是子集，没有「期望跳过数」——抽 12 条命中 7 条门控的概率
-    // 约为零，拿全量基线对账子集必然假红（#89 发回整改的阻断 1：干净
-    // Linux 上 --sample 3 三条全拦仍退 1）。子集档不对账；跳过数的对账
-    // 由全量档执行（CI master push / 手动触发 / 本地全量）。
+    // ENGINE_SKIP_BASELINE 是全量模式的不变量（7/186 恰好依赖引擎）。
+    // 抽样/切片是子集，没有「期望跳过数」——抽 12 条命中 7 条依赖引擎的概率
+    // 约为零，拿全量基线核对子集必然假红（#89 发回整改的阻断 1：干净
+    // Linux 上 --sample 3 三条全拦仍退 1）。子集档不核对；跳过数的核对
+    // 由全量模式执行（CI master push / 手动触发 / 本地全量）。
     const baseline =
       args.skip_baseline === undefined
         ? ENGINE_SKIP_BASELINE
@@ -445,7 +445,7 @@ function verdict_problems(tally, args, engine_present) {
     if (tally.skipped !== baseline) {
       problems.push(
         `无引擎跳过 ${tally.skipped} ≠ 基线 ${baseline}` +
-          `——引擎门控覆盖面变了，这个数字必须是有意识的提交`,
+          `——依赖引擎的用例覆盖面变了，这个数字必须是有意识的提交`,
       );
     }
   }
@@ -504,7 +504,7 @@ async function execute_jobs(args) {
       copies.push(make_copy(args.root));
     }
     // 每个副本先跑不变异的对照全量（并行）：副本缺文件/环境破损会表现为
-    // 测试红，若不先对照，会被误判成「变异被拦截」——假绿的最大来源
+    // 测试红，若不先对照，会被误判成「变异被拦截」——误报通过的最大来源
     const controls = await Promise.all(
       copies.map((copy) =>
         spawn_capture(process.execPath, ['--test'], { cwd: copy }),
@@ -513,7 +513,7 @@ async function execute_jobs(args) {
     for (let i = 0; i < jobs; i += 1) {
       if (controls[i].code !== 0) {
         console.log(`✗ 副本 ${i} 对照运行即红（副本环境破损，非变异拦截）：`);
-        // 先点名失败的测试（not ok / ✖ / 非零 fail 计数），没有再退回
+        // 先列出失败的测试（not ok / ✖ / 非零 fail 计数），没有再退回
         // 尾部 60 行——对照失败必须能定位到用例，尾 12 行连测试名都露不出
         const lines = controls[i].output.split('\n');
         const failures = lines.filter((l) =>
@@ -575,21 +575,21 @@ async function main() {
   if (args.verify) {
     if (gates_ok) {
       console.log(
-        `✓ 结构校验全绿：${entries.length} 条台账，三道门全过（计数基线 ${args.baseline}）`,
+        `✓ 结构校验全绿：${entries.length} 条条目表，三项检查全过（计数基线 ${args.baseline}）`,
       );
     } else {
-      console.log('✗ 结构校验未过（三道门见上）');
+      console.log('✗ 结构校验未过（三项检查见上）');
     }
     process.exit(gates_ok ? 0 : 1);
   }
   if (!gates_ok) {
-    console.log('✗ 三道门未过，拒绝执行');
+    console.log('✗ 三项检查未过，拒绝执行');
     process.exit(1);
   }
   const engine_present = Boolean(locate_asar(args.root, args.asar));
   if (!engine_present) {
     console.log(
-      '⚠ 未找到引擎 asar：引擎门控的变异将按「跳过」分类（硬口径须有引擎的本地全量）',
+      '⚠ 未找到引擎 asar：依赖引擎的变异将按「跳过」分类（严格标准须有引擎的本地全量）',
     );
   }
   const started = Date.now();
@@ -600,7 +600,7 @@ async function main() {
   console.log(
     `\n拦截 ${tally.caught} / 跳过 ${tally.skipped} / 红 ${tally.red} — ${elapsed}s` +
       (problems.length === 0
-        ? '（全部变异被测试拦截，无假绿）'
+        ? '（全部变异被测试拦截，无误报通过）'
         : `（存在问题：${problems.join('；')}）`),
   );
   console.log(

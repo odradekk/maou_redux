@@ -15,7 +15,7 @@
  * TEQUIP 守卫在零指令下不可达，整段以注释占位（docs/stub-registry.md）。
  * 其余直线代码（日期行、目标行、绝顶计数、MAXBASE 修正）1:1 照搬。
  *
- * #74 的两条换皮（对拍都在旁边看着——本画面在黄金样本覆盖内）：
+ * #74 的两条换表现层（比对都在旁边看着——本画面在黄金样本覆盖内）：
  *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
  *     语义值（参数名 + palam 原值）在条内/条后文字里，归一化器零解析直取
  *     （tools/compare/normalize.js 的 progress 分支）；percentage 纯表现。
@@ -35,7 +35,7 @@ const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
   'SHOW_EQUIP_2',
@@ -59,7 +59,7 @@ const PALAM_VALUE_WIDTH = 5;
 /**
  * PRINT_PALAM（引擎内建命令）的移植：一角色的参数条画面。
  *
- * 渲染规则（#74 换皮：printMultiColumns 的 progress 格）：
+ * 渲染规则（#74 换表现层：printMultiColumns 的 progress 格）：
  *   - 枚举 palam 名字表从 0 起的连续序号（Palam.yml 的 0..15；100「否定」
  *     是珠侧专用，参数条不显示——连续段在 16 断开即止）；
  *   - 每格：条内文字＝参数名、条后文字＝右对齐宽 5 的数值、percentage＝
@@ -67,8 +67,8 @@ const PALAM_VALUE_WIDTH = 5;
  *     floor(10*值/下一阈值) 的格数填充没有等价物，也不需要）；
  *   - 每行 3 格。
  *
- * percentage 是**纯表现**：对拍两侧归一的语义值＝条后数值（palam 原值），
- * 条形几何（字符条格数 vs 百分比）不进事件流——「换皮不砸对拍」的裁定
+ * percentage 是**纯表现**：比对两侧归一的语义值＝条后数值（palam 原值），
+ * 条形几何（字符条格数 vs 百分比）不进事件流——「换掉表现层不影响比对」的裁定
  * 本体，见 tools/compare/normalize.js 的 progress 分支与 docs/output-diff.md。
  *
  * @param {number} cid 角色 ID（原作实参 TARGET）
@@ -148,7 +148,7 @@ function print_ex_counters(cid) {
   }
   if (parts.length > 0) {
     // :123-124 SIF EX 任一非零 → PRINTL（拼行 + 补换行；各段尾自带双空格，
-    // 与原作逐字一致，对拍归 #48）
+    // 与原作逐字一致，比对归 #48）
     era.print(parts.join(''));
   }
 }
@@ -169,7 +169,7 @@ function fix_maxbase(cid, assi_variant = false) {
 // —— 状态画面组件（#74）：整页一个 ScreenBlock ——
 //
 // 会话态：BEGIN TRAIN 的事件链（EVENTTRAIN）重建——锚点跨会话复用会拿上一
-// 局的锚点清掉本局内容（#73 主菜单同款裁定，跨会话测试钉死）。本处理器不
+// 局的锚点清掉本局内容（#73 主菜单同款裁定，跨会话测试固定住）。本处理器不
 // 输出任何行，与链上其他 EVENTTRAIN 处理器（PRITRAIN 头部等）无序依赖。
 let status_block = null;
 // 「本轮指令路径执行过」探针（重绘判据）。PREVCOM 的**值差**不能当判据：
@@ -225,7 +225,7 @@ async function draw_status_screen(target) {
   print_ex_counters(target);
 
   // :126 PRINT_PALAM TARGET（引擎内建命令的移植，参数条——指令菜单之外
-  // 玩家唯一的反馈，工单点名保留）
+  // 玩家唯一的反馈，工单报出保留）
   print_palam(target);
 
   // :128-142 MAXBASE 修正（目标/主人/助手三处；助手档判据差异见函数头）
@@ -243,7 +243,7 @@ async function draw_status_screen(target) {
   // :253 CALL SHOW_EQUIP_1 —— 存根
   stub_line('SHOW_EQUIP_1', '装备一览', '随装备票');
 
-  // :255-256 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；本票
+  // :255-256 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；这张票
   // 移植——引擎 LINECOUNT 的等价物 getLineCount 直通）
   era.set('tflag:999', era.getLineCount());
 }
@@ -270,8 +270,8 @@ on('SHOW_STATUS', async () => {
     // 指令轮（含重复同指令）：追加绘制（原作 @SHOW_STATUS 本款是追加
     // 滚动，无 CLEARLINE）。就地重绘会清掉玩家还没读的指令结果（叙述/
     // 算式行在锚点跨度内）——「分发期输出必须被玩家看到再被重绘清掉」
-    //（#73 定档）要求等键，而等键属叙述所属的指令模块（train-message/
-    // SOURCE_CHECK，本票边界外），状态画面侧不加每轮按键（工单事实 7）
+    //（#73 确定）要求等键，而等键属叙述所属的指令模块（train-message/
+    // SOURCE_CHECK，这张票边界外），状态画面侧不加每轮按键（工单事实 7）
     // 就只能不吃叙述。
     await status_block.draw();
   } else {

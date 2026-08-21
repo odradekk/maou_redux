@@ -64,7 +64,7 @@ test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预
   // 引擎第一步就短路——空壳夹具记下调用后断言全绿，实机一个角色都没加
   assert.equal(fixture.era.addCharacter(0), false);
   assert.deepEqual(fixture.chara_no, []);
-  // 调用仍被记录（接线层面的断言不受影响）
+  // 调用仍被记录（接入层面的断言不受影响）
   assert.deepEqual(fixture.calls, [{ api: 'addCharacter', args: [0] }]);
 
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
@@ -117,7 +117,7 @@ test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边
 
   // 引擎寻址层（app.asar 模块 648）的镜像：二段 tflag 在 data.tflag 不存在
   // 时落到兜底分支报 key error；三段 palam 在角色子表缺失时静默丢弃。
-  // 引擎侧证据由 test/train-loop.test.js 的引擎对拍用例锁定
+  // 引擎侧证据由 test/train-loop.test.js 的引擎比对用例锁定
   assert.throws(() => fixture.era.set('tflag:0', 1), /key error/);
   assert.equal(fixture.era.set('palam:31:3', 1), undefined);
 
@@ -180,7 +180,7 @@ test('printAndWait 不进 waits（缝对等待的观测统一走显式 waitAnyKe
 test('waitAnyKey：无输出跳过；有输出才等键并清零', async () => {
   const fixture = create_era_fixture();
   // 引擎：(this.allowWait||e)&&(this.allowWait=!1, await this.input({any:!0}))
-  // 空屏 / 无输出 → 跳过。旧桩「立即返回并留痕」会把跳过记成等了，本用例
+  // 空屏 / 无输出 → 跳过。旧桩「立即返回并记录」会把跳过记成等了，本用例
   // 钉住「等了和没等」的区分（#73 发回：夹具必须镜像 allowWait）。
   await fixture.era.waitAnyKey();
   assert.deepEqual(fixture.waits, [
@@ -261,7 +261,7 @@ test('已加入角色列表：addCharacter 追加、resetData 清空（CHARANUM 
 
   fixture.era.resetData();
   assert.deepEqual(fixture.chara_no, []);
-  // 两者虽有专门实现，仍显式留痕：用例要能断言「先清档再加人」的顺序
+  // 两者虽有专门实现，仍显式记录：用例要能断言「先清档再加人」的顺序
   assert.deepEqual(fixture.calls, [
     { api: 'addCharacter', args: [0] },
     { api: 'addCharacter', args: [31] },
@@ -304,7 +304,7 @@ test('文本行保留原始片段（样式断言的落点，text 是压平结果
   assert.equal(record.content, fragments);
 });
 
-// —— 多列输出族的录制（#48 对拍录制器：print 系全部输出 API 有专门记录，
+// —— 多列输出族的录制（#48 比对录制器：print 系全部输出 API 有专门记录，
 //    不落兜底 calls——「文本层录制器覆盖 print 系全部输出 API」的落点） ——
 
 test('printMultiColumns：GridObject 逐格压平成既有条目类型', () => {
@@ -352,11 +352,11 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
   ]);
 });
 
-test('printImage：记 image 条目（无文本，对拍只留痕）', () => {
+test('printImage：记 image 条目（无文本，比对只记录）', () => {
   const fixture = create_era_fixture();
   fixture.era.printImage('res-x', 'res-y');
 
-  // 空 resolved 不挂（#69 与 #68 的合并口径）：条目保持裸形状
+  // 空 resolved 不挂（#69 与 #68 的合并标准）：条目保持裸形状
   assert.deepEqual(fixture.lines, [
     { type: 'image', names: ['res-x', 'res-y'], row: 0 },
   ]);
@@ -418,7 +418,7 @@ test('playMusic：config 非对象重置为 {loop:false}、取第一个注册音
   assert.equal(fixture.music[2].played, null);
 });
 
-test('stopMusic / resumeMusic 留痕（音乐事件记录面）', () => {
+test('stopMusic / resumeMusic 记录（音乐事件记录面）', () => {
   const fixture = create_era_fixture();
   fixture.era.stopMusic();
   fixture.era.resumeMusic();
@@ -467,7 +467,7 @@ test('音乐 API 不占 Row（引擎只 connect、不调 addTotalLines）；prin
   // = 实机上多清一行。此用例即守住该判断的回归锁（#68 验收通则）。
 });
 
-// —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎口径一致 ——
+// —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎标准一致 ——
 // 引擎证据（app.asar）：主进程 EraApi 每次输出调用恰好一次 addTotalLines()；
 // 渲染层把 printMultiCols / printInColRows 整次调用各装进一个行对象。
 
@@ -485,7 +485,7 @@ test('一次多列输出算一个 Row：getLineCount 增量为 1，clear(1) 只�
   ]);
 
   // ADR 0003 的缺陷场景：若按条目计数，增量是 4、组件 clear(4) 会连带
-  // 抹掉上面三行无关内容——Row 口径下增量必须是 1
+  // 抹掉上面三行无关内容——Row 的计法下增量必须是 1
   assert.equal(era.getLineCount() - before, 1);
   // 全部格子共享同一 Row 号
   const rows = new Set(fixture.lines.slice(1).map((l) => l.row));
@@ -580,7 +580,7 @@ test('replaceText 换掉最后一个 Row 的全部条目，行数不增', () => 
   assert.deepEqual(fixture.text_lines(), ['标题', '改写']);
 });
 
-test('replaceInColRows 与 replaceText 同口径：整行换、不增行', () => {
+test('replaceInColRows 与 replaceText 同一标准：整行换、不增行', () => {
   const fixture = create_era_fixture();
   const { era } = fixture;
   era.printMultiColumns([
@@ -690,7 +690,7 @@ test('空 printMultiColumns 仍占一个 Row（引擎无条件 addTotalLines）'
 //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
 //     || this.print(i)
 // 普通 input() 的回显 print → addTotalLines → +1 Row；三段短路任一命中则
-// 不 print。夹具只调计数器、不推条目（条目层的回显由对拍标记承载）。
+// 不 print。夹具只调计数器、不推条目（条目层的回显由比对标记承载）。
 
 test('input 回显计一行：画 3 行 → input → clear(3) → 组件首行残留（重绘主路径）', async () => {
   const fixture = create_era_fixture();
@@ -707,8 +707,8 @@ test('input 回显计一行：画 3 行 → input → clear(3) → 组件首行�
 
   // ADR-0003 的重绘纪律「重绘只发生在玩家交互之后」——交互就是 input。
   // 组件按绘制时量得的 3 行 clear(3)，引擎实机清掉的是「回显 + 组件后两
-  // 行」，组件首行残留。行数口径若与引擎不一致（回显不计），组件在夹具
-  // 里被完整清掉、实机上却留一行——本票要消灭的正是这类缺陷
+  // 行」，组件首行残留。行数的计法若与引擎不一致（回显不计），组件在夹具
+  // 里被完整清掉、实机上却留一行——这张票要消灭的正是这类缺陷
   assert.equal(await era.clear(3), 1);
   assert.deepEqual(fixture.text_lines(), ['第一行']);
 });
