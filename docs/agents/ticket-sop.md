@@ -4,7 +4,7 @@
 
 工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；移植决议的索引见地图 issue #1（只读）。
 
-票序与阻塞关系写在**当前那颗曳光弹的父票**里（第一颗 #15、第二颗 #42，均已关闭）。两颗曳光弹之后没有常设的票序索引——新工作按 `docs/stub-registry.md` 认领，阻塞关系写在各票的正文里。
+票序与阻塞关系写在**当前那条贯通路径的父票**里（第一条 #15、第二条 #42，均已关闭）。两条贯通路径跑完之后没有常设的票序索引，新工作按 `docs/stub-registry.md` 认领，阻塞关系写在各票的正文里。
 
 ## 0. 环境前提
 
@@ -12,12 +12,12 @@
 
 - Windows 上 CLI 就是 `orca`；Linux 下用 `orca-ide`（裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
 - **本机 Orca 的 `commandSourcePolicy` 是 `local-only`，仓库里的 `orca.yaml` 钩子不会执行**（实测：带 `--run-hooks` 删 worktree，仓库脚本一行没跑）。所以仓库里不放 `orca.yaml`；worktree 的 setup 钩子（`npm install`）配在 Orca 的 **Settings → Repository → Hooks**。
-- 推论：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了——要留下的东西，删之前必须已经推走。
+- 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
 - `.worktreeinclude` 会把主 checkout 的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**主 checkout 那份必须是 `"static": "yml"`**，否则每个新 worktree 一开就是坏的。
 
 ## 1. 选票与认领
 
-**前沿** = `open` + 阻塞票全部已关闭 + 无 assignee，按编号序取第一个。
+**可认领的第一张票** = `open` + 阻塞票全部已关闭 + 无 assignee，按编号序取第一个。
 
 ```
 gh issue list --repo odradekk/maou_redux --state open --label ready-for-agent --json number,title,assignees
@@ -28,7 +28,7 @@ gh issue edit <n> --repo odradekk/maou_redux --add-assignee @me
 
 ## 2. 并发上限：同时最多 5 个工单
 
-无依赖关系的票可以同时开多个 worktree。**有阻塞边的票等阻塞方合并进 `master` 之后再建 worktree**——早建的基线里没有前置代码。派新单前先数一遍在跑的（不含主 checkout `master`）：
+无依赖关系的票可以同时开多个 worktree。**有阻塞关系的票，等阻塞方合并进 `master` 之后再建 worktree**：早建的基线里没有前置代码。派新单前先数一遍在跑的（不含主 checkout `master`）：
 
 ```
 orca worktree ps --json
@@ -42,35 +42,35 @@ orca worktree create --name t<N>-<slug> --no-parent --agent droid --prompt "<简
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单标题里的 T 编号。
 - `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
-- `--agent droid` 让 droid 落在 worktree 的第一个终端，这是唯一正确的派法——「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
+- `--agent droid` 让 droid 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
 - `--repo` 省略时 Orca 从当前 worktree 推断仓库；跨仓库才需要 `orca repo list --json` 取 id。
 - 记下返回里的 `worktree.id`（形如 `<repoId>::<绝对路径>`，**两段都要**，只给 repoId 不是 worktree id）与 `startupTerminal.handle`。
 
 ### 简报模板
 
-**第一行必须是 `/implement` 加一个空格再接任务描述。** 斜杠命令后没有空格不会被识别为技能调用；写成「请用 /implement 技能……」是在*请求*它调用，直接调用更稳。
+**第一行必须是 `/implement` 加一个空格再接任务描述。** 斜杠命令后没有空格不会被识别为技能调用；写成「请用 /implement 技能……」只是在*请求*它调用，直接调用更稳。
 
 ```
 /implement issue #<N>：<标题>
 工单正文与验收清单：gh issue view <N> --repo odradekk/maou_redux --comments
-父票（本票在整体中的位置与测试策略）：gh issue view 15 --repo odradekk/maou_redux
+父票（这张票在整体中的位置与测试策略）：gh issue view 15 --repo odradekk/maou_redux
 相关决议，动手前请读：#<a>、#<b>
 
 <三到五条它自己查会很贵、且容易查错的既有事实，直接给结论>
 
 自检与提交：
-- 自检三件套全绿（npm test、npx eslint . --max-warnings 0、npx prettier --check .）
+- 三项自检全绿（npm test、npx eslint . --max-warnings 0、npx prettier --check .）
 - 逐条对照验收清单
 - 验收里写着「且此行为有测试」的每一条，做变异测试自证：把被测规则改坏，
-  确认真的有用例失败（本项目在 #10 吃过亏——测试全绿但规则已失效）
+  确认真的有用例失败（本项目在 #10 出过事：测试全绿，规则却已失效）
 - 按 Conventional Commits 提交，scope 用 <scope>
 - 完成后停下等验收，合并与开 PR 由派单人做
 ```
 
 两条写法约定：
 
-- **简报不必让它读 `AGENTS.md`**——agent 会自动加载，写进去只是浪费开头的注意力。
-- **简报给结论。** 让它自己去 `target/`（315,953 行）或引擎源码里重查一件已经查实的事，既慢又容易得出与既有决议矛盾的结果。但**本票自己要解决的设计问题留给它**，只要求把判断依据写在 issue 上。
+- **简报不必让它读 `AGENTS.md`**：agent 会自动加载，写进去只是浪费开头的注意力。
+- **简报给结论。** 让它自己去 `target/`（315,953 行）或引擎源码里重查一件已经查实的事，既慢又容易得出与既有决议矛盾的结果。但**这张票自己要解决的设计问题留给它**，只要求把判断依据写在 issue 上。
 
 `/implement` 内部驱动 `tdd` 一次一个红绿切片，收尾跑 `code-review` 的两轴审查（Standards + Spec）再提交。绕过它就少了这层自检，交上来的东西得从头人工复核。
 
@@ -85,14 +85,14 @@ orca worktree set --worktree id:<repoId>::<路径> --comment "<一句话进展>"
 
 发消息前先 `read`。等 TUI 就绪必须带 `--timeout-ms`，否则输入会丢在启动过程里。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，只用最新那个。
 
-## 5. 验收：自己复跑一遍
+## 5. 验收：自己重跑一遍
 
 agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 issue 的验收清单：
 
-1. **自检三件套**（worktree 若缺 `node_modules`，`npx eslint` 会去拉 v9 并报错——先 `npm ci`）。
+1. **三项自检**（worktree 若缺 `node_modules`，`npx eslint` 会去拉 v9 并报错，先 `npm ci`）。
 2. 凡是验收清单里写着「此行为**必须有测试**」的，**做变异测试**：把那条规则改坏，确认真的有用例失败。#10 的原型曾因一句无条件删除让规则失效，而测试全绿。
 
-   曳光弹期间靠这一步抓到三条**空用例**——用例名声称守住某个行为，实际守不住。共同特征是**测试构造的世界里，被测条件的两个分支从未分开过**：守卫拦下与走缺失路径的可观测结果相同（#21）、被测条件的两个分支在在场数据里恰好重合（#24）、记录失效方式的表征测试 production 怎么改都绿（#20）。光读用例名与断言看不出来，只有改坏被测行为才能发现。
+   贯通验证期间靠这一步抓到三条**空用例**：用例名声称守住某个行为，实际守不住。共同特征是**测试构造的世界里，被测条件的两个分支从未分开过**。守卫拦下与走缺失路径的可观测结果相同（#21）、被测条件的两个分支在在场数据里恰好重合（#24）、记录失效方式的表征测试怎么改被测代码都绿（#20）。光读用例名与断言看不出来，只有改坏被测行为才能发现。
 
    变异也要挑对位置：改一处应当只死该行为对应的用例。一改就死一大片，说明用例耦合过深；一改全绿，说明那条根本没被守住。
 
@@ -100,9 +100,9 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 4. 1:1 移植的改动，抽查文件头的来源注释是否真指到 `target/` 里存在的文件与函数。
 5. **机械改名类迁移（裸寻址 → 门面、批量重命名），验收证据是「寻址多重集等价」，不是行为覆盖。** 从产物源码建「门面字段 → 寻址」映射，再解析迁移 diff，把删掉的旧寻址与新增的门面写各自归约成 `表:下标` 的多重集，逐条比对——每一处迁移后写的必须仍是它原来写的那个地址。
 
-   为什么不能靠行为覆盖：#90 迁 `source-check.js` 的 57 处跨域写时，派单人在工单里写了「它在黄金样本对拍窗口内，改错了对拍当场红」。**实测不成立**——均匀抽样 10 处、逐处把赋值右侧改成 `12345`，**对拍一处都没网住**（未解释恒为 0）、用例只网住 3 处。该文件 309 个分支，黄金样本只经过一小部分，外推约 40/57 处没有任何回归网。迁移是全量的，覆盖是局部的，**两者不可互相担保**。
+   为什么不能靠行为覆盖：#90 迁 `source-check.js` 的 57 处跨域写时，派单的人在工单里写了「它在黄金样本的比对窗口内，改错了比对当场红」。**实测不成立**：均匀抽样 10 处、逐处把赋值右侧改成 `12345`，**比对一处都没拦下**（未解释恒为 0），用例只拦下 3 处。该文件 309 个分支，黄金样本只经过一小部分，外推约 40/57 处没有任何回归防护。迁移是全量的，覆盖是局部的，**两者不能互相担保**。
 
-   **只能在合并时做**：欠账台账（`tools/domain-ledger.mjs` 一类）的条目一迁完就删，事后再无「原来写的是哪个地址」的记录。错过这一刻就永远补不上。
+   **只能在合并时做**：待办条目表（`tools/domain-ledger.mjs` 一类）的条目一迁完就删，事后再无「原来写的是哪个地址」的记录。错过这一刻就永远补不上。
 
 ## 6. 收尾
 
@@ -115,9 +115,9 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
 ```
 
 - PR 正文以 `Closes #<n>` 结尾，合并即自动关票。
-- **删 worktree 前确认提交都已推送**——本机没有归档钩子，删了不可恢复。
+- **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **需要启动引擎的手工验收，在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，worktree 的存档也不会保留。
 
-## 7. 决议留痕
+## 7. 决议的记录方式
 
-实现中若发现某条既有决议站不住，**回对应 issue 补勘误评论**再继续（#3 被 #6 推翻即是先例）。地图 issue #1 只读，不改写历史。
+实现中若发现某条既有决议站不住，**回对应 issue 补勘误评论**再继续（#3 被 #6 推翻就是先例）。地图 issue #1 只读，不改写历史。
