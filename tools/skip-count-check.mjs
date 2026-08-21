@@ -1,6 +1,6 @@
 // 无引擎跳过数守护（issue #92）：CI 上没有引擎，引擎依赖用例整组
 // test.skip 退场——这个数字不许隐形。本工具读 `npm run test:ci` 落盘的
-// TAP 报告，把摘要里的跳过数与 test/engine-skip-baseline.txt 的基线对账：
+// TAP 报告，把摘要里的跳过数与 test/engine-skip-baseline.txt 的基线核对：
 //
 //   一致 → 退出 0，把「跳过 N/总数」打在 CI 日志（有 GITHUB_STEP_SUMMARY
 //          时同时写进度摘要）；
@@ -13,8 +13,8 @@
 // 「CI 比本地弱多少」，值得在 Actions 步骤列表里占一行自己的红绿；
 // 测试步红时守护不会跑（GitHub Actions 逐步短路），不会叠加误导。
 //
-// 退出码：0 对账通过；1 对账失败（数字偏离基线）；2 输入不可用（TAP
-// 缺摘要、文件缺失、基线烂——测试运行器异常退出不该被当成对账通过）。
+// 退出码：0 核对通过；1 核对失败（数字偏离基线）；2 输入不可用（TAP
+// 缺摘要、文件缺失、基线烂——测试运行器异常退出不该被当成核对通过）。
 //
 // 只在无引擎环境（CI、未放置 ere-4.8.0 的裸克隆）有意义。引擎在场时
 // 跳过数为 0，对基线必然红——那是提醒你跑错了环境，不是基线错了。
@@ -121,7 +121,7 @@ function main() {
   let summary;
   try {
     // parse_argv 也在 try 内：参数错误同样走「输入不可用」的退出码 2，
-    // 不以未捕获异常的姿态与对账失败（1）混淆（#92 复查意见）
+    // 不以未捕获异常的姿态与核对失败（1）混淆（#92 复查意见）
     options = parse_argv(process.argv.slice(2));
     baseline = read_baseline(options.baseline);
     summary = read_summary(options.tap);

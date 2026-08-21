@@ -1,11 +1,11 @@
-# 无引擎档 CI（issue #92）：自检三件套在干净 Linux 环境上的自动执行点。
-# 边界：CI 机器不放置引擎（ere-4.8.0-win-x64 不入库），引擎对拍用例按
-# test/engine-skip-baseline.txt 的基线整组跳过，跳过数由守护步对账——
+# 无引擎环境 CI（issue #92）：三项自检在干净 Linux 环境上的自动执行点。
+# 边界：CI 机器不放置引擎（ere-4.8.0-win-x64 不入库），引擎比对用例按
+# test/engine-skip-baseline.txt 的基线整组跳过，跳过数由守护步核对——
 # 偏离基线即红，覆盖面的收缩必须是一次有意识的提交。变异检查自 #89 起
-# 有了自动执行点（下方 mutation job 与 npm test 内的快档），硬口径
+# 有了自动执行点（下方 mutation job 与 npm test 内的快速模式），硬标准
 # （全拦、零跳过）仍须有引擎的本地全量——CI 绿 ≠ 本地全过。
 # Runner 选型（ubuntu：计费 1x）与按月分钟数估算见 issue #92 / #89 的实现评论。
-name: 无引擎档 CI
+name: 无引擎环境 CI
 
 on:
   push:
@@ -34,22 +34,22 @@ jobs:
           cache: npm
       - name: 安装依赖
         run: npm ci
-      - name: 测试（无引擎；spec 进日志，TAP 落盘供守护对账）
+      - name: 测试（无引擎；spec 进日志，TAP 落盘供守护核对）
         run: npm run test:ci
       - name: 跳过数守护（引擎缺失的代价必须是看得见的数字）
         run: node tools/skip-count-check.mjs test-report.tap
-      - name: ESLint（零警告，与本地三件套同口径）
+      - name: ESLint（零警告，与本地三项自检同一标准）
         run: npx eslint . --max-warnings 0
-      - name: Prettier（格式对拍）
+      - name: Prettier（格式比对）
         run: npx prettier --check .
 
   # 变异检查（#89）：「验证其余检查器守得住」的检查器的执行层。第三层
-  # 快档（台账三道门 --verify）已随 test/mutation-check.test.js 进上面
+  # 快速模式（条目表三项检查 --verify）已随 test/mutation-check.test.js 进上面
   # job 的 npm test。本 job：PR 抽样 12 条按运行号轮转（干净 Linux 实测
-  # 4–48s，取决于抽中条目——抽中重靶如回放对拍则一条 ~40s）；master push
+  # 4–48s，取决于抽中条目——抽中重靶如回放比对则一条 ~40s）；master push
   # 与手动触发跑全量（--jobs 4 隔离临时副本并行，实测 ~112s，主树不写）。
-  # 测试零第三方依赖，无需 npm ci。无引擎处，引擎门控条目按「跳过」放行；
-  # 跳过数对账 ENGINE_SKIP_BASELINE 只在全量档生效（子集没有期望跳过数，
+  # 测试零第三方依赖，无需 npm ci。无引擎处，依赖引擎条目按「跳过」放行；
+  # 跳过数核对 ENGINE_SKIP_BASELINE 只在全量模式生效（子集没有期望跳过数，
   # #89 整改的阻断 1），偏离即红。残留守护与**检出基线**比对而非假设干净
   # ——裸检出可能带既有脏度（#96 的 dev-guides CRLF），守护证的是「变异
   # 逐字节还原」，不是「仓库本来干净」。计费估算见 issue #89 实现评论。
@@ -63,10 +63,10 @@ jobs:
           node-version: 24
       - name: 记录检出基线（裸检出未必干净，见 #96）
         run: git status --porcelain > /tmp/tree-before.txt
-      - name: 变异抽样（PR 档：12 条按运行号轮转）
+      - name: 变异抽样（抽样模式：12 条按运行号轮转）
         if: github.event_name == 'pull_request'
         run: node tools/mutation-check.mjs --sample 12 --seed "${{ github.run_number }}"
-      - name: 变异全量（master push / 手动档：隔离副本并行）
+      - name: 变异全量（master push / 手动触发：隔离副本并行）
         if: github.event_name != 'pull_request'
         run: node tools/mutation-check.mjs --jobs 4
       - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）

@@ -1,12 +1,12 @@
 /**
- * T18 首回合真对拍（issue #48 的核心验收）：ere 回放（真实模块、#16 夹具
+ * T18 首回合真比对（issue #48 的核心验收）：ere 回放（真实模块、#16 夹具
  * 记录层）vs target/emuera.log 首回合黄金窗口。
  *
  * 这里的断言是「差异全部有名有姓」的机器形态：分类计数逐项锁死（版本 4 /
  * 存根 94 / 未解释 0），后续票据实现某个存根时计数有意变化、由改动者更新
- * 本基线——对拍锁是活文档，不是免检通行证。
+ * 本基线——比对锁是活文档，不是免检通行证。
  *
- * 硬边界（docs/output-diff.md）：黄金样本只覆盖调教这一段，「对拍通过」
+ * 硬边界（docs/output-diff.md）：黄金样本只覆盖调教这一段，「比对通过」
  * 目前只等于「调教的这一段对得上」。
  */
 
@@ -36,7 +36,7 @@ const { replay_first_turn, RAND_FIX } = require('../tools/compare/replay');
 const REPO = path.resolve(__dirname, '..');
 const LOG = fs.readFileSync(path.join(REPO, 'target', 'emuera.log'), 'utf8');
 
-/** 全套对拍素材（多个用例共用一次回放，回放本身无副作用、幂等） */
+/** 全套比对素材（多个用例共用一次回放，回放本身无副作用、幂等） */
 async function build_comparison() {
   const { fixture, before, after } = await replay_first_turn();
   const golden_window = window_between_inputs(golden_stream(LOG), 0);
@@ -47,7 +47,7 @@ async function build_comparison() {
   return { fixture, before, after, golden_window, ere_window, report };
 }
 
-test('首回合对拍：未解释差异为零，分类计数与当前欠账清单一致', async () => {
+test('首回合比对：未解释差异为零，分类计数与当前待办清单一致', async () => {
   const { report } = await build_comparison();
 
   // 真缺陷出口：unexplained 必须为 0（有一条都算「不知道为什么」）
@@ -56,7 +56,7 @@ test('首回合对拍：未解释差异为零，分类计数与当前欠账清�
     0,
     `未解释差异（完整报告见 node tools/compare/cli.js）：\n${format_report(report)}`,
   );
-  // 当前欠账状态的基线（存根实现后有意变化，改动者更新）：
+  // 当前待办状态的基线（存根实现后有意变化，改动者更新）：
   //   版本 10 = 54/55/89 三对标签漂移（各 2 条）+ 交谈[56] + 穿脱衣服[110]
   //             + 打屁股 39↔40 标签移位（各 1 条）
   //   存根 112 = COM_ABLE 未过滤的指令按钮 + @SHOW_USERCOM 按钮组（含与
@@ -70,7 +70,7 @@ test('首回合对拍：未解释差异为零，分类计数与当前欠账清�
   });
 });
 
-test('首回合对拍：黄金样本侧逐条文本全部被 ere 侧复现（除两处服装欠账）', async () => {
+test('首回合比对：黄金样本侧逐条文本全部被 ere 侧复现（除两处服装待办）', async () => {
   const { report, golden_window } = await build_comparison();
   // 黄金窗口的 text 条目里，只有服装前缀句与【紧身衣＆裙甲的姿态】两句
   // 进了差异（stub），其余全部匹配——口上（log:26）、A 文（log:29）、
@@ -85,7 +85,7 @@ test('首回合对拍：黄金样本侧逐条文本全部被 ere 侧复现（除
   assert.equal(golden_window.filter((e) => e.kind === 'text').length, 10);
 });
 
-test('首回合对拍：16 格参数条逐格相等（数值经画面路径全量复现）', async () => {
+test('首回合比对：16 格参数条逐格相等（数值经画面路径全量复现）', async () => {
   const { ere_window } = await build_comparison();
   const gauges = Object.fromEntries(
     ere_window
@@ -132,7 +132,7 @@ test('变量层：快照差异与黄金样本可见的变化逐项对上', async
   const { before, after } = await build_comparison();
   const diff = diff_snapshots(before, after, [
     // tflag:999（SET_CLEAR_POINT 的行号）随输出行数漂移：回放侧行数与
-    // 实机不同（按钮平铺 vs 三列），行号本身无对拍意义
+    // 实机不同（按钮平铺 vs 三列），行号本身无比对意义
     { re: /^tflag:999$/, reason: '清除点行号随排版漂移' },
   ]);
   const by_path = Object.fromEntries(
@@ -168,7 +168,7 @@ test('变量层：快照差异与黄金样本可见的变化逐项对上', async
 
 test('变量层：era.get 退路与 store 快照等值（raw() 的替代采集法可用）', async () => {
   const { fixture, after } = await build_comparison();
-  // via_get 读的是当前（回合后）存档数据，与拍平的 store 快照逐键等值
+  // via_get 读的是当前（回合后）存档数据，与展平的 store 快照逐键等值
   assert.deepEqual(snapshot_via_get(fixture.era, Object.keys(after)), after);
 });
 

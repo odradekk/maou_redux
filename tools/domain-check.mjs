@@ -1,43 +1,43 @@
-// 域边界检查器（issue #72）：跨域写未具名即红，存量冻结成只能变短的台账。
+// 域边界检查器（issue #72）：跨域写未具名即红，现有冻结成只能变短的条目表。
 //
 // 守什么：ere/ 游戏代码里的 era.set / era.add（写）与 era.get（读）。写的
 // 判定依据是 ownership/ 的区段所有权产物（#66/#70 实测，16 张表、区间键
 // 展开为逐下标属主）——属主域 ≠ 所在文件的域 = 跨域写，必须走属主域导出
-// 的具名方法（门面 setter，#71）；裸字符串寻址的跨域写即红，除非落在台账。
+// 的具名方法（门面 setter，#71）；裸字符串寻址的跨域写即红，除非落在条目表。
 // 跨域读放行（#70 实测：跨域读 42,741 次、高度分散，强制走方法 = 约 4.3
 // 万处样板——ADR-0002「跨域读放行，跨域写具名」），但计数进报告，可见
 // 而不强制。
 //
 // 怎么守（照 tools/trace-check.mjs 的形状，#63 已被多轮验收探针打过）：
-//   1. 台账在 tools/domain-ledger.mjs（条目 = 文件 → 寻址串 → 次数），
-//      与代码实测逐条对账：代码多出即红（未登记的跨域写，新文件自动
+//   1. 条目表在 tools/domain-ledger.mjs（条目 = 文件 → 寻址串 → 次数），
+//      与代码实测逐条核对：代码多出即红（未登记的跨域写，新文件自动
 //      纳入——扫描的是 ere/ 全树，不是登记表）；代码少了也红（条目
-//      发霉：访问被删或改写，须同步删/减）。
-//   2. 基线 LEDGER_BASELINE 内嵌在本工具本体：台账条目必须逐条落在基线
+//      过期失效：访问被删或改写，须同步删/减）。
+//   2. 基线 LEDGER_BASELINE 内嵌在本工具本体：条目表条目必须逐条落在基线
 //      内、计数不得超过基线——扩基线必须显式改这份常量，在版本库差异
-//      里看得见。台账是「尚未迁移」的欠账表，不是「可以这么写」的许可。
+//      里看得见。条目表是「尚未迁移」的待办表，不是「可以这么写」的许可。
 //   3. 判定依据全部读产物与代码，不在本工具里硬编码属主：所有权来自
 //      ownership/<表>-ownership.yml；「某寻址有没有具名方法」来自解析
 //      ere/facade/*.js 的访问器注释；文件属于哪个域来自下方 DIR_DOMAINS。
 //
-// 台账条目的标识形态：文件 → `表:下标` → 次数。行号会随编辑腐烂、同一
+// 条目表条目的标识形态：文件 → `表:下标` → 次数。行号会随编辑腐烂、同一
 // 寻址串在同一文件里可能重复，故不用行号；次数吸收重复——修掉一处，
-// 计数减一（改台账，差异可见），修光则删条目。era.set 与 era.add 记同
-// 一条（欠账是「这处跨域写还没走门面」，与写法无关）。
+// 计数减一（改条目表，差异可见），修光则删条目。era.set 与 era.add 记同
+// 一条（待办是「这处跨域写还没走门面」，与写法无关）。
 //
 // 不判定的写（只计数进报告，不红）：动态下标（`tflag:${i}`，静态无法
 // 知道写了哪些下标——与 test/static-table-coverage 只扫字面量前缀同款
-// 口径）；表无所有权产物（juel / delta / ex_talent 等 #70 未测量或引擎
+// 标准）；表无所有权产物（juel / delta / ex_talent 等 #70 未测量或引擎
 // 内建表，测量补齐前无判定依据——表清单也从 ownership/ 目录推导，产物
 // 落地即自动纳入）；下标无测量事实（如 flag:10000+ 保留区，#70 只对
 // 原作实写下标给出属主）。拼接/变量首参（`'flag:' + n`）静态连寻址串都
-// 拿不到，清点为「不可见」逐处点名进报告——不判定，但必须被看见。
+// 拿不到，清点为「不可见」逐处报进报告——不判定，但必须被看见。
 // cid 段认字面量与模板两种形态（`base:0:2` 与 `base:${cid}:2` 同判，
 // 属主与角色无关）。这不与「写变量前所属静态表必须已落地」（名字表不
-// 在 + 桶在 → 硬崩）混为一谈——那是引擎表覆盖问题
+// 在 + 桶在 → 直接崩溃）混为一谈——那是引擎表覆盖问题
 // （test/static-table-coverage.test.js），这里是域边界问题。
 //
-// 包装层的排除按角色显式声明（不是目录逃生门）：WRAPPER_FILES 逐文件
+// 包装层的排除按角色显式声明（不是目录逃生口）：WRAPPER_FILES 逐文件
 // 列出 ere/facade/ 与 ere/era-utils/ 里承担「具名方法本体」的模块——它们
 // 的裸寻址是职责不是违规。口子收在两层：条目必须落在 WRAPPER_HOMES 两
 // 个包装层目录里（游戏代码目录永远进不了这张表），且包装层里未登记的
@@ -45,8 +45,8 @@
 // 是引擎 SDK，整体跳过（与 trace-check 同款）。
 //
 // 用法：node tools/domain-check.mjs [--print-ledger]
-//   全绿退出码 0；任何失配退出码 1。--print-ledger 打印当前实测的台账
-//   形状（首次冻结、或属主产物重测后需要整体重算时用；日常消化存量 =
+//   全绿退出码 0；任何失配退出码 1。--print-ledger 打印当前实测的条目表
+//   形状（首次冻结、或属主产物重测后需要整体重算时用；日常消化现有条目 =
 //   手工删/减条目，不走过这里）。
 
 import fs from 'node:fs';
@@ -72,7 +72,7 @@ function list_ownership_tables() {
     .sort();
 }
 
-/** 引擎 SDK：不是游戏代码，整体跳过（trace-check 同款口径） */
+/** 引擎 SDK：不是游戏代码，整体跳过（trace-check 同款标准） */
 const SDK_FILE = 'ere/era-electron.js';
 
 /** 包装层目录：WRAPPER_FILES 的条目只准落在这里（角色门槛，防白名单被挪用） */
@@ -116,7 +116,7 @@ const WRAPPER_FILES = [
  * 即跨域（读放行）——这正是「界面写状态应走门面」的架构意图。
  * ere/ 根下直接摆放的文件（main.js 等基础设施）属 system，不走本表，
  * 也不给「ere/ 全树」兜底——否则包装层目录里未登记的新文件会被静默
- * 归进 system，白名单就退化成了目录逃生门。
+ * 归进 system，白名单就退化成了目录逃生口。
  */
 const DIR_DOMAINS = [
   ['ere/system/train', 'train'],
@@ -129,9 +129,9 @@ const DIR_DOMAINS = [
 ];
 
 /**
- * 台账冻结基线（issue #72 首冻）。台账（tools/domain-ledger.mjs）的每条
- * 条目必须落在本基线内、计数不得超过——「只能变短」。消化存量 = 删/减
- * 台账条目；扩基线必须显式改这份常量。
+ * 条目表冻结基线（issue #72 首冻）。条目表（tools/domain-ledger.mjs）的每条
+ * 条目必须落在本基线内、计数不得超过——「只能变短」。消化现有条目 = 删/减
+ * 条目表条目；扩基线必须显式改这份常量。
  */
 const LEDGER_BASELINE = {
   'ere/event/event-com.js': {
@@ -315,7 +315,7 @@ function parse_accessors() {
  * 扫单个 js 文本里的 era.get/set/add 调用。字符串首参（字面量或模板串）
  * 逐处解析；cid 段认 `${...}` 与字面量数字两种形态（`base:0:2` 与
  * `base:${cid}:2` 同判——代码审查实证曾有 14 处字面量 cid 写被当成动态
- * 下标漏出台账）；多行调用按整文件正则捕获，行号用换行计数回算。
+ * 下标漏出条目表）；多行调用按整文件正则捕获，行号用换行计数回算。
  * 返回 [{ op, table, index | null, line }]：index 为 null = 动态下标
  * （模板串下标位含 ${} 或名字下标）。
  */
@@ -347,7 +347,7 @@ function scan_calls(text) {
 
 /**
  * 清点扫描正则看不见的调用：首参是拼接（`'flag:' + n`）或变量等非纯串
- * 形态。当前存量实测为零；一旦出现即计入「动态/不可见」——拼接下标静态
+ * 形态。当前现有实测为零；一旦出现即计入「动态/不可见」——拼接下标静态
  * 无法判定属主，但必须被看见，不许静默逃逸（代码审查 c-2）。
  * 返回 [{ op, line }]。
  */
@@ -454,7 +454,7 @@ function remedy_for(accessors, key) {
   return `门面尚无 ${key} 的访问器——先在 tools/facade-names.js 补名并 node tools/gen-facade.js --force（#71 裁定三：未命名属主下标不进门面，ownership/ 仍登记），再改用之`;
 }
 
-// —— 对账 ——
+// —— 核对 ——
 
 function run() {
   const { accessors, cross_writes, cross_write_sites, stats } = measure();
@@ -484,7 +484,7 @@ function run() {
     }
   }
 
-  // 1) 代码侧：每处跨域写都必须在台账里，且次数对得上（逐处指位）
+  // 1) 代码侧：每处跨域写都必须在条目表里，且次数对得上（逐处指位）
   for (const [rel, bucket] of cross_writes) {
     const ledger = DOMAIN_LEDGER[rel] ?? {};
     for (const [key, actual] of bucket) {
@@ -493,7 +493,7 @@ function run() {
         const sites = cross_write_sites.get(`${rel} ${key}`);
         for (let n = ledger_count; n < actual; n += 1) {
           console.log(
-            `✗ ${rel}:${sites[n]} 裸跨域写 ${key}（第 ${n + 1}/${actual} 处）不在台账——${remedy_for(accessors, key)}`,
+            `✗ ${rel}:${sites[n]} 裸跨域写 ${key}（第 ${n + 1}/${actual} 处）不在条目表——${remedy_for(accessors, key)}`,
           );
           failures += 1;
         }
@@ -501,12 +501,12 @@ function run() {
     }
   }
 
-  // 2) 台账侧：条目发霉即红（代码里已不存在），且逐条落在 #72 基线内
+  // 2) 条目表侧：条目过期失效即红（代码里已不存在），且逐条落在 #72 基线内
   for (const [rel, ledger] of Object.entries(DOMAIN_LEDGER)) {
     const actual_bucket = cross_writes.get(rel) ?? new Map();
     if (WRAPPER_FILES.includes(rel)) {
       console.log(
-        `✗ ${rel} —— 台账条目指向包装层文件（包装层经 WRAPPER_FILES 排除，不该有台账欠账）`,
+        `✗ ${rel} —— 条目表条目指向包装层文件（包装层经 WRAPPER_FILES 排除，不该有条目表待办）`,
       );
       failures += 1;
       continue;
@@ -515,19 +515,19 @@ function run() {
       const actual = actual_bucket.get(key) ?? 0;
       if (count > actual) {
         console.log(
-          `✗ ${rel} ${key} —— 台账计数 ${count} > 代码实际 ${actual}（条目发霉：访问被删或改写，同步删/减本条；台账只能变短）`,
+          `✗ ${rel} ${key} —— 条目表计数 ${count} > 代码实际 ${actual}（条目过期失效：访问被删或改写，同步删/减本条；条目表只能变短）`,
         );
         failures += 1;
       }
       const baseline = LEDGER_BASELINE[rel]?.[key];
       if (baseline === undefined) {
         console.log(
-          `✗ ${rel} ${key} —— 台账条目不在 #72 基线内（只能变短：消化存量 = 删/减条目；新跨域写走门面，扩基线必须显式改 LEDGER_BASELINE）`,
+          `✗ ${rel} ${key} —— 条目表条目不在 #72 基线内（只能变短：消化现有条目 = 删/减条目；新跨域写走门面，扩基线必须显式改 LEDGER_BASELINE）`,
         );
         failures += 1;
       } else if (count > baseline) {
         console.log(
-          `✗ ${rel} ${key} —— 台账计数 ${count} 超 #72 基线 ${baseline}（扩基线必须显式改 LEDGER_BASELINE，在版本库差异里看得见）`,
+          `✗ ${rel} ${key} —— 条目表计数 ${count} 超 #72 基线 ${baseline}（扩基线必须显式改 LEDGER_BASELINE，在版本库差异里看得见）`,
         );
         failures += 1;
       }
@@ -552,24 +552,24 @@ function run() {
   const r = stats.reads;
   if (failures === 0) {
     const report = [
-      `✓ 域边界：${stats.files} 个游戏文件，跨域写 ${cross_write_total} 处全数在账（台账 ${ledger_entries} 条，#72 基线内只减不增）`,
-      `  写：域内 ${w.intra} · 在账 ${cross_write_total} · 不判定 ${w.dynamic + w.no_table + w.no_fact}（动态 ${w.dynamic} · 无所有权表 ${w.no_table} · 无测量事实 ${w.no_fact}）`,
+      `✓ 域边界：${stats.files} 个游戏文件，跨域写 ${cross_write_total} 处全部登记在册（条目表 ${ledger_entries} 条，#72 基线内只减不增）`,
+      `  写：域内 ${w.intra} · 登记在册 ${cross_write_total} · 不判定 ${w.dynamic + w.no_table + w.no_fact}（动态 ${w.dynamic} · 无所有权表 ${w.no_table} · 无测量事实 ${w.no_fact}）`,
       `  读：域内 ${r.intra} · 跨域放行 ${r.cross}（前五表：${top_reads}）· 不判定 ${r.dynamic + r.no_table + r.no_fact}`,
     ];
-    // 拼接/变量首参：存量应为零；出现即逐处点名，不留静默逃生口
+    // 拼接/变量首参：现有的应为零；出现即逐处报出位置，不留静默逃生口
     for (const site of stats.invisible_sites) {
       report.push(`  ⚠ ${site} —— 静态不可判定，须改字面量/模板串或走门面`);
     }
     console.log(report.join('\n'));
   } else {
-    // 汇总不枚举门名：哪条门触发了，上方逐条消息已经写明；枚举会让
-    // 「文案断言」型的测试被未触发的门名误满足（M902 曾因此漏网）
+    // 汇总不枚举检查项名：哪项检查触发了，上方逐条消息已经写明；枚举会让
+    // 「文案断言」型的测试被未触发的检查项名误满足（M902 曾因此漏网）
     console.log(`✗ ${failures} 处域边界失守（逐条见上）`);
   }
   return failures;
 }
 
-/** 打印当前实测的台账形状（首次冻结、属主产物重测后整体重算时用） */
+/** 打印当前实测的条目表形状（首次冻结、属主产物重测后整体重算时用） */
 function print_ledger() {
   const { cross_writes } = measure();
   const lines = [];

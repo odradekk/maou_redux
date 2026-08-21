@@ -10,10 +10,10 @@
  *   - MARK:1/2 刻印分档、TALENT:76/85 素质分支；
  *   - 随机分支可控可重复（rand 定值序注入，RAND:3 → RAND:2 定序）；
  *   - 三种插值（角色名 %SAVESTR% / 自称 %SELF_CALL% / 心形 %UNICODE%）；
- *   - **黄金样本 :1097 逐字对拍**——期望值运行时读自 target/emuera.log:26
- *     与 ERB 原文两处（对拍能有的最强形式）；
+ *   - **黄金样本 :1097 逐字比对**——期望值运行时读自 target/emuera.log:26
+ *     与 ERB 原文两处（比对能有的最强形式）；
  *   - 七道跳过判定（含 K3 特有：死斗场最先、兽奸岔 DOG_KOJO_3）；
- *   - 存根清单对账（docs/stub-registry.md）。
+ *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
@@ -127,7 +127,7 @@ test('二次以后それ以外支逐阶段推进：201 → 202 → 203 → 随�
   assert.equal(tail.store.get('cflag:31:301'), 203);
 });
 
-test('黄金样本 :1097 逐字对拍：RAND:3 != 0 且 RAND:2 == 0，双期望源一致', async () => {
+test('黄金样本 :1097 逐字比对：RAND:3 != 0 且 RAND:2 == 0，双期望源一致', async () => {
   // 样本角色状态（issue #45 反推）：MARK:2 <= 1、MARK:1 != 3、无淫乱/爱慕，
   // CFLAG:301 已过 203（样本是长期调教的尾段）——落在随机尾的中支
   const fixture = await setup_k3((f) => f.store.set('cflag:31:301', 203));
@@ -305,7 +305,7 @@ test('屈服Lv2＆快乐Lv3 链（3xx）：301/302/303 逐格推进后随机尾'
 
 test('3xx 支的附加门槛 MARK:1 == 3：Lv2 屈服而无快乐刻印时两支皆不命中', async () => {
   // :1021 ELSEIF MARK:2 == 2 && MARK:1 == 3 —— 删掉 MARK:1 臂会让本状态
-  // 误入 3xx（验收变异实测的假绿位）：MARK:2 == 2 且 MARK:1 != 3 时，
+  // 误入 3xx（验收变异实测的误报通过位）：MARK:2 == 2 且 MARK:1 != 3 时，
   // 3xx（要 MARK:1 == 3）与 2xx（要 MARK:2 <= 1）都不命中，原作一句不出
   const fixture = await setup_k3((f) => {
     f.store.set('mark:31:2', 2);
@@ -375,7 +375,7 @@ test('助手调教 / 口塞 / 失神 / 崩坏 / 触手：静默跳过', async ()
   }
 });
 
-test('爱抚外指令（SELECTCOM != 0）：落占位行（分支欠账可见）', async () => {
+test('爱抚外指令（SELECTCOM != 0）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 1; // 舔阴
@@ -386,9 +386,9 @@ test('爱抚外指令（SELECTCOM != 0）：落占位行（分支欠账可见）
   ]);
 });
 
-// —— 存根清单对账 ——
+// —— 存根清单核对 ——
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k3');
   const registry = fs.readFileSync(

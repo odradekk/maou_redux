@@ -203,7 +203,7 @@ test('气力回复钳上限：超上限回落 MAXBASE', async () => {
   );
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/event-end');
   const registry = fs.readFileSync(

@@ -26,7 +26,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 
 // SHE(ARG)：性别代词（Emuera 内建表达式函数）。era 约定：TALENT:x:122
 // （男人）→「他」，其余（含 121 扶她）→「她」。代词全集的逐字核对归
-// 输出对拍票（#48）。
+// 输出比对票（#48）。
 function she(cid) {
   return era.get(`talent:${cid}:122`) ? '他' : '她';
 }

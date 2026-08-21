@@ -19,7 +19,7 @@
  *     LIST_POS/PREV_PAGE 滚动缓存随之退化为局部变量（原作调用侧本就
  *     从未读到被调侧的更新，缓存不生效）；
  *   - 列表行只渲染 `[编号] 名字`；富化列（职业 GET_JOB_NAME / 等级 /
- *     HP 条 / 调教回数 / 沦陷标签）欠账，见 docs/stub-registry.md。
+ *     HP 条 / 调教回数 / 沦陷标签）待办，见 docs/stub-registry.md。
  */
 
 const era = require('#/era-electron');
@@ -28,7 +28,7 @@ const { stub_line } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
- * 本文件存根化的原作调用名（docs/stub-registry.md 对账钉死）。
+ * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
  */
 const STUBBED_CALLS = ['MONSTER_PLAY', 'SHOW_LIST_TRAINABLE'];
 
@@ -93,7 +93,7 @@ function show_list_trainable(no_page, num_page) {
     // 按可训练序号开窗——原作缺陷的修正移植，见文件头）
     if (index >= no_page * num_page && index < (no_page + 1) * num_page) {
       // 原作行：PRINTFORM [{COUNT,2}] %SAVESTR:COUNT,12,LEFT% + 富化列（职业/
-      // LV/HP 条/调教回数/爱慕·淫乱·未沦陷/收藏标记，整组欠账）。
+      // LV/HP 条/调教回数/爱慕·淫乱·未沦陷/收藏标记，整组待办）。
       //
       // 原作是纯文本 + INPUT 收数字；ere 侧改按钮，与本画面下方的翻页/返回
       // 四个按钮、以及 page-title、first-setting 的同款先例一致（实机上纯

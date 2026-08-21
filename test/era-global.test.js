@@ -1,7 +1,7 @@
 /**
  * @file ere/era-utils/era-global.js 的行为测试（issue #18）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）：
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）：
  * 经 '#/era-utils/era-global' 加载真实模块，从夹具的变量读写记录与 store 观察。
  *
  * 覆盖 #18 验收清单的三条：
@@ -95,7 +95,7 @@ test('手写区业务方法与生成区访问器共存：toggle 0↔1 往返', (
 // —— 标题音乐默认值播种（issue #69 落地 #18 移交的缺口）——
 //
 // 原作随包 global.sav 预置 是否启用标题音乐=1、标题音乐音量=66；ere 引擎
-// 全新 global.sav 把声明槽位一律置 0，且本票之前生成的旧档没有 global:2
+// 全新 global.sav 把声明槽位一律置 0，且这张票之前生成的旧档没有 global:2
 // 槽（loadGlobal 对缺失声明槽补 0）——两种档都应落在「未播种」分支。
 
 test('seed_title_music_defaults：未播种的档补写 1/66 并置标记、显式落公共存档', async () => {
@@ -128,7 +128,7 @@ test('seed_title_music_defaults：标记已置则不播（用户关掉的标题�
   assert.equal(era_global.title_music_enabled, 0);
 });
 
-test('seed_title_music_defaults：本票之前的旧档（无 global:2 槽）也落在播种分支', async () => {
+test('seed_title_music_defaults：这张票之前的旧档（无 global:2 槽）也落在播种分支', async () => {
   const fixture = create_era_fixture();
   const era_global = fixture.load_module('era-utils/era-global');
   // 旧档形态：只有 0/98/99 槽，2 槽缺失（读值得 undefined → 兜底 0）

@@ -2,10 +2,10 @@
  * @file 存根占位行助手（全项目统一形状）。
  *
  * 源: 无对应源——存根是本项目的移植工程机制（docs/skeleton.md「存根是有
- *     记录的欠账」；CONTEXT.md「存根」条目），先例在 page-main-menu.js
+ *     记录的待办」；CONTEXT.md「存根」条目），先例在 page-main-menu.js
  *     （#23）与 event-first.js（#22），#44 起收敛为本模块。
  *
- * 两个变体，按调用时机分（#73 发回整改定档）：
+ * 两个变体，按调用时机分（#73 发回整改后确定）：
  *   - stub_line（绘制期）：一行可见反馈，纯输出。用于屏幕组屏途中（主菜单
  *     的面板/指令面板存根、page-train 的 SHOW_STATUS 存根）——组屏中途等键
  *     会卡住画面拼装，与原作相悖；
@@ -19,14 +19,14 @@
  *     等待的观测统一走 waitAnyKey 记录，故不走 printAndWait）。
  *
  * 运行时占位：一行可见反馈，正文含原作函数名（可检索、可断言——各文件的
- * STUBBED_CALLS 对账测试以「@函数名」出现在占位行为准）。owner 给出时
+ * STUBBED_CALLS 核对测试以「@函数名」出现在占位行为准）。owner 给出时
  * 追加归属说明（如「随装备票」）。
  */
 
 const era = require('#/era-electron');
 
 /**
- * 占位行文案（两个变体共用，保证对账断言只见一种形状）。
+ * 占位行文案（两个变体共用，保证核对断言只见一种形状）。
  * @param {string} erb_name 原作函数名（不含 @）
  * @param {string} note 未移植内容的中文说明
  * @param {string} [owner] 归属说明

@@ -3,7 +3,7 @@
  * #43 调教域变量表 Palam/Source/Abl/Exp/Mark/TrainCommand）。
  *
  * 一次性转换、默认不覆盖（issue #10 的产物边界规则）：产物进 git、归人工维护，
- * 已存在时一律跳过，重写必须显式 --force。规则有测试钉死，防止一句清理代码
+ * 已存在时一律跳过，重写必须显式 --force。规则有测试固定住，防止一句清理代码
  * 让它失效（#10 的原型曾因此销毁人工修改）。
  *
  * 用法：node tools/csv-to-yml.js [--force] [--chara <编号|all>] [--table <表名>]
@@ -23,7 +23,7 @@
  * 解析逻辑逐行镜像引擎（ere-4.8.0 的 background.js，parseDataFile 模块），
  * 保证「引擎读 CSV 得到什么，本脚本就拿到什么」；YAML 侧的等价性由
  * test/csv-to-yml.test.js、test/chara-yml.test.js 与 test/variable-yml.test.js
- * 验证——后两者直接驱动引擎自己的解析器与装载循环对拍（#17 的实机验证手法
+ * 验证——后两者直接驱动引擎自己的解析器与装载循环比对（#17 的实机验证手法
  * 固化为测试，#35/#38）。
  *
  * 零第三方依赖；编码识别用内置 TextDecoder（Shift-JIS 兜底，issue #10 陷阱一）。
@@ -432,9 +432,9 @@ function to_chara_yaml(groups, { source = '' } = {}) {
 //     器（app.asar 模块 682）对这种形状同样有损（同名键写两遍，yml 解析
 //     先者胜），非本转换器引入的偏差，详见 issue #38 评论。
 
-// —— 变量表的特殊表名（issue #43，依据见该票评论的引擎实测留痕）——
+// —— 变量表的特殊表名（issue #43，依据见该票评论的引擎实测记录）——
 //
-// 引擎（ere-4.8.0 background.js）对静态表文件名有三道闸，直接决定本票两张表
+// 引擎（ere-4.8.0 background.js）对静态表文件名有三道闸，直接决定这张票两张表
 // 的命名：
 //   1. 弃用表名（variablesize/str/strname/globals/train）：装载循环打警告
 //      「已弃用表名」并跳过——产物叫 Train.yml 等于不存在；

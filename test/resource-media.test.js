@@ -11,7 +11,7 @@
  *      csv 能被引擎解析器装载、行内文件真实存在；yml/Audio.yml 经引擎装载
  *      后 setVar 接受 audio: 寻址——「名字表在 + 桶在 → 通过」的实测路径。
  *
- * 引擎不在场（无 app.asar）时引擎对拍用例整组 skip 并留警告。
+ * 引擎不在场（无 app.asar）时引擎比对用例整组 skip 并留警告。
  */
 
 const assert = require('node:assert/strict');
@@ -32,7 +32,7 @@ const RES_DIR = path.join(REPO_ROOT, 'res');
 const TARGET_RESOURCES = path.join(REPO_ROOT, 'target', 'resources');
 const TARGET_SOUND = path.join(REPO_ROOT, 'target', 'sound');
 
-// 本票搬运范围（相对 res/ 的路径）。清单即边界：多一个少一个都红。
+// 这张票搬运范围（相对 res/ 的路径）。清单即边界：多一个少一个都红。
 const EXPECTED_FILES = [
   '.gitkeep',
   'COVER_WHITE.png',
@@ -106,7 +106,7 @@ test('注册表不含头像素材的繁体注册名（紅綠藍銀——不登�
 });
 
 test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册名即原作实参）', () => {
-  // 游戏代码引用的媒体名（page-title.js / page-main-menu.js 的 #69 接线）
+  // 游戏代码引用的媒体名（page-title.js / page-main-menu.js 的 #69 接入）
   const referenced = ['TFM-003A_17.mp3', '据点2.mp3', 'TITLE'];
   const registered = new Set();
   for (const rel of ['img.csv', 'sound/sound.csv']) {
@@ -123,11 +123,11 @@ test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册�
       `游戏代码引用的媒体名 ${name} 未在注册表登记`,
     );
   }
-  // 大书库.mp3 已登记待接（播放点所在画面未移植），在册是欠账的前提
+  // 大书库.mp3 已登记待接（播放点所在画面未移植），在册是待办的前提
   assert.ok(registered.has('大书库.mp3'));
 });
 
-// —— 引擎对拍：注册表与 Audio.yml 都用引擎自己的代码装载 ——
+// —— 引擎比对：注册表与 Audio.yml 都用引擎自己的代码装载 ——
 
 engine_test('注册表 csv 能被引擎解析器装载，行内文件与 csv 同目录存在', () => {
   const registries = [

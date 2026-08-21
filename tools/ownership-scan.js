@@ -9,12 +9,12 @@
  * 一维表与二维表的区段所有权语义相同（所有权都在下标维，角色槽维不入测量），
  * 且门面（ADR-0001）一维二维对称——两者都测。
  *
- * 写入口径 v2（#66 口径 + 全表实测查实的五类新写形；每条的语料证据见 issue #70 评论）：
+ * 写入标准 v2（#66 标准 + 全表实测查实的五类新写形；每条的语料证据见 issue #70 评论）：
  *   1. 写入 = 寻址后跟赋值/复合赋值（= += -= *= /= |= &= ^= <<= >>= **'=**）；
  *      比较形态（== >= <= != < >）不是写入。**'= 是字符串赋值**（速查表
- *      `STR '= "文本"`），#66 未计入——全表口径下 CSTR 有一例。
+ *      `STR '= "文本"`），#66 未计入——按全表统计 CSTR 有一例。
  *   2. 后缀 **++/--** 是写入（等价 += 1 / -= 1）。#66 的负检查「无 ++/--」只对
- *      CFLAG 字面量形态成立；全表口径下 ABL 30+ 处、MARK 2 处、CFLAG 2 处
+ *      CFLAG 字面量形态成立；按全表统计 ABL 30+ 处、MARK 2 处、CFLAG 2 处
  *      （`CFLAG:ARG:131++`、`CFLAG:PM:508 --`——均为槽位变量形态，#66 的检查
  *      搜的是字面量形态所以漏了）。算术歧义（`1--2`）已负检查：语料为零。
  *   3. **TIMES 表:下标, 倍率** 是写入（整数乘小数自乘）。SOURCE 上 130+ 处。
@@ -31,13 +31,13 @@
  *   6. 表名前不得是词字符（负向后行）：`EX_CFLAG`/`EX_FLAG`/`EX_TALENT`/
  *      `LOSEBASE`/`MAXBASE`/`NOWEX`/`*_EXP`/`*_FLAG` 都是 #DIM 自定义变量或
  *      引擎内建变量，不是这些表的寻址——#66 的正则会把 `EX_CFLAG:A:99 = …`
- *      里的 `CFLAG:A:99` 误记为 CFLAG 写入（实测 2 笔假写，见 issue #70 对账）。
+ *      里的 `CFLAG:A:99` 误记为 CFLAG 写入（实测 2 笔假写，见 issue #70 核对）。
  *
  * ignored_files 语义（#70 依据实测改判，推翻 #66 的「忽略文件出现写入即报错」）：
  * 根目录源文件被引擎忽略是**装载语义**（issue #12：根 TITLE.ERB 与 SYSTEM/ 下
  * 同名函数冲突而不被装载），与它写不写变量无关——实测 TITLE.ERB 里有 GLOBAL
  * 写入，但引擎永远不执行它。因此 ignored 文件 = 死代码，**整体跳过测量**（读写
- * 均不计）；守卫改为「声明的文件必须存在」（防数据发霉）。
+ * 均不计）；守卫改为「声明的文件必须存在」（防数据过期失效）。
  *
  * 读取：非写入的寻址命中即读（比较、右值、PRINTFORM 引用、CALL 实参），逐下标
  * × 按域计数，供跨域读汇总产物使用。#65 的决议是「跨域读放行」；#70 只给数据
@@ -389,7 +389,7 @@ function classify_line(code, addr_re, name_maps, errors, where) {
 // —— 扫描一棵 ERB 树（全部表，单遍）——
 //
 // 目录归属校验（后来者自动纳入）：target/ERB 的每个一级目录必须被域清单恰好
-// 认领一次；ignored_files 声明的根文件必须存在（发霉即报），其内容整体跳过
+// 认领一次；ignored_files 声明的根文件必须存在（过期失效即报），其内容整体跳过
 // （引擎不装载 = 死代码，读写均无测量意义）。
 
 function scan_all_tables({ erb_root, domains, name_maps }) {
@@ -412,7 +412,7 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
   );
   if (stale.length > 0) {
     throw new Error(
-      `域清单认领了不存在的目录：${stale.join('、')}（数据发霉，删掉或改对）`,
+      `域清单认领了不存在的目录：${stale.join('、')}（数据过期失效，删掉或改对）`,
     );
   }
   const ignored = new Set(domains.ignored_files);
@@ -427,7 +427,7 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
   );
   if (missing_ignored.length > 0) {
     throw new Error(
-      `ignored_files 声明了不存在的文件：${missing_ignored.join('、')}（数据发霉，删掉或改对）`,
+      `ignored_files 声明了不存在的文件：${missing_ignored.join('、')}（数据过期失效，删掉或改对）`,
     );
   }
 
@@ -605,7 +605,7 @@ function to_ownership_yaml(table, ranges, domain_order, meta) {
     `# 区段所有权表（${meta.variable}，${meta.dims === 2 ? '二维角色表' : '一维表'}）——由 tools/ownership-scan.js 从 target/ 实测生成（issue ${meta.ticket}）`,
     `# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table ${table}`,
     '#',
-    "# 口径（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；",
+    "# 标准（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；",
     '#       名字下标归一为简体后按 yml 名字表解析；表名带词边界（EX_CFLAG 等自定义变量不算）。',
     '#       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。',
     '# 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。',
@@ -658,7 +658,7 @@ function to_reads_summary_yaml(table_results, meta) {
     `# 跨域读汇总（全部表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue ${meta.ticket}）`,
     `# 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table all`,
     '#',
-    '# 口径：读取 = 非写入的寻址命中（比较/右值/PRINTFORM/CALL 实参），ignored 文件不计；',
+    '# 标准：读取 = 非写入的寻址命中（比较/右值/PRINTFORM/CALL 实参），ignored 文件不计；',
     '#       跨域读 = 读取者域 ≠ 该下标属主域（#65 决议「跨域读放行」；本表只给数据）。',
     '#       by_pair 按「读取者->属主」聚合；top10_indexes 取跨域读最多的十个下标；',
     '#       indexes_covering_80pct = 覆盖 80% 跨域读所需下标数（越小越集中）。',

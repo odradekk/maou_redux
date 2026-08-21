@@ -2,16 +2,16 @@
  * ere/page/components/screen-block.js 与 menu-button.js 的行为测试
  * （issue #73：画面组件最小集——组件自知占几行、可就地重绘）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。夹具的
- * Row 口径已与引擎对齐（#68）：一次输出调用 = 一个 Row、input() 回显 +1
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。夹具的
+ * Row 的计法已与引擎对齐（#68）：一次输出调用 = 一个 Row、input() 回显 +1
  * Row、clear(n) 按 Row 删并返回清屏后行数——本文件断言全部建立在其上。
  *
  * 覆盖（对应 #73 验收项）：
  *   1. 行数 = 绘制前后 getLineCount() 差值，不静态声明；内容行数随数据变
  *      （角色列表/参数条形态的合成块——print_palam 的抽象容纳性证明）；
- *   2. Row 口径：一次 printMultiColumns 的多格 = 1 Row（条目数不是行数）；
+ *   2. Row 的计法：一次 printMultiColumns 的多格 = 1 Row（条目数不是行数）；
  *   3. 重绘 = 清锚点跨度 + 重画；重绘后其上方内容完好（直接断言——Row
- *      口径错误的破坏形态正是上方内容被连带抹掉）；
+ *      标准错误的破坏形态正是上方内容被连带抹掉）；
  *   4. input 回显行计入清行跨度；hideUserInput 无回显时跨度自适应；
  *   5. menu_button：正文不写 [编号] 前缀（引擎自动拼）、未选中调暗
  *      #bbbbbb（两条既有 UI 结论在新落点的直接断言）。
@@ -50,7 +50,7 @@ test('行数测量：占几行 = 绘制前后差值，内容行数随数据变�
   assert.equal(fixture.era.getLineCount(), 8); // 3 + 5：追加不清屏
 });
 
-test('Row 口径：一次 printMultiColumns 的多格 = 1 Row（条目数不是行数）', async () => {
+test('Row 的计法：一次 printMultiColumns 的多格 = 1 Row（条目数不是行数）', async () => {
   const fixture = create_era_fixture();
   const {
     screen_block: { ScreenBlock },
@@ -64,15 +64,15 @@ test('Row 口径：一次 printMultiColumns 的多格 = 1 Row（条目数不是�
       { type: 'text', content: '丁' },
     ]);
   });
-  assert.equal(await grid.draw(), 1); // 四格共享一个 Row（引擎口径，#68）
-  assert.equal(fixture.lines.length, 4); // 条目层仍是 4 条——对拍看格
+  assert.equal(await grid.draw(), 1); // 四格共享一个 Row（引擎标准，#68）
+  assert.equal(fixture.lines.length, 4); // 条目层仍是 4 条——比对看格
 
   await grid.redraw(); // 重绘只清 1 行、重画 1 行
   assert.equal(fixture.era.getLineCount(), 1);
   assert.equal(fixture.lines.length, 4);
 });
 
-test('重绘后其上方内容完好（Row 口径错误的破坏形态，直接断言）', async () => {
+test('重绘后其上方内容完好（Row 的计法错误的破坏形态，直接断言）', async () => {
   const fixture = create_era_fixture();
   const {
     screen_block: { ScreenBlock },

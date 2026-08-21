@@ -1,6 +1,6 @@
-// 变异台账切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
+// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
@@ -110,14 +110,14 @@ export default [
     must_mention: '逐轮减半',
   },
   {
-    desc: 'M26 相殺钳制：池子存量不足不再整池扣走',
+    desc: 'M26 相殺钳制：池子里不够不再整池扣走',
     file: 'ere/system/train/juel-check.js',
     find: `    if (pool_value(pick) < take) {
-      take = pool_value(pick); // :631-632 池子存量不足就整池扣走
+      take = pool_value(pick); // :631-632 池子里不够就整池扣走
     }`,
-    replace: `    // 变异：不按池子存量钳制`,
+    replace: `    // 变异：不按池子现有钳制`,
     tests: ['juel-check'],
-    must_mention: '池子存量不足',
+    must_mention: '池子里不够',
   },
   {
     desc: 'M27 相殺兜底：余量取半为 0 时改扣 2（原作扣 1）',
@@ -277,7 +277,7 @@ export default [
     must_mention: '端到端',
   },
   {
-    desc: 'M98 豁免条目发霉（main-loop 的 :231 改号——台账对账必须红）',
+    desc: 'M98 豁免条目过期失效（main-loop 的 :231 改号——条目表核对必须红）',
     file: 'ere/system/flow/main-loop.js',
     find: '  // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发',
     replace:

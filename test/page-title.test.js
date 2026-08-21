@@ -1,17 +1,17 @@
 /**
  * @file ere/page/page-title.js 的行为测试（issue #19）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  *
  * 标题画面是常驻交互循环（原作 RESTART 语义），没有自然退出点。两种终止
  * 方式：多数用例以预置输入驱动交互，输入耗尽时 era.input() 抛错即是终止信
  * 号（夹具的既定设计），断言落在「耗尽瞬间的最后一块屏幕」与变量/调用记
  * 录上；「新的猎物」分支自 issue #20 起改为发出 BEGIN FIRST 转场信号，对
  * 应用例直接捕获 BeginSignal 终止。画布每轮重绘时会被 clear 清空，故中途
- * 分支的文本反馈以 waitAnyKey 留痕与变量写入来证明。
+ * 分支的文本反馈以 waitAnyKey 记录与变量写入来证明。
  *
  * 开关的持久化在单元层证到「写 global:<id> + 显式 saveGlobal」（#18 定下的
- * 口径）；跨局实机往返（重启引擎开关仍生效）由派单人在合并后实机验收。
+ * 标准）；跨局实机往返（重启引擎开关仍生效）由派单人在合并后实机验收。
  */
 
 const assert = require('node:assert/strict');
@@ -249,7 +249,7 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
   // 新游戏四件套的前两件：RESETDATA（:100，#22 接通 era.resetData——清掉
   // 上一局的会话数据）与 ADDCHARA 0（:101）。真初始化在 @EVENTFIRST
-  // （test/event-first.test.js），此处证标题侧的接线。
+  // （test/event-first.test.js），此处证标题侧的接入。
   assert(
     fixture.calls.some((c) => c.api === 'resetData'),
     '必须先清档（原作 :100 RESETDATA）',
@@ -259,7 +259,7 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
     '必须加入初始角色 0（原作 :101 ADDCHARA 0）',
   );
   // #35：调了 addCharacter 之外，还要证明引擎语义上的「真的加进去了」——
-  // 夹具镜像引擎守卫，缺角色表时这里会失败（#21/#22 的假绿不会再放行）
+  // 夹具镜像引擎守卫，缺角色表时这里会失败（#21/#22 的误报通过不会再放行）
   assert.deepEqual(
     fixture.chara_no,
     [0],

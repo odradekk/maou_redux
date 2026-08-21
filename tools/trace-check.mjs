@@ -18,15 +18,15 @@
 //   4. ere/ 全部 .js 注释里出现的每个 :N / :N-M 都必须在 FILES 登记或在
 //      tools/trace-exempt.mjs 豁免——新增引用静默失守即红（#63 之前，
 //      page-main-menu.js 零登记，派单时已知 3 条引用指错、实审得 7 条，
-//      两颗曳光弹都没抓到）。引用形态统一定义为「注释内、冒号前不是词字符/点号/花括号的
-//      :数字」——覆盖工单点名的三种写法（行尾 `// :N`、块注释 `* :N`、
+//      两颗贯通验证都没抓到）。引用形态统一定义为「注释内、冒号前不是词字符/点号/花括号的
+//      :数字」——覆盖工单指出的三种写法（行尾 `// :N`、块注释 `* :N`、
 //      括号 `（:N）`/`(:N)`）及其复合（斜杠链 `:A/:B`、`@函数名 :N`），
 //      同时天然排除 `era.get('base:0:0')` 与注释里的 `deltabase:${cid}:0`
 //      一类变量寻址（花括号排除 `}:0` 形态）与 `ERB:2` 一类
 //      文件名:行号（后者不进锁：改写它会连坐 mutation-check 的 find 串）。
 //      代码侧（注释外）一律不扫：三段寻址 `cflag:${id}:1` 无法与引用区分。
-// 豁免清单是 #63 冻结的存量欠账（未审计、行号对错未知）：只能变短
-//   （本工具内嵌 ERB_EXEMPT_BASELINE 基线钉死，超基线即红）、不许发霉
+// 豁免清单是 #63 冻结的现有待办（未审计、行号对错未知）：只能变短
+//   （本工具内嵌 ERB_EXEMPT_BASELINE 基线固定，超基线即红）、不许过期失效
 //   （条目对应的 js 引用消失也红）——两条都在本工具里执行，退出码语义
 //   对二者同样生效。行号一律以原始文件为准（emuera.log 是 UTF-8 BOM
 //   + CRLF，BOM 不占行）。后来者改代码动了引用：把表里的 ref/锚一起更新，
@@ -1057,7 +1057,7 @@ const FILES = [
   //    正确行段一致，属注释烂、非移植缺陷。多来源：主源 DRAW_MAINMENU +
   //    按钮明暗 EXT_COMM + A 计数守卫 SHOP）——
   {
-    // 标题画面（#69 新审计的引用：音乐与标题图接线；其余存量在豁免表）
+    // 标题画面（#69 新审计的引用：音乐与标题图接入；其余现有在豁免表）
     js: 'ere/page/page-title.js',
     refs: [
       // 标题音乐：音量无引擎等价物，值仅为存档保真播种（era-global）
@@ -1534,7 +1534,7 @@ const FILES = [
         ref: '160-161',
         any: [/^\tTRYCALLFORM KOJO_MESSAGE_COM_\{LOCAL - 100\}$/m],
       },
-      // EX 口上欠账的两处源引用（文件头说明）
+      // EX 口上待办的两处源引用（文件头说明）
       {
         src: EXCOM,
         ref: '31-38',
@@ -1728,7 +1728,7 @@ const FILES = [
 // —— emuera.log 行号引用表（#48 验收整改起纳入） ——
 //
 // src 固定为 target/emuera.log；ref/any 与 ERB 锚同款（区间 N-M 取区间内
-// 任一行命中任一锚）。锚的写法对着原始行钉死（条形字符数、数值、标签），
+// 任一行命中任一锚）。锚的写法对着原始行固定（条形字符数、数值、标签），
 // 行号漂移或样本被换，红在这里。既有引用（kojo-k3 的 26、juel-check 的
 // 236-260）实测无误，一并进锁。
 
@@ -1829,7 +1829,7 @@ const LOG_REFS = [
     ],
   },
   {
-    // 变异台账（#89 起住在 tools/mutations/pipeline.mjs）的 find 串逐字引用
+    // 变异条目表（#89 起住在 tools/mutations/pipeline.mjs）的 find 串逐字引用
     // replay.js 的证据注释——引用的引用同样进锁：find 里的行号被改错，
     // 这里先红（比驱动器的「出现次数≠1」更早）
     js: 'tools/mutations/pipeline.mjs',
@@ -1964,8 +1964,8 @@ for (const rel of ['ere', 'tools', 'test'].flatMap(list_js_files)) {
 
 // —— #63 冻结基线：豁免清单（tools/trace-exempt.mjs）的上界快照 ——
 //
-// 台账里的每一条都必须出现在这份基线内——超出即红（清单只能变短）。
-// 消化存量 = 只动 trace-exempt.mjs（删条目，本表不碰）；要扩表必须连
+// 条目表里的每一条都必须出现在这份基线内——超出即红（清单只能变短）。
+// 消化现有条目 = 只动 trace-exempt.mjs（删条目，本表不碰）；要扩表必须连
 // 这里一起改——冻结不是不可变，是「改动必须显式发生在标着冻结的地方」。
 // 与 log 侧同构：扫描完整性（含它的数据）住在工具里，测试只做行为靶。
 
@@ -2446,7 +2446,7 @@ const ERB_EXEMPT_BASELINE = {
 // —— ERB 侧扫描完整性（#63）：ere/ 全部 .js 注释里的 :N / :N-M 引用都
 //    必须在 FILES 登记或在 ERB_EXEMPT 豁免——与 log 侧第三道同款，防
 //    新增引用绕过锚表。引用形态见文件头第 4 条；豁免清单只能变短、
-//    不许发霉（见 tools/trace-exempt.mjs 头注） ——
+//    不许过期失效（见 tools/trace-exempt.mjs 头注） ——
 
 const ERB_REF_RE = /(?<![A-Za-z0-9_.{}]):(\d+)(?:-(\d+))?/g;
 
@@ -2498,7 +2498,7 @@ for (const rel of list_js_files('ere')) {
   for (const ref of found) {
     if (!registered?.has(ref) && !exempt.includes(ref)) {
       console.log(
-        `✗ ${rel} :${ref} —— 未登记进 FILES（新引用必须登记锚表；豁免清单是 #63 冻结的存量，不收新条目）`,
+        `✗ ${rel} :${ref} —— 未登记进 FILES（新引用必须登记锚表；豁免清单是 #63 冻结的现有，不收新条目）`,
       );
       failures += 1;
     }
@@ -2513,15 +2513,15 @@ for (const rel of list_js_files('ere')) {
   }
 }
 
-// 规则 1「只能变短」：台账条目必须逐条落在 #63 基线内（在工具里执行，
-// 与退出码语义一致——验收整改：此前这条只在测试里，台账 465→466 时
+// 规则 1「只能变短」：条目表条目必须逐条落在 #63 基线内（在工具里执行，
+// 与退出码语义一致——验收整改：此前这条只在测试里，条目表 465→466 时
 // 单独跑工具的人看到的是绿）
 for (const [rel, refs] of Object.entries(ERB_EXEMPT)) {
   const baseline_refs = ERB_EXEMPT_BASELINE[rel] ?? [];
   for (const ref of refs) {
     if (!baseline_refs.includes(ref)) {
       console.log(
-        `✗ ${rel} :${ref} —— 豁免条目不在 #63 基线内（清单只能变短：消化存量 = 删条目；新引用登记 FILES 锚表，扩基线必须显式改 ERB_EXEMPT_BASELINE）`,
+        `✗ ${rel} :${ref} —— 豁免条目不在 #63 基线内（清单只能变短：消化现有条目 = 删条目；新引用登记 FILES 锚表，扩基线必须显式改 ERB_EXEMPT_BASELINE）`,
       );
       failures += 1;
     }
@@ -2530,7 +2530,7 @@ for (const [rel, refs] of Object.entries(ERB_EXEMPT)) {
 
 console.log(
   failures === 0
-    ? `✓ ${checked} 条内联行号引用全部与源文件一致；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，台账见 tools/trace-exempt.mjs）`
+    ? `✓ ${checked} 条内联行号引用全部与源文件一致；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，条目表见 tools/trace-exempt.mjs）`
     : `✗ ${failures}/${checked} 条引用对不上（另有 ERB 完整性失守计入 failures）`,
 );
 process.exit(failures === 0 ? 0 : 1);

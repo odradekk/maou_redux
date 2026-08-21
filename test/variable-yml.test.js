@@ -1,18 +1,18 @@
 /**
- * @file 变量表迁移的引擎对拍测试（issue #38）。
+ * @file 变量表迁移的引擎比对测试（issue #38）。
  *
  * 与 test/chara-yml.test.js 同构的验证路线：不用夹具（记录层证明不了
  * 「引擎接受」），不用自写镜像（会漂移），全部经 test/helpers/engine-bundle.js
  * 驱动 app.asar 里的 parseDataFile 与 eraStart 变量表装载分支（转写），
  * 回答验收的核心问题——**引擎自己的代码**读到 yml/Talent.yml、yml/Item.yml
  * 后得到的静态数据与读源 CSV 是否逐字段一致；yml/Base.yml（人工表）装载
- * 后的形状是否符合预期；item* 寻址在表在场/缺席时的引擎行为（PR #34 硬崩
+ * 后的形状是否符合预期；item* 寻址在表在场/缺席时的引擎行为（PR #34 直接崩溃
  * 的回归锁）。
  *
- * 已知并钉死的一处偏差：Item.csv 有 5 对重名（1000-1004 与 1005-1009，
+ * 已知并固定的一处偏差：Item.csv 有 5 对重名（1000-1004 与 1005-1009，
  * 名称与价格完全相同）。引擎 csv 路径 name→id 后者覆盖、序号各自保留；
  * yml 以名称为键无法表达同名双序号，产物保留后者（见 Item.yml 头注与
- * issue #38 评论）。对拍用「csv 侧状态剔除被合并序号」作为期望，剔除集
+ * issue #38 评论）。比对用「csv 侧状态剔除被合并序号」作为期望，剔除集
  * 由转换器返回的 dropped 逐点断言——偏差集有任何意外扩大都会红。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告。
@@ -28,7 +28,7 @@ const {
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 const { parse_variable_csv, read_text } = require('../tools/csv-to-yml');
-// T20 归一表（#60）：产物名经离线归一（如 滅焰呪印→灭焰咒印）。对拍缝在
+// T20 归一表（#60）：产物名经离线归一（如 滅焰呪印→灭焰咒印）。比对缝在
 // **名字面**（对象键与 fieldNames 的 n）——两侧同过一张表后比对；k（含
 // item 第 4 列的日文注释，引擎元数据非文案）与 t 原样不动
 const { to_simplified } = require('../tools/lang-normalize');
@@ -113,7 +113,7 @@ engine_test('Talent：产物经引擎装载的结果与源 CSV 逐字段一致',
     simplify_display(from_yml.field_names.talent),
     simplify_display(from_csv.field_names.talent),
   );
-  // 点名几条：id 1 = 童贞（Chara0 的素質 1 预设指向它）
+  // 报出几条：id 1 = 童贞（Chara0 的素質 1 预设指向它）
   assert.equal(from_yml.static_data.talent['童贞'], 1);
   assert.equal(from_yml.static_data.talent['男人'], 122);
   assert.deepEqual(from_yml.field_names.talent[1], {
@@ -123,10 +123,10 @@ engine_test('Talent：产物经引擎装载的结果与源 CSV 逐字段一致',
   });
 });
 
-// —— Item：重名合并偏差集逐点钉死，其余逐字段一致（验收项） ——
+// —— Item：重名合并偏差集逐点固定，其余逐字段一致（验收项） ——
 
 engine_test(
-  'Item：产物与源 CSV 一致（重名合并的 5 个序号除外，逐点钉死）',
+  'Item：产物与源 CSV 一致（重名合并的 5 个序号除外，逐点固定）',
   () => {
     const { text } = read_text(path.join(CSV_DIR, 'Item.csv'));
     const { dropped, warnings } = parse_variable_csv(text, { table: 'item' });
@@ -253,7 +253,7 @@ engine_test('Base：人工表装载得到 6 个下标，名称→序号映射正
   });
 });
 
-// —— item* 寻址：表在场/缺席的引擎行为（PR #34 硬崩的回归锁） ——
+// —— item* 寻址：表在场/缺席的引擎行为（PR #34 直接崩溃的回归锁） ——
 
 engine_test(
   "引擎 setVar：无 Item 表时 itemsales 写入抛 reading 'name'（PR #34）",
@@ -270,7 +270,7 @@ engine_test(
     assert.throws(
       () => engine.set_var.call(fake_this, 'itemsales:53', 1),
       /reading 'name'/,
-      '静态表缺失时 item* 寻址必须硬崩——这是 PR #34 降级该写入的依据',
+      '静态表缺失时 item* 寻址必须直接崩溃——这是 PR #34 降级该写入的依据',
     );
   },
 );

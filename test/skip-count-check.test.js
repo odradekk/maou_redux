@@ -1,6 +1,6 @@
 /**
  * @file skip-count-check 的行为锁（issue #92）：无引擎跳过数守护不只
- * 「数字对得上就绿」，还要「表外即红、输入烂即拒」——五条行为在此钉死：
+ * 「数字对得上就绿」，还要「表外即红、输入烂即拒」——五条行为在此固定：
  *
  *   1. 全绿：TAP 跳过数与基线一致 → 退出 0，输出报出 数字/总数 与基线
  *      文件。这一条也锁定「看得见的数字」的输出形状（CI 日志靠它说话）。
@@ -10,7 +10,7 @@
  *      侧的机制就是这两条；整机演示（真把一个用例改成引擎依赖跑一遍）
  *      见 issue #92 的实现评论。
  *   4. 缺摘要即拒：TAP 没有 `# skipped` 行 → 退出 2。node --test 异常
- *      退出时不产摘要，绝不能被当成「对账通过」放行。
+ *      退出时不产摘要，绝不能被当成「核对通过」放行。
  *   5. 烂基线即拒：基线文件非「注释/空行 + 恰好一行纯数字」→ 退出 2。
  *
  * 另有一条仓库健康锁：test/engine-skip-baseline.txt 本身必须解析出非负
@@ -95,14 +95,14 @@ test('全绿：跳过数与基线一致 → 退出 0，报出 数字/总数 与�
     fs.writeFileSync(tap, make_tap(38, 553), 'utf8');
     const baseline = make_baseline(dir, 38);
     const { status, output } = run_tool(tap, baseline);
-    assert.equal(status, 0, `对账应通过，实际退出 ${status}：\n${output}`);
+    assert.equal(status, 0, `核对应通过，实际退出 ${status}：\n${output}`);
     assert.match(
       output,
       /38\/553（6\.9%）/,
       `数字/总数未按形状报出：\n${output}`,
     );
     assert.ok(output.includes('一致'), `未声明与基线一致：\n${output}`);
-    assert.ok(output.includes('baseline.txt'), `未点名基线文件：\n${output}`);
+    assert.ok(output.includes('baseline.txt'), `未报出基线文件：\n${output}`);
   });
 });
 
@@ -112,7 +112,7 @@ test('偏多即红：39 vs 基线 38 → 退出 1，两个数字与方向提示�
     fs.writeFileSync(tap, make_tap(39, 554), 'utf8');
     const baseline = make_baseline(dir, 38);
     const { status, output } = run_tool(tap, baseline);
-    assert.equal(status, 1, `偏多应对账失败，实际退出 ${status}：\n${output}`);
+    assert.equal(status, 1, `偏多应核对失败，实际退出 ${status}：\n${output}`);
     assert.ok(
       output.includes('39') && output.includes('38'),
       `基线与实际两个数字未同时在场：\n${output}`,
@@ -131,7 +131,7 @@ test('偏少即红：37 vs 基线 38 → 退出 1', () => {
     fs.writeFileSync(tap, make_tap(37, 552), 'utf8');
     const baseline = make_baseline(dir, 38);
     const { status, output } = run_tool(tap, baseline);
-    assert.equal(status, 1, `偏少应对账失败，实际退出 ${status}：\n${output}`);
+    assert.equal(status, 1, `偏少应核对失败，实际退出 ${status}：\n${output}`);
     assert.ok(output.includes('-1'), `未报出偏移量：\n${output}`);
     assert.ok(
       output.includes('skip 门') || output.includes('被删'),
@@ -140,7 +140,7 @@ test('偏少即红：37 vs 基线 38 → 退出 1', () => {
   });
 });
 
-test('缺摘要即拒：TAP 没有 `# skipped` 行 → 退出 2（不许当对账通过）', () => {
+test('缺摘要即拒：TAP 没有 `# skipped` 行 → 退出 2（不许当核对通过）', () => {
   with_temp_dir((dir) => {
     const tap = path.join(dir, 'broken.tap');
     fs.writeFileSync(tap, 'TAP version 13\nok 1 - a\n1..1\n', 'utf8');
@@ -149,7 +149,7 @@ test('缺摘要即拒：TAP 没有 `# skipped` 行 → 退出 2（不许当对�
     assert.equal(
       status,
       2,
-      `缺摘要应拒绝对账（退出 2），实际退出 ${status}：\n${output}`,
+      `缺摘要应拒绝核对（退出 2），实际退出 ${status}：\n${output}`,
     );
     assert.ok(
       output.includes('# skipped') && output.includes('异常退出'),
@@ -191,7 +191,7 @@ test('仓库基线健康：真实基线文件解析出非负整数（烂在本�
     );
     assert.ok(
       output.includes('38') || output.includes('偏离'),
-      `真实基线未参与对账：\n${output}`,
+      `真实基线未参与核对：\n${output}`,
     );
   });
 });

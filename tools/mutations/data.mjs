@@ -1,6 +1,6 @@
-// 变异台账切片：yml/ 与 res/（静态表产物与媒体注册）。
+// 变异条目表切片：yml/ 与 res/（静态表产物与媒体注册）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {

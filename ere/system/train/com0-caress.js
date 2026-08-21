@@ -9,10 +9,10 @@
  *   - SOURCE:xx → `source:${cid}:${xx}`（nextTurnInTrain 每回合清零；Emuera
  *     只在 BEGIN TRAIN 清零，跨指令残值的差异见 issue #45 留言）；
  *   - LOSEBASE:0/1 → `deltabase:${cid}:0/1` 的**负值**累加（引擎
- *     base += deltabase 并钳到 [0, maxbase]，本票仅负责让 deltabase 动起来，
+ *     base += deltabase 并钳到 [0, maxbase]，这张票仅负责让 deltabase 动起来，
  *     结算在回合循环的 nextTurnInTrain）。
  *
- * 本票存根/登记的分支（docs/stub-registry.md「@COM0 分支欠账」节）：
+ * 这张票存根/登记的分支（docs/stub-registry.md「@COM0 分支待办」节）：
  *   - :76-82 口污 + ASSIPLAY 分支与 :84-88 口塞（TEQUIP:45）分支——助手
  *     调教（ASSIPLAY）与口塞装备均无写入路径，整支登记；
  *   - :122-123 兽奸提前返回（TEQUIP:89）、:128-133 触手污れ（TEQUIP:90）
@@ -33,7 +33,7 @@ const { train_message_b } = require('#/system/train/train-message');
  */
 const STUBBED_CALLS = ['COM0_AUTO'];
 
-// SOURCE 的分档表：纯数据，错一格不会报错——每一档的用例与变异测试钉死
+// SOURCE 的分档表：纯数据，错一格不会报错——每一档的用例与变异测试固定住
 // （com0-caress.test.js / tools/mutation-check.mjs）。
 
 // :32-51 ABL:0（阴蒂感觉）分档 → [SOURCE:0, SOURCE:3]（ELSE 档 = ABL:0 ≥ 5）

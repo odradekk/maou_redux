@@ -1,7 +1,7 @@
 /**
  * @file 一维变量的stronghold域门面（tools/gen-facade.js）。
  *
- * 形状：game.stronghold.<字段>。与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本本票已迁。
+ * 形状：game.stronghold.<字段>。与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本这张票已迁。
  */
 
 const era = require('#/era-electron');

@@ -26,8 +26,8 @@ const era_flag = require('#/era-utils/era-flag');
 
 /**
  * 本文件存根化的原作调用名（@SELECT_ASSI 的函数体与作用域外指令分支的壳
- * 占位）。docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 对账
- * 钉死）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
+ * 占位）。docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 核对
+ * 固定）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
  * 自 #44 起为真身/真转场，移出本名单。
  */
 const STUBBED_CALLS = [
@@ -71,7 +71,7 @@ on(
     reset_out_of_range_pointers();
 
     // :15-18 REPEAT 100: ITEMSALES:COUNT = 0（清道具上架位）。Item 表已随
-    // #38 落地，item* 寻址的硬崩支（PR #34）已消除；注意清零范围 0..99 覆盖
+    // #38 落地，item* 寻址的直接崩溃支（PR #34）已消除；注意清零范围 0..99 覆盖
     // @EVENTFIRST :35 置 1 的 53 号——原作即如此（清空后由商店侧重新点亮
     // 在售位），1:1 照搬两层写入。
     for (let i = 0; i < 100; i += 1) {
@@ -79,7 +79,7 @@ on(
     }
 
     // :20 BOUGHT = -1：BOUGHT 是 builtin 标量、无 ere 落点，仍登记
-    // docs/stub-registry.md 变量级欠账（本处是第二个定值点）。
+    // docs/stub-registry.md 变量级待办（本处是第二个定值点）。
   },
   TIER.NORMAL,
 );
@@ -92,11 +92,11 @@ on(
  */
 function show_shop(main_menu) {
   // :24 SAVESTR:0 = 你（魔王的存档名字串）：SAVESTR 未落表，消费者（名字
-  // 按钮 498/499 等）随角色数据票——登记 docs/stub-registry.md 变量级欠账
-  // （#5 已决由内置 callname 承载，接线随彼票）。
+  // 按钮 498/499 等）随角色数据票——登记 docs/stub-registry.md 变量级待办
+  // （#5 已决由内置 callname 承载，接入随彼票）。
   // :25-30 CALL CLEAR_SHOP 与 BOUGHT 跳转（BOUGHT >= 0 才跳，进商店轮时
   // 恒 -1，原作也不触发）：BOUGHT 无落点，整段登记 docs/stub-registry.md
-  // 函数级欠账，商店票落地时一并。
+  // 函数级待办，商店票落地时一并。
   //
   // :33-36 防御性日期修正：月/日小于 1 时钳成 1。@EVENTFIRST 只初始化
   // DAY:1 = 1、DAY 与 DAY:2 留 0（#22 的 1:1 决定），玩家看到的开局因此是
@@ -145,13 +145,13 @@ async function select_assi() {
  * 作用域外的指令分支按原作结构留壳：运行时打一行占位（原作调用名可检
  * 索），真行为整支欠着，docs/stub-registry.md 整组登记。100 分支自 #44 起
  * 是真身（SELECT_TARGET 真身 + BEGIN TRAIN 真转场）；壳内的 BEGIN TURNEND
- * 仍是出口欠账（回合结算票），接通前主循环进站即报错点名，那是预期行为。
+ * 仍是出口待办（回合结算票），接通前主循环进站即报错报出，那是预期行为。
  *
  * @param {number} result 玩家输入（原作 RESULT，即 era.input() 的返回值）
  */
 async function usershop(result) {
   // :44-57 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 跳
-  // 商店）：BOUGHT 是 builtin 标量、无 ere 落点（恒 -1 语义，变量级欠账表
+  // 商店）：BOUGHT 是 builtin 标量、无 ere 落点（恒 -1 语义，变量级待办表
   // 已登记），四个条件全部不成立、整段不可达，不搬——商店票落地时恢复。
   //
   // A（可选奴隶数）：原作在 @DRAW_MAINMENU :208-216 算出，:59/:152/:154
@@ -354,7 +354,7 @@ async function usershop(result) {
 /**
  * STATE.SHOP 的处理器：@EVENTSHOP 一次 + 「@SHOW_SHOP 绘制 → INPUT →
  * @USERSHOP 分发」的循环。正常情况下永不返回（菜单是游戏的中枢，经 BEGIN
- * 转场离开，如原作 @USERSHOP :99 的 BEGIN TRAIN——#44 已接线，begin() 的
+ * 转场离开，如原作 @USERSHOP :99 的 BEGIN TRAIN——#44 已接入，begin() 的
  * BeginSignal 从本循环自然上抛、由主循环接站；本模块不写 try/catch，
  * 不会吞信号，#6 硬约束）。
  */

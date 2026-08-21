@@ -3,7 +3,7 @@
  * 可达路径）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - **黄金样本对拍**：emuera.log 第一次输入 0 之后的结算块（39 点线、源
+ *   - **黄金样本比对**：emuera.log 第一次输入 0 之后的结算块（39 点线、源
  *     一览、体力气力条、9 个参数行）逐字节一致——角色状态按样本数值反推
  *     （ABL:0=3/ABL:1=0/顺从 0/欲望 1/侍奉精神 0/露出癖 0、CFLAG:16=-1
  *     初吻未体验、MARK:3=1 反抗刻印、调教者技巧 0），反推依据见 issue #45；
@@ -14,7 +14,7 @@
  *   - 体力气力扣减与钳制、气力 0 的损耗加倍；
  *   - TFLAG:59（旧 PREVCOM）/TFLAG:50；
  *   - 端到端：回合循环输入 0 → 全链输出 → 999 退出；
- *   - 存根清单对账（docs/stub-registry.md）。
+ *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
@@ -71,7 +71,7 @@ const GOLDEN_BLOCK = (() => {
   return log.split(/\r?\n/).slice(29, 44);
 })();
 
-test('黄金样本对拍：第一次爱抚的结算块 15 行逐字节一致（含推断角色状态）', async () => {
+test('黄金样本比对：第一次爱抚的结算块 15 行逐字节一致（含推断角色状态）', async () => {
   const fixture = await run_caress((f) => {
     // 推断的温妮状态（反推依据记在 issue #45）：九个数全部由这套状态复现
     f.store.set('abl:31:0', 3); // SOURCE:0 = 1200
@@ -99,7 +99,7 @@ test('黄金样本对拍：第一次爱抚的结算块 15 行逐字节一致（�
 
   const texts = fixture.lines
     .map((l) => (l.type === 'divider' ? '§DIV§' : l.text))
-    .filter((t) => !t.startsWith('（')); // 存根占位行是记名差异，不在对拍面
+    .filter((t) => !t.startsWith('（')); // 存根占位行是记名差异，不在比对面
   const start = texts.indexOf('‥'.repeat(39));
   assert.ok(start >= 0, '39 点线必须在输出里');
   const block = texts.slice(start, start + GOLDEN_BLOCK.length);
@@ -406,9 +406,9 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   );
 });
 
-// —— 存根清单对账 ——
+// —— 存根清单核对 ——
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/source-check');
   const registry = fs.readFileSync(
@@ -425,14 +425,14 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
   assert.ok(registry.includes('装备持续效果'), '装备持续效果组行');
 });
 
-// —— #90：跨域写走门面（台账 22 条清零的契约锁）——
+// —— #90：跨域写走门面（条目表 22 条清零的契约锁）——
 
-test('跨域写走门面：22 条台账寻址串的字面量 era.set/add 清零', () => {
+test('跨域写走门面：22 条条目表寻址串的字面量 era.set/add 清零', () => {
   const text = fs.readFileSync(
     path.resolve(__dirname, '..', 'ere', 'event', 'source-check.js'),
     'utf8',
   );
-  // 写侧零残留：#72 台账里的 22 个寻址串，字面量形态的 era.set/era.add
+  // 写侧零残留：#72 条目表里的 22 个寻址串，字面量形态的 era.set/era.add
   // 都必须消失（读侧 era.get 放行是 #70 决议，不在本锁范围）
   const gone = [
     'era.set(`mark:',

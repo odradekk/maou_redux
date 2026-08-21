@@ -4,12 +4,12 @@
  *
  * 缝 = test/helpers/era-fixture.js。期望值全部对着两处真身：
  *   - target/emuera.log:236-260 的黄金样本（结算表 13 行、SHOW_INFO_EXP、
- *     SHOW_JUEL——预置状态复刻样本前态 + 定值随机源，逐字对拍）；
+ *     SHOW_JUEL——预置状态复刻样本前态 + 定值随机源，逐字比对）；
  *   - target/ERB/調教相關/TRAIN_MAIN.ERB:552-740 的梯子/加算/相殺语义。
  *
  * 验收项「13 项参数各有用例」：结算表 13 行每行一个用例（含精确行文与
  * 落账数值——纯数据结算错一格不报错，必须逐项钉）。「不发生重复结算」：
- * gotjuel 清零断言 + 引擎对拍（真 endTrain 源码驱动）双重锁定。
+ * gotjuel 清零断言 + 引擎比对（真 endTrain 源码驱动）双重锁定。
  */
 
 const assert = require('node:assert/strict');
@@ -244,7 +244,7 @@ test('结算表第 12 行：CSTR:7 定制癖好名替换「癖好」标签', () 
 
 // ———— 相殺（:626-649）与 TFLAG 快照（:615-624） ————
 
-test('相殺：否定余量逐轮减半（定值随机源），逐步写序钉死', () => {
+test('相殺：否定余量逐轮减半（定值随机源），逐步写序固定', () => {
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
   fixture.store.set('juel:31:100', 100);
@@ -264,7 +264,7 @@ test('相殺：否定余量逐轮减半（定值随机源），逐步写序钉�
   assert.equal(fixture.store.get('juel:31:4'), 900, '1000 - 100 = 900');
 });
 
-test('相殺：池子存量不足时整池扣走（钳制），否定余量留在池空之后', () => {
+test('相殺：池子里不够时整池扣走（钳制），否定余量留在池空之后', () => {
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
   fixture.store.set('juel:31:100', 1000);
@@ -272,7 +272,7 @@ test('相殺：池子存量不足时整池扣走（钳制），否定余量留�
 
   mod.offset_negative_group(31, [4, 5, 6], rotating_rng());
 
-  assert.equal(fixture.store.get('juel:31:5'), 0, '存量 30 整池扣走');
+  assert.equal(fixture.store.get('juel:31:5'), 0, '现有 30 整池扣走');
   assert.equal(fixture.store.get('juel:31:100'), 970, '三池皆空 → 否定残留');
 });
 
@@ -363,7 +363,7 @@ const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 engine_test(
-  '引擎对拍：endTrain 逐键把 gotjuel 加进 juel——非零残留即双重累加；全零为精确无操作',
+  '引擎比对：endTrain 逐键把 gotjuel 加进 juel——非零残留即双重累加；全零为精确无操作',
   () => {
     const { era_api } = engine;
     const settle = (got0, got100) => {
@@ -483,7 +483,7 @@ test('自动升级（GETBIT(FLAG:5,35)）：不进交互，直接收尾', async 
   );
 });
 
-// ———— 黄金样本对拍（target/emuera.log:236-260，前态复刻 + 定值随机源） ————
+// ———— 黄金样本比对（target/emuera.log:236-260，前态复刻 + 定值随机源） ————
 
 test('黄金样本 :237-253：结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () => {
   const fixture = create_era_fixture();
@@ -689,9 +689,9 @@ test('SHOW_ABLUP_SELECT：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中�
   );
 });
 
-// ———— 存根清单对账 ————
+// ———— 存根清单核对 ————
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = seed_world(fixture);
   const registry = fs.readFileSync(

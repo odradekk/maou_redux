@@ -9,7 +9,7 @@
 # 同样吃这张表**——引擎的 setVar 在表名属于内置表（embeddedTableNames 含
 # tflag）时走 `u = i(this.staticData[a][u], u)`，名字表缺位即抛错。这一条
 # 修正了 #13 的既有认知：二段寻址不是一律「静默创建」，`flag:*` 之所以静默
-# 通过，是因为 Flag.yml 在；`tflag:*` 缺表就是硬崩。
+# 通过，是因为 Flag.yml 在；`tflag:*` 缺表就是直接崩溃。
 #
 # 空表即够用：下标是数字，引擎的 safeUndefinedCheck 在名字表查不到时原样
 # 回落到该数字。

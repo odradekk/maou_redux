@@ -47,7 +47,7 @@ function make_probe_repo(entries) {
     const from = path.join(REPO_ROOT, rel);
     if (!fs.existsSync(from)) {
       throw new Error(
-        `探针副本的源不存在：${rel}——清单发霉了，同步本文件的调用方`,
+        `探针副本的源不存在：${rel}——清单过期失效了，同步本文件的调用方`,
       );
     }
     copy_entry(from, path.join(root, rel));
@@ -71,7 +71,7 @@ function refresh_probe_repo(root, entries) {
 
 /**
  * 从仓库内某源文件的文本里抽字面路径（探针副本清单推导用——工具引用的
- * target/ 源文件散在它的数据表里，逐个手抄会发霉，从源码文本机械提取）。
+ * target/ 源文件散在它的数据表里，逐个手抄会过期失效，从源码文本机械提取）。
  * @param {string} file_rel 仓库相对的源文件
  * @param {RegExp} re 含一个捕获组的路径正则
  * @returns {string[]} 去重后真实存在的路径

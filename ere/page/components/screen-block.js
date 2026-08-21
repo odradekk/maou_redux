@@ -7,7 +7,7 @@
  *     CLEARLINE LINECOUNT-L_LCOUNT（target/ERB/SHOP/SHOP ver1.0.2.ERB
  *     :274/:280/:314 等 30+ 处；无效输入分支的 CLEARLINE 1 单清回显行）。
  *
- * 行数口径（#73 裁定，依据见 issue #73 设计留言）：
+ * 行数的计法（#73 裁定，依据见 issue #73 设计留言）：
  *   - 「占几行」＝绘制前后 getLineCount() 的差值——运行时测量，不静态
  *     声明（内容可变的组件，行数必然随数据变：角色列表随人数、参数条
  *     随条目数）；
@@ -16,11 +16,11 @@
  *     + 两次绘制之间的任何临时输出（如分发期的存根行、选择画面整屏）。
  *     只清「自身行数」是错的：clear 只能从屏幕尾部删行（渲染层公式，
  *     #68 实证），回显行在组件下方，清 N 行会删掉回显、留下组件顶行，
- *     实机表现为屏幕每轮净涨一行——正是 Row 口径错误的破坏形态。
+ *     实机表现为屏幕每轮净涨一行——正是 Row 的计法错误的破坏形态。
  *
  * 重绘只发生在玩家交互之后（ADR-0003：叙述流中间重绘会打断右键快进）。
  * 本类不强制时机（它不知道调用方上下文），由调用点负责：唯一的调用方
- * page-shop 的商店轮是「输入 → 分发 → 重绘」的循环，测试钉死该点。
+ * page-shop 的商店轮是「输入 → 分发 → 重绘」的循环，测试固定住该点。
  */
 
 const era = require('#/era-electron');
@@ -62,7 +62,7 @@ class ScreenBlock {
     const span = era.getLineCount() - this.anchor_row;
     if (span > 0) {
       // clear 的返回值＝清屏后行数（#68 实证），应当正好回到锚点；对不上
-      // 说明有旁路动过行数（引擎/夹具口径漂移或误用），留痕后由 draw 重锚。
+      // 说明有旁路动过行数（引擎/夹具计法漂移或误用），记录后由 draw 重锚。
       const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {
         era.logger.warn(

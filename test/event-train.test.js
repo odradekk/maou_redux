@@ -1,13 +1,13 @@
 /**
  * ere/event/event-train.js 的行为测试（issue #44：@EVENTTRAIN 真身）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  *
  * 覆盖：
  *   1. 直线赋值全量断言（验收项：意外写入当场暴露，写法照
  *      test/event-first.test.js）；
  *   2. 条件分支：时常发情（TALENT:271）、助手参与（ASSIPLAY）两处；
- *   3. 存根清单：docs/stub-registry.md 可检索且与本文件的存根对账；
+ *   3. 存根清单：docs/stub-registry.md 可检索且与本文件的存根核对；
  *   4. 调教域 flag 槽位（包装层）钉在 yml/Flag.yml 的 id 上。
  */
 
@@ -167,7 +167,7 @@ test('调教域 flag 槽位：包装层寻址钉在 yml/Flag.yml 的保留区 id
   ]);
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/event-train');
   const registry = fs.readFileSync(

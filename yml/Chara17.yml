@@ -3,7 +3,7 @@
 #
 # 人工增补（非转换内容，issue #67）：portcflag 行是移植自建扩展表的预设
 # （原作 CSV 无此行，--force --chara 17 重跑会丢——test/portcflag-table.test.js
-# 读库内本文件装载断言，丢行即红）。数据版本基线 0 = 原作口径，见 PortCFlag.yml。
+# 读库内本文件装载断言，丢行即红）。数据版本基线 0 = 原作的算法，见 PortCFlag.yml。
 "番号": 17
 "名前": "玛奥"
 "呼び名": "玛奥"

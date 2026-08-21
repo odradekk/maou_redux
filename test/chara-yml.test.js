@@ -1,5 +1,5 @@
 /**
- * @file 角色表迁移的引擎对拍测试（issue #35；#50 增 Chara17 村娘与 CFlag 表）。
+ * @file 角色表迁移的引擎比对测试（issue #35；#50 增 Chara17 村娘与 CFlag 表）。
  *
  * 与 test/csv-to-yml.test.js 的分工：那边测转换器自身的契约（产物边界、
  * 解析镜像的行为锁），这边回答验收的核心问题——**引擎自己的代码**读到产物
@@ -35,7 +35,7 @@ const {
   to_chara_yaml,
 } = require('../tools/csv-to-yml');
 // T20 归一表（#60）：产物名在生成期归一为简体（csv-to-yml 的
-// emit_product_lines），CSV 侧过同一张表再装载——对拍语义是「产物 = 归一(源)」
+// emit_product_lines），CSV 侧过同一张表再装载——比对语义是「产物 = 归一(源)」
 const { to_simplified_yaml } = require('../tools/lang-normalize');
 
 const engine = load_engine_bundle();
@@ -50,8 +50,8 @@ const SOURCE_FILES = fs
 
 // 入库的变量表（#38：Base/Talent/Item，用引擎代码装载 yml/ 产物）。
 // 表落地前，基礎/素質 预设行在两条加载路径上同样被丢弃（#35 验收时的
-// 对拍盲区）；表落地后挂上真表，这些字段进入对拍视野——装载循环把
-// staticData.base/talent 的 name→id 翻译用在预设行上，45 文件对拍因此
+// 比对盲区）；表落地后挂上真表，这些字段进入比对视野——装载循环把
+// staticData.base/talent 的 name→id 翻译用在预设行上，45 文件比对因此
 // 从「两侧同错」升级为「两侧同生效」。
 const repo_tables = load_repo_variable_tables();
 
@@ -76,7 +76,7 @@ function load_product_yml(yml_text) {
   return loader;
 }
 
-// —— 全量对拍：45 个源文件，两条加载路径逐字段等价（验收项）——
+// —— 全量比对：45 个源文件，两条加载路径逐字段等价（验收项）——
 
 engine_test(
   '全部 45 个源文件：产物经引擎 yml 路径装载的结果与 csv 路径逐字段一致',
@@ -136,9 +136,9 @@ engine_test(
 
     assert.deepEqual(from_yml.static_data, from_csv.static_data);
     assert.deepEqual(from_yml.errors, from_csv.errors);
-    // 基础字段直接点名：番号/名前/呼び名（引擎规范名 id/name/callname）。
+    // 基础字段直接列出：番号/名前/呼び名（引擎规范名 id/name/callname）。
     // #38 起变量表在场，基礎/素質 预设不再被丢弃（错误清单为空、预设
-    // 落进 preset.base/talent），由上方全量对拍兜底。
+    // 落进 preset.base/talent），由上方全量比对兜底。
     assert.deepEqual(from_yml.errors, []);
     assert.deepEqual(from_yml.static_data.chara[0], {
       id: 0,
@@ -150,7 +150,7 @@ engine_test(
   },
 );
 
-// —— addCharacter：引擎真方法，无预设不加、有预设真加（本票修的缺陷）——
+// —— addCharacter：引擎真方法，无预设不加、有预设真加（这张票修的缺陷）——
 
 engine_test(
   '引擎 addCharacter：无角色预设时整段短路，角色 0 加不进去（#35 缺陷的回归锁）',
@@ -219,7 +219,7 @@ engine_test(
       4: 0,
       10: 0,
     });
-    // talent 只点名预设项（267 个下标全量初始化，0 值不逐条抄）
+    // talent 只列出预设项（267 个下标全量初始化，0 值不逐条抄）
     assert.equal(adder.data.talent[0][1], 1);
     assert.equal(adder.data.talent[0][122], 1);
     assert.equal(adder.data.talent[0][0], 0, '未预设的素质初始化为 0');
@@ -232,7 +232,7 @@ engine_test(
   '两列行的缺省值经引擎装载落在预设上（挂入库的 Base/Talent 表）',
   () => {
     // #35 时代此用例以手工预置的两张表钉住「折叠缺省值」语义（当时 yml/
-    // 还没有 Base/Talent，45 文件对拍对这些行天然盲）；#38 表落地后改挂
+    // 还没有 Base/Talent，45 文件比对对这些行天然盲）；#38 表落地后改挂
     // 入库产物，语义钉住不变：第二列两种写法各占一行——序号形（素質,1）
     // 与名称形（基礎,体力，经 staticData 翻译回序号 0）。
     const csv_text = '番号,7\n素質,1,\n素質,122,\n基礎,体力,500\n';
@@ -248,7 +248,7 @@ engine_test(
       from_csv.static_data.chara,
       '两条加载路径的预设不一致',
     );
-    // 点名期望：两列行的缺省值是 1（talent 表），名称形第二列翻译成序号 0
+    // 报出期望：两列行的缺省值是 1（talent 表），名称形第二列翻译成序号 0
     assert.deepEqual(from_csv.static_data.chara[7], {
       id: 7,
       base: { 0: 500 },
@@ -315,7 +315,7 @@ engine_test(
     const from_yml = load_product_yml(product);
     const from_csv = load_source_csv(text);
 
-    // 零告警零丢弃：缺表行（如 フラグ → cflag）会在这里逐行点名
+    // 零告警零丢弃：缺表行（如 フラグ → cflag）会在这里逐行报出
     assert.deepEqual(from_yml.errors, []);
     // 预设逐字段（フラグ,1,1 依赖 CFlag.yml 落进 cflag）
     assert.deepEqual(from_yml.static_data.chara[17], {
@@ -357,7 +357,7 @@ engine_test(
       // 预设基线，装载翻译落在 portcflag.0
       portcflag: { 0: 0 },
     });
-    // 与源 CSV 路径逐字段一致——#67 起口径为「源 + 登记在案的移植增补」：
+    // 与源 CSV 路径逐字段一致——#67 起标准为「源 + 登记在案的移植增补」：
     // 剥离 portcflag 增补键后预设与源一致；增补本身的装载、登记与落桶
     // 由 test/portcflag-table.test.js 单独钉住
     const preset_17 = { ...from_yml.static_data.chara[17] };
@@ -425,12 +425,12 @@ engine_test(
       4: 0,
       10: 0,
     });
-    // 素质预设点名三条：0 处女（两列行缺省 1）、300 头发颜色 = 4、
+    // 素质预设列出三条：0 处女（两列行缺省 1）、300 头发颜色 = 4、
     // 314 种族 = 0（三列行的显式 0 值，防止「0 值被当空值丢掉」的偏差）
     assert.equal(adder.data.talent[17][0], 1);
     assert.equal(adder.data.talent[17][300], 4);
     assert.equal(adder.data.talent[17][314], 0);
-    // 引擎行为留痕：initCharaTable 的预设拷贝只覆盖名字表内登记的下标，
+    // 引擎行为记录：initCharaTable 的预设拷贝只覆盖名字表内登记的下标，
     // cflag 名字表为空 → 预设 cflag 不落 data（CFlag.yml 头注释的依据）；
     // 村娘分支随后写 cflag:17:1 = 0 覆盖预设位，无行为差异。
     assert.deepEqual(adder.data.cflag[17], {});

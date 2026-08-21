@@ -1,6 +1,6 @@
-// 变异台账切片：ere/kojo/（口上状态机与文本插值）。
+// 变异条目表切片：ere/kojo/（口上状态机与文本插值）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两道门）。desc 里的 M 编号是历史惯性编号
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
@@ -20,7 +20,7 @@ export default [
     must_mention: '存在判定',
   },
   {
-    desc: 'M59 分发接线：TRYCALLFORM 拼名偏移（local - 100 改 - 101）',
+    desc: 'M59 分发接入：TRYCALLFORM 拼名偏移（local - 100 改 - 101）',
     file: 'ere/kojo/kojo-system.js',
     find: '    await kojo_message_com_family.call(local - 100, {',
     replace: '    await kojo_message_com_family.call(local - 101, {',

@@ -5,15 +5,15 @@
  *   1. 写入/读取分类 v2——小段源文本直接驱动：赋值/复合赋值/字符串赋值'/后缀
  *      ++--/TIMES/VARSET 全形态，含词边界（EX_CFLAG 等前缀变量不算表寻址）、
  *      名字下标（归一 + 解析 + 散文容忍）、VARSET 区间左闭右开；
- *   2. ignored_files 语义（#70 改判）——声明的文件必须存在（发霉即报），
+ *   2. ignored_files 语义（#70 改判）——声明的文件必须存在（过期失效即报），
  *      其内容整体跳过测量（引擎不装载 = 死代码，TITLE.ERB 里的写入不算）；
  *   3. 域清单是数据——夹具域清单带一个工具从没见过的域；目录归属校验照旧；
  *   4. 产物边界——默认不覆盖、--force 才覆盖；--table 单表只写该表两份产物，
  *      reads-summary 只在 all 时写出；
  *   5. 同步守护——重跑真实 target/ 的 33 份产物逐字节一致；
- *   6. 锚点复现——#66 的 CFLAG 锚点在 v2 口径下完好（2xx+3xx 口上独占
+ *   6. 锚点复现——#66 的 CFLAG 锚点在 v2 标准下完好（2xx+3xx 口上独占
  *      9447、零外部写入者），全表锚点（SOURCE/PALAM/STAIN 单域、GLOBAL
- *      仅系统、口上是最大的跨域读者）与 #66→#70 的口径对账数字钉死。
+ *      仅系统、口上是最大的跨域读者）与 #66→#70 的统计核对数字固定。
  */
 
 const assert = require('node:assert/strict');
@@ -90,7 +90,7 @@ const FIXTURE_DOMAINS = [
 ].join('\n');
 
 // 域清单声明的目录与 ignored 文件都建出来（空内容即可）——归属校验要求
-// 声明与实存一致：只建用到的目录会触发「数据发霉」报错（那正是该校验的职责）
+// 声明与实存一致：只建用到的目录会触发「数据过期失效」报错（那正是该校验的职责）
 function ensure_domain_dirs(erb_root, domain_text) {
   let section = '';
   for (const line of domain_text.split('\n')) {
@@ -178,7 +178,7 @@ test('写入判定：赋值与复合赋值计入，比较形态（== >= <= != < 
   assert.deepEqual(classify('CFLAG:TARGET:344 += 1').writes, [
     { table: 'cflag', index: 344 },
   ]);
-  // 括号角色槽：#66 口径就有的第三种寻址形态
+  // 括号角色槽：#66 当时就有的第三种寻址形态
   assert.deepEqual(classify('CFLAG:(ARG:0):13 *= 2').writes, [
     { table: 'cflag', index: 13 },
   ]);
@@ -385,7 +385,7 @@ test('ignored 文件：整体跳过测量（死代码），声明了不存在的
   assert.equal(result.tables.get('global').scan.writes_total, 0);
   assert.equal(result.tables.get('cflag').scan.writes_total, 1);
 
-  // 声明了不存在的文件 = 数据发霉（不走 ensure_domain_dirs——它会替清单
+  // 声明了不存在的文件 = 数据过期失效（不走 ensure_domain_dirs——它会替清单
   // 把声明的文件建出来，而本用例要的正是「声明了但不存在」）
   await with_fixture_tree(
     { 甲: [['A.ERB', '']] },
@@ -517,7 +517,7 @@ test('目录归属校验：未认领的一级目录报错（后来者自动纳�
   );
 });
 
-test('目录归属校验：认领了不存在的目录报错（数据发霉）', async () => {
+test('目录归属校验：认领了不存在的目录报错（数据过期失效）', async () => {
   await with_fixture_tree(
     { 甲: [['A.ERB', '']] },
     async ({ dir, erb_root }) => {
@@ -696,7 +696,7 @@ test('同步守护：16 张表的所有权表与跨域清单、reads-summary 与
   }
 });
 
-test('锚点复现：CFLAG 2xx+3xx 口上独占——实活 9447 次写入、零外部写入者（v2 口径完好）', () => {
+test('锚点复现：CFLAG 2xx+3xx 口上独占——实活 9447 次写入、零外部写入者（v2 标准下依然成立）', () => {
   const { scan } = real_generate().tables.get('cflag');
   let kojo_writes = 0;
   const outsiders = [];
@@ -739,9 +739,9 @@ test('锚点复现：1xx/4xx/6xx 是混用段（各有多域写入者）', () =>
   }
 });
 
-test('锚点复现：CFLAG 全量数字与编码（#66→#70 口径对账后的值）', () => {
+test('锚点复现：CFLAG 全量数字与编码（#66→#70 统计核对后的值）', () => {
   const { scan, ranges, cross } = real_generate().tables.get('cflag');
-  // 对账（issue #70 评论）：11435 → 11439 = −2 假写（EX_CFLAG 词边界）
+  // 核对（issue #70 评论）：11435 → 11439 = −2 假写（EX_CFLAG 词边界）
   // +4 漏写（CJK 槽位变量 L_孩子）+2 后缀 ++/--；读 15543 → 15529 同源。
   assert.equal(scan.writes_total, 11439);
   assert.equal(scan.commented_writes, 307);

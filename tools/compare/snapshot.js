@@ -1,7 +1,7 @@
 /**
- * @file T18 输出对拍·变量层快照（issue #48，验证决议 #9）。
+ * @file T18 输出比对·变量层快照（issue #48，验证决议 #9）。
  *
- * == era.raw() 的裁决（#9 的风险记录，本票实测确认） ==
+ * == era.raw() 的裁决（#9 的风险记录，这张票实测确认） ==
  *
  * raw() 在引擎侧真实存在（app.asar 的 EraApi：`raw(){return{data:
  * this.data,global:this.global}}`，开发套件生成器在用），但 **SDK
@@ -11,7 +11,7 @@
  * 已记录在 #9 的结论评论里。
  *
  * 本工具链**离线运行**，快照直接取自 #16 夹具的变量存储（内容等价于
- * raw().data 拍平）；实机取快照若 raw() 失效，退路是 snapshot_via_get——
+ * raw().data 展平）；实机取快照若 raw() 失效，退路是 snapshot_via_get——
  * 用 era.get 遍历已写入键（实现与测试都在，夹具世界可用；实机同样成立，
  * SDK 的 get 是声明过的）。
  */

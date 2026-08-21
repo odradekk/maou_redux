@@ -1,7 +1,7 @@
 /**
  * @file ere/system/flow/begin-signal.js 的行为测试（issue #20）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。本模块
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。本模块
  * 不碰 era API，夹具只用来按引擎的加载路径取模块。
  *
  * 验收对应：「转场信号由专门的信号类型承载，不与普通错误混淆」。

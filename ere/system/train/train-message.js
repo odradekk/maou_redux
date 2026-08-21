@@ -3,19 +3,19 @@
  * @TRAIN_MESSAGE_A（参数上升反应，后）的 COM0（爱抚）分支（issue #45）。
  *
  * 源: target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB  @TRAIN_MESSAGE_B
- *     （:12-3049 全文；本票移植 :19-90 的公共头 + 爱抚分支，其余指令分支
+ *     （:12-3049 全文；这张票移植 :19-90 的公共头 + 爱抚分支，其余指令分支
  *     随各自指令票扩展）
  *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB  @TRAIN_MESSAGE_A
- *     （:15-1351 全文；本票移植 :22-26 的公共头 + :745-808 的爱抚反应分支）
+ *     （:15-1351 全文；这张票移植 :22-26 的公共头 + :745-808 的爱抚反应分支）
  *
  * 原作 B 在前、A 在后（B 文件头 :10 的调用方注释）；ere 侧同为两次直调：
  * B 由 @COM0 调（COMF0_愛撫.ERB:11），A 由 @SOURCE_CHECK 调
  * （SYSTEM_SOURCE.ERB:478）。
  *
- * 本票存根/登记（docs/stub-registry.md）：
+ * 这张票存根/登记（docs/stub-registry.md）：
  *   - B 的服装前缀组（:29-39，PRINT_CLOTHTYPE_SPECIAL / _MAIN2）：CFLAG:40/42
  *     着衣位无写入路径（服装系统存根），三支整组登记，黄金样本中的
- *     「隔着紧身衣＆裙甲、」前缀是本票与样本的记名差异之一；
+ *     「隔着紧身衣＆裙甲、」前缀是这张票与样本的记名差异之一；
  *   - B 的 TEQUIP:90/88/89 描写支（:40-66，触手/魔兽/兽奸）：装备位无写入
  *     路径，整组登记；
  *   - B/A 的其余 SELECTCOM 分支（舔阴 :94 起 / 射精文本 :30-120 等）：随

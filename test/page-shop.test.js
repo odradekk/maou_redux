@@ -1,11 +1,11 @@
 /**
  * ere/page/page-shop.js @USERSHOP 输入分发的行为测试（issue #24）。
  *
- * 缝 = test/helpers/era-fixture.js（全项目唯一测试缝，issue #16）。经
+ * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。经
  * run_shop 驱动（公开接口）：预置一串输入，循环以「预置输入耗尽抛错」终止
  * （夹具既定设计），再对输出行、变量读写与角色列表断言。
  *
- * 取证口径（#73 起）：主菜单就地重绘，终态 lines 只留最后一轮——「哪轮
+ * 取证标准（#73 起）：主菜单就地重绘，终态 lines 只留最后一轮——「哪轮
  * 画过什么 / 进没进过哪个分支」的断言一律看夹具的全量行史 lines_history
  * （含被重绘清掉的条目）；「屏幕现在是什么」的断言仍看 lines/text_lines。
  *
@@ -20,13 +20,13 @@
  *   4. 连续多轮混合操作后状态一致；
  *   5. 作用域外指令分支的壳：占位带原作调用名（派单核实事实 #7——不静默
  *      丢掉），含 110/111 守卫与 520-530 区间的 1:1；
- *   6. 存根清单对账（docs/stub-registry.md）。
+ *   6. 存根清单核对（docs/stub-registry.md）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：作用域外的每个指令壳只抽查代表
  * （101/777/200/888/199/525 + 498/499 + 999 + 7788 未逐个断言）——壳的
- * 完整性由 STUBBED_CALLS 对账与链结构的 deepEqual 之外的代码评审承担；
+ * 完整性由 STUBBED_CALLS 核对与链结构的 deepEqual 之外的代码评审承担；
  * 删掉某个未抽查的壳（如 102 DUNGEON_INFO2）测试仍绿，认领对应子系统票时
- * 以 docs/stub-registry.md 的专节为对账依据。
+ * 以 docs/stub-registry.md 的专节为核对依据。
  */
 
 const assert = require('node:assert/strict');
@@ -210,7 +210,7 @@ test('守卫 A == 0：496/497/100 与无效输入同路——无反馈、只重�
   );
   // 三次输入都被守卫拦下后落到链尾，回循环重绘（3 次输入 + 首轮 = 4 轮）
   assert.equal(rounds_drawn(fixture), 4);
-  // 除每轮固定的两行存根外无任何新增输出；行史文本行总数钉死为每轮 5 行
+  // 除每轮固定的两行存根外无任何新增输出；行史文本行总数固定为每轮 5 行
   //（状态行 + 面板存根 + Commands 标题 + [---] 不可选占位 + 指令面板存根）
   //——多打任何一行（含给守卫拦下的输入加「提示」）都会在此红。A == 0 时
   // [100] 调教退化为灰色 [---] 文本（原作 :229-231），A > 0 时它是按钮、
@@ -225,7 +225,7 @@ test('无效输入：不抛错、无提示，画面重绘（原作无 ELSE，:22
   assert.equal(rounds_drawn(fixture), 5);
   const texts = history_texts(fixture);
   // 原作不打提示（派单核实事实 #5）：除每轮固定两行存根外零新增输出，
-  // 行史文本行总数钉死为每轮 5 行（含 A == 0 时的 [---] 占位）——给无效
+  // 行史文本行总数固定为每轮 5 行（含 A == 0 时的 [---] 占位）——给无效
   // 输入加「提示」会在此红
   assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 5 * 2);
   assert.equal(texts.length, 5 * 5);
@@ -237,7 +237,7 @@ test('连续多轮混合操作后状态一致', async () => {
   // 加入可选奴隶 31（A = 1）：496 会真进分支（真身选择画面，不选人）；
   // 更重要的是指针若被某个分支污染成 31，能活过绘制侧的越界守卫（31 在
   // 已加入列表里）——不加角色的话守卫会把一切脏值洗回 -1，污染不可观测
-  //（变异测试抓到的假绿形态）
+  //（变异测试抓到的误报通过形态）
   join_selectable_slave(fixture, 31);
   era_flag.money = 10000;
   era_flag.day_count = 0;
@@ -349,7 +349,7 @@ test('498/499 无守卫：指针未选也照原作进分支', async () => {
   );
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名', async () => {
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-shop');
   const registry_path = path.resolve(
@@ -360,7 +360,7 @@ test('存根清单可检索：docs/stub-registry.md 收录本票全部占位名'
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
 
-  // 先钉死名单本身（漏登记会在此红，#22 验收抓过的假绿形态），再对账清单。
+  // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
   // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44 起为真身/真转场，已移出
   assert.deepEqual(STUBBED_CALLS, [
     'SELECT_ASSI',

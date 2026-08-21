@@ -1,7 +1,7 @@
 /**
  * @file 一维门面入口：game.<域>.<字段>（tools/gen-facade.js，issue #71）。
  *
- * 与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本本票已迁。域切片文件在 game-<域>.js。
+ * 与 era_flag / era_global 并存。一维重切不强制迁移；口上域样本这张票已迁。域切片文件在 game-<域>.js。
  */
 
 // GENERATED START —— tools/gen-facade.js 装配 game 命名空间，勿手改

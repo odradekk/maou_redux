@@ -4,14 +4,14 @@
  * 缝 = test/helpers/era-fixture.js。覆盖：
  *   - @COM_ABLE0 的三条判据（爱抚系过滤 / 决斗中 / 默认放行）；
  *   - SOURCE 分档的**每一档**（ABL:0 六档 × ABL:1 六档——分档表是纯数据，
- *     错一格不会报错，验收项点名逐档有用例）；
+ *     错一格不会报错，验收项报出逐档有用例）；
  *   - 接吻侧分支（初吻回避 / 不怕污臭 / 反感污臭 / 高姿态 / 爱慕 / 主人口污
  *     / 口污双向移动）；
  *   - V⇔指、B⇔指的污垢移动；
  *   - 百合/断背/爱情经验与 LOSEBASE（deltabase 负向累加）。
  *
  * 世界底座与 test/train-loop.test.js 的 seed_world 同构：魔王 0 + 奴隶 31、
- * 火车表已开，直接经 COM 族调用（同时验注册接线）。
+ * 火车表已开，直接经 COM 族调用（同时验注册接入）。
  */
 
 const assert = require('node:assert/strict');

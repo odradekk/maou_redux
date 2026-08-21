@@ -1,10 +1,10 @@
 /**
  * tools/compare/snapshot.js 与 assertions.js 的行为测试（issue #48）。
  *
- * snapshot：快照拍平、era.get 退路（era.raw() 未被 SDK 声明的风险记录见
+ * snapshot：快照展平、era.get 退路（era.raw() 未被 SDK 声明的风险记录见
  * 模块头与 #9 结论评论）、三类差异与忽略规则。
  * assertions：算式断言的抽取与自校验（#9 定下的「抽取器必须自校验」）、
- * 真实 emuera.log 上 400 条断言的原型口径复现、链一致性。
+ * 真实 emuera.log 上 400 条断言的原型的统计复现、链一致性。
  */
 
 const assert = require('node:assert/strict');
@@ -29,7 +29,7 @@ const LOG = fs.readFileSync(path.join(REPO, 'target', 'emuera.log'), 'utf8');
 
 // —— snapshot ——
 
-test('快照拍平：键排序、deep 友好', () => {
+test('快照展平：键排序、deep 友好', () => {
   const store = new Map([
     ['palam:31:2', 0],
     ['palam:31:0', 5240],
@@ -86,7 +86,7 @@ test('名表解析：Palam.yml 17 名（16 参数 + 否定 100）与序号对应
   assert.equal(ids.size, 17);
 });
 
-test('算术自校验：验算不过的算式被点名（工具自身可信的前提）', () => {
+test('算术自校验：验算不过的算式被报出（工具自身可信的前提）', () => {
   const stream = golden_stream('阴核  100+  1=  101\n');
   const { self_check } = extract_calc_assertions(
     stream,
@@ -104,7 +104,7 @@ test('算术自校验：验算不过的算式被点名（工具自身可信的�
   assert.equal(bad_check.assertions.length, 0); // 坏行不产断言
 });
 
-test('真实样本全量：400 条断言与 #9 原型口径逐项一致', () => {
+test('真实样本全量：400 条断言与 #9 原型的统计逐项一致', () => {
   const { assertions, self_check } = extract_calc_assertions(
     golden_stream(LOG),
     parse_name_ids(path.join(REPO, 'yml', 'Palam.yml')),
@@ -136,7 +136,7 @@ test('链一致性：to ≠ 下一条 from 且非归零 → 无法解释的断�
   assert.equal(self_check.chain.reset, 1); // 第三条 from=0 → 归零类
 });
 
-test('check_assertions：before/after 两端核对，错值点名', () => {
+test('check_assertions：before/after 两端核对，错值报出', () => {
   const failures = check_assertions(
     [
       {

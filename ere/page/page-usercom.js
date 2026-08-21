@@ -13,7 +13,7 @@
  * @P_C 的 TRAIN_NAME（按存档定制的指令名）优先级高于静态名表——存根化
  * （TRAIN_NAME_INIT，stub-registry 已有行），此处直接读静态名。
  *
- * 其余欠账（docs/stub-registry.md，#44 登记）：能力表示[100]/污秽表示[101]/
+ * 其余待办（docs/stub-registry.md，#44 登记）：能力表示[100]/污秽表示[101]/
  * 交代助手[102]/对换调教[112]/避孕套设定[103]/过滤[104-108]/调教菜单
  * [990-992] 按钮组；GETBIT(FLAG:5,34) 的自定义 COM 菜单（SHOW_COMMENU）。
  * SETCOLOR 0xDDA0DD 的「上次的调教指令」淡紫色不镜像（记名差异）。
@@ -40,7 +40,7 @@ const STUBBED_CALLS = [
 ];
 
 on('SHOW_USERCOM', async (usable = []) => {
-  // :9-13 GETBIT(FLAG:5,34) → 自定义 COM 菜单（欠账，占位行见下）
+  // :9-13 GETBIT(FLAG:5,34) → 自定义 COM 菜单（待办，占位行见下）
   era.println(); // :14 PRINTL（空行）
   era.drawLine(); // :15 DRAWLINE
   // :16 RESETCOLOR —— 无 ere 对应语义，不镜像
@@ -51,7 +51,7 @@ on('SHOW_USERCOM', async (usable = []) => {
   era.println(); // 按钮组收尾换行
   // :17-36 能力表示[100] 污秽表示[101]（交代助手[102]/对换调教[112] 有
   // 守卫）避孕套设定[103]；:38-84 过滤[104-108]；:85-90 调教菜单[990-992]
-  // ——整组按钮欠账，一行占位（含可检索的原作函数名）
+  // ——整组按钮待办，一行占位（含可检索的原作函数名）
   era.print(
     '（能力表示/污秽表示/避孕套设定/过滤/调教菜单等按钮尚未移植，此处为占位——原作 @SHOW_USERCOM（SHOW_CHARA_INFO 等），随调教 UI 票，见 docs/stub-registry.md。）',
   );
@@ -60,7 +60,7 @@ on('SHOW_USERCOM', async (usable = []) => {
   era.printButton('调教结束', 999);
   era.println(); // :92 PRINTL
   // :93-100 ＜上次的调教指令：…＞（PREVCOM > -1；名字 = @P_C 的 TRAINNAME，
-  // TRAIN_NAME 定制名欠账——直接读静态名表）
+  // TRAIN_NAME 定制名待办——直接读静态名表）
   if (era_flag.prevcom > -1) {
     era.print(
       `＜上次的调教指令：${era.get(`traincommandname:${era_flag.prevcom}`) ?? ''}＞`,

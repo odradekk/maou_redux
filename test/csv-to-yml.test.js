@@ -528,15 +528,15 @@ test('CLI：--chara 走角色表路径（skip/force/未知参数/缺参数）', 
 
 // —— 同步守护：入库产物与源 CSV 的转换结果不得漂移 ——
 //
-// 引擎对拍（test/chara-yml.test.js）对 `基礎`/`素質` 这类预设行天然盲：
+// 引擎比对（test/chara-yml.test.js）对 `基礎`/`素質` 这类预设行天然盲：
 // Base/Talent 表尚未进 yml/，引擎装载时两侧同样丢弃它们，产物里的值改坏也
 // 看不出来（验收变异实测：把 "素質" 的 1 改成 0，129 条全绿）。本用例
 // 不经引擎、直接比对转换结果，把产物的每一个字节钉住。
-// #38 起 Base/Talent 已入库，引擎对拍不再盲，但守护继续留守：它盯的是
+// #38 起 Base/Talent 已入库，引擎比对不再盲，但守护继续留守：它盯的是
 // 字节而非装载结果，能在「表被人工改坏、恰好两条装载路径同错」时报警。
 // 变量表（Talent/Item）同样适用；Base.yml 是人工表、无 CSV 源，不在其列。
 // #43 起调教域六张表（Palam/Source/Abl/Exp/Mark/TrainCommand）纳入同一
-// 守护——「两条装载路径同错」的盲区对逐字段对拍仍然存在，字节层不留窗。
+// 守护——「两条装载路径同错」的盲区对逐字段比对仍然存在，字节层不留窗。
 // #60 起**直比**：T20 归一（繁/日产物名→简体）在生成器内部完成
 // （csv-to-yml.js 的 emit_product_lines），「产物长什么样」的规格在生成器、
 // 不在测试——本守护因此不再替转换结果补归一，生成器漏归一会直接红。
@@ -845,7 +845,7 @@ test('CLI：--table traincommand 解析 Train.csv，产物名 TrainCommand.yml�
       'utf8',
     );
     assert.ok(product.includes('"爱抚":'));
-    assert.ok(product.includes('issue #43'), '新表头注引用本票');
+    assert.ok(product.includes('issue #43'), '新表头注引用这张票');
     assert.ok(product.includes('--force --table traincommand'));
 
     // 表名大小写不敏感（与既有 --table 行为一致）

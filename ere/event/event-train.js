@@ -9,7 +9,7 @@
  * 对应 TRAIN_MAIN.ERB 的 #PRI 定义，注册于模块顶层。直线赋值 1:1 照搬，
  * test/event-train.test.js 对写入做全量断言（意外写入当场暴露）。
  *
- * 掉不进去的与欠账的（docs/stub-registry.md）：
+ * 掉不进去的与待办的（docs/stub-registry.md）：
  *   - TSTR:90（前回指令名暂存）无 ere 落点——唯一写点 @P_C 经 PREVCOM > -1
  *     守卫，零指令下不可达；
  *   - TRAIN_NAME_INIT（自定义指令名表 TRAIN_NAME 的初始化）：静态名表已由
@@ -25,7 +25,7 @@ const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = ['TRAIN_NAME_INIT', 'PRITRAIN_MESSAGE'];
 
@@ -36,7 +36,7 @@ const STUBBED_CALLS = ['TRAIN_NAME_INIT', 'PRITRAIN_MESSAGE'];
  *   - CFLAG:TARGET:10 += 1（调教回数，累计计数）；
  *   - T:10/11/12 = MASTER/TARGET/ASSI（「避免角色错乱的暂存纪录」，
  *     @EVENTEND 复位角色时读回，TRAIN_MAIN.ERB:320-323）。
- * 消息体（:16-201 的省略设定/初调教/着衣/素质分支叙事）存根化，登记欠账。
+ * 消息体（:16-201 的省略设定/初调教/着衣/素质分支叙事）存根化，登记待办。
  */
 async function pritrain_message_head() {
   // :7-8 调教経験を加算：CFLAG:TARGET:10 += 1
@@ -103,7 +103,7 @@ on(
     era.set('tflag:402', 0);
 
     // :52-53 初始化 TRAIN_NAME（存根：自定义指令名表，静态名已由
-    // TrainCommand.yml 承载，见文件头欠账说明）
+    // TrainCommand.yml 承载，见文件头待办说明）
     stub_line('TRAIN_NAME_INIT', '自定义指令名初始化');
 
     // :55 CALL PRITRAIN_MESSAGE（承载头部移植 + 消息体存根）

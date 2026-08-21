@@ -24,7 +24,7 @@
  * CFLAG:301 <= 5/4/3/2/1，写入 6/5/4/3/2——FLAG:7 == 2（默认）时上限被
  * 旁路、同支每次出声；FLAG:7 == 1 时逐阶段各出一次声。无随机分支。
  *
- * 本票存根（docs/stub-registry.md）：COLOSSEUM_KOJO_5 与 SELECTCOM != 0
+ * 这张票存根（docs/stub-registry.md）：COLOSSEUM_KOJO_5 与 SELECTCOM != 0
  * 的其余指令分支（随各自指令票）。
  */
 
@@ -40,7 +40,7 @@ const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 对账钉死）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = ['COLOSSEUM_KOJO_5', 'KOJO_MESSAGE_COM_5'];
 
@@ -186,7 +186,7 @@ async function kojo_message_com_5() {
     return 0; // :846
   }
 
-  // :848 ENDIF（IF SELECTCOM == 0 的收口）——其余指令欠账，占位一行
+  // :848 ENDIF（IF SELECTCOM == 0 的收口）——其余指令待办，占位一行
   stub_line(
     'KOJO_MESSAGE_COM_5',
     `指令 ${era_flag.selectcom} 的口上`,

@@ -5,7 +5,7 @@
  * palamname:3 / 'palamkeys'；夹具是平表，用例须自行预置这些键。名字的
  * 唯一真身是 yml 产物本身——这里直接解析其 `"名":\n  id: N` 形状（零
  * 依赖，不引 yaml 库；产物正确性另由 test/chara-yml.test.js 用引擎代码
- * 对拍，两层不重复）。
+ * 比对，两层不重复）。
  */
 
 const fs = require('node:fs');
