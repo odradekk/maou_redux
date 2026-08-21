@@ -17,7 +17,7 @@
 export const ENGINE_CONTRACT_LEDGER = [
   {
     id: 'printAndWait-internal-wait',
-    desc: 'printAndWait 的内部等待不镜像：引擎 = print + waitAnyKey 两步组合（app.asar 逐字），夹具只 print——waits / inputs_consumed 只记显式 waitAnyKey，缝对「等待」的观测方式由 fixture 用例钉住',
+    desc: 'printAndWait 的内部等待不镜像：引擎 = print + waitAnyKey 两步组合（app.asar 逐字），夹具只 print——waits / inputs_consumed 只记显式 waitAnyKey，注入点对「等待」的观测方式由 fixture 用例钉住',
     witness: 'printAndWait 的内部等待',
   },
   {

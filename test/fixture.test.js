@@ -1,7 +1,7 @@
 /**
  * @file 测试夹具自身的契约测试。
  *
- * 夹具是全项目唯一的一处缝（见 issue #16）：
+ * 夹具是全项目唯一的一处注入点（见 issue #16）：
  * 加载真实 SDK 文件，替换 require('#/era-electron') 返回的对象，
  * 让游戏代码在不启动 Electron GUI 的情况下可测。
  */
@@ -166,7 +166,7 @@ test('printAndWait 输出计入 lines', async () => {
   assert.deepEqual(fixture.text_lines(), ['按任意键继续']);
 });
 
-test('printAndWait 不进 waits（缝对等待的观测统一走显式 waitAnyKey）', async () => {
+test('printAndWait 不进 waits（注入点对等待的观测统一走显式 waitAnyKey）', async () => {
   // 引擎 printAndWait = print + waitAnyKey 两步组合（app.asar 逐字）。夹具
   // 有意不镜像内部等待：inputs_consumed / waits 只记录显式 waitAnyKey，
   // 否则 kojo 全链的消费序列会把「打印+等」翻倍。这条钉住「故意不镜像」
