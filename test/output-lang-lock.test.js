@@ -25,9 +25,9 @@
  *
  * 探针自证（#46 验收的做法固化成测试）：锁跑绿之后，往 ere/ 塞一个带违规
  * 输出的探针模块、重扫、必须红且点名探针文件——证明「新塞进 ere/ 的模块
- * 自动受锁」，而不是只在既有文件上凑绿。探针放 ere/ 根（不放 kojo/，避免
- * 与并行运行的 kojo-text-fidelity.test.js 的 require 期扫描互踩），用完
- * try/finally 删净。
+ * 自动受锁」，而不是只在既有文件上凑绿。探针住**临时副本**（#89 三轮整改：
+ * 就地写真树 ere/ 会与并行测试的递归拷贝撞车——cpSync 枚举后条目消失即
+ * ENOENT），副本按清单只拷 ere/，用完 try/finally 还原（清单回拷）。
  */
 
 'use strict';
@@ -35,7 +35,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { test } = require('node:test');
+const { after, test } = require('node:test');
 
 const {
   find_offenders,
@@ -43,6 +43,7 @@ const {
   load_table,
   scan_string_literals,
 } = require('../tools/lang-normalize');
+const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const ERE_DIR = path.join(REPO_ROOT, 'ere');
@@ -64,8 +65,8 @@ function walk(dir, ext, out = []) {
 /**
  * 扫一遍 ere/ + yml/，返回违规清单。
  *
- * @param {string} [ere_dir] 覆盖 ere 目录（探针自证用临时副本时不必——
- *   探针直接写进真 ere/，这里不参数化，锁必须扫的就是真目录）
+ * @param {string} [ere_dir] 覆盖 ere 目录（探针自证传临时副本的 ere/；
+ *   默认真树——锁必须扫的就是真目录）
  * @returns {{problems: string[], js_files: number, yml_files: number,
  *   literals: number}}
  */
@@ -148,20 +149,38 @@ test('ere/ 与 yml/ 的玩家可见文本全部为简体（表外字符即红）
   );
 });
 
-// —— 探针自证：新塞进 ere/ 的模块自动受锁 ——
+// —— 探针自证：新塞进 ere/ 的模块自动受锁（探针住临时副本，#89）——
+
+const PROBE_REPO_ENTRIES = ['ere'];
+
+let probe_repo_cache;
+
+/** 单例副本（本文件的探针共用一份；文件内用例串行） */
+function probe_repo() {
+  probe_repo_cache ??= make_probe_repo(PROBE_REPO_ENTRIES);
+  return probe_repo_cache;
+}
+
+after(() => {
+  if (probe_repo_cache) {
+    fs.rmSync(probe_repo_cache, { recursive: true, force: true });
+  }
+});
 
 test('探针：往 ere/ 塞违规模块，锁必须点名它（自动纳入后来者）', () => {
-  const probe_rel = path.join(ERE_DIR, '__lang_lock_probe__.js');
+  const root = probe_repo();
+  const ere_copy = path.join(root, 'ere');
+  const probe = path.join(ere_copy, '__lang_lock_probe__.js');
   const cleanup = () => {
-    if (fs.existsSync(probe_rel)) {
-      fs.unlinkSync(probe_rel);
+    if (fs.existsSync(probe)) {
+      fs.unlinkSync(probe);
     }
   };
   cleanup(); // 上一次异常退出留下的残骸先清
   try {
-    const before_count = walk(ERE_DIR, '.js').length;
+    const before_count = walk(ere_copy, '.js').length;
     fs.writeFileSync(
-      probe_rel,
+      probe,
       [
         '// 探针模块（test/output-lang-lock.test.js 写入，跑完即删）：',
         '// 三类违规各一——字级（繁体）、词级（日文残留词）、假名。',
@@ -173,13 +192,10 @@ test('探针：往 ere/ 塞违规模块，锁必须点名它（自动纳入后�
       ].join('\n'),
       'utf8',
     );
-    const { problems, js_files } = scan_repo();
-    // 并行容忍：node --test 并行跑测试文件，trace-check 等探针也会往 ere/
-    // 塞临时文件——两次全目录计数之间多出别人的探针不是失明（#92 在无引擎
-    // Linux 复跑时实测撞过：前 52 后 54）。本探针在 scan_repo 时必然在场，
-    // 故取 >=；真正「锁对新增文件不失明」的证明在下面 probe_hits 的点名。
+    const { problems, js_files } = scan_repo(ere_copy);
+    // 副本是私有地（无并行写者），计数是确定性的——探针必然被扫到
     assert.ok(
-      js_files >= before_count + 1,
+      js_files === before_count + 1,
       `探针没被扫到（前 ${before_count} 后 ${js_files}）——锁对新增文件失明`,
     );
     const probe_hits = problems.filter((p) =>
@@ -204,10 +220,11 @@ test('探针：往 ere/ 塞违规模块，锁必须点名它（自动纳入后�
   } finally {
     cleanup();
   }
-  // 删净之后锁恢复（也证明探针真的进过扫描）
-  const after = scan_repo();
+  // 还原（清单回拷）之后再扫必须无探针（也证明探针真的进过扫描）
+  refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  const after_scan = scan_repo(ere_copy);
   assert.ok(
-    after.problems.every((p) => !p.includes('__lang_lock_probe__')),
-    '探针删了还在红——文件系统或扫描有一边不对',
+    after_scan.problems.every((p) => !p.includes('__lang_lock_probe__')),
+    '探针删了还在红——副本或扫描有一边不对',
   );
 });
