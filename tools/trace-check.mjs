@@ -1829,9 +1829,10 @@ const LOG_REFS = [
     ],
   },
   {
-    // 变异驱动器的 find 串逐字引用 replay.js 的证据注释——引用的引用同样
-    // 进锁：find 里的行号被改错，这里先红（比驱动器的「出现次数≠1」更早）
-    js: 'tools/mutation-check.mjs',
+    // 变异台账（#89 起住在 tools/mutations/pipeline.mjs）的 find 串逐字引用
+    // replay.js 的证据注释——引用的引用同样进锁：find 里的行号被改错，
+    // 这里先红（比驱动器的「出现次数≠1」更早）
+    js: 'tools/mutations/pipeline.mjs',
     refs: [{ ref: '34', any: [/^阴核\s+5240\+\s+300/m] }],
   },
 ];

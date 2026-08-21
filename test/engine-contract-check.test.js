@@ -3,12 +3,24 @@
  * 三道门的每一条都要在退出码里生效——探针写坏规则靶子 / 伪造引擎 / 改坏
  * 台账，工具必须非 0 且点名；引擎缺失时必须退 0 并警告（skip 语义）。
  * 本文件不持事实表、基线或台账的副本（数据只在 tools/ 的三份源文件与工具
- * 内嵌基线里），只验行为——「规则写在测试里而工具声称在守、退出码却是
+ * 内嵌基线里），只验行为——「规则写在测试里而工具声称自己在守、退出码却是
  * 0」是 trace-check 整改时的教训。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  * 伪造引擎用 test/helpers/fake-asar.js 构造的最小 asar（同款头结构），
  * 不碰真实引擎。
+ *
+ * 写坏型探针一律住在**临时仓库副本**里（#89 整改的阻断 2，两轮）：node
+ * --test 并行跑测试文件，就地改 ere/page/page-train.js 这类工作树文件会
+ * 与并行读者撞车（16 核 Linux 五跑四红）；而副本若整棵拷 ere/，递归拷贝
+ * 在乎的不是内容是「条目在不在」，并行的探针在 ere/ 里增删文件会让
+ * cpSync 中途 ENOENT（Windows npm test 7/9 红的回归形态）。故副本按
+ * **清单最小拷贝**（PROBE_REPO_ENTRIES：工具本体 + 事实表 + 台账 + 全仓
+ * 唯一的 progress 调用点 + 见证所在的夹具——门 A 在副本里扫 ere/ 只见
+ * page-train.js，调用点 1 处与真树合计一致，判定可平移）；副本进程内
+ * 单例、文件内用例串行复用，finally 用清单回拷还原。副本的 tools/ 在
+ * 运行时从真树拷入，变异到工具本体的条目仍传得进副本。只读型探针
+ * （伪造 asar、全绿对照）仍跑真树真工具——它们不写任何东西，无竞态可言。
  */
 
 'use strict';
@@ -18,21 +30,19 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { test } = require('node:test');
+const { after, test } = require('node:test');
 
 const { build_asar, build_renderer_map } = require('./helpers/fake-asar');
+const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'engine-contract-check.mjs');
-const FACTS = path.join(REPO_ROOT, 'tools', 'engine-contract-facts.mjs');
-const LEDGER = path.join(REPO_ROOT, 'tools', 'engine-contract-ledger.mjs');
-const PAGE_TRAIN = path.join(REPO_ROOT, 'ere', 'page', 'page-train.js');
 
 // 事实表在 tools/ 侧是 ESM（与检查器同源）；Node 22.12+ 的 require(esm)
 // 可同步引入无顶级 await 的模块——只为取锚点字面造伪造渲染包，不复制表
 const { ENGINE_FACTS } = require('../tools/engine-contract-facts.mjs');
 
-/** 跑一遍工具，返回 { status, output }；extra_env 可注入 ERE_ENGINE_ASAR */
+/** 跑一遍真树工具，返回 { status, output }；extra_env 可注入 ERE_ENGINE_ASAR（只读探针用） */
 function run_tool(args = [], extra_env = {}) {
   const r = spawnSync(process.execPath, [TOOL, ...args], {
     cwd: REPO_ROOT,
@@ -40,6 +50,44 @@ function run_tool(args = [], extra_env = {}) {
     maxBuffer: 16 * 1024 * 1024,
     env: { ...process.env, ...extra_env },
   });
+  return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
+}
+
+// 探针副本清单（最小集）+ 进程内单例：写坏型探针的私有地
+const PROBE_REPO_ENTRIES = [
+  'tools/engine-contract-check.mjs',
+  'tools/engine-contract-facts.mjs',
+  'tools/engine-contract-ledger.mjs',
+  'ere/page/page-train.js',
+  'test/helpers/era-fixture.js',
+];
+
+let probe_repo_cache;
+
+/** 单例副本（本文件全部写坏型探针共用一份；文件内用例串行） */
+function probe_repo() {
+  probe_repo_cache ??= make_probe_repo(PROBE_REPO_ENTRIES);
+  return probe_repo_cache;
+}
+
+after(() => {
+  if (probe_repo_cache) {
+    fs.rmSync(probe_repo_cache, { recursive: true, force: true });
+  }
+});
+
+/** 跑副本里的工具（写坏型探针用，与 run_tool 同款返回） */
+function run_tool_in(root, args = []) {
+  const r = spawnSync(
+    process.execPath,
+    [path.join(root, 'tools', 'engine-contract-check.mjs'), ...args],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      maxBuffer: 16 * 1024 * 1024,
+      env: { ...process.env },
+    },
+  );
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
@@ -69,16 +117,18 @@ test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 台账两道�
 });
 
 test('调用点规则：barWidth 常量改成 24 必须红且点名（#74 形态的守门）', () => {
-  const original = fs.readFileSync(PAGE_TRAIN, 'utf8');
-  const anchor = 'const PALAM_PROGRESS_BAR_WIDTH = 16;';
-  assert.ok(original.includes(anchor), '探针锚行不在 page-train.js 里？');
+  const root = probe_repo();
   try {
+    const page_train = path.join(root, 'ere', 'page', 'page-train.js');
+    const original = fs.readFileSync(page_train, 'utf8');
+    const anchor = 'const PALAM_PROGRESS_BAR_WIDTH = 16;';
+    assert.ok(original.includes(anchor), '探针锚行不在 page-train.js 里？');
     fs.writeFileSync(
-      PAGE_TRAIN,
+      page_train,
       original.replace(anchor, 'const PALAM_PROGRESS_BAR_WIDTH = 24;'),
       'utf8',
     );
-    const { status, output } = run_tool();
+    const { status, output } = run_tool_in(root);
     assert.notEqual(
       status,
       0,
@@ -89,20 +139,28 @@ test('调用点规则：barWidth 常量改成 24 必须红且点名（#74 形态
       `探针未被点名：\n${output}`,
     );
     assert.ok(output.includes('越界'), `报错应说明越界（1..23）：\n${output}`);
+    // 还原副本后再跑必须绿——证明上面的红确实来自探针，不是副本本身破损
+    fs.writeFileSync(page_train, original, 'utf8');
+    const restored = run_tool_in(root);
+    assert.equal(
+      restored.status,
+      0,
+      `探针还原后还红——副本或真树有一边不对：\n${restored.output}`,
+    );
   } finally {
-    fs.writeFileSync(PAGE_TRAIN, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
-  assert.equal(restored.status, 0, `探针删了还红：\n${restored.output}`);
 });
 
 test('调用点规则：删掉 config（不显式传 barWidth）必须红', () => {
-  const original = fs.readFileSync(PAGE_TRAIN, 'utf8');
-  const anchor = 'config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },';
-  assert.ok(original.includes(anchor), '探针锚行不在 page-train.js 里？');
+  const root = probe_repo();
   try {
-    fs.writeFileSync(PAGE_TRAIN, original.replace(anchor, ''), 'utf8');
-    const { status, output } = run_tool();
+    const page_train = path.join(root, 'ere', 'page', 'page-train.js');
+    const original = fs.readFileSync(page_train, 'utf8');
+    const anchor = 'config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },';
+    assert.ok(original.includes(anchor), '探针锚行不在 page-train.js 里？');
+    fs.writeFileSync(page_train, original.replace(anchor, ''), 'utf8');
+    const { status, output } = run_tool_in(root);
     assert.notEqual(
       status,
       0,
@@ -113,20 +171,21 @@ test('调用点规则：删掉 config（不显式传 barWidth）必须红', () =
       `探针未被点名：\n${output}`,
     );
   } finally {
-    fs.writeFileSync(PAGE_TRAIN, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
-  assert.equal(restored.status, 0, `探针删了还红：\n${restored.output}`);
 });
 
 test('规则阈值来自事实表（同一条事实不抄两遍）：改表里的 max，规则跟着变', () => {
   // 把事实表的 max 从 23 放宽到 24，再把调用点改成 24——工具必须转绿：
   // 证明阈值读的是共享事实表，检查器里没有第二份数字
-  const facts_original = fs.readFileSync(FACTS, 'utf8');
-  const page_original = fs.readFileSync(PAGE_TRAIN, 'utf8');
+  const root = probe_repo();
   try {
+    const facts = path.join(root, 'tools', 'engine-contract-facts.mjs');
+    const page_train = path.join(root, 'ere', 'page', 'page-train.js');
+    const facts_original = fs.readFileSync(facts, 'utf8');
+    const page_original = fs.readFileSync(page_train, 'utf8');
     fs.writeFileSync(
-      FACTS,
+      facts,
       facts_original.replace(
         'min: 1,\n      max: 23,',
         'min: 1,\n      max: 24,',
@@ -134,7 +193,7 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
       'utf8',
     );
     fs.writeFileSync(
-      PAGE_TRAIN,
+      page_train,
       page_original.replace(
         'const PALAM_PROGRESS_BAR_WIDTH = 16;',
         'const PALAM_PROGRESS_BAR_WIDTH = 24;',
@@ -143,7 +202,7 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
     );
     // 引擎缺失环境下锚点门本就跳过，此探针只看规则门：显式指一个不存在的
     // asar，把锚点门摘出去
-    const { status, output } = run_tool([
+    const { status, output } = run_tool_in(root, [
       '--asar',
       'Z:\\definitely\\missing.asar',
     ]);
@@ -153,11 +212,8 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
       `max 放宽到 24 后 barWidth=24 应放行（阈值与事实表同源）：\n${output}`,
     );
   } finally {
-    fs.writeFileSync(FACTS, facts_original, 'utf8');
-    fs.writeFileSync(PAGE_TRAIN, page_original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
-  assert.equal(restored.status, 0, `探针还原后还红：\n${restored.output}`);
 });
 
 test('锚点失配 → 硬红报「引擎变了」并点名事实（伪造 asar 探针）', () => {
@@ -238,13 +294,15 @@ test('引擎缺失 → 退 0 并警告（skip 语义，不是失守）', () => {
 });
 
 test('台账只能变短：基线外新条目必须红且点名', () => {
-  const original = fs.readFileSync(LEDGER, 'utf8');
-  const anchor = "  {\n    id: 'waitanykey-fromclear-useRule',";
-  assert.ok(original.includes(anchor), '探针锚行不在台账里——台账结构变了？');
-  const probe = `  {\n    id: 'probe-outside-baseline',\n    desc: '探针：基线外条目',\n    witness: '不存在的见证串',\n  },\n${anchor}`;
+  const root = probe_repo();
   try {
-    fs.writeFileSync(LEDGER, original.replace(anchor, probe), 'utf8');
-    const { status, output } = run_tool([
+    const ledger = path.join(root, 'tools', 'engine-contract-ledger.mjs');
+    const original = fs.readFileSync(ledger, 'utf8');
+    const anchor = "  {\n    id: 'waitanykey-fromclear-useRule',";
+    assert.ok(original.includes(anchor), '探针锚行不在台账里——台账结构变了？');
+    const probe = `  {\n    id: 'probe-outside-baseline',\n    desc: '探针：基线外条目',\n    witness: '不存在的见证串',\n  },\n${anchor}`;
+    fs.writeFileSync(ledger, original.replace(anchor, probe), 'utf8');
+    const { status, output } = run_tool_in(root, [
       '--asar',
       'Z:\\definitely\\missing.asar',
     ]);
@@ -258,24 +316,31 @@ test('台账只能变短：基线外新条目必须红且点名', () => {
         output.includes('不在 #91 基线内'),
       `探针条目未被以基线名义点名：\n${output}`,
     );
+    fs.writeFileSync(ledger, original, 'utf8');
+    const restored = run_tool_in(root);
+    assert.equal(
+      restored.status,
+      0,
+      `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
+    );
   } finally {
-    fs.writeFileSync(LEDGER, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
-  assert.equal(restored.status, 0, `台账还原后还红：\n${restored.output}`);
 });
 
 test('台账不许发霉：见证注释不在夹具里的条目必须红', () => {
-  const original = fs.readFileSync(LEDGER, 'utf8');
-  const anchor = "witness: 'setBack/setOverlay 的独立',";
-  assert.ok(original.includes(anchor), '探针锚行不在台账里——台账结构变了？');
+  const root = probe_repo();
   try {
+    const ledger = path.join(root, 'tools', 'engine-contract-ledger.mjs');
+    const original = fs.readFileSync(ledger, 'utf8');
+    const anchor = "witness: 'setBack/setOverlay 的独立',";
+    assert.ok(original.includes(anchor), '探针锚行不在台账里——台账结构变了？');
     fs.writeFileSync(
-      LEDGER,
+      ledger,
       original.replace(anchor, "witness: '不在夹具里的见证串 xyz',"),
       'utf8',
     );
-    const { status, output } = run_tool([
+    const { status, output } = run_tool_in(root, [
       '--asar',
       'Z:\\definitely\\missing.asar',
     ]);
@@ -288,9 +353,14 @@ test('台账不许发霉：见证注释不在夹具里的条目必须红', () =>
       output.includes('setback-setoverlay-rearm') && output.includes('发霉'),
       `发霉条目未被逐条点名：\n${output}`,
     );
+    fs.writeFileSync(ledger, original, 'utf8');
+    const restored = run_tool_in(root);
+    assert.equal(
+      restored.status,
+      0,
+      `台账还原后还红——副本或真树有一边不对：\n${restored.output}`,
+    );
   } finally {
-    fs.writeFileSync(LEDGER, original, 'utf8');
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool();
-  assert.equal(restored.status, 0, `台账还原后还红：\n${restored.output}`);
 });

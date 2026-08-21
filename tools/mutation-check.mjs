@@ -1,1863 +1,615 @@
-// 变异测试驱动器（issue #44 验收自证）
-// 用法：node tools/mutation-check.mjs
-// 每条变异 = { file, find, replace, desc, tests（应失败的测试文件，不含 .test.js）, expect_only }
-//   find 必须在文件中恰好出现一次；替换后运行 tests，期望 exit code != 0（有红）
-//   expect_only（可选）：在输出中必须能找到的失败用例名片段，证明红的正是被测行为
-// 流程：备份 → 改坏 → 跑 → 断言红 → 还原。任一环节失败即整体退出码 1。
+// 变异测试驱动器（issue #44 建立；#89 重构为「台账 sidecar + 分层执行点」）。
+//
+// 守什么：测试是否真的守得住它声称守护的行为——把被测代码改坏一小块
+// （变异），对应测试必须红；红不了 = 假绿。它因此是「验证其余检查器
+// 真的守得住」的那一个：trace-check / domain-check / engine-contract-check /
+// compare 的行为锁各有变异条目钉在台账里。
+//
+// 形态（#89 两问之「形态」）：
+//   变异记录按靶文件目录分片住在 tools/mutations/*.mjs（加载时动态收账，
+//   新增分片文件即入账，无需登记）。desc 里的 M 编号是历史惯性编号
+//   （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配——引用
+//   变异时用运行时生成的稳定短号 [M-xxxxxxxx]（desc 内容哈希）或直接
+//   引 desc。字段：
+//     { desc, file, find, replace, tests, must_mention }
+//   - find 必须在靶文件中恰好出现 1 次（失配 = 硬红：靶代码被重构后，
+//     工具当场红而不是静默失守——这条安全性质不许拆）；
+//   - tests = 应变红的测试文件名（不含 test/ 前缀与 .test.js 后缀）；
+//   - must_mention = 测试输出里必须能找到的片段，证明红的正是被测行为。
+//     语义是「输出包含该片段」，不是「只有它红了」——按实义命名
+//     （旧名 expect_only 名不副实，#89 改名），必填，无弱路径。
+//
+// 台账三道门（照 #72 domain-check 的两道门形状，多一道测试文件存在性）：
+//   1. 计数门：台账条数必须等于 LEDGER_COUNT_BASELINE——增删条目必须
+//      显式改这份常量，搬家丢条目、悄悄混条目都在版本库差异里看得见；
+//   2. 失配门：每条 find 在靶文件中恰好 1 次，靶文件必须存在；
+//   3. 测试文件门：tests 引用的 test/<名字>.test.js 必须存在——文件
+//      不存在时 node --test 因「找不到文件」退出非 0，形同假拦截。
+//
+// 用法：
+//   node tools/mutation-check.mjs                        全量（串行，就地变异+还原）
+//   node tools/mutation-check.mjs --verify               只跑三道门（秒级；进 npm test 的快档）
+//   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（CI 的 PR 档）
+//   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档）
+//   --root <dir>            变异所在的仓库根（默认本工具的上级；测试夹具用）
+//   --ledger-dir <dir>      台账目录（默认 tools/mutations；测试夹具用）
+//   --baseline <n>          覆盖计数门基线（测试夹具用）
+//   --skip-baseline <n|off> 覆盖无引擎跳过基线（测试夹具与并行子进程用）
+//   --slice <i> <k>         只跑 sha1(desc) % k === i 的条目（并行子进程用）
+//   --asar <path|none>      显式指引擎 asar（none = 视为无引擎；给了就不再
+//                           三址回落，所指不存在按无引擎处理——测试与诊断
+//                           用，与 tools/engine-contract-check.mjs 同款口径）
+//
+// 退出码：全拦 = 0（无引擎环境下另允许「跳过数恰等于基线」）；任何
+// 失配、假绿、还原失败、副本破损 = 1。测试驱动工具看退出码，不在测试
+// 里复制基线（trace-check 的整改教训：规则写在测试里而不在工具里，
+// 工具会声称自己在守、退出码却是 0）。
+//
+// 无引擎环境（CI runner）：变异靶的测试若整组引擎门控（engine-bundle
+// 找不到 asar 时逐用例 skip 并打警告），该条分类为「跳过（门控测试绿 +
+// 缺引擎警告）」——分类是纯输出判定，不掺环境；总数对 ENGINE_SKIP_
+// BASELINE 对账、偏离即红——引擎对拍的覆盖面收缩必须是有意识的提交
+// （与 test/engine-skip-baseline.txt 同一口径）。
+// **对账只在全量档生效**：基线是全量口径的不变量，抽样/切片子集没有
+// 期望跳过数，不对账（见 verdict_problems）。**引擎在场时跳过数必须为
+// 0，任何档位都是硬判**——这条否决权集中在 verdict_problems，与分类
+// 分离，行为锁可直接钉（#89 二次验收的探针 G）。CI 的「跳过」仍是弱
+// 路径：无引擎处真假绿分不清，硬口径以有引擎的本地全量为准。
+//
+// 并行模式（--jobs K）用隔离临时副本：主树只读，每个子进程在自己那份
+// 副本里就地变异（副本 = ere/yml/res/test/tools/ownership/target 等白名单
+// 条目，测试零第三方依赖，node_modules 与引擎不进副本）。副本先跑一遍
+// 不变异的对照全量——副本缺文件会表现为测试红，不先对照会被误判成
+// 「变异被拦截」，是并行模式假绿的最大来源。
 
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const REPO = new URL('..', import.meta.url).pathname.replace(
-  /^\/([A-Za-z]:)/,
-  '$1',
-);
+const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
+const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 
-const MUTATIONS = [
-  {
-    desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
-    file: 'ere/system/train/train-loop.js',
-    find: `    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
-    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
-    const usable = await scan_usable_commands();
+/**
+ * 台账计数基线（门 1）：条数只能通过显式改这份常量来变。
+ * 增 = 新变异落地（公告）；减 = 变异被删（也应是公告）。
+ */
+const LEDGER_COUNT_BASELINE = 186;
 
-    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
-    // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit('SHOW_USERCOM', usable);`,
-    replace: `    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
-    // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit('SHOW_USERCOM', []);
+/**
+ * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
+ * 门控的条目数。当前 7 条 = M112/M113/M115（portcflag 预设对拍）+
+ * M127（资源缺省配置对拍）+ M167/M169/M171（夹具的引擎镜像语义）。
+ * 新变异若只被引擎对拍用例守护，此数会涨——那意味着该变异在 CI 上只被
+ * 「跳过」覆盖，改这份常量时想清楚。
+ */
+const ENGINE_SKIP_BASELINE = 7;
 
-    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
-    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
-    const usable = await scan_usable_commands();`,
-    tests: ['train-loop'],
-    expect_only: '回调顺序',
-  },
-  {
-    desc: 'M2 COM_ABLE 默认值：未定义改为不可执行（whenMissing 1 → 0）',
-    file: 'ere/system/train/train-loop.js',
-    find: 'const able = await com_able_family.call(id, { whenMissing: 1 });',
-    replace: 'const able = await com_able_family.call(id, { whenMissing: 0 });',
-    tests: ['train-loop'],
-    expect_only: '未定义即视为可执行',
-  },
-  {
-    desc: 'M3 999 出口：@USERCOM 不再发起 BEGIN AFTERTRAIN',
-    file: 'ere/page/page-usercom.js',
-    find: `  if (result === 999) {
-    // :173-175 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
-    begin(STATE.AFTERTRAIN);
-  }`,
-    replace: `  if (result === 999) {
-    // 变异：不发起转场
-  }`,
-    tests: ['train-loop', 'page-usercom'],
-    expect_only: '端到端',
-  },
-  {
-    desc: 'M4 EVENTCOMEND 目标死亡分支：FLAG:35 判据取反',
-    file: 'ere/event/event-comend.js',
-    find: '  if (stamina <= 0 && auto_end_flag === 0) {',
-    replace: '  if (stamina <= 0 && auto_end_flag !== 0) {',
-    tests: ['event-comend'],
-    expect_only: '死亡消息',
-  },
-  {
-    desc: 'M5 EVENTCOMEND 助手衰弱分支：凭空加 FLAG:35 守卫（原作无）',
-    file: 'ere/event/event-comend.js',
-    find: `  } else if (stamina < 500) {
-    // :302-307 衰弱（无 FLAG:35 守卫——开关只管目标侧）`,
-    replace: `  } else if (stamina < 500 && era.get('flag:35')) {
-    // 变异：加了原作没有的 FLAG:35 守卫`,
-    tests: ['event-comend'],
-    expect_only: '分支 4',
-  },
-  {
-    desc: 'M6 EVENTTRAIN 全量：删掉一笔直线赋值（BASE:MASTER:4 = 0）',
-    file: 'ere/event/event-train.js',
-    find: `    // :22 BASE:MASTER:4 = 0（触手射精槽）
-    era.set('base:0:4', 0);`,
-    replace: `    // :22 BASE:MASTER:4 = 0（触手射精槽）——变异：删除`,
-    tests: ['event-train'],
-    expect_only: '全量断言',
-  },
-  {
-    desc: 'M7 EVENTTRAIN/PRITRAIN 暂存：SIF ASSI 的非零判定改成大于零',
-    file: 'ere/event/event-train.js',
-    find: `  era_flag.target_backup = target;
-  if (era_flag.assi) {
-    era_flag.assi_backup = era_flag.assi;`,
-    replace: `  era_flag.target_backup = target;
-  if (era_flag.assi > 0) {
-    era_flag.assi_backup = era_flag.assi;`,
-    tests: ['event-train'],
-    expect_only: '全量断言',
-  },
-  {
-    desc: 'M8 SELECT_TARGET 取消：999 返回 1（假选中）',
-    file: 'ere/page/page-select-target.js',
-    find: `    if (result === 999) {
-      // :294-296 返回 → RETURN 0
-      return 0;
-    }`,
-    replace: `    if (result === 999) {
-      // 变异：返回 1
-      return 1;
-    }`,
-    tests: ['page-select-target', 'page-shop'],
-    expect_only: '取消',
-  },
-  {
-    desc: 'M9 SELECT_TARGET 选中：漏写 FLAG:1（前回调教目标）',
-    file: 'ere/page/page-select-target.js',
-    find: `      era_flag.target = result;
-      era.set('flag:1', result);
-      return 1;`,
-    replace: `      era_flag.target = result;
-      return 1;`,
-    tests: ['page-select-target'],
-    expect_only: 'FLAG:1',
-  },
-  {
-    desc: 'M10 IS_TRAINABLE：删掉占用判据（CFLAG:x:1）',
-    file: 'ere/page/page-select-target.js',
-    find: `  // :111-112 SIF CFLAG:ARG:1 != 0 → 2
-  if ((era.get(\`cflag:\${cid}:1\`) || 0) !== 0) {
-    return 2;
-  }`,
-    replace: `  // :111-112 变异：删掉占用判据`,
-    tests: ['page-select-target'],
-    expect_only: 'IS_TRAINABLE',
-  },
-  {
-    desc: 'M11 PRINT_PALAM 百分比：满刻度改用当前等级阈值（而非下一级）',
-    file: 'ere/page/page-train.js',
-    find: '    const next_threshold = PALAMLV[level + 1];',
-    replace: '    const next_threshold = PALAMLV[level];',
-    tests: ['page-train'],
-    expect_only: '手算基线',
-  },
-  {
-    desc: 'M12 PRINT_PALAM 条后数值丢失（outContent 空——语义值载体没了，对拍未解释）',
-    file: 'ere/page/page-train.js',
-    find: "      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),",
-    replace: "      outContent: '', // 变异：数值丢失",
-    tests: ['page-train', 'compare-first-turn'],
-    expect_only: '条后数值',
-  },
-  {
-    desc: 'M13 回合循环：删掉全角色 NOWEX 清零（步骤 10）',
-    file: 'ere/system/train/train-loop.js',
-    find: `      // 10. 全角色 NOWEX 清零
-      clear_nowex_all();
-      // 11. @EVENTCOM（函数体在 event/event-com.js）`,
-    replace: `      // 10. 变异：NOWEX 不清零
-      // 11. @EVENTCOM（函数体在 event/event-com.js）`,
-    tests: ['train-loop'],
-    expect_only: '回调顺序',
-  },
-  {
-    desc: 'M14 SELECTCOM 来源：输入检查不再设定 SELECTCOM（步骤 9）',
-    file: 'ere/system/train/train-loop.js',
-    find: `      // 9. 输入检查通过 → SELECTCOM = 输入
-      era_flag.selectcom = result;`,
-    replace: `      // 9. 变异：不设 SELECTCOM`,
-    tests: ['train-loop'],
-    expect_only: '回调顺序',
-  },
-  {
-    desc: 'M15 AFTERTRAIN 收尾：endTrain 挪到 @EVENTEND 链之前',
-    file: 'ere/system/train/train-loop.js',
-    find: `  const pending = await emit('EVENTEND');
-  era.endTrain();
-  return pending;`,
-    replace: `  era.endTrain();
-  const pending = await emit('EVENTEND');
-  return pending;`,
-    tests: ['train-loop'],
-    expect_only: 'run_aftertrain',
-  },
-  {
-    desc: 'M16 SELECT_TARGET 翻页：开窗判据边界错一格（下界改开区间）',
-    file: 'ere/page/page-select-target.js',
-    find: '    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
-    replace:
-      '    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
-    tests: ['page-select-target'],
-    expect_only: '翻页',
-  },
-  {
-    desc: 'M17 TURNEND 壳出口：BEGIN SHOP 改 BEGIN TITLE（回不到主菜单）',
-    file: 'ere/event/event-turnend.js',
-    find: '    begin(STATE.SHOP);',
-    replace: '    begin(STATE.TITLE);',
-    tests: ['train-loop'],
-    expect_only: '端到端',
-  },
-  {
-    desc: 'M18 100 分支守卫：育儿室判据取反（10 改 11，守卫永不成立）',
-    file: 'ere/page/page-shop.js',
-    find: "    if ((era.get('cflag:0:1') || 0) === 10) {",
-    replace: "    if ((era.get('cflag:0:1') || 0) === 11) {",
-    tests: ['page-shop'],
-    expect_only: '育儿室',
-  },
-  {
-    desc: 'M19 EVENTEND 死亡删除：漏除名（DELCHARA）',
-    file: 'ere/event/event-end.js',
-    find: `      stub_line('PARTY_CHAR_DEL', '队伍移除');
-      // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）
-      era.removeCharacter(target);`,
-    replace: `      stub_line('PARTY_CHAR_DEL', '队伍移除');
-      // 变异：不除名`,
-    tests: ['event-end'],
-    expect_only: '除名',
-  },
-  {
-    desc: 'M20 EVENTEND 指针还原：尾部读错槽（target_record 改 master_backup）',
-    file: 'ere/event/event-end.js',
-    find: `    era_flag.assi = era_flag.assi_record;
-    era_flag.target = era_flag.target_record;`,
-    replace: `    era_flag.assi = era_flag.assi_record;
-    era_flag.target = era_flag.master_backup;`,
-    tests: ['event-end'],
-    expect_only: '主体',
-  },
-  {
-    desc: 'M21 珠梯子：PALAMLV:3*2 档丢失乘数（3000 档直接给 100）',
-    file: 'ere/system/train/juel-check.js',
-    find: '  [PALAMLV[3] * 2, 100],',
-    replace: '  [PALAMLV[3], 100],',
-    tests: ['juel-check'],
-    expect_only: '26 个边界',
-  },
-  {
-    desc: 'M22 绝顶加成：EX:0 的 ×1000 改 ×100',
-    file: 'ere/system/train/juel-check.js',
-    find: '      era.set(`gotjuel:${cid}:0`, gain + (era.get(`ex:${cid}:0`) || 0) * 1000);',
-    replace:
-      '      era.set(`gotjuel:${cid}:0`, gain + (era.get(`ex:${cid}:0`) || 0) * 100);',
-    tests: ['juel-check'],
-    expect_only: '结算表第 0 行',
-  },
-  {
-    desc: 'M23 加算对象混入 3（润滑不是保有珠）',
-    file: 'ere/system/train/juel-check.js',
-    find: 'const OWNED_JUEL_KEYS = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];',
-    replace:
-      'const OWNED_JUEL_KEYS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];',
-    tests: ['juel-check'],
-    expect_only: '职责划分',
-  },
-  {
-    desc: 'M24 双重结算：删掉结算尾部的 gotjuel 清零',
-    file: 'ere/system/train/juel-check.js',
-    find: `  for (const key of OWNED_JUEL_KEYS) {
-    era.set(\`gotjuel:\${cid}:\${key}\`, 0);
+/** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
+const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
+
+/**
+ * 并行副本不携带的顶层条目（拒绝清单而非白名单：仓库里凡测试可能读到
+ * 的数据目录——docs/、ownership/、target/ 等——一律自动入副本；漏带会
+ * 表现为对照运行红，而不是变异被误判拦截）。引擎目录与 node_modules
+ * 体积大且测试不依赖（测试零第三方依赖，引擎对拍走三址回落）。
+ */
+const COPY_DENY = new Set([
+  '.git',
+  '.claude',
+  '.factory',
+  'node_modules',
+  'ere-4.8.0-win-x64',
+  'sav',
+  'test-report.tap',
+]);
+
+// —— 参数 ——
+
+function parse_args(argv) {
+  const out = {
+    verify: false,
+    sample: undefined,
+    seed: '',
+    jobs: 1,
+    slice: undefined,
+    root: DEFAULT_ROOT,
+    ledger_dir: DEFAULT_LEDGER_DIR,
+    baseline: LEDGER_COUNT_BASELINE,
+    skip_baseline: undefined,
+    asar: undefined,
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    const next = () => argv[(i += 1)];
+    if (a === '--verify') out.verify = true;
+    else if (a === '--sample') out.sample = Number(next());
+    else if (a === '--seed') out.seed = String(next());
+    else if (a === '--jobs') out.jobs = Math.max(1, Number(next()));
+    else if (a === '--slice')
+      out.slice = [Number(argv[(i += 1)]), Number(argv[(i += 1)])];
+    else if (a === '--root') out.root = path.resolve(String(next()));
+    else if (a === '--ledger-dir')
+      out.ledger_dir = path.resolve(String(next()));
+    else if (a === '--baseline') out.baseline = Number(next());
+    else if (a === '--skip-baseline') out.skip_baseline = String(next());
+    else if (a === '--asar') out.asar = String(next());
+    else throw new Error(`未知参数：${a}`);
   }
-  return 0; // :740 RETURN 0`,
-    replace: `  return 0; // :740 RETURN 0`,
-    tests: ['juel-check'],
-    expect_only: '职责划分',
-  },
-  {
-    desc: 'M25 相殺取量：否定余量减半改三分之一',
-    file: 'ere/system/train/juel-check.js',
-    find: '    let take = Math.floor(negative() / 2); // LOCAL:1 = JUEL:100 / 2',
-    replace:
-      '    let take = Math.floor(negative() / 3); // LOCAL:1 = JUEL:100 / 2',
-    tests: ['juel-check'],
-    expect_only: '逐轮减半',
-  },
-  {
-    desc: 'M26 相殺钳制：池子存量不足不再整池扣走',
-    file: 'ere/system/train/juel-check.js',
-    find: `    if (pool_value(pick) < take) {
-      take = pool_value(pick); // :631-632 池子存量不足就整池扣走
-    }`,
-    replace: `    // 变异：不按池子存量钳制`,
-    tests: ['juel-check'],
-    expect_only: '池子存量不足',
-  },
-  {
-    desc: 'M27 相殺兜底：余量取半为 0 时改扣 2（原作扣 1）',
-    file: 'ere/system/train/juel-check.js',
-    find: '      take = 1; // :629-630 否定未清零时至少扣 1',
-    replace: '      take = 2; // :629-630 否定未清零时至少扣 1',
-    tests: ['juel-check'],
-    expect_only: '改扣 1',
-  },
-  {
-    desc: 'M28 TFLAG 快照：槽位错一格（+51 改 +52）',
-    file: 'ere/system/train/juel-check.js',
-    find: '    era.set(`tflag:${count + 51}`, era.get(`juel:${cid}:${count + 4}`) || 0);',
-    replace:
-      '    era.set(`tflag:${count + 52}`, era.get(`juel:${cid}:${count + 4}`) || 0);',
-    tests: ['juel-check'],
-    expect_only: 'TFLAG 快照',
-  },
-  {
-    desc: 'M29 TFLAG:58：否定快照读错槽（juel:100 改 juel:99）',
-    file: 'ere/system/train/juel-check.js',
-    find: "  era.set('tflag:58', era.get(`juel:${cid}:100`) || 0); // :624",
-    replace: "  era.set('tflag:58', era.get(`juel:${cid}:99`) || 0); // :624",
-    tests: ['juel-check'],
-    expect_only: 'TFLAG 快照',
-  },
-  {
-    desc: 'M30 相殺两组先后：LABEL_1/LABEL_2 对调',
-    file: 'ere/system/train/juel-check.js',
-    find: `  offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_1 恭顺/欲情/屈服
-  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_2 耻情/苦痛/恐怖`,
-    replace: `  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_1 恭顺/欲情/屈服
-  offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_2 耻情/苦痛/恐怖`,
-    tests: ['juel-check'],
-    expect_only: '两组先后',
-  },
-  {
-    desc: 'M31 交互循环出口：999 改 998（退出键失效）',
-    file: 'ere/system/train/juel-check.js',
-    find: `    if (result === 999) {
-      break; // :540-541 → $LABEL_EXIT（能力值提高结束）
-    }`,
-    replace: `    if (result === 998) {
-      break; // :540-541 → $LABEL_EXIT（能力值提高结束）
-    }`,
-    tests: ['juel-check', 'train-loop'],
-    expect_only: '选 999 退出',
-  },
-  {
-    desc: 'M32 自动升级开关：GETBIT 位 35 改 34',
-    file: 'ere/system/train/juel-check.js',
-    find: "    if (getbit(era.get('flag:5'), 35)) {",
-    replace: "    if (getbit(era.get('flag:5'), 34)) {",
-    tests: ['juel-check'],
-    expect_only: '自动升级',
-  },
-  {
-    desc: 'M33 基础行格式：) 与 = 之间的 12 空格少 2 格',
-    file: 'ere/system/train/juel-check.js',
-    find: '      { content: \')            = \' }, // :687 PRINT ) + 12 空格 + "= "',
-    replace:
-      '      { content: \')          = \' }, // :687 PRINT ) + 12 空格 + "= "',
-    tests: ['juel-check'],
-    expect_only: '结算表第 0 行',
-  },
-  {
-    desc: 'M34 FIGURE_INDENT：8 位右对齐改 7 位',
-    file: 'ere/system/train/juel-check.js',
-    find: 'const figure_indent = (n) => String(n).padStart(8);',
-    replace: 'const figure_indent = (n) => String(n).padStart(7);',
-    tests: ['juel-check'],
-    expect_only: '结算表第 0 行',
-  },
-  {
-    desc: 'M35 SHOW_JUEL 数值列：右对齐宽 6 改 5',
-    file: 'ere/page/page-ablup.js',
-    find: '    row += ` ${name}点数：${String(value).padStart(6)}`; // {JUEL,6,RIGHT}',
-    replace:
-      '    row += ` ${name}点数：${String(value).padStart(5)}`; // {JUEL,6,RIGHT}',
-    tests: ['juel-check'],
-    expect_only: 'SHOW_JUEL 三行',
-  },
-  {
-    desc: 'M36 等级行公式：本级需求 lv*10+10 改 lv*10+5',
-    file: 'ere/page/page-info-exp.js',
-    find: `    // :1051-1053 其余
-    need = lv * 10 + 10;`,
-    replace: `    // :1051-1053 其余
-    need = lv * 10 + 5;`,
-    tests: ['juel-check'],
-    expect_only: 'SHOW_INFO_EXP 的经验行',
-  },
-  {
-    desc: 'M37 否定汇入：GOTJUEL:100 的累加改覆盖（反感/不快/抑郁只剩其一）',
-    file: 'ere/system/train/juel-check.js',
-    find: '      era.add(`gotjuel:${cid}:100`, gain);',
-    replace: '      era.set(`gotjuel:${cid}:100`, gain);',
-    tests: ['juel-check'],
-    expect_only: '结算表第 11 行',
-  },
-  {
-    desc: 'M38 能力分支：命中表判假（@ABLUPxx 占位不再出现）',
-    file: 'ere/system/train/juel-check.js',
-    find: '    if (ABLUP_IDS.includes(result)) {',
-    replace: '    if (false && ABLUP_IDS.includes(result)) {',
-    tests: ['juel-check'],
-    expect_only: '能力分支',
-  },
-  // —— #45（指令 0 爱抚 + @SOURCE_CHECK）——
-  {
-    desc: 'M39 COM_ABLE0 爱抚系过滤：FLAG:25 & 1 判据删掉',
-    file: 'ere/system/train/com0-caress.js',
-    find: `  if ((era.get('flag:25') || 0) & 1) {
-    return 0;
-  }`,
-    replace: '  // 变异：过滤判据删除',
-    tests: ['com0-caress'],
-    expect_only: 'COM_ABLE0',
-  },
-  {
-    desc: 'M40 COM_ABLE0 决斗中判据删掉（TEQUIP:55）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  if (era.get(`tequip:${era_flag.target}:55`)) {\n    return 0;\n  }',
-    replace: '  // 变异：决斗判据删除',
-    tests: ['com0-caress'],
-    expect_only: 'COM_ABLE0',
-  },
-  {
-    desc: 'M41 ABL:0 分档表错一格（1200 改 1201）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  [1200, 100],',
-    replace: '  [1201, 100],',
-    tests: ['com0-caress'],
-    expect_only: '= 3 档',
-  },
-  {
-    desc: 'M42 ABL:1 分档表错一格（300 改 301）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  [300, 80],',
-    replace: '  [301, 80],',
-    tests: ['com0-caress'],
-    expect_only: '= 2 档',
-  },
-  {
-    desc: 'M43 初吻回避判据取反（CFLAG:16 === -1 改 !== -1）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  if ((era.get(`cflag:${target}:16`) || 0) === -1) {',
-    replace: '  if ((era.get(`cflag:${target}:16`) || 0) !== -1) {',
-    tests: ['com0-caress'],
-    expect_only: '初吻未体验',
-  },
-  {
-    desc: 'M44 爱慕的加倍删掉（SOURCE:3 × 2）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '      set_src(3, src(3) * 2);',
-    replace: '      // 变异：加倍删除',
-    tests: ['com0-caress'],
-    expect_only: '爱慕',
-  },
-  {
-    desc: 'M45 百合经验的性别判定短路',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  if (!target_male && !player_male) {',
-    replace: '  if (false) {',
-    tests: ['com0-caress'],
-    expect_only: '百合经验',
-  },
-  {
-    desc: 'M46 调教者技巧阶梯废掉（恒 ×1.0）',
-    file: 'ere/event/source-check.js',
-    find: '  const rate = pabl(12) >= 5 ? rates[5] : rates[pabl(12)];',
-    replace: '  const rate = 1.0;',
-    tests: ['source-check'],
-    expect_only: '技巧',
-  },
-  {
-    desc: 'M47 欲情系数的边界改为含下界（< 改 <=）',
-    file: 'ere/event/source-check.js',
-    find: '    if (p5 < PALAMLV[table[i][0]]) {',
-    replace: '    if (p5 <= PALAMLV[table[i][0]]) {',
-    tests: ['source-check'],
-    expect_only: '欲情系数',
-  },
-  {
-    desc: 'M48 ABL>5 的放大算式错一格（+5 改 +4）',
-    file: 'ere/event/source-check.js',
-    find: '  local0 = idiv(local0 * (abl(0) + 5), 10);',
-    replace: '  local0 = idiv(local0 * (abl(0) + 4), 10);',
-    tests: ['source-check'],
-    expect_only: '技巧 0 档',
-  },
-  {
-    desc: 'M49 绝顶阈值错档（PALAMLV[4] 改 PALAMLV[3]）',
-    file: 'ere/event/source-check.js',
-    find: '  const LV4 = PALAMLV[4]; // 10000',
-    replace: '  const LV4 = PALAMLV[3]; // 变异：阈值错档',
-    tests: ['source-check'],
-    expect_only: '阴蒂绝顶',
-  },
-  {
-    desc: 'M50 NOWEX 只写不并被破坏（直接并进 EX → 与引擎双重累加）',
-    file: 'ere/event/source-check.js',
-    find: '  era.set(`nowex:${cid}:0`, ex_c);',
-    replace: '  era.add(`ex:${cid}:0`, ex_c);',
-    tests: ['source-check'],
-    expect_only: 'NOWEX',
-  },
-  {
-    desc: 'M51 体力气力扣减的去零钳制删掉',
-    file: 'ere/event/source-check.js',
-    find: '        next = Math.max(Math.min(next, max), 0);',
-    replace: '        next = next;',
-    tests: ['source-check'],
-    expect_only: '气力耗尽',
-  },
-  {
-    desc: 'M52 TFLAG:59 读了新 PREVCOM（应为旧值）',
-    file: 'ere/event/source-check.js',
-    find: "  era.set('tflag:59', era_flag.prevcom);",
-    replace: "  era.set('tflag:59', era_flag.selectcom);",
-    tests: ['source-check'],
-    expect_only: '黄金样本',
-  },
-  {
-    desc: 'M53 参数行的缺段空格错一（DOWN 缺段 7 改 8）',
-    file: 'ere/event/source-check.js',
-    find: "          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(7)) +",
-    replace:
-      "          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(8)) +",
-    tests: ['source-check'],
-    expect_only: '黄金样本',
-  },
-  {
-    desc: 'M54 PRINTW 点线错一（39 改 38）',
-    file: 'ere/event/source-check.js',
-    find: "  era.print('‥'.repeat(39));",
-    replace: "  era.print('‥'.repeat(38));",
-    tests: ['source-check'],
-    expect_only: '黄金样本',
-  },
-  {
-    desc: 'M55 回合循环的 SOURCE_CHECK 槽位删掉',
-    file: 'ere/system/train/train-loop.js',
-    find: `      const source_pending = await emit('SOURCE_CHECK');
-      if (source_pending !== undefined) {
-        return source_pending;
-      }`,
-    replace: '      // 变异：SOURCE_CHECK 槽位删除',
-    tests: ['source-check'],
-    expect_only: '端到端',
-  },
-  {
-    desc: 'M56 指令按钮渲染删掉（回到 [999] 单按钮）',
-    file: 'ere/page/page-usercom.js',
-    find: "    era.printButton(`${era.get(`traincommandname:${id}`) ?? ''}`, id);",
-    replace: '    // 变异：按钮渲染删除',
-    tests: ['source-check'],
-    expect_only: '端到端',
-  },
-  // —— #46（口上切片：K3 高貴 + K5 マオ，验证决议 #8）——
-  {
-    desc: 'M57 口上总开关守卫删松（<= 0 改 < 0，flag:7 = 0 不再拦）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "  if ((era.get('flag:7') || 0) <= 0) {",
-    replace: "  if ((era.get('flag:7') || 0) < 0) {",
-    tests: ['kojo-system'],
-    expect_only: '完全不输出',
-  },
-  {
-    desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '  if ((era.get(`flag:${local}`) || 0) === 0) {',
-    replace: '  if (false) { // 变异：存在判定删除',
-    tests: ['kojo-system'],
-    expect_only: '存在判定',
-  },
-  {
-    desc: 'M59 分发接线：TRYCALLFORM 拼名偏移（local - 100 改 - 101）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '    await kojo_message_com_family.call(local - 100, {',
-    replace: '    await kojo_message_com_family.call(local - 101, {',
-    tests: ['kojo-system'],
-    expect_only: '空间内缺失',
-  },
-  {
-    desc: 'M60 K5 首次状态推进写错（CFLAG:301 = 1 改 2）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: '      kojo.爱抚 = 1; // :813',
-    replace: '      kojo.爱抚 = 2; // :813（变异）',
-    tests: ['kojo-k5', 'kojo-system'],
-    expect_only: '推进到 1',
-  },
-  {
-    desc: 'M61 K3 首次状态推进写错（CFLAG:301 = 1 改 2）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: '      kojo.爱抚 = 1; // :930',
-    replace: '      kojo.爱抚 = 2; // :930（变异）',
-    tests: ['kojo-k3'],
-    expect_only: '推进到 1',
-  },
-  {
-    desc: 'M62 K5 首次刻印分档边界（MARK:2 >= 2 改 >= 3）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: '      if (mark(2) >= 2) {',
-    replace: '      if (mark(2) >= 3) {',
-    tests: ['kojo-k5'],
-    expect_only: '只出一句',
-  },
-  {
-    desc: 'M63 K5 淫乱素质判据错格（TALENT:76 改 77）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: '      era.get(`talent:${target}:76`) === 1 &&',
-    replace: '      era.get(`talent:${target}:77`) === 1 &&',
-    tests: ['kojo-k5'],
-    expect_only: '淫乱分支',
-  },
-  {
-    desc: 'M64 K3 爱慕素质判据错格（TALENT:85 改 86）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: '      era.get(`talent:${target}:85`) === 1 &&',
-    replace: '      era.get(`talent:${target}:86`) === 1 &&',
-    tests: ['kojo-k3'],
-    expect_only: '爱慕分支',
-  },
-  {
-    desc: 'M65 K5 淫乱门槛的 FLAG:7 == 2 旁路失效（改 === 3）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)',
-    replace: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 3)',
-    tests: ['kojo-k5'],
-    expect_only: '阈值闸',
-  },
-  {
-    desc: 'M66 K3 黄金分支条件（RAND:2 == 0 改 == 1）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: '        } else if (rand_n(2) === 0) {\n          await era.printAndWait(\n            `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,',
-    replace:
-      '        } else if (rand_n(2) === 1) {\n          await era.printAndWait(\n            `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,',
-    tests: ['kojo-k3'],
-    expect_only: '黄金样本',
-  },
-  {
-    desc: 'M67 K3 黄金文本逐字（「想要杀了」改「想杀了」）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: '一心地，想要杀了',
-    replace: '一心地，想杀了',
-    tests: ['kojo-k3'],
-    expect_only: '黄金样本',
-  },
-  {
-    desc: 'M68 K3 淫乱阶段推进写错（CFLAG:301 = 600 改 500）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: '      kojo.爱抚 = 600; // :953',
-    replace: '      kojo.爱抚 = 500; // :953（变异）',
-    tests: ['kojo-k3'],
-    expect_only: '淫乱分支',
-  },
-  {
-    desc: 'M69 @EVENTSHOP #PRI 总开关默认值（FLAG:7 = 2 改 1）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "      era.set('flag:7', 2);",
-    replace: "      era.set('flag:7', 1);",
-    tests: ['kojo-system'],
-    expect_only: '@EVENTSHOP',
-  },
-  {
-    desc: 'M70 K5 @EVENTEND #LATER 清标志删除',
-    file: 'ere/kojo/kojo-k5.js',
-    find: '    game.kojo.口上存在_5 = 0; // :88',
-    replace: '    // 变异：清标志删除',
-    tests: ['kojo-system'],
-    expect_only: '清 0',
-  },
-  {
-    desc: 'M71 K3 失神守卫删除（TFLAG:899 改恒 false）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: `  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
-  if (game.train.失神) {`,
-    replace: `  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
-  if (false) { // 变异：失神守卫删除`,
-    tests: ['kojo-k3'],
-    expect_only: '静默跳过',
-  },
-  {
-    desc: 'M72 心形插值丢失（%UNICODE(0x2661)% 映射成空串）',
-    file: 'ere/kojo/kojo-text.js',
-    find: "  return '♡'.repeat(n);",
-    replace: "  return '';",
-    tests: ['kojo-k3', 'kojo-k5'],
-    expect_only: '♡',
-  },
-  {
-    desc: 'M73 自称插值回落错字（「我」改「本人」）',
-    file: 'ere/kojo/kojo-text.js',
-    find: "  return era.get(`cstr:${cid}:60`) || '我';",
-    replace: "  return era.get(`cstr:${cid}:60`) || '本人';",
-    tests: ['kojo-k3'],
-    expect_only: '自称',
-  },
-  // —— #46 验收整改（三处假绿的覆盖缺口：行为用例 + kojo-text-fidelity 锁）——
-  {
-    desc: 'M74 K3 3xx 支的附加条件删除（MARK:1 == 3 臂拿掉）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: `      // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
-      mark(2) === 2 &&
-      mark(1) === 3 &&
-      (kojo.爱抚 <= 299 || game.kojo.口上开关 === 2)`,
-    replace: `      // :1021-1050 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）
-      mark(2) === 2 &&
-      (kojo.爱抚 <= 299 || game.kojo.口上开关 === 2)`,
-    tests: ['kojo-k3'],
-    expect_only: 'MARK:1 == 3',
-  },
-  {
-    desc: 'M75 K3 的 PRINTFORML 映射错变体（:944 print 改 printAndWait）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: `        era.print(
-          \`\${player_name}开始爱抚后、\${target_name}立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。\`,
-        ); // :944 PRINTFORML`,
-    replace: `        await era.printAndWait(
-          \`\${player_name}开始爱抚后、\${target_name}立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。\`,
-        ); // :944 PRINTFORML`,
-    tests: ['kojo-text-fidelity'],
-    expect_only: 'W/L',
-  },
-  {
-    desc: 'M76 K3 插值填错孔（:1076 player 与 target 互换）',
-    file: 'ere/kojo/kojo-k3.js',
-    find: '`${player_name}轻轻地抚摸了一下${target_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,',
-    replace:
-      '`${target_name}轻轻地抚摸了一下${player_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,',
-    tests: ['kojo-text-fidelity', 'kojo-k3'],
-    expect_only: '槽位序',
-  },
-  // —— #60 T20 语言统一：归一表与两道锁的自证 ——
-  {
-    desc: 'M77 归一表删一个实测字种（著→着）',
-    file: 'tools/lang-table.js',
-    find: "  著: '着',",
-    replace: '  // 变异：著→着 删除',
-    tests: ['lang-normalize', 'kojo-text-fidelity'],
-    expect_only: '缺映射',
-  },
-  {
-    desc: 'M78 K5 台词改回繁体（简体锁 + 锁 D 反向 + 行为断言三处红）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: "        await era.printAndWait('「你这个变态…别、别碰我！」'); // :810",
-    replace:
-      "        await era.printAndWait('「你這個變態…別、別碰我！」'); // :810",
-    tests: ['output-lang-lock', 'kojo-text-fidelity', 'kojo-k5'],
-    expect_only: '非简体',
-  },
-  {
-    desc: 'M79 豁免名单删華胥の亡靈条（简体锁必须点名致谢行）',
-    file: 'tools/lang-table.js',
-    find: `  {
-    value:
-      '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
-    where: 'ere/page/page-title.js',
-    why: '口上组致谢名单整行。華胥の亡靈 是贡献者 ID（含日文の与繁体華/靈），其余名字同理不译——对人名/ID 做字符归一会改名。豁免到「字符串整体」，这行被改写时失配变红，改者须有意识地同步本表。',
-  },`,
-    replace: '  // 变异：豁免条目删除',
-    tests: ['output-lang-lock'],
-    expect_only: '華胥の亡靈',
-  },
-  {
-    desc: 'M80 K5 抄错字（归一后锁 D 仍抓：正向片段找不到）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: "        await era.printAndWait('「咕…呜呜…啊！」'); // :807",
-    replace: "        await era.printAndWait('「咕…呜呜…啊呀！」'); // :807",
-    tests: ['kojo-text-fidelity'],
-    expect_only: '未见于 JS',
-  },
-  {
-    desc: 'M81 K5 句中空格丢失（归一后锁 D 仍抓：片段含前导空格）',
-    file: 'ere/kojo/kojo-k5.js',
-    find: '`「主人、再多摸摸我嘛${heart(1)} 舒服的我都要叫出来了啦${heart(1)}」`',
-    replace:
-      '`「主人、再多摸摸我嘛${heart(1)}舒服的我都要叫出来了啦${heart(1)}」`',
-    tests: ['kojo-text-fidelity'],
-    expect_only: '未见于 JS',
-  },
-  {
-    desc: 'M82 词级译法删奴隷→奴隶（转换用例必须红）',
-    file: 'tools/lang-table.js',
-    find: "  { source: '奴隷', target: '奴隶' },",
-    replace: '  // 变异：奴隷 词删除',
-    tests: ['lang-normalize'],
-    expect_only: '奴隷',
-  },
-  {
-    desc: 'M83 生成器去归一（csv-to-yml 不再自应用归一表——验收实测的退回路径）',
-    file: 'tools/csv-to-yml.js',
-    find: `function emit_product_lines(lines) {
-  return to_simplified_yaml(\`\${lines.join('\\n')}\\n\`);
-}`,
-    replace: `function emit_product_lines(lines) {
-  // 变异：生成期归一删除——产物与库内（已归一）不再一致
-  return \`\${lines.join('\\n')}\\n\`;
-}`,
-    tests: ['csv-to-yml'],
-    expect_only: '逐字节一致',
-  },
-  // —— #48 T18 输出对拍：录制器 / 归一化器 / 差异引擎 / 回放的自证 ——
-  {
-    desc: 'M84 夹具 printButton 不记 accelerator（菜单对拍失去编号键）',
-    file: 'test/helpers/era-fixture.js',
-    find: `  const make_button_entry = (content, accelerator, config) => {
-    const text = normalize_content(content);
-    return {
-      type: 'button',
-      text,
-      accelerator,`,
-    replace: `  const make_button_entry = (content, accelerator, config) => {
-    const text = normalize_content(content);
-    return {
-      type: 'button',
-      text,
-      accelerator: undefined, // 变异：不记编号`,
-    tests: ['compare-first-turn', 'page-usercom'],
-    expect_only: '分类计数与当前欠账清单一致',
-  },
-  {
-    desc: 'M85 归一化器样本侧去归一（黄金样本不再过 #60 归一表）',
-    file: 'tools/compare/normalize.js',
-    find: '.map((l) => to_simplified(l));',
-    replace: '.map((l) => l); // 变异：样本侧去归一',
-    tests: ['compare-normalize'],
-    expect_only: '繁/日键名',
-  },
-  {
-    desc: 'M86 归一化器菜单编号解析坏（Number → -1）',
-    file: 'tools/compare/normalize.js',
-    find: "cells.push({ kind: 'menu', key: name, val: Number(inner.trim()) });",
-    replace:
-      "cells.push({ kind: 'menu', key: name, val: -1 }); // 变异：编号解析坏",
-    tests: ['compare-normalize'],
-    expect_only: 'menu 条目',
-  },
-  {
-    desc: 'M87 差异引擎 calc 键忽略全部数值（植入算式缺陷抓不到——检验3b 的靶心）',
-    file: 'tools/compare/diff.js',
-    find: 'return `calc:${entry.key}|${entry.from}|+${entry.add}|-${entry.sub}|=${entry.to}|${entry.phrase}`;',
-    replace: 'return `calc:${entry.key}|${entry.phrase}`; // 变异：数值不进键',
-    tests: ['compare-diff'],
-    expect_only: '加数漂移',
-  },
-  {
-    desc: 'M88 差异引擎 menu 键回退常数（同编号异名被吞——真缺陷出口焊死）',
-    file: 'tools/compare/diff.js',
-    find: '      return `menu:${entry.key}|${entry.val}`;',
-    replace: "      return 'menu:?'; // 变异：标签与编号不进键",
-    tests: ['compare-diff', 'compare-first-turn'],
-    expect_only: '真缺陷出口',
-  },
-  {
-    desc: 'M89 归因规则删 体力 条键（golden 基础条变未解释差异）',
-    file: 'tools/compare/rules.js',
-    find: "const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);",
-    replace:
-      "const STUB_GAUGE_KEYS = new Set(['气力', '射精（你）']); // 变异：体力 删",
-    tests: ['compare-first-turn'],
-    expect_only: '分类计数与当前欠账清单一致',
-  },
-  {
-    desc: 'M90 回放播种改错（阴核初值 5240 → 5200——变量层断言的靶心）',
-    file: 'tools/compare/replay.js',
-    find: '[0, 5240], // 阴核 5240+300=5540（log:34）',
-    replace: '[0, 5200], // 变异：播种值错（log:34）',
-    tests: ['compare-first-turn'],
-    expect_only: '日志算式断言',
-  },
-  {
-    desc: 'M91 回放随机源取错支（RAND_FIX 落到别的台词——确定性回放的靶心）',
-    file: 'tools/compare/replay.js',
-    find: 'const RAND_FIX = 0.4;',
-    replace: 'const RAND_FIX = 0.9; // 变异：错支',
-    tests: ['compare-first-turn'],
-    expect_only: '逐条文本',
-  },
-  {
-    desc: 'M92 回放输入标记不落 lines（窗口两侧不再同构）',
-    file: 'tools/compare/replay.js',
-    find: "    fixture.lines.push({ type: 'input', text: String(value) });",
-    replace: '    // 变异：输入标记不落 lines',
-    tests: ['compare-first-turn'],
-    expect_only: '对拍窗口不完整',
-  },
-  {
-    desc: 'M93 夹具 printMultiColumns 不再记录（print 系覆盖的缺口）',
-    file: 'test/helpers/era-fixture.js',
-    find: `  era.printMultiColumns = (columnObjects) =>
-    push_row((columnObjects ?? []).map(make_grid_entry));`,
-    replace: `  era.printMultiColumns = (columnObjects) =>
-    push_row([]); // 变异：不记录`,
-    tests: ['fixture'],
-    expect_only: 'printMultiColumns',
-  },
-  // —— #68 测试缝的 Row 保真：归并 / 计数 / 删除 / 替换的自证 ——
-  // （#73 给 push_row 补了 lines_history 记录，find/replace 随之同步）
-  {
-    desc: 'M103 Row 归并改坏：一次调用的条目逐格递增（退回逐格计数）',
-    file: 'test/helpers/era-fixture.js',
-    find: `  const push_row = (entries) => {
-    const row = total_rows;
-    entries.forEach((entry) => {
-      entry.row = row;
-      lines.push(entry);
-      lines_history.push(entry);
-    });
-    total_rows += 1;
-    allow_wait = true;
-    return total_rows;
-  };`,
-    replace: `  const push_row = (entries) => {
-    const row = total_rows;
-    entries.forEach((entry) => {
-      entry.row = row;
-      lines.push(entry);
-      lines_history.push(entry);
-      total_rows += 1; // 变异：逐格计数
-    });
-    allow_wait = true;
-    return total_rows;
-  };`,
-    tests: ['fixture'],
-    expect_only: '算一个 Row',
-  },
-  {
-    desc: 'M104 clear 按 Row 删改坏：退回按条目数切（clear(1) 误伤邻行）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    const cut = lines.findIndex(
-      (l) => l.row !== undefined && l.row >= total_rows,
-    );
-    if (cut >= 0) {
-      lines.splice(cut);
-    }`,
-    replace: `    lines.splice(Math.max(0, lines.length - n)); // 变异：按条目数删`,
-    tests: ['fixture'],
-    expect_only: 'clear(1) 只删本行',
-  },
-  {
-    desc: 'M105 替换系改坏：replace_row 只弹一条（多列 Row 换不干净）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    if (row >= 0) {
-      for (let i = lines.length - 1; i >= 0; i -= 1) {
-        if (lines[i].row === row) {
-          lines.splice(i, 1);
-        }
-      }
-    }`,
-    replace: `    if (row >= 0) {
-      lines.pop(); // 变异：只弹一条
-    }`,
-    tests: ['fixture'],
-    expect_only: 'replaceText 换掉最后一个 Row',
-  },
-  {
-    desc: 'M106 getLineCount 改回条目数（多列 Row 计数虚高）',
-    file: 'test/helpers/era-fixture.js',
-    find: '  era.getLineCount = () => total_rows;',
-    replace: '  era.getLineCount = () => lines.length; // 变异：条目数',
-    tests: ['fixture'],
-    expect_only: '算一个 Row',
-  },
-  {
-    desc: 'M107 input 回显计行删除（组件重绘差一行的主路径缺陷回归）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    if (input_echo_adds_row(config)) {
-      total_rows += 1; // this.print(回显值)：+1 Row
-      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
-    }`,
-    replace: '    // 变异：回显不计行',
-    tests: ['fixture'],
-    expect_only: '组件首行残留',
-  },
-  // —— #63 T21 trace 完整性：ERB 侧第三道 + 豁免台账的自证 ——
-  {
-    desc: 'M94 ERB 完整性门焊死（未登记引用不再红——探针用例必须抓到失明）',
-    file: 'tools/trace-check.mjs',
-    find: '    if (!registered?.has(ref) && !exempt.includes(ref)) {',
-    replace:
-      '    if (false && !registered?.has(ref) && !exempt.includes(ref)) {',
-    tests: ['trace-check'],
-    expect_only: '完整性门对后来者失明',
-  },
-  {
-    desc: 'M95 豁免清单偷偷变长（新条目必须撞基线锁）',
-    file: 'tools/trace-exempt.mjs',
-    find: "    '1076',",
-    replace: "    '1076',\n    '999993',",
-    tests: ['trace-check'],
-    expect_only: '只能变短',
-  },
-  {
-    desc: 'M96 锚校验：把 :53 的锚改错（FONTBOLD→FONTBOLDX，行号对但锚不命中）',
-    file: 'tools/trace-check.mjs',
-    find: "      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLD$/m] },",
-    replace: "      { src: DRAW_MAINMENU, ref: '53', any: [/^FONTBOLDX$/m] },",
-    tests: ['trace-check'],
-    expect_only: '未命中任何锚',
-  },
-  {
-    desc: 'M97 引用行号改坏（:53→:48 死代码行——在册校验 + 完整性双红）',
-    file: 'ere/page/page-main-menu.js',
-    find: "      fontWeight: 'bold', // :53 FONTBOLD（整行粗体，片段级携带）",
-    replace:
-      "      fontWeight: 'bold', // :48 FONTBOLD（整行粗体，片段级携带）",
-    tests: ['trace-check'],
-    expect_only: '已不存在',
-  },
-  {
-    desc: 'M98 豁免条目发霉（main-loop 的 :231 改号——台账对账必须红）',
-    file: 'ere/system/flow/main-loop.js',
-    find: '  // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发',
-    replace:
-      '  // 真身出口显式 begin(STATE.SHOP)（:232），此行只在未来的处理器们都不发',
-    tests: ['trace-check'],
-    expect_only: '清单只能变短',
-  },
-  // —— #66 T22 区段所有权扫描器：产物边界 / 同步守护 / 属主决胜 / 跨域滤芯 ——
-  // （#70 重构后 find 同步到新代码；被测规则不变）
-  {
-    desc: 'M99 产物边界失效：所有权表永远强制重写（人工修改不再幸存）',
-    file: 'tools/ownership-scan.js',
-    find: `    reports.push(
-      write_product(
-        path.join(out_dir, \`\${key}-ownership.yml\`),
-        result.tables.get(key).ownership_yaml,
-        {
-          force,
-        },
-      ),
-    );`,
-    replace: `    reports.push(
-      write_product(
-        path.join(out_dir, \`\${key}-ownership.yml\`),
-        result.tables.get(key).ownership_yaml,
-        { force: true },
-      ),
-    );`,
-    tests: ['ownership-scan'],
-    expect_only: '人工修改幸存',
-  },
-  {
-    desc: 'M100 寻址段字符集退回 ASCII（名字下标与 CJK 槽位全丢——同步守护必须红）',
-    file: 'tools/ownership-scan.js',
-    find: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_\\u3000-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\uFF00-\\uFFEF]+)`;',
-    replace: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_]+)`;',
-    tests: ['ownership-scan'],
-    expect_only: '逐字节一致',
-  },
-  {
-    desc: 'M101 属主决胜反转：并列改取后声明者（tflag 夹具的 1:1 并列翻转）',
-    file: 'tools/ownership-scan.js',
-    find: '      if (count > best) {',
-    replace: '      if (count >= best) {',
-    tests: ['ownership-scan'],
-    expect_only: '属主判定',
-  },
-  {
-    desc: 'M102 跨域滤芯反接（只收属主自己的写入——清单测试必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '          entry.index !== null &&\n          owner_of_index.get(entry.index) !== entry.domain,',
-    replace:
-      '          entry.index !== null &&\n          owner_of_index.get(entry.index) === entry.domain,',
-    tests: ['ownership-scan'],
-    expect_only: '跨域写入清单',
-  },
+  return out;
+}
 
-  // —— #70 全表实测：新写形 / 词边界 / 名字下标 / ignored 语义 / 跨域读汇总 ——
-  {
-    desc: 'M128 词边界负向后行被砍（EX_CFLAG 的假写回流——词边界用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: "  return new RegExp(\n    `(?<![0-9A-Za-z_])(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
-    replace:
-      "  return new RegExp(\n    `(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
-    tests: ['ownership-scan'],
-    expect_only: '词边界',
-  },
-  {
-    desc: "M117 字符串赋值 '= 不再算写入（CSTR 写形用例必须红）",
-    file: 'tools/ownership-scan.js',
-    find: "const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^']|<<|>>)?=[ \\t]*[^=]/;",
-    replace: 'const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^]|<<|>>)?=[ \\t]*[^=]/;',
-    tests: ['ownership-scan'],
-    expect_only: '字符串赋值',
-  },
-  {
-    desc: 'M129 后缀 ++/-- 不再算写入（ABL/MARK/CFLAG 自增丢失——写形用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '    if (ASSIGN_OP_RE.test(rest) || POSTFIX_OP_RE.test(rest)) {',
-    replace: '    if (ASSIGN_OP_RE.test(rest)) {',
-    tests: ['ownership-scan'],
-    expect_only: '后缀',
-  },
-  {
-    desc: 'M130 TIMES 不再算写入（SOURCE 乘法赋值全丢——TIMES 用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: "  if (command === 'TIMES') {",
-    replace: "  if (command === 'TIMES_NEVER') {",
-    tests: ['ownership-scan'],
-    expect_only: 'TIMES',
-  },
-  {
-    desc: 'M131 VARSET 区间右端改包含（止端下标也写入——左闭右开用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '      for (let i = Number(start); i < Number(end); i += 1) {',
-    replace: '      for (let i = Number(start); i <= Number(end); i += 1) {',
-    tests: ['ownership-scan'],
-    expect_only: '左闭右开',
-  },
-  {
-    desc: 'M132 名字下标不再归一（繁/日形态查不到表——归一用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: "const { to_simplified } = require('./lang-normalize');",
-    replace: 'const { to_simplified } = { to_simplified: (x) => x };',
-    tests: ['ownership-scan'],
-    expect_only: '归一',
-  },
-  {
-    desc: 'M133 跨域读判定反接（只统计本域读——同步守护与跨域读者锚点必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '        if (reader !== owner) {\n          cross_total += count;',
-    replace: '        if (reader === owner) {\n          cross_total += count;',
-    tests: ['ownership-scan'],
-    expect_only: '逐字节一致',
-  },
-  {
-    desc: 'M134 ignored 文件不再跳过测量（TITLE.ERB 死代码写入回流——ignored 用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '    if (rel.length === 1 && ignored.has(rel[0])) {\n      continue; // 死代码：引擎不装载，整体跳过\n    }',
-    replace: '    void ignored;',
-    tests: ['ownership-scan'],
-    expect_only: 'ignored',
-  },
-  {
-    desc: 'M135 ignored_files 存在性守卫被删（发霉声明不再报错——发霉用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: `  const missing_ignored = domains.ignored_files.filter(
-    (name) => !root_files.includes(name),
+// —— 台账装载与稳定短号 ——
+
+/** desc 的内容哈希短号：引用锚点 [M-xxxxxxxx]，desc 变则号变，无需人工分配 */
+function stable_id(desc) {
+  return `M-${crypto.createHash('sha1').update(desc).digest('hex').slice(0, 8)}`;
+}
+
+function desc_rank(desc) {
+  return parseInt(
+    crypto.createHash('sha1').update(desc).digest('hex').slice(0, 12),
+    16,
   );
-  if (missing_ignored.length > 0) {
-    throw new Error(
-      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据发霉，删掉或改对）\`,
-    );
-  }`,
-    replace: '  void root_files;',
-    tests: ['ownership-scan'],
-    expect_only: '声明了不存在的文件',
-  },
-  {
-    desc: 'M136 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: `  const unclaimed = top_dirs.filter((dir) => !domains.dir_to_domain.has(dir));
-  if (unclaimed.length > 0) {
-    throw new Error(
-      \`ERB 根下有未被域清单认领的一级目录：\${unclaimed.join('、')}（在 ownership/domains.yml 里给它们归属一个域）\`,
-    );
-  }`,
-    replace: '  void top_dirs;',
-    tests: ['ownership-scan'],
-    expect_only: '未认领',
-  },
+}
 
-  // —— #67 自造扩展表 portcflag：接入 / 预设 / 登记 / 名字表的自证 ——
-  {
-    desc: 'M108 村娘加入点漏盖版本戳（init_portcflag 调用删除）',
-    file: 'ere/event/event-first.js',
-    find: `    // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
-    // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
-    // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码对拍）
-    init_portcflag(17);`,
-    replace: '    // 变异：portcflag 版本戳不盖',
-    tests: ['event-first'],
-    expect_only: 'portcflag:17:数据版本',
-  },
-  {
-    desc: 'M109 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
-    file: 'ere/page/page-title.js',
-    find: `      // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
-      // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
-      init_portcflag(0);`,
-    replace: '      // 变异：portcflag 版本戳不盖',
-    tests: ['page-title'],
-    expect_only: 'portcflag:0:数据版本',
-  },
-  {
-    desc: 'M110 版本戳盖错值（PORT_DATA_VERSION 1 改 2）',
-    file: 'ere/chara/chara-portcflag.js',
-    find: 'const PORT_DATA_VERSION = 1;',
-    replace: 'const PORT_DATA_VERSION = 2;',
-    tests: ['event-first', 'page-title'],
-    expect_only: 'portcflag',
-  },
-  {
-    desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机硬崩）',
-    file: 'ere/chara/chara-portcflag.js',
-    find: '  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);',
-    replace: '  return era.set(`portflag:${cid}:数据版本`, PORT_DATA_VERSION);',
-    tests: ['event-first', 'page-title'],
-    expect_only: 'portcflag',
-  },
-  {
-    desc: 'M112 Chara17 预设行被删（预设生效用例必须红）',
-    file: 'yml/Chara17.yml',
-    find: `"portcflag":
-  "数据版本": 0`,
-    replace: '# 变异：portcflag 预设行删除',
-    tests: ['portcflag-table'],
-    expect_only: '预设',
-  },
-  {
-    desc: 'M113 Chara17 预设基线改坏（0 改 3）',
-    file: 'yml/Chara17.yml',
-    find: `"portcflag":
-  "数据版本": 0`,
-    replace: `"portcflag":
-  "数据版本": 3`,
-    tests: ['portcflag-table'],
-    expect_only: '预设',
-  },
-  {
-    desc: 'M114 登记被删（_fixed.json 清空——契约锁必须红）',
-    file: 'yml/_fixed.json',
-    find: `{
-  "system": {
-    "extendedCharaTables": ["portcflag"]
+async function load_ledger(dir) {
+  const names = fs
+    .readdirSync(dir)
+    .filter((n) => n.endsWith('.mjs'))
+    .sort();
+  if (names.length === 0) {
+    throw new Error(`台账目录 ${dir} 里没有 .mjs 分片`);
   }
-}`,
-    replace: `{
-  "system": {
-    "extendedCharaTables": []
+  const entries = [];
+  for (const name of names) {
+    const mod = await import(pathToFileURL(path.join(dir, name)).href);
+    if (!Array.isArray(mod.default)) {
+      throw new Error(`${name} 必须默认导出数组`);
+    }
+    entries.push(...mod.default);
   }
-}`,
-    tests: ['portcflag-table'],
-    expect_only: '登记',
-  },
-  {
-    desc: 'M115 名字表 id 改坏（数据版本 id 0 改 3——装载/寻址/预设全红）',
-    file: 'yml/PortCFlag.yml',
-    find: `"数据版本":
-  id: 0`,
-    replace: `"数据版本":
-  id: 3`,
-    tests: ['portcflag-table'],
-    expect_only: '名字表',
-  },
+  return entries;
+}
 
-  // —— #69（美术与音频进场）的变异自证 ——
-  {
-    desc: 'M116 标题音乐播错曲（TFM-003A_17 → 据点2）',
-    file: 'ere/page/page-title.js',
-    find: "    era.playMusic('TFM-003A_17.mp3', { loop: true });",
-    replace: "    era.playMusic('据点2.mp3', { loop: true });",
-    tests: ['page-title'],
-    expect_only: 'TFM-003A_17',
-  },
-  {
-    desc: 'M117 标题音乐丢循环（{loop:true} → {}——Emuera PLAYBGM 默认循环）',
-    file: 'ere/page/page-title.js',
-    find: "    era.playMusic('TFM-003A_17.mp3', { loop: true });",
-    replace: "    era.playMusic('TFM-003A_17.mp3', {});",
-    tests: ['page-title'],
-    expect_only: '（循环）',
-  },
-  {
-    desc: 'M118 主菜单 BGM 守卫删掉（开关恒真，新档也播）',
-    file: 'ere/page/page-main-menu.js',
-    find: `  if (era_audio.bgm_enabled === 1) {
-    era.playMusic('据点2.mp3', { loop: true });
-  }`,
-    replace: `  era.playMusic('据点2.mp3', { loop: true });`,
-    tests: ['page-main-menu'],
-    expect_only: '新档默认',
-  },
-  {
-    desc: 'M119 播种默认值改坏（音量 66 → 0，原作随包 global.sav 实证 66）',
-    file: 'ere/era-utils/era-global.js',
-    find: '  era_global.title_music_volume = 66;',
-    replace: '  era_global.title_music_volume = 0;',
-    tests: ['era-global', 'page-title'],
-    expect_only: '66',
-  },
-  {
-    desc: 'M120 播种标记守卫删掉（每次进标题都重播、覆盖用户偏好）',
-    file: 'ere/era-utils/era-global.js',
-    find: `  if (era_global.audio_defaults_seeded === 1) {
-    return false;
-  }`,
-    replace: '  // 变异：无标记守卫，每次都播种',
-    tests: ['era-global'],
-    expect_only: '不被覆盖',
-  },
-  {
-    desc: 'M121 标题图守卫删掉（资源未启用也硬输出图片行）',
-    file: 'ere/page/page-title.js',
-    find: `  if (era.checkImage('TITLE')) {
-    era.printWholeImage('TITLE');
-  }`,
-    replace: "  era.printWholeImage('TITLE');",
-    tests: ['page-title'],
-    expect_only: '纯文本兜底',
-  },
-  {
-    desc: 'M122 夹具 playMusic 不再校验类型（图片名也能命中——引擎只认 audio）',
-    file: 'test/helpers/era-fixture.js',
-    find: "    const played =\n      list.find((name) => res_registry.get(name) === 'audio') ?? null;",
-    replace:
-      '    const played = list.find((name) => res_registry.has(name)) ?? null;',
-    tests: ['fixture'],
-    expect_only: '第一个注册音频',
-  },
-  {
-    desc: 'M123 夹具查名不再小写（注册与查名两侧小写是引擎实测语义）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    const results = names.map(
-      (name) => res_registry.get(String(name).toLowerCase()) === 'image',
-    );`,
-    replace: `    const results = names.map(
-      (name) => res_registry.get(String(name)) === 'image',
-    );`,
-    tests: ['fixture'],
-    expect_only: '小写',
-  },
-  {
-    desc: 'M124 注册表漏行（img.csv 删掉 TITLE 注册，引擎装载与引用锁双红）',
-    file: 'res/img.csv',
-    find: 'TITLE,TITLE.png\n',
-    replace: '',
-    tests: ['resource-media'],
-    expect_only: 'TITLE',
-  },
-  {
-    desc: 'M125 playMusic 误计一行（引擎只 connect 不调 addTotalLines——不占 Row 的判断要有用例守）',
-    file: 'test/helpers/era-fixture.js',
-    find: `  era.playMusic = (names, config) => {
-    const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
-    replace: `  era.playMusic = (names, config) => {
-    push_row([]); // 变异：音乐误算一行（派单人独立变异复现过的假绿形态）
-    const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
-    tests: ['fixture'],
-    expect_only: '不占 Row',
-  },
-  {
-    desc: 'M126 默认配置的资源开关被关掉（resource true→false——#69 重开的交付项）',
-    file: 'yml/_config.json',
-    find: '"resource": true,',
-    replace: '"resource": false,',
-    tests: ['resource-media'],
-    expect_only: '版本库默认配置',
-  },
-  {
-    desc: 'M127 默认配置漏键（删 window.audio——缺键被 syncConfig 永久物化的坑）',
-    file: 'yml/_config.json',
-    find: `    "audio": 100,
-    "autoMax": false,`,
-    replace: `    "autoMax": false,`,
-    tests: ['resource-media'],
-    expect_only: '引擎默认配置整份',
-  },
-  // —— #73（画面组件最小集与主菜单迁入）——
-  // 注：编号 M157+ 是占位号（并发分支不从 master 最大号续编，合并时由集成方
-  // 按实际情况统一改号；前四票曾因各自从 M99 起编撞号四次）。
-  {
-    desc: 'M137 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
-    file: 'ere/page/components/screen-block.js',
-    find: '    const span = era.getLineCount() - this.anchor_row;',
-    replace: '    const span = this.row_count;',
-    tests: ['screen-block', 'page-main-menu'],
-    expect_only: '上方内容完好',
-  },
-  {
-    desc: 'M138 重绘不清屏直接重画（退回追加式——屏幕随交互增长）',
-    file: 'ere/page/components/screen-block.js',
-    find: `    const span = era.getLineCount() - this.anchor_row;
-    if (span > 0) {`,
-    replace: `    const span = era.getLineCount() - this.anchor_row;
-    if (span > 0 && false) {`,
-    tests: ['screen-block', 'page-main-menu'],
-    expect_only: '上方内容完好',
-  },
-  {
-    desc: 'M139 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
-    file: 'ere/page/components/screen-block.js',
-    find: `    this.anchor_row = era.getLineCount();
-    await this.draw_content();`,
-    replace: `    await this.draw_content();
-    this.anchor_row = era.getLineCount();`,
-    tests: ['screen-block', 'page-main-menu'],
-    expect_only: '上方内容完好',
-  },
-  {
-    desc: 'M140 行数不测量（row_count 恒 0——「组件自知占几行」失守）',
-    file: 'ere/page/components/screen-block.js',
-    find: '    this.row_count = era.getLineCount() - this.anchor_row;',
-    replace: '    this.row_count = 0;',
-    tests: ['screen-block'],
-    expect_only: '行数测量',
-  },
-  {
-    desc: 'M141 menu_button 删调暗色（未选中态与选中态同色）',
-    file: 'ere/page/components/menu-button.js',
-    find: '    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,',
-    replace: '    undefined,',
-    tests: ['screen-block', 'page-main-menu'],
-    expect_only: '调暗',
-  },
-  {
-    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
-    file: 'ere/page/components/menu-button.js',
-    find: '    `▌${label}`,',
-    replace: '    `[${accelerator}] ▌${label}`,',
-    tests: ['screen-block', 'page-main-menu'],
-    expect_only: '编号前缀',
-  },
-  {
-    desc: 'M143 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
-    file: 'ere/page/page-shop.js',
-    find: '  return main_menu.redraw();',
-    replace: '  return main_menu.draw();',
-    tests: ['page-main-menu'],
-    expect_only: '不涨屏',
-  },
-  {
-    desc: 'M144 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
-    file: 'ere/page/page-shop.js',
-    find: '  const main_menu = create_main_menu();',
-    replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
-  const main_menu = main_menu_singleton;`,
-    tests: ['page-main-menu'],
-    expect_only: '跨会话',
-  },
-  // —— #73 发回整改：分发期输出必须被玩家看到再被重绘清掉 ——
-  {
-    desc: 'M145 分发期存根退回纯 print（stub_line_wait 丢掉等键——玩家看不到）',
-    file: 'ere/utils/stub-line.js',
-    find: `async function stub_line_wait(erb_name, note, owner) {
-  era.print(stub_text(erb_name, note, owner));
-  await era.waitAnyKey();
-}`,
-    replace: `async function stub_line_wait(erb_name, note, owner) {
-  era.print(stub_text(erb_name, note, owner));
-}`,
-    tests: ['page-main-menu'],
-    expect_only: '玩家先看到',
-  },
-  {
-    desc: 'M146 waitAnyKey 无条件等（无输出也记等待——夹具 allowWait 镜像失守）',
-    file: 'test/helpers/era-fixture.js',
-    find: '    const waited = allow_wait || Boolean(force);',
-    replace: '    const waited = true; // 变异：无条件等',
-    tests: ['fixture'],
-    expect_only: '无输出跳过',
-  },
-  {
-    desc: 'M147 输出不再置位 allowWait（有输出也不等——玩家看不到存根）',
-    file: 'test/helpers/era-fixture.js',
-    find: '    allow_wait = true;\n    return total_rows;',
-    replace: '    return total_rows;',
-    tests: ['fixture', 'page-main-menu'],
-    expect_only: '有输出才等键',
-  },
-  // —— #74（归一化器吃结构化记录 + 调教状态画面组件化）——
-  // 注：M148–M156 由集成方在合并时从占位号 M157+ 顺延而来（并发分支不从
-  // master 最大号续编；#73 首次实践零冲突，本票第二次）。
-  {
-    desc: 'M148 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
-    file: 'tools/compare/normalize.js',
-    find: '        val: Number(record.out),',
-    replace: '        val: record.percentage, // 变异：语义值读错',
-    tests: ['compare-normalize', 'compare-first-turn'],
-    expect_only: 'percentage 不进事件流',
-  },
-  {
-    desc: 'M149 归一化器 progress 分支删除（结构化记录从事件流消失——对拍未解释）',
-    file: 'tools/compare/normalize.js',
-    find: "    } else if (record.type === 'progress') {",
-    replace:
-      "    } else if (record.type === 'progress_never') { // 变异：分支删除",
-    tests: ['compare-normalize', 'compare-first-turn'],
-    expect_only: 'progress 记录',
-  },
-  {
-    desc: 'M150 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
-    file: 'ere/page/page-train.js',
-    find: '  if (command_path_seen) {',
-    replace: '  if (!command_path_seen) { // 变异：判据反接',
-    tests: ['page-train'],
-    expect_only: '指令轮追加绘制',
-  },
-  {
-    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
-    file: 'ere/page/page-train.js',
-    find: `on('EVENTTRAIN', () => {
-  status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
-  command_path_seen = false;
-});`,
-    replace: `on('EVENTTRAIN', () => {
-  // 变异：组件不重建
-  command_path_seen = false;
-});`,
-    tests: ['page-train'],
-    expect_only: '跨会话',
-  },
-  {
-    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不留痕）',
-    file: 'ere/page/components/screen-block.js',
-    find: `      const remaining = await era.clear(span);
-      if (remaining !== this.anchor_row) {
-        era.logger.warn(
-          \`画面组件重绘后行数 \${remaining} 未回到锚点 \${this.anchor_row}（清行跨度 \${span}）——存在旁路清行\`,
-        );
-      }`,
-    replace: '      await era.clear(span); // 变异：自校验删除',
-    tests: ['page-train'],
-    expect_only: '旁路清行',
-  },
-  {
-    desc: 'M153 参数条逐格平铺（一次一格——Row 分组丢失，16 格占 16 行）',
-    file: 'ere/page/page-train.js',
-    find: `  for (let row = 0; row < cells.length; row += PALAM_COLUMNS) {
-    era.printMultiColumns(cells.slice(row, row + PALAM_COLUMNS));
-  }`,
-    replace:
-      '  cells.forEach((cell) => era.printMultiColumns([cell])); // 变异：逐格平铺',
-    tests: ['page-train'],
-    expect_only: '16 格原生进度条',
-  },
-  {
-    desc: 'M154 EVENTCOM 探针不翻标志（重复同指令轮被误判成无指令轮——重绘吃叙述）',
-    file: 'ere/page/page-train.js',
-    find: `on('EVENTCOM', () => {
-  command_path_seen = true;
-});`,
-    replace: `on('EVENTCOM', () => {
-  // 变异：探针失灵`,
-    tests: ['page-train'],
-    expect_only: '重复执行同一指令',
-  },
-  {
-    desc: 'M155 barWidth 改 24（引擎缺省值——el-col-0 吞掉全部条后数值，验收实测的全绿假象）',
-    file: 'ere/page/page-train.js',
-    find: 'const PALAM_PROGRESS_BAR_WIDTH = 16;',
-    replace: 'const PALAM_PROGRESS_BAR_WIDTH = 24; // 变异：吞数值列',
-    tests: ['page-train'],
-    expect_only: '条后数值列必须真实渲染',
-  },
-  {
-    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155 形态）',
-    file: 'ere/page/page-train.js',
-    find: '      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },',
-    replace: '      // 变异：config 删除，吃引擎缺省 24',
-    tests: ['page-train'],
-    expect_only: '条后数值列必须真实渲染',
-  },
-  // —— #71（门面生成器：一维按域重切 + 口上域二维切片）——
-  // 注：M157–M160 由集成方在合并时从占位号 M900+ 顺延而来。
-  {
-    desc: 'M157 生成区/手写区：--force 重写整文件而不经标记替换',
-    file: 'tools/gen-facade.js',
-    find: '      replace_generated_section(existing, spec.section()),',
-    replace: '      spec.body,',
-    tests: ['gen-facade'],
-    expect_only: '只替换生成区',
-  },
-  {
-    desc: 'M158 未声明下标读兜底被删（undefined 泄漏给调用方）',
-    file: 'ere/facade/chara-kojo.js',
-    find: '    return era.get(`cflag:${this.cid}:301`) || 0;',
-    replace: '    return era.get(`cflag:${this.cid}:301`);',
-    tests: ['gen-facade'],
-    expect_only: '读写落到正确寻址',
-  },
-  {
-    desc: 'M159 角色视图不再按 ID 缓存（每次 chara(cid) 新对象）',
-    file: 'ere/facade/chara.js',
-    find: `function chara(cid) {
-  const key = Number(cid);
-  let view = cache.get(key);
-  if (!view) {
-    view = new CharaView(key);
-    cache.set(key, view);
+// —— 三道门 ——
+
+function gate_shape(entries) {
+  const errors = [];
+  const seen = new Set();
+  for (const m of entries) {
+    if (typeof m.desc !== 'string' || !m.desc) {
+      errors.push(`条目缺 desc：${JSON.stringify(m).slice(0, 80)}`);
+      continue;
+    }
+    if (seen.has(m.desc)) {
+      errors.push(`desc 重复：${m.desc}`);
+    }
+    seen.add(m.desc);
+    if (typeof m.file !== 'string' || !m.file) {
+      errors.push(`[${m.desc}] 缺 file`);
+    }
+    if (typeof m.find !== 'string' || typeof m.replace !== 'string') {
+      errors.push(`[${m.desc}] find/replace 必须是字符串`);
+    }
+    if (!Array.isArray(m.tests) || m.tests.length === 0) {
+      errors.push(`[${m.desc}] tests 必须是非空数组`);
+    }
+    if (typeof m.must_mention !== 'string' || !m.must_mention) {
+      errors.push(`[${m.desc}] 缺 must_mention（无弱路径，必填）`);
+    }
   }
-  return view;
-}`,
-    replace: `function chara(cid) {
-  return new CharaView(Number(cid));
-}`,
-    tests: ['gen-facade'],
-    expect_only: '按 ID 缓存',
-  },
-  {
-    desc: 'M160 字段同时出现在非属主域（属主过滤被掏空）',
-    file: 'tools/gen-facade.js',
-    find: '.filter(([, owner]) => owner === domain)',
-    replace: '.filter(() => true)',
-    tests: ['gen-facade'],
-    expect_only: '口上域切片缺名',
-  },
-  // —— #72（域边界检查器与存量台账）——
-  // 注：M161–M166 由集成方在合并时从占位号 M900+ 顺延而来。
-  {
-    desc: 'M161 跨域判定被掏空：属主等于本域恒真，跨域写永不成立',
-    file: 'tools/domain-check.mjs',
-    find: '      if (owner === domain) {',
-    replace: '      if (true) {',
-    tests: ['domain-check'],
-    expect_only: '必须红且点名（新文件自动纳入）',
-  },
-  {
-    desc: 'M162 判定依据脱离产物：所有权区间坍缩为单下标，区间尾段全部失主',
-    file: 'tools/domain-check.mjs',
-    find: '    const end = match[2] ? Number(match[2]) : start;',
-    replace: '    const end = start;',
-    tests: ['domain-check'],
-    expect_only: '必须红且点名（新文件自动纳入）',
-  },
-  {
-    desc: 'M163 台账发霉门被拆（count > actual 恒假，消化存量后忘删条目不再红）',
-    file: 'tools/domain-check.mjs',
-    find: '      if (count > actual) {',
-    replace: '      if (false) {',
-    tests: ['domain-check'],
-    expect_only: '发霉',
-  },
-  {
-    desc: 'M164 基线计数门被拆（count > baseline 恒假，抬计数吸收新增欠账不再红）',
-    file: 'tools/domain-check.mjs',
-    find: '      } else if (count > baseline) {',
-    replace: '      } else if (false) {',
-    tests: ['domain-check'],
-    expect_only: '不得超基线',
-  },
-  {
-    desc: 'M165 基线键门被拆（baseline === undefined 恒假，基线外新条目不再红）',
-    file: 'tools/domain-check.mjs',
-    find: '      if (baseline === undefined) {',
-    replace: '      if (false) {',
-    tests: ['domain-check'],
-    expect_only: '只能变短',
-  },
-  {
-    desc: 'M166 包装层白名单退化成目录口子（ere/facade/ 整目录跳过扫描）',
-    file: 'tools/domain-check.mjs',
-    find: '    if (rel === SDK_FILE || WRAPPER_FILES.includes(rel)) {',
-    replace:
-      "    if (rel === SDK_FILE || rel.startsWith('ere/facade/') || WRAPPER_FILES.includes(rel)) {",
-    tests: ['domain-check'],
-    expect_only: '目录逃生门',
-  },
-  // —— #91（引擎语义契约对拍与锚点校核）——
-  // 注：M167–M178 由集成方在合并时从占位号 M900+ 顺延而来。
-  {
-    desc: 'M167 夹具 addTotalLines 镜像不置位（任何输出后 allowWait 恒假）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    total_rows += 1;
-    allow_wait = true;
-    return total_rows;`,
-    replace: `    total_rows += 1;
-    return total_rows;`,
-    tests: ['engine-contract'],
-    expect_only: '逐步一致',
-  },
-  {
-    desc: 'M168 夹具 waitAnyKey 不清零 allowWait（等待消费被漏）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    const waited = allow_wait || Boolean(force);
-    allow_wait = false;`,
-    replace: `    const waited = allow_wait || Boolean(force);`,
-    tests: ['engine-contract', 'fixture'],
-    expect_only: '中途分叉（一）',
-  },
-  {
-    desc: 'M169 夹具 clear 的 setTotalLines 再置位被删（清屏不算新内容）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    if (total_rows !== before) {
-      allow_wait = true;
-    }`,
-    replace: `    // 变异：清屏不再置位`,
-    tests: ['engine-contract'],
-    expect_only: '中途分叉（二）',
-  },
-  {
-    desc: 'M170 夹具 input 回显不计行不置位（#68 形态：Row 记账错位）',
-    file: 'test/helpers/era-fixture.js',
-    find: `      total_rows += 1; // this.print(回显值)：+1 Row
-      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）`,
-    replace: `      // 变异：回显不计行不置位`,
-    tests: ['engine-contract', 'fixture'],
-    expect_only: '#68 形态',
-  },
-  {
-    desc: 'M171 夹具 clear 的 disableClear 短路被拆（配置开着也照清）',
-    file: 'test/helpers/era-fixture.js',
-    find: `    if (system_config.disableClear) {
-      return total_rows;
-    }`,
-    replace: `    // 变异：disableClear 短路被拆`,
-    tests: ['engine-contract'],
-    expect_only: 'disableClear 下 clear 整体无操作',
-  },
-  {
-    desc: 'M172 调用点规则的界值检查被拆（只查下界，barWidth=24 放行）',
-    file: 'tools/engine-contract-check.mjs',
-    find: '      } else if (value < rule.min || value > rule.max) {',
-    replace: '      } else if (value < rule.min) {',
-    tests: ['engine-contract-check'],
-    expect_only: '改成 24',
-  },
-  {
-    desc: 'M173 锚点门被拆（字面消失不红，引擎升版当天守护无声消失）',
-    file: 'tools/engine-contract-check.mjs',
-    find: '      if (!renderer_source.includes(anchor)) {',
-    replace: '      if (false) { // 变异：锚点门拆除',
-    tests: ['engine-contract-check'],
-    expect_only: '锚点失配',
-  },
-  {
-    desc: 'M174 退出码语义被拆（失守也退 0——工具只会打印不会红）',
-    file: 'tools/engine-contract-check.mjs',
-    find: 'process.exit(run() === 0 ? 0 : 1);',
-    replace: 'process.exit(0); // 变异：退出码语义拆除',
-    tests: ['engine-contract-check'],
-    expect_only: '锚点失配',
-  },
-  {
-    desc: 'M175 台账基线门被拆（基线外新条目不再红）',
-    file: 'tools/engine-contract-check.mjs',
-    find: '    if (!LEDGER_BASELINE.includes(entry.id)) {',
-    replace: '    if (false) { // 变异：基线门拆除',
-    tests: ['engine-contract-check'],
-    expect_only: '只能变短',
-  },
-  {
-    desc: 'M176 台账发霉门被拆（见证注释消失不再红）',
-    file: 'tools/engine-contract-check.mjs',
-    find: '    if (!fixture_source.includes(entry.witness)) {',
-    replace: '    if (false) { // 变异：发霉门拆除',
-    tests: ['engine-contract-check'],
-    expect_only: '发霉',
-  },
-  {
-    desc: 'M177 锚点定位器退化成写死哈希文件名（渲染包换名即失明）',
-    file: 'tools/engine-contract-check.mjs',
-    find: 'const RENDERER_MAP_RE = /^js\\/app\\.[0-9a-f]+\\.js\\.map$/;',
-    replace:
-      'const RENDERER_MAP_RE = /^js\\/app\\.2cccec57\\.js\\.map$/; // 变异：写死哈希',
-    tests: ['engine-contract-check'],
-    expect_only: '仍能定位',
-  },
-  {
-    desc: 'M178 engine-bundle 模块号漂移守卫被拆（漂移时炸 TypeError 而非说清引擎变了）',
-    file: 'test/helpers/engine-bundle.js',
-    find: '    !ERA_API_METHODS.every(',
-    replace: '    false && !ERA_API_METHODS.every(',
-    tests: ['engine-contract'],
-    expect_only: '引擎变了',
-  },
-  // —— #90（二维门面按属主域铺开 + source-check 跨域写迁移）——
-  // 注：M179–M185 由集成方在合并时从占位号 M900+ 顺延而来。
-  {
-    desc: 'M179 yml 合流被拆（YML_NAME_FILES 删 mark，mark 名字只剩手写表）',
-    file: 'tools/gen-facade.js',
-    find: "  mark: 'Mark.yml',\n",
-    replace: '',
-    tests: ['gen-facade'],
-    expect_only: '两源合流',
-  },
-  {
-    desc: 'M180 两源冲突检查被拆（名字不一致时静默择手写，不再报错）',
-    file: 'tools/gen-facade.js',
-    find: `    if (from_yml !== manual.name) {
-      throw new Error(
-        \`两源名字不一致 \${table}:\${index}：yml 列名「\${from_yml}」vs facade-names「\${manual.name}」——yml 列名是唯一真相，先对齐再生成\`,
+  return errors;
+}
+
+function gate_count(entries, baseline) {
+  if (entries.length !== baseline) {
+    const dir =
+      entries.length > baseline
+        ? `多出 ${entries.length - baseline} 条（新变异落地须显式抬基线）`
+        : `少了 ${baseline - entries.length} 条（条目丢失或被删，须显式降基线）`;
+    return [`台账条数 ${entries.length} ≠ 基线 ${baseline}：${dir}`];
+  }
+  return [];
+}
+
+function gate_targets(root, entries) {
+  const errors = [];
+  const content_by_file = new Map();
+  for (const m of entries) {
+    if (typeof m.file !== 'string') {
+      continue;
+    }
+    if (!content_by_file.has(m.file)) {
+      const full = path.join(root, m.file);
+      if (!fs.existsSync(full)) {
+        errors.push(`[${m.desc}] 靶文件不存在：${m.file}`);
+        content_by_file.set(m.file, null);
+        continue;
+      }
+      content_by_file.set(m.file, fs.readFileSync(full, 'utf8'));
+    }
+    const content = content_by_file.get(m.file);
+    if (content === null) {
+      continue;
+    }
+    const count = content.split(m.find).length - 1;
+    if (count !== 1) {
+      errors.push(
+        `[${m.desc}] find 在 ${m.file} 中出现 ${count} 次（要求恰 1 次）` +
+          `——靶代码被重构了？先同步 find 串再跑`,
       );
-    }`,
-    replace: `    if (from_yml !== manual.name) {
-      return manual;
-    }`,
-    tests: ['gen-facade'],
-    expect_only: '名字不一致',
-  },
-  {
-    desc: 'M181 delta 属主裁定被改（train → system，切片落错域文件）',
-    file: 'tools/facade-names.js',
-    find: `const PORT_TABLE_OWNERS = {
-  delta: 'train',`,
-    replace: `const PORT_TABLE_OWNERS = {
-  delta: 'system',`,
-    tests: ['gen-facade'],
-    expect_only: '移植自建表门面',
-  },
-  {
-    desc: 'M182 cflag 好感度补名下标错位（2 → 3，写进别的槽）',
-    file: 'tools/facade-names.js',
-    find: "  2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
-    replace:
-      "  3: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
-    tests: ['gen-facade'],
-    expect_only: '好感度',
-  },
-  {
-    desc: 'M183 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
-    file: 'ere/event/source-check.js',
-    find: 'game.train.屈服刻印结算 = 1; // 屈服刻印１相当',
-    replace: "era.set('tflag:200', 1); // 屈服刻印１相当",
-    tests: ['source-check'],
-    expect_only: '跨域写走门面',
-  },
-  {
-    desc: 'M184 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
-    file: 'ere/event/source-check.js',
-    find: 'chara(cid).system.反抗刻印 = 1;',
-    replace: 'era.set(`mark:${cid}:3`, 1);',
-    tests: ['source-check'],
-    expect_only: '跨域写走门面',
-  },
-  {
-    desc: 'M185 产物出处路径指向不存在的文件（#71 翻过车的一类）',
-    file: 'ere/facade/chara-train.js',
-    find: '   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
-    replace:
-      '   * 源: target/ERB/SYSTEM/__NOPE__.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
-    tests: ['gen-facade'],
-    expect_only: '出处路径',
-  },
-];
+    }
+  }
+  return errors;
+}
 
-function run_one(m, index) {
-  const path = m.file.replace(/\//g, '\\');
-  const full = `${REPO}${path}`;
+function gate_test_files(root, entries) {
+  const errors = [];
+  const missing = new Set();
+  for (const m of entries) {
+    for (const t of Array.isArray(m.tests) ? m.tests : []) {
+      const rel = `test/${t}.test.js`;
+      if (!missing.has(rel) && !fs.existsSync(path.join(root, rel))) {
+        missing.add(rel);
+        errors.push(`[${m.desc}] 测试文件不存在：${rel}`);
+      }
+    }
+  }
+  return errors;
+}
+
+function run_gates(entries, args) {
+  const errors = [
+    ...gate_shape(entries),
+    ...gate_count(entries, args.baseline),
+    ...gate_targets(args.root, entries),
+    ...gate_test_files(args.root, entries),
+  ];
+  for (const e of errors) {
+    console.log(`✗ 门：${e}`);
+  }
+  return errors.length === 0;
+}
+
+// —— 引擎在场判定（默认与 test/helpers/engine-bundle.js 同款三址回落；
+//    --asar 显式指路时不再回落，指 none 或所指不存在 = 无引擎）——
+
+function locate_asar(root, explicit) {
+  if (explicit) {
+    if (explicit === 'none') {
+      return undefined;
+    }
+    return fs.existsSync(explicit) ? explicit : undefined;
+  }
+  const candidates = [
+    process.env.ERE_ENGINE_ASAR,
+    path.join(root, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
+  ].filter(Boolean);
+  return candidates.find((c) => fs.existsSync(c));
+}
+
+// —— 单条执行（就地变异 + 还原 + 还原读回校验）——
+
+/**
+ * 孙进程环境消毒：node --test 给测试文件传 NODE_TEST_CONTEXT，原样漏进
+ * 再起的 node --test 会让后者误入「测试子进程上报模式」、静默退 0——
+ * 快档（npm test 内驱动本工具，工具再起 node --test）必踩，红不了
+ * 还会被误判成假绿。所有内部 spawn 一律剔掉 NODE_TEST* 键。
+ */
+function clean_env() {
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith('NODE_TEST')) {
+      delete env[key];
+    }
+  }
+  return env;
+}
+
+let active_restore = null; // { full, original }：SIGINT 兜底还原
+process.on('SIGINT', () => {
+  if (active_restore) {
+    try {
+      fs.writeFileSync(active_restore.full, active_restore.original, 'utf8');
+    } catch {
+      /* 尽力而为；中断后先 git status 再谈别的（#89 教训） */
+    }
+  }
+  process.exit(130);
+});
+
+/**
+ * 单条分类是**纯输出判定**（不掺环境）：门控测试整组绿 + 输出含缺引擎
+ * 警告 = engine-skip。「引擎在场时跳过必须为 0」的否决权全部集中在
+ * verdict_problems——分类与判定分离后，这条不变量从 CLI 可观测、可测
+ * （#89 二次验收的探针 G：判定若被抽样档短路，行为锁当场红）。真实
+ * 跑动里父进程与子测试的引擎判定总是一致，两侧行为不变；只有 --asar
+ * 错配（父进程说有引擎、子测试看不到）的夹具形态会走到「在场却跳过」，
+ * 由 verdict 拦下。
+ *
+ * @returns {'caught'|'miss'|'engine-skip'|'find-mismatch'|'restore-fail'}
+ */
+function run_one(root, m) {
+  const full = path.join(root, m.file);
   const original = fs.readFileSync(full, 'utf8');
   const count = original.split(m.find).length - 1;
   if (count !== 1) {
-    console.log(`✗ ${m.desc}`);
     console.log(
-      `  find 在文件中出现 ${count} 次（要求恰 1 次），跳过前先修正驱动器`,
+      `✗ [${stable_id(m.desc)}] ${m.desc} — find 出现 ${count} 次（要求恰 1 次），先修正台账`,
     );
-    return false;
+    return 'find-mismatch';
   }
-  fs.writeFileSync(full, original.replace(m.find, m.replace), 'utf8');
+  active_restore = { full, original };
   let failed_as_expected = false;
-  let saw_named_failure = false;
   let output = '';
   try {
+    fs.writeFileSync(full, original.replace(m.find, m.replace), 'utf8');
     const files = m.tests.map((t) => `test/${t}.test.js`);
     const run = spawnSync(process.execPath, ['--test', ...files], {
-      cwd: REPO,
+      cwd: root,
       encoding: 'utf8',
       maxBuffer: 16 * 1024 * 1024,
+      env: clean_env(),
     });
     output = `${run.stdout || ''}${run.stderr || ''}`;
     if (run.status !== 0) {
       failed_as_expected = true;
     }
-  } catch (e) {
-    output = `${e.stdout || ''}${e.stderr || ''}`;
-    failed_as_expected = true;
   } finally {
     fs.writeFileSync(full, original, 'utf8');
   }
-  if (m.expect_only) {
-    saw_named_failure = output.includes(m.expect_only);
-  } else {
-    saw_named_failure = true;
+  if (fs.readFileSync(full, 'utf8') !== original) {
+    console.log(`✗ [${stable_id(m.desc)}] ${m.desc} — 还原失败（读回不一致）`);
+    active_restore = null;
+    return 'restore-fail';
   }
-  const ok = failed_as_expected && saw_named_failure;
+  active_restore = null;
+  const saw_named_failure = output.includes(m.must_mention);
+  if (failed_as_expected && saw_named_failure) {
+    console.log(
+      `✓ [${stable_id(m.desc)}] ${m.desc} — 红=true 点名「${m.must_mention}」=true`,
+    );
+    return 'caught';
+  }
+  if (!failed_as_expected && output.includes(ENGINE_WARN_MARKER)) {
+    console.log(
+      `⏭ [${stable_id(m.desc)}] ${m.desc} — 跳过（门控测试绿 + 缺引擎警告）`,
+    );
+    return 'engine-skip';
+  }
   console.log(
-    `${ok ? '✓' : '✗'} ${m.desc} — 红=${failed_as_expected}${m.expect_only ? ` 点名「${m.expect_only}」=${saw_named_failure}` : ''}`,
+    `✗ [${stable_id(m.desc)}] ${m.desc} — 红=${failed_as_expected} 点名「${m.must_mention}」=${saw_named_failure}`,
   );
-  return ok;
+  return 'miss';
 }
 
-let all_ok = true;
-MUTATIONS.forEach((m, i) => {
-  if (!run_one(m, i)) all_ok = false;
+// —— 执行模式 ——
+
+function select_entries(entries, args) {
+  if (args.slice) {
+    const [i, k] = args.slice;
+    return entries.filter((m) => desc_rank(m.desc) % k === i);
+  }
+  if (args.sample !== undefined) {
+    return [...entries]
+      .sort(
+        (a, b) =>
+          desc_rank(`${args.seed}:${a.desc}`) -
+          desc_rank(`${args.seed}:${b.desc}`),
+      )
+      .slice(0, args.sample);
+  }
+  return entries;
+}
+
+function execute(entries, args) {
+  const tally = { caught: 0, skipped: 0, red: 0 };
+  for (const m of select_entries(entries, args)) {
+    const r = run_one(args.root, m);
+    if (r === 'caught') tally.caught += 1;
+    else if (r === 'engine-skip') tally.skipped += 1;
+    else tally.red += 1;
+  }
+  return tally;
+}
+
+/** 本轮是否只执行台账的一个子集（抽样 / 切片） */
+function is_partial(args) {
+  return args.sample !== undefined || args.slice !== undefined;
+}
+
+function verdict_problems(tally, args, engine_present) {
+  const problems = [];
+  if (tally.red > 0) {
+    problems.push(`未被拦截/失配/还原失败共 ${tally.red} 条`);
+  }
+  if (engine_present) {
+    if (tally.skipped > 0) {
+      problems.push(`引擎在场却有 ${tally.skipped} 条按「跳过」处理（不允许）`);
+    }
+  } else if (!is_partial(args) && args.skip_baseline !== 'off') {
+    // ENGINE_SKIP_BASELINE 是全量口径的不变量（7/186 恰好引擎门控）。
+    // 抽样/切片是子集，没有「期望跳过数」——抽 12 条命中 7 条门控的概率
+    // 约为零，拿全量基线对账子集必然假红（#89 发回整改的阻断 1：干净
+    // Linux 上 --sample 3 三条全拦仍退 1）。子集档不对账；跳过数的对账
+    // 由全量档执行（CI master push / 手动触发 / 本地全量）。
+    const baseline =
+      args.skip_baseline === undefined
+        ? ENGINE_SKIP_BASELINE
+        : Number(args.skip_baseline);
+    if (tally.skipped !== baseline) {
+      problems.push(
+        `无引擎跳过 ${tally.skipped} ≠ 基线 ${baseline}` +
+          `——引擎门控覆盖面变了，这个数字必须是有意识的提交`,
+      );
+    }
+  }
+  return problems;
+}
+
+// —— 子进程原语：捕获输出的 spawn（对照运行与并行子进程共用）——
+
+function spawn_capture(cmd, cmd_args, opts) {
+  return new Promise((resolve) => {
+    const child = spawn(cmd, cmd_args, {
+      ...opts,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: clean_env(),
+    });
+    let output = '';
+    let done = false;
+    const add = (d) => {
+      output += d;
+    };
+    child.stdout.on('data', add);
+    child.stderr.on('data', add);
+    const finish = (code) => {
+      if (!done) {
+        done = true;
+        resolve({ code: code ?? 1, output });
+      }
+    };
+    child.on('exit', finish);
+    child.on('error', finish);
+  });
+}
+
+// —— 并行（隔离临时副本）：主树只读，每个子进程在自己的副本里就地变异 ——
+
+function make_copy(root) {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mutation-copy-'));
+  for (const name of fs.readdirSync(root)) {
+    if (COPY_DENY.has(name)) {
+      continue;
+    }
+    fs.cpSync(path.join(root, name), path.join(tmp, name), {
+      recursive: true,
+    });
+  }
+  return tmp;
+}
+
+const SUMMARY_RE = /^SUMMARY caught=(\d+) skipped=(\d+) red=(\d+)$/m;
+
+async function execute_jobs(args) {
+  const jobs = args.jobs;
+  const copies = [];
+  try {
+    for (let i = 0; i < jobs; i += 1) {
+      copies.push(make_copy(args.root));
+    }
+    // 每个副本先跑不变异的对照全量（并行）：副本缺文件/环境破损会表现为
+    // 测试红，若不先对照，会被误判成「变异被拦截」——假绿的最大来源
+    const controls = await Promise.all(
+      copies.map((copy) =>
+        spawn_capture(process.execPath, ['--test'], { cwd: copy }),
+      ),
+    );
+    for (let i = 0; i < jobs; i += 1) {
+      if (controls[i].code !== 0) {
+        console.log(`✗ 副本 ${i} 对照运行即红（副本环境破损，非变异拦截）：`);
+        // 先点名失败的测试（not ok / ✖ / 非零 fail 计数），没有再退回
+        // 尾部 60 行——对照失败必须能定位到用例，尾 12 行连测试名都露不出
+        const lines = controls[i].output.split('\n');
+        const failures = lines.filter((l) =>
+          /^(not ok|✖|# fail\s+[1-9])/.test(l),
+        );
+        console.log(
+          failures.length > 0
+            ? failures.slice(0, 20).join('\n')
+            : lines.slice(-60).join('\n'),
+        );
+        return { caught: 0, skipped: 0, red: 1 };
+      }
+    }
+    const results = await Promise.all(
+      copies.map((copy, i) =>
+        spawn_capture(
+          process.execPath,
+          [
+            path.join(copy, 'tools', 'mutation-check.mjs'),
+            '--slice',
+            String(i),
+            String(jobs),
+            '--skip-baseline',
+            'off',
+          ],
+          { cwd: copy },
+        ),
+      ),
+    );
+    const tally = { caught: 0, skipped: 0, red: 0 };
+    results.forEach((r, i) => {
+      process.stdout.write(r.output);
+      const m = SUMMARY_RE.exec(r.output);
+      if (r.code !== 0 || !m) {
+        tally.red += 1;
+        if (!m) {
+          console.log(`✗ 子进程 ${i} 没有给出可解析的 SUMMARY 行`);
+        }
+        return;
+      }
+      tally.caught += Number(m[1]);
+      tally.skipped += Number(m[2]);
+      tally.red += Number(m[3]);
+    });
+    return tally;
+  } finally {
+    for (const copy of copies) {
+      fs.rmSync(copy, { recursive: true, force: true });
+    }
+  }
+}
+
+// —— 主流程 ——
+
+async function main() {
+  const args = parse_args(process.argv.slice(2));
+  const entries = await load_ledger(args.ledger_dir);
+  const gates_ok = run_gates(entries, args);
+  if (args.verify) {
+    if (gates_ok) {
+      console.log(
+        `✓ 结构校验全绿：${entries.length} 条台账，三道门全过（计数基线 ${args.baseline}）`,
+      );
+    } else {
+      console.log('✗ 结构校验未过（三道门见上）');
+    }
+    process.exit(gates_ok ? 0 : 1);
+  }
+  if (!gates_ok) {
+    console.log('✗ 三道门未过，拒绝执行');
+    process.exit(1);
+  }
+  const engine_present = Boolean(locate_asar(args.root, args.asar));
+  if (!engine_present) {
+    console.log(
+      '⚠ 未找到引擎 asar：引擎门控的变异将按「跳过」分类（硬口径须有引擎的本地全量）',
+    );
+  }
+  const started = Date.now();
+  const tally =
+    args.jobs > 1 ? await execute_jobs(args) : execute(entries, args);
+  const elapsed = ((Date.now() - started) / 1000).toFixed(1);
+  const problems = verdict_problems(tally, args, engine_present);
+  console.log(
+    `\n拦截 ${tally.caught} / 跳过 ${tally.skipped} / 红 ${tally.red} — ${elapsed}s` +
+      (problems.length === 0
+        ? '（全部变异被测试拦截，无假绿）'
+        : `（存在问题：${problems.join('；')}）`),
+  );
+  console.log(
+    `SUMMARY caught=${tally.caught} skipped=${tally.skipped} red=${tally.red}`,
+  );
+  process.exit(problems.length === 0 ? 0 : 1);
+}
+
+main().catch((e) => {
+  console.error(e?.stack || e);
+  process.exit(1);
 });
-console.log(
-  all_ok ? '\n全部变异被测试拦截（无假绿）' : '\n存在未被拦截的变异（假绿）',
-);
-process.exit(all_ok ? 0 : 1);
