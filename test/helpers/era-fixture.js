@@ -136,7 +136,7 @@ function create_era_fixture() {
   // 见 clear 处）：setBack/setOverlay 的独立
   //   置位（游戏代码未用这两个 API）；fromClear/useRule（渲染层簿记参数）；
   //   printAndWait 的内部等待（引擎 =
-  //   print + waitAnyKey 两步组合）不进 inputs_consumed——缝对「等待」的
+  //   print + waitAnyKey 两步组合）不进 inputs_consumed——注入点对「等待」的
   //   观测统一走显式 waitAnyKey 的记录，该契约由 fixture 用例钉住。
   let allow_wait = false;
   // 引擎 isContinue 由渲染层 input 回包的 continue 字段维护（右键快进态）；
@@ -403,7 +403,7 @@ function create_era_fixture() {
   era.clear = async (line_count) => {
     // 引擎 clear 的第一段短路（app.asar 逐字）：system.disableClear 配置开着
     // 时整体无操作、返回当前行数——不清、不等、不置位。#68 时裁定「已查实
-    // 不镜像」，#91 起进缝（契约测试逐步比对守卫链，缺它第一层对不齐），
+    // 不镜像」，#91 起进注入点（契约测试逐步比对守卫链，缺它第一层对不齐），
     // 旋钮在 system_config.disableClear（默认 false，与引擎默认一致）
     if (system_config.disableClear) {
       return total_rows;
