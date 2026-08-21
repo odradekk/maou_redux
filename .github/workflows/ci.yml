@@ -50,7 +50,9 @@ jobs:
   # 与手动触发跑全量（--jobs 4 隔离临时副本并行，实测 ~112s，主树不写）。
   # 测试零第三方依赖，无需 npm ci。无引擎处，引擎门控条目按「跳过」放行；
   # 跳过数对账 ENGINE_SKIP_BASELINE 只在全量档生效（子集没有期望跳过数，
-  # #89 整改的阻断 1），偏离即红。计费估算见 issue #89 实现评论。
+  # #89 整改的阻断 1），偏离即红。残留守护与**检出基线**比对而非假设干净
+  # ——裸检出可能带既有脏度（#96 的 dev-guides CRLF），守护证的是「变异
+  # 逐字节还原」，不是「仓库本来干净」。计费估算见 issue #89 实现评论。
   mutation:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -59,17 +61,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: 记录检出基线（裸检出未必干净，见 #96）
+        run: git status --porcelain > /tmp/tree-before.txt
       - name: 变异抽样（PR 档：12 条按运行号轮转）
         if: github.event_name == 'pull_request'
         run: node tools/mutation-check.mjs --sample 12 --seed "${{ github.run_number }}"
       - name: 变异全量（master push / 手动档：隔离副本并行）
         if: github.event_name != 'pull_request'
         run: node tools/mutation-check.mjs --jobs 4
-      - name: 工作树残留守护（变异必须逐字节还原）
+      - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）
         run: |
-          residue="$(git status --porcelain)"
-          if [ -n "$residue" ]; then
-            echo "变异运行后工作树不干净："
-            echo "$residue"
+          git status --porcelain > /tmp/tree-after.txt
+          if ! diff -u /tmp/tree-before.txt /tmp/tree-after.txt; then
+            echo "变异运行后工作树相对检出基线有变化（diff 里 - 行是基线、+ 行是跑后）——变异没有逐字节还原"
             exit 1
           fi
+          echo "工作树与检出基线一致（变异逐字节还原；基线自身的脏度不属于本守护的判定面）"
