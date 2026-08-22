@@ -32,6 +32,7 @@ const { ask_initial_slave } = require('#/event/first-setting');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -113,10 +114,14 @@ on('EVENTFIRST', async () => {
   // :55 MONEY = 10000 —— 开局持有金（包装层：flag:10004）
   era_flag.money = 10000;
 
-  // :56 EX_FLAG:4444 = 1234（金钱增减镜像，@MONEYSYS）、:60-62 CFLAG:0:451
-  // = 21（魔王相当于人类年龄）、:62 EX_FLAG:99 = 70（初始威望）——EX_FLAG
-  // 表未声明，EX_FLAG 两笔随 ExFlag 落表票（存根清单）；CFLAG 这笔照落：
+  // :56 EX_FLAG:4444 = 1234（金钱增减镜像，@MONEYSYS）——ExFlag.yml 已随
+  // #113 落表，但该值当前无消费者（魔法出兵不写它，MONEYSYS 未移植），
+  // 播种随首个消费者落地（存根清单变量级待办仍挂）。:60-62 CFLAG:0:451
+  // = 21（魔王相当于人类年龄）、:62 EX_FLAG:99 = 70（初始威望）——威望
+  // 播种自 #117 起接入（包装层写入；侵略线窄路径的前置，威望 0 会让首次
+  // 魔力出兵落进「岌岌可危」档直接失败）；CFLAG 这笔照落：
   era.set('cflag:0:451', 21);
+  era_exflag.prestige = 70;
 
   // :65-74 IF FLAG:502 == 1（2D 地图模式）：GEO_TEST/SET_VIL + DB 50×50
   // 清零。FIRST_SETTING 存根使 FLAG:502 恒 0，分支不可达；守卫照搬，正文

@@ -56,6 +56,9 @@ function expected_init_writes(initial_slave) {
     { name: 'flag:8', value: 7 }, // :50-52 新档翻位 0b111
     { name: 'flag:10004', value: 10000 }, // :55 MONEY = 10000
     { name: 'cflag:0:451', value: 21 }, // :60 魔王相当于人类年龄
+    { name: 'exflag:99', value: 70 }, // :62 EX_FLAG:99 = 70（初始威望，#117
+    // 接入：ExFlag.yml 已随 #113 落地，播种是侵略线窄路径的前置——威望 0
+    // 会让首次魔力出兵落进「岌岌可危」档直接失败）
   ];
   if (initial_slave === 1) {
     writes.push(

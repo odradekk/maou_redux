@@ -36,7 +36,14 @@ const GENERATED_END = '// GENERATED END';
 // flag 条目（id 10000 保留区，见 yml/Flag.yml 头注）。
 // audio 自 issue #69 起入白名单：音声 SAVEDATA 一族（主菜单 BGM 开关/音量）
 // 落扩展普通表 yml/Audio.yml，引擎侧自动建桶（见该 yml 头注）。
-const RENDERABLE_ONE_DIM_TABLES = new Set(['global', 'flag', 'audio']);
+// exflag 自 issue #117 起入白名单：EX_FLAG 一族（威望、非作弊资金、结局线
+// 等）落 yml/ExFlag.yml（#113 落表，头注点名首个消费者生成包装层）。
+const RENDERABLE_ONE_DIM_TABLES = new Set([
+  'global',
+  'flag',
+  'audio',
+  'exflag',
+]);
 
 // 变量字段行：id / name / type（引擎三字段，见 #5 决议与 18-tools.md）
 const FIELD_RE = /^\s+(id|name|type):\s*(.+?)\s*$/;
@@ -236,13 +243,19 @@ function extract_generated_section(text) {
 /**
  * 重生成：只替换标记之间的行，标记之外（文件头、手写区）逐字节保留。
  * 标记定位与唯一性校验和 extract 共用 locate_markers。
+ *
+ * 幂等：section 以换行结尾，直接拼接会在标记后多出一个空行（每次 --force
+ * 累积一行）；先剥掉结尾换行再拼，重生成对未变更的表零差异。
  */
 function replace_generated_section(text, section) {
   const lines = text.split('\n');
   const { start, end } = locate_markers(lines);
+  const section_lines = section.endsWith('\n')
+    ? section.split('\n').slice(0, -1)
+    : section.split('\n');
   const merged = [
     ...lines.slice(0, start),
-    ...section.split('\n'),
+    ...section_lines,
     ...lines.slice(end + 1),
   ];
   // split 会在末尾留一个空串元素，重新 join 后保持文件以单个换行结尾的约定

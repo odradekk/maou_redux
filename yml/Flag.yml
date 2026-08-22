@@ -34,6 +34,13 @@
   id: 82
   name: "human_realm_fallen"
   type: "number"
+# 人间界侵略事件进度（@KYOTEN_EVENT 的状态机，INVASION_EVENT.ERB:15-104）：
+# 0=未占、1=占村、2=占港、3=陷堡垒、4=占街道、5=占城市；侵攻度回落时按档
+# 回退（:60-104）。角色线读数点：嘉德线判定 == 3（ENDINGDATA_ADDON1.ERB:151）
+"人间界侵略事件进度":
+  id: 93
+  name: "human_realm_event_stage"
+  type: "number"
 # 精灵族领域侵攻度（衰减与税单同 FLAG:81 型，SYSTEM ver1.0.3.ERB:644-648、
 # TAX.ERB:97-99）；满值触发 ENDING_3
 "精灵领域侵攻度":

@@ -22,13 +22,15 @@ const {
 } = require('#/page/page-main-menu');
 const { stub_line_wait } = require('#/utils/stub-line');
 const { select_target } = require('#/page/page-select-target');
+const { invasion } = require('#/page/page-invasion');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
  * 本文件存根化的原作调用名（@SELECT_ASSI 的函数体与作用域外指令分支的壳
  * 占位）。docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 核对
  * 固定）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
- * 自 #44 起为真身/真转场，移出本名单。
+ * 自 #44 起为真身/真转场，INVASION 自 #117 起为真身（[109] 的 BEGIN
+ * TURNEND 随之真转场；199 休息的出口仍是待办），均移出本名单。
  */
 const STUBBED_CALLS = [
   'SELECT_ASSI',
@@ -40,7 +42,6 @@ const STUBBED_CALLS = [
   'CHARA_SALE',
   'ITEM_SHOP',
   'TAILOR_MAIN',
-  'INVASION',
   'SECRET_LABO',
   'INFRASTRUCTURE',
   'BEGIN TURNEND',
@@ -144,8 +145,9 @@ async function select_assi() {
  *
  * 作用域外的指令分支按原作结构留壳：运行时打一行占位（原作调用名可检
  * 索），真行为整支欠着，docs/stub-registry.md 整组登记。100 分支自 #44 起
- * 是真身（SELECT_TARGET 真身 + BEGIN TRAIN 真转场）；壳内的 BEGIN TURNEND
- * 仍是出口待办（回合结算票），接通前主循环进站即报错报出，那是预期行为。
+ * 是真身（SELECT_TARGET 真身 + BEGIN TRAIN 真转场）；109 分支自 #117 起
+ * 是真身（INVASION 窄路径 + BEGIN TURNEND 真转场）；199 休息壳内的
+ * BEGIN TURNEND 仍是出口待办（回合结算票）。
  *
  * @param {number} result 玩家输入（原作 RESULT，即 era.input() 的返回值）
  */
@@ -253,9 +255,12 @@ async function usershop(result) {
     // 调教目标）
     await stub_line_wait('TAILOR_MAIN', '换装', '随换装票');
   } else if (result === 109) {
-    // 侵略（:124-128 CALL INVASION，返回 1 才 BEGIN TURNEND :127，出口
-    // 之一）
-    await stub_line_wait('INVASION', '侵略', '随侵略票');
+    // 侵略（:124-128）：CALL INVASION（#117 起真身：魔力出兵窄路径，
+    // ere/page/page-invasion.js），返回 1 才 BEGIN TURNEND（:127，出口
+    // 之一——BEGIN 结束当前函数，ere 侧信号上抛由主循环接站）
+    if ((await invasion()) === 1) {
+      begin(STATE.TURNEND);
+    }
   } else if (result === 110 && (era.get('talent:0:325') || 0) === 1) {
     // 实验室（:130-131）：守卫 TALENT:0:325 == 1（魔王的魔界知识，
     // DRAW_HAVEITEMS 的判定同源）。talent 表未落 yml/ 时读值 undefined →

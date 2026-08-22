@@ -70,6 +70,8 @@ const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
 const DRAW_EXT_COMM = 'target/ERB/其他/DRAW_EXT_COMM.ERB';
 const TITLE = 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB';
 const SHOP_2 = 'target/ERB/SHOP/SHOP_2.ERB';
+const INVASION = 'target/ERB/侵略/INVASION.ERB';
+const INVASION_EVENT = 'target/ERB/侵略/INVASION_EVENT.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -1791,6 +1793,184 @@ const FILES = [
           /^\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)$/m,
         ],
       },
+    ],
+  },
+  {
+    js: 'ere/page/page-invasion.js',
+    refs: [
+      {
+        src: INVASION_EVENT,
+        ref: '2-209',
+        any: [/^\s*@KYOTEN_EVENT, ARG:0$/m],
+      },
+      { src: INVASION, ref: '6-997', any: [/^\s*@INVASION$/m] },
+      {
+        src: INVASION_EVENT,
+        ref: '15-104',
+        any: [/^\s*IF FLAG:81 >= 2000 && FLAG:93 == 0$/m],
+      },
+      { src: INVASION, ref: '25-138', any: [/^\s*\$INPUT_LOOP2$/m] },
+      { src: INVASION, ref: '26', any: [/^\s*CLEARLINE LINECOUNT$/m] },
+      { src: INVASION, ref: '110-111', any: [/^\s*AREA = 81$/m] },
+      { src: INVASION_EVENT, ref: '111', any: [/^\s*;FLAG:94 = 1$/m] },
+      { src: INVASION, ref: '139-142', any: [/^\s*ELSE$/m] },
+      { src: INVASION, ref: '139-204', any: [/^\s*\$START1$/m] },
+      { src: INVASION, ref: '143-151', any: [/^\s*\$START1$/m] },
+      { src: INVASION, ref: '144-186', any: [/^\s*REPEAT 90$/m] },
+      { src: INVASION, ref: '188-200', any: [/^\s*\$INPUT_LOOP$/m] },
+      { src: INVASION, ref: '190-191', any: [/^\s*IF RESULT == 999$/m] },
+      { src: INVASION, ref: '192-195', any: [/^\s*ELSEIF RESULT >= 4$/m] },
+      { src: INVASION, ref: '193', any: [/^\s*GOTO INPUT_LOOP$/m] },
+      { src: INVASION, ref: '195', any: [/^\s*GOTO INPUT_LOOP$/m] },
+      {
+        src: INVASION,
+        ref: '196-199',
+        any: [/^\s*ELSEIF RESULT == 0 && MON_NUM < 600$/m],
+      },
+      { src: INVASION, ref: '197', any: [/^\s*GOTO INPUT_LOOP$/m] },
+      { src: INVASION, ref: '199', any: [/^\s*GOTO INPUT_LOOP$/m] },
+      { src: INVASION, ref: '202', any: [/^\s*INV_TYPE = RESULT$/m] },
+      { src: INVASION, ref: '203-207', any: [/^\s*SINKOU = 0$/m] },
+      {
+        src: INVASION_EVENT,
+        ref: '204',
+        any: [
+          /^\s*PRINTL \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*$/m,
+        ],
+      },
+      { src: INVASION, ref: '209-263', any: [/^\s*IF INV_TYPE == 0$/m] },
+      { src: INVASION, ref: '210', any: [/^\s*IF INV_TYPE == 0$/m] },
+      {
+        src: INVASION_EVENT,
+        ref: '212-235',
+        any: [/^\s*@INVASION_EVENT, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I$/m],
+      },
+      { src: INVASION_EVENT, ref: '224-232', any: [/^\s*IF LOCAL == 9$/m] },
+      {
+        src: INVASION,
+        ref: '236-259',
+        any: [/^\s*IF EX_FLAG:99 <= 20 && EX_FLAG:99 >= 0$/m],
+      },
+      {
+        src: INVASION_EVENT,
+        ref: '250-251',
+        any: [/^\s*SIF FLAG:SINDO != 0$/m],
+      },
+      {
+        src: INVASION_EVENT,
+        ref: '257-260',
+        any: [/^\s*IF FLAG:AREA == 0 && FLAG:SINDO == 0$/m],
+      },
+      { src: INVASION, ref: '266-296', any: [/^\s*ELSEIF INV_TYPE == 1$/m] },
+      { src: INVASION, ref: '267', any: [/^\s*SINKOU = BASE:0:1 \/ 25$/m] },
+      { src: INVASION, ref: '268', any: [/^\s*BASE:0:1 \/= 2$/m] },
+      {
+        src: INVASION,
+        ref: '269-293',
+        any: [/^\s*IF EX_FLAG:99 <= 20 && EX_FLAG:99 >= 0$/m],
+      },
+      {
+        src: INVASION,
+        ref: '270-274',
+        any: [/^\s*IF EX_FLAG:99 <= 20 && EX_FLAG:99 >= 0$/m],
+      },
+      { src: INVASION_EVENT, ref: '273', any: [/^\s*SIF INV_TYPE != 2$/m] },
+      { src: INVASION_EVENT, ref: '273-274', any: [/^\s*SIF INV_TYPE != 2$/m] },
+      {
+        src: INVASION,
+        ref: '275-278',
+        any: [/^\s*ELSEIF EX_FLAG:99 <= 40 && EX_FLAG:99 > 20$/m],
+      },
+      {
+        src: INVASION,
+        ref: '279-284',
+        any: [/^\s*ELSEIF EX_FLAG:99 <= 60 && EX_FLAG:99 > 40$/m],
+      },
+      {
+        src: INVASION_EVENT,
+        ref: '279-459',
+        any: [/^\s*IF FLAG:AREA >= 5000 && FLAG:SINDO == 0 && INV_TYPE == 2$/m],
+      },
+      {
+        src: INVASION,
+        ref: '285-286',
+        any: [/^\s*ELSEIF EX_FLAG:99 <= 80 && EX_FLAG:99 > 60$/m],
+      },
+      {
+        src: INVASION,
+        ref: '287-292',
+        any: [/^\s*ELSEIF EX_FLAG:99 <= 100 && EX_FLAG:99 > 80$/m],
+      },
+      {
+        src: INVASION,
+        ref: '296',
+        any: [/^\s*PRINTFORMW 战斗力　\{SINKOU\}点$/m],
+      },
+      { src: INVASION, ref: '298-441', any: [/^\s*\$INPUT_LOOP_TMPO2$/m] },
+      { src: INVASION, ref: '299', any: [/^\s*ELSEIF INV_TYPE == 2$/m] },
+      { src: INVASION, ref: '442', any: [/^\s*ELSEIF INV_TYPE == 3$/m] },
+      { src: INVASION, ref: '442-561', any: [/^\s*\$INPUT_LOOP_TMPO3$/m] },
+      {
+        src: INVASION_EVENT,
+        ref: '539',
+        any: [
+          /^\s*SIF FLAG:SINDO \|\| INV_TYPE != 0 && INV_TYPE != 2 && INV_TYPE != 3$/m,
+        ],
+      },
+      { src: INVASION, ref: '565-598', any: [/^\s*IF TALENT:0:325 == 1$/m] },
+      { src: INVASION, ref: '565-603', any: [/^\s*IF TALENT:0:325 == 1$/m] },
+      {
+        src: INVASION,
+        ref: '568-572',
+        any: [
+          /^\s*PRINTFORMW 魔王补正　　　x\{TMP2_I\/100\}\.%TOSTR\(TMP2_I%100,"00"\)%$/m,
+        ],
+      },
+      { src: INVASION, ref: '574-590', any: [/^\s*IF TALENT:0:325 == 1$/m] },
+      { src: INVASION, ref: '593-595', any: [/^\s*CALL MEDAL_BONUS,0$/m] },
+      {
+        src: INVASION,
+        ref: '598',
+        any: [/^\s*PRINTFORMW 合计　\{SINKOU\}点$/m],
+      },
+      {
+        src: INVASION,
+        ref: '601-603',
+        any: [
+          /^\s*CALL INVASION_EVENT, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I$/m,
+        ],
+      },
+      { src: INVASION, ref: '609-618', any: [/^\s*IF INV_TYPE == 3$/m] },
+      { src: INVASION, ref: '613-615', any: [/^\s*ELSE$/m] },
+      { src: INVASION, ref: '617-618', any: [/^\s*SIF FLAG:AREA >= 10000$/m] },
+      { src: INVASION, ref: '694-757', any: [/^\s*ELSEIF INV_TYPE == 1$/m] },
+      {
+        src: INVASION,
+        ref: '696',
+        any: [/^\s*PRINTFORML %SAVESTR:MASTER%的魔力爆发出来了！$/m],
+      },
+      { src: INVASION, ref: '697-709', any: [/^\s*IF SINKOU < 100$/m] },
+      {
+        src: INVASION,
+        ref: '711-738',
+        any: [/^\s*IF AREA == 81 && FLAG:SINDO$/m],
+      },
+      { src: INVASION, ref: '736-738', any: [/^\s*ELSE$/m] },
+      { src: INVASION, ref: '742-757', any: [/^\s*SIF AREA == 81$/m] },
+      {
+        src: INVASION_EVENT,
+        ref: '824',
+        any: [/^\s*SIF INV_TYPE != 0 && INV_TYPE != 2 && INV_TYPE != 3$/m],
+      },
+      { src: INVASION, ref: '976', any: [/^\s*DRAWLINE$/m] },
+      { src: INVASION, ref: '976-997', any: [/^\s*IF AREA == 81$/m] },
+      { src: INVASION, ref: '977', any: [/^\s*WAIT$/m] },
+      { src: INVASION, ref: '978', any: [/^\s*EX_FLAG:99 \+= 2$/m] },
+      { src: INVASION, ref: '983-994', any: [/^\s*IF AREA == 81$/m] },
+      { src: INVASION, ref: '996', any: [/^\s*CALL INVASION_CHECK$/m] },
+      { src: INVASION, ref: '997', any: [/^\s*RETURN 1$/m] },
+      { src: INVASION, ref: '999-1021', any: [/^\s*@INVASION_CHECK$/m] },
+      { src: INVASION, ref: '1026-1067', any: [/^\s*@MEDAL_BONUS,ARG$/m] },
     ],
   },
 ];

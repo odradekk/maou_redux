@@ -85,6 +85,7 @@ const WRAPPER_HOMES = ['ere/facade/', 'ere/era-utils/'];
  */
 const WRAPPER_FILES = [
   'ere/era-utils/era-audio.js',
+  'ere/era-utils/era-exflag.js',
   'ere/era-utils/era-flag.js',
   'ere/era-utils/era-global.js',
   'ere/era-utils/palam-level.js',
