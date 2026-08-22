@@ -271,6 +271,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     { api: 'waitAnyKey' },
     { api: 'waitAnyKey' },
     { api: 'input', value: 999 },
+    { api: 'waitAnyKey' },
   ]);
 
   const texts = fixture.text_lines();
@@ -282,8 +283,8 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
       (line) => line.type === 'button' && line.accelerator === 999,
     ),
   );
-  // 出过调教：@EVENTEND 消息 + 珠结算表（#47）+ 回合结算壳 + 回到主菜单
-  //（状态行恰两次：100 之前一次、回程重绘一次）
+  // 出过调教：@EVENTEND 消息 + 珠结算表（#47）+ 回合结算三档链（#114）+
+  // 回到主菜单（状态行恰两次：100 之前一次、回程重绘一次）
   assert(texts.includes('调教结束了。'));
   assert(texts.includes('以上的点数变化了。'));
   assert(
@@ -295,7 +296,9 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     ),
     '@JUEL_CHECK 的退出键必须是按钮（PR #53）',
   );
-  assert(texts.some((line) => line.includes('回合结算尚未移植')));
+  // 回合结算三档链已落地（#114）：#PRI 存根与普通档存根都在场
+  assert(texts.some((line) => line.includes('原作 @AUTO_BUYING，')));
+  assert(texts.some((line) => line.includes('原作 @PARTY_UNITE，')));
   assert.equal(
     texts.filter((line) => line.includes('所持金')).length,
     2,
@@ -304,6 +307,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 闭环后的指针：@EVENTEND 尾部还原为记录值；FLAG:1 = 前回调教目标；
   // 体力充足不触发死亡删除（角色仍在场）
   const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(era_flag.time, 1, '回合结算应把时段从午前推进到午后（#114）');
   assert.equal(era_flag.target, 31);
   assert.equal(fixture.store.get('flag:1'), 31);
   assert(fixture.era.getAddedCharacters().includes(31));

@@ -10,6 +10,7 @@ const TrainFacade = require('#/facade/chara-train');
 const CharaFacade = require('#/facade/chara-chara');
 const StrongholdFacade = require('#/facade/chara-stronghold');
 const DungeonFacade = require('#/facade/chara-dungeon');
+const InvasionFacade = require('#/facade/chara-invasion');
 const EventFacade = require('#/facade/chara-event');
 const SystemFacade = require('#/facade/chara-system');
 const PatchFacade = require('#/facade/chara-patch');
@@ -22,6 +23,7 @@ class CharaView {
     this.chara = new CharaFacade(cid);
     this.stronghold = new StrongholdFacade(cid);
     this.dungeon = new DungeonFacade(cid);
+    this.invasion = new InvasionFacade(cid);
     this.event = new EventFacade(cid);
     this.system = new SystemFacade(cid);
     this.patch = new PatchFacade(cid);

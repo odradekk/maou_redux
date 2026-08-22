@@ -91,6 +91,7 @@ const WRAPPER_FILES = [
   'ere/facade/chara-chara.js',
   'ere/facade/chara-dungeon.js',
   'ere/facade/chara-event.js',
+  'ere/facade/chara-invasion.js',
   'ere/facade/chara-kojo.js',
   'ere/facade/chara-patch.js',
   'ere/facade/chara-stronghold.js',

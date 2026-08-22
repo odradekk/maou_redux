@@ -28,6 +28,36 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:2`, v);
   }
 
+  /**
+   * 基础攻击（cflag:cid:13 ↔ CFLAG:13）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:13 基礎攻撃力
+   * @returns {number}
+   */
+  get 基础攻击() {
+    return era.get(`cflag:${this.cid}:13`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 基础攻击(v) {
+    era.set(`cflag:${this.cid}:13`, v);
+  }
+
+  /**
+   * 基础防御（cflag:cid:14 ↔ CFLAG:14）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:14 基礎防御力
+   * @returns {number}
+   */
+  get 基础防御() {
+    return era.get(`cflag:${this.cid}:14`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 基础防御(v) {
+    era.set(`cflag:${this.cid}:14`, v);
+  }
+
   // —— talent ——
   /**
    * 处女（talent:cid:0 ↔ TALENT:0）

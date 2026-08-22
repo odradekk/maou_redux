@@ -65,16 +65,21 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   assert.ok(indexes.includes(201));
   assert.ok(!indexes.includes(1));
   // #90 起 cflag 在 kojo 之外按补名逐个进门面：NAMES.cflag = kojo 切片 +
-  // 已补名的他域下标（当前仅 chara 域的 cflag:2 好感度）
+  // 已补名的他域下标。#114（回合结算）一次补了 10 个：1/506/507（invasion）、
+  // 4/666（train）、13/14（chara）、503/534（dungeon）、570（system）、2（#90）
+  const NON_KOJO_NAMED = [1, 2, 4, 13, 14, 503, 506, 507, 534, 570, 666];
   const manual_keys = Object.keys(NAMES.cflag)
     .map(Number)
     .sort((a, b) => a - b);
   const slice = indexes.slice().sort((a, b) => a - b);
   assert.deepEqual(
-    manual_keys.filter((i) => i !== 2),
+    manual_keys.filter((i) => !NON_KOJO_NAMED.includes(i)),
     slice,
   );
-  assert.ok(manual_keys.includes(2));
+  assert.deepEqual(
+    manual_keys.filter((i) => NON_KOJO_NAMED.includes(i)),
+    NON_KOJO_NAMED,
+  );
 });
 
 test('一维按域重切：flag 下标分属七域，不是整表毯子', () => {

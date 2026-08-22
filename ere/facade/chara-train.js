@@ -12,6 +12,83 @@ class TrainFacade {
     this.cid = cid;
   }
 
+  // —— cflag ——
+  /**
+   * 灌肠经验（cflag:cid:4 ↔ CFLAG:4）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）
+   * @returns {number}
+   */
+  get 灌肠经验() {
+    return era.get(`cflag:${this.cid}:4`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 灌肠经验(v) {
+    era.set(`cflag:${this.cid}:4`, v);
+  }
+
+  /**
+   * 自动调教（cflag:cid:666 ↔ CFLAG:666）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 自動調教が行われたかフラグ
+   * @returns {number}
+   */
+  get 自动调教() {
+    return era.get(`cflag:${this.cid}:666`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 自动调教(v) {
+    era.set(`cflag:${this.cid}:666`, v);
+  }
+
+  // —— base ——
+  /**
+   * 射精槽（base:cid:2 ↔ BASE:2）
+   * 源: yml/Base.yml id 2
+   * @returns {number}
+   */
+  get 射精槽() {
+    return era.get(`base:${this.cid}:2`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 射精槽(v) {
+    era.set(`base:${this.cid}:2`, v);
+  }
+
+  /**
+   * 母乳槽（base:cid:3 ↔ BASE:3）
+   * 源: yml/Base.yml id 3
+   * @returns {number}
+   */
+  get 母乳槽() {
+    return era.get(`base:${this.cid}:3`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 母乳槽(v) {
+    era.set(`base:${this.cid}:3`, v);
+  }
+
+  /**
+   * 触手射精槽（base:cid:4 ↔ BASE:4）
+   * 源: yml/Base.yml id 4
+   * @returns {number}
+   */
+  get 触手射精槽() {
+    return era.get(`base:${this.cid}:4`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 触手射精槽(v) {
+    era.set(`base:${this.cid}:4`, v);
+  }
+
   // —— talent ——
   /**
    * 童贞（talent:cid:1 ↔ TALENT:1）

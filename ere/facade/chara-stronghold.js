@@ -12,6 +12,22 @@ class StrongholdFacade {
     this.cid = cid;
   }
 
+  // —— base ——
+  /**
+   * 寿命（base:cid:10 ↔ BASE:10）
+   * 源: yml/Base.yml id 10
+   * @returns {number}
+   */
+  get 寿命() {
+    return era.get(`base:${this.cid}:10`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 寿命(v) {
+    era.set(`base:${this.cid}:10`, v);
+  }
+
   // —— talent ——
   /**
    * 崩坏（talent:cid:9 ↔ TALENT:9）

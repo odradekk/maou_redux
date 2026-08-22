@@ -81,7 +81,6 @@ export const ERB_EXEMPT = {
     '231',
   ],
   'ere/event/event-train.js': ['6-14', '13-58', '16', '16-201'],
-  'ere/event/event-turnend.js': ['8-140'],
   'ere/event/first-setting.js': [
     '16-17',
     '781-935',

@@ -155,3 +155,9 @@
   id: 10016
   name: "assi_backup"
   type: "number"
+# 星期（DAY:3，@EVENTTURNEND 的日推进写入：+1 超过 6 回 0——日曜的次日是
+# 月曜，即 0=月曜…6=日曜；开局不写、留 0，随 #114 进保留区）
+"星期":
+  id: 10017
+  name: "weekday"
+  type: "number"

@@ -54,7 +54,21 @@ function erb(rel, extra) {
 // 的域也按补名逐个进门面（其余属主下标仍跳过并报告，随各自子系统票）。
 
 const cflag = {
+  // —— 低位共享状态（#114 回合结算接入；各下标属主见 ownership/cflag-ownership.yml）——
+  1: named(
+    '状态',
+    src(
+      SRC_FLAG,
+      'CFLAG:1 キャラの状態 0=調教中 1=待機 2=侵攻中 3=迎撃中 4=死亡 12=戦役（SYSTEM ver1.0.3.ERB の CFLAG:A:1 == 12）',
+    ),
+  ),
   2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),
+  4: named(
+    '灌肠经验',
+    src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),
+  ),
+  13: named('基础攻击', src(SRC_FLAG, 'CFLAG:13 基礎攻撃力')),
+  14: named('基础防御', src(SRC_FLAG, 'CFLAG:14 基礎防御力')),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),
   202: named('简易助手_0', src(SRC_KXX, ':123 简易助手口上 CFLAG:202～210')),
@@ -198,6 +212,21 @@ const cflag = {
     erb('口上/EVENT_K11_リリィ.ERB', '魔族化 CFLAG:400'),
   ),
   444: named('兽奸眼罩', src(SRC_FLAG, 'CFLAG:444 獣姦アイマスク时口上')),
+  503: named(
+    '休憩',
+    // SYSTEM ver1.0.3.ERB 带空格的文件名进不了门面出处注释（gen-facade 测试
+    // 的路径 token 以空白断词），出处落旗标一览：CFLAG:503 在该表即「フラグ」，
+    // 消费点是回合结算的休憩判定（&1 时回复翻倍、消费 -1）
+    src(SRC_FLAG, 'CFLAG:503 フラグ（回合结算的休憩判定消费）'),
+  ),
+  506: named('新人', src(SRC_FLAG, 'CFLAG:506 新人フラグ')),
+  507: named('回城标志', src(SRC_FLAG, 'CFLAG:507 街まで帰還フラグ')),
+  534: named('已接任务', src(SRC_FLAG, 'CFLAG:534 受注クエスト')),
+  570: named(
+    '从属怪物',
+    src(SRC_FLAG, 'CFLAG:570 従属モンスター（使役パートナーの NO）'),
+  ),
+  666: named('自动调教', src(SRC_FLAG, 'CFLAG:666 自動調教が行われたかフラグ')),
   ...fill(650, 657, (i) =>
     named(
       i === 650 ? 'NTR再捕获' : `NTR_${i}`,

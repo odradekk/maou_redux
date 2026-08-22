@@ -37,11 +37,16 @@ require('#/event/event-com');
 require('#/event/event-comend');
 require('#/event/event-end');
 require('#/event/event-turnend');
+require('#/event/event-turnend-later');
 require('#/event/source-check');
 require('#/page/page-train');
 require('#/page/page-usercom');
 // @COM0 与 @COM_ABLE0 的实现（#45——首条真实指令；注册进 COM 分发族）
 require('#/system/train/com0-caress');
+// 回合结算本体（#114）：@EVENTTURNEND 的普通档定义（SYSTEM ver1.0.3.ERB）。
+// 与上面 event-turnend.js 的 #PRI 档、event-turnend-later.js 的空 #LATER 档
+// 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）
+require('#/system/turnend-settle');
 // 口上（#46）：公共底座（@EVENTSHOP 总开关 / @GET_KOJO_NUM / 指令口上
 // 分发族）与两个口上模块（K3 高貴、K5 マオ——各带 @EVENTTRAIN 存在标志
 // 与 @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层目录（docs/skeleton.md）
@@ -76,10 +81,11 @@ const STATE_HANDLERS = {
   // 原作 BEGIN AFTERTRAIN → @EVENTEND 链（TRAIN_MAIN.ERB:314-429，尾部
   // BEGIN TURNEND）→ 引擎收尾调教数据（ere 侧 era.endTrain）。
   [STATE.AFTERTRAIN]: run_aftertrain,
-  // 原作 BEGIN TURNEND → @EVENTTURNEND 链。当前链上只有 #PRI 壳（出口
-  // BEGIN SHOP 真实，本体待办）——链无人 BEGIN 时与 FIRST 同理按引擎行为
-  // 兜底 SHOP？不：Emuera 对 TURNEND 无「自动进商店轮」的文档语义，且 #PRI
-  // 壳必发 BEGIN SHOP，兜底只会掩盖壳被误删的回归，保持 undefined 报错。
+  // 原作 BEGIN TURNEND → @EVENTTURNEND 链。#114 起三档真身：#PRI（时段/
+  // 日期推进，event/event-turnend.js）→ 普通（回合结算本体，
+  // system/turnend-settle.js）→ #LATER（空，event/event-turnend-later.js）。
+  // 出口必发 BEGIN SHOP，链无人 BEGIN 时保持 undefined 报错（兜底只会掩盖
+  // 处理器被误删的回归）。
   [STATE.TURNEND]: async () => await emit('EVENTTURNEND'),
 };
 
