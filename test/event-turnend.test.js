@@ -221,6 +221,137 @@ test('侵攻度自然衰减：人间界有余量时每日 RAND:100，下限 0，
   );
 });
 
+test('KYOTEN_EVENT 经日循环触发（#119 接线）：未征服衰减后推进档恰好一次', async () => {
+  // FLAG:81 = 2100：衰减 RAND:100 后落 [2100, 2000]，任何取值都 >= 2000，
+  // 推进档（stage 0 → 1）必命中——用例对 rand 的任何取值确定
+  const world = setup_turnend();
+  world.fixture.store.set('flag:82', 0); // 人间界未征服
+  world.fixture.store.set('flag:81', 2100);
+  world.fixture.store.set('flag:93', 0); // FLAG:93 事件进度：初始档
+
+  await world.emit('EVENTTURNEND');
+  assert.equal(
+    world.fixture.store.get('flag:93'),
+    1,
+    '衰减后 CALL KYOTEN_EVENT, 1 推进 FLAG:93 0→1（SYSTEM ver1.0.3.ERB:631）',
+  );
+  const banners = world.fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((line) => line.text);
+  assert(
+    banners.some((line) => line.includes('占领了村庄')),
+    '跨 2000 阈值的横幅经日循环打出',
+  );
+
+  // 再走一回合：stage == 1 且侵攻度 < 4000，档位条件全不满足 → 不重复触发
+  await world.emit('EVENTTURNEND');
+  assert.equal(
+    world.fixture.store.get('flag:93'),
+    1,
+    '档位不符的回合必须空转（恰好触发一次，不重复）',
+  );
+  assert.equal(
+    world.fixture.lines_history.filter(
+      (line) => line.type === 'text' && line.text.includes('占领了村庄'),
+    ).length,
+    1,
+    '「占领了村庄」横幅只出现一次',
+  );
+});
+
+test('KYOTEN_EVENT 经日循环触发（#119 接线）：衰减跌破回退阈值打夺回横幅', async () => {
+  // FLAG:81 = 300：衰减后落 [300, 200]，任何取值都 <= 500，回退档必命中
+  const world = setup_turnend();
+  world.fixture.store.set('flag:82', 0);
+  world.fixture.store.set('flag:81', 300);
+  world.fixture.store.set('flag:93', 1);
+
+  await world.emit('EVENTTURNEND');
+  assert.equal(
+    world.fixture.store.get('flag:93'),
+    0,
+    '衰减到 500 以下时 FLAG:93 回退 1→0（INVASION_EVENT.ERB:60-66）',
+  );
+  assert(
+    world.fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
+    ),
+    '夺回横幅经日循环打出',
+  );
+});
+
+test('KYOTEN_EVENT 经日循环触发（#119 接线）：已征服的反抗臂走同一调用点', async () => {
+  // FLAG:82 = 1：每日 RAND:6 == 0 才反抗（衰减 RAND:100、保底 100）后调用。
+  // 反抗是 1/6 概率，循环推进直到回退档命中（连续 60 回合不中的概率可忽略）
+  const world = setup_turnend();
+  world.fixture.store.set('flag:82', 1); // 已征服
+  world.fixture.store.set('flag:81', 300);
+  world.fixture.store.set('flag:93', 1);
+
+  let turns = 0;
+  for (; turns < 60 && world.fixture.store.get('flag:93') === 1; turns += 1) {
+    await world.emit('EVENTTURNEND');
+  }
+  assert.ok(turns < 60, '60 回合内反抗至少发生一次');
+  assert.equal(world.fixture.store.get('flag:93'), 0, '反抗衰减后回退档命中');
+  assert.ok(
+    (world.fixture.store.get('flag:81') ?? 0) >= 100,
+    '已征服衰减的保底 100（SYSTEM ver1.0.3.ERB:636-637）',
+  );
+  assert(
+    world.fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
+    ),
+    '夺回横幅经已征服反抗臂打出（调用点 :640）',
+  );
+});
+
+test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 ARG 2 臂，空转零副作用', async () => {
+  // 两手构造：FLAG:86 = 2100 让精灵衰减块执行（证明该块的调用点真的跑到，
+  // 且它调的 KYOTEN_EVENT 实参应是 2）；FLAG:81 = 300 + FLAG:93 = 2 让人间界
+  // 块先回退一档到 1——若精灵块把领域号误传成 1，会以 FLAG:81（<= 500，
+  // stage 1）再回退一档到 0 并打出夺回横幅，本用例当场红
+  const world = setup_turnend();
+  world.fixture.store.set('flag:82', 0); // 人间界未征服
+  world.fixture.store.set('flag:81', 300);
+  world.fixture.store.set('flag:93', 2);
+  world.fixture.store.set('flag:87', 0); // 精灵领域未征服
+  world.fixture.store.set('flag:86', 2100);
+
+  let turns = 0;
+  for (
+    ;
+    turns < 60 && world.fixture.store.get('flag:86') === 2100;
+    turns += 1
+  ) {
+    await world.emit('EVENTTURNEND');
+  }
+  assert.ok(turns < 60, '精灵领域衰减块确实执行（RAND:100 连 0 的概率可忽略）');
+  assert.ok(
+    (world.fixture.store.get('flag:86') ?? 0) < 2100,
+    'FLAG:86 已衰减（调用点 :650 之后的 KYOTEN_EVENT, 2 已被调用）',
+  );
+  assert.equal(
+    world.fixture.store.get('flag:93'),
+    1,
+    '人间界只回退一档到 1；ARG 2 臂不得误读人间界状态再退一档（传参须按领域号）',
+  );
+  assert.equal(
+    world.fixture.store.get('flag:94'),
+    undefined,
+    'ARG 2 臂空转：不创建 FLAG:94（汉化版三臂无状态推进，见 issue #119）',
+  );
+  assert(
+    !world.fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
+    ),
+    'ARG 2 臂空转：不打第二档以下的夺回横幅',
+  );
+});
+
 test('魔王回复：午前结算 +1400、午后 +1000；战役中气力 -10；超上限钳制', async () => {
   const world = setup_turnend();
   world.fixture.store.set('maxbase:0:0', 100000);

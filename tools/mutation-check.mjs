@@ -77,8 +77,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
  * 条目表计数基线（门 1）：条数只能通过显式改这份常量来变。
  * 增 = 新变异落地（公告）；减 = 变异被删（也应是公告）。
  * #115 起为 201：+6（M190-M195，日程推进与月份回绕）。
+ * #119 起为 217：+3（M197-M199，KYOTEN_EVENT 日循环接线）。
  */
-const LEDGER_COUNT_BASELINE = 214;
+const LEDGER_COUNT_BASELINE = 217;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
