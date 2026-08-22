@@ -24,7 +24,8 @@
  *     名单见 STUBBED_CALLS，登记 docs/stub-registry.md。
  *   - KYOTEN_EVENT（#119）与 INVASION_CHECK（#118）不在存根之列：前者调用
  *     点已留接入注释（据点事件票落地时补调用），后者原作即是注释状态（行 621）、
- *     1:1 不调用。
+ *     1:1 不调用。EVENT_NEWDAY 自 #115 起为真身（ere/event/event-nextday.js，
+ *     含每日一次的 @ENDCHECK 调用点）。
  */
 
 const era = require('#/era-electron');
@@ -33,6 +34,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
+const { run_event_newday } = require('#/event/event-nextday');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -56,7 +58,6 @@ const STUBBED_CALLS = [
   'PARTY_JOIN',
   'PARTY_DEL',
   'GEO_OUTPUT_2',
-  'EVENT_NEWDAY',
   'GET_LOOK_INFO',
 ];
 
@@ -535,9 +536,10 @@ on('EVENTTURNEND', async () => {
     stub_line('GEO_OUTPUT_2', '2D 地图输出');
   }
 
-  // :749-751 翌朝的事件（日推进回合 TIME==0 时）
+  // :749-751 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
+  // 晨间三事件存根 + 每日一次的 @ENDCHECK 调用点）
   if (era_flag.time === 0) {
-    stub_line('EVENT_NEWDAY', '翌朝事件');
+    await run_event_newday();
   }
 
   // :753-758 还原前次的调教对象与助手（FLAG:1/FLAG:2，@EVENTEND 记录）

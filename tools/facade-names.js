@@ -69,6 +69,10 @@ const cflag = {
   ),
   13: named('基础攻击', src(SRC_FLAG, 'CFLAG:13 基礎攻撃力')),
   14: named('基础防御', src(SRC_FLAG, 'CFLAG:14 基礎防御力')),
+  109: named(
+    '排卵诱发剂',
+    src(SRC_FLAG, 'CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）'),
+  ),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),
   202: named('简易助手_0', src(SRC_KXX, ':123 简易助手口上 CFLAG:202～210')),
@@ -212,6 +216,14 @@ const cflag = {
     erb('口上/EVENT_K11_リリィ.ERB', '魔族化 CFLAG:400'),
   ),
   444: named('兽奸眼罩', src(SRC_FLAG, 'CFLAG:444 獣姦アイマスク时口上')),
+  451: named(
+    '年龄',
+    src(SRC_FLAG, 'CFLAG:451 年齢（人間換算，HUMAN_AGE_GENERATE の結果）'),
+  ),
+  452: named(
+    '种族年龄',
+    src(SRC_FLAG, 'CFLAG:452 種族年齢（月替わりの年齢加算はこちら）'),
+  ),
   503: named(
     '休憩',
     // SYSTEM ver1.0.3.ERB 带空格的文件名进不了门面出处注释（gen-facade 测试

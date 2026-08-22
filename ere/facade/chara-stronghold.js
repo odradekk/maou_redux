@@ -12,6 +12,22 @@ class StrongholdFacade {
     this.cid = cid;
   }
 
+  // —— cflag ——
+  /**
+   * 排卵诱发剂（cflag:cid:109 ↔ CFLAG:109）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）
+   * @returns {number}
+   */
+  get 排卵诱发剂() {
+    return era.get(`cflag:${this.cid}:109`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 排卵诱发剂(v) {
+    era.set(`cflag:${this.cid}:109`, v);
+  }
+
   // —— base ——
   /**
    * 寿命（base:cid:10 ↔ BASE:10）

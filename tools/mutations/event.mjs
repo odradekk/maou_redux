@@ -218,11 +218,63 @@ export default [
     must_mention: '魔王回复',
   },
   {
-    desc: 'M190 @EVENTFIRST 威望播种改坏（70 改 7，SYSTEM ver1.0.3.ERB:62）',
+    desc: 'M196 @EVENTFIRST 威望播种改坏（70 改 7，SYSTEM ver1.0.3.ERB:62）',
     file: 'ere/event/event-first.js',
     find: '  era_exflag.prestige = 70;',
     replace: '  era_exflag.prestige = 7; // 变异：播种改坏',
     tests: ['event-first'],
     must_mention: 'exflag:99',
+  },
+  // —— #115 日程推进（EVENT_NEXTDAY/EVENT_NEWDAY 窄路径 + EVENT_NEXTMONTH
+  //    月份回绕；条目收本切片）——
+  {
+    desc: 'M190 EVENT_NEXTMONTH 12 月不回 1（跨年月号错）',
+    file: 'ere/event/event-nextmonth.js',
+    find: '    era_flag.month = 1;',
+    replace: '    era_flag.month = 2;',
+    tests: ['event-nextday'],
+    must_mention: '与期望日历不符',
+  },
+  {
+    desc: 'M191 EVENT_NEXTMONTH 小月表错一个月（9 改 8——8 月被当小月提前换月）',
+    file: 'ere/event/event-nextmonth.js',
+    find: '[4, 6, 9, 11].includes(era_flag.month)',
+    replace: '[4, 6, 8, 11].includes(era_flag.month)',
+    tests: ['event-nextday'],
+    must_mention: '与期望日历不符',
+  },
+  {
+    desc: 'M192 EVENT_NEXTMONTH 2 月支删掉（29 日不换月，日历对照失守）',
+    file: 'ere/event/event-nextmonth.js',
+    find: '  if (era_flag.month === 2) {',
+    replace: '  if (era_flag.month === 13) {',
+    tests: ['event-nextday'],
+    must_mention: '与期望日历不符',
+  },
+  {
+    desc: 'M193 ENDCHECK 调用点被删（主线剧情监测每日一次失守）',
+    file: 'ere/event/event-nextday.js',
+    find: "  stub_line('ENDCHECK', '主线剧情监测');",
+    replace: '  // 变异：ENDCHECK 不调用',
+    tests: ['event-nextday'],
+    must_mention: 'ENDCHECK 必须恰好被调用一次',
+  },
+  {
+    desc: 'M194 普通档的 TIME==0 守卫删掉（午后回合也跑翌朝事件，每日翻倍）',
+    file: 'ere/system/turnend-settle.js',
+    find: `  if (era_flag.time === 0) {
+    await run_event_newday();
+  }`,
+    replace: '  await run_event_newday();',
+    tests: ['event-nextday'],
+    must_mention: '不进日的回合不得调用 ENDCHECK',
+  },
+  {
+    desc: 'M195 跨年年龄增长漏 +1（种族年龄不推进）',
+    file: 'ere/event/event-nextmonth.js',
+    find: '      chara(cid).chara.种族年龄 += 1; // CFLAG:452 += 1（:31）',
+    replace: '      // 变异：种族年龄不推进',
+    tests: ['event-nextday'],
+    must_mention: '种族年龄应 +1',
   },
 ];
