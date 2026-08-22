@@ -304,7 +304,14 @@ test('变量表但不在渲染白名单（如二维角色表）：告警跳过�
 // 原先只盯 global 的守护对 era-flag.js 视而不见，改了 Flag.yml 不重生成也
 // 不会红。白名单是生成器自己的真相，从它出发就不会再漏。
 for (const table of RENDERABLE_ONE_DIM_TABLES) {
-  const yml_name = `${table[0].toUpperCase()}${table.slice(1)}.yml`;
+  // 真实文件名按「小写 == 表名」在 yml/ 里找：ExFlag.yml 这类混合大小写
+  // （#113 先例）不满足「首字母大写即文件名」的旧假设；找不到即红（白名单
+  // 指向了不存在的表）
+  const yml_name = fs
+    .readdirSync(path.join(REPO_ROOT, 'yml'))
+    .find(
+      (name) => name.toLowerCase() === `${table}.yml` && /\.ya?ml$/i.test(name),
+    );
   const product_name = `era-${table}.js`;
 
   test(`同步守护：ere/era-utils/${product_name} 的生成区与 yml/${yml_name} 渲染结果一致`, () => {

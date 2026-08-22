@@ -361,7 +361,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   const registry = fs.readFileSync(registry_path, 'utf8');
 
   // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
-  // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44 起为真身/真转场，已移出
+  // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44、INVASION 与 109 分支的
+  // BEGIN TURNEND 自 #117 起为真身/真转场，已移出
   assert.deepEqual(STUBBED_CALLS, [
     'SELECT_ASSI',
     'CHARA_INFO',
@@ -372,7 +373,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'CHARA_SALE',
     'ITEM_SHOP',
     'TAILOR_MAIN',
-    'INVASION',
     'SECRET_LABO',
     'INFRASTRUCTURE',
     'BEGIN TURNEND',

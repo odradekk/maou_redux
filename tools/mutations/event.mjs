@@ -217,4 +217,12 @@ export default [
     tests: ['event-turnend'],
     must_mention: '魔王回复',
   },
+  {
+    desc: 'M190 @EVENTFIRST 威望播种改坏（70 改 7，SYSTEM ver1.0.3.ERB:62）',
+    file: 'ere/event/event-first.js',
+    find: '  era_exflag.prestige = 70;',
+    replace: '  era_exflag.prestige = 7; // 变异：播种改坏',
+    tests: ['event-first'],
+    must_mention: 'exflag:99',
+  },
 ];

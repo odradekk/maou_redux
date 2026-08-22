@@ -50,6 +50,19 @@ const era_flag = {
     era.set('flag:82', v);
   },
   /**
+   * 人间界侵略事件进度（flag:93 ↔ FLAG:93）
+   * @returns {number}
+   */
+  get human_realm_event_stage() {
+    return era.get('flag:93') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set human_realm_event_stage(v) {
+    era.set('flag:93', v);
+  },
+  /**
    * 精灵领域侵攻度（flag:86 ↔ FLAG:86）
    * @returns {number}
    */
