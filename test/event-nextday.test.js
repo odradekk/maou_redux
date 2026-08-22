@@ -9,8 +9,9 @@
  * 覆盖（对应工单验收清单）：
  *   1. 连续推进 400 天：DAY:1 始终 1–12、DAY:2 落在合法日范围、大小月与
  *      2 月/12 月回绕全部正确（对照独立天数表的期望序列逐日核对）；
- *   2. 每推进一天 ENDCHECK 恰好被调用一次（日推进回合 1 行占位、午后
- *      回合 0 行、N 天累计 N 次）；
+ *   2. 每推进一天 ENDCHECK 恰好被调用一次（#116 起为真调用，观测其每日
+ *      无条件副作用——ENDRESET 的玛奥清场写：日推进回合 1 笔、午后回合
+ *      0 笔、N 天累计 N 笔）；
  *   3. 单元级全量写入断言（直接调 run_event_nextday / run_event_newday）；
  *   4. 存根清单核对（两模块的 STUBBED_CALLS ↔ docs/stub-registry.md）；
  *   5. 执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、ENDCHECK 在
@@ -170,10 +171,15 @@ test('每推进一天 ENDCHECK 恰好被调用一次：午后回合 0 次、日�
   const world = setup_nextday();
   join_slave_chara(world.fixture, 31, '温妮');
 
+  // ENDCHECK 已是真调用（#116），观测点改为其每日无条件副作用：ENDRESET
+  // 的玛奥清场写（玛奥 17 不在场 → exflag:2805 = 0 每次执行必写一笔）
+  const endcheck_runs = (fixture) =>
+    fixture.var_writes.filter((w) => w.name === 'exflag:2805').length;
+
   // 午后回合（TIME 0→1）：不进日，不得监测
   await world.emit('EVENTTURNEND');
   assert.equal(
-    stub_count(world.fixture.text_lines(), 'ENDCHECK'),
+    endcheck_runs(world.fixture),
     0,
     '不进日的回合不得调用 ENDCHECK',
   );
@@ -181,7 +187,7 @@ test('每推进一天 ENDCHECK 恰好被调用一次：午后回合 0 次、日�
   // 日推进回合（TIME 1→0）：恰好一次
   await world.emit('EVENTTURNEND');
   assert.equal(
-    stub_count(world.fixture.text_lines(), 'ENDCHECK'),
+    endcheck_runs(world.fixture),
     1,
     '每推进一天 ENDCHECK 必须恰好被调用一次（@EVENT_NEWDAY 的 :241）',
   );
@@ -192,13 +198,13 @@ test('每推进一天 ENDCHECK 恰好被调用一次：午后回合 0 次、日�
     await world.emit('EVENTTURNEND');
   }
   assert.equal(
-    stub_count(world.fixture.text_lines(), 'ENDCHECK'),
+    endcheck_runs(world.fixture),
     10,
     '10 个游戏日的累计调用数必须是 10',
   );
 });
 
-test('单元级全量写入：只有魔王的世界里 EVENT_NEXTDAY 只写 FLAG:61、EVENT_NEWDAY 零写', async () => {
+test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 ENDCHECK 追加清场与反叛写', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -214,11 +220,29 @@ test('单元级全量写入：只有魔王的世界里 EVENT_NEXTDAY 只写 FLAG
     '只有魔王（循环全跳过）时，EVENT_NEXTDAY 的唯一写入是熏香清零',
   );
 
+  // EVENT_NEWDAY 的晨间事件全是存根；:241 起进入 @ENDCHECK（#116 真调用）：
+  // ENDRESET 十一角清场（剧情角色全不在场 → 十一笔零写，源码顺序）+
+  // ENDCHECKMAIN 反叛判定（夹具零播种 → 威望 0 ≤ 0 → FLAG:2816 = 10）；
+  // 其余四条线条件全不触发，ENDCHECKCHARA 无角色可定线，分派循环对空注册表静默
   await run_event_newday();
   assert.deepEqual(
     fixture.var_writes,
-    [{ name: 'flag:61', value: 0 }],
-    'EVENT_NEWDAY 的窄路径不写任何变量（全部存根）',
+    [
+      { name: 'flag:61', value: 0 },
+      { name: 'exflag:2805', value: 0 }, // 玛奥
+      { name: 'exflag:2813', value: 0 }, // 金红桃
+      { name: 'exflag:2814', value: 0 }, // 银黑桃
+      { name: 'exflag:2811', value: 0 }, // 黑方片
+      { name: 'exflag:2812', value: 0 }, // 白梅花
+      { name: 'exflag:2806', value: 0 }, // 莉莉
+      { name: 'exflag:2808', value: 0 }, // 琼
+      { name: 'exflag:2809', value: 0 }, // 普林希斯
+      { name: 'exflag:2810', value: 0 }, // 嘉德
+      { name: 'flag:2815', value: 0 }, // 葵希罗（原作错写 FLAG 侧，1:1）
+      { name: 'exflag:2807', value: 0 }, // 菲娅
+      { name: 'flag:2816', value: 10 }, // 反叛判定（威望 0）
+    ],
+    'EVENT_NEWDAY 的写入 = 熏香清零 + ENDCHECK 链（ENDRESET 清场 + 反叛写）',
   );
 });
 
@@ -245,6 +269,9 @@ test('排卵诱发剂效果消去：CFLAG:109 非零时播报 + 清零（走门�
 test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、ENDCHECK 在普通档尾部', async () => {
   const world = setup_nextday();
   join_slave_chara(world.fixture, 31, '温妮');
+  // 银黑桃 21 在场：ENDCHECK（#116 真调用）进入 ENDCHECKCHARA 时会打
+  // ENDCHECKSPADE 存根行——它就是 ENDCHECK 执行的直接可见证据
+  join_slave_chara(world.fixture, 21, '银黑桃');
   world.era_flag.month = 2;
   world.era_flag.date = 28;
   world.era_flag.time = 1;
@@ -254,7 +281,9 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   const texts = world.fixture.text_lines();
   const tax = texts.findIndex((line) => line.includes('@TAX_GET')); // NEXTDAY 尾部
   const month_roll = texts.findIndex((line) => line.includes('明天就是3月了')); // NEXTMONTH（在 :84，DAY 推进之后）
-  const endcheck = texts.findIndex((line) => line.includes('@ENDCHECK'));
+  const endcheck = texts.findIndex((line) =>
+    line.includes('原作 @ENDCHECKSPADE，'),
+  ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后）
   const campaign = texts.findIndex((line) =>
     line.includes('@CAMPAIGN_GAMEOVER'),
   ); // 普通档尾部
@@ -304,7 +333,6 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'MORNING_FELLATIO',
     'ONESHO',
     'DOG_WALK',
-    'ENDCHECK',
   ]);
   assert.deepEqual(nextmonth_stubs, ['HUMAN_AGE_GENERATE']);
   const registry = fs.readFileSync(

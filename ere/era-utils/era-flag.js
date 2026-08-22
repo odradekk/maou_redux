@@ -167,6 +167,32 @@ const era_flag = {
     era.set('flag:502', v);
   },
   /**
+   * 葵希罗线（flag:2815 ↔ FLAG:2815）
+   * @returns {number}
+   */
+  get route_34() {
+    return era.get('flag:2815') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set route_34(v) {
+    era.set('flag:2815', v);
+  },
+  /**
+   * 反叛结局（flag:2816 ↔ FLAG:2816）
+   * @returns {number}
+   */
+  get rebellion_ending() {
+    return era.get('flag:2816') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set rebellion_ending(v) {
+    era.set('flag:2816', v);
+  },
+  /**
    * 天数（flag:10000 ↔ FLAG:10000）
    * @returns {number}
    */

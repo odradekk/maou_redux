@@ -252,9 +252,11 @@ export default [
     must_mention: '与期望日历不符',
   },
   {
-    desc: 'M193 ENDCHECK 调用点被删（主线剧情监测每日一次失守）',
+    desc: 'M193 ENDCHECK 调用点被删（主线剧情监测每日一次失守；#116 起为真调用）',
     file: 'ere/event/event-nextday.js',
-    find: "  stub_line('ENDCHECK', '主线剧情监测');",
+    find: `  // :241 主线剧情监测——每日一次的结局判定入口，@ENDCHECK 全链本体在
+  // ere/event/event-endcheck.js（#116）
+  await run_endcheck();`,
     replace: '  // 变异：ENDCHECK 不调用',
     tests: ['event-nextday'],
     must_mention: 'ENDCHECK 必须恰好被调用一次',
@@ -340,5 +342,101 @@ export default [
     replace: '  era_flag.elf_realm_conquered = 1; // 变异：状态机断在 1',
     tests: ['event-ending'],
     must_mention: '1→2',
+  },
+  {
+    desc: 'M209 ENDCHECKMAIN 2801 主线空闲守卫删除（剧情线推进中也置 99）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (
+    era_flag.day_count === 500 &&
+    (era_exflag.first_run_deadline === 0 || era_exflag.first_run_deadline >= 90)
+  ) {`,
+    replace: `  if (era_flag.day_count === 500 && era_exflag.first_run_deadline >= 0) {`,
+    tests: ['event-endcheck'],
+    must_mention: '不得置 99',
+  },
+  {
+    desc: 'M210 ENDCHECKMAIN 2802 反作弊容差丢失（+8766 删掉）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  if (era_flag.money > era_exflag.legit_money + 8766) {',
+    replace: '  if (era_flag.money > era_exflag.legit_money) {',
+    tests: ['event-endcheck'],
+    must_mention: '容差界',
+  },
+  {
+    desc: 'M211 ENDCHECKMAIN 2803 占用守卫删除（占用中的奴隶也计入失控号）',
+    file: 'ere/event/event-endcheck.js',
+    find: `    if (
+      (era.get(\`cflag:\${cid}:9\`) || 0) >= 5000 &&
+      (era.get(\`cflag:\${cid}:1\`) || 0) === 0
+    ) {`,
+    replace: `    if ((era.get(\`cflag:\${cid}:9\`) || 0) >= 5000) {`,
+    tests: ['event-endcheck'],
+    must_mention: '占用中的角色不得计入',
+  },
+  {
+    desc: 'M212 ENDCHECKMAIN 2804 魔王过载阈值边界含等改不含（>= 1500 改 >）',
+    file: 'ere/event/event-endcheck.js',
+    find: "  if ((era.get('cflag:0:9') || 0) >= 1500) {",
+    replace: "  if ((era.get('cflag:0:9') || 0) > 1500) {",
+    tests: ['event-endcheck'],
+    must_mention: '魔王过载必须置 10',
+  },
+  {
+    desc: 'M213 ENDCHECKMAIN FLAG 侧反叛判定边界（<= 0 改 < 0，威望恰为零不置）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  if (era_exflag.prestige <= 0) {',
+    replace: '  if (era_exflag.prestige < 0) {',
+    tests: ['event-endcheck'],
+    must_mention: '威望 <= 0 必须置',
+  },
+  {
+    desc: 'M214 ENDRESET 嘉德清场守卫改读自家线值（把原作 2814 笔误"修好"）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  if (get_chara(33) < 0 && era_exflag.route_21 < 500) {',
+    replace: '  if (get_chara(33) < 0 && era_exflag.route_33 < 500) {',
+    tests: ['event-endcheck'],
+    must_mention: '守卫读 2814',
+  },
+  {
+    desc: 'M215 ENDCHECKCHARA 素质定线值交换（恋慕也置 20）',
+    file: 'ere/event/event-endcheck.js',
+    find: '          starter.holder[starter.name] = 10;',
+    replace: '          starter.holder[starter.name] = 20;',
+    tests: ['event-endcheck'],
+    must_mention: '恋慕定线必须置 10',
+  },
+  {
+    desc: 'M216 END 族分派循环防重播守卫删除（个位非 0 的已播段也分发）',
+    file: 'ere/event/event-endcheck.js',
+    find: '      if (stage % 10 === 0) {',
+    replace: '      if (true) {',
+    tests: ['event-endcheck'],
+    must_mention: '已播',
+  },
+  {
+    desc: 'M217 END 族分派循环短路守卫删除（2801 == 99 时照跑）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (era_exflag.first_run_deadline !== 99) {
+    for (let local = 2; local < 16; local += 1) {`,
+    replace: `  {
+    for (let local = 2; local < 16; local += 1) {`,
+    tests: ['event-endcheck'],
+    must_mention: '整体短路',
+  },
+  {
+    desc: 'M218 END 族声明空间丢族 15（葵希罗错位读点从合法缺失变空间外）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],',
+    replace: '  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],',
+    tests: ['event-endcheck'],
+    must_mention: '不在声明的编号空间内',
+  },
+  {
+    desc: 'M219 ENDING_N 门槛丢 DAY 守卫（99 已定即每天调演出）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  if (era_exflag.first_run_deadline === 99 && era_flag.day_count === 500) {',
+    replace: '  if (era_exflag.first_run_deadline === 99) {',
+    tests: ['event-endcheck'],
+    must_mention: 'DAY != 500 时不得调用',
   },
 ];

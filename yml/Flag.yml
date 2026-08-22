@@ -90,6 +90,25 @@
   id: 502
   name: "map_2d_mode"
   type: "number"
+# —— 结局线区间（issue #116）——
+# 原作把结局线区间 2801-2820 声明在 EX_FLAG（@ENDCHECK 头注释），但两条
+# 实际写进了 FLAG 侧（ENDCHECK 链 1:1 照搬写点，见 yml/ExFlag.yml 头注的
+# 错写登记；ExFlag.yml 同 id 的 2815/2816 条目是语义登记，真值归属由
+# ENDING_1 演出票 #118 定夺——两侧均无读者，写侧必须与 ENDCHECKCHARA 的
+# 读点同侧才保原作状态机行为）。
+# 葵希罗（角色号 34）线进度：TALENT:85 恋慕 → 10、TALENT:76 淫乱 → 20
+# （ENDINGDATA.ERB:130-137）；不在队清零（:30-32）。分派循环读的是
+# EX_FLAG:2815（族错位，恒 0 → END15_0 静默），FLAG 侧永不被分派消费
+"葵希罗线":
+  id: 2815
+  name: "route_34"
+  type: "number"
+# 反叛结局标记：威望（EX_FLAG:99）≤ 0 时置 10（ENDINGDATA.ERB:61-63）。
+# 全库无消费点（死代码），1:1 保留写入
+"反叛结局":
+  id: 2816
+  name: "rebellion_ending"
+  type: "number"
 "天数":
   id: 10000
   name: "day_count"

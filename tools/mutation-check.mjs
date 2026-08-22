@@ -81,7 +81,8 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
  * #118 起为 226：+9（INVASION_CHECK 五组判据与 ENDING_1 链——page/wrapper
  * 切片的 M196-M198、M203-M204 与 event 切片的 M205-M208）。
  */
-const LEDGER_COUNT_BASELINE = 226;
+// #116 起抬 11（M209-M219，ENDCHECK 全链的行为锁）
+const LEDGER_COUNT_BASELINE = 237;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
