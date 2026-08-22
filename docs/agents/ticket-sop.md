@@ -1,16 +1,18 @@
 # 工单流程 SOP
 
-一张工单 = 一个 Orca worktree = 一个 droid 会话，全程用 `orca` CLI 驱动。
+一张工单 = 一个 Orca worktree = 一个 ante 会话，全程用 `orca` CLI 驱动。
 
 工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；移植决议的索引见地图 issue #1（只读）。
 
-票序与阻塞关系写在**当前那条贯通路径的父票**里（第一条 #15、第二条 #42，均已关闭）。两条贯通路径跑完之后没有常设的票序索引，新工作按 `docs/stub-registry.md` 认领，阻塞关系写在各票的正文里。
+**当前的票序索引是路线图 issue #101**（「移植路线图：十八个子系统到可通关的完整游戏」）。它的子票是**阶段决策票**，阻塞关系用 GitHub 原生依赖表达（`issue_dependencies_summary.blocked_by`）。**实施票不挂 #101**，挂各阶段自己的子地图——先例是 #42（第二条贯通路径，它自身带 `wayfinder:map`，八张 T 票是它的实施票）。没有子地图可挂的零散工作，按 `docs/stub-registry.md` 认领。
 
 ## 0. 环境前提
 
-先读这四条，否则后面每一步都会踩。
+先读这七条，否则后面每一步都会踩。
 
 - Windows 上 CLI 就是 `orca`；Linux 下用 `orca-ide`（裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
+- **WSL 会话是个例外**：环境变量 `ORCA_CLI_COMMAND` 写着 `orca-ide`，但这台机器上没有这个可执行文件。可用的是 Windows 端的 `orca.exe`（在 PATH 上，`…/AppData/Local/Programs/orca/resources/bin`），它与 app 是同一份安装。
+- **`worktree create` 报 `runtime_unavailable` 往往是假失败**：连接断了，但 worktree 在服务端已经建成。**重试前先 `orca worktree list --json` 看一眼**，否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
 - **本机 Orca 的 `commandSourcePolicy` 是 `local-only`，仓库里的 `orca.yaml` 钩子不会执行**（实测：带 `--run-hooks` 删 worktree，仓库脚本一行没跑）。所以仓库里不放 `orca.yaml`；worktree 的 setup 钩子（`npm install`）配在 Orca 的 **Settings → Repository → Hooks**。
 - 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
 - `.worktreeinclude` 会把主 checkout 的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**主 checkout 那份必须是 `"static": "yml"`**，否则每个新 worktree 一开就是坏的。
@@ -34,26 +36,38 @@ gh issue edit <n> --repo odradekk/maou_redux --add-assignee @me
 orca worktree ps --json
 ```
 
-## 3. 建 worktree 并派 droid
+## 3. 建 worktree 并派 ante
+
+**分三步，不要合成一步。**
 
 ```
-orca worktree create --name t<N>-<slug> --no-parent --agent droid --prompt "<简报>" --json
+orca worktree create --name t<N>-<slug> --no-parent --agent ante --issue <N> --json
+orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 180000 --json
+orca terminal send --terminal <handle> --text "请读 /tmp/brief-<N>.txt 这份工单简报，按其中要求执行。" --enter --json
 ```
 
-- 命名 `t<N>-<slug>`，`<N>` 取工单标题里的 T 编号。
+- 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。`--issue <N>` 让 Orca 把 worktree 关联到 GitHub issue，卡片上直接看得见。
 - `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
-- `--agent droid` 让 droid 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
+- `--agent ante` 让 ante 落在 worktree 的第一个终端（它实际执行 `ante --yolo`），这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
 - `--repo` 省略时 Orca 从当前 worktree 推断仓库；跨仓库才需要 `orca repo list --json` 取 id。
-- 记下返回里的 `worktree.id`（形如 `<repoId>::<绝对路径>`，**两段都要**，只给 repoId 不是 worktree id）与 `startupTerminal.handle`。
+- 记下返回里的 `worktree.id`（形如 `<repoId>::<绝对路径>`，**两段都要**）与 `agentTerminalHandle` / `startupTerminal.handle`。连接断了拿不到时，用 `orca terminal list --worktree name:<名字> --json` 重取。
+
+**绝对不要用 `--prompt` 传多行简报。** `--prompt` 是逐字符打进 TUI 的：**每个换行都是一次回车**，而斜杠开头会拉出命令菜单，后续回车就在菜单里乱选。实测一次二十多行的简报最后选中了 `/exit`，ante 当场退出，worktree 空跑一趟（终端里只剩 `❯ /exit` 和 `Signing off.`）。
+
+**正确的送法是单行 + 简报文件**：简报写进 `/tmp/brief-<N>.txt`（worktree 的终端是 WSL shell，`/tmp` 与派单会话共享），再发**一行**指令让它去读。一行 = 一次回车，没有菜单可选。
+
+**起不来时怎么办。** `--agent` 启动偶尔会输在终端初始化的竞速上，终端里留下 `The cursor position could not be read within a normal duration` 然后掉回 shell。发 `ante --yolo` 重起即可。注意此时输入行上可能粘着残留的转义序列（形如 `1;2c1R`），会把命令吃掉变成 `command not found`——`terminal read` 看一眼提示符干净了再发。
+
+**每一步都要 `terminal read` 验证，别信 `accepted: true`。** 那只证明字节写进了 PTY，不证明 agent 收到了、更不证明它还活着。
 
 ### 简报模板
 
-**第一行必须是 `/implement` 加一个空格再接任务描述。** 斜杠命令后没有空格不会被识别为技能调用；写成「请用 /implement 技能……」只是在*请求*它调用，直接调用更稳。
+简报写进 `/tmp/brief-<N>.txt`，**第一行是 `/implement` 加一个空格再接任务描述**（research 票用 `/research`）。斜杠命令后没有空格不会被识别为技能调用；写成「请用 /implement 技能……」只是在*请求*它调用，直接调用更稳。
 
 ```
 /implement issue #<N>：<标题>
 工单正文与验收清单：gh issue view <N> --repo odradekk/maou_redux --comments
-父票（这张票在整体中的位置与测试策略）：gh issue view 15 --repo odradekk/maou_redux
+父票（这张票在整体中的位置与测试策略）：gh issue view <父票> --repo odradekk/maou_redux
 相关决议，动手前请读：#<a>、#<b>
 
 <三到五条它自己查会很贵、且容易查错的既有事实，直接给结论>
