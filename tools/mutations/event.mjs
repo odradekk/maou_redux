@@ -206,7 +206,7 @@ export default [
       era.print(spec.resist_text);`,
     replace: `      spec.write(spec.degree());
       era.print(spec.resist_text);`,
-    tests: ['event-turnend'],
+    tests: ['event-turnend', 'event-ending-e2e'],
     must_mention: '侵攻度自然衰减',
   },
   {
@@ -296,7 +296,9 @@ export default [
       await kyoten_event(region);`,
     replace: '      // 变异：征服后反抗臂不调 KYOTEN_EVENT',
     tests: ['event-turnend'],
-    must_mention: '60 回合内反抗至少发生一次',
+    // #120 起该用例改确定构造（随机源注入），断言消息随之更换（flag:93
+    // 的断言先于横幅断言红）
+    must_mention: '反抗衰减后回退档命中',
   },
   {
     desc: 'M199 KYOTEN_EVENT 领域号写死 1（精灵衰减误读人间界状态再退一档）',

@@ -282,29 +282,68 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：衰减跌破回退阈�
 });
 
 test('KYOTEN_EVENT 经日循环触发（#119 接线）：已征服的反抗臂走同一调用点', async () => {
-  // FLAG:82 = 1：每日 RAND:6 == 0 才反抗（衰减 RAND:100、保底 100）后调用。
-  // 反抗是 1/6 概率，循环推进直到回退档命中（连续 60 回合不中的概率可忽略）
+  // FLAG:82 = 1：每回合 RAND:6 == 0 才反抗（衰减 RAND:100、保底 100）后调用。
+  // #119 验收时记录的已知非确定性（60 回合循环等 1/6 命中，约 1.8e-5 概率
+  // 挂）：#120 起夹具提供 Math.random 注入（override_math_random，选择依据
+  // 见 issue #120 评论），改为确定构造——预置序列让反抗首次判定即命中：
+  //   rand(6) 取 r=0 → 0（反抗）；rand(100) 取 r=0.5 → 50（衰减量，
+  //   flag:81 = 300 - 50 = 250，> 100 不触保底钳制）
   const world = setup_turnend();
   world.fixture.store.set('flag:82', 1); // 已征服
   world.fixture.store.set('flag:81', 300);
   world.fixture.store.set('flag:93', 1);
 
-  let turns = 0;
-  for (; turns < 60 && world.fixture.store.get('flag:93') === 1; turns += 1) {
-    await world.emit('EVENTTURNEND');
-  }
-  assert.ok(turns < 60, '60 回合内反抗至少发生一次');
-  assert.equal(world.fixture.store.get('flag:93'), 0, '反抗衰减后回退档命中');
-  assert.ok(
-    (world.fixture.store.get('flag:81') ?? 0) >= 100,
-    '已征服衰减的保底 100（SYSTEM ver1.0.3.ERB:636-637）',
+  const rand_seq = [0, 0.5];
+  let drawn = 0;
+  // 耗尽后回落固定 0.5：floor(0.5 * n) 对任何 n >= 2 都非 0，若世界里有
+  // 未预见的额外 rand 消费，也不会误命中反抗判定（本世界魔王独居，
+  // 一次 emit 的消费恰为序列两项）
+  world.fixture.override_math_random(() =>
+    drawn < rand_seq.length ? rand_seq[drawn++] : 0.5,
   );
+  try {
+    await world.emit('EVENTTURNEND');
+  } finally {
+    world.fixture.restore_math_random();
+  }
+
+  assert.equal(
+    world.fixture.store.get('flag:81'),
+    250,
+    '反抗衰减 300 - 50（RAND:6 命中后 RAND:100 = 50）',
+  );
+  assert.equal(world.fixture.store.get('flag:93'), 0, '反抗衰减后回退档命中');
   assert(
     world.fixture.lines_history.some(
       (line) =>
         line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
     ),
     '夺回横幅经已征服反抗臂打出（调用点 :640）',
+  );
+});
+
+test('已征服反抗臂的保底钳制：衰减跌破 100 时钳回 100（SYSTEM :636-637）', async () => {
+  // flag:81 = 120、反抗命中后 rand(100) = 50 → 70 < 100 → 钳回 100。
+  // 随机源确定构造同上一条用例（rand(6) = 0 命中反抗、rand(100) = 50）
+  const world = setup_turnend();
+  world.fixture.store.set('flag:82', 1);
+  world.fixture.store.set('flag:81', 120);
+
+  const rand_seq = [0, 0.5];
+  let drawn = 0;
+  world.fixture.override_math_random(() =>
+    drawn < rand_seq.length ? rand_seq[drawn++] : 0.5,
+  );
+  try {
+    await world.emit('EVENTTURNEND');
+  } finally {
+    world.fixture.restore_math_random();
+  }
+
+  assert.equal(
+    world.fixture.store.get('flag:81'),
+    100,
+    '120 - 50 = 70 跌破保底，钳回 100（原作 SIF FLAG:81 < 100 的钳制）',
   );
 });
 

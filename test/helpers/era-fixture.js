@@ -72,6 +72,9 @@ function normalize_content(content) {
 }
 
 // 创建一套干净的夹具：真实 SDK + 记录层。每个测试用例各建一个，互不污染。
+// Math.random 的替换是进程级的（见 override_math_random），原值在此捕获
+const real_math_random = Math.random;
+
 function create_era_fixture() {
   install_hash_resolver();
   purge_ere_cache();
@@ -786,6 +789,37 @@ function create_era_fixture() {
      */
     set_inputs(...values) {
       input_queue.push(...values);
+    },
+    /**
+     * 清空输入队列后重新预置（#120 端到端）：驱动方逐轮供输入时，上一轮
+     * 未消费的条目（如仅触发轮才消费的结局询问 [0]）会残留在队头，普通
+     * set_inputs 只会追加到其后、造成错位——先清再供，让每轮的输入序列
+     * 恒从队头开始。返回清掉的条目数，供驱动方核对消费量
+     */
+    reset_inputs(...values) {
+      const dropped = input_queue.length;
+      input_queue.length = 0;
+      input_queue.push(...values);
+      return dropped;
+    },
+    /**
+     * 替换全局 Math.random 为给定函数（#120）：ere 侧原作 RAND:N 的等价物
+     * 散布在 turnend-settle / event-nextday / chara-init / kojo / juel-check
+     * 的**事件处理器体内**，外部无参数通道（chara-init 的函数参数注入先例
+     * 只适用于被显式调用的函数）；在 ere/ 开随机源缝会破坏「游戏代码零
+     * 修改、不留任何测试钩子」的注入点原则（本文件头）。Math.random 是
+     * JS 可变全局，在夹具层替换它是唯一不动游戏代码的随机源注入点——
+     * 与 set_inputs 同属「驱动方对世界的预设」。
+     *
+     * 进程级副作用：必须成对调 restore_math_random()（同文件后续用例才
+     * 不被污染；node --test 的文件间进程隔离管不到同文件）
+     */
+    override_math_random(fn) {
+      Math.random = fn;
+    },
+    /** 恢复 override_math_random 替换前的 Math.random（幂等） */
+    restore_math_random() {
+      Math.random = real_math_random;
     },
     /**
      * 预置已注册的媒体资源（对应引擎 res 注册表，注册名自动小写——与
