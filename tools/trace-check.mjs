@@ -74,6 +74,10 @@ const TITLE = 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB';
 const SHOP_2 = 'target/ERB/SHOP/SHOP_2.ERB';
 const INVASION = 'target/ERB/侵略/INVASION.ERB';
 const INVASION_EVENT = 'target/ERB/侵略/INVASION_EVENT.ERB';
+const ENDING_ERB = 'target/ERB/EVENT/ENDING ver 1.0.1.ERB';
+const ENDINGDATA_ADDON1 = 'target/ERB/EVENT/ENDINGDATA_ADDON1.ERB';
+const CHAR_MAKE = 'target/ERB/キャラ関数/CHAR_MAKE.ERB';
+const CHARA_MAKE_INIT = 'target/ERB/キャラ関数/CHARA_MAKE_INIT.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -2063,7 +2067,181 @@ const FILES = [
       { src: INVASION, ref: '996', any: [/^\s*CALL INVASION_CHECK$/m] },
       { src: INVASION, ref: '997', any: [/^\s*RETURN 1$/m] },
       { src: INVASION, ref: '999-1021', any: [/^\s*@INVASION_CHECK$/m] },
+      // @INVASION_CHECK 本体（#118）：五组条件与声望结账的行号锚
+      {
+        src: INVASION,
+        ref: '1001-1003',
+        any: [/^\s*IF FLAG:81 >= 10000 && FLAG:82 == 0$/m],
+      },
+      { src: INVASION, ref: '1003', any: [/^\s*EX_FLAG:99 \+= 10$/m] },
+      {
+        src: INVASION,
+        ref: '1003-1004',
+        any: [/^\s*EX_FLAG:99 \+= 10$/m, /^\s*PRINTL 声望\+10$/m],
+      },
+      { src: INVASION, ref: '1004', any: [/^\s*PRINTL 声望\+10$/m] },
+      {
+        src: INVASION,
+        ref: '1005-1007',
+        any: [/^\s*ELSEIF FLAG:86 >= 10000 && FLAG:87 == 0$/m],
+      },
+      { src: INVASION, ref: '1007', any: [/^\s*EX_FLAG:99 \+= 10$/m] },
+      { src: INVASION, ref: '1008', any: [/^\s*PRINTL 声望\+10$/m] },
+      {
+        src: INVASION,
+        ref: '1009-1011',
+        any: [/^\s*ELSEIF FLAG:88 >= 10000 && FLAG:89 == 0$/m],
+      },
+      { src: INVASION, ref: '1011', any: [/^\s*EX_FLAG:99 \+= 10$/m] },
+      { src: INVASION, ref: '1012', any: [/^\s*PRINTL 声望\+10$/m] },
+      {
+        src: INVASION,
+        ref: '1013-1015',
+        any: [/^\s*ELSEIF FLAG:90 >= 10000 && FLAG:91 == 0$/m],
+      },
+      { src: INVASION, ref: '1015', any: [/^\s*EX_FLAG:99 \+= 10$/m] },
+      { src: INVASION, ref: '1016', any: [/^\s*PRINTL 声望\+10$/m] },
+      {
+        src: INVASION,
+        ref: '1017-1019',
+        any: [/^\s*ELSEIF EX_FLAG:101 >= 10000 && EX_FLAG:102 == 0$/m],
+      },
+      { src: INVASION, ref: '1019', any: [/^\s*EX_FLAG:99 \+= 10$/m] },
+      { src: INVASION, ref: '1020', any: [/^\s*PRINTL 声望\+10$/m] },
       { src: INVASION, ref: '1026-1067', any: [/^\s*@MEDAL_BONUS,ARG$/m] },
+    ],
+  },
+  {
+    // #118：ENDING_1 真身与 ENDING_3/4/5/END10_55 的接线（INVASION_CHECK
+    // 五组条件的演出侧）
+    js: 'ere/event/event-ending.js',
+    refs: [
+      { src: ENDING_ERB, ref: '6-40', any: [/^@ENDING_1$/m] },
+      { src: ENDING_ERB, ref: '8-18', any: [/^DRAWLINE$/m, /^PRINTL ┌/m] },
+      { src: ENDING_ERB, ref: '20-23', any: [/^ADDCHARA 35$/m] },
+      { src: ENDING_ERB, ref: '25', any: [/^WAIT$/m] },
+      { src: ENDING_ERB, ref: '27', any: [/人间界已经陷落了/m] },
+      {
+        src: ENDING_ERB,
+        ref: '29-30',
+        any: [/世界这么大/m, /不想做魔王了/m],
+      },
+      { src: ENDING_ERB, ref: '31-37', any: [/^\$INPUT_LOOP$/m] },
+      { src: ENDING_ERB, ref: '34', any: [/^\s*QUIT$/m] },
+      {
+        src: ENDING_ERB,
+        ref: '35-36',
+        any: [/^\s*ELSEIF RESULT != 0$/m, /^\s*GOTO INPUT_LOOP$/m],
+      },
+      { src: ENDING_ERB, ref: '38', any: [/^FLAG:82 = 1$/m] },
+      { src: ENDING_ERB, ref: '39', any: [/菲娅，被你抓获了/m] },
+      { src: ENDING_ERB, ref: '40', any: [/^RETURN 0$/m] },
+      { src: ENDING_ERB, ref: '59-74', any: [/^@ENDING_3$/m] },
+      { src: ENDING_ERB, ref: '70', any: [/^FLAG:87 = 1$/m] },
+      { src: ENDING_ERB, ref: '72', any: [/^FLAG:87 = 2$/m] },
+      { src: ENDING_ERB, ref: '77-92', any: [/^@ENDING_4$/m] },
+      { src: ENDING_ERB, ref: '88', any: [/^FLAG:89 = 1$/m] },
+      { src: ENDING_ERB, ref: '90', any: [/^FLAG:89 = 2$/m] },
+      { src: ENDING_ERB, ref: '97-112', any: [/^@ENDING_5$/m] },
+      { src: ENDING_ERB, ref: '108', any: [/^FLAG:91 = 1$/m] },
+      { src: ENDING_ERB, ref: '110', any: [/^FLAG:91 = 2$/m] },
+      { src: ENDING_ERB, ref: '136', any: [/^@CHAR_GIFT, ARG$/m] },
+      {
+        src: ENDINGDATA_ADDON1,
+        ref: '475-485',
+        any: [/^@END10_55$/m],
+      },
+      {
+        src: ENDINGDATA_ADDON1,
+        ref: '485',
+        any: [/^\s*EX_FLAG:2810 \+= 5$/m],
+      },
+    ],
+  },
+  {
+    // #118：@CHAR_INIT 窄路径与 @RANDOM_SELF_CALL 窄路径（ENDING_1 的
+    // ADDCHARA 链第三环）
+    js: 'ere/chara/chara-init.js',
+    refs: [
+      // CHAR_MAKE.ERB 的 JUMP 壳
+      {
+        src: CHAR_MAKE,
+        ref: '22-25',
+        any: [/^@CHAR_INIT$/m, /^JUMP CHARA_INIT/m],
+      },
+      // CHARA_MAKE_INIT.ERB 的本体
+      { src: CHARA_MAKE_INIT, ref: '2-49', any: [/^@CHARA_INIT\(L_A\)$/m] },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '7',
+        any: [/^SAVESTR:L_A = %CALLNAME:L_A%$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '10-18',
+        any: [/^IF CFLAG:L_A:9 > 1 && CFLAG:L_A:11 == 0$/m],
+      },
+      { src: CHARA_MAKE_INIT, ref: '14', any: [/^\s*CALL ST_UP, L_A$/m] },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '22-24',
+        any: [/^SWAP L_A, TARGET$/m, /^\s*CALL WEARING_CLOTH_ABLE$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '23',
+        any: [/^\s*CALL WEARING_CLOTH_ABLE$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '27',
+        any: [/^\s*CALL RANDOM_SELF_CALL, L_A$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '29-33',
+        any: [/^IF GETBIT\(FLAG:5,12\) \|\| GETBIT\(FLAG:5,15\)$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '30',
+        any: [/^IF GETBIT\(FLAG:5,12\) \|\| GETBIT\(FLAG:5,15\)$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '36-53',
+        any: [/^IF !\(TALENT:L_A:275/m],
+      },
+      { src: CHARA_MAKE_INIT, ref: '38', any: [/^\s*SIF RAND:40 == 0$/m] },
+      { src: CHARA_MAKE_INIT, ref: '54', any: [/^RETURN L_A$/m] },
+      // SELF_CALL.ERB 的一人称
+      {
+        src: SELF_CALL_ERB,
+        ref: '2-65',
+        any: [/^@RANDOM_SELF_CALL, ARG, MODE = 0$/m],
+      },
+      { src: SELF_CALL_ERB, ref: '6', any: [/^LOCAL = CFLAG:ARG:450$/m] },
+      { src: SELF_CALL_ERB, ref: '7-8', any: [/^SIF MODE == 0$/m] },
+      { src: SELF_CALL_ERB, ref: '25-26', any: [/^SIF LOCAL >= 200$/m] },
+      {
+        src: SELF_CALL_ERB,
+        ref: '28-36',
+        any: [/^IF LOCAL < 0$/m, /LOCALS = %CSVCSTR/m],
+      },
+      { src: SELF_CALL_ERB, ref: '29', any: [/LOCALS = %CSVCSTR/m] },
+      { src: SELF_CALL_ERB, ref: '38-42', any: [/^IF LOCAL < 9$/m] },
+      {
+        src: SELF_CALL_ERB,
+        ref: '39-40',
+        any: [/^\s*CSTR:ARG:60 = 我$/m, /^\s*CFLAG:ARG:450 = 9$/m],
+      },
+      { src: SELF_CALL_ERB, ref: '44-52', any: [/^IF LOCAL < 100$/m] },
+      {
+        src: SELF_CALL_ERB,
+        ref: '46',
+        any: [/^\s*CALL SET_SUIT_SELFCALL, ARG, LOCAL$/m],
+      },
+      { src: SELF_CALL_ERB, ref: '54-62', any: [/^IF LOCAL < 200$/m] },
     ],
   },
 ];

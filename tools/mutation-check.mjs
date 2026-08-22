@@ -78,8 +78,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
  * 增 = 新变异落地（公告）；减 = 变异被删（也应是公告）。
  * #115 起为 201：+6（M190-M195，日程推进与月份回绕）。
  * #119 起为 217：+3（M197-M199，KYOTEN_EVENT 日循环接线）。
+ * #118 起为 226：+9（INVASION_CHECK 五组判据与 ENDING_1 链——page/wrapper
+ * 切片的 M196-M198、M203-M204 与 event 切片的 M205-M208）。
  */
-const LEDGER_COUNT_BASELINE = 217;
+const LEDGER_COUNT_BASELINE = 226;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

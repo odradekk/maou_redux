@@ -1,12 +1,13 @@
 /**
  * @file 侵略画面：@INVASION 的魔力出兵窄路径 + @KYOTEN_EVENT 的人间界臂 +
- *     @INVASION_EVENT 的魔力臂 + @INVASION_CHECK / @MEDAL_BONUS 的调用点
- *     存根（issue #117，阶段 1 第三条贯通路径的 S5）。
+ *     @INVASION_EVENT 的魔力臂 + @INVASION_CHECK 五组结局判定（issue #117
+ *     出兵窄路径；issue #118 结局判定本体与 ENDING_1 接线）。
  *
- * 源: target/ERB/侵略/INVASION.ERB  @INVASION（:6-997，本票只做 [1] 魔力
+ * 源: target/ERB/侵略/INVASION.ERB  @INVASION（:6-997，#117 只做 [1] 魔力
  *       出兵：菜单 :139-204、魔力分支 :266-296、共通补正 :565-603、结果段
  *       :609-618 + :694-757、结算尾 :976-997）/ @MEDAL_BONUS（:1026-1067，
- *       存根）/ @INVASION_CHECK（:999-1021，仅调用点，本体是 #118）
+ *       存根）/ @INVASION_CHECK（:999-1021，#118 五组条件 1:1；ENDING_x
+ *       演出本体在 ere/event/event-ending.js）
  *     target/ERB/侵略/INVASION_EVENT.ERB  @KYOTEN_EVENT（:2-209，仅 ARG:0
  *       == 1 人间界臂）/ @INVASION_EVENT（:212-235，魔力臂）
  *
@@ -31,6 +32,13 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const {
+  end10_55,
+  ending_1,
+  ending_3,
+  ending_4,
+  ending_5,
+} = require('#/event/event-ending');
 const { chara } = require('#/facade/chara');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -40,13 +48,9 @@ const { chara_callname } = require('#/utils/callname-utils');
  *
  * 'INVASION' 是函数内联段的宿主名（先例：DRAW_MAINMENU 指令面板段）：
  * 地上征服后分支（:25-138）、[0]/[2]/[3] 出兵路线三段（:210-/:299-/:442-）。
+ * 'INVASION_CHECK' 自 #118 起是真身（五组条件 1:1），移出本名单。
  */
-const STUBBED_CALLS = [
-  'INVASION',
-  'MEDAL_BONUS',
-  'INVASION_CHECK',
-  'INVASION_EVENT_SEIEI',
-];
+const STUBBED_CALLS = ['INVASION', 'MEDAL_BONUS', 'INVASION_EVENT_SEIEI'];
 
 /** 进度条的条宽（< 24，否则引擎 el-col-0 吞掉条后数值列，见文件头） */
 const BAR_WIDTH = 16;
@@ -222,14 +226,63 @@ async function medal_bonus() {
 }
 
 /**
- * @INVASION_CHECK（INVASION.ERB:999-1021）：结局判定。
+ * @INVASION_CHECK（INVASION.ERB:999-1021）：结局判定（#118 本体）。
  *
- * 本票只要求调用点存在（:996），本体（FLAG:81 >= 10000 && FLAG:82 == 0 →
- * ENDING_1 演出）是 #118 的事。存根空转。
+ * 五组 ELSEIF（顺序 1:1，命中一组即止）：各领域侵攻度满 10000 且未征服
+ * → 对应结局演出 + EX_FLAG:99 += 10 + PRINTL 声望+10。人间界组
+ * （:1001-1003）是阶段 1 的贯通终点——ENDING_1 演出后游戏可继续；其余
+ * 四组（精灵/龙/天界/天神宫）在窄路径不可达（对应 FLAG/EX_FLAG 无写入
+ * 点），演出在 ere/event/event-ending.js 存根。
+ *
  * @returns {Promise<void>}
  */
 async function invasion_check() {
-  await stub_line_wait('INVASION_CHECK', '侵略判定（结局检查）', '随 #118');
+  // :1001-1003 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1
+  if (
+    era_flag.human_realm_invasion >= 10000 &&
+    era_flag.human_realm_fallen === 0
+  ) {
+    const ended = await ending_1();
+    if (ended !== 1) {
+      // 原作 QUIT 后 :1003-1004 不可达；正常返回（含继续游戏）才结声望
+      era_exflag.prestige = era_exflag.prestige + 10; // :1003 EX_FLAG:99 += 10
+      era.print('声望+10'); // :1004 PRINTL
+    }
+    return;
+  }
+  // :1005-1007 精灵领域：FLAG:86 >= 10000 && FLAG:87 == 0 → ENDING_3
+  if (
+    era_flag.elf_realm_invasion >= 10000 &&
+    era_flag.elf_realm_conquered === 0
+  ) {
+    await ending_3();
+    era_exflag.prestige = era_exflag.prestige + 10; // :1007
+    era.print('声望+10'); // :1008 PRINTL
+    return;
+  }
+  // :1009-1011 龙之山脉：FLAG:88 >= 10000 && FLAG:89 == 0 → ENDING_4
+  if (
+    era_flag.dragon_realm_invasion >= 10000 &&
+    era_flag.dragon_realm_conquered === 0
+  ) {
+    await ending_4();
+    era_exflag.prestige = era_exflag.prestige + 10; // :1011
+    era.print('声望+10'); // :1012 PRINTL
+    return;
+  }
+  // :1013-1015 天界：FLAG:90 >= 10000 && FLAG:91 == 0 → ENDING_5
+  if (era_flag.heaven_invasion >= 10000 && era_flag.heaven_conquered === 0) {
+    await ending_5();
+    era_exflag.prestige = era_exflag.prestige + 10; // :1015
+    era.print('声望+10'); // :1016 PRINTL
+    return;
+  }
+  // :1017-1019 天神宫：EX_FLAG:101 >= 10000 && EX_FLAG:102 == 0 → END10_55
+  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {
+    await end10_55();
+    era_exflag.prestige = era_exflag.prestige + 10; // :1019
+    era.print('声望+10'); // :1020 PRINTL
+  }
 }
 
 /**
@@ -467,7 +520,8 @@ async function invasion() {
   era_exflag.prestige = era_exflag.prestige + 2; // :978 EX_FLAG:99 += 2
   // :983-994 KYOTEN_EVENT（AREA == 81 → ARG 1）
   await kyoten_event(1);
-  // :996 CALL INVASION_CHECK（调用点；本体 #118）
+  // :996 CALL INVASION_CHECK（结局判定，#118 本体：FLAG:81 满时在此触发
+  // ENDING_1，演出含 [0] 继续 / [1] 退出的询问——选 0 继续后回落到这里）
   await invasion_check();
   return 1; // :997
 }

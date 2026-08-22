@@ -82,10 +82,14 @@ test('【验收 1】气力 10000 出兵一次：侵攻度 +400、气力减半、
     texts.includes('根据传闻狂王为了应对魔王军的入侵已开始组织起了精锐部队。'),
     '首次侵略的精锐部队传闻（INVASION_EVENT.ERB:259）',
   );
-  // 结算尾部的调用点占位（#118 的本体）
+  // 结算尾部 CALL INVASION_CHECK（:996）——#118 起是五组条件本体：本用例
+  // FLAG:81 = 400、FLAG:82 = 0，五组全不满足，空转零输出
   assert(
-    texts.some((line) => line.includes('@INVASION_CHECK')),
-    '结算尾部必须有 CALL INVASION_CHECK 的调用点（:996）',
+    !texts.some(
+      (line) =>
+        line.includes('声望+10') || line.includes('魔王终于再次掌握了世界'),
+    ),
+    '未达 10000 时 INVASION_CHECK 空转（不触发结局演出）',
   );
 });
 
@@ -275,12 +279,24 @@ test('KYOTEN_EVENT 人间界臂：五档推进、夺回回退、阈值间空转�
 test('侵攻度封顶 10000 与 KYOTEN_EVENT 经结算链触发（:617-618/:984）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { prestige: 90, invasion: 9900 });
+  fixture.seed_chara(35, { name: '菲娅', callname: '菲娅' }); // ENDING_1 的菲娅
   // SINKOU = 400 × 1.10 = 440；9900 + 440 = 10340 → 封顶 10000；KYOTEN_EVENT
-  // 首档（93 == 0）打「占领了村庄」
-  const result = await run_invasion(fixture, 1);
-  assert.equal(result, 1);
+  // 首档（93 == 0）打「占领了村庄」。封顶后结算尾的 INVASION_CHECK 命中
+  // 人间界组（#118 本体）：ENDING_1 演出 → 选 [0] 继续游戏
+  const result = await run_invasion(fixture, 1, 0);
+  assert.equal(result, 1, '结局演出后 invasion() 仍返回 1（走 TURNEND）');
   assert.equal(fixture.store.get('flag:81'), 10000, '侵攻度封顶');
   assert.equal(fixture.store.get('flag:93'), 1, '结算尾部 KYOTEN_EVENT 已跑');
+  assert.equal(
+    fixture.store.get('flag:82'),
+    1,
+    'ENDING_1 已演出（FLAG:82 = 1）',
+  );
+  assert.equal(
+    fixture.store.get('exflag:99'),
+    90 + 2 + 10,
+    '结算尾 +2（:978）与结局 +10（:1002）都发生',
+  );
   assert(
     history_texts(fixture).some((line) => line.includes('占领了村庄')),
     '跨 2000 阈值的横幅经结算链打出',
@@ -315,10 +331,10 @@ test('[109] 返回 0（999 取消）：不转场，回主菜单重绘', async ()
 test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文件全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-invasion');
+  // INVASION_CHECK 自 #118 起是真身（五组条件），不在存根名单
   assert.deepEqual(STUBBED_CALLS, [
     'INVASION',
     'MEDAL_BONUS',
-    'INVASION_CHECK',
     'INVASION_EVENT_SEIEI',
   ]);
   const registry = fs.readFileSync(
