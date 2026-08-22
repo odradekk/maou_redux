@@ -277,4 +277,33 @@ export default [
     tests: ['event-nextday'],
     must_mention: '种族年龄应 +1',
   },
+  // —— #119 KYOTEN_EVENT 接线（普通档衰减块内两处调用，条目收本切片）——
+  {
+    desc: 'M197 KYOTEN_EVENT 未征服臂调用删除（衰减后据点事件不触发）',
+    file: 'ere/system/turnend-settle.js',
+    find: `      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+      await kyoten_event(region);`,
+    replace: '      // 变异：未征服臂不调 KYOTEN_EVENT',
+    tests: ['event-turnend'],
+    must_mention: '推进 FLAG:93 0→1',
+  },
+  {
+    desc: 'M198 KYOTEN_EVENT 征服后反抗臂调用删除（反抗衰减后据点事件不触发）',
+    file: 'ere/system/turnend-settle.js',
+    find: `      // CALL KYOTEN_EVENT, region（征服后反抗臂，原作 :640/:659/:678/:697）
+      await kyoten_event(region);`,
+    replace: '      // 变异：征服后反抗臂不调 KYOTEN_EVENT',
+    tests: ['event-turnend'],
+    must_mention: '60 回合内反抗至少发生一次',
+  },
+  {
+    desc: 'M199 KYOTEN_EVENT 领域号写死 1（精灵衰减误读人间界状态再退一档）',
+    file: 'ere/system/turnend-settle.js',
+    find: `      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+      await kyoten_event(region);`,
+    replace: `      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+      await kyoten_event(1); // 变异：领域号写死`,
+    tests: ['event-turnend'],
+    must_mention: 'ARG 2 臂不得误读人间界状态再退一档',
+  },
 ];

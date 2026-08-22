@@ -22,15 +22,20 @@
  *   - EQUIP_CHECK 存根 RESULT 恒 0（无装备效果）：回复的装备倍率因此恒 ×1/÷1
  *     （原作 RESULT += 1 后乘除），戒指两事件（陷落/洗脑）整支不达。存根
  *     名单见 STUBBED_CALLS，登记 docs/stub-registry.md。
- *   - KYOTEN_EVENT（#119）与 INVASION_CHECK（#118）不在存根之列：前者调用
- *     点已留接入注释（据点事件票落地时补调用），后者原作即是注释状态（行 621）、
- *     1:1 不调用。EVENT_NEWDAY 自 #115 起为真身（ere/event/event-nextday.js，
- *     含每日一次的 @ENDCHECK 调用点）。
+ *   - KYOTEN_EVENT（#119）自本票起接线：四个领域的衰减块在衰减完成后按
+ *     领域号调用（ere/page/page-invasion.js 的 kyoten_event——system → page
+ *     的依赖方向与 juel-check → page-info-exp 同构，判断依据见 issue #119
+ *     评论）。ARG:0 == 1 人间界臂是真身；2/3/4 三臂不可达（FLAG:86/88/90
+ *     无写入路径恒 0，衰减分支不进），被调时空转。INVASION_CHECK（#118）
+ *     不在存根之列：原作即是注释状态（行 621）、1:1 不调用。EVENT_NEWDAY
+ *     自 #115 起为真身（ere/event/event-nextday.js，含每日一次的 @ENDCHECK
+ *     调用点）。
  */
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
+const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
@@ -451,7 +456,8 @@ on('EVENTTURNEND', async () => {
   era.println(); // :623 PRINTL
   // :624-699 侵攻度自然衰减：未征服（FLAG:82/87/89/91 == 0）且有余量时每日 RAND:100；
   // 已征服低概率反抗、保底 100。直接决定通关天数（#112 验收的天数估算依据），
-  // 1:1 保留。衰减后的 CALL KYOTEN_EVENT, <领域号> 是 #119 的接入位
+  // 1:1 保留。衰减后各领域按领域号 CALL KYOTEN_EVENT, <1-4>（#119 接线，
+  // 本体在 ere/page/page-invasion.js）
   await decay_invasion_degree(1, {
     conquered: era.get('flag:82') || 0, // 人间界征服完了
     degree: () => era.get('flag:81') || 0, // 人间界侵攻度
@@ -555,8 +561,8 @@ on('EVENTTURNEND', async () => {
  *
  * 未征服（conquered == 0）：余量 > 0 时每日衰减 RAND:100、下限 0；
  * 已征服（conquered == 1）：每 reconquer_rand 日一遇的反抗，余量 > 100 时
- * 衰减 RAND:100、下限 100。衰减后的 CALL KYOTEN_EVENT, <领域号> 是 #119
- * 的接入位（调用点行号见各调用处注释）。
+ * 衰减 RAND:100、下限 100。衰减完成后 CALL KYOTEN_EVENT, region（#119 接线，
+ * 调用点行号见各调用处注释）。
  *
  * @param {number} region 领域号（KYOTEN_EVENT 的原作实参 1-4）
  * @param {object} spec 一个领域的衰减参数
@@ -579,7 +585,8 @@ async function decay_invasion_degree(region, spec) {
       if (spec.degree() < 0) {
         spec.write(0);
       }
-      // CALL KYOTEN_EVENT, region —— #119 接入位
+      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+      await kyoten_event(region);
     }
   } else if (spec.conquered === 1 && rand(spec.reconquer_rand) === 0) {
     if (spec.degree() > 100) {
@@ -590,7 +597,8 @@ async function decay_invasion_degree(region, spec) {
       if (spec.degree() < 100) {
         spec.write(100);
       }
-      // CALL KYOTEN_EVENT, region —— #119 接入位
+      // CALL KYOTEN_EVENT, region（征服后反抗臂，原作 :640/:659/:678/:697）
+      await kyoten_event(region);
     }
   }
 }
