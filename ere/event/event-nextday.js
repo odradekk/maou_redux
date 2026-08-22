@@ -32,6 +32,7 @@
  */
 
 const era = require('#/era-electron');
+const { run_endcheck } = require('#/event/event-endcheck');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -68,7 +69,6 @@ const STUBBED_CALLS = [
   'MORNING_FELLATIO',
   'ONESHO',
   'DOG_WALK',
-  'ENDCHECK',
 ];
 
 /** 原作 RAND:N（0..N-1）的等价物 */
@@ -301,9 +301,9 @@ async function run_event_newday() {
   // :238 犬の散歩（晨间事件，无条件）
   stub_line('DOG_WALK', '遛狗事件');
 
-  // :241 主线剧情监测——每日一次的结局判定入口，@ENDCHECK 本体是 #116，
-  // 此处只保证调用点存在且能被执行（工单 #115 的必做件之二）
-  stub_line('ENDCHECK', '主线剧情监测');
+  // :241 主线剧情监测——每日一次的结局判定入口，@ENDCHECK 全链本体在
+  // ere/event/event-endcheck.js（#116）
+  await run_endcheck();
 
   // :243 RETURN 1
 }
