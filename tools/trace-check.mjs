@@ -51,6 +51,8 @@ const CHARA_INFO_SHOW = 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
 const SHOP = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
 const SHOP_FUNCTION = 'target/ERB/SHOP/SHOP_FUNCTION.ERB';
 const TURNEND = 'target/ERB/EVENT/EVENT_TURNEND.ERB';
+const NEXTDAY = 'target/ERB/EVENT/EVENT_NEXTDAY.ERB';
+const NEXTMONTH = 'target/ERB/EVENT/EVENT_NEXTMONTH.ERB';
 const ENDING = 'target/ERB/EVENT/ENDING ver 1.0.1.ERB';
 const SYSTEM = 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB';
 const COMF0 = 'target/ERB/調教相關/COMF0_愛撫.ERB';
@@ -368,6 +370,7 @@ const FILES = [
       { src: TURNEND, ref: '57', any: [/^IF TIME == 1$/m] },
       { src: TURNEND, ref: '61-74', any: [/IN_VAGINA_EXTRA/] },
       { src: TURNEND, ref: '77', any: [/^\tCALL EVENT_NEXTDAY$/m] },
+      { src: TURNEND, ref: '79', any: [/DAY:0 \+= 1/] },
       { src: TURNEND, ref: '79-91', any: [/DAY:0 \+= 1/] },
       { src: TURNEND, ref: '93', any: [/CALL ENTER_ENEMY,0/] },
       { src: TURNEND, ref: '95-107', any: [/SENGENMAX/] },
@@ -435,6 +438,87 @@ const FILES = [
     // @EVENTTURNEND 的空 #LATER 定义（#114 按 1:1 保留为空）
     js: 'ere/event/event-turnend-later.js',
     refs: [{ src: ENDING, ref: '1-3', any: [/^@EVENTTURNEND$/m, /^#LATER$/m] }],
+  },
+  {
+    // @EVENT_NEXTDAY / @EVENT_NEWDAY 窄路径（#115 日程推进）
+    js: 'ere/event/event-nextday.js',
+    refs: [
+      { src: NEXTDAY, ref: '6-189', any: [/^@EVENT_NEXTDAY$/m] },
+      { src: NEXTDAY, ref: '10-52', any: [/NEXTDAY_COUNT/] },
+      { src: NEXTDAY, ref: '16-20', any: [/EVENT_FUTA_F/] },
+      { src: NEXTDAY, ref: '22-28', any: [/EVENT_MORASI/] },
+      { src: NEXTDAY, ref: '29-38', any: [/EVENT_YOUJI/] },
+      { src: NEXTDAY, ref: '40-44', any: [/EVENT_MAZOKU/] },
+      { src: NEXTDAY, ref: '47', any: [/^\tCALL APHRODISIAC_ADDICT$/m] },
+      { src: NEXTDAY, ref: '50', any: [/^\tCALL SOUL_DISLOCATION$/m] },
+      { src: NEXTDAY, ref: '55-61', any: [/CFLAG:COUNT:109 = 0/] },
+      { src: NEXTDAY, ref: '59', any: [/CFLAG:COUNT:109 = 0/] },
+      { src: NEXTDAY, ref: '64', any: [/^FLAG:61 = 0$/m] },
+      { src: NEXTDAY, ref: '67', any: [/^CALL NINSIN_MAIN$/m] },
+      { src: NEXTDAY, ref: '69-95', any: [/TALENT:LOCAL:153/] },
+      {
+        src: NEXTDAY,
+        ref: '72',
+        any: [/\(CFLAG:LOCAL:110 - 3\) == DAY/],
+      },
+      { src: NEXTDAY, ref: '75', any: [/;CALL REACH_FULL_TERM/] },
+      {
+        src: NEXTDAY,
+        ref: '77',
+        any: [/\(CFLAG:LOCAL:110 - 1\) == DAY/],
+      },
+      { src: NEXTDAY, ref: '79', any: [/出産日了/] },
+      { src: NEXTDAY, ref: '82', any: [/CFLAG:LOCAL:110 == DAY/] },
+      { src: NEXTDAY, ref: '84', any: [/;CALL CHILD_BIRTH/] },
+      {
+        src: NEXTDAY,
+        ref: '86',
+        any: [/\(CFLAG:LOCAL:110 \+ 5\) == DAY/],
+      },
+      { src: NEXTDAY, ref: '88', any: [/;CALL DEPEARENT/] },
+      { src: NEXTDAY, ref: '89', any: [/TALENT:LOCAL:154/] },
+      { src: NEXTDAY, ref: '97-99', any: [/WASHING_CLOTH/] },
+      { src: NEXTDAY, ref: '102-111', any: [/OFFERVIRGIN_CHECK/] },
+      { src: NEXTDAY, ref: '114', any: [/^CALL NIGHT_STALKING_CHECK$/m] },
+      { src: NEXTDAY, ref: '117', any: [/;CALL RUNNING_COST/] },
+      { src: NEXTDAY, ref: '120', any: [/^CALL CURSE_EQUIP_RING$/m] },
+      { src: NEXTDAY, ref: '123', any: [/CALL SUMMON_MONSTER, 0/] },
+      { src: NEXTDAY, ref: '126', any: [/^CALL DUNGEON_ROOM_DAY$/m] },
+      { src: NEXTDAY, ref: '129-178', any: [/CALL PILLORY/] },
+      { src: NEXTDAY, ref: '146-147', any: [/处女の場合善恶值上昇/] },
+      { src: NEXTDAY, ref: '146-154', any: [/CALL KARMA, TARGET, 1/] },
+      { src: NEXTDAY, ref: '147', any: [/TALENT:0 == 0 && RAND:3 == 0/] },
+      { src: NEXTDAY, ref: '162-175', any: [/CALL FAITH, TARGET, 1/] },
+      { src: NEXTDAY, ref: '181', any: [/^CALL TAX_GET$/m] },
+      { src: NEXTDAY, ref: '184', any: [/^CALL SENGEN_VIDEO_DE$/m] },
+      { src: NEXTDAY, ref: '187', any: [/^CALL MAOU_KOUHO$/m] },
+      { src: NEXTDAY, ref: '189', any: [/^RETURN 1$/m] },
+      { src: NEXTDAY, ref: '193-243', any: [/^@EVENT_NEWDAY$/m] },
+      { src: NEXTDAY, ref: '200-221', any: [/影の寿命/] },
+      { src: NEXTDAY, ref: '226', any: [/^CALL MORNING_FELLATIO$/m] },
+      { src: NEXTDAY, ref: '229', any: [/;CALL HAPPY_BIRTHDAY/] },
+      { src: NEXTDAY, ref: '232', any: [/^CALL ONESHO$/m] },
+      { src: NEXTDAY, ref: '235', any: [/;CALL PARTICULAR_DATE/] },
+      { src: NEXTDAY, ref: '238', any: [/^CALL DOG_WALK$/m] },
+      { src: NEXTDAY, ref: '241', any: [/^CALL ENDCHECK$/m] },
+      { src: NEXTDAY, ref: '243', any: [/^RETURN 1$/m] },
+    ],
+  },
+  {
+    // @EVENT_NEXTMONTH 月份回绕（#115）
+    js: 'ere/event/event-nextmonth.js',
+    refs: [
+      { src: NEXTMONTH, ref: '3-7', any: [/DAY:1は现在の月/] },
+      { src: NEXTMONTH, ref: '12-36', any: [/^@EVENT_NEXTMONTH$/m] },
+      { src: NEXTMONTH, ref: '14-17', any: [/IF DAY:1 == 2/] },
+      { src: NEXTMONTH, ref: '18-21', any: [/DAY:1 == 4/] },
+      { src: NEXTMONTH, ref: '22-25', any: [/DAY:1 == 1 \|\|/] },
+      { src: NEXTMONTH, ref: '26-35', any: [/DAY:1 == 12/] },
+      { src: NEXTMONTH, ref: '30-35', any: [/FOR AGE_COUNT, 1, CHARANUM/] },
+      { src: NEXTMONTH, ref: '31', any: [/CFLAG:AGE_COUNT:452 \+= 1/] },
+      { src: NEXTMONTH, ref: '32-33', any: [/HUMAN_AGE_GENERATE/] },
+      { src: NEXTMONTH, ref: '34', any: [/^\t\tRESULT = 0$/m] },
+    ],
   },
   {
     js: 'ere/page/page-train.js',

@@ -58,6 +58,36 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:14`, v);
   }
 
+  /**
+   * 年龄（cflag:cid:451 ↔ CFLAG:451）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:451 年齢（人間換算，HUMAN_AGE_GENERATE の結果）
+   * @returns {number}
+   */
+  get 年龄() {
+    return era.get(`cflag:${this.cid}:451`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 年龄(v) {
+    era.set(`cflag:${this.cid}:451`, v);
+  }
+
+  /**
+   * 种族年龄（cflag:cid:452 ↔ CFLAG:452）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:452 種族年齢（月替わりの年齢加算はこちら）
+   * @returns {number}
+   */
+  get 种族年龄() {
+    return era.get(`cflag:${this.cid}:452`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 种族年龄(v) {
+    era.set(`cflag:${this.cid}:452`, v);
+  }
+
   // —— talent ——
   /**
    * 处女（talent:cid:0 ↔ TALENT:0）

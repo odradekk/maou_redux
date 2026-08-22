@@ -66,8 +66,12 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   assert.ok(!indexes.includes(1));
   // #90 起 cflag 在 kojo 之外按补名逐个进门面：NAMES.cflag = kojo 切片 +
   // 已补名的他域下标。#114（回合结算）一次补了 10 个：1/506/507（invasion）、
-  // 4/666（train）、13/14（chara）、503/534（dungeon）、570（system）、2（#90）
-  const NON_KOJO_NAMED = [1, 2, 4, 13, 14, 503, 506, 507, 534, 570, 666];
+  // 4/666（train）、13/14（chara）、503/534（dungeon）、570（system）、2（#90）；
+  // #115（日程推进）补 3 个：109（stronghold 排卵诱发剂）、451/452（chara
+  // 年龄/种族年龄）
+  const NON_KOJO_NAMED = [
+    1, 2, 4, 13, 14, 109, 451, 452, 503, 506, 507, 534, 570, 666,
+  ];
   const manual_keys = Object.keys(NAMES.cflag)
     .map(Number)
     .sort((a, b) => a - b);

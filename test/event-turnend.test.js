@@ -51,8 +51,8 @@ test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次�
   assert.equal(era_flag.day_count, 0, '午后回合不得进日');
   assert.equal(era_flag.date, 0);
   assert(
-    !fixture.text_lines().some((line) => line.includes('@EVENT_NEXTDAY')),
-    '未进日不得触发日程推进',
+    !fixture.text_lines().some((line) => line.includes('@TAX_GET')),
+    '未进日不得触发日程推进（EVENT_NEXTDAY 只在日推进回合执行）',
   );
 
   // 第二回合：午后 → 次日午前，DAY:0/DAY:2/DAY:3 各 +1，回到开局的时段
@@ -63,27 +63,48 @@ test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次�
   assert.equal(era_flag.date, 1, 'DAY:2 += 1');
   assert.equal(era_flag.weekday, 1, 'DAY:3 += 1');
   assert(
-    fixture.text_lines().some((line) => line.includes('@EVENT_NEXTDAY')),
-    '日推进回合必须触发日程推进（存根占位行）',
+    fixture.text_lines().some((line) => line.includes('@TAX_GET')),
+    '日推进回合必须执行日程推进（EVENT_NEXTDAY 真身的税収占位行）',
   );
   assert(
-    !fixture.text_lines().some((line) => line.includes('@EVENT_NEXTMONTH')),
-    'DAY:2 未超 28 不得月替',
+    !fixture
+      .text_lines()
+      .some((line) => line.includes('月了，是个适合调教的月份')),
+    'DAY:2 未超 28 不得月替（月替播报在 EVENT_NEXTMONTH 真身内）',
   );
 });
 
 test('日推进的月替与星期回绕：DAY:2 超 28 触发 EVENT_NEXTMONTH、DAY:3 超 6 回 0', async () => {
   const { fixture, emit, era_flag } = setup_turnend();
   era_flag.time = 1; // 直接站在日推进回合
-  era_flag.date = 28; // 明日 29 → 月替
+  era_flag.month = 1; // 1 月（大月：32 日溢出才换）
+  era_flag.date = 28; // 明日 29 → 触发调用（大月不换月，只走日历推进）
   era_flag.weekday = 6; // 日曜 → 次日回月曜
 
   await emit('EVENTTURNEND');
-  assert.equal(era_flag.date, 29);
+  assert.equal(era_flag.date, 29, '1 月 29 日仍在月内（大月 32 日才换）');
+  assert.equal(era_flag.month, 1);
   assert.equal(era_flag.weekday, 0);
   assert(
-    fixture.text_lines().some((line) => line.includes('@EVENT_NEXTMONTH')),
-    'DAY:2 超 28 必须触发月替（存根占位行）',
+    !fixture
+      .text_lines()
+      .some((line) => line.includes('月了，是个适合调教的月份')),
+    '大月 29 日不得换月',
+  );
+
+  // 正向：2 月 28 日 → 29 即换 3 月（#PRI 的月替调用点 → EVENT_NEXTMONTH 真身）
+  const feb = setup_turnend();
+  feb.era_flag.time = 1;
+  feb.era_flag.month = 2;
+  feb.era_flag.date = 28;
+  await feb.emit('EVENTTURNEND');
+  assert.equal(feb.era_flag.month, 3, '2 月 29 日即换 3 月');
+  assert.equal(feb.era_flag.date, 1);
+  assert(
+    feb.fixture
+      .text_lines()
+      .some((line) => line.includes('明天就是3月了，是个适合调教的月份')),
+    '月替播报必须出现',
   );
 });
 
@@ -312,7 +333,9 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   const { STUBBED_CALLS: settle_stubs } = fixture.load_module(
     'system/turnend-settle',
   );
-  // 名单本身固定（增删存根必须同步本测试与清单）
+  // 名单本身固定（增删存根必须同步本测试与清单）。#115 起 EVENT_NEXTDAY/
+  // EVENT_NEXTMONTH 换成真身（ere/event/event-nextday.js、event-nextmonth.js），
+  // 不再占位
   assert.deepEqual(pri_stubs, [
     'CHECK_SELLASSIABLE',
     'CHECK_SPECIALSKIL',
@@ -324,8 +347,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'CONCEPTION_CHECK_KYOUOU_TO_T',
     'IN_VAGINA_NTRD_TO_T',
     'CONCEPTION_CHECK_NTRD_TO_T',
-    'EVENT_NEXTDAY',
-    'EVENT_NEXTMONTH',
     'ENTER_ENEMY',
     'AUTO_BUYING',
     'DEBUG_CHECK',
@@ -348,7 +369,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'PARTY_JOIN',
     'PARTY_DEL',
     'GEO_OUTPUT_2',
-    'EVENT_NEWDAY',
     'GET_LOOK_INFO',
   ]);
   const registry = fs.readFileSync(

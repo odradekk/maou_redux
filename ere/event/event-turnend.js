@@ -18,9 +18,10 @@
  *     侧指针不隐式传（#5 决议第六条），循环按角色 ID 显式进行（era.
  *     getAddedCharacters()，对应原作 0..CHARANUM-1 的已加入序号全体），被调
  *     实现落地时以参数承接。
- *   - 体外函数全部存根（运行时打占位行，名单见 STUBBED_CALLS，登记
- *     docs/stub-registry.md）：判定与妊娠六件、ENTER_ENEMY、EVENT_NEXTDAY/
- *     EVENT_NEXTMONTH（#115）、AUTO_BUYING、DEBUG_CHECK。
+ *   - 体外函数除日程两件外全部存根（运行时打占位行，名单见 STUBBED_CALLS，
+ *     登记 docs/stub-registry.md）：判定与妊娠六件、ENTER_ENEMY、
+ *     AUTO_BUYING、DEBUG_CHECK。EVENT_NEXTDAY/EVENT_NEXTMONTH 是 #115 落的
+ *     真身（ere/event/event-nextday.js、event-nextmonth.js）。
  *   - :31-51 原作注释掉的死亡删除段，1:1 不移植（照原样保持注释状态）。
  */
 
@@ -29,6 +30,8 @@ const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
+const { run_event_nextday } = require('#/event/event-nextday');
+const { run_event_nextmonth } = require('#/event/event-nextmonth');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -45,8 +48,6 @@ const STUBBED_CALLS = [
   'CONCEPTION_CHECK_KYOUOU_TO_T',
   'IN_VAGINA_NTRD_TO_T',
   'CONCEPTION_CHECK_NTRD_TO_T',
-  'EVENT_NEXTDAY',
-  'EVENT_NEXTMONTH',
   'ENTER_ENEMY',
   'AUTO_BUYING',
   'DEBUG_CHECK',
@@ -85,16 +86,17 @@ on(
         stub_line('CONCEPTION_CHECK_NTRD_TO_T', 'NTR 妊娠确定');
       });
 
-      // :77 日期更换时的事件（日程推进，#115 落真身；全库唯此一处调用）
-      stub_line('EVENT_NEXTDAY', '日程推进');
+      // :77 日付変更時のイベント（日程推进，#115 真身；全库唯此一处调用，
+      // 先于 :79 的 DAY:0 += 1 执行）
+      await run_event_nextday();
 
       // :79-91 日推进：DAY:0 天数 +1；DAY:2 日 +1，超过 28 触发月替（
       // EVENT_NEXTMONTH，#115）；DAY:3 星期 +1，日曜（6）的次日回月曜（0）
       era_flag.day_count += 1;
       era_flag.date += 1;
       if (era_flag.date > 28) {
-        // 毎月 29 日以上になってたら月替わり処理（行 81-84）
-        stub_line('EVENT_NEXTMONTH', '月替处理');
+        // 毎月 29 日以上になってたら月替わり処理（行 81-84，#115 真身）
+        await run_event_nextmonth();
       }
       era_flag.weekday += 1;
       if (era_flag.weekday > 6) {
