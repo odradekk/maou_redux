@@ -5,9 +5,12 @@
 ; 留给纸娃娃合成系统的票。
 ; 引擎装载行为（app.asar eraStart 实证）：注册名统一小写落表；查名
 ; （playMusic/checkImage/printImage/printWholeImage）同样先小写再查。
+; 文件名两处改小写 .png（COVER_WHITE 与 WHITE_L）：原表写 .PNG 而仓库文件
+; 是 .png，Windows/WSL-NTFS 大小写不敏感掩盖了不匹配，ext4 工作树（变异
+; 检查的并行副本）上「同目录存在」即红——文件名精确匹配是磁盘读的要求。
 HEART,HEART.png
 HEART_R,HEART_R.png
 HEART_B,HEART_B.png
 TITLE,TITLE.png
-COVER_WHITE,COVER_WHITE.PNG
-ROW_WHITE,WHITE_L.PNG
+COVER_WHITE,COVER_WHITE.png
+ROW_WHITE,WHITE_L.png
