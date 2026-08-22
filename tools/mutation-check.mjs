@@ -80,9 +80,12 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
  * #119 起为 217：+3（M197-M199，KYOTEN_EVENT 日循环接线）。
  * #118 起为 226：+9（INVASION_CHECK 五组判据与 ENDING_1 链——page/wrapper
  * 切片的 M196-M198、M203-M204 与 event 切片的 M205-M208）。
+ * #120 起为 227：+1（M209 人间界结局判据整支删除——端到端用例的专属靶；
+ * M157/M188 的 tests 列表挂进 event-ending-e2e，条数不变）。
  */
 // #116 起抬 11（M209-M219，ENDCHECK 全链的行为锁）
-const LEDGER_COUNT_BASELINE = 237;
+// #120 起抬 1（M220，端到端专属靶：人间界结局判据整支删除）
+const LEDGER_COUNT_BASELINE = 238;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

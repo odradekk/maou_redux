@@ -315,7 +315,7 @@ export default [
     find: '  sinkou = Math.floor(chara(0).dungeon.气力 / 25);',
     replace:
       '  sinkou = Math.floor(chara(0).dungeon.气力 / 30); // 变异：公式改坏',
-    tests: ['page-invasion'],
+    tests: ['page-invasion', 'event-ending-e2e'],
     must_mention: 'FLAG:81 += 10000/25',
   },
   {
@@ -421,6 +421,33 @@ export default [
     replace: `  if (era_flag.human_realm_invasion >= 10000) { // 变异：删 FLAG:82 == 0 半边`,
     tests: ['event-ending'],
     must_mention: '横幅只出现一次',
+  },
+  {
+    // #120 端到端的专属靶：M196（删防重复半边）在端到端路径上不可观察——
+    // FLAG:82 置 1 后 invasion() 开头的「地上征服后」分支（#118 取舍 4，
+    // 有意登记的待办）挡住再次出兵，invasion_check 不再被调。端到端能守
+    // 的是判据整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
+    desc: 'M220 人间界结局判据整支删除（#120 端到端：新档循环永不停止）',
+    file: 'ere/page/page-invasion.js',
+    find: `  // :1001-1003 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1
+  if (
+    era_flag.human_realm_invasion >= 10000 &&
+    era_flag.human_realm_fallen === 0
+  ) {
+    const ended = await ending_1();
+    if (ended !== 1) {
+      // 原作 QUIT 后 :1003-1004 不可达；正常返回（含继续游戏）才结声望
+      era_exflag.prestige = era_exflag.prestige + 10; // :1003 EX_FLAG:99 += 10
+      era.print('声望+10'); // :1004 PRINTL
+    }
+    return;
+  }`,
+    replace: `  // 变异：人间界判据整支删除
+  if (false) {
+    return;
+  }`,
+    tests: ['event-ending-e2e'],
+    must_mention: '仍未通关',
   },
   {
     desc: 'M197 人间界结局门槛 10000 改 9999（INVASION.ERB:1001）',
