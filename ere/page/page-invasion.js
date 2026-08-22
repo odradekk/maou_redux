@@ -419,7 +419,7 @@ async function invasion() {
   await era.waitAnyKey();
 
   // :601-603 CALL INVASION_EVENT；SIF RESULT > 0 → RETURN RESULT
-  const event_result = await invasion_event(area, sindo, inv_type, sinkou);
+  const event_result = await invasion_event(area, sindo, inv_type);
   if (event_result > 0) {
     return event_result;
   }
