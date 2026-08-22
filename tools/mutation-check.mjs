@@ -100,7 +100,7 @@ const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
 const COPY_DENY = new Set([
   '.git',
   '.claude',
-  '.factory',
+  '.agents',
   'node_modules',
   'ere-4.8.0-win-x64',
   'sav',

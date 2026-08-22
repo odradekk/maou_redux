@@ -3,7 +3,7 @@
  * issue #44——继事件链（#6）与分发族（#7）之后的第三套结构）。
  *
  * 源: 无单一对应源——Emuera 的 TRAIN 回合循环是**引擎内建行为**，不是 ERB
- *     代码（.factory/skills/emuera-basic-agent-guide/references/system-flow/
+ *     代码（.agents/skills/emuera-basic-agent-guide/references/system-flow/
  *     system-flow.md「TRAIN 阶段」）；EraElectron 完全没有这个循环
  *     （beginTrain/endTrain 只管建表与结算 gotjewel，dev-guides/09-static.md），
  *     循环由本模块手写。@EVENTTRAIN/@EVENTCOM/@EVENTCOMEND 的函数体在
