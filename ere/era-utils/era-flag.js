@@ -374,6 +374,19 @@ const era_flag = {
   set assi_backup(v) {
     era.set('flag:10016', v);
   },
+  /**
+   * 星期（flag:10017 ↔ FLAG:10017）
+   * @returns {number}
+   */
+  get weekday() {
+    return era.get('flag:10017') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set weekday(v) {
+    era.set('flag:10017', v);
+  },
 };
 // GENERATED END
 
@@ -393,6 +406,9 @@ const era_flag = {
 //       这是原作行为，不是漏移植（DRAW_MAINMENU.ERB:57）。
 //   time       TIME   时段：0=上午、1=下午（@SAVEINFO 与主菜单的上午/下午
 //       判据）。开局不写、留 0。
+//   weekday    DAY:3  星期（0=月曜…6=日曜，原作注释「日曜の次は月曜にする」）。
+//       @EVENTTURNEND 的日推进 +1、超过 6 回 0（EVENT_TURNEND.ERB:86-89）；
+//       开局不写、留 0（#114 并入保留区）。
 //   money      MONEY  持有金钱（单位 pts.，_replace.csv 的 お金の単位 归
 //       游戏代码，#10 决议）。开局 10000（SYSTEM ver1.0.3.ERB:55）。
 //   target     TARGET 角色指针（#5 决议第六条：指针占 flag 槽位，函数间一律

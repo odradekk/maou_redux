@@ -632,6 +632,11 @@ const EXEMPT_STRINGS = [
     where: 'ere/page/page-title.js',
     why: '口上组致谢名单整行。華胥の亡靈 是贡献者 ID（含日文の与繁体華/靈），其余名字同理不译——对人名/ID 做字符归一会改名。豁免到「字符串整体」，这行被改写时失配变红，改者须有意识地同步本表。',
   },
+  {
+    value: '自動處刑',
+    where: 'ere/system/turnend-settle.js',
+    why: '原作函数名（SYSTEM ver1.0.3.ERB:590 的 CALL 自動處刑，繁体）。存根占位行携带原作函数名供检索（docs/stub-registry.md 的检索约定），归一成「自动处刑」会切断与 target/ 的对应。#114 收录。',
+  },
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；

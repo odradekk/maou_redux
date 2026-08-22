@@ -12,6 +12,22 @@ class SystemFacade {
     this.cid = cid;
   }
 
+  // —— cflag ——
+  /**
+   * 从属怪物（cflag:cid:570 ↔ CFLAG:570）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:570 従属モンスター（使役パートナーの NO）
+   * @returns {number}
+   */
+  get 从属怪物() {
+    return era.get(`cflag:${this.cid}:570`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 从属怪物(v) {
+    era.set(`cflag:${this.cid}:570`, v);
+  }
+
   // —— talent ——
   /**
    * 母乳体质（talent:cid:130 ↔ TALENT:130）

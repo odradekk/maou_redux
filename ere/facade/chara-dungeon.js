@@ -12,6 +12,68 @@ class DungeonFacade {
     this.cid = cid;
   }
 
+  // —— cflag ——
+  /**
+   * 休憩（cflag:cid:503 ↔ CFLAG:503）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:503 フラグ（回合结算的休憩判定消费）
+   * @returns {number}
+   */
+  get 休憩() {
+    return era.get(`cflag:${this.cid}:503`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 休憩(v) {
+    era.set(`cflag:${this.cid}:503`, v);
+  }
+
+  /**
+   * 已接任务（cflag:cid:534 ↔ CFLAG:534）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:534 受注クエスト
+   * @returns {number}
+   */
+  get 已接任务() {
+    return era.get(`cflag:${this.cid}:534`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 已接任务(v) {
+    era.set(`cflag:${this.cid}:534`, v);
+  }
+
+  // —— base ——
+  /**
+   * 体力（base:cid:0 ↔ BASE:0）
+   * 源: yml/Base.yml id 0
+   * @returns {number}
+   */
+  get 体力() {
+    return era.get(`base:${this.cid}:0`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 体力(v) {
+    era.set(`base:${this.cid}:0`, v);
+  }
+
+  /**
+   * 气力（base:cid:1 ↔ BASE:1）
+   * 源: yml/Base.yml id 1
+   * @returns {number}
+   */
+  get 气力() {
+    return era.get(`base:${this.cid}:1`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 气力(v) {
+    era.set(`base:${this.cid}:1`, v);
+  }
+
   // —— talent ——
   /**
    * 谜之魅力（talent:cid:92 ↔ TALENT:92）

@@ -43,8 +43,12 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 
 // 二维角色表（#90 按属主域推广）：cflag 的 yml 表为空、名字走 facade-names；
 // 中间六张 yml 有列名；delta/deltabase 是移植自建表，属主见 PORT_TABLE_OWNERS。
+// base 随 #114 进门面（回合结算的 HP/气力回复从 event/system 域跨域写 base，
+// ownership 属主 dungeon——无门面即无合法写径）；maxbase 只读、暂不进门面
+// （读侧放行，见 domain-check 的跨域读政策）。
 const TWO_DIM_TABLES = [
   'cflag',
+  'base',
   'talent',
   'source',
   'abl',
@@ -55,8 +59,9 @@ const TWO_DIM_TABLES = [
   'deltabase',
 ];
 
-// yml 名字表（name→id 形态）——这六张表的列名唯一真相（#90 裁定）
+// yml 名字表（name→id 形态）——这七张表的列名唯一真相（#90 裁定 + #114 base）
 const YML_NAME_FILES = {
+  base: 'Base.yml',
   talent: 'Talent.yml',
   source: 'Source.yml',
   abl: 'Abl.yml',

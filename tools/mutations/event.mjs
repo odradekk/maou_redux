@@ -43,10 +43,12 @@ export default [
     must_mention: '全量断言',
   },
   {
-    desc: 'M17 TURNEND 壳出口：BEGIN SHOP 改 BEGIN TITLE（回不到主菜单）',
-    file: 'ere/event/event-turnend.js',
-    find: '    begin(STATE.SHOP);',
-    replace: '    begin(STATE.TITLE);',
+    // #114 起三档链落地：#PRI 的出口会被链上后写的普通档覆盖，改它已无
+    // 行为差异（整条变异退化为跳过）；出口守卫改指向链上最后生效的普通档
+    desc: 'M17 TURNEND 出口：普通档 BEGIN SHOP 改 BEGIN TITLE（链上最后的出口决定去向，回不到主菜单）',
+    file: 'ere/system/turnend-settle.js',
+    find: '  begin(STATE.SHOP);',
+    replace: '  begin(STATE.TITLE);',
     tests: ['train-loop'],
     must_mention: '端到端',
   },
@@ -170,5 +172,49 @@ export default [
     replace: 'era.set(`mark:${cid}:3`, 1);',
     tests: ['source-check'],
     must_mention: '跨域写走门面',
+  },
+  // —— #114 日循环骨架（EVENTTURNEND 三档；普通档体在 ere/system/
+  //    turnend-settle.js，同属事件链代码，条目收本切片）——
+  {
+    desc: 'M185 EVENTTURNEND（#PRI）时段判据取反（TIME==1 改 !=）',
+    file: 'ere/event/event-turnend.js',
+    find: '    if (era_flag.time === 1) {',
+    replace: '    if (era_flag.time !== 1) {',
+    tests: ['event-turnend'],
+    must_mention: '时段与日期推进',
+  },
+  {
+    desc: 'M186 EVENTTURNEND（#PRI）日期推进漏 +1（day_count 不增）',
+    file: 'ere/event/event-turnend.js',
+    find: '      era_flag.day_count += 1;',
+    replace: '      // 变异：day_count 不推进',
+    tests: ['event-turnend'],
+    must_mention: 'DAY:0 += 1',
+  },
+  {
+    desc: 'M187 迷宫守卫恒放行（CFLAG:1 判据删掉——阶段 3 接入点失守）',
+    file: 'ere/system/turnend-settle.js',
+    find: "    if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {",
+    replace: '    if (true) {',
+    tests: ['event-turnend'],
+    must_mention: 'CFLAG:1 守卫',
+  },
+  {
+    desc: 'M188 侵攻度自然衰减归零（不减 RAND:100——通关天数估算失真）',
+    file: 'ere/system/turnend-settle.js',
+    find: `      spec.write(spec.degree() - rand(100));
+      era.print(spec.resist_text);`,
+    replace: `      spec.write(spec.degree());
+      era.print(spec.resist_text);`,
+    tests: ['event-turnend'],
+    must_mention: '侵攻度自然衰减',
+  },
+  {
+    desc: 'M189 魔王回复量错一位（午前结算 1400 改 140）',
+    file: 'ere/system/turnend-settle.js',
+    find: '  const maou_heal = era_flag.time === 0 ? 1400 : 1000;',
+    replace: '  const maou_heal = era_flag.time === 0 ? 140 : 1000;',
+    tests: ['event-turnend'],
+    must_mention: '魔王回复',
   },
 ];
