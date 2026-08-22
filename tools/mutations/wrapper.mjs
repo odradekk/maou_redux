@@ -85,4 +85,21 @@ export default [
     tests: ['gen-facade'],
     must_mention: '出处路径',
   },
+  {
+    desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，SELF_CALL.ERB:39-40）',
+    file: 'ere/chara/chara-init.js',
+    find: `    era.set(\`cstr:\${cid}:60\`, '我'); // CSTR:x:60 一人称
+    era.set(\`cflag:\${cid}:450\`, 9); // CFLAG:x:450 一人称档位`,
+    replace: '    // 变异：一人称直设删除',
+    tests: ['chara-init'],
+    must_mention: 'CSTR:x:60 = 我',
+  },
+  {
+    desc: 'M204 能力者技能守卫反转（!(275||…||279)，CHARA_MAKE_INIT.ERB:36）',
+    file: 'ere/chara/chara-init.js',
+    find: '  if (!has_element) {',
+    replace: '  if (has_element) { // 变异：守卫反转',
+    tests: ['chara-init'],
+    must_mention: '守卫挡住五连',
+  },
 ];

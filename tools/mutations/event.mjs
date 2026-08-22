@@ -306,4 +306,39 @@ export default [
     tests: ['event-turnend'],
     must_mention: 'ARG 2 臂不得误读人间界状态再退一档',
   },
+  {
+    desc: 'M205 ENDING_1 的 FLAG:82 置位删除（:38）',
+    file: 'ere/event/event-ending.js',
+    find: '  era_flag.human_realm_fallen = 1;',
+    replace: '  // 变异：FLAG:82 不置位',
+    tests: ['event-ending'],
+    must_mention: 'FLAG:82 置 1',
+  },
+  {
+    desc: 'M206 ENDING_1 的 QUIT 分支也置 FLAG:82（原作不置，:34-38）',
+    file: 'ere/event/event-ending.js',
+    find: `      era.quit();
+      return 1;`,
+    replace: `      era.quit();
+      era_flag.human_realm_fallen = 1; // 变异：QUIT 前置位
+      return 1;`,
+    tests: ['event-ending'],
+    must_mention: '退出路径不置陷落标记',
+  },
+  {
+    desc: 'M207 ENDING_1 入队角色号改坏（ADDCHARA 35 → 34，:20）',
+    file: 'ere/event/event-ending.js',
+    find: '  era.addCharacter(35);',
+    replace: '  era.addCharacter(34); // 变异：入错角色',
+    tests: ['event-ending'],
+    must_mention: '菲娅）入队',
+  },
+  {
+    desc: 'M208 ENDING_3 的置位状态机断在 1（FLAG:87 = 2 → 1，:72）',
+    file: 'ere/event/event-ending.js',
+    find: '  era_flag.elf_realm_conquered = 2; // :72 FLAG:87 = 2',
+    replace: '  era_flag.elf_realm_conquered = 1; // 变异：状态机断在 1',
+    tests: ['event-ending'],
+    must_mention: '1→2',
+  },
 ];

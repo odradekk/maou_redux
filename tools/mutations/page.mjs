@@ -411,4 +411,35 @@ export default [
     tests: ['page-invasion', 'page-shop'],
     must_mention: 'TURNEND',
   },
+  {
+    desc: 'M196 人间界结局判据删掉防重复半边（FLAG:82 == 0）',
+    file: 'ere/page/page-invasion.js',
+    find: `  if (
+    era_flag.human_realm_invasion >= 10000 &&
+    era_flag.human_realm_fallen === 0
+  ) {`,
+    replace: `  if (era_flag.human_realm_invasion >= 10000) { // 变异：删 FLAG:82 == 0 半边`,
+    tests: ['event-ending'],
+    must_mention: '横幅只出现一次',
+  },
+  {
+    desc: 'M197 人间界结局门槛 10000 改 9999（INVASION.ERB:1001）',
+    file: 'ere/page/page-invasion.js',
+    find: `    era_flag.human_realm_invasion >= 10000 &&
+    era_flag.human_realm_fallen === 0`,
+    replace: `    era_flag.human_realm_invasion >= 9999 && // 变异：门槛改坏
+    era_flag.human_realm_fallen === 0`,
+    tests: ['event-ending'],
+    must_mention: '预置输入已耗尽',
+  },
+  {
+    desc: 'M198 精灵领域判据门槛改成恒真（FLAG:86，INVASION.ERB:1005）',
+    file: 'ere/page/page-invasion.js',
+    find: `    era_flag.elf_realm_invasion >= 10000 &&
+    era_flag.elf_realm_conquered === 0`,
+    replace: `    era_flag.elf_realm_invasion >= 0 && // 变异：门槛恒真
+    era_flag.elf_realm_conquered === 0`,
+    tests: ['event-ending'],
+    must_mention: '空转零输出',
+  },
 ];
