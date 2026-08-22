@@ -73,4 +73,45 @@ export default [
     tests: ['resource-media'],
     must_mention: '引擎默认配置整份',
   },
+  {
+    desc: 'ExFlag 名字表 id 改坏（威望 99 改 98——名称→序号映射与寻址双红，#113）',
+    file: 'yml/ExFlag.yml',
+    find: `"威望":
+  id: 99`,
+    replace: `"威望":
+  id: 98`,
+    tests: ['exflag-chara35'],
+    must_mention: '名称→序号映射',
+  },
+  {
+    desc: 'ExFlag 结局线槽位删（嘉德线 2810 整块删——ENDCHECK 分派区间不完整，#113）',
+    file: 'yml/ExFlag.yml',
+    find: `# 角色号 33【嘉德】
+"嘉德线":
+  id: 2810
+  name: "route_33"
+  type: "number"
+`,
+    replace: '',
+    tests: ['exflag-chara35'],
+    must_mention: '应装载 36 条',
+  },
+  {
+    desc: 'Chara35 预设值改坏（素質 300 银发 5 改 6——与源 CSV 逐字段比对红，#113）',
+    file: 'yml/Chara35.yml',
+    find: '  "300": 5',
+    replace: '  "300": 6',
+    tests: ['exflag-chara35'],
+    must_mention: '菲娅预设',
+  },
+  {
+    desc: 'Flag 侵略线 id 改坏（人间界侵攻度 81 改 80——ENDING_1 触发条件读错位，#113）',
+    file: 'yml/Flag.yml',
+    find: `"人间界侵攻度":
+  id: 81`,
+    replace: `"人间界侵攻度":
+  id: 80`,
+    tests: ['exflag-chara35'],
+    must_mention: '人间界侵攻度必须落在原作下标 81',
+  },
 ];

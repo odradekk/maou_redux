@@ -1,0 +1,218 @@
+# EX_FLAG 名字表（issue #113）：原作「魔改版从原版 FLAG 移出的独有旗标」
+# （target/ERB/其他/EXCOM.ERH:1 的 #DIM SAVEDATA EX_FLAG,10000）。#5 决议的
+# 「自定义一维表」，与 Flag.yml 同为人工产出（原作无 EX_FLAG 名称 CSV，无从
+# 转换；先例 Global.yml，issue #18）。
+#
+# 机制（yml/Audio.yml 同款，app.asar eraStart 实测）：非内建表名落 yml 即
+# 注册为扩展普通表，fillData 自动建 data.exflag 桶并把声明槽位置 0；
+# saveData 整存、resetData 重建桶——与 #DIM SAVEDATA 的存清语义一致。
+# setVar 接受 exflag:99 与 exflag:威望 两种寻址。
+#
+# 条目范围：#5 决议实测的 34 个实用下标 + 2815/2816 两个槽位，不做超出用点
+# 的扩表。逐条语义与证据见各条注释（文件与行号均为 target/ 原作侧）。
+#
+# 两条已查实的原作缺陷，移植时按本注释处置（不要「修回去」）：
+#   - id 101（天神宫侵攻度）：原作 INVASION.ERB:134-135 把 AREA=101 的侵攻度
+#     累加进了 FLAG:101，EX_FLAG:101 只有只读显示点（INVASION.ERB:46），
+#     无写入点（issue #102 查明）。槽位按原作意图保留。
+#   - id 2815/2816：结局线区间在原作被错写进 FLAG 侧（ENDINGDATA.ERB 的
+#     【葵希罗】行写 FLAG:2815 = 0、ENDING ver 1.0.1.ERB 的 ENDCHECKMAIN 写
+#     FLAG:2816 = 10）；EX_FLAG 侧 ENDCHECK 的动态读
+#     EX_FLAG:(2800+LOCAL)（ENDING ver 1.0.1.ERB:347，LOCAL 取 2-15）只达
+#     2815。两槽按语义区间登记在案，真值归属由 ENDING_1 演出票决定。
+#
+# 包装层产物：暂未生成——首个消费者（侵略线各票）落地时由
+# tools/gen-wrapper.js 入白名单生成 ere/era-utils/era-exflag.js 初稿。
+# 上届魔王的角色号（@MAOU_TENSHIN：EX_FLAG:0 = MASTER，注释「上届魔王记录」，
+# EVENT_NEXTDAY.ERB:2458-2459；CHARA_INFO ver1.0.1.ERB:276 名单跳过它）
+"上届魔王":
+  id: 0
+  name: "prev_maou"
+  type: "number"
+# 指定继任的魔王角色号（@MAOU_KOUFO 选出存入，@MAOU_TENSHIN 据此交接，
+# EVENT_NEXTDAY.ERB:2451/2457）
+"继任魔王":
+  id: 3
+  name: "next_maou"
+  type: "number"
+# 已击破勇者的种族位域（人类|1、精灵|2、龙族|4、…，INVASION_EVENT.ERB:836+）
+"勇者击破位域":
+  id: 95
+  name: "defeated_heroes_bits"
+  type: "number"
+# 威望。@EVENTFIRST 播种 70，每次侵略 +2（INVASION.ERB）；出兵效率按区间
+# 打折（INVASION.ERB:236-255：≤20 侵攻失败、21-40 战斗力÷4、41-60 略受
+# 质疑、61-80 相安无事、81-100 广受爱戴）；魔王交接时 -30
+"威望":
+  id: 99
+  name: "prestige"
+  type: "number"
+# 天神宫侵攻度（0-10000，INVASION.ERB:46 只读显示；写入点被原作错放进
+# FLAG:101，见头注）
+"天神宫侵攻度":
+  id: 101
+  name: "shrine_invasion"
+  type: "number"
+# 天神宫征服阶段（≥1 可巡视、≥4 已征服；唯一写点 INVASION.ERB:136-137）
+"天神宫阶段":
+  id: 102
+  name: "shrine_stage"
+  type: "number"
+# 嘉德口上会话开关（@EVENTTRAIN #PRI 置 1、@EVENTEND #LATER 清 0，
+# EVENT_K903_嘉德.ERB）
+"嘉德口上会话":
+  id: 103
+  name: "kojo_gade_session"
+  type: "number"
+# 菲娅口上会话开关（同型，EVENT_K904_菲娅.ERB）
+"菲娅口上会话":
+  id: 104
+  name: "kojo_fia_session"
+  type: "number"
+# 丽塔口上会话开关（同型，EVENT_F1_丽塔.ERB）
+"丽塔口上会话":
+  id: 223
+  name: "kojo_rita_session"
+  type: "number"
+# 非作弊资金记账：@MONEYSYS 与 MONEY 同步增减（初值 1234，SYSTEM
+# ver1.0.3.ERB:56）；ENDCHECKMAIN 以 MONEY > 本值 + 8766 判资金作弊
+"非作弊资金":
+  id: 4444
+  name: "legit_money"
+  type: "number"
+# 一周目主线判定（ENDCHECKMAIN：DAY:0 == 500 且未进线 → 99，触发 ENDING_N，
+# ENDINGDATA.ERB）
+"一周目主线":
+  id: 2801
+  name: "first_run_deadline"
+  type: "number"
+# 资金作弊结局标记（MONEY 超过非作弊资金 + 8766 → 10）
+"资金作弊结局":
+  id: 2802
+  name: "money_cheat_ending"
+  type: "number"
+# 魔力失控的奴隶角色号（CFLAG:x:9 ≥ 5000 时记录 x，ENDCHECKMAIN）
+"失控奴隶号":
+  id: 2803
+  name: "runaway_slave_id"
+  type: "number"
+# 魔王魔力失控结局标记（CFLAG:0:9 ≥ 1500 → 10，GAMEOVER 线）
+"魔王失控结局":
+  id: 2804
+  name: "maou_runaway_ending"
+  type: "number"
+# 角色线结局进度（2805-2815，值十位=结局分派段、个位=推进段；不在队
+# （GETCHARA < 0）时 ENDCHECKCHARA 归零重走。角色号见各条注释）
+# 角色号 17【玛奥】（玛奥，ENDINGDATA.ERB @ENDRESET）
+"玛奥线":
+  id: 2805
+  name: "route_17"
+  type: "number"
+# 角色号 24【莉莉】
+"莉莉线":
+  id: 2806
+  name: "route_24"
+  type: "number"
+# 角色号 35【菲娅】——ENDING_1 演出里 ADDCHARA 35 入队的对象
+"菲娅线":
+  id: 2807
+  name: "route_35"
+  type: "number"
+# 角色号 31【琼】
+"琼线":
+  id: 2808
+  name: "route_31"
+  type: "number"
+# 角色号 32【普林希斯】
+"普林希斯线":
+  id: 2809
+  name: "route_32"
+  type: "number"
+# 角色号 33【嘉德】
+"嘉德线":
+  id: 2810
+  name: "route_33"
+  type: "number"
+# 角色号 22【黑方片】
+"黑方片线":
+  id: 2811
+  name: "route_22"
+  type: "number"
+# 角色号 23【白梅花】
+"白梅花线":
+  id: 2812
+  name: "route_23"
+  type: "number"
+# 角色号 20【金红桃】
+"金红桃线":
+  id: 2813
+  name: "route_20"
+  type: "number"
+# 角色号 21【银黑桃】（与嘉德线共用阈值：2814 < 300/500 时 ENDCHECKCHARA
+# 不归零）
+"银黑桃线":
+  id: 2814
+  name: "route_21"
+  type: "number"
+# 角色号 34【葵希罗】——原作错写 FLAG:2815（见头注），EX_FLAG 侧被
+# ENDCHECK 的动态读（2800+LOCAL）触及
+"葵希罗线":
+  id: 2815
+  name: "route_34"
+  type: "number"
+# 反叛结局标记（威望 ≤ 0 → 10，ENDCHECKMAIN）——原作错写 FLAG:2816（见头注）
+"反叛结局":
+  id: 2816
+  name: "rebellion_ending"
+  type: "number"
+# 魔改开关位图（原作 MOD_SWITCH；bit0 魔界银行、bit1 铁石心肠、bit2 打工、bit3 卖春
+# 积极性；bit5/6 已废弃，MOD_SWITCH ver1.0.11.ERB:4-31）
+"魔改开关位图":
+  id: 9000
+  name: "mod_switch_bits"
+  type: "number"
+# 魔界银行存款（MAKAI_BANK.ERB，存取自由）
+"银行存款":
+  id: 9001
+  name: "bank_deposit"
+  type: "number"
+# 银行上次结息日（INTEREST.ERB:5 按日差计息）
+"银行计息日":
+  id: 9002
+  name: "bank_interest_day"
+  type: "number"
+# 银行欠款（贷款额 ×12/10，MAKAI_BANK.ERB:70）
+"银行欠款":
+  id: 9003
+  name: "bank_debt"
+  type: "number"
+# 银行有欠款标记（0/1，INTEREST.ERB:7-10）
+"银行欠款标记":
+  id: 9004
+  name: "bank_debt_flag"
+  type: "number"
+# 银行还款倒计时（无欠款重置 30 天，到期未清 GAMEOVER 线，INTEREST.ERB:14-22）
+"银行还款倒计时":
+  id: 9005
+  name: "bank_deadline"
+  type: "number"
+# 处刑水晶球库存（SELL_VIDEO.ERB:1078 录制入库；INVASION.ERB:1074 起投放）
+"水晶球库存":
+  id: 9010
+  name: "crystal_ball_stock"
+  type: "number"
+# 已投放城内的水晶球数（INVASION.ERB:1076/1109）
+"水晶球投放数":
+  id: 9011
+  name: "crystal_ball_deployed"
+  type: "number"
+# 流行中的水晶球数（投放累加、按日 ×1.2 或 ×1.6 增长，INVASION.ERB:1189-1192）
+"水晶球流行度":
+  id: 9012
+  name: "crystal_ball_popularity"
+  type: "number"
+# 水晶球过时倒计时（投放累加、按日递减，INVASION.ERB:1078/1114）
+"水晶球过时倒计时":
+  id: 9013
+  name: "crystal_ball_expire"
+  type: "number"

@@ -11,6 +11,149 @@ const era = require('#/era-electron');
 // GENERATED START —— tools/gen-wrapper.js 自 yml/Flag.yml 生成，勿手改；重新生成（--force）只替换本标记之间
 const era_flag = {
   /**
+   * 特别税加成（flag:9 ↔ FLAG:9）
+   * @returns {number}
+   */
+  get tax_surcharge() {
+    return era.get('flag:9') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set tax_surcharge(v) {
+    era.set('flag:9', v);
+  },
+  /**
+   * 人间界侵攻度（flag:81 ↔ FLAG:81）
+   * @returns {number}
+   */
+  get human_realm_invasion() {
+    return era.get('flag:81') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set human_realm_invasion(v) {
+    era.set('flag:81', v);
+  },
+  /**
+   * 人间界陷落（flag:82 ↔ FLAG:82）
+   * @returns {number}
+   */
+  get human_realm_fallen() {
+    return era.get('flag:82') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set human_realm_fallen(v) {
+    era.set('flag:82', v);
+  },
+  /**
+   * 精灵领域侵攻度（flag:86 ↔ FLAG:86）
+   * @returns {number}
+   */
+  get elf_realm_invasion() {
+    return era.get('flag:86') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set elf_realm_invasion(v) {
+    era.set('flag:86', v);
+  },
+  /**
+   * 精灵领域征服（flag:87 ↔ FLAG:87）
+   * @returns {number}
+   */
+  get elf_realm_conquered() {
+    return era.get('flag:87') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set elf_realm_conquered(v) {
+    era.set('flag:87', v);
+  },
+  /**
+   * 龙之山脉侵攻度（flag:88 ↔ FLAG:88）
+   * @returns {number}
+   */
+  get dragon_realm_invasion() {
+    return era.get('flag:88') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set dragon_realm_invasion(v) {
+    era.set('flag:88', v);
+  },
+  /**
+   * 龙之山脉征服（flag:89 ↔ FLAG:89）
+   * @returns {number}
+   */
+  get dragon_realm_conquered() {
+    return era.get('flag:89') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set dragon_realm_conquered(v) {
+    era.set('flag:89', v);
+  },
+  /**
+   * 天界侵攻度（flag:90 ↔ FLAG:90）
+   * @returns {number}
+   */
+  get heaven_invasion() {
+    return era.get('flag:90') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set heaven_invasion(v) {
+    era.set('flag:90', v);
+  },
+  /**
+   * 天界征服（flag:91 ↔ FLAG:91）
+   * @returns {number}
+   */
+  get heaven_conquered() {
+    return era.get('flag:91') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set heaven_conquered(v) {
+    era.set('flag:91', v);
+  },
+  /**
+   * 勇者战役中（flag:400 ↔ FLAG:400）
+   * @returns {number}
+   */
+  get hero_campaign_active() {
+    return era.get('flag:400') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set hero_campaign_active(v) {
+    era.set('flag:400', v);
+  },
+  /**
+   * 二维地图模式（flag:502 ↔ FLAG:502）
+   * @returns {number}
+   */
+  get map_2d_mode() {
+    return era.get('flag:502') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set map_2d_mode(v) {
+    era.set('flag:502', v);
+  },
+  /**
    * 天数（flag:10000 ↔ FLAG:10000）
    * @returns {number}
    */

@@ -2,7 +2,8 @@
 #
 # id 分配约定（两层，互不重叠）：
 #   - 原作 FLAG:N 条目按原下标 1:1 落表（实用下标 104 个、最大 9001，随各
-#     子系统票渐进声明——本表先只立贯通验证路径用到的部分）；
+#     子系统票渐进声明——已立：调教路径（#44）、侵略线（#113，9/81/82/
+#     86-91/400/502））；
 #   - 10000 起为保留区：ere 无对应表的 Emuera 内置变量并入 flag（DAY/TIME/
 #     MONEY）与角色指针占 flag 槽位（TARGET/ASSI，ere-kanon 同做法，#5
 #     决议第六条）。原作 FLAG 实用下标最大 9001，10000 起无撞号风险。
@@ -11,6 +12,77 @@
 # flag 名表，原作 flag 语义只散见于注释与 資料_非必要無須解壓/ 的说明。
 # 包装层产物：ere/era-utils/era-flag.js（tools/gen-wrapper.js 生成初稿）。
 # 各变量在原作中的语义与来源见该文件手写区补注。
+#
+# —— 侵略线一段（issue #113，语义依据逐条注明原作文件与行号）——
+# 魔王特别税加成（百分比）：主菜单「休息」每次 +5（SHOP ver1.0.2.ERB:137），
+# 征税时 TAX:3 = TAX:0 × (本值 + 100) / 100 − TAX:0，征毕清零（TAX.ERB:205-213）
+"特别税加成":
+  id: 9
+  name: "tax_surcharge"
+  type: "number"
+# 人间界侵攻度（0-10000）。出兵累加（INVASION.ERB 的 AREA 循环）、每日自然
+# 衰减 RAND:100（SYSTEM ver1.0.3.ERB:625-626）；≥10000 触发 ENDING_1
+# （INVASION.ERB:1001-1002）；税单按 /10 折殖民地数（TAX.ERB:89-91）
+"人间界侵攻度":
+  id: 81
+  name: "human_realm_invasion"
+  type: "number"
+# ENDING_1（魔王掌握世界）已演出标记：演出内置 1（ENDING ver 1.0.1.ERB:38），
+# 亦是「人间界已陷落」的世界状态读点（EVENT_K.ERB:171 闲聊差分、
+# ENTER_ENEMY.ERB:35/332 勇者数量守卫）
+"人间界陷落":
+  id: 82
+  name: "human_realm_fallen"
+  type: "number"
+# 精灵族领域侵攻度（衰减与税单同 FLAG:81 型，SYSTEM ver1.0.3.ERB:644-648、
+# TAX.ERB:97-99）；满值触发 ENDING_3
+"精灵领域侵攻度":
+  id: 86
+  name: "elf_realm_invasion"
+  type: "number"
+# 精灵领域征服标记：ENDING_3 演出前置 =1、献上圣女（CHAR_GIFT）毕 =2
+# （ENDING ver 1.0.1.ERB:70-72）；ENTER_ENEMY.ERB:37-41 按三区征服数限勇者
+"精灵领域征服":
+  id: 87
+  name: "elf_realm_conquered"
+  type: "number"
+# 龙之山脉侵攻度（SYSTEM ver1.0.3.ERB:663-667、TAX.ERB:105-107）；满值触发
+# ENDING_4
+"龙之山脉侵攻度":
+  id: 88
+  name: "dragon_realm_invasion"
+  type: "number"
+# 龙之山脉征服标记（ENDING_4 演出 =1 → CHAR_GIFT 献上龙族公主 → =2，
+# ENDING ver 1.0.1.ERB:88-90）
+"龙之山脉征服":
+  id: 89
+  name: "dragon_realm_conquered"
+  type: "number"
+# 天界侵攻度（SYSTEM ver1.0.3.ERB:682-686、TAX.ERB:113-115）；满值触发
+# ENDING_5
+"天界侵攻度":
+  id: 90
+  name: "heaven_invasion"
+  type: "number"
+# 天界征服标记（ENDING_5 演出 =1 → CHAR_GIFT 献下代主神天使 → =2，
+# ENDING ver 1.0.1.ERB:108-110）
+"天界征服":
+  id: 91
+  name: "heaven_conquered"
+  type: "number"
+# 勇者战役进行中：CAMPAIGN_1.ERB:62 置 1、CAMPAIGN_EVENT.ERB:269/317 战役
+# 结束清 0。为 1 时每回合魔王气力回复改为 -10（SYSTEM ver1.0.3.ERB:713-715）、
+# 战役角色（CFLAG:x:1 == 12）在战役结束后复位（:281-284/:732-735）
+"勇者战役中":
+  id: 400
+  name: "hero_campaign_active"
+  type: "number"
+# 2D 地图模式开关（设定菜单写入，SYSTEM ver1.0.3.ERB:924、
+# LABO_DUNGEON_MAP.ERB:262）：迷宫走 2D 地图（:66/:287-295）还是文本探索
+"二维地图模式":
+  id: 502
+  name: "map_2d_mode"
+  type: "number"
 "天数":
   id: 10000
   name: "day_count"

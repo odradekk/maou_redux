@@ -77,7 +77,7 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
  * 条目表计数基线（门 1）：条数只能通过显式改这份常量来变。
  * 增 = 新变异落地（公告）；减 = 变异被删（也应是公告）。
  */
-const LEDGER_COUNT_BASELINE = 186;
+const LEDGER_COUNT_BASELINE = 190;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
@@ -86,7 +86,7 @@ const LEDGER_COUNT_BASELINE = 186;
  * 新变异若只被引擎比对用例守护，此数会涨——那意味着该变异在 CI 上只被
  * 「跳过」覆盖，改这份常量时想清楚。
  */
-const ENGINE_SKIP_BASELINE = 7;
+const ENGINE_SKIP_BASELINE = 11;
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';

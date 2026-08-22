@@ -23,12 +23,16 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 // 角色预设的 フラグ 行报「角色数据表不存在: cflag!」并被丢弃（#50 实测）。
 // PortCFlag.yml 同为人工表（移植自建扩展表，#67）：登记在此使 Chara17.yml
 // 的 portcflag 预设行在装载循环里可翻译（名字表缺位同样报错丢弃）。
+// Abl/CStr（#43 入库）随 #113 登记：Chara35 是首个带 ABL/CSTR 预设行的
+// 入库角色，缺表时这两行同样被报错丢弃。
 const TABLE_FILES = [
   ['Base.yml', 'base'],
   ['Talent.yml', 'talent'],
   ['Item.yml', 'item'],
   ['CFlag.yml', 'cflag'],
   ['PortCFlag.yml', 'portcflag'],
+  ['Abl.yml', 'abl'],
+  ['CStr.yml', 'cstr'],
 ];
 
 /**
