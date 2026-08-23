@@ -83,10 +83,11 @@ function draw_title_screen() {
   // （dev-guides/09-static.md）；只读，不硬编码
   const gamebase = era.get('gamebase');
   // 原作 :17 LOCALS = {V/1000}.{V%1000}（整数除法）→ 93106 即 "93.106"。
-  // 照原作自算，不依赖引擎 versionName 的回退。
-  const version_text = `${Math.floor(gamebase.version / 1000)}.${
-    gamebase.version % 1000
-  }`;
+  // 有意偏离 1:1（#135 / ADR-0006）：移植版版本轴重设为 0.0.0 后，自算式对
+  // 【版本】0 会算出 "0.0"，位数语义已失；改为直读【版本代号】versionName
+  // （String，纯显示，dev-guides/09-static.md）。引擎对 versionName 缺省的
+  // 回退恰是「版本号除以 1000」，与原作公式同族，但我们显式设值、不走回退。
+  const version_text = gamebase.versionName;
 
   era.setAlign('center'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中
   era.drawLine(); // 原作 :19 DRAWLINE

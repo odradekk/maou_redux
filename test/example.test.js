@@ -27,7 +27,7 @@ test('示例：游戏入口 main 已接到标题画面（入口冒烟）', async
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
   // 断言「输出了哪些文本」
-  assert(fixture.text_lines().some((line) => line.includes('Ver93.106')));
+  assert(fixture.text_lines().some((line) => line.includes('Ver0.0.0')));
 });
 
 test('示例：变量读写被记录', () => {
