@@ -1414,6 +1414,10 @@ const FILES = [
         ref: '232-319',
         any: [/PRINTLCD \[101\] 能力显示/],
       },
+      // [109] 侵略按钮（#129：原作无条件渲染，:283 前无 IF 守卫，对照
+      // [100] 的 226-231）
+      { src: DRAW_MAINMENU, ref: '282-283', any: [/PRINTLCD \[109\] 侵略/] },
+      { src: DRAW_MAINMENU, ref: '283', any: [/PRINTLCD \[109\] 侵略/] },
       {
         src: DRAW_MAINMENU,
         ref: '320',

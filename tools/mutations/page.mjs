@@ -412,6 +412,14 @@ export default [
     must_mention: 'TURNEND',
   },
   {
+    desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，#129 形态）',
+    file: 'ere/page/page-main-menu.js',
+    find: "  era.printButton('侵略', 109);",
+    replace: "  era.printButton('侵略', 1090); // 变异：accelerator 改坏",
+    tests: ['page-main-menu'],
+    must_mention: '侵略必须是按钮',
+  },
+  {
     desc: 'M196 人间界结局判据删掉防重复半边（FLAG:82 == 0）',
     file: 'ere/page/page-invasion.js',
     find: `  if (
