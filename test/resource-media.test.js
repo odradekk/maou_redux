@@ -206,20 +206,22 @@ test('版本库默认配置开着资源：yml/_config.json 的 system.resource �
 });
 
 engine_test(
-  'yml/_config.json 是引擎默认配置整份 + 唯一偏离 resource:true',
+  'yml/_config.json 是引擎默认配置整份 + 有意偏离仅 resource:true 与 saveFiles:100',
   () => {
     // 缺键调研（app.asar 实证）：_config.json 存在时 defaultConfig 整个是它，
     // getEmptyConfigForm() 只在文件缺失/解析失败时兜底、不做逐键合并；
     // syncConfig 又把 config 合并 _fixed.json 后整份写回 ere.config.json——
     // _config.json 没写的键从此不存在（window.audio 缺失 = 静默没声音一类坑）。
-    // 故必须写全：与 getEmptyConfigForm() 逐键一致，唯一偏离 resource。
+    // 故必须写全：与 getEmptyConfigForm() 逐键一致，偏离只有两处且各有票据：
+    // resource:true（#69，资源默认开）、saveFiles:100（#135，C2 的 99 号
+    // 自动存档槽要可见）。
     const defaults = engine.engine_utils.getEmptyConfigForm();
     const config = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
     );
     assert.deepEqual(config, {
       ...defaults,
-      system: { ...defaults.system, resource: true },
+      system: { ...defaults.system, resource: true, saveFiles: 100 },
     });
   },
 );
