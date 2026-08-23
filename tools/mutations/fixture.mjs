@@ -4,22 +4,28 @@
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
+    // 注：find 原覆盖函数头整段（#130 前的形状）；入集合逻辑插进函数体后
+    // 按工具规则同步 find/replace 到仍唯一的 return 形状段，变异语义不变。
     desc: 'M84 夹具 printButton 不记 accelerator（菜单比对失去编号键）',
     file: 'test/helpers/era-fixture.js',
-    find: `  const make_button_entry = (content, accelerator, config) => {
-    const text = normalize_content(content);
-    return {
+    find: `    return {
       type: 'button',
       text,
       accelerator,`,
-    replace: `  const make_button_entry = (content, accelerator, config) => {
-    const text = normalize_content(content);
-    return {
+    replace: `    return {
       type: 'button',
       text,
       accelerator: undefined, // 变异：不记编号`,
     tests: ['compare-first-turn', 'page-usercom'],
     must_mention: '分类计数与当前待办清单一致',
+  },
+  {
+    desc: 'M179 夹具 input 白名单校验被拆（未打印按钮的值照单全收——#130 要防的复发形态）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (config?.useRule !== false) {`,
+    replace: `    if (false && config?.useRule !== false) { // 变异：白名单失守`,
+    tests: ['fixture'],
+    must_mention: '白名单必须拒收',
   },
   {
     desc: 'M93 夹具 printMultiColumns 不再记录（print 系覆盖的缺口）',

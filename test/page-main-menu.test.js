@@ -464,23 +464,39 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
 });
 
 test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
-  const stub_round = await run_shop_rounds([102, 500]); // 102 = 地下城（存根）
-  const plain = await run_shop_rounds([500, 500]);
+  // 102（地下城存根）不印按钮（按钮与真身同票落地的政策），引擎不会送达
+  // （#130）；已打印的存根分发入口是 [497] 助手（A > 0 才进 @SELECT_ASSI
+  // 存根），用它驱动同一形态
+  const stub_round = create_era_fixture();
+  stub_round.era.print('上方一');
+  stub_round.era.print('上方二');
+  join_chara(stub_round, 31); // A = 1：497 直达存根分支
+  const { run_shop: run_stub } = stub_round.load_module('page/page-shop');
+  stub_round.set_inputs(497, 500);
+  await assert.rejects(() => run_stub(), /预置输入已耗尽/);
+  // 对照轮带同一世界（A = 1）：差异只剩「分发是否打存根」这一个变量
+  const plain = create_era_fixture();
+  plain.era.print('上方一');
+  plain.era.print('上方二');
+  join_chara(plain, 31);
+  const { run_shop: run_plain } = plain.load_module('page/page-shop');
+  plain.set_inputs(500, 500);
+  await assert.rejects(() => run_plain(), /预置输入已耗尽/);
 
   // 分发打了存根 → waitAnyKey 等键时屏幕上最新行就是存根（玩家看得到）→
   // 下一轮重绘才清掉。waits.rows_at_wait 是调用瞬间的行数，直接钉住
   // 「看到」发生在「消失」之前（#73 发回的验收项）。
   const waited = stub_round.waits.filter((w) => w.waited);
-  assert.equal(waited.length, 1, '102 分支必须等一次键');
+  assert.equal(waited.length, 1, '497 分支必须等一次键');
   const at_wait = stub_round.lines_history.filter(
     (l) => l.row !== undefined && l.row < waited[0].rows_at_wait,
   );
   assert(
-    at_wait.some((l) => l.text?.includes('DUNGEON_INFO2')),
+    at_wait.some((l) => l.text?.includes('SELECT_ASSI')),
     '等键时存根行必须已在屏幕上',
   );
   // 重绘之后才消失：终态与无存根轮逐行同高、屏幕上看不见存根
-  assert(!stub_round.text_lines().some((l) => l.includes('DUNGEON_INFO2')));
+  assert(!stub_round.text_lines().some((l) => l.includes('SELECT_ASSI')));
   assert.equal(stub_round.era.getLineCount(), plain.era.getLineCount());
 });
 

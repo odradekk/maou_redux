@@ -86,7 +86,8 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #116 起抬 11（M209-M219，ENDCHECK 全链的行为锁）
 // #120 起抬 1（M220，端到端专属靶：人间界结局判据整支删除）
 // #129 起为 239：+1（M221，[109] 侵略按钮 accelerator——渲染守卫）。
-const LEDGER_COUNT_BASELINE = 239;
+// #130 起为 240：+1（M179，input 白名单校验——喂未打印按钮值的防线）。
+const LEDGER_COUNT_BASELINE = 240;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

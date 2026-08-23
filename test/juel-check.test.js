@@ -435,22 +435,10 @@ test('交互循环：能力分支命中打占位、重绘后可再选（进得�
   );
 });
 
-test('交互循环：无分支输入静默重绘（原作 GOTO INPUT_LOOP_1）', async () => {
-  const fixture = create_era_fixture();
-  seed_world(fixture);
-  fixture.set_inputs(7, 999); // 7 不在能力分支表（:463-539 无 RESULT == 7）
-
-  await fixture.load_module('system/train/juel-check').run_juel_check();
-
-  assert(
-    !fixture.text_lines().some((line) => line.includes('@ABLUP7')),
-    '7 无对应分支，不得打能力占位',
-  );
-  assert.equal(
-    fixture.text_lines().filter((line) => line.includes('当前是Lv')).length,
-    2,
-  );
-});
+// 原「交互循环：无分支输入静默重绘」用例（喂 7）已删（#130）：7 不是
+// 已打印按钮的快捷键，引擎的 input() 在渲染层就把它弹回——「无分支输入」
+// 在引擎侧不可达（本画面印出的编号全部落在 ABLUP_IDS ∪ {999}）。重绘
+// 机理本身由上一用例（能力尝试 + 退出 → 等级行两轮）覆盖。
 
 test('自动升级（GETBIT(FLAG:5,35)）：不进交互，直接收尾', async () => {
   const fixture = create_era_fixture();

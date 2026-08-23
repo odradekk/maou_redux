@@ -142,7 +142,7 @@ test('COM_ABLE 未定义即视为可执行：零实现下全部 101 个编号可
   );
 });
 
-test('COM_ABLE 返回 0 的指令不可执行：输入走 @USERCOM 而非指令路径', async () => {
+test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#130）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
@@ -153,19 +153,43 @@ test('COM_ABLE 返回 0 的指令不可执行：输入走 @USERCOM 而非指令�
   on('EVENTCOM', async () => probe.push('eventcom'));
   on('USERCOM', async (result) => probe.push(`usercom(${result})`));
 
-  fixture.set_inputs(5, 999);
+  // 原用例喂 5 验证「输入走 @USERCOM 而非指令路径」。可执行表驱动按钮
+  // 渲染：COM_ABLE = 0 的 5 不印按钮，引擎的 input() 只送达已打印按钮的
+  // 快捷键——5 在渲染层就被弹回，@USERCOM 收不到 5（原作 INPUT 收任意
+  // 数字时代的路径在引擎侧不存在）。引擎可达的等价断言＝不渲染 + 拒收
+  fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
 
+  assert(
+    !fixture.lines_history.some(
+      (line) => line.type === 'button' && line.accelerator === 5,
+    ),
+    'COM_ABLE = 0 的指令不得渲染为按钮',
+  );
   assert.deepEqual(probe, [
-    'usercom(5)', // 指令路径被 COM_ABLE 拦下 → @USERCOM
-    'usercom(999)', // 第二次输入是退出键，同样走 @USERCOM（→ BEGIN AFTERTRAIN）
+    'usercom(999)', // 退出键照常走 @USERCOM（→ BEGIN AFTERTRAIN）
   ]);
-  // 非指令输入不得设定 SELECTCOM（写记录断言，理由同上）
+  // 全程无指令路径：SELECTCOM 不被写
   assert(
     !fixture.var_writes.some((w) => w.name === 'flag:10011'),
     'USERCOM 路径不得写 SELECTCOM',
   );
+
+  // 拒收锁：喂 5 当场抛「输入不合法」，合法值列表里没有 5
+  const locked = create_era_fixture();
+  seed_world(locked);
+  const { com_able_family: family_locked } = locked.load_module(
+    'system/train/com-family',
+  );
+  locked.load_module('page/page-usercom');
+  family_locked.register(5, async () => 0);
+  locked.set_inputs(5);
+  const { run_train: run_locked } = locked.load_module(
+    'system/train/train-loop',
+  );
+  await assert.rejects(() => run_locked(), /输入不合法！请输入以下值之一：/);
+  assert(!locked.inputs_consumed.some((e) => e.value === 5), '5 未被送达');
 });
 
 test('@COMxx 未实现：EVENTCOM 后重新要求输入（不结算、不进 EVENTCOMEND）', async () => {

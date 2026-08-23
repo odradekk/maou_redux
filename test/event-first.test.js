@@ -278,25 +278,26 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   assert.deepEqual(fixture.chara_no, [0, 17]);
 });
 
-test('初期奴隶问答：无效输入重问，两个取值都由玩家选择产生', async () => {
+test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达，#130）', async () => {
   const fixture = create_era_fixture();
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 先给一个越界输入 9（原作 SIF 0<=RESULT<=1 不落笔、回菜单重问），再选 0
-  fixture.set_inputs(9, 0);
+  // 原作用例曾先喂 9（越界）验证重问。问答每轮重印 [0]/[1] 按钮，引擎的
+  // input() 只送达已打印按钮的快捷键，9 在渲染层被弹回——重问分支是引擎
+  // 死路径，此处只走有效输入
+  fixture.set_inputs(0);
   const pending = await emit('EVENTFIRST');
 
-  // 两次 era.input 都被问答消费（9 无效重问、0 生效）；无效轮后选项重渲染
-  assert.deepEqual(fixture.inputs_consumed.slice(0, 2), [
-    { api: 'input', value: 9 },
-    { api: 'input', value: 0 },
-  ]);
+  assert.deepEqual(
+    fixture.inputs_consumed.filter((e) => e.api === 'input'),
+    [{ api: 'input', value: 0 }],
+  );
   const question_rounds = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator === 0,
   );
-  assert.equal(question_rounds.length, 2, '无效输入后必须重问（重渲染选项）');
+  assert.equal(question_rounds.length, 1, '选项恰好渲染一轮');
   assert.equal(fixture.store.get('flag:501'), 0);
   // 选 0 走随机路径：共用出口
   assert.equal(pending, STATE.SHOP);
@@ -307,15 +308,17 @@ test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重�
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
 
-  // 村娘 → 搬运方式先给越界的 3（原作 GOTO INPUT_LOOP 重问）、再选 2 拖拽
-  fixture.set_inputs(1, 3, 2);
+  // 村娘 → 搬运方式选 2 拖拽（首输入 1 是初期奴隶问答的答案）。原作用例
+  // 曾在中间喂越界的 3 验证 GOTO 重问：搬运画面只印一次 [1]/[2]，引擎的
+  // input() 只送达已打印按钮的快捷键，3 在渲染层被弹回——重问分支是引擎
+  // 死路径（#130），此处只走有效输入
+  fixture.set_inputs(1, 2);
   await emit('EVENTFIRST');
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),
     [
       { api: 'input', value: 1 },
-      { api: 'input', value: 3 },
       { api: 'input', value: 2 },
     ],
   );

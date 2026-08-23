@@ -97,6 +97,12 @@ function create_era_fixture() {
   const logs = []; // logger 记录
   const inputs_consumed = []; // 已消费的输入
   const input_queue = []; // 预置输入队列，等待输入的 API 依次消费
+  // 本轮合法输入集（#130）：= 引擎渲染层 inputParam.rule 的数组形态——
+  // 已打印按钮的快捷键去重累积。任何一次成功回传（input / waitAnyKey 的
+  // any 键 / printAndWait 的内部等待）都把它清空；clear 不碰它（app.vue
+  // 的 clear 处理只删行，returnFromButton 才重置 rule）。era.input 消费
+  // 预置值时按它校验，见「输入」段
+  const input_rules = [];
   const store = new Map(); // 变量存储
 
   // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎标准一致 ——
@@ -195,6 +201,12 @@ function create_era_fixture() {
 
   // printButton 与多列按钮对象共用：按钮条目的引擎渲染公式（app.asar）
   const make_button_entry = (content, accelerator, config) => {
+    // 入合法输入集（引擎 app.vue 的按钮行构造 P 逐字）：disabled 按钮
+    // 整体短路不入集；快捷键去重（重复时引擎只 console.log 一条
+    // 「duplicate accelerator」告警，此处不记录——不影响校验语义）
+    if (!config?.disabled && !input_rules.includes(accelerator)) {
+      input_rules.push(accelerator);
+    }
     const text = normalize_content(content);
     return {
       type: 'button',
@@ -241,7 +253,13 @@ function create_era_fixture() {
 
   // —— 输出 ——
   era.print = (content) => push_row([make_text_entry(content)]);
-  era.printAndWait = async (content) => push_row([make_text_entry(content)]);
+  // 引擎 printAndWait = print + await waitAnyKey()（app.asar 逐字），print
+  // 刚置位 allowWait → 必等键 → 任何一次回传都清空合法输入集（#130）
+  era.printAndWait = async (content) => {
+    const returned = push_row([make_text_entry(content)]);
+    input_rules.length = 0;
+    return returned;
+  };
   era.println = () => push_row([{ type: 'br', text: '' }]);
   era.drawLine = (config) =>
     push_row([
@@ -536,15 +554,15 @@ function create_era_fixture() {
   };
 
   // —— 输入 ——
-  const take_input = (api) => {
+  // 只取值、不落 inputs_consumed：era.input 校验通过后才记录——被白名单
+  // 拒收的值引擎不会回传给游戏，记进去会把「玩家试过」误当「游戏收到」
+  const take_input = () => {
     if (input_queue.length === 0) {
       throw new Error(
-        `测试夹具：era.${api}() 等待输入，但预置输入已耗尽（先用 set_inputs 预置）`,
+        '测试夹具：era.input() 等待输入，但预置输入已耗尽（先用 set_inputs 预置）',
       );
     }
-    const value = input_queue.shift();
-    inputs_consumed.push({ api, value });
-    return value;
+    return input_queue.shift();
   };
   // 引擎 system.hideUserInput / system.disableClear 配置（ere.config.json 的
   // 键，游戏代码不能改）的镜像：hideUserInput 默认 false＝回显计行、
@@ -564,7 +582,38 @@ function create_era_fixture() {
   const input_echo_adds_row = (config) =>
     !system_config.hideUserInput && !config?.hideInput && !config?.any;
   era.input = async (config) => {
-    const value = take_input('input');
+    const value = take_input();
+    // —— 按钮白名单校验（#130）：镜像引擎渲染层 returnFromButton 的拒收 ——
+    // 引擎（app.vue，两处逐字）：useRule 默认开（safeUndefinedCheck 兜底
+    // true）；config.rule（字符串）先把合法集合换成 RegExp（showInput），
+    // 判据 !rule.test(val.toString())，文案「输入不合法！输入规范：…」；
+    // 数组分支（按钮快捷键）非空才设限，判据 rule.indexOf(Number(val))
+    // === -1，文案「输入不合法！请输入以下值之一：a, b, c」——拒收即弹
+    // 错且**不回传**，游戏逻辑拿不到该值。夹具同款抛错：喂进引擎永远不会
+    // 送达的输入（如 #129 的 [109]、PR #53 的 [100]）当场红，不再靠人开
+    // 引擎发现。集合为空（本轮没打印过按钮）＝自由输入不设限——引擎对
+    // 取名等场景的原生出口（dev-guides/05-interaction.md），不是豁免通道
+    if (config?.useRule !== false) {
+      if (config?.rule) {
+        if (!new RegExp(`^${config.rule}$`).test(String(value))) {
+          throw new Error(
+            `测试夹具：输入不合法！输入规范：${config.rule}（era.input() 的 config.rule 校验，引擎同款）`,
+          );
+        }
+      } else if (
+        input_rules.length > 0 &&
+        !input_rules.includes(Number(value))
+      ) {
+        throw new Error(
+          `测试夹具：输入不合法！请输入以下值之一：${input_rules.join(', ')}（era.input() 只接受本轮已打印按钮的快捷键；本轮＝上一次输入之后，引擎同款校验）`,
+        );
+      }
+    }
+    // 引擎：任何一次成功回传都把 rule 清空（returnFromButton 成功路径的
+    // rule=[]）——上一轮按钮对下一次 input 不再有约束力。inputs_consumed
+    // 也在此刻记录：校验通过＝游戏真的收到了这个值
+    input_rules.length = 0;
+    inputs_consumed.push({ api: 'input', value });
     if (input_echo_adds_row(config)) {
       total_rows += 1; // this.print(回显值)：+1 Row
       allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
@@ -582,6 +631,9 @@ function create_era_fixture() {
     allow_wait = false;
     waits.push({ waited, rows_at_wait: total_rows, forced: Boolean(force) });
     if (waited) {
+      // 引擎：等待＝input({any:true,useRule:false}) 真回传一次，returnFromButton
+      // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
+      input_rules.length = 0;
       inputs_consumed.push({ api: 'waitAnyKey' });
     }
   };

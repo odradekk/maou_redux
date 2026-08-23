@@ -201,18 +201,26 @@ test('按钮 9 两次：(n+1)%2 往返，回到展开态', async () => {
   assert(fixture.text_lines().includes('敬请见证！'));
 });
 
-test('无法识别的输入：重绘标题画面，不崩溃（原作 ELSE → RESTART）', async () => {
+test('未打印按钮的值引擎不送达：拒收且画面不重绘（原作 ELSE → RESTART 分支不可达，#130）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.set_inputs(42);
   const run_title_page = fixture.load_module('page/page-title');
 
-  // 只以「输入耗尽」终止：若画面自身抛错，此处因错误信息不符而失败
-  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
-
-  assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 42 }]);
-  // 重绘后仍是完整标题画面
-  assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
+  // 引擎把非按钮输入弹回并提示「输入不合法」，游戏逻辑拿不到 42——
+  // RESTART 分支是引擎死路径；夹具同款校验当场抛错（#130）
+  await assert.rejects(
+    () => run_title_page(),
+    /输入不合法！请输入以下值之一：/,
+  );
+  // 42 未被送达：标题画面仍是首绘那一轮（无重绘）
+  assert.deepEqual(fixture.inputs_consumed, []);
+  assert.equal(
+    fixture.text_lines().filter((line) => line.includes('伪Ver93.106立绘版'))
+      .length,
+    1,
+    '拒收后不得重绘（引擎侧玩家看到的是提示框，画面原样）',
+  );
 });
 
 test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函数（issue #20）', async () => {
@@ -315,12 +323,13 @@ test('标题音乐：全新 global.sav 播种后进标题即播 TFM-003A_17（�
   ]);
 });
 
-test('标题音乐：RESTART 重绘不重播（PLAYBGM 在 $PRINT_TITLE 标签之前，只播一次）', async () => {
+test('标题音乐：重绘不重播（PLAYBGM 在 $PRINT_TITLE 标签之前，只播一次）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.seed_res('TFM-003A_17.mp3', 'audio');
-  // 无法识别的输入 → 原作 RESTART 重绘，两轮循环后仍只有一次播放
-  fixture.set_inputs(42, 42);
+  // 两次 [9] 切换各重绘一轮（引擎可达的重绘来源；原用例的 42 属无效输入，
+  // 引擎侧不送达、RESTART 不会发生，#130），两轮循环后仍只有一次播放
+  fixture.set_inputs(9, 9);
   const run_title_page = fixture.load_module('page/page-title');
 
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
