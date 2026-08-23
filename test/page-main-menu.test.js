@@ -340,6 +340,25 @@ test('[100] 调教：A > 0 时是可点按钮，A == 0 时退化为灰色 [---] 
   assert.ok(placeholder, 'A == 0 时必须留灰色 [---] 占位（原作 PRINTLC）');
 });
 
+test('[109] 侵略：无条件渲染按钮（原作 :283 无守卫），正文无手写前缀', () => {
+  // 原作 :282-283 无条件 PRINTLCD [109] 侵略（对照 [100] 的 IF A > 0 守卫）
+  // ——新档（A == 0）也必须打。分支真身自 #117 起（usershop 109 → INVASION
+  // + BEGIN TURNEND），#129 起入口存在：没有这枚按钮，引擎的 input() 拒收
+  // 109（「输入不合法」），整条侵略线在实机上不存在。
+  const fresh = draw_menu_with(() => {});
+  const invade = button_of(fresh.fixture, 109);
+  assert.ok(
+    invade,
+    '侵略必须是按钮——没有 [109]，整条侵略线在实机上入口不存在（#129）',
+  );
+  assert.equal(invade.rendered, '[109] 侵略');
+  assert.equal(
+    invade.text,
+    '侵略',
+    '按钮正文不得手写 [109] 前缀（引擎的 showAcc 会拼，PR #30）',
+  );
+});
+
 test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1日）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
