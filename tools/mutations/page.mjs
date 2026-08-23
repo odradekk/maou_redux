@@ -417,7 +417,7 @@ export default [
     find: "  era.printButton('侵略', 109);",
     replace: "  era.printButton('侵略', 1090); // 变异：accelerator 改坏",
     tests: ['page-main-menu'],
-    must_mention: '侵略',
+    must_mention: '侵略必须是按钮',
   },
   {
     desc: 'M196 人间界结局判据删掉防重复半边（FLAG:82 == 0）',
