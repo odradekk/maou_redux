@@ -98,7 +98,7 @@ catch(e) { this.defaultConfig = getEmptyConfigForm() }
 if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))), …)
 ```
 
-- **`yml/_config.json` 是整份默认配置，不是补丁。** 它存在时 `defaultConfig` 整个就是它，引擎默认值只在文件缺失或解析失败时兜底，**没写的键不会回落默认，而是直接缺失**。缺键的后果也不中性：各消费点自行兜底，做法各不相同（`saveFiles` 有 `||10`、`window.*` 交给渲染层、`resource` 直接按 falsy 关掉）。所以这份文件必须写全 `getEmptyConfigForm()` 的形状，只标出有意偏离的那几个键。`test/resource-media.test.js` 有一道引擎比对锁：逐键 deepEqual 引擎默认形状，只许 `resource` 一处偏离。
+- **`yml/_config.json` 是整份默认配置，不是补丁。** 它存在时 `defaultConfig` 整个就是它，引擎默认值只在文件缺失或解析失败时兜底，**没写的键不会回落默认，而是直接缺失**。缺键的后果也不中性：各消费点自行兜底，做法各不相同（`saveFiles` 有 `||10`、`window.*` 交给渲染层、`resource` 直接按 falsy 关掉）。所以这份文件必须写全 `getEmptyConfigForm()` 的形状，只标出有意偏离的那几个键。`test/resource-media.test.js` 有一道引擎比对锁：逐键 deepEqual 引擎默认形状，只许 `resource` 与 `saveFiles` 两处偏离（#135 起；`saveFiles` 取 **99** 而非 100——引擎 `listSaveFiles` 的扫描是闭区间 `for (let t = 0; t <= saveFiles; ++t)`，99 恰好覆盖槽位 0–99，且 `dev-guides/03-config.md:76` 限定该值为 10–99）。
 - **已有 `ere.config.json` 的机器读不到新默认值**：第二行的 `||` 短路了。`this.config` 已由 `ere.config.json` 填好，`_config.json` 整份不参与。改了默认值要在本机生效，得手工改该键，或删掉 `ere.config.json` 让引擎按新默认重建。
 - **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会直接崩溃或静默降级）放 `_fixed.json`，它优先于用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`，放进 `_fixed.json` 会让 UI 开关点了没反应。
 

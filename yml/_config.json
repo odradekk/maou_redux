@@ -7,7 +7,7 @@
     "hideUserInput": false,
     "resource": true,
     "saveCompressedData": false,
-    "saveFiles": 100
+    "saveFiles": 99
   },
   "window": {
     "audio": 100,

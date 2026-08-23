@@ -206,22 +206,27 @@ test('版本库默认配置开着资源：yml/_config.json 的 system.resource �
 });
 
 engine_test(
-  'yml/_config.json 是引擎默认配置整份 + 有意偏离仅 resource:true 与 saveFiles:100',
+  'yml/_config.json 是引擎默认配置整份 + 有意偏离仅 resource:true 与 saveFiles:99',
   () => {
     // 缺键调研（app.asar 实证）：_config.json 存在时 defaultConfig 整个是它，
     // getEmptyConfigForm() 只在文件缺失/解析失败时兜底、不做逐键合并；
     // syncConfig 又把 config 合并 _fixed.json 后整份写回 ere.config.json——
     // _config.json 没写的键从此不存在（window.audio 缺失 = 静默没声音一类坑）。
     // 故必须写全：与 getEmptyConfigForm() 逐键一致，偏离只有两处且各有票据：
-    // resource:true（#69，资源默认开）、saveFiles:100（#135，C2 的 99 号
-    // 自动存档槽要可见）。
+    // resource:true（#69，资源默认开）、saveFiles:99（#135）。
+    //
+    // 为什么恰好是 99 而不是 100：引擎 listSaveFiles 的扫描是**闭区间**
+    // （app.asar：`const e = saveFiles || 10; for (let t = 0; t <= e; ++t)`），
+    // 所以 99 覆盖槽位 0–99——正好是原作的 0–98 手动槽加 99 号自动存档槽
+    // （ADR-0006）。且 dev-guides/03-config.md:76 限定该值为 10–99 的整数，
+    // 100 超出规范。**不要为了「凑整」把它改回 100。**
     const defaults = engine.engine_utils.getEmptyConfigForm();
     const config = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
     );
     assert.deepEqual(config, {
       ...defaults,
-      system: { ...defaults.system, resource: true, saveFiles: 100 },
+      system: { ...defaults.system, resource: true, saveFiles: 99 },
     });
   },
 );
