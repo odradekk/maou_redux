@@ -171,17 +171,21 @@ test('选 [1] 退出：era.quit 被调、FLAG:82 不置 1（QUIT 分支先于置
   );
 });
 
-test('无效输入（如 5）重问不重画：横幅只画一次（$INPUT_LOOP 的 GOTO，:33-36）', async () => {
+test('演出横幅只画一次（:33-36 的无效重问分支引擎侧不可达，#130）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
-  await run_check(fixture, 5, 0);
+  // 原作用例曾喂 5 验证「无效输入重问不重画」。引擎的 input() 只送达已
+  // 打印按钮的快捷键（本画面 [0]/[1]），5 在渲染层就被弹回、到不了游戏
+  // ——该分支是引擎死路径，重问本身不会发生；横幅只画一次由单次有效输入
+  // 直接钉住。喂 5 当场拒收的锁在夹具契约（test/fixture.test.js，#130）
+  await run_check(fixture, 0);
 
   const texts = history_texts(fixture);
-  assert.equal(fixture.store.get('flag:82'), 1, '最终选 0 正常继续');
+  assert.equal(fixture.store.get('flag:82'), 1, '选 0 正常继续');
   assert.equal(
     texts.filter((line) => line.includes('魔王终于再次掌握了世界')).length,
     1,
-    '重问不重画（无效输入不重绘演出）',
+    '演出横幅只画一次',
   );
 });
 

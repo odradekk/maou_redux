@@ -381,4 +381,8 @@ async function run_shop() {
   }
 }
 
-module.exports = { run_shop, STUBBED_CALLS };
+// usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键，
+// 存根分支（101-888、498/499、52x、999）按政策不印按钮（按钮与真身同票
+// 落地，见 page-main-menu 的普查注释）——这些分支的分发行为只能经直接
+// 调用测试，不经输入通道
+module.exports = { run_shop, usershop, STUBBED_CALLS };

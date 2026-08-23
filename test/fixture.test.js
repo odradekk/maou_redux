@@ -731,3 +731,108 @@ test('input 回显三段短路：hideInput / any / system.hideUserInput 任一�
   await era.input();
   assert.equal(era.getLineCount(), 2);
 });
+
+// —— input 按钮白名单（#130）：引擎只把已打印按钮的快捷键回传给游戏 ——
+//
+// 引擎机制（app.vue 两处逐字，非手册推断）：按钮行构造把 accelerator 去重
+// 累积进 inputParam.rule；回传时 useRule 默认开、数组非空才设限，判据
+// Number(值) ∈ rule，未命中弹「输入不合法！请输入以下值之一：…」且不
+// 回传；任何一次成功回传清空 rule。此前夹具的 set_inputs 照单全收，#129
+// （[109] 按钮缺失）与 PR #53（[100]）两次都靠人开引擎才发现——这组用例
+// 是防复发锁，锁对后来者不失明。
+
+test('input 白名单（#130 自证）：喂未打印按钮的值必须抛错，并列出合法值', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.printButton('爱抚', 0);
+  era.printButton('结束', 999);
+
+  fixture.set_inputs(5);
+  await assert.rejects(
+    era.input(),
+    (err) =>
+      err.message.includes('输入不合法！请输入以下值之一：0, 999') &&
+      err.message.includes('era.input()'),
+    '白名单必须拒收未打印按钮的值（#130）',
+  );
+
+  // 命中即放行；引擎判据是 Number(值) ∈ rule——字符串 '0' 同样命中
+  fixture.set_inputs('0');
+  assert.equal(await era.input(), '0');
+});
+
+test('input 白名单：本轮没打印按钮＝自由输入不设限（引擎对取名等场景的原生出口）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+  era.print('为奴隶起名：'); // 纯文本，无按钮
+  fixture.set_inputs('苍井·橡');
+  assert.equal(await era.input(), '苍井·橡');
+});
+
+test('input 白名单：任何一次成功回传都清空集合——旧按钮不再约束下一次 input', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  // input 回传后清空：第二个 1 落进自由窗口（引擎 rule=[] → 不设限）
+  era.printButton('继续', 1);
+  fixture.set_inputs(1, 1);
+  assert.equal(await era.input(), 1);
+  assert.equal(await era.input(), 1);
+
+  // waitAnyKey 等键＝input({any:true}) 真回传一次，同样清空
+  era.printButton('再看一眼', 2);
+  await era.waitAnyKey(); // printButton 已置位 allowWait → 真等了
+  fixture.set_inputs(3);
+  assert.equal(await era.input(), 3);
+
+  // printAndWait＝print + waitAnyKey（必等键），同样清空
+  era.printButton('演出选项', 4);
+  await era.printAndWait('演出文本');
+  fixture.set_inputs(5);
+  assert.equal(await era.input(), 5);
+
+  // 对照：没有中间回传时，未命中仍然拦
+  era.printButton('新选项', 6);
+  fixture.set_inputs(7);
+  await assert.rejects(era.input(), /请输入以下值之一：6/);
+});
+
+test('input 白名单：disabled 按钮不入集合；多列输出的按钮格同样入集合', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  // 引擎按钮行构造：e.config.disabled 整体短路，快捷键不进 rule
+  era.printButton('不可用', 7, { disabled: true });
+  era.printMultiColumns([
+    { type: 'button', content: '迷宫', accelerator: 3 },
+    { type: 'text', content: '｜' },
+  ]);
+
+  fixture.set_inputs(7); // disabled 的 7 不在集合里 → 抛错只列 3
+  await assert.rejects(era.input(), /请输入以下值之一：3（/);
+
+  fixture.set_inputs(3); // 多列按钮格的快捷键合法
+  assert.equal(await era.input(), 3);
+});
+
+test('input 白名单：useRule:false 跳过校验；config.rule 走正则分支（文案同引擎）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  era.printButton('按钮', 1);
+  fixture.set_inputs(99);
+  // 引擎 waitAnyKey 内部正是 input({any:true, useRule:false})——不设限
+  assert.equal(await era.input({ useRule: false }), 99);
+
+  // config.rule（字符串）把合法集合换成 RegExp（引擎 showInput），判据
+  // 用原始字符串而非 Number
+  fixture.set_inputs('abc');
+  assert.equal(await era.input({ rule: '[a-z]+' }), 'abc');
+  fixture.set_inputs(9);
+  await assert.rejects(
+    era.input({ rule: '[a-z]+' }),
+    (err) =>
+      err.message.includes('输入不合法！输入规范：[a-z]+') &&
+      err.message.includes('era.input()'),
+  );
+});

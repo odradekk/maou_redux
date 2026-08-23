@@ -167,7 +167,9 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   fixture.load_module('kojo/kojo-system');
   fixture.load_module('kojo/kojo-k3');
   fixture.load_module('kojo/kojo-k5');
-  fixture.set_inputs(9999); // 无效输入 → 重绘一轮后输入耗尽
+  // 走一轮面板切换（500 是已打印按钮，#130：引擎只送达已打印按钮的快捷
+  // 键；原用例的 9999 属无效输入，引擎侧根本不会送达）后输入耗尽
+  fixture.set_inputs(500);
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.equal(
     fixture.store.get('flag:7'),

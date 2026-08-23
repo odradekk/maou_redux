@@ -154,12 +154,28 @@ test('[999] 返回 0：零副作用，不消耗回合（:190-191）', async () =
   assert.equal(fixture.store.get('exflag:99'), 70);
 });
 
-test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 被拦且输入 0/2 重问（:173-199）', async () => {
+test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 不可达（引擎侧拒收，#130）', async () => {
+  // [0]/[2] 在怪物不足时渲染为 `[-]` 文本占位（非按钮）——引擎的 input()
+  // 只送达已打印按钮的快捷键，键入 0/2 在渲染层就被弹回。原作 :196-199
+  // 的游戏侧重问守卫是引擎死路径；「被拦」的引擎形态＝拒收且画面不重绘
+  const locked = create_era_fixture();
+  make_world(locked);
+  await assert.rejects(
+    () => run_invasion(locked, 0),
+    /输入不合法！请输入以下值之一：/,
+  );
+  assert.deepEqual(locked.inputs_consumed, [], '0 未被送达');
+  assert.equal(
+    history_texts(locked).filter((line) => line.includes('你的怪物数量'))
+      .length,
+    1,
+    '拒收后画面不重绘（原作 $INPUT_LOOP 不重画的引擎等价形态）',
+  );
+
+  // [1] 无兵力门槛即可选：0 只怪物照常出兵
   const fixture = create_era_fixture();
   make_world(fixture);
-  // 0/2（怪物不足被拦）、7（≥4 被拦）、-1（负数被拦）都不重绘、只重问；
-  // 之后 1 照常出兵
-  const result = await run_invasion(fixture, 0, 2, 7, -1, 1);
+  const result = await run_invasion(fixture, 1);
   assert.equal(result, 1);
   assert.equal(fixture.store.get('flag:81'), 400);
 
@@ -179,11 +195,10 @@ test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 被拦且输入 0/2 �
     ),
     '[1] 按钮正文 = 使用魔王的魔力（经验值），无 [编号] 前缀',
   );
-  // 输入被拦的轮次不重绘：怪物数量行只画一次（画面在 $INPUT_LOOP 里不重画）
   assert.equal(
     texts.filter((line) => line.includes('你的怪物数量')).length,
     1,
-    '无效输入在 $INPUT_LOOP 重问，不重绘画面（原作行为）',
+    '有效路径画面也只画一次（出兵后转场）',
   );
 });
 

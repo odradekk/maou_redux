@@ -196,39 +196,55 @@ test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转
   );
 });
 
-test('守卫 A == 0：496/497/100 与无效输入同路——无反馈、只重绘（原作行为）', async () => {
+test('守卫 A == 0：496/497 与无效输入同路——无反馈、只重绘；100 分支不可达（原作行为，#130）', async () => {
   // 不加任何可选奴隶（A 只数 x != 0 的未占用角色）：A 恒 0
-  const fixture = await run_shop_with(496, 497, 100);
+  const fixture = await run_shop_with(496, 497);
   const texts = history_texts(fixture);
   assert(
     !texts.some((line) => line.includes('@SELECT_')),
     'A == 0 时不得进 496/497 分支',
   );
-  assert(
-    !texts.some((line) => line.includes('@BEGIN TRAIN')),
-    'A == 0 时不得进 100 分支',
-  );
-  // 三次输入都被守卫拦下后落到链尾，回循环重绘（3 次输入 + 首轮 = 4 轮）
-  assert.equal(rounds_drawn(fixture), 4);
+  // 两次输入都被守卫拦下后落到链尾，回循环重绘（2 次输入 + 首轮 = 3 轮）
+  assert.equal(rounds_drawn(fixture), 3);
   // 除每轮固定的两行存根外无任何新增输出；行史文本行总数固定为每轮 5 行
   //（状态行 + 面板存根 + Commands 标题 + [---] 不可选占位 + 指令面板存根）
   //——多打任何一行（含给守卫拦下的输入加「提示」）都会在此红。A == 0 时
   // [100] 调教退化为灰色 [---] 文本（原作 :229-231），A > 0 时它是按钮、
   // 不计入文本行
-  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 4 * 2);
-  assert.equal(texts.length, 4 * 5);
+  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 3 * 2);
+  assert.equal(texts.length, 3 * 5);
+
+  // [100] 的守卫走直接分发验证：A == 0 时 [100] 不渲染（[---] 文本占位），
+  // 引擎的 input() 不会送达 100（#130）——进不了调教分支只能经 usershop
+  // 直调证明，且不得发出 BEGIN TRAIN 信号、不得打出 @BEGIN TRAIN 占位
+  const bare = create_era_fixture();
+  const { usershop } = bare.load_module('page/page-shop');
+  await usershop(100); // 不得抛 BeginSignal（A == 0 拦下）
+  assert(
+    !history_texts(bare).some((line) => line.includes('@BEGIN TRAIN')),
+    'A == 0 时 100 分支不得进调教',
+  );
 });
 
-test('无效输入：不抛错、无提示，画面重绘（原作无 ELSE，:228 RETURN 0）', async () => {
-  const fixture = await run_shop_with(42, 531, 9999, -7);
-  // 活到输入耗尽 = 分发没抛错也没退出；4 次输入 + 首轮 = 5 轮重绘
-  assert.equal(rounds_drawn(fixture), 5);
+test('未打印按钮的值引擎不送达：拒收且只画首轮（原作无 ELSE 的死路径，#130）', async () => {
+  // 原用例喂 42/531/9999/-7 验证「无效输入不抛错、只重绘」——Emuera 的
+  // INPUT 收任意键入数字，这套行为在原作成立；EraElectron 的引擎只把已
+  // 打印按钮的快捷键回传，这些值在渲染层就被弹回，@USERSHOP 的链尾是
+  // 引擎死路径。新形态＝#130 的防线本身：拒收发生在 input、画面不再推进
+  const fixture = create_era_fixture();
+  fixture.set_inputs(42, 531, 9999, -7);
+  const { run_shop } = fixture.load_module('page/page-shop');
+  await assert.rejects(() => run_shop(), /输入不合法！请输入以下值之一：/);
+
+  assert.deepEqual(fixture.inputs_consumed, [], '四个值无一被送达');
+  assert.equal(
+    rounds_drawn(fixture),
+    1,
+    '拒收后不得重绘（引擎在等下一次输入）',
+  );
   const texts = history_texts(fixture);
-  // 原作不打提示（派单核实事实 #5）：除每轮固定两行存根外零新增输出，
-  // 行史文本行总数固定为每轮 5 行（含 A == 0 时的 [---] 占位）——给无效
-  // 输入加「提示」会在此红
-  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 5 * 2);
-  assert.equal(texts.length, 5 * 5);
+  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 1 * 2);
+  assert.equal(texts.length, 1 * 5);
 });
 
 test('连续多轮混合操作后状态一致', async () => {
@@ -243,37 +259,50 @@ test('连续多轮混合操作后状态一致', async () => {
   era_flag.day_count = 0;
   era_flag.month = 1;
   era_flag.target = -1;
-  // 496 起进入真身 SELECT_TARGET：尾随的 500/501 是选择画面的两次无效输入
-  //（重绘不选人），在画面内耗尽输入
-  fixture.set_inputs(501, 42, 504, 9999, 505, 496, 500, 501);
+  // 全部走已打印按钮（#130）：两次面板切换 → [496] 进真身 SELECT_TARGET
+  // → [999] 取消（不选人）→ [505] 再切面板；随后输入耗尽。原用例混入的
+  // 42/9999（主菜单无效输入）与选择画面里的 500/501（非目标按钮）在引擎
+  // 侧都不会送达，已删
+  fixture.set_inputs(501, 504, 496, 999, 505);
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
   assert.equal(fixture.store.get('flag:36'), 5, '最后一次面板输入是 505');
-  // 无效输入（42/9999）、496 的选择画面（两次无效输入后取消态耗尽）、
-  // 面板切换都不碰游戏状态——指针保持 -1（31 是合法 ID，若被写会活过
-  // 守卫、在此暴露）
+  // 496 的选择画面（取消不选人）、面板切换都不碰游戏状态——指针保持 -1
+  //（31 是合法 ID，若被写会活过守卫、在此暴露）
   assert.equal(era_flag.money, 10000);
   assert.equal(era_flag.day_count, 0);
   assert.equal(era_flag.target, -1);
   assert.equal(era_flag.assi, -1);
   assert.deepEqual(fixture.era.getAddedCharacters(), [31]);
-  // 8 次输入全部消费；主菜单重绘 6 轮（首轮 + 501/42/504/9999/505 五次
-  // 输入），其后玩家停在选择画面内（画面自己的重绘不画主菜单按钮）——
-  // 状态不错乱
-  assert.equal(fixture.inputs_consumed.length, 8);
-  assert.equal(rounds_drawn(fixture), 6);
+  // 5 次输入全部消费；主菜单重绘 4 轮（首轮 + 501/504/496 三次输入），
+  // 496 进选择画面（画面自己的重绘不画主菜单按钮），999 取消回主菜单后
+  // 505 是第 5 次输入、随后耗尽——状态不错乱
+  assert.equal(fixture.inputs_consumed.length, 5);
+  assert.equal(rounds_drawn(fixture), 5);
   assert(
-    fixture
-      .text_lines()
-      .some((line) => line.includes('请魔王大人选择将要调教的奴隶人选')),
-    '496 应进入真身选择画面',
+    history_texts(fixture).some((line) =>
+      line.includes('请魔王大人选择将要调教的奴隶人选'),
+    ),
+    '496 应进入真身选择画面（取证在行史：取消后已被主菜单重绘清掉）',
   );
 });
 
+// 直接驱动 @USERSHOP 分发（#130）：存根分支（101-888、498/499、52x、999）
+// 按政策不印按钮（按钮与真身同票落地，见 page-main-menu 的普查注释），引擎
+// 的 input() 不会送达它们的编号——这些分支的分发行为只能经直调测试
+async function dispatch(...results) {
+  const fixture = create_era_fixture();
+  const { usershop } = fixture.load_module('page/page-shop');
+  for (const result of results) {
+    await usershop(result); // 守卫拦下的直调不得抛信号（抛了会在用例里炸出）
+  }
+  return fixture;
+}
+
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
   // 七次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史
-  const fixture = await run_shop_with(101, 777, 200, 888, 199, 525, 7788);
+  const fixture = await dispatch(101, 777, 200, 888, 199, 525, 7788);
   const texts = history_texts(fixture);
   for (const name of [
     '@CHARA_INFO',
@@ -293,8 +322,10 @@ test('作用域外的指令分支：壳占位带原作调用名（代表抽查�
 
 test('110/111 的守卫照原作：不满足时与无效输入同路', async () => {
   // talent 表未落 yml/（TALENT:0:325 读值 undefined）、FLAG:83/84 未置——
-  // 两守卫都不成立
-  const off = await run_shop_with(110, 111);
+  // 两守卫都不成立。原作此时渲染 `[---]` 占位、键入 110/111 走链尾；ere
+  // 的引擎侧等价形态＝不印按钮（键入被渲染层弹回，#130），守卫行为经
+  // usershop 直调验证
+  const off = await dispatch(110, 111);
   assert(
     !history_texts(off).some((line) => line.includes('@SECRET_LABO')),
     '守卫不成立不得进 110',
@@ -304,12 +335,14 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
     '守卫不成立不得进 111',
   );
 
+  // 守卫成立：原作 PRINTLCD [110]/[111]（DRAW_MAINMENU.ERB:286/:292），
+  // 按钮本体随实验室/设施票落地（存根不印按钮的政策），分发直调验证
   const on = create_era_fixture();
   on.store.set('talent:0:325', 1); // 魔王的魔界知识
   on.store.set('flag:83', 3); // 肉便器数 > 0
-  on.set_inputs(110, 111);
-  const { run_shop } = on.load_module('page/page-shop');
-  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  const { usershop } = on.load_module('page/page-shop');
+  await usershop(110);
+  await usershop(111);
   assert(
     history_texts(on).some((line) => line.includes('@SECRET_LABO')),
     '守卫成立应进 110',
@@ -321,7 +354,8 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
 });
 
 test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 520）', async () => {
-  const fixture = await run_shop_with(520, 531, 530);
+  // 楼层按钮（原作 PRINTBUTTON X+520）随楼层面板票落地，分发直调验证
+  const fixture = await dispatch(520, 531, 530);
   assert.equal(
     history_texts(fixture).filter((line) => line.includes('@SHOW_FLOOR'))
       .length,
@@ -330,8 +364,10 @@ test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 5
   );
 });
 
-test('键入 999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达）', async () => {
-  const fixture = await run_shop_with(999);
+test('999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达）', async () => {
+  // 原作主菜单不印 [999]（DRAW_MAINMENU 的编号表 100-888 无它）——键入式
+  // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证
+  const fixture = await dispatch(999);
   assert(
     history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
     '999 应占位 @DEBUG_MENU_U（与原作 BOUGHT == -1 时同路径）',
@@ -339,7 +375,7 @@ test('键入 999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达�
 });
 
 test('498/499 无守卫：指针未选也照原作进分支', async () => {
-  const fixture = await run_shop_with(498, 499);
+  const fixture = await dispatch(498, 499);
   assert.equal(
     history_texts(fixture).filter((line) =>
       line.includes('@CHARA_INFO_INDIVIDUAL_WAPPED'),

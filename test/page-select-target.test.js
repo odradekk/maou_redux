@@ -105,19 +105,36 @@ test('列表为空：唯一角色是魔王（不可选）→ 不等输入直接�
   assert.deepEqual(fixture.inputs_consumed, [], '空列表不得等输入');
 });
 
-test('无效输入：重绘不提示，再选 999 取消', async () => {
+test('未打印按钮的值引擎不送达：拒收且不重绘；再选 999 取消（#130）', async () => {
+  // 原用例曾喂 42 验证「重绘不提示」：42 不是已打印按钮（列表只印 31 与
+  // 999），引擎的 input() 在渲染层就把它弹回——无效输入重绘分支是引擎死
+  // 路径。此处钉引擎可达的部分：拒收时画面原样（不重绘、无提示），取消
+  // 键照常生效
+  const locked = create_era_fixture();
+  join_slave_chara(locked, 31, '温妮');
+  const { select_target: select_locked } = load_page(locked);
+  locked.set_inputs(42);
+  await assert.rejects(() => select_locked(), /输入不合法！请输入以下值之一：/);
+  assert.deepEqual(locked.inputs_consumed, [], '42 未被送达');
+  assert.equal(
+    locked
+      .text_lines()
+      .filter((line) => line === '请魔王大人选择将要调教的奴隶人选').length,
+    1,
+    '拒收后不得重绘（引擎侧玩家看到的是提示框，画面原样）',
+  );
+
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31, '温妮');
   const { select_target } = load_page(fixture);
-  fixture.set_inputs(42, 999); // 42 不在已加入列表
+  fixture.set_inputs(999);
 
   assert.equal(await select_target(), 0);
-  // 标题画了两轮（一次首绘 + 一次无效输入后的重绘），无提示文本
   assert.equal(
     fixture
       .text_lines()
       .filter((line) => line === '请魔王大人选择将要调教的奴隶人选').length,
-    2,
+    1,
   );
 });
 
