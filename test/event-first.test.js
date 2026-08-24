@@ -35,6 +35,12 @@ const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
 // 角色 ID 17。
 function expected_init_writes(initial_slave) {
   const writes = [
+    // 移植自建（#136 返工）：存读档指针 11 槽初值 -1（见 event-first 的
+    // 注释与 era-flag.js 手写区），位于原作各行之前
+    ...Array.from({ length: 11 }, (_, k) => ({
+      name: `flag:${10018 + k}`,
+      value: -1,
+    })),
     { name: 'flag:500', value: 2 }, // :15 狂王初期性别：扶她
     { name: 'flag:501', value: initial_slave }, // :19 FIRST_SETTING 初期奴隶一问
     ...Array.from({ length: 14 }, (_, k) => ({
@@ -214,6 +220,16 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
 
   // 出口：随机路径的共用出口 :231 BEGIN SHOP
   assert.equal(pending, STATE.SHOP);
+  // #136 返工的独立锚（放 deepEqual 之前：变异删初始化时此处先红，带点名
+  // 消息）：存读档指针槽（flag:10018-10028）初值 -1——登记进 Flag.yml 后
+  // 引擎会为已声明序号补 0（fillData/resetData），显式初始化是哨兵 -1 的
+  // 唯一保证
+  assert(
+    Array.from({ length: 11 }, (_, k) => `flag:${10018 + k}`).every((name) =>
+      fixture.var_writes.some((w) => w.name === name && w.value === -1),
+    ),
+    '11 个存读档指针槽必须初始化为 -1（登记后 fillData 补 0 会冒充 0 号槽）',
+  );
   assert.deepEqual(fixture.var_writes, expected_init_writes(0));
   // 存根清单核对用的导出（6 个：FIRST_SETTING 移交 first-setting.js 的
   // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）

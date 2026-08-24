@@ -426,25 +426,181 @@ const era_flag = {
   set weekday(v) {
     era.set('flag:10017', v);
   },
+  /**
+   * 上次读取存档（flag:10018 ↔ FLAG:10018）
+   * @returns {number}
+   */
+  get last_load_no() {
+    return era.get('flag:10018') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_load_no(v) {
+    era.set('flag:10018', v);
+  },
+  /**
+   * 上次保存存档（flag:10019 ↔ FLAG:10019）
+   * @returns {number}
+   */
+  get last_save_no() {
+    return era.get('flag:10019') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no(v) {
+    era.set('flag:10019', v);
+  },
+  /**
+   * 上次保存存档_1（flag:10020 ↔ FLAG:10020）
+   * @returns {number}
+   */
+  get last_save_no_1() {
+    return era.get('flag:10020') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_1(v) {
+    era.set('flag:10020', v);
+  },
+  /**
+   * 上次保存存档_2（flag:10021 ↔ FLAG:10021）
+   * @returns {number}
+   */
+  get last_save_no_2() {
+    return era.get('flag:10021') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_2(v) {
+    era.set('flag:10021', v);
+  },
+  /**
+   * 上次保存存档_3（flag:10022 ↔ FLAG:10022）
+   * @returns {number}
+   */
+  get last_save_no_3() {
+    return era.get('flag:10022') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_3(v) {
+    era.set('flag:10022', v);
+  },
+  /**
+   * 上次保存存档_4（flag:10023 ↔ FLAG:10023）
+   * @returns {number}
+   */
+  get last_save_no_4() {
+    return era.get('flag:10023') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_4(v) {
+    era.set('flag:10023', v);
+  },
+  /**
+   * 上次保存存档_5（flag:10024 ↔ FLAG:10024）
+   * @returns {number}
+   */
+  get last_save_no_5() {
+    return era.get('flag:10024') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_5(v) {
+    era.set('flag:10024', v);
+  },
+  /**
+   * 上次保存存档_6（flag:10025 ↔ FLAG:10025）
+   * @returns {number}
+   */
+  get last_save_no_6() {
+    return era.get('flag:10025') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_6(v) {
+    era.set('flag:10025', v);
+  },
+  /**
+   * 上次保存存档_7（flag:10026 ↔ FLAG:10026）
+   * @returns {number}
+   */
+  get last_save_no_7() {
+    return era.get('flag:10026') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_7(v) {
+    era.set('flag:10026', v);
+  },
+  /**
+   * 上次保存存档_8（flag:10027 ↔ FLAG:10027）
+   * @returns {number}
+   */
+  get last_save_no_8() {
+    return era.get('flag:10027') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_8(v) {
+    era.set('flag:10027', v);
+  },
+  /**
+   * 上次保存存档_9（flag:10028 ↔ FLAG:10028）
+   * @returns {number}
+   */
+  get last_save_no_9() {
+    return era.get('flag:10028') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_save_no_9(v) {
+    era.set('flag:10028', v);
+  },
 };
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
 //
-// 存读档域指针（#136 并入；生成区的「↔ FLAG:100xx」注释同样失真，以此处
-// 为准）：
-//   last_load_no  LASTLOAD_NO  Emuera 内建只读变量（LOADDATA 时引擎设置）。
-//       ere 无内建等价物，由 page-save-load 在读档成功后写入，随存档保存
-//       （原作语义同）。**兜底必须用 ?? 而非 ||**：0 是有效槽号，|| 0 会把
-//       「未读过」（undefined）伪装成「读过 0 号」，高亮随之打错槽。
-//   last_save_no  LASTSAVE_NO:0  最近一次保存的槽号（其他/VARIABLES.ERH:16
-//       `#DIM LASTSAVE_NO,10 = -1` 的首元素——@SYSTEM_LIST_DATA 的裸名比较
-//       只读 [0]，[1..9] 的历史记录由 page-save-load 直写 flag:10020..10028）。
-//       兜底同样用 ?? -1（初值 -1 = 没存过）。
+// 存读档域指针（#136 并入；随 #136 返工登记进 yml/Flag.yml 保留区
+// 10018-10028，两组变量**来源不同**）：
+//   last_load_no  LASTLOAD_NO  Emuera 内建只读变量（LOADDATA 后更新，
+//       RESETDATA 或返回标题后恢复初值 **-1**——技能 data-save-load.md
+//       「LASTLOAD 变量」：初始值「-1 或空」，int 型为 -1）。ere 无内建
+//       等价物，由 page-save-load 在读档成功后写入。
+//   last_save_no  LASTSAVE_NO:0  其他/VARIABLES.ERH:16
+//       `#DIM LASTSAVE_NO,10 = -1`——**声明即带初值 -1**；[1..9]（flag:
+//       10020..10028，生成的 last_save_no_1..9 无人消费）是 ARRAYSHIFT
+//       压栈的历史元素，@SYSTEM_LIST_DATA 的高亮比较只读 [0]。
+//
+// **为什么必须显式初始化（ere/event/event-first.js 的 EVENTFIRST 开头
+// 写 -1），不能靠 undefined 表示「没读过」**：槽位登记进 Flag.yml 后，
+// 引擎 resetData/fillData 会为**已声明**序号赋 0（#13 的 fillData 语义；
+// 未登记时才是 undefined）。而 0 是有效槽号——0 号存档槽会被高亮成
+// 「上次存/读」，哨兵语义被破坏。`?? -1` 兜底只救未初始化的 undefined
+// 读（如测试直调；fillData 补出的 0 非 nullish，兜底管不了），**初值的
+// 真正保证是初始化写入**。原作侧对应：Emuera 在装载期（#DIM 声明）与
+// RESETDATA/返回标题时恢复 -1，ere 无这两个钩子，等价落点＝新档初始化。
+// 下面的 defineProperty 覆盖生成区的 `|| 0` 同名访问器——`|| 0` 会把
+// 未初始化读伪装成「0 号槽」（0 falsy 时返回 0），同样破坏哨兵。
+// 同版本旧档不存在（移植期 saves 为空对象，ADR-0006），fillData 对
+// 「新增已声明序号」补 0 的窗口仅理论存在。
 
 Object.defineProperty(era_flag, 'last_load_no', {
   configurable: true,
-  /** 最近读档槽号（flag:10018 ↔ LASTLOAD_NO）@type {number} */
+  /** 最近读档槽号（flag:10018 ↔ LASTLOAD_NO，初值 -1）@type {number} */
   get() {
     return era.get('flag:10018') ?? -1;
   },
@@ -456,7 +612,7 @@ Object.defineProperty(era_flag, 'last_load_no', {
 
 Object.defineProperty(era_flag, 'last_save_no', {
   configurable: true,
-  /** 最近保存槽号（flag:10019 ↔ LASTSAVE_NO:0）@type {number} */
+  /** 最近保存槽号（flag:10019 ↔ LASTSAVE_NO:0，初值 -1）@type {number} */
   get() {
     return era.get('flag:10019') ?? -1;
   },

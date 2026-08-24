@@ -187,3 +187,55 @@
   id: 10017
   name: "weekday"
   type: "number"
+# —— 存读档域（#136 返工登记）：两组变量来源不同，初值语义见
+# ere/era-utils/era-flag.js 手写区——
+# 上次读取存档（10018）：Emuera 内建只读变量 LASTLOAD_NO（LOADDATA 后更新，
+# RESETDATA 或返回标题后恢复初值 -1，技能 data-save-load.md「LASTLOAD 变量」）。
+# ere 无内建等价物，读档成功后由 ere/page/page-save-load.js 写入。
+"上次读取存档":
+  id: 10018
+  name: "last_load_no"
+  type: "number"
+# 上次保存存档（10019..10028）：其他/VARIABLES.ERH:16 `#DIM LASTSAVE_NO,10
+# = -1`——声明即带初值 -1，_1.._9 是 ARRAYSHIFT 压栈的历史元素
+# （@SYSTEM_LIST_DATA 的高亮比较只读 [0]，历史元素仅占位防撞号）。
+"上次保存存档":
+  id: 10019
+  name: "last_save_no"
+  type: "number"
+"上次保存存档_1":
+  id: 10020
+  name: "last_save_no_1"
+  type: "number"
+"上次保存存档_2":
+  id: 10021
+  name: "last_save_no_2"
+  type: "number"
+"上次保存存档_3":
+  id: 10022
+  name: "last_save_no_3"
+  type: "number"
+"上次保存存档_4":
+  id: 10023
+  name: "last_save_no_4"
+  type: "number"
+"上次保存存档_5":
+  id: 10024
+  name: "last_save_no_5"
+  type: "number"
+"上次保存存档_6":
+  id: 10025
+  name: "last_save_no_6"
+  type: "number"
+"上次保存存档_7":
+  id: 10026
+  name: "last_save_no_7"
+  type: "number"
+"上次保存存档_8":
+  id: 10027
+  name: "last_save_no_8"
+  type: "number"
+"上次保存存档_9":
+  id: 10028
+  name: "last_save_no_9"
+  type: "number"

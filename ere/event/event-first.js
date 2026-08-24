@@ -52,6 +52,17 @@ const STUBBED_CALLS = [
 // 函数体内调用，#6 的两条硬规则之二）。普通档：原作 @EVENTFIRST 的其他
 // 定义随各自所属票接入。
 on('EVENTFIRST', async () => {
+  // 移植自建（#136 返工，非原作 @EVENTFIRST 的行）：存读档指针的初值
+  // -1（flag:10018-10028，已登记 yml/Flag.yml 保留区）。登记后引擎
+  // resetData/fillData 会为已声明序号赋 0——0 是有效槽号（0 号槽会被误
+  // 高亮），初值只能靠显式写（完整论证见 era-flag.js 手写区）。原作侧
+  // 对应：LASTSAVE_NO 的 `#DIM LASTSAVE_NO,10 = -1`（VARIABLES.ERH:16，
+  // 装载期初值）与 LASTLOAD_NO 的引擎初值 -1（RESETDATA/返回标题恢复）
+  // ——ere 无这两个钩子，等价落点＝新档初始化。
+  for (let i = 10018; i <= 10028; i += 1) {
+    era.set(`flag:${i}`, -1);
+  }
+
   // :8-9 HAIRCOLOR/CHARACTER = -1：#DIM 函数局部，写后全函数无读者，不移植。
   //
   // :11-12 FLAG:26/27 = 种族年龄表（base-1000 打包；232015325431115011 超

@@ -528,3 +528,20 @@ test('反向钉：读档成功路径不出现 @SYSTEM_LOADEND 的「兼容性修
     '@SYSTEM_LOADEND 是死代码（零调用者 + 非保留名，#14 登记），不得被顺手接上',
   );
 });
+
+// —— #136 返工：指针槽的登记与显式初始化 ——
+
+test('登记锚：10018-10028 十一个槽必须登记进 yml/Flag.yml（防撞号）', () => {
+  // Flag.yml 头注的「id 分配约定」靠登记维持：没登记，下一张票不知道这些
+  // 槽被占（保留区 10000-10017 是连续登记的先例）。读表文本断言逐槽在场。
+  const flag_yml = require('node:fs').readFileSync(
+    require('node:path').resolve(__dirname, '../yml/Flag.yml'),
+    'utf8',
+  );
+  for (let slot = 10018; slot <= 10028; slot += 1) {
+    assert(
+      new RegExp(`^  id: ${slot}$`, 'm').test(flag_yml),
+      `flag:${slot} 未登记进 yml/Flag.yml（id 分配约定，防撞号）`,
+    );
+  }
+});

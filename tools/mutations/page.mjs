@@ -581,4 +581,25 @@ export default [
     tests: ['page-save-load'],
     must_mention: '@SYSTEM_LOADEND 是死代码',
   },
+  {
+    desc: 'M233 存读档指针初始化被删（EVENTFIRST 不再写 -1，#136 返工——fillData 补 0 会冒充 0 号槽）',
+    file: 'ere/event/event-first.js',
+    find: `  for (let i = 10018; i <= 10028; i += 1) {
+    era.set(\`flag:\${i}\`, -1);
+  }`,
+    replace: `  // 变异：11 槽初值写入被删`,
+    tests: ['event-first'],
+    must_mention: '必须初始化为 -1',
+  },
+  {
+    desc: 'M234 防撞号登记被删（Flag.yml 的 10018-10028 条目——下一张票无从知道槽被占，#136 返工）',
+    file: 'yml/Flag.yml',
+    find: `"上次读取存档":
+  id: 10018
+  name: "last_load_no"
+  type: "number"`,
+    replace: `# 变异：10018 条目被删`,
+    tests: ['page-save-load'],
+    must_mention: '未登记进 yml/Flag.yml',
+  },
 ];
