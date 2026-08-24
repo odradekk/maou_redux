@@ -79,22 +79,29 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   );
 });
 
-test('端到端：读档分支（旧的奴隶）维持 #19 占位，不经状态机转场', async () => {
+test('端到端：读档分支（旧的奴隶）进真身读档界面，返回后回标题，不经状态机转场', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
-  fixture.set_inputs(0);
+  fixture.set_inputs(0, 100);
   const main = fixture.load_module('main');
 
-  // 占位路径：输入 0 → 占位反馈 + 读键 → 回标题重绘 → 输入耗尽。
-  // 不抛 BeginSignal（存档票未决），也不该进 FIRST。
+  // #136 起读档入口是真身 @SYSTEM_LOADGAME（page-save-load.js）：输入 0 →
+  // 读档界面 → [100] 返回 → 原作无条件 RESTART 回标题重绘 → 输入耗尽。
+  // 不抛 BeginSignal（读档不转场——原作 CALL 返回后直接 RESTART），也不进 FIRST。
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 0 },
-    { api: 'waitAnyKey' },
+    { api: 'input', value: 100 },
   ]);
+  assert(
+    fixture.lines_history.some(
+      (line) => line.text === '【读取存档】要载入以下哪个存档？',
+    ),
+    '应真的进入读档界面（#136 接通）',
+  );
   assert(fixture.text_lines().includes('伪Ver0.0.0立绘版'));
 });
 

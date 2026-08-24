@@ -431,6 +431,42 @@ const era_flag = {
 
 // —— 手写区（重新生成不会触碰）——
 //
+// 存读档域指针（#136 并入；生成区的「↔ FLAG:100xx」注释同样失真，以此处
+// 为准）：
+//   last_load_no  LASTLOAD_NO  Emuera 内建只读变量（LOADDATA 时引擎设置）。
+//       ere 无内建等价物，由 page-save-load 在读档成功后写入，随存档保存
+//       （原作语义同）。**兜底必须用 ?? 而非 ||**：0 是有效槽号，|| 0 会把
+//       「未读过」（undefined）伪装成「读过 0 号」，高亮随之打错槽。
+//   last_save_no  LASTSAVE_NO:0  最近一次保存的槽号（其他/VARIABLES.ERH:16
+//       `#DIM LASTSAVE_NO,10 = -1` 的首元素——@SYSTEM_LIST_DATA 的裸名比较
+//       只读 [0]，[1..9] 的历史记录由 page-save-load 直写 flag:10020..10028）。
+//       兜底同样用 ?? -1（初值 -1 = 没存过）。
+
+Object.defineProperty(era_flag, 'last_load_no', {
+  configurable: true,
+  /** 最近读档槽号（flag:10018 ↔ LASTLOAD_NO）@type {number} */
+  get() {
+    return era.get('flag:10018') ?? -1;
+  },
+  /** @param {number} v */
+  set(v) {
+    era.set('flag:10018', v);
+  },
+});
+
+Object.defineProperty(era_flag, 'last_save_no', {
+  configurable: true,
+  /** 最近保存槽号（flag:10019 ↔ LASTSAVE_NO:0）@type {number} */
+  get() {
+    return era.get('flag:10019') ?? -1;
+  },
+  /** @param {number} v */
+  set(v) {
+    era.set('flag:10019', v);
+  },
+});
+
+//
 // 变量语义补注（原作语义 + 来源，AGENTS.md「变量语义必须注释」）：
 //
 // 生成区的「↔ FLAG:1000x」注释对 10000 保留区失真——这七个条目不是原作

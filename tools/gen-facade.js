@@ -46,8 +46,11 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // base 随 #114 进门面（回合结算的 HP/气力回复从 event/system 域跨域写 base，
 // ownership 属主 dungeon——无门面即无合法写径）；maxbase 只读、暂不进门面
 // （读侧放行，见 domain-check 的跨域读政策）。
+// cstr 随 #136 进门面（yml 空表、名字走 facade-names；首个字段 99 故事名，
+// 原作读写都在 SYSTEM_DATA.ERB 的存档界面）。
 const TWO_DIM_TABLES = [
   'cflag',
+  'cstr',
   'base',
   'talent',
   'source',
@@ -127,7 +130,14 @@ const DOMAINS = [
   'patch', // 实测只拥有二维表，一维切片为空则不产出 game-patch.js
 ];
 
-const TYPE_RENDER = { number: { js_type: 'number', fallback: '0' } };
+// 表类型：字符串表（cstr——引擎对 cstr 新增表变量赋 ''，11-saves.md）的
+// getter 兜底是 '' 且 JSDoc 是 string；`|| 0` 会把空串与 undefined 一起吞成
+// 数字 0，字符串消费方（.length / startsWith）随之错型。其余按数字表渲染。
+const TYPE_RENDER = {
+  number: { js_type: 'number', fallback: '0' },
+  string: { js_type: 'string', fallback: "''" },
+};
+const STRING_TABLES = new Set(['cstr']);
 
 // 移植自建表的原作对应名（JSDoc 的 ↔ 侧）：delta/deltabase 在 ERB 里叫
 // UP / LOSEBASE，不是同名表——照 toUpperCase 写会产出对不上原作的假锚点
@@ -252,7 +262,9 @@ function groups_of(spec) {
 
 function render_accessor(kind, entry) {
   const { table, index, name, source } = entry;
-  const render_type = TYPE_RENDER.number;
+  const render_type = STRING_TABLES.has(table)
+    ? TYPE_RENDER.string
+    : TYPE_RENDER.number;
   const legacy = `${LEGACY_TABLE_NAMES[table] ?? table.toUpperCase()}:${index}`;
   const address =
     kind === 'chara' ? `${table}:cid:${index}` : `${table}:${index}`;

@@ -477,4 +477,108 @@ export default [
     tests: ['event-ending'],
     must_mention: '空转零输出',
   },
+  {
+    desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿（SYSTEM_DATA.ERB:309-310）',
+    file: 'ere/page/page-save-load.js',
+    find: `    // :309-310 SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）
+    if (i === era_flag.last_save_no) {
+      color = 'lightgreen';
+    }`,
+    replace: `    // :309-310 变异：删掉 LASTSAVE_NO 高亮`,
+    tests: ['page-save-load'],
+    must_mention: '上次存档号高亮 LIGHTGREEN',
+  },
+  {
+    desc: 'M224 覆盖确认整段跳过（存在槽不再问，SYSTEM_DATA.ERB:163-171）',
+    file: 'ere/page/page-save-load.js',
+    find: `      if (has_valid_save(comment)) {
+        // :165-166
+        era.print('存档已经存在，确定要覆盖么？');`,
+    replace: `      if (false) {
+        // :165-166 变异：覆盖确认永不触发
+        era.print('存档已经存在，确定要覆盖么？');`,
+    tests: ['page-save-load'],
+    must_mention: '取消时不得存档',
+  },
+  {
+    desc: 'M225 故事命名截断放宽（32 → 33 字符，SYSTEM_DATA.ERB:202）',
+    file: 'ere/page/page-save-load.js',
+    find: '    chara(0).system.故事名 = name.substring(0, 32);',
+    replace:
+      '    chara(0).system.故事名 = name.substring(0, 33); // 变异：上限改坏',
+    tests: ['page-save-load'],
+    must_mention: 'CSTR:MASTER:99 只存前 32 字符',
+  },
+  {
+    desc: 'M226 存档界面翻页步长改坏（+20 → +19，SYSTEM_DATA.ERB:140-146）',
+    file: 'ere/page/page-save-load.js',
+    find: `    } else if (result === 102 && pos + PAGE_LEN < 99) {
+      // :140-146
+      pos += PAGE_LEN;`,
+    replace: `    } else if (result === 102 && pos + PAGE_LEN < 99) {
+      // :140-146
+      pos += PAGE_LEN - 1; // 变异：步长改坏`,
+    tests: ['page-save-load'],
+    must_mention: '翻页往返后回到首页起点 0',
+  },
+  {
+    desc: 'M227 删除存档：rmData 调用移除（SYSTEM_DATA.ERB:284）',
+    file: 'ere/page/page-save-load.js',
+    find: '        await era.rmData(result);',
+    replace: '        // 变异：删除调用移除',
+    tests: ['page-save-load'],
+    must_mention: '确认后必须调 era.rmData(5)',
+  },
+  {
+    desc: 'M228 SAVEINFO 时段判据反转（TIME == 0 改 == 1，SYSTEM ver1.0.3.ERB:955）',
+    file: 'ere/page/page-save-load.js',
+    find: "  const day_half = era_flag.time === 0 ? '午前' : '午后';",
+    replace:
+      "  const day_half = era_flag.time === 1 ? '午前' : '午后'; // 变异：判据反转",
+    tests: ['page-save-load'],
+    must_mention: '正在调教:玛奥',
+  },
+  {
+    desc: 'M229 LASTSAVE_NO 压栈不滑动（ARRAYSHIFT 退化为只写 [0]，SYSTEM_DATA.ERB:186）',
+    file: 'ere/page/page-save-load.js',
+    find: `  for (let i = 9; i > 0; i -= 1) {
+    era.set(\`flag:\${10019 + i}\`, era.get(\`flag:\${10019 + i - 1}\`) ?? -1);
+  }
+  era_flag.last_save_no = idx;`,
+    replace: `  // 变异：不滑动历史元素
+  era_flag.last_save_no = idx;`,
+    tests: ['page-save-load'],
+    must_mention: '旧 [0] 移到 [1]',
+  },
+  {
+    desc: 'M230 读档成功不写 LASTLOAD_NO（SYSTEM_DATA.ERB:73 的引擎行为等价物）',
+    file: 'ere/page/page-save-load.js',
+    find: `        era_flag.last_load_no = result;
+        return pos;`,
+    replace: `        // 变异：漏写 LASTLOAD_NO
+        return pos;`,
+    tests: ['page-save-load'],
+    must_mention: 'LASTLOAD_NO = 本次槽号',
+  },
+  {
+    desc: 'M231 EX_FLAG:2801 钳制阈值改坏（< 10 改 < 4，SYSTEM_DATA.ERB:74）',
+    file: 'ere/page/page-save-load.js',
+    find: `        if (era_exflag.first_run_deadline < 10) {
+          era_exflag.first_run_deadline = 10;
+        }`,
+    replace: `        if (era_exflag.first_run_deadline < 4) {
+          era_exflag.first_run_deadline = 10;
+        }`,
+    tests: ['page-save-load'],
+    must_mention: 'EX_FLAG:2801 < 10 → 10',
+  },
+  {
+    desc: 'M232 反向钉：把 @SYSTEM_LOADEND 的尾行输出接上读档成功路径（#14 登记的死代码）',
+    file: 'ere/page/page-save-load.js',
+    find: `      if (await era.loadData(result)) {`,
+    replace: `      if (await era.loadData(result)) {
+        era.print('兼容性修正中……'); // 变异：模拟接上 @SYSTEM_LOADEND`,
+    tests: ['page-save-load'],
+    must_mention: '@SYSTEM_LOADEND 是死代码',
+  },
 ];

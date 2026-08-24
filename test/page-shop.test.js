@@ -301,13 +301,13 @@ async function dispatch(...results) {
 }
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
-  // 七次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史
-  const fixture = await dispatch(101, 777, 200, 888, 199, 525, 7788);
+  // 六次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
+  // 200 自 #136 起是真身存档界面（下方独立用例），不再走占位
+  const fixture = await dispatch(101, 777, 888, 199, 525, 7788);
   const texts = history_texts(fixture);
   for (const name of [
     '@CHARA_INFO',
     '@CONFIG',
-    '@SYSTEM_SAVEGAME',
     '@MAOUNET',
     '@BEGIN TURNEND',
     '@SHOW_FLOOR',
@@ -316,6 +316,31 @@ test('作用域外的指令分支：壳占位带原作调用名（代表抽查�
     assert(
       texts.some((line) => line.includes(name)),
       `指令壳应占位 ${name}`,
+    );
+  }
+});
+
+test('200/300：真身存读档界面（#136 接通，占位移除）', async () => {
+  {
+    const fixture = create_era_fixture();
+    const { usershop } = fixture.load_module('page/page-shop');
+    fixture.set_inputs(100); // 进存档界面后直接返回
+    await usershop(200);
+    assert(
+      history_texts(fixture).some((line) =>
+        line.includes('要保存到以下哪个存档？'),
+      ),
+      '200 必须进入真身存档界面',
+    );
+  }
+  {
+    const fixture = create_era_fixture();
+    const { usershop } = fixture.load_module('page/page-shop');
+    fixture.set_inputs(100);
+    await usershop(300);
+    assert(
+      history_texts(fixture).some((line) => line.includes('【读取存档】')),
+      '300 必须进入真身读档界面（与标题画面共用）',
     );
   }
 });
@@ -398,7 +423,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
 
   // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
   // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44、INVASION 与 109 分支的
-  // BEGIN TURNEND 自 #117 起为真身/真转场，已移出
+  // BEGIN TURNEND 自 #117 起为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME
+  // 自 #136 起为真身（200/300 分支），已移出
   assert.deepEqual(STUBBED_CALLS, [
     'SELECT_ASSI',
     'CHARA_INFO',
@@ -412,8 +438,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'SECRET_LABO',
     'INFRASTRUCTURE',
     'BEGIN TURNEND',
-    'SYSTEM_SAVEGAME',
-    'SYSTEM_LOADGAME',
     'CONFIG',
     'MAOUNET',
     'LABO',

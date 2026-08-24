@@ -23,6 +23,7 @@ const {
 const { stub_line_wait } = require('#/utils/stub-line');
 const { select_target } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
+const { save_game, load_game } = require('#/page/page-save-load');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
@@ -30,7 +31,8 @@ const era_flag = require('#/era-utils/era-flag');
  * 占位）。docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 核对
  * 固定）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
  * 自 #44 起为真身/真转场，INVASION 自 #117 起为真身（[109] 的 BEGIN
- * TURNEND 随之真转场；199 休息的出口仍是待办），均移出本名单。
+ * TURNEND 随之真转场；199 休息的出口仍是待办），SYSTEM_SAVEGAME /
+ * SYSTEM_LOADGAME 自 #136 起为真身（200/300 分支），均移出本名单。
  */
 const STUBBED_CALLS = [
   'SELECT_ASSI',
@@ -45,8 +47,6 @@ const STUBBED_CALLS = [
   'SECRET_LABO',
   'INFRASTRUCTURE',
   'BEGIN TURNEND',
-  'SYSTEM_SAVEGAME',
-  'SYSTEM_LOADGAME',
   'CONFIG',
   'MAOUNET',
   'LABO',
@@ -279,11 +279,13 @@ async function usershop(result) {
     // 回合结算票
     await stub_line_wait('BEGIN TURNEND', '休息（回合结束）', '随回合结算票');
   } else if (result === 200) {
-    // 保存（:140）
-    await stub_line_wait('SYSTEM_SAVEGAME', '保存', '随存档票');
+    // 保存（:140）：CALL SYSTEM_SAVEGAME（真身见 page/page-save-load.js，
+    // #136；返回后回循环重绘主菜单——读档界面若换过数据，重绘即新状态）
+    await save_game();
   } else if (result === 300) {
-    // 读取（:142）：标题画面的同名占位共用（函数表该行已登记两个调用点）
-    await stub_line_wait('SYSTEM_LOADGAME', '读取', '随存档票');
+    // 读取（:142）：CALL SYSTEM_LOADGAME（标题画面共用，#136）；读档成功
+    // 后 era.loadData 已整体替换数据表，回循环重绘的主菜单读新值
+    await load_game();
   } else if (result === 777) {
     // 设定（:144）
     await stub_line_wait('CONFIG', '设定', '随设定票');
