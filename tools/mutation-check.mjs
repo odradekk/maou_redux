@@ -87,7 +87,12 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #120 起抬 1（M220，端到端专属靶：人间界结局判据整支删除）
 // #129 起为 239：+1（M221，[109] 侵略按钮 accelerator——渲染守卫）。
 // #130 起为 240：+1（M179，input 白名单校验——喂未打印按钮值的防线）。
-const LEDGER_COUNT_BASELINE = 253;
+// #133 rebase 到含 #136 的 master 后为 258：master 侧 253（含 #136 的
+// M223-M234 十二条）+ 本票 5 条（M235-M239，ownership 文件级归属的优先级/
+// 去偏导出/存在性与重复认领守卫/清单-产物互锁；另收紧 M135 的 must_mention——
+// 同款文案在宿主多处出现，按 SOP 判据 3 换成用例名独有片段，条数不变）。
+// 本票原编号 M223-M227 与 #136 撞号，按 SOP §5.5「后合并那批整体顺延」改号。
+const LEDGER_COUNT_BASELINE = 258;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
