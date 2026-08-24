@@ -1,4 +1,4 @@
-# 区段所有权表（CFLAG，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 区段所有权表（CFLAG，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cflag
 #
 # 标准（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
@@ -6,7 +6,7 @@
 #       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
 # 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
 # 实活写入 11439（动态/表级 19 未归类；注释掉的写入 307 另计）；
-# 实活下标 247 个 → 区间 104 条；跨域写入 740 条（见 cflag-cross-domain-writes.yml）。
+# 实活下标 247 个 → 区间 102 条；跨域写入 675 条（见 cflag-cross-domain-writes.yml）。
 "0":
   owner: stronghold
   writes: 4
@@ -19,9 +19,9 @@
   by_domain:
     invasion: 45
     dungeon: 37
-    system: 19
-    chara: 18
+    chara: 30
     event: 11
+    system: 7
     stronghold: 5
     patch: 4
 "2":
@@ -39,7 +39,8 @@
   writes: 9
   by_domain:
     train: 7
-    system: 2
+    dungeon: 1
+    system: 1
 "6":
   owner: chara
   writes: 13
@@ -57,39 +58,31 @@
   writes: 13
   by_domain:
     chara: 7
-    system: 3
+    dungeon: 3
     stronghold: 1
-    dungeon: 1
     event: 1
+    system: 1
 "10":
   owner: stronghold
   writes: 3
   by_domain:
     stronghold: 2
     event: 1
-"11":
-  owner: chara
-  writes: 86
-  by_domain:
-    chara: 34
-    dungeon: 31
-    invasion: 11
-    system: 10
-"12":
+"11-12":
   owner: dungeon
-  writes: 96
+  writes: 182
   by_domain:
-    dungeon: 39
-    chara: 27
-    invasion: 18
-    system: 12
+    dungeon: 90
+    chara: 61
+    invasion: 29
+    system: 2
 "13-14":
   owner: chara
   writes: 69
   by_domain:
     chara: 34
-    dungeon: 15
-    system: 14
+    dungeon: 23
+    system: 6
     stronghold: 2
     event: 2
     patch: 2
@@ -99,8 +92,8 @@
   by_domain:
     train: 101
     chara: 30
-    dungeon: 25
-    system: 25
+    dungeon: 28
+    system: 22
     event: 19
     kojo: 3
     stronghold: 2
@@ -128,11 +121,10 @@
     train: 1
     event: 1
 "40-41":
-  owner: system
+  owner: train
   writes: 83
   by_domain:
-    system: 45
-    train: 31
+    train: 76
     stronghold: 3
     event: 3
     chara: 1
@@ -141,39 +133,34 @@
   writes: 7
   by_domain:
     chara: 3
-    system: 2
+    train: 2
     stronghold: 1
     event: 1
 "43":
-  owner: system
+  owner: train
   writes: 5
   by_domain:
-    system: 3
-    train: 1
+    train: 4
     stronghold: 1
-"44-45":
+"44":
   owner: stronghold
-  writes: 12
+  writes: 3
   by_domain:
-    stronghold: 5
-    train: 3
-    system: 3
-    chara: 1
-"46-47":
-  owner: system
-  writes: 18
+    stronghold: 2
+    train: 1
+"45-48":
+  owner: train
+  writes: 29
   by_domain:
-    system: 9
-    stronghold: 5
-    train: 3
-    chara: 1
-"48-49":
+    train: 18
+    stronghold: 9
+    chara: 2
+"49":
   owner: stronghold
-  writes: 6
+  writes: 4
   by_domain:
-    stronghold: 3
+    stronghold: 2
     event: 2
-    system: 1
 "50":
   owner: event
   writes: 4
@@ -225,17 +212,17 @@
   by_domain:
     event: 6
     train: 5
-"103-105":
+"103-104":
   owner: system
-  writes: 10
+  writes: 5
   by_domain:
-    system: 10
-"106-107":
+    system: 5
+"105-107":
   owner: dungeon
-  writes: 33
+  writes: 38
   by_domain:
-    dungeon: 24
-    system: 7
+    dungeon: 30
+    system: 6
     event: 2
 "108":
   owner: system
@@ -253,20 +240,19 @@
   writes: 29
   by_domain:
     event: 24
-    system: 3
-    chara: 2
+    chara: 5
 "112":
   owner: dungeon
   writes: 3
   by_domain:
     dungeon: 2
-    system: 1
+    chara: 1
 "113":
   owner: train
   writes: 31
   by_domain:
     train: 30
-    system: 1
+    chara: 1
 "120":
   owner: patch
   writes: 6
@@ -389,11 +375,11 @@
   owner: chara
   writes: 57
   by_domain:
-    chara: 32
+    chara: 36
     stronghold: 8
     invasion: 7
-    system: 7
     event: 3
+    system: 3
 "491":
   owner: train
   writes: 5
@@ -473,18 +459,18 @@
   by_domain:
     invasion: 41
     dungeon: 35
-    system: 5
-    chara: 2
+    chara: 4
+    system: 3
     event: 2
 "508-509":
   owner: dungeon
   writes: 22
   by_domain:
-    dungeon: 12
+    dungeon: 13
     invasion: 3
     event: 3
-    system: 2
     chara: 1
+    system: 1
     patch: 1
 "510-511":
   owner: event
@@ -524,18 +510,16 @@
     chara: 40
     invasion: 14
     event: 7
+    dungeon: 4
     stronghold: 3
-    dungeon: 3
     patch: 2
-    system: 1
 "551-552":
   owner: event
   writes: 20
   by_domain:
-    event: 12
+    event: 14
     patch: 4
     chara: 2
-    system: 2
 "570":
   owner: system
   writes: 7
@@ -553,12 +537,11 @@
   owner: dungeon
   writes: 38
   by_domain:
-    dungeon: 24
+    dungeon: 25
     patch: 8
     chara: 3
     invasion: 1
     event: 1
-    system: 1
 "582":
   owner: patch
   writes: 14
@@ -588,10 +571,10 @@
   by_domain:
     chara: 7
 "606-608":
-  owner: system
+  owner: dungeon
   writes: 8
   by_domain:
-    system: 7
+    dungeon: 7
     chara: 1
 "609":
   owner: chara
@@ -599,10 +582,10 @@
   by_domain:
     chara: 5
 "610":
-  owner: system
+  owner: dungeon
   writes: 2
   by_domain:
-    system: 2
+    dungeon: 2
 "621":
   owner: chara
   writes: 2
@@ -629,17 +612,11 @@
   writes: 2
   by_domain:
     event: 2
-"680-681":
+"680-682":
   owner: dungeon
-  writes: 8
+  writes: 14
   by_domain:
-    dungeon: 8
-"682":
-  owner: system
-  writes: 6
-  by_domain:
-    system: 4
-    dungeon: 2
+    dungeon: 14
 "700":
   owner: chara
   writes: 2

@@ -1,4 +1,4 @@
-# 跨域写入清单（CSTR）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 跨域写入清单（CSTR）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cstr
 #
 # 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
@@ -60,12 +60,12 @@
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 448
 - index: 2
-  writer: system
+  writer: chara
   owner: event
   file: "target/ERB/其他/NINSIN.ERB"
   line: 316
 - index: 2
-  writer: system
+  writer: chara
   owner: event
   file: "target/ERB/其他/NINSIN.ERB"
   line: 881
@@ -100,7 +100,7 @@
   file: "target/ERB/キャラ関数/CHARA_FIRST_EXP.ERB"
   line: 667
 - index: 3
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1494
@@ -140,12 +140,12 @@
   file: "target/ERB/キャラ関数/CHARA_MARRIAGE.ERB"
   line: 428
 - index: 4
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1483
 - index: 4
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1487

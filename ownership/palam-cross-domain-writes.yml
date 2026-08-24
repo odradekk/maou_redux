@@ -1,4 +1,4 @@
-# 跨域写入清单（PALAM）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 跨域写入清单（PALAM）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table palam
 #
 # 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），

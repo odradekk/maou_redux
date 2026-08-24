@@ -506,6 +506,21 @@ class TrainGame {
   }
 
   /**
+   * 下装穿不上（tflag:45 ↔ TFLAG:45）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:45
+   * @returns {number}
+   */
+  get 下装穿不上() {
+    return era.get('tflag:45') || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 下装穿不上(v) {
+    era.set('tflag:45', v);
+  }
+
+  /**
    * 珠结算_7（tflag:58 ↔ TFLAG:58）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58
    * @returns {number}

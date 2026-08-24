@@ -1,9 +1,9 @@
-# 跨域写入清单（TALENT）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 跨域写入清单（TALENT）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table talent
 #
 # 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
 #       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
-# 共 303 条。
+# 共 284 条。
 - index: 0
   writer: event
   owner: chara
@@ -30,15 +30,10 @@
   file: "target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB"
   line: 271
 - index: 0
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1492
-- index: 0
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 403
 - index: 0
   writer: system
   owner: chara
@@ -195,7 +190,7 @@
   file: "target/ERB/EVENT/EVENT_ADDICT.ERB"
   line: 68
 - index: 9
-  writer: system
+  writer: chara
   owner: stronghold
   file: "target/ERB/其他/NINSIN.ERB"
   line: 814
@@ -370,7 +365,7 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 138
 - index: 76
-  writer: system
+  writer: chara
   owner: stronghold
   file: "target/ERB/其他/NINSIN.ERB"
   line: 812
@@ -410,7 +405,7 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 46
 - index: 85
-  writer: system
+  writer: chara
   owner: stronghold
   file: "target/ERB/其他/NINSIN.ERB"
   line: 808
@@ -485,12 +480,12 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 525
 - index: 101
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 549
 - index: 102
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 552
@@ -500,12 +495,12 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 529
 - index: 103
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 692
 - index: 104
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 695
@@ -515,12 +510,12 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 533
 - index: 105
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 741
 - index: 106
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 744
@@ -530,12 +525,12 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 537
 - index: 107
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 601
 - index: 108
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 604
@@ -559,21 +554,6 @@
   owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 481
-- index: 109
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 891
-- index: 109
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 894
-- index: 109
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 932
 - index: 110
   writer: stronghold
   owner: chara
@@ -594,26 +574,6 @@
   owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 474
-- index: 110
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 897
-- index: 110
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 907
-- index: 110
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 928
-- index: 110
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 930
 - index: 111
   writer: patch
   owner: chara
@@ -644,21 +604,6 @@
   owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 470
-- index: 114
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 898
-- index: 114
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 901
-- index: 114
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 927
 - index: 116
   writer: stronghold
   owner: chara
@@ -669,11 +614,6 @@
   owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 478
-- index: 116
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 890
 - index: 119
   writer: stronghold
   owner: chara
@@ -684,16 +624,6 @@
   owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 466
-- index: 119
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 902
-- index: 119
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 925
 - index: 121
   writer: event
   owner: chara
@@ -836,27 +766,27 @@
   line: 869
 - index: 130
   writer: stronghold
-  owner: system
+  owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 575
 - index: 130
   writer: stronghold
-  owner: system
+  owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 1447
 - index: 130
   writer: dungeon
-  owner: system
+  owner: chara
   file: "target/ERB/怪物相關/MARRIAGE_DAY.ERB"
   line: 815
 - index: 130
   writer: train
-  owner: system
+  owner: chara
   file: "target/ERB/調教相關/COMF100_触手召喚.ERB"
   line: 416
 - index: 130
   writer: train
-  owner: system
+  owner: chara
   file: "target/ERB/調教相關/COMF5_胸愛撫.ERB"
   line: 141
 - index: 135
@@ -885,10 +815,10 @@
   file: "target/ERB/EVENT/GET_SPECIALTALENT.ERB"
   line: 252
 - index: 155
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 972
+  writer: dungeon
+  owner: chara
+  file: "target/ERB/怪物相關/MARRIAGE_DAY.ERB"
+  line: 840
 - index: 159
   writer: system
   owner: chara
@@ -1409,16 +1339,6 @@
   owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 3405
-- index: 314
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 516
-- index: 314
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 584
 - index: 315
   writer: system
   owner: chara
@@ -1459,46 +1379,31 @@
   owner: chara
   file: "target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB"
   line: 898
-- index: 319
-  writer: chara
-  owner: system
-  file: "target/ERB/キャラ関数/CHARA_CUSTOM3.ERB"
-  line: 128
 - index: 321
   writer: event
-  owner: system
+  owner: chara
   file: "target/ERB/EVENT/EVENT_NEXTDAY.ERB"
   line: 474
 - index: 321
   writer: stronghold
-  owner: system
+  owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 3404
 - index: 322
   writer: event
-  owner: system
+  owner: chara
   file: "target/ERB/EVENT/EVENT_NEXTDAY.ERB"
   line: 476
 - index: 322
   writer: event
-  owner: system
+  owner: chara
   file: "target/ERB/EVENT/EVENT_NEXTDAY.ERB"
   line: 488
 - index: 322
   writer: stronghold
-  owner: system
+  owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 3406
-- index: 322
-  writer: chara
-  owner: system
-  file: "target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB"
-  line: 58
-- index: 322
-  writer: chara
-  owner: system
-  file: "target/ERB/キャラ関数/LOOK.ERB"
-  line: 846
 - index: 326
   writer: event
   owner: stronghold

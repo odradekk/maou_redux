@@ -10,6 +10,18 @@
 # 每个域都拥有真实区段（最少的 invasion 6 段 / patch 5 段），无一域是纯
 # 客户端；低段（CFLAG 0-99 等）是八域共写的共享状态，按跨域写逐条具名，
 # 不构成并域证据。逐表分布与裁定依据见 issue #70 评论。
+#
+# 文件级归属（#133：一级目录 → 文件级）：块内可选 `files:` 键声明「目录内
+# 个别文件改归本域」（路径 = target/ERB/ 下相对路径，正斜杠），文件级优先
+# 于目录级，其余文件仍随目录；目录级声明（dirs 行）维持 #70 原样。声明的
+# 文件必须存在（过期失效即报）、不得被两个域认领。
+# 其他/ 六个子系统的文件级归属由导出规则机械产出（可复算：
+# node tools/ownership-scan.js --export 其他）：基线 = 剔除 其他/ 全部写入
+# 后的区段属主，文件域 = 其写入所落基线属主的 plurality——不剔除则循环
+# 论证（合租目录自己的写入把区段属主撑成兜底域，#106 实测的 40-48 六块
+# 碎区间正是这么来的）。这是测量结果、不是终局裁定：EQUIP（3 票 2:1）、
+# USE_EX_ITEM（30 票 16:14）票数薄，装备与服装的归属裁定回阶段 2 子地图
+# （#106/#133），推翻 = 改本文件重跑，工具零改动。
 
 kojo:
   label: 口上
@@ -19,11 +31,16 @@ train:
   label: 调教
   # ABL.ERB 的 SHOW_JUEL / SHOW_ABLUP_SELECT 与 ABLUP* 全在调教结算（JUEL_CHECK）流程内
   dirs: 調教相關, ABL
+  # FUNC_CLOTH 80 写：cflag 63 落 train 属主区段 43 票（服装状态 40/43 去偏后
+  # 本就是 調教相關 写的）、stronghold 18、tflag 落 event 17
+  files: 其他/FUNC_CLOTH.ERB
 
 chara:
   label: 角色
   # 關係設置 = RELATION 系初始化
   dirs: キャラ関数, 關係設置
+  # NINSIN 93 写：talent 22 票落 chara（妊娠素质区段）、invasion 14、event 11
+  files: 其他/NINSIN.ERB
 
 stronghold:
   label: 据点
@@ -35,6 +52,10 @@ dungeon:
   # 怪物相關：SUMMON_MONSTER 的主调用方是 DUNGEON_TRAP 与日循环；
   # MONSTER_PLAY 的 SHOP 入口（SELECT_TARGET）记为跨域流量，由跨域写入清单显式
   dirs: 迷宮, 怪物相關
+  # MAGIC 102 写（base 58 全落 dungeon 区段，87 票）；LOVERS 30 写（dungeon
+  # 10 / train 7 / chara 4）；USE_EX_ITEM 30 写（dungeon 16 / chara 14——两票
+  # 之差，票薄注明）
+  files: 其他/LOVERS.ERB, 其他/MAGIC.ERB, 其他/USE_EX_ITEM.ERB
 
 invasion:
   label: 侵略
@@ -44,12 +65,18 @@ event:
   label: 事件
   # 處刑相關：EXECUTION_MINI / NAEDOKO 从日循环（EVENT_NEXTDAY / SYSTEM）调用，属日程内容事件
   dirs: EVENT, 處刑相關
+  # EQUIP 实活写仅 3 次（event 2 / stronghold 1）——原作的装备状态几乎全走
+  # 局部数组与 TEQUIP（后者 調教相關 私有，见 #106）；3 票薄据，待阶段 2 裁定
+  files: 其他/EQUIP.ERB
 
 system:
   label: 系统
   # 其他 = 杂项兜底。#70 裁定：EXCOM 的 EX_CFLAG/EX_FLAG/EX_TALENT 是 #DIM
   # 自定义变量、不是已落地引擎表（yml/ 无其名字表），全表实测看不见它们——
   # 「其他」并入 system 的映射在全表数据下无矛盾，维持。
+  # #133 起 其他/ 的六个大文件按文件级声明改归各域（见上），其余小文件
+  # （DATA_FIX/NTR/MAOUNET/TEST/EXCOM 等，合计约 1200 行）仍随目录归
+  # system——杂项兜底的原语义对它们仍然成立。
   # 音声相关只有音量设置的全局变量声明，无 .ERB
   dirs: SYSTEM, 其他, 音声相关
 

@@ -1,4 +1,4 @@
-# 区段所有权表（FLAG，一维表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 区段所有权表（FLAG，一维表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table flag
 #
 # 标准（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
@@ -12,10 +12,9 @@
   writes: 88
   by_domain:
     event: 50
-    chara: 10
+    chara: 16
     stronghold: 9
     patch: 8
-    system: 6
     train: 3
     invasion: 2
 "5":
@@ -58,10 +57,10 @@
   by_domain:
     event: 3
 "32":
-  owner: system
+  owner: chara
   writes: 1
   by_domain:
-    system: 1
+    chara: 1
 "33":
   owner: stronghold
   writes: 2

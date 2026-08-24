@@ -1,4 +1,4 @@
-# 区段所有权表（EXP，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 区段所有权表（EXP，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table exp
 #
 # 标准（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
@@ -6,15 +6,15 @@
 #       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
 # 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
 # 实活写入 1533（动态/表级 2 未归类；注释掉的写入 5 另计）；
-# 实活下标 83 个 → 区间 41 条；跨域写入 557 条（见 exp-cross-domain-writes.yml）。
+# 实活下标 83 个 → 区间 41 条；跨域写入 530 条（见 exp-cross-domain-writes.yml）。
 "0-2":
   owner: dungeon
   writes: 336
   by_domain:
-    dungeon: 232
+    dungeon: 235
     train: 49
-    system: 20
     event: 18
+    system: 17
     chara: 11
     stronghold: 3
     patch: 2
@@ -38,13 +38,12 @@
   owner: dungeon
   writes: 59
   by_domain:
-    dungeon: 27
+    dungeon: 28
     train: 10
     chara: 9
     event: 9
     stronghold: 1
     invasion: 1
-    system: 1
     patch: 1
 "6-7":
   owner: stronghold
@@ -68,13 +67,12 @@
   owner: dungeon
   writes: 63
   by_domain:
-    dungeon: 29
+    dungeon: 31
     train: 17
     chara: 7
     stronghold: 2
     invasion: 2
     event: 2
-    system: 2
     patch: 2
 "12-19":
   owner: stronghold
@@ -85,10 +83,10 @@
   owner: dungeon
   writes: 245
   by_domain:
-    dungeon: 128
+    dungeon: 131
     train: 86
     event: 13
-    system: 12
+    system: 9
     stronghold: 3
     patch: 3
 "23":
@@ -190,7 +188,7 @@
     dungeon: 20
     train: 7
     stronghold: 2
-    system: 1
+    chara: 1
     patch: 1
 "54":
   owner: train
@@ -204,32 +202,32 @@
   owner: dungeon
   writes: 67
   by_domain:
-    dungeon: 49
+    dungeon: 51
     train: 7
     event: 5
     stronghold: 3
-    system: 3
+    system: 1
 "58-59":
   owner: stronghold
   writes: 2
   by_domain:
     stronghold: 2
 "60":
-  owner: system
+  owner: chara
   writes: 5
   by_domain:
-    system: 3
-    chara: 2
+    chara: 3
+    system: 2
 "61":
   owner: stronghold
   writes: 1
   by_domain:
     stronghold: 1
 "62":
-  owner: system
+  owner: chara
   writes: 3
   by_domain:
-    system: 2
+    chara: 2
     stronghold: 1
 "63-64":
   owner: stronghold
@@ -255,7 +253,7 @@
   by_domain:
     train: 4
     stronghold: 3
-    system: 1
+    dungeon: 1
     patch: 1
 "73-74":
   owner: dungeon
@@ -285,14 +283,14 @@
   owner: dungeon
   writes: 132
   by_domain:
-    dungeon: 50
+    dungeon: 66
     invasion: 42
-    system: 17
     event: 9
     train: 5
     chara: 5
     patch: 3
     stronghold: 1
+    system: 1
 "81":
   owner: event
   writes: 25
