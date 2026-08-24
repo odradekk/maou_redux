@@ -25,18 +25,18 @@ export default [
   {
     desc: 'M114 登记被删（_fixed.json 清空——契约锁必须红）',
     file: 'yml/_fixed.json',
-    find: `{
-  "system": {
-    "extendedCharaTables": ["portcflag"]
-  }
-}`,
-    replace: `{
-  "system": {
-    "extendedCharaTables": []
-  }
-}`,
+    find: `"extendedCharaTables": ["portcflag"]`,
+    replace: `"extendedCharaTables": []`,
     tests: ['portcflag-table'],
-    must_mention: '登记',
+    must_mention: '登记清单为空',
+  },
+  {
+    desc: 'M222 saveFiles 退回引擎默认（_fixed.json 里改成 10——原作 11-98 号槽的备注不再被 loadGlobal 维护，界面上显示为空栏位）',
+    file: 'yml/_fixed.json',
+    find: `"saveFiles": 99`,
+    replace: `"saveFiles": 10`,
+    tests: ['resource-media'],
+    must_mention: 'saveFiles 必须在 _fixed.json',
   },
   {
     desc: 'M115 名字表 id 改坏（数据版本 id 0 改 3——装载/寻址/预设全红）',

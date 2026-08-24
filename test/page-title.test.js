@@ -30,9 +30,10 @@ test('首屏：标题、版本行、作者、年份、展开名单、信息行�
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
 
   const texts = fixture.text_lines();
-  // 标题与版本号取自静态表：原作自算 {V/1000}.{V%1000}，93106 → "93.106"
+  // 标题与版本行取自静态表：版本直读【版本代号】versionName（#135，
+  // "0.0.0"），不再沿用原作 {V/1000}.{V%1000} 自算式
   assert(texts.includes('ERA魔王 年度版（名字暂定）（PC only）'));
-  assert(texts.includes('伪Ver93.106立绘版'));
+  assert(texts.includes('伪Ver0.0.0立绘版'));
   // 作者与年份（原作带半角括号、仅年份非空时输出）
   assert(texts.includes('「人人为我，我为人人」'));
   assert(texts.includes('(2011 - 2024！)'));
@@ -70,16 +71,19 @@ test('首屏：标题、版本行、作者、年份、展开名单、信息行�
   assert(buttons.every((b) => !/^\s*\[\d+\]/.test(b.text)));
 });
 
-test('版本号按原作公式算自静态表，不硬编码', async () => {
+test('版本行直读【版本代号】自静态表，不自算、不硬编码（#135）', async () => {
   const fixture = create_era_fixture();
-  preset_gamebase(fixture, { version: 20004 });
+  // versionName 换值 + version 设成自算式会算出别的结果的值：证明显示
+  // 跟随 versionName 走、与 version 无关（原作公式 {V/1000}.{V%1000} 对
+  // 20004 会算 "20.4"），也不是写死的 0.0.0
+  preset_gamebase(fixture, { versionName: '1.2.3', version: 20004 });
   const run_title_page = fixture.load_module('page/page-title');
 
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
 
-  // 20004 → {20004/1000}.{20004%1000} = 20.4；同时证明不是写死的 93.106
-  assert(fixture.text_lines().includes('伪Ver20.4立绘版'));
-  assert(!fixture.text_lines().some((line) => line.includes('93.106')));
+  assert(fixture.text_lines().includes('伪Ver1.2.3立绘版'));
+  assert(!fixture.text_lines().some((line) => line.includes('20.4')));
+  assert(!fixture.text_lines().some((line) => line.includes('0.0.0')));
 });
 
 test('GLOBAL:99 非 0 → 折叠致辞 + 按钮「>>」', async () => {
@@ -216,7 +220,7 @@ test('未打印按钮的值引擎不送达：拒收且画面不重绘（原作 E
   // 42 未被送达：标题画面仍是首绘那一轮（无重绘）
   assert.deepEqual(fixture.inputs_consumed, []);
   assert.equal(
-    fixture.text_lines().filter((line) => line.includes('伪Ver93.106立绘版'))
+    fixture.text_lines().filter((line) => line.includes('伪Ver0.0.0立绘版'))
       .length,
     1,
     '拒收后不得重绘（引擎侧玩家看到的是提示框，画面原样）',
@@ -297,7 +301,7 @@ test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () 
     { api: 'waitAnyKey' },
   ]);
   assert.deepEqual(fixture.var_writes, []);
-  assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
+  assert(fixture.text_lines().includes('伪Ver0.0.0立绘版'));
 });
 
 // —— 标题音乐与标题图（issue #69：原作 :3-7 / :22-23 / :95 / :105）——
@@ -397,5 +401,5 @@ test('标题图：资源在场时显示 TITLE 全图，缺席时纯文本兜底�
 
   // resource: false（未注册）时 checkImage 恒假——无图可显、纯文本标题兜底
   assert(!without_image.lines.some((line) => line.type === 'image.whole'));
-  assert(without_image.text_lines().includes('伪Ver93.106立绘版'));
+  assert(without_image.text_lines().includes('伪Ver0.0.0立绘版'));
 });

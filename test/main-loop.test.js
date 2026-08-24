@@ -73,7 +73,7 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   assert(texts.some((line) => line.includes('@RAND_CHARA_MAKE')));
   // 到站证据三：标题只画过转场前的那一次（FIRST 之后没有回标题重绘）
   assert.equal(
-    texts.filter((line) => line === '伪Ver93.106立绘版').length,
+    texts.filter((line) => line === '伪Ver0.0.0立绘版').length,
     1,
     '标题不得在初始化后重绘（重绘 = 转场没到 SHOP）',
   );
@@ -95,7 +95,7 @@ test('端到端：读档分支（旧的奴隶）维持 #19 占位，不经状态
     { api: 'input', value: 0 },
     { api: 'waitAnyKey' },
   ]);
-  assert(fixture.text_lines().includes('伪Ver93.106立绘版'));
+  assert(fixture.text_lines().includes('伪Ver0.0.0立绘版'));
 });
 
 test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 #23 改制）', async () => {

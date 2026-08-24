@@ -5,7 +5,11 @@
  * （dev-guides/09-static.md）。夹具的变量存储是空的，凡测到读静态表的页面
  * （当前是标题画面）都要先预置这份形状。字段与 yml/GameBase.yml 的对应：
  *   游戏名称 title / 作者 author / 追加信息 info / 发布时间 year /
- *   游戏标识 gameCode / 版本 version / 最低支持版本 allowVersion
+ *   游戏标识 gameCode / 版本 version / 版本代号 versionName（#135 起为
+ *   String，标题画面直读它显示）/ 最低支持版本 allowVersion
+ *
+ * 版本轴自 #135 重设为 0.0.0（ADR-0006）：version/allowVersion = 0，
+ * versionName = "0.0.0"；gameCode 冻结 931060（与 sav/global.sav 一致）。
  */
 
 const GAMEBASE_SHAPE = {
@@ -14,8 +18,9 @@ const GAMEBASE_SHAPE = {
   info: '※未经允许，任何人不得引用、修改再打包或进行商业用途※',
   year: '2011 - 2024！',
   gameCode: 931060,
-  version: 93106,
-  allowVersion: 93106,
+  version: 0,
+  versionName: '0.0.0',
+  allowVersion: 0,
 };
 
 /**

@@ -101,6 +101,8 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 - **`yml/_config.json` 是整份默认配置，不是补丁。** 它存在时 `defaultConfig` 整个就是它，引擎默认值只在文件缺失或解析失败时兜底，**没写的键不会回落默认，而是直接缺失**。缺键的后果也不中性：各消费点自行兜底，做法各不相同（`saveFiles` 有 `||10`、`window.*` 交给渲染层、`resource` 直接按 falsy 关掉）。所以这份文件必须写全 `getEmptyConfigForm()` 的形状，只标出有意偏离的那几个键。`test/resource-media.test.js` 有一道引擎比对锁：逐键 deepEqual 引擎默认形状，只许 `resource` 一处偏离。
 - **已有 `ere.config.json` 的机器读不到新默认值**：第二行的 `||` 短路了。`this.config` 已由 `ere.config.json` 填好，`_config.json` 整份不参与。改了默认值要在本机生效，得手工改该键，或删掉 `ere.config.json` 让引擎按新默认重建。
 - **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会直接崩溃或静默降级）放 `_fixed.json`，它优先于用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`，放进 `_fixed.json` 会让 UI 开关点了没反应。
+  - **`saveFiles` 是结构性要求，落 `_fixed.json`（#135 定，取 99）。** 原作有 99 个手动存档槽（0–98）加 99 号自动存档槽（ADR-0006），而引擎 `listSaveFiles` 的扫描是闭区间 `for (let t = 0; t <= saveFiles; ++t)`——`saveFiles` 取 99 恰好覆盖 0–99，且 `dev-guides/03-config.md:76` 限定该值为 10–99 的整数（**100 超规范**）。放 `_config.json` 不行：它会被本机已有的 `ere.config.json` 整份短路（上一条），于是装过旧版本的机器上仍是 10，槽位 11–98 的备注不被 `loadGlobal` 维护、界面上显示为空栏位，而**没有任何测试会红**。代价是配置 UI 里的「存档数量」点了不生效，已有意接受。
+  - 参考项目里 `saveFiles` 两处都不设（erauma、ere-kanon、ere-example 实测）：它们的游戏槽位数在引擎默认范围内，不需要抬。erauma 另有一条我们用不了的路——运行时 `era.get('gameconfig')?.system.saveFiles` 读生效配置，**`gameconfig` 这个键在 4.8.0 不存在**。
 
 `yml/` 的产物由 `tools/csv-to-yml.js` 生成，遵守**产物边界**（issue #10）：产物进 git、归人工维护，转换器重跑默认跳过已存在的产物，重写必须显式 `--force`。这条规则有测试固定住。产物名在**生成期**经归一表（`tools/lang-table.js`，issue #60）归一为简体（引擎列名键如 素質/名前 受保护，原样保留），所以 `--force` 重跑得到的产物与库内逐字节一致，不会退回源 CSV 的繁/日原名；同步守护因此只做直接比较，生成器漏归一即红。YAML 键名一律加引号，键含 `:` / `#` 或首尾空格时裸键名会产出无法解析的 YAML。`GameBase.yml` 的原始输入已随迁移删除，要重转先从 git 历史取回 `csv/GameBase.csv`。
 
