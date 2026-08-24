@@ -382,7 +382,10 @@ test('两源合流：yml 列名进二维门面，跳过的缺口不进产物', (
   assert.ok(system_text.includes('get 苦痛刻印()'));
   assert.ok(system_text.includes('era.set(`mark:${this.cid}:0`, v);'));
   assert.ok(system_text.includes('源: yml/Mark.yml id 0'));
-  assert.ok(system_text.includes('get 妊娠()')); // talent 也在 system 域
+  // talent 的妊娠切片随 #133 文件级归属从 system 挪进 chara 域
+  //（NINSIN.ERB 改归 chara，talent 妊娠素质区段属主随之）
+  assert.ok(read('chara-chara.js').includes('get 妊娠()'));
+  assert.ok(!system_text.includes('get 妊娠()'));
   // 手补缺口：mark:4 原作无列名，出处指向 ERB
   assert.ok(system_text.includes('get 反抗刻印履历()'));
   assert.ok(system_text.includes('era.set(`mark:${this.cid}:4`, v);'));

@@ -54,10 +54,18 @@
  * 跨域写入 = 写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
  * 按「下标、文件、行号」排序。
  *
+ * 文件级归属（#133：一级目录 → 文件级）：域块内可选 `files:` 键声明「目录内
+ * 个别文件改归本域」（路径 = target/ERB/ 下相对路径，正斜杠）。文件级优先于
+ * 目录级，其余文件仍随目录；守卫照目录级同款纪律（声明的文件必须存在 = 数据
+ * 过期失效即报；一个文件不得被两个域认领）。归属不是人工拍的：导出规则见
+ * export_file_domains，`--export <目录>` 可复算。
+ *
  * 用法：node tools/ownership-scan.js [--force] [--table <表名|all>]
+ *        node tools/ownership-scan.js --export <一级目录名>
  *   默认 all：写出全部产物。--table 单表时只写该表两份产物（reads-summary 是
  *   全表产物，只在 all 时写出）。扫描始终单遍过全部表（一条正则交替分支），
- *   单表与全表的耗时几乎相同。
+ *   单表与全表的耗时几乎相同。--export 只打印建议不写任何文件——domains.yml
+ *   是人工维护的输入数据，导出结果由人誊写进清单。
  *   文件编码按内容判定（复用 tools/csv-to-yml.js 的 read_text）——target/ 有
  *   一个 Shift-JIS 活代码文件（調教相關/COMF90_ニプルファック.ERB）。
  */
@@ -104,8 +112,8 @@ const VARIABLE_TO_KEY = new Map(
 // —— 域清单（ownership/domains.yml）——
 //
 // 手维护的输入数据，格式刻意收窄（全行注释、空行、顶层「键:」起块、块内
-// 「label: 名」「dirs: 目录, 目录」或「- 文件名」），解析器只认这四种行——
-// 写歪即报错，绝不静默吞掉半个域。
+// 「label: 名」「dirs: 目录, 目录」「files: 目录/文件, …」或「- 文件名」），
+// 解析器只认这五种行——写歪即报错，绝不静默吞掉半个域。
 
 function parse_domains(text) {
   const domains = [];
@@ -128,7 +136,7 @@ function parse_domains(text) {
         if (!/^[a-z][a-z0-9_]*$/.test(top[1])) {
           throw new Error(`域标识必须是 小写snake_case：${top[1]}`);
         }
-        current = { key: top[1], label: undefined, dirs: [] };
+        current = { key: top[1], label: undefined, dirs: [], files: [] };
         domains.push(current);
       }
       continue;
@@ -136,17 +144,22 @@ function parse_domains(text) {
     if (!current) {
       throw new Error(`域清单的缩进行出现在任何块之前：${line}`);
     }
-    const kv = /^(label|dirs):[ \t]+(.+)$/.exec(line);
+    const kv = /^(label|dirs|files):[ \t]+(.+)$/.exec(line);
     const item = /^-[ \t]+(.+)$/.exec(line);
     if (current.ignored && item) {
       ignored_files.push(item[1].trim());
     } else if (!current.ignored && kv) {
       if (kv[1] === 'label') {
         current.label = kv[2].trim();
-      } else {
+      } else if (kv[1] === 'dirs') {
         current.dirs = kv[2]
           .split(',')
           .map((dir) => dir.trim())
+          .filter(Boolean);
+      } else {
+        current.files = kv[2]
+          .split(',')
+          .map((file) => file.trim())
           .filter(Boolean);
       }
     } else {
@@ -159,6 +172,7 @@ function parse_domains(text) {
   }
   const seen_keys = new Set();
   const seen_dirs = new Map();
+  const seen_files = new Map();
   for (const domain of domains) {
     if (seen_keys.has(domain.key)) {
       throw new Error(`域标识重复：${domain.key}`);
@@ -175,11 +189,29 @@ function parse_domains(text) {
       }
       seen_dirs.set(dir, domain.key);
     }
+    for (const file of domain.files) {
+      if (!/^[^/]+\/[^/]+?\.(erb|erh)$/i.test(file)) {
+        throw new Error(
+          `域 ${domain.key} 的文件级声明 ${file} 形态不对（应为 目录/文件.ERB，正斜杠相对路径；根文件只能进 ignored_files，不参与归属）`,
+        );
+      }
+      if (seen_files.has(file)) {
+        throw new Error(
+          `文件 ${file} 被域 ${seen_files.get(file)} 与 ${domain.key} 重复认领`,
+        );
+      }
+      seen_files.set(file, domain.key);
+    }
   }
   if (new Set(ignored_files).size !== ignored_files.length) {
     throw new Error('ignored_files 有重复条目');
   }
-  return { domains, ignored_files, dir_to_domain: seen_dirs };
+  return {
+    domains,
+    ignored_files,
+    dir_to_domain: seen_dirs,
+    file_to_domain: seen_files,
+  };
 }
 
 // —— 名字表（yml/ 产物 → 名字 → 下标）——
@@ -389,10 +421,18 @@ function classify_line(code, addr_re, name_maps, errors, where) {
 // —— 扫描一棵 ERB 树（全部表，单遍）——
 //
 // 目录归属校验（后来者自动纳入）：target/ERB 的每个一级目录必须被域清单恰好
-// 认领一次；ignored_files 声明的根文件必须存在（过期失效即报），其内容整体跳过
+// 认领一次；文件级声明（#133）的文件必须存在（过期失效即报，与目录同款）；
+// ignored_files 声明的根文件必须存在（过期失效即报），其内容整体跳过
 // （引擎不装载 = 死代码，读写均无测量意义）。
+// 文件的域 = 文件级声明优先，否则随一级目录。per_file_out（可选）收集每个
+// 文件的实写下标写入——文件级归属导出（export_file_domains）的投票材料。
 
-function scan_all_tables({ erb_root, domains, name_maps }) {
+function scan_all_tables({
+  erb_root,
+  domains,
+  name_maps,
+  per_file_out = null,
+}) {
   const top_entries = fs.readdirSync(erb_root, { withFileTypes: true });
   const top_dirs = top_entries
     .filter((e) => e.isDirectory())
@@ -413,6 +453,14 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
   if (stale.length > 0) {
     throw new Error(
       `域清单认领了不存在的目录：${stale.join('、')}（数据过期失效，删掉或改对）`,
+    );
+  }
+  const missing_files = [...domains.file_to_domain.keys()].filter(
+    (file) => !fs.existsSync(path.join(erb_root, ...file.split('/'))),
+  );
+  if (missing_files.length > 0) {
+    throw new Error(
+      `域清单文件级声明了不存在的文件：${missing_files.join('、')}（数据过期失效，删掉或改对）`,
     );
   }
   const ignored = new Set(domains.ignored_files);
@@ -469,7 +517,11 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
     if (rel.length === 1 && ignored.has(rel[0])) {
       continue; // 死代码：引擎不装载，整体跳过
     }
-    const domain_key = domains.dir_to_domain.get(rel[0]);
+    const rel_posix = rel.join('/');
+    // 文件级声明优先于目录级（#133）；未声明的文件随一级目录
+    const domain_key =
+      domains.file_to_domain.get(rel_posix) ??
+      domains.dir_to_domain.get(rel[0]);
     const repo_rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
 
     const { text, enc } = read_text(file);
@@ -496,6 +548,13 @@ function scan_all_tables({ erb_root, domains, name_maps }) {
           const per = stat.per_index.get(index) ?? new Map();
           per.set(domain_key, (per.get(domain_key) ?? 0) + 1);
           stat.per_index.set(index, per);
+          // 文件级归属导出的投票材料（--export）：逐文件的实写下标写入
+          if (per_file_out) {
+            if (!per_file_out.has(rel_posix)) {
+              per_file_out.set(rel_posix, []);
+            }
+            per_file_out.get(rel_posix).push({ table, index });
+          }
         }
         stat.writes_by_domain.set(
           domain_key,
@@ -596,6 +655,100 @@ function sort_by_domain(entries, domain_order) {
     (a, b) =>
       b[1] - a[1] || domain_order.indexOf(a[0]) - domain_order.indexOf(b[0]),
   );
+}
+
+// —— 文件级归属导出（#133：目录是多个子系统合租时，按文件测真实耦合）——
+//
+// 规则（可复算，与属主判定同构——plurality、并列按声明序）：
+//   1. 基线 = **剔除目标目录全部写入**后的区段属主。不剔除则循环论证：
+//      合租目录整个随目录级声明计票，它自己的写入会把区段属主撑成兜底域，
+//      再按属主给文件投票等于让文件给自己投票（#106 实测的 40-48 六块碎
+//      区间正是这么来的）。
+//   2. 文件的域 = 其写入所落基线属主的 plurality；只统计有下标的实活写入，
+//      无基线属主的写入（仅目标目录写过的下标）不投票。
+//   3. 无有效票的文件不导出（维持目录级兜底——没测量基础就不动，#70 对
+//      EXCOM 的同款立场）。
+//
+// 这是测量导出，不是终局裁定：结果誊进 domains.yml 的 files: 后，域清单
+// 归人工维护，推翻 = 改清单重跑，工具零改动（ADR-0002）。
+//
+// 哨兵域：目标目录的写入照常进 per_index（投票可审计），但 assign_ownership
+// 只按真实域的声明序数票，哨兵票天然不计；零票下标在属主判定前剔除——
+// assign_ownership 的决胜循环对零票会给出声明序第一域，那不是测量事实。
+
+const EXPORT_EXCLUDED = '__export_baseline_excluded__';
+
+function export_file_domains({
+  domain_file,
+  erb_root,
+  name_dir,
+  target_dir,
+} = {}) {
+  const domains = parse_domains(
+    read_text(domain_file ?? path.join(REPO_ROOT, 'ownership', 'domains.yml'))
+      .text,
+  );
+  if (!domains.dir_to_domain.has(target_dir)) {
+    throw new Error(
+      `导出目标目录 ${target_dir} 不在域清单的目录认领里（先在 ownership/domains.yml 认领它）`,
+    );
+  }
+  // 基线扫描：目录级归属（文件级声明不参与），目标目录整体摘到哨兵域
+  const baseline = {
+    domains: domains.domains,
+    ignored_files: domains.ignored_files,
+    dir_to_domain: new Map(domains.dir_to_domain),
+    file_to_domain: new Map(),
+  };
+  baseline.dir_to_domain.set(target_dir, EXPORT_EXCLUDED);
+  const per_file = new Map();
+  const scan = scan_all_tables({
+    erb_root: erb_root ?? path.join(REPO_ROOT, 'target', 'ERB'),
+    domains: baseline,
+    name_maps: load_name_maps(name_dir ?? path.join(REPO_ROOT, 'yml')),
+    per_file_out: per_file,
+  });
+
+  const domain_order = domains.domains.map((domain) => domain.key);
+  const owners = new Map();
+  for (const key of TABLE_KEYS) {
+    const per_index = scan.per_table.get(key).per_index;
+    for (const [index, per] of per_index) {
+      per.delete(EXPORT_EXCLUDED);
+      if (per.size === 0) {
+        per_index.delete(index); // 仅目标目录写过的下标：无基线属主
+      }
+    }
+    owners.set(key, assign_ownership(per_index, domain_order));
+  }
+
+  const prefix = `${target_dir}/`;
+  const results = [];
+  for (const [file, writes] of [...per_file.entries()].sort()) {
+    if (!file.startsWith(prefix)) {
+      continue; // 只导出目标目录下的文件（per_file 收集全树，导出收口到目标）
+    }
+    const votes = new Map();
+    let unowned = 0;
+    for (const { table, index } of writes) {
+      const owner = owners.get(table).get(index);
+      if (owner === undefined) {
+        unowned += 1;
+      } else {
+        votes.set(owner, (votes.get(owner) ?? 0) + 1);
+      }
+    }
+    const ranked = sort_by_domain([...votes], domain_order);
+    results.push({
+      file,
+      writes: writes.length,
+      unowned,
+      votes: ranked,
+      // winner = null：无有效票，维持目录级兜底
+      winner: ranked.length > 0 ? ranked[0][0] : null,
+    });
+  }
+  return results;
 }
 
 // —— 产物文本 ——
@@ -788,7 +941,7 @@ function generate({
       )
       .map((entry) => ({ ...entry, owner: owner_of_index.get(entry.index) }));
     const meta = {
-      ticket: '#70',
+      ticket: '#70 实测，#133 文件级粒度重跑',
       variable: TABLES[key].variable,
       dims: TABLES[key].dims,
       cross_product: `${key}-cross-domain-writes.yml`,
@@ -808,18 +961,22 @@ function generate({
     });
   }
 
-  const reads_summary_yaml = to_reads_summary_yaml(results, { ticket: '#70' });
+  const reads_summary_yaml = to_reads_summary_yaml(results, {
+    ticket: '#70 实测，#133 文件级粒度重跑',
+  });
   return { domains, scan, tables: results, reads_summary_yaml };
 }
 
 // —— CLI ——
 
 const USAGE =
-  '用法：node tools/ownership-scan.js [--force] [--table <表名|all>]（默认 all）';
+  '用法：node tools/ownership-scan.js [--force] [--table <表名|all>]（默认 all）\n' +
+  '      node tools/ownership-scan.js --export <一级目录名>   文件级归属导出（只打印）';
 
 function main(argv, overrides = {}) {
   let force = false;
   let table = 'all';
+  let export_dir = null;
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--force' || arg === '-f') {
@@ -833,11 +990,50 @@ function main(argv, overrides = {}) {
       }
       table = value.toLowerCase();
       i += 1;
+    } else if (arg === '--export') {
+      const value = argv[i + 1];
+      if (value === undefined) {
+        console.error('错误：--export 需要一个一级目录名，如 其他');
+        console.error(USAGE);
+        return 2;
+      }
+      export_dir = value;
+      i += 1;
     } else {
       console.error(`错误：未知参数：${arg}`);
       console.error(USAGE);
       return 2;
     }
+  }
+
+  if (export_dir !== null) {
+    let exports;
+    try {
+      exports = export_file_domains({
+        domain_file: overrides.domain_file,
+        erb_root: overrides.erb_root,
+        name_dir: overrides.name_dir,
+        target_dir: export_dir,
+      });
+    } catch (error) {
+      console.error(`错误：${error.message}`);
+      return 1;
+    }
+    console.log(
+      `[ownership-scan] 文件级归属导出（目录 ${export_dir}）：基线已剔除该目录的写入，票 = 各文件写入所落基线属主的 plurality`,
+    );
+    for (const row of exports) {
+      const votes = row.votes.map(([d, n]) => `${d} ${n}`).join(' / ');
+      console.log(
+        `[ownership-scan] ${row.file}：写 ${row.writes}（无基线属主 ${row.unowned}）→ ${
+          row.winner ?? '（无有效票，维持目录级兜底）'
+        }${votes ? `（${votes}）` : ''}`,
+      );
+    }
+    console.log(
+      '[ownership-scan] 导出是测量建议：誊进 ownership/domains.yml 的 files: 后重跑（--force）生效，域清单归人工维护',
+    );
+    return 0;
   }
 
   let result;
@@ -935,6 +1131,7 @@ module.exports = {
   build_addr_re,
   classify_command,
   classify_line,
+  export_file_domains,
   generate,
   load_name_maps,
   main,
