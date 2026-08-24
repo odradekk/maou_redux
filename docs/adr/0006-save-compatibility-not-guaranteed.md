@@ -58,3 +58,38 @@
 **`PORT_DATA_VERSION` 失去迁移消费者。** #67 给它定的用途是「迁移代码据此比对存档里的值 < 该角色应有版本决定补值」，与本决议冲突；判据把「角色预设内容变更」划为破坏性之后，它降格为诊断戳——读档后可辨别该角色由哪一版预设生成。曾考虑给「不写迁移」开一个角色预设级的例外，未取：口子一开就要再判一条「哪些算角色预设级」的边界，判错的后果是玩家拿着半迁移的档，比干脆废档更坏，且这类缺陷在夹具里看不出来。
 
 **原作的历史迁移代码不移植。** `target/ERB/其他/DATA_FIX.ERB`（107 行，由 `@EVENTLOAD` 无条件调用，无版本判定）修的全是 Emuera 旧档的具体缺陷。这不是本决议的新裁定，而是 #1 已将「读取 Emuera 旧存档」判为出界的直接推论。其中三处对新档仍有语义的行（`EX_TALENT:MASTER:200 = 1`、`MAXBASE:A:0` 下限 600、`MAXBASE:A:1` 下限 100）逐条判定归属后另行安置。
+
+## 勘误（#135 验收时发现，2026-08-24）
+
+**开头那张表的第二行与其后的「拿不到」是错的，本决议的最强论据作废。** 结论维持，但支撑它的理由只剩两条，强度从「引擎不给输入，做不到」降为「做得到，但我们选择不做」。
+
+**错在哪**：原文只查了 `global:version`（那确实恒等于 GameBase 的版本，`dev-guides/09-static.md:598`），没查**单段的 `era.get('version')`**。后者返回 `this.data.version`——被读入那个存档自己的版本号，正是 `LASTLOAD_VERSION` 的等价物。
+
+引擎证据（`app.asar` 的 `loadData`）：
+
+```js
+if (r.version && !(r.version < this.staticData.gamebase.allowVersion))
+  return ((this.era.data = r), this.fillData(), !0);
+```
+
+`this.era.data = r` 把整个存档载荷（含 `r.version`）装进 `this.data`；`era.get` 的单段分支是 `case "version": return this.data.version`。
+
+**反例**：`umaera/erauma` 的 `ere/page/page-load-game.js` 正是靠它建了一条上千行的迁移阶梯——`if (version < 1011)` 一路排到 `if (version <= 2210)`，逐版本补数据、修称号、迁字段，末尾还有一段 `if (version < era.get('gamebase').version)` 的兜底。**成熟 ere 项目不但做得到，而且做了。**
+
+**为什么结论仍然维持**（这两条与引擎能力无关）：
+
+1. 移植期的变量模型本身还在发明中，迁移代码会比被迁移的东西先烂掉。
+2. #13 证明未声明序号能静默写入并进存档，旧档里带着无人认领的键，迁移代码没有可靠判据知道该补什么——**这条原文就有，且不依赖被推翻的那条**。
+
+外加一条处境差异：erauma 是有玩家、有存量存档的活游戏；本项目此刻 `sav/global.sav` 的 `saves` 是空对象，一个存档都没有。**代价还没产生，所以现在选「不做」是廉价的；等有了存档再改主意就不是了。**
+
+**重开这个决议的判据**：出现第一批需要保护的存档（对外发布，或验收流程开始依赖存档而非临时置位）时，回本 ADR 重新权衡——届时 `era.get('version')` 是现成的入口，erauma 的阶梯是现成的样式。
+
+## 补充：`saveFiles` 的落点与取值（#135 定）
+
+自动存档占 99 号槽这条决定带来一个配置要求，原文没写：
+
+- 引擎 `listSaveFiles` 的扫描是**闭区间**——`const e = saveFiles || 10; for (let t = 0; t <= e; ++t)`——所以 `saveFiles = 99` 恰好覆盖槽位 0–99：原作的 0–98 手动槽加 99 号自动存档槽。`dev-guides/03-config.md:76` 限定该值为 **10–99 的整数**，100 超规范。
+- **落 `yml/_fixed.json`，不落 `_config.json`。** 后者会被本机已有的 `ere.config.json` 整份短路，而那个文件不进 git、且经 `.worktreeinclude` 复制进每个新 worktree。落 `_config.json` 的话，装过旧版本的机器上 `saveFiles` 仍是 10，**槽位 11–98 的备注不被 `loadGlobal` 维护、界面上显示为空栏位，而没有任何测试会红**——受损的不只是自动存档，是原作大半存档槽。按「缺了会静默降级 → `_fixed.json`」的判据归位。
+- 代价（有意接受）：引擎配置 UI 里的「存档数量」开关点了不会生效。
+- 参考项目无先例可循：erauma、ere-kanon、ere-example 三家两处都不设 `saveFiles`，因为它们的槽位数在引擎默认范围内。erauma 另有一条运行时读生效配置的路（`era.get('gameconfig')?.system.saveFiles`），但**`gameconfig` 这个键在引擎 4.8.0 上不存在**（手册、SDK、`app.asar` 三处皆无），我们用不了。

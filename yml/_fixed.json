@@ -1,5 +1,6 @@
 {
   "system": {
-    "extendedCharaTables": ["portcflag"]
+    "extendedCharaTables": ["portcflag"],
+    "saveFiles": 99
   }
 }

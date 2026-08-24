@@ -206,27 +206,62 @@ test('版本库默认配置开着资源：yml/_config.json 的 system.resource �
 });
 
 engine_test(
-  'yml/_config.json 是引擎默认配置整份 + 有意偏离仅 resource:true 与 saveFiles:99',
+  'yml/_config.json 是引擎默认配置整份 + 唯一偏离 resource:true',
   () => {
     // 缺键调研（app.asar 实证）：_config.json 存在时 defaultConfig 整个是它，
     // getEmptyConfigForm() 只在文件缺失/解析失败时兜底、不做逐键合并；
     // syncConfig 又把 config 合并 _fixed.json 后整份写回 ere.config.json——
     // _config.json 没写的键从此不存在（window.audio 缺失 = 静默没声音一类坑）。
-    // 故必须写全：与 getEmptyConfigForm() 逐键一致，偏离只有两处且各有票据：
-    // resource:true（#69，资源默认开）、saveFiles:99（#135）。
-    //
-    // 为什么恰好是 99 而不是 100：引擎 listSaveFiles 的扫描是**闭区间**
-    // （app.asar：`const e = saveFiles || 10; for (let t = 0; t <= e; ++t)`），
-    // 所以 99 覆盖槽位 0–99——正好是原作的 0–98 手动槽加 99 号自动存档槽
-    // （ADR-0006）。且 dev-guides/03-config.md:76 限定该值为 10–99 的整数，
-    // 100 超出规范。**不要为了「凑整」把它改回 100。**
+    // 故必须写全：与 getEmptyConfigForm() 逐键一致，唯一偏离 resource。
     const defaults = engine.engine_utils.getEmptyConfigForm();
     const config = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
     );
     assert.deepEqual(config, {
       ...defaults,
-      system: { ...defaults.system, resource: true, saveFiles: 99 },
+      system: { ...defaults.system, resource: true },
     });
+  },
+);
+
+// —— 存档槽位数（#135）：结构性要求，落 _fixed.json 而非 _config.json ——
+//
+// 原作有 99 个手动存档槽（0–98，SYSTEM_DATA.ERB 的 CASE 0 TO 98），另加 99 号
+// 自动存档槽（ADR-0006）。引擎 listSaveFiles 的扫描是**闭区间**：
+//   const e = saveFiles || 10; for (let t = 0; t <= e; ++t) { … }
+// 所以 saveFiles = 99 恰好覆盖槽位 0–99。取 99 而非 100 还有一条硬约束：
+// dev-guides/03-config.md:76 限定该值为 10–99 的整数。
+//
+// **为什么必须在 _fixed.json**：_config.json 会被本机已有的 ere.config.json
+// 整份短路（app.asar：`if (this.config || (this.config = …defaultConfig))`），
+// 而 ere.config.json 不进 git、且经 .worktreeinclude 复制进每个新 worktree。
+// 落 _config.json 的话，任何装过旧版本的机器上 saveFiles 仍是 10，槽位 11–98
+// 的备注不被 loadGlobal 维护——**原作大半存档槽在界面上显示为空栏位**，
+// 且没有任何测试会红。这是「缺了会静默降级」，按 AGENTS.md 的判据归 _fixed.json。
+//
+// 代价（有意接受）：引擎配置 UI 若有「存档数量」开关，玩家点了不会生效。
+engine_test(
+  'yml/_fixed.json 锁定 saveFiles = 99（原作 0–98 手动槽 + 99 自动槽）',
+  () => {
+    const fixed = JSON.parse(
+      fs.readFileSync(path.join(REPO_ROOT, 'yml', '_fixed.json'), 'utf8'),
+    );
+    assert.equal(
+      fixed?.system?.saveFiles,
+      99,
+      'saveFiles 必须在 _fixed.json：_config.json 会被已有的 ere.config.json 整份短路',
+    );
+    // 与引擎的取值范围对齐：10–99（dev-guides/03-config.md:76）
+    assert.ok(
+      Number.isInteger(fixed.system.saveFiles) &&
+        fixed.system.saveFiles >= 10 &&
+        fixed.system.saveFiles <= 99,
+      'saveFiles 必须是 10–99 的整数',
+    );
+    // 闭区间扫描：saveFiles 必须 >= 最大要用的槽位号（99 号自动存档槽）
+    assert.ok(
+      fixed.system.saveFiles >= 99,
+      '99 号自动存档槽要被 loadGlobal 扫描到，saveFiles 不得小于 99',
+    );
   },
 );
