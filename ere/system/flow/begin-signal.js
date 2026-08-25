@@ -36,6 +36,17 @@ const STATE = Object.freeze({
   FIRST: 'FIRST',
   /** 商店主循环（原作 6 处 BEGIN SHOP） */
   SHOP: 'SHOP',
+  /**
+   * 读档后的商店主循环。ere 侧本地扩展（#137），非原作 BEGIN 目标：原作由
+   * LOADDATA 的引擎转场承载（SYSTEM_DATA.ERB:71 的注释「実行後、@EVENTLOAD
+   * へ遷移」——LOADDATA 与 BEGIN 并列，技能 system-flow.md:26）。与 SHOP 的
+   * 唯一差别：**读档后不执行 @EVENTSHOP**（同文件 51-53 行「时机：读档后、
+   * BEGIN SHOP 执行后」「读档后不执行 @EVENTSHOP」）——原作引擎内建地区分
+   * 「LOADDATA 隐式进入」与「显式 BEGIN SHOP」，ere 侧没有引擎替我们记来源，
+   * 以独立状态显式承载。处理器见 main-loop.js（同 run_shop，跳过
+   * EVENTSHOP 链）。
+   */
+  SHOP_AFTER_LOAD: 'SHOP_AFTER_LOAD',
   /** 调教（原作 1 处：SHOP ver1.0.2.ERB:99） */
   TRAIN: 'TRAIN',
   /** 调教后结算（原作 6 处） */

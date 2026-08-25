@@ -449,4 +449,29 @@ export default [
     tests: ['event-first'],
     must_mention: 'flag:26',
   },
+  {
+    desc: 'M254 钩子的 EX_TALENT:MASTER:200 写入被拆（DATA_FIX 三行之一，魔王高贵标识）',
+    file: 'ere/event/event-load.js',
+    find: `      if (cid === 0) {
+        // EX_TALENT:200 = 魔王（高贵标识）
+        era.set('ex_talent:0:200', 1);
+      }`,
+    replace: `      // 变异：魔王标识写入被拆`,
+    tests: ['event-load', 'page-save-load'],
+    must_mention:
+      'EX_TALENT:MASTER:200 = 1（魔王高贵标识，DATA_FIX 170205 段）',
+  },
+  {
+    desc: 'M255 钩子的 MAXBASE 下限钳制被拆（DATA_FIX 三行之二与三——读入存档的低上限不被兜回）',
+    file: 'ere/event/event-load.js',
+    find: `      if ((era.get(\`maxbase:\${cid}:0\`) || 0) < 600) {
+        era.set(\`maxbase:\${cid}:0\`, 600);
+      }
+      if ((era.get(\`maxbase:\${cid}:1\`) || 0) < 100) {
+        era.set(\`maxbase:\${cid}:1\`, 100);
+      }`,
+    replace: `      // 变异：MAXBASE 钳制被拆`,
+    tests: ['event-load', 'page-save-load'],
+    must_mention: '体力上限 < 600 → 600',
+  },
 ];

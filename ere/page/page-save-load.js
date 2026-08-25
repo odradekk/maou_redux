@@ -68,17 +68,32 @@
  *     后由 DRAW_PAGE 重画，等价（反馈行经 waitAnyKey 读键，可见性不损失）。
  *   - PRINTBUTTON（现名, CSTR:MASTER:99）（点击把现名预填进输入框）→ 纯
  *     文本 `（现名）` 提示：ere 引擎无「按钮点击预填输入框」能力。
- *   - @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778，读档后引擎回调）整体不镜像：
- *     LOADGLOBAL 是 ere 引擎行为（global 表在内存、读档不动它）；名字
- *     初始化两调用是既有存根（event-first 已登记）；LASTLOAD_NO == 999 →
- *     MAOUNET 与 1000–1020 → INPORT_B 是跨作品数据交换，本票不移植（登记
- *     docs/stub-registry.md，归通信票）；DATA_FIX 由 ADR-0006 判不移植。
+ *   - @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778，读档后引擎回调）**自 #137
+ *     起由 ere/event/event-load.js 承载**（本文件 require 装配，emit 点在
+ *     load_game 的成功分支）：LOADGLOBAL 是 ere 引擎行为（global 表在内存、
+ *     读档不动它）；名字初始化两调用是既有存根（#105 决议）；LASTLOAD_NO
+ *     == 999 → MAOUNET 与 1000–1020 → INPORT_B 是跨作品数据交换（ere 读档
+ *     界面只放行 0-99，不可达，登记 docs/stub-registry.md，归通信票）；
+ *     DATA_FIX 历史补丁体由 ADR-0006 判不移植，三处对新档有语义的行经
+ *     #137 逐条判定后归钩子等价落地（判定依据见 event-load.js 文件头）。
+ *   - LOADDATA 的**转场语义**（#137，SYSTEM_DATA.ERB:71 注释「実行後、
+ *     @EVENTLOADへ遷移」）：读档成功后不回调用方（标题的 RESTART、据点的
+ *     循环重绘都不再走），而是 emit EVENTLOAD 链后转场进 SHOP——且**不执行
+ *     @EVENTSHOP**（技能 system-flow.md:51-53），以 STATE.SHOP_AFTER_LOAD
+ *     承载（begin-signal.js 的本地扩展）。引擎拒读（loadData false）时不
+ *     转场：留在读档界面重绘（#136 已有行为，1:1 对应原作 CHKDATA 拦下）。
  */
 
 const era = require('#/era-electron');
+// @EVENTLOAD 钩子的注册模块（#137）：emit 点在本文件 load_game 的成功
+// 分支，require 即装配（on 注册在模块顶层）——与 page-shop.js 的
+// @EVENTSHOP 同构（注册与 emit 同侧装配，测试不依赖 main-loop 的清单）
+require('#/event/event-load');
+const { emit } = require('#/system/event/registry');
+const { begin, STATE } = require('#/system/flow/begin-signal');
+const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { chara } = require('#/facade/chara');
 
 /**
  * 分页步长：原作 SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -311,11 +326,15 @@ async function set_story_name(anchor) {
 /**
  * @SYSTEM_LOADGAME（SYSTEM_DATA.ERB:5-83）：读档界面。
  *
- * 列表 + 99 号自动存档槽单列段 + 翻页行；读档成功后 @EVENTLOAD 的等价
- * 处置见文件头（LASTLOAD_NO 自写入 + EX_FLAG:2801 钳制是 @SYSTEM_LOADGAME
- * 自己的 :74-75，1:1 保留在此）。
+ * 列表 + 99 号自动存档槽单列段 + 翻页行；读档成功后：@SYSTEM_LOADGAME
+ * 自己的 :74-75（EX_FLAG:2801 钳制 + LASTLOAD_NO 自写入）→ @EVENTLOAD
+ * 链（ere/event/event-load.js）→ 转场进 SHOP（LOADDATA 的引擎语义，见
+ * 文件头）。**读档成功后本函数不再返回**（begin 只 throw）——原作
+ * `RETURN L_POS`（:76）与标题的 RESTART 都在「没读成」的世界里，ere 侧
+ * 返回值只在 [100] 返回分支产生。
  *
- * @returns {Promise<number>} 离开时的页起点（原作 RETURN L_POS）
+ * @returns {Promise<number>} [100] 返回时的页起点（原作 RETURN L_POS）
+ * @throws {BeginSignal} 读档成功：转场进 STATE.SHOP_AFTER_LOAD
  */
 async function load_game() {
   let pos = 0; // #DIM L_POS（Emuera 局部零值；:12 的 < 0 归一不触发）
@@ -370,9 +389,10 @@ async function load_game() {
       has_valid_save(era.get(`global:saves:${result}`))
     ) {
       // :67-77 范围内且存在 → 读档
-      // :73 LOADDATA（@EVENTLOAD 的映射见文件头；引擎拒读时返回 false，
-      // 原作无此分支——CHKDATA 通过后 LOADDATA 失败由 Emuera 弹错，ere 侧
-      // false 落到无效输入重绘，不吞不炸）
+      // :73 LOADDATA：ere 等价 era.loadData（Boolean）。引擎拒读时返回
+      // false（如版本闸门），**不转场**——落到循环尾清行重绘，留在读档
+      // 界面（原作无此分支：CHKDATA 通过后 LOADDATA 失败由 Emuera 弹错
+      // 终止；ere 侧 false 不吞不炸，1:1 对应 CHKDATA 拦下的等输入路径）
       if (await era.loadData(result)) {
         // :74-75 SIF EX_FLAG:2801 < 10 → 10（读入后的值上钳制；EX_FLAG:2801
         // = 一周目主线截止，包装层名 first_run_deadline）
@@ -382,7 +402,17 @@ async function load_game() {
         // LASTLOAD_NO：原作由引擎在 LOADDATA 时设置；ere 自写入（写进
         // 读入后的数据，随下一次存档带走——与原作同序）
         era_flag.last_load_no = result;
-        return pos;
+        // @EVENTLOAD 链（原作 LOADDATA 后迁移的保留名回调，ere/event/
+        // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——原作
+        // :769-771 的 BEGIN SHOP（显式、会跑 @EVENTSHOP）与隐式进入 SHOP
+        // 的区分在 ere 侧即此缺省值与覆盖值之差（begin-signal.js）
+        const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;
+        // LOADDATA 的转场语义（SYSTEM_DATA.ERB:71 注释「実行後、
+        // @EVENTLOADへ遷移」）：不回调用方（标题的 RESTART、据点的循环
+        // 重绘都不再走），进 SHOP 且不执行 @EVENTSHOP。begin 只 throw
+        // 不返回——原作 RETURN L_POS（:76）在迁移发生后不回调用方，ere
+        // 侧以「成功分支无返回」1:1 对应
+        begin(next);
       }
     }
     // :80-82 无效输入（CLEARLINE 1 重输）与翻页失败：统一清行重画（先例
@@ -487,6 +517,34 @@ async function save_game() {
 }
 
 /**
+ * 自动存档（#137 / ADR-0006）：每个游戏日开始时写进 99 号槽。
+ *
+ * **对原作的有意偏离**：原作全库只有一处玩家存档写点（SYSTEM_DATA.ERB:185，
+ * 槽位 0-98），99 号槽在读档界面被渲染却没有任何写点，原作也未定义 Emuera
+ * 的内建自动存档钩子 @SYSTEM_AUTOSAVE——占用它不改变任何原作可见行为，
+ * 正当性见 ADR-0006「后果」节，追溯登记 #14。
+ *
+ * 行为边界（有意取舍，写明）：
+ *   - 备注 = 「自动」前缀 + 手动档同款 `%GETTIMES()% %SAVEDATA_TEXT%`
+ *     （工单 #137 / 决议 #104 第三节）；
+ *   - **不 push LASTSAVE_NO**：自动行为不占用玩家的「上次存档」高亮
+ *     （99 号槽有独立的渲染位与 LASTLOAD_NO == 99 高亮判据）；
+ *   - **无输出、无确认**：日推进的输出流不被打断（原作无此功能，无
+ *     先例可循；覆盖旧自动档无条件进行——手动档的覆盖确认是玩家动作
+ *     的护栏，自动档没有玩家动作）；
+ *   - build_save_info 的指针改写副作用（SIF FLAG:1/FLAG:2 >= 0 →
+ *     TARGET/ASSI）随调用发生——与原作 @SAVEINFO 的调用语义一致，且
+ *     本函数的调用点（run_event_newday 入口）之后回合结算会重设同一对
+ *     指针（turnend-settle.js:753-758），无实害。
+ *
+ * @returns {Promise<boolean>} era.saveData 的返回值
+ */
+async function auto_save() {
+  const remark = `自动 ${get_times()} ${build_save_info()}`;
+  return era.saveData(AUTOSAVE_SLOT, remark);
+}
+
+/**
  * @SYSTEM_DELDATA（SYSTEM_DATA.ERB:220-292）：删除存档界面。
  *
  * @param {number} [pos] 页起点（原作参数默认 -1 → 归 0）
@@ -556,6 +614,7 @@ async function del_data(pos = -1) {
 module.exports = {
   PAGE_LEN,
   AUTOSAVE_SLOT,
+  auto_save,
   build_save_info,
   del_data,
   get_times,

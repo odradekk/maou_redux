@@ -455,7 +455,7 @@ test('LOADGAME：99 号槽无存档时不渲染槽行（原作 :32-34 只剩一�
   );
 });
 
-test('LOADGAME：读档成功 → LASTLOAD_NO 自写入 + EX_FLAG:2801 钳到 10', async () => {
+test('LOADGAME：读档成功 → LASTLOAD_NO 自写入 + EX_FLAG:2801 钳到 10 + 转场', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 3, '三号档');
   fixture.store.set('exflag:2801', 5); // 一周目主线 < 10
@@ -463,7 +463,19 @@ test('LOADGAME：读档成功 → LASTLOAD_NO 自写入 + EX_FLAG:2801 钳到 10
   fixture.era.loadData = async () => true; // 引擎读档成功（SDK 可变对象）
   fixture.set_inputs(3);
 
-  assert.equal(await load_game(), 0);
+  // #137 起 LOADDATA 的转场语义落地：读档成功不再返回（原断言
+  // `assert.equal(await load_game(), 0)` 把「回调用方」的错误行为固化成了
+  // 断言——实机上玩家读完档无路可走，#136 实机验收撞出、#137 评论移交。
+  // 改锚「去了哪个状态」：SHOP_AFTER_LOAD = 进 SHOP 且不执行 @EVENTSHOP
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
+  await assert.rejects(
+    () => load_game(),
+    (e) => e instanceof BeginSignal && e.state === STATE.SHOP_AFTER_LOAD,
+    '读档成功必须以转场信号离开（LOADDATA 与 BEGIN 并列，system-flow.md:26）',
+  );
+  // LASTLOAD_NO 与钳制在转场抛出前完成（:74-75 先于迁移）
   assert.equal(fixture.store.get('flag:10018'), 3, 'LASTLOAD_NO = 本次槽号');
   assert.equal(fixture.store.get('exflag:2801'), 10, 'EX_FLAG:2801 < 10 → 10');
   assert(
@@ -479,7 +491,7 @@ test('LOADGAME：EX_FLAG:2801 已 >= 10 时不钳制（原作 SIF 判据）', as
   const { load_game } = load_page(fixture);
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
-  await load_game();
+  await assert.rejects(() => load_game(), /BEGIN/);
   assert.equal(fixture.store.get('exflag:2801'), 15, '15 不动');
 });
 
@@ -522,11 +534,136 @@ test('反向钉：读档成功路径不出现 @SYSTEM_LOADEND 的「兼容性修
   const { load_game } = load_page(fixture);
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
-  await load_game();
+  await assert.rejects(() => load_game(), /BEGIN/);
   assert(
     !history_texts(fixture).some((t) => t.includes('兼容性修正中')),
     '@SYSTEM_LOADEND 是死代码（零调用者 + 非保留名，#14 登记），不得被顺手接上',
   );
+});
+
+// —— #137：LOADDATA 的转场语义与读档钩子 ——
+
+test('读档成功后钩子被调用：EVENTLOAD 链真的跑了（不是只证明钩子存在）', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 3, '三号档');
+  // 探针挂在链上：load_game 的成功分支必须 emit（page-save-load require
+  // event-load 完成装配，链非空）
+  const { on } = fixture.load_module('system/event/registry');
+  let probe_calls = 0;
+  on('EVENTLOAD', () => {
+    probe_calls += 1;
+  });
+  const { load_game } = load_page(fixture);
+  fixture.era.loadData = async () => true;
+  fixture.set_inputs(3);
+
+  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(probe_calls, 1, '读档成功必须 emit EVENTLOAD 链一次');
+  // 钩子的 DATA_FIX 等价物也跑了（魔王标识写入——角色 0 虽不在场，钩子
+  // 对 getAddedCharacters 循环，空列表零写入；探针即「被调用」的判据）
+});
+
+test('钩子副作用：DATA_FIX 三行对新档有语义的行在读档后被重放', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 3, '三号档');
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.seed_chara(17, { id: 17, name: '琼', callname: '琼' });
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(17);
+  // 读入的存档带着被剧情压低的上限（EVENT_ADDICT.ERB:160-172 的写点产物）
+  fixture.store.set('maxbase:0:0', 550);
+  fixture.store.set('maxbase:0:1', 90);
+  fixture.store.set('maxbase:17:0', 1200); // 高于下限：不动
+  fixture.store.set('maxbase:17:1', 100); // 恰好等于下限：不动
+  const { load_game } = load_page(fixture);
+  fixture.era.loadData = async () => true;
+  fixture.set_inputs(3);
+
+  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(
+    fixture.store.get('ex_talent:0:200'),
+    1,
+    'EX_TALENT:MASTER:200 = 1（魔王高贵标识，DATA_FIX 170205 段）',
+  );
+  assert.equal(fixture.store.get('ex_talent:17:200'), undefined, '只写 MASTER');
+  assert.equal(fixture.store.get('maxbase:0:0'), 600, 'MAXBASE:0 < 600 → 600');
+  assert.equal(fixture.store.get('maxbase:0:1'), 100, 'MAXBASE:1 < 100 → 100');
+  assert.equal(
+    fixture.store.get('maxbase:17:0'),
+    1200,
+    '已高于下限的角色不动（SIF 判据）',
+  );
+  assert.equal(fixture.store.get('maxbase:17:1'), 100, '恰等于下限不动');
+});
+
+test('钩子存根：CHARA_NAME_INIT / EX_TALENTNAME_INIT 打占位行（#105 决议，不落地）', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 3, '三号档');
+  const { load_game } = load_page(fixture);
+  fixture.era.loadData = async () => true;
+  fixture.set_inputs(3);
+
+  await assert.rejects(() => load_game(), /BEGIN/);
+  const texts = history_texts(fixture);
+  assert(
+    texts.some((t) => t.includes('CHARA_NAME_INIT')),
+    '角色名初始化的存根占位行必须在读档路径出现',
+  );
+  assert(
+    texts.some((t) => t.includes('EX_TALENTNAME_INIT')),
+    'EX素质名初始化的存根占位行必须在读档路径出现',
+  );
+});
+
+test('夹具镜像版本闸门：低版本存档 loadData 拒读，不转场、数据不被替换', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:10000', 7); // DAY:0 = 7 → 存档快照里是 7
+  const { save_game, load_game } = load_page(fixture);
+  fixture.set_inputs(3);
+  await save_game(); // 以 current_version = 1 存进 3 号槽
+
+  fixture.store.set('flag:10000', 99); // 存档后继续游戏（DAY 变 99）
+  fixture.save_gate.allow_version = 2; // 抬最低支持版本 → 3 号档成旧档
+  fixture.set_inputs(3, 100);
+  // 拒读：留在读档界面（3 落到无效输入重绘），100 返回。outcome 形态收
+  // 结果：拒读路径正常返回 0；变异拆掉夹具闸门时 loadData 意外成功、
+  // load_game 抛 BeginSignal，outcome 是 Error ≠ 0——本断言先红（M258 锚）
+  const outcome = await load_game().then(
+    (v) => v,
+    (e) => e,
+  );
+  assert.equal(outcome, 0, '拒读后仍可 [100] 返回（不转场）');
+  assert.equal(
+    fixture.store.get('flag:10000'),
+    99,
+    '拒读时数据不被替换（引擎 r.version < allowVersion → false）',
+  );
+  assert.equal(
+    fixture.store.get('flag:10018'),
+    undefined,
+    '拒读不得写 LASTLOAD_NO',
+  );
+});
+
+test('夹具镜像整体替换：loadData 成功后变量表换成存档快照（this.era.data = r）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:10000', 7);
+  fixture.store.set('global:99', 1); // global 不随档走
+  const { save_game } = load_page(fixture);
+  fixture.set_inputs(3);
+  await save_game();
+
+  fixture.store.set('flag:10000', 99); // 存档后漂移
+  const { load_game } = load_page(fixture);
+  fixture.set_inputs(3);
+
+  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(
+    fixture.store.get('flag:10000'),
+    7,
+    '读档成功后读的是存档时的值（数据被整体替换）',
+  );
+  assert.equal(fixture.store.get('global:99'), 1, 'global 表不随档走');
 });
 
 // —— #136 返工：指针槽的登记与显式初始化 ——

@@ -75,6 +75,10 @@ const STATE_HANDLERS = {
   // 输入 → @USERSHOP 分发循环（SHOP ver1.0.2.ERB；ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已落地）。
   [STATE.SHOP]: run_shop,
+  // 原作 LOADDATA 后的隐式进入（#137）：同 SHOP 主循环，但**不执行
+  // @EVENTSHOP**（技能 system-flow.md:51-53「读档后不执行 @EVENTSHOP」；
+  // 状态语义见 begin-signal.js 的 SHOP_AFTER_LOAD 注释）
+  [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),
   // 原作 BEGIN TRAIN → 引擎初始化调教数据 → @EVENTTRAIN 链 → 回合循环
   //（引擎行为，ere 侧手写——system/train/train-loop.js，issue #44）。
   [STATE.TRAIN]: run_train,
@@ -128,4 +132,7 @@ async function run_main_loop() {
   }
 }
 
+// enter_state 一并导出（#137）：状态映射（如 SHOP_AFTER_LOAD 跳过
+// @EVENTSHOP）的行为测试直接驱动它，不必整跑 run_main_loop
 module.exports = run_main_loop;
+module.exports.enter_state = enter_state;

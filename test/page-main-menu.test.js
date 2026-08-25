@@ -359,6 +359,32 @@ test('[109] 侵略：无条件渲染按钮（原作 :283 无守卫），正文�
   );
 });
 
+test('[200]/[300]：保存/读取按钮无条件渲染（原作 :303/:306 无守卫），正文无手写前缀', () => {
+  // 原作 :303 PRINTLCD [200] 保存 / :306 PRINTLCD [300] 读取，前均无 IF
+  // 守卫，无条件渲染（对照 [100] 的 IF A > 0）。分发真身自 #136 起在
+  // usershop 的 200/300 分支，但渲染侧此前从未画过按钮——引擎的 input()
+  // 只送达已打印按钮的快捷键，据点两处存读档入口在实机上不存在
+  // （#136 勘误评论移交 #137）。这一条是本次缺口的正主：#136 的用例直接
+  // 驱动 save_game()/load_game()，绕过主菜单 input()，「入口存在」从未
+  // 被覆盖（夹具的按钮白名单 #130 随 printButton 自动放行 200/300——
+  // 想写「经主菜单进存档界面」的用例，输入合法性即由此保证）
+  const fresh = draw_menu_with(() => {});
+  const save = button_of(fresh.fixture, 200);
+  assert.ok(
+    save,
+    '保存必须是按钮——没有 [200]，据点存档入口在实机上不存在（#137）',
+  );
+  assert.equal(save.rendered, '[200] 保存');
+  assert.equal(save.text, '保存', '正文不得手写 [200] 前缀（PR #30）');
+  const load = button_of(fresh.fixture, 300);
+  assert.ok(
+    load,
+    '读取必须是按钮——没有 [300]，据点读档入口在实机上不存在（#137）',
+  );
+  assert.equal(load.rendered, '[300] 读取');
+  assert.equal(load.text, '读取', '正文不得手写 [300] 前缀（PR #30）');
+});
+
 test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1日）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
