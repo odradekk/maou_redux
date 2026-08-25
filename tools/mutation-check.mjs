@@ -98,7 +98,7 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // 更新，条数不变）。
 // #138 追加 +1：M246 版本退回 0（loadData truthy 短路拒档——版本下限
 // 文件级用例直接红，无引擎也拦，不进跳过数）。现为 265。
-const LEDGER_COUNT_BASELINE = 275;
+const LEDGER_COUNT_BASELINE = 278;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
@@ -110,7 +110,7 @@ const LEDGER_COUNT_BASELINE = 275;
  * 是 extalent-table 的 engine_test 组；同票 M240/M241/M244 靶在文件级
  * 用例（登记契约/版本轴）上，无引擎也红，不进跳过数）。
  */
-const ENGINE_SKIP_BASELINE = 13;
+const ENGINE_SKIP_BASELINE = 16;
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';

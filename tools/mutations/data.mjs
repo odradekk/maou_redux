@@ -84,6 +84,31 @@ export default [
     must_mention: '与读源 CSV 不一致',
   },
   {
+    desc: 'M270 Chara150 素質 320 大数改坏（1000000001 改 1000000002——消费验证的 talent 断言红，#139 编号外批）',
+    file: 'yml/Chara150.yml',
+    find: '"320": 1000000001',
+    replace: '"320": 1000000002',
+    tests: ['chara-outer'],
+    must_mention: '大数预设必须原样落 talent',
+  },
+  {
+    desc: 'M271 Chara201 素質 319 种族改坏（2 改 9——逐字段比对与消费验证双红；319 是奴隶商店召唤池 CSVTALENT 的商品过滤键，#139）',
+    file: 'yml/Chara201.yml',
+    find: '"319": 2',
+    replace: '"319": 9',
+    tests: ['chara-outer'],
+    must_mention: '商品过滤键）必须落 talent 为 2',
+  },
+  {
+    desc: 'M272 Chara777 相性段删（"777|223" 静态表消失——相性搬运用例与逐字段比对双红，#139；丽塔/卡拉配对相性）',
+    file: 'yml/Chara777.yml',
+    find: `"相性":
+  "223": 1000`,
+    replace: '# 变异：相性段删除',
+    tests: ['chara-outer'],
+    must_mention: '配对相性必须落静态表',
+  },
+  {
     desc: 'M222 saveFiles 退回引擎默认（_fixed.json 里改成 10——原作 11-98 号槽的备注不再被 loadGlobal 维护，界面上显示为空栏位）',
     file: 'yml/_fixed.json',
     find: `"saveFiles": 99`,
