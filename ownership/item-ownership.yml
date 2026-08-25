@@ -35,4 +35,4 @@
   writes: 3
   by_domain:
     stronghold: 2
-    event: 1
+    system: 1

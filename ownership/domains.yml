@@ -22,6 +22,13 @@
 # 碎区间正是这么来的）。这是测量结果、不是终局裁定：EQUIP（3 票 2:1）、
 # USE_EX_ITEM（30 票 16:14）票数薄，装备与服装的归属裁定回阶段 2 子地图
 # （#106/#133），推翻 = 改本文件重跑，工具零改动。
+#
+# **该裁定已完成（#134，ADR-0007）**：EQUIP 的 2:1 导出结果**有意不采纳**——
+# 它无域状态，判据不适用（详见 system 块注释）。USE_EX_ITEM 的 16:14 维持
+# 采纳：它有 30 处真实持久写入，票薄但判据成立，与 EQUIP 是两回事。
+# 导出规则本身未变，重跑 `--export 其他` 仍会算出 EQUIP → event；
+# 采纳与否是裁定，不是工具行为。
+
 
 kojo:
   label: 口上
@@ -65,15 +72,26 @@ event:
   label: 事件
   # 處刑相關：EXECUTION_MINI / NAEDOKO 从日循环（EVENT_NEXTDAY / SYSTEM）调用，属日程内容事件
   dirs: EVENT, 處刑相關
-  # EQUIP 实活写仅 3 次（event 2 / stronghold 1）——原作的装备状态几乎全走
-  # 局部数组与 TEQUIP（后者 調教相關 私有，见 #106）；3 票薄据，待阶段 2 裁定
-  files: 其他/EQUIP.ERB
+  # 其他/EQUIP.ERB 曾按导出结果声明在此（3 票 2:1），#134 裁定撤销——它无域状态、
+  # 不参与区段归属，回落 system 兜底。依据见 ADR-0007 与下方 system 块的注释。
 
 system:
   label: 系统
   # 其他 = 杂项兜底。#70 裁定：EXCOM 的 EX_CFLAG/EX_FLAG/EX_TALENT 是 #DIM
   # 自定义变量、不是已落地引擎表（yml/ 无其名字表），全表实测看不见它们——
   # 「其他」并入 system 的映射在全表数据下无矛盾，维持。
+  #
+  # 其他/EQUIP.ERB 随目录归此，是**裁定结果不是默认兜底**（#134，ADR-0007）：
+  # 该文件 1114 行里 300+ 处赋值全落局部数组 W:n，全库真 EQUIP:（排除 TEQUIP:）
+  # 仅 6 处，自身持久写入只有 6 处（cflag 2 / item 4）——ADR-0002 的「写入区段
+  # 所有权」判据对它无解，不是信号薄而是判据不适用。它是被六域以上共用的无状态
+  # 计算/渲染模块（EQUIP_CHECK 被 SYSTEM/キャラ関数/侵略/迷宮 调用，
+  # PRINT_EQUIPTYPE_WEAPON 再加 SHOP/其他，无主导者）。ere 侧落点 system/equip/，
+  # 移植票排阶段 3（消费者侵略与迷宮都在那里）。
+  # **扩展点**：二次开发若建 yml/Equip.yml 并引入 EQUIP: 写入，equip 即获得真实
+  # 区段（TABLES 由 yml/ 名字表决定，见 tools/ownership-scan.js:86），那时按本文件
+  # 顶部说明新建 equip 域即可，工具零改动。届时应把本段与 ADR-0007 一并更新。
+
   # #133 起 其他/ 的六个大文件按文件级声明改归各域（见上），其余小文件
   # （DATA_FIX/NTR/MAOUNET/TEST/EXCOM 等，合计约 1200 行）仍随目录归
   # system——杂项兜底的原语义对它们仍然成立。

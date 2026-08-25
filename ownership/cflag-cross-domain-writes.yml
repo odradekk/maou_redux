@@ -3,7 +3,7 @@
 #
 # 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
 #       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
-# 共 675 条。
+# 共 677 条。
 - index: 0
   writer: event
   owner: stronghold
@@ -3165,6 +3165,11 @@
   file: "target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB"
   line: 168
 - index: 551
+  writer: system
+  owner: event
+  file: "target/ERB/其他/EQUIP.ERB"
+  line: 246
+- index: 551
   writer: patch
   owner: event
   file: "target/ERB/魔改新增/處刑改寫.ERB"
@@ -3179,6 +3184,11 @@
   owner: event
   file: "target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB"
   line: 171
+- index: 552
+  writer: system
+  owner: event
+  file: "target/ERB/其他/EQUIP.ERB"
+  line: 261
 - index: 552
   writer: patch
   owner: event

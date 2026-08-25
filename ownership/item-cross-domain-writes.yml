@@ -40,7 +40,7 @@
   file: "target/ERB/售卻相關/SELL_FIGHTMONEY.ERB"
   line: 8
 - index: 300
-  writer: event
+  writer: system
   owner: stronghold
   file: "target/ERB/其他/EQUIP.ERB"
   line: 167

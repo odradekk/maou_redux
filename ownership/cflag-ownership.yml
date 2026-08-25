@@ -6,7 +6,7 @@
 #       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
 # 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
 # 实活写入 11439（动态/表级 19 未归类；注释掉的写入 307 另计）；
-# 实活下标 247 个 → 区间 102 条；跨域写入 675 条（见 cflag-cross-domain-writes.yml）。
+# 实活下标 247 个 → 区间 102 条；跨域写入 677 条（见 cflag-cross-domain-writes.yml）。
 "0":
   owner: stronghold
   writes: 4
@@ -517,9 +517,10 @@
   owner: event
   writes: 20
   by_domain:
-    event: 14
+    event: 12
     patch: 4
     chara: 2
+    system: 2
 "570":
   owner: system
   writes: 7

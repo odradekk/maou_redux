@@ -906,13 +906,15 @@ test('锚点复现：CFLAG 全量数字与编码（#66→#70 统计核对、#133
   // 写入/读取/下标数不受归属粒度影响（#133 只改写入记在谁名下）；
   // 区间 104 → 102、跨域写 740 → 675：其他/ 六文件改归各域后服装段
   // （40-48）的多块碎片按 plurality 重新合并（见文件级锚点用例）。
+  // 675 → 677：#134 撤销 EQUIP.ERB 的文件级声明（回落 system，ADR-0007）后，
+  // 它那 2 处 cflag 写从域内写变成 system→event 跨域写。
   assert.equal(scan.writes_total, 11439);
   assert.equal(scan.commented_writes, 307);
   assert.equal(scan.dynamic_writes, 19);
   assert.equal(scan.reads_total, 15529);
   assert.equal(scan.per_index.size, 247);
   assert.equal(ranges.length, 102);
-  assert.equal(cross.length, 675);
+  assert.equal(cross.length, 677);
   assert.deepEqual(real_generate().scan.shift_jis_files, [
     'target/ERB/調教相關/COMF90_ニプルファック.ERB',
   ]);
@@ -1004,16 +1006,27 @@ test('锚点复现：口上是最大的跨域读者（跨域读放行决议的�
 
 test('文件级锚点：其他/ 六子系统的归属＝导出规则的 plurality 结果', () => {
   const { domains } = real_generate();
+  // EQUIP.ERB 不在此表：导出规则**仍会**算出 event（3 票 2:1，可复算
+  // `node tools/ownership-scan.js --export 其他`），但 #134 裁定有意不采纳——
+  // 它无域状态（1114 行里 300+ 处赋值落局部数组 W:n，自身持久写入仅 6 处），
+  // ADR-0002 的写入区段判据对它不适用，故回落 system 兜底。**采纳与否是裁定、
+  // 不是工具行为**，所以这里断言的是「已采纳的文件级声明」而非「导出结果」。
+  // 依据见 ADR-0007 与 ownership/domains.yml 的 system 块注释。
   assert.deepEqual(
     Object.fromEntries([...domains.file_to_domain.entries()].sort()),
     {
-      '其他/EQUIP.ERB': 'event',
       '其他/FUNC_CLOTH.ERB': 'train',
       '其他/LOVERS.ERB': 'dungeon',
       '其他/MAGIC.ERB': 'dungeon',
       '其他/NINSIN.ERB': 'chara',
       '其他/USE_EX_ITEM.ERB': 'dungeon',
     },
+  );
+  // 反向钉住裁定：EQUIP.ERB 必须不带文件级声明（有人把它加回来即红）
+  assert.equal(
+    domains.file_to_domain.has('其他/EQUIP.ERB'),
+    false,
+    'EQUIP.ERB 无域状态，不得有文件级归属声明（#134 裁定 / ADR-0007）',
   );
 });
 
@@ -1041,27 +1054,31 @@ test('文件级锚点：cflag 服装段不再被兜底域切碎（#106 的证据
   ]);
 });
 
-test('文件级锚点：全表跨域写 2652 → 2475（其他/ 拆出后域内写变多）', () => {
+test('文件级锚点：全表跨域写 2652 → 2477（其他/ 拆出后域内写变多）', () => {
   const result = real_generate();
   const total = TABLE_KEYS.reduce(
     (sum, key) => sum + result.tables.get(key).cross.length,
     0,
   );
   // #70 目录级 2652；#133 文件级：其他/ 六文件的写入记到真实耦合域名下，
-  // 原来按 system 兜底记的跨域写大量转为域内写（−177）
-  assert.equal(total, 2475);
+  // 原来按 system 兜底记的跨域写大量转为域内写（−177）。#134 撤销 EQUIP.ERB
+  // 的声明后回补 +2（它那 2 处 cflag 写重新成为跨域写），净 −175。
+  assert.equal(total, 2477);
 });
 
-test('文件级导出可复算：--export 其他 的 plurality 与清单声明一致', () => {
+test('文件级导出可复算：--export 其他 的 plurality 结果（与是否采纳无关）', () => {
   const rows = export_file_domains({ target_dir: '其他' });
   const by_file = new Map(rows.map((row) => [row.file, row.winner]));
-  // 六个声明的文件导出结果与 ownership/domains.yml 的 files: 完全一致；
+  // 五个声明的文件导出结果与 ownership/domains.yml 的 files: 完全一致；
   // 有票但未声明的文件（DATA_FIX/NTR 等）同样给出结果，留待后续按需声明
   assert.equal(by_file.get('其他/FUNC_CLOTH.ERB'), 'train');
   assert.equal(by_file.get('其他/NINSIN.ERB'), 'chara');
   assert.equal(by_file.get('其他/LOVERS.ERB'), 'dungeon');
   assert.equal(by_file.get('其他/MAGIC.ERB'), 'dungeon');
   assert.equal(by_file.get('其他/USE_EX_ITEM.ERB'), 'dungeon');
+  // EQUIP.ERB 是「导出有结果、裁定不采纳」的唯一一例（#134 / ADR-0007）：
+  // 本断言钉住**导出规则未因该裁定而改动**——它仍算出 event（3 票 2:1）。
+  // 与上一条「清单里不得有 EQUIP 声明」的断言形成对照：工具照算，人不采纳。
   assert.equal(by_file.get('其他/EQUIP.ERB'), 'event');
   // MAOUNET 的两次写入都无基线属主 → 无票，维持兜底
   assert.equal(

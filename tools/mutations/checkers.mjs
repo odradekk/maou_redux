@@ -214,9 +214,9 @@ export default [
     must_mention: '一个文件被两个域认领',
   },
   {
-    desc: 'M239 域清单删一条文件级声明（EQUIP 回落 system 兜底——同步守护必须红：改清单不重跑产物即失配）',
+    desc: 'M239 域清单删一条文件级声明（FUNC_CLOTH 回落 system 兜底——同步守护必须红：改清单不重跑产物即失配）',
     file: 'ownership/domains.yml',
-    find: '  files: 其他/EQUIP.ERB\n',
+    find: '  files: 其他/FUNC_CLOTH.ERB\n',
     replace: '',
     tests: ['ownership-scan'],
     must_mention: '与重跑逐字节一致',
