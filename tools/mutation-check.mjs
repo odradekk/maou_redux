@@ -98,7 +98,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // 更新，条数不变）。
 // #138 追加 +1：M246 版本退回 0（loadData truthy 短路拒档——版本下限
 // 文件级用例直接红，无引擎也拦，不进跳过数）。现为 265。
-const LEDGER_COUNT_BASELINE = 278;
+// #148 起为 281：+3（M273 夹具 quit 的 throw 拆回普通返回——G5 镜像本体；
+// M274 ere 侧 quit 调用被拆、哨兵复辟；M275 INVASION_CHECK 吞掉 QUIT 异常。
+// 另同步 M206/M220 的 find 到 #148 改造后的代码形状，条数不变）。
+const LEDGER_COUNT_BASELINE = 281;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

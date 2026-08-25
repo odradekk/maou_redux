@@ -322,10 +322,10 @@ export default [
     desc: 'M206 ENDING_1 的 QUIT 分支也置 FLAG:82（原作不置，:34-38）',
     file: 'ere/event/event-ending.js',
     find: `      era.quit();
-      return 1;`,
-    replace: `      era.quit();
-      era_flag.human_realm_fallen = 1; // 变异：QUIT 前置位
-      return 1;`,
+    }`,
+    replace: `      era_flag.human_realm_fallen = 1; // 变异：QUIT 前置位
+      era.quit();
+    }`,
     tests: ['event-ending'],
     must_mention: '退出路径不置陷落标记',
   },
@@ -483,5 +483,27 @@ export default [
     replace: `  // 变异：自动存档被拆`,
     tests: ['event-nextday'],
     must_mention: '自动存档必须写 99 号槽（原作留白，ADR-0006）',
+  },
+  // —— #148 quit 的 throw 型控制流（夹具镜像 + ere 侧哨兵机制拆除）——
+  {
+    desc: 'M274 ENDING_1 的 quit 调用被拆、哨兵复辟（#148 前旧形态：return 1 短路）',
+    file: 'ere/event/event-ending.js',
+    find: '      era.quit();',
+    replace:
+      '      return 1; // 变异：quit 调用被拆，哨兵复辟（#148 前旧形态）',
+    tests: ['event-ending'],
+    must_mention: 'QUIT 的异常炸穿 invasion_check',
+  },
+  {
+    desc: 'M275 INVASION_CHECK 吞掉 QUIT 异常（调用链上不得 try/catch 拦截炸穿）',
+    file: 'ere/page/page-invasion.js',
+    find: '    await ending_1();',
+    replace: `    try {
+      await ending_1(); // 变异：吞掉 QUIT 异常，威望 +10 照走
+    } catch (e) {}`,
+    tests: ['event-ending'],
+    // 变异下吞掉异常 → run_check 正常 resolve → 用例第一条断言（炸穿在
+    // 场）先红，威望断言不再执行——must_mention 取先红断言的消息片段
+    must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
 ];

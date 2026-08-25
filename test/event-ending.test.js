@@ -154,20 +154,38 @@ test('【验收 2】FLAG:82 == 1 后再次满足 FLAG:81 >= 10000 不重复触�
   assert.equal(fixture.store.get('flag:82'), 1);
 });
 
-test('选 [1] 退出：era.quit 被调、FLAG:82 不置 1（QUIT 分支先于置位，:35）', async () => {
+test('选 [1] 退出：era.quit() 抛 Error("quit") 炸穿 invasion_check（真机 throw 型控制流，#148）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
-  await run_check(fixture, 1);
+
+  // 引擎 quit() 是 throw 型（app.asar 模块 183 逐字：先发关窗 IPC，再抛
+  // Error("quit")；装载循环按 message 静默放行）——QUIT 之后游戏侧一切
+  // 语句不可达。夹具逐字镜像（era-fixture.js），异常从 ending_1 炸穿
+  // invasion_check 传到测试。旧断言「ended !== 1 哨兵短路」断的是夹具
+  // 降格期的巧合：真机上哨兵不存在，威望 +10 的不发生靠异常炸穿（见
+  // event-ending.js 的 JSDoc 与 invasion_check 的行内注释）
+  let caught;
+  await run_check(fixture, 1).catch((e) => {
+    caught = e;
+  });
+  assert(
+    caught instanceof Error && caught.message === 'quit',
+    'QUIT 的异常炸穿 invasion_check（引擎 throw 型，非哨兵短路）',
+  );
 
   assert(
     fixture.calls.some(({ api, args }) => api === 'quit' && args.length === 0),
-    'QUIT → era.quit()',
+    'QUIT → era.quit()（先记录关窗 IPC 再抛，引擎逗号表达式的同构）',
   );
-  assert.equal(fixture.store.get('flag:82'), 0, '退出路径不置陷落标记');
+  assert.equal(
+    fixture.store.get('flag:82'),
+    0,
+    '退出路径不置陷落标记（异常炸穿，:38 不可达）',
+  );
   assert.equal(
     fixture.store.get('exflag:99'),
     70,
-    'ENDING_1 未正常返回，声望 +10 不发生（QUIT 后续代码不执行）',
+    '威望 +10 不发生（异常炸穿，:1003 不可达——不是哨兵短路）',
   );
 });
 

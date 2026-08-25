@@ -799,6 +799,20 @@ function create_era_fixture() {
       : undefined;
   };
 
+  // —— quit：throw 型控制流的逐字镜像（issue #148，普查报告 G5）——
+  //
+  // 引擎（app.asar 模块 183，逐字）：quit(){throw this.era.quit(),new Error("quit")}
+  // ——逗号表达式：先发关窗 IPC，然后抛 Error("quit")。装载循环显式识别并
+  // 静默放行（'quit' !== e.message && this.error(...)），即游戏脚本的整个
+  // Promise 链被炸穿、QUIT 之后的所有语句（含各层调用方的后续）不可达。
+  // 夹具同构：先记录调用（关窗 IPC 的观测面），再抛同 message 的 Error——
+  // era.quit() 的调用点从此在测试里拿到与真机一致的控制流；拆掉 throw 就
+  // 是把它降格回「恒值成功」的无害桩（普查报告第四节纪律 2 所禁的形态）。
+  era.quit = () => {
+    calls.push({ api: 'quit', args: [] });
+    throw new Error('quit');
+  };
+
   // —— logger：必须整对象替换。
   // 只置 version.engine 不够：SDK 自带的 logger 在 engine 非空时会自调用
   // （era-electron.js:291-295），形成无限递归
@@ -848,6 +862,7 @@ function create_era_fixture() {
     'nextTurnInTrain',
     'endTrain',
     'removeCharacter',
+    'quit',
   ]);
   Object.keys(era).forEach((key) => {
     if (

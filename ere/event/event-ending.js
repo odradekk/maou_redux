@@ -50,10 +50,14 @@ const STUBBED_CALLS = [
  * 横幅 → 菲娅（角色 35）入队与初始化 → 询问是否继续 → 置 FLAG:82。
  * 选 [1] 才 QUIT，选 [0] 继续游戏（阶段 3 的接续前提）。
  *
- * @returns {Promise<number>} 0 = 正常返回（原作 RETURN 0）；1 = QUIT 路径。
- *   原作 QUIT 终止执行、:40 的 RETURN 0 不可达，ere 的 quit() 后进程
- *   关闭时机未定义，故以返回值显式承载「QUIT 后续不执行」（调用方据此
- *   跳过 INVASION_CHECK 里的威望 +10，见 invasion_check）。
+ * QUIT 是 throw 型控制流（#148，普查报告 G5）：引擎 quit() 发关窗 IPC 后
+ * 抛 Error("quit")，异常炸穿整个调用链（装载循环按 message 静默放行），
+ * 故 QUIT 路径上 :38 的 FLAG:82 = 1 与 :39 的 PRINTW 均不可达——quit()
+ * 之后不写任何语句（原作 QUIT 后函数不再返回，1:1）。夹具同款 throw
+ * （era-fixture.js），测试可证。
+ *
+ * @returns {Promise<number>} 0 = 继续游戏（原作 RETURN 0）。QUIT 路径不
+ *   返回（异常炸穿，见上）——原作 :40 的 RETURN 0 在该路径同样不可达。
  */
 async function ending_1() {
   // :8-18 横幅（DRAWLINE + 制表框 8 行 + 空行 2，含全角空格的手工对齐，
@@ -89,11 +93,11 @@ async function ending_1() {
   for (;;) {
     const result = await era.input();
     if (result === 1) {
-      // :34 QUIT：结束游戏并关闭引擎。原作 QUIT 后函数不再返回，:38 的
-      // FLAG:82 = 1 与 :39 的 PRINTW 均不执行——ere 侧 quit() 后直接带
-      // 哨兵值返回（见 JSDoc），不置 FLAG:82
+      // :34 QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，
+      // #148）——本函数与全部调用方的后续语句不可达，:38 的 FLAG:82 = 1
+      // 与 :39 的 PRINTW 均不执行。quit() 之后不写任何语句（原作 QUIT 后
+      // 函数不再返回，1:1）；夹具同款 throw（era-fixture.js），测试可证
       era.quit();
-      return 1;
     }
     if (result !== 0) {
       continue; // :35-36 GOTO INPUT_LOOP（重问不重画）

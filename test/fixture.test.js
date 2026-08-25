@@ -57,6 +57,20 @@ test('无专门实现的 API 走兜底记录，不抛错', () => {
   ]);
 });
 
+test('quit 镜像引擎 throw 型（#148）：先记录关窗 IPC 再抛 Error("quit")，调用方后续不可达', () => {
+  const fixture = create_era_fixture();
+
+  // 引擎（app.asar 模块 183 逐字）：quit(){throw this.era.quit(),new Error("quit")}
+  // ——夹具同构：calls 里的记录＝关窗 IPC 的观测面，throw＝炸穿调用链的
+  // 控制流本体（装载循环按 message === "quit" 静默放行）
+  assert.throws(
+    () => fixture.era.quit(),
+    (e) => e instanceof Error && e.message === 'quit',
+    'quit 必须 throw Error("quit")（引擎 throw 型控制流的镜像）',
+  );
+  assert.deepEqual(fixture.calls, [{ api: 'quit', args: [] }]);
+});
+
 test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预设才加（issue #35）', () => {
   const fixture = create_era_fixture();
 

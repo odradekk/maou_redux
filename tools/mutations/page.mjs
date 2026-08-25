@@ -442,12 +442,15 @@ export default [
     era_flag.human_realm_invasion >= 10000 &&
     era_flag.human_realm_fallen === 0
   ) {
-    const ended = await ending_1();
-    if (ended !== 1) {
-      // 原作 QUIT 后 :1003-1004 不可达；正常返回（含继续游戏）才结声望
-      era_exflag.prestige = era_exflag.prestige + 10; // :1003 EX_FLAG:99 += 10
-      era.print('声望+10'); // :1004 PRINTL
-    }
+    // QUIT 是 throw 型（#148，引擎 quit() 抛 Error("quit")）：选 [1] 退出
+    // 时异常在 ending_1 内部炸穿，下面两行不可达——原作 QUIT 后 :1003-1004
+    // 同样不可达，靠的也是异常炸穿而非哨兵短路（旧写法 ended !== 1 是夹具
+    // 降格期发明的机制，#148 拆除；真机上该判断唯一可达的出口只有「正常
+    // 返回 0」——见 event-ending.js 的 JSDoc）。调用链上任何一层都不得
+    // try/catch 吞掉这个异常，夹具同款 throw 由测试钉住
+    await ending_1();
+    era_exflag.prestige = era_exflag.prestige + 10; // :1003 EX_FLAG:99 += 10
+    era.print('声望+10'); // :1004 PRINTL
     return;
   }`,
     replace: `  // 变异：人间界判据整支删除

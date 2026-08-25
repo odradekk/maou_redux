@@ -238,4 +238,18 @@ export default [
     tests: ['page-save-load'],
     must_mention: '读档成功后读的是存档时的值（数据被整体替换）',
   },
+  {
+    desc: 'M273 夹具 quit 的 throw 拆回普通返回（降格回无害桩——#148/G5 的镜像缺口本体）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.quit = () => {
+    calls.push({ api: 'quit', args: [] });
+    throw new Error('quit');
+  };`,
+    replace: `  era.quit = () => {
+    calls.push({ api: 'quit', args: [] });
+    // 变异：throw 拆回普通返回（兜底桩形态）
+  };`,
+    tests: ['fixture', 'event-ending'],
+    must_mention: 'QUIT 的异常炸穿 invasion_check',
+  },
 ];
