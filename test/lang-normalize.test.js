@@ -46,7 +46,10 @@ const MEASURED_TRAD =
 const MEASURED_JP =
   '変挿実満覚経説戦脳両壊専昇圧値増廃陥抜豊渇悪帰拡縄汎処浄斉営掲団舎雑軽応姉栄緑毎晩歳様砕乗闘幇郷撃獣呑顔験絶証寛険汚呪効黒巣楽搾対帯亜揺録収発鈍壷囲産';
 // 词级条目的全库出现次数（2026-08 实测，方法：target/**/*.ERB 全文计数）
-const MEASURED_WORDS = { 奴隷: 426, 気力: 169, 回復: 85 };
+// ハウンド：ERB 全库 3 次（SUMMON_MONSTER.ERB:91 ヘルハウンド、:100 ゾンビハウンド+ヘルハウンド，
+// 注释里的子串）；作为整词的实据在 target/CSV/Chara/Chara210.csv:3（呼び名 ハウンドL），
+// count_word 只扫 ERB、CSV 不在口径内，#139 收录时登记。
+const MEASURED_WORDS = { 奴隷: 426, 気力: 169, 回復: 85, ハウンド: 3 };
 
 // —— 表不变量 ——
 
@@ -177,7 +180,7 @@ test('机械映射覆盖 target/ PRINT 行实测的全部字种（普查可复�
   );
 });
 
-test('词级译法的三个词条语料里真实存在（实测次数逐条登记）', () => {
+test('词级译法的各词条语料里真实存在（实测次数逐条登记）', () => {
   const tbl = load_table();
   const count_word = (word) => {
     let hits = 0;
