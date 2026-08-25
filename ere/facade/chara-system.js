@@ -28,6 +28,22 @@ class SystemFacade {
     era.set(`cflag:${this.cid}:570`, v);
   }
 
+  // —— cstr ——
+  /**
+   * 故事名（cstr:cid:99 ↔ CSTR:99）
+   * 源: target/ERB/SYSTEM/SYSTEM_DATA.ERB 行193-209 $SET_NAME 读写（32 字符上限）
+   * @returns {string}
+   */
+  get 故事名() {
+    return era.get(`cstr:${this.cid}:99`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 故事名(v) {
+    era.set(`cstr:${this.cid}:99`, v);
+  }
+
   // —— talent ——
   /**
    * 母乳体质（talent:cid:130 ↔ TALENT:130）

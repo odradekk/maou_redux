@@ -35,7 +35,10 @@
  *     转场信号、结束本函数，信号由主循环接住（system/flow/main-loop.js），
  *     @EVENTFIRST 的真身（event/event-first.js，issue #22）完成初始化后
  *     转入 SHOP。
- *   - 读档（CALL @SYSTEM_LOADGAME）未移植（归后续存档票），维持占位反馈。
+ *   - 读档（CALL @SYSTEM_LOADGAME）自 #136 起接通（真身见
+ *     page/page-save-load.js）：读档成功后原作无条件 RESTART 回标题
+ *     （TITLE ver1.0.8.ERB:110），1:1 照搬——ere 侧 load_game 返回后
+ *     continue 即 RESTART 的等价物，重绘的标题用读入的新数据。
  */
 
 const era = require('#/era-electron');
@@ -43,6 +46,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_global = require('#/era-utils/era-global');
+const { load_game } = require('#/page/page-save-load');
 
 // 原作 :58-73：GLOBAL:99 == 0 时展开的完整制作名单。末行「※特别鸣谢…※」在
 // 原作是不换行的 PRINTFORM，其后紧跟按钮 9；'' 即原作的空 PRINTFORML。
@@ -210,16 +214,14 @@ async function run_title_page() {
     }
 
     if (result === 0) {
-      // 原作 :105 STOPBGM：离开标题（读档路径）同样停曲；读档占位分支照搬
+      // 原作 :105 STOPBGM：离开标题（读档路径）同样停曲
       era.stopMusic();
-      // 原作 :102-107 读档：分割线后 CALL @SYSTEM_LOADGAME 未移植（归后续
-      // 存档票），只留占位反馈；原作调用返回后 RESTART 回标题。
+      // 原作 :102-107 读档：分割线后 CALL @SYSTEM_LOADGAME（真身见
+      // page/page-save-load.js，#136），返回后 RESTART 回标题——读档成功
+      // 与否都一样（原作 :110 无条件 RESTART，1:1 照搬）
       era.drawLine();
       era.setAlign('left'); // 原作 :106 ALIGNMENT LEFT
-      era.print(
-        '（读档界面尚未移植，此处为占位反馈——原作 @SYSTEM_LOADGAME。）',
-      );
-      await era.waitAnyKey();
+      await load_game();
       continue;
     }
 

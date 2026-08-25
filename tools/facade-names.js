@@ -449,6 +449,17 @@ const mark = {
   ),
 };
 
+const cstr = {
+  // 故事名：原作仅 SYSTEM_DATA.ERB 的存档界面读写（$SET_NAME 与 @SAVEINFO），
+  // 属主 system（ownership/cstr-ownership.yml "99"）。**不得**随本表同步进
+  // yml/CStr.yml——登记进引擎名字表的下标会被 addCharacter 的 initCharaTable
+  // 预置 0，行为随之改变（#136 简报事实 3）；门面命名是代码层动作，不碰 yml。
+  99: named(
+    '故事名',
+    erb('SYSTEM/SYSTEM_DATA.ERB', ':193-209 $SET_NAME 读写（32 字符上限）'),
+  ),
+};
+
 // —— DELTA：UP/DOWN 的 ere 等价物（移植自建，#90）——
 // 名字 = Palam.yml 同下标列名 +「增量」——审校者对着 @SOURCE_CHECK_UP_* 的
 // `UP:N += …` 与 palam 面板行就能确认。原作侧 UP/DOWN 是 Emuera 内建变量
@@ -508,7 +519,17 @@ const PORT_TABLE_OWNERS = {
   deltabase: 'train',
 };
 
-const NAMES = { cflag, flag, tflag, item, global, mark, delta, deltabase };
+const NAMES = {
+  cflag,
+  flag,
+  tflag,
+  item,
+  global,
+  mark,
+  cstr,
+  delta,
+  deltabase,
+};
 
 /** 合法访问器名：中文或英文 snake_case，可含数字下划线 */
 const NAME_RE = /^[A-Za-z\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*$/;

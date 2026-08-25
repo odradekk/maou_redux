@@ -286,20 +286,29 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   ]);
 });
 
-test('选项 0（旧的奴隶）：占位反馈，读键后回标题', async () => {
+test('选项 0（旧的奴隶）：进读档界面，[100] 返回后 RESTART 回标题', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 同上：预置播种标记，避开 #69 的默认值播种写入
   preset_audio_seeded(fixture);
-  fixture.set_inputs(0);
+  fixture.set_inputs(0, 100);
   const run_title_page = fixture.load_module('page/page-title');
 
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
 
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 0 },
-    { api: 'waitAnyKey' },
+    { api: 'input', value: 100 },
   ]);
+  // 进过真身读档界面（#136 接通 @SYSTEM_LOADGAME；返回后标题整屏重绘，
+  // 界面行只在行史里——原作 CALL 后无条件 RESTART，1:1 照搬）
+  assert(
+    fixture.lines_history.some(
+      (line) => line.text === '【读取存档】要载入以下哪个存档？',
+    ),
+    '标题的读档入口必须真的进入读档界面',
+  );
+  // 未读档：不写 LASTLOAD_NO，也不产生其他变量写入
   assert.deepEqual(fixture.var_writes, []);
   assert(fixture.text_lines().includes('伪Ver0.0.0立绘版'));
 });
@@ -356,7 +365,7 @@ test('标题音乐：开关关着（播种过、用户关掉）不播；资源�
   assert.deepEqual(fixture.var_writes, []);
 });
 
-test('离开标题停曲：新游戏与读档占位两分支都 STOPBGM（原作 :95/:105）', async () => {
+test('离开标题停曲：新游戏与读档两分支都 STOPBGM（原作 :95/:105）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   preset_audio_seeded(fixture); // 跳过播种（音乐开关随之为 0，不影响停曲断言）
