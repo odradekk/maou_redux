@@ -171,7 +171,7 @@ export default [
     must_mention: '未认领',
   },
   {
-    desc: 'M223 文件级优先级反转：目录级先命中，files: 声明永不生效（#133 文件级用例必须红）',
+    desc: 'M235 文件级优先级反转：目录级先命中，files: 声明永不生效（#133 文件级用例必须红）',
     file: 'tools/ownership-scan.js',
     find: `    const domain_key =
       domains.file_to_domain.get(rel_posix) ??
@@ -183,7 +183,7 @@ export default [
     must_mention: 'files: 覆盖目录级',
   },
   {
-    desc: 'M224 导出基线不再剔除目标目录（合租目录自己的票回流——循环论证复活，去偏用例必须红）',
+    desc: 'M236 导出基线不再剔除目标目录（合租目录自己的票回流——循环论证复活，去偏用例必须红）',
     file: 'tools/ownership-scan.js',
     find: '  baseline.dir_to_domain.set(target_dir, EXPORT_EXCLUDED);',
     replace: '  // 变异：基线不剔除目标目录（兜底票回流）',
@@ -191,7 +191,7 @@ export default [
     must_mention: '基线剔除目标目录',
   },
   {
-    desc: 'M225 文件级存在性守卫被删（过期失效的文件级声明不再报错——文件级守卫用例必须红）',
+    desc: 'M237 文件级存在性守卫被删（过期失效的文件级声明不再报错——文件级守卫用例必须红）',
     file: 'tools/ownership-scan.js',
     find: `  const missing_files = [...domains.file_to_domain.keys()].filter(
     (file) => !fs.existsSync(path.join(erb_root, ...file.split('/'))),
@@ -206,7 +206,7 @@ export default [
     must_mention: '文件级守卫：声明的文件不存在',
   },
   {
-    desc: 'M226 文件重复认领守卫跳过（同一文件两域声明不再报错——守卫用例必须红）',
+    desc: 'M238 文件重复认领守卫跳过（同一文件两域声明不再报错——守卫用例必须红）',
     file: 'tools/ownership-scan.js',
     find: '      if (seen_files.has(file)) {',
     replace: '      if (seen_files.has(file) && false) {',
@@ -214,7 +214,7 @@ export default [
     must_mention: '一个文件被两个域认领',
   },
   {
-    desc: 'M227 域清单删一条文件级声明（EQUIP 回落 system 兜底——同步守护必须红：改清单不重跑产物即失配）',
+    desc: 'M239 域清单删一条文件级声明（EQUIP 回落 system 兜底——同步守护必须红：改清单不重跑产物即失配）',
     file: 'ownership/domains.yml',
     find: '  files: 其他/EQUIP.ERB\n',
     replace: '',
