@@ -313,6 +313,38 @@ test('选项 0（旧的奴隶）：进读档界面，[100] 返回后 RESTART 回
   assert(fixture.text_lines().includes('伪Ver0.0.0立绘版'));
 });
 
+test('选项 0 读档成功：转场进 SHOP_AFTER_LOAD，不回标题（#137——#136 实机撞出的无路缺陷）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  preset_audio_seeded(fixture);
+  fixture.store.set('global:saves:3', '三号档');
+  fixture.era.loadData = async () => true;
+  fixture.set_inputs(0, 3);
+  const run_title_page = fixture.load_module('page/page-title');
+
+  // #136 实机验收：标题读档成功后回标题画面，玩家从此无路可走（标题只有
+  // 新档与再读一次）。根因：ere 侧把 era.loadData() 当普通函数，1:1 照搬了
+  // 控制流的字面形状、丢掉 LOADDATA 的转场语义（原作注释 SYSTEM_DATA.ERB:71
+  // 「実行後、@EVENTLOADへ遷移」写死了它不返回）。读档成功必须以信号离开
+  // 整条标题循环
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
+  await assert.rejects(
+    () => run_title_page(),
+    (e) => e instanceof BeginSignal && e.state === STATE.SHOP_AFTER_LOAD,
+    '标题读档成功必须转场进据点——不得 RESTART 回标题',
+  );
+  assert.deepEqual(
+    fixture.inputs_consumed,
+    [
+      { api: 'input', value: 0 },
+      { api: 'input', value: 3 },
+    ],
+    '选完槽号即转场，不再回标题吃第三轮输入',
+  );
+});
+
 // —— 标题音乐与标题图（issue #69：原作 :3-7 / :22-23 / :95 / :105）——
 
 test('标题音乐：全新 global.sav 播种后进标题即播 TFM-003A_17（循环）', async () => {

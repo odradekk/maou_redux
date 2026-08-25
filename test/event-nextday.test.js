@@ -220,7 +220,9 @@ test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 EN
     '只有魔王（循环全跳过）时，EVENT_NEXTDAY 的唯一写入是熏香清零',
   );
 
-  // EVENT_NEWDAY 的晨间事件全是存根；:241 起进入 @ENDCHECK（#116 真调用）：
+  // EVENT_NEWDAY 的晨间事件全是存根；入口自动存档（#137，见下一条用例）
+  // 经 @SAVEINFO 的 1:1 副作用改写 TARGET/ASSI 指针（FLAG:1/FLAG:2 缺省 0
+  // 恒 >= 0 → 双写 0）；:241 起进入 @ENDCHECK（#116 真调用）：
   // ENDRESET 十一角清场（剧情角色全不在场 → 十一笔零写，源码顺序）+
   // ENDCHECKMAIN 反叛判定（夹具零播种 → 威望 0 ≤ 0 → FLAG:2816 = 10）；
   // 其余四条线条件全不触发，ENDCHECKCHARA 无角色可定线，分派循环对空注册表静默
@@ -229,6 +231,8 @@ test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 EN
     fixture.var_writes,
     [
       { name: 'flag:61', value: 0 },
+      { name: 'flag:10005', value: 0 }, // TARGET = FLAG:1（自动存档的 SAVEINFO 副作用）
+      { name: 'flag:10006', value: 0 }, // ASSI = FLAG:2（同上）
       { name: 'exflag:2805', value: 0 }, // 玛奥
       { name: 'exflag:2813', value: 0 }, // 金红桃
       { name: 'exflag:2814', value: 0 }, // 银黑桃
@@ -242,7 +246,50 @@ test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 EN
       { name: 'exflag:2807', value: 0 }, // 菲娅
       { name: 'flag:2816', value: 10 }, // 反叛判定（威望 0）
     ],
-    'EVENT_NEWDAY 的写入 = 熏香清零 + ENDCHECK 链（ENDRESET 清场 + 反叛写）',
+    'EVENT_NEWDAY 的写入 = 自动存档的指针副作用 + ENDCHECK 链（ENDRESET 清场 + 反叛写）',
+  );
+});
+
+test('自动存档（#137/ADR-0006）：EVENT_NEWDAY 入口写 99 号槽，备注带「自动」前缀', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:10000', 6); // DAY:0 = 6 → 第 7 日
+  fixture.store.set('flag:10003', 0); // TIME = 0 → 午前
+  fixture.store.set('flag:10019', 5); // LASTSAVE_NO 已有值
+  const { run_event_newday } = fixture.load_module('event/event-nextday');
+
+  await run_event_newday();
+
+  // saveData 恰一次、目标 99 号槽（夹具的数据层真实现同时落备注）。args
+  // 断言在前：拆掉自动存档的变异下它先红（M252 的 must_mention 锚点）
+  const saves = fixture.calls.filter((c) => c.api === 'saveData');
+  assert.equal(
+    saves[0]?.args[0],
+    99,
+    '自动存档必须写 99 号槽（原作留白，ADR-0006）',
+  );
+  assert.equal(saves.length, 1, '入口恰好存一次');
+  assert.match(
+    saves[0].args[1],
+    /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第 7日午前/,
+    '备注 = 「自动」前缀 + %GETTIMES()% + @SAVEINFO 正文（#104 决议第三节）',
+  );
+  assert.equal(
+    fixture.store.get('global:saves:99'),
+    saves[0].args[1],
+    '备注落 global:saves:99（读档界面单列段即读它）',
+  );
+  // 有意取舍：不 push LASTSAVE_NO（自动行为不占用玩家的上次存档高亮）
+  assert.equal(
+    fixture.store.get('flag:10019'),
+    5,
+    '自动存档不得动 LASTSAVE_NO',
+  );
+  // 无输出：日推进的输出流不被打断（除 ENDCHECK 链的既有行外零新增文本）
+  assert(
+    !fixture.text_lines().some((t) => t.includes('已将游戏保存为')),
+    '自动存档无玩家可见反馈（手动档的反馈行不得出现）',
   );
 });
 

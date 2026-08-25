@@ -455,6 +455,24 @@ const FILES = [
     refs: [{ src: ENDING, ref: '1-3', any: [/^@EVENTTURNEND$/m, /^#LATER$/m] }],
   },
   {
+    // @EVENTLOAD 读档钩子（#137）：SYSTEM ver1.0.3.ERB 的逐行处置 +
+    // DATA_FIX 三行出处（判定依据见 event-load.js 文件头）；SYSTEM_DATA
+    // 的活钳制行（:74-75，@SYSTEM_LOADGAME 侧）是对照引用
+    js: 'ere/event/event-load.js',
+    refs: [
+      { src: SYSTEM, ref: '760-778', any: [/@EVENTLOAD/] },
+      { src: SYSTEM, ref: '761', any: [/^@EVENTLOAD$/m] },
+      { src: SYSTEM, ref: '764', any: [/角色名初始化/] },
+      { src: SYSTEM, ref: '766', any: [/EX素质名初始化/] },
+      { src: SYSTEM, ref: '768-772', any: [/IF LASTLOAD_NO == 999/] },
+      { src: SYSTEM, ref: '769-771', any: [/CALL MAOUNET/] },
+      { src: SYSTEM, ref: '773-774', any: [/CALL INPORT_B/] },
+      { src: SYSTEM, ref: '775-776', any: [/;SIF EX_FLAG:2801 < 10/] },
+      { src: SYSTEM, ref: '779', any: [/CALL DATA_FIX/] },
+      { src: SYSTEM_DATA, ref: '74-75', any: [/SIF EX_FLAG:2801 < 10/] },
+    ],
+  },
+  {
     // @EVENT_NEXTDAY / @EVENT_NEWDAY 窄路径（#115 日程推进）
     js: 'ere/event/event-nextday.js',
     refs: [
@@ -1421,6 +1439,10 @@ const FILES = [
       // [100] 的 226-231）
       { src: DRAW_MAINMENU, ref: '282-283', any: [/PRINTLCD \[109\] 侵略/] },
       { src: DRAW_MAINMENU, ref: '283', any: [/PRINTLCD \[109\] 侵略/] },
+      // [200]/[300] 存读档按钮（#137：原作无条件渲染，:303/:306 前无 IF
+      // 守卫；#136 勘误移交——渲染侧从未画过，据点两处入口实机不可达）
+      { src: DRAW_MAINMENU, ref: '303', any: [/PRINTLCD \[200\] 保存/] },
+      { src: DRAW_MAINMENU, ref: '306', any: [/PRINTLCD \[300\] 读取/] },
       {
         src: DRAW_MAINMENU,
         ref: '320',
@@ -1787,6 +1809,10 @@ const FILES = [
       { src: SYSTEM_DATA, ref: '67-77', any: [/SIF EX_FLAG:2801 < 10/] },
       { src: SYSTEM_DATA, ref: '73', any: [/LOADDATA L_IDX/] },
       { src: SYSTEM_DATA, ref: '74-75', any: [/SIF EX_FLAG:2801 < 10/] },
+      // #137：RETURN L_POS（:76）只在「没读成」的世界里走到（LOADDATA 后
+      // 迁移 @EVENTLOAD 不回调用方）+ @EVENTLOAD 的 MAOUNET 分支出处
+      { src: SYSTEM_DATA, ref: '76', any: [/RETURN L_POS/] },
+      { src: SYSTEM, ref: '769-771', any: [/CALL MAOUNET/] },
       { src: SYSTEM_DATA, ref: '80-82', any: [/GOTO INPUT_LOOP/] },
       { src: SYSTEM_DATA, ref: '101', any: [/CUSTOMDRAWLINE =/] },
       { src: SYSTEM_DATA, ref: '102-108', any: [/PRINT 【保存存档】/] },

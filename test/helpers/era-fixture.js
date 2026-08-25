@@ -553,6 +553,74 @@ function create_era_fixture() {
     return next;
   };
 
+  // —— 存档 API（#137）：saveData / loadData / rmData 的数据层语义 ——
+  //
+  // 此前是「不设防的桩」：走兜层只记录、返回 undefined——loadData 的成功
+  // 路径要靠用例就地替换，版本闸门与「数据被整体替换」从来没有被夹具
+  // 表达过（#136 实机验收在同一张票上撞出的三个缺陷有两个同此根因，
+  // #137 评论移交）。此处镜像引擎 loadData 的两道语义（app.asar 逐字）：
+  //   1. 版本闸门：`if (r.version && !(r.version < allowVersion))` ——
+  //      存档的 version 为 falsy（0/undefined）或低于最低支持版本即拒读
+  //      （返回 false，不替换数据）。#138 的版本轴起点 0.0.1 正是为躲开
+  //      `r.version` 的 truthy 短路；
+  //   2. 整体替换：`this.era.data = r` + fillData()——读档成功后变量表
+  //      整个换成存档时的快照。
+  // 快照口径：global:* 键与 gamebase（静态表）不随档走（global 存
+  // global.sav、gamebase 是静态数据），快照与灌回都跳过；其余平表全量。
+  // 备注（global:saves:n）由 saveData 落、rmData 删，与引擎一致（11-saves）。
+  //
+  // 旋钮 save_gate：{current_version, allow_version}，默认 1/1（非 0——
+  // 0 会撞 truthy 短路，与 #138 的版本轴决定一致）。用例造「旧版本存档」
+  // 的姿势：先降 current_version 再 saveData，或直接造 save_files（不推荐）。
+  const save_files = new Map(); // slot -> {version, snapshot: Map 副本}
+  const save_gate = { current_version: 1, allow_version: 1 };
+  const snapshot_store = () =>
+    new Map(
+      [...store.entries()].filter(
+        ([key]) => !key.startsWith('global:') && key !== 'gamebase',
+      ),
+    );
+  const restore_store = (snapshot) => {
+    // 只清「随档走」的键：global:*/gamebase 保持现值（引擎不重置它们）
+    for (const key of [...store.keys()]) {
+      if (!key.startsWith('global:') && key !== 'gamebase') {
+        store.delete(key);
+      }
+    }
+    for (const [key, value] of snapshot) {
+      store.set(key, value);
+    }
+  };
+  era.saveData = async (slot, comment) => {
+    calls.push({ api: 'saveData', args: [slot, comment] });
+    save_files.set(slot, {
+      version: save_gate.current_version,
+      snapshot: snapshot_store(),
+    });
+    // 引擎：备注落 global:saves 并自动 saveGlobal（11-saves.md）
+    store.set(`global:saves:${slot}`, comment);
+    return true;
+  };
+  era.loadData = async (slot) => {
+    calls.push({ api: 'loadData', args: [slot] });
+    const record = save_files.get(slot);
+    if (record === undefined) {
+      return false; // 无此档（引擎读文件失败同 false）
+    }
+    // 引擎版本闸门逐字（含 truthy 短路）：拒读 = false，数据不动
+    if (record.version && !(record.version < save_gate.allow_version)) {
+      restore_store(record.snapshot);
+      return true;
+    }
+    return false;
+  };
+  era.rmData = async (slot) => {
+    calls.push({ api: 'rmData', args: [slot] });
+    save_files.delete(slot);
+    store.delete(`global:saves:${slot}`);
+    return true;
+  };
+
   // —— 输入 ——
   // 只取值、不落 inputs_consumed：era.input 校验通过后才记录——被白名单
   // 拒收的值引擎不会回传给游戏，记进去会把「玩家试过」误当「游戏收到」
@@ -766,6 +834,9 @@ function create_era_fixture() {
     'get',
     'set',
     'add',
+    'saveData',
+    'loadData',
+    'rmData',
     'input',
     'waitAnyKey',
     'addCharacter',
@@ -884,6 +955,11 @@ function create_era_fixture() {
      *  一致为 false）：置 true 后 input 回显不计 Row / clear 整体无操作，
      *  覆盖两条引擎短路的对应段，见「输入」段与 clear 处注释 */
     system_config,
+    /** 存档闸门旋钮（#137）：current_version = saveData 盖章的版本、
+     *  allow_version = 【最低支持版本】（loadData 的拒读下限）。默认 1/1
+     *  （非 0，避开 truthy 短路）。造「旧版本存档」：先降 current_version
+     *  再 saveData，或 saveData 后改 record（不推荐） */
+    save_gate,
     /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
     seed_chara(chara_id, preset) {
       chara_presets.set(chara_id, preset);

@@ -222,4 +222,20 @@ export default [
     tests: ['engine-contract'],
     must_mention: '引擎变了',
   },
+  {
+    desc: 'M258 夹具版本闸门被拆（低版本存档照放——#136 两缺陷同根因的镜像缺口，#137 评论移交）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (record.version && !(record.version < save_gate.allow_version)) {`,
+    replace: `    if (true) { // 变异：版本闸门被拆`,
+    tests: ['page-save-load'],
+    must_mention: '拒读后仍可 [100] 返回（不转场）',
+  },
+  {
+    desc: 'M259 夹具整体替换被拆（loadData 成功也不换数据——转场语义的镜像缺口，#137 评论移交）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      restore_store(record.snapshot);`,
+    replace: `      // 变异：数据不被替换`,
+    tests: ['page-save-load'],
+    must_mention: '读档成功后读的是存档时的值（数据被整体替换）',
+  },
 ];

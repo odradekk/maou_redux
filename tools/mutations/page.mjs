@@ -553,10 +553,8 @@ export default [
   {
     desc: 'M230 读档成功不写 LASTLOAD_NO（SYSTEM_DATA.ERB:73 的引擎行为等价物）',
     file: 'ere/page/page-save-load.js',
-    find: `        era_flag.last_load_no = result;
-        return pos;`,
-    replace: `        // 变异：漏写 LASTLOAD_NO
-        return pos;`,
+    find: `        era_flag.last_load_no = result;`,
+    replace: `        // 变异：漏写 LASTLOAD_NO`,
     tests: ['page-save-load'],
     must_mention: 'LASTLOAD_NO = 本次槽号',
   },
@@ -601,5 +599,52 @@ export default [
     replace: `# 变异：10018 条目被删`,
     tests: ['page-save-load'],
     must_mention: '未登记进 yml/Flag.yml',
+  },
+  {
+    desc: 'M250 读档转场被拆（begin(next) 删——读档成功后回调用方，#136 实机撞出的无路缺陷，#137 核心）',
+    file: 'ere/page/page-save-load.js',
+    find: `        begin(next);`,
+    replace: `        // 变异：转场被拆，读档成功后照常返回调用方`,
+    tests: ['page-save-load', 'page-title', 'page-shop'],
+    must_mention: '读档成功必须以转场信号离开',
+  },
+  {
+    desc: 'M251 主菜单 [200]/[300] 存读档按钮被拆（据点两处入口实机不可达，#136 勘误移交 #137 的缺口正主）',
+    file: 'ere/page/page-main-menu.js',
+    find: `  era.printButton('保存', 200);
+  era.printButton('读取', 300);`,
+    replace: `  // 变异：两枚按钮被拆`,
+    tests: ['page-main-menu'],
+    must_mention:
+      '保存必须是按钮——没有 [200]，据点存档入口在实机上不存在（#137）',
+  },
+  {
+    desc: 'M253 读档后仍执行 @EVENTSHOP（skip_eventshop 开关被拆——读回来的在售状态被初始化覆盖，system-flow.md:51-53）',
+    file: 'ere/page/page-shop.js',
+    find: `  if (!skip_eventshop) {
+    // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
+    // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
+    await emit('EVENTSHOP');
+  }`,
+    replace: `  // 变异：跳过开关被拆，一律执行 @EVENTSHOP
+  await emit('EVENTSHOP');`,
+    tests: ['page-shop'],
+    must_mention: '读档后的进入路径不得执行 @EVENTSHOP',
+  },
+  {
+    desc: 'M256 读档钩子链被拆（load_game 成功分支不再 emit EVENTLOAD——钩子存在但从不被调用）',
+    file: 'ere/page/page-save-load.js',
+    find: `        const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;`,
+    replace: `        const next = STATE.SHOP_AFTER_LOAD; // 变异：钩子链被拆`,
+    tests: ['page-save-load'],
+    must_mention: '读档成功必须 emit EVENTLOAD 链一次',
+  },
+  {
+    desc: 'M257 SHOP_AFTER_LOAD 的状态映射指回 run_shop 原样（主循环进入也跑 @EVENTSHOP）',
+    file: 'ere/system/flow/main-loop.js',
+    find: `  [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),`,
+    replace: `  [STATE.SHOP_AFTER_LOAD]: run_shop, // 变异：映射指回原样`,
+    tests: ['page-shop'],
+    must_mention: '经主循环进入 SHOP_AFTER_LOAD 同样不跑 @EVENTSHOP',
   },
 ];

@@ -345,6 +345,88 @@ test('200/300：真身存读档界面（#136 接通，占位移除）', async ()
   }
 });
 
+// —— #137：读档转场与 @EVENTSHOP 的跳过 ——
+
+test('300 读档成功：BeginSignal 从 usershop 上抛（run_shop 循环被打断，主循环接站）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('global:saves:3', '三号档');
+  const { usershop } = fixture.load_module('page/page-shop');
+  fixture.era.loadData = async () => true;
+  fixture.set_inputs(3);
+
+  // #136 实机验收撞出的缺陷正主：读档成功后 ere 侧曾把 era.loadData() 当
+  // 普通函数、返回后回主菜单循环——实机上据点 [300] 读档后回主菜单而非
+  // 重进据点。LOADDATA 是转场命令（SYSTEM_DATA.ERB:71），读档成功必须以
+  // 信号离开，run_shop 的循环（连同本用例的调用栈）被信号打断
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
+  await assert.rejects(
+    () => usershop(300),
+    (e) => e instanceof BeginSignal && e.state === STATE.SHOP_AFTER_LOAD,
+    '读档成功必须转场——不得静默回主菜单循环',
+  );
+});
+
+test('SHOP_AFTER_LOAD：读档后的进入路径不执行 @EVENTSHOP（system-flow.md:51-53）', async () => {
+  // 探针挂在链上（page-shop 自己的普通档与 kojo 的 #PRI 档之外再加一个
+  // 只计数的），分别驱动两条进入路径
+  const probe_and_run = async (options) => {
+    const fixture = create_era_fixture();
+    // 装配 kojo 的 #PRI 档（真实链形状：多档注册），计数探针挂 NORMAL 档
+    fixture.load_module('kojo/kojo-system');
+    const { on } = fixture.load_module('system/event/registry');
+    let probe = 0;
+    on('EVENTSHOP', () => {
+      probe += 1;
+    });
+    const { run_shop } = fixture.load_module('page/page-shop');
+    fixture.set_inputs(500); // 面板切换分支：一轮分发后回循环，下一次 input 耗尽
+    await assert.rejects(() => run_shop(options), /预置输入已耗尽/);
+    return { fixture, probe };
+  };
+
+  const normal = await probe_and_run();
+  assert.ok(normal.probe >= 1, '正常进入（BEGIN SHOP）必须执行 @EVENTSHOP');
+  assert(
+    normal.fixture.lines_history.some((line) => line.type === 'button'),
+    '正常路径主菜单照常渲染',
+  );
+
+  const after_load = await probe_and_run({ skip_eventshop: true });
+  assert.equal(
+    after_load.probe,
+    0,
+    '读档后的进入路径不得执行 @EVENTSHOP（读回来的世界以存档数据为准）',
+  );
+  assert(
+    after_load.fixture.lines_history.some((line) => line.type === 'button'),
+    '跳过的是 @EVENTSHOP，主菜单渲染不受影响',
+  );
+});
+
+test('状态机映射：enter_state(SHOP_AFTER_LOAD) 走 run_shop 的跳过变体', async () => {
+  const fixture = create_era_fixture();
+  // main-loop 装配全部事件模块（require 清单），enter_state 是主循环真正
+  // 调用的入口——直接钉「映射没有指回 run_shop 原样」
+  const main_loop = fixture.load_module('system/flow/main-loop');
+  const { on } = fixture.load_module('system/event/registry');
+  let probe = 0;
+  on('EVENTSHOP', () => {
+    probe += 1;
+  });
+  fixture.set_inputs(500);
+  await assert.rejects(
+    () => main_loop.enter_state('SHOP_AFTER_LOAD'),
+    /预置输入已耗尽/,
+  );
+  assert.equal(probe, 0, '经主循环进入 SHOP_AFTER_LOAD 同样不跑 @EVENTSHOP');
+  assert(
+    fixture.lines_history.some((line) => line.type === 'button'),
+    '主菜单画面照常出现（读档后玩家落进据点）',
+  );
+});
+
 test('110/111 的守卫照原作：不满足时与无效输入同路', async () => {
   // talent 表未落 yml/（TALENT:0:325 读值 undefined）、FLAG:83/84 未置——
   // 两守卫都不成立。原作此时渲染 `[---]` 占位、键入 110/111 走链尾；ere

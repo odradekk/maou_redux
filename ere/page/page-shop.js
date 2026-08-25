@@ -364,11 +364,21 @@ async function usershop(result) {
  * 转场离开，如原作 @USERSHOP :99 的 BEGIN TRAIN——#44 已接入，begin() 的
  * BeginSignal 从本循环自然上抛、由主循环接站；本模块不写 try/catch，
  * 不会吞信号，#6 硬约束）。
+ *
+ * @param {object} [options]
+ * @param {boolean} [options.skip_eventshop] 跳过 @EVENTSHOP 链——
+ *   STATE.SHOP_AFTER_LOAD（读档后的进入路径）专用：技能
+ *   system-flow.md:51-53「读档后不执行 @EVENTSHOP」。读档回来的世界
+ *   以存档数据为准，@EVENTSHOP 的两个动作（指针越界钳制 + 清 100 个
+ *   道具上架位）都是「新进商店轮」的初始化，重放会给读入的数据盖掉
+ *   存档时的在售状态。
  */
-async function run_shop() {
-  // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
-  // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
-  await emit('EVENTSHOP');
+async function run_shop({ skip_eventshop = false } = {}) {
+  if (!skip_eventshop) {
+    // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
+    // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
+    await emit('EVENTSHOP');
+  }
   // 主菜单画面组件：随 SHOP 状态的进入创建（create_main_menu 的注释说明
   // 为什么不做模块级单例——锚点是会话态，跨会话复用会拿旧锚点清本局内容）
   const main_menu = create_main_menu();
