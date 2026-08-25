@@ -113,6 +113,24 @@ test('版本轴：0.0.1——【版本】=【最低支持版本】= 版本代号
   assert.equal(field('游戏标识'), 931060, '【游戏标识】冻结，动它引擎拒绝启动');
 });
 
+test('版本下限：【版本】不得低于 1——0 会被 loadData 的 truthy 短路当空值拒档（#138 追加）', () => {
+  // 引擎约束（app.asar 的 loadData 逐字）：`if (r.version && !(r.version <
+  // this.staticData.gamebase.allowVersion))`——r.version 为 0 时 falsy，短路
+  // 在版本比较之前，任何存档都落「saveN.sav 版本过低（0）！」。#135 定的
+  // 0.0.0 轴因此整体不可用（存得进、读不回），本断言独立于编码一致性——
+  // 把【版本】与【版本代号】一致地改回 0.0.0 也能在这里红。闸门行为的
+  // 引擎级证明见下方 engine_test 用例。
+  const text = read_yml('GameBase.yml');
+  const m = /^"版本": (.+)$/m.exec(text);
+  assert.ok(m, 'GameBase.yml 缺少字段「版本」');
+  const version = JSON.parse(m[1]);
+  assert.ok(
+    version >= 1,
+    `【版本】= ${version}，低于引擎最小可用值 1——loadData 的 r.version && ` +
+      '短路会把所有存档拒掉（saveN.sav 版本过低（0）！）',
+  );
+});
+
 // —— 引擎级（驱动 app.asar 的真代码）——
 
 const repo_tables = load_repo_variable_tables();
@@ -376,6 +394,91 @@ engine_test(
       assert.equal(await api.loadData(1), true);
       assert.equal(api.get('ex_talent:31:101'), 1);
       assert.equal(api.get('base:31:0'), 1800, '预设随存档往返不丢');
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+  },
+);
+
+engine_test(
+  '版本闸门（#138 追加）：引擎真 loadData 拒 version 0 的档、放行当前 GameBase 版本',
+  async () => {
+    // #135 的 0.0.0 轴在实机上撞出的阻断性缺陷：loadData 的闸门是
+    // `if (r.version && !(r.version < allowVersion))`——truthy 判空，0 直接
+    // 落 error 分支，任何存档读不回。对照组 loadGlobal 用 undefined 判空
+    // （0 能过），两处写法不一致是这个坑一直没被发现的原因。本用例驱动
+    // 引擎自己的 loadData（不是我们的镜像）：喂 version 0 的载荷确认被拒，
+    // 再喂按当前 GameBase 版本盖戳的载荷确认通过——若有人把【版本】改回
+    // 0，盖出的档同样被拒，本用例当场红。
+    const text = read_yml('GameBase.yml');
+    const field = (name) =>
+      JSON.parse(new RegExp(`^"${name}": (.+)$`, 'm').exec(text)[1]);
+    const version = field('版本');
+    const allow_version = field('最低支持版本');
+    const game_code = field('游戏标识');
+
+    const loader = load_batch_presets();
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-vergate-'));
+    const errors = [];
+    try {
+      const fake_era = {
+        path: tmp,
+        config: { system: { saveCompressedData: false } },
+        global: { saves: {} },
+        staticData: {
+          ...loader.static_data,
+          gamebase: {
+            version,
+            gameCode: game_code,
+            allowVersion: allow_version,
+            defaultChara: 0,
+          },
+          chara: {
+            0: { id: '0', name: '你', callname: '你' },
+            ...loader.static_data.chara,
+          },
+        },
+        data: {},
+        fieldNames: repo_tables.field_names,
+        extendedTables: EXTENDED_TABLES,
+        connect: () => {},
+        error: (...args) => errors.push(args.join(' ')),
+        log: () => {},
+      };
+      const api = new engine.era_api(fake_era);
+
+      // 建档：saveData 给载荷盖 gamebase 的 version 与 code（app.asar 实测）
+      api.resetData();
+      assert.equal(await api.saveData(1, '版本闸门'), true);
+      const save_path = path.join(tmp, 'sav', 'save1.sav');
+      const payload = JSON.parse(fs.readFileSync(save_path, 'utf8'));
+      assert.equal(payload.version, version, '载荷必须盖着 GameBase 的版本');
+
+      // 喂 version 0（等价 #135 时代 0.0.0 轴存出的档）：拒收
+      fs.writeFileSync(save_path, JSON.stringify({ ...payload, version: 0 }));
+      fake_era.data = {};
+      errors.length = 0;
+      assert.equal(
+        await api.loadData(1),
+        false,
+        'version 0 必须被拒——r.version falsy 短路在 allowVersion 比较之前',
+      );
+      assert.match(
+        errors.join('\n'),
+        /版本过低（0）/,
+        '引擎的报错文案是闸门行为的直接证据',
+      );
+
+      // 喂当前版本：通过（payload 原样还原）
+      fs.writeFileSync(save_path, JSON.stringify(payload));
+      fake_era.data = {};
+      errors.length = 0;
+      assert.equal(
+        await api.loadData(1),
+        true,
+        `version ${version}（当前 GameBase）的档必须能读回`,
+      );
+      assert.deepEqual(errors, []);
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }

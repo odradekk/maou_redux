@@ -85,6 +85,28 @@ if (r.version && !(r.version < this.staticData.gamebase.allowVersion))
 
 **重开这个决议的判据**：出现第一批需要保护的存档（对外发布，或验收流程开始依赖存档而非临时置位）时，回本 ADR 重新权衡——届时 `era.get('version')` 是现成的入口，erauma 的阶梯是现成的样式。
 
+## 勘误二：版本轴的起点 0.0.0 不可用（#138 追加，2026-08-25）
+
+上面「版本号另起 `0.0.0` 轴」一节的取值表把起点定为 `0.0.0`（对应【版本】= 0）——**该值在引擎侧不可用**，实机验收撞出（#138 追加指令）：【版本】为 0 时引擎的任何存档都读不回来。
+
+引擎证据（app.asar 的 `loadData`，逐字）：
+
+```js
+if (r.version && !(r.version < this.staticData.gamebase.allowVersion))
+  return ((this.era.data = r), this.fillData(), !0);
+this.era.error(`save${e}.sav 版本过低（${r.version / 1e3}）！`);
+```
+
+`r.version &&` 是 **truthy 判空**：version 为 0 时 falsy，短路发生在 `allowVersion` 比较之前，直接落 error 分支，实机报「save0.sav 版本过低（0）！」。对照组：同一引擎的 `loadGlobal` 写法是 `void 0 === n.version || n.version < allowVersion ? error : ok`——**undefined 判空，0 能过**。两处闸门写法不一致，是这个坑一直没被发现的原因。
+
+**为什么测试没拦住**：引擎级用例的假 `gamebase` 都用了非 0 版本（93106 或 1），version 为 0 的载荷从未被任何用例驱动过；夹具路径则根本不经过引擎闸门。
+
+修正与守卫：
+
+- **轴起点改为 `0.0.1`，【版本】最小可用值是 1**（`yml/GameBase.yml` 头注同步）。编码规则、「最低支持版本恒等于版本」、「游戏标识冻结」维持不变；0.0.0 只是名义起点，从未有过可读存档（本仓库 `sav/global.sav` 的 `saves` 为空，无实际损失）。
+- `test/extalent-table.test.js` 两条守卫：文件级「版本下限」（独立于编码一致性——把【版本】与【版本代号】一致地改回 0.0.0 也红）与引擎级「版本闸门」（真 `loadData`：喂 version 0 的载荷确认拒收、喂按当前 GameBase 盖戳的载荷确认通过）。变异 M246 把【版本】改回 0 钉住。
+- 主体决议不受影响：不保证兼容、破坏性改动同抬废档的结论与 0 值问题正交；本票抬 0.0.1 的破坏性理由（extendedCharaTables 加表 + 预设内容变更）照旧成立，只是多了一条「离开不可用的 0 值区间」。
+
 ## 补充：`saveFiles` 的落点与取值（#135 定）
 
 自动存档占 99 号槽这条决定带来一个配置要求，原文没写：

@@ -96,7 +96,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // M242 FLAG:26 槽序颠倒、M243 Chara31 ABL 预设改坏、M244 版本轴退回、
 // M245 Chara34 MARK 预设段删；M114 的 find 串随 _fixed.json 登记集扩容同步
 // 更新，条数不变）。
-const LEDGER_COUNT_BASELINE = 264;
+// #138 追加 +1：M246 版本退回 0（loadData truthy 短路拒档——版本下限
+// 文件级用例直接红，无引擎也拦，不进跳过数）。现为 265。
+const LEDGER_COUNT_BASELINE = 265;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

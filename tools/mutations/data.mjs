@@ -65,6 +65,14 @@ export default [
     must_mention: '的编码不一致',
   },
   {
+    desc: 'M246 版本退回 0（loadData 的 truthy 短路把所有存档拒掉——版本下限与闸门用例双红，#138 追加）',
+    file: 'yml/GameBase.yml',
+    find: `"版本": 1`,
+    replace: `"版本": 0`,
+    tests: ['extalent-table'],
+    must_mention: '低于引擎最小可用值 1',
+  },
+  {
     desc: 'M245 Chara34 预设段删（MARK 1/3/4 整块删——逐字段比对与边界用例双红，#138）',
     file: 'yml/Chara34.yml',
     find: `"MARK":
