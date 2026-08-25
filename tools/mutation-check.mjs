@@ -92,7 +92,11 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // 去偏导出/存在性与重复认领守卫/清单-产物互锁；另收紧 M135 的 must_mention——
 // 同款文案在宿主多处出现，按 SOP 判据 3 换成用例名独有片段，条数不变）。
 // 本票原编号 M223-M227 与 #136 撞号，按 SOP §5.5「后合并那批整体顺延」改号。
-const LEDGER_COUNT_BASELINE = 258;
+// #138 起为 264：+6（M240 ex_talent 登记被删、M241 登记名丢下划线、
+// M242 FLAG:26 槽序颠倒、M243 Chara31 ABL 预设改坏、M244 版本轴退回、
+// M245 Chara34 MARK 预设段删；M114 的 find 串随 _fixed.json 登记集扩容同步
+// 更新，条数不变）。
+const LEDGER_COUNT_BASELINE = 264;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
@@ -100,8 +104,11 @@ const LEDGER_COUNT_BASELINE = 258;
  * M127（资源缺省配置比对）+ M167/M169/M171（夹具的引擎镜像语义）。
  * 新变异若只被引擎比对用例守护，此数会涨——那意味着该变异在 CI 上只被
  * 「跳过」覆盖，改这份常量时想清楚。
+ * #138 起 +2：M243/M245（Chara31 ABL / Chara34 MARK 预设比对——靶用例
+ * 是 extalent-table 的 engine_test 组；同票 M240/M241/M244 靶在文件级
+ * 用例（登记契约/版本轴）上，无引擎也红，不进跳过数）。
  */
-const ENGINE_SKIP_BASELINE = 11;
+const ENGINE_SKIP_BASELINE = 13;
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';

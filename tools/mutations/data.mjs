@@ -25,10 +25,55 @@ export default [
   {
     desc: 'M114 登记被删（_fixed.json 清空——契约锁必须红）',
     file: 'yml/_fixed.json',
-    find: `"extendedCharaTables": ["portcflag"]`,
-    replace: `"extendedCharaTables": []`,
+    find: `"extendedCharaTables": ["portcflag", "ex_talent"],`,
+    replace: `"extendedCharaTables": [],`,
     tests: ['portcflag-table'],
     must_mention: '登记清单为空',
+  },
+  {
+    desc: 'M240 ex_talent 登记被删（_fixed.json 只留 portcflag——降一维回到 #21 缺口，写入全部静默丢弃，#138）',
+    file: 'yml/_fixed.json',
+    find: `"extendedCharaTables": ["portcflag", "ex_talent"],`,
+    replace: `"extendedCharaTables": ["portcflag"],`,
+    tests: ['extalent-table'],
+    must_mention: '九处写入全部静默丢弃',
+  },
+  {
+    desc: 'M241 登记名丢下划线（ex_talent 改 extalent——文件名/寻址前缀/登记名三处一致性破，#138）',
+    file: 'yml/_fixed.json',
+    find: `"extendedCharaTables": ["portcflag", "ex_talent"],`,
+    replace: `"extendedCharaTables": ["portcflag", "extalent"],`,
+    tests: ['portcflag-table', 'extalent-table'],
+    must_mention: '没有对应名字表',
+  },
+  {
+    desc: 'M243 Chara31 预设改坏（ABL 21 琼 3 改 9——库内产物与源 CSV 逐字段比对红，#138）',
+    file: 'yml/Chara31.yml',
+    find: `"ABL":
+  "21": 3`,
+    replace: `"ABL":
+  "21": 9`,
+    tests: ['extalent-table'],
+    must_mention: '与读源 CSV 不一致',
+  },
+  {
+    desc: 'M244 版本轴退回 0.0.0（【版本】1 改 0 而【版本代号】仍是 0.0.1——编码一致性用例红，#138 抬版本的机器可查子集）',
+    file: 'yml/GameBase.yml',
+    find: `"版本": 1`,
+    replace: `"版本": 0`,
+    tests: ['extalent-table'],
+    must_mention: '的编码不一致',
+  },
+  {
+    desc: 'M245 Chara34 预设段删（MARK 1/3/4 整块删——逐字段比对与边界用例双红，#138）',
+    file: 'yml/Chara34.yml',
+    find: `"MARK":
+  "1": 3
+  "3": 3
+  "4": 3`,
+    replace: '# 变异：MARK 预设段删除',
+    tests: ['extalent-table'],
+    must_mention: '与读源 CSV 不一致',
   },
   {
     desc: 'M222 saveFiles 退回引擎默认（_fixed.json 里改成 10——原作 11-98 号槽的备注不再被 loadGlobal 维护，界面上显示为空栏位）',
