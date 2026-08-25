@@ -28,7 +28,9 @@ const { preset_gamebase } = require('./helpers/gamebase');
 const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
 
 // 原作 @EVENTFIRST 直线赋值的完整期望（SYSTEM ver1.0.3.ERB:11-62，按语句
-// 顺序；:11-12/:42/:53/:56 的不可落地项不在内，见 docs/stub-registry.md）。
+// 顺序；:42/:53/:56 的不可落地项不在内，见 docs/stub-registry.md）。
+// :11-12 FLAG:26/27 随 #138 落地为数组承载（超安全整数的种族年龄表，
+// 逐槽等价性由 test/extalent-table.test.js 用 BigInt 拆原值钉住）。
 // DAY:1/MONEY 走包装层（flag:10001/10004），TARGET 走指针槽（flag:10005）。
 // initial_slave = FLAG:501（#50：first-setting.js 问答的写入，:19 位置）；
 // 选村娘（1）时追加村娘分支（:95-187）的写入组——原作的序号 1 一律译为
@@ -41,6 +43,10 @@ function expected_init_writes(initial_slave) {
       name: `flag:${10018 + k}`,
       value: -1,
     })),
+    { name: 'flag:26', value: [11, 115, 431, 325, 15, 232] }, // :11 种族年龄
+    // 表槽 0-5（base-1000 打包 232015325431115011 的逐槽拆解，#105 决议四
+    // 的数组承载——超 JS 安全整数，整数照搬必失精度）
+    { name: 'flag:27', value: [1, 1] }, // :12 种族年龄表槽 6-7（原 001001）
     { name: 'flag:500', value: 2 }, // :15 狂王初期性别：扶她
     { name: 'flag:501', value: initial_slave }, // :19 FIRST_SETTING 初期奴隶一问
     ...Array.from({ length: 14 }, (_, k) => ({
@@ -85,6 +91,26 @@ function expected_init_writes(initial_slave) {
   }
   return writes;
 }
+
+// #138：FLAG:26/27 数组承载与原打包值逐槽等价（BigInt 拆解，无引擎也跑）。
+// 原值 232015325431115011 ≈ 2.32e17 超 Number.MAX_SAFE_INTEGER 约 26 倍，
+// 只能用 BigInt 算：CHARA_BODY.ERB:291 的取槽式 RACE_CLA = FLAG:26 /
+// POWER(1000, RACE_ID) % 1000，槽 0 是最低三位。001001（FLAG:27）同理，
+// 槽 6-7（:289 接 RACE_ID >= 6）。event-first.js 的字面数组若与拆解不符，
+// 上方 expected_init_writes 的 deepEqual 会在 var_writes 处红。
+test('FLAG:26/27 数组承载与原打包值逐槽等价（BigInt 拆解原值 232015325431115011 / 001001）', () => {
+  const unpack = (packed, slots) => {
+    const value = BigInt(packed);
+    return Array.from({ length: slots }, (_, slot) =>
+      Number((value / 1000n ** BigInt(slot)) % 1000n),
+    );
+  };
+  assert.deepEqual(
+    unpack('232015325431115011', 6),
+    [11, 115, 431, 325, 15, 232],
+  );
+  assert.deepEqual(unpack('001001', 2), [1, 1]);
+});
 
 test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转向 SHOP 渲染主菜单', async () => {
   const fixture = create_era_fixture();

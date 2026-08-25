@@ -9,8 +9,9 @@
  *     maxbase/relation/source/talent），未声明下标写入即落、可回读——
  *     #13 的「静默建变量」在写入侧是可用的通道，读侧仍须兜底；
  *   - 落不进去的不装样子写（表未声明，写了即静默 no-op），注释说明去向：
- *     FLAG:26/27（种族年龄表）、EX_FLAG、PBAND、BOUGHT、冒險者性別、
- *     丽塔启动！——全部登记在 docs/stub-registry.md 的「变量级待办」；
+ *     PBAND、BOUGHT、冒險者性別、丽塔启动！——登记在 docs/stub-registry.md
+ *     的「变量级待办」（FLAG:26/27 已随 #138 数组化落地，EX_FLAG 已随 #113
+ *     落表并接入）；
  *   - 约二十处调用绝大部分存根化：可达路径上的存根各打一行占位（含原作
  *     函数名，可检索可断言），不可达分支体内的调用仅登记不打印；
  *   - 被 FIRST_SETTING 钉在默认值的分支体：村娘分支（FLAG:501，:95-187）
@@ -31,6 +32,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { ask_initial_slave } = require('#/event/first-setting');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { init_portcflag } = require('#/chara/chara-portcflag');
+const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 
@@ -65,8 +67,21 @@ on('EVENTFIRST', async () => {
 
   // :8-9 HAIRCOLOR/CHARACTER = -1：#DIM 函数局部，写后全函数无读者，不移植。
   //
-  // :11-12 FLAG:26/27 = 种族年龄表（base-1000 打包；232015325431115011 超
-  // JS 安全整数）。唯一消费者是身体生成（CHARA_BODY.ERB），随其票落地。
+  // :11-12 FLAG:26/27 = 种族年龄表。原作是 base-1000 打包整数：
+  //   FLAG:26 = 232015325431115011（18 位 = 种族槽 0-5，低位是槽 0，
+  //   CHARA_BODY.ERB 取槽段的 RACE_CLA = FLAG:26 / POWER(1000, RACE_ID) % 1000），
+  //   FLAG:27 = 001001（种族槽 6-7，接 RACE_ID >= 6）。
+  // 232015325431115011 ≈ 2.32e17 超出 Number.MAX_SAFE_INTEGER（≈9.01e15）约
+  // 26 倍，照搬必失精度；BigInt 出局（JSON.stringify 遇 BigInt 抛 TypeError，
+  // 存档当场写不出去）。#105 决议四：拆数组承载——按槽号索引，每个元素即
+  // 该种族的 RACE_CLA（三位：百位年龄倍率档 / 十位数量级 / 个位倍数）。
+  // 有意偏离 1:1，登记于 docs/stub-registry.md 变量级表；消费者（CHARA_BODY
+  // 的解包与 RACE_CONFIG 编辑器）随角色身体票移植，届时按槽号直接取数组
+  // 元素。写入走 game.chara 门面（域边界由 domain-check 守，裸寻址会被拦）。
+  // FLAGNAME:26 = 种族年龄表（槽 0-5，低位在前）
+  // FLAGNAME:27 = 种族年龄表续（槽 6-7）
+  game.chara.种族年龄设定_0 = [11, 115, 431, 325, 15, 232];
+  game.chara.种族年龄设定_1 = [1, 1];
 
   // :15 FLAG:500 = 2 —— 狂王初期性别：扶她
   era.set('flag:500', 2);

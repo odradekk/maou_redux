@@ -61,7 +61,6 @@ const NOT_THREE_PART = new Set([
   'relation',
   'itemsales',
   'no',
-  'ex_talent', // 无 data 桶：写入静默丢弃（#21 已知，落表前不崩）
 ]);
 
 /** 递归收集 ere/ 下的 .js */

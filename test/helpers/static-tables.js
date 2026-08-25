@@ -25,14 +25,23 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 // 的 portcflag 预设行在装载循环里可翻译（名字表缺位同样报错丢弃）。
 // Abl/CStr（#43 入库）随 #113 登记：Chara35 是首个带 ABL/CSTR 预设行的
 // 入库角色，缺表时这两行同样被报错丢弃。
+// Mark/Exp（#43 入库）随 #138 登记：常规批 Chara34 首带 MARK 预设行（缺表
+// 时整行报错丢弃，#138 前仅 Chara223 有 EXP 行、编号外批未入库，一直漏登）。
+// Ex_Talent.yml（#138，原作 EXCOM.ERH:4 的 CHARADATA EX_TALENT）：登记使
+// 比对与实机装载一致——虽然常规批 Chara*.yml 没有 ex_talent 预设段，但
+// extendedCharaTables 里的表理应在装载循环视野内（空名字表建
+// staticData.ex_talent，数字下标寻址的回落依赖它）。
 const TABLE_FILES = [
   ['Base.yml', 'base'],
   ['Talent.yml', 'talent'],
   ['Item.yml', 'item'],
   ['CFlag.yml', 'cflag'],
   ['PortCFlag.yml', 'portcflag'],
+  ['Ex_Talent.yml', 'ex_talent'],
   ['Abl.yml', 'abl'],
   ['CStr.yml', 'cstr'],
+  ['Mark.yml', 'mark'],
+  ['Exp.yml', 'exp'],
 ];
 
 /**

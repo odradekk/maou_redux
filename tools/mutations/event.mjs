@@ -441,4 +441,12 @@ export default [
     tests: ['event-endcheck'],
     must_mention: 'DAY != 500 时不得调用',
   },
+  {
+    desc: 'M242 FLAG:26 数组槽序颠倒（低位在前改高位在前——var_writes 全量断言红，#138 的数组承载）',
+    file: 'ere/event/event-first.js',
+    find: '  game.chara.种族年龄设定_0 = [11, 115, 431, 325, 15, 232];',
+    replace: '  game.chara.种族年龄设定_0 = [232, 15, 325, 431, 115, 11];',
+    tests: ['event-first'],
+    must_mention: 'flag:26',
+  },
 ];
