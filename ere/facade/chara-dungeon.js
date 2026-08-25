@@ -121,21 +121,6 @@ class DungeonFacade {
   }
 
   /**
-   * 母性（talent:cid:155 ↔ TALENT:155）
-   * 源: yml/Talent.yml id 155
-   * @returns {number}
-   */
-  get 母性() {
-    return era.get(`talent:${this.cid}:155`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 母性(v) {
-    era.set(`talent:${this.cid}:155`, v);
-  }
-
-  /**
    * 妓女（talent:cid:180 ↔ TALENT:180）
    * 源: yml/Talent.yml id 180
    * @returns {number}

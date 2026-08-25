@@ -1,4 +1,4 @@
-# 跨域读汇总（全部表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 跨域读汇总（全部表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table all
 #
 # 标准：读取 = 非写入的寻址命中（比较/右值/PRINTFORM/CALL 实参），ignored 文件不计；
@@ -8,77 +8,65 @@
 cflag:
   reads_total: 15529
   dynamic_reads: 184
-  cross_domain_reads: 4518
+  cross_domain_reads: 4108
   unowned_index_reads: 49
   by_pair:
-    "dungeon->chara": 805
+    "dungeon->chara": 877
     "kojo->stronghold": 471
-    "train->system": 330
+    "train->chara": 332
     "kojo->event": 294
-    "train->chara": 270
-    "system->chara": 208
-    "kojo->system": 147
-    "dungeon->invasion": 143
-    "event->chara": 117
-    "kojo->train": 108
+    "kojo->train": 255
+    "dungeon->invasion": 180
+    "event->train": 142
+    "event->chara": 120
     "stronghold->chara": 107
-    "event->system": 97
-    "invasion->chara": 93
-    "system->invasion": 83
-    "chara->invasion": 78
-    "dungeon->system": 72
+    "dungeon->stronghold": 97
+    "chara->invasion": 96
+    "invasion->dungeon": 88
+    "chara->train": 83
+    "dungeon->train": 79
+    "chara->dungeon": 77
+    "chara->stronghold": 74
     "kojo->chara": 71
-    "chara->stronghold": 70
     "dungeon->patch": 70
     "stronghold->invasion": 68
-    "system->stronghold": 65
-    "chara->train": 59
+    "invasion->chara": 60
     "patch->chara": 57
-    "invasion->dungeon": 55
-    "chara->dungeon": 54
-    "event->train": 45
-    "system->dungeon": 44
-    "dungeon->stronghold": 43
     "kojo->invasion": 42
-    "chara->system": 37
-    "event->invasion": 37
-    "system->event": 24
-    "system->train": 23
-    "dungeon->train": 21
+    "event->invasion": 38
+    "system->invasion": 27
+    "system->chara": 25
+    "stronghold->train": 23
     "invasion->stronghold": 21
     "patch->invasion": 21
     "dungeon->event": 20
-    "event->stronghold": 18
+    "event->stronghold": 19
     "patch->dungeon": 18
+    "chara->event": 15
     "chara->kojo": 14
-    "stronghold->system": 14
+    "dungeon->system": 12
     "invasion->event": 12
-    "train->stronghold": 11
+    "system->event": 11
     "chara->patch": 10
-    "invasion->system": 8
+    "chara->system": 10
+    "system->train": 9
+    "train->stronghold": 9
+    "invasion->train": 8
     "stronghold->event": 7
-    "chara->event": 6
+    "event->dungeon": 5
     "kojo->dungeon": 5
-    "stronghold->train": 5
     "patch->event": 4
     "system->kojo": 4
+    "train->dungeon": 4
     "stronghold->dungeon": 3
     "stronghold->kojo": 3
+    "system->dungeon": 3
+    "train->system": 3
     "event->kojo": 2
-    "train->dungeon": 2
     "patch->stronghold": 1
+    "system->stronghold": 1
     "train->invasion": 1
   top10_indexes:
-    "40":
-      cross_reads: 523
-      readers:
-        train: 291
-        event: 95
-        kojo: 78
-        dungeon: 38
-        chara: 10
-        invasion: 8
-        stronghold: 3
     "504":
       cross_reads: 464
       readers:
@@ -92,46 +80,57 @@ cflag:
     "1":
       cross_reads: 456
       readers:
-        dungeon: 132
-        system: 83
-        chara: 74
+        dungeon: 169
+        chara: 92
         stronghold: 68
         kojo: 42
-        event: 37
+        event: 38
+        system: 27
         patch: 19
         train: 1
     "9":
-      cross_reads: 418
+      cross_reads: 412
       readers:
-        dungeon: 105
-        system: 99
+        dungeon: 191
         stronghold: 71
         invasion: 54
         train: 36
         patch: 32
         event: 21
+        system: 7
     "42":
       cross_reads: 377
       readers:
-        train: 198
-        system: 67
+        train: 262
         event: 53
         kojo: 27
-        dungeon: 24
+        dungeon: 25
         stronghold: 8
+        system: 2
     "102":
       cross_reads: 307
       readers:
         kojo: 293
         dungeon: 8
-        system: 6
-    "601":
-      cross_reads: 158
+        system: 4
+        chara: 2
+    "40":
+      cross_reads: 235
       readers:
-        dungeon: 110
+        event: 95
+        kojo: 78
+        dungeon: 39
+        chara: 10
+        invasion: 8
+        stronghold: 3
+        system: 2
+    "601":
+      cross_reads: 149
+      readers:
+        dungeon: 113
         kojo: 27
-        system: 13
         event: 8
+        system: 1
     "7":
       cross_reads: 130
       readers:
@@ -139,67 +138,66 @@ cflag:
         event: 25
         chara: 7
         dungeon: 1
-    "41":
-      cross_reads: 123
+    "151":
+      cross_reads: 116
       readers:
-        kojo: 69
-        train: 31
-        dungeon: 17
-        stronghold: 4
-        event: 2
+        dungeon: 90
+        patch: 15
+        event: 4
+        invasion: 4
+        stronghold: 2
+        system: 1
   indexes_covering_80pct: 12
 talent:
   reads_total: 22438
   dynamic_reads: 251
-  cross_domain_reads: 20694
+  cross_domain_reads: 20593
   unowned_index_reads: 58
   by_pair:
     "kojo->stronghold": 9678
-    "kojo->chara": 2926
-    "train->chara": 1907
+    "kojo->chara": 3001
+    "train->chara": 1946
     "kojo->event": 1151
-    "event->chara": 862
-    "dungeon->chara": 845
+    "event->chara": 966
+    "dungeon->chara": 930
     "train->event": 536
-    "stronghold->chara": 385
-    "system->chara": 330
-    "stronghold->dungeon": 312
+    "stronghold->chara": 433
+    "stronghold->dungeon": 308
     "train->stronghold": 226
+    "system->chara": 216
     "event->stronghold": 195
-    "dungeon->event": 107
-    "kojo->system": 94
-    "event->system": 88
-    "chara->stronghold": 84
-    "system->event": 83
-    "chara->system": 80
-    "dungeon->stronghold": 74
-    "patch->chara": 67
-    "system->stronghold": 65
-    "chara->dungeon": 59
+    "chara->stronghold": 118
+    "dungeon->event": 115
+    "dungeon->stronghold": 81
+    "system->event": 72
+    "patch->chara": 68
+    "invasion->chara": 62
+    "chara->dungeon": 58
     "stronghold->event": 58
-    "stronghold->system": 55
-    "invasion->chara": 52
-    "chara->event": 39
-    "system->dungeon": 33
-    "event->dungeon": 31
+    "chara->event": 42
+    "event->dungeon": 33
     "invasion->stronghold": 30
     "patch->stronghold": 29
-    "train->system": 28
-    "invasion->system": 27
+    "system->stronghold": 24
     "train->dungeon": 23
     "train->patch": 22
-    "dungeon->system": 20
     "kojo->dungeon": 20
+    "chara->system": 19
+    "kojo->system": 19
+    "invasion->system": 17
     "chara->train": 15
-    "patch->system": 13
-    "system->train": 12
+    "system->dungeon": 15
+    "patch->system": 12
     "event->train": 11
+    "stronghold->system": 11
+    "system->train": 10
     "stronghold->train": 8
     "dungeon->patch": 3
     "kojo->patch": 3
     "event->patch": 2
     "invasion->dungeon": 2
     "patch->event": 2
+    "event->system": 1
     "kojo->train": 1
     "stronghold->patch": 1
   top10_indexes:
@@ -209,120 +207,118 @@ talent:
         kojo: 4791
         train: 100
         event: 97
-        chara: 25
-        dungeon: 17
-        system: 17
+        chara: 36
+        dungeon: 18
         invasion: 12
         patch: 12
+        system: 5
     "76":
       cross_reads: 4610
       readers:
         kojo: 4416
         train: 60
         event: 42
+        chara: 33
         dungeon: 31
-        chara: 24
-        system: 14
         invasion: 12
         patch: 11
+        system: 5
     "122":
-      cross_reads: 1541
+      cross_reads: 1536
       readers:
-        train: 652
+        train: 654
         kojo: 408
+        dungeon: 177
         event: 175
-        dungeon: 170
-        system: 77
+        system: 63
         stronghold: 36
         patch: 19
         invasion: 4
     "0":
-      cross_reads: 746
+      cross_reads: 744
       readers:
         kojo: 628
         train: 43
+        dungeon: 32
         event: 32
-        dungeon: 31
         stronghold: 6
-        system: 6
+        system: 3
     "121":
-      cross_reads: 655
+      cross_reads: 654
       readers:
         kojo: 339
         train: 181
         event: 79
-        dungeon: 28
+        dungeon: 29
         stronghold: 17
-        system: 8
+        system: 6
         patch: 3
     "136":
       cross_reads: 537
       readers:
         kojo: 491
         train: 21
-        dungeon: 11
+        dungeon: 12
+        chara: 7
         stronghold: 6
-        chara: 4
-        system: 4
     "314":
-      cross_reads: 411
+      cross_reads: 404
       readers:
         kojo: 297
-        dungeon: 34
+        dungeon: 39
         stronghold: 26
-        event: 20
-        system: 18
+        event: 25
         invasion: 15
+        system: 1
         train: 1
     "110":
-      cross_reads: 281
+      cross_reads: 279
       readers:
         kojo: 181
         stronghold: 61
         event: 17
         train: 16
         dungeon: 3
-        system: 3
+        system: 1
     "114":
-      cross_reads: 275
+      cross_reads: 273
       readers:
         kojo: 182
         stronghold: 61
         event: 17
         train: 9
         dungeon: 3
-        system: 3
+        system: 1
     "9":
       cross_reads: 240
       readers:
         kojo: 210
         train: 13
-        system: 7
+        chara: 11
         event: 5
-        chara: 4
         patch: 1
-  indexes_covering_80pct: 28
+  indexes_covering_80pct: 27
 abl:
   reads_total: 10223
   dynamic_reads: 36
-  cross_domain_reads: 8850
+  cross_domain_reads: 8862
   unowned_index_reads: 16
   by_pair:
     "kojo->system": 3786
-    "train->system": 3200
-    "event->system": 377
-    "dungeon->system": 341
+    "train->system": 3202
+    "event->system": 378
+    "dungeon->system": 350
     "kojo->train": 252
     "stronghold->system": 204
-    "dungeon->train": 174
+    "dungeon->train": 180
     "stronghold->train": 115
     "event->train": 105
     "train->chara": 88
-    "system->train": 46
+    "system->train": 40
     "kojo->chara": 36
     "chara->system": 27
-    "dungeon->chara": 23
-    "system->chara": 18
+    "dungeon->chara": 26
+    "system->chara": 15
     "chara->train": 14
     "event->chara": 10
     "patch->system": 10
@@ -333,32 +329,32 @@ abl:
     "patch->chara": 1
   top10_indexes:
     "16":
-      cross_reads: 1596
+      cross_reads: 1597
       readers:
         kojo: 1076
         train: 463
         event: 36
-        dungeon: 11
+        dungeon: 12
         stronghold: 8
         chara: 1
         patch: 1
     "3":
-      cross_reads: 1158
+      cross_reads: 1159
       readers:
         kojo: 894
         train: 179
         event: 44
         stronghold: 22
-        dungeon: 15
+        dungeon: 16
         chara: 3
         patch: 1
     "10":
-      cross_reads: 1044
+      cross_reads: 1046
       readers:
-        train: 643
+        train: 644
         kojo: 198
         dungeon: 111
-        event: 58
+        event: 59
         stronghold: 29
         chara: 4
         patch: 1
@@ -373,23 +369,23 @@ abl:
         chara: 1
         patch: 1
     "2":
-      cross_reads: 792
+      cross_reads: 793
       readers:
         kojo: 505
         train: 201
         event: 36
         stronghold: 27
-        dungeon: 19
+        dungeon: 20
         chara: 3
         patch: 1
     "12":
-      cross_reads: 727
+      cross_reads: 728
       readers:
         train: 624
         kojo: 41
         event: 24
         stronghold: 19
-        dungeon: 17
+        dungeon: 18
         chara: 2
     "11":
       cross_reads: 526
@@ -403,69 +399,70 @@ abl:
         patch: 4
         invasion: 3
     "0":
-      cross_reads: 406
+      cross_reads: 407
       readers:
         train: 351
         event: 21
         stronghold: 20
+        dungeon: 6
         kojo: 6
-        dungeon: 5
         chara: 3
     "17":
-      cross_reads: 377
+      cross_reads: 379
       readers:
-        train: 154
+        train: 155
         kojo: 145
         event: 52
-        dungeon: 15
+        dungeon: 16
         stronghold: 8
         chara: 2
         patch: 1
     "1":
-      cross_reads: 269
+      cross_reads: 270
       readers:
         train: 172
         kojo: 64
         stronghold: 19
         event: 11
         chara: 3
+        dungeon: 1
   indexes_covering_80pct: 8
 base:
   reads_total: 767
   dynamic_reads: 12
-  cross_domain_reads: 516
+  cross_domain_reads: 498
   unowned_index_reads: 0
   by_pair:
     "kojo->dungeon": 194
     "invasion->dungeon": 88
     "stronghold->dungeon": 65
-    "chara->dungeon": 44
-    "system->dungeon": 40
+    "chara->dungeon": 45
     "train->dungeon": 38
     "event->dungeon": 28
+    "system->dungeon": 21
     "system->train": 9
     "patch->dungeon": 8
     "event->stronghold": 2
   top10_indexes:
     "0":
-      cross_reads: 323
+      cross_reads: 309
       readers:
         kojo: 128
         stronghold: 65
         invasion: 39
         event: 26
-        system: 25
-        chara: 21
+        chara: 22
         train: 15
+        system: 10
         patch: 4
     "1":
-      cross_reads: 182
+      cross_reads: 178
       readers:
         kojo: 66
         invasion: 49
         chara: 23
         train: 23
-        system: 15
+        system: 11
         patch: 4
         event: 2
     "2":
@@ -484,7 +481,7 @@ base:
 exp:
   reads_total: 1177
   dynamic_reads: 38
-  cross_domain_reads: 1055
+  cross_domain_reads: 1047
   unowned_index_reads: 10
   by_pair:
     "train->dungeon": 492
@@ -498,17 +495,17 @@ exp:
     "event->train": 8
     "chara->event": 7
     "chara->stronghold": 7
-    "chara->system": 5
     "event->stronghold": 5
-    "event->system": 5
     "patch->dungeon": 5
-    "stronghold->system": 5
-    "system->dungeon": 5
+    "stronghold->chara": 5
     "train->stronghold": 5
     "train->system": 5
+    "event->system": 4
     "chara->train": 3
     "stronghold->train": 3
-    "kojo->system": 2
+    "kojo->chara": 2
+    "system->dungeon": 2
+    "event->chara": 1
     "invasion->dungeon": 1
   top10_indexes:
     "0":
@@ -520,13 +517,12 @@ exp:
         chara: 5
         invasion: 1
     "1":
-      cross_reads: 215
+      cross_reads: 214
       readers:
         train: 121
         kojo: 64
         event: 28
         chara: 1
-        system: 1
     "22":
       cross_reads: 71
       readers:
@@ -762,7 +758,7 @@ cstr:
     "train->stronghold": 10
     "chara->train": 8
     "dungeon->patch": 7
-    "system->event": 3
+    "chara->event": 3
     "stronghold->train": 2
     "system->chara": 1
   top10_indexes:
@@ -776,7 +772,7 @@ cstr:
       cross_reads: 35
       readers:
         kojo: 32
-        system: 3
+        chara: 3
     "50":
       cross_reads: 7
       readers:
@@ -799,29 +795,29 @@ cstr:
 flag:
   reads_total: 10104
   dynamic_reads: 104
-  cross_domain_reads: 1309
+  cross_domain_reads: 1185
   unowned_index_reads: 76
   by_pair:
-    "train->system": 221
-    "system->dungeon": 176
+    "train->system": 224
     "kojo->train": 141
     "dungeon->stronghold": 108
-    "chara->dungeon": 86
+    "chara->dungeon": 93
     "invasion->dungeon": 69
     "kojo->system": 67
     "kojo->dungeon": 60
     "invasion->system": 53
+    "system->dungeon": 42
     "invasion->event": 35
     "stronghold->event": 34
-    "chara->event": 26
+    "chara->event": 32
     "dungeon->invasion": 26
     "event->dungeon": 20
-    "system->event": 20
     "patch->event": 19
     "system->train": 16
+    "dungeon->system": 15
     "event->system": 15
-    "dungeon->system": 14
     "stronghold->dungeon": 14
+    "system->event": 14
     "stronghold->system": 13
     "event->invasion": 9
     "patch->stronghold": 9
@@ -830,7 +826,7 @@ flag:
     "dungeon->event": 7
     "kojo->event": 7
     "train->dungeon": 7
-    "chara->system": 6
+    "chara->system": 5
     "system->kojo": 4
     "system->invasion": 3
     "patch->invasion": 2
@@ -839,25 +835,25 @@ flag:
     "patch->dungeon": 1
     "train->event": 1
   top10_indexes:
-    "5":
-      cross_reads: 363
+    "37":
+      cross_reads: 267
       readers:
-        system: 171
-        chara: 86
+        train: 222
+        kojo: 20
+        dungeon: 15
+        event: 8
+        chara: 1
+        stronghold: 1
+    "5":
+      cross_reads: 236
+      readers:
+        chara: 93
         invasion: 69
+        system: 37
         event: 20
         stronghold: 13
         train: 3
         patch: 1
-    "37":
-      cross_reads: 263
-      readers:
-        train: 219
-        kojo: 20
-        dungeon: 14
-        event: 8
-        chara: 1
-        stronghold: 1
     "62":
       cross_reads: 141
       readers:
@@ -889,18 +885,18 @@ flag:
     "1":
       cross_reads: 28
       readers:
-        chara: 8
+        chara: 11
         patch: 8
-        system: 6
         stronghold: 5
+        system: 3
         invasion: 1
     "2":
       cross_reads: 27
       readers:
-        chara: 8
+        chara: 11
         patch: 8
-        system: 6
         stronghold: 4
+        system: 3
         invasion: 1
     "81":
       cross_reads: 17
@@ -908,11 +904,11 @@ flag:
         invasion: 12
         stronghold: 3
         kojo: 2
-  indexes_covering_80pct: 8
+  indexes_covering_80pct: 9
 tflag:
   reads_total: 2731
   dynamic_reads: 8
-  cross_domain_reads: 2076
+  cross_domain_reads: 2060
   unowned_index_reads: 8
   by_pair:
     "kojo->event": 687
@@ -922,7 +918,7 @@ tflag:
     "kojo->system": 124
     "event->system": 110
     "system->train": 88
-    "train->system": 78
+    "train->system": 62
     "train->event": 32
     "stronghold->train": 13
     "patch->event": 9
@@ -1085,7 +1081,7 @@ item:
     "stronghold->train": 7
     "event->train": 5
     "train->stronghold": 2
-    "system->stronghold": 1
+    "event->stronghold": 1
   top10_indexes:
     "24":
       cross_reads: 3
@@ -1126,7 +1122,7 @@ item:
     "300":
       cross_reads: 1
       readers:
-        system: 1
+        event: 1
   indexes_covering_80pct: 6
 global:
   reads_total: 4

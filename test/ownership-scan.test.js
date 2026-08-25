@@ -1,7 +1,8 @@
 /**
- * @file tools/ownership-scan.js 的契约测试（issue #66 单表 → #70 全表实测）。
+ * @file tools/ownership-scan.js 的契约测试（issue #66 单表 → #70 全表实测 →
+ * #133 文件级归属粒度）。
  *
- * 六个重点：
+ * 七个重点：
  *   1. 写入/读取分类 v2——小段源文本直接驱动：赋值/复合赋值/字符串赋值'/后缀
  *      ++--/TIMES/VARSET 全形态，含词边界（EX_CFLAG 等前缀变量不算表寻址）、
  *      名字下标（归一 + 解析 + 散文容忍）、VARSET 区间左闭右开；
@@ -10,10 +11,13 @@
  *   3. 域清单是数据——夹具域清单带一个工具从没见过的域；目录归属校验照旧；
  *   4. 产物边界——默认不覆盖、--force 才覆盖；--table 单表只写该表两份产物，
  *      reads-summary 只在 all 时写出；
- *   5. 同步守护——重跑真实 target/ 的 33 份产物逐字节一致；
+ *   5. 同步守护——重跑真实 target/ 的 33 份产物，与库内产物比对一致；
  *   6. 锚点复现——#66 的 CFLAG 锚点在 v2 标准下完好（2xx+3xx 口上独占
  *      9447、零外部写入者），全表锚点（SOURCE/PALAM/STAIN 单域、GLOBAL
- *      仅系统、口上是最大的跨域读者）与 #66→#70 的统计核对数字固定。
+ *      仅系统、口上是最大的跨域读者）与 #66→#70 的统计核对数字固定；
+ *   7. 文件级归属（#133）——files: 声明覆盖目录级、守卫（不存在/重复认领/
+ *      形态）、导出规则（去偏 plurality，无票维持兜底）、
+ *      真实锚点（其他/ 六子系统归属、cflag 服装段不再被兜底域切碎）。
  */
 
 const assert = require('node:assert/strict');
@@ -28,6 +32,7 @@ const {
   TABLE_KEYS,
   build_addr_re,
   classify_line,
+  export_file_domains,
   generate,
   load_name_maps,
   main,
@@ -99,13 +104,20 @@ function ensure_domain_dirs(erb_root, domain_text) {
       section = top[1];
       continue;
     }
-    const dirs = /^ {2}dirs: (.+)$/.exec(line);
-    if (dirs) {
-      for (const dir of dirs[1]
-        .split(',')
-        .map((entry) => entry.trim())
-        .filter(Boolean)) {
-        fs.mkdirSync(path.join(erb_root, dir), { recursive: true });
+    for (const key of ['dirs', 'files']) {
+      const kv = new RegExp(`^ {2}${key}: (.+)$`).exec(line);
+      if (kv) {
+        for (const entry of kv[1]
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean)) {
+          const target = path.join(erb_root, ...entry.split('/'));
+          if (key === 'dirs') {
+            fs.mkdirSync(target, { recursive: true });
+          } else if (!fs.existsSync(target)) {
+            fs.writeFileSync(target, '', 'utf8'); // 文件级声明守卫：文件必须存在
+          }
+        }
       }
     }
     const item = section === 'ignored_files' ? /^ {2}- (.+)$/.exec(line) : null;
@@ -546,6 +558,154 @@ test('目录归属校验：根目录源文件未处置报错', async () => {
   );
 });
 
+// —— 文件级归属（#133：一级目录 → 文件级）——
+
+test('文件级归属：files: 覆盖目录级，其余文件仍随目录', async () => {
+  const domains = [
+    '# 夹具：甲目录整体归 alpha，其中 例外.ERB 改归 beta',
+    'alpha:',
+    '  label: 甲域',
+    '  dirs: 甲',
+    'beta:',
+    '  label: 乙域',
+    '  dirs: 乙',
+    '  files: 甲/例外.ERB',
+    'ignored_files:',
+    '  - TITLE.ERB',
+  ].join('\n');
+  const { result } = await generate_on_fixture(
+    {
+      甲: [
+        ['A.ERB', 'CFLAG:1 = 1\n'],
+        ['例外.ERB', 'CFLAG:2 = 1\nCFLAG:1 = 1\n'],
+      ],
+    },
+    { domains },
+  );
+  const cflag = result.tables.get('cflag');
+  // A.ERB 随目录归 alpha；例外.ERB 按文件级归 beta（两次写入都记 beta 名下）
+  assert.equal(cflag.scan.writes_by_domain.get('alpha'), 1);
+  assert.equal(cflag.scan.writes_by_domain.get('beta'), 2);
+  const owner_of = Object.fromEntries(
+    cflag.ranges.map((range) => [range.start, range.owner]),
+  );
+  assert.equal(owner_of[1], 'alpha'); // 1:1 并列按声明序 alpha 先
+  assert.equal(owner_of[2], 'beta');
+  // 跨域写清单按文件级归属判定：beta 的 例外.ERB 写 alpha 属主的下标 1
+  assert.equal(cflag.cross.length, 1);
+  assert.deepEqual(
+    { index: cflag.cross[0].index, writer: cflag.cross[0].domain },
+    { index: 1, writer: 'beta' },
+  );
+});
+
+test('文件级守卫：声明的文件不存在报错（数据过期失效）', async () => {
+  const domains = [
+    'alpha:',
+    '  label: 甲域',
+    '  dirs: 甲',
+    '  files: 甲/GONE.ERB',
+    'ignored_files:',
+    '  - TITLE.ERB',
+  ].join('\n');
+  await with_fixture_tree(
+    { 甲: [['A.ERB', '']] },
+    async ({ dir, erb_root }) => {
+      const domain_file = path.join(dir, 'domains.yml');
+      fs.writeFileSync(domain_file, domains, 'utf8');
+      assert.throws(
+        () =>
+          generate({
+            domain_file,
+            erb_root,
+            name_dir: make_name_dir(dir, {}),
+          }),
+        /文件级声明了不存在的文件.*GONE/,
+      );
+    },
+  );
+});
+
+test('文件级守卫：一个文件被两个域认领、路径形态不对都报错', () => {
+  assert.throws(
+    () =>
+      parse_domains(
+        [
+          'alpha:',
+          '  label: 甲',
+          '  dirs: 甲',
+          '  files: 甲/X.ERB',
+          'beta:',
+          '  label: 乙',
+          '  dirs: 乙',
+          '  files: 甲/X.ERB',
+        ].join('\n'),
+      ),
+    /文件 甲\/X\.ERB .*重复认领/,
+  );
+  // 根文件（无目录前缀）不参与归属——那是 ignored_files 的地盘
+  assert.throws(
+    () =>
+      parse_domains('alpha:\n  label: 甲\n  dirs: 甲\n  files: TITLE.ERB\n'),
+    /形态不对/,
+  );
+});
+
+test('文件级导出：基线剔除目标目录后按 plurality 归属；无票维持兜底', async () => {
+  // 丙 = 导出目标目录（目录级归 alpha，合租语义）；甲乙提供基线写入
+  const domains = [
+    'alpha:',
+    '  label: 甲域',
+    '  dirs: 甲, 丙',
+    'beta:',
+    '  label: 乙域',
+    '  dirs: 乙',
+    'ignored_files:',
+    '  - TITLE.ERB',
+  ].join('\n');
+  const rows = await with_fixture_tree(
+    {
+      甲: [['A.ERB', 'CFLAG:5 = 1\n']],
+      乙: [['B.ERB', 'CFLAG:5 = 1\nCFLAG:5 = 1\nCFLAG:5 = 1\n']],
+      丙: [
+        // F1 写基线属主明确的下标（beta 独占）→ 导出 beta
+        ['F1.ERB', 'CFLAG:5 = 1\nCFLAG:5 = 1\nCFLAG:5 = 1\n'],
+        // F2 只写没人写的下标 → 剔除后无基线属主 → 无票，维持目录级兜底
+        ['F2.ERB', 'CFLAG:9 = 1\n'],
+      ],
+    },
+    async ({ dir, erb_root }) => {
+      const domain_file = path.join(dir, 'domains.yml');
+      fs.writeFileSync(domain_file, domains, 'utf8');
+      ensure_domain_dirs(erb_root, domains);
+      return export_file_domains({
+        domain_file,
+        erb_root,
+        name_dir: make_name_dir(dir, {}),
+        target_dir: '丙',
+      });
+    },
+  );
+  const by_file = Object.fromEntries(rows.map((row) => [row.file, row]));
+  // 去偏：F1 的三票全落基线属主 beta（若不剔除丙，alpha 兜底票会打成 alpha）
+  assert.deepEqual(by_file['丙/F1.ERB'].votes, [['beta', 3]]);
+  assert.equal(by_file['丙/F1.ERB'].winner, 'beta');
+  // F2 唯一写入的下标 9 剔除丙后无任何写入者 → 无票
+  assert.equal(by_file['丙/F2.ERB'].winner, null);
+  assert.equal(by_file['丙/F2.ERB'].unowned, 1);
+});
+
+test('文件级导出：目标目录不在域清单认领里报错', () => {
+  assert.throws(
+    () =>
+      export_file_domains({
+        domain_file: path.join(REPO_ROOT, 'ownership', 'domains.yml'),
+        target_dir: '不存在的目录',
+      }),
+    /不在域清单的目录认领里/,
+  );
+});
+
 test('编码按内容判定：Shift-JIS 文件里的写入不漏（工单陷阱）', async () => {
   await with_fixture_tree({ '(root)': [] }, async ({ dir, erb_root }) => {
     fs.mkdirSync(path.join(erb_root, '甲'), { recursive: true });
@@ -739,17 +899,20 @@ test('锚点复现：1xx/4xx/6xx 是混用段（各有多域写入者）', () =>
   }
 });
 
-test('锚点复现：CFLAG 全量数字与编码（#66→#70 统计核对后的值）', () => {
+test('锚点复现：CFLAG 全量数字与编码（#66→#70 统计核对、#133 文件级重跑后的区间/跨域数）', () => {
   const { scan, ranges, cross } = real_generate().tables.get('cflag');
   // 核对（issue #70 评论）：11435 → 11439 = −2 假写（EX_CFLAG 词边界）
   // +4 漏写（CJK 槽位变量 L_孩子）+2 后缀 ++/--；读 15543 → 15529 同源。
+  // 写入/读取/下标数不受归属粒度影响（#133 只改写入记在谁名下）；
+  // 区间 104 → 102、跨域写 740 → 675：其他/ 六文件改归各域后服装段
+  // （40-48）的多块碎片按 plurality 重新合并（见文件级锚点用例）。
   assert.equal(scan.writes_total, 11439);
   assert.equal(scan.commented_writes, 307);
   assert.equal(scan.dynamic_writes, 19);
   assert.equal(scan.reads_total, 15529);
   assert.equal(scan.per_index.size, 247);
-  assert.equal(ranges.length, 104);
-  assert.equal(cross.length, 740);
+  assert.equal(ranges.length, 102);
+  assert.equal(cross.length, 675);
   assert.deepEqual(real_generate().scan.shift_jis_files, [
     'target/ERB/調教相關/COMF90_ニプルファック.ERB',
   ]);
@@ -829,10 +992,80 @@ test('锚点复现：口上是最大的跨域读者（跨域读放行决议的�
   }
   const ranked = [...by_reader.entries()].sort((a, b) => b[1] - a[1]);
   assert.equal(ranked[0][0], 'kojo');
-  // 与跨域写的量级对照：读 ~4.3 万次、写 ~2.7 千次——放行读、具名写的依据
+  // 与跨域写的量级对照：读 ~4.3 万次、写 ~2.5 千次——放行读、具名写的依据
   const total = ranked.reduce((sum, [, count]) => sum + count, 0);
   assert.ok(
     total > 40000 && total < 45000,
     `跨域读总量 ${total} 应在 4 万–4.5 万`,
+  );
+});
+
+// —— 真实 target/：文件级归属锚点（#133）——
+
+test('文件级锚点：其他/ 六子系统的归属＝导出规则的 plurality 结果', () => {
+  const { domains } = real_generate();
+  assert.deepEqual(
+    Object.fromEntries([...domains.file_to_domain.entries()].sort()),
+    {
+      '其他/EQUIP.ERB': 'event',
+      '其他/FUNC_CLOTH.ERB': 'train',
+      '其他/LOVERS.ERB': 'dungeon',
+      '其他/MAGIC.ERB': 'dungeon',
+      '其他/NINSIN.ERB': 'chara',
+      '其他/USE_EX_ITEM.ERB': 'dungeon',
+    },
+  );
+});
+
+test('文件级锚点：cflag 服装段不再被兜底域切碎（#106 的证据表被推翻）', () => {
+  const cflag = real_generate().tables.get('cflag');
+  // 目录级下 40-49 被切成六块分属三域（40-41/43/46-47 system、42 chara、
+  // 44-45/48-49 stronghold），其中 system 块的票是 其他/ 整目录兜底贡献的；
+  // FUNC_CLOTH 归 train 后，写入最多的域拿下 40-41/43/45-48（42/44/49 仍归
+  // plurality 写入者 chara/stronghold——属主判定没有因粒度改变而放宽）。
+  const owners = [];
+  for (let i = 40; i <= 49; i += 1) {
+    owners.push(cflag.owner_of_index.get(i));
+  }
+  assert.deepEqual(owners, [
+    'train', // 40
+    'train', // 41
+    'chara', // 42
+    'train', // 43
+    'stronghold', // 44
+    'train', // 45
+    'train', // 46
+    'train', // 47
+    'train', // 48
+    'stronghold', // 49
+  ]);
+});
+
+test('文件级锚点：全表跨域写 2652 → 2475（其他/ 拆出后域内写变多）', () => {
+  const result = real_generate();
+  const total = TABLE_KEYS.reduce(
+    (sum, key) => sum + result.tables.get(key).cross.length,
+    0,
+  );
+  // #70 目录级 2652；#133 文件级：其他/ 六文件的写入记到真实耦合域名下，
+  // 原来按 system 兜底记的跨域写大量转为域内写（−177）
+  assert.equal(total, 2475);
+});
+
+test('文件级导出可复算：--export 其他 的 plurality 与清单声明一致', () => {
+  const rows = export_file_domains({ target_dir: '其他' });
+  const by_file = new Map(rows.map((row) => [row.file, row.winner]));
+  // 六个声明的文件导出结果与 ownership/domains.yml 的 files: 完全一致；
+  // 有票但未声明的文件（DATA_FIX/NTR 等）同样给出结果，留待后续按需声明
+  assert.equal(by_file.get('其他/FUNC_CLOTH.ERB'), 'train');
+  assert.equal(by_file.get('其他/NINSIN.ERB'), 'chara');
+  assert.equal(by_file.get('其他/LOVERS.ERB'), 'dungeon');
+  assert.equal(by_file.get('其他/MAGIC.ERB'), 'dungeon');
+  assert.equal(by_file.get('其他/USE_EX_ITEM.ERB'), 'dungeon');
+  assert.equal(by_file.get('其他/EQUIP.ERB'), 'event');
+  // MAOUNET 的两次写入都无基线属主 → 无票，维持兜底
+  assert.equal(
+    rows.find((row) => row.file === '其他/MAOUNET.ERB').winner,
+    null,
   );
 });

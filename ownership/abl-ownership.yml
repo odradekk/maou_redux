@@ -1,4 +1,4 @@
-# 区段所有权表（ABL，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 区段所有权表（ABL，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table abl
 #
 # 标准（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；

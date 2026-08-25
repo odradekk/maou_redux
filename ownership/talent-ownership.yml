@@ -1,4 +1,4 @@
-# 区段所有权表（TALENT，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 区段所有权表（TALENT，二维角色表）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table talent
 #
 # 标准（v2，全表实测）：写入 = 赋值/复合赋值/字符串赋值'=/后缀++与--/TIMES/VARSET，剥除 ; 注释后的实活代码；
@@ -6,17 +6,17 @@
 #       区间 = 相邻实活写入下标合并，未写入的下标无测量事实、不属任何区间。
 # 属主 = 区间内写入次数最多的域；并列按 ownership/domains.yml 的声明序取先者。
 # 实活写入 966（动态/表级 33 未归类；注释掉的写入 8 另计）；
-# 实活下标 252 个 → 区间 102 条；跨域写入 303 条（见 talent-cross-domain-writes.yml）。
+# 实活下标 252 个 → 区间 95 条；跨域写入 284 条（见 talent-cross-domain-writes.yml）。
 "0":
   owner: chara
   writes: 31
   by_domain:
-    chara: 10
-    dungeon: 9
-    system: 4
+    chara: 11
+    dungeon: 10
     train: 3
     stronghold: 3
     event: 2
+    system: 2
 "1":
   owner: train
   writes: 22
@@ -32,8 +32,8 @@
   writes: 7
   by_domain:
     stronghold: 5
+    chara: 1
     event: 1
-    system: 1
 "10":
   owner: chara
   writes: 1
@@ -203,7 +203,7 @@
   by_domain:
     stronghold: 5
     event: 2
-    system: 1
+    chara: 1
     patch: 1
 "78-79":
   owner: event
@@ -228,7 +228,7 @@
   by_domain:
     stronghold: 4
     event: 2
-    system: 1
+    chara: 1
 "86":
   owner: event
   writes: 4
@@ -272,10 +272,11 @@
   owner: chara
   writes: 72
   by_domain:
-    chara: 40
-    system: 19
+    chara: 47
     stronghold: 8
+    dungeon: 8
     event: 4
+    system: 4
     patch: 1
 "113":
   owner: dungeon
@@ -287,9 +288,8 @@
   owner: chara
   writes: 42
   by_domain:
-    chara: 28
+    chara: 34
     stronghold: 8
-    system: 6
 "121-122":
   owner: chara
   writes: 38
@@ -322,10 +322,10 @@
   by_domain:
     dungeon: 2
 "130":
-  owner: system
+  owner: chara
   writes: 8
   by_domain:
-    system: 3
+    chara: 3
     train: 2
     stronghold: 2
     dungeon: 1
@@ -367,33 +367,13 @@
   writes: 6
   by_domain:
     event: 6
-"152":
+"152-157":
   owner: chara
-  writes: 2
+  writes: 15
   by_domain:
-    chara: 1
-    event: 1
-"153-154":
-  owner: system
-  writes: 8
-  by_domain:
-    system: 8
-"155":
-  owner: dungeon
-  writes: 2
-  by_domain:
+    chara: 13
     dungeon: 1
-    system: 1
-"156":
-  owner: system
-  writes: 1
-  by_domain:
-    system: 1
-"157":
-  owner: chara
-  writes: 2
-  by_domain:
-    chara: 2
+    event: 1
 "158":
   owner: event
   writes: 1
@@ -547,34 +527,15 @@
   writes: 2
   by_domain:
     event: 2
-"300-318":
+"300-322":
   owner: chara
-  writes: 179
+  writes: 204
   by_domain:
-    chara: 146
-    stronghold: 11
-    system: 9
-    event: 7
+    chara: 168
+    stronghold: 13
+    event: 10
+    system: 7
     train: 6
-"319":
-  owner: system
-  writes: 3
-  by_domain:
-    system: 2
-    chara: 1
-"320":
-  owner: chara
-  writes: 9
-  by_domain:
-    chara: 9
-"321-322":
-  owner: system
-  writes: 13
-  by_domain:
-    system: 6
-    event: 3
-    chara: 2
-    stronghold: 2
 "325-328":
   owner: stronghold
   writes: 8
@@ -593,10 +554,10 @@
   by_domain:
     stronghold: 2
 "341-344":
-  owner: system
+  owner: chara
   writes: 8
   by_domain:
-    system: 8
+    chara: 8
 "471-474":
   owner: chara
   writes: 4

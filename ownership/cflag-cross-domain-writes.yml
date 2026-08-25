@@ -1,9 +1,9 @@
-# 跨域写入清单（CFLAG）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 跨域写入清单（CFLAG）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table cflag
 #
 # 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
 #       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
-# 共 740 条。
+# 共 675 条。
 - index: 0
   writer: event
   owner: stronghold
@@ -200,62 +200,62 @@
   file: "target/ERB/キャラ関数/CHAR_MAKE.ERB"
   line: 180
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 46
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 255
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 273
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 380
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 556
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 621
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 623
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 874
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 958
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 1045
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 1093
 - index: 1
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 1094
@@ -560,7 +560,7 @@
   file: "target/ERB/魔改新增/處刑改寫.ERB"
   line: 352
 - index: 3
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/MAGIC.ERB"
   line: 431
@@ -610,12 +610,12 @@
   file: "target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB"
   line: 112
 - index: 9
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/MAGIC.ERB"
   line: 1229
 - index: 9
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/MAGIC.ERB"
   line: 1263
@@ -631,264 +631,234 @@
   line: 8
 - index: 11
   writer: system
-  owner: chara
+  owner: dungeon
   file: "target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB"
   line: 114
 - index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_CUSTOM ver1.0.1.ERB"
+  line: 131
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB"
+  line: 142
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB"
+  line: 148
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB"
+  line: 154
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB"
+  line: 160
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB"
+  line: 166
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB"
+  line: 172
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 135
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 141
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 147
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 153
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 159
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 165
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 191
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 194
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
+  line: 199
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 16
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 17
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 23
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 34
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 41
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 53
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 58
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 64
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/CHAR_ST.ERB"
+  line: 118
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 21
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 27
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 40
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 45
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 48
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 68
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 73
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 78
+- index: 11
+  writer: chara
+  owner: dungeon
+  file: "target/ERB/キャラ関数/FULLMOON.ERB"
+  line: 88
+- index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/ARCANA_BATTLE.ERB"
   line: 325
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/ARCANA_BATTLE.ERB"
   line: 327
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/ARCANA_BATTLE.ERB"
   line: 499
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/ARCANA_BATTLE.ERB"
   line: 501
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 308
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 368
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 370
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 379
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 381
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 418
 - index: 11
   writer: invasion
-  owner: chara
+  owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 420
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 488
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 492
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 514
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 518
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 540
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 544
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1232
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1266
-- index: 11
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 971
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/怪物相關/MONSTER_SKILL.ERB"
-  line: 66
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/怪物相關/MONSTER_SKILL.ERB"
-  line: 107
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/怪物相關/MONSTER_SKILL.ERB"
-  line: 207
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/怪物相關/MONSTER_SKILL.ERB"
-  line: 349
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/怪物相關/MONSTER_SKILL.ERB"
-  line: 400
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 377
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 391
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 406
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1199
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1202
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1338
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1339
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1371
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1372
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1413
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1421
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1429
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1437
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_BATLLE.ERB"
-  line: 1438
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_ROOM.ERB"
-  line: 717
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_ROOM.ERB"
-  line: 718
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 615
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 628
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 679
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 703
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 788
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 819
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 854
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 867
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 986
-- index: 11
-  writer: dungeon
-  owner: chara
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 998
 - index: 12
   writer: system
   owner: dungeon
@@ -1119,61 +1089,6 @@
   owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 427
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 934
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 962
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1013
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1017
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1039
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1043
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1065
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1069
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1233
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1267
-- index: 12
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 972
 - index: 13
   writer: stronghold
   owner: chara
@@ -1195,22 +1110,22 @@
   file: "target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB"
   line: 445
 - index: 13
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/MAGIC.ERB"
   line: 1234
 - index: 13
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/MAGIC.ERB"
   line: 1268
 - index: 13
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 558
 - index: 13
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 862
@@ -1280,22 +1195,22 @@
   file: "target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB"
   line: 448
 - index: 14
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/MAGIC.ERB"
   line: 1235
 - index: 14
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/MAGIC.ERB"
   line: 1269
 - index: 14
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 610
 - index: 14
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 863
@@ -1575,7 +1490,7 @@
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 454
 - index: 15
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1493
@@ -1750,12 +1665,12 @@
   file: "target/ERB/キャラ関数/CHARA_MARRIAGE.ERB"
   line: 439
 - index: 16
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1482
 - index: 16
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1486
@@ -1886,192 +1801,37 @@
   line: 23
 - index: 40
   writer: event
-  owner: system
+  owner: train
   file: "target/ERB/EVENT/EVENT_BEFORETRAIN.ERB"
   line: 29
 - index: 40
   writer: event
-  owner: system
+  owner: train
   file: "target/ERB/EVENT/EVENT_BEFORETRAIN.ERB"
   line: 137
 - index: 40
   writer: event
-  owner: system
+  owner: train
   file: "target/ERB/EVENT/EVENT_NEXTDAY.ERB"
   line: 1079
 - index: 40
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 202
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 17
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 159
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 176
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 189
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 191
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 193
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 207
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 210
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 212
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 221
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 227
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 244
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 246
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 264
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 266
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 272
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 276
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 286
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 297
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 304
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF110_服の着脱.ERB"
-  line: 307
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 16
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 101
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 108
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 116
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 118
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 125
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 137
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 139
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 144
-- index: 40
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 149
 - index: 41
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 172
 - index: 41
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 197
 - index: 41
   writer: chara
-  owner: system
+  owner: train
   file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
   line: 1364
 - index: 42
@@ -2085,110 +1845,80 @@
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 218
 - index: 42
-  writer: system
+  writer: train
   owner: chara
   file: "target/ERB/其他/FUNC_CLOTH.ERB"
   line: 250
 - index: 42
-  writer: system
+  writer: train
   owner: chara
   file: "target/ERB/其他/FUNC_CLOTH.ERB"
   line: 385
 - index: 43
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 203
-- index: 43
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 150
 - index: 44
   writer: train
   owner: stronghold
   file: "target/ERB/調教相關/COMF111_服を破る.ERB"
   line: 145
 - index: 45
+  writer: stronghold
+  owner: train
+  file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
+  line: 173
+- index: 45
+  writer: stronghold
+  owner: train
+  file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
+  line: 198
+- index: 45
+  writer: stronghold
+  owner: train
+  file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
+  line: 238
+- index: 45
   writer: chara
-  owner: stronghold
+  owner: train
   file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
   line: 1365
-- index: 45
-  writer: system
-  owner: stronghold
-  file: "target/ERB/其他/FUNC_CLOTH.ERB"
-  line: 333
-- index: 45
-  writer: system
-  owner: stronghold
-  file: "target/ERB/其他/FUNC_CLOTH.ERB"
-  line: 416
-- index: 45
-  writer: system
-  owner: stronghold
-  file: "target/ERB/其他/FUNC_CLOTH.ERB"
-  line: 432
-- index: 45
-  writer: train
-  owner: stronghold
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 109
-- index: 45
-  writer: train
-  owner: stronghold
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 126
 - index: 46
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 174
 - index: 46
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 199
 - index: 46
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 244
 - index: 46
   writer: chara
-  owner: system
+  owner: train
   file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
   line: 1366
-- index: 46
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 119
-- index: 46
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 140
 - index: 47
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 208
 - index: 47
   writer: stronghold
-  owner: system
+  owner: train
   file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
   line: 219
-- index: 47
-  writer: train
-  owner: system
-  file: "target/ERB/調教相關/COMF111_服を破る.ERB"
-  line: 102
 - index: 48
-  writer: system
-  owner: stronghold
-  file: "target/ERB/其他/FUNC_CLOTH.ERB"
-  line: 446
+  writer: stronghold
+  owner: train
+  file: "target/ERB/SHOP/SHOP_TAILOR.ERB"
+  line: 205
 - index: 49
   writer: event
   owner: stronghold
@@ -2264,16 +1994,21 @@
   owner: event
   file: "target/ERB/調教相關/COMF_ANALSEX.ERB"
   line: 391
+- index: 105
+  writer: system
+  owner: dungeon
+  file: "target/ERB/其他/NTR.ERB"
+  line: 281
+- index: 105
+  writer: system
+  owner: dungeon
+  file: "target/ERB/其他/NTR.ERB"
+  line: 312
 - index: 106
   writer: system
   owner: dungeon
   file: "target/ERB/SYSTEM/SYSTEM_SOURCE.ERB"
   line: 445
-- index: 106
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1595
 - index: 106
   writer: system
   owner: dungeon
@@ -2295,16 +2030,6 @@
   file: "target/ERB/SYSTEM/SYSTEM_SOURCE.ERB"
   line: 457
 - index: 107
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1583
-- index: 107
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1599
-- index: 107
   writer: event
   owner: dungeon
   file: "target/ERB/處刑相關/NAEDOKO.ERB"
@@ -2320,12 +2045,12 @@
   file: "target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB"
   line: 80
 - index: 110
-  writer: system
+  writer: chara
   owner: event
   file: "target/ERB/其他/NINSIN.ERB"
   line: 879
 - index: 110
-  writer: system
+  writer: chara
   owner: event
   file: "target/ERB/其他/NINSIN.ERB"
   line: 1042
@@ -2335,17 +2060,17 @@
   file: "target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB"
   line: 81
 - index: 111
-  writer: system
+  writer: chara
   owner: event
   file: "target/ERB/其他/NINSIN.ERB"
   line: 880
 - index: 112
-  writer: system
+  writer: chara
   owner: dungeon
   file: "target/ERB/其他/NINSIN.ERB"
   line: 175
 - index: 113
-  writer: system
+  writer: chara
   owner: train
   file: "target/ERB/其他/NINSIN.ERB"
   line: 233
@@ -2479,16 +2204,6 @@
   owner: chara
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 527
-- index: 454
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 913
-- index: 454
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 940
 - index: 455
   writer: stronghold
   owner: chara
@@ -2509,16 +2224,6 @@
   owner: chara
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 528
-- index: 455
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 914
-- index: 455
-  writer: system
-  owner: chara
-  file: "target/ERB/其他/NINSIN.ERB"
-  line: 941
 - index: 456
   writer: invasion
   owner: chara
@@ -2855,12 +2560,12 @@
   file: "target/ERB/キャラ関数/CHARA_TEMPTATION.ERB"
   line: 81
 - index: 507
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 270
 - index: 507
-  writer: system
+  writer: chara
   owner: invasion
   file: "target/ERB/其他/NINSIN.ERB"
   line: 288
@@ -3064,11 +2769,6 @@
   owner: dungeon
   file: "target/ERB/侵略/AGENT/AGENT.ERB"
   line: 117
-- index: 509
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 423
 - index: 510
   writer: dungeon
   owner: event
@@ -3400,7 +3100,7 @@
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 460
 - index: 550
-  writer: system
+  writer: dungeon
   owner: chara
   file: "target/ERB/其他/USE_EX_ITEM.ERB"
   line: 186
@@ -3465,11 +3165,6 @@
   file: "target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB"
   line: 168
 - index: 551
-  writer: system
-  owner: event
-  file: "target/ERB/其他/EQUIP.ERB"
-  line: 246
-- index: 551
   writer: patch
   owner: event
   file: "target/ERB/魔改新增/處刑改寫.ERB"
@@ -3484,11 +3179,6 @@
   owner: event
   file: "target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB"
   line: 171
-- index: 552
-  writer: system
-  owner: event
-  file: "target/ERB/其他/EQUIP.ERB"
-  line: 261
 - index: 552
   writer: patch
   owner: event
@@ -3564,11 +3254,6 @@
   owner: dungeon
   file: "target/ERB/キャラ関数/CHARA_TEMPTATION.ERB"
   line: 341
-- index: 580
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 120
 - index: 580
   writer: patch
   owner: dungeon
@@ -3666,7 +3351,7 @@
   line: 31
 - index: 606
   writer: chara
-  owner: system
+  owner: dungeon
   file: "target/ERB/キャラ関数/CHARA_MARRIAGE.ERB"
   line: 195
 - index: 666
@@ -3674,16 +3359,6 @@
   owner: train
   file: "target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB"
   line: 256
-- index: 682
-  writer: dungeon
-  owner: system
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 1398
-- index: 682
-  writer: dungeon
-  owner: system
-  file: "target/ERB/迷宮/DUNGEON_TRAP.ERB"
-  line: 1418
 - index: 777
   writer: event
   owner: patch

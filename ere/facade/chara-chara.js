@@ -990,6 +990,21 @@ class CharaFacade {
   }
 
   /**
+   * 母乳体质（talent:cid:130 ↔ TALENT:130）
+   * 源: yml/Talent.yml id 130
+   * @returns {number}
+   */
+  get 母乳体质() {
+    return era.get(`talent:${this.cid}:130`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 母乳体质(v) {
+    era.set(`talent:${this.cid}:130`, v);
+  }
+
+  /**
    * 幼稚（talent:cid:132 ↔ TALENT:132）
    * 源: yml/Talent.yml id 132
    * @returns {number}
@@ -1122,6 +1137,66 @@ class CharaFacade {
    */
   set 不受洗脑(v) {
     era.set(`talent:${this.cid}:152`, v);
+  }
+
+  /**
+   * 妊娠（talent:cid:153 ↔ TALENT:153）
+   * 源: yml/Talent.yml id 153
+   * @returns {number}
+   */
+  get 妊娠() {
+    return era.get(`talent:${this.cid}:153`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 妊娠(v) {
+    era.set(`talent:${this.cid}:153`, v);
+  }
+
+  /**
+   * 育儿中（talent:cid:154 ↔ TALENT:154）
+   * 源: yml/Talent.yml id 154
+   * @returns {number}
+   */
+  get 育儿中() {
+    return era.get(`talent:${this.cid}:154`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 育儿中(v) {
+    era.set(`talent:${this.cid}:154`, v);
+  }
+
+  /**
+   * 母性（talent:cid:155 ↔ TALENT:155）
+   * 源: yml/Talent.yml id 155
+   * @returns {number}
+   */
+  get 母性() {
+    return era.get(`talent:${this.cid}:155`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 母性(v) {
+    era.set(`talent:${this.cid}:155`, v);
+  }
+
+  /**
+   * 父性（talent:cid:156 ↔ TALENT:156）
+   * 源: yml/Talent.yml id 156
+   * @returns {number}
+   */
+  get 父性() {
+    return era.get(`talent:${this.cid}:156`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 父性(v) {
+    era.set(`talent:${this.cid}:156`, v);
   }
 
   /**
@@ -2100,6 +2175,21 @@ class CharaFacade {
   }
 
   /**
+   * 种族2（talent:cid:319 ↔ TALENT:319）
+   * 源: yml/Talent.yml id 319
+   * @returns {number}
+   */
+  get 种族2() {
+    return era.get(`talent:${this.cid}:319`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 种族2(v) {
+    era.set(`talent:${this.cid}:319`, v);
+  }
+
+  /**
    * 家族构成（talent:cid:320 ↔ TALENT:320）
    * 源: yml/Talent.yml id 320
    * @returns {number}
@@ -2112,6 +2202,96 @@ class CharaFacade {
    */
   set 家族构成(v) {
     era.set(`talent:${this.cid}:320`, v);
+  }
+
+  /**
+   * 原种族（talent:cid:321 ↔ TALENT:321）
+   * 源: yml/Talent.yml id 321
+   * @returns {number}
+   */
+  get 原种族() {
+    return era.get(`talent:${this.cid}:321`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 原种族(v) {
+    era.set(`talent:${this.cid}:321`, v);
+  }
+
+  /**
+   * 现种族（talent:cid:322 ↔ TALENT:322）
+   * 源: yml/Talent.yml id 322
+   * @returns {number}
+   */
+  get 现种族() {
+    return era.get(`talent:${this.cid}:322`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 现种族(v) {
+    era.set(`talent:${this.cid}:322`, v);
+  }
+
+  /**
+   * 乳内妊娠（talent:cid:341 ↔ TALENT:341）
+   * 源: yml/Talent.yml id 341
+   * @returns {number}
+   */
+  get 乳内妊娠() {
+    return era.get(`talent:${this.cid}:341`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 乳内妊娠(v) {
+    era.set(`talent:${this.cid}:341`, v);
+  }
+
+  /**
+   * 精巢妊娠（talent:cid:342 ↔ TALENT:342）
+   * 源: yml/Talent.yml id 342
+   * @returns {number}
+   */
+  get 精巢妊娠() {
+    return era.get(`talent:${this.cid}:342`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 精巢妊娠(v) {
+    era.set(`talent:${this.cid}:342`, v);
+  }
+
+  /**
+   * 肛内妊娠（talent:cid:343 ↔ TALENT:343）
+   * 源: yml/Talent.yml id 343
+   * @returns {number}
+   */
+  get 肛内妊娠() {
+    return era.get(`talent:${this.cid}:343`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 肛内妊娠(v) {
+    era.set(`talent:${this.cid}:343`, v);
+  }
+
+  /**
+   * 口内妊娠（talent:cid:344 ↔ TALENT:344）
+   * 源: yml/Talent.yml id 344
+   * @returns {number}
+   */
+  get 口内妊娠() {
+    return era.get(`talent:${this.cid}:344`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 口内妊娠(v) {
+    era.set(`talent:${this.cid}:344`, v);
   }
 
   /**
@@ -2263,6 +2443,37 @@ class CharaFacade {
    */
   set 百合气质(v) {
     era.set(`abl:${this.cid}:22`, v);
+  }
+
+  // —— exp ——
+  /**
+   * 生育经验（exp:cid:60 ↔ EXP:60）
+   * 源: yml/Exp.yml id 60
+   * @returns {number}
+   */
+  get 生育经验() {
+    return era.get(`exp:${this.cid}:60`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 生育经验(v) {
+    era.set(`exp:${this.cid}:60`, v);
+  }
+
+  /**
+   * 异种妊娠经验（exp:cid:62 ↔ EXP:62）
+   * 源: yml/Exp.yml id 62
+   * @returns {number}
+   */
+  get 异种妊娠经验() {
+    return era.get(`exp:${this.cid}:62`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 异种妊娠经验(v) {
+    era.set(`exp:${this.cid}:62`, v);
   }
 }
 // GENERATED END

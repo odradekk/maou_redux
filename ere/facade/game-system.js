@@ -10,21 +10,6 @@ const era = require('#/era-electron');
 class SystemGame {
   // —— flag ——
   /**
-   * 爱之奴隶所生（flag:32 ↔ FLAG:32）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:32
-   * @returns {number}
-   */
-  get 爱之奴隶所生() {
-    return era.get('flag:32') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 爱之奴隶所生(v) {
-    era.set('flag:32', v);
-  }
-
-  /**
    * 濒死自动结束调教（flag:35 ↔ FLAG:35）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:35
    * @returns {number}
@@ -278,21 +263,6 @@ class SystemGame {
    */
   set 榨乳中(v) {
     era.set('tflag:35', v);
-  }
-
-  /**
-   * 下装穿不上（tflag:45 ↔ TFLAG:45）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:45
-   * @returns {number}
-   */
-  get 下装穿不上() {
-    return era.get('tflag:45') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 下装穿不上(v) {
-    era.set('tflag:45', v);
   }
 
   /**

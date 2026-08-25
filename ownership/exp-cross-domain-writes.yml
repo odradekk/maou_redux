@@ -1,9 +1,9 @@
-# 跨域写入清单（EXP）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70）
+# 跨域写入清单（EXP）——由 tools/ownership-scan.js 从 target/ 实测生成（issue #70 实测，#133 文件级粒度重跑）
 # 本文件归人工维护：扫描器重跑默认不覆盖，需要重新生成请加 --force --table exp
 #
 # 定义：写入者域 ≠ 该下标属主域 的每一次写入（含 VARSET 展开的逐下标写入），
 #       按「下标、文件、行号」排序。动态/表级写入无属主可比，不入本清单。
-# 共 557 条。
+# 共 530 条。
 - index: 0
   writer: event
   owner: dungeon
@@ -84,11 +84,6 @@
   owner: dungeon
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 449
-- index: 0
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1534
 - index: 0
   writer: system
   owner: dungeon
@@ -297,11 +292,6 @@
 - index: 1
   writer: system
   owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1542
-- index: 1
-  writer: system
-  owner: dungeon
   file: "target/ERB/其他/NTR.ERB"
   line: 103
 - index: 1
@@ -339,11 +329,6 @@
   owner: dungeon
   file: "target/ERB/其他/NTR.ERB"
   line: 300
-- index: 1
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 489
 - index: 1
   writer: event
   owner: dungeon
@@ -690,11 +675,6 @@
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 452
 - index: 5
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1550
-- index: 5
   writer: train
   owner: dungeon
   file: "target/ERB/調教相關/BENKI.ERB"
@@ -824,16 +804,6 @@
   owner: dungeon
   file: "target/ERB/侵略/ARCANA_FORT.ERB"
   line: 433
-- index: 10
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 426
-- index: 10
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 487
 - index: 10
   writer: train
   owner: dungeon
@@ -982,11 +952,6 @@
 - index: 20
   writer: system
   owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1557
-- index: 20
-  writer: system
-  owner: dungeon
   file: "target/ERB/其他/NTR.ERB"
   line: 113
 - index: 20
@@ -1014,11 +979,6 @@
   owner: dungeon
   file: "target/ERB/其他/NTR.ERB"
   line: 342
-- index: 20
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 385
 - index: 20
   writer: event
   owner: dungeon
@@ -1429,11 +1389,6 @@
   owner: dungeon
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 1308
-- index: 22
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1519
 - index: 22
   writer: system
   owner: dungeon
@@ -2060,7 +2015,7 @@
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 1308
 - index: 52
-  writer: system
+  writer: chara
   owner: dungeon
   file: "target/ERB/其他/NINSIN.ERB"
   line: 303
@@ -2177,11 +2132,6 @@
 - index: 56
   writer: system
   owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1563
-- index: 56
-  writer: system
-  owner: dungeon
   file: "target/ERB/其他/NTR.ERB"
   line: 161
 - index: 56
@@ -2210,11 +2160,6 @@
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 1308
 - index: 57
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/LOVERS.ERB"
-  line: 1513
-- index: 57
   writer: train
   owner: dungeon
   file: "target/ERB/調教相關/COMF51_媚薬.ERB"
@@ -2225,18 +2170,18 @@
   file: "target/ERB/調教相關/COMF52_利尿剤.ERB"
   line: 60
 - index: 60
-  writer: chara
-  owner: system
-  file: "target/ERB/キャラ関数/CHARA_MAKE.ERB"
-  line: 1064
+  writer: system
+  owner: chara
+  file: "target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB"
+  line: 1799
 - index: 60
-  writer: chara
-  owner: system
-  file: "target/ERB/キャラ関数/LOOK.ERB"
-  line: 556
+  writer: system
+  owner: chara
+  file: "target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB"
+  line: 1834
 - index: 62
   writer: stronghold
-  owner: system
+  owner: chara
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 1309
 - index: 63
@@ -2265,7 +2210,7 @@
   file: "target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB"
   line: 1309
 - index: 70
-  writer: system
+  writer: dungeon
   owner: train
   file: "target/ERB/其他/LOVERS.ERB"
   line: 1569
@@ -2579,86 +2524,6 @@
   owner: dungeon
   file: "target/ERB/侵略/INVASION_EVENT.ERB"
   line: 1102
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 591
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 674
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 771
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1111
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1206
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1208
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1224
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1230
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1243
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1258
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1264
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1277
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1292
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/MAGIC.ERB"
-  line: 1311
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 649
-- index: 80
-  writer: system
-  owner: dungeon
-  file: "target/ERB/其他/USE_EX_ITEM.ERB"
-  line: 789
 - index: 80
   writer: event
   owner: dungeon
