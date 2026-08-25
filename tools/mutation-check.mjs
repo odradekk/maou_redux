@@ -98,7 +98,7 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // 更新，条数不变）。
 // #138 追加 +1：M246 版本退回 0（loadData truthy 短路拒档——版本下限
 // 文件级用例直接红，无引擎也拦，不进跳过数）。现为 265。
-const LEDGER_COUNT_BASELINE = 274;
+const LEDGER_COUNT_BASELINE = 275;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

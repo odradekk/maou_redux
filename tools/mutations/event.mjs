@@ -474,4 +474,14 @@ export default [
     tests: ['event-load', 'page-save-load'],
     must_mention: '体力上限 < 600 → 600',
   },
+  {
+    desc: 'M252 自动存档被拆（EVENT_NEWDAY 入口不再写 99 号槽，#137/ADR-0006 的有意偏离）',
+    file: 'ere/event/event-nextday.js',
+    find: `  // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的
+  // auto_save：备注带「自动」前缀、不 push LASTSAVE_NO、无输出）
+  await auto_save();`,
+    replace: `  // 变异：自动存档被拆`,
+    tests: ['event-nextday'],
+    must_mention: '自动存档必须写 99 号槽（原作留白，ADR-0006）',
+  },
 ];

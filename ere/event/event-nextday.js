@@ -33,6 +33,7 @@
 
 const era = require('#/era-electron');
 const { run_endcheck } = require('#/event/event-endcheck');
+const { auto_save } = require('#/page/page-save-load');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -281,8 +282,16 @@ async function run_event_nextday() {
 
 /**
  * 翌朝事件（原作 @EVENT_NEWDAY，普通档日推进回合 TIME==0 时调用）。
+ *
+ * 调用时机（turnend-settle.js:749-751）：#PRI 档已推进 DAY:0 += 1、TIME
+ * 已归 0——本函数入口即「新游戏日开始」的语义点，自动存档（#137 / ADR-0006
+ * 的有意偏离，非原作动作）挂在这里，备注里的「第N日午前」反映新的一天。
  */
 async function run_event_newday() {
+  // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的
+  // auto_save：备注带「自动」前缀、不 push LASTSAVE_NO、无输出）
+  await auto_save();
+
   // :200-221 影寿命循环（TALENT:292 魔王之影）：292 无写入路径，整段
   // 当前不可达——登记不占位（docs/stub-registry.md），影角色票落地时按
   // 原行号补真身（逐日 CFLAG:A:820 -1 播报、归零时 CFLAG:A:9 = 1 +
