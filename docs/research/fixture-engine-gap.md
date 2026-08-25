@@ -5,6 +5,8 @@
 起点不是零：#135（版本闸门 truthy 短路）、#136（按钮缺失勘误）、#137（`LOADDATA` 的转场语义）三类逃逸机制已实机确证，本报告**直接引用、不重新诊断**，往下扩查同型缺口。
 本票只查只写：不改夹具、不改任何用例，修复归本报告产出的后续票。
 
+**读前必看**：本报告写于 #137 合并之前，`G1` 与后续票 `P0` 已被部分落地，现状见文末「验收补记」。其余各条不受影响。
+
 ## 结论摘要
 
 1. 存档系列六个 API（`loadData` / `saveData` / `rmData` / `saveGlobal` / `loadGlobal` / `resetGlobal`）全部不在夹具的 `implemented` 名单（`era-fixture.js:747-780`），落兜底层只记录、恒返回 `undefined`（:788-791）——#135/#137 撞出的两个缺陷只是这一族的最先暴露者（G1）。
@@ -172,6 +174,28 @@ G5 的锐边说明：`beginTrain`/`endTrain` 自陈的「删表不镜像」意�
 1. `input` 的 `useRule` 默认值：`A-api-docs.md` 写「默认值为 `false`」；渲染层代码是 `safeUndefinedCheck(e.config.useRule, !0)`（`js/app.2cccec57.js` 的 `pe` 函数）——默认 **true**。夹具按代码（`era-fixture.js:596` 的 `config?.useRule !== false`）。另核实：`config.rule` 构造 RegExp 的锚定 ``new RegExp(`^${rule}$`)`` 渲染层与夹具逐字一致。
 2. `nextTurnInTrain` 词条（`A-api-docs.md`）：「将 delta 表结算到 **param** 表中」；代码结算进 **palam**（`this.data.palam[e][t] += this.data.delta[e][t]`）。且 `deltabase` → `base` 的结算带 `maxbase` 钳制（`Math.max(Math.min(base+delta, maxbase), 0)`，仅 `maxbase > 0` 时），手册只字未提。
 3. `notify` 词条（`A-api-docs.md`）：参数与返回值段落误植了 `printWholeImage` 的文档（`WholeImageConfig`、「显示全图后显示在界面上的行数」）；代码 `notify` 是 `connect("notify", {...})`，无返回值。
+
+## 验收补记（派单人，2026-08-25）
+
+本报告的调查基线早于 #137（C3 读档钩子）合并。**C3 在落地读档转场时顺手补了存档系列的一部分夹具镜像**（`test/helpers/era-fixture.js`，随 PR #145 合并），因此 `G1` 与后续票 `P0` 的现状需要收窄。逐条核对如下（核对时点：master `5d87bff`）：
+
+| API           | 报告写作时 | 现状       | 说明                                                                      |
+| ------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| `loadData`    | 走兜底     | **已实现** | 镜像版本闸门（truthy 短路）与整体替换（`this.era.data = r` + `fillData`） |
+| `saveData`    | 走兜底     | **已实现** | 盖版本戳 + `global.saves` 副作用                                          |
+| `rmData`      | 走兜底     | **已实现** | 删档 + 备注清理                                                           |
+| `saveGlobal`  | 走兜底     | 仍走兜底   | `G1` 未落地部分                                                           |
+| `loadGlobal`  | 走兜底     | 仍走兜底   | 同上；与 `loadData` 判空写法不一致那条仍只在文档里                        |
+| `resetGlobal` | 走兜底     | 仍走兜底   | 同上                                                                      |
+
+C3 另做了两件本报告第四节所建议的事：把 `test/page-save-load.test.js:466` 那句「读档后返回调用方」的断言改锚为「去了哪个状态」（第四节建议 3 的原文要求）；并新增变异条目 M258/M259 **钉住夹具自己的镜像**——拆掉版本闸门或整体替换即红。这是对「就地替换」纪律的机器化补强，本报告未想到这一手。
+
+因此后续票清单的修订：
+
+- **P0 收窄**为「`saveGlobal`/`loadGlobal`/`resetGlobal` 三个 + `listSaveFiles` 的槽位对账约定（`(FILE LOST) ` 前缀分支仍无用例，见 G1 第三点）」。已落地的三个 API 目前是**手写镜像**而非 `engine-bundle` 驱动，第四节建议 1 的「让引擎自己执行判据」尚未实现，是否值得改造留给 P0 的实施票判断——权衡点是手写镜像已被 M258/M259 钉住，改造收益递减。
+- **P1（`quit`）、P1（`removeCharacter`）、P2、P3 各条不受影响**，逐条复核仍成立：`quit` 与三个 global 系 API 仍走兜底（`implemented` 名单实测），`removeCharacter` 虽在名单内但其发明的布尔返回值与幸存者三段键漏删两条分歧未变。
+
+`G5`（`quit` 的 throw 型控制流）验收时已用引擎代码独立复核，逐字属实：`quit(){throw this.era.quit(),new Error("quit")}`，装载循环 `catch(e=>{"quit"!==e.message&&this.error(...)})` 按 message 静默放行。`ere/event/event-ending.js:95` 的 `era.quit(); return 1;` 在真机上 `return 1` 确不可达，且该文件注释与 JSDoc 仍按「带哨兵值返回」描述——修复时两处一并更正。
 
 ## 相关
 
