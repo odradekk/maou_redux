@@ -1,6 +1,6 @@
 {
   "system": {
-    "extendedCharaTables": ["portcflag"],
+    "extendedCharaTables": ["portcflag", "ex_talent"],
     "saveFiles": 99
   }
 }

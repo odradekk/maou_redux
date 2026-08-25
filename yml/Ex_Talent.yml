@@ -1,0 +1,28 @@
+# EX_TALENT 名字表（issue #138）：原作「魔改版从原版 TALENT 移出的独有素质」
+# （target/ERB/其他/EXCOM.ERH:4 的 `#DIM SAVEDATA CHARADATA EX_TALENT,1000`，
+# 按角色、1000 槽，全库用量 163 次——#105 决议第三节）。
+#
+# 本文件不是转换器产物：原作没有 EX_TALENT 名称 CSV，无从转换（CFlag.yml
+# 同款先例）。它落的是 #105 决议「扩展角色表只加 EX_TALENT」——EX_CFLAG
+# 全库用量仅 10，不值得为此多付一次 #13 的死分支代价，不加。
+#
+# 二维生效靠登记：yml/_fixed.json 的 system.extendedCharaTables 含
+# "ex_talent"（注意下划线——文件名小写即表名，寻址 `ex_talent:角色:序号`，
+# ere/chara/chara-ex.js 的九处写入用的就是这个前缀）。登记与表在场的双向
+# 契约由 test/extalent-table.test.js 钉住（portcflag 的同款实害：登记了
+# 没表 → addCharacter 建顶层桶时直接崩；有表没登记 → 引擎按一维自动生效，
+# 角色桶永不建、写入静默丢弃）。
+#
+# 空表即够用：现有消费者（@ADDCHARA_EX 分发的八个实现，#21）一律用数字
+# 下标寻址（200 魔王 / 101 琼 / 102 普林希斯 / 103 嘉德 / 104 菲娅 / 4+801+901
+# 狂王替身 / 223 丽塔 / 777 卡拉），引擎 safeUndefinedCheck 在名字表查不到
+# 时原样回落数字。名称条目（原作 @EX_TALENTNAME_INIT 的运行时初始化表，
+# EXCOM.ERB:39）随读档钩子票落地时在此补「名称: id」——补之前先看
+# yml/CStr.yml 头注的警告：登记进名字表的下标会被 initCharaTable 预置 0。
+#
+# #13 死分支（fillData 对 chara 类扩展表不重建 per-chara 桶）的处置：
+# 新档路径 resetData → fillData 建顶层桶，addCharacter 为每个角色建
+# data.ex_talent[cid] = {}，写入即生效；「表晚于存档出现」的旧档读档后
+# 写入会静默丢弃——本票按 ADR-0006 判定表把 GameBase 版本抬到 0.0.1，
+# 旧档一律废掉，该场景在本版本轴内不存在。怪癖由
+# test/extalent-table.test.js 钉住（portcflag-table.test.js 的同款用例）。

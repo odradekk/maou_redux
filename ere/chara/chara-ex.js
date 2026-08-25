@@ -36,12 +36,12 @@ const chara_ex = new DispatchFamily('CHARA_EX', DECLARED_CHARA_IDS);
 // #11 已判定「数据不是代码」）。EX_TALENT 序号语义 = EXCOM.ERB
 // @EX_TALENTNAME_INIT 的名称表，注释逐个标注。
 //
-// 已知缺口：ex_talent 表尚未随数据管线进 yml/（原作声明在 EXCOM.ERH:4
-// `#DIM SAVEDATA CHARADATA EX_TALENT,1000`）。引擎变量层（app.asar）对三维
-// 寻址 `ex_talent:角色:序号` 分两种情况：整表未声明 → `if(!this.data[a]||!
-// this.data[a][c])return;` 静默忽略、不写不抛（当前状态，写入无害无效果，
-// 表落地后同一写入自动生效）；表已声明而序号未声明 → 静默建出变量并进存档
-// （#13 的实测，与前者不同）。测试经夹具 var_writes 断言写入意图。
+// ex_talent 表已随 #138 落地（yml/Ex_Talent.yml 空名字表 + _fixed.json 登记
+// extendedCharaTables，原作声明在 EXCOM.ERH:4 `#DIM SAVEDATA CHARADATA
+// EX_TALENT,1000`）：新档 resetData → fillData 建顶层桶，addCharacter 为每个
+// 角色建 data.ex_talent[cid]，下方写入真正生效（生效与未登记的反面均由
+// test/extalent-table.test.js 用引擎真方法断言）。名称条目随读档钩子票
+// （EX_TALENTNAME_INIT）落地时补，见 Ex_Talent.yml 头注。
 chara_ex.register(0, (cid) => {
   // @CHARA_EX_0（CHARA0.ERB）：EX_TALENT:200 = 魔王
   era.set(`ex_talent:${cid}:200`, 1);
