@@ -101,7 +101,11 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #148 起为 281：+3（M273 夹具 quit 的 throw 拆回普通返回——G5 镜像本体；
 // M274 ere 侧 quit 调用被拆、哨兵复辟；M275 INVASION_CHECK 吞掉 QUIT 异常。
 // 另同步 M206/M220 的 find 到 #148 改造后的代码形状，条数不变）。
-const LEDGER_COUNT_BASELINE = 281;
+// #147 起为 288：+7（global 系存档镜像——M276 saveGlobal 盖戳写盘、
+// M277 loadGlobal 不匹配 throw、M278 loadGlobal 闸门被换成 truthy 写法、
+// M279 resetGlobal 重建、M280 listSaveFiles 对账整体跳过、M281 UNNAMED
+// 补名；M282 has_valid_save 的 FILE LOST 前缀分支——#147 点名的无钉住缺口）。
+const LEDGER_COUNT_BASELINE = 288;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

@@ -5,9 +5,10 @@
  * 99 槽 + 分页 + 故事命名（32 字符上限）+ 删除 + 覆盖确认 + 上次存/读档号
  * 高亮，**逐条有测试**；另钉 @SYSTEM_LOADEND 死代码不被接上（#14 登记）。
  *
- * 夹具注意：era.saveData / rmData / loadData 无专门实现、走兜层记录
- * （返回 undefined）——loadData 的成功路径由用例就地替换
- * fixture.era.loadData（SDK 是可变对象，page-train.test.js 的先例）。
+ * 夹具注意：saveData / loadData / rmData 的数据层镜像与 global 系三 API
+ * （saveGlobal / loadGlobal / resetGlobal）分别由 #137 / #147 落实，契约见
+ * test/fixture.test.js；个别用例仍就地替换 fixture.era.loadData（SDK 是
+ * 可变对象，page-train.test.js 的先例）以绕开闸门细节、单测界面分支。
  */
 
 const assert = require('node:assert/strict');
@@ -72,6 +73,44 @@ test('LIST_DATA：存在槽 = 备注按钮，空槽按视角分化（存=灰按�
     (line) => line.type === 'text' && line.text === '----',
   );
   assert(gray_text, '空槽渲染为灰色纯文本 ----');
+});
+
+test('LIST_DATA：`(FILE LOST) ` 前缀的备注按空槽对待（#147——引擎 loadGlobal 对账约定的消费面）', () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 0, '正常档');
+  seed_save(fixture, 5, '(FILE LOST) 文件丢失的档');
+  const { list_data } = load_page(fixture);
+
+  // 读/删视角：带前缀的槽不可点（has_valid_save 的前缀分支——CHKDATA 等价
+  // 判据，11-saves.md：`(FILE LOST) ` 前缀 = 有备注但文件丢失）
+  list_data(0, 6, false);
+  let entries = buttons(fixture);
+  assert.equal(entries.length, 1, '丢失槽不出按钮（只剩 0 号正常档可点）');
+  assert.equal(entries[0].accelerator, 0);
+  assert.equal(entries[0].text, '正常档');
+  const gray_slots = fixture.lines.filter(
+    (line) => line.type === 'text' && line.text === '----',
+  );
+  assert.equal(
+    gray_slots.length,
+    5,
+    '四个空槽加一个丢失槽同样渲染 ---- 灰文本',
+  );
+
+  // 存档视角：丢失槽照旧是灰按钮（原作对空槽照存，可覆盖）
+  const fixture2 = create_era_fixture();
+  seed_save(fixture2, 5, '(FILE LOST) 文件丢失的档');
+  const { list_data: list_data2 } = load_page(fixture2);
+  list_data2(0, 6, true);
+  entries = buttons(fixture2);
+  assert.equal(entries.length, 6, '存档视角：丢失槽照旧可存');
+  assert.equal(entries[5].accelerator, 5);
+  assert.equal(entries[5].text, '----');
+  assert.equal(
+    entries[5].color,
+    'gray',
+    '(FILE LOST) 前缀的备注按空槽对待（灰）',
+  );
 });
 
 test('LIST_DATA：末页 99 号位在列表内留空行（单列段归读档界面）', () => {

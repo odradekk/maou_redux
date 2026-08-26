@@ -71,6 +71,204 @@ test('quit 镜像引擎 throw 型（#148）：先记录关窗 IPC 再抛 Error("
   assert.deepEqual(fixture.calls, [{ api: 'quit', args: [] }]);
 });
 
+// —— global 系存档 API（#147）：saveGlobal / loadGlobal / resetGlobal 与
+// listSaveFiles 槽位对账的契约。引擎逐字实现与镜像偏差登记见
+// test/helpers/era-fixture.js 的「global 系存档 API」段注释 ——
+// 两处版本闸门的判空写法差异（loadData truthy / loadGlobal undefined）是
+// 验收清单点名的核查项：下面两条用例各自取到能区分两种写法的值，
+// 不共用断言（写法被互换即红）。
+
+test('saveGlobal 盖戳落盘（#147）：loadGlobal 读回同一份，多出的键随整份替换消失', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  store.set('global:0', 7);
+  store.set('global:98', 2);
+  assert.equal(await era.saveGlobal(), true);
+
+  // 落盘后改内存：读回必须是落盘时的快照（整份替换，非合并）
+  store.set('global:0', 9);
+  store.delete('global:98');
+  store.set('global:99', 5); // 不在文件里的键
+  await era.loadGlobal();
+
+  assert.equal(
+    store.get('global:0'),
+    7,
+    '读回的是落盘时的值（盖戳写盘被拆即红）',
+  );
+  assert.equal(store.get('global:98'), 2, '文件里的键一并灌回');
+  assert.equal(
+    store.get('global:99'),
+    undefined,
+    '不在文件中的键随整份替换消失（引擎 this.era.global = n）',
+  );
+  assert.deepEqual(fixture.logs, [], '版本与游戏标识都对，无报错');
+  // loadGlobal 成功路径尾部逐字：listSaveFiles（不在 SDK 面、无记录）+ saveGlobal
+  assert.deepEqual(
+    fixture.calls.map((c) => c.api),
+    ['saveGlobal', 'loadGlobal', 'saveGlobal'],
+  );
+});
+
+test('loadGlobal 镜像 gameCode 不匹配的 throw 型（#147）：先报错再裸抛（引擎启动拒绝的机制本体）', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  await era.saveGlobal(); // 以当前 game_code 落盘
+  fixture.save_gate.game_code = 931061; // GameBase 的【游戏标识】变了
+
+  await assert.rejects(
+    () => era.loadGlobal(),
+    // 引擎逐字 if(r)throw new Error——裸抛无 message，断言只认 Error 本体
+    (e) => e instanceof Error,
+    '不匹配必须裸抛 Error 而非返回 false（返回 false 是无害桩降格）',
+  );
+  assert(
+    fixture.logs.some(
+      (l) => l.level === 'error' && String(l.msg).includes('所属游戏ID'),
+    ),
+    'throw 前经 logger.error 留下引擎同款报错文案',
+  );
+  assert.deepEqual(
+    fixture.calls.map((c) => c.api),
+    ['saveGlobal', 'loadGlobal'],
+    'throw 炸穿后不再有后续调用',
+  );
+});
+
+test('loadGlobal 版本闸门用 undefined 判空（#147）：version 0 低于下限即重建，truthy 写法会漏放', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  fixture.save_gate.current_version = 0; // 落一盘 version 0 的 global.sav
+  store.set('global:0', 7);
+  await era.saveGlobal();
+  // allow_version 默认 1：undefined 判空下 0 < 1 命中比较 → 版本过低。
+  // 若照抄 loadData 的 truthy 写法，0 会被短路漏放、直接走读入分支
+  await era.loadGlobal();
+
+  assert(
+    fixture.logs.some(
+      (l) => l.level === 'error' && String(l.msg).includes('版本过低'),
+    ),
+    'version 0 低于下限也必须拦（undefined 判空不吃 truthy 短路）',
+  );
+  assert.equal(store.get('global:0'), 0, '过低即重建：旧值清 0');
+  assert.deepEqual(
+    fixture.calls.map((c) => c.api),
+    ['saveGlobal', 'loadGlobal', 'resetGlobal', 'saveGlobal'],
+    '重建路径逐字：loadGlobal → resetGlobal → saveGlobal',
+  );
+});
+
+test('loadData 版本闸门用 truthy 判空（#137 落地、#147 钉写法）：version 0 即便不低于下限也拒读', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  fixture.save_gate.current_version = 0;
+  store.set('flag:1', 11);
+  await era.saveData(3, '零版本档');
+  fixture.save_gate.allow_version = 0; // 0 不低于下限 0……
+  store.set('flag:1', 22); // 存档后再改，验「拒读不动数据」
+
+  assert.equal(
+    await era.loadData(3),
+    false,
+    'truthy 判空：version 0 短路拒读（换成 undefined 写法会放行，本用例即红）',
+  );
+  assert.equal(store.get('flag:1'), 22, '拒读不动数据');
+});
+
+test('两处闸门写法的差异对照（#147）：version 0 且下限 0——loadData 拒、loadGlobal 收', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  fixture.save_gate.current_version = 0;
+  fixture.save_gate.allow_version = 0;
+  store.set('global:0', 7);
+  await era.saveGlobal();
+  store.set('global:0', 9);
+  await era.loadGlobal();
+
+  assert.equal(
+    store.get('global:0'),
+    7,
+    '同一取值 loadGlobal 收：0 是合法版本号，undefined 判空放它进比较',
+  );
+});
+
+test('loadGlobal 文件缺失走重建（#147）：global 键清 0，二次 load 即成功路径', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  store.set('global:0', 7);
+  await era.loadGlobal(); // 尚未落过盘 → 文件缺失分支
+
+  assert.deepEqual(fixture.logs, [], '文件缺失不是错误（引擎静默重建）');
+  assert.equal(store.get('global:0'), 0, '重建后旧 global 值清 0');
+  assert.deepEqual(
+    fixture.calls.map((c) => c.api),
+    ['loadGlobal', 'resetGlobal', 'saveGlobal'],
+  );
+
+  // 重建尾部已把 global.sav 写出：再 load 即成功路径（不再 resetGlobal）
+  store.set('global:0', 9);
+  await era.loadGlobal();
+  assert.equal(store.get('global:0'), 0, '二次 load 读回重建时落盘的值');
+  assert.deepEqual(fixture.calls.map((c) => c.api).slice(3), [
+    'loadGlobal',
+    'saveGlobal',
+  ]);
+});
+
+test('listSaveFiles 槽位对账（#147）：文件丢加 (FILE LOST) 前缀、文件在剥误标前缀', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  // 槽 5：备注在而文件丢（引擎侧 = sav/save5.sav 被删/盘损，备注随
+  // global.sav 存活）——备注先进 global 再落盘，槽文件从不曾存在
+  store.set('global:saves:5', '五号备注');
+  // 槽 6：文件在而备注带误标前缀（引擎侧 = 文件失而复得，如备份恢复）
+  await era.saveData(6, '六号备注');
+  store.set('global:saves:6', '(FILE LOST) 六号备注');
+  await era.saveGlobal(); // 带着两处状态落盘
+
+  await era.loadGlobal(); // 成功路径尾部对账（引擎逐字 listSaveFiles + saveGlobal）
+
+  assert.equal(
+    store.get('global:saves:5'),
+    '(FILE LOST) 五号备注',
+    '备注在而文件丢必须加 (FILE LOST) 前缀（has_valid_save 消费的约定）',
+  );
+  assert.equal(
+    store.get('global:saves:6'),
+    '六号备注',
+    '文件在：误标的丢失前缀被剥掉（引擎 substring(12)）',
+  );
+});
+
+test('resetGlobal 整份重建（#147）：旧值清 0、备注丢失的槽按文件补 UNNAMED SAVE FILE', async () => {
+  const fixture = create_era_fixture();
+  const { era, store } = fixture;
+
+  await era.saveData(3, '三号档');
+  store.set('global:0', 7);
+  assert.equal(await era.resetGlobal(), true, '返回尾部 saveGlobal 的结果');
+
+  assert.equal(store.get('global:0'), 0, '声明键清 0（夹具近似：一律清 0）');
+  assert.equal(
+    store.get('global:saves:3'),
+    'UNNAMED SAVE FILE',
+    '文件在而备注缺必须补 UNNAMED SAVE FILE（重建丢备注后的对账）',
+  );
+  assert.deepEqual(
+    fixture.calls.map((c) => c.api),
+    ['saveData', 'resetGlobal', 'saveGlobal'],
+    'saveData 的自动持久化不另记 calls（只属于显式调用）',
+  );
+});
+
 test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预设才加（issue #35）', () => {
   const fixture = create_era_fixture();
 
