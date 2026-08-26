@@ -122,7 +122,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // （#151 前的真实写法）、M294 归一加 typeof string 守卫、M295 归一换成
 // parseInt 截断解析；三条同钉 fixture 的字符串预置正主用例，数字预置的
 // 既有用例零误伤）。
-const LEDGER_COUNT_BASELINE = 301;
+// #152 起为 304：+3（调教域表生命周期——M296 beginTrain 重建守卫被拆、
+// M297 删表范围收窄到 tflag、M298 resetData 调教态不清；三条各只死
+// fixture 的对应用例，单场调教的存量用例零误伤）。
+const LEDGER_COUNT_BASELINE = 304;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

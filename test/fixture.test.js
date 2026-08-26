@@ -545,6 +545,94 @@ engine_test('引擎 getNumber（模块 65）：input 回传归一的边界值（
   assert.ok(getNumber('1e2') === 100);
   assert.ok(getNumber('  ') === 0);
 });
+engine_test(
+  '引擎比对：beginTrain 重建清 tflag 静态条目、表已在则不清；endTrain 删 11 张表（#152）',
+  () => {
+    const { era_api } = engine;
+    // 原型链载体：beginTrain 尾部 this.addCharacterForTrain(...) 走 this 的
+    // 原型链找方法，普通对象字面量挂不上（juel-check 驱动 endTrain 无此
+    // 依赖）。基类原型另有 get data()/get staticData() 访问器（读 this.era），
+    // 普通赋值遮蔽不了，须 defineProperty 定义 own 属性
+    const make_train_this = () => {
+      const t = Object.create(era_api.prototype);
+      // staticData.tflag 只被 Object.values 消费（值成为 data.tflag 的键），
+      // 给两个声明条目即可，与名字表的方向性无关。base 空表：addCharacterForTrain
+      // 建桶时对 staticData.base 无守卫地 Object.values（空表 → 不建键）
+      Object.defineProperty(t, 'staticData', {
+        value: { base: {}, tflag: { a: '第一条', b: '第二条' } },
+        writable: true,
+      });
+      Object.defineProperty(t, 'data', {
+        value: { juel: { 31: { 0: 10 } } },
+        writable: true,
+      });
+      return t;
+    };
+
+    // 第一次 beginTrain：tequip 不存在 → 重建 11 张表 + tflag 静态条目清 0
+    const t = make_train_this();
+    era_api.prototype.beginTrain.call(t, 31);
+    assert.deepEqual(
+      Object.keys(t.data).sort(),
+      [
+        'delta',
+        'deltabase',
+        'ex',
+        'gotjuel',
+        'juel', // 用例预置的常驻表（endTrain 结算的目标），非 beginTrain 所建
+        'nowex',
+        'palam',
+        'source',
+        'stain',
+        'tcvar',
+        'tequip',
+        'tflag',
+      ].sort(),
+      'beginTrain 重建 11 张表（juel 是预置的常驻表）',
+    );
+    assert(
+      Object.values(t.data.tflag).every((v) => v === 0),
+      'tflag 静态条目在重建那一刻清 0',
+    );
+    // addCharacterForTrain 已被 beginTrain 尾调：tequip 建角色桶（裸键是字符串）
+    assert.deepEqual(Object.keys(t.data.tequip), ['31']);
+
+    // 重复 beginTrain（tequip 已存在）：守卫跳过重建，已写值保留
+    t.data.tflag['第一条'] = 7;
+    era_api.prototype.beginTrain.call(t, 31);
+    assert.equal(
+      t.data.tflag['第一条'],
+      7,
+      '表已存在时重复 beginTrain 不清 tflag（守卫逐字）',
+    );
+
+    // endTrain：结算 gotjuel→juel 后删 11 张表
+    t.data.gotjuel[31][0] = 5;
+    era_api.prototype.endTrain.call(t);
+    assert.equal(t.data.juel[31][0], 15, 'endTrain 把 gotjuel 加进 juel');
+    for (const table of [
+      'delta',
+      'deltabase',
+      'ex',
+      'gotjuel',
+      'nowex',
+      'palam',
+      'source',
+      'stain',
+      'tcvar',
+      'tequip',
+      'tflag',
+    ]) {
+      assert.equal(t.data[table], undefined, `endTrain 删整表 ${table}`);
+    }
+    // 删表后的下一次 beginTrain 重新走重建分支（跨场不残留的引擎本体）
+    era_api.prototype.beginTrain.call(t, 31);
+    assert(
+      Object.values(t.data.tflag).every((v) => v === 0),
+      '删表后的 beginTrain 重建：上一场的 7 不残留',
+    );
+  },
+);
 
 test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边界', () => {
   const fixture = create_era_fixture();
@@ -574,6 +662,86 @@ test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边
   fixture.era.endTrain();
   assert.deepEqual(fixture.era.getCharactersInTrain(), []);
   assert.throws(() => fixture.era.set('tflag:0', 2), /key error/);
+});
+
+test('跨调教场不残留（#152）：endTrain 删表、下一场 beginTrain 整表重建', () => {
+  const fixture = create_era_fixture();
+
+  // 场 1：写入各类调教域键（tflag 二段；palam/ex/stain/source 三段）
+  fixture.era.beginTrain(0, 31);
+  fixture.era.set('tflag:860', 1);
+  fixture.era.set('palam:31:3', 3000);
+  fixture.era.set('ex:31:0', 1);
+  fixture.era.set('stain:31:2', 2);
+  fixture.era.set('source:31:0', 5);
+  fixture.era.endTrain();
+
+  // 场 2：整表重建后读不到上一场的值。夹具残留可读 = 掩盖「忘清
+  // tflag/palam」类真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形态，
+  // 消费点如 event-end.js 的 tflag:860 / palam:3·5 结算读）
+  fixture.era.beginTrain(0, 31);
+  assert.equal(
+    fixture.era.get('tflag:860'),
+    undefined,
+    '下一场调教读不到上一场的 tflag（endTrain 删表 + beginTrain 整表重建）',
+  );
+  assert.equal(
+    fixture.era.get('palam:31:3'),
+    undefined,
+    '下一场调教读不到上一场的 palam——删表范围是 11 张整表，不止 tflag',
+  );
+  assert.equal(
+    fixture.era.get('ex:31:0'),
+    undefined,
+    '下一场调教读不到上一场的 ex',
+  );
+  assert.equal(
+    fixture.era.get('stain:31:2'),
+    undefined,
+    '下一场调教读不到上一场的 stain',
+  );
+  assert.equal(
+    fixture.era.get('source:31:0'),
+    undefined,
+    '下一场调教读不到上一场的 source（endTrain 删除列表含 source）',
+  );
+});
+
+test('同场重复 beginTrain 不重建（#152）：tequip 守卫逐字，已写值保留', () => {
+  const fixture = create_era_fixture();
+  fixture.era.beginTrain(0, 31);
+  fixture.era.set('tflag:860', 1);
+  // 引擎守卫：this.data.tequip ||（表已存在）→ 跳过重建，tflag 不清。
+  // 无条件清会错杀 train-loop 的同场幂等 beginTrain（补入角色不重置状态）
+  fixture.era.beginTrain(0, 31);
+  assert.equal(
+    fixture.era.get('tflag:860'),
+    1,
+    '表已存在时重复 beginTrain 不重建（引擎 tequip 守卫逐字）',
+  );
+});
+
+test('resetData 清调教态（#152，D4 登记的分歧闭合）：列表清空、表键随 data 重建消失', () => {
+  const fixture = create_era_fixture();
+  fixture.era.beginTrain(0, 31);
+  fixture.era.set('tflag:860', 1);
+  assert.deepEqual(fixture.era.getCharactersInTrain(), [0, 31]);
+
+  // 引擎 resetData 整份重建 data：tequip 消失 → getCharactersInTrain 恒 []
+  // （D4 #150 登记给本票的分歧：夹具此前只清 chara_no 不清 chars_in_train）
+  fixture.era.resetData();
+  assert.deepEqual(
+    fixture.era.getCharactersInTrain(),
+    [],
+    'resetData 把调教列表一并清空（引擎整份重建 data）',
+  );
+  assert.throws(() => fixture.era.set('tflag:0', 1), /key error/);
+  fixture.era.beginTrain(0, 31);
+  assert.equal(
+    fixture.era.get('tflag:860'),
+    undefined,
+    'resetData 后新开调教读不到残留（表随 data 整份重建消失）',
+  );
 });
 
 test('logger 被记录且不自递归', () => {
