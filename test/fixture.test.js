@@ -302,6 +302,46 @@ test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预
   assert.deepEqual(fixture.chara_no, [0]);
 });
 
+test('角色列表的顺序语义（#150）：三个 get 按数值升序，容器保持插入序', () => {
+  const fixture = create_era_fixture();
+  // 非升序喂法：seed/加入/入列全部先大号后小号——现有其余用例恰好都是
+  // 升序加入，改不改实现都绿，这条是唯一的非升序判据（G4 的潜伏缺口本体）
+  fixture.seed_chara(31, { id: 31, name: '琼' });
+  fixture.seed_chara(0, { id: 0, name: '你' });
+  fixture.seed_chara(5, { id: 5, name: '五号' }); // 只 seed 不加入
+  fixture.era.addCharacter(31);
+  fixture.era.addCharacter(0);
+
+  // 容器侧（引擎 data.no 的对应物）：插入序不动——removeCharacter 的
+  // 过滤与重加入的「先滤同号再入列」都依赖它，别顺手把它也排序
+  assert.deepEqual(fixture.chara_no, [31, 0], '容器 chara_no 保持插入序');
+
+  // 引擎 getAddedCharacters = Object.keys(data.base).map(Number)：
+  // 整数键恒数值升序，与加入先后无关
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 31],
+    '已加入列表按数值升序，与加入序无关',
+  );
+
+  fixture.era.beginTrain(31, 0);
+  // getCharactersInTrain = Object.keys(data.tequip || {}).map(Number)：
+  // beginTrain 的参数序同样不影响返回序
+  assert.deepEqual(
+    fixture.era.getCharactersInTrain(),
+    [0, 31],
+    '调教列表按数值升序，与入列序无关',
+  );
+
+  // getAllCharacters = Object.keys(staticData.chara).map(Number)：读静态
+  // 预设表的键，与是否已加入无关（5 从未 addCharacter 也在列）
+  assert.deepEqual(
+    fixture.era.getAllCharacters(),
+    [0, 5, 31],
+    '预设表键按数值升序，且含未加入者',
+  );
+});
+
 test('addCharacter 落 callname 键（引擎数据层行为，#44）：姓名 -1 / 称呼 -2', () => {
   const fixture = create_era_fixture();
   // 名前 ≠ 呼び名 的角色：两个键重合的世界里，写反了也断言不出来
@@ -440,6 +480,46 @@ engine_test(
       '被删者 callname 整行删除',
     );
     assert.equal(adder.data.base[31], undefined, '被删者 base 整行删除');
+  },
+);
+
+engine_test(
+  '引擎三个角色列表 get：Object.keys 整数键升序，与加入序无关（#150）',
+  () => {
+    const loader = create_chara_loader();
+    // 预设按 31 → 0 → 5 的顺序装载（staticData.chara 的键插入序非升序）
+    loader.load_rows([
+      ['番号', '31'],
+      ['名前', '琼'],
+    ]);
+    loader.load_rows([
+      ['番号', '0'],
+      ['名前', '你'],
+    ]);
+    loader.load_rows([
+      ['番号', '5'],
+      ['名前', '五号'],
+    ]);
+    const adder = create_add_character(loader.static_data);
+
+    // 非升序加入：31 先、0 后——data.no 是插入序（数组 push）
+    assert.equal(adder.add(31), true);
+    assert.equal(adder.add(0), true);
+    assert.deepEqual(adder.data.no, [31, 0]);
+
+    // 真方法逐字读表键：Object.keys(data.base) 对整数键恒数值升序
+    assert.deepEqual(adder.get_added(), [0, 31]);
+    // staticData.chara 的键升序，含未加入的 5
+    assert.deepEqual(adder.get_all(), [0, 5, 31]);
+    // data.tequip 缺失：引擎 `|| {}` 兜底空表
+    assert.deepEqual(adder.get_in_train(), []);
+
+    // 按 beginTrain(31, 0) 的参数序建 tequip 桶（addCharacterForTrain
+    // 逐参数 `data.tequip[id] = {}` 的时序），键序仍交给 Object.keys
+    adder.data.tequip = {};
+    adder.data.tequip[31] = {};
+    adder.data.tequip[0] = {};
+    assert.deepEqual(adder.get_in_train(), [0, 31]);
   },
 );
 

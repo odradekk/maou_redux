@@ -147,7 +147,10 @@ function endcheck_main() {
 
   // :51-55 奴隶魔力过载：任一角色（含 0 号魔王）CFLAG:9 >= 5000 且无
   // 占用/调教中标记（CFLAG:x:1 == 0）→ 记角色号。原作 DO 循环从 0 号
-  // 扫到 CHARANUM-1、后命中覆盖先命中，ere 侧按角色 ID 迭代同语义
+  // 扫到 CHARANUM-1、后命中覆盖先命中；ere 侧迭代序＝引擎键序
+  // （getAddedCharacters 数值升序，#150），覆盖写语义同，「最后」＝
+  // 最大命中 ID——非升序加入时与原作位序模型分道，取舍随 #21 的
+  // ID 语义扁平化
   for (const cid of era.getAddedCharacters()) {
     // CFLAG:x:9 魔力存量；CFLAG:x:1 占用/状态标记（0=空闲）
     if (

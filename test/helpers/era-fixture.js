@@ -939,9 +939,30 @@ function create_era_fixture() {
     return chara_ids.length === 1 ? results[0] : results;
   };
 
+  // —— 角色列表的顺序语义（#150/G4）：引擎三个 get 是键升序，容器是插入序 ——
+  //
+  // 引擎侧两套顺序并存，别混为一谈（app.asar 模块 183，逐字）：
+  //   getAllCharacters()     = Object.keys(this.staticData.chara).map(Number)
+  //   getAddedCharacters()   = Object.keys(this.data.base).map(Number)
+  //   getCharactersInTrain() = Object.keys(this.data.tequip || {}).map(Number)
+  // JS 对整数键的 Object.keys 恒按数值升序迭代，与插入先后无关——即非升序
+  // 加入（先 31 后 0）时三个 get 都返回 [0, 31]。而 addCharacter 同时
+  // `data.no.push(n)`（数组，插入序——removeCharacter 的过滤与重加入的
+  // 「先滤同号再入列」都依赖它）。三个 get 读的都不是 data.no，是各自表的
+  // 键：chara_no ↔ data.no、chars_in_train ↔ data.tequip 的键集合、
+  // chara_presets ↔ staticData.chara 的键集合。集合恒等由对侧操作同步维护
+  // （add/remove/resetData 两侧同动），夹具按「读键」镜像即排序副本；容器
+  // 本体保持插入序不动。
+  const by_id_ascending = (a, b) => a - b;
+
   // CHARANUM 的等价物：主菜单的指针钳制读它（page-main-menu.js）。
   // 返回副本，调用方改不动夹具内部状态。
-  era.getAddedCharacters = () => [...chara_no];
+  era.getAddedCharacters = () => [...chara_no].sort(by_id_ascending);
+
+  // 引擎读静态预设表（staticData.chara）的键，与是否已加入无关——含
+  // seed 过但从未 addCharacter 的源编号。此前夹具无实现，走兜底记录桩
+  // 恒 undefined（#150 一并补上：同一形态的同一缺口）。
+  era.getAllCharacters = () => [...chara_presets.keys()].sort(by_id_ascending);
 
   // —— 调教 API：镜像引擎 beginTrain/endTrain 一族的数据层语义（#44）——
   // beginTrain 创建仅限调教的表并把 tflag 静态条目清 0（表只建一次）、
@@ -961,7 +982,10 @@ function create_era_fixture() {
     chara_ids.forEach((id) => chars_in_train.add(id));
     return undefined;
   };
-  era.getCharactersInTrain = () => [...chars_in_train];
+  // beginTrain 入列序＝参数序（Set 插入序），但 get 的返回序是键升序（见
+  // 上方「角色列表的顺序语义」段）；tequip 缺失时引擎 `|| {}` 兜底空表，
+  // Set 空集天然同构。
+  era.getCharactersInTrain = () => [...chars_in_train].sort(by_id_ascending);
   era.nextTurnInTrain = () => {
     calls.push({ api: 'nextTurnInTrain', args: [] });
     return undefined;
@@ -1074,6 +1098,7 @@ function create_era_fixture() {
     'waitAnyKey',
     'addCharacter',
     'getAddedCharacters',
+    'getAllCharacters',
     'resetData',
     'beginTrain',
     'addCharacterForTrain',
