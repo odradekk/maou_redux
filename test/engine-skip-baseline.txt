@@ -48,4 +48,9 @@
 # 引擎门控用例「引擎 getNumber（模块 65）：input 回传归一的边界值」，驱动
 # 真 getNumber；正主归一用例走夹具路径不依赖引擎照常跑），现为 64
 # （768 = 704 过 + 64 跳过 + 0 挂，WSL 无引擎实测）。
-64
+# #152（D6 调教域表生命周期）复测：+1（fixture.test.js 第三个引擎门控
+# 用例「引擎比对：beginTrain 重建清 tflag 静态条目、表已在则不清；endTrain
+# 删 11 张表」，驱动真 beginTrain/addCharacterForTrain/endTrain；跨场不残留
+# 的三条正主用例走夹具路径不依赖引擎照常跑），现为 65（772 = 707 过 +
+# 65 跳过 + 0 挂，WSL 无引擎实测）。
+65

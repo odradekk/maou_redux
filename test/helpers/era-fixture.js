@@ -525,6 +525,19 @@ function create_era_fixture() {
     return true;
   }
 
+  // 调教域表的整表删除/重建镜像（#152/D6）：引擎 endTrain 删 11 张表、
+  // beginTrain 在 tequip 不存在时整表换新、resetData 整份重建 data——夹具
+  // 平表 store 的等价物是删该族全部键。param/gotjewel 是归一别名（era.set
+  // 按原始名落键），删键同样按归一名匹配。不经 era.set：引擎内部动作不进
+  // 游戏代码的写清单（var_writes，与 addCharacter 的 callname 直写同款纪律）。
+  const delete_train_table_keys = () => {
+    for (const key of [...store.keys()]) {
+      if (TRAIN_CHAR_GUARD_TABLES.has(normalize_table_name(key))) {
+        store.delete(key);
+      }
+    }
+  };
+
   era.get = (var_name) => {
     if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
       var_reads.push({ name: var_name, value: undefined });
@@ -984,15 +997,38 @@ function create_era_fixture() {
   era.getAllCharacters = () => [...chara_presets.keys()].sort(by_id_ascending);
 
   // —— 调教 API：镜像引擎 beginTrain/endTrain 一族的数据层语义（#44）——
-  // beginTrain 创建仅限调教的表并把 tflag 静态条目清 0（表只建一次）、
-  // endTrain 结算 gotjuel 后删表；两者间 getCharactersInTrain 读已入列角色。
-  // 结算/删除的实际数值语义（gotjuel→juel、delta→palam 等）不在此镜像：
-  // 夹具的 store 是平表，per-chara 子表结构不存在——那层比对归引擎
-  // bundle 用例（test/train-loop.test.js 的寻址锁）。这里只镜像「何时可寻址」
-  // 与调用记录，让时序错误（beginTrain 之前写 tflag）当场暴露。
+  // 表的生命周期逐字镜像（#152/D6，app.asar 模块 183；简报四段实现）：
+  //   beginTrain(...e){this.data.tequip||(this.data.deltabase={},this.data.tequip={},
+  //     this.data.tflag={},this.data.tcvar={},this.data.palam={},this.data.delta={},
+  //     this.data.gotjuel={},this.data.source={},this.data.stain={},this.data.ex={},
+  //     this.data.nowex={},void 0!==this.staticData.tflag&&
+  //       Object.values(this.staticData.tflag).forEach(e=>this.data.tflag[e]=0)),
+  //     this.addCharacterForTrain(...e)}
+  //   endTrain(){this.getCharactersInTrain().forEach(e=>Object.entries(
+  //     this.data.gotjuel[e]).forEach(([t,r])=>this.data.juel[e][t]+=r)),
+  //     delete this.data.deltabase,delete this.data.tequip,delete this.data.tflag,
+  //     delete this.data.tcvar,delete this.data.palam,delete this.data.gotjuel,
+  //     delete this.data.stain,delete this.data.ex,delete this.data.nowex,
+  //     delete this.data.source,delete this.data.delta}
+  // 三个转换点（重建/删表/随 resetData 消失）由 delete_train_table_keys 承载，
+  // train_open 与引擎「tequip 表在不在」同步：beginTrain 开、endTrain 与
+  // resetData 关。结算的实际数值语义（gotjuel→juel、delta→palam 等）不在此
+  // 镜像：夹具的 store 是平表，per-chara 子表结构不存在——那层比对归引擎
+  // bundle 用例（test/train-loop.test.js 的寻址锁、test/juel-check.test.js
+  // 的 endTrain 结算锁）。这里只镜像「何时可寻址」与调用记录，让时序错误
+  // （beginTrain 之前写 tflag）当场暴露、跨场残留不再掩盖「忘清 tflag」类
+  // 真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形态）。
+  // 已登记偏差：引擎重建时把**静态声明**的 tflag 条目补 0，夹具无声明表
+  // ——删键后读 undefined（未声明条目引擎侧同样是 undefined；声明条目是
+  // 0，getter 一律 || 0 兜底，对游戏代码可观察等价）。
   era.beginTrain = (...chara_ids) => {
     calls.push({ api: 'beginTrain', args: chara_ids });
-    train_open = true; // 引擎：表已存在时跳过重建，此处等价（守卫只看开闭）
+    if (!train_open) {
+      // 引擎守卫逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
+      // 不清 tflag（train-loop 的 beginTrain 幂等语义依赖它）
+      delete_train_table_keys();
+    }
+    train_open = true;
     chara_ids.forEach((id) => chars_in_train.add(id));
     return undefined;
   };
@@ -1013,16 +1049,24 @@ function create_era_fixture() {
     calls.push({ api: 'endTrain', args: [] });
     train_open = false;
     chars_in_train.clear();
+    // 引擎删 11 张表（见上逐字）——结算数值语义不动（自陈简化），删表镜像
+    delete_train_table_keys();
     return undefined;
   };
 
-  // 引擎 resetData 会清空全部存档数据；夹具只清已加入列表——store 里静态
-  // 预置与存档数据尚未分离，全面清空需要先做那层区分。
+  // 引擎 resetData 整份重建 data：tequip/tflag 等调教表全部消失，
+  // getCharactersInTrain 从此恒 []（D4 #150 登记的分歧在此闭合）、调教域
+  // 寻址守卫关闭。夹具同清 train 态与调教域键；store 里静态预置与存档
+  // 数据的全面分离是 G2 锐边（docs/research/fixture-engine-gap.md），
+  // 不属本票——已加入列表之外的数据键维持既定简化。
   era.resetData = () => {
     // 与 addCharacter 同样记录：有专门实现的 API 不走兜底记录层，不显式
     // push 的话 fixture.calls 里就看不见它（用例断言「先清档」要读这里）
     calls.push({ api: 'resetData', args: [] });
     chara_no.length = 0;
+    train_open = false;
+    chars_in_train.clear();
+    delete_train_table_keys();
     return undefined;
   };
   // removeCharacter（DELCHARA 的引擎等价物，#44 的 @EVENTEND 死亡分支用）。

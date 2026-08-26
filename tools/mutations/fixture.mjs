@@ -451,4 +451,65 @@ export default [
     tests: ['fixture'],
     must_mention: '空串的归宿是数值 0',
   },
+  {
+    // 「一个人会怎么写错」：看见「清残留」就直接每次 beginTrain 都清，
+    // 漏了引擎 `this.data.tequip||` 的存在性守卫——同场幂等 beginTrain
+    // （train-loop 的补入角色路径）会把已写状态错杀。
+    desc: 'M296 夹具 beginTrain 重建守卫被拆（每次 beginTrain 都清表——漏引擎 tequip 存在性守卫）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (!train_open) {
+      // 引擎守卫逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
+      // 不清 tflag（train-loop 的 beginTrain 幂等语义依赖它）
+      delete_train_table_keys();
+    }
+    train_open = true;`,
+    replace: `    delete_train_table_keys(); // 变异：守卫被拆，每次 beginTrain 都重建
+    train_open = true;`,
+    tests: ['fixture'],
+    must_mention: '表已存在时重复 beginTrain 不重建（引擎 tequip 守卫逐字）',
+  },
+  {
+    // 「一个人会怎么写错」：读到「引擎把 tflag 静态条目清 0」就把删键范围
+    // 收窄到 tflag——漏了「整表换新」：palam/ex/stain/source 等同样重建，
+    // 残留同样掩盖缺陷（event-end 读 palam/ex 是活消费点）。这正是 #152
+    // 三选一里 B 方案（只清 tflag）的现实错法。
+    desc: 'M297 夹具删表范围收窄到 tflag（「引擎只清 tflag 静态条目」的窄读法——#152 的 B 方案错法）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const delete_train_table_keys = () => {
+    for (const key of [...store.keys()]) {
+      if (TRAIN_CHAR_GUARD_TABLES.has(normalize_table_name(key))) {
+        store.delete(key);
+      }
+    }
+  };`,
+    replace: `  const delete_train_table_keys = () => {
+    for (const key of [...store.keys()]) {
+      if (key.split(':')[0].toLowerCase() === 'tflag') {
+        store.delete(key); // 变异：只删 tflag（窄读引擎的静态条目清 0）
+      }
+    }
+  };`,
+    tests: ['fixture'],
+    must_mention:
+      '下一场调教读不到上一场的 palam——删表范围是 11 张整表，不止 tflag',
+  },
+  {
+    // #150 前的真实写法（D4 登记给 #152 的分歧原样）：resetData 只清已
+    // 加入列表，调教列表与调教域键不清——引擎 resetData 整份重建 data，
+    // tequip 随之消失，getCharactersInTrain 从此恒 []。
+    desc: 'M298 夹具 resetData 调教态不清（只清已加入列表——#150 前的真实写法，D4 登记的分歧原样）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    chara_no.length = 0;
+    train_open = false;
+    chars_in_train.clear();
+    delete_train_table_keys();
+    return undefined;
+  };`,
+    replace: `    chara_no.length = 0;
+    // 变异：调教态与调教域键不清（#150 前只清已加入列表的写法）
+    return undefined;
+  };`,
+    tests: ['fixture'],
+    must_mention: 'resetData 把调教列表一并清空（引擎整份重建 data）',
+  },
 ];
