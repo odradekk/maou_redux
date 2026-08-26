@@ -105,7 +105,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // M277 loadGlobal 不匹配 throw、M278 loadGlobal 闸门被换成 truthy 写法、
 // M279 resetGlobal 重建、M280 listSaveFiles 对账整体跳过、M281 UNNAMED
 // 补名；M282 has_valid_save 的 FILE LOST 前缀分支——#147 点名的无钉住缺口）。
-const LEDGER_COUNT_BASELINE = 288;
+// #147 验收补 +1，现为 289：M283 loadGlobal 闸门换成取反后忠实照抄的 truthy
+// 写法。M278 模拟的是漏取反的照抄（闸门整体反向，打死 4 条用例）；两种写法
+// 真正分道的取值是 version 0 且下限 0，此前只有对照用例覆盖、无条目钉住。
+const LEDGER_COUNT_BASELINE = 289;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

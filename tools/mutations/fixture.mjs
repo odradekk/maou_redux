@@ -330,4 +330,16 @@ export default [
     tests: ['fixture'],
     must_mention: '文件在而备注缺必须补 UNNAMED SAVE FILE',
   },
+  {
+    // M278 模拟的是「照抄 loadData 那一行、漏了它在拒收位上语义相反」；
+    // 本条模拟取反后的忠实照抄——两种写法真正分道的取值只有 version 0
+    // 且下限 0（undefined 判空放 0 进比较、收；truthy 写法短路、误拒）。
+    desc: 'M283 夹具 loadGlobal 版本闸门换成取反后忠实照抄的 truthy 写法（version 0 且下限 0 时误拒——#147 验收补）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        global_sav.version === undefined ||
+        global_sav.version < save_gate.allow_version`,
+    replace: `        !(global_sav.version && !(global_sav.version < save_gate.allow_version))`,
+    tests: ['fixture'],
+    must_mention: '同一取值 loadGlobal 收',
+  },
 ];
