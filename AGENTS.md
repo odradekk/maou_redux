@@ -34,6 +34,7 @@
 D:\Code\era\
 ├── ere/              # 游戏源码，入口 main.js；era-electron.js 是引擎 SDK，勿改名或移动
 ├── yml/              # 静态数据表（YAML），即引擎的静态数据目录
+├── golden/           # 范围 B 黄金样本落点与录制备料（#156；样本名→文件登记表在 tools/compare/samples.js）
 ├── tools/            # 离线脚本，不受 ere/ 的依赖限制
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
 ├── res/              # 图片/音频（当前 resource: false，未启用）

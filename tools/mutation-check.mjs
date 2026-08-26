@@ -108,7 +108,11 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #147 验收补 +1，现为 289：M283 loadGlobal 闸门换成取反后忠实照抄的 truthy
 // 写法。M278 模拟的是漏取反的照抄（闸门整体反向，打死 4 条用例）；两种写法
 // 真正分道的取值是 version 0 且下限 0，此前只有对照用例覆盖、无条目钉住。
-const LEDGER_COUNT_BASELINE = 289;
+// #156 起为 293：+4（对拍多样本机制——M284 样本登记表未知名静默回落、
+// M285 cli 缺席样本继续走、M286 引用前缀解析退回无前缀正则、M287 样本锚
+// 校验焊死）。这批的 M 编号在 rebase 时整体顺延（原 M276-M279 与 #147
+// 撞号，SOP §5.5）。
+const LEDGER_COUNT_BASELINE = 293;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

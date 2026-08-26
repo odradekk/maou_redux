@@ -128,4 +128,21 @@ export default [
     tests: ['compare-normalize', 'compare-first-turn'],
     must_mention: 'progress 记录',
   },
+  {
+    desc: 'M284 样本登记表未知名静默回落旧样本（#156：回落=拿旧样本冒充新样本）',
+    file: 'tools/compare/samples.js',
+    find: '    throw new Error(`未知样本名「${name}」。有效样本名：${known}`);',
+    replace: "    name = ''; // 变异：未知名静默回落旧样本",
+    tests: ['compare-samples'],
+    must_mention: '静默回落等于拿旧样本冒充新样本',
+  },
+  {
+    desc: 'M285 cli 缺席样本继续走（#156：阶段二回收前的占位名必须显式失败）',
+    file: 'tools/compare/cli.js',
+    find: '  if (!fs.existsSync(sample.abs)) {',
+    replace:
+      '  if (false && !fs.existsSync(sample.abs)) { // 变异：缺席样本继续走',
+    tests: ['compare-samples'],
+    must_mention: '消息必须给出缺席路径本体',
+  },
 ];

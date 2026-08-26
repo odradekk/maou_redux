@@ -376,4 +376,22 @@ export default [
     tests: ['gen-facade'],
     must_mention: '好感度',
   },
+  {
+    desc: 'M286 引用前缀解析退回无前缀正则（#156：<样本名>-log:行号 被当裸引用核旧样本——静默错判的活体）',
+    file: 'tools/trace-check.mjs',
+    find: 'const LOG_REF_RE =\n  /([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*-)?(?:emuera\\.)?log:(\\d+)(?:-(\\d+))?/g;',
+    replace:
+      'const LOG_REF_RE = /(?:emuera\\.)?log:(\\d+)(?:-(\\d+))?/g; // 变异：前缀捕获删除',
+    tests: ['trace-check'],
+    must_mention: '必须按完整前缀串报出',
+  },
+  {
+    desc: 'M287 样本锚校验焊死（#156：样本内容漂移不再红——登记机制空转）',
+    file: 'tools/trace-check.mjs',
+    find: "      const lines = load_source(sample_rel);\n      const [a, b = a] = ref.split('-').map(Number);\n      const slice = lines.slice(a - 1, b).join('\\n');\n      if (!any.some((anchor) => anchor.test(slice))) {",
+    replace:
+      "      const lines = load_source(sample_rel);\n      const [a, b = a] = ref.split('-').map(Number);\n      const slice = lines.slice(a - 1, b).join('\\n');\n      if (false && !any.some((anchor) => anchor.test(slice))) { // 变异：样本锚校验焊死",
+    tests: ['trace-check'],
+    must_mention: '锚校验焊死的变异靠这条拦下',
+  },
 ];
