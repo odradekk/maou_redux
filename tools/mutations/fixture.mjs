@@ -375,4 +375,34 @@ export default [
     tests: ['fixture'],
     must_mention: '引擎方法体没有 return 语句，恒返回 undefined',
   },
+  {
+    // #150 前的真实写法，也是直觉写法：容器本来就是插入序，get 直接摊开
+    // 它「看起来最自然」。升序加入的用例全绿（此前用例恰好全是），只有
+    // 非升序加入的正主用例能抓到——与引擎 Object.keys 的整数键序分道。
+    desc: 'M290 夹具 getAddedCharacters 退回插入序（直接摊开容器——#150 前的真实写法，升序加入时看不出错）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.getAddedCharacters = () => [...chara_no].sort(by_id_ascending);`,
+    replace: `  era.getAddedCharacters = () => [...chara_no]; // 变异：退回插入序（#150 前）`,
+    tests: ['fixture'],
+    must_mention: '已加入列表按数值升序，与加入序无关',
+  },
+  {
+    desc: 'M291 夹具 getCharactersInTrain 退回插入序（Set 摊开即入列序——#150 前的真实写法，beginTrain 参数序漏进返回序）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.getCharactersInTrain = () => [...chars_in_train].sort(by_id_ascending);`,
+    replace: `  era.getCharactersInTrain = () => [...chars_in_train]; // 变异：退回插入序（#150 前）`,
+    tests: ['fixture'],
+    must_mention: '调教列表按数值升序，与入列序无关',
+  },
+  {
+    // getAllCharacters 在 #150 前没有实现（走兜底记录桩恒 undefined），
+    // 本条模拟的是「补实现时照另两个 get 的旧风格摊开容器」——Map 的
+    // 键序是 seed 序，非升序 seed 时与引擎 staticData.chara 的键序分道。
+    desc: 'M292 夹具 getAllCharacters 退回预设表插入序（Map 键序即 seed 序——照另两个 get 的旧风格发明）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.getAllCharacters = () => [...chara_presets.keys()].sort(by_id_ascending);`,
+    replace: `  era.getAllCharacters = () => [...chara_presets.keys()]; // 变异：退回插入序`,
+    tests: ['fixture'],
+    must_mention: '预设表键按数值升序，且含未加入者',
+  },
 ];

@@ -129,7 +129,10 @@ test('ENDCHECKMAIN 2803：奴隶魔力过载记录角色号；占用中（CFLAG:
     );
   }
   {
-    // DO 循环后命中覆盖先命中（原作 :51-55 无 break）
+    // 覆盖写语义（原作 :51-55 无 break）。加入序故意非升序（31 先、24 后）：
+    // ere 按引擎键序迭代（getAddedCharacters 数值升序，#150），「后命中」＝
+    // 最大命中 ID（31）；原作位序模型（位序＝加入序）下会记 24——两个模型
+    // 在非升序加入时分道，这里是顺序语义的活判据
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 31, '温妮');
     join_chara(fixture, 24, '莉莉');
@@ -138,8 +141,8 @@ test('ENDCHECKMAIN 2803：奴隶魔力过载记录角色号；占用中（CFLAG:
     await mod.run_endcheck();
     assert.equal(
       fixture.store.get('exflag:2803'),
-      24,
-      '多角色符合时记最后扫描到的（DO 循环覆盖写语义）',
+      31,
+      '多角色符合时记最后迭代到的（覆盖写；迭代序＝引擎键序，数值升序）',
     );
   }
 });

@@ -410,6 +410,15 @@ function create_add_character(static_data, { extended_tables = {} } = {}) {
     // 且没有 return 语句，恒返回 undefined（夹具镜像同款，勿加返回值）。
     remove: (...chara_ids) =>
       engine.era_api.prototype.removeCharacter.call(fake_this, ...chara_ids),
+    // 引擎真角色列表 get（#150）：三个方法体各读一张表的键
+    // （staticData.chara / data.base / data.tequip||{}），只依赖假 this 上
+    // 已有的字段。get_in_train 要看非升序时，直接往 data.tequip 按参数序
+    // 建桶（beginTrain→addCharacterForTrain 的建桶时序），键序交给 JS 引擎。
+    get_added: () =>
+      engine.era_api.prototype.getAddedCharacters.call(fake_this),
+    get_all: () => engine.era_api.prototype.getAllCharacters.call(fake_this),
+    get_in_train: () =>
+      engine.era_api.prototype.getCharactersInTrain.call(fake_this),
   };
 }
 
