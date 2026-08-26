@@ -1224,7 +1224,7 @@ module.exports = class extends CustomizedEro {
     * 其他参数结算：更新其他参数的 delta 表；
     * 基础资源结算：更新 base 表；
     * 刻印结算：根据 delta 表，更新 mark 表，并输出刻印变化；
-    * 参数结算：输出参数变化，调用 era.nextTurnInTrain（清空 source 表并将 delta 表和 nowex 表结算到 param 表和 ex 表中）。
+    * 参数结算：输出参数变化，调用 era.nextTurnInTrain（将 deltabase 表、delta 表、nowex 表分别结算到 base 表、palam 表、ex 表中——maxbase 大于 0 时 base 被钳制在 [0, maxbase] 区间——并将 source、deltabase、delta 与 nowex 表中已有的键逐个置 0）。
 
 ### 指令专属的效果结算
 

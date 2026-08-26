@@ -519,7 +519,7 @@ era_println();
     - `config`（object，可选）：获取输入内容的其他可选项，可以有以下属性：
         - `disableBefore`（boolean，可选）：接收到玩家输入后是否禁用之前输出的按钮，默认值为 `true`；
         - `rule`（string，可选）：正则表达式，在没有输出按钮的情况下可以用于控制玩家的输入内容，使用时 `useRule` 必须为 `true`；
-        - `useRule`（boolean，可选）：是否启用规则检查，默认值为 `false`；
+        - `useRule`（boolean，可选）：是否启用规则检查，默认值为 `true`；
         - `hideInput`（boolean，可选）：是否隐藏玩家的输入，默认值为 `false`，为 `true` 时本次玩家的输入将不会被输出到引擎中；
         - `show`（boolean，仅限安卓版，可选）：是否显示输入框，为 `false` 时当使用按钮限制玩家输入时输入框将不会显示。
 - **返回值**：`any`，玩家输入的内容或点击按钮的快捷键。
@@ -589,17 +589,16 @@ _PC引擎 4.2.2_
 
 ## nextTurnInTrain()
 
-- **描述**：将 delta 表结算到 param 表中，nowex 表结算到 ex 表中，并清空所有角色的 source、delta 与 nowex 表。
+- **描述**：对所有调教中的角色，将 deltabase 表结算到 base 表中（对应 maxbase 大于 0 时，base 会被钳制在 [0, maxbase] 区间内），delta 表结算到 palam 表中，nowex 表结算到 ex 表中，并将 source、deltabase、delta 与 nowex 表中已有的键逐个置为 0（表与键本身保留）。
 - **返回值**：`void`
 
-## notify(content, title?, type?, duration?)
+## notify(content, title?, type?)
 
 - **描述**：在引擎界面中显示一条浮动的提醒信息，使用案例可见 [#6 输出](./06-output#eranotify)。
 - **参数**：
     - `content`（`string|({content:string,color:string,fontSize:string,fontWeight}|{isBr:true})[]`）：提醒信息内的文本内容，是对象数组时每个元素的属性含义可以参考 [PrintedSpan](#printedspan)；
     - `title`（string，可选）：提醒信息的标题；
-    - `type`（`'success'|'info'|'warning'|'error'|''`，可选）：提醒信息的类型，会在提醒信息左上角显示对应颜色的图标，五种取值分别对应成功（绿色）、信息（灰色）、警告（黄色）、错误（红色）、默认值（不显示）；
-    - `duration`（number，可选）：提醒信息的持续时间，结束后自动消失，单位是ms（毫秒），默认值为5,000；如果设置为0，则不自动消失。
+    - `type`（`'success'|'info'|'warning'|'error'|''`，可选）：提醒信息的类型，会在提醒信息左上角显示对应颜色的图标，五种取值分别对应成功（绿色）、信息（灰色）、警告（黄色）、错误（红色）、默认值（不显示）。
 - **返回值**：`void`
 
 ## playMusic(names, config?)

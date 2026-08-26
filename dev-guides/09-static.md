@@ -712,7 +712,7 @@ era.beginTrain 的参数与 era.addCharacterForTrain 完全相同，并在创建
 
 ![era.nextTurnInTrain](../imgs/66.9-era.nextTurnInTrain.png)
 
-将 delta 表结算到 param 表中，nowex 表结算到 ex 表中，并清空 source、delta 与 nowex 表。
+将 deltabase 表结算到 base 表中（maxbase 大于 0 时钳制在 [0, maxbase] 区间内）、delta 表结算到 palam 表中、nowex 表结算到 ex 表中，并将 source、deltabase、delta 与 nowex 表中已有的键逐个置 0。
 
 ### era.endTrain
 

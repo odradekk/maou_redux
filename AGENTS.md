@@ -110,6 +110,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 ## 引擎 API 与硬约束
 
 - 一切能力来自 `require('#/era-electron')`，权威清单 `dev-guides/A-api-docs.md`。分组：输出（`print` / `printAndWait` / `printMultiColumns` / `printInColRows` / `printButton` / `printImage`）、输入（`input` / `waitAnyKey`）、变量（`get` / `set` / `add`）、存档（`saveData` / `loadData` / `saveGlobal`）、角色（`getAllCharacters` / `addCharacter` / `beginTrain` / `endTrain`）、媒体（`playMusic`）、日志（`logger.*`）。
+- **手册 < 引擎代码**：`dev-guides/` 的陈述与 `app.asar` 的实测行为冲突时，一律以引擎代码为准。**`dev-guides/` 是经本项目按引擎代码修正过的副本，不是上游逐字原文**（#163 裁定：发现分歧直接改正文，单一真相源，不建勘误表、不加页内注记；上游原文只存在于 git 历史）。必须逐字不变的外部材料只有 `.agents/skills/emuera-basic-agent-guide/`——它有上游同步、改了将来会冲突，手册是一次性拷贝，两者待遇不同的理由就在这里。新钉住的分歧按 `tools/engine-contract-facts.mjs` 头注的分工设防：可执行的配 engine-bundle 用例，可字面锚定的进该表 anchors。
 - **运行时可用的只有 `era` API 与 `crypto`。** Node 内置模块和第三方库都被引擎拦下（`dev-guides/18-tools.md`）。`tools/` 里的离线脚本不受此限，这是「数据自动提取」路线成立的前提。
 - 异步 API 必须 `await`：`printAndWait`、`input`、`clear`、`waitAnyKey`、`delay`、存档系列。漏 `await` 造成的时序错乱极难排查。
 - 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读未声明的序号返回 `undefined` 而非 0**，且能静默写入并存进存档（issue #13）。拼错下标不会报错，只会凭空造出一个变量，所以包装层的 getter 一律 `|| 0` 兜底。

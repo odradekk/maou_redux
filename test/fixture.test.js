@@ -5,7 +5,7 @@
  * 加载真实 SDK 文件，替换 require('#/era-electron') 返回的对象，
  * 让游戏代码在不启动 Electron GUI 的情况下可测。
  *
- * #149/#150/#151 起含三条引擎门控用例（removeCharacter / 三个角色列表
+ * #149/#150/#151/#152/#163 起含多条引擎门控用例（removeCharacter / 三个角色列表
  * get / getNumber 归一边界，文件尾部）：缺引擎（无 app.asar）时这些用例
  * skip，跳过数进
  * test/engine-skip-baseline.txt 基线；其余用例不依赖引擎照常跑。
@@ -17,6 +17,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const {
   create_add_character,
+  create_next_turn_in_train,
   create_chara_loader,
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
@@ -1487,3 +1488,43 @@ test('input 回传值过引擎 getNumber 归一（#151）：字符串预置回�
   fixture.set_inputs(3);
   assert.equal(await era.input(), 3, '数字预置原样回传');
 });
+
+engine_test(
+  '引擎 nextTurnInTrain：deltabase→base 带 maxbase 钳制、delta→palam、nowex→ex，逐键置 0 不删表（#163）',
+  () => {
+    const harness = create_next_turn_in_train();
+    const { data } = harness;
+    // 31 在训（tequip 建桶＝beginTrain 的入列时序）；0 有 delta 但不在训
+    data.tequip = { 31: {} };
+    // deltabase→base：maxbase>0 的键被钳到 [0, maxbase]，maxbase 缺失的键不钳
+    data.base = { 31: { 0: 500, 1: 5, 2: 3 } };
+    data.maxbase = { 31: { 0: 1000, 2: 100 } }; // 键 1 无上限
+    data.deltabase = { 31: { 0: 700, 1: -10, 2: -50 } };
+    data.source = { 31: { 7: 12 } };
+    // delta→palam（手册曾误写 param——一字之差就是写错寻址族）
+    data.palam = { 31: { 3: 100 } };
+    data.delta = { 31: { 3: 40 }, 0: { 3: 999 } };
+    // nowex→ex
+    data.ex = { 31: { 2: 10 } };
+    data.nowex = { 31: { 2: 5 } };
+
+    assert.equal(harness.run(), undefined, '引擎无 return，恒 undefined');
+
+    // deltabase→base：上界钳制、无上限不钳、下界钳到 0
+    assert.equal(data.base[31][0], 1000, '500+700=1200 被 maxbase=1000 钳住');
+    assert.equal(data.base[31][1], -5, 'maxbase 缺失（不 >0）不钳：5-10=-5');
+    assert.equal(data.base[31][2], 0, '3-50=-47 被下界 0 钳住');
+    // 不是清空表：键还在、值归 0（手册曾写「清空」）
+    assert.deepEqual(data.deltabase[31], { 0: 0, 1: 0, 2: 0 });
+    assert.equal(data.source[31][7], 0, 'source 逐键置 0');
+    assert.ok('7' in data.source[31], '逐键置 0，表与键保留（非删表）');
+    // delta→palam、nowex→ex
+    assert.equal(data.palam[31][3], 140, 'delta 结算进 palam（非 param）');
+    assert.equal(data.delta[31][3], 0);
+    assert.equal(data.ex[31][2], 15);
+    assert.equal(data.nowex[31][2], 0);
+    // 只结算在训角色：0 不在 tequip，delta 原样保留
+    assert.equal(data.delta[0][3], 999, '不在训的角色不被结算');
+    assert.equal(data.palam[0], undefined);
+  },
+);

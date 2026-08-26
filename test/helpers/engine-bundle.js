@@ -422,9 +422,40 @@ function create_add_character(static_data, { extended_tables = {} } = {}) {
   };
 }
 
+/**
+ * 以「假 this + 真方法」驱动引擎的 nextTurnInTrain（模块 183 的原型方法，
+ * #163）。
+ *
+ * 方法体只依赖 this.getCharactersInTrain() 与 this.data 的调教结算桶
+ * （deltabase/base/maxbase/source/delta/palam/nowex/ex）——get 挂真原型
+ * 方法（读 this.data.tequip 的键，beginTrain→addCharacterForTrain 的建桶
+ * 时序），八个桶由调用方种入并原样暴露：跑的是引擎自己的数据层，断言
+ * 直接读返回的 data（结算落 palam 而非 param、maxbase>0 钳制、逐键置 0
+ * 而非删表——手册三处误述的引擎侧证据）。
+ *
+ * @returns {{ data: object, run: () => undefined } | undefined}
+ */
+function create_next_turn_in_train() {
+  const engine = load_engine_bundle();
+  if (!engine) {
+    return undefined;
+  }
+  const data = {};
+  const fake_this = {
+    data,
+    getCharactersInTrain: engine.era_api.prototype.getCharactersInTrain,
+  };
+  return {
+    data,
+    // 方法体无 return 语句，恒 undefined（与 removeCharacter 同款，勿加返回值）
+    run: () => engine.era_api.prototype.nextTurnInTrain.call(fake_this),
+  };
+}
+
 module.exports = {
   create_add_character,
   create_chara_loader,
+  create_next_turn_in_train,
   create_variable_loader,
   load_engine_bundle,
   locate_asar,
