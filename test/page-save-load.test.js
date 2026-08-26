@@ -338,14 +338,15 @@ test('SAVEGAME 翻页：102 前进 / 101 回退 / 首页不退 / 末页（80 起
   assert(!slots4.includes(99), '末页列表不含 99 号（100 是返回按钮，非槽号）');
 });
 
-test('SAVEGAME 标题行：故事名有无两态（原作 :102-108 拼接）', async () => {
+test('SAVEGAME 标题行：故事名有无两态（原作 :102-108 拼接，含【保存存档】前缀）', async () => {
   const fixture = create_era_fixture();
   const { save_game } = load_page(fixture);
   fixture.set_inputs(100);
   await save_game();
+  // 前缀「【保存存档】」原作 :102 PRINT，#161 范围 B 对拍查出首版漏抄、已补
   assert(
     history_texts(fixture).some(
-      (t) => t === '当前故事还没有名字，要保存到以下哪个存档？',
+      (t) => t === '【保存存档】当前故事还没有名字，要保存到以下哪个存档？',
     ),
   );
 

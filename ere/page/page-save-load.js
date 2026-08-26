@@ -434,12 +434,17 @@ async function save_game() {
   for (;;) {
     era.drawLine({ isSolid: true }); // :101 CUSTOMDRAWLINE =
     // :102-108 标题（故事名拼接；PRINT 不带行尾，两段拼同一行——ere 的
-    // print 独占一行，一次拼完再输出，两行布局等效）
+    // print 独占一行，一次拼完再输出，两行布局等效）。标题 PRINT 的
+    // 「【保存存档】」前缀首版漏抄，#161 范围 B 对拍实证
+    // （saveload-natural-log:90），已补——读取画面（:19）同款前缀
+    // 本就在，此处与其对齐
     const story = chara(0).system.故事名;
     if (story.length > 0) {
-      era.print(`当前的故事名为『${story}』，要保存到以下哪个存档？`);
+      era.print(
+        `【保存存档】当前的故事名为『${story}』，要保存到以下哪个存档？`,
+      );
     } else {
-      era.print('当前故事还没有名字，要保存到以下哪个存档？');
+      era.print('【保存存档】当前故事还没有名字，要保存到以下哪个存档？');
     }
     era.drawLine(); // :109
     list_data(pos, pos + PAGE_LEN, true); // :111（空槽也按钮，见文件头）
