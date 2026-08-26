@@ -349,7 +349,8 @@ function create_variable_loader() {
 }
 
 /**
- * 以「假 this + 真方法」驱动引擎的 addCharacter（模块 183 的原型方法）。
+ * 以「假 this + 真方法」驱动引擎的 addCharacter / removeCharacter
+ * （模块 183 的原型方法）。
  *
  * 方法体只依赖 this.staticData / this.data / this.era.extendedTables 与模块
  * 闭包里的工具函数——闭包是真的，this 是按字段清单最小构造的。返回的
@@ -362,7 +363,8 @@ function create_variable_loader() {
  *
  * @param {object} static_data 预设数据（create_chara_loader().static_data）
  * @param {{ extended_tables?: Object<string, number> }} [options]
- * @returns {{ data: object, add: (id: number) => boolean }}
+ * @returns {{ data: object, add: (id: number) => boolean,
+ *            remove: (...ids: number[]) => undefined }}
  */
 function create_add_character(static_data, { extended_tables = {} } = {}) {
   const engine = load_engine_bundle();
@@ -402,6 +404,12 @@ function create_add_character(static_data, { extended_tables = {} } = {}) {
     data,
     add: (chara_id) =>
       engine.era_api.prototype.addCharacter.call(fake_this, chara_id),
+    // 引擎真 removeCharacter（#149）：与 add 共用同一份 data 与假 this——
+    // 引擎里两个方法操作同一数据层。方法体只依赖 this.data 与
+    // this.era.extendedTables（被删者循环的扩展表段在空登记表上空转），
+    // 且没有 return 语句，恒返回 undefined（夹具镜像同款，勿加返回值）。
+    remove: (...chara_ids) =>
+      engine.era_api.prototype.removeCharacter.call(fake_this, ...chara_ids),
   };
 }
 

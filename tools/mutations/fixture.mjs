@@ -342,4 +342,37 @@ export default [
     tests: ['fixture'],
     must_mention: '同一取值 loadGlobal 收',
   },
+  {
+    // #149 前夹具的真实写法（也是旧注释的信念：其余表的清理「天然发生」）
+    // ——只过滤列表、不删三段键。幸存者指向被删者的 relation/callname
+    // 因此残留可读，而引擎下是 undefined（G3）。
+    desc: 'M288 夹具 removeCharacter 只过滤列表、幸存者三段键清理被省（键残留可读——#149 前的真实写法）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      for (const target of chara_ids) {
+        store.delete(\`relation:\${id}:\${target}\`);
+        store.delete(\`callname:\${id}:\${target}\`);
+      }`,
+    replace: `      // 变异：幸存者三段键清理被省（过滤列表就够——#149 前的写法）`,
+    tests: ['fixture'],
+    must_mention: '删完之后幸存者读被删者是 undefined',
+  },
+  {
+    // 「一个人会怎么写错」：照 addCharacter 的风格给调用方回一个成功标志
+    // （#149 前的实现就是它）——引擎方法体没有 return，这个布尔在真机上
+    // 没有对应物；语义还错位（返回的是「不在列表」而非「删掉了」）。
+    desc: 'M289 夹具 removeCharacter 返回值复辟成布尔（照 addCharacter 风格发明成功标志——#149 前的发明）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    chara_no.length = 0;
+    chara_no.push(...kept);
+    return undefined;
+  };`,
+    replace: `    chara_no.length = 0;
+    chara_no.push(...kept);
+    return chara_ids.length === 1
+      ? !chara_no.includes(chara_ids[0]) // 变异：布尔返回值复辟
+      : undefined;
+  };`,
+    tests: ['fixture'],
+    must_mention: '引擎方法体没有 return 语句，恒返回 undefined',
+  },
 ];
