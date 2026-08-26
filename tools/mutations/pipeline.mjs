@@ -48,8 +48,9 @@ export default [
   {
     desc: 'M85 归一化器样本侧去归一（黄金样本不再过 #60 归一表）',
     file: 'tools/compare/normalize.js',
-    find: '.map((l) => to_simplified(l));',
-    replace: '.map((l) => l); // 变异：样本侧去归一',
+    find: '.map((l) => (is_exempted(l) ? l : to_simplified(l)));',
+    replace:
+      '.map((l) => l); // 变异：样本侧去归一（豁免放行也被抹平，豁免用例一并红）',
     tests: ['compare-normalize'],
     must_mention: '繁/日键名',
   },
@@ -144,5 +145,76 @@ export default [
       '  if (false && !fs.existsSync(sample.abs)) { // 变异：缺席样本继续走',
     tests: ['compare-samples'],
     must_mention: '消息必须给出缺席路径本体',
+  },
+  {
+    desc: 'M299 灰条单元当按钮拆（编号位 --- 也进 menu——把占位当可点入口）',
+    file: 'tools/compare/normalize.js',
+    find: "      cells.push({ kind: 'text', text: `[---]${label ? ` ${label}` : ''}` });",
+    replace:
+      "      cells.push({ kind: 'menu', key: `[---]${label ? ` ${label}` : ''}`, val: -2 }); // 变异：灰条当按钮",
+    tests: ['compare-normalize'],
+    must_mention: 'ere 侧 page-main-menu 的灰条正是',
+  },
+  {
+    desc: 'M300 槽位备注时间戳不归一（重录必假红——归一化裁定 #161 的靶心）',
+    file: 'tools/compare/normalize.js',
+    find: "function normalize_ts(text) {\n  return text.replace(TIMESTAMP_RE, '<TS>');\n}",
+    replace:
+      'function normalize_ts(text) {\n  return text; // 变异：时间戳不归一\n}',
+    tests: ['compare-normalize', 'compare-scope-b'],
+    must_mention: '两个录制时刻的归一结果',
+  },
+  {
+    desc: 'M301 按钮行守门删除（残渣行也拆成 menu——叙述文本被误拆）',
+    file: 'tools/compare/normalize.js',
+    find: "    cursor = BRACKET_CELL_RE.lastIndex;\n  }\n  if (cells.length === 0 || line.slice(cursor).trim() !== '') {\n    return null;\n  }\n  return cells;\n}",
+    replace:
+      '    cursor = BRACKET_CELL_RE.lastIndex;\n  }\n  if (cells.length === 0) {\n    return null;\n  }\n  return cells; // 变异：行尾与单元间残渣不拦\n}',
+    tests: ['compare-normalize'],
+    must_mention: '残渣（方括号外有正文）',
+  },
+  {
+    desc: 'M302 ere 侧按钮正文不做时间戳归一（两侧同构被破坏——黄金侧独归一）',
+    file: 'tools/compare/normalize.js',
+    find: '        key: normalize_ts(compress_ws(record.text)),',
+    replace: '        key: compress_ws(record.text), // 变异：ere 侧不去时间戳',
+    tests: ['compare-normalize', 'compare-scope-b'],
+    must_mention: 'ere 侧按钮正文过同一套时间戳归一',
+  },
+  {
+    desc: 'M303 回放观测面把命名清行当原作清行（set_story_name 不进自建判定——保存画面被错误剔除）',
+    file: 'tools/compare/replay-b.js',
+    find: 'const REDRAW_CLEAR_RE = /screen-block\\.js|set_story_name/;',
+    replace:
+      'const REDRAW_CLEAR_RE = /screen-block\\.js/; // 变异：命名清行漏判',
+    tests: ['compare-scope-b'],
+    must_mention: '基线漂移',
+  },
+  {
+    desc: 'M304 回放输入恢复白名单校验（useRule:false 删——199/9999 无按钮输入被夹具拦下）',
+    file: 'tools/compare/replay-b.js',
+    find: '    const got = await original_input({ ...(config ?? {}), useRule: false });',
+    replace:
+      '    const got = await original_input(config); // 变异：走白名单校验',
+    tests: ['compare-scope-b'],
+    must_mention: '输入不合法！请输入以下值之一',
+  },
+  {
+    desc: 'M305 归因规则删存档备注错位条目（<TS> 规则——saveload 基线未解释非零）',
+    file: 'tools/compare/rules.js',
+    find: "      if (typeof entry.key === 'string' && entry.key.startsWith('<TS> ')) {",
+    replace:
+      "      if (false && typeof entry.key === 'string' && entry.key.startsWith('<TS> ')) { // 变异：错位规则删",
+    tests: ['compare-scope-b'],
+    must_mention: '基线漂移',
+  },
+  {
+    desc: 'M306 cli 比对不传 scope（范围 B 归因组整体旁路——真库直跑未解释非零）',
+    file: 'tools/compare/cli.js',
+    find: "  const report = diff_streams(golden_entries, ere_entries, {\n    scope: 'B',\n    segment,\n  });",
+    replace:
+      '  const report = diff_streams(golden_entries, ere_entries, {}); // 变异：scope 忘传',
+    tests: ['compare-samples'],
+    must_mention: 'unexplained 归零',
   },
 ];

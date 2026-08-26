@@ -1,0 +1,12 @@
+{
+  "sample": "daycycle-natural",
+  "segment": "标题→读档→主菜单→休息×2（日循环推进一日）→回主菜单",
+  "state": "natural",
+  "build": "93106",
+  "save": "save99（第 7 日午前）",
+  "seed_string": "",
+  "macro_key": "manual",
+  "autosave": false,
+  "recorded_at": "2026-08-26",
+  "history_lines": 50000
+}

@@ -1,5 +1,6 @@
 /**
- * @file T18 输出比对·命令行入口（issue #48；#156 阶段一起加 --sample）。
+ * @file T18 输出比对·命令行入口（issue #48；#156 阶段一起加 --sample，
+ * #161 阶段二接事件流比对）。
  *
  * 用法：node tools/compare/cli.js [--sample <样本名>]
  *
@@ -11,18 +12,22 @@
  *   4. 变量层：算式断言核对 + 回合前后快照差异。
  *
  * `--sample <名>` 选 #156 范围 B 的新样本（登记表 tools/compare/samples.js，
- * 文件落 golden/、由人录制回收后入库）。新样本目前只跑与内容无关的通用
- * 部分（头注回显 + 装饰行复核 + 算式断言统计）；ere 侧回放与事件流比对
- * 属阶段二——归一化器要不要扩展、差异如何归因，必须看了实际样本形态才
- * 判（#109 裁定问题五，现在判就是猜）。头注 sidecar（<样本>.meta.json）
- * 缺失或字段不全按「样本不可重录」拒绝（#156：置位串不落库，样本就不可
- * 重录）。
+ * 文件落 golden/）。#161 阶段二起跑完整比对：头注回显 + 装饰行复核 +
+ * 算式断言统计 + **黄金样本 vs ere 回放的事件流比对**（回放器
+ * tools/compare/replay-b.js——世界播种、观测面、输入通道的裁定见该文件
+ * 头注；归因走 rules.js 的范围 B 规则组，scope/segment 由此处传入）。
+ * 基线（六份样本的匹配/差异四数）由 test/compare-scope-b.test.js 锁死。
+ * 头注 sidecar（<样本>.meta.json）缺失或字段不全按「样本不可重录」拒绝
+ * （#156：置位串不落库，样本就不可重录；#161 加 autosave——自动存档
+ * 开着会让 [99] 行中途变化且覆盖 target/Sav/save99.sav）。
  *
  * 退出码：参数/样本/头注不合法 → 1；缺省路径下 unexplained > 0、断言自
- * 校验/链有无法解释项、或变量核对失败 → 1。
+ * 校验/链有无法解释项、或变量核对失败 → 1；命名样本下 unexplained > 0
+ * 或断言自校验失败 → 1。
  *
- * 硬边界（必须随任何「比对通过」的表述一起说）：黄金样本只覆盖调教这一
- * 段，「比对通过」目前只等于「调教的这一段对得上」（#9 勘误一）。
+ * 硬边界（必须随任何「比对通过」的表述一起说）：调教段比对只覆盖调教
+ * 这一段（#9 勘误一）；范围 B 三段两态（标题→主菜单 / 存读档 / 日循环
+ * 推进一日）自 #161 起有对拍，边界与范围外处置见 docs/output-diff.md。
  */
 
 'use strict';
@@ -48,8 +53,12 @@ const { meta_rel, resolve_sample } = require('./samples');
 
 const REPO = path.resolve(__dirname, '..', '..');
 
-/** --sample 必填的四个头注字段（#156：置位串不落库，样本就不可重录） */
-const META_REQUIRED = ['build', 'save', 'seed_string', 'macro_key'];
+/**
+ * --sample 必填的五个头注字段（#156：置位串不落库，样本就不可重录；#161：
+ * 自动存档状态不落库，将来重录会得到不同的 [99] 行而查不出原因——录制时
+ * 该开关必须为关，见 golden/README.md）。
+ */
+const META_REQUIRED = ['build', 'save', 'seed_string', 'macro_key', 'autosave'];
 
 /**
  * 解析命令行参数。此前没有任何参数，故采取严格策略：未知参数即错。
@@ -85,11 +94,12 @@ function die(message) {
 }
 
 /**
- * 命名样本（#156 范围 B）的通用分析：头注回显 + 装饰行复核 + 算式断言
- * 统计。不做 ere 侧比对（阶段二，见文件头注）。全部通过则退出码 0。
+ * 命名样本（#156 范围 B，#161 阶段二起含事件流比对）：头注回显 + 装饰行
+ * 复核 + 算式断言统计 + 黄金样本 vs ere 回放的事件流比对。unexplained > 0
+ * 或断言自校验失败 → 退出码 1。
  * @param {{name: string, rel: string, abs: string}} sample resolve_sample 的结果
  */
-function run_named_sample(sample) {
+async function run_named_sample(sample) {
   if (!fs.existsSync(sample.abs)) {
     die(
       `样本文件不在库：${sample.rel}——#156 的样本由人录制回收后入库（阶段二），` +
@@ -118,7 +128,7 @@ function run_named_sample(sample) {
   if (missing.length > 0) {
     die(
       `样本头注缺必填字段：${missing.join('、')}（${meta_rel(sample.rel)}）——` +
-        `四个字段的意义与示例见 golden/README.md`,
+        `五个字段的意义与示例见 golden/README.md`,
     );
     return;
   }
@@ -126,7 +136,8 @@ function run_named_sample(sample) {
   console.log(`[样本] ${sample.name}（${sample.rel}）`);
   console.log(
     `[样本头注] 构建标识 ${meta.build} ｜ 起录存档 ${meta.save} ｜ 宏键 ${meta.macro_key} ｜ ` +
-      (meta.seed_string === '' ? '置位串（空 = 自然态）' : '置位串 ↓'),
+      (meta.seed_string === '' ? '置位串（空 = 自然态）' : '置位串 ↓') +
+      ` ｜ 自动存档 ${meta.autosave === false ? '关' : '开'}`,
   );
   if (meta.seed_string !== '') {
     meta.seed_string
@@ -137,7 +148,7 @@ function run_named_sample(sample) {
   const log_text = fs.readFileSync(sample.abs, 'utf8');
   const stats = line_stats(log_text);
   console.log(
-    `[装饰行复核] 全 ${stats.total} 行：空行 ${stats.blank} + 分割线 ${stats.divider} + 省略号 ${stats.ellipsis}` +
+    `[装饰行复核] 全 ${stats.total} 行：空行 ${stats.blank} + 分割线 ${stats.divider} + 省略号 ${stats.ellipsis} + 图形标记 ${stats.shape}` +
       ` = ${stats.dropped}（${(stats.ratio * 100).toFixed(1)}%）`,
   );
 
@@ -152,17 +163,49 @@ function run_named_sample(sample) {
       `自校验失败 ${self_check.self_validate_failures.length}；未识别指标 ${self_check.unknown_names.length}；` +
       `链：首尾相接 ${self_check.chain.chained} / 归零 ${self_check.chain.reset} / 无法解释 ${self_check.chain.unexplained.length}`,
   );
-  console.log(
-    '[比对] 跳过：该样本的 ere 侧回放与事件流比对属 #156 阶段二——归一化器要不要扩展、' +
-      '差异如何归因，以回收样本的实际输出形态为准（#109 裁定问题五）。',
+
+  // 事件流比对（#161 阶段二）：黄金样本 vs ere 侧回放（tools/compare/replay-b.js
+  // 的世界播种与观测面裁定）。段名取自样本名的第一段（mainmenu/saveload/
+  // daycycle），态从头注 state。归因走 rules.js 的范围 B 规则组（scope: 'B'）。
+  const segment = sample.name.split('-')[0];
+  const { replay_scope_b } = require('./replay-b');
+  const { stream_source } = await replay_scope_b(
+    segment,
+    meta.state ?? 'natural',
   );
+  const golden_entries = golden_stream(log_text).filter(
+    (e) => e.kind !== 'discard' && e.kind !== 'group',
+  );
+  const ere_entries = fixture_stream(stream_source).filter(
+    (e) => e.kind !== 'discard' && e.kind !== 'group',
+  );
+  const report = diff_streams(golden_entries, ere_entries, {
+    scope: 'B',
+    segment,
+  });
+  console.log(
+    `[事件流比对] golden ${golden_entries.length} 条 vs ere ${ere_entries.length} 条`,
+  );
+  console.log(format_report(report));
+
+  const bad =
+    report.summary.unexplained > 0 ||
+    self_check.self_validate_failures.length > 0 ||
+    self_check.unknown_names.length > 0 ||
+    self_check.chain.unexplained.length > 0;
+  if (bad) {
+    console.log('[结论] 存在未解释差异或断言失败，退出码 1');
+    process.exitCode = 1;
+  } else {
+    console.log('[结论] 差异全部有名有姓（范围 B：三段两态，边界见文件头）');
+  }
 }
 
 async function main() {
   const opts = parse_args(process.argv.slice(2));
   const sample = resolve_sample(opts.sample);
   if (sample.name !== '') {
-    run_named_sample(sample);
+    await run_named_sample(sample);
     return;
   }
   const log_text = fs.readFileSync(sample.abs, 'utf8');
@@ -170,7 +213,7 @@ async function main() {
   // 1. 装饰行占比复核
   const stats = line_stats(log_text);
   console.log(
-    `[装饰行复核] 全 ${stats.total} 行：空行 ${stats.blank} + 分割线 ${stats.divider} + 省略号 ${stats.ellipsis}` +
+    `[装饰行复核] 全 ${stats.total} 行：空行 ${stats.blank} + 分割线 ${stats.divider} + 省略号 ${stats.ellipsis} + 图形标记 ${stats.shape}` +
       ` = ${stats.dropped}（${(stats.ratio * 100).toFixed(1)}%，#9 原标准 21.2%）`,
   );
 

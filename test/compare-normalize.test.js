@@ -247,3 +247,174 @@ test('窗口边界：缺第二次输入即报错（两侧同构的纪律）', ()
   ];
   assert.throws(() => window_between_inputs(stream, 0), /比对窗口不完整/);
 });
+
+// —— 范围 B（#161）：主菜单/存读档/日循环的形态扩展 ——
+
+test('编号在前的按钮行：`[N] 标签` 单元铺满 → menu 条目（#161）', () => {
+  // 标题入口（单钮）
+  const one = classify_line('[0] 旧的奴隶');
+  assert.equal(one.kind, 'menu');
+  assert.equal(one.key, '旧的奴隶');
+  assert.equal(one.val, 0);
+  // 翻页行（同行三钮）
+  const row = classify_line(
+    '[101] 上一页                [100] 返回                  [102] 下一页',
+  );
+  assert.equal(row.kind, 'group');
+  assert.deepEqual(
+    row.items.map((i) => [i.kind, i.key, i.val]),
+    [
+      ['menu', '上一页', 101],
+      ['menu', '返回', 100],
+      ['menu', '下一页', 102],
+    ],
+  );
+  // 主菜单指令行（全角空格前缀 + 三列）
+  const cmds = classify_line(
+    '　[100] 调教               　[101] 能力显示           　[102] 场子',
+  );
+  assert.equal(cmds.kind, 'group');
+  assert.deepEqual(
+    cmds.items.map((i) => [i.key, i.val]),
+    [
+      ['调教', 100],
+      ['能力显示', 101],
+      ['场子', 102],
+    ],
+  );
+});
+
+test('混排灰条行：`[---]` 段落归 text、数字按钮照拆 menu（#161）', () => {
+  const entry = classify_line(
+    '　[---] 　　　　           　[107] 购物               　[108] 换装',
+  );
+  assert.equal(entry.kind, 'group');
+  assert.deepEqual(
+    entry.items.map((i) => [i.kind, i.key ?? i.text, i.val]),
+    [
+      ['text', '[---]', undefined],
+      ['menu', '购物', 107],
+      ['menu', '换装', 108],
+    ],
+    '灰条单元必须归 text 残段：ere 侧 page-main-menu 的灰条正是 era.print 单行，两侧同构',
+  );
+  // 纯灰条行整行是 text（ere 侧 page-main-menu 的灰条正是 era.print('[---]')）
+  const bare = classify_line('　[---] 　　　　　');
+  assert.equal(
+    bare.kind,
+    'text',
+    '纯灰条行必须归 text（ere 侧同构的灰条输出）',
+  );
+  assert.equal(bare.text, '[---]');
+});
+
+test('按钮行守门：叙述文本里的编号引用与残渣不被误拆（#161）', () => {
+  // 残渣（方括号外有正文）→ 整行 text
+  assert.equal(
+    classify_line('「[1] 你好」的世界观').kind,
+    'text',
+    '守门判定：残渣（方括号外有正文）的行不得拆成按钮',
+  );
+  // 空标签（`[100]` 后直接下一单元）→ 不是按钮行
+  assert.equal(classify_line('[100] [101] 下一个').kind, 'text');
+  // 编号带字母（非编号）→ text
+  assert.equal(classify_line('[A1] 某物').kind, 'text');
+  // 行尾残渣（按钮单元之后还有非单元的方括号段）→ 整行 text——守门不拦
+  // 会把 `[某某]` 静默丢掉（拆出的 menu 丢文本，比对信息缺失且无红）。
+  // 注意多词标签（`[100] 调教 了不得的东西`）是合法按钮：标签段可含空格
+  //（槽位备注即多词标签），不得按「行尾有正文」拒收
+  assert.equal(
+    classify_line('[100] 调教 [某某]').kind,
+    'text',
+    '残渣（方括号外有正文）的行必须整体回落 text，行尾守门不可删',
+  );
+  assert.equal(classify_line('[100] 调教 了不得的东西').kind, 'menu');
+});
+
+test('存档槽位行：编号在前 + 时间戳归一 `<TS>`（#161 验收项）', () => {
+  // 存在槽（时间戳 = 保存时刻，重录必变——归一成占位符）
+  const slot = classify_line(
+    ' [ 5] 2026/08/26 17:32:58  第 7日午前 LV   0 正在调教:温妮           『对拍样本』',
+  );
+  assert.equal(slot.kind, 'menu');
+  assert.equal(slot.val, 5);
+  assert.equal(
+    slot.key,
+    '<TS> 第 7日午前 LV 0 正在调教:温妮 『对拍样本』',
+    '两个录制时刻的归一结果必须以 <TS> 占位开头（时间戳值不进比对）',
+  );
+  // 两个不同时刻的同槽备注归一后 key 相等（重录不红的保证）
+  const again = classify_line(
+    ' [ 5] 2027/01/01 08:00:00  第 7日午前 LV   0 正在调教:温妮           『对拍样本』',
+  );
+  assert.equal(
+    slot.key,
+    again.key,
+    '不同录制时刻的归一结果必须逐字相等——重录不红的保证',
+  );
+  // 时间戳的「在场」仍是断言：丢了时间戳的备注与带时间戳的 key 不等
+  const no_ts = classify_line(
+    ' [ 5] 第 7日午前 LV   0 正在调教:温妮           『对拍样本』',
+  );
+  assert.notEqual(slot.key, no_ts.key);
+  // 空槽 `[N] ----` 也是 menu（ere 侧存档界面空槽是灰色按钮）
+  const empty = classify_line(' [19] ----');
+  assert.equal(empty.kind, 'menu');
+  assert.equal(empty.key, '----');
+  assert.equal(empty.val, 19);
+});
+
+test('ere 侧按钮正文过同一套时间戳归一（两侧同构）', () => {
+  const stream = fixture_stream([
+    {
+      type: 'button',
+      text: '2026/08/26 17:32:58  第 7日午前 LV   0 正在调教:温妮           『对拍样本』',
+      accelerator: 5,
+    },
+    { type: 'button', text: '----', accelerator: 6 },
+  ]);
+  assert.equal(stream[0].kind, 'menu');
+  assert.equal(
+    stream[0].key,
+    '<TS> 第 7日午前 LV 0 正在调教:温妮 『对拍样本』',
+    'ere 侧按钮正文过同一套时间戳归一（两侧同构，否则比对必假红）',
+  );
+  assert.deepEqual([stream[1].key, stream[1].val], ['----', 6]);
+});
+
+test('富文本标记行：img src 抠出 → image；纯 shape → 丢弃（#161）', () => {
+  const img = classify_line(
+    "<shape type='space' param='100'><img src='金0' height='90' ypos='-17'>",
+  );
+  assert.equal(img.kind, 'image');
+  assert.deepEqual(img.names, ['金0']);
+  const title = classify_line(
+    "<shape type='space' param='2180'><img src='TITLE' height='72' width='400' ypos='-6'>",
+  );
+  assert.deepEqual(title.names, ['TITLE']);
+  // 只有排版位移（无 img）→ 丢弃，进 shape 计数
+  const bare = classify_line("<shape type='space' param='300'>");
+  assert.equal(bare.kind, 'discard');
+  assert.equal(bare.why, 'shape');
+  // 装饰行统计的新类别
+  const stats = line_stats(
+    "<shape type='space' param='300'>\r\n[0] 旧的奴隶\r\n",
+  );
+  assert.equal(stats.shape, 1);
+  assert.equal(stats.total, 2);
+});
+
+test('黄金侧豁免名单：整串命中的行原样放行（致谢名单的華胥の亡靈）', () => {
+  // ere 侧该行按 lang-table 豁免保留原文；黄金侧若归一即两侧假差异
+  //（#161 范围 B 首次对拍实证）。豁免判定与 output-lang-lock 同一真相源
+  const stream = golden_stream(
+    '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious\r\n',
+  );
+  assert.ok(
+    stream[0].text.includes('華胥の亡靈'),
+    '豁免串必须原样放行（繁体保留）',
+  );
+  // 非豁免的繁体行照旧过归一表
+  const normalized = golden_stream('奴隷市场\r\n');
+  assert.equal(normalized[0].text, '奴隶市场');
+});
