@@ -845,6 +845,22 @@ function create_era_fixture() {
   // 仍是不取输入的记录桩，见下，机制同源）。
   const input_echo_adds_row = (config) =>
     !system_config.hideUserInput && !config?.hideInput && !config?.any;
+  // 引擎 input() 回传前的数值归一（#151/G6），模块 65 逐字：
+  //   getNumber(e){const t=Number(e);return isNaN(t)?e:t}
+  // —— Number(val) 可解析则转数值，NaN 则原样返回。模块 183 的回传路径
+  // `const i=y(n.val)`：归一发生在 resolve 之前，引擎还会把归一后的值
+  // print 出去（回显行，golden 样本里光秃秃的 199/99 行）。渲染层回包的
+  // val 恒字符串，普通 input() 回给游戏的几乎总是数值。Number 语义边界
+  // （test/fixture.test.js 逐条钉住）：空串与 null 都归一成 0（最反直觉
+  // 的一条）、非数字串原样、前后空白照样解析、部分数字的串不截断。
+  // 归一只在白名单校验之后发生——引擎渲染层 returnFromButton 校验的就是
+  // 原始 val（#130 段）。回显的条目层仍不推（设计裁定 2，docs/
+  // output-diff.md）：print 的归一后值在夹具只计行（上方回显计数），条目
+  // 层的输入回显由 tools/compare/replay.js 的回放器承载，勿在此补。
+  const get_number = (val) => {
+    const num = Number(val);
+    return isNaN(num) ? val : num;
+  };
   era.input = async (config) => {
     const value = take_input();
     // —— 按钮白名单校验（#130）：镜像引擎渲染层 returnFromButton 的拒收 ——
@@ -877,12 +893,15 @@ function create_era_fixture() {
     // rule=[]）——上一轮按钮对下一次 input 不再有约束力。inputs_consumed
     // 也在此刻记录：校验通过＝游戏真的收到了这个值
     input_rules.length = 0;
-    inputs_consumed.push({ api: 'input', value });
+    // 归一后的值才是游戏真收到的（引擎 resolve 的是 i＝getNumber(val)）：
+    // 记录与回传都用它
+    const result = get_number(value);
+    inputs_consumed.push({ api: 'input', value: result });
     if (input_echo_adds_row(config)) {
       total_rows += 1; // this.print(回显值)：+1 Row
       allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
     }
-    return value;
+    return result;
   };
   // 引擎 waitAnyKey(e) 的逐字镜像：((allowWait || e) && (allowWait = !1,
   // await input({any:true})))——有输出（或强制 e）才等键、等待即消费清零。

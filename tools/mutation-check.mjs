@@ -118,7 +118,11 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #150 起为 298：+3（角色列表顺序语义——M290 getAddedCharacters 退回
 // 插入序、M291 getCharactersInTrain 退回插入序、M292 getAllCharacters
 // 退回预设表插入序；三条同钉 fixture 的非升序正主用例，升序用例不误伤）。
-const LEDGER_COUNT_BASELINE = 298;
+// #151 起为 301：+3（input 回传值的 getNumber 归一——M293 归一被拆
+// （#151 前的真实写法）、M294 归一加 typeof string 守卫、M295 归一换成
+// parseInt 截断解析；三条同钉 fixture 的字符串预置正主用例，数字预置的
+// 既有用例零误伤）。
+const LEDGER_COUNT_BASELINE = 301;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
