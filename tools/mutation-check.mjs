@@ -112,7 +112,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // M285 cli 缺席样本继续走、M286 引用前缀解析退回无前缀正则、M287 样本锚
 // 校验焊死）。这批的 M 编号在 rebase 时整体顺延（原 M276-M279 与 #147
 // 撞号，SOP §5.5）。
-const LEDGER_COUNT_BASELINE = 293;
+// #149 起为 295：+2（M288 夹具 removeCharacter 只过滤列表、幸存者三段键
+// 清理被省；M289 返回值复辟成布尔）。这批 M 编号在 rebase 时顺延（原
+// M284/M285 与 #156 撞号，SOP §5.5）。
+const LEDGER_COUNT_BASELINE = 295;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎

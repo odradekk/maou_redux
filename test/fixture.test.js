@@ -4,12 +4,21 @@
  * 夹具是全项目唯一的一处注入点（见 issue #16）：
  * 加载真实 SDK 文件，替换 require('#/era-electron') 返回的对象，
  * 让游戏代码在不启动 Electron GUI 的情况下可测。
+ *
+ * #149 起含一条引擎门控用例（removeCharacter 的引擎桥接段，文件尾部）：
+ * 缺引擎（无 app.asar）时该用例 skip，跳过数进
+ * test/engine-skip-baseline.txt 基线；其余用例不依赖引擎照常跑。
  */
 
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const {
+  create_add_character,
+  create_chara_loader,
+  load_engine_bundle,
+} = require('./helpers/engine-bundle');
 
 test('加载的是真实 SDK：注入守卫已绕过', () => {
   const fixture = create_era_fixture();
@@ -308,21 +317,131 @@ test('addCharacter 落 callname 键（引擎数据层行为，#44）：姓名 -1
   assert.deepEqual(fixture.var_writes, []);
 });
 
-test('removeCharacter 镜像引擎过滤删除（DELCHARA 等价物，#44）', () => {
+test('removeCharacter 镜像引擎：过滤删除且恒返回 undefined（DELCHARA 等价物，#44/#149）', () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(31);
 
-  assert.equal(fixture.era.removeCharacter(31), true);
+  // 引擎方法体没有 return 语句，恒 undefined（#149/G3：旧夹具单参返回
+  // 「!includes(id)」的布尔值是发明，被本用例的前身钉成过断言）
+  assert.equal(
+    fixture.era.removeCharacter(31),
+    undefined,
+    '引擎方法体没有 return 语句，恒返回 undefined',
+  );
+  // 过滤删除（data.no.filter 的镜像）：被删者出列、幸存者保序
   assert.deepEqual(fixture.chara_no, [0]);
   assert.deepEqual(fixture.calls, [
     { api: 'addCharacter', args: [0] },
     { api: 'addCharacter', args: [31] },
     { api: 'removeCharacter', args: [31] },
   ]);
+
+  // 二次删除同一 ID（已不在列表）：引擎同样静默 undefined——布尔返回值
+  // 复辟的形态下这里会拿到 true（「不在列表」而非「删掉了」），语义错乱
+  assert.equal(fixture.era.removeCharacter(31), undefined);
+  assert.deepEqual(fixture.chara_no, [0]);
 });
+
+test('removeCharacter 幸存者三段键清理（#149）：指向被删者的 relation/callname 删除，指向他人保留', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.seed_chara(5, { id: 5, name: '五号', callname: '五号' });
+  fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(5);
+  fixture.era.addCharacter(31);
+  fixture.era.set('relation:0:31', 800);
+  fixture.era.set('callname:0:31', '温妮');
+  fixture.era.set('relation:0:5', 300); // 幸存者之间的条目
+  fixture.era.set('relation:0:99', 100); // 99 从未入列，但将出现在本次参数里
+
+  fixture.era.removeCharacter(31, 99);
+
+  // 引擎 filter 幸存者分支（delete relation[r][t] / callname[r][t]）：
+  // 三段键的主段是幸存者、不随除名失效，不删则残留可读而引擎下是 undefined
+  assert.equal(
+    fixture.era.get('relation:0:31'),
+    undefined,
+    '删完之后幸存者读被删者是 undefined',
+  );
+  assert.equal(fixture.era.get('callname:0:31'), undefined);
+  // 幸存者之间的条目不在清理范围（引擎只删指向每个参数的条目）
+  assert.equal(fixture.era.get('relation:0:5'), 300);
+  // 99 不在 chara_no（从未入列）但出现在参数里：引擎按**参数**删三段键、
+  // 不按「实际移出列表者」删——若镜像写成按 removed 集合删，此键漏删
+  assert.equal(
+    fixture.era.get('relation:0:99'),
+    undefined,
+    '三段键按参数删（参数里出现即删，无论是否真被移出列表）',
+  );
+});
+
+// —— 引擎桥接（#149 验收项）：夹具证明「调了」，引擎真方法证明「引擎这么干」——
+// 引擎侧逐字见票身与夹具注释；这里驱动 app.asar 里的真 removeCharacter
+// （经 test/helpers/engine-bundle.js，与 addCharacter 共用同一数据层），
+// 给上面两条夹具镜像的行为提供引擎侧证据。缺引擎（无 app.asar）时
+// skip，跳过数进 test/engine-skip-baseline.txt 基线。
+
+const engine = load_engine_bundle();
+const engine_test = engine ? test : test.skip;
+
+engine_test(
+  '引擎 removeCharacter：无 return 语句，幸存者三段键与被删者整行都被清掉',
+  () => {
+    const loader = create_chara_loader();
+    // 最小预设：两个角色足以分开「幸存者 × 被删者」与「被删者自身行表」。
+    // 装载循环一次 load_rows 装一个角色（preset 是单角色累积器，与引擎
+    // 「每文件一角色」同构），两个角色分两袋
+    loader.load_rows([
+      ['番号', '0'],
+      ['名前', '你'],
+    ]);
+    loader.load_rows([
+      ['番号', '31'],
+      ['名前', '温妮'],
+    ]);
+    const adder = create_add_character(loader.static_data);
+    assert.equal(adder.add(0), true);
+    assert.equal(adder.add(31), true);
+
+    // 种入关系数据：直接写引擎内部数据层（初始状态，非被测行为）
+    adder.data.relation[0][31] = 800;
+    adder.data.callname[0][31] = '温妮';
+    adder.data.relation[0][5] = 300; // 幸存者指向第三者（未入列）
+
+    // 引擎真方法（方法体无 return 语句）
+    assert.equal(adder.remove(31), undefined, '引擎无 return，恒 undefined');
+    assert.deepEqual(adder.data.no, [0]);
+
+    // 票面验收点：幸存者指向被删者的条目被引擎真删（读回 undefined）
+    assert.equal(
+      adder.data.relation[0][31],
+      undefined,
+      '引擎删幸存者指向被删者的 relation 三段键',
+    );
+    assert.equal(
+      adder.data.callname[0][31],
+      undefined,
+      '引擎删幸存者指向被删者的 callname 三段键',
+    );
+    assert.equal(adder.data.relation[0][5], 300, '指向第三者的条目不动');
+    // 删除循环：被删者自己的整行表
+    assert.equal(
+      adder.data.relation[31],
+      undefined,
+      '被删者 relation 整行删除',
+    );
+    assert.equal(
+      adder.data.callname[31],
+      undefined,
+      '被删者 callname 整行删除',
+    );
+    assert.equal(adder.data.base[31], undefined, '被删者 base 整行删除');
+  },
+);
 
 test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边界', () => {
   const fixture = create_era_fixture();

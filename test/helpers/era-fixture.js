@@ -982,17 +982,37 @@ function create_era_fixture() {
     chara_no.length = 0;
     return undefined;
   };
-  // removeCharacter（DELCHARA 的引擎等价物，#44 的 @EVENTEND 死亡分支用）：
-  // 镜像引擎的过滤删除（data.no.filter，命中即出列）；其余角色表的清理在
-  // 平表 store 里天然发生（键带着旧角色 ID，不再被读到）。
+  // removeCharacter（DELCHARA 的引擎等价物，#44 的 @EVENTEND 死亡分支用）。
+  // 引擎（app.asar 模块 183，逐字）分两段清理：
+  //   - filter 的幸存者分支：对每个幸存者 × 每个参数，delete
+  //     relation[幸存者][参数] 与 callname[幸存者][参数]（三段键）；
+  //   - 删除循环：被删者自己的整行表（maxbase/base/abl/…/callname/
+  //     relation 与扩展表）。
+  // 夹具平表 store 只镜像第一段：三段键的主段是幸存者、不随除名失效，
+  // 残留可读而引擎下是 undefined（#149/G3），必须真删。第二段的行表键
+  // （主段＝被删者，如 base:31:0）在平表下同样残留可读，但主段带着已
+  // 除名的 ID、游戏代码只沿 getAddedCharacters 迭代，读不到它们；引擎侧
+  // 的整行删除由 test/fixture.test.js 的引擎比对用例独立背书，不逐键清扫。
+  // 方法体没有 return 语句，恒返回 undefined——#149 拆掉旧夹具发明的
+  // 布尔返回值（单参返回 !includes(id)，真机上无对应物；唯一调用点
+  // event-end.js 的死亡分支不取返回值）。
   era.removeCharacter = (...chara_ids) => {
     calls.push({ api: 'removeCharacter', args: chara_ids });
-    const kept = chara_no.filter((id) => !chara_ids.includes(id));
+    const kept = chara_no.filter((id) => {
+      if (chara_ids.includes(id)) {
+        return false;
+      }
+      // 引擎幸存者分支逐字：按**参数**删（参数里出现即删，无论该 ID
+      // 是否真被移出列表——与删除循环按实际移出者删是两套口径）
+      for (const target of chara_ids) {
+        store.delete(`relation:${id}:${target}`);
+        store.delete(`callname:${id}:${target}`);
+      }
+      return true;
+    });
     chara_no.length = 0;
     chara_no.push(...kept);
-    return chara_ids.length === 1
-      ? !chara_no.includes(chara_ids[0])
-      : undefined;
+    return undefined;
   };
 
   // —— quit：throw 型控制流的逐字镜像（issue #148，普查报告 G5）——
