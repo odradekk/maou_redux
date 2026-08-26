@@ -650,4 +650,16 @@ export default [
     tests: ['page-shop'],
     must_mention: '经主循环进入 SHOP_AFTER_LOAD 同样不跑 @EVENTSHOP',
   },
+  {
+    desc: 'M282 has_valid_save 的 FILE LOST 前缀分支被拆（丢失槽被当有效档可点——#147 点名的无钉住缺口）',
+    file: 'ere/page/page-save-load.js',
+    find: `function has_valid_save(comment) {
+  return comment !== undefined && !comment.startsWith('(FILE LOST) ');
+}`,
+    replace: `function has_valid_save(comment) {
+  return comment !== undefined; // 变异：FILE LOST 前缀分支被拆
+}`,
+    tests: ['page-save-load'],
+    must_mention: '丢失槽不出按钮（只剩 0 号正常档可点）',
+  },
 ];

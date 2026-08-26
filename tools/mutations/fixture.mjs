@@ -252,4 +252,94 @@ export default [
     tests: ['fixture', 'event-ending'],
     must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
+  {
+    desc: 'M276 夹具 saveGlobal 的盖戳写盘被拆（内存代身恒空——#147/G1 的镜像缺口本体）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const persist_global = () => {
+    global_sav = serialize_global();
+    global_sav.version = save_gate.current_version;
+    global_sav.code = save_gate.game_code;
+    return true;
+  };`,
+    replace: `  const persist_global = () => {
+    // 变异：盖戳写盘被拆（saveGlobal 空转）
+    return true;
+  };`,
+    tests: ['fixture'],
+    must_mention: '读回的是落盘时的值',
+  },
+  {
+    desc: 'M277 夹具 loadGlobal 的 gameCode 不匹配 throw 拆回普通返回（降格回无害桩——引擎启动拒绝的机制本体，#147）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      if (mismatch) {
+        // 引擎逐字 \`throw new Error\`——裸抛无 message，装载循环按报错
+        // 拒绝启动；夹具同型（先留观测记录再抛，#148 quit 先例）
+        throw new Error();
+      }`,
+    replace: `      if (mismatch) {
+        // 变异：throw 拆回普通返回（兜底桩形态）
+      }`,
+    tests: ['fixture'],
+    must_mention: '不匹配必须裸抛 Error 而非返回 false',
+  },
+  {
+    desc: 'M278 夹具 loadGlobal 版本闸门被换成 loadData 的 truthy 写法（version 0 被短路漏放——两处判空写法差异的 loadGlobal 侧，#147）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        global_sav.version === undefined ||
+        global_sav.version < save_gate.allow_version`,
+    replace: `        global_sav.version && !(global_sav.version < save_gate.allow_version)`,
+    tests: ['fixture'],
+    must_mention: 'undefined 判空不吃 truthy 短路',
+  },
+  {
+    desc: 'M279 夹具 resetGlobal 的整份重建被拆（旧 global 值与备注残留——#147）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    for (const key of [...store.keys()]) {
+      if (key.startsWith('global:saves:')) {
+        store.delete(key);
+      } else if (key.startsWith('global:')) {
+        store.set(key, 0);
+      }
+    }
+    await list_save_files();`,
+    replace: `    // 变异：重建被拆（global:* 原样残留）
+    await list_save_files();`,
+    tests: ['fixture'],
+    must_mention: '重建后旧 global 值清 0',
+  },
+  {
+    desc: 'M280 夹具 listSaveFiles 槽位对账整体跳过（FILE LOST 前缀与剥前缀都不发生——#147）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const list_save_files = async () => {
+    for (let slot = 0; slot <= system_config.saveFiles; slot += 1) {`,
+    replace: `  const list_save_files = async () => {
+    return; // 变异：槽位对账整体跳过
+    for (let slot = 0; slot <= system_config.saveFiles; slot += 1) {`,
+    tests: ['fixture'],
+    must_mention: '备注在而文件丢必须加 (FILE LOST) 前缀',
+  },
+  {
+    desc: 'M281 夹具 listSaveFiles 的 UNNAMED 补名被拆（文件在而备注缺不补默认名——#147）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        } else {
+          store.set(key, 'UNNAMED SAVE FILE');
+        }`,
+    replace: `        } else {
+          // 变异：UNNAMED 补名被拆
+        }`,
+    tests: ['fixture'],
+    must_mention: '文件在而备注缺必须补 UNNAMED SAVE FILE',
+  },
+  {
+    // M278 模拟的是「照抄 loadData 那一行、漏了它在拒收位上语义相反」；
+    // 本条模拟取反后的忠实照抄——两种写法真正分道的取值只有 version 0
+    // 且下限 0（undefined 判空放 0 进比较、收；truthy 写法短路、误拒）。
+    desc: 'M283 夹具 loadGlobal 版本闸门换成取反后忠实照抄的 truthy 写法（version 0 且下限 0 时误拒——#147 验收补）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        global_sav.version === undefined ||
+        global_sav.version < save_gate.allow_version`,
+    replace: `        !(global_sav.version && !(global_sav.version < save_gate.allow_version))`,
+    tests: ['fixture'],
+    must_mention: '同一取值 loadGlobal 收',
+  },
 ];

@@ -569,11 +569,17 @@ function create_era_fixture() {
   // global.sav、gamebase 是静态数据），快照与灌回都跳过；其余平表全量。
   // 备注（global:saves:n）由 saveData 落、rmData 删，与引擎一致（11-saves）。
   //
-  // 旋钮 save_gate：{current_version, allow_version}，默认 1/1（非 0——
-  // 0 会撞 truthy 短路，与 #138 的版本轴决定一致）。用例造「旧版本存档」
-  // 的姿势：先降 current_version 再 saveData，或直接造 save_files（不推荐）。
+  // 旋钮 save_gate：{current_version, allow_version, game_code}，对应
+  // GameBase.yml 的【版本】/【最低支持版本】/【游戏标识】，默认 1/1/931060
+  // （版本非 0——0 会撞 loadData 的 truthy 短路，与 #138 的版本轴决定一致；
+  // game_code 冻结值见 GameBase.yml 头注）。用例造「旧版本存档」的姿势：
+  // 先降 current_version 再 saveData，或直接造 save_files（不推荐）。
   const save_files = new Map(); // slot -> {version, snapshot: Map 副本}
-  const save_gate = { current_version: 1, allow_version: 1 };
+  const save_gate = {
+    current_version: 1,
+    allow_version: 1,
+    game_code: 931060,
+  };
   const snapshot_store = () =>
     new Map(
       [...store.entries()].filter(
@@ -597,8 +603,12 @@ function create_era_fixture() {
       version: save_gate.current_version,
       snapshot: snapshot_store(),
     });
-    // 引擎：备注落 global:saves 并自动 saveGlobal（11-saves.md）
+    // 引擎：备注落 global:saves 并自动 saveGlobal（11-saves.md，逐字
+    // `this.global.saves[e]=t,await this.saveGlobal()`）。夹具走内部
+    // persist_global 落 global.sav 代身、不另记 calls——calls 里的
+    // saveGlobal 条目只属于显式调用（page-title 的精确计数断言依赖它）
     store.set(`global:saves:${slot}`, comment);
+    await persist_global();
     return true;
   };
   era.loadData = async (slot) => {
@@ -618,7 +628,188 @@ function create_era_fixture() {
     calls.push({ api: 'rmData', args: [slot] });
     save_files.delete(slot);
     store.delete(`global:saves:${slot}`);
+    // 引擎逐字：`delete this.global.saves[e],await this.saveGlobal()`——
+    // 与 saveData 同款自动持久化（不另记 calls，理由见上）
+    await persist_global();
     return true;
+  };
+
+  // —— global 系存档 API（#147）：saveGlobal / loadGlobal / resetGlobal ——
+  // 普查报告 G1（docs/research/fixture-engine-gap.md）与工单 #147 落地，
+  // 引擎（app.asar 模块 183，逐字，压缩名已还原）：
+  //   async saveGlobal(){const e=l(this.era.path,"./sav");s(e)||o(e);try{
+  //     this.global.version=this.staticData.gamebase.version,
+  //     this.global.code=this.staticData.gamebase.gameCode,
+  //     u(l(e,"./global.sav"),JSON.stringify(this.global))}
+  //     catch(e){return this.era.error(e.message,e.stack),!1}return!0}
+  //   async loadGlobal(){let e=!1;const t=l(this.era.path,"./sav/global.sav");
+  //     if(s(t)){let r=!1;try{const n=JSON.parse(a(t,"utf-8"));
+  //       void 0!==n.code&&n.code!==this.staticData.gamebase.gameCode
+  //         ?(r=!0,this.era.error(`global.sav 所属游戏ID（${n.code}）与GameBase
+  //           （${…gameCode}）不匹配！请检查sav文件夹！`))
+  //         :void 0===n.version||n.version<this.staticData.gamebase.allowVersion
+  //           ?(this.era.error(`global.sav版本过低（${n.version}）！已重新生成`),e=!0)
+  //           :(this.era.global=n,Object.values(this.staticData.global).forEach(
+  //             e=>this.global[e]||(this.global[e]=0)))}
+  //     catch(t){e=!0}if(r)throw new Error}else e=!0;
+  //     return e?await this.resetGlobal():(await this.listSaveFiles(),
+  //       await this.saveGlobal())}
+  //   async resetGlobal(){return this.era.global={code:…,saves:{},version:…},
+  //     Object.values(this.staticData.global||{}).forEach(e=>this.global[e]=0),
+  //     await this.listSaveFiles(),await this.saveGlobal()}
+  //   async listSaveFiles(){const e=a(this.config,"system.saveFiles")||10;
+  //     for(let t=0;t<=e;++t){const e=<save${t}.sav 是否存在>;
+  //       e?this.global.saves[t]?this.global.saves[t].startsWith("(FILE LOST) ")&&
+  //         (this.global.saves[t]=this.global.saves[t].substring(12))
+  //        :this.global.saves[t]="UNNAMED SAVE FILE"
+  //       :!this.global.saves[t]||…startsWith("(FILE LOST) ")||
+  //         (this.global.saves[t]="(FILE LOST) "+this.global.saves[t])}}
+  // 手册对应：dev-guides/11-saves.md「era.loadGlobal」词条（含 `(FILE LOST) `
+  // 对账三规则的文字版）。
+  //
+  // 镜像要点（与引擎的已知偏差逐条登记）：
+  //   - global.sav 的内存代身 global_sav（闭包私有，不进 store）：saveGlobal
+  //     盖 version/code 戳后整体写入；「文件在不在」= 它是否已写过。写失败
+  //     分支（盘满等 IO 错 → era.error + false）在内存镜像下不可达，恒 true。
+  //   - loadGlobal 的 gameCode 不匹配分支是 throw 型：引擎先 this.era.error
+  //     （SDK error → logger.error）再**裸抛 new Error**（无 message），装载
+  //     循环按非 'quit' 报错、拒绝启动（11-saves.md 与 AGENTS.md 已记）。
+  //     夹具同构（#148 quit 的先例）：先经 logger.error 留报错记录，再抛。
+  //   - 版本闸门逐字用 **undefined 判空**（`void 0===n.version||n.version<
+  //     allowVersion`），与上面 loadData 的 truthy 判空是两套写法：version 0
+  //     且下限 0 时 loadData 拒（0 falsy 短路）、loadGlobal 收（0 是合法版本）；
+  //     version 0 且下限 1 时两者都拒但机制相反（比较命中 vs 短路漏过会放行）。
+  //     两条用例在 test/fixture.test.js 各自钉住，不许共用断言（验收清单明写）。
+  //   - 静态 global 键：引擎按 yml/Global.yml 声明表补 0 / 清 0，夹具无声明
+  //     表——loadGlobal 灌回后 store 里不在文件中的旧键直接删（引擎整份替换
+  //     `this.era.global=n`，未声明键同样消失）；resetGlobal 对现存 global:*
+  //     变量键一律置 0（声明键的引擎语义；未声明键引擎置 undefined，夹具以 0
+  //     代之——getter 一律 || 0 兜底，两侧可观察等价）。
+  //   - 槽位对账 list_save_files（引擎内部 listSaveFiles，不在 SDK 面上，
+  //     ere/era-electron.js 无此方法）：文件在 = save_files 有该槽。文件在＋
+  //     备注缺 → 'UNNAMED SAVE FILE'；文件在＋备注带前缀 → 剥前缀（引擎
+  //     substring(12) = '(FILE LOST) '.length）；文件缺＋备注在且未带前缀 →
+  //     加前缀。扫描 0..saveFiles 闭区间（含 99 自动档；saveFiles=99 由
+  //     yml/_fixed.json 钉死，#135/ADR-0006——引擎裸默认 10，本项目永不以
+  //     10 运行，故夹具默认直接取项目生效值）。
+  let global_sav; // global.sav 代身：undefined = 文件不存在
+  const serialize_global = () => {
+    const out = { saves: {} };
+    for (const [key, value] of store.entries()) {
+      if (!key.startsWith('global:')) {
+        continue;
+      }
+      const rest = key.slice('global:'.length);
+      if (rest.startsWith('saves:')) {
+        out.saves[rest.slice('saves:'.length)] = value;
+      } else {
+        out[rest] = value;
+      }
+    }
+    return out;
+  };
+  const restore_global = (file) => {
+    // 整份替换：先清空 store 的 global:* 键（引擎 this.era.global=n），
+    // 再灌回文件内容；code/version 是引擎盖章字段、不是可寻址变量，跳过
+    for (const key of [...store.keys()]) {
+      if (key.startsWith('global:')) {
+        store.delete(key);
+      }
+    }
+    for (const [field, value] of Object.entries(file)) {
+      if (field === 'saves') {
+        for (const [slot, comment] of Object.entries(value ?? {})) {
+          store.set(`global:saves:${slot}`, comment);
+        }
+      } else if (field !== 'code' && field !== 'version') {
+        store.set(`global:${field}`, value);
+      }
+    }
+  };
+  const persist_global = () => {
+    global_sav = serialize_global();
+    global_sav.version = save_gate.current_version;
+    global_sav.code = save_gate.game_code;
+    return true;
+  };
+  const list_save_files = async () => {
+    for (let slot = 0; slot <= system_config.saveFiles; slot += 1) {
+      const key = `global:saves:${slot}`;
+      const comment = store.get(key);
+      if (save_files.has(slot)) {
+        if (comment) {
+          // 文件回来了：剥掉误标的丢失前缀（引擎 substring(12)）
+          if (comment.startsWith('(FILE LOST) ')) {
+            store.set(key, comment.substring(12));
+          }
+        } else {
+          store.set(key, 'UNNAMED SAVE FILE');
+        }
+      } else if (comment && !comment.startsWith('(FILE LOST) ')) {
+        store.set(key, `(FILE LOST) ${comment}`);
+      }
+    }
+  };
+  era.saveGlobal = async () => {
+    calls.push({ api: 'saveGlobal', args: [] });
+    return persist_global();
+  };
+  era.loadGlobal = async () => {
+    calls.push({ api: 'loadGlobal', args: [] });
+    let rebuilt = false;
+    if (global_sav === undefined) {
+      rebuilt = true; // 文件不存在（引擎 else e=!0 分支）
+    } else {
+      let mismatch = false;
+      // 闸门顺序逐字：先 gameCode（n.code 非 undefined 且不匹配才拦），
+      // 后版本。JSON 解不开 → 重建的分支在内存代身下不可达（对象由
+      // persist_global 造出，恒可读）
+      if (
+        global_sav.code !== undefined &&
+        global_sav.code !== save_gate.game_code
+      ) {
+        mismatch = true;
+        era.logger.error(
+          `global.sav 所属游戏ID（${global_sav.code}）与GameBase（${save_gate.game_code}）不匹配！请检查sav文件夹！`,
+        );
+      } else if (
+        // undefined 判空逐字——与 loadData 的 truthy 判空是两套写法，
+        // version 0 在两处的去向相反（见段首「镜像要点」）
+        global_sav.version === undefined ||
+        global_sav.version < save_gate.allow_version
+      ) {
+        era.logger.error(
+          `global.sav版本过低（${global_sav.version}）！已重新生成`,
+        );
+        rebuilt = true;
+      } else {
+        restore_global(global_sav);
+        // 声明槽补 0（引擎 forEach）：夹具无声明表，缺失即 undefined，
+        // getter || 0 兜底等价（见段首「镜像要点」）
+      }
+      if (mismatch) {
+        // 引擎逐字 `throw new Error`——裸抛无 message，装载循环按报错
+        // 拒绝启动；夹具同型（先留观测记录再抛，#148 quit 先例）
+        throw new Error();
+      }
+    }
+    return rebuilt
+      ? await era.resetGlobal()
+      : (await list_save_files(), await era.saveGlobal());
+  };
+  era.resetGlobal = async () => {
+    calls.push({ api: 'resetGlobal', args: [] });
+    // 引擎：this.global = {code, saves:{}, version} 整份重建，声明键清 0。
+    // 夹具近似：saves 键全删（saves:{}），其余现存 global:* 变量键置 0
+    for (const key of [...store.keys()]) {
+      if (key.startsWith('global:saves:')) {
+        store.delete(key);
+      } else if (key.startsWith('global:')) {
+        store.set(key, 0);
+      }
+    }
+    await list_save_files();
+    return await era.saveGlobal();
   };
 
   // —— 输入 ——
@@ -632,11 +823,16 @@ function create_era_fixture() {
     }
     return input_queue.shift();
   };
-  // 引擎 system.hideUserInput / system.disableClear 配置（ere.config.json 的
-  // 键，游戏代码不能改）的镜像：hideUserInput 默认 false＝回显计行、
-  // disableClear 默认 false＝clear 正常清——测试翻转以覆盖 input 回显三段
-  // 短路的第一段与 clear 的第一段短路（#91 契约测试的探针旋钮）
-  const system_config = { hideUserInput: false, disableClear: false };
+  // 引擎 system 配置（ere.config.json / yml/_fixed.json 的键，游戏代码不能
+  // 改）的镜像：hideUserInput 默认 false＝回显计行、disableClear 默认 false＝
+  // clear 正常清——测试翻转以覆盖 input 回显三段短路的第三段（#91 契约测试
+  // 的探针旋钮）；saveFiles 默认 99＝本项目 _fixed.json 钉死的槽位数
+  // （ADR-0006/#135，引擎裸默认 10）——listSaveFiles 对账的扫描上界（含 99）
+  const system_config = {
+    hideUserInput: false,
+    disableClear: false,
+    saveFiles: 99,
+  };
   // 引擎 input() 回显计行的三段短路，逐字镜像（app.asar 主进程 input）：
   //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
   //     || this.print(i)
@@ -851,6 +1047,9 @@ function create_era_fixture() {
     'saveData',
     'loadData',
     'rmData',
+    'saveGlobal',
+    'loadGlobal',
+    'resetGlobal',
     'input',
     'waitAnyKey',
     'addCharacter',
@@ -970,10 +1169,13 @@ function create_era_fixture() {
      *  一致为 false）：置 true 后 input 回显不计 Row / clear 整体无操作，
      *  覆盖两条引擎短路的对应段，见「输入」段与 clear 处注释 */
     system_config,
-    /** 存档闸门旋钮（#137）：current_version = saveData 盖章的版本、
-     *  allow_version = 【最低支持版本】（loadData 的拒读下限）。默认 1/1
-     *  （非 0，避开 truthy 短路）。造「旧版本存档」：先降 current_version
-     *  再 saveData，或 saveData 后改 record（不推荐） */
+    /** 存档闸门旋钮（#137/#147）：current_version = saveData/saveGlobal 盖章
+     *  的版本、allow_version = 【最低支持版本】（loadData/loadGlobal 的拒读
+     *  下限，两处判空写法不同——loadData truthy、loadGlobal undefined，见
+     *  global 系存档段注释）、game_code = 【游戏标识】（loadGlobal 的不匹配
+     *  即 throw）。默认 1/1/931060（GameBase.yml 当前值）。造「旧版本存档」：
+     *  先降 current_version 再 saveData，或 saveData 后改 record（不推荐）；
+     *  造「异游戏 global.sav」：saveGlobal 后改 game_code 再 loadGlobal */
     save_gate,
     /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
     seed_chara(chara_id, preset) {
