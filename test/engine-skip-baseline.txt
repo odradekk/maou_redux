@@ -53,4 +53,10 @@
 # 删 11 张表」，驱动真 beginTrain/addCharacterForTrain/endTrain；跨场不残留
 # 的三条正主用例走夹具路径不依赖引擎照常跑），现为 65（772 = 707 过 +
 # 65 跳过 + 0 挂，WSL 无引擎实测）。
-65
+# #163（手册按引擎代码修正）复测：+1（fixture.test.js 第三个引擎门控用例
+# 「引擎 nextTurnInTrain：deltabase→base 带 maxbase 钳制、delta→palam、
+# nowex→ex，逐键置 0 不删表」，驱动真 nextTurnInTrain；同票的 useRule 走
+# ENGINE_FACTS 锚定不经用例，不加数），现为 66
+# （rebase 到含 #151/#152 的 master 后复测：773 = 707 过 +
+# 66 跳过 + 0 挂，WSL 无引擎实测）。
+66

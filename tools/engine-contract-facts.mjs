@@ -60,4 +60,16 @@ export const ENGINE_FACTS = [
     anchors: ["border: data.config.isSolid ? 'solid' : 'dashed'"],
     rule: null,
   },
+  {
+    // #163：手册 A-api-docs.md 曾写 useRule 默认 false，渲染层逐字是
+    // safeUndefinedCheck(data.config.useRule, true)——默认 true，显式传
+    // false 才关。夹具的白名单校验正依赖这个缺省（不传 config.useRule
+    // 时校验生效），符合「夹具行为真的依赖它」的收录判据。
+    id: 'input-userule-default-true',
+    desc: 'input 的 useRule 缺省 true：渲染层 safeUndefinedCheck(data.config.useRule, true) 兜底——不传时本轮按钮快捷键白名单与 config.rule 正则校验默认生效',
+    mirror:
+      'test/helpers/era-fixture.js era.input 的白名单校验（config?.useRule !== false 分支，#130）',
+    anchors: ['safeUndefinedCheck(data.config.useRule, true)'],
+    rule: null, // 只锚默认值；「何时该显式传 false」无静态可判的调用点规则
+  },
 ];
