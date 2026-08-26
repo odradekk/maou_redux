@@ -1,0 +1,12 @@
+{
+  "sample": "mainmenu-max",
+  "segment": "标题→读档→据点主菜单",
+  "state": "max",
+  "build": "93106",
+  "save": "save99（第 7 日午前）",
+  "seed_string": "FLAG:37 = 1\nFLAG:83 = 5\nFLAG:84 = 3\nTALENT:0:325 = 1\nCFLAG:(TARGET > 0 ? TARGET # 1):0 = 1\nITEM:24 = 3\nITEM:25 = 2",
+  "macro_key": "manual",
+  "autosave": false,
+  "recorded_at": "2026-08-26",
+  "history_lines": 50000
+}

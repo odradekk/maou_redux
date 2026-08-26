@@ -9,8 +9,9 @@
  *      一行没动，缺省路径只是经 resolve_sample 走到同一个文件）。
  *   2. 未登记样本名 → 非零退出 + 报出有效名单。**绝不静默回落缺省**：
  *      回落 = 拿旧样本冒充新样本，比对结论整个作废。
- *   3. 已登记但文件未入库（阶段二回收前的占位形态）→ 非零退出 + 点名
- *      阶段二，不裸崩、不回落。
+ *   3. 已登记样本已真实入库（#161 阶段二）→ 真库直跑，走到头注校验之后
+ *      的通用统计。占位形态（文件不在库 → 非零退出 + 点名阶段二）成为
+ *      历史，该用例随之改写。
  *   4. 样本 + 头注齐备的完整路径（临时仓库副本里伪造最小样本）→ 退出 0、
  *      头注回显、通用统计执行、且明说跳过 ere 侧比对（归一化器要不要
  *      扩展是阶段二裁定，#109 问题五）。头注缺失 / 缺必填字段 → 非零
@@ -18,7 +19,8 @@
  *
  * 副本清单与 trace-check 探针同思路（#89 整改：写坏型探针不写工作树），
  * 但只需 cli 命名路径的判定面：tools/（工具本体）+ yml/（Palam.yml 的
- * 算式指标）+ golden/（样本落点，库内已有 macro.txt 与 README.md）。
+ * 算式指标）+ golden/（样本落点；#161 阶段二起六份样本已真实入库，副本里
+ * 会被 write_fake_sample 覆盖 mainmenu-natural——副本是临时的，预期如此）。
  */
 
 const assert = require('node:assert/strict');
@@ -95,24 +97,74 @@ test('未登记样本名：非零退出 + 报出有效名单，绝不静默回�
   assert.match(bad_arg.output, /--sample 缺样本名/);
 });
 
-test('已登记但样本未入库：非零退出 + 点名阶段二占位，不回落不裸崩', () => {
+test('已登记样本已真实入库：真库直跑，头注校验通过且事件流比对全绿', () => {
+  // #161 阶段二：六份样本由人录制回收后入库，「已登记但样本未入库」的
+  // 占位形态成为历史。本用例随之从「期待非零退出（样本文件不在库）」改写
+  // 为：golden/mainmenu-natural.log 现在是真的，跑它必须走过头注校验、
+  // 产出头注回显与通用统计，并完成事件流比对（回放 + 归因，unexplained
+  // 归零 → 退出 0；这份样本的归因基线由 test/compare-scope-b.test.js 锁）
   const { status, output } = run_cli(['--sample', 'mainmenu-natural']);
-  assert.notEqual(
+  assert.equal(
     status,
     0,
-    '样本文件不在库时必须失败——阶段二回收前该样本名只是占位',
+    `真实样本的完整比对路径应全绿（unexplained 归零）：\n${output}`,
   );
   assert.match(
     output,
-    /样本文件不在库：golden\/mainmenu-natural\.log/,
-    '消息必须给出缺席路径本体',
+    /\[样本\] mainmenu-natural（golden\/mainmenu-natural\.log）/,
   );
-  assert.match(output, /阶段二/, '消息必须指向回收流程而不是让读者猜');
+  assert.match(
+    output,
+    /\[样本头注\] 构建标识 93106 ｜ 起录存档 save99（第 7 日午前） ｜ 宏键 manual ｜ 置位串（空 = 自然态） ｜ 自动存档 关/,
+  );
+  assert.match(output, /\[装饰行复核\]/, '头注校验之后的通用统计必须执行');
+  assert.match(
+    output,
+    /\[事件流比对\] golden \d+ 条 vs ere \d+ 条/,
+    '#161 起命名样本必须跑 ere 侧回放与事件流比对，不再跳过',
+  );
+  assert.match(output, /未解释 0/);
 });
 
-// —— 完整路径：临时副本里伪造一份最小样本（阶段二回收前的形态预演） ——
+test('样本文件缺席仍必须显式失败（守卫的复现场景：副本里删掉已入库样本）', () => {
+  // #161 样本入库后主仓库恒有样本文件，这段守卫的真值场景搬进副本：
+  // 删掉副本里的 mainmenu-natural.log 再跑，必须非零退出 + 报出缺席路径
+  // 本体，不得裸崩（读文件 ENOENT）、不得静默继续（变异 M285 的靶）
+  const root = probe_repo();
+  const sample_path = path.join(root, 'golden', 'mainmenu-natural.log');
+  fs.rmSync(sample_path, { force: true });
+  try {
+    const { status, output } = run_cli(
+      ['--sample', 'mainmenu-natural'],
+      root,
+      path.join(root, 'tools', 'compare', 'cli.js'),
+    );
+    assert.notEqual(status, 0, '样本文件不在库时必须失败');
+    assert.match(
+      output,
+      /样本文件不在库：golden\/mainmenu-natural\.log/,
+      '消息必须给出缺席路径本体',
+    );
+  } finally {
+    // 还原副本里的样本（真树回拷）
+    fs.copyFileSync(
+      path.join(REPO_ROOT, 'golden', 'mainmenu-natural.log'),
+      sample_path,
+    );
+  }
+});
 
-const PROBE_REPO_ENTRIES = ['tools', 'yml', 'golden'];
+// —— 完整路径：临时副本里伪造一份最小样本（头注校验的行为靶） ——
+
+const PROBE_REPO_ENTRIES = [
+  'tools',
+  'yml',
+  'golden',
+  // #161 起 cli 的命名样本路径跑 ere 侧回放：replay-b.js 依赖
+  // test/helpers/era-fixture.js 与 ere/ 全部游戏代码（#'/' 别名映射 ere/）
+  'ere',
+  'test/helpers',
+];
 
 let probe_repo_cache;
 
@@ -148,6 +200,7 @@ function write_fake_sample({ meta_extra = {}, meta_drop = [] } = {}) {
     save: 'save99（第 7 日午前）',
     seed_string: '',
     macro_key: 'F1',
+    autosave: false,
     ...meta_extra,
   };
   for (const key of meta_drop) {
@@ -171,7 +224,7 @@ function clean_fake_sample() {
   }
 }
 
-test('样本与头注齐备：退出 0、头注回显、通用统计、明说跳过 ere 侧比对', () => {
+test('样本与头注齐备：头注校验放行、通用统计执行、事件流比对照跑', () => {
   const root = write_fake_sample();
   try {
     const { status, output } = run_cli(
@@ -179,14 +232,21 @@ test('样本与头注齐备：退出 0、头注回显、通用统计、明说跳
       root,
       path.join(root, 'tools', 'compare', 'cli.js'),
     );
-    assert.equal(status, 0, `命名样本完整路径应退出 0：\n${output}`);
+    // 假样本（3 行杜撰内容）与 ere 回放比对必然大量未解释 → 退出 1；
+    // 本用例的靶点是「头注齐备不被拒、比对真的跑了」，退出码预期见断言
+    assert.notEqual(status, 0, '假样本内容与回放对不上，未解释必非零');
+    assert.ok(
+      !/样本头注缺必填字段|样本头注缺失/.test(output),
+      '头注齐备的样本不得在头注校验被拒',
+    );
     assert.match(
       output,
       /\[样本\] mainmenu-natural（golden\/mainmenu-natural\.log）/,
     );
     assert.match(
       output,
-      /构建标识 93106 ｜ 起录存档 save99（第 7 日午前） ｜ 宏键 F1/,
+      /构建标识 93106 ｜ 起录存档 save99（第 7 日午前） ｜ 宏键 F1 ｜ 置位串（空 = 自然态） ｜ 自动存档 关/,
+      '头注回显必须包含自动存档开关状态（#161 新契约字段）',
     );
     assert.match(
       output,
@@ -197,8 +257,8 @@ test('样本与头注齐备：退出 0、头注回显、通用统计、明说跳
     assert.match(output, /\[算式断言\] 共 0 条/);
     assert.match(
       output,
-      /\[比对\] 跳过：.*#156 阶段二/,
-      '必须明说 ere 侧比对属阶段二，不是静默少跑',
+      /\[事件流比对\] golden \d+ 条 vs ere \d+ 条/,
+      '#161 起必须跑 ere 侧回放与事件流比对（假样本红在未解释，不在流程缺席）',
     );
   } finally {
     clean_fake_sample();
@@ -234,6 +294,19 @@ test('头注缺失或字段不全：非零退出（置位串不落库，样本�
       no_seed.output,
       /样本头注缺必填字段：seed_string/,
       '消息必须点名缺席字段',
+    );
+
+    const drop_autosave = write_fake_sample({ meta_drop: ['autosave'] });
+    const no_autosave = run_cli(
+      ['--sample', 'mainmenu-natural'],
+      drop_autosave,
+      path.join(drop_autosave, 'tools', 'compare', 'cli.js'),
+    );
+    assert.notEqual(no_autosave.status, 0, '缺自动存档字段的头注必须被拒绝');
+    assert.match(
+      no_autosave.output,
+      /样本头注缺必填字段：autosave/,
+      '消息必须点名缺席字段（#161：自动存档状态不落库，将来重录会得到不同的 [99] 行而查不出原因）',
     );
   } finally {
     clean_fake_sample();

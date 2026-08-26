@@ -2728,6 +2728,35 @@ const SAMPLE_LOG_REFS = {
   // 'mainmenu-natural': [
   //   { js: 'ere/…', refs: [{ ref: '行号或区间', any: [/锚正则/] }] },
   // ],
+  // —— #161 阶段二起的首批真实登记（回放器/移植修复的证据行） ——
+  'mainmenu-natural': [
+    {
+      js: 'tools/compare/replay-b.js',
+      refs: [
+        // SAVE00/SAVE99 备注的逐字证据（读档画面槽位行）
+        {
+          ref: '40',
+          any: [/2024\/12\/23 12:08:10  第 2日午前 LV   0/],
+        },
+        {
+          ref: '61',
+          any: [/2024\/12\/25 19:55:17  第 7日午前 LV   0/],
+        },
+      ],
+    },
+  ],
+  'saveload-natural': [
+    {
+      js: 'ere/page/page-save-load.js',
+      refs: [
+        // 【保存存档】前缀的实证行（#161 对拍查出的漏抄，已修复）
+        {
+          ref: '90',
+          any: [/^【保存存档】当前故事还没有名字，要保存到以下哪个存档？/],
+        },
+      ],
+    },
+  ],
 };
 
 // —— 校核 ——

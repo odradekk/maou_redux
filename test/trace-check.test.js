@@ -263,9 +263,16 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
   const root = probe_repo();
   const tool_path = path.join(root, 'tools', 'trace-check.mjs');
   const golden_dir = path.join(root, 'golden');
-  const sample_path = path.join(golden_dir, 'mainmenu-natural.log');
+  // 探针样本名挑 SAMPLE_LOG_REFS 里**没有既有登记**的一个（#161 样本入库
+  // 后 golden/ 全是真实样本：伪造内容会覆盖副本里的真文件，撞上其它文件
+  // 对该样本的已登记引用——mainmenu-natural/saveload-natural 已被
+  // replay-b.js / page-save-load.js 引用，探针改用 daycycle-max）
+  const probe_sample = 'daycycle-max';
+  const sample_path = path.join(golden_dir, `${probe_sample}.log`);
   const probe_path = path.join(root, 'ere', '__sample_ref_probe__.js');
-  const token = 'mainmenu-natural' + '-log:' + '1';
+  // 拼接构造（不用模板串）：扫描器会把源码里的带前缀引用文本当真引用
+  // 扫进完整性检查，拼接让源码文本里不存在该形态（#156 阶段一的既有写法）
+  const token = `${probe_sample}` + '-log:' + '1';
   const inject_anchor = 'const SAMPLE_LOG_REFS = {';
   const original_tool = fs.readFileSync(tool_path, 'utf8');
   if (!original_tool.includes(inject_anchor)) {
@@ -274,20 +281,27 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
     );
   }
   const cleanup = () => {
-    for (const p of [probe_path, sample_path]) {
+    for (const p of [probe_path]) {
       if (fs.existsSync(p)) {
         fs.unlinkSync(p);
       }
     }
   };
   cleanup(); // 上一次异常退出留下的残骸先清
+  const restore_sample = () => {
+    // 被覆盖的真实样本从真树回拷（refresh_probe_repo 之外的单文件还原）
+    fs.copyFileSync(
+      path.join(REPO_ROOT, 'golden', `${probe_sample}.log`),
+      sample_path,
+    );
+  };
   try {
-    // 1) 副本里登记锚表 + 伪造样本（第 1 行命中锚）+ 探针引用 → 全绿
+    // 1) 副本里登记锚表 + 伪造样本内容（第 1 行命中锚）+ 探针引用 → 全绿
     fs.writeFileSync(
       tool_path,
       original_tool.replace(
         inject_anchor,
-        `${inject_anchor}\n  'mainmenu-natural': [\n    { js: 'ere/__sample_ref_probe__.js', refs: [{ ref: '1', any: [/^第7日/m] }] },\n  ],`,
+        `${inject_anchor}\n  '${probe_sample}': [\n    { js: 'ere/__sample_ref_probe__.js', refs: [{ ref: '1', any: [/^第7日/m] }] },\n  ],`,
       ),
       'utf8',
     );
@@ -324,6 +338,7 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
     );
   } finally {
     cleanup();
+    restore_sample(); // 被伪造内容覆盖的真实样本回拷还原
     refresh_probe_repo(root, PROBE_REPO_ENTRIES); // 还原被注入的工具
   }
   // 还原之后复绿
