@@ -44,4 +44,8 @@
 # 驱动真 getAddedCharacters/getAllCharacters/getCharactersInTrain；正主
 # 顺序用例走夹具路径不依赖引擎照常跑），现为 63（766 = 703 过 + 63 跳过
 # + 0 挂，WSL 无引擎实测）。
-63
+# #151（D5 input 回传值 getNumber 归一）复测：+1（fixture.test.js 第三个
+# 引擎门控用例「引擎 getNumber（模块 65）：input 回传归一的边界值」，驱动
+# 真 getNumber；正主归一用例走夹具路径不依赖引擎照常跑），现为 64
+# （768 = 704 过 + 64 跳过 + 0 挂，WSL 无引擎实测）。
+64

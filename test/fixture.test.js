@@ -5,8 +5,9 @@
  * 加载真实 SDK 文件，替换 require('#/era-electron') 返回的对象，
  * 让游戏代码在不启动 Electron GUI 的情况下可测。
  *
- * #149 起含一条引擎门控用例（removeCharacter 的引擎桥接段，文件尾部）：
- * 缺引擎（无 app.asar）时该用例 skip，跳过数进
+ * #149/#150/#151 起含三条引擎门控用例（removeCharacter / 三个角色列表
+ * get / getNumber 归一边界，文件尾部）：缺引擎（无 app.asar）时这些用例
+ * skip，跳过数进
  * test/engine-skip-baseline.txt 基线；其余用例不依赖引擎照常跑。
  */
 
@@ -522,6 +523,28 @@ engine_test(
     assert.deepEqual(adder.get_in_train(), [0, 31]);
   },
 );
+
+engine_test('引擎 getNumber（模块 65）：input 回传归一的边界值（#151）', () => {
+  const { getNumber } = engine.engine_utils;
+  // 上面夹具正主用例的同一组取值——期望值由引擎真函数背书，不是凭
+  // Number() 的直觉抄写。空串与 null 的 0 是 Number 语义里最反直觉的
+  // 两条；undefined 走 NaN 分支原样返回（Number(undefined) === NaN）
+  assert.ok(getNumber('3') === 3);
+  assert.ok(getNumber('') === 0);
+  assert.ok(getNumber('abc') === 'abc');
+  assert.ok(getNumber('  3 ') === 3);
+  assert.ok(getNumber('0') === 0);
+  assert.ok(getNumber('-5') === -5);
+  assert.ok(getNumber('3abc') === '3abc');
+  assert.ok(getNumber(null) === 0);
+  assert.ok(getNumber(3) === 3);
+  assert.ok(getNumber(undefined) === undefined);
+  // Number 特有形态的文档性快照：整串解析吃十六进制与科学计数法、
+  // 纯空白等同空串——parseInt/parseFloat 在这些取值上全部偏离
+  assert.ok(getNumber('0x10') === 16);
+  assert.ok(getNumber('1e2') === 100);
+  assert.ok(getNumber('  ') === 0);
+});
 
 test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边界', () => {
   const fixture = create_era_fixture();
@@ -1167,9 +1190,16 @@ test('input 白名单（#130 自证）：喂未打印按钮的值必须抛错，
     '白名单必须拒收未打印按钮的值（#130）',
   );
 
-  // 命中即放行；引擎判据是 Number(值) ∈ rule——字符串 '0' 同样命中
+  // 命中即放行；引擎判据是 Number(值) ∈ rule——字符串 '0' 同样命中。
+  // 放行的证据用送达记录（拒收＝0 条），回传值的归一形态由 #151 的正主
+  // 用例专测——白名单语义与归一语义不共用断言
   fixture.set_inputs('0');
-  assert.equal(await era.input(), '0');
+  await era.input();
+  assert.equal(
+    fixture.inputs_consumed.length,
+    1,
+    '字符串 "0" 命中白名单被放行（引擎判据 Number(值) ∈ rule）',
+  );
 });
 
 test('input 白名单：本轮没打印按钮＝自由输入不设限（引擎对取名等场景的原生出口）', async () => {
@@ -1246,4 +1276,46 @@ test('input 白名单：useRule:false 跳过校验；config.rule 走正则分支
       err.message.includes('输入不合法！输入规范：[a-z]+') &&
       err.message.includes('era.input()'),
   );
+});
+
+// —— input 回传值的数值归一（#151/G6）：引擎把回包 val 过一遍 getNumber ——
+//
+// 引擎（app.asar 模块 183 的回传路径）逐字：`const i=y(n.val)`——归一发生
+// 在 resolve 之前，引擎还会把归一后的值 print 出去（三段短路见上；golden
+// 样本里光秃秃的 199/99 行就是回显）。getNumber（模块 65）：
+//   getNumber(e){const t=Number(e);return isNaN(t)?e:t}
+// 渲染层回包的 val 恒字符串，普通 input() 回给游戏的几乎总是数值——夹具
+// 此前预置什么回什么，字符串预置与真机当场分岔（G6「未来一踩一个准」）。
+// 归一在白名单校验之后：引擎渲染层校验的就是原始 val（#130 段）。下述
+// 取值全部由文件尾的引擎门控用例（驱动真 getNumber）背书。
+test('input 回传值过引擎 getNumber 归一（#151）：字符串预置回传数值，非数字串原样', async () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  // 正主：set_inputs('3') 后 result === 3 必须成立
+  fixture.set_inputs('3');
+  assert.equal(await era.input(), 3, '字符串预置的输入必须归一成数值');
+
+  // Number('') === 0——最反直觉的一条，不是原样返回
+  fixture.set_inputs('');
+  assert.equal(await era.input(), 0, '空串的归宿是数值 0');
+  // 非数字串走 NaN 分支原样返回，不得变成 NaN/undefined
+  fixture.set_inputs('abc');
+  assert.equal(await era.input(), 'abc', '非数字串原样返回');
+  // 前后空白照样解析（Number('  3 ') === 3）
+  fixture.set_inputs('  3 ');
+  assert.equal(await era.input(), 3, '前后带空白的数字串照样解析');
+  fixture.set_inputs('0');
+  assert.equal(await era.input(), 0, '数字串 0 归一成数值 0');
+  fixture.set_inputs('-5');
+  assert.equal(await era.input(), -5, '负数串归一成负数');
+  // 整串解析：部分数字的串不截断（parseInt('3abc') 是 3，分岔点）
+  fixture.set_inputs('3abc');
+  assert.equal(await era.input(), '3abc', '部分数字的串原样返回（整串解析）');
+  // Number(null) === 0——引擎只看 Number() 的结果，不看输入类型
+  fixture.set_inputs(null);
+  assert.equal(await era.input(), 0, 'null 也过同一条归一');
+  // 数字预置直通（既有用例形态不受扰）
+  fixture.set_inputs(3);
+  assert.equal(await era.input(), 3, '数字预置原样回传');
 });

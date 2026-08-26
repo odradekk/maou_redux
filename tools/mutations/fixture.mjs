@@ -405,4 +405,50 @@ export default [
     tests: ['fixture'],
     must_mention: '预设表键按数值升序，且含未加入者',
   },
+  {
+    // #151 前的真实写法（G6 点名的「未来一踩一个准」）：预置什么回什么。
+    // 渲染层回包恒字符串，真机 result === 3 成立、夹具分岔——正主用例的
+    // 严格断言里只有字符串/数字可分道的取值（'3'/''/'  3 '/'0'/'-5'/
+    // '3abc'/null）能抓到，'abc' 与数字预置两侧同值不红（各守各的行为）。
+    desc: 'M293 夹具 input 回传的 getNumber 归一被拆（预置什么回什么——#151 前的真实写法，字符串预置与真机当场分岔）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const result = get_number(value);`,
+    replace: `    const result = value; // 变异：归一被拆（#151 前的写法）`,
+    tests: ['fixture'],
+    must_mention: '字符串预置的输入必须归一成数值',
+  },
+  {
+    // 「一个人会怎么写错」：手册都说回包 val 恒字符串，保守写法就是只归一
+    // 字符串（「别的类型不该动」）——字符串路径全过，唯独 Number(null)
+    // === 0 分岔，正主用例的 null 断言专杀它。
+    desc: 'M294 夹具归一加 typeof string 守卫（只归一字符串——null 不再归一成 0 的保守错法）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const get_number = (val) => {
+    const num = Number(val);
+    return isNaN(num) ? val : num;
+  };`,
+    replace: `  const get_number = (val) => {
+    if (typeof val !== 'string') {
+      return val; // 变异：只归一字符串
+    }
+    const num = Number(val);
+    return isNaN(num) ? val : num;
+  };`,
+    tests: ['fixture'],
+    must_mention: 'null 也过同一条归一',
+  },
+  {
+    // era 传统数字解析的惯性错法：解析器换成 parseInt（保留 NaN 原样分支
+    // ——错法只错在解析器，不动回退）。parseInt 截断解析（'3abc' 得 3）且
+    // 空串得 NaN——引擎 getNumber 是 Number 的整串解析，正主用例的空串
+    // 与 '3abc' 断言分头拦下；'苍井·橡'/'abc' 走 NaN 分支原样、不误伤。
+    desc: 'M295 夹具归一的解析器换成 parseInt（"3abc" 得 3、空串得 NaN——era 传统解析的惯性错法）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const num = Number(val);
+    return isNaN(num) ? val : num;`,
+    replace: `    const num = parseInt(val, 10); // 变异：截断解析
+    return isNaN(num) ? val : num;`,
+    tests: ['fixture'],
+    must_mention: '空串的归宿是数值 0',
+  },
 ];
