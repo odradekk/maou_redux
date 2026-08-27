@@ -1,10 +1,15 @@
 /**
- * @file 简体锁（issue #60）：ere/ 与 yml/ 的玩家可见文本不得含表外非简体字符。
+ * @file 简体锁（issue #60；#188 收紧）：ere/ 与 yml/ 的玩家可见文本不得含
+ * 非简体字符。
  *
  * 缘由：游戏语言统一为简体中文是产品决定（对 1:1 的有意偏离），偏离必须以
- * 「一张表 + 一道锁」落地。判定器是 tools/lang-normalize.js 的
- * find_offenders（字级命中 / 假名 / 词级命中），数据是 tools/lang-table.js
- * （唯一真相源）——本文件不自持一份判定逻辑。
+ * 「一张表 + 一道锁」落地。**两路判定器**都在 tools/lang-normalize.js，本文件
+ * 不自持判定逻辑：
+ *   - find_offenders：查表命中（字级 / 假名 / 词级），数据 tools/lang-table.js
+ *     （唯一真相源）——报「表内登记的」非简体字符；
+ *   - find_outside_trad（#188 新增）：独立参考集判定（tools/lang-simp-ref.js，
+ *     OpenCC 繁→简字表派生），报「归一表外的」繁侧字——补上查表命中对表外
+ *     繁体的失明（find_offenders('救贖我的吧') 曾返回 []，贖 不在归一表）。
  *
  * 形状参照 test/static-table-coverage.test.js 与 test/kojo-text-fidelity.test.js：
  * **从源码扫、逐条探**，新模块 / 新产物自动纳入——文件二不用登记。
@@ -39,6 +44,7 @@ const { after, test } = require('node:test');
 
 const {
   find_offenders,
+  find_outside_trad,
   is_exempted,
   load_table,
   scan_string_literals,
@@ -60,6 +66,11 @@ function walk(dir, ext, out = []) {
     }
   }
   return out;
+}
+
+/** 两路判定的合并命中：表内查表命中 + 表外繁侧参考集命中（#188）。 */
+function all_offenders(content, tbl) {
+  return [...find_offenders(content, tbl), ...find_outside_trad(content, tbl)];
 }
 
 /**
@@ -85,7 +96,7 @@ function scan_repo(ere_dir = ERE_DIR) {
       if (is_exempted(lit.content, tbl)) {
         continue;
       }
-      const hits = find_offenders(lit.content, tbl);
+      const hits = all_offenders(lit.content, tbl);
       if (hits.length > 0) {
         problems.push(
           `${rel}:${lit.line} 非简体残留 ${hits
@@ -113,7 +124,7 @@ function scan_repo(ere_dir = ERE_DIR) {
         if (token === '' || tbl.engine_column_keys.has(token)) {
           continue;
         }
-        const hits = find_offenders(token, tbl);
+        const hits = all_offenders(token, tbl);
         if (hits.length > 0) {
           problems.push(
             `yml/${name}:${idx + 1} 非简体残留 ${hits
@@ -133,7 +144,7 @@ function scan_repo(ere_dir = ERE_DIR) {
   };
 }
 
-test('ere/ 与 yml/ 的玩家可见文本全部为简体（表外字符即红）', () => {
+test('ere/ 与 yml/ 的玩家可见文本不含非简体字符（表内查表命中 + 表外繁侧参考集双路即红）', () => {
   const { problems, js_files, yml_files, literals } = scan_repo();
   // 扫描未退化：ere/ 已有几十个模块、上千条字面量
   assert.ok(js_files >= 30, `ere/ 只扫到 ${js_files} 个 .js，扫描八成失效了`);
@@ -145,7 +156,7 @@ test('ere/ 与 yml/ 的玩家可见文本全部为简体（表外字符即红）
   assert.deepEqual(
     problems,
     [],
-    `玩家可见文本里有表外非简体字符（修法：跑 node tools/lang-normalize.js --write <文件>；词级/专有名词先补 tools/lang-table.js——表只能有意识地长）：\n  ${problems.join('\n  ')}`,
+    `玩家可见文本里有非简体字符（修法：char:/word: 是表内命中，跑 node tools/lang-normalize.js --write <文件>，词级/专有名词先补 tools/lang-table.js；outside: 是归一表外的繁侧字，把映射收进 lang-table.js 或按整串豁免——表与豁免都只能有意识地长）：\n  ${problems.join('\n  ')}`,
   );
 });
 
@@ -183,11 +194,13 @@ test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后�
       probe,
       [
         '// 探针模块（test/output-lang-lock.test.js 写入，跑完即删）：',
-        '// 三类违规各一——字级（繁体）、词级（日文残留词）、假名。',
+        '// 四类违规各一——字级（繁体）、词级（日文残留词）、假名、',
+        '// 表外繁侧字（#188：归一表没有 贖，查表命中看不见，靠参考集抓）。',
         "const era = require('#/era-electron');",
         "exports.run = () => era.print('你這個變態…別碰我！');",
         "exports.run2 = () => era.print('因奴隷的爱而回復了気力');",
         "exports.run3 = () => era.print('華胥の亡靈式的未豁免串');",
+        "exports.run4 = () => era.print('救贖我的吧');",
         '',
       ].join('\n'),
       'utf8',
@@ -202,8 +215,8 @@ test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后�
       p.includes('__lang_lock_probe__'),
     );
     assert.ok(
-      probe_hits.length >= 3,
-      `探针三类违规至少各红一条，得 ${probe_hits.length} 条：\n${problems.join('\n')}`,
+      probe_hits.length >= 4,
+      `探针四类违规至少各红一条，得 ${probe_hits.length} 条：\n${problems.join('\n')}`,
     );
     assert.ok(
       probe_hits.some((p) => p.includes('char:這') || p.includes('char:別')),
@@ -216,6 +229,10 @@ test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后�
     assert.ok(
       probe_hits.some((p) => p.includes('kana:の')),
       '假名命中未报出',
+    );
+    assert.ok(
+      probe_hits.some((p) => p.includes('outside:贖')),
+      '表外繁侧字命中未报出（outside:贖）——#188 收紧的判定器失守',
     );
   } finally {
     cleanup();
