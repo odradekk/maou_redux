@@ -63,4 +63,9 @@
 # 无引擎实测）——enter-enemy.test.js 的 33 条与 event-turnend/
 # event-nextday 的隔离改造、event-ending-e2e 的开关全部走 era-fixture
 # 路径（无 engine-bundle 门控），不新增跳过：66（既有）+ 0（本票）= 66。
-66
+# #171 验收补 +1，现为 67：static-table-coverage 新增引擎门控用例
+# 「savestr 族不存在——二段报 key error、三段完全静默」。#171 把这条事实
+# 只写进了 enter-enemy.js 的文件头注释，没有任何东西会在引擎升版时报错；
+# 按 AGENTS.md「新钉住的分歧要设防、可执行的配 engine-bundle 用例」补钉。
+# 复测：900 = 833 过 + 67 跳过 + 0 挂（WSL 无引擎实测）。
+67
