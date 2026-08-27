@@ -75,9 +75,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { TextDecoder } = require('node:util');
-
 const { to_simplified } = require('./lang-normalize');
-
+const { get_name } = require('./facade-names');
 const KOJO_DIR = path.join(__dirname, '..', 'target', 'ERB', '口上');
 
 /** 21 个口上文件（EVENT_K20_琼 是 0 字节空文件，原型里也处理它） */
@@ -87,6 +86,49 @@ const KOJO_FILES = (() => {
   return files;
 })();
 
+/**
+ * 源文件名 → 产物文件名映射（裁定二：#107 形态裁定）。
+ * 产物文件名一律 ASCII kebab-case，描述部分意译成英文单词（非罗马音）；
+ * 人名无对应英文词用拉丁转写。未登记的文件名显式报错，不静默回落。
+ */
+const KOJO_OUTPUT_NAME = {
+  'EVENT_K0_慈愛.ERB': 'kojo-k0-tender.js',
+  'EVENT_K1_自信家.ERB': 'kojo-k1-confident.js',
+  'EVENT_K2_気弱.ERB': 'kojo-k2-timid.js',
+  'EVENT_K3_高貴.ERB': 'kojo-k3-noble.js',
+  'EVENT_K4_冷徹.ERB': 'kojo-k4-stoic.js',
+  'EVENT_K5_マオ.ERB': 'kojo-k5-mao.js',
+  'EVENT_K6_悪女.ERB': 'kojo-k6-wicked.js',
+  'EVENT_K7_ハート.ERB': 'kojo-k7-heart.js',
+  'EVENT_K8_スペード.ERB': 'kojo-k8-spade.js',
+  'EVENT_K9_ダイヤ.ERB': 'kojo-k9-diamond.js',
+  'EVENT_K10_クラブ.ERB': 'kojo-k10-club.js',
+  'EVENT_K11_リリィ.ERB': 'kojo-k11-lily.js',
+  'EVENT_K12_知的.ERB': 'kojo-k12-intellectual.js',
+  'EVENT_K13_庇護者.ERB': 'kojo-k13-protector.js',
+  'EVENT_K14_貴公子.ERB': 'kojo-k14-nobleman.js',
+  'EVENT_K15_伶俐.ERB': 'kojo-k15-clever.js',
+  'EVENT_K19_菲娅.ERB': 'kojo-k19-fia.js',
+  'EVENT_K20_琼 ver1.0.0.ERB': 'kojo-k20-qiong.js',
+  'EVENT_K902_普林希丝 ver1.0.3.ERB': 'kojo-k902-princess.js',
+  'EVENT_K903_嘉德.ERB': 'kojo-k903-garde.js',
+  'EVENT_K904_菲娅.ERB': 'kojo-k904-fia.js',
+  'EVENT_F1_丽塔.ERB': 'kojo-f1-rita.js',
+};
+
+/**
+ * 源文件名 → 产物文件名。未登记显式抛错（不静默回落成原名）。
+ * @param {string} erb_filename target/ERB/口上/ 下的源文件名
+ */
+function output_name_for(erb_filename) {
+  const mapped = KOJO_OUTPUT_NAME[erb_filename];
+  if (!mapped) {
+    throw new Error(
+      `未登记的口上文件：${erb_filename}——须在 tools/kojo-transpiler.js 的 KOJO_OUTPUT_NAME 补映射（裁定二：产物文件名 ASCII kebab-case）`,
+    );
+  }
+  return mapped;
+}
 /**
  * PRINT 系命令词。group1 = 命令前缀（PRINT/PRINTL/PRINTW/PRINTFORM/…），
  * group2 = FORMS 变体，group3 = L/W/N 后缀，group4 = 参数。
@@ -106,6 +148,10 @@ const PRINT_RE =
 /** ERB 结构关键字（行首 token；块由关键字界定，与缩进无关） */
 const BLOCK_RE = /^\s*(IF|ELSEIF|ELSE|ENDIF)\b/i;
 
+/** SELECTCASE 结构（switch 等价物）：SELECTCASE expr / CASE n / CASEELSE / ENDSELECT */
+const SCASE_RE = /^\s*SELECTCASE\b/i;
+const SCASE_CASE_RE = /^\s*CASE(ELSE)?\b/i;
+const SCASE_END_RE = /^\s*ENDSELECT\b/i;
 const SIF_RE = /^\s*SIF\b/;
 const AT_RE = /^\s*@/;
 const HASH_RE = /^\s*#(PRI|LATER|DIM|DIMS|FUNCTION|FUNCTIONS)\b/;
@@ -245,17 +291,198 @@ function normalize_text(raw) {
 }
 
 /**
+ * 角色变量族（二维：角色:下标）。引擎字符串寻址需完整三段
+ * （`cflag:${角色}:${下标}`）——Emuera 的 `CFLAG:301`（省略角色维）语义
+ * 是 TARGET，而引擎的 `cflag:301`（两段）实测落到角色 0（见 #107 裁定后
+ * 的引擎实证），所以转译器必须显式补角色维，不能直接抄两段。
+ */
+const CHARA_VAR_FAMILIES = new Set([
+  'CFLAG',
+  'CDFLAG',
+  'TALENT',
+  'MARK',
+  'ABL',
+  'BASE',
+  'EXP',
+  'PALAM',
+  'SOURCE',
+  'STAIN',
+  'EX',
+  'TEQUIP',
+  'RELATION',
+  'JUEL',
+  'MAXBASE',
+  'EX_TALENT',
+  'EX_FLAG',
+]);
+
+/** 一维变量（直接 flag:N） */
+const PLAIN_VAR_FAMILIES = new Set(['FLAG', 'TFLAG', 'GLOBAL']);
+
+/**
+ * ERB 角色号 token → JS 变量名。TARGET 是口上语境默认角色；A/COUNT 等
+ * 是函数局部变量（转译器在函数头声明）；ASSI/PLAYER/MASTER 是引擎常量。
+ * 角色号本身也是寻址的一部分，转成 JS 后由复核 agent 确认取值。
+ */
+const ROLE_TOKEN_JS = {
+  TARGET: 'target',
+  MASTER: 'master',
+  ASSI: 'assi',
+  PLAYER: 'player',
+  A: 'a',
+  COUNT: 'count',
+  ARG: 'arg',
+  LOCAL: 'local',
+  LCOUNT: 'lcount',
+};
+
+/**
+ * 表达式里的 ERB 寻址 token → JS 表达式（era.get 调用串）。
+ *
+ * 纯语法转换：下标原样保留（数字 / 角色号 / 表达式），不猜语义。
+ * 角色变量族补全为三段（缺角色维 = TARGET，Emuera 语义）；RAND / 字符串
+ * 变量等 JS 无等价物的 REVIEW 提示。
+ *
+ * @param {string} expr ERB 表达式（条件 / 赋值右侧 / RETURN 值）
+ * @param {number} line_no 溯源行号
+ * @param {Array} review_notes REVIEW 收集
+ * @returns {string} 转换后的 JS 表达式
+ */
+function convert_expr(expr, line_no, review_notes) {
+  let out = expr;
+  // 1) 角色变量族：CFLAG:301 / CFLAG:TARGET:301 / CFLAG:A:504 / CFLAG:COUNT:1
+  //    角色维缺省 → TARGET（Emuera 语义）；显式角色 → 对应 JS 变量
+  for (const fam of CHARA_VAR_FAMILIES) {
+    const lower = fam.toLowerCase();
+    const re = new RegExp(
+      `\\b${fam}(?::([A-Za-z_][A-Za-z0-9_]*))?:([A-Za-z0-9_\u4e00-\u9fff]+)`,
+      'gi',
+    );
+    out = out.replace(re, (whole, role, idx) => {
+      const role_js = role
+        ? (ROLE_TOKEN_JS[role] ?? `review_role_${role}`)
+        : 'target';
+      if (role && !ROLE_TOKEN_JS[role]) {
+        review_notes.push({
+          kind: '角色号',
+          line: line_no,
+          msg: `角色维 ${role} 无 JS 映射（${whole}）——人工定`,
+        });
+      }
+      return `era.get(\`${lower}:\${${role_js}}:${idx}\`)`;
+    });
+  }
+  // 2) 一维变量：FLAG:7 / TFLAG:899 / GLOBAL:3
+  for (const fam of PLAIN_VAR_FAMILIES) {
+    const lower = fam.toLowerCase();
+    const re = new RegExp(`\\b${fam}:([A-Za-z0-9_]+)`, 'gi');
+    out = out.replace(re, (whole, idx) => `era.get('${lower}:${idx}')`);
+  }
+  // 3) 函数参数 / 局部变量：ARG:n / LOCAL:n / COUNT:n / LCOUNT:n →
+  //    JS 局部变量（arg_n / local_n …），REVIEW 提示形参名人工定
+  out = out.replace(
+    /\b(ARG|LOCAL|COUNT|LCOUNT):([A-Za-z0-9_]+)\b/g,
+    (whole, fam, idx) => {
+      review_notes.push({
+        kind: '局部参数',
+        line: line_no,
+        msg: `${whole} → ${fam.toLowerCase()}_${idx}（JS 局部变量，形参名人工定）`,
+      });
+      return `${fam.toLowerCase()}_${idx}`;
+    },
+  );
+  // 3a) NO:X —— 角色编号属性（ere 以角色 ID = 原作 NO 寻址，
+  //     ere/chara/chara-make.js:19 先例）。转成合法占位 + REVIEW。
+  out = out.replace(/\bNO:([A-Za-z_][A-Za-z0-9_]*)\b/g, (whole, role) => {
+    const role_js = ROLE_TOKEN_JS[role] ?? `review_role_${role}`;
+    review_notes.push({
+      kind: 'NO属性',
+      line: line_no,
+      msg: `${whole} → 角色 ${role_js} 的 ID（ere 角色 ID = 原作 NO，直接对应 JS 角色变量）`,
+    });
+    return `(${role_js})`;
+  });
+  // 3b) 单值全局变量（引擎运行时单值，非静态表寻址）：映射到既有门面
+  //     era_flag（语法形态——落哪个域由复核 agent 定，这里只保证可读可查）
+  const SINGLE_VALUE_GLOBALS = {
+    SELECTCOM: 'era_flag.selectcom',
+    ASSI: 'era_flag.assi',
+    ASSIPLAY: 'era_flag.assiplay',
+    PLAYER: 'era_flag.player',
+    TARGET: 'era_flag.target',
+    TIME: 'era_flag.time',
+    PREVCOM: 'era_flag.prevcom',
+    NEXTCOM: 'era_flag.nextcom',
+  };
+  for (const [erb_name, js_expr] of Object.entries(SINGLE_VALUE_GLOBALS)) {
+    const re = new RegExp(`\\b${erb_name}\\b(?!\\s*:)`, 'g');
+    out = out.replace(re, js_expr);
+  }
+  // 4) RAND:n —— 随机数，JS 无 RAND 变量，转成 rand_n(n) 调用（REVIEW 提示
+  //    需注入随机源，参照 ere/kojo/kojo-k5.js 的 rand 参数）
+  out = out.replace(/\bRAND:([0-9]+)\b/g, (whole, n) => {
+    review_notes.push({
+      kind: 'RAND',
+      line: line_no,
+      msg: `RAND:${n} → rand_n(${n})——随机源需注入（参照 kojo-k5.js 的 rand 参数）`,
+    });
+    return `rand_n(${n})`;
+  });
+  // 4) 其它寻址族（字符串变量 / 派生变量）：SAVESTR / NAME / CSTR / ITEM /
+  //    NOWEX / PALAMLV / MAXBASE / TSTR / LOCALS / ARGS / UP / DELTA 等。
+  //    一律转成 era.get('<族小写>:<下标>') 的合法语法（保 node --check 过），
+  //    语义是否成立留给复核 agent（这些族的引擎字符串寻址未必等价 ERB）。
+  const OTHER_FAMILIES = [
+    'SAVESTR',
+    'NAME',
+    'CSTR',
+    'TSTR',
+    'ITEM',
+    'NOWEX',
+    'PALAMLV',
+    'LOCALS',
+    'ARGS',
+    'UP',
+    'DELTA',
+    'DELTABASE',
+  ];
+  for (const fam of OTHER_FAMILIES) {
+    const lower = fam.toLowerCase();
+    const re = new RegExp(`\\b${fam}:([A-Za-z0-9_]+)`, 'gi');
+    out = out.replace(re, (whole, idx) => {
+      review_notes.push({
+        kind: '表达式寻址',
+        line: line_no,
+        msg: `${whole} → era.get('${lower}:${idx}')——族名直译，语义与归属人工定`,
+      });
+      return `era.get('${lower}:${idx}')`;
+    });
+  }
+  // 5) 赋值目标（左值）由 emit_assign 单独处理，这里只处理表达式右侧；
+  //    但条件里可能出现 `CFLAG:301 == 0` 这类整式，已由上面转换。
+  return out;
+}
+
+/**
  * 一条非 PRINT 的语句 → 结构化对象。
  * 机械转换只覆盖口上文件实际出现的子集；超出即 REVIEW。
  */
 function emit_statement(raw, line_no, review_notes) {
   const trimmed = raw.trim();
   if (SIF_RE.test(trimmed)) {
-    const cond = trimmed.replace(/^\s*SIF\s+/i, '');
+    const cond = convert_expr(
+      trimmed.replace(/^\s*SIF\s+/i, ''),
+      line_no,
+      review_notes,
+    );
     return { kind: 'sif', cond };
   }
   if (/^RETURN\b/i.test(trimmed)) {
-    const value = trimmed.replace(/^RETURN\s*/i, '').trim() || '0';
+    const value = convert_expr(
+      trimmed.replace(/^RETURN\s*/i, '').trim() || '0',
+      line_no,
+      review_notes,
+    );
     return { kind: 'return', value };
   }
   if (/^CALL\b/i.test(trimmed)) {
@@ -294,30 +521,13 @@ function emit_statement(raw, line_no, review_notes) {
   return { kind: 'raw', raw: trimmed };
 }
 
-/** 角色变量（二维：角色:下标）在 era.get/set 里的族名 */
-const CHARA_VAR_FAMILIES = new Set([
-  'CFLAG',
-  'CDFLAG',
-  'TALENT',
-  'MARK',
-  'ABL',
-  'BASE',
-  'EXP',
-  'PALAM',
-  'SOURCE',
-  'STAIN',
-  'EX',
-  'TEQUIP',
-  'RELATION',
-  'JUEL',
-]);
-
-/** 一维变量（直接 flag:N） */
-const PLAIN_VAR_FAMILIES = new Set(['FLAG', 'TFLAG', 'GLOBAL']);
-
+/** （CHARA_VAR_FAMILIES / PLAIN_VAR_FAMILIES 定义见文件前部 convert_expr 前） */
 /**
  * 赋值语句 → JS（机械映射 era.set / era.add + 语义注释）。
- * 变量语义最终由复核 agent 定（换成门面 / kojo 对象字段），初稿先可执行。
+ *
+ * 左值寻址与 convert_expr 同一套规则（角色变量族补全三段、一维直写）；
+ * 右值过 convert_expr（表达式里的寻址一并转换）。变量语义（落哪个门面
+ * 域）留给复核 agent，按 #71「跨域写走门面」处理——产物头注会写明。
  */
 function emit_assign(stmt, line_no, review_notes) {
   const { var_name, idx, op, expr } = stmt;
@@ -325,22 +535,41 @@ function emit_assign(stmt, line_no, review_notes) {
   const index = idx ? idx.trim() : null;
   let target_expr;
   if (CHARA_VAR_FAMILIES.has(family)) {
-    // CFLAG:301（无角色号）在口上语境 = CFLAG:TARGET:301
-    const idx_part = index ? `:${index}` : '';
-    target_expr = `\`${family.toLowerCase()}:${'${target}'}${idx_part}\``;
+    // 左值：CFLAG:301 → cflag:${target}:301；CFLAG:A:504 → cflag:${a}:504
+    const m = /^([A-Za-z_][A-Za-z0-9_]*):(.+)$/.exec(index ?? '');
+    const role = m ? m[1] : null;
+    const idx_part = m ? m[2] : index;
+    const role_js = role
+      ? (ROLE_TOKEN_JS[role] ?? `review_role_${role}`)
+      : 'target';
+    if (role && !ROLE_TOKEN_JS[role]) {
+      review_notes.push({
+        kind: '角色号',
+        line: line_no,
+        msg: `角色维 ${role} 无 JS 映射（${family}:${index}）——人工定`,
+      });
+    }
+    target_expr = `\`${family.toLowerCase()}:\${${role_js}}:${idx_part}\``;
   } else if (PLAIN_VAR_FAMILIES.has(family)) {
     target_expr = `'${family.toLowerCase()}:${index ?? ''}'`;
   } else if (family === 'UP') {
-    // UP:idx 是 PALAM 的临时增量（Emuera 每回合清空），era 侧用
-    // 局部变量表达（口上里通常随 PALAM 一起读，如 P = PALAM:3 + UP:3）
+    // UP:idx 是 PALAM 的临时增量（Emuera 每回合清空），JS 侧无直接等价物
     review_notes.push({
       kind: 'UP变量',
       line: line_no,
       msg: `UP:${index} —— 临时增量，JS 侧无直接等价物，人工定`,
     });
-    target_expr = null;
+    return [`// 赋值 ${trim_stmt(stmt)}${anchor(line_no)}`];
+  } else if (/^[A-Z]$/.test(family)) {
+    // 单字母局部变量（P/A 等）：JS 局部变量，声明由函数头处理
+    review_notes.push({
+      kind: '局部变量',
+      line: line_no,
+      msg: `${var_name}${index ? ':' + index : ''} ${op} ${expr} —— 单字母局部变量，JS 侧声明与赋值人工定`,
+    });
+    return [`// 赋值 ${trim_stmt(stmt)}${anchor(line_no)}`];
   } else {
-    // LOCAL / ARG / 自定义变量 → REVIEW（JS 侧用局部变量，人工定）
+    // LOCAL / ARG / 自定义变量 → REVIEW
     review_notes.push({
       kind: '变量语义',
       line: line_no,
@@ -348,11 +577,11 @@ function emit_assign(stmt, line_no, review_notes) {
     });
     return [`// 赋值 ${trim_stmt(stmt)}${anchor(line_no)}`];
   }
-  if (target_expr === null) {
-    return [`// 赋值 ${trim_stmt(stmt)}${anchor(line_no)}`];
-  }
   const method = op === '=' ? 'set' : 'add';
-  const value = op === '-=' ? `-(${expr})` : expr;
+  const value =
+    op === '-='
+      ? `-(${convert_expr(expr, line_no, review_notes)})`
+      : convert_expr(expr, line_no, review_notes);
   const js_expr = `${target_expr}, ${value}`;
   return [
     `// ${trim_stmt(stmt)}（变量语义：${family} 族，${index ?? '当前角色'}）${anchor(line_no)}`,
@@ -385,6 +614,8 @@ function transpile(text) {
 
   // 块栈：{type: 'if'|'elseif'|'else', indent, kw_line}
   const stack = [];
+  // switch 栈：{type: 'switch'|'case'|'caseelse', indent, kw_line}
+  const switch_stack = [];
   // SIF 栈：等待体的 SIF 条件（SIF cond 的体是下一个语句，可嵌套）
   const sif_stack = [];
   let indent = 0;
@@ -414,7 +645,15 @@ function transpile(text) {
   // 把一行非块、非注释的内容转成 JS 语句行（PRINT / 赋值 / return / …）
   const emit_body_line = (line_no, review) => {
     const raw = lines[line_no - 1];
-    const trimmed = raw.trim();
+    let trimmed = raw.trim();
+    // 非 PRINT 行的行内 ; 注释剥离（PRINT 参数里的 ; 是文本，不动）。
+    // ERB 行内注释形态：`IF TALENT:130 \t;母乳体质`（:1051 实测）
+    if (!PRINT_RE.test(trimmed)) {
+      const semi = trimmed.indexOf(';');
+      if (semi >= 0) {
+        trimmed = trimmed.slice(0, semi).trimEnd();
+      }
+    }
     const print_match = PRINT_RE.exec(trimmed);
     if (print_match) {
       const kind = print_match[1] + (print_match[4] || '');
@@ -446,8 +685,14 @@ function transpile(text) {
   for (let i = 0; i < lines.length; i += 1) {
     const raw = lines[i];
     const line_no = i + 1;
-    const trimmed = raw.trim();
-
+    let trimmed = raw.trim();
+    // 行内 ; 注释剥离（非 PRINT 行；PRINT 参数里的 ; 是文本，emit_body_line 单独处理）
+    if (!PRINT_RE.test(trimmed)) {
+      const semi = trimmed.indexOf(';');
+      if (semi >= 0) {
+        trimmed = trimmed.slice(0, semi).trimEnd();
+      }
+    }
     // 空行：SIF 等待体时空行跳过（Emuera 的 SIF 体是下一个语句）；否则保留
     if (trimmed === '') {
       if (sif_stack.length === 0) {
@@ -486,10 +731,20 @@ function transpile(text) {
         function_header = [];
       }
       seen_code = true;
+      // ERB 的 @ 函数体由下一个 @ 隐式结束：先闭合当前函数
+      if (current_function) {
+        out.push('}');
+        out.push('');
+      }
       const fn_decl = trimmed.replace(/^@/, '').trim();
-      // @FUNC, ARG:0 带参数声明 → 剥掉，REVIEW
-      const fn_name = fn_decl.replace(/,.*$/, '').trim();
-      if (fn_decl.includes(',')) {
+      // @FUNC, ARG:0 / @FUNC(ARGS, ARG) 带参数声明 → 剥成纯函数名，REVIEW
+      let fn_name = fn_decl;
+      if (fn_name.includes('(')) {
+        fn_name = fn_name.slice(0, fn_name.indexOf('(')).trim();
+      } else if (fn_name.includes(',')) {
+        fn_name = fn_name.slice(0, fn_name.indexOf(',')).trim();
+      }
+      if (fn_decl !== fn_name) {
         review_notes.push({
           kind: '函数参数',
           line: line_no,
@@ -506,9 +761,8 @@ function transpile(text) {
         });
       }
       function_seen.add(fn_name);
-      out.push('');
       out.push(`// @${fn_decl}${anchor(line_no)}`);
-      out.push(`function ${fn_name}() {`);
+      out.push(`async function ${fn_name}() {`);
       current_function = fn_name;
       stats.function_count += 1;
       indent = 1;
@@ -524,12 +778,95 @@ function transpile(text) {
       continue;
     }
 
+    // SELECTCASE 结构（switch）：SELECTCASE expr / CASE n / CASEELSE / ENDSELECT
+    if (SCASE_RE.test(trimmed)) {
+      if (sif_stack.length > 0) {
+        emit_sif_body(line_no, review_notes);
+      }
+      const expr = convert_expr(
+        trimmed.replace(/^\s*SELECTCASE\s+/i, ''),
+        line_no,
+        review_notes,
+      );
+      out.push(`${pad()}switch (${expr}) {${anchor(line_no)}`);
+      switch_stack.push({ type: 'switch', indent, kw_line: line_no });
+      indent += 1;
+      continue;
+    }
+    if (SCASE_CASE_RE.test(trimmed)) {
+      const top = switch_stack[switch_stack.length - 1];
+      if (!top) {
+        review_notes.push({
+          kind: 'CASE无SELECTCASE',
+          line: line_no,
+          msg: trimmed,
+        });
+        out.push(`${pad()}// CASE 无匹配 SELECTCASE${anchor(line_no)}`);
+        continue;
+      }
+      // 收上一个 case 的块（ERB 的 CASE 块独立执行，等价 JS 带 break 的 case）
+      if (top.type === 'case' || top.type === 'caseelse') {
+        indent = top.indent;
+        out.push(`${'  '.repeat(indent)}break;${anchor(line_no)}`);
+        out.push(`${'  '.repeat(indent)}}${anchor(line_no)}`);
+        switch_stack.pop();
+      }
+      if (SCASE_CASE_RE.exec(trimmed)[1] === 'ELSE') {
+        out.push(`${'  '.repeat(top.indent)}default: {${anchor(line_no)}`);
+        switch_stack.push({
+          type: 'caseelse',
+          indent: top.indent + 1,
+          kw_line: line_no,
+        });
+      } else {
+        const val = trimmed.replace(/^\s*CASE\s+/i, '');
+        out.push(`${'  '.repeat(top.indent)}case ${val}: {${anchor(line_no)}`);
+        switch_stack.push({
+          type: 'case',
+          indent: top.indent + 1,
+          kw_line: line_no,
+        });
+      }
+      indent = switch_stack[switch_stack.length - 1].indent;
+      continue;
+    }
+    if (SCASE_END_RE.test(trimmed)) {
+      if (sif_stack.length > 0) {
+        emit_sif_body(line_no, review_notes);
+      }
+      // 收最后一个 case 块（补 break）+ switch 块
+      let top = switch_stack[switch_stack.length - 1];
+      while (top && top.type !== 'switch') {
+        out.push(`${'  '.repeat(top.indent)}break;${anchor(line_no)}`);
+        out.push(`${'  '.repeat(top.indent)}}${anchor(line_no)}`);
+        switch_stack.pop();
+        top = switch_stack[switch_stack.length - 1];
+      }
+      if (!top) {
+        review_notes.push({
+          kind: 'ENDSELECT无SELECTCASE',
+          line: line_no,
+          msg: trimmed,
+        });
+        out.push(`${pad()}// ENDSELECT 无匹配 SELECTCASE${anchor(line_no)}`);
+        continue;
+      }
+      indent = top.indent;
+      out.push(`${'  '.repeat(indent)}}${anchor(line_no)}`);
+      switch_stack.pop();
+      continue;
+    }
+
     // 结构块关键字（IF/ELSEIF/ELSE/ENDIF，大小写不敏感）
     const block = BLOCK_RE.exec(trimmed);
     if (block) {
       const kw = block[1].toUpperCase();
       if (kw === 'IF') {
-        const cond = trimmed.replace(/^IF\s+/i, '');
+        const cond = convert_expr(
+          trimmed.replace(/^IF\s+/i, ''),
+          line_no,
+          review_notes,
+        );
         if (sif_stack.length > 0) {
           // SIF 体里出现 IF：先闭合 SIF 体（单行体装不下块）
           review_notes.push({
@@ -546,7 +883,11 @@ function transpile(text) {
         continue;
       }
       if (kw === 'ELSEIF') {
-        const cond = trimmed.replace(/^ELSEIF\s+/i, '');
+        const cond = convert_expr(
+          trimmed.replace(/^ELSEIF\s+/i, ''),
+          line_no,
+          review_notes,
+        );
         const top = stack[stack.length - 1];
         if (!top || (top.type !== 'if' && top.type !== 'elseif')) {
           review_notes.push({
@@ -602,7 +943,11 @@ function transpile(text) {
 
     // SIF：入栈等体（大小写不敏感）
     if (SIF_RE.test(trimmed)) {
-      const cond = trimmed.replace(/^\s*SIF\s+/i, '');
+      const cond = convert_expr(
+        trimmed.replace(/^\s*SIF\s+/i, ''),
+        line_no,
+        review_notes,
+      );
       sif_stack.push(cond);
       continue;
     }
@@ -644,14 +989,52 @@ function transpile(text) {
   return { code, reviews: review_notes, stats };
 }
 
+/**
+ * 收集产物里出现的、已有门面名的下标（裁定一要求头注写明）。
+ * 对照 tools/facade-names.js 的 get_name（flag/cflag/tflag 等已命名），
+ * talent/abl/mark 等名字表在 yml/（facade-names 未生成门面），这里只报
+ * facade-names 已命名的部分；复核 agent 升级门面时直接可用。
+ *
+ * @param {string} code 产物代码
+ * @returns {string[]} 提示行（每行一个「族:下标 = 门面名」）
+ */
+function collect_facade_hints(code) {
+  const hints = [];
+  const seen = new Set();
+  // 从产物里抓 era.get('flag:7') / era.get(`cflag:${target}:301`) 的下标
+  const re = /era\.get\(['"`]([a-z]+):[^'"`]*?:?(\d+)/g;
+  let m;
+  while ((m = re.exec(code))) {
+    const family = m[1];
+    const idx = Number(m[2]);
+    const key = `${family}:${idx}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const named = get_name(family, idx);
+    if (named?.name) {
+      hints.push(`${key} = ${named.name}（facade-names）`);
+    }
+  }
+  return hints.sort();
+}
+
 /** 生成产物文件内容（头注 + 代码 + REVIEW 清单） */
 function build_product(erb_path, { code, reviews }) {
   const rel = path.relative(path.join(__dirname, '..'), erb_path);
+  const hints = collect_facade_hints(code);
   const header = [
+    // 待复核初稿：era/target/era_flag/rand_n 等变量由复核 agent 补导入，
+    // eslint 的语义规则不适用（语法规则仍生效）；文件级 disable 必须置顶
+    '/* eslint-disable no-undef, no-unused-vars, no-irregular-whitespace, no-redeclare, no-unreachable, no-dupe-else-if */',
     '/**',
     ` * @file ${path.basename(erb_path)} 的口上转译产物（issue #107 原型，待复核）`,
     ' *',
     ` * 源: ${rel}`,
+    ' *',
+    ' * == 已有门面名的下标（复核时可升级为门面读写，裁定一） ==',
+    ...(hints.length > 0
+      ? hints.map((h) => ` *   ${h}`)
+      : [' *   （本文件未命中 facade-names 已命名下标）']),
     ' *',
     ` * == 复核标记（${reviews.length} 处） ==`,
     ' * 本文件由 tools/kojo-transpiler.js 生成。以下位置是机械转换无法',
@@ -704,6 +1087,7 @@ function transpile_file(erb_path, out_path, { force = false } = {}) {
 // —— CLI ——
 if (require.main === module) {
   const args = process.argv.slice(2);
+  const force = args.includes('--force');
   if (args[0] === '--list') {
     console.log(KOJO_FILES.join('\n'));
     process.exit(0);
@@ -711,8 +1095,8 @@ if (require.main === module) {
   if (args[0] === '--all') {
     const out_root = path.join(__dirname, '..', 'products', 'kojo');
     for (const f of KOJO_FILES) {
-      const out = path.join(out_root, f.replace(/\.ERB$/i, '.js'));
-      transpile_file(path.join(KOJO_DIR, f), out);
+      const out = path.join(out_root, output_name_for(f));
+      transpile_file(path.join(KOJO_DIR, f), out, { force });
     }
     process.exit(0);
   }
@@ -722,18 +1106,37 @@ if (require.main === module) {
     console.error('      node tools/kojo-transpiler.js --all');
     process.exit(2);
   }
-  const force = args.includes('--force');
   const rest = args.filter((a) => a !== '--force');
-  transpile_file(rest[0], rest[1], { force });
+  if (rest.length === 1) {
+    // 只给源文件：产物名按映射表推，落 products/kojo/
+    const src = path.resolve(rest[0]);
+    const fname = path.basename(src);
+    const out = path.join(
+      __dirname,
+      '..',
+      'products',
+      'kojo',
+      output_name_for(fname),
+    );
+    transpile_file(src, out, { force });
+  } else {
+    transpile_file(rest[0], rest[1], { force });
+  }
 }
 
 module.exports = {
+  CHARA_VAR_FAMILIES,
+  KOJO_FILES,
+  KOJO_OUTPUT_NAME,
+  PLAIN_VAR_FAMILIES,
   build_product,
+  convert_expr,
   emit_assign,
   emit_print,
   emit_statement,
   interpolate_to_js,
   normalize_text,
+  output_name_for,
   read_text,
   split_comment,
   text_to_js,

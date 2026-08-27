@@ -21,9 +21,12 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const {
+  KOJO_OUTPUT_NAME,
   build_product,
+  convert_expr,
   emit_print,
   interpolate_to_js,
+  output_name_for,
   read_text,
   split_comment,
   transpile,
@@ -119,7 +122,7 @@ test('transpile：IF/ELSEIF/ELSE 结构栈（缩进不可靠）', () => {
 test('transpile：SIF 展开成单行 if', () => {
   const src = ['SIF TALENT:TARGET:9 == 1', '\tRETURN 0', 'RETURN 1'].join('\n');
   const r = transpile(src);
-  assert.ok(r.code.includes('if (TALENT:TARGET:9 == 1) {'));
+  assert.ok(r.code.includes('if (era.get(`talent:${target}:9`) == 1) {'));
   assert.ok(r.code.includes('return 0;'));
   assert.ok(r.code.includes('return 1;'));
 });
@@ -182,4 +185,73 @@ test('产物样例：K5 爱抚段与人工参照 kojo-k5.js 的文本逐句一�
   assert.ok(lines.some((l) => l.includes('「你这个变态…别、别碰我！」')));
   assert.ok(lines.some((l) => l.includes('${heart(1)}')));
   assert.ok(lines.some((l) => l.includes('${target_name}弯曲着身体')));
+});
+
+// —— 裁定一：寻址转换（产物必须过 node --check） ——
+
+test('convert_expr：角色变量补全角色维（缺省 = TARGET，Emuera 语义）', () => {
+  const n = [];
+  assert.equal(convert_expr('CFLAG:301 == 0', 1, n), 'era.get(`cflag:${target}:301`) == 0');
+  assert.equal(
+    convert_expr('TALENT:TARGET:76 == 1', 2, n),
+    'era.get(`talent:${target}:76`) == 1',
+  );
+  assert.equal(
+    convert_expr('MARK:2 >= 2', 3, n),
+    'era.get(`mark:${target}:2`) >= 2',
+  );
+  assert.equal(n.length, 0);
+});
+
+test('convert_expr：一维变量 / 单值全局 / RAND / 局部参数', () => {
+  const n = [];
+  assert.equal(convert_expr('FLAG:7 == 2', 1, n), "era.get('flag:7') == 2");
+  assert.equal(
+    convert_expr('SELECTCOM == 0 && ASSI > 0', 2, n),
+    'era_flag.selectcom == 0 && era_flag.assi > 0',
+  );
+  assert.equal(convert_expr('RAND:3 == 0', 3, n), 'rand_n(3) == 0');
+  assert.equal(convert_expr('ARG:0 == 1', 4, n), 'arg_0 == 1');
+  assert.ok(n.some((x) => x.kind === 'RAND')); // RAND REVIEW
+  assert.ok(n.some((x) => x.kind === '局部参数')); // ARG REVIEW
+});
+
+test('产物是合法 JS：K5 转译产物过 node --check（裁定一硬门槛）', () => {
+  const { execFileSync } = require('node:child_process');
+  const erb = path.join(REPO_ROOT, 'target', 'ERB', '口上', 'EVENT_K5_マオ.ERB');
+  const out = path.join(TMP, 'check-k5.js');
+  transpile_file(erb, out, { force: true });
+  // node --check 必须退出 0
+  execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
+});
+
+// —— 裁定二：产物文件名 ASCII kebab-case ——
+
+test('output_name_for：源文件名 → ASCII kebab-case（意译非罗马音）', () => {
+  assert.equal(output_name_for('EVENT_K3_高貴.ERB'), 'kojo-k3-noble.js');
+  assert.equal(output_name_for('EVENT_K5_マオ.ERB'), 'kojo-k5-mao.js');
+  assert.equal(output_name_for('EVENT_K9_ダイヤ.ERB'), 'kojo-k9-diamond.js');
+  assert.equal(output_name_for('EVENT_F1_丽塔.ERB'), 'kojo-f1-rita.js');
+  // 未登记的文件名显式报错，不静默回落
+  assert.throws(() => output_name_for('EVENT_UNKNOWN.ERB'), /未登记的口上文件/);
+});
+
+test('KOJO_OUTPUT_NAME 覆盖全部 21 个口上文件（+ K20 空文件）', () => {
+  const fs = require('node:fs');
+  const files = fs.readdirSync(path.join(REPO_ROOT, 'target', 'ERB', '口上'));
+  for (const f of files) {
+    assert.ok(KOJO_OUTPUT_NAME[f], `缺映射：${f}`);
+    assert.ok(/^kojo-[kf]\d+[a-z-]+\.js$/.test(KOJO_OUTPUT_NAME[f]), `产物名非法：${KOJO_OUTPUT_NAME[f]}`);
+  }
+});
+
+// —— 裁定一：产物头注写「已有门面名的下标」 ——
+
+test('build_product：头注含门面名提示与 eslint-disable 置顶', () => {
+  const r = transpile('@F\nIF FLAG:7 == 0\n\tRETURN 0\nENDIF\n');
+  const prod = build_product('target/ERB/口上/EVENT_K1.ERB', r);
+  assert.ok(prod.includes('已有门面名的下标'));
+  assert.ok(prod.includes('flag:7 = 口上开关'));
+  // eslint-disable 必须在文件最顶部（文件头注释之前）
+  assert.ok(prod.startsWith('/* eslint-disable'));
 });
