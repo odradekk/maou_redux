@@ -28,6 +28,7 @@ const { test } = require('node:test');
 const {
   convert_source,
   find_offenders,
+  find_outside_trad,
   is_exempted,
   load_table,
   scan_string_literals,
@@ -293,6 +294,34 @@ test('find_offenders：字级/词级/假名分别报出，豁免按整串放行'
   assert.ok(
     !is_exempted('華胥の亡靈', tbl),
     '豁免粒度是字符串整体：名单里抠出来的片段不豁免',
+  );
+});
+
+test('find_outside_trad：表外繁侧字报出、表内字与简体不报（#188）', () => {
+  const tbl = load_table();
+  assert.deepEqual(
+    find_outside_trad('救贖我的吧', tbl),
+    [{ kind: 'outside', value: '贖' }],
+    '贖 不在归一表——这正是 #188 的失明点，由参考集报出',
+  );
+  assert.deepEqual(
+    find_outside_trad('調教', tbl),
+    [],
+    '調 在归一表，归 find_offenders 报（char:調），此处不重复',
+  );
+  assert.deepEqual(find_outside_trad('你是变态', tbl), [], '正常简体不报');
+  assert.deepEqual(
+    find_outside_trad('贈身於巖', tbl),
+    [
+      { kind: 'outside', value: '贈' },
+      { kind: 'outside', value: '巖' },
+    ],
+    '去重保序；於 是简繁两用字（OpenCC 排除），不报',
+  );
+  assert.deepEqual(
+    find_outside_trad('救贖贖罪', tbl),
+    [{ kind: 'outside', value: '贖' }],
+    '同字去重',
   );
 });
 

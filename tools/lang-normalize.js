@@ -10,6 +10,9 @@
  *   4. convert_source(text) 与 CLI：只改 JS 源码里的字符串字面量（注释与
  *      标识符不碰），豁免串原样放行——ere/ 现有文本的离线转换入口，也是
  *      后续各子系统票转换约 2,300 行待办的机制。
+ *   5. find_outside_trad(str)：判定一段文本是否含**归一表外的繁侧字**（#188
+ *      收紧）——数据源 tools/lang-simp-ref.js（OpenCC 派生，独立于归一表），
+ *      补上查表命中对表外繁体的失明；简体锁两路判定并用。
  *
  * 消费方：test/lang-normalize.test.js（表测试）、test/output-lang-lock.test.js
  * （ere/ + yml/ 简体锁）、test/kojo-text-fidelity.test.js（锁 D 的 ERB 侧
@@ -25,6 +28,10 @@
 'use strict';
 
 const table = require('./lang-table');
+const { TRAD_SIDE } = require('./lang-simp-ref');
+
+/** 繁侧字集（require 期建一次）。数据与溯源见 tools/lang-simp-ref.js。 */
+const TRAD_SIDE_SET = new Set(TRAD_SIDE);
 
 /** 假名（含长音符・半角片假名；・ 在假名区，用作分隔样式时会有意红一次） */
 const KANA_RE = /[\u3041-\u30FF\uFF66-\uFF9F]/;
@@ -182,6 +189,33 @@ function is_exempted(text, tbl = load_table()) {
 }
 
 /**
+ * 找出文本里**归一表外**的繁侧字（#188 收紧：锁不再对表外繁体失明）。
+ *
+ * 「繁侧」以 OpenCC 派生的参考集（tools/lang-simp-ref.js）为准，独立于
+ * 归一表——表外繁体（如 贖）与表内繁体在这里分道：后者由 find_offenders
+ * 以 char:… 报出，前者由本函数以 outside:… 报出，表内字不在此重复报。
+ * 假名与词级命中不在此（KANA_RE 按区间、WORD_MAP 按表，均无失明）。
+ *
+ * @returns {Array<{kind: 'outside', value: string}>} 去重保序。空数组 = 干净。
+ *   豁免仍按整串、由调用方先查 is_exempted（与 find_offenders 同约定）。
+ */
+function find_outside_trad(text, tbl = load_table()) {
+  const hits = [];
+  const seen = new Set();
+  for (const ch of text) {
+    if (seen.has(ch)) {
+      continue;
+    }
+    if (tbl.char_map.has(ch) || !TRAD_SIDE_SET.has(ch)) {
+      continue;
+    }
+    seen.add(ch);
+    hits.push({ kind: 'outside', value: ch });
+  }
+  return hits;
+}
+
+/**
  * 扫描 JS 源码里的字符串字面量（注释感知）。
  *
  * 与 test/kojo-text-fidelity.test.js 的扫描器同一套边界：字符串内容按不
@@ -333,6 +367,7 @@ if (require.main === module) {
 module.exports = {
   convert_source,
   find_offenders,
+  find_outside_trad,
   is_exempted,
   load_table,
   scan_string_literals,
