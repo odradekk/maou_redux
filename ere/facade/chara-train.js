@@ -29,6 +29,21 @@ class TrainFacade {
   }
 
   /**
+   * 自动调教（cflag:cid:666 ↔ CFLAG:666）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 自動調教が行われたかフラグ
+   * @returns {number}
+   */
+  get 自动调教() {
+    return era.get(`cflag:${this.cid}:666`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 自动调教(v) {
+    era.set(`cflag:${this.cid}:666`, v);
+  }
+
+  /**
    * 初体验对象（cflag:cid:15 ↔ CFLAG:15）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
    * @returns {number}
@@ -101,21 +116,6 @@ class TrainFacade {
    */
   set 上衣下状态(v) {
     era.set(`cflag:${this.cid}:46`, v);
-  }
-
-  /**
-   * 自动调教（cflag:cid:666 ↔ CFLAG:666）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 自動調教が行われたかフラグ
-   * @returns {number}
-   */
-  get 自动调教() {
-    return era.get(`cflag:${this.cid}:666`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 自动调教(v) {
-    era.set(`cflag:${this.cid}:666`, v);
   }
 
   // —— base ——

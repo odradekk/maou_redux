@@ -14,6 +14,36 @@ class DungeonFacade {
 
   // —— cflag ——
   /**
+   * 休憩（cflag:cid:503 ↔ CFLAG:503）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:503 フラグ（回合结算的休憩判定消费）
+   * @returns {number}
+   */
+  get 休憩() {
+    return era.get(`cflag:${this.cid}:503`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 休憩(v) {
+    era.set(`cflag:${this.cid}:503`, v);
+  }
+
+  /**
+   * 已接任务（cflag:cid:534 ↔ CFLAG:534）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:534 受注クエスト
+   * @returns {number}
+   */
+  get 已接任务() {
+    return era.get(`cflag:${this.cid}:534`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 已接任务(v) {
+    era.set(`cflag:${this.cid}:534`, v);
+  }
+
+  /**
    * 攻击力（cflag:cid:11 ↔ CFLAG:11）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行270 CFLAG:11 = 攻撃力
    * @returns {number}
@@ -59,21 +89,6 @@ class DungeonFacade {
   }
 
   /**
-   * 休憩（cflag:cid:503 ↔ CFLAG:503）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:503 フラグ（回合结算的休憩判定消费）
-   * @returns {number}
-   */
-  get 休憩() {
-    return era.get(`cflag:${this.cid}:503`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 休憩(v) {
-    era.set(`cflag:${this.cid}:503`, v);
-  }
-
-  /**
    * 再起点（cflag:cid:508 ↔ CFLAG:508）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行409 CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）
    * @returns {number}
@@ -86,21 +101,6 @@ class DungeonFacade {
    */
   set 再起点(v) {
     era.set(`cflag:${this.cid}:508`, v);
-  }
-
-  /**
-   * 已接任务（cflag:cid:534 ↔ CFLAG:534）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:534 受注クエスト
-   * @returns {number}
-   */
-  get 已接任务() {
-    return era.get(`cflag:${this.cid}:534`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 已接任务(v) {
-    era.set(`cflag:${this.cid}:534`, v);
   }
 
   // —— base ——
