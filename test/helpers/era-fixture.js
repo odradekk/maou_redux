@@ -1267,6 +1267,28 @@ function create_era_fixture() {
       Math.random = real_math_random;
     },
     /**
+     * 关闭勇者来袭（#171 / #168 裁定 4，端到端的隔离开关）：把
+     * #/event/enter-enemy 的 enter_enemy 导出就地替换为无操作（返回原作
+     * 早退值 0）。阶段 1 的 ENDING_1 路径与阶段 3 的 ENDING_2 路径在同一
+     * 条日循环上竞速——ENTER_ENEMY 是每日调用，勇者一旦真的生成，通关
+     * 天数就从确定值变成概率问题，两条 e2e 各自隔离才能保留回归判据。
+     *
+     * 不用游戏内置位的理由（#168 裁定 4）：FLAG:5 位 32 是原作调试位，
+     * DUNGEON.ERB 至少 4 处 IF FLAG:5 & 32 是渲染守卫，开了它整个迷宫的
+     * 输出形态都变；把角色数顶到 61（触发人数上限早退）要凭空造 61 个
+     * 角色，还会改变一堆按 CHARANUM 循环的结算。
+     *
+     * 生效前提（游戏侧零修改）：event-turnend 经**模块对象**调用
+     * enter_enemy（不解构——解构会把函数固化进闭包），属性查找发生在
+     * 调用时，替换导出即短路。与「SDK 是普通可变对象、可在 require 之后
+     * 就地替换函数」（本文件头）同一手法；与 override_math_random 同属
+     * 「驱动方对世界的预设」。替换整链短路（K_11_LILY / K_34_crazylord
+     * 只被 enter_enemy 调用）。
+     */
+    disable_enter_enemy() {
+      require('#/event/enter-enemy').enter_enemy = async () => 0;
+    },
+    /**
      * 预置已注册的媒体资源（对应引擎 res 注册表，注册名自动小写——与
      * eraStart 的装载行为一致）。type 取 'image'（默认）或 'audio'。
      */

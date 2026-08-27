@@ -506,4 +506,102 @@ export default [
     // 场）先红，威望断言不再执行——must_mention 取先红断言的消息片段
     must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
+  // —— #171 H2 勇者来袭（ere/event/enter-enemy.js 与其接线）——
+  {
+    // 反向变异（#116 的 M214/M218 先例）：把被汉化版注释掉、1:1 保留为
+    // 死注释的月末守卫「修好」——钉住用例证明原作现状是「月末也照来」
+    desc: 'M348 月末守卫被修好（死注释复活成活代码——原作现状是每日来袭）',
+    file: 'ere/event/enter-enemy.js',
+    find: `  // :7-8 LOCAL = 10（原 RAND:10 + 20 被写死）——原作现状，#14 登记，勿修
+  // :10-13 月末才来的守卫（SIF DAY:2 > LOCAL && ARG:0 == 0 && FLAG:60 < 300
+  //   → RETURN 0）在汉化版里被整段注释掉，1:1 保持死注释不移植（钉住
+  //   用例证明「月末也照来」，反向变异条目防守「修好」它的手滑）`,
+    replace: `  const local_month = 10; // 变异：月末守卫复活
+  if (
+    era_flag.date > local_month &&
+    arg0 === 0 &&
+    (era.get('flag:60') || 0) < 300
+  ) {
+    return 0; // 变异：原作现状是这段被注释掉、每日都来
+  }`,
+    tests: ['enter-enemy'],
+    must_mention: '月末守卫已死：日 28 仍每日来袭',
+  },
+  {
+    desc: 'M349 人数上限分支①的线从 60 抬到 61（61 人不再拦）',
+    file: 'ere/event/enter-enemy.js',
+    find: '  if (f(82) === 0 && charanum > 60) {',
+    replace: '  if (f(82) === 0 && charanum > 61) {',
+    tests: ['enter-enemy'],
+    // must_mention 取静态锚用例**会红的那条**断言消息：变异下 ret 仍为 0
+    // （61 人走到恐惧早退也返回 0），第一条断言通过不打印；红的是第二条
+    // （零输出——恐惧早退会打文本），消息只在该断言失败时出现
+    must_mention:
+      '上限拦截零输出——61 人里 1 号恰在场，若走到选号段会打出恐惧早退文本',
+  },
+  {
+    desc: 'M350 恐惧早退被拆（演出文本与 RETURN 0 全没了）',
+    file: 'ere/event/enter-enemy.js',
+    find: `    era.print('出于对魔王的恐惧，勇者没有出现。');
+    await era.waitAnyKey();
+    return 0;`,
+    replace: '    return 1; // 变异：恐惧早退被拆',
+    tests: ['enter-enemy'],
+    // 变异下用例第一条断言（ret）先红，文本断言不再执行——must_mention
+    // 取先红断言的消息（M275 先例）
+    must_mention: 'RETURN 0（早退）',
+  },
+  {
+    desc: 'M351 初期金钱的高人气加算改坏（+1000 → +100）',
+    file: 'ere/event/enter-enemy.js',
+    find: '    money += 1000; // :111-112 高人气ボーナス',
+    replace: '    money += 100; // 变异：高人气加算改坏',
+    tests: ['enter-enemy'],
+    must_mention: '高人气 +1000（含等级 1）',
+  },
+  {
+    desc: 'M352 初期金钱下限钳制删（负赠与全额入账）',
+    file: 'ere/event/enter-enemy.js',
+    find: `  if (money <= 0) {
+    money = 0; // :131 对于不受欢迎的勇者（本次赠与额下限 0）
+  }`,
+    replace: '  // 变异：下限钳制删',
+    tests: ['enter-enemy'],
+    must_mention: '对于不受欢迎的勇者（:131）',
+  },
+  {
+    desc: 'M353 初期座標写入删（死变量也 1:1 保留——裁定 5 的 H12 前置）',
+    file: 'ere/event/enter-enemy.js',
+    find: `  const [pos_x, pos_y] = roll_initial_position(rand_n);
+  era.set(\`cflag:\${a}:510\`, pos_x); // event 域内直写
+  era.set(\`cflag:\${a}:511\`, pos_y);`,
+    replace: '  // 变异：座標写入删',
+    tests: ['enter-enemy'],
+    must_mention: 'CFLAG:A:510 座標 X',
+  },
+  {
+    desc: 'M354 K_34 的 CFLAG:A:1 = 2 改 0（替身不侵攻）',
+    file: 'ere/event/enter-enemy.js',
+    find: '  chara(a).invasion.状态 = 2; // :299',
+    replace: '  chara(a).invasion.状态 = 0; // 变异：不侵攻',
+    tests: ['enter-enemy'],
+    must_mention: 'CFLAG:A:1 = 2（:299）',
+  },
+  {
+    desc: 'M355 GET_ENEMY 的 CFLAG:A:1 = 0 改 2（俘虏变侵攻中）',
+    file: 'ere/event/enter-enemy.js',
+    find: '  chara(a).invasion.状态 = 0; // :384 CFLAG:A:1 = 0（与主体的 2 相对）',
+    replace: '  chara(a).invasion.状态 = 2; // 变异：俘虏变侵攻',
+    tests: ['enter-enemy'],
+    must_mention: 'CFLAG:A:1 = 0——俘虏不侵攻（:384）',
+  },
+  {
+    desc: 'M356 EVENTTURNEND 的 :93 调用点被拆（日推进不再来袭）',
+    file: 'ere/event/event-turnend.js',
+    find: `      // :93 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）
+      await enter_enemy_mod.enter_enemy(0);`,
+    replace: '      // 变异：ENTER_ENEMY 调用被拆',
+    tests: ['enter-enemy'],
+    must_mention: ':93 CALL ENTER_ENEMY,0 经日推进真跑（勇者入队）',
+  },
 ];

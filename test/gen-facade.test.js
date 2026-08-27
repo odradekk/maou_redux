@@ -70,10 +70,11 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   // #115（日程推进）补 3 个：109（stronghold 排卵诱发剂）、451/452（chara
   // 年龄/种族年龄）；#170（角色生成管线）补 11 个：11/12/501/508（dungeon）、
   // 15/16/41/45/46（train）、120（patch）、502（event）；#174（装备）再补 3 个：
-  // 550（chara 武装枠）、551/552（event 装饰枠）——11/12 两票共有，已合并
+  // 550（chara 武装枠）、551/552（event 装饰枠）——11/12 两票共有，已合并；
+  // #171（勇者来袭）补 3 个：6/151（chara 随机名/善恶值）、580（dungeon 所持金）
   const NON_KOJO_NAMED = [
-    1, 2, 4, 11, 12, 13, 14, 15, 16, 41, 45, 46, 109, 120, 451, 452, 501, 502,
-    503, 506, 507, 508, 534, 550, 551, 552, 570, 666,
+    1, 2, 4, 6, 11, 12, 13, 14, 15, 16, 41, 45, 46, 109, 120, 151, 451, 452,
+    501, 502, 503, 506, 507, 508, 534, 550, 551, 552, 570, 580, 666,
   ];
   const manual_keys = Object.keys(NAMES.cflag)
     .map(Number)
@@ -274,7 +275,10 @@ test('尾部条目分区（named_tail，#170）：同表既有条目之后发射
   // named_tail），落点是四个域的 cflag 组尾部——与 #174（EQUIP）并行
   // 补名时的合并隔离手段，机制见 gen-facade.js entries_for 的稳定分区
   const expected_tails = {
-    dungeon: [11, 12, 501, 508],
+    // #171 起 dungeon 尾追加 580（所持金）、chara 域新增 6/151（#170/#174
+    // 未曾给 chara 补过 cflag 尾，本票起有）
+    chara: [6, 151],
+    dungeon: [11, 12, 501, 508, 580],
     event: [502],
     patch: [120],
     train: [15, 16, 41, 45, 46],
@@ -315,9 +319,9 @@ test('尾部条目分区（named_tail，#170）：同表既有条目之后发射
     .split('  // —— cflag ——')[1]
     .split('  // —— base ——')[0];
   assert.ok(
-    /set 再起点\(v\)/.test(cflag_section) &&
+    /set 所持金\(v\)/.test(cflag_section) &&
       cflag_section.trimEnd().endsWith('}'),
-    'chara-dungeon.js 的 cflag 组应再以「再起点」收尾',
+    'chara-dungeon.js 的 cflag 组应以「所持金」收尾（#171 的 580 尾追）',
   );
 });
 

@@ -37,6 +37,11 @@ function setup_turnend() {
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
+  // 本局关闭勇者来袭（#171/#168 裁定 4 的隔离开关）：本文件的用例测时段/
+  // 日期/衰减/KYOTEN/结算，不测勇者——ENTER_ENEMY 自 #171 起为每日真调用，
+  // 在本世界（1-16 号无预设）会反复给孤儿号跑生成管线，干扰既有断言；
+  // 勇者来袭自身的行为在 test/enter-enemy.test.js 隔离地测
+  fixture.disable_enter_enemy();
   return { fixture, emit, STATE, era_flag };
 }
 
@@ -554,7 +559,7 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   );
   // 名单本身固定（增删存根必须同步本测试与清单）。#115 起 EVENT_NEXTDAY/
   // EVENT_NEXTMONTH 换成真身（ere/event/event-nextday.js、event-nextmonth.js），
-  // 不再占位
+  // 不再占位；#171 起 ENTER_ENEMY 换真身（ere/event/enter-enemy.js）
   assert.deepEqual(pri_stubs, [
     'CHECK_SELLASSIABLE',
     'CHECK_SPECIALSKIL',
@@ -566,7 +571,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'CONCEPTION_CHECK_KYOUOU_TO_T',
     'IN_VAGINA_NTRD_TO_T',
     'CONCEPTION_CHECK_NTRD_TO_T',
-    'ENTER_ENEMY',
     'AUTO_BUYING',
     'DEBUG_CHECK',
   ]);

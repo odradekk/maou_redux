@@ -36,6 +36,11 @@ function setup_nextday() {
   fixture.load_module('event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
+  // 本局关闭勇者来袭（#171/#168 裁定 4 的隔离开关）：本文件的用例测日程
+  // 推进与月份回绕，不测勇者——ENTER_ENEMY 自 #171 起为每日真调用，勇者
+  // 来袭的行为在 test/enter-enemy.test.js 隔离地测（event-turnend.test.js
+  // 的 setup_turnend 同款）
+  fixture.disable_enter_enemy();
   return { fixture, emit, era_flag };
 }
 

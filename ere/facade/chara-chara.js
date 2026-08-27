@@ -103,6 +103,52 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:550`, v);
   }
 
+  /**
+   * 随机名编号（cflag:cid:6 ↔ CFLAG:6）
+   * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行303 CFLAG:A:6 = RAND:80（ランダム名前決定）
+   * @returns {number}
+   */
+  get 随机名编号() {
+    return era.get(`cflag:${this.cid}:6`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 随机名编号(v) {
+    era.set(`cflag:${this.cid}:6`, v);
+  }
+
+  /**
+   * 善恶值（cflag:cid:151 ↔ CFLAG:151）
+   * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行101-103 善悪値調整（< -100 钳到 -100）
+   * @returns {number}
+   */
+  get 善恶值() {
+    return era.get(`cflag:${this.cid}:151`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 善恶值(v) {
+    era.set(`cflag:${this.cid}:151`, v);
+  }
+
+  // —— cstr ——
+  /**
+   * 加入时名字（cstr:cid:1 ↔ CSTR:1）
+   * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行198 CSTR:A:1 = %NAME:A%（SYSTEM 同款惯例）
+   * @returns {string}
+   */
+  get 加入时名字() {
+    return era.get(`cstr:${this.cid}:1`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 加入时名字(v) {
+    era.set(`cstr:${this.cid}:1`, v);
+  }
+
   // —— talent ——
   /**
    * 处女（talent:cid:0 ↔ TALENT:0）

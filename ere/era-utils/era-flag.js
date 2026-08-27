@@ -167,6 +167,19 @@ const era_flag = {
     era.set('flag:502', v);
   },
   /**
+   * 狂王替身登场（flag:224 ↔ FLAG:224）
+   * @returns {number}
+   */
+  get crazylord_entered() {
+    return era.get('flag:224') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set crazylord_entered(v) {
+    era.set('flag:224', v);
+  },
+  /**
    * 葵希罗线（flag:2815 ↔ FLAG:2815）
    * @returns {number}
    */

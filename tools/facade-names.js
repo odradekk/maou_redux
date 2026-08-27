@@ -329,6 +329,27 @@ const cflag = {
     '装饰2',
     src(SRC_FLAG, 'CFLAG:550～559 装備品枠——装飾2（存储编号，EQUIP.ERB:37）'),
   ),
+  // —— 勇者来袭的跨域写（#171 H2 @ENTER_ENEMY；named_tail 让本票与
+  //    并行票的产物落点不相邻，#170 先例。まとめ文档无这三条的词条，
+  //    出处直接给 ERB）——
+  6: named_tail(
+    '随机名编号',
+    erb(
+      'EVENT/ENTER_ENEMY.ERB',
+      ':303 CFLAG:A:6 = RAND:80（ランダム名前決定）',
+    ),
+  ),
+  151: named_tail(
+    '善恶值',
+    erb('EVENT/ENTER_ENEMY.ERB', ':101-103 善悪値調整（< -100 钳到 -100）'),
+  ),
+  580: named_tail(
+    '所持金',
+    erb(
+      '迷宮/DUNGEON_TOWN.ERB',
+      ':121 勇者所持金（城镇经济消费，ENTER_ENEMY.ERB 的初期加算同此下标）',
+    ),
+  ),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——
@@ -541,6 +562,13 @@ const cstr = {
   99: named(
     '故事名',
     erb('SYSTEM/SYSTEM_DATA.ERB', ':193-209 $SET_NAME 读写（32 字符上限）'),
+  ),
+  // 加入时名字：原作全库的固定习惯（ADDCHARA 后 CSTR:1 = %NAME:A%，角色
+  // 加入即把预设名抄进 CSTR:1），#171 H2 的 K_11_LILY/K_34_crazylord 沿用；
+  // 不进 yml/CStr.yml 的理由同上（预置 0 会顶掉字符串空值语义）
+  1: named_tail(
+    '加入时名字',
+    erb('EVENT/ENTER_ENEMY.ERB', ':198 CSTR:A:1 = %NAME:A%（SYSTEM 同款惯例）'),
   ),
 };
 

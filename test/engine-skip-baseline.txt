@@ -59,4 +59,8 @@
 # ENGINE_FACTS 锚定不经用例，不加数），现为 66
 # （rebase 到含 #151/#152 的 master 后复测：773 = 707 过 +
 # 66 跳过 + 0 挂，WSL 无引擎实测）。
+# #171（H2 勇者来袭）复测：66 不变（899 = 833 过 + 66 跳过 + 0 挂，WSL
+# 无引擎实测）——enter-enemy.test.js 的 33 条与 event-turnend/
+# event-nextday 的隔离改造、event-ending-e2e 的开关全部走 era-fixture
+# 路径（无 engine-bundle 门控），不新增跳过：66（既有）+ 0（本票）= 66。
 66

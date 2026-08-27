@@ -107,6 +107,13 @@ test('端到端：新档从标题走到 ENDING_1（三信号 + 实测天数）',
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
+  // 本局关闭勇者来袭（#171 / #168 裁定 4 的隔离开关）：ENTER_ENEMY 自 #171
+  // 起每日真调用，勇者一旦生成，本用例的 ENDING_1 路径就会与 ENDING_2 在
+  // 同一条日循环上竞速——PRNG 消费序列被生成管线打散、100 日的实测值变
+  // 成概率问题。关掉它，阶段 1 的回归判据（种子 20250601 恒 100 日）保持
+  // 确定；阶段 3 的 e2e（#173）在自己的用例里隔离地开勇者线
+  fixture.disable_enter_enemy();
+
   fixture.override_math_random(mulberry32(20250601));
   let rounds = 0; // 半天轮数（午前/午后各一）
   try {

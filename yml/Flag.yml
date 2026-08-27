@@ -90,6 +90,16 @@
   id: 502
   name: "map_2d_mode"
   type: "number"
+# —— 勇者来袭的特殊登场（issue #171 H2，语义依据 ENTER_ENEMY.ERB）——
+# 狂王替身（葵希罗替身，角色号 34）登场済标志：@K_34_crazylord 的防重复
+# 触发判据（ENTER_ENEMY.ERB:228 SIF FLAG:224 == 1 RETURN），登场即置 1
+# （:252）。属主 chara（ownership/flag-ownership.yml "224"）——跨域写须
+# 具名，故进本表生成包装层（era_flag.crazylord_entered）；同函数族的
+# FLAG:223（莉莉登场済，:173）属主 event、域内裸写，不进表
+"狂王替身登场":
+  id: 224
+  name: "crazylord_entered"
+  type: "number"
 # —— 结局线区间（issue #116）——
 # 原作把结局线区间 2801-2820 声明在 EX_FLAG（@ENDCHECK 头注释），但两条
 # 实际写进了 FLAG 侧（ENDCHECK 链 1:1 照搬写点，见 yml/ExFlag.yml 头注的
