@@ -33,6 +33,7 @@
 D:\Code\era\
 ├── ere/              # 游戏源码，入口 main.js；era-electron.js 是引擎 SDK，勿改名或移动
 ├── yml/              # 静态数据表（YAML），即引擎的静态数据目录
+├── products/         # 转译中转区：口上转译产物的待复核初稿（#107），复核后移入 ere/
 ├── golden/           # 范围 B 黄金样本落点与录制备料（#156；样本名→文件登记表在 tools/compare/samples.js）
 ├── tools/            # 离线脚本，不受 ere/ 的依赖限制
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
@@ -44,6 +45,8 @@ D:\Code\era\
 ```
 
 移植产物一律写进 `ere/`、`yml/`、`res/`。
+
+**`products/` 是例外，也是唯一的例外**：口上转译器（`tools/kojo-transpiler.js`，#107）的输出**不是最终产物**，是待 agent 逐字复核的初稿。它进版本库的理由只有一条——复核成果就地写在产物文件里（#107 的 Q3 裁定），产物不在库就没地方积累。产物边界照 #10「默认不覆盖 + `--force`」，复核完成后改名移入 `ere/kojo/`，此时才受简体锁与保真锁约束。初稿首行的 `eslint-disable` 是有意的：产物尚未补导入，`no-undef` 单文件近两万处。
 
 ## 运行与调试
 

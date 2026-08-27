@@ -22,3 +22,7 @@ yml/
 # 区段所有权产物：与 yml/ 同规格的生成物（tools/ownership-scan.js，issue #66），
 # 键名双引号 + 固定排序是扫描器约定，勿格式化
 ownership/
+
+# 口上转译器产物（issue #107）：待复核初稿，行锚/空行是复核定位依据，
+# 格式由 tools/kojo-transpiler.js 约定（与 yml/ 同理由），勿 prettier 重排
+products/
