@@ -12,7 +12,7 @@
 
 - Windows 上 CLI 就是 `orca`；Linux 下用 `orca-ide`（裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
 - **WSL 会话是个例外**：环境变量 `ORCA_CLI_COMMAND` 写着 `orca-ide`，但这台机器上没有这个可执行文件。可用的是 Windows 端的 `orca.exe`（在 PATH 上，`…/AppData/Local/Programs/orca/resources/bin`），它与 app 是同一份安装。
-- **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 5 次派发里出现 4 次，每次 worktree 都已在服务端建成**）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
+- **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 11 次派发里出现 10 次，每次 worktree 都已在服务端建成**）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
 - **worktree 的选择器认 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `--worktree "name:t119-s7-kyoten"` 报错、`--worktree "name:odradekk/t119-s7-kyoten"` 才对。**别猜，用 `path:<绝对路径>`**——路径是 `worktree list` 里的 `path` 字段，稳定且唯一。
 - **`--issue <N>` 不保证写上关联**：实测建出来的 worktree `linkedIssue` 仍是 `null`。卡片上看不到关联不代表 worktree 建错了，别据此重建。
 - **本机 Orca 的 `commandSourcePolicy` 是 `local-only`，仓库里的 `orca.yaml` 钩子不会执行**（实测：带 `--run-hooks` 删 worktree，仓库脚本一行没跑）。所以仓库里不放 `orca.yaml`；worktree 的 setup 钩子（`npm install`）配在 Orca 的 **Settings → Repository → Hooks**。
@@ -42,6 +42,8 @@ orca worktree ps --json
 
 代价是可量化的：一次 rebase + 解四处冲突 + 重跑一遍全量变异（约 15 分钟），比等前一张票合并再派贵得多。所以顺序是「**验收 → 合并 → 再派下一张**」，而不是「一次派满 5 张」。
 
+**判串行看「落点是否相邻」，不是「是否同一文件」。** D1–D6 六张票的票面都写着「都改 `era-fixture.js`，必须串行」，实测过宽：#151 落在 `:848`（`era.input`）、#152 落在 `:974-1010`（调教段），相隔百余行，并发合并零冲突，git 自己就合了。真正会碰的永远是上面那四处**全局计数字段与全局登记表**——它们是行级相邻，任何两张票都躲不开。同一文件的不同区段可以并行。
+
 **派单前还要找一遍隐性硬依赖**——票据元数据上没有阻塞关系，但代码上有：
 
 > #130（给夹具加按钮白名单校验）与 #129（补 [109] 按钮）在工单里互不阻塞。但 #130 一加校验，#117/#118/#120 的用例喂进的 `109` 立刻被拦下变红，而那枚按钮归 #129——**#130 在自己分支里无法弄绿**。
@@ -60,9 +62,10 @@ orca worktree list --json          # 无论上一步返回什么，都来这一�
 # 2. 取终端句柄（create 的返回经常拿不到，别指望它）
 orca terminal list --json          # 按 worktreePath 含 t<N> 过滤出 handle
 
-# 3. 起 ante（必然要发两次，见下）
+# 3. 起 ante（三发：空回车吃残留、clear 洗一遍、再起，见下）
 orca terminal switch  --terminal <handle> --json
-orca terminal send    --terminal <handle> --text "ante --yolo" --enter --json
+orca terminal send    --terminal <handle> --text "" --enter --json
+orca terminal send    --terminal <handle> --text "clear" --enter --json
 orca terminal send    --terminal <handle> --text "ante --yolo" --enter --json
 orca terminal wait    --terminal <handle> --for tui-idle --timeout-ms 180000 --json
 
@@ -78,16 +81,9 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 - `--agent ante` 让 ante 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
 - `--repo` 省略时 Orca 从当前 worktree 推断仓库；跨仓库才需要 `orca repo list --json` 取 id。
 
-**`--agent` 启动几乎必然输给终端初始化的竞速——按「一定会掉回 shell」来写流程。** 本项目连续 5 次派发，5 次都在终端里留下 `The cursor position could not be read within a normal duration` 然后掉回 shell。所以第 3 步是必经流程，不是异常处理。
+**`--agent` 启动几乎必然输给终端初始化的竞速——按「一定会掉回 shell」来写流程。** 本项目连续 11 次派发，11 次都在终端里留下 `The cursor position could not be read within a normal duration` 然后掉回 shell。所以第 3 步是必经流程，不是异常处理。
 
-**而且第一次 `ante --yolo` 一定被吃掉。** 掉回 shell 时输入行上粘着残留的转义序列（形如 `1;2c1R`），第一次发出去会变成：
-
-```
-bash: 1: command not found
-bash: 2c1Rante: command not found
-```
-
-第二次才干净。所以**连发两次**是正常流程；只发一次然后等 `tui-idle` 会一直等到超时。先 `terminal switch` 过去再发，不然发到别的终端上。
+**掉回 shell 时输入行上粘着残留的转义序列**（形如 `1;2c1R`），直接发 `ante --yolo` 会被污染成 `bash: 2c1Rante: command not found`。所以三发：**空回车吃掉残留、`clear` 洗一遍、第三发才是 `ante --yolo`**——实测 6/6 一次起来，比早先「连发两次 `ante --yolo`」可靠。先 `terminal switch` 过去再发，不然发到别的终端上。
 
 **绝对不要用 `--prompt` 传多行简报。** `--prompt` 是逐字符打进 TUI 的：**每个换行都是一次回车**，而斜杠开头会拉出命令菜单，后续回车就在菜单里乱选。实测一次二十多行的简报最后选中了 `/exit`，ante 当场退出，worktree 空跑一趟（终端里只剩 `❯ /exit` 和 `Signing off.`）。
 
@@ -114,9 +110,10 @@ bash: 2c1Rante: command not found
 worktree 若缺 node_modules 先 npm ci。跑全量变异用 node tools/mutation-check.mjs，
 **不要加 --jobs**：并行副本看不到引擎会误报跳过。
 
-两个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
-test/engine-skip-baseline.txt 现为 <m>。只管把自己分支的数改对（新增变异条目同步
-抬基线；新增依赖引擎的用例同步改跳过数并在注释里写出算式），跨票对账由派单人处理。
+三个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
+test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k>——**你的新
+条目从 M<k+1> 起编**。只管把自己分支的数改对（新增变异条目同步抬基线；新增依赖
+引擎的用例同步改跳过数并在注释里写出算式），跨票对账由派单人处理。
 
 自检与提交：
 - 三项自检全绿（npm test、npx eslint . --max-warnings 0、npx prettier --check .）
@@ -132,9 +129,12 @@ test/engine-skip-baseline.txt 现为 <m>。只管把自己分支的数改对（�
 ```
 grep -n "LEDGER_COUNT_BASELINE = " tools/mutation-check.mjs
 tail -1 test/engine-skip-baseline.txt
+grep -hoE "\bM[0-9]+\b" tools/mutations/*.mjs | sort -u -t M -k2 -n | tail -1
 ```
 
 漏掉引擎变量那段的后果不是「测得慢一点」，而是**它交上来一份自称全绿、实则几十个用例没跑的东西**，验收时才发现。这条比简报里任何一条领域事实都值钱。
+
+**M 起点也必须显式写进简报。** 本项目连撞五次 M 编号，唯一没撞的一次就是简报里写了起点。撞号本身不致命（唯一性由 `desc` 全串保证，见 `tools/mutation-check.mjs` 头注），但 rebase 时要把后合并那批整体顺延，白付一轮全量变异。
 
 两条写法约定：
 
@@ -154,9 +154,13 @@ orca worktree set --worktree id:<repoId>::<路径> --comment "<一句话进展>"
 
 发消息前先 `read`。等 TUI 就绪必须带 `--timeout-ms`，否则输入会丢在启动过程里。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，只用最新那个。
 
+**判交付看提交，不看终端。** 终端安静只说明 TUI 空闲了一瞬，agent 可能还在下一个工具调用里。判据是两条同时成立：`git -C <worktree> log origin/master..HEAD` 有提交，且 `git -C <worktree> status --short` 干净。实测有一次照终端状态判「完成」，那时分支上一个提交都还没有。
+
 ## 5. 验收：自己重跑一遍
 
 agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 issue 的验收清单。
+
+两种漂移都实测到过，判法不同：**自述的绿是自己重跑**——#161 交付时自称「三项自检全绿」，实测 `eslint --max-warnings 0` 有两处 `no-useless-escape`；**报告里的事实主张要回原始材料核**——#143 的普查报告把一处分歧描述成「误植了 `printWholeImage` 的文档」，而手册里根本没有那些内容，真正的错误是凭空多出的 `duration` 参数。
 
 **分支落后 master 时，先按 §5.5 rebase 再验收**——否则要验两遍。
 
@@ -226,7 +230,16 @@ worktree 建得早于前置票合并时（见 §2），验收前必须先 `git r
 | `test/engine-skip-baseline.txt`                       | 同样相加；注释里的算式按 rebase 后实测更正                                                                       |
 | `docs/stub-registry.md`                               | 两边都会重排整张表。**把三方都归一化后再 `git merge-file`**（`sed 's/ _/ /g; s/ _                                | \*/ | /g; s/-\{3,\}/---/g'`），真冲突通常只剩一两处，解完交给 `prettier --write` 重排 |
 
-**数组元素之间的冲突，边界会落在两侧共享的分隔符上。** 实测两次：`tools/mutations/event.mjs` 的合并区正好切在 `},` 上，两边各缺一半——**去掉冲突标记后是语法错误**。光检查「标记删干净了」不够，**必须让工具解析一次**（`node tools/mutation-check.mjs --verify` 会当场报 `SyntaxError`）。
+**数组元素之间的冲突，边界会落在两侧共享的分隔符上。** 实测两次都切在 `},\n  {` 上，两边各缺一半闭合——**冲突标记删得干干净净、肉眼看不出，去掉标记后却是语法错误**（一次在 `tools/mutations/event.mjs`，`--verify` 报「303 ≠ 304」；一次在 `test/*.test.js` 的追加区，`node --check` 报 `Unexpected end of input`）。
+
+**更稳的解法是不手工拼接**——取 master 整份文件，再从本票提交里把新增块抽出来追加到文件尾：
+
+```
+git checkout origin/master -- <path>   # 先要 master 整份，放弃合并区
+git show <本票 sha>:<path>              # 从这里抽出本票新增的条目/用例块，追加到文件尾
+```
+
+第二次用这个解法一次干净。无论怎么解，**`node tools/mutation-check.mjs --verify` 必须跑**，只看 diff 不够。
 
 `prettier --write` 对 Markdown 里**不在反引号内**的下划线标识符是有损的（`AGENT_1.ERB` → `AGENT*1.ERB`）。解完冲突跑一次体征检查：`grep -nE '[A-Za-z0-9]\*[A-Za-z0-9]' <文件>`，应为空。
 
