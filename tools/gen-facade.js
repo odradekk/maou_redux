@@ -216,6 +216,8 @@ function entries_for(table, domain, ownership_dir, lookup = merged_name) {
       index,
       name: named.name,
       source: named.source,
+      // named_tail 的尾部标志（缺省 undefined = 既有条目，见下方分区）
+      tail: named.tail,
     });
   }
   if (table === 'cflag' && domain === 'kojo' && skipped.length > 0) {
@@ -225,6 +227,12 @@ function entries_for(table, domain, ownership_dir, lookup = merged_name) {
         .join(', ')}——先补 tools/facade-names.js`,
     );
   }
+  // 尾部条目（facade-names 的 named_tail）：稳定分区到同域同表既有条目
+  // 之后发射——sort 稳定，两侧仍各自保持升序，既有条目的相对次序不动。
+  // 用途：并行票各自补名时让后加的字段落在域区块尾部，两票在生成产物
+  // 上的落点不相邻，合并面最小（#170 与 #174 同改本表的先例）。tail
+  // 标志只能来自手写命名表（merged_name 的 manual 臂），yml 来源恒无。
+  named_entries.sort((a, b) => (a.tail ? 1 : 0) - (b.tail ? 1 : 0));
   return { entries: named_entries, skipped };
 }
 

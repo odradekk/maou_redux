@@ -68,9 +68,11 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   // 已补名的他域下标。#114（回合结算）一次补了 10 个：1/506/507（invasion）、
   // 4/666（train）、13/14（chara）、503/534（dungeon）、570（system）、2（#90）；
   // #115（日程推进）补 3 个：109（stronghold 排卵诱发剂）、451/452（chara
-  // 年龄/种族年龄）
+  // 年龄/种族年龄）；#170（角色生成管线）补 11 个：11/12/501/508（dungeon）、
+  // 15/16/41/45/46（train）、120（patch）、502（event）
   const NON_KOJO_NAMED = [
-    1, 2, 4, 13, 14, 109, 451, 452, 503, 506, 507, 534, 570, 666,
+    1, 2, 4, 11, 12, 13, 14, 15, 16, 41, 45, 46, 109, 120, 451, 452, 501, 502,
+    503, 506, 507, 508, 534, 570, 666,
   ];
   const manual_keys = Object.keys(NAMES.cflag)
     .map(Number)
@@ -263,6 +265,58 @@ test('口上域切片缺名时生成器报错，不静默用数字当名字', ()
   assert.throws(
     () => entries_for('cflag', 'kojo', undefined, lookup),
     /口上域切片缺名：cflag:301/,
+  );
+});
+
+test('尾部条目分区（named_tail，#170）：同表既有条目之后发射、两侧各自升序', () => {
+  // #170 的 11 个补名条目全部带 tail 标志（tools/facade-names.js 的
+  // named_tail），落点是四个域的 cflag 组尾部——与 #174（EQUIP）并行
+  // 补名时的合并隔离手段，机制见 gen-facade.js entries_for 的稳定分区
+  const expected_tails = {
+    dungeon: [11, 12, 501, 508],
+    event: [502],
+    patch: [120],
+    train: [15, 16, 41, 45, 46],
+  };
+  for (const [domain, tails] of Object.entries(expected_tails)) {
+    const { entries } = entries_for('cflag', domain);
+    const indexes = entries.map((entry) => entry.index);
+    assert.deepEqual(
+      indexes.slice(indexes.length - tails.length),
+      tails,
+      `${domain} 域 cflag 组应以尾部条目（升序）收尾`,
+    );
+    // tail 标志与位置一致：前段全无、尾段全有
+    const flags = entries.map((entry) => Boolean(entry.tail));
+    const head_len = indexes.length - tails.length;
+    assert.ok(
+      flags.slice(0, head_len).every((flag) => !flag),
+      `${domain} 域前段不得混入尾部标志`,
+    );
+    assert.ok(
+      flags.slice(head_len).every(Boolean),
+      `${domain} 域尾段必须全部带尾部标志`,
+    );
+    // 前段自身仍升序（既有条目零重排——稳定分区的另一半语义）
+    const head = indexes.slice(0, head_len);
+    assert.deepEqual(
+      [...head].sort((a, b) => a - b),
+      head,
+      `${domain} 域既有条目应保持升序`,
+    );
+  }
+  // 产物侧：chara-dungeon 的 cflag 组以「再起点」收尾（其后即 base 组）
+  const dungeon = fs.readFileSync(
+    path.join(REPO_ROOT, 'ere', 'facade', 'chara-dungeon.js'),
+    'utf8',
+  );
+  const cflag_section = dungeon
+    .split('  // —— cflag ——')[1]
+    .split('  // —— base ——')[0];
+  assert.ok(
+    /set 再起点\(v\)/.test(cflag_section) &&
+      cflag_section.trimEnd().endsWith('}'),
+    'chara-dungeon.js 的 cflag 组应再以「再起点」收尾',
   );
 });
 

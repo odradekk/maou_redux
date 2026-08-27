@@ -45,6 +45,17 @@ function named(name, source) {
   return { name, source };
 }
 
+/**
+ * 尾部条目：除 name/source 外带 tail 标志，生成器（gen-facade.js
+ * entries_for 的稳定分区）把它排在同域同表既有条目**之后**发射。用途：
+ * 并行票各自补名时，让后加的字段落在域区块尾部——两票在生成产物上的
+ * 落点不相邻，合并面最小（#170 与 #174 同改本表的先例）。既有条目
+ * 一律继续用 named，不要回头改写成 named_tail。
+ */
+function named_tail(name, source) {
+  return { name, source, tail: true };
+}
+
 function erb(rel, extra) {
   return src(`${SRC_ERB}/${rel}`, extra);
 }
@@ -243,6 +254,58 @@ const cflag = {
     named(
       i === 650 ? 'NTR再捕获' : `NTR_${i}`,
       src(SRC_FLAG, 'CFLAG:650～660 NTR 旗标'),
+    ),
+  ),
+
+  // —— 角色生成段的跨域写（#170 @CM_BASE/@CM_VIRGIN/@CM_CLOTH；属主见
+  //    ownership/cflag-ownership.yml）。全部用 named_tail：书写与发射都
+  //    落在各域区块尾部——#174（EQUIP）并行补名时两票落点不相邻，
+  //    合并面最小（named_tail 语义见其 JSDoc）。 ——
+  11: named_tail('攻击力', src(SRC_FLAG, ':270 CFLAG:11 = 攻撃力')),
+  12: named_tail('防御力', src(SRC_FLAG, ':271 CFLAG:12 = 防御力')),
+  15: named_tail(
+    '初体验对象',
+    src(
+      SRC_FLAG,
+      ':275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）',
+    ),
+  ),
+  16: named_tail(
+    '初吻对象',
+    src(
+      SRC_FLAG,
+      ':276 CFLAG:16 ファーストキスの相手のキャラ番号＋１（未経験は -1 初期化）',
+    ),
+  ),
+  41: named_tail(
+    '上衣类型',
+    src(
+      SRC_FLAG,
+      ':295 CFLAG:41 上着のタイプ（詳細は FUNC_CLOTH.ERB @PRINT_CLOTHTYPE）',
+    ),
+  ),
+  45: named_tail(
+    '上衣上状态',
+    src(
+      SRC_FLAG,
+      ':299 CFLAG:45 上着上の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）',
+    ),
+  ),
+  46: named_tail(
+    '上衣下状态',
+    src(
+      SRC_FLAG,
+      ':300 CFLAG:46 上着下の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）',
+    ),
+  ),
+  120: named_tail('卖春积极性', src(SRC_FLAG, ':331 CFLAG:120 売春への積極性')),
+  501: named_tail('侵攻阶层', src(SRC_FLAG, ':386 CFLAG:501 侵攻階層')),
+  502: named_tail('侵攻度', src(SRC_FLAG, ':387 CFLAG:502 侵攻度')),
+  508: named_tail(
+    '再起点',
+    src(
+      SRC_FLAG,
+      ':409 CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）',
     ),
   ),
 };

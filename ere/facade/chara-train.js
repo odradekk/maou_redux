@@ -43,6 +43,81 @@ class TrainFacade {
     era.set(`cflag:${this.cid}:666`, v);
   }
 
+  /**
+   * 初体验对象（cflag:cid:15 ↔ CFLAG:15）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
+   * @returns {number}
+   */
+  get 初体验对象() {
+    return era.get(`cflag:${this.cid}:15`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 初体验对象(v) {
+    era.set(`cflag:${this.cid}:15`, v);
+  }
+
+  /**
+   * 初吻对象（cflag:cid:16 ↔ CFLAG:16）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行276 CFLAG:16 ファーストキスの相手のキャラ番号＋１（未経験は -1 初期化）
+   * @returns {number}
+   */
+  get 初吻对象() {
+    return era.get(`cflag:${this.cid}:16`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 初吻对象(v) {
+    era.set(`cflag:${this.cid}:16`, v);
+  }
+
+  /**
+   * 上衣类型（cflag:cid:41 ↔ CFLAG:41）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行295 CFLAG:41 上着のタイプ（詳細は FUNC_CLOTH.ERB @PRINT_CLOTHTYPE）
+   * @returns {number}
+   */
+  get 上衣类型() {
+    return era.get(`cflag:${this.cid}:41`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 上衣类型(v) {
+    era.set(`cflag:${this.cid}:41`, v);
+  }
+
+  /**
+   * 上衣上状态（cflag:cid:45 ↔ CFLAG:45）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行299 CFLAG:45 上着上の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
+   * @returns {number}
+   */
+  get 上衣上状态() {
+    return era.get(`cflag:${this.cid}:45`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 上衣上状态(v) {
+    era.set(`cflag:${this.cid}:45`, v);
+  }
+
+  /**
+   * 上衣下状态（cflag:cid:46 ↔ CFLAG:46）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行300 CFLAG:46 上着下の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
+   * @returns {number}
+   */
+  get 上衣下状态() {
+    return era.get(`cflag:${this.cid}:46`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 上衣下状态(v) {
+    era.set(`cflag:${this.cid}:46`, v);
+  }
+
   // —— base ——
   /**
    * 射精槽（base:cid:2 ↔ BASE:2）
