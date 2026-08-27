@@ -127,7 +127,7 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // fixture 的对应用例，单场调教的存量用例零误伤）。
 // #161 起为 312：+8（范围 B 对拍——归一化器扩展与样本登记的镜像本体）。
 // 本批 M 编号在 rebase 时整体顺延（原 M293-M300 与 #151/#152 撞号，SOP §5.5）。
-const LEDGER_COUNT_BASELINE = 312;
+const LEDGER_COUNT_BASELINE = 315;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

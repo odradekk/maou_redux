@@ -12,6 +12,22 @@ class EventFacade {
     this.cid = cid;
   }
 
+  // —— cflag ——
+  /**
+   * 侵攻度（cflag:cid:502 ↔ CFLAG:502）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行387 CFLAG:502 侵攻度
+   * @returns {number}
+   */
+  get 侵攻度() {
+    return era.get(`cflag:${this.cid}:502`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 侵攻度(v) {
+    era.set(`cflag:${this.cid}:502`, v);
+  }
+
   // —— talent ——
   /**
    * 反抗心（talent:cid:11 ↔ TALENT:11）

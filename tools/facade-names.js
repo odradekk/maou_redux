@@ -67,13 +67,52 @@ const cflag = {
     '灌肠经验',
     src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),
   ),
+  // —— 角色生成段的跨域写（#170 @CM_BASE/@CM_VIRGIN/@CM_CLOTH；属主见 ownership/cflag-ownership.yml）——
+  11: named('攻击力', src(SRC_FLAG, ':270 CFLAG:11 = 攻撃力')),
+  12: named('防御力', src(SRC_FLAG, ':271 CFLAG:12 = 防御力')),
   13: named('基础攻击', src(SRC_FLAG, 'CFLAG:13 基礎攻撃力')),
   14: named('基础防御', src(SRC_FLAG, 'CFLAG:14 基礎防御力')),
+  15: named(
+    '初体验对象',
+    src(
+      SRC_FLAG,
+      ':275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）',
+    ),
+  ),
+  16: named(
+    '初吻对象',
+    src(
+      SRC_FLAG,
+      ':276 CFLAG:16 ファーストキスの相手のキャラ番号＋１（未経験は -1 初期化）',
+    ),
+  ),
+  41: named(
+    '上衣类型',
+    src(
+      SRC_FLAG,
+      ':295 CFLAG:41 上着のタイプ（詳細は FUNC_CLOTH.ERB @PRINT_CLOTHTYPE）',
+    ),
+  ),
+  45: named(
+    '上衣上状态',
+    src(
+      SRC_FLAG,
+      ':299 CFLAG:45 上着上の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）',
+    ),
+  ),
+  46: named(
+    '上衣下状态',
+    src(
+      SRC_FLAG,
+      ':300 CFLAG:46 上着下の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）',
+    ),
+  ),
   109: named(
     '排卵诱发剂',
     src(SRC_FLAG, 'CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）'),
   ),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
+  120: named('卖春积极性', src(SRC_FLAG, ':331 CFLAG:120 売春への積極性')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),
   202: named('简易助手_0', src(SRC_KXX, ':123 简易助手口上 CFLAG:202～210')),
   203: named('简易助手_1', src(SRC_KXX, ':123')),
@@ -224,6 +263,8 @@ const cflag = {
     '种族年龄',
     src(SRC_FLAG, 'CFLAG:452 種族年齢（月替わりの年齢加算はこちら）'),
   ),
+  501: named('侵攻阶层', src(SRC_FLAG, ':386 CFLAG:501 侵攻階層')),
+  502: named('侵攻度', src(SRC_FLAG, ':387 CFLAG:502 侵攻度')),
   503: named(
     '休憩',
     // SYSTEM ver1.0.3.ERB 带空格的文件名进不了门面出处注释（gen-facade 测试
@@ -233,6 +274,13 @@ const cflag = {
   ),
   506: named('新人', src(SRC_FLAG, 'CFLAG:506 新人フラグ')),
   507: named('回城标志', src(SRC_FLAG, 'CFLAG:507 街まで帰還フラグ')),
+  508: named(
+    '再起点',
+    src(
+      SRC_FLAG,
+      ':409 CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）',
+    ),
+  ),
   534: named('已接任务', src(SRC_FLAG, 'CFLAG:534 受注クエスト')),
   570: named(
     '从属怪物',

@@ -12,6 +12,23 @@ class PatchFacade {
     this.cid = cid;
   }
 
+  // —— cflag ——
+  /**
+   * 卖春积极性（cflag:cid:120 ↔ CFLAG:120）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行331 CFLAG:120 売春への積極性
+   * @returns {number}
+   */
+  get 卖春积极性() {
+    return era.get(`cflag:${this.cid}:120`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 卖春积极性(v) {
+    era.set(`cflag:${this.cid}:120`, v);
+  }
+
+  // —— talent ——
   /**
    * 不怕脏（talent:cid:64 ↔ TALENT:64）
    * 源: yml/Talent.yml id 64
