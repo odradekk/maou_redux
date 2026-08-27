@@ -217,4 +217,28 @@ export default [
     tests: ['compare-samples'],
     must_mention: 'unexplained 归零',
   },
+  {
+    desc: 'M370 表外繁体判定器坏（find_outside_trad 永不报——锁对表外繁体复盲，#188 的靶心）',
+    file: 'tools/lang-normalize.js',
+    find: '    if (tbl.char_map.has(ch) || !TRAD_SIDE_SET.has(ch)) {',
+    replace: '    if (true) { // 变异：表外繁体永不报',
+    tests: ['lang-normalize', 'output-lang-lock'],
+    must_mention: '贖',
+  },
+  {
+    desc: 'M371 参考集数据删锚点字（贖 移出繁侧集——数据侧坏，判定器跟着失明）',
+    file: 'tools/lang-simp-ref.js',
+    find: '贖贗',
+    replace: '贗',
+    tests: ['lang-simp-ref', 'lang-normalize', 'output-lang-lock'],
+    must_mention: '贖',
+  },
+  {
+    desc: 'M372 归一表目标值映进繁侧（寵→龍——表把字映成另一个繁体，交叉不变量红）',
+    file: 'tools/lang-table.js',
+    find: "  寵: '宠',",
+    replace: "  寵: '龍', // 变异：目标值落在繁侧集",
+    tests: ['lang-simp-ref'],
+    must_mention: '繁侧',
+  },
 ];
