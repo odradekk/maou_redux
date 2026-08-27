@@ -22,3 +22,8 @@ yml/
 # 区段所有权产物：与 yml/ 同规格的生成物（tools/ownership-scan.js，issue #66），
 # 键名双引号 + 固定排序是扫描器约定，勿格式化
 ownership/
+
+# 口上转译器产物（issue #107 原型）：待复核初稿，含 ERB 变量名直译
+# （如 if (FLAG:7 == 0) 的 FLAG:7 是 ERB 语法，不是合法 JS），
+# 格式由 tools/kojo-transpiler.js 约定，复核后进入 ere/ 才受 prettier 约束
+products/

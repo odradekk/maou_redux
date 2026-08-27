@@ -1,0 +1,4 @@
+# 口上转译器产物（issue #107 原型）：待复核初稿，含 ERB 变量名直译
+# （如 if (FLAG:7 == 0) 的 FLAG:7 是 ERB 语法，不是合法 JS），
+# 复核后进入 ere/ 才受 eslint 约束
+products/
