@@ -160,3 +160,37 @@ engine_test('引擎实证：缺名字表时三段寻址直接崩溃（本锁存�
     /Cannot read properties of undefined \(reading '2'\)/,
   );
 });
+
+engine_test(
+  '引擎实证：savestr 族不存在——二段报 key error、三段完全静默（#171 改走 callname 的理由）',
+  () => {
+    const loader = load_all_products();
+    const errors = [];
+    const make_fake = () => ({
+      staticData: { ...loader.static_data },
+      fieldNames: loader.field_names,
+      data: { cstr: { 0: {} } },
+      global: {},
+      extendedTables: {},
+      era: { error: (m) => errors.push(String(m)) },
+    });
+
+    // 对照：cstr 表引擎认识，三段写得进（原作 CSTR:A:1 因此可 1:1 照写）
+    assert.equal(engine.set_var.call(make_fake(), 'cstr:0:1', 'X'), 'X');
+
+    // 二段 savestr：引擎压根没有这张表（app.asar 全文零命中），走 error 分支
+    errors.length = 0;
+    assert.equal(engine.set_var.call(make_fake(), 'savestr:0', 'X'), undefined);
+    assert.deepEqual(errors, ['key error in getter/setter! key (savestr:0)']);
+
+    // 三段 savestr：**连 era.error 都不给**，完全静默丢弃。这一条比二段更
+    // 危险——原作的 SAVESTR:A 正是三段形态，照抄过来不会有任何痕迹，
+    // 玩家看到的名字恒空。#171 因此把名字承载改走 callname:${id}:-1（#5）。
+    errors.length = 0;
+    assert.equal(
+      engine.set_var.call(make_fake(), 'savestr:0:1', 'X'),
+      undefined,
+    );
+    assert.deepEqual(errors, []);
+  },
+);

@@ -512,4 +512,15 @@ export default [
     tests: ['fixture'],
     must_mention: 'resetData 把调教列表一并清空（引擎整份重建 data）',
   },
+  // —— #171 夹具隔离开关（#168 裁定 4：两条 e2e 不在同一条日循环上竞速）——
+  {
+    desc: 'M357 disable_enter_enemy 被拆（隔离开关失效，勇者照常来袭）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      require('#/event/enter-enemy').enter_enemy = async () => 0;`,
+    replace: `      ; // 变异：开关不替换导出`,
+    tests: ['enter-enemy'],
+    // 变异下开关用例第一条断言（勇者入队）先红，第二条不再执行——
+    // must_mention 取先红断言的消息（M275 先例）
+    must_mention: '开关短路了 :93 的调用——勇者没有入队',
+  },
 ];

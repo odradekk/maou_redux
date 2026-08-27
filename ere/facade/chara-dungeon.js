@@ -103,6 +103,21 @@ class DungeonFacade {
     era.set(`cflag:${this.cid}:508`, v);
   }
 
+  /**
+   * 所持金（cflag:cid:580 ↔ CFLAG:580）
+   * 源: target/ERB/迷宮/DUNGEON_TOWN.ERB 行121 勇者所持金（城镇经济消费，ENTER_ENEMY.ERB 的初期加算同此下标）
+   * @returns {number}
+   */
+  get 所持金() {
+    return era.get(`cflag:${this.cid}:580`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 所持金(v) {
+    era.set(`cflag:${this.cid}:580`, v);
+  }
+
   // —— base ——
   /**
    * 体力（base:cid:0 ↔ BASE:0）

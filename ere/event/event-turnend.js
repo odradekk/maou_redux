@@ -18,10 +18,12 @@
  *     侧指针不隐式传（#5 决议第六条），循环按角色 ID 显式进行（era.
  *     getAddedCharacters()，对应原作 0..CHARANUM-1 的已加入序号全体），被调
  *     实现落地时以参数承接。
- *   - 体外函数除日程两件外全部存根（运行时打占位行，名单见 STUBBED_CALLS，
- *     登记 docs/stub-registry.md）：判定与妊娠六件、ENTER_ENEMY、
+ *   - 体外函数除日程与勇者来袭三件外全部存根（运行时打占位行，名单见
+ *     STUBBED_CALLS，登记 docs/stub-registry.md）：判定与妊娠六件、
  *     AUTO_BUYING、DEBUG_CHECK。EVENT_NEXTDAY/EVENT_NEXTMONTH 是 #115 落的
- *     真身（ere/event/event-nextday.js、event-nextmonth.js）。
+ *     真身（ere/event/event-nextday.js、event-nextmonth.js）；ENTER_ENEMY
+ *     是 #171 落的真身（ere/event/enter-enemy.js，经模块对象调用——见
+ *     顶部 require 处的说明）。
  *   - :31-51 原作注释掉的死亡删除段，1:1 不移植（照原样保持注释状态）。
  */
 
@@ -32,6 +34,11 @@ const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { run_event_nextday } = require('#/event/event-nextday');
 const { run_event_nextmonth } = require('#/event/event-nextmonth');
+// ENTER_ENEMY 经模块对象调用（不解构）：#171 的夹具隔离开关
+// （era-fixture.js 的 disable_enter_enemy，#168 裁定 4）就地替换本模块的
+// enter_enemy 导出，解构会把函数固化进本闭包、替换不可达——两个写法的
+// 游戏行为完全等价，差别只在导出表的属性查找发生在调用时
+const enter_enemy_mod = require('#/event/enter-enemy');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -48,7 +55,6 @@ const STUBBED_CALLS = [
   'CONCEPTION_CHECK_KYOUOU_TO_T',
   'IN_VAGINA_NTRD_TO_T',
   'CONCEPTION_CHECK_NTRD_TO_T',
-  'ENTER_ENEMY',
   'AUTO_BUYING',
   'DEBUG_CHECK',
 ];
@@ -107,8 +113,8 @@ on(
       // TIME = 0（次日午前，行 91）
       era_flag.time = 0;
 
-      // :93 随机遇敌的第一件（参数 0）
-      stub_line('ENTER_ENEMY', '随机遇敌');
+      // :93 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）
+      await enter_enemy_mod.enter_enemy(0);
 
       // :95-107 宣言数 SENGEN/SENGENMAX（EX_FLAG:9012 = 宣言回数）。EX_FLAG
       // 表未落地（#113），读无可读，此处按 0 承接——落表后换真读。DAY 分档
@@ -137,13 +143,16 @@ on(
         sengen = sengenmax;
       }
       if (day >= 100) {
-        stub_line('ENTER_ENEMY', '随机遇敌');
+        // :112 CALL ENTER_ENEMY（#171 起为真身）
+        await enter_enemy_mod.enter_enemy(0);
       }
       if (day >= 300) {
-        stub_line('ENTER_ENEMY', '随机遇敌');
+        // :114 CALL ENTER_ENEMY
+        await enter_enemy_mod.enter_enemy(0);
       }
       if (day >= 500) {
-        stub_line('ENTER_ENEMY', '随机遇敌');
+        // :116 CALL ENTER_ENEMY
+        await enter_enemy_mod.enter_enemy(0);
       }
       if (sengen <= 0 && ex_flag_9012 > 0) {
         sengen = 1;
@@ -153,7 +162,8 @@ on(
       }
       // :121-125 IF SENGEN > 0：FOR EFFECT, 0, SENGEN 追加遇敌
       for (let effect = 0; effect < sengen; effect += 1) {
-        stub_line('ENTER_ENEMY', '随机遇敌');
+        // :123 CALL ENTER_ENEMY
+        await enter_enemy_mod.enter_enemy(0);
       }
     } else {
       // :126-128 午前 → 午后
