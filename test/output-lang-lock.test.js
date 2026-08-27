@@ -1,10 +1,13 @@
 /**
- * @file 简体锁（issue #60）：ere/ 与 yml/ 的玩家可见文本不得含表外非简体字符。
+ * @file 简体锁（issue #60）：ere/ 与 yml/ 的玩家可见文本不得含**归一表登记的**非简体字符。
  *
  * 缘由：游戏语言统一为简体中文是产品决定（对 1:1 的有意偏离），偏离必须以
  * 「一张表 + 一道锁」落地。判定器是 tools/lang-normalize.js 的
  * find_offenders（字级命中 / 假名 / 词级命中），数据是 tools/lang-table.js
  * （唯一真相源）——本文件不自持一份判定逻辑。
+ *
+ * **能力边界（#188 勘误）**：判定是查表命中——字在归一表里才报，表外的
+ * 繁/日字种静默通过。本锁当前只守护「表内登记的非简体字符」。
  *
  * 形状参照 test/static-table-coverage.test.js 与 test/kojo-text-fidelity.test.js：
  * **从源码扫、逐条探**，新模块 / 新产物自动纳入——文件二不用登记。
@@ -133,7 +136,7 @@ function scan_repo(ere_dir = ERE_DIR) {
   };
 }
 
-test('ere/ 与 yml/ 的玩家可见文本全部为简体（表外字符即红）', () => {
+test('ere/ 与 yml/ 的玩家可见文本不含表内登记的非简体字符（查表命中即红）', () => {
   const { problems, js_files, yml_files, literals } = scan_repo();
   // 扫描未退化：ere/ 已有几十个模块、上千条字面量
   assert.ok(js_files >= 30, `ere/ 只扫到 ${js_files} 个 .js，扫描八成失效了`);
