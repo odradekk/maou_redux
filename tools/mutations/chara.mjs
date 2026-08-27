@@ -17,7 +17,7 @@ export default [
     find: '  if (!elite && !ex1 && !offspring) {',
     replace: '  if (!ex1 && !offspring) {',
     tests: ['chara-make'],
-    must_mention: 'CFLAG:A:1 = 0',
+    must_mention: 'CFLAG:A:1 = 0（精英部下）',
   },
   {
     desc: 'M309 转发层折叠（@CHAR_MAKE 不再 JUMP 本体——转发测试必须红）',

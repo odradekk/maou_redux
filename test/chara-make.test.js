@@ -117,7 +117,7 @@ test('三分叉·精英部下：CFLAG:1 = 0，走 CM_ST_ACE（无职业四维外
   fixture.store.set('talent:7:220', 1); // TALENT:精英
   const { chara_make } = load(fixture);
   await chara_make(7, 0, 0, never);
-  assert.equal(fixture.store.get('cflag:7:1'), 0, 'CFLAG:A:1 = 0');
+  assert.equal(fixture.store.get('cflag:7:1'), 0, 'CFLAG:A:1 = 0（精英部下）');
   assert.equal(
     fixture.store.get('talent:7:254'),
     1,
