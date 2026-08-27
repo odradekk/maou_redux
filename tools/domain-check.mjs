@@ -125,6 +125,9 @@ const DIR_DOMAINS = [
   ['ere/kojo', 'kojo'],
   ['ere/chara', 'chara'],
   ['ere/event', 'event'],
+  // ere/data/ 是纯数据常量表（如装备表 ere/data/equip-database.js，ADR-0007
+  // 的装备落 system 兜底域）——零 era.set，域映射只为目录认领完整性
+  ['ere/data', 'system'],
   ['ere/system', 'system'],
   ['ere/page', 'page'],
   ['ere/utils', 'utils'],

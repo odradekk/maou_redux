@@ -14,6 +14,36 @@ class EventFacade {
 
   // —— cflag ——
   /**
+   * 装饰（cflag:cid:551 ↔ CFLAG:551）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——装飾（存储编号，EQUIP.ERB:36）
+   * @returns {number}
+   */
+  get 装饰() {
+    return era.get(`cflag:${this.cid}:551`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 装饰(v) {
+    era.set(`cflag:${this.cid}:551`, v);
+  }
+
+  /**
+   * 装饰2（cflag:cid:552 ↔ CFLAG:552）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——装飾2（存储编号，EQUIP.ERB:37）
+   * @returns {number}
+   */
+  get 装饰2() {
+    return era.get(`cflag:${this.cid}:552`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 装饰2(v) {
+    era.set(`cflag:${this.cid}:552`, v);
+  }
+
+  /**
    * 侵攻度（cflag:cid:502 ↔ CFLAG:502）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行387 CFLAG:502 侵攻度
    * @returns {number}

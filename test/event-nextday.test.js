@@ -345,6 +345,23 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   );
 });
 
+test('诅咒戒指制造接线（#174 真身）：EVENT_NEXTDAY:120 无条件调用，按库存逐个消耗', async () => {
+  // 随机源走生产路径（Math.random），断言对环种不敏感：只看消耗与播报形态
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('item:300', 1);
+  const { run_event_nextday } = fixture.load_module('event/event-nextday');
+
+  await run_event_nextday();
+  assert.equal(fixture.store.get('item:300'), 0, '装饰戒指被消耗一件');
+  assert.match(
+    fixture.text_lines().join('\n'),
+    /你把装饰戒指制造成.+了/,
+    '制造播报必须出现（EVENT_NEXTDAY:120 的调用点）',
+  );
+});
+
 test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS: nextday_stubs } = fixture.load_module(
@@ -364,7 +381,7 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'NINSIN_MAIN',
     'OFFERVIRGIN_CHECK',
     'NIGHT_STALKING_CHECK',
-    'CURSE_EQUIP_RING',
+    // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）
     'SUMMON_MONSTER',
     'DUNGEON_ROOM_DAY',
     'PILLORY',

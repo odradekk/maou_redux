@@ -460,6 +460,14 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'flag:10006', value: -1 }, // ASSI = -1（普通档开头）
     { name: 'cflag:0:506', value: 0 }, // 新人标志消去
     { name: 'cflag:0:666', value: 0 }, // 自动调教标志消去
+    // WEAPON_RESTORE（#174 真身，全角色循环含魔王；基础攻防 0 → 六笔 0 写，
+    // 写序 = 原作 :16-19 的两步赋值 × 攻/防 + :34-35 的 ÷(RESULT+1)）
+    { name: 'cflag:0:11', value: 0 },
+    { name: 'cflag:0:11', value: 0 },
+    { name: 'cflag:0:12', value: 0 },
+    { name: 'cflag:0:12', value: 0 },
+    { name: 'cflag:0:11', value: 0 },
+    { name: 'cflag:0:12', value: 0 },
     { name: 'base:0:0', value: 1100 }, // 魔王体力 +1000（TIME 已翻转为 1）
     { name: 'base:0:1', value: 1050 }, // 魔王气力 +1000
     { name: 'base:0:1', value: 300 }, // 超上限钳回 MAXBASE:0:1
@@ -474,6 +482,47 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   );
   // 结算中段的原作 WAIT 恰好一次
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'waitAnyKey' }]);
+});
+
+test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与死之戒指的回复减衰', async () => {
+  // 原作 :314-326：W:8 = 4 乘、W:8 = 13 除。存根时代倍率恒 ×1/÷1，此处
+  // 钉住真身取值——再生+3（效果 4）→ ×(3+1)；死之+2（效果 13）→ ÷(2+1)
+  const world = setup_turnend();
+  join_slave_chara(world.fixture, 31, '温妮');
+  world.fixture.store.set('maxbase:31:0', 2000);
+  world.fixture.store.set('base:31:0', 100);
+  world.fixture.store.set('cflag:31:551', 4 + 3 * 1000); // 再生戒指+3
+  world.fixture.store.set('cflag:31:552', 13 + 2 * 1000); // 死之戒指+2
+
+  await world.emit('EVENTTURNEND'); // 第一回合：结算见 TIME==1 → 回 MAX/10
+  // heal = 200 × (3+1) = 800，÷ (2+1) = 266
+  assert.equal(world.fixture.store.get('base:31:0'), 100 + 266);
+});
+
+test('装备效果接入（#174 真身）：欲望戒指的陷落事件随 RESULT > 0 可达', async () => {
+  // 原作 :390-413（W:8 = 6）：存根 RESULT 0 整支不达。真身按佩戴强度取值，
+  // 无素质 69/73 的角色走第一支：获得容易陷落（TALENT:73）并加欲情珠
+  const world = setup_turnend();
+  join_slave_chara(world.fixture, 31, '温妮');
+  world.fixture.store.set('cflag:31:551', 6 + 2 * 1000); // 欲望戒指+2（诅咒、效果 6）
+
+  await world.emit('EVENTTURNEND');
+  assert.equal(
+    world.fixture.store.get('talent:31:73'),
+    1,
+    '容易陷落（TALENT:73）必须被赋予',
+  );
+  assert.equal(
+    world.fixture.store.get('juel:31:5'),
+    1,
+    '按等级欲情：floor(2/2)',
+  );
+  assert(
+    world.fixture
+      .text_lines()
+      .some((line) => line.includes('戒指的魔力永久地改变了')),
+    '陷落播报必须出现',
+  );
 });
 
 test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', async () => {
@@ -521,15 +570,14 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'AUTO_BUYING',
     'DEBUG_CHECK',
   ]);
+  // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
     'PARTY_UNITE',
-    'WEAPON_RESTORE',
     'DUNGEON',
     'DUNGEON_MAP',
     'LVUP',
     'DUNGEON_AFTER',
-    'EQUIP_CHECK',
     '自動處刑',
     'BENKI',
     'NAEDOKO',

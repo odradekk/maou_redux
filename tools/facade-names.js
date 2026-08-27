@@ -261,8 +261,14 @@ const cflag = {
   //    ownership/cflag-ownership.yml）。全部用 named_tail：书写与发射都
   //    落在各域区块尾部——#174（EQUIP）并行补名时两票落点不相邻，
   //    合并面最小（named_tail 语义见其 JSDoc）。 ——
-  11: named_tail('攻击力', src(SRC_FLAG, ':270 CFLAG:11 = 攻撃力')),
-  12: named_tail('防御力', src(SRC_FLAG, ':271 CFLAG:12 = 防御力')),
+  11: named_tail(
+    '攻击力',
+    src(SRC_FLAG, ':270 CFLAG:11 = 攻撃力（@WEAPON_RESTORE 每日重算写入）'),
+  ),
+  12: named_tail(
+    '防御力',
+    src(SRC_FLAG, ':271 CFLAG:12 = 防御力（@WEAPON_RESTORE 每日重算写入）'),
+  ),
   15: named_tail(
     '初体验对象',
     src(
@@ -307,6 +313,21 @@ const cflag = {
       SRC_FLAG,
       ':409 CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）',
     ),
+  ),
+  // —— 装备枠（#174 H5）。553-559 全库无读写（target/ 实测仅 550/551/552
+  //    有使用），无名字不进门面。用 named（非 named_tail）：tail 的用途是
+  //    并行期把两票落点岔开，冲突已在 rebase 解掉，这三条按序号正常入列。 ——
+  550: named(
+    '武装',
+    src(SRC_FLAG, 'CFLAG:550～559 装備品枠——武装（存储编号，EQUIP.ERB:35）'),
+  ),
+  551: named(
+    '装饰',
+    src(SRC_FLAG, 'CFLAG:550～559 装備品枠——装飾（存储编号，EQUIP.ERB:36）'),
+  ),
+  552: named(
+    '装饰2',
+    src(SRC_FLAG, 'CFLAG:550～559 装備品枠——装飾2（存储编号，EQUIP.ERB:37）'),
   ),
 };
 

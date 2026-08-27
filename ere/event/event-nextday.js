@@ -39,6 +39,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
+const { curse_equip_ring } = require('#/system/equip/equip-curse');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -54,7 +55,6 @@ const STUBBED_CALLS = [
   'NINSIN_MAIN',
   'OFFERVIRGIN_CHECK',
   'NIGHT_STALKING_CHECK',
-  'CURSE_EQUIP_RING',
   'SUMMON_MONSTER',
   'DUNGEON_ROOM_DAY',
   'PILLORY',
@@ -221,8 +221,9 @@ async function run_event_nextday() {
 
   // :117 運営費（原作注释态，不移植）
 
-  // :120 指輪と召喚 / :123 召喚（参数 0）/ :126 设施効果（均无条件）
-  stub_line('CURSE_EQUIP_RING', '诅咒戒指处理');
+  // :120 指輪と召喚（CURSE_EQUIP_RING #174 起真身）/ :123 召喚（参数 0）/
+  // :126 设施効果（均无条件）
+  await curse_equip_ring();
   stub_line('SUMMON_MONSTER', '怪物召唤');
   stub_line('DUNGEON_ROOM_DAY', '设施效果结算');
 

@@ -19,10 +19,9 @@
  *     主循环 A = 1 起跳过魔王），ere 侧按角色 ID 迭代（era.getAddedCharacters()
  *     逐一遍历，结算循环跳过 cid 0——魔王恒角色 ID 0，与原作跳过首位角色
  *     等价，CONTEXT.md「角色与指针」）。
- *   - EQUIP_CHECK 存根 RESULT 恒 0（无装备效果）：回复的装备倍率因此恒 ×1/÷1
- *     （原作 RESULT += 1 后乘除），戒指两事件（陷落/洗脑）整支不达。存根
- *     名单见 STUBBED_CALLS，登记 docs/stub-registry.md。
- *   - KYOTEN_EVENT（#119）自本票起接线：四个领域的衰减块在衰减完成后按
+ *   - EQUIP_CHECK/WEAPON_RESTORE 自 #174（H5）起为真身（ere/system/equip/）：
+ *     装备倍率按佩戴效果实际取值，戒指两事件（陷落/洗脑）随 RESULT > 0 可达。
+ *     KYOTEN_EVENT（#119）自本票起接线：四个领域的衰减块在衰减完成后按
  *     领域号调用（ere/page/page-invasion.js 的 kyoten_event——system → page
  *     的依赖方向与 juel-check → page-info-exp 同构，判断依据见 issue #119
  *     评论）。ARG:0 == 1 人间界臂是真身；2/3/4 三臂不可达（FLAG:86/88/90
@@ -40,6 +39,8 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { run_event_newday } = require('#/event/event-nextday');
+const { equip_check } = require('#/system/equip/equip-check');
+const { weapon_restore } = require('#/system/equip/weapon-restore');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -48,12 +49,10 @@ const { run_event_newday } = require('#/event/event-nextday');
 const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
   'PARTY_UNITE',
-  'WEAPON_RESTORE',
   'DUNGEON',
   'DUNGEON_MAP',
   'LVUP',
   'DUNGEON_AFTER',
-  'EQUIP_CHECK',
   '自動處刑',
   'BENKI',
   'NAEDOKO',
@@ -69,17 +68,6 @@ const STUBBED_CALLS = [
 /** 原作 RAND:N（0..N-1）的等价物 */
 function rand(n) {
   return Math.floor(Math.random() * n);
-}
-
-/**
- * EQUIP_CHECK 的存根：打一行占位并返回 RESULT = 0（无装备效果——TEQUIP
- * 装备位当前无写入路径，装备票落地后换真身）。W:8 的装备效果编号以注释
- * 随调用点标注。
- * @returns {number} 存根 RESULT：恒 0
- */
-function stub_equip_check() {
-  stub_line('EQUIP_CHECK', '装备效果检查');
-  return 0;
 }
 
 on('EVENTTURNEND', async () => {
@@ -101,7 +89,7 @@ on('EVENTTURNEND', async () => {
 
   // :265-272 全角色：装备复原；战役中（CFLAG:1 == 12）的角色推进迷宫攻略
   for (const cid of era.getAddedCharacters()) {
-    stub_line('WEAPON_RESTORE', '装备复原');
+    weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
     if (chara(cid).invasion.状态 === 12) {
       // 阶段 3 的接入点之一（勇者战役；当前无写入路径，恒不达。行 270-271）
       stub_line('DUNGEON', '迷宫攻略');
@@ -148,9 +136,10 @@ on('EVENTTURNEND', async () => {
     let heal =
       era_flag.time === 1 ? Math.floor(max_hp / 10) : Math.floor(max_hp / 2);
 
-    // :314-326 装备效果（W:8 = 4 回复加成、W:8 = 13 回复减衰；存根倍率 ×1/÷1）
-    heal *= stub_equip_check() + 1;
-    heal = Math.floor(heal / (stub_equip_check() + 1));
+    // :314-326 装备效果（W:8 = 4 HP回复加成乘、W:8 = 13 回复减衰除；行 318
+    // 与 324 的 RESULT += 1 已并入调用）
+    heal *= equip_check(cid, 4) + 1;
+    heal = Math.floor(heal / (equip_check(cid, 13) + 1));
 
     // :328-330 吸血鬼（TALENT:314 == 3）回复三倍
     if ((era.get(`talent:${cid}:314`) || 0) === 3) {
@@ -186,8 +175,8 @@ on('EVENTTURNEND', async () => {
     if (place === 2) {
       const max_wp = era.get(`maxbase:${cid}:1`) || 0;
       let mheal = Math.floor(max_wp / 40);
-      mheal *= stub_equip_check() + 1;
-      mheal = Math.floor(mheal / (stub_equip_check() + 1));
+      mheal *= equip_check(cid, 5) + 1;
+      mheal = Math.floor(mheal / (equip_check(cid, 13) + 1));
       if (era.get(`talent:${cid}:12`)) {
         mheal *= 2; // 刚强
       } else if (era.get(`talent:${cid}:10`)) {
@@ -206,9 +195,8 @@ on('EVENTTURNEND', async () => {
       chara(cid).invasion.状态 = 0;
     }
 
-    // :390-413 容易陷落戒指（W:8 = 6）。存根 RESULT 0 → 三支全不达，只剩
-    // 原作的空行；真身落地后 RESULT 按佩戴效果取值
-    const fall_ring = stub_equip_check();
+    // :390-413 容易陷落戒指（W:8 = 6）。RESULT 按佩戴效果取值（#174 起真身）
+    const fall_ring = equip_check(cid, 6);
     era.println(); // PRINTFORML（行 394）
     if (
       fall_ring > 0 &&
@@ -251,7 +239,7 @@ on('EVENTTURNEND', async () => {
     // :415-431 攻击/防御增加的装备效果已被原作移进 @WEAPON_RESTORE（注释段）
     // :433-437 经验增加（W:8 = 10）
     {
-      const exp_up = stub_equip_check();
+      const exp_up = equip_check(cid, 10);
       if (exp_up > 0) {
         chara(cid).dungeon.战斗经验 += exp_up * 10;
       }
@@ -259,7 +247,7 @@ on('EVENTTURNEND', async () => {
 
     // :439-449 攻击防御减少（W:8 = 14），下限 15
     {
-      const down = stub_equip_check();
+      const down = equip_check(cid, 14);
       if (down > 0) {
         chara(cid).chara.基础攻击 = Math.max(
           chara(cid).chara.基础攻击 - down,
@@ -274,7 +262,7 @@ on('EVENTTURNEND', async () => {
 
     // :451-494 支配（W:8 = 9）与异种婚姻/使役的伙伴决定
     {
-      const dominate = stub_equip_check();
+      const dominate = equip_check(cid, 9);
       if (era.get(`talent:${cid}:159`)) {
         // 异种婚姻：结婚对象必定使役（CFLAG:601 是对象 NO，100-199 段之外无效）
         let partner = era.get(`cflag:${cid}:601`) || 0;
@@ -322,9 +310,9 @@ on('EVENTTURNEND', async () => {
       }
     }
 
-    // :496-523 洗脑戒指（W:8 = 15）。存根 RESULT 0 → 四支全不达，只剩空行
+    // :496-523 洗脑戒指（W:8 = 15）。RESULT 按佩戴效果取值（#174 起真身）
     {
-      const brainwash = stub_equip_check();
+      const brainwash = equip_check(cid, 15);
       era.println(); // PRINTFORML（行 499）
       if (brainwash > 0 && era.get(`talent:${cid}:152`)) {
         const name = era.get(`callname:${cid}:-1`) ?? '';

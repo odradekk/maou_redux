@@ -88,6 +88,21 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:452`, v);
   }
 
+  /**
+   * 武装（cflag:cid:550 ↔ CFLAG:550）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——武装（存储编号，EQUIP.ERB:35）
+   * @returns {number}
+   */
+  get 武装() {
+    return era.get(`cflag:${this.cid}:550`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 武装(v) {
+    era.set(`cflag:${this.cid}:550`, v);
+  }
+
   // —— talent ——
   /**
    * 处女（talent:cid:0 ↔ TALENT:0）
