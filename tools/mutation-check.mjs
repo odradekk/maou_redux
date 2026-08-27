@@ -130,16 +130,29 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 const LEDGER_COUNT_BASELINE = 312;
 
 /**
- * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组引擎
- * 依赖引擎的条目数。当前 7 条 = M112/M113/M115（portcflag 预设比对）+
- * M127（资源缺省配置比对）+ M167/M169/M171（夹具的引擎镜像语义）。
- * 新变异若只被引擎比对用例守护，此数会涨——那意味着该变异在 CI 上只被
- * 「跳过」覆盖，改这份常量时想清楚。
- * #138 起 +2：M243/M245（Chara31 ABL / Chara34 MARK 预设比对——靶用例
- * 是 extalent-table 的 engine_test 组；同票 M240/M241/M244 靶在文件级
- * 用例（登记契约/版本轴）上，无引擎也红，不进跳过数）。
+ * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖
+ * 引擎的条目数。新变异若只被引擎比对用例守护，此数会涨——那意味着该
+ * 变异在 CI 上只被「跳过」覆盖，改这份常量时想清楚。
+ *
+ * **逐条记全，别只记增量。** 只记「#N 起 +k」时，某一票漏抬就再也对不
+ * 上账：#135 加的 M222 漏抬（11 未进 12），其后 #138 的 +2 与 #139 的 +3
+ * 各自算对了自己那份，总数却一直差 1，master CI 因此连红 18 次 4 天
+ * （首红 6f17fc3，2026-08-24）——直到有人把 17 条逐条列出来才对上。
+ *
+ * 当前 17 条：
+ *   基础 7：M112/M113/M115（portcflag 预设比对）、M127（资源缺省配置
+ *           比对）、M167/M169/M171（夹具的引擎镜像语义）
+ *   #113 +4：Chara35 预设值、ExFlag 名字表 id、ExFlag 结局线槽位、
+ *           Flag 侵略线 id
+ *   #135 +1：M222（saveFiles 落 _fixed.json——靶用例 resource-media 的
+ *           引擎默认形状比对。**当时漏抬，本处补记**）
+ *   #138 +2：M243/M245（Chara31 ABL / Chara34 MARK 预设比对——靶用例是
+ *           extalent-table 的 engine_test 组；同票 M240/M241/M244 靶在
+ *           文件级用例（登记契约/版本轴）上，无引擎也红，不进跳过数）
+ *   #139 +3：M270/M271/M272（Chara150 素質 320 / Chara201 素質 319 /
+ *           Chara777 相性段）
  */
-const ENGINE_SKIP_BASELINE = 16;
+const ENGINE_SKIP_BASELINE = 17;
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
