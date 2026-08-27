@@ -45,7 +45,7 @@ class DungeonFacade {
 
   /**
    * 攻击力（cflag:cid:11 ↔ CFLAG:11）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行270 CFLAG:11 = 攻撃力
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行270 CFLAG:11 = 攻撃力（@WEAPON_RESTORE 每日重算写入）
    * @returns {number}
    */
   get 攻击力() {
@@ -60,7 +60,7 @@ class DungeonFacade {
 
   /**
    * 防御力（cflag:cid:12 ↔ CFLAG:12）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行271 CFLAG:12 = 防御力
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行271 CFLAG:12 = 防御力（@WEAPON_RESTORE 每日重算写入）
    * @returns {number}
    */
   get 防御力() {
