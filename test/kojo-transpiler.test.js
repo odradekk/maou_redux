@@ -191,7 +191,10 @@ test('产物样例：K5 爱抚段与人工参照 kojo-k5.js 的文本逐句一�
 
 test('convert_expr：角色变量补全角色维（缺省 = TARGET，Emuera 语义）', () => {
   const n = [];
-  assert.equal(convert_expr('CFLAG:301 == 0', 1, n), 'era.get(`cflag:${target}:301`) == 0');
+  assert.equal(
+    convert_expr('CFLAG:301 == 0', 1, n),
+    'era.get(`cflag:${target}:301`) == 0',
+  );
   assert.equal(
     convert_expr('TALENT:TARGET:76 == 1', 2, n),
     'era.get(`talent:${target}:76`) == 1',
@@ -218,7 +221,13 @@ test('convert_expr：一维变量 / 单值全局 / RAND / 局部参数', () => {
 
 test('产物是合法 JS：K5 转译产物过 node --check（裁定一硬门槛）', () => {
   const { execFileSync } = require('node:child_process');
-  const erb = path.join(REPO_ROOT, 'target', 'ERB', '口上', 'EVENT_K5_マオ.ERB');
+  const erb = path.join(
+    REPO_ROOT,
+    'target',
+    'ERB',
+    '口上',
+    'EVENT_K5_マオ.ERB',
+  );
   const out = path.join(TMP, 'check-k5.js');
   transpile_file(erb, out, { force: true });
   // node --check 必须退出 0
@@ -241,7 +250,10 @@ test('KOJO_OUTPUT_NAME 覆盖全部 21 个口上文件（+ K20 空文件）', ()
   const files = fs.readdirSync(path.join(REPO_ROOT, 'target', 'ERB', '口上'));
   for (const f of files) {
     assert.ok(KOJO_OUTPUT_NAME[f], `缺映射：${f}`);
-    assert.ok(/^kojo-[kf]\d+[a-z-]+\.js$/.test(KOJO_OUTPUT_NAME[f]), `产物名非法：${KOJO_OUTPUT_NAME[f]}`);
+    assert.ok(
+      /^kojo-[kf]\d+[a-z-]+\.js$/.test(KOJO_OUTPUT_NAME[f]),
+      `产物名非法：${KOJO_OUTPUT_NAME[f]}`,
+    );
   }
 });
 
