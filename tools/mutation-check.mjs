@@ -127,6 +127,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // fixture 的对应用例，单场调教的存量用例零误伤）。
 // #161 起为 312：+8（范围 B 对拍——归一化器扩展与样本登记的镜像本体）。
 // 本批 M 编号在 rebase 时整体顺延（原 M293-M300 与 #151/#152 撞号，SOP §5.5）。
+// #170 起为 315：+3（角色生成管线——M307 CM_STP 的 CFLAG:A:1 = 2 改 3、
+// M308 三分叉第一支守卫砍掉 !精英、M309 转发层折叠；三条同钉新宿主
+// chara-make，无老宿主代红之虞）。
 const LEDGER_COUNT_BASELINE = 315;
 
 /**
