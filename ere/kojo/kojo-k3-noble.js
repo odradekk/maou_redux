@@ -453,7 +453,7 @@ async function kojo_message_com_3(rand) {
         } else if (rand_n(2) === 0) {
           await era.printAndWait(
             `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,
-          ); // :1097 黄金样本逐字比对（test/kojo-k3.test.js）
+          ); // :1097 黄金样本逐字比对（test/kojo-k3-noble.test.js）
         } else {
           await era.printAndWait(
             '「嗯~、嗯~嗯~……明明…说了、快住手了……啊嗯~……」',

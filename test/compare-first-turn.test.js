@@ -172,9 +172,9 @@ test('变量层：era.get 退路与 store 快照等值（raw() 的替代采集�
   assert.deepEqual(snapshot_via_get(fixture.era, Object.keys(after)), after);
 });
 
-test('录制不经游戏代码改动：口上台词由真实 kojo-k3 模块产出（定值随机源）', async () => {
+test('录制不经游戏代码改动：口上台词由真实 kojo-k3-noble 模块产出（定值随机源）', async () => {
   const { fixture } = await build_comparison();
-  // 这句只可能出自 ere/kojo/kojo-k3.js 的 :1097 分支（RAND_FIX 把随机三支
+  // 这句只可能出自 ere/kojo/kojo-k3-noble.js 的 :1097 分支（RAND_FIX 把随机三支
   // 固定到黄金样本选中的一支）——游戏模块零测试钩子，输出全走记录层
   assert.ok(
     fixture.text_lines().some((t) => t.includes('「哈呜、温妮、可是，一心地')),

@@ -64,7 +64,7 @@ const DECLARED_KOJO_COM_IDS = [
   ...Array.from({ length: 700 }, (_, i) => i + 901),
 ];
 
-/** @KOJO_MESSAGE_COM_{N}：指令口上族（这张票注册 3 与 5，见 kojo-k3/k5） */
+/** @KOJO_MESSAGE_COM_{N}：指令口上族（这张票注册 3 与 5，见 kojo-k3-noble / kojo-k5-mao） */
 const kojo_message_com_family = new DispatchFamily(
   'KOJO_MESSAGE_COM',
   DECLARED_KOJO_COM_IDS,

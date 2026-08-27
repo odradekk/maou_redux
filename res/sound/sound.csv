@@ -2,8 +2,10 @@
 ; 三首 BGM，源: target/sound（issue #69）。注册名沿用原作 PLAYBGM 的实参
 ; （即文件名本身，TITLE ver1.0.8.ERB:4 / DRAW_MAINMENU.ERB:13 /
 ; DEBUG小白娘2024ver0.0.14.ERB:65），调用点可照抄原串。
+; 注册名保留原作实参（1:1 追溯），磁盘文件名改 ASCII kebab-case——两列
+; 分离正好承载这件事，调用点 era.playMusic('据点2.mp3') 一行不动。
 ; 大书库.mp3 的播放点（@DEBUG_MENU_U）所在画面尚未移植，先登记备用，
 ; 待办见 docs/stub-registry.md 资源级待办。
 TFM-003A_17.mp3,TFM-003A_17.mp3
-据点2.mp3,据点2.mp3
-大书库.mp3,大书库.mp3
+据点2.mp3,stronghold-2.mp3
+大书库.mp3,great-library.mp3

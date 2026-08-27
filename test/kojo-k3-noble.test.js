@@ -1,5 +1,5 @@
 /**
- * ere/kojo/kojo-k3.js 的行为测试（issue #46 的黄金样本切片）。
+ * ere/kojo/kojo-k3-noble.js 的行为测试（issue #46 的黄金样本切片）。
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：温妮（id 31，随机生成的
  * 高貴性格角色——实机复现不了，测试播种素质 163）。覆盖：
@@ -65,7 +65,7 @@ async function setup_k3(seed) {
     seed(fixture);
   }
   fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k3');
+  fixture.load_module('kojo/kojo-k3-noble');
   return fixture;
 }
 
@@ -390,7 +390,7 @@ test('爱抚外指令（SELECTCOM != 0）：落占位行（分支待办可见）
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k3');
+  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k3-noble');
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',

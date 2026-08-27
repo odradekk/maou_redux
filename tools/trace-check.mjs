@@ -2097,7 +2097,7 @@ const FILES = [
     ],
   },
   {
-    js: 'ere/kojo/kojo-k3.js',
+    js: 'ere/kojo/kojo-k3-noble.js',
     refs: [
       { src: K3, ref: '81-85', any: [/^@EVENTTRAIN$/m, /^FLAG:103 = 1$/m] },
       { src: K3, ref: '87-89', any: [/^@EVENTEND$/m, /^FLAG:103 = 0$/m] },
@@ -2188,7 +2188,7 @@ const FILES = [
     ],
   },
   {
-    js: 'ere/kojo/kojo-k5.js',
+    js: 'ere/kojo/kojo-k5-mao.js',
     refs: [
       { src: K5, ref: '80-84', any: [/^@EVENTTRAIN$/m, /^FLAG:105 = 1$/m] },
       { src: K5, ref: '86-88', any: [/^@EVENTEND$/m, /^FLAG:105 = 0$/m] },
@@ -3588,7 +3588,7 @@ const FILES = [
 //
 // src 固定为 target/emuera.log；ref/any 与 ERB 锚同款（区间 N-M 取区间内
 // 任一行命中任一锚）。锚的写法对着原始行固定（条形字符数、数值、标签），
-// 行号漂移或样本被换，红在这里。既有引用（kojo-k3 的 26、juel-check 的
+// 行号漂移或样本被换，红在这里。既有引用（kojo-k3-noble 的 26、juel-check 的
 // 236-260）实测无误，一并进锁。
 
 const EMUERA_LOG = 'target/emuera.log';
@@ -3660,11 +3660,11 @@ const LOG_REFS = [
     ],
   },
   {
-    js: 'ere/kojo/kojo-k3.js',
+    js: 'ere/kojo/kojo-k3-noble.js',
     refs: [{ ref: '26', any: [/「哈呜、温妮、可是，一心地/] }],
   },
   {
-    js: 'test/kojo-k3.test.js',
+    js: 'test/kojo-k3-noble.test.js',
     refs: [{ ref: '26', any: [/「哈呜、温妮、可是，一心地/] }],
   },
   {
@@ -4069,7 +4069,7 @@ const ERB_EXEMPT_BASELINE = {
     '2175',
     '2508-2572',
   ],
-  'ere/kojo/kojo-k3.js': [
+  'ere/kojo/kojo-k3-noble.js': [
     '83',
     '84-85',
     '89',
@@ -4182,7 +4182,7 @@ const ERB_EXEMPT_BASELINE = {
     '1095',
     '1099',
   ],
-  'ere/kojo/kojo-k5.js': [
+  'ere/kojo/kojo-k5-mao.js': [
     '82',
     '83-84',
     '88',

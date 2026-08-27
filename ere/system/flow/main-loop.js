@@ -51,8 +51,8 @@ require('#/system/turnend-settle');
 // 分发族）与两个口上模块（K3 高貴、K5 マオ——各带 @EVENTTRAIN 存在标志
 // 与 @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层目录（docs/skeleton.md）
 require('#/kojo/kojo-system');
-require('#/kojo/kojo-k3');
-require('#/kojo/kojo-k5');
+require('#/kojo/kojo-k3-noble');
+require('#/kojo/kojo-k5-mao');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。

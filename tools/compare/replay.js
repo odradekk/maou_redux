@@ -40,7 +40,7 @@ const TRAIN_PATH_MODULES = [
   'event/event-com',
   'event/event-comend',
   'event/source-check',
-  'kojo/kojo-k3',
+  'kojo/kojo-k3-noble',
   'page/page-train',
   'page/page-usercom',
   'system/train/com0-caress',

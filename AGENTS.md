@@ -124,6 +124,9 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 格式由 `.eslintrc.js` 与 `.prettierrc` 约束，无须记忆。以下是格式之外、参照 erauma 的工程约定：
 
 - **文件名** kebab-case 带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
+
+- **文件名一律 ASCII，描述部分用英文单词而非罗马音。** 原作的日文/中文文件名（`EVENT_K3_高貴.ERB`、`据点2.mp3`）移植后**意译**：`kojo-k3-noble.js`、`stronghold-2.mp3`——不是 `kouki`、不是 `judian`。人名无对应英文词，用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上 22 个源文件的映射表在 `tools/kojo-transpiler.js`，未登记的源名显式报错、不静默回落。
+  - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名照抄原作 `PLAYBGM` / `printImage` 的实参（1:1 追溯），只有磁盘文件名改 ASCII。所以 `era.playMusic('据点2.mp3')` 的调用点一行不动。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
 - **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `chara` / `kojo` / `facade` / `utils` / `data` / `i18n`（`chara` = 角色域代码，如 `#/chara/chara-ex`，T6 引入；`kojo` = 口上模块，独立顶层目录，#46 起存在；`facade` = 按域门面，#71 起存在）。

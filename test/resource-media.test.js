@@ -44,8 +44,8 @@ const EXPECTED_FILES = [
   'img.csv',
   'sound/TFM-003A_17.mp3',
   'sound/sound.csv',
-  'sound/大书库.mp3',
-  'sound/据点2.mp3',
+  'sound/great-library.mp3',
+  'sound/stronghold-2.mp3',
 ];
 
 // res/ 媒体文件 → 只读源文件的映射（复制保真断言用）
@@ -57,8 +57,10 @@ const SOURCE_OF = {
   'TITLE.png': path.join(TARGET_RESOURCES, 'TITLE.png'),
   'WHITE_L.png': path.join(TARGET_RESOURCES, 'WHITE_L.png'),
   'sound/TFM-003A_17.mp3': path.join(TARGET_SOUND, 'TFM-003A_17.mp3'),
-  'sound/大书库.mp3': path.join(TARGET_SOUND, '大书库.mp3'),
-  'sound/据点2.mp3': path.join(TARGET_SOUND, '据点2.mp3'),
+  // 磁盘文件名改 ASCII（AGENTS.md 代码约定），只读源保持原名——
+  // 键是产物路径、值是 target/ 源路径，两侧本就不必同名。
+  'sound/great-library.mp3': path.join(TARGET_SOUND, '大书库.mp3'),
+  'sound/stronghold-2.mp3': path.join(TARGET_SOUND, '据点2.mp3'),
 };
 
 /** 递归收集目录下全部文件的相对路径（posix 风格，排序保证断言稳定） */

@@ -126,7 +126,7 @@ export const ERB_EXEMPT = {
     '2175',
     '2508-2572',
   ],
-  'ere/kojo/kojo-k3.js': [
+  'ere/kojo/kojo-k3-noble.js': [
     '83',
     '84-85',
     '89',
@@ -239,7 +239,7 @@ export const ERB_EXEMPT = {
     '1095',
     '1099',
   ],
-  'ere/kojo/kojo-k5.js': [
+  'ere/kojo/kojo-k5-mao.js': [
     '82',
     '83-84',
     '88',

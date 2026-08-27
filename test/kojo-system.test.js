@@ -40,8 +40,8 @@ async function setup_kojo(seed) {
     seed(fixture);
   }
   fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k3');
-  fixture.load_module('kojo/kojo-k5');
+  fixture.load_module('kojo/kojo-k3-noble');
+  fixture.load_module('kojo/kojo-k5-mao');
   return fixture;
 }
 
@@ -165,8 +165,8 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   // 挂载顺序同 main-loop：页面先、口上后——档位序保证 #PRI 先跑）
   const { run_shop } = fixture.load_module('page/page-shop');
   fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k3');
-  fixture.load_module('kojo/kojo-k5');
+  fixture.load_module('kojo/kojo-k3-noble');
+  fixture.load_module('kojo/kojo-k5-mao');
   // 走一轮面板切换（500 是已打印按钮，#130：引擎只送达已打印按钮的快捷
   // 键；原用例的 9999 属无效输入，引擎侧根本不会送达）后输入耗尽
   fixture.set_inputs(500);

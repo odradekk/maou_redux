@@ -1,5 +1,5 @@
 /**
- * ere/kojo/kojo-k5.js 的行为测试（issue #46——实机唯一能触发的口上支）。
+ * ere/kojo/kojo-k5-mao.js 的行为测试（issue #46——实机唯一能触发的口上支）。
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：玛奥（Chara17，素质 165
  * 村娘A → GET_KOJO_NUM 105）入列调教。覆盖：
@@ -39,7 +39,7 @@ async function setup_k5(seed) {
     seed(fixture);
   }
   fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k5');
+  fixture.load_module('kojo/kojo-k5-mao');
   return fixture;
 }
 
@@ -212,7 +212,7 @@ test('死斗场（TEQUIP:55）：岔进专用口上的占位行', async () => {
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k5');
+  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k5-mao');
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
