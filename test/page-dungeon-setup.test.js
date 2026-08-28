@@ -262,10 +262,19 @@ test('ROOM_SETUP：[999] 停止不写槽', async () => {
 
 test('MON_SET_OMAKASE：随机放置写 DB（值域 0-9），玉座跳过', async () => {
   const fixture = setup_world();
-  const { mon_set_omakase, db_get } = load(fixture, 'page/page-dungeon-setup');
+  const { mon_set_omakase } = load(fixture, 'page/page-dungeon-setup');
+  const { db_get } = load(fixture, 'dungeon/labo');
   // 种子化随机源：rand() 的返回值按消费方各自定义（等级 = floor(r*10)、
   // 坐标 = floor(r*32)），序列给精确小数——[lv/10, x/32, y/32] 三元组轮转：
-  // 第 1 轮 lv=5(x=3,y=7)；第 2 轮 lv=2(x=16,y=16) 玉座跳过；第 3 轮 lv=9(0,0)
+  // 第 1 轮 lv=5(x=3,y=7)；第 2 轮 lv=2(x=16,y=16) 玉座跳过；第 3 轮 lv=9(0,0)。
+  // #181 返工起 MON_LIMIT 是真身：每轮开头的許容量检查会扫掉兵力不足
+  // （ITEM 段 5 格合计 ≤ 20）的放置格（原作 MON_CHECK :75 的防白嫖副作用），
+  // 预置三段兵力让放置存活——断言语义不变，前置变严
+  for (const seg of [120, 150, 190]) {
+    for (let k = 0; k < 5; k += 1) {
+      fixture.store.set(`item:${seg + k}`, 21);
+    }
+  }
   const seq = [0.5, 3 / 32, 7 / 32, 0.2, 16 / 32, 16 / 32, 0.9, 0, 0];
   let i = 0;
   const rand = () => {
@@ -274,18 +283,91 @@ test('MON_SET_OMAKASE：随机放置写 DB（值域 0-9），玉座跳过', asyn
     return v;
   };
   await mon_set_omakase(rand);
-  assert.equal(db_get(7, 3), 5, '第 1 轮 lv=5 写 (7,3)');
+  assert.equal(db_get(7, 3), 5, '第 1 轮 lv=5 写 (7,3)——兵力 21 > 20 存活');
   assert.equal(db_get(16, 16), 0, '玉座 (16,16) 不写');
   assert.equal(db_get(0, 0), 9, '第 3 轮 lv=9 写 (0,0)');
 });
 
-test('MON_SET_OMAKASE：MON_LIMIT 拒绝（0）时一次不放', async () => {
+test('MON_SET_OMAKASE：无兵力的放置被許容量检查扫掉（MON_CHECK :75 副作用）', async () => {
   const fixture = setup_world();
-  const mod = load(fixture, 'page/page-dungeon-setup');
-  // 用夹具替换模块内的 mon_limit 不可行（闭包引用）——改经 dungeon_info_map
-  // 的路径验证太重；此处直测存根语义：恒 1（可放置），配合上一条的 101 次
-  // 上限即覆盖「存根返回值让放置循环可走」的行为
-  assert.equal(await mod.mon_limit(), 1, 'MON_LIMIT 存根恒 1（可放置）');
+  const { mon_set_omakase } = load(fixture, 'page/page-dungeon-setup');
+  const { db_get } = load(fixture, 'dungeon/labo');
+  const { mon_limit } = load(fixture, 'dungeon/labo-map');
+  // seq 周期三轮：位 0 放 lv5(x=3,y=7)、位 3 玉座跳过、位 6 放 lv9(x=0,y=0)
+  // ——放置序 = 位0、位6、位0、位6…，第 101 次（count 上限）恰落在位 0 型
+  // (7,3)。无 item 兵力时每轮开头的 MON_LIMIT 扫描会把上一轮的放置清掉
+  // （MON_CHECK :75：兵力 0 ≤ 20 → 清格返回 0）——退出时的持久状态：
+  // 最后一放 (7,3) 未及被扫（下一轮循环已因 count > 100 退出），倒数第
+  // 二放 (0,0) 已被第 101 轮开头的扫描清掉
+  const seq = [0.5, 3 / 32, 7 / 32, 0.2, 16 / 32, 16 / 32, 0.9, 0, 0];
+  let i = 0;
+  const rand = () => {
+    const v = seq[i % seq.length];
+    i += 1;
+    return v;
+  };
+  await mon_set_omakase(rand);
+  assert.equal(db_get(7, 3), 5, '第 101 次放置 (7,3) 是最后一放——未及被扫');
+  assert.equal(
+    db_get(0, 0),
+    0,
+    '倒数第二放 (0,0) 兵力 0——被下一轮开头的 MON_LIMIT 扫描清格',
+  );
+  assert.equal(
+    await mon_limit(),
+    1,
+    '再扫一遍：全图无存活怪物 → 合计 0 ≤ 120 可放',
+  );
+});
+
+test('MON_LIMIT 真身两态：无布置可放、合计超 120 拒绝（#181 返工收敛）', async () => {
+  const fixture = setup_world();
+  const { mon_limit } = load(fixture, 'dungeon/labo-map');
+  const { db_set, db_get } = load(fixture, 'dungeon/labo');
+  // 空图：合计 0 ≤ 120 → 1
+  assert.equal(await mon_limit(), 1, '空图可放');
+  // 25 格 lv 5（合计 125 > 120）——兵力 21 让格子存活
+  for (let k = 0; k < 5; k += 1) {
+    fixture.store.set(`item:${150 + k}`, 21);
+  }
+  for (let x = 0; x < 25; x += 1) {
+    db_set(0, x, 5);
+  }
+  assert.equal(await mon_limit(), 0, '合计 125 > 120 → 拒绝');
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('*怪物的配置到极限了*')),
+    '超限播报（LABO_MAP.ERB:179）',
+  );
+  assert.equal(db_get(0, 0), 5, '兵力足够的格子不被扫');
+});
+
+test('MON_SET_OMAKASE：許容量满后提前停（真身超限语义，不再走满 101 次）', async () => {
+  const fixture = setup_world();
+  const { mon_set_omakase } = load(fixture, 'page/page-dungeon-setup');
+  const { db_get } = load(fixture, 'dungeon/labo');
+  const { db_set } = load(fixture, 'dungeon/labo');
+  // 预置 24 格 lv 5（合计 120 = 上限，仍可放）+ 全段兵力；随后恒定 rand
+  // 放 lv=9(x=0,y=0)——第 1 轮后合计 129 > 120，第 2 轮开头的 MON_LIMIT
+  // 拒绝 → 提前退出：恰 3 次 rand 调用（一轮三元组）
+  for (let k = 0; k < 5; k += 1) {
+    fixture.store.set(`item:${150 + k}`, 21);
+    fixture.store.set(`item:${190 + k}`, 21);
+  }
+  for (let x = 8; x < 32; x += 1) {
+    db_set(0, x, 5);
+  }
+  let calls = 0;
+  const rand = () => {
+    calls += 1;
+    return 0.9; // lv=9 (x=28, y=28)——floor(0.9*32) = 28，不在预置行（y=0）
+  };
+  await mon_set_omakase(rand);
+  assert.equal(calls, 3, '第 1 轮放置后合计 129 > 120——第 2 轮許容量检查即停');
+  assert.equal(
+    db_get(28, 28),
+    9,
+    '超限前的最后放置仍落库（lv9 兵力 21 > 20，扫描不清）',
+  );
 });
 
 test('MON_SET_OMAKASE：放置次数上限 101', async () => {
@@ -305,7 +387,8 @@ test('MON_SET_OMAKASE：放置次数上限 101', async () => {
 
 test('DB 折叠寻址：db_get/db_set 与 store 的一维地址互看', () => {
   const fixture = setup_world();
-  const { db_get, db_set } = load(fixture, 'page/page-dungeon-setup');
+  // #181 返工起包装的唯一真相源在 ere/dungeon/labo.js（自本文件移交）
+  const { db_get, db_set } = load(fixture, 'dungeon/labo');
   db_set(4, 12, 7);
   assert.equal(fixture.store.get('db:412'), 7, 'DB(4,12) → db:4*100+12');
   assert.equal(db_get(4, 12), 7);
@@ -328,16 +411,21 @@ test('INFO_MAP：菜单六钮与 [100] 返回在白名单内', async () => {
   }
 });
 
-test('INFO_MAP：[1] 显示地图走 GEO_OUTPUT_2 存根', async () => {
+test('INFO_MAP：[1] 显示地图走 GEO_OUTPUT_2 真身（#181 返工收敛）', async () => {
   const fixture = setup_world();
   const { dungeon_info_map } = load(fixture, 'page/page-dungeon-setup');
   fixture.set_inputs(1, 100);
   await dungeon_info_map();
+  const texts = fixture.lines_history
+    .filter((l) => l.type === 'text')
+    .map((l) => l.text);
+  // 真身：32 行 × 32 格（da 全 0 → 地形档 0 的「０,」），中心 (16,16) 是凸
+  const map_rows = texts.filter((t) => t.length === 64 && t.includes('０,'));
+  assert.equal(map_rows.length, 32, '32 行 × 每行 64 字符的 chip 地图');
+  assert.ok(map_rows[16].includes('凸,'), '第 17 行（y=16）的中心是魔王城凸');
   assert.ok(
-    fixture.lines_history
-      .map((l) => l.text ?? '')
-      .some((t) => t.includes('@GEO_OUTPUT_2')),
-    'GEO_OUTPUT_2 存根占位行可见',
+    !texts.some((t) => t.includes('@GEO_OUTPUT_2')),
+    '域内存根占位行不再出现',
   );
 });
 
@@ -356,26 +444,28 @@ test('INFO_MAP：[2]-[5] 部下扫描（魔王军横幅）', async () => {
 
 test('INFO_MAP：手动放置流程（等级 → X/Y → ★ 确认 → DB 写入）', async () => {
   const fixture = setup_world();
-  const { dungeon_info_map, db_get } = load(fixture, 'page/page-dungeon-setup');
+  const { dungeon_info_map } = load(fixture, 'page/page-dungeon-setup');
+  const { db_get } = load(fixture, 'dungeon/labo');
   fixture.set_inputs(0, 5, 7, 11, 0, 100); // 配置 → 等级 5 → X=7 → Y=11 → 好的
   await dungeon_info_map();
   assert.equal(db_get(11, 7), 5, 'DB(Y=11, X=7) = 等级 5');
   const texts = fixture.lines_history.map((l) => l.text ?? '');
   assert.ok(texts.some((t) => t.includes('确定放置在★的所在？')));
   assert.ok(
-    texts.some((t) => t.includes('★')),
-    '★ 占位芯片可见',
+    texts.some((t) => t.includes('★,')),
+    '★ 放置点芯片（原作 PRINT ★ / PRINT , 同构——默认色带逗号）',
   );
   assert.ok(
-    texts.some((t) => t.includes('□')),
-    'CHIP_DRAW 存根芯片 □',
+    texts.some((t) => t.length === 64 && t.includes('０,')),
+    'CHIP_DRAW 真身芯片：空地形格的地形档 0（#181 返工收敛，□ 存根退役）',
   );
   assert.ok(texts.some((t) => t.includes('*放置了怪物*')));
 });
 
 test('INFO_MAP：玉座 (16,16) 拒绝放置，重问等级后可停止', async () => {
   const fixture = setup_world();
-  const { dungeon_info_map, db_get } = load(fixture, 'page/page-dungeon-setup');
+  const { dungeon_info_map } = load(fixture, 'page/page-dungeon-setup');
+  const { db_get } = load(fixture, 'dungeon/labo');
   // 配置 → 等级 5 → X=16 → Y=16 → 拒（重问等级）→ 停止（0）→ 菜单返回
   fixture.set_inputs(0, 5, 16, 16, 0, 100);
   await dungeon_info_map();

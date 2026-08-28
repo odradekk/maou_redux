@@ -385,9 +385,9 @@ export default [
   {
     desc: 'M582 GEO_TEST 点阵写入的维度转置（da[y][x] → da[x][y]：行主序破坏）',
     file: 'ere/dungeon/labo.js',
-    find: '      da[y][x] = rand_n(256); // ランダマイズ',
+    find: '      da_set(y, x, rand_n(256)); // ランダマイズ',
     replace:
-      '      da[x][y] = rand_n(256); // 变异：维度转置（[y][x] → [x][y]）',
+      '      da_set(x, y, rand_n(256)); // 变异：维度转置（[y][x] → [x][y]）',
     tests: ['dungeon-labo'],
     must_mention: '第一行第 5 个点',
   },
@@ -426,6 +426,25 @@ export default [
     }`,
     tests: ['event-turnend', 'event-ending2-2d-e2e'],
     must_mention: '走野外地图',
+  },
+  {
+    // #181 返工：DA/DB/DC 落引擎表（一维折叠）——两条钉住承载不倒退
+    desc: 'M588 da_set 蒸发（era.set 删掉——引擎表承载退化为只读零值，存档快照失去 da: 键）',
+    file: 'ere/dungeon/labo.js',
+    find: 'function da_set(y, x, v) {\n  era.set(`da:${y * 100 + x}`, v);\n}',
+    replace:
+      'function da_set(y, x, v) {\n  // 变异：era.set 蒸发（写入不落引擎表）\n}',
+    tests: ['dungeon-labo'],
+    must_mention: '前置，防恒真断言',
+  },
+  {
+    desc: 'M589 da_get 的折叠算式改坏（y*100+x → y+x：格子地址错位串行）',
+    file: 'ere/dungeon/labo.js',
+    find: 'function da_get(y, x) {\n  return era.get(`da:${y * 100 + x}`) || 0;\n}',
+    replace:
+      'function da_get(y, x) {\n  return era.get(`da:${y + x}`) || 0; // 变异：折叠算式 y+x\n}',
+    tests: ['dungeon-labo'],
+    must_mention: '正向差：0 + trunc',
   },
   {
     desc: 'M587 FIRST_SETTING 地下城模式一问的置位蒸发（FLAG:502 恒 0——2D 模式不可达）',

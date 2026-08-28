@@ -1,0 +1,17 @@
+# DC 表：2D 模式的村庄区（issue #181，阶段 3 H12；返工裁定——随 #180 的
+# DB.yml 同款落引擎表，承载依据见 issue #181 返工报告）。
+#
+# 源: target/CSV/VariableSize.csv:134（DC,100,100——Emuera 二维全局数组）。
+#     写者：LABO_MAP.ERB 的 @SET_VIL（:151-157，随机放 4 个村庄、中心
+#     (16,16) 排除）；读者：@VIL_CHECK（:86 发展等级）与 @CHIP_DRAW 的
+#     村庄格（凹）。放置在 EVENTFIRST 的 FLAG:502==1 分支（:68）与
+#     @LABO_MAP_SET（LABO_DUNGEON_MAP.ERB:276，配置切换时重建）。
+#
+# Emuera 的 DC 是二维数组（DC:Y:X，各 100）。EraElectron 的自定义表只有一维
+# 桶——本文件让引擎按「开发者自定义一维表」建 data.dc 桶（与 E.yml/DB.yml
+# 同款），游戏代码把二维寻址折叠成一维：dc:(Y * 100 + X)。使用面 32×32
+#（SET_VIL 的 RAND:32）加清零面 50×50，Y*100+X 在该面内无碰撞（X < 100）。
+#
+# 空表即够用（CFlag.yml/DB.yml 同款先例）：未声明下标读侧 getter 兜 0
+# （1:1 于原作「全区 0 起步」——未开 2D 模式时全图无村庄，VIL_CHECK 恒 0）。
+# 读写包装：ere/dungeon/labo.js 的 dc_get / dc_set。

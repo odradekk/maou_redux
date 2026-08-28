@@ -2481,6 +2481,7 @@ const FILES = [
   {
     js: 'ere/page/page-dungeon-setup.js',
     refs: [
+      { src: DUNGEON_SETUP, ref: '459-460', any: [/^\t\t\tPRINT ★$/m] },
       // target/ERB/迷宮/DUNGEON_SETUP.ERB
       {
         src: DUNGEON_SETUP,
@@ -2744,7 +2745,7 @@ const FILES = [
         ref: '332-334',
         any: [/^\s*IF RESULT == 1$/m, /^\s*CALL GEO_OUTPUT_2$/m],
       },
-      { src: DUNGEON_SETUP, ref: '333', any: [/^\s*CALL GEO_OUTPUT_2$/m] },
+      { src: DUNGEON_SETUP, ref: '332-334', any: [/^\s*CALL GEO_OUTPUT_2$/m] },
       {
         src: DUNGEON_SETUP,
         ref: '335-384',
@@ -17169,6 +17170,7 @@ const FILES = [
   {
     js: 'ere/dungeon/labo.js',
     refs: [
+      { src: SYSTEM, ref: '67', any: [/\tCALL GEO_TEST/] },
       { src: LABO, ref: '3-40', any: [/@LABO/] },
       { src: LABO, ref: '6', any: [/PRINTL ----------/] },
       { src: LABO, ref: '7', any: [/PRINTL \[LABORATORY\]/] },

@@ -14,22 +14,23 @@
  *   LOCAL:5/6 = 作業中の x / y   LOCAL:10-15 = 临时/四角 z
  *
  * 移植说明（有意偏离，均注明依据）：
- *   - **DA/DB/DC 三张 100×100 全局二维数组以模块内存承载**：它们是
- *     Emuera 的遗留多维数组（VariableSize.csv :132-134 定义尺寸，变量分类
- *     见 emuera-basic-agent-guide/references/core-concepts/variables.md
- *     「多维度变量」——已废弃的 DA~DE 族）。引擎侧没有等价通道：三段
- *     寻址 `da:y:x` 的名字表可以配（yml/ 加空表），但 data 桶只会随
- *     addCharacter 按角色 ID 开（AGENTS.md「引擎 API 与硬约束」），y 坐标
- *     维永远等不来开桶者——「名字表在 + 桶不在」是静默丢弃（PR #57 实测），
- *     写进去的地图数据无声消失。模块内存与原作同为「运行时数据」：2D 模式
- *     的地图只在 @EVENTFIRST 的 FLAG:502==1 分支生成一次（GEO_TEST 全库
- *     唯一调用点 SYSTEM ver1.0.3.ERB:67），原作亦无读档重建路径，本票按
- *     「读档后归零」与 Emuera 同语义处理。共享面：本模块（DA 产地）、
- *     labo-map.js（DC/DB 产地）、labo-dungeon-map.js（读 DA 写 DB）、
- *     event-first.js（开局接线）、后续 DUNGEON_SETUP 票（#180，MON_LIMIT /
- *     CHIP_DRAW 的调用方）；维度约定统一为 [y][x]（行主序——UNIT_MOVE
- *     :128 读 DA:(LOCAL:1):(LOCAL:0)、SET_VIL 写 DC:(LOCAL:0):(LOCAL:1) 与
- *     VIL_CHECK :86 读 DC:(P:1):(P:0) 按同一解释对齐）；
+ *   - **DA/DB/DC 三张 100×100 全局二维数组以引擎表承载（一维折叠）**：
+ *     它们是 Emuera 的遗留多维数组（VariableSize.csv :132-134 定义尺寸）。
+ *     引擎的自定义表只有一维桶，二维寻址 `da:y:x` 的三段形态也确实走不通
+ *     （桶只随 addCharacter 按角色 ID 开，y 坐标维等不来开桶者）；但**一维
+ *     折叠 `da:(y*100+x)` 是通的**——yml/DA.yml 建空表让装载器开 data.da
+ *     桶（E.yml/DB.yml 同款，#180 的 db_get/db_set 先例），使用面（33×33
+ *     加清零面 50×50）内 y*100+x 无碰撞。**必须进引擎表而不能放模块内存**
+ *     （#181 返工裁定，依据见 issue #181 返工报告）：引擎 saveData 是整份
+ *     data 的 JSON 快照，模块内存不进存档；而地形只在 EVENTFIRST 生成一次
+ *     （GEO_TEST 全库唯一调用点 :67）、无读档重建路径，玩家为 DB 付的钱
+ *     （#180 的 MON_SET_OMAKASE 扣 MONEY）都不容读档蒸发；原作同样持久
+ *     （emuera.config:60 二进制存档，EVENTFIRST 的显式清零循环只在数据会
+ *     留存时才有意义）。本模块导出 da/db/dc 三对读写包装（DB 一对由
+ *     #180 的 page-dungeon-setup.js 移交至此，两票共用的唯一真相源）；
+ *     维度约定 [y][x]（行主序——UNIT_MOVE :128 读 DA:(LOCAL:1):(LOCAL:0)、
+ *     SET_VIL 写 DC:(LOCAL:0):(LOCAL:1) 与 VIL_CHECK :86 读 DC:(P:1):(P:0)
+ *     按同一解释对齐）；
  *   - **整数除法用 trunc**：Emuera 的 / 是向零截断（C 风格），插值算式的
  *     差值项可负（(z1-z0)*k/100 一族），Math.floor 在负侧差 1——三个数学
  *     函数（GEO_CALC_INTERP / LINEAR_INTERP_COS_X / _Y）逐条用 Math.trunc，
@@ -62,17 +63,39 @@ function idiv(a, b) {
 }
 
 // —— DA/DB/DC：VariableSize.csv :132-134 的三张 100×100 全局二维数组 ——
-//    （承载依据见文件头；未写格与 Emuera 同为 0）
-function make_grid() {
-  return Array.from({ length: 100 }, () => new Array(100).fill(0));
+//    引擎表一维折叠承载（文件头）；未写格 getter 兜 0，与 Emuera「全区
+//    0 起步」同语义。DB 的包装自 #180 移交至此（两票共用的唯一真相源，
+//    page-dungeon-setup.js 从这里 require）。
+
+/** DA:Y:X 读（一维折叠，yml/DA.yml 建桶）——地质高度图（/32 后为颜色档） */
+function da_get(y, x) {
+  return era.get(`da:${y * 100 + x}`) || 0;
 }
 
-/** DA：地质高度图（0..255，/32 后为颜色档 0..7） */
-const da = make_grid();
-/** DB：怪物配置图（格子 → 怪物 LV，MON_CHECK 消费） */
-const db = make_grid();
-/** DC：村庄图（格子 → 发展等级，VIL_CHECK 消费） */
-const dc = make_grid();
+/** DA:Y:X 写（一维折叠，yml/DA.yml 建桶） */
+function da_set(y, x, v) {
+  era.set(`da:${y * 100 + x}`, v);
+}
+
+/** DB:Y:X 读（一维折叠，yml/DB.yml 建桶，#180 先例）——怪物配置图 */
+function db_get(y, x) {
+  return era.get(`db:${y * 100 + x}`) || 0;
+}
+
+/** DB:Y:X 写（一维折叠，yml/DB.yml 建桶，#180 先例） */
+function db_set(y, x, v) {
+  era.set(`db:${y * 100 + x}`, v);
+}
+
+/** DC:Y:X 读（一维折叠，yml/DC.yml 建桶）——村庄图（发展等级） */
+function dc_get(y, x) {
+  return era.get(`dc:${y * 100 + x}`) || 0;
+}
+
+/** DC:Y:X 写（一维折叠，yml/DC.yml 建桶） */
+function dc_set(y, x, v) {
+  era.set(`dc:${y * 100 + x}`, v);
+}
 
 /**
  * 余弦插值系数表（SELECTCASE CASE 1..7 → 4/15/31/50/69/85/96；CASEELSE 0）。
@@ -89,7 +112,7 @@ function da_clear() {
   // ;マップの初期化
   for (let y = 0; y < 50; y += 1) {
     for (let x = 0; x < 50; x += 1) {
-      da[y][x] = 0;
+      da_set(y, x, 0);
     }
   }
 }
@@ -154,7 +177,7 @@ function geo_output() {
   for (let y = 0; y < 32; y += 1) {
     const row = [];
     for (let x = 0; x < 32; x += 1) {
-      row.push(...c_out(idiv(da[y][x], 32))); // LOCAL:2 = DA:(y):(x)/32
+      row.push(...c_out(idiv(da_get(y, x), 32))); // LOCAL:2 = DA:(y):(x)/32
     }
     era.print(row);
     era.println(); // :106 行尾 PRINTL
@@ -184,7 +207,7 @@ function geo_test(rand) {
     const y = py * 8; // ターゲットｙ座標（LOCAL:1）
     for (let px = 0; px < points; px += 1) {
       const x = px * 8; // ターゲットｘ座標（LOCAL:0）
-      da[y][x] = rand_n(256); // ランダマイズ
+      da_set(y, x, rand_n(256)); // ランダマイズ
     }
   }
 
@@ -194,7 +217,7 @@ function geo_test(rand) {
       const x0 = col * 8; // 対象ブロックの左上（LOCAL:0）
       const y0 = row * 8; // （LOCAL:1）
       for (let x = x0 + 1; x < x0 + 8; x += 1) {
-        da[y0][x] = linear_interp_cos_x(x0, x0 + 8, x, y0);
+        da_set(y0, x, linear_interp_cos_x(x0, x0 + 8, x, y0));
       }
     }
   }
@@ -205,7 +228,7 @@ function geo_test(rand) {
       const x0 = col * 8;
       const y0 = row * 8;
       for (let y = y0 + 1; y < y0 + 8; y += 1) {
-        da[y][x0] = linear_interp_cos_y(y0, y0 + 8, y, x0);
+        da_set(y, x0, linear_interp_cos_y(y0, y0 + 8, y, x0));
       }
     }
   }
@@ -216,10 +239,10 @@ function geo_test(rand) {
       const x0 = col * 8; // ブロックの左上[x,y]=[LOCAL:0,LOCAL:1]
       const y0 = row * 8;
       // ブロックの4点のzをとる（:218-224）
-      const z_ul = da[y0][x0]; // 左上（LOCAL:12）
-      const z_ur = da[y0][x0 + 8]; // 右上（LOCAL:13）
-      const z_dl = da[y0 + 8][x0]; // 左下（LOCAL:14）
-      const z_dr = da[y0 + 8][x0 + 8]; // 右下（LOCAL:15）
+      const z_ul = da_get(y0, x0); // 左上（LOCAL:12）
+      const z_ur = da_get(y0, x0 + 8); // 右上（LOCAL:13）
+      const z_dl = da_get(y0 + 8, x0); // 左下（LOCAL:14）
+      const z_dr = da_get(y0 + 8, x0 + 8); // 右下（LOCAL:15）
       for (let y = y0 + 1; y < y0 + 8; y += 1) {
         for (let x = x0 + 1; x < x0 + 8; x += 1) {
           geo_calc_interp(z_ul, z_ur, z_dl, z_dr, x - x0, y - y0, x, y); // :232（写 DA[y][x]，副作用函数）
@@ -254,11 +277,14 @@ function geo_calc_interp(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   const ky = COS_TABLE[arg5] ?? 0; // LOCAL:1 = py
 
   // 計算（:295）——三项整除后相加（文件头：trunc 语义）
-  da[arg7][arg6] =
+  da_set(
+    arg7,
+    arg6,
     idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +
-    idiv((arg1 - arg0) * kx, 100) +
-    idiv((arg2 - arg0) * ky, 100) +
-    arg0;
+      idiv((arg1 - arg0) * kx, 100) +
+      idiv((arg2 - arg0) * ky, 100) +
+      arg0,
+  );
 }
 
 /**
@@ -272,8 +298,8 @@ function geo_calc_interp(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
  */
 function linear_interp_cos_x(arg0, arg1, arg2, arg3) {
   // ;X軸上の補完
-  const z0 = da[arg3][arg0]; // LOCAL:0:z0
-  const z1 = da[arg3][arg1]; // LOCAL:1:z1
+  const z0 = da_get(arg3, arg0); // LOCAL:0:z0
+  const z1 = da_get(arg3, arg1); // LOCAL:1:z1
   const k = COS_TABLE[arg2 - arg0] ?? 0; // LOCAL:2:係数
   return z0 + idiv((z1 - z0) * k, 100);
 }
@@ -289,8 +315,8 @@ function linear_interp_cos_x(arg0, arg1, arg2, arg3) {
  * @returns {number} LOCAL:0 + ((LOCAL:1 - LOCAL:0)*LOCAL:2)/100
  */
 function linear_interp_cos_y(arg0, arg1, arg2, arg3) {
-  const z0 = da[arg0][arg3]; // LOCAL:0:z0
-  const z1 = da[arg1][arg3]; // LOCAL:1:z1
+  const z0 = da_get(arg0, arg3); // LOCAL:0:z0
+  const z1 = da_get(arg1, arg3); // LOCAL:1:z1
   const k = COS_TABLE[arg2 - arg0] ?? 0; // LOCAL:2:係数
   return z0 + idiv((z1 - z0) * k, 100);
 }
@@ -351,9 +377,12 @@ async function labo(rand) {
 }
 
 module.exports = {
-  da,
-  db,
-  dc,
+  da_get,
+  da_set,
+  db_get,
+  db_set,
+  dc_get,
+  dc_set,
   COS_TABLE,
   da_clear,
   c_out,

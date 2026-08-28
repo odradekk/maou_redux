@@ -38,7 +38,7 @@ const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { geo_test, db } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
+const { geo_test, db_set } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
 const { set_vil } = require('#/dungeon/labo-map');
 
 /**
@@ -163,7 +163,7 @@ on('EVENTFIRST', async () => {
     // :69-73 FOR 50×50：DB 清零
     for (let y = 0; y < 50; y += 1) {
       for (let x = 0; x < 50; x += 1) {
-        db[y][x] = 0;
+        db_set(y, x, 0);
       }
     }
   }

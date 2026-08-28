@@ -19,9 +19,10 @@
  *
  * 随机源全部为**不挑分支的恒定形态**（#195 教训）：`(n) => n - 1` 总取
  * 区间上界（移动恒 +1、RAND:5/RAND:4 恒非零——dungeon_bitch / equip_select
- * 不触发）、`() => 128` 一类定值钉地形。DA/DB/DC 是 labo.js 的模块级承载
- * （文件头依据），同文件用例间共享——涉格用例一律先 da_clear() 或全量
- * 重置，不依赖用例顺序。
+ * 不触发）、`() => 128` 一类定值钉地形。DA/DB/DC 自 #181 返工起走引擎表
+ * （一维折叠 da:/db:/dc: 二段寻址，yml 三张空表建桶——labo.js 文件头），
+ * 夹具侧落在 store：每个用例的新夹具各有一份干净变量层，无需跨用例清场
+ * （模块内存时代的 reset_grids 已随承载改动删除）。
  */
 
 const assert = require('node:assert/strict');
@@ -39,15 +40,6 @@ function setup_labo() {
   const labo_map = fixture.load_module('dungeon/labo-map');
   const labo_dungeon_map = fixture.load_module('dungeon/labo-dungeon-map');
   return { fixture, labo, labo_map, labo_dungeon_map };
-}
-
-/** 全量重置三张网格（模块级共享，用例间不串） */
-function reset_grids(labo) {
-  for (let i = 0; i < 100; i += 1) {
-    labo.da[i].fill(0);
-    labo.db[i].fill(0);
-    labo.dc[i].fill(0);
-  }
 }
 
 /** 入场一个勇者单位：cflag:1 状态 + 坐标 510/511 */
@@ -77,10 +69,10 @@ test('余弦系数表：CASE 1..7 → 4/15/31/50/69/85/96，其余 0（LABO.ERB 
 
 test('LINEAR_INTERP_COS_X 逐点：z0 + trunc((z1-z0)*k/100)（:299-330）', () => {
   const { fixture, labo } = setup_labo();
-  const { da } = labo;
+  const { da_set } = labo;
   // 点 (x0=10, y=5) z=0、(x1=18, y=5) z=200；x=13 偏移 3（k=31）
-  da[5][10] = 0;
-  da[5][18] = 200;
+  da_set(5, 10, 0);
+  da_set(5, 18, 200);
   assert.equal(
     labo.linear_interp_cos_x(10, 18, 13, 5),
     62, // 0 + trunc(200*31/100) = trunc(62) = 62
@@ -88,23 +80,23 @@ test('LINEAR_INTERP_COS_X 逐点：z0 + trunc((z1-z0)*k/100)（:299-330）', () 
   );
   // 负差截断点：z0=255、z1=0、偏移 1（k=4）——Emuera 向零截断，floor 会
   // 得 244（-10.2 向下取整），trunc 得 245。这一格钉住除法语义
-  da[5][10] = 255;
-  da[5][18] = 0;
+  da_set(5, 10, 255);
+  da_set(5, 18, 0);
   assert.equal(
     labo.linear_interp_cos_x(10, 18, 11, 5),
     245, // 255 + trunc((0-255)*4/100) = 255 + trunc(-10.2) = 245
     '负差向零截断（Math.floor 会得 244——差 1 即红）',
   );
   // 偏移 7（k=96）终点逼近
-  da[5][10] = 0;
-  da[5][18] = 100;
+  da_set(5, 10, 0);
+  da_set(5, 18, 100);
   assert.equal(
     labo.linear_interp_cos_x(10, 18, 17, 5),
     96, // 0 + trunc(100*96/100) = 96
     '偏移 7 系数 96',
   );
   // 偏移 0 的防御分支（CASEELSE → 0）：不 interpolasi，原样 z0
-  da[5][10] = 77;
+  da_set(5, 10, 77);
   assert.equal(
     labo.linear_interp_cos_x(10, 18, 10, 5),
     77,
@@ -119,16 +111,16 @@ test('LINEAR_INTERP_COS_X 逐点：z0 + trunc((z1-z0)*k/100)（:299-330）', () 
 
 test('LINEAR_INTERP_COS_Y 逐点：读 da[y0][x] / da[y1][x]（:333-364）', () => {
   const { labo } = setup_labo();
-  const { da } = labo;
-  da[8][3] = 64;
-  da[16][3] = 192;
+  const { da_set } = labo;
+  da_set(8, 3, 64);
+  da_set(16, 3, 192);
   assert.equal(
     labo.linear_interp_cos_y(8, 16, 14, 3),
     172, // 64 + trunc((192-64)*85/100) = 64 + trunc(108.8) = 172（偏移 6，k=85）
     'y 向插值读的是同列两行（da[y0][x] 与 da[y1][x]）',
   );
-  da[8][3] = 0;
-  da[16][3] = 100;
+  da_set(8, 3, 0);
+  da_set(16, 3, 100);
   assert.equal(
     labo.linear_interp_cos_y(8, 16, 15, 3),
     96, // 0 + trunc(100*96/100) = 96（偏移 7）
@@ -143,12 +135,12 @@ test('GEO_CALC_INTERP 逐点：四角双线性（带余弦系数），写 da[y][
   //   trunc((0-100)*50/100) = -50（×2）
   //   50 - 50 - 50 + 100 = 50
   labo.geo_calc_interp(100, 0, 0, 100, 4, 4, 20, 20);
-  assert.equal(labo.da[20][20], 50, '对称四角的中心值（px=py=4）');
+  assert.equal(labo.da_get(20, 20), 50, '对称四角的中心值（px=py=4）');
   // 负差截断：a=200、b=c=100、d=0、px=py=1（k=4）
   //   trunc(0*16/10000)=0；trunc(-100*4/100)=-4（×2）→ 200-4-4+0 = 192
   labo.geo_calc_interp(200, 100, 100, 0, 1, 1, 30, 30);
   assert.equal(
-    labo.da[30][30],
+    labo.da_get(30, 30),
     192,
     '负差项向零截断（floor 会得 191——差 1 即红）',
   );
@@ -156,14 +148,13 @@ test('GEO_CALC_INTERP 逐点：四角双线性（带余弦系数），写 da[y][
   //   trunc((0-255-255+0)*96*96/10000) = trunc(-470.016) = -470
   //   trunc(255*96/100) = 244（×2）→ -470+244+244+0 = 18
   labo.geo_calc_interp(0, 255, 255, 0, 7, 7, 40, 40);
-  assert.equal(labo.da[40][40], 18, '对角双高的偏角值（乘法链先乘后整除）');
+  assert.equal(labo.da_get(40, 40), 18, '对角双高的偏角值（乘法链先乘后整除）');
 });
 
 // —— 2. 地图生成 ——
 
 test('GEO_TEST：恒定随机源下点阵全同值 → 插值全区收敛到该值（结构证据）', () => {
   const { labo } = setup_labo();
-  reset_grids(labo);
   labo.geo_test(() => 128); // RAND:256 恒 128
   for (const [y, x] of [
     [0, 0],
@@ -177,13 +168,13 @@ test('GEO_TEST：恒定随机源下点阵全同值 → 插值全区收敛到该�
     [19, 3], // 横线补完格
   ]) {
     assert.equal(
-      labo.da[y][x],
+      labo.da_get(y, x),
       128,
       `(${x},${y}) 应为 128——横线/纵线/内侧三层补完全部把 128 映到 128`,
     );
   }
   assert.equal(
-    labo.da[40][40],
+    labo.da_get(40, 40),
     0,
     '生成区外（>32）保持 0——GEO_TEST 只覆盖点阵 0..32',
   );
@@ -191,27 +182,34 @@ test('GEO_TEST：恒定随机源下点阵全同值 → 插值全区收敛到该�
 
 test('GEO_TEST：点阵顺序按行主序（da[y][x]），第一个点落在 (0,0)', () => {
   const { labo } = setup_labo();
-  reset_grids(labo);
   let calls = 0;
   // 前 25 次调用（点阵 5×5）返回递增值，其余（无——GEO_TEST 无其他随机消费）
   labo.geo_test((n) => {
     calls += 1;
     return n === 256 ? calls : 0;
   });
-  assert.equal(labo.da[0][0], 1, '第一个 RAND:256 落在 da[0][0]（行主序起点）');
-  assert.equal(labo.da[0][32], 5, '第一行第 5 个点落在 da[0][32]（x = 4*8）');
-  assert.equal(labo.da[32][0], 21, '第 5 行首点落在 da[32][0]（y = 4*8）');
+  assert.equal(
+    labo.da_get(0, 0),
+    1,
+    '第一个 RAND:256 落在 da[0][0]（行主序起点）',
+  );
+  assert.equal(
+    labo.da_get(0, 32),
+    5,
+    '第一行第 5 个点落在 da[0][32]（x = 4*8）',
+  );
+  assert.equal(labo.da_get(32, 0), 21, '第 5 行首点落在 da[32][0]（y = 4*8）');
   assert.equal(calls, 25, '恰 25 次随机消费（5×5 点阵，插值不掷随机）');
 });
 
 test('DA_CLEAR：50×50 清零，区外不动', () => {
   const { labo } = setup_labo();
-  labo.da[10][10] = 999;
-  labo.da[60][60] = 999; // 区外（>49）
+  labo.da_set(10, 10, 999);
+  labo.da_set(60, 60, 999); // 区外（>49）
   labo.da_clear();
-  assert.equal(labo.da[10][10], 0, '区内清零');
+  assert.equal(labo.da_get(10, 10), 0, '区内清零');
   assert.equal(
-    labo.da[60][60],
+    labo.da_get(60, 60),
     999,
     '区外（50..99）不属清理范围（原作 FOR 0,50）',
   );
@@ -219,18 +217,16 @@ test('DA_CLEAR：50×50 清零，区外不动', () => {
 
 test('SET_VIL：4 个村庄落点 + 中心排除（:151-157）', () => {
   const { labo, labo_map } = setup_labo();
-  reset_grids(labo);
   // rand 恒 7：y=7、x=7，4 次全叠 → dc[7][7] = 4
   labo_map.set_vil(() => 7);
-  assert.equal(labo.dc[7][7], 4, '4 个村庄叠加在同一格（rand 恒 7）');
-  assert.equal(labo.dc[16][16], 0, '中心 (16,16) 排除（魔王城）');
+  assert.equal(labo.dc_get(7, 7), 4, '4 个村庄叠加在同一格（rand 恒 7）');
+  assert.equal(labo.dc_get(16, 16), 0, '中心 (16,16) 排除（魔王城）');
   // rand 恒 16：全被中心排除吃掉 → dc 全 0
-  reset_grids(labo);
   labo_map.set_vil(() => 16);
   let total = 0;
   for (let y = 0; y < 50; y += 1) {
     for (let x = 0; x < 50; x += 1) {
-      total += labo.dc[y][x];
+      total += labo.dc_get(y, x);
     }
   }
   assert.equal(
@@ -244,22 +240,21 @@ test('SET_VIL：4 个村庄落点 + 中心排除（:151-157）', () => {
 
 test('MON_CHECK：兵力判据、越界档、清格副作用（:51-77）', () => {
   const { fixture, labo, labo_map } = setup_labo();
-  reset_grids(labo);
   // lv 3 → item 130..134；兵力合计 21 > 20 → 在场
-  labo.db[5][5] = 3;
+  labo.db_set(5, 5, 3);
   fixture.store.set('item:130', 21);
   assert.equal(labo_map.mon_check(5, 5), 3, '兵力 21 > 20：怪物在场');
   // 兵力 20（不 > 20）：清格返回 0
-  labo.db[6][6] = 3;
+  labo.db_set(6, 6, 3);
   fixture.store.set('item:130', 20);
   assert.equal(labo_map.mon_check(6, 6), 0, '兵力 20 不满足 > 20');
-  assert.equal(labo.db[6][6], 0, '兵力不足的格子被扫掉（:75）');
-  assert.equal(labo.db[5][5], 3, '在场格不受别格扫描影响');
+  assert.equal(labo.db_get(6, 6), 0, '兵力不足的格子被扫掉（:75）');
+  assert.equal(labo.db_get(5, 5), 3, '在场格不受别格扫描影响');
   // 越界：lv 0 / 10 / 负
-  labo.db[7][7] = 10;
-  labo.db[8][8] = -1;
+  labo.db_set(7, 7, 10);
+  labo.db_set(8, 8, -1);
   assert.equal(labo_map.mon_check(7, 7), 0, 'lv >= 10 不算怪物');
-  assert.equal(labo.db[7][7], 10, '越界档不清格（早退在清格之前）');
+  assert.equal(labo.db_get(7, 7), 10, '越界档不清格（早退在清格之前）');
   assert.equal(labo_map.mon_check(8, 8), 0, 'lv <= 0 不算怪物');
 });
 
@@ -276,21 +271,20 @@ test('UNIT_CHECK：状态与坐标筛（:26-47）', () => {
 
 test('VIL_CHECK：dc[y][x] 的正值直通（:80-91）', () => {
   const { labo, labo_map } = setup_labo();
-  labo.dc[4][5] = 2;
-  labo.dc[6][6] = -1;
+  labo.dc_set(4, 5, 2);
+  labo.dc_set(6, 6, -1);
   assert.equal(labo_map.vil_check(5, 4), 2, '正值返回发展等级');
   assert.equal(labo_map.vil_check(6, 6), 0, '<= 0 返回 0');
 });
 
 test('CHIP_DRAW：五级优先级（:95-139）', () => {
   const { fixture, labo, labo_map } = setup_labo();
-  reset_grids(labo);
   seed_unit(fixture, 1, '甲', 2, 2, 3); // 侵攻中红 @
   seed_unit(fixture, 2, '乙', 3, 2, 4); // 迎击中素色 @
-  labo.db[6][5] = 4; // 怪物 lv 4 在 (5,6)
+  labo.db_set(6, 5, 4); // 怪物 lv 4 在 (5,6)
   fixture.store.set('item:140', 21); // lv 4 → item 140..144
-  labo.dc[8][7] = 1; // 村庄在 (7,8)
-  labo.da[10][9] = 200; // 地形档 200/32 = 6 在 (9,10)
+  labo.dc_set(8, 7, 1); // 村庄在 (7,8)
+  labo.da_set(10, 9, 200); // 地形档 200/32 = 6 在 (9,10)
 
   assert.deepEqual(
     labo_map.chip_draw(16, 16),
@@ -326,8 +320,7 @@ test('CHIP_DRAW：五级优先级（:95-139）', () => {
 });
 
 test('GEO_OUTPUT_2：32×32 行输出 + 等键（:6-23）', async () => {
-  const { fixture, labo, labo_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 0, 0);
   await labo_map.geo_output_2();
   const texts = fixture.text_lines();
@@ -350,12 +343,11 @@ test('GEO_OUTPUT_2：32×32 行输出 + 等键（:6-23）', async () => {
 
 test('MON_LIMIT：合计 ≤ 120 放行，超限拒绝并播报（:162-181）', () => {
   const { fixture, labo, labo_map } = setup_labo();
-  reset_grids(labo);
   assert.equal(labo_map.mon_limit(), 1, '空图合计 0 → 放行');
   // 25 格 lv 5（合计 125 > 120）——lv 5 → item 150..154
   fixture.store.set('item:150', 21);
   for (let x = 0; x < 25; x += 1) {
-    labo.db[0][x] = 5;
+    labo.db_set(0, x, 5);
   }
   assert.equal(labo_map.mon_limit(), 0, '合计 125 > 120 → 拒绝');
   assert.ok(
@@ -367,8 +359,7 @@ test('MON_LIMIT：合计 ≤ 120 放行，超限拒绝并播报（:162-181）', 
 // —— 4. UNIT_MOVE ——
 
 test('UNIT_MOVE：侵攻方向趋近中心，落笔坐标与侵攻度（:83-235）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 10, 10);
   fixture.store.set('cflag:1:507', 0); // 非撤退
   // rand_max：x = 89 → walk20 = 0+89 > 10 → floor(89/10) = 8；抖动 +1+1
@@ -379,8 +370,7 @@ test('UNIT_MOVE：侵攻方向趋近中心，落笔坐标与侵攻度（:83-235�
 });
 
 test('UNIT_MOVE：撤退方向远离中心，D:20 负值钳到 100（:130-138/:229-233）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 10, 10);
   fixture.store.set('cflag:1:507', 1); // 撤退中 → x = -90（:88）
   const walk20 = await labo_dungeon_map.unit_move(1, -5, rand_max);
@@ -389,8 +379,7 @@ test('UNIT_MOVE：撤退方向远离中心，D:20 负值钳到 100（:130-138/:2
 });
 
 test('UNIT_MOVE：D:20 > 10 先经 /10 再抖动（:139-140）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 0, 0);
   // 传入的 walk20 先累加 x（:113-118），环内再判 > 10 → /10：
   // 50 + 89 = 139 → floor(139/10) = 13
@@ -406,8 +395,7 @@ test('UNIT_MOVE：D:20 > 10 先经 /10 再抖动（:139-140）', async () => {
 });
 
 test('UNIT_MOVE：到中心 (16,16) → JUMP ENDING_2 的尾跳转语义（:171-177）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 15, 16);
   fixture.store.set('base:1:0', 1000);
   fixture.store.set('maxbase:1:0', 1000);
@@ -448,8 +436,7 @@ test('UNIT_MOVE：到中心 (16,16) → JUMP ENDING_2 的尾跳转语义（:171-
 });
 
 test('UNIT_MOVE：撞同伴（同状态）移动停止，坐标不落笔（:180-183）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 11, 11);
   seed_unit(fixture, 2, '乙', 2, 12, 12); // 甲 +1+1 的落点
   const walk20 = await labo_dungeon_map.unit_move(1, 89, rand_max);
@@ -462,8 +449,7 @@ test('UNIT_MOVE：撞同伴（同状态）移动停止，坐标不落笔（:180-
 });
 
 test('UNIT_MOVE：撞不同阵营单位走 DUNGEON_BATTLE2 占位（:184-199，原作缺失）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 3, 11, 11); // 迎击中（else 臂：walk20 -= 2x）
   seed_unit(fixture, 2, '乙', 2, 12, 12); // 侵攻中——甲的落点，不同阵营
   // 迎击侧累加是 -2x = -178：传入 200 才能保 D:20 = 22 > 10 走趋近臂
@@ -476,9 +462,8 @@ test('UNIT_MOVE：撞不同阵营单位走 DUNGEON_BATTLE2 占位（:184-199，�
 
 test('UNIT_MOVE：撞怪物走 DUNGEON_BATTLE 占位（:205-222，原作缺失）', async () => {
   const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
   seed_unit(fixture, 1, '甲', 2, 11, 11);
-  labo.db[12][12] = 3; // 甲的落点是怪物
+  labo.db_set(12, 12, 3); // 甲的落点是怪物
   fixture.store.set('item:130', 21); // 兵力足够
   await labo_dungeon_map.unit_move(1, 89, rand_max);
   assert.ok(
@@ -492,8 +477,7 @@ test('UNIT_MOVE：撞怪物走 DUNGEON_BATTLE 占位（:205-222，原作缺失�
 // —— 5. DUNGEON_MAP 主流程 ——
 
 test('DUNGEON_MAP：迎击中 HP/MP > 80% 时重启迎击（:7-12）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 3, 10, 10);
   fixture.store.set('cflag:1:507', 1); // 此前在撤退
   fixture.store.set('base:1:0', 900);
@@ -509,8 +493,7 @@ test('DUNGEON_MAP：迎击中 HP/MP > 80% 时重启迎击（:7-12）', async () 
 });
 
 test('DUNGEON_MAP：HP < 45% 撤退决议 + 侵攻度写回 + 气力消耗（:19-40）', async () => {
-  const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
+  const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 10, 10);
   fixture.store.set('base:1:0', 100);
   fixture.store.set('maxbase:1:0', 1000); // HP 10% < 45% → 撤退
@@ -549,7 +532,6 @@ test('CONFIG_LABO_MAP_STATUS：FLAG:502 的两种显示（:238-247）', () => {
 
 test('CONFIG_LABO_MAP_SETTING：选 2D 置位 + 顺带初始化地图（:250-270）', async () => {
   const { fixture, labo, labo_dungeon_map } = setup_labo();
-  reset_grids(labo);
   fixture.set_inputs(1);
   // 分支随机源：点阵（RAND:256）恒 128、村庄（RAND:32）恒 7——两个分布
   // 各自钉住，不互相越界
@@ -557,9 +539,13 @@ test('CONFIG_LABO_MAP_SETTING：选 2D 置位 + 顺带初始化地图（:250-270
   const ret = await labo_dungeon_map.config_labo_map_setting(branch_rand);
   assert.equal(ret, 0);
   assert.equal(fixture.store.get('flag:502'), 1, 'FLAG:502 = 1（:262）');
-  assert.equal(labo.da[0][0], 128, 'LABO_MAP_SET 跑过（GEO_TEST 点阵 = 128）');
-  assert.equal(labo.dc[7][7], 4, 'SET_VIL 跑过（4 个村庄叠在 (7,7)）');
-  assert.equal(labo.db[10][10], 0, 'DB 清零跑过（:277-281）');
+  assert.equal(
+    labo.da_get(0, 0),
+    128,
+    'LABO_MAP_SET 跑过（GEO_TEST 点阵 = 128）',
+  );
+  assert.equal(labo.dc_get(7, 7), 4, 'SET_VIL 跑过（4 个村庄叠在 (7,7)）');
+  assert.equal(labo.db_get(10, 10), 0, 'DB 清零跑过（:277-281）');
 });
 
 test('CONFIG_LABO_MAP_SETTING：选普通置 0、选 100 直接返回（:266-267）', async () => {
@@ -578,7 +564,6 @@ test('CONFIG_LABO_MAP_SETTING：选普通置 0、选 100 直接返回（:266-267
 
 test('LABO 菜单：[100] 返回、[007] 打 HEART_R 图、[001] 调色行（:3-40）', async () => {
   const { fixture, labo } = setup_labo();
-  reset_grids(labo);
   fixture.set_inputs(7, 1, 100);
   const ret = await labo.labo(rand_max);
   assert.equal(ret, 0, '[100] RETURN 0');
@@ -626,4 +611,44 @@ test('FIRST_SETTING 地下城模式一问：选普通置 0', async () => {
   const choice = await ask_dungeon_mode();
   assert.equal(choice, 0);
   assert.equal(fixture.store.get('flag:502'), 0);
+});
+
+// —— 8. 存档往返（#181 返工验收核心）——
+
+test('存档往返：DA/DB/DC 落引擎表，saveData → loadData 读回同值（承载改动的验收核心）', async () => {
+  // 引擎 saveData 是整份 data 的 JSON 快照（app.asar 偏移 207005 一带，
+  // dev-guides/11-saves.md:73）——三张 2D 表自 #181 返工起走引擎表（一维
+  // 折叠，yml/DA.yml、DB.yml、DC.yml 建桶），本用例钉住「地图数据随档走」：
+  // 若有人把承载改回模块内存，快照里不会有 da:/db:/dc: 键、loadData 后
+  // 读回恒 0——此用例当场红（返工简报的原话：没有它下次还会有人选模块内存）
+  const { fixture, labo } = setup_labo();
+  const { da_set, db_set, dc_set, da_get, db_get, dc_get } = labo;
+  // 三张表各写代表格（含典型值与清零面边角）
+  da_set(0, 0, 255);
+  da_set(32, 32, 128);
+  da_set(16, 15, 96);
+  db_set(7, 7, 5);
+  dc_set(16, 15, 3);
+
+  await fixture.era.saveData(1, '2D 地图档'); // 快照含 da:/db:/dc: 键
+  // 存后改值（模拟「存档退出再进来」前的状态漂移）
+  da_set(0, 0, 1);
+  db_set(7, 7, 0);
+  dc_set(16, 15, 0);
+  assert.equal(da_get(0, 0), 1, '改值生效（前置，防恒真断言）');
+
+  const ok = await fixture.era.loadData(1);
+  assert.equal(ok, true, 'loadData 成功（版本闸门默认放行）');
+  assert.equal(da_get(0, 0), 255, 'DA 读回存档值');
+  assert.equal(da_get(32, 32), 128, 'DA 角点读回');
+  assert.equal(da_get(16, 15), 96, 'DA 内侧格读回');
+  assert.equal(db_get(7, 7), 5, 'DB 读回存档值（玩家买的怪物配置不蒸发）');
+  assert.equal(dc_get(16, 15), 3, 'DC 读回存档值（村庄不蒸发）');
+  // 生成的地形也整表随档：跑一次 GEO_TEST（恒定随机源）→ 存 → 读回比对
+  labo.geo_test(() => 128);
+  await fixture.era.saveData(2, '地形档');
+  await fixture.era.loadData(1); // 读回旧档（GEO_TEST 覆盖前的快照）
+  assert.notEqual(da_get(20, 20), 128, '读回旧档：GEO_TEST 的 128 未混入');
+  await fixture.era.loadData(2);
+  assert.equal(da_get(20, 20), 128, '读回地形档：全区 128 的生成结果随档走');
 });

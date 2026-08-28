@@ -52,7 +52,7 @@ const { equip_select } = require('#/system/equip/equip-select');
 const { use_ex_item } = require('#/dungeon/dungeon'); // 3D 路径同款存根（单点登记）
 const { ending_2 } = require('#/event/event-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch'); // :29-30（真身 #184；模块对象引用，测试可替换）
-const { da, db, geo_test } = require('#/dungeon/labo');
+const { da_get, db_set, geo_test } = require('#/dungeon/labo');
 const { unit_check, mon_check, set_vil } = require('#/dungeon/labo-map');
 
 /**
@@ -159,7 +159,7 @@ async function unit_move(a, walk20, rand) {
   for (;;) {
     mx = chara(a).event.X坐标; // LOCAL:0 = CFLAG:A:510
     my = chara(a).event.Y坐标; // LOCAL:1 = CFLAG:A:511
-    from_level = Math.trunc(da[my][mx] / 32); // LOCAL:2 = DA:(y):(x)/32（[y][x]，labo.js 文件头）
+    from_level = Math.trunc(da_get(my, mx) / 32); // LOCAL:2 = DA:(y):(x)/32（折叠约定见 labo.js 文件头）
 
     if (walk20 < 0) {
       // :130-138 撤退方向：远离中心（16,16）
@@ -201,7 +201,7 @@ async function unit_move(a, walk20, rand) {
     }
 
     // :157-161 高低差がある地形を避ける（20% 概率接受）
-    const to_level = Math.trunc(da[my][mx] / 32); // LOCAL:10 = DA:(y):(x)/32
+    const to_level = Math.trunc(da_get(my, mx) / 32); // LOCAL:10 = DA:(y):(x)/32
     if (from_level !== to_level && rand_n(5) > 0) {
       continue;
     }
@@ -447,7 +447,7 @@ async function labo_map_set(rand) {
   set_vil(rand_n); // :276 CALL SET_VIL
   for (let y = 0; y < 50; y += 1) {
     for (let x = 0; x < 50; x += 1) {
-      db[y][x] = 0; // :277-281 DB 50×50 清零（[y][x]，EVENTFIRST :69-73 同款）
+      db_set(y, x, 0); // :277-281 DB 50×50 清零（折叠约定同 EVENTFIRST :69-73）
     }
   }
   return 0;

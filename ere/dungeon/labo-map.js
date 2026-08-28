@@ -26,7 +26,14 @@
 
 const era = require('#/era-electron');
 
-const { da, db, dc, c_out } = require('#/dungeon/labo');
+const {
+  da_get,
+  db_get,
+  db_set,
+  dc_get,
+  dc_set,
+  c_out,
+} = require('#/dungeon/labo');
 
 /** 原作 RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
@@ -74,7 +81,7 @@ function unit_check(x, y) {
  * @returns {number} 怪物 LV，不在场 0
  */
 function mon_check(x, y) {
-  const lv = db[y][x]; // LOCAL:0 = DB:(P:1):(P:0)
+  const lv = db_get(y, x); // LOCAL:0 = DB:(P:1):(P:0)
 
   if (lv <= 0 || lv >= 10) {
     return 0; // :59-60
@@ -91,7 +98,7 @@ function mon_check(x, y) {
     return lv;
   }
 
-  db[y][x] = 0; // :75 兵力不足——扫掉
+  db_set(y, x, 0); // :75 兵力不足——扫掉
 
   return 0;
 }
@@ -103,7 +110,7 @@ function mon_check(x, y) {
  * @returns {number} 発展 LV，不在场 0
  */
 function vil_check(x, y) {
-  const v = dc[y][x]; // X = DC:(P:1):(P:0)
+  const v = dc_get(y, x); // X = DC:(P:1):(P:0)
   if (v <= 0) {
     return 0; // :88-89
   }
@@ -181,7 +188,7 @@ function chip_draw(x, y) {
     return [{ content: '凹,' }]; // :127-131 PRINTFORM 凹 / PRINT ,
   }
 
-  return c_out(Math.trunc(da[y][x] / 32)); // :134-135 LOCAL:2 = DA/32 → C_OUT
+  return c_out(Math.trunc(da_get(y, x) / 32)); // :134-135 LOCAL:2 = DA/32 → C_OUT
 }
 
 /**
@@ -215,7 +222,7 @@ function set_vil(rand) {
   const rand_n = rand ?? default_rand;
   for (let y = 0; y < 50; y += 1) {
     for (let x = 0; x < 50; x += 1) {
-      dc[y][x] = 0;
+      dc_set(y, x, 0);
     }
   }
 
@@ -227,7 +234,7 @@ function set_vil(rand) {
     if (y === 16 && x === 16) {
       continue; // :154-155 中心（魔王城）不放村
     }
-    dc[y][x] += 1;
+    dc_set(y, x, dc_get(y, x) + 1);
   }
 
   return 0;
