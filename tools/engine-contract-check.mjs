@@ -25,6 +25,7 @@
 //   「引擎缺失」处理（跳过锚点检查并警告，不静默换一个引擎来查）。
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -54,16 +55,27 @@ const LEDGER_BASELINE = [
 // —— asar 读取（与 test/helpers/engine-bundle.js 同款头结构：前 16 字节是
 //    目录 pickle 的长度 framing，偏移 12 是头 JSON 的字节长度） ——
 
+/** 候选位置与 test/helpers/engine-bundle.js 同款，逐条理由见那里的注释；
+ *  漂移由 test/asar-candidates.test.js 判红 */
+const ASAR_CANDIDATES = () =>
+  [
+    process.env.ERE_ENGINE_ASAR,
+    path.join(REPO, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    path.join(os.homedir(), '.era-engine', 'app.asar'),
+    '/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar',
+    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
+  ].filter(Boolean);
+
 function locate_asar(explicit) {
   if (explicit) {
     return fs.existsSync(explicit) ? explicit : undefined;
   }
-  const candidates = [
-    process.env.ERE_ENGINE_ASAR,
-    path.join(REPO, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
-    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
-  ].filter(Boolean);
-  return candidates.find((candidate) => fs.existsSync(candidate));
+  // env 的 none 与 mutation-check 的 --asar none 同款语义（显式无引擎）：
+  // 绝对路径回落进来之后，`env -u ERE_ENGINE_ASAR` 已造不出无引擎环境
+  if (process.env.ERE_ENGINE_ASAR === 'none') {
+    return undefined;
+  }
+  return ASAR_CANDIDATES().find((candidate) => fs.existsSync(candidate));
 }
 
 /** 展开 asar 头目录为 [相对路径, {offset, size}]（offset 相对数据段起点） */

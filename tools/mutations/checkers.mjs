@@ -394,4 +394,22 @@ export default [
     tests: ['trace-check'],
     must_mention: '锚校验焊死的变异靠这条拦下',
   },
+  {
+    desc: 'M373 三处 asar 候选悄悄漂移一条（引擎定位在三个文件里各写一份，漂移的后果是静默降级而非报错）',
+    file: 'tools/engine-contract-check.mjs',
+    find: "    path.join(os.homedir(), '.era-engine', 'app.asar'),",
+    replace:
+      "    path.join(os.homedir(), '.era-engine-drifted', 'app.asar'), // 变异：候选漂移",
+    tests: ['asar-candidates'],
+    must_mention: '三处必须同款',
+  },
+  {
+    desc: 'M374 ERE_ENGINE_ASAR=none 开关被拆（SOP 的跳过基线核对会静默变成「带引擎」跑，那时跳过数是 0、与基线永远对不上）',
+    file: 'test/helpers/engine-bundle.js',
+    find: "  if (process.env.ERE_ENGINE_ASAR === 'none') {",
+    replace:
+      "  if (false && process.env.ERE_ENGINE_ASAR === 'none') { // 变异：none 开关被拆",
+    tests: ['asar-candidates'],
+    must_mention: 'none 必须让 engine-bundle 退回无引擎',
+  },
 ];

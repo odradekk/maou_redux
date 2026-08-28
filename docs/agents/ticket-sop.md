@@ -19,6 +19,17 @@
 - 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
 - `.worktreeinclude` 会把主 checkout 的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**主 checkout 那份必须是 `"static": "yml"`**，否则每个新 worktree 一开就是坏的。
 
+### 两个 checkout，各管一头
+
+|                 | 路径                              | 用途                                                                                         | Orca 仓库 id                           |
+| --------------- | --------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **主 checkout** | `D:\Code\era` = `/mnt/d/Code/era` | **只做引擎手工验收**：GUI 引擎是 Windows 程序，必须留在 Windows 盘上。合并后 `git pull` 同步 | `f7e86ea9-1881-436f-9e29-d71dcbaae393` |
+| **WSL 基座**    | `/home/bam00n/era`                | **所有 agent worktree 从它建**，落点 `~/orca/workspaces/era/<name>`                          | `71b28045-8ed3-4485-a036-2db90ae7758b` |
+
+**派单一律用 WSL 那个 id。** `/mnt/d` 是 9p 文件系统（WSL 访问 Windows 盘的协议），同一套自检在上面慢 1.5 倍且方差大得多——实测 `npm test` 中位 27s（26–32），ext4 上 18s（16–18）。两个仓库在 Orca 里 `displayName` 都是 `era`，**按名字选会撞**，所以选择器用 `id:`，别用 `name:`。
+
+两边都以 GitHub 为准同步（`git pull --ff-only origin master`），互不引用。
+
 ## 1. 选票与认领
 
 **可认领的第一张票** = `open` + 阻塞票全部已关闭 + 无 assignee，按编号序取第一个。
@@ -55,8 +66,9 @@ orca worktree ps --json
 **这是五步，不是三步。** 前四步每一步都有一个已知的失败形态，`--agent` 那一步的失败是**常态而非偶发**。
 
 ```
-# 1. 建（失败返回先当假失败处理，见 §0）
-orca worktree create --name t<N>-<slug> --no-parent --agent ante --issue <N> --json
+# 1. 建（失败返回先当假失败处理，见 §0；--repo 必须显式给 WSL 基座的 id）
+orca worktree create --name t<N>-<slug> --no-parent --agent ante --issue <N> \
+  --repo id:71b28045-8ed3-4485-a036-2db90ae7758b --json
 orca worktree list --json          # 无论上一步返回什么，都来这一下确认
 
 # 2. 取终端句柄（create 的返回经常拿不到，别指望它）
@@ -79,7 +91,7 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
 - `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
 - `--agent ante` 让 ante 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
-- `--repo` 省略时 Orca 从当前 worktree 推断仓库；跨仓库才需要 `orca repo list --json` 取 id。
+- **`--repo` 不能省。** 省略时 Orca 从当前目录推断，而派单会话通常就在主 checkout 里——那会把 worktree 建到 9p 上，白丢 1.5 倍速度。两个仓库同名，只能用 `id:`（见 §0 的表）。
 
 **`--agent` 启动几乎必然输给终端初始化的竞速——按「一定会掉回 shell」来写流程。** 本项目连续 11 次派发，11 次都在终端里留下 `The cursor position could not be read within a normal duration` 然后掉回 shell。所以第 3 步是必经流程，不是异常处理。
 
@@ -105,10 +117,9 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 
 <三到五条它自己查会很贵、且容易查错的既有事实，直接给结论>
 
-跑测试前必须设这个环境变量，否则 <当前基线数> 个用例静默跳过而测试仍报绿：
-   export ERE_ENGINE_ASAR=/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar
-worktree 若缺 node_modules 先 npm ci。跑全量变异用 node tools/mutation-check.mjs，
-**不要加 --jobs**：并行副本看不到引擎会误报跳过。
+worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.sh 包一层
+（并发时不把机器压死），全量变异用 bash tools/capped.sh node tools/mutation-check.mjs
+--jobs 4。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
 
 三个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
 test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k>——**你的新
@@ -164,19 +175,18 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 **分支落后 master 时，先按 §5.5 rebase 再验收**——否则要验两遍。
 
-**开跑前先设引擎变量，否则等于没验：**
+**不必再 `export ERE_ENGINE_ASAR`。** asar 现在按 `ASAR_CANDIDATES` 逐条回落（含 `~/.era-engine/` 与 `/mnt/d/Code/era` 两条绝对路径），worktree 里没有 `ere-4.8.0-win-x64/` 也能命中。三处定位的同步由 `test/asar-candidates.test.js` 判红。
 
-```
-export ERE_ENGINE_ASAR=/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar
-```
-
-引擎查找的第三处回落写的是 Windows 路径 `D:\Code\era`，WSL 下解析不了。不设它会**静默跳过几十个用例而测试仍报绿**，`mutation-check.mjs` 也会误报「N 条跳过」。#113 验收时被这个假象误导过一次。
+**代价是「无引擎」不再能靠不设变量制造**——`env -u ERE_ENGINE_ASAR` 照样命中回落。第 2 步因此改用显式开关 `ERE_ENGINE_ASAR=none`。
 
 ### 四步
 
-1. **三项自检（带引擎）**：`npm test` / `npx eslint . --max-warnings 0` / `npx prettier --check .`。worktree 若缺 `node_modules` 先 `npm ci`——否则 `npx` 会从仓库外拉版本，eslint 与 prettier 都给出与仓库不一致的结果。
-2. **跳过基线核对（不带引擎）**：`env -u ERE_ENGINE_ASAR npm test`，跳过数必须等于 `test/engine-skip-baseline.txt` 里的数字。新增依赖引擎的用例必须同步改该数并在注释里写出算式；**rebase 后注释里的算式会失准**（用例总数变了），一并更正。
-3. **全量变异检查（带引擎、串行）**：`node tools/mutation-check.mjs`，约 12–15 分钟。**严格标准是「全部拦下、零跳过」**。**不要用 `--jobs`**，并行副本看不到引擎会误报跳过。
+**每条都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
+
+1. **三项自检（带引擎）**：`bash tools/capped.sh npm test` / `npx eslint . --max-warnings 0` / `npx prettier --check .`。worktree 若缺 `node_modules` 先 `npm ci`——否则 `npx` 会从仓库外拉版本，eslint 与 prettier 都给出与仓库不一致的结果。
+2. **跳过基线核对（不带引擎）**：`ERE_ENGINE_ASAR=none bash tools/capped.sh npm test`，跳过数必须等于 `test/engine-skip-baseline.txt` 里的数字。新增依赖引擎的用例必须同步改该数并在注释里写出算式；**rebase 后注释里的算式会失准**（用例总数变了），一并更正。
+3. **全量变异检查（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，约 4 分钟（ext4 实测 253s）。**严格标准是「全部拦下、零跳过」**。
+   **`--jobs` 现在可用了**，此前 SOP 禁止它是对的：`COPY_DENY` 把 `ere-4.8.0-win-x64` 排除在副本外，子进程够不着引擎，有引擎的机器上必然判出「引擎在场却有 17 条按跳过处理」而整体红（实测 `329/17/rc=1`）。绝对路径回落进来之后同样条件是 `346/0/rc=0`。串行仍然可用（约 330s），只是没有理由再选它。
 4. **逐条比对工单验收清单**，并抽查本票新增的变异条目是否真被拦下。
 
 ### 逐条对照清单时的八个判据
@@ -248,12 +258,14 @@ git show <本票 sha>:<path>              # 从这里抽出本票新增的条目
 ```
 gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<conventional commit>" --body-file -
 gh pr merge <pr> --repo odradekk/maou_redux --squash --delete-branch
-git -C D:/Code/era pull --ff-only origin master
+git -C /home/bam00n/era pull --ff-only origin master   # WSL 基座：下一张票的建树基线
+git -C /mnt/d/Code/era  pull --ff-only origin master   # 主 checkout：引擎手工验收用
 orca worktree rm --worktree "id:<repoId>::<路径>" --force --json
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
 - PR 正文以 `Closes #<n>` 结尾，合并即自动关票。
+- **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §2 说的那四处全局计数冲突。
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **需要启动引擎的手工验收，在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
 
