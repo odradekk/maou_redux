@@ -114,6 +114,10 @@ const KOJO_OUTPUT_NAME = {
   'EVENT_K903_嘉德.ERB': 'kojo-k903-garde.js',
   'EVENT_K904_菲娅.ERB': 'kojo-k904-fia.js',
   'EVENT_F1_丽塔.ERB': 'kojo-f1-rita.js',
+  // #183（H14 迷宫凌辱男性对象）：迷宫目录的口上型文件，与口上同构
+  // （带文本的状态机）。产物名沿用 ASCII 意译（dungeon + ravish-man），
+  // 与口上的 kojo-[kf] 命名族并存。
+  'DUNGEON_RYOUZYOKU_MAN.ERB': 'kojo-dungeon-ravish-man.js',
 };
 
 /**
