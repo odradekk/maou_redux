@@ -604,4 +604,59 @@ export default [
     tests: ['enter-enemy'],
     must_mention: ':93 CALL ENTER_ENEMY,0 经日推进真跑（勇者入队）',
   },
+  // —— #173（H4）：ENDING_2 真身（M440-M445）——
+  {
+    desc: 'M440 ENDING_2 的 QUIT 降格为普通返回（quit() → return 0）',
+    file: 'ere/event/event-ending.js',
+    find: `  era.quit();
+}`,
+    replace: `  return 0; // 变异：QUIT 降格为返回值
+}`,
+    tests: ['event-ending', 'dungeon-main', 'event-ending2-e2e'],
+    must_mention: 'QUIT 的异常从 ending_2 炸出',
+  },
+  {
+    desc: 'M441 ENDING_2 封印播报的名字写死 0（%SAVESTR:TARGET% 不取指针）',
+    file: 'ere/event/event-ending.js',
+    find: "  const target_name = era.get(`callname:${era_flag.target}:-1`) ?? '';",
+    replace:
+      "  const target_name = era.get(`callname:0:-1`) ?? ''; // 变异：写死 0",
+    tests: ['event-ending'],
+    must_mention: '封印播报随 TARGET 指针取名',
+  },
+  {
+    desc: 'M442 ENDING_2 的 GAMEOVER 分隔行删除（:54）',
+    file: 'ere/event/event-ending.js',
+    find: `  era.print(
+    '-------------------------------GAMEOVER---------------------------------',
+  );`,
+    replace: '  // 变异：GAMEOVER 分隔行删',
+    tests: ['event-ending', 'event-ending2-e2e'],
+    must_mention: 'GAMEOVER 分隔行',
+  },
+  {
+    desc: 'M443 ENDING_2 横幅末行删除（:49「带着一丝不易察觉的微笑……」）',
+    file: 'ere/event/event-ending.js',
+    find: "  era.print('｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜');",
+    replace: '  // 变异：横幅末行删',
+    tests: ['event-ending', 'event-ending2-e2e'],
+    must_mention: '横幅末行',
+  },
+  {
+    desc: 'M444 ENDING_2 的仪式性 INPUT 删除（:55）',
+    file: 'ere/event/event-ending.js',
+    find: `  // :55 INPUT——确认用，结果不被消费（QUIT 之后无读者）
+  await era.input();`,
+    replace: '  // 变异：INPUT 删（演出不等确认直接 QUIT）',
+    tests: ['event-ending'],
+    must_mention: 'INPUT 恰一次在 QUIT 之前',
+  },
+  {
+    desc: 'M445 ENDING_2 封印播报的读键删除（PRINTFORMW 不等键，:52）',
+    file: 'ere/event/event-ending.js',
+    find: '  await era.waitAnyKey(); // PRINTFORMW 的读键',
+    replace: '  // 变异：PRINTFORMW 的读键删',
+    tests: ['event-ending'],
+    must_mention: 'PRINTFORMW 读键在前',
+  },
 ];

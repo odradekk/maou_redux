@@ -141,7 +141,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #171 的 M348 号段零撞号）。
 // 变异条目计数基线：条目表条数必须与此相等（增删条目 = 显式改这里）。
 // #172（H3 迷宫主循环）+14（tools/mutations/dungeon.mjs，M375-M388）。
-const LEDGER_COUNT_BASELINE = 362;
+// #173（H4 ENDING_2 与端到端）+7（event.mjs 的 M440-M445：QUIT 降格 /
+// 名字写死 / GAMEOVER 行删 / 横幅末行删 / INPUT 删 / 读键删；dungeon.mjs
+// 的 M446：魔王房间演出行删）。现为 369。
+const LEDGER_COUNT_BASELINE = 369;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

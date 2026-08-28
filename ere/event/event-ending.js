@@ -1,29 +1,37 @@
 /**
- * @file 结局演出：@ENDING_1 真身 + @ENDING_3/4/5 与 @END10_55 的条件接线
- *     与状态置位（issue #118，阶段 1 第三条贯通路径的 S6——游戏第一次
- *     可通关）。
+ * @file 结局演出：@ENDING_1 / @ENDING_2 真身 + @ENDING_3/4/5 与 @END10_55
+ *     的条件接线与状态置位（#118 阶段 1 第三条贯通路径的 S6——游戏第一次
+ *     可通关；#173 阶段 3 H4——ENDING_2 真身，游戏第一次能输）。
  *
  * 源: target/ERB/EVENT/ENDING ver 1.0.1.ERB  @ENDING_1（:6-40，人间界
- *       征服的中场结局）/ @ENDING_3（:59-74，精灵领域）/ @ENDING_4
+ *       征服的中场结局）/ @ENDING_2（:43-56，魔王城陷落的真
+ *       GAMEOVER）/ @ENDING_3（:59-74，精灵领域）/ @ENDING_4
  *       （:77-92，龙之山脉）/ @ENDING_5（:97-112，天界）/ @CHAR_GIFT
  *       （:136-，贡品角色的献上流程，存根）
  *     target/ERB/EVENT/ENDINGDATA_ADDON1.ERB  @END10_55（:475-485，
  *       天神宫结局演出，存根）
- *     （触发条件与 CALL 在 ere/page/page-invasion.js 的 invasion_check，
- *     原作 INVASION.ERB:999-1021）
+ *     （ENDING_1 的触发条件与 CALL 在 ere/page/page-invasion.js 的
+ *     invasion_check，原作 INVASION.ERB:999-1021；ENDING_2 的触发在
+ *     ere/dungeon/dungeon.js，原作 DUNGEON.ERB:202 的 JUMP）
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - ENDING_1 是中场结局不是游戏终止（#112 判据）：默认路径继续游戏，
  *     玩家选 [1] 才 QUIT（era.quit()，引擎 API）；「演出已出现」的判定
  *     取 FLAG:82 == 1，只在继续路径置位（原作 :38，QUIT 分支不置）；
+ *   - ENDING_2 是真 GAMEOVER（#173 判据）：无条件 QUIT、无 RETURN、不置
+ *     任何旗标（原作 :43-56 全文即演出 + INPUT + QUIT）——端到端的断言是
+ *     quit 抛出，不是某个 flag 变 1；
  *   - [0]/[1] 选项改 printButton（原作 PRINTL [0] - … + INPUT）：引擎
  *     showAcc 自动拼 [快捷键] 正文，按钮正文不写 [编号] 前缀（PR #30
  *     实机教训，工单「两个容易做错的点」之二）；原作「 - 」分隔随引擎
- *     渲染公式成为「 」，与 page-invasion 的菜单同一先例；
+ *     渲染公式成为「 」，与 page-invasion 的菜单同一先例；ENDING_2 的
+ *     INPUT 无按钮（原作亦无选项，纯确认），era.input() 直收；
  *   - $INPUT_LOOP 的无效输入只重问不重画（原作 :31-37 的 GOTO）；
  *   - `CALL ADDCHARA_EX, CHARANUM-1` → add_chara_ex(35)（ere 以角色号
  *     直接寻址，#21）；`A = CHARANUM-1` 是原作的全局传参媒介，ere 显式
  *     传参（#5 决议第六条），不再镜像；
+ *   - ENDING_2 的 %SAVESTR:TARGET% → callname:TARGET:-1（SAVESTR 无引擎
+ *     通道，#171 的 #5 决议承载；取 TARGET 指针不取队长，见函数内注释）；
  *   - CHAR_GIFT 的「FLAG:87/89/91 = 1 → CALL → = 2」状态机 1:1 保留
  *     （置位是防重复触发的判据，不是演出），演出本体存根。
  */
@@ -35,9 +43,11 @@ const { add_chara_ex } = require('#/chara/chara-ex');
 const { char_init } = require('#/chara/chara-init');
 const { stub_line_wait } = require('#/utils/stub-line');
 
-/** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定） */
+/**
+ * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。#173（H4）
+ * 起 ENDING_2 已接真身，从名单移除。
+ */
 const STUBBED_CALLS = [
-  'ENDING_2',
   'ENDING_3',
   'ENDING_4',
   'ENDING_5',
@@ -116,21 +126,55 @@ async function ending_1() {
 /**
  * @ENDING_2（ENDING ver 1.0.1.ERB:43-56）：魔王城陷落——真 GAMEOVER。
  *
- * 与 ENDING_1 的中场结局形态不同：横幅 + 勇者封印播报 + GAMEOVER 线 +
- * INPUT + QUIT，QUIT 后无任何语句。**真身随 #173（H4）落地**——本存根
- * 是 #172（H3）的接入点（DUNGEON.ERB:202 的 JUMP ENDING_2 在勇者到达
- * 第 9 层且 TALENT:122 == 0 时首次可达）。JUMP 是尾跳转：ere 侧调用后
- * 调用方不再执行后续语句（run_dungeon 在调用后直接 return，1:1）。
+ * 与 ENDING_1 的中场结局形态不同：横幅 → 勇者封印播报（PRINTFORMW）→
+ * 空行（原作行尾两个半角空格，逐字抄）→ GAMEOVER 分隔行 → INPUT（仪式性
+ * 确认，结果不被消费——下一步就 QUIT）→ QUIT。**无条件退出，无 RETURN。**
  *
- * @returns {Promise<number>} 原作 QUIT 后无 RETURN（存根以 0 收口）
+ * 调用点是 DUNGEON.ERB:202 的 JUMP ENDING_2（FLOOR >= 9 且 TALENT:122 == 0
+ * 的真勇者踏破第 9 层；ere/dungeon/dungeon.js）。JUMP 是尾跳转：原作调用
+ * 方不再执行后续，ere 侧以调用后的 return 0 收口（#172）——真身抛 quit 后
+ * 该行不可达（#148 的 throw 型控制流，与 ending_1 的 QUIT 路径同一机制，
+ * 夹具同款 throw）。
+ *
+ * @returns {Promise<void>} 永不返回（QUIT 抛 Error("quit") 炸穿调用链）
  */
 async function ending_2() {
-  await stub_line_wait(
-    'ENDING_2',
-    '魔王城陷落的 GAMEOVER 演出',
-    '随 #173（H4）',
+  // :45 DRAWLINE
+  era.drawLine();
+  // :46-50 横幅（制表框 4 行，含全角空格的手工对齐，逐字抄）
+  era.print('┌─────────────────────────────┐');
+  era.print('｜　　　　　　新的女勇者，终于攻陷了魔王的地下城　　　　　　｜');
+  era.print('｜　　　　　　魔王将打倒自己的勇者的模样铭记于心　　　　　　｜');
+  era.print('｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜');
+  era.print('└─────────────────────────────┘');
+
+  // :52 PRINTFORMW *勇者%SAVESTR:TARGET%封印了魔王……*。SAVESTR 无引擎
+  // 通道（#171：app.asar 无 savestr 表），名字承载按 #5 决议读
+  // callname:TARGET:-1。**取的是 TARGET 指针、不是队长 ARG:0**（票面
+  // #173：两者在这条路径上未必同一人，差异属原作行为，照抄别顺手改成
+  // 队长）——本函数无参（JUMP 不带参），读的就是全局指针；其值由
+  // run_dungeon 的 DUNGEON.ERB 行 37（TARGET = ARG:0）设置，行 852 的
+  // TARGET = -1 复位在 JUMP 之后不可达，故触发时恒为踏破第 9 层的队长
+  // 本人（对现状的观察，不是把判据改写成队长的依据）
+  const target_name = era.get(`callname:${era_flag.target}:-1`) ?? '';
+  era.print(`*勇者${target_name}封印了魔王，被后人歌颂为传说中的勇者*`);
+  await era.waitAnyKey(); // PRINTFORMW 的读键
+
+  // :53 PRINTL（两个尾随半角空格的行——与 ENDING_1 的纯空 PRINTL 不同，
+  // 逐字抄）
+  era.print('  ');
+  // :54 GAMEOVER 分隔行
+  era.print(
+    '-------------------------------GAMEOVER---------------------------------',
   );
-  return 0;
+
+  // :55 INPUT——确认用，结果不被消费（QUIT 之后无读者）
+  await era.input();
+
+  // :56 QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，#148）
+  // ——本函数与 DUNGEON 调用链的后续语句全部不可达。quit() 之后不写任何
+  // 语句（原作 QUIT 后无 RETURN，1:1）
+  era.quit();
 }
 
 /**

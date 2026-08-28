@@ -189,6 +189,83 @@ test('选 [1] 退出：era.quit() 抛 Error("quit") 炸穿 invasion_check（真�
   );
 });
 
+// —— @ENDING_2 真身（#173 H4）：魔王城陷落的真 GAMEOVER ——
+
+test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的名字）+ GAMEOVER 行 + INPUT 后 quit 抛出', async () => {
+  const fixture = create_era_fixture();
+  // 两个角色在场：TARGET 指针指向 1——封印播报必须取指针的名字，不是
+  // 「最近的」「随便一个」角色（票面 #173：取 TARGET 不是队长 ARG:0，
+  // 差异属原作行为，照抄）
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
+  fixture.era.addCharacter(1);
+  fixture.era.addCharacter(2);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 1;
+  const { ending_2 } = fixture.load_module('event/event-ending');
+
+  fixture.set_inputs(0); // :55 INPUT（仪式性确认，结果不被消费）
+  let caught;
+  await ending_2().catch((e) => {
+    caught = e;
+  });
+  // :56 QUIT：throw 型（#148）——异常炸穿本函数，无 RETURN
+  assert(
+    caught instanceof Error && caught.message === 'quit',
+    'QUIT 的异常从 ending_2 炸出（真 GAMEOVER，无 RETURN）',
+  );
+  assert(
+    fixture.calls.some(({ api }) => api === 'quit'),
+    'QUIT → era.quit()（关窗 IPC 已记录）',
+  );
+  // 演出八行逐字（:45-54）
+  const texts = history_texts(fixture);
+  assert.deepEqual(
+    texts,
+    [
+      '┌─────────────────────────────┐',
+      '｜　　　　　　新的女勇者，终于攻陷了魔王的地下城　　　　　　｜',
+      '｜　　　　　　魔王将打倒自己的勇者的模样铭记于心　　　　　　｜',
+      '｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜',
+      '└─────────────────────────────┘',
+      '*勇者阿尔封印了魔王，被后人歌颂为传说中的勇者*',
+      '  ',
+      '-------------------------------GAMEOVER---------------------------------',
+    ],
+    '横幅 6 行 + 封印播报 + 空行（两个尾随空格）+ GAMEOVER 分隔行（:46-54 逐字）',
+  );
+  // :52 的名字来自 TARGET 指针（callname:1:-1，不是 2 的「贝丝」）
+  // :52 PRINTFORMW 的读键（waitAnyKey，print 置位 allowWait 后真等）在
+  // 前、:55 INPUT（确认用）在后——顺序即 :52 → :55 → :56 的执行序
+  assert.deepEqual(
+    fixture.inputs_consumed.map(({ api, value }) =>
+      value === undefined ? api : `${api}:${value}`,
+    ),
+    ['waitAnyKey', 'input:0'],
+    'PRINTFORMW 读键在前、INPUT 恰一次在 QUIT 之前（:52/:55/:56 的顺序）',
+  );
+});
+
+test('ENDING_2·TARGET 判据：指针指向 2 时封印播报取 2 的名字（非写死、非队长）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
+  fixture.era.addCharacter(1);
+  fixture.era.addCharacter(2);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 2;
+  const { ending_2 } = fixture.load_module('event/event-ending');
+
+  fixture.set_inputs(0);
+  await ending_2().catch(() => {});
+  assert(
+    history_texts(fixture).includes(
+      '*勇者贝丝封印了魔王，被后人歌颂为传说中的勇者*',
+    ),
+    '封印播报随 TARGET 指针取名（%SAVESTR:TARGET% 的 1:1）',
+  );
+});
+
 test('演出横幅只画一次（:33-36 的无效重问分支引擎侧不可达，#130）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
@@ -326,7 +403,6 @@ test('存根清单核对：event-ending 与 chara-init 的 STUBBED_CALLS 全部�
     fixture.load_module('event/event-ending');
   const { STUBBED_CALLS: INIT_STUBS } = fixture.load_module('chara/chara-init');
   assert.deepEqual(ENDING_STUBS, [
-    'ENDING_2',
     'ENDING_3',
     'ENDING_4',
     'ENDING_5',
