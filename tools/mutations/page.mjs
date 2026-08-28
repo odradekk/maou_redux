@@ -662,4 +662,133 @@ export default [
     tests: ['page-save-load'],
     must_mention: '丢失槽不出按钮（只剩 0 号正常档可点）',
   },
+  {
+    desc: 'M560 INFO2 陷阱写入漏判选中位图（SELECT_FLAG & COMPARE_BIT 改恒真，未选层也被写）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: `          for (let l = 0; l < 9; l += 1) {
+            for (let c = 0; c < 3; c += 1) {
+              if ((select_flag[c] & compare_bit) !== 0) {
+                flag_set(l + c * 10 + 300, result === 0 ? -1 : result);
+              }
+            }
+            compare_bit *= 2;
+          }`,
+    replace: `          for (let l = 0; l < 9; l += 1) {
+            for (let c = 0; c < 3; c += 1) {
+              // 变异：漏判选中位图，恒写
+              flag_set(l + c * 10 + 300, result === 0 ? -1 : result);
+            }
+            compare_bit *= 2;
+          }`,
+    tests: ['page-dungeon-info'],
+    must_mention: 'B 列不受单元选择影响',
+  },
+  {
+    desc: 'M561 INFO2 设施批量改造的扣款删除（MONEY 与 EX_FLAG:4444 双减，:334-335）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: `              era_flag.money -= 10000 * dialogue[1];
+              era_exflag.legit_money -= 10000 * dialogue[1];`,
+    replace: `              // 变异：不扣款`,
+    tests: ['page-dungeon-info'],
+    must_mention: 'MONEY 双扣 20000',
+  },
+  {
+    desc: 'M562 INFO2 怪物迎击 toggle 的位换算改坏（FLAG:5 位 4 → 位 3）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: `    if (result === 100) {
+      flag_set(5, flag_get(5) ^ 16);
+    }`,
+    replace: `    if (result === 100) {
+      flag_set(5, flag_get(5) ^ 8); // 变异：位 3
+    }`,
+    tests: ['page-dungeon-info'],
+    must_mention: '一次翻转置位 16',
+  },
+  {
+    desc: 'M563 ENEMY_COMPARE 阶层比较方向反转（低层靠前 → 高层靠前）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: `  if (cflag_get(a, 501) !== cflag_get(b, 501)) {
+    return cflag_get(a, 501) < cflag_get(b, 501) ? -1 : 1;
+  }`,
+    replace: `  if (cflag_get(a, 501) !== cflag_get(b, 501)) {
+    return cflag_get(a, 501) > cflag_get(b, 501) ? -1 : 1; // 变异：方向反
+  }`,
+    tests: ['page-dungeon-info'],
+    must_mention: '阶层 2 排在阶层 5 前',
+  },
+  {
+    desc: 'M564 SETUP 宝物判定被「修好」（原作 ELSEIF Z > 300 漏掉 300 本身，#14 登记的原作缺陷照抄——修好必须红）',
+    file: 'ere/page/page-dungeon-setup.js',
+    find: `        } else if (z > 300) {
+          // :227-229 宝物：Y = X + 340
+          flag_set(floor + 340, z);
+        }`,
+    replace: `        } else if (z >= 300) {
+          // 变异：修好了原作缺陷（ELSEIF Z > 300 漏 300）
+          flag_set(floor + 340, z);
+        }`,
+    tests: ['page-dungeon-setup'],
+    must_mention: '原作缺陷照抄',
+  },
+  {
+    desc: 'M565 ROOM_SETUP 设施改造的扣款删除（10000p 双减，:300-301）',
+    file: 'ere/page/page-dungeon-setup.js',
+    find: `      era_flag.money -= 10000;
+      era_exflag.legit_money -= 10000;
+      flag_set(floor + 350, result);`,
+    replace: `      // 变异：不扣款
+      flag_set(floor + 350, result);`,
+    tests: ['page-dungeon-setup'],
+    must_mention: 'MONEY -10000',
+  },
+  {
+    desc: 'M566 MON_SET_OMAKASE 玉座跳过删除（(16,16) 也放怪物，:509-511）',
+    file: 'ere/page/page-dungeon-setup.js',
+    find: `    // :509-511 玉座 (16,16) 跳过
+    if (x === 16 && y === 16) {
+      continue;
+    }`,
+    replace: `    // 变异：玉座也放`,
+    tests: ['page-dungeon-setup'],
+    must_mention: '玉座 (16,16) 不写',
+  },
+  {
+    desc: 'M567 OVERVIEW「迷宫外」判定改坏（501 <= 1 且 502 == 0 → 502 判据删）',
+    file: 'ere/page/page-main-menu.js',
+    find: `        if (floor <= 1 && (era.get(\`cflag:\${cid}:502\`) || 0) === 0) {
+          temp[10] += 1;`,
+    replace: `        if (floor <= 1) {
+          // 变异：漏判攻略度 0
+          temp[10] += 1;`,
+    tests: ['page-dungeon-info'],
+    must_mention: '迷宫外恰 1 人（勇者甲）',
+  },
+  {
+    desc: 'M568 DRAW_DUNGEON_DAILY 威望上界钳制删除（EX_FLAG:99 >= 100 → 100）',
+    file: 'ere/page/page-main-menu.js',
+    find: `  if (era_exflag.prestige >= 100) {
+    era_exflag.prestige = 100;
+  }`,
+    replace: `  // 变异：不钳上界`,
+    tests: ['page-dungeon-info'],
+    must_mention: 'EX_FLAG:99 钳到 100',
+  },
+  {
+    desc: 'M569 主菜单 [102] 地下城按钮删除（实机可达性——#129 型缺口的防复发钉）',
+    file: 'ere/page/page-main-menu.js',
+    find: `  era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);`,
+    replace: `  // 变异：不渲染 [102] 按钮`,
+    tests: ['page-dungeon-info'],
+    must_mention: '[102] 恰一枚',
+  },
+  {
+    desc: 'M570 SETUP 的 2D 模式分流删除（FLAG:502 == 1 不再进 DUNGEON_INFO_MAP，:8-11）',
+    file: 'ere/page/page-dungeon-setup.js',
+    find: `  if (flag_get(502) === 1) {
+    return dungeon_info_map();
+  }`,
+    replace: `  // 变异：不分流 2D 模式`,
+    tests: ['page-dungeon-setup'],
+    must_mention: '进了 MAP 界面',
+  },
 ];

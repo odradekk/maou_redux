@@ -84,6 +84,8 @@ const K5 = 'target/ERB/口上/EVENT_K5_マオ.ERB';
 const EXCOM = 'target/ERB/其他/EXCOM.ERB';
 const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
 const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
+const DUNGEON_INFO2 = 'target/ERB/迷宮/DUNGEON_INFO2.ERB';
+const DUNGEON_SETUP = 'target/ERB/迷宮/DUNGEON_SETUP.ERB';
 const DRAW_EXT_COMM = 'target/ERB/其他/DRAW_EXT_COMM.ERB';
 const TITLE = 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB';
 const SHOP_2 = 'target/ERB/SHOP/SHOP_2.ERB';
@@ -1476,6 +1478,121 @@ const FILES = [
       // 守卫；#136 勘误移交——渲染侧从未画过，据点两处入口实机不可达）
       { src: DRAW_MAINMENU, ref: '303', any: [/PRINTLCD \[200\] 保存/] },
       { src: DRAW_MAINMENU, ref: '306', any: [/PRINTLCD \[300\] 读取/] },
+      // —— #180（[102] 按钮 + @DRAW_DUNGEON_OVERVIEW/@DRAW_DUNGEON_DAILY 真身）——
+      { src: DRAW_MAINMENU, ref: '239', any: [/^IF FLAG:502 == 0$/m] },
+      {
+        src: DRAW_MAINMENU,
+        ref: '239-243',
+        any: [/^IF FLAG:502 == 0$/m, /^PRINTLCD \[102\] 地下城$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '427-577',
+        any: [/^@DRAW_DUNGEON_OVERVIEW$/m, /^#DIM DYNAMIC TEMP, 500$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '432-433',
+        any: [/^PRINT$/m, /^PRINTFORML 迷宫Lv：/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '434-438',
+        any: [/^REPEAT 99$/m, /^L_近卫 = 0$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '441-467',
+        any: [/^IF CHARANUM >= 1$/m, /^REPEAT CHARANUM$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '450-455',
+        any: [
+          /^\s*IF CFLAG:COUNT:501 <= 1 && CFLAG:COUNT:502 == 0$/m,
+          /^\s*TEMP:97 \+= 1$/m,
+        ],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '458-462',
+        any: [/^\s*IF CFLAG:COUNT:1 == 3$/m, /^\s*TEMP:96 \+= 1$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '465-466',
+        any: [
+          /^\s*L_近卫 \+= EX_TALENT:COUNT:1 > 0$/m,
+          /^\s*L_奴隶 \+= CFLAG:COUNT:1 != 2 && CFLAG:COUNT:1 != 9$/m,
+        ],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '471-569',
+        any: [/^\s*B = 0$/m, /^\s*REPEAT 100$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '488-498',
+        any: [
+          /^\s*IF X != 10 && TEMP1:4 == 1$/m,
+          /^\s*PRINTBUTTON LOCALS, X\+520$/m,
+        ],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '509-511',
+        any: [/^\s*A = Z \+ 100$/m, /^\s*B \+= ITEM:A$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '523-532',
+        any: [
+          /^\s*PRINTFORM 部下\{B, 4\}只, $/m,
+          /^\s*PRINTFORM 勇者：\{TEMP:X, 2\}人$/m,
+        ],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '533-552',
+        any: [/^\s*PRINTFORM 设施：$/m, /^\s*PRINTFORM 娼馆街　$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '556-558',
+        any: [
+          /^\s*PRINTFORM 近卫兵：$/m,
+          /^\s*PRINTFORML \{B \+ L_近卫, 4\}体/m,
+        ],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '570-575',
+        any: [/^PRINTL 　$/m, /^PRINTFORM  部下统计：/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '583-601',
+        any: [/^@DRAW_DUNGEON_DAILY\s*$/m, /^CALL DISPLAY_DUNGEON_DAILY$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '584-586',
+        any: [/^IF EX_FLAG:99 >= 100$/m, /^EX_FLAG:99 = 100$/m],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '589-599',
+        any: [
+          /^IF EX_FLAG:99 <= 20 && EX_FLAG:99 >= 0$/m,
+          /^PRINT 【广受爱戴】$/m,
+        ],
+      },
+      {
+        src: DRAW_MAINMENU,
+        ref: '601',
+        any: [/^CALL DISPLAY_DUNGEON_DAILY$/m],
+      },
       {
         src: DRAW_MAINMENU,
         ref: '320',
@@ -1784,6 +1901,998 @@ const FILES = [
       { src: SHOP_VER, ref: '4-20', any: [/^@EVENTSHOP/m, /REPEAT 100/] },
       { src: SHOP_VER, ref: '7-12', any: [/バグ対策/] },
       { src: SHOP_VER, ref: '15-18', any: [/ITEMSALES:COUNT = 0/] },
+      // #180：102 分支接 DUNGEON_INFO2 真身（原豁免条目 '108' 随引用
+      // 改写为 108-109 而消化，豁免清单同步删）
+      {
+        src: SHOP_VER,
+        ref: '108-109',
+        any: [/^ELSEIF RESULT == 102$/m, /^CALL DUNGEON_INFO2$/m],
+      },
+    ],
+  },
+  // —— #180（H11 迷宫情报与建设：DUNGEON_INFO2.ERB / DUNGEON_SETUP.ERB）——
+  {
+    js: 'ere/page/page-dungeon-info2.js',
+    refs: [
+      // target/ERB/迷宮/DUNGEON_INFO2.ERB
+      {
+        src: DUNGEON_INFO2,
+        ref: '2-492',
+        any: [/^\s*@DUNGEON_INFO2$/m, /^\s*#DIM DISPLAY_FLAG = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '3-9',
+        any: [
+          /^\s*#DIM DISPLAY_FLAG = 0$/m,
+          /^\s*#DIM SELECT_FLAG = 0, 0, 0$/m,
+        ],
+      },
+      { src: DUNGEON_INFO2, ref: '12', any: [/^\s*REDRAW 0$/m] },
+      { src: DUNGEON_INFO2, ref: '15', any: [/^\s*CUSTOMDRAWLINE =$/m] },
+      { src: DUNGEON_INFO2, ref: '17', any: [/^\s*WHILE RESULT != 999$/m] },
+      { src: DUNGEON_INFO2, ref: '18', any: [/^\s*DISPLAY_LINE = 17$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '20-46',
+        any: [/^\s*LINE_COUNT:0 = 4$/m, /^\s*LINE_COUNT:1 = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '48-52',
+        any: [
+          /^\s*FONTBOLD$/m,
+          /^\s*CALL MENU_BUTTON, \(DISPLAY_FLAG != 0\), @"%UNICODE\(0x258c\)% 陷 阱　", 900$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '54-123',
+        any: [/^\s*COMPARE_BIT = 1$/m, /^\s*FOR LCOUNT:0, 0, 9$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '56',
+        any: [
+          /^\s*PRINTFORM \[\{\(LCOUNT:0 \+ 1\) \* 10 \+ 100\}\] 第\{LCOUNT:0 \+ 1\}阶层\s*$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '58-79',
+        any: [/^\s*IF DISPLAY_FLAG == 0$/m, /^\s*FOR LCOUNT:1, 0, 3$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '65', any: [/^\s*SETCOLOR 128, 255, 0$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '67',
+        any: [/^\s*SETCOLORBYNAME RoyalBlue$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '75-76',
+        any: [/^\s*PRINTFORM 陷阱：%"无",18,LEFT%$/m, /^\s*FLAG:X = -1$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '81-99',
+        any: [/^\s*ELSEIF DISPLAY_FLAG == 1$/m, /^\s*X = LCOUNT:0 \+ 350$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '87', any: [/^\s*SETCOLOR 128, 255, 0$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '89',
+        any: [/^\s*SETCOLORBYNAME RoyalBlue$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '96-97',
+        any: [/^\s*PRINTFORM 设施：通路$/m, /^\s*FLAG:X = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '101-119',
+        any: [/^\s*ELSE$/m, /^\s*X = LCOUNT:0 \+ 340$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '107', any: [/^\s*SETCOLOR 128, 255, 0$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '109',
+        any: [/^\s*SETCOLORBYNAME RoyalBlue$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '124-128',
+        any: [
+          /^\s*IF DISPLAY_FLAG == 0$/m,
+          /^\s*PRINTFORML \[200\] 全部陷阱 \[201\]陷阱%"　Ａ",21,LEFT%  \[202\]陷阱%"　Ｂ",21,LEFT%  \[203\]陷阱　Ｃ$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '131-132',
+        any: [
+          /^\s*SIF SELECT_FLAG:0 == 0 && SELECT_FLAG:1 == 0 && SELECT_FLAG:2 == 0$/m,
+          /^\s*SETCOLOR 128, 128, 128$/m,
+        ],
+      },
+      { src: DUNGEON_INFO2, ref: '132', any: [/^\s*SETCOLOR 128, 128, 128$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '134-246',
+        any: [/^\s*IF DISPLAY_FLAG == 0$/m, /^\s*Y = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '136-166',
+        any: [/^\s*Y = 0$/m, /^\s*LINE_COUNT:1 = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '139',
+        any: [/^\s*PRINTL \[  0\] 解除陷阱$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '149',
+        any: [
+          /^\s*PRINTFORM \[\{LCOUNT:0, 3\}\] %ITEMNAME:\(LCOUNT:0\), 16, LEFT%（\{ITEM:\(LCOUNT:0\), 2\}）$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '153-159',
+        any: [/^\s*ELSEIF DIALOGUE:1 == -1$/m, /^\s*RESETCOLOR$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '171-180',
+        any: [/^\s*IF DIALOGUE:1 > 0$/m, /^\s*IF DIALOGUE:0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '187-192',
+        any: [/^\s*ELSEIF DIALOGUE:1 == -2$/m, /^\s*DISPLAY_LINE -= 1$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '193-204',
+        any: [/^\s*ELSE$/m, /^\s*Y = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '214-245',
+        any: [/^\s*ELSE$/m, /^\s*Y = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '240-241',
+        any: [
+          /^\s*IF LINE_COUNT:0 > LINE_COUNT:1$/m,
+          /^\s*FOR LCOUNT:0, LINE_COUNT:1, LINE_COUNT:0$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '249-252',
+        any: [
+          /^\s*PRINTFORML \[10\] 部下状态总览$/m,
+          /^\s*PRINTFORM \[11\]1～3层 \[12\]4～6层 \[13\]7～9层 \[14\]近卫兵$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '251',
+        any: [/^\s*PRINTPLAIN  显示部下\s*$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '252',
+        any: [
+          /^\s*PRINTFORML \[100\]怪物迎击    　现在：\\@\(FLAG:5 & 16\) \?關閉#開啟\\@$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '256-262',
+        any: [/^\s*IF DIALOGUE:1 < 0$/m, /^\s*WAITANYKEY$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '265-320',
+        any: [
+          /^\s*IF DISPLAY_FLAG == 0$/m,
+          /^\s*IF RESULT > 100 && RESULT < 204$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '268',
+        any: [/^\s*COMPARE_BIT = 1 << RESULT \/ 10 - 11$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '270-279',
+        any: [
+          /^\s*IF RESULT == 200$/m,
+          /^\s*IF SELECT_FLAG:0 == 511 && SELECT_FLAG:1 == 511 && SELECT_FLAG:2 == 511$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '281-291',
+        any: [
+          /^\s*ELSEIF RESULT % 10 == 0$/m,
+          /^\s*COMPARE_BIT = 1 << RESULT \/ 10 - 11$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '293-298',
+        any: [
+          /^\s*ELSEIF RESULT > 200$/m,
+          /^\s*IF SELECT_FLAG:\(RESULT - 201\) == 511$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '300-301',
+        any: [
+          /^\s*ELSEIF RESULT % 10 < 4$/m,
+          /^\s*SELECT_FLAG:\(RESULT % 10 - 1\) \^= COMPARE_BIT$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '304-319',
+        any: [
+          /^\s*ELSEIF \(RESULT == 0\) \|\| \(RESULT >= 60 && RESULT < 89 && ITEM:RESULT\)$/m,
+          /^\s*SIF SELECT_FLAG:0 == 0 && SELECT_FLAG:1 == 0 && SELECT_FLAG:2 == 0$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '322-376',
+        any: [/^\s*ELSEIF DISPLAY_FLAG == 1$/m, /^\s*IF DIALOGUE:1 > 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '324-346',
+        any: [
+          /^\s*IF RESULT == 0$/m,
+          /^\s*IF \(MONEY >= 10000 \* DIALOGUE:1 && DIALOGUE:0 != 0\) \|\| \(DIALOGUE:0 == 0\)$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '325',
+        any: [
+          /^\s*IF \(MONEY >= 10000 \* DIALOGUE:1 && DIALOGUE:0 != 0\) \|\| \(DIALOGUE:0 == 0\)$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '334-335',
+        any: [
+          /^\s*MONEY -= 10000 \* DIALOGUE:1$/m,
+          /^\s*EX_FLAG:4444 -= 10000 \* DIALOGUE:1$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '352-353',
+        any: [
+          /^\s*IF RESULT > 100 && RESULT < 200$/m,
+          /^\s*SELECT_FLAG:0 \^= 1 << RESULT \/ 10 - 11$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '355-360',
+        any: [/^\s*ELSEIF RESULT == 200$/m, /^\s*IF SELECT_FLAG:0 == 511$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '362-375',
+        any: [
+          /^\s*ELSEIF \(RESULT == 0\) \|\| \(RESULT >= 500 && RESULT < 508\)$/m,
+          /^\s*IF SELECT_FLAG:0 == 0$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '370',
+        any: [/^\s*IF SELECT_FLAG & COMPARE_BIT$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '378-403',
+        any: [/^\s*ELSE$/m, /^\s*IF RESULT > 100 && RESULT < 200$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '381-382',
+        any: [
+          /^\s*IF RESULT > 100 && RESULT < 200$/m,
+          /^\s*SELECT_FLAG:0 \^= 1 << RESULT \/ 10 - 11$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '384-389',
+        any: [/^\s*ELSEIF RESULT == 200$/m, /^\s*IF SELECT_FLAG:0 == 511$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '391-402',
+        any: [
+          /^\s*ELSEIF \(RESULT == 0\) \|\| \(RESULT >= 300 && RESULT < 340 && ITEM:RESULT\)$/m,
+          /^\s*IF SELECT_FLAG:0 == 0$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '397',
+        any: [/^\s*IF SELECT_FLAG & COMPARE_BIT$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '407-412',
+        any: [
+          /^\s*IF RESULT >= 900 && RESULT <= 902$/m,
+          /^\s*DISPLAY_FLAG = RESULT % 10$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '415-417',
+        any: [/^\s*IF RESULT == 100$/m, /^\s*FLAG:5 \^= 16$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '420-477',
+        any: [/^\s*IF RESULT >= 10 && RESULT <= 14$/m, /^\s*\$PRINT$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '421-424',
+        any: [
+          /^\s*\$PRINT$/m,
+          /^\s*PRINTL \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '421-477',
+        any: [
+          /^\s*\$PRINT$/m,
+          /^\s*PRINTL \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '426-438',
+        any: [/^\s*Z = 0$/m, /^\s*R = 100$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '439', any: [/^\s*KAI_LIST = RESULT$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '440-465',
+        any: [/^\s*REPEAT 100$/m, /^\s*SIF Z >= 100 \|\| R <= 0$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '447', any: [/^\s*WAIT$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '449-453',
+        any: [/^\s*IF X != 10$/m, /^\s*PRINTFORML 第\{X\}阶层$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '454', any: [/^\s*CALL ENEMY_EXIST2\(X\)$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '460',
+        any: [/^\s*PRINTFORML \[\{A\}\] \{B\}只%MONSTERNAME\(A\)%\s*$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '468', any: [/^\s*PRINTL \[999\] 返回$/m] },
+      { src: DUNGEON_INFO2, ref: '469', any: [/^\s*INPUT$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '472',
+        any: [/^\s*CALL MONSTER_SETUP,RESULT$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '472-473',
+        any: [/^\s*CALL MONSTER_SETUP,RESULT$/m, /^\s*GOTO PRINT$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '479-480',
+        any: [/^\s*SIF RESULT != 999$/m, /^\s*CLEARLINE DISPLAY_LINE$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '483-488',
+        any: [/^\s*DISPLAY_FLAG = 0$/m, /^\s*SELECT_FLAG:0 = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '483-491',
+        any: [/^\s*DISPLAY_FLAG = 0$/m, /^\s*SELECT_FLAG:0 = 0$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '491', any: [/^\s*REDRAW 1$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '496-541',
+        any: [/^\s*@ENEMY_COMPARE\(ARG, ARG:1\)$/m, /^\s*#FUNCTION$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '501-502',
+        any: [/^\s*SIF ARG == ARG:1$/m, /^\s*RETURNF 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '505-506',
+        any: [
+          /^\s*SIF CFLAG:ARG:501 != CFLAG:\(ARG:1\):501$/m,
+          /^\s*RETURNF CFLAG:ARG:501 < CFLAG:\(ARG:1\):501 \? -1 # 1$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '508-511',
+        any: [
+          /^\s*LOCAL = 0,0,0,0,0$/m,
+          /^\s*LOCAL:3 = CFLAG:ARG:1 == 3 && CFLAG:ARG:500 == 4 \? 2 # CFLAG:ARG:1$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '514-528',
+        any: [
+          /^\s*IF LOCAL:3 != LOCAL:4$/m,
+          /^\s*LOCAL = LOCAL:3 == 2 \? CFLAG:ARG:533 # ARG$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '531-532',
+        any: [
+          /^\s*SIF LOCAL != LOCAL:1$/m,
+          /^\s*RETURNF CFLAG:LOCAL:502 < CFLAG:\(LOCAL:1\):502 \? -1 # 1$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '535-538',
+        any: [/^\s*SIF LOCAL == ARG$/m, /^\s*RETURNF -1$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '541',
+        any: [/^\s*RETURNF CFLAG:LOCAL:531 == ARG \? -1 # 1$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '545-645',
+        any: [/^\s*@ENEMY_EXIST2\(ARG\)$/m, /^\s*#DIM L_CHAR$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '553-554',
+        any: [/^\s*VARSET LOCAL$/m, /^\s*L_LEN = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '557-580',
+        any: [/^\s*FOR L_CHAR, 1, CHARANUM$/m, /^\s*SIF ARG == 10$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '559-560',
+        any: [/^\s*SIF ARG == 10$/m, /^\s*CONTINUE$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '562-563',
+        any: [/^\s*SIF CFLAG:L_CHAR:501 != ARG$/m, /^\s*CONTINUE$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '565-566',
+        any: [
+          /^\s*SIF \( CFLAG:L_CHAR:1 != 2 && CFLAG:L_CHAR:1 != 3 && TALENT:L_CHAR:221 == 0 \) \|\| \(\(\(CFLAG:L_CHAR:1 != 0 && ARG == 10\) \|\| \(CFLAG:L_CHAR:1 != 3 && CFLAG:L_CHAR:1 != 2\)\) && TALENT:L_CHAR:221 \)$/m,
+          /^\s*CONTINUE$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '571-579',
+        any: [/^\s*FOR L_INDX, 0, L_LEN$/m, /^\s*IF LOCAL:L_INDX <= 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '581-628',
+        any: [/^\s*L_CHAR = 0$/m, /^\s*L_LAST = 0$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '584',
+        any: [/^\s*L_LAST = CFLAG:L_CHAR:533$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '591',
+        any: [/^\s*IF L_LAST > 0 && CFLAG:L_LAST:533 == CFLAG:L_CHAR:533$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '595', any: [/^\s*PRINTL$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '602-618',
+        any: [/^\s*IF CFLAG:L_CHAR:507 == 1$/m, /^\s*SETCOLOR 200,200,100$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '603', any: [/^\s*SETCOLOR 200,200,100$/m] },
+      { src: DUNGEON_INFO2, ref: '607', any: [/^\s*SETCOLOR 100,255,255$/m] },
+      { src: DUNGEON_INFO2, ref: '611', any: [/^\s*SETCOLOR 255,100,100$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '613-617',
+        any: [
+          /^\s*IF CFLAG:L_CHAR:520 > 0$/m,
+          /^\s*PRINTFORM \[\{CFLAG:L_CHAR:520\+1\}F侵攻\]$/m,
+        ],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '620-625',
+        any: [/^\s*IF CFLAG:L_CHAR:1 == 2$/m, /^\s*SETCOLOR 255,100,100$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '622', any: [/^\s*SETCOLOR 255,100,100$/m] },
+      { src: DUNGEON_INFO2, ref: '624', any: [/^\s*SETCOLOR 100,255,255$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '627',
+        any: [/^\s*PRINTFORM %SAVESTR:L_CHAR,MAX_NAME_LEN,LEFT%\s*$/m],
+      },
+      { src: DUNGEON_INFO2, ref: '629-630', any: [/^\s*PRINTL$/m] },
+      { src: DUNGEON_INFO2, ref: '632', any: [/^\s*IF X == 10$/m] },
+      {
+        src: DUNGEON_INFO2,
+        ref: '632-645',
+        any: [/^\s*IF X == 10$/m, /^\s*FOR COUNT, 0, CHARANUM$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '637',
+        any: [/^\s*PRINTFORM %SAVESTR:COUNT,MAX_NAME_LEN,LEFT%$/m],
+      },
+      {
+        src: DUNGEON_INFO2,
+        ref: '638-641',
+        any: [/^\s*FOR LOCAL, 200, 212$/m, /^\s*SIF TALENT:COUNT:LOCAL$/m],
+      },
+    ],
+  },
+  {
+    js: 'ere/page/page-dungeon-setup.js',
+    refs: [
+      // target/ERB/迷宮/DUNGEON_SETUP.ERB
+      {
+        src: DUNGEON_SETUP,
+        ref: '5-231',
+        any: [/^\s*@DUNGEON_INFO$/m, /^\s*IF FLAG:502 == 1$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '8-11',
+        any: [/^\s*IF FLAG:502 == 1$/m, /^\s*CALL DUNGEON_INFO_MAP$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '14', any: [/^\s*DRAWLINE$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '16-79',
+        any: [/^\s*REPEAT 9$/m, /^\s*SETCOLORBYNAME RoyalBlue$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '17',
+        any: [/^\s*SETCOLORBYNAME RoyalBlue$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '19-28',
+        any: [/^\s*X = COUNT \+ 300$/m, /^\s*Y = FLAG:X$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '22',
+        any: [/^\s*PRINTFORM \[\{COUNT\}\] 第\{COUNT \+ 1\}阶层　陷阱：无$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '31-52',
+        any: [/^\s*X = COUNT \+ 310$/m, /^\s*Y = FLAG:X$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '57-66',
+        any: [/^\s*X = COUNT \+ 350$/m, /^\s*Y = FLAG:X$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '69-78',
+        any: [/^\s*X = COUNT \+ 340$/m, /^\s*Y = FLAG:X$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '81-82',
+        any: [
+          /^\s*PRINTFORML \[9\] 部下状态总览$/m,
+          /^\s*PRINTFORML \[10\]1～3层 \[11\]4～6层 \[12\]7～9层 的部下$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '88-92',
+        any: [/^\s*IF RESULT < 0$/m, /^\s*GOTO INPUT_LOOP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '95-143',
+        any: [
+          /^\s*IF RESULT >= 9 && RESULT <= 12$/m,
+          /^\s*PRINTL \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '101-137',
+        any: [/^\s*Z = 0$/m, /^\s*R = 100$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '119-123',
+        any: [/^\s*IF X != 10$/m, /^\s*PRINTFORML 第\{X\}阶层$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '128-133',
+        any: [/^\s*IF B > 0$/m, /^\s*PRINTV B$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '140', any: [/^\s*WAIT$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '145-146',
+        any: [/^\s*SIF RESULT == 100$/m, /^\s*RETURN 0$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '148', any: [/^\s*X = RESULT$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '150-177',
+        any: [
+          /^\s*PRINTFORML 进行第\{X \+ 1\}阶层的设定$/m,
+          /^\s*PRINTL 《请选择要设置的陷阱和宝物》$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '153-163',
+        any: [/^\s*Y = 0$/m, /^\s*REPEAT 29$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '164-173',
+        any: [/^\s*REPEAT 21$/m, /^\s*Z = COUNT \+ 300$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '179-231',
+        any: [/^\s*\$INPUT_LOOP_2$/m, /^\s*INPUT$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '181-185',
+        any: [/^\s*IF RESULT < 0$/m, /^\s*GOTO INPUT_LOOP_2$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '187-194',
+        any: [/^\s*IF RESULT == 0$/m, /^\s*Y = X \+ 300$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '195-198',
+        any: [/^\s*ELSEIF RESULT == 1$/m, /^\s*Y = X \+ 340$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '199-201',
+        any: [/^\s*ELSEIF RESULT == 2$/m, /^\s*CALL ROOM_SETUP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '202-203',
+        any: [/^\s*ELSEIF RESULT == 998$/m, /^\s*GOTO INPUT_LOOP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '204-205',
+        any: [/^\s*ELSEIF RESULT == 999$/m, /^\s*RETURN 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '207-231',
+        any: [/^\s*Z = RESULT$/m, /^\s*IF Z < 100$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '208-229',
+        any: [/^\s*IF Z < 100$/m, /^\s*\$INPUT_LOOP_3$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '211-215',
+        any: [/^\s*INPUT$/m, /^\s*IF RESULT < 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '212-215',
+        any: [/^\s*IF RESULT < 0$/m, /^\s*GOTO INPUT_LOOP_3$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '216-223',
+        any: [/^\s*ELSEIF RESULT == 3$/m, /^\s*Y = X \+ 300$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '225-226',
+        any: [/^\s*Y = X \+ 300$/m, /^\s*Y \+= RESULT \* 10$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '227-229',
+        any: [/^\s*ELSEIF Z > 300$/m, /^\s*Y = X \+ 340$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '237-264',
+        any: [/^\s*@ENEMY_EXIST$/m, /^\s*REPEAT CHARANUM$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '240', any: [/^\s*SETCOLOR 255,255,0$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '241',
+        any: [/^\s*IF CFLAG:COUNT:501 == X && COUNT != MASTER\s*$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '242-255',
+        any: [
+          /^\s*IF CFLAG:COUNT:1 == 2$/m,
+          /^\s*PRINTFORM %SAVESTR:COUNT%\[侵攻中\]$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '259',
+        any: [/^\s*SIF X == 10 && COUNT != MASTER && EX_TALENT:COUNT:1$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '259-260',
+        any: [
+          /^\s*SIF X == 10 && COUNT != MASTER && EX_TALENT:COUNT:1$/m,
+          /^\s*PRINTFORML %SAVESTR:COUNT%\[护卫中\]$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '268-307',
+        any: [/^\s*@ROOM_SETUP$/m, /^\s*\$INPUT_LOOP_4$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '276-284',
+        any: [/^\s*REPEAT 7$/m, /^\s*Z = COUNT \+ 500$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '290-292',
+        any: [/^\s*IF RESULT == 0$/m, /^\s*Y = X \+ 350$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '293-294',
+        any: [/^\s*ELSEIF RESULT == 999$/m, /^\s*RETURN 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '295-303',
+        any: [
+          /^\s*ELSEIF RESULT >= 500 && RESULT <= 507$/m,
+          /^\s*IF MONEY < 10000$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '297-299',
+        any: [/^\s*PRINTL \*资金不足！！\*$/m, /^\s*RETURN 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '300-301',
+        any: [/^\s*MONEY -= 10000$/m, /^\s*EX_FLAG:4444 -= 10000$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '304-305',
+        any: [/^\s*ELSE$/m, /^\s*GOTO INPUT_LOOP_4$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '311-483',
+        any: [/^\s*@DUNGEON_INFO_MAP$/m, /^\s*\$INPUT_LOOP_MAP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '332-334',
+        any: [/^\s*IF RESULT == 1$/m, /^\s*CALL GEO_OUTPUT_2$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '333', any: [/^\s*CALL GEO_OUTPUT_2$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '335-384',
+        any: [
+          /^\s*ELSEIF RESULT >= 2 && RESULT <= 5$/m,
+          /^\s*PRINTL \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '342-378',
+        any: [/^\s*Z = 0$/m, /^\s*R = 100$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '386-387',
+        any: [/^\s*SIF RESULT == 100$/m, /^\s*RETURN 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '390-393',
+        any: [/^\s*CALL MON_LIMIT$/m, /^\s*SIF RESULT == 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '395-483',
+        any: [/^\s*\$INPUT_LOOP_MONSET$/m, /^\s*PRINTL \*放置怪物\*$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '397-411',
+        any: [/^\s*PRINTL \*放置怪物\*$/m, /^\s*PRINTL 请设定怪物的等级$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '403-404',
+        any: [/^\s*IF RESULT == 0$/m, /^\s*GOTO INPUT_LOOP_MAP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '405-408',
+        any: [/^\s*ELSEIF RESULT == 100$/m, /^\s*CALL MON_SET_OMAKASE$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '409-410',
+        any: [
+          /^\s*ELSEIF RESULT < 0 \|\| RESULT >= 11$/m,
+          /^\s*GOTO INPUT_LOOP_MONSET$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '413-428',
+        any: [/^\s*LOCAL:2 = RESULT$/m, /^\s*PRINTL 请设定怪物的X坐标$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '426-427',
+        any: [
+          /^\s*ELSEIF RESULT < 0 \|\| RESULT >= 33$/m,
+          /^\s*GOTO INPUT_LOOP_MONSET$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '430-444',
+        any: [/^\s*LOCAL:3 = RESULT$/m, /^\s*PRINTL 请设定怪物的Y坐标$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '442-443',
+        any: [
+          /^\s*ELSEIF RESULT < 0 \|\| RESULT >= 33$/m,
+          /^\s*GOTO INPUT_LOOP_MONSET$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '448-451',
+        any: [
+          /^\s*IF LOCAL:3 == 16 && LOCAL:4 == 16$/m,
+          /^\s*PRINTW 无法在此放置$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '453',
+        any: [/^\s*SETFONT "ＭＳ ゴシック"$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '455-468',
+        any: [/^\s*FOR LOCAL:1,0,32$/m, /^\s*FOR LOCAL:0,0,32$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '470', any: [/^\s*SETFONT$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '472-473',
+        any: [
+          /^\s*PRINTW 确定放置在★的所在？$/m,
+          /^\s*PRINTL \[0\] 好的  \[1\] 不要$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '475-476',
+        any: [/^\s*SIF RESULT != 0$/m, /^\s*GOTO INPUT_LOOP_MAP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '478',
+        any: [/^\s*DB:\(LOCAL:4\):\(LOCAL:3\) = LOCAL:2$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '480-483',
+        any: [/^\s*PRINTW \*放置了怪物\*$/m, /^\s*GOTO INPUT_LOOP_MAP$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '486-516',
+        any: [/^\s*@MON_SET_OMAKASE$/m, /^\s*LOCAL:0 = 0$/m],
+      },
+      { src: DUNGEON_SETUP, ref: '492', any: [/^\s*LOCAL:0 = 0$/m] },
+      {
+        src: DUNGEON_SETUP,
+        ref: '496-497',
+        any: [/^\s*SIF LOCAL:0 > 100$/m, /^\s*RETURN 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '500-502',
+        any: [/^\s*CALL MON_LIMIT$/m, /^\s*SIF RESULT == 0$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '505-507',
+        any: [/^\s*LOCAL:2 = RAND:10$/m, /^\s*LOCAL:3 = RAND:32$/m],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '509-511',
+        any: [
+          /^\s*IF LOCAL:3 == 16 && LOCAL:4 == 16$/m,
+          /^\s*GOTO INPUT_LOOP_MONSET_OMAKASE$/m,
+        ],
+      },
+      {
+        src: DUNGEON_SETUP,
+        ref: '512',
+        any: [/^\s*DB:\(LOCAL:4\):\(LOCAL:3\) = LOCAL:2$/m],
+      },
     ],
   },
   {

@@ -23,6 +23,7 @@ const {
 const { stub_line_wait } = require('#/utils/stub-line');
 const { select_target } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
+const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { save_game, load_game } = require('#/page/page-save-load');
 const era_flag = require('#/era-utils/era-flag');
 
@@ -32,12 +33,12 @@ const era_flag = require('#/era-utils/era-flag');
  * 固定）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
  * 自 #44 起为真身/真转场，INVASION 自 #117 起为真身（[109] 的 BEGIN
  * TURNEND 随之真转场；199 休息的出口仍是待办），SYSTEM_SAVEGAME /
- * SYSTEM_LOADGAME 自 #136 起为真身（200/300 分支），均移出本名单。
+ * SYSTEM_LOADGAME 自 #136 起为真身（200/300 分支），DUNGEON_INFO2 自 #180
+ * 起为真身（102 分支，page-dungeon-info2.js），均移出本名单。
  */
 const STUBBED_CALLS = [
   'SELECT_ASSI',
   'CHARA_INFO',
-  'DUNGEON_INFO2',
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
@@ -232,8 +233,10 @@ async function usershop(result) {
       '随角色信息票',
     );
   } else if (result === 102) {
-    // 地下城 / 场子（:108；面板按钮文案依 FLAG:502，渲染随指令面板段）
-    await stub_line_wait('DUNGEON_INFO2', '地下城信息画面', '随迷宫票');
+    // 地下城 / 场子（:108-109）：CALL DUNGEON_INFO2（#180 起真身：ere/page/
+    // page-dungeon-info2.js 的三标签页情报界面；按钮文案依 FLAG:502——渲染
+    // 在 page-main-menu.js 的指令面板段，随本票落地）
+    await dungeon_info2();
   } else if (result === 103) {
     // 处刑（:110；原作 EXECUTION 的调用已注释，现行调批量处刑）
     await stub_line_wait('批量处刑', '处刑（批量处刑）', '随处刑票');

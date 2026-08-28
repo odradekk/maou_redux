@@ -76,25 +76,28 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（不叠�
     [1, 4, 5, 0],
   );
   assert.equal(fixture.store.get('flag:36'), 0);
-  // 重绘即反馈：每轮恰两行占位（子面板存根 + 指令面板渲染存根），没有为
-  // 面板按钮多打一行「占位反馈」——叠了会在此红（派单核实事实 #2）。
-  // 就地重绘下逐轮取证看行史：每轮的占位数与轮数的积不变
+  // 重绘即反馈：每轮恰两行占位（子面板 + 指令面板渲染），没有为面板按钮
+  // 多打一行「占位反馈」——叠了会在此红（派单核实事实 #2）。#180 起地城
+  // 两面板真身：轮 3（地城概况）只余指令面板占位 1 行，轮 4（地城日常）
+  // 是 DISPLAY_DUNGEON_DAILY 存根 + 指令面板 2 行——合计 2+2+1+2+2 = 9
   assert.equal(rounds_drawn(fixture), 5);
   assert.equal(
     history_texts(fixture).filter((line) => line.includes('尚未移植')).length,
-    5 * 2,
+    9,
   );
-  // 切换后的重绘确实换到了对应面板：第 2/3/4 轮的面板存根各自可见
+  // 切换后的重绘确实换到了对应面板：第 2/3/4 轮的面板内容各自可见
+  //（HAVETRAPS 仍是存根占位；地城两面板 #180 起真身，看读数标记）
   const texts = history_texts(fixture);
-  for (const erb_name of [
-    'DRAW_HAVETRAPS',
-    'DRAW_DUNGEON_OVERVIEW',
-    'DRAW_DUNGEON_DAILY',
-  ]) {
+  assert.equal(
+    texts.filter((line) => line.includes('@DRAW_HAVETRAPS')).length,
+    1,
+    `切换后应恰一次重绘出 @DRAW_HAVETRAPS 面板`,
+  );
+  for (const marker of ['迷宫Lv', '威望值']) {
     assert.equal(
-      texts.filter((line) => line.includes(`@${erb_name}`)).length,
+      texts.filter((line) => line.includes(marker)).length,
       1,
-      `切换后应恰一次重绘出 @${erb_name} 面板`,
+      `切换后应恰一次重绘出「${marker}」读数`,
     );
   }
   // 首轮面板是 DRAW_HAVEITEMS（FLAG:36 未声明读值 0），500 切回后恰两次
@@ -506,11 +509,11 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
   // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44、INVASION 与 109 分支的
   // BEGIN TURNEND 自 #117 起为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME
-  // 自 #136 起为真身（200/300 分支），已移出
+  // 自 #136 起为真身（200/300 分支），DUNGEON_INFO2 自 #180 起为真身
+  //（102 分支，page-dungeon-info2.js），已移出
   assert.deepEqual(STUBBED_CALLS, [
     'SELECT_ASSI',
     'CHARA_INFO',
-    'DUNGEON_INFO2',
     '批量处刑',
     'INTERCEPT',
     'ABILITY_UP',
