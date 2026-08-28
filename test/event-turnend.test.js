@@ -118,7 +118,14 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   // 迷宫整体绕开；再以 12/2/3 的正向用例分开两支——守卫删坏（比如恒放行）
   // 在正向用例上无差异、在本用例红；守卫写反（恒拦截）则在正向用例红。
   // #172 起 DUNGEON 是真身（无占位行），以 DUNGEON_ROOM 存根行计数观测
-  // （每次 run_dungeon 的 :386 必经，中性且每回合恰一行）
+  // run_dungeon 是否被调用。注意原作 :386 的 CALL DUNGEON_ROOM **不是必经**
+  // （#195 勘误，此前此处写反）：它之前有行動完了早退（CFLAG:530）、魔王
+  // 房间 ENDING_2 收口、撤退臂走出迷宫、迎击奴隶滞留归还等多处 return 0 /
+  // break 出口，落到哪个出口由随机掷选决定——如 walk = RAND:20 + 6×RAND:10
+  // 七掷全 0 时侵攻度不增，走撤退臂在迷宫外 break，DUNGEON_ROOM 行数为 0。
+  // 故正向两世界注入恒 0.5 随机源钉住滞留臂（walk = 40，侵攻度 0 + 40 ∈
+  // (0, 100)），:386 恰经过一次、计数恰一行；注入不挑分支，#175（H6 战斗）
+  // 改 :386 之后的行为（掉血、层数推进）不影响本观测
   const neutral = setup_turnend();
   join_slave_chara(neutral.fixture, 31, '温妮');
   await neutral.emit('EVENTTURNEND');
@@ -140,7 +147,12 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   const campaign = setup_turnend();
   join_slave_chara(campaign.fixture, 31, '温妮');
   campaign.fixture.store.set('cflag:31:1', 12);
-  await campaign.emit('EVENTTURNEND');
+  campaign.fixture.override_math_random(() => 0.5);
+  try {
+    await campaign.emit('EVENTTURNEND');
+  } finally {
+    campaign.fixture.restore_math_random();
+  }
   assert.equal(
     stub_count(campaign.fixture.text_lines(), 'DUNGEON_ROOM'),
     1,
@@ -151,7 +163,12 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   const explore = setup_turnend();
   join_slave_chara(explore.fixture, 31, '温妮');
   explore.fixture.store.set('cflag:31:1', 2);
-  await explore.emit('EVENTTURNEND');
+  explore.fixture.override_math_random(() => 0.5);
+  try {
+    await explore.emit('EVENTTURNEND');
+  } finally {
+    explore.fixture.restore_math_random();
+  }
   assert.equal(
     stub_count(explore.fixture.text_lines(), 'DUNGEON_ROOM'),
     1,
@@ -357,6 +374,13 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 A
   // 且它调的 KYOTEN_EVENT 实参应是 2）；FLAG:81 = 300 + FLAG:93 = 2 让人间界
   // 块先回退一档到 1——若精灵块把领域号误传成 1，会以 FLAG:81（<= 500，
   // stage 1）再回退一档到 0 并打出夺回横幅，本用例当场红
+  //
+  // #195 随机源注入（恒 0.5，选择依据同「已征服的反抗臂」用例，issue #120
+  // 评论）：真实随机下精灵块首掷 RAND:100 = 0（约 1%）会让循环进第 2 轮，
+  // 人间界块跟着再跑一次、FLAG:93 再退一档到 0，断言随机红——mutation-check
+  // 副本对照「环境破损」误报的来源之一。恒 0.5 下两处衰减每轮必掷 50：精灵
+  // 块首轮即离开 2100、循环恰一轮退出，人间界块也只跑一轮。floor(0.5 * n)
+  // 对任何 n >= 2 都非 0，世界里有未预见的额外 rand 消费也不会误触发掷 0 分支
   const world = setup_turnend();
   world.fixture.store.set('flag:82', 0); // 人间界未征服
   world.fixture.store.set('flag:81', 300);
@@ -365,14 +389,22 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 A
   world.fixture.store.set('flag:86', 2100);
 
   let turns = 0;
-  for (
-    ;
-    turns < 60 && world.fixture.store.get('flag:86') === 2100;
-    turns += 1
-  ) {
-    await world.emit('EVENTTURNEND');
+  world.fixture.override_math_random(() => 0.5);
+  try {
+    for (
+      ;
+      turns < 60 && world.fixture.store.get('flag:86') === 2100;
+      turns += 1
+    ) {
+      await world.emit('EVENTTURNEND');
+    }
+  } finally {
+    world.fixture.restore_math_random();
   }
-  assert.ok(turns < 60, '精灵领域衰减块确实执行（RAND:100 连 0 的概率可忽略）');
+  assert.ok(
+    turns < 60,
+    '精灵领域衰减块确实执行（衰减被删时 FLAG:86 恒不离开 2100）',
+  );
   assert.ok(
     (world.fixture.store.get('flag:86') ?? 0) < 2100,
     'FLAG:86 已衰减（调用点 :650 之后的 KYOTEN_EVENT, 2 已被调用）',
