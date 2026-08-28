@@ -1,6 +1,6 @@
 # 工单流程 SOP
 
-一张工单 = 一个 Orca worktree = 一个 ante 会话，全程用 `orca` CLI 驱动。
+一张工单 = 一个 Orca worktree = 一个 agent 会话（代码票用 `ante`，口上票用 `pi`，见 §3），全程用 `orca` CLI 驱动。
 
 工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；移植决议的索引见地图 issue #1（只读）。
 
@@ -12,10 +12,12 @@
 
 - Windows 上 CLI 就是 `orca`；Linux 下用 `orca-ide`（裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
 - **WSL 会话是个例外**：环境变量 `ORCA_CLI_COMMAND` 写着 `orca-ide`，但这台机器上没有这个可执行文件。可用的是 Windows 端的 `orca.exe`（在 PATH 上，`…/AppData/Local/Programs/orca/resources/bin`），它与 app 是同一份安装。
-- **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 11 次派发里出现 10 次，每次 worktree 都已在服务端建成**）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
+- **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 17 次派发里出现 16 次，每次 worktree 都已在服务端建成**；阶段 3 后期连续四张票全是假失败）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
+  - **假失败还会多出一个终端**：`terminal list` 里会有两个 handle，一个是 setup 钩子跑 `npm install` 的、一个是 agent 的。**别挑错**——`terminal read` 一眼就能分：agent 那个留着 `ante '--yolo'` 与 cursor-position 报错，setup 那个是 `npm audit` 之类的收尾输出。
 - **worktree 的选择器认 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `--worktree "name:t119-s7-kyoten"` 报错、`--worktree "name:odradekk/t119-s7-kyoten"` 才对。**别猜，用 `path:<绝对路径>`**——路径是 `worktree list` 里的 `path` 字段，稳定且唯一。
 - **`--issue <N>` 不保证写上关联**：实测建出来的 worktree `linkedIssue` 仍是 `null`。卡片上看不到关联不代表 worktree 建错了，别据此重建。
 - **本机 Orca 的 `commandSourcePolicy` 是 `local-only`，仓库里的 `orca.yaml` 钩子不会执行**（实测：带 `--run-hooks` 删 worktree，仓库脚本一行没跑）。所以仓库里不放 `orca.yaml`；worktree 的 setup 钩子（`npm install`）配在 Orca 的 **Settings → Repository → Hooks**。
+  - **WSL 基座那个仓库的钩子已配好**（`npm install`，实测生效：新 worktree 建成即有 102 个包，`npx eslint` / `npx prettier` 直接可跑，无须先 `npm ci`）。**两个仓库在 Orca 里 `displayName` 都是 `era`**，GUI 里配错过一次——按 `path` 认，或用 `orca repo list --json` 核对 `hookSettings.scripts.setup` 落在哪个 id 上。CLI 没有写这个字段的命令，只能在 GUI 改。
 - 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
 - `.worktreeinclude` 会把主 checkout 的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**主 checkout 那份必须是 `"static": "yml"`**，否则每个新 worktree 一开就是坏的。
 
@@ -61,25 +63,40 @@ orca worktree ps --json
 
 判据：**这张票会不会让别的票的用例变红，而修复手段不在自己范围内？** 会，就是硬依赖，必须串行。
 
-## 3. 建 worktree 并派 ante
+**还有一种反向的代价：并行票看不到彼此的交付，会漏掉票面里指向对方的验收条目。** #184（H15）的清单第 6 条是「H3 留的 `DUNGEON_BITCH` 存根换成实现并划掉」，但它建树时 #172（H3）还没合并、`ere/dungeon/` 当时根本不存在——那一条它无从下手，交上来的是「真身实现了但运行时不可达」（新模块除测试外无人 require），验收时才发现。
+
+这不是交付方的问题，是派单的问题。两条应对：
+
+- **票面里写着「换掉某张票留的存根」的，等那张票合并再派**；实在要并行，就在简报里写明「那个存根此刻还不存在，你的交付会停在真身实现，接线留给验收后的返工」，让双方都有预期。
+- 验收时**专门查一遍「真身有没有人调用」**：`grep -rn "<新模块名>" ere/ | grep -v "^ere/<新模块自身>"`，只有测试引用就是没接上。
+
+同类风险每次并行都在：本轮 #183 也曾落后三个提交，靠派单方 rebase 兜住。
+
+## 3. 建 worktree 并派 agent
+
+**先选载体：`ante` 还是 `pi`。** 口上票（`ERB/口上/` 与迷宫口上四票 H13–H16）用 **`pi`**——#168 裁定 7 定的「agent 逐字对照复核，载体是 pi agent 而非 ante」。其余代码票用 `ante`。两者 Orca 都认（`--agent pi` 实测可用），但**起法不同，见第 3 步**。
 
 **这是五步，不是三步。** 前四步每一步都有一个已知的失败形态，`--agent` 那一步的失败是**常态而非偶发**。
 
 ```
 # 1. 建（失败返回先当假失败处理，见 §0；--repo 必须显式给 WSL 基座的 id）
-orca worktree create --name t<N>-<slug> --no-parent --agent ante --issue <N> \
+orca worktree create --name t<N>-<slug> --no-parent --agent <ante|pi> --issue <N> \
   --repo id:71b28045-8ed3-4485-a036-2db90ae7758b --json
 orca worktree list --json          # 无论上一步返回什么，都来这一下确认
 
 # 2. 取终端句柄（create 的返回经常拿不到，别指望它）
 orca terminal list --json          # 按 worktreePath 含 t<N> 过滤出 handle
 
-# 3. 起 ante（三发：空回车吃残留、clear 洗一遍、再起，见下）
+# 3a. ante：三发（空回车吃残留、clear 洗一遍、再起，见下）
 orca terminal switch  --terminal <handle> --json
 orca terminal send    --terminal <handle> --text "" --enter --json
 orca terminal send    --terminal <handle> --text "clear" --enter --json
 orca terminal send    --terminal <handle> --text "ante --yolo" --enter --json
 orca terminal wait    --terminal <handle> --for tui-idle --timeout-ms 180000 --json
+
+# 3b. pi：一发就起来（不输竞速，无须三发），但要多等一轮再送简报
+orca terminal switch  --terminal <handle> --json
+orca terminal read    --terminal <handle> --json   # 等到看见 Packages: / pi-square
 
 # 4. 送简报（单行指向文件，绝不多行）
 orca terminal send --terminal <handle> --text "请读 /tmp/brief-<N>.txt 这份工单简报，按其中要求执行。" --enter --json
@@ -90,10 +107,20 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
 - `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
-- `--agent ante` 让 ante 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
+- `--agent <id>` 让 agent 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
 - **`--repo` 不能省。** 省略时 Orca 从当前目录推断，而派单会话通常就在主 checkout 里——那会把 worktree 建到 9p 上，白丢 1.5 倍速度。两个仓库同名，只能用 `id:`（见 §0 的表）。
 
-**`--agent` 启动几乎必然输给终端初始化的竞速——按「一定会掉回 shell」来写流程。** 本项目连续 11 次派发，11 次都在终端里留下 `The cursor position could not be read within a normal duration` 然后掉回 shell。所以第 3 步是必经流程，不是异常处理。
+**ante 与 pi 的差别，两处都会绊人：**
+
+|              | ante                               | pi                                |
+| ------------ | ---------------------------------- | --------------------------------- |
+| 起法         | **必然掉回 shell，要三发**（见下） | **一发就起来**，无须三发          |
+| 起来的判据   | 看到 `yolo mode on` + 模型名       | 看到 `Packages:` / `pi-square`    |
+| 送简报的时机 | `wait --for tui-idle` 之后即可     | **`tui-idle` 不可靠，要多等一轮** |
+
+**`terminal wait --for tui-idle` 对 pi 会提前返回。** 实测两张 pi 票的简报都送空了——TUI 还在初始化，字节写进 PTY 但没人接。表现是 `terminal read` 里只有 `Packages:` 那几行、没有 `Working...`。**判据是送完简报后能看到 `Working...` 或上涨的 `Context`**，看不到就等 15 秒重发一次（重发无害，pi 不会把两条当两个任务）。
+
+**ante 的 `--agent` 启动几乎必然输给终端初始化的竞速——按「一定会掉回 shell」来写流程。** 本项目连续 13 次 ante 派发，13 次都在终端里留下 `The cursor position could not be read within a normal duration` 然后掉回 shell。所以第 3a 步是必经流程，不是异常处理。**pi 没有这个问题**，它一发就起来。
 
 **掉回 shell 时输入行上粘着残留的转义序列**（形如 `1;2c1R`），直接发 `ante --yolo` 会被污染成 `bash: 2c1Rante: command not found`。所以三发：**空回车吃掉残留、`clear` 洗一遍、第三发才是 `ante --yolo`**——实测 6/6 一次起来，比早先「连发两次 `ante --yolo`」可靠。先 `terminal switch` 过去再发，不然发到别的终端上。
 
@@ -143,6 +170,16 @@ tail -1 test/engine-skip-baseline.txt
 grep -hoE "\bM[0-9]+\b" tools/mutations/*.mjs | sort -u -t M -k2 -n | tail -1
 ```
 
+**M 号段要按已派出的票记账，不能只看 master 的最大号。** 实测栽过一次：#172 派单时给「从 M375 起」，两票之后派 #183 又给了「M375–M399」——而 #172 那时还没合并，master 的最大号没变，光看仓库看不出撞车。#172 最终实占 M375–M388，只能中途改派 #183 到 M420。
+
+做法：**给每张在跑的票留一段固定宽度（20 个号）并写下来**，下一张从上一段的末尾之后起。一轮四张并行的分配长这样：
+
+```
+#182 → M500 起   #185 → M520 起   #176 → M540 起   #180 → M560 起
+```
+
+号段浪费不要紧（M 号只是引用锚点，不连续无害）；撞号要在合并时手工解 `tools/mutations/*.mjs` 的冲突，贵得多。
+
 漏掉引擎变量那段的后果不是「测得慢一点」，而是**它交上来一份自称全绿、实则几十个用例没跑的东西**，验收时才发现。这条比简报里任何一条领域事实都值钱。
 
 **M 起点也必须显式写进简报。** 本项目连撞五次 M 编号，唯一没撞的一次就是简报里写了起点。撞号本身不致命（唯一性由 `desc` 全串保证，见 `tools/mutation-check.mjs` 头注），但 rebase 时要把后合并那批整体顺延，白付一轮全量变异。
@@ -188,6 +225,18 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 3. **全量变异检查（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，约 4 分钟（ext4 实测 253s）。**严格标准是「全部拦下、零跳过」**。
    **`--jobs` 现在可用了**，此前 SOP 禁止它是对的：`COPY_DENY` 把 `ere-4.8.0-win-x64` 排除在副本外，子进程够不着引擎，有引擎的机器上必然判出「引擎在场却有 17 条按跳过处理」而整体红（实测 `329/17/rc=1`）。绝对路径回落进来之后同样条件是 `346/0/rc=0`。串行仍然可用（约 330s），只是没有理由再选它。
 4. **逐条比对工单验收清单**，并抽查本票新增的变异条目是否真被拦下。
+
+**第 3 步偶尔会红在「副本对照」而不是变异本身**（形态：`拦截 0 / 跳过 0 / 红 1`，一百多秒就退，文案是「副本 N 对照运行即红（副本环境破损，非变异拦截）」）。**这不一定是本票的问题**——它可能是 master 上一条随机相关的 flaky 用例，概率低到平时撞不上、四个副本一起跑就放大了四倍。
+
+判法：主树上 `npm test` 全绿而副本红 → 去日志里找 `✖ failing tests:` 下面那条用例名（工具自己列不出来时会退回尾部 60 行，得手工 `grep -nE "✖|# fail"`），然后在 master 上单独跑那个文件。是既有的就**立票、重跑本票的变异**，别让交付方背锅；是本票引入的才退回。
+
+**验证 flaky 修好了没有，不能只靠「重复跑 N 次不失败」。** 1% 概率的用例跑 30 次有 74% 的可能一次都不失败——master 版和修复版都会「30 次全绿」，这个对照什么也证明不了。**要构造能必然触发的条件再对照**，例如在文件首行钉死随机源：
+
+```
+sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 git checkout 还原
+```
+
+#195 就是这么验的：同样钉死 `Math.random ≡ 0`，master 3 条失败、修复版只剩 1 条（那条是有意保留的假阳性）。这才叫证明。
 
 ### 逐条对照清单时的八个判据
 
