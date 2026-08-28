@@ -582,6 +582,617 @@ const era_flag = {
   set last_save_no_9(v) {
     era.set('flag:10028', v);
   },
+  /**
+   * 第1层陷阱A（flag:300 ↔ FLAG:300）
+   * @returns {number}
+   */
+  get floor_1_trap_a() {
+    return era.get('flag:300') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_1_trap_a(v) {
+    era.set('flag:300', v);
+  },
+  /**
+   * 第2层陷阱A（flag:301 ↔ FLAG:301）
+   * @returns {number}
+   */
+  get floor_2_trap_a() {
+    return era.get('flag:301') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_2_trap_a(v) {
+    era.set('flag:301', v);
+  },
+  /**
+   * 第3层陷阱A（flag:302 ↔ FLAG:302）
+   * @returns {number}
+   */
+  get floor_3_trap_a() {
+    return era.get('flag:302') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_3_trap_a(v) {
+    era.set('flag:302', v);
+  },
+  /**
+   * 第4层陷阱A（flag:303 ↔ FLAG:303）
+   * @returns {number}
+   */
+  get floor_4_trap_a() {
+    return era.get('flag:303') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_4_trap_a(v) {
+    era.set('flag:303', v);
+  },
+  /**
+   * 第5层陷阱A（flag:304 ↔ FLAG:304）
+   * @returns {number}
+   */
+  get floor_5_trap_a() {
+    return era.get('flag:304') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_5_trap_a(v) {
+    era.set('flag:304', v);
+  },
+  /**
+   * 第6层陷阱A（flag:305 ↔ FLAG:305）
+   * @returns {number}
+   */
+  get floor_6_trap_a() {
+    return era.get('flag:305') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_6_trap_a(v) {
+    era.set('flag:305', v);
+  },
+  /**
+   * 第7层陷阱A（flag:306 ↔ FLAG:306）
+   * @returns {number}
+   */
+  get floor_7_trap_a() {
+    return era.get('flag:306') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_7_trap_a(v) {
+    era.set('flag:306', v);
+  },
+  /**
+   * 第8层陷阱A（flag:307 ↔ FLAG:307）
+   * @returns {number}
+   */
+  get floor_8_trap_a() {
+    return era.get('flag:307') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_8_trap_a(v) {
+    era.set('flag:307', v);
+  },
+  /**
+   * 第9层陷阱A（flag:308 ↔ FLAG:308）
+   * @returns {number}
+   */
+  get floor_9_trap_a() {
+    return era.get('flag:308') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_9_trap_a(v) {
+    era.set('flag:308', v);
+  },
+  /**
+   * 第1层陷阱B（flag:310 ↔ FLAG:310）
+   * @returns {number}
+   */
+  get floor_1_trap_b() {
+    return era.get('flag:310') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_1_trap_b(v) {
+    era.set('flag:310', v);
+  },
+  /**
+   * 第2层陷阱B（flag:311 ↔ FLAG:311）
+   * @returns {number}
+   */
+  get floor_2_trap_b() {
+    return era.get('flag:311') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_2_trap_b(v) {
+    era.set('flag:311', v);
+  },
+  /**
+   * 第3层陷阱B（flag:312 ↔ FLAG:312）
+   * @returns {number}
+   */
+  get floor_3_trap_b() {
+    return era.get('flag:312') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_3_trap_b(v) {
+    era.set('flag:312', v);
+  },
+  /**
+   * 第4层陷阱B（flag:313 ↔ FLAG:313）
+   * @returns {number}
+   */
+  get floor_4_trap_b() {
+    return era.get('flag:313') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_4_trap_b(v) {
+    era.set('flag:313', v);
+  },
+  /**
+   * 第5层陷阱B（flag:314 ↔ FLAG:314）
+   * @returns {number}
+   */
+  get floor_5_trap_b() {
+    return era.get('flag:314') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_5_trap_b(v) {
+    era.set('flag:314', v);
+  },
+  /**
+   * 第6层陷阱B（flag:315 ↔ FLAG:315）
+   * @returns {number}
+   */
+  get floor_6_trap_b() {
+    return era.get('flag:315') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_6_trap_b(v) {
+    era.set('flag:315', v);
+  },
+  /**
+   * 第7层陷阱B（flag:316 ↔ FLAG:316）
+   * @returns {number}
+   */
+  get floor_7_trap_b() {
+    return era.get('flag:316') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_7_trap_b(v) {
+    era.set('flag:316', v);
+  },
+  /**
+   * 第8层陷阱B（flag:317 ↔ FLAG:317）
+   * @returns {number}
+   */
+  get floor_8_trap_b() {
+    return era.get('flag:317') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_8_trap_b(v) {
+    era.set('flag:317', v);
+  },
+  /**
+   * 第9层陷阱B（flag:318 ↔ FLAG:318）
+   * @returns {number}
+   */
+  get floor_9_trap_b() {
+    return era.get('flag:318') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_9_trap_b(v) {
+    era.set('flag:318', v);
+  },
+  /**
+   * 第1层陷阱C（flag:320 ↔ FLAG:320）
+   * @returns {number}
+   */
+  get floor_1_trap_c() {
+    return era.get('flag:320') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_1_trap_c(v) {
+    era.set('flag:320', v);
+  },
+  /**
+   * 第2层陷阱C（flag:321 ↔ FLAG:321）
+   * @returns {number}
+   */
+  get floor_2_trap_c() {
+    return era.get('flag:321') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_2_trap_c(v) {
+    era.set('flag:321', v);
+  },
+  /**
+   * 第3层陷阱C（flag:322 ↔ FLAG:322）
+   * @returns {number}
+   */
+  get floor_3_trap_c() {
+    return era.get('flag:322') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_3_trap_c(v) {
+    era.set('flag:322', v);
+  },
+  /**
+   * 第4层陷阱C（flag:323 ↔ FLAG:323）
+   * @returns {number}
+   */
+  get floor_4_trap_c() {
+    return era.get('flag:323') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_4_trap_c(v) {
+    era.set('flag:323', v);
+  },
+  /**
+   * 第5层陷阱C（flag:324 ↔ FLAG:324）
+   * @returns {number}
+   */
+  get floor_5_trap_c() {
+    return era.get('flag:324') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_5_trap_c(v) {
+    era.set('flag:324', v);
+  },
+  /**
+   * 第6层陷阱C（flag:325 ↔ FLAG:325）
+   * @returns {number}
+   */
+  get floor_6_trap_c() {
+    return era.get('flag:325') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_6_trap_c(v) {
+    era.set('flag:325', v);
+  },
+  /**
+   * 第7层陷阱C（flag:326 ↔ FLAG:326）
+   * @returns {number}
+   */
+  get floor_7_trap_c() {
+    return era.get('flag:326') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_7_trap_c(v) {
+    era.set('flag:326', v);
+  },
+  /**
+   * 第8层陷阱C（flag:327 ↔ FLAG:327）
+   * @returns {number}
+   */
+  get floor_8_trap_c() {
+    return era.get('flag:327') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_8_trap_c(v) {
+    era.set('flag:327', v);
+  },
+  /**
+   * 第9层陷阱C（flag:328 ↔ FLAG:328）
+   * @returns {number}
+   */
+  get floor_9_trap_c() {
+    return era.get('flag:328') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_9_trap_c(v) {
+    era.set('flag:328', v);
+  },
+  /**
+   * 第1层宝箱（flag:340 ↔ FLAG:340）
+   * @returns {number}
+   */
+  get floor_1_treasure() {
+    return era.get('flag:340') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_1_treasure(v) {
+    era.set('flag:340', v);
+  },
+  /**
+   * 第2层宝箱（flag:341 ↔ FLAG:341）
+   * @returns {number}
+   */
+  get floor_2_treasure() {
+    return era.get('flag:341') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_2_treasure(v) {
+    era.set('flag:341', v);
+  },
+  /**
+   * 第3层宝箱（flag:342 ↔ FLAG:342）
+   * @returns {number}
+   */
+  get floor_3_treasure() {
+    return era.get('flag:342') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_3_treasure(v) {
+    era.set('flag:342', v);
+  },
+  /**
+   * 第4层宝箱（flag:343 ↔ FLAG:343）
+   * @returns {number}
+   */
+  get floor_4_treasure() {
+    return era.get('flag:343') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_4_treasure(v) {
+    era.set('flag:343', v);
+  },
+  /**
+   * 第5层宝箱（flag:344 ↔ FLAG:344）
+   * @returns {number}
+   */
+  get floor_5_treasure() {
+    return era.get('flag:344') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_5_treasure(v) {
+    era.set('flag:344', v);
+  },
+  /**
+   * 第6层宝箱（flag:345 ↔ FLAG:345）
+   * @returns {number}
+   */
+  get floor_6_treasure() {
+    return era.get('flag:345') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_6_treasure(v) {
+    era.set('flag:345', v);
+  },
+  /**
+   * 第7层宝箱（flag:346 ↔ FLAG:346）
+   * @returns {number}
+   */
+  get floor_7_treasure() {
+    return era.get('flag:346') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_7_treasure(v) {
+    era.set('flag:346', v);
+  },
+  /**
+   * 第8层宝箱（flag:347 ↔ FLAG:347）
+   * @returns {number}
+   */
+  get floor_8_treasure() {
+    return era.get('flag:347') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_8_treasure(v) {
+    era.set('flag:347', v);
+  },
+  /**
+   * 第9层宝箱（flag:348 ↔ FLAG:348）
+   * @returns {number}
+   */
+  get floor_9_treasure() {
+    return era.get('flag:348') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_9_treasure(v) {
+    era.set('flag:348', v);
+  },
+  /**
+   * 第1层设施（flag:350 ↔ FLAG:350）
+   * @returns {number}
+   */
+  get floor_1_facility() {
+    return era.get('flag:350') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_1_facility(v) {
+    era.set('flag:350', v);
+  },
+  /**
+   * 第2层设施（flag:351 ↔ FLAG:351）
+   * @returns {number}
+   */
+  get floor_2_facility() {
+    return era.get('flag:351') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_2_facility(v) {
+    era.set('flag:351', v);
+  },
+  /**
+   * 第3层设施（flag:352 ↔ FLAG:352）
+   * @returns {number}
+   */
+  get floor_3_facility() {
+    return era.get('flag:352') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_3_facility(v) {
+    era.set('flag:352', v);
+  },
+  /**
+   * 第4层设施（flag:353 ↔ FLAG:353）
+   * @returns {number}
+   */
+  get floor_4_facility() {
+    return era.get('flag:353') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_4_facility(v) {
+    era.set('flag:353', v);
+  },
+  /**
+   * 第5层设施（flag:354 ↔ FLAG:354）
+   * @returns {number}
+   */
+  get floor_5_facility() {
+    return era.get('flag:354') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_5_facility(v) {
+    era.set('flag:354', v);
+  },
+  /**
+   * 第6层设施（flag:355 ↔ FLAG:355）
+   * @returns {number}
+   */
+  get floor_6_facility() {
+    return era.get('flag:355') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_6_facility(v) {
+    era.set('flag:355', v);
+  },
+  /**
+   * 第7层设施（flag:356 ↔ FLAG:356）
+   * @returns {number}
+   */
+  get floor_7_facility() {
+    return era.get('flag:356') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_7_facility(v) {
+    era.set('flag:356', v);
+  },
+  /**
+   * 第8层设施（flag:357 ↔ FLAG:357）
+   * @returns {number}
+   */
+  get floor_8_facility() {
+    return era.get('flag:357') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_8_facility(v) {
+    era.set('flag:357', v);
+  },
+  /**
+   * 第9层设施（flag:358 ↔ FLAG:358）
+   * @returns {number}
+   */
+  get floor_9_facility() {
+    return era.get('flag:358') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set floor_9_facility(v) {
+    era.set('flag:358', v);
+  },
+  /**
+   * 肉便器数（flag:83 ↔ FLAG:83）
+   * @returns {number}
+   */
+  get meat_toilet_count() {
+    return era.get('flag:83') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set meat_toilet_count(v) {
+    era.set('flag:83', v);
+  },
+  /**
+   * 展品数（flag:84 ↔ FLAG:84）
+   * @returns {number}
+   */
+  get exhibit_count() {
+    return era.get('flag:84') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set exhibit_count(v) {
+    era.set('flag:84', v);
+  },
 };
 // GENERATED END
 

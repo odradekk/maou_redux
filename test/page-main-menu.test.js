@@ -256,16 +256,14 @@ test('防御性修正：所指角色被占用（CFLAG:x:1 != 0）时重置', () 
   assert.equal(era_flag.assi, 1, '未占用的助手保留');
 });
 
-test('四个子面板存根：按 FLAG:36 分发，各带原作函数名与归属', () => {
-  const cases = [
+test('四个子面板：按 FLAG:36 分发——物品/陷阱占位，地城两面板真身（#180）', () => {
+  const stub_cases = [
     [0, 'DRAW_HAVEITEMS', '物品/技能面板'],
     [1, 'DRAW_HAVETRAPS', '持有陷阱面板'],
-    [4, 'DRAW_DUNGEON_OVERVIEW', '地城概况面板'],
-    [5, 'DRAW_DUNGEON_DAILY', '地城日常面板'],
     // ELSE 分支（:197-198）：未知值回落物品/技能面板
     [2, 'DRAW_HAVEITEMS', '物品/技能面板'],
   ];
-  for (const [flag_value, erb_name, label] of cases) {
+  for (const [flag_value, erb_name, label] of stub_cases) {
     const { fixture } = draw_menu_with((f) => {
       f.store.set('flag:36', flag_value);
     });
@@ -279,6 +277,31 @@ test('四个子面板存根：按 FLAG:36 分发，各带原作函数名与归�
     assert(
       stubs.some((line) => line.includes(label)),
       `占位行应标注面板名 ${label}`,
+    );
+  }
+  // 4/5 是真身：不再打子面板占位行，读数内容可见
+  for (const [flag_value, marker] of [
+    [4, '迷宫Lv'],
+    [5, '威望值'],
+  ]) {
+    const { fixture } = draw_menu_with((f) => {
+      f.store.set('flag:36', flag_value);
+    });
+    assert.ok(
+      fixture.text_lines().some((line) => line.includes(marker)),
+      `FLAG:36=${flag_value} 应显示真身读数「${marker}」`,
+    );
+    // 子面板本体不再占位（DAILY 尾部的 DISPLAY_DUNGEON_DAILY 是另一存根，
+    // 其占位行仍合法）
+    assert(
+      !fixture
+        .text_lines()
+        .some((line) =>
+          line.includes(
+            `@${flag_value === 4 ? 'DRAW_DUNGEON_OVERVIEW' : 'DRAW_DUNGEON_DAILY'}`,
+          ),
+        ),
+      `FLAG:36=${flag_value} 的子面板本体不再打占位行`,
     );
   }
 });
@@ -428,12 +451,13 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部待办'
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
 
-  // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单
+  // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
+  // DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件下方），
+  // 移出；DAILY 尾部的 DISPLAY_DUNGEON_DAILY（地城日常的部下日程）入名单
   assert.deepEqual(STUBBED_CALLS, [
     'DRAW_HAVEITEMS',
     'DRAW_HAVETRAPS',
-    'DRAW_DUNGEON_OVERVIEW',
-    'DRAW_DUNGEON_DAILY',
+    'DISPLAY_DUNGEON_DAILY',
     'DRAW_MAINMENU',
   ]);
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）

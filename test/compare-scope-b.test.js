@@ -36,13 +36,17 @@ const REPO = path.resolve(__dirname, '..');
 // 数字来源：#161 首次全绿实测（2026-08 工作树）。matched 升 / stub 降 =
 // 移植推进，更新此处是每次推进的一部分；unexplained 必须恒为 0——它非零
 // 就是有名有姓之外的真差异候选（当场归因或立票，不许改基准放行）。
+// #180 推进：[102] 地下城按钮落地（saveload 两样本 matched +2）；地城日常
+// 面板真身化后尾部 DISPLAY_DUNGEON_DAILY 存根行进 stub 计数（mainmenu
+// +1/+2、daycycle +3——样本过 5 号面板的次数），两读数真身行经归因规则
+// 进 matched/stub 的其余部分不变。
 const BASELINE = {
-  'mainmenu-natural': { matched: 34, version: 2, stub: 80, unexplained: 0 },
-  'mainmenu-max': { matched: 41, version: 2, stub: 109, unexplained: 0 },
-  'saveload-natural': { matched: 144, version: 2, stub: 221, unexplained: 0 },
-  'saveload-max': { matched: 144, version: 2, stub: 221, unexplained: 0 },
-  'daycycle-natural': { matched: 46, version: 2, stub: 218, unexplained: 0 },
-  'daycycle-max': { matched: 46, version: 2, stub: 258, unexplained: 0 },
+  'mainmenu-natural': { matched: 34, version: 2, stub: 81, unexplained: 0 },
+  'mainmenu-max': { matched: 41, version: 2, stub: 111, unexplained: 0 },
+  'saveload-natural': { matched: 146, version: 2, stub: 221, unexplained: 0 },
+  'saveload-max': { matched: 146, version: 2, stub: 221, unexplained: 0 },
+  'daycycle-natural': { matched: 46, version: 2, stub: 221, unexplained: 0 },
+  'daycycle-max': { matched: 46, version: 2, stub: 261, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
