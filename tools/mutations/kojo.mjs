@@ -235,4 +235,14 @@ export default [
     tests: ['kojo-dungeon-bitch'],
     must_mention: '收益结算',
   },
+
+  {
+    desc: 'M447 SKIP 块处理删除（[SKIPSTART] 内容被当活代码装载，#184 反向变异：四组同名的死代码判定）',
+    file: 'tools/kojo-transpiler.js',
+    find: '    if (/^\\[SKIPSTART\\]$/i.test(trimmed)) {',
+    replace:
+      '    if (false && /^\\[SKIPSTART\\]$/i.test(trimmed)) { // 变异：SKIP 块不拦截',
+    tests: ['kojo-transpiler'],
+    must_mention: '不产出重复顶层函数',
+  },
 ];
