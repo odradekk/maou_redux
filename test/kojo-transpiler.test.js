@@ -326,6 +326,11 @@ test('output_name_for：源文件名 → ASCII kebab-case（意译非罗马音�
   assert.equal(output_name_for('EVENT_K5_マオ.ERB'), 'kojo-k5-mao.js');
   assert.equal(output_name_for('EVENT_K9_ダイヤ.ERB'), 'kojo-k9-diamond.js');
   assert.equal(output_name_for('EVENT_F1_丽塔.ERB'), 'kojo-f1-rita.js');
+  // #183（H14 迷宫凌辱男性对象）：迷宫目录的口上型文件映射
+  assert.equal(
+    output_name_for('DUNGEON_RYOUZYOKU_MAN.ERB'),
+    'kojo-dungeon-ravish-man.js',
+  );
   // 未登记的文件名显式报错，不静默回落
   assert.throws(() => output_name_for('EVENT_UNKNOWN.ERB'), /未登记的口上文件/);
 });

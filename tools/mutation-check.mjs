@@ -147,7 +147,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #184（H15 地下城卖春系统）+4（kojo.mjs 的 M400-M403）。现为 373。
 // #175（H6 迷宫战斗）+8（dungeon.mjs 的 M480-M487）。现为 382
 // （rebase 相加：master 的 374 + 本票 8）。
-const LEDGER_COUNT_BASELINE = 382;
+// #183（H14 迷宫凌辱男性对象）+5（kojo.mjs 的 M420-M424：同名函数区分、
+// %SAVESTR:ARG% 插值承载、史莱姆 BASE 回复、分派缺失、初吻推进）。现为 387。
+const LEDGER_COUNT_BASELINE = 387;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

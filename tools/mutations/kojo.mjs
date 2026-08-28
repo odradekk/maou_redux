@@ -202,7 +202,53 @@ export default [
     tests: ['kojo-text-fidelity'],
     must_mention: '未见于 JS',
   },
-
+  {
+    // #183（H14 迷宫凌辱男性对象）：同名函数区分（验收要求「此行为必须有测试」）
+    desc: 'M420 H14 同名函数区分：orc_ryou_man 改回 orc_ryou（与 H13 撞名，触发 #12 遮蔽）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find: 'async function orc_ryou_man(arg, mon_num, rand) {',
+    replace: 'async function orc_ryou(arg, mon_num, rand) {',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '同名函数断言',
+  },
+  {
+    // #183：%SAVESTR:ARG% 插值承载改坏（arg_name 变固定串）。保真锁 D 只
+    // 比对字面量片段、不守插值映射本身（名字变了片段仍在）——由行为测试
+    // 的「11 种怪物分派」断言（输出须含被凌辱者名「冒险者」）拦截。
+    desc: 'M421 H14 插值承载改坏：arg_name_of 返回固定字符串',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find: '  return chara_callname(arg);',
+    replace: "  return '某人';",
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '怪物分派',
+  },
+  {
+    // #183：数值副作用改坏（BASE:ARG:0 += 100 改 50，史莱姆回复支断言红）
+    desc: 'M422 H14 数值副作用：史莱姆治愈的 BASE:ARG:0 += 100 改 50',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find: 'chara(arg).dungeon.体力 += 100; // :466 BASE:ARG:0 += 100（体力回复）',
+    replace: 'chara(arg).dungeon.体力 += 50; // :466 变异',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '体力回复',
+  },
+  {
+    // #183：11 种怪物分派（验收要求）——删掉一个导出，分派测试红
+    desc: 'M423 H14 分派缺失：module.exports 删 orc_ryou_man 导出',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find: '  orc_ryou_man,\n  slime_ryou_man,',
+    replace: '  slime_ryou_man,',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '未导出',
+  },
+  {
+    // #183：初吻推进改坏（995 改 994，SIF CFLAG:16 == -1 语义被破坏）
+    desc: 'M424 H14 初吻推进：995（怪物的阴茎）改 994（怪物）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find: '      chara(arg).train.初吻对象 = 995; // :135 CFLAG:16 = 995（怪物的阴茎）',
+    replace: '      chara(arg).train.初吻对象 = 994; // :135 变异',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '初吻',
+  },
   {
     desc: 'M400 勇者第一道门槛删除（EXP:74 == 0 不再拦，#184 验收变异）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',

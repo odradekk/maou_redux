@@ -65,7 +65,11 @@ const SEGMENT_MIN = 4;
  *  PRINTFORMW/L → wait/line，PRINTFORM/PRINT/PRINTW/PRINTL → 对应 wait/line；
  *  口上文件（K3/K5）只用 PRINTFORMW/L，不受影响）。variant：'W' 等待 / 'L'
  *  换行 / undefined 无后缀 */
-const PRINTFORM_RE = /^\s*PRINTFORM(W|L)?\s+(.*)$|^\s*PRINT(W|L)?\s+(.*)$/;
+// #183 增补：参数可空（PRINTL 空行、PRINTW 空行等待——DUNGEON_RYOUZYOKU_MAN
+// 的 :175 PRINTL 与 :197 PRINTW 空行）。`[ \t]+` 只吃半角空白，全角空格是
+// 参数内容（如 `PRINTFORMW` 后接全角空格开头的文本，参数以全角空格开头，#183 实测）。
+const PRINTFORM_RE =
+  /^\s*PRINTFORM(W|L)?(?:[ \t]+(.*))?$|^\s*PRINT(W|L)?(?:[ \t]+(.*))?$/;
 
 // —— 插值记号的归一表（ERB %…% → 归一名 ← JS ${…}） ——
 
@@ -120,6 +124,7 @@ const JS_TOKEN_RULES = [
   [/^scf\(\)$/, 'SCF'],
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],
+  [/^arg_name$/, 'ARGNAME'], // #183：H14 用 arg_name 变量名承载 %SAVESTR:ARG%
   [/^locals$/, 'LOCALS'],
   [/^local$/, 'LOCAL'],
   [/^kyaku$/, 'KYAKU'],
@@ -165,7 +170,17 @@ function norm_erb_token(raw) {
     }
   }
   const heart_match = tok.match(/^UNICODE\(0x2661\)\s*\*(\d+)$/);
-  return heart_match ? `HEART${heart_match[1]}` : undefined;
+  if (heart_match) {
+    return `HEART${heart_match[1]}`;
+  }
+  // #183：{MON_NUM} / {MON_NUM * 10} 计算插值（迷宫凌辱的怪物数量）
+  if (tok === 'MON_NUM') {
+    return 'MONNUM';
+  }
+  if (tok === 'MON_NUM * 10') {
+    return 'MONNUM_MUL10';
+  }
+  return undefined;
 }
 
 /** JS ${…} 记号 → 归一名；未知记号返回 undefined */
@@ -177,7 +192,17 @@ function norm_js_token(raw) {
     }
   }
   const heart_match = tok.match(/^heart\((\d+)\)$/);
-  return heart_match ? `HEART${heart_match[1]}` : undefined;
+  if (heart_match) {
+    return `HEART${heart_match[1]}`;
+  }
+  // #183：JS 侧 ${mon_num} / ${mon_num * 10} 与 ERB 的 {MON_NUM} 配对
+  if (tok === 'mon_num') {
+    return 'MONNUM';
+  }
+  if (tok === 'mon_num * 10') {
+    return 'MONNUM_MUL10';
+  }
+  return undefined;
 }
 
 /**
@@ -341,7 +366,7 @@ function find_printform(erb_lines, n, m) {
       const variant =
         match[1] ||
         (match[3] === 'W' ? 'W' : match[3] === 'L' ? 'L' : undefined);
-      const arg = match[2] ?? match[4];
+      const arg = match[2] ?? match[4] ?? '';
       return { line_no: i, variant, arg };
     }
   }
@@ -352,6 +377,18 @@ function find_printform(erb_lines, n, m) {
     const line = erb_lines[i - 1];
     if (line && /^\s*PRINTDATA/.test(line)) {
       return { line_no: i, variant: 'DATA', arg: '' };
+    }
+  }
+  // #183 增补：锚落在 DATAFORM 行区间（如 `// :94-98`）时，从窗口起点
+  // 向前回溯找所属 PRINTDATA 起始行——窗口内只有 DATAFORM 行、起始行在
+  // 窗口之前（DUNGEON_RYOUZYOKU_MAN.ERB 的逐行锚风格）。
+  for (let i = n - 1; i >= 1; i -= 1) {
+    const line = erb_lines[i - 1];
+    if (line && /^\s*PRINTDATA/.test(line)) {
+      return { line_no: i, variant: 'DATA', arg: '' };
+    }
+    if (PRINTFORM_RE.test(line ?? '')) {
+      break; // 遇到普通输出行说明不在 PRINTDATA 块内
     }
   }
   return null;
@@ -633,8 +670,12 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
       for (const seg of erb_arg.split(/%[^%]+%|{[^}]+}/)) {
         if (seg.trim().length >= SEGMENT_MIN) {
           erb_checked += 1;
-          if (!stmt.raw.includes(seg)) {
-            problems.push(`${where}: ERB 片段（归一后）未见于 JS：「${seg}」`);
+          // 只去尾随空白（行尾 tab/空格是编辑残留，转译器不保留）；
+          // 保留前导空白——M81 守的正是「句中前导空格丢失」（#46）
+          if (!stmt.raw.includes(seg.trimEnd())) {
+            problems.push(
+              `${where}: ERB 片段（归一后）未见于 JS：「${seg.trimEnd()}」`,
+            );
           }
         }
       }
