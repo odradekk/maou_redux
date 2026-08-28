@@ -52,6 +52,7 @@ const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { party_del } = require('#/dungeon/dungeon-party');
 const { ending_2 } = require('#/event/event-ending');
+const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -65,7 +66,6 @@ const STUBBED_CALLS = [
   'DUNGEON_TRAP',
   'DUNGEON_ROOM',
   'DUNGEON_TOWN',
-  'DUNGEON_BITCH',
   'KARMA',
   'ADD_EX_ITEM',
   'USE_EX_ITEM',
@@ -85,7 +85,8 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-// —— 存根层（工单 #172 十组中的八组 + 附属；归属见 docs/stub-registry.md）——
+// —— 存根层（工单 #172 十组中余下的 + 附属；DUNGEON_BITCH 已随 #184 换真身——
+//    真身在 ere/kojo/kojo-dungeon-bitch.js，:718 经模块对象调用；归属见 docs/stub-registry.md）——
 
 /**
  * @DUNGEON_SPY 存根（迷宮/DUNGEON_SPY.ERB；#175 H6）：行动完了的迎击
@@ -164,17 +165,6 @@ async function dungeon_room() {
  */
 async function dungeon_town() {
   await stub_line_wait('DUNGEON_TOWN', '城镇事件', '随 #178（H9）城镇票');
-  return 0;
-}
-
-/**
- * @DUNGEON_BITCH 存根（迷宮/DUNGEON_BITCH.ERB；#184 H15）：战后探索的
- * 卖春/淫逸事件（口上型状态机，走 #107 转译线）。
- * @param {number} cid 受探索者（原作 LOCAL）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
- */
-async function dungeon_bitch() {
-  await stub_line_wait('DUNGEON_BITCH', '战后探索', '随 #184（H15）口上型票');
   return 0;
 }
 
@@ -1175,7 +1165,7 @@ async function run_dungeon(arg0, rand) {
     after_target = arg0;
   }
 
-  await dungeon_bitch(after_target); // :718
+  await dungeon_bitch_mod.dungeon_bitch(after_target, rand_n); // :718（真身 #184；rand_n 透传，迷宫与卖春共用随机源。模块对象不解构——测试可替换导出断言被调，enter-enemy 先例）
   await get_junk_item(after_target); // :719
 
   // === 宝箱を見つける（:721-731；侵攻中 2 且 RAND:4 == 0，各自判定）===

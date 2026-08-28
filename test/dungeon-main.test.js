@@ -609,3 +609,37 @@ test('撤退决议：满状态继续前进', async () => {
   );
   assert.equal(fixture.store.get('cflag:1:507') ?? 0, 0, '不立撤退标志');
 });
+
+// —— #184 返工 1：H3 留的 DUNGEON_BITCH 存根换真身（运行时可达）——
+
+test('战后探索：run_dungeon 调用卖春真身（#184 接线，非存根占位行）', async () => {
+  const fixture = setup_world();
+  const { run_dungeon } = load(fixture);
+
+  // 替换真身模块导出为 spy（dungeon.js 不解构、属性查找在调用时——与
+  // disable_enter_enemy 同款手法）：断言 :718 真的调用到 kojo-dungeon-bitch
+  // 的真身，而不是 #172 遗留的本地存根占位行
+  const mod = fixture.load_module('kojo/kojo-dungeon-bitch');
+  const calls = [];
+  const orig = mod.dungeon_bitch;
+  mod.dungeon_bitch = async (cid, rand) => {
+    calls.push({ cid, rand });
+    return 0;
+  };
+
+  try {
+    // zero 随机源：RAND:N == 0 → 戦闘後探索的受者 1/3 掷选（RAND:3 == 0 &&
+    // SIDEA > 0 不成立、RAND:2 == 0 && SIDEB > 0 不成立）→ after_target = arg0
+    await run_dungeon(1, zero);
+  } finally {
+    mod.dungeon_bitch = orig; // 还原，避免污染同文件后续用例
+  }
+
+  assert.equal(calls.length, 1, ':718 恰好调用一次真身');
+  assert.equal(calls[0].cid, 1, '受者 = arg0（无 SIDEA/SIDEB 时）');
+  assert.equal(
+    typeof calls[0].rand,
+    'function',
+    'rand_n 透传（迷宫与卖春共用随机源）',
+  );
+});
