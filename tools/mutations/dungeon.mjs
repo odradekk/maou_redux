@@ -256,4 +256,109 @@ export default [
     tests: ['dungeon-battle'],
     must_mention: '勇者被打退',
   },
+
+  // —— #176 H7 陷阱（ere/dungeon/dungeon-trap.js 与 dungeon.js 的接线）——
+  {
+    desc: 'M540 陷阱 A 槽基址错位（+299 → +300：槽寻位读空列）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '    let trap_num = chara(a).dungeon.侵攻阶层 + 299;',
+    replace:
+      '    let trap_num = chara(a).dungeon.侵攻阶层 + 300; // 变异：A 槽基址错位',
+    tests: ['dungeon-trap'],
+    must_mention: '落穴伤害经分发落变量',
+  },
+  {
+    desc: 'M541 同一陷阱回避阈值改坏（20 - 512 → 20 + 512：恒不回避）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '      const trap_miss = 20 - c512;',
+    replace: '      const trap_miss = 20 + c512; // 变异：回避阈值方向反',
+    tests: ['dungeon-trap'],
+    must_mention: '回避演出',
+  },
+  {
+    desc: 'M542 陷阱消耗守卫改坏（TRAP_NOUSE == 0 → != 0：未作动反消耗）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '        trap_nouse === 0 &&\n        place === 2\n      ) {',
+    replace:
+      '        trap_nouse !== 0 &&\n        place === 2\n      ) { // 变异：消耗守卫反',
+    tests: ['dungeon-trap'],
+    must_mention: '作动消耗一个库存',
+  },
+  {
+    desc: 'M543 TRAP_PRICE 价格表错（63 号 100 → 101）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '    63: 100,',
+    replace: '    63: 101, // 变异：价格错',
+    tests: ['dungeon-trap'],
+    must_mention: 'TRAP_PRICE(63) 应为 100',
+  },
+  {
+    desc: 'M544 PIT 重伤档的两倍伤害删（dice *= 2）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '    dice = rand_n(40) + diff * 10 + 1;\n    dice *= 2;',
+    replace: '    dice = rand_n(40) + diff * 10 + 1; // 变异：两倍伤害删',
+    tests: ['dungeon-trap'],
+    must_mention: '要害两倍伤害',
+  },
+  {
+    desc: 'M545 TELEPORT 的侵攻度写回删（ctx.d20 = 1 的起点档）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '    ctx.d20 = 1; // :330 D:20 = 1',
+    replace: '    // 变异：ctx.d20 = 1 删（:330）',
+    tests: ['dungeon-trap'],
+    must_mention: 'D:20 = 1（:330）',
+  },
+  {
+    desc: 'M546 SHOOT 的下坠一层删（侵攻阶层 += 1）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '    chara(a).dungeon.侵攻阶层 += 1;\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
+    replace:
+      '    // 变异：侵攻阶层 += 1 删\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
+    tests: ['dungeon-trap'],
+    must_mention: '下坠一层（:1066）',
+  },
+  {
+    desc: 'M547 SUCCUBUS 的百合经验档删（EXP:40 += 6）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '    if (yuri) {\n      chara(a).train.百合经验 += 6; // :776 EXP:A:40（train 域门面）\n    }',
+    replace:
+      '    if (false && yuri) { // 变异：百合经验档删\n      chara(a).train.百合经验 += 6; // :776 EXP:A:40（train 域门面）\n    }',
+    tests: ['dungeon-trap'],
+    must_mention: '百合经验 +6',
+  },
+  {
+    desc: 'M548 陷阱自动补货的金库扣款删（MONEY -= price）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '          era_flag.money -= price;\n          era_exflag.legit_money -= price;',
+    replace:
+      '          // 变异：金库扣款删\n          era_exflag.legit_money -= price;',
+    tests: ['dungeon-trap'],
+    must_mention: 'MONEY -= TRAP_PRICE（:175）',
+  },
+  {
+    desc: 'M549 诈骗剧情3 的双倍欠条改坏（582 -= COST×2 → -= COST）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '  chara(a).patch.借款 -= cost * 2; // CFLAG:582（patch 域门面「借款」）',
+    replace: '  chara(a).patch.借款 -= cost; // 变异：双倍欠条改单倍',
+    tests: ['dungeon-trap'],
+    must_mention: '债务 COST×2（:231）',
+  },
+  {
+    desc: 'M550 SLAVE_TRAP_SET 的补充增量删（stock + 1 → stock）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '      if (stock > 0 && stock < 99) {\n        era.set(`item:${trap_id}`, stock + 1);\n      }',
+    replace:
+      '      if (stock > 0 && stock < 99) {\n        era.set(`item:${trap_id}`, stock); // 变异：补充增量删\n      }',
+    tests: ['dungeon-trap'],
+    must_mention: '库存 5 → 补 1（:1440）',
+  },
+  {
+    desc: 'M551 dungeon.js 的 D:20 收线删（walk20 = trap_ctx.d20）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '    // TELEPORT 的 D:20 写回（:330/:335）——:748 的 CFLAG:502 = D:20 用它\n    walk20 = trap_ctx.d20;',
+    replace:
+      '    // TELEPORT 的 D:20 写回（:330/:335）——变异：收线删\n    // walk20 = trap_ctx.d20;',
+    tests: ['dungeon-trap'],
+    must_mention: 'CFLAG:502 = D:20 = 1（:748）',
+  },
 ];
