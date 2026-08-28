@@ -219,6 +219,91 @@ test('convert_expr：一维变量 / 单值全局 / RAND / 局部参数', () => {
   assert.ok(n.some((x) => x.kind === '局部参数')); // ARG REVIEW
 });
 
+test('convert_expr：RAND:(expr) 表达式形态 → rand_n(expr)（#184 修的静默漏出）', () => {
+  const n = [];
+  assert.equal(
+    convert_expr('RAND:(SEIKOU + SIPPAI) < SEIKOU', 1, n),
+    'rand_n(SEIKOU + SIPPAI) < SEIKOU',
+  );
+  assert.ok(n.some((x) => x.kind === 'RAND'));
+});
+
+test('convert_expr：表达式下标 CFLAG:(ARG:0):533 / FLAG:(CFLAG:ARG:501 + 349)（#184）', () => {
+  const n = [];
+  assert.equal(
+    convert_expr('CFLAG:(ARG:0):533 > 1', 1, n),
+    'era.get(`cflag:${arg_0}:533`) > 1',
+  );
+  assert.ok(n.some((x) => x.kind === '表达式下标'));
+  const n2 = [];
+  assert.equal(
+    convert_expr('FLAG:(CFLAG:ARG:501 + 349) == 507', 2, n2),
+    'era.get(`flag:${era.get(`cflag:${arg}:501`) + 349}`) == 507',
+  );
+  assert.ok(n2.some((x) => x.kind === '表达式下标'));
+});
+
+test('convert_expr：数组局部变量元素 PLAY:LCOUNT → play[lcount]（#184）', () => {
+  const n = [];
+  assert.equal(
+    convert_expr('LOCAL < PLAY:LCOUNT', 1, n),
+    'LOCAL < play[lcount]',
+  );
+  assert.ok(n.some((x) => x.kind === '数组元素'));
+});
+
+test('SKIPSTART/SKIPEND 块：整段转注释、不产出重复顶层函数（#184）', () => {
+  const src = [
+    '@DUNGEON_BITCH',
+    'RETURN 0',
+    '[SKIPSTART]',
+    '@DUNGEON_BITCH',
+    'RETURN 1',
+    '[SKIPEND]',
+    '@SELL_BITCH',
+    'RETURN 2',
+  ].join('\n');
+  const { code, reviews } = transpile(src);
+  // 只有两个顶层函数（无重复 DUNGEON_BITCH）
+  const funcs = [...code.matchAll(/^async function (\w+)/gm)].map((m) => m[1]);
+  assert.deepEqual(funcs, ['DUNGEON_BITCH', 'SELL_BITCH']);
+  assert.ok(code.includes('// [SKIPSTART] ～ [SKIPEND]'));
+  assert.ok(reviews.some((r) => r.kind === 'SKIP块'));
+});
+
+test('多值 CASE：CASE "ORAL", "LES" → 并列 case 标签（#184）', () => {
+  const src = [
+    'SELECTCASE ARGS:1',
+    'CASE "ORAL", "LES"',
+    'RETURNF 2',
+    'CASEELSE',
+    'RETURNF 0',
+    'ENDSELECT',
+  ].join('\n');
+  const { code } = transpile(src);
+  assert.ok(code.includes('case "ORAL":'));
+  assert.ok(code.includes('case "LES": {'));
+  // node --check 必须过
+  const { execFileSync } = require('node:child_process');
+  const out = path.join(TMP, 'check-multicase.js');
+  fs.writeFileSync(out, code);
+  execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
+});
+
+test('产物是合法 JS：DUNGEON_BITCH 转译产物过 node --check（#184 修后）', () => {
+  const { execFileSync } = require('node:child_process');
+  const erb = path.join(
+    REPO_ROOT,
+    'target',
+    'ERB',
+    '迷宮',
+    'DUNGEON_BITCH.ERB',
+  );
+  const out = path.join(TMP, 'check-dungeon-bitch.js');
+  transpile_file(erb, out, { force: true });
+  execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
+});
+
 test('产物是合法 JS：K5 转译产物过 node --check（裁定一硬门槛）', () => {
   const { execFileSync } = require('node:child_process');
   const erb = path.join(

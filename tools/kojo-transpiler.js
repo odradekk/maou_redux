@@ -117,17 +117,32 @@ const KOJO_OUTPUT_NAME = {
 };
 
 /**
+ * 口上型非口上文件（#184 起）：与 ERB/口上/ 同构、走同一转译流程，但源文件
+ * 不在口上目录。`--all` 也转这些文件（产物落 products/kojo/，能被复现）。
+ * 数组元素 = [源文件相对仓库根的路径, 产物文件名]。
+ */
+const KOJO_EXTRA_FILES = [
+  ['target/ERB/迷宮/DUNGEON_BITCH.ERB', 'dungeon-bitch.js'],
+];
+
+/**
  * 源文件名 → 产物文件名。未登记显式抛错（不静默回落成原名）。
- * @param {string} erb_filename target/ERB/口上/ 下的源文件名
+ * @param {string} erb_filename 源文件名（target/ERB/口上/ 或 KOJO_EXTRA_FILES）
  */
 function output_name_for(erb_filename) {
   const mapped = KOJO_OUTPUT_NAME[erb_filename];
-  if (!mapped) {
-    throw new Error(
-      `未登记的口上文件：${erb_filename}——须在 tools/kojo-transpiler.js 的 KOJO_OUTPUT_NAME 补映射（裁定二：产物文件名 ASCII kebab-case）`,
-    );
+  if (mapped) {
+    return mapped;
   }
-  return mapped;
+  const extra_hit = KOJO_EXTRA_FILES.find(
+    ([src]) => path.basename(src) === erb_filename,
+  );
+  if (extra_hit) {
+    return extra_hit[1];
+  }
+  throw new Error(
+    `未登记的口上文件：${erb_filename}——须在 tools/kojo-transpiler.js 的 KOJO_OUTPUT_NAME 或 KOJO_EXTRA_FILES 补映射（裁定二：产物文件名 ASCII kebab-case）`,
+  );
 }
 /**
  * PRINT 系命令词。group1 = 命令前缀（PRINT/PRINTL/PRINTW/PRINTFORM/…），
@@ -350,6 +365,28 @@ const ROLE_TOKEN_JS = {
  */
 function convert_expr(expr, line_no, review_notes) {
   let out = expr;
+  // 0) 表达式下标（角色变量族/一维的括号表达式下标）：CFLAG:(ARG:0):533 /
+  //    FLAG:(CFLAG:ARG:501 + 349) —— ERB 允许下标是括号表达式。必须**先于**
+  //    角色变量族转换（否则内部的 CFLAG:ARG:501 先被转成 era.get(...)，括号
+  //    匹配就乱了，#184：DUNGEON_BITCH.ERB:823/:1028）。角色维/一维的归属
+  //    与内部寻址由复核 agent 核（内部寻址随后续步骤转换）。
+  out = out.replace(
+    // RAND 是伪变量（随机数），不是变量族，留给 4a 的 rand_n 处理——这里
+    // 显式排除，避免把 RAND:(expr) 误判成 era.get('rand:...')（#184）
+    /\b(?!RAND\b)([A-Z][A-Z0-9_]*):\(([^)]*)\)(?::([0-9]+))?/g,
+    (whole, fam, role_expr, tail_idx) => {
+      review_notes.push({
+        kind: '表达式下标',
+        line: line_no,
+        msg: `${whole} —— 括号表达式下标（${fam}），人工核角色维/一维归属`,
+      });
+      if (CHARA_VAR_FAMILIES.has(fam)) {
+        return `era.get(\`${fam.toLowerCase()}:\${${role_expr}}:${tail_idx ?? '0'}\`)`;
+      }
+      // 一维族：括号内容作为模板插值（内部寻址由后续步骤继续转换）
+      return `era.get(\`${fam.toLowerCase()}:\${${role_expr}}${tail_idx ? `:${tail_idx}` : ''}\`)`;
+    },
+  );
   // 1) 角色变量族：CFLAG:301 / CFLAG:TARGET:301 / CFLAG:A:504 / CFLAG:COUNT:1
   //    角色维缺省 → TARGET（Emuera 语义）；显式角色 → 对应 JS 变量
   for (const fam of CHARA_VAR_FAMILIES) {
@@ -420,6 +457,19 @@ function convert_expr(expr, line_no, review_notes) {
   }
   // 4) RAND:n —— 随机数，JS 无 RAND 变量，转成 rand_n(n) 调用（REVIEW 提示
   //    需注入随机源，参照 ere/kojo/kojo-k5.js 的 rand 参数）
+  // 4a) RAND:(expr) —— 随机数的表达式下标形态（Emuera 同款，见 DUNGEON_BITCH
+  //    :27 等）。原型只覆盖 RAND:<数字>，表达式形态静默漏出成 JS 语法错——
+  //    这里一并转 rand_n(expr)（#184 修）。转的是括号内的表达式，expr 里
+  //    的寻址随后续步骤（角色变量族等）继续转换。
+  const rand_expr_re = /\bRAND:\(([^)]*)\)/g;
+  out = out.replace(rand_expr_re, (whole, inner) => {
+    review_notes.push({
+      kind: 'RAND',
+      line: line_no,
+      msg: `RAND:(${inner}) → rand_n(${inner})——随机源需注入（参照 kojo-k5.js 的 rand 参数）`,
+    });
+    return `rand_n(${inner})`;
+  });
   out = out.replace(/\bRAND:([0-9]+)\b/g, (whole, n) => {
     review_notes.push({
       kind: 'RAND',
@@ -428,6 +478,21 @@ function convert_expr(expr, line_no, review_notes) {
     });
     return `rand_n(${n})`;
   });
+  // 4a2) RAND(min, max) —— 双参数形态（emuera-basic-agent-guide
+  //     in-expression-functions.md:96：`int RAND(int min(, int max))`，
+  //     双参数返回 [min, max)）。RAND(a, b) = a + rand_n(b - a)。
+  //     口上文件少见但存在（DUNGEON_BITCH.ERB:34/:447/:455/:579/:589）。
+  out = out.replace(
+    /\bRAND\(\s*([^,()]+)\s*,\s*([^()]+)\)/g,
+    (whole, min, max) => {
+      review_notes.push({
+        kind: 'RAND',
+        line: line_no,
+        msg: `RAND(${min}, ${max}) → ${min} + rand_n(${max} - ${min})——随机源需注入（参照 kojo-k5.js 的 rand 参数）`,
+      });
+      return `(${min} + rand_n(${max} - ${min}))`;
+    },
+  );
   // 4) 其它寻址族（字符串变量 / 派生变量）：SAVESTR / NAME / CSTR / ITEM /
   //    NOWEX / PALAMLV / MAXBASE / TSTR / LOCALS / ARGS / UP / DELTA 等。
   //    一律转成 era.get('<族小写>:<下标>') 的合法语法（保 node --check 过），
@@ -458,6 +523,25 @@ function convert_expr(expr, line_no, review_notes) {
       return `era.get('${lower}:${idx}')`;
     });
   }
+  // 4b) 表达式下标已在步骤 0 处理（必须先于角色变量族，见 convert_expr 头）
+  // 4c) 数组局部变量元素：PLAY:LOCAL / PREV_EXP:LCOUNT / MAN:1 / GIRL:3 /
+  //     PLAY:6 —— ERB 的 #DIM X, N 数组的局部变量下标。转译器原样漏出成
+  //     JS 语法错（#184）。转成 x_i 形式的下标访问占位 + REVIEW（JS 侧
+  //     数组形态由复核 agent 定：局部数组在函数头用 Array 声明，元素访问
+  //     即 arr[i]）。
+  out = out.replace(
+    /\b([A-Z][A-Z0-9_]*):([A-Za-z0-9_]+)\b/g,
+    (whole, fam, idx) => {
+      // 下标若是已知局部变量 token（LCOUNT/COUNT/LOCAL/ARG），转小写
+      const idx_js = ROLE_TOKEN_JS[idx] ?? idx;
+      review_notes.push({
+        kind: '数组元素',
+        line: line_no,
+        msg: `${whole} —— 局部数组元素（#DIM ${fam}），JS 侧用 ${fam.toLowerCase()}[${idx_js}] 访问，人工核`,
+      });
+      return `${fam.toLowerCase()}[${idx_js}]`;
+    },
+  );
   // 5) 赋值目标（左值）由 emit_assign 单独处理，这里只处理表达式右侧；
   //    但条件里可能出现 `CFLAG:301 == 0` 这类整式，已由上面转换。
   return out;
@@ -693,6 +777,42 @@ function transpile(text) {
         trimmed = trimmed.slice(0, semi).trimEnd();
       }
     }
+    // [SKIPSTART]～[SKIPEND]：预处理指令（emuera-basic-agent-guide
+    // preprocessor.md）。块内整段不被引擎装载——函数定义不会进入函数空间，
+    // 块内重复的同名函数也不构成「同名遮蔽」。转译器原样保留为 JS 注释，
+    // 不生成代码（#184：DUNGEON_BITCH.ERB:1199-3132 的旧構文块，若照转会
+    // 产出重复的顶层 async function → node --check 语法错，静默漏出）。
+    if (/^\[SKIPSTART\]$/i.test(trimmed)) {
+      if (sif_stack.length > 0) {
+        emit_sif_body(line_no, review_notes);
+      }
+      const skip_end = lines
+        .slice(i)
+        .findIndex((l) => /^\[SKIPEND\]$/i.test(l.trim()));
+      const end_abs = skip_end < 0 ? lines.length : i + skip_end + 1; // 含 SKIPEND 行
+      out.push(
+        `${pad()}// [SKIPSTART] ～ [SKIPEND]（预处理指令，块内不装载）${anchor(line_no)}`,
+      );
+      for (let j = i + 1; j < end_abs; j += 1) {
+        out.push(`${'  '.repeat(indent)}// SKIP ${lines[j]}${anchor(j + 1)}`);
+      }
+      review_notes.push({
+        kind: 'SKIP块',
+        line: line_no,
+        msg: `[SKIPSTART]（:${line_no}）～[SKIPEND]（:${end_abs}）——预处理跳过块，整段转注释`,
+      });
+      i = end_abs - 1; // for 循环 i++ 后落在 SKIPEND 之后
+      continue;
+    }
+    if (/^\[SKIPEND\]$/i.test(trimmed)) {
+      // 孤立的 SKIPEND（无 SKIPSTART 配对）：照原样 REVIEW，不吞代码
+      review_notes.push({
+        kind: 'SKIPEND孤立',
+        line: line_no,
+        msg: '[SKIPEND] 无配对 [SKIPSTART]——人工核',
+      });
+    }
+
     // 空行：SIF 等待体时空行跳过（Emuera 的 SIF 体是下一个语句）；否则保留
     if (trimmed === '') {
       if (sif_stack.length === 0) {
@@ -819,8 +939,31 @@ function transpile(text) {
           kw_line: line_no,
         });
       } else {
+        // ERB 的 CASE 支持多值列表：`CASE "ORAL", "LES"` / `CASE 2, 8, 12`。
+        // JS 的 case 标签也支持并列：前几个标签不带块（case a:），最后一个
+        // 标签带块（case c: {）——收尾逻辑只闭合最后一个 `{`，块栈只 push
+        // 一个 case。值本身若是 ERB 寻址表达式，过 convert_expr
+        // （#184：CASE "ORAL", "LES"）。
         const val = trimmed.replace(/^\s*CASE\s+/i, '');
-        out.push(`${'  '.repeat(top.indent)}case ${val}: {${anchor(line_no)}`);
+        const vals = val
+          .split(',')
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+        // 前几个值拆成不带块的并列 case 标签
+        for (let vi = 0; vi < vals.length - 1; vi += 1) {
+          const js_val = convert_expr(vals[vi], line_no, review_notes);
+          out.push(
+            `${'  '.repeat(top.indent)}case ${js_val}:${anchor(line_no)}`,
+          );
+        }
+        const last_val = convert_expr(
+          vals[vals.length - 1],
+          line_no,
+          review_notes,
+        );
+        out.push(
+          `${'  '.repeat(top.indent)}case ${last_val}: {${anchor(line_no)}`,
+        );
         switch_stack.push({
           type: 'case',
           indent: top.indent + 1,
@@ -1098,6 +1241,11 @@ if (require.main === module) {
       const out = path.join(out_root, output_name_for(f));
       transpile_file(path.join(KOJO_DIR, f), out, { force });
     }
+    // 口上型非口上文件（#184）：DUNGEON_BITCH 等与口上同构，一并转
+    for (const [src_rel, out_name] of KOJO_EXTRA_FILES) {
+      const src = path.join(__dirname, '..', src_rel);
+      transpile_file(src, path.join(out_root, out_name), { force });
+    }
     process.exit(0);
   }
   if (args.length < 2) {
@@ -1126,6 +1274,7 @@ if (require.main === module) {
 
 module.exports = {
   CHARA_VAR_FAMILIES,
+  KOJO_EXTRA_FILES,
   KOJO_FILES,
   KOJO_OUTPUT_NAME,
   PLAIN_VAR_FAMILIES,
