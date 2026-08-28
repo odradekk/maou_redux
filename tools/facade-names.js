@@ -388,6 +388,11 @@ const cflag = {
     ),
   ),
   601: named_tail('结婚对象', src(SRC_FLAG, ':464 CFLAG:601 = 結婚相手')),
+  // —— 2D 地下城模式的跨域写（#181 H12 @UNIT_MOVE；named_tail 落表尾，
+  //    #170-#172 先例。510/511 属主 event（dungeon 文件写）——2D 单位的
+  //    格子位置，词条取まとめ文档 :412-413 的「X座標/Y座標」归一简体）——
+  510: named_tail('X坐标', src(SRC_FLAG, ':412 CFLAG:510 = X座標')),
+  511: named_tail('Y坐标', src(SRC_FLAG, ':413 CFLAG:511 = Y座標')),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

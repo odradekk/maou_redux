@@ -29,20 +29,23 @@ const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { stub_line } = require('#/utils/stub-line');
 const { begin, STATE } = require('#/system/flow/begin-signal');
-const { ask_initial_slave } = require('#/event/first-setting');
+const {
+  ask_initial_slave,
+  ask_dungeon_mode,
+} = require('#/event/first-setting');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { geo_test, db } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
+const { set_vil } = require('#/dungeon/labo-map');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'GEO_TEST',
-  'SET_VIL',
   'CHARA_NAME_INIT',
   'EX_TALENTNAME_INIT',
   'RAND_CHARA_MAKE',
@@ -86,12 +89,13 @@ on('EVENTFIRST', async () => {
   // :15 FLAG:500 = 2 —— 狂王初期性别：扶她
   era.set('flag:500', 2);
 
-  // :19 CALL FIRST_SETTING —— 交互式开局设置。#50 起部分实现：仅「初期
-  // 奴隶」一问（FLAG:501：0 随机 / 1 村娘，问答见 event/first-setting.js，
-  // 置法决议与依据在 issue #50），其余各问维持默认（FLAG:500 已在 :15 置
-  // 2、FLAG:502 = 0 通常、丽塔启动！= 0 关闭），占位行随问答打印。FLAG:502
-  // 分支与丽塔块仍不可达。
+  // :19 CALL FIRST_SETTING —— 交互式开局设置。#50 起部分实现：初期奴隶
+  // 一问（FLAG:501：0 随机 / 1 村娘）+ #181（H12）加的地下城模式一问
+  // （FLAG:502：0 普通 / 1 2D，#168 裁定 5「连带补开关」），问答见
+  // event/first-setting.js，置法决议与依据在 issue #50/#181。其余各问维持
+  // 默认（FLAG:500 已在 :15 置 2、丽塔启动！= 0 关闭），占位行随问答打印。
   await ask_initial_slave();
+  await ask_dungeon_mode();
 
   // :21-24 REPEAT 14：FLAG:60..73 = -1（男性冒险者用着素质展示位等）
   for (let i = 60; i < 60 + 14; i += 1) {
@@ -150,12 +154,18 @@ on('EVENTFIRST', async () => {
   era_exflag.prestige = 70;
 
   // :65-74 IF FLAG:502 == 1（2D 地图模式）：GEO_TEST/SET_VIL + DB 50×50
-  // 清零。FIRST_SETTING 存根使 FLAG:502 恒 0，分支不可达；守卫照搬，正文
-  // 随迷宫票落地（GEO_TEST/SET_VIL 的占位只在真开 2D 模式后才会打印）。
+  // 清零。#181（H12）起 FLAG:502 有玩家置位路径（first-setting 的地下城
+  // 模式一问），分支可达，正文接真身（ere/dungeon/labo.js 与
+  // labo-map.js；DA/DB/DC 的承载见 labo.js 文件头）。
   if ((era.get('flag:502') || 0) === 1) {
-    stub_line('GEO_TEST', '2D 地形生成');
-    stub_line('SET_VIL', '村庄设置');
-    // :69-73 FOR 50×50：DB 清零（DataTable，迷宫票一并）
+    geo_test(); // :67 CALL GEO_TEST（缺省随机源走 Math.random）
+    set_vil(); // :68 CALL SET_VIL
+    // :69-73 FOR 50×50：DB 清零
+    for (let y = 0; y < 50; y += 1) {
+      for (let x = 0; x < 50; x += 1) {
+        db[y][x] = 0;
+      }
+    }
   }
 
   // :78 CALL CHARA_NAME_INIT —— 角色名初始化（存根）

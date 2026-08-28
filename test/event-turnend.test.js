@@ -175,16 +175,34 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     '状态 2 且 FLAG:502 == 0 应走迷宫本体',
   );
 
-  // 状态 2 且 2D 模式：改走 DUNGEON_MAP，不走迷宫本体
+  // 状态 2 且 2D 模式：改走 DUNGEON_MAP 真身（#181 H12 换上），不走迷宫
+  // 本体。观测点换成真身的确定性后果：HP 预置 10%（< 45%）必触发
+  // 「决定返回了」播报 + CFLAG:507 = 1（DUNGEON_MAP 的 :21-28 撤退决议）；
+  // 3D 的 DUNGEON_ROOM 占位行 0 计数佐证迷宫本体未被调用。恒定 0.5 随机
+  // 源：unit_move 的抖动 ±0（坐标不动）、dungeon_bitch（RAND:5）与
+  // equip_select（RAND:4）均不触发（floor(0.5*n) 恒 ≥ 1），退出路径确定
   const field = setup_turnend();
   join_slave_chara(field.fixture, 31, '温妮');
   field.fixture.store.set('cflag:31:1', 2);
   field.fixture.store.set('flag:502', 1);
-  await field.emit('EVENTTURNEND');
+  field.fixture.store.set('base:31:0', 100);
+  field.fixture.store.set('maxbase:31:0', 1000); // HP 10% < 45% → 必撤退
+  field.fixture.store.set('base:31:1', 1000);
+  field.fixture.store.set('maxbase:31:1', 1000); // MP 100% → 不走第二臂
+  field.fixture.override_math_random(() => 0.5);
+  try {
+    await field.emit('EVENTTURNEND');
+  } finally {
+    field.fixture.restore_math_random();
+  }
+  assert(
+    field.fixture.text_lines().some((line) => line.includes('温妮决定返回了')),
+    '状态 2 且 FLAG:502 == 1 走野外地图（DUNGEON_MAP 真身的撤退播报 :23）',
+  );
   assert.equal(
-    stub_count(field.fixture.text_lines(), 'DUNGEON_MAP'),
+    field.fixture.store.get('cflag:31:507'),
     1,
-    '状态 2 且 FLAG:502 == 1 应走野外地图',
+    '撤退旗立起（CFLAG:507 = 1，DUNGEON_MAP :24）',
   );
   assert.equal(
     stub_count(field.fixture.text_lines(), 'DUNGEON_ROOM'),
@@ -613,10 +631,11 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'DEBUG_CHECK',
   ]);
   // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位；
-  // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）
+  // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）；
+  // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（ere/dungeon/labo-dungeon-map.js
+  // 与 labo-map.js）
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
-    'DUNGEON_MAP',
     'LVUP',
     'DUNGEON_AFTER',
     '自動處刑',
@@ -625,7 +644,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'MARRIAGE_DAY',
     'AUTOTRAIN',
     'CAMPAIGN_GAMEOVER',
-    'GEO_OUTPUT_2',
     'GET_LOOK_INFO',
   ]);
   const registry = fs.readFileSync(

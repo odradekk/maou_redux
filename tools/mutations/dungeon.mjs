@@ -361,4 +361,79 @@ export default [
     tests: ['dungeon-trap'],
     must_mention: 'CFLAG:502 = D:20 = 1（:748）',
   },
+  // —— #181（H12 2D 地下城）：LABO 三文件 + FIRST_SETTING 一问 + turnend
+  //    else 臂。M580 起编（#182/#185/#176/#180 占 M500/M520/M540/M560 段）——
+
+  {
+    desc: 'M580 余弦系数表偏移 1 改坏（4 → 5：三条插值曲线的起点权重漂移）',
+    file: 'ere/dungeon/labo.js',
+    find: 'const COS_TABLE = { 1: 4, 2: 15, 3: 31, 4: 50, 5: 69, 6: 85, 7: 96 };',
+    replace:
+      'const COS_TABLE = { 1: 5, 2: 15, 3: 31, 4: 50, 5: 69, 6: 85, 7: 96 }; // 变异：偏移 1 的系数 4 → 5',
+    tests: ['dungeon-labo'],
+    must_mention: '负差向零截断',
+  },
+  {
+    desc: 'M581 GEO_CALC_INTERP 的对角项分母改坏（10000 → 1000：块内插值的交叉项放大十倍）',
+    file: 'ere/dungeon/labo.js',
+    find: '    idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +',
+    replace:
+      '    idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 1000) + // 变异：分母 10000 → 1000',
+    tests: ['dungeon-labo'],
+    must_mention: '对称四角的中心值',
+  },
+  {
+    desc: 'M582 GEO_TEST 点阵写入的维度转置（da[y][x] → da[x][y]：行主序破坏）',
+    file: 'ere/dungeon/labo.js',
+    find: '      da[y][x] = rand_n(256); // ランダマイズ',
+    replace:
+      '      da[x][y] = rand_n(256); // 变异：维度转置（[y][x] → [x][y]）',
+    tests: ['dungeon-labo'],
+    must_mention: '第一行第 5 个点',
+  },
+  {
+    desc: 'M583 MON_CHECK 的兵力阈值改坏（> 20 → >= 20：兵力恰 20 的怪物凭空在场）',
+    file: 'ere/dungeon/labo-map.js',
+    find: '  if (troops > 20) {',
+    replace: '  if (troops >= 20) { // 变异：阈值 > 20 → >= 20',
+    tests: ['dungeon-labo'],
+    must_mention: '兵力 20 不满足',
+  },
+  {
+    desc: 'M584 UNIT_MOVE 的中心判定偏移（16,16 → 15,16：魔王城挪一格，2D 路径到不了终点）',
+    file: 'ere/dungeon/labo-dungeon-map.js',
+    find: '  if (mx === 16 && my === 16) {',
+    replace: '  if (mx === 15 && my === 16) { // 变异：中心判定偏移一格',
+    tests: ['dungeon-labo', 'event-ending2-2d-e2e'],
+    must_mention: '炸穿 unit_move',
+  },
+  {
+    desc: 'M585 DUNGEON_MAP 的侵攻度写回改坏（D:20 丢失——2D 单位的推进状态不再持久）',
+    file: 'ere/dungeon/labo-dungeon-map.js',
+    find: '  chara(a).event.侵攻度 = walk20;',
+    replace: '  chara(a).event.侵攻度 = 0; // 变异：写回值丢成 0',
+    tests: ['dungeon-labo'],
+    must_mention: 'CFLAG:502 = D:20',
+  },
+  {
+    desc: 'M586 turnend else 臂的 DUNGEON_MAP 调用蒸发（2D 模式的勇者原地不动）',
+    file: 'ere/system/turnend-settle.js',
+    find: `    } else if (place === 2 || place === 3) {
+      await dungeon_map(cid);
+    }`,
+    replace: `    } else if (place === 2 || place === 3) {
+      // 变异：dungeon_map 调用蒸发（2D 模式空转）
+    }`,
+    tests: ['event-turnend', 'event-ending2-2d-e2e'],
+    must_mention: '走野外地图',
+  },
+  {
+    desc: 'M587 FIRST_SETTING 地下城模式一问的置位蒸发（FLAG:502 恒 0——2D 模式不可达）',
+    file: 'ere/event/first-setting.js',
+    find: '      game.dungeon.迷宫模式 = result; // :924 FLAG:502 = RESULT',
+    replace:
+      '      // game.dungeon.迷宫模式 = result; // 变异：置位蒸发（FLAG:502 恒 0）',
+    tests: ['dungeon-labo', 'event-ending2-2d-e2e'],
+    must_mention: 'game 门面写入',
+  },
 ];
