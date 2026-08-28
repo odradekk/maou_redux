@@ -291,4 +291,51 @@ export default [
     tests: ['kojo-transpiler'],
     must_mention: '不产出重复顶层函数',
   },
+
+  {
+    // #182（H13 迷宫凌辱）：分派表缺失（验收要求「13 种怪物 × 两种对象的
+    // 分派表逐条有测试」）——删掉一个导出，分派测试红
+    desc: 'M488 H13 分派缺失：module.exports 删 orc_ryou 导出',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '  orc_ryou,\n  slime_ryou,',
+    replace: '  slime_ryou,',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '13 个函数',
+  },
+  {
+    // #182：凌辱畏怖记忆推进改坏（CFLAG:130 写错怪物号）
+    desc: 'M489 H13 凌辱畏怖记忆：首次推进 CFLAG:130 写错（local_1 改 0）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: 'chara(arg).dungeon.凌辱畏怖记忆_怪物 = local_1; // :67 CFLAG:130',
+    replace: 'chara(arg).dungeon.凌辱畏怖记忆_怪物 = 0; // :67 变异',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '凌辱畏怖记忆推进',
+  },
+  {
+    // #182：PC_RYOU 处女丧失推进改坏（初体验对象 15 写错）
+    desc: 'M490 H13 PC_RYOU 处女丧失：初体验对象 CFLAG:15 写错（arg0 + 1 改 arg0）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: 'chara(arg1).train.初体验对象 = arg0 + 1; // :2445 CFLAG:ARG:1:15 = NO:(ARG:0) + 1',
+    replace: 'chara(arg1).train.初体验对象 = arg0; // :2445 变异',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '初体验对象',
+  },
+  {
+    // #182：逃脱分支救援成功条件改坏（回城标志不写）
+    desc: 'M491 H13 逃脱救援：回城标志 507 写入删（救援成功不立回城）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '      chara(leader).invasion.回城标志 = 1; // :2999',
+    replace: '      // 变异：救援成功不立回城标志',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '救援成功：回城标志 507 写入',
+  },
+  {
+    // #182：VICTORY_RYOUZYOKU 善恶值门槛改坏（> -50 改 > 0，混沌才发生）
+    desc: 'M492 H13 胜利凌辱：善恶值门槛改坏（> -50 改 > 0）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '  if ((era.get(`cflag:${arg}:151`) || 0) > -50) {',
+    replace: '  if ((era.get(`cflag:${arg}:151`) || 0) > 0) {',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '善恶值 > -50',
+  },
 ];
