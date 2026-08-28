@@ -350,6 +350,21 @@ const cflag = {
       ':121 勇者所持金（城镇经济消费，ENTER_ENEMY.ERB 的初期加算同此下标）',
     ),
   ),
+  // —— 迷宫主循环与队伍编组的跨域写（#172 H3 @DUNGEON/@PARTY_DEL；
+  //    named_tail 落表尾，#170/#171 先例。50 属主 event（dungeon 文件写）、
+  //    521 属主 invasion、601 属主 chara——三条都是跨域写必需的门面）——
+  50: named_tail(
+    '贞操带钥匙',
+    src(SRC_FLAG, ':304 CFLAG:50 = 貞操帯のカギをダンジョンで見つけた'),
+  ),
+  521: named_tail(
+    '存档点',
+    src(
+      SRC_FLAG,
+      ':419 CFLAG:521 = セーブポイント（2015 补丁起兼作挫折阶层记忆，#103）',
+    ),
+  ),
+  601: named_tail('结婚对象', src(SRC_FLAG, ':464 CFLAG:601 = 結婚相手')),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

@@ -44,6 +44,21 @@ class EventFacade {
   }
 
   /**
+   * 贞操带钥匙（cflag:cid:50 ↔ CFLAG:50）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行304 CFLAG:50 = 貞操帯のカギをダンジョンで見つけた
+   * @returns {number}
+   */
+  get 贞操带钥匙() {
+    return era.get(`cflag:${this.cid}:50`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 贞操带钥匙(v) {
+    era.set(`cflag:${this.cid}:50`, v);
+  }
+
+  /**
    * 侵攻度（cflag:cid:502 ↔ CFLAG:502）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行387 CFLAG:502 侵攻度
    * @returns {number}

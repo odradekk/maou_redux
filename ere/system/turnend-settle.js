@@ -41,15 +41,21 @@ const { stub_line } = require('#/utils/stub-line');
 const { run_event_newday } = require('#/event/event-nextday');
 const { equip_check } = require('#/system/equip/equip-check');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
+const {
+  party_unite,
+  party_join,
+  party_del,
+} = require('#/dungeon/dungeon-party');
+const { run_dungeon } = require('#/dungeon/dungeon');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。#172（H3）起 PARTY_UNITE / DUNGEON /
+ * PARTY_JOIN / PARTY_DEL 已接真身（ere/dungeon/），从名单移除——DUNGEON_MAP
+ * （2D 模式）仍存根，随 #181（H12）。
  */
 const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
-  'PARTY_UNITE',
-  'DUNGEON',
   'DUNGEON_MAP',
   'LVUP',
   'DUNGEON_AFTER',
@@ -59,8 +65,6 @@ const STUBBED_CALLS = [
   'MARRIAGE_DAY',
   'AUTOTRAIN',
   'CAMPAIGN_GAMEOVER',
-  'PARTY_JOIN',
-  'PARTY_DEL',
   'GEO_OUTPUT_2',
   'GET_LOOK_INFO',
 ];
@@ -84,15 +88,15 @@ on('EVENTTURNEND', async () => {
     chara(cid).train.自动调教 = 0; // CFLAG:666 = 0（行 256）
   }
 
-  // :263 队伍编成（パーティー設定）
-  stub_line('PARTY_UNITE', '队伍编成');
+  // :263 队伍编成（パーティー設定）——#172 起真身（ere/dungeon/）
+  party_unite();
 
   // :265-272 全角色：装备复原；战役中（CFLAG:1 == 12）的角色推进迷宫攻略
   for (const cid of era.getAddedCharacters()) {
     weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
     if (chara(cid).invasion.状态 === 12) {
-      // 阶段 3 的接入点之一（勇者战役；当前无写入路径，恒不达。行 270-271）
-      stub_line('DUNGEON', '迷宫攻略');
+      // 阶段 3 的接入点之一（勇者战役）——#172 起真身。行 270-271
+      await run_dungeon(cid);
     }
   }
 
@@ -110,11 +114,11 @@ on('EVENTTURNEND', async () => {
     }
 
     // :286-296 迷宫攻略分档——阶段 3 的接入点之二：勇者探索中（2）或
-    // 迎击中（3）且非 2D 模式（FLAG:502 == 0）走迷宫本体；2D 模式走地图。
-    // 守卫 1:1 保留（工单要求）：没有勇者进入这些状态，迷宫整体绕开
+    // 迎击中（3）且非 2D 模式（FLAG:502 == 0）走迷宫本体（#172 起真身，
+    // H1 的勇者生成让守卫第一次可达）；2D 模式走地图。
     const place = chara(cid).invasion.状态;
     if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {
-      stub_line('DUNGEON', '迷宫攻略');
+      await run_dungeon(cid);
     } else if (place === 2 || place === 3) {
       stub_line('DUNGEON_MAP', '野外地图推进');
     }
@@ -339,7 +343,7 @@ on('EVENTTURNEND', async () => {
         await era.waitAnyKey();
         chara(cid).invasion.新人 = 1; // CFLAG:506 = 1（行 511）
         chara(cid).invasion.回城标志 = 0; // CFLAG:507 = 0（行 512）
-        stub_line('PARTY_DEL', '队伍离队'); // 行 513
+        party_del(cid); // 行 513 CALL PARTY_DEL（#172 起真身）
         chara(cid).system.顺从 += 1; // ABL:A:10 += 1（行 514）
       } else if (
         brainwash > 0 &&
@@ -522,8 +526,8 @@ on('EVENTTURNEND', async () => {
   // :740 自动调教
   stub_line('AUTOTRAIN', '自动调教');
 
-  // :743 队伍结成
-  stub_line('PARTY_JOIN', '队伍结成');
+  // :743 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
+  await party_join();
 
   // :745-746 2D 模式（FLAG:502 == 1）的地图重绘（当前不可达）
   if ((era.get('flag:502') || 0) === 1) {

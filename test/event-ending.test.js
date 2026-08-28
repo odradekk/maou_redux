@@ -326,6 +326,7 @@ test('存根清单核对：event-ending 与 chara-init 的 STUBBED_CALLS 全部�
     fixture.load_module('event/event-ending');
   const { STUBBED_CALLS: INIT_STUBS } = fixture.load_module('chara/chara-init');
   assert.deepEqual(ENDING_STUBS, [
+    'ENDING_2',
     'ENDING_3',
     'ENDING_4',
     'ENDING_5',

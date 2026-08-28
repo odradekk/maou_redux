@@ -56,6 +56,21 @@ class InvasionFacade {
   set 回城标志(v) {
     era.set(`cflag:${this.cid}:507`, v);
   }
+
+  /**
+   * 存档点（cflag:cid:521 ↔ CFLAG:521）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行419 CFLAG:521 = セーブポイント（2015 补丁起兼作挫折阶层记忆，#103）
+   * @returns {number}
+   */
+  get 存档点() {
+    return era.get(`cflag:${this.cid}:521`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 存档点(v) {
+    era.set(`cflag:${this.cid}:521`, v);
+  }
 }
 // GENERATED END
 
