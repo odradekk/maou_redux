@@ -115,6 +115,9 @@ const BATLLE2 = 'target/ERB/迷宮/DUNGEON_BATLLE2.ERB';
 const MONSTER_DATA_ERB = 'target/ERB/怪物相關/MONSTER_DATA.ERB';
 const ENEMY_DATA_ERB = 'target/ERB/侵略/ENEMY_DATA.ERB';
 const DUNGEON_TRAP_ERB = 'target/ERB/迷宮/DUNGEON_TRAP.ERB';
+const DUNGEON_AFTER_ERB = 'target/ERB/迷宮/DUNGEON_AFTER.ERB';
+const LVUP_ERB = 'target/ERB/迷宮/LVUP.ERB';
+const DUNGEON_DAILY_ERB = 'target/ERB/迷宮/DUNGEON_DAILY.ERB';
 const FRAUD_ERB = 'target/ERB/魔改新增/诈骗陷阱.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
@@ -13008,6 +13011,18 @@ const FILES = [
         any: [/^IF CFLAG:L_A:9 > 1 && CFLAG:L_A:11 == 0$/m],
       },
       { src: CHARA_MAKE_INIT, ref: '14', any: [/^\s*CALL ST_UP, L_A$/m] },
+      { src: CHARA_MAKE_INIT, ref: '15', any: [/^\s*REND$/m] },
+      { src: CHARA_MAKE_INIT, ref: '16', any: [/^\s*CFLAG:L_A:9 = LOCAL$/m] },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '17',
+        any: [/^\s*BASE:L_A:0 = MAXBASE:L_A:0$/m],
+      },
+      {
+        src: CHARA_MAKE_INIT,
+        ref: '16-17',
+        any: [/^\s*CFLAG:L_A:9 = LOCAL$/m],
+      },
       {
         src: CHARA_MAKE_INIT,
         ref: '22-24',
@@ -15590,6 +15605,409 @@ const FILES = [
       { src: MONSTER_DATA_ERB, ref: '421-437', any: [/LOCAL = E:\(TOP\+1\)/] },
       { src: MONSTER_DATA_ERB, ref: '443-456', any: [/E:\(TOP\+2\) \+= LVUP/] },
       { src: MONSTER_DATA_ERB, ref: '96-110', any: [/;16 射撃/] },
+    ],
+  },
+
+  // —— #179 H10 升级：ere/dungeon/dungeon-lvup.js ——
+  {
+    js: 'ere/dungeon/dungeon-lvup.js',
+    refs: [
+      { src: LVUP_ERB, ref: '2-41', any: [/^\s*@LVUP,\ ARG:0$/m] },
+      { src: LVUP_ERB, ref: '44-89', any: [/^\s*@ST_UP,\ ARG:0$/m] },
+      { src: SYSTEM, ref: '619', any: [/^\s*CALL LVUP, 0$/m] },
+      {
+        src: LVUP_ERB,
+        ref: '12',
+        any: [/^\s*;魔王必要经验值 = LV \* 100 \+ 10/],
+      },
+      { src: LVUP_ERB, ref: '45-47', any: [/^\s*CFLAG:\(ARG:0\):9\ \+=\ 1$/m] },
+      { src: LVUP_ERB, ref: '13', any: [/^\s*LOCAL\ =\ LOCAL:0$/m] },
+      {
+        src: LVUP_ERB,
+        ref: '14',
+        any: [/^\s*ELSEIF\ TALENT:ARG:220\ ==\ 1$/m],
+      },
+      { src: LVUP_ERB, ref: '48-54', any: [/^\s*LOCAL:0\ =\ RAND:2$/m] },
+      { src: LVUP_ERB, ref: '55-58', any: [/^\s*IF\ DAY\ >=\ 100$/m] },
+      {
+        src: LVUP_ERB,
+        ref: '59-62',
+        any: [/^\s*IF\ TALENT:\(ARG:0\):240\ ==\ 1$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '63-66',
+        any: [/^\s*IF\ TALENT:\(ARG:0\):248\ ==\ 1$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '69-72',
+        any: [/^\s*IF\ TALENT:\(ARG:0\):314\ ==\ 5$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '75-76',
+        any: [/^\s*SIF\ TALENT:\(ARG:0\):314\ ==\ 11$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '79-80',
+        any: [/^\s*SIF\ TALENT:ARG:261\ ==\ 1$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '83-84',
+        any: [/^\s*SIF\ TALENT:ARG:262\ ==\ 1$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '86-87',
+        any: [/^\s*MAXBASE:\(ARG:0\):0\ \+=\ 10$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '6',
+        any: [/^\s*LOCAL:0\ =\ CFLAG:\(ARG:0\):9\ \*\ 10\ \+\ 10$/m],
+      },
+      {
+        src: LVUP_ERB,
+        ref: '14-17',
+        any: [/^\s*ELSEIF\ TALENT:ARG:220\ ==\ 1$/m],
+      },
+      { src: LVUP_ERB, ref: '8', any: [/^\s*LOCAL:2\ =\ 0$/m] },
+      { src: LVUP_ERB, ref: '10-29', any: [/^\s*\$LVUP_REPEAT$/m] },
+      { src: LVUP_ERB, ref: '11-21', any: [/^\s*IF\ ARG\ ==\ MASTER$/m] },
+      { src: LVUP_ERB, ref: '24-28', any: [/^\s*EXP:ARG:80\ \-=\ LOCAL$/m] },
+      { src: LVUP_ERB, ref: '31-34', any: [/^\s*IF\ LOCAL:2\ >\ 0$/m] },
+      {
+        src: LVUP_ERB,
+        ref: '35-39',
+        any: [
+          /^\s*IF\ TALENT:\(ARG:0\):291\ \&\&\ CFLAG:\(ARG:0\):9\ >=\ 30$/m,
+        ],
+      },
+    ],
+  },
+  // —— #179 H10 战果：ere/dungeon/dungeon-after.js ——
+  {
+    js: 'ere/dungeon/dungeon-after.js',
+    refs: [
+      { src: SYSTEM, ref: '302', any: [/^\s*CALL DUNGEON_AFTER$/m] },
+      { src: DUNGEON_AFTER_ERB, ref: '2-15', any: [/^\s*@DUNGEON_AFTER$/m] },
+      { src: DUNGEON_AFTER_ERB, ref: '19-322', any: [/^\s*@GOHOUBI$/m] },
+      { src: DUNGEON_AFTER_ERB, ref: '325-568', any: [/^\s*@OSIOKI$/m] },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '562-566',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 9$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '342-346',
+        any: [/^\s*IF\ RESULT\ <\ 0$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '40-62',
+        any: [/^\s*IF\ ABL:A:10\ ==\ 0$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '353-401',
+        any: [/^\s*IF\ ABL:A:10\ ==\ 0$/m],
+      },
+      { src: DUNGEON_AFTER_ERB, ref: '23', any: [/^\s*PRINTL$/m] },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '27-29',
+        any: [/^\s*PRINTL\ \[0\]\ 这是你应份的$/m],
+      },
+      { src: DUNGEON_AFTER_ERB, ref: '30-36', any: [/^\s*\$INPUT_LOOP$/m] },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '66-70',
+        any: [/^\s*IF\ RESULT\ ==\ 0$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '72-80',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 1$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '75-76',
+        any: [/^\s*SIF\ CFLAG:A:7\&1\ ==\ 1$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '77',
+        any: [/^\s*PRINTFORML\ %SAVESTR:A%自豪地把勋章戴在身上。$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '81-322',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 2$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '213',
+        any: [/^\s*IF\ ABL:A:2\ >\ ABL:A:3$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '291',
+        any: [/^\s*IF\ ABL:A:2\ >\ ABL:A:3$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '83-98',
+        any: [/^\s*IF\ CFLAG:A:504\ ==\ 0$/m],
+      },
+      { src: DUNGEON_AFTER_ERB, ref: '91-98', any: [/^\s*ELSE$/m] },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '99-132',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 1$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '133-165',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 2$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '166-202',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 3$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '203-209',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 4$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '210-239',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 5$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '240-250',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 6$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '251-279',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 7$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '280-287',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 8$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '288-319',
+        any: [/^\s*ELSEIF\ CFLAG:A:504\ ==\ 9$/m],
+      },
+      { src: DUNGEON_AFTER_ERB, ref: '320-321', any: [/^\s*ELSE$/m] },
+      { src: DUNGEON_AFTER_ERB, ref: '568', any: [/^\s*RETURN\ 0$/m] },
+      { src: DUNGEON_AFTER_ERB, ref: '327', any: [/^\s*PRINTL$/m] },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '331-339',
+        any: [/^\s*PRINT\ \[0\]\ 什么也不做/],
+      },
+      { src: DUNGEON_AFTER_ERB, ref: '340-346', any: [/^\s*\$INPUT_LOOP$/m] },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '413',
+        any: [/^\s*IF\ ABL:A:21\ >=\ 3$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '487',
+        any: [/^\s*IF\ ABL:A:21\ >=\ 3$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '434',
+        any: [/^\s*IF\ ABL:A:17\ >=\ 4$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '463',
+        any: [/^\s*IF\ ABL:A:17\ >=\ 6$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '404-408',
+        any: [/^\s*IF\ RESULT\ ==\ 0$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '409-429',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 1$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '430-458',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 2$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '459-482',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 3$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '483-503',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 4$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '504-527',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 5$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '528-535',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 6$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '536-543',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 7$/m],
+      },
+      {
+        src: DUNGEON_AFTER_ERB,
+        ref: '544-561',
+        any: [/^\s*ELSEIF\ RESULT\ ==\ 8$/m],
+      },
+    ],
+  },
+  // —— #179 H10 战果口上分发：ere/kojo/kojo-dungeon-after.js ——
+  {
+    js: 'ere/kojo/kojo-dungeon-after.js',
+    refs: [
+      { src: EVENT_K, ref: '468-476', any: [/^\s*@GOHOUBI_AFTER_KOUJO$/m] },
+      { src: EVENT_K, ref: '486-494', any: [/^\s*@OSIOKI_KOUJO$/m] },
+      { src: EVENT_K, ref: '471-472', any: [/^;口上の存在判定/m] },
+      { src: EVENT_K, ref: '473', any: [/^\s*LOCAL\ =\ GET_KOJO_NUM\(\)$/m] },
+      { src: EVENT_K, ref: '491', any: [/^\s*LOCAL\ =\ GET_KOJO_NUM\(\)$/m] },
+    ],
+  },
+  // —— #179 H10 日程：ere/page/page-dungeon-daily.js ——
+  {
+    js: 'ere/page/page-dungeon-daily.js',
+    refs: [
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '1-768',
+        any: [/^\s*@DISPLAY_DUNGEON_DAILY$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '769-774',
+        any: [/^\s*@CAL_DUNGEON_DAILY$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '7',
+        any: [/^\s*PRINTFORML\ Space\ for\ further\ docuement$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '8-12',
+        any: [/^\s*; FLAG <= 20 --> 岌岌可危$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '94-767',
+        any: [/^\s*IF\ EX_FLAG:99\ >=\ 0\ \&\&\ EX_FLAG:99\ <=\ 20$/m],
+      },
+      { src: DUNGEON_DAILY_ERB, ref: '15-37', any: [/^\s*REPEAT\ CHARANUM$/m] },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '39-68',
+        any: [/^\s*DISPLAYCHARA\ =\ %SAVESTR:DAILYTARGET%$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '70-554',
+        any: [/^\s*TEMP\ =\ RAND\(49\)$/m],
+      },
+      { src: DUNGEON_DAILY_ERB, ref: '72-93', any: [/^\s*SELECTCASE\ TEMP$/m] },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '555-767',
+        any: [/^\s*TEMP\ =\ RAND\(20\)$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '57',
+        any: [/^\s*LOCALS\ =\ %EX_TALENTNAME:COUNT%$/m],
+      },
+      { src: DUNGEON_DAILY_ERB, ref: '6-7', any: [/^PRINT\ \u3000/] },
+      { src: DUNGEON_DAILY_ERB, ref: '13', any: [/^\s*STORAGE\ =\ 0$/m] },
+      { src: DUNGEON_DAILY_ERB, ref: '16-23', any: [/^\s*REPEAT\ CHARANUM$/m] },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '24-27',
+        any: [/^\s*PRINTL\ Testing\ Purpose$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '28-37',
+        any: [/^\s*IF\ STORAGE\ !=\ 0$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '29-30',
+        any: [/^\s*RAND\ \(STORAGE\)$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '40',
+        any: [/^\s*DISPLAYCHARA\ =\ %SAVESTR:DAILYTARGET%$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '41-42',
+        any: [/^\s*SIF\ DAILYTARGET\ >=\ CHARANUM$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '43-58',
+        any: [/^\s*SIF\ EX_TALENT:DAILYTARGET:2$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '47-48',
+        any: [/^\s*SIF\ STRLENS\(LOCALS\)\ >\ 1$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '53-54',
+        any: [/^\s*SIF\ STRLENS\(LOCALS\)\ >\ 1$/m],
+      },
+      { src: DUNGEON_DAILY_ERB, ref: '59-60', any: [/^\s*\$DAILYTYPE$/m] },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '61-65',
+        any: [/^\s*IF\ TALENT:DAILYTARGET:85$/m],
+      },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '66',
+        any: [/^\s*PRINTFORML\ %DISPLAYCHARA%$/m],
+      },
+      { src: DUNGEON_DAILY_ERB, ref: '67', any: [/^LOCALS\ =\ \r?$/m] },
+      {
+        src: DUNGEON_DAILY_ERB,
+        ref: '771-773',
+        any: [/^\s*IF\ EX_FLAG:99\ >=\ 100$/m],
+      },
+      { src: DUNGEON_DAILY_ERB, ref: '774', any: [/^\s*EX_FLAG:99\ \-=\ 2$/m] },
     ],
   },
 

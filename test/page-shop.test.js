@@ -78,12 +78,13 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（不叠�
   assert.equal(fixture.store.get('flag:36'), 0);
   // 重绘即反馈：每轮恰两行占位（子面板 + 指令面板渲染），没有为面板按钮
   // 多打一行「占位反馈」——叠了会在此红（派单核实事实 #2）。#180 起地城
-  // 两面板真身：轮 3（地城概况）只余指令面板占位 1 行，轮 4（地城日常）
-  // 是 DISPLAY_DUNGEON_DAILY 存根 + 指令面板 2 行——合计 2+2+1+2+2 = 9
+  // 两面板真身：轮 3（地城概况）只余指令面板占位 1 行；#179 起轮 4（地城
+  // 日常）尾部的 DISPLAY_DUNGEON_DAILY 亦为真身，同样只余指令面板占位
+  // 1 行——合计 2+2+1+1+2 = 8
   assert.equal(rounds_drawn(fixture), 5);
   assert.equal(
     history_texts(fixture).filter((line) => line.includes('尚未移植')).length,
-    9,
+    8,
   );
   // 切换后的重绘确实换到了对应面板：第 2/3/4 轮的面板内容各自可见
   //（HAVETRAPS 仍是存根占位；地城两面板 #180 起真身，看读数标记）

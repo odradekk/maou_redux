@@ -29,6 +29,21 @@ class CharaFacade {
   }
 
   /**
+   * 等级（cflag:cid:9 ↔ CFLAG:9）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:9 レベル（LVUP.ERB の CFLAG:(ARG:0)行9）
+   * @returns {number}
+   */
+  get 等级() {
+    return era.get(`cflag:${this.cid}:9`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 等级(v) {
+    era.set(`cflag:${this.cid}:9`, v);
+  }
+
+  /**
    * 基础攻击（cflag:cid:13 ↔ CFLAG:13）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:13 基礎攻撃力
    * @returns {number}
