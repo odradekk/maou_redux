@@ -29,7 +29,8 @@
  *   - :157 `X *= 2`（迎击臂的侵攻度累加处）：X 是原作全局、全库无初始化
  *     （恒 0），*= 2 无副作用——死代码，注释保留不落变量；
  *   - :569 `CALL GET_DOWN_ENEMY, B`：B 由 @DUNGEON_BATTLE2_PARTY 设置
- *     （败者号）；存根恒返 0 下两个分支均不达，B 以局部 b ?? 0 占位；
+ *     （败者号）；H6（#175）起经返回值 { result, loser } 显式传出
+ *     （#5 决议第六条）；
  *   - 跨域写走门面（#71/#72）：CFLAG:1（invasion.状态）、502
  *     （event.侵攻度）、506/507（invasion.新人/回城标志）、521
  *     （invasion.存档点，#172 补名）、50（event.贞操带钥匙，#172 补名）、
@@ -53,6 +54,11 @@ const { equip_select } = require('#/system/equip/equip-select');
 const { party_del } = require('#/dungeon/dungeon-party');
 const { ending_2 } = require('#/event/event-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
+// H6（#175）战斗真身：dungeon-battle / dungeon-battle2 对 dungeon.js 的
+// karma / add_ex_item / use_ex_item 存根是函数内延迟 require（避开循环
+// 初始化），本文件对它们是顶层引用——两侧只在一处顶层引用，无环
+const battle_mod = require('#/dungeon/dungeon-battle');
+const battle2_mod = require('#/dungeon/dungeon-battle2');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -60,9 +66,6 @@ const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
  * （#174 真身，文件头）。
  */
 const STUBBED_CALLS = [
-  'DUNGEON_SPY',
-  'DUNGEON_PARTY_BATTLE',
-  'DUNGEON_BATTLE2_PARTY',
   'DUNGEON_TRAP',
   'DUNGEON_ROOM',
   'DUNGEON_TOWN',
@@ -88,49 +91,9 @@ function default_rand(n) {
 // —— 存根层（工单 #172 十组中余下的 + 附属；DUNGEON_BITCH 已随 #184 换真身——
 //    真身在 ere/kojo/kojo-dungeon-bitch.js，:718 经模块对象调用；归属见 docs/stub-registry.md）——
 
-/**
- * @DUNGEON_SPY 存根（迷宮/DUNGEON_SPY.ERB；#175 H6）：行动完了的迎击
- * 者的潜入行动（CFLAG:530 == 1 且 CFLAG:1 == 3 时调用，:29-30）。
- * @param {number} cid 角色（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
- */
-async function dungeon_spy() {
-  await stub_line_wait('DUNGEON_SPY', '潜入行动', '随 #175（H6）战斗票');
-  return 0;
-}
-
-/**
- * @DUNGEON_PARTY_BATTLE 存根（迷宮/DUNGEON_BATLLE.ERB；#175 H6）：勇者
- * 队伍 vs 怪物的战斗（侵攻勇者 CFLAG:1 == 2 / 战役 12）。存根不改变
- * CFLAG:1（无人陷落）——勇者不掉血必然推到第 9 层是本票的有意中间状态
- * （#168 裁定 1），H6 负责纠正。
- * @param {number} cid 队长（原作 ARG:0）
- * @returns {Promise<number>} 原作无 RESULT 消费（陷落判定读 CFLAG:1）
- */
-async function dungeon_party_battle() {
-  await stub_line_wait(
-    'DUNGEON_PARTY_BATTLE',
-    '队伍战斗',
-    '随 #175（H6）战斗票',
-  );
-  return 0;
-}
-
-/**
- * @DUNGEON_BATTLE2_PARTY 存根（迷宮/DUNGEON_BATLLE2.ERB；#175 H6）：
- * 勇者与元勇者（迎击方）的战斗。RESULT：1 = 迎击方胜利（勇者被击退）、
- * 2 = 勇者胜（迎击的 B 被打倒）；存根恒 0——两个消费分支均不达。
- * @param {number} cid 迎击队长（原作 ARG:0）
- * @returns {Promise<number>} RESULT（存根恒 0）
- */
-async function dungeon_battle2_party() {
-  await stub_line_wait(
-    'DUNGEON_BATTLE2_PARTY',
-    '迎击战斗',
-    '随 #175（H6）战斗票',
-  );
-  return 0;
-}
+// H6（#175）起三处战斗存根换成真身：DUNGEON_SPY / DUNGEON_PARTY_BATTLE /
+// DUNGEON_BATTLE2_PARTY 见 ere/dungeon/dungeon-battle2.js 与
+// ere/dungeon/dungeon-battle.js（调用点经模块对象引用，对比测试可替换）。
 
 /**
  * @DUNGEON_TRAP 存根（迷宮/DUNGEON_TRAP.ERB；#176 H7）：陷阱处理。
@@ -275,9 +238,9 @@ async function run_dungeon(arg0, rand) {
 
   // :27-32 行動完了の場合飛ばす（CFLAG:530 == 1 本日行动已完）
   if ((era.get(`cflag:${arg0}:530`) || 0) === 1) {
-    // 迎撃中の場合、潜入行動（CFLAG:1 == 3）
+    // 迎撃中の場合、潜入行動（CFLAG:1 == 3）——H6（#175）真身
     if (chara(arg0).invasion.状态 === 3) {
-      await dungeon_spy(arg0);
+      await battle2_mod.dungeon_spy(arg0, rand_n);
     }
     return 0;
   }
@@ -752,9 +715,9 @@ async function run_dungeon(arg0, rand) {
           chara(sideb).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
         }
       } else {
-        // :441-477 戦闘（存根下无人陷落）
+        // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
-        await dungeon_party_battle(arg0);
+        await battle_mod.dungeon_party_battle(arg0, rand_n);
         // :445 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
@@ -880,7 +843,7 @@ async function run_dungeon(arg0, rand) {
         }
       } else {
         let turnend = 0;
-        await dungeon_party_battle(arg0); // :536
+        await battle_mod.dungeon_party_battle(arg0, rand_n); // :536
         // :537-543 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
@@ -921,18 +884,17 @@ async function run_dungeon(arg0, rand) {
         }
       }
     } else {
-      // —— 勇者と元勇者の戦闘（:564-588 迎击 3）——
-      const battle2 = await dungeon_battle2_party(arg0);
-      // B：DUNGEON_BATTLE2_PARTY 设置的败者号（存根恒 0 下两臂不达，
-      // 局部 b 缺省 0，文件头）
-      const b = 0;
-      if (battle2 === 2) {
+      // —— 勇者と元勇者の戦闘（:564-588 迎击 3）——H6（#175）真身：
+      // RESULT 与败者号 B 经返回值显式传出（#5 决议第六条，文件头）
+      const { result: battle2r, loser: b } =
+        await battle2_mod.dungeon_battle2_party(arg0, rand_n);
+      if (battle2r === 2) {
         // :568-571 迎击方的 B 被打倒
         await get_down_enemy(b); // :569（复活，依据 #103）
         // CFLAG:505 勇者撃破数 += 1（dungeon 属主域内）
         era.set(`cflag:${arg0}:505`, (era.get(`cflag:${arg0}:505`) || 0) + 1);
         party_del(b); // :571
-      } else if (battle2 === 1) {
+      } else if (battle2r === 1) {
         // :572-587 勇者被击退
         chara(arg0).invasion.回城标志 = 0; // :574
         if (chara(arg0).invasion.状态 === 0) {
@@ -1520,4 +1482,9 @@ module.exports = {
   check_status_one,
   get_junk_item,
   get_down_enemy,
+  // 三支战斗侧消费的域内存根（#175 起 dungeon-battle/-battle2 经模块对象
+  // 引用——单点登记，docs/stub-registry.md 不重复收录）
+  karma,
+  add_ex_item,
+  use_ex_item,
 };

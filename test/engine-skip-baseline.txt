@@ -85,4 +85,12 @@
 # 挂，ERE_ENGINE_ASAR=none 实测）。算式：event-ending.test.js 新增 2 条
 # （ENDING_2 真身与 TARGET 判据）+ event-ending2-e2e.test.js 1 条（新档到
 # GAMEOVER 的端到端）全部走 era-fixture 路径——67（既有）+ 0（本票）= 67。
+# #175（H6 迷宫战斗）复测：67 不变（rebase 到含 #184/#195 的 master 后
+# 为 1017 = 950 过 + 67 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测；本票未合并
+# 时单边实测 993 = 926 过 + 67 跳过）。算式：dungeon-battle.test.js 17 条
+# （monster-database 源比对走纯文件解析、战斗行为全走 era-fixture 路径，
+# 随机源经参数注入或 mulberry32 替换 Math.random，无 engine-bundle 门控）
+# + dungeon-main.test.js 改写 3 条仍走夹具——67（既有）+ 0（本票）= 67。
+# E 表（yml/E.yml）的引擎侧验证由 static-table-coverage 的既有门控用例
+# 覆盖（e 族名字表在装载后可寻址），不新增门控用例。
 67

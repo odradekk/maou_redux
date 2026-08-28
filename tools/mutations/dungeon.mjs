@@ -162,4 +162,98 @@ export default [
     tests: ['dungeon-main', 'event-ending2-e2e'],
     must_mention: '这里是魔王的房间',
   },
+  // —— #175（H6）：迷宫战斗（M480-M487）——
+  {
+    desc: 'M480 勇者臂的战斗调用删除（dungeon_party_battle 不再发生）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `        // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
+        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
+        await battle_mod.dungeon_party_battle(arg0, rand_n);`,
+    replace: `        // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
+        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
+        // 变异：勇者臂的战斗调用删（勇者不遇敌、不掉气力）`,
+    tests: ['dungeon-main', 'dungeon-battle'],
+    must_mention: '真身态气力',
+  },
+  {
+    desc: 'M481 DEATH_CHECK 投降臂的陷落写入删（CFLAG:1 = 0 不写）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: `    era.print(\`\${name_of(arg0)}感觉到生命垂危，投降求饶了。\`);
+    chara(arg0).invasion.状态 = 0;
+    return 2;`,
+    replace: `    era.print(\`\${name_of(arg0)}感觉到生命垂危，投降求饶了。\`);
+    // 变异：投降的陷落写入删（CFLAG:1 = 0 不写）
+    return 2;`,
+    tests: ['dungeon-battle'],
+    must_mention: '投降（CFLAG:1 = 0）',
+  },
+  {
+    desc: 'M482 DEATH_CHECK2 勇者侧退场的陷落写入删',
+    file: 'ere/dungeon/dungeon-battle2.js',
+    find: `    era.print(\`\${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。\`);
+    chara(arg1).invasion.状态 = 0;
+    return 2;`,
+    replace: `    era.print(\`\${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。\`);
+    // 变异：勇者退场的陷落写入删
+    return 2;`,
+    tests: ['dungeon-battle'],
+    must_mention: '勇者 CFLAG:1 = 0',
+  },
+  {
+    desc: 'M483 SPY 迎击入口删除（CFLAG:1 == 3 的提前返回内不再调 dungeon_spy）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `    if (chara(arg0).invasion.状态 === 3) {
+      await battle2_mod.dungeon_spy(arg0, rand_n);
+    }`,
+    replace: `    if (chara(arg0).invasion.状态 === 3) {
+      // 变异：迎击潜入调用删
+    }`,
+    tests: ['dungeon-main'],
+    must_mention: '工作活动扣了勇者的 HP/气力',
+  },
+  {
+    desc: 'M484 monster-database 一条数据改坏（狗头人等级 1 → 9）',
+    file: 'ere/data/monster-database.js',
+    find: `  100: {
+    番号: 100,
+    等级: 1,`,
+    replace: `  100: {
+    番号: 100,
+    等级: 9, // 变异：等级改坏`,
+    tests: ['dungeon-battle'],
+    must_mention: '九字段与源不一致',
+  },
+  {
+    desc: 'M485 BATTLE2 的败者号传参坏（loser 恒 0）',
+    file: 'ere/dungeon/dungeon-battle2.js',
+    find: `  if (chara(enemy).invasion.状态 === 0) {
+    return { result: 2, loser: enemy };
+  }`,
+    replace: `  if (chara(enemy).invasion.状态 === 0) {
+    return { result: 2, loser: 0 }; // 变异：败者号不传
+  }`,
+    tests: ['dungeon-battle'],
+    must_mention: '败者号 = 勇者 2',
+  },
+  {
+    desc: 'M486 MONSTER_ATTACK 的 off-by-one 被「修好」（-100 → -99：原作缺陷形态被改）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: '  // :1052 IDを先頭に——-100（非同构处的 -99）：off-by-one，文件头注释\n  monid -= 100;',
+    replace:
+      '  // :1052 IDを先頭に——变异：off-by-one 被修好（-99），原作缺陷形态被改\n  monid -= 99;',
+    tests: ['dungeon-battle'],
+    must_mention: 'HP 不动（DMG = 0×等级 = 0）',
+  },
+  {
+    desc: 'M487 BATTLE2 勇者退场的 result 分流坏（return 2 → 0）',
+    file: 'ere/dungeon/dungeon-battle2.js',
+    find: `  if (chara(enemy).invasion.状态 === 0) {
+    return { result: 2, loser: enemy };
+  }`,
+    replace: `  if (chara(enemy).invasion.状态 === 0) {
+    return { result: 0, loser: enemy }; // 变异：勇者退场的 result 分流坏
+  }`,
+    tests: ['dungeon-battle'],
+    must_mention: '勇者被打退',
+  },
 ];

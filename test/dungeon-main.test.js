@@ -189,12 +189,15 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
   );
 });
 
-test('贯通·存根不改推进：全程没有战斗扣血（CFLAG:1 恒 2，直到结局）', async () => {
+test('贯通·战斗真身（H6）：推进全程战斗确实发生、勇者气力被消耗，直到结局', async () => {
   const fixture = setup_world();
   const { run_dungeon } = load(fixture);
-  // 第 18 次调用踏破第 9 层 → ENDING_2 真身 quit（#173）；接住后核
-  // 「直到结局 CFLAG:1 恒 2」——本票不碰战斗，战斗存根不改推进的判据
-  // 不因真身接入而失效（派单简报第 4 条；H6 接上战斗后按新语义调整）
+  // H6（#175）起 DUNGEON_PARTY_BATTLE 是真身：每轮滞留都发生战斗、
+  // 战斗的逃跑段（TURN > 5，max 下 rand(3) = 2 ≠ 0 必成）扣勇者气力
+  // RAND:30 = 29。第 18 次调用踏破第 9 层 → ENDING_2 真身 quit（#173）。
+  // 判据换正向：战斗确实扣了气力（存根态此值为满值 1000），推进本身
+  // 不受阻挡（max 下 WALK 恒 73，层数轨迹与 H3 相同——随机源注入与
+  // 序列无关，见下一条对比测试的论证）
   fixture.set_inputs(0);
   let caught;
   for (let i = 0; i < 8 * 2 + 2; i += 1) {
@@ -206,17 +209,28 @@ test('贯通·存根不改推进：全程没有战斗扣血（CFLAG:1 恒 2，�
   }
   assert(
     caught instanceof Error && caught.message === 'quit',
-    '以 ENDING_2 的 QUIT 收场（贯通终点）',
+    '以 ENDING_2 的 QUIT 收场（贯通终点不因战斗接入而断）',
   );
   assert.equal(
     fixture.store.get('cflag:1:1'),
     2,
-    '存根下无人陷落、直到结局保持侵攻中（工单验收线）',
+    '满状态的勇者不被战斗打退（怪物侧攻击的原作缺陷形态，见 dungeon-battle.js 文件头）',
   );
-  // 10 组存根在推进路径上留痕（DUNGEON_ROOM / DUNGEON_PARTY_BATTLE /
-  // ADD_EX_ITEM / DUNGEON_SPY 不在此路径）——核两个代表性的
-  assert(stub_count(fixture, 'DUNGEON_ROOM') >= 1, '房间设施存根在场');
-  assert(stub_count(fixture, 'DUNGEON_PARTY_BATTLE') >= 1, '队伍战斗存根在场');
+  const wp = fixture.store.get('base:1:1');
+  assert(
+    typeof wp === 'number' && wp < 1000,
+    `战斗确实扣了勇者气力（实测 ${wp} < 满值 1000；逃跑段 -RAND:30 × 战斗数）`,
+  );
+  // 存根占位行已退场（真身不产占位行）
+  assert.equal(
+    stub_count(fixture, 'DUNGEON_PARTY_BATTLE'),
+    0,
+    '队伍战斗真身（无占位行）',
+  );
+  assert(
+    stub_count(fixture, 'DUNGEON_ROOM') >= 1,
+    '房间设施存根仍在场（H7 未接）',
+  );
 });
 
 // —— TALENT:122（冒险者）不走结局（验收「另一条臂有测试」）——
@@ -295,15 +309,37 @@ test('行动完了：CFLAG:530 == 1 直接返回，不推进不打演出', async
   assert.equal(texts.length, 0, '无任何演出行（连开场段都在守卫之后）');
 });
 
-test('行动完了·迎击：CFLAG:1 == 3 时先走 DUNGEON_SPY 存根再返回', async () => {
+test('行动完了·迎击：CFLAG:1 == 3 时先走 DUNGEON_SPY 真身（H6）再返回', async () => {
   const fixture = setup_world();
-  fixture.store.set('cflag:1:1', 3);
-  fixture.store.set('cflag:1:530', 1);
+  // 潜入奴隶 2：迎击中、行动完了（以同伴身份追随队长勇者 1）
+  fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
+  fixture.era.addCharacter(2);
+  fixture.store.set('maxbase:2:0', 2000);
+  fixture.store.set('maxbase:2:1', 1000);
+  fixture.store.set('base:2:0', 2000);
+  fixture.store.set('base:2:1', 1000);
+  fixture.store.set('cflag:1:1', 2); // 队长勇者 1：侵攻中
+  fixture.store.set('cflag:2:1', 3); // 奴隶 2：迎击中（潜入）
+  fixture.store.set('cflag:2:530', 1); // 行动完了
+  fixture.store.set('cflag:2:533', 1); // 队长记忆 = 勇者 1
+  fixture.store.set('cflag:1:531', 2); // 勇者 1 的仲間A = 奴隶 2
   const { run_dungeon } = load(fixture);
 
-  await run_dungeon(1, max);
-  assert.equal(stub_count(fixture, 'DUNGEON_SPY'), 1, ':29-30 迎击潜入存根');
-  assert.equal(fixture.store.get('cflag:1:502') ?? 0, 0, '不推进');
+  await run_dungeon(2, max);
+  // DUNGEON_SPY 真身：对队长勇者 1 的工作活动（SPY_BATTLE 三分支）扣
+  // HP/气力 10 起（max 下走「下剤投与」分支：HDMG = 10、MDMG = 10）
+  assert.equal(
+    stub_count(fixture, 'DUNGEON_SPY'),
+    0,
+    '迎击潜入真身（无占位行）',
+  );
+  const hero_hp = fixture.store.get('base:1:0');
+  const hero_wp = fixture.store.get('base:1:1');
+  assert(
+    typeof hero_hp === 'number' && hero_hp < 2000 && hero_wp < 1000,
+    `工作活动扣了勇者的 HP/气力（实测 ${hero_hp}/${hero_wp}）`,
+  );
+  assert.equal(fixture.store.get('cflag:2:502') ?? 0, 0, '奴隶不推进侵攻度');
 });
 
 test('迎击分叉：侵攻度倒退（D:20 -= WALK），踏破臂走「回到阶层」', async () => {
@@ -373,18 +409,39 @@ test('迎击分叉·方向辨析：D:20 = 50 时倒退穿 0 被推出（+= 变�
   );
 });
 
-test('迎击分叉·战斗：0 < D:20 < 100 滞留时走 DUNGEON_BATTLE2_PARTY 存根', async () => {
+test('迎击分叉·战斗：0 < D:20 < 100 滞留时走 DUNGEON_BATTLE2_PARTY 真身（H6）', async () => {
   const fixture = setup_world();
-  fixture.store.set('cflag:1:1', 3);
+  // 迎击奴隶 1 找同层的侵攻勇者 2 决斗（对象选择的 1/3 跳过用 rand(3) = 1
+  // 避开——zero 会命中跳过分支）
+  fixture.seed_chara(2, { id: 2, name: '勇者甲', callname: '勇者甲' });
+  fixture.era.addCharacter(2);
+  fixture.store.set('maxbase:2:0', 2000);
+  fixture.store.set('maxbase:2:1', 1000);
+  fixture.store.set('base:2:0', 2000);
+  fixture.store.set('base:2:1', 1000);
+  fixture.store.set('cflag:1:1', 3); // 奴隶 1：迎击中
+  fixture.store.set('cflag:1:11', 60); // 攻击力（DUEL 才有杀伤）
+  fixture.store.set('cflag:1:12', 20);
   fixture.store.set('cflag:1:502', 50);
+  fixture.store.set('cflag:1:533', 1);
+  fixture.store.set('cflag:2:1', 2); // 勇者 2：侵攻中、同层
+  fixture.store.set('cflag:2:11', 10);
+  fixture.store.set('cflag:2:12', 5);
+  fixture.store.set('cflag:2:501', 1);
   const { run_dungeon } = load(fixture);
 
-  await run_dungeon(1, zero); // WALK = 0 → D:20 = 50 滞留
-  assert(
-    stub_count(fixture, 'DUNGEON_BATTLE2_PARTY') === 1,
-    ':566 迎击战斗存根（存根 RESULT 0 两臂均不进）',
+  const not_first = (n) => (n === 3 ? 1 : 0); // rand(3) = 1（不跳过）、其余 0
+  await run_dungeon(1, not_first); // WALK = 0 → D:20 = 50 滞留 → 迎击战斗
+  assert.equal(
+    stub_count(fixture, 'DUNGEON_BATTLE2_PARTY'),
+    0,
+    '迎击战斗真身（无占位行）',
   );
-  assert.equal(fixture.store.get('cflag:1:1'), 3, '存根不改 CFLAG:1');
+  const enemy_wp = fixture.store.get('base:2:1');
+  assert(
+    typeof enemy_wp === 'number' && enemy_wp < 1000,
+    `对人格斗扣了勇者气力（实测 ${enemy_wp} < 1000；DUEL_ATTACK 的 MDMG）`,
+  );
   assert.equal(fixture.store.get('cflag:1:514'), 1, '阶层滞在计数 +1');
 });
 
