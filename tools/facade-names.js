@@ -350,6 +350,13 @@ const cflag = {
       ':121 勇者所持金（城镇经济消费，ENTER_ENEMY.ERB 的初期加算同此下标）',
     ),
   ),
+  582: named_tail(
+    '借款',
+    src(
+      SRC_FLAG,
+      ':459 CFLAG:582 = 現在の借金（マイナス）——勇者资产闭环第三槽',
+    ),
+  ),
   // —— 迷宫主循环与队伍编组的跨域写（#172 H3 @DUNGEON/@PARTY_DEL；
   //    named_tail 落表尾，#170/#171 先例。50 属主 event（dungeon 文件写）、
   //    521 属主 invasion、601 属主 chara——三条都是跨域写必需的门面）——

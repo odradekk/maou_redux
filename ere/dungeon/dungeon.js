@@ -56,17 +56,20 @@ const { ending_2 } = require('#/event/event-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // H6（#175）战斗真身：dungeon-battle / dungeon-battle2 对 dungeon.js 的
 // karma / add_ex_item / use_ex_item 存根是函数内延迟 require（避开循环
-// 初始化），本文件对它们是顶层引用——两侧只在一处顶层引用，无环
+// 初始化），本文件对它们是顶层引用——两侧只在一处顶层引用，无环。
+// H7（#176）陷阱真身在 ere/dungeon/dungeon-trap.js（其对 dungeon.js 的
+// KARMA 存根是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）
 const battle_mod = require('#/dungeon/dungeon-battle');
 const battle2_mod = require('#/dungeon/dungeon-battle2');
+const trap_mod = require('#/dungeon/dungeon-trap');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。EQUIP_CHECK/EQUIP_SELECT 不在此列
- * （#174 真身，文件头）。
+ * （#174 真身，文件头）；DUNGEON_TRAP 不在此列（#176 真身
+ * ere/dungeon/dungeon-trap.js）。
  */
 const STUBBED_CALLS = [
-  'DUNGEON_TRAP',
   'DUNGEON_ROOM',
   'DUNGEON_TOWN',
   'KARMA',
@@ -94,19 +97,8 @@ function default_rand(n) {
 // H6（#175）起三处战斗存根换成真身：DUNGEON_SPY / DUNGEON_PARTY_BATTLE /
 // DUNGEON_BATTLE2_PARTY 见 ere/dungeon/dungeon-battle2.js 与
 // ere/dungeon/dungeon-battle.js（调用点经模块对象引用，对比测试可替换）。
-
-/**
- * @DUNGEON_TRAP 存根（迷宮/DUNGEON_TRAP.ERB；#176 H7）：陷阱处理。
- * 原作读全局 A（受陷阱者）与 D:4（试行次数，装备「陷阱誘発」的强度），
- * 存根签名按此预留。
- * @param {number} cid 受陷阱者（原作 A）
- * @param {number} tries 试行次数（原作 D:4）
- * @returns {Promise<number>} 原作无 RESULT 消费
- */
-async function dungeon_trap() {
-  await stub_line_wait('DUNGEON_TRAP', '陷阱处理', '随 #176（H7）陷阱票');
-  return 0;
-}
+// H7（#176）起 DUNGEON_TRAP 存根换成真身：ere/dungeon/dungeon-trap.js
+// （调用点经模块对象引用 trap_mod，同款可替换）。
 
 /**
  * @DUNGEON_ROOM 存根（迷宮/DUNGEON_ROOM.ERB；#177 H8）：房间设施效果。
@@ -676,20 +668,26 @@ async function run_dungeon(arg0, rand) {
       trap_target = arg0;
     }
 
-    // D:4 = 陷阱试行次数（原作全局 D 槽；有写无读——DUNGEON_TRAP 真身
-    // （#176）的输入，签名按此预留）
-    let d4;
+    // D:4 = 陷阱试行次数（原作全局 D 槽；装备「陷阱誘発」的强度——真身
+    // （#176）的输入）。D:20 与陷阱共享（TELEPORT 写、ONE_WAY/SHOOT 读），
+    // 经 ctx 对象回写（原作全局 D 槽，#5 决议第六条）
+    const trap_ctx = { d20: walk20 };
     // :400-405 装備効果(陷阱誘発)（W:8 = 20）
     if (equip_check(trap_target, 20) > 0) {
-      d4 = equip_check(trap_target, 20);
-      await dungeon_trap(trap_target, d4);
+      await trap_mod.dungeon_trap(
+        trap_target,
+        equip_check(trap_target, 20),
+        rand_n,
+        trap_ctx,
+      );
     } else {
-      d4 = 0;
       // :408-412 装備効果(陷阱避け)（W:8 = 16）：RESULT < RAND:10 时触发
       if (equip_check(trap_target, 16) < rand_n(10)) {
-        await dungeon_trap(trap_target, d4);
+        await trap_mod.dungeon_trap(trap_target, 0, rand_n, trap_ctx);
       }
     }
+    // TELEPORT 的 D:20 写回（:330/:335）——:748 的 CFLAG:502 = D:20 用它
+    walk20 = trap_ctx.d20;
 
     // :415-419 シュートでPTが分断された時のためにここで一度SIDEA・SIDEBを
     // 再定義（ちょっと乱暴だけど…ハズ）

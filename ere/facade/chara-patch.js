@@ -28,6 +28,21 @@ class PatchFacade {
     era.set(`cflag:${this.cid}:120`, v);
   }
 
+  /**
+   * 借款（cflag:cid:582 ↔ CFLAG:582）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行459 CFLAG:582 = 現在の借金（マイナス）——勇者资产闭环第三槽
+   * @returns {number}
+   */
+  get 借款() {
+    return era.get(`cflag:${this.cid}:582`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 借款(v) {
+    era.set(`cflag:${this.cid}:582`, v);
+  }
+
   // —— talent ——
   /**
    * 不怕脏（talent:cid:64 ↔ TALENT:64）
