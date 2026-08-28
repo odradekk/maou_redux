@@ -143,8 +143,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #172（H3 迷宫主循环）+14（tools/mutations/dungeon.mjs，M375-M388）。
 // #173（H4 ENDING_2 与端到端）+7（event.mjs 的 M440-M445：QUIT 降格 /
 // 名字写死 / GAMEOVER 行删 / 横幅末行删 / INPUT 删 / 读键删；dungeon.mjs
-// 的 M446：魔王房间演出行删）。现为 369。
-const LEDGER_COUNT_BASELINE = 369;
+// 的 M446：魔王房间演出行删）。
+// #184（H15 地下城卖春系统）+4（kojo.mjs 的 M400-M403）。现为 373。
+const LEDGER_COUNT_BASELINE = 373;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

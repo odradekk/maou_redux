@@ -202,4 +202,37 @@ export default [
     tests: ['kojo-text-fidelity'],
     must_mention: '未见于 JS',
   },
+
+  {
+    desc: 'M400 勇者第一道门槛删除（EXP:74 == 0 不再拦，#184 验收变异）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '    if (!era.get(`exp:${arg}:74`)) {\n      return 0; // :20-21\n    }',
+    replace: '    // 变异：删掉 EXP:74 门槛\n    if (false) {',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: 'EXP:74 为零则返回',
+  },
+  {
+    desc: 'M401 SIPPAI 基础失败率改坏（250 → 200，#184 验收变异）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: "      if (args1 === 'TOWN') {\n        local = 250 + (era.get(`cflag:${arg}:151`) || 0);",
+    replace: '        local = 200 + (era.get(`cflag:${arg}:151`) || 0);',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: '失败率算式',
+  },
+  {
+    desc: 'M402 SET_BICH_LEVEL 输入上限改坏（> 5 改 > 6，#184 验收变异）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '  if (result > 5) {',
+    replace: '  if (result > 6) {',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: '输入分档',
+  },
+  {
+    desc: 'M403 PROFIT_BITCH 总价改坏（PAY * PLAY 改 PAY + PLAY，#184 验收变异）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '  pay = pay * play;',
+    replace: '  pay = pay + play;',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: '收益结算',
+  },
 ];
