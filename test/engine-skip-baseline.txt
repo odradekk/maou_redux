@@ -77,4 +77,8 @@
 # 该次复测：67 不变（928 = 861 过 + 67 跳过 + 0 挂）——新增的
 # asar-candidates.test.js 五条都不依赖引擎（读源码文本比对 + 子进程探针，
 # 探针自己带 none，不经 engine-bundle 门控）。
+# #172（H3 迷宫主循环）复测：67 不变（973 = 906 过 + 67 跳过 + 0 挂，WSL
+# 有引擎实测 973 = 973 过 + 0 跳）。算式：dungeon-main.test.js 28 条 +
+# dungeon-party.test.js 17 条全部走 era-fixture 路径（随机源经参数注入，
+# 无 engine-bundle 门控）——0 条新增引擎依赖用例，跳过数不动。
 67

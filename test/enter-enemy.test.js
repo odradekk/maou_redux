@@ -145,9 +145,11 @@ test('链路：生成勇者后 turnend-settle 的 DUNGEON 守卫第一次为真�
 
   era_flag.time = 1;
   await emit('EVENTTURNEND');
-  // #112 起 1:1 保留的守卫：place === 2 且非 2D 模式 → 走迷宫本体（占位行）
+  // #112 起 1:1 保留的守卫：place === 2 且非 2D 模式 → 走迷宫本体。
+  // #172 起 DUNGEON 是真身（无占位行）——以 DUNGEON_ROOM 存根行观测
+  // （run_dungeon 的 :386 每回合必经）
   assert(
-    stub_count(fixture, 'DUNGEON') >= 1,
+    stub_count(fixture, 'DUNGEON_ROOM') >= 1,
     'CFLAG:1 == 2 的勇者让 turnend-settle 的 DUNGEON 守卫为真',
   );
 });

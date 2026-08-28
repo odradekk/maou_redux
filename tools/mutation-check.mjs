@@ -139,7 +139,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #188 起为 346：+3（简体锁收紧——M370 表外繁体判定器坏、M371 参考集数据
 // 删锚点字 贖、M372 归一表目标值映进繁侧；本票 M370 起由派单简报指定，与
 // #171 的 M348 号段零撞号）。
-const LEDGER_COUNT_BASELINE = 348;
+// 变异条目计数基线：条目表条数必须与此相等（增删条目 = 显式改这里）。
+// #172（H3 迷宫主循环）+14（tools/mutations/dungeon.mjs，M375-M388）。
+const LEDGER_COUNT_BASELINE = 362;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

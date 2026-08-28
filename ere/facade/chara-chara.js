@@ -133,6 +133,21 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:151`, v);
   }
 
+  /**
+   * 结婚对象（cflag:cid:601 ↔ CFLAG:601）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行464 CFLAG:601 = 結婚相手
+   * @returns {number}
+   */
+  get 结婚对象() {
+    return era.get(`cflag:${this.cid}:601`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 结婚对象(v) {
+    era.set(`cflag:${this.cid}:601`, v);
+  }
+
   // —— cstr ——
   /**
    * 加入时名字（cstr:cid:1 ↔ CSTR:1）

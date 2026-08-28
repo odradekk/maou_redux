@@ -266,6 +266,10 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 体力预设（真实游戏由 Chara31.yml 的 基礎 行落地；@EVENTEND 的死亡判定
   // 读它——无预设时体力 0 会触发死亡删除分支，那不是本用例的目标路径）
   fixture.store.set('base:31:0', 2000);
+  // 行动完了预置（#172 起 PARTY_UNITE 真身：回合结算的队伍编成会把它
+  // 复位为 0——占位行时代该断言盯「原作 @PARTY_UNITE，」，真身后改盯
+  // 数据效果）
+  fixture.store.set('cflag:31:530', 1);
   const { on, TIER } = fixture.load_module('system/event/registry');
   on('EVENTFIRST', async () => fixture.era.addCharacter(31), TIER.LATER);
 
@@ -320,9 +324,18 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     ),
     '@JUEL_CHECK 的退出键必须是按钮（PR #53）',
   );
-  // 回合结算三档链已落地（#114）：#PRI 存根与普通档存根都在场
+  // 回合结算三档链已落地（#114）：#PRI 存根在场；PARTY_UNITE 自 #172 起
+  // 真身（ere/dungeon/），占位行退场、效果是行动完了复位（上方预置 1）
   assert(texts.some((line) => line.includes('原作 @AUTO_BUYING，')));
-  assert(texts.some((line) => line.includes('原作 @PARTY_UNITE，')));
+  assert(
+    !texts.some((line) => line.includes('原作 @PARTY_UNITE，')),
+    'PARTY_UNITE 已是真身（#172），不应再打占位行',
+  );
+  assert.equal(
+    fixture.store.get('cflag:31:530'),
+    0,
+    'PARTY_UNITE 真身应把行动完了复位（预置的 1 被清掉）',
+  );
   assert.equal(
     texts.filter((line) => line.includes('所持金')).length,
     2,

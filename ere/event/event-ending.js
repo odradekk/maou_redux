@@ -37,6 +37,7 @@ const { stub_line_wait } = require('#/utils/stub-line');
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定） */
 const STUBBED_CALLS = [
+  'ENDING_2',
   'ENDING_3',
   'ENDING_4',
   'ENDING_5',
@@ -113,6 +114,26 @@ async function ending_1() {
 }
 
 /**
+ * @ENDING_2（ENDING ver 1.0.1.ERB:43-56）：魔王城陷落——真 GAMEOVER。
+ *
+ * 与 ENDING_1 的中场结局形态不同：横幅 + 勇者封印播报 + GAMEOVER 线 +
+ * INPUT + QUIT，QUIT 后无任何语句。**真身随 #173（H4）落地**——本存根
+ * 是 #172（H3）的接入点（DUNGEON.ERB:202 的 JUMP ENDING_2 在勇者到达
+ * 第 9 层且 TALENT:122 == 0 时首次可达）。JUMP 是尾跳转：ere 侧调用后
+ * 调用方不再执行后续语句（run_dungeon 在调用后直接 return，1:1）。
+ *
+ * @returns {Promise<number>} 原作 QUIT 后无 RETURN（存根以 0 收口）
+ */
+async function ending_2() {
+  await stub_line_wait(
+    'ENDING_2',
+    '魔王城陷落的 GAMEOVER 演出',
+    '随 #173（H4）',
+  );
+  return 0;
+}
+
+/**
  * @ENDING_3（ENDING ver 1.0.1.ERB:59-74）：精灵领域征服的中场结局。
  *
  * 横幅与 CHAR_GIFT, 1（精灵族圣女·角色 31 的献上）随各领域征服票，
@@ -175,6 +196,7 @@ module.exports = {
   STUBBED_CALLS,
   end10_55,
   ending_1,
+  ending_2,
   ending_3,
   ending_4,
   ending_5,

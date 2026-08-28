@@ -116,17 +116,17 @@ test('日推进的月替与星期回绕：DAY:2 超 28 触发 EVENT_NEXTMONTH、
 test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走各的分支', async () => {
   // 守卫是阶段 3 的接入点（工单单独要求的测试）。中立世界（状态位 0）下
   // 迷宫整体绕开；再以 12/2/3 的正向用例分开两支——守卫删坏（比如恒放行）
-  // 在正向用例上无差异、在本用例红；守卫写反（恒拦截）则在正向用例红
+  // 在正向用例上无差异、在本用例红；守卫写反（恒拦截）则在正向用例红。
+  // #172 起 DUNGEON 是真身（无占位行），以 DUNGEON_ROOM 存根行计数观测
+  // （每次 run_dungeon 的 :386 必经，中性且每回合恰一行）
   const neutral = setup_turnend();
   join_slave_chara(neutral.fixture, 31, '温妮');
   await neutral.emit('EVENTTURNEND');
   const neutral_texts = neutral.fixture.text_lines();
-  // 占位行文案形状固定为「原作 @函数名，」——按此精确匹配，
-  // 否则 @DUNGEON 会误命中 @DUNGEON_AFTER 的占位行
   const stub_count = (lines, name) =>
     lines.filter((line) => line.includes(`原作 @${name}，`)).length;
   assert.equal(
-    stub_count(neutral_texts, 'DUNGEON'),
+    stub_count(neutral_texts, 'DUNGEON_ROOM'),
     0,
     'CFLAG:1 = 0 时 DUNGEON 不得被调用（哪怕一次）',
   );
@@ -142,7 +142,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   campaign.fixture.store.set('cflag:31:1', 12);
   await campaign.emit('EVENTTURNEND');
   assert.equal(
-    stub_count(campaign.fixture.text_lines(), 'DUNGEON'),
+    stub_count(campaign.fixture.text_lines(), 'DUNGEON_ROOM'),
     1,
     '状态 12 恰好一次 DUNGEON（战役结束后状态复位，结算循环内不再触发）',
   );
@@ -153,7 +153,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   explore.fixture.store.set('cflag:31:1', 2);
   await explore.emit('EVENTTURNEND');
   assert.equal(
-    stub_count(explore.fixture.text_lines(), 'DUNGEON'),
+    stub_count(explore.fixture.text_lines(), 'DUNGEON_ROOM'),
     1,
     '状态 2 且 FLAG:502 == 0 应走迷宫本体',
   );
@@ -170,7 +170,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     '状态 2 且 FLAG:502 == 1 应走野外地图',
   );
   assert.equal(
-    stub_count(field.fixture.text_lines(), 'DUNGEON'),
+    stub_count(field.fixture.text_lines(), 'DUNGEON_ROOM'),
     0,
     '2D 模式下不得走迷宫本体',
   );
@@ -465,6 +465,9 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'flag:10006', value: -1 }, // ASSI = -1（普通档开头）
     { name: 'cflag:0:506', value: 0 }, // 新人标志消去
     { name: 'cflag:0:666', value: 0 }, // 自动调教标志消去
+    // PARTY_UNITE（#172 真身）行动完了复位：原作 FOR CHARID, 0 起，魔王
+    // 的 CFLAG:530 也清（行 263，先于 WEAPON_RESTORE）
+    { name: 'cflag:0:530', value: 0 },
     // WEAPON_RESTORE（#174 真身，全角色循环含魔王；基础攻防 0 → 六笔 0 写，
     // 写序 = 原作 :16-19 的两步赋值 × 攻/防 + :34-35 的 ÷(RESULT+1)）
     { name: 'cflag:0:11', value: 0 },
@@ -477,6 +480,9 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'base:0:1', value: 1050 }, // 魔王气力 +1000
     { name: 'base:0:1', value: 300 }, // 超上限钳回 MAXBASE:0:1
     { name: 'flag:10005', value: -1 }, // TARGET = TARGET_POOL（暂存值）
+    // PARTY_JOIN（#172 真身）内联的 PARTY_UNITE 复调（行 743 → :98），
+    // 魔王的 530 再清一次
+    { name: 'cflag:0:530', value: 0 },
     { name: 'flag:10005', value: 0 }, // TARGET = FLAG:1（开局 0）
     { name: 'flag:10006', value: 0 }, // ASSI = FLAG:2（开局 0）
   ]);
@@ -574,11 +580,10 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'AUTO_BUYING',
     'DEBUG_CHECK',
   ]);
-  // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位
+  // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位；
+  // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
-    'PARTY_UNITE',
-    'DUNGEON',
     'DUNGEON_MAP',
     'LVUP',
     'DUNGEON_AFTER',
@@ -588,8 +593,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'MARRIAGE_DAY',
     'AUTOTRAIN',
     'CAMPAIGN_GAMEOVER',
-    'PARTY_JOIN',
-    'PARTY_DEL',
     'GEO_OUTPUT_2',
     'GET_LOOK_INFO',
   ]);
