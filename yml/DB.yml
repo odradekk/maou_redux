@@ -1,0 +1,21 @@
+# DB 表：2D 模式的怪物配置区（issue #180，阶段 3 H11；随 #181 H12 的 2D 模式
+# 全量消费）。
+#
+# 源: target/CSV/VariableSize.csv:133（DB,100,100——Emuera 二维全局数组）。
+#     写者：DUNGEON_SETUP.ERB 的 @MON_SET_OMAKASE（:512，随机放置）与
+#     @DUNGEON_INFO_MAP 的手动放置（:478）；读者：LABO_MAP.ERB 的 @MON_CHECK
+#     （怪物在位判定，联动 ITEM:100-199 的等级段库存——H6 战斗的怪物来源）、
+#     @CHIP_DRAW 与 LABO_DUNGEON_MAP.ERB 的地图渲染。
+#
+# Emuera 的 DB 是二维数组（DB:Y:X，各 100）。EraElectron 的自定义表只有一维
+# 桶——本文件让引擎按「开发者自定义一维表」建 data.db 桶（与 E.yml 同款；
+# 装载器把非内置表标为 tableType.normal，fillData 建桶并给声明条目补 0），
+# 游戏代码把二维寻址折叠成一维：db:(Y * 100 + X)。实际使用面 32×32
+# （MON_LIMIT/MON_SET_OMAKASE 的 RAND:32 与 DUNGEON_INFO_MAP 的 32×32 地图），
+# Y*100+X 在该面内无碰撞（X < 100）。
+#
+# 空表即够用（CFlag.yml 同款先例）：游戏代码一律数字下标寻址，未声明下标
+# 读侧 getter 兜 0（1:1 于原作「全区 0 起步」——MON_CHECK 对 <= 0 的格判
+# 「无怪物」，未写格天然无怪物）。DB 的格子数 10000，布局语义是纯坐标
+# （没有「第 0 行第 3 列」一类值得命名的条目），逐条声明只有噪声，不声明。
+# 读写包装：ere/page/page-dungeon-setup.js 的 db_get / db_set。

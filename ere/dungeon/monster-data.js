@@ -433,6 +433,7 @@ module.exports = {
   STUBBED_CALLS,
   e_get,
   e_set,
+  item_name,
   monster_data,
   skeleton,
   monster_extra,

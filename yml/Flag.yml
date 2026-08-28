@@ -249,3 +249,199 @@
   id: 10028
   name: "last_save_no_9"
   type: "number"
+# —— 迷宫情报与建设一段（issue #180，语义依据 DUNGEON_INFO2.ERB /
+#     DUNGEON_SETUP.ERB / DRAW_MAINMENU.ERB @DRAW_DUNGEON_OVERVIEW）——
+# 迷宫布置区（寻址 FLAG:(层-1 + 列*10 + 300)，层 1-9、列 A/B/C 即 +0/+10/+20）。
+# 槽值语义：陷阱槽存 Item.yml 的陷阱 id（60-88；-1 = 未布置，显示侧把
+# ITEM 查无的值也归 -1——DUNGEON_INFO2.ERB:70-77）；宝物槽存宝物 id
+# （300-320，-1 = 无）；设施槽存设施 id（500-507）或 0（通路）。
+"第1层陷阱A":
+  id: 300
+  name: "floor_1_trap_a"
+  type: "number"
+"第2层陷阱A":
+  id: 301
+  name: "floor_2_trap_a"
+  type: "number"
+"第3层陷阱A":
+  id: 302
+  name: "floor_3_trap_a"
+  type: "number"
+"第4层陷阱A":
+  id: 303
+  name: "floor_4_trap_a"
+  type: "number"
+"第5层陷阱A":
+  id: 304
+  name: "floor_5_trap_a"
+  type: "number"
+"第6层陷阱A":
+  id: 305
+  name: "floor_6_trap_a"
+  type: "number"
+"第7层陷阱A":
+  id: 306
+  name: "floor_7_trap_a"
+  type: "number"
+"第8层陷阱A":
+  id: 307
+  name: "floor_8_trap_a"
+  type: "number"
+"第9层陷阱A":
+  id: 308
+  name: "floor_9_trap_a"
+  type: "number"
+"第1层陷阱B":
+  id: 310
+  name: "floor_1_trap_b"
+  type: "number"
+"第2层陷阱B":
+  id: 311
+  name: "floor_2_trap_b"
+  type: "number"
+"第3层陷阱B":
+  id: 312
+  name: "floor_3_trap_b"
+  type: "number"
+"第4层陷阱B":
+  id: 313
+  name: "floor_4_trap_b"
+  type: "number"
+"第5层陷阱B":
+  id: 314
+  name: "floor_5_trap_b"
+  type: "number"
+"第6层陷阱B":
+  id: 315
+  name: "floor_6_trap_b"
+  type: "number"
+"第7层陷阱B":
+  id: 316
+  name: "floor_7_trap_b"
+  type: "number"
+"第8层陷阱B":
+  id: 317
+  name: "floor_8_trap_b"
+  type: "number"
+"第9层陷阱B":
+  id: 318
+  name: "floor_9_trap_b"
+  type: "number"
+"第1层陷阱C":
+  id: 320
+  name: "floor_1_trap_c"
+  type: "number"
+"第2层陷阱C":
+  id: 321
+  name: "floor_2_trap_c"
+  type: "number"
+"第3层陷阱C":
+  id: 322
+  name: "floor_3_trap_c"
+  type: "number"
+"第4层陷阱C":
+  id: 323
+  name: "floor_4_trap_c"
+  type: "number"
+"第5层陷阱C":
+  id: 324
+  name: "floor_5_trap_c"
+  type: "number"
+"第6层陷阱C":
+  id: 325
+  name: "floor_6_trap_c"
+  type: "number"
+"第7层陷阱C":
+  id: 326
+  name: "floor_7_trap_c"
+  type: "number"
+"第8层陷阱C":
+  id: 327
+  name: "floor_8_trap_c"
+  type: "number"
+"第9层陷阱C":
+  id: 328
+  name: "floor_9_trap_c"
+  type: "number"
+"第1层宝箱":
+  id: 340
+  name: "floor_1_treasure"
+  type: "number"
+"第2层宝箱":
+  id: 341
+  name: "floor_2_treasure"
+  type: "number"
+"第3层宝箱":
+  id: 342
+  name: "floor_3_treasure"
+  type: "number"
+"第4层宝箱":
+  id: 343
+  name: "floor_4_treasure"
+  type: "number"
+"第5层宝箱":
+  id: 344
+  name: "floor_5_treasure"
+  type: "number"
+"第6层宝箱":
+  id: 345
+  name: "floor_6_treasure"
+  type: "number"
+"第7层宝箱":
+  id: 346
+  name: "floor_7_treasure"
+  type: "number"
+"第8层宝箱":
+  id: 347
+  name: "floor_8_treasure"
+  type: "number"
+"第9层宝箱":
+  id: 348
+  name: "floor_9_treasure"
+  type: "number"
+"第1层设施":
+  id: 350
+  name: "floor_1_facility"
+  type: "number"
+"第2层设施":
+  id: 351
+  name: "floor_2_facility"
+  type: "number"
+"第3层设施":
+  id: 352
+  name: "floor_3_facility"
+  type: "number"
+"第4层设施":
+  id: 353
+  name: "floor_4_facility"
+  type: "number"
+"第5层设施":
+  id: 354
+  name: "floor_5_facility"
+  type: "number"
+"第6层设施":
+  id: 355
+  name: "floor_6_facility"
+  type: "number"
+"第7层设施":
+  id: 356
+  name: "floor_7_facility"
+  type: "number"
+"第8层设施":
+  id: 357
+  name: "floor_8_facility"
+  type: "number"
+"第9层设施":
+  id: 358
+  name: "floor_9_facility"
+  type: "number"
+# 肉便器数 / 展品数：主菜单 [111] 设施·设备的可用性判据（SHOP ver1.0.2.ERB
+# :132-133）与地城概况统计行的读数（DRAW_MAINMENU.ERB:571）
+"肉便器数":
+  id: 83
+  name: "meat_toilet_count"
+  type: "number"
+"展品数":
+  id: 84
+  name: "exhibit_count"
+  type: "number"
