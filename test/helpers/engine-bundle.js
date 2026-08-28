@@ -19,26 +19,47 @@
  * 模块号是 ere-4.8.0 的实测值（见各字段注释），引擎升版后编号漂移会在这里
  * 抛错——那是重新核读新版的信号，不是本助手的缺陷。
  *
- * asar 定位顺序：环境变量 ERE_ENGINE_ASAR → 仓库内 ere-4.8.0-win-x64/
- * （全新克隆按 AGENTS.md 放置引擎运行时即命中）→ D:\Code\era 主 checkout。
- * 三处都没有时 load_engine_bundle() 返回 undefined，依赖它的用例以
- * test.skip 退场并留一行警告——引擎比对是加强项，不该让无引擎的裸克隆
- * 连 npm test 都跑不过。
+ * asar 定位顺序见 ASAR_CANDIDATES。全都没有时 load_engine_bundle() 返回
+ * undefined，依赖它的用例以 test.skip 退场并留一行警告——引擎比对是加强项，
+ * 不该让无引擎的裸克隆连 npm test 都跑不过。
  */
 
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
-// asar 候选位置（按顺序取第一个存在的）
-function locate_asar() {
-  const candidates = [
+/**
+ * asar 候选位置（按顺序取第一个存在的）。**三处 locate_asar 必须同款**
+ * （本文件、tools/mutation-check.mjs、tools/engine-contract-check.mjs），
+ * 漂移由 test/asar-candidates.test.js 判红。
+ *
+ * 后三条是为「worktree 里没有引擎」准备的：`ere-4.8.0-win-x64/` 不进 git
+ * （.gitignore:15），所以 worktree 与 mutation-check 的并行副本都够不着仓库
+ * 内那条，只剩绝对路径可回落。#113 验收踩过这个坑——几十个用例静默 skip
+ * 而测试仍报绿。
+ *   ~/.era-engine/app.asar  跨机器的约定位置，放本地盘（WSL 下 9p 慢 1.5 倍）
+ *   /mnt/d/…                主 checkout 的 WSL 形式；下一条的 Windows 形式在
+ *                           WSL 里解析不了，两条都留着才是「两个平台各有一条」
+ */
+const ASAR_CANDIDATES = () =>
+  [
     process.env.ERE_ENGINE_ASAR,
     path.join(REPO_ROOT, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    path.join(os.homedir(), '.era-engine', 'app.asar'),
+    '/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar',
     'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
   ].filter(Boolean);
-  return candidates.find((candidate) => fs.existsSync(candidate));
+
+function locate_asar() {
+  // ERE_ENGINE_ASAR=none 表示「视为无引擎」，与 mutation-check 的 --asar none
+  // 同款语义。SOP 的跳过基线核对靠它制造无引擎环境：绝对路径回落进来之后，
+  // 单靠 `env -u ERE_ENGINE_ASAR` 已经造不出无引擎了（照样命中回落）。
+  if (process.env.ERE_ENGINE_ASAR === 'none') {
+    return undefined;
+  }
+  return ASAR_CANDIDATES().find((candidate) => fs.existsSync(candidate));
 }
 
 // 从 asar 里切出单个文件的内容；头结构见文件头注释

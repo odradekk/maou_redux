@@ -139,7 +139,7 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #188 起为 346：+3（简体锁收紧——M370 表外繁体判定器坏、M371 参考集数据
 // 删锚点字 贖、M372 归一表目标值映进繁侧；本票 M370 起由派单简报指定，与
 // #171 的 M348 号段零撞号）。
-const LEDGER_COUNT_BASELINE = 346;
+const LEDGER_COUNT_BASELINE = 348;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖
@@ -353,8 +353,23 @@ function run_gates(entries, args) {
   return errors.length === 0;
 }
 
-// —— 引擎在场判定（默认与 test/helpers/engine-bundle.js 同款三址回落；
+// —— 引擎在场判定（默认与 test/helpers/engine-bundle.js 同款回落；
 //    --asar 显式指路时不再回落，指 none 或所指不存在 = 无引擎）——
+
+/** 候选位置与 test/helpers/engine-bundle.js 同款，逐条理由见那里的注释；
+ *  漂移由 test/asar-candidates.test.js 判红。
+ *
+ *  **并行模式尤其依赖后三条绝对路径**：COPY_DENY 把 ere-4.8.0-win-x64 排除在
+ *  副本外（见那里的注释），子进程在副本里跑，仓库内那条必然落空。少了它们，
+ *  有引擎的机器上 --jobs 会得到「引擎在场却有 N 条按跳过处理」而整体判红。 */
+const ASAR_CANDIDATES = (root) =>
+  [
+    process.env.ERE_ENGINE_ASAR,
+    path.join(root, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    path.join(os.homedir(), '.era-engine', 'app.asar'),
+    '/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar',
+    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
+  ].filter(Boolean);
 
 function locate_asar(root, explicit) {
   if (explicit) {
@@ -363,12 +378,12 @@ function locate_asar(root, explicit) {
     }
     return fs.existsSync(explicit) ? explicit : undefined;
   }
-  const candidates = [
-    process.env.ERE_ENGINE_ASAR,
-    path.join(root, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
-    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
-  ].filter(Boolean);
-  return candidates.find((c) => fs.existsSync(c));
+  // env 的 none 与 --asar none 同款语义（显式无引擎）：绝对路径回落进来之后，
+  // 单靠 `env -u ERE_ENGINE_ASAR` 已经造不出无引擎环境了
+  if (process.env.ERE_ENGINE_ASAR === 'none') {
+    return undefined;
+  }
+  return ASAR_CANDIDATES(root).find((c) => fs.existsSync(c));
 }
 
 // —— 单条执行（就地变异 + 还原 + 还原读回校验）——

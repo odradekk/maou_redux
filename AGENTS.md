@@ -66,6 +66,8 @@ npx eslint . --max-warnings 0   # 格式 + 代码错误，零警告标准（与 
 npx prettier --check .   # 仅格式，--write 可自动改
 ```
 
+**多个 agent 并发时，用 `tools/capped.sh` 包一层**：`bash tools/capped.sh npm test`。测试套件默认按核数并发（16 核上起到 26 个进程），三个 agent 同时跑会把 load 顶到 20、**交互延迟从 32ms 涨到 698ms**——机器还在算，人已经没法用。限到每份 4 核后延迟回到 106ms，总耗时只多 5%（三并发实测）。脚本只限 CPU 不限内存（OOM kill 会变成假红），systemd 不可用时透传执行，退出码原样传出。
+
 三个容易踩的点：
 
 - 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则里**各写了一份且取值相同**。改格式约定必须同时改这两处，否则两条命令会给出互相矛盾的结果。
@@ -120,7 +122,11 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 - **写一个变量前，先确认它所属的静态表已经在 `yml/` 里。** 决定行为的不是「几段寻址」，而是名字表在不在与 data 桶在不在的组合（引擎 setVar，PR #57 逐族实测）：名字表在 + 桶在 → 通过（未声明下标回落成数字）；名字表在 + 桶不在 → 静默丢弃；**名字表不在 + 桶在 → 直接崩溃**，二段三段皆然（在引擎里遇到过两次：`item*` 见 PR #34，`stain`/`ex`/`cstr`/`tequip`/`tflag` 见 PR #57）。`test/static-table-coverage.test.js` 从源码扫出寻址族逐个探测，新族忘了配表会在那里红。但**别把它当免检**，它只覆盖 `era.get/set/add` 的字面量前缀。
 - **输出类 API 会二次加工你给的参数，第一次用之前先去引擎渲染层看一眼。** 手册只讲参数含义，不讲引擎拿到参数后画成什么样；夹具只记录调用，也不模拟渲染。两边都看不见的东西，只有在引擎里实际运行才能发现。已知一例：`printButton` 的 `showAcc` 默认为真，引擎自动拼出 `[快捷键] 正文`，并把正文里的连续空白折叠成一个空格。所以**按钮正文一律不写 `[编号]` 前缀**，写了会得到 `[0] [0] 旧的奴隶`（在引擎里遇到过，PR #30）。
   查法：`ere-4.8.0-win-x64/resources/app.asar` 是 webpack bundle，直接按 API 名或配置项名搜字符串就能读到渲染公式（bundle 里带未压缩的原始源码副本）。查到的变换补进 `test/helpers/era-fixture.js` 的对应记录字段，让它此后可断言。
-- **「引擎接受了」与「我们调用了」是两回事，验收时夹具证明不了前者。** 夹具的记录层只能证明调用发生过；引擎侧的短路（如 `addCharacter` 对无预设角色直接返回 false，#21/#22 就是这样误报通过的）只有引擎自己的代码能暴露。`test/helpers/engine-bundle.js` 把 app.asar 里的解析器、装载循环与 `EraApi` 方法（真方法 + 最小假 this）直接交给测试驱动，静态表产物与引擎行为的比对从此不必手抄镜像。asar 有三处定位（环境变量 `ERE_ENGINE_ASAR` / 仓库内 / `D:\Code\era`），缺引擎时相关用例 skip 并留一条警告。
+- **「引擎接受了」与「我们调用了」是两回事，验收时夹具证明不了前者。** 夹具的记录层只能证明调用发生过；引擎侧的短路（如 `addCharacter` 对无预设角色直接返回 false，#21/#22 就是这样误报通过的）只有引擎自己的代码能暴露。`test/helpers/engine-bundle.js` 把 app.asar 里的解析器、装载循环与 `EraApi` 方法（真方法 + 最小假 this）直接交给测试驱动，静态表产物与引擎行为的比对从此不必手抄镜像。asar 按 `ASAR_CANDIDATES` 逐条回落（环境变量 `ERE_ENGINE_ASAR` → 仓库内 → `~/.era-engine/` → `/mnt/d/Code/era` → `D:\Code\era`），缺引擎时相关用例 skip 并留一条警告。
+
+  **这份列表在三处各写了一份**（`test/helpers/engine-bundle.js`、`tools/mutation-check.mjs`、`tools/engine-contract-check.mjs`，CJS/ESM 混用抽不成公共模块），同步由 `test/asar-candidates.test.js` 判红。后三条绝对路径是给 **worktree 与变异并行副本**用的——`ere-4.8.0-win-x64/` 不进 git，它们都够不着仓库内那条，少了回落就是几十个用例静默 skip 而测试仍报绿（#113 验收踩过）。
+  - **不必再手工 `export ERE_ENGINE_ASAR`**，回落会自己命中。想跑得快些，把 asar 拷一份到 `~/.era-engine/app.asar`（本地盘，比 `/mnt/d` 的 9p 快）。
+  - **`ERE_ENGINE_ASAR=none` 是「视为无引擎」的开关**，三处同款语义。跳过基线核对必须用它：绝对路径回落进来之后，`env -u ERE_ENGINE_ASAR` 照样命中回落，已经造不出无引擎环境了。
 
 ## 代码约定
 

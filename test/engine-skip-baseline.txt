@@ -68,4 +68,13 @@
 # 只写进了 enter-enemy.js 的文件头注释，没有任何东西会在引擎升版时报错；
 # 按 AGENTS.md「新钉住的分歧要设防、可执行的配 engine-bundle 用例」补钉。
 # 复测：900 = 833 过 + 67 跳过 + 0 挂（WSL 无引擎实测）。
+#
+# ⚠ 核对方式已变：**必须用 `ERE_ENGINE_ASAR=none npm test`**，不能再用
+# `env -u ERE_ENGINE_ASAR`。asar 定位加了 `~/.era-engine/` 与 `/mnt/d/Code/era`
+# 两条绝对路径回落（为 worktree 与变异并行副本准备，它们都没有仓库内的
+# `ere-4.8.0-win-x64/`），不设变量照样命中引擎——那时跳过数是 0，与本基线
+# 必然对不上。`none` 是三处 locate_asar 同款的「视为无引擎」开关。
+# 该次复测：67 不变（928 = 861 过 + 67 跳过 + 0 挂）——新增的
+# asar-candidates.test.js 五条都不依赖引擎（读源码文本比对 + 子进程探针，
+# 探针自己带 none，不经 engine-bundle 门控）。
 67
