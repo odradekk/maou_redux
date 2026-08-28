@@ -41,8 +41,10 @@
  *   - 模板字面量内容按不透明处理（${} 内不出现反引号/嵌套模板）——kojo
  *     的写法满足；更复杂形态出现时扫描器要有意识地扩。
  *   - 片段阈值 ≥4 字符（trim 后）：更短的片段（「」、…）双向核对无区分力。
- *   - 只认 print / printAndWait 与 PRINTFORMW / PRINTFORML——其余变体
- *     （PRINTL 空占位、println、printButton…）出现即红，扩展须有意识。
+ *   - 只认 print / printAndWait 与 PRINT 系变体（PRINTFORMW/L、PRINTW/L、
+ *     PRINTFORM、PRINT）。#184 起 DUNGEON_BITCH 这类带文本状态机用全变体
+ *     （PRINTFORM 不换行拼接、PRINTW 等）；口上文件（K3/K5）只用
+ *     PRINTFORMW/L。其余（println、printButton…）出现即红，扩展须有意识。
  */
 
 const assert = require('node:assert/strict');
@@ -59,8 +61,11 @@ const KOJO_DIR = path.join(REPO_ROOT, 'ere', 'kojo');
 /** 片段双向核对的长度阈值（trim 后） */
 const SEGMENT_MIN = 4;
 
-/** ERB 侧的 PRINTFORM 变体（其余变体不在锁内，出现即红） */
-const PRINTFORM_RE = /^\s*PRINTFORM(W|L)\s+(.*)$/;
+/** ERB 侧的 PRINT 变体（#184 扩：DUNGEON_BITCH 这类带文本状态机用全变体——
+ *  PRINTFORMW/L → wait/line，PRINTFORM/PRINT/PRINTW/PRINTL → 对应 wait/line；
+ *  口上文件（K3/K5）只用 PRINTFORMW/L，不受影响）。variant：'W' 等待 / 'L'
+ *  换行 / undefined 无后缀 */
+const PRINTFORM_RE = /^\s*PRINTFORM(W|L)?\s+(.*)$|^\s*PRINT(W|L)?\s+(.*)$/;
 
 // —— 插值记号的归一表（ERB %…% → 归一名 ← JS ${…}） ——
 
@@ -71,6 +76,39 @@ const ERB_TOKEN_RULES = [
   [/^NAME:MASTER$/, 'MASTER'],
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
+  // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
+  [/^SAVESTR:ARG$/, 'ARGNAME'],
+  [/^LOCALS$/, 'LOCALS'],
+  [/^LOCAL$/, 'LOCAL'],
+  [/^KYAKU$/, 'KYAKU'],
+  [/^PLAY$/, 'PLAY'],
+  [/^PLAY:6$/, 'PLAY6'],
+  [/^PLAY\s*\*\s*200$/, 'PLAY200'],
+  [/^PLAY\s*\*\s*100$/, 'PLAY100'],
+  [/^PLAY\s*\*\s*250$/, 'PLAY250'],
+  [/^PLAY\s*\*\s*500$/, 'PLAY500'],
+  [/^ABS\(LOCAL\)$/, 'ABSLOCAL'],
+  [/^EXPNAME:56$/, 'EXPNAME56'],
+  [/^EXPNAME:10$/, 'EXPNAME10'],
+  [/^EXPNAME:LCOUNT, 16, RIGHT$/, 'EXPNAME_L'],
+  [/^PALAMNAME:0$/, 'PALAMNAME0'],
+  [/^PALAMNAME:1$/, 'PALAMNAME1'],
+  [/^PALAMNAME:4$/, 'PALAMNAME4'],
+  [/^PALAMNAME:5$/, 'PALAMNAME5'],
+  [/^PALAMNAME:LCOUNT, 12, RIGHT$/, 'PALAMNAME_L'],
+  [/^EXP:ARG:LCOUNT, 30, RIGHT$/, 'NOW_EXP'],
+  [/^JUEL:ARG:LCOUNT, 30, RIGHT$/, 'NOW_JUEL'],
+  [/^PREV_EXP:LCOUNT, 30, RIGHT$/, 'PREV_EXP_L'],
+  [/^PREV_JUEL:LCOUNT, 30, RIGHT$/, 'PREV_JUEL_L'],
+  // #184 第二批（复核时补全的插值集合）
+  [/^EXPNAME:0$/, 'EXPNAME0'],
+  [/^EXPNAME:5$/, 'EXPNAME5'],
+  [/^PALAMNAME:6$/, 'PALAMNAME6'],
+  [/^PALAMNAME:8$/, 'PALAMNAME8'],
+  [/^PLAY\s*\*\s*300$/, 'PLAY300'],
+  [/^CFLAG:ARG:120$/, 'LEVEL'],
+  [/^NUM$/, 'NUM'],
+  [/^RESULT$/, 'RESULT'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -80,6 +118,42 @@ const JS_TOKEN_RULES = [
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
   [/^scf\(\)$/, 'SCF'],
+  // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
+  [/^name_of\(arg\)$/, 'ARGNAME'],
+  [/^locals$/, 'LOCALS'],
+  [/^local$/, 'LOCAL'],
+  [/^kyaku$/, 'KYAKU'],
+  [/^play$/, 'PLAY'],
+  [/^play\[6\]$/, 'PLAY6'],
+  [/^play\s*\*\s*200$/, 'PLAY200'],
+  [/^play\s*\*\s*100$/, 'PLAY100'],
+  [/^play\s*\*\s*250$/, 'PLAY250'],
+  [/^play\s*\*\s*500$/, 'PLAY500'],
+  [/^Math\.abs\(local\)$/, 'ABSLOCAL'],
+  [/^expname\(56\)$/, 'EXPNAME56'],
+  [/^expname\(10\)$/, 'EXPNAME10'],
+  [/^expname\(lcount,\s*16\)$/, 'EXPNAME_L'],
+  [/^palamname\(0\)$/, 'PALAMNAME0'],
+  [/^palamname\(1\)$/, 'PALAMNAME1'],
+  [/^palamname\(4\)$/, 'PALAMNAME4'],
+  [/^palamname\(5\)$/, 'PALAMNAME5'],
+  [/^palamname\(lcount,\s*12\)$/, 'PALAMNAME_L'],
+  [/^era\.get\(`exp:\$\{arg\}:\$\{lcount\}`\)\s*\|\|\s*0$/, 'EXP_ARG_L'],
+  [/^era\.get\(`juel:\$\{arg\}:\$\{lcount\}`\)\s*\|\|\s*0$/, 'JUEL_ARG_L'],
+  [/^prev_exp\[lcount\]$/, 'PREV_EXP_L'],
+  [/^prev_juel\[lcount\]$/, 'PREV_JUEL_L'],
+  // #184 第二批（复核时补全的插值集合）
+  [/^expname\(0\)$/, 'EXPNAME0'],
+  [/^expname\(5\)$/, 'EXPNAME5'],
+  [/^palamname\(6\)$/, 'PALAMNAME6'],
+  [/^palamname\(8\)$/, 'PALAMNAME8'],
+  [/^play\s*\*\s*300$/, 'PLAY300'],
+  [/^play\[0\]$/, 'PLAY'],
+  [/^now_exp$/, 'NOW_EXP'],
+  [/^now_juel$/, 'NOW_JUEL'],
+  [/^level$/, 'LEVEL'],
+  [/^num$/, 'NUM'],
+  [/^result$/, 'RESULT'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
@@ -256,12 +330,28 @@ function scan_print_statements(text) {
   return { statements, print_calls, lines, line_of };
 }
 
-/** ERB 的 [n, m] 行窗口里找第一条 PRINTFORM 行 */
+/** ERB 的 [n, m] 行窗口里找第一条 PRINT 行（#184 扩：支持全变体）。
+ *  返回 { line_no, variant, arg }——variant：'W'（等待）/'L'（换行）/
+ *  undefined（无后缀：PRINTFORM/PRINT 不换行不等待，映射 line） */
 function find_printform(erb_lines, n, m) {
   for (let i = n; i <= m; i += 1) {
     const match = erb_lines[i - 1]?.match(PRINTFORM_RE);
     if (match) {
-      return { line_no: i, variant: match[1], arg: match[2] };
+      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?
+      const variant =
+        match[1] ||
+        (match[3] === 'W' ? 'W' : match[3] === 'L' ? 'L' : undefined);
+      const arg = match[2] ?? match[4];
+      return { line_no: i, variant, arg };
+    }
+  }
+  // #184：窗口内无 PRINT 系行时，PRINTDATA/DATAFORM 随机文本结构也绑定
+  //（era.print(数组[rand]) 输出 DATAFORM 候选之一；variant 'DATA' 由锁
+  // B/C 跳过、锁 D 跳过——随机候选集由行为测试覆盖）
+  for (let i = n; i <= m; i += 1) {
+    const line = erb_lines[i - 1];
+    if (line && /^\s*PRINTDATA/.test(line)) {
+      return { line_no: i, variant: 'DATA', arg: '' };
     }
   }
   return null;
@@ -351,7 +441,7 @@ const MODULES = (() => {
       if (hit) {
         stmt.printform = hit;
       } else if (stmt.binding.via === '尾锚') {
-        stmt.bind_error = `尾锚 :${stmt.binding.label} 在 ${entry.erb_rel} 不是 PRINTFORM(W/L) 行`;
+        stmt.bind_error = `尾锚 :${stmt.binding.label} 在 ${entry.erb_rel} 不是 PRINT 系行`;
       } else {
         // 前置注释是结构注释（窗口内无 PRINTFORM 行），不绑定
         stmt.binding = null;
@@ -425,6 +515,9 @@ test('W/L 变体逐行：PRINTFORMW → printAndWait、PRINTFORML → print', ()
       } else {
         line_prints += 1;
       }
+      if (stmt.printform.variant === 'DATA') {
+        continue; // #184：PRINTDATA 随机文本结构不参与 W/L 判定
+      }
       const expected = stmt.printform.variant === 'W' ? 'wait' : 'line';
       if (stmt.kind !== expected) {
         problems.push(
@@ -457,9 +550,14 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
         continue;
       }
       const where = `${mod.name} :${stmt.binding.label}（ERB :${stmt.printform.line_no}）`;
-      const erb_tokens = [...stmt.printform.arg.matchAll(/%([^%]+)%/g)].map(
-        (m) => m[1],
-      );
+      // #184 扩：ERB 的 %…% 与 {…} 都是插值记号（口上文件只有 %…%；
+      // DUNGEON_BITCH 等带文本状态机用 {…} 做显示插值，如 {PLAY}、{LOCAL}）
+      if (stmt.printform.variant === 'DATA') {
+        continue; // #184：PRINTDATA 随机文本结构不参与槽位序比对
+      }
+      const erb_tokens = [
+        ...stmt.printform.arg.matchAll(/%([^%]+)%|{([^}]+)}/g),
+      ].map((m) => m[1] ?? m[2]);
       const js_tokens = [];
       for (const s of stmt.strings) {
         if (s.quote === '`') {
@@ -521,14 +619,18 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
         continue;
       }
       const where = `${mod.name} :${stmt.binding.label}（ERB :${stmt.printform.line_no}）`;
+      if (stmt.printform.variant === 'DATA') {
+        continue; // #184：PRINTDATA 随机候选集由「随机文本候选」专项对核
+      }
       // ERB 侧归一（繁/日 → 简，词级优先；tools/lang-table.js 唯一真相源）。
       // JS 侧不归一——它必须本来就是简体（忘了转换在这里红，见文件头）。
       const erb_arg = to_simplified(stmt.printform.arg);
       if (erb_arg !== stmt.printform.arg) {
         normalized_hits += 1;
       }
-      // 正向：ERB 字面量片段（按 %…% 切开、归一后）⊂ JS 语句原文
-      for (const seg of erb_arg.split(/%[^%]+%/)) {
+      // 正向：ERB 字面量片段（按 %…% 与 {…} 切开、归一后）⊂ JS 语句原文
+      //（#184 扩：{…} 是 ERB 的显示插值，与 %…% 同属插值记号）
+      for (const seg of erb_arg.split(/%[^%]+%|{[^}]+}/)) {
         if (seg.trim().length >= SEGMENT_MIN) {
           erb_checked += 1;
           if (!stmt.raw.includes(seg)) {
