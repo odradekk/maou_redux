@@ -123,7 +123,7 @@ test('接入点·战役臂：CFLAG:1 == 12 的角色让 :93 守卫为真（战�
 
 // —— 层数推进 1 → 9 与 ENDING_2 接入（验收「此行为必须有测试」）——
 
-test('贯通：max 随机源下层数 1 → 9，第 9 层踏破走到 ENDING_2 接入存根', async () => {
+test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 真身（quit 炸穿）', async () => {
   const fixture = setup_world();
   const { run_dungeon } = load(fixture);
 
@@ -143,21 +143,45 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破走到 ENDING_2 �
     '再起点 CFLAG:508 同步 +8（起始 0）',
   );
 
-  // 第 9 层的踏破：D:20 再次到 100 → FLOOR >= 9 → 魔王的房间
-  await run_dungeon(1, max);
-  await run_dungeon(1, max);
-
+  // 第 9 层的踏破：D:20 再次到 100 → FLOOR >= 9 → 魔王的房间 → ENDING_2
+  // 真身（#173 起）：演出 + INPUT + QUIT（throw 型，#148）炸穿 run_dungeon
+  fixture.set_inputs(0); // :55 INPUT（确认用）
+  let caught;
+  for (let i = 0; i < 2; i += 1) {
+    try {
+      await run_dungeon(1, max);
+    } catch (e) {
+      caught = e;
+    }
+  }
+  assert(
+    caught instanceof Error && caught.message === 'quit',
+    '第 9 层踏破 → JUMP ENDING_2 → QUIT 异常炸穿（真 GAMEOVER）',
+  );
   const texts = text_lines(fixture);
   assert(
     texts.includes('这里是魔王的房间………'),
     '第 9 层踏破打出「这里是魔王的房间………」',
   );
   assert(
-    stub_count(fixture, 'ENDING_2') === 1,
-    'TALENT:122 == 0 的真勇者走到 ENDING_2 接入存根（恰一次）',
+    texts.includes(
+      '｜　　　　　　新的女勇者，终于攻陷了魔王的地下城　　　　　　｜',
+    ),
+    'ENDING_2 横幅演出（真身）',
   );
-  // JUMP 语义：ENDING_2 之后本回合不再执行——:749 的侵攻度写回不可达，
-  // 502 停在上一次（第 17 次）调用写回的 73，而不是本次踏破的 0 或 146
+  assert(
+    texts.includes('*勇者阿尔封印了魔王，被后人歌颂为传说中的勇者*'),
+    '封印播报取 TARGET（= 队长 1）的 callname（%SAVESTR:TARGET%）',
+  );
+  assert(
+    texts.includes(
+      '-------------------------------GAMEOVER---------------------------------',
+    ),
+    'GAMEOVER 分隔行（:54）',
+  );
+  // JUMP 语义：ENDING_2 的 QUIT 之后本回合不再执行——:749 的侵攻度写回
+  // 不可达，502 停在上一次（第 17 次）调用写回的 73，而不是本次踏破的
+  // 0 或 146
   assert.equal(
     fixture.store.get('cflag:1:502'),
     73,
@@ -168,13 +192,26 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破走到 ENDING_2 �
 test('贯通·存根不改推进：全程没有战斗扣血（CFLAG:1 恒 2，直到结局）', async () => {
   const fixture = setup_world();
   const { run_dungeon } = load(fixture);
+  // 第 18 次调用踏破第 9 层 → ENDING_2 真身 quit（#173）；接住后核
+  // 「直到结局 CFLAG:1 恒 2」——本票不碰战斗，战斗存根不改推进的判据
+  // 不因真身接入而失效（派单简报第 4 条；H6 接上战斗后按新语义调整）
+  fixture.set_inputs(0);
+  let caught;
   for (let i = 0; i < 8 * 2 + 2; i += 1) {
-    await run_dungeon(1, max);
+    try {
+      await run_dungeon(1, max);
+    } catch (e) {
+      caught = e;
+    }
   }
+  assert(
+    caught instanceof Error && caught.message === 'quit',
+    '以 ENDING_2 的 QUIT 收场（贯通终点）',
+  );
   assert.equal(
     fixture.store.get('cflag:1:1'),
     2,
-    '存根下无人陷落（工单验收线）',
+    '存根下无人陷落、直到结局保持侵攻中（工单验收线）',
   );
   // 10 组存根在推进路径上留痕（DUNGEON_ROOM / DUNGEON_PARTY_BATTLE /
   // ADD_EX_ITEM / DUNGEON_SPY 不在此路径）——核两个代表性的
@@ -193,7 +230,13 @@ test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，
     await run_dungeon(1, max);
   }
   assert.equal(fixture.store.get('cflag:1:501'), 9, '冒险者同样推进到第 9 层');
-  assert.equal(stub_count(fixture, 'ENDING_2'), 0, '不走结局（TALENT:122 真）');
+  assert.equal(stub_count(fixture, 'ENDING_2'), 0, '无 ENDING_2 占位行');
+  // 真身（#173）后的守卫判据：不抛 quit、无 quit 调用——冒险者
+  // （TALENT:122 真）到第 9 层也不进结局（回头/挑战臂，验收线）
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '冒险者不走结局（TALENT:122 真 → 无 QUIT）',
+  );
   const texts = text_lines(fixture);
   assert(
     texts.includes('作为冒险者而非勇者的他深知自己无法击败魔王。'),
@@ -221,6 +264,10 @@ test('冒险者·挑战臂：RAND:4 == 0 且魔王欲望不足 → 失败成为�
     await run_dungeon(1, mixed);
   }
   assert.equal(stub_count(fixture, 'ENDING_2'), 0, '不走结局');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '挑战臂同样无 QUIT（TALENT:122 真）',
+  );
   const texts = text_lines(fixture);
   assert(
     texts.includes('但阿尔仍是向魔王发起了挑战。'),

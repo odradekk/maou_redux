@@ -81,4 +81,8 @@
 # 有引擎实测 973 = 973 过 + 0 跳）。算式：dungeon-main.test.js 28 条 +
 # dungeon-party.test.js 17 条全部走 era-fixture 路径（随机源经参数注入，
 # 无 engine-bundle 门控）——0 条新增引擎依赖用例，跳过数不动。
+# #173（H4 ENDING_2 与端到端）复测：67 不变（976 = 909 过 + 67 跳过 + 0
+# 挂，ERE_ENGINE_ASAR=none 实测）。算式：event-ending.test.js 新增 2 条
+# （ENDING_2 真身与 TARGET 判据）+ event-ending2-e2e.test.js 1 条（新档到
+# GAMEOVER 的端到端）全部走 era-fixture 路径——67（既有）+ 0（本票）= 67。
 67

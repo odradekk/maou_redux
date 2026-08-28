@@ -34,7 +34,9 @@ export default [
     find: '          if ((era.get(`talent:${arg0}:122`) || 0) === 0) {',
     replace: '          if ((era.get(`talent:${arg0}:122`) || 0) !== 0) {',
     tests: ['dungeon-main'],
-    must_mention: '走到 ENDING_2 接入存根',
+    // must_mention 随 #173 的用例翻修同步：贯通用例断言从「接入存根」改为
+    // 「quit 炸穿」（ENDING_2 真身落地），锚串换新断言消息（#133 先例）
+    must_mention: 'QUIT 异常炸穿',
   },
   {
     desc: 'M379 冒险者回头臂的挫折记忆改坏（507 = 1 删——撤退标志不立）',
@@ -150,5 +152,14 @@ export default [
     replace: '  // :1064 LOCAL *= CFLAG:ARG:501（阶层）——变异：乘算删除',
     tests: ['dungeon-main'],
     must_mention: '四项素质补正',
+  },
+  // —— #173（H4）：ENDING_2 贯通终点的演出行（M446）——
+  {
+    desc: 'M446 魔王房间演出行删除（:200「这里是魔王的房间………」）',
+    file: 'ere/dungeon/dungeon.js',
+    find: "          era.print('这里是魔王的房间………'); // :200",
+    replace: '          // 变异：魔王房间演出删',
+    tests: ['dungeon-main', 'event-ending2-e2e'],
+    must_mention: '这里是魔王的房间',
   },
 ];
