@@ -2482,4 +2482,7 @@ module.exports = {
   mag_down_trap,
   all_down_trap,
   fraud_trap,
+  // #178（H9）起导出：DUNGEON_TOWN.ERB:645/:652（宴会风俗的爱抚自动调教）
+  // 复用本域内存根（此前仅本文件 :1283 淫虫陷阱内部调用，未导出）
+  com0_auto,
 };

@@ -758,4 +758,127 @@ export default [
     tests: ['event-turnend', 'enter-enemy'],
     must_mention: '状态 12 恰好一次 DUNGEON',
   },
+  {
+    desc: 'M640 还债利息整除改 floor（-1234/10 = -124，负债多计一成利息）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '    const interest = Math.trunc(loan / 10); // 利率 = CFLAG:582 / 10（截断）',
+    replace:
+      '    const interest = Math.floor(loan / 10); // 变异：截断改 floor',
+    tests: ['dungeon-town'],
+    must_mention: '-1234 + trunc(-1234/10) = -1357',
+  },
+  {
+    desc: 'M641 还款额的债务上限钳删（还超债务清成正值）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '  local = Math.min(\n    local,\n    Math.abs(chara(arg).patch.借款),\n    Math.trunc(cash / 2),\n  );',
+    replace:
+      '  local = Math.min(local, Math.trunc(cash / 2)); // 变异：债务钳删',
+    tests: ['dungeon-town'],
+    must_mention: '借金の金額は越えないように',
+  },
+  {
+    desc: 'M642 担保人背债方向反（债务递减而非递增）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '  chara(arg).patch.借款 -= local; // :227 CFLAG:582 -= LOCAL（patch 门面）',
+    replace: '  chara(arg).patch.借款 += local; // 变异：背债方向反',
+    tests: ['dungeon-town'],
+    must_mention: '担保人按魔王等级背债',
+  },
+  {
+    desc: 'M643 借款判定反（< 50 改 >= 50：低善恶反而借不到）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '  if (rand_n(260 + (era.get(`cflag:${arg}:151`) || 0)) < 50) {',
+    replace:
+      '  if (rand_n(260 + (era.get(`cflag:${arg}:151`) || 0)) >= 50) { // 变异',
+    tests: ['dungeon-town'],
+    must_mention: '（260 + 善恶）面骰 < 50 借入 1000',
+  },
+  {
+    desc: 'M644 FI_FUNDING 补正改读 ARG（TARGET 语义改坏）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '  let local = 0; // :162 VARSET LOCAL\n  // 故郷や家族からの補助金（以下全读 TARGET，文件头）\n  const t = era_flag.target;',
+    replace:
+      '  let local = 0; // :162 VARSET LOCAL\n  // 变异：TARGET 残留读改 ARG 读\n  const t = arg;',
+    tests: ['dungeon-town'],
+    must_mention: '按 TARGET（勇者）算，不按 ARG（贝丝）',
+  },
+  {
+    desc: 'M645 宴会预算收集改读本人（收集/支付不对称的原作行为改坏）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '    const cash = era.get(`cflag:${budget_target}:580`) || 0; // CFLAG:580（TARGET）',
+    replace:
+      '    const cash = era.get(`cflag:${pm[lcount]}:580`) || 0; // 变异：逐人读',
+    tests: ['dungeon-town'],
+    must_mention: '贝丝被记了同一份飲み代（不对称）',
+  },
+  {
+    desc: 'M646 重度借债的 GOAL 赋值提出守卫（修好原作笔误——#14 反向钉子）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n        goal = floor_max + 1;\n        start_floor = floor_max + 1;\n      }",
+    replace:
+      "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n      }\n      goal = floor_max + 1; // 变异：修好原作笔误（赋值提出守卫）\n      start_floor = floor_max + 1;",
+    tests: ['dungeon-town'],
+    must_mention: 'GOAL 0（闲逛）',
+  },
+  {
+    desc: 'M647 城镇主流程散会概率反（9/10 散会改 1/10）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: '  if (rand_n(10) > 0) {',
+    replace: '  if (rand_n(10) === 0) { // 变异',
+    tests: ['dungeon-town'],
+    must_mention: 'rand(10) > 0 散会不开宴',
+  },
+  {
+    desc: 'M648 受注计数判定改 bit2（修好原作笔误——#14 反向钉子）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) {',
+    replace:
+      '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) { // 变异：改 bit2',
+    tests: ['dungeon-quest'],
+    must_mention: 'rand(10)+1 = 5（短计数）',
+  },
+  {
+    desc: 'M649 受注计数递减删（任务永不超时）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: '    if ((era.get(`cflag:${cid}:539`) || 0) > 0) {',
+    replace: '    if (false) { // 变异：539 递减删',
+    tests: ['dungeon-quest'],
+    must_mention: '计数在掷点前递减',
+  },
+  {
+    desc: 'M650 任务报酬资金公式改坏（等级×10+100 改 ×10）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: '        const local = (era.get(`cflag:${cid}:9`) || 0) * 10 + 100;',
+    replace:
+      '        const local = (era.get(`cflag:${cid}:9`) || 0) * 10; // 变异',
+    tests: ['dungeon-quest'],
+    must_mention: 'LV5 × 10 + 100',
+  },
+  {
+    desc: 'M651 RESULT_QUEST 的 E 列匹配删（无讨伐对象也结算）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: '    if (found === 0) {\n      continue;\n    }\n\n    // :153 PRINTW *クエスト結果*',
+    replace:
+      '    if (false) { // 变异：E 列匹配删\n      continue;\n    }\n\n    // :153 PRINTW *クエスト結果*',
+    tests: ['dungeon-quest'],
+    must_mention: '534 原样（未结算）',
+  },
+  {
+    desc: 'M652 性奉侍完结的 534 置位删（交涉成立也不完结任务）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: "        era.print('*任务成功*'); // PRINTFORML\n        chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 1);\n        return 1;",
+    replace:
+      "        era.print('*任务成功*'); // PRINTFORML\n        // 变异：SETBIT 534,1 删\n        return 1;",
+    tests: ['dungeon-quest'],
+    must_mention: '534 置成功完结位',
+  },
+  {
+    desc: 'M653 QUEST_BITCH 失贞判定改读 ARG（TARGET 语义改坏）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: '  const t = era_flag.target;\n  if (\n    (era.get(`exp:${t}:0`) || 0) > 0 &&',
+    replace:
+      '  const t = arg; // 变异：TARGET 读改 ARG 读\n  if (\n    (era.get(`exp:${t}:0`) || 0) > 0 &&',
+    tests: ['dungeon-quest'],
+    must_mention: '失贞：处女素质消去',
+  },
 ];

@@ -65,16 +65,17 @@ const battle_mod = require('#/dungeon/dungeon-battle');
 const battle2_mod = require('#/dungeon/dungeon-battle2');
 const trap_mod = require('#/dungeon/dungeon-trap');
 const room_mod = require('#/dungeon/dungeon-room');
+const town_mod = require('#/dungeon/dungeon-town');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。EQUIP_CHECK/EQUIP_SELECT 不在此列
  * （#174 真身，文件头）；DUNGEON_TRAP 不在此列（#176 真身
  * ere/dungeon/dungeon-trap.js）；DUNGEON_ROOM 不在此列（#177 真身
- * ere/dungeon/dungeon-room.js）。
+ * ere/dungeon/dungeon-room.js）；DUNGEON_TOWN 亦不在此列（#178 真身
+ * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
  */
 const STUBBED_CALLS = [
-  'DUNGEON_TOWN',
   'KARMA',
   'ADD_EX_ITEM',
   'USE_EX_ITEM',
@@ -105,17 +106,14 @@ function default_rand(n) {
 // H8（#177）起 DUNGEON_ROOM 存根换成真身：ere/dungeon/dungeon-room.js
 // （调用点经模块对象引用 room_mod，同款可替换；RESULT 语义与 D:20 ctx
 // 透传见 :386 调用点）。
+// H9（#178）起 DUNGEON_TOWN 存根换成真身：ere/dungeon/dungeon-town.js
+// （:294 调用点经模块对象引用 town_mod，同款可替换；其对 dungeon.js 的
+// KARMA/ADD_EX_ITEM 存根是函数内延迟 require，防环——本文件对它顶层引用
+// 只此一处，与 battle_mod 同构）。
 
-/**
- * @DUNGEON_TOWN 存根（迷宮/DUNGEON_TOWN.ERB；#178 H9）：勇者撤到迷宫外
- * 时的城镇事件（补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
- * @param {number} cid 队长（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
- */
-async function dungeon_town() {
-  await stub_line_wait('DUNGEON_TOWN', '城镇事件', '随 #178（H9）城镇票');
-  return 0;
-}
+// @DUNGEON_TOWN（迷宮/DUNGEON_TOWN.ERB）：#178（H9）起为真身
+// ere/dungeon/dungeon-town.js 的 dungeon_town（撤到迷宫外时的城镇事件——
+// 补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
 
 /**
  * @KARMA 存根（キャラ関数/CHAR_ST.ERB:71；善恶值票，阶段 5）：善恶值
@@ -571,8 +569,9 @@ async function run_dungeon(arg0, rand) {
         if (floor <= 1) {
           era.print(`${leader_name}回到了${mapc}外面。`); // :291
           walk20 = 0;
-          // :294-295 街でのイベント（城镇事件，存根 #178）
-          await dungeon_town(arg0);
+          // :294-295 街でのイベント（城镇事件——#178 真身：恢复/筹钱/
+          // 借贷/采购/计划/受注/宴会）
+          await town_mod.dungeon_town(arg0, rand_n);
           // :297-314 補給购买段在原作是注释状态（;CALL ADD_EX_ITEM -3），不移植
           break; // :315
         } else {

@@ -461,7 +461,7 @@ test('迎击分叉·战斗：0 < D:20 < 100 滞留时走 DUNGEON_BATTLE2_PARTY �
 
 // —— 撤退臂（勇者 D:20 <= 0）——
 
-test('勇者撤退：D:20 <= 0 且 FLOOR <= 1 → 走到迷宫外（DUNGEON_TOWN 存根）', async () => {
+test('勇者撤退：D:20 <= 0 且 FLOOR <= 1 → 走到迷宫外（DUNGEON_TOWN 真身）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:502', 0);
   const { run_dungeon } = load(fixture);
@@ -471,7 +471,12 @@ test('勇者撤退：D:20 <= 0 且 FLOOR <= 1 → 走到迷宫外（DUNGEON_TOWN
     text_lines(fixture).includes('阿尔回到了地下城外面。'),
     ':291 撤到迷宫外',
   );
-  assert.equal(stub_count(fixture, 'DUNGEON_TOWN'), 1, ':295 城镇事件存根');
+  // #178 起城镇事件走真身（ere/dungeon/dungeon-town.js）：zero 随机下
+  // 受注段必达（SET_QUEST 的 534 = 1）——以受注播报钉「真身被调用」
+  assert(
+    text_lines(fixture).some((l) => l.includes('阿尔接受了任务！')),
+    ':295 城镇事件真身（受注播报）',
+  );
   assert.equal(fixture.store.get('cflag:1:502'), 0, 'D:20 = 0');
 });
 
