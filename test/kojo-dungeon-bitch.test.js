@@ -101,10 +101,23 @@ test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——SEIKOU <= 100 �
     f.store.set('abl:31:37', 0);
     f.store.set('cflag:31:151', 0);
   });
-  // SEIKOU 恒 101 > 100：第二道门槛不拦，卖春进入（LOG_TRY_BITCH 占位）
+  // SEIKOU 恒 101 > 100：第二道门槛不拦，卖春进入（LOG_TRY_BITCH 真身，
+  // #185 起不再打占位行）
   assert.equal(mod.fi_culc_bitch(31, 'SEIKOU', 'DUNGEON'), 101);
   await mod.dungeon_bitch(31, seq_rand(0, 0));
-  assert.ok(fixture.text_lines().some((l) => l.includes('LOG_TRY_BITCH')));
+  const lines = fixture.text_lines();
+  assert.ok(
+    lines.some((l) => l.includes('考虑着出卖肉体的事。')),
+    'LOG_TRY_BITCH 真身末行',
+  );
+  assert.ok(
+    lines.some((l) => l.includes('在空闲的时间，')),
+    'LOG_TRY_BITCH 真身 DUNGEON 分支',
+  );
+  assert.ok(
+    !lines.some((l) => l.includes('LOG_TRY_BITCH')),
+    '不再打存根占位行',
+  );
 });
 
 test('DUNGEON_BITCH：普通奴隶（非勇者）无两道门槛，卖春积极性 0 时仍走兽奸/自慰分支', async () => {
