@@ -82,6 +82,7 @@ const ERB_TOKEN_RULES = [
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^SAVESTR:ARG$/, 'ARGNAME'],
+  [/^FS_BITCH\("LOOKS", ARG\)$/, 'LOOKS'], // #185：%FS_BITCH("LOOKS", ARG)%
   [/^LOCALS$/, 'LOCALS'],
   [/^LOCAL$/, 'LOCAL'],
   [/^KYAKU$/, 'KYAKU'],
@@ -134,6 +135,7 @@ const JS_TOKEN_RULES = [
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],
   [/^arg_name$/, 'ARGNAME'], // #183：H14 用 arg_name 变量名承载 %SAVESTR:ARG%
+  [/^fs_bitch\('LOOKS', arg\)$/, 'LOOKS'], // #185：${fs_bitch('LOOKS', arg)}
   [/^locals$/, 'LOCALS'],
   [/^local$/, 'LOCAL'],
   [/^kyaku$/, 'KYAKU'],

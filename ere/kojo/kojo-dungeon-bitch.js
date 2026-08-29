@@ -45,21 +45,22 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { stub_line } = require('#/utils/stub-line');
+const {
+  expname,
+  palamname,
+  fs_bitch,
+  fs_log_bitch,
+  log_try_bitch,
+  log_after_bitch,
+  log_bitch_animal,
+  log_bitch_self,
+} = require('#/kojo/kojo-dungeon-bitch-log');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [
-  'LOG_TRY_BITCH',
-  'LOG_AFTER_BITCH',
-  'LOG_BITCH_ANIMAL',
-  'LOG_BITCH_SELF',
-  'FS_BITCH',
-  'FS_LOG_BITCH',
-  'KARMA',
-  '强制肉偿',
-];
+const STUBBED_CALLS = ['KARMA', '强制肉偿'];
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -115,7 +116,7 @@ async function dungeon_bitch(arg, rand = default_rand) {
   if (era.get(`cflag:${arg}:120`)) {
     // :27 成败判定：RAND:(SEIKOU + SIPPAI) < SEIKOU
     if (rand_n(seikou + sippai) < seikou) {
-      stub_line('LOG_TRY_BITCH', '卖春前的日志'); // :28 CALL LOG_TRY_BITCH
+      await log_try_bitch(arg, 'DUNGEON'); // :28 CALL LOG_TRY_BITCH(ARG, "DUNGEON")
       await sell_bitch(arg, 'DUNGEON', rand); // :29 CALL SELL_BITCH
     }
   }
@@ -172,7 +173,7 @@ async function heroine_bitch(arg, rand = default_rand) {
   // :66-72 卖春处理（CFLAG:120 > 0 且 SEIKOU > 100 且成败判定）
   if (era.get(`cflag:${arg}:120`)) {
     if (seikou > 100 && rand_n(seikou + sippai) < seikou) {
-      stub_line('LOG_TRY_BITCH', '卖春前的日志'); // :70 CALL LOG_TRY_BITCH
+      await log_try_bitch(arg, 'TOWN'); // :70 CALL LOG_TRY_BITCH(ARG, "TOWN")
       await sell_bitch(arg, 'TOWN', rand); // :71 CALL SELL_BITCH
     }
   }
@@ -421,7 +422,7 @@ async function sell_bitch(arg, place, rand = default_rand) {
       karma(arg, local); // :248 CALL KARMA
 
       // :250 卖春日志（LOG_AFTER_BITCH 消费 CHECK）
-      stub_line('LOG_AFTER_BITCH', `卖春后日志（CHECK=${check}）`); // :250 CALL LOG_AFTER_BITCH(ARG, CHECK)
+      await log_after_bitch(arg, check, rand); // :250 CALL LOG_AFTER_BITCH(ARG, CHECK)
 
       // :252-262 经验与点数变化显示（与快照比对）
       await era.print('～经验与点数变化～'); // :252
@@ -542,28 +543,6 @@ async function fail_message(arg, kyaku, has_kyaku, no_kyaku) {
     await era.printAndWait('于是、一个对象也没有找到'); // :327
   }
 }
-
-// 占位：EXPNAME / PALAMNAME（经验/点数名）与 FS_* 文本函数随 H16
-const expname = (idx, width) => {
-  void width; // 对齐源 %EXPNAME:LCOUNT, 16, RIGHT%（宽度对齐参数，H16 落地时用）
-  stub_line('FS_BITCH', `EXPNAME:${idx}`);
-  return `EXPNAME:${idx}`;
-};
-const palamname = (idx, width) => {
-  void width; // 对齐源 %PALAMNAME:LCOUNT, 12, RIGHT%（宽度对齐参数，H16 落地时用）
-  stub_line('FS_BITCH', `PALAMNAME:${idx}`);
-  return `PALAMNAME:${idx}`;
-};
-const fs_bitch = (type, arg) => {
-  void arg;
-  stub_line('FS_BITCH', `FS_BITCH(${type}, ${arg})`);
-  return '';
-};
-const fs_log_bitch = (type, ...args) => {
-  void args;
-  stub_line('FS_LOG_BITCH', `FS_LOG_BITCH(${type})`);
-  return '';
-};
 
 /**
  * @EXP_BITCH（:334-417）：卖春经验/点数结算。
@@ -846,7 +825,7 @@ async function dungeon_animal(arg, rand = default_rand) {
   await era.printAndWait(`忘我地与野兽样的魔物交尾了${play}次…`); // :528
 
   // :530 日志
-  stub_line('LOG_BITCH_ANIMAL', '兽奸日志');
+  await log_bitch_animal(arg, 'DUNGEON'); // :530 CALL LOG_BITCH_ANIMAL(ARG, "DUNGEON", ARG:1)
   await era.waitAnyKey(); // :531 WAIT
 
   // :534-539 兽奸经验
@@ -982,7 +961,7 @@ async function self_bitch(arg, place, rand = default_rand) {
   await era.printAndWait(`自慰了${play}次。`); // :637
 
   // :639-641 日志
-  stub_line('LOG_BITCH_SELF', `自慰日志（妄想对象 ${local}）`); // :640 CALL LOG_BITCH_SELF(ARG, PLACE, LOCAL)
+  await log_bitch_self(arg, place, local); // :640 CALL LOG_BITCH_SELF(ARG, PLACE, LOCAL)
   await era.waitAnyKey(); // :641 WAIT
 
   // :643-645 自慰经验

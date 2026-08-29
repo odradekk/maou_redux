@@ -155,8 +155,9 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // 畏怖记忆推进、PC_RYOU 处女丧失、逃脱救援回城、胜利凌辱善恶门槛）。
 // #181（H12 2D 地下城）+8（dungeon.mjs 的 M580-M587）；返工 +2（M588/M589
 // 钉住 DA/DB/DC 引擎表承载不倒退）。
-// #179（H10 迷宫日程与战果）+13（dungeon.mjs 的 M620-M632）。现为 438。
-const LEDGER_COUNT_BASELINE = 438;
+// #179（H10 迷宫日程与战果）+13（dungeon.mjs 的 M620-M632）。
+// #185（H16 卖春记录与日志分支）+4（kojo.mjs 的 M520-M523）。现为 442。
+const LEDGER_COUNT_BASELINE = 442;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖
