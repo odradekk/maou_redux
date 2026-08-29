@@ -118,6 +118,12 @@ async function run_train() {
   era_flag.assiplay = 0; // ASSIPLAY:0 = 0
   era_flag.prevcom = -1; // PREVCOM:0 = -1
   era_flag.nextcom = -1; // NEXTCOM:0 = -1
+  // TSTR:90（前回指令名）清空：Emuera 在 BEGIN TRAIN 整族清空 TSTR
+  // （引擎内建）；ere 的 tstr 是持久普通表（yml/TStr.yml，#212 探针定论
+  // ——beginTrain/endTrain 的调教期表清单里没有 tstr），引擎不清，此处
+  // 手动镜像。原作 TRAIN_MAIN.ERB:29-30 那行注释掉的 ;TSTR:90 =
+  // 正是同语义（引擎替它清了才注释掉）
+  era.set('tstr:90', '');
   // 建表 + 全部已加入角色入列（Emuera 的调教数组隐式覆盖全角色，ere 须
   // 显式；不重复初始化已入列角色——引擎语义，多次 beginTrain 不重置）
   era.beginTrain(...era.getAddedCharacters());

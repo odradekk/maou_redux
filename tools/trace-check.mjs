@@ -667,6 +667,83 @@ const FILES = [
     ],
   },
   {
+    js: 'ere/system/train/train-name.js',
+    refs: [
+      // @TRAIN_NAME_INIT 与其调用点
+      { src: TRAIN_MAIN, ref: '53', any: [/^CALL TRAIN_NAME_INIT$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '783-910',
+        any: [
+          /^@TRAIN_NAME_INIT$/m,
+          /^TRAIN_NAME:0 = 爱抚$/m,
+          /^TRAIN_NAME:208 = 触手$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '786-787',
+        any: [/^SIF STRLENSU\(TRAIN_NAME\) > 0$/m, /^\tRETURN$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '788-908',
+        any: [/^TRAIN_NAME:0 = 爱抚$/m, /^TRAIN_NAME:12 = 振动杖$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '899',
+        any: [/^TRAIN_NAME:150 = %CSTR:7%調教$/m],
+      },
+    ],
+  },
+  {
+    js: 'ere/page/components/chara-bars.js',
+    refs: [
+      // @LIFE_BAR / @VITAL_BAR（#212 首个消费者是 @SHOW_STATUS）
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1129-1168',
+        any: [/^@LIFE_BAR \(ARG:0 = -1, ARG:1 = 0\)$/m, /^PRINT 体力$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1137-1141',
+        any: [/^IF MAXBASE:0 <= 0$/m, /終わるときにはTARGETを戻す/],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1143-1157',
+        any: [/^PRINT 体力$/m, /^BAR BASE:0,MAXBASE:0,32$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1145-1156',
+        any: [/^\tIF 立绘$/m, /BAR 0,MAXBASE:0,14/],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1159-1163',
+        any: [/★死亡★/, /★濒死★/],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1175-1203',
+        any: [/^@VITAL_BAR \(ARG:0 = -1, ARG:1 = 0\)$/m, /^PRINT 气力$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1183-1187',
+        any: [/^IF MAXBASE:1 <= 0$/m],
+      },
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1198-1199',
+        any: [/^SIF BASE:1 <= 0$/m, /★气力０★/],
+      },
+    ],
+  },
+  {
     js: 'ere/page/page-train.js',
     refs: [
       // @SHOW_STATUS 整函数（#74 组件化后的 draw_status_screen 全量）
@@ -689,11 +766,14 @@ const FILES = [
         any: [/调教中   调教者:/, /^PRINT   $/m],
       },
       { src: TRAIN_MAIN, ref: '82', any: [/^PRINT   $/m] },
+      { src: TRAIN_MAIN, ref: '84', any: [/^CALL SHOW_EQUIP_2$/m] },
       {
         src: TRAIN_MAIN,
-        ref: '84-86',
-        any: [/^CALL SHOW_EQUIP_2$/m, /^CALL LIFE_BAR$/m, /^CALL VITAL_BAR$/m],
+        ref: '85-86',
+        any: [/^CALL LIFE_BAR$/m, /^CALL VITAL_BAR$/m],
       },
+      // #212：基础条组件的源（LIFE_BAR/VITAL_BAR 住 CHARA_INFO_SHOW）
+      { src: CHARA_INFO_SHOW, ref: '1175', any: [/^@VITAL_BAR /m] },
       {
         src: TRAIN_MAIN,
         ref: '87-91',
@@ -727,6 +807,50 @@ const FILES = [
         ref: '144-252',
         any: [/射精（/, /^CALL SHOW_EQUIP_1$/m],
       },
+      // —— #212：射精/母乳/触手槽条段的逐段锚 ——
+      { src: TRAIN_MAIN, ref: '144', any: [/^IF \(TALENT:MASTER:121/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '144-158',
+        any: [
+          /^\tPRINT 射精（$/m,
+          /^\tBAR BASE:MASTER:2,MAXBASE:MASTER:2,32$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '160-175',
+        any: [/^IF ASSIPLAY$/m, /^SETCOLOR 0xFF1493$/m],
+      },
+      { src: TRAIN_MAIN, ref: '161', any: [/^\tIF \(TALENT:ASSI:121/m] },
+      { src: TRAIN_MAIN, ref: '177', any: [/^IF \(TALENT:TARGET:121/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '177-188',
+        any: [/^\tBAR BASE:2,MAXBASE:2,32$/m, /^\tSIF TEQUIP:37$/m],
+      },
+      { src: TRAIN_MAIN, ref: '190-200', any: [/^IF TALENT:MASTER:130$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '202-214',
+        any: [/^IF ASSI > 0$/m, /^\tIF TALENT:ASSI:130 $/m],
+      },
+      { src: TRAIN_MAIN, ref: '216-226', any: [/^IF TALENT:TARGET:130$/m] },
+      {
+        src: TRAIN_MAIN,
+        ref: '228-235',
+        any: [/^IF TEQUIP:89$/m, /PRINT 射精（犬）/],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '237-244',
+        any: [/^IF TEQUIP:90$/m, /PRINT 射精（触手）/],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '246-252',
+        any: [/^IF TEQUIP:55$/m, /射精（死斗场・怪物）/],
+      },
       { src: TRAIN_MAIN, ref: '253', any: [/^CALL SHOW_EQUIP_1$/m] },
       {
         src: TRAIN_MAIN,
@@ -742,6 +866,25 @@ const FILES = [
         src: USERCOM,
         ref: '9-13',
         any: [/^IF GETBIT\(FLAG:5,34\)$/m, /^CALL SHOW_COMMENU$/m],
+      },
+      // #212：@P_C（TRAIN_MAIN.ERB:771-780，上次的调教指令名）
+      {
+        src: TRAIN_MAIN,
+        ref: '773',
+        any: [/^TSTR:90 '= TRAINNAME:LOCAL$/m],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '775-776',
+        any: [
+          /^SIF STRLENSU\(TSTR:90\) < 1$/m,
+          /^\tTSTR:90 '= TRAIN_NAME:LOCAL$/m,
+        ],
+      },
+      {
+        src: TRAIN_MAIN,
+        ref: '778-779',
+        any: [/^SIF STRLENSU\(TSTR:90\) < 1$/m, /^\tTSTR:90 = 　$/m],
       },
       { src: USERCOM, ref: '14', any: [/^PRINTL$/m] },
       { src: USERCOM, ref: '15', any: [/^DRAWLINE$/m] },

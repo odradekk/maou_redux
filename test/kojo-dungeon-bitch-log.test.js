@@ -352,3 +352,25 @@ test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BIT
     'LOG_TRY_BITCH 真身文本出现',
   );
 });
+
+// —— #212 返工：魔族少年的性别分档（首版 talent:122 二段恒 undefined，永远走 else 臂）——
+
+test('DUNGEON_ANAL_LOG：魔族少年（ARG:0 == 2）按 TALENT:TARGET:122 分档（两臂分开）', async () => {
+  // rand_n(8) === 0 → 第一子分支 :1850/:1852
+  const { fixture: f1, mod: m1, era_flag: ef1 } = setup_log();
+  ef1.target = 31;
+  await m1.dungeon_anal_log(2, seq_rand(0));
+  assert.ok(
+    f1.text_lines().some((l) => l.includes('姐姐的屁股，真棒')),
+    'TALENT:122 未置位 → 姐姐臂（:1852）',
+  );
+
+  const { fixture: f2, mod: m2, era_flag: ef2 } = setup_log();
+  ef2.target = 31;
+  f2.store.set('talent:31:122', 1); // 男人
+  await m2.dungeon_anal_log(2, seq_rand(0));
+  assert.ok(
+    f2.text_lines().some((l) => l.includes('哥哥的屁股，真棒')),
+    'TALENT:122 置位 → 哥哥臂（:1850）',
+  );
+});

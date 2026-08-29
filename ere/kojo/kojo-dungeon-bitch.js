@@ -648,9 +648,11 @@ function exp_bitch(arg, place, type, play) {
       chara(arg).dungeon.兽奸经验 += play; // :403 EXP:56 += PLAY（兽奸经验）
       chara(arg).dungeon.私处经验 += play; // :404 EXP:0 += PLAY
       chara(arg).dungeon.性交经验 += play; // :405 EXP:5 += PLAY
-      era.add(`juel:1`, play * 200); // :406 JUEL:1 += PLAY * 200
-      era.add(`juel:6`, play * 300); // :407 JUEL:6 += PLAY * 300
-      era.add(`juel:8`, play * 200); // :408 JUEL:8 += PLAY * 200
+      // （#212 返工修正：原作 JUEL:N 省略位 == TARGET，此处即 arg——首版
+      // 写成二段，era.add 打在「角色 1 的整行对象」上，加算从未生效）
+      era.add(`juel:${arg}:1`, play * 200); // :406 JUEL:1 += PLAY * 200
+      era.add(`juel:${arg}:6`, play * 300); // :407 JUEL:6 += PLAY * 300
+      era.add(`juel:${arg}:8`, play * 200); // :408 JUEL:8 += PLAY * 200
       break;
 
     default:

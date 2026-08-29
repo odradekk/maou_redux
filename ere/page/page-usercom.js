@@ -10,8 +10,8 @@
  * COM_ABLE 扫描透传（emit 的第二参）；名字经 `traincommandname:${id}` 寻址
  * （yml/TrainCommand.yml，#43 实证可寻址）。原作是 PRINTC 三列排版——ere
  * 侧改按钮平铺（记名差异：排版；PR #30 通则——正文不带 [编号] 前缀）。
- * @P_C 的 TRAIN_NAME（按存档定制的指令名）优先级高于静态名表——存根化
- * （TRAIN_NAME_INIT，stub-registry 已有行），此处直接读静态名。
+ * @P_C（#212 真身，本文件 p_c）：TSTR:90 承载上次的指令名，TRAIN_NAME
+ * 定制名（trainalias）优先级高于静态名表——见 p_c 的三级回落。
  *
  * 其余待办（docs/stub-registry.md，#44 登记）：能力表示[100]/污秽表示[101]/
  * 交代助手[102]/对换调教[112]/避孕套设定[103]/过滤[104-108]/调教菜单
@@ -23,10 +23,12 @@ const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const era_flag = require('#/era-utils/era-flag');
+const { read_train_name } = require('#/system/train/train-name');
 
 /**
  * 本文件存根化的原作调用名（@USERCOM 未挂载分支的处理器 + 自定义菜单）。
  * docs/stub-registry.md 必须收录每一个；名单变动必须同步清单。
+ * @P_C 已随 #212 落地真身（TRAIN_NAME 定制名优先级接通，TSTR:90 承载）。
  */
 const STUBBED_CALLS = [
   'SHOW_CHARA_INFO',
@@ -36,8 +38,29 @@ const STUBBED_CALLS = [
   'COMSEQ_SHOW',
   'COMSEQ_TRAIN',
   'SHOW_COMMENU',
-  'P_C',
 ];
+
+/**
+ * @P_C（TRAIN_MAIN.ERB:771-780）：上次的调教指令名 → TSTR:90。
+ * 三级回落（1:1）：TRAINNAME（静态名表 traincommandname）→ TRAIN_NAME
+ * （trainalias 定制覆盖层）→ 全角空格。TSTR:90 的承载是 yml/TStr.yml 的
+ * 扩展普通表（#5 建模项定论，引擎探针见 test/tstr-train-table.test.js）；
+ * 「BEGIN TRAIN 清空」由 train-loop.js 初始化段手动镜像。
+ */
+function p_c() {
+  const local = era_flag.prevcom;
+  // :773 TSTR:90 '= TRAINNAME:LOCAL（'= 是表达式赋值；TRAINNAME ＝静态名表）
+  let name = era.get(`traincommandname:${local}`) ?? '';
+  // :775-776 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）
+  if (name.length < 1) {
+    name = read_train_name(local);
+  }
+  // :778-779 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）
+  if (name.length < 1) {
+    name = '　';
+  }
+  era.set('tstr:90', name);
+}
 
 on('SHOW_USERCOM', async (usable = []) => {
   // :9-13 GETBIT(FLAG:5,34) → 自定义 COM 菜单（待办，占位行见下）
@@ -59,12 +82,11 @@ on('SHOW_USERCOM', async (usable = []) => {
   // :91 PRINTC 调教结束[999] ——（按钮正文不带 [999] 前缀，引擎自动拼）
   era.printButton('调教结束', 999);
   era.println(); // :92 PRINTL
-  // :93-100 ＜上次的调教指令：…＞（PREVCOM > -1；名字 = @P_C 的 TRAINNAME，
-  // TRAIN_NAME 定制名待办——直接读静态名表）
+  // :93-100 PREVCOM > -1 → CALL P_C（置 TSTR:90）→ ＜上次的调教指令：…＞
+  // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
   if (era_flag.prevcom > -1) {
-    era.print(
-      `＜上次的调教指令：${era.get(`traincommandname:${era_flag.prevcom}`) ?? ''}＞`,
-    );
+    p_c();
+    era.print(`＜上次的调教指令：${era.get('tstr:90') ?? ''}＞`);
   }
 });
 

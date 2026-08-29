@@ -1,0 +1,34 @@
+# TStr 表：Emuera 内置变量 TSTR（回合字符串表）的 ere 落点（issue #212 认领
+# #5 的三个遗留建模项之一，结论经 engine-bundle 两情形探针钉死，见
+# test/tstr-train-table.test.js 与下方事实清单）。
+#
+# 引擎事实（app.asar 逐条核读，非推理）：
+#   - ere 引擎**没有 tstr 这个调教期表**：beginTrain 建的桶清单是
+#     tequip/tflag/tcvar/palam/delta/gotjuel/deltabase/source/stain/ex/nowex
+#     （endTrain 同款删除），tstr 不在其中；
+#   - setVar 二段分支的常驻可写表闭包 s = {flag, global, item, tflag, love}，
+#     tstr 不在；embeddedTableNames（yml 装载循环的内建表名单）也不含 tstr
+#     ——于是本文件在场时，eraStart 会把 tstr 登记成扩展普通表
+#     （tableType.normal），fillData 建持久顶层桶、saveData 整存 this.data，
+#     era.set('tstr:90', …) 即可写（与 yml/Audio.yml 同一条机制，#69 实测）；
+#   - 本文件缺席的世界里，任何时机（调教内或外）写 tstr:90 都落到 setVar
+#     函数末尾的 era.error「key error in getter/setter!」（探针情形一）；
+#     手工预建桶而不登记也救不了——写入路径要求 normal 登记，只读回落后
+#     仍是静默丢弃（探针情形二）。
+#
+# 与 Emuera 语义的**唯一刻意差异**：TSTR 在 Emuera 是回合域变量（BEGIN TRAIN
+# 时引擎整族清空）；ere 的 tstr 桶是**持久普通表**（beginTrain/endTrain 不碰
+# 它），「BEGIN TRAIN 清空」由 train-loop.js 的初始化段手动镜像（原作
+# TRAIN_MAIN.ERB:29-30 那行被注释掉的 ;TSTR:90 = 　 正是因为引擎替它清了；
+# ere 侧引擎不清，改由循环补写）。清哪些槽：只有被消费过的槽——当前 90。
+#
+# 空表即够用（yml/TFlag.yml 同款先例）：下标是数字，引擎的
+# safeUndefinedCheck 在名字表查不到时原样回落到该数字；且**不要**往这张表
+# 登记条目——fillData 会把已声明槽位预填成数字 0，字符串槽拿到 0 而不是 ''，
+# 消费者的空串判定就被破坏了。
+#
+# 槽位账（随消费者增补）：
+#   90  前回指令名：@P_C 写（TRAIN_MAIN.ERB:771-780），@SHOW_USERCOM 的
+#       「＜上次的调教指令：…＞」读（USERCOM.ERB:93-100）；
+#   30  售卖物名暂存：售卻/處刑一族写（SELL_MATURO/EXECUTION 等）、
+#       SELL_VIDEO 读后清（阶段 5 售卻票）——同表承载，届时直接寻址。

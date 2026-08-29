@@ -418,3 +418,54 @@ test('黄金侧豁免名单：整串命中的行原样放行（致谢名单的�
   const normalized = golden_stream('奴隷市场\r\n');
   assert.equal(normalized[0].text, '奴隶市场');
 });
+
+// —— #212：progress 格的 `(cur/max)` 形态（LIFE_BAR/VITAL_BAR/射精/母乳段）——
+
+test('progress 基础条：`(cur/max)` 拆出 max，与黄金侧网格解析对齐（#212）', () => {
+  const stream = fixture_stream([
+    { type: 'progress', text: '体力', out: '(1445/2000)', bar_width: 16 },
+    { type: 'progress', text: '气力', out: '( 360/2000)', bar_width: 16 },
+  ]);
+  assert.deepEqual(stream, [
+    { kind: 'gauge', key: '体力', val: 1445, max: 2000, line: 1 },
+    { kind: 'gauge', key: '气力', val: 360, max: 2000, line: 2 },
+  ]);
+});
+
+test('progress 基础条：缀文（避孕套使用中/濒死标）以 text 条目保留在流里', () => {
+  const stream = fixture_stream([
+    {
+      type: 'progress',
+      text: '射精（你）',
+      out: '(2500/10000)避孕套使用中',
+      bar_width: 16,
+    },
+    { type: 'progress', text: '体力', out: '( 400/2000)★濒死★', bar_width: 16 },
+  ]);
+  assert.deepEqual(stream, [
+    { kind: 'gauge', key: '射精（你）', val: 2500, max: 10000, line: 1 },
+    { kind: 'text', text: '避孕套使用中', line: 1 },
+    { kind: 'gauge', key: '体力', val: 400, max: 2000, line: 2 },
+    { kind: 'text', text: '★濒死★', line: 2 },
+  ]);
+});
+
+test('progress 参数条不受影响：无括号形态走原 val-only 分支', () => {
+  const stream = fixture_stream([
+    { type: 'progress', text: '快楽', out: ' 5540', bar_width: 16 },
+  ]);
+  assert.deepEqual(stream, [
+    { kind: 'gauge', key: '快楽', val: 5540, line: 1 },
+  ]);
+});
+
+test('progress 基础条：非 `(数字/数字)` 开头的括号形态不当基础条（守误拆）', () => {
+  const stream = fixture_stream([
+    { type: 'progress', text: 'x', out: '(abc/def)', bar_width: 16 },
+  ]);
+  assert.equal(stream[0].kind, 'gauge');
+  assert.ok(
+    Number.isNaN(stream[0].val),
+    '落回 val-only 分支（Number("(abc/def)")=NaN）',
+  );
+});

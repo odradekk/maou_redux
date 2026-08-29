@@ -30,9 +30,24 @@ function seed_world(fixture) {
   return era_flag;
 }
 
+// @TRAIN_NAME_INIT 的播种写入（TRAIN_MAIN.ERB:788-908；TRAIN_NAME_TABLE
+// 的键升序，150 号槽在循环后单独内插写入——实现见 train-name.js）
+function expected_train_name_writes(train_name_table) {
+  return [
+    ...Object.entries(train_name_table).map(([id, name]) => ({
+      name: `trainalias:${id}`,
+      value: name,
+    })),
+    // :899 TRAIN_NAME:150 = %CSTR:7%調教（TARGET=31 的 CSTR:7 未播种 → 空串）
+    { name: 'trainalias:150', value: '调教' },
+  ];
+}
+
 // @EVENTTRAIN 直线赋值的完整期望（TRAIN_MAIN.ERB:15-55 按语句顺序；含
-// @PRITRAIN_MESSAGE 承载头部的三笔，EVENT_BEFORETRAIN.ERB:7-14）
-function expected_train_writes() {
+// @TRAIN_NAME_INIT 播种与 @PRITRAIN_MESSAGE 承载头部的三笔，
+// EVENT_BEFORETRAIN.ERB:7-14）。train_name_table 由用例侧经夹具装载传入
+//（播种表以实现为准——表内容错漏由 train-name.test.js 的逐条断言守）。
+function expected_train_writes(train_name_table) {
   return [
     { name: 'base:0:2', value: 0 }, // :15-16 主人的射精清零
     { name: 'base:31:2', value: 0 }, // :17-18 目标的射精清零
@@ -48,7 +63,9 @@ function expected_train_writes() {
     { name: 'flag:10012', value: 31 }, // :41 TARGET:1 = TARGET（记录目标）
     // :44-46 SIF TALENT:TARGET:271 → PALAM 3/5 = 3000（无素质，不写）
     { name: 'tflag:402', value: 0 }, // :49-50 死斗场收入初始化
-    // :53 TRAIN_NAME_INIT 存根（无写入）；:55 PRITRAIN_MESSAGE 承载头部：
+    // :53 CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，守卫空过）
+    ...expected_train_name_writes(train_name_table),
+    // :55 PRITRAIN_MESSAGE 承载头部：
     { name: 'cflag:31:10', value: 1 }, // :7-8 CFLAG:TARGET:10 += 1（调教回数）
     { name: 'flag:10014', value: 0 }, // :11 T:10 = MASTER
     { name: 'flag:10015', value: 31 }, // :12 T:11 = TARGET
@@ -63,6 +80,7 @@ test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外�
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { STUBBED_CALLS } = fixture.load_module('event/event-train');
+  const { TRAIN_NAME_TABLE } = fixture.load_module('system/train/train-name');
   const { emit } = fixture.load_module('system/event/registry');
 
   const pending = await emit('EVENTTRAIN');
@@ -72,10 +90,13 @@ test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外�
   // 世界底座的指针写入（seed_world 侧）不计：从 @EVENTTRAIN 第一笔写起看
   const start = fixture.var_writes.findIndex((w) => w.name === 'base:0:2');
   assert.ok(start >= 0, '@EVENTTRAIN 必须先清主人的射精槽');
-  assert.deepEqual(fixture.var_writes.slice(start), expected_train_writes());
-  assert.deepEqual(STUBBED_CALLS, ['TRAIN_NAME_INIT', 'PRITRAIN_MESSAGE']);
-  // 两个存根各打一行占位（可检索）
-  for (const name of ['TRAIN_NAME_INIT', 'PRITRAIN_MESSAGE']) {
+  assert.deepEqual(
+    fixture.var_writes.slice(start),
+    expected_train_writes(TRAIN_NAME_TABLE),
+  );
+  assert.deepEqual(STUBBED_CALLS, ['PRITRAIN_MESSAGE']);
+  // 存根打一行占位（可检索）；TRAIN_NAME_INIT 已是真身、无占位行
+  for (const name of ['PRITRAIN_MESSAGE']) {
     assert(
       fixture.text_lines().some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印含函数名的占位行`,

@@ -10,24 +10,24 @@
  * test/event-train.test.js 对写入做全量断言（意外写入当场暴露）。
  *
  * 掉不进去的与待办的（docs/stub-registry.md）：
- *   - TSTR:90（前回指令名暂存）无 ere 落点——唯一写点 @P_C 经 PREVCOM > -1
- *     守卫，零指令下不可达；
- *   - TRAIN_NAME_INIT（自定义指令名表 TRAIN_NAME 的初始化）：静态名表已由
- *     yml/TrainCommand.yml 承载，按存档定制的部分（含 CSTR:7 依存的 150
- *     癖好调教）随口上/角色数据票；
- *   - PRITRAIN_MESSAGE 的消息体（初调教/着衣/素质分支叙事）。
+ *   - PRITRAIN_MESSAGE 的消息体（初调教/着衣/素质分支叙事）；
+ *   - TRAIN_NAME_INIT 与 TSTR:90 已随 #212 落地（ere/system/train/
+ *     train-name.js 与 page/page-usercom.js 的 p_c；TSTR 承载的建模定论见
+ *     yml/TStr.yml 头注与 test/tstr-train-table.test.js）。
  */
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
+const { train_name_init } = require('#/system/train/train-name');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
+ * TRAIN_NAME_INIT 已随 #212 换真身（train_name_init）。
  */
-const STUBBED_CALLS = ['TRAIN_NAME_INIT', 'PRITRAIN_MESSAGE'];
+const STUBBED_CALLS = ['PRITRAIN_MESSAGE'];
 
 /**
  * @PRITRAIN_MESSAGE 的承载头部（EVENT_BEFORETRAIN.ERB:6-14）。
@@ -102,9 +102,9 @@ on(
     // :49-50 死斗场の収入初期化：TFLAG:402 = 0（200 循环外，独立写入）
     era.set('tflag:402', 0);
 
-    // :52-53 初始化 TRAIN_NAME（存根：自定义指令名表，静态名已由
-    // TrainCommand.yml 承载，见文件头待办说明）
-    stub_line('TRAIN_NAME_INIT', '自定义指令名初始化');
+    // :52-53 CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 定制名表一次性播种，
+    // 守卫幂等——ere/system/train/train-name.js）
+    train_name_init();
 
     // :55 CALL PRITRAIN_MESSAGE（承载头部移植 + 消息体存根）
     await pritrain_message_head();

@@ -47,6 +47,7 @@
 
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
+const era_flag = require('#/era-utils/era-flag');
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -1998,7 +1999,7 @@ async function dungeon_anal_log(arg0, rand = default_rand) {
   } else if (arg0 === 2) {
     // :1847-1870 魔族少年（TALENT:122 性别分档）
     if (rand_n(8) === 0) {
-      if (era.get('talent:122') || 0) {
+      if (era.get(`talent:${era_flag.target}:122`) || 0) {
         era.print('「哥哥的屁股，真棒」'); // :1850
       } else {
         era.print('「姐姐的屁股，真棒」'); // :1852
@@ -2016,7 +2017,7 @@ async function dungeon_anal_log(arg0, rand = default_rand) {
     } else if (rand_n(2) === 0) {
       era.print('「这么紧凑的，也只有菊花能做到了吧。」'); // :1865
     } else {
-      if (era.get('talent:122') || 0) {
+      if (era.get(`talent:${era_flag.target}:122`) || 0) {
         era.print('「大哥哥的肛门，非常地舒服啊……」'); // :1868
       } else {
         era.print('「大姐姐的肛门，非常地舒服啊……」'); // :1870

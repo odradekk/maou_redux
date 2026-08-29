@@ -652,6 +652,18 @@ const EXEMPT_STRINGS = [
     where: 'ere/kojo/kojo-dungeon-ravish.js',
     why: 'DUNGEON_RYOUZYOKU.ERB:1895 的 GIRL_RYOU 处女封印台词，・ 是原作刻意用的停顿分隔样式（「好好感・受・吧」的逐字顿挫），非日文假名。lang-normalize 头注明言「・ 用作分隔样式时会有意红一次」——此处是那个「有意」：整串豁免，改写时失配变红。#182 收录。',
   },
+  ...['正常位・接吻', '正常位・胸爱抚', '背后位・胸爱抚', '背后位・打屁股'].map(
+    (value) => ({
+      value,
+      where: 'ere/system/train/train-name.js',
+      why: 'TRAIN_NAME:128-132 的复合指令名，・ 是原作的复合动作分隔样式，逐字照抄（@TRAIN_NAME_INIT，#212 收录）。归一成 · 会切断与 target/ 指令名的逐字对应；整串豁免，改写时失配变红。',
+    }),
+  ),
+  {
+    value: '射精（死斗场・怪物）',
+    where: 'ere/page/page-train.js',
+    why: 'TRAIN_MAIN.ERB:249 的 PRINT 射精（死斗场・怪物），・ 是原作的并列主体分隔样式，逐字照抄（SHOW_STATUS 槽条段，#212 收录）。整串豁免，改写时失配变红。',
+  },
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；

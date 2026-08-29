@@ -370,4 +370,24 @@ export default [
     tests: ['kojo-dungeon-bitch-log'],
     must_mention: '调 LOG_BITCH_SEX',
   },
+
+  // —— #212 返工：存量二段寻址修复的反向变异 ——
+  {
+    desc: 'M717 ANIMAL 珠加算回退成二段（juel:arg:1 → juel:1——从未生效的形态）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '      era.add(`juel:${arg}:1`, play * 200); // :406 JUEL:1 += PLAY * 200',
+    replace: '      era.add(`juel:1`, play * 200); // :406 变异：二段',
+    tests: ['chara-table-addressing', 'kojo-dungeon-bitch'],
+    must_mention: 'JUEL:1 必须 +PLAY*200',
+  },
+  {
+    desc: 'M718 性别分档回退成二段（talent:TARGET:122 → talent:122——恒走 else 臂）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find: `    if (rand_n(8) === 0) {
+      if (era.get(\`talent:\${era_flag.target}:122\`) || 0) {`,
+    replace: `    if (rand_n(8) === 0) {
+      if (era.get('talent:122') || 0) {`,
+    tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
+    must_mention: 'TALENT:122 置位 → 哥哥臂',
+  },
 ];
