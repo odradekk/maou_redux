@@ -78,6 +78,10 @@ const cflag = {
     '灌肠经验',
     src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),
   ),
+  9: named(
+    '等级',
+    src(SRC_FLAG, 'CFLAG:9 レベル（LVUP.ERB の CFLAG:(ARG:0):9）'),
+  ),
   13: named('基础攻击', src(SRC_FLAG, 'CFLAG:13 基礎攻撃力')),
   14: named('基础防御', src(SRC_FLAG, 'CFLAG:14 基礎防御力')),
   109: named(

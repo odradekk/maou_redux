@@ -632,12 +632,11 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   ]);
   // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位；
   // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）；
-  // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（ere/dungeon/labo-dungeon-map.js
-  // 与 labo-map.js）
+  // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（labo-dungeon-map.js 与
+  // labo-map.js）；#179 起 LVUP/DUNGEON_AFTER 换真身（dungeon-lvup.js 与
+  // dungeon-after.js）——三条均已从名单移除
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
-    'LVUP',
-    'DUNGEON_AFTER',
     '自動處刑',
     'BENKI',
     'NAEDOKO',
@@ -657,4 +656,88 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   for (const name of ['KYOTEN_EVENT', 'INVASION_CHECK']) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
+});
+
+// —— #179（H10）升级结算与战果结算的接线 ——
+
+test('升级守卫（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级，其他角色照常升级', async () => {
+  const { fixture, emit } = setup_turnend();
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.seed_chara(2, { id: 2, name: '贝塔', callname: '贝塔' });
+  fixture.era.addCharacter(1);
+  fixture.era.addCharacter(2);
+  for (const cid of [1, 2]) {
+    fixture.store.set(`maxbase:${cid}:0`, 100);
+    fixture.store.set(`maxbase:${cid}:1`, 100);
+  }
+  // 2D 模式（FLAG:502 = 1）：侵攻中的阿尔走 DUNGEON_MAP 存根臂而非迷宫
+  // 真身——本用例只测升级守卫，迷宫推进的行为在 dungeon-main.test.js
+  fixture.store.set('flag:502', 1);
+  // 阿尔：侵攻中（CFLAG:1 = 2，H2 写入的状态）+ 足量经验（LV3 需 40）
+  fixture.store.set('cflag:1:1', 2);
+  fixture.store.set('cflag:1:9', 3);
+  fixture.store.set('exp:1:80', 45);
+  // 贝塔：空闲 + 同量经验
+  fixture.store.set('cflag:2:1', 0);
+  fixture.store.set('cflag:2:9', 3);
+  fixture.store.set('exp:2:80', 45);
+
+  await emit('EVENTTURNEND');
+
+  assert.equal(
+    fixture.store.get('cflag:1:9'),
+    3,
+    '侵攻中的勇者不升级（原作 :298 的 SIF CFLAG:A:1 != 2 守卫，1:1）',
+  );
+  assert.equal(
+    fixture.store.get('exp:1:80'),
+    45,
+    '守卫在 LVUP 之前：经验也不扣',
+  );
+  assert.equal(fixture.store.get('cflag:2:9'), 4, '空闲角色升级 LV3 → 4');
+  assert.equal(fixture.store.get('exp:2:80'), 5, '经验扣 40');
+});
+
+test('魔王升级（:619 CALL LVUP,0）：经验够则升级并播报', async () => {
+  const { fixture, emit } = setup_turnend();
+  fixture.store.set('cflag:0:9', 5); // 魔王 LV5 → 需 60
+  fixture.store.set('exp:0:80', 60);
+  await emit('EVENTTURNEND');
+  assert.equal(fixture.store.get('cflag:0:9'), 6, '魔王 LV5 → 6');
+  assert.equal(fixture.store.get('exp:0:80'), 0);
+  assert(
+    fixture.text_lines().some((line) => line.includes('*你的等级提升为LV6*')),
+    '升级播报（NAME:MASTER = 魔王名前）',
+  );
+});
+
+test('战果结算分派（:302 CALL DUNGEON_AFTER）：凯旋（5）与败北（6）各进各臂', async () => {
+  const { fixture, emit } = setup_turnend();
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.seed_chara(2, { id: 2, name: '贝塔', callname: '贝塔' });
+  fixture.era.addCharacter(1);
+  fixture.era.addCharacter(2);
+  for (const cid of [1, 2]) {
+    fixture.store.set(`maxbase:${cid}:0`, 100);
+    fixture.store.set(`maxbase:${cid}:1`, 100);
+    fixture.store.set(`cflag:${cid}:9`, 1);
+  }
+  fixture.store.set('cflag:1:1', 5); // 凯旋 → 奖赏
+  fixture.store.set('cflag:2:1', 6); // 败北 → 惩罚
+  fixture.set_inputs(0, 0); // 两臂各选 [0]
+
+  await emit('EVENTTURNEND');
+
+  assert(
+    fixture.text_lines().some((line) => line.includes('打倒了勇者，凯旋而归')),
+    '凯旋的奖赏臂',
+  );
+  assert(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('没有发现勇者（或者是输了）')),
+    '败北的惩罚臂',
+  );
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '凯旋结算后状态清 0');
+  assert.equal(fixture.store.get('cflag:2:1'), 0, '败北结算后状态清 0');
 });

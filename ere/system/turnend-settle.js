@@ -49,18 +49,20 @@ const {
 const { run_dungeon } = require('#/dungeon/dungeon');
 const { dungeon_map } = require('#/dungeon/labo-dungeon-map');
 const { geo_output_2 } = require('#/dungeon/labo-map');
+const { lvup } = require('#/dungeon/dungeon-lvup');
+const { dungeon_after } = require('#/dungeon/dungeon-after');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。#172（H3）起 PARTY_UNITE / DUNGEON /
  * PARTY_JOIN / PARTY_DEL 已接真身（ere/dungeon/），从名单移除；#181（H12）
  * 起 DUNGEON_MAP（2D 模式的 else 臂）与 GEO_OUTPUT_2（FLAG:502==1 的地图
- * 重绘）亦接真身（ere/dungeon/labo-dungeon-map.js 与 labo-map.js）。
+ * 重绘）亦接真身（ere/dungeon/labo-dungeon-map.js 与 labo-map.js）；#179
+ * （H10）起 LVUP / DUNGEON_AFTER 亦接真身（ere/dungeon/dungeon-lvup.js 与
+ * dungeon-after.js），三者均从名单移除。
  */
 const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
-  'LVUP',
-  'DUNGEON_AFTER',
   '自動處刑',
   'BENKI',
   'NAEDOKO',
@@ -125,13 +127,15 @@ on('EVENTTURNEND', async () => {
       await dungeon_map(cid);
     }
 
-    // :298-299 升级结算（侵攻中的勇者除外）
+    // :298-299 升级结算（侵攻中的勇者除外）——#179 起真身
+    //（ere/dungeon/dungeon-lvup.js；守卫 SIF CFLAG:A:1 != 2 原样保留，
+    // 与 H2 写入的 CFLAG:1 = 2 直接耦合：侵攻中的勇者不升级）
     if (place !== 2) {
-      stub_line('LVUP', '升级结算');
+      lvup(cid);
     }
 
-    // :302 战果结算
-    stub_line('DUNGEON_AFTER', '战果结算');
+    // :302 战果结算——#179 起真身（ere/dungeon/dungeon-after.js）
+    await dungeon_after(cid);
 
     // :304-352 体力回复。此处 TIME 已被 #PRI 档翻转：午后结算（TIME==1，
     // 调教后的夜休）回 MAX/2，午前结算（日推进回合）回 MAX/10
@@ -442,8 +446,8 @@ on('EVENTTURNEND', async () => {
     await era.waitAnyKey(); // WAIT
   }
 
-  // :619 魔王的升级结算
-  stub_line('LVUP', '升级结算');
+  // :619 魔王的升级结算——#179 起真身（CALL LVUP, 0）
+  lvup(0);
 
   // 原作此处即注释状态（;CALL INVASION_CHECK，行 621）；#118 落地时按其结论处置
 

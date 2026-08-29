@@ -291,8 +291,8 @@ test('四个子面板：按 FLAG:36 分发——物品/陷阱占位，地城两�
       fixture.text_lines().some((line) => line.includes(marker)),
       `FLAG:36=${flag_value} 应显示真身读数「${marker}」`,
     );
-    // 子面板本体不再占位（DAILY 尾部的 DISPLAY_DUNGEON_DAILY 是另一存根，
-    // 其占位行仍合法）
+    // 子面板本体不再占位（DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179 起
+    // 亦为真身，其输出在 page-dungeon-daily.test.js 直测）
     assert(
       !fixture
         .text_lines()
@@ -452,12 +452,12 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部待办'
   const registry = fs.readFileSync(registry_path, 'utf8');
 
   // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
-  // DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件下方），
-  // 移出；DAILY 尾部的 DISPLAY_DUNGEON_DAILY（地城日常的部下日程）入名单
+  // DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件
+  // 下方）；DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179（H10）起亦为真身
+  // （page/page-dungeon-daily.js），均移出
   assert.deepEqual(STUBBED_CALLS, [
     'DRAW_HAVEITEMS',
     'DRAW_HAVETRAPS',
-    'DISPLAY_DUNGEON_DAILY',
     'DRAW_MAINMENU',
   ]);
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）

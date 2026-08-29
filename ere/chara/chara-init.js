@@ -26,10 +26,12 @@
 
 const era = require('#/era-electron');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { chara } = require('#/facade/chara');
+const { st_up } = require('#/dungeon/dungeon-lvup');
 
-/** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定） */
+/** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
+ * ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js），移出名单。 */
 const STUBBED_CALLS = [
-  'ST_UP',
   'WEARING_CLOTH_ABLE',
   'SET_SUIT_SELFCALL',
   'SET_NICK_SELFCALL',
@@ -100,15 +102,21 @@ async function char_init(cid, rand) {
   // :7 SAVESTR:L_A = %CALLNAME:L_A% —— callname:id:-2 已由 addCharacter
   // 自动写入（文件头），无动作
 
-  // :10-18 等级与基础数值：CSV 只设置了等级没设置攻击力时按等级逐级 CALL
-  // ST_UP（:14）
-  // ST_UP。菲娅 CFLAG:35:9 = 1（不 > 1）不可达；命中的角色（随机生成线）
-  // 随升级票
+  // :10-18 等级与基础数值：CSV 只设置了等级没设置攻击力时按等级逐级
+  // CALL ST_UP（:14），之后等级钳回（:15——ST_UP 每次 +1，正好还原）、
+  // 体力/气力拉满到上限（:16-17）。菲娅 CFLAG:35:9 = 1（不 > 1）不可达；
+  // ST_UP 自 #179（H10）起为真身
   if (
     (era.get(`cflag:${cid}:9`) || 0) > 1 &&
     (era.get(`cflag:${cid}:11`) || 0) === 0
   ) {
-    await stub_line_wait('ST_UP', '按等级的基础数值初始化', '随升级票');
+    const lv = era.get(`cflag:${cid}:9`) || 0; // CFLAG:9 = 等级
+    for (let i = 0; i < lv; i += 1) {
+      st_up(cid, rand_n);
+    }
+    era.set(`cflag:${cid}:9`, lv); // :15 等级钳回原值
+    chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0; // :16
+    chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0; // :17
   }
 
   // :22-24 着替え装着（SWAP TARGET → CALL WEARING_CLOTH_ABLE :23 → SWAP）

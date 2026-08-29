@@ -102,16 +102,28 @@ test('已持有一系能力者时整段跳过（!(275||…||279) 的守卫，:35
   assert.equal(fixture.store.get('talent:35:276'), undefined);
 });
 
-test('等级段条件 1:1：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（ST_UP 占位）', async () => {
+test('等级段条件 1:1：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（ST_UP 真身，#179）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:35:9', 5);
   fixture.store.set('cflag:35:11', 0);
   const { char_init } = load(fixture);
+  // rand ≡ 1：ST_UP 的 RAND:2 掷 1 → 每级攻 +1 / 防 +2（基础各 +1 + 防 1）
   await char_init(35, () => 1);
-  assert(
-    history_texts(fixture).some((line) => line.includes('@ST_UP')),
-    '等级段命中：按等级初始化的占位行可见（登记项）',
+  assert.equal(fixture.store.get('cflag:35:9'), 5, '等级钳回原值（:15）');
+  assert.equal(fixture.store.get('cflag:35:13'), 5, '基础攻击 +5（5 级 × 1）');
+  assert.equal(
+    fixture.store.get('cflag:35:14'),
+    10,
+    '基础防御 +10（5 级 × 2）',
   );
+  assert.equal(
+    fixture.store.get('maxbase:35:0'),
+    50,
+    '体力上限 +50（5 级 × 10，:86）',
+  );
+  assert.equal(fixture.store.get('maxbase:35:1'), 50, '气力上限 +50（:87）');
+  assert.equal(fixture.store.get('base:35:0'), 50, '体力拉满到上限（:16）');
+  assert.equal(fixture.store.get('base:35:1'), 50, '气力拉满到上限（:17）');
 
   // 菲娅形态的对照组：CFLAG:11 = 15（CSV 预设）——即使等级 > 1 也不进
   const guard = create_era_fixture();
@@ -119,10 +131,12 @@ test('等级段条件 1:1：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（ST_UP 占位�
   guard.store.set('cflag:35:11', 15);
   const { char_init: init_guard } = load(guard);
   await init_guard(35, () => 1);
-  assert(
-    !history_texts(guard).some((line) => line.includes('@ST_UP')),
+  assert.equal(
+    guard.store.get('cflag:35:13'),
+    undefined,
     'CFLAG:11 != 0：等级段不进（CSV 已设攻击力）',
   );
+  assert.equal(guard.store.get('cflag:35:14'), undefined);
 });
 
 test('身体数据段条件 1:1：FLAG:5 位 12/15 开且 451/453 缺失才进', async () => {

@@ -4,7 +4,8 @@
  * 源: target/ERB/SHOP/DRAW_MAINMENU.ERB  @DRAW_MAINMENU（:5-325）/
  *     @DRAW_DUNGEON_OVERVIEW（:427-577，#180 起真身）/
  *     @DRAW_DUNGEON_DAILY（:583-601，#180 起真身；尾部的
- *     @DISPLAY_DUNGEON_DAILY（DUNGEON_DAILY.ERB:1）留存根，随 #179 H10）；
+ *     @DISPLAY_DUNGEON_DAILY（DUNGEON_DAILY.ERB:1）自 #179 起真身，
+ *     page/page-dungeon-daily.js）；
  *     @DRAW_HAVEITEMS :331 / @DRAW_HAVETRAPS :400 两个子面板仍存根
  *
  * 这张票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
@@ -30,6 +31,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
 const { stub_line } = require('#/utils/stub-line');
+const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -41,16 +43,11 @@ const { stub_line } = require('#/utils/stub-line');
  * 随 #136）——函数本体的骨架已实现（#23），占位的是其余各项；输入分发本体
  * 在 page/page-shop.js 的 usershop（#24）。
  *
- * DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件下方），
- * 移出本名单；DAILY 尾部的 DISPLAY_DUNGEON_DAILY（地城日常的部下日程，
- * 迷宮/DUNGEON_DAILY.ERB）入名单。
+ * DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件下方）；
+ * DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179（H10）起为真身
+ * （page/page-dungeon-daily.js），移出本名单。
  */
-const STUBBED_CALLS = [
-  'DRAW_HAVEITEMS',
-  'DRAW_HAVETRAPS',
-  'DISPLAY_DUNGEON_DAILY',
-  'DRAW_MAINMENU',
-];
+const STUBBED_CALLS = ['DRAW_HAVEITEMS', 'DRAW_HAVETRAPS', 'DRAW_MAINMENU'];
 
 // 原文排版里的全角空格（UNICODE 0x3000）。以转义书写并集中定义：ESLint
 // 的 no-irregular-whitespace 拦裸写，prettier 会把字符串里的裸全角空格当
@@ -449,7 +446,7 @@ function draw_dungeon_overview() {
 /**
  * @DRAW_DUNGEON_DAILY（:583-601）：地城日常信息面板（FLAG:36 == 5）。
  * 威望值（EX_FLAG:99，钳上界 100）与五档评语；尾部接 DISPLAY_DUNGEON_DAILY
- * （迷宮/DUNGEON_DAILY.ERB:1，随 #179 H10 的日程票——存根占位）。
+ * （迷宮/DUNGEON_DAILY.ERB:1，#179 起真身——page/page-dungeon-daily.js）。
  *
  * @returns {void}
  */
@@ -473,12 +470,9 @@ function draw_dungeon_daily() {
     grade = '【广受爱戴】';
   }
   era.print(`${FULL_WIDTH_SPACE}威望值：${prestige} ${grade}`);
-  // :601 CALL DISPLAY_DUNGEON_DAILY（#179 H10 待移植）
-  stub_line(
-    'DISPLAY_DUNGEON_DAILY',
-    '地城日常的部下日程',
-    '随 #179（H10）日程票',
-  );
+  // :601 CALL DISPLAY_DUNGEON_DAILY——#179（H10）起真身
+  //（page/page-dungeon-daily.js；随机的三次消费见该文件头）
+  display_dungeon_daily();
 }
 
 /**
