@@ -1,0 +1,13 @@
+{
+  "macro_key": "manual",
+  "autosave": false,
+  "history_lines": 50000,
+  "build": "93106",
+  "save": "save99（第 7 日午前）",
+  "sample": "train-upgrade",
+  "segment": "置位 ABL:0:12=3→[100] 调教→插入手指×2（第二次升格为刺激Ｇ点）→[999] 结算→回据点主菜单",
+  "state": "upgraded",
+  "seed_string": "ABL:0:12 = 3",
+  "recorded_at": "2026-08-29T19:09:36",
+  "notes": "置位自检在账：主菜单重画后「技巧Lv： Lv3」（置位前一屏为 Lv0，同一份日志内两态皆有）。夺处女确认按 [0]。升格生效的三处证据：方格里 8 号格标签变「刺激Ｇ点」、执行行为「刺激Ｇ点」、下一屏「＜上次的调教指令：刺激Ｇ点＞」。"
+}
