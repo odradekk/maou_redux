@@ -72,7 +72,7 @@ npx prettier --check .   # 仅格式，--write 可自动改
 
 - 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则里**各写了一份且取值相同**。改格式约定必须同时改这两处，否则两条命令会给出互相矛盾的结果。
 - `.prettierignore` 是必需品：prettier 默认扫描全仓库，没有它 `--write` 会重写只读的 `target/`（68MB，且在其中的 Shift-JIS 日文 HTML 上直接报错退出），也会把 `yml/` 产物的双引号键名改成单引号。
-- 新 worktree 若还没装 `node_modules`，`npx eslint` 会去拉 v9 并因找不到 `eslint.config.js` 报错。那是环境问题，先 `npm ci`。
+- **没装 `node_modules` 时 `npx` 会去拉最新版，而 eslint 与 prettier 的失败形态相反——后者更危险。** eslint 拉到 v9 会因找不到 `eslint.config.js` **报错**，一眼看得出是环境问题；prettier 拉到比 `package-lock.json` 钉的版本更新的一支则**静默给出不同答案**：3.9.x 与本仓库钉的 3.8.3 在 markdown 表格对齐与 `for (…;…; )` 的尾空格上判定相反，于是 `--check .` 报出三个「失败」文件（全是假的），而 `--write` 会把真正干净的文件改坏。**先 `npm ci`**；来不及就显式钉版本：`npx prettier@3.8.3`（版本以 `package-lock.json` 为准，不是 `package.json` 的 `^` 范围）。
 
 ### CI（无引擎环境）
 

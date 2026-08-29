@@ -5,7 +5,15 @@ Issues and specs for this repo live as GitHub issues in **`odradekk/maou_redux`*
 ## Conventions
 
 - **Create an issue**: `gh issue create --repo odradekk/maou_redux --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --repo odradekk/maou_redux --comments`, filtering comments by `jq` and also fetching labels.
+- **Read an issue**: **`--comments` 是坏的，别用**——GitHub 已下线 Projects (classic)，本机 `gh` 2.46.0 那条 GraphQL 查询里仍带 `repository.issue.projectCards`，一律报
+  「GraphQL: Projects (classic) is being deprecated」。用 `--json` 形式（已验证，正文与全部评论一次拿到）：
+
+  ```
+  gh issue view <number> --repo odradekk/maou_redux --json title,body,comments --jq '"# " + .title, "", .body, "", (.comments[] | "\n--- 评论 by " + .author.login + " ---\n" + .body)'
+  ```
+
+  标签另取：`--json labels --jq '[.labels[].name]'`。`gh issue comment` / `edit` / `close` 不受影响。
+
 - **List issues**: `gh issue list --repo odradekk/maou_redux --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
 - **Comment on an issue**: `gh issue comment <number> --repo odradekk/maou_redux --body "..."`
 - **Apply / remove labels**: `gh issue edit <number> --repo odradekk/maou_redux --add-label "..."` / `--remove-label "..."`
@@ -19,7 +27,7 @@ The local clone has an `origin` remote pointing at this repo, so `gh` can infer 
 
 When set to `yes`, PRs run through the same labels and states as issues, using the `gh pr` equivalents:
 
-- **Read a PR**: `gh pr view <number> --comments` and `gh pr diff <number>` for the diff.
+- **Read a PR**: `gh pr view <number> --json title,body,comments --jq ...`（同上，`--comments` 同样触发 projectCards 报错）与 `gh pr diff <number>` 取 diff。
 - **List external PRs for triage**: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments` then keep only `authorAssociation` of `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` (drop `OWNER`/`MEMBER`/`COLLABORATOR`).
 - **Comment / label / close**: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
 
@@ -31,7 +39,7 @@ Create a GitHub issue.
 
 ## When a skill says "fetch the relevant ticket"
 
-Run `gh issue view <number> --repo odradekk/maou_redux --comments`.
+Run the `--json` form above（**不是 `--comments`**，那条已因 Projects (classic) 下线而必然失败）。
 
 ## Wayfinding operations
 

@@ -144,7 +144,7 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 
 ```
 /implement issue #<N>：<标题>
-工单正文与验收清单：gh issue view <N> --repo odradekk/maou_redux --comments
+工单正文与验收清单：gh issue view <N> --repo odradekk/maou_redux --json title,body,comments --jq '"# " + .title, "", .body, "", (.comments[] | "\n--- 评论 by " + .author.login + " ---\n" + .body)'
 父票（这张票在整体中的位置与测试策略）：gh issue view <父票> --repo odradekk/maou_redux
 相关决议，动手前请读：#<a>、#<b>
 
@@ -167,6 +167,8 @@ test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k
 - 按 Conventional Commits 提交，scope 用 <scope>
 - 完成后停下等验收，合并与开 PR 由派单人做
 ```
+
+**简报里绝不要写 `gh issue view … --comments`。** GitHub 于 2024-05-23 下线 Projects (classic)，本机 `gh` 2.46.0 的 `issue view` 仍在 GraphQL 里请求 `repository.issue.projectCards`——**该命令现在必然失败**，只吐一行「GraphQL: Projects (classic) is being deprecated」。阶段 4 派头两张票时两个 agent 同时撞上，白烧一轮。上面模板里的 `--json` 形式是验证过的替代（正文与全部评论一次拿到）。`gh issue comment` / `edit` / `close` 不受影响。
 
 **中间那两段是每次派单都要照抄的常量**，派单前先去仓库取当前值填进去：
 
