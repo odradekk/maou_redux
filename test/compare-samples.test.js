@@ -59,7 +59,7 @@ test('缺省样本仍是 target/emuera.log：resolve 直达 + cli 全绿且四�
   assert.match(output, /\[结论\] 差异全部有名有姓/);
 });
 
-test('登记表覆盖范围 B 三段 × 两态，且路径都锚在 golden/（或旧样本）', () => {
+test('登记表覆盖范围 B 三段 × 两态 + 调教段两份，且路径都锚在 golden/（或旧样本）', () => {
   const names = [
     'mainmenu-natural',
     'mainmenu-max',
@@ -67,10 +67,34 @@ test('登记表覆盖范围 B 三段 × 两态，且路径都锚在 golden/（�
     'saveload-max',
     'daycycle-natural',
     'daycycle-max',
+    // #211 第三段：调教段全序列两份（自然态 + 升格加录）
+    'train-natural',
+    'train-upgrade',
   ];
   for (const name of names) {
     const resolved = resolve_sample(name);
     assert.equal(resolved.rel, `golden/${name}.log`);
+  }
+});
+
+test('调教段样本真库直跑：cli 走 train 分流（replay_train_sample 回放），头注校验过后全绿', () => {
+  // #211 第三段：两份样本入库后的完整比对路径——cli 的段分流（样本名
+  // 第一段 'train'）必须走 replay.js 的调教回放而非 replay-b（后者会以
+  // 「未知段 train」崩掉）。归因基线由 test/compare-train.test.js 锁。
+  for (const name of ['train-natural', 'train-upgrade']) {
+    const { status, output } = run_cli(['--sample', name]);
+    assert.equal(
+      status,
+      0,
+      `调教样本 ${name} 的完整比对路径应全绿（unexplained 归零）：\n${output}`,
+    );
+    assert.ok(
+      output.includes(`[样本] ${name}（golden/${name}.log）`),
+      '样本名与落点必须回显',
+    );
+    assert.match(output, /\[事件流比对\] golden \d+ 条 vs ere \d+ 条/);
+    assert.match(output, /未解释 0/);
+    assert.match(output, /调教段全序列/);
   }
 });
 

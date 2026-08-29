@@ -89,6 +89,8 @@ function show(entry) {
       return `${entry.key}[${entry.val}]`;
     case 'gauge':
       return `${entry.key}[条] ${entry.val}${entry.max !== undefined ? ` (max ${entry.max})` : ''}`;
+    case 'lossbar':
+      return `${entry.key}[条] -${entry.val}`;
     case 'calc':
       return `${entry.key} ${entry.from}+${entry.add}${entry.sub ? `-${entry.sub}` : ''}=${entry.to}${entry.phrase}`;
     default:

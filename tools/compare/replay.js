@@ -34,16 +34,20 @@ const { snapshot_from_store } = require('./snapshot');
 // K3 随机三支：floor(0.4*3)=1≠0、floor(0.4*2)=0 → 命中 :1097（黄金样本行）
 const RAND_FIX = 0.4;
 
-/** 回放要装载的调教路径模块（引擎装载 ere/ 全部文件；夹具按路径装子集） */
+/** 回放要装载的调教路径模块（引擎装载 ere/ 全部文件；夹具按路径装子集）。
+ * 末两项（@EVENTEND 与 @JUEL_CHECK）只被全序列回放（#211 第三段）消费：
+ * 旧样本首回合以 999 出循环、不进 AFTERTRAIN，装载对它无输出影响。 */
 const TRAIN_PATH_MODULES = [
   'event/event-train',
   'event/event-com',
   'event/event-comend',
+  'event/event-end',
   'event/source-check',
   'kojo/kojo-k3-noble',
   'page/page-train',
   'page/page-usercom',
   'system/train/com0-caress',
+  'system/train/juel-check',
   'system/train/train-message',
 ];
 
@@ -176,9 +180,351 @@ async function replay_first_turn() {
   }
 }
 
+// —— #211 第三段：train-natural / train-upgrade 的全序列回放 ——
+//
+// 与 replay_first_turn（旧样本首回合）的三点形态差异，裁定依据都在 #211：
+//
+// 1. **随机源是序列不是常数**。两份新样本的 K3 口上不消费随机——save99 的
+//    FLAG:7 = 1（口上「阶段推进」模式）且 CFLAG:301 已停在 2xx 段末尾，
+//    两次爱抚均无台词（train-natural-log:122-126 / 253-257 的实证：只有
+//    TRAIN_MESSAGE 的 A 文，无口上行）；随机消费点只剩 @JUEL_CHECK 相殺的
+//    RAND:3 六连掷（juel-check.js 的 offset_negative_group）。池序号序列
+//    从黄金样本的相殺终态反推（见 TRAIN_RAND_SEQ 各条注释），常数
+//    RAND_FIX 产不出这种序列，回放层按序注入（[0,3) 的池序号 → 取
+//    (pick + 0.5) / 3，落在目标区间的内部、不贴边）。
+// 2. **输入走 useRule:false 通道**（replay-b 裁定 2 的沿用）：结算段的
+//    [100] 停止键在 ere 侧 SHOW_ABLUP_SELECT 未渲染（page-ablup.js），夹具
+//    白名单会拦下 Emuera 世界合法的输入；流程错位由事件流比对暴露。
+// 3. **比对流 = lines_history 全量**（replay-b 观测面的沿用）。调教段的
+//    golden 日志是纯追加历史（17 屏状态屏 + 指令块全在，train-natural
+//    实证——原作 @SET_CLEAR_POINT/@CLEAR_TO_POINT 的清行不反映进日志）；
+//    ere 侧 ScreenBlock 的自建清行条目因此保留，与 golden 同构。
+//    仍包装 clear 按「原作 CLEARLINE 对应」剔除（调教段现为空集），未来
+//    画面组件镜像原作清行时观测面自动正确。
+
+// 相殺池序号序列（pools [4,5,6] 与 [8,9,10] 共用同一注入序：第二组在
+// 否定清零后不进循环，train-natural 实证只有第一组消费）。
+// 反推方法：golden 结算行的「(上次值 + 增量) - 抵消 = 结果」给出各池终态，
+// 扣减量必为 take = floor(negative/2) 的逐步序列（余量取半、池尽整扣、
+// 余 1 兜底扣 1），唯一分解出每轮选中的池。
+const TRAIN_RAND_SEQ = {
+  // train-natural-log:919-925：否定 23；屈服 697→676（-21 = 11+6+3+1）、
+  // 恭顺 1→0（整池扣 1）、欲情 38→37（兜底扣 1）——六掷 [屈服,屈服,屈服,
+  // 屈服,恭顺,欲情] = 池序号 [2,2,2,2,0,1]
+  'train-natural': [2, 2, 2, 2, 0, 1],
+  // train-upgrade-log:427-438：否定 20；屈服 677→661（-16 = 10+5+1）、
+  // 欲情 38→34（-4 = 2+1+1）——六掷 [屈服,屈服,欲情,屈服,欲情,欲情] =
+  // 池序号 [2,2,1,2,1,1]
+  'train-upgrade': [2, 2, 1, 2, 1, 1],
+};
+
+// 调教窗口内的输入序列（golden 样本的输入回显，去掉窗口外的标题/读档/
+// 主菜单与尾部日程推屏；ere 回放从 run_train 起跑，序列一一对应）。
+const TRAIN_INPUT_PLANS = {
+  // train-natural.log 的输入：0/6/89/(7 穿脱子菜单)/0/12/1/10/3/12/10/30/
+  // 12/55/0/10/12 = 16 条指令，999 调教结束，0/0/100/999 = 升级尝试两次、
+  // 停止、能力值提高结束
+  'train-natural': [
+    0, 6, 89, 7, 0, 12, 1, 10, 3, 12, 10, 30, 12, 55, 0, 10, 12, 999, 0, 0, 100,
+    999,
+  ],
+  // train-upgrade.log：89 穿脱、7 全部扒光、8 插入手指、0 夺处女确认、
+  // 8（升格为刺激Ｇ点 COM84）、999 调教结束、999 能力值提高结束
+  'train-upgrade': [89, 7, 8, 0, 8, 999, 999],
+};
+
+// golden 事件流中调教窗口的起点：第 offset 次输入（0 起）之前的那次输入
+// 是「主菜单选 100 进调教」，窗口从它的下一条输出起（首屏在窗口内）。
+const TRAIN_GOLDEN_INPUT_OFFSET = {
+  'train-natural': 2, // 99（读档）、100（进调教）之后
+  'train-upgrade': 7, // 99、9999、101、0、100、999、100（进调教）之后
+};
+
+// 置位串（meta.json 的 seed_string；train-natural 自然态为空）
+const TRAIN_SEEDS = {
+  'train-natural': {},
+  'train-upgrade': { 'abl:0:12': 3 },
+};
+
+/**
+ * 播种 save99 的调教起点世界（第 7 日午前，温妮第 13 次调教）。
+ * 每个种子值都注明 golden 侧证据（行号 = golden/train-natural.log；
+ * train-upgrade 与其同一存档录制，起点状态一致）。
+ *
+ * 播种取值原则：**让 ere 侧已实现路径的输出与 golden 逐字一致**。经验/
+ * 珠的存量按结算屏的显示值播（golden 显示的是「存量 + 本场增量」，ere 侧
+ * 未移植的指令不产生增量，播显示值恰好复现显示行）；档位内不可知的具体
+ * 值（好感）取档内代表值——已实现路径只消费档位。
+ *
+ * @param {object} fixture
+ * @param {'train-natural'|'train-upgrade'} sample
+ */
+function seed_train_world(fixture, sample) {
+  // —— 角色与身份 ——
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
+  fixture.era.addCharacter(31);
+  // TALENT:0:122（男人）：判定行与结算无百合/断背向经验（train-natural-log:935-936）
+  fixture.store.set('talent:0:122', 1);
+  // 温妮非男人（TALENT:31:122 不写）：阴核参数名（train-natural-log:101）
+  fixture.store.set('talent:31:163', 1); // 高貴（K3 口上挂载的前提）
+
+  // —— 调教域表先开（三段寻址守卫；run_train 内的 beginTrain 幂等）——
+  fixture.era.beginTrain(0, 31);
+
+  // —— BASE/MAXBASE（首屏 train-natural-log:98-99：1198/2000、2000/2000）——
+  fixture.store.set('maxbase:31:0', 2000);
+  fixture.store.set('maxbase:31:1', 2000);
+  fixture.store.set('base:31:0', 1198);
+  fixture.store.set('base:31:1', 2000);
+
+  // —— ABL（结算能力一览 train-natural-log:945-951 + 实行值判定行 train-natural-log:169-170 与 train-natural-log:453-454
+  //    的反解；「阴核点数×5859/20000 ……点数不足」（train-natural-log:959）证阴蒂感觉
+  //    LV4 是存量、非本场所升——）——
+  fixture.store.set('abl:31:0', 4); // 阴蒂感觉 LV4
+  fixture.store.set('abl:31:1', 1); // 乳房感觉 LV1
+  fixture.store.set('abl:31:10', 1); // 顺从 LV1（判定行 顺从LV1(4)）
+  fixture.store.set('abl:31:11', 1); // 欲望 LV1（判定行；首回合 palam 欲情 0）
+  fixture.store.set('abl:31:12', 1); // 技巧 LV1（train-natural-log:946）
+  fixture.store.set('abl:31:13', 1); // 侍奉技术 LV1（train-natural-log:946）
+  fixture.store.set('abl:31:17', 1); // 露出癖 LV1（自慰判定行 train-natural-log:453）
+  fixture.store.set('abl:31:21', 3); // 抖M气质 LV3（判定行 train-natural-log:169）
+
+  // —— 刻印（实行值判定行的反解：快乐/苦痛/屈服/反抗全在账）——
+  fixture.store.set('mark:31:0', 2); // 快乐刻印 LV2（train-natural-log:169 快乐刻印LV2(4)）
+  fixture.store.set('mark:31:1', 1); // 苦痛刻印 LV1（train-natural-log:169）
+  fixture.store.set('mark:31:2', 2); // 屈服刻印 LV2（train-natural-log:169）
+  fixture.store.set('mark:31:3', 1); // 反抗刻印 LV1（train-natural-log:169 与 train-natural-log:951）
+
+  // —— CFLAG/CSTR ——
+  // CFLAG:2（好感）∈ [100,300) 档：首回合源一览 不洁(27)=30×0.9、情爱
+  // (181)=165×1.1（master_skill_check 的档位乘算，train-natural-log:127 的实证；档内
+  // 具体值不可知、已实现路径只消费档位，取代表值 200）
+  fixture.store.set('cflag:31:2', 200);
+  // CFLAG:16（初吻对象）>0 且 <100：结算「[初吻对象：你的唇]」（train-natural-log:938）
+  // 的值域 + COM0 走「已有接吻经验」支（源不洁不为 0）；CSTR:4 = 名
+  fixture.store.set('cflag:31:16', 1);
+  fixture.store.set('cstr:31:4', '你');
+  // CFLAG:301（K3 状态机）停在 2xx 段末尾。两次爱抚均无口上行的机制
+  // （train-natural-log:122-126 与 train-natural-log:253-257 的实证）：「それ以外（2xx）」支的门槛是
+  // MARK:2（屈服刻印）<= 1，而 save99 的温妮是 LV2（判定行 train-natural-log:169）→
+  // 2xx 支不可达；屈服Lv2＆快乐Lv3 支又要 MARK:1 === 3（快乐刻印，实为
+  // LV2）→ 同样不进——全支无输出。FLAG:7（口上开关）因此不必播种：
+  // 读 0 → @EVENTTRAIN #PRI 补 2（>0 即调用，各支不进）。旧样本
+  // （emuera.log）首回合出 :1097 台词，靠的是 mid-session 播种
+  // mark:31:2 不写（=0 ≤ 1）——两份样本的口上形态由刻印差分道
+  fixture.store.set('cflag:31:301', 203);
+  // CFLAG:9（等级）LV1（train-natural-log:937「温妮当前是Lv1」；EXP:80 战斗经验 0 不播）
+  fixture.store.set('cflag:31:9', 1);
+  // CFLAG:15（初体验）不写 = 0：train-natural 无初体验括号（train-natural-log:938）；
+  // train-upgrade 的「[初体验对象：你]」（train-upgrade-log:446）是本场 COM8 夺处女的
+  // 结果，ere 侧无 COM8 不产生——该差异归 COM8 未移植（rules.js）
+
+  // —— 经验存量（SHOW_INFO_EXP 的显示值，train-natural-log:935-936；ere 侧未移植指令
+  //    不产生增量，播显示值即复现显示行）——
+  fixture.store.set('exp:31:2', 13); // 绝顶经验（= 存量 12 + 本场振动杖 1）
+  fixture.store.set('exp:31:10', 4); // 自慰经验（存量 3 + 本场自慰 1）
+  fixture.store.set('exp:31:11', 4); // 调教自慰经验（同上）
+  fixture.store.set('exp:31:22', 16); // 口交经验（存量）
+  fixture.store.set('exp:31:73', 1); // 调教会话经验（本场交谈 +1）
+
+  // —— 珠存量（结算表「上次值」列，train-natural-log:919-931；juel-check 的加算后显示
+  //    = 存量 + ere 侧增量，ere 增量与 golden 不同属 COM 未移植差异）——
+  fixture.store.set('juel:31:0', 4759); // 阴核
+  fixture.store.set('juel:31:1', 0); // 私处
+  fixture.store.set('juel:31:2', 0); // 肛门
+  fixture.store.set('juel:31:4', 0); // 恭顺
+  fixture.store.set('juel:31:5', 18); // 欲情
+  fixture.store.set('juel:31:6', 677); // 屈服
+  fixture.store.set('juel:31:7', 30); // 习得
+  fixture.store.set('juel:31:8', 120); // 耻情
+  fixture.store.set('juel:31:9', 12); // 苦痛
+  fixture.store.set('juel:31:10', 11); // 恐怖
+  fixture.store.set('juel:31:14', 1); // 乳房
+  fixture.store.set('juel:31:15', 0); // 癖好
+  fixture.store.set('juel:31:100', 0); // 否定（train-natural-log:930 抵消后为 0）
+
+  // —— 世界指针 ——
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.day_count = 6; // 第 7 日（train-natural-log:96「7日(午前)」= DAY+1）
+  era_flag.time = 0; // (午前)
+  era_flag.target = 31;
+  era_flag.assi = -1; // 无「助手:名」段（train-natural-log:97）
+
+  // —— 置位串（train-upgrade：主菜单重画「技巧Lv： Lv3」的自检在窗口外，
+  //    置位在此直接落库——ABL:0:12 是 MASTER 的技巧）——
+  for (const [key, value] of Object.entries(TRAIN_SEEDS[sample])) {
+    fixture.store.set(key, value);
+  }
+
+  // —— 静态名表（实机由引擎装载 yml/ 注入；消费点：print_palam、指令
+  //    按钮/上次指令名、SHOW_INFO_EXP 的经验名、SHOW_JUEL/结算表的参数名）——
+  const palam = parse_name_ids('yml/Palam.yml');
+  fixture.store.set(
+    'palamkeys',
+    [...palam.values()].sort((a, b) => a - b),
+  );
+  palam.forEach((id, name) => fixture.store.set(`palamname:${id}`, name));
+  parse_name_ids('yml/TrainCommand.yml').forEach((id, name) =>
+    fixture.store.set(`traincommandname:${id}`, name),
+  );
+  const exp = parse_name_ids('yml/Exp.yml');
+  fixture.store.set(
+    'expkeys',
+    [...exp.values()].sort((a, b) => a - b),
+  );
+  exp.forEach((id, name) => fixture.store.set(`expname:${id}`, name));
+  const abl = parse_name_ids('yml/Abl.yml');
+  fixture.store.set(
+    'ablkeys',
+    [...abl.values()].sort((a, b) => a - b),
+  );
+  abl.forEach((id, name) => fixture.store.set(`ablname:${id}`, name));
+  fixture.store.set('markname:3', '反抗刻印'); // SHOW_ABLUP_SELECT 的 [99] 行
+}
+
+/**
+ * 回放一份调教样本的全序列：run_train（全部指令 + 999）→ run_aftertrain
+ * （@EVENTEND → @JUEL_CHECK 的升级交互 → 返回 TURNEND 停）。
+ *
+ * @param {'train-natural'|'train-upgrade'} sample 样本名
+ * @returns {Promise<{fixture: object, stream_source: Array<object>}>}
+ *   fixture：夹具本体；stream_source：与 golden 日志语义同构的比对流
+ *   （lines_history 剔除「原作 CLEARLINE 对应」的清行，见文件头观测面节）
+ */
+async function replay_train_sample(sample) {
+  const plan = TRAIN_INPUT_PLANS[sample];
+  if (!plan) {
+    throw new Error(
+      `未知调教样本「${sample}」（有效：${Object.keys(TRAIN_INPUT_PLANS).join('、')}）`,
+    );
+  }
+  const fixture = create_era_fixture();
+
+  // 随机源：序列注入（TRAIN_RAND_SEQ 的注释里有每份样本的反推依据）；
+  // 耗尽后回落 RAND_FIX 常数——未来消费点超出已反推序列时输出仍确定，
+  // 差异当场暴露而不是随机漂移
+  const rand_seq = TRAIN_RAND_SEQ[sample];
+  let rand_idx = 0;
+  const original_random = Math.random;
+  Math.random = () =>
+    rand_idx < rand_seq.length
+      ? (rand_seq[rand_idx++] + 0.5) / rand_seq.length
+      : RAND_FIX;
+
+  // 观测面（replay-b 同款）：clear 按调用栈区分两类清行。调教段的 ere
+  // 清行全部来自 ScreenBlock（自建重绘——原作 @SHOW_STATUS 是追加滚动，
+  // 样本 17 屏全在为证），比对流保留；非 ScreenBlock 的 clear（若未来
+  // 画面组件镜像原作 CLEARLINE）剔除。
+  const REDRAW_CLEAR_RE = /screen-block\.js/;
+  const dropped = new Set();
+  const original_clear = fixture.era.clear;
+  fixture.era.clear = async (line_count) => {
+    const from_redraw = REDRAW_CLEAR_RE.test(new Error().stack ?? '');
+    const before = [...fixture.lines];
+    const result = await original_clear(line_count);
+    if (!from_redraw) {
+      before
+        .filter((entry) => !fixture.lines.includes(entry))
+        .forEach((entry) => dropped.add(entry));
+    }
+    return result;
+  };
+
+  // 输入通道：useRule:false（Emuera 自由输入语义，见文件头裁定 2）；
+  // 标记带 Row（replay-b 形态）同时进 lines 与 lines_history
+  let input_idx = 0;
+  const original_input = fixture.era.input;
+  fixture.era.input = async (config) => {
+    if (input_idx >= plan.length) {
+      // 计划耗尽 = 回放完成（golden 停在能力值提高结束，ere 侧不该再要输入）
+      throw new Error(
+        `回放输入计划已耗尽（${sample}：${plan.length} 键）——ere 侧流程比 golden 多要了一次输入`,
+      );
+    }
+    fixture.set_inputs(plan[input_idx]);
+    input_idx += 1;
+    const value = await original_input({
+      ...(config ?? {}),
+      useRule: false,
+    });
+    const mark = { type: 'input', text: String(value) };
+    mark.row = fixture.era.getLineCount() - 1;
+    fixture.lines.push(mark);
+    fixture.lines_history.push(mark);
+    return value;
+  };
+
+  try {
+    seed_train_world(fixture, sample);
+    TRAIN_PATH_MODULES.forEach((name) => fixture.load_module(name));
+    const { run_train, run_aftertrain } = fixture.load_module(
+      'system/train/train-loop',
+    );
+    const next_state = await run_train();
+    if (next_state !== 'AFTERTRAIN') {
+      throw new Error(
+        `run_train 的出口状态是 ${next_state}（预期 AFTERTRAIN）——流程错位`,
+      );
+    }
+    const tail_state = await run_aftertrain();
+    if (tail_state !== 'TURNEND') {
+      throw new Error(
+        `run_aftertrain 的出口状态是 ${tail_state}（预期 TURNEND）——流程错位`,
+      );
+    }
+  } finally {
+    Math.random = original_random;
+    fixture.era.input = original_input;
+    fixture.era.clear = original_clear;
+  }
+  const stream_source = fixture.lines_history.filter(
+    (entry) => !dropped.has(entry),
+  );
+  return { fixture, stream_source };
+}
+
+/**
+ * golden 事件流的调教窗口：从「主菜单选 100 进调教」那次输入之后的第一条
+ * 输出起（首屏在窗口内），到最后一次输入（能力值提高结束 999）的回显止
+ * （含）——尾部的日程推屏与回场主菜单不进窗口（日循环由范围 B 的
+ * daycycle 样本覆盖，调教样本的比对面是调教与结算交互本身）。
+ *
+ * @param {Array<object>} stream golden_stream 的产物（含 discard）
+ * @param {'train-natural'|'train-upgrade'} sample
+ * @returns {Array<object>} 窗口内条目（discard/group 已滤除）
+ */
+function train_window(stream, sample) {
+  const offset = TRAIN_GOLDEN_INPUT_OFFSET[sample];
+  const positions = [];
+  stream.forEach((entry, i) => {
+    if (entry.kind === 'input') {
+      positions.push(i);
+    }
+  });
+  const start = positions[offset - 1]; // 进调教那次输入（99/100 序列的末条）
+  const end = positions[positions.length - 1]; // 能力值提高结束 999
+  if (start === undefined || end === undefined || end < start) {
+    throw new Error(
+      `golden 输入定位失败：offset ${offset}（实得 ${positions.length} 次输入）`,
+    );
+  }
+  return stream
+    .slice(start + 1, end + 1)
+    .filter((entry) => entry.kind !== 'discard' && entry.kind !== 'group');
+}
+
 module.exports = {
   RAND_FIX,
+  TRAIN_GOLDEN_INPUT_OFFSET,
+  TRAIN_INPUT_PLANS,
   TRAIN_PATH_MODULES,
+  TRAIN_RAND_SEQ,
+  TRAIN_SEEDS,
   replay_first_turn,
+  replay_train_sample,
+  seed_train_world,
   seed_winnie_world,
+  train_window,
 };

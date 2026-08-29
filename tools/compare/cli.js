@@ -164,28 +164,48 @@ async function run_named_sample(sample) {
       `链：首尾相接 ${self_check.chain.chained} / 归零 ${self_check.chain.reset} / 无法解释 ${self_check.chain.unexplained.length}`,
   );
 
-  // 事件流比对（#161 阶段二）：黄金样本 vs ere 侧回放（tools/compare/replay-b.js
-  // 的世界播种与观测面裁定）。段名取自样本名的第一段（mainmenu/saveload/
-  // daycycle），态从头注 state。归因走 rules.js 的范围 B 规则组（scope: 'B'）。
+  // 事件流比对：按段分流（段名 = 样本名第一段）。
+  //   - train（#211 第三段）：调教段全序列——golden 窗口（train_window 裁：
+  //     进调教起、能力值提高结束止）vs replay_train_sample 的回放流，归因
+  //     走 rules.js 的调教段规则组（无 scope，与旧样本首回合共用）。
+  //   - 其余（#161 范围 B）：golden 全流 vs replay-b 回放，scope: 'B'。
   const segment = sample.name.split('-')[0];
-  const { replay_scope_b } = require('./replay-b');
-  const { stream_source } = await replay_scope_b(
-    segment,
-    meta.state ?? 'natural',
-  );
-  const golden_entries = golden_stream(log_text).filter(
-    (e) => e.kind !== 'discard' && e.kind !== 'group',
-  );
-  const ere_entries = fixture_stream(stream_source).filter(
-    (e) => e.kind !== 'discard' && e.kind !== 'group',
-  );
-  const report = diff_streams(golden_entries, ere_entries, {
-    scope: 'B',
-    segment,
-  });
-  console.log(
-    `[事件流比对] golden ${golden_entries.length} 条 vs ere ${ere_entries.length} 条`,
-  );
+  let report;
+  if (segment === 'train') {
+    const { replay_train_sample, train_window } = require('./replay');
+    const { stream_source } = await replay_train_sample(sample.name);
+    const golden_entries = train_window(golden_stream(log_text), sample.name);
+    const ere_entries = fixture_stream(stream_source).filter(
+      (e) => e.kind !== 'discard' && e.kind !== 'group',
+    );
+    console.log(
+      `[事件流比对] golden ${golden_entries.length} 条 vs ere ${ere_entries.length} 条`,
+    );
+    report = diff_streams(golden_entries, ere_entries, {
+      scope: 'train',
+      sample: sample.name,
+      traincommand_ids: load_traincommand_ids(),
+    });
+  } else {
+    const { replay_scope_b } = require('./replay-b');
+    const { stream_source } = await replay_scope_b(
+      segment,
+      meta.state ?? 'natural',
+    );
+    const golden_entries = golden_stream(log_text).filter(
+      (e) => e.kind !== 'discard' && e.kind !== 'group',
+    );
+    const ere_entries = fixture_stream(stream_source).filter(
+      (e) => e.kind !== 'discard' && e.kind !== 'group',
+    );
+    console.log(
+      `[事件流比对] golden ${golden_entries.length} 条 vs ere ${ere_entries.length} 条`,
+    );
+    report = diff_streams(golden_entries, ere_entries, {
+      scope: 'B',
+      segment,
+    });
+  }
   console.log(format_report(report));
 
   const bad =
@@ -197,7 +217,11 @@ async function run_named_sample(sample) {
     console.log('[结论] 存在未解释差异或断言失败，退出码 1');
     process.exitCode = 1;
   } else {
-    console.log('[结论] 差异全部有名有姓（范围 B：三段两态，边界见文件头）');
+    console.log(
+      segment === 'train'
+        ? '[结论] 差异全部有名有姓（调教段全序列：两份样本，边界见文件头）'
+        : '[结论] 差异全部有名有姓（范围 B：三段两态，边界见文件头）',
+    );
   }
 }
 
