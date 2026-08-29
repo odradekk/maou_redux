@@ -344,7 +344,7 @@ export default [
     find: "        era.print('在空闲的时间，'); // :25",
     replace: "        era.print('变异：错误文本'); // :25 变异",
     tests: ['kojo-dungeon-bitch-log'],
-    must_mention: 'LOG_TRY_BITCH 真身 DUNGEON 分支',
+    must_mention: '勇者无中毒/债务 → 空闲',
   },
   {
     desc: 'M521 LOG_TRY_BITCH 末行删除（:47「考虑着出卖肉体的事。」，#185 验收变异：与 FI_TRY_BITCH 区分）',
