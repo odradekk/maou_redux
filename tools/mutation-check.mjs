@@ -150,8 +150,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #183（H14 迷宫凌辱男性对象）+5（kojo.mjs 的 M420-M424：同名函数区分、
 // %SAVESTR:ARG% 插值承载、史莱姆 BASE 回复、分派缺失、初吻推进）。
 // #176（H7 迷宫陷阱）+12（dungeon.mjs 的 M540-M551）。
-// #180（H11 迷宫情报与建设）+11（page.mjs 的 M560-M570）。现为 410。
-const LEDGER_COUNT_BASELINE = 410;
+// #180（H11 迷宫情报与建设）+11（page.mjs 的 M560-M570）。
+// #182（H13 迷宫凌辱女性对象）+5（kojo.mjs 的 M488-M492：分派缺失、凌辱
+// 畏怖记忆推进、PC_RYOU 处女丧失、逃脱救援回城、胜利凌辱善恶门槛）。现为 415。
+const LEDGER_COUNT_BASELINE = 415;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

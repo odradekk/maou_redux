@@ -108,8 +108,9 @@ test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 mon
     ...load(fixture, 'dungeon/dungeon-battle').STUBBED_CALLS,
     ...load(fixture, 'dungeon/dungeon-battle2').STUBBED_CALLS,
     ...load(fixture, 'dungeon/monster-data').STUBBED_CALLS,
+    ...load(fixture, 'kojo/kojo-dungeon-ravish').STUBBED_CALLS,
   ];
-  assert.ok(names.length >= 19, `三份名单合计 ${names.length} 条（应 ≥ 19）`);
+  assert.ok(names.length >= 17, `四份名单合计 ${names.length} 条（应 ≥ 17）`);
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

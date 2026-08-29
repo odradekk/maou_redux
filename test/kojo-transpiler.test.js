@@ -304,6 +304,41 @@ test('产物是合法 JS：DUNGEON_BITCH 转译产物过 node --check（#184 修
   execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
 });
 
+test('PRINTDATA(W|L)?：随机文本块转 pick(list, rand_n)（#182 补方言，防 ATAW 静默坏码）', () => {
+  const src = [
+    'PRINTDATAW',
+    '\tDATAFORM 『甲』',
+    '\tDATAFORM 『乙』',
+    'ENDDATA',
+    'PRINTDATAL',
+    '\tDATAFORM 丙',
+    'ENDDATA',
+    'PRINTDATA',
+    '\tDATAFORM 丁',
+    'ENDDATA',
+  ].join('\n');
+  const { code, reviews } = transpile(src);
+  // PRINTDATAW → printAndWait(pick(...))；PRINTDATAL/PRINTDATA → print(pick(...))
+  assert.ok(
+    code.includes(
+      'await era.printAndWait(pick([`『甲』`, `『乙』`], rand_n));',
+    ),
+  );
+  assert.ok(code.includes('await era.print(pick([`丙`], rand_n));'));
+  assert.ok(code.includes('await era.print(pick([`丁`], rand_n));'));
+  // 不再产出 ATAW/ATAL/ATA 坏码
+  assert.ok(!code.includes('ATAW'));
+  assert.ok(!code.includes('ATAL'));
+  assert.ok(!code.includes('await era.print(`ATA`);'));
+  // REVIEW 标记
+  assert.ok(reviews.some((r) => r.kind === 'PRINTDATA'));
+  // node --check 必须过
+  const { execFileSync } = require('node:child_process');
+  const out = path.join(TMP, 'check-printdata.js');
+  fs.writeFileSync(out, code);
+  execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
+});
+
 test('产物是合法 JS：K5 转译产物过 node --check（裁定一硬门槛）', () => {
   const { execFileSync } = require('node:child_process');
   const erb = path.join(
@@ -330,6 +365,11 @@ test('output_name_for：源文件名 → ASCII kebab-case（意译非罗马音�
   assert.equal(
     output_name_for('DUNGEON_RYOUZYOKU_MAN.ERB'),
     'kojo-dungeon-ravish-man.js',
+  );
+  // #182（H13 迷宫凌辱）：女性对象版映射
+  assert.equal(
+    output_name_for('DUNGEON_RYOUZYOKU.ERB'),
+    'kojo-dungeon-ravish.js',
   );
   // 未登记的文件名显式报错，不静默回落
   assert.throws(() => output_name_for('EVENT_UNKNOWN.ERB'), /未登记的口上文件/);

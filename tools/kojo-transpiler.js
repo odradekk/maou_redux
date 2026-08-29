@@ -118,6 +118,10 @@ const KOJO_OUTPUT_NAME = {
   // （带文本的状态机）。产物名沿用 ASCII 意译（dungeon + ravish-man），
   // 与口上的 kojo-[kf] 命名族并存。
   'DUNGEON_RYOUZYOKU_MAN.ERB': 'kojo-dungeon-ravish-man.js',
+  // #182（H13 迷宫凌辱）：女性对象版 + 主框架（@RYOUZYOKU/@PC_RYOU/
+  // @VICTORY_RYOUZYOKU/@*_RYOU_YUSYA/@DUNGEON_RYOUZYOKU_ESCAPE）。产物名
+  // 意译 ravish（凌辱非人名，ASCII 约定；#183 同款）。
+  'DUNGEON_RYOUZYOKU.ERB': 'kojo-dungeon-ravish.js',
 };
 
 /**
@@ -1001,6 +1005,73 @@ function transpile(text) {
       indent = top.indent;
       out.push(`${'  '.repeat(indent)}}${anchor(line_no)}`);
       switch_stack.pop();
+      continue;
+    }
+
+    // PRINTDATA(W|L)?：随机文本块（DATAFORM 行 + ENDDATA）。Emuera 在块内
+    // 随机取一条输出——JS 侧转成 `pick(list, rand_n)`（随机源注入，与
+    // RAND 同款；#182 复核时发现 PRINTDATAW 被误解析成 `PRINTD ATAW` 的
+    // 静默坏码——PRINT_RE 把 D 当作 (K|D) 修饰符吞掉，其余字符进参数）。
+    // 整块消费（含 ENDDATA），产物锚落在 PRINTDATA 起始行（保真锁
+    // find_printform 的 DATA 回溯语义，#184/#183 已支持）。
+    const data_match = trimmed.match(/^PRINTDATA(W|L)?\b/i);
+    if (data_match) {
+      if (sif_stack.length > 0) {
+        emit_sif_body(line_no, review_notes);
+      }
+      const variant = data_match[1]; // 'W' | 'L' | undefined
+      const candidates = [];
+      let end_abs = -1;
+      for (let j = i + 1; j < lines.length; j += 1) {
+        const inner = lines[j].trim();
+        if (/^ENDDATA\b/i.test(inner)) {
+          end_abs = j;
+          break;
+        }
+        const dm = inner.match(/^DATAFORM[ \t]+(.*)$/);
+        if (dm) {
+          candidates.push(dm[1]);
+        } else if (inner !== '') {
+          review_notes.push({
+            kind: 'PRINTDATA块内异常行',
+            line: j + 1,
+            msg: `PRINTDATA 块内非 DATAFORM 行：${inner}——人工核`,
+          });
+        }
+      }
+      if (end_abs < 0) {
+        review_notes.push({
+          kind: 'PRINTDATA无ENDDATA',
+          line: line_no,
+          msg: 'PRINTDATA 块未闭合（缺 ENDDATA）——人工核',
+        });
+        end_abs = lines.length - 1;
+      }
+      // 归一（简体）+ 转义（text_to_js 同款）
+      const items = candidates.map((c) => {
+        const normed = normalize_text(c);
+        const js = text_to_js(normed, line_no, review_notes);
+        return `\`${js}\``;
+      });
+      if (items.length === 0) {
+        review_notes.push({
+          kind: 'PRINTDATA空块',
+          line: line_no,
+          msg: 'PRINTDATA 块无 DATAFORM 行——人工核',
+        });
+        out.push(`${pad()}// PRINTDATA 空块（无 DATAFORM）${anchor(line_no)}`);
+      } else {
+        const call = variant === 'W' ? 'era.printAndWait' : 'era.print';
+        out.push(
+          `${pad()}await ${call}(pick([${items.join(', ')}], rand_n));${anchor(line_no)}`,
+        );
+      }
+      review_notes.push({
+        kind: 'PRINTDATA',
+        line: line_no,
+        msg: `PRINTDATA${variant ?? ''}（${candidates.length} 条候选）→ pick(list, rand_n)（#182 补方言；随机源注入）`,
+      });
+      i = end_abs; // for 循环 i++ 后落在 ENDDATA 之后
       continue;
     }
 

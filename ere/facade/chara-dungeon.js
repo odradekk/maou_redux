@@ -14,6 +14,36 @@ class DungeonFacade {
 
   // —— cflag ——
   /**
+   * 凌辱畏怖记忆_怪物（cflag:cid:130 ↔ CFLAG:130）
+   * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 行67 CFLAG:ARG:130 = LOCAL:1（被凌辱モンスターID記憶）
+   * @returns {number}
+   */
+  get 凌辱畏怖记忆_怪物() {
+    return era.get(`cflag:${this.cid}:130`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 凌辱畏怖记忆_怪物(v) {
+    era.set(`cflag:${this.cid}:130`, v);
+  }
+
+  /**
+   * 凌辱畏怖计数（cflag:cid:131 ↔ CFLAG:131）
+   * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 行69/行72 CFLAG:ARG:131（凌辱畏怖記憶の回数；BATLLE.ERB:701 起按它做伤害减免/增伤）
+   * @returns {number}
+   */
+  get 凌辱畏怖计数() {
+    return era.get(`cflag:${this.cid}:131`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 凌辱畏怖计数(v) {
+    era.set(`cflag:${this.cid}:131`, v);
+  }
+
+  /**
    * 休憩（cflag:cid:503 ↔ CFLAG:503）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:503 フラグ（回合结算的休憩判定消费）
    * @returns {number}

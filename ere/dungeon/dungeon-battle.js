@@ -73,8 +73,6 @@ const STUBBED_CALLS = [
   'SOURCE_CHECK_AUTO',
   'ATTACK_KOUJO',
   'VICTORY_KOUJO',
-  'VICTORY_RYOUZYOKU',
-  'RYOUZYOKU',
 ];
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
@@ -209,21 +207,29 @@ async function victory_koujo() {
 }
 
 /**
- * @VICTORY_RYOUZYOKU 存根（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：
- * 胜利后的凌辱事件。
+ * @VICTORY_RYOUZYOKU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：胜利后的
+ * 凌辱事件（「間違いが起こる」）。真身在 ere/kojo/kojo-dungeon-ravish.js，
+ * 经模块对象调用（测试可替换导出断言被调，#184 先例）。
+ * @param {number} atker 胜者（原作 ARG = A）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function victory_ryouzyoku() {
-  await stub_line_wait('VICTORY_RYOUZYOKU', '胜利凌辱', '随 #182（H13）');
+async function victory_ryouzyoku(atker, rand) {
+  const mod = require('#/kojo/kojo-dungeon-ravish');
+  await mod.victory_ryouzyoku(atker, rand);
 }
 
 /**
- * @RYOUZYOKU 存根（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：败者的凌辱
- * 事件（FLAG:5 & 1 配置位）。
+ * @RYOUZYOKU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：败者的凌辱事件
+ * （FLAG:5 & 1 配置位）。真身在 ere/kojo/kojo-dungeon-ravish.js，经模块
+ * 对象调用。
+ * @param {number} atker 败北勇者（原作 ARG = A）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function ryouzyoku() {
-  await stub_line_wait('RYOUZYOKU', '凌辱事件', '随 #182（H13）');
+async function ryouzyoku(atker, rand) {
+  const mod = require('#/kojo/kojo-dungeon-ravish');
+  await mod.ryouzyoku(atker, rand);
 }
 
 /**
@@ -1578,7 +1584,7 @@ async function dungeon_party_battle(arg0, rand) {
     const dc = await death_check(atker);
     if (dc === 2) {
       if ((settings & 1) !== 0) {
-        await ryouzyoku();
+        await ryouzyoku(atker, rand_n);
       }
       break;
     }
@@ -1587,7 +1593,7 @@ async function dungeon_party_battle(arg0, rand) {
       era.drawLine();
       await victory_koujo();
       await victory_get(atker, rand_n);
-      await victory_ryouzyoku();
+      await victory_ryouzyoku(atker, rand_n);
       success.v = 1;
       break;
     }

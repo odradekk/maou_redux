@@ -118,6 +118,22 @@ class TrainFacade {
     era.set(`cflag:${this.cid}:46`, v);
   }
 
+  // —— cstr ——
+  /**
+   * 初体验对象名（cstr:cid:3 ↔ CSTR:3）
+   * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 行2445 CSTR:(ARG:1)行3 = %SAVESTR:(ARG:0)%
+   * @returns {string}
+   */
+  get 初体验对象名() {
+    return era.get(`cstr:${this.cid}:3`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 初体验对象名(v) {
+    era.set(`cstr:${this.cid}:3`, v);
+  }
+
   // —— base ——
   /**
    * 射精槽（base:cid:2 ↔ BASE:2）

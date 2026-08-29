@@ -113,6 +113,15 @@ const ERB_TOKEN_RULES = [
   [/^CFLAG:ARG:120$/, 'LEVEL'],
   [/^NUM$/, 'NUM'],
   [/^RESULT$/, 'RESULT'],
+  // —— #182：迷宫凌辱（H13）的插值形态 ——
+  [/^SHE\(ARG\)$/, 'SHE'],
+  [/^SHE\(ARG:0\)$/, 'SHE'],
+  [/^SHE\(ARG:1\)$/, 'SHE'],
+  [/^SAVESTR:\(ARG:0\)$/, 'ARGNAME'],
+  [/^SAVESTR:\(ARG:1\)$/, 'ARGNAME'],
+  [/^SAVESTR:SIDEA$/, 'SIDEA'],
+  [/^SAVESTR:SIDEB$/, 'SIDEB'],
+  [/^MONSTERNAME\(LOCAL:1\)$/, 'MONSTERNAME'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -159,6 +168,19 @@ const JS_TOKEN_RULES = [
   [/^level$/, 'LEVEL'],
   [/^num$/, 'NUM'],
   [/^result$/, 'RESULT'],
+  // —— #182：迷宫凌辱（H13）的插值形态 ——
+  [/^she\(arg\)$/, 'SHE'],
+  [/^she\(arg0\)$/, 'SHE'],
+  [/^she\(arg1\)$/, 'SHE'],
+  [/^arg_name_of\(arg0\)$/, 'ARGNAME'],
+  [/^arg_name_of\(arg\)$/, 'ARGNAME'],
+  [/^winner_name$/, 'ARGNAME'], // #182 PC_RYOU：胜者名
+  [/^loser_name$/, 'ARGNAME'], // #182 PC_RYOU：败者名
+  [/^arg_name_of\(arg1\)$/, 'ARGNAME'],
+  [/^arg_name_of\(sidea\)$/, 'SIDEA'],
+  [/^arg_name_of\(sideb\)$/, 'SIDEB'],
+  [/^monstername\(local_1\)$/, 'MONSTERNAME'],
+  [/^pick\(/, 'PICK'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
@@ -177,8 +199,15 @@ function norm_erb_token(raw) {
   if (tok === 'MON_NUM') {
     return 'MONNUM';
   }
-  if (tok === 'MON_NUM * 10') {
-    return 'MONNUM_MUL10';
+  // #182：{MON_NUM * N} 计算插值（12/15/5 等倍率；源文件各分支倍数不同）
+  const mul = tok.match(/^MON_NUM\s*\*\s*(\d+)$/);
+  if (mul) {
+    return `MONNUM_MUL${mul[1]}`;
+  }
+  // #182：{PLAY * 10}（勇者版胜利演出）
+  const play_mul = tok.match(/^PLAY\s*\*\s*(\d+)$/);
+  if (play_mul) {
+    return `PLAY_MUL${play_mul[1]}`;
   }
   return undefined;
 }
@@ -199,8 +228,15 @@ function norm_js_token(raw) {
   if (tok === 'mon_num') {
     return 'MONNUM';
   }
-  if (tok === 'mon_num * 10') {
-    return 'MONNUM_MUL10';
+  // #182：${mon_num * N} 计算插值
+  const mul = tok.match(/^mon_num\s*\*\s*(\d+)$/);
+  if (mul) {
+    return `MONNUM_MUL${mul[1]}`;
+  }
+  // #182：${play * 10}（勇者版胜利演出）
+  const play_mul = tok.match(/^play\s*\*\s*(\d+)$/);
+  if (play_mul) {
+    return `PLAY_MUL${play_mul[1]}`;
   }
   return undefined;
 }

@@ -305,6 +305,22 @@ const cflag = {
     ),
   ),
   120: named_tail('卖春积极性', src(SRC_FLAG, ':331 CFLAG:120 売春への積極性')),
+  // —— 迷宫凌辱的畏怖记忆（#182 H13 @RYOUZYOKU：dungeon 域写、
+  //    ownership/cflag-ownership.yml "130-131" owner: dungeon）——
+  130: named(
+    '凌辱畏怖记忆_怪物',
+    erb(
+      '迷宮/DUNGEON_RYOUZYOKU.ERB',
+      ':67 CFLAG:ARG:130 = LOCAL:1（被凌辱モンスターID記憶）',
+    ),
+  ),
+  131: named(
+    '凌辱畏怖计数',
+    erb(
+      '迷宮/DUNGEON_RYOUZYOKU.ERB',
+      ':69/:72 CFLAG:ARG:131（凌辱畏怖記憶の回数；BATLLE.ERB:701 起按它做伤害减免/增伤）',
+    ),
+  ),
   501: named_tail('侵攻阶层', src(SRC_FLAG, ':386 CFLAG:501 侵攻階層')),
   502: named_tail('侵攻度', src(SRC_FLAG, ':387 CFLAG:502 侵攻度')),
   508: named_tail(
@@ -591,6 +607,16 @@ const cstr = {
   1: named_tail(
     '加入时名字',
     erb('EVENT/ENTER_ENEMY.ERB', ':198 CSTR:A:1 = %NAME:A%（SYSTEM 同款惯例）'),
+  ),
+  // 初体验对象名：原作破处时把相手名抄进 CSTR:3（DUNGEON_RYOUZYOKU.ERB
+  // :2445/:2595 等；CHARA_FIRST_EXP.ERB:17 读它显示）。属主 train
+  // （ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
+  3: named_tail(
+    '初体验对象名',
+    erb(
+      '迷宮/DUNGEON_RYOUZYOKU.ERB',
+      ':2445 CSTR:(ARG:1):3 = %SAVESTR:(ARG:0)%',
+    ),
   ),
 };
 

@@ -35,7 +35,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { stub_line } = require('#/utils/stub-line');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
 const { equip_database } = require('#/system/equip/equip-lookup');
 const { e_get, e_set, monster_data } = require('#/dungeon/monster-data');
@@ -47,7 +47,7 @@ const { party_del } = require('#/dungeon/dungeon-party');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL', 'PC_RYOU', 'GET_TATTOO'];
+const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL', 'GET_TATTOO'];
 
 /** 名字承载（#5 决议） */
 function name_of(cid) {
@@ -75,11 +75,17 @@ function slave_monster_skill() {
 }
 
 /**
- * @PC_RYOU 存根（凌辱票；FLAG:5 & 1 配置位）：败者被凌辱的演出。
+ * @PC_RYOU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：败者被凌辱的演出
+ * （对人格斗败北，FLAG:5 & 1 配置位）。真身在 ere/kojo/kojo-dungeon-ravish
+ * .js，经模块对象调用。
+ * @param {number} arg0 魔王側（原作 ARG:0）
+ * @param {number} arg1 勇者側（原作 ARG:1）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function pc_ryou() {
-  await stub_line_wait('PC_RYOU', '败者凌辱', '随凌辱票');
+async function pc_ryou(arg0, arg1, rand) {
+  const mod = require('#/kojo/kojo-dungeon-ravish');
+  await mod.pc_ryou(arg0, arg1, rand);
 }
 
 /**
@@ -1246,7 +1252,7 @@ async function dungeon_battle2_party(arg0, rand) {
       const dc = death_check2(arg0, atker);
       if (dc === 2) {
         if ((settings & 1) !== 0) {
-          await pc_ryou(arg0, atker);
+          await pc_ryou(arg0, atker, rand_n);
         }
         break;
       }
@@ -1293,7 +1299,7 @@ async function dungeon_battle2_party(arg0, rand) {
       const dc = death_check2(atker, defer);
       if (dc === 2) {
         if ((settings & 1) !== 0) {
-          await pc_ryou(atker, defer);
+          await pc_ryou(atker, defer, rand_n);
         }
         break;
       }
@@ -1318,7 +1324,7 @@ async function dungeon_battle2_party(arg0, rand) {
       const dc = death_check2(atker, defer);
       if (dc === 2) {
         if ((settings & 1) !== 0) {
-          await pc_ryou(atker, defer);
+          await pc_ryou(atker, defer, rand_n);
         }
         break;
       }
@@ -1343,7 +1349,7 @@ async function dungeon_battle2_party(arg0, rand) {
     const dc = death_check2(atker, defer);
     if (dc === 2) {
       if ((settings & 1) !== 0) {
-        await pc_ryou(atker, defer);
+        await pc_ryou(atker, defer, rand_n);
       }
       break;
     }
