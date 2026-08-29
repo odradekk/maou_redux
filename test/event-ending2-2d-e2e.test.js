@@ -8,7 +8,7 @@
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点，#16）。
  *
- * 与 3D 版（#173）的三点差异：
+ * 与 3D 版（#173）的四点差异：
  *   - **开局多答一问**：FIRST_SETTING 的地下城模式选「2D」（#181 加的一
  *     问，#168 裁定 5「连带补开关」）——FLAG:502 = 1 后 turnend 的 else 臂
  *     走 DUNGEON_MAP 真身（2D 野外推进），EVENTFIRST 的 2D 分支顺带生成
@@ -20,7 +20,25 @@
  *   - **终点判据不同**：2D 的播报是「这里就是魔王城了吗………」
  *     （LABO_DUNGEON_MAP.ERB:174），3D 的「这里是魔王的房间………」在
  *     本用例断言**不得出现**（FLAG:502 = 1 时 run_dungeon 不可达——两条
- *     路径互斥的留证）。
+ *     路径互斥的留证）；
+ *   - **驱动分两档（#179 返工）**：2D 慢线（~70 日起）跑不赢「魔王升级
+ *     正反馈」加速后的侵略——实测第 135 轮（67.5 日）FLAG:81 涨满
+ *     10000，invasion_check 的 ENDING_1 中场演出先至（询问「[0] 继续 /
+ *     [1] 退出」，选继续后 FLAG:82 = 1）。**征服后主菜单的侵略分支走
+ *     「地上征服后的地区选择菜单」存根且 return 0**（page-invasion.js
+ *     开头的守卫，随征服后内容票）——不消耗输入、不 BEGIN TURNEND，
+ *     ere 当前移植面上**没有第二个回合转场**（usershop 全表只有 109 的
+ *     invasion() === 1 一处 begin(TURNEND)；199 休息整支存根）。本用例
+ *     的驱动因此按 FLAG:82 分档：征服前 [109, 1]（主菜单侵略 → 魔力
+ *     出兵，尾 0 留给 ENDING_1 演出的「继续」询问——恰在封顶轮的
+ *     TURNEND 链内消费）；征服后 [100, (17,) 999, 999]（主菜单调教 →
+ *     首轮选目标玛奥 → 调教结束 → juel-check 退出）——**调教是征服后
+ *     唯一的回合通道**（TRAIN → AFTERTRAIN 的 @EVENTEND 尾部 BEGIN
+ *     TURNEND，main-loop 的状态机），FLAG:81 冻结、勇者继续游走；尾 0
+ *     留给触发轮 ENDING_2 的仪式 INPUT。两档切换对「第几轮封顶」不
+ *     敏感（世界轨迹漂移只移动切换点）；但调教轮的 PRNG 消费量与侵略
+ *     轮不同，切换点一动游走剧本就岔——到达点实测 134 日（269 轮：
+ *     135 侵略 + 134 调教），区间据此放宽。
  *
  * 随机源（#173 范本 + #195 教训）：Math.random 替换为种子化 PRNG
  * （mulberry32）。种子 20250602 是**任取的固定值**，不按结局路径挑选——
@@ -34,11 +52,18 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
 
-/** 断言的通关天数区间（实测 71 日，种子 20250602；两端留漂移余量） */
-const DAY_MIN = 10;
-const DAY_MAX = 95;
-/** 驱动上限（半天轮）：随机游走的到达时间是概率量，上限给足余量（100 日） */
-const ROUND_LIMIT = 200;
+/**
+ * 断言的通关天数区间（实测 134 日，种子 20250602，#179 后的两段驱动：
+ * 135 轮侵略 + 134 轮调教，见文件头第四点）。下界 50：随机游走的物理
+ * 下限（#179 前实测最快也要 ~70 日，快 30% 以上即游走公式可疑）；
+ * 上界 175：慢 30% 以上同样可疑（方向选择 / 高低差拒绝 / 撤退决议被
+ * 改坏）。ENDING_1 封顶轮的漂移（侵略速度随票变化）会移动两段切换点、
+ * 岔开游走剧本，±40 日都在区间内。
+ */
+const DAY_MIN = 50;
+const DAY_MAX = 175;
+/** 驱动上限（半天轮）：区间上界 175 日 = 350 轮，上限给到 380 轮兜死循环 */
+const ROUND_LIMIT = 380;
 
 /** mulberry32：种子化 PRNG（[0, 1) 均匀分布，替换 Math.random） */
 function mulberry32(seed) {
@@ -113,9 +138,11 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
 
   fixture.load_module('system/flow/main-loop');
   const run_title_page = fixture.load_module('page/page-title');
-  const { run_shop } = fixture.load_module('page/page-shop');
+  const { enter_state } = fixture.load_module('system/flow/main-loop');
   const { emit } = fixture.load_module('system/event/registry');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // 勇者来袭开着（与 3D 版同向：本路径的推进者就是每日生成的勇者）
@@ -142,21 +169,46 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       'FLAG:502 = 1：地下城模式已选（FIRST_SETTING 一问的置位留证）',
     );
 
-    // —— 主循环：每半天出兵一次，勇者在 2D 地图上游走，直到
-    // LABO_DUNGEON_MAP:175 的 JUMP ENDING_2 从 EVENTTURNEND 链里炸出来。
-    // reset_inputs 每轮清残留（3D 版同款：触发轮多一个 ENDING_2 仪式 INPUT）
+    // —— 主循环（FLAG:82 分档驱动，见文件头第四点）：征服前每半天出兵
+    // 一次；ENDING_1 中场演出先至（选继续）后改走调教推进回合，勇者在
+    // 2D 地图上继续游走，直到 LABO_DUNGEON_MAP:175 的 JUMP ENDING_2 从
+    // EVENTTURNEND 链里炸出来。reset_inputs 每轮清残留（3D 版同款）。
+    // 调教轮跨四个状态（SHOP→TRAIN→AFTERTRAIN→TURNEND→SHOP），用主循环
+    // 的 enter_state 逐态驱动（main-loop 导出的接站入口，#137），与真实
+    // 状态机同一张表——比手写 expect_signal 的两态驱动更贴近引擎
     let quit_error;
     while (quit_error === undefined) {
-      fixture.reset_inputs(109, 1, 0);
-      await expect_signal(
-        run_shop(),
-        'TURNEND',
-        BeginSignal,
-        `第 ${rounds + 1} 轮出兵`,
-      );
+      const fallen = (fixture.store.get('flag:82') ?? 0) !== 0;
+      if (fallen) {
+        // 征服后：调教推进。首轮多一个目标选择（[17] 玛奥，select_target
+        // 打的是角色 ID 按钮）；此后 era_flag.target 经 EVENTTURNEND 尾部
+        // 还原（FLAG:1）保持 > 0，直接 100 进调教。999×2：调教结束 +
+        // juel-check 退出（train-loop 的 USERCOM 999 → AFTERTRAIN；
+        // juel-check 的 :461 INPUT 999 → LABEL_EXIT）。尾 0 留给触发轮
+        // ENDING_2 的仪式 INPUT
+        const target_set = fixture.inputs_consumed.some(
+          (i) => i.api === 'input' && i.value === 17,
+        );
+        fixture.reset_inputs(
+          ...(target_set ? [100, 999, 999, 0] : [100, 17, 999, 999, 0]),
+        );
+      } else {
+        // 征服前：侵略推进。尾 0 留给封顶轮 ENDING_1 演出的「[0] 继续」
+        // 询问（恰在该轮 TURNEND 链内消费——封顶轮结算时 FLAG:82 才翻 1，
+        // 本轮仍走侵略档）
+        fixture.reset_inputs(109, 1, 0);
+      }
       try {
-        const pending = await emit('EVENTTURNEND');
-        assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');
+        let state = STATE.SHOP;
+        while (state !== STATE.TURNEND) {
+          state = await enter_state(state);
+          assert(
+            !(state === STATE.SHOP),
+            `第 ${rounds + 1} 轮提前回 SHOP——回合没有推进（输入档与菜单错位）`,
+          );
+        }
+        const pending = await enter_state(STATE.TURNEND);
+        assert.equal(pending, STATE.SHOP, '回合结算的出口必是 BEGIN SHOP');
       } catch (e) {
         if (e instanceof Error && e.message === 'quit') {
           quit_error = e;
@@ -224,15 +276,27 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       `触发者的出发格 (${hx},${hy}) 在中心一步邻域内（移动环的抖动幅度 ±1）`,
     );
 
-    // —— 压住侵攻度（与 3D 版同判据：确保先到 ENDING_2 而非 ENDING_1）——
+    // —— 双结局剧本（#179 返工后的新事实，与 3D 版判据方向相反）——
+    // 魔王升级正反馈（魔王补正即等级，INVASION.ERB:568）让慢线侵略先于
+    // 游走封顶：本剧本必然先经 ENDING_1 中场演出（选「[0] 继续」）、
+    // FLAG:82 = 1，随后调教推进到 ENDING_2 收尾。3D 快线（14 日内 GAMEOVER）
+    // 仍压得住侵攻度、其「ENDING_1 未抢先」断言不动——两版互补覆盖
+    // 「ENDING_1 抢先 / 不抢先」两个世界
     assert.equal(
       fixture.store.get('flag:82') ?? 0,
-      0,
-      'FLAG:82 == 0：ENDING_1 未抢先',
+      1,
+      'FLAG:82 == 1：ENDING_1 中场演出先至（2D 慢线的必然，见文件头）',
+    );
+    // 封顶 = 10000 的瞬时值不可回看（已征服反抗臂的 KYOTEN_EVENT 夺回线
+    // 此后缓慢回吐侵攻度，实测终局 ~9175 / 134 日）——断言收敛在「接近
+    // 封顶」区间，与 FLAG:82 / 横幅两证互补
+    assert.ok(
+      (fixture.store.get('flag:81') ?? 0) > 9000,
+      'FLAG:81 接近封顶（ENDING_1 的触发条件留证，衰减回吐后仍 > 9000）',
     );
     assert(
-      !texts.some((line) => line.includes('魔王终于再次掌握了世界')),
-      'ENDING_1 横幅未出现',
+      texts.some((line) => line.includes('魔王终于再次掌握了世界')),
+      'ENDING_1 横幅在场（中场演出真实发生过，非仅位置断言）',
     );
 
     // —— 天数（工单要求：断言区间 + 打印实测值）——
@@ -246,11 +310,15 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
         '说明游走/方向/撤退公式被改坏；余量理由见文件头）',
     );
 
-    // —— 循环入口的完整性：每一轮都经主菜单 [109] 进侵略 ——
+    // —— 循环入口的完整性：每一轮恰好走一个回合转场入口（侵略 [109]
+    // 或调教 [100]），触发轮在内——循环没有走偏入口、也没有空转轮
+    const entry_count = fixture.inputs_consumed.filter(
+      ({ value }) => value === 109 || value === 100,
+    ).length;
     assert.equal(
-      fixture.inputs_consumed.filter(({ value }) => value === 109).length,
+      entry_count,
       rounds + 1,
-      '每个半天轮恰好一次主菜单 [109]（触发轮在内，循环没有走偏入口）',
+      '每个半天轮恰好一次回合转场入口（侵略 [109] / 调教 [100]，触发轮在内）',
     );
   } finally {
     // Math.random 是进程级替换，必须恢复（同文件后续用例不被污染）
