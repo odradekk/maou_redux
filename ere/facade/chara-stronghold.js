@@ -28,6 +28,21 @@ class StrongholdFacade {
     era.set(`cflag:${this.cid}:109`, v);
   }
 
+  /**
+   * 迷宫内行动（cflag:cid:500 ↔ CFLAG:500）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行385 CFLAG:500 = ダンジョン内行動(0:内職 1:売春 2:罠補充 3:施設拡張 4:潜入)
+   * @returns {number}
+   */
+  get 迷宫内行动() {
+    return era.get(`cflag:${this.cid}:500`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 迷宫内行动(v) {
+    era.set(`cflag:${this.cid}:500`, v);
+  }
+
   // —— base ——
   /**
    * 寿命（base:cid:10 ↔ BASE:10）

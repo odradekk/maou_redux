@@ -117,15 +117,17 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   // 守卫是阶段 3 的接入点（工单单独要求的测试）。中立世界（状态位 0）下
   // 迷宫整体绕开；再以 12/2/3 的正向用例分开两支——守卫删坏（比如恒放行）
   // 在正向用例上无差异、在本用例红；守卫写反（恒拦截）则在正向用例红。
-  // #172 起 DUNGEON 是真身（无占位行），以 DUNGEON_ROOM 存根行计数观测
-  // run_dungeon 是否被调用。注意原作 :386 的 CALL DUNGEON_ROOM **不是必经**
-  // （#195 勘误，此前此处写反）：它之前有行動完了早退（CFLAG:530）、魔王
-  // 房间 ENDING_2 收口、撤退臂走出迷宫、迎击奴隶滞留归还等多处 return 0 /
-  // break 出口，落到哪个出口由随机掷选决定——如 walk = RAND:20 + 6×RAND:10
-  // 七掷全 0 时侵攻度不增，走撤退臂在迷宫外 break，DUNGEON_ROOM 行数为 0。
-  // 故正向两世界注入恒 0.5 随机源钉住滞留臂（walk = 40，侵攻度 0 + 40 ∈
-  // (0, 100)），:386 恰经过一次、计数恰一行；注入不挑分支，#175（H6 战斗）
-  // 改 :386 之后的行为（掉血、层数推进）不影响本观测
+  // #177（H8）起 DUNGEON_ROOM 也是真身（无占位行），观测锚点换成
+  // CFLAG:514（階層滞在カウント，DUNGEON.ERB :358——全库唯一写者是
+  // run_dungeon 的滞留臂，:167/:286 两臂则清零）：一次 emit 恰走一次滞留
+  // 臂 → 514 恰为 1。注意原作 :386 的 CALL DUNGEON_ROOM **不是必经**
+  // （#195 勘误，此前此处写反；对 514 同样成立）：它之前有行動完了早退
+  // （CFLAG:530）、魔王房间 ENDING_2 收口、撤退臂走出迷宫、迎击奴隶滞留
+  // 归还等多处 return 0 / break 出口，落到哪个出口由随机掷选决定——如
+  // walk = RAND:20 + 6×RAND:10 七掷全 0 时侵攻度不增，走撤退臂在迷宫外
+  // break，滞留臂不经过、514 为 0。故正向两世界注入恒 0.5 随机源钉住滞留
+  // 臂（walk = 40，侵攻度 0 + 40 ∈ (0, 100)），:358 恰经过一次、514 恰为
+  // 1；注入不挑分支，#175/#177 改滞留臂之后的行为不影响本观测
   const neutral = setup_turnend();
   join_slave_chara(neutral.fixture, 31, '温妮');
   await neutral.emit('EVENTTURNEND');
@@ -133,7 +135,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   const stub_count = (lines, name) =>
     lines.filter((line) => line.includes(`原作 @${name}，`)).length;
   assert.equal(
-    stub_count(neutral_texts, 'DUNGEON_ROOM'),
+    neutral.fixture.store.get('cflag:31:514') ?? 0,
     0,
     'CFLAG:1 = 0 时 DUNGEON 不得被调用（哪怕一次）',
   );
@@ -154,7 +156,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     campaign.fixture.restore_math_random();
   }
   assert.equal(
-    stub_count(campaign.fixture.text_lines(), 'DUNGEON_ROOM'),
+    campaign.fixture.store.get('cflag:31:514'),
     1,
     '状态 12 恰好一次 DUNGEON（战役结束后状态复位，结算循环内不再触发）',
   );
@@ -170,7 +172,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     explore.fixture.restore_math_random();
   }
   assert.equal(
-    stub_count(explore.fixture.text_lines(), 'DUNGEON_ROOM'),
+    explore.fixture.store.get('cflag:31:514'),
     1,
     '状态 2 且 FLAG:502 == 0 应走迷宫本体',
   );
@@ -205,7 +207,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     '撤退旗立起（CFLAG:507 = 1，DUNGEON_MAP :24）',
   );
   assert.equal(
-    stub_count(field.fixture.text_lines(), 'DUNGEON_ROOM'),
+    field.fixture.store.get('cflag:31:514') ?? 0,
     0,
     '2D 模式下不得走迷宫本体',
   );

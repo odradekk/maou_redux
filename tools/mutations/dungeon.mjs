@@ -566,4 +566,196 @@ export default [
     tests: ['chara-init'],
     must_mention: '基础攻击 +5（5 级 × 1）',
   },
+  // —— #177（H8）：迷宫房间与设施（M600-M619 + M633/M634）——
+  {
+    desc: 'M600 ROOM 分发·店遭遇的 RESULT 1 改坏（战斗照发生）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '    await dungeon_shop_itemsell(arg0);\n    return 1;',
+    replace:
+      '    await dungeon_shop_itemsell(arg0);\n    return 0; // 变异：RESULT 1 改 0',
+    tests: ['dungeon-room'],
+    must_mention: 'RESULT 1 = 戦闘が発生しないフラグ',
+  },
+  {
+    desc: 'M601 ROOM 分发·店遭遇掷删（RAND:10 == 0 恒不中）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  if (rand_n(10) === 0) {\n    await dungeon_shop_itemsell(arg0);',
+    replace:
+      '  if (rand_n(10) === -1) {\n    await dungeon_shop_itemsell(arg0);',
+    tests: ['dungeon-room'],
+    must_mention: 'RESULT 1 = 戦闘が発生しないフラグ',
+  },
+  {
+    desc: 'M602 SWAMP 的伤害基数 +10 删（DMG 少 10 点）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: "  let dmg = (era.get('cflag:0:9') || 0) + 10;",
+    replace: "  let dmg = era.get('cflag:0:9') || 0; // 变异：+10 删",
+    tests: ['dungeon-room', 'dungeon-main'],
+    must_mention: 'DMG = 0（魔王等级）+ 10',
+  },
+  {
+    desc: 'M603 ICE 的攻击衰减改坏（×9/10 → ×10/10 不衰减）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  const atk = era.get(`cflag:${a}:11`) || 0;\n  era.set(`cflag:${a}:11`, Math.floor((atk * 9) / 10));',
+    replace:
+      '  const atk = era.get(`cflag:${a}:11`) || 0;\n  era.set(`cflag:${a}:11`, Math.floor((atk * 10) / 10)); // 变异：不衰减',
+    tests: ['dungeon-room'],
+    must_mention: 'CFLAG:11 = floor(945/10)',
+  },
+  {
+    desc: 'M604 HEAT 的防御衰减改坏（×9/10 → ×10/10 不衰减）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  const def = era.get(`cflag:${a}:12`) || 0;\n  era.set(`cflag:${a}:12`, Math.floor((def * 9) / 10));',
+    replace:
+      '  const def = era.get(`cflag:${a}:12`) || 0;\n  era.set(`cflag:${a}:12`, Math.floor((def * 10) / 10)); // 变异：不衰减',
+    tests: ['dungeon-room'],
+    must_mention: 'CFLAG:12 = floor(945/10)',
+  },
+  {
+    desc: 'M605 MASE 的 D:20 写删（ctx 不再回写 -BACK）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  // :835 D:20 -= BACK（ctx 回写，文件头）\n  if (ctx) {\n    ctx.d20 -= back;\n  }',
+    replace:
+      '  // :835 D:20 -= BACK——变异：写删\n  // if (ctx) {\n  //   ctx.d20 -= back;\n  // }',
+    tests: ['dungeon-room'],
+    must_mention: 'MASE 的 -10 从房间段活到',
+  },
+  {
+    desc: 'M606 MASE 的迷惑状態立位删（CFLAG:509 不写）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  era.set(`cflag:${a}:509`, 1); // :844',
+    replace: '  // era.set(`cflag:${a}:509`, 1); // 变异：立位删',
+    tests: ['dungeon-room'],
+    must_mention: '迷惑状態（:844）',
+  },
+  {
+    desc: 'M607 MUSEUM 的陈列架位 5 立起删（CFLAG:503 不 +32）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '      era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32); // :900',
+    replace:
+      '      // era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32); // 变异：立位删',
+    tests: ['dungeon-room'],
+    must_mention: '位 5（32）立起',
+  },
+  {
+    desc: 'M608 HOTEL 的入账删（MONEY += COST 不写）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  era_flag.money += cost; // :1008\n  era_exflag.legit_money += cost; // :1009',
+    replace:
+      '  // era_flag.money += cost; // 变异：入账删\n  // era_exflag.legit_money += cost;',
+    tests: ['dungeon-room'],
+    must_mention: 'MONEY += COST（:1008）',
+  },
+  {
+    desc: 'M609 SHOP 逛街档的体力 +20 删',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  chara(a).dungeon.体力 += 20; // :257 BASE:A:0 += 20',
+    replace: '  // chara(a).dungeon.体力 += 20; // 变异：+20 删',
+    tests: ['dungeon-room'],
+    must_mention: '体力 +20（:257）',
+  },
+  {
+    desc: 'M610 SHOP_DAY 岌岌可危档的归零删（低收入仍入账）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: "    era.print('威望值是【岌岌可危】'); // :343 PRINTL\n    income = 0; // :344",
+    replace:
+      "    era.print('威望值是【岌岌可危】'); // :343 PRINTL\n    // income = 0; // 变异：归零删",
+    tests: ['dungeon-room'],
+    must_mention: '岌岌可危 → 税入 0',
+  },
+  {
+    desc: 'M611 ROOM_DAY 的牧场臂删（502 不再走 FARM）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '    } else if (room === 502) {\n      await dungeon_farm(extra, rand_n); // :162\n    }',
+    replace:
+      '    } // 变异：牧场臂删\n    // } else if (room === 502) {\n    //   await dungeon_farm(extra, rand_n); // :162\n    // }',
+    tests: ['dungeon-room'],
+    must_mention: '税入 100 + 牧场 50',
+  },
+  {
+    desc: 'M612 FARM 的只数写回删（ITEM:MON_ID 不写）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  era.set(`item:${mon_id}`, mon_num); // :647',
+    replace: '  // era.set(`item:${mon_id}`, mon_num); // 变异：写回删',
+    tests: ['dungeon-room'],
+    must_mention: 'ITEM:100 += 5',
+  },
+  {
+    desc: 'M613 FARM 的 SIF 作用域事故被修好（原作缺陷不许修，#14）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  era_flag.money += meat_count * 10; // :629\n  era_exflag.legit_money += meat_count * 10; // :630',
+    replace:
+      '  if (sell_baby) {\n    era_flag.money += meat_count * 10; // 变异：修好原作缺陷\n    era_exflag.legit_money += meat_count * 10;\n  }',
+    tests: ['dungeon-room'],
+    must_mention: 'FLAG:614 = 0 仍 +50（原作缺陷）',
+  },
+  {
+    desc: 'M614 FARM_RESCUE 的 EXTRA 当角色号缺陷被修好（原作缺陷不许修，#14）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {\n    era_flag.meat_toilet_count -= 1;\n  }',
+    replace: '  era_flag.meat_toilet_count -= 1; // 变异：修好原作缺陷（恒减）',
+    tests: ['dungeon-room'],
+    must_mention: 'EXTRA = 1 恰逢勇者在战役',
+  },
+  {
+    desc: 'M615 ROOM_BUILD 的拡張位写入删（FLAG:ROOMID 不 +1）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '    era.set(`flag:${room_id + 10}`, extra + 1); // :111 FLAG:ROOMID += 1',
+    replace:
+      '    // era.set(`flag:${room_id + 10}`, extra + 1); // 变异：写入删',
+    tests: ['dungeon-room'],
+    must_mention: 'FLAG:360 += 1（:111）',
+  },
+  {
+    desc: 'M616 ITEMSSELL 的否定の珠换钱删（JUEL/580 不动）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '    era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500); // :291\n    chara(a).dungeon.所持金 += 500; // :292',
+    replace:
+      '    // era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500); // 变异：换钱删\n    // chara(a).dungeon.所持金 += 500;',
+    tests: ['dungeon-room'],
+    must_mention: 'JUEL:100 -= 500',
+  },
+  {
+    desc: 'M617 HEAT 绿洲臂的 TARGET 写删（JUEL:6 / 好感度不动）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: "    const target = era_flag.target;\n    era.set(\n      `juel:${target}:6`,\n      (era.get(`juel:${target}:6`) || 0) + (era.get('cflag:0:9') || 0) * 4,\n    );\n    chara(target).chara.好感度 += 20; // CFLAG:TARGET:2 += 20",
+    replace:
+      "    const target = era_flag.target;\n    // 变异：TARGET 写删\n    // era.set(\n    //   `juel:${target}:6`,\n    //   (era.get(`juel:${target}:6`) || 0) + (era.get('cflag:0:9') || 0) * 4,\n    // );\n    // chara(target).chara.好感度 += 20;",
+    tests: ['dungeon-room'],
+    must_mention: 'JUEL:TARGET:6 += 16',
+  },
+  {
+    desc: 'M618 MUSEUM 的气力伤害删（BASE:A:1 不减 MDMG）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  chara(a).dungeon.气力 -= mdmg; // :904',
+    replace: '  // chara(a).dungeon.气力 -= mdmg; // 变异：伤害删',
+    tests: ['dungeon-room'],
+    must_mention: 'BASE:A:1 -= 50（:904）',
+  },
+  {
+    desc: 'M619 event-nextday 的 ROOM_DAY 调用删（日结算不接线）',
+    file: 'ere/event/event-nextday.js',
+    find: '  await room_day_mod.dungeon_room_day();',
+    replace: '  // await room_day_mod.dungeon_room_day(); // 变异：调用删',
+    tests: ['dungeon-room'],
+    must_mention: '日循环真的结了设施账',
+  },
+  {
+    desc: 'M633 dungeon.js 的房间调用删（:386 不再进设施）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '    const move_ctx = { d20: walk20 };\n    no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);\n    walk20 = move_ctx.d20;',
+    replace:
+      '    const move_ctx = { d20: walk20 };\n    // 变异：房间调用删\n    // no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);\n    // walk20 = move_ctx.d20;',
+    tests: ['dungeon-main', 'dungeon-room'],
+    must_mention: '房间设施真身（毒沼 10 点伤害恰一次）',
+  },
+  {
+    desc: 'M634 滞留臂的階層滞在カウント +1 删（event-turnend 新观测锚点自证）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '      // :358 階層滞在カウントを+1（CFLAG:514）\n      era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);',
+    replace:
+      '      // :358 階層滞在カウントを+1——变异：+1 删\n      // era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);',
+    tests: ['event-turnend', 'enter-enemy'],
+    must_mention: '状态 12 恰好一次 DUNGEON',
+  },
 ];

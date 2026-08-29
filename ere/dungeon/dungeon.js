@@ -58,19 +58,22 @@ const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // karma / add_ex_item / use_ex_item 存根是函数内延迟 require（避开循环
 // 初始化），本文件对它们是顶层引用——两侧只在一处顶层引用，无环。
 // H7（#176）陷阱真身在 ere/dungeon/dungeon-trap.js（其对 dungeon.js 的
-// KARMA 存根是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）
+// KARMA 存根是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）。
+// H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其对 dungeon.js
+// 的 ADD_EX_ITEM / KARMA / CAMPAIGN_ROOM 存根是延迟 require，同款防环）
 const battle_mod = require('#/dungeon/dungeon-battle');
 const battle2_mod = require('#/dungeon/dungeon-battle2');
 const trap_mod = require('#/dungeon/dungeon-trap');
+const room_mod = require('#/dungeon/dungeon-room');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。EQUIP_CHECK/EQUIP_SELECT 不在此列
  * （#174 真身，文件头）；DUNGEON_TRAP 不在此列（#176 真身
- * ere/dungeon/dungeon-trap.js）。
+ * ere/dungeon/dungeon-trap.js）；DUNGEON_ROOM 不在此列（#177 真身
+ * ere/dungeon/dungeon-room.js）。
  */
 const STUBBED_CALLS = [
-  'DUNGEON_ROOM',
   'DUNGEON_TOWN',
   'KARMA',
   'ADD_EX_ITEM',
@@ -99,18 +102,9 @@ function default_rand(n) {
 // ere/dungeon/dungeon-battle.js（调用点经模块对象引用，对比测试可替换）。
 // H7（#176）起 DUNGEON_TRAP 存根换成真身：ere/dungeon/dungeon-trap.js
 // （调用点经模块对象引用 trap_mod，同款可替换）。
-
-/**
- * @DUNGEON_ROOM 存根（迷宮/DUNGEON_ROOM.ERB；#177 H8）：房间设施效果。
- * RESULT：1 = 该房间不发生战斗（NO_BATTLE 累加）——存根返回 0（战斗可能
- * 发生）是中性值，侵攻度与层数的推进不受存根影响（工单验收线）。
- * @param {number} cid 受设施效果者（原作 A）
- * @returns {Promise<number>} 原作 RESULT（存根恒 0）
- */
-async function dungeon_room() {
-  await stub_line_wait('DUNGEON_ROOM', '房间设施', '随 #177（H8）房间票');
-  return 0;
-}
+// H8（#177）起 DUNGEON_ROOM 存根换成真身：ere/dungeon/dungeon-room.js
+// （调用点经模块对象引用 room_mod，同款可替换；RESULT 语义与 D:20 ctx
+// 透传见 :386 调用点）。
 
 /**
  * @DUNGEON_TOWN 存根（迷宮/DUNGEON_TOWN.ERB；#178 H9）：勇者撤到迷宫外
@@ -656,7 +650,13 @@ async function run_dungeon(arg0, rand) {
       a = arg0;
     }
     // :386 CALL DUNGEON_ROOM, A——戦闘无なら1が加算される（RESULT → NO_BATTLE）
-    no_battle += await dungeon_room(a);
+    // H8（#177）起真身 ere/dungeon/dungeon-room.js。D:20（侵攻度）与陷阱
+    // 侧共享同一 ctx 槽（原作全局 D 槽，MASE :835 写、TELEPORT :330/:335
+    // 写、ONE_WAY/SHOOT 读），房间与陷阱两段之间本变量无读者——单槽即
+    // 原作语义
+    const move_ctx = { d20: walk20 };
+    no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);
+    walk20 = move_ctx.d20;
 
     // === 陷阱処理（:390-413）：受者另行 1/3 掷选 ===
     let trap_target;
@@ -670,8 +670,9 @@ async function run_dungeon(arg0, rand) {
 
     // D:4 = 陷阱试行次数（原作全局 D 槽；装备「陷阱誘発」的强度——真身
     // （#176）的输入）。D:20 与陷阱共享（TELEPORT 写、ONE_WAY/SHOOT 读），
-    // 经 ctx 对象回写（原作全局 D 槽，#5 决议第六条）
-    const trap_ctx = { d20: walk20 };
+    // 经 ctx 对象回写（原作全局 D 槽，#5 决议第六条；房间段已建 move_ctx，
+    // 此处复用同一槽）
+    const trap_ctx = move_ctx;
     // :400-405 装備効果(陷阱誘発)（W:8 = 20）
     if (equip_check(trap_target, 20) > 0) {
       await trap_mod.dungeon_trap(
@@ -1481,8 +1482,10 @@ module.exports = {
   get_junk_item,
   get_down_enemy,
   // 三支战斗侧消费的域内存根（#175 起 dungeon-battle/-battle2 经模块对象
-  // 引用——单点登记，docs/stub-registry.md 不重复收录）
+  // 引用——单点登记，docs/stub-registry.md 不重复收录）。#177 起增补
+  // campaign_room（dungeon-room.js 战役分支的延迟 require 同款）
   karma,
   add_ex_item,
   use_ex_item,
+  campaign_room,
 };
