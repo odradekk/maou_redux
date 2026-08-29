@@ -7,7 +7,23 @@
  * TRAIN_NAME 是静态名表（yml/TrainCommand.yml＝TRAINNAME，#43）之上的可写
  * 覆盖层：@TRAIN_NAME_INIT 在 @EVENTTRAIN 内一次性播种初值（TRAIN_MAIN.ERB
  * :53 的调用点），此后按存档定制（J4 的自定义菜单 SHOW_COMMENU、J19 的
- * COMF120/121 读 TRAIN_NAME:SELECTCOM）。承载面是扩展普通表 yml/
+ * COMF120/121 读 TRAIN_NAME:SELECTCOM）。
+ *
+ * **本表是 @SHOW_COMMENU 指令方格的标签来源，而方格编号另有来路**
+ * （USERCOM.ERB 第 188-216 行；#212 交付后由新录黄金样本查实，J4 #214
+ * 照此接线）：
+ *   - 标签：`PRINTFORMC %TRAIN_NAME:RESULT%[{L_IDX,3}]`——读的正是本表
+ *     （TRAIN_NAME，游戏自建数组），且 RESULT 已过 @GET_ADV_COM 升格
+ *     （升格标签会盖掉底格名：样本里 8 号格标签已是「刺激Ｇ点」＝COM84，
+ *     编号仍是 8）；64 合成臂读的才是 CSV 静态名
+ *     （%TRAINNAME:64%・%TRAINNAME:L_I%，差一个下划线的两个数组写在
+ *     相邻两行）。ere 侧标签经 read_train_name(升格号) 取；
+ *   - 编号：`[n]` 是 L_IDX——对全部非空 TRAINNAME（CSV）条目（0..300
+ *     扫描、跳过 CSV 空号）的**紧凑位次**，且在 COM_ABLE 检查之前自增
+ *     （USERCOM.ERB 第 198 行），与当前可用性无关、稳定。两套编号只在
+ *     0-38（第一个 CSV 空号 39 之前）重合（实机：按 89 出穿脱衣服＝
+ *     Train.csv 110、按 55 出交谈＝56）。玩家输入的也是 L_IDX——
+ *     L_IDX ↔ Train.csv 号的映射由 J3（#213 分发骨架）建，不在本文件。承载面是扩展普通表 yml/
  * TrainAlias.yml——表名裁定（trainname 撞引擎 setVar 的 *name 只读拦截）
  * 与装载机制的引擎探针见 test/tstr-train-table.test.js 与该 yml 头注。
  *
