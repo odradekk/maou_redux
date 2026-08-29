@@ -18,4 +18,6 @@
 # 读侧 getter 兜 0（1:1 于原作「全区 0 起步」——MON_CHECK 对 <= 0 的格判
 # 「无怪物」，未写格天然无怪物）。DB 的格子数 10000，布局语义是纯坐标
 # （没有「第 0 行第 3 列」一类值得命名的条目），逐条声明只有噪声，不声明。
-# 读写包装：ere/page/page-dungeon-setup.js 的 db_get / db_set。
+# 读写包装：ere/dungeon/labo.js 的 db_get / db_set（#181 返工起自
+# page-dungeon-setup.js 移交——DA/DB/DC 三对包装同一栈导出，两票共用面的
+# 唯一真相源；折叠约定与承载依据见 labo.js 文件头）。

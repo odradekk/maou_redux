@@ -73,6 +73,36 @@ class EventFacade {
     era.set(`cflag:${this.cid}:502`, v);
   }
 
+  /**
+   * X坐标（cflag:cid:510 ↔ CFLAG:510）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行412 CFLAG:510 = X座標
+   * @returns {number}
+   */
+  get X坐标() {
+    return era.get(`cflag:${this.cid}:510`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set X坐标(v) {
+    era.set(`cflag:${this.cid}:510`, v);
+  }
+
+  /**
+   * Y坐标（cflag:cid:511 ↔ CFLAG:511）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行413 CFLAG:511 = Y座標
+   * @returns {number}
+   */
+  get Y坐标() {
+    return era.get(`cflag:${this.cid}:511`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set Y坐标(v) {
+    era.set(`cflag:${this.cid}:511`, v);
+  }
+
   // —— talent ——
   /**
    * 反抗心（talent:cid:11 ↔ TALENT:11）

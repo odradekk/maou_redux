@@ -49,6 +49,7 @@ function expected_init_writes(initial_slave) {
     { name: 'flag:27', value: [1, 1] }, // :12 种族年龄表槽 6-7（原 001001）
     { name: 'flag:500', value: 2 }, // :15 狂王初期性别：扶她
     { name: 'flag:501', value: initial_slave }, // :19 FIRST_SETTING 初期奴隶一问
+    { name: 'flag:502', value: 0 }, // :19 FIRST_SETTING 地下城模式一问（#181，选普通）
     ...Array.from({ length: 14 }, (_, k) => ({
       name: `flag:${60 + k}`,
       value: -1,
@@ -118,15 +119,17 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   // 严格夹具：角色 0/17 都要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
   preset_chara_17(fixture);
-  // 三次输入：标题「新的猎物」、初期奴隶问答「村娘」、搬运方式「抱起来」
-  fixture.set_inputs(1, 1, 1);
+  // 四次输入：标题「新的猎物」、初期奴隶问答「村娘」、地下城模式「普通」
+  // （#181 加的一问）、搬运方式「抱起来」
+  fixture.set_inputs(1, 1, 0, 1);
   const main = fixture.load_module('main');
 
   // 流程：标题消费输入 1（resetData + 加入角色 0 + 专属初始化）→ BEGIN
-  // FIRST → @EVENTFIRST 真身：初期奴隶问答（输入 1）→ 直线赋值、开场叙事
-  // （:91 读键）→ 村娘分支：加入角色 17、CFLAG 一组、描写（读键）、搬运
-  // 二选一（输入 1）、囚禁播报（读键）→ BEGIN SHOP → 主循环进 SHOP：绘制
-  // 主菜单 → era.input() 输入耗尽抛错到站。
+  // FIRST → @EVENTFIRST 真身：初期奴隶问答（输入 1）→ 地下城模式问答
+  // （输入 0，#181 加的一问）→ 直线赋值、开场叙事（:91 读键）→ 村娘分支：
+  // 加入角色 17、CFLAG 一组、描写（读键）、搬运二选一（输入 1）、囚禁播报
+  // （读键）→ BEGIN SHOP → 主循环进 SHOP：绘制主菜单 → era.input() 输入
+  // 耗尽抛错到站。
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
   // 新游戏四件套（标题侧）+ 村娘（#50）：清档后已加入 [0, 17]
@@ -144,6 +147,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 },
     { api: 'input', value: 1 },
+    { api: 'input', value: 0 }, // #181 地下城模式一问（普通）
     ...Array.from({ length: 1 }, () => ({ api: 'waitAnyKey' })),
     ...Array.from({ length: 5 }, () => ({ api: 'waitAnyKey' })),
     ...Array.from({ length: 4 }, () => ({ api: 'waitAnyKey' })),
@@ -241,7 +245,7 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  fixture.set_inputs(0);
+  fixture.set_inputs(0, 0); // 问答：随机 + 普通（#181 的第二问）
   const pending = await emit('EVENTFIRST');
 
   // 出口：随机路径的共用出口 :231 BEGIN SHOP
@@ -260,8 +264,6 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   // 存根清单核对用的导出（6 个：FIRST_SETTING 移交 first-setting.js 的
   // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）
   assert.deepEqual(STUBBED_CALLS, [
-    'GEO_TEST',
-    'SET_VIL',
     'CHARA_NAME_INIT',
     'EX_TALENTNAME_INIT',
     'RAND_CHARA_MAKE',
@@ -276,8 +278,8 @@ test('初始化写入（村娘）：CFLAG 一组 1:1 落在角色 ID 17 上（�
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 两次输入：问答「村娘」、搬运「抱起来」
-  fixture.set_inputs(1, 1);
+  // 三次输入：问答「村娘」、地下城模式「普通」（#181 的第二问）、搬运「抱起来」
+  fixture.set_inputs(1, 0, 1);
   const pending = await emit('EVENTFIRST');
 
   // 出口：村娘分支自己的 :187 BEGIN SHOP
@@ -296,7 +298,7 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   preset_chara_17(fixture);
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
-  fixture.set_inputs(1, 1);
+  fixture.set_inputs(1, 0, 1); // 村娘 + 普通（#181 第二问）+ 搬运默认走完
   // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，村娘加入后世界才是
   // 原作语境的 [0, 17]——序号 1 恰好指向村娘
   fixture.era.addCharacter(0);
@@ -329,17 +331,20 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   // 原作用例曾先喂 9（越界）验证重问。问答每轮重印 [0]/[1] 按钮，引擎的
   // input() 只送达已打印按钮的快捷键，9 在渲染层被弹回——重问分支是引擎
   // 死路径，此处只走有效输入
-  fixture.set_inputs(0);
+  fixture.set_inputs(0, 0); // 初期奴隶「随机」+ 地下城模式「普通」（#181 第二问）
   const pending = await emit('EVENTFIRST');
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),
-    [{ api: 'input', value: 0 }],
+    [
+      { api: 'input', value: 0 },
+      { api: 'input', value: 0 },
+    ],
   );
   const question_rounds = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator === 0,
   );
-  assert.equal(question_rounds.length, 1, '选项恰好渲染一轮');
+  assert.equal(question_rounds.length, 2, '两问各渲染一轮（奴隶 + 模式）');
   assert.equal(fixture.store.get('flag:501'), 0);
   // 选 0 走随机路径：共用出口
   assert.equal(pending, STATE.SHOP);
@@ -350,17 +355,18 @@ test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重�
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
 
-  // 村娘 → 搬运方式选 2 拖拽（首输入 1 是初期奴隶问答的答案）。原作用例
+  // 村娘 → 地下城模式普通（#181 第二问）→ 搬运方式选 2 拖拽。原作用例
   // 曾在中间喂越界的 3 验证 GOTO 重问：搬运画面只印一次 [1]/[2]，引擎的
   // input() 只送达已打印按钮的快捷键，3 在渲染层被弹回——重问分支是引擎
   // 死路径（#130），此处只走有效输入
-  fixture.set_inputs(1, 2);
+  fixture.set_inputs(1, 0, 2);
   await emit('EVENTFIRST');
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),
     [
       { api: 'input', value: 1 },
+      { api: 'input', value: 0 },
       { api: 'input', value: 2 },
     ],
   );

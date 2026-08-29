@@ -1,0 +1,20 @@
+# DA 表：2D 模式的地质高度区（issue #181，阶段 3 H12；返工裁定——随 #180 的
+# DB.yml 同款落引擎表，承载依据见 issue #181 返工报告）。
+#
+# 源: target/CSV/VariableSize.csv:132（DA,100,100——Emuera 二维全局数组）。
+#     写者：LABO.ERB 的 @GEO_TEST（:155 点阵随机高、:176/:196 两向余弦插值、
+#     :232 块内 GEO_CALC_INTERP）与 @DA_CLEAR（:44 清零）；
+#     读者：@C_OUT 经 /32 的颜色档（:101/:134）、@UNIT_MOVE 的高低差判定
+#     （LABO_DUNGEON_MAP.ERB:128/:157）。
+#
+# Emuera 的 DA 是二维数组（DA:Y:X，各 100）。EraElectron 的自定义表只有一维
+# 桶——本文件让引擎按「开发者自定义一维表」建 data.da 桶（与 E.yml/DB.yml
+# 同款；装载器把非内置表标为 tableType.normal，fillData 建桶），游戏代码把
+# 二维寻址折叠成一维：da:(Y * 100 + X)。实际使用面 33×33（GEO_TEST 的点阵
+# 0..32）加 DA_CLEAR 的 50×50 清零面，Y*100+X 在该面内无碰撞（X < 100）。
+#
+# 空表即够用（CFlag.yml/DB.yml 同款先例）：格子语义是纯坐标，逐条声明只有
+# 噪声，不声明；未声明下标读侧 getter 兜 0（1:1 于原作「全区 0 起步」——
+# 2D 模式未开时地形恒平，UNIT_MOVE 的高低差拒绝恒不触发）。
+# 读写包装：ere/dungeon/labo.js 的 da_get / da_set（DB 的 db_get/db_set 同栈
+# 导出，两票共用的唯一真相源）。

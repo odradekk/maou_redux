@@ -47,16 +47,18 @@ const {
   party_del,
 } = require('#/dungeon/dungeon-party');
 const { run_dungeon } = require('#/dungeon/dungeon');
+const { dungeon_map } = require('#/dungeon/labo-dungeon-map');
+const { geo_output_2 } = require('#/dungeon/labo-map');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。#172（H3）起 PARTY_UNITE / DUNGEON /
- * PARTY_JOIN / PARTY_DEL 已接真身（ere/dungeon/），从名单移除——DUNGEON_MAP
- * （2D 模式）仍存根，随 #181（H12）。
+ * PARTY_JOIN / PARTY_DEL 已接真身（ere/dungeon/），从名单移除；#181（H12）
+ * 起 DUNGEON_MAP（2D 模式的 else 臂）与 GEO_OUTPUT_2（FLAG:502==1 的地图
+ * 重绘）亦接真身（ere/dungeon/labo-dungeon-map.js 与 labo-map.js）。
  */
 const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
-  'DUNGEON_MAP',
   'LVUP',
   'DUNGEON_AFTER',
   '自動處刑',
@@ -65,7 +67,6 @@ const STUBBED_CALLS = [
   'MARRIAGE_DAY',
   'AUTOTRAIN',
   'CAMPAIGN_GAMEOVER',
-  'GEO_OUTPUT_2',
   'GET_LOOK_INFO',
 ];
 
@@ -115,12 +116,13 @@ on('EVENTTURNEND', async () => {
 
     // :286-296 迷宫攻略分档——阶段 3 的接入点之二：勇者探索中（2）或
     // 迎击中（3）且非 2D 模式（FLAG:502 == 0）走迷宫本体（#172 起真身，
-    // H1 的勇者生成让守卫第一次可达）；2D 模式走地图。
+    // H1 的勇者生成让守卫第一次可达）；2D 模式走地图（#181 起真身，
+    // ere/dungeon/labo-dungeon-map.js，缺省随机源走 Math.random）。
     const place = chara(cid).invasion.状态;
     if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {
       await run_dungeon(cid);
     } else if (place === 2 || place === 3) {
-      stub_line('DUNGEON_MAP', '野外地图推进');
+      await dungeon_map(cid);
     }
 
     // :298-299 升级结算（侵攻中的勇者除外）
@@ -529,9 +531,10 @@ on('EVENTTURNEND', async () => {
   // :743 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();
 
-  // :745-746 2D 模式（FLAG:502 == 1）的地图重绘（当前不可达）
+  // :745-746 2D 模式（FLAG:502 == 1）的地图重绘（#181 起真身，
+  // ere/dungeon/labo-map.js 的 geo_output_2）
   if ((era.get('flag:502') || 0) === 1) {
-    stub_line('GEO_OUTPUT_2', '2D 地图输出');
+    await geo_output_2();
   }
 
   // :749-751 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +

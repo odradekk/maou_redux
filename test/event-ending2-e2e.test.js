@@ -146,8 +146,10 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       '标题画面新游戏',
     );
 
-    // —— @EVENTFIRST：初期奴隶选「村娘」[1]（#50 真身），搬运选「抱起」[1]
-    fixture.set_inputs(1, 1);
+    // —— @EVENTFIRST：初期奴隶选「村娘」[1]（#50 真身）、地下城模式选
+    // 「普通」[0]（#181 加的一问——本条走 3D 路径，2D 版见
+    // event-ending2-2d-e2e.test.js）、搬运选「抱起」[1]
+    fixture.set_inputs(1, 0, 1);
     const first_exit = await emit('EVENTFIRST');
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 

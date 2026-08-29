@@ -41,15 +41,19 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { ScreenBlock } = require('#/page/components/screen-block');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { item_name } = require('#/dungeon/monster-data');
+// 2D 地图三真身与 DB 折叠包装自 #181（H12）起收敛于 ere/dungeon/（labo-map
+// 的域内存根与本地 db_get/db_set 随返工撤销——包装的唯一真相源在 labo.js）
+const { db_set } = require('#/dungeon/labo');
+const { geo_output_2, mon_limit, chip_draw } = require('#/dungeon/labo-map');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。GEO_OUTPUT_2 的既有登记在
- * ere/system/turnend-settle.js 一侧（同名单条目，不重复收录）。
+ * 核对固定）；名单变动必须同步清单。#181（H12）返工后 GEO_OUTPUT_2 /
+ * MON_LIMIT / CHIP_DRAW 三者收敛于 ere/dungeon/labo-map.js 真身（域内存根
+ * 撤销），名单清空。
  */
-const STUBBED_CALLS = ['GEO_OUTPUT_2', 'MON_LIMIT', 'CHIP_DRAW'];
+const STUBBED_CALLS = [];
 
 // :17 SETCOLORBYNAME RoyalBlue（楼层列表行）
 const COLOR_ROYAL_BLUE = 'royalblue';
@@ -79,57 +83,6 @@ function cflag_get(cid, i) {
 /** SAVESTR:cid（部下显示名）——dungeon.js name_of 同款寻址（#5 决议） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** DB:Y:X 读（一维折叠，yml/DB.yml） */
-function db_get(y, x) {
-  return era.get(`db:${y * 100 + x}`) || 0;
-}
-
-/** DB:Y:X 写（一维折叠，yml/DB.yml） */
-function db_set(y, x, v) {
-  era.set(`db:${y * 100 + x}`, v);
-}
-
-/**
- * @GEO_OUTPUT_2 存根（迷宮/LABO_MAP.ERB:6；随 #181 H12 的 2D 模式全量）：
- * 2D 模式的地图重绘。既有调用点 SYSTEM ver1.0.3.ERB:746（FLAG:502 == 1
- * 分支内）与 @DUNGEON_INFO_MAP 的 [1] 显示地图（:333）。
- *
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function geo_output_2() {
-  await stub_line_wait(
-    'GEO_OUTPUT_2',
-    '2D 地图输出',
-    '随 #181（H12）2D 模式票',
-  );
-}
-
-/**
- * @MON_LIMIT 存根（迷宮/LABO_MAP.ERB:162；随 #181 H12）：怪物配置限界
- * （32×32 格的 MON_CHECK 加总 <= 120 → 1 可放，打提示行后 0）。存根返回 1
- * （可放置）：中性值——2D 数据区未落地时 MON_CHECK 恒 0、加总恒 0 <= 120，
- * 真身在无布置世界上同样返回 1；返回 0 会让 MON_SET_OMAKASE 一次都不放。
- *
- * @returns {Promise<number>} 原作 RESULT（存根恒 1 = 可放置）
- */
-async function mon_limit() {
-  return 1;
-}
-
-/**
- * @CHIP_DRAW 存根（迷宮/LABO_MAP.ERB:95；随 #181 H12）：地图芯片绘制
- * （坐标 P:0/P:1，按地形/单位画字符）。存根返回占位芯片 '□'——32×32 的
- * 放置确认网格照常输出，★（放置点）可辨，地形细节随 2D 模式票落地。
- *
- * @param {number} x X 坐标（原作 P:0；存根不消费——真身按地形表绘制）
- * @param {number} y Y 坐标（原作 P:1；同上）
- * @returns {string} 该格的显示字符（存根恒 '□'）
- */
-// eslint-disable-next-line no-unused-vars
-function chip_draw(x, y) {
-  return '□';
 }
 
 /**
@@ -454,12 +407,15 @@ async function dungeon_info_map() {
       // :455-468 マップを出力（32×32；★ 在 (x,y)，其余 CHIP_DRAW 存根芯片。
       // SETFONT 等宽无通道，见文件头）
       for (let my = 0; my < 32; my += 1) {
-        let row = '';
+        // chip_draw 真身返回带色分段数组（#181），一行 32 格归并为一次
+        // era.print(段数组)——★ 是原作 PRINT ★ / PRINT ,（:459-460），
+        // 与其余格子同构（默认色 + 逗号）
+        const row = [];
         for (let mx = 0; mx < 32; mx += 1) {
           if (mx === x && my === y) {
-            row += '★';
+            row.push({ content: '★,' });
           } else {
-            row += chip_draw(mx, my);
+            row.push(...chip_draw(mx, my));
           }
         }
         era.print(row);
@@ -710,9 +666,4 @@ module.exports = {
   room_setup,
   dungeon_info_map,
   mon_set_omakase,
-  mon_limit,
-  chip_draw,
-  geo_output_2,
-  db_get,
-  db_set,
 };
