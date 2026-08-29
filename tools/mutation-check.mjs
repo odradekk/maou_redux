@@ -161,8 +161,12 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #177（H8 迷宫房间与设施）+22（dungeon.mjs 的 M600-M619 与 M633/M634：
 // 八设施效果各一条 + RESULT 契约 + 建设扩张 + 两条日结算 + 两处原作缺陷
 // 反向钉 + 接线两处 + 514 观测锚点自证。M620/M621 与 #179 撞号，验收时
-// 改到 M633/M634）。现为 464。
-const LEDGER_COUNT_BASELINE = 464;
+// 改到 M633/M634）。
+
+// #178（H9 城镇与任务）+14（dungeon.mjs 的 M640-M653：借贷还债担保三段、
+// 宴会预算不对称、任务受注与报酬结算、两处原作笔误反向钉、TARGET 语义
+// 两条）。现为 478。
+const LEDGER_COUNT_BASELINE = 478;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

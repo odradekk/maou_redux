@@ -53,16 +53,21 @@ const {
   monstername,
   monster_name,
 } = require('#/dungeon/monster-data');
+// H9（#178）任务真身：QUEST_BATTLE_SET / RESULT_QUEST 经模块对象引用
+// （对比测试可替换导出）。dungeon-quest 对本文件的 CAMPAIGN_MONSTER_LIST
+// 存根是函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
+// battle_mod 同构）。
+const quest_mod = require('#/dungeon/dungeon-quest');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。QUEST_BATTLE_SET / RESULT_QUEST 不在
+ * 此列（#178 真身 ere/dungeon/dungeon-quest.js，:77/:363/:365 经模块对象
+ * quest_mod 调用）。
  */
 const STUBBED_CALLS = [
   'MAGIC',
   'MONSTER_SKILL',
-  'QUEST_BATTLE_SET',
-  'RESULT_QUEST',
   'CAMPAIGN_MONSTER_LIST',
   'CAMPAIGN_DUNGEON_LV',
   'SELECT_BENKI_MENU',
@@ -112,23 +117,9 @@ function monster_skill() {
   return stub_line('MONSTER_SKILL', '怪物技能', '随怪物技能票');
 }
 
-/**
- * @QUEST_BATTLE_SET 存根（迷宮/DUNGEON_QUEST.ERB:516；#178 H9）：任务战斗
- * 判定与敌方设置。RESULT：1 = 本次是任务战斗且跳过普通战斗；2 = 任务战斗
- * 继续。存根返回 0（非任务战斗，普通战斗照打）。
- * @returns {number} 原作 RESULT（存根恒 0）
- */
-function quest_battle_set() {
-  return stub_line('QUEST_BATTLE_SET', '任务战斗判定', '随 #178（H9）城镇票');
-}
-
-/**
- * @RESULT_QUEST 存根（迷宮/DUNGEON_QUEST.ERB；#178 H9）：任务成败结算。
- * @returns {number} 原作 RETURN（存根恒 0）
- */
-function result_quest() {
-  return stub_line('RESULT_QUEST', '任务结算', '随 #178（H9）城镇票');
-}
+// @QUEST_BATTLE_SET / @RESULT_QUEST（迷宮/DUNGEON_QUEST.ERB）：#178（H9）
+// 起为真身 ere/dungeon/dungeon-quest.js 的 quest_battle_set / result_quest
+// （:77 与 :363/:365 的调用点经模块对象 quest_mod 引用，见文件头）。
 
 /**
  * @CAMPAIGN_MONSTER_LIST 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役
@@ -1354,9 +1345,9 @@ async function dungeon_party_battle(arg0, rand) {
 
   // === 勝利フラグ / クエスト（:75-80）===
   const success = { v: 0 };
-  const quest_flag = quest_battle_set(arg0); // QUEST_FLAG = RESULT
+  const quest_flag = await quest_mod.quest_battle_set(arg0, rand); // QUEST_FLAG = RESULT
   if (quest_flag === 1) {
-    return 0;
+    return 0; // 性奉侍完结（QUEST_BITCH 已把 534 置成功位）
   }
 
   // === 弾の補充（:89-96）===
@@ -1600,13 +1591,13 @@ async function dungeon_party_battle(arg0, rand) {
     // :359 ATK_TURN += 1——死赋值（无读者），不落地（文件头注释）
   }
 
-  // :362-365 クエスト结算（QUEST_BATTLE_SET 存根恒 0，两臂不达——quest_flag
-  // 已是调用值，结构 1:1 保留）
+  // :362-365 クエスト结算——#178 真身起两臂第一次可达（存根期 QUEST_FLAG
+  // 恒 0）：任务战斗（quest_flag === 2）按战果 SUCCESS 走成功/失败结算
   if (quest_flag === 2 && success.v === 1) {
-    result_quest(arg0, '成功');
+    await quest_mod.result_quest(arg0, '成功', rand);
   }
   if (quest_flag === 2 && success.v === 0) {
-    result_quest(arg0, '失败');
+    await quest_mod.result_quest(arg0, '失败', rand);
   }
 
   // :367-368 侵攻中的再出发演出
