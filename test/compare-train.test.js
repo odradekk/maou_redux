@@ -41,11 +41,19 @@ const REPO = path.resolve(__dirname, '..');
 //     放置PLAY 54↔55、交谈 55↔56、穿脱衣服 89↔110 各 2 条）+ ere 侧
 //     野外PLAY[54]/兽奸PLAY[89] 撞错位段 + 交谈[56]/穿脱衣服[110] 的 ere
 //     半边（SKEW 兜底）× 屏数；
-//   存根 2549 的主体 = 每屏 ~80 条 COM_ABLE 未过滤按钮 × 17 屏 + 指令块
+//   存根 2536 的主体 = 每屏 ~80 条 COM_ABLE 未过滤按钮 × 17 屏 + 指令块
 //     输出 + 参数/结算数值差——阶段 4 的进度计本体。
+//
+// 【验收期更新，#212（J2）合并后实测】本票建树时 master 尚无 J2 的
+// @SHOW_STATUS 槽条段与 LIFE_BAR/VITAL_BAR 真身，四数原为
+//   train-natural 537/176/2549/0、train-upgrade 142/52/841/0。
+// J2 落地后体力/气力/射精三条基础条转为匹配、两行 ere 占位撤除，两份样本
+// 同向移动：匹配 +15/+8、存根 -13/-11、version 与 unexplained 一动不动。
+// **这是收紧不是放宽**——进度计（存根数）该降的时候降了，而 unexplained
+// 恒为 0 说明没有差异被偷偷豁免掉。缺省样本同步 54/10/112 → 57/10/107。
 const BASELINE = {
-  'train-natural': { matched: 537, version: 176, stub: 2549, unexplained: 0 },
-  'train-upgrade': { matched: 142, version: 52, stub: 841, unexplained: 0 },
+  'train-natural': { matched: 552, version: 176, stub: 2536, unexplained: 0 },
+  'train-upgrade': { matched: 150, version: 52, stub: 830, unexplained: 0 },
 };
 
 async function build_report(sample) {
