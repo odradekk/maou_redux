@@ -250,7 +250,10 @@ async function draw_status_screen(target) {
   // 名字后的全角对齐衬垫（STRLENSU < 4 补全角空格）是字符条排版，progress
   // 格不镜像（见 chara-bars.js 文件头）。SETCOLOR 的名字着色（主人浅蓝/
   // 助手粉）为纯表现，不镜像（与头行着色同为记名差异）。
-  // TEQUIP:35/36/37（主人/助手/目标避孕套）缀「避孕套使用中」。
+  // TEQUIP:35/36/37 缀「避孕套使用中」——注意省略角色位在 Emuera 里恒指
+  // TARGET（不是各段自己的角色），三段读的都是 tequip:TARGET:3x（#212
+  // 返工修正：首版写成二段 tequip:3x，引擎侧读的是「角色 3x 的整行对象」/
+  // undefined——避孕套恒显或恒不显，见返工报告）。
 
   // :144-158 射精（主人）：TARGET != MASTER（自调教不显示）
   if (
@@ -263,7 +266,7 @@ async function draw_status_screen(target) {
       era.get('base:0:2') || 0,
       era.get('maxbase:0:2') || 0,
       {
-        suffix: era.get('tequip:35') ? '避孕套使用中' : '',
+        suffix: era.get(`tequip:${target}:35`) ? '避孕套使用中' : '',
       },
     );
   }
@@ -280,7 +283,7 @@ async function draw_status_screen(target) {
       `射精（${chara_callname(era_flag.assi)}）`,
       era.get(`base:${era_flag.assi}:2`) || 0,
       era.get(`maxbase:${era_flag.assi}:2`) || 0,
-      { suffix: era.get('tequip:36') ? '避孕套使用中' : '' },
+      { suffix: era.get(`tequip:${target}:36`) ? '避孕套使用中' : '' },
     );
   }
 
@@ -294,7 +297,7 @@ async function draw_status_screen(target) {
       `射精（${chara_callname(target)}）`,
       era.get(`base:${target}:2`) || 0,
       era.get(`maxbase:${target}:2`) || 0,
-      { suffix: era.get('tequip:37') ? '避孕套使用中' : '' },
+      { suffix: era.get(`tequip:${target}:37`) ? '避孕套使用中' : '' },
     );
   }
 
@@ -336,7 +339,7 @@ async function draw_status_screen(target) {
   }
 
   // :228-235 射精（犬）（TEQUIP:89 兽奸 PLAY）：BASE:MASTER:4 槽，缺省补 10000
-  if (era.get('tequip:89')) {
+  if (era.get(`tequip:${target}:89`)) {
     if (!(era.get('maxbase:0:4') > 0)) {
       era.set('maxbase:0:4', 10000);
     }
@@ -348,7 +351,7 @@ async function draw_status_screen(target) {
   }
 
   // :237-244 射精（触手）（TEQUIP:90）
-  if (era.get('tequip:90')) {
+  if (era.get(`tequip:${target}:90`)) {
     if (!(era.get('maxbase:0:4') > 0)) {
       era.set('maxbase:0:4', 10000);
     }
@@ -360,7 +363,7 @@ async function draw_status_screen(target) {
   }
 
   // :246-252 射精（死斗场・怪物）（TEQUIP:55）
-  if (era.get('tequip:55')) {
+  if (era.get(`tequip:${target}:55`)) {
     if (!(era.get('maxbase:0:4') > 0)) {
       era.set('maxbase:0:4', 10000);
     }

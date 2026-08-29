@@ -564,7 +564,7 @@ test('射精（主人）：121/122 守卫、TALENT:135 无 ≥2000 臂（与助�
   // 避孕套（TEQUIP:35）
   const f4 = create_era_fixture();
   base_world(f4);
-  f4.store.set('tequip:35', 1);
+  f4.store.set('tequip:31:35', 1); // 目标的避孕套槽（省略位 == TARGET）
   await run_show_status(f4);
   assert.equal(find_bar(f4, '射精（你）').out, '(2500/10000)避孕套使用中');
 
@@ -606,7 +606,7 @@ test('射精（目标）：TALENT:135 的 ≥2000 臂放行（与主人档对照
   const f3 = create_era_fixture();
   seed(f3);
   f3.store.set('base:31:2', 2500);
-  f3.store.set('tequip:37', 1);
+  f3.store.set('tequip:31:37', 1);
   await run_show_status(f3);
   assert.equal(find_bar(f3, '射精（温妮）').out, '(2500/10000)避孕套使用中');
 });
@@ -686,7 +686,7 @@ test('触手/犬/死斗场三段（TEQUIP:89/90/55）：BASE:4 槽 + MAXBASE:4 �
     const fixture = create_era_fixture();
     const era_flag = seed_world(fixture);
     era_flag.day_count = 0;
-    fixture.store.set(`tequip:${slot}`, 1);
+    fixture.store.set(`tequip:31:${slot}`, 1);
     fixture.store.set('base:0:4', 1200);
 
     await run_show_status(fixture);

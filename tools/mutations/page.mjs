@@ -880,10 +880,19 @@ export default [
   {
     desc: 'M712 主人避孕套槽位 35 改 36（TEQUIP 位错）',
     file: 'ere/page/page-train.js',
-    find: `      suffix: era.get('tequip:35') ? '避孕套使用中' : '',`,
-    replace: `      suffix: era.get('tequip:36') ? '避孕套使用中' : '',`,
+    find: "      suffix: era.get(`tequip:${target}:35`) ? '避孕套使用中' : '',",
+    replace:
+      "      suffix: era.get(`tequip:${target}:36`) ? '避孕套使用中' : '',",
     tests: ['page-train'],
     must_mention: '(2500/10000)避孕套使用中',
+  },
+  {
+    desc: 'M716 避孕套守卫回退成二段（tequip:TARGET:35 → tequip:35——守卫真树用例的靶心）',
+    file: 'ere/page/page-train.js',
+    find: "      suffix: era.get(`tequip:${target}:35`) ? '避孕套使用中' : '',",
+    replace: "      suffix: era.get('tequip:35') ? '避孕套使用中' : '',",
+    tests: ['chara-table-addressing'],
+    must_mention: '角色表二段寻址',
   },
   {
     desc: 'M713 主人档的 TARGET != MASTER 判据删（自调教双条）',

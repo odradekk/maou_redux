@@ -412,4 +412,15 @@ export default [
     tests: ['asar-candidates'],
     must_mention: 'none 必须让 engine-bundle 退回无引擎',
   },
+
+  // —— #212 返工三：二段寻址守卫的反向变异 ——
+  {
+    desc: 'M715 守卫表族清单摘掉 tequip（阳性对照当场红——守卫必须有牙）',
+    file: 'test/chara-table-addressing.test.js',
+    find: `  'tequip',
+  'tcvar',`,
+    replace: `  'tcvar',`,
+    tests: ['chara-table-addressing'],
+    must_mention: '守卫清单与期望名单不一致',
+  },
 ];

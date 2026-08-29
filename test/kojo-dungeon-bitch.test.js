@@ -603,3 +603,18 @@ test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文�
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
 });
+
+// —— #212 返工：ANIMAL 的 JUEL 加算（首版二段寻址打在角色 1 的行对象上，从未生效）——
+
+test('EXP_BITCH：ANIMAL 的 JUEL 加算真打到 arg 名下（JUEL:1/6/8 三段）', () => {
+  const { fixture, mod } = setup_bitch();
+
+  mod.exp_bitch(31, 'DUNGEON', 'ANIMAL', 2);
+
+  // :406-408 JUEL:N += PLAY * 200/300/200（省略位 == TARGET == arg）
+  assert.equal(fixture.store.get('juel:31:1'), 400, 'JUEL:1 必须 +PLAY*200');
+  assert.equal(fixture.store.get('juel:31:6'), 600, 'JUEL:6 必须 +PLAY*300');
+  assert.equal(fixture.store.get('juel:31:8'), 400, 'JUEL:8 必须 +PLAY*200');
+  // 角色 1 名下不得被打扰（二段形态 era.add(`juel:1`) 打的是它的行对象）
+  assert.equal(fixture.store.get('juel:1:1'), undefined);
+});
