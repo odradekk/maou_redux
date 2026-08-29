@@ -156,8 +156,13 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #181（H12 2D 地下城）+8（dungeon.mjs 的 M580-M587）；返工 +2（M588/M589
 // 钉住 DA/DB/DC 引擎表承载不倒退）。
 // #179（H10 迷宫日程与战果）+13（dungeon.mjs 的 M620-M632）。
-// #185（H16 卖春记录与日志分支）+4（kojo.mjs 的 M520-M523）。现为 442。
-const LEDGER_COUNT_BASELINE = 442;
+// #185（H16 卖春记录与日志分支）+4（kojo.mjs 的 M520-M523）。
+
+// #177（H8 迷宫房间与设施）+22（dungeon.mjs 的 M600-M619 与 M633/M634：
+// 八设施效果各一条 + RESULT 契约 + 建设扩张 + 两条日结算 + 两处原作缺陷
+// 反向钉 + 接线两处 + 514 观测锚点自证。M620/M621 与 #179 撞号，验收时
+// 改到 M633/M634）。现为 464。
+const LEDGER_COUNT_BASELINE = 464;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

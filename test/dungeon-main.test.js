@@ -191,6 +191,11 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
 
 test('贯通·战斗真身（H6）：推进全程战斗确实发生、勇者气力被消耗，直到结局', async () => {
   const fixture = setup_world();
+  // 第 1 层放毒沼（H8 房间真身的确定性输出锚点）：勇者恰在第 1 层滞留一
+  // 次（第 1 次调用 walk = 73 ∈ (0,100) 滞留臂；第 2 次踏破后房间读的是
+  // 已推进的第 2 层），毒沼的 10 点伤害（DMG = CFLAG:0:9 + 10）是
+  // DUNGEON_ROOM 真身跑过的直接证据——存根期此锚点靠占位行计数
+  fixture.store.set('flag:350', 501);
   const { run_dungeon } = load(fixture);
   // H6（#175）起 DUNGEON_PARTY_BATTLE 是真身：每轮滞留都发生战斗、
   // 战斗的逃跑段（TURN > 5，max 下 rand(3) = 2 ≠ 0 必成）扣勇者气力
@@ -227,9 +232,18 @@ test('贯通·战斗真身（H6）：推进全程战斗确实发生、勇者气�
     0,
     '队伍战斗真身（无占位行）',
   );
-  assert(
-    stub_count(fixture, 'DUNGEON_ROOM') >= 1,
-    '房间设施存根仍在场（H7 未接）',
+  // H8（#177）房间真身的正向锚点：第 1 层毒沼恰结算一次（第 1 次调用的
+  // 滞留臂后），2000 - 10 = 1990——战斗侧怪物攻击是原作缺陷形态（不打退
+  // 也不掉 HP，见 dungeon-battle.js 文件头），HP 无其他写者，精确等值
+  assert.equal(
+    fixture.store.get('base:1:0'),
+    1990,
+    '房间设施真身（毒沼 10 点伤害恰一次）',
+  );
+  assert.equal(
+    stub_count(fixture, 'DUNGEON_ROOM'),
+    0,
+    '房间设施真身（无占位行）',
   );
 });
 

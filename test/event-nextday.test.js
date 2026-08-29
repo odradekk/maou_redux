@@ -386,9 +386,9 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'NINSIN_MAIN',
     'OFFERVIRGIN_CHECK',
     'NIGHT_STALKING_CHECK',
-    // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）
+    // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；
+    // #177 起 DUNGEON_ROOM_DAY 换真身（ere/dungeon/dungeon-room.js）
     'SUMMON_MONSTER',
-    'DUNGEON_ROOM_DAY',
     'PILLORY',
     'SABBATH',
     'SABBATH_DAY',
