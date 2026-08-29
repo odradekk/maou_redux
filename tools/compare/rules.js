@@ -1,12 +1,14 @@
 /**
- * @file T18 输出比对·差异归因规则（issue #48）。
+ * @file T18 输出比对·差异归因规则（issue #48；#161 范围 B、#211 调教段
+ * 全序列各自加 scope 规则组）。
  *
  * #9 的定案：忽略规则每条都要注明理由——否则忽略规则会逐渐变成掩盖缺陷
  * 的地毯。规则只认「有名字的差异」：
- *   - version：黄金样本录自比 target/ 更早的构建（#9 勘误二），54/55/56/
- *     89/110 五个编号的指令菜单差异是构建漂移、不是移植缺陷；
- *   - stub：docs/stub-registry.md 已登记的待办（存根占位行、状态画面未
- *     移植的条段、COM_ABLE 未移植导致的按钮未过滤、SHOW_USERCOM 按钮组）；
+ *   - version：编号体系差（L_IDX 紧凑序号 vs Train.csv 的 L_I，#211 实证；
+ *     待 #213 建映射层后整组删除）与版本轴重设（ADR-0006）；
+ *   - stub：docs/stub-registry.md 已登记的待办（存根占位行、指令族未移植
+ *     的输出块与数值差、COM_ABLE 未移植导致的按钮未过滤、SHOW_USERCOM
+ *     按钮组）与已登记的已知移植缺陷；
  *   - 其余一律 unexplained——真缺陷候选，当次比对必须归零或开票处置。
  *
  * 规则表是**白名单**形态：命中才豁免，改一个字就失配变红，逼改动者有
@@ -18,17 +20,41 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-// —— 指令菜单的构建漂移（#9 勘误二 + 本次新查出）——
-// 日志侧：放置PLAY=54、交谈=55、穿脱衣服=89；target 侧：野外PLAY=54、
-// 放置PLAY=55、交谈=56、兽奸PLAY=89、穿脱衣服=110。两构建在这些编号上
-// 必然对不齐，追它们没有意义。
+// —— 指令菜单的编号体系差（#9 勘误二的登记 + #211 第三段的归因改正）——
+//
+// 【机制（#211 第二段录制查出，三条独立证据在票上：Train.csv 行序算术、
+// @SHOW_COMMENU 的 L_IDX++、实机 89 跑出 @COM110）】玩家看到并输入的编号
+// 是**紧凑序号 L_IDX**（全部非空 TRAINNAME 条目中的位次），不是 Train.csv
+// 的编号 L_I：@SHOW_COMMENU（USERCOM.ERB:189-215）的 L_IDX 在 COM_ABLE
+// 检查之前自增，打印 %TRAIN_NAME:RESULT%[{L_IDX,3}]——名字用（升格后的）
+// id、编号用位次。Train.csv 的 39/67/69/70/74-79/84/86/91-99 段是空号，
+// 从打屁股（L_I=40）起 L_IDX = L_I − 累计空号数。
+//
+// ere 侧按钮渲染的是 L_I（yml/TrainCommand.yml 存的就是 L_I——那是对的；
+// train-loop.js 把输入直当 SELECTCOM 的潜伏错误归 #213），两侧在这五个
+// 编号上必然对不齐。**ere 侧待 #213（J3）建 L_IDX↔L_I 映射层后本组两条
+// 豁免即可删除**；在此之前桥必须架着——新样本（train-natural/
+// train-upgrade，录自当前构建、与旧样本编号完全一致）一比对就是一片
+// 假差异。这不是构建漂移：旧样本录自更旧构建的解释已被新样本推翻
+// （两份构建相隔多次提交、编号差却逐字相同——差异随构建走的假设不成立）。
+//
+// 豁免形态两档（精确的在前）：
+//   - MENU_LABEL_SHIFT 按 (标签, 侧, 编号) 精确配对四个错位标签；
+//   - VERSION_SKEW_IDS 裸编号兜**ere 侧独有条目**（野外PLAY[54]、兽奸
+//     PLAY[89]——L_I 编号撞进错位段，COM_ABLE 未过滤把它们渲染出来）。
+// 不放宽到裸编号匹配四个标签——裸 40 会吞掉真正的 COM_ABLE 回归。
 const VERSION_SKEW_IDS = new Set([54, 55, 56, 89, 110]);
 
-// —— 同族漂移的**标签移位**（这张票首跑比对新发现，勘误二「0-39 全部吻合」
-//    的例外）：黄金样本 打屁股[39]（log:66），Train.csv 打屁股=40——target
-//    在 39-53 段插过指令、其后编号整体 +1。按 (标签, 侧, 编号) 精确配对，
-//    不放宽到裸编号（裸 40 会吞掉真正的 COM_ABLE 回归）。
-const MENU_LABEL_SHIFT = [{ key: '打屁股', golden: 39, ere: 40 }];
+// 四个错位标签的精确配对（golden 侧紧凑序号 / ere 侧 Train.csv 编号；
+// train-natural-log:111-112 的方格与 yml/TrainCommand.yml 逐条核对）。
+// 顺序敏感：classify_entry 里 shift 先于 VERSION_SKEW_IDS 命中——四个
+// 标签走精确配对、SKEW 只兜剩余编号，两档各自有名字。
+const MENU_LABEL_SHIFT = [
+  { key: '打屁股', golden: 39, ere: 40 }, // L_I 39 空号（首位）
+  { key: '放置PLAY', golden: 54, ere: 55 },
+  { key: '交谈', golden: 55, ere: 56 },
+  { key: '穿脱衣服', golden: 89, ere: 110 }, // 累计 21 个空号
+];
 
 // —— @SHOW_USERCOM 的按钮组标签（docs/stub-registry.md「指令菜单按钮渲染」
 //    行：[100]-[990] 组未挂载）。golden 侧出现这些标签 = 已登记待办 ——
@@ -68,7 +94,9 @@ const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);
 //   golden 带「隔着紧身衣＆裙甲、」前缀，ere 侧没有；ere 侧的裸文本与
 //   golden 去前缀后逐字一致才豁免（成对豁免，单边不成立）。
 const CLOTH_PREFIX = '隔着紧身衣＆裙甲、';
-const STUB_TEXT_EXACT = new Set(['【紧身衣＆裙甲的姿态】']); // PRINT_CLOTHTYPE
+// PRINT_CLOTHTYPE 的两态（train-natural 的穿衣/全裸各屏；范围 B 与旧样本
+// 的流里无此二串，加'【全裸】'（#211）对既有基线零影响）
+const STUB_TEXT_EXACT = new Set(['【紧身衣＆裙甲的姿态】', '【全裸】']);
 
 // —— 范围 B（#161）：主菜单/存读档/日循环三段的归因。全部受 scope 守卫
 //    （context.scope === 'B'，由 cli 的 --sample 传入）——调教段比对不带
@@ -153,7 +181,7 @@ function load_traincommand_ids(
  *   null = 无法归因（unexplained，真缺陷候选）}
  */
 function classify_entry(entry, side, context) {
-  // 范围 B（#161）的规则组先于调教段规则：scope 守卫保证调教段比对
+  // 范围 B（#161）的规则组先于调教段规则：scope 守卫保证其它比对
   // （无 scope）零触发；范围 B 内编号与调教规则的重叠（110 等）也由
   // 先到先得消解——范围 B 样本里 110 是主菜单的实验室按钮
   if (context.scope === 'B') {
@@ -162,22 +190,35 @@ function classify_entry(entry, side, context) {
       return hit;
     }
   }
+  // 调教段全序列（#211 第三段）的规则组：只在 scope === 'train'（cli 的
+  // --sample train-* 传入）时生效——旧样本首回合比对（无 scope）与范围 B
+  // 的计数零变化。组内未命中的条目落回下方的调教段通用规则（菜单豁免
+  // 桥 VERSION_SKEW/MENU_LABEL_SHIFT、存根行、COM_ABLE 未过滤等两份
+  // 新样本同样消费）
+  if (context.scope === 'train') {
+    const hit = classify_scope_train(entry, side, context);
+    if (hit) {
+      return hit;
+    }
+  }
   const tc_ids = context.traincommand_ids ?? load_traincommand_ids();
 
   if (entry.kind === 'menu') {
+    // 精确配对先行（#211 第三段起）：四个错位标签各自有名字；SKEW 裸编号
+    // 只兜 ere 侧独有条目（野外PLAY[54]/兽奸PLAY[89] 等 L_I 撞错位段的渲染）
     const shift = MENU_LABEL_SHIFT.find(
       (s) => s.key === entry.key && s[side] === entry.val,
     );
-    if (VERSION_SKEW_IDS.has(entry.val)) {
-      return {
-        category: 'version',
-        reason: `指令编号 ${entry.val} 在黄金样本与 Train.csv 间漂移（#9 勘误二）`,
-      };
-    }
     if (shift) {
       return {
         category: 'version',
-        reason: `标签移位：${shift.key} 在黄金样本是 ${shift.golden}、Train.csv 是 ${shift.ere}（勘误二「0-39 吻合」的例外，这张票实证）`,
+        reason: `编号体系差：${shift.key} 的方格编号是紧凑序号 L_IDX ${shift.golden}、Train.csv 编号 L_I ${shift.ere}（@SHOW_COMMENU 的 L_IDX++，#211 实证；ere 侧待 #213 建映射层后本条删除）`,
+      };
+    }
+    if (VERSION_SKEW_IDS.has(entry.val)) {
+      return {
+        category: 'version',
+        reason: `编号体系差：编号 ${entry.val} 落在 L_IDX/L_I 错位段（Train.csv 空号累计，#211 实证；ere 侧待 #213 建映射层后本条删除）`,
       };
     }
     if (side === 'golden' && USERCOM_BUTTON_LABELS.has(entry.key)) {
@@ -265,6 +306,438 @@ function classify_entry(entry, side, context) {
   // —— 范围 B（#161）：主菜单/存读档/日循环的规则组（独立函数，由
   //    classify_entry 在 scope 守卫下优先调用） ——
   return null;
+}
+
+// —— 调教段全序列（#211 第三段）：train-natural / train-upgrade 的归因 ——
+//
+// 与范围 B 的本质差异：这里的差异主体是**指令族未移植的连带**。COM 族除
+// COM0（爱抚）外全部是分发存根（com_family.call 返回 COM_MISSING → 回合
+// 循环丢弃输入就地重绘），golden 侧 16+2 条指令的输出块（指令名回显/
+// 实行值判定/情景与口上/源一览/算式/损耗/经验行）、参数累积（gauge）、
+// 结算增量（calc 与结算表）与 PREVCOM 推进全部随之缺失。这批差异就是
+// #210 阶段 4 的进度计：每张指令族票落地，对应差异自动消失、基线四数
+// 变化（有意更新基线锁）——**不许用放宽本组的办法把它做小**。
+//
+// 两条已核的移植缺陷登记在案（随修正票，修好即从差异中消失）：
+//   - SHOW_INFO_EXP 的经验名截断：原作 SUBSTRING 按显示宽度 8（= 4 个
+//     全角字）截（golden「调教自慰」/「调教会话」见 train-natural-log:935-936），
+//     ere 侧 page-info-exp.js 按字符数 slice(0, 8) 不截——名字长度差 2 字
+//     （源 exp.csv 本名「调教自慰经验」/「调教会话经验」）；
+//   - train-loop.js:164-168 把玩家输入直接当 SELECTCOM（L_IDX 缺映射层，
+//     归 #213）：train-upgrade 的夺处女确认输入 0 被 ere 侧当指令 0 执行、
+//     多出一整块爱抚输出。
+
+// 源一览行：`阴核(1000)乳房(25)…` —— 名字(数字) 单元串联、无运算符
+// （@SOURCE_CHECK 的「ソース確認」显示；源由各 @COMn 写入，未移植的指令
+// 无源可显——ere 侧整行缺席）。判定行（`顺从LV1(4) + …`）带 ` + ` 结构，
+// 不落本正则。
+const TRAIN_SOURCE_LINE_RE = /^[^\s()+-]+(\(\d+\)[^\s()+-]*)+$/;
+// 实行值判定行（两形态：算式尾行 `… = 29 > 实行值15`；跨行折断的首行
+// `顺从LV1(4) + 抖M气质LV3(6) + …`——COMF 头部判定段，随族票）
+const TRAIN_JUDGE_TAIL_RE = / = \d+ (>|<|=) 实行值\d+$/;
+const TRAIN_JUDGE_HEAD_RE = /^(顺从|欲望)LV\d+\(\d+\) \+ /;
+// 结算表行（@JUEL_CHECK_MAIN 已移植 #47）：`阴核点数：(    4759 +     1100)            =     5859|`
+// 与抵消形态 `恭顺点数：(       0 +        1) -        1 =        0|`
+const TRAIN_SETTLE_ROW_RE = /^[^\s()]+点数：\(.*= *\d+\|$/;
+// 点数一览行（@SHOW_JUEL 已移植）：`阴核点数：  5859 私处点数：     0 …`
+const TRAIN_JUEL_SUM_RE = /^[^\s:：]+点数：\s*\d+(\s+[^\s:：]+点数：\s*\d+)+$/;
+// 经验一览行（@SHOW_INFO_EXP 已移植）：行首全角空格 + `绝顶经验:    13` 串联
+// （归一化已压空白，匹配半角形态）
+const TRAIN_EXP_SUM_RE = /^[^\s:：]{2,10}:\s*\d+(\s+[^\s:：]{2,10}:\s*\d+)*$/;
+// 等级行与初吻/初体验括号行（SHOW_INFO_EXP 的尾段）
+const TRAIN_LEVEL_RE = /^温妮当前是Lv\d+，战斗经验值总计/;
+const TRAIN_KISS_RE = /^\[初(吻|体验)对象：/;
+// 状态画面头两行（重绘屏族的锚：ere 侧无效输入回环多出的屏以此为头）
+const TRAIN_STATUS_HEAD_RE = /^\d+日\((午前|午后)\)$|^温妮 调教中/;
+// 绝顶计数行（SHOW_STATUS 的 EX 方括号段）
+const TRAIN_EX_COUNT_RE = /^\[[^\]]*绝顶：\d+次\]$/;
+// ABLUP 能力列表条目（ere 按钮化 PR #53 通则；golden 纯文本 `[ 0]阴蒂感觉 - LV 4`）
+const TRAIN_ABLUP_ITEM_RE = / - LV \d+( \*)?$/;
+// 穿脱子菜单条目（COM110 未移植）：` [1] - 紧身衣＆裙甲上半身脱掉`
+const TRAIN_CLOTH_MENU_RE = /^- (紧身衣＆裙甲|脱掉内裤|全部扒光|移动到|算了)/;
+
+// 未移植指令的输出块区间（golden 行号，含端点；样本只读故区间稳定）。
+// 块 = 指令名回显起、下一屏状态行止；块内的情景/口上/判定/源一览/算式/
+// 损耗/经验/绝顶行统一归「该指令未移植」。两次爱抚（COM0 已移植）的块
+// 也在列：ere 侧因 PREVCOM 链断误入「连续执行同一指令」补正分支（×0.5
+// 档），算式与源一览数值发散——同为指令族未移植的连带。
+const TRAIN_UNIMPLEMENTED_BLOCKS = {
+  'train-natural': [
+    [90, 95], // @PRITRAIN_MESSAGE 消息体（第 13 次调教开场叙事与口上）
+    [167, 186], // COM6 接吻（头部判定 + 情景 + 算式）
+    [211, 221], // COM110 穿脱衣服（子菜单 + 温妮全裸了。）
+    [251, 274], // COM0 爱抚#2：连续补正误触发（PREVCOM 链断）
+    [303, 324], // COM12 振动杖
+    [353, 373], // COM1 舔阴
+    [402, 422], // COM10 振动宝石
+    [451, 480], // COM3 自慰（判定 + 情景 + 经验行 + 算式）
+    [509, 530], // COM12 振动杖
+    [559, 579], // COM10 振动宝石
+    [608, 627], // COM30 手淫（判定 + 情景 + 算式）
+    [656, 681], // COM12 振动杖（含「阴蒂绝顶」段）
+    [711, 724], // COM55 交谈（情景 + 经验行 + 算式）
+    [756, 779], // COM0 爱抚#3：同爱抚#2
+    [809, 829], // COM10 振动宝石
+    [859, 880], // COM12 振动杖
+    [912, 912], // K3 调教结束口上（EVENT_K3_高貴.ERB:829）
+    [915, 915], // RE_CLOTHED（调教后重新着衣）
+  ],
+  // train-upgrade：COM110 穿脱 + COM8/COM84 升格链两块
+  'train-upgrade': [
+    [232, 236], // @PRITRAIN_MESSAGE 消息体
+    [261, 271], // COM110 穿脱衣服（子菜单 + 温妮全裸了。）
+    [300, 332], // COM8 插入手指（夺处女确认 + 【处女丧失】+ 算式）
+    [362, 388], // COM84 刺激Ｇ点（升格目标，@GET_ADV_COM 随 #213/J19）
+    [419, 423], // K3 调教结束口上 + RE_CLOTHED
+  ],
+};
+
+/** golden 行号是否落在该样本的未移植指令块内 */
+function in_unimplemented_block(sample, line) {
+  return (TRAIN_UNIMPLEMENTED_BLOCKS[sample] ?? []).some(
+    ([lo, hi]) => line >= lo && line <= hi,
+  );
+}
+
+/**
+ * 调教段全序列（#211 第三段）的归因规则组：只在 context.scope === 'train'
+ * （cli --sample train-* 传入）时被 classify_entry 调用。规则依据见上方
+ * 常量注释；未命中者落回调教段通用规则（菜单豁免桥、存根行等）。
+ * @param {object} entry 差异条目
+ * @param {'golden'|'ere'} side
+ * @param {object} context { sample?: 'train-natural'|'train-upgrade',
+ *   counterpart?: 对侧条目, traincommand_names?: Set<string> }
+ * @returns {{category: 'version'|'stub', reason: string} | null}
+ */
+function classify_scope_train(entry, side, context) {
+  const sample = context.sample;
+  const tc_names = context.traincommand_names ?? load_traincommand_names();
+
+  // —— 数值路径：参数/结算/算式的 COM 族连带 ——
+  if (entry.kind === 'gauge' && context.counterpart?.kind === 'gauge') {
+    return {
+      category: 'stub',
+      reason: `参数条数值差：${entry.key} 的增量来自未移植指令（COM 族存根不结算，参数不累积——#210 阶段 4 逐票消费）`,
+    };
+  }
+  if (
+    entry.kind === 'gauge' &&
+    side === 'ere' &&
+    context.counterpart === undefined
+  ) {
+    // ere 侧每条被丢弃的指令输入都就地重绘一屏（引擎「重新要求输入」
+    // 语义），屏数多于 golden 的指令屏——多出屏的参数条在此归因
+    return {
+      category: 'stub',
+      reason: `无效输入回环的重绘屏参数条（${entry.key}）：COM 未移植 → 输入被丢弃重绘，ere 侧屏数多于 golden`,
+    };
+  }
+  if (entry.kind === 'calc') {
+    return {
+      category: 'stub',
+      reason:
+        '算式行数值差：增量来自未移植指令（COM 族存根不结算，#210 阶段 4 逐票消费）',
+    };
+  }
+  if (entry.kind === 'lossbar' && side === 'golden') {
+    return {
+      category: 'stub',
+      reason: '损耗行：未移植指令的体力/气力损耗（COM 族存根无 LOSEBASE 写入）',
+    };
+  }
+  // #213 输入映射缺失的连带（train-upgrade）：夺处女确认的输入 0 被 ere
+  // 侧当指令 0（爱抚）执行——误执行的爱抚输出块（指令名/A 文/反应行/
+  // 损耗条）在 ere 侧多出，对侧常是未移植指令（COM8/COM84）的输出
+  if (
+    side === 'ere' &&
+    context.counterpart !== undefined &&
+    in_unimplemented_block(sample, context.counterpart.line)
+  ) {
+    return {
+      category: 'stub',
+      reason:
+        '误执行 COM0（爱抚）的输出：确认输入 0 被 ere 侧直接当 SELECTCOM——L_IDX↔L_I 映射缺失（归 #213，登记见文件头）',
+    };
+  }
+  if (side === 'ere' && entry.kind === 'lossbar' && context.counterpart) {
+    return {
+      category: 'stub',
+      reason: '误执行 COM0 的损耗条（同上，#213 输入映射缺失的连带）',
+    };
+  }
+  if (entry.kind === 'text') {
+    // 「＜上次的调教指令：X＞」的数量与内容错位：ere 侧 PREVCOM 停留在
+    // 最后一条真执行过的指令（COM 未移植不推进），两侧同名行数目不配
+    if (/^＜上次的调教指令：.+＞$/.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '上次的调教指令行错位：未移植指令不推进 PREVCOM（ere 侧停留于最后真执行过的指令）',
+      };
+    }
+    // 状态画面头两行出现在差异 = ere 侧多出的重绘屏（无效输入回环）
+    if (side === 'ere' && TRAIN_STATUS_HEAD_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '无效输入回环的重绘屏头行：COM 未移植 → 输入被丢弃重绘（ere 侧屏数多于 golden）',
+      };
+    }
+    // ere 侧爱抚的连续补正标记与反应行档位：PREVCOM 链断的连带（golden
+    // 的爱抚#2/#3 之间隔着未移植指令，非连续）
+    if (
+      side === 'ere' &&
+      (entry.text === '＜连续执行同一指令＞' ||
+        entry.text === '但温妮的身体却像被轻微电击一样、微微颤动着。')
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '连续执行补正误触发：未移植指令不推进 PREVCOM，ere 侧爱抚被判为连续执行（×0.5 档与连续标记行）',
+      };
+    }
+    // 绝顶计数行：本场的绝顶由未移植指令（振动杖）触发，ere 侧无
+    if (side === 'golden' && TRAIN_EX_COUNT_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '绝顶计数行：本场绝顶来自未移植指令（参数不累积则不达绝顶阈值）',
+      };
+    }
+    // 结算表/点数一览/经验一览：结算与显示本体已移植（#47），差在增量
+    if (TRAIN_SETTLE_ROW_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '结算表行的增量列差：参数增量来自未移植指令（结算本体已移植 #47，差随指令族票消失）',
+      };
+    }
+    if (side === 'golden' && TRAIN_JUEL_SUM_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason: '点数一览的数值差：同上，增量来自未移植指令',
+      };
+    }
+    if (side === 'ere' && TRAIN_JUEL_SUM_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '能力提升交互的完整重绘屏（ere 每轮重绘点数一览；golden 反馈屏不重绘）',
+      };
+    }
+    if (TRAIN_EXP_SUM_RE.test(entry.text)) {
+      return side === 'golden'
+        ? {
+            // 名字差（调教自慰 vs 调教自慰经验）与数值差（本场经验增量）
+            // 两类混在同形态行里，统一归此类；名字差的具体缺陷见文件头登记
+            category: 'stub',
+            reason:
+              '经验一览行差：本场经验增量来自未移植指令；经验名截断宽度（SUBSTRING 按显示宽度 8）是已登记移植缺陷，随修正票',
+          }
+        : {
+            category: 'stub',
+            reason:
+              '能力提升交互的完整重绘屏（ere 每轮重绘经验一览；golden 反馈屏不重绘）',
+          };
+    }
+    if (
+      side === 'ere' &&
+      (TRAIN_LEVEL_RE.test(entry.text) || TRAIN_KISS_RE.test(entry.text))
+    ) {
+      return {
+        category: 'stub',
+        reason: '能力提升交互的完整重绘屏（ere 每轮重绘等级行/初吻括号行）',
+      };
+    }
+    if (side === 'golden' && /^调教结果：/.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason: '否定点数抵消量差：否定增量来自未移植指令（反感/不快/抑郁）',
+      };
+    }
+    if (side === 'ere' && /^调教结果：/.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason: '同上：ere 半边（否定量 = ere 侧爱抚的反感/不快/抑郁增量）',
+      };
+    }
+    if (/^使用中\(.+\)$/.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '装备一览头行（@SHOW_EQUIP_1，CHARA_INFO_SHOW ver1.1.2.ERB:1601）未移植，ere 侧为存根占位行',
+      };
+    }
+    // ABLUP 交互的固定文案（golden 有、ere 是 ABLUP0 存根行）
+    if (
+      side === 'golden' &&
+      (entry.text === '阴蒂的感度提升了。' ||
+        entry.text === '未满足条件' ||
+        entry.text.startsWith('阴蒂感觉越高') ||
+        entry.text.startsWith('阴核点数×'))
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '能力提升反馈行（@ABLUP0 升级处理未移植，ere 侧为 ABLUP0 存根）',
+      };
+    }
+    // 源一览行（结构正则，见常量注释）
+    if (TRAIN_SOURCE_LINE_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '源一览行：源由未移植的 @COMn 写入（@SOURCE_CHECK 已移植，无源可显）',
+      };
+    }
+    // 实行值判定行（COMF 头部判定段）
+    if (
+      TRAIN_JUDGE_TAIL_RE.test(entry.text) ||
+      TRAIN_JUDGE_HEAD_RE.test(entry.text)
+    ) {
+      return {
+        category: 'stub',
+        reason: '实行值判定行：该指令的 @COMn 头部判定段未移植（随指令族票）',
+      };
+    }
+    // 指令名回显：恰为一条 TrainCommand 名（ere 侧未移植指令无回显；
+    // 已移植的 COM0「爱抚」两侧同名走 matched，不进差异）
+    if (side === 'golden' && tc_names.has(entry.text)) {
+      return {
+        category: 'stub',
+        reason: `指令名回显「${entry.text}」：@COMn 未移植（ere 侧无输出，随指令族票）`,
+      };
+    }
+    // 指令名回显互异（train-upgrade）：ere 侧执行了爱抚、golden 侧是升格
+    // 链的插入手指（同为 TrainCommand 名的成对差异）
+    if (
+      side === 'ere' &&
+      tc_names.has(entry.text) &&
+      context.counterpart !== undefined &&
+      tc_names.has(context.counterpart.text ?? '')
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '指令名回显互异：ere 侧执行了爱抚、golden 侧是升格链的插入手指（#213 输入映射缺失的连带）',
+      };
+    }
+    // golden 的初体验括号（本场 COM8 夺处女的记录，ere 侧无 COM8 不产生；
+    // ere 侧的初吻行差已由上方 ABLUP 重绘屏规则接走）
+    if (side === 'golden' && TRAIN_KISS_RE.test(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '初吻/初体验括号行：初体验记录由未移植的 COM8 写入（ere 侧只复现初吻半边）',
+      };
+    }
+    // 未移植指令块内的叙述行/口上行（区间表见常量注释）
+    if (side === 'golden' && in_unimplemented_block(sample, entry.line)) {
+      return {
+        category: 'stub',
+        reason: `指令输出块（train ${sample} log:${entry.line}）：情景/口上/结算文案随各自指令票`,
+      };
+    }
+  }
+  if (entry.kind === 'menu') {
+    // ABLUP 能力列表（ere 按钮化）与方格/子菜单的跨画面编号错位：方格用
+    // L_IDX、本画面用 ABL 编号、穿脱子菜单另有编号——集合按 val 配对时
+    // 跨画面异名条目互相错位（范围 B 的主菜单/存读档同构）
+    if (TRAIN_ABLUP_ITEM_RE.test(entry.key)) {
+      return {
+        category: 'stub',
+        reason:
+          '能力值列表条目：与指令方格共用小编号空间的集合配对错位（方格 L_IDX / 本画面 ABL 编号；ere 按钮化 PR #53 通则）' +
+          (side === 'ere' ? '——ere 半边' : '——golden 半边'),
+      };
+    }
+    // 错位的 ere 半边：ere 方格/画面按钮（COM_ABLE 未过滤，101 条全渲染）
+    // 撞上 golden 侧同编号的 ABLUP 行或穿脱子菜单行
+    if (
+      side === 'ere' &&
+      context.counterpart !== undefined &&
+      (TRAIN_ABLUP_ITEM_RE.test(context.counterpart.key) ||
+        context.counterpart.key.startsWith('- '))
+    ) {
+      return {
+        category: 'stub',
+        reason: `指令方格按钮（${entry.key}[${entry.val}]）与能力值列表/穿脱子菜单的跨画面编号错位（ere 半边：COM_ABLE 未过滤全渲染）`,
+      };
+    }
+    // ere 的 ABLUP 交互循环每次重绘完整列表（golden 的升级反馈屏只出
+    // 反馈行与停止键，能力值提高结束行两侧出现次数不同）
+    if (side === 'ere' && entry.key === '- 能力值提高结束') {
+      return {
+        category: 'stub',
+        reason:
+          '能力提升交互循环的形态差：ere 每次重绘完整列表，golden 的反馈屏只有反馈行（@ABLUPn 未移植的连带）',
+      };
+    }
+    // ere 侧多出的方格屏（无对侧的调教结束按钮）：Emuera 的子菜单/确认
+    // 屏（穿脱、夺处女）不重绘方格，ere 侧每输入一律整屏重绘（COM 未
+    // 移植 → 子菜单形态缺席，train-upgrade 实证）
+    if (
+      side === 'ere' &&
+      context.counterpart === undefined &&
+      entry.val === 999
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          'ere 侧多出的方格屏重绘：子菜单/确认屏形态未移植（COM 未移植 → 每输入一律整屏重绘）',
+      };
+    }
+    // golden 的 ABLUP 文本菜单行（`- 停止`、`- 阴核点数×…点数不足`）
+    if (side === 'golden' && entry.key.startsWith('- ')) {
+      return {
+        category: 'stub',
+        reason: '能力提升画面的文本菜单行（@ABLUPn 反馈与 [100] 停止键未移植）',
+      };
+    }
+    // 穿脱子菜单（COM110）
+    if (side === 'golden' && TRAIN_CLOTH_MENU_RE.test(entry.key)) {
+      return {
+        category: 'stub',
+        reason: '穿脱子菜单（@COM110 未移植，ere 侧输入 89 被丢弃重绘）',
+      };
+    }
+    // 升格标签（train-upgrade）：方格 8 号位的名字由 @GET_ADV_COM 升格
+    // 决定（TRAIN_NAME 数组），ere 侧渲染静态名表的「插入手指」
+    if (side === 'golden' && entry.key === '刺激Ｇ点') {
+      return {
+        category: 'stub',
+        reason:
+          '升格指令标签：@GET_ADV_COM 未移植（方格名字取 TRAIN_NAME 升格值，ere 侧为静态名，随 #213/J19）',
+      };
+    }
+    if (
+      side === 'ere' &&
+      entry.key === '插入手指' &&
+      entry.val === 8 &&
+      context.counterpart?.key === '刺激Ｇ点'
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '同上：升格标签差异的 ere 半边（静态名表 vs TRAIN_NAME 升格名）',
+      };
+    }
+  }
+  return null;
+}
+
+/** TrainCommand 名字域（指令名回显的判定用）：名字 → 编号的 Map，
+ * classify_scope_train 取其键集；测试可经 context.traincommand_names 注入 */
+function load_traincommand_names() {
+  const text = fs.readFileSync(
+    path.join(path.resolve(__dirname, '..', '..'), 'yml', 'TrainCommand.yml'),
+    'utf8',
+  );
+  const map = new Map();
+  [...text.matchAll(/"(.+)":\r?\n\s+id:\s*(\d+)/g)].forEach((m) =>
+    map.set(m[1], Number(m[2])),
+  );
+  return map;
 }
 
 /**
@@ -540,8 +1013,17 @@ module.exports = {
   STUB_GAUGE_KEYS,
   STUB_TEXT_EXACT,
   STUB_TEXT_RE,
+  TRAIN_ABLUP_ITEM_RE,
+  TRAIN_JUDGE_HEAD_RE,
+  TRAIN_JUDGE_TAIL_RE,
+  TRAIN_SETTLE_ROW_RE,
+  TRAIN_SOURCE_LINE_RE,
+  TRAIN_UNIMPLEMENTED_BLOCKS,
   USERCOM_BUTTON_LABELS,
   VERSION_SKEW_IDS,
   classify_entry,
+  classify_scope_b,
+  classify_scope_train,
   load_traincommand_ids,
+  load_traincommand_names,
 };

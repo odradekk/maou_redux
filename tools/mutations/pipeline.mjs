@@ -211,9 +211,9 @@ export default [
   {
     desc: 'M306 cli 比对不传 scope（范围 B 归因组整体旁路——真库直跑未解释非零）',
     file: 'tools/compare/cli.js',
-    find: "  const report = diff_streams(golden_entries, ere_entries, {\n    scope: 'B',\n    segment,\n  });",
+    find: "    report = diff_streams(golden_entries, ere_entries, {\n      scope: 'B',\n      segment,\n    });",
     replace:
-      '  const report = diff_streams(golden_entries, ere_entries, {}); // 变异：scope 忘传',
+      '    report = diff_streams(golden_entries, ere_entries, {}); // 变异：scope 忘传',
     tests: ['compare-samples'],
     must_mention: 'unexplained 归零',
   },
@@ -250,5 +250,84 @@ export default [
     replace: `      const base = null; // 变异：(cur/max) 不拆`,
     tests: ['compare-normalize'],
     must_mention: 'max: 2000',
+  },
+  // —— #211 第三段：调教段全序列（登记/回放/归因/基线锁）——
+  {
+    desc: 'M660 反向变异：MENU_LABEL_SHIFT 放宽成裸编号（val 命中即豁免——注释警告过的那条纪律）',
+    file: 'tools/compare/rules.js',
+    find: `    const shift = MENU_LABEL_SHIFT.find(
+      (s) => s.key === entry.key && s[side] === entry.val,
+    );`,
+    replace: `    const shift = MENU_LABEL_SHIFT.find(
+      (s) => s[side] === entry.val, // 变异：放宽成裸编号（标签不查）
+    );`,
+    tests: ['compare-train'],
+    must_mention: '不放宽到裸编号',
+  },
+  {
+    desc: 'M661 相殺随机序列坏一掷（train-natural 首掷 2→0：屈服改恭顺开扣，终态偏移）',
+    file: 'tools/compare/replay.js',
+    find: "  'train-natural': [2, 2, 2, 2, 0, 1],",
+    replace: "  'train-natural': [0, 2, 2, 2, 0, 1], // 变异：首掷改恭顺",
+    tests: ['compare-train'],
+    // must_mention 不能取序列数字本身：node 的 inspect 给数组元素加 ANSI 色码，
+    // 原始 stdout 里是 `[ ^[[33m0^[[39m, … ]`，`2, 2, 2, 0, 1` 这个字面量永远
+    // 匹配不上（验收期查实）。取断言名，且它在宿主文件里恰出现一次。
+    must_mention: '池序号与 golden 相殺终态一致',
+  },
+  {
+    desc: 'M662 回放输入计划坏一键（train-upgrade 的夺处女确认 0→1，ere 侧不再误执行 COM0）',
+    file: 'tools/compare/replay.js',
+    find: "  'train-upgrade': [89, 7, 8, 0, 8, 999, 999],",
+    replace:
+      "  'train-upgrade': [89, 7, 8, 1, 8, 999, 999], // 变异：确认键改 1",
+    tests: ['compare-train'],
+    must_mention: '基线漂移',
+  },
+  {
+    desc: 'M663 播种把屈服刻印改回 LV1（K3 的 2xx 支重新可达——爱抚随机支出声并吃掉相殺序列）',
+    file: 'tools/compare/replay.js',
+    find: "  fixture.store.set('mark:31:2', 2); // 屈服刻印 LV2（train-natural-log:169）",
+    replace:
+      "  fixture.store.set('mark:31:2', 1); // 变异：屈服刻印 LV1（2xx 支可达，随机支出声）",
+    tests: ['compare-train'],
+    must_mention: '基线漂移',
+  },
+  {
+    desc: 'M664 cli 的 train 段分流失效（train 样本误走 replay-b，以「未知段」当场崩）',
+    file: 'tools/compare/cli.js',
+    find: "  if (segment === 'train') {",
+    replace: "  if (segment === 'train-never') { // 变异：分流键改坏",
+    tests: ['compare-samples'],
+    must_mention: '调教样本',
+  },
+  {
+    desc: 'M665 train 规则组的 gauge 归因删（参数条数值差全部 unexplained——基线锁的靶心）',
+    file: 'tools/compare/rules.js',
+    find: "  if (entry.kind === 'gauge' && context.counterpart?.kind === 'gauge') {",
+    replace:
+      "  if (entry.kind === 'gauge' && context.counterpart?.kind === 'never') { // 变异：gauge 归因删",
+    tests: ['compare-train'],
+    must_mention: '基线漂移',
+  },
+  {
+    desc: 'M666 样本登记表删 train-natural（resolve 报未知样本，绝不静默回落缺省）',
+    file: 'tools/compare/samples.js',
+    find: "  'train-natural': 'golden/train-natural.log',",
+    replace: '  // 变异：train-natural 条目删除',
+    tests: ['compare-samples'],
+    must_mention: '未知样本名',
+  },
+  {
+    desc: 'M667 golden 调教窗口裁切坏（slice 起点多含一次输入回显，窗口边界漂移）',
+    file: 'tools/compare/replay.js',
+    find: `  return stream
+    .slice(start + 1, end + 1)
+    .filter((entry) => entry.kind !== 'discard' && entry.kind !== 'group');`,
+    replace: `  return stream
+    .slice(start, end) // 变异：窗口边界漂一档
+    .filter((entry) => entry.kind !== 'discard' && entry.kind !== 'group');`,
+    tests: ['compare-train'],
+    must_mention: '裁切',
   },
 ];

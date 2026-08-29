@@ -168,7 +168,8 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // 两条）。现为 478。
 // #212（J2）+19：M700-M714（首轮）+ 返工 M715-M718（二段寻址守卫
 // M715/M716 与存量修复回退 M717/M718；M712 的 find 随三段形态更新，条数不变）
-const LEDGER_COUNT_BASELINE = 497;
+// #211 第三段 +8：M660-M667（登记/回放序列/归因改正/窗口裁切）
+const LEDGER_COUNT_BASELINE = 505;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

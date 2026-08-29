@@ -24,6 +24,8 @@ const path = require('node:path');
 const REPO = path.resolve(__dirname, '..', '..');
 
 // 样本名 → 仓库相对路径。空串键是缺省（见文件头注）。
+// train-* 两份（#211）：调教段全序列（17 屏自然态 / 升格加录），段名
+// 第一段 'train' 是 cli 的分流键（走 replay.js 的调教回放，非 replay-b）。
 const SAMPLES = {
   '': 'target/emuera.log',
   'mainmenu-natural': 'golden/mainmenu-natural.log',
@@ -32,6 +34,8 @@ const SAMPLES = {
   'saveload-max': 'golden/saveload-max.log',
   'daycycle-natural': 'golden/daycycle-natural.log',
   'daycycle-max': 'golden/daycycle-max.log',
+  'train-natural': 'golden/train-natural.log',
+  'train-upgrade': 'golden/train-upgrade.log',
 };
 
 /**
