@@ -270,7 +270,10 @@ export default [
     find: "  'train-natural': [2, 2, 2, 2, 0, 1],",
     replace: "  'train-natural': [0, 2, 2, 2, 0, 1], // 变异：首掷改恭顺",
     tests: ['compare-train'],
-    must_mention: '2, 2, 2, 0, 1',
+    // must_mention 不能取序列数字本身：node 的 inspect 给数组元素加 ANSI 色码，
+    // 原始 stdout 里是 `[ ^[[33m0^[[39m, … ]`，`2, 2, 2, 0, 1` 这个字面量永远
+    // 匹配不上（验收期查实）。取断言名，且它在宿主文件里恰出现一次。
+    must_mention: '池序号与 golden 相殺终态一致',
   },
   {
     desc: 'M662 回放输入计划坏一键（train-upgrade 的夺处女确认 0→1，ere 侧不再误执行 COM0）',
