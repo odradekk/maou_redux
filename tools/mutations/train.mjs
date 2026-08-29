@@ -285,4 +285,71 @@ export default [
     tests: ['trace-check'],
     must_mention: '清单只能变短',
   },
+
+  // —— #212（J2 调教回合骨架）：M700-M703 ——
+  {
+    desc: 'M700 回调顺序：@EVENTCOM 与 @COMxx 分发对调（步骤 11↔12）',
+    file: 'ere/system/train/train-loop.js',
+    find: `      // 11. @EVENTCOM（函数体在 event/event-com.js）
+      const com_pending = await emit('EVENTCOM');
+      if (com_pending !== undefined) {
+        return com_pending;
+      }
+      // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
+      const com_result = await com_family.call(result, {
+        whenMissing: COM_MISSING,
+      });`,
+    replace: `      // 11. 变异：COM 分发先于 EVENTCOM
+      const com_result = await com_family.call(result, {
+        whenMissing: COM_MISSING,
+      });
+      const com_pending = await emit('EVENTCOM');
+      if (com_pending !== undefined) {
+        return com_pending;
+      }`,
+    tests: ['train-loop'],
+    must_mention: '回调顺序',
+  },
+  {
+    desc: 'M701 BEGIN TRAIN 清空 TSTR:90 删（#212：Emuera 整族清空的手动镜像）',
+    file: 'ere/system/train/train-loop.js',
+    find: `  // TSTR:90（前回指令名）清空：Emuera 在 BEGIN TRAIN 整族清空 TSTR
+  // （引擎内建）；ere 的 tstr 是持久普通表（yml/TStr.yml，#212 探针定论
+  // ——beginTrain/endTrain 的调教期表清单里没有 tstr），引擎不清，此处
+  // 手动镜像。原作 TRAIN_MAIN.ERB:29-30 那行注释掉的 ;TSTR:90 =
+  // 正是同语义（引擎替它清了才注释掉）
+  era.set('tstr:90', '');`,
+    replace: `  // 变异：TSTR:90 不清（残留上一局的前回指令名）`,
+    tests: ['train-loop'],
+    must_mention: 'BEGIN TRAIN 必须清 TSTR:90',
+  },
+  {
+    desc: 'M702 TRAIN_NAME_INIT 守卫删（每次 EVENTTRAIN 重播种）',
+    file: 'ere/system/train/train-name.js',
+    find: `  if ((era.get('trainalias:0') ?? '').length > 0) {
+    return;
+  }`,
+    replace: `  // 变异：守卫删`,
+    tests: ['train-name'],
+    must_mention: '守卫命中后不得有任何写入',
+  },
+  {
+    desc: 'M703 TRAIN_NAME:150 的 %CSTR:7% 内插删（播种时求值丢失）',
+    file: 'ere/system/train/train-name.js',
+    find: `  era.set(
+    \`trainalias:150\`,
+    \`\${era.get(\`cstr:\${era_flag.target}:7\`) ?? ''}调教\`,
+  );`,
+    replace: `  era.set(\`trainalias:150\`, '调教');`,
+    tests: ['train-name'],
+    must_mention: '尾巴调教',
+  },
+  {
+    desc: 'M704 read_train_name 的空串兜底删（未播种槽回 undefined）',
+    file: 'ere/system/train/train-name.js',
+    find: `  return era.get(\`trainalias:\${id}\`) ?? '';`,
+    replace: `  return era.get(\`trainalias:\${id}\`);`,
+    tests: ['train-name'],
+    must_mention: 'read_train_name',
+  },
 ];

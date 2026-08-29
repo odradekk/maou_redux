@@ -80,13 +80,13 @@ export default [
     must_mention: '真缺陷出口',
   },
   {
-    desc: 'M89 归因规则删 体力 条键（golden 基础条变未解释差异）',
+    desc: 'M89 归因规则删 体力 条键（范围 B 主菜单的 golden 基础条变未解释差异）',
     file: 'tools/compare/rules.js',
     find: "const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);",
     replace:
       "const STUB_GAUGE_KEYS = new Set(['气力', '射精（你）']); // 变异：体力 删",
-    tests: ['compare-first-turn'],
-    must_mention: '分类计数与当前待办清单一致',
+    tests: ['compare-samples'],
+    must_mention: 'mainmenu-natural',
   },
   {
     desc: 'M90 回放播种改错（阴核初值 5240 → 5200——变量层断言的靶心）',
@@ -240,5 +240,15 @@ export default [
     replace: "  寵: '龍', // 变异：目标值落在繁侧集",
     tests: ['lang-simp-ref'],
     must_mention: '繁侧',
+  },
+
+  // —— #212（J2 调教回合骨架）：M713 ——
+  {
+    desc: 'M714 progress 基础条的 (cur/max) 拆解焊死（max 不进事件流）',
+    file: 'tools/compare/normalize.js',
+    find: `      const base = record.out.match(/^\\(\\s*(\\d+)\\/(\\d+)\\)/);`,
+    replace: `      const base = null; // 变异：(cur/max) 不拆`,
+    tests: ['compare-normalize'],
+    must_mention: 'max: 2000',
   },
 ];

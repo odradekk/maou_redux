@@ -791,4 +791,108 @@ export default [
     tests: ['page-dungeon-setup'],
     must_mention: '进了 MAP 界面',
   },
+
+  // —— #212（J2 调教回合骨架）：M704-M712 ——
+  {
+    desc: 'M705 @P_C 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
+    file: 'ere/page/page-usercom.js',
+    find: `  let name = era.get(\`traincommandname:\${local}\`) ?? '';
+  // :775-776 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）
+  if (name.length < 1) {
+    name = read_train_name(local);
+  }`,
+    replace: `  let name = read_train_name(local);
+  if (name.length < 1) {
+    name = era.get(\`traincommandname:\${local}\`) ?? '';
+  }`,
+    tests: ['page-usercom'],
+    must_mention: 'TRAINNAME 非空时不得读 TRAIN_NAME',
+  },
+  {
+    desc: 'M706 @P_C 第三级回落的全角空格改空串（STRLENSU >= 1 语义丢）',
+    file: 'ere/page/page-usercom.js',
+    find: `  // :778-779 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）
+  if (name.length < 1) {
+    name = '　';
+  }`,
+    replace: `  // :778-779 变异：占位改空串
+  if (name.length < 1) {
+    name = '';
+  }`,
+    tests: ['page-usercom'],
+    must_mention: '第三级回落必须落全角空格占位',
+  },
+  {
+    desc: 'M707 LIFE_BAR 濒死阈值 <500 改 <0（濒死标永不出现）',
+    file: 'ere/page/components/chara-bars.js',
+    find: `  } else if (cur < 500) {
+    suffix = '★濒死★';
+  }`,
+    replace: `  } else if (cur < 0) {
+    suffix = '★濒死★';
+  }`,
+    tests: ['page-train'],
+    must_mention: '★濒死★',
+  },
+  {
+    desc: 'M708 VITAL_BAR 气力０条件 <=0 改 <0（0 值不标）',
+    file: 'ere/page/components/chara-bars.js',
+    find: `    suffix: cur <= 0 ? '★气力０★' : '',`,
+    replace: `    suffix: cur < 0 ? '★气力０★' : '',`,
+    tests: ['page-train'],
+    must_mention: '★气力０★',
+  },
+  {
+    desc: 'M709 主人射精档的 135 守卫补上 >=2000 臂（三处守卫差异抹平）',
+    file: 'ere/page/page-train.js',
+    find: `    (era.get('talent:0:121') || era.get('talent:0:122')) &&
+    !era.get('talent:0:135') &&
+    target !== 0`,
+    replace: `    (era.get('talent:0:121') || era.get('talent:0:122')) &&
+    (!era.get('talent:0:135') || (era.get('base:0:2') || 0) >= 2000) &&
+    target !== 0`,
+    tests: ['page-train'],
+    must_mention: '主人档 TALENT:135 置位即不显示',
+  },
+  {
+    desc: 'M710 目标射精档的 135 >=2000 臂删（守卫差异反向抹平）',
+    file: 'ere/page/page-train.js',
+    find: `    (era.get(\`talent:\${target}:121\`) || era.get(\`talent:\${target}:122\`)) &&
+    (!era.get(\`talent:\${target}:135\`) ||
+      (era.get(\`base:\${target}:2\`) || 0) >= 2000)`,
+    replace: `    (era.get(\`talent:\${target}:121\`) || era.get(\`talent:\${target}:122\`)) &&
+    !era.get(\`talent:\${target}:135\`)`,
+    tests: ['page-train'],
+    must_mention: '135 置位但 BASE >= 2000 → 显示',
+  },
+  {
+    desc: 'M711 母乳（目标）MAXBASE:3 缺省补 10000 删（:217-218 SIF 写入）',
+    file: 'ere/page/page-train.js',
+    find: `  if (era.get(\`talent:\${target}:130\`)) {
+    if (!(era.get(\`maxbase:\${target}:3\`) > 0)) {
+      era.set(\`maxbase:\${target}:3\`, 10000);
+    }`,
+    replace: `  if (era.get(\`talent:\${target}:130\`)) {
+    // 变异：MAXBASE:3 缺省不补`,
+    tests: ['page-train'],
+    must_mention: '母乳条必须读 MAXBASE:3 的缺省补值',
+  },
+  {
+    desc: 'M712 主人避孕套槽位 35 改 36（TEQUIP 位错）',
+    file: 'ere/page/page-train.js',
+    find: `      suffix: era.get('tequip:35') ? '避孕套使用中' : '',`,
+    replace: `      suffix: era.get('tequip:36') ? '避孕套使用中' : '',`,
+    tests: ['page-train'],
+    must_mention: '(2500/10000)避孕套使用中',
+  },
+  {
+    desc: 'M713 主人档的 TARGET != MASTER 判据删（自调教双条）',
+    file: 'ere/page/page-train.js',
+    find: `    !era.get('talent:0:135') &&
+    target !== 0`,
+    replace: `    !era.get('talent:0:135') &&
+    true`,
+    tests: ['page-train'],
+    must_mention: '恰一条',
+  },
 ];

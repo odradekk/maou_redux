@@ -57,6 +57,29 @@ test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色�
   );
 });
 
+test('BEGIN TRAIN 清空 TSTR:90（Emuera 引擎整族清空的 ere 手动镜像，#212）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.load_module('page/page-usercom'); // 注册 999 → AFTERTRAIN
+  fixture.set_inputs(999);
+  // 上一局残留的前回指令名（tstr 是持久普通表，见 yml/TStr.yml）
+  fixture.store.set('tstr:90', '振动杖');
+  const { run_train } = fixture.load_module('system/train/train-loop');
+
+  assert.equal(await run_train(), 'AFTERTRAIN');
+
+  // 清空发生在 beginTrain 之前（与 ASSIPLAY/PREVCOM/NEXTCOM 同批：引擎在
+  // BEGIN TRAIN 一开始就清，ere 侧镜像同位），且值是空串不是删除
+  const clear = fixture.var_writes.find((w) => w.name === 'tstr:90');
+  assert.ok(clear, 'BEGIN TRAIN 必须清 TSTR:90');
+  assert.equal(clear.value, '');
+  const begin = fixture.calls.findIndex((c) => c.api === 'beginTrain');
+  assert.ok(
+    begin >= 0 && begin < fixture.calls.length,
+    'beginTrain 必须发生过',
+  );
+});
+
 test('回合循环的回调顺序：与 Emuera 逐条一致（探针固定）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);

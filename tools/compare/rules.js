@@ -54,9 +54,13 @@ const USERCOM_BUTTON_LABELS = new Set([
 // 占位行都含这个词，正文台词不含（output-lang-lock 同款标准）。
 const STUB_TEXT_RE = /尚未移植/;
 
-// —— 状态条待办的 golden 侧键名（SHOW_STATUS 存根登记行）——
-//   体力/气力：LIFE_BAR / VITAL_BAR（待认领·状态画面）；
-//   射精（你）：SHOW_STATUS 射精/母乳/触手槽条段（登记，随指令/装备票）。
+// —— 状态条待办的 golden 侧键名（golden 侧 gauge 的存根归因）——
+//   体力：**范围 B 三段（主菜单/存读档/日循环）的调教目标面板**——
+//   DRAW_MAINMENU.ERB:100-145 的 @LIFE_BAR 调用点在 ere 侧是注释占位
+//   （page-main-menu.js，随角色数据票），golden 的体力条无 ere 对应；
+//   调教段（SHOW_STATUS :85）的体力/气力/射精（你）已随 #212 真身匹配、
+//   不再吃本规则（首回合窗口 matched 57 为证）。气力/射精（你）当前无
+//   golden 侧未匹配实例，留在集合里是给「同一函数的未实现调用点」兜底。
 const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);
 
 // —— golden 侧文本的成对差异（服装系统待办）——
@@ -216,7 +220,7 @@ function classify_entry(entry, side, context) {
   ) {
     return {
       category: 'stub',
-      reason: `${entry.key}条未移植（LIFE_BAR/VITAL_BAR 或射精槽条段，docs/stub-registry.md）`,
+      reason: `${entry.key}条未移植（LIFE_BAR 调用点，docs/stub-registry.md）`,
     };
   }
 

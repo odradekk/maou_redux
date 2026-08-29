@@ -350,14 +350,36 @@ function fixture_stream(fixture_lines) {
       //   吸收）——两侧归一的语义值是条后数值，这是「换掉表现层不影响比对」的
       //   机制本体（print_palam 换 printMultiColumns 的 progress 格后，
       //   事件流与合成串时代逐字节同构）。
-      //   max 不映射：palam 条无上限；`(cur/max)` 形态的基础条
-      //   （LIFE_BAR/VITAL_BAR，仍是存根）随那张票扩。
-      entries.push({
-        kind: 'gauge',
-        key: compress_ws(record.text),
-        val: Number(record.out),
-        line: line_no,
-      });
+      //   #212 扩展（本行注释下方分支）：基础条的 `(cur/max)` 形态
+      //   （LIFE_BAR/VITAL_BAR/射精/母乳段，chara-bars.js）——outContent 以
+      //   `(cur/max)` 开头时拆出 max，与黄金侧 parse_grid_line 的同名分支
+      //   对齐；`(cur/max)` 之后的缀文（避孕套使用中 / ★濒死★）以 text
+      //   条目保留在事件流。已知不对称（记录在案）：黄金侧带缀文的整行
+      //   会被网格解析当残渣回落成单条 text（含条形字符）；ere 侧是
+      //   gauge + text 两条——当前样本窗口不含缀文形态（避孕套/濒死状态
+      //   未录制），对拍撞上时按此差异归因。
+      //   palam 条无上限（无 max 映射）。
+      const base = record.out.match(/^\(\s*(\d+)\/(\d+)\)/);
+      if (base) {
+        entries.push({
+          kind: 'gauge',
+          key: compress_ws(record.text),
+          val: Number(base[1]),
+          max: Number(base[2]),
+          line: line_no,
+        });
+        const tail = compress_ws(record.out.slice(base[0].length));
+        if (tail !== '') {
+          entries.push({ kind: 'text', text: tail, line: line_no });
+        }
+      } else {
+        entries.push({
+          kind: 'gauge',
+          key: compress_ws(record.text),
+          val: Number(record.out),
+          line: line_no,
+        });
+      }
     } else if (record.type === 'input') {
       entries.push({ kind: 'input', text: record.text, line: line_no });
     } else if (record.type === 'image') {

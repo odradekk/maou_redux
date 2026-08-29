@@ -1,0 +1,23 @@
+# TrainAlias 表：原作 #DIMS TRAIN_NAME,500（其他/VARIABLES.ERH:13，「用于
+# 储存保留的 TRAINNAME，函数 @TRAIN_NAME_INIT 用于初始化」）的 ere 落点
+# （issue #212）。按存档定制的调教指令名表——静态名在 yml/TrainCommand.yml
+# （TRAINNAME 的等价物，#43），本表是它的可写覆盖层：@TRAIN_NAME_INIT
+# （TRAIN_MAIN.ERB:783-910）一次性播种，@P_C 在静态名为空时回落读它。
+#
+# 表名为什么不是 trainname：引擎 setVar 的二段分支对以 name 结尾的表名有
+# 拦截（a.endsWith('name') → 当作「取 fieldNames 名字」的只读寻址，登记成
+# 扩展普通表也进不了写入路径，落到 key error——本表建表前用引擎真方法核
+# 过，见 test/tstr-train-table.test.js 的探针）。trainalias 避开拦截。
+#
+# 承载机制与 yml/TStr.yml 同一条：eraStart 对非内建表名登记
+# tableType.normal，fillData 建持久桶、saveData 整存 this.data。
+#
+# 与 Emuera 语义的**已知差异**（不可观测，记录在案）：TRAIN_NAME 是普通
+# #DIMS（无 SAVEDATA），Emuera 里不进存档、每次读取档后由 INIT 守卫重新
+# 播种（150 号槽会按当时目标的 CSTR:7 重算）；ere 的桶随存档持久，播种每
+# 存档只发生一次。差异前提是 CSTR:7 有写点——当前全库无任何写入
+# （grep 证实，CStr.yml 是空表、槽 7 无预填），150 号槽两种语义下都恒为
+# '调教'；将来癖好名可变时，须在读取档路径补重播种（或改 INIT 守卫判据）。
+#
+# 空表即够用（yml/TFlag.yml 同款先例）：下标数字寻址 + 不预填（fillData 会
+# 把已声明槽位预填成数字 0，破坏 INIT 守卫的空串判据与字符串语义）。

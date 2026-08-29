@@ -10,10 +10,11 @@
  *     重绘的原作习语（@SHOW_STATUS 尾部记锚点、清回锚点重画），ere 侧由
  *     ScreenBlock（page/components/screen-block.js，#73）承载
  *
- * 骨架范围（工单：循环骨架不是完整状态画面）：@SHOW_STATUS 的子调用除
- * PRINT_PALAM 外一律存根化；射精/母乳/触手槽条段（:144-252）的 TALENT /
- * TEQUIP 守卫在零指令下不可达，整段以注释占位（docs/stub-registry.md）。
- * 其余直线代码（日期行、目标行、绝顶计数、MAXBASE 修正）1:1 照搬。
+ * 骨架范围：@SHOW_STATUS 的子调用中 SHOW_EQUIP_1/2 与 PRINT_CLOTHTYPE 存根
+ * 化（J5 #215 服装与 TEQUIP 建模）；LIFE_BAR/VITAL_BAR（#212，组件在
+ * ere/page/components/chara-bars.js）与射精/母乳/触手槽条段（:144-252，
+ * #212 就地实现）已写真身。其余直线代码（日期行、目标行、绝顶计数、
+ * MAXBASE 修正）1:1 照搬。
  *
  * #74 的两条换表现层（比对都在旁边看着——本画面在黄金样本覆盖内）：
  *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
@@ -26,6 +27,11 @@
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { ScreenBlock } = require('#/page/components/screen-block');
+const {
+  life_bar,
+  print_base_bar,
+  vital_bar,
+} = require('#/page/components/chara-bars');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -36,14 +42,10 @@ const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
+ * LIFE_BAR/VITAL_BAR（#212 落地，ere/page/components/chara-bars.js）与
+ * 射精/母乳/触手槽条段（:144-252，就地实现）不在名单里。
  */
-const STUBBED_CALLS = [
-  'SHOW_EQUIP_2',
-  'LIFE_BAR',
-  'VITAL_BAR',
-  'PRINT_CLOTHTYPE',
-  'SHOW_EQUIP_1',
-];
+const STUBBED_CALLS = ['SHOW_EQUIP_2', 'PRINT_CLOTHTYPE', 'SHOW_EQUIP_1'];
 
 // 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
 //   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的
@@ -209,10 +211,12 @@ async function draw_status_screen(target) {
   header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
   era.print(header);
 
-  // :84-86 CALL SHOW_EQUIP_2 / LIFE_BAR / VITAL_BAR —— 存根
+  // :84 CALL SHOW_EQUIP_2 —— 存根（J5 #215：服装与 TEQUIP 建模）
   stub_line('SHOW_EQUIP_2', '装备显示', '随装备票');
-  stub_line('LIFE_BAR', '生命条', '随状态画面票');
-  stub_line('VITAL_BAR', '气力条', '随状态画面票');
+  // :85-86 CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
+  // chara-bars.js；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1129/:1175）
+  life_bar(target);
+  vital_bar(target);
 
   // :87-91 調教時ステータス画面に服装表示を捻じ込んでみた：【PRINT_CLOTHTYPE】
   // （INLINE 占位：原作在同一行内嵌服装名，存根文案并入括号保持单行结构）
@@ -235,10 +239,137 @@ async function draw_status_screen(target) {
     fix_maxbase(era_flag.assi, true);
   }
 
-  // :144-252 射精（主人/助手/目标三段）· 母乳（三段）· 触手/死斗场（TEQUIP
-  // 89/90/55）槽条段：TALENT:121/122/130/135 与 TEQUIP 守卫在零指令空转下
-  // 全部不可达，整段以注释占位——正文随首条指令/装备票移植（已登记
-  // docs/stub-registry.md「SHOW_STATUS 射精/母乳/触手槽条段」行）。
+  // :144-252 射精/母乳/触手槽条段（#212 落地）。守卫素质：121 扶她/
+  // 122 男人（阴茎侧）、130 母乳体质、135 未熟。三处射精守卫的 135 臂
+  // 形态各异，逐处 1:1：
+  //   - 主人（:144）：(TALENT:135 || (TALENT:135 && BASE:2 >= 2000)) == 0
+  //     经布尔化简（A || A&&B ≡ A）恒等于 !TALENT:135——主人独缺
+  //     「≥2000 也放行」臂；
+  //   - 助手（:161）/目标（:177）：TALENT:135 == 0 || (TALENT:135 &&
+  //     BASE:2 >= 2000)——有 ≥2000 臂。
+  // 名字后的全角对齐衬垫（STRLENSU < 4 补全角空格）是字符条排版，progress
+  // 格不镜像（见 chara-bars.js 文件头）。SETCOLOR 的名字着色（主人浅蓝/
+  // 助手粉）为纯表现，不镜像（与头行着色同为记名差异）。
+  // TEQUIP:35/36/37（主人/助手/目标避孕套）缀「避孕套使用中」。
+
+  // :144-158 射精（主人）：TARGET != MASTER（自调教不显示）
+  if (
+    (era.get('talent:0:121') || era.get('talent:0:122')) &&
+    !era.get('talent:0:135') &&
+    target !== 0
+  ) {
+    print_base_bar(
+      `射精（${chara_name(0)}）`,
+      era.get('base:0:2') || 0,
+      era.get('maxbase:0:2') || 0,
+      {
+        suffix: era.get('tequip:35') ? '避孕套使用中' : '',
+      },
+    );
+  }
+
+  // :160-175 射精（助手）：仅助手调教时（IF ASSIPLAY）
+  if (
+    era_flag.assiplay !== 0 &&
+    (era.get(`talent:${era_flag.assi}:121`) ||
+      era.get(`talent:${era_flag.assi}:122`)) &&
+    (!era.get(`talent:${era_flag.assi}:135`) ||
+      (era.get(`base:${era_flag.assi}:2`) || 0) >= 2000)
+  ) {
+    print_base_bar(
+      `射精（${chara_callname(era_flag.assi)}）`,
+      era.get(`base:${era_flag.assi}:2`) || 0,
+      era.get(`maxbase:${era_flag.assi}:2`) || 0,
+      { suffix: era.get('tequip:36') ? '避孕套使用中' : '' },
+    );
+  }
+
+  // :177-188 射精（目标）
+  if (
+    (era.get(`talent:${target}:121`) || era.get(`talent:${target}:122`)) &&
+    (!era.get(`talent:${target}:135`) ||
+      (era.get(`base:${target}:2`) || 0) >= 2000)
+  ) {
+    print_base_bar(
+      `射精（${chara_callname(target)}）`,
+      era.get(`base:${target}:2`) || 0,
+      era.get(`maxbase:${target}:2`) || 0,
+      { suffix: era.get('tequip:37') ? '避孕套使用中' : '' },
+    );
+  }
+
+  // :190-200 母乳（主人，TALENT:130 母乳体质）：MAXBASE:3 缺省补 10000
+  if (era.get('talent:0:130')) {
+    if (!(era.get('maxbase:0:3') > 0)) {
+      era.set('maxbase:0:3', 10000);
+    }
+    print_base_bar(
+      `母乳（${chara_callname(0)}）`,
+      era.get('base:0:3') || 0,
+      era.get('maxbase:0:3') || 0,
+    );
+  }
+
+  // :202-214 母乳（助手）：守卫 IF ASSI > 0（注意与射精段的 ASSI >= 0 不同，
+  // 原作两处写法不一致，1:1 保留）
+  if (era_flag.assi > 0 && era.get(`talent:${era_flag.assi}:130`)) {
+    if (!(era.get(`maxbase:${era_flag.assi}:3`) > 0)) {
+      era.set(`maxbase:${era_flag.assi}:3`, 10000);
+    }
+    print_base_bar(
+      `母乳（${chara_callname(era_flag.assi)}）`,
+      era.get(`base:${era_flag.assi}:3`) || 0,
+      era.get(`maxbase:${era_flag.assi}:3`) || 0,
+    );
+  }
+
+  // :216-226 母乳（目标）
+  if (era.get(`talent:${target}:130`)) {
+    if (!(era.get(`maxbase:${target}:3`) > 0)) {
+      era.set(`maxbase:${target}:3`, 10000);
+    }
+    print_base_bar(
+      `母乳（${chara_callname(target)}）`,
+      era.get(`base:${target}:3`) || 0,
+      era.get(`maxbase:${target}:3`) || 0,
+    );
+  }
+
+  // :228-235 射精（犬）（TEQUIP:89 兽奸 PLAY）：BASE:MASTER:4 槽，缺省补 10000
+  if (era.get('tequip:89')) {
+    if (!(era.get('maxbase:0:4') > 0)) {
+      era.set('maxbase:0:4', 10000);
+    }
+    print_base_bar(
+      '射精（犬）',
+      era.get('base:0:4') || 0,
+      era.get('maxbase:0:4') || 0,
+    );
+  }
+
+  // :237-244 射精（触手）（TEQUIP:90）
+  if (era.get('tequip:90')) {
+    if (!(era.get('maxbase:0:4') > 0)) {
+      era.set('maxbase:0:4', 10000);
+    }
+    print_base_bar(
+      '射精（触手）',
+      era.get('base:0:4') || 0,
+      era.get('maxbase:0:4') || 0,
+    );
+  }
+
+  // :246-252 射精（死斗场・怪物）（TEQUIP:55）
+  if (era.get('tequip:55')) {
+    if (!(era.get('maxbase:0:4') > 0)) {
+      era.set('maxbase:0:4', 10000);
+    }
+    print_base_bar(
+      '射精（死斗场・怪物）',
+      era.get('base:0:4') || 0,
+      era.get('maxbase:0:4') || 0,
+    );
+  }
 
   // :253 CALL SHOW_EQUIP_1 —— 存根
   stub_line('SHOW_EQUIP_1', '装备一览', '随装备票');

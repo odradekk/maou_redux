@@ -166,7 +166,10 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #178（H9 城镇与任务）+14（dungeon.mjs 的 M640-M653：借贷还债担保三段、
 // 宴会预算不对称、任务受注与报酬结算、两处原作笔误反向钉、TARGET 语义
 // 两条）。现为 478。
-const LEDGER_COUNT_BASELINE = 478;
+// #212（J2）+15：M700-M714（train 5 / page 8 / pipeline 1 + M89 宿主迁移
+// compare-first-turn → compare-samples——STUB_GAUGE_KEYS 的承重面从调教段
+// （已匹配）换到范围 B 主菜单面板的体力条）
+const LEDGER_COUNT_BASELINE = 493;
 
 /**
  * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖

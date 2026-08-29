@@ -93,4 +93,10 @@
 # + dungeon-main.test.js 改写 3 条仍走夹具——67（既有）+ 0（本票）= 67。
 # E 表（yml/E.yml）的引擎侧验证由 static-table-coverage 的既有门控用例
 # 覆盖（e 族名字表在装载后可寻址），不新增门控用例。
-67
+# #212（J2 调教回合骨架）复测：+5（tstr-train-table.test.js 的五个引擎门控
+# 用例——TSTR 建模与 trainname 表名裁定的 setVar/beginTrain/endTrain 探针），
+# 现为 72（1371 = 1299 过 + 72 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）。
+# 算式：67（既有）+ 5（tstr-train-table 的 engine_test）= 72；本票其余新用例
+#（train-name/page-train 槽条段/p_c/compare-normalize 扩展）全走 era-fixture
+# 或纯解析路径，无 engine-bundle 门控。
+72

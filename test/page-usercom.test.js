@@ -70,9 +70,63 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'COMSEQ_SHOW',
     'COMSEQ_TRAIN',
     'SHOW_COMMENU',
-    'P_C', // #45：TRAIN_NAME 定制名（静态名路径已实现）
   ]);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
+});
+
+// —— @P_C 与「上次的调教指令」行（#212：TSTR:90 承载，TRAIN_MAIN.ERB:771-780）——
+
+/** 预置 prevcom 后绘制指令菜单，返回「上次的调教指令」行文本与 tstr:90 */
+async function draw_with_prevcom(fixture, prevcom) {
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.prevcom = prevcom;
+  const { emit } = load_page(fixture);
+  await emit('SHOW_USERCOM');
+  const line = fixture.lines
+    .filter((l) => l.type === 'text')
+    .map((l) => l.text)
+    .find((t) => t.startsWith('＜上次的调教指令：'));
+  return { line, tstr: fixture.store.get('tstr:90') };
+}
+
+test('@P_C 第一级：静态名表命中 → TSTR:90 = TRAINNAME', async () => {
+  const fixture = create_era_fixture();
+  // traincommandname:12（振动杖，yml/TrainCommand.yml 的静态名）
+  fixture.store.set('traincommandname:12', '振动杖');
+  const { line, tstr } = await draw_with_prevcom(fixture, 12);
+  assert.equal(tstr, '振动杖');
+  assert.equal(line, '＜上次的调教指令：振动杖＞');
+});
+
+test('@P_C 第二级：静态名空 → TRAIN_NAME 定制名（trainalias 覆盖层）', async () => {
+  const fixture = create_era_fixture();
+  // 999 不是静态表编号：traincommandname 未播种 → 回落 trainalias
+  fixture.store.set('trainalias:999', '自定义名');
+  const { line, tstr } = await draw_with_prevcom(fixture, 999);
+  assert.equal(tstr, '自定义名');
+  assert.equal(line, '＜上次的调教指令：自定义名＞');
+});
+
+test('@P_C 第三级：两级皆空 → 全角空格占位（STRLENSU ≥ 1）', async () => {
+  const fixture = create_era_fixture();
+  const { line, tstr } = await draw_with_prevcom(fixture, 998);
+  assert.equal(tstr, '　', '第三级回落必须落全角空格占位（STRLENSU >= 1）');
+  assert.equal(line, '＜上次的调教指令：　＞');
+});
+
+test('静态名优先于定制名（TRAINNAME > TRAIN_NAME 的回落顺序不可倒置）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('traincommandname:12', '振动杖');
+  fixture.store.set('trainalias:12', '被覆盖的名字');
+  const { tstr } = await draw_with_prevcom(fixture, 12);
+  assert.equal(tstr, '振动杖', 'TRAINNAME 非空时不得读 TRAIN_NAME');
+});
+
+test('PREVCOM = -1（首轮）：无「上次的调教指令」行，也不写 TSTR:90', async () => {
+  const fixture = create_era_fixture();
+  const { line, tstr } = await draw_with_prevcom(fixture, -1);
+  assert.equal(line, undefined);
+  assert.equal(tstr, undefined, 'P_C 不被调用，TSTR:90 不得有写入');
 });
