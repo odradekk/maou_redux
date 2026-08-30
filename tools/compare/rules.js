@@ -950,16 +950,14 @@ function classify_scope_b(entry, side, context) {
         return {
           category: 'stub',
           reason:
-            '空槽 [N] ----：读档界面的 ere 半边是纯文本（page-save-load.js 有意偏离：不可选即等价）——读档空槽不进 menu 集合，还会把存档界面同编号的空槽组错位一档（错位尾巴按 <TS> 备注规则归因）',
+            '空槽 [N] ----：读档界面的 ere 半边是纯文本（page-save-load.js 有意偏离：不可选即等价）——读档空槽不进 menu 集合，无 ere 对应条目',
         };
       }
-      if (typeof entry.key === 'string' && entry.key.startsWith('<TS> ')) {
-        return {
-          category: 'stub',
-          reason:
-            '存档备注按钮（正文 = 时间戳 + @SAVEINFO 备注）：两侧正文一致、集合按槽号配对时因读档空槽纯文本化（见 ---- 规则）错位一档的尾巴条目',
-        };
-      }
+      // 【#228 拆除】此处原是 <TS> 存档备注的错位归因规则：它补偿的是
+      // 「按下标配对把两侧同形的备注条目错开」的假差异——diff.js 的 menu
+      // 集合比对改为相等 token 先配后无消费者（删前实测：saveload 两样本
+      // 四数逐数不变、unexplained 仍 0）。与服装四条两态豁免同一件事：
+      // 根因修好，补偿它的规则必须同时拆除，否则留在表里空转
     }
   }
 
