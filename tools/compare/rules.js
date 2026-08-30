@@ -4,8 +4,7 @@
  *
  * #9 的定案：忽略规则每条都要注明理由——否则忽略规则会逐渐变成掩盖缺陷
  * 的地毯。规则只认「有名字的差异」：
- *   - version：编号体系差（L_IDX 紧凑序号 vs Train.csv 的 L_I，#211 实证；
- *     待 #213 建映射层后整组删除）与版本轴重设（ADR-0006）；
+ *   - version：版本轴重设（ADR-0006）；
  *   - stub：docs/stub-registry.md 已登记的待办（存根占位行、指令族未移植
  *     的输出块与数值差、COM_ABLE 未移植导致的按钮未过滤、SHOW_USERCOM
  *     按钮组）与已登记的已知移植缺陷；
@@ -13,48 +12,18 @@
  *
  * 规则表是**白名单**形态：命中才豁免，改一个字就失配变红，逼改动者有
  * 意识地同步本表（与 #60 豁免名单同一设计哲学）。
+ *
+ * 【#213 起编号体系差豁免整组删除】#211 曾以 MENU_LABEL_SHIFT（四标签
+ * 精确配对）+ VERSION_SKEW_IDS（裸编号兜底）豁免「ere 侧按钮印 L_I、
+ * golden 侧印 L_IDX」的错位——#213 建了 L_IDX↔L_I 映射层（ere/system/
+ * train/com-index.js），ere 侧按钮自此印紧凑序号，两侧编号一致，错位差异
+ * 整组消失，两条豁免随之拆除（原文见 git 历史 / issue #213 回帖）。
  */
 
 'use strict';
 
 const fs = require('node:fs');
 const path = require('node:path');
-
-// —— 指令菜单的编号体系差（#9 勘误二的登记 + #211 第三段的归因改正）——
-//
-// 【机制（#211 第二段录制查出，三条独立证据在票上：Train.csv 行序算术、
-// @SHOW_COMMENU 的 L_IDX++、实机 89 跑出 @COM110）】玩家看到并输入的编号
-// 是**紧凑序号 L_IDX**（全部非空 TRAINNAME 条目中的位次），不是 Train.csv
-// 的编号 L_I：@SHOW_COMMENU（USERCOM.ERB:189-215）的 L_IDX 在 COM_ABLE
-// 检查之前自增，打印 %TRAIN_NAME:RESULT%[{L_IDX,3}]——名字用（升格后的）
-// id、编号用位次。Train.csv 的 39/67/69/70/74-79/84/86/91-99 段是空号，
-// 从打屁股（L_I=40）起 L_IDX = L_I − 累计空号数。
-//
-// ere 侧按钮渲染的是 L_I（yml/TrainCommand.yml 存的就是 L_I——那是对的；
-// train-loop.js 把输入直当 SELECTCOM 的潜伏错误归 #213），两侧在这五个
-// 编号上必然对不齐。**ere 侧待 #213（J3）建 L_IDX↔L_I 映射层后本组两条
-// 豁免即可删除**；在此之前桥必须架着——新样本（train-natural/
-// train-upgrade，录自当前构建、与旧样本编号完全一致）一比对就是一片
-// 假差异。这不是构建漂移：旧样本录自更旧构建的解释已被新样本推翻
-// （两份构建相隔多次提交、编号差却逐字相同——差异随构建走的假设不成立）。
-//
-// 豁免形态两档（精确的在前）：
-//   - MENU_LABEL_SHIFT 按 (标签, 侧, 编号) 精确配对四个错位标签；
-//   - VERSION_SKEW_IDS 裸编号兜**ere 侧独有条目**（野外PLAY[54]、兽奸
-//     PLAY[89]——L_I 编号撞进错位段，COM_ABLE 未过滤把它们渲染出来）。
-// 不放宽到裸编号匹配四个标签——裸 40 会吞掉真正的 COM_ABLE 回归。
-const VERSION_SKEW_IDS = new Set([54, 55, 56, 89, 110]);
-
-// 四个错位标签的精确配对（golden 侧紧凑序号 / ere 侧 Train.csv 编号；
-// train-natural-log:111-112 的方格与 yml/TrainCommand.yml 逐条核对）。
-// 顺序敏感：classify_entry 里 shift 先于 VERSION_SKEW_IDS 命中——四个
-// 标签走精确配对、SKEW 只兜剩余编号，两档各自有名字。
-const MENU_LABEL_SHIFT = [
-  { key: '打屁股', golden: 39, ere: 40 }, // L_I 39 空号（首位）
-  { key: '放置PLAY', golden: 54, ere: 55 },
-  { key: '交谈', golden: 55, ere: 56 },
-  { key: '穿脱衣服', golden: 89, ere: 110 }, // 累计 21 个空号
-];
 
 // —— @SHOW_USERCOM 的按钮组标签（docs/stub-registry.md「指令菜单按钮渲染」
 //    行：[100]-[990] 组未挂载）。golden 侧出现这些标签 = 已登记待办 ——
@@ -154,9 +123,10 @@ const B_MAP_GRID_RE = /^[０-９＠凹凸]+(,[０-９＠凹凸]+)+,$/;
 const B_VERSION_LINE_RE = /^伪Ver\d+\.\d+(\.\d+)?立绘版$/;
 
 /**
- * TrainCommand.yml 的全部编号（ere 侧菜单条目的合法值域）。
- * 规则用：ere 侧多出来的按钮只有编号在册才可归因「COM_ABLE 未移植」；
- * 编号不在册（拼错/凭空）照样 unexplained。
+ * TrainCommand.yml 的全部编号（L_I 侧值域）与「L_IDX 位次 → L_I」的映射
+ * （#213 起 ere 侧按钮印紧凑序号 L_IDX，归因前先映射回 L_I 判定在册）。
+ * 规则用：ere 侧多出来的按钮只有（位次对应的）编号在册才可归因
+ * 「COM_ABLE 未移植」；编号不在册（拼错/凭空）照样 unexplained。
  */
 function load_traincommand_ids(
   repo_root = path.resolve(__dirname, '..', '..'),
@@ -171,11 +141,24 @@ function load_traincommand_ids(
 }
 
 /**
+ * L_IDX 位次 → L_I 的映射（离线等价物：全部非空 TRAINNAME 条目升序的
+ * 下标，即 @SHOW_COMMENU 的 FOR L_I,0,300 + STRLENS 守卫；与 ere/system/
+ * train/com-index.js 同源同法，独立推导作对账通道）。
+ */
+function load_traincommand_index_map(
+  repo_root = path.resolve(__dirname, '..', '..'),
+) {
+  const ids = [...load_traincommand_ids(repo_root)].sort((a, b) => a - b);
+  return new Map(ids.map((id, idx) => [idx, id]));
+}
+
+/**
  * 归因单条差异条目。
  *
  * @param {object} entry 差异条目（kind 同 normalize）
  * @param {'golden'|'ere'} side 条目所在侧
  * @param {object} context { traincommand_ids: Set<number>,
+ *   traincommand_index_map?: Map<number, number>（L_IDX→L_I，缺省现读 yml）,
  *   counterpart?: 对侧同编号/同键条目（成对差异时给） }
  * @returns {{category: 'version'|'stub', reason: string} | null
  *   null = 无法归因（unexplained，真缺陷候选）}
@@ -192,9 +175,8 @@ function classify_entry(entry, side, context) {
   }
   // 调教段全序列（#211 第三段）的规则组：只在 scope === 'train'（cli 的
   // --sample train-* 传入）时生效——旧样本首回合比对（无 scope）与范围 B
-  // 的计数零变化。组内未命中的条目落回下方的调教段通用规则（菜单豁免
-  // 桥 VERSION_SKEW/MENU_LABEL_SHIFT、存根行、COM_ABLE 未过滤等两份
-  // 新样本同样消费）
+  // 的计数零变化。组内未命中的条目落回下方的调教段通用规则（存根行、
+  // COM_ABLE 未过滤等两份新样本同样消费）
   if (context.scope === 'train') {
     const hit = classify_scope_train(entry, side, context);
     if (hit) {
@@ -202,25 +184,16 @@ function classify_entry(entry, side, context) {
     }
   }
   const tc_ids = context.traincommand_ids ?? load_traincommand_ids();
+  // #213 起 ere 侧方格按钮印 L_IDX：归因用的在册判定先映射回 L_I
+  const idx_map =
+    context.traincommand_index_map ?? load_traincommand_index_map();
+  // ere 侧按钮编号的 L_I 解释（L_I 侧直接在册或经位次映射在册；golden 侧
+  // 的方格编号本就是 L_IDX，同表映射）
+  const l_i_of = (val) => (tc_ids.has(val) ? val : idx_map.get(val));
 
   if (entry.kind === 'menu') {
-    // 精确配对先行（#211 第三段起）：四个错位标签各自有名字；SKEW 裸编号
-    // 只兜 ere 侧独有条目（野外PLAY[54]/兽奸PLAY[89] 等 L_I 撞错位段的渲染）
-    const shift = MENU_LABEL_SHIFT.find(
-      (s) => s.key === entry.key && s[side] === entry.val,
-    );
-    if (shift) {
-      return {
-        category: 'version',
-        reason: `编号体系差：${shift.key} 的方格编号是紧凑序号 L_IDX ${shift.golden}、Train.csv 编号 L_I ${shift.ere}（@SHOW_COMMENU 的 L_IDX++，#211 实证；ere 侧待 #213 建映射层后本条删除）`,
-      };
-    }
-    if (VERSION_SKEW_IDS.has(entry.val)) {
-      return {
-        category: 'version',
-        reason: `编号体系差：编号 ${entry.val} 落在 L_IDX/L_I 错位段（Train.csv 空号累计，#211 实证；ere 侧待 #213 建映射层后本条删除）`,
-      };
-    }
+    // 【#213 拆除】此处原是 MENU_LABEL_SHIFT / VERSION_SKEW_IDS 的编号
+    // 体系差豁免——映射层落地后两侧编号一致，整组删除（见文件头）
     if (side === 'golden' && USERCOM_BUTTON_LABELS.has(entry.key)) {
       return {
         category: 'stub',
@@ -229,7 +202,7 @@ function classify_entry(entry, side, context) {
     }
     if (
       side === 'ere' &&
-      tc_ids.has(entry.val) &&
+      l_i_of(entry.val) !== undefined &&
       !USERCOM_BUTTON_LABELS.has(entry.key) &&
       // 编号与 golden 侧同一指令撞名（change 对）时必须由对侧规则归因：
       // golden 是按钮组标签 → 存根待办；否则同编号异名 = unexplained
@@ -244,7 +217,7 @@ function classify_entry(entry, side, context) {
     if (
       side === 'ere' &&
       context.counterpart === undefined &&
-      tc_ids.has(entry.val)
+      l_i_of(entry.val) !== undefined
     ) {
       return {
         category: 'stub',
@@ -1009,7 +982,6 @@ module.exports = {
   B_MAINMENU_LABELS,
   B_SAVELOAD_LABELS,
   CLOTH_PREFIX,
-  MENU_LABEL_SHIFT,
   STUB_GAUGE_KEYS,
   STUB_TEXT_EXACT,
   STUB_TEXT_RE,
@@ -1020,10 +992,10 @@ module.exports = {
   TRAIN_SOURCE_LINE_RE,
   TRAIN_UNIMPLEMENTED_BLOCKS,
   USERCOM_BUTTON_LABELS,
-  VERSION_SKEW_IDS,
   classify_entry,
   classify_scope_b,
   classify_scope_train,
   load_traincommand_ids,
+  load_traincommand_index_map,
   load_traincommand_names,
 };

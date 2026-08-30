@@ -33,8 +33,10 @@
  *     7. UP/DOWN/LOSEBASE/CUP/CDOWN 初始化——ere 等价物（delta/deltabase）
  *        已由上一回合末的 nextTurnInTrain 结算清零，此步无独立动作；首回
  *        合的表由 beginTrain 建为零
- *     8. 等待输入（era.input()）
- *     9. 输入检查：命中可执行指令 → SELECTCOM = 输入（flag 槽位）
+ *     8. 等待输入（era.input()——玩家输入的是紧凑序号 L_IDX，先过
+ *        com-index 映射层转回 Train.csv 编号 L_I，#211 实证/#213 落地）
+ *     9. 输入检查：映射有效且命中可执行指令 → SELECTCOM = L_I（flag 槽位）；
+ *        映射无效（999 出口、子菜单号、乱数）→ @USERCOM
  *    10. 全部角色 NOWEX 清零（exkeys 枚举，逐格置 0）
  *    11. @EVENTCOM 事件链
  *    12. 对应 @COMxx（com_family 分发）。未实现 → 引擎「重新要求输入」
@@ -66,7 +68,12 @@
 
 const era = require('#/era-electron');
 const { emit } = require('#/system/event/registry');
-const { com_able_family, com_family } = require('#/system/train/com-family');
+const {
+  com_able_family,
+  com_family,
+  DECLARED_TRAIN_IDS,
+} = require('#/system/train/com-family');
+const { com_id } = require('#/system/train/com-index');
 const era_flag = require('#/era-utils/era-flag');
 
 // @COMxx 未实现时的缺失哨兵：dispatch 的 whenMissing 由调用点声明（#7），
@@ -77,13 +84,15 @@ const COM_MISSING = Symbol('COM_MISSING');
  * 遍历 @COM_ABLExx 得出本回合可执行的指令编号（升序）。
  *
  * 判据 1:1：探测 COM_ABLE 族，返回 0 = 不可执行；空间内未实现 → 1
- * （COM_ABLE初期値默认值，可执行）。编号空间 = TrainCommand.yml 的 101 条。
+ * （COM_ABLE初期値默认值，可执行）。遍历域 = **可直选空间**（Train.csv
+ * 的 101 个号，@SHOW_COMMENU 的 FOR L_I,0,300 只走非空 TRAINNAME）——
+ * 分发空间的另外 20 个高级 COM 不可直选，不进扫描（#213）。
  *
- * @returns {Promise<number[]>} 可执行指令的编号列表
+ * @returns {Promise<number[]>} 可执行指令的编号列表（L_I 侧）
  */
 async function scan_usable_commands() {
   const usable = [];
-  for (const id of com_able_family.declared) {
+  for (const id of DECLARED_TRAIN_IDS) {
     const able = await com_able_family.call(id, { whenMissing: 1 });
     if (able !== 0) {
       usable.push(id);
@@ -166,11 +175,15 @@ async function run_train() {
     // 7. UP/DOWN/LOSEBASE/CUP/CDOWN 初始化：ere 等价物已在上一回合末
     // nextTurnInTrain 结算清零（文件头第 7 步说明），无独立动作
 
-    // 8. 等待输入
-    const result = await era.input();
+    // 8. 等待输入。玩家输入的是**紧凑序号 L_IDX**（指令按钮上印的数，
+    // #211 实证：按 89 跑出 @COM110）——先过映射层转回 Train.csv 编号
+    const idx = await era.input();
+    const result = com_id(idx);
 
-    if (usable.includes(result)) {
-      // 9. 输入检查通过 → SELECTCOM = 输入
+    if (result !== undefined && usable.includes(result)) {
+      // 9. 输入检查通过 → SELECTCOM = L_I（紧凑序号经 com-index 映射；
+      // 空间外编号（999 出口、子菜单号、乱数）在映射处得 undefined，
+      // 落 @USERCOM——引擎「输入检查失败 → @USERCOM」的同位语义）
       era_flag.selectcom = result;
       // 10. 全角色 NOWEX 清零
       clear_nowex_all();
@@ -204,8 +217,9 @@ async function run_train() {
       continue;
     }
 
-    // 非指令输入 → @USERCOM（999 = 调教结束，函数体在 page/page-usercom.js）
-    const usercom_pending = await emit('USERCOM', result);
+    // 非指令输入（映射得 undefined）→ @USERCOM（999 = 调教结束，函数体在
+    // page/page-usercom.js；@USERCOM 收到的是玩家的原始输入，同原作 RESULT）
+    const usercom_pending = await emit('USERCOM', idx);
     if (usercom_pending !== undefined) {
       return usercom_pending;
     }

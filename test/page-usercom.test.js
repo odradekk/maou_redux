@@ -76,6 +76,87 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   }
 });
 
+// —— #213：指令按钮的紧凑序号（L_IDX）与升格标签（@SHOW_COMMENU 依据） ——
+
+test('指令按钮印 L_IDX、标签取 TRAIN_NAME（trainalias）——错位段不再是 L_I', async () => {
+  const fixture = create_era_fixture();
+  const { train_name_init } = fixture.load_module('system/train/train-name');
+  const { emit } = load_page(fixture);
+  // @TRAIN_NAME_INIT 播种 TRAIN_NAME（真实调用点在 @EVENTTRAIN，#212）
+  train_name_init();
+
+  // 0（恒等段）、40（打屁股）、110（穿脱衣服）：#211 实证的三个错位点
+  await emit('SHOW_USERCOM', [0, 40, 110]);
+
+  const buttons = fixture.lines.filter(
+    (line) => line.type === 'button' && line.accelerator !== 999,
+  );
+  assert.deepEqual(
+    buttons.map((b) => [b.accelerator, b.text]),
+    [
+      [0, '爱抚'],
+      [39, '打屁股'],
+      [89, '穿脱衣服'],
+    ],
+    '编号必须是紧凑序号 L_IDX（打屁股 40→39、穿脱衣服 110→89）',
+  );
+});
+
+test('command_button_label：升格后的号取名字；64 合成臂读 CSV 静态名', async () => {
+  const fixture = create_era_fixture();
+  const { command_button_label } = fixture.load_module('page/page-usercom');
+  const { train_name_init } = fixture.load_module('system/train/train-name');
+  train_name_init();
+  fixture.store.set('traincommandname:64', '３Ｐ');
+  fixture.store.set('traincommandname:20', '正常位');
+
+  // 未升格（adv = id）：TRAIN_NAME（trainalias）的名字
+  assert.equal(command_button_label(0, 0), '爱抚');
+  // 升格（8 → 84 刺激Ｇ点）：名字用升格后的号，编号仍用升格前的位次
+  assert.equal(command_button_label(84, 8), '刺激Ｇ点');
+  // 64 合成臂（RESULT == 64 且 L_I != 64）：%TRAINNAME:64%・%TRAINNAME:L_I%
+  assert.equal(command_button_label(64, 20), '３Ｐ・正常位');
+  // 64 本尊不走合成臂（L_I == 64）
+  assert.equal(command_button_label(64, 64), '３Ｐ');
+});
+
+test('指令按钮经 @GET_ADV_COM 升格：标签换、编号不换（train-upgrade 实证形态）', async () => {
+  const fixture = create_era_fixture();
+  const { train_name_init } = fixture.load_module('system/train/train-name');
+  const { adv_com_family } = fixture.load_module('system/train/com-adv');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  const { emit } = load_page(fixture);
+  train_name_init();
+
+  // 测试内注册 CASE 8 形状的升格规则（#213 骨架态零生产规则；J9 落地真
+  // 规则时本用例按新语义改读生产规则）
+  adv_com_family.register(8, async () => (era_flag.prevcom === 8 ? 84 : 8));
+
+  // 条件不满足 → 原名原号
+  era_flag.prevcom = 0;
+  await emit('SHOW_USERCOM', [8]);
+  let buttons = fixture.lines.filter(
+    (line) => line.type === 'button' && line.accelerator !== 999,
+  );
+  assert.deepEqual(
+    buttons.map((b) => [b.accelerator, b.text]),
+    [[8, '插入手指']],
+  );
+
+  // 前回合是插入手指 → 标签升格为 COM84（刺激Ｇ点），编号仍是 8 号位
+  //（train-upgrade-log:348 实证形态：名字用升格 id、编号用位次）
+  era_flag.prevcom = 8;
+  const before = fixture.lines.length; // 追加式记录：只看第二次绘制的增量
+  await emit('SHOW_USERCOM', [8]);
+  buttons = fixture.lines
+    .slice(before)
+    .filter((line) => line.type === 'button' && line.accelerator !== 999);
+  assert.deepEqual(
+    buttons.map((b) => [b.accelerator, b.text]),
+    [[8, '刺激Ｇ点']],
+  );
+});
+
 // —— @P_C 与「上次的调教指令」行（#212：TSTR:90 承载，TRAIN_MAIN.ERB:771-780）——
 
 /** 预置 prevcom 后绘制指令菜单，返回「上次的调教指令」行文本与 tstr:90 */

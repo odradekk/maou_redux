@@ -1,16 +1,26 @@
 /**
  * @file 调教文本的通用前缀与后缀：@TRAIN_MESSAGE_B（指令情景描写，前）与
- * @TRAIN_MESSAGE_A（参数上升反应，后）的 COM0（爱抚）分支（issue #45）。
+ * @TRAIN_MESSAGE_A（参数上升反应，后）的 COM0（爱抚）分支与分发骨架
+ * （issue #45 落地爱抚分支，#213 立分发表——其余 SELECTCOM 分支随各自
+ * 指令票在 com-<族>.js 注册，default 落存根占位行）。
  *
  * 源: target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB  @TRAIN_MESSAGE_B
- *     （:12-3049 全文；这张票移植 :19-90 的公共头 + 爱抚分支，其余指令分支
- *     随各自指令票扩展）
+ *     （:12-3049 全文；公共头 :19-26 + 107 个 IF SELECTCOM == 分支）
  *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB  @TRAIN_MESSAGE_A
- *     （:15-1351 全文；这张票移植 :22-26 的公共头 + :745-808 的爱抚反应分支）
+ *     （:15-1351 全文；公共头 :22-26 + 82 个分支）
  *
  * 原作 B 在前、A 在后（B 文件头 :10 的调用方注释）；ere 侧同为两次直调：
  * B 由 @COM0 调（COMF0_愛撫.ERB:11），A 由 @SOURCE_CHECK 调
  * （SYSTEM_SOURCE.ERB:478）。
+ *
+ * == 分发表（#209 裁定 6 / #213 立面） ==
+ *
+ * 平铺大文件只留公共头做骨架，各族的段跟族票。ere 侧按族建模块
+ * （com-<族>.js）：族票把该族的 TRAIN_MESSAGE 分支注册进
+ * train_message_b_family / train_message_a_family——声明空间 = 121 段
+ * 分发空间（SELECTCOM 经升格可取高级 COM 号，高级号的分支同样在这两张
+ * 表里）。缺失（族票未落地）→ 存根占位行；空间外 → 显式抛错（SELECTCOM
+ * 只会是 121 之一，越界即引擎对接 bug，不静默回落）。
  *
  * 这张票存根/登记（docs/stub-registry.md）：
  *   - B 的服装前缀组（:29-39，PRINT_CLOTHTYPE_SPECIAL / _MAIN2）：CFLAG:40/42
@@ -26,12 +36,34 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
+const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { DECLARED_COM_IDS } = require('#/system/train/com-family');
 
 /**
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
  * 变动必须同步清单。
  */
 const STUBBED_CALLS = ['TRAIN_MESSAGE_B', 'TRAIN_MESSAGE_A'];
+
+/**
+ * @TRAIN_MESSAGE_B 的分支族（SELECTCOM → 情景描写）。族票在 com-<族>.js
+ * 注册：`train_message_b_family.register(<n>, async () => { … })`。
+ */
+const train_message_b_family = new DispatchFamily(
+  'TRAIN_MESSAGE_B',
+  DECLARED_COM_IDS,
+);
+
+/**
+ * @TRAIN_MESSAGE_A 的分支族（SELECTCOM → 参数上升反应）。
+ */
+const train_message_a_family = new DispatchFamily(
+  'TRAIN_MESSAGE_A',
+  DECLARED_COM_IDS,
+);
+
+// 分支缺失的哨兵：族票未落地的指令走存根占位行（#45 起的既有行为）
+const BRANCH_MISSING = Symbol('TRAIN_MESSAGE_BRANCH_MISSING');
 
 // 体质描述（:74-87）——TALENT:135 未熟 / 100 娇小 / 115 肥胖（体型三选一）；
 // 244 恶魔肌肤 / 253 褐色肌肤 / 255 白皙（肤色三选一）。名字表见 yml/Talent.yml
@@ -103,7 +135,8 @@ async function train_message_b_caress() {
 }
 
 /**
- * @TRAIN_MESSAGE_B（:12-）。当前仅实现爱抚分支，其余指令落存根占位行。
+ * @TRAIN_MESSAGE_B（:12-）。公共头（省略设定 + 点线）后按 SELECTCOM 分发；
+ * 缺失分支落存根占位行，空间外显式抛错（见文件头「分发表」）。
  *
  * @returns {Promise<void>}
  */
@@ -116,9 +149,10 @@ async function train_message_b() {
   // 近似，记名差异见 issue #45）
   era.drawLine();
 
-  if (era_flag.selectcom === 0) {
-    await train_message_b_caress();
-  } else {
+  const branch = await train_message_b_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+  });
+  if (branch === BRANCH_MISSING) {
     stub_line(
       'TRAIN_MESSAGE_B',
       `指令 ${era_flag.selectcom} 的情景描写`,
@@ -134,6 +168,11 @@ async function train_message_b() {
  * 是 delta 表（nextTurnInTrain 结算 delta→palam，本函数在其前运行，读数
  * 与原作同位）。
  *
+ * 分支守卫（:746）在 handler 内：SELECTCOM == 0 && TEQUIP:44 == 0
+ * （绳子紧缚中换文本）&& TFLAG:899 <= 1（失神档位）——后两条当前无写入
+ * 路径，守卫 1:1 保留；不满足时落「紧缚/失神中的爱抚反应」占位行
+ * （#45 起的既有行为，分支文本随失神票）。
+ *
  * @returns {Promise<void>}
  */
 async function train_message_a_caress() {
@@ -141,13 +180,16 @@ async function train_message_a_caress() {
   const player_name = chara_callname(era_flag.player);
   const target_name = chara_callname(target);
 
+  // :746 爱抚分支守卫（SELECTCOM == 0 由分发表保证，另两条在此）
+  if (era.get(`tequip:${target}:44`) || (era.get('tflag:899') || 0) > 1) {
+    stub_line('TRAIN_MESSAGE_A', '紧缚/失神中的爱抚反应', '随失神票');
+    return;
+  }
+
   // :747-749 A = UP:0、B = UP:14、C = A + B
   const c =
     (era.get(`delta:${target}:0`) || 0) + (era.get(`delta:${target}:14`) || 0);
 
-  // 爱抚分支的进入条件 :745：SELECTCOM == 0 && TEQUIP:44 == 0（绳子紧缚中
-  // 换文本）&& TFLAG:899 <= 1（失神档位）——后两条当前无写入路径，守卫 1:1
-  // 保留在 train_message_a 的分支判断里（见下）
   if (c < 100) {
     // :751-760
     if (era.get(`talent:${target}:11`)) {
@@ -219,7 +261,8 @@ async function train_message_a_caress() {
 }
 
 /**
- * @TRAIN_MESSAGE_A（:15-）。当前仅实现爱抚分支，其余指令落存根占位行。
+ * @TRAIN_MESSAGE_A（:15-）。公共头（省略设定 + 点线）后按 SELECTCOM 分发；
+ * 缺失分支落存根占位行，空间外显式抛错（见文件头「分发表」）。
  *
  * @returns {Promise<void>}
  */
@@ -231,18 +274,10 @@ async function train_message_a() {
   // :26 CUSTOMDRAWLINE ‥（排版近似说明同 train_message_b）
   era.drawLine();
 
-  // :744 爱抚分支守卫：SELECTCOM == 0 && TEQUIP:44 == 0 && TFLAG:899 <= 1
-  if (
-    era_flag.selectcom === 0 &&
-    !era.get(`tequip:${era_flag.target}:44`) &&
-    (era.get('tflag:899') || 0) <= 1
-  ) {
-    await train_message_a_caress();
-  } else if (era_flag.selectcom === 0) {
-    // 爱抚但缚绳/失神中：分支文本随失神票（TFLAG:899 分档文本在
-    // PASSOUT_TEXT 一族），此处不硬造
-    stub_line('TRAIN_MESSAGE_A', '紧缚/失神中的爱抚反应', '随失神票');
-  } else {
+  const branch = await train_message_a_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+  });
+  if (branch === BRANCH_MISSING) {
     stub_line(
       'TRAIN_MESSAGE_A',
       `指令 ${era_flag.selectcom} 的参数反应`,
@@ -251,8 +286,14 @@ async function train_message_a() {
   }
 }
 
+// COM0（爱抚）分支注册（#45 落地的两个分支；其余指令随族票接进两张表）
+train_message_b_family.register(0, train_message_b_caress);
+train_message_a_family.register(0, train_message_a_caress);
+
 module.exports = {
   STUBBED_CALLS,
   train_message_a,
+  train_message_a_family,
   train_message_b,
+  train_message_b_family,
 };

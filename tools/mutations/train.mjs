@@ -45,7 +45,9 @@ export default [
   {
     desc: 'M14 SELECTCOM 来源：输入检查不再设定 SELECTCOM（步骤 9）',
     file: 'ere/system/train/train-loop.js',
-    find: `      // 9. 输入检查通过 → SELECTCOM = 输入
+    find: `      // 9. 输入检查通过 → SELECTCOM = L_I（紧凑序号经 com-index 映射；
+      // 空间外编号（999 出口、子菜单号、乱数）在映射处得 undefined，
+      // 落 @USERCOM——引擎「输入检查失败 → @USERCOM」的同位语义）
       era_flag.selectcom = result;`,
     replace: `      // 9. 变异：不设 SELECTCOM`,
     tests: ['train-loop'],
@@ -351,5 +353,166 @@ export default [
     replace: `  return era.get(\`trainalias:\${id}\`);`,
     tests: ['train-name'],
     must_mention: 'read_train_name',
+  },
+  // —— #213（J3 指令分发骨架）：121 段空间 / L_IDX 映射 / 升格 / 分发族 ——
+  {
+    desc: 'M740 反向变异（#213 必配）：映射层恒等化（com_index 返回 L_I 本身——train-loop.js:164 的旧行为）',
+    file: 'ere/system/train/com-index.js',
+    find: `function com_index(id) {
+  const idx = ORDERED_TRAIN_IDS.indexOf(id);
+  return idx === -1 ? undefined : idx;
+}`,
+    replace: `function com_index(id) {
+  // 变异：恒等映射（第一个空号 39 之后的指令全部错位）
+  return Number.isInteger(id) ? id : undefined;
+}`,
+    tests: ['com-dispatch', 'page-usercom'],
+    must_mention: '打屁股——恒等映射在此必红',
+  },
+  {
+    desc: 'M741 输入侧映射的越界兜底改成 0（空间外输入被误当爱抚执行）',
+    file: 'ere/system/train/com-index.js',
+    find: `  if (!Number.isInteger(idx) || idx < 0 || idx >= ORDERED_TRAIN_IDS.length) {
+    return undefined;
+  }`,
+    replace: `  // 变异：越界回落 0（999 出口被当爱抚）
+  if (!Number.isInteger(idx) || idx < 0 || idx >= ORDERED_TRAIN_IDS.length) {
+    return 0;
+  }`,
+    tests: ['com-dispatch', 'train-loop'],
+    // train-loop 侧的红形态是输入耗尽（999→0 进指令路径吃掉退出键），
+    // com-dispatch 侧是越界断言——must_mention 取后者
+    must_mention: '必须 undefined',
+  },
+  {
+    desc: 'M742 train-loop 输入映射删（玩家输入直当 L_I——#211 查出的潜伏错误回潮）',
+    file: 'ere/system/train/train-loop.js',
+    find: `    const idx = await era.input();
+    const result = com_id(idx);`,
+    replace: `    const idx = await era.input();
+    const result = idx; // 变异：映射层旁路`,
+    tests: ['train-loop'],
+    must_mention: 'L_IDX 39 必须分发到 @COM40',
+  },
+  {
+    desc: 'M743 COM_ABLE 扫描域换成 121 段分发空间（高级 COM 混进可直选菜单）',
+    file: 'ere/system/train/train-loop.js',
+    find: `  for (const id of DECLARED_TRAIN_IDS) {
+    const able = await com_able_family.call(id, { whenMissing: 1 });`,
+    replace: `  for (const id of com_able_family.declared) {
+    // 变异：扫全分发空间（高级 COM 不可直选）
+    const able = await com_able_family.call(id, { whenMissing: 1 });`,
+    tests: ['train-loop'],
+    must_mention: '可直选空间 101 个编号全可用',
+  },
+  {
+    desc: 'M744 按钮编号印回 L_I（渲染侧映射删——方格与玩家输入错位）',
+    file: 'ere/page/page-usercom.js',
+    find: `  for (const id of usable) {
+    const adv = await get_adv_com(id);
+    era.printButton(command_button_label(adv, id), com_index(id));
+  }`,
+    replace: `  for (const id of usable) {
+    const adv = await get_adv_com(id);
+    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I
+  }`,
+    tests: ['page-usercom'],
+    must_mention: '编号必须是紧凑序号 L_IDX',
+  },
+  {
+    desc: 'M745 按钮标签不升格（标签用升格前的号——%TRAIN_NAME:RESULT% 的 RESULT 被旁路）',
+    file: 'ere/page/page-usercom.js',
+    find: `function command_button_label(adv, id) {
+  if (adv === 64 && id !== 64) {`,
+    replace: `function command_button_label(adv, id) {
+  // 变异：升格名旁路（恒用升格前的号取名）
+  adv = id;
+  if (adv === 64 && id !== 64) {`,
+    tests: ['page-usercom'],
+    must_mention: '标签换、编号不换',
+  },
+  {
+    desc: 'M746 64 合成臂删（%TRAINNAME:64%・%TRAINNAME:L_I% 的合成标签不再成形）',
+    file: 'ere/page/page-usercom.js',
+    find: `  if (adv === 64 && id !== 64) {`,
+    replace: `  if (false) {
+    // 变异：合成臂删（64 合成时直接落 TRAIN_NAME）`,
+    tests: ['page-usercom'],
+    must_mention: '64 合成臂',
+  },
+  {
+    desc: 'M747 GET_ADV_COM 的缺失语义改 0（RETURN ARG 变 RETURN 0——无规则的指令被升格去 0 号）',
+    file: 'ere/system/train/com-adv.js',
+    find: `  return adv_com_family.call(id, { whenMissing: id, args: [rule_rand] });`,
+    replace: `  return adv_com_family.call(id, { whenMissing: 0, args: [rule_rand] }); // 变异`,
+    tests: ['com-dispatch'],
+    must_mention: '无规则时',
+  },
+  {
+    desc: 'M748 升格规则收不到随机源（get_adv_com 不注入缺省 rand——签名契约破）',
+    file: 'ere/system/train/com-adv.js',
+    find: `  const rule_rand = rand ?? ((n) => Math.floor(Math.random() * n));`,
+    replace: `  const rule_rand = undefined; // 变异：随机源不注入`,
+    tests: ['com-dispatch'],
+    must_mention: 'rand 必须以函数形态注入规则',
+  },
+  {
+    desc: 'M749 V_ABLE 的未成熟判定删（源注释与代码的出入处——照注释不照代码）',
+    file: 'ere/system/train/v-able.js',
+    find: `  if (era.get(\`talent:\${cid}:135\`)) {
+    return 0; // :9-10 未成熟（源注释的「萨德豁免」不在函数体内，见文件头）
+  }`,
+    replace: `  // 变异：未成熟判定删`,
+    tests: ['com-dispatch'],
+    must_mention: '未成熟不可',
+  },
+  {
+    desc: 'M750 分发空间少一号（84 刺激Ｇ点从声明空间摘除——升格目标无处分发）',
+    file: 'ere/system/train/com-family.js',
+    find: `const ADVANCED_COM_IDS = [
+  67, 69, 70, 84, 111, 120, 121, 123, 124, 125, 126, 127, 128, 129, 130, 131,
+  132, 133, 134, 208,
+];`,
+    replace: `const ADVANCED_COM_IDS = [
+  67, 69, 70, 111, 120, 121, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132,
+  133, 134, 208, // 变异：84 摘除
+];`,
+    tests: ['com-dispatch'],
+    must_mention: '高级 COM = 分发空间 − 可直选空间',
+  },
+  {
+    desc: 'M751 TRAIN_MESSAGE_B 的缺失分支静默（default 占位行删——族票落地前无声无息）',
+    file: 'ere/system/train/train-message.js',
+    find: `  const branch = await train_message_b_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+  });
+  if (branch === BRANCH_MISSING) {
+    stub_line(
+      'TRAIN_MESSAGE_B',
+      \`指令 \${era_flag.selectcom} 的情景描写\`,
+      '随各自指令票',
+    );
+  }`,
+    replace: `  const branch = await train_message_b_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+  });
+  // 变异：缺失分支静默`,
+    tests: ['train-message', 'com-dispatch'],
+    must_mention: '缺失分支必须落可检索的占位行',
+  },
+  {
+    desc: 'M752 TRAIN_MESSAGE_A 分发的空间外抛错被吞（越界 SELECTCOM 静默回落）',
+    file: 'ere/system/train/train-message.js',
+    find: `  const branch = await train_message_a_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+  });`,
+    replace: `  if (!train_message_a_family.declared.has(era_flag.selectcom)) {
+    return; // 变异：空间外静默
+  }
+  const branch = await train_message_a_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+  });`,
+    tests: ['com-dispatch'],
+    must_mention: '空间外显式抛错',
   },
 ];

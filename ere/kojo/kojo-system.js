@@ -28,6 +28,35 @@
  * 合法（未移植的性格不发一言）；重复注册启动即炸（#14：原作 23 个口上
  * 函数被同名遮蔽的真实事故）。
  *
+ * == handler 签名（#213 定死的接触面——轴 A 十二张族票与轴 B 二十一张
+ *    口上票唯一共用的一张脸，两边都对着它写） ==
+ *
+ *   async (rand) => 0
+ *
+ *   - 入参 rand：RAND:N 的随机源（(n) => [0, n) 整数；缺省均匀随机）。
+ *     分发点以 args: [rand] 透传；handler 内部自兜底（K3 先例）；
+ *   - 返回值恒 0（TRYCALLFORM 不读返回值；契约测试锁定）；
+ *   - 读取面：era_flag 的 target/player/assi/assiplay/selectcom 与
+ *     era 表——**只读游戏状态**，跨域写一律走门面（#71）；
+ *   - 输出面：台词用 era.printAndWait；除此之外不得有任何输出或等待；
+ *   - **七道头部守卫先于任何 SELECTCOM 分支**（实测 EVENT_K3_高貴.ERB
+ *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各文件 1:1）：
+ *       1. TEQUIP:55（死斗场）→ 岔去专用口上（COLOSSEUM_KOJO_<n>）；
+ *       2. ASSI > 0 && ASSIPLAY（助手调教）→ 跳过；
+ *       3. TEQUIP:45 && SELECTCOM != 45（口塞；口塞指令自己不算）→ 跳过；
+ *       4. TFLAG:899（失神）→ 跳过；
+ *       5. TEQUIP:89（兽奸）→ 岔去专用口上（DOG_KOJO_<n>；有的性格是
+ *          静默跳过，按各文件 1:1）；
+ *       6. TALENT:9 == 1（崩坏）→ 跳过；
+ *       7. TEQUIP:90（触手）→ 跳过。
+ *     守卫读 TEQUIP:55/45/89/90 只读（TEQUIP 建模归 J5，#215）。契约测试
+ *     （test/kojo-system.test.js）对**已注册的全部 handler** 逐条置位驱
+ *     动：守卫命中时不得出现台词（无等待、无台词输出）——口上票落地即
+ *     自动进契约，无需逐票自写守卫用例。
+ *   - SELECTCOM 分支：指令族票（轴 A）落地一条 @COM<n> 时，同一编号的
+ *     台词分支在各口上 handler 内各自扩展（各文件 1:1，分支序/条件随
+ *     ERB 原文）。
+ *
  * == EX 口上待办（登记 docs/stub-registry.md，随 EX 口上票） ==
  *
  * @GET_KOJO_NUM 的 LOCAL = GET_EX_KOJO_NUM(ARG)（EXCOM.ERB:31-38，扫

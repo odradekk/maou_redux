@@ -11,8 +11,9 @@
  *   2. 回放器裁定行为：随机源是序列注入（相殺的 RAND:3 六连掷，反推自
  *      golden 结算终态）、输入计划耗尽的显式失败、run_train → run_aftertrain
  *      的状态链（AFTERTRAIN → TURNEND）。
- *   3. 归因改正的行为锁：MENU_LABEL_SHIFT 的精确配对四个标签齐（#211 的
- *      L_IDX/L_I 机制），裸编号不吞标签（反向变异的靶在 tools/mutations/）。
+ *   3. 归因的行为锁（#213 起）：编号在册判定经 L_IDX 映射——位次映射回
+ *      L_I 才可归因「COM_ABLE 未过滤」，不在册/标签不配照旧 unexplained；
+ *      #211 的 MENU_LABEL_SHIFT/VERSION_SKEW 豁免已随映射层落地整组拆除。
  *
  * 全用例走夹具（纯 Node），无引擎依赖。
  */
@@ -37,23 +38,21 @@ const REPO = path.resolve(__dirname, '..');
 // —— 1. 两份样本的比对基线锁（#211 第三段首次全绿的实测）——
 //
 // 数字的构成（供后续票据更新时对账）：
-//   train-natural 的 version 176 = 17 屏方格的四个错位标签（打屁股 39↔40、
-//     放置PLAY 54↔55、交谈 55↔56、穿脱衣服 89↔110 各 2 条）+ ere 侧
-//     野外PLAY[54]/兽奸PLAY[89] 撞错位段 + 交谈[56]/穿脱衣服[110] 的 ere
-//     半边（SKEW 兜底）× 屏数；
-//   存根 2536 的主体 = 每屏 ~80 条 COM_ABLE 未过滤按钮 × 17 屏 + 指令块
-//     输出 + 参数/结算数值差——阶段 4 的进度计本体。
+//   存根的大头 = 每屏 ~90 条 COM_ABLE 未过滤按钮 × 屏数 + 指令块输出 +
+//   参数/结算数值差——阶段 4 的进度计本体。
 //
-// 【验收期更新，#212（J2）合并后实测】本票建树时 master 尚无 J2 的
-// @SHOW_STATUS 槽条段与 LIFE_BAR/VITAL_BAR 真身，四数原为
-//   train-natural 537/176/2549/0、train-upgrade 142/52/841/0。
-// J2 落地后体力/气力/射精三条基础条转为匹配、两行 ere 占位撤除，两份样本
-// 同向移动：匹配 +15/+8、存根 -13/-11、version 与 unexplained 一动不动。
-// **这是收紧不是放宽**——进度计（存根数）该降的时候降了，而 unexplained
-// 恒为 0 说明没有差异被偷偷豁免掉。缺省样本同步 54/10/112 → 57/10/107。
+// 【#213（J3）映射层落地后实测】ere 侧指令按钮自此印紧凑序号 L_IDX、
+// 标签先过 @GET_ADV_COM（零规则的骨架态：升格标签的差仍在，随族票）。
+// 四数原为 train-natural 552/176/2536/0、train-upgrade 150/52/830/0。
+// 变化全部来自 #211 编号体系差豁免（MENU_LABEL_SHIFT 四标签精确配对 +
+// VERSION_SKEW 裸编号）的整组拆除：两侧编号一致后，四个错位标签的差异
+// 整对转匹配（natural +67 对 / upgrade +16 对），SKEW 兜底的 ere 独有
+// 条目转「COM_ABLE 未过滤」记名存根（natural +42 / upgrade +20），
+// version 归零。**这是收紧不是放宽**——豁免消失而不是扩围，unexplained
+// 恒为 0 的底线不动。缺省样本同步 57/10/107 → 61/0/109。
 const BASELINE = {
-  'train-natural': { matched: 552, version: 176, stub: 2536, unexplained: 0 },
-  'train-upgrade': { matched: 150, version: 52, stub: 830, unexplained: 0 },
+  'train-natural': { matched: 619, version: 0, stub: 2578, unexplained: 0 },
+  'train-upgrade': { matched: 166, version: 0, stub: 850, unexplained: 0 },
 };
 
 async function build_report(sample) {
@@ -164,63 +163,55 @@ test('golden 调教窗口的裁切：首屏在内、标题/主菜单段与尾部
   assert.equal(first_input?.text, '0');
 });
 
-// —— 3. 归因改正的行为锁 ——
+// —— 3. 归因的行为锁（#213：L_IDX 在册判定与豁免拆除）——
 
-test('MENU_LABEL_SHIFT 四个错位标签齐：L_IDX/L_I 的精确配对（#211 机制）', async () => {
-  const {
-    MENU_LABEL_SHIFT,
-    classify_entry,
-  } = require('../tools/compare/rules');
-  assert.deepEqual(
-    MENU_LABEL_SHIFT.map((s) => [s.key, s.golden, s.ere]),
-    [
-      ['打屁股', 39, 40],
-      ['放置PLAY', 54, 55],
-      ['交谈', 55, 56],
-      ['穿脱衣服', 89, 110],
-    ],
-  );
-  // 精确配对先于裸编号：打屁股[39] 的归因文本点名机制与 #213
+test('ere 侧菜单条目的在册判定经 L_IDX 映射：位次映射回 L_I 才豁免（#213）', async () => {
+  const { classify_entry } = require('../tools/compare/rules');
+  // 野外PLAY 的 L_IDX 53（L_I 54）——不在 L_I 值域，但经位次映射在册
+  //（#213 起 ere 按钮印紧凑序号，归因前先映射回 L_I）
   const hit = classify_entry(
-    { kind: 'menu', key: '打屁股', val: 39 },
-    'golden',
-    {},
-  );
-  assert.equal(hit.category, 'version');
-  assert.match(hit.reason, /L_IDX/);
-  assert.match(hit.reason, /#213/);
-  // 裸编号仍在（ere 侧独有条目兜底），且理由不再提「构建漂移」
-  const skew = classify_entry(
-    { kind: 'menu', key: '野外PLAY', val: 54 },
+    { kind: 'menu', key: '野外PLAY', val: 53 },
     'ere',
     {},
   );
-  assert.equal(skew.category, 'version');
-  assert.match(skew.reason, /L_IDX/);
-  assert.ok(!skew.reason.includes('勘误二'));
+  assert.equal(hit?.category, 'stub');
+  assert.match(hit.reason, /COM_ABLE/);
+  // L_I 侧直接在册（打屁股 40）照旧豁免——两套值域并存
+  const direct = classify_entry(
+    { kind: 'menu', key: '打屁股', val: 40 },
+    'ere',
+    {},
+  );
+  assert.equal(direct?.category, 'stub');
+  assert.match(direct.reason, /COM_ABLE/);
 });
 
-test('MENU_LABEL_SHIFT 不放宽到裸编号：val 撞值域但标签不配的条目不被豁免', async () => {
-  // rules.js 的纪律（#9 起注释一直警告）：裸 40 会吞掉真正的 COM_ABLE
-  // 回归——ere 侧若因回归渲染出 val=40 的异名按钮，它的正确归因是
-  // 「未被 COM_ABLE 过滤」（stub，计数进 stub 桶），裸编号会把它抢成
-  // version（桶间搬家、回归不可见）；golden 侧的异名条目更该直接
-  // unexplained。此前没有机器守卫（#211 实测：真实数据里 ere 侧
-  // val∈值域的只有四标签本尊与 SKEW 编号，放宽了也不红），本用例直接
-  // 锁规则行为。
+test('不在册/标签不配的条目不被豁免（#211 的纪律在 #213 后继续成立）', async () => {
   const { classify_entry } = require('../tools/compare/rules');
-  const ere_hit = classify_entry(
-    { kind: 'menu', key: '爱抚', val: 40 },
-    'ere',
-    {},
+  // 编号不在两套值域（178 既非 L_I——Train.csv 无此行、也非法位次 0-100）
+  // → unexplained：值域判定若放宽成「任意编号」，COM_ABLE 回归就不可见了
+  assert.equal(
+    classify_entry({ kind: 'menu', key: '爱抚', val: 178 }, 'ere', {}),
+    null,
+    'ere 侧不在册编号必须 unexplained',
   );
-  assert.equal(ere_hit?.category, 'stub');
-  assert.match(ere_hit.reason, /COM_ABLE/);
+  // golden 侧条目（无 ere 对应 = 该指令没被渲染，COM_ABLE 回归候选）：
+  // 39 映射回 40 在册，但 golden 侧没有「值域豁免」这一档——必须
+  // unexplained（#213 拆除后的正确形态：两侧编号一致，golden 独有条目
+  // 只该是按钮组标签（存根待办）或真差异）
   assert.equal(
     classify_entry({ kind: 'menu', key: '爱抚', val: 39 }, 'golden', {}),
     null,
-    '裸编号吞掉回归：golden 侧 val 命中 shift 值域但标签不配的条目必须 unexplained',
+    'golden 侧条目不得被值域豁免吞掉',
   );
+  // 按钮组标签（golden 侧）照旧走存根待办
+  const usercom = classify_entry(
+    { kind: 'menu', key: '能力表示', val: 100 },
+    'golden',
+    {},
+  );
+  assert.equal(usercom?.category, 'stub');
+  assert.match(usercom.reason, /@SHOW_USERCOM/);
 });
 
 test('旧样本首回合基线不受 train 规则组影响（scope 守卫）', async () => {

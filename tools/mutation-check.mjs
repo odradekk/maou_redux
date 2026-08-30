@@ -186,7 +186,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // #256（测试验收分层）+3：checkers.mjs 的 M730-M732（选择器的三条保守
 // 性质：全局锁恒在 / 兜底退回全量 / 目录探针不退化），再 +2：M733/M734
 // （引擎声明的门 4 与逐条交叉核对）。现为 510。
-const LEDGER_COUNT_BASELINE = 510;
+const LEDGER_COUNT_BASELINE = 523; // #213 +13（M740-M752）
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若

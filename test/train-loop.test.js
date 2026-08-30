@@ -150,18 +150,96 @@ test('回合循环的回调顺序：与 Emuera 逐条一致（探针固定）', 
   );
 });
 
-test('COM_ABLE 未定义即视为可执行：零实现下全部 101 个编号可用', async () => {
+test('COM_ABLE 未定义即视为可执行：零实现下可直选空间 101 个编号全可用', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.load_module('page/page-usercom');
   const { scan_usable_commands } = fixture.load_module(
     'system/train/train-loop',
   );
-  const { DECLARED_COM_IDS } = fixture.load_module('system/train/com-family');
+  const { DECLARED_TRAIN_IDS } = fixture.load_module('system/train/com-family');
 
+  // 扫描域是**可直选空间**（Train.csv 101）——分发空间的另外 20 个高级
+  // COM 不可直选（#213），不得进菜单
   assert.deepEqual(
     await scan_usable_commands(),
-    [...DECLARED_COM_IDS].sort((a, b) => a - b),
+    [...DECLARED_TRAIN_IDS].sort((a, b) => a - b),
+  );
+});
+
+test('#213 输入映射：玩家输入是 L_IDX，SELECTCOM 取 L_I（39→40 / 89→110）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  const { com_family } = fixture.load_module('system/train/com-family');
+  fixture.load_module('page/page-usercom');
+  const probe = [];
+  // 指令 40（打屁股）的探针实现：证明经映射分发到位
+  com_family.register(40, async () => {
+    probe.push('com_40');
+    return 1;
+  });
+
+  // 玩家按 39（打屁股的紧凑序号）→ SELECTCOM = 40（Train.csv 号）
+  fixture.set_inputs(39, 999);
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  assert.equal(await run_train(), 'AFTERTRAIN');
+  assert.deepEqual(probe, ['com_40'], 'L_IDX 39 必须分发到 @COM40');
+  const flag_writes = (id) =>
+    fixture.var_writes.filter((w) => w.name === id).map((w) => w.value);
+  assert.deepEqual(
+    flag_writes('flag:10011'),
+    [40],
+    'SELECTCOM = 40（映射后的 L_I；BEGIN TRAIN 不写 SELECTCOM）',
+  );
+  assert.deepEqual(flag_writes('flag:10009'), [-1, 40], 'PREVCOM 推进到 40');
+});
+
+test('#213 输入映射：89 跑出穿脱衣服的路由（golden 实证对），未实现 → 重新要求输入', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.load_module('page/page-usercom');
+
+  // 89 = 穿脱衣服的 L_IDX（Train.csv 110，train-natural-log:211
+  // 实证）。COM110 未移植 → 引擎「重新要求输入」：SELECTCOM 已置、无输出、
+  // PREVCOM 不推进、下一输入（999）正常退出
+  fixture.set_inputs(89, 999);
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  assert.equal(await run_train(), 'AFTERTRAIN');
+  assert.ok(
+    fixture.var_writes.some((w) => w.name === 'flag:10011' && w.value === 110),
+    'SELECTCOM 必须 = 110（不是玩家输入的 89）',
+  );
+  const prevcom_writes = fixture.var_writes
+    .filter((w) => w.name === 'flag:10009')
+    .map((w) => w.value);
+  assert.deepEqual(
+    prevcom_writes,
+    [-1],
+    '未实现的指令不推进 PREVCOM（重新要求输入语义）',
+  );
+  assert.deepEqual(
+    fixture.text_lines().filter((l) => l.includes('爱抚')),
+    [],
+    '89 不得被误当 COM0 之前的编号执行出任何指令输出',
+  );
+});
+
+test('#213 输入映射：映射外的编号原样落 @USERCOM（999 出口照常）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  const { on } = fixture.load_module('system/event/registry');
+  fixture.load_module('page/page-usercom');
+  const probe = [];
+  on('USERCOM', async (result) => probe.push(`usercom(${result})`));
+
+  // 999 在 L_IDX 空间外（0-100）→ @USERCOM 收到原始输入 999 → AFTERTRAIN
+  fixture.set_inputs(999);
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  assert.equal(await run_train(), 'AFTERTRAIN');
+  assert.deepEqual(probe, ['usercom(999)']);
+  assert(
+    !fixture.var_writes.some((w) => w.name === 'flag:10011'),
+    'USERCOM 路径不得写 SELECTCOM',
   );
 });
 

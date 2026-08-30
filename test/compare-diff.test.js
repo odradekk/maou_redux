@@ -150,12 +150,21 @@ test('归因：菜单同编号异名（爱抚[0] vs 爱抚X[0]）不可豁免—
   assert.equal(report.summary.unexplained, 2);
 });
 
-test('归因：打屁股 39↔40 标签移位 → version（勘误二的例外，非缺陷）', () => {
+test('归因：打屁股 39↔40 标签移位 → unexplained（#213 映射层落地后是真缺陷出口）', () => {
+  // #211 时代此差异经 MENU_LABEL_SHIFT 豁免成 version（编号体系差）；
+  // #213 建 L_IDX↔L_I 映射层后两侧编号应当一致——豁免整组拆除，同名
+  // 异号回到「真缺陷候选」（与上方同编号异名用例同构）
   const report = diff_streams(
     [{ kind: 'menu', key: '打屁股', val: 39 }],
     [{ kind: 'menu', key: '打屁股', val: 40 }],
   );
-  assert.equal(report.summary.version, 2);
+  // 异号条目不构成 change 对（val 不同 → 各自落单侧差异）：golden 的
+  // [39] 无对位 → unexplained（缺陷候选）；ere 的 [40] 记名进存根桶
+  //（「COM_ABLE 未过滤」的保守归因——计数不静默，真缺陷仍会在
+  // unexplained 与基线四数上冒头）
+  assert.equal(report.summary.version, 0);
+  assert.equal(report.summary.unexplained, 1);
+  assert.equal(report.summary.stub, 1);
 });
 
 test('归因：不在册的指令编号（9999）不进 COM_ABLE 豁免——拼错必红', () => {
