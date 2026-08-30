@@ -215,10 +215,15 @@ async function draw_status_screen(target) {
   header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
   era.print(header);
 
-  // :84 CALL SHOW_EQUIP_2 —— 存根（读 TEQUIP 的调教装备显示：触手/死斗场
-  // 等位由各自族票点亮后才有可显示内容，随族票；#215 勘误归属，见
-  // docs/stub-registry.md 的 SHOW_EQUIP_2 条目）
-  stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');
+  // :84 CALL SHOW_EQUIP_2 —— 调教装备显示（CHARA_INFO_SHOW ver1.1.2.ERB
+  // :1564-1596，粉色一行的逐位追加）。TEQUIP:55（[死斗场决斗中]）臂随
+  // J20（#230——本族点亮该位）；其余装备位（摄影/野外/羞耻/浴室/新妻/
+  // 使役魔兽/兽奸/触手）随各自族票（J10/J13/J17），未点亮期间占位行保留
+  if (era.get(`tequip:${target}:55`)) {
+    era.print([{ content: '[死斗场决斗中]', color: '#FF1493' }]); // :1587-1588
+  } else {
+    stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');
+  }
   // :85-86 CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
   // chara-bars.js；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1129/:1175）
   life_bar(target);

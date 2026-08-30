@@ -46,6 +46,9 @@ require('#/system/train/com0-caress');
 // @COM40-49「SM 系」族（#223 J13）：@COM/@COM_ABLE 真身 + EQUIP_COM43-49
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
 require('#/system/train/com-sm');
+// 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
+// @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
+require('#/system/train/com-colosseum');
 // 回合结算本体（#114）：@EVENTTURNEND 的普通档定义（SYSTEM ver1.0.3.ERB）。
 // 与上面 event-turnend.js 的 #PRI 档、event-turnend-later.js 的空 #LATER 档
 // 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）

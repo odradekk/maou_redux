@@ -48,6 +48,7 @@ const TRAIN_PATH_MODULES = [
   'page/page-usercom',
   'system/train/com0-caress',
   'system/train/com-cloth',
+  'system/train/com-colosseum',
   'system/train/juel-check',
   'system/train/train-message',
 ];

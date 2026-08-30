@@ -45,15 +45,22 @@
  *        （引擎未明文），#45 已核——CALLTRAIN 段（system-flow.md:100-105）
  *        证得 SOURCE_CHECK→EVENTCOMEND 是执行链尾，缺失路径无观察差异，
  *        维持本序（详见 issue #45 留言）。**@COMxx 返回 0 → 回合取消**
- *        （era wiki Emuera/flow·TRAIN 节，flow1821＝本作引擎版本：「@COM
- *        returns 0, it returns to @SHOW_STATUS」）：引擎不调 @SOURCE_CHECK
- *        与 @EVENTCOMEND、SOURCE 不清零、PREVCOM 不推进，指令自身的副
- *        作用（着衣位等）保留——自带子菜单的指令（COM110/111 等）全部
- *        出口 RETURN 0，源文件头的「通常コマンド扱いにならない」即指
- *        此。原 #44/#213 期已实现的指令（COM0 等）一律 RETURN 1，取消
- *        路径无消费者；语义随 #228（J18·COM110）落地修正——golden 侧
- *        证据：train-natural 的 210/250 两行「上次的调教指令」在 COM110 执行
- *        前后同为接吻（PREVCOM 未推）。
+ *        （引擎源码证据：Emuera Process.SystemProc.cs:499-512 的
+ *        endCallComXX 只看 RESULT == 0 → endCallEventComEnd 直接回回合头，
+ *        不调 @SOURCE_CHECK/@EVENTCOMEND；VariableEvaluator.cs:1719 明言
+ *        PREVCOM 由脚本自更「スクリプトの方で更新する必要がある」——
+ *        取代此前的 era wiki 级证据 flow1821「@COM returns 0, it returns
+ *        to @SHOW_STATUS」，wiki 级升级为源码级）：SOURCE 不清零、
+ *        PREVCOM 不推进，指令自身的副作用（着衣位等）保留——自带子菜单
+ *        的指令（COM110/111 等）全部出口 RETURN 0，源文件头的「通常コ
+ *        マンド扱いにならない」即指此。原 #44/#213 期已实现的指令
+ *        （COM0 等）一律 RETURN 1，取消路径无消费者；语义随 #228
+ *        （J18·COM110）落地修正——golden 侧证据：train-natural 的
+ *        210/250 两行「上次的调教指令」在 COM110 执行前后同为接吻
+ *        （PREVCOM 未推）。J20（#230）补全库首批真实 RETURN 0 路径：
+ *        COM201-206 的「暂时放过」与子指令失败支（此前 0 与 missing 由
+ *        同一字段 not_executed 承载，验收裁定分立为 missing/cancelled——
+ *        移植期要分得出「我们还没做」和「游戏本来就取消了这一回合」）。
  *    12.5 @SOURCE_CHECK 事件链（引擎回调：@COMxx 之后、UPCHECK 之前；
  *        函数体在 event/source-check.js，#45——源→参数换算、绝顶、刻印、
  *        结算展示）
@@ -142,9 +149,12 @@ function clear_nowex_all() {
  *
  * @param {number} result SELECTCOM（Train.csv 编号 L_I）
  * @returns {Promise<{missing: boolean, cancelled?: boolean, pending?: string}>}
- *   missing = @COMxx 未实现（引擎「重新要求输入」语义，调用方丢弃本回合）；
+ *   missing = @COMxx 未实现（引擎「重新要求输入」语义，调用方丢弃本回合；
+ *   债务信号，族票落齐后消失）；
  *   cancelled = @COMxx RETURN 0（回合取消：副作用保留但不结算，调用方回
- *   循环头重绘——与 missing 对调用方同形，语义分立供断言与后续消费）；
+ *   循环头重绘——与 missing 对调用方同形，但性质不同：cancelled 是原作
+ *   正确行为，永远存在。两者必须分立：存根登记、对拍归因、测试断言都
+ *   靠这个区分「我们还没做」与「游戏本来就取消了这一回合」）；
  *   pending = 链内暂存的 BEGIN 目标（转场优先，调用方须立即上抛）
  */
 async function execute_command_round(result) {
@@ -257,7 +267,7 @@ async function run_train() {
       era_flag.selectcom = result;
       // 10-13. 共用回合段（CALLTRAIN 同链，#214）
       const round = await execute_command_round(result);
-      if (round.missing) {
+      if (round.missing || round.cancelled) {
         continue;
       }
       if (round.pending !== undefined) {

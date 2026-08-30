@@ -333,6 +333,27 @@ async function train_message_a() {
   // :26 CUSTOMDRAWLINE ‥（排版近似说明同 train_message_b）
   era.drawLine();
 
+  // —— 公共头的 TFLAG:15（怪物/触手射精旗标）段（:110-146）——
+  // 死斗场（TEQUIP:55）的灌精两臂随 J20（#230）：TFLAG:15 的写入者是本族
+  // 怪物（com-colosseum 的 monster_ejaculation，SELECTCOM = 凌辱子指令）；
+  // 内层三支之外的 SELECTCOM 无输出——且链被死斗场臂消费，触手臂不再落
+  // （源 IF 链形状，1:1）。非死斗场的触手两臂（:113-125 与 :143-145，
+  // 文本「身上的触手、吐出了体液…」）随 J17（触手族），未落地即无输出。
+  // TFLAG:9 的股间射精段（:30-108）随各自指令票，同样未落地
+  const tflag15 = era.get('tflag:15') || 0;
+  if (tflag15 > 0 && era.get(`tequip:${era_flag.target}:55`)) {
+    const com_site = { 31: '嘴里', 21: '私处里', 27: '直肠里' };
+    const site = com_site[era_flag.selectcom];
+    if (site !== undefined) {
+      const target_name = chara_callname(era_flag.target);
+      era.print(
+        tflag15 === 2
+          ? `${target_name}的${site}、被怪物大量的粘稠精液灌满了…` // :135-141
+          : `${target_name}的${site}、被灌入了怪物黏黏糊糊的精液…`, // :127-133
+      );
+    }
+  }
+
   const branch = await train_message_a_family.call(era_flag.selectcom, {
     whenMissing: BRANCH_MISSING,
   });
