@@ -42,9 +42,9 @@
  *     男人（Chara0），两分支当前不可达，登记；
  *   - LOST_VIRGIN_CHECK 的正文（TFLAG:19 = 0 恒早退，守卫 1:1 保留）；
  *   - TARGET_EJAC/MILK/WORMBABY_CHECK（素质 121/130/190/191 无预设）；
- *   - SEIIN_START（精饮绝顶）、失神组（PASSOUT_CHECK/TEXT/OUTDOOR/
- *     PISSING_ECST_CHECK/SOUL_DISLOCATION_DEBUFF——分别门槛在 TEQUIP:22、
- *     TALENT:57/274、气力耗尽的失神状态机）；
+ *   - SEIIN_START 与失神组（PASSOUT_CHECK/TEXT/OUTDOOR）已随 #216（J6）
+ *     落真身（system/train/seiin.js 与 passout.js）；PISSING_ECST_CHECK
+ *     （TEQUIP:22/TALENT:57 门槛）与 SOUL_DISLOCATION_DEBUFF 仍在册；
  *   - EXP_GOT_CHECK / SOKUOCHI_CHECK：生效分支的门槛（TFLAG:100、UP:2/
  *     UP:9 ≥ 阈值、TALENT:73）在当前写入面下全为 0/无预设，整支登记；
  *   - 膣内射精チェック（:419-473，TFLAG:19/2/6/10 族）；
@@ -62,9 +62,20 @@ const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { train_message_a } = require('#/system/train/train-message');
+const {
+  passout_check,
+  passout_text,
+  passout_palam_check,
+  passout_palam_up,
+  passout_outdoor,
+} = require('#/system/train/passout');
+const { seiin_start } = require('#/system/train/seiin');
 const { kojo_message_com } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+
+/** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
+const MASTER = 0;
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个；名单
@@ -77,14 +88,9 @@ const STUBBED_CALLS = [
   'SOURCE_LESBIAN_SEX_CHECK',
   'SOURCE_GAY_SEX_CHECK',
   'INCEST',
-  'LOST_VIRGIN_CHECK',
   'TARGET_EJAC_CHECK',
   'TARGET_MILK_CHECK',
   'TARGET_WORMBABY_CHECK',
-  'SEIIN_START',
-  'PASSOUT_CHECK',
-  'PASSOUT_TEXT',
-  'PASSOUT_OUTDOOR',
   'PISSING_ECST_CHECK',
   'SOUL_DISLOCATION_DEBUFF',
   'EXP_GOT_CHECK',
@@ -276,13 +282,89 @@ function incest_sex_check() {
   stub_line('INCEST', '亲族关系判定', '随亲族票');
 }
 
-// @LOST_VIRGIN_CHECK（SUB1:265-）：守卫 1:1（TALENT:0 == 0 || TFLAG:19 == 0
-// 早退）；正文（处女丧失记录与刻印）整支登记
+// @LOST_VIRGIN_CHECK（SUB1:265-340，#216 J6 真身）：守卫 1:1（TALENT:0 ==
+// 0 || TFLAG:19 == 0 早退）；正文 = 处女丧失记录（初体验相手 CFLAG:15 与
+// 近亲代码）、摄影/刻印旗、爱情源的乘算。触发位 TFLAG:19 由插入系指令
+// （COMF8/11/20-23/34/64/81/83/120/121/128-134）置位——族票落地前游玩
+// 不可达，测试可驱动（与 SEIIN 的 TFLAG:0 随 J12 同型）。
+// INCEST 复用在册存根（上方 incest_sex_check 的同一条登记，#177/#178
+// 教训——不建第二个桩）。
 function lost_virgin_check() {
   if (!tal(0) || tflag(19) === 0) {
-    return;
+    return; // :267-268
   }
-  stub_line('LOST_VIRGIN_CHECK', '处女丧失处理', '随插入系指令票');
+  era.print('【处女丧失】'); // :270
+  chara(cid).chara.处女 = 0; // :271（talent:0 属主 chara 走门面）
+
+  // :274-277 本次指令/调教/摄影的三面旗（31 属 event、32 属 kojo 走门面）
+  game.train.处女丧失 = 1;
+  game.event.本次调教处女丧失 = 1;
+  if (era.get(`tequip:${cid}:53`)) {
+    game.kojo.录像内容 |= 1;
+  }
+
+  const r = era_flag.player; // :282 R = NO:PLAYER
+  game.train.近亲与自我口上 = 0; // :284
+  stub_line('INCEST', '亲族关系判定', '随亲族票'); // :285 CALL INCEST
+
+  // :287-313 初体验相手记录（CFLAG:15 属主 train 直写；+1 存 character no，
+  // 300+ 近亲代码——与 COM_AFTER_*_SEX 的表不同组，原作两处各表 1:1）
+  if ((era.get(`cflag:${cid}:15`) || 0) === 0) {
+    chara(cid).train.初体验对象 = era_flag.player + 1; // :289
+    chara(cid).train.初体验对象名 =
+      era.get(`callname:${era_flag.player}:-1`) ?? ''; // :290
+    const rel = era.get('tflag:14') || 0;
+    const male = ptal(122) ? 1 : 0;
+    if (rel === 1 && male) {
+      chara(cid).train.初体验对象 = 300;
+    } else if (rel === 1 && !male) {
+      chara(cid).train.初体验对象 = 301;
+    } else if (rel === 3 && male) {
+      chara(cid).train.初体验对象 = 304;
+    } else if (rel === 3 && !male) {
+      chara(cid).train.初体验对象 = 305;
+    } else if (rel === 4 && male) {
+      chara(cid).train.初体验对象 = 306;
+    } else if (rel === 4 && !male) {
+      chara(cid).train.初体验对象 = 307;
+    } else if (rel === 5 && !male) {
+      chara(cid).train.初体验对象 = 308;
+    } else if (rel === 6 && male) {
+      chara(cid).train.初体验对象 = 309;
+    }
+    // :314-325 特殊初体验的覆盖代码
+    if (era_flag.selectcom === 11) {
+      chara(cid).train.初体验对象 = 101; // 振动棒
+    }
+    if (era.get(`tequip:${cid}:90`) && era_flag.selectcom === 101) {
+      chara(cid).train.初体验对象 = 102; // 触手生物
+    }
+    if (era.get(`tequip:${cid}:89`)) {
+      chara(cid).train.初体验对象 = 103; // 犬
+    }
+    if (era.get(`tequip:${cid}:55`) && !era_flag.assiplay) {
+      chara(cid).train.初体验对象 = 104; // 死斗场怪物
+    }
+  }
+
+  // :327-340 反抗刻印回避与爱情源乘算（TALENT:85 爱慕 / 76 淫乱 /
+  // 助手相性 200+；150 属 system 走门面）
+  if (era_flag.player === MASTER && tal(85)) {
+    game.system.反抗刻印回避 = 1;
+    set_src(3, times(src(3), 2.0));
+    set_src(15, times(src(15), 0.3));
+  } else if (tal(76)) {
+    game.system.反抗刻印回避 = 1;
+    set_src(3, times(src(3), 2.0));
+    set_src(6, times(src(6), 0.5));
+    set_src(15, times(src(15), 0.3));
+  } else if (
+    era_flag.assiplay &&
+    (era.get(`relation:${cid}:${r}`) || 0) >= 200 &&
+    tflag(14) === 0
+  ) {
+    game.system.反抗刻印回避 = 1;
+  }
 }
 
 // —— SOURCE_CHECK_UP_*：SOURCE → UP（delta）的换算（SYSTEM_SOURCE） ——
@@ -1173,7 +1255,7 @@ function jujun_up_check() {
   }
 }
 
-function ex_check_up() {
+async function ex_check_up() {
   let ex_c = 0;
   let ex_v = 0;
   let ex_a = 0;
@@ -1242,7 +1324,9 @@ function ex_check_up() {
   });
 
   ecst_check(ex_c + ex_v + ex_a + ex_b + ex_f);
-  stub_line('SEIIN_START', '精饮绝顶处理', '随精饮票');
+  // :1812 精饮绝顶（J6 真身，system/train/seiin.js；TFLAG:0 口内射精由
+  // 奉仕系指令置位——J12 前游玩不可达，守卫自守）
+  await seiin_start();
 
   // 多重绝顶的倍率与宣告（组数分档：五重 12 倍 / 四重 8 倍 / 三重 4 倍 / 双 2 倍）
   const parts = [
@@ -1999,7 +2083,7 @@ on('SOURCE_CHECK', async () => {
   love_moist_check_up();
 
   // :235 绝顶
-  ex_check_up();
+  await ex_check_up();
 
   // :238-252 调教对象的射精/喷乳/蠕虫出産（素质门槛不可达，登记）
   stub_line('TARGET_EJAC_CHECK', '调教对象射精检查', '随扶她/男人票');
@@ -2055,9 +2139,18 @@ on('SOURCE_CHECK', async () => {
     set_lose(0, lose(0) * 2 + 80);
   }
 
-  // :393 / :398 失神组（门槛未达，登记）
+  // :393 灵魂错位（登记）
   stub_line('SOUL_DISLOCATION_DEBUFF', '灵魂错位减益', '随魂缚票');
-  stub_line('PASSOUT_CHECK', '失神检查', '随失神票');
+  // :398 失神检查（J6 真身，system/train/passout.js——TFLAG:899 的写入
+  // 路径，#213 七道守卫第四道的置位者）
+  await passout_check();
+  // :400-401 野外 PLAY 中失神 → 解除并带回
+  if (
+    (era.get(`tequip:${cid}:54`) || 0) > 0 &&
+    (era.get('tflag:899') || 0) > 0
+  ) {
+    await passout_outdoor();
+  }
 
   // :406 苦痛的追加损耗
   pain_damage_check_up();
@@ -2099,8 +2192,28 @@ on('SOURCE_CHECK', async () => {
   // :476 调教文本的后半
   await train_message_a();
 
-  // :482-497 失神文本（TFLAG:899 分档；体内部自守，登记）
-  stub_line('PASSOUT_TEXT', '失神时的文本', '随失神票');
+  // :482-497 失神文本（J6 真身）。两臂（TFLAG:899 < 1 与 ≥ 1）都调
+  // PASSOUT_TEXT——未失神回合跑快照 else 段（装备变化的 -1 标记），失神
+  // 中另按相位调参数暂存（== 2）/ 回流（== 3，含刻印复查与口上）
+  await passout_text();
+  if (
+    (era.get('tflag:896') || 0) === 2 ||
+    (era.get('tflag:897') || 0) === 2 ||
+    (era.get('tflag:898') || 0) === 2
+  ) {
+    passout_palam_check();
+  }
+  if (
+    (era.get('tflag:896') || 0) === 3 ||
+    (era.get('tflag:897') || 0) === 3 ||
+    (era.get('tflag:898') || 0) === 3
+  ) {
+    passout_palam_up();
+    mark_got_check();
+    if ((era.get('flag:7') || 0) > 0) {
+      stub_line('KOJO_MESSAGE_MARKCNG', '刻印取得口上', '随口上票 #46');
+    }
+  }
   // :499 绝顶漏尿（TEQUIP:22/TALENT:57 门槛，登记）
   stub_line('PISSING_ECST_CHECK', '绝顶漏尿', '随漏尿票');
 

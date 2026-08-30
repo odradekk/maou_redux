@@ -69,10 +69,16 @@ const REPO = path.resolve(__dirname, '..');
 //
 // 【#214 与 #215 合并后重测（派单人在 rebase 时）】两票各自播种了 replay
 // 世界的不同侧面（#214 的 flag:5 开局值、#215 的着衣态），合并后两组播种
-// 同时生效，四数因此既不等于 #214 的也不等于 #215 的——下面是合并态实测。
+// 同时生效，四数因此既不等于 #214 的也不等于 #215 的——合并态实测
+// 765/2430、200/830。
+//
+// 【#216（J6）失神/精饮/避孕套真身后实测】@SOURCE_CHECK 的三个占位行
+// （SEIIN_START / PASSOUT_CHECK / PASSOUT_TEXT）换真身，COM0 路径上
+// 三者恒静默（绝顶强度 < 阈值、无 TFLAG:0/19 写入面）→ 存根差异
+// natural −9（三回合 × 3 行）、upgrade −3，matched 不动，unexplained 恒 0。
 const BASELINE = {
-  'train-natural': { matched: 765, version: 0, stub: 2430, unexplained: 0 },
-  'train-upgrade': { matched: 200, version: 0, stub: 830, unexplained: 0 },
+  'train-natural': { matched: 765, version: 0, stub: 2421, unexplained: 0 },
+  'train-upgrade': { matched: 200, version: 0, stub: 827, unexplained: 0 },
 };
 
 async function build_report(sample) {

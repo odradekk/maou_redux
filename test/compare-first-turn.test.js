@@ -71,10 +71,12 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   //             ；#214 起 @SHOW_USERCOM 按钮组整组挂载，golden 侧原
   //             「按钮组未挂载」的条目转匹配。两票的 replay 播种合并后
   //             同时生效，下面是合并态实测
+  // #216（J6）起 −3：@SOURCE_CHECK 的 SEIIN_START / PASSOUT_CHECK /
+  // PASSOUT_TEXT 三个占位行换真身，COM0 路径上恒静默
   assert.deepEqual(report.summary, {
     matched: 71,
     version: 0,
-    stub: 97,
+    stub: 94,
     unexplained: 0,
   });
 });

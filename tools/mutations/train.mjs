@@ -1237,4 +1237,473 @@ export default [
     tests: ['benki'],
     must_mention: 'BENKI_PLAYER_NAME：读 FLAG:64 返回对象名',
   },
+
+  // —— #216 J6 跨族共用子程序与失神、受精（锚定 find 串经脚本核唯一）——
+  {
+    desc: 'M870 CONDOM_SETTINGS 显示出当前设定标签（反向变异：LOCALS 缺陷 1:1 空值形态的钉子——谁把 %LOCALS:(CFLAG:61)% 修成有值，此处红，SOP §5 判据 7）',
+    file: 'ere/system/train/com-condom.js',
+    find: `  era.print('现在：');`,
+    replace: `  era.print(\`现在：\${['每次都问', '有套就用', '每次都直接来，来个痛快'][era.get(\`cflag:\${cid}:61\`) || 0] ?? ''}\`); // 变异：修好缺陷`,
+    tests: ['com-condom'],
+    must_mention: '当前设定行',
+  },
+  {
+    desc: 'M871 CONFIRM_CONDOM 已戴守卫删（重复消耗安全套）',
+    file: 'ere/system/train/com-condom.js',
+    find: `    const wearing_master = chara(cid).event.主人避孕套;
+    const wearing_assi = era.get(\`tequip:\${cid}:36\`) || 0;
+    if (
+      (!era_flag.assiplay && wearing_master) ||
+      (era_flag.assiplay && wearing_assi)
+    ) {
+      return 1;
+    }`,
+    replace: `    // 变异：已戴守卫删`,
+    tests: ['com-condom'],
+    must_mention: '不重复消耗',
+  },
+  {
+    desc: 'M872 CONFIRM_CONDOM 每次问的 [0] 不消耗 ITEM:24',
+    file: 'ere/system/train/com-condom.js',
+    find: `      if (result === 0) {
+        game.train.安全套 -= 1; // :76`,
+    replace: `      if (result === 0) {
+        // 变异：不消耗`,
+    tests: ['com-condom'],
+    must_mention: '消耗一枚',
+  },
+  {
+    desc: 'M873 tequip:35 写错位（35 → 36，event 门面位错）',
+    file: 'ere/system/train/com-condom.js',
+    find: `          era.print(\`\${player_name}戴着套。\`); // :78
+          chara(cid).event.主人避孕套 = 1; // :79（属主 event，走门面）`,
+    replace: `          era.print(\`\${player_name}戴着套。\`); // :78
+          era.set(\`tequip:\${cid}:36\`, 1); // 变异：位错`,
+    tests: ['com-condom'],
+    must_mention: '消耗一枚、主人位 35',
+  },
+  {
+    desc: 'M874 CONFIRM_CONDOM 的 RESTART 删（改设定后直接放行，不走自动用段）',
+    file: 'ere/system/train/com-condom.js',
+    find: `      if (result === 3) {
+        era.print('今后有套就用。'); // :91
+        era.set(\`cflag:\${cid}:61\`, 1); // :92
+        continue; // :93 RESTART
+      }`,
+    replace: `      if (result === 3) {
+        era.print('今后有套就用。'); // :91
+        era.set(\`cflag:\${cid}:61\`, 1); // :92
+        return 1; // 变异：RESTART 删
+      }`,
+    tests: ['com-condom'],
+    must_mention: 'RESTART 后走自动用',
+  },
+  {
+    desc: 'M875 笨魔王条款翻转（无套时技巧 < 5 也问）',
+    file: 'ere/system/train/com-condom.js',
+    find: `      if (Math.floor(era.get(\`abl:\${MASTER}:12\`) || 0) > 4) {`,
+    replace: `      if (Math.floor(era.get(\`abl:\${MASTER}:12\`) || 0) < 5) {`,
+    tests: ['com-condom'],
+    must_mention: '直接插入（笨魔王条款',
+  },
+  {
+    desc: 'M876 CONFIRM_CONDOM2 的主人设定写到 TARGET 行',
+    file: 'ere/system/train/com-condom.js',
+    find: `      } else if (result === 1) {
+        era.set(\`cflag:\${MASTER}:61\`, 2); // :176`,
+    replace: `      } else if (result === 1) {
+        era.set(\`cflag:\${cid}:61\`, 2); // 变异：行错`,
+    tests: ['com-condom'],
+    must_mention: 'MASTER 的 CFLAG:61 = 2',
+  },
+  {
+    desc: 'M877 COM20 的基础值表 SP 化（1500/1600/1800/2500/3200/4000）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  if (com === 20 || com === 21 || com === 90) {
+    // :57-99 正常位、背后位、乳内
+    skill_base(SKILL_BASE_HI);`,
+    replace: `  if (com === 20 || com === 21 || com === 90) {
+    // :57-99 正常位、背后位、乳内
+    skill_base(SKILL_BASE_SP);`,
+    tests: ['com-vaginasex'],
+    must_mention: 'B = 1500',
+  },
+  {
+    desc: 'M878 V 版润滑首档 0.6 改 0.4（A 版表错入）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  if (lube < PALAMLV[1]) {
+    return 0.6;
+  }`,
+    replace: `  if (lube < PALAMLV[1]) {
+    return 0.4;
+  }`,
+    tests: ['com-vaginasex'],
+    must_mention: '× 0.6（润滑',
+  },
+  {
+    desc: 'M879 EXP:0 阈值首档删（< EXPLV:1 不再 ×1.5）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  for (let i = 1; i < EXPLV.length; i += 1) {
+    if (value < EXPLV[i]) {
+      return rates[i - 1];
+    }
+  }
+  return rates[rates.length - 1];
+}`,
+    replace: `  for (let i = 2; i < EXPLV.length; i += 1) {
+    if (value < EXPLV[i]) {
+      return rates[i - 1];
+    }
+  }
+  return rates[rates.length - 1];
+}`,
+    tests: ['com-vaginasex'],
+    must_mention: '数值例：COM20 全 ABL 0',
+  },
+  {
+    desc: 'M880 V 版安全套减率 0.6 改 0.5（A 版值错入）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  if (chara(cid).event.主人避孕套 || (era_flag.assiplay && tequip(cid, 36))) {
+    b = times(b, 0.6);
+  }`,
+    replace: `  if (chara(cid).event.主人避孕套 || (era_flag.assiplay && tequip(cid, 36))) {
+    b = times(b, 0.5);
+  }`,
+    tests: ['com-vaginasex'],
+    must_mention: '数值例：COM20 全 ABL 0',
+  },
+  {
+    desc: 'M881 射精判定的双倍档删（E == 2 并入 1）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+
+  const print_ejac = (heavy) => {`,
+    replace: `  const e = s > ejac ? 1 : 0;
+
+  const print_ejac = (heavy) => {`,
+    tests: ['com-vaginasex'],
+    must_mention: '大量射精',
+  },
+  {
+    desc: 'M882 膣内射精旗的置位条件反转（无套才漏标）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `    if (!era_flag.assiplay && chara(cid).event.主人避孕套 === 0) {
+      era.set('tflag:38', 2); // :734-735 膣内射精（主人・无套）`,
+    replace: `    if (!era_flag.assiplay && chara(cid).event.主人避孕套 !== 0) {
+      era.set('tflag:38', 2); // 变异：条件反转`,
+    tests: ['com-vaginasex'],
+    must_mention: '膣内射精旗',
+  },
+  {
+    desc: 'M883 膣内受精判定的 rand 命中改恒不写',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `      if (era.get(\`cflag:\${cid}:109\`)) {
+        if (rand_n(heavy ? 2 : 3) === 0) {
+          era.set(\`cflag:\${cid}:113\`, -1);
+        }
+      } else if (rand_n(heavy ? 3 : 5) === 0) {
+        era.set(\`cflag:\${cid}:113\`, -1);
+      }`,
+    replace: `      // 变异：受精判定恒不写`,
+    tests: ['com-vaginasex'],
+    must_mention: 'CFLAG:113 = -1',
+  },
+  {
+    desc: 'M884 MILK 的 E 判据改 S（上游 B 判据怪相的行为锁）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;`,
+    replace: `  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;`,
+    tests: ['com-vaginasex'],
+    must_mention: 'B 判据行为锁',
+  },
+  {
+    desc: 'M885 童贞丧失的初体验记录删（CFLAG:PLAYER:15 / CSTR:3）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  if (tal(player, 1)) {
+    era.set(\`talent:\${player}:1\`, 0); // :1007（属主 train）`,
+    replace: `  if (tal(player, 1) && false) {
+    era.set(\`talent:\${player}:1\`, 0); // 变异：童贞丧失段死`,
+    tests: ['com-vaginasex'],
+    must_mention: '童贞丧失',
+  },
+  {
+    desc: 'M886 EXTRA 的日文残留退回（性交经验＋１ → 性交経験＋１，#60 简体锁）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: `  era.print('性交经验＋１'); // :1074（原文 経験，#60 归一）`,
+    replace: `  era.print('性交経験＋１'); // 变异：退回日文`,
+    tests: ['com-vaginasex'],
+    must_mention: '归一简体',
+  },
+  {
+    desc: 'M887 COM27（後背位）错加顺从乘率（原文此位无）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `  } else if (com === 27) {
+    // :85-110 後背位肛交（技巧のみ——顺从表不在原作此位）
+    skill_base([2700, 2800, 2900, 3100, 3200, 3300]);`,
+    replace: `  } else if (com === 27) {
+    // :85-110 後背位肛交
+    skill_base([2700, 2800, 2900, 3100, 3200, 3300]);
+    b = times(b, abl_rate(cid, 10, OBED_STRONG));`,
+    tests: ['com-analsex'],
+    must_mention: 'COM27',
+  },
+  {
+    desc: 'M888 A 版润滑表 V 版化（0.4 起步改 0.6）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `    if (lube < PALAMLV[1]) {
+      b = times(b, 0.4);
+    } else if (lube < PALAMLV[2]) {`,
+    replace: `    if (lube < PALAMLV[1]) {
+      b = times(b, 0.6);
+    } else if (lube < PALAMLV[2]) {`,
+    tests: ['com-analsex'],
+    must_mention: 'A 版润滑',
+  },
+  {
+    desc: 'M889 肛内异常妊娠的 TALENT:340 判据删（恒置 3）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `  const anal_pregnancy = (heavy) => {
+    if (era.get(\`cflag:\${cid}:109\`)) {
+      if (rand_n(heavy ? 3 : 5) === 0 && tal(cid, 340)) {
+        era.set(\`cflag:\${cid}:113\`, 3);
+      }
+    } else if (rand_n(heavy ? 5 : 10) === 0 && tal(cid, 340)) {
+      era.set(\`cflag:\${cid}:113\`, 3);
+    }
+  };`,
+    replace: `  const anal_pregnancy = (heavy) => {
+    if (rand_n(heavy ? 3 : 5) === 0) {
+      era.set(\`cflag:\${cid}:113\`, 3);
+    }
+  };`,
+    tests: ['com-analsex'],
+    must_mention: '无 TALENT:340 时 rand 命中也不写',
+  },
+  {
+    desc: 'M890 妊娠相手门面寻址错（102 → 103）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `      chara(cid).event.妊娠相手 = 1; // :388 主人`,
+    replace: `      era.set(\`cflag:\${cid}:103\`, 1); // 变异：寻址错`,
+    tests: ['com-analsex'],
+    must_mention: '妊娠相手判定',
+  },
+  {
+    desc: 'M891 爱情经验 26 档删（恒走其他 2）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `  let e;
+  if (era_flag.selectcom === 26) {
+    e = 3; // :416
+  } else {
+    e = 2; // :420-421 その他（含 28）
+  }`,
+    replace: `  let e = 2; // 变异：26 档删`,
+    tests: ['com-analsex'],
+    must_mention: 'COM26 → 3',
+  },
+  {
+    desc: 'M892 A 版润滑顶档 1.6 改 1.4（V 版值错入）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `    } else {
+      b = times(b, 1.6);
+    }`,
+    replace: `    } else {
+      b = times(b, 1.4);
+    }`,
+    tests: ['com-analsex'],
+    must_mention: 'COM28（対面座位）顺从强侧表',
+  },
+  {
+    desc: 'M893 强绝顶首回的 rand<8 闸删（恒记相位）',
+    file: 'ere/system/train/passout.js',
+    find: `  if (z >= 16 && tflag(897) === 0 && tflag(899) < 1 && rand_n(10) < 8) {
+    set_tflag(897, 1);`,
+    replace: `  if (z >= 16 && tflag(897) === 0 && tflag(899) < 1) {
+    set_tflag(897, 1);`,
+    tests: ['passout'],
+    must_mention: 'rand ≥ 8 时首回不记相位',
+  },
+  {
+    desc: 'M894 失神支的 rand<6 闸改恒失神',
+    file: 'ere/system/train/passout.js',
+    find: `  } else if (z >= 16 && tflag(897) === 1 && tflag(899) < 1 && rand_n(10) < 6) {`,
+    replace: `  } else if (
+    z >= 16 &&
+    tflag(897) === 1 &&
+    tflag(899) < 1
+  ) {`,
+    tests: ['passout'],
+    must_mention: '次回 rand ≥ 6 不失神',
+  },
+  {
+    desc: 'M895 苦痛线阈值 7500 改 500',
+    file: 'ere/system/train/passout.js',
+    find: `  if (
+    (up(cid, 9) >= 7500 || up(cid, 9) + a >= 15000) &&
+    tflag(899) < 1 &&
+    rand_n(10) < 5
+  ) {`,
+    replace: `  if ((up(cid, 9) >= 500 || up(cid, 9) + a >= 15000) && tflag(899) < 1 && rand_n(10) < 5) {`,
+    tests: ['passout'],
+    must_mention: 'UP:9 < 7500',
+  },
+  {
+    desc: 'M896 TFLAG:899 计数块删（互斥守卫的写路径断）',
+    file: 'ere/system/train/passout.js',
+    find: `  if (tflag(896) >= 2 || tflag(897) >= 2 || tflag(898) >= 2) {
+    if (tflag(899) === 0) {
+      set_tflag(899, 1);
+    } else if (tflag(899) >= 1) {
+      add_tflag(899, 1);
+    }
+  }`,
+    replace: `  // 变异：899 计数删`,
+    tests: ['passout'],
+    must_mention: 'TFLAG:899',
+  },
+  {
+    desc: 'M897 恢复判定的执行回数条件删（899 >= 4）',
+    file: 'ere/system/train/passout.js',
+    find: `    if (z >= 16 || (tflag(899) >= 2 && up(cid, 9) >= 5000) || tflag(899) >= 4) {`,
+    replace: `    if (z >= 16 || (tflag(899) >= 2 && up(cid, 9) >= 5000)) {`,
+    tests: ['passout'],
+    must_mention: '执行 4 回',
+  },
+  {
+    desc: 'M898 快照的绳值带入改恒 1（864 = tequip:44 值）',
+    file: 'ere/system/train/passout.js',
+    find: `    if (tequip(cid, 44)) {
+      set_tflag(864, tequip(cid, 44)); // 绳（值 = 绳种）`,
+    replace: `    if (tequip(cid, 44)) {
+      set_tflag(864, 1); // 变异：值不带入`,
+    tests: ['passout'],
+    must_mention: '快照（899 == 1）',
+  },
+  {
+    desc: 'M899 快照 else 臂的 -1 标记删（插入系）',
+    file: 'ere/system/train/passout.js',
+    find: `    if (tequip(cid, 11) === 1 && tflag(877) !== 1) {
+      set_tflag(877, -1);
+    }`,
+    replace: `    // 变异：-1 标记删`,
+    tests: ['passout'],
+    must_mention: '标 -1',
+  },
+  {
+    desc: 'M900 同回叠加（快感 + 苦痛 → 4）改回 2',
+    file: 'ere/system/train/passout.js',
+    find: `    } else if (tflag(895) === 1) {
+      // :52-54 快感失神叠加苦痛 → 4
+      set_tflag(895, 4);`,
+    replace: `    } else if (tflag(895) === 1) {
+      // :52-54
+      set_tflag(895, 2);`,
+    tests: ['passout'],
+    must_mention: '895 = 4',
+  },
+  {
+    desc: 'M901 PALAM_UP 的两路分配对调（恐怖屈服路走 100 - Z）',
+    file: 'ere/system/train/passout.js',
+    find: `  add_up(cid, 7, idiv(a, 100 - z));
+  add_up(cid, 8, idiv(b, 100 - z));
+  add_up(cid, 10, idiv(c, 100 - z));
+  add_up(cid, 11, idiv(d, z));`,
+    replace: `  add_up(cid, 7, idiv(a, z));
+  add_up(cid, 8, idiv(b, z));
+  add_up(cid, 10, idiv(c, z));
+  add_up(cid, 11, idiv(d, 100 - z));`,
+    tests: ['passout'],
+    must_mention: '恐怖/屈服路',
+  },
+  {
+    desc: 'M902 FLAG:72 系统开关守卫删',
+    file: 'ere/system/train/seiin.js',
+    find: `  if ((era.get('flag:72') || 0) === 1) {
+    return; // :8 系统关闭（头注：全库零写点，恒开）
+  }`,
+    replace: `  // 变异：系统开关守卫删`,
+    tests: ['seiin'],
+    must_mention: 'FLAG:72',
+  },
+  {
+    desc: 'M903 失神抑制（TFLAG:899 > 0）删',
+    file: 'ere/system/train/seiin.js',
+    find: `  if (tflag(0) === 0 || tflag(899) > 0) {
+    return; // :11-12 未口内射精 / 失神中
+  }`,
+    replace: `  if (tflag(0) === 0) {
+    return; // 变异：失神抑制删
+  }`,
+    tests: ['seiin'],
+    must_mention: '失神中（TFLAG:899 ≥ 1）抑制',
+  },
+  {
+    desc: 'M904 阈值表的淫乱 -20 删',
+    file: 'ere/system/train/seiin.js',
+    find: `  if (tal(76) === 1) {
+    p -= 20;
+  }
+  await seiin_compulsion_orgasm(p); // :68`,
+    replace: `  await seiin_compulsion_orgasm(p); // 变异：淫乱修正删`,
+    tests: ['seiin'],
+    must_mention: '达阈值：获得旗 TFLAG:110',
+  },
+  {
+    desc: 'M905 精液中毒直抬 LV3 删',
+    file: 'ere/system/train/seiin.js',
+    find: `  if (count >= p) {
+    if (abl32() < 3) {
+      era.print(\`\${name_of(cid)}的精液中毒达到LV3了\`);
+      era.set(\`abl:\${cid}:32\`, 3); // 属主 train
+    }
+  }`,
+    replace: `  // 变异：LV3 直抬删`,
+    tests: ['seiin'],
+    must_mention: '直抬 LV3',
+  },
+  {
+    desc: 'M906 LOST_VIRGIN_CHECK 守卫的 TFLAG:19 判据删（恒早退）',
+    file: 'ere/event/source-check.js',
+    find: `function lost_virgin_check() {
+  if (!tal(0) || tflag(19) === 0) {
+    return; // :267-268
+  }`,
+    replace: `function lost_virgin_check() {
+  if (!tal(0)) {
+    return; // 变异：TFLAG:19 判据删（恒早退）
+  }`,
+    tests: ['source-check'],
+    must_mention: 'TFLAG:19 = 0',
+  },
+  {
+    desc: 'M907 TALENT:0 的清除删（经 chara 门面）',
+    file: 'ere/event/source-check.js',
+    find: `  era.print('【处女丧失】'); // :270
+  chara(cid).chara.处女 = 0; // :271（talent:0 属主 chara 走门面）`,
+    replace: `  era.print('【处女丧失】'); // :270
+  // 变异：TALENT:0 清除删`,
+    tests: ['source-check'],
+    must_mention: '丧失宣言、三面旗、初体验记录',
+  },
+  {
+    desc: 'M908 摄影旗（tflag:32 |= 1 经 kojo 门面）删',
+    file: 'ere/event/source-check.js',
+    find: `  if (era.get(\`tequip:\${cid}:53\`)) {
+    game.kojo.录像内容 |= 1;
+  }`,
+    replace: `  // 变异：摄影旗删`,
+    tests: ['source-check'],
+    must_mention: 'TFLAG:32 |= 1',
+  },
+  {
+    desc: 'M909 振动棒初体验覆盖码错（101 → 103）',
+    file: 'ere/event/source-check.js',
+    find: `    if (era_flag.selectcom === 11) {
+      chara(cid).train.初体验对象 = 101; // 振动棒
+    }`,
+    replace: `    if (era_flag.selectcom === 11) {
+      chara(cid).train.初体验对象 = 103; // 变异：覆盖码错
+    }`,
+    tests: ['source-check'],
+    must_mention: '101',
+  },
 ];

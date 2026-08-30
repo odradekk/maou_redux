@@ -89,6 +89,7 @@ const WRAPPER_FILES = [
   'ere/era-utils/era-flag.js',
   'ere/era-utils/era-global.js',
   'ere/era-utils/palam-level.js',
+  'ere/era-utils/exp-level.js',
   'ere/facade/chara-chara.js',
   'ere/facade/chara-dungeon.js',
   'ere/facade/chara-event.js',

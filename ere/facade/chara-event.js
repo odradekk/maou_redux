@@ -14,6 +14,21 @@ class EventFacade {
 
   // —— cflag ——
   /**
+   * 妊娠相手（cflag:cid:102 ↔ CFLAG:102）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行318 CFLAG:102 = 誰によって妊娠させられたか（マスター=1, 助手=2, 奴隷=3, 客=4, 犬=5, モンスター・触手=6, 狂王=7）
+   * @returns {number}
+   */
+  get 妊娠相手() {
+    return era.get(`cflag:${this.cid}:102`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 妊娠相手(v) {
+    era.set(`cflag:${this.cid}:102`, v);
+  }
+
+  /**
    * 装饰（cflag:cid:551 ↔ CFLAG:551）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——装飾（存储编号，EQUIP.ERB:36）
    * @returns {number}
