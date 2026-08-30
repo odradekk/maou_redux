@@ -1,4 +1,4 @@
-# 本文件不是转换器产物：T 是 target/CSV/VariableSize.csv:79 声明的单字母
+# 本文件不是转换器产物：T 是 target/CSV/VariableSize.csv:84 声明的单字母
 # 全局整数数组（T,100000），没有名字表、纯数字下标（E.yml/DA.yml 同款先例，
 # 引擎按「开发者自定义一维表」建 data.t 桶）。
 #
