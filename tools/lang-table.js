@@ -669,6 +669,16 @@ const EXEMPT_STRINGS = [
     where: 'ere/page/page-usercom.js',
     why: 'USERCOM.ERB:211 的复合指令标签分隔（%TRAINNAME:64%・%TRAINNAME:L_I%），64 合成臂动态拼名、・ 逐字照抄——TRAIN_NAME:128-132 同款样式与处置（#212 先例，#213 收录）。整串豁免（本条 value 即完整字面量），改写时失配变红。',
   },
+  ...[
+    '＜助手・口交＞',
+    '＜助手・胸爱抚＞',
+    '＜助手・背后位＞',
+    '＜助手・背后位肛交＞',
+  ].map((value) => ({
+    value,
+    where: 'ere/system/train/com-colosseum.js',
+    why: 'COMF201_助手.ERB:78/:87/:96/:105 的凌辱标题行（PRINTL ＜助手・○○＞），・ 是原作的主体・动作分隔样式，逐字照抄——TRAIN_NAME:128-132 与 USERCOM:211 同款样式与处置（#212 先例，#230 收录）。整串豁免，改写时失配变红。',
+  })),
   {
     value: '射精（死斗场・怪物）',
     where: 'ere/page/page-train.js',

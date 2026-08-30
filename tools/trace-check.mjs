@@ -73,6 +73,15 @@ const ENDING = 'target/ERB/EVENT/ENDING ver 1.0.1.ERB';
 const SYSTEM = 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB';
 const SYSTEM_DATA = 'target/ERB/SYSTEM/SYSTEM_DATA.ERB';
 const COMF0 = 'target/ERB/調教相關/COMF0_愛撫.ERB';
+// #230（J20）：死斗场与怪物族（COMF200/201/207 各一文件；202-206 五体
+// 同构，怪物共用段与菜单/射精块的行号以 COMF202 为基准转录，204/206 的
+// 两处独有差异另指本尊）
+const COMF200 = 'target/ERB/調教相關/COMF200_コロシアム.ERB';
+const COMF201 = 'target/ERB/調教相關/COMF201_助手.ERB';
+const COMF202 = 'target/ERB/調教相關/COMF202_最下層民.ERB';
+const COMF204 = 'target/ERB/調教相關/COMF204_オーク.ERB';
+const COMF206 = 'target/ERB/調教相關/COMF206_トロル.ERB';
+const COMF207 = 'target/ERB/調教相關/COMF207_媚薬スライム.ERB';
 const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
 const COMF40 = 'target/ERB/調教相關/COMF40_スパンキング.ERB';
@@ -776,6 +785,13 @@ const FILES = [
   {
     js: 'ere/page/page-train.js',
     refs: [
+      // #230（J20）：SHOW_EQUIP_2 的死斗场臂（其余装备位随 J10/J13/J17）
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1564-1596',
+        any: [/一度使用したら解除するまで止まらない道具や調教を/m],
+      },
+      { src: CHARA_INFO_SHOW, ref: '1587-1588', any: [/死斗场决斗中/m] },
       // #215（J5）：clothtype_text 内部 :37 的着衣模式守卫
       {
         src: FUNC_CLOTH_ERB,
@@ -2450,6 +2466,581 @@ const FILES = [
     ],
   },
   {
+    js: 'ere/system/train/com-colosseum.js',
+    refs: [
+      { src: COMF200, ref: '8-37', any: [/CALL\ TRAIN_MESSAGE_B/m] },
+      { src: COMF200, ref: '10', any: [/PRINTL\ 死斗场决斗/m] },
+      { src: COMF200, ref: '11', any: [/CALL\ TRAIN_MESSAGE_B/m] },
+      { src: COMF200, ref: '13-16', any: [/TEQUIP:55\ =\ 0/m] },
+      { src: COMF200, ref: '17-34', any: [/LOSEBASE:1\ \+=\ A\ \*\ 2/m] },
+      { src: COMF200, ref: '21', any: [/A\ =\ 100/m] },
+      { src: COMF200, ref: '24-25', any: [/TIMES\ A\ ,\ 2\.00/m] },
+      { src: COMF200, ref: '27-28', any: [/TIMES\ A\ ,\ 0\.60/m] },
+      { src: COMF200, ref: '30-31', any: [/LOSEBASE:1\ \+=\ A\ \*\ 2/m] },
+      { src: COMF200, ref: '33', any: [/UP:10\ \+=\ A\ \*\ 20/m] },
+      { src: COMF200, ref: '34', any: [/SOURCE:14\ \+=\ A\ \*\ 5/m] },
+      { src: COMF200, ref: '36', any: [/T\ =\ 0/m] },
+      { src: COMF200, ref: '37', any: [/RETURN\ 1/m] },
+      { src: COMF200, ref: '40-68', any: [/TIMES\ SOURCE:17\ ,\ 2\.00/m] },
+      {
+        src: COMF200,
+        ref: '73-95',
+        any: [/IF\ BASE:ASSI:1\ <\ \(MAXBASE:ASSI:1\ \/\ 5\)/m],
+      },
+      { src: COMF200, ref: '74-78', any: [/IF\ BASE:TARGET:1\ >\ 0/m] },
+      { src: COMF200, ref: '81', any: [/PRINTL\ ＜奴隶陷落＞/m] },
+      { src: COMF200, ref: '83', any: [/TFLAG:401\ =\ 1/m] },
+      {
+        src: COMF200,
+        ref: '85-90',
+        any: [/IF\ BASE:ASSI:1\ <\ \(MAXBASE:ASSI:1\ \/\ 5\)/m],
+      },
+      { src: COMF200, ref: '87', any: [/PRINTL\ ＜助手退却＞/m] },
+      { src: COMF200, ref: '88', any: [/ASSIPLAY\ =\ 0/m] },
+      { src: COMF200, ref: '93', any: [/RETURN\ 1/m] },
+      { src: COMF200, ref: '98-119', any: [/CALL\ WEAPON_RESTORE,TARGET/m] },
+      { src: COMF200, ref: '99', any: [/A\ =\ TARGET/m] },
+      { src: COMF200, ref: '101', any: [/CALL\ WEAPON_RESTORE,TARGET/m] },
+      { src: COMF200, ref: '102', any: [/B\ =\ 0/m] },
+      { src: COMF200, ref: '104-105', any: [/B\ \+=\ CFLAG:A:11/m] },
+      { src: COMF200, ref: '106-107', any: [/B\ \+=\ CFLAG:A:12/m] },
+      { src: COMF200, ref: '109-110', any: [/SIF\ TALENT:A:241\ ==\ 1/m] },
+      { src: COMF200, ref: '111-112', any: [/SIF\ TALENT:A:250\ ==\ 1/m] },
+      { src: COMF200, ref: '114-116', any: [/B\ \/=\ MAXBASE:A:1/m] },
+      { src: COMF200, ref: '118-119', any: [/SIF\ B\ <=\ 0/m] },
+      { src: COMF200, ref: '126-148', any: [/CALL\ WEAPON_RESTORE,ASSI/m] },
+      { src: COMF200, ref: '127', any: [/A\ =\ ASSI/m] },
+      { src: COMF200, ref: '129', any: [/CALL\ WEAPON_RESTORE,ASSI/m] },
+      { src: COMF200, ref: '130', any: [/B\ =\ 0/m] },
+      { src: COMF200, ref: '132-133', any: [/B\ \+=\ CFLAG:A:11/m] },
+      { src: COMF200, ref: '134-135', any: [/B\ \+=\ CFLAG:A:12/m] },
+      { src: COMF200, ref: '137-138', any: [/SIF\ TALENT:A:241\ ==\ 1/m] },
+      { src: COMF200, ref: '139-140', any: [/SIF\ TALENT:A:250\ ==\ 1/m] },
+      { src: COMF200, ref: '142-143', any: [/B\ \*=\ \(BASE:A:1\ \/\ 100\)/m] },
+      { src: COMF200, ref: '145-146', any: [/SIF\ B\ <=\ 0/m] },
+      {
+        src: COMF201,
+        ref: '8-118',
+        any: [
+          /ELSEIF\ RESULT\ ==\ 2\ \&\&\ \(TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1\)\ \&\&\ TALENT:122\ ==\ 0\ \&\&\ TALENT:273\ ==\ 0\ \&\&\ CFLAG:42\ !=\ 79\ \ \&\&\ \(!TALENT:135\ \|\|\ TALENT:ASSI:83\ ==\ 1\)/m,
+        ],
+      },
+      { src: COMF201, ref: '10-11', any: [/SIF\ ASSI\ !=\ PLAYER/m] },
+      { src: COMF201, ref: '13', any: [/PRINTL\ 助手/m] },
+      { src: COMF201, ref: '15', any: [/CALL\ TRAIN_MESSAGE_B/m] },
+      { src: COMF201, ref: '20-23', any: [/LOSEBASE:1\ \+=\ RESULT\ \*\ 10/m] },
+      { src: COMF201, ref: '20', any: [/CALL\ ARENA_ASSI_POINT/m] },
+      { src: COMF201, ref: '22-23', any: [/LOSEBASE:1\ \+=\ RESULT\ \*\ 10/m] },
+      { src: COMF201, ref: '27', any: [/CALL\ ARENA_SLAVE_POINT/m] },
+      {
+        src: COMF201,
+        ref: '30-45',
+        any: [
+          /PRINTFORMW\ 然后，%SAVESTR:ASSI%发出痛恨的一击，将%SAVESTR:TARGET%的武器打掉了。/m,
+        ],
+      },
+      {
+        src: COMF201,
+        ref: '32-34',
+        any: [/PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%踩在脚下。/m],
+      },
+      { src: COMF201, ref: '37-38', any: [/LOSEBASE:1\ \+=\ C\ \*\ 5/m] },
+      {
+        src: COMF201,
+        ref: '39-42',
+        any: [
+          /PRINTFORMW\ 然后，%SAVESTR:ASSI%发出痛恨的一击，将%SAVESTR:TARGET%的武器打掉了。/m,
+        ],
+      },
+      {
+        src: COMF201,
+        ref: '44-47',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%对%SAVESTR:ASSI%进行了反击。/m],
+      },
+      { src: COMF201, ref: '52', any: [/TFLAG:400\ =\ 201/m] },
+      { src: COMF201, ref: '54', any: [/CALL\ COM_AFTER_ARENA/m] },
+      { src: COMF201, ref: '55-56', any: [/SIF\ RESULT\ ==\ 0/m] },
+      { src: COMF201, ref: '58-59', any: [/SIF\ ASSI\ !=\ PLAYER/m] },
+      {
+        src: COMF201,
+        ref: '64-115',
+        any: [
+          /ELSEIF\ RESULT\ ==\ 2\ \&\&\ \(TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1\)\ \&\&\ TALENT:122\ ==\ 0\ \&\&\ TALENT:273\ ==\ 0\ \&\&\ CFLAG:42\ !=\ 79\ \ \&\&\ \(!TALENT:135\ \|\|\ TALENT:ASSI:83\ ==\ 1\)/m,
+        ],
+      },
+      { src: COMF201, ref: '65', any: [/PRINTL\ 对哪里进行凌辱？/m] },
+      {
+        src: COMF201,
+        ref: '66-67',
+        any: [
+          /SIF\ TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1/m,
+        ],
+      },
+      { src: COMF201, ref: '68', any: [/PRINTL\ \[1\]\ \-\ 胸部/m] },
+      {
+        src: COMF201,
+        ref: '69-70',
+        any: [
+          /SIF\ \(TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1\)\ \&\&\ TALENT:122\ ==\ 0\ \&\&\ TALENT:273\ ==\ 0\ \&\&\ CFLAG:42\ !=\ 79\ \ \&\&\ \(!TALENT:135\ \|\|\ TALENT:ASSI:83\ ==\ 1\)/m,
+        ],
+      },
+      {
+        src: COMF201,
+        ref: '71-72',
+        any: [
+          /SIF\ TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1/m,
+        ],
+      },
+      { src: COMF201, ref: '73', any: [/PRINTL\ \[999\]\ 暂时放过/m] },
+      { src: COMF201, ref: '75', any: [/INPUT/m] },
+      {
+        src: COMF201,
+        ref: '77-85',
+        any: [
+          /IF\ RESULT\ ==\ 0\ \&\&\ \(TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1\)/m,
+        ],
+      },
+      { src: COMF201, ref: '82-83', any: [/SIF\ RESULT\ ==\ 0/m] },
+      {
+        src: COMF201,
+        ref: '85',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \*\ 5\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF201,
+        ref: '86-91',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \*\ 5\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF201,
+        ref: '91',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \*\ 5\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF201,
+        ref: '92-103',
+        any: [
+          /ELSEIF\ RESULT\ ==\ 2\ \&\&\ \(TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1\)\ \&\&\ TALENT:122\ ==\ 0\ \&\&\ TALENT:273\ ==\ 0\ \&\&\ CFLAG:42\ !=\ 79\ \ \&\&\ \(!TALENT:135\ \|\|\ TALENT:ASSI:83\ ==\ 1\)/m,
+        ],
+      },
+      { src: COMF201, ref: '94-95', any: [/SIF\ TALENT:122/m] },
+      { src: COMF201, ref: '100-101', any: [/SIF\ RESULT\ ==\ 0/m] },
+      {
+        src: COMF201,
+        ref: '103',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \*\ 5\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF201,
+        ref: '104-109',
+        any: [
+          /ELSEIF\ RESULT\ ==\ 3\ \&\&\ \(TALENT:ASSI:121\ ==\ 1\ \|\|\ TALENT:ASSI:122\ ==\ 1\ \|\|\ ITEM:PBAND\ ==\ 1\)/m,
+        ],
+      },
+      {
+        src: COMF201,
+        ref: '109',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \*\ 5\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF201,
+        ref: '110-112',
+        any: [/PRINTFORMW\ %NAME:MASTER%叫%SAVESTR:ASSI%退下了……/m],
+      },
+      { src: COMF201, ref: '113-114', any: [/GOTO\ INPUT_LOOP_0/m] },
+      { src: COMF201, ref: '117', any: [/RETURN\ 1/m] },
+      {
+        src: COMF202,
+        ref: '17-43',
+        any: [
+          /PRINTFORMW\ 连地下城中最低等最卑微的种族都打不过，手足无措的%SAVESTR:TARGET%被无情地嘲笑着。/m,
+        ],
+      },
+      { src: COMF202, ref: '9', any: [/PRINTL\ 最下层居民/m] },
+      { src: COMF202, ref: '11', any: [/CALL\ TRAIN_MESSAGE_B/m] },
+      { src: COMF202, ref: '17-20', any: [/CALL\ ARENA_SLAVE_POINT/m] },
+      { src: COMF202, ref: '20', any: [/CALL\ ARENA_SLAVE_POINT/m] },
+      {
+        src: COMF202,
+        ref: '21-38',
+        any: [
+          /PRINTFORMW\ 连地下城中最低等最卑微的种族都打不过，手足无措的%SAVESTR:TARGET%被无情地嘲笑着。/m,
+        ],
+      },
+      {
+        src: COMF202,
+        ref: '23-25',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%无法抵抗，被嘲笑了。/m],
+      },
+      { src: COMF202, ref: '29-30', any: [/LOSEBASE:1\ \+=\ 200/m] },
+      {
+        src: COMF202,
+        ref: '31-34',
+        any: [/PRINTFORMW\ 终于，%SAVESTR:TARGET%倒下了。/m],
+      },
+      {
+        src: COMF202,
+        ref: '36-38',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%蹂躏着最下层居民，打得他们满地打滚，这个已经不能被称为战斗了。/m,
+        ],
+      },
+      { src: COMF202, ref: '43', any: [/TFLAG:400\ =\ 202/m] },
+      { src: COMF202, ref: '45', any: [/CALL\ COM_AFTER_ARENA/m] },
+      { src: COMF202, ref: '46-47', any: [/SIF\ RESULT\ ==\ 0/m] },
+      {
+        src: COMF202,
+        ref: '52-101',
+        any: [
+          /SIF\ TALENT:122\ \|\|\ TALENT:273\ \|\|\ \(CFLAG:42\ ==\ 79\ \&\&\ \(CFLAG:40\ \&\ 64\)\ \&\&\ FLAG:37\)/m,
+        ],
+      },
+      { src: COMF202, ref: '53', any: [/PRINTL\ 对哪里进行凌辱？/m] },
+      { src: COMF202, ref: '54', any: [/PRINTL\ \[0\]\ \-\ 嘴巴/m] },
+      { src: COMF202, ref: '55', any: [/PRINTL\ \[1\]\ \-\ 胸部/m] },
+      {
+        src: COMF202,
+        ref: '56-57',
+        any: [/SIF\ !TALENT:122\ \&\&\ !TALENT:273\ \&\&\ CFLAG:42\ !=\ 79/m],
+      },
+      { src: COMF202, ref: '58', any: [/PRINTL\ \[3\]\ \-\ 肛门/m] },
+      { src: COMF202, ref: '59', any: [/PRINTL\ \[999\]\ 暂时放过/m] },
+      { src: COMF202, ref: '61', any: [/INPUT/m] },
+      {
+        src: COMF202,
+        ref: '63-71',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      { src: COMF202, ref: '67-69', any: [/SIF\ RESULT\ ==\ 0/m] },
+      {
+        src: COMF202,
+        ref: '71',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF202,
+        ref: '72-77',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF202,
+        ref: '77',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF202,
+        ref: '78-89',
+        any: [
+          /SIF\ TALENT:122\ \|\|\ TALENT:273\ \|\|\ \(CFLAG:42\ ==\ 79\ \&\&\ \(CFLAG:40\ \&\ 64\)\ \&\&\ FLAG:37\)/m,
+        ],
+      },
+      {
+        src: COMF202,
+        ref: '80-81',
+        any: [
+          /SIF\ TALENT:122\ \|\|\ TALENT:273\ \|\|\ \(CFLAG:42\ ==\ 79\ \&\&\ \(CFLAG:40\ \&\ 64\)\ \&\&\ FLAG:37\)/m,
+        ],
+      },
+      { src: COMF202, ref: '85-87', any: [/SIF\ RESULT\ ==\ 0/m] },
+      {
+        src: COMF202,
+        ref: '89',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF202,
+        ref: '90-95',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF202,
+        ref: '95',
+        any: [/TFLAG:402\ \+=\ LOSEBASE:0\ \+\ RAND:RESULT/m],
+      },
+      {
+        src: COMF202,
+        ref: '96-98',
+        any: [/PRINTFORMW\ %SAVESTR:MASTER%让最下层居民退下了……/m],
+      },
+      { src: COMF202, ref: '99-100', any: [/GOTO\ INPUT_LOOP_0/m] },
+      {
+        src: COMF202,
+        ref: '103-289',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \|\|\ SELECTCOM\ ==\ 34/m],
+      },
+      { src: COMF202, ref: '107-108', any: [/SIF\ MAXBASE:MASTER:4\ ==\ 0/m] },
+      { src: COMF202, ref: '110', any: [/B\ =\ 0/m] },
+      { src: COMF202, ref: '112-125', any: [/ELSEIF\ ABL:12\ ==\ 1/m] },
+      { src: COMF202, ref: '127-141', any: [/ELSEIF\ ABL:10\ ==\ 1/m] },
+      { src: COMF202, ref: '143-157', any: [/ELSEIF\ PALAM:5\ <\ PALAMLV:2/m] },
+      { src: COMF202, ref: '159-177', any: [/ELSEIF\ SELECTCOM\ ==\ 21/m] },
+      { src: COMF202, ref: '179', any: [/BASE:MASTER:4\ \+=\ B/m] },
+      { src: COMF202, ref: '181', any: [/S\ =\ BASE:MASTER:4/m] },
+      { src: COMF202, ref: '182', any: [/EJAC\ =\ MAXBASE:MASTER:4/m] },
+      { src: COMF202, ref: '184-190', any: [/IF\ \ S\ >\ EJAC\ \*\ 2/m] },
+      { src: COMF202, ref: '192-224', any: [/TIMES\ SOURCE:4\ ,\ 3\.00/m] },
+      { src: COMF202, ref: '194', any: [/TIMES\ SOURCE:4\ ,\ 3\.00/m] },
+      { src: COMF202, ref: '196-224', any: [/TIMES\ SOURCE:5\ ,\ 2\.00/m] },
+      { src: COMF202, ref: '226', any: [/EXP:20\ \+=\ 3/m] },
+      { src: COMF202, ref: '227', any: [/PRINTL\ 怪物大量射精/m] },
+      { src: COMF202, ref: '228', any: [/PRINTL\ 精液经验＋３/m] },
+      { src: COMF202, ref: '230', any: [/BASE:MASTER:4\ \-=\ EJAC\*2/m] },
+      { src: COMF202, ref: '231-232', any: [/SIF\ BASE:MASTER:4\ >=\ EJAC/m] },
+      {
+        src: COMF202,
+        ref: '233-235',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \|\|\ SELECTCOM\ ==\ 34/m],
+      },
+      { src: COMF202, ref: '236-238', any: [/SIF\ SELECTCOM\ ==\ 31/m] },
+      {
+        src: COMF202,
+        ref: '239-241',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \|\|\ SELECTCOM\ ==\ 27/m],
+      },
+      { src: COMF202, ref: '244', any: [/EXP:20\ \+=\ 1/m] },
+      { src: COMF202, ref: '245', any: [/PRINTL\ 怪物射精/m] },
+      { src: COMF202, ref: '246', any: [/PRINTL\ 精液经验＋１/m] },
+      { src: COMF202, ref: '248', any: [/BASE:MASTER:4\ \-=\ EJAC/m] },
+      { src: COMF202, ref: '249-250', any: [/SIF\ BASE:MASTER:4\ >=\ EJAC/m] },
+      {
+        src: COMF202,
+        ref: '251-253',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \|\|\ SELECTCOM\ ==\ 34/m],
+      },
+      { src: COMF202, ref: '254-256', any: [/SIF\ SELECTCOM\ ==\ 31/m] },
+      {
+        src: COMF202,
+        ref: '257-259',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \|\|\ SELECTCOM\ ==\ 27/m],
+      },
+      {
+        src: COMF202,
+        ref: '267-284',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \&\&\ E\ >\ 0/m],
+      },
+      { src: COMF202, ref: '267-268', any: [/SIF\ SELECTCOM\ ==\ 21/m] },
+      { src: COMF202, ref: '269-270', any: [/SIF\ SELECTCOM\ ==\ 27/m] },
+      { src: COMF202, ref: '271-272', any: [/SIF\ SELECTCOM\ ==\ 30/m] },
+      { src: COMF202, ref: '273-274', any: [/SIF\ SELECTCOM\ ==\ 31/m] },
+      { src: COMF202, ref: '275-276', any: [/SIF\ SELECTCOM\ ==\ 37/m] },
+      {
+        src: COMF202,
+        ref: '277-278',
+        any: [/SIF\ SELECTCOM\ ==\ 21\ \&\&\ E\ >\ 0/m],
+      },
+      {
+        src: COMF202,
+        ref: '279-280',
+        any: [/SIF\ SELECTCOM\ ==\ 27\ \&\&\ E\ >\ 0/m],
+      },
+      {
+        src: COMF202,
+        ref: '281-282',
+        any: [/SIF\ SELECTCOM\ ==\ 30\ \&\&\ E\ >\ 0/m],
+      },
+      {
+        src: COMF202,
+        ref: '283-284',
+        any: [/SIF\ SELECTCOM\ ==\ 31\ \&\&\ E\ >\ 0/m],
+      },
+      { src: COMF202, ref: '287', any: [/TFLAG:15\ =\ E/m] },
+      { src: COMF202, ref: '289', any: [/RETURN\ 1/m] },
+      { src: COMF204, ref: '35', any: [/PRINTL\ ＜奴隶陷落＞/m] },
+      {
+        src: COMF206,
+        ref: '98-99',
+        any: [/PRINTFORMW\ %SAVESTR:MASTER%让巨魔退下了……/m],
+      },
+      {
+        src: COMF206,
+        ref: '108-126',
+        any: [/IF\ EXP:52\ ==\ 0\ \&\&\ SELECTCOM\ ==\ 21/m],
+      },
+      {
+        src: COMF207,
+        ref: '9-63',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被媚药史莱姆包裹着，完全无法抵抗了。/m,
+        ],
+      },
+      { src: COMF207, ref: '9', any: [/PRINTL\ 媚药史莱姆/m] },
+      { src: COMF207, ref: '11', any: [/CALL\ TRAIN_MESSAGE_B/m] },
+      {
+        src: COMF207,
+        ref: '16-18',
+        any: [/LOSEBASE:1\ \+=\ CFLAG:0:9\ \*\ 10/m],
+      },
+      { src: COMF207, ref: '18', any: [/CALL\ ARENA_SLAVE_POINT/m] },
+      {
+        src: COMF207,
+        ref: '21-38',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被媚药史莱姆包裹着，完全无法抵抗了。/m,
+        ],
+      },
+      {
+        src: COMF207,
+        ref: '28-30',
+        any: [
+          /PRINTFORMW\ 然后，%SAVESTR:TARGET%被淹没在媚药史莱姆的体内了。/m,
+        ],
+      },
+      { src: COMF207, ref: '31', any: [/ENDIF/m] },
+      { src: COMF207, ref: '40', any: [/TFLAG:400\ =\ 207/m] },
+      { src: COMF207, ref: '42', any: [/CALL\ COM_AFTER_ARENA/m] },
+      { src: COMF207, ref: '43-44', any: [/SIF\ RESULT\ ==\ 0/m] },
+      {
+        src: COMF207,
+        ref: '46-79',
+        any: [
+          /PRINTFORMW\ 在倒下的%SAVESTR:TARGET%私处里，灌入了大量的粘液，从阴唇到子宫都灌满了。/m,
+        ],
+      },
+      { src: COMF207, ref: '47', any: [/PRINTL\ 把粘液灌到哪里？？/m] },
+      { src: COMF207, ref: '48', any: [/PRINTL\ \[0\]\ \-\ 嘴巴/m] },
+      { src: COMF207, ref: '49-50', any: [/SIF\ TALENT:122\ ==\ 0/m] },
+      { src: COMF207, ref: '51', any: [/PRINTL\ \[2\]\ \-\ 肛门/m] },
+      { src: COMF207, ref: '52', any: [/PRINTL\ \[999\]\ 暂时放过/m] },
+      { src: COMF207, ref: '54', any: [/INPUT/m] },
+      {
+        src: COMF207,
+        ref: '56-59',
+        any: [/PRINTFORMW\ 在倒下的%SAVESTR:TARGET%嘴里，灌入了大量的粘液。/m],
+      },
+      { src: COMF207, ref: '63-65', any: [/SIF\ TALENT:122/m] },
+      {
+        src: COMF207,
+        ref: '68-74',
+        any: [
+          /PRINTFORMW\ 在倒下的%SAVESTR:TARGET%肛门里，灌入了大量的粘液。/m,
+        ],
+      },
+      { src: COMF207, ref: '77', any: [/ELSEIF\ RESULT\ ==\ 999/m] },
+      { src: COMF207, ref: '78-79', any: [/GOTO\ INPUT_LOOP_0/m] },
+      { src: COMF207, ref: '82', any: [/RETURN\ 1/m] },
+      {
+        src: COMABLE,
+        ref: '4650-4755',
+        any: [
+          /SIF\ TEQUIP:55\ ==\ 0\ \&\&\ \(TEQUIP:11\ \|\|\ TEQUIP:13\ \|\|\ TEQUIP:14\ \|\|\ TEQUIP:15\ \|\|\ TEQUIP:16\ \|\|\ TEQUIP:17\ \|\|\ TEQUIP:19\ \|\|\ TEQUIP:43\ \|\|\ TEQUIP:44\ \|\|\ TEQUIP:45\ \|\|\ TEQUIP:46\|\|\ TEQUIP:49\ \|\|\ TEQUIP:54\ \|\|\ TEQUIP:89\)/m,
+        ],
+      },
+      {
+        src: COMABLE,
+        ref: '4654-4655',
+        any: [
+          /SIF\ TEQUIP:55\ ==\ 0\ \&\&\ \(TEQUIP:11\ \|\|\ TEQUIP:13\ \|\|\ TEQUIP:14\ \|\|\ TEQUIP:15\ \|\|\ TEQUIP:16\ \|\|\ TEQUIP:17\ \|\|\ TEQUIP:19\ \|\|\ TEQUIP:43\ \|\|\ TEQUIP:44\ \|\|\ TEQUIP:45\ \|\|\ TEQUIP:46\|\|\ TEQUIP:49\ \|\|\ TEQUIP:54\ \|\|\ TEQUIP:89\)/m,
+        ],
+      },
+      { src: COMABLE, ref: '4657-4659', any: [/SIF\ TEQUIP:54/m] },
+      { src: COMABLE, ref: '4661-4684', any: [/SIF\ ITEM:35\ ==\ 0/m] },
+      { src: COMABLE, ref: '4686-4687', any: [/@COM_ABLE201/m] },
+      { src: COMABLE, ref: '4688', any: [/SIF\ TEQUIP:55\ ==\ 0/m] },
+      { src: COMABLE, ref: '4693-4694', any: [/RETURN\ 1/m] },
+      { src: COMABLE, ref: '4695-4696', any: [/@COM_ABLE202/m] },
+      { src: COMABLE, ref: '4697', any: [/SIF\ TEQUIP:55\ ==\ 0/m] },
+      { src: COMABLE, ref: '4699', any: [/;助手じゃ駄目/m] },
+      { src: COMABLE, ref: '4705', any: [/@COM_ABLE203/m] },
+      { src: COMABLE, ref: '4712', any: [/RETURN\ 0/m] },
+      {
+        src: MESSAGE_B,
+        ref: '3010-3027',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被带到了死斗场。%SAVESTR:TARGET%已经完全没有战斗的力气了…/m,
+        ],
+      },
+      {
+        src: MESSAGE_B,
+        ref: '3011-3012',
+        any: [/PRINTFORML\ %SAVESTR:PLAYER%把%SAVESTR:TARGET%带回了房间…/m],
+      },
+      {
+        src: MESSAGE_B,
+        ref: '3014-3026',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被带到了死斗场。%SAVESTR:TARGET%已经完全没有战斗的力气了…/m,
+        ],
+      },
+      {
+        src: MESSAGE_B,
+        ref: '3016-3018',
+        any: [/CALL\ PRINT_CLOTHTYPE_MAIN2/m],
+      },
+      { src: MESSAGE_B, ref: '3019-3021', any: [/ELSEIF\ CFLAG:40/m] },
+      { src: MESSAGE_B, ref: '3022-3023', any: [/PRINT\ 全裸的/m] },
+      { src: MESSAGE_B, ref: '3024-3025', any: [/IF\ BASE:1\ <=\ 0/m] },
+      {
+        src: MESSAGE_B,
+        ref: '3026-3027',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被带到了死斗场。%SAVESTR:TARGET%已经完全没有战斗的力气了…/m,
+        ],
+      },
+      {
+        src: MESSAGE_B,
+        ref: '3028-3029',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%被带到了死斗场…/m],
+      },
+      { src: MESSAGE_B, ref: '3030-3032', any: [/PRINTW\ ……………/m] },
+      {
+        src: MESSAGE_B,
+        ref: '3033-3037',
+        any: [
+          /PRINTFORMW\ 被下流的笑容和好奇的视线所包围、%SAVESTR:TARGET%在异样的气氛中沉默不语。/m,
+        ],
+      },
+      {
+        src: MESSAGE_B,
+        ref: '29-39',
+        any: [/IF\ \(CFLAG:40\ \&\ 64\)\ \&\&\ CFLAG:42\ <=\ 50/m],
+      },
+      {
+        src: MESSAGE_A,
+        ref: '127-146',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%的私处里、被灌入了怪物黏黏糊糊的精液…/m,
+        ],
+      },
+      {
+        src: MESSAGE_A,
+        ref: '113-125',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%全身上的触手、一起吐出了大量的体液…/m,
+        ],
+      },
+      {
+        src: SOURCE,
+        ref: '59-120',
+        any: [/CALL EQUIP_COM11/m],
+      },
+      {
+        src: COMF201,
+        ref: '69-70',
+        any: [/CFLAG:42 != 79  && \(!TALENT:135/m],
+      },
+      {
+        src: COMF201,
+        ref: '92',
+        any: [/ELSEIF RESULT == 2 && \(TALENT:ASSI:121/m],
+      },
+      {
+        src: COMF202,
+        ref: '56-57',
+        any: [/SIF !TALENT:122 && !TALENT:273 && CFLAG:42 != 79/m],
+      },
+      { src: COMF202, ref: '110-177', any: [/;ABL:技巧をみる/m] },
+      { src: COMF202, ref: '181-190', any: [/S = BASE:MASTER:4/m] },
+      { src: COMF202, ref: '225-260', any: [/IF E == 2/m] },
+      { src: COMF207, ref: '63-68', any: [/対象が男人なら戻る/m] },
+      { src: COMF207, ref: '64-65', any: [/SIF TALENT:122/m] },
+      {
+        src: MESSAGE_A,
+        ref: '143-145',
+        any: [/PRINTFORML\ %SAVESTR:TARGET%身上的触手、吐出了体液…/m],
+      },
+    ],
+  },
+  {
     js: 'ere/system/train/train-message.js',
     refs: [
       // #215（J5）：服装前缀组与装备支真身化的新增引用
@@ -2524,6 +3115,13 @@ const FILES = [
       { src: MESSAGE_A, ref: '779-780', any: [/明确地感受到了快感/] },
       { src: MESSAGE_A, ref: '781-790', any: [/主动用手/] },
       { src: MESSAGE_A, ref: '791-807', any: [/依恋地靠着/] },
+      // #230（J20）：A 公共头 TFLAG:15 段的死斗场两臂（触手两臂随 J17）
+      { src: MESSAGE_A, ref: '110-146', any: [/死斗场で射精/m] },
+      { src: MESSAGE_A, ref: '113-125', any: [/身上的触手、吐出了体液/m] },
+      { src: MESSAGE_A, ref: '127-133', any: [/被灌入了怪物黏黏糊糊的精液/m] },
+      { src: MESSAGE_A, ref: '135-141', any: [/被怪物大量的粘稠精液灌满了/m] },
+      { src: MESSAGE_A, ref: '143-145', any: [/身上的触手、吐出了体液/m] },
+      { src: MESSAGE_A, ref: '30-108', any: [/IF TFLAG:9 == 0/m] },
     ],
   },
   // —— #215 J5 服装：ere/system/cloth-lookup.js ——

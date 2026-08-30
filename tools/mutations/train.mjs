@@ -270,10 +270,7 @@ export default [
   {
     desc: 'M55 回合循环的 SOURCE_CHECK 槽位删掉',
     file: 'ere/system/train/train-loop.js',
-    find: `  const source_pending = await emit('SOURCE_CHECK');
-  if (source_pending !== undefined) {
-    return { missing: false, pending: source_pending };
-  }`,
+    find: "  const source_pending = await emit('SOURCE_CHECK');\n  if (source_pending !== undefined) {\n    return { missing: false, pending: source_pending };\n  }",
     replace: '  // 变异：SOURCE_CHECK 槽位删除',
     tests: ['source-check'],
     must_mention: '端到端',
@@ -292,25 +289,9 @@ export default [
   {
     desc: 'M700 回调顺序：@EVENTCOM 与 @COMxx 分发对调（步骤 11↔12）',
     file: 'ere/system/train/train-loop.js',
-    find: `  // 11. @EVENTCOM（函数体在 event/event-com.js）
-  const com_pending = await emit('EVENTCOM');
-  if (com_pending !== undefined) {
-    return { missing: false, pending: com_pending };
-  }
-  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）；
-  // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头
-  // 第 12 步的取消语义，子菜单指令全出口 RETURN 0）
-  const com_result = await com_family.call(result, {
-    whenMissing: COM_MISSING,
-  });`,
-    replace: `  // 11. 变异：COM 分发先于 EVENTCOM
-  const com_result = await com_family.call(result, {
-    whenMissing: COM_MISSING,
-  });
-  const com_pending = await emit('EVENTCOM');
-  if (com_pending !== undefined) {
-    return { missing: false, pending: com_pending };
-  }`,
+    find: "  // 11. @EVENTCOM（函数体在 event/event-com.js）\n  const com_pending = await emit('EVENTCOM');\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }\n  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）；\n  // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头\n  // 第 12 步的取消语义，子菜单指令全出口 RETURN 0）\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });",
+    replace:
+      "  // 11. 变异：COM 分发先于 EVENTCOM\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });\n  const com_pending = await emit('EVENTCOM');\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }",
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
@@ -2504,5 +2485,286 @@ export default [
               : 5;`,
     tests: [`com-sm`],
     must_mention: `整阈值 EXP 档`,
+  },
+  {
+    desc: 'M1010 COM_ABLE200 的观战券守卫删（无券也放行）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "  // :4686-4687 无观战券（ITEM:35）不可\n  if ((era.get('item:35') || 0) === 0) {\n    return 0;\n  }",
+    replace: '  // 变异：观战券守卫删',
+    tests: ['com-colosseum'],
+    must_mention: '无观战券不可',
+  },
+  {
+    desc: 'M1011 COM_ABLE200 的互斥位照判删（死斗场中触手也可开）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  if (tequip(90)) {\n    return 0;\n  }',
+    replace: '  // 变异：触手互斥删',
+    tests: ['com-colosseum'],
+    must_mention: '死斗场中与触手互斥',
+  },
+  {
+    desc: 'M1012 COM_ABLE201 的助手亲自出战判定翻转',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  // :4695-4696 助手亲自出战才有\n  if (era_flag.player !== era_flag.assi) {\n    return 0;\n  }',
+    replace: '  // 变异：助手出战判定删',
+    tests: ['com-colosseum'],
+    must_mention: '主人调教',
+  },
+  {
+    desc: 'M1013 COM_ABLE 等级门槛的 < 改 <=（恰在门槛也拒绝）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    if ((era.get(`cflag:${era_flag.player}:9`) || 0) < min_level) {',
+    replace:
+      '    if ((era.get(`cflag:${era_flag.player}:9`) || 0) <= min_level) {',
+    tests: ['com-colosseum'],
+    must_mention: '等级恰在门槛',
+  },
+  {
+    desc: 'M1014 COM200 进入支的胆怯/感情淡薄缩放删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    let a = 100; // :21 A = 100\n    if (era.get(`talent:${target}:10`)) {\n      a = times(a, 2.0); // :24-25 胆怯\n    }\n    if (era.get(`talent:${target}:22`)) {\n      a = times(a, 0.6); // :27-28 感情淡薄\n    }',
+    replace: '    let a = 100; // 变异：素质缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '×2 / 感情淡薄 ×0.6',
+  },
+  {
+    desc: 'M1015 COM200 的 UP:10（恐怖）写删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  era.add(`delta:${target}:10`, a * 20); // :33 UP:10（恐怖）',
+    replace: '  // 变异：UP:10 写删',
+    tests: ['com-colosseum'],
+    must_mention: 'UP:10（恐怖）',
+  },
+  {
+    desc: 'M1016 COM200 退出支的观战券扣减删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    era.add('item:35', -1); // item 表 34-35 属主 train，直写",
+    replace: '    // 变异：观战券不扣',
+    tests: ['com-colosseum'],
+    must_mention: ':15 ITEM:35 -= 1',
+  },
+  {
+    desc: 'M1017 B 的 200 分支进入支删（落到无操作也不出文本）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    prefix = '全裸的'; // :3024-3025",
+    replace: "    prefix = '赤裸的'; // 变异：全裸前缀改坏",
+    tests: ['com-colosseum'],
+    must_mention: '进入支的完整文本序列',
+  },
+  {
+    desc: 'M1018 B/A 对 201-207 的无操作注册删（占位行复辟）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: 'const noop_branch = async () => {};',
+    replace:
+      'const noop_branch = undefined; // 变异：无操作注册废（register 会炸）',
+    tests: ['com-colosseum'],
+    must_mention: '不得出占位行',
+  },
+  {
+    desc: 'M1019 A 公共头 TFLAG:15 死斗场两臂删',
+    file: 'ere/system/train/train-message.js',
+    find: "  const tflag15 = era.get('tflag:15') || 0;\n  if (tflag15 > 0 && era.get(`tequip:${era_flag.target}:55`)) {\n    const com_site = { 31: '嘴里', 21: '私处里', 27: '直肠里' };\n    const site = com_site[era_flag.selectcom];\n    if (site !== undefined) {\n      const target_name = chara_callname(era_flag.target);\n      era.print(\n        tflag15 === 2\n          ? `${target_name}的${site}、被怪物大量的粘稠精液灌满了…` // :135-141\n          : `${target_name}的${site}、被灌入了怪物黏黏糊糊的精液…`, // :127-133\n      );\n    }\n  }",
+    replace: '  // 变异：TFLAG:15 死斗场两臂删',
+    tests: ['com-colosseum'],
+    must_mention: '死斗场 ==1 臂',
+  },
+  {
+    desc: 'M1020 A 公共头两臂的 SELECTCOM 三支过滤删（206 也灌精）',
+    file: 'ere/system/train/train-message.js',
+    find: '    const site = com_site[era_flag.selectcom];',
+    replace:
+      "    const site = com_site[era_flag.selectcom] ?? '嘴里'; // 变异：三支过滤删",
+    tests: ['com-colosseum'],
+    must_mention: 'SELECTCOM 206 无新增',
+  },
+  {
+    desc: 'M1021 COM201 的非助手出战双保险删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  // :10-11 非助手亲自出战不可执行（与 COM_ABLE201 双保险，1:1 保留）\n  if (assi !== era_flag.player) {\n    return 0;\n  }',
+    replace: '  // 变异：双保险删',
+    tests: ['com-colosseum'],
+    must_mention: ':10-11 双保险',
+  },
+  {
+    desc: 'M1022 COM201 反击支的助手气力扣减删（门面写不落）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    chara(assi).dungeon.体力 -= slave_point;\n    chara(assi).dungeon.气力 -= slave_point * 10;',
+    replace: '    // 变异：助手体力气力不扣',
+    tests: ['com-colosseum'],
+    must_mention: '直接扣助手体力气力',
+  },
+  {
+    desc: 'M1023 COM201 的助手退却气力线（1/5）改 1/6',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 5)',
+    replace: '      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 6)',
+    tests: ['com-colosseum'],
+    must_mention: ':56-57 退则 → 暂时放过（RETURN 1）',
+  },
+  {
+    desc: 'M1024 COM201 凌辱收入算式的 ×5 改 ×4',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "      era.add('tflag:402', lose(target, 0) * 5 + rand(com_result)); // :91",
+    replace:
+      "      era.add('tflag:402', lose(target, 0) * 4 + rand(com_result)); // :91",
+    tests: ['com-colosseum'],
+    must_mention: '收入 = LOSEBASE:0 × 5',
+  },
+  {
+    desc: 'M1025 COM201 的 999 暂时放过改 RETURN 1',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '      await era.waitAnyKey();\n      return 0;\n    } else {\n      continue; // :113-114',
+    replace:
+      '      await era.waitAnyKey();\n      return 1; // 变异：放过不作废回合\n    } else {\n      continue; // :113-114',
+    tests: ['com-colosseum'],
+    must_mention: ':105-107 暂时放过 RETURN 0',
+  },
+  {
+    desc: 'M1026 怪物开战损耗的等级缩放删（203 的 level 倍率）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(level, weak),',
+    replace: '    open_lose0: () => 5, // 变异：等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '霉菌犬',
+  },
+  {
+    desc: 'M1027 怪物体力枯竭的 /=4 折减删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: 'function monster_lose0(base_value, weak) {\n  return weak ? idiv(base_value, 4) : base_value;\n}',
+    replace:
+      'function monster_lose0(base_value, weak) {\n  return base_value; // 变异：/=4 折减删\n}',
+    tests: ['com-colosseum'],
+    must_mention: '/=4 折减',
+  },
+  {
+    desc: 'M1028 怪物败北线翻转（< 改 <=：点恰等也判胜）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  if (slave_point < cfg.threshold(level) || fainted) {',
+    replace: '  if (slave_point <= cfg.threshold(level) || fainted) {',
+    tests: ['com-colosseum'],
+    must_mention: '胜利支',
+  },
+  {
+    desc: 'M1029 怪物失神判定删（899 不再强制败北）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "  const fainted = (era.get('tflag:899') || 0) > 0; // 失神中",
+    replace: '  const fainted = false; // 变异：失神判定删',
+    tests: ['com-colosseum'],
+    must_mention: 'TFLAG:899',
+  },
+  {
+    desc: 'M1030 怪物收入倍率表改坏（巨魔 ×5 改 ×4）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 5,',
+    replace: '    income: (lose0) => lose0 * 4,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 5',
+  },
+  {
+    desc: 'M1031 COM206 的 999 缺 RETURN 0 标记删（放过也作废回合）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: 'MONSTER_CONFIGS[206].no_999_return = true; // :98-99 缺 RETURN 0（#14 第七批）',
+    replace:
+      'MONSTER_CONFIGS[206].no_999_return = false; // 变异：缺 RETURN 0 不复现',
+    tests: ['com-colosseum'],
+    must_mention: '999 后照走射精检查并 RETURN 1',
+  },
+  {
+    desc: 'M1032 COM206 拡張经验的初回异常经验判据删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    if ((era.get(`exp:${target}:52`) || 0) === 0 && era_flag.selectcom === 21) {',
+    replace: '    if (false && era_flag.selectcom === 21) {',
+    tests: ['com-colosseum'],
+    must_mention: '初回异常经验各 +1',
+  },
+  {
+    desc: 'M1033 射精量的技巧分档表改坏（档 2 值 1600 改 1500）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  b = [450, 1000, 1600, 2200, 2700, 3200][abl12];',
+    replace: '  b = [450, 1000, 1500, 2200, 2700, 3200][abl12];',
+    tests: ['com-colosseum'],
+    must_mention: '射精量 = 技巧档 × 顺从 × 欲情 × 体位',
+  },
+  {
+    desc: 'M1034 射精槽扣减后的钳制删（SIF BASE >= EJAC → = EJAC-1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    era.add(`base:${master}:4`, -ejac * 2); // :230\n    if ((era.get(`base:${master}:4`) || 0) >= ejac) {\n      era.set(`base:${master}:4`, ejac - 1); // :231-232\n    }',
+    replace: '    era.add(`base:${master}:4`, -ejac); // 变异：钳制删',
+    tests: ['com-colosseum'],
+    must_mention: '钳制到 EJAC-1',
+  },
+  {
+    desc: 'M1035 大量射精的 EXP:20 加算删（门面写不落）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    chara(target).dungeon.精液经验 += 3; // :226 EXP:20（属主 dungeon，门面）',
+    replace: '    // 变异：EXP:20 +3 删',
+    tests: ['com-colosseum'],
+    must_mention: '大量射精',
+  },
+  {
+    desc: 'M1036 汚れ位的按位或改赋值（口位 |= 2|4 改 = 2）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  const stain_or = (idx, bit) =>\n    era.set(\n      `stain:${target}:${idx}`,\n      (era.get(`stain:${target}:${idx}`) || 0) | bit,\n    );',
+    replace:
+      '  const stain_or = (idx, bit) => era.set(`stain:${target}:${idx}`, bit);',
+    tests: ['com-colosseum'],
+    must_mention: '口位 STAIN:0 |= 2 | 4',
+  },
+  {
+    desc: 'M1037 TFLAG:15（怪物射精旗标）写删',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "  era.set('tflag:15', e); // :287 死斗场怪物が射精フラグ（source-check/A 头消费）",
+    replace: '  // 变异：TFLAG:15 写删',
+    tests: ['com-colosseum'],
+    must_mention: '2880 < 10000 → E = 0',
+  },
+  {
+    desc: 'M1038 COM207 的 JUMP COM51 尾调用改不设 SELECTCOM',
+    file: 'ere/system/train/com-colosseum.js',
+    find: 'function call_insult_com(com) {\n  era_flag.selectcom = com;\n  return com_family.call(com, { whenMissing: 0 });\n}',
+    replace:
+      'function call_insult_com(com) {\n  return com_family.call(com, { whenMissing: 0 }); // 变异：SELECTCOM 不设\n}',
+    tests: ['com-colosseum'],
+    must_mention: 'SELECTCOM = 51',
+  },
+  {
+    desc: 'M1040 COM_AFTER_ARENA 的胜利线改（> 0 改 > 1：気力 1 也判陷落）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  if ((era.get(`base:${target}:1`) || 0) > 0) {',
+    replace: '  if ((era.get(`base:${target}:1`) || 0) > 1) {',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余（1 > 0）→ 胜利 0',
+  },
+  {
+    desc: 'M1041 ARENA_SLAVE_POINT 的気力折减删（点数不随気力降）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '  b *= era.get(`base:${a}:1`) || 0;\n  b = idiv(b, era.get(`maxbase:${a}:1`) || 0);',
+    replace: '  // 变异：気力折减删',
+    tests: ['com-colosseum'],
+    must_mention: '按気力比例折减',
+  },
+  {
+    desc: 'M1042 train-loop 的 RETURN 0 分支删（作废回合照结算）',
+    file: 'ere/system/train/train-loop.js',
+    find: '  if (com_result === 0) {\n    return { missing: false, cancelled: true };\n  }',
+    replace: '  // 变异：RETURN 0 分支删',
+    tests: ['com-colosseum', 'com-cloth'],
+    must_mention: '作废回合不得进 @SOURCE_CHECK',
+  },
+  {
+    desc: 'M1043 SHOW_EQUIP_2 死斗场臂删（占位行复辟）',
+    file: 'ere/page/page-train.js',
+    find: "  if (era.get(`tequip:${target}:55`)) {\n    era.print([{ content: '[死斗场决斗中]', color: '#FF1493' }]); // :1587-1588\n  } else {\n    stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');\n  }",
+    replace: "  stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族包');",
+    tests: ['com-colosseum'],
+    must_mention: '[死斗场决斗中]',
+  },
+  {
+    desc: 'M1044 COM_ABLE207 的死斗场守卫删（不在场也可用→输入 100 触发指令）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    if ((era.get(`tequip:${era_flag.target}:55`) || 0) === 0) {\n      return 0; // 死斗场判定（:4699 等）\n    }',
+    replace: '    // 变异：死斗场守卫删',
+    tests: ['com-colosseum'],
+    must_mention: '预置输入已耗尽',
   },
 ];
