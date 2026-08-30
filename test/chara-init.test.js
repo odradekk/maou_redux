@@ -59,7 +59,7 @@ test('一人称档位 [9,100)：SET_SUIT_SELFCALL 存根、CSTR 不写、档位�
   );
 });
 
-test('char_init 窄路径（菲娅形态）：一人称直设 + 服装存根 + 能力者全掷不中', async () => {
+test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 + 能力者全掷不中', async () => {
   const fixture = create_era_fixture();
   const { char_init } = load(fixture);
   // 注入全不中的随机源（RAND:40 恒 1 ≠ 0）
@@ -67,10 +67,9 @@ test('char_init 窄路径（菲娅形态）：一人称直设 + 服装存根 + �
   assert.equal(result, 35, 'RETURN L_A');
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称已设');
   const texts = history_texts(fixture);
-  assert(
-    texts.some((line) => line.includes('@WEARING_CLOTH_ABLE')),
-    '初始着装的占位行可见（:21-23 的 CALL，登记项）',
-  );
+  // :21-23 着替え装着自 #215（J5）起为真身：菲娅无既定服装（41/42 均 0）
+  // → WEARING_CLOTH_ALL 早退、无输出无写入（行为锁在 test/cloth-func.test.js）
+  assert.equal(fixture.store.get('cflag:35:40'), undefined, '无服装不写装位');
   assert(
     !texts.some((line) => line.includes('@ST_UP')),
     'CFLAG:9 = 1 不 > 1：等级段不进（菲娅既定事实）',

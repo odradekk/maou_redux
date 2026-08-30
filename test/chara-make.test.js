@@ -91,7 +91,6 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
     'LOOK_SET',
     'CHARA_FIRST_EXP',
     'SEARCH_FAMILY',
-    'WEARING_CLOTH_ABLE',
   ]) {
     assert(
       texts.some((line) => line.includes(`@${name}`)),
@@ -713,9 +712,12 @@ test('cm_cloth 男战士：锁子甲 + 剑 + 接頭語（:1126-1131、:1362）',
   assert.equal(fixture.store.get('cflag:3:550'), 100040, '剑 40 + 接頭語');
   assert.equal(fixture.store.get('cflag:3:45'), 0, '上衣上状态清 0');
   assert.equal(fixture.store.get('cflag:3:46'), 0, '上衣下状态清 0');
-  assert(
-    stub_texts(fixture).some((line) => line.includes('@WEARING_CLOTH_ABLE')),
-    '初始着装占位可见（登记项）',
+  // :1368-1371 着替え装着自 #215（J5）起为真身：cm_cloth 已写 cflag:3:41 = 3
+  // （锁甲，1-100 裙装段）→ WEARING_CLOTH_ALL 装位 1|2|4|8（无素质干扰）
+  assert.equal(
+    fixture.store.get('cflag:3:40'),
+    15,
+    '锁甲装位 = 内裤|胸罩|上装|裙',
   );
 });
 

@@ -134,6 +134,67 @@ class TrainFacade {
     era.set(`cstr:${this.cid}:3`, v);
   }
 
+  // —— tequip ——
+  /**
+   * 口塞（tequip:cid:45 ↔ TEQUIP:45）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行516 TEQUIP:45 ボールギャグ装着
+   * @returns {number}
+   */
+  get 口塞() {
+    return era.get(`tequip:${this.cid}:45`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 口塞(v) {
+    era.set(`tequip:${this.cid}:45`, v);
+  }
+
+  /**
+   * 死斗场（tequip:cid:55 ↔ TEQUIP:55）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行523 TEQUIP:55 コロシアム
+   * @returns {number}
+   */
+  get 死斗场() {
+    return era.get(`tequip:${this.cid}:55`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 死斗场(v) {
+    era.set(`tequip:${this.cid}:55`, v);
+  }
+
+  /**
+   * 兽奸（tequip:cid:89 ↔ TEQUIP:89）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行527 TEQUIP:89 獣姦プレイ
+   * @returns {number}
+   */
+  get 兽奸() {
+    return era.get(`tequip:${this.cid}:89`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 兽奸(v) {
+    era.set(`tequip:${this.cid}:89`, v);
+  }
+
+  /**
+   * 触手（tequip:cid:90 ↔ TEQUIP:90）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行528 TEQUIP:90 触手調教
+   * @returns {number}
+   */
+  get 触手() {
+    return era.get(`tequip:${this.cid}:90`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 触手(v) {
+    era.set(`tequip:${this.cid}:90`, v);
+  }
+
   // —— base ——
   /**
    * 射精槽（base:cid:2 ↔ BASE:2）

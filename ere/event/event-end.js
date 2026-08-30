@@ -21,6 +21,10 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { run_juel_check } = require('#/system/train/juel-check');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
+// AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身（train 域的
+// ere/system/train/cloth.js——@EVENTEND 在 endTrain 之前发（run_aftertrain
+// 的既有次序），TFLAG:45 的读写落在火车表内，原生成立）
+const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -32,8 +36,6 @@ const STUBBED_CALLS = [
   'SELL_MILK',
   'SELL_VIDEO',
   'SELL_FIGHTMONEY',
-  'AFTERTRAIN_CLOTH',
-  'RE_CLOTHED',
   'PARTY_CHAR_DEL',
   'NAME_RESET',
   'MAOU_TENSHIN',
@@ -86,13 +88,15 @@ on(
     stub_line('SELL_FIGHTMONEY', '死斗场观战费');
 
     // :356-361 生きていて着衣モードなら調教後の衣類の処理（FLAG:37 =
-    // 着衣系统，@EVENTFIRST 开局置 1）
+    // 着衣系统，@EVENTFIRST 开局置 1；#215 真身——调教内调用，TFLAG:45
+    // 直读直清）
     if (
       (era.get('flag:37') || 0) !== 0 &&
       (era.get(`base:${era_flag.target}:0`) || 0) > 0
     ) {
-      stub_line('AFTERTRAIN_CLOTH', '调教后衣物处理');
-      stub_line('RE_CLOTHED', '重新着衣');
+      await aftertrain_cloth(era_flag.target);
+      // :360 衣類の再着衣
+      await re_clothed(era_flag.target);
     }
 
     // :363-375 調教後に死ぬか臨死状態なら珠を獲得せずに、ターゲットを

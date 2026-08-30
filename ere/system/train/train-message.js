@@ -23,21 +23,25 @@
  * 只会是 121 之一，越界即引擎对接 bug，不静默回落）。
  *
  * 这张票存根/登记（docs/stub-registry.md）：
- *   - B 的服装前缀组（:29-39，PRINT_CLOTHTYPE_SPECIAL / _MAIN2）：CFLAG:40/42
- *     着衣位无写入路径（服装系统存根），三支整组登记，黄金样本中的
- *     「隔着紧身衣＆裙甲、」前缀是这张票与样本的记名差异之一；
- *   - B 的 TEQUIP:90/88/89 描写支（:40-66，触手/魔兽/兽奸）：装备位无写入
- *     路径，整组登记；
  *   - B/A 的其余 SELECTCOM 分支（舔阴 :94 起 / 射精文本 :30-120 等）：随
  *     各自指令票扩展，default 落存根占位行。
+ *
+ *   爱抚分支的服装前缀组（:29-39）与 TEQUIP:90/88/89 描写支（:40-66）自
+ *   #215（J5）起为真身（ere/page/page-clothtype.js 的串构造 +
+ *   ere/dungeon/monster-data.js 的魔兽名）。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
+const { e_get, monster_name } = require('#/dungeon/monster-data');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { DECLARED_COM_IDS } = require('#/system/train/com-family');
+const {
+  clothtype_main2_text,
+  clothtype_special_text,
+} = require('#/page/page-clothtype');
 
 /**
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
@@ -87,6 +91,26 @@ function body_phrase(cid) {
 }
 
 /**
+ * :89-90 妊娠中的胎动（TALENT:153 妊娠 && CFLAG:110 受孕期判定 && 非史莱姆
+ * 着衣态）。B 文全部 SELECTCOM 分支的公共尾段（爱抚分支 :29-90 与其余分支
+ * 同款），CFLAG:110/TALENT:153 的写入路径未移植，条件 1:1 保留（达成时
+ * 文本随妊娠票核对）。
+ * @param {number} target 目标角色 ID
+ * @param {string} target_name 目标显示名
+ * @returns {Promise<void>}
+ */
+async function print_pregnancy_kick(target, target_name) {
+  if (
+    era.get(`talent:${target}:153`) &&
+    (era.get(`cflag:${target}:110`) || 0) <= era_flag.day_count + 10 &&
+    ((era.get(`cflag:${target}:42`) || 0) !== 11 ||
+      ((era.get(`cflag:${target}:40`) || 0) & 64) === 0)
+  ) {
+    era.print(`${target_name}圆滚滚的腹部里、微微感觉到胎儿在踢脚……`);
+  }
+}
+
+/**
  * @TRAIN_MESSAGE_B 的爱抚分支（SELECTCOM == 0，:28-90）。
  *
  * @returns {Promise<void>} 原作 RETURN 0
@@ -96,42 +120,77 @@ async function train_message_b_caress() {
   const player = era_flag.player;
   const target_name = chara_callname(target);
 
-  // :29-39 服装前缀（CFLAG:40/42）——服装系统存根，整组登记（见文件头）；
-  // :40-66 TEQUIP:90/88/89 描写支——装备位存根，整组登记（见文件头）。
-
-  // :67-72 普通支：调教者名 +（接吻条件成立的）轻舔 + 仔细爱抚着
-  let line = chara_callname(player);
-  // :69 接吻文本的条件：奴隶口污为爱液系（<2 / 16 / 17）或主人不怕脏
-  // （TALENT:64）或助手调教，且未装口塞（TEQUIP:45）、已有初吻
-  // （CFLAG:16 != -1）
-  const mouth_stain = era.get(`stain:${target}:0`) || 0;
-  const kissable =
-    (mouth_stain < 2 ||
-      mouth_stain === 16 ||
-      mouth_stain === 17 ||
-      era.get('talent:0:64') ||
-      era_flag.assiplay) &&
-    !era.get(`tequip:${target}:45`) &&
-    (era.get(`cflag:${target}:16`) || 0) !== -1;
-  if (kissable) {
-    line += `轻舔着${target_name}的唇、`; // :70
+  // :29-39 服装前缀（CFLAG:40/42）——原作 CALL PRINT_CLOTHTYPE_SPECIAL /
+  // _MAIN2 的行内拼串（#215 起真身，ere/page/page-clothtype.js）：
+  // 特别服装（位 64 且类型 ≤50）→ 隔着<特别服装>、；上装在身（位 28）→
+  // 隔着<基本服装>、；仅内衣 → 隔着内衣、
+  const cloth_bits = era.get(`cflag:${target}:40`) || 0;
+  const special_type = era.get(`cflag:${target}:42`) || 0;
+  let line = '';
+  if ((cloth_bits & 64) !== 0 && special_type <= 50) {
+    line += `隔着${clothtype_special_text(target)}、`; // :30-32
+  } else if ((cloth_bits & 28) !== 0) {
+    line += `隔着${clothtype_main2_text(target)}、`; // :33-35
+  } else if (cloth_bits !== 0) {
+    line += '隔着内衣、'; // :36-37
   }
-  line += '仔细爱抚着'; // :71
+
+  // :40-66 装备描写支（TEQUIP:90 触手 :40-41 / 88 魔兽 :42-63 / 89 兽奸 :65-66）——#215 起
+  // 真身。魔兽支的名字行走 MONSTER_NAME（ere/dungeon/monster-data.js），
+  // 怪物数据在 E 数组第 4 列（E:300 = COMF88 的 CALL MONSTER_DATA 置入，
+  // E:307 = 种族），其分支文本用 PRINTL 收行——名字行独立成行，身体行另起
+  const tequip = (idx) => era.get(`tequip:${target}:${idx}`) || 0;
+  if (tequip(90)) {
+    line += '触手玩弄着'; // :40-41
+  } else if (tequip(88)) {
+    // :42-63 CALL MONSTER_NAME,E:300,0（:43）+ E:307 种族分支（:44-62）
+    const species = e_get(307);
+    const action =
+      species === 2
+        ? '用满是黏液的身体包覆着' // スライム
+        : species === 3
+          ? '那冰冷的节肢正触碰着' // 昆虫
+          : species === 4
+            ? '伸出藤蔓抚弄着' // 植物
+            : species === 5 || species === 11
+              ? '伸出触手玩弄着' // 触手・脳
+              : species === 6
+                ? '用娇小的身驱紧贴摩擦着' // 妖精
+                : species === 10 || species === 12
+                  ? '那野兽的舌头正舔着' // 獣・馬
+                  : '正仔细地爱抚着'; // :63 ELSE
+    // PRINTL 收行：服装前缀 + 魔兽名 + 种族动作收在第一行（Emuera 的
+    // PRINT 追加同一行缓冲），身体行另起
+    era.print(`${line}${monster_name(e_get(300))}${action}`);
+    era.print(`${target_name}${body_phrase(target)}的身体……`);
+    await print_pregnancy_kick(target, target_name);
+    return;
+  } else if (tequip(89)) {
+    line += '狗的舌头舔舐着'; // :65-66
+  } else {
+    // :67-72 普通支：调教者名 +（接吻条件成立的）轻舔 + 仔细爱抚着。
+    // 接吻文本的条件：奴隶口污为爱液系（<2 / 16 / 17）或主人不怕脏
+    // （TALENT:64）或助手调教，且未装口塞（TEQUIP:45）、已有初吻
+    // （CFLAG:16 != -1）
+    line += chara_callname(player); // :68 %SAVESTR:PLAYER%
+    const mouth_stain = era.get(`stain:${target}:0`) || 0;
+    const kissable =
+      (mouth_stain < 2 ||
+        mouth_stain === 16 ||
+        mouth_stain === 17 ||
+        era.get('talent:0:64') ||
+        era_flag.assiplay) &&
+      !era.get(`tequip:${target}:45`) &&
+      (era.get(`cflag:${target}:16`) || 0) !== -1;
+    if (kissable) {
+      line += `轻舔着${target_name}的唇、`;
+    }
+    line += '仔细爱抚着';
+  }
   // :73-88 目标名 + 体型/肤色描述 + 的身体……
   line += `${target_name}${body_phrase(target)}的身体……`;
   era.print(line);
-
-  // :89-90 妊娠中的胎动（TALENT:153 妊娠 && CFLAG:110 受孕期判定 &&
-  // 非紧身衣着衣态）——CFLAG:110/TALENT:153 的写入路径未移植，条件 1:1
-  // 保留（达成时文本随妊娠票核对）
-  if (
-    era.get(`talent:${target}:153`) &&
-    (era.get(`cflag:${target}:110`) || 0) <= era_flag.day_count + 10 &&
-    ((era.get(`cflag:${target}:42`) || 0) !== 11 ||
-      ((era.get(`cflag:${target}:40`) || 0) & 64) === 0)
-  ) {
-    era.print(`${target_name}圆滚滚的腹部里、微微感觉到胎儿在踢脚……`);
-  }
+  await print_pregnancy_kick(target, target_name);
 }
 
 /**

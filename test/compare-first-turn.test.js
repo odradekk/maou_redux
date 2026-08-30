@@ -61,31 +61,34 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   //           #213 映射层落地整组拆除——ere 侧按钮自此印 L_IDX，四个错位
   //           标签（54/55/89/39↔40）全部转匹配（原 10 条 version 消失：
   //           4 对成匹配 + 2 条 SKEW ere 半边转存根桶「COM_ABLE 未过滤」）
-  //   存根 101 = COM_ABLE 未过滤的指令按钮 + 状态画面/调教结算占位行 +
-  //             服装前缀对（#212 起：体力/气力/射精（主人）三条基础条已
-  //             真身匹配；#213 起 107 → 109：SKEW 豁免的 2 条 ere 半边
-  //             转正；#214 起 109 → 69/101：@SHOW_USERCOM 按钮组整组挂载，
-  //             golden 侧原「按钮组未挂载」的 8 条转匹配）
+  //   存根 105 = COM_ABLE 未过滤的指令按钮 + @SHOW_USERCOM 按钮组（含与
+  //             触手系指令同编号的对）+ 状态画面/调教结算占位行
+  //             （#212 起：体力/气力/射精（主人）三条基础条已真身匹配；
+  //             #213 起 107 → 109：SKEW 豁免的 2 条 ere 半边转正为
+  //             「COM_ABLE 未过滤」记名存根；#215 起 109 → 105：服装前缀
+  //             对与【紧身衣＆裙甲的姿态】两对转匹配——着衣态随 #215
+  //             播种后 ere 侧逐字复现）
+  //             ；#214 起 @SHOW_USERCOM 按钮组整组挂载，golden 侧原
+  //             「按钮组未挂载」的条目转匹配。两票的 replay 播种合并后
+  //             同时生效，下面是合并态实测
   assert.deepEqual(report.summary, {
-    matched: 69,
+    matched: 71,
     version: 0,
-    stub: 101,
+    stub: 97,
     unexplained: 0,
   });
 });
 
-test('首回合比对：黄金样本侧逐条文本全部被 ere 侧复现（除两处服装待办）', async () => {
+test('首回合比对：黄金样本侧逐条文本全部被 ere 侧复现', async () => {
   const { report, golden_window } = await build_comparison();
-  // 黄金窗口的 text 条目里，只有服装前缀句与【紧身衣＆裙甲的姿态】两句
-  // 进了差异（stub），其余全部匹配——口上（log:26）、A 文（log:29）、
-  // 源一览（log:31）、日期/目标/绝顶计数（log:46-51）、上次指令（log:74）
+  // #215（J5）起服装前缀句与【紧身衣＆裙甲的姿态】两句也逐字复现
+  // （着衣态播种进回放世界后两侧一致）——黄金窗口的 text 条目零差异：
+  // 口上（log:26）、A 文（log:29）、源一览（log:31）、
+  // 日期/目标/绝顶计数（log:46-51）、上次指令（log:74）全部匹配
   const diff_texts = report.diffs
     .filter((d) => d.side === 'golden' && d.entry.kind === 'text')
     .map((d) => d.entry.text);
-  assert.deepEqual(diff_texts, [
-    '隔着紧身衣＆裙甲、你仔细爱抚着温妮的身体……',
-    '【紧身衣＆裙甲的姿态】',
-  ]);
+  assert.deepEqual(diff_texts, []);
   assert.equal(golden_window.filter((e) => e.kind === 'text').length, 10);
 });
 

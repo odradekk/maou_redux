@@ -44,6 +44,8 @@
 
 const era = require('#/era-electron');
 const { random_self_call } = require('#/chara/chara-init');
+// WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
+const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
@@ -61,7 +63,6 @@ const STUBBED_CALLS = [
   'CHARA_FIRST_EXP',
   'CMI_CONFLICT_CHECK',
   'ST_UP',
-  'WEARING_CLOTH_ABLE',
 ];
 
 /**
@@ -1580,8 +1581,9 @@ async function cm_cloth(cid, rand_n) {
   r = 0; // :1367
 
   // :1368-1371 X = TARGET; TARGET = A; CALL WEARING_CLOTH_ABLE; TARGET = X
-  // —— 指针换手显式传参消解（#5 决议第六条）；FUNC_CLOTH 归阶段 4
-  await stub_line_wait('WEARING_CLOTH_ABLE', '初始着装', '随服装票');
+  // —— 指针换手显式传参消解（#5 决议第六条）；#215（J5）起真身
+  //    （ere/system/train/cloth.js）
+  wearing_cloth_able(cid);
 
   // :1373-1374 眼镜素质配眼镜饰品
   if (t(48) === 1) {

@@ -35,6 +35,9 @@ const {
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+// PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/page/page-clothtype.js 的
+// 串构造：SHOW_STATUS 的【…】包裹段消费）
+const { clothtype_text } = require('#/page/page-clothtype');
 // PALAMLV/palam_level 自 #45 起收敛在 era-utils/palam-level.js（SOURCE_CHECK
 // 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
 const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
@@ -42,10 +45,11 @@ const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
- * LIFE_BAR/VITAL_BAR（#212 落地，ere/page/components/chara-bars.js）与
+ * LIFE_BAR/VITAL_BAR（#212 落地，ere/page/components/chara-bars.js）、
+ * PRINT_CLOTHTYPE（#215 落地，ere/page/page-clothtype.js）与
  * 射精/母乳/触手槽条段（:144-252，就地实现）不在名单里。
  */
-const STUBBED_CALLS = ['SHOW_EQUIP_2', 'PRINT_CLOTHTYPE', 'SHOW_EQUIP_1'];
+const STUBBED_CALLS = ['SHOW_EQUIP_2', 'SHOW_EQUIP_1'];
 
 // 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
 //   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的
@@ -211,19 +215,22 @@ async function draw_status_screen(target) {
   header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
   era.print(header);
 
-  // :84 CALL SHOW_EQUIP_2 —— 存根（J5 #215：服装与 TEQUIP 建模）
-  stub_line('SHOW_EQUIP_2', '装备显示', '随装备票');
+  // :84 CALL SHOW_EQUIP_2 —— 存根（读 TEQUIP 的调教装备显示：触手/死斗场
+  // 等位由各自族票点亮后才有可显示内容，随族票；#215 勘误归属，见
+  // docs/stub-registry.md 的 SHOW_EQUIP_2 条目）
+  stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');
   // :85-86 CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
   // chara-bars.js；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1129/:1175）
   life_bar(target);
   vital_bar(target);
 
-  // :87-91 調教時ステータス画面に服装表示を捻じ込んでみた：【PRINT_CLOTHTYPE】
-  // （INLINE 占位：原作在同一行内嵌服装名，存根文案并入括号保持单行结构）
-  era.print(
-    `【服装表示尚未移植（原作 @PRINT_CLOTHTYPE，随服装票，见 docs/stub-registry.md。）】`,
-  );
-  era.println(); // :93 PRINTL
+  // :87-91 調教時ステータス画面に服装表示を捻じ込んでみた：PRINT 【 /
+  // CALL PRINT_CLOTHTYPE / PRINT 】——Emuera 三段拼一行，
+  // :93 PRINTL（空）收行——
+  // ere 合成一次 print（#215 真身：ere/page/page-clothtype.js；FLAG:37
+  // 着衣模式的守卫在 clothtype_text 内部 :37，关闭时显示全裸——与原作
+  // 状态屏恒出【】行的形态一致）
+  era.print(`【${clothtype_text(target)}】`); // :87-91 + :93
 
   // :95-124 绝顶计数（直线段，1:1）
   print_ex_counters(target);

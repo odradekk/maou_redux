@@ -809,4 +809,213 @@ export default [
     tests: ['com-order'],
     must_mention: 'a 初值透传累加',
   },
+  {
+    desc: 'M790 WEARING_CLOTH_ALL 裤装分支：101-200 段的位 16 改位 8（裙位）',
+    file: 'ere/system/train/cloth.js',
+    find: `    } else if (type >= 101 && type <= 200) {
+      // ズボンタイプのツーピース
+      bits |= 4;
+      bits |= 16;
+    }`,
+    replace: `    } else if (type >= 101 && type <= 200) {
+      // ズボンタイプのツーピース
+      bits |= 4;
+      bits |= 8;
+    }`,
+    tests: ['cloth-func'],
+    must_mention: '裤装两截（41=106 军服',
+  },
+  {
+    desc: 'M791 WEARING_CLOTH_ALL 胸罩装着删（bits |= 2 失效）',
+    file: 'ere/system/train/cloth.js',
+    find: `      bits |= 2;
+    }
+    const type = main_type(cid);`,
+    replace: `    }
+    const type = main_type(cid);`,
+    tests: ['cloth-func'],
+    must_mention: '裙装两截（41=5 紧身衣＆裙甲）',
+  },
+  {
+    desc: 'M792 WEARING_CLOTH_ALL 和服/兔女郎免胸罩删（202/254 判恒假）',
+    file: 'ere/system/train/cloth.js',
+    find: 'if (bits & 2 && (type === 202 || type === 254)) {',
+    replace: 'if (false) {',
+    tests: ['cloth-func'],
+    must_mention: '254 兔女郎装',
+  },
+  {
+    desc: 'M793 WEARING_CLOTH_ALL 尿布免内裤删（42=69 判恒假）',
+    file: 'ere/system/train/cloth.js',
+    find: `    // :190-191 オムツ着用時（CFLAG:42 == 69）のノーパン処理
+    if (bits & 1 && special_type(cid) === 69) {
+      bits -= 1;
+    }`,
+    replace: `    // :190-191 オムツ着用時（CFLAG:42 == 69）のノーパン処理（变异：删）`,
+    tests: ['cloth-func'],
+    must_mention: '尿布（42=69）→ 免内裤',
+  },
+  {
+    desc: 'M794 WEARING_CLOTH_ABLE 下装双剥改单剥（46 的位 16 剥除删）',
+    file: 'ere/system/train/cloth.js',
+    find: `  if ((era.get(\`cflag:\${cid}:46\`) || 0) !== 0) {
+    bits -= bits & 16;
+  }`,
+    replace: `  if ((era.get(\`cflag:\${cid}:46\`) || 0) !== 0) {
+    // 变异：位 16 不剥
+  }`,
+    tests: ['cloth-func'],
+    must_mention: '各部位洗濯/没收状态剥对应装位',
+  },
+  {
+    desc: 'M795 AFTERTRAIN_CLOTH 特别服装丢弃不清类型（42 = 0 改 1）',
+    file: 'ere/system/train/cloth.js',
+    find: 'chara(cid).chara.特别服装类型 = 0; // :250 CFLAG:42 = 0',
+    replace: 'chara(cid).chara.特别服装类型 = 1; // :250 CFLAG:42 = 0（变异）',
+    tests: ['cloth-func'],
+    must_mention: '特别服装类型清零',
+  },
+  {
+    desc: 'M796 AFTERTRAIN_CLOTH 尿布换新不扣费（MONEY -= 50 删）',
+    file: 'ere/system/train/cloth.js',
+    find: 'era_flag.money -= 50; // :264 MONEY',
+    replace: '// 变异：不扣费',
+    tests: ['cloth-func'],
+    must_mention: 'MONEY -= 50（:264）',
+  },
+  {
+    desc: 'M797 AFTERTRAIN_CLOTH 下装废弃状态错（46 = -2 改 -1）',
+    file: 'ere/system/train/cloth.js',
+    find: 'era.set(`cflag:${cid}:46`, -2); // :315 ツーピースは下のみ廃棄',
+    replace: 'era.set(`cflag:${cid}:46`, -1); // :315（变异）',
+    tests: ['cloth-func'],
+    must_mention: '两截型下装废弃（:315）',
+  },
+  {
+    desc: 'M798 AFTERTRAIN_CLOTH 内裤洗涤天数错（43 = 2 改 3）',
+    file: 'ere/system/train/cloth.js',
+    find: 'era.set(`cflag:${cid}:43`, 2); // :361',
+    replace: 'era.set(`cflag:${cid}:43`, 3); // :361（变异）',
+    tests: ['cloth-func'],
+    must_mention: '洗濯 2 日（:361）',
+  },
+  {
+    desc: 'M799 AFTERTRAIN_CLOTH 上下俱废的类型消除删（45<0&&46<0 判恒假）',
+    file: 'ere/system/train/cloth.js',
+    find: `    if (
+      (era.get(\`cflag:\${cid}:45\`) || 0) < 0 &&
+      (era.get(\`cflag:\${cid}:46\`) || 0) < 0
+    ) {
+      era.set(\`cflag:\${cid}:41\`, 0);
+    }`,
+    replace: `    if (false) {
+      era.set(\`cflag:\${cid}:41\`, 0);
+    }`,
+    tests: ['cloth-func'],
+    must_mention: '上下俱废 → 类型 0',
+  },
+  {
+    desc: 'M800 RE_CLOTHED 守卫翻转（< 3 改 >= 3：露出癖高的反而穿回）',
+    file: 'ere/system/train/cloth.js',
+    find: 'if (obedience + exposure < 3) {',
+    replace: 'if (obedience + exposure >= 3) {',
+    tests: ['cloth-func'],
+    must_mention: '≥3 维持脱衣（:396）',
+  },
+  {
+    desc: 'M801 SOILING_CLOTH_NO1 内裤置位删（bit 1 不置）',
+    file: 'ere/system/train/cloth.js',
+    find: `  if (worn(cid) & 1) {
+    era.print(\`《\${chara_callname(cid)}的内衣沾满了尿》\`); // :484
+    mask = or_tflag45(mask, 1, in_train);
+  }
+  return mask;
+}
+
+/**
+ * @SOILING_CLOTH_NO2`,
+    replace: `  if (worn(cid) & 1) {
+    era.print(\`《\${chara_callname(cid)}的内衣沾满了尿》\`); // :484
+  }
+  return mask;
+}
+
+/**
+ * @SOILING_CLOTH_NO2`,
+    tests: ['cloth-func'],
+    must_mention: '特别服装（16）+ 下装（4）+ 内裤（1）',
+  },
+  {
+    desc: 'M802 SOILING_CLOTH_NO2 特别服装废弃位删（bit 32 不置）',
+    file: 'ere/system/train/cloth.js',
+    find: 'mask = or_tflag45(mask, 32, in_train);',
+    replace: '// 变异：废弃位不置',
+    tests: ['cloth-func'],
+    must_mention: '大小便全置（:501-522）',
+  },
+  {
+    desc: 'M803 SOILING_CLOTH_NO1 尿布早退删（69 的 RETURN 拿掉）',
+    file: 'ere/system/train/cloth.js',
+    find: `    mask = or_tflag45(mask, 16, in_train);
+    // :469-470 オムツ着用中なら他の衣類は無事
+    if (special_type(cid) === 69) {
+      return mask;
+    }
+  }
+  // :472-482 下装`,
+    replace: `    mask = or_tflag45(mask, 16, in_train);
+    // :469-470 オムツ着用中なら他の衣類は無事（变异：不早退）
+  }
+  // :472-482 下装`,
+    tests: ['cloth-func'],
+    must_mention: '只有尿布自身',
+  },
+  {
+    desc: 'M804 TRAIN_MESSAGE_B 服装前缀的基本服装支删（位 28 判恒假）',
+    file: 'ere/system/train/train-message.js',
+    find: '  } else if ((cloth_bits & 28) !== 0) {',
+    replace: '  } else if (false) {',
+    tests: ['cloth-func', 'compare-train'],
+    must_mention: '基本服装前缀（:33-35',
+  },
+  {
+    desc: 'M805 TRAIN_MESSAGE_B 触手支删（触手玩弄着 → 仔细爱抚着）',
+    file: 'ere/system/train/train-message.js',
+    find: "    line += '触手玩弄着'; // :40-41",
+    replace: "    line += ''; // :42-43（变异）",
+    tests: ['cloth-func'],
+    must_mention: '触手支（:42-43）',
+  },
+  {
+    desc: 'M806 TRAIN_MESSAGE_B 兽奸支删（狗的舌头舔舐着 → 空）',
+    file: 'ere/system/train/train-message.js',
+    find: "    line += '狗的舌头舔舐着'; // :65-66",
+    replace: "    line += ''; // :62-63（变异）",
+    tests: ['cloth-func'],
+    must_mention: '兽奸支（:62-63）',
+  },
+  {
+    desc: 'M807 TRAIN_MESSAGE_B 魔兽支的种族分支改走 ELSE（E:307 判恒假）',
+    file: 'ere/system/train/train-message.js',
+    find: '    const species = e_get(307);',
+    replace: '    const species = -1; // 变异：种族判空',
+    tests: ['cloth-func'],
+    must_mention: '魔兽种族支（E:307 == 10',
+  },
+  {
+    desc: 'M808 GET_CLOTHTYPE_MAIN2 未知编号的兜底串错（「服」改空串）',
+    file: 'ere/system/cloth-lookup.js',
+    find: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';",
+    replace: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '';",
+    tests: ['cloth-func'],
+    must_mention: 'GET 版无胸甲＆透视裙子（:884-885 CASEELSE）',
+  },
+  {
+    desc: 'M809 GET_CLOTHTYPE_SPECIAL 的 98 号退回繁体残留（#60 简体锁的靶点）',
+    file: 'ere/system/cloth-lookup.js',
+    find: "  98: '神秘的尿道导管',",
+    replace: "  98: '神秘的導尿管',",
+    tests: ['cloth-func'],
+    must_mention: 'ere 统一简体（#14）',
+  },
 ];

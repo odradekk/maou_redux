@@ -26,13 +26,14 @@
 
 const era = require('#/era-electron');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+// WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
+const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const { st_up } = require('#/dungeon/dungeon-lvup');
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
  * ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js），移出名单。 */
 const STUBBED_CALLS = [
-  'WEARING_CLOTH_ABLE',
   'SET_SUIT_SELFCALL',
   'SET_NICK_SELFCALL',
   'CHAR_BODY_GENERATE_WAPPED',
@@ -120,7 +121,8 @@ async function char_init(cid, rand) {
   }
 
   // :22-24 着替え装着（SWAP TARGET → CALL WEARING_CLOTH_ABLE :23 → SWAP）
-  await stub_line_wait('WEARING_CLOTH_ABLE', '初始着装', '随服装票');
+  // ——#215（J5）起真身（ere/system/train/cloth.js，显式传参消解 SWAP）
+  wearing_cloth_able(cid);
 
   // :27 一人称の設定（CALL RANDOM_SELF_CALL）
   await random_self_call(cid);

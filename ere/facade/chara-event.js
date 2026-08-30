@@ -103,6 +103,22 @@ class EventFacade {
     era.set(`cflag:${this.cid}:511`, v);
   }
 
+  // —— tequip ——
+  /**
+   * 主人避孕套（tequip:cid:35 ↔ TEQUIP:35）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行511 TEQUIP:35 マスターがコンドーム装着（属主 event：SYSTEM_SOURCE/COMF_CONDOM 的跨域写走本门面）
+   * @returns {number}
+   */
+  get 主人避孕套() {
+    return era.get(`tequip:${this.cid}:35`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 主人避孕套(v) {
+    era.set(`tequip:${this.cid}:35`, v);
+  }
+
   // —— talent ——
   /**
    * 反抗心（talent:cid:11 ↔ TALENT:11）

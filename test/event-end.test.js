@@ -74,14 +74,15 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
     'SELL_MILK',
     'SELL_VIDEO',
     'SELL_FIGHTMONEY',
-    'AFTERTRAIN_CLOTH', // FLAG:37 = 1（着衣）且存活 → 着衣分支可达
-    'RE_CLOTHED',
   ]) {
     assert(
       fixture.text_lines().some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印含函数名的占位行`,
     );
   }
+  // AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身：着衣分支可达
+  // （FLAG:37 = 1 且存活）但本世界 TFLAG:45 = 0、无衣物状态变化 → 静默
+  // （真身的行为锁在 test/cloth-func.test.js）
   // :421 @JUEL_CHECK 已是真身（#47）：结算表落地、不再是占位行
   assert(fixture.text_lines().includes('以上的点数变化了。'));
   assert(!fixture.text_lines().some((line) => line.includes('@JUEL_CHECK')));
@@ -217,8 +218,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'SELL_MILK',
     'SELL_VIDEO',
     'SELL_FIGHTMONEY',
-    'AFTERTRAIN_CLOTH',
-    'RE_CLOTHED',
     'PARTY_CHAR_DEL',
     'NAME_RESET',
     'MAOU_TENSHIN',

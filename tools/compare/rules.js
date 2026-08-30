@@ -274,6 +274,32 @@ function classify_entry(entry, side, context) {
         reason: '同上：服装前缀差异的 ere 半边（成对豁免）',
       };
     }
+    // #215（J5）起服装前缀与 PRINT_CLOTHTYPE 为真身，但 COM110（穿脱）
+    // 未移植：ere 侧不扒光，前缀与【着衣】态残留——ere 半边的两态与
+    // 反向前缀记名 COM110 待办（golden 半边走上方既有规则；比对流的
+    // LCS 配对在指令块大面积缺失时会跨块错位，对侧未必是同类行，故
+    // ere 半边不要求 counterpart——与 golden 半边 STUB_TEXT_EXACT 的
+    // 无条件形状对称。COM110 落地时本组差异整对转匹配，unexplained
+    // 恒 0 的底线不动）
+    if (side === 'ere' && STUB_TEXT_EXACT.has(entry.text)) {
+      return {
+        category: 'stub',
+        reason:
+          '服装显示两态差异：COM110（穿脱衣服）未移植，ere 侧未扒光（docs/stub-registry.md）',
+      };
+    }
+    if (
+      side === 'ere' &&
+      entry.text.startsWith(CLOTH_PREFIX) &&
+      context.counterpart?.kind === 'text' &&
+      context.counterpart.text === entry.text.slice(CLOTH_PREFIX.length)
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          'ere 侧多服装前缀：COM110（穿脱衣服）未移植，ere 侧未扒光（docs/stub-registry.md）',
+      };
+    }
   }
 
   // —— 范围 B（#161）：主菜单/存读档/日循环的规则组（独立函数，由
