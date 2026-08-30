@@ -1,5 +1,5 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，十一条
+ * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，十二条
  * 行为在此固定。全部通过临时目录夹具驱动（--root/--ledger-dir/--baseline/
  * --asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
@@ -31,6 +31,10 @@
  *      跳过 = 未拦截，任何档位都必须退 1（#89 二次验收的探针 G——
  *      「引擎在场时跳过必须为 0」这条不变量声称任何档位不变，此前
  *      没有测试守它）。
+ *  12. 引擎声明与实测不许分家（#256）：实测按「跳过」分类却没声明
+ *      `engine: true` → 退出码 1。全量变异退到阶段闸之后，门 4 只数得出
+ *      声明的**个数**；数对了但标错了哪一条，只有这条逐条核对能看见。
+ *      （门 4 本身只对真条目表生效，夹具换表时跳过，由变异条目 M733 守。）
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -339,7 +343,11 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
       ].join('\n'),
       'utf8',
     );
-    const ledger = write_ledger(root, [{ ...GOOD_ENTRY, tests: ['gated'] }]);
+    const ledger = write_ledger(root, [
+      // engine: true 是 #256 的交叉核对要求的：实测按「跳过」分类的条目
+      // 必须已声明，否则 run_one 当场判红（声明与实测不许分家）。
+      { ...GOOD_ENTRY, tests: ['gated'], engine: true },
+    ]);
     const args = ['--root', root, '--ledger-dir', ledger, '--baseline', '1'];
     const engineless = run_tool([
       ...args,
@@ -369,6 +377,30 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
       with_engine.status,
       0,
       '引擎在场时未被拦截必须非 0——跳过分类不掩盖真误报通过',
+    );
+
+    // #256 的交叉核对：同一条目摘掉 engine: true，实测按「跳过」分类却
+    // 没声明——必须当场红。门 4 只数得出声明的个数，数对了但标错了哪
+    // 一条，只有这里能看见。
+    const undeclared = write_ledger(root, [
+      { ...GOOD_ENTRY, tests: ['gated'] },
+    ]);
+    const stale = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      undeclared,
+      '--baseline',
+      '1',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '1',
+    ]);
+    assert.notEqual(stale.status, 0, '漏声明 engine: true 必须非 0');
+    assert.ok(
+      stale.output.includes('实测只被引擎用例守护，却没声明 engine: true'),
+      `应报出漏声明：\n${stale.output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
@@ -432,7 +464,12 @@ test('抽样含依赖引擎的条目同样退 0：抽样档不核对，依赖引
     );
     const ledger = write_ledger(root, [
       { ...GOOD_ENTRY, desc: 'T5 加倍系数改坏（普通条目）' },
-      { ...GOOD_ENTRY, desc: 'T6 依赖引擎条目', tests: ['gated'] },
+      {
+        ...GOOD_ENTRY,
+        desc: 'T6 依赖引擎条目',
+        tests: ['gated'],
+        engine: true,
+      },
     ]);
     const { status, output } = run_tool([
       '--root',
@@ -480,7 +517,12 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
       'utf8',
     );
     const ledger = write_ledger(root, [
-      { ...GOOD_ENTRY, desc: 'T7 依赖引擎条目', tests: ['gated'] },
+      {
+        ...GOOD_ENTRY,
+        desc: 'T7 依赖引擎条目',
+        tests: ['gated'],
+        engine: true,
+      },
     ]);
     const { status, output } = run_tool([
       '--root',

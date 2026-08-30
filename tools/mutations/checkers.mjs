@@ -423,4 +423,55 @@ export default [
     tests: ['chara-table-addressing'],
     must_mention: '守卫清单与期望名单不一致',
   },
+
+  // —— #256 测试选择器：三条保守性质各钉一条 ——
+  // 选择器的危险不是「选错」，是「选少了还不说」。三条变异分别拆掉
+  // 全局锁、拆掉退回全量的兜底、把目录探针退化回全目录——都必须红。
+  {
+    desc: 'M730 全局锁改成只在 --no-locks 时才加（交付闸不再带扫全树的那 11 个，跨域回归当场失明）',
+    file: 'tools/select-tests.mjs',
+    find: '      if (!args.no_locks) for (const t of locks) tests.add(t);',
+    replace:
+      '      if (args.no_locks) for (const t of locks) tests.add(t); // 变异：取反',
+    tests: ['select-tests'],
+    must_mention: '全局锁缺了',
+  },
+  {
+    desc: 'M731 兜底不再触发（不可解析的改动不退回全量——「正确性不依赖规则表完备性」这条前提被拆，漏测且无声）',
+    file: 'tools/select-tests.mjs',
+    find: '    if (unresolved.length > 0) {',
+    replace: '    if (unresolved.length > 99999) { // 变异：兜底永不触发',
+    tests: ['select-tests'],
+    must_mention: '退回全量（整套分层的安全前提）',
+  },
+  {
+    desc: 'M732 目录探针退回全目录（tools/x.mjs 按裸 tools 反查，牵出一大片，选择器等于没选）',
+    file: 'tools/select-tests.mjs',
+    find: "  const probes = dir.includes('/') ? [f, dir] : [f];",
+    replace:
+      "  const probes = dir === '.' ? [f] : [f, dir]; // 变异：目录探针退化",
+    tests: ['select-tests'],
+    must_mention: '目录探针退化了',
+  },
+
+  // —— #256 引擎声明的两道核对 ——
+  // 全量变异退到阶段闸之后，ENGINE_SKIP_BASELINE 的漂移一个阶段才暴露
+  // （#135 的 M222 漏抬就是这么连红 18 次 4 天的）。补偿是门 4（静态声明
+  // 数，随 npm test 每次都查）与 run_one 的逐条交叉核对。两道各钉一条。
+  {
+    desc: 'M733 ENGINE_SKIP_BASELINE 抬到 18（声明数与基线分家——门 4 若失守，这一类漂移要一个阶段才暴露）',
+    file: 'tools/mutation-check.mjs',
+    find: 'const ENGINE_SKIP_BASELINE = 17;',
+    replace: 'const ENGINE_SKIP_BASELINE = 18; // 变异：与声明数分家',
+    tests: ['mutation-check'],
+    must_mention: 'engine: true 的声明数',
+  },
+  {
+    desc: 'M734 交叉核对被拆（实测按「跳过」分类却没声明也放行——门 4 数得对个数、标错哪一条就无人可见）',
+    file: 'tools/mutation-check.mjs',
+    find: '    if (m.engine !== true) {',
+    replace: '    if (false && m.engine !== true) { // 变异：交叉核对被拆',
+    tests: ['mutation-check'],
+    must_mention: '漏声明 engine: true 必须非 0',
+  },
 ];

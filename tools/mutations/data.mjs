@@ -4,6 +4,7 @@
 // （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
 export default [
   {
+    engine: true,
     desc: 'M112 Chara17 预设行被删（预设生效用例必须红）',
     file: 'yml/Chara17.yml',
     find: `"portcflag":
@@ -13,6 +14,7 @@ export default [
     must_mention: '预设',
   },
   {
+    engine: true,
     desc: 'M113 Chara17 预设基线改坏（0 改 3）',
     file: 'yml/Chara17.yml',
     find: `"portcflag":
@@ -47,6 +49,7 @@ export default [
     must_mention: '没有对应名字表',
   },
   {
+    engine: true,
     desc: 'M243 Chara31 预设改坏（ABL 21 琼 3 改 9——库内产物与源 CSV 逐字段比对红，#138）',
     file: 'yml/Chara31.yml',
     find: `"ABL":
@@ -73,6 +76,7 @@ export default [
     must_mention: '低于引擎最小可用值 1',
   },
   {
+    engine: true,
     desc: 'M245 Chara34 预设段删（MARK 1/3/4 整块删——逐字段比对与边界用例双红，#138）',
     file: 'yml/Chara34.yml',
     find: `"MARK":
@@ -84,6 +88,7 @@ export default [
     must_mention: '与读源 CSV 不一致',
   },
   {
+    engine: true,
     desc: 'M270 Chara150 素質 320 大数改坏（1000000001 改 1000000002——消费验证的 talent 断言红，#139 编号外批）',
     file: 'yml/Chara150.yml',
     find: '"320": 1000000001',
@@ -92,6 +97,7 @@ export default [
     must_mention: '大数预设必须原样落 talent',
   },
   {
+    engine: true,
     desc: 'M271 Chara201 素質 319 种族改坏（2 改 9——逐字段比对与消费验证双红；319 是奴隶商店召唤池 CSVTALENT 的商品过滤键，#139）',
     file: 'yml/Chara201.yml',
     find: '"319": 2',
@@ -100,6 +106,7 @@ export default [
     must_mention: '商品过滤键）必须落 talent 为 2',
   },
   {
+    engine: true,
     desc: 'M272 Chara777 相性段删（"777|223" 静态表消失——相性搬运用例与逐字段比对双红，#139；丽塔/卡拉配对相性）',
     file: 'yml/Chara777.yml',
     find: `"相性":
@@ -109,6 +116,7 @@ export default [
     must_mention: '配对相性必须落静态表',
   },
   {
+    engine: true,
     desc: 'M222 saveFiles 退回引擎默认（_fixed.json 里改成 10——原作 11-98 号槽的备注不再被 loadGlobal 维护，界面上显示为空栏位）',
     file: 'yml/_fixed.json',
     find: `"saveFiles": 99`,
@@ -117,6 +125,7 @@ export default [
     must_mention: 'saveFiles 必须在 _fixed.json',
   },
   {
+    engine: true,
     desc: 'M115 名字表 id 改坏（数据版本 id 0 改 3——装载/寻址/预设全红）',
     file: 'yml/PortCFlag.yml',
     find: `"数据版本":
@@ -143,6 +152,7 @@ export default [
     must_mention: '版本库默认配置',
   },
   {
+    engine: true,
     desc: 'M127 默认配置漏键（删 window.audio——缺键被 syncConfig 永久物化的坑）',
     file: 'yml/_config.json',
     find: `    "audio": 100,
@@ -152,6 +162,7 @@ export default [
     must_mention: '引擎默认配置整份',
   },
   {
+    engine: true,
     desc: 'ExFlag 名字表 id 改坏（威望 99 改 98——名称→序号映射与寻址双红，#113）',
     file: 'yml/ExFlag.yml',
     find: `"威望":
@@ -162,6 +173,7 @@ export default [
     must_mention: '名称→序号映射',
   },
   {
+    engine: true,
     desc: 'ExFlag 结局线槽位删（嘉德线 2810 整块删——ENDCHECK 分派区间不完整，#113）',
     file: 'yml/ExFlag.yml',
     find: `# 角色号 33【嘉德】
@@ -175,6 +187,7 @@ export default [
     must_mention: '应装载 36 条',
   },
   {
+    engine: true,
     desc: 'Chara35 预设值改坏（素質 300 银发 5 改 6——与源 CSV 逐字段比对红，#113）',
     file: 'yml/Chara35.yml',
     find: '  "300": 5',
@@ -183,6 +196,7 @@ export default [
     must_mention: '菲娅预设',
   },
   {
+    engine: true,
     desc: 'Flag 侵略线 id 改坏（人间界侵攻度 81 改 80——ENDING_1 触发条件读错位，#113）',
     file: 'yml/Flag.yml',
     find: `"人间界侵攻度":
