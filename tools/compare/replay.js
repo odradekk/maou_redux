@@ -46,7 +46,7 @@ const TRAIN_PATH_MODULES = [
   'kojo/kojo-k3-noble',
   'page/page-train',
   'page/page-usercom',
-  'system/train/com0-caress',
+  'system/train/com-caress',
   'system/train/com-cloth',
   'system/train/com-colosseum',
   'system/train/juel-check',
@@ -125,12 +125,17 @@ function seed_winnie_world(fixture) {
   fixture.store.set('cflag:31:16', -1); // 初吻未体験：无「轻舔着」前缀 + 不潔被清零 + 阴核/2
   fixture.store.set('cflag:31:301', 203); // K3 状态机已推进到随机三支（台词 :1097）
   // CFLAG:31:2（好感）不写 = 0：情爱(31) 未吃到 ≥100 档的 ×1.1
-  // —— 服装（#215 J5）：旧样本首回合的爱抚行带「隔着紧身衣＆裙甲、」
-  //    前缀（emuera.log:25）、状态屏【紧身衣＆裙甲的姿态】（emuera.log:50）
-  //    为证——着衣系统 FLAG:37 = 1、紧身衣＆裙甲（41 = 5）装位 15
+  // —— 服装（#215 J5；#219 复核修正）：旧样本首回合的爱抚行带「隔着紧身
+  //    衣＆裙甲、」前缀（emuera.log:25）、状态屏【紧身衣＆裙甲的姿态】
+  //    （emuera.log:50）为证——外衣在身。但 emuera.log:7-9 的首屏方格
+  //    **列着舔阴[1]/自慰[3]/插入手指[8]/舔肛[9]**（着衣时 COM_ABLE 的
+  //    内裤位判定会滤掉它们，对照 train-natural:109 同为穿衣态首屏、方格
+  //    无舔阴）→ 旧样本世界是「有外衣、无内衣」：CFLAG:40 = 12（上着 4 |
+  //    裙 8，内裤 1 / 胸罩 2 / 下装 16 不在）、FLAG:37 = 1、紧身衣＆裙甲
+  //    （41 = 5）。#215 初版种 15（含内衣位）是把两份样本的着衣态混同
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:41', 5);
-  fixture.store.set('cflag:31:40', 15);
+  fixture.store.set('cflag:31:40', 12);
 
   // —— EX / 世界指针 ——
   fixture.store.set('ex:31:0', 1); // [阴蒂绝顶：1次]（log:51）
@@ -313,9 +318,12 @@ function seed_train_world(fixture, sample) {
   fixture.store.set('abl:31:17', 1); // 露出癖 LV1（自慰判定行 train-natural-log:453）
   fixture.store.set('abl:31:21', 3); // 抖M气质 LV3（判定行 train-natural-log:169）
 
-  // —— 刻印（实行值判定行的反解：快乐/苦痛/屈服/反抗全在账）——
-  fixture.store.set('mark:31:0', 2); // 快乐刻印 LV2（train-natural-log:169 快乐刻印LV2(4)）
-  fixture.store.set('mark:31:1', 1); // 苦痛刻印 LV1（train-natural-log:169）
+  // —— 刻印（实行值判定行的反解：快乐/苦痛/屈服/反抗全在账）。下标按
+  //    yml/Mark.yml（0=苦痛 1=快乐 2=屈服 3=反抗）——#219 勘定：此处原把
+  //    苦痛/快乐两行对调着种（0←2、1←1），COM6 判定行落地时数值对不上
+  //    golden :169（苦痛刻印LV1(5) + 快乐刻印LV2(4)）才翻出，随本票更正 ——
+  fixture.store.set('mark:31:0', 1); // 苦痛刻印 LV1（train-natural-log:169）
+  fixture.store.set('mark:31:1', 2); // 快乐刻印 LV2（train-natural-log:169 快乐刻印LV2(4)）
   fixture.store.set('mark:31:2', 2); // 屈服刻印 LV2（train-natural-log:169）
   fixture.store.set('mark:31:3', 1); // 反抗刻印 LV1（train-natural-log:169 与 train-natural-log:951）
 
@@ -416,6 +424,10 @@ function seed_train_world(fixture, sample) {
     [...abl.values()].sort((a, b) => a - b),
   );
   abl.forEach((id, name) => fixture.store.set(`ablname:${id}`, name));
+  // 刻印名表全量（#219 起 COM_ORDER/判定行读 markname:0-2；此前只有
+  // SHOW_ABLUP_SELECT 的 [99] 行用到 :3）
+  const mark = parse_name_ids('yml/Mark.yml');
+  mark.forEach((id, name) => fixture.store.set(`markname:${id}`, name));
   fixture.store.set('markname:3', '反抗刻印'); // SHOW_ABLUP_SELECT 的 [99] 行
 }
 

@@ -1,6 +1,6 @@
 /**
- * ere/system/train/train-message.js 的行为测试（issue #45：@TRAIN_MESSAGE_B/A
- * 的爱抚分支）。
+ * ere/system/train/train-message.js 的行为测试（issue #45 起；#219 起爱抚
+ * 0-9 分支归 com-caress.js，本文件装载族模块后经分发族驱动同一批行为）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
  *   - B 的爱抚描写行（接吻条件、体型/肤色修饰、妊娠行、省略设定短路）；
@@ -24,6 +24,7 @@ function seed_message_world() {
   era_flag.target = 31;
   era_flag.player = 0;
   era_flag.selectcom = 0;
+  fixture.load_module('system/train/com-caress'); // 分支 0 的注册在族模块
   const { train_message_a, train_message_b } = fixture.load_module(
     'system/train/train-message',
   );

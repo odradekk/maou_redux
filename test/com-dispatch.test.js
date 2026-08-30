@@ -340,6 +340,7 @@ test('TRAIN_MESSAGE 分发族：声明空间 121；缺失落占位行；空间�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   era_flag.player = 0;
+  fixture.load_module('system/train/com-caress'); // 爱抚 0-9 分支的注册在族模块
   const {
     train_message_a,
     train_message_a_family,

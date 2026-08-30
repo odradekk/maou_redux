@@ -97,16 +97,13 @@
 const era = require('#/era-electron');
 const { emit } = require('#/system/event/registry');
 const {
+  COM_MISSING,
   com_able_family,
   com_family,
   DECLARED_TRAIN_IDS,
 } = require('#/system/train/com-family');
 const { com_id } = require('#/system/train/com-index');
 const era_flag = require('#/era-utils/era-flag');
-
-// @COMxx 未实现时的缺失哨兵：dispatch 的 whenMissing 由调用点声明（#7），
-// Symbol 保证不与真实指令实现的返回值混淆
-const COM_MISSING = Symbol('COM_MISSING');
 
 /**
  * 遍历 @COM_ABLExx 得出本回合可执行的指令编号（升序）。

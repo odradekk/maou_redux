@@ -42,7 +42,9 @@ require('#/event/source-check');
 require('#/page/page-train');
 require('#/page/page-usercom');
 // @COM0 与 @COM_ABLE0 的实现（#45——首条真实指令；注册进 COM 分发族）
-require('#/system/train/com0-caress');
+// @COM0-9「爱抚系」族（#219 J9）：@COM/@COM_ABLE 真身 + TRAIN_MESSAGE 分支
+// + GET_ADV_COM 的 CASE 1/3/4/5/6/8 升格规则（COM0 自 com0-caress.js 搬入）
+require('#/system/train/com-caress');
 // @COM40-49「SM 系」族（#223 J13）：@COM/@COM_ABLE 真身 + EQUIP_COM43-49
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
 require('#/system/train/com-sm');

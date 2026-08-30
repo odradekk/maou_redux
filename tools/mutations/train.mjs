@@ -211,60 +211,68 @@ export default [
   },
   {
     desc: 'M39 COM_ABLE0 爱抚系过滤：FLAG:25 & 1 判据删掉',
-    file: 'ere/system/train/com0-caress.js',
-    find: `  if ((era.get('flag:25') || 0) & 1) {
-    return 0;
+    file: 'ere/system/train/com-caress.js',
+    find: `com_able_family.register(0, async () => {
+  if ((era.get('flag:25') || 0) & 1) {
+    return 0; // :30-31
   }`,
-    replace: '  // 变异：过滤判据删除',
-    tests: ['com0-caress'],
+    replace: `com_able_family.register(0, async () => {
+  // 变异：过滤判据删除`,
+    tests: ['com-caress'],
     must_mention: 'COM_ABLE0',
   },
   {
     desc: 'M40 COM_ABLE0 决斗中判据删掉（TEQUIP:55）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  if (era.get(`tequip:${era_flag.target}:55`)) {\n    return 0;\n  }',
-    replace: '  // 变异：决斗判据删除',
-    tests: ['com0-caress'],
+    file: 'ere/system/train/com-caress.js',
+    find: `  if (era.get(\`tequip:\${era_flag.target}:55\`)) {
+    return 0; // :32-33
+  }
+  return 1;
+});`,
+    replace: `  return 1; // 变异：决斗判据删除
+});`,
+    tests: ['com-caress'],
     must_mention: 'COM_ABLE0',
   },
   {
     desc: 'M41 ABL:0 分档表错一格（1200 改 1201）',
-    file: 'ere/system/train/com0-caress.js',
+    file: 'ere/system/train/com-caress.js',
     find: '  [1200, 100],',
     replace: '  [1201, 100],',
-    tests: ['com0-caress'],
+    tests: ['com-caress'],
     must_mention: '= 3 档',
   },
   {
     desc: 'M42 ABL:1 分档表错一格（300 改 301）',
-    file: 'ere/system/train/com0-caress.js',
+    file: 'ere/system/train/com-caress.js',
     find: '  [300, 80],',
     replace: '  [301, 80],',
-    tests: ['com0-caress'],
+    tests: ['com-caress'],
     must_mention: '= 2 档',
   },
   {
     desc: 'M43 初吻回避判据取反（CFLAG:16 === -1 改 !== -1）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '  if ((era.get(`cflag:${target}:16`) || 0) === -1) {',
-    replace: '  if ((era.get(`cflag:${target}:16`) || 0) !== -1) {',
-    tests: ['com0-caress'],
+    file: 'ere/system/train/com-caress.js',
+    find: '  if ((era.get(`cflag:${target}:16`) || 0) === -1) {\n    // :136-140 初吻未体験 → 回避接吻，效果减',
+    replace:
+      '  if ((era.get(`cflag:${target}:16`) || 0) !== -1) {\n    // :136-140 初吻未体験 → 回避接吻，效果减',
+    tests: ['com-caress'],
     must_mention: '初吻未体验',
   },
   {
     desc: 'M44 爱慕的加倍删掉（SOURCE:3 × 2）',
-    file: 'ere/system/train/com0-caress.js',
-    find: '      set_src(3, src(3) * 2);',
+    file: 'ere/system/train/com-caress.js',
+    find: '      set(3, src(3) * 2); // :187-190 爱慕且主人亲自调教',
     replace: '      // 变异：加倍删除',
-    tests: ['com0-caress'],
+    tests: ['com-caress'],
     must_mention: '爱慕',
   },
   {
     desc: 'M45 百合经验的性别判定短路',
-    file: 'ere/system/train/com0-caress.js',
+    file: 'ere/system/train/com-caress.js',
     find: '  if (!target_male && !player_male) {',
     replace: '  if (false) {',
-    tests: ['com0-caress'],
+    tests: ['com-caress'],
     must_mention: '百合经验',
   },
   {
@@ -464,6 +472,7 @@ export default [
     file: 'ere/system/train/train-message.js',
     find: `  const branch = await train_message_b_family.call(era_flag.selectcom, {
     whenMissing: BRANCH_MISSING,
+    args: [rand_source()],
   });
   if (branch === BRANCH_MISSING) {
     stub_line(
@@ -484,6 +493,7 @@ export default [
     file: 'ere/system/train/train-message.js',
     find: `  const branch = await train_message_a_family.call(era_flag.selectcom, {
     whenMissing: BRANCH_MISSING,
+    args: [rand_source()],
   });`,
     replace: `  if (!train_message_a_family.declared.has(era_flag.selectcom)) {
     return; // 变异：空间外静默
@@ -955,7 +965,7 @@ export default [
   },
   {
     desc: 'M804 TRAIN_MESSAGE_B 服装前缀的基本服装支删（位 28 判恒假）',
-    file: 'ere/system/train/train-message.js',
+    file: 'ere/system/train/com-caress.js',
     find: '  } else if ((cloth_bits & 28) !== 0) {',
     replace: '  } else if (false) {',
     tests: ['cloth-func', 'compare-train'],
@@ -963,25 +973,26 @@ export default [
   },
   {
     desc: 'M805 TRAIN_MESSAGE_B 触手支删（触手玩弄着 → 仔细爱抚着）',
-    file: 'ere/system/train/train-message.js',
-    find: "    line += '触手玩弄着'; // :40-41",
+    file: 'ere/system/train/com-caress.js',
+    find: "    line += '触手玩弄着';",
     replace: "    line += ''; // :42-43（变异）",
     tests: ['cloth-func'],
     must_mention: '触手支（:42-43）',
   },
   {
     desc: 'M806 TRAIN_MESSAGE_B 兽奸支删（狗的舌头舔舐着 → 空）',
-    file: 'ere/system/train/train-message.js',
-    find: "    line += '狗的舌头舔舐着'; // :65-66",
+    file: 'ere/system/train/com-caress.js',
+    find: "    line += '狗的舌头舔舐着';",
     replace: "    line += ''; // :62-63（变异）",
     tests: ['cloth-func'],
     must_mention: '兽奸支（:62-63）',
   },
   {
     desc: 'M807 TRAIN_MESSAGE_B 魔兽支的种族分支改走 ELSE（E:307 判恒假）',
-    file: 'ere/system/train/train-message.js',
-    find: '    const species = e_get(307);',
-    replace: '    const species = -1; // 变异：种族判空',
+    file: 'ere/system/train/com-caress.js',
+    find: '  } else if (teq(88)) {\n    const species = e_get(307);\n    const action =',
+    replace:
+      '  } else if (teq(88)) {\n    const species = -1; // 变异：种族判空\n    const action =',
     tests: ['cloth-func'],
     must_mention: '魔兽种族支（E:307 == 10',
   },
@@ -2766,5 +2777,105 @@ export default [
     replace: '    // 变异：死斗场守卫删',
     tests: ['com-colosseum'],
     must_mention: '#214 撞号消解',
+  },
+
+  {
+    desc: 'M910 COM_ABLE1 的下装着衣判据删（位 16 + FLAG:37）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  if (cloth_blocked(target, 17)) {\n    return 0; // パンツか上着下・ズボン\n  }',
+    replace: '  // 变异：着衣判据删除',
+    tests: ['com-caress'],
+    must_mention: 'パンツ/下装在身',
+  },
+  {
+    desc: 'M911 COM_ABLE2 助手双低放行删（顺从 ≤3 且百合 ≤3 → RETURN 1 源逐字）',
+    file: 'ere/system/train/com-caress.js',
+    find: '    if (\n      (era.get(`abl:${assi}:10`) || 0) <= 3 &&\n      (era.get(`abl:${assi}:22`) || 0) <= 3\n    ) {\n      return 1;\n    }',
+    replace: '    // 变异：双低放行删除',
+    tests: ['com-caress'],
+    must_mention: '双 ≤3 放行（源逐字）',
+  },
+  {
+    desc: 'M912 COM3 判定不过仍进 B 文（A < V 的 RETURN 0 删）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  // :161-162 実行できない\n  if (a < v) {\n    return 0;\n  }',
+    replace: '  // :161-162 実行できない\n  if (false) {\n    return 0;\n  }',
+    tests: ['com-caress'],
+    must_mention: 'RETURN 0 且不进 B 文',
+  },
+  {
+    desc: 'M913 COM4 调教者经验写删（CFLAG:22 += 1）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  era.add(`cflag:${player}:22`, 1); // :71 調教者的経験',
+    replace: '  // 变异：经验写删除',
+    tests: ['com-caress'],
+    must_mention: 'ABL:0 分档',
+  },
+  {
+    desc: 'M914 COM6 兽奸判定修正删（A -= 15 的数值怪癖，打印值仍 (10)）',
+    file: 'ere/system/train/com-caress.js',
+    find: '    if (tequip(89) && !talent(136)) {\n      minus();\n      a -= 15;',
+    replace: '    if (tequip(89) && !talent(136)) {\n      // 变异：修正删除',
+    tests: ['com-caress'],
+    must_mention: '兽奸',
+  },
+  {
+    desc: 'M915 COM7 处女罚则删（A -= 20 → 判定恒过）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  if (talent(0)) {\n    minus();\n    a -= 20;',
+    replace: '  if (talent(0)) {\n    // 变异：罚则删除',
+    tests: ['com-caress'],
+    must_mention: '-20 使判定不过',
+  },
+  {
+    desc: 'M916 COM8 最末档乘法对象改 S1（源 :72 乘 SOURCE:2 的逐字怪癖）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  } else {\n    set(2, times(src(2), 1.8));\n    set(13, times(src(13), 1.5));\n    set(6, 0);\n  }',
+    replace:
+      '  } else {\n    set(1, times(src(1), 1.8));\n    set(13, times(src(13), 1.5));\n    set(6, 0);\n  }',
+    tests: ['com-caress'],
+    must_mention: '乘 SOURCE:2 而非 SOURCE:1',
+  },
+  {
+    desc: 'M917 COM9 深入档判据删（EXP:1 ≥ 50 且 ABL:3/欲情双门槛）',
+    file: 'ere/system/train/com-caress.js',
+    find: "${exp_a >= 50 && deep ? '、舌头伸入到洞里去、有节奏地搅动' : ''}",
+    replace: "${deep ? '、舌头伸入到洞里去、有节奏地搅动' : ''}",
+    tests: ['com-caress'],
+    must_mention: '深入搅动句',
+  },
+  {
+    desc: 'M918 升格 CASE 8 直跳删（PREVCOM == 8 且技巧 3+ 仍回原号）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  if (\n    era_flag.prevcom === 8 &&\n    (era.get(`abl:${era_flag.player}:12`) || 0) >= 3\n  ) {\n    return 84;\n  }',
+    replace: '  // 变异：直跳删除',
+    tests: ['com-caress'],
+    must_mention: 'PREVCOM == 8 且技巧 3+ 直跳',
+  },
+  {
+    desc: 'M919 升格 CASE 6 的 TFLAG:59 分岔删（G 点系前前回合不再定向 128）',
+    file: 'ere/system/train/com-caress.js',
+    find: '    if (\n      [20, 128, 129, 130].includes(prev2) &&\n      [120, 121].includes(prev) &&\n      (await adv_target_able(128)) === 1\n    ) {\n      return 128;\n    }',
+    replace: '    // 变异：prev2 分岔删除',
+    tests: ['com-caress'],
+    must_mention: 'TFLAG:59 分岔',
+  },
+  {
+    desc: 'M920 B 分发的 rand 注入改恒 0（rand(3) === 0 永真）',
+    file: 'ere/system/train/train-message.js',
+    find: '  const branch = await train_message_b_family.call(era_flag.selectcom, {\n    whenMissing: BRANCH_MISSING,\n    args: [rand_source()],\n  });',
+    replace:
+      '  const branch = await train_message_b_family.call(era_flag.selectcom, {\n    whenMissing: BRANCH_MISSING,\n    args: [() => 0],\n  });',
+    tests: ['com-caress'],
+    must_mention: 'rand(3)==0 走阴茎支',
+  },
+  {
+    desc: 'M921 A 空支 4/6/7/8/9 改落占位行（no-op 注册改占位输出）',
+    file: 'ere/system/train/com-caress.js',
+    find: 'for (const id of [4, 6, 7, 8, 9]) {\n  train_message_a_family.register(id, async () => 0);\n}',
+    replace:
+      'for (const id of [4, 6, 7, 8, 9]) {\n  train_message_a_family.register(id, () => {\n    era.print(`@TRAIN_MESSAGE_A ${id}（变异：占位行）`);\n    return 0;\n  });\n}',
+    tests: ['com-caress'],
+    must_mention: '不落占位行',
   },
 ];

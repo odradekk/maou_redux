@@ -16,7 +16,7 @@
  *     PREVCOM 不推、SOURCE_CHECK/EVENTCOMEND 不跑——era wiki Emuera/flow
  *     TRAIN 节，golden train-natural:210/:250 的实证）。
  *
- * 世界底座与 test/com0-caress.test.js 同构：魔王 0 + 奴隶 31、火车表已开。
+ * 世界底座与 test/com-caress.test.js 同构：魔王 0 + 奴隶 31、火车表已开。
  */
 
 const assert = require('node:assert/strict');
@@ -670,7 +670,7 @@ test('回合取消：COM110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHE
   const { execute_command_round } = world.fixture.load_module(
     'system/train/train-loop',
   );
-  world.fixture.load_module('system/train/com0-caress');
+  world.fixture.load_module('system/train/com-caress');
   world.era_flag.prevcom = 6; // golden train-natural:210 的接吻位
   world.fixture.set_inputs(7);
   const round = await execute_command_round(110);
@@ -705,7 +705,7 @@ test('回合不取消：COM0 RETURN 1 → 正常结算链（取消语义不误�
   const { execute_command_round } = world.fixture.load_module(
     'system/train/train-loop',
   );
-  world.fixture.load_module('system/train/com0-caress');
+  world.fixture.load_module('system/train/com-caress');
   world.fixture.set_inputs(999); // COM0 不收输入；防夹具误等
   const round = await execute_command_round(0);
   assert.equal(round.cancelled ?? false, false, 'COM0 一如既往走结算');
