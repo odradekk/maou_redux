@@ -1,6 +1,6 @@
 # 工单流程 SOP
 
-一张工单 = 一个 Orca worktree = 一个 agent 会话（代码票用 `ante`，口上票用 `pi`，见 §3），全程用 `orca` CLI 驱动。
+一张工单 = 一个 Orca worktree = 一个 `pi` 会话，全程用 `orca` CLI 驱动。
 
 工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；移植决议的索引见地图 issue #1（只读）。
 
@@ -13,7 +13,7 @@
 - Windows 上 CLI 就是 `orca`；Linux 下用 `orca-ide`（裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
 - **WSL 会话是个例外**：环境变量 `ORCA_CLI_COMMAND` 写着 `orca-ide`，但这台机器上没有这个可执行文件。可用的是 Windows 端的 `orca.exe`（在 PATH 上，`…/AppData/Local/Programs/orca/resources/bin`），它与 app 是同一份安装。
 - **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 17 次派发里出现 16 次，每次 worktree 都已在服务端建成**；阶段 3 后期连续四张票全是假失败）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
-  - **假失败还会多出一个终端**：`terminal list` 里会有两个 handle，一个是 setup 钩子跑 `npm install` 的、一个是 agent 的。**别挑错**——`terminal read` 一眼就能分：agent 那个留着 `ante '--yolo'` 与 cursor-position 报错，setup 那个是 `npm audit` 之类的收尾输出。
+  - **`terminal list` 里通常有不止一个 handle**：setup 钩子跑 `npm install` 的那个也在。**别挑错**——setup 那个的 `terminal read` 里是 `setup-runner.sh` 与 `npm audit` 的收尾输出。§3 的派法自己建终端并拿到 handle，不用猜。
 - **worktree 的选择器认 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `--worktree "name:t119-s7-kyoten"` 报错、`--worktree "name:odradekk/t119-s7-kyoten"` 才对。**别猜，用 `path:<绝对路径>`**——路径是 `worktree list` 里的 `path` 字段，稳定且唯一。
 - **`--issue <N>` 不保证写上关联**：实测建出来的 worktree `linkedIssue` 仍是 `null`。卡片上看不到关联不代表 worktree 建错了，别据此重建。
 - **仓库里的 `orca.yaml` 钩子不会执行**（`commandSourcePolicy` 是 `local-only`，实测带 `--run-hooks` 删 worktree 时仓库脚本一行没跑）。所以钩子配在 Orca 的 **Settings → Repository → Hooks**，CLI 无法写这个字段。**WSL 基座的 `npm install` 钩子已配好**，新 worktree 建成即可直接 `npx eslint` / `npx prettier`，无须 `npm ci`。两个仓库 `displayName` 都是 `era`，GUI 里配错过一次——用 `orca repo list --json` 核对 `hookSettings.scripts.setup` 落在哪个 id 上。
@@ -63,9 +63,9 @@ CI 红期间 master 的绿红没有信息量，这比红本身危险：真回归
 orca worktree ps --json
 ```
 
-**建 worktree 的基线必须是当前 `master`，前置票没合并就别建。** 对无依赖的并行票同样成立：阶段 1 的 #115/#117/#118/#119 都提前建树，四张全部撞上 rebase，冲突面每次一样——就是 §5.5 表里那四处**全局计数字段与全局登记表**。代价约 15 分钟（rebase + 解四处 + 重跑全量变异），比等前一张合并再派贵得多。顺序是「**验收 → 合并 → 再派下一张**」。（这个 15 分钟量于 #256 分层之前，重跑那部分现在按 T3 算要便宜些；但**四处冲突的解法一处没少**，结论不变。）
+**建 worktree 的基线必须是当前 `master`，前置票没合并就别建。** 对无依赖的并行票同样成立：阶段 1 的 #115/#117/#118/#119 都提前建树，四张全部撞上 rebase，冲突面每次一样——就是 §5.5 表里那五处**全局计数字段与全局登记表**。顺序是「**验收 → 合并 → 再派下一张**」。
 
-**判串行看「落点是否相邻」，不是「是否同一文件」。** D1–D6 的票面都写「都改 `era-fixture.js`，必须串行」，实测过宽：#151 落在 `:848`、#152 落在 `:974-1010`，相隔百余行，git 自己就合了。行级相邻的只有那四处全局字段。
+**判串行看「落点是否相邻」，不是「是否同一文件」。** D1–D6 的票面都写「都改 `era-fixture.js`，必须串行」，实测过宽：#151 落在 `:848`、#152 落在 `:974-1010`，相隔百余行，git 自己就合了。行级相邻的只有 §5.5 那五处。
 
 **派单前找一遍暗耦合**——票据元数据上互不阻塞，代码上却互相牵扯。四种形态，各有一个判据：
 
@@ -85,29 +85,20 @@ orca worktree ps --json
 
 ## 3. 建 worktree 并派 agent
 
-**先选载体**：口上票（`ERB/口上/` 与迷宫口上四票 H13–H16）用 **`pi`**（#168 裁定 7：「agent 逐字对照复核，载体是 pi agent 而非 ante」），其余代码票用 `ante`。两者 Orca 都认，但**起法不同，见第 3 步**。
-
-**前四步每一步都有一个已知的失败形态**，`--agent` 那一步的失败是常态而非偶发。
-
 ```
-# 1. 建（失败返回先当假失败处理，见 §0；--repo 必须显式给 WSL 基座的 id）
-orca worktree create --name t<N>-<slug> --no-parent --agent <ante|pi> --issue <N> \
+# 1. 建 worktree——不带 --agent（理由见下）
+#    失败返回先当假失败处理，见 §0；--repo 必须显式给 WSL 基座的 id
+orca worktree create --name t<N>-<slug> --no-parent --issue <N> \
   --repo id:71b28045-8ed3-4485-a036-2db90ae7758b --json
-orca worktree list --json          # 无论上一步返回什么，都来这一下确认
+orca worktree list --json          # 无论上一步返回什么，都来这一下确认，并取 path
 
-# 2. 取终端句柄（create 的返回经常拿不到，别指望它）
-orca terminal list --json          # 按 worktreePath 含 t<N> 过滤出 handle
+# 2. 起 agent：自己建终端，命令行里带模型与思考强度
+orca terminal create --worktree "path:<绝对路径>" --title AGENT \
+  --command "pi -a --model cpa/glm-5.3 --thinking max" --json
+#    handle 从这一步的 result.terminal.handle 直接拿，不用去 terminal list 里猜
 
-# 3a. ante：三发（空回车吃残留、clear 洗一遍、再起，见下）
-orca terminal switch  --terminal <handle> --json
-orca terminal send    --terminal <handle> --text "" --enter --json
-orca terminal send    --terminal <handle> --text "clear" --enter --json
-orca terminal send    --terminal <handle> --text "ante --yolo" --enter --json
-orca terminal wait    --terminal <handle> --for tui-idle --timeout-ms 180000 --json
-
-# 3b. pi：一发就起来（不输竞速，无须三发），但要多等一轮再送简报
-orca terminal switch  --terminal <handle> --json
-orca terminal read    --terminal <handle> --json   # 等到看见 Packages: / pi-square
+# 3. 等就绪：terminal read 到 `✓ π² pi-square` 那行
+orca terminal read --terminal <handle> --json
 
 # 4. 送简报（单行指向文件，绝不多行）
 orca terminal send --terminal <handle> --text "请读 /tmp/brief-<N>.txt 这份工单简报，按其中要求执行。" --enter --json
@@ -118,26 +109,33 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
 - `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
-- `--agent <id>` 让 agent 落在 worktree 的第一个终端，这是唯一正确的派法。「先裸建 worktree 再 `terminal create` 同一个 agent」会多出一个没人用的空壳 shell。
 - **`--repo` 不能省。** 省略时 Orca 从当前目录推断，而派单会话通常就在主 checkout 里——那会把 worktree 建到 9p 上，白丢 1.5 倍速度。两个仓库同名，只能用 `id:`（见 §0 的表）。
 
-**ante 与 pi 的差别，两处都会绊人：**
+**为什么不用 `--agent pi`：它只接一个固定的 TUI id，带不了参数**，于是模型只能落到 `~/.pi/agent/settings.json` 的默认值（当前是 `cpa/deepseek-v4-flash`——一个 flash 模型去啃两千行的移植票）。`terminal create --command` 收任意命令行，这是**唯一能指定模型的派法**，Orca 自己的注解也推荐它（「for a fresh agent in the current checkout」）。
 
-|              | ante                               | pi                                |
-| ------------ | ---------------------------------- | --------------------------------- |
-| 起法         | **必然掉回 shell，要三发**（见下） | **一发就起来**，无须三发          |
-| 起来的判据   | 看到 `yolo mode on` + 模型名       | 看到 `Packages:` / `pi-square`    |
-| 送简报的时机 | `wait --for tui-idle` 之后即可     | **`tui-idle` 不可靠，要多等一轮** |
+**模型与思考强度**：
 
-**`terminal wait --for tui-idle` 对 pi 会提前返回。** 实测两张 pi 票的简报都送空了——TUI 还在初始化，字节写进 PTY 但没人接。表现是 `terminal read` 里只有 `Packages:` 那几行、没有 `Working...`。**判据是送完简报后能看到 `Working...` 或上涨的 `Context`**，看不到就等 15 秒重发一次（重发无害，pi 不会把两条当两个任务）。
+- `--model` 要写全 `provider/id`，**不吃通配**——`--model "*opus-5*"` 直接报 `Model not found`（glob 只在 `--models` 的 Ctrl+P 轮换列表里有效）。`--list-models` 看全集。
+- `--thinking` 七档：`off / minimal / low / medium / high / xhigh / max`。等价写法 `--model "cpa/glm-5.3:max"`。
+- 实施票默认 **`cpa/glm-5.3` + `max`**：J3/J4/J5 三张交付质量已验证过它。
+- `-a`（`--approve`）固定带上。信任是**按 worktree 路径逐个记**在 `~/.pi/agent/trust.json` 里的，新树首次起会问；弹出来而我们照常送简报，简报就落进那个对话框。
 
-**ante 的三发是必经流程，不是异常处理。** 连续 13 次 ante 派发，13 次都留下 `The cursor position could not be read within a normal duration` 然后掉回 shell，输入行上粘着转义残留（形如 `1;2c1R`），直上 `ante --yolo` 会被污染成 `bash: 2c1Rante: command not found`。空回车吃残留、`clear` 洗一遍、第三发才起——实测 6/6 一次成。**pi 没有这个问题。** 先 `terminal switch` 过去再发，不然发到别的终端上。
+**技能来自 `~/.agents/skills/`**（`implement` / `tdd` / `code-review` / `research` 等三十来个），不是 `~/.pi/agent/skills/`——后者是空的，照它判会误以为 pi 没有 `/implement`。
 
-**简报一律走「单行指令 + `/tmp/brief-<N>.txt`」**（worktree 终端是 WSL shell，`/tmp` 与派单会话共享）。一行 = 一次回车，没有菜单可选。`--prompt` 是逐字符打进 TUI 的，**每个换行都是一次回车**，斜杠开头还会拉出命令菜单——实测一份二十多行的简报最后选中 `/exit`，ante 当场退出，worktree 空跑一趟。
+**pi 起来了不等于能收简报。** `terminal wait --for tui-idle` 对 pi 会提前返回；实测三张票的简报都送空过——TUI 还在初始化，字节写进 PTY 但没人接。两条判据分开看：
 
-**每一步都要 `terminal read` 验证，别信 `accepted: true`。** 那只证明字节写进了 PTY，不证明 agent 收到了、更不证明它还活着。判据：`terminal read` 的输出里能看到 `yolo mode on` 与模型名那一行，才算 ante 起来了；送完简报后能看到 `esc / ctrl-c to interrupt` 与上涨的 `ctx`，才算它真的开工了。
+| 判什么     | 看什么                                |
+| ---------- | ------------------------------------- |
+| pi 起来了  | `terminal read` 里有 `✓ π² pi-square` |
+| 简报收到了 | 送完之后有 `Working...`               |
 
-**不要同时起两个。** 并发 `worktree create --agent` 会一起输掉竞速，两个都掉回 shell，还得逐个捞。逐张派，前一张确认开工再派下一张。
+`Packages:` **不能当就绪判据**——那行只在有包更新时才出现。没看到 `Working...` 就等 15 秒重发一次（重发无害，pi 不会把两条当两个任务）。
+
+**简报一律走「单行指令 + `/tmp/brief-<N>.txt`」**（worktree 终端是 WSL shell，`/tmp` 与派单会话共享）。一行 = 一次回车，没有菜单可选。`--prompt` 是逐字符打进 TUI 的，**每个换行都是一次回车**，斜杠开头还会拉出命令菜单——实测一份二十多行的简报最后选中 `/exit`，agent 当场退出，worktree 空跑一趟。
+
+**每一步都要 `terminal read` 验证，别信 `accepted: true`。** 那只证明字节写进了 PTY，不证明 agent 收到了、更不证明它还活着。
+
+**不要同时起两个。** 逐张派，前一张确认开工再派下一张。
 
 ### 简报模板
 
@@ -154,17 +152,21 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.sh 包一层
 （并发时不把机器压死）。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
 
-**别在红绿切片的内环里跑全量**：全量是 94 个文件 / 1386 个用例 / 98 秒。
+**别在红绿切片的内环里跑全量**：全量约 1500 个用例 / 98 秒。
 内环用 bash tools/capped.sh npm run test:inner（只跑改动相关，去全局锁），
-交付前一次 bash tools/capped.sh npm run test:related。全量与全量变异由
-派单人在验收时跑，你不必跑。
+交付前一次 bash tools/capped.sh npm run test:related。全量、无引擎重跑与
+全量变异都由派单人在验收时跑，你不必跑。
 
 三个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
 test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k>——**你的新
-条目从 M<k+1> 起编**。只管把自己分支的数改对（新增变异条目同步抬基线；新增依赖
-引擎的用例同步改跳过数并在注释里写出算式），跨票对账由派单人处理。
+条目从 M<k+1> 起编**，号段 M<k+1>–M<k+w>（并行票占了 M<x>–M<y>，别越界）。
+只管把自己分支的数改对（新增变异条目同步抬基线；新增依赖引擎的用例同步改跳过
+数并在注释里写出算式），跨票对账由派单人处理。
 **新条目若只被引擎比对用例守护**，给它加 engine: true 并同步抬
 tools/mutation-check.mjs 的 ENGINE_SKIP_BASELINE，两处不一致 npm test 当场红。
+
+对拍基线四数当前是 <样本: m/v/s/u ...>。并行票也会动它——只管把自己分支的
+数改对，合并态由派单人重测。
 
 自检与提交：
 - npm run test:related 全绿，外加 npx eslint . --max-warnings 0、npx prettier --check .
@@ -175,9 +177,9 @@ tools/mutation-check.mjs 的 ENGINE_SKIP_BASELINE，两处不一致 npm test 当
 - 完成后停下等验收，合并与开 PR 由派单人做
 ```
 
-**简报里绝不要写 `gh issue view … --comments`。** GitHub 于 2024-05-23 下线 Projects (classic)，本机 `gh` 2.46.0 的 `issue view` 仍在 GraphQL 里请求 `repository.issue.projectCards`——**该命令现在必然失败**，只吐一行「GraphQL: Projects (classic) is being deprecated」。阶段 4 派头两张票时两个 agent 同时撞上，白烧一轮。上面模板里的 `--json` 形式是验证过的替代（正文与全部评论一次拿到）。`gh issue comment` / `edit` / `close` 不受影响。
+**简报里绝不要写 `gh issue view … --comments`。** 本机 `gh` 的 `issue view` 仍在 GraphQL 里请求已下线的 `repository.issue.projectCards`，**该命令必然失败**，只吐一行「Projects (classic) is being deprecated」——阶段 4 派头两张票时两个 agent 同时撞上，白烧一轮。模板里的 `--json` 形式是验证过的替代（正文与全部评论一次拿到）。`gh issue comment` / `edit` / `close` 不受影响。
 
-**中间那两段是每次派单都要照抄的常量**，派单前先去仓库取当前值填进去：
+**那几个数字是每次派单都要现取的**，别照抄上一份简报：
 
 ```
 grep -n "LEDGER_COUNT_BASELINE = " tools/mutation-check.mjs
@@ -185,15 +187,9 @@ tail -1 test/engine-skip-baseline.txt
 grep -hoE "\bM[0-9]+\b" tools/mutations/*.mjs | sort -u -t M -k2 -n | tail -1
 ```
 
-**M 号段按已派出的票记账，不能只看 master 的最大号**——在跑的票还没合并，仓库里看不出撞车。给每张在跑的票留一段并写进简报，下一张从上一段末尾之后起：
+**M 号段按已派出的票记账，不能只看 master 的最大号**——在跑的票还没合并，仓库里看不出撞车。给每张在跑的票留一段写进简报，下一张从上一段末尾之后起；**宽度按规模给，十函数以上直接留 40**（号段浪费无害，M 号只是引用锚点、不连续没关系；撞号要手工解 `tools/mutations/*.mjs` 的冲突，贵得多）。
 
-```
-#182 → M500 起   #185 → M520 起   #176 → M540 起   #180 → M560 起
-```
-
-**宽度按票的规模给，十函数以上直接留 40。** 估法看验收清单：「每个 X 各有一条测试」这类逐项条目，条数至少等于 X 的个数，再加接线、原作缺陷反向钉、观测锚点自证。号段浪费无害（M 号只是引用锚点，不连续没关系）；撞号要在合并时手工解 `tools/mutations/*.mjs` 的冲突，贵得多。
-
-实测栽过三次：#172 与 #183 都被给了「M375 起」（#172 那时未合并，仓库看不出）；#177 写了 22 条 M600–M621 而下一段起点是 M620，溢出两号；连撞五次里唯一没撞的那次，就是简报里写了起点。
+连撞五次里唯一没撞的那次，就是简报里写了起点。
 
 两条写法约定：
 
@@ -206,12 +202,11 @@ grep -hoE "\bM[0-9]+\b" tools/mutations/*.mjs | sort -u -t M -k2 -n | tail -1
 
 ```
 orca terminal read --terminal <handle> --json
-orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 300000 --json
 orca terminal send --terminal <handle> --text "<追加指示>" --enter --json
-orca worktree set --worktree id:<repoId>::<路径> --comment "<一句话进展>" --workspace-status in-review --json
+orca worktree set --worktree "path:<绝对路径>" --comment "<一句话进展>" --workspace-status in-review --json
 ```
 
-发消息前先 `read`。等 TUI 就绪必须带 `--timeout-ms`，否则输入会丢在启动过程里。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，只用最新那个。
+发消息前先 `read`（`--for tui-idle` 对 pi 不可靠，见 §3，别拿它当发送时机）。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，只用最新那个。
 
 **判交付看提交，不看终端。** 终端安静只说明 TUI 空闲了一瞬，agent 可能还在下一个工具调用里。判据是两条同时成立：`git -C <worktree> log origin/master..HEAD` 有提交，且 `git -C <worktree> status --short` 干净。实测有一次照终端状态判「完成」，那时分支上一个提交都还没有。
 
@@ -223,15 +218,11 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 **分支落后 master 时，先按 §5.5 rebase 再验收**——否则要验两遍。
 
-**不必再 `export ERE_ENGINE_ASAR`。** asar 现在按 `ASAR_CANDIDATES` 逐条回落（含 `~/.era-engine/` 与 `/mnt/d/Code/era` 两条绝对路径），worktree 里没有 `ere-4.8.0-win-x64/` 也能命中。三处定位的同步由 `test/asar-candidates.test.js` 判红。
-
-**代价是「无引擎」不再能靠不设变量制造**——`env -u ERE_ENGINE_ASAR` 照样命中回落。第 2 步因此改用显式开关 `ERE_ENGINE_ASAR=none`。
+**不必再 `export ERE_ENGINE_ASAR`。** asar 按 `ASAR_CANDIDATES` 逐条回落（含 `~/.era-engine/` 与 `/mnt/d/Code/era` 两条绝对路径），worktree 里没有 `ere-4.8.0-win-x64/` 也能命中；三处定位的同步由 `test/asar-candidates.test.js` 判红。**代价是「无引擎」不再能靠不设变量制造**（`env -u` 照样命中回落），要造得用显式开关 `ERE_ENGINE_ASAR=none`，见 §5.6。
 
 ### 分层：每票跑 T3，阶段收口跑 T4
 
-**全量不是每票都跑**（#256）。实测代价摆在这：全量 `npm test` 98s、eslint 31s、prettier 12s、无引擎重跑再 98s、全量变异 **426s**（条目表 510 条；SOP 旧文写的 253s 是条目表约 330 条时的数，已过期）。每票跑满 = 11 分钟，而其中 524s 是**一个阶段验一次就够**的东西。
-
-下面的秒数都是 `capped.sh` 限 4 核的实测值，不是估算：
+**全量不是每票都跑**（#256）。每票跑满约 11 分钟，其中**无引擎重跑（98s）与全量变异（约 500s）是一个阶段验一次就够**的。下面的秒数都是 `capped.sh` 限 4 核的实测值：
 
 | 层     | 谁     | 何时         | 内容                                                      | 实测          |
 | ------ | ------ | ------------ | --------------------------------------------------------- | ------------- |
@@ -240,7 +231,7 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 | **T3** | 派单人 | **每张票**   | 下面的三步                                                | **约 2.9 分** |
 | **T4** | 派单人 | **阶段收口** | T3 ＋无引擎重跑 ＋全量变异 ＋引擎手工验收 ＋对拍，见 §5.6 | 约 10.5 分    |
 
-**收益集中在 T1**（98s → 8.5s，11 倍）与 T3（11 分 → 2.9 分）。**T2 只省一到五成**，别指望更多——真实工单必然会碰 `docs/stub-registry.md`（牵 30 个测试）与 `test/helpers/era-fixture.js`（牵 57 个），那些依赖是真的。六个已合并提交回放实测：三个精确选中 46/56/84（全部 95 个中），两个退回全量，**零漏测**。
+**收益集中在 T1**（98s → 8.5s）与 T3（11 分 → 2.9 分）。**T2 只省一到五成**，别指望更多——真实工单必然会碰 `docs/stub-registry.md`（牵 30 个测试）与 `test/helpers/era-fixture.js`（牵 57 个），那些依赖是真的。六个已合并提交回放实测：三个精确选中、两个退回全量、**零漏测**。
 
 **每条都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
 
@@ -251,17 +242,11 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 2. **定向变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --changed`，只跑靶文件在本票改动范围内的条目，通常十几条、几十秒。**严格标准仍是「全部拦下、零跳过」**。
 3. **逐条比对工单验收清单**，并抽查本票新增的变异条目是否真被拦下。
 
-#### T4 阶段闸（阶段收口时，见 §5.6）
-
-无引擎重跑、全量变异、引擎手工验收、对拍全在那里。
-
 **把全量变异退到阶段闸，就等于放弃了 `ENGINE_SKIP_BASELINE` 的逐票核对**——而那正是 master 连红 18 次 4 天的那个 bug（#135 的 M222 漏抬）。补偿已经做进工具：依赖引擎的条目带 `engine: true` 声明，门 4 在秒级的 `--verify` 里核对声明数，于是**随每次 `npm test` 都查**；全量模式再交叉核对声明与实测，声明因此不会长草。新增只被引擎比对用例守护的条目，两处一起改。
 
 **验收期的读数不能与 `npm test` 或串行变异并发取。** `tools/mutation-check.mjs` 是**就地变异 + 还原**（文件头 `:30` 明写），而 `test/mutation-check.test.js` 的快速模式随 `npm test` 跑——那期间工作树是**间歇性坏的**。阶段 4 验收 #212 时踩过：一边跑着 `npm test`，一边 `node tools/compare/cli.js`，读回 54/112 而真值是 57/107，我据此误报了「对拍退化」。**判据是 `pgrep -f 'capped.sh|mutation-check.mjs'` 为空再读**，或者干脆串行：先跑完测试，再取对拍与快照类读数。`--jobs` 并行路径用隔离副本、不碰工作树，但快速模式与串行全量都碰。
 
-**`--jobs` 的全量变异偶尔会红在「副本对照」而不是变异本身**（形态：`拦截 0 / 跳过 0 / 红 1`，一百多秒就退，文案是「副本 N 对照运行即红（副本环境破损，非变异拦截）」）。**这不一定是本票的问题**——它可能是 master 上一条随机相关的 flaky 用例，概率低到平时撞不上、四个副本一起跑就放大了四倍。
-
-判法：主树上 `npm test` 全绿而副本红 → 去日志里找 `✖ failing tests:` 下面那条用例名（工具自己列不出来时会退回尾部 60 行，得手工 `grep -nE "✖|# fail"`），然后在 master 上单独跑那个文件。是既有的就**立票、重跑本票的变异**，别让交付方背锅；是本票引入的才退回。
+**`--jobs` 的全量变异偶尔会红在「副本对照」而不是变异本身**（形态：`拦截 0 / 跳过 0 / 红 1`，一百多秒就退，文案是「副本 N 对照运行即红」）。**这不一定是本票的问题**——多半是 master 上一条 flaky 用例，概率低到平时撞不上、四个副本一起跑就放大四倍。判法：主树 `npm test` 全绿而副本红 → 从日志 `✖ failing tests:` 找到用例名，在 master 上单跑那个文件。是既有的就**立票、重跑本票的变异**，别让交付方背锅。
 
 **验证 flaky 修好了没有，不能只靠「重复跑 N 次不失败」。** 1% 概率的用例跑 30 次有 74% 的可能一次都不失败——master 版和修复版都会「30 次全绿」，这个对照什么也证明不了。**要构造能必然触发的条件再对照**，例如在文件首行钉死随机源：
 
@@ -293,7 +278,7 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
    **更要紧的是反向**：夹具能证明「我们调用了」，证明不了「引擎接受了」。引擎侧的短路（`addCharacter` 对无预设角色直接返回 false）、引擎侧的拒收（`input()` 只送达已打印按钮的快捷键）都只有引擎自己的代码能暴露。#21/#22 因前者误报通过，#129 因后者让整条侵略线在实机上入口不存在而四张票全绿。**问一句「这个行为在引擎里真的会发生吗」，比读十遍断言有用。**
 
-7. **1:1 移植的改动**，抽查文件头的来源注释是否真指到 `target/` 里存在的文件与函数。移植中**新发现的原作缺陷要登记进 #14**（已累积三批），并尽量配一条反向变异钉住它——#116 的 M214／M218 是先例，让「不要修好原作缺陷」这条约定第一次有了机器可执行的守卫。
+7. **1:1 移植的改动**，抽查文件头的来源注释是否真指到 `target/` 里存在的文件与函数。移植中**新发现的原作缺陷要登记进 #14**，并尽量配一条反向变异钉住它——#116 的 M214／M218 是先例，让「不要修好原作缺陷」这条约定第一次有了机器可执行的守卫。
 
 8. **机械改名类迁移（裸寻址 → 门面、批量重命名），验收证据是「寻址多重集等价」，不是行为覆盖。** 从产物源码建「门面字段 → 寻址」映射，再解析迁移 diff，把删掉的旧寻址与新增的门面写各自归约成 `表:下标` 的多重集，逐条比对——每一处迁移后写的必须仍是它原来写的那个地址。
 
@@ -317,29 +302,34 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
 worktree 建得早于前置票合并时（见 §2），验收前必须先 `git rebase origin/master`。**先 rebase 再验收，别验两遍。**
 
-冲突面高度固定，就那四处：
+冲突面高度固定，就那五处：
 
 | 冲突处                                                | 解法                                                                                                           |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `tools/mutation-check.mjs` 的 `LEDGER_COUNT_BASELINE` | **按「保留双方意图」相加**：master 值 + 本票增量。改完 `--verify` 自校验实际条目数                             |
 | `tools/mutations/*.mjs`                               | 两边条目全留。**M 编号撞号时把后合并那批整体顺延**（编号是历史惯性标签，唯一性由 `desc` 全串保证，见工具头注） |
 | `test/engine-skip-baseline.txt`                       | 同样相加；注释里的算式按 rebase 后实测更正                                                                     |
-| `docs/stub-registry.md`                               | 两边都会重排整张表，**三方归一化后再 `git merge-file`**（见下），真冲突通常只剩一两处                          |
+| 对拍基线四数（`test/compare-*.test.js`）              | **不能二选一，也不能相加——必须重测**（见下）                                                                   |
+| `docs/stub-registry.md`                               | **按行键取并集**（见下）：两边都被 prettier 重排过整张表，文本层根本合不了                                     |
 
-`stub-registry.md` 的归一化（实测两次，归一后真冲突均为 0）：
+`stub-registry.md` 的行键并集——**先用 `-w` 看清本票到底改了哪几行**（重排噪声动辄四百行，真改动往往不到十行），再拿 master 整份逐行替换：
 
 ```
-git show origin/master:docs/stub-registry.md > /tmp/s.ours
-git show <本票 sha>:docs/stub-registry.md   > /tmp/s.theirs
-git show <建树基线>:docs/stub-registry.md   > /tmp/s.base
-for f in /tmp/s.ours /tmp/s.theirs /tmp/s.base; do
-  sed -E 's/[ ]{2,}/ /g; s/-{3,}/---/g; s/ +\|/ |/g; s/\| +/| /g' "$f" > "$f.n"
-done
-cp /tmp/s.ours.n /tmp/s.merged
-git merge-file /tmp/s.merged /tmp/s.base.n /tmp/s.theirs.n
+git diff -w <基线> <本票 sha> -- docs/stub-registry.md | grep -E '^[+-]\|'   # 真改动的行
+git show origin/master:docs/stub-registry.md > /tmp/sr.md
+# 以第一格（原作函数名）为键，把本票改过的那几行替换进 /tmp/sr.md
+cp /tmp/sr.md docs/stub-registry.md && npx prettier --write docs/stub-registry.md
 ```
 
-解完把 `/tmp/s.merged` 装回去，交给 `prettier --write` 重排。
+行键 = 表格第一个单元格，全表唯一。替换完必须核一遍「命中的键」与「预期改的键」逐个对上——漏一个就是悄悄丢掉一条登记。
+
+**对拍基线四数是唯一一处「解冲突解不出来、只能重跑」的。** 两张票各自播种了回放世界的不同侧面（`tools/compare/replay.js`），合并后两组播种**同时生效**，结果既不是任一单票的数、也不是相加：
+
+| 样本          | #214 单独    | #215 单独    | 合并后实测       |
+| ------------- | ------------ | ------------ | ---------------- |
+| train-natural | 763/0/2434/0 | 621/0/2574/0 | **765/0/2430/0** |
+
+而 `replay.js` 本身**不冲突**（两组播种落在不同行区），所以 git 一声不响。解法只有一条：解完其余冲突后跑 `node tools/compare/cli.js --sample <名>` 逐样本读数写回，并核对 **unexplained 仍为 0**。两票的沿革注释都留着，另写一段说明合并态为何两者皆非。
 
 **数组元素之间的冲突，边界会落在两侧共享的分隔符上。** 两边各缺一半闭合——**冲突标记删得干干净净、肉眼看不出，去掉标记后却是语法错误**（`tools/mutations/event.mjs` 那次 `--verify` 报「303 ≠ 304」；`test/*.test.js` 追加区那次 `node --check` 报 `Unexpected end of input`）。
 
@@ -368,8 +358,7 @@ git show <本票 sha>:<path>              # 从这里抽出本票新增的条目
 触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。四项，约 10 分钟：
 
 1. **无引擎重跑**：`ERE_ENGINE_ASAR=none bash tools/capped.sh npm test`，跳过数必须等于 `test/engine-skip-baseline.txt` 里的数字。新增依赖引擎的用例必须同步改该数并在注释里写出算式；**rebase 后注释里的算式会失准**（用例总数变了），一并更正。
-2. **全量变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，实测 426s（510 条）。**严格标准是「全部拦下、零跳过」**。
-   **`--jobs` 现在可用了**，此前 SOP 禁止它是对的：`COPY_DENY` 把 `ere-4.8.0-win-x64` 排除在副本外，子进程够不着引擎，有引擎的机器上必然判出「引擎在场却有 N 条按跳过处理」而整体红（实测 `329/17/rc=1`）。绝对路径回落进来之后同样条件是 `346/0/rc=0`。串行仍然可用，只是没有理由再选它。
+2. **全量变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，约 500s（条目表 570 余条，随票增长）。**严格标准是「全部拦下、零跳过」**。
 3. **引擎手工验收**：在主 checkout 里启动引擎跑一遍本阶段的贯通路径。
 4. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
 
@@ -386,12 +375,12 @@ gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<
 gh pr merge <pr> --repo odradekk/maou_redux --squash --delete-branch
 git -C /home/bam00n/era pull --ff-only origin master   # WSL 基座：下一张票的建树基线
 git -C /mnt/d/Code/era  pull --ff-only origin master   # 主 checkout：引擎手工验收用
-orca worktree rm --worktree "id:<repoId>::<路径>" --force --json
+orca worktree rm --worktree "path:<绝对路径>" --force --json
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
 - PR 正文以 `Closes #<n>` 结尾，合并即自动关票。
-- **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §2 说的那四处全局计数冲突。
+- **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §5.5 那五处冲突。
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **需要启动引擎的手工验收，在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
 
