@@ -74,6 +74,46 @@ const DECLARED_COM_IDS = [...DECLARED_TRAIN_IDS, ...ADVANCED_COM_IDS].sort(
 /** @COMxx：指令实现族（每条指令的行为本体，随各自指令票注册） */
 const com_family = new DispatchFamily('COM', DECLARED_COM_IDS);
 
+/**
+ * @EQUIP_COMxx：装备持续效果族（#223 J13 立）。消费点是 @SOURCE_CHECK 的
+ * SIF 链（SYSTEM_SOURCE.ERB:58-123，ere/event/source-check.js 按链序遍历），
+ * 实现散在各 COMF 文件（@EQUIP_COM11-19 在道具族、43-49 在 SM 族、53-59 在
+ * 特殊族、89 在重度族、100/108 在触手族）——随各自指令族票注册。
+ *
+ * EQUIP_COM_CHAIN 逐项照抄原作 SIF 链：[TEQUIP 位, EQUIP_COM 号]，两处不是
+ * 一一对应（TEQUIP:90 → EQUIP_COM100、TEQUIP:98 → EQUIP_COM108），链序即
+ * 执行序（各号的写入都落在同一批 SOURCE/UP 格上，顺序影响结果）。
+ */
+const EQUIP_COM_CHAIN = [
+  [11, 11],
+  [13, 13],
+  [14, 14],
+  [15, 15],
+  [16, 16],
+  [17, 17],
+  [18, 18],
+  [19, 19],
+  [43, 43],
+  [44, 44],
+  [45, 45],
+  [46, 46],
+  [47, 47],
+  [49, 49],
+  [53, 53],
+  [54, 54],
+  [57, 57],
+  [58, 58],
+  [59, 59],
+  [89, 89],
+  [90, 100],
+  [98, 108],
+];
+
+/** @EQUIP_COMxx 族（声明空间 = 链上的 EQUIP_COM 号全集） */
+const equip_com_family = new DispatchFamily(
+  'EQUIP_COM',
+  EQUIP_COM_CHAIN.map(([, com]) => com),
+);
 /** @COM_ABLExx：可执行性判定族（返回 0 = 不可执行；未定义 = 可执行） */
 const com_able_family = new DispatchFamily('COM_ABLE', DECLARED_COM_IDS);
 
@@ -81,6 +121,8 @@ module.exports = {
   ADVANCED_COM_IDS,
   DECLARED_COM_IDS,
   DECLARED_TRAIN_IDS,
+  EQUIP_COM_CHAIN,
   com_able_family,
   com_family,
+  equip_com_family,
 };

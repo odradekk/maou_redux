@@ -1956,4 +1956,553 @@ export default [
     tests: ['com-cloth'],
     must_mention: 'A・B 探测后还原',
   },
+  // —— #223（J13：SM 系指令族 40-49）——
+  {
+    desc: `M950 COM40 苦痛档首档错（300 改 30——PAIN_LADDERS 的打屁股表）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  40: [300, 500, 800, 1200, 1800],`,
+    replace: `  40: [30, 500, 800, 1200, 1800],`,
+    tests: [`com-sm`],
+    must_mention: `SOURCE:6 = 300`,
+  },
+  {
+    desc: `M951 COM40 LOSEBASE 体力扣错（80 改 8）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  add_lose(target, 0, 80);
+  add_lose(target, 1, 40);`,
+    replace: `  add_lose(target, 0, 8);
+  add_lose(target, 1, 40);`,
+    tests: [`com-sm`],
+    must_mention: `-80`,
+  },
+  {
+    desc: `M952 主人经验门槛错（ABL:21 >= maso_min 改 >= maso_min + 10）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (era_flag.assiplay === 0 && abl(cid, 21) >= maso_min) {`,
+    replace: `  if (era_flag.assiplay === 0 && abl(cid, 21) >= maso_min + 10) {`,
+    tests: [`com-sm`],
+    must_mention: `TFLAG:30 += 1（主人亲自 + 抖M ≥ 1）`,
+  },
+  {
+    desc: `M953 爱情经验的抖M/受虐狂门删（40/41/42/44 的 maso_gate 恒真）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  const gate_ok = maso_gate ? abl(cid, 21) >= 3 || tal(cid, 88) !== 0 : true;`,
+    replace: `  const gate_ok = true; // 变异：门删`,
+    tests: [`com-sm`],
+    must_mention: `@COM40：LOSEBASE、SOURCE:12/14`,
+  },
+  {
+    desc: `M954 COM43 的 S10 三连链：抖M 首档系数错（0.8 改 1）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `function maso_factor(cid) {
+  const m = abl(cid, 21);
+  return m === 0
+    ? 0.8`,
+    replace: `function maso_factor(cid) {
+  const m = abl(cid, 21);
+  return m === 0
+    ? 1`,
+    tests: [`com-sm`],
+    must_mention: `@COM43：欲情×顺从×抖M×倒错`,
+  },
+  {
+    desc: `M955 COM43 胆怯不翻倍（S14 的胆怯臂删）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  set_src(target, 14, tal(target, 10) ? times(500, 2) : 500); // :76-78`,
+    replace: `  set_src(target, 14, 500); // 变异：胆怯臂删`,
+    tests: [`com-sm`],
+    must_mention: `胆怯翻倍 SOURCE:14`,
+  },
+  {
+    desc: `M956 COM44 触手紧缚不清触手计数（T:0 = 0 删）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  set_tq(target, 44, 1 - tq(target, 44));
+  if (tq(target, 90)) {
+    era.set('t:0', 0);
+  }`,
+    replace: `  set_tq(target, 44, 1 - tq(target, 44));`,
+    tests: [`com-sm`],
+    must_mention: `@COM44：S10 = 800×链`,
+  },
+  {
+    desc: `M957 COM45 六格直填错（S13 = 150 改 15）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  set_src(target, 13, 150); // :31 SOURCE:13 屈从`,
+    replace: `  set_src(target, 13, 15); // 变异`,
+    tests: [`com-sm`],
+    must_mention: `@COM45：六格 SOURCE 直填`,
+  },
+  {
+    desc: `M958 COM46 的 ABL:21 整组覆写删（S13 保留 ABL:3 档的 1400）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  const wide = MASO_WIDE_LADDER[Math.min(abl(target, 21), 5)];
+  set_src(target, 6, wide[0]);
+  set_src(target, 8, wide[1]);
+  set_src(target, 13, wide[2]);`,
+    replace: `  const wide = MASO_WIDE_LADDER[Math.min(abl(target, 21), 5)];
+  set_src(target, 6, wide[0]);
+  set_src(target, 8, wide[1]); // 变异：S13/S14/S15 不覆写`,
+    tests: [`com-sm`],
+    must_mention: `S13 被 ABL:21 档覆写`,
+  },
+  {
+    desc: `M959 COM46 润滑档的 S6 += 删（80/500/300/120/100 加算不发生）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `    src(target, 6) +
+      (palam_below(target, 3, 1)
+        ? 800
+        : palam_below(target, 3, 2)
+          ? 500
+          : palam_below(target, 3, 3)
+            ? 300
+            : palam_below(target, 3, 4)
+              ? 120
+              : 100),
+  );
+
+  // :102-128 S2 再乘 欲情（:102-113）× 顺从（:115-128，肛门系表）`,
+    replace: `    src(target, 6) + 0),
+  );
+
+  // :102-128 S2 再乘 欲情（:102-113）× 顺从（:115-128，肛门系表）`,
+    tests: [`com-sm`],
+    must_mention: `ABL:3 档 → S2/S13 基础`,
+  },
+  {
+    desc: `M960 COM46 肛门钝感不乘（anal_sense_factor 直通）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `function anal_sense_factor(cid, v) {
+  if (tal(cid, 105)) {
+    return times(v, 1.5);
+  }`,
+    replace: `function anal_sense_factor(cid, v) {
+  if (false) {
+    return times(v, 1.5);
+  }`,
+    tests: [`com-sm`],
+    must_mention: `@COM46：润滑档`,
+  },
+  {
+    desc: `M961 COM46 重贞操的 S13/3 删`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  if ((era.get(' +
+      '`' +
+      'exp:${target}:0' +
+      '`' +
+      ') || 0) === 0 && tal(target, 30)) {\n    set_src(target, 13, Math.floor(src(target, 13) / 3));\n  }\n\n  // —— 経験上昇（:157-161）——',
+    replace: `  // 变异：重贞操删
+
+  // —— 経験上昇（:157-161）——`,
+    tests: [`com-sm`],
+    must_mention: `@COM46：润滑档`,
+  },
+  {
+    desc: `M962 COM46 初次排泄门错（CFLAG:4 == 0 改 == 9）`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  if (tq(target, 46) && (era.get(' +
+      '`' +
+      'cflag:${target}:4' +
+      '`' +
+      ') || 0) === 0) {',
+    replace:
+      '  if (tq(target, 46) && (era.get(' +
+      '`' +
+      'cflag:${target}:4' +
+      '`' +
+      ') || 0) === 9) {',
+    tests: [`com-sm`],
+    must_mention: `初次 +1`,
+  },
+  {
+    desc: `M963 COM46 触手插入的 A 口污垢置位删`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  if (tq(target, 46) === 0 && tq(target, 90)) {\n    era.set(' +
+      '`' +
+      'stain:${target}:4' +
+      '`' +
+      ', (era.get(' +
+      '`' +
+      'stain:${target}:4' +
+      '`' +
+      ') || 0) | 2 | 4);\n  }',
+    replace: `  // 变异：污垢置位删`,
+    tests: [`com-sm`],
+    must_mention: `插入回合 + 触手`,
+  },
+  {
+    desc: `M964 COM46 着衣弄脏调用删（soiling_cloth_no2 不再发生）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tq(target, 46) && era.get('flag:37')) {
+    await soiling_cloth_no2(target);
+  }`,
+    replace: `  // 变异：弄脏调用删`,
+    tests: [`com-sm`],
+    must_mention: `弄脏位 &1|&2（内裤洗濯+处理）`,
+  },
+  {
+    desc: `M965 COM47 解除无修正的提前返回删（脱衣回合也吃气力扣）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tq(target, 47)) {
+    set_tq(target, 47, 0);
+    return 1;
+  }`,
+    replace: `  if (tq(target, 47)) {
+    set_tq(target, 47, 0);
+  } // 变异：提前返回删`,
+    tests: [`com-sm`],
+    must_mention: `@COM47：已穿着`,
+  },
+  {
+    desc: `M966 COM48 抖M配对链 S0 系数错（1.2 改 1）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `const MASO_PAIR_LADDER = [
+  [1, 1],
+  [1.2, 0.8],`,
+    replace: `const MASO_PAIR_LADDER = [
+  [1, 1],
+  [1, 0.8],`,
+    tests: [`com-sm`],
+    must_mention: `@COM48：ABL:0 档与抖M配对链`,
+  },
+  {
+    desc: `M967 COM48 被虐快乐首档错（+3 落到 +1）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tal(target, 88) === 1 || (abl(target, 11) >= 3 && abl(target, 21) >= 3)) {
+    era.print('被虐快乐经验+3'); // :67 PRINTFORML %EXPNAME:30%+3
+    chara(target).dungeon.被虐快乐经验 += 3;
+  } else if`,
+    replace: `  if (false) {
+    era.print('被虐快乐经验+3');
+    chara(target).dungeon.被虐快乐经验 += 3;
+  } else if`,
+    tests: [`com-sm`],
+    must_mention: `@COM48：ABL:0 档与抖M配对链`,
+  },
+  {
+    desc: `M968 精通的关系门槛错（150 改 1500）`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  if ((era.get(' +
+      '`' +
+      'relation:${target}:${player}' +
+      '`' +
+      ') || 0) < 150) {',
+    replace:
+      '  if ((era.get(' +
+      '`' +
+      'relation:${target}:${player}' +
+      '`' +
+      ') || 0) < 1500) {',
+    tests: [`com-sm`],
+    must_mention: `未熟解除`,
+  },
+  {
+    desc: `M969 COM49 本体的经验档整阈值化（EXPLV[3]/2 改 EXPLV[3]——半阈值是源形）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  const e = era.get(\`exp:\${target}:1\`) || 0;
+  const exp_idx =
+    e < EXPLV[1]
+      ? 0
+      : e < EXPLV[2] / 2
+        ? 1
+        : e < EXPLV[3] / 2
+          ? 2
+          : e < EXPLV[4] / 2
+            ? 3
+            : e < EXPLV[5] / 2
+              ? 4
+              : 5;
+  set_src(target, 2, times(src(target, 2), ANAL_EXP_LADDER[exp_idx][0]));
+  set_src(target, 6, ANAL_EXP_LADDER[exp_idx][1]);`,
+    replace: `  const e = era.get(\`exp:\${target}:1\`) || 0;
+  const exp_idx =
+    e < EXPLV[1]
+      ? 0
+      : e < EXPLV[2]
+        ? 1
+        : e < EXPLV[3]
+          ? 2
+          : e < EXPLV[4]
+            ? 3
+            : e < EXPLV[5]
+              ? 4
+              : 5;
+  set_src(target, 2, times(src(target, 2), ANAL_EXP_LADDER[exp_idx][0]));
+  set_src(target, 6, ANAL_EXP_LADDER[exp_idx][1]);`,
+    tests: [`com-sm`],
+    must_mention: `@COM49：ABL:3/EXP:1 双梯`,
+  },
+  {
+    desc: `M970 SM 系过滤位错（FLAG:25 & 16 改 & 1）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `const sm_filtered = () => ((era.get('flag:25') || 0) & 16) !== 0;`,
+    replace: `const sm_filtered = () => ((era.get('flag:25') || 0) & 1) !== 0;`,
+    tests: [`com-sm`],
+    must_mention: `SM 过滤`,
+  },
+  {
+    desc: `M971 鞭的道具持有门删（无鞭也可执行）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (!has_item(10)) {
+    return 0; // :1913-1914
+  }`,
+    replace: `  // 变异：持有门删`,
+    tests: [`com-sm`],
+    must_mention: `无鞭（ITEM:10 == 0）`,
+  },
+  {
+    desc: `M972 眼罩解除不随时（已装着仍要求道具）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tq(cid, 43)) {
+    return 1; // :1993-1994 解除はいつでも可能
+  }`,
+    replace: `  // 变异：解除随时删`,
+    tests: [`com-sm`],
+    must_mention: `失神挡、解除随时、要 ITEM:5`,
+  },
+  {
+    desc: `M973 绳子的调教者技巧门删（技巧 0 也可绑）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (abl(era_flag.player, 12) <= 2) {
+    return 0; // :2030-2031 調教者の技巧
+  }`,
+    replace: `  // 变异：技巧门删`,
+    tests: [`com-sm`],
+    must_mention: `技巧不足（ABL:PLAYER:12 = 0）`,
+  },
+  {
+    desc: `M974 口塞的触手口辱挡删`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tq(cid, 98)) {
+    return 0; // :2049-2050 触手口辱中
+  }`,
+    replace: `  // 变异：触手口辱挡删`,
+    tests: [`com-sm`],
+    must_mention: `@COM_ABLE45：触手口辱挡`,
+  },
+  {
+    desc: `M975 灌肠的肛门经验门槛错（<= 25 改 <= 0）`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  if ((era.get(' +
+      '`' +
+      'exp:${cid}:1' +
+      '`' +
+      ') || 0) <= 25) {\n    return 0; // :2120-2121 肛门经验 > 25\n  }',
+    replace:
+      '  if ((era.get(' +
+      '`' +
+      'exp:${cid}:1' +
+      '`' +
+      ') || 0) <= 0) {\n    return 0;\n  }',
+    tests: [`com-sm`],
+    must_mention: `EXP:1 = 25 不可（要 > 25）`,
+  },
+  {
+    desc: `M976 拘束衣的助手限定门删（主人也可穿）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (era_flag.assiplay === 0 || era_flag.assi < 1) {
+    return 0; // :2142-2143 助手じゃなきゃダメ
+  }`,
+    replace: `  // 变异：助手限定删`,
+    tests: [`com-sm`],
+    must_mention: `@COM_ABLE47：只能助手穿`,
+  },
+  {
+    desc: `M977 践踏的对象性别门删（女性也可被踩）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (!tal(cid, 121) && !tal(cid, 122)) {
+    return 0; // :2159-2160 対象が男人か扶她
+  }`,
+    replace: `  // 变异：性别门删`,
+    tests: [`com-sm`],
+    must_mention: `温妮（女）不可`,
+  },
+  {
+    desc: `M978 电极的浴室挡删`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tq(cid, 58)) {
+    return 0; // :2236-2237 浴室
+  }`,
+    replace: `  // 变异：浴室挡删`,
+    tests: [`com-sm`],
+    must_mention: `浴室中不可插电极`,
+  },
+  {
+    desc: `M979 电极的肛具互斥删（灌肠使用中也可插电极）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  if (tq(cid, 13) || tq(cid, 19) || tq(cid, 46)) {
+    return 0; // :2225-2234 肛门振动棒/肛珠/普通の浣腸使用中
+  }`,
+    replace: `  // 变异：互斥删`,
+    tests: [`com-sm`],
+    must_mention: `@COM_ABLE49：要 ITEM:21`,
+  },
+  {
+    desc: `M980 B40 着ぐるみ支删（永远走普通支）`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  let line = ' +
+      '`' +
+      '${player_name}在' +
+      '`' +
+      ';\n  if (in_zooko()) {',
+    replace:
+      '  let line = ' + '`' + '${player_name}在' + '`' + ';\n  if (false) {',
+    tests: [`com-sm`],
+    must_mention: `着ぐるみ支`,
+  },
+  {
+    desc: `M981 B46 失神中仍打抖M档（TFLAG:899 门删）`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '    era.print(' +
+      '`' +
+      '${tname}的肛塞被拔掉了、里面的污物随之喷出肛门、飞散一地。' +
+      '`' +
+      ");\n    if ((era.get('tflag:899') || 0) === 0) {",
+    replace:
+      '    era.print(' +
+      '`' +
+      '${tname}的肛塞被拔掉了、里面的污物随之喷出肛门、飞散一地。' +
+      '`' +
+      ');\n    if (true) {',
+    tests: [`com-sm`],
+    must_mention: `失神中无抖M档文本`,
+  },
+  {
+    desc: `M982 A40-42 的失神门删（&&/|| 同优先级的三指令共钳被破坏）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  // :1208 的第三臂 + TFLAG:899 失神门（> 1 时不进本分支——整支跳过，
+  // 与原作 ELSEIF 不命中同形）
+  if ((era.get('tflag:899') || 0) > 1) {
+    return;
+  }`,
+    replace: `  // 变异：失神门删`,
+    tests: [`com-sm`],
+    must_mention: `SELECTCOM = 40 失神中无反应文本`,
+  },
+  {
+    desc: `M983 A40-42 的灌肠塞排泄段删`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      `  if (tq(target, 46) && (era.get('tflag:899') || 0) <= 1) {
+    era.print(
+      ` +
+      '`' +
+      `\${tname}的菊花被灌入大量的灌肠液后还用肛门塞封起来了、侵犯还在继续。` +
+      '`' +
+      `,
+    );
+    const m = abl(target, 21);`,
+    replace:
+      `  if (false) {
+    era.print(
+      ` +
+      '`' +
+      `\${tname}的菊花被灌入大量的灌肠液后还用肛门塞封起来了、侵犯还在继续。` +
+      '`' +
+      `,
+    );
+    const m = abl(target, 21);`,
+    tests: [`com-sm`],
+    must_mention: `装着灌肠塞时的排泄段`,
+  },
+  {
+    desc: `M984 CASE 40 同调教者门删（换人也升格）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  const same_trainer =
+    (era_flag.assiplay && (era.get('tflag:50') || 0)) ||
+    (!era_flag.assiplay && (era.get('tflag:50') || 0) === 0);
+  if (!same_trainer) {
+    return 40; // 未命中 → RETURN ARG
+  }`,
+    replace: `  // 变异：同调教者门删`,
+    tests: [`com-sm`],
+    must_mention: `调教者换了人 → 不升格`,
+  },
+  {
+    desc: `M985 CASE 40 第二臂删（上上回合 + 挿入Ｇスポ/子宮口 不再升格）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  const hit =
+    [21, 131, 133, 134].includes(prev) ||
+    ([21, 131, 132, 133, 134].includes(prev2) &&
+      (prev === 120 || prev === 121));`,
+    replace: `  const hit = [21, 131, 133, 134].includes(prev);`,
+    tests: [`com-sm`],
+    must_mention: `同调教者 + 上回合后背位族`,
+  },
+  {
+    desc: `M986 JUMPFORM 落点的占位行删（升格目标缺失静默）`,
+    file: 'ere/system/train/com-sm.js',
+    find:
+      '  stub_line(' +
+      '`' +
+      'COM${com}' +
+      '`' +
+      ', ' +
+      '`' +
+      '指令 ${com} 的升格目标' +
+      '`' +
+      ", '随追加与高级指令票');\n  return 1;",
+    replace: `  return 1; // 变异：占位行删`,
+    tests: [`com-sm`],
+    must_mention: `升格目标缺失的占位行（J19 落地前）`,
+  },
+  {
+    desc: `M987 EQUIP_COM43 的 UP:10 直写删`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  add_up(target, 5, a);
+  add_up(target, 10, src(target, 14));`,
+    replace: `  add_up(target, 5, a); // 变异：UP:10 删`,
+    tests: [`com-sm`],
+    must_mention: `UP:10 += SOURCE:14（累加后）`,
+  },
+  {
+    desc: `M988 EQUIP_COM46 的 S14 += B 改 += C（源 :328 的 B 是有意互异）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  set_src(target, 2, src(target, 2) + a);
+  set_src(target, 13, src(target, 13) + b_base);
+  set_src(target, 6, src(target, 6) + c);
+  set_src(target, 14, src(target, 14) + b_base);`,
+    replace: `  set_src(target, 2, src(target, 2) + a);
+  set_src(target, 13, src(target, 13) + b_base);
+  set_src(target, 6, src(target, 6) + c);
+  set_src(target, 14, src(target, 14) + c);`,
+    tests: [`com-sm`],
+    must_mention: `@EQUIP_COM46：EXP:1 半阈值档`,
+  },
+  {
+    desc: `M989 EQUIP_COM49 的经验档半阈值化（整阈值是全库唯一一处源形）`,
+    file: 'ere/system/train/com-sm.js',
+    find: `  const exp_idx =
+    e < EXPLV[1]
+      ? 0
+      : e < EXPLV[2]
+        ? 1
+        : e < EXPLV[3]
+          ? 2
+          : e < EXPLV[4]
+            ? 3
+            : e < EXPLV[5]
+              ? 4
+              : 5;`,
+    replace: `  const exp_idx =
+    e < EXPLV[1]
+      ? 0
+      : e < EXPLV[2] / 2
+        ? 1
+        : e < EXPLV[3] / 2
+          ? 2
+          : e < EXPLV[4] / 2
+            ? 3
+            : e < EXPLV[5] / 2
+              ? 4
+              : 5;`,
+    tests: [`com-sm`],
+    must_mention: `整阈值 EXP 档`,
+  },
 ];

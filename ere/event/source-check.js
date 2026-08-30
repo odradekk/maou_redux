@@ -70,6 +70,10 @@ const {
   passout_outdoor,
 } = require('#/system/train/passout');
 const { seiin_start } = require('#/system/train/seiin');
+const {
+  EQUIP_COM_CHAIN,
+  equip_com_family,
+} = require('#/system/train/com-family');
 const { kojo_message_com } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -2010,15 +2014,34 @@ on('SOURCE_CHECK', async () => {
     await kojo_message_com();
   }
 
-  // :19-51 避孕套判定（TEQUIP:35/36——装备无写入路径，整组登记）
+  // :19-51 避孕套判定（TEQUIP:35/36——避孕套使用判定未移植，随 J6
+  // COMF_CONDOM；装备持续效果组已随 #223 拆出，见下方链循环）
   // :53-55 助手避孕套（TEQUIP:36，同上）
-  stub_line('EQUIP_COM', '避孕套与装备持续效果判定', '随装备票');
+  stub_line('EQUIP_COM', '避孕套判定', '随共用子程序票');
 
   // :56 CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线（排版近似，记名差异
   // 见 issue #45；TRAIN_MESSAGE_B/A 的同类分隔线同此）
   era.drawLine();
 
-  // :58-123 装备持续效果组（EQUIP_COMxx）——登记（同上一并占位）
+  // :58-123 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
+  // 接通）：按原作链序遍历装备位，真身随各自指令族票注册进
+  // equip_com_family（com-family.js 的 EQUIP_COM_CHAIN——J13 交 43-49，
+  // 道具/特殊/重度/触手族位随各自票）。缺失位且装备着 → 占位行
+  //（当前各写点未落地，装备位点不亮，实际不触发；族票落地即自愈）
+  for (const [bit, com] of EQUIP_COM_CHAIN) {
+    if (!era.get(`tequip:${cid}:${bit}`)) {
+      continue;
+    }
+    if (equip_com_family.has(com)) {
+      await equip_com_family.call(com);
+    } else {
+      stub_line(
+        `EQUIP_COM${com}`,
+        `装备位 ${bit} 的持续效果`,
+        '随对应指令族票',
+      );
+    }
+  }
 
   // :128-130 调教者侧检查三连
   source_sex_check();

@@ -1,0 +1,14 @@
+# 本文件不是转换器产物：NOITEM 是 target/CSV/VariableSize.csv:51 声明的全局
+# 整数数组（NOITEM,1000），没有名字表、纯数字下标。
+#
+# 它的存在只有一个目的（CFlag.yml 同款先例）：让引擎装载循环建出
+# staticData.noitem 与 data.noitem 桶。没有它，读 era.get('noitem:0') 落
+# 「key error in getter/setter」（app.asar 的 setVar/getVar 实测，engine
+# bundle 复现），值静默丢失。
+#
+# 语义：调教指令的可用性判定读它（原作 COMABLE.ERB 的
+# 「SIF ITEM:x == 0 && NOITEM == 0 / RETURN 0」——NOITEM != 0 即「道具
+# 无视模式」，持有检查全部放行）。全库无写点（issue #223 实测：target/
+# 全部 ERB 只有读，无一写入），全区恒 0，1:1 于原作起步态。空表即够用，
+# 未声明下标读侧 getter 兜 0。将来若移植出道具无视模式的写点（如调试或
+# 配置界面），在此补「名称: id」条目即可。
