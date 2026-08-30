@@ -1240,12 +1240,12 @@ export default [
 
   // —— #216 J6 跨族共用子程序与失神、受精（锚定 find 串经脚本核唯一）——
   {
-    desc: 'M870 CONDOM_SETTINGS 的当前设定标签退回空串（LOCALS 缺陷修复的靶点）',
+    desc: 'M870 CONDOM_SETTINGS 显示出当前设定标签（反向变异：LOCALS 缺陷 1:1 空值形态的钉子——谁把 %LOCALS:(CFLAG:61)% 修成有值，此处红，SOP §5 判据 7）',
     file: 'ere/system/train/com-condom.js',
-    find: `  era.print(\`现在：\${SETTING_LABELS[setting] ?? ''}\`); // :14（头注缺陷条）`,
-    replace: `  era.print('现在：'); // 变异：退回上游缺陷形态（恒空）`,
+    find: `  era.print('现在：');`,
+    replace: `  era.print(\`现在：\${['每次都问', '有套就用', '每次都直接来，来个痛快'][era.get(\`cflag:\${cid}:61\`) || 0] ?? ''}\`); // 变异：修好缺陷`,
     tests: ['com-condom'],
-    must_mention: '当前设定',
+    must_mention: '当前设定行',
   },
   {
     desc: 'M871 CONFIRM_CONDOM 已戴守卫删（重复消耗安全套）',

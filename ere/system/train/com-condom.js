@@ -14,10 +14,13 @@
  * TEQUIP:37 = 对象装着（属主 train，直写）；ITEM:24 = 安全套所持数。
  *
  * 移植说明（有意偏离，均注明依据）：
- *   - `PRINTFORML 现在：%LOCALS:(CFLAG:61)%`（:14）是上游缺陷：LOCALS:0-2
- *     全库零写点（LOCALS 是运行期草稿寄存器；唯一下标 0-2 写点在
- *     DUNGEON_BATLLE2 / CHARA_FIRST_EXP，与避孕套无关），原作显示恒为
- *     空串。ere 侧按本菜单三项就地取材显示当前设定（缺陷修复，#14 登记）。
+ *   - `PRINTFORML 现在：%LOCALS:(CFLAG:61)%`（:14）是上游缺陷：Emuera 的
+ *     LOCALS 是**函数级局部数组**（skill 变量表：函数内局部、不进存档），
+ *     @CONDOM_SETTINGS 自身零写点——别处函数（EVENT_TRAIN_MESSAGE_B 等）
+ *     写的 LOCALS 进不了这一份，故该行读到的恒为空串，显示「现在：」加
+ *     空值。已登记 #14、按移植期规约不修（#101「答案恒为不改」/SOP §5
+ *     判据 7）：ere 侧 1:1 打出该行，值为空；反向变异 M870 钉住缺陷本身
+ *     （谁把标签显示出来，测试当场红）。
  *   - 原作 PRINTL [n] 正文 + 自由数字 INPUT、CASEELSE GOTO 的行内重试在
  *     ere 侧不可达：引擎对已打印按钮拒收白名单外输入（#130 白名单），
  *     按钮化后无效值到不了游戏（#214 裁定六同款）。循环骨架保留给
@@ -34,9 +37,6 @@ const { game } = require('#/facade/game');
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
-/** 设定值 → 当前设定的显示标签（[0][1][2] 按钮正文复用，见头注缺陷条） */
-const SETTING_LABELS = ['每次都问', '有套就用', '每次都直接来，来个痛快'];
-
 /**
  * @CONDOM_SETTINGS（:10-40）：调教菜单 [103] 的设定画面。
  * TARGET < 1（魔王自己是调教对象）时直接 RETURN 1 不开画面（:11-12）。
@@ -48,9 +48,10 @@ async function condom_settings() {
     return 1; // :12
   }
   const name = era.get(`callname:${cid}:-1`) ?? '';
-  const setting = era.get(`cflag:${cid}:61`) || 0;
   era.print(`和${name}做爱要戴套吗？`); // :13
-  era.print(`现在：${SETTING_LABELS[setting] ?? ''}`); // :14（头注缺陷条）
+  // :14 %LOCALS:(CFLAG:61)% —— LOCALS 是函数级局部数组，本函数零写点 →
+  // 恒空串。1:1：整行照打、值为空（头注缺陷条，#14 已登记不修）
+  era.print('现在：');
   era.drawLine(); // :15
   era.printButton('每次都问', 0); // :16
   era.printButton('有套就用', 1); // :17

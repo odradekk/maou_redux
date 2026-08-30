@@ -171,8 +171,8 @@ test('@USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）
     'CONDOM_SETTINGS 真身的画面标题在场',
   );
   assert.ok(
-    fixture.text_lines().some((t) => t.includes('现在：每次都问')),
-    '当前设定的显示行在场（LOCALS 缺陷的标签修复）',
+    fixture.text_lines().some((t) => t.includes('现在：')),
+    '当前设定的显示行在场（值为空——LOCALS 缺陷的 1:1，#14 已登记不修）',
   );
 });
 
