@@ -346,6 +346,14 @@ const TRAIN_UNIMPLEMENTED_BLOCKS = {
   // train-upgrade：COM110 穿脱 + COM8/COM84 升格链两块
   'train-upgrade': [
     [232, 236], // @PRITRAIN_MESSAGE 消息体
+    // COM8 插入手指（300-332）：ere 侧因 #213 输入映射缺失多跑过误执行
+    // COM0 回合，PREVCOM 链与 golden 错位 → CASE 8 升格（PREVCOM==8 且
+    // 技巧 3+ → JUMP 84）在 golden 首次执行 COM8 的那回合提前触发，84 未
+    // 移植 → 回合丢弃重输（输入 0 又成 SELECTCOM=0 爱抚）——golden 的
+    // 夺处女确认（输入 0）与【处女丧失】序列单边。CONFIRM_LOST_VIRGIN
+    // 真身已随 #216+#219 接线（单回合对齐已由 com-caress 测试锚定），
+    // 块随 #213 修复或 J19（COM84 落地）拆除。
+    [300, 332],
     [362, 388], // COM84 刺激Ｇ点（升格目标，@GET_ADV_COM 随 #213/J19）
     [420, 420], // K3 调教结束口上（421-423 的 RE_CLOTHED 行已随 #228 匹配）
   ],
@@ -372,12 +380,51 @@ function classify_scope_train(entry, side, context) {
   const sample = context.sample;
   const tc_names = context.traincommand_names ?? load_traincommand_names();
 
+  // 未移植指令块内的输入回显（train-upgrade 的 :304 = 夺处女确认吃进的
+  // 那发 0——COM8 块整体错位时它是纯删除，与块内文本行同因；文本行的
+  // 块吸收在下方 entry.kind === 'text' 组内）
+  if (
+    entry.kind === 'input' &&
+    side === 'golden' &&
+    in_unimplemented_block(sample, entry.line)
+  ) {
+    return {
+      category: 'stub',
+      reason: `指令输出块内的输入回显（train ${sample} log:${entry.line}）：交互随各自指令票`,
+    };
+  }
+
   // —— 数值路径：参数/结算/算式的 COM 族连带 ——
   if (entry.kind === 'gauge' && context.counterpart?.kind === 'gauge') {
     return {
       category: 'stub',
       reason: `参数条数值差：${entry.key} 的增量来自未移植指令（COM 族存根不结算，参数不累积——#210 阶段 4 逐票消费）`,
     };
+  }
+  // 误执行 COM0 的整窗插入（#213 输入映射缺失）：ere 侧某回合被丢弃
+  //（升格目标未移植 → COM_MISSING 上抛，或子菜单回合取消）后，重输的下
+  // 一发输入 0 被当作 SELECTCOM=0——多出一整个爱抚回合窗口。窗口内的
+  // 指令名/输入回显/A 文/损耗条是纯插入（对侧无同型条目可配对），与
+  // 上方「误执行 COM0 的输出」（有对侧）同根同因
+  if (side === 'ere' && context.counterpart === undefined) {
+    if (
+      (entry.kind === 'input' && entry.text === '0') ||
+      entry.text === '爱抚' ||
+      entry.text === '你轻舔着温妮的唇、仔细爱抚着温妮的身体……' ||
+      entry.text === '温妮明确地感受到了快感、轻轻喘息着、发出了媚惑的呻吟。'
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '误执行 COM0 的整窗插入：回合被丢弃后输入 0 成为 SELECTCOM=0（L_IDX↔L_I 映射缺失，归 #213；登记见文件头）',
+      };
+    }
+    if (entry.kind === 'lossbar') {
+      return {
+        category: 'stub',
+        reason: '误执行 COM0 整窗的损耗条（同上，#213 输入映射缺失）',
+      };
+    }
   }
   if (
     entry.kind === 'gauge' &&
@@ -453,6 +500,22 @@ function classify_scope_train(entry, side, context) {
         category: 'stub',
         reason:
           '连续执行补正误触发：未移植指令不推进 PREVCOM，ere 侧爱抚被判为连续执行（×0.5 档与连续标记行）',
+      };
+    }
+    // 同根的下游形态（#219 收口时暴露）：连续补正的 ×0.5 档让 ere 侧参数
+    // 基线偏移，传到后续回合——A 文（TRAIN_MESSAGE_A）的档位文案随 UP:0
+    // 漂移、刻印/顺从升降行随反感的偏移跨档。golden 侧无这些行（其基线
+    // 未偏移），ere 侧单边多出。根因同上（PREVCOM 链断），随该票修复消失
+    if (
+      side === 'ere' &&
+      (entry.text === '温妮承受着被舔的刺激、确实感觉到快感了。' ||
+        /^获得.+刻印LV\d+$/.test(entry.text) ||
+        /^(顺从|欲望|技巧|侍奉精神)下?升?降到?LV\d+$/.test(entry.text))
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '连续补正数值漂移的下游：ere 侧参数基线偏移使反应行档位/刻印升降跨档（根因同上，PREVCOM 链断）',
       };
     }
     // 绝顶计数行：本场的绝顶由未移植指令（振动杖）触发，ere 侧无

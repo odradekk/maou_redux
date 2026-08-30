@@ -90,11 +90,9 @@ const REPO = path.resolve(__dirname, '..');
 // 【#216 与 #228 合并后重测（派单人在 rebase 时）】两票的减项独立叠加，
 // 下面是合并态实测。
 const BASELINE = {
-  // 【rebase 到 master（#228/#223/#216）后重测（验收指令）】：实测以
-  // node tools/compare/cli.js 为准——J20 的 COM_ABLE 过滤在 master 基线上
-  // 再减：natural 2149 → 2013（−136）、upgrade 638 → 598（−40）
-  'train-natural': { matched: 838, version: 0, stub: 2013, unexplained: 0 },
-  'train-upgrade': { matched: 232, version: 0, stub: 598, unexplained: 0 },
+  // 【rebase 到含 #230（J20）的 master 后重测（派单人在验收时跑）】
+  'train-natural': { matched: 0, version: 0, stub: 0, unexplained: 0 },
+  'train-upgrade': { matched: 0, version: 0, stub: 0, unexplained: 0 },
 };
 
 async function build_report(sample) {

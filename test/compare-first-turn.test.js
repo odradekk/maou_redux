@@ -76,8 +76,9 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 84,
-
+    // #219：CFLAG:40 勘定 15 → 12（旧样本世界有外衣无内衣，首屏方格的
+    // 舔阴/自慰等按钮为证）；数值随 rebase 到含 #230 的 master 后重测
+    stub: 0,
     unexplained: 0,
   });
 });
