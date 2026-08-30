@@ -46,7 +46,7 @@ const TRAIN_PATH_MODULES = [
   'kojo/kojo-k3-noble',
   'page/page-train',
   'page/page-usercom',
-  'system/train/com0-caress',
+  'system/train/com-caress',
   'system/train/com-cloth',
   'system/train/com-colosseum',
   'system/train/juel-check',
@@ -313,9 +313,12 @@ function seed_train_world(fixture, sample) {
   fixture.store.set('abl:31:17', 1); // 露出癖 LV1（自慰判定行 train-natural-log:453）
   fixture.store.set('abl:31:21', 3); // 抖M气质 LV3（判定行 train-natural-log:169）
 
-  // —— 刻印（实行值判定行的反解：快乐/苦痛/屈服/反抗全在账）——
-  fixture.store.set('mark:31:0', 2); // 快乐刻印 LV2（train-natural-log:169 快乐刻印LV2(4)）
-  fixture.store.set('mark:31:1', 1); // 苦痛刻印 LV1（train-natural-log:169）
+  // —— 刻印（实行值判定行的反解：快乐/苦痛/屈服/反抗全在账）。下标按
+  //    yml/Mark.yml（0=苦痛 1=快乐 2=屈服 3=反抗）——#219 勘定：此处原把
+  //    苦痛/快乐两行对调着种（0←2、1←1），COM6 判定行落地时数值对不上
+  //    golden :169（苦痛刻印LV1(5) + 快乐刻印LV2(4)）才翻出，随本票更正 ——
+  fixture.store.set('mark:31:0', 1); // 苦痛刻印 LV1（train-natural-log:169）
+  fixture.store.set('mark:31:1', 2); // 快乐刻印 LV2（train-natural-log:169 快乐刻印LV2(4)）
   fixture.store.set('mark:31:2', 2); // 屈服刻印 LV2（train-natural-log:169）
   fixture.store.set('mark:31:3', 1); // 反抗刻印 LV1（train-natural-log:169 与 train-natural-log:951）
 
@@ -416,6 +419,10 @@ function seed_train_world(fixture, sample) {
     [...abl.values()].sort((a, b) => a - b),
   );
   abl.forEach((id, name) => fixture.store.set(`ablname:${id}`, name));
+  // 刻印名表全量（#219 起 COM_ORDER/判定行读 markname:0-2；此前只有
+  // SHOW_ABLUP_SELECT 的 [99] 行用到 :3）
+  const mark = parse_name_ids('yml/Mark.yml');
+  mark.forEach((id, name) => fixture.store.set(`markname:${id}`, name));
   fixture.store.set('markname:3', '反抗刻印'); // SHOW_ABLUP_SELECT 的 [99] 行
 }
 

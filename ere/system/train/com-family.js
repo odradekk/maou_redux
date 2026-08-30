@@ -71,6 +71,14 @@ const DECLARED_COM_IDS = [...DECLARED_TRAIN_IDS, ...ADVANCED_COM_IDS].sort(
   (a, b) => a - b,
 );
 
+/**
+ * @COMxx 未实现时的缺失哨兵（共享 Symbol）：回合循环（train-loop.js 步骤
+ * 12 的「重新要求输入」）与 COMF 头部的 JUMPFORM 升格跳转（com-caress.js
+ * 的 jump_advanced）都要以「同一个符号」识别缺失——族模块跳到未落地的
+ * 高级 COM 时上抛本哨兵，由回合循环统一丢弃本回合（#219 起两处共用）。
+ */
+const COM_MISSING = Symbol('COM_MISSING');
+
 /** @COMxx：指令实现族（每条指令的行为本体，随各自指令票注册） */
 const com_family = new DispatchFamily('COM', DECLARED_COM_IDS);
 
@@ -119,6 +127,7 @@ const com_able_family = new DispatchFamily('COM_ABLE', DECLARED_COM_IDS);
 
 module.exports = {
   ADVANCED_COM_IDS,
+  COM_MISSING,
   DECLARED_COM_IDS,
   DECLARED_TRAIN_IDS,
   EQUIP_COM_CHAIN,

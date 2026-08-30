@@ -14,7 +14,7 @@
  *   - GET_/PRINT_ 两版取串表的差异位（GET 版缺 CASE 9、SPECIAL 的 98/99
  *     简体化、动词后置）与 clothtype_text 的组合（全裸/史莱姆/特别服装句）。
  *
- * 世界底座与 test/com0-caress.test.js 同构：魔王 0 + 奴隶 31、火车表按
+ * 世界底座与 test/com-caress.test.js 同构：魔王 0 + 奴隶 31、火车表按
  * 用例决定开否（mask 参数链的用例特意**不开**——证明调教外路径不碰
  * tflag 表）。
  */
@@ -673,7 +673,7 @@ test('clothtype_main_text：体操服（109）与全身型（201-300）的撕破
 
 test('TRAIN_MESSAGE_B 爱抚分支：服装前缀三态（特别服装 / 基本服装 / 内衣）', async () => {
   const { fixture, era_flag } = seed_train_world();
-  fixture.load_module('system/train/train-message');
+  fixture.load_module('system/train/com-caress'); // 分支 0 的注册在族模块（#219 起）
   const { train_message_b_family } = fixture.load_module(
     'system/train/train-message',
   );
@@ -716,7 +716,7 @@ test('TRAIN_MESSAGE_B 爱抚分支：服装前缀三态（特别服装 / 基本�
 
 test('TRAIN_MESSAGE_B 爱抚分支：触手/兽奸装备支与魔兽双行形态', async () => {
   const { fixture, era_flag } = seed_train_world();
-  fixture.load_module('system/train/train-message');
+  fixture.load_module('system/train/com-caress'); // 分支 0 的注册在族模块（#219 起）
   const { train_message_b_family } = fixture.load_module(
     'system/train/train-message',
   );

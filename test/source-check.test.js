@@ -50,7 +50,7 @@ async function run_caress(seed, post) {
   if (seed) {
     seed(fixture);
   }
-  fixture.load_module('system/train/com0-caress');
+  fixture.load_module('system/train/com-caress');
   fixture.load_module('event/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   const { emit } = fixture.load_module('system/event/registry');
@@ -359,7 +359,7 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   fixture.load_module('event/event-comend');
   fixture.load_module('page/page-usercom');
   fixture.load_module('event/source-check');
-  fixture.load_module('system/train/com0-caress');
+  fixture.load_module('system/train/com-caress');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   era_flag.assi = -1;

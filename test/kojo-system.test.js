@@ -197,7 +197,7 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   assert.equal(fixture.store.get('flag:105'), 1);
 
   // 回合：COM0（爱抚）→ @SOURCE_CHECK（:11-12 的 CALL KOJO_MESSAGE_COM）
-  fixture.load_module('system/train/com0-caress');
+  fixture.load_module('system/train/com-caress');
   fixture.load_module('event/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   await com_family.call(0);

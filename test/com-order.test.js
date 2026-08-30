@@ -1,5 +1,6 @@
 /**
- * ere/system/train/com-order.js 的行为测试（issue #214：@COM_ORDER）。
+ * ere/system/train/com-order.js 的行为测试（issue #214：@COM_ORDER；
+ * #219 起明细段以 parts 返回、不再自行打印——断言跟着改 parts.join('')）。
  *
  * 明细行形态的第一断言锚在 golden train-natural-log:169 的实行值判定行
  * 前半（COM_ORDER 的贡献段）：「顺从LV1(4) + 抖M气质LV3(6) + 苦痛刻印
@@ -73,10 +74,10 @@ test('golden 实证形态：判定行的 COM_ORDER 段逐字（train-natural-log
   fixture.store.set('mark:31:2', 2);
   fixture.store.set('mark:31:3', 1);
 
-  const { a, s } = await com_order(0, 0);
+  const { a, s, parts } = await com_order(0, 0);
 
   assert.equal(
-    fixture.text_lines().join(''),
+    parts.join(''),
     '顺从LV1(4) + 抖M气质LV3(6) + 苦痛刻印LV1(5) + 屈服刻印LV2(12) - 反抗刻印LV1(4)',
     '明细行逐字（含首项无分隔、反抗刻印的行首 " - "——源码不查 S）',
   );
@@ -91,9 +92,9 @@ test('首项为负（反抗心）：行首带 " - "，无前置 " + "（:182-188
   const { com_order } = load_order(fixture);
   fixture.store.set('talent:31:11', 1); // 反抗心，其余全空
 
-  const { a } = await com_order(0, 0);
+  const { a, parts } = await com_order(0, 0);
 
-  assert.equal(fixture.text_lines().join(''), ' - 反抗心(5)');
+  assert.equal(parts.join(''), ' - 反抗心(5)');
   assert.equal(a, -5);
 });
 
@@ -111,11 +112,11 @@ test('百合段两态：双方皆女才进（:28），好奇心/保守的取值�
     fixture.store.set('talent:31:23', 1); // 好奇心 +7（百合分支值）
     fixture.store.set('talent:31:24', 1); // 保守的 -13（百合分支值）
 
-    const { a } = await com_order(0, 0);
+    const { a, parts } = await com_order(0, 0);
 
     // 好奇心段 SIF S 打 " + "、保守的段（无 SIF）打 " - "——两个分隔都输出
     assert.equal(
-      fixture.text_lines().join(''),
+      parts.join(''),
       '百合气质LV2(6) + 双性恋(10) + 好奇心(7) - 保守的(13)',
     );
     assert.equal(a, 6 + 10 + 7 - 13);
@@ -132,9 +133,9 @@ test('百合段两态：双方皆女才进（:28），好奇心/保守的取值�
     fixture.store.set('talent:31:23', 1);
     fixture.store.set('talent:31:24', 1);
 
-    const { a } = await com_order(0, 0);
+    const { a, parts } = await com_order(0, 0);
 
-    assert.equal(fixture.text_lines().join(''), '好奇心(5) - 保守的(10)');
+    assert.equal(parts.join(''), '好奇心(5) - 保守的(10)');
     assert.equal(a, 5 - 10, '百合气质不得计入（ELSE 分支）');
   }
 });
@@ -169,9 +170,9 @@ test('参数阶梯：恭顺/恐怖按 PALAMLV 取 L（<100 为 0、≥30000 为 
   fixture.store.set('palam:31:4', 100); // 恭顺：恰达 LV1（阈值含下界）
   fixture.store.set('palam:31:10', 99); // 恐怖：LV0 → 不打项
 
-  const { a } = await com_order(0, 0);
+  const { a, parts } = await com_order(0, 0);
 
-  assert.equal(fixture.text_lines().join(''), '恭顺LV1(3)');
+  assert.equal(parts.join(''), '恭顺LV1(3)');
   assert.equal(a, 3, '恐怖 LV0 不进明细也不计值');
 });
 
@@ -190,10 +191,10 @@ test('调教者素质五项（:291-334）：读 PLAYER 的 TALENT，全查 S', a
   }
   const { com_order } = load_order(fixture);
 
-  const { a } = await com_order(0, 0);
+  const { a, parts } = await com_order(0, 0);
 
   assert.equal(
-    fixture.text_lines().join(''),
+    parts.join(''),
     '魅惑(6) + 谜之魅力(6) + 威圧感(6) + 施虐狂(3) + 鼓舞(1)',
   );
   assert.equal(a, 6 + 6 + 6 + 3 + 1);
@@ -215,9 +216,9 @@ test('相性六档（:339-379）：RELATION:PLAYER 的档位与文案', async ()
     const { com_order } = load_order(fixture);
     fixture.store.set('relation:31:0', relation); // TARGET 对 PLAYER
 
-    const { a } = await com_order(0, 0);
+    const { a, parts } = await com_order(0, 0);
 
-    assert.equal(fixture.text_lines().join(''), expected_text);
+    assert.equal(parts.join(''), expected_text);
     assert.equal(a, expected_a);
   }
 });
@@ -229,8 +230,15 @@ test('接触面：a/s 初值透传，返回累加后的新值（调用方继续�
   fixture.store.set('abl:31:10', 2); // 顺从 ×4 → +8
 
   const first = await com_order(0, 0); // COMF 的第一拍：清零起步
-  assert.deepEqual(first, { a: 8, s: 1 });
+  assert.equal(first.a, 8);
+  assert.equal(first.s, 1);
+  assert.deepEqual(first.parts, ['顺从LV2(8)'], '明细段随返回值交回调用方');
 
   const second = await com_order(first.a, first.s); // 同拍复算（幂等形态）
   assert.equal(second.a, 16, 'a 初值透传累加');
+  assert.deepEqual(
+    second.parts,
+    [' + ', '顺从LV2(8)'],
+    's 初值透传（首项带分隔）',
+  );
 });

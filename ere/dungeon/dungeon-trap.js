@@ -129,7 +129,7 @@ function summon_monster() {
 
 /**
  * @COM0_AUTO 存根（調教相關/COMF0_愛撫.ERB:174-243；自动调教票）：
- * 自动爱抚（CALLTRAIN 的指令内变体）。com0-caress.js 的 STUBBED_CALLS
+ * 自动爱抚（CALLTRAIN 的指令内变体）。com-caress.js（COM0 部分随 #219 搬入族模块） 的 STUBBED_CALLS
  * 登记的「不可达」指手动调教侧的 CALLTRAIN 分支；本调用点
  * （LOVE_BUG :1283）随本票接入后可达。
  * @returns {Promise<void>} 原作无 RESULT 消费

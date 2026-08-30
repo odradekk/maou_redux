@@ -323,12 +323,16 @@ const TRAIN_ABLUP_ITEM_RE = / - LV \d+( \*)?$/;
 const TRAIN_UNIMPLEMENTED_BLOCKS = {
   'train-natural': [
     [90, 95], // @PRITRAIN_MESSAGE 消息体（第 13 次调教开场叙事与口上）
-    [167, 186], // COM6 接吻（头部判定 + 情景 + 算式）
+    [173, 173], // COM6 接吻的口上行（#219 起判定/B 文/算式全部匹配，仅台词随轴 B）
     [251, 274], // COM0 爱抚#2：连续补正误触发（PREVCOM 链断）
     [303, 324], // COM12 振动杖
-    [353, 373], // COM1 舔阴
+    // COM1 舔阴（353-373）：B 文是 rand 变体口上（golden 实录的随机台词），
+    // 重放侧 rand 序列不可对齐——口上票落地时按台词库重录样本再拆。
+    [353, 373],
     [402, 422], // COM10 振动宝石
-    [451, 480], // COM3 自慰（判定 + 情景 + 经验行 + 算式）
+    // COM3 自慰（451-480）：同 COM1——rand 变体口上 + 随 COM_ABLE 过滤的
+    // 回合结构差，随口上票重录。
+    [451, 480],
     [509, 530], // COM12 振动杖
     [559, 579], // COM10 振动宝石
     [608, 627], // COM30 手淫（判定 + 情景 + 算式）
@@ -342,7 +346,6 @@ const TRAIN_UNIMPLEMENTED_BLOCKS = {
   // train-upgrade：COM110 穿脱 + COM8/COM84 升格链两块
   'train-upgrade': [
     [232, 236], // @PRITRAIN_MESSAGE 消息体
-    [300, 332], // COM8 插入手指（夺处女确认 + 【处女丧失】+ 算式）
     [362, 388], // COM84 刺激Ｇ点（升格目标，@GET_ADV_COM 随 #213/J19）
     [420, 420], // K3 调教结束口上（421-423 的 RE_CLOTHED 行已随 #228 匹配）
   ],
@@ -546,14 +549,18 @@ function classify_scope_train(entry, side, context) {
           '源一览行：源由未移植的 @COMn 写入（@SOURCE_CHECK 已移植，无源可显）',
       };
     }
-    // 实行值判定行（COMF 头部判定段）
+    // 实行值判定行（COMF 头部判定段）。两种形态共用：未移植指令的判定段
+    // 整体缺席（golden 侧）；已移植指令（#219 起 COM6/COM3）的折行形态差
+    // ——ere 一次 print 一行，Emuera 日志按终端宽把同一行折成两物理段
+    // （记名差异，同点线近似；数值逐字已由 #219 的判定行断言锚定）
     if (
       TRAIN_JUDGE_TAIL_RE.test(entry.text) ||
       TRAIN_JUDGE_HEAD_RE.test(entry.text)
     ) {
       return {
         category: 'stub',
-        reason: '实行值判定行：该指令的 @COMn 头部判定段未移植（随指令族票）',
+        reason:
+          '实行值判定行：判定段未移植（随指令族票），或已移植指令的终端折行形态差（记名差异）',
       };
     }
     // 指令名回显：恰为一条 TrainCommand 名（ere 侧未移植指令无回显；
