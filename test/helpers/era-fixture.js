@@ -1043,16 +1043,22 @@ function create_era_fixture() {
   era.getCharactersInTrain = () => [...chars_in_train].sort(by_id_ascending);
   era.nextTurnInTrain = () => {
     calls.push({ api: 'nextTurnInTrain', args: [] });
-    // 引擎语义（技能指南 variables.md「SOURCE …BEGIN TRAIN / @SOURCE_CHECK
-    // 时全 0」+ dev-guides/15-ero.md 的 UPCHECK 结算）：每次回合结算把全部
-    // 角色的 SOURCE 清零。游戏代码按此假设**不在回合内自清**（COMF 头部的
-    // 零化只覆盖各自用到的位——COMF6 等不写 SOURCE:0，上回合残留若不清会
-    // 被下回合的共用闸再乘再转一遍）。delta/deltabase/nowex 的结算游戏侧
-    // 已在 SOURCE_CHECK 内行内完成（引擎做时已是空值，同结果），此处只补
-    // SOURCE 这一件。置 0 不删键（VARSET 语义：值清零、表形状不动）
-    for (const key of [...store.keys()]) {
-      if (key.startsWith('source:')) {
-        store.set(key, 0);
+    // 回合结算把 SOURCE 逐键置 0。**依据是引擎代码本身**，不是手册：
+    // test/fixture.test.js 的 engine_test「引擎 nextTurnInTrain」驱动真方法，
+    // 已断言 `data.source[31][7] === 0` 且键仍在（置 0 不删表）——夹具此前
+    // 少了这一件，是与引擎的实打实偏离（#219 在对拍里撞出来）。
+    // 游戏代码依赖它：COMF 头部的零化只覆盖各自用到的位（COMF6 等不写
+    // SOURCE:0），上回合残留若不清会被下回合的共用闸再乘再转一遍。
+    // 同一 engine_test 的末两条断言「只结算在训角色」——所以这里也只清
+    // chars_in_train 里的（引擎侧的闸是 data.tequip，夹具的同构物是它）。
+    // delta/deltabase/nowex 的结算游戏侧已在 SOURCE_CHECK 内行内完成
+    //（引擎做时已是空值，同结果），此处只补 SOURCE 这一件。
+    for (const cid of chars_in_train) {
+      const prefix = `source:${cid}:`;
+      for (const key of [...store.keys()]) {
+        if (key.startsWith(prefix)) {
+          store.set(key, 0);
+        }
       }
     }
     return undefined;

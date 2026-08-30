@@ -247,7 +247,7 @@ function classify_entry(entry, side, context) {
     // PRINT_CLOTHTYPE/前缀自 #215 起为真身——两侧同形，#211/#215 期的
     // 四条两态豁免（golden/ere 各两条）随之整组拆除。残余的 ere 侧
     // 多余【全裸】只可能来自 ere 多出的整屏重绘（train-upgrade 实证 1
-    // 条：误执行 COM0 的多余回合，#213 输入映射缺失，文件头登记）——
+    // 条：误执行 COM0 的多余回合，输入流错开一发，随 J19 消失）——
     // 其余屏行（状态头/参数条/按钮组）各有重绘归因，服装行在此补齐。
     // **只认【全裸】**：COM110 若回归（ere 不再扒光），ere 侧多出的是
     // 【紧身衣＆裙甲的姿态】、golden 侧多出【全裸】——两者都不在本条
@@ -256,7 +256,7 @@ function classify_entry(entry, side, context) {
       return {
         category: 'stub',
         reason:
-          '服装行在 ere 侧多出的重绘屏（COM110 已移植、两侧同形；屏数差来自误执行 COM0 的多余回合，#213 输入映射缺失，见文件头登记）',
+          '服装行在 ere 侧多出的重绘屏（COM110 已移植、两侧同形；屏数差来自误执行 COM0 的多余回合，输入流错开一发，随 J19 消失）',
       };
     }
   }
@@ -346,13 +346,12 @@ const TRAIN_UNIMPLEMENTED_BLOCKS = {
   // train-upgrade：COM110 穿脱 + COM8/COM84 升格链两块
   'train-upgrade': [
     [232, 236], // @PRITRAIN_MESSAGE 消息体
-    // COM8 插入手指（300-332）：ere 侧因 #213 输入映射缺失多跑过误执行
-    // COM0 回合，PREVCOM 链与 golden 错位 → CASE 8 升格（PREVCOM==8 且
-    // 技巧 3+ → JUMP 84）在 golden 首次执行 COM8 的那回合提前触发，84 未
-    // 移植 → 回合丢弃重输（输入 0 又成 SELECTCOM=0 爱抚）——golden 的
-    // 夺处女确认（输入 0）与【处女丧失】序列单边。CONFIRM_LOST_VIRGIN
-    // 真身已随 #216+#219 接线（单回合对齐已由 com-caress 测试锚定），
-    // 块随 #213 修复或 J19（COM84 落地）拆除。
+    // COM8 插入手指（300-332）：CASE 8 升格（PREVCOM==8 且技巧 3+ →
+    // JUMP 84）在 golden 首次执行 COM8 的那回合触发，而 @COM84 未移植
+    // → 本回合被丢弃、重新要求输入（输入 0 又成 SELECTCOM=0 爱抚），
+    // 此后两侧输入流整体错开一发——golden 的夺处女确认（输入 0）与
+    // 【处女丧失】序列因此单边。CONFIRM_LOST_VIRGIN 真身已随 #216+#219
+    // 接线（单回合对齐由 com-caress 测试锚定）。块随 J19（COM84）拆除。
     [300, 332],
     [362, 388], // COM84 刺激Ｇ点（升格目标，@GET_ADV_COM 随 #213/J19）
     [420, 420], // K3 调教结束口上（421-423 的 RE_CLOTHED 行已随 #228 匹配）
@@ -401,11 +400,18 @@ function classify_scope_train(entry, side, context) {
       reason: `参数条数值差：${entry.key} 的增量来自未移植指令（COM 族存根不结算，参数不累积——#210 阶段 4 逐票消费）`,
     };
   }
-  // 误执行 COM0 的整窗插入（#213 输入映射缺失）：ere 侧某回合被丢弃
-  //（升格目标未移植 → COM_MISSING 上抛，或子菜单回合取消）后，重输的下
-  // 一发输入 0 被当作 SELECTCOM=0——多出一整个爱抚回合窗口。窗口内的
-  // 指令名/输入回显/A 文/损耗条是纯插入（对侧无同型条目可配对），与
-  // 上方「误执行 COM0 的输出」（有对侧）同根同因
+  // 误执行 COM0 的整窗插入：ere 侧某回合被丢弃后，重输的下一发输入 0 被
+  // 当作 SELECTCOM=0——多出一整个爱抚回合窗口，此后两侧输入流整体错位。
+  //
+  // 回合被丢弃是**已移植代码的正确行为**：升格目标（COM84 等，随 J19）
+  // 未注册时 @COM 落空，train-loop 按「未定义 → 重新要求输入」丢弃本回合
+  // （com-family.js 的缺失哨兵，#213 定 / #228 与 #230 定 missing 与
+  // cancelled 之分）。golden 侧那些指令都在，不丢弃，于是从此错开一发。
+  // **不是 L_IDX↔L_I 映射缺陷**——com-index 的映射有 test/com-dispatch
+  // 锁着；随升格目标落地（J19）本条自然消失。
+  //
+  // 窗口内的指令名/输入回显/A 文/损耗条是纯插入（对侧无同型条目可配对），
+  // 与上方「误执行 COM0 的输出」（有对侧）同根同因
   if (side === 'ere' && context.counterpart === undefined) {
     if (
       (entry.kind === 'input' && entry.text === '0') ||
@@ -416,13 +422,13 @@ function classify_scope_train(entry, side, context) {
       return {
         category: 'stub',
         reason:
-          '误执行 COM0 的整窗插入：回合被丢弃后输入 0 成为 SELECTCOM=0（L_IDX↔L_I 映射缺失，归 #213；登记见文件头）',
+          '误执行 COM0 的整窗插入：升格目标未移植使本回合被丢弃，重输的 0 成为 SELECTCOM=0（随 J19 落地消失）',
       };
     }
     if (entry.kind === 'lossbar') {
       return {
         category: 'stub',
-        reason: '误执行 COM0 整窗的损耗条（同上，#213 输入映射缺失）',
+        reason: '误执行 COM0 整窗的损耗条（同上，升格目标未移植）',
       };
     }
   }
@@ -451,9 +457,12 @@ function classify_scope_train(entry, side, context) {
       reason: '损耗行：未移植指令的体力/气力损耗（COM 族存根无 LOSEBASE 写入）',
     };
   }
-  // #213 输入映射缺失的连带（train-upgrade）：夺处女确认的输入 0 被 ere
-  // 侧当指令 0（爱抚）执行——误执行的爱抚输出块（指令名/A 文/反应行/
-  // 损耗条）在 ere 侧多出，对侧常是未移植指令（COM8/COM84）的输出
+  // 输入流错开一发的连带（train-upgrade）：golden 侧那一发 0 是给未移植
+  // 指令的交互吃的（夺处女确认、或升格目标 COM84 落空后重新要求输入），
+  // ere 侧没有那次交互 → 同一发 0 被当成 SELECTCOM=0（爱抚）执行。误执行
+  // 的爱抚输出块（指令名/A 文/反应行/损耗条）在 ere 侧多出，对侧常是未移植
+  // 指令（COM8/COM84）的输出。**不是 L_IDX↔L_I 映射缺陷**——映射有
+  // test/com-dispatch 锁着；随 J19（COM84 等升格目标）落地本组消失
   if (
     side === 'ere' &&
     context.counterpart !== undefined &&
@@ -462,13 +471,13 @@ function classify_scope_train(entry, side, context) {
     return {
       category: 'stub',
       reason:
-        '误执行 COM0（爱抚）的输出：确认输入 0 被 ere 侧直接当 SELECTCOM——L_IDX↔L_I 映射缺失（归 #213，登记见文件头）',
+        '误执行 COM0（爱抚）的输出：未移植指令的交互没吃掉那一发 0，它被当成 SELECTCOM=0（随升格目标 J19 落地消失）',
     };
   }
   if (side === 'ere' && entry.kind === 'lossbar' && context.counterpart) {
     return {
       category: 'stub',
-      reason: '误执行 COM0 的损耗条（同上，#213 输入映射缺失的连带）',
+      reason: '误执行 COM0 的损耗条（同上，输入流错开一发）',
     };
   }
   if (entry.kind === 'text') {
@@ -623,7 +632,7 @@ function classify_scope_train(entry, side, context) {
       return {
         category: 'stub',
         reason:
-          '实行值判定行：判定段未移植（随指令族票），或已移植指令的终端折行形态差（记名差异）',
+          '实行值判定行：判定段未移植（随指令族票）；已移植指令（#219 起 COM6/COM3）剩下的是终端折行形态差——ere 一次 print 一行，Emuera 日志按终端宽折成两物理段，数值逐字已由 #219 的判定行断言锚定',
       };
     }
     // 指令名回显：恰为一条 TrainCommand 名（ere 侧未移植指令无回显；
@@ -645,7 +654,7 @@ function classify_scope_train(entry, side, context) {
       return {
         category: 'stub',
         reason:
-          '指令名回显互异：ere 侧执行了爱抚、golden 侧是升格链的插入手指（#213 输入映射缺失的连带）',
+          '指令名回显互异：ere 侧执行了爱抚、golden 侧是升格链的插入手指（输入流错开一发的连带）',
       };
     }
     // golden 的初体验括号（本场 COM8 夺处女的记录，ere 侧无 COM8 不产生；

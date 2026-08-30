@@ -90,9 +90,11 @@ const REPO = path.resolve(__dirname, '..');
 // 【#216 与 #228 合并后重测（派单人在 rebase 时）】两票的减项独立叠加，
 // 下面是合并态实测。
 const BASELINE = {
-  // 【rebase 到含 #230（J20）的 master 后重测（派单人在验收时跑）】
-  'train-natural': { matched: 0, version: 0, stub: 0, unexplained: 0 },
-  'train-upgrade': { matched: 0, version: 0, stub: 0, unexplained: 0 },
+  // 【rebase 到含 #230（J20）的 master 后重测（派单人在验收时跑）】爱抚系
+  // 0-9 真身 + 夹具补 SOURCE 清零（引擎 nextTurnInTrain 语义）后两侧收敛：
+  // natural 838/2013 → 940/1848，upgrade 232/598 → 257/592
+  'train-natural': { matched: 940, version: 0, stub: 1848, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 592, unexplained: 0 },
 };
 
 async function build_report(sample) {

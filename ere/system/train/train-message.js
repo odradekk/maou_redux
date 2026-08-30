@@ -35,9 +35,10 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { DECLARED_COM_IDS } = require('#/system/train/com-family');
+const { chara_callname } = require('#/utils/callname-utils');
+const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
