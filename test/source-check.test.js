@@ -406,6 +406,131 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   );
 });
 
+// —— #216 J6：@LOST_VIRGIN_CHECK 正文（守卫之后的处女丧失处理） ——
+
+test('LOST_VIRGIN_CHECK：守卫（TFLAG:19 = 0）→ 处女不动、无记录', async () => {
+  const fixture = await run_caress((f) => f.store.set('talent:31:0', 1));
+  assert.equal(fixture.store.get('talent:31:0'), 1, '处女未丧失');
+  assert.equal(fixture.store.get('cflag:31:15'), undefined);
+  assert.ok(!fixture.text_lines().includes('【处女丧失】'));
+});
+
+test('LOST_VIRGIN_CHECK：TFLAG:19 + 处女 → 丧失宣言、三面旗、初体验记录', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:0', 1);
+      f.store.set('callname:0:-1', '魔王');
+    },
+    (f) => f.store.set('tflag:19', 1),
+  );
+  assert.equal(
+    fixture.store.get('talent:31:0'),
+    0,
+    'TALENT:0 清除（经 chara 门面）',
+  );
+  assert.ok(fixture.text_lines().includes('【处女丧失】'));
+  assert.equal(fixture.store.get('tflag:3'), 1);
+  assert.equal(
+    fixture.store.get('tflag:31'),
+    1,
+    '本次调教处女丧失（event 门面）',
+  );
+  assert.equal(fixture.store.get('cflag:31:15'), 1, 'NO:PLAYER + 1 = 1');
+  assert.equal(fixture.store.get('cstr:31:3'), '魔王');
+});
+
+test('LOST_VIRGIN_CHECK：摄影（tequip:53）→ TFLAG:32 |= 1（kojo 门面）', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:0', 1);
+      f.store.set('tequip:31:53', 1);
+    },
+    (f) => f.store.set('tflag:19', 1),
+  );
+  assert.equal(fixture.store.get('tflag:32'), 1);
+});
+
+test('LOST_VIRGIN_CHECK：CFLAG:15 已有记录 → 不覆盖；selectcom 11 → 101 覆盖码', async () => {
+  const kept = await run_caress(
+    (f) => {
+      f.store.set('talent:31:0', 1);
+      f.store.set('cflag:31:15', 77);
+    },
+    (f) => f.store.set('tflag:19', 1),
+  );
+  assert.equal(kept.store.get('cflag:31:15'), 77, '已有初体验记录不覆盖');
+
+  const vibe = await run_caress(
+    (f) => f.store.set('talent:31:0', 1),
+    (f) => {
+      f.store.set('tflag:19', 1);
+      const ef = f.load_module('era-utils/era-flag');
+      ef.selectcom = 11;
+    },
+  );
+  assert.equal(vibe.store.get('cflag:31:15'), 101, '振动棒初体验覆盖码');
+});
+
+test('LOST_VIRGIN_CHECK：主人亲自 + 对象爱慕（85）→ 反抗刻印回避生效', async () => {
+  // tflag:150 是回合内旗（MARK_GOT_CHECK 消费后清零，:1637），断言走
+  // 消费效果：UP:11+12 ≥ 500 本应得反抗刻印，回避旗命中则不得
+  const control = await run_caress(
+    (f) => f.store.set('talent:31:0', 1),
+    (f) => {
+      f.store.set('tflag:19', 1);
+      f.store.set('delta:31:11', 600);
+    },
+  );
+  assert.equal(
+    control.store.get('mark:31:4'),
+    1,
+    '对照组：无爱慕 → 反抗刻印 LV1',
+  );
+
+  const loved = await run_caress(
+    (f) => {
+      f.store.set('talent:31:0', 1);
+      f.store.set('talent:31:85', 1); // 对象爱慕（主人亲自）
+    },
+    (f) => {
+      f.store.set('tflag:19', 1);
+      f.store.set('delta:31:11', 600);
+    },
+  );
+  assert.equal(
+    loved.store.get('mark:31:4'),
+    undefined,
+    '爱慕 → tflag:150 → 刻印回避',
+  );
+});
+
+test('LOST_VIRGIN_CHECK：对象淫乱（76）→ 同款回避（SOURCE:6/15 的折算另有乘算位）', async () => {
+  const control = await run_caress(
+    (f) => f.store.set('talent:31:0', 1),
+    (f) => {
+      f.store.set('tflag:19', 1);
+      f.store.set('delta:31:11', 600);
+    },
+  );
+  assert.equal(control.store.get('mark:31:4'), 1);
+
+  const lewd = await run_caress(
+    (f) => {
+      f.store.set('talent:31:0', 1);
+      f.store.set('talent:31:76', 1); // 对象淫乱
+    },
+    (f) => {
+      f.store.set('tflag:19', 1);
+      f.store.set('delta:31:11', 600);
+    },
+  );
+  assert.equal(
+    lewd.store.get('mark:31:4'),
+    undefined,
+    '淫乱 → tflag:150 → 刻印回避',
+  );
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {

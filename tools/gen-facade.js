@@ -48,6 +48,10 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // （读侧放行，见 domain-check 的跨域读政策）。
 // cstr 随 #136 进门面（yml 空表、名字走 facade-names；首个字段 99 故事名，
 // 原作读写都在 SYSTEM_DATA.ERB 的存档界面）。
+// ex 随 #216（J6）进门面：绝顶计数（ex/nowex 共用名字表，引擎寻址层
+// case"nowex" → staticData.ex）；yml/Ex.yml 是空表（有意，同 tequip 的
+// 理由——登记名字表会让 initCharaTable 预置 0），名字走 facade-names，
+// 首个具名位 5 喷乳绝顶（COM_EJAC_PLAYER_MILK 的跨域写点）。
 // tequip 随 #215（J5）进门面：调教域表（桶随 beginTrain 建、endTrain 删），
 // yml/TEquip.yml 是空表（有意：登记名字表会令 initCharaTable 预置 0，见该
 // 文件头注），名字走 facade-names；跨域两段（22 属 system、35 属 event）的
@@ -64,6 +68,7 @@ const TWO_DIM_TABLES = [
   'palam',
   'mark',
   'exp',
+  'ex',
   'delta',
   'deltabase',
 ];

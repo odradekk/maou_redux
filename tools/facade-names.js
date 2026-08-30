@@ -253,6 +253,13 @@ const cflag = {
     '从属怪物',
     src(SRC_FLAG, 'CFLAG:570 従属モンスター（使役パートナーの NO）'),
   ),
+  102: named(
+    '妊娠相手',
+    src(
+      SRC_FLAG,
+      ':318 CFLAG:102 = 誰によって妊娠させられたか（マスター=1, 助手=2, 奴隷=3, 客=4, 犬=5, モンスター・触手=6, 狂王=7）',
+    ),
+  ),
   666: named('自动调教', src(SRC_FLAG, 'CFLAG:666 自動調教が行われたかフラグ')),
   ...fill(650, 657, (i) =>
     named(
@@ -719,6 +726,21 @@ const tequip = {
   90: named_tail('触手', src(SRC_FLAG, ':528 TEQUIP:90 触手調教')),
 };
 
+// —— EX：绝顶计数（#216 J6 进门面；ex/nowex 共用一张名字表——引擎寻址层
+//    case"nowex" → staticData.ex，yml/Ex.yml 空表故名字走本表，同 tequip
+//    先例）。只名一个：EX:5 射精·喷乳（COM_EJAC_PLAYER_MILK 的
+//    EX:PLAYER:5 += 1，属主 system——train 侧写它必须走门面）。
+//    其余下标随各自票补名（#71 裁定三：未命名不进门面）。 ——
+const ex = {
+  5: named(
+    '喷乳绝顶',
+    src(
+      SRC_FLAG,
+      ':EX:5 射精·喷乳（COM_EJAC_PLAYER_MILK 的 EX:PLAYER:5 += 1）',
+    ),
+  ),
+};
+
 // —— 移植自建表的属主声明（#90 裁定，依据见 issue #90）——
 // 这些表 target/ 侧没有源（UP/DOWN、LOSEBASE 是 Emuera 内建变量族），测量
 // 不出属主，只能人定；与名字同处声明，因为两者都是「测不出来、人工定」的
@@ -736,6 +758,7 @@ const PORT_TABLE_OWNERS = {
 
 const NAMES = {
   cflag,
+  ex,
   flag,
   tflag,
   item,

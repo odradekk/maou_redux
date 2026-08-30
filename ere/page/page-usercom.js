@@ -45,9 +45,7 @@
  * 定制名（trainalias）优先级高于静态名表——见 p_c 的三级回落。
  *
  * 本文件仍存根化的原作调用（docs/stub-registry.md）：SHOW_CHARA_INFO
- * （USERCOM:105，随角色信息票）、STAIN_INFO（:108，随污渍票）、
- * CONDOM_SETTINGS（:130，随道具票）——按钮与分发已随 #214 接通，处理
- * 器本体打到占位行。@USERCOM 各分支的 RETURN 1/0 被 Emuera 引擎忽略
+ * （USERCOM:105，随角色信息票）、STAIN_INFO（:108，随污渍票）。@USERCOM 各分支的 RETURN 1/0 被 Emuera 引擎忽略
  * （重绘回合画面是唯一效果），ere 侧 emit 同构（返回值无消费者）。
  * SETCOLOR 0xDDA0DD 的「上次的调教指令」淡紫色不镜像（记名差异）。
  */
@@ -70,6 +68,7 @@ const {
   comseq_train,
 } = require('#/system/train/com-register');
 const { stub_line_wait } = require('#/utils/stub-line');
+const { condom_settings } = require('#/system/train/com-condom');
 
 /**
  * 本文件存根化的原作调用名（@USERCOM 分发到的存根处理器）。
@@ -77,7 +76,7 @@ const { stub_line_wait } = require('#/utils/stub-line');
  * @P_C 已随 #212 落地真身；SHOW_COMMENU 与 COMSEQ_* 已随 #214 落地真身
  * （本文件 show_commenu 与 system/train/com-register.js），不在名单。
  */
-const STUBBED_CALLS = ['SHOW_CHARA_INFO', 'STAIN_INFO', 'CONDOM_SETTINGS'];
+const STUBBED_CALLS = ['SHOW_CHARA_INFO', 'STAIN_INFO'];
 
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
@@ -318,8 +317,8 @@ on('USERCOM', async (result) => {
     return;
   }
   if (result === 103) {
-    // :129-131 避孕套设定（本体随道具票）
-    await stub_line_wait('CONDOM_SETTINGS', '避孕套设定画面', '随道具票');
+    // :129-131 避孕套设定（#216 J6 真身，system/train/com-condom.js）
+    await condom_settings();
     return;
   }
   // :132-161 过滤位翻转（落尾 RETURN 0——重绘即反馈）；清位掩码 =

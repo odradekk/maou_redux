@@ -153,11 +153,33 @@ test('@USERCOM：999 → BEGIN AFTERTRAIN（链内暂存，最后一个胜出）
   assert.equal(pending, 'AFTERTRAIN');
 });
 
-test('@USERCOM：100/101/103 落存根占位行（本体随各自领域票）', async () => {
+test('@USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(31);
+  fixture.era.beginTrain(0, 31);
+  fixture.store.set('callname:31:-1', '温妮');
+  const { emit } = load_page(fixture);
+  fixture.set_inputs(9); // [9] 返回（不改动设定）
+
+  await emit('USERCOM', 103);
+
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('和温妮做爱要戴套吗？')),
+    'CONDOM_SETTINGS 真身的画面标题在场',
+  );
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('现在：每次都问')),
+    '当前设定的显示行在场（LOCALS 缺陷的标签修复）',
+  );
+});
+
+test('@USERCOM：100/101 落存根占位行（本体随各自领域票）', async () => {
   for (const [acc, name] of [
     [100, 'SHOW_CHARA_INFO'],
     [101, 'STAIN_INFO'],
-    [103, 'CONDOM_SETTINGS'],
   ]) {
     const fixture = create_era_fixture();
     const { emit } = load_page(fixture);
@@ -339,11 +361,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, [
-    'SHOW_CHARA_INFO',
-    'STAIN_INFO',
-    'CONDOM_SETTINGS',
-  ]);
+  assert.deepEqual(STUBBED_CALLS, ['SHOW_CHARA_INFO', 'STAIN_INFO']);
   for (const name of STUBBED_CALLS) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }

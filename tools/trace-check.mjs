@@ -83,6 +83,13 @@ const MESSAGE_A = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB';
 const SOURCE = 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB';
 const SUB1 = 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB';
 const SUB2 = 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB';
+// #216 J6：跨族共用子程序五件套 + SHE 代词（魔改新增/文本校正.ERB）
+const COMF_CONDOM_ERB = 'target/ERB/調教相關/COMF_CONDOM.ERB';
+const COMF_VAGINASEX_ERB = 'target/ERB/調教相關/COMF_VAGINASEX.ERB';
+const COMF_ANALSEX_ERB = 'target/ERB/調教相關/COMF_ANALSEX.ERB';
+const PASSOUT_ERB = 'target/ERB/調教相關/PASSOUT.ERB';
+const SEIIN_ERB = 'target/ERB/調教相關/SEIIN.ERB';
+const TEXT_FIX_ERB = 'target/ERB/魔改新增/文本校正.ERB';
 const SHOP_VER = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
 const EVENT_K = 'target/ERB/EVENT/EVENT_K.ERB';
 const K3 = 'target/ERB/口上/EVENT_K3_高貴.ERB';
@@ -1037,7 +1044,6 @@ const FILES = [
         ref: '129-131',
         any: [/^ELSEIF RESULT == 103$/m, /^CALL CONDOM_SETTINGS$/m],
       },
-      { src: USERCOM, ref: '130', any: [/^\tCALL CONDOM_SETTINGS$/m] },
       {
         src: USERCOM,
         ref: '132-161',
@@ -2624,6 +2630,1393 @@ const FILES = [
       { src: FUNC_CLOTH_ERB, ref: '52-56', any: [/^\s*IF CFLAG:42$/m] },
     ],
   },
+  // —— #216 J6 跨族共用子程序：锚按「源文件对应行内容的逐字正则」机械
+  //    生成（首个非空行 + 可选 ; 前缀），后续改动引用时按同法同步 ——
+  {
+    js: 'ere/system/train/com-condom.js',
+    refs: [
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '10-40',
+        any: [/^\s*;?\s*@CONDOM_SETTINGS$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '42-163',
+        any: [/^\s*;?\s*@CONFIRM_CONDOM$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '165-183',
+        any: [/^\s*;?\s*@CONFIRM_CONDOM2$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '14',
+        any: [/^\s*;?\s*PRINTFORML\ 现在：%LOCALS:\(CFLAG:61\)%$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '66',
+        any: [/^\s*;?\s*毎回確認かつ安全套所持の場合、確認する$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '69',
+        any: [/^\s*;?\s*PRINTL\ 要戴套吗？$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '146-150', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '11-12',
+        any: [/^\s*;?\s*SIF\ TARGET\ <\ 1$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '12', any: [/^\s*;?\s*RETURN\ 1$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '13',
+        any: [/^\s*;?\s*PRINTFORML\ 和%SAVESTR:TARGET%做爱要戴套吗？$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '15', any: [/^\s*;?\s*DRAWLINE$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '16',
+        any: [/^\s*;?\s*PRINTL\ \[0\]\ 每次都问$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '17',
+        any: [/^\s*;?\s*PRINTL\ \[1\]\ 有套就用$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '18',
+        any: [/^\s*;?\s*PRINTL\ \[2\]\ 每次都直接来，来个痛快$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '19',
+        any: [/^\s*;?\s*PRINTL\ \[9\]\ 返回$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '21', any: [/^\s*;?\s*INPUT$/m] },
+      { src: COMF_CONDOM_ERB, ref: '24', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '26',
+        any: [/^\s*;?\s*PRINTW\ 每次确认。$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '27', any: [/^\s*;?\s*CFLAG:61\ =\ 0$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '29',
+        any: [/^\s*;?\s*PRINTW\ 使用安全套。$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '30', any: [/^\s*;?\s*CFLAG:61\ =\ 1$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '32',
+        any: [/^\s*;?\s*PRINTFORMW\ 和%SAVESTR:TARGET%直接做。$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '33', any: [/^\s*;?\s*CFLAG:61\ =\ 2$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '35',
+        any: [/^\s*;?\s*GOTO\ INPUT_LOOP_01$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '46',
+        any: [/^\s*;?\s*RETURN\ 1:コマンド続行$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '48',
+        any: [/^\s*;?\s*\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '50',
+        any: [/^\s*;?\s*安全套使わない設定なら続行$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '52', any: [/^\s*;?\s*RETURN\ 1$/m] },
+      { src: COMF_CONDOM_ERB, ref: '54', any: [/^\s*;?\s*SIF\ TEQUIP:89$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '57-98',
+        any: [/^\s*;?\s*SIF\ TEQUIP:55$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '61', any: [/^\s*;?\s*RETURN\ 1$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '62',
+        any: [/^\s*;?\s*調教者が既に安全套してるなら続行$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '63',
+        any: [
+          /^\s*;?\s*SIF\ \(!ASSIPLAY\ \&\&\ TEQUIP:35\)\ \|\|\ \(ASSIPLAY\ \&\&\ TEQUIP:36\)$/m,
+        ],
+      },
+      { src: COMF_CONDOM_ERB, ref: '65', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '67',
+        any: [/^\s*;?\s*IF\ CFLAG:61\ ==\ 0\ \&\&\ ITEM:24$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '70',
+        any: [/^\s*;?\s*PRINTL\ \ \[0\]\ \-\ 戴$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '73',
+        any: [/^\s*;?\s*PRINTL\ 让使用安全套吗？$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '76', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '78',
+        any: [/^\s*;?\s*PRINTL\ \ \[3\]\ \-\ 今后都戴套$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '79', any: [/^\s*;?\s*$/m] },
+      { src: COMF_CONDOM_ERB, ref: '81', any: [/^\s*;?\s*INPUT$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '82',
+        any: [/^\s*;?\s*SELECTCASE\ RESULT$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '83', any: [/^\s*;?\s*CASE\ 0$/m] },
+      { src: COMF_CONDOM_ERB, ref: '85', any: [/^\s*;?\s*IF\ !ASSIPLAY$/m] },
+      { src: COMF_CONDOM_ERB, ref: '87', any: [/^\s*;?\s*TEQUIP:35\ =\ 1$/m] },
+      { src: COMF_CONDOM_ERB, ref: '88', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '89',
+        any: [/^\s*;?\s*PRINTFORML\ 让%SAVESTR:PLAYER%戴着套。$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '91', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: COMF_CONDOM_ERB, ref: '92', any: [/^\s*;?\s*RETURN\ 1$/m] },
+      { src: COMF_CONDOM_ERB, ref: '93', any: [/^\s*;?\s*CASE\ 1$/m] },
+      { src: COMF_CONDOM_ERB, ref: '95', any: [/^\s*;?\s*CASE\ 2$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '101-141',
+        any: [/^\s*;?\s*CFLAG:61\ =\ 1$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '105', any: [/^\s*;?\s*ENDSELECT$/m] },
+      { src: COMF_CONDOM_ERB, ref: '107', any: [/^\s*;?\s*$/m] },
+      { src: COMF_CONDOM_ERB, ref: '108', any: [/^\s*;?\s*自動で使う場合$/m] },
+      { src: COMF_CONDOM_ERB, ref: '110', any: [/^\s*;?\s*安全套があるか$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '111',
+        any: [/^\s*;?\s*IF\ ITEM:24\ >\ 0$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '113-137',
+        any: [/^\s*;?\s*ITEM:24\ \-=\ 1$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '115',
+        any: [/^\s*;?\s*PRINTFORML\ %SAVESTR:PLAYER%戴着套。$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '118-120',
+        any: [/^\s*;?\s*PRINTFORML\ 让%SAVESTR:PLAYER%戴着套。$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '121', any: [/^\s*;?\s*RETURN\ 1$/m] },
+      { src: COMF_CONDOM_ERB, ref: '122', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '123',
+        any: [/^\s*;?\s*ない場合、魔王さまの技巧Lvが5未満だと生でしてしまう$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '126',
+        any: [/^\s*;?\s*PRINTFORM\ 没有安全套，直接来。$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '128',
+        any: [/^\s*;?\s*PRINTFORML\ 来吗？$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '130',
+        any: [/^\s*;?\s*PRINTFORML\ 让吗？$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '131', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '132',
+        any: [/^\s*;?\s*PRINTL\ \ \[0\]\ \-\ 好的\(下次也继续确认\)$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '134',
+        any: [/^\s*;?\s*PRINTL\ \ \[2\]\ \-\ 不要$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '136', any: [/^\s*;?\s*\$INPUT_LOOP_02$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '138',
+        any: [/^\s*;?\s*SELECTCASE\ RESULT$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '162',
+        any: [/^\s*;?\s*安全套を使うかの確認2$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '183', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '167',
+        any: [
+          /^\s*;?\s*IF\ TEQUIP:37\ ==\ 0\ \&\&\ ITEM:24\ \&\&\ \(TALENT:TARGET:121\ \|\|\ TALENT:TARGET:122\)\ \&\&\ CFLAG:MASTER:61\ !=\ 2$/m,
+        ],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '168',
+        any: [/^\s*;?\s*PRINTFORML\ %SAVESTR:TARGET%使用安全套吗？$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '169',
+        any: [/^\s*;?\s*PRINTL\ \ \[0\]\ \-\ 用$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '170',
+        any: [/^\s*;?\s*PRINTL\ \ \[1\]\ \-\ 这次直接来$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '172',
+        any: [/^\s*;?\s*IF\ RESULT\ ==\ 0$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '173',
+        any: [/^\s*;?\s*PRINTFORML\ %SAVESTR:TARGET%戴着套$/m],
+      },
+      { src: COMF_CONDOM_ERB, ref: '174', any: [/^\s*;?\s*ITEM:24\ \-=\ 1$/m] },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '176',
+        any: [/^\s*;?\s*ELSEIF\ RESULT\ ==\ 1$/m],
+      },
+      {
+        src: COMF_CONDOM_ERB,
+        ref: '178',
+        any: [/^\s*;?\s*ELSEIF\ RESULT\ !=\ 1$/m],
+      },
+    ],
+  },
+
+  {
+    js: 'ere/system/train/com-vaginasex.js',
+    refs: [
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '6-19',
+        any: [/^\s*;?\s*@CONFIRM_LOST_VIRGIN$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '40-745',
+        any: [/^\s*;?\s*@COM_EJAC_PLAYER_SEX$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '747-869',
+        any: [/^\s*;?\s*@COM_EJAC_PLAYER_MILK$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '871-1044',
+        any: [/^\s*;?\s*@COM_AFTER_VAGINA_SEX$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1046-1197',
+        any: [/^\s*;?\s*@COM_AFTER_EXTRA_SEX$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '21-38',
+        any: [/^\s*;?\s*@CONFIRM_LOST_VIRGIN_YOU$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '41', any: [/^\s*;?\s*\#DIM\ EXP_ID$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '587-589',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 3\.50$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '614-616',
+        any: [/^\s*;?\s*EXP_ID\ =\ 52$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '761',
+        any: [/^\s*;?\s*IF\ ABL:PLAYER:1\ ==\ 0$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '826', any: [/^\s*;?\s*E\ =\ 2$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '757-758',
+        any: [/^\s*;?\s*RETURN\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1074',
+        any: [/^\s*;?\s*PRINTL\ 性交経験＋１$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1171',
+        any: [/^\s*;?\s*PRINTW\ 【童貞喪失】$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '881',
+        any: [/^\s*;?\s*ELSEIF\ ABL:2\ <=\ 7$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1013',
+        any: [/^\s*;?\s*初体験が近親相姦$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '655-663',
+        any: [/^\s*;?\s*EXP:PLAYER:3\ \+=\ 2$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '57-738',
+        any: [/^\s*;?\s*B\ =\ 1500$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '44-48', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '44', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '47',
+        any: [/^\s*;?\s*SIF\ TEQUIP:55\ \&\&\ \(ASSI\ !=\ PLAYER\)$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '51', any: [/^\s*;?\s*B\ =\ 0$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '57-99', any: [/^\s*;?\s*B\ =\ 1500$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '100-133',
+        any: [/^\s*;?\s*ABL:顺从をみる$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '134-166',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 1\.00$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '167-226',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 0\.90$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '227-260',
+        any: [/^\s*;?\s*B\ =\ 500$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '261-293',
+        any: [/^\s*;?\s*ELSEIF\ ABL:12\ ==\ 2$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '294-339',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 1\.50$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '340-373',
+        any: [/^\s*;?\s*ELSEIF\ ABL:12\ ==\ 3$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '374-421', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '422-456',
+        any: [/^\s*;?\s*B\ =\ 3000$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '457-501',
+        any: [/^\s*;?\s*IF\ ABL:12\ ==\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '502-546',
+        any: [/^\s*;?\s*調教対象のABL:技巧をみる$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '547-588', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '591-663',
+        any: [/^\s*;?\s*EXP:私处经验をみる$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '666-668',
+        any: [
+          /^\s*;?\s*PRINTFORML\ %SAVESTR:TARGET%的直肠深处被大量的精液强烈地冲击着$/m,
+        ],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '671-673',
+        any: [/^\s*;?\s*PRINTL\ 膣内大量射精$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '675-683', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '688-723',
+        any: [/^\s*;?\s*セックスで射精フラグ$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '733-768',
+        any: [/^\s*;?\s*膣内射精フラグ（主人）$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '689',
+        any: [/^\s*;?\s*TFLAG:2\ =\ 2$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '741', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '691',
+        any: [/^\s*;?\s*SIF\ ASSIPLAY\ ==\ 0\ \&\&\ TEQUIP:35\ ==\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '743',
+        any: [/^\s*;?\s*調教者の噴乳チェック$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '695-696',
+        any: [/^\s*;?\s*TFLAG:38\ =\ 2$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '747-748',
+        any: [/^\s*;?\s*@COM_EJAC_PLAYER_MILK$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '699-700',
+        any: [/^\s*;?\s*EXP:20\ \+=\ 1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '751-752',
+        any: [/^\s*;?\s*RETURN\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '703-704',
+        any: [/^\s*;?\s*ELSEIF\ CFLAG:113\ ==\ 1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '755-756',
+        any: [/^\s*;?\s*死斗场の場合は助手以外はここで終了$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '706', any: [/^\s*;?\s*PRINTL\ 射精$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '758', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '707-713',
+        any: [
+          /^\s*;?\s*PRINTFORML\ %SAVESTR:TARGET%的精巢似乎感受到了的冲击$/m,
+        ],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '759-765',
+        any: [/^\s*;?\s*調教者の噴乳ゲージ増加量$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '685-730',
+        any: [/^\s*;?\s*SIF\ BASE:PLAYER:2\ >=\ EJAC$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '724',
+        any: [/^\s*;?\s*PRINTL\ 精液经验＋１$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '725',
+        any: [/^\s*;?\s*STAIN:PLAYER:2\ \|=\ 4$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '727-729',
+        any: [/^\s*;?\s*BASE:PLAYER:2\ \-=\ EJAC$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '732',
+        any: [/^\s*;?\s*TFLAG:2\ =\ 1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '734-735',
+        any: [/^\s*;?\s*SIF\ ASSIPLAY\ ==\ 0\ \&\&\ TEQUIP:35\ ==\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '737-738',
+        any: [/^\s*;?\s*SIF\ ASSIPLAY\ \&\&\ TEQUIP:36\ ==\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '731-771',
+        any: [/^\s*;?\s*セックスで射精フラグ$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '769',
+        any: [/^\s*;?\s*ELSEIF\ ABL:PLAYER:1\ >=\ 4$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '773', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '775-776', any: [/^\s*;?\s*克制$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '778-779', any: [/^\s*;?\s*接受快感$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '745',
+        any: [
+          /^\s*;?\s*2016\/11\/04\ 追加、基本にはCOM_EJAC_PLAYER_SEXとTARGET_MILK_CHECKの変形$/m,
+        ],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '751', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '753',
+        any: [/^\s*;?\s*SIF\ TEQUIP:89$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '755',
+        any: [/^\s*;?\s*死斗场の場合は助手以外はここで終了$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '760-767',
+        any: [
+          /^\s*;?\s*そのまま射精ゲージ流用し、Ｂ感覚のレッベルによて、変化する$/m,
+        ],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '770',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 1\.40$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '776',
+        any: [/^\s*;?\s*SIF\ TALENT:PLAYER:20$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '779', any: [/^\s*;?\s*接受快感$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '782', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '785',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 1\.10$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '788',
+        any: [/^\s*;?\s*SIF\ TALENT:PLAYER:71$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '791', any: [/^\s*;?\s*B敏感$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '794', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '797',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 0\.50$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '800',
+        any: [/^\s*;?\s*SIF\ TALENT:PLAYER:116$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '803',
+        any: [/^\s*;?\s*調教対象が幼儿退行$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '805-813',
+        any: [/^\s*;?\s*B\ \*=\ 2$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '815-840',
+        any: [/^\s*;?\s*調教者が弄乳狂$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '826-828', any: [/^\s*;?\s*E\ =\ 2$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '841-866',
+        any: [/^\s*;?\s*Ｂに母乳汚れ$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '10',
+        any: [/^\s*;?\s*PRINTL\ \ \[0\]\ \-\ 来吧女人$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '11',
+        any: [/^\s*;?\s*PRINTL\ \ \[1\]\ \-\ 让她继续做女孩$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '12', any: [/^\s*;?\s*INPUT$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '13',
+        any: [/^\s*;?\s*IF\ RESULT\ ==\ 1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '15',
+        any: [/^\s*;?\s*ELSEIF\ RESULT\ !=\ 0$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '17', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '19', any: [/^\s*;?\s*RETURN\ 1$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '876-884',
+        any: [/^\s*;?\s*私处感觉が高いほど私处经验が入る$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '886',
+        any: [/^\s*;?\s*EXP:0\ \+=\ S$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '887',
+        any: [/^\s*;?\s*PRINTFORML\ 私处经验\+\{S\}$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '890-914',
+        any: [/^\s*;?\s*EXP:5\ \+=\ 1$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '893', any: [/^\s*;?\s*异常经验$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '895-896',
+        any: [/^\s*;?\s*TFLAG:14\ =\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '898-899',
+        any: [/^\s*;?\s*处女丧失の相手が女性なら异常经验に＋1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '901-902',
+        any: [/^\s*;?\s*处女丧失の相手が父親か母親なら异常经验に＋２$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '905',
+        any: [
+          /^\s*;?\s*ELSEIF\ TALENT:0\ \&\&\ \(TFLAG:14\ ==\ 3\ \|\|\ TFLAG:14\ ==\ 4\)$/m,
+        ],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '908',
+        any: [/^\s*;?\s*处女丧失が兽奸なら异常经验は基本値２$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '917-918',
+        any: [/^\s*;?\s*EXP:50\ \+=\ Z$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '921',
+        any: [/^\s*;?\s*膣内フラグに上書きされることもある$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '924-928',
+        any: [/^\s*;?\s*兽奸の場合はここで終了$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '933',
+        any: [/^\s*;?\s*EXP:40\ \+=\ 4$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '936-957',
+        any: [/^\s*;?\s*死斗场の場合はここで終了$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '939', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '941',
+        any: [/^\s*;?\s*調教者が童贞で調教対象が处女$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '960-963', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '966-987',
+        any: [/^\s*;?\s*PRINTFORML\ %EXPNAME:23%\+\{E\}$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '977-978',
+        any: [/^\s*;?\s*SIF\ RELATION:R\ ==\ 30$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '982-983',
+        any: [/^\s*;?\s*SIF\ RELATION:R\ ==\ 20$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '987-988',
+        any: [/^\s*;?\s*SIF\ RELATION:R\ ==\ 10$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '990-991',
+        any: [/^\s*;?\s*SIF\ RELATION:R\ >\ 200$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '994-1000',
+        any: [/^\s*;?\s*主人によるセックスなら好感度上升$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1003-1041',
+        any: [/^\s*;?\s*親族関係の判定$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1005',
+        any: [/^\s*;?\s*CALL\ INCEST$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1007',
+        any: [/^\s*;?\s*IF\ TALENT:PLAYER:1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1008',
+        any: [/^\s*;?\s*TALENT:PLAYER:1\ =\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1010',
+        any: [/^\s*;?\s*IF\ CFLAG:PLAYER:15\ ==\ 0$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1011',
+        any: [/^\s*;?\s*CFLAG:PLAYER:15\ =\ NO:TARGET\ \+\ 1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1014-1037',
+        any: [
+          /^\s*;?\s*初体験の相手が自分の息子・娘という状況は生物学的にありえないので省く$/m,
+        ],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1039',
+        any: [
+          /^\s*;?\s*\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-$/m,
+        ],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1042-1043',
+        any: [/^\s*;?\s*STAIN:PLAYER:2\ \|=\ STAIN:3$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1055-1072',
+        any: [/^\s*;?\s*Ｂ感覚が高いほどＢ経験が入る$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1065-1066',
+        any: [/^\s*;?\s*初のB経験の場合異常経験2$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '1070', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1073',
+        any: [/^\s*;?\s*EXP:5\ \+=\ 1$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1076-1083',
+        any: [/^\s*;?\s*異常経験$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1080',
+        any: [/^\s*;?\s*ABNOMAL_EXP\ \+=\ Z$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '1086', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1091',
+        any: [/^\s*;?\s*レズ経験上昇$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1094-1098',
+        any: [/^\s*;?\s*PRINTL\ \+4$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '1101', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1103-1125',
+        any: [/^\s*;?\s*調教者が童貞で調教対象が処女$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1132-1153',
+        any: [/^\s*;?\s*初体験の相手が助手$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1158-1164',
+        any: [/^\s*;?\s*IF\ ABL:2\ >=\ 3$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1168-1192',
+        any: [/^\s*;?\s*調教者が童貞なら童貞喪失$/m],
+      },
+      {
+        src: COMF_VAGINASEX_ERB,
+        ref: '1170',
+        any: [/^\s*;?\s*TALENT:PLAYER:1\ =\ 0$/m],
+      },
+      { src: COMF_VAGINASEX_ERB, ref: '1194', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: COMF_VAGINASEX_ERB, ref: '1195-1197', any: [/^\s*;?\s*ENDIF$/m] },
+    ],
+  },
+
+  {
+    js: 'ere/system/train/com-analsex.js',
+    refs: [
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '6-351',
+        any: [/^\s*;?\s*@COM_EJAC_PLAYER_ANALSEX$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '353-452',
+        any: [/^\s*;?\s*@COM_AFTER_ANAL_SEX$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '15-242',
+        any: [/^\s*;?\s*調教者の射精ゲージ増加量$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '10-14',
+        any: [/^\s*;?\s*死斗场の場合は助手以外はここで終了$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '10', any: [/^\s*;?\s*$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '13', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '17', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '21-45',
+        any: [/^\s*;?\s*IF\ ABL:12\ ==\ 0$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '46-84', any: [/^\s*;?\s*B\ =\ 2400$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '85-110', any: [/^\s*;?\s*B\ =\ 800$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '111-153', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '154-196',
+        any: [/^\s*;?\s*ELSEIF\ ABL:12\ ==\ 4$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '197-242',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 1\.20$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '244-315',
+        any: [/^\s*;?\s*TIMES\ B\ ,\ 3\.50$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '279-291', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '315-317',
+        any: [/^\s*;?\s*セックスで射精フラグ$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '320-322',
+        any: [/^\s*;?\s*CFLAG:113\ =\ 3$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '324-332', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '335-344',
+        any: [/^\s*;?\s*SIF\ BASE:PLAYER:2\ >=\ EJAC$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '360-369', any: [/^\s*;?\s*S\ \+=\ 3$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '334-353',
+        any: [/^\s*;?\s*BASE:PLAYER:2\ \-=\ EJAC$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '339', any: [/^\s*;?\s*TFLAG:2\ =\ 1$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '340',
+        any: [/^\s*;?\s*肛内挿入异常妊娠フラグ$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '347', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '348-353', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '354-374',
+        any: [
+          /^\s*;?\s*\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-$/m,
+        ],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '359',
+        any: [/^\s*;?\s*IF\ ABL:3\ <=\ 1$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '360', any: [/^\s*;?\s*S\ \+=\ 3$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '371', any: [/^\s*;?\s*$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '372-374',
+        any: [/^\s*;?\s*EXP:5\ \+=\ 1$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '357-371', any: [/^\s*;?\s*S\ =\ 0$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '372', any: [/^\s*;?\s*EXP:5\ \+=\ 1$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '373',
+        any: [/^\s*;?\s*PRINTL\ 性交经验＋１$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '375-391',
+        any: [/^\s*;?\s*肛交怀孕对象判定$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '380',
+        any: [/^\s*;?\s*ELSEIF\ TEQUIP:89$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '382',
+        any: [/^\s*;?\s*CFLAG:102\ =\ 5$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '384', any: [/^\s*;?\s*死斗场下层居民$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '386',
+        any: [/^\s*;?\s*ELSEIF\ TEQUIP:90\ \|\|\ TEQUIP:55$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '388',
+        any: [/^\s*;?\s*CFLAG:102\ =\ 6$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '393', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '396-405', any: [/^\s*;?\s*RETURN\ 0$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '410',
+        any: [/^\s*;?\s*死斗场の場合はここで終了$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '413-425', any: [/^\s*;?\s*爱情经验$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '417-418', any: [/^\s*;?\s*E\ =\ 3$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '416',
+        any: [/^\s*;?\s*IF\ SELECTCOM\ ==\ 26$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '420-421', any: [/^\s*;?\s*E\ =\ 4$/m] },
+      { src: COMF_ANALSEX_ERB, ref: '423', any: [/^\s*;?\s*E\ =\ 2$/m] },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '427',
+        any: [/^\s*;?\s*SIF\ TALENT:122$/m],
+      },
+      {
+        src: COMF_ANALSEX_ERB,
+        ref: '430-437',
+        any: [/^\s*;?\s*IF\ CFLAG:2\ >=\ 1000\ \&\&\ ASSIPLAY\ ==\ 0$/m],
+      },
+      { src: COMF_ANALSEX_ERB, ref: '440-449', any: [/^\s*;?\s*ELSE$/m] },
+    ],
+  },
+
+  {
+    js: 'ere/system/train/passout.js',
+    refs: [
+      { src: PASSOUT_ERB, ref: '14-89', any: [/^\s*;?\s*@PASSOUT_CHECK$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '398',
+        any: [/^\s*;?\s*IF\ TEQUIP:13\ ==\ 1$/m],
+      },
+      { src: PASSOUT_ERB, ref: '91-283', any: [/^\s*;?\s*@PASSOUT_TEXT$/m] },
+      { src: PASSOUT_ERB, ref: '482-497', any: [/^\s*;?\s*UP:13\ =\ 0$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '285-456',
+        any: [/^\s*;?\s*@PASSOUT_MESSAGE$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '457-485',
+        any: [/^\s*;?\s*@PASSOUT_PALAM_CHECK$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '487-589',
+        any: [/^\s*;?\s*@PASSOUT_PALAM_UP$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '591-602',
+        any: [/^\s*;?\s*@PASSOUT_OUTDOOR$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '275-278',
+        any: [
+          /^\s*;?\s*失神回復時口上の呼び出し\ TFLAG:200が中身違うのでこれもスルーする$/m,
+        ],
+      },
+      { src: PASSOUT_ERB, ref: '294', any: [/^\s*;?\s*ELSE$/m] },
+      { src: PASSOUT_ERB, ref: '1-7', any: [/^\s*;?\s*﻿;eraIM@Sから流用$/m] },
+      { src: PASSOUT_ERB, ref: '16', any: [/^\s*;?\s*SIF\ FLAG:70\ ==\ 1$/m] },
+      { src: PASSOUT_ERB, ref: '18', any: [/^\s*;?\s*$/m] },
+      { src: PASSOUT_ERB, ref: '20', any: [/^\s*;?\s*$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '25-34',
+        any: [
+          /^\s*;?\s*（失神中はカウントしない、「強絶頂か2箇所以上絶頂」を続けている限りランダムで外れてもフラグは維持）$/m,
+        ],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '33',
+        any: [
+          /^\s*;?\s*ELSEIF\ Z\ <\ 16\ \&\&\ TFLAG:897\ <\ 2\ \&\&\ TFLAG:899\ <\ 1$/m,
+        ],
+      },
+      { src: PASSOUT_ERB, ref: '35', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '37-55', any: [/^\s*;?\s*A\ =\ PALAM:9$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '40-41',
+        any: [
+          /^\s*;?\s*一度に7500以上の苦痛を受けるか計15000ごとにランダムで失神（既に失神状態の場合はスキップ）$/m,
+        ],
+      },
+      { src: PASSOUT_ERB, ref: '51', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '52-54', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '57-71', any: [/^\s*;?\s*TFLAG:895\ =\ 3$/m] },
+      { src: PASSOUT_ERB, ref: '67', any: [/^\s*;?\s*失神中にコマンド実行$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '68-70',
+        any: [
+          /^\s*;?\s*IF\ TFLAG:896\ >=\ 2\ \|\|\ TFLAG:897\ >=\ 2\ \|\|\ TFLAG:898\ >=\ 2$/m,
+        ],
+      },
+      { src: PASSOUT_ERB, ref: '73-81', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '83-89', any: [/^\s*;?\s*TFLAG:898\ =\ 3$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '88',
+        any: [
+          /^\s*;?\s*\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-$/m,
+        ],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '95-100',
+        any: [/^\s*;?\s*TFLAG:\(864\ \+\ COUNT\)\ =\ 0$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '107-156',
+        any: [/^\s*;?\s*IF\ TFLAG:0\ \+\ TFLAG:6\ >=\ 1$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '115-127',
+        any: [/^\s*;?\s*IF\ TEQUIP:35\ ==\ 0$/m],
+      },
+      { src: PASSOUT_ERB, ref: '128', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '129-136',
+        any: [/^\s*;?\s*IF\ TFLAG:2\ \+\ TFLAG:6\ >=\ 1$/m],
+      },
+      { src: PASSOUT_ERB, ref: '137-138', any: [/^\s*;?\s*ENDIF$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '139-150',
+        any: [/^\s*;?\s*IF\ TFLAG:2\ \+\ TFLAG:6\ >=\ 1$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '153-234',
+        any: [/^\s*;?\s*ELSEIF\ SELECTCOM\ ==\ 102$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '236-237',
+        any: [/^\s*;?\s*TFLAG:882\ =\ \(\-1\)$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '239-272',
+        any: [/^\s*;?\s*IF\ TFLAG:899\ >=\ 1$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '274-313',
+        any: [/^\s*;?\s*CALL\ PASSOUT_MESSAGE$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '286-292',
+        any: [
+          /^\s*;?\s*自分でもよく分からないくらいメチャクチャな上、下に進むほど大雑把$/m,
+        ],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '288-302',
+        any: [/^\s*;?\s*IF\ TFLAG:60\ ==\ 1$/m],
+      },
+      { src: PASSOUT_ERB, ref: '304-455', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '304-322', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '323-354', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '355-383', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '384-391',
+        any: [/^\s*;?\s*PRINTW\ 触手吐出的污液，和无法隐藏的困惑…$/m],
+      },
+      { src: PASSOUT_ERB, ref: '392-404', any: [/^\s*;?\s*ELSE$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '405-427',
+        any: [/^\s*;?\s*ELSEIF\ TEQUIP:13\ ==\ 1$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '428-429',
+        any: [/^\s*;?\s*PRINT\ 被装上了器具，$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '430-449',
+        any: [/^\s*;?\s*PRINTFORMW\ 发现后开始感到困惑和恐惧了…$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '450-451',
+        any: [
+          /^\s*;?\s*X\ =\ TFLAG:867\ \+\ TFLAG:877\ \+\ TFLAG:878\ \+\ TFLAG:866\ \+\ TFLAG:879\ \+\ TFLAG:864\ \+\ TFLAG:865\ \+\ TFLAG:880\ \+\ TFLAG:881$/m,
+        ],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '452-458',
+        any: [/^\s*;?\s*TIMES\ X\ ,\ \-1$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '459-460',
+        any: [/^\s*;?\s*TFLAG:883\ \+=\ UP:6$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '461-463',
+        any: [/^\s*;?\s*TFLAG:885\ \+=\ UP:10$/m],
+      },
+      { src: PASSOUT_ERB, ref: '465-470', any: [/^\s*;?\s*ELSE$/m] },
+      { src: PASSOUT_ERB, ref: '475-484', any: [/^\s*;?\s*UP:4\ =\ 0$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '509-514',
+        any: [/^\s*;?\s*A\ \+=\ A\ \*\ G$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '515-527',
+        any: [/^\s*;?\s*IF\ ABL:32\ ==\ 3$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '529-535',
+        any: [/^\s*;?\s*E\ \+=\ E\ \*\ X$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '537-551',
+        any: [/^\s*;?\s*D\ \+=\ D\ \*\ Y$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '557-563',
+        any: [/^\s*;?\s*IF\ TFLAG:873\ >=\ 1$/m],
+      },
+      { src: PASSOUT_ERB, ref: '565-570', any: [/^\s*;?\s*ENDIF$/m] },
+      { src: PASSOUT_ERB, ref: '572-577', any: [/^\s*;?\s*Z\ \/=\ 2$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '579-583',
+        any: [/^\s*;?\s*UP:13\ \+=\ F\ \*\ Z\ \/\ 100$/m],
+      },
+      {
+        src: PASSOUT_ERB,
+        ref: '594',
+        any: [/^\s*;?\s*PRINTFORMW\ %SAVESTR:TARGET%失神了，所以带回了房间…$/m],
+      },
+      { src: PASSOUT_ERB, ref: '595', any: [/^\s*;?\s*$/m] },
+      {
+        src: PASSOUT_ERB,
+        ref: '598-602',
+        any: [/^\s*;?\s*BASE:MASTER:1\ \-=\ 10$/m],
+      },
+      { src: TEXT_FIX_ERB, ref: '1-7', any: [/^\s*;?\s*﻿@SHE\(ARG\)$/m] },
+    ],
+  },
+
+  {
+    js: 'ere/system/train/seiin.js',
+    refs: [
+      { src: SEIIN_ERB, ref: '6-23', any: [/^\s*;?\s*@SEIIN_START$/m] },
+      { src: SEIIN_ERB, ref: '25-78', any: [/^\s*;?\s*@SEIIN_CHECK$/m] },
+      { src: SEIIN_ERB, ref: '80-122', any: [/^\s*;?\s*@SEIIN_ORGASM$/m] },
+      {
+        src: SEIIN_ERB,
+        ref: '124-166',
+        any: [/^\s*;?\s*@SEIIN_COMPULSION_ORGASM$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '143',
+        any: [/^\s*;?\s*PRINTFORML\ 强制精饮绝顶$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '153',
+        any: [/^\s*;?\s*PRINTFORMW\ %SAVESTR:TARGET%的精液中毒达到LV3了$/m],
+      },
+      { src: SEIIN_ERB, ref: '1-7', any: [/^\s*;?\s*﻿;eraIM@Sから流用$/m] },
+      { src: SEIIN_ERB, ref: '8', any: [/^\s*;?\s*SIF\ FLAG:72\ ==\ 1$/m] },
+      {
+        src: SEIIN_ERB,
+        ref: '11-12',
+        any: [/^\s*;?\s*口で射精させていないor失神中だと処理しない$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '15-16',
+        any: [/^\s*;?\s*ELSEIF\ TALENT:47\ \&\&\ TFLAG:0\ >\ 0$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '18-19',
+        any: [/^\s*;?\s*ELSEIF\ TFLAG:0\ >\ 0\ \&\&\ TFLAG:29\ >\ 0$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '30-65',
+        any: [/^\s*;?\s*奴隷の素質により規定回数を増減する$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '30',
+        any: [/^\s*;?\s*奴隷の素質により規定回数を増減する$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '32-65',
+        any: [/^\s*;?\s*SIF\ TALENT:13\ ==\ 1$/m],
+      },
+      { src: SEIIN_ERB, ref: '68', any: [/^\s*;?\s*SIF\ TALENT:80\ ==\ 1$/m] },
+      {
+        src: SEIIN_ERB,
+        ref: '82-83',
+        any: [/^\s*;?\s*精饮绝顶经验の回数追加$/m],
+      },
+      { src: SEIIN_ERB, ref: '86-99', any: [/^\s*;?\s*精饮绝顶经验の処理$/m] },
+      { src: SEIIN_ERB, ref: '101-119', any: [/^\s*;?\s*基本ソース$/m] },
+      { src: SEIIN_ERB, ref: '127', any: [/^\s*;?\s*$/m] },
+      {
+        src: SEIIN_ERB,
+        ref: '130-133',
+        any: [/^\s*;?\s*PRINTFORML\ 强制精饮绝顶$/m],
+      },
+      {
+        src: SEIIN_ERB,
+        ref: '134-141',
+        any: [/^\s*;?\s*ELSEIF\ CFLAG:600\ ==\ 1$/m],
+      },
+      { src: SEIIN_ERB, ref: '142-150', any: [/^\s*;?\s*ELSE$/m] },
+      { src: SEIIN_ERB, ref: '152-158', any: [/^\s*;?\s*IF\ ABL:32\ <\ 3$/m] },
+      {
+        src: SEIIN_ERB,
+        ref: '160-166',
+        any: [/^\s*;?\s*SOURCE:13\ =\ 1000$/m],
+      },
+      { src: TEXT_FIX_ERB, ref: '1-7', any: [/^\s*;?\s*﻿@SHE\(ARG\)$/m] },
+    ],
+  },
   // —— #215 J5 服装：ere/system/train/cloth.js ——
   {
     js: 'ere/system/train/cloth.js',
@@ -2957,6 +4350,40 @@ const FILES = [
   {
     js: 'ere/event/source-check.js',
     refs: [
+      {
+        src: SUB1,
+        ref: '267-268',
+        any: [/^\s*;?\s*SIF\ TALENT:0\ ==\ 0\ \|\|\ TFLAG:19\ ==\ 0$/m],
+      },
+      { src: SUB1, ref: '270', any: [/^\s*;?\s*PRINTL\ 【处女丧失】$/m] },
+      { src: SUB1, ref: '271', any: [/^\s*;?\s*TALENT:0\ =\ 0$/m] },
+      { src: SUB1, ref: '274-277', any: [/^\s*;?\s*TFLAG:3\ =\ 1$/m] },
+      { src: SUB1, ref: '282', any: [/^\s*;?\s*$/m] },
+      { src: SUB1, ref: '284', any: [/^\s*;?\s*TFLAG:14\ =\ 0$/m] },
+      { src: SUB1, ref: '285', any: [/^\s*;?\s*CALL\ INCEST$/m] },
+      { src: SUB1, ref: '287-313', any: [/^\s*;?\s*IF\ CFLAG:15\ ==\ 0$/m] },
+      {
+        src: SUB1,
+        ref: '289',
+        any: [/^\s*;?\s*CFLAG:15\ =\ NO:PLAYER\ \+\ 1$/m],
+      },
+      {
+        src: SUB1,
+        ref: '290',
+        any: [/^\s*;?\s*CSTR:TARGET:3\ =\ %SAVESTR:PLAYER%$/m],
+      },
+      {
+        src: SUB1,
+        ref: '314-325',
+        any: [/^\s*;?\s*SIF\ TEQUIP:90\ \&\&\ SELECTCOM\ ==\ 101$/m],
+      },
+      { src: SUB1, ref: '327-340', any: [/^\s*;?\s*TFLAG:150\ =\ 1$/m] },
+      {
+        src: SOURCE,
+        ref: '400-401',
+        any: [/^\s*;?\s*SIF\ TEQUIP:54\ \&\&\ TFLAG:899\ >\ 0$/m],
+      },
+      { src: SOURCE, ref: '1812', any: [/^\s*;?\s*CALL\ SEIIN_START$/m] },
       { src: SOURCE, ref: '7-576', any: [/@SOURCE_CHECK/] },
       { src: SOURCE, ref: '11-12', any: [/CALL KOJO_MESSAGE_COM/] },
       { src: SOURCE, ref: '19-51', any: [/射在避孕套里/] },
