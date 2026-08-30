@@ -110,7 +110,9 @@ test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 mon
     ...load(fixture, 'dungeon/monster-data').STUBBED_CALLS,
     ...load(fixture, 'kojo/kojo-dungeon-ravish').STUBBED_CALLS,
   ];
-  assert.ok(names.length >= 17, `四份名单合计 ${names.length} 条（应 ≥ 17）`);
+  // #217 起 SELECT_BENKI_MENU/NAME_BENKI_MENU/GET_EXP_BENKI_MENU 换真身
+  // （system/train/benki.js），战斗三份名单减 3 条
+  assert.ok(names.length >= 14, `四份名单合计 ${names.length} 条（应 ≥ 14）`);
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

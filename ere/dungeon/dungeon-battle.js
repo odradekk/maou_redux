@@ -58,21 +58,24 @@ const {
 // 存根是函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
 // battle_mod 同构）。
 const quest_mod = require('#/dungeon/dungeon-quest');
+const {
+  select_benki_menu,
+  name_benki_menu,
+  get_exp_benki_menu,
+} = require('#/system/train/benki');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。QUEST_BATTLE_SET / RESULT_QUEST 不在
  * 此列（#178 真身 ere/dungeon/dungeon-quest.js，:77/:363/:365 经模块对象
- * quest_mod 调用）。
+ * quest_mod 调用）；#217（J7）起 SELECT_BENKI_MENU / NAME_BENKI_MENU /
+ * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除。
  */
 const STUBBED_CALLS = [
   'MAGIC',
   'MONSTER_SKILL',
   'CAMPAIGN_MONSTER_LIST',
   'CAMPAIGN_DUNGEON_LV',
-  'SELECT_BENKI_MENU',
-  'NAME_BENKI_MENU',
-  'GET_EXP_BENKI_MENU',
   'BEFORE_AUTOTRAIN',
   'COM13_AUTO',
   'SOURCE_CHECK_AUTO',
@@ -128,33 +131,6 @@ function monster_skill() {
  */
 function campaign_monster_list() {
   return stub_line('CAMPAIGN_MONSTER_LIST', '战役怪物表', '随战役票（阶段 5）');
-}
-
-/**
- * @SELECT_BENKI_MENU 存根（肉便器票）：战斗中肉便器的PLAY 类型选择。
- * 存根返回 0（普通型）。
- * @returns {number} 原作 RESULT（存根恒 0）
- */
-function select_benki_menu() {
-  return stub_line('SELECT_BENKI_MENU', '肉便器选择', '随肉便器票');
-}
-
-/**
- * @NAME_BENKI_MENU 存根（肉便器票）：PLAY 类型名（打印型）。存根返回
- * 空串——攻击演出的「以……进行了诱惑」中间无名（调用点 1:1 保留）。
- * @returns {string} 类型名（存根恒空串）
- */
-function name_benki_menu() {
-  stub_line('NAME_BENKI_MENU', '肉便器类型名', '随肉便器票');
-  return '';
-}
-
-/**
- * @GET_EXP_BENKI_MENU 存根（肉便器票）：肉便器战斗的经验加成。
- * @returns {void} 原作无 RESULT 消费
- */
-function get_exp_benki_menu() {
-  stub_line('GET_EXP_BENKI_MENU', '肉便器经验', '随肉便器票');
 }
 
 /**
@@ -601,8 +577,8 @@ async function enemy_attack(arg0, arg1, rand) {
   // :561-562 一応代入（A / TARGET）
   era_flag.target = arg0;
 
-  // :565 肉便器用（PLAY_TYPE；存根恒 0）
-  const play_type = select_benki_menu();
+  // :565 肉便器用（PLAY_TYPE——#217 真身：以 RAND:DICE 抽调教指令号）
+  const play_type = select_benki_menu(arg0, '战斗', rand);
 
   // :568 PLAYER = 0——本函数无读者，不落变量（死赋值，注释留痕）
 
@@ -679,7 +655,8 @@ async function enemy_attack(arg0, arg1, rand) {
     let line = skill_tag;
     if (benki) {
       // :652-654 作为肉便器的XX以（NAME_BENKI_MENU 的类型名）进行了诱惑！！
-      line += `作为肉便器的${name_of(arg0)}以${name_benki_menu()}进行了诱惑！！`;
+      // :653 CALL NAME_BENKI_MENU,PLAY_TYPE（#217 真身：返回类型名拼行）
+      line += `作为肉便器的${name_of(arg0)}以${name_benki_menu(play_type)}进行了诱惑！！`;
     } else {
       line += `勇者${name_of(arg0)}使用${
         [
@@ -851,7 +828,7 @@ async function enemy_attack(arg0, arg1, rand) {
     // 死亡怪物計算（FLAG:63）
     era.set('flag:63', (era.get('flag:63') || 0) + e_get(target_head + 99));
     era.set(`exp:${arg0}:80`, (era.get(`exp:${arg0}:80`) || 0) + get_exp);
-    get_exp_benki_menu(arg0, play_type);
+    await get_exp_benki_menu(arg0, play_type);
     // :820-824 ITEM:E:C -= E:(C + 99)（怪物库存，钳 0）
     const stock = era.get(`item:${mon_id}`) || 0;
     era.set(`item:${mon_id}`, Math.max(stock - e_get(target_head + 99), 0));
@@ -898,7 +875,7 @@ async function enemy_attack(arg0, arg1, rand) {
   get_exp *= killed;
   get_exp *= 3;
   era.set(`exp:${arg0}:80`, (era.get(`exp:${arg0}:80`) || 0) + get_exp);
-  get_exp_benki_menu(arg0, play_type);
+  await get_exp_benki_menu(arg0, play_type);
   if (boss_flag === 0) {
     e_set(target_head + 99, e_get(target_head + 99) - killed);
   }
