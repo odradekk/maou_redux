@@ -73,10 +73,13 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   //             同时生效，下面是合并态实测
   // #216（J6）起 −3：@SOURCE_CHECK 的 SEIIN_START / PASSOUT_CHECK /
   // PASSOUT_TEXT 三个占位行换真身，COM0 路径上恒静默
+  //             同时生效；#228 起 72/95：diff.js 的 menu 集合比对改
+  //             「相等 token 先配」（同号多条目次序受屏数影响时按下标
+  //             配对会错开同形条目），旧样本里两条错位 menu 对转匹配
   assert.deepEqual(report.summary, {
-    matched: 71,
+    matched: 72,
     version: 0,
-    stub: 94,
+    stub: 92,
     unexplained: 0,
   });
 });

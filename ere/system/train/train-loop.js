@@ -44,17 +44,27 @@
  *        不结算、不进 @EVENTCOMEND。EVENTCOM 先于该判定是本移植的解读
  *        （引擎未明文），#45 已核——CALLTRAIN 段（system-flow.md:100-105）
  *        证得 SOURCE_CHECK→EVENTCOMEND 是执行链尾，缺失路径无观察差异，
- *        维持本序（详见 issue #45 留言）
+ *        维持本序（详见 issue #45 留言）。**@COMxx 返回 0 → 回合取消**
+ *        （era wiki Emuera/flow·TRAIN 节，flow1821＝本作引擎版本：「@COM
+ *        returns 0, it returns to @SHOW_STATUS」）：引擎不调 @SOURCE_CHECK
+ *        与 @EVENTCOMEND、SOURCE 不清零、PREVCOM 不推进，指令自身的副
+ *        作用（着衣位等）保留——自带子菜单的指令（COM110/111 等）全部
+ *        出口 RETURN 0，源文件头的「通常コマンド扱いにならない」即指
+ *        此。原 #44/#213 期已实现的指令（COM0 等）一律 RETURN 1，取消
+ *        路径无消费者；语义随 #228（J18·COM110）落地修正——golden 侧
+ *        证据：train-natural 的 210/250 两行「上次的调教指令」在 COM110 执行
+ *        前后同为接吻（PREVCOM 未推）。
  *    12.5 @SOURCE_CHECK 事件链（引擎回调：@COMxx 之后、UPCHECK 之前；
  *        函数体在 event/source-check.js，#45——源→参数换算、绝顶、刻印、
  *        结算展示）
- *    13. 指令执行后：PREVCOM = SELECTCOM（引擎行为，「检查 SOURCE、UPCHECK
- *        等」的一环；原作在 @SOURCE_CHECK :545 自做，ere 侧统一由本循环承
- *        载）→ era.nextTurnInTrain()（UPCHECK 的 ere 等价：delta→
- *        palam、nowex→ex、deltabase→base 并清 source/delta/nowex；#45 起
- *        SOURCE_CHECK 对 palam/base 当场结算、delta/deltabase 清零，本步
- *        对已结算行为成为无操作——防双重累加的职责划分见 source-check.js
- *        文件头）→ @EVENTCOMEND 事件链
+ *    13. 指令执行后（仅 RETURN 非 0 的回合，见 12 的取消语义）：
+ *        PREVCOM = SELECTCOM（原作在 @SOURCE_CHECK :545 自做，ere 侧统一
+ *        由本循环承载——SOURCE_CHECK 跑了才推，取消回合不推）→ era.
+ *        nextTurnInTrain()（UPCHECK 的 ere 等价：delta→palam、nowex→ex、
+ *        deltabase→base 并清 source/delta/nowex；#45 起 SOURCE_CHECK 对
+ *        palam/base 当场结算、delta/deltabase 清零，本步对已结算行为成为
+ *        无操作——防双重累加的职责划分见 source-check.js 文件头）→
+ *        @EVENTCOMEND 事件链
  *    14. 回到 4
  *
  *    步骤 10-13 抽成 execute_command_round（#214）：正常输入路径与
@@ -131,8 +141,10 @@ function clear_nowex_all() {
  * 序列共用。**不含**输入检查与 SELECTCOM 设定（调用方先置 selectcom）。
  *
  * @param {number} result SELECTCOM（Train.csv 编号 L_I）
- * @returns {Promise<{missing: boolean, pending?: string}>}
+ * @returns {Promise<{missing: boolean, cancelled?: boolean, pending?: string}>}
  *   missing = @COMxx 未实现（引擎「重新要求输入」语义，调用方丢弃本回合）；
+ *   cancelled = @COMxx RETURN 0（回合取消：副作用保留但不结算，调用方回
+ *   循环头重绘——与 missing 对调用方同形，语义分立供断言与后续消费）；
  *   pending = 链内暂存的 BEGIN 目标（转场优先，调用方须立即上抛）
  */
 async function execute_command_round(result) {
@@ -143,12 +155,17 @@ async function execute_command_round(result) {
   if (com_pending !== undefined) {
     return { missing: false, pending: com_pending };
   }
-  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
+  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）；
+  // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头
+  // 第 12 步的取消语义，子菜单指令全出口 RETURN 0）
   const com_result = await com_family.call(result, {
     whenMissing: COM_MISSING,
   });
   if (com_result === COM_MISSING) {
     return { missing: true };
+  }
+  if (com_result === 0) {
+    return { missing: false, cancelled: true };
   }
   // 12.5 @SOURCE_CHECK（引擎回调：@COMxx 之后、UPCHECK 之前；函数体在
   // event/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
@@ -157,7 +174,8 @@ async function execute_command_round(result) {
   if (source_pending !== undefined) {
     return { missing: false, pending: source_pending };
   }
-  // 13. PREVCOM 更新（引擎行为）→ UPCHECK 等价结算 → @EVENTCOMEND
+  // 13. PREVCOM 更新 → UPCHECK 等价结算 → @EVENTCOMEND（取消回合已在
+  // 12 处返回，到不了这里）
   era_flag.prevcom = result;
   era.nextTurnInTrain();
   const comend_pending = await emit('EVENTCOMEND');

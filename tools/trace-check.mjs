@@ -76,6 +76,9 @@ const COMF0 = 'target/ERB/調教相關/COMF0_愛撫.ERB';
 const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
 const BENKI = 'target/ERB/調教相關/BENKI.ERB';
+const COMF110_ERB = 'target/ERB/調教相關/COMF110_服の着脱.ERB';
+const COMF111_ERB = 'target/ERB/調教相關/COMF111_服を破る.ERB';
+const COMABLE_ERB = COMABLE;
 const MESSAGE_B = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB';
 const FUNC_CLOTH_ERB = 'target/ERB/其他/FUNC_CLOTH.ERB';
 const SHOP_TAILOR = 'target/ERB/SHOP/SHOP_TAILOR.ERB';
@@ -4015,6 +4018,215 @@ const FILES = [
         any: [/^\s*;?\s*SOURCE:13\ =\ 1000$/m],
       },
       { src: TEXT_FIX_ERB, ref: '1-7', any: [/^\s*;?\s*﻿@SHE\(ARG\)$/m] },
+    ],
+  },
+  // —— #228 J18 着装脱衣：ere/system/train/com-cloth.js（COM110/COM111 +
+  //    COMABLE.ERB 的两段可用性判定；88 条内联引用的锚） ——
+  {
+    js: 'ere/system/train/com-cloth.js',
+    refs: [
+      { src: COMF110_ERB, ref: '8-323', any: [/^@COM110$/m] },
+      { src: COMF110_ERB, ref: '12', any: [/^PRINTL 穿脱衣服$/m] },
+      { src: COMF110_ERB, ref: '14-17', any: [/^CALL WEARING_CLOTH_ALL$/m] },
+      { src: COMF110_ERB, ref: '22-24', any: [/^CALL PRINT_CLOTHTYPE$/m] },
+      { src: COMF110_ERB, ref: '27-50', any: [/^CALL COM110_ABLE5W$/m] },
+      { src: COMF110_ERB, ref: '52-135', any: [/^PRINTL  \[100\] - 算了$/m] },
+      { src: COMF110_ERB, ref: '136', any: [/^INPUT$/m] },
+      { src: COMF110_ERB, ref: '142-319', any: [/^ELSEIF RESULT == 100$/m] },
+      {
+        src: COMF110_ERB,
+        ref: '141-144',
+        any: [/^	PRINTFORML %SAVESTR:TARGET%贞操带的钥匙丢掉了。$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '146-160',
+        any: [/^ELSEIF RESULT == 0 && T:0$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '161-178',
+        any: [/^ELSEIF RESULT == 0 && W:0$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '179-194',
+        any: [/^ELSEIF RESULT == 1 && T:1$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '195-216',
+        any: [/^ELSEIF RESULT == 1 && W:1$/m],
+      },
+      { src: COMF110_ERB, ref: '210-215', any: [/^				CFLAG:40 \|= 8$/m] },
+      {
+        src: COMF110_ERB,
+        ref: '217-222',
+        any: [/^ELSEIF RESULT == 1 && T:2$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '223-228',
+        any: [/^ELSEIF RESULT == 1 && W:2$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '229-247',
+        any: [/^ELSEIF RESULT == 2 && T:3$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '248-273',
+        any: [/^ELSEIF RESULT == 2 && W:3$/m],
+      },
+      { src: COMF110_ERB, ref: '263-267', any: [/^		IF CFLAG:41 <= 100$/m] },
+      {
+        src: COMF110_ERB,
+        ref: '270-273',
+        any: [/^ELSEIF RESULT == 3 && T:4$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '274-277',
+        any: [/^ELSEIF RESULT == 3 && W:4$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '278-287',
+        any: [/^ELSEIF RESULT == 4 && T:5$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '288-299',
+        any: [/^ELSEIF RESULT == 4 && W:5$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '300-311',
+        any: [/^ELSEIF RESULT == 7 && CFLAG:40 != 0$/m],
+      },
+      {
+        src: COMF110_ERB,
+        ref: '312-316',
+        any: [/^ELSEIF RESULT == 9 && CFLAG:40 != 0$/m],
+      },
+      { src: COMF110_ERB, ref: '314', any: [/^	CALL COM111$/m] },
+      { src: COMF110_ERB, ref: '317-318', any: [/^ELSEIF RESULT == 100$/m] },
+      { src: COMF110_ERB, ref: '321', any: [/^PRINTL $/m] },
+      { src: COMF110_ERB, ref: '323', any: [/^GOTO INPUT_LOOP$/m] },
+      { src: COMF110_ERB, ref: '329-540', any: [/^@COM110_ABLE0T$/m] },
+      { src: COMF110_ERB, ref: '329-349', any: [/^@COM110_ABLE0T$/m] },
+      {
+        src: COMF110_ERB,
+        ref: '342-343',
+        any: [/^	SIF \(CFLAG:40 & 64\) && CFLAG:42 <= 50$/m],
+      },
+      { src: COMF110_ERB, ref: '351-377', any: [/^@COM110_ABLE0W$/m] },
+      { src: COMF110_ERB, ref: '379-390', any: [/^@COM110_ABLE1T$/m] },
+      { src: COMF110_ERB, ref: '392-411', any: [/^@COM110_ABLE1W$/m] },
+      {
+        src: COMF110_ERB,
+        ref: '400-403',
+        any: [/^IF \(CFLAG:40 & 4\) \|\| CFLAG:45 != 0$/m],
+      },
+      { src: COMF110_ERB, ref: '413-424', any: [/^@COM110_ABLE2T$/m] },
+      { src: COMF110_ERB, ref: '426-443', any: [/^@COM110_ABLE2W$/m] },
+      { src: COMF110_ERB, ref: '445-456', any: [/^@COM110_ABLE3T$/m] },
+      { src: COMF110_ERB, ref: '458-475', any: [/^@COM110_ABLE3W$/m] },
+      { src: COMF110_ERB, ref: '477-488', any: [/^@COM110_ABLE4T$/m] },
+      { src: COMF110_ERB, ref: '490-504', any: [/^@COM110_ABLE4W$/m] },
+      { src: COMF110_ERB, ref: '506-520', any: [/^@COM110_ABLE5T$/m] },
+      { src: COMF110_ERB, ref: '522-540', any: [/^@COM110_ABLE5W$/m] },
+      { src: COMF111_ERB, ref: '7-168', any: [/^@COM111$/m] },
+      { src: COMF111_ERB, ref: '11', any: [/^PRINTL 撕破衣服$/m] },
+      { src: COMF111_ERB, ref: '13-16', any: [/^CALL WEARING_CLOTH_ALL$/m] },
+      { src: COMF111_ERB, ref: '20-23', any: [/^CALL PRINT_CLOTHTYPE$/m] },
+      { src: COMF111_ERB, ref: '25-39', any: [/^CALL COM111_ABLE6L$/m] },
+      { src: COMF111_ERB, ref: '41-84', any: [/^PRINTL  \[100\]- 算了$/m] },
+      { src: COMF111_ERB, ref: '85', any: [/^INPUT$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '91-157',
+        any: [/^ELSEIF RESULT == 10 && L:0$/m],
+      },
+      {
+        src: COMF111_ERB,
+        ref: '91-96',
+        any: [
+          /^IF RESULT == 10 && \(CFLAG:40 & 64\) && \(CFLAG:42 == 11 \|\| CFLAG:42 == 79\)$/m,
+        ],
+      },
+      {
+        src: COMF111_ERB,
+        ref: '97-103',
+        any: [/^ELSEIF RESULT == 10 && L:0$/m],
+      },
+      { src: COMF111_ERB, ref: '102', any: [/^	CFLAG:47 = -3$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '104-110',
+        any: [/^ELSEIF RESULT == 11 && L:1$/m],
+      },
+      { src: COMF111_ERB, ref: '109', any: [/^	CFLAG:45 = -3$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '111-120',
+        any: [/^ELSEIF RESULT == 12 && L:2$/m],
+      },
+      { src: COMF111_ERB, ref: '119', any: [/^	CFLAG:46 = -3$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '121-127',
+        any: [/^ELSEIF RESULT == 11 && L:3$/m],
+      },
+      { src: COMF111_ERB, ref: '126', any: [/^	CFLAG:45 = -3$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '128-141',
+        any: [/^ELSEIF RESULT == 12 && L:4$/m],
+      },
+      { src: COMF111_ERB, ref: '140', any: [/^	CFLAG:46 = -3$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '142-146',
+        any: [/^ELSEIF RESULT == 13 && L:5$/m],
+      },
+      { src: COMF111_ERB, ref: '145', any: [/^	CFLAG:44 = -3$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '147-151',
+        any: [/^ELSEIF RESULT == 14 && L:6$/m],
+      },
+      { src: COMF111_ERB, ref: '150', any: [/^	CFLAG:43 = -3$/m] },
+      { src: COMF111_ERB, ref: '151-152', any: [/^ELSEIF RESULT == 19$/m] },
+      { src: COMF111_ERB, ref: '153-155', any: [/^ELSEIF RESULT == 100$/m] },
+      { src: COMF111_ERB, ref: '156-157', any: [/^	GOTO INPUT_LOOP$/m] },
+      {
+        src: COMF111_ERB,
+        ref: '159-165',
+        any: [/^	PRINTL （已经全裸，撕无可撕）$/m],
+      },
+      { src: COMF111_ERB, ref: '166', any: [/^PRINTL $/m] },
+      { src: COMF111_ERB, ref: '168', any: [/^GOTO INPUT_LOOP$/m] },
+      { src: COMF111_ERB, ref: '174-262', any: [/^@COM111_ABLE0L$/m] },
+      { src: COMF111_ERB, ref: '174-182', any: [/^@COM111_ABLE0L$/m] },
+      { src: COMF111_ERB, ref: '184-195', any: [/^@COM111_ABLE1L$/m] },
+      { src: COMF111_ERB, ref: '197-208', any: [/^@COM111_ABLE2L$/m] },
+      { src: COMF111_ERB, ref: '210-221', any: [/^@COM111_ABLE3L$/m] },
+      { src: COMF111_ERB, ref: '223-234', any: [/^@COM111_ABLE4L$/m] },
+      { src: COMF111_ERB, ref: '236-247', any: [/^@COM111_ABLE5L$/m] },
+      { src: COMF111_ERB, ref: '249-262', any: [/^@COM111_ABLE6L$/m] },
+      { src: COMABLE_ERB, ref: '3662-3678', any: [/^@COM_ABLE110$/m] },
+      { src: COMABLE_ERB, ref: '3664-3665', any: [/^SIF TFLAG:224 == 555$/m] },
+      { src: COMABLE_ERB, ref: '3666-3667', any: [/^SIF FLAG:37 == 0$/m] },
+      {
+        src: COMABLE_ERB,
+        ref: '3670-3671',
+        any: [/^SIF CFLAG:41 == 0 && CFLAG:42 == 0$/m],
+      },
+      { src: COMABLE_ERB, ref: '3672-3681', any: [/^SIF TEQUIP:90$/m] },
+      { src: COMABLE_ERB, ref: '3692-3716', any: [/^@COM_ABLE111$/m] },
+      { src: COMABLE_ERB, ref: '3718-3719', any: [/^SIF CFLAG:40 == 0$/m] },
     ],
   },
   // —— #215 J5 服装：ere/system/train/cloth.js ——

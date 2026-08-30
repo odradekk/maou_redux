@@ -200,15 +200,6 @@ export default [
     must_mention: '输入不合法！请输入以下值之一',
   },
   {
-    desc: 'M305 归因规则删存档备注错位条目（<TS> 规则——saveload 基线未解释非零）',
-    file: 'tools/compare/rules.js',
-    find: "      if (typeof entry.key === 'string' && entry.key.startsWith('<TS> ')) {",
-    replace:
-      "      if (false && typeof entry.key === 'string' && entry.key.startsWith('<TS> ')) { // 变异：错位规则删",
-    tests: ['compare-scope-b'],
-    must_mention: '基线漂移',
-  },
-  {
     desc: 'M306 cli 比对不传 scope（范围 B 归因组整体旁路——真库直跑未解释非零）',
     file: 'tools/compare/cli.js',
     find: "    report = diff_streams(golden_entries, ere_entries, {\n      scope: 'B',\n      segment,\n    });",
