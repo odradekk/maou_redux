@@ -29,6 +29,21 @@ class StrongholdFacade {
   }
 
   /**
+   * 胸罩状态（cflag:cid:44 ↔ CFLAG:44）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行298 CFLAG:44 ブラジャーの状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
+   * @returns {number}
+   */
+  get 胸罩状态() {
+    return era.get(`cflag:${this.cid}:44`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 胸罩状态(v) {
+    era.set(`cflag:${this.cid}:44`, v);
+  }
+
+  /**
    * 迷宫内行动（cflag:cid:500 ↔ CFLAG:500）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行385 CFLAG:500 = ダンジョン内行動(0:内職 1:売春 2:罠補充 3:施設拡張 4:潜入)
    * @returns {number}

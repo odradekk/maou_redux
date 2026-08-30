@@ -58,14 +58,11 @@ const STUB_TEXT_RE = /尚未移植/;
 //   golden 侧未匹配实例，留在集合里是给「同一函数的未实现调用点」兜底。
 const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);
 
-// —— golden 侧文本的成对差异（服装系统待办）——
-//   TRAIN_MESSAGE_B 的服装前缀（PRINT_CLOTHTYPE_SPECIAL，登记随服装票）：
-//   golden 带「隔着紧身衣＆裙甲、」前缀，ere 侧没有；ere 侧的裸文本与
-//   golden 去前缀后逐字一致才豁免（成对豁免，单边不成立）。
-const CLOTH_PREFIX = '隔着紧身衣＆裙甲、';
-// PRINT_CLOTHTYPE 的两态（train-natural 的穿衣/全裸各屏；范围 B 与旧样本
-// 的流里无此二串，加'【全裸】'（#211）对既有基线零影响）
-const STUB_TEXT_EXACT = new Set(['【紧身衣＆裙甲的姿态】', '【全裸】']);
+// 【#228 整组拆除】此处原是服装系统的四条两态豁免（CLOTH_PREFIX 成对
+// 两条 + STUB_TEXT_EXACT 两条）：PRINT_CLOTHTYPE/前缀自 #215（J5）起为
+// 真身、COM110（穿脱）自 #228（J18）起为真身，两侧同形、豁免全部失效。
+// 残余的「ere 侧多余【全裸】」改按重绘屏残余归因（classify_entry 内，
+// 只认【全裸】——COM110 回归时当场 unexplained 变红）。
 
 // —— 范围 B（#161）：主菜单/存读档/日循环三段的归因。全部受 scope 守卫
 //    （context.scope === 'B'，由 cli 的 --sample 传入）——调教段比对不带
@@ -246,58 +243,20 @@ function classify_entry(entry, side, context) {
           '存根占位行（ere/utils/stub-line.js 形状，docs/stub-registry.md）',
       };
     }
-    if (side === 'golden' && STUB_TEXT_EXACT.has(entry.text)) {
-      return {
-        category: 'stub',
-        reason: '服装类型显示未移植（PRINT_CLOTHTYPE，docs/stub-registry.md）',
-      };
-    }
-    if (
-      side === 'golden' &&
-      entry.text.startsWith(CLOTH_PREFIX) &&
-      context.counterpart?.kind === 'text' &&
-      context.counterpart.text === entry.text.slice(CLOTH_PREFIX.length)
-    ) {
-      return {
-        category: 'stub',
-        reason:
-          '服装前缀未移植（PRINT_CLOTHTYPE_SPECIAL，docs/stub-registry.md）',
-      };
-    }
-    if (
-      side === 'ere' &&
-      context.counterpart?.kind === 'text' &&
-      context.counterpart.text === CLOTH_PREFIX + entry.text
-    ) {
-      return {
-        category: 'stub',
-        reason: '同上：服装前缀差异的 ere 半边（成对豁免）',
-      };
-    }
-    // #215（J5）起服装前缀与 PRINT_CLOTHTYPE 为真身，但 COM110（穿脱）
-    // 未移植：ere 侧不扒光，前缀与【着衣】态残留——ere 半边的两态与
-    // 反向前缀记名 COM110 待办（golden 半边走上方既有规则；比对流的
-    // LCS 配对在指令块大面积缺失时会跨块错位，对侧未必是同类行，故
-    // ere 半边不要求 counterpart——与 golden 半边 STUB_TEXT_EXACT 的
-    // 无条件形状对称。COM110 落地时本组差异整对转匹配，unexplained
-    // 恒 0 的底线不动）
-    if (side === 'ere' && STUB_TEXT_EXACT.has(entry.text)) {
+    // 服装行的重绘屏残余（#228 收口）：COM110（穿脱）已移植、
+    // PRINT_CLOTHTYPE/前缀自 #215 起为真身——两侧同形，#211/#215 期的
+    // 四条两态豁免（golden/ere 各两条）随之整组拆除。残余的 ere 侧
+    // 多余【全裸】只可能来自 ere 多出的整屏重绘（train-upgrade 实证 1
+    // 条：误执行 COM0 的多余回合，#213 输入映射缺失，文件头登记）——
+    // 其余屏行（状态头/参数条/按钮组）各有重绘归因，服装行在此补齐。
+    // **只认【全裸】**：COM110 若回归（ere 不再扒光），ere 侧多出的是
+    // 【紧身衣＆裙甲的姿态】、golden 侧多出【全裸】——两者都不在本条
+    // 豁免内，当场 unexplained 变红
+    if (side === 'ere' && entry.text === '【全裸】') {
       return {
         category: 'stub',
         reason:
-          '服装显示两态差异：COM110（穿脱衣服）未移植，ere 侧未扒光（docs/stub-registry.md）',
-      };
-    }
-    if (
-      side === 'ere' &&
-      entry.text.startsWith(CLOTH_PREFIX) &&
-      context.counterpart?.kind === 'text' &&
-      context.counterpart.text === entry.text.slice(CLOTH_PREFIX.length)
-    ) {
-      return {
-        category: 'stub',
-        reason:
-          'ere 侧多服装前缀：COM110（穿脱衣服）未移植，ere 侧未扒光（docs/stub-registry.md）',
+          '服装行在 ere 侧多出的重绘屏（COM110 已移植、两侧同形；屏数差来自误执行 COM0 的多余回合，#213 输入映射缺失，见文件头登记）',
       };
     }
   }
@@ -352,8 +311,9 @@ const TRAIN_STATUS_HEAD_RE = /^\d+日\((午前|午后)\)$|^温妮 调教中/;
 const TRAIN_EX_COUNT_RE = /^\[[^\]]*绝顶：\d+次\]$/;
 // ABLUP 能力列表条目（ere 按钮化 PR #53 通则；golden 纯文本 `[ 0]阴蒂感觉 - LV 4`）
 const TRAIN_ABLUP_ITEM_RE = / - LV \d+( \*)?$/;
-// 穿脱子菜单条目（COM110 未移植）：` [1] - 紧身衣＆裙甲上半身脱掉`
-const TRAIN_CLOTH_MENU_RE = /^- (紧身衣＆裙甲|脱掉内裤|全部扒光|移动到|算了)/;
+// 【#228 拆除】此处原是 TRAIN_CLOTH_MENU_RE（穿脱子菜单条目，golden 侧
+// ` [1] - 紧身衣＆裙甲上半身脱掉` 形状）：COM110（穿脱）落地后子菜单条目
+// 两侧同形、转匹配，规则与常量随之删除。
 
 // 未移植指令的输出块区间（golden 行号，含端点；样本只读故区间稳定）。
 // 块 = 指令名回显起、下一屏状态行止；块内的情景/口上/判定/源一览/算式/
@@ -364,7 +324,6 @@ const TRAIN_UNIMPLEMENTED_BLOCKS = {
   'train-natural': [
     [90, 95], // @PRITRAIN_MESSAGE 消息体（第 13 次调教开场叙事与口上）
     [167, 186], // COM6 接吻（头部判定 + 情景 + 算式）
-    [211, 221], // COM110 穿脱衣服（子菜单 + 温妮全裸了。）
     [251, 274], // COM0 爱抚#2：连续补正误触发（PREVCOM 链断）
     [303, 324], // COM12 振动杖
     [353, 373], // COM1 舔阴
@@ -379,15 +338,13 @@ const TRAIN_UNIMPLEMENTED_BLOCKS = {
     [809, 829], // COM10 振动宝石
     [859, 880], // COM12 振动杖
     [912, 912], // K3 调教结束口上（EVENT_K3_高貴.ERB:829）
-    [915, 915], // RE_CLOTHED（调教后重新着衣）
   ],
   // train-upgrade：COM110 穿脱 + COM8/COM84 升格链两块
   'train-upgrade': [
     [232, 236], // @PRITRAIN_MESSAGE 消息体
-    [261, 271], // COM110 穿脱衣服（子菜单 + 温妮全裸了。）
     [300, 332], // COM8 插入手指（夺处女确认 + 【处女丧失】+ 算式）
     [362, 388], // COM84 刺激Ｇ点（升格目标，@GET_ADV_COM 随 #213/J19）
-    [419, 423], // K3 调教结束口上 + RE_CLOTHED
+    [420, 420], // K3 调教结束口上（421-423 的 RE_CLOTHED 行已随 #228 匹配）
   ],
 };
 
@@ -705,13 +662,6 @@ function classify_scope_train(entry, side, context) {
         reason: '能力提升画面的文本菜单行（@ABLUPn 反馈与 [100] 停止键未移植）',
       };
     }
-    // 穿脱子菜单（COM110）
-    if (side === 'golden' && TRAIN_CLOTH_MENU_RE.test(entry.key)) {
-      return {
-        category: 'stub',
-        reason: '穿脱子菜单（@COM110 未移植，ere 侧输入 89 被丢弃重绘）',
-      };
-    }
     // 升格标签（train-upgrade）：方格 8 号位的名字由 @GET_ADV_COM 升格
     // 决定（TRAIN_NAME 数组），ere 侧渲染静态名表的「插入手指」
     if (side === 'golden' && entry.key === '刺激Ｇ点') {
@@ -1019,9 +969,7 @@ function classify_scope_b(entry, side, context) {
 module.exports = {
   B_MAINMENU_LABELS,
   B_SAVELOAD_LABELS,
-  CLOTH_PREFIX,
   STUB_GAUGE_KEYS,
-  STUB_TEXT_EXACT,
   STUB_TEXT_RE,
   TRAIN_ABLUP_ITEM_RE,
   TRAIN_JUDGE_HEAD_RE,

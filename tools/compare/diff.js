@@ -135,13 +135,25 @@ function diff_streams(golden, ere, context = {}) {
   for (const val of new Set([...g_menu.keys(), ...e_menu.keys()])) {
     const gs = g_menu.get(val) ?? [];
     const es = e_menu.get(val) ?? [];
-    for (let k = 0; k < Math.max(gs.length, es.length); k += 1) {
-      const g = gs[k];
-      const e = es[k];
-      if (g && e && token(g) === token(e)) {
+    // 相等 token 先配（集合比对的本义，#228）：同号多条目在两侧的出现
+    // 次序受屏数影响（ere 侧无效输入回环多重绘一屏、golden 侧子菜单屏
+    // 不重绘方格），按下标配对会把两侧**同形**的条目错开成伪 change 对
+    //（穿脱子菜单条目两侧各一条，却因前面的方格屏数差互换了下标）。先
+    // 摘掉全部相等对，余下按原次序配对——counterpart 语义与归因规则不变。
+    const es_rest = [...es];
+    const gs_rest = [];
+    for (const g of gs) {
+      const j = es_rest.findIndex((e) => token(e) === token(g));
+      if (j !== -1) {
+        es_rest.splice(j, 1);
         matched += 1;
-        continue;
+      } else {
+        gs_rest.push(g);
       }
+    }
+    for (let k = 0; k < Math.max(gs_rest.length, es_rest.length); k += 1) {
+      const g = gs_rest[k];
+      const e = es_rest[k];
       if (g) {
         diffs.push({ entry: g, side: 'golden', counterpart: e });
       }

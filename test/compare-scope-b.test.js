@@ -43,8 +43,11 @@ const REPO = path.resolve(__dirname, '..');
 const BASELINE = {
   'mainmenu-natural': { matched: 34, version: 2, stub: 81, unexplained: 0 },
   'mainmenu-max': { matched: 41, version: 2, stub: 111, unexplained: 0 },
-  'saveload-natural': { matched: 146, version: 2, stub: 221, unexplained: 0 },
-  'saveload-max': { matched: 146, version: 2, stub: 221, unexplained: 0 },
+  // saveload 两份自 #228 起 150/213：diff.js 的 menu 集合比对改「相等
+  // token 先配」（同号槽位条目在两侧次序受重绘影响，按下标配对会把同形
+  // 条目错开成伪 change 对——存读档槽位组正撞此形，+4 匹配 / −8 存根）
+  'saveload-natural': { matched: 150, version: 2, stub: 213, unexplained: 0 },
+  'saveload-max': { matched: 150, version: 2, stub: 213, unexplained: 0 },
   'daycycle-natural': { matched: 46, version: 2, stub: 221, unexplained: 0 },
   'daycycle-max': { matched: 46, version: 2, stub: 261, unexplained: 0 },
 };

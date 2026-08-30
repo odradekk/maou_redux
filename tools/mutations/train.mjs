@@ -297,7 +297,9 @@ export default [
   if (com_pending !== undefined) {
     return { missing: false, pending: com_pending };
   }
-  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
+  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）；
+  // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头
+  // 第 12 步的取消语义，子菜单指令全出口 RETURN 0）
   const com_result = await com_family.call(result, {
     whenMissing: COM_MISSING,
   });`,
@@ -1705,5 +1707,253 @@ export default [
     }`,
     tests: ['source-check'],
     must_mention: '101',
+  },
+  // —— #228 J18 着装脱衣（COM110/111）：ere/system/train/com-cloth.js ——
+  {
+    desc: 'M990 全裸分支漏保留贞操带位（42=79 且位 64 时 40=64 改 0）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `        set_worn(target, BIT_SPECIAL);`,
+    replace: `        set_worn(target, 0); // 变异：贞操带位不保留`,
+    tests: ['com-cloth'],
+    must_mention: '仅剩位 64',
+  },
+  {
+    desc: 'M991 COM110 的 [9] 移轨行删（移动到[撕破衣服]）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `      era.print(' [9] - 移动到[撕破衣服]');`,
+    replace: `      // 变异：移轨行删`,
+    tests: ['com-cloth', 'compare-train'],
+    must_mention: 'golden train-natural:212-221 的逐字形状',
+  },
+  {
+    desc: 'M992 ABLE2T 上装位判据错（位 4 改查位 8）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `function com110_able2t(cid) {
+  if (main_type(cid) >= 201) {
+    return 0;
+  }
+  if ((worn(cid) & BIT_UPPER) === 0) {
+    return 0;
+  }`,
+    replace: `function com110_able2t(cid) {
+  if (main_type(cid) >= 201) {
+    return 0;
+  }
+  if ((worn(cid) & BIT_SKIRT) === 0) {
+    // 变异：判据错位
+    return 0;
+  }`,
+    tests: ['com-cloth'],
+    must_mention: 'W:2 动作行',
+  },
+  {
+    desc: 'M993 W:1 的裙型位错（201-250 段落位 8 改位 16）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `          bits |= main_type(target) <= 250 ? BIT_SKIRT : BIT_TROUSERS;`,
+    replace: `          bits |= main_type(target) <= 250 ? BIT_TROUSERS : BIT_SKIRT; // 变异：位对调`,
+    tests: ['com-cloth'],
+    must_mention: '201-250 裙型 → 位 4+8',
+  },
+  {
+    desc: 'M994 W:5 洗濯判据错（CFLAG:43 改查 44）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `  if ((b & BIT_PANTY) === 0) {
+    return 0;
+  }
+  if (laundry(cid, 43) !== 0) {
+    return 0;
+  }`,
+    replace: `  if ((b & BIT_PANTY) === 0) {
+    return 0;
+  }
+  if (laundry(cid, 44) !== 0) {
+    // 变异：洗濯位错
+    return 0;
+  }`,
+    tests: ['com-cloth'],
+    must_mention: 'CFLAG:43 != 0 时 W:5 不出现',
+  },
+  {
+    desc: 'M995 COM111 撕胸罩的 CFLAG:44 写改裸寻址（不走 stronghold 门面）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `      chara(target).stronghold.胸罩状态 = -3; // :145 CFLAG:44 = -3`,
+    replace: `      era.set(\`cflag:\${target}:44\`, -3); // 变异：跨域裸写`,
+    tests: ['domain-check'],
+    must_mention: 'cflag:44',
+  },
+  {
+    desc: 'M996 COM111 史莱姆/贞操带徒手守卫删（剥ぎ取れない支直落 L:0 撕破）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `    if (
+      result === 10 &&
+      worn(target) & BIT_SPECIAL &&
+      (special_type(target) === 11 || special_type(target) === 79)
+    ) {
+      era.print(\`\${clothtype_special_text(target)}被徒手撕破了。\`);
+      await era.waitAnyKey();
+      return 0;
+    }
+`,
+    replace: `    // 变异：徒手守卫整块删（直落 L:0 撕破）
+`,
+    tests: ['com-cloth'],
+    must_mention: '撕不动直接退出',
+  },
+  {
+    desc: 'M997 COM111 撕完全裸收尾删（不退出改重绘菜单）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `    if (worn(target) === 0) {
+      era.print('（已经全裸，撕无可撕）');
+      era.print('');
+      await era.waitAnyKey();
+      return 0;
+    }`,
+    replace: `    // 变异：全裸收尾删`,
+    tests: ['com-cloth'],
+    must_mention: '撕完全裸 → RETURN 0',
+  },
+  {
+    desc: 'M998 COM111 的 [100] 行空格形态改坏（] 与 - 间补空格）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `    era.print(' [100]- 算了');`,
+    replace: `    era.print(' [100] - 算了'); // 变异：空格形态`,
+    tests: ['com-cloth'],
+    must_mention: '] 与 - 间无空格',
+  },
+  {
+    desc: 'M999 COM110 脱衣菜单行空格形态改坏（一空格删成顶格）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `      era.print(\` [1] - \${clothtype_main2_text(target)}上半身脱掉\`);`,
+    replace: `      era.print(\`[1] - \${clothtype_main2_text(target)}上半身脱掉\`); // 变异：空格形态`,
+    tests: ['com-cloth', 'compare-train'],
+    must_mention: 'golden train-natural:212-221 的逐字形状',
+  },
+  {
+    desc: 'M1000 COM_ABLE110 的着衣設定判据删（FLAG:37）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `  // :3666-3667 着衣設定を使ってない
+  if ((era.get('flag:37') || 0) === 0) {
+    return 0;
+  }`,
+    replace: `  // 变异：着衣設定判据删`,
+    tests: ['com-cloth'],
+    must_mention: '八条判据各挡一条',
+  },
+  {
+    desc: 'M1001 COM_ABLE111 的全裸判据删',
+    file: 'ere/system/train/com-cloth.js',
+    find: `  // :3718-3719 全裸だとダメ
+  if (worn(era_flag.target) === 0) {
+    return 0;
+  }`,
+    replace: `  // 变异：全裸判据删`,
+    tests: ['com-cloth'],
+    must_mention: '全裸（CFLAG:40=0）不可',
+  },
+  {
+    desc: 'M1002 T:3 裙型措辞条件对调（裙型 ↔ 非裙型）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `          is_skirt(target) ? '的裙子脱掉' : '下半身脱掉'`,
+    replace: `          is_skirt(target) ? '下半身脱掉' : '的裙子脱掉' // 变异：措辞对调`,
+    tests: ['com-cloth'],
+    must_mention: '非裙型措辞',
+  },
+  {
+    desc: 'M1003 COM111 特别服装撕破的废弃态写错（-3 改 -2）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `      set_laundry(target, 47, -3); // :102 CFLAG:47 = -3（破り取られている）`,
+    replace: `      set_laundry(target, 47, -2); // 变异：废弃态值错`,
+    tests: ['com-cloth'],
+    must_mention: '废弃态 -3',
+  },
+  {
+    desc: 'M1004 ABLE1W 上下两半守卫删（洗涤中两半也可重穿整件）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `  if (worn(cid) & BIT_UPPER || laundry(cid, 45) !== 0) {
+    if (worn(cid) & (BIT_SKIRT | BIT_TROUSERS) || laundry(cid, 46) !== 0) {
+      return 0;
+    }
+  }`,
+    replace: `  // 变异：上下两半守卫删`,
+    tests: ['com-cloth'],
+    must_mention: '上下两半都不可用时 W:1 不出现',
+  },
+  {
+    desc: 'M1005 ABLE5T 和服支删（202 下为裙也可脱内裤）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `  if (main_type(cid) === 202 && worn(cid) & BIT_SKIRT) {
+    return 0; // 和服下为裙时脱内裤不可
+  }
+  return 1;
+}
+
+/** @COM110_ABLE5W（:522-540）：パンツ装着 */`,
+    replace: `  return 1;
+}
+
+/** @COM110_ABLE5W（:522-540）：パンツ装着 */`,
+    tests: ['com-cloth'],
+    must_mention: '202 && 位 8 → T:5 = 0',
+  },
+  {
+    desc: 'M1006 贞操带钥匙分支判据坏（CFLAG:49 恒假，提示行不出现）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `    if (result === 0 && laundry(target, 49)) {`,
+    replace: `    if (result === 0 && false) {
+      // 变异：钥匙分支判据坏`,
+    tests: ['com-cloth'],
+    must_mention: ':143 的提示行',
+  },
+  {
+    desc: 'M1007 ABLE0T 的标准装位判定错（未设定特别服装也放行）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `function com110_able0t(cid) {
+  if (special_type(cid) === 0) {
+    return 0;
+  }`,
+    replace: `function com110_able0t(cid) {
+  if (special_type(cid) === 999) {
+    // 变异：未设定判据坏
+    return 0;
+  }`,
+    tests: ['com-cloth'],
+    must_mention: '类型未设定时 [0] 不出现',
+  },
+  {
+    desc: 'M1008 W:0 拒绝句的弄脏位错（32/16 改 2/1）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `      const unusable = soiled_unusable(mask, 32, 16);
+      if (unusable) {
+        era.print(unusable);
+      } else {
+        era.print(
+          \`\${name}将\${clothtype_special_text(target)}\${`,
+    replace: `      const unusable = soiled_unusable(mask, 2, 1);
+      if (unusable) {
+        era.print(unusable);
+      } else {
+        era.print(
+          \`\${name}将\${clothtype_special_text(target)}\${`,
+    tests: ['com-cloth'],
+    must_mention: 'W:0 拒绝行',
+  },
+  {
+    desc: 'M1009 B 探测不还原（标准装位残留，CFLAG:40 被探测覆写）',
+    file: 'ere/system/train/com-cloth.js',
+    find: `function standard_bits(cid) {
+  const keep = worn(cid);
+  wearing_cloth_all(cid);
+  const bits = worn(cid);
+  set_worn(cid, keep);
+  return bits;
+}`,
+    replace: `function standard_bits(cid) {
+  const keep = worn(cid);
+  wearing_cloth_all(cid);
+  const bits = worn(cid);
+  return bits; // 变异：还原删（探测覆写残留）
+}`,
+    tests: ['com-cloth'],
+    must_mention: 'A・B 探测后还原',
   },
 ];

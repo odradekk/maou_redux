@@ -325,6 +325,17 @@ const cflag = {
       ':300 CFLAG:46 上着下の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）',
     ),
   ),
+  // 胸罩状态（44）属主 stronghold（ownership/cflag-ownership.yml "44"：3 处
+  // 写中据点侧 2）——COM111 撕胸罩的 CFLAG:44 = -3 是登记在册的跨域写
+  //（cflag-cross-domain-writes.yml），经 chara(cid).stronghold 门面（#71，
+  // #228 J18 接线）。与 41/45/46 同族但属主不同，落 chara-stronghold.js
+  44: named_tail(
+    '胸罩状态',
+    src(
+      SRC_FLAG,
+      ':298 CFLAG:44 ブラジャーの状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）',
+    ),
+  ),
   120: named_tail('卖春积极性', src(SRC_FLAG, ':331 CFLAG:120 売春への積極性')),
   // —— 迷宫凌辱的畏怖记忆（#182 H13 @RYOUZYOKU：dungeon 域写、
   //    ownership/cflag-ownership.yml "130-131" owner: dungeon）——

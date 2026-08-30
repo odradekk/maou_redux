@@ -76,9 +76,22 @@ const REPO = path.resolve(__dirname, '..');
 // （SEIIN_START / PASSOUT_CHECK / PASSOUT_TEXT）换真身，COM0 路径上
 // 三者恒静默（绝顶强度 < 阈值、无 TFLAG:0/19 写入面）→ 存根差异
 // natural −9（三回合 × 3 行）、upgrade −3，matched 不动，unexplained 恒 0。
+//
+// 同时生效，四数因此既不等于 #214 的也不等于 #215 的。
+//
+// 【#228（J18·COM110/111）落地后实测】COM110 真身 + 引擎「@COMxx 返回 0 →
+// 回合取消」语义（era wiki Emuera/flow·TRAIN 节）落地后，COM110 的输出块
+// （子菜单 + 全裸行）、RE_CLOTHED 行与扒光后的【全裸】屏整组转匹配；
+// diff.js 的 menu 集合比对改为「相等 token 先配」（同号多条目在两侧的
+// 次序受重绘屏数影响，按下标配对会把两侧同形的穿脱子菜单条目错开成伪
+// change 对）；rules.js 的服装四条两态豁免与穿脱子菜单规则随之整组拆除。
+// natural 765/2430 → 838/2158，upgrade 200/830 → 232/641。
+//
+// 【#216 与 #228 合并后重测（派单人在 rebase 时）】两票的减项独立叠加，
+// 下面是合并态实测。
 const BASELINE = {
-  'train-natural': { matched: 765, version: 0, stub: 2421, unexplained: 0 },
-  'train-upgrade': { matched: 200, version: 0, stub: 827, unexplained: 0 },
+  'train-natural': { matched: 838, version: 0, stub: 2149, unexplained: 0 },
+  'train-upgrade': { matched: 232, version: 0, stub: 638, unexplained: 0 },
 };
 
 async function build_report(sample) {

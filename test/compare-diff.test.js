@@ -22,6 +22,7 @@ const {
   classify_line,
 } = require('../tools/compare/normalize');
 const { diff_streams } = require('../tools/compare/diff');
+const { classify_entry } = require('../tools/compare/rules');
 
 const REPO = path.resolve(__dirname, '..');
 const LOG = fs.readFileSync(path.join(REPO, 'target', 'emuera.log'), 'utf8');
@@ -172,14 +173,60 @@ test('归因：不在册的指令编号（9999）不进 COM_ABLE 豁免——拼
   assert.equal(report.summary.unexplained, 1);
 });
 
-test('归因：服装前缀成对豁免，裸配不成对（单边出现即红）', () => {
+test('归因：服装前缀差异已无豁免（#228 拆除）——两侧同形才匹配', () => {
+  // #215 起前缀为真身、#228 起 COM110 扒光为真身：两侧本就同形，成对
+  // 豁免（隔着…前缀 ↔ 去前缀裸句）整组拆除。前缀句 vs 裸句如今两侧
+  // unexplained——前缀回归（TRAIN_MESSAGE_B 少拼前缀）当场可见
   const golden_cloth = classify_line(
     '隔着紧身衣＆裙甲、你仔细爱抚着温妮的身体……',
   );
   const bare = classify_line('你仔细爱抚着温妮的身体……');
   const paired = diff_streams([golden_cloth], [bare]);
-  assert.equal(paired.summary.stub, 2);
-  // 前缀句对上无关句（不成对）→ 两侧都 unexplained
-  const odd = diff_streams([golden_cloth], [classify_line('完全无关的句子')]);
-  assert.equal(odd.summary.unexplained, 2);
+  assert.equal(paired.summary.unexplained, 2);
+  assert.equal(paired.summary.stub, 0);
+});
+
+test('menu 集合比对：相等 token 先配（同号多条目次序错开不错配，#228）', () => {
+  // ere 侧多出的重绘屏会把同号（val 相同）条目的出现次序挤开：按下标
+  // 配对时两侧同形条目（格子按钮 ↔ 子菜单条目）互换下标、错成两个伪
+  // change 对。相等 token 先摘，余下才按次序配对
+  const menu = (key, val) => ({ kind: 'menu', key, val });
+  const golden = [
+    menu('舔阴', 1),
+    menu('史莱姆', 100),
+    menu('- 紧身衣＆裙甲上半身脱掉', 1),
+  ];
+  const ere = [
+    menu('史莱姆', 100),
+    menu('- 紧身衣＆裙甲上半身脱掉', 1),
+    menu('舔阴', 1),
+    menu('爱抚', 0),
+  ];
+  const report = diff_streams(golden, ere);
+  // 三对相等 token 全配（与次序无关）；ere 多出的 [0] 爱抚落单侧差异
+  assert.equal(report.matched, 3);
+  assert.equal(report.diffs.length, 1);
+  assert.equal(report.diffs[0].side, 'ere');
+  assert.equal(report.diffs[0].entry.key, '爱抚');
+});
+
+test('归因：ere 侧多余【全裸】按重绘屏残余归因；多余着衣态行仍红（COM110 回归可见）', () => {
+  // #228 收口：COM110 已移植、两侧同形。ere 侧多出的【全裸】只可能来自
+  // 多余的整屏重绘（train-upgrade 实证：误执行 COM0 的多余回合）；着衣态
+  // 【紧身衣＆裙甲的姿态】的多余不在此列——COM110 回归（不再扒光）时
+  // ere 侧多出的正是它，必须 unexplained 变红
+  const hit = classify_entry({ kind: 'text', text: '【全裸】' }, 'ere', {});
+  assert.equal(hit?.category, 'stub');
+  assert.match(hit.reason, /重绘屏/);
+  const missed = classify_entry(
+    { kind: 'text', text: '【紧身衣＆裙甲的姿态】' },
+    'ere',
+    {},
+  );
+  assert.equal(missed, null, '着衣态多余行不得被重绘残余吞掉');
+  // golden 侧的【全裸】同样无豁免（ere 侧欠扒光时当场红）
+  assert.equal(
+    classify_entry({ kind: 'text', text: '【全裸】' }, 'golden', {}),
+    null,
+  );
 });
