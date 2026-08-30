@@ -162,6 +162,7 @@ export default [
     must_mention: '有输出才等键',
   },
   {
+    engine: true,
     desc: 'M167 夹具 addTotalLines 镜像不置位（任何输出后 allowWait 恒假）',
     file: 'test/helpers/era-fixture.js',
     find: `    total_rows += 1;
@@ -182,6 +183,7 @@ export default [
     must_mention: '中途分叉（一）',
   },
   {
+    engine: true,
     desc: 'M169 夹具 clear 的 setTotalLines 再置位被删（清屏不算新内容）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (total_rows !== before) {
@@ -205,6 +207,7 @@ export default [
     must_mention: '回显计一行',
   },
   {
+    engine: true,
     desc: 'M171 夹具 clear 的 disableClear 短路被拆（配置开着也照清）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (system_config.disableClear) {

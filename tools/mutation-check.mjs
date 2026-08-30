@@ -11,26 +11,34 @@
 //   （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配——引用
 //   变异时用运行时生成的稳定短号 [M-xxxxxxxx]（desc 内容哈希）或直接
 //   引 desc。字段：
-//     { desc, file, find, replace, tests, must_mention }
+//     { desc, file, find, replace, tests, must_mention, engine? }
 //   - find 必须在靶文件中恰好出现 1 次（失配 = 直接判失败：靶代码被重构后，
 //     工具当场红而不是静默失守——这条安全性质不许拆）；
 //   - tests = 应变红的测试文件名（不含 test/ 前缀与 .test.js 后缀）；
 //   - must_mention = 测试输出里必须能找到的片段，证明红的正是被测行为。
 //     语义是「输出包含该片段」，不是「只有它红了」——按实义命名
 //     （旧名 expect_only 名不副实，#89 改名），必填，无宽松判定。
+//   - engine = 该条只被引擎比对用例守护（无引擎处按「跳过」放行）。可选，
+//     省略即 false；声明数由门 4 核对，实测由 verdict_problems 交叉核对。
 //
-// 条目表三项检查（照 #72 domain-check 的两项检查形状，多一道测试文件存在性）：
+// 条目表四项检查（照 #72 domain-check 的两项检查形状，多一道测试文件存在性
+// 与一道引擎声明数）：
 //   1. 计数检查：条目表条数必须等于 LEDGER_COUNT_BASELINE——增删条目必须
 //      显式改这份常量，搬家丢条目、悄悄混条目都在版本库差异里看得见；
 //   2. 失配检查：每条 find 在靶文件中恰好 1 次，靶文件必须存在；
 //   3. 测试文件检查：tests 引用的 test/<名字>.test.js 必须存在——文件
 //      不存在时 node --test 因「找不到文件」退出非 0，形同假拦截。
+//   4. 引擎声明检查（#256）：`engine: true` 的条数必须等于 ENGINE_SKIP_
+//      BASELINE。只对真条目表生效（--ledger-dir 换表时跳过）。
 //
 // 用法：
 //   node tools/mutation-check.mjs                        全量（串行，就地变异+还原）
 //   node tools/mutation-check.mjs --verify               只跑三项检查（秒级；进 npm test 的快速模式）
+//   node tools/mutation-check.mjs --changed              定向：只跑改动文件的条目（SOP 的 T3 票验收档）
 //   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（CI 的抽样模式）
-//   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档）
+//   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档 / SOP 的 T4 阶段闸）
+//   --changed / --base <ref>  按 git 改动过滤条目的 file:（默认基线 origin/master）
+//   --files a.js,b.js         显式给靶文件列表（不走 git；测试夹具与诊断用）
 //   --root <dir>            变异所在的仓库根（默认本工具的上级；测试夹具用）
 //   --ledger-dir <dir>      条目表目录（默认 tools/mutations；测试夹具用）
 //   --baseline <n>          覆盖计数检查基线（测试夹具用）
@@ -50,8 +58,13 @@
 // 缺引擎警告）」——分类是纯输出判定，不掺环境；总数对 ENGINE_SKIP_
 // BASELINE 核对、偏离即红——引擎比对的覆盖面收缩必须是有意识的提交
 // （与 test/engine-skip-baseline.txt 同一标准）。
-// **核对只在全量模式生效**：基线是全量模式的不变量，抽样/切片子集没有
-// 期望跳过数，不核对（见 verdict_problems）。**引擎在场时跳过数必须为
+// **核对只在全量模式生效**：基线是全量模式的不变量，抽样/切片/定向子集
+// 没有期望跳过数，不核对（见 verdict_problems 与 is_partial）。
+// 分层之后（#256）全量只在阶段闸跑，这条运行时核对因此**一个阶段才生效
+// 一次**——不够。补偿是把它同时做成**静态声明**：依赖引擎的条目带
+// `engine: true`，门 4 在秒级的 --verify 里核对声明数（于是随 npm test 每
+// 次都查），全量模式再交叉核对声明与实测（于是声明不会长草）。
+// **引擎在场时跳过数必须为
 // 0，任何档位都是硬判**——这条否决权集中在 verdict_problems，与分类
 // 分离，行为锁可直接钉（#89 二次验收的探针 G）。CI 的「跳过」仍是弱
 // 路径：无引擎处真误报通过分不清，严格标准以有引擎的本地全量为准。
@@ -67,11 +80,12 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
+
+import { DEFAULT_LEDGER_DIR, load_ledger } from './load-mutations.mjs';
 
 const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
-const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 
 /**
  * 条目表计数基线（门 1）：条数只能通过显式改这份常量来变。
@@ -169,19 +183,32 @@ const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 // #212（J2）+19：M700-M714（首轮）+ 返工 M715-M718（二段寻址守卫
 // M715/M716 与存量修复回退 M717/M718；M712 的 find 随三段形态更新，条数不变）
 // #211 第三段 +8：M660-M667（登记/回放序列/归因改正/窗口裁切）
-const LEDGER_COUNT_BASELINE = 505;
+// #256（测试验收分层）+3：checkers.mjs 的 M730-M732（选择器的三条保守
+// 性质：全局锁恒在 / 兜底退回全量 / 目录探针不退化），再 +2：M733/M734
+// （引擎声明的门 4 与逐条交叉核对）。现为 510。
+const LEDGER_COUNT_BASELINE = 510;
 
 /**
- * 无引擎环境的预期跳过数（门 4，实测值见 #89）：变异靶的测试整组依赖
- * 引擎的条目数。新变异若只被引擎比对用例守护，此数会涨——那意味着该
- * 变异在 CI 上只被「跳过」覆盖，改这份常量时想清楚。
+ * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
+ * 只被引擎比对用例守护，此数会涨——那意味着该变异在 CI 上只被「跳过」
+ * 覆盖，改这份常量时想清楚。
+ *
+ * **这个数字现在有两个核对点**（#256 分层之后）：
+ *   - **门 4（静态，秒级）**：条目表里 `engine: true` 的条数必须等于它。
+ *     随 `--verify` 进 `npm test`，每次三项自检都查。加这道门的理由就是
+ *     下面那次事故——分层把全量变异退到阶段闸之后，只剩运行时核对的话，
+ *     同样的漏抬要一个阶段才暴露。
+ *   - **运行时（全量模式）**：无引擎跑全量，实测跳过数必须等于它；且
+ *     `run_one` 逐条交叉核对声明与实测（实测跳过却没声明、声明了却无
+ *     引擎也拦得下，都当场判红）——所以声明不会长草。
  *
  * **逐条记全，别只记增量。** 只记「#N 起 +k」时，某一票漏抬就再也对不
  * 上账：#135 加的 M222 漏抬（11 未进 12），其后 #138 的 +2 与 #139 的 +3
  * 各自算对了自己那份，总数却一直差 1，master CI 因此连红 18 次 4 天
  * （首红 6f17fc3，2026-08-24）——直到有人把 17 条逐条列出来才对上。
  *
- * 当前 17 条：
+ * 当前 17 条（#256 用 `ERE_ENGINE_ASAR=none … --asar none --jobs 4` 实测
+ * 复核过，与下面这份清单逐条一致，并已就地标上 `engine: true`）：
  *   基础 7：M112/M113/M115（portcflag 预设比对）、M127（资源缺省配置
  *           比对）、M167/M169/M171（夹具的引擎镜像语义）
  *   #113 +4：Chara35 预设值、ExFlag 名字表 id、ExFlag 结局线槽位、
@@ -229,11 +256,20 @@ function parse_args(argv) {
     baseline: LEDGER_COUNT_BASELINE,
     skip_baseline: undefined,
     asar: undefined,
+    files: undefined,
+    base: undefined,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     const next = () => argv[(i += 1)];
     if (a === '--verify') out.verify = true;
+    else if (a === '--changed') out.base = 'origin/master';
+    else if (a === '--base') out.base = String(next());
+    else if (a === '--files')
+      out.files = String(next())
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
     else if (a === '--sample') out.sample = Number(next());
     else if (a === '--seed') out.seed = String(next());
     else if (a === '--jobs') out.jobs = Math.max(1, Number(next()));
@@ -262,25 +298,6 @@ function desc_rank(desc) {
     crypto.createHash('sha1').update(desc).digest('hex').slice(0, 12),
     16,
   );
-}
-
-async function load_ledger(dir) {
-  const names = fs
-    .readdirSync(dir)
-    .filter((n) => n.endsWith('.mjs'))
-    .sort();
-  if (names.length === 0) {
-    throw new Error(`条目表目录 ${dir} 里没有 .mjs 分片`);
-  }
-  const entries = [];
-  for (const name of names) {
-    const mod = await import(pathToFileURL(path.join(dir, name)).href);
-    if (!Array.isArray(mod.default)) {
-      throw new Error(`${name} 必须默认导出数组`);
-    }
-    entries.push(...mod.default);
-  }
-  return entries;
 }
 
 // —— 三项检查 ——
@@ -370,12 +387,39 @@ function gate_test_files(root, entries) {
   return errors;
 }
 
+/**
+ * 门 4（#256）：`engine: true` 的声明数必须等于 ENGINE_SKIP_BASELINE。
+ *
+ * 存在的理由是分层：全量变异退到阶段闸之后，那条**运行时**核对一个阶段
+ * 才生效一次，而 #135 的 M222 漏抬正是这一类漏网（master 连红 18 次 4 天）。
+ * 这道门是静态的，随 --verify 进 npm test，每次三项自检都查。
+ *
+ * 声明会不会长草？不会——全量模式交叉核对声明与实测（见 verdict_problems），
+ * 声明多了少了、标错了哪一条，都在那里当场红。
+ */
+function gate_engine_declared(entries, args) {
+  // 只对真条目表生效。夹具用 --ledger-dir 换一份自造条目表，那份与
+  // ENGINE_SKIP_BASELINE 没有关系；把 --skip-baseline 拿来当这道门的
+  // 期望值是错的（那是**运行时**跳过数的覆盖开关，不是声明数），
+  // 首版这么写，当场打死了夹具用例 8。
+  if (args.ledger_dir !== DEFAULT_LEDGER_DIR) return [];
+  const declared = entries.filter((m) => m.engine === true).length;
+  return declared === ENGINE_SKIP_BASELINE
+    ? []
+    : [
+        `engine: true 的声明数 ${declared} ≠ ENGINE_SKIP_BASELINE ${ENGINE_SKIP_BASELINE}` +
+          `——新条目若只被引擎比对用例守护，它在 CI 上只被「跳过」覆盖，` +
+          `改这两个数字前想清楚`,
+      ];
+}
+
 function run_gates(entries, args) {
   const errors = [
     ...gate_shape(entries),
     ...gate_count(entries, args.baseline),
     ...gate_targets(args.root, entries),
     ...gate_test_files(args.root, entries),
+    ...gate_engine_declared(entries, args),
   ];
   for (const e of errors) {
     console.log(`✗ 门：${e}`);
@@ -494,12 +538,29 @@ function run_one(root, m) {
   active_restore = null;
   const saw_named_failure = output.includes(m.must_mention);
   if (failed_as_expected && saw_named_failure) {
+    // 反向的交叉核对：无引擎处仍被拦下，说明它不是「只被引擎用例守护」，
+    // 声明过时了。有引擎时不判——那时所有条目都拦得下，判不出信息。
+    if (m.engine === true && output.includes(ENGINE_WARN_MARKER)) {
+      console.log(
+        `✗ [${stable_id(m.desc)}] ${m.desc} — 声明了 engine: true，实测无引擎也拦得下（声明过时）`,
+      );
+      return 'miss';
+    }
     console.log(
       `✓ [${stable_id(m.desc)}] ${m.desc} — 红=true 命中「${m.must_mention}」=true`,
     );
     return 'caught';
   }
   if (!failed_as_expected && output.includes(ENGINE_WARN_MARKER)) {
+    // 交叉核对（#256）：实测「只被引擎用例守护」的条目，必须已经声明
+    // engine: true。门 4 只数得出声明的**个数**，数对了但标错了哪一条，
+    // 只有这里能看见。
+    if (m.engine !== true) {
+      console.log(
+        `✗ [${stable_id(m.desc)}] ${m.desc} — 实测只被引擎用例守护，却没声明 engine: true`,
+      );
+      return 'miss';
+    }
     console.log(
       `⏭ [${stable_id(m.desc)}] ${m.desc} — 跳过（依赖引擎的测试绿 + 缺引擎警告）`,
     );
@@ -513,7 +574,35 @@ function run_one(root, m) {
 
 // —— 执行模式 ——
 
+/**
+ * 相对 base 的改动文件（含未提交与未跟踪）。与 tools/select-tests.mjs 的
+ * changed_files 同款口径——两个工具对「什么算改动」的理解必须一致，
+ * 否则会出现「选择器选中了某测试、定向变异却不跑对应条目」的错位。
+ */
+function changed_files(root, base) {
+  const run = (a) => {
+    const r = spawnSync('git', a, { cwd: root, encoding: 'utf8' });
+    if (r.status !== 0) {
+      throw new Error(`git ${a.join(' ')} 失败：${(r.stderr || '').trim()}`);
+    }
+    return r.stdout;
+  };
+  const mb = run(['merge-base', base, 'HEAD']).trim();
+  return new Set(
+    `${run(['diff', '--name-only', mb])}\n${run(['ls-files', '--others', '--exclude-standard'])}`
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+}
+
 function select_entries(entries, args) {
+  if (args.files || args.base) {
+    const files = args.files
+      ? new Set(args.files)
+      : changed_files(args.root, args.base);
+    return entries.filter((m) => files.has(m.file));
+  }
   if (args.slice) {
     const [i, k] = args.slice;
     return entries.filter((m) => desc_rank(m.desc) % k === i);
@@ -541,9 +630,19 @@ function execute(entries, args) {
   return tally;
 }
 
-/** 本轮是否只执行条目表的一个子集（抽样 / 切片） */
+/**
+ * 本轮是否只执行条目表的一个子集（抽样 / 切片 / 定向）。
+ *
+ * **新的子集档位必须加进这里**：ENGINE_SKIP_BASELINE 是全量模式的不变量，
+ * 子集没有期望跳过数，漏加会让定向模式在无引擎处必然假红。
+ */
 function is_partial(args) {
-  return args.sample !== undefined || args.slice !== undefined;
+  return (
+    args.sample !== undefined ||
+    args.slice !== undefined ||
+    args.files !== undefined ||
+    args.base !== undefined
+  );
 }
 
 function verdict_problems(tally, args, engine_present) {

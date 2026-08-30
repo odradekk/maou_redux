@@ -155,16 +155,22 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 <三到五条它自己查会很贵、且容易查错的既有事实，直接给结论>
 
 worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.sh 包一层
-（并发时不把机器压死），全量变异用 bash tools/capped.sh node tools/mutation-check.mjs
---jobs 4。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
+（并发时不把机器压死）。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
+
+**别在红绿切片的内环里跑全量**：全量是 94 个文件 / 1386 个用例 / 98 秒。
+内环用 bash tools/capped.sh npm run test:inner（只跑改动相关，去全局锁），
+交付前一次 bash tools/capped.sh npm run test:related。全量与全量变异由
+派单人在验收时跑，你不必跑。
 
 三个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
 test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k>——**你的新
 条目从 M<k+1> 起编**。只管把自己分支的数改对（新增变异条目同步抬基线；新增依赖
 引擎的用例同步改跳过数并在注释里写出算式），跨票对账由派单人处理。
+**新条目若只被引擎比对用例守护**，给它加 engine: true 并同步抬
+tools/mutation-check.mjs 的 ENGINE_SKIP_BASELINE，两处不一致 npm test 当场红。
 
 自检与提交：
-- 三项自检全绿（npm test、npx eslint . --max-warnings 0、npx prettier --check .）
+- npm run test:related 全绿，外加 npx eslint . --max-warnings 0、npx prettier --check .
 - 逐条对照验收清单
 - 验收里写着「且此行为有测试」的每一条，做变异测试自证：把被测规则改坏，
   确认真的有用例失败（本项目在 #10 出过事：测试全绿，规则却已失效）
@@ -228,19 +234,39 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 **代价是「无引擎」不再能靠不设变量制造**——`env -u ERE_ENGINE_ASAR` 照样命中回落。第 2 步因此改用显式开关 `ERE_ENGINE_ASAR=none`。
 
-### 四步
+### 分层：每票跑 T3，阶段收口跑 T4
+
+**全量不是每票都跑**（#256）。实测代价摆在这：全量 `npm test` 98s、eslint 31s、prettier 12s、无引擎重跑再 98s、全量变异 **426s**（条目表 510 条；SOP 旧文写的 253s 是条目表约 330 条时的数，已过期）。每票跑满 = 11 分钟，而其中 524s 是**一个阶段验一次就够**的东西。
+
+下面的秒数都是 `capped.sh` 限 4 核的实测值，不是估算：
+
+| 层     | 谁     | 何时         | 内容                                                      | 实测          |
+| ------ | ------ | ------------ | --------------------------------------------------------- | ------------- |
+| **T1** | agent  | 每个红绿切片 | `npm run test:inner`（只跑相关，去全局锁）                | **8.5s**      |
+| **T2** | agent  | 提交前一次   | `npm run test:related` + eslint + prettier                | 25s ＋ 43s    |
+| **T3** | 派单人 | **每张票**   | 下面的三步                                                | **约 2.9 分** |
+| **T4** | 派单人 | **阶段收口** | T3 ＋无引擎重跑 ＋全量变异 ＋引擎手工验收 ＋对拍，见 §5.6 | 约 10.5 分    |
+
+**收益集中在 T1**（98s → 8.5s，11 倍）与 T3（11 分 → 2.9 分）。**T2 只省一到五成**，别指望更多——真实工单必然会碰 `docs/stub-registry.md`（牵 30 个测试）与 `test/helpers/era-fixture.js`（牵 57 个），那些依赖是真的。六个已合并提交回放实测：三个精确选中 46/56/84（全部 95 个中），两个退回全量，**零漏测**。
 
 **每条都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
 
+#### T3 三步（每张票）
+
 1. **三项自检（带引擎）**：`bash tools/capped.sh npm test` / `npx eslint . --max-warnings 0` / `npx prettier --check .`。worktree 若缺 `node_modules` 先 `npm ci`——否则 `npx` 会从仓库外拉版本，eslint 与 prettier 都给出与仓库不一致的结果。
-2. **跳过基线核对（不带引擎）**：`ERE_ENGINE_ASAR=none bash tools/capped.sh npm test`，跳过数必须等于 `test/engine-skip-baseline.txt` 里的数字。新增依赖引擎的用例必须同步改该数并在注释里写出算式；**rebase 后注释里的算式会失准**（用例总数变了），一并更正。
-3. **全量变异检查（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，约 4 分钟（ext4 实测 253s）。**严格标准是「全部拦下、零跳过」**。
-   **`--jobs` 现在可用了**，此前 SOP 禁止它是对的：`COPY_DENY` 把 `ere-4.8.0-win-x64` 排除在副本外，子进程够不着引擎，有引擎的机器上必然判出「引擎在场却有 17 条按跳过处理」而整体红（实测 `329/17/rc=1`）。绝对路径回落进来之后同样条件是 `346/0/rc=0`。串行仍然可用（约 330s），只是没有理由再选它。
-4. **逐条比对工单验收清单**，并抽查本票新增的变异条目是否真被拦下。
+   **这一步不砍成相关性**：它是唯一能发现「改 A 弄红了远处 B」的网，98s 不是瓶颈。
+2. **定向变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --changed`，只跑靶文件在本票改动范围内的条目，通常十几条、几十秒。**严格标准仍是「全部拦下、零跳过」**。
+3. **逐条比对工单验收清单**，并抽查本票新增的变异条目是否真被拦下。
+
+#### T4 阶段闸（阶段收口时，见 §5.6）
+
+无引擎重跑、全量变异、引擎手工验收、对拍全在那里。
+
+**把全量变异退到阶段闸，就等于放弃了 `ENGINE_SKIP_BASELINE` 的逐票核对**——而那正是 master 连红 18 次 4 天的那个 bug（#135 的 M222 漏抬）。补偿已经做进工具：依赖引擎的条目带 `engine: true` 声明，门 4 在秒级的 `--verify` 里核对声明数，于是**随每次 `npm test` 都查**；全量模式再交叉核对声明与实测，声明因此不会长草。新增只被引擎比对用例守护的条目，两处一起改。
 
 **验收期的读数不能与 `npm test` 或串行变异并发取。** `tools/mutation-check.mjs` 是**就地变异 + 还原**（文件头 `:30` 明写），而 `test/mutation-check.test.js` 的快速模式随 `npm test` 跑——那期间工作树是**间歇性坏的**。阶段 4 验收 #212 时踩过：一边跑着 `npm test`，一边 `node tools/compare/cli.js`，读回 54/112 而真值是 57/107，我据此误报了「对拍退化」。**判据是 `pgrep -f 'capped.sh|mutation-check.mjs'` 为空再读**，或者干脆串行：先跑完测试，再取对拍与快照类读数。`--jobs` 并行路径用隔离副本、不碰工作树，但快速模式与串行全量都碰。
 
-**第 3 步偶尔会红在「副本对照」而不是变异本身**（形态：`拦截 0 / 跳过 0 / 红 1`，一百多秒就退，文案是「副本 N 对照运行即红（副本环境破损，非变异拦截）」）。**这不一定是本票的问题**——它可能是 master 上一条随机相关的 flaky 用例，概率低到平时撞不上、四个副本一起跑就放大了四倍。
+**`--jobs` 的全量变异偶尔会红在「副本对照」而不是变异本身**（形态：`拦截 0 / 跳过 0 / 红 1`，一百多秒就退，文案是「副本 N 对照运行即红（副本环境破损，非变异拦截）」）。**这不一定是本票的问题**——它可能是 master 上一条随机相关的 flaky 用例，概率低到平时撞不上、四个副本一起跑就放大了四倍。
 
 判法：主树上 `npm test` 全绿而副本红 → 去日志里找 `✖ failing tests:` 下面那条用例名（工具自己列不出来时会退回尾部 60 行，得手工 `grep -nE "✖|# fail"`），然后在 master 上单独跑那个文件。是既有的就**立票、重跑本票的变异**，别让交付方背锅；是本票引入的才退回。
 
@@ -328,6 +354,22 @@ git show <本票 sha>:<path>              # 从这里抽出本票新增的条目
 第二次用这个解法一次干净。无论怎么解，**`node tools/mutation-check.mjs --verify` 必须跑**，只看 diff 不够。
 
 `prettier --write` 对 Markdown 里**不在反引号内**的下划线标识符是有损的（`AGENT_1.ERB` → `AGENT*1.ERB`）。解完冲突跑一次体征检查：`grep -nE '[A-Za-z0-9]\*[A-Za-z0-9]' <文件>`，应为空。
+
+## 5.6 T4 阶段闸（阶段收口时跑一次）
+
+触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。四项，约 10 分钟：
+
+1. **无引擎重跑**：`ERE_ENGINE_ASAR=none bash tools/capped.sh npm test`，跳过数必须等于 `test/engine-skip-baseline.txt` 里的数字。新增依赖引擎的用例必须同步改该数并在注释里写出算式；**rebase 后注释里的算式会失准**（用例总数变了），一并更正。
+2. **全量变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，实测 426s（510 条）。**严格标准是「全部拦下、零跳过」**。
+   **`--jobs` 现在可用了**，此前 SOP 禁止它是对的：`COPY_DENY` 把 `ere-4.8.0-win-x64` 排除在副本外，子进程够不着引擎，有引擎的机器上必然判出「引擎在场却有 N 条按跳过处理」而整体红（实测 `329/17/rc=1`）。绝对路径回落进来之后同样条件是 `346/0/rc=0`。串行仍然可用，只是没有理由再选它。
+3. **引擎手工验收**：在主 checkout 里启动引擎跑一遍本阶段的贯通路径。
+4. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
+
+**要在本机造出「无引擎」，`--asar none` 一个人做不到。** 它只改**父进程**对「引擎在不在场」的判定；决定**被测试子进程**能不能看见引擎的是环境变量 `ERE_ENGINE_ASAR`（`run_one` 用 `clean_env()` 透传）。所以有引擎的机器上单给 `--asar none` 会得到「跳过 0 ≠ 基线」的假红。两个一起给：
+
+```
+ERE_ENGINE_ASAR=none bash tools/capped.sh node tools/mutation-check.mjs --asar none --jobs 4
+```
 
 ## 6. 收尾
 
