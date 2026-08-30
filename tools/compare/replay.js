@@ -72,6 +72,11 @@ function seed_winnie_world(fixture) {
   //    再调是幂等无操作 ——
   fixture.era.beginTrain(0, 31);
 
+  // —— FLAG:5 = 开局值（@EVENTFIRST，event-first.js:110；录制会话新档）。
+  //    bit34 = 1 → SHOW_USERCOM 走自定义菜单支（#214 渲染分流；依据见
+  //    seed_train_world 的同款播种注）——
+  fixture.store.set('flag:5', 17179934119);
+
   // —— PALAM 初值（算式行 from 侧 + 首屏条形，log:34-44 / log:1-4 / log:52-57）——
   const PALAM_SEED = [
     [0, 5240], // 阴核 5240+300=5540（log:34）
@@ -272,6 +277,15 @@ function seed_train_world(fixture, sample) {
 
   // —— 调教域表先开（三段寻址守卫；run_train 内的 beginTrain 幂等）——
   fixture.era.beginTrain(0, 31);
+
+  // —— FLAG:5（游戏设置位组）：开局值整组播种（@EVENTFIRST 置
+  //    17179934119，event-first.js:110；录制会话是新档，CONFIG 未动）。
+  //    bit34 = 1（自定义 COM 菜单）——golden 两份样本的方格形态（升格名，
+  //    train-upgrade-log:348「刺激Ｇ点[8]」）为该态实证，ere 侧
+  //    SHOW_USERCOM 的渲染分流（#214）钉到同一支（#209 裁定 12 同款：
+  //    观察 golden 走的哪一支，把 ere 侧钉过去）——不播则 GETBIT = 0、
+  //    方格退回内建静态名，基线全面漂移 ——
+  fixture.store.set('flag:5', 17179934119);
 
   // —— BASE/MAXBASE（首屏 train-natural-log:98-99：1198/2000、2000/2000）——
   fixture.store.set('maxbase:31:0', 2000);

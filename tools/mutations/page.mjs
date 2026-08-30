@@ -9,9 +9,11 @@ export default [
     find: `  if (result === 999) {
     // :173-175 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
     begin(STATE.AFTERTRAIN);
+    return;
   }`,
     replace: `  if (result === 999) {
     // 变异：不发起转场
+    return;
   }`,
     tests: ['train-loop', 'page-usercom'],
     must_mention: '端到端',
@@ -105,11 +107,11 @@ export default [
     must_mention: 'SHOW_INFO_EXP 的经验行',
   },
   {
-    desc: 'M56 指令按钮渲染删掉（回到 [999] 单按钮；#213 起按钮印 L_IDX + 升格标签）',
+    desc: 'M56 指令按钮渲染删掉（#214 起靶 = 内建臂：GETBIT=0 的静态名按钮——e2e 与单测都走它）',
     file: 'ere/page/page-usercom.js',
-    find: `    era.printButton(command_button_label(adv, id), com_index(id));`,
+    find: "    era.printButton(era.get(`traincommandname:${id}`) ?? '', com_index(id));",
     replace: '    // 变异：按钮渲染删除',
-    tests: ['source-check'],
+    tests: ['source-check', 'page-usercom'],
     must_mention: '端到端',
   },
   {
