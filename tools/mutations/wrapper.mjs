@@ -102,4 +102,16 @@ export default [
     tests: ['chara-init'],
     must_mention: '守卫挡住五连',
   },
+  {
+    desc: 'M813 tequip 门面口塞位寻址错（45 写到 46——#215 四守卫位的门面靶）',
+    file: 'ere/facade/chara-train.js',
+    find: `  set 口塞(v) {
+    era.set(\`tequip:\${this.cid}:45\`, v);
+  }`,
+    replace: `  set 口塞(v) {
+    era.set(\`tequip:\${this.cid}:46\`, v);
+  }`,
+    tests: ['tequip-model'],
+    must_mention: '四个口上守卫位经 train 域门面可写',
+  },
 ];

@@ -123,6 +123,12 @@ function seed_winnie_world(fixture) {
   fixture.store.set('cflag:31:16', -1); // 初吻未体験：无「轻舔着」前缀 + 不潔被清零 + 阴核/2
   fixture.store.set('cflag:31:301', 203); // K3 状态机已推进到随机三支（台词 :1097）
   // CFLAG:31:2（好感）不写 = 0：情爱(31) 未吃到 ≥100 档的 ×1.1
+  // —— 服装（#215 J5）：旧样本首回合的爱抚行带「隔着紧身衣＆裙甲、」
+  //    前缀（emuera.log:25）、状态屏【紧身衣＆裙甲的姿态】（emuera.log:50）
+  //    为证——着衣系统 FLAG:37 = 1、紧身衣＆裙甲（41 = 5）装位 15
+  fixture.store.set('flag:37', 1);
+  fixture.store.set('cflag:31:41', 5);
+  fixture.store.set('cflag:31:40', 15);
 
   // —— EX / 世界指针 ——
   fixture.store.set('ex:31:0', 1); // [阴蒂绝顶：1次]（log:51）
@@ -316,6 +322,19 @@ function seed_train_world(fixture, sample) {
   // (181)=165×1.1（master_skill_check 的档位乘算，train-natural-log:127 的实证；档内
   // 具体值不可知、已实现路径只消费档位，取代表值 200）
   fixture.store.set('cflag:31:2', 200);
+  // —— 服装（#215 J5 起 TRAIN_MESSAGE_B 服装前缀与 SHOW_STATUS 的
+  //    【PRINT_CLOTHTYPE】为真身，两侧对得上要求播种着衣态）——
+  // FLAG:37 = 1（着衣系统开）：状态屏【紧身衣＆裙甲的姿态】在场为证
+  // （train-natural-log:100；PRINT_CLOTHTYPE 的 :37 守卫读它）
+  fixture.store.set('flag:37', 1);
+  // CFLAG:41 = 5（紧身衣＆裙甲，两截裙装型）+ CFLAG:40 = 15（内裤|胸罩|
+  // 上装|裙，WEARING_CLOTH_ALL 对 1-100 型的装位）：爱抚情景行带
+  // 「隔着紧身衣＆裙甲、」前缀（train-natural-log:122）与
+  // 「紧身衣＆裙甲的姿态的温妮被带来了。」（train-natural-log:91）
+  // 为证。ere 侧 COM110（穿脱）未移植，89/7 扒光后 ere 不脱——两态错位
+  // 差异经 rules.js 记名 COM110 待办
+  fixture.store.set('cflag:31:41', 5);
+  fixture.store.set('cflag:31:40', 15);
   // CFLAG:16（初吻对象）>0 且 <100：结算「[初吻对象：你的唇]」（train-natural-log:938）
   // 的值域 + COM0 走「已有接吻经验」支（源不洁不为 0）；CSTR:4 = 名
   fixture.store.set('cflag:31:16', 1);

@@ -411,7 +411,6 @@ test('存根清单核对：event-ending 与 chara-init 的 STUBBED_CALLS 全部�
   ]);
   // ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js），移出
   assert.deepEqual(INIT_STUBS, [
-    'WEARING_CLOTH_ABLE',
     'SET_SUIT_SELFCALL',
     'SET_NICK_SELFCALL',
     'CHAR_BODY_GENERATE_WAPPED',

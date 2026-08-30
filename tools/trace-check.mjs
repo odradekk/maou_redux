@@ -77,6 +77,8 @@ const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
 const BENKI = 'target/ERB/調教相關/BENKI.ERB';
 const MESSAGE_B = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB';
+const FUNC_CLOTH_ERB = 'target/ERB/其他/FUNC_CLOTH.ERB';
+const SHOP_TAILOR = 'target/ERB/SHOP/SHOP_TAILOR.ERB';
 const MESSAGE_A = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB';
 const SOURCE = 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB';
 const SUB1 = 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB';
@@ -282,6 +284,8 @@ const FILES = [
   {
     js: 'ere/event/event-end.js',
     refs: [
+      // #215（J5）：调教后衣物处理与再着衣换真身
+      { src: TRAIN_MAIN, ref: '360', any: [/^\s*CALL RE_CLOTHED$/m] },
       {
         src: TRAIN_MAIN,
         ref: '316-317',
@@ -750,6 +754,12 @@ const FILES = [
   {
     js: 'ere/page/page-train.js',
     refs: [
+      // #215（J5）：clothtype_text 内部 :37 的着衣模式守卫
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '37',
+        any: [/^\s*IF FLAG:37 == 0 \|\| CFLAG:41 == 0$/m],
+      },
       // @SHOW_STATUS 整函数（#74 组件化后的 draw_status_screen 全量）
       { src: TRAIN_MAIN, ref: '60-256', any: [/^@SHOW_STATUS$/m] },
       // 锚点跨度重绘的原作习语（#74：ScreenBlock 承载的 ere 侧等价物）
@@ -2334,6 +2344,30 @@ const FILES = [
   {
     js: 'ere/system/train/train-message.js',
     refs: [
+      // #215（J5）：服装前缀组与装备支真身化的新增引用
+      {
+        src: MESSAGE_B,
+        ref: '29-90',
+        any: [/^\s*IF \(CFLAG:40 & 64\) && CFLAG:42 <= 50$/m],
+      },
+      {
+        src: MESSAGE_B,
+        ref: '29-39',
+        any: [/^\s*IF \(CFLAG:40 & 64\) && CFLAG:42 <= 50$/m],
+      },
+      { src: MESSAGE_B, ref: '30-32', any: [/^\s*PRINT 隔着$/m] },
+      { src: MESSAGE_B, ref: '33-35', any: [/^\s*ELSEIF CFLAG:40 & 28$/m] },
+      { src: MESSAGE_B, ref: '36-37', any: [/^\s*PRINT 、$/m] },
+      { src: MESSAGE_B, ref: '40-41', any: [/^\s*PRINT 触手玩弄着$/m] },
+      {
+        src: MESSAGE_B,
+        ref: '42-63',
+        any: [/^\s*CALL MONSTER_NAME,E:300,0$/m],
+      },
+      { src: MESSAGE_B, ref: '43', any: [/^\s*CALL MONSTER_NAME,E:300,0$/m] },
+      { src: MESSAGE_B, ref: '44-62', any: [/^\s*IF E:307 == 2$/m] },
+      { src: MESSAGE_B, ref: '63', any: [/^\s*PRINTL 正仔细地爱抚着$/m] },
+      { src: MESSAGE_B, ref: '65-66', any: [/^\s*PRINT 狗的舌头舔舐着$/m] },
       {
         src: MESSAGE_B,
         ref: '19-26',
@@ -2352,6 +2386,7 @@ const FILES = [
         any: [/IF TEQUIP:90/, /ELSEIF TEQUIP:88/],
       },
       { src: MESSAGE_B, ref: '67-72', any: [/SIF \(STAIN:0 < 2/] },
+      { src: MESSAGE_B, ref: '68', any: [/^\s*PRINTFORM %SAVESTR:PLAYER%$/m] },
       { src: MESSAGE_B, ref: '73-88', any: [/IF TALENT:135/] },
       { src: MESSAGE_B, ref: '89-90', any: [/微微感觉到胎儿在踢脚/] },
       {
@@ -2381,6 +2416,453 @@ const FILES = [
       { src: MESSAGE_A, ref: '779-780', any: [/明确地感受到了快感/] },
       { src: MESSAGE_A, ref: '781-790', any: [/主动用手/] },
       { src: MESSAGE_A, ref: '791-807', any: [/依恋地靠着/] },
+    ],
+  },
+  // —— #215 J5 服装：ere/system/cloth-lookup.js ——
+  {
+    js: 'ere/system/cloth-lookup.js',
+    refs: [
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '707-888',
+        any: [/^\s*@GET_CLOTHTYPE_MAIN2\(L_A = -1, L_VERB = ""\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '998-1109',
+        any: [/^\s*@GET_CLOTHTYPE_SPECIAL\(L_A = -1\)$/m],
+      },
+      {
+        src: SHOP_TAILOR,
+        ref: '73',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:TARGET%现在%GET_CLOTHTYPE_MAIN2\(TARGET,"身穿"\)%。$/m,
+        ],
+      },
+      {
+        src: SHOP_TAILOR,
+        ref: '168',
+        any: [/^\s*PRINTV GET_CLOTHTYPE_MAIN2\(TARGET,"脱下"\)$/m],
+      },
+      {
+        src: SHOP_TAILOR,
+        ref: '176',
+        any: [/^\s*PRINTFORML %GET_CLOTHTYPE_MAIN2\(TARGET,"换上"\)%了。$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '716-886', any: [/^\s*CASE 0$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '1006-1107',
+        any: [/^\s*SELECTCASE CFLAG:L_A:42$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '884-885', any: [/^\s*CASEELSE$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '1105-1106', any: [/^\s*CASEELSE$/m] },
+    ],
+  },
+  // —— #215 J5 服装：ere/page/page-clothtype.js ——
+  {
+    js: 'ere/page/page-clothtype.js',
+    refs: [
+      { src: FUNC_CLOTH_ERB, ref: '35-58', any: [/^\s*@PRINT_CLOTHTYPE$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '61-156',
+        any: [/^\s*@PRINT_CLOTHTYPE_MAIN$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '530-703',
+        any: [/^\s*@PRINT_CLOTHTYPE_MAIN2$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '892-994',
+        any: [/^\s*@PRINT_CLOTHTYPE_SPECIAL$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '74-96', any: [/^\s*ENDIF$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '531-703', any: [/^\s*IF CFLAG:41 == 0$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '894-992', any: [/^\s*IF CFLAG:42 == 1$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '701-702', any: [/^\s*ELSE$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '102',
+        any: [
+          /^\s*IF TALENT:122 == 0 && TALENT:116 == 0 && \(TALENT:109 == 0 \|\| TALENT:132 == 0\)$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '126',
+        any: [
+          /^\s*IF TALENT:122 == 0 && TALENT:116 == 0 && \(TALENT:109 == 0 \|\| TALENT:132 == 0\)$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '63-65',
+        any: [/^\s*IF CFLAG:41 == 192 && \(CFLAG:40 & 16\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '67-83',
+        any: [/^\s*ELSEIF CFLAG:41 == 109$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '86-110',
+        any: [/^\s*IF CFLAG:41 >= 201 && CFLAG:41 <= 300$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '112-154',
+        any: [/^\s*IF \(CFLAG:40 & 28\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '37-40',
+        any: [/^\s*IF FLAG:37 == 0 \|\| CFLAG:41 == 0$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '43-46',
+        any: [/^\s*IF CFLAG:42 == 11 && \(CFLAG:40 & 64\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '49',
+        any: [/^\s*CALL PRINT_CLOTHTYPE_MAIN$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '52-56', any: [/^\s*IF CFLAG:42$/m] },
+    ],
+  },
+  // —— #215 J5 服装：ere/system/train/cloth.js ——
+  {
+    js: 'ere/system/train/cloth.js',
+    refs: [
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '161-221',
+        any: [/^\s*@WEARING_CLOTH_ALL$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '226-239',
+        any: [/^\s*@WEARING_CLOTH_ABLE$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '244-388', any: [/^\s*@AFTERTRAIN_CLOTH$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '393-405', any: [/^\s*@RE_CLOTHED$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '459-488',
+        any: [/^\s*@SOILING_CLOTH_NO1$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '493-525',
+        any: [/^\s*@SOILING_CLOTH_NO2$/m],
+      },
+      { src: NEXTDAY, ref: '786-787', any: [/^\s*CALL SOILING_CLOTH_NO1$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '410-454', any: [/^\s*@WASHING_CLOTH$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '163-164',
+        any: [/^\s*SIF CFLAG:41 == 0 && CFLAG:42 == 0$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '167', any: [/^\s*CFLAG:40 = 0$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '170-215', any: [/^\s*IF CFLAG:41 != 0$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '172', any: [/^\s*CFLAG:40 \|= 1$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '174',
+        any: [
+          /^\s*SIF TALENT:116 == 0 && TALENT:135 == 0 && \(TALENT:132 == 0 \|\| TALENT:109 == 0\)$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '177-178',
+        any: [
+          /^\s*SIF \(CFLAG:40 & 2\) && \(CFLAG:41 == 202 \|\| CFLAG:41 == 254\)$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '180-185',
+        any: [/^\s*SIF \(CFLAG:41 >= 191 && CFLAG:41 <= 200\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '187-188',
+        any: [/^\s*SIF CFLAG:41 == 29$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '190-191',
+        any: [/^\s*SIF \(CFLAG:40 & 1\) && CFLAG:42 == 69$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '194-209',
+        any: [/^\s*IF CFLAG:41 >= 1 && CFLAG:41 <= 100$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '212-213',
+        any: [/^\s*SIF CFLAG:41 == 192$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '218-219', any: [/^\s*SIF CFLAG:42$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '228-239', any: [/^\s*SIF CFLAG:43 != 0$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '247-295',
+        any: [/^\s*IF CFLAG:42 && \(TFLAG:45 & 32\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '249',
+        any: [
+          /^\s*PRINTFORMW （%SAVESTR:TARGET%的%GET_CLOTHTYPE_SPECIAL\(\)%被拿去扔掉了）$/m,
+        ],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '250', any: [/^\s*CFLAG:42 = 0$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '251', any: [/^\s*TFLAG:45 -= 32$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '253-254', any: [/^\s*SIF CFLAG:40 & 64$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '255-284',
+        any: [
+          /^\s*ELSEIF CFLAG:42 == 69 && \(TFLAG:45 & 16\) && CFLAG:47 == 0 && MONEY >= 50$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '258',
+        any: [/^\s*PRINTFORML 花费50p为%SAVESTR:TARGET%换尿布吗？$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '259', any: [/^\s*PRINTL  \[0\] - 好的$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '260', any: [/^\s*PRINTL  \[1\] - 不要$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '261', any: [/^\s*INPUT$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '263',
+        any: [/^\s*PRINTFORM （为%SAVESTR:TARGET%换上了新的尿布）$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '269', any: [/^\s*PRINTL\s*$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '264', any: [/^\s*MONEY -= 50$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '265', any: [/^\s*EX_FLAG:4444 -= 50$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '266', any: [/^\s*CFLAG:47 = 0$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '267', any: [/^\s*TFLAG:45 -= 16$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '268-271',
+        any: [/^\s*IF TALENT:135 == 0$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '273', any: [/^\s*WAIT$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '276',
+        any: [/^\s*PRINTFORMW （把%SAVESTR:TARGET%的尿布拿去洗了）$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '277', any: [/^\s*CFLAG:47 = 2$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '278', any: [/^\s*TFLAG:45 -= 16$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '280-281', any: [/^\s*SIF CFLAG:40 & 64$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '282-283', any: [/^\s*ELSE$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '285-294',
+        any: [/^\s*ELSEIF CFLAG:42 && \(TFLAG:45 & 16\) && CFLAG:47 == 0$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '287', any: [/^\s*CFLAG:47 = 5$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '289-290',
+        any: [/^\s*SIF CFLAG:42 == 69$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '291', any: [/^\s*TFLAG:45 -= 16$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '293-294', any: [/^\s*SIF CFLAG:40 & 64$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '297-350',
+        any: [/^\s*IF CFLAG:41 && \(TFLAG:45 & 8\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '298-305',
+        any: [/^\s*PRINTFORM （%SAVESTR:TARGET%穿过的$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '300-301',
+        any: [/^\s*IF CFLAG:41 >= 1 && CFLAG:41 <= 100$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '302-303',
+        any: [/^\s*ELSEIF CFLAG:41 <= 200$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '306-313',
+        any: [/^\s*IF CFLAG:41 >= 201$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '315', any: [/^\s*CFLAG:46 = -2$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '321', any: [/^\s*TFLAG:45 -= 8$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '323-349',
+        any: [/^\s*ELSEIF CFLAG:41 && \(TFLAG:45 & 4\) && CFLAG:46 == 0$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '326-327',
+        any: [/^\s*IF CFLAG:41 >= 1 && CFLAG:41 <= 100$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '328-329',
+        any: [/^\s*ELSEIF CFLAG:41 <= 200$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '332-340',
+        any: [/^\s*IF CFLAG:41 >= 201$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '342', any: [/^\s*CFLAG:46 = 3$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '348', any: [/^\s*TFLAG:45 -= 4$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '352-366',
+        any: [/^\s*IF \(TFLAG:45 & 2\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '353',
+        any: [/^\s*PRINTFORMW （%SAVESTR:TARGET%的内衣被拿去扔掉了）$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '354', any: [/^\s*CFLAG:43 = -2$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '355-356', any: [/^\s*SIF CFLAG:40 & 1$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '357', any: [/^\s*TFLAG:45 -= 2$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '359-365',
+        any: [/^\s*ELSEIF \(TFLAG:45 & 1\) && CFLAG:43 == 0$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '361', any: [/^\s*CFLAG:43 = 2$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '362-363', any: [/^\s*SIF CFLAG:40 & 1$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '364', any: [/^\s*TFLAG:45 -= 1$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '369-381', any: [/^\s*IF CFLAG:41$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '370-371',
+        any: [/^\s*SIF CFLAG:45 < 0 && CFLAG:46 < 0$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '373-374',
+        any: [/^\s*SIF CFLAG:41 == 192 && CFLAG:46 < 0$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '376-377',
+        any: [/^\s*SIF CFLAG:41 == 0 && CFLAG:40 & 3$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '379-380',
+        any: [
+          /^\s*ELSEIF \(CFLAG:41 == 1 \|\| CFLAG:41 == -1\) && !\(CFLAG:40 & 3\)$/m,
+        ],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '383-386', any: [/^\s*IF CFLAG:42$/m] },
+      { src: FUNC_CLOTH_ERB, ref: '385', any: [/^\s*CFLAG:42 = 0$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '400',
+        any: [/^\s*PRINTFORML （%SAVESTR:TARGET%把被脱掉的衣服又穿上了）$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '401', any: [/^\s*WAIT$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '473-480',
+        any: [/^\s*PRINTFORM 《%SAVESTR:TARGET%正穿着$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '508-515',
+        any: [/^\s*PRINTFORM 《%SAVESTR:TARGET%正穿着$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '461-462', any: [/^\s*SIF FLAG:37 == 0$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '465-471',
+        any: [
+          /^\s*IF \(CFLAG:40 & 64\) && \(CFLAG:42 <= 50 \|\| CFLAG:42 == 69\)$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '466',
+        any: [
+          /^\s*PRINTFORML 《%SAVESTR:TARGET%的%GET_CLOTHTYPE_SPECIAL\(\)%沾满了尿》$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '469-470',
+        any: [/^\s*SIF CFLAG:42 == 69$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '472-482',
+        any: [/^\s*IF \(CFLAG:40 & 8\) \|\| \(CFLAG:40 & 16\)$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '480', any: [/^\s*PRINTFORML 沾满了尿》$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '483-486',
+        any: [/^\s*IF \(CFLAG:40 & 1\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '484',
+        any: [/^\s*PRINTFORML 《%SAVESTR:TARGET%的内衣沾满了尿》$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '495-496', any: [/^\s*SIF FLAG:37 == 0$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '499-506',
+        any: [
+          /^\s*IF \(CFLAG:40 & 64\) && \(CFLAG:42 <= 50 \|\| CFLAG:42 == 69\)$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '500',
+        any: [
+          /^\s*PRINTFORML 《%SAVESTR:TARGET%的%GET_CLOTHTYPE_SPECIAL\(\)%沾满了污物$/m,
+        ],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '504-505',
+        any: [/^\s*SIF CFLAG:42 == 69$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '507-518',
+        any: [/^\s*IF \(CFLAG:40 & 8\) \|\| \(CFLAG:40 & 16\)$/m],
+      },
+      { src: FUNC_CLOTH_ERB, ref: '515', any: [/^\s*PRINTL 沾满了污物》$/m] },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '519-523',
+        any: [/^\s*IF \(CFLAG:40 & 1\)$/m],
+      },
+      {
+        src: FUNC_CLOTH_ERB,
+        ref: '520',
+        any: [/^\s*PRINTFORML 《%SAVESTR:TARGET%的内衣沾满了污物》$/m],
+      },
     ],
   },
   {
@@ -22705,6 +23187,8 @@ const LOG_REFS = [
       { ref: '51', any: [/\[阴蒂绝顶：1次\]/] },
       { ref: '46', any: [/^3日\(午后\)/m] },
       { ref: '47', any: [/温妮 调教中\s+调教者:你/] },
+      // #215（J5）着衣态播种的证据行：状态屏的服装表示（【紧身衣＆裙甲的姿态】）
+      { ref: '50', any: [/^【紧身衣＆裙甲的姿态】$/] },
     ],
   },
   {
@@ -22814,11 +23298,17 @@ const SAMPLE_LOG_REFS = {
       refs: [
         // 爱抚无台词的实证（TRAIN_MESSAGE 的 A 文在场、口上行缺席）
         { ref: '122-126', any: [/^隔着紧身衣＆裙甲、你轻舔着温妮的唇/] },
+        // #215（J5）着衣态播种（CFLAG:41 = 5 / 40 = 15）的证据：前缀行本身
+        { ref: '122', any: [/^隔着紧身衣＆裙甲、你轻舔着温妮的唇/] },
+        // 调教开场叙事的服装句（「紧身衣＆裙甲的姿态的温妮被带来了。」）
+        { ref: '91', any: [/紧身衣＆裙甲的姿态的温妮被带来了。/] },
         { ref: '253-257', any: [/你轻舔着温妮的唇、仔细爱抚着温妮的身体/] },
         // 首屏状态（体力/气力/日期/目标行/参数条）
         { ref: '96', any: [/^7日\(午前\)/] },
         { ref: '97', any: [/温妮 调教中\s+调教者:你/] },
         { ref: '98-99', any: [/体力\[\.{14}\]\(1198\/2000\)/] },
+        // #215（J5）FLAG:37 = 1（着衣系统开）的证据：状态屏的服装表示
+        { ref: '100', any: [/^【紧身衣＆裙甲的姿态】$/] },
         { ref: '101', any: [/阴核\[\.{10}\]\s+0/] },
         // 好感档的源一览实证（不洁 27 = 30×0.9、情爱 181 = 165×1.1）
         { ref: '127', any: [/^阴核\(1000\)乳房\(25\)情爱\(181\)/] },

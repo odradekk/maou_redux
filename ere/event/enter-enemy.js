@@ -53,6 +53,8 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+// WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
+const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const { char_make, char_make_inport } = require('#/chara/char-make');
 const { add_chara_ex } = require('#/chara/chara-ex');
@@ -65,7 +67,6 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 const STUBBED_CALLS = [
   'ENTERENEMY_KOUJO',
   'SHOW_CHARA_INFO',
-  'WEARING_CLOTH_ABLE',
   'CHAR_BODY_GENERATE_WAPPED',
   'FAMILY_REGISTER',
 ];
@@ -357,7 +358,7 @@ async function k_11_lily() {
   chara(a).chara.加入时名字 = name; // :198 CSTR:A:1
   chara(a).chara.武装 = 40; // :200 初期装備：剑（CFLAG:A:550）
   era_flag.target = a; // :202 着替え装着
-  await stub_line_wait('WEARING_CLOTH_ABLE', '初始着装', '随服装票'); // :203
+  wearing_cloth_able(a); // :203 —— #215（J5）真身
   await stub_line_wait(
     'CHAR_BODY_GENERATE_WAPPED',
     '角色身体数据生成',
@@ -448,7 +449,7 @@ async function k_34_crazylord(rand_n) {
   }
 
   era_flag.target = a; // :270 着替え装着
-  await stub_line_wait('WEARING_CLOTH_ABLE', '初始着装', '随服装票'); // :271
+  wearing_cloth_able(a); // :271 —— #215（J5）真身
   await stub_line_wait(
     'CHAR_BODY_GENERATE_WAPPED',
     '角色身体数据生成',

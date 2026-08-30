@@ -57,9 +57,22 @@ const REPO = path.resolve(__dirname, '..');
 // GETBIT(FLAG:5,34) 渲染分流同步落地（replay 播种 flag:5 开局值，
 // golden 的自定义菜单形态不变）。ere 多出的末屏按钮组条目挂进
 // 「多出的方格屏」归因（同屏整组，见 rules.js）。
+//
+// 【#215（J5）服装前缀与 PRINT_CLOTHTYPE 真身后实测】回放世界播种着衣态
+// （FLAG:37 = 1、CFLAG:41 = 5 紧身衣＆裙甲、CFLAG:40 = 15）后：早期的
+// 【紧身衣＆裙甲的姿态】屏与带前缀的爱抚行转匹配；COM110（穿脱）未移植
+// 使 ere 侧不扒光，后续屏的【全裸】与无前缀爱抚行是两态错位——ere 半边
+// 经 rules.js 记名「COM110 未移植」（golden 半边走 STUB_TEXT_EXACT 既有
+// 规则）。natural 619/2578 → 621/2574，upgrade 166/850 → 167/848。存根
+// 差异净降 6：服装系统的记名差异从「前缀/显示未移植」转记「扒光指令未
+// 移植」（J18 着装脱衣票落地时整组转匹配）。
+//
+// 【#214 与 #215 合并后重测（派单人在 rebase 时）】两票各自播种了 replay
+// 世界的不同侧面（#214 的 flag:5 开局值、#215 的着衣态），合并后两组播种
+// 同时生效，四数因此既不等于 #214 的也不等于 #215 的——下面是合并态实测。
 const BASELINE = {
-  'train-natural': { matched: 763, version: 0, stub: 2434, unexplained: 0 },
-  'train-upgrade': { matched: 199, version: 0, stub: 832, unexplained: 0 },
+  'train-natural': { matched: 765, version: 0, stub: 2430, unexplained: 0 },
+  'train-upgrade': { matched: 200, version: 0, stub: 830, unexplained: 0 },
 };
 
 async function build_report(sample) {

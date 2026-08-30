@@ -294,6 +294,16 @@ const cflag = {
       ':295 CFLAG:41 上着のタイプ（詳細は FUNC_CLOTH.ERB @PRINT_CLOTHTYPE）',
     ),
   ),
+  // 特别服装类型（42）属主 chara（ownership/cflag-ownership.yml "42"）——
+  // FUNC_CLOTH（train 域）的 AFTERTRAIN_CLOTH 写它走 chara(cid).chara 门面
+  //（#215 J5）；与 41/45/46 同族但不同属主，落 chara-chara.js 的域区块
+  42: named_tail(
+    '特别服装类型',
+    src(
+      SRC_FLAG,
+      ':296 CFLAG:42 特別コスチュームのタイプ（詳細は FUNC_CLOTH.ERB）',
+    ),
+  ),
   45: named_tail(
     '上衣上状态',
     src(
@@ -681,6 +691,34 @@ const deltabase = {
   1: named('气力损耗', src_losebase(1)),
 };
 
+// —— TEQUIP：调教中的装备位（#215 J5 建模；名字源 = 旗标一览，属主见
+//    ownership/tequip-ownership.yml 的 12 个区间）。TEquip.yml 保持空表
+//    （引擎建桶用；登记名字表会让 initCharaTable 预置 0，见该文件头注），
+//    名字只进本表。只名六个：跨域两段（22 属 system、35 属 event——train
+//    侧写它必须走门面）与 #213 口上头部守卫消费的四位（45/55/89/90，
+//    train 域内——族票写它时可直写也可走门面，具名是给可读性）。
+//    其余属主下标随各自族票补名（#71 裁定三：未命名不进门面）。——
+const tequip = {
+  22: named_tail(
+    '利尿剂',
+    src(
+      SRC_FLAG,
+      ':510 TEQUIP:22 利尿剤（属主 system：COMF52/COMF85 的 train 跨域写走本门面）',
+    ),
+  ),
+  35: named_tail(
+    '主人避孕套',
+    src(
+      SRC_FLAG,
+      ':511 TEQUIP:35 マスターがコンドーム装着（属主 event：SYSTEM_SOURCE/COMF_CONDOM 的跨域写走本门面）',
+    ),
+  ),
+  45: named_tail('口塞', src(SRC_FLAG, ':516 TEQUIP:45 ボールギャグ装着')),
+  55: named_tail('死斗场', src(SRC_FLAG, ':523 TEQUIP:55 コロシアム')),
+  89: named_tail('兽奸', src(SRC_FLAG, ':527 TEQUIP:89 獣姦プレイ')),
+  90: named_tail('触手', src(SRC_FLAG, ':528 TEQUIP:90 触手調教')),
+};
+
 // —— 移植自建表的属主声明（#90 裁定，依据见 issue #90）——
 // 这些表 target/ 侧没有源（UP/DOWN、LOSEBASE 是 Emuera 内建变量族），测量
 // 不出属主，只能人定；与名字同处声明，因为两者都是「测不出来、人工定」的
@@ -704,6 +742,7 @@ const NAMES = {
   global,
   mark,
   cstr,
+  tequip,
   delta,
   deltabase,
 };

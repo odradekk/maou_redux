@@ -44,6 +44,22 @@ class SystemFacade {
     era.set(`cstr:${this.cid}:99`, v);
   }
 
+  // —— tequip ——
+  /**
+   * 利尿剂（tequip:cid:22 ↔ TEQUIP:22）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行510 TEQUIP:22 利尿剤（属主 system：COMF52/COMF85 的 train 跨域写走本门面）
+   * @returns {number}
+   */
+  get 利尿剂() {
+    return era.get(`tequip:${this.cid}:22`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 利尿剂(v) {
+    era.set(`tequip:${this.cid}:22`, v);
+  }
+
   // —— talent ——
   /**
    * 金红桃（talent:cid:167 ↔ TALENT:167）

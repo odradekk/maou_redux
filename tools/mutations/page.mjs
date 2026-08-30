@@ -906,4 +906,32 @@ export default [
     tests: ['page-train'],
     must_mention: '恰一条',
   },
+  {
+    desc: 'M810 clothtype_text 的特别服装复合句删（穿戴着…的模样不拼）',
+    file: 'ere/page/page-clothtype.js',
+    find: '    out += `穿戴着${clothtype_special_text(cid)}的模样`;',
+    replace: '    // 变异：特别服装句删',
+    tests: ['cloth-func'],
+    must_mention: '基本 + 特别复合句（:49-56）',
+  },
+  {
+    desc: 'M811 乳房外露判据删（breasts_exposed 恒假 → 一律上半身裸露）',
+    file: 'ere/page/page-clothtype.js',
+    find: `  return (
+    talent(cid, 122) === 0 &&
+    talent(cid, 116) === 0 &&
+    (talent(cid, 109) === 0 || talent(cid, 132) === 0)
+  );`,
+    replace: '  return false; // 变异',
+    tests: ['cloth-func'],
+    must_mention: '乳房外露，穿着紧身衣＆裙甲的裙子',
+  },
+  {
+    desc: 'M812 SHOW_STATUS 的服装表示行删（【PRINT_CLOTHTYPE】段静默）',
+    file: 'ere/page/page-train.js',
+    find: '  era.print(`【${clothtype_text(target)}】`);',
+    replace: '  // 变异：服装表示行删',
+    tests: ['page-train', 'compare-train'],
+    must_mention: '服装表示行为【全裸】（着衣模式关）',
+  },
 ];

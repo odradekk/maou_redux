@@ -234,12 +234,18 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
   assert(!texts.some((line) => line.includes('绝顶')));
   // 存根各占位一行（可检索；LIFE_BAR/VITAL_BAR 已随 #212 换真身——
   // maxbase 未播种时静默，见下方两条反向断言）
-  for (const name of ['SHOW_EQUIP_2', 'PRINT_CLOTHTYPE', 'SHOW_EQUIP_1']) {
+  for (const name of ['SHOW_EQUIP_2', 'SHOW_EQUIP_1']) {
     assert(
       texts.some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印占位行`,
     );
   }
+  // PRINT_CLOTHTYPE 自 #215（J5）起为真身：本世界未播种服装 → 【全裸】
+  //（FLAG:37 缺省 0 时 clothtype_text 的 :37 早退路径）
+  assert(
+    texts.some((line) => line === '【全裸】'),
+    '服装表示行为【全裸】（着衣模式关）',
+  );
   // :85-86 LIFE_BAR/VITAL_BAR（#212）：maxbase 未播种时静默（MAXBASE <= 0
   // 的原作守卫）——温妮世界没播 maxbase:31:0/1，两条都不出
   assert(
@@ -450,11 +456,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, [
-    'SHOW_EQUIP_2',
-    'PRINT_CLOTHTYPE',
-    'SHOW_EQUIP_1',
-  ]);
+  assert.deepEqual(STUBBED_CALLS, ['SHOW_EQUIP_2', 'SHOW_EQUIP_1']);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

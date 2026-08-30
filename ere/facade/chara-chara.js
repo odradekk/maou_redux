@@ -134,6 +134,21 @@ class CharaFacade {
   }
 
   /**
+   * 特别服装类型（cflag:cid:42 ↔ CFLAG:42）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行296 CFLAG:42 特別コスチュームのタイプ（詳細は FUNC_CLOTH.ERB）
+   * @returns {number}
+   */
+  get 特别服装类型() {
+    return era.get(`cflag:${this.cid}:42`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 特别服装类型(v) {
+    era.set(`cflag:${this.cid}:42`, v);
+  }
+
+  /**
    * 善恶值（cflag:cid:151 ↔ CFLAG:151）
    * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行101-103 善悪値調整（< -100 钳到 -100）
    * @returns {number}

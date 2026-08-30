@@ -637,6 +637,11 @@ const WORD_MAP = [
 // 豁免名单：整串豁免。value 必须与 JS 字符串字面量的内容**完全相等**才命中。
 const EXEMPT_STRINGS = [
   {
+    value: '土著头饰',
+    where: 'ere/page/page-clothtype.js, ere/system/cloth-lookup.js',
+    why: 'FUNC_CLOTH.ERB:922/:1056 的 CFLAG:42 == 56（土着頭飾→汉化版「土著头饰」）。著 在简体规范里是「土著」（tǔzhù，原住民）的正字——词级豁免而非字级映射：单收 著→着 会把这个词改坏（土着），而 著 在本作语料里只随这一个词出现。#215（J5）收录。',
+  },
+  {
     value:
       '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
     where: 'ere/page/page-title.js',
