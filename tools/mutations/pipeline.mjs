@@ -253,16 +253,13 @@ export default [
   },
   // —— #211 第三段：调教段全序列（登记/回放/归因/基线锁）——
   {
-    desc: 'M660 反向变异：MENU_LABEL_SHIFT 放宽成裸编号（val 命中即豁免——注释警告过的那条纪律）',
+    desc: 'M660 L_IDX 在册判定退回 L_I 值域（#213 映射层落地后的形态：位次映射臂删——ere 侧按钮的紧凑序号重新全部 unexplained）',
     file: 'tools/compare/rules.js',
-    find: `    const shift = MENU_LABEL_SHIFT.find(
-      (s) => s.key === entry.key && s[side] === entry.val,
-    );`,
-    replace: `    const shift = MENU_LABEL_SHIFT.find(
-      (s) => s[side] === entry.val, // 变异：放宽成裸编号（标签不查）
-    );`,
+    find: `  const l_i_of = (val) => (tc_ids.has(val) ? val : idx_map.get(val));`,
+    replace: `  const l_i_of = (val) =>
+    tc_ids.has(val) ? val : undefined; // 变异：L_IDX 位次映射删`,
     tests: ['compare-train'],
-    must_mention: '不放宽到裸编号',
+    must_mention: '位次映射回 L_I 才豁免',
   },
   {
     desc: 'M661 相殺随机序列坏一掷（train-natural 首掷 2→0：屈服改恭顺开扣，终态偏移）',

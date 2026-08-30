@@ -72,6 +72,8 @@ const SYSTEM = 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB';
 const SYSTEM_DATA = 'target/ERB/SYSTEM/SYSTEM_DATA.ERB';
 const COMF0 = 'target/ERB/調教相關/COMF0_愛撫.ERB';
 const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
+const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
+const BENKI = 'target/ERB/調教相關/BENKI.ERB';
 const MESSAGE_B = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB';
 const MESSAGE_A = 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB';
 const SOURCE = 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB';
@@ -885,6 +887,22 @@ const FILES = [
         src: TRAIN_MAIN,
         ref: '778-779',
         any: [/^SIF STRLENSU\(TSTR:90\) < 1$/m, /^\tTSTR:90 = 　$/m],
+      },
+      // #213：按钮编号/标签的换算依据（@SHOW_COMMENU 的方格行）
+      {
+        src: USERCOM,
+        ref: '188-216',
+        any: [/@SHOW_COMMENU/, /FOR L_I,0,300/],
+      },
+      {
+        src: USERCOM,
+        ref: '211',
+        any: [/PRINTFORMC %TRAINNAME:64%・%TRAINNAME:L_I%/],
+      },
+      {
+        src: USERCOM,
+        ref: '213',
+        any: [/PRINTFORMC %TRAIN_NAME:RESULT%/],
       },
       { src: USERCOM, ref: '14', any: [/^PRINTL$/m] },
       { src: USERCOM, ref: '15', any: [/^DRAWLINE$/m] },
@@ -1844,8 +1862,40 @@ const FILES = [
     ],
   },
   {
+    // #213：@GET_ADV_COM 升格骨架（SELECTCASE 全文；零规则态）
+    js: 'ere/system/train/com-adv.js',
+    refs: [{ src: COMF_JUMP, ref: '1-684', any: [/@GET_ADV_COM/] }],
+  },
+  {
+    // #213：L_IDX↔L_I 映射层（@SHOW_COMMENU 的紧凑序号循环）
+    js: 'ere/system/train/com-index.js',
+    refs: [
+      { src: USERCOM, ref: '188-216', any: [/@SHOW_COMMENU/, /L_IDX\+\+/] },
+    ],
+  },
+  {
+    // #213：@V_ABLE 公共头（COMABLE.ERB 文件头；消费点 BENKI.ERB:1400/1407 随 J7）
+    js: 'ere/system/train/v-able.js',
+    refs: [
+      { src: COMABLE, ref: '3-20', any: [/@V_ABLE\(ARG\)/] },
+      { src: COMABLE, ref: '5-20', any: [/;オトコだとダメ/, /^RETURN 1$/m] },
+      { src: COMABLE, ref: '6-7', any: [/^SIF TALENT:\(ARG\):122$/m] },
+      { src: COMABLE, ref: '9-10', any: [/^SIF TALENT:\(ARG\):135$/m] },
+      { src: COMABLE, ref: '12-13', any: [/^SIF TALENT:\(ARG\):0$/m] },
+      { src: COMABLE, ref: '15-16', any: [/SIF CFLAG:\(ARG\):42 == 79/] },
+      { src: COMABLE, ref: '18-19', any: [/SIF TALENT:\(ARG\):273/] },
+      { src: COMABLE, ref: '20', any: [/^RETURN 1$/m] },
+      { src: BENKI, ref: '1407', any: [/CALL V_ABLE,ARG/] },
+    ],
+  },
+  {
     js: 'ere/system/train/train-message.js',
     refs: [
+      {
+        src: MESSAGE_B,
+        ref: '19-26',
+        any: [/調教テキスト省略設定の場合は戻る/, /CUSTOMDRAWLINE ‥/],
+      },
       {
         src: MESSAGE_B,
         ref: '19-21',
@@ -1867,6 +1917,11 @@ const FILES = [
         any: [/調教テキスト省略設定の場合は戻る/],
       },
       { src: MESSAGE_A, ref: '26', any: [/CUSTOMDRAWLINE ‥/] },
+      {
+        src: MESSAGE_A,
+        ref: '746',
+        any: [/IF SELECTCOM == 0 && TEQUIP:44 == 0/],
+      },
       {
         src: MESSAGE_A,
         ref: '745-808',
@@ -3311,6 +3366,12 @@ const FILES = [
         src: EVENT_K,
         ref: '12-15',
         any: [/^@EVENTSHOP/m, /^SIF FLAG:7 == 0$/m],
+      },
+      // #213：接触面契约（七道头部守卫）的出处锚
+      {
+        src: K3,
+        ref: '888-912',
+        any: [/@KOJO_MESSAGE_COM_3/, /SIF TFLAG:899/],
       },
       {
         src: EVENT_K,
@@ -22344,17 +22405,29 @@ const SAMPLE_LOG_REFS = {
     },
     {
       js: 'tools/compare/rules.js',
-      refs: [
-        { ref: '935-936', any: [/绝顶经验:\s+13/] },
-        { ref: '111-112', any: [/打屁股\[ 39\]/] },
-      ],
+      refs: [{ ref: '935-936', any: [/绝顶经验:\s+13/] }],
     },
+    // #213：映射层的实证行（89 → COM110；升格标签 8 号格）
+    {
+      js: 'ere/system/train/com-index.js',
+      refs: [{ ref: '211', any: [/^89$/] }],
+    },
+    {
+      js: 'test/train-loop.test.js',
+      refs: [{ ref: '211', any: [/^89$/] }],
+    },
+
     {
       js: 'tools/mutations/pipeline.mjs',
       refs: [{ ref: '169', any: [/顺从LV1\(4\)/] }],
     },
   ],
   'train-upgrade': [
+    // #213：升格标签的实证（8 号格名字已是 COM84、编号仍是 8）
+    {
+      js: 'test/page-usercom.test.js',
+      refs: [{ ref: '348', any: [/刺激Ｇ点\[  8\]/] }],
+    },
     {
       js: 'tools/compare/replay.js',
       refs: [
@@ -23046,7 +23119,6 @@ const ERB_EXEMPT_BASELINE = {
     '12',
     '15-1351',
     '15',
-    '19-90',
     '22-26',
     '28-90',
     '30-120',
@@ -23055,8 +23127,6 @@ const ERB_EXEMPT_BASELINE = {
     '71',
     '74-87',
     '94',
-    '744',
-    '745',
   ],
 };
 

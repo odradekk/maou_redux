@@ -1,5 +1,6 @@
 /**
- * ere/kojo/kojo-system.js 的行为测试（issue #46：口上系统的公共底座）。
+ * ere/kojo/kojo-system.js 的行为测试（issue #46：口上系统的公共底座；
+ * #213 增补接触面契约——七道头部守卫）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
  *   - 两道守卫：FLAG:7 关闭时完全不输出（验收项「此行为有测试」）、
@@ -10,7 +11,12 @@
  *   - 事件链挂接：@EVENTSHOP #PRI 总开关默认开（只补 0）、
  *     @EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0；
  *   - 实机路径端到端：run_shop（BEGIN SHOP → @EVENTSHOP 链置开关）→
- *     @EVENTTRAIN 链 → COM0 → @SOURCE_CHECK 链 → K5 首次台词。
+ *     @EVENTTRAIN 链 → COM0 → @SOURCE_CHECK 链 → K5 首次台词；
+ *   - **#213 接触面契约**：@KOJO_MESSAGE_COM_<n> handler 的签名
+ *     （kojo-system.js 文件头「handler 签名」段）——七道头部守卫对
+ *     **已注册的全部 handler** 逐条置位驱动，守卫命中时不得出现台词。
+ *     口上票（轴 B）落地新 handler 自动进契约，无需逐票自写守卫用例；
+ *     指令族票（轴 A）对着同一签名扩展 SELECTCOM 分支。
  */
 
 const assert = require('node:assert/strict');
@@ -201,4 +207,69 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
     'K5 首次台词经真实调用点出现在输出里（#60 归一为简体）',
   );
   assert.equal(fixture.store.get('cflag:17:301'), 1, '状态机推进');
+});
+
+// —— #213 接触面契约：@KOJO_MESSAGE_COM_<n> 的七道头部守卫 ——
+
+// 七道守卫的置位器（EVENT_K3_高貴.ERB:888-912 实测；K5 同款顺序互异——
+// 契约锁的是守卫集与语义，顺序按各文件 1:1）。TEQUIP:55/45/89/90 只读
+// （TEQUIP 建模归 J5，#215）。
+const KOJO_GUARD_STATES = [
+  [
+    'TEQUIP:55 死斗场 → 专用口上',
+    (fixture) => fixture.store.set('tequip:17:55', 1),
+  ],
+  [
+    'ASSI > 0 && ASSIPLAY 助手调教 → 跳过',
+    (fixture, era_flag) => {
+      era_flag.assi = 17;
+      era_flag.assiplay = 1;
+    },
+  ],
+  [
+    'TEQUIP:45 口塞（SELECTCOM != 45）→ 跳过',
+    (fixture) => fixture.store.set('tequip:17:45', 1),
+  ],
+  ['TFLAG:899 失神 → 跳过', (fixture) => fixture.store.set('tflag:899', 1)],
+  [
+    'TEQUIP:89 兽奸 → 专用口上/静默',
+    (fixture) => fixture.store.set('tequip:17:89', 1),
+  ],
+  ['TALENT:9 崩坏 → 跳过', (fixture) => fixture.store.set('talent:17:9', 1)],
+  ['TEQUIP:90 触手 → 跳过', (fixture) => fixture.store.set('tequip:17:90', 1)],
+];
+
+test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过（守卫命中不得出台词）', async () => {
+  // 对 family 里已注册的每个 handler × 每道守卫：置位 → 直调 → 返回 0、
+  // 无等待（台词用 printAndWait = print + waitAnyKey）、文本行只允许存根
+  // 占位形状（死斗场/兽奸守卫岔去专用口上时打占位行，K3/K5 形状各异）。
+  // 新口上票落地即自动进本契约——这是「12 张族票与 21 张口上票对着同一
+  // 张脸写」的机器守卫。
+  const probe = await setup_kojo();
+  const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
+  const handlers = [...kojo_message_com_family.implemented.entries()];
+  assert.ok(handlers.length >= 2, '契约至少要覆盖已注册的 K3/K5');
+
+  for (const [num, handler] of handlers) {
+    for (const [name, seed_guard] of KOJO_GUARD_STATES) {
+      const fixture = await setup_kojo();
+      const flag = fixture.load_module('era-utils/era-flag');
+      seed_guard(fixture, flag);
+      const result = await handler();
+      assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 守卫「${name}」返回 0`);
+      assert.equal(
+        fixture.calls.filter((c) => c.api === 'waitAnyKey').length,
+        0,
+        `KOJO_MESSAGE_COM_${num} 守卫「${name}」不得有台词（无等待）`,
+      );
+      for (const line of fixture.text_lines()) {
+        assert.match(
+          line,
+          /尚未移植，此处为占位/,
+          `KOJO_MESSAGE_COM_${num} 守卫「${name}」只允许存根占位行，` +
+            `实际输出：${line}`,
+        );
+      }
+    }
+  }
 });

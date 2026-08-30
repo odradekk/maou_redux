@@ -57,16 +57,19 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
     `未解释差异（完整报告见 node tools/compare/cli.js）：\n${format_report(report)}`,
   );
   // 当前待办状态的基线（存根实现后有意变化，改动者更新）：
-  //   版本 10 = 54/55/89 三对标签漂移（各 2 条）+ 交谈[56] + 穿脱衣服[110]
-  //             + 打屁股 39↔40 标签移位（各 1 条）
-  //   存根 107 = COM_ABLE 未过滤的指令按钮 + @SHOW_USERCOM 按钮组（含与
-  //             触手系指令同编号的 8 对）+ 状态画面/调教结算占位行 +
+  //   版本 0：#211 的编号体系差豁免（MENU_LABEL_SHIFT/VERSION_SKEW）随
+  //           #213 映射层落地整组拆除——ere 侧按钮自此印 L_IDX，四个错位
+  //           标签（54/55/89/39↔40）全部转匹配（原 10 条 version 消失：
+  //           4 对成匹配 + 2 条 SKEW ere 半边转存根桶「COM_ABLE 未过滤」）
+  //   存根 109 = COM_ABLE 未过滤的指令按钮 + @SHOW_USERCOM 按钮组（含与
+  //             触手系指令同编号的对）+ 状态画面/调教结算占位行 +
   //             服装前缀对（#212 起：体力/气力/射精（主人）三条基础条已
-  //             真身匹配、LIFE_BAR/VITAL_BAR 两行占位行撤除，112 → 107）
+  //             真身匹配；#213 起 107 → 109：SKEW 豁免的 2 条 ere 半边
+  //             转正为「COM_ABLE 未过滤」记名存根）
   assert.deepEqual(report.summary, {
-    matched: 57,
-    version: 10,
-    stub: 107,
+    matched: 61,
+    version: 0,
+    stub: 109,
     unexplained: 0,
   });
 });

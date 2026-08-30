@@ -660,6 +660,11 @@ const EXEMPT_STRINGS = [
     }),
   ),
   {
+    value: '・',
+    where: 'ere/page/page-usercom.js',
+    why: 'USERCOM.ERB:211 的复合指令标签分隔（%TRAINNAME:64%・%TRAINNAME:L_I%），64 合成臂动态拼名、・ 逐字照抄——TRAIN_NAME:128-132 同款样式与处置（#212 先例，#213 收录）。整串豁免（本条 value 即完整字面量），改写时失配变红。',
+  },
+  {
     value: '射精（死斗场・怪物）',
     where: 'ere/page/page-train.js',
     why: 'TRAIN_MAIN.ERB:249 的 PRINT 射精（死斗场・怪物），・ 是原作的并列主体分隔样式，逐字照抄（SHOW_STATUS 槽条段，#212 收录）。整串豁免，改写时失配变红。',

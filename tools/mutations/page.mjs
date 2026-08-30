@@ -105,9 +105,9 @@ export default [
     must_mention: 'SHOW_INFO_EXP 的经验行',
   },
   {
-    desc: 'M56 指令按钮渲染删掉（回到 [999] 单按钮）',
+    desc: 'M56 指令按钮渲染删掉（回到 [999] 单按钮；#213 起按钮印 L_IDX + 升格标签）',
     file: 'ere/page/page-usercom.js',
-    find: "    era.printButton(`${era.get(`traincommandname:${id}`) ?? ''}`, id);",
+    find: `    era.printButton(command_button_label(adv, id), com_index(id));`,
     replace: '    // 变异：按钮渲染删除',
     tests: ['source-check'],
     must_mention: '端到端',

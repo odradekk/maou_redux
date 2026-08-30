@@ -1,15 +1,23 @@
 /**
  * @file 调教指令菜单：@SHOW_USERCOM（绘制）与 @USERCOM（输入分发）的处理器
- * （issue #44；指令按钮与「上次的调教指令」行随 #45 挂载）。
+ * （issue #44；指令按钮 #45 挂载、#213 换紧凑序号与升格标签）。
  *
  * 源: target/ERB/調教相關/USERCOM.ERB  @SHOW_USERCOM（:7-100，无标记 =
- *     普通档事件）/@USERCOM（:102-177，同）
+ *     普通档事件）/@USERCOM（:102-177，同）@SHOW_COMMENU（:188-216，
+ *     自定义 COM 菜单的方格渲染——GETBIT(FLAG:5,34) 时替代本文件上方的
+ *     按钮组；其方格编号/标签规则即 ere 侧按钮渲染的依据，菜单本体归 J4）
  *     target/ERB/調教相關/TRAIN_MAIN.ERB  @P_C（:771-780，上次的调教指令名）
  *
- * 指令按钮（引擎内建的 TRAIN 指令列表，#45 挂载）：可执行表由回合循环的
- * COM_ABLE 扫描透传（emit 的第二参）；名字经 `traincommandname:${id}` 寻址
- * （yml/TrainCommand.yml，#43 实证可寻址）。原作是 PRINTC 三列排版——ere
- * 侧改按钮平铺（记名差异：排版；PR #30 通则——正文不带 [编号] 前缀）。
+ * 指令按钮（#45 挂载，#213 按 @SHOW_COMMENU 换算）：可执行表由回合循环的
+ * COM_ABLE 扫描透传（emit 的第二参）。**编号印 L_IDX 紧凑序号、标签先过
+ * @GET_ADV_COM 升格**（USERCOM.ERB:209-214 逐字）：
+ *   - 编号：`[{L_IDX,3}]`——L_I → L_IDX 经 com-index 映射（升格前的位次，
+ *     与可用性无关、稳定，#211 实证）；
+ *   - 标签：`%TRAIN_NAME:RESULT%`——TRAIN_NAME（trainalias 定制覆盖层，
+ *     @TRAIN_NAME_INIT 播种）取**升格后**的号（get_adv_com）；RESULT == 64
+ *     且 L_I != 64 的合成臂读 CSV 静态名（%TRAINNAME:64%・%TRAINNAME:L_I%，
+ *     差一个下划线的两个数组写在相邻两行）。原作 PRINTC 三列排版——ere
+ *     侧改按钮平铺（记名差异：排版；PR #30 通则——正文不带 [编号] 前缀）。
  * @P_C（#212 真身，本文件 p_c）：TSTR:90 承载上次的指令名，TRAIN_NAME
  * 定制名（trainalias）优先级高于静态名表——见 p_c 的三级回落。
  *
@@ -24,6 +32,8 @@ const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const era_flag = require('#/era-utils/era-flag');
 const { read_train_name } = require('#/system/train/train-name');
+const { com_index } = require('#/system/train/com-index');
+const { get_adv_com } = require('#/system/train/com-adv');
 
 /**
  * 本文件存根化的原作调用名（@USERCOM 未挂载分支的处理器 + 自定义菜单）。
@@ -62,14 +72,42 @@ function p_c() {
   era.set('tstr:90', name);
 }
 
+// %TRAINNAME:64%・%TRAINNAME:L_I% 的复合动作分隔（lang-table.js 整串
+// 豁免本字面量：・ 是原作样式，归一成 · 会切断与 target/ 指令名的对应）
+const COMPOUND_SEP = '・';
+
+/**
+ * @SHOW_COMMENU 的方格标签（USERCOM.ERB:210-214）：升格后的号取名字。
+ * 64 的合成臂（RESULT == 64 且 L_I != 64）读 CSV 静态名（TRAINNAME，两段
+ * 拼接）；其余读 TRAIN_NAME（trainalias 覆盖层）。纯函数抽出便于断言。
+ *
+ * @param {number} adv @GET_ADV_COM 的返回值（升格后的号；未升格 = 原号）
+ * @param {number} id 当前指令号（L_I，升格前）
+ * @returns {string} 按钮正文
+ */
+function command_button_label(adv, id) {
+  if (adv === 64 && id !== 64) {
+    // :211 PRINTFORMC %TRAINNAME:64%・%TRAINNAME:L_I%（CSV 静态名）。
+    // ・ 是原作的复合动作分隔样式，逐字照抄——TRAIN_NAME:128-132 与
+    // SHOW_STATUS 的射精行同款处置（lang-table 整串豁免，见 COMPOUND_SEP）
+    return `${era.get('traincommandname:64') ?? ''}${COMPOUND_SEP}${
+      era.get(`traincommandname:${id}`) ?? ''
+    }`;
+  }
+  // :213 PRINTFORMC %TRAIN_NAME:RESULT%（游戏自建数组，trainalias）
+  return read_train_name(adv);
+}
+
 on('SHOW_USERCOM', async (usable = []) => {
   // :9-13 GETBIT(FLAG:5,34) → 自定义 COM 菜单（待办，占位行见下）
   era.println(); // :14 PRINTL（空行）
   era.drawLine(); // :15 DRAWLINE
   // :16 RESETCOLOR —— 无 ere 对应语义，不镜像
-  // 指令按钮（引擎内建列表，#45）：可执行表来自回合循环的 COM_ABLE 扫描
+  // 指令按钮（#45 挂载，#213 换算）：编号印 L_IDX、标签先过升格（见
+  // command_button_label；原作 PRINTC 三列改平铺按钮，记名差异）
   for (const id of usable) {
-    era.printButton(`${era.get(`traincommandname:${id}`) ?? ''}`, id);
+    const adv = await get_adv_com(id);
+    era.printButton(command_button_label(adv, id), com_index(id));
   }
   era.println(); // 按钮组收尾换行
   // :17-36 能力表示[100] 污秽表示[101]（交代助手[102]/对换调教[112] 有
@@ -102,4 +140,4 @@ on('USERCOM', async (result) => {
   // :177 RETURN 0：引擎忽略返回值、重绘回合画面
 });
 
-module.exports = { STUBBED_CALLS };
+module.exports = { STUBBED_CALLS, command_button_label };
