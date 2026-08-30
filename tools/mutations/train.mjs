@@ -1018,4 +1018,223 @@ export default [
     tests: ['cloth-func'],
     must_mention: 'ere 统一简体（#14）',
   },
+  {
+    desc: 'M830 BENKI 魔王除外守卫删（ARG:0 == 0 不再提前返回）',
+    file: 'ere/system/train/benki.js',
+    find: `  if (arg === 0) {
+    return 0; // 魔王様は除外
+  }`,
+    replace: `  if (false) {
+    return 0; // 变异：魔王除外守卫失效
+  }`,
+    tests: ['benki'],
+    must_mention: '魔王（角色 0）恒被除外',
+  },
+  {
+    desc: 'M831 BENKI 肉便器素质门槛删（TALENT:204 == 0 也结算）',
+    file: 'ere/system/train/benki.js',
+    find: `  if (t(arg, 204) === 0) {
+    return 0; // 肉便器以外は除外（TALENT:204 肉便器）
+  }`,
+    replace: `  if (false) {
+    return 0; // 变异：肉便器素质门槛失效
+  }`,
+    tests: ['benki'],
+    must_mention: '非肉便器角色（TALENT:204 == 0）直接返回',
+  },
+  {
+    desc: 'M832 BENKI 体力门槛删（BASE:0 < 300 也结算）',
+    file: 'ere/system/train/benki.js',
+    find: `  if ((era.get(\`base:\${arg}:0\`) || 0) < 300) {
+    return 0; // BASE:0 < 300
+  }`,
+    replace: `  if (false) {
+    return 0; // 变异：体力门槛失效
+  }`,
+    tests: ['benki'],
+    must_mention: '体力 < 300 或气力 < 100 直接返回',
+  },
+  {
+    desc: 'M833 BENKI 占用状态门槛删（CFLAG:1 != 0 也结算）',
+    file: 'ere/system/train/benki.js',
+    find: `  if ((era.get(\`cflag:\${arg}:1\`) || 0) !== 0) {
+    return 0; // CFLAG:1 != 0（占用状态：待机 0/1 之外不结算）
+  }`,
+    replace: `  if (false) {
+    return 0; // 变异：占用状态门槛失效
+  }`,
+    tests: ['benki'],
+    must_mention: '占用中（CFLAG:1 != 0）或育儿中不结算',
+  },
+  {
+    desc: 'M834 BENKI 配信分派的行动号写坏（兽奸配信 7 改 8）',
+    file: 'ere/system/train/benki.js',
+    find: `      era.set('flag:62', 7); // 兽奸配信`,
+    replace: `      era.set('flag:62', 8); // 变异：兽奸配信行动号改坏`,
+    tests: ['benki'],
+    must_mention: '兽奸配信说明',
+  },
+  {
+    desc: 'M835 BENKI 奉仕分派的对方写坏（FLAG:64 最下層民 0 改 3）',
+    file: 'ere/system/train/benki.js',
+    find: `    era.set('flag:62', 0); //
+    era.set('flag:64', 0); //
+
+    let s = pregnant_head(); //`,
+    replace: `    era.set('flag:62', 0); //
+    era.set('flag:64', 3); // 变异：相手写坏
+
+    let s = pregnant_head(); //`,
+    tests: ['benki'],
+    must_mention: '最下層民奉仕',
+  },
+  {
+    desc: 'M836 BENKI 一般分派的行动号写坏（フェラ便器 6 改 5）',
+    file: 'ere/system/train/benki.js',
+    find: `    era.set('flag:62', 6); // その他。フェラ便器
+  }
+
+  // —— :393-400 未定の相手を確定 ——`,
+    replace: `    era.set('flag:62', 5); // 变异：フェラ便器行动号改坏
+  }
+
+  // —— :393-400 未定の相手を確定 ——`,
+    tests: ['benki'],
+    must_mention: 'フェラ便器说明',
+  },
+  {
+    desc: 'M837 BENKI 同性爱分派的对方写坏（淫魔 9 改 7）',
+    file: 'ere/system/train/benki.js',
+    find: `    era.set('flag:62', 1); //
+    if (t(arg, 142)) {
+      era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
+    } else {
+      era.set('flag:64', 9); // 淫魔
+    }`,
+    replace: `    era.set('flag:62', 1); //
+    if (t(arg, 142)) {
+      era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
+    } else {
+      era.set('flag:64', 7); // 变异：淫魔写坏
+    }`,
+    tests: ['benki'],
+    must_mention: '淫魔相拥',
+  },
+  {
+    desc: 'M838 BENKI 珠结算的欲情加算删（JUEL:5 不写）',
+    file: 'ere/system/train/benki.js',
+    find:
+      `  era.set(` +
+      '`juel:${cid}:0`' +
+      `, (era.get(` +
+      '`juel:${cid}:0`' +
+      `) || 0) + play * 10); //
+  era.set(` +
+      '`juel:${cid}:5`' +
+      `, (era.get(` +
+      '`juel:${cid}:5`' +
+      `) || 0) + play * 10); //`,
+    replace:
+      `  era.set(` +
+      '`juel:${cid}:0`' +
+      `, (era.get(` +
+      '`juel:${cid}:0`' +
+      `) || 0) + play * 10); //
+  // 变异：欲情珠加算删`,
+    tests: ['benki'],
+    must_mention: '欲情珠加算',
+  },
+  {
+    desc: 'M839 SELECT_BENKI_MENU 的手淫分支概率改坏（技巧分支不命中）',
+    file: 'ere/system/train/benki.js',
+    find: `    if (abl(arg, 12) >= 2 && rand_n(dice) === 0) {
+      answer = 30;`,
+    replace: `    if (abl(arg, 12) >= 2 && false) {
+      answer = 30; // 变异：手淫分支不命中`,
+    tests: ['benki'],
+    must_mention: '技巧 2 以上且 RAND 命中 → 手淫（30）',
+  },
+  {
+    desc: 'M840 SELECT_BENKI_MENU 的 V_ABLE 接线删（处女也升正常位）',
+    file: 'ere/system/train/benki.js',
+    find: `    if (abl(arg, 2) >= 2 && v_able(arg) === 1 && rand_n(dice) === 0) {
+      answer = 20;`,
+    replace: `    if (abl(arg, 2) >= 2 && rand_n(dice) === 0) {
+      answer = 20; // 变异：V_ABLE 接线删`,
+    tests: ['benki'],
+    must_mention: '处女拦截正常位',
+  },
+  {
+    desc: 'M841 NAME_BENKI_MENU 名字表改坏（正常位 20 改名）',
+    file: 'ere/system/train/benki.js',
+    find: `  20: '正常位',`,
+    replace: `  20: '正常位（变异）',`,
+    tests: ['benki'],
+    must_mention: '指令号 → 名字表',
+  },
+  {
+    desc: 'M842 GET_EXP_BENKI_MENU 的 281 门槛删（常识改变【战斗】= 0 也结算）',
+    file: 'ere/system/train/benki.js',
+    find: `  if (t(arg0, 281) === 0) {
+    return 0; //
+  }`,
+    replace: `  if (false) {
+    return 0; // 变异：281 门槛失效
+  }`,
+    tests: ['benki'],
+    must_mention: '非肉便器或非常识改变【战斗】直接返回',
+  },
+  {
+    desc: 'M843 GET_EXP_BENKI_MENU 的正常位私处经验删（EXP:0 不写）',
+    file: 'ere/system/train/benki.js',
+    find: `      get_palam[7] += Math.floor(play / 3); // 正常位/後背位/対面座位/背面座位
+      get_palam[1] += play;
+      era.print(\`私处经验+\${Math.floor(play / 10)}\`);
+      await era.waitAnyKey(); // PRINTFORMW
+      chara(arg0).dungeon.私处经验 += Math.floor(play / 10);
+      break;`,
+    replace: `      get_palam[7] += Math.floor(play / 3); // 正常位/後背位/対面座位/背面座位
+      get_palam[1] += play;
+      era.print(\`私处经验+\${Math.floor(play / 10)}\`);
+      await era.waitAnyKey(); // PRINTFORMW
+      // 变异：私处经验写删
+      break;`,
+    tests: ['benki'],
+    must_mention: '私处经验写',
+  },
+  {
+    desc: 'M844 GET_EXP_BENKI_MENU 的 JUEL 加算删（juel 不写）',
+    file: 'ere/system/train/benki.js',
+    find:
+      `    era.set(
+      ` +
+      '`juel:${arg0}:${i}`' +
+      `,
+      (era.get(` +
+      '`juel:${arg0}:${i}`' +
+      `) || 0) + get_palam[i],
+    );`,
+    replace: `    // 变异：JUEL 加算删`,
+    tests: ['benki'],
+    must_mention: '私处点数珠',
+  },
+  {
+    desc: 'M845 BENKI 的 FLAG:63 门面写删（game.dungeon.肉便器常识改写不写）',
+    file: 'ere/system/train/benki.js',
+    find: `  game.dungeon.肉便器常识改写 = 0; // FLAG:63 = 0
+  if (t(arg, 283) > 0) {
+    game.dungeon.肉便器常识改写 = 1; // 常識改変【日常】
+  }`,
+    replace: `  // 变异：FLAG:63 常識改変写删（两处门面写都不落）`,
+    tests: ['benki'],
+    must_mention: '经 game.dungeon 门面',
+  },
+  {
+    desc: 'M846 BENKI_PLAYER_NAME 的对象表改坏（大型犬 2 改名）',
+    file: 'ere/system/train/benki.js',
+    find: `    2: '大型犬',`,
+    replace: `    2: '大型犬（变异）',`,
+    tests: ['benki'],
+    must_mention: 'BENKI_PLAYER_NAME：读 FLAG:64 返回对象名',
+  },
 ];

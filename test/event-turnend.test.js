@@ -636,11 +636,11 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）；
   // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（labo-dungeon-map.js 与
   // labo-map.js）；#179 起 LVUP/DUNGEON_AFTER 换真身（dungeon-lvup.js 与
-  // dungeon-after.js）——三条均已从名单移除
+  // dungeon-after.js）；#217 起 BENKI 换真身（system/train/benki.js）——
+  // 四条均已从名单移除
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
     '自動處刑',
-    'BENKI',
     'NAEDOKO',
     'MARRIAGE_DAY',
     'AUTOTRAIN',

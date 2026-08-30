@@ -130,6 +130,7 @@ const LVUP_ERB = 'target/ERB/迷宮/LVUP.ERB';
 const DUNGEON_DAILY_ERB = 'target/ERB/迷宮/DUNGEON_DAILY.ERB';
 const DUNGEON_ROOM_ERB = 'target/ERB/迷宮/DUNGEON_ROOM.ERB';
 const FRAUD_ERB = 'target/ERB/魔改新增/诈骗陷阱.ERB';
+const TEXT_CORRECT_ERB = 'target/ERB/魔改新增/文本校正.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -498,6 +499,7 @@ const FILES = [
       { src: SYSTEM, ref: '721', any: [/CAMPAIGN_GAMEOVER/] },
       { src: SYSTEM, ref: '723', any: [/TARGET = TARGET_POOL/] },
       { src: SYSTEM, ref: '725-737', any: [/CALL BENKI/] },
+      { src: SYSTEM, ref: '729', any: [/^\s*CALL BENKI,A$/m] },
       { src: SYSTEM, ref: '740', any: [/^CALL AUTOTRAIN$/m] },
       { src: SYSTEM, ref: '743', any: [/^CALL PARTY_JOIN$/m] },
       { src: SYSTEM, ref: '745-746', any: [/GEO_OUTPUT_2/] },
@@ -2339,6 +2341,93 @@ const FILES = [
       { src: COMABLE, ref: '18-19', any: [/SIF TALENT:\(ARG\):273/] },
       { src: COMABLE, ref: '20', any: [/^RETURN 1$/m] },
       { src: BENKI, ref: '1407', any: [/CALL V_ABLE,ARG/] },
+    ],
+  },
+  {
+    // #217 J7 肉便器：ere/system/train/benki.js（@BENKI 与战斗三段真身）
+    js: 'ere/system/train/benki.js',
+    refs: [
+      { src: TEXT_CORRECT_ERB, ref: '1-7', any: [/@SHE\(ARG\)/] },
+      { src: BENKI, ref: '2-1356', any: [/^@BENKI, ARG:0$/m] },
+      { src: BENKI, ref: '4', any: [/^#DIM BENKI_MENU,10$/m] },
+      { src: BENKI, ref: '4-6', any: [/^#DIM BENKI_MENU,10$/m] },
+      {
+        src: BENKI,
+        ref: '26-30',
+        any: [/^ELSEIF TALENT:\(ARG:0\):肉便器 == 0$/m],
+      },
+      { src: BENKI, ref: '33-36', any: [/^\s*SIF BASE:\(ARG:0\):0 < 300$/m] },
+      { src: BENKI, ref: '38-40', any: [/調教中以外除去/] },
+      { src: BENKI, ref: '50-52', any: [/^PRINTL/m] },
+      { src: BENKI, ref: '62-78', any: [/常識改変フラグ/] },
+      {
+        src: BENKI,
+        ref: '94-193',
+        any: [/^;处女（V減少）$/m, /^;献身的（奉仕）$/m],
+      },
+      { src: BENKI, ref: '132-155', any: [/^;能力値$/m] },
+      { src: BENKI, ref: '149-171', any: [/特殊な経験の有無/] },
+      { src: BENKI, ref: '174-176', any: [/^;貞操帯（V減少）$/m] },
+      {
+        src: BENKI,
+        ref: '181-193',
+        any: [/^\s*SIF TALENT:\(ARG:0\):283 == 1$/m],
+      },
+      { src: BENKI, ref: '196-225', any: [/共通のPLAY補正/] },
+      { src: BENKI, ref: '228-240', any: [/后面是我主要修改东西/] },
+      { src: BENKI, ref: '243-346', any: [/配信分岐/] },
+      { src: BENKI, ref: '393-400', any: [/^;DUNGEON_BITCH_LOG.ERB参照$/m] },
+      { src: BENKI, ref: '411-421', any: [/^;説明（～をした）$/m] },
+      { src: BENKI, ref: '426-491', any: [/^ELSEIF FLAG:62 == 3$/m] },
+      { src: BENKI, ref: '468-491', any: [/^;乳内妊娠$/m] },
+      { src: BENKI, ref: '491', any: [/^ELSEIF FLAG:62 == 10$/m] },
+      { src: BENKI, ref: '495-577', any: [/露出＆獣姦/] },
+      { src: BENKI, ref: '565', any: [/^\s*PRINTFORM 服侍了起来$/m] },
+      { src: BENKI, ref: '591', any: [/^\s*CALL BENKI_KOUJO$/m] },
+      { src: BENKI, ref: '624-757', any: [/配信/] },
+      { src: BENKI, ref: '626-637', any: [/被复制/] },
+      { src: BENKI, ref: '645-710', any: [/PRINTFORML 了。/] },
+      { src: BENKI, ref: '653', any: [/^\s*ELSE$/m] },
+      {
+        src: BENKI,
+        ref: '658-660',
+        any: [/^\s*JUEL:\(ARG:0\):0 \+= PLAY\*10$/m],
+      },
+      { src: BENKI, ref: '696-697', any: [/^\s*IF BENKI_MENU:2 >= 3$/m] },
+      { src: BENKI, ref: '712-861', any: [/兽奸ソース3以上で兽奸分岐/] },
+      { src: BENKI, ref: '808', any: [/^\s*CALL BENKI_KOUJO$/m] },
+      { src: BENKI, ref: '819', any: [/^\s*JUEL:\(ARG:0\):0 \+= PLAY\*10$/m] },
+      { src: BENKI, ref: '863-1032', any: [/露出のソース3以上で公開/] },
+      { src: BENKI, ref: '873', any: [/^\s*PRINTFORM 举止高贵地$/m] },
+      { src: BENKI, ref: '982', any: [/^\s*CALL BENKI_KOUJO$/m] },
+      {
+        src: BENKI,
+        ref: '992-1021',
+        any: [/^\s*JUEL:\(ARG:0\):5 \+= PLAY\*10$/m],
+      },
+      { src: BENKI, ref: '1059-1185', any: [/在精囊被掏空之前/] },
+      { src: BENKI, ref: '1128', any: [/^\s*CALL BENKI_KOUJO$/m] },
+      {
+        src: BENKI,
+        ref: '1229-1349',
+        any: [/^\s*;奴隷の様子$/m, /^\s*;精液経験で分岐$/m],
+      },
+      { src: BENKI, ref: '1310', any: [/^\s*CALL BENKI_KOUJO$/m] },
+      {
+        src: BENKI,
+        ref: '1359-1427',
+        any: [/^@SELECT_BENKI_MENU\(ARG, ARGS\)$/m],
+      },
+      { src: BENKI, ref: '1375-1403', any: [/技巧2以上で手淫分岐/] },
+      { src: BENKI, ref: '1430-1494', any: [/^@NAME_BENKI_MENU\(ARG\)$/m] },
+      { src: BENKI, ref: '1440-1492', any: [/^CASE 2$/m] },
+      {
+        src: BENKI,
+        ref: '1497-1654',
+        any: [/^@GET_EXP_BENKI_MENU\(ARG, ARG:1\)$/m],
+      },
+      { src: BENKI, ref: '162-270', any: [/^\s*BENKI_MENU:4 \+= 1$/m] },
+      { src: BENKI, ref: '1656-1681', any: [/^@BENKI_PLAYER_NAME$/m] },
     ],
   },
   {
@@ -19027,6 +19116,7 @@ const FILES = [
       { src: BATLLE, ref: '637', any: [/DMG = CFLAG:\(ARG:0\):11/] },
       { src: BATLLE, ref: '643-648', any: [/W:0 = CFLAG:\(ARG:0\):550/] },
       { src: BATLLE, ref: '650-660', any: [/IF FLAG:5 & 32/] },
+      { src: BATLLE, ref: '653', any: [/CALL NAME_BENKI_MENU,PLAY_TYPE/] },
       {
         src: BATLLE,
         ref: '652-654',

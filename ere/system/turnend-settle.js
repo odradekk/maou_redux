@@ -51,6 +51,7 @@ const { dungeon_map } = require('#/dungeon/labo-dungeon-map');
 const { geo_output_2 } = require('#/dungeon/labo-map');
 const { lvup } = require('#/dungeon/dungeon-lvup');
 const { dungeon_after } = require('#/dungeon/dungeon-after');
+const { run_benki } = require('#/system/train/benki');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -59,12 +60,12 @@ const { dungeon_after } = require('#/dungeon/dungeon-after');
  * 起 DUNGEON_MAP（2D 模式的 else 臂）与 GEO_OUTPUT_2（FLAG:502==1 的地图
  * 重绘）亦接真身（ere/dungeon/labo-dungeon-map.js 与 labo-map.js）；#179
  * （H10）起 LVUP / DUNGEON_AFTER 亦接真身（ere/dungeon/dungeon-lvup.js 与
- * dungeon-after.js），三者均从名单移除。
+ * dungeon-after.js）；#217（J7）起 BENKI 亦接真身（ere/system/train/
+ * benki.js）——四条均从名单移除。
  */
 const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
   '自動處刑',
-  'BENKI',
   'NAEDOKO',
   'MARRIAGE_DAY',
   'AUTOTRAIN',
@@ -520,7 +521,9 @@ on('EVENTTURNEND', async () => {
 
   // :725-737 全角色：肉便器/苗床业务与结婚日、事件后的场所/任务复位
   for (const cid of era.getAddedCharacters()) {
-    stub_line('BENKI', '肉便器业务');
+    // :729 CALL BENKI（#217 真身：肉便器业务——门槛不中静默返回，演出段
+    // 输出 + BENKI_KOUJO 口上存根，见 ere/system/train/benki.js）
+    await run_benki(cid);
     stub_line('NAEDOKO', '苗床业务');
     stub_line('MARRIAGE_DAY', '结婚日');
     if ((era.get('flag:400') || 0) === 0 && chara(cid).invasion.状态 === 12) {
