@@ -56,6 +56,17 @@
  *        对已结算行为成为无操作——防双重累加的职责划分见 source-check.js
  *        文件头）→ @EVENTCOMEND 事件链
  *    14. 回到 4
+ *
+ *    步骤 10-13 抽成 execute_command_round（#214）：正常输入路径与
+ *    CALLTRAIN 序列（run_calltrain，COM_REGISTER.ERB:230 的唯一调用点）
+ *    走同一条链。CALLTRAIN 的自动循环（system-flow.md「CALLTRAIN 自动
+ *    执行」）**不含 @SHOW_STATUS/@SHOW_USERCOM**（那是玩家交互步骤），
+ *    也不重判 COM_ABLE——序列由调用方 @COMSEQ_TRAIN 预验证（每条探测时
+ *    PREVCOM = 前一条，COM_REGISTER.ERB:218-228 的 REPEAT 形状）。
+ *    SELECTCOM:1..N 的数组不落表：全库唯一写点就是 COMSEQ_TRAIN 自己
+ *    （:226），无引擎外读者，序列直接传参（记名差异：值不进存档，
+ *    CALLTRAIN 是瞬时同步过程，无跨存档语义）。
+ *
  *   非指令输入（含 999）→ @USERCOM 事件链（999 = 调教结束 → BEGIN
  *   AFTERTRAIN，page/page-usercom.js）；链内 BEGIN 的暂存目标作为本状态
  *   处理器的返回值交给主循环
@@ -113,6 +124,47 @@ function clear_nowex_all() {
       era.set(`nowex:${cid}:${key}`, 0);
     }
   }
+}
+
+/**
+ * 执行一个调教回合（循环步骤 10-13，#214 抽出）：正常输入路径与 CALLTRAIN
+ * 序列共用。**不含**输入检查与 SELECTCOM 设定（调用方先置 selectcom）。
+ *
+ * @param {number} result SELECTCOM（Train.csv 编号 L_I）
+ * @returns {Promise<{missing: boolean, pending?: string}>}
+ *   missing = @COMxx 未实现（引擎「重新要求输入」语义，调用方丢弃本回合）；
+ *   pending = 链内暂存的 BEGIN 目标（转场优先，调用方须立即上抛）
+ */
+async function execute_command_round(result) {
+  // 10. 全角色 NOWEX 清零
+  clear_nowex_all();
+  // 11. @EVENTCOM（函数体在 event/event-com.js）
+  const com_pending = await emit('EVENTCOM');
+  if (com_pending !== undefined) {
+    return { missing: false, pending: com_pending };
+  }
+  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
+  const com_result = await com_family.call(result, {
+    whenMissing: COM_MISSING,
+  });
+  if (com_result === COM_MISSING) {
+    return { missing: true };
+  }
+  // 12.5 @SOURCE_CHECK（引擎回调：@COMxx 之后、UPCHECK 之前；函数体在
+  // event/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
+  // 结算展示都在链上；未注册时静默通过（空链语义）
+  const source_pending = await emit('SOURCE_CHECK');
+  if (source_pending !== undefined) {
+    return { missing: false, pending: source_pending };
+  }
+  // 13. PREVCOM 更新（引擎行为）→ UPCHECK 等价结算 → @EVENTCOMEND
+  era_flag.prevcom = result;
+  era.nextTurnInTrain();
+  const comend_pending = await emit('EVENTCOMEND');
+  if (comend_pending !== undefined) {
+    return { missing: false, pending: comend_pending };
+  }
+  return { missing: false };
 }
 
 /**
@@ -185,33 +237,13 @@ async function run_train() {
       // 空间外编号（999 出口、子菜单号、乱数）在映射处得 undefined，
       // 落 @USERCOM——引擎「输入检查失败 → @USERCOM」的同位语义）
       era_flag.selectcom = result;
-      // 10. 全角色 NOWEX 清零
-      clear_nowex_all();
-      // 11. @EVENTCOM（函数体在 event/event-com.js）
-      const com_pending = await emit('EVENTCOM');
-      if (com_pending !== undefined) {
-        return com_pending;
-      }
-      // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
-      const com_result = await com_family.call(result, {
-        whenMissing: COM_MISSING,
-      });
-      if (com_result === COM_MISSING) {
+      // 10-13. 共用回合段（CALLTRAIN 同链，#214）
+      const round = await execute_command_round(result);
+      if (round.missing) {
         continue;
       }
-      // 12.5 @SOURCE_CHECK（引擎回调：@COMxx 之后、UPCHECK 之前；函数体在
-      // event/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
-      // 结算展示都在链上；未注册时静默通过（空链语义）
-      const source_pending = await emit('SOURCE_CHECK');
-      if (source_pending !== undefined) {
-        return source_pending;
-      }
-      // 13. PREVCOM 更新（引擎行为）→ UPCHECK 等价结算 → @EVENTCOMEND
-      era_flag.prevcom = result;
-      era.nextTurnInTrain();
-      const comend_pending = await emit('EVENTCOMEND');
-      if (comend_pending !== undefined) {
-        return comend_pending;
+      if (round.pending !== undefined) {
+        return round.pending;
       }
       // 14. 回到 @SHOW_STATUS
       continue;
@@ -242,4 +274,9 @@ async function run_aftertrain() {
   return pending;
 }
 
-module.exports = { run_aftertrain, run_train, scan_usable_commands };
+module.exports = {
+  execute_command_round,
+  run_aftertrain,
+  run_train,
+  scan_usable_commands,
+};

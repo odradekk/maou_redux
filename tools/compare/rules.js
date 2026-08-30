@@ -648,7 +648,9 @@ function classify_scope_train(entry, side, context) {
     }
     // ere 侧多出的方格屏（无对侧的调教结束按钮）：Emuera 的子菜单/确认
     // 屏（穿脱、夺处女）不重绘方格，ere 侧每输入一律整屏重绘（COM 未
-    // 移植 → 子菜单形态缺席，train-upgrade 实证）
+    // 移植 → 子菜单形态缺席，train-upgrade 实证）。**同屏的整组按钮**
+    // （[990] 调教菜单登录，#214 起挂载）跟随归因——它们与 999 同在
+    // @SHOW_USERCOM 的按钮组里，多出的屏多出整组
     if (
       side === 'ere' &&
       context.counterpart === undefined &&
@@ -658,6 +660,16 @@ function classify_scope_train(entry, side, context) {
         category: 'stub',
         reason:
           'ere 侧多出的方格屏重绘：子菜单/确认屏形态未移植（COM 未移植 → 每输入一律整屏重绘）',
+      };
+    }
+    if (
+      side === 'ere' &&
+      context.counterpart === undefined &&
+      USERCOM_BUTTON_LABELS.has(entry.key)
+    ) {
+      return {
+        category: 'stub',
+        reason: `ere 侧多出的方格屏重绘带的按钮组条目（${entry.key}，与 [999] 同屏——归因同上一条）`,
       };
     }
     // golden 的 ABLUP 文本菜单行（`- 停止`、`- 阴核点数×…点数不足`）

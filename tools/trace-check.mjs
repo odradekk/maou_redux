@@ -59,6 +59,8 @@ const SAMPLES = samples_module.SAMPLES;
 const TRAIN_MAIN = 'target/ERB/調教相關/TRAIN_MAIN.ERB';
 const BEFORE_TRAIN = 'target/ERB/EVENT/EVENT_BEFORETRAIN.ERB';
 const USERCOM = 'target/ERB/調教相關/USERCOM.ERB';
+const COMORDER = 'target/ERB/調教相關/COMORDER.ERB';
+const COM_REGISTER = 'target/ERB/調教相關/COM_REGISTER.ERB';
 const ABL = 'target/ERB/ABL/ABL.ERB';
 const CHARA_INFO_SHOW = 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB';
 const SHOP = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
@@ -907,21 +909,37 @@ const FILES = [
       { src: USERCOM, ref: '14', any: [/^PRINTL$/m] },
       { src: USERCOM, ref: '15', any: [/^DRAWLINE$/m] },
       { src: USERCOM, ref: '16', any: [/^RESETCOLOR$/m] },
+      // #214：子菜单按钮组与 @USERCOM 全分支
       {
         src: USERCOM,
-        ref: '17-36',
-        any: [/^PRINTC 能力表示\[100\]$/m, /^PRINTC 避孕套设定\[103\]$/m],
+        ref: '17-91',
+        any: [/PRINTC 能力表示\[100\]/, /PRINTC 调教结束\[999\]/],
       },
+      { src: USERCOM, ref: '17', any: [/^PRINTC 能力表示\[100\]$/m] },
+      { src: USERCOM, ref: '18', any: [/^PRINTC 污秽表示\[101\]$/m] },
+      {
+        src: USERCOM,
+        ref: '20-35',
+        any: [/IF ASSI > 0 && ASSI:1 > 0/, /CFLAG:0 >= 2/],
+      },
+      { src: USERCOM, ref: '21', any: [/^\tPRINTC 交代助手\[102\]$/m] },
+      { src: USERCOM, ref: '20', any: [/^IF ASSI > 0 && ASSI:1 > 0$/m] },
+      {
+        src: USERCOM,
+        ref: '28',
+        any: [/^IF \(TARGET == MASTER \|\| CFLAG:0 >= 2\) && ASSI:1 > 0$/m],
+      },
+      { src: USERCOM, ref: '29', any: [/^\tPRINTC 对换调教\[112\]$/m] },
+      { src: USERCOM, ref: '36', any: [/^PRINTC 避孕套设定\[103\]$/m] },
       {
         src: USERCOM,
         ref: '38-84',
         any: [/^\t*PRINTC 爱抚系过滤\[104\]/m, /^\t*PRINTC ＳＭ系过滤\[108\]/m],
       },
-      {
-        src: USERCOM,
-        ref: '85-90',
-        any: [/PRINTC 调教菜单登录\[990\]/, /PRINTC 调教菜单实行\[992\]/],
-      },
+      { src: USERCOM, ref: '85', any: [/PRINTC 调教菜单登录\[990\]/] },
+      { src: USERCOM, ref: '86', any: [/^\tPRINTL$/m] },
+      { src: USERCOM, ref: '88', any: [/PRINTC 调教菜单表示\[991\]/] },
+      { src: USERCOM, ref: '89', any: [/PRINTC 调教菜单实行\[992\]/] },
       { src: USERCOM, ref: '91', any: [/^PRINTC 调教结束\[999\]$/m] },
       { src: USERCOM, ref: '92', any: [/^PRINTL$/m] },
       {
@@ -932,10 +950,103 @@ const FILES = [
       { src: USERCOM, ref: '103', any: [/^REDRAW 1$/m] },
       {
         src: USERCOM,
-        ref: '104-172',
+        ref: '104-106',
+        any: [/^IF RESULT == 100$/m, /^CALL SHOW_CHARA_INFO\(TARGET\)$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '107-109',
+        any: [/^ELSEIF RESULT == 101$/m, /^CALL STAIN_INFO$/m],
+      },
+      { src: USERCOM, ref: '108', any: [/^\tCALL STAIN_INFO$/m] },
+      {
+        src: USERCOM,
+        ref: '110',
+        any: [/^ELSEIF RESULT == 102 && ASSI > 0 && ASSI:1 > 0$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '110-122',
+        any: [/^ELSEIF RESULT == 102/, /^\tIF TARGET == MASTER$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '111-113',
         any: [
-          /^IF RESULT == 100$/m,
-          /^ELSEIF RESULT == 992 && FLAG:550 > 0 $/m,
+          /^\tIF TARGET == MASTER$/m,
+          /PLAYER == TARGET:1 \? ASSI:1 # TARGET:1/,
+        ],
+      },
+      {
+        src: USERCOM,
+        ref: '114-116',
+        any: [
+          /^ELSEIF TARGET == TARGET:1$/m,
+          /PLAYER == MASTER \? ASSI:1 # MASTER/,
+        ],
+      },
+      {
+        src: USERCOM,
+        ref: '117-119',
+        any: [/PLAYER == MASTER \? TARGET:1 # MASTER/],
+      },
+      {
+        src: USERCOM,
+        ref: '121',
+        any: [/^\tASSIPLAY = PLAYER != MASTER \? 1 # 0$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '123',
+        any: [
+          /^ELSEIF RESULT == 112 && \(TARGET == MASTER \|\| CFLAG:0 >= 2\) && ASSI:1 > 0$/m,
+        ],
+      },
+      {
+        src: USERCOM,
+        ref: '123-128',
+        any: [/^ELSEIF RESULT == 112/, /^\tSWAP TARGET, PLAYER$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '125-126',
+        any: [
+          /SIF PLAYER == ASSI:1 \|\| PLAYER == TARGET:1/,
+          /^\t\tASSI = PLAYER$/m,
+        ],
+      },
+      {
+        src: USERCOM,
+        ref: '127',
+        any: [/^\tASSIPLAY = PLAYER != MASTER \? 1 # 0$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '129-131',
+        any: [/^ELSEIF RESULT == 103$/m, /^CALL CONDOM_SETTINGS$/m],
+      },
+      { src: USERCOM, ref: '130', any: [/^\tCALL CONDOM_SETTINGS$/m] },
+      {
+        src: USERCOM,
+        ref: '132-161',
+        any: [/^ELSEIF RESULT == 104$/m, /FLAG:25 \|= 16/],
+      },
+      {
+        src: USERCOM,
+        ref: '162-164',
+        any: [/^ELSEIF RESULT == 990$/m, /^CALL COMSEQ_REGISTER$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '165-170',
+        any: [/^ELSEIF RESULT == 991 && FLAG:550 > 0/, /^\tWAIT$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '171-172',
+        any: [
+          /^ELSEIF RESULT == 992 && FLAG:550 > 0/,
+          /^\tCALL COMSEQ_TRAIN$/m,
         ],
       },
       {
@@ -944,6 +1055,338 @@ const FILES = [
         any: [/^ELSEIF RESULT == 999$/m, /^\tBEGIN AFTERTRAIN$/m],
       },
       { src: USERCOM, ref: '177', any: [/^RETURN 0$/m] },
+      {
+        src: USERCOM,
+        ref: '179-180',
+        any: [/@SET_CLEAR_POINT/, /^TFLAG:999 = LINECOUNT$/m],
+      },
+      {
+        src: USERCOM,
+        ref: '182-186',
+        any: [/@CLEAR_TO_POINT/, /CLEARLINE LINECOUNT - TFLAG:999/],
+      },
+      {
+        src: USERCOM,
+        ref: '200-203',
+        any: [/^\tRESULT = 1$/m, /TRYCALLFORM COM_ABLE\{L_I\}/],
+      },
+      {
+        src: USERCOM,
+        ref: '202-203',
+        any: [/^\tSIF RESULT == 0$/m, /^\t\tCONTINUE$/m],
+      },
+      { src: USERCOM, ref: '209', any: [/^\tCALL GET_ADV_COM, L_I$/m] },
+      {
+        src: USERCOM,
+        ref: '209-214',
+        any: [/^\tCALL GET_ADV_COM, L_I$/m, /IF RESULT == 64 && L_I != 64/],
+      },
+      { src: USERCOM, ref: '216', any: [/^NEXT$/m] },
+    ],
+  },
+
+  {
+    // #214：@COM_ORDER（实行值的共通明细段，COMORDER.ERB 全文）
+    js: 'ere/system/train/com-order.js',
+    refs: [
+      { src: COMORDER, ref: '3-379', any: [/@COM_ORDER/, /^IF ABL:10$/m] },
+      {
+        src: COMORDER,
+        ref: '8-23',
+        any: [/^IF ABL:10$/m, /^A \+= ABL:10 \* 4$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '28',
+        any: [/IF TALENT:PLAYER:122 == 0 && TALENT:TARGET:122 == 0/],
+      },
+      {
+        src: COMORDER,
+        ref: '28-91',
+        any: [/;ABL:百合气质/, /A \+= ABL:22\*3/],
+      },
+      {
+        src: COMORDER,
+        ref: '66-71',
+        any: [/^\tIF TALENT:24$/m, /^\t\tA -= 13$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '85-90',
+        any: [/^A -= 10$/m, /TALENTNAME:24/],
+      },
+      {
+        src: COMORDER,
+        ref: '96-127',
+        any: [/^IF MARK:0$/m, /^A \+= MARK:0 \* 5$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '105-111',
+        any: [/^\tT = 4$/m, /^\tT = 2$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '121-127',
+        any: [/^IF MARK:3$/m, /^A -= MARK:3 \* 2 \* T$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '132-176',
+        any: [/;PALAM:恭顺/, /;PALAM:恐怖/],
+      },
+      {
+        src: COMORDER,
+        ref: '133-145',
+        any: [/^IF PALAM:4 < PALAMLV:1$/m, /^ELSEIF PALAM:4 < PALAMLV:5$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '156-168',
+        any: [/^IF PALAM:10 < PALAMLV:1$/m, /^ELSEIF PALAM:10 < PALAMLV:5$/m],
+      },
+      {
+        src: COMORDER,
+        ref: '182-285',
+        any: [/;反抗心/, /;盲从/],
+      },
+      { src: COMORDER, ref: '206', any: [/;自尊心$/m] },
+      {
+        src: COMORDER,
+        ref: '291-334',
+        any: [/;魅惑/, /;鼓舞/],
+      },
+      {
+        src: COMORDER,
+        ref: '339-379',
+        any: [/^R = NO:PLAYER$/m, /RELATION:R > 0 && RELATION:R < 30/],
+      },
+    ],
+  },
+
+  {
+    // #214：COMSEQ 的登记 / 显示 / 执行（COM_REGISTER.ERB 全文）
+    js: 'ere/system/train/com-register.js',
+    refs: [
+      {
+        src: COM_REGISTER,
+        ref: '25-121',
+        any: [/@COMSEQ_REGISTER/, /^PRINTL 调教菜单登录$/m],
+      },
+      { src: COM_REGISTER, ref: '26', any: [/^PRINTL 调教菜单登录$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '31-33',
+        any: [/\$REDRAW_LOOP/, /^CLEARLINE LINECOUNT - LOCAL:99$/m],
+      },
+      { src: COM_REGISTER, ref: '35', any: [/^DRAWLINE$/m] },
+      { src: COM_REGISTER, ref: '36', any: [/^CALL COMSEQ_SHOW$/m] },
+      { src: COM_REGISTER, ref: '37', any: [/^DRAWLINE$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '38',
+        any: [/^PRINTFORML 选择第\{LOCAL:0\+1\}个指令:/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '39',
+        any: [/^CALL COMSEQSUB_PRINT_COMLIST$/m],
+      },
+      { src: COM_REGISTER, ref: '40', any: [/^PRINTL$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '41-51',
+        any: [/^SIF FLAG:550 > 0$/m, /PRINTC 取消并返回\[1000\]/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '41-42',
+        any: [/^SIF FLAG:550 > 0$/m, /PRINTC 重置菜单\[998\]/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '43-44',
+        any: [/^SIF LOCAL:0 > 0$/m, /PRINTC 重复指令\[999\]/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '45-48',
+        any: [/IF LOCAL:0 == 0 && FLAG:550 > 0/, /PRINTC 取消并返回\[1000\]/],
+      },
+      { src: COM_REGISTER, ref: '50', any: [/PRINTC 保存并返回\[1000\]/] },
+      { src: COM_REGISTER, ref: '52', any: [/^PRINTL $/m] },
+      { src: COM_REGISTER, ref: '53', any: [/^DRAWLINE$/m] },
+      { src: COM_REGISTER, ref: '57', any: [/^INPUT$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '58-62',
+        any: [/IF RESULT == 1000 && LOCAL:0 == 0/, /RESULT > 999/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '65-74',
+        any: [/IF RESULT == 998 && FLAG:550 > 0/, /^\tTFLAG:204 = 0$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '76-89',
+        any: [/ELSEIF RESULT == 999 && LOCAL:0 > 0/, /^\tLOCAL:1 = LOCAL:0$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '81-83',
+        any: [/^\tSIF LOCAL:0 > 9$/m, /^\t\tGOTO COMPLETE$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '93-101',
+        any: [/^\tTFLAG:204 = RESULT$/m, /CALL MULTI_COMABLE, TFLAG:204/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '104-108',
+        any: [/^LOCAL:1 = 551 \+ LOCAL:0$/m, /FLAG:\(LOCAL:1\) = TFLAG:204/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '111-113',
+        any: [/^LOCAL \+\+$/m, /^\tGOTO REDRAW_LOOP$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '115-121',
+        any: [/\$COMPLETE/, /^PRINTW 调教菜单登录完毕$/m],
+      },
+      { src: COM_REGISTER, ref: '116', any: [/^DRAWLINE$/m] },
+      { src: COM_REGISTER, ref: '117', any: [/^CALL COMSEQ_SHOW$/m] },
+      { src: COM_REGISTER, ref: '118', any: [/^DRAWLINE$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '119',
+        any: [/^PRINTW 调教菜单登录完毕$/m],
+      },
+      { src: COM_REGISTER, ref: '120', any: [/^TFLAG:204 = 0$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '126-155',
+        any: [/@COMSEQ_SHOW/, /^VARSET LOCAL, 0$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '131-136',
+        any: [/TRYCALLFORM COM_ABLE\{FLAG:LOCAL\}/, /PRINT （不可用）/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '133',
+        any: [/PRINTFORM %TRAINNAME:\(FLAG:LOCAL\)%/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '138-151',
+        any: [/^\t\tLOCAL:1 = 1$/m, /\$TIMES_EXP_CHECK/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '152-153',
+        any: [/SIF COUNT < FLAG:550 - 1/, /PRINT  → /],
+      },
+      { src: COM_REGISTER, ref: '155', any: [/^PRINTL  $/m] },
+      {
+        src: COM_REGISTER,
+        ref: '162-179',
+        any: [/@COMSEQSUB_PRINT_COMLIST/, /^VARSET LOCAL$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '169',
+        any: [/PRINTFORMC %TRAINNAME:LOCAL%\[\{LOCAL, 3\}\]/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '190-202',
+        any: [/@MULTI_COMABLE, ARG/, /IF STRLENS\(TRAINNAME:ARG\) == 0/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '196',
+        any: [/^\t;調教菜單実行中を表すTFLAGを設定する$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '196-200',
+        any: [/^\tTFLAG:224 = 555$/m, /TRYCALLFORM COM_ABLE\{ARG\}/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '207-237',
+        any: [/@COMSEQ_TRAIN/, /^PRINTFORMW 开始自动执行调教指令$/m],
+      },
+      { src: COM_REGISTER, ref: '208', any: [/^DRAWLINE$/m] },
+      { src: COM_REGISTER, ref: '209', any: [/^CALL COMSEQ_SHOW$/m] },
+      { src: COM_REGISTER, ref: '210', any: [/^DRAWLINE$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '211',
+        any: [/^PRINTFORMW 开始自动执行调教指令$/m],
+      },
+      { src: COM_REGISTER, ref: '213', any: [/^TFLAG:224 = 555$/m] },
+      { src: COM_REGISTER, ref: '217', any: [/^LOCAL = PREVCOM$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '226',
+        any: [/^\tSELECTCOM:\(COUNT \+ 1\) = FLAG:\(551 \+ COUNT\)$/m],
+      },
+      { src: COM_REGISTER, ref: '230', any: [/^\tCALLTRAIN FLAG:550$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '218-228',
+        any: [/^REPEAT FLAG:550$/m, /^\tRESULT = 1$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '220-224',
+        any: [/TRYCALLFORM COM_ABLE\{FLAG:\(551 \+ COUNT\)\}/, /^\t\tBREAK$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '220',
+        any: [/TRYCALLFORM COM_ABLE\{FLAG:\(551 \+ COUNT\)\}/],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '227',
+        any: [/^\tPREVCOM = FLAG:\(551 \+ COUNT\)$/m],
+      },
+      {
+        src: COM_REGISTER,
+        ref: '229-235',
+        any: [/IF LOCAL:1 == 0/, /^\tCALLTRAIN FLAG:550$/m],
+      },
+      { src: COM_REGISTER, ref: '233', any: [/^\tTFLAG:224 = 0$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '234',
+        any: [/PRINTL 所登录的指令目前无法实行/],
+      },
+      { src: COM_REGISTER, ref: '236', any: [/^PREVCOM = LOCAL$/m] },
+      {
+        src: COM_REGISTER,
+        ref: '243-245',
+        any: [/@CALLTRAINEND/, /^;調教菜單実行中を表すTFLAGをリセットする$/m],
+      },
+    ],
+  },
+
+  {
+    // #214：CALLTRAIN 等价的头注引用（SELECTCOM:1..N 的唯一写点）
+    js: 'ere/system/train/train-loop.js',
+    refs: [
+      {
+        src: COM_REGISTER,
+        ref: '226',
+        any: [/SELECTCOM:\(COUNT \+ 1\) = FLAG:\(551 \+ COUNT\)/],
+      },
     ],
   },
 
@@ -22416,6 +22859,15 @@ const SAMPLE_LOG_REFS = {
       js: 'test/train-loop.test.js',
       refs: [{ ref: '211', any: [/^89$/] }],
     },
+    // #214：COM_ORDER 的明细行实证（判定行前半 = COM_ORDER 的贡献段）
+    {
+      js: 'ere/system/train/com-order.js',
+      refs: [{ ref: '169', any: [/顺从LV1\(4\)/] }],
+    },
+    {
+      js: 'test/com-order.test.js',
+      refs: [{ ref: '169', any: [/顺从LV1\(4\)/] }],
+    },
 
     {
       js: 'tools/mutations/pipeline.mjs',
@@ -22433,6 +22885,8 @@ const SAMPLE_LOG_REFS = {
       refs: [
         { ref: '427-438', any: [/^阴核点数：\(/, /屈服点数：\(/] },
         { ref: '446', any: [/初体验对象：你/] },
+        // #214：flag:5 播种的依据行（自定义菜单态的升格名方格）
+        { ref: '348', any: [/刺激Ｇ点\[  8\]/] },
       ],
     },
   ],

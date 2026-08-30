@@ -34,11 +34,11 @@ export default [
   {
     desc: 'M13 回合循环：删掉全角色 NOWEX 清零（步骤 10）',
     file: 'ere/system/train/train-loop.js',
-    find: `      // 10. 全角色 NOWEX 清零
-      clear_nowex_all();
-      // 11. @EVENTCOM（函数体在 event/event-com.js）`,
-    replace: `      // 10. 变异：NOWEX 不清零
-      // 11. @EVENTCOM（函数体在 event/event-com.js）`,
+    find: `  // 10. 全角色 NOWEX 清零
+  clear_nowex_all();
+  // 11. @EVENTCOM（函数体在 event/event-com.js）`,
+    replace: `  // 10. 变异：NOWEX 不清零
+  // 11. @EVENTCOM（函数体在 event/event-com.js）`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
@@ -270,11 +270,11 @@ export default [
   {
     desc: 'M55 回合循环的 SOURCE_CHECK 槽位删掉',
     file: 'ere/system/train/train-loop.js',
-    find: `      const source_pending = await emit('SOURCE_CHECK');
-      if (source_pending !== undefined) {
-        return source_pending;
-      }`,
-    replace: '      // 变异：SOURCE_CHECK 槽位删除',
+    find: `  const source_pending = await emit('SOURCE_CHECK');
+  if (source_pending !== undefined) {
+    return { missing: false, pending: source_pending };
+  }`,
+    replace: '  // 变异：SOURCE_CHECK 槽位删除',
     tests: ['source-check'],
     must_mention: '端到端',
   },
@@ -292,23 +292,23 @@ export default [
   {
     desc: 'M700 回调顺序：@EVENTCOM 与 @COMxx 分发对调（步骤 11↔12）',
     file: 'ere/system/train/train-loop.js',
-    find: `      // 11. @EVENTCOM（函数体在 event/event-com.js）
-      const com_pending = await emit('EVENTCOM');
-      if (com_pending !== undefined) {
-        return com_pending;
-      }
-      // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
-      const com_result = await com_family.call(result, {
-        whenMissing: COM_MISSING,
-      });`,
-    replace: `      // 11. 变异：COM 分发先于 EVENTCOM
-      const com_result = await com_family.call(result, {
-        whenMissing: COM_MISSING,
-      });
-      const com_pending = await emit('EVENTCOM');
-      if (com_pending !== undefined) {
-        return com_pending;
-      }`,
+    find: `  // 11. @EVENTCOM（函数体在 event/event-com.js）
+  const com_pending = await emit('EVENTCOM');
+  if (com_pending !== undefined) {
+    return { missing: false, pending: com_pending };
+  }
+  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）
+  const com_result = await com_family.call(result, {
+    whenMissing: COM_MISSING,
+  });`,
+    replace: `  // 11. 变异：COM 分发先于 EVENTCOM
+  const com_result = await com_family.call(result, {
+    whenMissing: COM_MISSING,
+  });
+  const com_pending = await emit('EVENTCOM');
+  if (com_pending !== undefined) {
+    return { missing: false, pending: com_pending };
+  }`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
@@ -408,14 +408,10 @@ export default [
   {
     desc: 'M744 按钮编号印回 L_I（渲染侧映射删——方格与玩家输入错位）',
     file: 'ere/page/page-usercom.js',
-    find: `  for (const id of usable) {
-    const adv = await get_adv_com(id);
-    era.printButton(command_button_label(adv, id), com_index(id));
-  }`,
-    replace: `  for (const id of usable) {
-    const adv = await get_adv_com(id);
-    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I
-  }`,
+    find: `    const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
+    era.printButton(command_button_label(adv, id), com_index(id));`,
+    replace: `    const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
+    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I`,
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
@@ -514,5 +510,303 @@ export default [
   });`,
     tests: ['com-dispatch'],
     must_mention: '空间外显式抛错',
+  },
+
+  // —— #214（J4 指令序列与自定义菜单）：M760-M778 ——
+  {
+    desc: 'M760 SHOW_COMMENU 的 L_IDX 位次换成 L_I（升格前的号直印——位次映射在渲染处旁路）',
+    file: 'ere/page/page-usercom.js',
+    find: `    const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
+    era.printButton(command_button_label(adv, id), com_index(id));`,
+    replace: `    const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
+    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I`,
+    tests: ['page-usercom'],
+    must_mention: '编号必须是紧凑序号 L_IDX',
+  },
+  {
+    desc: 'M761 GETBIT 分流恒 OFF（自定义菜单臂删除——flag:5 开局态失灵）',
+    file: 'ere/page/page-usercom.js',
+    find: `  if (show_advanced_names()) {
+    await show_commenu();
+  } else {
+    draw_builtin_comlist(usable);
+  }`,
+    replace: `  draw_builtin_comlist(usable); // 变异：恒内建臂`,
+    tests: ['page-usercom'],
+    must_mention: '自定义菜单，标签取 TRAIN_NAME',
+  },
+  {
+    desc: 'M762 GETBIT 分流恒 ON（内建臂删除——OFF 态吃 trainalias 不吃静态名）',
+    file: 'ere/page/page-usercom.js',
+    find: `  if (show_advanced_names()) {
+    await show_commenu();
+  } else {
+    draw_builtin_comlist(usable);
+  }`,
+    replace: `  await show_commenu(); // 变异：恒自定义臂`,
+    tests: ['page-usercom'],
+    must_mention: 'OFF 臂读 traincommandname',
+  },
+  {
+    desc: 'M763 SHOW_COMMENU 的 COM_ABLE 过滤删（不可用指令也渲染）',
+    file: 'ere/page/page-usercom.js',
+    find: `    const able = await com_able_family.call(id, { whenMissing: 1 });
+    if (able === 0) {
+      continue; // :202-203 SIF RESULT == 0 CONTINUE
+    }`,
+    replace: `    // 变异：不过滤`,
+    tests: ['page-usercom'],
+    must_mention: 'COM_ABLE=0 的指令不得渲染',
+  },
+  {
+    desc: 'M764 子菜单按钮守卫删（交代助手/对换调教恒显示）',
+    file: 'ere/page/page-usercom.js',
+    find: `  if (guards.can_handover) {
+    era.printButton('交代助手', 102); // :21（ASSI > 0 && ASSI:1 > 0）
+  }`,
+    replace: `  era.printButton('交代助手', 102); // 变异：无守卫`,
+    tests: ['page-usercom'],
+    must_mention: '默认态 9 个按钮',
+  },
+  {
+    desc: 'M765 FLAG:550 守卫删（991/992 无菜单也显示）',
+    file: 'ere/page/page-usercom.js',
+    find: `  if (game_train.指令菜单长度 > 0) {
+    era.printButton('调教菜单表示', 991); // :88
+    era.printButton('调教菜单实行', 992); // :89
+  }`,
+    replace: `  era.printButton('调教菜单表示', 991); // 变异：无守卫
+  era.printButton('调教菜单实行', 992);`,
+    tests: ['page-usercom'],
+    must_mention: '默认态 9 个按钮',
+  },
+  {
+    desc: 'M766 过滤按钮染色删（SETCOLOR 的开/关色差丢失）',
+    file: 'ere/page/page-usercom.js',
+    find: `    const on = (game_train.指令过滤 & mask) !== 0;
+    const off_color = FILTER_COLORS[acc];
+    era.printButton(
+      label,
+      acc,
+      on
+        ? { color: FILTER_GRAY }
+        : off_color !== undefined
+          ? { color: off_color }
+          : undefined,
+    );`,
+    replace: `    era.printButton(label, acc); // 变异：不染色`,
+    tests: ['page-usercom'],
+    must_mention: '开启位一律灰',
+  },
+  {
+    desc: 'M767 交代助手分支一的视角翻转反了（PLAYER == TARGET:1 判定旁路）',
+    file: 'ere/page/page-usercom.js',
+    find: `      era_flag.player =
+        era_flag.player === target_record ? assi_record : target_record;
+      era_flag.assi = era_flag.player;`,
+    replace: `      era_flag.player = target_record; // 变异：不判 PLAYER == TARGET:1
+      era_flag.assi = era_flag.player;`,
+    tests: ['page-usercom'],
+    must_mention: '分支一命中 TARGET:1',
+  },
+  {
+    desc: 'M768 对换调教的 SWAP 反转（TARGET 不动只改 PLAYER）',
+    file: 'ere/page/page-usercom.js',
+    find: `    era_flag.target = era_flag.player;
+    era_flag.player = target; // SWAP TARGET, PLAYER`,
+    replace: `    era_flag.player = target; // 变异：单边赋值`,
+    tests: ['page-usercom'],
+    must_mention: 'SWAP：TARGET ← 原 PLAYER',
+  },
+  {
+    desc: 'M769 过滤位翻转的清位掩码换成全清（邻位被波及）',
+    file: 'ere/page/page-usercom.js',
+    find: `      if ((game_train.指令过滤 & mask) !== 0) {
+        game_train.指令过滤 &= 31 ^ mask;
+      } else {
+        game_train.指令过滤 |= mask;
+      }`,
+    replace: `      if ((game_train.指令过滤 & mask) !== 0) {
+        game_train.指令过滤 = 0; // 变异：全清
+      } else {
+        game_train.指令过滤 |= mask;
+      }`,
+    tests: ['page-usercom'],
+    must_mention: '只清位 1，位 0/3 保留',
+  },
+  {
+    desc: 'M770 102/112 的 ASSIPLAY 更新删（换视角后助手参与态不刷新）',
+    file: 'ere/page/page-usercom.js',
+    find: `    // :121 ASSIPLAY = PLAYER != MASTER ? 1 : 0
+    era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;
+    return;
+  }
+  if (result === 112 && guards.can_swap) {`,
+    replace: `    return;
+  }
+  if (result === 112 && guards.can_swap) {`,
+    tests: ['page-usercom'],
+    must_mention: 'PLAYER != MASTER → ASSIPLAY = 1',
+  },
+  {
+    desc: 'M772 MULTI_COMABLE 的 TRAINNAME 空判据删（高级 COM 可登记）',
+    file: 'ere/system/train/com-register.js',
+    find: `  if ((era.get(\`traincommandname:\${id}\`) ?? '').length === 0) {
+    return 0;
+  }`,
+    replace: `  // 变异：不查静态名`,
+    tests: ['com-register'],
+    must_mention: '高级 COM 84',
+  },
+  {
+    desc: 'M773 MULTI_COMABLE 的 TFLAG:224 包裹删（探测时索求抑制旗标不在场）',
+    file: 'ere/system/train/com-register.js',
+    find: `  game_train.索求口上抑制 = COMSEQ_ACTIVE;
+  const able = await com_able_family.call(id, { whenMissing: 1 });
+  game_train.索求口上抑制 = 0;
+  return able;`,
+    replace: `  const able = await com_able_family.call(id, { whenMissing: 1 });
+  return able; // 变异：无旗标包裹`,
+    tests: ['com-register'],
+    must_mention: '探测时旗标必须是 555',
+  },
+  {
+    desc: 'M774 COMSEQ_SHOW 的 ×n 折叠删（连续同指令逐条展开）',
+    file: 'ere/system/train/com-register.js',
+    find: `    let times = 1;
+    while (count < length - 1) {
+      const next_id = era.get(\`flag:\${SLOT_BASE + count + 1}\`) || 0;
+      if (next_id !== id) {
+        break;
+      }
+      times += 1;
+      count += 1;
+    }
+    if (times > 1) {
+      era.print(\`×\${times}\`);
+    }`,
+    replace: `    const times = 1; // 变异：不折叠`,
+    tests: ['com-register'],
+    must_mention: '×3',
+  },
+  {
+    desc: 'M775 COMSEQ_SHOW 的（不可用）分支换成照印名字（不可用条目伪装可用）',
+    file: 'ere/system/train/com-register.js',
+    find: `    if (able) {
+      era.print(era.get(\`traincommandname:\${id}\`) ?? '');
+    } else {
+      era.print('（不可用）');
+    }`,
+    replace: `    era.print(era.get(\`traincommandname:\${id}\`) ?? ''); // 变异：不分可用性`,
+    tests: ['com-register'],
+    must_mention: '（不可用）',
+  },
+  {
+    desc: 'M776 COMSEQ_REGISTER 的重复指令周期模板换成常数 0（填充段全复制首条）',
+    file: 'ere/system/train/com-register.js',
+    find: `        const template = era.get(\`flag:\${SLOT_BASE + (local0 % period)}\`) || 0;`,
+    replace: `        const template = era.get(\`flag:\${SLOT_BASE}\`) || 0; // 变异：恒取首槽`,
+    tests: ['com-register'],
+    must_mention: '0, 6, 0, 6',
+  },
+  {
+    desc: 'M777 COMSEQ_REGISTER 的满 10 条边界放宽（<= 9 改 < 9——第 10 条后仍重画要输入）',
+    file: 'ere/system/train/com-register.js',
+    find: `    local0 += 1;
+    if (local0 <= 9) {
+      continue; // GOTO REDRAW_LOOP
+    }
+    break; // COMPLETE`,
+    replace: `    local0 += 1;
+    if (local0 < 9) {
+      continue; // 变异：边界错位
+    }
+    break; // COMPLETE`,
+    tests: ['com-register'],
+    must_mention: '<= 9 边界',
+  },
+  {
+    desc: 'M778 重置菜单只清长度不清槽位（551-560 残留旧值）',
+    file: 'ere/system/train/com-register.js',
+    find: `      for (let slot = 550; slot <= 560; slot += 1) {
+        era.set(\`flag:\${slot}\`, 0);
+      }`,
+    replace: `      era.set('flag:550', 0); // 变异：只清长度`,
+    tests: ['com-register'],
+    must_mention: '未清',
+  },
+  {
+    desc: 'M779 COMSEQ_TRAIN 的预检查删（不可用条目照样执行）',
+    file: 'ere/system/train/com-register.js',
+    find: `    const able =
+      DECLARED_TRAIN_IDS.includes(id) &&
+      (await com_able_family.call(id, { whenMissing: 1 })) !== 0;
+    if (!able) {
+      blocked = true; // LOCAL:1 = 1
+      break;
+    }`,
+    replace: `    // 变异：不预检查`,
+    tests: ['com-register'],
+    must_mention: '任何一条不可用即整段拒绝',
+  },
+  {
+    desc: 'M780 COMSEQ_TRAIN 的 PREVCOM 保存/恢复删（调用方语境被序列污染）',
+    file: 'ere/system/train/com-register.js',
+    find: `  era_flag.prevcom = prevcom_saved; // :236 PREVCOM 恢复
+  return pending;`,
+    replace: `  return pending; // 变异：不恢复`,
+    tests: ['com-register'],
+    must_mention: '序列后 PREVCOM 恢复原值',
+  },
+  {
+    desc: 'M781 run_calltrain 尾部的 CALLTRAINEND 删（实行旗标不复位）',
+    file: 'ere/system/train/com-register.js',
+    find: `  calltrainend();
+  return undefined;`,
+    replace: `  return undefined; // 变异：不回调 CALLTRAINEND`,
+    tests: ['com-register'],
+    must_mention: 'CALLTRAINEND 复位',
+  },
+  {
+    desc: 'M782 COMSEQ_TRAIN 的预检查 PREVCOM 推进删（探测时看到进函数原值）',
+    file: 'ere/system/train/com-register.js',
+    find: `    sequence.push(id);
+    era_flag.prevcom = id; // :227`,
+    replace: `    sequence.push(id); // 变异：不推进`,
+    tests: ['com-register'],
+    must_mention: '探测第 k 条时它是第 k-1 条',
+  },
+  {
+    desc: 'M783 COM_ORDER 的百合条件反（双方皆女被当百合外）',
+    file: 'ere/system/train/com-order.js',
+    find: `  if (p_talent(122) === 0 && talent(122) === 0) {`,
+    replace: `  if (p_talent(122) !== 0 || talent(122) !== 0) { // 变异：条件反`,
+    tests: ['com-order'],
+    must_mention: '百合气质LV2(6)',
+  },
+  {
+    desc: 'M784 COM_ORDER 的刻印 T 系数恒 2（高姿态/低姿态的调节丢失）',
+    file: 'ere/system/train/com-order.js',
+    find: `  const t = talent(15) ? 4 : talent(17) ? 1 : 2;`,
+    replace: `  const t = 2; // 变异：系数恒 2`,
+    tests: ['com-order'],
+    must_mention: 'T 系数 = 4',
+  },
+  {
+    desc: 'M785 COM_ORDER 的相性正值前置判据删（值 0 的未登场关系被当最差档）',
+    file: 'ere/system/train/com-order.js',
+    find: `  if (relation > 0 && relation < 30) {`,
+    replace: `  if (relation < 30) { // 变异：正值前置删除`,
+    tests: ['com-order'],
+    must_mention: '相性最差',
+  },
+  {
+    desc: 'M786 COM_ORDER 的 a 初值透传删（调用方累计被重置）',
+    file: 'ere/system/train/com-order.js',
+    find: `async function com_order(a = 0, s = 0) {`,
+    replace: `async function com_order(_a = 0, s = 0) {
+  let a = 0; // 变异：不透传（合法形状，a 恒从 0 起）`,
+    tests: ['com-order'],
+    must_mention: 'a 初值透传累加',
   },
 ];

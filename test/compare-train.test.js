@@ -50,9 +50,16 @@ const REPO = path.resolve(__dirname, '..');
 // 条目转「COM_ABLE 未过滤」记名存根（natural +42 / upgrade +20），
 // version 归零。**这是收紧不是放宽**——豁免消失而不是扩围，unexplained
 // 恒为 0 的底线不动。缺省样本同步 57/10/107 → 61/0/109。
+//
+// 【#214（J4）子菜单按钮组挂载后实测】@SHOW_USERCOM 的 [100]-[108]/
+// [990] 按钮组 + 交代助手/对换调教守卫 + FLAG:550 守卫落地，golden 侧
+// 原归「按钮组未挂载」的条目整组转匹配（natural +144 / upgrade +33）；
+// GETBIT(FLAG:5,34) 渲染分流同步落地（replay 播种 flag:5 开局值，
+// golden 的自定义菜单形态不变）。ere 多出的末屏按钮组条目挂进
+// 「多出的方格屏」归因（同屏整组，见 rules.js）。
 const BASELINE = {
-  'train-natural': { matched: 619, version: 0, stub: 2578, unexplained: 0 },
-  'train-upgrade': { matched: 166, version: 0, stub: 850, unexplained: 0 },
+  'train-natural': { matched: 763, version: 0, stub: 2434, unexplained: 0 },
+  'train-upgrade': { matched: 199, version: 0, stub: 832, unexplained: 0 },
 };
 
 async function build_report(sample) {
