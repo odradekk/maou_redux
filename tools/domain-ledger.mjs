@@ -51,7 +51,6 @@ export const DOMAIN_LEDGER = {
     'base:2': 3,
     'base:3': 1,
     'base:4': 1,
-    'cflag:10': 1,
     'palam:3': 1,
     'palam:5': 1,
     'tflag:402': 1,

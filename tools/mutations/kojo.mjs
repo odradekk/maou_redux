@@ -6,8 +6,12 @@ export default [
   {
     desc: 'M57 口上总开关守卫删松（<= 0 改 < 0，flag:7 = 0 不再拦）',
     file: 'ere/kojo/kojo-system.js',
-    find: "  if ((era.get('flag:7') || 0) <= 0) {",
-    replace: "  if ((era.get('flag:7') || 0) < 0) {",
+    find: `async function kojo_message_com(rand) {
+  // :151-152 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）
+  if ((era.get('flag:7') || 0) <= 0) {`,
+    replace: `async function kojo_message_com(rand) {
+  // :151-152 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）
+  if ((era.get('flag:7') || 0) < 0) {`,
     tests: ['kojo-system'],
     must_mention: '完全不输出',
   },

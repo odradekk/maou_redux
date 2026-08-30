@@ -30,9 +30,10 @@ const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
+const { self_check } = require('#/event/event-aftertrain');
+
 const STUBBED_CALLS = [
   'CHARADEAD_CHECK',
-  'SELF_CHECK',
   'SELL_MILK',
   'SELL_VIDEO',
   'SELL_FIGHTMONEY',
@@ -78,7 +79,7 @@ on(
 
     // :341-345 生きていれば調教後行為のチェック（IF RESULT == 0）
     if (charadead_result === 0) {
-      stub_line('SELF_CHECK', '调教后行为检查');
+      await self_check();
       era.drawLine(); // :344
     }
 

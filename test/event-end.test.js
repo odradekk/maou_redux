@@ -70,7 +70,6 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   // 存根各打一行占位（可检索）
   for (const name of [
     'CHARADEAD_CHECK',
-    'SELF_CHECK',
     'SELL_MILK',
     'SELL_VIDEO',
     'SELL_FIGHTMONEY',
@@ -214,7 +213,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
 
   assert.deepEqual(STUBBED_CALLS, [
     'CHARADEAD_CHECK',
-    'SELF_CHECK',
     'SELL_MILK',
     'SELL_VIDEO',
     'SELL_FIGHTMONEY',

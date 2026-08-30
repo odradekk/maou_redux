@@ -29,21 +29,6 @@ class TrainFacade {
   }
 
   /**
-   * 自动调教（cflag:cid:666 ↔ CFLAG:666）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 自動調教が行われたかフラグ
-   * @returns {number}
-   */
-  get 自动调教() {
-    return era.get(`cflag:${this.cid}:666`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 自动调教(v) {
-    era.set(`cflag:${this.cid}:666`, v);
-  }
-
-  /**
    * 初体验对象（cflag:cid:15 ↔ CFLAG:15）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
    * @returns {number}
@@ -71,6 +56,21 @@ class TrainFacade {
    */
   set 初吻对象(v) {
     era.set(`cflag:${this.cid}:16`, v);
+  }
+
+  /**
+   * 着衣状态（cflag:cid:40 ↔ CFLAG:40）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行294 CFLAG:40 = 着衣の状態
+   * @returns {number}
+   */
+  get 着衣状态() {
+    return era.get(`cflag:${this.cid}:40`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 着衣状态(v) {
+    era.set(`cflag:${this.cid}:40`, v);
   }
 
   /**
@@ -116,6 +116,66 @@ class TrainFacade {
    */
   set 上衣下状态(v) {
     era.set(`cflag:${this.cid}:46`, v);
+  }
+
+  /**
+   * 逆强暴（cflag:cid:61 ↔ CFLAG:61）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行307 CFLAG:61 = 逆レイプ
+   * @returns {number}
+   */
+  get 逆强暴() {
+    return era.get(`cflag:${this.cid}:61`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 逆强暴(v) {
+    era.set(`cflag:${this.cid}:61`, v);
+  }
+
+  /**
+   * 蓄积润滑（cflag:cid:81 ↔ CFLAG:81）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行317 CFLAG:81 = 蓄積潤滑
+   * @returns {number}
+   */
+  get 蓄积润滑() {
+    return era.get(`cflag:${this.cid}:81`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 蓄积润滑(v) {
+    era.set(`cflag:${this.cid}:81`, v);
+  }
+
+  /**
+   * 蓄积欲情（cflag:cid:82 ↔ CFLAG:82）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行318 CFLAG:82 = 蓄積欲情
+   * @returns {number}
+   */
+  get 蓄积欲情() {
+    return era.get(`cflag:${this.cid}:82`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 蓄积欲情(v) {
+    era.set(`cflag:${this.cid}:82`, v);
+  }
+
+  /**
+   * 自动调教（cflag:cid:666 ↔ CFLAG:666）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 = 自動調教
+   * @returns {number}
+   */
+  get 自动调教() {
+    return era.get(`cflag:${this.cid}:666`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 自动调教(v) {
+    era.set(`cflag:${this.cid}:666`, v);
   }
 
   // —— cstr ——

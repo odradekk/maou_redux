@@ -118,6 +118,21 @@ class EventFacade {
     era.set(`cflag:${this.cid}:511`, v);
   }
 
+  /**
+   * 自动调教回数（cflag:cid:667 ↔ CFLAG:667）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:667 = 自動調教回数
+   * @returns {number}
+   */
+  get 自动调教回数() {
+    return era.get(`cflag:${this.cid}:667`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 自动调教回数(v) {
+    era.set(`cflag:${this.cid}:667`, v);
+  }
+
   // —— tequip ——
   /**
    * 主人避孕套（tequip:cid:35 ↔ TEQUIP:35）

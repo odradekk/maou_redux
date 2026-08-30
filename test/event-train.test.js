@@ -65,14 +65,12 @@ function expected_train_writes(train_name_table) {
     { name: 'tflag:402', value: 0 }, // :49-50 死斗场收入初始化
     // :53 CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，守卫空过）
     ...expected_train_name_writes(train_name_table),
-    // :55 PRITRAIN_MESSAGE 承载头部：
+    // :55 PRITRAIN_MESSAGE（真身写入）：
     { name: 'cflag:31:10', value: 1 }, // :7-8 CFLAG:TARGET:10 += 1（调教回数）
     { name: 'flag:10014', value: 0 }, // :11 T:10 = MASTER
     { name: 'flag:10015', value: 31 }, // :12 T:11 = TARGET
-    // :13-14 SIF ASSI → T:12 = ASSI —— Emuera 的 SIF 判「非零」，ASSI = -1
-    //（无助手）同样为真、照写 -1；@EVENTEND 的 SIF ASSI → ASSI = T:12 同
-    // 判据，-1 一进一出还原（全量断言抓过「以为 -1 跳过」的预期错误）
-    { name: 'flag:10016', value: -1 },
+    { name: 'flag:10016', value: -1 }, // :13-14 SIF ASSI → T:12 = ASSI
+    { name: 'cflag:31:40', value: 0 }, // :28-29 着衣OFF (FLAG:37==0) 全裸
   ];
 }
 
@@ -94,16 +92,7 @@ test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外�
     fixture.var_writes.slice(start),
     expected_train_writes(TRAIN_NAME_TABLE),
   );
-  assert.deepEqual(STUBBED_CALLS, ['PRITRAIN_MESSAGE']);
-  // 存根打一行占位（可检索）；TRAIN_NAME_INIT 已是真身、无占位行
-  for (const name of ['PRITRAIN_MESSAGE']) {
-    assert(
-      fixture.text_lines().some((line) => line.includes(`@${name}`)),
-      `存根 ${name} 必须打印含函数名的占位行`,
-    );
-  }
-  // PRITRAIN_MESSAGE 存根保留 WAIT 的读键节奏
-  assert.deepEqual(fixture.inputs_consumed, [{ api: 'waitAnyKey' }]);
+  assert.deepEqual(STUBBED_CALLS, []);
 });
 
 test('时常发情（TALENT:TARGET:271）：润滑与欲情从 3000 起步', async () => {
