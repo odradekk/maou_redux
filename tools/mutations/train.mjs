@@ -2765,6 +2765,6 @@ export default [
     find: '    if ((era.get(`tequip:${era_flag.target}:55`) || 0) === 0) {\n      return 0; // 死斗场判定（:4699 等）\n    }',
     replace: '    // 变异：死斗场守卫删',
     tests: ['com-colosseum'],
-    must_mention: '预置输入已耗尽',
+    must_mention: '#214 撞号消解',
   },
 ];
