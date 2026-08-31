@@ -69,6 +69,9 @@ require('#/system/train/com-cloth');
 require('#/system/train/com-colosseum');
 // @COM10-19「道具使用」族（#220 J10）：真身、可用性、装备持续效果与训练消息分支
 require('#/system/train/com-toy');
+// @COM120-135「追加与高级」族（#229 J19）：高级 COM 真身 + COM_ABLE +
+// TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 135 升格规则
+require('#/system/train/com-advanced');
 // @COM100-109 / 150 / 208「触手与自由调教」族（#227 J17）：触手召唤、
 // 触手插入/口辱/自由调教、死斗场触手的 @COM/@COM_ABLE 真身 + EQUIP_COM100/108
 // 持续效果 + TRAIN_MESSAGE 分支；JUMP 目标 11/13-17/31 未落地 → COM_MISSING
