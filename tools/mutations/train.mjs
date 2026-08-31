@@ -3898,4 +3898,12 @@ export default [
     replace: '  // 变异：COM128 情爱恒乘删除',
     must_mention: 'COM128：正常位・接吻，回填 SELECTCOM 与默认 SOURCE',
   },
+  {
+    desc: 'M1463 COM129 默认档乳房 SOURCE:17 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);',
+    replace: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM129 乳房 SOURCE:17 删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
+  },
 ];
