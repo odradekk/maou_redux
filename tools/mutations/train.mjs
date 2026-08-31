@@ -3901,8 +3901,8 @@ export default [
   {
     desc: 'M1463 COM129 默认档乳房 SOURCE:17 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);',
-    replace: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM129 乳房 SOURCE:17 删除',
+    find: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
+    replace: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM129 乳房 SOURCE:17 删除\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
     tests: ['com-advanced'],
     must_mention: 'COM129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
@@ -3917,8 +3917,8 @@ export default [
   {
     desc: 'M1465 COM131 默认档 EXP 档疼痛 SOURCE:6 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '    set_src(cid, 6, 30);\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [',
-    replace: '    // 变异：COM131 EXP 档疼痛删除\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [',
+    find: '    set_src(cid, 6, 30);\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],',
+    replace: '    // 变异：COM131 EXP 档疼痛删除\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],',
     tests: ['com-advanced'],
     must_mention: 'COM131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
@@ -3929,5 +3929,13 @@ export default [
     replace: '  // 变异：COM132 PALAM:9 疼痛覆写删除',
     tests: ['com-advanced'],
     must_mention: 'COM132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE',
+  },
+  {
+    desc: 'M1467 COM133 默认档情爱 SOURCE:3 恒乘删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  times_src(cid, 3, 1.5); // 源侧无缩进，恒乘（COMF133:230）',
+    replace: '  // 变异：COM133 情爱恒乘删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM133：站立背后位，回填 SELECTCOM 与默认 SOURCE',
   },
 ];
