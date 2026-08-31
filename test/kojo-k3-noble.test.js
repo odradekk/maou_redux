@@ -375,16 +375,164 @@ test('助手调教 / 口塞 / 失神 / 崩坏 / 触手：静默跳过', async ()
   }
 });
 
-test('爱抚外指令（SELECTCOM != 0）：落占位行（分支待办可见）', async () => {
+test('舔阴首次（CFLAG:302 == 0 且非处女）：一句拒绝 + 推进到 1', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 1; // 舔阴
+    era_flag.selectcom = 1;
   });
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 1 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
+    '「啊啊…怎么会…舌头…哈呜…啊~…啊呜~~~~！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:302'), 1);
+});
+
+test('舔阴首次处女分档（TALENT:0）：脏的台词 + 推进到 1', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:0', 1);
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊啊~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:302'), 1);
+});
+
+test('舔阴二次以后：淫乱 / 爱慕 / 屈服Lv3 / それ以外 四支与状态推进', async () => {
+  const lewd = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('cflag:31:302', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k3(lewd, seq_rand(0, 0));
+  assert.deepEqual(lewd.text_lines(), [
+    '「哈啊啊…更加地…更加地...将小穴弄得更加黏糊糊地吧♡…更加地欺负小穴吧哈呜~~♡♡♡」',
+    '温妮将你的头按住晃动着腰。',
+    '「请更加地…欺负温妮的小穴吧~…将变态温妮的小穴弄得乱七八糟的吧啊啊~！♡♡♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:302'), 5);
+
+  const love = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('cflag:31:302', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k3(love, seq_rand(0, 0));
+  assert.deepEqual(love.text_lines(), [
+    '「啊啊~…那里明明…那么脏来的啊♪………不行…的啊…那么地…啊嗯~♪」',
+    '温妮哪怕耳朵红透了也好，也继续接受着你的爱抚。',
+    '「嗯呜啊~…哼啊啊啊！~…腰要…腰要飘起来了~♡」',
+  ]);
+  assert.equal(love.store.get('cflag:31:302'), 4);
+
+  const yield3 = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('cflag:31:302', 1);
+    f.store.set('mark:31:2', 3);
+  });
+  await speak_k3(yield3, seq_rand(0, 0));
+  assert.deepEqual(yield3.text_lines(), [
+    '「呜啊~…啊~…呜呼啊~…更加地…温柔地爱抚吧…哼唔啊~…啊~啊啊~♪」',
+  ]);
+  assert.equal(yield3.store.get('cflag:31:302'), 3);
+
+  const other = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('cflag:31:302', 1);
+  });
+  await speak_k3(other, seq_rand(0, 0));
+  assert.deepEqual(other.text_lines(), [
+    '「不、不要…请停下来吧！哪怕舔这种地方也好…哼呜啊啊啊~！」',
+  ]);
+  assert.equal(other.store.get('cflag:31:302'), 2);
+});
+
+test('肛门爱抚首次（CFLAG:303 == 0）：一句拒绝 + 推进到 1', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [
+    '「呜，呜哇啊！？那、那里是不行的！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:303'), 1);
+});
+
+test('肛门爱抚二次以后：淫乱润滑分档 / 爱慕润滑 / それ以外', async () => {
+  const lewd_wet = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('palam:31:3', 500); // PALAM:3 + UP:3 >= PALAMLV:2
+  });
+  await speak_k3(lewd_wet, seq_rand(0, 0));
+  assert.deepEqual(lewd_wet.text_lines(), [
+    '「啊啊~♡…啊~♡…哈呜啊啊啊~♡♡♡」',
+    '温妮每当被弯曲的手指来回扣着尻穴内壁时都会漏出欢喜的娇喘。',
+    '「尻穴小穴♡ 更加玩弄尻穴吧~~~♡♡♡」',
+  ]);
+  assert.equal(lewd_wet.store.get('cflag:31:303'), 7);
+
+  const lewd_dry = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k3(lewd_dry, seq_rand(0, 0));
+  assert.deepEqual(lewd_dry.text_lines(), [
+    '「嗯啊~……哈啊嗯~♡　指尖在…嗯~…在挖着…啊~♡这个嗯~~~~♡」',
+    '温妮的尻穴虽然还没有完全湿润，不过手指越是抽插越能进入温妮的尻穴的深处。',
+    '「恩呜呜~…更加地…♡　进到里面去来回抽插吧♡♡♡」',
+  ]);
+  assert.equal(lewd_dry.store.get('cflag:31:303'), 6);
+
+  const love_wet = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('palam:31:3', 500);
+  });
+  await speak_k3(love_wet, seq_rand(0, 0));
+  assert.deepEqual(love_wet.text_lines(), [
+    '「啊~哈嗯~啊啊~…这、这个部位…才不是用来塞进什么东西的地方来的呀………」',
+    '虽然嘴上说着这样的话，但是温妮一点都不讨厌地接受着你的手指。',
+    '「哈嗯~♪……啊·~…不是…这个…才不是对你大人的手指感到舒…哼啊啊~…啊啊~…哈啊嗯~♪」',
+  ]);
+  assert.equal(love_wet.store.get('cflag:31:303'), 5);
+
+  const other = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+  });
+  await speak_k3(other, seq_rand(0, 0));
+  assert.deepEqual(other.text_lines(), [
+    '「嗯呜~…请，请快住手啊…那种地方不管怎么做都不会…呜啊啊~啊啊~！」',
+  ]);
+  assert.equal(other.store.get('cflag:31:303'), 2);
+});
+
+test('爱抚与舔阴与肛门爱抚外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5; // 胸爱抚，本切片尚未落地
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [
+    '（指令 5 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
+
 
 // —— 存根清单核对 ——
 

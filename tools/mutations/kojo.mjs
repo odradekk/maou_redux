@@ -66,8 +66,12 @@ export default [
   {
     desc: 'M64 K3 爱慕素质判据错格（TALENT:85 改 86）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: '      era.get(`talent:${target}:85`) === 1 &&',
-    replace: '      era.get(`talent:${target}:86`) === 1 &&',
+    find: `      // :955-975 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.爱抚 <= 499 || game.kojo.口上开关 === 2)`,
+    replace: `      // :955-975 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:86\`) === 1 &&
+      (kojo.爱抚 <= 499 || game.kojo.口上开关 === 2)`,
     tests: ['kojo-k3-noble'],
     must_mention: '爱慕分支',
   },
@@ -394,4 +398,65 @@ export default [
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
     must_mention: 'TALENT:122 置位 → 哥哥臂',
   },
+  {
+    desc: 'M1500 K3 舔阴首次推进写错（CFLAG:302 = 1 改 2）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.舔阴 = 1; // :1120',
+    replace: '      kojo.舔阴 = 2; // :1120（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '舔阴首次（CFLAG:302 == 0 且非处女）',
+  },
+  {
+    desc: 'M1501 K3 舔阴处女分档删（TALENT:0 臂拿掉）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      if (era.get(\`talent:\${target}:0\`) === 1) {
+        await era.printAndWait(
+          '「嗯啊啊~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」',
+        ); // :1115
+      } else {`,
+    replace: `      if (false) { // 变异：处女分档删除
+        await era.printAndWait(
+          '「嗯啊啊~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」',
+        ); // :1115
+      } else {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '舔阴首次处女分档',
+  },
+  {
+    desc: 'M1502 K3 舔阴淫乱推进写错（CFLAG:302 = 5 改 4）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.舔阴 = 5; // :1129',
+    replace: '      kojo.舔阴 = 4; // :1129（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '舔阴二次以后',
+  },
+  {
+    desc: 'M1503 K3 肛门爱抚首次推进写错（CFLAG:303 = 1 改 2）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.肛门爱抚 = 1; // :1156',
+    replace: '      kojo.肛门爱抚 = 2; // :1156（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '肛门爱抚首次',
+  },
+  {
+    desc: 'M1504 K3 肛门爱抚润滑阈值错（PALAMLV[2] 改 PALAMLV[3]）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[3] &&
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '肛门爱抚二次以后',
+  },
+  {
+    desc: 'M1505 K3 肛门爱抚それ以外读错槽（CFLAG:223 改 303）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {',
+    replace: '    } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 === 2) {',
+    tests: ['kojo-k3-noble'],
+    must_mention: '肛门爱抚二次以后',
+  },
 ];
+
