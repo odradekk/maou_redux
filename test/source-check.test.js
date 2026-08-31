@@ -531,6 +531,71 @@ test('LOST_VIRGIN_CHECK：对象淫乱（76）→ 同款回避（SOURCE:6/15 的
   );
 });
 
+// —— @INCEST / TARGET_* 早退（#220 J10 收口）——
+
+test('INCEST：CFLAG:21–24 按顺序写 TFLAG:14，主人 + -1 强制父母关系', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:0:122', 1);
+      f.store.set('cflag:31:21', 100); // 1 / 100 + 1 = 2
+      f.store.set('cflag:31:23', 300); // 后位覆盖为 4
+      f.store.set('cflag:31:24', -1); // MASTER 特例最终覆盖为 1
+    },
+    (f) => f.store.set('tflag:19', 1),
+  );
+  assert.equal(fixture.store.get('tflag:14'), 1);
+  assert.ok(fixture.text_lines().includes('父女相奸'), '主角 TALENT:122 为真');
+});
+
+test('INCEST：CFLAG:25 命中时有意读取 CFLAG:24 的上游字面行为', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('cflag:31:24', 400); // 被上游 CFLAG:25 分支读到 → 5
+      f.store.set('cflag:31:25', 100); // 只负责命中 PLAYER 0
+    },
+    (f) => f.store.set('tflag:19', 1),
+  );
+  assert.equal(fixture.store.get('tflag:14'), 5);
+  assert.ok(fixture.text_lines().includes('表弟相奸'));
+});
+
+test('INCEST：无亲族普通路径静默，SOURCE:3/14/16 不乘算', async () => {
+  const fixture = await run_caress(undefined, (f) => {
+    f.store.set('tflag:19', 1);
+    f.store.set('source:31:3', 101);
+    f.store.set('source:31:14', 103);
+    f.store.set('source:31:16', 107);
+  });
+  assert.equal(fixture.store.get('tflag:14'), 0);
+  assert.ok(!fixture.text_lines().some((line) => line.includes('相奸')));
+});
+
+test('INCEST_SEX_CHECK：父母 ×2、同胞 ×1.5，逐次向下取整', async () => {
+  const parent = await run_caress(
+    (f) => f.store.set('cflag:31:21', 0),
+    (f) => {
+      f.store.set('cflag:31:21', -1);
+      f.store.set('tflag:19', 1);
+      f.store.set('source:31:3', 101);
+      f.store.set('source:31:14', 103);
+      f.store.set('source:31:16', 107);
+    },
+  );
+  // SOURCE_CHECK 后会转换并清源，故锁源一览行，而不是结尾 source 表。
+  assert.ok(parent.text_lines().some((line) => line.includes('情爱(202)')));
+
+  const sibling = await run_caress(
+    (f) => f.store.set('cflag:31:23', 200), // 2 + 1 = 3
+    (f) => {
+      f.store.set('tflag:19', 1);
+      f.store.set('source:31:3', 101);
+      f.store.set('source:31:14', 103);
+      f.store.set('source:31:16', 107);
+    },
+  );
+  assert.ok(sibling.text_lines().some((line) => line.includes('情爱(151)')));
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
@@ -592,7 +657,7 @@ test('跨域写走门面：22 条条目表寻址串的字面量 era.set/add 清�
     'chara(cid).chara.坦率 = 1;',
     'game.train.屈服刻印结算 = 1;',
     'game.train.主人经验 = 0;',
-    'game.train.近亲与自我口上 = 0;',
+    'incest(cid, player); // :284-285 CALL INCEST',
     'game.system.反抗刻印回避 = 0;',
     'game.system.上次调教者是助手 =',
   ]) {

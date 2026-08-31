@@ -207,3 +207,89 @@ test('A 守卫：TEQUIP:44 / TFLAG:899 > 1 / 其他指令 → 存根占位', asy
     other.fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_A')),
   );
 });
+
+// —— @TRAIN_MESSAGE_A 公共绝顶段（EVENT_TRAIN_MESSAGE_A.ERB:377-424） ——
+
+test('A 公共绝顶：TFLAG:29 在 COM12 专属反应之前输出同一行', async () => {
+  const { fixture, era_flag, train_message_a } = seed_message_world();
+  fixture.load_module('system/train/com-toy');
+  era_flag.selectcom = 12;
+  fixture.store.set('tflag:29', 1);
+  fixture.store.set('delta:31:0', 1000);
+  await train_message_a();
+
+  const lines = fixture.text_lines();
+  assert.deepEqual(lines.slice(-2), [
+    '温妮背脊夸张地向后仰、全身哆嗦着、颤动到了极点。',
+    '阴蒂被振动杖按压着、温妮轻轻地可爱呻吟着、身体颤抖不已。',
+  ]);
+});
+
+test('A 公共绝顶：爱液档、终档与 TFLAG:899 守卫逐字生效', async () => {
+  const transparent = seed_message_world();
+  transparent.fixture.store.set('tflag:29', 5);
+  await transparent.train_message_a();
+  assert(
+    transparent.fixture
+      .text_lines()
+      .includes('温妮阴唇里喷出透明的爱液、全身哆嗦着、颤动到了极点。'),
+  );
+
+  const opaque = seed_message_world();
+  opaque.fixture.store.set('tflag:29', 12);
+  await opaque.train_message_a();
+  assert(
+    opaque.fixture
+      .text_lines()
+      .includes(
+        '温妮阴唇里喷出混合着白浊的爱液、露出快乐又淫媚的神色、绝顶高潮了……',
+      ),
+  );
+
+  const suppressed = seed_message_world();
+  suppressed.fixture.store.set('tflag:29', 1);
+  suppressed.fixture.store.set('tflag:899', 2);
+  await suppressed.train_message_a();
+  assert(
+    !suppressed.fixture.text_lines().some((line) => line.includes('背脊夸张')),
+    'TFLAG:899 > 1 时跳过普通绝顶段',
+  );
+});
+
+test('A 公共绝顶：母乳、两性人和对象射精按原作拼接', async () => {
+  const milk = seed_message_world();
+  milk.fixture.store.set('tflag:29', 5);
+  milk.fixture.store.set('tflag:11', 2);
+  await milk.train_message_a();
+  assert(
+    milk.fixture
+      .text_lines()
+      .includes(
+        '温妮从胸前喷出大量香喷喷的母乳、阴唇里喷出透明的爱液、全身哆嗦着、颤动到了极点。',
+      ),
+  );
+
+  const intersex = seed_message_world();
+  intersex.fixture.store.set('tflag:29', 9);
+  intersex.fixture.store.set('talent:31:121', 1);
+  await intersex.train_message_a();
+  assert(
+    intersex.fixture
+      .text_lines()
+      .includes('温妮背脊夸张地向后仰、全身哆嗦着、颤动到了极点。'),
+    '两性人不输出爱液，但保留背脊反应',
+  );
+
+  const ejaculation = seed_message_world();
+  ejaculation.fixture.store.set('tflag:29', 1);
+  ejaculation.fixture.store.set('tflag:10', 2);
+  ejaculation.fixture.store.set('talent:31:318', 4);
+  await ejaculation.train_message_a();
+  assert(
+    ejaculation.fixture
+      .text_lines()
+      .includes(
+        '温妮跳动着、马一样的阴茎中大量的精液飞散而出。全身哆嗦着、颤动到了极点。',
+      ),
+  );
+});

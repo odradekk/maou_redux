@@ -218,7 +218,7 @@ function classify_entry(entry, side, context) {
     ) {
       return {
         category: 'stub',
-        reason: `指令 ${entry.key}(${entry.val}) 未被 COM_ABLE 过滤（COM_ABLE 族未移植，随各自指令票）`,
+        reason: `指令 ${entry.key}(${entry.val}) 在 ere 侧多出（COM_ABLE 未落地则默认放行；已落地的是多出的重绘屏）`,
       };
     }
     return null;
@@ -411,12 +411,11 @@ function classify_scope_train(entry, side, context) {
   // 误执行 COM0 的整窗插入：ere 侧某回合被丢弃后，重输的下一发输入 0 被
   // 当作 SELECTCOM=0——多出一整个爱抚回合窗口，此后两侧输入流整体错位。
   //
-  // 回合被丢弃是**已移植代码的正确行为**：升格目标（COM84 等，随 J19）
-  // 未注册时 @COM 落空，train-loop 按「未定义 → 重新要求输入」丢弃本回合
-  // （com-family.js 的缺失哨兵，#213 定 / #228 与 #230 定 missing 与
-  // cancelled 之分）。golden 侧那些指令都在，不丢弃，于是从此错开一发。
-  // **不是 L_IDX↔L_I 映射缺陷**——com-index 的映射有 test/com-dispatch
-  // 锁着；随升格目标落地（J19）本条自然消失。
+  // #226 起升格目标 COM84 已落地；回合仍错开，是 golden 首次 COM8
+  // （夺贞）下游六处占位（CONFIRM_LOST_VIRGIN / EQUIP_COM / INCEST /
+  // TARGET_EJAC_CHECK / TARGET_MILK_CHECK / KOJO_MESSAGE_MARKCNG /
+  // EXP_GOT_CHECK）让该回合输出与 golden 不同构，升格判定被拖早一轮。
+  // 见 TRAIN_UNIMPLEMENTED_BLOCKS['train-upgrade'] 的块注。
   //
   // 窗口内的指令名/输入回显/A 文/损耗条是纯插入（对侧无同型条目可配对），
   // 与上方「误执行 COM0 的输出」（有对侧）同根同因
@@ -430,13 +429,13 @@ function classify_scope_train(entry, side, context) {
       return {
         category: 'stub',
         reason:
-          '误执行 COM0 的整窗插入：升格目标未移植使本回合被丢弃，重输的 0 成为 SELECTCOM=0（随 J19 落地消失）',
+          '误执行 COM0 的整窗插入：COM8 下游占位使输入流错开一发，重输的 0 成为 SELECTCOM=0',
       };
     }
     if (entry.kind === 'lossbar') {
       return {
         category: 'stub',
-        reason: '误执行 COM0 整窗的损耗条（同上，升格目标未移植）',
+        reason: '误执行 COM0 整窗的损耗条（同上，COM8 下游占位使输入流错开）',
       };
     }
   }
@@ -465,12 +464,9 @@ function classify_scope_train(entry, side, context) {
       reason: '损耗行：未移植指令的体力/气力损耗（COM 族存根无 LOSEBASE 写入）',
     };
   }
-  // 输入流错开一发的连带（train-upgrade）：golden 侧那一发 0 是给未移植
-  // 指令的交互吃的（夺处女确认、或升格目标 COM84 落空后重新要求输入），
-  // ere 侧没有那次交互 → 同一发 0 被当成 SELECTCOM=0（爱抚）执行。误执行
-  // 的爱抚输出块（指令名/A 文/反应行/损耗条）在 ere 侧多出，对侧常是未移植
-  // 指令（COM8/COM84）的输出。**不是 L_IDX↔L_I 映射缺陷**——映射有
-  // test/com-dispatch 锁着；随 J19（COM84 等升格目标）落地本组消失
+  // 输入流错开一发的连带（train-upgrade）：golden 侧那一发 0 是给 COM8
+  // 夺贞确认吃的，ere 侧该回合形态不同构 → 同一发 0 被当成 SELECTCOM=0。
+  // 根因见上方整窗插入（COM8 下游占位，不是 COM84 未注册）。
   if (
     side === 'ere' &&
     context.counterpart !== undefined &&
@@ -479,7 +475,7 @@ function classify_scope_train(entry, side, context) {
     return {
       category: 'stub',
       reason:
-        '误执行 COM0（爱抚）的输出：未移植指令的交互没吃掉那一发 0，它被当成 SELECTCOM=0（随升格目标 J19 落地消失）',
+        '误执行 COM0（爱抚）的输出：COM8 下游占位没吃掉那一发 0，它被当成 SELECTCOM=0',
     };
   }
   if (side === 'ere' && entry.kind === 'lossbar' && context.counterpart) {
@@ -683,6 +679,18 @@ function classify_scope_train(entry, side, context) {
     }
   }
   if (entry.kind === 'menu') {
+    // golden 侧「股间性交」：#274 补装奉仕系后 COM_ABLE33 真身按
+    // PALAM:3 < 2000 过滤（COMABLE.ERB:1578）。ere 侧未移植指令不累积
+    // 润滑，阈值达不到；golden 存档已过 2000（train-natural-log:689
+    // 润滑 2117），于是 golden 独有该按钮。随器具/振动杖等族落地、
+    // 润滑对得上后消失。
+    if (side === 'golden' && entry.key === '股间性交') {
+      return {
+        category: 'stub',
+        reason:
+          'COM_ABLE33 过滤股间性交：ere 侧润滑未达 2000（未移植指令不累积 PALAM:3）',
+      };
+    }
     // ABLUP 能力列表（ere 按钮化）与方格/子菜单的跨画面编号错位：方格用
     // L_IDX、本画面用 ABL 编号、穿脱子菜单另有编号——集合按 val 配对时
     // 跨画面异名条目互相错位（范围 B 的主菜单/存读档同构）
@@ -749,27 +757,9 @@ function classify_scope_train(entry, side, context) {
         reason: '能力提升画面的文本菜单行（@ABLUPn 反馈与 [100] 停止键未移植）',
       };
     }
-    // 升格标签（train-upgrade）：方格 8 号位的名字由 @GET_ADV_COM 升格
-    // 决定（TRAIN_NAME 数组），ere 侧渲染静态名表的「插入手指」
-    if (side === 'golden' && entry.key === '刺激Ｇ点') {
-      return {
-        category: 'stub',
-        reason:
-          '升格指令标签：@GET_ADV_COM 未移植（方格名字取 TRAIN_NAME 升格值，ere 侧为静态名，随 #213/J19）',
-      };
-    }
-    if (
-      side === 'ere' &&
-      entry.key === '插入手指' &&
-      entry.val === 8 &&
-      context.counterpart?.key === '刺激Ｇ点'
-    ) {
-      return {
-        category: 'stub',
-        reason:
-          '同上：升格标签差异的 ere 半边（静态名表 vs TRAIN_NAME 升格名）',
-      };
-    }
+    // 【#274 拆除】此处原是「升格指令标签：@GET_ADV_COM 未移植」——
+    // 方格 8 号位 golden「刺激Ｇ点」vs ere「插入手指」。GET_ADV_COM 与
+    // CASE 8 升格规则（#213/#219）落地后两侧同名，规则永不命中。
   }
   return null;
 }

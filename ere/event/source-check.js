@@ -37,10 +37,10 @@
  *
  * 可达性判断（哪些分支整支存根，依据写在 issue #45）：
  *   - 避孕套判定（:19-51，TEQUIP:35/36）、装备持续效果组（:58-123 的
- *     EQUIP_COMxx，TEQUIP 11-98）：装备无写入路径，整组登记；
+ *     EQUIP_COMxx）：各装备位是否已有真身由 equip_com_family 按位判定；
  *   - SOURCE_LESBIAN/GAY_SEX_CHECK（SUB2）：预设角色清一色女性 + 主人是
  *     男人（Chara0），两分支当前不可达，登记；
- *   - LOST_VIRGIN_CHECK 的正文（TFLAG:19 = 0 恒早退，守卫 1:1 保留）；
+ *   - INCEST 的 CFLAG:21–25 解码、普通无亲族早退与 SUB1 的源乘算已实现；
  *   - TARGET_EJAC/MILK/WORMBABY_CHECK（素质 121/130/190/191 无预设）；
  *   - SEIIN_START 与失神组（PASSOUT_CHECK/TEXT/OUTDOOR）已随 #216（J6）
  *     落真身（system/train/seiin.js 与 passout.js）；PISSING_ECST_CHECK
@@ -78,6 +78,7 @@ const {
 const { kojo_message_com } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const { incest } = require('#/system/train/incest');
 
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
@@ -92,7 +93,6 @@ const STUBBED_CALLS = [
   'EQUIP_COM',
   'SOURCE_LESBIAN_SEX_CHECK',
   'SOURCE_GAY_SEX_CHECK',
-  'INCEST',
   'TARGET_EJAC_CHECK',
   'TARGET_MILK_CHECK',
   'TARGET_WORMBABY_CHECK',
@@ -280,11 +280,32 @@ function master_skill_check() {
   }
 }
 
-// @INCEST_SEX_CHECK（SUB1:222-263）：近亲判定归 INCEST（登记；relation
-// 表无数据，TFLAG:14 恒 0，其后的乘算分支自然不达）
+// @INCEST_SEX_CHECK（SUB1:222-263）：亲族文本与源乘算。
 function incest_sex_check() {
-  game.train.近亲与自我口上 = 0;
-  stub_line('INCEST', '亲族关系判定', '随亲族票');
+  const relation = incest(cid, player);
+  if (relation === 0 || tflag(19) === 0) {
+    return;
+  }
+  const label = {
+    1: ptal(122) ? '父女相奸' : '母女相奸',
+    2: ptal(122) ? '母子相奸' : '母女相奸',
+    3: ptal(122) ? '兄妹相奸' : '姐妹相奸',
+    4: ptal(122) ? '姐弟相奸' : '姐妹相奸',
+    5: ptal(122) ? undefined : '表弟相奸',
+    6: ptal(122) ? '表姐相奸' : undefined,
+  }[relation];
+  if (label !== undefined) {
+    era.print(label);
+  }
+  if (relation === 1 || relation === 2) {
+    for (const index of [3, 14, 16]) {
+      set_src(index, times(src(index), 2));
+    }
+  } else if (relation === 3 || relation === 4) {
+    for (const index of [3, 14, 16]) {
+      set_src(index, times(src(index), 1.5));
+    }
+  }
 }
 
 // @LOST_VIRGIN_CHECK（SUB1:265-340，#216 J6 真身）：守卫 1:1（TALENT:0 ==
@@ -292,8 +313,7 @@ function incest_sex_check() {
 // 近亲代码）、摄影/刻印旗、爱情源的乘算。触发位 TFLAG:19 由插入系指令
 // （COMF8/11/20-23/34/64/81/83/120/121/128-134）置位——族票落地前游玩
 // 不可达，测试可驱动（与 SEIIN 的 TFLAG:0 随 J12 同型）。
-// INCEST 复用在册存根（上方 incest_sex_check 的同一条登记，#177/#178
-// 教训——不建第二个桩）。
+// INCEST 使用 system/train/incest.js 的共用真身；TFLAG:14 由该函数写回。
 function lost_virgin_check() {
   if (!tal(0) || tflag(19) === 0) {
     return; // :267-268
@@ -309,8 +329,7 @@ function lost_virgin_check() {
   }
 
   const r = era_flag.player; // :282 R = NO:PLAYER
-  game.train.近亲与自我口上 = 0; // :284
-  stub_line('INCEST', '亲族关系判定', '随亲族票'); // :285 CALL INCEST
+  incest(cid, player); // :284-285 CALL INCEST
 
   // :287-313 初体验相手记录（CFLAG:15 属主 train 直写；+1 存 character no，
   // 300+ 近亲代码——与 COM_AFTER_*_SEX 的表不同组，原作两处各表 1:1）
@@ -2113,7 +2132,6 @@ on('SOURCE_CHECK', async () => {
   stub_line('TARGET_EJAC_CHECK', '调教对象射精检查', '随扶她/男人票');
   stub_line('TARGET_MILK_CHECK', '喷乳检查', '随母乳票');
   stub_line('TARGET_WORMBABY_CHECK', '蠕虫出产检查', '随蠕虫票');
-
   // :254-255 主人调教的好感度累积
   master_flag_check();
 

@@ -66,8 +66,7 @@
 //   --root <dir> / --ledger-dir <dir>              测试夹具用
 //
 // --no-locks 是给红绿切片的内环用的：那时只想知道「我这个模块还对不对」，
-// 全局锁那 11 个文件 20s 是纯等待。交付闸（T2）与验收（T3）**不许去锁**。
-//
+// 全局锁那 13 个文件（含两份对拍）是纯等待。交付闸（T2）与验收（T3）**不许去锁**。
 // 输出分流：**stdout 是文件列表（每行一个），stderr 是报告**——
 // `node tools/select-tests.mjs` 的输出可以直接喂给别的命令。
 // 退出码：不带 --run 恒为 0；带 --run 时透传 node --test 的退出码。
@@ -85,7 +84,8 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 /**
  * 全局锁：改任何东西都可能弄红的测试，因此恒选。判据是「失败原因与被改
  * 的是哪个域无关」——扫全树的检查器、全局计数字段的守护、跨文件同步的
- * 守护。实测这一组 11 个文件 / 118 个用例 / 20s。
+ * 守护。另含两份对拍基线锁（#274）：任何 ere/ 改动都可能移动计数，
+ * 不恒选就会出现「test:related 绿、rebase 后全量红」（#220）。
  *
  * source-check 名字像检查器，**不在此列**：它是 ere/event/source-check.js
  * 的域测试（6.6s），只有改到该文件才需要跑。
@@ -102,6 +102,8 @@ const LOCKS = [
   'skip-count-check', // 跳过数守护工具自身
   'engine-contract-check', // 引擎契约锚点
   'resource-media', // 引擎默认配置形状逐键比对
+  'compare-first-turn', // 调教首回合对拍基线：ere/ 改动常移动存根数（#220/#274）
+  'compare-train', // 调教段对拍基线：同上，natural/upgrade 四数恒锁
 ];
 
 // —— 参数 ——

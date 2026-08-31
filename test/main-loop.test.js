@@ -163,7 +163,7 @@ test('主启动图注册重度调教系：COM80 与 COM_ABLE80 可由主循环�
   assert.equal(com_able_family.has(80), true, 'COM_ABLE80 必须经主启动图注册');
 });
 
-test('主启动图注册奉仕系：COM30 与 COM_ABLE30 可由主循环侧的 require 发现', () => {
+test('主启动图注册奉仕系：COM30 与 COM_ABLE30 可由主循环侧的 require 发现', async () => {
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
   const { com_family, com_able_family } = fixture.load_module(
@@ -174,7 +174,18 @@ test('主启动图注册奉仕系：COM30 与 COM_ABLE30 可由主循环侧的 r
   assert.equal(com_able_family.has(30), true, 'COM_ABLE30 必须经主启动图注册');
 });
 
-test('主启动图注册助手与蕾丝系：COM60 与 COM_ABLE60 可由主循环侧的 require 发现', () => {
+test('主启动图注册道具系：COM10 与 COM_ABLE10 可由主循环侧的 require 发现', async () => {
+  const fixture = create_era_fixture();
+  fixture.load_module('system/flow/main-loop');
+  const { com_family, com_able_family } = fixture.load_module(
+    'system/train/com-family',
+  );
+
+  assert.equal(com_family.has(10), true, 'COM10 必须经主启动图注册');
+  assert.equal(com_able_family.has(10), true, 'COM_ABLE10 必须经主启动图注册');
+});
+
+test('主启动图注册助手与蕾丝系：COM60 与 COM_ABLE60 可由主循环侧的 require 发现', async () => {
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
   const { com_family, com_able_family } = fixture.load_module(

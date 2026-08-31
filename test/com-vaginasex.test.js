@@ -378,6 +378,28 @@ test('调教者童贞丧失：TFLAG 复位、CFLAG:PLAYER:15 = no + 1、CSTR:3�
   assert.ok(fixture.text_lines().includes('【童贞丧失】'));
 });
 
+test('亲族关系：V 事后处理复用 INCEST，并按原作关系 2 写调教者初体验码', async () => {
+  const { fixture, vs } = seed_world();
+  arm_player(fixture);
+  fixture.store.set('talent:31:0', 1);
+  fixture.store.set('talent:0:1', 1);
+  fixture.store.set('cflag:0:15', 0);
+  fixture.store.set('cflag:31:21', 100); // 玩家是对象的子女（关系 2）
+  await vs.com_after_vagina_sex(() => 1);
+
+  assert.equal(fixture.store.get('tflag:14'), 0, '事后处理末尾按原作复位');
+  assert.equal(
+    fixture.store.get('exp:31:50'),
+    undefined,
+    '子女关系不触发 V 版异常经验加成',
+  );
+  assert.equal(
+    fixture.store.get('cflag:0:15'),
+    301,
+    '女性对象的调教者初体验亲族码',
+  );
+});
+
 test('污渍互换：STAIN:3 |= STAIN:P:2（含精液位 4 的传播）', async () => {
   const { fixture, vs } = seed_world();
   fixture.store.set('stain:0:2', 4);

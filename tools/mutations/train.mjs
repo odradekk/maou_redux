@@ -3948,4 +3948,154 @@ export default [
     tests: ['com-assistant'],
     must_mention: '射精旗打开后走源侧反应文',
   },
+
+  // —— #220 J10：COM10–19 道具使用 ——
+  {
+    desc: 'M1060 COM_ABLE10 器具过滤门失效（FLAG:25&2 仍放行）（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: `com_able_family.register(10, async () => {
+  const cid = era_flag.target;
+  return tool_filtered() ||`,
+    replace: `com_able_family.register(10, async () => {
+  const cid = era_flag.target;
+  return false || // 变异：器具过滤门失效`,
+    tests: ['com-toy'],
+    must_mention: '@COM_ABLE10：器具过滤、无道具和下装各阻止执行',
+  },
+  {
+    desc: 'M1061 COM_ABLE11 贞操带门失效（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: '    chastity_belt_worn(cid) ||',
+    replace: '    false || // 变异：贞操带不再阻止',
+    tests: ['com-toy'],
+    must_mention: '贞操带挡',
+  },
+  {
+    desc: 'M1062 COM_ABLE12 低技巧助手门失效（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: '    assi_skill_without_sadist_blocked() ||',
+    replace: '    false || // 变异：低技巧助手不再阻止',
+    tests: ['com-toy'],
+    must_mention: '@COM_ABLE12：低技巧助手可由施虐狂豁免',
+  },
+  {
+    desc: 'M1063 COM_ABLE18 兽奸场景门失效（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: '    tq(cid, 89) ||',
+    replace: '    false || // 变异：兽奸场景不再阻止',
+    tests: ['com-toy'],
+    must_mention: 'TEQUIP:89 阻止 COM18',
+  },
+  {
+    desc: 'M1064 EQUIP_COM11 未注册，SOURCE_CHECK 链不再消费蠕虫持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(11, equip_com11);',
+    replace: '// 变异：EQUIP_COM11 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1065 EQUIP_COM13 未注册，SOURCE_CHECK 链不再消费肛门虫持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(13, equip_com13);',
+    replace: '// 变异：EQUIP_COM13 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1066 EQUIP_COM14 未注册，SOURCE_CHECK 链不再消费阴蒂夹持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(14, equip_com14);',
+    replace: '// 变异：EQUIP_COM14 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1067 EQUIP_COM15 未注册，SOURCE_CHECK 链不再消费乳头夹持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(15, equip_com15);',
+    replace: '// 变异：EQUIP_COM15 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1068 EQUIP_COM16 未注册，SOURCE_CHECK 链不再消费榨乳器持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(16, equip_com16);',
+    replace: '// 变异：EQUIP_COM16 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1069 EQUIP_COM17 未注册，SOURCE_CHECK 链不再消费飞机杯持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(17, equip_com17);',
+    replace: '// 变异：EQUIP_COM17 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1070 EQUIP_COM18 未注册，SOURCE_CHECK 链不再消费淋浴持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(18, equip_com18);',
+    replace: '// 变异：EQUIP_COM18 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1071 EQUIP_COM19 未注册，SOURCE_CHECK 链不再消费肛珠持续效果（#220）',
+    file: 'ere/system/train/com-toy.js',
+    find: 'equip_com_family.register(19, equip_com19);',
+    replace: '// 变异：EQUIP_COM19 不注册',
+    tests: ['com-toy'],
+    must_mention: '八个装备位的持续效果横幅必须在场',
+  },
+  {
+    desc: 'M1072 INCEST 无亲族路径误输出（#220）',
+    file: 'ere/system/train/incest.js',
+    find: '  game.train.近亲与自我口上 = 0; // SUB2:326',
+    replace:
+      "  game.train.近亲与自我口上 = 0; // SUB2:326\n  era.print('变异：无亲族相奸');",
+    tests: ['source-check'],
+    must_mention: 'INCEST：无亲族普通路径静默',
+  },
+  {
+    desc: 'M1073 TRAIN_MESSAGE_A 公共绝顶段挪到专属分支之后（#220）',
+    file: 'ere/system/train/train-message.js',
+    find: `    era.print(line);
+  }
+
+  const branch = await train_message_a_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+    args: [rand_source()],
+  });`,
+    replace: `    era.set('str:0', line); // 变异：公共段延后到专属分支后
+  }
+
+  const branch = await train_message_a_family.call(era_flag.selectcom, {
+    whenMissing: BRANCH_MISSING,
+    args: [rand_source()],
+  });
+  if (orgasms > 0 && faint <= 1) {
+    era.print(era.get('str:0'));
+  }`,
+    tests: ['train-message'],
+    must_mention: 'A 公共绝顶：TFLAG:29 在 COM12 专属反应之前输出同一行',
+  },
+  {
+    desc: 'M1074 主启动图删道具系注册（COM10/COM_ABLE10 不进实际运行图）（#220）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-toy');",
+    replace: '// 变异：道具系不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: 'COM10 必须经主启动图注册',
+  },
+  {
+    desc: 'M1370 主启动图删着装脱衣系注册（COM110/111 不进实际运行图）（#274）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-cloth');",
+    replace: '// 变异：着装脱衣系不在主启动图注册',
+    tests: ['com-family-wiring'],
+    must_mention: '主启动图漏装：com-cloth',
+  },
 ];

@@ -91,6 +91,16 @@ const COMF6 = 'target/ERB/調教相關/COMF6_キス.ERB';
 const COMF7 = 'target/ERB/調教相關/COMF7_秘貝開帳.ERB';
 const COMF8 = 'target/ERB/調教相關/COMF8_指挿入れ.ERB';
 const COMF9 = 'target/ERB/調教相關/COMF9_アナル舐め.ERB';
+const COMF10 = 'target/ERB/調教相關/COMF10_振動の宝石.ERB';
+const COMF11 = 'target/ERB/調教相關/COMF11_バイブ.ERB';
+const COMF12 = 'target/ERB/調教相關/COMF12_振動の杖.ERB';
+const COMF13 = 'target/ERB/調教相關/COMF13_アナルワーム.ERB';
+const COMF14 = 'target/ERB/調教相關/COMF14_クリキャップ.ERB';
+const COMF15 = 'target/ERB/調教相關/COMF15_二プルキャップ.ERB';
+const COMF16 = 'target/ERB/調教相關/COMF16_搾乳器.ERB';
+const COMF17 = 'target/ERB/調教相關/COMF17_オナホール.ERB';
+const COMF18 = 'target/ERB/調教相關/COMF18_シャワー.ERB';
+const COMF19 = 'target/ERB/調教相關/COMF19_アナルビーズ.ERB';
 const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
 // #226（J16：重度调教族 80-90——@COM/@COM_ABLE/@EQUIP_COM89/TRAIN_MESSAGE/CASE 80）
@@ -3178,6 +3188,33 @@ const FILES = [
       { src: BENKI, ref: '1656-1681', any: [/^@BENKI_PLAYER_NAME$/m] },
     ],
   },
+  // —— #220（J10：道具使用族 10-19——@COM/@COM_ABLE/@EQUIP_COM/TRAIN_MESSAGE）——
+  {
+    js: 'ere/system/train/com-toy.js',
+    refs: [
+      { src: COMF10, ref: '8-52', any: [/@COM10/] },
+      { src: COMF11, ref: '7-171', any: [/@COM11/] },
+      { src: COMF11, ref: '177-334', any: [/@EQUIP_COM11/] },
+      { src: COMF12, ref: '9-53', any: [/@COM12/] },
+      { src: COMF13, ref: '7-198', any: [/@COM13/] },
+      { src: COMF13, ref: '204-377', any: [/@EQUIP_COM13/] },
+      { src: COMF14, ref: '7-67', any: [/@COM14/] },
+      { src: COMF14, ref: '73-139', any: [/@EQUIP_COM14/] },
+      { src: COMF15, ref: '7-86', any: [/@COM15/] },
+      { src: COMF15, ref: '92-168', any: [/@EQUIP_COM15/] },
+      { src: COMF16, ref: '7-98', any: [/@COM16/] },
+      { src: COMF16, ref: '104-221', any: [/@EQUIP_COM16/] },
+      { src: COMF17, ref: '7-70', any: [/@COM17/] },
+      { src: COMF17, ref: '76-153', any: [/@EQUIP_COM17/] },
+      { src: COMF18, ref: '7-105', any: [/@COM18/] },
+      { src: COMF18, ref: '111-204', any: [/@EQUIP_COM18/] },
+      { src: COMF19, ref: '7-155', any: [/@COM19/] },
+      { src: COMF19, ref: '161-310', any: [/@EQUIP_COM19/] },
+      { src: COMABLE, ref: '382-859', any: [/@COM_ABLE10/] },
+      { src: MESSAGE_B, ref: '783-1013', any: [/ELSEIF SELECTCOM == 10/] },
+      { src: MESSAGE_A, ref: '986-1149', any: [/ELSEIF SELECTCOM == 10/] },
+    ],
+  },
   // —— #224（J14：特殊指令族 50-59——@COM/@COM_ABLE/@EQUIP_COM/TRAIN_MESSAGE）——
   {
     js: 'ere/system/train/com-special.js',
@@ -3832,6 +3869,11 @@ const FILES = [
         any: [/調教テキスト省略設定の場合は戻る/],
       },
       { src: MESSAGE_A, ref: '26', any: [/CUSTOMDRAWLINE ‥/] },
+      {
+        src: MESSAGE_A,
+        ref: '377-424',
+        any: [/IF TFLAG:29 > 0 && TFLAG:899 <= 1/],
+      },
       // 头注「其余分支待办」的两个范围引用（#219 起）：射精文本 / 振动宝石起点
       {
         src: MESSAGE_B,
@@ -5897,6 +5939,10 @@ const FILES = [
     ],
   },
   {
+    js: 'ere/system/train/incest.js',
+    refs: [{ src: SUB2, ref: '324-343', any: [/@INCEST/] }],
+  },
+  {
     js: 'ere/event/source-check.js',
     refs: [
       {
@@ -5909,7 +5955,7 @@ const FILES = [
       { src: SUB1, ref: '274-277', any: [/^\s*;?\s*TFLAG:3\ =\ 1$/m] },
       { src: SUB1, ref: '282', any: [/^\s*;?\s*$/m] },
       { src: SUB1, ref: '284', any: [/^\s*;?\s*TFLAG:14\ =\ 0$/m] },
-      { src: SUB1, ref: '285', any: [/^\s*;?\s*CALL\ INCEST$/m] },
+      { src: SUB1, ref: '284-285', any: [/^\s*;?\s*TFLAG:14\ =\ 0/m] },
       { src: SUB1, ref: '287-313', any: [/^\s*;?\s*IF\ CFLAG:15\ ==\ 0$/m] },
       {
         src: SUB1,
@@ -26970,6 +27016,8 @@ const SAMPLE_LOG_REFS = {
         { ref: '946', any: [/技巧\s+- LV 1 \*/] },
         { ref: '951', any: [/反抗刻印 - LV 1/] },
         { ref: '959', any: [/阴核点数×5859\/20000/] },
+        // #274：COM_ABLE32 在技巧 LV1 仍放行乳交 → 温妮有巨乳
+        { ref: '241', any: [/乳交\[\s+32\]/] },
       ],
     },
     {
@@ -26978,7 +27026,11 @@ const SAMPLE_LOG_REFS = {
     },
     {
       js: 'tools/compare/rules.js',
-      refs: [{ ref: '935-936', any: [/绝顶经验:\s+13/] }],
+      refs: [
+        { ref: '935-936', any: [/绝顶经验:\s+13/] },
+        // #274：COM_ABLE33 过滤股间性交的证据——golden 润滑已过 2000
+        { ref: '689', any: [/润滑\[>{7}\.{3}\]\s+2117/] },
+      ],
     },
     // #213：映射层的实证行（89 → COM110；升格标签 8 号格）
     {
