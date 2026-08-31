@@ -2967,4 +2967,101 @@ export default [
     tests: ['event-corrupt-e2e', 'event-beforetrain'],
     must_mention: '角色堕落长跑',
   },
+  // —— #221 J11：COM20–29 性交系 ——
+  {
+    desc: 'M1103 COM22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）（#221）',
+    file: 'ere/system/train/com-sex.js',
+    find: `  const extra = player_skill_source(cid, false);
+  // 原作 SIF EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，原样保留。
+  if (EXPLV[0] >= 3) add_src(cid, 1, extra);
+  if (tal(cid, 85))
+    multiply_source(cid, [
+      [3, 3],
+      [7, 2],
+      [16, 2],
+    ]);`,
+    replace: `  const extra = player_skill_source(cid, false);
+  // 原作 SIF EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，原样保留。
+  if (EXPLV[0] >= 3) add_src(cid, 1, extra);
+  if (tal(cid, 85))
+    multiply_source(cid, [
+      [3, 3],
+      // 变异：漏掉 SOURCE:7/16 的爱慕倍率
+    ]);`,
+    tests: ['com-sex'],
+    must_mention: '成瘾与恭顺不能漏乘',
+  },
+  {
+    desc: 'M1104 COM26–28 欲情段错乘情爱格（SOURCE:3）（#221）',
+    file: 'ere/system/train/com-sex.js',
+    find: '    set_src(cid, 13, times(src(cid, 13), row[1]));',
+    replace: '    set_src(cid, 3, times(src(cid, 3), row[1]));',
+    tests: ['com-sex'],
+    must_mention: '欲情段乘肛门快感与屈从格',
+  },
+  {
+    desc: 'M1105 COM29 顺从段错用非肛交两列倍率（#221）',
+    file: 'ere/system/train/com-sex.js',
+    find: `  if (anal) {
+    set_src(cid, 2, times(src(cid, 2), row[0]));
+    set_src(cid, 3, times(src(cid, 3), row[1]));
+    set_src(cid, 15, times(src(cid, 15), row[2]));`,
+    replace: `  if (anal) {
+    set_src(cid, 3, times(src(cid, 3), row[0]));
+    set_src(cid, 15, times(src(cid, 15), row[1]));`,
+    tests: ['com-sex'],
+    must_mention: '顺从段三格各取独立倍率',
+  },
+  {
+    desc: 'M1106 COM20 高级跳转缺失时删除可见 staged stub（#221）',
+    file: 'ere/system/train/com-sex.js',
+    find: "  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');\n  return 1;",
+    replace: '  // 变异：未实现升格目标静默成功\n  return 1;',
+    tests: ['com-sex'],
+    must_mention: '未实现升格目标必须可见',
+  },
+  {
+    desc: 'M1107 GET_ADV_COM CASE20 SP 命中时提前清 TFLAG:42（#221）',
+    file: 'ere/system/train/com-sex.js',
+    find: `  if (
+    same_trainer() &&
+    ((prev2 === 128 && prev === 129) ||
+      (prev2 === 129 && prev === 128) ||
+      (prev2 === 130 && (prev === 128 || prev === 129)))
+  ) {
+    if ((await com_able_family.call(130, { whenMissing: 1 })) === 1) return 130;
+  }
+  set('tflag:42', 0);`,
+    replace: `  set('tflag:42', 0); // 变异：SP 分支前清旗
+  if (
+    same_trainer() &&
+    ((prev2 === 128 && prev === 129) ||
+      (prev2 === 129 && prev === 128) ||
+      (prev2 === 130 && (prev === 128 || prev === 129)))
+  ) {
+    if ((await com_able_family.call(130, { whenMissing: 1 })) === 1) return 130;
+  }`,
+    tests: ['com-sex'],
+    must_mention: 'SP 保留旗',
+  },
+  {
+    desc: 'M1108 COM24 低欲情档错作 LV1 放行（#221）',
+    file: 'ere/system/train/com-sex.js',
+    find: `  return below(cid, 5, 1)
+    ? 0
+    : below(cid, 5, 2)`,
+    replace: `  return below(cid, 5, 1)
+    ? 1 // 变异：低档错作 LV1
+    : below(cid, 5, 2)`,
+    tests: ['com-sex'],
+    must_mention: '低欲情档不能放行 COM24',
+  },
+  {
+    desc: 'M1109 主启动图删性交系注册（COM20/COM_ABLE20 不进实际运行图）（#221）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-sex');",
+    replace: '// 变异：性交系不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: '主启动图注册性交系',
+  },
 ];

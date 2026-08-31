@@ -28,6 +28,51 @@ class SystemFacade {
     era.set(`cflag:${this.cid}:570`, v);
   }
 
+  /**
+   * 主人膣内射精（cflag:cid:101 ↔ CFLAG:101）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行317 CFLAG:101 マスターによる膣内射精カウント用（SYSTEM_SOURCE.ERB:442/454/467）
+   * @returns {number}
+   */
+  get 主人膣内射精() {
+    return era.get(`cflag:${this.cid}:101`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 主人膣内射精(v) {
+    era.set(`cflag:${this.cid}:101`, v);
+  }
+
+  /**
+   * 助手膣内射精（cflag:cid:103 ↔ CFLAG:103）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行319 CFLAG:103 助手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:439/448）
+   * @returns {number}
+   */
+  get 助手膣内射精() {
+    return era.get(`cflag:${this.cid}:103`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 助手膣内射精(v) {
+    era.set(`cflag:${this.cid}:103`, v);
+  }
+
+  /**
+   * 对象膣内射精（cflag:cid:104 ↔ CFLAG:104）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行320 CFLAG:104 奴隷から助手への膣内射精カウント用（SYSTEM_SOURCE.ERB:461/464/470）
+   * @returns {number}
+   */
+  get 对象膣内射精() {
+    return era.get(`cflag:${this.cid}:104`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 对象膣内射精(v) {
+    era.set(`cflag:${this.cid}:104`, v);
+  }
+
   // —— cstr ——
   /**
    * 故事名（cstr:cid:99 ↔ CSTR:99）

@@ -104,6 +104,36 @@ class DungeonFacade {
   }
 
   /**
+   * 犬膣内射精（cflag:cid:106 ↔ CFLAG:106）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行322 CFLAG:106 ノラ犬からの中田氏カウント用（SYSTEM_SOURCE.ERB:445）
+   * @returns {number}
+   */
+  get 犬膣内射精() {
+    return era.get(`cflag:${this.cid}:106`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 犬膣内射精(v) {
+    era.set(`cflag:${this.cid}:106`, v);
+  }
+
+  /**
+   * 怪物膣内射精（cflag:cid:107 ↔ CFLAG:107）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行323 CFLAG:107 モンスター・触手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:451/457）
+   * @returns {number}
+   */
+  get 怪物膣内射精() {
+    return era.get(`cflag:${this.cid}:107`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 怪物膣内射精(v) {
+    era.set(`cflag:${this.cid}:107`, v);
+  }
+
+  /**
    * 侵攻阶层（cflag:cid:501 ↔ CFLAG:501）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行386 CFLAG:501 侵攻階層
    * @returns {number}

@@ -89,12 +89,14 @@ const REPO = path.resolve(__dirname, '..');
 //
 // 【#216 与 #228 合并后重测（派单人在 rebase 时）】两票的减项独立叠加，
 // 下面是合并态实测。
+// 【#221（J11）性交系回放装载后重测】回放器此前漏装 com-sex，导致
+// COM_ABLE20-29 缺失时按默认可执行。两份既有样本虽不选这些指令，漏装状态
+// 仍会在每轮菜单错误列出它们；补齐真实装载面后，实际 guard 过滤掉的菜单
+// 条目不再被误记为「COM_ABLE 未移植」存根。输出匹配数不变，存根自然态
+// −142、升格态 −36。
 const BASELINE = {
-  // 【rebase 到含 #230（J20）的 master 后重测（派单人在验收时跑）】爱抚系
-  // 0-9 真身 + 夹具补 SOURCE 清零（引擎 nextTurnInTrain 语义）后两侧收敛：
-  // natural 838/2013 → 940/1848，upgrade 232/598 → 257/592
-  'train-natural': { matched: 940, version: 0, stub: 1848, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 592, unexplained: 0 },
+  'train-natural': { matched: 940, version: 0, stub: 1706, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 556, unexplained: 0 },
 };
 
 async function build_report(sample) {
@@ -159,6 +161,30 @@ test('随机源是序列注入：两份样本各六掷、池序号与 golden 相
     texts.some((t) => t.startsWith('调教结果：否定点数')),
     '相殺必须执行（否定点数行在场）',
   );
+});
+
+test('回放装载面：性交系的 COM、COM_ABLE 与消息分发均随真实路径注册', async () => {
+  const { fixture } = await replay_train_sample('train-natural');
+  const { com_able_family, com_family } = fixture.load_module(
+    'system/train/com-family',
+  );
+  const { train_message_a_family, train_message_b_family } =
+    fixture.load_module('system/train/train-message');
+
+  for (const id of [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]) {
+    assert.equal(com_family.has(id), true, `COM${id} 必须随回放装载`);
+    assert.equal(com_able_family.has(id), true, `COM_ABLE${id} 必须随回放装载`);
+    assert.equal(
+      train_message_a_family.has(id),
+      true,
+      `TRAIN_MESSAGE_A${id} 必须随回放装载`,
+    );
+    assert.equal(
+      train_message_b_family.has(id),
+      true,
+      `TRAIN_MESSAGE_B${id} 必须随回放装载`,
+    );
+  }
 });
 
 test('输入计划耗尽的显式失败：多要一次输入即报错，不静默挂起', async () => {

@@ -3002,6 +3002,14 @@ const FILES = [
     refs: [{ src: COMF_JUMP, ref: '1-684', any: [/@GET_ADV_COM/] }],
   },
   {
+    // #221（J11）：COM20–29 性交系的升格规则内联锚。
+    js: 'ere/system/train/com-sex.js',
+    refs: [
+      { src: COMF_JUMP, ref: '152-163', any: [/前回と今回の調教者が同じ/] },
+      { src: COMF_JUMP, ref: '228-239', any: [/まず背后位・胸爱抚/] },
+    ],
+  },
+  {
     // #213：L_IDX↔L_I 映射层（@SHOW_COMMENU 的紧凑序号循环）
     js: 'ere/system/train/com-index.js',
     refs: [
@@ -5874,7 +5882,11 @@ const FILES = [
       { src: SOURCE, ref: '377-387', any: [/IF BASE:1 <= 0/] },
       { src: SOURCE, ref: '411-412', any: [/BASE:0 -= LOSEBASE:0/] },
       { src: SOURCE, ref: '415-424', any: [/挿しっぱ无判定 TFLAG:60/] },
-      { src: SOURCE, ref: '426-473', any: [/膣内射精のチェック/] },
+      {
+        src: SOURCE,
+        ref: '426-473',
+        any: [/TEQUIP:37/, /CFLAG:101/, /膣内射精のチェック/],
+      },
       { src: SOURCE, ref: '476', any: [/CALL TRAIN_MESSAGE_A/] },
       { src: SOURCE, ref: '482-497', any: [/IF TFLAG:899 < 1/] },
       { src: SOURCE, ref: '499', any: [/CALL PISSING_ECST_CHECK/] },
@@ -27184,7 +27196,6 @@ const ERB_EXEMPT_BASELINE = {
     '398',
     '406',
     '411',
-    '419-473',
     '504',
     '512',
     '547-549',

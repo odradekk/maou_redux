@@ -45,6 +45,9 @@ require('#/page/page-usercom');
 // @COM0-9「爱抚系」族（#219 J9）：@COM/@COM_ABLE 真身 + TRAIN_MESSAGE 分支
 // + GET_ADV_COM 的 CASE 1/3/4/5/6/8 升格规则（COM0 自 com0-caress.js 搬入）
 require('#/system/train/com-caress');
+// @COM20-29「性交系」族（#221 J11）：阴道性交、逆侵犯与肛交的 @COM /
+// @COM_ABLE、TRAIN_MESSAGE 与 GET_ADV_COM 注册必须在主启动图实际加载。
+require('#/system/train/com-sex');
 // @COM40-49「SM 系」族（#223 J13）：@COM/@COM_ABLE 真身 + EQUIP_COM43-49
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
 require('#/system/train/com-sm');

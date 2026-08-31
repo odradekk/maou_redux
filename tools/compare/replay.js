@@ -47,6 +47,7 @@ const TRAIN_PATH_MODULES = [
   'page/page-train',
   'page/page-usercom',
   'system/train/com-caress',
+  'system/train/com-sex',
   'system/train/com-cloth',
   'system/train/com-colosseum',
   'system/train/juel-check',

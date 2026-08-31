@@ -88,6 +88,41 @@ const cflag = {
     '排卵诱发剂',
     src(SRC_FLAG, 'CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）'),
   ),
+  101: named_tail(
+    '主人膣内射精',
+    src(
+      SRC_FLAG,
+      ':317 CFLAG:101 マスターによる膣内射精カウント用（SYSTEM_SOURCE.ERB:442/454/467）',
+    ),
+  ),
+  103: named_tail(
+    '助手膣内射精',
+    src(
+      SRC_FLAG,
+      ':319 CFLAG:103 助手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:439/448）',
+    ),
+  ),
+  104: named_tail(
+    '对象膣内射精',
+    src(
+      SRC_FLAG,
+      ':320 CFLAG:104 奴隷から助手への膣内射精カウント用（SYSTEM_SOURCE.ERB:461/464/470）',
+    ),
+  ),
+  106: named_tail(
+    '犬膣内射精',
+    src(
+      SRC_FLAG,
+      ':322 CFLAG:106 ノラ犬からの中田氏カウント用（SYSTEM_SOURCE.ERB:445）',
+    ),
+  ),
+  107: named_tail(
+    '怪物膣内射精',
+    src(
+      SRC_FLAG,
+      ':323 CFLAG:107 モンスター・触手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:451/457）',
+    ),
+  ),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),
   202: named('简易助手_0', src(SRC_KXX, ':123 简易助手口上 CFLAG:202～210')),
@@ -736,6 +771,13 @@ const tequip = {
     src(
       SRC_FLAG,
       ':511 TEQUIP:35 マスターがコンドーム装着（属主 event：SYSTEM_SOURCE/COMF_CONDOM 的跨域写走本门面）',
+    ),
+  ),
+  37: named_tail(
+    '对象避孕套',
+    src(
+      SRC_FLAG,
+      ':513 TEQUIP:37 調教対象がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:427-430 的 system 跨域清零）',
     ),
   ),
   45: named_tail('口塞', src(SRC_FLAG, ':516 TEQUIP:45 ボールギャグ装着')),

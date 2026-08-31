@@ -47,7 +47,8 @@
  *     （TEQUIP:22/TALENT:57 门槛）与 SOUL_DISLOCATION_DEBUFF 仍在册；
  *   - EXP_GOT_CHECK / SOKUOCHI_CHECK：生效分支的门槛（TFLAG:100、UP:2/
  *     UP:9 ≥ 阈值、TALENT:73）在当前写入面下全为 0/无预设，整支登记；
- *   - 膣内射精チェック（:419-473，TFLAG:19/2/6/10 族）；
+ *   - 膣内射精チェック（:426-473）已随 #221 J11 落地：目标侧避孕套、
+ *     主人/助手/兽奸/死斗场/触手与逆侵犯的计数链按原 if/else-if 顺序结算；
  *   - KOJO_MESSAGE_PALAMCNG / MARKCNG（:504/:512，FLAG:7 > 0 才达，口上
  *     触发点待办随各自口上票）；指令口上 KOJO_MESSAGE_COM（:11-12）已随
  *     #46 接真身（kojo/kojo-system.js）。
@@ -2211,7 +2212,47 @@ on('SOURCE_CHECK', async () => {
     }
   }
 
-  // :426-473 避孕套（目标侧）与膣内射精检查（TFLAG:19/2 族恒 0，整组登记）
+  // :426-473 对象侧避孕套：目标射精先消耗避孕套，并清掉 TFLAG:10；后续
+  // 内射链看的是清零后的值（原作顺序不可调整）。TEQUIP:37 属 train，
+  // source-check 是 system 域，故跨域写走生成门面。
+  if (chara(cid).train.对象避孕套 && tflag(10)) {
+    era.print(`射在避孕套里（${era.get(`callname:${cid}:-2`) ?? ''}）`);
+    chara(cid).train.对象避孕套 = 0;
+    game.system.对象射精 = 0;
+  }
+
+  // 该段后续为膣内射精计数。首段是一个严格的 if / else-if 优先级链；其后
+  // 的 COM24/62/65 三条是同一顶层链的后续独立臂。不能按「对称」重排。
+  if (tflag(19)) {
+    if (tflag(6) && tflag(41) === 1) {
+      chara(cid).system.助手膣内射精 += tflag(38);
+    } else if (tflag(2) && tflag(40) === 1) {
+      chara(cid).system.主人膣内射精 += tflag(38);
+    } else if (era.get(`tequip:${cid}:89`) && tflag(16)) {
+      chara(cid).dungeon.犬膣内射精 += tflag(16);
+    } else if (era_flag.assiplay && tflag(2)) {
+      chara(cid).system.助手膣内射精 += tflag(38);
+    } else if (tflag(15) && era.get(`tequip:${cid}:55`)) {
+      chara(cid).dungeon.怪物膣内射精 += tflag(15);
+    } else if (tflag(2)) {
+      chara(cid).system.主人膣内射精 += tflag(38);
+    } else if (
+      era.get(`tequip:${cid}:90`) &&
+      era.get(`tequip:${cid}:11`) &&
+      tflag(15)
+    ) {
+      chara(cid).dungeon.怪物膣内射精 += tflag(15);
+    }
+  } else if (era_flag.selectcom === 24 && tflag(10) && era_flag.assiplay) {
+    chara(era_flag.assi).system.对象膣内射精 += tflag(10);
+  } else if (era_flag.selectcom === 24 && tflag(10)) {
+    chara(MASTER).system.对象膣内射精 += tflag(10);
+  } else if (era_flag.selectcom === 62 && tflag(7)) {
+    chara(era_flag.assi).system.主人膣内射精 += tflag(7);
+  } else if (era_flag.selectcom === 65 && era_flag.assi >= 1 && tflag(10)) {
+    chara(era_flag.assi).system.对象膣内射精 += tflag(10);
+  }
+
   // :476 调教文本的后半
   await train_message_a();
 
