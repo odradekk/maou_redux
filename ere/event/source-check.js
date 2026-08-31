@@ -75,11 +75,14 @@ const {
   EQUIP_COM_CHAIN,
   equip_com_family,
 } = require('#/system/train/com-family');
-const { kojo_message_com } = require('#/kojo/kojo-system');
+const {
+  kojo_message_com,
+  kojo_message_palamcng,
+  kojo_message_markcng,
+} = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { incest } = require('#/system/train/incest');
-
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
@@ -88,8 +91,6 @@ const MASTER = 0;
  * 变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'KOJO_MESSAGE_PALAMCNG',
-  'KOJO_MESSAGE_MARKCNG',
   'EQUIP_COM',
   'SOURCE_LESBIAN_SEX_CHECK',
   'SOURCE_GAY_SEX_CHECK',
@@ -2293,7 +2294,7 @@ on('SOURCE_CHECK', async () => {
     passout_palam_up();
     mark_got_check();
     if ((era.get('flag:7') || 0) > 0) {
-      stub_line('KOJO_MESSAGE_MARKCNG', '刻印取得口上', '随口上票 #46');
+      await kojo_message_markcng();
     }
   }
   // :499 绝顶漏尿（TEQUIP:22/TALENT:57 门槛，登记）
@@ -2301,13 +2302,13 @@ on('SOURCE_CHECK', async () => {
 
   // :504-513 参数变动口上 / 刻印取得口上（FLAG:7，#46）
   if ((era.get('flag:7') || 0) > 0) {
-    stub_line('KOJO_MESSAGE_PALAMCNG', '参数变动口上', '随口上票 #46');
+    await kojo_message_palamcng();
   }
 
   // :510 刻印取得
   mark_got_check();
   if ((era.get('flag:7') || 0) > 0) {
-    stub_line('KOJO_MESSAGE_MARKCNG', '刻印取得口上', '随口上票 #46');
+    await kojo_message_markcng();
   }
 
   // :518 / :523 经验检查与容易陷落（生效门槛不可达，登记）

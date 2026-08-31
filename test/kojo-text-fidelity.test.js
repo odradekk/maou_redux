@@ -79,7 +79,11 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
+  [/^SELF_CALL\(A(,\s*\d+)?\)$/, 'SCA'],
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
+  [/^SELF_CALL_FIRST\(A\)$/, 'SCFA'],
+  [/^CSTR:2$/, 'CSTR2'],
+
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^SAVESTR:ARG$/, 'ARGNAME'],
   [/^FS_BITCH\("LOOKS", ARG\)$/, 'LOOKS'], // #185：%FS_BITCH("LOOKS", ARG)%
@@ -131,7 +135,11 @@ const JS_TOKEN_RULES = [
   [/^assi_name$/, 'ASSI'],
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
+  [/^self_call\(a\)$/, 'SCA'],
   [/^scf\(\)$/, 'SCF'],
+  [/^self_call_first\(a\)$/, 'SCFA'],
+  [/^cstr2$/, 'CSTR2'],
+
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],
   [/^arg_name$/, 'ARGNAME'], // #183：H14 用 arg_name 变量名承载 %SAVESTR:ARG%
@@ -197,6 +205,11 @@ function norm_erb_token(raw) {
   if (heart_match) {
     return `HEART${heart_match[1]}`;
   }
+  const black_heart_match = tok.match(/^UNICODE\(0x2764\)\s*\*(\d+)$/);
+  if (black_heart_match) {
+    return `BLACKHEART${black_heart_match[1]}`;
+  }
+
   // #183：{MON_NUM} / {MON_NUM * 10} 计算插值（迷宫凌辱的怪物数量）
   if (tok === 'MON_NUM') {
     return 'MONNUM';
@@ -226,6 +239,14 @@ function norm_js_token(raw) {
   if (heart_match) {
     return `HEART${heart_match[1]}`;
   }
+  const black_heart_match = tok.match(/^black_heart\((\d+)\)$/);
+  if (black_heart_match) {
+    return `BLACKHEART${black_heart_match[1]}`;
+  }
+  if (tok === "'\\u3000'") {
+    return 'IDEOGRAPHIC_SPACE';
+  }
+
   // #183：JS 侧 ${mon_num} / ${mon_num * 10} 与 ERB 的 {MON_NUM} 配对
   if (tok === 'mon_num') {
     return 'MONNUM';
@@ -637,6 +658,11 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
       for (const s of stmt.strings) {
         if (s.quote === '`') {
           for (const m of s.content.matchAll(/\$\{([^}]*)\}/g)) {
+            const tok = m[1].trim();
+            if (tok === "'\\u3000'" || tok === "'u3000'") {
+              continue;
+            }
+
             js_tokens.push(m[1]);
           }
         }
@@ -710,9 +736,11 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
           erb_checked += 1;
           // 只去尾随空白（行尾 tab/空格是编辑残留，转译器不保留）；
           // 保留前导空白——M81 守的正是「句中前导空格丢失」（#46）
-          if (!stmt.raw.includes(seg.trimEnd())) {
+          const needle = seg.trimEnd();
+          const js_raw = stmt.raw.replace(/\$\{\s*'\\u3000'\s*\}/g, '\u3000');
+          if (!js_raw.includes(needle) && !stmt.raw.includes(needle)) {
             problems.push(
-              `${where}: ERB 片段（归一后）未见于 JS：「${seg.trimEnd()}」`,
+              `${where}: ERB 片段（归一后）未见于 JS：「${needle}」`,
             );
           }
         }

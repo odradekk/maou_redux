@@ -153,7 +153,7 @@ const { equip_database } = require('#/system/equip/equip-lookup');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['GOBI_KOUJO', 'CHA_IMG2', 'SHOW_DATA', 'KARMA'];
+const STUBBED_CALLS = ['CHA_IMG2', 'SHOW_DATA', 'KARMA'];
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -995,16 +995,16 @@ async function orc_ryou(arg, mon_num, rand) {
 
     await era.print('『猪'); // :708
     if (era.get(`talent:${arg}:17`)) {
-      stub_line('GOBI_KOUJO', '语尾口上', '随语尾口上票'); // :705 CALL GOBI_KOUJO, 1
+      await require('#/kojo/kojo-system').gobi_koujo(1); // :705 CALL GOBI_KOUJO, 1
     } else {
-      stub_line('GOBI_KOUJO', '语尾口上', '随语尾口上票'); // :708 CALL GOBI_KOUJO, 5
+      await require('#/kojo/kojo-system').gobi_koujo(5); // :708 CALL GOBI_KOUJO, 5
     }
     await era.print('还自称冒险者……简直傻了'); // :717
 
     if (era.get(`talent:${arg}:17`)) {
-      stub_line('GOBI_KOUJO', '语尾口上', '随语尾口上票'); // :714 CALL GOBI_KOUJO, 1
+      await require('#/kojo/kojo-system').gobi_koujo(1); // :714 CALL GOBI_KOUJO, 1
     } else {
-      stub_line('GOBI_KOUJO', '语尾口上', '随语尾口上票'); // :717 CALL GOBI_KOUJO, 5
+      await require('#/kojo/kojo-system').gobi_koujo(5); // :717 CALL GOBI_KOUJO, 5
     }
     await era.printAndWait('　噗噗，噗嘻！』'); // :728
 
@@ -4045,4 +4045,6 @@ module.exports = {
   brain_ryou_yusya,
   horse_ryou_yusya,
   dungeon_ryouzyoku_escape,
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
 };

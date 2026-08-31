@@ -50,7 +50,13 @@ const MEASURED_JP =
 // ハウンド：ERB 全库 3 次（SUMMON_MONSTER.ERB:91 ヘルハウンド、:100 ゾンビハウンド+ヘルハウンド，
 // 注释里的子串）；作为整词的实据在 target/CSV/Chara/Chara210.csv:3（呼び名 ハウンドL），
 // count_word 只扫 ERB、CSV 不在口径内，#139 收录时登记。
-const MEASURED_WORDS = { 奴隷: 426, 気力: 169, 回復: 85, ハウンド: 3 };
+const MEASURED_WORDS = {
+  奴隷: 426,
+  気力: 169,
+  回復: 85,
+  ハウンド: 3,
+  'っ，': 1,
+};
 
 // —— 表不变量 ——
 

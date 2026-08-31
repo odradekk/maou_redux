@@ -335,44 +335,61 @@ test('阈值闸：FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声
 
 // —— 七道跳过判定（:888-912，K3 顺序：死斗场最先） ——
 
-test('死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_3 占位行', async () => {
+test('死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_3 真台词', async () => {
   const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 55;
     f.store.set('tequip:31:55', 1);
+    f.store.set('base:31:1', 100);
     f.store.set('tflag:899', 1); // 即使后续守卫也会拦，先到先得
   });
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
-    '（死斗场专用口上尚未移植，此处为占位——原作 @COLOSSEUM_KOJO_3，随死斗场票，见 docs/stub-registry.md。）',
+    '温妮被角斗场的热气和被接下来要战斗的对手凝视着而吓得直发抖……',
   ]);
 });
 
-test('兽奸（TEQUIP:89）：K3 岔进 DOG_KOJO_3 占位行', async () => {
+test('兽奸（TEQUIP:89）：K3 岔进 DOG_KOJO_3 真台词', async () => {
   const fixture = await setup_k3((f) => f.store.set('tequip:31:89', 1));
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
-    '（兽奸专用口上尚未移植，此处为占位——原作 @DOG_KOJO_3，随兽奸票，见 docs/stub-registry.md。）',
+    '「不……不要啊！才…才不要做这种事情！！」',
   ]);
+  assert.equal(fixture.store.get('cflag:31:301'), 1, '兽奸爱抚首次推进到 1');
 });
 
-test('助手调教 / 口塞 / 失神 / 崩坏 / 触手：静默跳过', async () => {
-  for (const [desc, seed] of [
-    [
-      '助手调教',
-      (f) => {
-        const era_flag = f.load_module('era-utils/era-flag');
-        era_flag.assi = 31;
-        era_flag.assiplay = 1;
-      },
-    ],
-    ['口塞', (f) => f.store.set('tequip:31:45', 1)],
-    ['失神', (f) => f.store.set('tflag:899', 1)],
-    ['崩坏', (f) => f.store.set('talent:31:9', 1)],
-    ['触手', (f) => f.store.set('tequip:31:90', 1)],
-  ]) {
-    const fixture = await setup_k3(seed);
-    await speak_k3(fixture, seq_rand(0, 0));
-    assert.deepEqual(fixture.text_lines(), [], `${desc}：跳过`);
-  }
+test('助手调教：静默跳过', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.assi = 31;
+    era_flag.assiplay = 1;
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [], '助手调教：跳过');
+});
+
+test('口塞：静默跳过', async () => {
+  const fixture = await setup_k3((f) => f.store.set('tequip:31:45', 1));
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [], '口塞：跳过');
+});
+
+test('失神：静默跳过', async () => {
+  const fixture = await setup_k3((f) => f.store.set('tflag:899', 1));
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [], '失神：跳过');
+});
+
+test('崩坏：静默跳过', async () => {
+  const fixture = await setup_k3((f) => f.store.set('talent:31:9', 1));
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [], '崩坏：跳过');
+});
+
+test('触手：静默跳过', async () => {
+  const fixture = await setup_k3((f) => f.store.set('tequip:31:90', 1));
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [], '触手：跳过');
 });
 
 test('舔阴首次（CFLAG:302 == 0 且非处女）：一句拒绝 + 推进到 1', async () => {
@@ -526,7 +543,6 @@ test('肛门爱抚二次以后：淫乱润滑分档 / 爱慕润滑 / それ以�
   assert.equal(other.store.get('cflag:31:303'), 1);
 });
 
-
 test('自慰首次（CFLAG:304 == 0）：屈辱一句 + 推进到 1', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -575,8 +591,11 @@ test('自慰二次以后：淫乱处女 / 淫乱自慰中毒Lv3 / 爱慕处女 /
     ],
     '淫乱自慰中毒Lv3推进到 8',
   );
-  assert.equal(lewd_addict.store.get('cflag:31:304'), 8, '淫乱自慰中毒Lv3推进到 8');
-
+  assert.equal(
+    lewd_addict.store.get('cflag:31:304'),
+    8,
+    '淫乱自慰中毒Lv3推进到 8',
+  );
 
   const love_virgin = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -613,9 +632,7 @@ test('胸爱抚首次（CFLAG:306 == 0）：疼的一句 + 推进到 1', async (
     era_flag.selectcom = 5;
   });
   await speak_k3(fixture, seq_rand(0, 0));
-  assert.deepEqual(fixture.text_lines(), [
-    '「嗯呜…不要…弄得那么疼………」',
-  ]);
+  assert.deepEqual(fixture.text_lines(), ['「嗯呜…不要…弄得那么疼………」']);
   assert.equal(fixture.store.get('cflag:31:306'), 1);
 });
 
@@ -662,7 +679,6 @@ test('胸爱抚二次以后：淫乱 / 爱慕 / B感覚Lv3 / それ以外', asyn
     '胸爱抚B感覚Lv3推进到 3',
   );
   assert.equal(b3.store.get('cflag:31:306'), 3, '胸爱抚B感覚Lv3推进到 3');
-
 
   const other = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -740,32 +756,68 @@ test('接吻二次以后：淫乱 / 爱慕 / 顺从Lv2 / それ以外', async ()
     f.store.set('cflag:31:307', 1);
   });
   await speak_k3(other, seq_rand(0, 0));
-  assert.deepEqual(other.text_lines(), [
-    '「哈啊…哈啊…这样…这样的………」',
-  ]);
+  assert.deepEqual(other.text_lines(), ['「哈啊…哈啊…这样…这样的………」']);
   assert.equal(other.store.get('cflag:31:307'), 2, '接吻それ以外推进到 2');
 });
 
-test('爱抚与舔阴与肛门爱抚与自慰与胸爱抚与接吻外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+test('自己扒开首次（SELECTCOM 7 / CFLAG:308 == 0）：非素质支 + 推进到 1', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 7; // 自己扒开，本切片尚未落地
+    era_flag.selectcom = 7;
   });
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 7 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
+    '「不，不行了啊…已经不能再张开了…哈呜！…我明、明白了…会张得…更大的………」',
   ]);
+  assert.equal(fixture.store.get('cflag:31:308'), 1, '自己扒开首次推进到 1');
 });
 
+test('EVENTTRAIN NORMAL：初调教 CFLAG:201 默认支 + 推进到 1', async () => {
+  const fixture = await setup_k3();
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('这种事情…不可能')),
+    'EVENTTRAIN 默认初调教台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:201'), 1, '初调教推进到 1');
+});
 
+test('EVENTEND NORMAL：CFLAG:301 >= 1 钳回 1 + 调教结束台词', async () => {
+  const fixture = await setup_k3((f) => {
+    f.store.set('cflag:31:301', 203);
+    f.store.set('mark:31:2', 0);
+    f.store.set('talent:31:85', 0);
+    f.store.set('talent:31:76', 0);
+    f.store.set('base:31:0', 1000);
+  });
 
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.equal(fixture.store.get('cflag:31:301'), 1, '爱抚计数钳回 1');
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('终于结束了啊')),
+    'EVENTEND 屈服低档结束台词',
+  );
+});
 
+test('PALAMCNG：首次润滑 Lv2 非爱慕支写 CFLAG:221', async () => {
+  const fixture = await setup_k3((f) => f.store.set('palam:31:3', 501));
+  const { palamcng_family } = fixture.load_module('kojo/kojo-system');
+  await palamcng_family.call(3);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊~…这，这个难道是…漏，漏了…啊啊…」',
+    '―――第一次超过了润滑lv2了。',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:221'), 1, '首次润滑Lv2');
+});
 
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k3-noble');
+  assert.deepEqual(STUBBED_CALLS, ['SELL_MATURO_K0']);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',

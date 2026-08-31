@@ -111,9 +111,13 @@ const REPO = path.resolve(__dirname, '..');
 // 【#225（J15）助手与蕾丝族落地后重测】COM_ABLE60-73 的真实 guard（助手在场、
 // 技巧门槛、装备位）过滤掉误列菜单：自然态 899 → 712、升格态 355 → 300。
 // 下面是合并态的实测值。未解释恒 0。
+// 【#234（J24）K3 高贵口上真身落地后重测】PALAMCNG/EVENTTRAIN/COM56 交谈
+// 不再走存根占位：自然态 matched 1108→1114、stub 525→483；升格态
+// matched 257→259、stub 245→236。回放预置 CFLAG:201/221-225，中途档
+// 不再打出首次台词。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1108, version: 0, stub: 525, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 245, unexplained: 0 },
+  'train-natural': { matched: 1114, version: 0, stub: 483, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 236, unexplained: 0 },
 };
 
 async function build_report(sample) {

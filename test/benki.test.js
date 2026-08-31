@@ -243,10 +243,11 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KO
     lines.some((l) => l.includes('任魔族男性将阴茎塞入了口中')),
     '第二段演出',
   );
-  // 口上存根两次（开头部 + 分支结算前）
+  // 口上分发（#234 起 K3 真身；本夹具未加载口上模块 → TRYCALL 落空静默）
   const stub_count = lines.filter((l) => l.includes('@BENKI_KOUJO')).length;
-  assert.equal(stub_count, 2, 'BENKI_KOUJO 存根两次');
+  assert.equal(stub_count, 0, 'BENKI_KOUJO 不再打占位行');
   // flag:62 = 6（フェラ便器）、flag:64 = 3（魔族男性）
+
   assert.equal(flag_of(fixture, 62), 6);
   assert.equal(flag_of(fixture, 64), 3);
   // 珠结算：阴核/欲情/耻情
@@ -392,13 +393,13 @@ test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
 
 // —— 存根清单核对 ——
 
-test('存根清单可检索：docs/stub-registry.md 收录 benki.js 的 BENKI_KOUJO', () => {
+test('存根清单可检索：benki.js 的 STUBBED_CALLS 已空（BENKI_KOUJO 换真分发）', () => {
   const { mod } = setup_benki();
   const registry = fs.readFileSync(
     path.join(REPO, 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.deepEqual(mod.STUBBED_CALLS, ['BENKI_KOUJO']);
+  assert.deepEqual(mod.STUBBED_CALLS, []);
   for (const name of mod.STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

@@ -133,6 +133,10 @@ function seed_winnie_world(fixture) {
   // MARK:31:2（屈服刻印）不写 = 0：K3 2xx 支门槛 MARK:2 <= 1
   fixture.store.set('cflag:31:16', -1); // 初吻未体験：无「轻舔着」前缀 + 不潔被清零 + 阴核/2
   fixture.store.set('cflag:31:301', 203); // K3 状态机已推进到随机三支（台词 :1097）
+  fixture.store.set('cflag:31:221', 1); // 首次润滑Lv2 已过（#234 PALAMCNG 真身，中途档不再出首次台词）
+  fixture.store.set('cflag:31:222', 1); // 首次欲情Lv2 已过
+  fixture.store.set('cflag:31:223', 1); // 首次耻情Lv2 已过
+
   // CFLAG:31:2（好感）不写 = 0：情爱(31) 未吃到 ≥100 档的 ×1.1
   // —— 服装（#215 J5；#219 复核修正）：旧样本首回合的爱抚行带「隔着紧身
   //    衣＆裙甲、」前缀（emuera.log:25）、状态屏【紧身衣＆裙甲的姿态】
@@ -385,6 +389,17 @@ function seed_train_world(fixture, sample) {
   // （emuera.log）首回合出 :1097 台词，靠的是 mid-session 播种
   // mark:31:2 不写（=0 ≤ 1）——两份样本的口上形态由刻印差分道
   fixture.store.set('cflag:31:301', 203);
+  // CFLAG:221/222/223（首次润滑/欲情/耻情 Lv2）已过：save99 是中途档，
+  // golden 的 SOURCE_CHECK 段没有 PALAMCNG 首次台词（#234 真身落地前
+  // 走 whenMissing:0 静默；真身后若不预置，首回合就会打出 :7125/:7136
+  // /:7147 三句，污染 train-natural/train-upgrade 的 unexplained）
+  fixture.store.set('cflag:31:221', 1);
+  fixture.store.set('cflag:31:222', 1);
+  fixture.store.set('cflag:31:223', 1);
+  fixture.store.set('cflag:31:224', 1); // 首次恐怖Lv2 已过（:7184）
+  fixture.store.set('cflag:31:225', 1); // 首次C绝顶 已过（:7200）
+  fixture.store.set('cflag:31:201', 1); // 初调教已过（:95 EVENTTRAIN 默认支）
+
   // CFLAG:9（等级）LV1（train-natural-log:937「温妮当前是Lv1」；EXP:80 战斗经验 0 不播）
   fixture.store.set('cflag:31:9', 1);
   // CFLAG:15（初体验）不写 = 0：train-natural 无初体验括号（train-natural-log:938）；

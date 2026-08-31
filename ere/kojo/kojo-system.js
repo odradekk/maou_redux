@@ -102,6 +102,80 @@ const kojo_message_com_family = new DispatchFamily(
 /** @SELF_KOJO_K{N}：事件口上族（随各口上票落地） */
 const self_kojo_family = new DispatchFamily('SELF_KOJO', DECLARED_KOJO_COM_IDS);
 
+/** @KOJO_MESSAGE_PALAMCNG_{N}：参数变动口上族 */
+const palamcng_family = new DispatchFamily(
+  'KOJO_MESSAGE_PALAMCNG',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @KOJO_MESSAGE_MARKCNG_{N}：刻印取得口上族 */
+const markcng_family = new DispatchFamily(
+  'KOJO_MESSAGE_MARKCNG',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @BENKI_KOUJO_K{N}：肉便器口上族 */
+const benki_koujo_family = new DispatchFamily(
+  'BENKI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @ENTERENEMY_KOUJO_K{N}：来袭口上族 */
+const enterenemy_koujo_family = new DispatchFamily(
+  'ENTERENEMY_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @DUNGEON_VICTORY_K{N}：战斗胜利口上族 */
+const victory_koujo_family = new DispatchFamily(
+  'DUNGEON_VICTORY',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @DUNGEON_ATTACK_K{N}：攻击台词口上族 */
+const attack_koujo_family = new DispatchFamily(
+  'DUNGEON_ATTACK',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @NTR_KOUJO_K{N} */
+const ntr_koujo_family = new DispatchFamily('NTR_KOUJO', DECLARED_KOJO_COM_IDS);
+
+/** @EXUCUTION_KOUJO_K{N} */
+const exucution_koujo_family = new DispatchFamily(
+  'EXUCUTION_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @MUSEUM_KOUJO_K{N} */
+const museum_koujo_family = new DispatchFamily(
+  'MUSEUM_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @BANISHMENT_KOUJO_K{N} */
+const banishment_koujo_family = new DispatchFamily(
+  'BANISHMENT_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @PUBLIC_EXUCUTION_KOUJO_K{N} */
+const public_exucution_koujo_family = new DispatchFamily(
+  'PUBLIC_EXUCUTION_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @GROTESQUE_KOUJO_K{N} */
+const grotesque_koujo_family = new DispatchFamily(
+  'GROTESQUE_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @GOBI_KOUJO_K{N}：语尾口上族 */
+const gobi_koujo_family = new DispatchFamily(
+  'GOBI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
 /**
  * @GET_KOJO_NUM（:86-144）：角色 → 口上编号。
  *
@@ -186,10 +260,80 @@ async function self_kojo(rand) {
   return 0;
 }
 
+/**
+ * 按 GET_KOJO_NUM 分发到已注册的口上实现。空间内缺失 = TRYCALL 落空。
+ * @param {DispatchFamily} family
+ * @param {unknown[]} [args]
+ */
+async function dispatch_kojo(family, args = []) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await family.call(local - 100, { whenMissing: 0, args });
+  }
+  return 0;
+}
+
+async function kojo_message_palamcng(rand) {
+  return dispatch_kojo(palamcng_family, [rand]);
+}
+
+async function kojo_message_markcng(rand) {
+  return dispatch_kojo(markcng_family, [rand]);
+}
+
+async function benki_koujo(rand) {
+  return dispatch_kojo(benki_koujo_family, [rand]);
+}
+
+async function enterenemy_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  era_flag.target = cid;
+  const local = get_kojo_num(cid);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await enterenemy_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [rand],
+    });
+  }
+  era_flag.target = target_pool;
+  return 0;
+}
+
+async function victory_koujo(rand) {
+  return dispatch_kojo(victory_koujo_family, [rand]);
+}
+
+async function attack_koujo(rand) {
+  return dispatch_kojo(attack_koujo_family, [rand]);
+}
+
+async function gobi_koujo(arg_0 = 0, rand) {
+  return dispatch_kojo(gobi_koujo_family, [rand, arg_0]);
+}
 module.exports = {
   get_kojo_num,
   kojo_message_com,
   kojo_message_com_family,
   self_kojo,
   self_kojo_family,
+  palamcng_family,
+  markcng_family,
+  kojo_message_palamcng,
+  kojo_message_markcng,
+  benki_koujo_family,
+  benki_koujo,
+  enterenemy_koujo_family,
+  enterenemy_koujo,
+  victory_koujo_family,
+  victory_koujo,
+  attack_koujo_family,
+  attack_koujo,
+  ntr_koujo_family,
+  exucution_koujo_family,
+  museum_koujo_family,
+  banishment_koujo_family,
+  public_exucution_koujo_family,
+  grotesque_koujo_family,
+  gobi_koujo_family,
+  gobi_koujo,
 };

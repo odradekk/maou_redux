@@ -79,8 +79,6 @@ const STUBBED_CALLS = [
   'BEFORE_AUTOTRAIN',
   'COM13_AUTO',
   'SOURCE_CHECK_AUTO',
-  'ATTACK_KOUJO',
-  'VICTORY_KOUJO',
 ];
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
@@ -162,7 +160,8 @@ async function source_check_auto() {
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
 async function attack_koujo() {
-  await stub_line_wait('ATTACK_KOUJO', '攻击口上', '随口上票');
+  const { attack_koujo: dispatch } = require('#/kojo/kojo-system');
+  await dispatch();
 }
 
 /**
@@ -170,7 +169,8 @@ async function attack_koujo() {
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
 async function victory_koujo() {
-  await stub_line_wait('VICTORY_KOUJO', '胜利口上', '随口上票');
+  const { victory_koujo: dispatch } = require('#/kojo/kojo-system');
+  await dispatch();
 }
 
 /**
