@@ -133,8 +133,12 @@ test('STUBBED_CALLS 为空：JUMP/CALL 全部经分发族，不建 COM11/13-17/3
 test('@COM_ABLE100：秘密知识 + 道具；未开启时装备互斥；浴室/新妻/决斗/使役各挡一条', async () => {
   const world = seed_world();
   const { fixture, com_able_family } = world;
+
+  // 先给道具、再查知识：两道守卫拆开，删掉知识守卫时本断言必红（M1330）
+  fixture.store.set('item:90', 1);
   assert.equal(await com_able_family.call(100), 0, '缺秘密知识');
 
+  fixture.store.set('item:90', 0);
   fixture.store.set('talent:0:325', 1);
   assert.equal(await com_able_family.call(100), 0, '缺 ITEM:90');
 
@@ -273,14 +277,20 @@ test('@COM_ABLE150：顺从+欲望≥6、无触手/兽奸/使役/决斗、无 zo
 
 test('@COM_ABLE208：死斗场中 + 秘密知识 + 道具；助手调教不可；无等级门槛', async () => {
   const { fixture, era_flag, com_able_family } = seed_world();
+
+  // 先给知识+道具、再查死斗场：叠层拆开，删掉死斗场守卫时本断言必红（M1341）
+  able_on({ fixture });
   assert.equal(await com_able_family.call(208), 0, '不在死斗场');
 
   fixture.store.set('tequip:31:55', 1);
+  assert.equal(await com_able_family.call(208), 1, '三件齐 → 可');
+
+  fixture.store.set('talent:0:325', 0);
   assert.equal(await com_able_family.call(208), 0, '缺秘密知识');
   fixture.store.set('talent:0:325', 1);
+  fixture.store.set('item:90', 0);
   assert.equal(await com_able_family.call(208), 0, '缺 ITEM:90');
   fixture.store.set('item:90', 1);
-  assert.equal(await com_able_family.call(208), 1, '三件齐 → 可');
 
   fixture.store.set('cflag:0:9', 0);
   assert.equal(
@@ -377,7 +387,7 @@ test('@COM106：JUMP COM44 落地时返回目标真身，SELECTCOM 仍是 106', 
     return 77;
   });
   const result = await run_com(world, 106);
-  assert.equal(result, 77);
+  assert.equal(result, 77, '目标看到的 SELECTCOM 仍是触手指令号');
   assert.deepEqual(jumped, [106], '目标看到的 SELECTCOM 仍是触手指令号');
   assert.equal(world.era_flag.selectcom, 106);
 });
@@ -438,6 +448,17 @@ test('@COM108：侍奉精神/技巧分档、取反 TEQUIP:98、初吻直写 -1�
   assert.equal(fixture.store.get('tequip:31:98'), 0, '再执行即关');
 });
 
+test('@COM108：初吻判定必须直读 cflag，不得走会把 -1 当 0 的门面', () => {
+  const src = fs.readFileSync(
+    path.join(REPO, 'ere', 'system', 'train', 'com-tentacle.js'),
+    'utf8',
+  );
+  assert.ok(
+    src.includes('if (era.get(`cflag:${target}:16`) === -1) {'),
+    '初吻直写',
+  );
+});
+
 test('@COM108：CFLAG:16 非 -1 时不改初吻', async () => {
   const world = seed_world();
   world.fixture.store.set('cflag:31:16', 3);
@@ -464,7 +485,7 @@ test('@COM150：癖好名标题、SOURCE 分档、双方非男人 → 百合经�
   assert.equal(fixture.store.get('source:31:18'), 20);
   assert.equal(fixture.store.get('source:31:8'), 30);
   assert.equal(fixture.store.get('source:31:12'), 100);
-  assert.equal(fixture.store.get('exp:31:40'), 5);
+  assert.equal(fixture.store.get('exp:31:40'), 5, '百合经验+5');
 });
 
 test('@COM150：双方皆男人 → 断背经验 +5；局部中毒倍率', async () => {
@@ -478,7 +499,8 @@ test('@COM150：双方皆男人 → 断背经验 +5；局部中毒倍率', async
   fixture.store.set('abl:31:40', 4); // ×1.50
   await run_com(world, 150);
   assert.ok(fixture.text_lines().includes('断背经验+5'));
-  assert.equal(fixture.store.get('exp:31:41'), 5);
+  assert.equal(fixture.store.get('exp:31:41'), 5, '断背经验+5');
+
   assert.equal(fixture.store.get('exp:31:40') || 0, 0);
   // ABL:4==3 → 1200；×1.50 → 1800
   assert.equal(fixture.store.get('source:31:18'), 1800);
@@ -540,16 +562,6 @@ test('@COM208：JUMP COM5 落地（胸爱抚已注册）返回子指令结果', 
 });
 
 test('@COM208：男人不显示私处；999 暂时放过 → RETURN 1', async () => {
-  const man = seed_world({ load_colosseum: true });
-  able_on(man);
-  man.fixture.store.set('tequip:31:55', 1);
-  man.fixture.store.set('base:31:1', 0);
-  man.fixture.store.set('maxbase:31:1', 1000);
-  man.fixture.store.set('talent:31:122', 1);
-  man.fixture.set_inputs(999);
-  assert.equal(await run_com(man, 208), 1, '男人走暂时放过');
-  assert.ok(!printed_buttons(man.fixture).includes('2:私处'), '男人不显示私处');
-
   const spare = seed_world({ load_colosseum: true });
   able_on(spare);
   spare.fixture.store.set('tequip:31:55', 1);
@@ -557,6 +569,16 @@ test('@COM208：男人不显示私处；999 暂时放过 → RETURN 1', async ()
   spare.fixture.store.set('maxbase:31:1', 1000);
   spare.fixture.set_inputs(999);
   assert.equal(await run_com(spare, 208), 1, '暂时放过 RETURN 1');
+
+  const man = seed_world({ load_colosseum: true });
+  able_on(man);
+  man.fixture.store.set('tequip:31:55', 1);
+  man.fixture.store.set('base:31:1', 0);
+  man.fixture.store.set('maxbase:31:1', 1000);
+  man.fixture.store.set('talent:31:122', 1);
+  man.fixture.set_inputs(999);
+  assert.equal(await run_com(man, 208), 1, '暂时放过 RETURN 1');
+  assert.ok(!printed_buttons(man.fixture).includes('2:私处'), '男人不显示私处');
 });
 
 test('@COM208：战斗点低于 10×魔王等级 → 追加伤害；否则打倒文本', async () => {
@@ -646,8 +668,8 @@ test('@EQUIP_COM100：MAXBASE:4 非 0 时射精检查写 TFLAG:15；大量射精
   assert.equal(fixture.store.get('tflag:15'), 2, 'tflag:15');
   assert.equal(fixture.store.get('tflag:38'), 2, '触手插入中大量射精');
   assert.equal(fixture.store.get('exp:31:50') || 0, 0, '非首次无异常经验');
-  // T: 射精 +1 + 尾段 +1 = 2
-  assert.equal(fixture.store.get('exp:31:55'), 3);
+  // T: 射精 +1 + 尾段 +1 = 2；起点 EXP:55=1 → 3。+=1 恒等不了这条。
+  assert.equal(fixture.store.get('exp:31:55'), 3, 'T+=1 后 EXP:55 += T');
 });
 
 test('@EQUIP_COM108：喜欢精液减半损耗；侍奉分档与口交经验；T += 1 不清零', async () => {
@@ -769,6 +791,7 @@ test('@TRAIN_MESSAGE_B150：嗅觉 / 腋 / 其它癖好三支；拼在「向」�
     smell.fixture
       .text_lines()
       .some((l) => l.includes('你向温妮坚持不懈地熏陶着那个味道')),
+    '你向温妮坚持不懈地熏陶着那个味道',
   );
 
   const armpit = seed_world();
@@ -811,6 +834,7 @@ test('@TRAIN_MESSAGE_A150：F 中毒 / F 感觉分档；嗅觉与其它癖好各
     high.fixture
       .text_lines()
       .includes('温妮被尾巴带来的快乐所扰乱、口水不断的从嘴角流了出来…'),
+    '口水不断的从嘴角流了出来',
   );
 
   const smell = seed_world();
