@@ -94,9 +94,13 @@ const REPO = path.resolve(__dirname, '..');
 // 仍会在每轮菜单错误列出它们；补齐真实装载面后，实际 guard 过滤掉的菜单
 // 条目不再被误记为「COM_ABLE 未移植」存根。输出匹配数不变，存根自然态
 // −142、升格态 −36。
+//
+// 【#229（J19）追加与高级族落地后重测】COM_ABLE120–135 真身守卫过滤了菜单
+// 上原先按默认可执行的高级/可直选指令按钮。输出匹配数不变，存根自然态
+// 1706 → 1672（−34）、升格态 556 → 546（−10）。unexplained 恒 0。
 const BASELINE = {
-  'train-natural': { matched: 940, version: 0, stub: 1706, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 556, unexplained: 0 },
+  'train-natural': { matched: 940, version: 0, stub: 1672, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 546, unexplained: 0 },
 };
 
 async function build_report(sample) {

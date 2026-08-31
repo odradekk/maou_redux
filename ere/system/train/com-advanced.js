@@ -47,7 +47,6 @@ const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const { com_order } = require('#/system/train/com-order');
 const { confirm_condom } = require('#/system/train/com-condom');
-const { train_message_a_sex_common } = require('#/system/train/com-sex');
 const {
   com_after_vagina_sex,
   com_ejac_player_milk,
@@ -89,6 +88,14 @@ const has_mat = () =>
   (era.get('item:13') || 0) !== 0 || (era.get('noitem:0') || 0) !== 0;
 
 const clothing_guard = (cid) => (worn(cid) & 17) !== 0 && clothes_on();
+async function train_message_a_sex_common() {
+  // 延迟读取：主启动图的 COM20–29 注册仍仅由 com-sex 自己负责；本族只在
+  // 实际渲染 128–134 A 文时复用其无注册 helper。
+  const {
+    train_message_a_sex_common: shared,
+  } = require('#/system/train/com-sex');
+  await shared();
+}
 const bra_guard = (cid) => (worn(cid) & 6) !== 0 && clothes_on();
 const diaper_guard = (cid) =>
   special(cid) === 69 && (worn(cid) & 64) !== 0 && clothes_on();
@@ -657,8 +664,8 @@ async function message_a120() {
     `对准${target_name()}私处内那最敏感的那一点、${player_name()}射出了${amount === 2 ? '大量的' : ''}精液…`,
   );
   if (palam(era_flag.target, 5) < PALAMLV[4] || era.get('tflag:31')) {
-    era.set('tflag:31', 0);
-    era.set('tflag:60', 0);
+    game.event.本次调教处女丧失 = 0;
+    game.event.插着不拔 = 0;
   }
 }
 
@@ -993,8 +1000,8 @@ async function message_a121() {
     );
   }
   if (removable) {
-    era.set('tflag:31', 0);
-    era.set('tflag:60', 0);
+    game.event.本次调教处女丧失 = 0;
+    game.event.插着不拔 = 0;
   }
 }
 
@@ -1192,7 +1199,7 @@ function ejac122() {
     times_src(cid, 7, 2);
     times_src(cid, 5, 1.5);
     era.add(`exp:${player}:3`, 2);
-    era.add(`exp:${cid}:20`, 9);
+    chara(cid).dungeon.精液经验 += 9;
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
@@ -1203,7 +1210,7 @@ function ejac122() {
     game.train.股间射精 = 2;
   } else if (e === 1) {
     era.add(`exp:${player}:3`, 1);
-    era.add(`exp:${cid}:20`, 3);
+    chara(cid).dungeon.精液经验 += 3;
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
@@ -1437,7 +1444,7 @@ function ejac123() {
     times_src(cid, 7, 2);
     times_src(cid, 5, 1.5);
     era.add(`exp:${player}:3`, 2);
-    era.add(`exp:${cid}:20`, 9);
+    chara(cid).dungeon.精液经验 += 9;
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
@@ -1451,7 +1458,7 @@ function ejac123() {
     }
   } else if (e === 1) {
     era.add(`exp:${player}:3`, 1);
-    era.add(`exp:${cid}:20`, 3);
+    chara(cid).dungeon.精液经验 += 3;
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
@@ -1547,7 +1554,7 @@ async function com123() {
   if (!(await order123(y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  era.add(`exp:${era_flag.target}:22`, 1);
+  chara(era_flag.target).dungeon.口交经验 += 1;
   source123(y);
   const b = gauge123();
   const e = ejac123();
@@ -1705,7 +1712,7 @@ function ejac124() {
     times_src(cid, 7, 2);
     times_src(cid, 5, 1.5);
     era.add(`exp:${player}:3`, 2);
-    era.add(`exp:${cid}:20`, 9);
+    chara(cid).dungeon.精液经验 += 9;
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
@@ -1719,7 +1726,7 @@ function ejac124() {
     }
   } else if (e === 1) {
     era.add(`exp:${player}:3`, 1);
-    era.add(`exp:${cid}:20`, 3);
+    chara(cid).dungeon.精液经验 += 3;
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
@@ -1818,7 +1825,7 @@ async function com124() {
   if (!(await order124(y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  era.add(`exp:${era_flag.target}:22`, 1);
+  chara(era_flag.target).dungeon.口交经验 += 1;
   source124(y);
   const b = gauge124();
   const e = ejac124();
@@ -2297,9 +2304,9 @@ async function com125() {
   if (!(await order125(y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  era.add(`exp:${era_flag.target}:22`, 1);
+  chara(era_flag.target).dungeon.口交经验 += 1;
   era.print(`${name_of('expname', 10)}＋１`);
-  era.add(`exp:${era_flag.target}:10`, 1);
+  chara(era_flag.target).dungeon.自慰经验 += 1;
   source125(y);
   const b = gauge124();
   const e = ejac124();
@@ -2448,7 +2455,7 @@ async function com126() {
   if (!(await order124(y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  era.add(`exp:${era_flag.target}:22`, 1);
+  chara(era_flag.target).dungeon.口交经验 += 1;
   source126(y);
   const b = gauge126();
   const e = ejac124();
@@ -2502,7 +2509,7 @@ async function com127() {
   if (!(await order124(y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  era.add(`exp:${era_flag.target}:22`, 1);
+  chara(era_flag.target).dungeon.口交经验 += 1;
   source124(y);
   const b = gauge124();
   const e = ejac124();
@@ -3033,7 +3040,7 @@ function source131() {
     set_src(cid, 6, 5000);
     if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
-      era.add(`exp:${cid}:50`, 1);
+      chara(cid).dungeon.异常经验 += 1;
     }
   } else if (e0 < EXPLV[2]) {
     times_src(cid, 1, 0.6);
@@ -3189,7 +3196,7 @@ function source132() {
     set_src(cid, 6, 5000);
     if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
-      era.add(`exp:${cid}:50`, 1);
+      chara(cid).dungeon.异常经验 += 1;
     }
   } else if (e0 < EXPLV[2]) {
     times_src(cid, 1, 0.6);
@@ -3368,7 +3375,7 @@ function source133() {
     set_src(cid, 6, 5000);
     if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
-      era.add(`exp:${cid}:50`, 1);
+      chara(cid).dungeon.异常经验 += 1;
     }
   } else if (e0 < EXPLV[2]) {
     times_src(cid, 1, 0.6);
@@ -3552,7 +3559,7 @@ function source134() {
     set_src(cid, 6, 5000);
     if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
-      era.add(`exp:${cid}:50`, 1);
+      chara(cid).dungeon.异常经验 += 1;
     }
   } else if (e0 < EXPLV[2]) {
     times_src(cid, 1, 0.6);
