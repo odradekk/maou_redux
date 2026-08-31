@@ -4606,7 +4606,7 @@ export default [
     must_mention: '显式无操作压掉分发骨架占位行',
   },
   {
-    desc: 'M1474 主启动图删 K2 口上注册（#233）',
+    desc: 'M1544 主启动图删 K2 口上注册（#233）',
     file: 'ere/system/flow/main-loop.js',
     find: "require('#/kojo/kojo-k2-timid');",
     replace: '// 变异：K2 口上不在主启动图注册',
@@ -4614,7 +4614,7 @@ export default [
     must_mention: '主启动图注册 K2',
   },
   {
-    desc: 'M1475 AFTERTRAIN leftover_q 不写入（#233）',
+    desc: 'M1545 AFTERTRAIN leftover_q 不写入（#233）',
     file: 'ere/event/event-aftertrain.js',
     find: '  leftover_q = q;',
     replace: '  leftover_q = 0; // 变异：不写入妄想对象',
