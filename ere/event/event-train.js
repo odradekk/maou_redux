@@ -3,60 +3,24 @@
  *
  * 源: target/ERB/調教相關/TRAIN_MAIN.ERB  @EVENTTRAIN（:13-58，#PRI）
  *     target/ERB/EVENT/EVENT_BEFORETRAIN.ERB  @PRITRAIN_MESSAGE
- *     （:6-14 为本文件移植的「承载头部」；:16 起的消息体存根化）
  *
  * @EVENTTRAIN 是事件函数（口上模块后续会往链上挂自己的定义）；本处理器
  * 对应 TRAIN_MAIN.ERB 的 #PRI 定义，注册于模块顶层。直线赋值 1:1 照搬，
  * test/event-train.test.js 对写入做全量断言（意外写入当场暴露）。
- *
- * 掉不进去的与待办的（docs/stub-registry.md）：
- *   - PRITRAIN_MESSAGE 的消息体（初调教/着衣/素质分支叙事）；
- *   - TRAIN_NAME_INIT 与 TSTR:90 已随 #212 落地（ere/system/train/
- *     train-name.js 与 page/page-usercom.js 的 p_c；TSTR 承载的建模定论见
- *     yml/TStr.yml 头注与 test/tstr-train-table.test.js）。
  */
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
 const { train_name_init } = require('#/system/train/train-name');
+const { pritrain_message } = require('#/event/event-beforetrain');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
- * TRAIN_NAME_INIT 已随 #212 换真身（train_name_init）。
+ * PRITRAIN_MESSAGE 已随 #218 换真身。
  */
-const STUBBED_CALLS = ['PRITRAIN_MESSAGE'];
-
-/**
- * @PRITRAIN_MESSAGE 的承载头部（EVENT_BEFORETRAIN.ERB:6-14）。
- *
- * 头部三件事是整条调教流程的承重墙，不能随消息体一起存根：
- *   - CFLAG:TARGET:10 += 1（调教回数，累计计数）；
- *   - T:10/11/12 = MASTER/TARGET/ASSI（「避免角色错乱的暂存纪录」，
- *     @EVENTEND 复位角色时读回，TRAIN_MAIN.ERB:320-323）。
- * 消息体（:16-201 的省略设定/初调教/着衣/素质分支叙事）存根化，登记待办。
- */
-async function pritrain_message_head() {
-  // :7-8 调教経験を加算：CFLAG:TARGET:10 += 1
-  const target = era_flag.target;
-  era.add(`cflag:${target}:10`, 1);
-
-  // :10-14 避免角色错乱的暂存纪录：T:10 = MASTER、T:11 = TARGET、
-  // SIF ASSI → T:12 = ASSI（flag 保留区槽位，见 era-flag.js 手写区补注）
-  era_flag.master_backup = 0; // MASTER 恒为角色 0（魔王，CONTEXT.md）
-  era_flag.target_backup = target;
-  if (era_flag.assi) {
-    era_flag.assi_backup = era_flag.assi;
-  }
-
-  // :16-21 调教テキスト省略設定（FLAG:6 & 1）：省略时的短消息。FLAG:6 未
-  // 落表时读值 0 → 走完整叙事；消息体整体存根（含本分支的短消息），两条
-  // 路径共用同一占位行
-  stub_line('PRITRAIN_MESSAGE', '调教开始消息');
-  await era.waitAnyKey(); // WAIT（消息体的读键：占位也保留节奏）
-}
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN（TRAIN_MAIN.ERB:13-58，#PRI）
 on(
@@ -106,8 +70,8 @@ on(
     // 守卫幂等——ere/system/train/train-name.js）
     train_name_init();
 
-    // :55 CALL PRITRAIN_MESSAGE（承载头部移植 + 消息体存根）
-    await pritrain_message_head();
+    // :55 CALL PRITRAIN_MESSAGE（真身）
+    await pritrain_message();
   },
   TIER.PRI,
 );

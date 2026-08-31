@@ -46,7 +46,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait } = require('#/utils/stub-line');
 // H10（#179）真身：@LVUP（DUNGEON_TOWN.ERB:34 的 CALL LVUP, PM:LOCAL）
 const { lvup } = require('#/dungeon/dungeon-lvup');
 // H15（#184）真身：@HEROINE_BITCH（:134 城镇侧卖春入口；log_try_bitch 的
@@ -68,13 +68,14 @@ const quest_mod = require('#/dungeon/dungeon-quest');
 const STUBBED_CALLS = [
   'DUNGEON_TOWN_LOVER',
   'SELL_EX_ITEM',
-  'COM63_AUTO',
-  'RAND_AUTOTRAIN',
   'KARMA',
   'ADD_EX_ITEM',
-  'BEFORE_AUTOTRAIN',
-  'COM0_AUTO',
-  'SOURCE_CHECK_AUTO',
+  'MONSTER_PLAY',
+  'SHOW_LIST_TRAINABLE',
+  'CHARADEAD_CHECK',
+  'SELL_MILK',
+  'SELL_VIDEO',
+  'SELL_FIGHTMONEY',
 ];
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
@@ -124,30 +125,6 @@ async function sell_ex_item(cid) {
     `道具出售（${name_of(cid)}）`,
     '随 EX 道具票（阶段 5）',
   );
-}
-
-/**
- * @COM63_AUTO 存根（調教相關/COMF63_貝あわせ.ERB:157；自动调教票，阶段
- * 4——与 RAND_AUTOTRAIN 同批，ADR-0007）：宴会嫖妓的磨镜自动调教。
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function com63_auto() {
-  await stub_line_wait('COM63_AUTO', '磨镜自动调教', '随调教自动票（阶段 4）');
-}
-
-/**
- * @RAND_AUTOTRAIN 存根（迷宮/DUNGEON_TOWN.ERB:705；自动调教票，阶段 4，
- * ADR-0007）：自动调教的随机表。原作是 β 空壳——TURNS = RAND:5 之后
- * FOR 循环整体注释态（:709-710），无任何可移植行为；域内存根仅承载
- * 「函数已登记」与掷点占位（掷 RAND:5 保持 PRNG 序列对齐——原作死赋
- * 值照掷，#175 文件头同款）。
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {number} 原作无 RETURN（隐式 0）
- */
-function rand_autotrain(rand = default_rand) {
-  void rand(5); // :708 TURNS = RAND:5（死赋值，无读者——照掷）
-  stub_line('RAND_AUTOTRAIN', '自动调教随机表（β）', '随调教自动票（阶段 4）');
-  return 0;
 }
 
 /**
@@ -825,7 +802,8 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
         await before_autotrain(); // :639
         // :640-642 貝合わせ自動調教（扶她或非男）
         if (futanari || !man) {
-          await com63_auto();
+          const { com63_auto } = require('#/event/event-autotrain');
+          com63_auto();
         }
         // :643-645 愛撫自動調教（扶她或男——扶她两连）
         if (futanari || man) {
@@ -903,7 +881,5 @@ module.exports = {
   town_pt_dayevent,
   dungeon_town_lover,
   sell_ex_item,
-  com63_auto,
-  rand_autotrain,
   STUBBED_CALLS,
 };

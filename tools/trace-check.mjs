@@ -169,6 +169,8 @@ const DUNGEON_DAILY_ERB = 'target/ERB/迷宮/DUNGEON_DAILY.ERB';
 const DUNGEON_ROOM_ERB = 'target/ERB/迷宮/DUNGEON_ROOM.ERB';
 const FRAUD_ERB = 'target/ERB/魔改新增/诈骗陷阱.ERB';
 const TEXT_CORRECT_ERB = 'target/ERB/魔改新增/文本校正.ERB';
+const AFTER_TRAIN = 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB';
+const AUTO_TRAIN = 'target/ERB/EVENT/EVENT_AUTOTRAIN.ERB';
 
 // —— 映射表：js 文件 → [{ src, ref: 'N' | 'N-M', any: [锚…（任一命中即可）] }] ——
 // 锚是对源文件所引行的正则；范围引用只要 [N, M] 内任一行命中任一锚。
@@ -890,22 +892,6 @@ const FILES = [
         any: [/初始化TRAIN_NAME/, /^CALL TRAIN_NAME_INIT$/m],
       },
       { src: TRAIN_MAIN, ref: '55', any: [/^CALL PRITRAIN_MESSAGE$/m] },
-      // EVENT_BEFORETRAIN.ERB @PRITRAIN_MESSAGE 承载头部
-      {
-        src: BEFORE_TRAIN,
-        ref: '7-8',
-        any: [/調教経験を加算/, /^CFLAG:10 \+= 1$/m],
-      },
-      {
-        src: BEFORE_TRAIN,
-        ref: '10-14',
-        any: [/避免角色錯亂的暫存紀錄/, /^T:10 = MASTER$/m, /^\tT:12 = ASSI$/m],
-      },
-      {
-        src: BEFORE_TRAIN,
-        ref: '16-21',
-        any: [/調教テキスト省略設定の場合/, /^IF \(FLAG:6 & 1\)$/m],
-      },
     ],
   },
   {
@@ -983,6 +969,43 @@ const FILES = [
       { src: TRAIN_MAIN, ref: '305', any: [/助手体力到了极限/] },
       { src: TRAIN_MAIN, ref: '306', any: [/^\t\tWAIT$/m] },
       { src: TRAIN_MAIN, ref: '307', any: [/^\t\tBEGIN AFTERTRAIN$/m] },
+    ],
+  },
+  {
+    js: 'ere/event/event-beforetrain.js',
+    refs: [
+      { src: BEFORE_TRAIN, ref: '6-201', any: [/@PRITRAIN_MESSAGE/] },
+      {
+        src: BEFORE_TRAIN,
+        ref: '207-270',
+        any: [/@PRITRAIN_MESSAGE_NOCLOTHES/],
+      },
+      { src: BEFORE_TRAIN, ref: '266-323', any: [/@PRITRAIN_MESSAGE_CLOTHED/] },
+    ],
+  },
+  {
+    js: 'ere/event/event-aftertrain.js',
+    refs: [
+      { src: AFTER_TRAIN, ref: '6-85', any: [/@CHARADEAD_CHECK/] },
+      { src: AFTER_TRAIN, ref: '100-128', any: [/TARGET/] },
+      { src: AFTER_TRAIN, ref: '140-250', any: [/@AFTERTRAIN_SEX_CHECK/] },
+      { src: AFTER_TRAIN, ref: '255-349', any: [/@AFTERTRAIN_ANALSEX_CHECK/] },
+      { src: AFTER_TRAIN, ref: '354-546', any: [/TALENT:121/] },
+      {
+        src: AFTER_TRAIN,
+        ref: '551-703',
+        any: [/@AFTERTRAIN_MASTURBATION_CHECK/],
+      },
+      { src: AFTER_TRAIN, ref: '708-842', any: [/@AFTERTRAIN_BEASTSEX_CHECK/] },
+    ],
+  },
+  {
+    js: 'ere/event/event-autotrain.js',
+    refs: [
+      { src: AUTO_TRAIN, ref: '11-47', any: [/@AUTOTRAIN/] },
+      { src: AUTO_TRAIN, ref: '51-87', any: [/@FORMAT_AUTOTRAIN/] },
+      { src: AUTO_TRAIN, ref: '91-104', any: [/@BEFORE_AUTOTRAIN/] },
+      { src: AUTO_TRAIN, ref: '108-159', any: [/@AFTER_AUTOTRAIN/] },
     ],
   },
   {
@@ -7260,6 +7283,12 @@ const FILES = [
         src: EXCOM,
         ref: '31-38',
         any: [/^@GET_EX_KOJO_NUM\(ARG\)$/m, /^FOR COUNT,101,801$/m],
+      },
+      // SELF_KOJO
+      {
+        src: EVENT_K,
+        ref: '225-241',
+        any: [/@SELF_KOJO/, /TRYCALLFORM SELF_KOJO_K/],
       },
     ],
   },
@@ -22785,8 +22814,6 @@ const FILES = [
         any: [/CALL DUNGEON_TOWN_LOVER,TARGET/],
       },
       { src: DUNGEON_TOWN_ERB, ref: '705-710', any: [/FOR/] },
-      { src: DUNGEON_TOWN_ERB, ref: '708', any: [/TURNS = RAND:5/] },
-      { src: DUNGEON_TOWN_ERB, ref: '709-710', any: [/FOR/] },
     ],
   },
   {
@@ -27126,7 +27153,7 @@ const ERB_EXEMPT_BASELINE = {
     '205-215',
     '231',
   ],
-  'ere/event/event-train.js': ['6-14', '13-58', '16', '16-201'],
+  'ere/event/event-train.js': ['13-58'],
   'ere/event/event-turnend.js': ['8-140'],
   'ere/event/first-setting.js': [
     '16-17',

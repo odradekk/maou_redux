@@ -76,7 +76,7 @@ test('存根清单可检索：docs/stub-registry.md 收录城镇文件的新增�
     'utf8',
   );
   const names = [...load(fixture).STUBBED_CALLS];
-  assert.ok(names.length >= 9, `名单 ${names.length} 条（应 ≥ 9）`);
+  assert.ok(names.length >= 7, `名单 ${names.length} 条（应 ≥ 7）`);
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

@@ -14,6 +14,21 @@ class StrongholdFacade {
 
   // —— cflag ——
   /**
+   * 调教回数（cflag:cid:10 ↔ CFLAG:10）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行269 CFLAG:10 = 調教回数
+   * @returns {number}
+   */
+  get 调教回数() {
+    return era.get(`cflag:${this.cid}:10`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 调教回数(v) {
+    era.set(`cflag:${this.cid}:10`, v);
+  }
+
+  /**
    * 排卵诱发剂（cflag:cid:109 ↔ CFLAG:109）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）
    * @returns {number}

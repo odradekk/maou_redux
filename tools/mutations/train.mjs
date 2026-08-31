@@ -2878,4 +2878,93 @@ export default [
     tests: ['com-caress'],
     must_mention: '不落占位行',
   },
+  // —— #218 J8 调教前后事件、自动调教与 E2E 测试 ——
+  {
+    desc: 'M1050 BEFORETRAIN: 初调教判断错位（train_count === 1 改 !== 1）',
+    file: 'ere/event/event-beforetrain.js',
+    find: '  if (train_count === 1) {',
+    replace: '  if (train_count !== 1) {',
+    tests: ['event-beforetrain'],
+    must_mention: '初调教与省略设定',
+  },
+  {
+    desc: 'M1051 AFTERTRAIN: 淫乱加成错位（talent:76 漏加）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (era.get(`talent:${target}:76`)) s += 1; // 淫乱',
+    replace: '  // 变异：淫乱漏加',
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_sex_check',
+  },
+  {
+    desc: 'M1052 AFTERTRAIN: 自慰判定忽略欲望门槛（abl:11 < 2 漏判）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (
+    (era.get(\`abl:\${target}:0\`) || 0) < 3 ||
+    (era.get(\`abl:\${target}:11\`) || 0) < 2
+  )
+    return 0;`,
+    replace: `  if (
+    (era.get(\`abl:\${target}:0\`) || 0) < 3
+  )
+    return 0;`,
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_masturbation_check 自慰检查',
+  },
+  {
+    desc: 'M1053 AUTOTRAIN: 常时发情（talent:271）欲情润滑初值赋错（3000 改 0）',
+    file: 'ere/event/event-autotrain.js',
+    find: `  if (era.get(\`talent:\${target}:271\`)) {
+    chara(target).train.润滑 = 3000;
+    chara(target).train.欲情 = 3000;
+  }`,
+    replace: `  if (era.get(\`talent:\${target}:271\`)) {
+    chara(target).train.润滑 = 0;
+    chara(target).train.欲情 = 0;
+  }`,
+    tests: ['event-autotrain'],
+    must_mention: 'format_autotrain & before_autotrain',
+  },
+  {
+    desc: 'M1054 AUTOTRAIN: COM3_AUTO 自慰经验不递增',
+    file: 'ere/event/event-autotrain.js',
+    find: `  chara(target).dungeon.自慰经验 += 1;
+  era.print('自慰经验＋１');`,
+    replace: `  // 变异：自慰经验不加
+  era.print('自慰经验＋１');`,
+    tests: ['event-autotrain'],
+    must_mention: 'COM3',
+  },
+  // 回路四环反向变异（M1055-M1058，打在结算/推进公共模块）：
+  {
+    desc: 'M1055 E2E: 回路第 1 环破环——参数上升切断（UP:0 快C 不写入 delta，使参数无法上升）',
+    file: 'ere/event/source-check.js',
+    find: '  add_up(0, local0); // PALAM:快Ｃ',
+    replace: '  // 变异：不累加快C',
+    tests: ['event-corrupt-e2e', 'source-check'],
+    must_mention: '角色堕落长跑',
+  },
+  {
+    desc: 'M1056 E2E: 回路第 2 环破环——刻印变化切断（快感达标不授予快乐刻印）',
+    file: 'ere/event/source-check.js',
+    find: '    chara(cid).system.快乐刻印 = 1;',
+    replace: '    // 变异：快乐刻印不赋值',
+    tests: ['event-corrupt-e2e', 'source-check'],
+    must_mention: '角色堕落长跑',
+  },
+  {
+    desc: 'M1057 E2E: 回路第 3 环破环——COM_ABLE 放行切断（灌肠判定顺从欲望露出门槛改高到 999 永不放行）',
+    file: 'ere/system/train/com-sm.js',
+    find: '  if (abl(cid, 10) + abl(cid, 11) + abl(cid, 17) < 10) {',
+    replace: '  if (abl(cid, 10) + abl(cid, 11) + abl(cid, 17) < 999) {',
+    tests: ['event-corrupt-e2e', 'com-sm'],
+    must_mention: '角色堕落长跑',
+  },
+  {
+    desc: 'M1058 E2E: 回路第 4 环破环——回合推进切断（调教前不累加调教回数 CFLAG:10）',
+    file: 'ere/event/event-beforetrain.js',
+    find: '  chara(target).stronghold.调教回数 += 1;',
+    replace: '  // 变异：调教回数不加',
+    tests: ['event-corrupt-e2e', 'event-beforetrain'],
+    must_mention: '角色堕落长跑',
+  },
 ];

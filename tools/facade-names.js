@@ -260,7 +260,6 @@ const cflag = {
       ':318 CFLAG:102 = 誰によって妊娠させられたか（マスター=1, 助手=2, 奴隷=3, 客=4, 犬=5, モンスター・触手=6, 狂王=7）',
     ),
   ),
-  666: named('自动调教', src(SRC_FLAG, 'CFLAG:666 自動調教が行われたかフラグ')),
   ...fill(650, 657, (i) =>
     named(
       i === 650 ? 'NTR再捕获' : `NTR_${i}`,
@@ -433,6 +432,14 @@ const cflag = {
   //    格子位置，词条取まとめ文档 :412-413 的「X座標/Y座標」归一简体）——
   510: named_tail('X坐标', src(SRC_FLAG, ':412 CFLAG:510 = X座標')),
   511: named_tail('Y坐标', src(SRC_FLAG, ':413 CFLAG:511 = Y座標')),
+  // #218（J8）补名：调教与服装跨域写
+  10: named('调教回数', src(SRC_FLAG, ':269 CFLAG:10 = 調教回数')),
+  40: named_tail('着衣状态', src(SRC_FLAG, ':294 CFLAG:40 = 着衣の状態')),
+  61: named_tail('逆强暴', src(SRC_FLAG, ':307 CFLAG:61 = 逆レイプ')),
+  81: named_tail('蓄积润滑', src(SRC_FLAG, ':317 CFLAG:81 = 蓄積潤滑')),
+  82: named_tail('蓄积欲情', src(SRC_FLAG, ':318 CFLAG:82 = 蓄積欲情')),
+  666: named_tail('自动调教', src(SRC_FLAG, 'CFLAG:666 = 自動調教')),
+  667: named_tail('自动调教回数', src(SRC_FLAG, 'CFLAG:667 = 自動調教回数')),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

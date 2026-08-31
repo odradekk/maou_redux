@@ -99,6 +99,9 @@ const kojo_message_com_family = new DispatchFamily(
   DECLARED_KOJO_COM_IDS,
 );
 
+/** @SELF_KOJO_K{N}：事件口上族（随各口上票落地） */
+const self_kojo_family = new DispatchFamily('SELF_KOJO', DECLARED_KOJO_COM_IDS);
+
 /**
  * @GET_KOJO_NUM（:86-144）：角色 → 口上编号。
  *
@@ -154,4 +157,39 @@ async function kojo_message_com(rand) {
   return 0;
 }
 
-module.exports = { get_kojo_num, kojo_message_com, kojo_message_com_family };
+/**
+ * @SELF_KOJO（:225-241）：事件口上入口（EVENT_AFTERTRAIN 等处的 CALL SELF_KOJO）。
+ *
+ * 两道守卫：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @returns {Promise<number>} 0
+ */
+async function self_kojo(rand) {
+  // 第一道守卫：总开关 FLAG:7 <= 0
+  if ((era.get('flag:7') || 0) <= 0) {
+    const { game } = require('#/facade/game');
+    game.train.怪物射精或购入金 = 0;
+    return 0;
+  }
+
+  // GET_KOJO_NUM()
+  const local = get_kojo_num();
+
+  // キャラ別：TRYCALLFORM SELF_KOJO_K{LOCAL - 100}
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await self_kojo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [rand],
+    });
+  }
+  return 0;
+}
+
+module.exports = {
+  get_kojo_num,
+  kojo_message_com,
+  kojo_message_com_family,
+  self_kojo,
+  self_kojo_family,
+};

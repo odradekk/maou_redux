@@ -33,12 +33,11 @@ export default [
   {
     desc: 'M7 EVENTTRAIN/PRITRAIN 暂存：SIF ASSI 的非零判定改成大于零',
     file: 'ere/event/event-train.js',
-    find: `  era_flag.target_backup = target;
-  if (era_flag.assi) {
-    era_flag.assi_backup = era_flag.assi;`,
-    replace: `  era_flag.target_backup = target;
-  if (era_flag.assi > 0) {
-    era_flag.assi_backup = era_flag.assi;`,
+    find: `    // :39-41 记录目标与助手，以备人物切换：ASSI:1 / TARGET:1（flag 槽位）
+    era_flag.assi_record = era_flag.assi;
+    era_flag.target_record = era_flag.target;`,
+    replace: `    // 变异：漏记 assi_record
+    era_flag.target_record = era_flag.target;`,
     tests: ['event-train'],
     must_mention: '全量断言',
   },
