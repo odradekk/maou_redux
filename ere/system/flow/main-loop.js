@@ -64,6 +64,8 @@ require('#/system/train/com-special');
 // @COM110/111「着装脱衣」族（#228 J18）：穿衣 / 脱衣。漏 require 时游戏里
 // 这两条指令根本没注册（#274 通用锁的起因之一）。
 require('#/system/train/com-cloth');
+// @COM60-73「助手与蕾丝」族（#225 J15）：助手指令、3P、六九式、发型
+require('#/system/train/com-assistant');
 // 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
 // @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
 require('#/system/train/com-colosseum');

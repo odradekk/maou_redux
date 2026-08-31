@@ -107,10 +107,13 @@ const REPO = path.resolve(__dirname, '..');
 // 而玩家恰好持有这两件。COM10/COM12 因此真执行，natural 匹配 940 → 1108。
 // 【#229（J19）追加与高级族落地后重测】COM_ABLE120-135 的真实 guard（追加
 // 指令许可 FLAG:71、各自的体位/装备门槛）过滤掉误列菜单：自然态 933 → 899、
-// 升格态 365 → 355。下面是合并态的实测值。未解释恒 0。
+// 升格态 365 → 355。
+// 【#225（J15）助手与蕾丝族落地后重测】COM_ABLE60-73 的真实 guard（助手在场、
+// 技巧门槛、装备位）过滤掉误列菜单：自然态 899 → 712、升格态 355 → 300。
+// 下面是合并态的实测值。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1108, version: 0, stub: 899, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 355, unexplained: 0 },
+  'train-natural': { matched: 1108, version: 0, stub: 712, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 300, unexplained: 0 },
 };
 
 async function build_report(sample) {
