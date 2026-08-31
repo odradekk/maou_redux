@@ -94,9 +94,14 @@ const REPO = path.resolve(__dirname, '..');
 // 仍会在每轮菜单错误列出它们；补齐真实装载面后，实际 guard 过滤掉的菜单
 // 条目不再被误记为「COM_ABLE 未移植」存根。输出匹配数不变，存根自然态
 // −142、升格态 −36。
+//
+// 【#220（J10）亲族共用真身后重测】两样本均未设置亲族 CFLAG，原作 @INCEST
+// 静默早退；过去每个 SOURCE_CHECK 仍凭空输出一行 INCEST 存根。共享真身接入
+// source-check / com-vaginasex 后，这些伪行消失：自然态 −6、升格态 −3；匹配
+// 数与未解释数不变。这里仅更新行为进度计，不改变 compare 工具、回放或夹具。
 const BASELINE = {
-  'train-natural': { matched: 940, version: 0, stub: 1706, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 556, unexplained: 0 },
+  'train-natural': { matched: 940, version: 0, stub: 1700, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 553, unexplained: 0 },
 };
 
 async function build_report(sample) {

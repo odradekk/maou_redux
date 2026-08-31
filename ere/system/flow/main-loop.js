@@ -64,6 +64,8 @@ require('#/system/train/com-special');
 // 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
 // @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
 require('#/system/train/com-colosseum');
+// @COM10-19「道具使用」族（#220 J10）：真身、可用性、装备持续效果与训练消息分支
+require('#/system/train/com-toy');
 // 回合结算本体（#114）：@EVENTTURNEND 的普通档定义（SYSTEM ver1.0.3.ERB）。
 // 与上面 event-turnend.js 的 #PRI 档、event-turnend-later.js 的空 #LATER 档
 // 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）

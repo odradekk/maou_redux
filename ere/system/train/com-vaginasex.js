@@ -43,28 +43,20 @@
  *   - @COM_AFTER_EXTRA_SEX 的日文原文串（:1074 性交経験＋１ / :1171
  *     【童貞喪失】）按 #60 归一简体（性交经验＋１ / 【童贞丧失】——
  *     V 版 :881/:1013 的简体字形）。
- *   - CALL INCEST 复用在册存根（stub_line，ere/event/source-check.js 的
- *     同名同形状——不建第二个桩，#177/#178 教训）；TFLAG:14 = 0 由本侧
- *     1:1 重置（原作 INCEST 首行）。
+ *   - CALL INCEST 复用 `system/train/incest` 的原作解码；TFLAG:14 的归零与
+ *     CFLAG:21–25 亲族关系计算都由共用函数 1:1 承载。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
+const { incest } = require('#/system/train/incest');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。INCEST 与 ere/event/source-check.js 共用同一条登记。
- */
-const STUBBED_CALLS = ['INCEST'];
-
-/** CALL INCEST（SUB2:324）：TFLAG:14 重置 1:1 + 在册存根（头注） */
+/** 执行 @INCEST（SUB2:324）；调用点使用当前 TARGET/PLAYER。 */
 function call_incest() {
-  era.set('tflag:14', 0); // SUB2:338（INCEST 首行）
-  stub_line('INCEST', '亲族关系判定', '随亲族票');
+  return incest(era_flag.target, era_flag.player);
 }
 
 // —— 结算上下文的小读取面（target / player 两行） ——
@@ -452,7 +444,7 @@ async function com_after_vagina_sex(rand) {
   // :890-914 异常经验（处女丧失的相手别——此时 TALENT:0 尚未清除，
   // 处女丧失本体在 @SOURCE_CHECK 的 LOST_VIRGIN_CHECK，回合后半才跑）
   let z = 0;
-  call_incest(); // :893（TFLAG:14 重置 + 存根）
+  call_incest(); // :893（TFLAG:14 清零后重算）
   const t14 = () => era.get('tflag:14') || 0;
   // :895-896 相手是女性（非男人 122 且非扶她 121）
   if (tal(cid, 0) && !tal(player, 122) && tal(player, 121) !== 1) {
@@ -744,7 +736,6 @@ async function com_after_extra_sex() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   confirm_lost_virgin,
   com_ejac_player_sex,
   com_ejac_player_milk,
