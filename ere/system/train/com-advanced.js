@@ -2816,7 +2816,211 @@ async function com129() {
   return 1;
 }
 
-const com130 = make_advanced_com(130, '正常位ＳＰ');
+function source130() {
+  const cid = era_flag.target;
+  add_lose(cid, 0, 70);
+  add_lose(cid, 1, 130);
+  set_src(cid, 12, 400);
+  const service = [
+    [50, 10],
+    [150, 50],
+    [200, 100],
+    [250, 180],
+    [300, 300],
+    [350, 500],
+  ][Math.min(abl(cid, 16), 5)];
+  set_src(cid, 4, service[0]);
+  set_src(cid, 5, service[1]);
+  const skill = [0.5, 0.8, 1, 1.5, 2.5, 4][Math.min(abl(cid, 12), 5)];
+  times_src(cid, 4, skill);
+  times_src(cid, 5, skill);
+  set_src(cid, 0, [20, 100, 500, 1200, 2000, 2800][Math.min(abl(cid, 0), 5)]);
+  const v_feel = [
+    [10, 250],
+    [50, 500],
+    [450, 550],
+    [1000, 800],
+    [2800, 1200],
+    [4000, 1800],
+  ][Math.min(abl(cid, 2), 5)];
+  set_src(cid, 1, v_feel[0]);
+  set_src(cid, 3, v_feel[1]);
+  const e0 = exp(cid, 0);
+  if (e0 < EXPLV[1]) {
+    times_src(cid, 1, 0.2);
+    set_src(cid, 6, 5500);
+  } else if (e0 < EXPLV[2]) {
+    times_src(cid, 1, 0.6);
+    set_src(cid, 6, 300);
+  } else if (e0 < EXPLV[3]) {
+    times_src(cid, 1, 1);
+    set_src(cid, 6, 50);
+  } else if (e0 < EXPLV[4]) {
+    times_src(cid, 1, 1.2);
+    set_src(cid, 6, 10);
+  } else if (e0 < EXPLV[5]) {
+    times_src(cid, 1, 1.3);
+    set_src(cid, 6, 0);
+  } else {
+    times_src(cid, 1, 1.8);
+    set_src(cid, 6, 0);
+  }
+  const lube = palam(cid, 3);
+  if (lube < PALAMLV[1]) {
+    times_src(cid, 1, 0.1);
+    add_src(cid, 6, 1000);
+    times_src(cid, 6, 3);
+  } else if (lube < PALAMLV[2]) {
+    times_src(cid, 1, 0.4);
+    add_src(cid, 6, 300);
+    times_src(cid, 6, 1);
+  } else if (lube < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 6, 0.5);
+  } else if (lube < PALAMLV[4]) {
+    times_src(cid, 1, 1.4);
+    times_src(cid, 6, 0.2);
+  } else {
+    times_src(cid, 1, 1.8);
+    times_src(cid, 6, 0.1);
+  }
+  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (tal(cid, 99)) times_src(cid, 6, 0.8);
+  if (tal(cid, 100)) times_src(cid, 6, 2);
+  if (tal(cid, 135)) times_src(cid, 6, 4);
+  if (tal(cid, 30)) {
+    times_src(cid, 3, 0.6);
+    set_src(cid, 15, e0 === 0 ? 10000 : 1000);
+  } else if (tal(cid, 31)) {
+    if (e0 === 0) {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 300);
+    }
+  } else if (e0 === 0) {
+    set_src(cid, 15, 3000);
+  }
+  const breast = [
+    [20, 50],
+    [100, 100],
+    [500, 160],
+    [1200, 200],
+    [2000, 230],
+    [2800, 250],
+  ][Math.min(abl(cid, 1), 5)];
+  set_src(cid, 17, breast[0]);
+  set_src(cid, 3, breast[1]); // 源侧覆写情爱，不是加算（COMF130:189）
+  const lust = palam(cid, 5);
+  if (lust < PALAMLV[1]) {
+    times_src(cid, 1, 0.6);
+    times_src(cid, 3, 0.3);
+  } else if (lust < PALAMLV[2]) {
+    times_src(cid, 1, 0.8);
+    times_src(cid, 3, 0.6);
+  } else if (lust < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 3, 1);
+  } else if (lust < PALAMLV[4]) {
+    times_src(cid, 1, 1.2);
+    times_src(cid, 3, 1.5);
+  } else {
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 1.8);
+  }
+  const obey = [
+    [0.5, 0.6, 2],
+    [0.8, 0.8, 1.5],
+    [1, 1, 1],
+    [1.3, 1.2, 0.8],
+    [1.6, 1.4, 0.6],
+    [2, 1.6, 0.3],
+  ][Math.min(abl(cid, 10), 5)];
+  times_src(cid, 1, obey[0]);
+  times_src(cid, 3, obey[1]);
+  times_src(cid, 15, obey[2]);
+  if (tal(cid, 85)) {
+    times_src(cid, 0, 1.5);
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 2);
+    times_src(cid, 17, 1.5);
+  }
+}
+
+function after130() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const mouth = stain(cid, 0) | stain(player, 0);
+  era.set(`stain:${cid}:0`, mouth);
+  era.set(`stain:${player}:0`, mouth);
+  const breast_stain = stain(cid, 5) | stain(player, 1);
+  era.set(`stain:${cid}:5`, breast_stain);
+  era.set(`stain:${player}:1`, breast_stain);
+}
+
+async function message_b130() {
+  const cid = era_flag.target;
+  era.print(
+    `${target_name()}用被贯穿的身体迎接着压下来的分量、嘴唇与${player_name()}重重地吻着、舌头缠绕在一起…`,
+  );
+  if (tal(cid, 110) || tal(cid, 114)) {
+    era.print(
+      `正在翻腾起波涛乳浪的双峰被与${player_name()}抓住、充满弹性的乳肉、被揉的时候好像要跳起来一样。`,
+    );
+  } else if (tal(cid, 109)) {
+    era.print(`小小的胸部被${player_name()}按摩着。`);
+  } else {
+    era.print(`晃动的胸部被${player_name()}揉搓着。`);
+  }
+  if (tal(cid, 85)) era.print('接着两人双手十指紧扣、');
+  era.print('在肉体与灵魂交汇中挺动着腰、不停地捅着子宫…');
+  if ((era.get('tflag:899') || 0) !== 0) return;
+  const e0 = exp(cid, 0);
+  if (e0 <= 30 || (e0 >= 31 && e0 <= 50)) {
+    era.print(`${target_name()}觉得异物感太强了、很痛苦的样子…`);
+  } else if (e0 <= 50 && tal(cid, 121)) {
+    era.print(`${target_name()}在阴毛和肚脐之间摩擦着阴茎、漏出了呻吟声…`);
+  } else if (e0 <= 50) {
+    era.print(`${target_name()}用阴毛摩擦着阴蒂、漏出了呻吟声…`);
+  } else if (e0 <= 80) {
+    era.print(`${target_name()}发出了长长的甘甜吐息、因强烈的插入感咬紧牙关…`);
+  } else if (e0 <= 120) {
+    era.print(
+      '子宫做好了接种的准备、扭动着纤细的腰、引导阴茎去到最深处那窟窿里…',
+    );
+    era.print(`${target_name()}子宫被重重地叩击着、嘴巴大张、身体剧烈地颤抖…`);
+  } else {
+    era.print(`突入到${target_name()}的子宫、狠狠地摇晃着她的身体、`);
+    let line = target_name();
+    if (tal(cid, 85)) line += '眼里泛起幸福的泪水、';
+    if (palam(cid, 5) > PALAMLV[4]) line += '口水流出来了、';
+    if (palam(cid, 3) > PALAMLV[4]) line += '私处湿得一塌糊涂、';
+    line += '样子发了疯似的、沉醉在牝奴能得到的最高快乐之中…';
+    era.print(line);
+  }
+}
+
+async function message_a130() {
+  await train_message_a_sex_common();
+}
+
+/** @COM130（COMF130_正常位ＳＰ.ERB）正常位ＳＰ。高级 COM。 */
+async function com130() {
+  era_flag.selectcom = 130; // 原作显式 SELECTCOM = 130（升格抵达时回填号位）
+  if ((await confirm_lost_virgin()) === 0) return 0;
+  if (!(await confirm_condom())) return 0;
+  era.print('正常位ＳＰ');
+  await train_message_b();
+  const cid = era_flag.target;
+  game.train.伴V经验指令 = 1;
+  if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
+    game.train.主人导致处女丧失 = 1;
+  }
+  await com_ejac_player_sex();
+  source130();
+  after130();
+  await com_after_vagina_sex();
+  return 1;
+}
+
 const com131 = make_advanced_com(131, '背后位・胸爱抚');
 const com132 = make_advanced_com(132, '背后位・打屁股');
 const com133 = make_advanced_com(133, '站立背后位');
@@ -2869,9 +3073,11 @@ train_message_b_family.register(128, message_b128);
 train_message_a_family.register(128, message_a128);
 train_message_b_family.register(129, message_b129);
 train_message_a_family.register(129, message_a129);
+train_message_b_family.register(130, message_b130);
+train_message_a_family.register(130, message_a130);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [130, 131, 132, 133, 134, 135]) {
+for (const id of [131, 132, 133, 134, 135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }

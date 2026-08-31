@@ -609,6 +609,47 @@ test('@COM129 B/A：胸揉搓行与灌满余韵', async () => {
   );
 });
 
+test('@COM130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 20;
+  world.fixture.store.set('abl:31:2', 3);
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
+  const result = await world.com_family.call(130);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 130, '原作显式 SELECTCOM = 130');
+  assert.ok(world.fixture.text_lines().includes('正常位ＳＰ'));
+  assert.equal(world.fixture.store.get('tflag:19'), 1);
+  // ABL:16=0 → S4=50 ×0.50=25、S5=10 ×0.50=5；ABL:0=0 → S0=20。
+  // ABL:2=3 → S1=1000、S3=800；EXP < EXPLV:3 → S1×1、S6=50；
+  // 润滑 < LV3 → S1×1、S6×0.50=25；ABL:1=0 → S17=20、S3=50（覆写）；
+  // 欲情 < LV1 → S1×0.60=600、S3×0.30=15；顺从 0 → S1×0.50=300、S3×0.60=9。
+  assert.equal(world.fixture.store.get('source:31:0'), 20);
+  assert.equal(world.fixture.store.get('source:31:1'), 300);
+  assert.equal(world.fixture.store.get('source:31:3'), 9);
+  assert.equal(world.fixture.store.get('source:31:4'), 25);
+  assert.equal(world.fixture.store.get('source:31:5'), 5);
+  assert.equal(world.fixture.store.get('source:31:6'), 25);
+  assert.equal(world.fixture.store.get('source:31:12'), 400);
+  assert.equal(world.fixture.store.get('source:31:17'), 20);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -70);
+});
+
+test('@COM130 B/A：接吻胸揉与子宫突进行', async () => {
+  const world = seed_world();
+  world.fixture.store.set('callname:0:-1', '魔王');
+  await world.com_family.call(130);
+  const lines = world.fixture.text_lines();
+  assert.ok(
+    lines.includes(
+      '温妮用被贯穿的身体迎接着压下来的分量、嘴唇与魔王重重地吻着、舌头缠绕在一起…',
+    ),
+  );
+  assert.ok(lines.includes('晃动的胸部被魔王揉搓着。'));
+  assert.ok(lines.includes('在肉体与灵魂交汇中挺动着腰、不停地捅着子宫…'));
+  assert.ok(lines.includes('温妮觉得异物感太强了、很痛苦的样子…'));
+});
+
 test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
   const world = seed_world();
   enable_oral(world.fixture);

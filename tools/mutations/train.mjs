@@ -3906,4 +3906,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
+  {
+    desc: 'M1464 COM130 默认档乳房覆写情爱 SOURCE:3 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  set_src(cid, 3, breast[1]); // 源侧覆写情爱，不是加算（COMF130:189）',
+    replace: '  // 变异：COM130 情爱覆写删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
+  },
 ];
