@@ -3946,4 +3946,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
   },
+  {
+    desc: 'M1469 COM135 默认档剃毛 SOURCE:12 加倍删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '    times_src(cid, 12, 2); // COMF135:428 剃毛加倍',
+    replace: '    // 变异：COM135 剃毛加倍删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM135：默认档 SOURCE 与自慰经验',
+  },
 ];

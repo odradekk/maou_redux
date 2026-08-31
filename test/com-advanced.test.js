@@ -414,9 +414,47 @@ test('@COM125 B/A：吸啜自慰行与口中注入', async () => {
 test('@COM135：自助舔阴（可直选）；扶她改自我口交', async () => {
   const world = seed_world();
   world.fixture.store.set('talent:31:121', 1);
+  world.fixture.store.set('abl:31:11', 33);
   const result = await run_com(world, 135);
   assert.equal(result, 1);
   assert.ok(world.fixture.text_lines().includes('自我口交'));
+});
+
+test('@COM135：默认档 SOURCE 与自慰经验', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 33);
+  const result = await run_com(world, 135);
+  assert.equal(result, 1);
+  assert.ok(world.fixture.text_lines().includes('自助舔阴'));
+  // ABL:0=0 → S0=15 ×0.30=4、S12=2000 ×2（剃毛）=4000、S13=500；
+  // ABL:1=0 → S17=15 ×0.30=4；ABL:12=0 → S4=100；S14=400。
+  assert.equal(world.fixture.store.get('source:31:0'), 4);
+  assert.equal(world.fixture.store.get('source:31:4'), 100);
+  assert.equal(world.fixture.store.get('source:31:12'), 4000);
+  assert.equal(world.fixture.store.get('source:31:13'), 500);
+  assert.equal(world.fixture.store.get('source:31:14'), 400);
+  assert.equal(world.fixture.store.get('source:31:17'), 4);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -5);
+  assert.equal(world.fixture.store.get('exp:31:10'), 1);
+  assert.equal(world.fixture.store.get('tflag:200'), 2);
+});
+
+test('@COM135：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await run_com(world, 135);
+  assert.equal(result, 0);
+  assert.equal(world.fixture.store.get('source:31:14'), undefined);
+});
+
+test('@COM135 B：拿下头舔阴部', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 33);
+  await run_com(world, 135);
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes('温妮拿下自己的头、放到阴部处舔舐了起来了…'),
+  );
 });
 
 test('@COM126：手搓口交，回填 SELECTCOM 与默认 SOURCE', async () => {

@@ -33,15 +33,15 @@
  * 高级 COM（120/121/123-134）均显式 `SELECTCOM = <自己的号>` 回填号位；
  * 122/135 是可直选指令，源侧没有这条赋值。
  *
- * TRAIN_MESSAGE 分支先登记空操作，避免「族票未落地」占位行；文案随各指令
- * 真身切片填入。口上（@KOJO_MESSAGE_COM_<n>）随轴 B，本票不写台词。
- *
+ * TRAIN_MESSAGE A/B 随各指令真身登记。COM135 源侧无 A 分支，A 登记空操作以免
+ * 「族票未落地」占位行。口上（@KOJO_MESSAGE_COM_<n>）随轴 B，本票不写台词。
  * COM135 经 CASE 21 可能跳到 COM64（三人，J15）。真身未落地时走登记存根。
  */
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
@@ -3741,6 +3741,176 @@ async function com134() {
   return 1;
 }
 
+async function order135() {
+  const cid = era_flag.target;
+  const { a, s, parts } = await com_order(0, 0);
+  const state = { a, s };
+  if (abl(cid, 11)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 11)}LV${abl(cid, 11)}`,
+      abl(cid, 11) * 3,
+    );
+  }
+  if (abl(cid, 17)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 17)}LV${abl(cid, 17)}`,
+      abl(cid, 17) * 4,
+    );
+  }
+  if (abl(cid, 31)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 31)}LV${abl(cid, 31)}`,
+      abl(cid, 31) * 3,
+    );
+  }
+  const mark1 = Math.floor(era.get(`mark:${cid}:1`) || 0);
+  if (mark1) {
+    append_term(parts, state, `${name_of('markname', 1)}LV${mark1}`, mark1 * 3);
+  }
+  const lust = palam_ladder(palam(cid, 5));
+  if (lust) {
+    append_term(parts, state, `${name_of('palamname', 5)}LV${lust}`, lust * 3);
+  }
+  if (tal(cid, 20)) append_term(parts, state, name_of('talentname', 20), -5);
+  if (tal(cid, 35)) append_term(parts, state, name_of('talentname', 35), -5);
+  if (tal(cid, 36)) append_term(parts, state, name_of('talentname', 36), 2);
+  if (tal(cid, 60)) append_term(parts, state, name_of('talentname', 60), 5);
+  if (tal(cid, 70)) append_term(parts, state, name_of('talentname', 70), 5);
+  if (tal(cid, 71)) append_term(parts, state, name_of('talentname', 71), -5);
+  if (tal(cid, 89)) append_term(parts, state, name_of('talentname', 89), 10);
+  if (tequip(cid, 21)) {
+    append_term(parts, state, name_of('itemname', 26), 8);
+  }
+  let v = 33;
+  if (tequip(cid, 53)) v += 10;
+  parts.push(` = ${state.a}`);
+  parts.push(state.a < v ? ' < ' : state.a === v ? ' = ' : ' > ');
+  parts.push(`实行值${v}`);
+  era.print(parts.join(''));
+  await era.waitAnyKey();
+  return state.a >= v;
+}
+
+function source135() {
+  const cid = era_flag.target;
+  add_lose(cid, 0, 5);
+  add_lose(cid, 1, 50);
+  set_src(cid, 14, 400);
+  if (tequip(cid, 53)) {
+    set_src(cid, 10, 50);
+    set_src(cid, 11, 100);
+  }
+  const clit = [
+    [15, 2000, 500],
+    [50, 2300, 800],
+    [300, 2600, 1200],
+    [700, 2900, 1900],
+    [1100, 3200, 2500],
+    [1600, 3500, 3000],
+  ][Math.min(abl(cid, 0), 5)];
+  set_src(cid, 0, clit[0]);
+  set_src(cid, 12, clit[1]);
+  set_src(cid, 13, clit[2]);
+  set_src(cid, 17, [15, 50, 300, 700, 1100, 1600][Math.min(abl(cid, 1), 5)]);
+  const skill = Math.min(abl(cid, 12), 5);
+  set_src(cid, 4, [100, 160, 220, 280, 340, 400][skill]);
+  const skill_body = [0.3, 0.7, 1, 1.2, 1.4, 1.6][skill];
+  times_src(cid, 0, skill_body);
+  times_src(cid, 17, skill_body);
+  times_src(cid, 1, skill_body);
+  times_src(cid, 2, skill_body);
+  const addict = Math.min(abl(cid, 31), 5);
+  set_src(cid, 7, [0, 100, 300, 800, 1500, 2500][addict]);
+  const addict_m = [1, 1.1, 1.2, 1.3, 1.5, 1.7][addict];
+  const addict_va = addict === 5 ? 1.5 : addict_m;
+  times_src(cid, 0, addict_m);
+  times_src(cid, 17, addict_m);
+  times_src(cid, 1, addict_va);
+  times_src(cid, 2, addict_va);
+  if (tequip(cid, 53) || tequip(cid, 54)) {
+    const expo = Math.min(abl(cid, 17), 5);
+    add_src(cid, 7, [0, 100, 300, 800, 1500, 2500][expo]);
+    const expo_m = [1, 1.1, 1.2, 1.3, 1.5, 1.7][expo];
+    times_src(cid, 0, expo_m);
+    times_src(cid, 17, expo_m);
+    times_src(cid, 1, expo_m);
+    times_src(cid, 2, expo_m);
+    times_src(cid, 12, [1, 1.2, 1.4, 1.6, 2, 3][expo]);
+    if (tal(cid, 89)) {
+      add_src(cid, 7, 500);
+      times_src(cid, 0, 1.2);
+      times_src(cid, 17, 1.2);
+      times_src(cid, 1, 1.2);
+      times_src(cid, 2, 1.2);
+      times_src(cid, 12, 1.5);
+    }
+  }
+  if (!tal(cid, 125) && tal(cid, 310) <= 20) {
+    times_src(cid, 12, 2); // COMF135:428 剃毛加倍
+  }
+}
+
+function after135() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const finger_b = stain(cid, 1) | stain(cid, 5);
+  era.set(`stain:${cid}:1`, finger_b);
+  era.set(`stain:${cid}:5`, finger_b);
+  const finger_v = stain(cid, 1) | stain(cid, 3);
+  era.set(`stain:${cid}:1`, finger_v);
+  era.set(`stain:${cid}:3`, finger_v);
+  if (tequip(cid, 53) || tequip(cid, 54)) {
+    chara(cid).dungeon.自慰经验 += 2;
+    era.print('自慰经验＋２');
+    chara(cid).dungeon.调教自慰经验 += 2;
+    era.print('调教自慰经验＋２');
+  } else {
+    chara(cid).dungeon.自慰经验 += 1;
+    era.print('自慰经验＋１');
+    chara(cid).dungeon.调教自慰经验 += 1;
+    era.print('调教自慰经验＋１');
+  }
+  if (
+    (tequip(cid, 53) || tequip(cid, 54)) &&
+    (era.get(`cflag:${cid}:3`) || 0) === 0
+  ) {
+    chara(cid).dungeon.异常经验 += 1;
+    era.print('异常经验＋１');
+    era.set(`cflag:${cid}:3`, 1);
+  }
+  if (tal(cid, 122) === 0 && tal(player, 122) === 0) {
+    era.print(`${name_of('expname', 40)}+3`);
+    era.add(`exp:${cid}:40`, 3);
+  } else if (tal(cid, 122) === 1 && tal(player, 122) === 1) {
+    era.print(`${name_of('expname', 41)}+3`);
+    era.add(`exp:${cid}:41`, 3);
+  }
+  game.train.屈服刻印结算 = 2;
+}
+
+async function message_b135() {
+  const cid = era_flag.target;
+  let line = `${target_name()}拿下自己的头、放到阴部处舔舐了起来`;
+  if (tal(cid, 121) && palam(cid, 5) >= PALAMLV[3]) {
+    line += '、然后叼着勃起的阴茎、';
+    if (abl(cid, 11) > 3) {
+      line += '像用飞机杯似得用自己的头套弄着、眼睛不住转动、追逐着快感';
+    }
+  } else if (tal(cid, 121)) {
+    line += '阴茎的根部、也仔细地舔舐着';
+  } else if (palam(cid, 5) >= PALAMLV[3]) {
+    line += '用嘴唇的前端、爱抚着阴蒂';
+  }
+  line += '了…';
+  era.print(line);
+}
+
 /**
  * @COM135（COMF135_セルフクンニ.ERB）自助舔阴。可直选。
  * 头部 LOCAL = 21 / CALL GET_ADV_COM（源 :14-16），命中则 JUMPFORM。
@@ -3753,7 +3923,10 @@ async function com135() {
   if (tequip(target, 53)) prefix += '公开';
   if (tequip(target, 54)) prefix += '野外';
   era.print(prefix + (tal(target, 121) === 1 ? '自我口交' : '自助舔阴'));
+  if (!(await order135())) return 0;
   await train_message_b();
+  source135();
+  after135();
   return 1;
 }
 
@@ -3798,12 +3971,8 @@ train_message_b_family.register(133, message_b133);
 train_message_a_family.register(133, message_a133);
 train_message_b_family.register(134, message_b134);
 train_message_a_family.register(134, message_a134);
-
-// TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [135]) {
-  train_message_b_family.register(id, async () => 0);
-  train_message_a_family.register(id, async () => 0);
-}
+train_message_b_family.register(135, message_b135);
+train_message_a_family.register(135, async () => 0);
 
 com_able_family.register(120, able120);
 com_able_family.register(121, able121);
