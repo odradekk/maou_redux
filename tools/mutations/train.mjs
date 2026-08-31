@@ -3829,8 +3829,8 @@ export default [
   {
     desc: 'M1454 COM120 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  times_src(cid, 1, obey[0]);',
-    replace: '  // 变异：顺从乘算删除',
+    find: '  times_src(cid, 1, obey[0]);\n  times_src(cid, 3, obey[1]);\n  times_src(cid, 15, obey[2]);\n\n  if (prev === 34) {',
+    replace: '  // 变异：顺从乘算删除\n  times_src(cid, 3, obey[1]);\n  times_src(cid, 15, obey[2]);\n\n  if (prev === 34) {',
     tests: ['com-advanced'],
     must_mention: '默认档 SOURCE',
   },
@@ -3889,5 +3889,13 @@ export default [
     replace: '  // 变异：COM127 回填号删除',
     tests: ['com-advanced'],
     must_mention: '原作显式 SELECTCOM = 127',
+  },
+  {
+    desc: 'M1462 COM128 默认档情爱 SOURCE:3 恒乘删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  times_src(cid, 3, 2); // 源侧无缩进，恒乘（COMF128:230）',
+    tests: ['com-advanced'],
+    replace: '  // 变异：COM128 情爱恒乘删除',
+    must_mention: 'COM128：正常位・接吻，回填 SELECTCOM 与默认 SOURCE',
   },
 ];

@@ -46,10 +46,13 @@ const { game } = require('#/facade/game');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const { com_order } = require('#/system/train/com-order');
+const { confirm_condom } = require('#/system/train/com-condom');
+const { train_message_a_sex_common } = require('#/system/train/com-sex');
 const {
   com_after_vagina_sex,
   com_ejac_player_milk,
   com_ejac_player_sex,
+  confirm_lost_virgin,
 } = require('#/system/train/com-vaginasex');
 const {
   train_message_a_family,
@@ -2517,7 +2520,157 @@ async function com127() {
   return 1;
 }
 
-const com128 = make_advanced_com(128, '正常位・接吻');
+function source128() {
+  const cid = era_flag.target;
+  add_lose(cid, 0, 60);
+  add_lose(cid, 1, 120);
+  set_src(cid, 12, 400);
+  const service = [
+    [50, 10],
+    [150, 50],
+    [200, 100],
+    [250, 180],
+    [300, 300],
+    [350, 500],
+  ][Math.min(abl(cid, 16), 5)];
+  set_src(cid, 4, service[0]);
+  set_src(cid, 5, service[1]);
+  const skill = [0.5, 0.8, 1, 1.5, 2.5, 4][Math.min(abl(cid, 12), 5)];
+  times_src(cid, 4, skill);
+  times_src(cid, 5, skill);
+  const v_feel = [
+    [40, 150],
+    [150, 250],
+    [400, 350],
+    [1000, 500],
+    [1700, 700],
+    [2200, 1000],
+  ][Math.min(abl(cid, 2), 5)];
+  set_src(cid, 1, v_feel[0]);
+  set_src(cid, 3, v_feel[1]);
+  const e0 = exp(cid, 0);
+  if (e0 < EXPLV[1]) {
+    times_src(cid, 1, 0.2);
+    set_src(cid, 6, 5500);
+  } else if (e0 < EXPLV[2]) {
+    times_src(cid, 1, 0.6);
+    set_src(cid, 6, 300);
+  } else if (e0 < EXPLV[3]) {
+    times_src(cid, 1, 1);
+    set_src(cid, 6, 50);
+  } else if (e0 < EXPLV[4]) {
+    times_src(cid, 1, 1.2);
+    set_src(cid, 6, 10);
+  } else if (e0 < EXPLV[5]) {
+    times_src(cid, 1, 1.3);
+    set_src(cid, 6, 0);
+  } else {
+    times_src(cid, 1, 1.8);
+    set_src(cid, 6, 0);
+  }
+  const lube = palam(cid, 3);
+  if (lube < PALAMLV[1]) {
+    times_src(cid, 1, 0.1);
+    add_src(cid, 6, 1000);
+    times_src(cid, 6, 3);
+  } else if (lube < PALAMLV[2]) {
+    times_src(cid, 1, 0.4);
+    add_src(cid, 6, 300);
+    times_src(cid, 6, 1);
+  } else if (lube < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 6, 0.5);
+  } else if (lube < PALAMLV[4]) {
+    times_src(cid, 1, 1.4);
+    times_src(cid, 6, 0.2);
+  } else {
+    times_src(cid, 1, 1.8);
+    times_src(cid, 6, 0.1);
+  }
+  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (tal(cid, 99)) times_src(cid, 6, 0.8);
+  if (tal(cid, 100)) times_src(cid, 6, 2);
+  if (tal(cid, 135)) times_src(cid, 6, 4);
+  if (tal(cid, 30)) {
+    times_src(cid, 3, 0.6);
+    set_src(cid, 15, e0 === 0 ? 10000 : 1000);
+  } else if (tal(cid, 31)) {
+    if (e0 === 0) {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 300);
+    }
+  } else if (e0 === 0) {
+    set_src(cid, 15, 3000);
+  }
+  const lust = palam(cid, 5);
+  if (lust < PALAMLV[1]) {
+    times_src(cid, 1, 0.6);
+    times_src(cid, 3, 0.3);
+  } else if (lust < PALAMLV[2]) {
+    times_src(cid, 1, 0.8);
+    times_src(cid, 3, 0.6);
+  } else if (lust < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 3, 1);
+  } else if (lust < PALAMLV[4]) {
+    times_src(cid, 1, 1.2);
+    times_src(cid, 3, 1.5);
+  } else {
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 1.8);
+  }
+  const obey = [
+    [0.5, 0.6, 2],
+    [0.8, 0.8, 1.5],
+    [1, 1, 1],
+    [1.3, 1.2, 0.8],
+    [1.6, 1.4, 0.6],
+    [2, 1.6, 0.3],
+  ][Math.min(abl(cid, 10), 5)];
+  times_src(cid, 1, obey[0]);
+  times_src(cid, 3, obey[1]);
+  times_src(cid, 15, obey[2]);
+  if (tal(cid, 85)) times_src(cid, 1, 1.5);
+  times_src(cid, 3, 2); // 源侧无缩进，恒乘（COMF128:230）
+}
+
+function after128() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const mouth = stain(cid, 0) | stain(player, 0);
+  era.set(`stain:${cid}:0`, mouth);
+  era.set(`stain:${player}:0`, mouth);
+}
+
+async function message_b128() {
+  era.print(
+    `${target_name()}被贯穿的身体迎接着压下来的分量、嘴唇与${player_name()}重重地吻着、舌头缠绕在一起…`,
+  );
+}
+
+async function message_a128() {
+  await train_message_a_sex_common();
+}
+
+/** @COM128（COMF128_正常位・キス.ERB）正常位・接吻。高级 COM。 */
+async function com128() {
+  era_flag.selectcom = 128; // 原作显式 SELECTCOM = 128（升格抵达时回填号位）
+  if ((await confirm_lost_virgin()) === 0) return 0;
+  if (!(await confirm_condom())) return 0;
+  era.print('正常位・接吻');
+  await train_message_b();
+  const cid = era_flag.target;
+  game.train.伴V经验指令 = 1;
+  if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
+    game.train.主人导致处女丧失 = 1;
+  }
+  await com_ejac_player_sex();
+  source128();
+  after128();
+  await com_after_vagina_sex();
+  return 1;
+}
+
 const com129 = make_advanced_com(129, '正常位・胸爱抚');
 const com130 = make_advanced_com(130, '正常位ＳＰ');
 const com131 = make_advanced_com(131, '背后位・胸爱抚');
@@ -2568,9 +2721,11 @@ train_message_b_family.register(126, message_b126);
 train_message_a_family.register(126, message_a126);
 train_message_b_family.register(127, message_b127);
 train_message_a_family.register(127, message_a127);
+train_message_b_family.register(128, message_b128);
+train_message_a_family.register(128, message_a128);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [128, 129, 130, 131, 132, 133, 134, 135]) {
+for (const id of [129, 130, 131, 132, 133, 134, 135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }
