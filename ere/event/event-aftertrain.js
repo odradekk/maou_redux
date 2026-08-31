@@ -114,7 +114,6 @@ async function aftertrain_sex_check() {
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
   game.train.初吻与自我口上 = 4;
   await self_kojo();
-
   era.print(`V经验＋${s}`);
   era.print(`性交经验＋${s}`);
   era.print(`快V点数＋${s * 200}`);
@@ -515,8 +514,7 @@ async function aftertrain_masturbation_check(
 
   // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
   game.train.初吻与自我口上 = 1;
-  await self_kojo();
-
+  await self_kojo(undefined, q);
   era.print(`自慰经验＋${a}`);
   const { chara } = require('#/facade/chara');
   chara(target).dungeon.自慰经验 += a;

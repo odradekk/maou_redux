@@ -73,6 +73,21 @@ class StrongholdFacade {
     era.set(`cflag:${this.cid}:500`, v);
   }
 
+  /**
+   * 要求奖赏（cflag:cid:504 ↔ CFLAG:504）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:504 = 要求したご褒美
+   * @returns {number}
+   */
+  get 要求奖赏() {
+    return era.get(`cflag:${this.cid}:504`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 要求奖赏(v) {
+    era.set(`cflag:${this.cid}:504`, v);
+  }
+
   // —— base ——
   /**
    * 寿命（base:cid:10 ↔ BASE:10）

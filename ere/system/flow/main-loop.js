@@ -82,12 +82,13 @@ require('#/system/train/com-tentacle');
 // 与上面 event-turnend.js 的 #PRI 档、event-turnend-later.js 的空 #LATER 档
 // 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）
 require('#/system/turnend-settle');
-// 口上（#46）：公共底座（@EVENTSHOP 总开关 / @GET_KOJO_NUM / 指令口上
-// 分发族）与两个口上模块（K3 高貴、K5 マオ——各带 @EVENTTRAIN 存在标志
-// 与 @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层目录（docs/skeleton.md）
+// 口上（#46/#232）：公共底座（@EVENTSHOP 总开关 / @GET_KOJO_NUM / 指令口上
+// 分发族）与三个口上模块（K3 高貴、K5 マオ、K1 自信家——各带 @EVENTTRAIN
+// 存在标志与 @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层目录（docs/skeleton.md）
 require('#/kojo/kojo-system');
 require('#/kojo/kojo-k3-noble');
 require('#/kojo/kojo-k5-mao');
+require('#/kojo/kojo-k1-confident');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。

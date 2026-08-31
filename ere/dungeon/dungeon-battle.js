@@ -45,6 +45,10 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const {
+  attack_koujo: speak_attack_koujo,
+  victory_koujo: speak_victory_koujo,
+} = require('#/kojo/kojo-system');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
 const { equip_database } = require('#/system/equip/equip-lookup');
 const {
@@ -158,19 +162,23 @@ async function source_check_auto() {
 }
 
 /**
- * @ATTACK_KOUJO 存根（口上，#107 转译线）：攻击时的口上台词。
+ * @ATTACK_KOUJO（EVENT_K.ERB:311）：攻击时的口上台词。分发层在
+ * kojo-system.js；未注册性格仍打占位行。
+ * @param {number} [cid] 攻击者（原作 ARG:0）
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function attack_koujo() {
-  await stub_line_wait('ATTACK_KOUJO', '攻击口上', '随口上票');
+async function attack_koujo(cid) {
+  await speak_attack_koujo(cid);
 }
 
 /**
- * @VICTORY_KOUJO 存根（口上，#107 转译线）：胜利时的口上台词。
+ * @VICTORY_KOUJO（EVENT_K.ERB:294）：胜利时的口上台词。分发层在
+ * kojo-system.js；未注册性格仍打占位行。
+ * @param {number} [cid] 胜者（原作全局 A = ATKER）
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function victory_koujo() {
-  await stub_line_wait('VICTORY_KOUJO', '胜利口上', '随口上票');
+async function victory_koujo(cid) {
+  await speak_victory_koujo(cid);
 }
 
 /**
@@ -624,9 +632,9 @@ async function enemy_attack(arg0, arg1, rand) {
   // :622 戦闘前発動スキル（行内标签串，文件头「同一显示行归并」）
   const skill_tag = skill_extra_bonus(arg0, rand);
 
-  // :628-630 セリフ（ATTACK_KOUJO 存根不打；FLAG:5 & 32 守卫）
+  // :628-630 セリフ（FLAG:5 & 32 守卫；口上分发）
   if ((settings & 32) !== 0) {
-    await attack_koujo();
+    await attack_koujo(arg0);
   }
 
   // :633-640 装備品効果（伤害增加 = 1）
@@ -1559,7 +1567,7 @@ async function dungeon_party_battle(arg0, rand) {
     if (dc === 1) {
       // 勝利セリフ / 戦利品 / 間違いが起こる
       era.drawLine();
-      await victory_koujo();
+      await victory_koujo(atker);
       await victory_get(atker, rand_n);
       await victory_ryouzyoku(atker, rand_n);
       success.v = 1;

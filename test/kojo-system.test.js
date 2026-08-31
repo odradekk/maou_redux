@@ -12,11 +12,10 @@
  *     @EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0；
  *   - 实机路径端到端：run_shop（BEGIN SHOP → @EVENTSHOP 链置开关）→
  *     @EVENTTRAIN 链 → COM0 → @SOURCE_CHECK 链 → K5 首次台词；
- *   - **#213 接触面契约**：@KOJO_MESSAGE_COM_<n> handler 的签名
- *     （kojo-system.js 文件头「handler 签名」段）——七道头部守卫对
- *     **已注册的全部 handler** 逐条置位驱动，守卫命中时不得出现台词。
- *     口上票（轴 B）落地新 handler 自动进契约，无需逐票自写守卫用例；
- *     指令族票（轴 A）对着同一签名扩展 SELECTCOM 分支。
+ *   - **#213 接触面契约**：跳过类守卫（口塞 / 失神 / 崩坏 / 触手）对
+ *     已注册的全部 handler 逐条置位；助手调教与死斗场/兽奸按各 handler
+ *     1:1 拆开（K3/K5 助手跳过、专用口上打占位；K1 助手出台词、专用口上
+ *     走真身，见 test/kojo-k1-confident.test.js）。
  */
 
 const assert = require('node:assert/strict');
@@ -209,58 +208,89 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   assert.equal(fixture.store.get('cflag:17:301'), 1, '状态机推进');
 });
 
-// —— #213 接触面契约：@KOJO_MESSAGE_COM_<n> 的七道头部守卫 ——
-
-// 七道守卫的置位器（EVENT_K3_高貴.ERB:888-912 实测；K5 同款顺序互异——
-// 契约锁的是守卫集与语义，顺序按各文件 1:1）。TEQUIP:55/45/89/90 只读
-// （TEQUIP 建模归 J5，#215）。
-const KOJO_GUARD_STATES = [
-  [
-    'TEQUIP:55 死斗场 → 专用口上',
-    (fixture) => fixture.store.set('tequip:17:55', 1),
-  ],
-  [
-    'ASSI > 0 && ASSIPLAY 助手调教 → 跳过',
-    (fixture, era_flag) => {
-      era_flag.assi = 17;
-      era_flag.assiplay = 1;
-    },
-  ],
+// —— #213 接触面契约：跳过类守卫 vs 助手/专用口上（按 handler 1:1） ——
+//
+// 口塞 / 失神 / 崩坏 / 触手：已注册的全部 handler 命中即静默。
+// 助手调教、死斗场、兽奸：K3/K5 与 K1 语义不同，不混在同一张表里驱动。
+const KOJO_SILENT_GUARDS = [
   [
     'TEQUIP:45 口塞（SELECTCOM != 45）→ 跳过',
     (fixture) => fixture.store.set('tequip:17:45', 1),
   ],
   ['TFLAG:899 失神 → 跳过', (fixture) => fixture.store.set('tflag:899', 1)],
-  [
-    'TEQUIP:89 兽奸 → 专用口上/静默',
-    (fixture) => fixture.store.set('tequip:17:89', 1),
-  ],
   ['TALENT:9 崩坏 → 跳过', (fixture) => fixture.store.set('talent:17:9', 1)],
   ['TEQUIP:90 触手 → 跳过', (fixture) => fixture.store.set('tequip:17:90', 1)],
 ];
 
-test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过（守卫命中不得出台词）', async () => {
-  // 对 family 里已注册的每个 handler × 每道守卫：置位 → 直调 → 返回 0、
-  // 无等待（台词用 printAndWait = print + waitAnyKey）、文本行只允许存根
-  // 占位形状（死斗场/兽奸守卫岔去专用口上时打占位行，K3/K5 形状各异）。
-  // 新口上票落地即自动进本契约——这是「12 张族票与 21 张口上票对着同一
-  // 张脸写」的机器守卫。
+test('#213 契约：跳过类守卫对已注册的全部 handler 逐条静默', async () => {
   const probe = await setup_kojo();
   const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
-  const handlers = [...kojo_message_com_family.implemented.entries()];
-  assert.ok(handlers.length >= 2, '契约至少要覆盖已注册的 K3/K5');
+  const nums = [...kojo_message_com_family.implemented.keys()];
+  assert.ok(nums.length >= 2, '契约至少要覆盖已注册的 K3/K5');
 
-  for (const [num, handler] of handlers) {
-    for (const [name, seed_guard] of KOJO_GUARD_STATES) {
+  for (const num of nums) {
+    for (const [name, seed_guard] of KOJO_SILENT_GUARDS) {
       const fixture = await setup_kojo();
       const flag = fixture.load_module('era-utils/era-flag');
       seed_guard(fixture, flag);
-      const result = await handler();
+      const family =
+        fixture.load_module('kojo/kojo-system').kojo_message_com_family;
+      const result = await family.call(num, { whenMissing: 0 });
       assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 守卫「${name}」返回 0`);
       assert.equal(
         fixture.calls.filter((c) => c.api === 'waitAnyKey').length,
         0,
         `KOJO_MESSAGE_COM_${num} 守卫「${name}」不得有台词（无等待）`,
+      );
+      assert.deepEqual(
+        fixture.text_lines(),
+        [],
+        `KOJO_MESSAGE_COM_${num} 守卫「${name}」必须静默`,
+      );
+    }
+  }
+});
+
+test('#213 契约：K3/K5 助手调教跳过（K1 不跳过，见 kojo-k1-confident）', async () => {
+  const probe = await setup_kojo();
+  const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
+  const nums = [...kojo_message_com_family.implemented.keys()];
+  for (const num of nums) {
+    const fixture = await setup_kojo();
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.assi = 17;
+    era_flag.assiplay = 1;
+    const family =
+      fixture.load_module('kojo/kojo-system').kojo_message_com_family;
+    const result = await family.call(num, { whenMissing: 0 });
+    assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 助手调教返回 0`);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [],
+      `KOJO_MESSAGE_COM_${num} 助手调教必须跳过`,
+    );
+  }
+});
+
+test('#213 契约：K3/K5 死斗场/兽奸只允许存根占位（K1 真身另测）', async () => {
+  const probe = await setup_kojo();
+  const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
+  const nums = [...kojo_message_com_family.implemented.keys()];
+  for (const num of nums) {
+    for (const [name, seed_guard] of [
+      ['TEQUIP:55 死斗场 → 专用口上', (f) => f.store.set('tequip:17:55', 1)],
+      ['TEQUIP:89 兽奸 → 专用口上/静默', (f) => f.store.set('tequip:17:89', 1)],
+    ]) {
+      const fixture = await setup_kojo();
+      seed_guard(fixture);
+      const family =
+        fixture.load_module('kojo/kojo-system').kojo_message_com_family;
+      const result = await family.call(num, { whenMissing: 0 });
+      assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 守卫「${name}」返回 0`);
+      assert.equal(
+        fixture.calls.filter((c) => c.api === 'waitAnyKey').length,
+        0,
+        `KOJO_MESSAGE_COM_${num} 守卫「${name}」不得有真身台词（无等待）`,
       );
       for (const line of fixture.text_lines()) {
         assert.match(
