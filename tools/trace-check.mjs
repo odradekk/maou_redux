@@ -26834,6 +26834,14 @@ const FILES = [
       { src: COMF135, ref: '14-16', any: [/LOCAL = 21/] },
     ],
   },
+  // —— #225（J15：助手与蕾丝族 60-73——@COM/@COM_ABLE/TRAIN_MESSAGE/CASE 61） ——
+  {
+    js: 'ere/system/train/com-assistant.js',
+    refs: [
+      { src: COMABLE, ref: '2514-3135', any: [/@COM_ABLE60/] },
+      { src: COMF_JUMP, ref: '627-637', any: [/CASE 61/] },
+    ],
+  },
   // —— #227（J17：触手与自由调教族 100-109 / 150 / 208） ——
   {
     js: 'ere/system/train/com-tentacle.js',

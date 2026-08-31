@@ -684,6 +684,13 @@ const EXEMPT_STRINGS = [
     where: 'ere/page/page-train.js',
     why: 'TRAIN_MAIN.ERB:249 的 PRINT 射精（死斗场・怪物），・ 是原作的并列主体分隔样式，逐字照抄（SHOW_STATUS 槽条段，#212 收录）。整串豁免，改写时失配变红。',
   },
+  ...['・私处和肛门一起插', '・性交同时口交', '・肛交同时口交'].map(
+    (value) => ({
+      value,
+      where: 'ere/system/train/com-assistant.js',
+      why: 'COMF64_３Ｐ.ERB:81/:83/:85 的 PRINTL 部位组合标题，・ 是原作的动作分隔样式，逐字照抄——TRAIN_NAME:128-132 与 USERCOM:211 同款样式与处置（#212 先例，#225 收录）。整串豁免，改写时失配变红。',
+    }),
+  ),
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；
