@@ -3257,4 +3257,178 @@ export default [
     tests: ['event-autotrain'],
     must_mention: 'cflag:666==0 的角色必须跳过',
   },
+  {
+    desc: 'M1230 COM_ABLE80 调教者男性器判定删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (!tal(player, 121) && !tal(player, 122)) return 0; // 调教者需男人/扶她\n  if (tequip(target, 45)) return 0; // 口枷使用中',
+    replace:
+      '  if (tequip(target, 45)) return 0; // 变异：调教者男性器判定删除',
+    tests: ['com-hardcore'],
+    must_mention: '调教者未配男性器',
+  },
+  {
+    desc: 'M1231 COM_ABLE85 利尿剂/漏尿癖改判为需同时具备（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (!tequip(target, 22) && !tal(target, 57)) return 0; // 需利尿剂或漏尿癖',
+    replace:
+      '  if (!tequip(target, 22) || !tal(target, 57)) return 0; // 变异：改判为需同时具备',
+    tests: ['com-hardcore'],
+    must_mention: '需利尿剂或漏尿癖',
+  },
+  {
+    desc: 'M1232 COM_ABLE87 顺从门槛 3 误抄为 2（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (abl(target, 10) < 3) return 0;\n  if (tequip(target, 11)) return 0;',
+    replace:
+      '  if (abl(target, 10) < 2) return 0; // 变异：门槛误抄为 2\n  if (tequip(target, 11)) return 0;',
+    tests: ['com-hardcore'],
+    must_mention: '顺从不足 3',
+  },
+  {
+    desc: 'M1233 COM_ABLE90 需超乳判定删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (!tal(target, 119)) return 0; // 需超乳\n  return 1;\n}',
+    replace: '  return 1; // 变异：需超乳判定删除\n}',
+    tests: ['com-hardcore'],
+    must_mention: '需超乳',
+  },
+  {
+    desc: 'M1234 COM80 死判定块的 SOURCE:8 汚れ常量 100 误改 200（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  set(8, 100);\n  if (abl(target, 16) === 0) {',
+    replace:
+      '  set(8, 200); // 变异：汚れ常量误改 200\n  if (abl(target, 16) === 0) {',
+    tests: ['com-hardcore'],
+    must_mention: 'SOURCE:8 简化为 100',
+  },
+  {
+    desc: 'M1235 COM81 私处经验增量 25 误抄为 10（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "  if (tal(target, 99)) set(6, src(6) * 0.8); // 魁梧\n  if (tal(target, 100)) set(6, src(6) * 2.0); // 小柄体形\n  if (tal(target, 135)) set(6, src(6) * 4.0); // 未熟\n\n  if (!tal(target, 122) && !tal(player, 122)) {\n    era.print(`${name_of('expname', 40)}+1`);\n    era.add(`exp:${target}:40`, 1);\n  } else if (tal(target, 122) && tal(player, 122)) {\n    era.print(`${name_of('expname', 41)}+1`);\n    era.add(`exp:${target}:41`, 1);\n  }\n\n  chara(target).dungeon.私处经验 += 25;",
+    replace:
+      "  if (tal(target, 99)) set(6, src(6) * 0.8); // 魁梧\n  if (tal(target, 100)) set(6, src(6) * 2.0); // 小柄体形\n  if (tal(target, 135)) set(6, src(6) * 4.0); // 未熟\n\n  if (!tal(target, 122) && !tal(player, 122)) {\n    era.print(`${name_of('expname', 40)}+1`);\n    era.add(`exp:${target}:40`, 1);\n  } else if (tal(target, 122) && tal(player, 122)) {\n    era.print(`${name_of('expname', 41)}+1`);\n    era.add(`exp:${target}:41`, 1);\n  }\n\n  chara(target).dungeon.私处经验 += 10; // 变异：增量误抄为 10",
+    tests: ['com-hardcore'],
+    must_mention: '拳交，私处经验',
+  },
+  {
+    desc: 'M1236 COM83 肛门扩张经验（EXP:53）累加行删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "  chara(target).dungeon.肛门扩张经验 += 3;\n  era.print('肛门扩张经验＋3');",
+    replace: "  era.print('肛门扩张经验＋3'); // 变异：EXP:53 累加行删除",
+    tests: ['com-hardcore'],
+    must_mention: '肛门扩张经验',
+  },
+  {
+    desc: 'M1237 COM_ABLE83 男人判定挡删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (tal(target, 122)) return 0;\n  if (exp(target, 0) < 150 || exp(target, 1) < 150) return 0;',
+    replace:
+      '  if (exp(target, 0) < 150 || exp(target, 1) < 150) return 0; // 变异：男人判定挡删除',
+    tests: ['com-hardcore'],
+    must_mention: '男人挡',
+  },
+  {
+    desc: 'M1238 COM84 显式回填 SELECTCOM=84 删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "  era.print('刺激Ｇ点');\n  era_flag.selectcom = 84; // 原作显式 SELECTCOM = 84（升格抵达时回填号位）",
+    replace: "  era.print('刺激Ｇ点'); // 变异：显式回填删除",
+    tests: ['com-hardcore'],
+    must_mention: '原作显式 SELECTCOM',
+  },
+  {
+    desc: 'M1239 COM85 放尿经验增量 2 误抄为 1（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "  era.print(`${name_of('expname', 31)}＋２`);\n  chara(target).system.放尿经验 += 2;",
+    replace:
+      "  era.print(`${name_of('expname', 31)}＋２`);\n  chara(target).system.放尿经验 += 1; // 变异：增量误抄为 1",
+    tests: ['com-hardcore'],
+    must_mention: '放尿经验经',
+  },
+  {
+    desc: 'M1240 COM87 取环位运算 cflag7 - p 误写为 cflag7 | p（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (cflag7 & p) {\n    era.set(`cflag:${target}:7`, cflag7 - p);',
+    replace:
+      '  if (cflag7 & p) {\n    era.set(`cflag:${target}:7`, cflag7 | p); // 变异：应减位却或位',
+    tests: ['com-hardcore'],
+    must_mention: '乳头位已清',
+  },
+  {
+    desc: 'M1241 COM88 使役 PLAY 开关切换判定反转（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  if (tequip(target, 88)) {\n    era.set(`tequip:${target}:88`, 0);\n  } else {\n    era.set(`tequip:${target}:88`, 1);\n  }',
+    replace:
+      '  if (!tequip(target, 88)) {\n    // 变异：判定反转\n    era.set(`tequip:${target}:88`, 0);\n  } else {\n    era.set(`tequip:${target}:88`, 1);\n  }',
+    tests: ['com-hardcore'],
+    must_mention: '开关切换',
+  },
+  {
+    desc: 'M1242 COM90 乳内插入旗标（CFLAG:113）赋值删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  era.set(`cflag:${target}:113`, 1); // 乳房挿入フラグ\n  await com_ejac_player_sex();',
+    replace: '  await com_ejac_player_sex(); // 变异：乳房插入旗标赋值删除',
+    tests: ['com-hardcore'],
+    must_mention: '乳房插入旗标',
+  },
+  {
+    desc: 'M1243 EQUIP_COM89 尾段 T 收尾清零删除，跨回合残留（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "  chara(target).dungeon.兽奸经验 += t_final;\n  era.set('t:0', 0);",
+    replace:
+      '  chara(target).dungeon.兽奸经验 += t_final; // 变异：T 收尾清零删除',
+    tests: ['com-hardcore'],
+    must_mention: '尾段清零共享变量',
+  },
+  {
+    desc: 'M1244 EQUIP_COM89 GOTO END_EJAC 默认 E 误设为 1（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  let e = 0;\n  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0) {',
+    replace:
+      '  let e = 1; // 变异：GOTO 命中默认值误设为 1\n  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0) {',
+    tests: ['com-hardcore'],
+    must_mention: 'E 默认值 0',
+  },
+  {
+    desc: 'M1245 EQUIP_COM89 GOTO END_EJAC 误跳过 TFLAG:16 尾段写入（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "  game.event.犬射精或处刑口上 = e;\n  const t_final = era.get('t:0') || 0;",
+    replace:
+      "  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0)\n    game.event.犬射精或处刑口上 = e; // 变异：GOTO 命中时误跳过\n  const t_final = era.get('t:0') || 0;",
+    tests: ['com-hardcore'],
+    must_mention: 'E 默认值 0',
+  },
+  {
+    desc: 'M1246 GET_ADV_COM CASE 80 上回合是 3P 判据删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: '  const prev = era_flag.prevcom;\n  if (prev === 64) {',
+    replace:
+      '  const prev = era_flag.prevcom;\n  if (false) {\n    // 变异：3P 判据删除',
+    tests: ['com-hardcore'],
+    must_mention: '上回合是 3P',
+  },
+  {
+    desc: 'M1247 TRAIN_MESSAGE_B90 从真实无输出改为打印文本（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: 'train_message_b_family.register(90, async () => 0);',
+    replace:
+      "train_message_b_family.register(90, async () => era.print('变异：90 不应有输出'));",
+    tests: ['com-hardcore'],
+    must_mention: '真实无输出',
+  },
+  {
+    desc: 'M1248 TRAIN_MESSAGE_A81-89 显式无操作批量注册删除（#226）',
+    file: 'ere/system/train/com-hardcore.js',
+    find: 'for (const id of [81, 82, 83, 84, 85, 87, 88, 89]) {\n  train_message_a_family.register(id, async () => 0); // 源侧无专属分支\n}',
+    replace: '// 变异：81-89 的显式无操作批量注册删除',
+    tests: ['com-hardcore'],
+    must_mention: '显式无操作',
+  },
+  {
+    desc: 'M1249 主启动图删重度调教系注册（COM80/COM_ABLE80 不进实际运行图）（#226）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-hardcore');",
+    replace: '// 变异：重度调教系不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: '主启动图注册重度调教系',
+  },
 ];

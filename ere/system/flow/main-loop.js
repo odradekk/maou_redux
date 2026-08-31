@@ -51,6 +51,10 @@ require('#/system/train/com-sex');
 // @COM40-49「SM 系」族（#223 J13）：@COM/@COM_ABLE 真身 + EQUIP_COM43-49
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
 require('#/system/train/com-sm');
+// @COM80-90「重度调教」族（#226 J16）：拳交系、G 点刺激、放尿、穿环、使役
+// 魔兽 PLAY、兽奸 PLAY、乳内插入的 @COM/@COM_ABLE 真身 + EQUIP_COM89
+// 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 80 升格规则
+require('#/system/train/com-hardcore');
 // 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
 // @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
 require('#/system/train/com-colosseum');

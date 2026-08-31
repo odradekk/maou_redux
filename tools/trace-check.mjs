@@ -93,6 +93,8 @@ const COMF8 = 'target/ERB/調教相關/COMF8_指挿入れ.ERB';
 const COMF9 = 'target/ERB/調教相關/COMF9_アナル舐め.ERB';
 const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
+// #226（J16：重度调教族 80-90——@COM/@COM_ABLE/@EQUIP_COM89/TRAIN_MESSAGE/CASE 80）
+const COMF80 = 'target/ERB/調教相關/COMF80_イラマチオ.ERB';
 const COMF40 = 'target/ERB/調教相關/COMF40_スパンキング.ERB';
 const COMF41 = 'target/ERB/調教相關/COMF41_鞭.ERB';
 const COMF42 = 'target/ERB/調教相關/COMF42_針.ERB';
@@ -26625,6 +26627,26 @@ const FILES = [
         ref: '1253-1272',
         any: [/PRINTFORML %SAVESTR:TARGET%的菊花/],
       },
+    ],
+  },
+  // —— #226（J16：重度调教族 80-90——@COM/@COM_ABLE/@EQUIP_COM89/TRAIN_MESSAGE/CASE 80） ——
+  {
+    js: 'ere/system/train/com-hardcore.js',
+    refs: [
+      { src: COMABLE, ref: '3142-3538', any: [/@COM_ABLE80/] },
+      { src: COMF_JUMP, ref: '642-663', any: [/CASE 80/] },
+      { src: COMF80, ref: '21', any: [/IF TALENT:151/] },
+      { src: COMF80, ref: '209', any: [/ENDIF/] },
+      { src: COMF80, ref: '19-209', any: [/実行できるかの判定/] },
+      { src: COMF80, ref: '10-14', any: [/JUMPFORM COM\{RESULT\}/] },
+      { src: COMF80, ref: '218-302', any: [/射精ゲージチェック/] },
+      { src: COMF80, ref: '306-371', any: [/ソースの計算/] },
+      { src: COMF80, ref: '323', any: [/Y\*40 \+ 100/] },
+      { src: COMF80, ref: '375-386', any: [/射精チェック/] },
+      { src: COMF80, ref: '420-459', any: [/大量射精/] },
+      { src: COMF80, ref: '464-466', any: [/奴隷の口/] },
+      { src: COMF80, ref: '468-473', any: [/なめ取る/] },
+      { src: COMF80, ref: '477-482', any: [/;初吻/] },
     ],
   },
 ];
