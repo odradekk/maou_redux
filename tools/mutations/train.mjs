@@ -3064,4 +3064,197 @@ export default [
     tests: ['main-loop'],
     must_mention: '主启动图注册性交系',
   },
+
+  {
+    desc: 'M1270 AFTERTRAIN: self_check 失神守卫失效（tflag:899 不再拦截）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  // 失神中に調教終了したらスルー
+  if ((era.get('tflag:899') || 0) >= 1) {
+    return 0;
+  }`,
+    replace: `  // 变异：失神守卫删除
+  if (false) {
+    return 0;
+  }`,
+    tests: ['event-aftertrain'],
+    must_mention: '失神跳过守卫',
+  },
+  {
+    desc: 'M1271 AFTERTRAIN: sex_check 未成熟闸失效（TALENT:135 放行）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (era.get(\`talent:\${target}:135\`)) return 0; // 未成熟
+  if (!era.get(\`talent:\${target}:85\`) && !era.get(\`talent:\${target}:76\`))
+    return 0; // 爱慕 / 淫乱`,
+    replace: `  // 变异：未成熟闸删除
+  if (!era.get(\`talent:\${target}:85\`) && !era.get(\`talent:\${target}:76\`))
+    return 0; // 爱慕 / 淫乱`,
+    tests: ['event-aftertrain'],
+    must_mention: '未成熟',
+  },
+  {
+    desc: 'M1272 AFTERTRAIN: sex_check 处女/男人闸失效（TALENT:0/122 放行）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (era.get(\`talent:\${target}:0\`) || era.get(\`talent:\${target}:122\`))
+    return 0; // 处女 / 男性
+
+  // 贞操带 / 贞操封印`,
+    replace: `  // 变异：处女/男人闸删除
+
+  // 贞操带 / 贞操封印`,
+    tests: ['event-aftertrain'],
+    must_mention: '处女',
+  },
+  {
+    desc: 'M1273 AFTERTRAIN: sex_check 濒死闸失效（BASE<500 放行）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  // 主人为男性或扶她
+  if (!era.get('talent:0:122') && !era.get('talent:0:121')) return 0;
+  if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0; // 濒死`,
+    replace: `  // 主人为男性或扶她
+  if (!era.get('talent:0:122') && !era.get('talent:0:121')) return 0;
+  // 变异：濒死闸删除`,
+    tests: ['event-aftertrain'],
+    must_mention: '濒死',
+  },
+  {
+    desc: 'M1274 AFTERTRAIN: self_check 派发优先——男人不再恒走肛门（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (is_male || (!is_male && abl2 < abl3) || (is_virgin && abl3 >= 3)) {
+    s = await aftertrain_analsex_check();
+  } else {
+    s = await aftertrain_sex_check();
+  }`,
+    replace: `  if ((!is_male && abl2 < abl3) || (is_virgin && abl3 >= 3)) {
+    s = await aftertrain_analsex_check();
+  } else {
+    s = await aftertrain_sex_check();
+  }`,
+    tests: ['event-aftertrain'],
+    must_mention: '男人必须走肛门分支',
+  },
+  {
+    desc: 'M1275 AFTERTRAIN: self_check 派发——处女且 A≥3 不再恒走肛门（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (is_male || (!is_male && abl2 < abl3) || (is_virgin && abl3 >= 3)) {
+    s = await aftertrain_analsex_check();
+  } else {
+    s = await aftertrain_sex_check();
+  }`,
+    replace: `  if (is_male || (!is_male && abl2 < abl3) || false) {
+    s = await aftertrain_analsex_check();
+  } else {
+    s = await aftertrain_sex_check();
+  }`,
+    tests: ['event-aftertrain'],
+    must_mention: '处女且 A感觉≥3 → 肛门',
+  },
+  {
+    desc: 'M1276 AFTERTRAIN: lesbian 四项素质门槛之一失效（百合气质<2 放行）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (abl22 < 2 || abl0 < 3 || abl10 < 2 || abl11 < 2) return 0;`,
+    replace: `  if (abl0 < 3 || abl10 < 2 || abl11 < 2) return 0; // 变异：百合气质门槛删`,
+    tests: ['event-aftertrain'],
+    must_mention: '百合气质',
+  },
+  {
+    desc: 'M1277 AFTERTRAIN: masturbation 从不自慰闸失效（TALENT:150 放行）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if (era.get(\`talent:\${target}:150\`)) return 0; // 从不自慰`,
+    replace: `  // 变异：从不自慰闸删除`,
+    tests: ['event-aftertrain'],
+    must_mention: '从不自慰',
+  },
+  {
+    desc: 'M1278 AFTERTRAIN: beast 无野狗闸失效（ITEM:22==0 放行）（#218）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  if ((era.get('item:22') || 0) === 0) return 0;`,
+    replace: `  // 变异：无野狗闸删除`,
+    tests: ['event-aftertrain'],
+    must_mention: '无野狗',
+  },
+  {
+    desc: 'M1279 BEFORETRAIN: 省略设定早退失效（FLAG:6&1 不再返回 0）（#218）',
+    file: 'ere/event/event-beforetrain.js',
+    find: `  // 調教テキスト省略設定の場合 (FLAG:6 & 1)
+  if ((era.get('flag:6') || 0) & 1) {
+    era.print(\`\${target_name}的第\${train_count}次调教开始了。\`);
+    await era.waitAnyKey();
+    return 0;
+  }`,
+    replace: `  // 变异：省略设定不早退
+  if ((era.get('flag:6') || 0) & 1) {
+    era.print(\`\${target_name}的第\${train_count}次调教开始了。\`);
+    await era.waitAnyKey();
+  }`,
+    tests: ['event-beforetrain'],
+    must_mention: '省略设定（FLAG:6 & 1）只输出一句并返回 0',
+  },
+  {
+    desc: 'M1280 BEFORETRAIN: 第N次调教崩坏分支失效（TALENT:9 不再特殊叙述）（#218）',
+    file: 'ere/event/event-beforetrain.js',
+    find: `  // 崩坏している場合
+  if (era.get(\`talent:\${target}:9\`)) {`,
+    replace: `  // 变异：崩坏分支删除
+  if (false) {`,
+    tests: ['event-beforetrain'],
+    must_mention: '第 N 次调教——崩坏分支',
+  },
+  {
+    desc: 'M1281 BEFORETRAIN: noclothes 反抗心分支失效（TALENT:11 落兜底）（#218）',
+    file: 'ere/event/event-beforetrain.js',
+    find: `  } else if (era.get(\`talent:\${target}:11\`)) {
+    // 反抗心
+    era.print(\`\${master_name}伸手粗暴地将\${name}剥光。\`);`,
+    replace: `  } else if (false) {
+    // 变异：反抗心分支删除
+    era.print(\`\${master_name}伸手粗暴地将\${name}剥光。\`);`,
+    tests: ['event-beforetrain'],
+    must_mention: '伸手粗暴地将玛奥剥光',
+  },
+  {
+    desc: 'M1282 AUTOTRAIN: com13 体力门槛失效（BASE:0<500 放行）（#218）',
+    file: 'ere/event/event-autotrain.js',
+    find: `  const target = era_flag.target;
+  if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0;
+  if ((era.get(\`base:\${target}:1\`) || 0) < 300) return 0;`,
+    replace: `  const target = era_flag.target;
+  // 变异：体力门槛删除
+  if ((era.get(\`base:\${target}:1\`) || 0) < 300) return 0;`,
+    tests: ['event-autotrain'],
+    must_mention: '体力<500 必须拦下',
+  },
+  {
+    desc: 'M1283 AUTOTRAIN: com13 气力门槛失效（BASE:1<300 放行）（#218）',
+    file: 'ere/event/event-autotrain.js',
+    find: `  if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0;
+  if ((era.get(\`base:\${target}:1\`) || 0) < 300) return 0;`,
+    replace: `  if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0;
+  // 变异：气力门槛删除`,
+    tests: ['event-autotrain'],
+    must_mention: '气力<300 必须拦下',
+  },
+  {
+    desc: 'M1284 AUTOTRAIN: after_autotrain 常时发情蓄积闸失效（flag:75==0 恒蓄积）（#218）',
+    file: 'ere/event/event-autotrain.js',
+    find: `  // 常时发情
+  if ((era.get('flag:75') || 0) === 0 && !era.get(\`talent:\${target}:271\`)) {`,
+    replace: `  // 变异：常时发情闸删除
+  if (true && !era.get(\`talent:\${target}:271\`)) {`,
+    tests: ['event-autotrain'],
+    must_mention:
+      'after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两道闸）',
+  },
+  {
+    desc: 'M1285 AUTOTRAIN: autotrain 遍历跳过 cflag:666==0 失效（#218）',
+    file: 'ere/event/event-autotrain.js',
+    find: `    if ((era.get(\`cflag:\${target}:666\`) || 0) === 0) {
+      continue;
+    }`,
+    replace: `    // 变异：跳过逻辑删除
+    if (false) {
+      continue;
+    }`,
+    tests: ['event-autotrain'],
+    must_mention: 'cflag:666==0 的角色必须跳过',
+  },
 ];
