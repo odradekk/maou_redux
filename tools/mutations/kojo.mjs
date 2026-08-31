@@ -486,6 +486,39 @@ export default [
     tests: ['kojo-k3-noble'],
     must_mention: '淫乱自慰中毒Lv3推进到 8',
   },
+  {
+    desc: 'M1509 K3 胸爱抚首次推进写错（CFLAG:306 = 1 改 2）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.胸爱抚 = 1; // :1357',
+    replace: '      kojo.胸爱抚 = 2; // :1357（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '胸爱抚首次（CFLAG:306 == 0）',
+  },
+  {
+    desc: 'M1510 K3 胸爱抚淫乱推进写错（CFLAG:306 = 5 改 4）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.胸爱抚 = 5; // :1388',
+    replace: '      kojo.胸爱抚 = 4; // :1388（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '胸爱抚淫乱推进到 5',
+  },
+  {
+    desc: 'M1511 K3 胸爱抚B感覚门槛错（乳房感觉 >= 3 改 >= 4）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      system.乳房感觉 >= 3 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「啊啊~…胸部…胸部居然会那么有感觉什么的…」',`,
+    replace: `      system.乳房感觉 >= 4 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「啊啊~…胸部…胸部居然会那么有感觉什么的…」',`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '胸爱抚B感覚Lv3推进到 3',
+  },
 ];
+
 
 

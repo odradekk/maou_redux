@@ -607,16 +607,86 @@ test('自慰二次以后：淫乱处女 / 淫乱自慰中毒Lv3 / 爱慕处女 /
   assert.equal(other.store.get('cflag:31:304'), 2, 'それ以外推进到 2');
 });
 
-test('爱抚与舔阴与肛门爱抚与自慰外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+test('胸爱抚首次（CFLAG:306 == 0）：疼的一句 + 推进到 1', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 5; // 胸爱抚，本切片尚未落地
+    era_flag.selectcom = 5;
   });
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 5 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
+    '「嗯呜…不要…弄得那么疼………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:306'), 1);
+});
+
+test('胸爱抚二次以后：淫乱 / 爱慕 / B感覚Lv3 / それ以外', async () => {
+  const lewd = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:306', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k3(lewd, seq_rand(0, 0));
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊哈啊啊~…要融化掉了~♡」',
+    '「主人，请更加地…随心所欲地做吧~…啊~…啊啊~♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:306'), 5, '胸爱抚淫乱推进到 5');
+
+  const love = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:306', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k3(love, seq_rand(0, 0));
+  assert.deepEqual(love.text_lines(), [
+    '「啊嗯~…可以的哦…更加用力地揉…也没有关系的噢…啊~哈啊嗯啊啊啊~♪」',
+    '「嗯呜~♪这样的真的可以哦~…啊~…是的噢…更加…用力地可以的噢♡」',
+  ]);
+  assert.equal(love.store.get('cflag:31:306'), 4, '胸爱抚爱慕推进到 4');
+
+  const b3 = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:306', 1);
+    f.store.set('abl:31:1', 3);
+  });
+  await speak_k3(b3, seq_rand(0, 0));
+  assert.deepEqual(
+    b3.text_lines(),
+    [
+      '「啊啊~…胸部…胸部居然会那么有感觉什么的…」',
+      '「哈嗯~…请，请不要欺负胸部…啊~啊啊~！」',
+    ],
+    '胸爱抚B感覚Lv3推进到 3',
+  );
+  assert.equal(b3.store.get('cflag:31:306'), 3, '胸爱抚B感覚Lv3推进到 3');
+
+
+  const other = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:306', 1);
+  });
+  await speak_k3(other, seq_rand(0, 0));
+  assert.deepEqual(other.text_lines(), [
+    '「不…不要…唔…不要再…欺负胸部…啊~…啊啊~！」',
+  ]);
+  assert.equal(other.store.get('cflag:31:306'), 2, '胸爱抚それ以外推进到 2');
+});
+
+test('爱抚与舔阴与肛门爱抚与自慰与胸爱抚外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6; // 接吻，本切片尚未落地
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [
+    '（指令 6 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
+
 
 
 
