@@ -27050,6 +27050,18 @@ const LOG_REFS = [
     ],
   },
   {
+    // #282：口上锁文件头注引用旧样本首回合 K3 口上台词（emuera.log:26），
+    // 作为「对拍样本会经过口上分发」的证据行
+    js: 'test/kojo-family-wiring.test.js',
+    refs: [{ ref: '26', any: [/「哈呜、温妮、可是，一心地/] }],
+  },
+  {
+    // #282 注释自身的引用（本文件注释里写了 emuera.log:26，被完整性扫描
+    // 扫到；登记后自洽）
+    js: 'tools/trace-check.mjs',
+    refs: [{ ref: '26', any: [/「哈呜、温妮、可是，一心地/] }],
+  },
+  {
     // #74：print_palam 换原生进度条后，条后数值仍以样本第二屏（回合后参数
     // 网格）为对齐证据
     js: 'test/page-train.test.js',
