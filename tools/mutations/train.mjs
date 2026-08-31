@@ -3834,4 +3834,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: '默认档 SOURCE',
   },
+  {
+    desc: 'M1455 COM121 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  times_src(cid, 1, obey[1]);',
+    replace: '  // 变异：COM121 顺从乘算删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM121',
+  },
 ];

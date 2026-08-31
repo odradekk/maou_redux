@@ -677,9 +677,324 @@ async function com120() {
   return 1;
 }
 
+/** @COM121 的 SOURCE 计算（COMF121:29-414）。润滑低档乘 SOURCE:0 是源侧原文。 */
+function source121() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const prev = era_flag.prevcom;
+
+  if (prev === 34) {
+    add_lose(cid, 0, 60);
+    add_lose(cid, 1, 150);
+    set_src(cid, 12, 900);
+  } else {
+    add_lose(cid, 0, 50);
+    add_lose(cid, 1, 100);
+    set_src(cid, 12, 400);
+  }
+
+  set_src(cid, 0, 0);
+  if (prev === 20 || prev === 22 || prev === 34) {
+    set_src(cid, 0, [20, 100, 400, 900, 1400, 2100][Math.min(abl(cid, 0), 5)]);
+  }
+
+  const v_feel = [
+    [10, 100],
+    [30, 180],
+    [400, 250],
+    [800, 380],
+    [2700, 500],
+    [3800, 800],
+  ][Math.min(abl(cid, 2), 5)];
+  set_src(cid, 1, v_feel[0]);
+  set_src(cid, 3, v_feel[1]);
+
+  const e0 = exp(cid, 0);
+  if (e0 < EXPLV[1]) {
+    times_src(cid, 1, 0.2);
+    set_src(cid, 6, 300);
+  } else if (e0 < EXPLV[2]) {
+    times_src(cid, 1, 0.6);
+    set_src(cid, 6, 100);
+  } else if (e0 < EXPLV[3]) {
+    times_src(cid, 1, 1);
+    set_src(cid, 6, 10);
+  } else if (e0 < EXPLV[4]) {
+    times_src(cid, 1, 1.2);
+    set_src(cid, 6, 0);
+  } else if (e0 < EXPLV[5]) {
+    times_src(cid, 1, 1.3);
+    set_src(cid, 6, 0);
+  } else {
+    times_src(cid, 1, 1.8);
+    set_src(cid, 6, 0);
+  }
+
+  if (palam(cid, 3) < PALAMLV[1]) {
+    times_src(cid, 0, 0.5);
+    times_src(cid, 6, 0.1);
+    add_src(cid, 6, 1000);
+    times_src(cid, 6, 3);
+  } else if (palam(cid, 3) < PALAMLV[2]) {
+    times_src(cid, 0, 0.6);
+    times_src(cid, 6, 0.4);
+    add_src(cid, 6, 300);
+    times_src(cid, 6, 1);
+  } else if (palam(cid, 3) < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 6, 0.5);
+  } else if (palam(cid, 3) < PALAMLV[4]) {
+    times_src(cid, 1, 1.4);
+    times_src(cid, 6, 0.2);
+  } else {
+    times_src(cid, 1, 1.8);
+    times_src(cid, 6, 0.1);
+  }
+
+  if (prev === 22) {
+    times_src(cid, 1, 1.3);
+    times_src(cid, 3, 1.1);
+  } else if (prev === 23) {
+    times_src(cid, 1, 0.7);
+    times_src(cid, 3, 0.9);
+  }
+
+  if (tal(player, 122)) times_src(cid, 1, 2.5);
+  if (tal(cid, 100)) times_src(cid, 6, 2);
+
+  if (tal(cid, 30)) {
+    if (tal(cid, 0) === 1) {
+      times_src(cid, 3, 0.6);
+      times_src(cid, 14, 5);
+      set_src(cid, 15, 2000);
+    } else {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 1000);
+    }
+  } else if (tal(cid, 31)) {
+    if (tal(cid, 0) === 1) {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 300);
+    }
+  } else if (tal(cid, 0) === 1) {
+    set_src(cid, 15, 3000);
+  }
+
+  if (palam(cid, 5) < PALAMLV[1]) {
+    times_src(cid, 0, 0.6);
+    times_src(cid, 1, 0.6);
+    times_src(cid, 3, 0.3);
+  } else if (palam(cid, 5) < PALAMLV[2]) {
+    times_src(cid, 0, 0.8);
+    times_src(cid, 1, 0.8);
+    times_src(cid, 3, 0.6);
+  } else if (palam(cid, 5) < PALAMLV[3]) {
+    times_src(cid, 0, 1);
+    times_src(cid, 1, 1);
+    times_src(cid, 3, 1);
+  } else if (palam(cid, 5) < PALAMLV[4]) {
+    times_src(cid, 0, 1.2);
+    times_src(cid, 1, 1.2);
+    times_src(cid, 3, 1.5);
+  } else {
+    times_src(cid, 0, 1.5);
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 1.8);
+  }
+
+  const obey = [
+    [0.5, 0.5, 0.6, 2],
+    [0.8, 0.8, 0.8, 1.5],
+    [1, 1, 1, 1],
+    [1.2, 1.3, 1.2, 0.8],
+    [1.4, 1.6, 1.4, 0.6],
+    [1.6, 2, 1.6, 0.3],
+  ][Math.min(abl(cid, 10), 5)];
+  times_src(cid, 0, obey[0]);
+  times_src(cid, 1, obey[1]);
+  times_src(cid, 3, obey[2]);
+  times_src(cid, 15, obey[3]);
+
+  if (prev === 34) {
+    const spirit = [
+      [200, 50, 300],
+      [250, 200, 100],
+      [350, 550, 30],
+      [450, 900, 0],
+      [600, 1500, 0],
+      [750, 2200, 0],
+    ][Math.min(abl(cid, 13), 5)];
+    set_src(cid, 4, spirit[0]);
+    set_src(cid, 5, spirit[1]);
+    set_src(cid, 14, spirit[2]);
+    const skill = [
+      [0.3, 0.3],
+      [0.6, 0.6],
+      [1, 1],
+      [1.1, 1.1],
+      [1.3, 1.2],
+      [1.5, 1.4],
+    ][Math.min(abl(cid, 12), 5)];
+    times_src(cid, 1, skill[0]);
+    times_src(cid, 3, skill[1]);
+  }
+
+  if (prev === 612) {
+    const breast = [
+      [50, 50, 50],
+      [200, 200, 200],
+      [500, 500, 400],
+      [1000, 600, 600],
+      [1600, 1000, 1000],
+      [2100, 1400, 1400],
+    ][Math.min(abl(cid, 1), 5)];
+    set_src(cid, 17, breast[0]);
+    add_src(cid, 3, breast[1]);
+    add_src(cid, 4, breast[2]);
+    const clit = [
+      [40, 50],
+      [160, 200],
+      [700, 400],
+      [1500, 600],
+      [2400, 1000],
+      [3600, 1400],
+    ][Math.min(abl(cid, 0), 5)];
+    add_src(cid, 0, clit[0]);
+    add_src(cid, 4, clit[1]);
+    const skill_rows = [
+      [100, 100, 50, 100, 50, 0, 0, 0],
+      [200, 200, 150, 150, 100, 50, 100, 0],
+      [300, 300, 250, 200, 200, 100, 200, 50],
+      [500, 400, 500, 300, 300, 150, 300, 100],
+      [800, 500, 800, 500, 400, 250, 400, 300],
+      [1200, 600, 1200, 800, 600, 400, 500, 500],
+    ][Math.min(abl(player, 12), 5)];
+    add_src(cid, 0, skill_rows[0]);
+    add_src(cid, 1, skill_rows[1]);
+    add_src(cid, 17, skill_rows[2]);
+    add_src(cid, 3, skill_rows[3]);
+    add_src(cid, 4, skill_rows[4]);
+    add_src(cid, 10, skill_rows[5]);
+    add_src(cid, 11, skill_rows[6]);
+    let extra = skill_rows[7];
+    const expose = [0.6, 1, 1.5, 2.4, 3.6, 5.8][Math.min(abl(cid, 17), 5)];
+    const expose_add = [100, 200, 400, 700, 1200, 2000][
+      Math.min(abl(cid, 17), 5)
+    ];
+    add_src(cid, 7, expose_add);
+    add_src(cid, 10, expose_add);
+    extra = times(extra, expose);
+    add_src(cid, 0, extra);
+    add_src(cid, 1, extra);
+    add_src(cid, 3, extra);
+    if (e0 >= EXPLV[3]) add_src(cid, 1, extra);
+    if (tal(cid, 85)) times_src(cid, 3, 2);
+  }
+}
+
+async function message_b121() {
+  const cid = era_flag.target;
+  const prev = era_flag.prevcom;
+  const fainted = (era.get('tflag:899') || 0) !== 0;
+  const e0 = exp(cid, 0);
+  if (prev === 34 && !fainted) {
+    era.print(
+      `${target_name()}用手扶在${player_name()}的胸部上、私处把整根阴茎都吞入了…`,
+    );
+    if (e0 <= 30) {
+      era.print(`${target_name()}就这样前后摇晃着腰…`);
+    } else if (e0 <= 50 && tal(cid, 121)) {
+      era.print(`${target_name()}用阴茎压着${player_name()}的腹部…`);
+    } else if (e0 <= 50) {
+      era.print(`${target_name()}利用${player_name()}的阴毛刺激着阴蒂…`);
+    } else if (e0 <= 80) {
+      era.print(`${target_name()}扭动着腰、因被插入的愉悦感而喷出炽热的气息…`);
+    } else if (e0 <= 120) {
+      era.print(`${target_name()}沉腰下探、陶醉在被插到最深的欢愉之中…`);
+      era.print('脆弱而敏感的子宫口绽放着、心神皆醉地做好了受孕的准备…');
+    } else {
+      era.print(
+        `${target_name()}纵情地扭动着、腰身有节奏地不停颤抖、露出了牝奴的痴迷表情、口水流出来了…`,
+      );
+      era.print(
+        '被播种的快感将理性彻底淹没了、成为了恳求种子不顾一切的牝奴的肉体…',
+      );
+    }
+    return;
+  }
+  if (prev === 20 || prev === 128 || prev === 129 || prev === 130) {
+    era.print(
+      `抓住${target_name()}的腰、往最深处突进、子宫被敲击着发出咚咚咚的声音…`,
+    );
+  }
+  if (
+    prev === 21 ||
+    prev === 131 ||
+    prev === 132 ||
+    prev === 133 ||
+    prev === 134
+  ) {
+    era.print(
+      `抓住${target_name()}的屁股、往最深处突进、子宫被敲击着发出咚咚咚的声音…`,
+    );
+  }
+  if (prev === 22) {
+    era.print(
+      `紧紧地抱住${target_name()}的腰、把腰围都收细了、阴茎在子宫口不停打转…`,
+    );
+  }
+  if (prev === 23) {
+    era.print(`压着${target_name()}的腰往下拉、突进到最深处了…`);
+  }
+  if (prev === 612) {
+    era.print(
+      `${player_name()}在镜子前一步、逼着${target_name()}看着自己的痴态、`,
+    );
+    era.print(`压着${target_name()}的腰往下拉、突进到最深处了…`);
+  }
+  if (e0 <= 30 || (e0 >= 31 && e0 <= 50 && (prev === 21 || prev === 612))) {
+    era.print(`${target_name()}觉得异物感太强了、很痛苦的样子…`);
+  } else if (e0 <= 50 && tal(cid, 121)) {
+    era.print(`${target_name()}在阴毛和肚脐之间摩擦着阴茎、漏出了呻吟声…`);
+  } else if (e0 <= 50) {
+    era.print(`${target_name()}用阴毛摩擦着阴蒂、漏出了呻吟声…`);
+  } else if (e0 <= 80) {
+    era.print(`${target_name()}发出了长长的甘甜吐息、因强烈的插入感咬紧牙关…`);
+  } else if (e0 <= 120) {
+    era.print(
+      '子宫做好了接种的准备、扭动着纤细的腰、引导阴茎去到最深处那窟窿里…',
+    );
+    era.print(`${target_name()}子宫被重重地叩击着、嘴巴大张、身体剧烈地颤抖…`);
+  } else {
+    era.print(`突入到${target_name()}的子宫、狠狠地摇晃着她的身体、`);
+    era.print(`${target_name()}发了疯似的、沉醉在牝奴能得到的最高快乐之中…`);
+  }
+}
+
+async function message_a121() {
+  const amount = era.get('tflag:2') || 0;
+  if (amount !== 1 && amount !== 2) return;
+  const cid = era_flag.target;
+  const removable = palam(cid, 5) < PALAMLV[4] || era.get('tflag:31');
+  if (amount === 1) {
+    era.print(`直接对${target_name()}的子宫、注入了热乎乎的精液…`);
+  } else if (removable) {
+    era.print(`直接对${target_name()}的子宫、注入了大量热乎乎的精液…`);
+  } else {
+    era.print(
+      `直接对${target_name()}快乐到生疼的子宫、注入了大量热乎乎的精液……`,
+    );
+  }
+  if (removable) {
+    era.set('tflag:31', 0);
+    era.set('tflag:60', 0);
+  }
+}
+
 /** @COM121（COMF121_挿入子宮口責め.ERB）插入子宫口蹂躏。高级 COM。 */
 async function com121() {
   const select = era_flag.selectcom;
+  game.train.三人PLAY持续 = 0;
   if (select === 34 || (select >= 20 && select <= 23)) {
     era.print(`${read_train_name(select)}子宫口蹂躏`);
   } else {
@@ -687,6 +1002,14 @@ async function com121() {
   }
   era_flag.selectcom = 121; // 原作显式 SELECTCOM = 121（升格抵达时回填号位）
   await train_message_b();
+  const cid = era_flag.target;
+  game.train.伴V经验指令 = 1;
+  if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
+    game.train.主人导致处女丧失 = 1;
+  }
+  await com_ejac_player_sex();
+  source121();
+  await com_after_vagina_sex();
   return 1;
 }
 
@@ -748,10 +1071,12 @@ adv_com_family.register(135, async () => {
 
 train_message_b_family.register(120, message_b120);
 train_message_a_family.register(120, message_a120);
+train_message_b_family.register(121, message_b121);
+train_message_a_family.register(121, message_a121);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
 for (const id of [
-  121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
+  122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
 ]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);

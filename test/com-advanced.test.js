@@ -164,6 +164,52 @@ test('@COM120 B/A：体位行与对准Ｇ点射精', async () => {
   );
 });
 
+test('@COM121：插入子宫口蹂躏，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.prevcom = 20;
+  world.era_flag.selectcom = 20;
+  world.fixture.store.set('trainalias:20', '正常位');
+  world.fixture.store.set('abl:31:2', 3);
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
+  const result = await world.com_family.call(121);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 121);
+  assert.ok(world.fixture.text_lines().includes('正常位子宫口蹂躏'));
+  assert.equal(world.fixture.store.get('tflag:19'), 1);
+  // ABL:2=3 → S1=800；EXP < EXPLV:3 → ×1.00；润滑 < LV3 → ×1.00；
+  // PALAM:5 < LV1 → ×0.60；ABL:10=0 → ×0.50。
+  assert.equal(world.fixture.store.get('source:31:1'), 240);
+  assert.equal(world.fixture.store.get('source:31:12'), 400);
+  assert.equal(world.fixture.store.get('source:31:0'), 6);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -50);
+});
+
+test('@COM121 B/A：子宫叩击行与直接注入精液', async () => {
+  const world = seed_world();
+  world.era_flag.prevcom = 20;
+  world.era_flag.selectcom = 20;
+  world.fixture.store.set('callname:0:-1', '魔王');
+  await world.com_family.call(121);
+  const lines = world.fixture.text_lines();
+  assert.ok(
+    lines.includes('抓住温妮的腰、往最深处突进、子宫被敲击着发出咚咚咚的声音…'),
+  );
+  assert.ok(lines.includes('温妮觉得异物感太强了、很痛苦的样子…'));
+
+  world.fixture.store.set('tflag:2', 1);
+  world.fixture.store.set('palam:31:5', 0);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes('直接对温妮的子宫、注入了热乎乎的精液…'),
+  );
+});
+
 test('@COM122：阴茎互捅（可直选），不回填 SELECTCOM', async () => {
   const world = seed_world();
   const result = await run_com(world, 122);
