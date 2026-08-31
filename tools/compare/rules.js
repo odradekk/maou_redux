@@ -346,14 +346,22 @@ const TRAIN_UNIMPLEMENTED_BLOCKS = {
   // train-upgrade：COM110 穿脱 + COM8/COM84 升格链两块
   'train-upgrade': [
     [232, 236], // @PRITRAIN_MESSAGE 消息体
-    // COM8 插入手指（300-332）：CASE 8 升格（PREVCOM==8 且技巧 3+ →
-    // JUMP 84）在 golden 首次执行 COM8 的那回合触发，而 @COM84 未移植
-    // → 本回合被丢弃、重新要求输入（输入 0 又成 SELECTCOM=0 爱抚），
-    // 此后两侧输入流整体错开一发——golden 的夺处女确认（输入 0）与
-    // 【处女丧失】序列因此单边。CONFIRM_LOST_VIRGIN 真身已随 #216+#219
-    // 接线（单回合对齐由 com-caress 测试锚定）。块随 J19（COM84）拆除。
+    // COM8 插入手指（300-332）/ COM84 刺激Ｇ点（362-388）：@COM84 真身已随
+    // #226（J16）落地，CASE 8 升格规则（PREVCOM==8 且技巧 3+ → JUMP 84，
+    // com-caress.js 的 adv_rule_8，#219）本身也验证无误（golden 第二次执行
+    // COM8 时真实展示 COM84 文案，与 ere 侧输出逐字一致）。**块未随之拆
+    // 除**：#226 实测发现两侧输入流仍整体错开一发，但根因已从「COM84 未
+    // 移植」移到 golden 首次执行 COM8（夺贞那一回合）的下游级联——
+    // CONFIRM_LOST_VIRGIN 之后的 @EQUIP_COM（避孕套判定）/ @INCEST（亲族
+    // 关系）/ @TARGET_EJAC_CHECK / @TARGET_MILK_CHECK / @KOJO_MESSAGE_
+    // MARKCNG（刻印取得口上）/ @EXP_GOT_CHECK 六处仍是占位行（各自登记在
+    // docs/stub-registry.md），该回合的输出形态因此仍与 golden 不同构、
+    // 两侧回合边界对不齐，升格判定被拖早一轮触发。块要等这六处（或其中
+    // 决定输出行数的几处）真身落地、COM8 首次执行那一回合的输出与 golden
+    // 同构后才能拆——下一票验证前先 `node tools/compare/cli.js --sample
+    // train-upgrade` 复测，若「未解释」仍为 0 才可安全移除本组。
     [300, 332],
-    [362, 388], // COM84 刺激Ｇ点（升格目标，@GET_ADV_COM 随 #213/J19）
+    [362, 388],
     [420, 420], // K3 调教结束口上（421-423 的 RE_CLOTHED 行已随 #228 匹配）
   ],
 };
