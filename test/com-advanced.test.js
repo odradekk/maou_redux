@@ -463,6 +463,56 @@ test('@COM126 B/A：吸啜按摩行与口中注入', async () => {
   assert.ok(world.fixture.text_lines().includes('精液注入到温妮的口中了…'));
 });
 
+test('@COM127：真空口交，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 31;
+  world.fixture.store.set('abl:31:11', 40);
+  const result = await world.com_family.call(127);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 127, '原作显式 SELECTCOM = 127');
+  assert.ok(world.fixture.text_lines().includes('真空口交'));
+  // SOURCE / 射精ゲージ与 COM124 同表：S4=310、S5=75、S6=200、S8=400、S13=1800、S14=600。
+  assert.equal(world.fixture.store.get('source:31:4'), 310);
+  assert.equal(world.fixture.store.get('source:31:5'), 75);
+  assert.equal(world.fixture.store.get('source:31:6'), 200);
+  assert.equal(world.fixture.store.get('source:31:8'), 400);
+  assert.equal(world.fixture.store.get('source:31:13'), 1800);
+  assert.equal(world.fixture.store.get('source:31:14'), 600);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -50);
+  assert.equal(world.fixture.store.get('tflag:100'), 1);
+  assert.equal(world.fixture.store.get('tflag:200'), 2);
+});
+
+test('@COM127：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await world.com_family.call(127);
+  assert.equal(result, 0);
+  assert.equal(world.era_flag.selectcom, 127);
+  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+});
+
+test('@COM127 B/A：吮吸行与口中开放精关', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 40);
+  await world.com_family.call(127);
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes(
+        '温妮将你的龟头、用舌头舔舐着、脸颊凹陷、发出淫秽的声音、强烈地吮吸着…',
+      ),
+  );
+
+  world.fixture.store.set('tflag:0', 1);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(
+    world.fixture.text_lines().includes('温妮吸啜着阴茎、在她口中开放了精关…'),
+  );
+});
+
 test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
   const world = seed_world();
   enable_oral(world.fixture);

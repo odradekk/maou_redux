@@ -3882,4 +3882,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM126：手搓口交，回填 SELECTCOM 与默认 SOURCE',
   },
+  {
+    desc: 'M1461 COM127 显式回填 SELECTCOM=127 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  era_flag.selectcom = 127; // 原作显式 SELECTCOM = 127（升格抵达时回填号位）',
+    replace: '  // 变异：COM127 回填号删除',
+    tests: ['com-advanced'],
+    must_mention: '原作显式 SELECTCOM = 127',
+  },
 ];

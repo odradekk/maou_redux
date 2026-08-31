@@ -2463,7 +2463,60 @@ async function com126() {
   return 1;
 }
 
-const com127 = make_advanced_com(127, '真空口交');
+async function message_b127() {
+  const cid = era_flag.target;
+  let line = `${target_name()}将${player_name()}的龟头、用舌头`;
+  line += tal(cid, 52) ? '来回打转着、' : '舔舐着、';
+  line += '脸颊凹陷、发出淫秽的声音、';
+  if (abl(cid, 12) >= 4 && abl(cid, 13) >= 3) line += '让人腰都酥软了、';
+  line += '强烈地吮吸着…';
+  era.print(line);
+}
+
+async function message_a127() {
+  const amount = era.get('tflag:0') || 0;
+  if (amount !== 1 && amount !== 2) return;
+  const cid = era_flag.target;
+  if (amount === 1) {
+    era.print(
+      abl(cid, 16) >= 3
+        ? `${target_name()}淫秽地吸啜着阴茎、在她口中开射出…`
+        : `${target_name()}吸啜着阴茎、在她口中开放了精关…`,
+    );
+    if (abl(cid, 32) >= 3) {
+      era.print(`${target_name()}带着恍惚的表情、把阴茎上的精液吸吮干净了。`);
+    }
+    return;
+  }
+  era.print(
+    abl(cid, 16) >= 3
+      ? `${target_name()}淫秽地吸啜着阴茎、在她嘴里、大量的精液喷涌而出…`
+      : `${target_name()}吸啜着阴茎、在她嘴里、大量的精液喷涌而出…`,
+  );
+  if (abl(cid, 32) >= 3) {
+    era.print(
+      `精液从嘴里溢出、${target_name()}带着恍惚的表情、把阴茎上的精液吸吮干净…`,
+    );
+  }
+}
+
+/** @COM127（COMF127_バキュームフェラ.ERB）真空口交。高级 COM。 */
+async function com127() {
+  era_flag.selectcom = 127; // 原作显式 SELECTCOM = 127（升格抵达时回填号位）
+  era.print('真空口交');
+  const y = dirty_penalty_124();
+  if (!(await order124(y))) return 0;
+  await train_message_b();
+  era.print(`${name_of('expname', 22)}＋１`);
+  era.add(`exp:${era_flag.target}:22`, 1);
+  source124(y);
+  const b = gauge124();
+  const e = ejac124();
+  await com_ejac_player_milk(b);
+  after124(e);
+  return 1;
+}
+
 const com128 = make_advanced_com(128, '正常位・接吻');
 const com129 = make_advanced_com(129, '正常位・胸爱抚');
 const com130 = make_advanced_com(130, '正常位ＳＰ');
@@ -2513,9 +2566,11 @@ train_message_b_family.register(125, message_b125);
 train_message_a_family.register(125, message_a125);
 train_message_b_family.register(126, message_b126);
 train_message_a_family.register(126, message_a126);
+train_message_b_family.register(127, message_b127);
+train_message_a_family.register(127, message_a127);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [127, 128, 129, 130, 131, 132, 133, 134, 135]) {
+for (const id of [128, 129, 130, 131, 132, 133, 134, 135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }
