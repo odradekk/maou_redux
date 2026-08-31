@@ -3830,7 +3830,8 @@ export default [
     desc: 'M1454 COM120 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  times_src(cid, 1, obey[0]);\n  times_src(cid, 3, obey[1]);\n  times_src(cid, 15, obey[2]);\n\n  if (prev === 34) {',
-    replace: '  // 变异：顺从乘算删除\n  times_src(cid, 3, obey[1]);\n  times_src(cid, 15, obey[2]);\n\n  if (prev === 34) {',
+    replace:
+      '  // 变异：顺从乘算删除\n  times_src(cid, 3, obey[1]);\n  times_src(cid, 15, obey[2]);\n\n  if (prev === 34) {',
     tests: ['com-advanced'],
     must_mention: '默认档 SOURCE',
   },
@@ -3854,7 +3855,8 @@ export default [
     desc: 'M1457 COM123 默认档侍奉精神 SOURCE:4 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  set_src(cid, 4, service[0]);\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
-    replace: '  // 变异：COM123 侍奉精神 SOURCE:4 删除\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
+    replace:
+      '  // 变异：COM123 侍奉精神 SOURCE:4 删除\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
     tests: ['com-advanced'],
     must_mention: 'COM123：乳夹口交，回填 SELECTCOM 与默认 SOURCE',
   },
@@ -3902,7 +3904,8 @@ export default [
     desc: 'M1463 COM129 默认档乳房 SOURCE:17 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
-    replace: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM129 乳房 SOURCE:17 删除\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
+    replace:
+      '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM129 乳房 SOURCE:17 删除\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
     tests: ['com-advanced'],
     must_mention: 'COM129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
@@ -3918,7 +3921,8 @@ export default [
     desc: 'M1465 COM131 默认档 EXP 档疼痛 SOURCE:6 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    set_src(cid, 6, 30);\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],\n    [100, 100],\n    [500, 160],',
-    replace: '    // 变异：COM131 EXP 档疼痛删除\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],\n    [100, 100],\n    [500, 160],',
+    replace:
+      '    // 变异：COM131 EXP 档疼痛删除\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],\n    [100, 100],\n    [500, 160],',
     tests: ['com-advanced'],
     must_mention: 'COM131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
@@ -3942,7 +3946,8 @@ export default [
     desc: 'M1468 COM134 默认档乳房 SOURCE:17 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    [3200, 1000],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);',
-    replace: '    [3200, 1000],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM134 乳房 SOURCE:17 删除',
+    replace:
+      '    [3200, 1000],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM134 乳房 SOURCE:17 删除',
     tests: ['com-advanced'],
     must_mention: 'COM134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
   },
