@@ -318,4 +318,12 @@ export default [
     tests: ['compare-train'],
     must_mention: '裁切',
   },
+  {
+    desc: '#221 回放漏装性交系（COM20-29 的真实 guard 不生效）',
+    file: 'tools/compare/replay.js',
+    find: "  'system/train/com-sex',",
+    replace: '  // 变异：回放漏装性交系',
+    tests: ['compare-train'],
+    must_mention: 'COM20 必须随回放装载',
+  },
 ];
