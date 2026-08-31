@@ -2763,11 +2763,12 @@ export default [
     must_mention: '作废回合不得进 @SOURCE_CHECK',
   },
   {
-    desc: 'M1043 SHOW_EQUIP_2 死斗场臂删（占位行复辟）',
+    desc: 'M1043 SHOW_EQUIP_2 已点亮状态改回占位行',
     file: 'ere/page/page-train.js',
-    find: "  if (era.get(`tequip:${target}:55`)) {\n    era.print([{ content: '[死斗场决斗中]', color: '#FF1493' }]); // :1587-1588\n  } else {\n    stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');\n  }",
-    replace: "  stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族包');",
-    tests: ['com-colosseum'],
+    find: "  if (special_equip.length > 0) {\n    era.print([{ content: special_equip.join(''), color: '#FF1493' }]);",
+    replace:
+      "  if (false) {\n    era.print([{ content: special_equip.join(''), color: '#FF1493' }]);",
+    tests: ['com-colosseum', 'com-special'],
     must_mention: '[死斗场决斗中]',
   },
   {
@@ -3430,5 +3431,249 @@ export default [
     replace: '// 变异：重度调教系不在主启动图注册',
     tests: ['main-loop'],
     must_mention: '主启动图注册重度调教系',
+  },
+  {
+    desc: 'M1190 COM51 药物经验五档首档偏移（EXP:57=0 错落下一档）',
+    file: 'ere/system/train/com-special.js',
+    find: `function drug_exp_level(value) {
+  if (value < EXPLV[1]) return 0;`,
+    replace: `function drug_exp_level(value) {
+  if (value < EXPLV[1] - 1) return 0;`,
+    tests: ['com-special'],
+    must_mention: '调合知识、药物经验与成瘾状态',
+  },
+  {
+    desc: 'M1191 EQUIP_COM53 首 tick 改为直接录帧',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (frame === 0) {
+    chara(cid).train.录像时间 += 1; // :63-65 首 tick 不记入录像
+  } else if (frame <= video_max) {`,
+    replace: `  if (frame === 0) {
+    chara(cid).train.录像时间 += 1;
+    set_video_record(cid, frame, era_flag.selectcom); // 变异：首 tick 录帧
+  } else if (frame <= video_max) {`,
+    tests: ['com-special'],
+    must_mention: '首个持续 tick 不录帧',
+  },
+  {
+    desc: 'M1192 EQUIP_COM53 充能上限 5 改 6（第六次不关机）',
+    file: 'ere/system/train/com-special.js',
+    find: '      if (chara(cid).train.水晶球充能次数 <= 5) {',
+    replace: '      if (chara(cid).train.水晶球充能次数 <= 6) {',
+    tests: ['com-special'],
+    must_mention: '充能先注册按钮，成功时双扣资金，选择停止时清充能',
+  },
+  {
+    desc: 'M1193 COM54 野外露出经验标志守卫删（重复取得异常经验）',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (!chara(cid).train.野外露出经验) {
+    era.print('异常经验＋１');`,
+    replace: `  if (true) {
+    era.print('异常经验＋１');`,
+    tests: ['com-special'],
+    must_mention: '首次开启记录野外露出经验',
+  },
+  {
+    desc: 'M1194 COM55 气力损耗 10 改为 0',
+    file: 'ere/system/train/com-special.js',
+    find: `  era.print('什么都不做');
+  add_lose(cid, 1, 10);`,
+    replace: `  era.print('什么都不做');
+  add_lose(cid, 1, 0);`,
+    tests: ['com-special'],
+    must_mention: '放置PLAY',
+  },
+  {
+    desc: 'M1195 COM56 歌唱经验实际值改为显示值（原作差 1 消失）',
+    file: 'ere/system/train/com-special.js',
+    find: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 3;',
+    replace: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 2;',
+    tests: ['com-special'],
+    must_mention: '显示 +6，实际加 E+ABL-3 = 5',
+  },
+  {
+    desc: 'M1196 COM57 爱情经验露出门槛 3 降为 2',
+    file: 'ere/system/train/com-special.js',
+    find: '    abl(cid, 17) >= 3 &&',
+    replace: '    abl(cid, 17) >= 2 &&',
+    tests: ['com-special'],
+    must_mention: 'COM57：开关、爱情经验与持续效果',
+  },
+  {
+    desc: 'M1197 COM58 关闭时先清浴室再清淋浴',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (chara(cid).train.浴室PLAY) {
+    if (chara(cid).train.淋浴中) chara(cid).train.淋浴中 = 0; // :13-14 必须先清淋浴
+    chara(cid).train.浴室PLAY = 0; // :15`,
+    replace: `  if (chara(cid).train.浴室PLAY) {
+    chara(cid).train.浴室PLAY = 0;
+    if (chara(cid).train.淋浴中) chara(cid).train.淋浴中 = 0;`,
+    tests: ['com-special'],
+    must_mention: '关闭时必须先清淋浴，再清浴室位',
+  },
+  {
+    desc: 'M1198 COM59 新妻主人经验的爱慕条件删',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (tal(cid, 85)) game.train.主人经验 += 20;',
+    replace: '  // 变异：爱慕条件删',
+    tests: ['com-special'],
+    must_mention: '主人经验四条件',
+  },
+  {
+    desc: 'M1199 COM_ABLE50 器具过滤守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: '    game.train.指令过滤 & 2 ||',
+    replace: '    false ||',
+    tests: ['com-special'],
+    must_mention: '器具过滤、药物抗性、连续利尿各自拦截',
+  },
+  {
+    desc: 'M1200 COM_ABLE51 抗药性守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (tal(cid, 56) || tq(cid, 55)) return 0;',
+    replace: '  if (tq(cid, 55)) return 0;',
+    tests: ['com-special'],
+    must_mention: '器具过滤、药物抗性、连续利尿各自拦截',
+  },
+  {
+    desc: 'M1201 COM_ABLE52 连续利尿剂守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (chara(cid).system.利尿剂 || tq(cid, 59) || tq(cid, 55)) return 0;',
+    replace: '  if (tq(cid, 59) || tq(cid, 55)) return 0;',
+    tests: ['com-special'],
+    must_mention: '器具过滤、药物抗性、连续利尿各自拦截',
+  },
+  {
+    desc: 'M1202 COM_ABLE53 索求口上抑制守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (game.train.索求口上抑制 === 555) return 0;',
+    replace: '  // 变异：索求口上抑制守卫删',
+    tests: ['com-special'],
+    must_mention: '录像解除随时、野外门槛、死斗与失神门',
+  },
+  {
+    desc: 'M1203 COM_ABLE54 顺从抖M双门槛降为 2',
+    file: 'ere/system/train/com-special.js',
+    find: '(abl(cid, 10) <= 2 && abl(cid, 21) <= 2)',
+    replace: '(abl(cid, 10) <= 1 && abl(cid, 21) <= 1)',
+    tests: ['com-special'],
+    must_mention: '录像解除随时、野外门槛、死斗与失神门',
+  },
+  {
+    desc: 'M1204 COM_ABLE57 镜子道具守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (!has_item(16) || abl(cid, 10) <= 1) return 0;',
+    replace: '  if (abl(cid, 10) <= 1) return 0;',
+    tests: ['com-special'],
+    must_mention: '镜子、浴室及新妻的关键门槛',
+  },
+  {
+    desc: 'M1205 COM_ABLE58 着衣守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (
+    worn &&
+    era.get('flag:37') &&
+    (worn !== 64 || (era.get(\`cflag:\${cid}:42\`) || 0) <= 70)
+  )
+    return 0;`,
+    replace: '  // 变异：着衣守卫删',
+    tests: ['com-special'],
+    must_mention: '镜子、浴室及新妻的关键门槛',
+  },
+  {
+    desc: 'M1206 COM_ABLE59 助手守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (!has_item(19) || era_flag.assiplay || abl(cid, 0) <= 2) return 0;',
+    replace: '  if (!has_item(19) || abl(cid, 0) <= 2) return 0;',
+    tests: ['com-special'],
+    must_mention: '镜子、浴室及新妻的关键门槛',
+  },
+  {
+    desc: 'M1207 COM_ABLE59 着衣守卫删',
+    file: 'ere/system/train/com-special.js',
+    find: "  return (era.get(`cflag:${cid}:40`) || 0) && era.get('flag:37') ? 0 : 1;",
+    replace: '  return 1; // 变异：着衣守卫删',
+    tests: ['com-special'],
+    must_mention: '镜子、浴室及新妻的关键门槛',
+  },
+  {
+    desc: 'M1208 COM_ABLE58 助手动物耳朵门槛删',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (
+    era_flag.assi > 0 &&
+    tal(era_flag.assi, 124) &&
+    abl(era_flag.assi, 10) <= 2
+  )
+    return 0;`,
+    replace: '  // 变异：助手动物耳朵门槛删',
+    tests: ['com-special'],
+    must_mention: '镜子、浴室及新妻的关键门槛',
+  },
+  {
+    desc: 'M1209 TRAIN_MESSAGE_B53 启停文案反转',
+    file: 'ere/system/train/com-special.js',
+    find: `    chara(target_id()).train.录像摄影
+      ? '★★★录像摄影结束★★★'
+      : '★★★录像摄影开始★★★',`,
+    replace: `    chara(target_id()).train.录像摄影
+      ? '★★★录像摄影开始★★★'
+      : '★★★录像摄影结束★★★',`,
+    tests: ['com-special'],
+    must_mention: '启动只清 480–489',
+  },
+  {
+    desc: 'M1210 TRAIN_MESSAGE_B54 返回房间文案删',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (chara(cid).train.野外PLAY) {
+    era.print('回到了房间……');
+    return;
+  }`,
+    replace: `  if (chara(cid).train.野外PLAY) {
+    return;
+  }`,
+    tests: ['com-special'],
+    must_mention: '首次开启记录野外露出经验',
+  },
+  {
+    desc: 'M1212 COM57 将 TALENT:80 后无条件的 B 倍率误并入条件',
+    file: 'ere/system/train/com-special.js',
+    find: '  if (tal(cid, 80)) a = times(a, 150);\n  b = times(b, 120);',
+    replace:
+      '  if (tal(cid, 80)) {\n    a = times(a, 150);\n    b = times(b, 120);\n  }',
+    tests: ['com-special'],
+    must_mention: 'SIF 只约束下一条语句',
+  },
+  {
+    desc: 'M1213 COM57 将 TALENT:113 后无条件效果误并入条件',
+    file: 'ere/system/train/com-special.js',
+    find: `  if (tal(cid, 113)) add_src(cid, 3, 500);
+  add_src(cid, 16, 500);
+  a = times(a, 150);
+  b = times(b, 120);`,
+    replace: `  if (tal(cid, 113)) {
+    add_src(cid, 3, 500);
+    add_src(cid, 16, 500);
+    a = times(a, 150);
+    b = times(b, 120);
+  }`,
+    tests: ['com-special'],
+    must_mention: 'SIF 只约束下一条语句',
+  },
+  {
+    desc: 'M1214 主启动图删特殊系注册（COM50/COM_ABLE50 不进实际运行图）（#224）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-special');",
+    replace: '// 变异：特殊系不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: '主启动图注册特殊系',
+  },
+  {
+    desc: 'M1211 TRAIN_MESSAGE_A55 欲情输出阈值反转',
+    file: 'ere/system/train/com-special.js',
+    find: "  if ((era.get('tflag:899') || 0) > 1 || palam(cid, 5) < PALAMLV[3]) return;",
+    replace:
+      "  if ((era.get('tflag:899') || 0) > 1 || palam(cid, 5) >= PALAMLV[3]) return;",
+    tests: ['com-special'],
+    must_mention: 'SOURCE_CHECK 调用时输出原作反应',
   },
 ];

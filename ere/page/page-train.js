@@ -216,11 +216,27 @@ async function draw_status_screen(target) {
   era.print(header);
 
   // :84 CALL SHOW_EQUIP_2 —— 调教装备显示（CHARA_INFO_SHOW ver1.1.2.ERB
-  // :1564-1596，粉色一行的逐位追加）。TEQUIP:55（[死斗场决斗中]）臂随
-  // J20（#230——本族点亮该位）；其余装备位（摄影/野外/羞耻/浴室/新妻/
-  // 使役魔兽/兽奸/触手）随各自族票（J10/J13/J17），未点亮期间占位行保留
-  if (era.get(`tequip:${target}:55`)) {
-    era.print([{ content: '[死斗场决斗中]', color: '#FF1493' }]); // :1587-1588
+  // :1564-1596，粉色一行的逐位追加）。#224（J14）点亮 53/54/57/58/59，
+  // #230（J20）点亮 55；其余装备位尚无所属族落地时才保留运行时占位。
+  // :1566-1577 / :1587-1588
+  const special_equip = [];
+  if (era.get(`tequip:${target}:53`)) {
+    // :1566-1577 的摄影段：LOCAL = 10 + 4 * CFLAG:499 - CFLAG:491 + 1
+    const remaining =
+      10 +
+      4 * (era.get(`cflag:${target}:499`) || 0) -
+      (era.get(`cflag:${target}:491`) || 0) +
+      1;
+    special_equip.push(`[摄影中(剩${remaining}次)]`);
+  }
+  if (era.get(`tequip:${target}:54`)) special_equip.push('[野外PLAY中]');
+  if (era.get(`tequip:${target}:57`))
+    special_equip.push('[羞耻（大镜子）PLAY中]');
+  if (era.get(`tequip:${target}:58`)) special_equip.push('[浴室PLAY中]');
+  if (era.get(`tequip:${target}:59`)) special_equip.push('[新妻PLAY中]');
+  if (era.get(`tequip:${target}:55`)) special_equip.push('[死斗场决斗中]');
+  if (special_equip.length > 0) {
+    era.print([{ content: special_equip.join(''), color: '#FF1493' }]);
   } else {
     stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');
   }

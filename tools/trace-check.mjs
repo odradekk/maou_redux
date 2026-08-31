@@ -105,6 +105,16 @@ const COMF46 = 'target/ERB/調教相關/COMF46_浣腸器＋プラグ.ERB';
 const COMF47 = 'target/ERB/調教相關/COMF47_ボンデージ装着.ERB';
 const COMF48 = 'target/ERB/調教相關/COMF48_足コキする.ERB';
 const COMF49 = 'target/ERB/調教相關/COMF49_アナル電極.ERB';
+const COMF50 = 'target/ERB/調教相關/COMF50_ローション.ERB';
+const COMF51 = 'target/ERB/調教相關/COMF51_媚薬.ERB';
+const COMF52 = 'target/ERB/調教相關/COMF52_利尿剤.ERB';
+const COMF53 = 'target/ERB/調教相關/COMF53_水晶球.ERB';
+const COMF54 = 'target/ERB/調教相關/COMF54_野外プレイ.ERB';
+const COMF55 = 'target/ERB/調教相關/COMF55_何もしない.ERB';
+const COMF56 = 'target/ERB/調教相關/COMF56_会話する.ERB';
+const COMF57 = 'target/ERB/調教相關/COMF57_羞恥プレイ.ERB';
+const COMF58 = 'target/ERB/調教相關/COMF58_お風呂場プレイ.ERB';
+const COMF59 = 'target/ERB/調教相關/COMF59_新妻プレイ.ERB';
 const BENKI = 'target/ERB/調教相關/BENKI.ERB';
 const COMF110_ERB = 'target/ERB/調教相關/COMF110_服の着脱.ERB';
 const COMF111_ERB = 'target/ERB/調教相關/COMF111_服を破る.ERB';
@@ -1484,11 +1494,23 @@ const FILES = [
   {
     js: 'ere/page/page-train.js',
     refs: [
-      // #230（J20）：SHOW_EQUIP_2 的死斗场臂（其余装备位随 J10/J13/J17）
+      // #224（J14）与 #230（J20）：SHOW_EQUIP_2 的已点亮状态臂
       {
         src: CHARA_INFO_SHOW,
         ref: '1564-1596',
         any: [/一度使用したら解除するまで止まらない道具や調教を/m],
+      },
+      // #224（J14）：特殊族点亮的 53/54/57/58/59 状态臂；与死斗场同一粉色行。
+      {
+        src: CHARA_INFO_SHOW,
+        ref: '1566-1577',
+        any: [
+          /摄影中/m,
+          /野外PLAY中/m,
+          /羞耻（大镜子）PLAY中/m,
+          /浴室PLAY中/m,
+          /新妻PLAY中/m,
+        ],
       },
       { src: CHARA_INFO_SHOW, ref: '1587-1588', any: [/死斗场决斗中/m] },
       // #215（J5）：clothtype_text 内部 :37 的着衣模式守卫
@@ -3118,6 +3140,59 @@ const FILES = [
       },
       { src: BENKI, ref: '162-270', any: [/^\s*BENKI_MENU:4 \+= 1$/m] },
       { src: BENKI, ref: '1656-1681', any: [/^@BENKI_PLAYER_NAME$/m] },
+    ],
+  },
+  // —— #224（J14：特殊指令族 50-59——@COM/@COM_ABLE/@EQUIP_COM/TRAIN_MESSAGE）——
+  {
+    js: 'ere/system/train/com-special.js',
+    refs: [
+      { src: COMF50, ref: '3-28', any: [/@COM50/] },
+      { src: COMF51, ref: '10-97', any: [/@COM51/] },
+      { src: COMF52, ref: '6-71', any: [/@COM52/] },
+      { src: COMF53, ref: '3-49', any: [/@COM53/] },
+      { src: COMF53, ref: '52-204', any: [/;ビデオ撮影中/] },
+      { src: COMF54, ref: '3-109', any: [/@COM54/] },
+      { src: COMF54, ref: '111-211', any: [/@EQUIP_COM54/] },
+      { src: COMF55, ref: '7-84', any: [/@COM55/] },
+      { src: COMF56, ref: '6-196', any: [/@COM56/] },
+      { src: COMF57, ref: '3-131', any: [/@COM57/] },
+      { src: COMF57, ref: '134-254', any: [/@EQUIP_COM57/] },
+      { src: COMF58, ref: '3-98', any: [/@COM58/] },
+      { src: COMF58, ref: '100-198', any: [/@EQUIP_COM58/] },
+      { src: COMF59, ref: '3-160', any: [/@COM59/] },
+      { src: COMF59, ref: '163-318', any: [/@EQUIP_COM59/] },
+      { src: COMABLE, ref: '2246-2506', any: [/@COM_ABLE50/] },
+      { src: MESSAGE_A, ref: '362-373', any: [/ELSEIF SELECTCOM == 55/] },
+      { src: MESSAGE_B, ref: '1901-2063', any: [/ELSEIF SELECTCOM == 50/] },
+      { src: COMF54, ref: '119-196', any: [/A = 500/] },
+      { src: COMF54, ref: '23-34', any: [/IF PALAM:5 < PALAMLV:1/] },
+      { src: COMF54, ref: '122-133', any: [/IF PALAM:5 < PALAMLV:1/] },
+      { src: COMF54, ref: '35-60', any: [/IF ABL:17 == 0/] },
+      { src: COMF54, ref: '134-159', any: [/IF ABL:17 == 0/] },
+      { src: COMF54, ref: '61-74', any: [/IF ABL:21 == 0/] },
+      { src: COMF54, ref: '76-78', any: [/SIF TALENT:28/] },
+      { src: COMF54, ref: '79-81', any: [/SIF TALENT:33/] },
+      { src: COMF54, ref: '83-85', any: [/SIF TALENT:10/] },
+      { src: COMF54, ref: '86-88', any: [/SIF TALENT:35/] },
+      { src: COMF50, ref: '6', any: [/PRINTL 润滑液/] },
+      { src: COMF50, ref: '8', any: [/CALL TRAIN_MESSAGE_B/] },
+      { src: COMF50, ref: '13', any: [/SOURCE:10 = 10000/] },
+      { src: COMF50, ref: '14', any: [/SOURCE:12 = 300/] },
+      { src: COMF50, ref: '16', any: [/ITEM:25 -= 1/] },
+      {
+        src: COMF50,
+        ref: '18-26',
+        any: [/IF TALENT:122 == 0 && TALENT:PLAYER:122 == 0/],
+      },
+      { src: COMF51, ref: '12', any: [/PRINTL 媚药/] },
+      { src: COMF51, ref: '14', any: [/CALL TRAIN_MESSAGE_B/] },
+      { src: COMF51, ref: '59-61', any: [/SIF LOSEBASE:0 < 0/] },
+      { src: COMF52, ref: '8', any: [/PRINTL 利尿剂/] },
+      { src: COMF52, ref: '10', any: [/CALL TRAIN_MESSAGE_B/] },
+      { src: COMF53, ref: '7', any: [/CALL TRAIN_MESSAGE_B/] },
+      { src: COMF53, ref: '63-65', any: [/CFLAG:491 \+= 1/] },
+      { src: COMF58, ref: '13-14', any: [/SIF TEQUIP:18/] },
+      { src: COMF58, ref: '15', any: [/TEQUIP:58 = 0/] },
     ],
   },
   {
