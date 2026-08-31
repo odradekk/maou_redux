@@ -758,6 +758,48 @@ test('@COM133 B/A：上身仰起与深吻行', async () => {
   );
 });
 
+test('@COM134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 21;
+  world.fixture.store.set('abl:31:2', 3);
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
+  const result = await world.com_family.call(134);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 134, '原作显式 SELECTCOM = 134');
+  assert.ok(world.fixture.text_lines().includes('背后位ＳＰ'));
+  assert.equal(world.fixture.store.get('tflag:19'), 1);
+  // ABL:16=0 → S4=50 ×0.50=25、S5=10 ×0.50=5；ABL:2=3 → S1=1000、S3=800；
+  // EXP < EXPLV:3 → S1×1、S6=30；ABL:1=0 → S17=20、S3+=50 → 850；
+  // 润滑 < LV3 → S1×1、S6×0.50=15；欲情 < LV1 → S1×0.60=600、S3×0.30=255；
+  // 顺从 0 → S1×0.50=300、S3×0.60=153。
+  assert.equal(world.fixture.store.get('source:31:1'), 300);
+  assert.equal(world.fixture.store.get('source:31:3'), 153);
+  assert.equal(world.fixture.store.get('source:31:4'), 25);
+  assert.equal(world.fixture.store.get('source:31:5'), 5);
+  assert.equal(world.fixture.store.get('source:31:6'), 15);
+  assert.equal(world.fixture.store.get('source:31:12'), 800);
+  assert.equal(world.fixture.store.get('source:31:17'), 20);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -60);
+});
+
+test('@COM134 B/A：从后揉胸与子宫口蹂躏行', async () => {
+  const world = seed_world();
+  world.fixture.store.set('callname:0:-1', '魔王');
+  await world.com_family.call(134);
+  const lines = world.fixture.text_lines();
+  assert.ok(lines.includes('温妮晃动的胸部被揉着、'));
+  assert.ok(
+    lines.includes('下巴被魔王抓住、扭头向后、舌头交缠着、口腔被蹂躏着、'),
+  );
+  assert.ok(
+    lines.includes(
+      '温妮的手腕被抓住拉到腰的两旁、保持这样的姿态、阴茎不断突进、蹂躏着子宫口…',
+    ),
+  );
+  assert.ok(lines.includes('温妮觉得异物感太强了、很痛苦的样子…'));
+});
+
 test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
   const world = seed_world();
   enable_oral(world.fixture);

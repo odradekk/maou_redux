@@ -1556,15 +1556,6 @@ async function com123() {
   return 1;
 }
 
-function make_advanced_com(id, title) {
-  return async function advanced_com() {
-    era_flag.selectcom = id; // 原作显式 SELECTCOM = id（升格抵达时回填号位）
-    era.print(title);
-    await train_message_b();
-    return 1;
-  };
-}
-
 function dirty_penalty_124() {
   const player = era_flag.player;
   let y = 0;
@@ -3527,7 +3518,228 @@ async function com133() {
   await com_after_vagina_sex();
   return 1;
 }
-const com134 = make_advanced_com(134, '背后位ＳＰ');
+function source134() {
+  const cid = era_flag.target;
+  add_lose(cid, 0, 60);
+  add_lose(cid, 1, 120);
+  set_src(cid, 12, 800);
+  const service = [
+    [50, 10],
+    [150, 50],
+    [200, 100],
+    [250, 180],
+    [300, 300],
+    [350, 500],
+  ][Math.min(abl(cid, 16), 5)];
+  set_src(cid, 4, service[0]);
+  set_src(cid, 5, service[1]);
+  const skill = [0.5, 0.8, 1, 1.5, 2.5, 4][Math.min(abl(cid, 12), 5)];
+  times_src(cid, 4, skill);
+  times_src(cid, 5, skill);
+  const v_feel = [
+    [10, 250],
+    [50, 500],
+    [450, 550],
+    [1000, 800],
+    [2800, 1200],
+    [4000, 1800],
+  ][Math.min(abl(cid, 2), 5)];
+  set_src(cid, 1, v_feel[0]);
+  set_src(cid, 3, v_feel[1]);
+  const e0 = exp(cid, 0);
+  if (e0 < EXPLV[1]) {
+    times_src(cid, 1, 0.2);
+    set_src(cid, 6, 5000);
+    if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
+      era.print(`${name_of('expname', 50)}＋１`);
+      era.add(`exp:${cid}:50`, 1);
+    }
+  } else if (e0 < EXPLV[2]) {
+    times_src(cid, 1, 0.6);
+    set_src(cid, 6, 220);
+  } else if (e0 < EXPLV[3]) {
+    times_src(cid, 1, 1);
+    set_src(cid, 6, 30);
+  } else if (e0 < EXPLV[4]) {
+    times_src(cid, 1, 1.2);
+    set_src(cid, 6, 5);
+  } else if (e0 < EXPLV[5]) {
+    times_src(cid, 1, 1.3);
+    set_src(cid, 6, 0);
+  } else {
+    times_src(cid, 1, 1.8);
+    set_src(cid, 6, 0);
+  }
+  const breast = [
+    [20, 50],
+    [100, 100],
+    [600, 200],
+    [1400, 300],
+    [2200, 600],
+    [3200, 1000],
+  ][Math.min(abl(cid, 1), 5)];
+  set_src(cid, 17, breast[0]);
+  add_src(cid, 3, breast[1]);
+  const lube = palam(cid, 3);
+  if (lube < PALAMLV[1]) {
+    times_src(cid, 1, 0.1);
+    add_src(cid, 6, 900);
+    times_src(cid, 6, 3);
+  } else if (lube < PALAMLV[2]) {
+    times_src(cid, 1, 0.4);
+    add_src(cid, 6, 250);
+    times_src(cid, 6, 1);
+  } else if (lube < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 6, 0.5);
+  } else if (lube < PALAMLV[4]) {
+    times_src(cid, 1, 1.4);
+    times_src(cid, 6, 0.2);
+  } else {
+    times_src(cid, 1, 1.8);
+    times_src(cid, 6, 0.1);
+  }
+  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (tal(cid, 99)) times_src(cid, 6, 1.8);
+  if (tal(cid, 100)) times_src(cid, 6, 2);
+  if (tal(cid, 30)) {
+    times_src(cid, 3, 0.6);
+    set_src(cid, 15, e0 === 0 ? 10000 : 1000);
+  } else if (tal(cid, 31)) {
+    if (e0 === 0) {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 300);
+    }
+  } else if (e0 === 0) {
+    set_src(cid, 15, 3000);
+  }
+  const lust = palam(cid, 5);
+  if (lust < PALAMLV[1]) {
+    times_src(cid, 1, 0.6);
+    times_src(cid, 3, 0.3);
+  } else if (lust < PALAMLV[2]) {
+    times_src(cid, 1, 0.8);
+    times_src(cid, 3, 0.6);
+  } else if (lust < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 3, 1);
+  } else if (lust < PALAMLV[4]) {
+    times_src(cid, 1, 1.2);
+    times_src(cid, 3, 1.5);
+  } else {
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 1.8);
+  }
+  const obey = [
+    [0.5, 0.6, 2],
+    [0.8, 0.8, 1.5],
+    [1, 1, 1],
+    [1.3, 1.2, 0.8],
+    [1.6, 1.4, 0.6],
+    [2, 1.6, 0.3],
+  ][Math.min(abl(cid, 10), 5)];
+  times_src(cid, 1, obey[0]);
+  times_src(cid, 3, obey[1]);
+  times_src(cid, 15, obey[2]);
+  if (tal(cid, 85)) {
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 2);
+    times_src(cid, 17, 1.5);
+  }
+  if ((era.get('tflag:59') || 0) === 132 || era_flag.prevcom === 132) {
+    const masochist = [
+      [0.6, 0.8, 0.8],
+      [0.8, 1, 1],
+      [1, 1.2, 1.5],
+      [1.1, 1.4, 3],
+      [1.2, 2, 5],
+      [1.3, 3, 8],
+    ][Math.min(abl(cid, 21), 5)];
+    times_src(cid, 1, masochist[0]);
+    times_src(cid, 10, masochist[1]);
+    times_src(cid, 13, masochist[2]);
+  }
+}
+
+function after134() {
+  after133();
+}
+
+async function message_b134() {
+  const cid = era_flag.target;
+  let first = target_name();
+  if (tal(cid, 110) || tal(cid, 114)) {
+    first +=
+      '那翻腾着波涛的双乳被从后抓住了、充满弹性的乳肉被揉的时候好像要跳起来一样、';
+  } else if (tal(cid, 109)) {
+    first += '小小的胸部被从后按摩、';
+  } else {
+    first += '晃动的胸部被揉着、';
+  }
+  era.print(first);
+  let kiss = `下巴被${player_name()}抓住、扭头向后、`;
+  kiss += tal(cid, 85)
+    ? '舌头积极地相互交缠、浓情地深吻着、'
+    : '舌头交缠着、口腔被蹂躏着、';
+  era.print(kiss);
+  era.print(
+    `${target_name()}的手腕被抓住拉到腰的两旁、保持这样的姿态、阴茎不断突进、蹂躏着子宫口…`,
+  );
+  if ((era.get('tflag:899') || 0) !== 0) return;
+  const e0 = exp(cid, 0);
+  if (e0 <= 30 || (e0 >= 31 && e0 <= 50)) {
+    era.print(`${target_name()}觉得异物感太强了、很痛苦的样子…`);
+  } else if (e0 <= 50 && tal(cid, 121)) {
+    era.print(`${target_name()}阴茎在空中兴奋地晃荡着、漏出了呻吟声…`);
+  } else if (e0 <= 50) {
+    era.print(`${target_name()}用阴毛摩擦着阴蒂、漏出了呻吟声…`);
+  } else if (e0 <= 80) {
+    era.print(`${target_name()}发出了长长的甘甜吐息、因强烈的插入感咬紧牙关…`);
+  } else if (e0 <= 120) {
+    era.print(
+      `${target_name()}做好了接种的准备、扭动着纤细的腰、引导着阴茎前往那最深处的洞穴…`,
+    );
+    era.print(
+      `${target_name()}子宫被重重地叩击着、大张着嘴巴、身体剧烈地颤抖…`,
+    );
+  } else {
+    era.print(`突入到${target_name()}的子宫、狠狠地摇晃着她的身体、`);
+    let line = target_name();
+    if (tal(cid, 85)) line += '眼里泛起幸福的泪水、';
+    if (palam(cid, 5) > PALAMLV[4]) line += '嘴角流出了口水、';
+    if (palam(cid, 3) > PALAMLV[4]) line += '私处湿得一塌糊涂、';
+    line += '像是发了疯似的、沉醉在牝奴能得到的最高快乐之中…';
+    era.print(line);
+  }
+}
+
+async function message_a134() {
+  await train_message_a_sex_common();
+}
+
+/** @COM134（COMF134_後背位ＳＰ.ERB）背后位ＳＰ。高级 COM。 */
+async function com134() {
+  era_flag.selectcom = 134; // 原作显式 SELECTCOM = 134（升格抵达时回填号位）
+  if ((await confirm_lost_virgin()) === 0) return 0;
+  if (!(await confirm_condom())) return 0;
+  era.print('背后位ＳＰ');
+  await train_message_b();
+  const cid = era_flag.target;
+  game.train.伴V经验指令 = 1;
+  if (
+    tal(cid, 85) &&
+    !era_flag.assiplay &&
+    exp(cid, 0) === 0 &&
+    !tequip(cid, 89)
+  ) {
+    game.train.主人导致处女丧失 = 1;
+  }
+  await com_ejac_player_sex();
+  source134();
+  after134();
+  await com_after_vagina_sex();
+  return 1;
+}
 
 /**
  * @COM135（COMF135_セルフクンニ.ERB）自助舔阴。可直选。
@@ -3584,9 +3796,11 @@ train_message_b_family.register(132, message_b132);
 train_message_a_family.register(132, message_a132);
 train_message_b_family.register(133, message_b133);
 train_message_a_family.register(133, message_a133);
+train_message_b_family.register(134, message_b134);
+train_message_a_family.register(134, message_a134);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [134, 135]) {
+for (const id of [135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }
