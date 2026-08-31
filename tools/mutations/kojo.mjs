@@ -628,4 +628,103 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '好吃吗',
   },
+  {
+    desc: 'M1626 K0 自慰首次状态推进写错（CFLAG:304 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.自慰 = 1; // :872',
+    replace: '      kojo.自慰 = 2; // :872（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '自慰首次推进到 1',
+  },
+  {
+    desc: 'M1627 K0 自慰首次爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :865-871 爱＆淫乱
+      if (
+        era.get(\`talent:\${target}:85\`) === 1 ||`,
+    replace: `      // :865-871 爱＆淫乱
+      if (
+        era.get(\`talent:\${target}:86\`) === 1 ||`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '请多多的…欣赏吧',
+  },
+  {
+    desc: 'M1628 K0 自慰淫乱+处女门槛错位（CFLAG:304 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.自慰 <= 8 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '自慰阈值闸',
+  },
+  {
+    desc: 'M1629 K0 自慰淫乱拍摄守卫删除（TEQUIP:53 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :885-894 撮影中
+      if (filming) {`,
+    replace: `      // :885-894 撮影中
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '看吧～♡　噗咻噗咻勃起的',
+  },
+  {
+    desc: 'M1630 K0 自慰拍摄鸡鸡判据错格（TALENT:122 改 123）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      era.get(`talent:${target}:122`) || era.get(`talent:${target}:121`);',
+    replace:
+      '      era.get(`talent:${target}:123`) || era.get(`talent:${target}:121`);',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鸡鸡～',
+  },
+  {
+    desc: 'M1631 K0 自慰淫乱中毒 Lv3 阈值错档（ABL:31 >= 3 改 >= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :883-902 淫乱＋自慰中毒Lv3以上
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      masturbation_addiction >= 3 &&`,
+    replace: `      // :883-902 淫乱＋自慰中毒Lv3以上
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      masturbation_addiction >= 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '自慰二次淫乱+自慰中毒 Lv3',
+  },
+  {
+    desc: 'M1632 K0 自慰爱慕+处女素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :913-916 爱＋处女
+      era.get(\`talent:\${target}:85\`) === 1 &&`,
+    replace: `      // :913-916 爱＋处女
+      era.get(\`talent:\${target}:86\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '专属小穴',
+  },
+  {
+    desc: 'M1633 K0 自慰屈服刻印 Lv3 分档错位（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :948-955 屈服刻印Lv3+自慰中毒Lv1以上
+      (era.get(\`mark:\${target}:2\`) || 0) === 3 &&`,
+    replace: `      // :948-955 屈服刻印Lv3+自慰中毒Lv1以上
+      (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '如果这是你希望的话',
+  },
+  {
+    desc: 'M1634 K0 自慰爱慕拍摄守卫删除（TEQUIP:53 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :920-929 撮影中
+      if (filming) {`,
+    replace: `      // :920-929 撮影中
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '看见了吗？～♪　噗咻噗咻勃起的',
+  },
+  {
+    desc: 'M1635 K0 自慰淫乱 RAND:3 首支旁路失效（=== 0 改 === 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        ); // :894
+      } else if (rand_n(3) === 0) {`,
+    replace: `        ); // :894
+      } else if (rand_n(3) === 1) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '飞起来了～飞起来了～',
+  },
 ];

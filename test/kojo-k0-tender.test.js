@@ -2,14 +2,16 @@
  * ere/kojo/kojo-k0-tender.js 的行为测试（issue #231——K0 慈爱口上）。
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：琼（Chara31，素质 160
- * 慈爱 → GET_KOJO_NUM 100）入列调教。覆盖第一刀：
+ * 慈爱 → GET_KOJO_NUM 100）入列调教。覆盖：
  *   - 首次与二次以后走不同分支且状态推进（验收项「此行为有测试」）；
  *   - MARK:2 刻印分档（>= 2 / == 3 / == 2 / <= 1）与 TALENT:76/85 素质分支；
  *   - FLAG:7 == 1 的阈值闸（每阶段一次）与 == 2 的旁路（每次出声）；
  *   - 七道跳过判定（K0 顺序：死斗场最先、崩坏在兽奸前；死斗场/兽奸岔专用口上）；
  *   - 爱抚外指令落占位行；
+ *   - 舔阴 / 肛门爱抚 / 自慰状态机（自慰含拍摄拼接与 RAND:3/RAND:2）；
  *   - @EVENTTRAIN #PRI / @EVENTEND #LATER 的存在标志；
  *   - 存根清单核对（docs/stub-registry.md）。
+
  */
 
 const assert = require('node:assert/strict');
@@ -45,10 +47,18 @@ async function setup_k0(seed) {
 }
 
 // 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_0 的等价物）
-async function speak_k0(fixture) {
+async function speak_k0(fixture, rand) {
   const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
-  return kojo_message_com_family.call(0);
+  return kojo_message_com_family.call(0, { args: [rand] });
 }
+
+// RAND:N 定值序：draws 依次被消费（RAND:3 先、RAND:2 后），越界取模
+const seq_rand =
+  (...draws) =>
+  (n) => {
+    const value = draws.shift() ?? 0;
+    return value % n;
+  };
 
 test('首次（CFLAG:301 == 0 且 MARK:2 < 2）：虚假的爱 + 状态推进到 1', async () => {
   const fixture = await setup_k0();
@@ -220,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 3; // 自慰——COM2 落地后改用尚未填的指令
+    era_flag.selectcom = 5; // 胸爱抚——COM3 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 3 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 5 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -506,6 +516,248 @@ test('肛门爱抚末支门槛是 CFLAG:223（原文 :847），不是 303', asyn
   });
   await speak_k0(quiet);
   assert.deepEqual(quiet.text_lines(), []);
+});
+
+test('自慰首次爱慕或淫乱：一句邀请，推进到 1', async () => {
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), ['「啊啊…请多多的…欣赏吧…♪」']);
+  assert.equal(love.store.get('cflag:31:304'), 1, '自慰首次推进到 1');
+
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), ['「啊啊…请多多的…欣赏吧…♪」']);
+});
+
+test('自慰首次非爱慕非淫乱：两句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「你是…恶魔」',
+    '琼一副要哭出来的样子继续自慰着………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:304'), 1);
+});
+
+test('自慰二次淫乱+处女：自称插值三句，推进到 9', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「咿～～…呀呜呜～～…主人～…快点把我的淫乱处女膜夺走吧！夺走吧～～～～！！」',
+    '「不管是用狗～！还是用怪物～！什么都好～！把我的小穴捣进去吧～～～！」',
+    '琼的脸上已经再也找不到一丝被称作圣女时候的清纯痕迹了………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:304'), 9);
+});
+
+test('自慰二次淫乱+自慰中毒 Lv3：拍摄拼接 / 三支随机', async () => {
+  const film = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:122', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(film);
+  assert.deepEqual(film.text_lines(), [
+    '「看吧～♡　噗咻噗咻勃起的',
+    '鸡鸡～',
+    '♡」',
+    '「我今天也是情绪高涨！请大家一起看我做舒服的事吧～♡」',
+  ]);
+  assert.equal(film.store.get('cflag:31:304'), 8);
+
+  const dildo = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(dildo);
+  assert.deepEqual(dildo.text_lines(), [
+    '「看吧～♡　噗咻噗咻勃起的',
+    '假鸡鸡～',
+    '♡」',
+    '「我今天也是情绪高涨！请大家一起看我做舒服的事吧～♡」',
+  ]);
+
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(r0, seq_rand(0));
+  assert.deepEqual(r0.text_lines(), [
+    '「小穴…好爽…啊啊～…飞起来了～飞起来了～♡」',
+  ]);
+
+  const r1 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(r1, seq_rand(1, 0));
+  assert.deepEqual(r1.text_lines(), [
+    '「平时一个人是怎么做的…就让你好好看看吧…」',
+  ]);
+
+  const r2 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(r2, seq_rand(1, 1));
+  assert.deepEqual(r2.text_lines(), [
+    '「啊～啊～…搅着搅着小穴里的淫水就止不住了啊啊啊～♡」',
+  ]);
+});
+
+test('自慰二次淫乱+自慰中毒不足 / 爱慕处女 / 屈服 Lv3 / それ以外', async () => {
+  const low = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(low, seq_rand(0));
+  assert.deepEqual(low.text_lines(), [
+    '「啊啊～～…明明在主人的眼前～…卖力自慰后请赏我大肉棒吧～～～♡」',
+  ]);
+  assert.equal(low.store.get('cflag:31:304'), 7);
+
+  const love_v = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:85', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(love_v);
+  assert.deepEqual(love_v.text_lines(), [
+    '「啊…啊啊～、快看…我在玩弄主人专用的专属小穴…！」',
+    '「哦～…哦哦～…感觉处女膜也在一颤一颤的呢…♡」',
+  ]);
+  assert.equal(love_v.store.get('cflag:31:304'), 6);
+
+  const yield_lv3 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('mark:31:2', 3);
+    f.store.set('abl:31:31', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(yield_lv3, seq_rand(0));
+  assert.deepEqual(yield_lv3.text_lines(), ['「如果这是你希望的话…」']);
+  assert.equal(yield_lv3.store.get('cflag:31:304'), 3);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(other, seq_rand(1));
+  assert.deepEqual(other.text_lines(), ['「真讨厌…」']);
+  assert.equal(other.store.get('cflag:31:304'), 2);
+});
+
+test('自慰二次爱慕+自慰中毒 Lv3：拍摄拼接与随机支', async () => {
+  const film = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(film);
+  assert.deepEqual(film.text_lines(), [
+    '「看见了吗？～♪　噗咻噗咻勃起的',
+    '假鸡鸡',
+    '♪」',
+    '「我呐，只有有爱的话，在大家面前也不觉得尴尬了……♪」',
+  ]);
+  assert.equal(film.store.get('cflag:31:304'), 5);
+
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('cflag:31:304', 1);
+  });
+  await speak_k0(r0, seq_rand(0));
+  assert.deepEqual(r0.text_lines(), ['「好、爽～！　啊哈哈…哈哈…好爽～！」']);
+});
+
+test('自慰阈值闸：FLAG:7 == 1 时上限生效，== 2 时旁路', async () => {
+  const quiet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:304', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(quiet);
+  assert.deepEqual(quiet.text_lines(), []);
+
+  // FLAG:7 == 1 且 CFLAG:304 == 8：<= 8 命中淫乱+处女（变异把门槛改成 <= 7 会静默）
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:304', 8);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「咿～～…呀呜呜～～…主人～…快点把我的淫乱处女膜夺走吧！夺走吧～～～～！！」',
+    '「不管是用狗～！还是用怪物～！什么都好～！把我的小穴捣进去吧～～～！」',
+    '琼的脸上已经再也找不到一丝被称作圣女时候的清纯痕迹了………',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:304'), 9, '自慰阈值闸');
+
+  const bypass = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:304', 9);
+  });
+  await speak_k0(bypass);
+  assert.deepEqual(bypass.text_lines(), [
+    '「咿～～…呀呜呜～～…主人～…快点把我的淫乱处女膜夺走吧！夺走吧～～～～！！」',
+    '「不管是用狗～！还是用怪物～！什么都好～！把我的小穴捣进去吧～～～！」',
+    '琼的脸上已经再也找不到一丝被称作圣女时候的清纯痕迹了………',
+  ]);
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

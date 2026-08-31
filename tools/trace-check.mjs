@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-856', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-968', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -10361,13 +10361,17 @@ const FILES = [
       {
         src: K0,
         ref: '812-813',
-        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/,
+        ],
       },
       {
         src: K0,
         ref: '813',
 
-        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/,
+        ],
       },
       {
         src: K0,
@@ -10414,17 +10418,23 @@ const FILES = [
       {
         src: K0,
         ref: '827-828',
-        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/,
+        ],
       },
       {
         src: K0,
         ref: '828',
-        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/,
+        ],
       },
       {
         src: K0,
         ref: '829',
-        any: [/PRINTFORMW %SAVESTR:TARGET%每当被抠弄肛门就会发出不成体统的呻吟/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%每当被抠弄肛门就会发出不成体统的呻吟/,
+        ],
       },
       { src: K0, ref: '830', any: [/^\t\t\tCFLAG:303 = 5$/m] },
 
@@ -10462,17 +10472,23 @@ const FILES = [
       {
         src: K0,
         ref: '840',
-        any: [/PRINTFORMW 「难以置信…%SELF_CALL\(TARGET\)%…的屁股…啊～…啊啊～！」/],
+        any: [
+          /PRINTFORMW 「难以置信…%SELF_CALL\(TARGET\)%…的屁股…啊～…啊啊～！」/,
+        ],
       },
       {
         src: K0,
         ref: '842-843',
-        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/,
+        ],
       },
       {
         src: K0,
         ref: '843',
-        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/,
+        ],
       },
       {
         src: K0,
@@ -10503,6 +10519,215 @@ const FILES = [
         any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门被刺激得红肿了起来/],
       },
       { src: K0, ref: '852', any: [/^\t\t\tCFLAG:303 = 2$/m] },
+
+      { src: K0, ref: '861', any: [/^IF SELECTCOM == 3$/m] },
+      { src: K0, ref: '861-968', any: [/^IF SELECTCOM == 3$/m] },
+      { src: K0, ref: '863-873', any: [/^\tIF CFLAG:304 == 0$/m] },
+      {
+        src: K0,
+        ref: '865-871',
+        any: [/^\t\tIF TALENT:TARGET:85 == 1 \|\| TALENT:TARGET:76 == 1$/m],
+      },
+      {
+        src: K0,
+        ref: '866',
+        any: [/PRINTFORMW 「啊啊…请多多的…欣赏吧…♪」/],
+      },
+      { src: K0, ref: '869', any: [/PRINTFORMW 「你是…悪魔」/] },
+      {
+        src: K0,
+        ref: '870',
+        any: [/PRINTFORMW %SAVESTR:TARGET%一副要哭出来的样子继续自慰着/],
+      },
+      { src: K0, ref: '872', any: [/^\t\tCFLAG:TARGET:304 = 1$/m] },
+      {
+        src: K0,
+        ref: '875-966',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 8 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '877-881',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 8 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '878',
+        any: [/淫乱处女膜夺走吧/],
+      },
+      {
+        src: K0,
+        ref: '879',
+        any: [/把%SELF_CALL\(TARGET\)%的小穴捣进去吧/],
+      },
+      {
+        src: K0,
+        ref: '880',
+        any: [/再也找不到一丝被称作聖女时候的清纯痕迹/],
+      },
+      { src: K0, ref: '881', any: [/^\t\t\tCFLAG:304 = 9$/m] },
+      {
+        src: K0,
+        ref: '883-902',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 7 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '885-894',
+        any: [/PRINTFORM 「看吧～%UNICODE\(0x2661\) \*1%　噗咻噗咻勃起的/],
+      },
+      {
+        src: K0,
+        ref: '887',
+        any: [/PRINTFORM 「看吧～%UNICODE\(0x2661\) \*1%　噗咻噗咻勃起的/],
+      },
+      { src: K0, ref: '889', any: [/^\t\t\t\t\tPRINT 鸡鸡～$/m] },
+      { src: K0, ref: '891', any: [/^\t\t\t\t\tPRINT 假鸡鸡～$/m] },
+      {
+        src: K0,
+        ref: '893',
+        any: [/PRINTFORMW %UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '894',
+        any: [/请大家一起看我做舒服的事吧/],
+      },
+      {
+        src: K0,
+        ref: '896',
+        any: [/飞起来了～飞起来了～/],
+      },
+      {
+        src: K0,
+        ref: '898',
+        any: [/平时一个人是怎么做的/],
+      },
+      {
+        src: K0,
+        ref: '900',
+        any: [/搅着搅着小穴里的淫水就止不住了/],
+      },
+      { src: K0, ref: '902', any: [/^\t\t\tCFLAG:304 = 8$/m] },
+      {
+        src: K0,
+        ref: '904-911',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 6 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '907',
+        any: [/卖力自慰后请赏我大肉棒吧/],
+      },
+      {
+        src: K0,
+        ref: '909',
+        any: [/小穴玩得停不下来了～…对不起～～！/],
+      },
+      { src: K0, ref: '911', any: [/^\t\t\tCFLAG:304 = 7$/m] },
+      {
+        src: K0,
+        ref: '913-916',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '914',
+        any: [/我在玩弄主人专用的专属小穴/],
+      },
+      {
+        src: K0,
+        ref: '915',
+        any: [/感觉处女膜也在一颤一颤的呢/],
+      },
+      { src: K0, ref: '916', any: [/^\t\t\tCFLAG:304 = 6$/m] },
+      {
+        src: K0,
+        ref: '918-937',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '920-929',
+        any: [/PRINTFORM 「看见了吗？～♪　噗咻噗咻勃起的/],
+      },
+      {
+        src: K0,
+        ref: '922',
+        any: [/PRINTFORM 「看见了吗？～♪　噗咻噗咻勃起的/],
+      },
+      { src: K0, ref: '924', any: [/^\t\t\t\t\tPRINT 鸡鸡……$/m] },
+      { src: K0, ref: '926', any: [/^\t\t\t\t\tPRINT 假鸡鸡$/m] },
+      { src: K0, ref: '928', any: [/PRINTFORMW ♪」/] },
+      {
+        src: K0,
+        ref: '929',
+        any: [/只有有爱的话，在大家面前也不觉得尴尬了/],
+      },
+      {
+        src: K0,
+        ref: '931',
+        any: [/PRINTFORMW 「好、爽～！　啊哈哈…哈哈…好爽～！」/],
+      },
+      {
+        src: K0,
+        ref: '933',
+        any: [/看看自慰地发狂的%SELF_CALL\(TARGET\)%/],
+      },
+      {
+        src: K0,
+        ref: '935',
+        any: [/这样…完全不够呢…还要…你的…啊啊～♪/],
+      },
+      { src: K0, ref: '937', any: [/^\t\t\tCFLAG:304 = 5$/m] },
+      {
+        src: K0,
+        ref: '939-946',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '942',
+        any: [/被看着…虽然很害羞、不过太舒服了～！/],
+      },
+      { src: K0, ref: '944', any: [/PRINTFORMW 「哈啊…哈啊…啊啊～」/] },
+      { src: K0, ref: '946', any: [/^\t\t\tCFLAG:304 = 4$/m] },
+      {
+        src: K0,
+        ref: '948-955',
+        any: [
+          /^\t\tELSEIF MARK:2 == 3 &&ABL:31 >= 1 && \(CFLAG:304 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '951',
+        any: [/PRINTFORMW 「如果这是你希望的话…」/],
+      },
+      { src: K0, ref: '953', any: [/PRINTFORMW 「就照你说的做吧…」/] },
+      { src: K0, ref: '955', any: [/^\t\t\tCFLAG:304 = 3$/m] },
+      {
+        src: K0,
+        ref: '957-964',
+        any: [/^\t\tELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      { src: K0, ref: '960', any: [/PRINTFORMW 「好难为情…」/] },
+      { src: K0, ref: '962', any: [/PRINTFORMW 「真讨厌…」/] },
+      { src: K0, ref: '964', any: [/^\t\t\tCFLAG:304 = 2$/m] },
     ],
   },
 
