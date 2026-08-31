@@ -3866,4 +3866,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM124：深喉，回填 SELECTCOM 与默认 SOURCE',
   },
+  {
+    desc: 'M1459 COM125 默认档剃毛 SOURCE:12 加倍删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  if (!tal(cid, 125) && tal(cid, 310) <= 20) times_src(cid, 12, 2);',
+    replace: '  // 变异：COM125 剃毛 SOURCE:12 加倍删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM125：默认档 SOURCE',
+  },
 ];

@@ -358,10 +358,57 @@ test('@COM124 B/A：喉咙最深处与抓住头射出', async () => {
 test('@COM125：口交时自慰，显式回填 SELECTCOM=125', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;
+  world.fixture.store.set('abl:31:11', 50);
   const result = await world.com_family.call(125);
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 125, '原作显式 SELECTCOM = 125');
   assert.ok(world.fixture.text_lines().includes('口交时自慰'));
+});
+
+test('@COM125：默认档 SOURCE / TFLAG', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 50);
+  await world.com_family.call(125);
+  // ABL:0=0 → S0=15 ×0.30（技巧）=4；S12=2000 ×2.00（剃毛）=4000；
+  // S13 被阴蒂感觉段覆写为 500。ABL:16=0 → S4 先 620 再被技巧覆写为 100 ×0.50=50；
+  // S5=150 ×0.30=45；S8=100 ×4.00=400。
+  assert.equal(world.fixture.store.get('source:31:0'), 4);
+  assert.equal(world.fixture.store.get('source:31:4'), 50);
+  assert.equal(world.fixture.store.get('source:31:5'), 45);
+  assert.equal(world.fixture.store.get('source:31:8'), 400);
+  assert.equal(world.fixture.store.get('source:31:12'), 4000);
+  assert.equal(world.fixture.store.get('source:31:13'), 500);
+  assert.equal(world.fixture.store.get('source:31:14'), 500);
+  assert.equal(world.fixture.store.get('source:31:17'), 4);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -30);
+  assert.equal(world.fixture.store.get('tflag:100'), 1);
+  assert.equal(world.fixture.store.get('tflag:200'), 3);
+});
+
+test('@COM125：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await world.com_family.call(125);
+  assert.equal(result, 0);
+  assert.equal(world.era_flag.selectcom, 125);
+  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+});
+
+test('@COM125 B/A：吸啜自慰行与口中注入', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 50);
+  await world.com_family.call(125);
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes('温妮一边吸啜着阴茎、一边玩弄着自己的阴唇…'),
+  );
+
+  world.fixture.store.set('tflag:0', 1);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(world.fixture.text_lines().includes('精液注入到温妮的嘴里了…'));
 });
 
 test('@COM135：自助舔阴（可直选）；扶她改自我口交', async () => {

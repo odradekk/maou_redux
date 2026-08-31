@@ -1833,7 +1833,487 @@ async function com124() {
   return 1;
 }
 
-const com125 = make_advanced_com(125, '口交时自慰');
+function dirty_penalty_125() {
+  const player = era_flag.player;
+  const cid = era_flag.target;
+  let y = 0;
+  if (stain(player, 2) & 1) y += 1;
+  if (stain(player, 2) & 4) y += 3;
+  if (stain(player, 2) & 8) y += 7;
+  if (stain(player, 2) & 16) y += 1;
+  if (stain(player, 4) & 32) y += 3;
+  if (tequip(cid, 89)) y = 7;
+  if (tal(cid, 61)) y = Math.floor(y / 3);
+  if (tal(cid, 62)) y *= 2;
+  return y;
+}
+
+async function order125(y) {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const { a, s, parts } = await com_order(0, 0);
+  const state = { a, s };
+  if (abl(cid, 11)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 11)}LV${abl(cid, 11)}`,
+      abl(cid, 11),
+    );
+  }
+  if (abl(cid, 16)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 16)}LV${abl(cid, 16)}`,
+      abl(cid, 16) * 4,
+    );
+  }
+  if (abl(cid, 32)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 32)}LV${abl(cid, 32)}`,
+      abl(cid, 32) * 3,
+    );
+  }
+  if (abl(cid, 17)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 17)}LV${abl(cid, 17)}`,
+      abl(cid, 17) * 4,
+    );
+  }
+  if (abl(cid, 31)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 31)}LV${abl(cid, 31)}`,
+      abl(cid, 31) * 3,
+    );
+  }
+  const mark1 = Math.floor(era.get(`mark:${cid}:1`) || 0);
+  if (mark1) {
+    append_term(parts, state, `${name_of('markname', 1)}LV${mark1}`, mark1);
+  }
+  const lust = palam_ladder(palam(cid, 5));
+  if (lust) {
+    append_term(parts, state, `${name_of('palamname', 5)}LV${lust}`, lust);
+  }
+  if (tal(cid, 20)) append_term(parts, state, name_of('talentname', 20), -5);
+  if (tal(cid, 35)) append_term(parts, state, name_of('talentname', 35), -1);
+  if (tal(cid, 61)) append_term(parts, state, name_of('talentname', 61), 1);
+  if (tal(cid, 62)) append_term(parts, state, name_of('talentname', 62), -3);
+  if (tal(cid, 63)) append_term(parts, state, name_of('talentname', 63), 6);
+  if (tal(cid, 71)) append_term(parts, state, name_of('talentname', 71), -1);
+  if (tal(cid, 82) && tal(player, 122)) {
+    append_term(parts, state, name_of('talentname', 82), -12);
+  }
+  if (tal(cid, 85) && !era_flag.assiplay) {
+    append_term(parts, state, name_of('talentname', 85), 5);
+  }
+  if (tal(player, 121)) {
+    append_term(parts, state, name_of('talentname', 121), 8);
+  }
+  if (tequip(cid, 89) && tal(cid, 136) === 0) {
+    append_term(parts, state, name_of('itemname', 22), -15);
+  }
+  if (y) {
+    const dirty_label = tal(cid, 61)
+      ? `脏、${name_of('talentname', 61)}`
+      : tal(cid, 62)
+        ? `脏、${name_of('talentname', 62)}`
+        : '脏';
+    append_term(parts, state, dirty_label, -y);
+  }
+  let v = 50;
+  if (tequip(cid, 53)) v += 10;
+  if (tequip(cid, 18)) v += 3;
+  if (tequip(cid, 11)) v += 5;
+  if (tequip(cid, 13)) v += 5;
+  parts.push(` = ${state.a}`);
+  parts.push(state.a < v ? ' < ' : state.a === v ? ' = ' : ' > ');
+  parts.push(`实行值${v}`);
+  era.print(parts.join(''));
+  await era.waitAnyKey();
+  return state.a >= v;
+}
+
+function apply_lube_lust_obey(va, vb, vc, cid) {
+  const lube = palam(cid, 3);
+  if (lube < PALAMLV[1]) {
+    va = times(va, 0.4);
+    vb = times(vb, 0.4);
+    vc += 800;
+  } else if (lube < PALAMLV[2]) {
+    va = times(va, 0.8);
+    vb = times(vb, 0.8);
+    vc += 500;
+  } else if (lube < PALAMLV[3]) {
+    vc += 300;
+  } else if (lube < PALAMLV[4]) {
+    va = times(va, 1.4);
+    vb = times(vb, 1.4);
+    vc += 120;
+  } else {
+    va = times(va, 1.8);
+    vb = times(vb, 1.8);
+    vc += 100;
+  }
+  const lust_m = palam_ladder(palam(cid, 5));
+  const lust = [0.8, 0.9, 1, 1.1, 1.2, 1.2][lust_m];
+  va = times(va, lust);
+  vb = times(vb, lust);
+  const obey = [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)];
+  va = times(va, obey);
+  vb = times(vb, obey);
+  return { va, vb, vc };
+}
+
+function source125(y) {
+  const cid = era_flag.target;
+  if (tal(cid, 47)) {
+    add_lose(cid, 0, 20);
+    add_lose(cid, 1, 70);
+  } else {
+    add_lose(cid, 0, 30);
+    add_lose(cid, 1, 150);
+  }
+  set_src(cid, 13, 1500);
+  set_src(cid, 14, 500);
+  set_src(cid, 8, y * 40 + 100);
+
+  let va = 0;
+  let vb = 0;
+  let vc = 0;
+  let vd = 0;
+  const va_tiers = [
+    [40, 150],
+    [120, 400],
+    [300, 700],
+    [500, 900],
+    [650, 1000],
+    [850, 1200],
+  ];
+  const clit = [
+    [15, 2000, 500],
+    [50, 2300, 800],
+    [300, 2600, 1200],
+    [700, 2900, 1900],
+    [1100, 3200, 2500],
+    [1600, 3500, 3000],
+  ][Math.min(abl(cid, 0), 5)];
+  set_src(cid, 0, clit[0]);
+  set_src(cid, 12, clit[1]);
+  set_src(cid, 13, clit[2]);
+  set_src(cid, 17, [15, 50, 300, 700, 1100, 1600][Math.min(abl(cid, 1), 5)]);
+
+  if (tequip(cid, 11)) {
+    const row = va_tiers[Math.min(abl(cid, 2), 5)];
+    va += row[0];
+    vd += row[1];
+    const e0 = exp(cid, 0);
+    if (e0 < EXPLV[2]) {
+      va = times(va, 0.6);
+      vc += 150;
+    } else if (e0 < EXPLV[3]) {
+      va = times(va, 1);
+      vc += 20;
+    } else if (e0 < EXPLV[4]) {
+      va = times(va, 1.2);
+    } else if (e0 < EXPLV[5]) {
+      va = times(va, 1.4);
+    } else {
+      va = times(va, 1.6);
+    }
+    if (tal(cid, 103)) {
+      vc = times(vc, 1.5);
+      vd = times(vd, 1.5);
+    } else if (tal(cid, 104)) {
+      vc = times(vc, 0.6);
+      vd = times(vd, 0.6);
+    }
+    add_src(cid, 13, vd);
+  }
+
+  if (tequip(cid, 13)) {
+    add_lose(cid, 0, 30);
+    add_lose(cid, 1, 80);
+    const row = va_tiers[Math.min(abl(cid, 3), 5)];
+    vb += row[0];
+    vd += row[1];
+    const e1 = exp(cid, 1);
+    if (e1 < EXPLV[1]) {
+      vb = times(vb, 0.5);
+      vc += 1000;
+    } else if (e1 < EXPLV[2]) {
+      vb = times(vb, 1);
+      vc += 150;
+    } else if (e1 < EXPLV[3]) {
+      vb = times(vb, 1.1);
+      vc += 20;
+    } else if (e1 < EXPLV[4]) {
+      vb = times(vb, 1.2);
+    } else if (e1 < EXPLV[5]) {
+      vb = times(vb, 1.4);
+    } else {
+      vb = times(vb, 1.6);
+    }
+    if (tal(cid, 105)) {
+      vc = times(vc, 1.5);
+      vd = times(vd, 1.5);
+    } else if (tal(cid, 106)) {
+      vc = times(vc, 0.6);
+      vd = times(vd, 0.6);
+    }
+    add_src(cid, 13, vd);
+  }
+
+  if (tequip(cid, 18)) {
+    const shower_c = [
+      [150, 1000, 50],
+      [400, 1300, 80],
+      [800, 1600, 120],
+      [1200, 1900, 190],
+      [1500, 2200, 250],
+      [1800, 2500, 300],
+    ][Math.min(abl(cid, 0), 5)];
+    set_src(cid, 0, shower_c[0]);
+    set_src(cid, 12, shower_c[1]);
+    set_src(cid, 13, shower_c[2]);
+    const shower_v = [
+      [0, 0],
+      [100, 300],
+      [200, 400],
+      [300, 500],
+      [400, 600],
+      [500, 700],
+    ][Math.min(abl(cid, 2), 5)];
+    set_src(cid, 1, shower_v[0]);
+    vd = shower_v[1];
+    const shower_a = va_tiers[Math.min(abl(cid, 3), 5)];
+    vb = shower_a[0];
+    vd += shower_a[1];
+    if (tal(cid, 103)) {
+      times_src(cid, 6, 1.5);
+      vd = times(vd, 1.5);
+    } else if (tal(cid, 104)) {
+      times_src(cid, 6, 0.6);
+      vd = times(vd, 0.6);
+    }
+    if (tal(cid, 105)) {
+      times_src(cid, 6, 1.5);
+      vd = times(vd, 1.5);
+    } else if (tal(cid, 106)) {
+      times_src(cid, 6, 0.6);
+      vd = times(vd, 0.6);
+    }
+    add_src(cid, 13, vd);
+  } else {
+    vb = 0;
+    set_src(cid, 2, 0);
+    va = 0;
+    set_src(cid, 1, 0);
+  }
+
+  if (tequip(cid, 11) || tequip(cid, 13)) {
+    const e = abl(cid, 2) + abl(cid, 3);
+    const decay =
+      e <= 1
+        ? 1
+        : e <= 3
+          ? 0.9
+          : e <= 5
+            ? 0.8
+            : e <= 7
+              ? 0.7
+              : e <= 9
+                ? 0.6
+                : 0.5;
+    times_src(cid, 0, decay);
+    times_src(cid, 17, decay);
+    ({ va, vb, vc } = apply_lube_lust_obey(va, vb, vc, cid));
+    if (tal(cid, 99)) vc = times(vc, 0.8);
+    if (tal(cid, 100)) vc = times(vc, 2);
+    if (tal(cid, 30)) vc = times(vc, 3);
+    set_src(cid, 1, va);
+    set_src(cid, 2, vb);
+    set_src(cid, 6, vc);
+  }
+
+  if (tequip(cid, 18)) {
+    ({ va, vb, vc } = apply_lube_lust_obey(va, vb, vc, cid));
+    add_src(cid, 1, va);
+    add_src(cid, 2, vb);
+  }
+
+  const service = [
+    [620, 150, 4],
+    [700, 300, 2.5],
+    [820, 600, 1.5],
+    [940, 900, 1],
+    [1100, 1500, 0.5],
+    [1260, 2200, 0.1],
+  ][Math.min(abl(cid, 16), 5)];
+  set_src(cid, 4, service[0]);
+  set_src(cid, 5, service[1]);
+  times_src(cid, 8, service[2]);
+
+  const skill = Math.min(abl(cid, 12), 5);
+  set_src(cid, 4, [100, 160, 220, 280, 340, 400][skill]);
+  const skill_body = [0.3, 0.7, 1, 1.2, 1.4, 1.6][skill];
+  times_src(cid, 0, skill_body);
+  times_src(cid, 17, skill_body);
+  times_src(cid, 1, skill_body);
+  times_src(cid, 2, skill_body);
+  times_src(cid, 4, [0.5, 0.8, 1, 1.2, 1.5, 2][skill]);
+  times_src(cid, 5, skill_body);
+
+  const addict = Math.min(abl(cid, 31), 5);
+  set_src(cid, 7, [0, 100, 300, 800, 1500, 2500][addict]);
+  const addict_m = [1, 1.1, 1.2, 1.3, 1.5, 1.7][addict];
+  const addict_va = addict === 5 ? 1.5 : addict_m;
+  times_src(cid, 0, addict_m);
+  times_src(cid, 17, addict_m);
+  times_src(cid, 1, addict_va);
+  times_src(cid, 2, addict_va);
+
+  if (tequip(cid, 53) || tequip(cid, 54)) {
+    const expo = Math.min(abl(cid, 17), 5);
+    add_src(cid, 7, [0, 100, 300, 800, 1500, 2500][expo]);
+    const expo_m = [1, 1.1, 1.2, 1.3, 1.5, 1.7][expo];
+    times_src(cid, 0, expo_m);
+    times_src(cid, 17, expo_m);
+    times_src(cid, 1, expo_m);
+    times_src(cid, 2, expo_m);
+    times_src(cid, 12, [1, 1.2, 1.4, 1.6, 2, 3][expo]);
+    if (tal(cid, 89)) {
+      add_src(cid, 7, 500);
+      times_src(cid, 0, 1.2);
+      times_src(cid, 17, 1.2);
+      times_src(cid, 1, 1.2);
+      times_src(cid, 2, 1.2);
+      times_src(cid, 12, 1.5);
+    }
+  }
+
+  if (!tal(cid, 125) && tal(cid, 310) <= 20) times_src(cid, 12, 2);
+}
+
+function after125(e) {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const mouth = stain(cid, 0) | stain(player, 2);
+  era.set(`stain:${cid}:0`, mouth);
+  era.set(`stain:${player}:2`, mouth);
+  const finger_b = stain(cid, 1) | stain(cid, 5);
+  era.set(`stain:${cid}:1`, finger_b);
+  era.set(`stain:${cid}:5`, finger_b);
+  const finger_v = stain(cid, 1) | stain(cid, 3);
+  era.set(`stain:${cid}:1`, finger_v);
+  era.set(`stain:${cid}:3`, finger_v);
+  if (tequip(cid, 18) === 1) {
+    era.set(`stain:${cid}:1`, 0);
+    era.set(`stain:${cid}:2`, 2);
+    era.set(`stain:${cid}:3`, 1);
+    era.set(`stain:${cid}:4`, 8);
+    era.set(`palam:${cid}:3`, Math.floor(palam(cid, 3) / 2));
+  }
+  if (abl(cid, 16) >= 2 && abl(cid, 12) >= 2) {
+    era.set(`stain:${player}:2`, 2);
+    if (e >= 1) game.train.口交射精后 = 1;
+  }
+  if (tal(cid, 122) === 0 && tal(player, 122) === 0) {
+    era.print(`${name_of('expname', 40)}+7`);
+    era.add(`exp:${cid}:40`, 7);
+  } else if (tal(cid, 122) === 1 && tal(player, 122) === 1) {
+    era.print(`${name_of('expname', 41)}+7`);
+    era.add(`exp:${cid}:41`, 7);
+  }
+  if (!era_flag.assiplay && exp(cid, 0) >= EXPLV[3]) {
+    game.train.主人经验 += 1;
+  }
+  if ((era.get(`cflag:${cid}:16`) || 0) === -1) {
+    era.set(`cflag:${cid}:16`, 201);
+    era.set(`cstr:${cid}:4`, chara_callname(player));
+    era.set('tflag:13', 1);
+  }
+  const love = tal(cid, 122) ? 2 : 1;
+  if ((era.get(`cflag:${cid}:2`) || 0) >= 1000 && !era_flag.assiplay) {
+    era.print(`${name_of('expname', 23)}+${love}`);
+    era.add(`exp:${cid}:23`, love);
+  }
+  if (tal(player, 121)) set_src(cid, 13, Math.floor(src(cid, 13) / 2));
+  game.train.快乐经验 = 1;
+  game.train.屈服刻印结算 = 3;
+}
+
+async function message_b125() {
+  const cid = era_flag.target;
+  let line = target_name();
+  if (tal(cid, 85)) line += '带着发烧似的表情、';
+  if (tal(cid, 76)) line += '带着淫媚的表情、';
+  if (tal(cid, 52)) line += '用舌头灵活地缠绕着棒身、';
+  line += '一边吸啜着阴茎、一边';
+  if (tequip(cid, 11) && tequip(cid, 13)) {
+    line += '抽动着私处和肛门里的虫子…';
+  } else if (tequip(cid, 11)) {
+    line += '抽动着私处里的虫子…';
+  } else if (tequip(cid, 13)) {
+    line += '抽动着肛门里的虫子…';
+  } else if (tal(cid, 122)) {
+    line += '玩弄着自己的阴茎…';
+  } else {
+    line += '玩弄着自己的阴唇…';
+  }
+  era.print(line);
+}
+
+async function message_a125() {
+  const amount = era.get('tflag:0') || 0;
+  if (amount !== 1 && amount !== 2) return;
+  const cid = era_flag.target;
+  if (amount === 1) {
+    if (abl(cid, 32) >= 3) {
+      era.print(`${target_name()}带着恍惚的表情、把注入口中的精液喝光了…`);
+    } else if (abl(cid, 16) >= 3) {
+      era.print(
+        `${target_name()}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`,
+      );
+    } else {
+      era.print(`精液注入到${target_name()}的嘴里了…`);
+    }
+    return;
+  }
+  if (abl(cid, 32) >= 3) {
+    era.print(`${target_name()}带着恍惚的表情、把口中的精液喝光了…`);
+  } else if (abl(cid, 16) >= 3) {
+    era.print(`没喝完的精液、从${target_name()}的嘴里溢出来了…`);
+  } else {
+    era.print(`满满的精液、把${target_name()}的喉咙叩开了…`);
+  }
+}
+
+/** @COM125（COMF125_フェラ自慰.ERB）口交时自慰。高级 COM。 */
+async function com125() {
+  era_flag.selectcom = 125; // 原作显式 SELECTCOM = 125（升格抵达时回填号位）
+  era.print('口交时自慰');
+  const y = dirty_penalty_125();
+  if (!(await order125(y))) return 0;
+  await train_message_b();
+  era.print(`${name_of('expname', 22)}＋１`);
+  era.add(`exp:${era_flag.target}:22`, 1);
+  era.print(`${name_of('expname', 10)}＋１`);
+  era.add(`exp:${era_flag.target}:10`, 1);
+  source125(y);
+  const b = gauge124();
+  const e = ejac124();
+  await com_ejac_player_milk(b);
+  after125(e);
+  return 1;
+}
+
 const com126 = make_advanced_com(126, '手搓口交');
 const com127 = make_advanced_com(127, '真空口交');
 const com128 = make_advanced_com(128, '正常位・接吻');
@@ -1881,9 +2361,11 @@ train_message_b_family.register(123, message_b123);
 train_message_a_family.register(123, message_a123);
 train_message_b_family.register(124, message_b124);
 train_message_a_family.register(124, message_a124);
+train_message_b_family.register(125, message_b125);
+train_message_a_family.register(125, message_a125);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135]) {
+for (const id of [126, 127, 128, 129, 130, 131, 132, 133, 134, 135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }
