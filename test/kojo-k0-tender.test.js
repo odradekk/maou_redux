@@ -217,14 +217,129 @@ test('触手（TEQUIP:90）：不输出', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('爱抚外指令（SELECTCOM != 0）：落占位行（分支待办可见）', async () => {
+test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 1; // 舔阴
+    era_flag.selectcom = 2; // 肛门爱抚——COM1 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 1 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 2 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+  ]);
+});
+
+test('舔阴首次处女（TALENT:0）：两句 + 状态推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:0', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「你、你在舔哪里啊～」',
+    '琼的私处处有着处女的味道………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:302'), 1, '舔阴首次推进到 1');
+});
+
+test('舔阴首次非处女：一句拒绝，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「请住手吧…不要舔那个地方！」']);
+  assert.equal(fixture.store.get('cflag:31:302'), 1);
+});
+
+test('舔阴二次淫乱（TALENT:76）：♡ 插值，推进到 5', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:302', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「再来～…再舔我那里吧…喝下去也行…啊啊～～♡」',
+    '蜜汁从琼的私处处不断涌了出来………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:302'), 5);
+});
+
+test('舔阴二次爱慕 / 屈服 Lv3 / それ以外：各推进到 4 / 3 / 2', async () => {
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:302', 1);
+    f.store.set('mark:31:2', 3);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), [
+    '「哈哈～…好吃吗？　这个…♪」',
+    '琼腼腆的笑着发出快乐的声音………',
+  ]);
+  assert.equal(love.store.get('cflag:31:302'), 4);
+
+  const lv3 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('mark:31:2', 3);
+    f.store.set('cflag:31:302', 2);
+  });
+  await speak_k0(lv3);
+  assert.deepEqual(lv3.text_lines(), [
+    '「呜唔呜唔…呜呜～！　不要～」',
+    '琼嘴上说着不要但还是老实地让你舔着………',
+  ]);
+  assert.equal(lv3.store.get('cflag:31:302'), 3);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('cflag:31:302', 1);
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), ['「这么脏的地方也…」']);
+  assert.equal(other.store.get('cflag:31:302'), 2);
+});
+
+test('舔阴阈值闸：FLAG:7 == 1 时上限生效，== 2 时旁路', async () => {
+  const quiet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:302', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(quiet);
+  assert.deepEqual(quiet.text_lines(), []);
+
+  // FLAG:7 == 1 且 CFLAG:302 == 4：<= 4 命中淫乱支（变异把门槛改成 <= 3 会静默）
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:302', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「再来～…再舔我那里吧…喝下去也行…啊啊～～♡」',
+    '蜜汁从琼的私处处不断涌了出来………',
+  ]);
+
+  const bypass = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 1;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:302', 5);
+  });
+  await speak_k0(bypass);
+  assert.deepEqual(bypass.text_lines(), [
+    '「再来～…再舔我那里吧…喝下去也行…啊啊～～♡」',
+    '蜜汁从琼的私处处不断涌了出来………',
   ]);
 });
 

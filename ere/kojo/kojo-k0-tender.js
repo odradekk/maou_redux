@@ -1,10 +1,10 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚分支（issue #231 第一刀）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
  *     @KOJO_MESSAGE_COM_0（:674；七道跳过判定 :676-699，**崩坏在兽奸前**；
- *     爱抚 CFLAG:301 状态机 :708-752）
+ *     爱抚 CFLAG:301 状态机 :708-752；舔阴 CFLAG:302 状态机 :757-794）
  *
  * == 状态机（CFLAG:301，个位数推进） ==
  *
@@ -17,8 +17,8 @@
  * 崩坏 → 兽奸（专用口上）→ 触手。与 K3（兽奸在崩坏前）不同，各文件 1:1。
  *
  * 这张票第一刀存根（docs/stub-registry.md）：COLOSSEUM_KOJO_0 / DOG_KOJO_0
- * 与 SELECTCOM != 0 的其余指令分支（后续切片填文本）。其余 SELECTCOM：
- * 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
+ * 与 SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
+ * 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
  * 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127（17 在原文已注释）。
  */
@@ -62,7 +62,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-752）：七道跳过判定 + 爱抚分支。
+ * @KOJO_MESSAGE_COM_0（:674-794）：七道跳过判定 + 爱抚 / 舔阴分支。
  *
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
  * 崩坏 → 兽奸（专用口上）→ 触手。
@@ -72,6 +72,7 @@ on(
  *
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
  */
+
 async function kojo_message_com_0() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -174,8 +175,65 @@ async function kojo_message_com_0() {
     }
     return 0; // :750
   }
+  // :752 ENDIF（IF SELECTCOM == 0 的收口）
 
-  // :752 ENDIF（IF SELECTCOM == 0 的收口）——其余指令待办，占位一行
+  // :757 IF SELECTCOM == 1（舔阴，CFLAG:302）
+  if (era_flag.selectcom === 1) {
+    // :759-769 初めて（CFLAG:302 == 0）
+    if (kojo.舔阴 === 0) {
+      // :761-767 处女（TALENT:0）
+      if (era.get(`talent:${target}:0`) === 1) {
+        await era.printAndWait('「你、你在舔哪里啊～」'); // :762
+        await era.printAndWait(`${target_name}的私处处有着处女的味道………`); // :763
+      } else {
+        await era.printAndWait('「请住手吧…不要舔那个地方！」'); // :766
+      }
+      kojo.舔阴 = 1; // :768
+      return 0; // :769
+    }
+
+    // :771-792 二回目以降
+    // :773-776 淫乱（TALENT:76）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.舔阴 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「再来～…再舔我那里吧…喝下去也行…啊啊～～${heart(1)}」`,
+      ); // :774
+      await era.printAndWait(`蜜汁从${target_name}的私处处不断涌了出来………`); // :775
+      kojo.舔阴 = 5; // :776
+    } else if (
+      // :778-781 爱慕（TALENT:85）
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.舔阴 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「哈哈～…好吃吗？　这个…♪」'); // :779
+      await era.printAndWait(`${target_name}腼腆的笑着发出快乐的声音………`); // :780
+      kojo.舔阴 = 4; // :781
+    } else if (
+      // :783-786 屈服刻印Lv3
+      (era.get(`mark:${target}:2`) || 0) === 3 &&
+      (kojo.舔阴 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「呜唔呜唔…呜呜～！　不要～」'); // :784
+      await era.printAndWait(
+        `${target_name}嘴上说着不要但还是老实地让你舔着………`,
+      ); // :785
+      kojo.舔阴 = 3; // :786
+    } else if (
+      // :788-790 それ以外（屈服刻印Lv3未満）
+      kojo.舔阴 <= 1 ||
+      game.kojo.口上开关 === 2
+    ) {
+      await era.printAndWait('「这么脏的地方也…」'); // :789
+      kojo.舔阴 = 2; // :790
+    }
+    return 0; // :792
+  }
+
+  // :794 ENDIF（IF SELECTCOM == 1 的收口）——其余指令待办，占位一行
+
   stub_line(
     'KOJO_MESSAGE_COM_0',
     `指令 ${era_flag.selectcom} 的口上`,

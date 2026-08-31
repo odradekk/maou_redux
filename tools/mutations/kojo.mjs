@@ -416,8 +416,13 @@ export default [
   {
     desc: 'M1472 K0 淫乱素质判据错格（TALENT:76 改 77）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '      era.get(`talent:${target}:76`) === 1 &&',
-    replace: '      era.get(`talent:${target}:77`) === 1 &&',
+    find: `    // :725-728 淫乱（TALENT:76）
+    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&`,
+    replace: `    // :725-728 淫乱（TALENT:76）
+    if (
+      era.get(\`talent:\${target}:77\`) === 1 &&`,
+
     tests: ['kojo-k0-tender'],
     must_mention: '淫乱分支',
   },
@@ -454,5 +459,29 @@ export default [
     replace: '// 变异：K0 口上不在主启动图注册',
     tests: ['main-loop'],
     must_mention: 'KOJO_MESSAGE_COM_0 必须经主启动图注册',
+  },
+  {
+    desc: 'M1477 K0 舔阴首次状态推进写错（CFLAG:302 = 1 改 2）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.舔阴 = 1; // :768',
+    replace: '      kojo.舔阴 = 2; // :768（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔阴首次推进到 1',
+  },
+  {
+    desc: 'M1478 K0 舔阴处女素质判据错格（TALENT:0 改 1）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      if (era.get(`talent:${target}:0`) === 1) {',
+    replace: '      if (era.get(`talent:${target}:1`) === 1) {',
+    tests: ['kojo-k0-tender'],
+    must_mention: '处女的味道',
+  },
+  {
+    desc: 'M1479 K0 舔阴淫乱门槛错位（CFLAG:302 <= 4 改 <= 3）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.舔阴 <= 4 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.舔阴 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔阴阈值闸',
   },
 ];

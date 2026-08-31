@@ -10109,7 +10109,8 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-752', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-794', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -10239,7 +10240,94 @@ const FILES = [
       { src: K0, ref: '748', any: [/^\t\t\tCFLAG:301 = 2$/m] },
       { src: K0, ref: '750', any: [/^\t\tRETURN 0$/m] },
       { src: K0, ref: '752', any: [/^ENDIF$/m] },
+
+      { src: K0, ref: '757', any: [/^IF SELECTCOM == 1$/m] },
+      { src: K0, ref: '757-794', any: [/^IF SELECTCOM == 1$/m] },
+      { src: K0, ref: '759-769', any: [/^\tIF CFLAG:302 == 0$/m] },
+      { src: K0, ref: '761-767', any: [/^\t\tIF TALENT:TARGET:0 == 1$/m] },
+      {
+        src: K0,
+        ref: '762',
+        any: [/PRINTFORMW 「你、你在舔哪里啊～」/],
+      },
+      {
+        src: K0,
+        ref: '763',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的私处处有着处女的味道/],
+      },
+      {
+        src: K0,
+        ref: '766',
+        any: [/PRINTFORMW 「请住手吧…不要舔那个地方！」/],
+      },
+      { src: K0, ref: '768', any: [/^\t\tCFLAG:302 = 1$/m] },
+      { src: K0, ref: '769', any: [/^\t\tRETURN 0$/m] },
+      { src: K0, ref: '771-792', any: [/^\tELSE$/m] },
+      {
+        src: K0,
+        ref: '773-776',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '774',
+        any: [/PRINTFORMW 「再来～…再舔我那里吧…喝下去也行…啊啊～～/],
+      },
+      {
+        src: K0,
+        ref: '775',
+        any: [/PRINTFORMW 蜜汁从%SAVESTR:TARGET%的私处处不断涌了出来/],
+      },
+      { src: K0, ref: '776', any: [/^\t\t\tCFLAG:302 = 5$/m] },
+      {
+        src: K0,
+        ref: '778-781',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '779',
+        any: [/PRINTFORMW 「哈哈～…好吃吗？　这个…♪」/],
+      },
+      {
+        src: K0,
+        ref: '780',
+        any: [/PRINTFORMW %SAVESTR:TARGET%腼腆的笑着发出快乐的声音/],
+      },
+      { src: K0, ref: '781', any: [/^\t\t\tCFLAG:302 = 4$/m] },
+      {
+        src: K0,
+        ref: '783-786',
+        any: [
+          /^\t\tELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '784',
+        any: [/PRINTFORMW 「呜唔呜唔…呜呜～！　不要～」/],
+      },
+      {
+        src: K0,
+        ref: '785',
+        any: [/PRINTFORMW %SAVESTR:TARGET%嘴上说着不要但还是老实地让你舔着/],
+      },
+      { src: K0, ref: '786', any: [/^\t\t\tCFLAG:302 = 3$/m] },
+      {
+        src: K0,
+        ref: '788-790',
+        any: [/^\t\tELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      { src: K0, ref: '789', any: [/PRINTFORMW 「这么脏的地方也…」/] },
+      { src: K0, ref: '790', any: [/^\t\t\tCFLAG:302 = 2$/m] },
+      { src: K0, ref: '792', any: [/^\t\tRETURN 0$/m] },
+      { src: K0, ref: '794', any: [/^ENDIF$/m] },
     ],
+
   },
 
   {
