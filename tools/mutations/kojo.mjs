@@ -456,7 +456,36 @@ export default [
     find: '    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {',
     replace: '    } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 === 2) {',
     tests: ['kojo-k3-noble'],
-    must_mention: '肛门爱抚二次以后',
+    must_mention: '肛门爱抚それ以外读 CFLAG:223',
+  },
+  {
+    desc: 'M1506 K3 自慰首次推进写错（CFLAG:304 = 1 改 2）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.自慰 = 1; // :1206',
+    replace: '      kojo.自慰 = 2; // :1206（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '自慰首次（CFLAG:304 == 0）',
+  },
+  {
+    desc: 'M1507 K3 自慰淫乱处女推进写错（CFLAG:304 = 9 改 8）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.自慰 = 9; // :1218',
+    replace: '      kojo.自慰 = 8; // :1218（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '淫乱处女推进到 9',
+  },
+  {
+    desc: 'M1508 K3 自慰淫乱自慰中毒门槛错（ABL:31 >= 3 改 >= 4）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      train.自慰中毒 >= 4 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '淫乱自慰中毒Lv3推进到 8',
   },
 ];
+
 

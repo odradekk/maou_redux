@@ -514,15 +514,100 @@ test('肛门爱抚二次以后：淫乱润滑分档 / 爱慕润滑 / それ以�
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 2;
     f.store.set('cflag:31:303', 1);
+    f.store.set('cflag:31:223', 2); // 原作读 223，已推进则 FLAG:7==1 时不出声
+    f.store.set('flag:7', 1);
+  });
+  await speak_k3(other, seq_rand(0, 0));
+  assert.deepEqual(
+    other.text_lines(),
+    [],
+    '肛门爱抚それ以外读 CFLAG:223：已推进且 FLAG:7==1 时不出声',
+  );
+  assert.equal(other.store.get('cflag:31:303'), 1);
+});
+
+
+test('自慰首次（CFLAG:304 == 0）：屈辱一句 + 推进到 1', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [
+    '「居然…不能不做这样的事情…这是……何等的…屈辱啊…」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:304'), 1);
+});
+
+test('自慰二次以后：淫乱处女 / 淫乱自慰中毒Lv3 / 爱慕处女 / それ以外', async () => {
+  const lewd_virgin = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('cflag:31:304', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+  });
+  await speak_k3(lewd_virgin, seq_rand(0, 0));
+  assert.deepEqual(lewd_virgin.text_lines(), [
+    '「啊啊♡　您真是的…真的是恶魔来的呀…♡」',
+    '「我的身心…明明....都变得…如此地淫乱了…啊啊~♡也不拿走我重要的东西什么的~♡」',
+    '温妮将腰抬高，向你诱惑而用手将蜜穴给张开。',
+    '「啊啊~…明明…在这里有处女膜来的~♡」',
+    '「拜托了♡请将我的…淫乱小穴…用你大人的大鸡巴来贯穿了吧~~~♡♡♡♡♡」',
+    '温妮一边将腰部左右地晃动着一边在你的面前自慰着………',
+  ]);
+  assert.equal(lewd_virgin.store.get('cflag:31:304'), 9, '淫乱处女推进到 9');
+
+  const lewd_addict = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('cflag:31:304', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:31', 3);
+  });
+  await speak_k3(lewd_addict, seq_rand(0, 0));
+  assert.deepEqual(
+    lewd_addict.text_lines(),
+    [
+      '「啊啊…主人…请看一下吧~~~…♡」',
+      '「小穴的里面♡要伸手指进去了哦~~~……♡」',
+      '「嗯哈啊啊~…不行了~…小穴自慰停不下来了♡♡♡」',
+    ],
+    '淫乱自慰中毒Lv3推进到 8',
+  );
+  assert.equal(lewd_addict.store.get('cflag:31:304'), 8, '淫乱自慰中毒Lv3推进到 8');
+
+
+  const love_virgin = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('cflag:31:304', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('talent:31:0', 1);
+  });
+  await speak_k3(love_virgin, seq_rand(0, 0));
+  assert.deepEqual(love_virgin.text_lines(), [
+    '「啊啊~…呜哈~…啊…♡」',
+    '温妮每次轻轻地抚摸自己的蜜穴后就会大声地呻吟一下。',
+    '「如果大人您再不做的话~…温妮就要自己弄破了噢~…♡」',
+    '温妮说完扑哧一笑、将手指塞向了深处。',
+    '「哈嗯~♡…唔哼哼~、只是开玩笑的噢~………啊嗯~~~♡」',
+  ]);
+  assert.equal(love_virgin.store.get('cflag:31:304'), 6, '爱慕处女推进到 6');
+
+  const other = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 3;
+    f.store.set('cflag:31:304', 1);
   });
   await speak_k3(other, seq_rand(0, 0));
   assert.deepEqual(other.text_lines(), [
-    '「嗯呜~…请，请快住手啊…那种地方不管怎么做都不会…呜啊啊~啊啊~！」',
+    '「呃呜…呜~…啊~…这样的一点也…哼呜~…啊~…哈呜~！」',
   ]);
-  assert.equal(other.store.get('cflag:31:303'), 2);
+  assert.equal(other.store.get('cflag:31:304'), 2, 'それ以外推进到 2');
 });
 
-test('爱抚与舔阴与肛门爱抚外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+test('爱抚与舔阴与肛门爱抚与自慰外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 5; // 胸爱抚，本切片尚未落地
@@ -532,6 +617,7 @@ test('爱抚与舔阴与肛门爱抚外指令（SELECTCOM 未移植）：落占�
     '（指令 5 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
+
 
 
 // —— 存根清单核对 ——

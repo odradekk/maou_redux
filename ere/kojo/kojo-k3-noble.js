@@ -5,7 +5,7 @@
  *     标志 FLAG:103）@EVENTEND #LATER（:87-89，清标志）
  *     @KOJO_MESSAGE_COM_3（:887；七道跳过判定 :888-912；爱抚 CFLAG:301
  *     状态机 :920-1105——黄金样本 emuera.log:26 出自 :1097；舔阴 CFLAG:302
- *     :1110-1147；肛门爱抚 CFLAG:303 :1152-1197）
+ *     :1110-1147；肛门爱抚 CFLAG:303 :1152-1197；自慰 CFLAG:304 :1202-1323）
  *
  * == 状态机（CFLAG:301，:918 注释「コマンド実行時のセリフ CFLAG 301～400
  *    を使用」） ==
@@ -23,6 +23,12 @@
  * 肛门爱抚（CFLAG:303）按润滑（PALAM:3 + UP:3 对 PALAMLV:2）再分档：初回
  * → 1；二回目以降按「淫乱+润滑Lv2以上/未満 → 爱慕+润滑Lv2以上/未満 →
  * 润滑Lv2以上＋A感覚Lv3以上 → それ以外（读 CFLAG:223）」写入 7/6/5/4/3/2。
+ *
+ * 自慰（CFLAG:304）初回 → 1；二回目以降按「淫乱+处女 → 淫乱+自慰中毒Lv3
+ * 以上/未満 → 爱慕+处女 → 爱慕+自慰中毒Lv3以上/未満 → 屈服Lv3+自慰中毒
+ * Lv1以上 → それ以外」写入 9/8/7/6/5/4/3/2；壶虫/肛门虫（TEQUIP:11/13）
+ * 在淫乱/爱慕的自慰中毒支上另出按摩器台词。
+ *
  * 这张票存根（docs/stub-registry.md）：COLOSSEUM_KOJO_3 / DOG_KOJO_3（守卫
  * 岔开的专用口上）与尚未落地的其余 SELECTCOM 分支。
  */
@@ -640,13 +646,267 @@ async function kojo_message_com_3(rand) {
     return 0; // :1195
   }
 
-  // :1197 ENDIF（IF SELECTCOM == 2 的收口）——其余指令待办，占位一行
+  // :1197 ENDIF（IF SELECTCOM == 2 的收口）
+
+  // :1202 IF SELECTCOM == 3（自慰 CFLAG:304）
+  if (era_flag.selectcom === 3) {
+    const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
+    const train = chara(target).train;
+
+    // :1204-1207 初めて（CFLAG:304 == 0）
+    if (kojo.自慰 === 0) {
+      await era.printAndWait(
+        '「居然…不能不做这样的事情…这是……何等的…屈辱啊…」',
+      ); // :1205
+      kojo.自慰 = 1; // :1206
+      return 0; // :1207
+    }
+
+    // :1209-1321 二回目以降
+    // :1211 淫乱＋处女
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      era.get(`talent:${target}:0`) === 1 &&
+      (kojo.自慰 <= 8 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊啊${heart(1)}　您真是的…真的是恶魔来的呀…${heart(1)}」`,
+      ); // :1212
+      await era.printAndWait(
+        `「${sc()}的身心…明明....都变得…如此地淫乱了…啊啊~${heart(1)}也不拿走${sc()}重要的东西什么的~${heart(1)}」`,
+      ); // :1213
+      await era.printAndWait(
+        `${target_name}将腰抬高，向${master_name}诱惑而用手将蜜穴给张开。`,
+      ); // :1214
+      await era.printAndWait(
+        `「啊啊~…明明…在这里有处女膜来的~${heart(1)}」`,
+      ); // :1215
+      await era.printAndWait(
+        `「拜托了${heart(1)}请将${sc()}的…淫乱小穴…用${master_name}大人的大鸡巴来贯穿了吧~~~${heart(5)}」`,
+      ); // :1216
+      await era.printAndWait(
+        `${target_name}一边将腰部左右地晃动着一边在${master_name}的面前自慰着………`,
+      ); // :1217
+      kojo.自慰 = 9; // :1218
+    } else if (
+      // :1220 淫乱＋自慰中毒Lv3以上
+      era.get(`talent:${target}:76`) === 1 &&
+      train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)
+    ) {
+      // :1222 壶虫or肛门虫
+      if (era.get(`tequip:${target}:11`) || era.get(`tequip:${target}:13`)) {
+        await era.printAndWait(
+          `「啊哼嗯~~…按摩器自慰最~棒~了~啊嗯~${heart(1)}」`,
+        ); // :1223
+        await era.printAndWait(`${target_name}留着口水继续着自慰………`); // :1224
+      } else if (rand_n(3) === 0) {
+        // :1227
+        await era.printAndWait(
+          `「啊啊…主人…请看一下吧~~~…${heart(1)}」`,
+        ); // :1228
+        await era.printAndWait(
+          `「小穴的里面${heart(1)}要伸手指进去了哦~~~……${heart(1)}」`,
+        ); // :1229
+        await era.printAndWait(
+          `「嗯哈啊啊~…不行了~…小穴自慰停不下来了${heart(3)}」`,
+        ); // :1230
+      } else if (rand_n(2) === 0) {
+        // :1231
+        await era.printAndWait(
+          `「哈啊~…啊~…啊啊~…这么的…舒服的事情嗯~…谁都没有告诉${target_name}啊嗯~…${heart(1)}」`,
+        ); // :1232
+        await era.printAndWait(
+          `「小穴“库啪”地打开了~嗯哦嗯~${heart(1)}将手指塞进深处后~${heart(1)}」`,
+        ); // :1233
+        await era.printAndWait(
+          `「只要再将小豆豆弄一下的话…哈嗯~${heart(1)}要舒服死了~${heart(1)}」`,
+        ); // :1234
+        await era.printAndWait(
+          `「为什么大家…不做这么舒服的事情呢~？${heart(1)}」`,
+        ); // :1235
+      } else {
+        // :1236
+        await era.printAndWait(
+          `「啊啊啊啊~…对不起…只用自己的手指就得那么舒服真是对不起~~~${heart(1)}」`,
+        ); // :1237
+        await era.printAndWait(
+          `「但是停不下来呢~~${heart(1)} 这么舒服的事情，根本停不下来呀~~~${heart(1)}」`,
+        ); // :1238
+        await era.printAndWait(
+          `「哪怕没有主人的命令也好…也会一整天玩弄自己的小穴真的是非常对不起呜~~~~~~${heart(1)}」`,
+        ); // :1239
+        await era.printAndWait(
+          `${target_name}连你根本不知道的事情也说都了出来………`,
+        ); // :1240
+      }
+      kojo.自慰 = 8; // :1243
+    } else if (
+      // :1245 淫乱＋自慰中毒Lv3未満
+      era.get(`talent:${target}:76`) === 1 &&
+      train.自慰中毒 < 3 &&
+      (kojo.自慰 <= 6 || game.kojo.口上开关 === 2)
+    ) {
+      // :1247 壶虫or肛门虫
+      if (era.get(`tequip:${target}:11`) || era.get(`tequip:${target}:13`)) {
+        await era.printAndWait(
+          `「啊啊啊啊~…要不行了…那里要不行啊~~~…${heart(1)}」`,
+        ); // :1248
+        await era.printAndWait(
+          `${target_name}流着口水沉浸在按摩器自慰着………`,
+        ); // :1249
+      } else if (rand_n(2) === 0) {
+        // :1252
+        await era.printAndWait(
+          `「啊啊~…手指…手指擅自动起来了呀~~~…${heart(1)}」`,
+        ); // :1253
+        await era.printAndWait(
+          `「这个手指…这个手指如果是主人的大鸡巴的话${heart(1)}　就会…就会变地更加舒服起来了呀~~${heart(1)}」`,
+        ); // :1254
+      } else {
+        // :1255
+        await era.printAndWait(
+          `「啊啊~…虽然玩弄小穴也不错来的…但是好想要主人的大鸡巴呀~~…${heart(1)}」`,
+        ); // :1256
+        await era.printAndWait(
+          `${target_name}自慰的同时，用着炽热的视线看着${target_name}股间的阴茎………`,
+        ); // :1257
+      }
+      kojo.自慰 = 7; // :1260
+    } else if (
+      // :1262 爱＋处女
+      era.get(`talent:${target}:85`) === 1 &&
+      era.get(`talent:${target}:0`) === 1 &&
+      (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(`「啊啊~…呜哈~…啊…${heart(1)}」`); // :1263
+      await era.printAndWait(
+        `${target_name}每次轻轻地抚摸自己的蜜穴后就会大声地呻吟一下。`,
+      ); // :1264
+      await era.printAndWait(
+        `「如果大人您再不做的话~…${target_name}就要自己弄破了噢~…${heart(1)}」`,
+      ); // :1265
+      await era.printAndWait(
+        `${target_name}说完扑哧一笑、将手指塞向了深处。`,
+      ); // :1266
+      await era.printAndWait(
+        `「哈嗯~${heart(1)}…唔哼哼~、只是开玩笑的噢~………啊嗯~~~${heart(1)}」`,
+      ); // :1267
+      kojo.自慰 = 6; // :1268
+    } else if (
+      // :1270 爱＋自慰中毒Lv3以上
+      era.get(`talent:${target}:85`) === 1 &&
+      train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // :1272 壶虫or肛门虫
+      if (era.get(`tequip:${target}:11`) || era.get(`tequip:${target}:13`)) {
+        await era.printAndWait(
+          `「自慰器…自慰器用起来好舒服啊嗯~${heart(1)}」`,
+        ); // :1273
+        await era.printAndWait(
+          `${target_name}嘴边流下了口水沉浸在了按摩器自慰中………`,
+        ); // :1274
+      } else if (rand_n(3) === 0) {
+        // :1277
+        await era.printAndWait(
+          `「唔啊~…啊~哈啊~…明明...这样的…不行…来的…${heart(1)}」`,
+        ); // :1278
+        await era.printAndWait(
+          `「啊啊~…但是…是魔王大人的命令来的…啊~啊啊~哈啊嗯~${heart(1)}」`,
+        ); // :1279
+        await era.printAndWait(
+          `${target_name}哪怕嘴上说着这么多的借口，但还是忘我地自慰着………`,
+        ); // :1280
+      } else if (rand_n(2) === 0) {
+        // :1281
+        await era.printAndWait(
+          `「啊啊…请更加…更加地看这边吧~…请看着${sc()}淫荡下流的哪里吧~${heart(1)}」`,
+        ); // :1282
+        await era.printAndWait(
+          `${target_name}每当将手指伸进蜜穴里后便会有下流的水声响起、爱液不提地滴到了地板上………`,
+        ); // :1283
+      } else {
+        // :1284
+        await era.printAndWait(
+          `「啊啊~…玩弄的话…明明在这样玩弄下去的话就要回不来了的~~…${heart(1)}」`,
+        ); // :1285
+        await era.printAndWait(
+          `「不行了嗯~~…已经…手指已经停不下来了~${heart(1)}…主人…请看着吧~！」`,
+        ); // :1286
+      }
+      kojo.自慰 = 5; // :1289
+    } else if (
+      // :1291 爱＋自慰中毒Lv3未満
+      era.get(`talent:${target}:85`) === 1 &&
+      train.自慰中毒 < 3 &&
+      (kojo.自慰 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      if (rand_n(2) === 0) {
+        // :1293
+        await era.printAndWait(
+          `「啊哈啊~…${heart(1)}　被喜欢的人给…看到了羞耻的地方什么的…」`,
+        ); // :1294
+        await era.printAndWait(
+          `「居然是那么舒服的事情来的呀…请更加地…更加地看着${sc()}自慰的姿态吧~~~${heart(1)}」`,
+        ); // :1295
+      } else {
+        // :1296
+        await era.printAndWait(
+          `「啊啊~…因为命令而自己安慰自己什么的…居然会那么舒服呀~~…${heart(1)}」`,
+        ); // :1297
+        await era.printAndWait(
+          `「主人~${heart(1)} 请更加地…疼爱${sc()}吧…啊~啊啊啊~嗯~${heart(1)}」`,
+        ); // :1298
+      }
+      kojo.自慰 = 4; // :1300
+    } else if (
+      // :1302 屈服刻印Lv3+自慰中毒Lv1以上
+      mark(2) === 3 &&
+      train.自慰中毒 >= 1 &&
+      (kojo.自慰 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      if (rand_n(2) === 0) {
+        // :1304
+        await era.printAndWait(
+          '「明明…不行…来的…但是...为什么…手却…停不下来呀~………啊嗯~！」',
+        ); // :1305
+      } else {
+        // :1306
+        await era.printAndWait(
+          '「好、的…更加深地~…啊啊~啊~…啊嗯嗯唔！」',
+        ); // :1307
+        await era.printAndWait(
+          `${target_name}顺从着${master_name}的指示摩擦着蜜穴、一点一点地开发着敏感度………`,
+        ); // :1308
+      }
+      kojo.自慰 = 3; // :1310
+    } else if (kojo.自慰 <= 1 || game.kojo.口上开关 === 2) {
+      // :1312 それ以外（爱無し、自慰中毒Lv1未満）
+      if (rand_n(2) === 0) {
+        // :1314
+        await era.printAndWait(
+          '「呃呜…呜~…啊~…这样的一点也…哼呜~…啊~…哈呜~！」',
+        ); // :1315
+      } else {
+        // :1316
+        await era.printAndWait(
+          `「啊啊…哈啊~…居然让${target_name}做这样的事情…给${target_name}记住吧…啊啊~…啊~…嗯~」`,
+        ); // :1317
+      }
+      kojo.自慰 = 2; // :1319
+    }
+    return 0; // :1321
+  }
+
+  // :1323 ENDIF（IF SELECTCOM == 3 的收口）——其余指令待办，占位一行
   stub_line(
     'KOJO_MESSAGE_COM_3',
     `指令 ${era_flag.selectcom} 的口上`,
     '随各自指令票',
   );
   return 0;
+
 }
 
 // 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_3 的等价物；重复注册抛错）
