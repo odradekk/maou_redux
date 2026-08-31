@@ -139,6 +139,62 @@ async function train_message_a() {
     }
   }
 
+  // —— 公共绝顶反应（:377-424）——
+  // 这是所有指令共用的 TFLAG:29 消费点，必须先于 SELECTCOM 分支输出；
+  // 原作连续 PRINTFORM/PRINT/PRINTL 组成一条可见行，故在此一次性拼接。
+  const target = era_flag.target;
+  const orgasms = era.get('tflag:29') || 0;
+  const faint = era.get('tflag:899') || 0;
+  if (orgasms > 0 && faint <= 1) {
+    const target_name = chara_callname(target);
+    const ejaculates = era.get('tflag:10') || 0;
+    const milk = era.get('tflag:11') || 0;
+    const intersex =
+      (era.get(`talent:${target}:121`) || 0) > 0 ||
+      (era.get(`talent:${target}:122`) || 0) > 0;
+    let line = target_name;
+    if (milk === 1) {
+      line += '从胸前滴落母乳';
+    } else if (milk === 2) {
+      line += '从胸前喷出大量香喷喷的母乳';
+    }
+    const has_love_fluid = !intersex && orgasms >= 5;
+    if (milk > 0 && (has_love_fluid || ejaculates > 0)) {
+      line += '、';
+    }
+    if (!intersex && orgasms >= 5 && orgasms <= 8) {
+      line += '阴唇里喷出透明的爱液、';
+    } else if (!intersex && orgasms >= 9) {
+      line += '阴唇里喷出混合着白浊的爱液、';
+    }
+    if (ejaculates === 1) {
+      const penis = {
+        1: '手臂般粗的',
+        2: '悲催的短小的',
+        3: '包着皮的',
+        4: '马一样的',
+      }[era.get(`talent:${target}:318`) || 0];
+      line += `${penis ?? ''}阴茎喷出了精液。`;
+    } else if (ejaculates === 2) {
+      const penis =
+        {
+          1: '怒张着、手臂般粗的',
+          2: '颤抖着、可怜的短小的',
+          3: '裸露龟头的',
+          4: '跳动着、马一样的',
+        }[era.get(`talent:${target}:318`) || 0] ?? '跳动着的';
+      line += `${penis}阴茎中大量的精液飞散而出。`;
+    }
+    if (ejaculates === 0 && milk === 0 && (orgasms < 5 || intersex)) {
+      line += '背脊夸张地向后仰、';
+    }
+    line +=
+      orgasms < 12
+        ? '全身哆嗦着、颤动到了极点。'
+        : '露出快乐又淫媚的神色、绝顶高潮了……';
+    era.print(line);
+  }
+
   const branch = await train_message_a_family.call(era_flag.selectcom, {
     whenMissing: BRANCH_MISSING,
     args: [rand_source()],
