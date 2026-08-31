@@ -109,6 +109,61 @@ test('@COM120：插入Ｇ点蹂躏，显式回填 SELECTCOM=120', async () => {
   assert.ok(world.fixture.text_lines().includes('骑乘位Ｇ点蹂躏'));
 });
 
+test('@COM120：默认档 SOURCE / TFLAG 与骑乘派生', async () => {
+  const world = seed_world();
+  world.era_flag.prevcom = 20;
+  world.era_flag.selectcom = 20;
+  world.fixture.store.set('abl:31:2', 3);
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
+  const result = await world.com_family.call(120);
+  assert.equal(result, 1);
+  assert.equal(world.fixture.store.get('tflag:19'), 1, '伴 V 经验旗');
+  assert.equal(world.fixture.store.get('tflag:42'), 0, '三人 PLAY 持续清零');
+  // ABL:2=3 → S1=2000；EXP < EXPLV:3 → ×1.00；润滑 < LV3 → ×1.00；
+  // PALAM:13 < LV1 → ×0.60；ABL:10=0 → ×0.50。TIMES 逐步朝零截断。
+  assert.equal(world.fixture.store.get('source:31:1'), 600);
+  assert.equal(world.fixture.store.get('source:31:12'), 900);
+  assert.equal(world.fixture.store.get('source:31:6'), 5);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -50);
+
+  const riding = seed_world();
+  riding.era_flag.prevcom = 34;
+  riding.era_flag.selectcom = 34;
+  riding.fixture.store.set('trainalias:34', '骑乘位');
+  await riding.com_family.call(120);
+  assert.equal(riding.fixture.store.get('source:31:12'), 1300);
+  assert.equal(riding.fixture.store.get('source:31:4'), 200);
+  assert.equal(riding.fixture.store.get('deltabase:31:0'), -60);
+});
+
+test('@COM120 B/A：体位行与对准Ｇ点射精', async () => {
+  const world = seed_world();
+  world.era_flag.prevcom = 20;
+  world.era_flag.selectcom = 20;
+  world.fixture.store.set('callname:0:-1', '魔王');
+  await world.com_family.call(120);
+  const lines = world.fixture.text_lines();
+  assert.ok(
+    lines.includes(
+      '从下往上地挺动着腰、温妮私处内最敏感的那一点、被仔细摩擦着…',
+    ),
+  );
+  assert.ok(lines.includes('温妮艰难地晃动着腰…'));
+
+  world.fixture.store.set('tflag:2', 1);
+  world.fixture.store.set('palam:31:5', 0);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes('对准温妮私处内那最敏感的那一点、魔王射出了精液…'),
+  );
+});
+
 test('@COM122：阴茎互捅（可直选），不回填 SELECTCOM', async () => {
   const world = seed_world();
   const result = await run_com(world, 122);

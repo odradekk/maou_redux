@@ -3826,4 +3826,12 @@ export default [
     tests: ['main-loop'],
     must_mention: '主启动图注册追加与高级系',
   },
+  {
+    desc: 'M1454 COM120 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  times_src(cid, 1, obey[0]);',
+    replace: '  // 变异：顺从乘算删除',
+    tests: ['com-advanced'],
+    must_mention: '默认档 SOURCE',
+  },
 ];

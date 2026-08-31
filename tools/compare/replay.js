@@ -50,6 +50,7 @@ const TRAIN_PATH_MODULES = [
   'system/train/com-sex',
   'system/train/com-cloth',
   'system/train/com-colosseum',
+  'system/train/com-advanced',
   'system/train/juel-check',
   'system/train/train-message',
 ];

@@ -40,16 +40,22 @@
  */
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { game } = require('#/facade/game');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
+const {
+  com_after_vagina_sex,
+  com_ejac_player_sex,
+} = require('#/system/train/com-vaginasex');
 const {
   train_message_a_family,
   train_message_b,
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { read_train_name } = require('#/system/train/train-name');
+const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 
 /** CASE 21 升格可能命中、但尚未由助手族落地的目标。 */
@@ -61,10 +67,16 @@ const tequip = (id, i) => era.get(`tequip:${id}:${i}`) || 0;
 const palam = (id, i) => era.get(`palam:${id}:${i}`) || 0;
 const exp = (id, i) => era.get(`exp:${id}:${i}`) || 0;
 const stain = (id, i) => era.get(`stain:${id}:${i}`) || 0;
+const src = (id, i) => era.get(`source:${id}:${i}`) || 0;
+const set_src = (id, i, v) => era.set(`source:${id}:${i}`, v);
+const add_src = (id, i, v) => era.add(`source:${id}:${i}`, v);
+const add_lose = (id, i, v) => era.add(`deltabase:${id}:${i}`, -v);
+const times = (value, multiplier) => Math.floor(value * multiplier);
 const worn = (id) => era.get(`cflag:${id}:40`) || 0;
 const special = (id) => era.get(`cflag:${id}:42`) || 0;
 const clothes_on = () => (era.get('flag:37') || 0) !== 0;
-
+const target_name = () => chara_callname(era_flag.target);
+const player_name = () => chara_callname(era_flag.player);
 const has_pband = () => (era.get('item:4') || 0) !== 0;
 const has_mat = () =>
   (era.get('item:13') || 0) !== 0 || (era.get('noitem:0') || 0) !== 0;
@@ -349,10 +361,304 @@ function able135() {
     return 0;
   return 1;
 }
+function times_src(cid, index, multiplier) {
+  set_src(cid, index, times(src(cid, index), multiplier));
+}
+
+/** @COM120 的 SOURCE 计算（COMF120:29-381）。PALAM:13 是源侧原文。 */
+function source120() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const prev = era_flag.prevcom;
+
+  if (prev === 34) {
+    add_lose(cid, 0, 60);
+    add_lose(cid, 1, 150);
+    set_src(cid, 12, 1300);
+  } else {
+    add_lose(cid, 0, 50);
+    add_lose(cid, 1, 100);
+    set_src(cid, 12, 900);
+  }
+
+  const v_feel = [
+    [150, 100],
+    [200, 180],
+    [600, 250],
+    [2000, 380],
+    [2600, 500],
+    [3400, 800],
+  ][Math.min(abl(cid, 2), 5)];
+  set_src(cid, 1, v_feel[0]);
+  set_src(cid, 3, v_feel[1]);
+
+  const e0 = exp(cid, 0);
+  if (e0 < EXPLV[1]) {
+    times_src(cid, 1, 0.2);
+    set_src(cid, 6, 300);
+  } else if (e0 < EXPLV[2]) {
+    times_src(cid, 1, 0.6);
+    set_src(cid, 6, 100);
+  } else if (e0 < EXPLV[3]) {
+    times_src(cid, 1, 1);
+    set_src(cid, 6, 10);
+  } else if (e0 < EXPLV[4]) {
+    times_src(cid, 1, 1.2);
+    set_src(cid, 6, 0);
+  } else if (e0 < EXPLV[5]) {
+    times_src(cid, 1, 1.3);
+    set_src(cid, 6, 0);
+  } else {
+    times_src(cid, 1, 1.8);
+    set_src(cid, 6, 0);
+  }
+
+  if (palam(cid, 3) < PALAMLV[1]) {
+    times_src(cid, 1, 0.1);
+    add_src(cid, 6, 1000);
+    times_src(cid, 6, 3);
+  } else if (palam(cid, 3) < PALAMLV[2]) {
+    times_src(cid, 1, 0.4);
+    add_src(cid, 6, 300);
+    times_src(cid, 6, 1);
+  } else if (palam(cid, 3) < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 6, 0.5);
+  } else if (palam(cid, 3) < PALAMLV[4]) {
+    times_src(cid, 1, 1.4);
+    times_src(cid, 6, 0.2);
+  } else {
+    times_src(cid, 1, 1.8);
+    times_src(cid, 6, 0.1);
+  }
+
+  if (prev === 22) {
+    times_src(cid, 1, 0.7);
+    times_src(cid, 3, 0.9);
+  } else if (prev === 23) {
+    times_src(cid, 1, 1.3);
+    times_src(cid, 3, 1.1);
+  }
+
+  if (tal(player, 122)) times_src(cid, 1, 2.5);
+  if (tal(cid, 100)) times_src(cid, 6, 2);
+
+  if (tal(cid, 30)) {
+    if (tal(cid, 0) === 1) {
+      times_src(cid, 3, 0.6);
+      times_src(cid, 14, 5);
+      set_src(cid, 15, 2000);
+    } else {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 1000);
+    }
+  } else if (tal(cid, 31)) {
+    if (tal(cid, 0) === 1) {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 300);
+    }
+  } else if (tal(cid, 0) === 1) {
+    set_src(cid, 15, 3000);
+  }
+
+  // PALAM:13 是源侧原文（COMF20 写 PALAM:5）；本票 1:1 保留
+  if (palam(cid, 13) < PALAMLV[1]) {
+    times_src(cid, 1, 0.6);
+    times_src(cid, 3, 0.3);
+  } else if (palam(cid, 13) < PALAMLV[2]) {
+    times_src(cid, 1, 0.8);
+    times_src(cid, 3, 0.6);
+  } else if (palam(cid, 13) < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 3, 1);
+  } else if (palam(cid, 13) < PALAMLV[4]) {
+    times_src(cid, 1, 1.2);
+    times_src(cid, 3, 1.5);
+  } else {
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 1.8);
+  }
+
+  const obey = [
+    [0.5, 0.6, 2],
+    [0.8, 0.8, 1.5],
+    [1, 1, 1],
+    [1.3, 1.2, 0.8],
+    [1.6, 1.4, 0.6],
+    [2, 1.6, 0.3],
+  ][Math.min(abl(cid, 10), 5)];
+  times_src(cid, 1, obey[0]);
+  times_src(cid, 3, obey[1]);
+  times_src(cid, 15, obey[2]);
+
+  if (prev === 34) {
+    const spirit = [
+      [200, 50, 300],
+      [250, 200, 100],
+      [350, 550, 30],
+      [450, 900, 0],
+      [600, 1500, 0],
+      [750, 2200, 0],
+    ][Math.min(abl(cid, 13), 5)];
+    set_src(cid, 4, spirit[0]);
+    set_src(cid, 5, spirit[1]);
+    set_src(cid, 14, spirit[2]);
+    const skill = [
+      [0.3, 0.3],
+      [0.6, 0.6],
+      [1, 1],
+      [1.1, 1.1],
+      [1.3, 1.2],
+      [1.5, 1.4],
+    ][Math.min(abl(cid, 12), 5)];
+    times_src(cid, 1, skill[0]);
+    times_src(cid, 3, skill[1]);
+  }
+
+  if (prev === 612) {
+    const breast = [
+      [50, 50, 50],
+      [200, 200, 200],
+      [500, 500, 400],
+      [1000, 600, 600],
+      [1600, 1000, 1000],
+    ];
+    if (abl(cid, 1) <= 4) {
+      const row = breast[abl(cid, 1)];
+      set_src(cid, 17, row[0]);
+      add_src(cid, 3, row[1]);
+      add_src(cid, 4, row[2]);
+    } else {
+      set_src(cid, 3, 2100); // 源 ELSE 写 SOURCE:3 = 2100，不是 SOURCE:17
+      add_src(cid, 3, 1400);
+      add_src(cid, 4, 1400);
+    }
+    const clit = [
+      [40, 50],
+      [160, 200],
+      [700, 400],
+      [1500, 600],
+      [2400, 1000],
+      [3600, 1400],
+    ][Math.min(abl(cid, 0), 5)];
+    add_src(cid, 0, clit[0]);
+    add_src(cid, 4, clit[1]);
+    const skill_rows = [
+      [100, 100, 50, 100, 50, 0, 0, 0],
+      [200, 200, 150, 150, 100, 50, 100, 0],
+      [300, 300, 250, 200, 200, 100, 200, 50],
+      [500, 400, 500, 300, 300, 150, 300, 100],
+      [800, 500, 800, 500, 400, 250, 400, 300],
+      [1200, 600, 1200, 800, 600, 400, 500, 500],
+    ][Math.min(abl(player, 12), 5)];
+    add_src(cid, 0, skill_rows[0]);
+    add_src(cid, 1, skill_rows[1]);
+    add_src(cid, 17, skill_rows[2]);
+    add_src(cid, 3, skill_rows[3]);
+    add_src(cid, 4, skill_rows[4]);
+    add_src(cid, 10, skill_rows[5]);
+    add_src(cid, 11, skill_rows[6]);
+    let extra = skill_rows[7];
+    const expose = [0.6, 1, 1.5, 2.4, 3.6, 5.8][Math.min(abl(cid, 17), 5)];
+    const expose_add = [100, 200, 400, 700, 1200, 2000][
+      Math.min(abl(cid, 17), 5)
+    ];
+    add_src(cid, 7, expose_add);
+    add_src(cid, 10, expose_add);
+    extra = times(extra, expose);
+    add_src(cid, 0, extra);
+    add_src(cid, 1, extra);
+    add_src(cid, 3, extra);
+    if (e0 >= EXPLV[3]) add_src(cid, 1, extra);
+    if (tal(cid, 85)) times_src(cid, 3, 2);
+  }
+}
+
+async function message_b120() {
+  const cid = era_flag.target;
+  const prev = era_flag.prevcom;
+  const fainted = (era.get('tflag:899') || 0) !== 0;
+  const e0 = exp(cid, 0);
+  if (prev === 34 && !fainted) {
+    era.print(
+      `${target_name()}上半身夸张地痉挛着、私处内最敏感的那一点、被阴茎好好地疼爱了…`,
+    );
+    if (e0 <= 30) {
+      era.print(`${target_name()}露出略感困惑的神情、但这个行动还在持续着…`);
+    } else if (e0 <= 50) {
+      era.print(`${target_name()}追逐着快感、积极地扭动着腰肢…`);
+    } else if (e0 <= 80) {
+      era.print(
+        `${target_name()}屁股用力收缩、腰部轻微地颤抖着、发出了娇媚的呻吟…`,
+      );
+    } else if (e0 <= 120) {
+      era.print(`${target_name()}身子后仰、双手后撑、激烈地扭腰追逐着快感…`);
+      era.print('被紧紧夹着的阴茎、不断摩擦着Ｇ点…');
+    } else {
+      era.print(
+        `${target_name()}的要害被进攻了、腰身一边不停痉挛着、一边积极扭动着追逐着快感…`,
+      );
+      era.print(
+        '每一下的抽插、私处内都发出了啧啧的水声、从喉咙深处发出了带着鼻音的淫靡呻吟…',
+      );
+    }
+    return;
+  }
+  if (prev === 20 || prev === 128 || prev === 129 || prev === 130) {
+    era.print(
+      `从下往上地挺动着腰、${target_name()}私处内最敏感的那一点、被仔细摩擦着…`,
+    );
+  } else if (
+    prev === 21 ||
+    prev === 131 ||
+    prev === 132 ||
+    prev === 133 ||
+    prev === 134
+  ) {
+    era.print(`上身趴下、${target_name()}私处内最敏感的那一点、被不停突进着…`);
+  } else if (prev === 22) {
+    era.print(
+      `放开上身、压着${target_name()}的小腹、仔细摩擦着私处内最敏感的那一点…`,
+    );
+  } else if (prev === 23) {
+    era.print(
+      `抓住${target_name()}的腰把她整个人上下套弄着、顽强地刺激私处内的那一点…`,
+    );
+  }
+  if (fainted) return;
+  if (e0 <= 30) {
+    era.print(`${target_name()}艰难地晃动着腰…`);
+  } else if (e0 <= 50) {
+    era.print(`${target_name()}紧闭嘴唇、忍受着不熟悉的快感…`);
+  } else if (e0 <= 80) {
+    era.print(`${target_name()}的要害被进攻了、深远的快感让她眼睛都亮了起来…`);
+  } else if (e0 <= 120) {
+    era.print(`${player_name()}奋力地扭动着腰、私处内的肉壁剧烈收缩、颤抖着…`);
+    era.print(`${target_name()}最敏感的地方被侵犯了、喷出了炽热的气息…`);
+  } else {
+    era.print(
+      `${target_name()}的喉咙差点被自己的口水呛到、手指脚趾紧紧地收合着、不停摇头、似乎感到苦闷…`,
+    );
+    era.print('连呼吸都变得困难了、张大嘴巴却发不出声音、只能娇媚地喘着大气…');
+  }
+}
+
+async function message_a120() {
+  const amount = era.get('tflag:2') || 0;
+  if (amount !== 1 && amount !== 2) return;
+  era.print(
+    `对准${target_name()}私处内那最敏感的那一点、${player_name()}射出了${amount === 2 ? '大量的' : ''}精液…`,
+  );
+  if (palam(era_flag.target, 5) < PALAMLV[4] || era.get('tflag:31')) {
+    era.set('tflag:31', 0);
+    era.set('tflag:60', 0);
+  }
+}
 
 /** @COM120（COMF120_挿入Ｇスポ責め.ERB）插入Ｇ点蹂躏。高级 COM。 */
 async function com120() {
   const select = era_flag.selectcom;
+  game.train.三人PLAY持续 = 0;
   if (select === 34 || (select >= 20 && select <= 23)) {
     era.print(`${read_train_name(select)}Ｇ点蹂躏`);
   } else {
@@ -360,6 +666,14 @@ async function com120() {
   }
   era_flag.selectcom = 120; // 原作显式 SELECTCOM = 120（升格抵达时回填号位）
   await train_message_b();
+  const cid = era_flag.target;
+  game.train.伴V经验指令 = 1;
+  if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
+    game.train.主人导致处女丧失 = 1;
+  }
+  await com_ejac_player_sex();
+  source120();
+  await com_after_vagina_sex();
   return 1;
 }
 
@@ -432,10 +746,12 @@ adv_com_family.register(135, async () => {
   return 135;
 });
 
+train_message_b_family.register(120, message_b120);
+train_message_a_family.register(120, message_a120);
+
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
 for (const id of [
-  120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134,
-  135,
+  121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
 ]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
