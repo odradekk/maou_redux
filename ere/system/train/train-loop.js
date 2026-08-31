@@ -65,7 +65,8 @@
  *        函数体在 event/source-check.js，#45——源→参数换算、绝顶、刻印、
  *        结算展示）
  *    13. 指令执行后（仅 RETURN 非 0 的回合，见 12 的取消语义）：
- *        PREVCOM = SELECTCOM（原作在 @SOURCE_CHECK :545 自做，ere 侧统一
+ *        PREVCOM = SELECTCOM（原作 SYSTEM_SOURCE.ERB :545 自做；高级
+ *        COM 回填 SELECTCOM 后亦须保留该号，ere 侧统一
  *        由本循环承载——SOURCE_CHECK 跑了才推，取消回合不推）→ era.
  *        nextTurnInTrain()（UPCHECK 的 ere 等价：delta→palam、nowex→ex、
  *        deltabase→base 并清 source/delta/nowex；#45 起 SOURCE_CHECK 对
@@ -181,9 +182,10 @@ async function execute_command_round(result) {
   if (source_pending !== undefined) {
     return { missing: false, pending: source_pending };
   }
-  // 13. PREVCOM 更新 → UPCHECK 等价结算 → @EVENTCOMEND（取消回合已在
-  // 12 处返回，到不了这里）
-  era_flag.prevcom = result;
+  // 13. PREVCOM = SELECTCOM（SYSTEM_SOURCE.ERB :545；高级 COM 可能在
+  // 本回合回填 SELECTCOM，不能误存调用前的 result）→ UPCHECK 等价结算
+  // → @EVENTCOMEND（取消回合已在 12 处返回，到不了这里）
+  era_flag.prevcom = era_flag.selectcom;
   era.nextTurnInTrain();
   const comend_pending = await emit('EVENTCOMEND');
   if (comend_pending !== undefined) {

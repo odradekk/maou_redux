@@ -39,6 +39,7 @@ const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { DECLARED_COM_IDS } = require('#/system/train/com-family');
 const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
+const { game } = require('#/facade/game');
 
 /**
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
@@ -95,6 +96,12 @@ async function train_message_b() {
       '随各自指令票',
     );
   }
+
+  // TFLAG:31 = 本次调教处女丧失：连续插入分支临时置 2，公共尾部归一回
+  // 1；其余遗留值清零。FLAG:6 的早退在函数开头，不能越过它执行本段。
+  // 源: EVENT_TRAIN_MESSAGE_B.ERB :3041-3046
+  const virgin_blood = game.event.本次调教处女丧失;
+  game.event.本次调教处女丧失 = virgin_blood === 2 ? 1 : 0;
 }
 
 /**

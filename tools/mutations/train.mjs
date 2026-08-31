@@ -3723,4 +3723,75 @@ export default [
     tests: ['event-aftertrain'],
     must_mention: '兽奸报告二次累加 A≠B 时按自慰回数而非兽奸回数',
   },
+  // —— #222 J12：COM30–38 奉仕系 ——
+  {
+    desc: 'M1110 COM34/36 骑乘位衣物判定把目标号漏传（#222）',
+    file: 'ere/system/train/com-service.js',
+    find: `  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+    return 0;
+  if (costume_blocked(target, 17)) return 0;
+  if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
+    replace: `  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+    return 0;
+  if (costume_blocked(17)) return 0; // 变异：误把位掩码当目标号
+  if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
+    tests: ['com-service'],
+    must_mention: 'COM_ABLE30-38',
+  },
+  {
+    desc: 'M1111 COM34/36 A 文不复用性交公共尾段（#222）',
+    file: 'ere/system/train/com-service.js',
+    find: `async function train_message_a_riding() {
+  await train_message_a_service();
+  // 延迟读取：主启动图的 COM20–29 注册仍仅由 com-sex 自己负责；本族只在
+  // 实际渲染骑乘 A 文时复用其无注册 helper。
+  const { train_message_a_sex_common } = require('#/system/train/com-sex');
+  await train_message_a_sex_common();`,
+    replace: `async function train_message_a_riding() {
+  await train_message_a_service();
+  // 变异：漏掉性交公共尾段`,
+    tests: ['com-service'],
+    must_mention: 'COM34/36 复用性交尾段',
+  },
+  {
+    desc: 'M1112 严格 TIMES 退回浮点向下取整（#222）',
+    file: 'ere/system/train/com-service.js',
+    find: '  return Number((BigInt(value_to_multiply) * numerator) / denominator);',
+    replace:
+      '  return Math.floor(value_to_multiply * rate); // 变异：JS 浮点截断',
+    tests: ['com-service'],
+    must_mention: '严格 TIMES',
+  },
+  {
+    desc: 'M1113 B 文公共尾部不把 TFLAG:31 的连续态归一（#222）',
+    file: 'ere/system/train/train-message.js',
+    find: '  game.event.本次调教处女丧失 = virgin_blood === 2 ? 1 : 0;',
+    replace: '  game.event.本次调教处女丧失 = 0; // 变异：连续插入也清零',
+    tests: ['com-service'],
+    must_mention: '正常末尾归一 TFLAG:31',
+  },
+  {
+    desc: 'M1115 COM35 玩家执行时把标准污渍误写固定 0 号（#222）',
+    file: 'ere/system/train/com-service.js',
+    find: '  set_standard_stain(era_flag.assiplay ? era_flag.assi : era_flag.player);',
+    replace: '  set_standard_stain(era_flag.assiplay ? era_flag.assi : 0);',
+    tests: ['com-service'],
+    must_mention: 'COM35：玩家执行时重置玩家',
+  },
+  {
+    desc: 'M1116 升格回合把 PREVCOM 错存执行入口而非 SELECTCOM（#222）',
+    file: 'ere/system/train/train-loop.js',
+    find: '  era_flag.prevcom = era_flag.selectcom;',
+    replace: '  era_flag.prevcom = result; // 变异：丢掉高级 COM 回填号',
+    tests: ['train-loop'],
+    must_mention: '升格回合：COM8 跳到 COM84 后 PREVCOM 保留回填的 SELECTCOM',
+  },
+  {
+    desc: 'M1114 主启动图删奉仕系注册（COM30/COM_ABLE30 不进实际运行图）（#222）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-service');",
+    replace: '// 变异：奉仕系不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: '主启动图注册奉仕系',
+  },
 ];

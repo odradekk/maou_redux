@@ -194,6 +194,32 @@ test('#213 输入映射：玩家输入是 L_IDX，SELECTCOM 取 L_I（39→40 / 
   assert.deepEqual(flag_writes('flag:10009'), [-1, 40], 'PREVCOM 推进到 40');
 });
 
+test('升格回合：COM8 跳到 COM84 后 PREVCOM 保留回填的 SELECTCOM', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.load_module('system/flow/main-loop'); // 注册 COM8、CASE 8 与 COM84 真身
+  // 直接以最小真实回合驱动：默认目标非处女，COM8 不进确认；CASE 8 命中后
+  // JUMPFORM COM84，COM84 自行回填 SELECTCOM = 84（COMF84_Gスポット刺激.ERB:8）。
+  // 执行回合的前置 PREVCOM 在 @EVENTTRAIN 之后（run_train 的初始化之后）设为
+  // 8，避免它被 BEGIN TRAIN 清为 -1。
+  const { on } = fixture.load_module('system/event/registry');
+  on('EVENTTRAIN', async () => {
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.prevcom = 8;
+    fixture.store.set('abl:0:12', 3); // 玩家技巧 ≥ 3
+  });
+  fixture.set_inputs(8, 999);
+  const { run_train } = fixture.load_module('system/train/train-loop');
+
+  assert.equal(await run_train(), 'AFTERTRAIN');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(
+    era_flag.prevcom,
+    84,
+    'PREVCOM 必须读取高级 COM 回填后的 SELECTCOM，而非执行入口 COM8',
+  );
+});
+
 test('#213 输入映射：89 跑出穿脱衣服的路由（golden 实证对），未实现 → 重新要求输入', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
