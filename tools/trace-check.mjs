@@ -95,6 +95,7 @@ const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
 // #226（J16：重度调教族 80-90——@COM/@COM_ABLE/@EQUIP_COM89/TRAIN_MESSAGE/CASE 80）
 const COMF80 = 'target/ERB/調教相關/COMF80_イラマチオ.ERB';
+const COMF135 = 'target/ERB/調教相關/COMF135_セルフクンニ.ERB';
 const COMF30 = 'target/ERB/調教相關/COMF30_手淫.ERB';
 const COMF34 = 'target/ERB/調教相關/COMF34_騎乗位.ERB';
 const COMF40 = 'target/ERB/調教相關/COMF40_スパンキング.ERB';
@@ -26759,6 +26760,15 @@ const FILES = [
       { src: COMF80, ref: '464-466', any: [/奴隷の口/] },
       { src: COMF80, ref: '468-473', any: [/なめ取る/] },
       { src: COMF80, ref: '477-482', any: [/;初吻/] },
+    ],
+  },
+  // —— #229（J19：追加与高级族 120-135——@COM/@COM_ABLE/TRAIN_MESSAGE/CASE 135） ——
+  {
+    js: 'ere/system/train/com-advanced.js',
+    refs: [
+      { src: COMABLE, ref: '3728-4622', any: [/@COM_ABLE120/] },
+      { src: COMF_JUMP, ref: '666-682', any: [/CASE 135/] },
+      { src: COMF135, ref: '14-16', any: [/LOCAL = 21/] },
     ],
   },
 ];

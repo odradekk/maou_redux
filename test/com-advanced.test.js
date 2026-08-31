@@ -1,0 +1,184 @@
+/**
+ * ere/system/train/com-advanced.js 的行为测试（issue #229：J19 指令族·追加
+ * 与高级 120-135）。骨架切片覆盖：
+ *
+ *   - 16 条 @COM_ABLE 的关键判据（FLAG:71、男性器、无头骑士、技巧门槛）；
+ *   - 高级 COM 显式回填 SELECTCOM；
+ *   - TRAIN_MESSAGE 空操作占位（不得出「族票未落地」占位行）；
+ *   - @GET_ADV_COM CASE 135（口交时自慰升格）。
+ */
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
+
+const { create_era_fixture } = require('./helpers/era-fixture');
+const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+
+function seed_world() {
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 31, '温妮');
+  fixture.era.beginTrain(0, 31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  era_flag.player = 0;
+  era_flag.assiplay = 0;
+  era_flag.assi = -1;
+  era_flag.selectcom = -1;
+  era_flag.prevcom = -1;
+  fixture.load_module('system/train/com-advanced');
+  const { com_family, com_able_family } = fixture.load_module(
+    'system/train/com-family',
+  );
+  const { adv_com_family } = fixture.load_module('system/train/com-adv');
+  return { fixture, era_flag, com_family, com_able_family, adv_com_family };
+}
+
+async function run_com(world, com) {
+  world.era_flag.selectcom = com;
+  return world.com_family.call(com);
+}
+
+function enable_insert(fixture) {
+  fixture.store.set('talent:0:122', 1);
+}
+
+function enable_oral(fixture) {
+  fixture.store.set('talent:0:122', 1);
+  fixture.store.set('abl:31:10', 3);
+}
+
+test('@COM_ABLE120：FLAG:71==1 挡；调教者需男性器/PBAND', async () => {
+  const { fixture, com_able_family } = seed_world();
+  assert.equal(await com_able_family.call(120), 0, '调教者未配男性器（默认）');
+
+  enable_insert(fixture);
+  assert.equal(await com_able_family.call(120), 1, '男性器 → 可');
+
+  fixture.store.set('flag:71', 1);
+  assert.equal(await com_able_family.call(120), 0, 'FLAG:71==1 追加未许可');
+  fixture.store.set('flag:71', 0);
+  assert.equal(await com_able_family.call(120), 1);
+});
+
+test('@COM_ABLE122：对象需男人/扶她', async () => {
+  const { fixture, com_able_family } = seed_world();
+  enable_insert(fixture);
+  assert.equal(await com_able_family.call(122), 0, '对象无男性器');
+  fixture.store.set('talent:31:122', 1);
+  assert.equal(await com_able_family.call(122), 1);
+});
+
+test('@COM_ABLE123：顺从/技巧/侍奉技术三门全低于 3 才挡；绝壁挡', async () => {
+  const { fixture, com_able_family } = seed_world();
+  fixture.store.set('talent:0:122', 1);
+  fixture.store.set('talent:31:110', 1); // 巨乳：过「非巨乳/爆乳/超乳需技巧 3」
+  assert.equal(await com_able_family.call(123), 0, '三门皆低于 3');
+  fixture.store.set('abl:31:10', 3);
+  assert.equal(await com_able_family.call(123), 1, '一门达标即过');
+  fixture.store.set('talent:31:116', 1);
+  assert.equal(await com_able_family.call(123), 0, '绝壁');
+});
+
+test('@COM_ABLE128：技巧 3+ 或性交技术 2+；无决斗守卫', async () => {
+  const { fixture, com_able_family } = seed_world();
+  enable_insert(fixture);
+  assert.equal(await com_able_family.call(128), 0, '技巧与性交技术都不足');
+  fixture.store.set('abl:0:12', 3);
+  assert.equal(await com_able_family.call(128), 1);
+  fixture.store.set('tequip:31:55', 1);
+  assert.equal(await com_able_family.call(128), 1, '128 无决斗守卫');
+});
+
+test('@COM_ABLE135：无头骑士（TALENT:314==4）；男人挡', async () => {
+  const { fixture, com_able_family } = seed_world();
+  assert.equal(await com_able_family.call(135), 0, '非无头骑士');
+  fixture.store.set('talent:31:314', 4);
+  assert.equal(await com_able_family.call(135), 1);
+  fixture.store.set('talent:31:122', 1);
+  assert.equal(await com_able_family.call(135), 0, '男人');
+});
+
+test('@COM120：插入Ｇ点蹂躏，显式回填 SELECTCOM=120', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 34;
+  world.fixture.store.set('trainalias:34', '骑乘位');
+  const result = await world.com_family.call(120);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 120, '原作显式 SELECTCOM = 120');
+  assert.ok(world.fixture.text_lines().includes('骑乘位Ｇ点蹂躏'));
+});
+
+test('@COM122：阴茎互捅（可直选），不回填 SELECTCOM', async () => {
+  const world = seed_world();
+  const result = await run_com(world, 122);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 122);
+  assert.ok(world.fixture.text_lines().includes('阴茎互捅'));
+});
+
+test('@COM125：口交时自慰，显式回填 SELECTCOM=125', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 31;
+  const result = await world.com_family.call(125);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 125, '原作显式 SELECTCOM = 125');
+  assert.ok(world.fixture.text_lines().includes('口交时自慰'));
+});
+
+test('@COM135：自助舔阴（可直选）；扶她改自我口交', async () => {
+  const world = seed_world();
+  world.fixture.store.set('talent:31:121', 1);
+  const result = await run_com(world, 135);
+  assert.equal(result, 1);
+  assert.ok(world.fixture.text_lines().includes('自我口交'));
+});
+
+test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
+  const world = seed_world();
+  enable_oral(world.fixture);
+  world.era_flag.prevcom = 31;
+  const hit = await world.adv_com_family.call(135, {
+    whenMissing: 135,
+    args: [() => 0],
+  });
+  assert.equal(hit, 125, '口交系 PREVCOM 升到 125');
+
+  world.era_flag.prevcom = 20;
+  const miss = await world.adv_com_family.call(135, {
+    whenMissing: 135,
+    args: [() => 0],
+  });
+  assert.equal(miss, 135, '非口交 PREVCOM 不升');
+});
+
+test('TRAIN_MESSAGE 120-135：骨架空操作，不得出族票未落地占位行', async () => {
+  for (const com of [120, 122, 125, 135]) {
+    const world = seed_world();
+    world.era_flag.selectcom = com;
+    const { train_message_b, train_message_a } = world.fixture.load_module(
+      'system/train/train-message',
+    );
+    await train_message_b();
+    await train_message_a();
+    assert.ok(
+      !world.fixture.text_lines().some((l) => l.includes('族票未落地')),
+      `COM${com} 不得打占位行`,
+    );
+  }
+});
+
+test('存根清单可检索：docs/stub-registry.md 收录 COM64', () => {
+  const world = seed_world();
+  const { STUBBED_CALLS } = world.fixture.load_module(
+    'system/train/com-advanced',
+  );
+  const registry = require('node:fs').readFileSync(
+    require('node:path').resolve(__dirname, '..', 'docs', 'stub-registry.md'),
+    'utf8',
+  );
+  assert.deepEqual(STUBBED_CALLS, ['COM64']);
+  for (const name of STUBBED_CALLS) {
+    assert.ok(registry.includes(name), `docs/stub-registry.md 缺少 ${name}`);
+  }
+});
