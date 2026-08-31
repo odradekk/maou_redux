@@ -61,6 +61,8 @@ require('#/system/train/com-hardcore');
 // @COM50-59「特殊」族（#224 J14）：药剂、录像与场景切换真身、可用性、
 // TRAIN_MESSAGE 分支及 EQUIP_COM53/54/57/58/59 持续效果
 require('#/system/train/com-special');
+// @COM60-73「助手与蕾丝」族（#225 J15）：助手指令、3P、六九式、发型
+require('#/system/train/com-assistant');
 // 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
 // @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
 require('#/system/train/com-colosseum');

@@ -26761,6 +26761,14 @@ const FILES = [
       { src: COMF80, ref: '477-482', any: [/;初吻/] },
     ],
   },
+  // —— #225（J15：助手与蕾丝族 60-73——@COM/@COM_ABLE/TRAIN_MESSAGE/CASE 61） ——
+  {
+    js: 'ere/system/train/com-assistant.js',
+    refs: [
+      { src: COMABLE, ref: '2514-3135', any: [/@COM_ABLE60/] },
+      { src: COMF_JUMP, ref: '627-637', any: [/CASE 61/] },
+    ],
+  },
 ];
 
 // —— emuera.log 行号引用表（#48 验收整改起纳入） ——

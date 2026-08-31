@@ -94,9 +94,11 @@ const REPO = path.resolve(__dirname, '..');
 // 仍会在每轮菜单错误列出它们；补齐真实装载面后，实际 guard 过滤掉的菜单
 // 条目不再被误记为「COM_ABLE 未移植」存根。输出匹配数不变，存根自然态
 // −142、升格态 −36。
+// 【#225（J15）助手与蕾丝系落地】COM_ABLE60-73 真实守卫再滤一轮菜单误列，
+// 存根自然态 1706 → 1519、升格态 556 → 501。匹配与未解释数不变。
 const BASELINE = {
-  'train-natural': { matched: 940, version: 0, stub: 1706, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 556, unexplained: 0 },
+  'train-natural': { matched: 940, version: 0, stub: 1519, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 501, unexplained: 0 },
 };
 
 async function build_report(sample) {

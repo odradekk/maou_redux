@@ -173,3 +173,14 @@ test('主启动图注册奉仕系：COM30 与 COM_ABLE30 可由主循环侧的 r
   assert.equal(com_family.has(30), true, 'COM30 必须经主启动图注册');
   assert.equal(com_able_family.has(30), true, 'COM_ABLE30 必须经主启动图注册');
 });
+
+test('主启动图注册助手与蕾丝系：COM60 与 COM_ABLE60 可由主循环侧的 require 发现', () => {
+  const fixture = create_era_fixture();
+  fixture.load_module('system/flow/main-loop');
+  const { com_family, com_able_family } = fixture.load_module(
+    'system/train/com-family',
+  );
+
+  assert.equal(com_family.has(60), true, 'COM60 必须经主启动图注册');
+  assert.equal(com_able_family.has(60), true, 'COM_ABLE60 必须经主启动图注册');
+});
