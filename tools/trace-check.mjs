@@ -10109,8 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-794', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-
+      { src: K0, ref: '674-856', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -10156,11 +10155,17 @@ const FILES = [
         any: [/PRINTFORMW %SAVESTR:TARGET%紧锁眉头、蜷缩着身体/],
       },
       { src: K0, ref: '720', any: [/^\t\tCFLAG:301 = 1$/m] },
-      { src: K0, ref: '721', any: [/^\t\tRETURN 0$/m] },
-      { src: K0, ref: '723-750', any: [/^\tELSE$/m] },
+      {
+        src: K0,
+        ref: '723-750',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
       {
         src: K0,
         ref: '725-728',
+
         any: [
           /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)$/m,
         ],
@@ -10238,8 +10243,6 @@ const FILES = [
       { src: K0, ref: '746', any: [/PRINTFORMW 「…好恶心」/] },
       { src: K0, ref: '747', any: [/PRINTFORMW %SAVESTR:TARGET%叹了口气/] },
       { src: K0, ref: '748', any: [/^\t\t\tCFLAG:301 = 2$/m] },
-      { src: K0, ref: '750', any: [/^\t\tRETURN 0$/m] },
-      { src: K0, ref: '752', any: [/^ENDIF$/m] },
 
       { src: K0, ref: '757', any: [/^IF SELECTCOM == 1$/m] },
       { src: K0, ref: '757-794', any: [/^IF SELECTCOM == 1$/m] },
@@ -10261,11 +10264,17 @@ const FILES = [
         any: [/PRINTFORMW 「请住手吧…不要舔那个地方！」/],
       },
       { src: K0, ref: '768', any: [/^\t\tCFLAG:302 = 1$/m] },
-      { src: K0, ref: '769', any: [/^\t\tRETURN 0$/m] },
-      { src: K0, ref: '771-792', any: [/^\tELSE$/m] },
+      {
+        src: K0,
+        ref: '771-792',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
       {
         src: K0,
         ref: '773-776',
+
         any: [
           /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)$/m,
         ],
@@ -10324,10 +10333,177 @@ const FILES = [
       },
       { src: K0, ref: '789', any: [/PRINTFORMW 「这么脏的地方也…」/] },
       { src: K0, ref: '790', any: [/^\t\t\tCFLAG:302 = 2$/m] },
-      { src: K0, ref: '792', any: [/^\t\tRETURN 0$/m] },
-      { src: K0, ref: '794', any: [/^ENDIF$/m] },
-    ],
 
+      { src: K0, ref: '799', any: [/^IF SELECTCOM == 2$/m] },
+      { src: K0, ref: '799-856', any: [/^IF SELECTCOM == 2$/m] },
+      { src: K0, ref: '801-804', any: [/^\tIF CFLAG:303 == 0$/m] },
+      {
+        src: K0,
+        ref: '802',
+        any: [/PRINTFORMW 「讨厌！　难、难以置信！」/],
+      },
+      { src: K0, ref: '803', any: [/^\t\tCFLAG:TARGET:303 = 1$/m] },
+      { src: K0, ref: '806-854', any: [/P = PALAM:3 \+ UP:3/] },
+      { src: K0, ref: '807', any: [/P = PALAM:3 \+ UP:3/] },
+
+      {
+        src: K0,
+        ref: '809-815',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 6 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '810',
+        any: [/PRINTFORMW 「啊呜～…好棒～！再来…往深处挖！往深处抠！」/],
+      },
+      {
+        src: K0,
+        ref: '812-813',
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+      },
+      {
+        src: K0,
+        ref: '813',
+
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+      },
+      {
+        src: K0,
+        ref: '814',
+        any: [/PRINTFORMW %SAVESTR:TARGET%每当被抠弄肛门就会发出娇喘/],
+      },
+      { src: K0, ref: '815', any: [/^\t\t\tCFLAG:303 = 7$/m] },
+      {
+        src: K0,
+        ref: '817-822',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:76 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 5 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '818',
+        any: [/PRINTFORMW 「啊～～…明明还不够湿…不过这样也好棒/],
+      },
+      {
+        src: K0,
+        ref: '820-821',
+        any: [/虽然还不够润滑但也能享受起你的爱抚/],
+      },
+      {
+        src: K0,
+        ref: '821',
+        any: [/虽然还不够润滑但也能享受起你的爱抚/],
+      },
+      { src: K0, ref: '822', any: [/^\t\t\tCFLAG:303 = 6$/m] },
+
+      {
+        src: K0,
+        ref: '824-830',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '825',
+        any: [/PRINTFORMW 「再、再多疼爱一下屁股眼吧！」/],
+      },
+      {
+        src: K0,
+        ref: '827-828',
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+      },
+      {
+        src: K0,
+        ref: '828',
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+      },
+      {
+        src: K0,
+        ref: '829',
+        any: [/PRINTFORMW %SAVESTR:TARGET%每当被抠弄肛门就会发出不成体统的呻吟/],
+      },
+      { src: K0, ref: '830', any: [/^\t\t\tCFLAG:303 = 5$/m] },
+
+      {
+        src: K0,
+        ref: '832-837',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '833',
+        any: [/PRINTFORMW 「突、突然做什么呢！？」/],
+      },
+      {
+        src: K0,
+        ref: '835-836',
+        any: [/虽然还不够润滑但也能享受起你的爱抚/],
+      },
+      {
+        src: K0,
+        ref: '836',
+        any: [/虽然还不够润滑但也能享受起你的爱抚/],
+      },
+      { src: K0, ref: '837', any: [/^\t\t\tCFLAG:303 = 4$/m] },
+
+      {
+        src: K0,
+        ref: '839-845',
+        any: [
+          /^\t\tELSEIF P >= PALAMLV:2 && ABL:3 >= 3 && \(CFLAG:303 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '840',
+        any: [/PRINTFORMW 「难以置信…%SELF_CALL\(TARGET\)%…的屁股…啊～…啊啊～！」/],
+      },
+      {
+        src: K0,
+        ref: '842-843',
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+      },
+      {
+        src: K0,
+        ref: '843',
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门已经被完全開発好了、张得大大的/],
+      },
+      {
+        src: K0,
+        ref: '844',
+        any: [/PRINTFORMW %SAVESTR:TARGET%因为肛门的快感而神情迷醉/],
+      },
+      { src: K0, ref: '845', any: [/^\t\t\tCFLAG:303 = 3$/m] },
+
+      {
+        src: K0,
+        ref: '847-852',
+        any: [/^\t\tELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      {
+        src: K0,
+        ref: '848',
+        any: [/PRINTFORMW 「不要啊…够了、快住手～！」/],
+      },
+      {
+        src: K0,
+        ref: '850-851',
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门被刺激得红肿了起来/],
+      },
+      {
+        src: K0,
+        ref: '851',
+
+        any: [/PRINTFORMW %SAVESTR:TARGET%鈍感的肛门被刺激得红肿了起来/],
+      },
+      { src: K0, ref: '852', any: [/^\t\t\tCFLAG:303 = 2$/m] },
+    ],
   },
 
   {

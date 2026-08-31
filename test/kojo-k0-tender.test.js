@@ -220,11 +220,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 2; // 肛门爱抚——COM1 落地后改用尚未填的指令
+    era_flag.selectcom = 3; // 自慰——COM2 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 2 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 3 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -341,6 +341,171 @@ test('舔阴阈值闸：FLAG:7 == 1 时上限生效，== 2 时旁路', async () 
     '「再来～…再舔我那里吧…喝下去也行…啊啊～～♡」',
     '蜜汁从琼的私处处不断涌了出来………',
   ]);
+});
+
+test('肛门爱抚首次：一句拒绝，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「讨厌！　难、难以置信！」']);
+  assert.equal(fixture.store.get('cflag:31:303'), 1, '肛门爱抚首次推进到 1');
+});
+
+test('肛门爱抚二次淫乱+润滑 Lv2：娇喘支，推进到 7', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:303', 1);
+    f.store.set('palam:31:3', 500); // PALAMLV[2]
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊呜～…好棒～！再来…往深处挖！往深处抠！」',
+    '琼每当被抠弄肛门就会发出娇喘………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:303'), 7);
+});
+
+test('肛门爱抚二次淫乱+润滑不足：♡ 插值，推进到 6', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:303', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊～～…明明还不够湿…不过这样也好棒♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:303'), 6);
+});
+
+test('肛门爱抚二次爱慕分润滑：湿润疼爱 / 不足惊吓', async () => {
+  const wet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:303', 1);
+    f.store.set('palam:31:3', 500);
+  });
+  await speak_k0(wet);
+  assert.deepEqual(wet.text_lines(), [
+    '「再、再多疼爱一下屁股眼吧！」',
+    '琼每当被抠弄肛门就会发出不成体统的呻吟………',
+  ]);
+  assert.equal(wet.store.get('cflag:31:303'), 5);
+
+  const dry = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:303', 1);
+  });
+  await speak_k0(dry);
+  assert.deepEqual(dry.text_lines(), ['「突、突然做什么呢！？」']);
+  assert.equal(dry.store.get('cflag:31:303'), 4);
+});
+
+test('肛门爱抚二次润滑+A感觉 Lv3：自称插值，推进到 3', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+    f.store.set('palam:31:3', 500);
+    f.store.set('abl:31:3', 3);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「难以置信…我…的屁股…啊～…啊啊～！」',
+    '琼因为肛门的快感而神情迷醉………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:303'), 3);
+});
+
+test('肛门爱抚二次それ以外：拒绝，推进到 2', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「不要啊…够了、快住手～！」']);
+  assert.equal(fixture.store.get('cflag:31:303'), 2);
+});
+
+test('肛门爱抚 A钝感附加句：湿润开发 / 不足开发 / 末支红肿', async () => {
+  const wet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:105', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('cflag:31:303', 1);
+    f.store.set('palam:31:3', 500);
+  });
+  await speak_k0(wet);
+  assert.deepEqual(wet.text_lines(), [
+    '「啊呜～…好棒～！再来…往深处挖！往深处抠！」',
+    '琼钝感的肛门已经被完全开发好了、张得大大的。',
+    '琼每当被抠弄肛门就会发出娇喘………',
+  ]);
+
+  const dry = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:105', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('cflag:31:303', 1);
+  });
+  await speak_k0(dry);
+  assert.deepEqual(dry.text_lines(), [
+    '「啊～～…明明还不够湿…不过这样也好棒♡」',
+    '琼钝感的肛门已经被完全开发好了、虽然还不够润滑但也能享受起你的爱抚………',
+  ]);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:105', 1);
+    f.store.set('cflag:31:303', 1);
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), [
+    '「不要啊…够了、快住手～！」',
+    '琼钝感的肛门被刺激得红肿了起来………',
+  ]);
+});
+
+test('肛门爱抚润滑合计含 UP:3：delta 把不足抬过 Lv2', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:303', 1);
+    f.store.set('palam:31:3', 400);
+    f.store.set('delta:31:3', 100);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊呜～…好棒～！再来…往深处挖！往深处抠！」',
+    '琼每当被抠弄肛门就会发出娇喘………',
+  ]);
+});
+
+test('肛门爱抚末支门槛是 CFLAG:223（原文 :847），不是 303', async () => {
+  const quiet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 1);
+    f.store.set('cflag:31:223', 2);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(quiet);
+  assert.deepEqual(quiet.text_lines(), []);
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {
