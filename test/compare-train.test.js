@@ -105,10 +105,12 @@ const REPO = path.resolve(__dirname, '..');
 // 另：com-toy（#220）同时进清单，并补种 item:0 / item:2——golden 的指令方格
 // 只出现 振动宝石[10] 与 振动杖[12]，11 / 13-19 一次都没有，可证 NOITEM 关闭
 // 而玩家恰好持有这两件。COM10/COM12 因此真执行，natural 匹配 940 → 1108。
-// 下面是合并态的实测值。未解释恒 0。
+// 【#229（J19）追加与高级族落地后重测】COM_ABLE120-135 的真实 guard（追加
+// 指令许可 FLAG:71、各自的体位/装备门槛）过滤掉误列菜单：自然态 933 → 899、
+// 升格态 365 → 355。下面是合并态的实测值。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1108, version: 0, stub: 933, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 365, unexplained: 0 },
+  'train-natural': { matched: 1108, version: 0, stub: 899, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 355, unexplained: 0 },
 };
 
 async function build_report(sample) {
