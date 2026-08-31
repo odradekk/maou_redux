@@ -650,6 +650,38 @@ test('@COM130 B/A：接吻胸揉与子宫突进行', async () => {
   assert.ok(lines.includes('温妮觉得异物感太强了、很痛苦的样子…'));
 });
 
+test('@COM131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 21;
+  world.fixture.store.set('abl:31:2', 3);
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
+  const result = await world.com_family.call(131);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 131, '原作显式 SELECTCOM = 131');
+  assert.ok(world.fixture.text_lines().includes('背后位・胸爱抚'));
+  assert.equal(world.fixture.store.get('tflag:19'), 1);
+  // ABL:2=3 → S1=1000、S3=350；EXP < EXPLV:3 → S1×1、S6=30；
+  // ABL:1=0 → S17=20、S3+=50 → 400；润滑 < LV3 → S1×1、S6×0.50=15；
+  // 欲情 < LV1 → S1×0.60=600、S3×0.30=120；顺从 0 → S1×0.50=300、S3×0.60=72。
+  assert.equal(world.fixture.store.get('source:31:1'), 300);
+  assert.equal(world.fixture.store.get('source:31:3'), 72);
+  assert.equal(world.fixture.store.get('source:31:6'), 15);
+  assert.equal(world.fixture.store.get('source:31:12'), 800);
+  assert.equal(world.fixture.store.get('source:31:17'), 20);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -60);
+});
+
+test('@COM131 B/A：从后揉胸行', async () => {
+  const world = seed_world();
+  await world.com_family.call(131);
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes('温妮正在摇晃的胸部被从后抓住、不停揉搓着、腰都僵硬了…'),
+  );
+});
+
 test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
   const world = seed_world();
   enable_oral(world.fixture);

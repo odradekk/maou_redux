@@ -3914,4 +3914,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
   },
+  {
+    desc: 'M1465 COM131 默认档 EXP 档疼痛 SOURCE:6 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '    set_src(cid, 6, 30);',
+    replace: '    // 变异：COM131 EXP 档疼痛删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
+  },
 ];
