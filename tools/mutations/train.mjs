@@ -2969,7 +2969,7 @@ export default [
   },
   // —— #221 J11：COM20–29 性交系 ——
   {
-    desc: '#221 COM22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）',
+    desc: 'M1103 COM22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  const extra = player_skill_source(cid, false);
   // 原作 SIF EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，原样保留。
@@ -2992,7 +2992,7 @@ export default [
     must_mention: '成瘾与恭顺不能漏乘',
   },
   {
-    desc: '#221 COM26–28 欲情段错乘情爱格（SOURCE:3）',
+    desc: 'M1104 COM26–28 欲情段错乘情爱格（SOURCE:3）（#221）',
     file: 'ere/system/train/com-sex.js',
     find: '    set_src(cid, 13, times(src(cid, 13), row[1]));',
     replace: '    set_src(cid, 3, times(src(cid, 3), row[1]));',
@@ -3000,7 +3000,7 @@ export default [
     must_mention: '欲情段乘肛门快感与屈从格',
   },
   {
-    desc: '#221 COM29 顺从段错用非肛交两列倍率',
+    desc: 'M1105 COM29 顺从段错用非肛交两列倍率（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  if (anal) {
     set_src(cid, 2, times(src(cid, 2), row[0]));
@@ -3013,7 +3013,7 @@ export default [
     must_mention: '顺从段三格各取独立倍率',
   },
   {
-    desc: '#221 COM20 高级跳转缺失时删除可见 staged stub',
+    desc: 'M1106 COM20 高级跳转缺失时删除可见 staged stub（#221）',
     file: 'ere/system/train/com-sex.js',
     find: "  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');\n  return 1;",
     replace: '  // 变异：未实现升格目标静默成功\n  return 1;',
@@ -3021,7 +3021,7 @@ export default [
     must_mention: '未实现升格目标必须可见',
   },
   {
-    desc: '#221 GET_ADV_COM CASE20 SP 命中时提前清 TFLAG:42',
+    desc: 'M1107 GET_ADV_COM CASE20 SP 命中时提前清 TFLAG:42（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  if (
     same_trainer() &&
@@ -3045,7 +3045,7 @@ export default [
     must_mention: 'SP 保留旗',
   },
   {
-    desc: '#221 COM24 低欲情档错作 LV1 放行',
+    desc: 'M1108 COM24 低欲情档错作 LV1 放行（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  return below(cid, 5, 1)
     ? 0
@@ -3057,7 +3057,7 @@ export default [
     must_mention: '低欲情档不能放行 COM24',
   },
   {
-    desc: '#221 主启动图删性交系注册（COM20/COM_ABLE20 不进实际运行图）',
+    desc: 'M1109 主启动图删性交系注册（COM20/COM_ABLE20 不进实际运行图）（#221）',
     file: 'ere/system/flow/main-loop.js',
     find: "require('#/system/train/com-sex');",
     replace: '// 变异：性交系不在主启动图注册',

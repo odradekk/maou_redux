@@ -660,7 +660,7 @@ export default [
   },
   // —— #221 J11：SYSTEM_SOURCE 的对象避孕套与膣内射精计数 ——
   {
-    desc: '#221 SOURCE_CHECK 对象避孕套前置清 TFLAG:10 删（逆侵犯误计数）',
+    desc: 'M1100 SOURCE_CHECK 对象避孕套前置清 TFLAG:10 删（逆侵犯误计数）（#221）',
     file: 'ere/event/source-check.js',
     find: `  if (chara(cid).train.对象避孕套 && tflag(10)) {
     era.print(\`射在避孕套里（\${era.get(\`callname:\${cid}:-2\`) ?? ''}）\`);
@@ -672,7 +672,7 @@ export default [
     must_mention: '阻止同回合逆侵犯计数',
   },
   {
-    desc: '#221 SOURCE_CHECK 兽奸臂提前到 3P 主人前（优先链错序）',
+    desc: 'M1101 SOURCE_CHECK 兽奸臂提前到 3P 主人前（优先链错序）（#221）',
     file: 'ere/event/source-check.js',
     find: `    } else if (tflag(2) && tflag(40) === 1) {
       chara(cid).system.主人膣内射精 += tflag(38);
