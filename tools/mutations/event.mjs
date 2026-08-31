@@ -658,4 +658,31 @@ export default [
     tests: ['event-ending'],
     must_mention: 'PRINTFORMW 读键在前',
   },
+  // —— #221 J11：SYSTEM_SOURCE 的对象避孕套与膣内射精计数 ——
+  {
+    desc: '#221 SOURCE_CHECK 对象避孕套前置清 TFLAG:10 删（逆侵犯误计数）',
+    file: 'ere/event/source-check.js',
+    find: `  if (chara(cid).train.对象避孕套 && tflag(10)) {
+    era.print(\`射在避孕套里（\${era.get(\`callname:\${cid}:-2\`) ?? ''}）\`);
+    chara(cid).train.对象避孕套 = 0;
+    game.system.对象射精 = 0;
+  }`,
+    replace: '  // 变异：对象避孕套不在内射链前清 TFLAG:10',
+    tests: ['source-check'],
+    must_mention: '阻止同回合逆侵犯计数',
+  },
+  {
+    desc: '#221 SOURCE_CHECK 兽奸臂提前到 3P 主人前（优先链错序）',
+    file: 'ere/event/source-check.js',
+    find: `    } else if (tflag(2) && tflag(40) === 1) {
+      chara(cid).system.主人膣内射精 += tflag(38);
+    } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
+      chara(cid).dungeon.犬膣内射精 += tflag(16);`,
+    replace: `    } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
+      chara(cid).dungeon.犬膣内射精 += tflag(16);
+    } else if (tflag(2) && tflag(40) === 1) {
+      chara(cid).system.主人膣内射精 += tflag(38);`,
+    tests: ['source-check'],
+    must_mention: '3P 主人优先于兽奸',
+  },
 ];

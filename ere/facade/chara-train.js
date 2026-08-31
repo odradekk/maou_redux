@@ -196,6 +196,21 @@ class TrainFacade {
 
   // —— tequip ——
   /**
+   * 对象避孕套（tequip:cid:37 ↔ TEQUIP:37）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行513 TEQUIP:37 調教対象がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:427-430 的 system 跨域清零）
+   * @returns {number}
+   */
+  get 对象避孕套() {
+    return era.get(`tequip:${this.cid}:37`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 对象避孕套(v) {
+    era.set(`tequip:${this.cid}:37`, v);
+  }
+
+  /**
    * 口塞（tequip:cid:45 ↔ TEQUIP:45）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行516 TEQUIP:45 ボールギャグ装着
    * @returns {number}

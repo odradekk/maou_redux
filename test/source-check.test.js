@@ -599,3 +599,222 @@ test('跨域写走门面：22 条条目表寻址串的字面量 era.set/add 清�
     assert.ok(text.includes(sample), `应包含门面写 ${sample}`);
   }
 });
+
+// —— #221 J11：SYSTEM_SOURCE.ERB :426-473 对象避孕套与膣内射精计数 ——
+
+async function run_ejaculation_settlement({
+  seed,
+  selectcom = 20,
+  assiplay = 0,
+  assi = -1,
+}) {
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 31, '温妮');
+  if (assi >= 1) {
+    fixture.seed_chara(assi, {
+      id: assi,
+      name: `助手${assi}`,
+      callname: `助手${assi}`,
+    });
+    fixture.era.addCharacter(assi);
+  }
+  seed_static_names(fixture);
+  fixture.era.beginTrain(0, 31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  era_flag.player = assiplay ? assi : 0;
+  era_flag.assi = assi;
+  era_flag.assiplay = assiplay;
+  era_flag.selectcom = selectcom;
+  era_flag.prevcom = -1;
+  fixture.store.set('callname:31:-2', '温妮');
+  fixture.load_module('event/source-check');
+  if (seed) seed(fixture, era_flag);
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('SOURCE_CHECK');
+  return fixture;
+}
+
+test('射精结算：目标避孕套先清 TFLAG:10 与装备，阻止同回合逆侵犯计数', async () => {
+  const fixture = await run_ejaculation_settlement({
+    selectcom: 24,
+    seed: (f) => {
+      f.store.set('tequip:31:37', 1);
+      f.store.set('tflag:10', 2);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:37'), 0);
+  assert.equal(fixture.store.get('tflag:10'), 0);
+  assert.equal(fixture.store.get('cflag:0:104'), undefined);
+  assert.ok(fixture.text_lines().includes('射在避孕套里（温妮）'));
+});
+
+test('射精结算：TFLAG:19 严格优先链的每对相邻分支', async () => {
+  const cases = [
+    [
+      '3P 助手优先于 3P 主人',
+      { assi: 17, assiplay: 1 },
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:6', 2);
+        f.store.set('tflag:41', 1);
+        f.store.set('tflag:2', 3);
+        f.store.set('tflag:40', 1);
+        f.store.set('tflag:38', 7);
+      },
+      'cflag:31:103',
+      7,
+      'cflag:31:101',
+    ],
+    [
+      '3P 主人优先于兽奸',
+      {},
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:2', 2);
+        f.store.set('tflag:40', 1);
+        f.store.set('tflag:38', 7);
+        f.store.set('tequip:31:89', 1);
+        f.store.set('tflag:16', 9);
+      },
+      'cflag:31:101',
+      7,
+      'cflag:31:106',
+    ],
+    [
+      '兽奸优先于普通助手',
+      { assi: 17, assiplay: 1 },
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:2', 2);
+        f.store.set('tflag:38', 7);
+        f.store.set('tequip:31:89', 1);
+        f.store.set('tflag:16', 9);
+      },
+      'cflag:31:106',
+      9,
+      'cflag:31:103',
+    ],
+    [
+      '普通助手优先于死斗场',
+      { assi: 17, assiplay: 1 },
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:2', 2);
+        f.store.set('tflag:38', 7);
+        f.store.set('tequip:31:55', 1);
+        f.store.set('tflag:15', 9);
+      },
+      'cflag:31:103',
+      7,
+      'cflag:31:107',
+    ],
+    [
+      '死斗场优先于主人',
+      {},
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:2', 2);
+        f.store.set('tflag:38', 7);
+        f.store.set('tequip:31:55', 1);
+        f.store.set('tflag:15', 9);
+      },
+      'cflag:31:107',
+      9,
+      'cflag:31:101',
+    ],
+    [
+      '主人优先于触手',
+      {},
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:2', 2);
+        f.store.set('tflag:38', 7);
+        f.store.set('tequip:31:90', 1);
+        f.store.set('tequip:31:11', 1);
+        f.store.set('tflag:15', 9);
+      },
+      'cflag:31:101',
+      7,
+      'cflag:31:107',
+    ],
+  ];
+  for (const [name, options, seed, key, value, skipped] of cases) {
+    const fixture = await run_ejaculation_settlement({
+      ...options,
+      seed,
+    });
+    assert.equal(fixture.store.get(key), value, name);
+    assert.equal(fixture.store.get(skipped), undefined, `${name} 不得落后臂`);
+  }
+});
+
+test('射精结算：主人、兽奸、死斗场与触手分别落指定 CFLAG', async () => {
+  const cases = [
+    [
+      '主人',
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tflag:2', 2);
+        f.store.set('tflag:38', 2);
+      },
+      'cflag:31:101',
+      2,
+    ],
+    [
+      '兽奸',
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tequip:31:89', 1);
+        f.store.set('tflag:16', 3);
+      },
+      'cflag:31:106',
+      3,
+    ],
+    [
+      '死斗场',
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tequip:31:55', 1);
+        f.store.set('tflag:15', 4);
+      },
+      'cflag:31:107',
+      4,
+    ],
+    [
+      '触手',
+      (f) => {
+        f.store.set('tflag:19', 1);
+        f.store.set('tequip:31:90', 1);
+        f.store.set('tequip:31:11', 1);
+        f.store.set('tflag:15', 5);
+      },
+      'cflag:31:107',
+      5,
+    ],
+  ];
+  for (const [name, seed, key, value] of cases) {
+    const fixture = await run_ejaculation_settlement({ seed });
+    assert.equal(fixture.store.get(key), value, name);
+  }
+});
+
+test('射精结算：逆侵犯与 COM62/65 按助手/主人落 CFLAG:104/101', async () => {
+  const cases = [
+    [24, 0, -1, (f) => f.store.set('tflag:10', 2), 'cflag:0:104', 2],
+    [24, 1, 17, (f) => f.store.set('tflag:10', 3), 'cflag:17:104', 3],
+    [62, 1, 17, (f) => f.store.set('tflag:7', 4), 'cflag:17:101', 4],
+    [65, 0, 17, (f) => f.store.set('tflag:10', 5), 'cflag:17:104', 5],
+  ];
+  for (const [selectcom, assiplay, assi, seed, key, value] of cases) {
+    const fixture = await run_ejaculation_settlement({
+      selectcom,
+      assiplay,
+      assi,
+      seed,
+    });
+    assert.equal(fixture.store.get(key), value, `COM${selectcom}`);
+  }
+});
