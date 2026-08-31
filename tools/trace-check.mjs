@@ -152,6 +152,7 @@ const SEIIN_ERB = 'target/ERB/調教相關/SEIIN.ERB';
 const TEXT_FIX_ERB = 'target/ERB/魔改新增/文本校正.ERB';
 const SHOP_VER = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
 const EVENT_K = 'target/ERB/EVENT/EVENT_K.ERB';
+const K2 = 'target/ERB/口上/EVENT_K2_気弱.ERB';
 const K3 = 'target/ERB/口上/EVENT_K3_高貴.ERB';
 const K5 = 'target/ERB/口上/EVENT_K5_マオ.ERB';
 const EXCOM = 'target/ERB/其他/EXCOM.ERB';
@@ -10259,6 +10260,15562 @@ const FILES = [
           /^\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)$/m,
         ],
       },
+    ],
+  },
+  {
+    js: 'ere/kojo/kojo-k2-timid.js',
+    refs: [
+      // —— #233（J23 口上·K2 気弱）：EVENT_K2 全部内联行号 ——
+      { src: K2, ref: '80-84', any: [/@EVENTTRAIN/] },
+      { src: K2, ref: '86-88', any: [/@EVENTEND/] },
+      { src: K2, ref: '94', any: [/@EVENTTRAIN/] },
+      { src: K2, ref: '740', any: [/@EVENTEND/] },
+      { src: K2, ref: '852', any: [/@KOJO_MESSAGE_COM_2/] },
+      { src: K2, ref: '854-875', any: [/IF TEQUIP:55/] },
+      { src: K2, ref: '872', any: [/	RETURN 0/] },
+      { src: K2, ref: '82', any: [/FLAG:102 = 1/] },
+      { src: K2, ref: '83-84', any: [/SIF FLAG:7 == 0/] },
+      { src: K2, ref: '88', any: [/FLAG:102 = 0/] },
+      { src: K2, ref: '96', any: [/	RETURN 0/] },
+      { src: K2, ref: '98', any: [/	RETURN 0/] },
+      { src: K2, ref: '103', any: [/IF CFLAG:201 == 0/] },
+      { src: K2, ref: '104', any: [/	DRAWLINE/] },
+      { src: K2, ref: '106', any: [/	IF TALENT:TARGET:314 == 1/] },
+      {
+        src: K2,
+        ref: '107',
+        any: [/		PRINTFORMW 「拜托…谁来把我从这里拯救出去……」/],
+      },
+      {
+        src: K2,
+        ref: '108',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%蜷伏在地板上，精灵族特有的长耳朵微微颤抖着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '109',
+        any: [
+          /		PRINTFORMW 看到这小动物一般微微发抖的姿态，施虐之心也仿佛被唤醒了一样……/,
+        ],
+      },
+      { src: K2, ref: '110', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '112', any: [/	ELSEIF TALENT:TARGET:314 == 2/] },
+      { src: K2, ref: '113', any: [/		PRINTFORMW 「停下…不要…不可以这样……」/] },
+      {
+        src: K2,
+        ref: '114',
+        any: [/		PRINTFORMW 人狼%SAVESTR:TARGET%被带来了。/],
+      },
+      {
+        src: K2,
+        ref: '115',
+        any: [/		PRINTFORMW “母狗”就要像母狗一样地被对待啊……/],
+      },
+      { src: K2, ref: '116', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '118', any: [/	ELSEIF TALENT:TARGET:314 == 3/] },
+      {
+        src: K2,
+        ref: '119',
+        any: [/		PRINTFORMW 「%SELF_CALL\(TARGET\)%的力量在这里被封印了……」/],
+      },
+      {
+        src: K2,
+        ref: '120',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%唯一可以依靠的吸血鬼力量被封印住了，懦弱地抱着肩膀。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '121',
+        any: [/		PRINTFORMW 「喂，喂你！…不要过来…求你不要过来…」/],
+      },
+      { src: K2, ref: '122', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '124', any: [/	ELSEIF TALENT:TARGET:314 == 4/] },
+      {
+        src: K2,
+        ref: '125',
+        any: [
+          /		PRINTFORMW 「呵呵…%SELF_CALL\(TARGET\)%你的冒险也就到此为止了……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '126',
+        any: [/		PRINTFORMW 像是接受命运一般，无头骑士娘抱着头呆坐在地上……/],
+      },
+      { src: K2, ref: '127', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '129', any: [/	ELSEIF TALENT:TARGET:314 == 5/] },
+      {
+        src: K2,
+        ref: '130',
+        any: [/		PRINTFORMW 「讨厌…已经…落到这个地步了吗……」/],
+      },
+      {
+        src: K2,
+        ref: '131',
+        any: [
+          /		PRINTFORMW 天性软弱的%SAVESTR:TARGET%已经失去了身为龙族的抵抗意志，缩在床上的角落里。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '132',
+        any: [/		PRINTFORMW 「做什么都可以，求求你让我从这里出去吧……」/],
+      },
+      { src: K2, ref: '133', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '135', any: [/	ELSEIF TALENT:TARGET:314 == 6/] },
+      {
+        src: K2,
+        ref: '136',
+        any: [
+          /		PRINTFORMW 「在这样的地底……%SELF_CALL\(TARGET\)%的祈祷根本无法传到天界啊……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '137',
+        any: [
+          /		PRINTFORMW 少女天使深深地叹了口气。%SAVESTR:TARGET%发觉到你走进房间后，发出了一阵悲鸣，原本可爱的脸庞也扭曲了起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '138',
+        any: [
+          /		PRINTFORMW 让这张脸因为痛苦更加地扭曲？还是体会到极乐的欢喜呢？真是件头疼的事啊……/,
+        ],
+      },
+      { src: K2, ref: '139', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '141', any: [/	ELSEIF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '142',
+        any: [/		PRINTFORMW 「再一次？！我不想再次来到这里啊……」/],
+      },
+      {
+        src: K2,
+        ref: '143',
+        any: [
+          /		PRINTFORMW 已经被魔族改造过一次的%SAVESTR:TARGET%，再次回到故地后陷入了绝望。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '144',
+        any: [/		PRINTFORMW 现在轮到身为魔王的你登场开始调教了。/],
+      },
+      { src: K2, ref: '145', any: [/		PRINTFORMW 「啊啊…这样的话…干脆……」/] },
+      { src: K2, ref: '146', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '148', any: [/	CFLAG:370 = 1/] },
+      { src: K2, ref: '150', any: [/	ELSEIF TALENT:TARGET:314 == 10/] },
+      {
+        src: K2,
+        ref: '151',
+        any: [/		PRINTFORMW 「明明当初有想过要折回去的……」/],
+      },
+      {
+        src: K2,
+        ref: '152',
+        any: [/		PRINTFORMW 娇小的霍比特人%SAVESTR:TARGET%啜泣着……/],
+      },
+      {
+        src: K2,
+        ref: '153',
+        any: [
+          /		PRINTFORMW 要让你知道，敢于反抗魔王统治的后果是什么，小不点“勇者”……/,
+        ],
+      },
+      { src: K2, ref: '154', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '156', any: [/	ELSEIF TALENT:TARGET:314 == 11/] },
+      {
+        src: K2,
+        ref: '157',
+        any: [
+          /		PRINTFORMW 「%SELF_CALL\(TARGET\)%一定有办法可以阻止这一切…可是…好可怕……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '158',
+        any: [
+          /		PRINTFORMW 怕到连话也说不清的矮人%SAVESTR:TARGET%身上，再也看不到当初的活泼可爱……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '159',
+        any: [/		PRINTFORMW 宽恕这种东西，并不存在于魔王这里呢……/],
+      },
+      { src: K2, ref: '160', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '162', any: [/	ELSE/] },
+      { src: K2, ref: '163', any: [/		PRINTFORMW 「放过我…求求你放过我…」/] },
+      {
+        src: K2,
+        ref: '164',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%被投入监牢后，嘴里不停重复这一句话。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '165',
+        any: [
+          /		PRINTFORMW 被从这间牢房里带出来的时候，%SAVESTR:TARGET%啊，定要用肉体的欢愉和心灵上的刻印让你臣服，将你彻底变成属于魔王的东西……/,
+        ],
+      },
+      { src: K2, ref: '166', any: [/	CFLAG:201 = 1/] },
+      { src: K2, ref: '167', any: [/	RETURN 1/] },
+      { src: K2, ref: '168', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '172',
+        any: [
+          /ELSEIF CFLAG:201 < 5 && CFLAG:370 == 0 && TALENT:TARGET:314 == 9 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '173',
+        any: [/	PRINTFORMW 「%SELF_CALL\(TARGET\)%为什么……要这样对我……？」/],
+      },
+      {
+        src: K2,
+        ref: '174',
+        any: [
+          /	PRINTFORMW %SAVESTR:TARGET%被反复地调教后已经彻底地沦为魔族，在无尽的绝望中痛哭失声。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '175',
+        any: [
+          /	PRINTFORMW 引导这些魔族的花苞绽放出邪媚的花朵可是身为魔王的职责呢。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '176',
+        any: [
+          /	PRINTFORMW 「原来…%SELF_CALL\(TARGET\)%如此憎恨身为魔族的自己么……」/,
+        ],
+      },
+      { src: K2, ref: '178', any: [/	CFLAG:370 = 2/] },
+      { src: K2, ref: '179', any: [/RETURN 1/] },
+      { src: K2, ref: '183', any: [/ELSEIF CFLAG:201 >= 1 && CFLAG:650 == 1/] },
+      { src: K2, ref: '184', any: [/	IF TALENT:85 \|\| TALENT:76/] },
+      { src: K2, ref: '185', any: [/		DRAWLINE/] },
+      {
+        src: K2,
+        ref: '186',
+        any: [
+          /		PRINTFORMW 将看了那水晶球的事告诉了%SAVESTR:TARGET%之后，她的脸色苍白了。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '187',
+        any: [
+          /		PRINTFORMW 「请原谅我！请原谅我！…哇，%SELF_CALL\(TARGET\)%我…并没有背叛魔王大人的意思…！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '188',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%苦苦地哀求着，看来经过这次事件后，%SAVESTR:TARGET%也该明白谁才是真正的主人……/,
+        ],
+      },
+      { src: K2, ref: '190', any: [/		CFLAG:650 = 0/] },
+      { src: K2, ref: '191', any: [/	ELSE/] },
+      { src: K2, ref: '192', any: [/		DRAWLINE/] },
+      { src: K2, ref: '193', any: [/		PRINTFORMW 「对不起…对不起…」/] },
+      {
+        src: K2,
+        ref: '194',
+        any: [/		PRINTFORMW 似曾相识的台词，却直到今天才想到要道歉？/],
+      },
+      {
+        src: K2,
+        ref: '195',
+        any: [
+          /		PRINTFORMW 不管如何，狂王和自己，究竟谁才是真正的主人？想必%SAVESTR:TARGET%也该明白了吧……/,
+        ],
+      },
+      { src: K2, ref: '197', any: [/		CFLAG:650 = 0/] },
+      { src: K2, ref: '198', any: [/	ENDIF/] },
+      { src: K2, ref: '199', any: [/	RETURN 1/] },
+      { src: K2, ref: '205', any: [/ELSEIF CFLAG:201 < 2 && MARK:2 == 1/] },
+      { src: K2, ref: '206', any: [/	DRAWLINE/] },
+      { src: K2, ref: '207', any: [/	PRINTFORMW 「那个，不、不可以！」/] },
+      { src: K2, ref: '208', any: [/	CFLAG:201 = 2/] },
+      { src: K2, ref: '209', any: [/	RETURN 1/] },
+      { src: K2, ref: '212', any: [/ELSEIF CFLAG:201 < 3 && MARK:2 == 2/] },
+      { src: K2, ref: '213', any: [/	DRAWLINE/] },
+      { src: K2, ref: '214', any: [/	PRINTFORMW 「不要……我不能」/] },
+      {
+        src: K2,
+        ref: '215',
+        any: [/	PRINTFORMW %SAVESTR:TARGET%象征性地反抗了一下……/],
+      },
+      { src: K2, ref: '216', any: [/	CFLAG:201 = 3/] },
+      { src: K2, ref: '217', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '220',
+        any: [
+          /ELSEIF CFLAG:201 < 4 && MARK:2 == 3 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0/,
+        ],
+      },
+      { src: K2, ref: '221', any: [/	DRAWLINE/] },
+      { src: K2, ref: '222', any: [/	PRINTFORMW 「请不要…弄疼我…」/] },
+      {
+        src: K2,
+        ref: '223',
+        any: [/	PRINTFORMW %SAVESTR:TARGET%弱气地向%SAVESTR:PLAYER%请求着……/],
+      },
+      { src: K2, ref: '224', any: [/	CFLAG:201 = 4/] },
+      { src: K2, ref: '225', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '228',
+        any: [
+          /ELSEIF CFLAG:201 < 5 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 1 && TALENT:TARGET:314 != 9/,
+        ],
+      },
+      { src: K2, ref: '229', any: [/	DRAWLINE/] },
+      {
+        src: K2,
+        ref: '230',
+        any: [/		PRINTFORMW 「啊…魔王大人…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '231',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%急不可耐地抱住了你。/],
+      },
+      {
+        src: K2,
+        ref: '232',
+        any: [
+          /		PRINTFORMW 「喂喂…魔王大人…请快点给我……%SELF_CALL\(TARGET\)%…我已经等不及了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '233',
+        any: [
+          /		PRINTFORMW 淫乱的笑容浮上脸庞%SAVESTR:TARGET%一边撒娇般舔着%SAVESTR:PLAYER%的脸庞一边用手搓揉起魔王的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '234', any: [/	CFLAG:201 = 5/] },
+      { src: K2, ref: '235', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '238',
+        any: [
+          /ELSEIF TALENT:TARGET:314 == 9 && CFLAG:201 < 6 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 1/,
+        ],
+      },
+      { src: K2, ref: '239', any: [/	DRAWLINE/] },
+      { src: K2, ref: '241', any: [/	IF CFLAG:370 == 1/] },
+      {
+        src: K2,
+        ref: '242',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%四脚爬爬，扭动着腰，用炽热的视线仰视着%SAVESTR:PLAYER%的胯下。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '243',
+        any: [
+          /		PRINTFORMW 「魔王大人…请让我来为您服务…今天也要射很多出来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '244',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%彻底接受了身为魔族的命运，如今的%SAVESTR:PLAYER%已经彻底沦为快感的奴隶。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '245',
+        any: [
+          /		PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%…现在好幸福…这就是身为奴隶的我…一直渴望的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '246',
+        any: [
+          /		PRINTFORMW 今后只要有你的许可，%SAVESTR:TARGET%随时都能使用了……/,
+        ],
+      },
+      { src: K2, ref: '247', any: [/		CFLAG:201 = 6/] },
+      { src: K2, ref: '248', any: [/		RETURN 1/] },
+      { src: K2, ref: '250', any: [/	ELSEIF CFLAG:370 == 2/] },
+      {
+        src: K2,
+        ref: '251',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%四脚爬爬，扭动着腰，用炽热的视线仰视着%SAVESTR:PLAYER%的胯下。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '252',
+        any: [
+          /		PRINTFORMW 「魔王大人…请让我来为您服务…今天也要射很多出来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '253',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%彻底接受了身为魔族的命运，如今的%SAVESTR:PLAYER%已经彻底沦为快感的奴隶。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '254',
+        any: [
+          /		PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%…现在好幸福…这就是身为奴隶的我…一直渴望的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '255',
+        any: [
+          /		PRINTFORMW 今后只要有你的许可，%SAVESTR:TARGET%随时都能使用了……/,
+        ],
+      },
+      { src: K2, ref: '256', any: [/		CFLAG:201 = 6/] },
+      { src: K2, ref: '257', any: [/		RETURN 1/] },
+      { src: K2, ref: '259', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '260',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%身为魔族仿佛脱胎换骨了一般，原本不安的脸只要能看见%SAVESTR:PLAYER%，便焕发出光芒。/,
+        ],
+      },
+      { src: K2, ref: '261', any: [/		PRINTFORMW 「啊…魔王…魔王大人好厉害……」/] },
+      {
+        src: K2,
+        ref: '262',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%的臀部轻轻扭动着，双手在青色的光滑皮肤上慢慢游走。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '263',
+        any: [
+          /		PRINTFORMW 「%SELF_CALL\(TARGET\)%…已经成为魔族了…嗯啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '264',
+        any: [
+          /		PRINTFORMW 「魔王大人…今后也请让我一直侍奉着您，直到永远…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '265',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%漆黑之翼包裹中的美妙身形缓缓下跪，亲吻着你的足铠……/,
+        ],
+      },
+      { src: K2, ref: '266', any: [/	CFLAG:201 = 6/] },
+      { src: K2, ref: '267', any: [/	RETURN 1/] },
+      { src: K2, ref: '268', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '270',
+        any: [
+          /ELSEIF CFLAG:201 < 7 && TALENT:TARGET:85 == 1 && TALENT:TARGET:76 == 0 && TALENT:TARGET:314 != 9/,
+        ],
+      },
+      { src: K2, ref: '271', any: [/	DRAWLINE/] },
+      {
+        src: K2,
+        ref: '272',
+        any: [
+          /		PRINTFORMW （原勇者的%SELF_CALL\(TARGET\)%…从当初的反抗…到如今彻底地奉献身心…）/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '273',
+        any: [
+          /		PRINTFORMW 「魔王大人…%SELF_CALL\(TARGET\)%今后会一直…遵从您的意志……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '274',
+        any: [
+          /		PRINTFORMW 「请…为我刻上您最深的印记吧……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '275',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%顺势跪下，亲吻着你的手……/],
+      },
+      { src: K2, ref: '276', any: [/	CFLAG:201 = 7/] },
+      { src: K2, ref: '277', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '280',
+        any: [
+          /ELSEIF TALENT:TARGET:314 == 9 && CFLAG:201 < 8 && TALENT:TARGET:85 == 1 && TALENT:TARGET:76 == 0/,
+        ],
+      },
+      { src: K2, ref: '281', any: [/	DRAWLINE/] },
+      { src: K2, ref: '283', any: [/	IF CFLAG:370 == 1/] },
+      {
+        src: K2,
+        ref: '284',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%像恋人一样紧紧依偎着魔王，双手紧紧地抱住%SAVESTR:PLAYER%的背部，不肯松手。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '285',
+        any: [
+          /		PRINTFORMW 「今后%SELF_CALL\(TARGET\)%…绝不会离开魔王大人的身边……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '286',
+        any: [
+          /		PRINTFORMW 「只要能被魔王大人调教…怎样的事情都无所谓……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '287',
+        any: [
+          /		PRINTFORMW 经过身为魔王的你调教后，迷茫的魔族%SAVESTR:TARGET%仿佛找到了最终的归宿一般。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '288',
+        any: [
+          /		PRINTFORMW 「到这里来真是太好了…魔王大人啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '289', any: [/		CFLAG:201 = 8/] },
+      { src: K2, ref: '290', any: [/		RETURN 1/] },
+      { src: K2, ref: '292', any: [/	ELSEIF CFLAG:370 == 2/] },
+      {
+        src: K2,
+        ref: '293',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%像恋人一样紧紧依偎着魔王，双手紧紧地抱住%SAVESTR:PLAYER%的背部，不肯松手。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '294',
+        any: [
+          /		PRINTFORMW 「今后%SELF_CALL\(TARGET\)%…绝不会离开魔王大人的身边……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '295',
+        any: [
+          /		PRINTFORMW 「啊啊…对魔王大人的爱意…就像这样…魔王大人的魔力已经彻底征服%SELF_CALL\(TARGET\)%的身体了呢……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '296',
+        any: [/		PRINTFORMW 经过身为魔王的你调教后，仿佛终于找到了归宿一般。/],
+      },
+      {
+        src: K2,
+        ref: '297',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%用湿润的魔族之眼深情地注视着你。/],
+      },
+      {
+        src: K2,
+        ref: '298',
+        any: [
+          /		PRINTFORMW 「从今开始，我的身体和灵魂都是属于魔王大人您的了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '299', any: [/		CFLAG:201 = 8/] },
+      { src: K2, ref: '300', any: [/		RETURN 1/] },
+      { src: K2, ref: '302', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '303',
+        any: [/		PRINTFORMW 「呀啊！这是什么～%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '304',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%因为感受到自身逐渐魔族化的喜悦显得有些紧张。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '305',
+        any: [
+          /		PRINTFORMW 背部的翅膀不停张合，箭头形的尾巴欢喜得像狗一样左右摇摆。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '306',
+        any: [
+          /		PRINTFORMW 「啊真是的…身为魔族，%UNICODE\(0x2661\) \*1% 从今天起…也要请您多多关照呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '307',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%被漆黑之翼包裹中的美妙身形顺势下跪。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '308',
+        any: [
+          /		PRINTFORMW 「……我便是魔王大人最卑微的奴仆，%SAVESTR:TARGET%请您随意使用我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '309', any: [/		CFLAG:201 = 8/] },
+      { src: K2, ref: '310', any: [/		RETURN 1/] },
+      { src: K2, ref: '311', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '314',
+        any: [/ELSEIF TALENT:TARGET:9 == 1 && CFLAG:201 < 9/],
+      },
+      { src: K2, ref: '315', any: [/	DRAWLINE/] },
+      {
+        src: K2,
+        ref: '316',
+        any: [
+          /	PRINTFORMW 「讨厌讨厌讨厌呀，可怕可怕可怕可怕…啊啊啊啊啊啊啊啊啊啊啊啊…甚至啊啊啊！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '317',
+        any: [
+          /	PRINTFORMW %SAVESTR:TARGET%彻底崩溃了，%SAVESTR:PLAYER%看着眼前之人发出一阵无意义的悲鸣。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '318',
+        any: [
+          /	PRINTFORMW %SAVESTR:TARGET%彻底崩坏的精神状况应该能恢复过来吧……/,
+        ],
+      },
+      { src: K2, ref: '319', any: [/	CFLAG:201 = 9/] },
+      { src: K2, ref: '320', any: [/	RETURN 1/] },
+      { src: K2, ref: '324', any: [/ELSEIF ASSI < 0 /] },
+      { src: K2, ref: '325', any: [/	CALL K2_KOJO2/] },
+      { src: K2, ref: '335', any: [/ELSEIF NO:ASSI == 17/] },
+      { src: K2, ref: '337', any: [/	DRAWLINE/] },
+      { src: K2, ref: '338', any: [/	IF talent:ASSI:165/] },
+      { src: K2, ref: '340', any: [/		IF CFLAG:202 == 0/] },
+      { src: K2, ref: '342', any: [/			IF TALENT:TARGET:9 == 1/] },
+      {
+        src: K2,
+        ref: '343',
+        any: [/				PRINTFORMW 『主人，这个人已经用坏掉了呢』/],
+      },
+      {
+        src: K2,
+        ref: '345',
+        any: [/			ELSEIF TALENT:TARGET:76 == 1 && CFLAG:201 >= 5/],
+      },
+      {
+        src: K2,
+        ref: '346',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:ASSI%一起走进了房间。%SAVESTR:TARGET%的眼中露出不明的神色。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '347',
+        any: [
+          /				PRINTFORMW 「唔哼哼…今天想要我们一起服侍么？主人啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '348',
+        any: [
+          /				PRINTFORMW 对一脸情色的%SAVESTR:TARGET%来说，眼前的少女只是个一起品尝快乐的伙伴罢了/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '349',
+        any: [
+          /				PRINTFORMW 「喂喂…快点一起来乞求主人的肉棒吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '350',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%扭动着屁股，狗一样地爬了过来。/],
+      },
+      { src: K2, ref: '351', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '352',
+        any: [/				PRINTFORMW 『喂…主人，这个人真的是勇者吗？』/],
+      },
+      { src: K2, ref: '353', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '354',
+        any: [
+          /				PRINTFORMW 你苦笑着肯定。%SAVESTR:ASSI%媚笑着走上前，尽情地开始抽打%SAVESTR:TARGET%正在扭动的屁股。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '355',
+        any: [/				PRINTFORMW 「真是条无廉耻之心的母狗呢……」/],
+      },
+      { src: K2, ref: '356', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '357',
+        any: [/				PRINTFORMW 『完全不够…今天我才是主人！ 给我扭动得再卖力些！』/],
+      },
+      { src: K2, ref: '358', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '360',
+        any: [/						PRINTFORMW 『（啊哈…但是，你颤抖的屁股已经出卖了你呢……）』/],
+      },
+      {
+        src: K2,
+        ref: '362',
+        any: [/						PRINTFORMW %SAVESTR:ASSI%回忆起自己被调教时的情形……/],
+      },
+      {
+        src: K2,
+        ref: '364',
+        any: [/			ELSEIF TALENT:TARGET:85 == 1 && CFLAG:201 >= 7/],
+      },
+      {
+        src: K2,
+        ref: '365',
+        any: [
+          /				PRINTFORMW 你带着%SAVESTR:ASSI%一起走进了房间。%SAVESTR:TARGET%露出了严肃的表情。/,
+        ],
+      },
+      { src: K2, ref: '366', any: [/				PRINTFORMW 「那个…主人…这个人是…？」/] },
+      { src: K2, ref: '367', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '368',
+        any: [/				PRINTFORMW 『今天可是由我来代替主人调教勇者大人你哟♪』/],
+      },
+      { src: K2, ref: '369', any: [/				RESETCOLOR/] },
+      { src: K2, ref: '371', any: [/					IF TALENT:ASSI:85 == 1/] },
+      {
+        src: K2,
+        ref: '372',
+        any: [
+          /						PRINTFORMW 「这、这实在…太残酷了…%SELF_CALL\(TARGET\)%这样的孩子也不放过……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '373',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%愤怒地开始谴责你。/],
+      },
+      { src: K2, ref: '374', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '375',
+        any: [/						PRINTFORMW 『啊……哈哈哈！勇者大人吃醋了么♪』/],
+      },
+      { src: K2, ref: '376', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '377',
+        any: [
+          /						PRINTFORMW 一阵大笑后，%SAVESTR:ASSI%的嘴角上翘，露出淫媚的表情。/,
+        ],
+      },
+      { src: K2, ref: '378', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '379',
+        any: [
+          /						PRINTFORMW 『对了，今天就让我来在勇者大人身上演示下魔王大人是如何爱我的吧♪』/,
+        ],
+      },
+      { src: K2, ref: '380', any: [/						RESETCOLOR/] },
+      { src: K2, ref: '382', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '383',
+        any: [
+          /						PRINTFORMW 「竟，竟然…%SELF_CALL\(TARGET\)%除了我之外……还有其他人也遭受了一样过分的事吗」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '384',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%不由得开始谴责你。/],
+      },
+      { src: K2, ref: '385', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '386',
+        any: [
+          /						PRINTFORMW 『过分？明明那么舒服…不过，勇者大人这么可爱……连我都忍不住了呢♪』/,
+        ],
+      },
+      { src: K2, ref: '387', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '388',
+        any: [
+          /						PRINTFORMW %SAVESTR:ASSI%冷笑着开始考虑该如何调教%SAVESTR:TARGET%……/,
+        ],
+      },
+      { src: K2, ref: '389', any: [/					ENDIF/] },
+      { src: K2, ref: '391', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '392',
+        any: [
+          /				PRINTFORMW 你和%SAVESTR:ASSI%一起饶有兴趣的看着%SAVESTR:TARGET%露出有点害怕的表情。/,
+        ],
+      },
+      { src: K2, ref: '393', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '394',
+        any: [/				PRINTFORMW 『初次见面呢勇者大人…今天可要多多关照咯』/],
+      },
+      { src: K2, ref: '395', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '396',
+        any: [
+          /				PRINTFORMW 新任的调教者仔细打量起%SAVESTR:TARGET%来，曾经的勇者的威严已经荡然无存。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '397',
+        any: [/				PRINTFORMW 「难、难道…你也是被魔王抓到的原勇者吗……是吧？！」/],
+      },
+      {
+        src: K2,
+        ref: '398',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%看向对方的目光中充满了宽恕。/],
+      },
+      { src: K2, ref: '399', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '400',
+        any: [/				PRINTFORMW 『喂喂…打算帮助对方好被调教？你到底在想什么？』/],
+      },
+      { src: K2, ref: '401', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '402',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的表情被识破，只能哭泣着从床上爬下来……/,
+        ],
+      },
+      { src: K2, ref: '403', any: [/			ENDIF/] },
+      { src: K2, ref: '404', any: [/			CFLAG:202 = 1/] },
+      { src: K2, ref: '405', any: [/			RETURN 1/] },
+      { src: K2, ref: '407', any: [/		ELSEIF CFLAG:202 == 1 && FLAG:7 == 2/] },
+      { src: K2, ref: '409', any: [/			IF TALENT:TARGET:9 == 1/] },
+      {
+        src: K2,
+        ref: '410',
+        any: [/				PRINTFORMW 『已经被用坏了么？…那么弄得更破烂一点也无妨吧★』/],
+      },
+      { src: K2, ref: '412', any: [/			ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '413', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '414',
+        any: [/				PRINTFORMW 『今天也来一起玩嘛勇者大人♪』/],
+      },
+      { src: K2, ref: '415', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '416',
+        any: [
+          /				PRINTFORMW 你和%SAVESTR:ASSI%一起看着%SAVESTR:TARGET%稍微皱了皱眉头，之后重新振作的少女模样。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '417',
+        any: [/				PRINTFORMW 「啊…啊，欢迎%SAVESTR:ASSI%酱」/],
+      },
+      { src: K2, ref: '419', any: [/					IF TALENT:ASSI:85 == 1/] },
+      {
+        src: K2,
+        ref: '420',
+        any: [
+          /						PRINTFORMW 依靠在你手臂上的%SAVESTR:ASSI%和%SAVESTR:TARGET%的视线交汇了。/,
+        ],
+      },
+      { src: K2, ref: '421', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '422',
+        any: [
+          /						PRINTFORMW 『喂喂，主人…看来上一次勇者大人很舒服呢…%UNICODE\(0x2661\) \*1% 主人你觉得呢…？』/,
+        ],
+      },
+      { src: K2, ref: '423', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '424',
+        any: [/						PRINTFORMW 「啊，啊啊…停、停下…快别这么说……」/],
+      },
+      { src: K2, ref: '425', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '426',
+        any: [/						PRINTFORMW 『哦呵呵…就让勇者大人的肉体来告诉我们答案吧♪』/],
+      },
+      { src: K2, ref: '427', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '428',
+        any: [/						PRINTFORMW 少女露出胜利者的笑容把%SAVESTR:TARGET%压倒在地……/],
+      },
+      { src: K2, ref: '430', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '431',
+        any: [/						PRINTFORMW 少女单手叉在腰间，仔细地打量着%SAVESTR:TARGET%。/],
+      },
+      { src: K2, ref: '432', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '433',
+        any: [
+          /						PRINTFORMW 『勇者大人气色不错？ 毎晩想到主人的时候要手淫几次呀？』/,
+        ],
+      },
+      { src: K2, ref: '434', any: [/						RESETCOLOR/] },
+      { src: K2, ref: '435', any: [/						PRINTFORMW 「别…请不要那样说……呜！」/] },
+      {
+        src: K2,
+        ref: '436',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%涨红了脸想争辩些什么，但最终还是沉默了下去。/,
+        ],
+      },
+      { src: K2, ref: '437', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '438',
+        any: [
+          /						PRINTFORMW 『嘿嘿嘿…好吧就这样默默地听着就好，毕竟肉体才是最诚实的呢♪ 今天就从上次的复习开始咯…♪』/,
+        ],
+      },
+      { src: K2, ref: '439', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '440',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%无计可施，再一次默默地接受少女的调教……/,
+        ],
+      },
+      { src: K2, ref: '441', any: [/					ENDIF/] },
+      { src: K2, ref: '443', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '444',
+        any: [
+          /				PRINTFORMW 「啊啊…%SAVESTR:ASSI%酱也来了吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '445',
+        any: [
+          /				PRINTFORMW 色情狂的表情从%SAVESTR:TARGET%脸上浮现，对%SAVESTR:ASSI%的调教感到十分兴奋。/,
+        ],
+      },
+      { src: K2, ref: '446', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '447',
+        any: [/				PRINTFORMW 『哼哼哼…勇者大人今天的调教可不轻松哦♪』/],
+      },
+      { src: K2, ref: '448', any: [/				RESETCOLOR/] },
+      { src: K2, ref: '450', any: [/					IF TALENT:ASSI:76 == 1/] },
+      {
+        src: K2,
+        ref: '451',
+        any: [/						PRINTFORMW 「啊啊…好棒…今天…主人也要从正面好好爱我……♪」/],
+      },
+      {
+        src: K2,
+        ref: '452',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%充满喜悦地靠在少女的怀里。相同的淫乱特质被激发出来了…？/,
+        ],
+      },
+      { src: K2, ref: '453', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '454',
+        any: [
+          /						PRINTFORMW 『哼哼，勇者大人的身体已经很熟练了么…♪ 真是令人满意的肉体呢…♪』/,
+        ],
+      },
+      { src: K2, ref: '455', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '456',
+        any: [
+          /						PRINTFORMW %SAVESTR:ASSI%和%SAVESTR:TARGET%的舌头互相缠绕着，发出一阵淫靡的吸吮声……/,
+        ],
+      },
+      { src: K2, ref: '458', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '459',
+        any: [/						PRINTFORMW 「啊啊…好棒…今天…主人也要从正面好好爱我……♪」/],
+      },
+      { src: K2, ref: '460', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '461',
+        any: [
+          /						PRINTFORMW 『啊啊啊…淫荡的程度还不够！以为这么简单就能获得奖赏吗！你这卑微的母狗！』/,
+        ],
+      },
+      { src: K2, ref: '462', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '463',
+        any: [
+          /						PRINTFORMW 少女的毒舌喷吐着侮辱的话语，不停在%SAVESTR:TARGET%的脸颊上拍打着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '464',
+        any: [/						PRINTFORMW 「有感觉了…啊…请…请继续侮辱我……」/],
+      },
+      { src: K2, ref: '465', any: [/						SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '466',
+        any: [/						PRINTFORMW 『像你这样的母狗还需要更严厉的惩罚！』/],
+      },
+      { src: K2, ref: '467', any: [/						RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '468',
+        any: [/						PRINTFORMW %SAVESTR:ASSI%的施虐心瞬间高涨……/],
+      },
+      { src: K2, ref: '469', any: [/					ENDIF/] },
+      { src: K2, ref: '471', any: [/			ELSE/] },
+      { src: K2, ref: '472', any: [/				PRINTFORMW 「不，请不要…这样欺负我……」/] },
+      { src: K2, ref: '473', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '474',
+        any: [
+          /				PRINTFORMW 『欺负？没有啊，没想到勇者大人居然也会喜欢这种调教呢♪』/,
+        ],
+      },
+      { src: K2, ref: '475', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '476',
+        any: [
+          /				PRINTFORMW %SAVESTR:ASSI%发出一阵低沉的笑声，慢慢靠近%SAVESTR:TARGET%。/,
+        ],
+      },
+      { src: K2, ref: '477', any: [/				PRINTFORMW 「哎呀…哎呀…救命啊…主人！」/] },
+      {
+        src: K2,
+        ref: '478',
+        any: [
+          /				PRINTFORMW 你苦笑着摇了摇头。%SAVESTR:TARGET%的脸色顿时变白了。/,
+        ],
+      },
+      { src: K2, ref: '479', any: [/				SETCOLOR 255,204,255/] },
+      {
+        src: K2,
+        ref: '480',
+        any: [
+          /				PRINTFORMW 『求救也没用哦，给我继续爬！你只是个到哪里都要爬着的奴隶！』/,
+        ],
+      },
+      { src: K2, ref: '481', any: [/				RESETCOLOR/] },
+      {
+        src: K2,
+        ref: '482',
+        any: [
+          /				PRINTFORMW 已经开始恐惧了，然而%SAVESTR:TARGET%被%SAVESTR:ASSI%调教的课程才刚刚开始……/,
+        ],
+      },
+      { src: K2, ref: '483', any: [/			ENDIF/] },
+      { src: K2, ref: '484', any: [/			RETURN 1/] },
+      { src: K2, ref: '485', any: [/		ENDIF/] },
+      { src: K2, ref: '487', any: [/	ELSE/] },
+      { src: K2, ref: '488', any: [/		CALL K2_KOJO2/] },
+      { src: K2, ref: '489', any: [/	ENDIF/] },
+      { src: K2, ref: '516', any: [/ELSE/] },
+      { src: K2, ref: '517', any: [/	CALL K2_KOJO2/] },
+      { src: K2, ref: '518', any: [/ENDIF/] },
+      { src: K2, ref: '524', any: [/@K2_KOJO2/] },
+      { src: K2, ref: '526', any: [/IF TALENT:TARGET:9 == 1 && FLAG:7 == 2/] },
+      { src: K2, ref: '527', any: [/	DRAWLINE/] },
+      {
+        src: K2,
+        ref: '528',
+        any: [/	PRINTFORMW 「讨厌讨厌讨厌讨厌…不要…啊啊啊啊啊啊啊啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '529',
+        any: [/	PRINTFORMW %SAVESTR:TARGET%已经彻底崩溃了……/],
+      },
+      { src: K2, ref: '530', any: [/	RETURN 1/] },
+      { src: K2, ref: '533', any: [/ELSEIF MARK:3 == 3 && FLAG:7 == 2/] },
+      { src: K2, ref: '534', any: [/	DRAWLINE/] },
+      { src: K2, ref: '536', any: [/	IF CFLAG:601 == 901/] },
+      {
+        src: K2,
+        ref: '537',
+        any: [/		PRINTFORMW 「%SELF_CALL\(TARGET\)%已经成为你的妻子了…吗…唔！」/],
+      },
+      {
+        src: K2,
+        ref: '538',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%好像并没有身为妻子的自觉……/],
+      },
+      { src: K2, ref: '539', any: [/	ELSE/] },
+      { src: K2, ref: '540', any: [/		PRINTFORMW 「不对…不该是这样的……」/] },
+      {
+        src: K2,
+        ref: '541',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%的眼神中充满了抗拒……/],
+      },
+      { src: K2, ref: '542', any: [/	ENDIF/] },
+      { src: K2, ref: '543', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '546',
+        any: [
+          /ELSEIF MARK:2 == 0 && FLAG:7 == 2 && TALENT:TARGET:76 == 0 && TALENT:TARGET:85 == 0/,
+        ],
+      },
+      { src: K2, ref: '547', any: [/	DRAWLINE/] },
+      { src: K2, ref: '549', any: [/	IF TALENT:TARGET:317 == 4 /] },
+      { src: K2, ref: '550', any: [/		PRINTFORMW 「帮帮我…拜托…呜」/] },
+      {
+        src: K2,
+        ref: '551',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%脑海里浮现出故乡的恋人……/],
+      },
+      { src: K2, ref: '553', any: [/	ELSEIF CFLAG:601 == 901/] },
+      {
+        src: K2,
+        ref: '554',
+        any: [/		PRINTFORMW 「%SELF_CALL\(TARGET\)%是被逼成为…你的妻子……」/],
+      },
+      {
+        src: K2,
+        ref: '555',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%看着你哼了一声转过头去……/],
+      },
+      { src: K2, ref: '556', any: [/	ELSE/] },
+      { src: K2, ref: '557', any: [/		PRINTFORMW 「原谅我…」/] },
+      { src: K2, ref: '558', any: [/	ENDIF/] },
+      { src: K2, ref: '559', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '562',
+        any: [
+          /ELSEIF MARK:2 == 1 && FLAG:7 == 2 && TALENT:TARGET:76 == 0 && TALENT:TARGET:85 == 0/,
+        ],
+      },
+      { src: K2, ref: '563', any: [/	DRAWLINE/] },
+      { src: K2, ref: '565', any: [/	IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '566',
+        any: [
+          /		PRINTFORMW 「%SELF_CALL\(TARGET\)%再也…回不去了，那个人在的地方……」/,
+        ],
+      },
+      { src: K2, ref: '568', any: [/	ELSEIF CFLAG:601 == 901/] },
+      { src: K2, ref: '569', any: [/		PRINTFORMW 「不…别、别碰我……」/] },
+      {
+        src: K2,
+        ref: '570',
+        any: [
+          /		PRINTFORMW 仿佛没听到一般，%SAVESTR:PLAYER%把自己的新娘%SAVESTR:TARGET%抱到怀里……/,
+        ],
+      },
+      { src: K2, ref: '571', any: [/	ELSE/] },
+      { src: K2, ref: '572', any: [/		PRINTFORMW 「你这么做…是为什么…？」/] },
+      { src: K2, ref: '573', any: [/	ENDIF/] },
+      { src: K2, ref: '574', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '577',
+        any: [
+          /ELSEIF MARK:2 == 2 && FLAG:7 == 2 && TALENT:TARGET:76 == 0 && TALENT:TARGET:85 == 0/,
+        ],
+      },
+      { src: K2, ref: '578', any: [/	DRAWLINE/] },
+      { src: K2, ref: '580', any: [/	IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '581',
+        any: [/		PRINTFORMW 「啊，不行…这个…如果被…啊啊……」/],
+      },
+      {
+        src: K2,
+        ref: '582',
+        any: [/		PRINTFORMW （又…想到那个人了么…已经回不去了啊…嗯嗯…）/],
+      },
+      {
+        src: K2,
+        ref: '583',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%无力地反抗着……/],
+      },
+      { src: K2, ref: '585', any: [/	ELSEIF CFLAG:601 == 901/] },
+      {
+        src: K2,
+        ref: '586',
+        any: [
+          /		PRINTFORMW 「嗯…今后…要温柔地爱我哦……%SELF_CALL\(TARGET\)%已经…是…属于你的了」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '587',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%露出柔弱的表情看着你，依偎在%SAVESTR:PLAYER%的怀中……/,
+        ],
+      },
+      { src: K2, ref: '588', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '589',
+        any: [/		PRINTFORMW 「当初成为勇者…说不定也是件好事呢」/],
+      },
+      { src: K2, ref: '590', any: [/	ENDIF/] },
+      { src: K2, ref: '591', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '594',
+        any: [
+          /ELSEIF MARK:2 == 3 &&  FLAG:7 == 2 && TALENT:TARGET:76 == 0 && TALENT:TARGET:85 == 0/,
+        ],
+      },
+      { src: K2, ref: '595', any: [/	DRAWLINE/] },
+      { src: K2, ref: '597', any: [/	IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '598',
+        any: [/		PRINTFORMW 「是…更加地…请随意享用…人家的肉体……」/],
+      },
+      {
+        src: K2,
+        ref: '599',
+        any: [
+          /		PRINTFORMW （对不起…%SELF_CALL\(TARGET\)%心的归属曾经是你…啊……）/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '600',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%回想起脑海中故乡的恋人……痛苦的感觉萦绕在心头……/,
+        ],
+      },
+      { src: K2, ref: '602', any: [/	ELSEIF CFLAG:601 == 901/] },
+      {
+        src: K2,
+        ref: '603',
+        any: [/		PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%已经蜕变了…就在此刻……」/],
+      },
+      {
+        src: K2,
+        ref: '604',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%身为妻子觉悟了什么一般，满怀期望地看着你……/,
+        ],
+      },
+      { src: K2, ref: '605', any: [/	ELSE/] },
+      { src: K2, ref: '606', any: [/		PRINTFORMW 「请多关照…主人」/] },
+      { src: K2, ref: '607', any: [/	ENDIF/] },
+      { src: K2, ref: '608', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '611',
+        any: [/ELSEIF TALENT:TARGET:76 == 1 && FLAG:7 == 2/],
+      },
+      { src: K2, ref: '612', any: [/	DRAWLINE/] },
+      { src: K2, ref: '614', any: [/	IF CFLAG:601 == 901/] },
+      { src: K2, ref: '616', any: [/		IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '617',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%撒娇般主动亲吻着%SAVESTR:PLAYER%的脸颊。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '618',
+        any: [
+          /			PRINTFORMW 「唔…你这个…大变态…已经是%SELF_CALL\(TARGET\)%的丈夫了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '619',
+        any: [
+          /			PRINTFORMW 「人家的小穴可是想你的肉棒想到发痛了呢……还有浓厚的肉棒牛奶……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '620', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '621',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%四肢着地，将丰盈的臀部高高耸起，母狗般向你献媚着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '622',
+        any: [
+          /			PRINTFORMW 「求求您…从哪里开始都可以…用你的大肉棒…好好地蹂躏%SELF_CALL\(TARGET\)%吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '623',
+        any: [
+          /			PRINTFORMW 淫乱的%SAVESTR:TARGET%似乎一刻都等不及般地乞求%SAVESTR:PLAYER%的侵犯，下体已经湿成一片，晃动的屁股上弥漫着淫乱的味道……/,
+        ],
+      },
+      { src: K2, ref: '624', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '625',
+        any: [
+          /			PRINTFORMW 「你可爱的…淫乱的妻子%SELF_CALL\(TARGET\)%的身体…已经在渴求肉棒了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '626',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%仿佛已经再也无法忍耐般地向%SAVESTR:PLAYER%乞求宠爱。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '627',
+        any: [
+          /			PRINTFORMW 「来吧…你淫乱的妻子已经等不及了哟…想要被肉棒塞满…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '628', any: [/		ENDIF/] },
+      { src: K2, ref: '630', any: [/	ELSEIF TALENT:TARGET:314 == 9/] },
+      { src: K2, ref: '632', any: [/		IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '633',
+        any: [/			PRINTFORMW 「是…魔王大人…又在想色色的事情了么？」/],
+      },
+      {
+        src: K2,
+        ref: '634',
+        any: [
+          /			PRINTFORMW 「是…无论是%SELF_CALL\(TARGET\)%的嘴巴，小穴还是肛门…都好喜欢好喜欢被魔王大人操呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '635',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%抱住%SAVESTR:PLAYER%不停地撒娇……/],
+      },
+      { src: K2, ref: '636', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '637',
+        any: [/			PRINTFORMW 「一切都要按照礼仪来安排…开玩笑的♪」/],
+      },
+      {
+        src: K2,
+        ref: '638',
+        any: [
+          /			PRINTFORMW 「那些…不要紧的细节不要去管…早一点插进来吧%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '639',
+        any: [
+          /			PRINTFORMW 「虽然现在身体还是会有点疼痛……但还是想要……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '640',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的翅膀高兴地扇动着……/],
+      },
+      { src: K2, ref: '641', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '642',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%迎了上来，尽情地拥抱你。/],
+      },
+      {
+        src: K2,
+        ref: '643',
+        any: [
+          /			PRINTFORMW 「魔王大人…%SELF_CALL\(TARGET\)%已经无法忍受了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '644',
+        any: [
+          /			PRINTFORMW 「不用力操我的话…我可不原谅您哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '645',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的尾巴悄悄伸出，用力地缠住你的脚踝……/,
+        ],
+      },
+      { src: K2, ref: '646', any: [/		ENDIF/] },
+      { src: K2, ref: '648', any: [/	ELSE/] },
+      { src: K2, ref: '650', any: [/		IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '651',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%迎了上来，尽情地拥抱你。/],
+      },
+      {
+        src: K2,
+        ref: '652',
+        any: [
+          /			PRINTFORMW 「魔王大人…%SELF_CALL\(TARGET\)%已经无法忍受了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '653',
+        any: [
+          /			PRINTFORMW 「不用力操我的话…我可不原谅您哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '654', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '655',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%四肢着地，将丰盈的臀部高高耸起，母狗般向你献媚着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '656',
+        any: [
+          /			PRINTFORMW 「我…我不行了……您最忠实的母狗%SAVESTR:TARGET%…等着您的宠爱%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '657',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%已经彻底化身牝犬，一脸淫荡的表情哀求着你……/,
+        ],
+      },
+      { src: K2, ref: '658', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '659',
+        any: [
+          /			PRINTFORMW 「嗯～身体已经想您想到疼痛了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '660',
+        any: [
+          /			PRINTFORMW 「快来～用力地～干坏%SELF_CALL\(TARGET\)%的小穴吧！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '661',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%眼眶已经湿润，仿佛已经忍耐到极限般，浑身微微地颤抖起来……/,
+        ],
+      },
+      { src: K2, ref: '662', any: [/		ENDIF/] },
+      { src: K2, ref: '663', any: [/	ENDIF/] },
+      { src: K2, ref: '664', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '667',
+        any: [/ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2/],
+      },
+      { src: K2, ref: '669', any: [/	IF \(CFLAG:40 & 28\) && CFLAG:41 == 209/] },
+      { src: K2, ref: '670', any: [/		PRINTFORMW %SAVESTR:TARGET%穿着女仆装/] },
+      {
+        src: K2,
+        ref: '672',
+        any: [/	ELSEIF \(CFLAG:40 & 28\) && CFLAG:41 == 203/],
+      },
+      { src: K2, ref: '673', any: [/		PRINTFORMW %SAVESTR:TARGET%穿着妓女服/] },
+      {
+        src: K2,
+        ref: '675',
+        any: [/	ELSEIF CFLAG:42 == 12 && \(CFLAG:40 & 28\) == 0/],
+      },
+      { src: K2, ref: '676', any: [/		PRINTFORMW %SAVESTR:TARGET%浑身赤裸着/] },
+      { src: K2, ref: '677', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '680',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%陶醉地看着手指上的戒指/],
+      },
+      { src: K2, ref: '682', any: [/	IF CFLAG:601 == 901/] },
+      { src: K2, ref: '684', any: [/		IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '685',
+        any: [
+          /			PRINTFORMW 「啊真是的…結婚生活果然最棒了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '686',
+        any: [
+          /			PRINTFORMW 「所以啊…来让婚后生活更加快乐吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '687',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%把%SAVESTR:PLAYER%的手放到自己的两腿之间引导着……/,
+        ],
+      },
+      { src: K2, ref: '688', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '689',
+        any: [
+          /			PRINTFORMW 「唔～唔%UNICODE\(0x2661\) \*1% 唔、啊…一起幸福下去…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '691',
+        any: [
+          /				PRINTFORMW 「快给我…你的精子…让我怀孕…为你…生很多很多…孩子%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '692',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%引导着你的手抚摸着自己的乳房和阴唇……/,
+        ],
+      },
+      { src: K2, ref: '693', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '695',
+        any: [
+          /				PRINTFORMW 「啊啊…爱意快要满溢了…%UNICODE\(0x2661\) \*1% 好想为你生孩子啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '696',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%紧紧地抱着%SAVESTR:PLAYER%撒娇，不肯松手。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '697',
+        any: [
+          /			PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%的爱意…来自妻子的爱感受到了吗？%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '698', any: [/		ENDIF/] },
+      { src: K2, ref: '700', any: [/	ELSEIF TALENT:TARGET:314 == 9/] },
+      { src: K2, ref: '702', any: [/		IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '703',
+        any: [/			PRINTFORMW 「唔唔…主人啊…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '704',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%开心地依偎在你怀中。/],
+      },
+      {
+        src: K2,
+        ref: '705',
+        any: [
+          /			PRINTFORMW 「%SELF_CALL\(TARGET\)%的心和身体…都深深喜欢着主人您哦…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '706', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '707',
+        any: [
+          /			PRINTFORMW 「主人啊…今天也要好好的爱我哟…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '708',
+        any: [/			PRINTFORMW 「深深地…彻底地爱我…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '710',
+        any: [/				PRINTFORMW 「好想为你生孩子…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '711', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '712',
+        any: [
+          /			PRINTFORMW 「主人啊…今天也请多多关照哦%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '713',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%露出了喜悦的笑容。/],
+      },
+      {
+        src: K2,
+        ref: '714',
+        any: [
+          /			PRINTFORMW 「这身体，每天都有为您好好保养哦！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '715', any: [/		ENDIF/] },
+      { src: K2, ref: '717', any: [/	ELSE/] },
+      { src: K2, ref: '719', any: [/		IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '720',
+        any: [/			PRINTFORMW 「今天才真正的成为了魔族一员呢！」/],
+      },
+      { src: K2, ref: '721', any: [/			PRINTFORMW 「…嗯…人家可是很认真的哦……」/] },
+      {
+        src: K2,
+        ref: '722',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%似乎很害羞，但还是鼓足勇气说了出来。/,
+        ],
+      },
+      { src: K2, ref: '723', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '724',
+        any: [/			PRINTFORMW 「主人！今天也请用力侵犯我吧！」/],
+      },
+      {
+        src: K2,
+        ref: '725',
+        any: [
+          /			PRINTFORMW 「只要您喜欢…怎么用力揉用力插都可以…这可是专属于您的东西了……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '726',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%握住你的手放在自己乳房上用力揉动……/],
+      },
+      { src: K2, ref: '727', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '728',
+        any: [
+          /			PRINTFORMW 「主人啊…今天也请多多关照哦%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '729',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%露出了喜悦的笑容。/],
+      },
+      { src: K2, ref: '730', any: [/		ENDIF/] },
+      { src: K2, ref: '731', any: [/	ENDIF/] },
+      { src: K2, ref: '732', any: [/	RETURN 1/] },
+      { src: K2, ref: '733', any: [/ENDIF/] },
+      { src: K2, ref: '734', any: [/RETURN 0/] },
+      { src: K2, ref: '742', any: [/	RETURN 0/] },
+      { src: K2, ref: '744', any: [/	RETURN 0/] },
+      { src: K2, ref: '748', any: [/	RETURN 0/] },
+      { src: K2, ref: '754', any: [/IF TALENT:TARGET:9 == 1 && FLAG:7 == 2/] },
+      { src: K2, ref: '755', any: [/	DRAWLINE/] },
+      {
+        src: K2,
+        ref: '756',
+        any: [/	PRINTFORMW 「太过分了…太过分了…嘿嘿嘿……」/],
+      },
+      {
+        src: K2,
+        ref: '757',
+        any: [
+          /	PRINTFORMW %SAVESTR:TARGET%的口水滴答落下，嘴里还在嘀咕着什么……/,
+        ],
+      },
+      { src: K2, ref: '758', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '760',
+        any: [/ELSEIF MARK:3 == 3 && TALENT:TARGET:85 == 0/],
+      },
+      { src: K2, ref: '761', any: [/	DRAWLINE/] },
+      { src: K2, ref: '762', any: [/	PRINTFORMW 「好想死……」/] },
+      { src: K2, ref: '763', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '766',
+        any: [/ELSEIF MARK:2 <= 1 && TALENT:TARGET:85 == 0/],
+      },
+      { src: K2, ref: '767', any: [/	DRAWLINE/] },
+      { src: K2, ref: '768', any: [/	PRINTFORMW 「为什么要这样对我……」/] },
+      { src: K2, ref: '769', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '772',
+        any: [/ELSEIF MARK:2 == 2 && TALENT:TARGET:85 == 0/],
+      },
+      { src: K2, ref: '773', any: [/	DRAWLINE/] },
+      { src: K2, ref: '774', any: [/	PRINTFORMW 「当勇者这种事，糟透了……」/] },
+      { src: K2, ref: '775', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '778',
+        any: [
+          /ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0/,
+        ],
+      },
+      { src: K2, ref: '779', any: [/	DRAWLINE/] },
+      {
+        src: K2,
+        ref: '780',
+        any: [/	PRINTFORMW 「%SELF_CALL\(TARGET\)%本来…就是被遗弃的东西么？」/],
+      },
+      { src: K2, ref: '781', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '784',
+        any: [/ELSEIF TALENT:TARGET:76 == 1 && BASE:0 >= 500/],
+      },
+      { src: K2, ref: '785', any: [/	DRAWLINE/] },
+      { src: K2, ref: '787', any: [/	IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '788',
+        any: [/		PRINTFORMW 「呼…嗯…被操得还不够呢…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '789', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '790',
+        any: [/		PRINTFORMW 「啊啊…明明还可以继续…好讨厌……」/],
+      },
+      { src: K2, ref: '791', any: [/	ENDIF/] },
+      { src: K2, ref: '792', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '794',
+        any: [/ELSEIF TALENT:TARGET:76 == 1 && BASE:0 <= 500/],
+      },
+      { src: K2, ref: '795', any: [/	DRAWLINE/] },
+      { src: K2, ref: '797', any: [/	IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '798',
+        any: [/		PRINTFORMW 「呼呼…好棒的性爱呢…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '799',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%懒洋洋地摇动着尾巴……/],
+      },
+      { src: K2, ref: '800', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '801',
+        any: [/		PRINTFORMW 「真的…好、好厉害……%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '802', any: [/	ENDIF/] },
+      { src: K2, ref: '803', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '806',
+        any: [/ELSEIF TALENT:TARGET:85 == 1 && BASE:0 >= 500/],
+      },
+      { src: K2, ref: '807', any: [/	DRAWLINE/] },
+      { src: K2, ref: '809', any: [/	IF TALENT:TARGET:314 == 9/] },
+      { src: K2, ref: '810', any: [/		PRINTFORMW 「啊啊…请多惩罚我一会吧……」/] },
+      { src: K2, ref: '811', any: [/	ELSE/] },
+      { src: K2, ref: '812', any: [/		PRINTFORMW 「好温柔…」/] },
+      { src: K2, ref: '813', any: [/	ENDIF/] },
+      { src: K2, ref: '814', any: [/	RETURN 1/] },
+      {
+        src: K2,
+        ref: '816',
+        any: [/ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500/],
+      },
+      { src: K2, ref: '817', any: [/	DRAWLINE/] },
+      { src: K2, ref: '819', any: [/	IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '820',
+        any: [
+          /		PRINTFORMW 「呼呼…主人的爱已经把小穴填满了呢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '821', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '822',
+        any: [/		PRINTFORMW 「能被主人这样操过…死而无憾了呢」/],
+      },
+      { src: K2, ref: '823', any: [/		SELECTCASE TALENT:TARGET:300/] },
+      { src: K2, ref: '824', any: [/			case 1/] },
+      {
+        src: K2,
+        ref: '825',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，金色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '826', any: [/			case 2/] },
+      {
+        src: K2,
+        ref: '827',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，栗色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '828', any: [/			case 3/] },
+      {
+        src: K2,
+        ref: '829',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，黑色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '830', any: [/			case 4/] },
+      {
+        src: K2,
+        ref: '831',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，红色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '832', any: [/			case 5/] },
+      {
+        src: K2,
+        ref: '833',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，银色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '834', any: [/			CASE 6/] },
+      {
+        src: K2,
+        ref: '835',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，蓝色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '836', any: [/			CASE 7/] },
+      {
+        src: K2,
+        ref: '837',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，绿色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '838', any: [/			CASE 11/] },
+      {
+        src: K2,
+        ref: '839',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，粉色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '840', any: [/			CASEELSE/] },
+      {
+        src: K2,
+        ref: '841',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的脸色还带着高潮余韵的潮红，黑色的头发凌乱地贴在额头上……/,
+        ],
+      },
+      { src: K2, ref: '842', any: [/		ENDSELECT/] },
+      { src: K2, ref: '843', any: [/	ENDIF/] },
+      { src: K2, ref: '844', any: [/	RETURN 1/] },
+      { src: K2, ref: '845', any: [/ENDIF/] },
+      { src: K2, ref: '846', any: [/RETURN 0/] },
+      { src: K2, ref: '854', any: [/IF TEQUIP:55/] },
+      { src: K2, ref: '855', any: [/	CALL COLOSSEUM_KOJO_2/] },
+      { src: K2, ref: '856', any: [/	RETURN 0/] },
+      { src: K2, ref: '857', any: [/ENDIF/] },
+      { src: K2, ref: '860', any: [/	RETURN 0 /] },
+      { src: K2, ref: '863', any: [/	RETURN 0/] },
+      { src: K2, ref: '866', any: [/	RETURN 0/] },
+      { src: K2, ref: '869', any: [/	RETURN 0/] },
+      { src: K2, ref: '875', any: [/	RETURN 0/] },
+      { src: K2, ref: '883', any: [/IF SELECTCOM == 0/] },
+      { src: K2, ref: '885', any: [/	IF CFLAG:301 == 0/] },
+      { src: K2, ref: '887', any: [/		IF MARK:2 >= 2/] },
+      {
+        src: K2,
+        ref: '888',
+        any: [/			PRINTFORMW 「真的…这样…不行…然而…无法反抗…」/],
+      },
+      { src: K2, ref: '890', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '891',
+        any: [/			PRINTFORMW 「什么？！请不要这样……快放开我！」/],
+      },
+      { src: K2, ref: '892', any: [/		ENDIF/] },
+      { src: K2, ref: '893', any: [/		CFLAG:301 = 1/] },
+      { src: K2, ref: '894', any: [/		RETURN 0/] },
+      { src: K2, ref: '896', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '898',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '899',
+        any: [
+          /			PRINTFORMW 「嗯嗯%UNICODE\(0x2661\) \*1%…再…再用力些嘛…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '900',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%淫乱的肉体本能地接受着%SAVESTR:PLAYER%的爱抚……/,
+        ],
+      },
+      { src: K2, ref: '901', any: [/			CFLAG:301 = 6/] },
+      {
+        src: K2,
+        ref: '903',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '904',
+        any: [/			PRINTFORMW 「呼…呼呼…再…请随意…关照…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '905',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边接受着爱抚的快感一边向%SAVESTR:PLAYER%撒娇……/,
+        ],
+      },
+      { src: K2, ref: '906', any: [/			CFLAG:301 = 5/] },
+      {
+        src: K2,
+        ref: '908',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '909', any: [/			PRINTFORMW 「请…再…再用力些…啊！」/] },
+      { src: K2, ref: '910', any: [/			CFLAG:301 = 4/] },
+      {
+        src: K2,
+        ref: '912',
+        any: [/		ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '913', any: [/			PRINTFORMW 「不可以…这样…不可以…！」/] },
+      { src: K2, ref: '914', any: [/			CFLAG:301 = 3/] },
+      {
+        src: K2,
+        ref: '916',
+        any: [/		ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '917', any: [/			PRINTFORMW 「感觉…啊啊…好奇怪…！」/] },
+      { src: K2, ref: '918', any: [/			CFLAG:301 = 2/] },
+      { src: K2, ref: '919', any: [/		ENDIF/] },
+      { src: K2, ref: '920', any: [/		RETURN 0/] },
+      { src: K2, ref: '921', any: [/	ENDIF/] },
+      { src: K2, ref: '922', any: [/ENDIF/] },
+      { src: K2, ref: '927', any: [/IF SELECTCOM == 1/] },
+      { src: K2, ref: '929', any: [/	IF CFLAG:302 == 0/] },
+      { src: K2, ref: '931', any: [/		IF TALENT:TARGET:0 == 1/] },
+      { src: K2, ref: '932', any: [/			PRINTFORMW 「哪里！那里…脏！好脏！」/] },
+      {
+        src: K2,
+        ref: '933',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%似乎反感阴部被舔……/],
+      },
+      { src: K2, ref: '935', any: [/		ELSE/] },
+      { src: K2, ref: '936', any: [/			PRINTFORMW 「啊啊…为什么那里…会！」/] },
+      { src: K2, ref: '937', any: [/		ENDIF/] },
+      { src: K2, ref: '938', any: [/		CFLAG:302 = 1/] },
+      { src: K2, ref: '939', any: [/		RETURN 0/] },
+      { src: K2, ref: '941', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '943',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '944',
+        any: [
+          /			PRINTFORMW 「不要停%UNICODE\(0x2661\) \*1% 好棒…把舌头伸进去……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '945',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%激动地不让%SAVESTR:PLAYER%抬头，腰部也随着缓缓向上移动……/,
+        ],
+      },
+      { src: K2, ref: '946', any: [/			CFLAG:302 = 5/] },
+      {
+        src: K2,
+        ref: '948',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '949',
+        any: [
+          /			PRINTFORMW 「好…好厉害…不要停…再多舔…一些%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '950',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%跟随着%SAVESTR:PLAYER%的动作抬起腰部，贪求更进一步的快乐……/,
+        ],
+      },
+      { src: K2, ref: '951', any: [/			CFLAG:302 = 4/] },
+      {
+        src: K2,
+        ref: '953',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '954',
+        any: [/			PRINTFORMW 「啊啊…如此关照…好棒…真的无以为报…」/],
+      },
+      {
+        src: K2,
+        ref: '955',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%羞耻地忍耐着抬动腰部的冲动……/],
+      },
+      { src: K2, ref: '956', any: [/			CFLAG:302 = 3/] },
+      { src: K2, ref: '958', any: [/		ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '959',
+        any: [/			PRINTFORMW 「不行…不可以…那里被翻开了呀！」/],
+      },
+      { src: K2, ref: '960', any: [/			CFLAG:302 = 2/] },
+      { src: K2, ref: '961', any: [/		ENDIF/] },
+      { src: K2, ref: '962', any: [/		RETURN 0/] },
+      { src: K2, ref: '963', any: [/	ENDIF/] },
+      { src: K2, ref: '964', any: [/ENDIF/] },
+      { src: K2, ref: '969', any: [/IF SELECTCOM == 2/] },
+      { src: K2, ref: '971', any: [/	IF CFLAG:303 == 0/] },
+      {
+        src: K2,
+        ref: '972',
+        any: [/		PRINTFORMW 「不要！不要！脏啊！不可以摸那里！」/],
+      },
+      { src: K2, ref: '973', any: [/		CFLAG:TARGET:303 = 1/] },
+      { src: K2, ref: '974', any: [/		RETURN 0/] },
+      { src: K2, ref: '976', any: [/	ELSE/] },
+      { src: K2, ref: '977', any: [/		P = PALAM:3 \+ UP:3/] },
+      {
+        src: K2,
+        ref: '979',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '980',
+        any: [
+          /			PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%哦…哦%UNICODE\(0x2661\) \*1% 连后面也…被唤醒了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '981',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的肛门被手指侵入，发出了一阵欢喜的呜咽。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '982',
+        any: [/			PRINTFORMW 「噢噢噢…这感觉…忍不住了…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '983', any: [/			CFLAG:303 = 7/] },
+      {
+        src: K2,
+        ref: '985',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '986',
+        any: [
+          /			PRINTFORMW 「咿啊啊…没…没关系…请继续%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '987',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的肛门还没有完全湿润，%SAVESTR:TARGET%慢慢地将手指探入。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '988',
+        any: [/			PRINTFORMW 「呼呼…还要…更多…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '989', any: [/			CFLAG:303 = 6/] },
+      {
+        src: K2,
+        ref: '991',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '992',
+        any: [/			PRINTFORMW 「啊啊…主人的手指正在侵犯…好…啊…又更深了…」/],
+      },
+      {
+        src: K2,
+        ref: '993',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的肛门纠缠住手指，品味着快感……/],
+      },
+      { src: K2, ref: '994', any: [/			CFLAG:303 = 5/] },
+      {
+        src: K2,
+        ref: '996',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '997',
+        any: [
+          /			PRINTFORMW 「好棒…主人…主人的手指好温柔…后面的小穴也很高兴呢…」/,
+        ],
+      },
+      { src: K2, ref: '998', any: [/			CFLAG:303 = 4/] },
+      {
+        src: K2,
+        ref: '1000',
+        any: [
+          /		ELSEIF P >= PALAMLV:2 && ABL:3 >= 3 && \(CFLAG:303 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1001',
+        any: [/			PRINTFORMW 「有…哦哦…好厉害…屁股的小穴…好棒！」/],
+      },
+      { src: K2, ref: '1002', any: [/			CFLAG:303 = 3/] },
+      { src: K2, ref: '1004', any: [/		ELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1005',
+        any: [/			PRINTFORMW 「这里…不可以，屁股…感觉…好糟糕…」/],
+      },
+      { src: K2, ref: '1006', any: [/			CFLAG:303 = 2/] },
+      { src: K2, ref: '1007', any: [/		ENDIF/] },
+      { src: K2, ref: '1008', any: [/		RETURN 0/] },
+      { src: K2, ref: '1009', any: [/	ENDIF/] },
+      { src: K2, ref: '1010', any: [/ENDIF/] },
+      { src: K2, ref: '1015', any: [/IF SELECTCOM == 3/] },
+      { src: K2, ref: '1017', any: [/	IF CFLAG:304 == 0/] },
+      {
+        src: K2,
+        ref: '1018',
+        any: [/			PRINTFORMW 「拜托…不要看…不要看着我…快要羞死了…」/],
+      },
+      { src: K2, ref: '1019', any: [/		CFLAG:TARGET:304 = 1/] },
+      { src: K2, ref: '1020', any: [/		RETURN 0/] },
+      { src: K2, ref: '1022', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1024',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1025',
+        any: [
+          /			PRINTFORMW 「啊啊啊…妈妈%UNICODE\(0x2661\) \*1%…魔王大人…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1026',
+        any: [
+          /			PRINTFORMW 「%SELF_CALL\(TARGET\)%的身体…已经变得…这么淫乱了！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1027',
+        any: [/			PRINTFORMW 「呼呼…小穴…小穴变得奇怪了%UNICODE\(0x2661\) \*3%」/],
+      },
+      {
+        src: K2,
+        ref: '1028',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边努力地挺动腰肢，炫耀般向%SAVESTR:PLAYER%露出未经蹂躏的小穴……/,
+        ],
+      },
+      { src: K2, ref: '1029', any: [/			CFLAG:304 = 9/] },
+      {
+        src: K2,
+        ref: '1031',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1033', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '1034',
+        any: [
+          /				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1% 手指…手指已经…插进去了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1035',
+        any: [
+          /				PRINTFORMW 「啊啊…不行不行！%UNICODE\(0x2661\) \*1% 身体…好疼…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1036',
+        any: [
+          /				PRINTFORMW 「好疼啊…明明很讨厌…可是手指却不自觉地……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1037', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '1038',
+        any: [
+          /				PRINTFORMW 「呼呼…有感觉了么%UNICODE\(0x2661\) \*1% 这样…%UNICODE\(0x2661\) \*1% 还要更多！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1039',
+        any: [
+          /				PRINTFORMW 「啊啊啊…小穴的爱液在涌出来…停不下来了！…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1040',
+        any: [
+          /				PRINTFORMW 「真是没想到…手指%UNICODE\(0x2661\) \*1% 和肉棒%UNICODE\(0x2661\) \*1% 和肉棒一样厉害！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1041',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%就这样看着变淫靡的%SAVESTR:TARGET%不停地手淫……/,
+        ],
+      },
+      { src: K2, ref: '1042', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1043',
+        any: [
+          /				PRINTFORMW 「是%UNICODE\(0x2661\) \*1% 魔王大人…%UNICODE\(0x2661\) \*1% 真是个喜欢看人自慰的变态呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1044',
+        any: [
+          /				PRINTFORMW 「每天晚上都在自慰哦%UNICODE\(0x2661\) \*1% 只要看到魔王大人…就变得很奇怪了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1045',
+        any: [
+          /				PRINTFORMW 「啊啊…让更多男人看见…淫乱的%SAVESTR:TARGET%是个变态自慰狂吧！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1046',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被压抑不住的愉悦击溃，在自慰中向你告白了……/,
+        ],
+      },
+      { src: K2, ref: '1047', any: [/			ENDIF/] },
+      { src: K2, ref: '1048', any: [/			CFLAG:304 = 8/] },
+      {
+        src: K2,
+        ref: '1050',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1052', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '1053',
+        any: [
+          /				PRINTFORMW 「嗯哼…啊啊啊%UNICODE\(0x2661\) \*1% 被看着…反而更有快感了呢……%SAVESTR:TARGET%真是个变态呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1054', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1055',
+        any: [
+          /				PRINTFORMW 「啊哈啊%UNICODE\(0x2661\) \*1%…好棒%UNICODE\(0x2661\) \*1%手指…已经…插到最里面了！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1056',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%激烈地用两手一起开始自慰……/],
+      },
+      { src: K2, ref: '1057', any: [/			ENDIF/] },
+      { src: K2, ref: '1058', any: [/			CFLAG:304 = 7/] },
+      {
+        src: K2,
+        ref: '1060',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1061',
+        any: [
+          /			PRINTFORMW 「啊啊啊…为什么…明明这么舒服…主人快来夺走我的贞操嘛…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1062',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%用手指拨开小穴引诱着你……/],
+      },
+      { src: K2, ref: '1063', any: [/			CFLAG:304 = 6/] },
+      {
+        src: K2,
+        ref: '1065',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1067', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '1068',
+        any: [
+          /				PRINTFORMW 「这样真是怎么弄都不够啊…应该这样？还是这样更舒服呢？」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1069',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的小穴里流出了爱液，手指的动作更加激烈了……/,
+        ],
+      },
+      { src: K2, ref: '1070', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '1071',
+        any: [
+          /				PRINTFORMW 「好棒！…好棒！…心情都变化了！…主人快看这里！%SELF_CALL\(TARGET\)%已经不行了！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1072',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%忍耐着可还是无法抑制地发出了快乐的喘息声……/,
+        ],
+      },
+      { src: K2, ref: '1073', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1074',
+        any: [
+          /				PRINTFORMW 「对…！来了！要高潮了！好厉害！！小穴都变得黏糊糊的…心情也变好了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1075',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%欲求不满地用双手擦拭着下体，诱惑地望着你……/,
+        ],
+      },
+      { src: K2, ref: '1076', any: [/			ENDIF/] },
+      { src: K2, ref: '1077', any: [/			CFLAG:304 = 5/] },
+      {
+        src: K2,
+        ref: '1079',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1081', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '1082',
+        any: [
+          /				PRINTFORMW 「啊…啊…好舒服！…看着我…主人快看我%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1083', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1084',
+        any: [
+          /				PRINTFORMW 「不行…整个人已经快要变奇怪了！…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1085', any: [/			ENDIF/] },
+      { src: K2, ref: '1086', any: [/			CFLAG:304 = 4/] },
+      {
+        src: K2,
+        ref: '1088',
+        any: [
+          /		ELSEIF MARK:2 == 3 &&ABL:31 >= 1 && \(CFLAG:304 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1090', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '1091',
+        any: [
+          /				PRINTFORMW 「呼呼…快看…%SELF_CALL\(TARGET\)%的小穴已经黏糊糊的了…」/,
+        ],
+      },
+      { src: K2, ref: '1092', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1093',
+        any: [/				PRINTFORMW 「嗯嗯…为什么只是手淫…就这么有感觉…」/],
+      },
+      { src: K2, ref: '1094', any: [/			ENDIF/] },
+      { src: K2, ref: '1095', any: [/			CFLAG:304 = 3/] },
+      { src: K2, ref: '1097', any: [/		ELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1099', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '1100',
+        any: [/				PRINTFORMW 「不要…不要…这样看着我…真是…好羞耻…啊…！」/],
+      },
+      { src: K2, ref: '1101', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1102',
+        any: [/				PRINTFORMW 「不行！不要看！不要看着那里！…」/],
+      },
+      { src: K2, ref: '1103', any: [/			ENDIF/] },
+      { src: K2, ref: '1104', any: [/			CFLAG:304 = 2/] },
+      { src: K2, ref: '1105', any: [/		ENDIF/] },
+      { src: K2, ref: '1106', any: [/		RETURN 0/] },
+      { src: K2, ref: '1107', any: [/	ENDIF/] },
+      { src: K2, ref: '1108', any: [/ENDIF/] },
+      { src: K2, ref: '1113', any: [/IF SELECTCOM == 5/] },
+      { src: K2, ref: '1115', any: [/	IF CFLAG:306 == 0/] },
+      {
+        src: K2,
+        ref: '1117',
+        any: [
+          /		IF TALENT:TARGET:130 == 1 && PALAM:5 > PALAMLV:3 && TEQUIP:16 == 0 && TEQUIP:15 == 0/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1119',
+        any: [/			IF TALENT:TARGET:85 == 1 \|\| TALENT:TARGET:76 == 1/],
+      },
+      {
+        src: K2,
+        ref: '1120',
+        any: [
+          /				PRINTFORMW 「如果这样用力揉胸部的话%UNICODE\(0x2661\) \*1%…乳汁都要出来了！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1121',
+        any: [/				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1% 乳汁…乳汁要出来了！」/],
+      },
+      { src: K2, ref: '1123', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1124',
+        any: [/				PRINTFORMW 「呼呼…请随您喜欢地…玩弄这个胸部吧…！」/],
+      },
+      {
+        src: K2,
+        ref: '1125',
+        any: [/				PRINTFORMW 「不…这样的我…这个声音…不来吸吸看吗！有点期待呢……」/],
+      },
+      { src: K2, ref: '1126', any: [/			ENDIF/] },
+      { src: K2, ref: '1127', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1129',
+        any: [/			IF TALENT:TARGET:85 == 1 \|\| TALENT:TARGET:76 == 1/],
+      },
+      {
+        src: K2,
+        ref: '1130',
+        any: [
+          /				PRINTFORMW 「啊…好高兴…请…随您喜欢地玩弄吧…这是主人专用的胸部…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1132', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1133',
+        any: [/				PRINTFORMW 「不要摸那里…感觉…好奇怪…好痒…！」/],
+      },
+      { src: K2, ref: '1134', any: [/			ENDIF/] },
+      { src: K2, ref: '1135', any: [/		ENDIF/] },
+      { src: K2, ref: '1136', any: [/		CFLAG:TARGET:306 = 1/] },
+      { src: K2, ref: '1137', any: [/		RETURN 0/] },
+      { src: K2, ref: '1139', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1141',
+        any: [
+          /		IF TALENT:TARGET:130 == 1 && PALAM:5 > PALAMLV:3 && TEQUIP:16 == 0 && TEQUIP:15 == 0/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1143',
+        any: [
+          /			IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1144',
+        any: [
+          /				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1% 还有很多…这淫荡的…乳汁…要喝下去呐%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1145',
+        any: [
+          /				PRINTFORMW 「又出来了！乳汁…满满…满满地溢出来了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1146', any: [/				CFLAG:306 = 5/] },
+      {
+        src: K2,
+        ref: '1148',
+        any: [
+          /			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1149',
+        any: [
+          /				PRINTFORMW 「乳房被这么用力地吮吸%UNICODE\(0x2661\) \*1%…乳汁都要出来了！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1150',
+        any: [
+          /				PRINTFORMW 「啊啊啊%UNICODE\(0x2661\) \*1% 好的…请喝光吧…啊啊%UNICODE\(0x2661\) \*1% 你这个淘气的大宝宝%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1151', any: [/				CFLAG:306 = 4/] },
+      {
+        src: K2,
+        ref: '1153',
+        any: [/			ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1154',
+        any: [/				PRINTFORMW 「啊啊…又要高潮了么…居然连乳房都…这感觉…唔唔♪」/],
+      },
+      {
+        src: K2,
+        ref: '1155',
+        any: [/				PRINTFORMW 「出来了…啊啊……乳汁都出来了…这感觉好棒！」/],
+      },
+      { src: K2, ref: '1156', any: [/				CFLAG:306 = 3/] },
+      { src: K2, ref: '1158', any: [/			ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1159',
+        any: [/				PRINTFORMW 「呼呼…请随您喜欢地…玩弄这个胸部吧…！」/],
+      },
+      {
+        src: K2,
+        ref: '1160',
+        any: [/				PRINTFORMW 「不…这样的我…这个声音…不来吸吸看吗！有点期待呢……」/],
+      },
+      { src: K2, ref: '1161', any: [/				CFLAG:306 = 2/] },
+      { src: K2, ref: '1162', any: [/			ENDIF/] },
+      { src: K2, ref: '1163', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1165',
+        any: [
+          /			IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1166',
+        any: [/				PRINTFORMW 「啊哈…手指…好冷…这种感觉%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '1167',
+        any: [
+          /				PRINTFORMW 「真是让人…唔唔…胀得发痛呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1168', any: [/				CFLAG:306 = 5/] },
+      {
+        src: K2,
+        ref: '1170',
+        any: [
+          /			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1171',
+        any: [
+          /				PRINTFORMW 「嗯…好舒服…胸部好舒服…整个人都……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1172',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%发出了愉悦的喘息声……/],
+      },
+      { src: K2, ref: '1173', any: [/				CFLAG:306 = 4/] },
+      {
+        src: K2,
+        ref: '1175',
+        any: [/			ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1176',
+        any: [/				PRINTFORMW 「这里…乳房…乳房好舒服…已经有感觉了…！」/],
+      },
+      { src: K2, ref: '1177', any: [/				CFLAG:306 = 3/] },
+      { src: K2, ref: '1179', any: [/			ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1180', any: [/				PRINTFORMW 「不…不要碰那里…拜托……」/] },
+      { src: K2, ref: '1181', any: [/				CFLAG:306 = 2/] },
+      { src: K2, ref: '1182', any: [/			ENDIF/] },
+      { src: K2, ref: '1183', any: [/		ENDIF/] },
+      { src: K2, ref: '1184', any: [/		RETURN 0/] },
+      { src: K2, ref: '1185', any: [/	ENDIF/] },
+      { src: K2, ref: '1186', any: [/ENDIF/] },
+      { src: K2, ref: '1191', any: [/IF SELECTCOM == 6/] },
+      { src: K2, ref: '1193', any: [/	IF CFLAG:307 == 0 && TFLAG:13/] },
+      {
+        src: K2,
+        ref: '1195',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1196',
+        any: [
+          /			PRINTFORMW %SAVESTR:PLAYER%温柔地将%SAVESTR:TARGET%抱住，她高兴地把脸凑过来撒娇。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1197',
+        any: [
+          /			PRINTFORMW 「嘿嘿…怎么样都可以哦魔王大人%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1198',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%可爱地闭上了眼睛，献出了初吻。/],
+      },
+      {
+        src: K2,
+        ref: '1199',
+        any: [
+          /			PRINTFORMW 「呼…这个%UNICODE\(0x2661\) \*1% 这个可是…%SELF_CALL\(TARGET\)%的初吻哦……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1200',
+        any: [
+          /			PRINTFORMW 「嘻嘻～%UNICODE\(0x2661\) \*1% 要开始进入状态了呢～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1202', any: [/			IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '1203',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%妖艳地笑着，好像已经彻底忘记脑海中故乡的恋人了……/,
+        ],
+      },
+      { src: K2, ref: '1204', any: [/			ENDIF/] },
+      {
+        src: K2,
+        ref: '1206',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0/,
+        ],
+      },
+      { src: K2, ref: '1208', any: [/			IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '1209',
+        any: [
+          /				PRINTFORMW 「啊…好…好高兴…能将初吻献给主人呢…请好好品尝…主人…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1210',
+        any: [
+          /				PRINTFORMW （啊…%SELF_CALL\(TARGET\)%…已经将…一切都……献给主人了呢……%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1211',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%一边流着泪和你接吻，一边在脑海中向远方的恋人道歉着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1212',
+        any: [
+          /				PRINTFORMW 「呼呼…好喜欢%UNICODE\(0x2661\) \*1% 更多…继续吻我%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1213', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1214',
+        any: [
+          /				PRINTFORMW 「啊…好…好高兴…能将初吻献给主人呢…请好好品尝…主人…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1215',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%一边热情地回吻一边流下了欢喜的泪水……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1216',
+        any: [/				PRINTFORMW 略显笨拙的嘴唇反而让你兴奋起来了……/],
+      },
+      {
+        src: K2,
+        ref: '1217',
+        any: [
+          /				PRINTFORMW 「呼呼…好喜欢%UNICODE\(0x2661\) \*1% 更多…继续吻我%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1218', any: [/			ENDIF/] },
+      { src: K2, ref: '1220', any: [/		ELSE/] },
+      { src: K2, ref: '1221', any: [/			PRINTFORMW 「唔唔…不要…不要啊……」/] },
+      {
+        src: K2,
+        ref: '1222',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%一边被你吻着一边流下了悲伤的泪水……/],
+      },
+      { src: K2, ref: '1224', any: [/			IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '1225',
+        any: [/				PRINTFORMW 「原谅我…还有这一切…吧……！」/],
+      },
+      {
+        src: K2,
+        ref: '1226',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%想起故乡的恋人，哭出声了……/],
+      },
+      { src: K2, ref: '1227', any: [/			ENDIF/] },
+      { src: K2, ref: '1228', any: [/		ENDIF/] },
+      { src: K2, ref: '1229', any: [/		CFLAG:307 = 1/] },
+      { src: K2, ref: '1230', any: [/		RETURN 0/] },
+      { src: K2, ref: '1232', any: [/	ELSEIF CFLAG:307 == 0/] },
+      { src: K2, ref: '1234', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1235',
+        any: [
+          /			PRINTFORMW 「Mua…Mua…Mua…无论…你要…多少都可以～%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1236',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%热情的嘴唇不停不停与你的唇分开重合着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1237',
+        any: [/			PRINTFORMW 「啊啊…这…更像是…接吻吧…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1239', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '1240',
+        any: [/			PRINTFORMW 「哼…那个人…初吻无法献给你…对不起啊…」/],
+      },
+      { src: K2, ref: '1242', any: [/		ELSE/] },
+      { src: K2, ref: '1243', any: [/			PRINTFORMW 「不…不要…好讨厌…唔呀！…」/] },
+      { src: K2, ref: '1244', any: [/		ENDIF/] },
+      { src: K2, ref: '1245', any: [/		CFLAG:307 = 1/] },
+      { src: K2, ref: '1246', any: [/		RETURN 0/] },
+      { src: K2, ref: '1248', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1250',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1251',
+        any: [
+          /			PRINTFORMW 「Mua…Mua…Mua…无论…你要…多少都可以～%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1252',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%热情的嘴唇不停不停与你的唇分开重合着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1253',
+        any: [
+          /			PRINTFORMW 「呼啊啊%UNICODE\(0x2661\) \*1%…啊啊…就是这里…请多吻我几次…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1254', any: [/			CFLAG:307 = 5/] },
+      {
+        src: K2,
+        ref: '1256',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1257',
+        any: [
+          /			PRINTFORMW 「主人…好…好喜欢接吻…请…亲多少次都可以…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1258',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%高兴地与你接吻了……/],
+      },
+      { src: K2, ref: '1259', any: [/			CFLAG:307 = 4/] },
+      {
+        src: K2,
+        ref: '1261',
+        any: [/		ELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '1262', any: [/			PRINTFORMW 「主人的话…怎样都可以…」/] },
+      { src: K2, ref: '1263', any: [/			CFLAG:307 = 3/] },
+      { src: K2, ref: '1265', any: [/		ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1266', any: [/			PRINTFORMW 「不可以…亲得…那么用力……」/] },
+      { src: K2, ref: '1267', any: [/			CFLAG:307 = 2/] },
+      { src: K2, ref: '1268', any: [/		ENDIF/] },
+      { src: K2, ref: '1269', any: [/		RETURN 0/] },
+      { src: K2, ref: '1270', any: [/	ENDIF/] },
+      { src: K2, ref: '1271', any: [/ENDIF/] },
+      { src: K2, ref: '1276', any: [/IF SELECTCOM == 7/] },
+      { src: K2, ref: '1278', any: [/	IF CFLAG:308 == 0/] },
+      { src: K2, ref: '1280', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1281',
+        any: [
+          /			PRINTFORMW 「看呐…人家的…小穴…已经湿漉漉的了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1282',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%自己张开了小穴，大量的爱液流了出来……/,
+        ],
+      },
+      { src: K2, ref: '1284', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '1285',
+        any: [
+          /			PRINTFORMW 「啊…%SELF_CALL\(TARGET\)%的小穴…请随意地看吧…还是有些不好意思呢…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1286',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%在你的注视下开始兴奋了起来……/],
+      },
+      { src: K2, ref: '1288', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1289',
+        any: [/			PRINTFORMW 「啊啊…好害羞…好想死…怎么可以做出这种姿势……」」/],
+      },
+      {
+        src: K2,
+        ref: '1290',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%分开的小穴里有爱液慢慢地渗出来了……/],
+      },
+      { src: K2, ref: '1291', any: [/		ENDIF/] },
+      { src: K2, ref: '1292', any: [/			CFLAG:TARGET:308 = 1/] },
+      { src: K2, ref: '1293', any: [/			RETURN 0/] },
+      { src: K2, ref: '1295', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1297',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:308 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1298',
+        any: [
+          /			PRINTFORMW 「快%UNICODE\(0x2661\) \*1%快来%UNICODE\(0x2661\) \*1%…用大肉棒来%UNICODE\(0x2661\) \*1%…惩罚…这个…淫乱潮湿的小洞洞吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1299',
+        any: [
+          /			PRINTFORMW 「真是糟糕啊%UNICODE\(0x2661\) \*1%…已经饥渴成这样了…如此不乖的…小穴…请狠狠地操进来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1300',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%露出了母狗般的表情，用手指勾引着%SAVESTR:PLAYER%……/,
+        ],
+      },
+      { src: K2, ref: '1301', any: [/			CFLAG:306 = 5/] },
+      {
+        src: K2,
+        ref: '1303',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:308 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1304',
+        any: [
+          /			PRINTFORMW 「主人的目光…无法忍耐了啊…快点插进来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1305',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%自己张开了小穴，大量的爱液流了出来……/,
+        ],
+      },
+      { src: K2, ref: '1306', any: [/			CFLAG:306 = 4/] },
+      {
+        src: K2,
+        ref: '1308',
+        any: [/		ELSEIF ABL:17 >= 3 && \(CFLAG:308 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1309',
+        any: [
+          /			PRINTFORMW 「请随意观看……%SELF_CALL\(TARGET\)%…已经变成这样的小穴…光是被看就已经受不了啊♪」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1310',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%分开的小穴里有爱液慢慢地渗出来了……/],
+      },
+      { src: K2, ref: '1311', any: [/			CFLAG:306 = 3/] },
+      { src: K2, ref: '1313', any: [/		ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1314',
+        any: [/			PRINTFORMW 「啊啊…好害羞…好想死…怎么可以做出这种姿势」/],
+      },
+      {
+        src: K2,
+        ref: '1315',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%分开的小穴里有爱液慢慢地渗出来了……/],
+      },
+      { src: K2, ref: '1316', any: [/			CFLAG:306 = 2/] },
+      { src: K2, ref: '1317', any: [/		ENDIF/] },
+      { src: K2, ref: '1318', any: [/		RETURN 0/] },
+      { src: K2, ref: '1319', any: [/	ENDIF/] },
+      { src: K2, ref: '1320', any: [/ENDIF/] },
+      { src: K2, ref: '1325', any: [/IF SELECTCOM == 8/] },
+      { src: K2, ref: '1327', any: [/	IF CFLAG:TARGET:309 == 0/] },
+      { src: K2, ref: '1329', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1330',
+        any: [
+          /			PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1%…手指…更加深入了%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%的小穴正在被欺负着呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1331',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边被凌辱一边像是发出邀请一般抬动着腰肢……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1333',
+        any: [/		ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1/],
+      },
+      {
+        src: K2,
+        ref: '1334',
+        any: [
+          /			PRINTFORMW 「啊啊…插进来了…主人的手指…还可以更深一些！用手指大力地搅动吧！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1335',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%配合地扭动着腰肢……/],
+      },
+      { src: K2, ref: '1337', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1338',
+        any: [/			PRINTFORMW 「手指…放进来了…好讨厌啊…啊…不要这样！」/],
+      },
+      { src: K2, ref: '1339', any: [/		ENDIF/] },
+      { src: K2, ref: '1340', any: [/		CFLAG:TARGET:309 = 1/] },
+      { src: K2, ref: '1341', any: [/		RETURN 0/] },
+      { src: K2, ref: '1343', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1345',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:309 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1346',
+        any: [
+          /			PRINTFORMW 「唔唔%UNICODE\(0x2661\) \*1% 手指…更加深入了%UNICODE\(0x2661\) \*1% 不过没关系…请更加深入地调教这个淫乱的小穴吧！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1347',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边呻吟一边像是发出邀请一般抬动着腰肢……/,
+        ],
+      },
+      { src: K2, ref: '1348', any: [/			CFLAG:309 = 5/] },
+      {
+        src: K2,
+        ref: '1350',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && MARK:2 == 3 && \(CFLAG:309 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1351',
+        any: [
+          /			PRINTFORMW 「高潮了…唔啊…手指…唔唔…更！更深一点！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1352',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的小穴伴随着你手指的深入而颤抖着……/],
+      },
+      { src: K2, ref: '1353', any: [/			CFLAG:309 = 4/] },
+      {
+        src: K2,
+        ref: '1355',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:309 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1356',
+        any: [/			PRINTFORMW 「不行…手指…哦哦哦！…屁股不由自主地动起来了…！」/],
+      },
+      { src: K2, ref: '1357', any: [/			CFLAG:309 = 3/] },
+      { src: K2, ref: '1359', any: [/		ELSEIF CFLAG:309 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1360',
+        any: [/			PRINTFORMW 「明明只是…手指…身体…身体居然就自己动起来了…」/],
+      },
+      { src: K2, ref: '1361', any: [/			CFLAG:309 = 2/] },
+      { src: K2, ref: '1362', any: [/		ENDIF/] },
+      { src: K2, ref: '1363', any: [/		RETURN 0/] },
+      { src: K2, ref: '1364', any: [/	ENDIF/] },
+      { src: K2, ref: '1365', any: [/ENDIF/] },
+      { src: K2, ref: '1370', any: [/IF SELECTCOM == 9/] },
+      { src: K2, ref: '1372', any: [/	IF CFLAG:310 == 0/] },
+      { src: K2, ref: '1374', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1375',
+        any: [
+          /			PRINTFORMW 「那%UNICODE\(0x2661\) \*1% 那里…不…不行啊%UNICODE\(0x2661\) \*1% 变奇怪了…屁股小穴变奇怪了呀%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1377', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '1378',
+        any: [
+          /			PRINTFORMW 「主人啊…不要舔那里…好害羞…真是的%UNICODE\(0x2661\) \*1%舌头…伸进去了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1380', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1381',
+        any: [/			PRINTFORMW 「不！不行…那里很脏…啊啊啊啊！」/],
+      },
+      { src: K2, ref: '1382', any: [/		ENDIF/] },
+      { src: K2, ref: '1383', any: [/		CFLAG:TARGET:310 = 1/] },
+      { src: K2, ref: '1384', any: [/		RETURN 0/] },
+      { src: K2, ref: '1386', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1388',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1389',
+        any: [
+          /			PRINTFORMW 「舒服得…快要融化了呢…后面的小穴%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1390',
+        any: [
+          /			PRINTFORMW 「唔唔%UNICODE\(0x2661\) \*1%…好棒…腰都动起来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1391', any: [/			CFLAG:310 = 5/] },
+      {
+        src: K2,
+        ref: '1393',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:310 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1394',
+        any: [/			PRINTFORMW 「唔唔…主人的舌头…伸到屁股里面了…感觉好奇怪…」/],
+      },
+      {
+        src: K2,
+        ref: '1395',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%兴奋地眯起了眼睛，感受着%SAVESTR:PLAYER%的舌头……/,
+        ],
+      },
+      { src: K2, ref: '1396', any: [/			CFLAG:310 = 4/] },
+      {
+        src: K2,
+        ref: '1398',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:310 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1399',
+        any: [/			PRINTFORMW 「主人的…命令…什么都…唔唔！」/],
+      },
+      { src: K2, ref: '1400', any: [/			CFLAG:310 = 3/] },
+      { src: K2, ref: '1402', any: [/		ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1403',
+        any: [
+          /			PRINTFORMW 「哎呀…心情好奇怪…原谅我…原谅我…后面的小穴…这奇妙的快感……」/,
+        ],
+      },
+      { src: K2, ref: '1404', any: [/			CFLAG:310 = 2/] },
+      { src: K2, ref: '1405', any: [/		ENDIF/] },
+      { src: K2, ref: '1406', any: [/		RETURN 0/] },
+      { src: K2, ref: '1407', any: [/	ENDIF/] },
+      { src: K2, ref: '1408', any: [/ENDIF/] },
+      { src: K2, ref: '1413', any: [/IF SELECTCOM == 10/] },
+      { src: K2, ref: '1415', any: [/	IF CFLAG:TARGET:311 == 0/] },
+      { src: K2, ref: '1417', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1418',
+        any: [
+          /			PRINTFORMW 「哦哦%UNICODE\(0x2661\) \*1% 这个可爱的小东西…%UNICODE\(0x2661\) \*1% 可是%SELF_CALL\(TARGET\)%…更想要主人的肉棒呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1420',
+        any: [/		ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1/],
+      },
+      {
+        src: K2,
+        ref: '1421',
+        any: [
+          /			PRINTFORMW 「呼呼…这个小东西…好可爱呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1423', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1424',
+        any: [/			PRINTFORMW 「这，这宝石…为什么在颤抖…不行不行！别放上来！」/],
+      },
+      { src: K2, ref: '1425', any: [/		ENDIF/] },
+      { src: K2, ref: '1426', any: [/		CFLAG:TARGET:311 = 1/] },
+      { src: K2, ref: '1427', any: [/		RETURN 0/] },
+      { src: K2, ref: '1429', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1431',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:311 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1432',
+        any: [
+          /			PRINTFORMW 「这…这感觉%UNICODE\(0x2661\) \*1% 连腰部也不由自主地…%UNICODE\(0x2661\) \*1% 忍不住了！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1433',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%淫荡地扭动着腰部，紧紧地把振动宝石按住不放……/,
+        ],
+      },
+      { src: K2, ref: '1434', any: [/			CFLAG:311 = 5/] },
+      {
+        src: K2,
+        ref: '1436',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && MARK:2 == 3 && \(CFLAG:311 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1437',
+        any: [
+          /			PRINTFORMW 「唔…嗯…好舒服…主人……再压紧点…啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1438',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的阴蒂在宝石的剧烈振动下高潮了……/],
+      },
+      { src: K2, ref: '1439', any: [/			CFLAG:311 = 4/] },
+      {
+        src: K2,
+        ref: '1441',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:311 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1442',
+        any: [/			PRINTFORMW 「啊啊啊！不行！腰不由自主地动起来了！」/],
+      },
+      { src: K2, ref: '1443', any: [/			CFLAG:311 = 3/] },
+      { src: K2, ref: '1445', any: [/		ELSEIF CFLAG:311 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1446',
+        any: [/			PRINTFORMW 「唔……继续那样压紧的话……会变得好奇怪！」/],
+      },
+      { src: K2, ref: '1447', any: [/			CFLAG:311 = 2/] },
+      { src: K2, ref: '1448', any: [/		ENDIF/] },
+      { src: K2, ref: '1449', any: [/		RETURN 0/] },
+      { src: K2, ref: '1450', any: [/	ENDIF/] },
+      { src: K2, ref: '1451', any: [/ENDIF/] },
+      { src: K2, ref: '1457', any: [/IF SELECTCOM == 11 && TEQUIP:11/] },
+      { src: K2, ref: '1459', any: [/	IF CFLAG:TARGET:312 == 0/] },
+      { src: K2, ref: '1461', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '1463', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '1464',
+        any: [
+          /				PRINTFORMW 「啊啊…%UNICODE\(0x2661\) \*1% 好舒服…那个小虫子在向深处侵犯着…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1465',
+        any: [
+          /				PRINTFORMW 「%SELF_CALL\(TARGET\)%的处女…终于被夺走了…啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1466',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%在%SAVESTR:TARGET%的子宫深处种入了蠕虫……/,
+        ],
+      },
+      { src: K2, ref: '1468', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '1469',
+        any: [
+          /				PRINTFORMW 「啊啊…拜托…主人…至少用大肉棒来夺走%SELF_CALL\(TARGET\)%的贞操嘛…唔唔！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1470',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的身体向后仰起，努力忍受着破瓜的痛楚……/,
+        ],
+      },
+      { src: K2, ref: '1472', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '1473',
+        any: [/				PRINTFORMW 「不行！不行！好讨厌啊啊啊啊！」/],
+      },
+      { src: K2, ref: '1474', any: [/			ENDIF/] },
+      { src: K2, ref: '1476', any: [/		ELSE/] },
+      { src: K2, ref: '1478', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '1479',
+        any: [
+          /				PRINTFORMW 「这感觉%UNICODE\(0x2661\) \*1% 进去得…好深…唔唔%UNICODE\(0x2661\) \*1% 啊啊啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1480',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%的身体随着蠕虫的深入而颤抖着……/],
+      },
+      { src: K2, ref: '1482', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '1483',
+        any: [
+          /				PRINTFORMW 「唔唔…比起这个，人家明明更想要大肉棒来侵犯自己嘛…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1485', any: [/			ELSE/] },
+      { src: K2, ref: '1486', any: [/				PRINTFORMW 「什么…这…这感觉…不要！」/] },
+      { src: K2, ref: '1487', any: [/			ENDIF/] },
+      { src: K2, ref: '1488', any: [/		ENDIF/] },
+      { src: K2, ref: '1489', any: [/		CFLAG:312 = 1/] },
+      { src: K2, ref: '1490', any: [/		RETURN 0/] },
+      { src: K2, ref: '1492', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1494',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:312 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1495',
+        any: [
+          /			PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%…朝着小穴的深处…进来吧%UNICODE\(0x2661\) \*1%…呼呼呼呼%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1496',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%随着蠕虫的深入发出了淫荡的喘息……/],
+      },
+      { src: K2, ref: '1497', any: [/			CFLAG:312 = 5/] },
+      {
+        src: K2,
+        ref: '1499',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:312 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1500',
+        any: [
+          /			PRINTFORMW 「心…心情变的好期待%UNICODE\(0x2661\) \*1%…蠕虫…进入小穴的深处…还在咕啾咕啾地发出响动%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1501',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%期待着蠕虫更加深入……/],
+      },
+      { src: K2, ref: '1502', any: [/			CFLAG:312 = 4/] },
+      {
+        src: K2,
+        ref: '1504',
+        any: [/		ELSEIF ABL:2 >= 3 && \(CFLAG:312 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1505',
+        any: [/			PRINTFORMW 「不行了…这感觉…太棒了…蠕虫什么的…好厉害…」/],
+      },
+      { src: K2, ref: '1506', any: [/			CFLAG:312 = 3/] },
+      { src: K2, ref: '1508', any: [/		ELSEIF CFLAG:312 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1509',
+        any: [/			PRINTFORMW 「啊啊…好奇怪…不行…不行啊…那里！…」/],
+      },
+      { src: K2, ref: '1510', any: [/			CFLAG:312 = 2/] },
+      { src: K2, ref: '1511', any: [/		ENDIF/] },
+      { src: K2, ref: '1512', any: [/		RETURN 0/] },
+      { src: K2, ref: '1513', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '1515',
+        any: [/ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0/],
+      },
+      {
+        src: K2,
+        ref: '1517',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:372 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1518',
+        any: [/		PRINTFORMW 「啊啊…再往深处去一点嘛……%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1519', any: [/		CFLAG:372 = 3/] },
+      {
+        src: K2,
+        ref: '1521',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:372 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1522',
+        any: [
+          /		PRINTFORMW 「唔唔…小虫子…就这么放进来了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1523', any: [/		CFLAG:372 = 2/] },
+      { src: K2, ref: '1525', any: [/	ELSEIF CFLAG:372 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1526', any: [/		PRINTFORMW 「唔…唔…感觉…好奇怪…」/] },
+      { src: K2, ref: '1527', any: [/		CFLAG:372 = 1/] },
+      { src: K2, ref: '1528', any: [/	ENDIF/] },
+      { src: K2, ref: '1529', any: [/	RETURN 0/] },
+      { src: K2, ref: '1530', any: [/ENDIF/] },
+      { src: K2, ref: '1535', any: [/IF SELECTCOM == 12/] },
+      { src: K2, ref: '1537', any: [/	IF CFLAG:313 == 0/] },
+      { src: K2, ref: '1539', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '1540',
+        any: [
+          /			PRINTFORMW 「哎呀%UNICODE\(0x2661\) \*1% 这不是玩具么？%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1541',
+        any: [
+          /			PRINTFORMW 「还有点……%UNICODE\(0x2661\) \*1% 不习惯呢…嘻嘻%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1543', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '1544',
+        any: [
+          /			PRINTFORMW 「天啊！这感觉！好棒！主人！这玩具好棒啊啊啊！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1546', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1547',
+        any: [
+          /			PRINTFORMW 「不…不…%SELF_CALL\(TARGET\)%可不是你的玩物啊…唔唔唔唔唔唔！」/,
+        ],
+      },
+      { src: K2, ref: '1548', any: [/		ENDIF/] },
+      { src: K2, ref: '1549', any: [/		CFLAG:313 = 1/] },
+      { src: K2, ref: '1550', any: [/		RETURN 0/] },
+      { src: K2, ref: '1552', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1554',
+        any: [/		IF TALENT:76 == 1 && \(CFLAG:313 <= 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1555',
+        any: [
+          /			PRINTFORMW 「唔唔…这剧烈的震动感%UNICODE\(0x2661\) \*1% 让小穴都要融化了啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1556',
+        any: [
+          /			PRINTFORMW 「好奇怪…主人你想试试吗？%UNICODE\(0x2661\) \*1%感觉好棒！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1557', any: [/			CFLAG:313 = 5/] },
+      {
+        src: K2,
+        ref: '1559',
+        any: [/		ELSEIF TALENT:85 == 1 && \(CFLAG:313 <= 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1560',
+        any: [
+          /			PRINTFORMW 「唔唔！整个人都发麻了！不要停啊！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1561',
+        any: [
+          /			PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% 这感觉…就这么涌上来了…唔唔…好厉害%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1562', any: [/			CFLAG:313 = 4/] },
+      {
+        src: K2,
+        ref: '1564',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:313 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1565',
+        any: [/			PRINTFORMW 「唔唔唔…啊！不要再弄啦…可是这感觉…！」/],
+      },
+      { src: K2, ref: '1566', any: [/			CFLAG:313 = 3/] },
+      { src: K2, ref: '1568', any: [/		ELSEIF CFLAG:313 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1569',
+        any: [/			PRINTFORMW 「这震动…的感觉…身体自发地颤抖起来了！」/],
+      },
+      { src: K2, ref: '1570', any: [/			CFLAG:313 = 2/] },
+      { src: K2, ref: '1571', any: [/		ENDIF/] },
+      { src: K2, ref: '1572', any: [/		RETURN 0/] },
+      { src: K2, ref: '1573', any: [/	ENDIF/] },
+      { src: K2, ref: '1574', any: [/ENDIF/] },
+      { src: K2, ref: '1580', any: [/IF SELECTCOM == 13 && TEQUIP:13/] },
+      { src: K2, ref: '1582', any: [/	IF CFLAG:TARGET:314 == 0/] },
+      { src: K2, ref: '1584', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1585',
+        any: [
+          /			PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1% 好样的生物…快让我尝尝…它的味道%UNICODE\(0x2661\) \*1% 比真人还要棒么？%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1587', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '1588',
+        any: [
+          /			PRINTFORMW 「啊啊啊…这样的生物要从后面进来…拜、拜托请温柔一些…」/,
+        ],
+      },
+      { src: K2, ref: '1590', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1591',
+        any: [/			PRINTFORMW 「什…什么啊这可怕的玩意…不许过来！」/],
+      },
+      { src: K2, ref: '1592', any: [/		ENDIF/] },
+      { src: K2, ref: '1593', any: [/		CFLAG:TARGET:314 = 1/] },
+      { src: K2, ref: '1594', any: [/		RETURN 0/] },
+      { src: K2, ref: '1596', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1598',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:314 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1599',
+        any: [
+          /			PRINTFORMW 「唔哦…在里面…%UNICODE\(0x2661\) \*1% 不停搅动着…好厉害！%UNICODE\(0x2661\) \*1% 继续不要停！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1600',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的肛门因为蠕虫的进入而分泌出了粘液，%SAVESTR:TARGET%高兴地扭动着屁股要求更多。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1601',
+        any: [
+          /			PRINTFORMW 「呜呜…后面已经这么淫荡了吗%UNICODE\(0x2661\) \*1% 屁眼已经高潮了啊啊！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1602', any: [/			CFLAG:314 = 7/] },
+      {
+        src: K2,
+        ref: '1604',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:314 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1605',
+        any: [
+          /			PRINTFORMW 「嘻嘻%UNICODE\(0x2661\) \*1%…再深入一些吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1606',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的肛门因为蠕虫的进入而分泌出了粘液。蠕虫在%SAVESTR:TARGET%的肛门里横冲直撞。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1607',
+        any: [
+          /			PRINTFORMW 「嘻嘻…好棒啊%UNICODE\(0x2661\) \*1% 啊啊啊…蠕虫在里面肆虐的感觉……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1608', any: [/			CFLAG:314 = 6/] },
+      {
+        src: K2,
+        ref: '1610',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:314 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1611',
+        any: [
+          /			PRINTFORMW 「啊主人…屁股里…好棒…好高兴…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1612',
+        any: [/			PRINTFORMW 蠕虫慢慢朝着%SAVESTR:TARGET%的尻穴深处进发……/],
+      },
+      { src: K2, ref: '1613', any: [/			CFLAG:314 = 5/] },
+      {
+        src: K2,
+        ref: '1615',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:314 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1616',
+        any: [/			PRINTFORMW 「主人啊…请温柔地…温柔的侵犯人家的屁股吧…」/],
+      },
+      { src: K2, ref: '1617', any: [/			CFLAG:314 = 4/] },
+      {
+        src: K2,
+        ref: '1619',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:314 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1620',
+        any: [/			PRINTFORMW 「屁股小穴…居然有感觉了…明明很奇怪…明明很奇怪…」/],
+      },
+      { src: K2, ref: '1621', any: [/			CFLAG:314 = 3/] },
+      {
+        src: K2,
+        ref: '1623',
+        any: [/		ELSEIF  CFLAG:314 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '1624',
+        any: [/			PRINTFORMW 「啊啊啊…屁股…太过分…太过分了…」/],
+      },
+      { src: K2, ref: '1625', any: [/			CFLAG:314 = 2/] },
+      { src: K2, ref: '1626', any: [/		ENDIF/] },
+      { src: K2, ref: '1627', any: [/		RETURN 0/] },
+      { src: K2, ref: '1628', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '1630',
+        any: [/ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0/],
+      },
+      {
+        src: K2,
+        ref: '1632',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:374 < 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1633',
+        any: [
+          /		PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1% 下次…用更粗的塞进来吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1634',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%淫荡地扭动着屁股……/],
+      },
+      { src: K2, ref: '1635', any: [/		CFLAG:374 = 4/] },
+      {
+        src: K2,
+        ref: '1637',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:374 < 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1638',
+        any: [
+          /		PRINTFORMW 「哈…哈…后面的小穴…已经自己张开了…主人…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1639', any: [/		CFLAG:374 = 3/] },
+      {
+        src: K2,
+        ref: '1641',
+        any: [/	ELSEIF ABL:3 >= 3 && \(CFLAG:374 < 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1642',
+        any: [/		PRINTFORMW 「啊啊…这感觉…感觉越来越好了…呢…下次再多进去一点…」/],
+      },
+      { src: K2, ref: '1643', any: [/		CFLAG:374 = 2/] },
+      { src: K2, ref: '1645', any: [/	ELSEIF CFLAG:374 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1646', any: [/		PRINTFORMW 「哈…哈…终于…拔出去了…」/] },
+      { src: K2, ref: '1647', any: [/		CFLAG:374 = 1/] },
+      { src: K2, ref: '1648', any: [/	ENDIF/] },
+      { src: K2, ref: '1649', any: [/	RETURN 0/] },
+      { src: K2, ref: '1650', any: [/ENDIF/] },
+      { src: K2, ref: '1656', any: [/IF SELECTCOM == 14 && TEQUIP:14/] },
+      { src: K2, ref: '1658', any: [/	IF CFLAG:315 == 0/] },
+      { src: K2, ref: '1660', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '1661',
+        any: [
+          /			PRINTFORMW 「哈啊%UNICODE\(0x2661\) \*1% 快用夹子夹住，快点%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1663', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '1664',
+        any: [/			PRINTFORMW 「主人啊…好可怕…我会努力忍耐的…请…请随意玩弄…」/],
+      },
+      { src: K2, ref: '1666', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1667',
+        any: [/			PRINTFORMW 「这、这难道是…不行！不不行！」/],
+      },
+      { src: K2, ref: '1668', any: [/		ENDIF/] },
+      { src: K2, ref: '1669', any: [/		CFLAG:315 = 1/] },
+      { src: K2, ref: '1670', any: [/		RETURN 0/] },
+      { src: K2, ref: '1672', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1674',
+        any: [/		IF TALENT:76 == 1 && \(CFLAG:315 <= 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1675',
+        any: [
+          /			PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1% 阴蒂夹的感觉%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1676',
+        any: [
+          /			PRINTFORMW 「啊啊啊…好厉害…那里已经都黏糊糊的了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1677', any: [/			CFLAG:315 = 4/] },
+      {
+        src: K2,
+        ref: '1679',
+        any: [/		ELSEIF TALENT:85 == 1 && \(CFLAG:315 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1680',
+        any: [/			PRINTFORMW 「唔…呼。主人…可以夹得更紧%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '1681',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%被阴蒂夹爽到浑身痉挛……/],
+      },
+      { src: K2, ref: '1682', any: [/			CFLAG:315 = 3/] },
+      { src: K2, ref: '1684', any: [/		ELSEIF CFLAG:315 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1685', any: [/			PRINTFORMW 「啊啊啊…好可怕…好可怕…！」/] },
+      { src: K2, ref: '1686', any: [/			CFLAG:315 = 2/] },
+      { src: K2, ref: '1687', any: [/		ENDIF/] },
+      { src: K2, ref: '1688', any: [/		RETURN 0/] },
+      { src: K2, ref: '1689', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '1691',
+        any: [/ELSEIF SELECTCOM == 14 && TEQUIP:14 == 0/],
+      },
+      {
+        src: K2,
+        ref: '1693',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:375 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1694',
+        any: [/		PRINTFORMW 「啊哈…小豆豆…想要…更多…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1695', any: [/		CFLAG:375 = 3/] },
+      {
+        src: K2,
+        ref: '1697',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:375 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1698',
+        any: [/		PRINTFORMW 「呼…呼…主人…可以夹得更紧…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1699', any: [/		CFLAG:375 = 2/] },
+      { src: K2, ref: '1701', any: [/	ELSEIF CFLAG:375 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1702', any: [/		PRINTFORMW 「呼…呼…小豆豆…好辛苦…」/] },
+      { src: K2, ref: '1703', any: [/		CFLAG:375 = 1/] },
+      { src: K2, ref: '1704', any: [/	ENDIF/] },
+      { src: K2, ref: '1705', any: [/	RETURN 0/] },
+      { src: K2, ref: '1706', any: [/ENDIF/] },
+      { src: K2, ref: '1712', any: [/IF SELECTCOM == 15 && TEQUIP:15/] },
+      { src: K2, ref: '1714', any: [/	IF CFLAG:316 == 0/] },
+      { src: K2, ref: '1716', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '1717',
+        any: [
+          /			PRINTFORMW 「嘻嘻%UNICODE\(0x2661\) \*1%…乳头的话…也没问题哦…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1719', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '1720',
+        any: [/			PRINTFORMW 「无论哪里都可以…胸部…已经有感觉了…快爱我…主人」/],
+      },
+      { src: K2, ref: '1722', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1723',
+        any: [/			PRINTFORMW 「不要！请不要用这东西夹住乳房…嗯嗯嗯嗯嗯！」/],
+      },
+      { src: K2, ref: '1724', any: [/		ENDIF/] },
+      { src: K2, ref: '1725', any: [/		CFLAG:316 = 1/] },
+      { src: K2, ref: '1726', any: [/		RETURN 0/] },
+      { src: K2, ref: '1728', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1730',
+        any: [/		IF TALENT:76 == 1 && \(CFLAG:316 <= 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1731',
+        any: [
+          /			PRINTFORMW 「哈…这样弄的话%UNICODE\(0x2661\) \*1% 乳房…要融化了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1732', any: [/			CFLAG:316 = 4/] },
+      {
+        src: K2,
+        ref: '1734',
+        any: [/		ELSEIF TALENT:85 == 1 && \(CFLAG:316 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1735',
+        any: [/			PRINTFORMW 「乳头…已经勃起了…请更加用力地欺负我吧…魔王大人…」/],
+      },
+      { src: K2, ref: '1736', any: [/			CFLAG:316 = 3/] },
+      { src: K2, ref: '1738', any: [/		ELSEIF CFLAG:316 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1739', any: [/			PRINTFORMW 「胸部…变…变奇怪了呢…」/] },
+      { src: K2, ref: '1740', any: [/			CFLAG:316 = 2/] },
+      { src: K2, ref: '1741', any: [/		ENDIF/] },
+      { src: K2, ref: '1742', any: [/		RETURN 0/] },
+      { src: K2, ref: '1743', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '1745',
+        any: [/ELSEIF SELECTCOM == 15 && TEQUIP:15 == 0/],
+      },
+      {
+        src: K2,
+        ref: '1747',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:376 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1748',
+        any: [/		PRINTFORMW 「是啊啊啊…乳房…好开心！…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1749', any: [/		CFLAG:376 = 3/] },
+      {
+        src: K2,
+        ref: '1751',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:376 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1752', any: [/		PRINTFORMW 「主人…乳房都要融化了啦…」/] },
+      { src: K2, ref: '1753', any: [/		CFLAG:376 = 2/] },
+      { src: K2, ref: '1755', any: [/	ELSEIF CFLAG:376 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1756',
+        any: [/		PRINTFORMW 「呼…呼…乳头…好像都不属于自己了…」/],
+      },
+      { src: K2, ref: '1757', any: [/		CFLAG:376 = 1/] },
+      { src: K2, ref: '1758', any: [/	ENDIF/] },
+      { src: K2, ref: '1759', any: [/	RETURN 0/] },
+      { src: K2, ref: '1760', any: [/ENDIF/] },
+      { src: K2, ref: '1766', any: [/IF SELECTCOM == 16 && TEQUIP:16/] },
+      { src: K2, ref: '1768', any: [/	IF CFLAG:317 == 0/] },
+      { src: K2, ref: '1770', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '1771',
+        any: [/			PRINTFORMW 「嗯…会变成乳牛的…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1773', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '1774',
+        any: [
+          /			PRINTFORMW 「啊…简直…就像变成母牛一样…%UNICODE\(0x2661\) \*1%啊啊…乳汁漏出来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1776', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1777',
+        any: [/			PRINTFORMW 「讨厌…把%SELF_CALL\(TARGET\)%…当成奶牛了么……」/],
+      },
+      { src: K2, ref: '1778', any: [/		ENDIF/] },
+      { src: K2, ref: '1779', any: [/		CFLAG:317 = 1/] },
+      { src: K2, ref: '1782', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1784',
+        any: [/		IF TALENT:76 == 1 && \(CFLAG:317 <= 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1785',
+        any: [/			PRINTFORMW 「啊…变成乳牛了啊啊啊啊啊…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '1786',
+        any: [
+          /			PRINTFORMW 「啊…一会一起喝乳汁吧…呼呼呼呼%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1787', any: [/			CFLAG:317 = 4/] },
+      {
+        src: K2,
+        ref: '1789',
+        any: [/		ELSEIF TALENT:85 == 1 && \(CFLAG:317 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1790',
+        any: [
+          /			PRINTFORMW 「好多乳汁流出来了…好像…好厉害…啊…好舒服…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1791', any: [/			CFLAG:317 = 3/] },
+      { src: K2, ref: '1793', any: [/		ELSEIF CFLAG:317 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '1794',
+        any: [/			PRINTFORMW 「嗯…乳房…乳房被啊啊啊啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '1795', any: [/			CFLAG:317 = 2/] },
+      { src: K2, ref: '1796', any: [/		ENDIF/] },
+      { src: K2, ref: '1797', any: [/		RETURN 0/] },
+      { src: K2, ref: '1798', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '1800',
+        any: [/ELSEIF SELECTCOM == 16 && TEQUIP:16 == 0/],
+      },
+      {
+        src: K2,
+        ref: '1802',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:377 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1803',
+        any: [
+          /		PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% 到底流出了多少乳汁？」/,
+        ],
+      },
+      { src: K2, ref: '1804', any: [/		CFLAG:377 = 3/] },
+      {
+        src: K2,
+        ref: '1806',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:377 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '1807', any: [/		PRINTFORMW 「啊…明明想要更多的……」/] },
+      { src: K2, ref: '1808', any: [/		CFLAG:377 = 2/] },
+      { src: K2, ref: '1810', any: [/	ELSEIF CFLAG:377 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1811', any: [/		PRINTFORMW 「啊…请…放过我吧……」/] },
+      { src: K2, ref: '1812', any: [/		CFLAG:377 = 1/] },
+      { src: K2, ref: '1813', any: [/	ENDIF/] },
+      { src: K2, ref: '1814', any: [/	RETURN 0/] },
+      { src: K2, ref: '1815', any: [/ENDIF/] },
+      { src: K2, ref: '1864', any: [/IF SELECTCOM == 19 && TEQUIP:19/] },
+      { src: K2, ref: '1866', any: [/	IF CFLAG:TARGET:320 == 0/] },
+      { src: K2, ref: '1868', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '1869',
+        any: [
+          /			PRINTFORMW 「好…屁股里都被塞满了呢…被这个小玩具塞满了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1871', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '1872',
+        any: [
+          /			PRINTFORMW 「主人啊…有点害怕呢…不过全部放进来也没关系！…只要魔王大人高兴就好%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1874', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '1875',
+        any: [/			PRINTFORMW 「啊啊啊！那种东西居然要全部放进来吗！肚子好痛！」/],
+      },
+      { src: K2, ref: '1876', any: [/		ENDIF/] },
+      { src: K2, ref: '1877', any: [/		CFLAG:TARGET:320 = 1/] },
+      { src: K2, ref: '1878', any: [/		RETURN 0/] },
+      { src: K2, ref: '1880', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '1882',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:320 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1883',
+        any: [
+          /			PRINTFORMW 「呼呼…后面被小珠珠塞满了…好棒的玩具%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1884',
+        any: [
+          /			PRINTFORMW 「在…摩擦着发出响声呢…呼呼%UNICODE\(0x2661\) \*1% 好动听呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1885',
+        any: [
+          /			PRINTFORMW 「就是这样…不要…不要…不要拔出来%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1886', any: [/			CFLAG:320 = 7/] },
+      {
+        src: K2,
+        ref: '1888',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:320 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1889',
+        any: [
+          /			PRINTFORMW 「呼呼…后面被小珠珠塞满了…好棒的玩具%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1890',
+        any: [
+          /			PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1%整个人…都变得酥麻了…后面被塞得满满的……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1891', any: [/			CFLAG:320 = 6/] },
+      {
+        src: K2,
+        ref: '1893',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:320 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1894',
+        any: [
+          /			PRINTFORMW 「啊啊啊…肚子好痛…全部放进来以后却好舒服…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1895',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%脸上浮现出短暂的痛苦，一边喘气一边妖艳地微笑着……/,
+        ],
+      },
+      { src: K2, ref: '1896', any: [/			CFLAG:320 = 5/] },
+      {
+        src: K2,
+        ref: '1898',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:320 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1899',
+        any: [/			PRINTFORMW 「全部…放进来了…主人…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '1900',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%脸上浮现出痛苦，一边喘气一边妖艳地微笑着……/,
+        ],
+      },
+      { src: K2, ref: '1901', any: [/			CFLAG:320 = 4/] },
+      {
+        src: K2,
+        ref: '1903',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:320 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1904',
+        any: [/			PRINTFORMW 「屁股…好厉害…里面还在摩擦着发出响声！」/],
+      },
+      { src: K2, ref: '1905', any: [/			CFLAG:320 = 3/] },
+      {
+        src: K2,
+        ref: '1907',
+        any: [/		ELSEIF  CFLAG:320 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '1908',
+        any: [/			PRINTFORMW 「啊啊…会好难受…肚子会好痛的…不可以…」/],
+      },
+      { src: K2, ref: '1909', any: [/			CFLAG:320 = 2/] },
+      { src: K2, ref: '1910', any: [/		ENDIF/] },
+      { src: K2, ref: '1911', any: [/		RETURN 0/] },
+      { src: K2, ref: '1912', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '1914',
+        any: [/ELSEIF SELECTCOM == 19 && TEQUIP:19 == 0/],
+      },
+      {
+        src: K2,
+        ref: '1916',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:379 < 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1917',
+        any: [
+          /		PRINTFORMW 「啊啊啊啊%UNICODE\(0x2661\) \*1% 内脏…好像都要被一起…拉出去了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '1918', any: [/		CFLAG:379 = 4/] },
+      {
+        src: K2,
+        ref: '1920',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:379 < 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1921',
+        any: [
+          /		PRINTFORMW 「唔哦哦！全部都被揪出去了！小珠珠全都出去了啊啊！」/,
+        ],
+      },
+      { src: K2, ref: '1922', any: [/		CFLAG:379 = 3/] },
+      {
+        src: K2,
+        ref: '1924',
+        any: [/	ELSEIF ABL:3 >= 3 && \(CFLAG:379 < 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '1925',
+        any: [/		PRINTFORMW 「居然全部…屁股小穴…有没尽兴呢…」/],
+      },
+      { src: K2, ref: '1926', any: [/		CFLAG:379 = 2/] },
+      { src: K2, ref: '1928', any: [/	ELSEIF CFLAG:379 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '1929', any: [/		PRINTFORMW 「哈…哈…终于结束了…」/] },
+      { src: K2, ref: '1930', any: [/		CFLAG:379 = 1/] },
+      { src: K2, ref: '1931', any: [/	ENDIF/] },
+      { src: K2, ref: '1932', any: [/	RETURN 0/] },
+      { src: K2, ref: '1933', any: [/ENDIF/] },
+      { src: K2, ref: '1938', any: [/IF SELECTCOM == 20/] },
+      { src: K2, ref: '1940', any: [/	IF CFLAG:TARGET:321 == 0/] },
+      { src: K2, ref: '1942', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '1944', any: [/			IF TALENT:76 == 1/] },
+      { src: K2, ref: '1946', any: [/				IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '1947',
+        any: [
+          /					PRINTFORMW 「嘶…%UNICODE\(0x2661\) \*1% 好奇怪…明、明明…听说会很疼的呐…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1948',
+        any: [
+          /					PRINTFORMW 「明……%UNICODE\(0x2661\) \*1%明白了…一定是因为…成为魔王大人的专属肉便器…所以一点也不疼呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1949',
+        any: [
+          /					PRINTFORMW 阴茎反复在%SAVESTR:TARGET%的小穴进出着，并在子宫口用力地搅动……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1950',
+        any: [
+          /					PRINTFORMW 「哦%UNICODE\(0x2661\) \*1%…请…用力地…侵犯我%UNICODE\(0x2661\) \*1% 小淫穴…还要更多%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1951',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%紧紧地搂住%SAVESTR:PLAYER%，双腿还用力缠住%SAVESTR:PLAYER%的腰向下压……/,
+        ],
+      },
+      { src: K2, ref: '1953', any: [/				ELSE/] },
+      { src: K2, ref: '1955', any: [/					IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '1956',
+        any: [
+          /						PRINTFORMW 「啊%UNICODE\(0x2661\) \*1%…啊…哈…嗯……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1957',
+        any: [
+          /						PRINTFORMW 「啊…虽然很痛…但是好幸福%UNICODE\(0x2661\) \*1% 魔王大人的肉棒%UNICODE\(0x2661\) \*1%…顶…顶到子宫了呀…哎呀呀呀！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1958',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%的身体向后蜷曲，发出了一声悲鸣。/],
+      },
+      {
+        src: K2,
+        ref: '1959',
+        any: [
+          /						PRINTFORMW 「能够被…魔王大人侵犯…%UNICODE\(0x2661\) \*1% 真是…好厉害的大肉棒，在小穴里抽动着%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1960',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%已经不会再想起故乡的恋人了……/],
+      },
+      { src: K2, ref: '1961', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '1962',
+        any: [
+          /						PRINTFORMW 「啊%UNICODE\(0x2661\) \*1%…啊…哈…唔……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1963',
+        any: [
+          /						PRINTFORMW 「啊…虽然很痛…但是好幸福%UNICODE\(0x2661\) \*1% 魔王大人的肉棒%UNICODE\(0x2661\) \*1%…顶…顶到子宫了呀…哎呀呀呀！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1964',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%的身体向后蜷曲，发出了一声悲鸣。/],
+      },
+      {
+        src: K2,
+        ref: '1965',
+        any: [
+          /						PRINTFORMW 「啊…嗯…没关系的%UNICODE\(0x2661\) \*1% 刚、刚开始有感觉哦…还要更多才可以%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1966',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%流下了眼泪，被%SAVESTR:PLAYER%抱在怀中……/,
+        ],
+      },
+      { src: K2, ref: '1967', any: [/					ENDIF/] },
+      { src: K2, ref: '1968', any: [/				ENDIF/] },
+      { src: K2, ref: '1970', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '1972', any: [/				IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '1973',
+        any: [
+          /					PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1% 大肉棒…顶到子宫了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1974',
+        any: [
+          /					PRINTFORMW 「这具%UNICODE\(0x2661\) \*1% 魔族的身体为什么…还能…哦…感觉到痛楚%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1975',
+        any: [
+          /					PRINTFORMW 「啊…主人身为魔族的大肉棒…好有感觉…明明是第一次啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1976',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%搂住%SAVESTR:PLAYER%，双腿紧紧地缠住了%SAVESTR:PLAYER%的腰。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1977',
+        any: [
+          /					PRINTFORMW 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…的第一次…就这么…献给你了%UNICODE\(0x2661\) \*1%…好开心～！」/,
+        ],
+      },
+      { src: K2, ref: '1979', any: [/				ELSE/] },
+      { src: K2, ref: '1981', any: [/					IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '1982',
+        any: [
+          /						PRINTFORMW 「主人呐…好开心…%SELF_CALL\(TARGET\)%的处女…能够献给主人…好开心…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1983',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%流下了欢喜的泪水，%SAVESTR:PLAYER%也操得更起劲了。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1984',
+        any: [
+          /						PRINTFORMW 「%SELF_CALL\(TARGET\)%…今后…一直…一直都是主人的东西…啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1985',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%有一瞬间想起了某个重要的人，但他马上就从脑海里消失了……/,
+        ],
+      },
+      { src: K2, ref: '1986', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '1987',
+        any: [
+          /						PRINTFORMW 「主人呐…好开心…%SELF_CALL\(TARGET\)%的处女…能够献给主人…好开心…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1988',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%流下了欢喜的泪水，%SAVESTR:PLAYER%也操得更起劲了。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1989',
+        any: [
+          /						PRINTFORMW 双手被%SAVESTR:PLAYER%压在身后，乳房被魔王大力吮吸还要忍耐着破瓜的痛楚。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1990',
+        any: [/						PRINTFORMW 「夺走这没用的贞操…主人您的大恩大德…没齿难忘…」/],
+      },
+      { src: K2, ref: '1991', any: [/					ENDIF/] },
+      { src: K2, ref: '1992', any: [/				ENDIF/] },
+      { src: K2, ref: '1994', any: [/			ELSE/] },
+      { src: K2, ref: '1996', any: [/				IF TALENT:TARGET:317 == 4 /] },
+      { src: K2, ref: '1997', any: [/					PRINTFORMW 「对不起…对不起…呜呜呜呜…」/] },
+      {
+        src: K2,
+        ref: '1998',
+        any: [
+          /					PRINTFORMW %SAVESTR:PLAYER%没有理会%SAVESTR:TARGET%的哀鸣，不停抽插着她的小穴。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '1999',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%在此时想起了故乡的恋人,为自己的软弱留下了泪水……/,
+        ],
+      },
+      { src: K2, ref: '2000', any: [/				ELSE/] },
+      { src: K2, ref: '2001', any: [/					PRINTFORMW 「呃…嗯…啊、啊啊啊啊！」/] },
+      {
+        src: K2,
+        ref: '2002',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%虽然咬紧牙关忍着破瓜的痛楚但还是留下了泪水……/,
+        ],
+      },
+      { src: K2, ref: '2003', any: [/				ENDIF/] },
+      { src: K2, ref: '2004', any: [/			ENDIF/] },
+      { src: K2, ref: '2006', any: [/		ELSE/] },
+      { src: K2, ref: '2008', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '2009',
+        any: [
+          /				PRINTFORMW 「啊…更多…抱住我用力插进来吧！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2010',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%伸出双手缠住%SAVESTR:PLAYER%，扭动着腰……/,
+        ],
+      },
+      { src: K2, ref: '2012', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '2013',
+        any: [
+          /				PRINTFORMW 「主人啊…插进来…让我…完全属于你吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2014',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%爱慕地望着你……/],
+      },
+      { src: K2, ref: '2016', any: [/			ELSE/] },
+      { src: K2, ref: '2017', any: [/				PRINTFORMW 「讨厌…就这样…被侵犯了…」/] },
+      {
+        src: K2,
+        ref: '2018',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%徒劳地左右摇头想要挣脱，但却被%SAVESTR:PLAYER%无视了……/,
+        ],
+      },
+      { src: K2, ref: '2019', any: [/			ENDIF/] },
+      { src: K2, ref: '2020', any: [/		ENDIF/] },
+      { src: K2, ref: '2021', any: [/		CFLAG:321 = 1/] },
+      { src: K2, ref: '2022', any: [/		RETURN 0/] },
+      { src: K2, ref: '2024', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2026',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:321 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2027', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2028',
+        any: [
+          /				PRINTFORMW 「啊…哦…再来%UNICODE\(0x2661\) \*1% 好棒…不要停%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2029',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%放荡地乞求%SAVESTR:PLAYER%的继续侵犯。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2030',
+        any: [
+          /				PRINTFORMW 「更用力%UNICODE\(0x2661\) \*1%…更用力地%UNICODE\(0x2661\) \*1%…更用力地插进来啊啊啊子宫都有回音%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2031', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2032',
+        any: [
+          /				PRINTFORMW 「这个小穴…已经是属于魔王大人的了%UNICODE\(0x2661\) \*1%……唔噢噢～%UNICODE\(0x2661\) \*1%请随你喜欢随便地插吧%UNICODE\(0x2661\) \*1%%SELF_CALL\(TARGET\)%被操坏了也没关系哟%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2033',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%紧紧地搂住%SAVESTR:PLAYER%，在魔王耳边发出了淫靡的呻吟，双腿还用力缠住%SAVESTR:PLAYER%的腰向下压……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2034',
+        any: [
+          /				PRINTFORMW 「好棒啊…超喜欢…魔王大人的小鸡鸡%UNICODE\(0x2661\) \*1%…唔…啊啊…啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2035', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2036',
+        any: [
+          /				PRINTFORMW 「好棒啊…嘻嘻%UNICODE\(0x2661\) \*1% 很喜欢这个姿势呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2037',
+        any: [
+          /				PRINTFORMW 「更多！%UNICODE\(0x2661\) \*1% 再来！再插我！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2038',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%紧紧地搂住%SAVESTR:PLAYER%，在魔王耳边发出了淫靡的呻吟，双腿还用力缠住%SAVESTR:PLAYER%的腰向下压……/,
+        ],
+      },
+      { src: K2, ref: '2039', any: [/			ENDIF/] },
+      { src: K2, ref: '2040', any: [/			CFLAG:321 = 6/] },
+      {
+        src: K2,
+        ref: '2042',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:321 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2043', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2044',
+        any: [
+          /				PRINTFORMW 「主人啊…啊啊啊…要更激烈…地占有我…明…明明…哼啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2045',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%身下娇喘着，听着从腰部发出的甜美声响出神。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2046',
+        any: [
+          /				PRINTFORMW 「哈啊…啊啊抱歉…好的…这个，好的……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2047', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2048',
+        any: [/				PRINTFORMW 「啊，真是的……好…深…来喽…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2049',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%一脸淫荡的表情向%SAVESTR:PLAYER%撒娇着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2050',
+        any: [/				PRINTFORMW 「主人啊…吻我……%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '2051', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2052',
+        any: [/				PRINTFORMW 「啊…最喜欢主人了！…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2054',
+        any: [
+          /					PRINTFORMW 「射了好多在里面…%UNICODE\(0x2661\) \*1% 会不会生小孩呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2055',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%双腿缠住了%SAVESTR:PLAYER%的腰……/],
+      },
+      { src: K2, ref: '2056', any: [/			ENDIF/] },
+      { src: K2, ref: '2057', any: [/			CFLAG:321 = 5/] },
+      {
+        src: K2,
+        ref: '2059',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:321 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2060',
+        any: [/			PRINTFORMW 「这感觉…都很喜欢啊…已经离不开…哼？」/],
+      },
+      { src: K2, ref: '2061', any: [/			CFLAG:321 = 4/] },
+      {
+        src: K2,
+        ref: '2063',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:321 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2064',
+        any: [/			PRINTFORMW 「不可以…但是…已经…无法抗拒…」/],
+      },
+      { src: K2, ref: '2065', any: [/			CFLAG:321 = 3/] },
+      { src: K2, ref: '2067', any: [/		ELSEIF CFLAG:321 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '2068', any: [/			PRINTFORMW 「啊啊啊…不行…不行啊…！」/] },
+      {
+        src: K2,
+        ref: '2069',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%摇头抗拒着，但%SAVESTR:PLAYER%却没有放过她的打算……/,
+        ],
+      },
+      { src: K2, ref: '2070', any: [/			CFLAG:321 = 2/] },
+      { src: K2, ref: '2071', any: [/		ENDIF/] },
+      { src: K2, ref: '2072', any: [/		RETURN 0/] },
+      { src: K2, ref: '2073', any: [/	ENDIF/] },
+      { src: K2, ref: '2074', any: [/ENDIF/] },
+      { src: K2, ref: '2079', any: [/IF SELECTCOM == 21/] },
+      { src: K2, ref: '2081', any: [/	IF CFLAG:TARGET:322 == 0/] },
+      { src: K2, ref: '2083', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '2085', any: [/			IF TALENT:76 == 1/] },
+      { src: K2, ref: '2087', any: [/				IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '2088',
+        any: [
+          /					PRINTFORMW 「啊哈…魔王大人%UNICODE\(0x2661\) \*1% 这里可从来没让别人使用过呢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2089',
+        any: [
+          /					PRINTFORMW 「请夺走我的贞操吧%UNICODE\(0x2661\) \*1% 蹂躙我吧%UNICODE\(0x2661\) \*1%…更用力地蹂躙我！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2090',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%趴在地板上扭动着屁股要求更多。/],
+      },
+      {
+        src: K2,
+        ref: '2091',
+        any: [
+          /					PRINTFORMW %SAVESTR:PLAYER%紧紧抱住%SAVESTR:TARGET%的屁股用力地插入……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2092',
+        any: [
+          /					PRINTFORMW 「第一次就%UNICODE\(0x2661\) \*1% 用这种%UNICODE\(0x2661\) \*1% 羞耻的姿势～%UNICODE\(0x2661\) \*1% 请魔王大人，用你高贵的阳物，在我身上烙下你的印记吧！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2094', any: [/				ELSE/] },
+      { src: K2, ref: '2096', any: [/					IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '2097',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%四肢着地将屁股高高翘起。/],
+      },
+      {
+        src: K2,
+        ref: '2098',
+        any: [
+          /						PRINTFORMW 「嗯…魔王大人…随你喜欢…%SELF_CALL\(TARGET\)%的小穴%UNICODE\(0x2661\) \*1% 请随意享用吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2099',
+        any: [
+          /						PRINTFORMW %SAVESTR:PLAYER%双手将%SAVESTR:TARGET%的臀肉掰开，强烈的情欲气息充满了室内……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2100',
+        any: [
+          /						PRINTFORMW 「初、初次见面…新鲜的小穴%UNICODE\(0x2661\) \*1% 无论…是…是谁…都不许染指…%UNICODE\(0x2661\) \*1% 只为了魔王大人的侵犯而保留到现在……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2101',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%故乡恋人模糊的脸庞突然又清晰了起来。%SAVESTR:PLAYER%刺穿处女膜的瞬间，那清晰的面容又碎裂了……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2102',
+        any: [
+          /						PRINTFORMW 「啊啊！进来了%UNICODE\(0x2661\) \*1%进来了%UNICODE\(0x2661\) \*1% 肉棒进来了啊%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      { src: K2, ref: '2103', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '2104',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%四肢着地将屁股高高翘起。/],
+      },
+      {
+        src: K2,
+        ref: '2105',
+        any: [
+          /						PRINTFORMW 「嗯…魔王大人…请随意侵犯…%SELF_CALL\(TARGET\)%的小穴%UNICODE\(0x2661\) \*1% 请随意享用吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2106',
+        any: [
+          /						PRINTFORMW %SAVESTR:PLAYER%双手将%SAVESTR:TARGET%的臀肉掰开，强烈的情欲气息充满了室内……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2107',
+        any: [
+          /						PRINTFORMW 「因、因为是初次见面…还是第一次使用的小穴%UNICODE\(0x2661\) \*1% 啊…啊…插%UNICODE\(0x2661\) \*1%插进来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2108',
+        any: [
+          /						PRINTFORMW 「啊啊！插进来了%UNICODE\(0x2661\) \*1%插进来了%UNICODE\(0x2661\) \*1% 肉棒进来了啊%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      { src: K2, ref: '2109', any: [/					ENDIF/] },
+      { src: K2, ref: '2110', any: [/				ENDIF/] },
+      { src: K2, ref: '2112', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '2114', any: [/				IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '2115',
+        any: [
+          /					PRINTFORMW 「%SELF_CALL\(TARGET\)%对魔王大人的命令当然会遵从的…只是这样的姿势…真、真的好羞人呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2116',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%虽然说着不太情愿的话，但是却高兴的摇动起了臀部，像是邀请%SAVESTR:PLAYER%的阴茎快点侵犯一样……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2117',
+        any: [
+          /					PRINTFORMW 「啊啊啊…快、快点…快点插进来%UNICODE\(0x2661\) \*1% 这个姿势…被仔细看着…会…很奇怪%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2118',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%的声音已经变得快要忍耐不住要哭出来一般，引诱着%SAVESTR:PLAYER%。感受着%SAVESTR:TARGET%的爱意，%SAVESTR:PLAYER%扶住扭动的腰臀用力插入……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2119',
+        any: [
+          /					PRINTFORMW 「天啊…啊啊啊…大肉棒…%SELF_CALL\(TARGET\)%的处女被夺走了%UNICODE\(0x2661\) \*1% 已经被打上魔王大人的印记了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2121', any: [/				ELSE/] },
+      { src: K2, ref: '2123', any: [/					IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '2124',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%顺从地四肢着地，将屁股高高翘起。/],
+      },
+      {
+        src: K2,
+        ref: '2125',
+        any: [
+          /						PRINTFORMW 「主人啊…好开心…%SELF_CALL\(TARGET\)%的处女…献给了主人…好开心…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2126',
+        any: [/						PRINTFORMW 「已…已经做好了觉悟了…啊…快…快点…！」/],
+      },
+      {
+        src: K2,
+        ref: '2127',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%流下了开心的泪水，接受了你。/],
+      },
+      {
+        src: K2,
+        ref: '2128',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%突然间想起了重要的人，但转眼就又忘记了……/,
+        ],
+      },
+      { src: K2, ref: '2129', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '2130',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%顺从地四肢着地，将屁股高高翘起。/],
+      },
+      {
+        src: K2,
+        ref: '2131',
+        any: [
+          /						PRINTFORMW 「主人啊…好开心…%SELF_CALL\(TARGET\)%的处女…献给了主人…好开心…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2132',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%流下了开心的泪水，接受了你。/],
+      },
+      { src: K2, ref: '2133', any: [/					ENDIF/] },
+      { src: K2, ref: '2134', any: [/				ENDIF/] },
+      { src: K2, ref: '2136', any: [/			ELSE/] },
+      { src: K2, ref: '2138', any: [/				IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '2139',
+        any: [/					PRINTFORMW 「这样…这样…不、不对啊…誰…来救救我…好…好痛！」/],
+      },
+      {
+        src: K2,
+        ref: '2140',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%抱住了腰部持续不断地抽插着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2141',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%想到故乡的恋人，为自己的软弱流下了泪水……/,
+        ],
+      },
+      { src: K2, ref: '2142', any: [/				ELSE/] },
+      { src: K2, ref: '2143', any: [/					PRINTFORMW 「哎…哎…啊、啊啊啊啊啊！」/] },
+      {
+        src: K2,
+        ref: '2144',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%忍受着破瓜的疼痛啜泣着。/],
+      },
+      { src: K2, ref: '2145', any: [/				ENDIF/] },
+      { src: K2, ref: '2146', any: [/			ENDIF/] },
+      { src: K2, ref: '2148', any: [/		ELSE/] },
+      { src: K2, ref: '2150', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '2151',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% %SELF_CALL\(TARGET\)%…像母狗一样……从后面被操了……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2152',
+        any: [
+          /				PRINTFORMW 「啊啊啊…可是…好舒服…不要停…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2154', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '2155',
+        any: [
+          /				PRINTFORMW 「从后面吗…虽然有点害怕…但只要是主人的意愿…就没问题…好哟%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2156',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%趴在%SAVESTR:PLAYER%的身下发出甜美的呻吟……/,
+        ],
+      },
+      { src: K2, ref: '2158', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2159',
+        any: [/				PRINTFORMW 「好过分…这样…像母狗一样…被侵犯…」/],
+      },
+      {
+        src: K2,
+        ref: '2160',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的腰部被%SAVESTR:PLAYER%紧紧抱住后，毫不留情地抽插起来……/,
+        ],
+      },
+      { src: K2, ref: '2161', any: [/			ENDIF/] },
+      { src: K2, ref: '2162', any: [/		ENDIF/] },
+      { src: K2, ref: '2163', any: [/		CFLAG:322 = 1/] },
+      { src: K2, ref: '2164', any: [/		RETURN 0/] },
+      { src: K2, ref: '2166', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2168',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2169', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2170',
+        any: [
+          /				PRINTFORMW 「啊啊…被欺负了%UNICODE\(0x2661\) \*1% 被欺负了…%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2171',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%的阴茎激烈地抽插着%SAVESTR:TARGET%的小穴，带出的爱液飞溅，周围弥漫着淫荡的气息。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2172',
+        any: [
+          /				PRINTFORMW 「啊哈…还要更多%UNICODE\(0x2661\) \*1% 精液都倒流进子宫了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2173', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2174',
+        any: [
+          /				PRINTFORMW 「已经要%UNICODE\(0x2661\) \*1% 操成淫荡的母狗了啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2175',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1%…啊哈%UNICODE\(0x2661\) \*1%…好棒啊…哦…哦…不要…啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2176',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%发出淫兽一样的娇喘，配合着抽插的动作摇摆着臀部……/,
+        ],
+      },
+      { src: K2, ref: '2177', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2178',
+        any: [
+          /				PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1% 小穴…要被操坏了…不…不过…没关系，只要还能被侵犯就可以…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2179',
+        any: [
+          /				PRINTFORMW 「已经舒服到…说不…出了话了…好厉害%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2180',
+        any: [
+          /				PRINTFORMW 「不要停%UNICODE\(0x2661\) \*1%…再深一些%UNICODE\(0x2661\) \*1%…用力地插进来啊啊啊！」/,
+        ],
+      },
+      { src: K2, ref: '2181', any: [/			ENDIF/] },
+      { src: K2, ref: '2182', any: [/			CFLAG:322 = 6/] },
+      {
+        src: K2,
+        ref: '2184',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2185', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2186',
+        any: [/				PRINTFORMW 「嗯…连头部都不能动了……%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2187',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从背后把头部按住，激烈地抽插着……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2188',
+        any: [
+          /				PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%…已经是你专属的了%UNICODE\(0x2661\) \*1%…性奴了…大肉棒……好喜欢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2189', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2190',
+        any: [/				PRINTFORMW 「啊好棒！还要…还要更激烈…！」/],
+      },
+      {
+        src: K2,
+        ref: '2191',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%像牝犬一样晃动着屁股向%SAVESTR:PLAYER%乞求更多。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2192',
+        any: [
+          /				PRINTFORMW 「人家…想要被主人玩到坏掉…%SELF_CALL\(TARGET\)%还想要更多%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2193', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2194',
+        any: [
+          /				PRINTFORMW 「插坏掉也完全没关系…请随意享用啊…主人…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2195',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%挺动着腰部配合%SAVESTR:PLAYER%的侵犯。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2196',
+        any: [
+          /				PRINTFORMW 「人家…想要被主人玩到坏掉%UNICODE\(0x2661\) \*1% 还想要更多%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2197', any: [/			ENDIF/] },
+      { src: K2, ref: '2198', any: [/			CFLAG:322 = 5/] },
+      {
+        src: K2,
+        ref: '2200',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:322 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2201',
+        any: [/			PRINTFORMW 「请…更…用力…更激烈地插进来…」/],
+      },
+      {
+        src: K2,
+        ref: '2202',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%像牝犬一样抬高屁股乞求更多……/],
+      },
+      { src: K2, ref: '2203', any: [/			CFLAG:322 = 4/] },
+      {
+        src: K2,
+        ref: '2205',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:322 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2206',
+        any: [/			PRINTFORMW 「明明很讨厌…可是…这奇怪的甜美感觉…」/],
+      },
+      {
+        src: K2,
+        ref: '2207',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的腰被紧紧抱住后发出了奇怪的呻吟……/],
+      },
+      { src: K2, ref: '2208', any: [/			CFLAG:322 = 3/] },
+      { src: K2, ref: '2210', any: [/		ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '2211', any: [/			PRINTFORMW 「这…啊…这种屈辱的姿势…」/] },
+      {
+        src: K2,
+        ref: '2212',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%一边被侵犯着一边流下了屈辱的泪水……/],
+      },
+      { src: K2, ref: '2213', any: [/			CFLAG:322 = 2/] },
+      { src: K2, ref: '2214', any: [/		ENDIF/] },
+      { src: K2, ref: '2215', any: [/		RETURN 0/] },
+      { src: K2, ref: '2216', any: [/	ENDIF/] },
+      { src: K2, ref: '2217', any: [/ENDIF/] },
+      { src: K2, ref: '2222', any: [/IF SELECTCOM == 22/] },
+      { src: K2, ref: '2223', any: [/	IF CFLAG:TARGET:323 == 0/] },
+      { src: K2, ref: '2225', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '2227', any: [/			IF TALENT:76 == 1/] },
+      { src: K2, ref: '2228', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '2230', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '2231', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '2233', any: [/			ELSE/] },
+      { src: K2, ref: '2234', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '2235', any: [/			ENDIF/] },
+      { src: K2, ref: '2237', any: [/		ELSE/] },
+      { src: K2, ref: '2239', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '2240',
+        any: [
+          /				PRINTFORMW 「啊啊啊%UNICODE\(0x2661\) \*1% 自己的腰已经不受控制了…主人啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2241',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%抱住后露出了淫荡的表情……/,
+        ],
+      },
+      { src: K2, ref: '2243', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '2244',
+        any: [
+          /				PRINTFORMW 「嘻嘻…被这样抱…感觉好羞人呢…不过，可以插得更激烈一点哦…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2245',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%握住了%SAVESTR:PLAYER%的手，享受着媾合的欢愉……/,
+        ],
+      },
+      { src: K2, ref: '2247', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2248',
+        any: [/				PRINTFORMW 「哎呀…请放开我…不行…这样的姿势…不可以！」/],
+      },
+      {
+        src: K2,
+        ref: '2249',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%用力地抱住%SAVESTR:TARGET%的腰，下身用力地插了进去……/,
+        ],
+      },
+      { src: K2, ref: '2250', any: [/			ENDIF/] },
+      { src: K2, ref: '2251', any: [/		ENDIF/] },
+      { src: K2, ref: '2252', any: [/		CFLAG:323 = 1/] },
+      { src: K2, ref: '2253', any: [/		RETURN 0/] },
+      { src: K2, ref: '2255', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2257',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:323 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2258', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2259',
+        any: [/				PRINTFORMW 「呼呼…喜欢…这个姿势哟%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2260',
+        any: [
+          /				PRINTFORMW 「小穴似乎完全嵌合了…%UNICODE\(0x2661\) \*1% 鸡鸡也要用力地顶上来啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2261',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%露出淫荡的表情紧紧抱住%SAVESTR:PLAYER%……/,
+        ],
+      },
+      { src: K2, ref: '2262', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2263',
+        any: [
+          /				PRINTFORMW 「动、动得慢一点…%UNICODE\(0x2661\) \*1% 是不是会让%SELF_CALL\(TARGET\)%更容易高潮呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2264',
+        any: [
+          /				PRINTFORMW 「可是好像也没有更…舒服%UNICODE\(0x2661\) \*1%的样子%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2265',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%搂住%SAVESTR:TARGET%的腰缓慢抽动着，但渐渐地…变成了激烈的抽插。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2266',
+        any: [
+          /				PRINTFORMW 「啊啊啊啊%UNICODE\(0x2661\) \*1%…您的大恩大德…没齿难忘！…果、果然…还是激烈一些…更爽呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2267', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2268',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% 亲亲…亲我嘛…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2269',
+        any: [
+          /				PRINTFORMW 「把骚货的…上下…两张嘴…一起堵上吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2270',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%耳边说着下流话……/],
+      },
+      { src: K2, ref: '2271', any: [/			ENDIF/] },
+      { src: K2, ref: '2272', any: [/			CFLAG:323 = 6/] },
+      {
+        src: K2,
+        ref: '2274',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:323 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2275', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2276',
+        any: [/				PRINTFORMW 「喜欢…好喜欢…主人…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2277',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%搂住%SAVESTR:PLAYER%的脖子，腰部开始扭动起来……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2278',
+        any: [
+          /				PRINTFORMW 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%也想主动一些…啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2279', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2280',
+        any: [/				PRINTFORMW 「哦…好棒啊…啊…唔哦…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2281',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%随着腰部的动作，压抑不住地呻吟起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2282',
+        any: [
+          /				PRINTFORMW 「啊哈…啊%UNICODE\(0x2661\) \*1% 小穴…%UNICODE\(0x2661\) \*1% 好舒服…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2283', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2284',
+        any: [
+          /				PRINTFORMW 「主人…不动的话也没关系…%SELF_CALL\(TARGET\)%也想主动一些…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2285',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%紧紧搂住%SAVESTR:PLAYER%的脖子，腰部开始上下扭动起来……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2286',
+        any: [
+          /				PRINTFORMW 「呼呼…大…肉棒…插到…深处了…%UNICODE\(0x2661\) \*1%啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2287', any: [/			ENDIF/] },
+      { src: K2, ref: '2288', any: [/			CFLAG:323 = 5/] },
+      {
+        src: K2,
+        ref: '2290',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:323 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2291',
+        any: [
+          /			PRINTFORMW 「哈啊啊啊…居然自己开始动了…讨厌…可是好舒服…不想停下来…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2292',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边流泪一边卖力地扭动着腰，快感彻底击溃了理智……/,
+        ],
+      },
+      { src: K2, ref: '2293', any: [/			CFLAG:323 = 4/] },
+      {
+        src: K2,
+        ref: '2295',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:323 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2296',
+        any: [/			PRINTFORMW 「感觉…好奇怪……不要，不要这样用力！」/],
+      },
+      {
+        src: K2,
+        ref: '2297',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的胴体哀求般地扭动着，却被%SAVESTR:PLAYER%无视用力顶入……/,
+        ],
+      },
+      { src: K2, ref: '2298', any: [/			CFLAG:323 = 3/] },
+      { src: K2, ref: '2300', any: [/		ELSEIF CFLAG:323 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '2301', any: [/			PRINTFORMW 「可恶…这样…不行…啊！」/] },
+      {
+        src: K2,
+        ref: '2302',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%紧紧抱住%SAVESTR:PLAYER%，忍受着由下而上的抽动……/,
+        ],
+      },
+      { src: K2, ref: '2303', any: [/			CFLAG:323 = 2/] },
+      { src: K2, ref: '2304', any: [/		ENDIF/] },
+      { src: K2, ref: '2305', any: [/		RETURN 0/] },
+      { src: K2, ref: '2306', any: [/	ENDIF/] },
+      { src: K2, ref: '2307', any: [/ENDIF/] },
+      { src: K2, ref: '2312', any: [/IF SELECTCOM == 23/] },
+      { src: K2, ref: '2313', any: [/	IF CFLAG:TARGET:324 == 0/] },
+      { src: K2, ref: '2315', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '2317', any: [/			IF TALENT:76 == 1/] },
+      { src: K2, ref: '2318', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '2320', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '2321', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '2323', any: [/			ELSE/] },
+      { src: K2, ref: '2324', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '2325', any: [/			ENDIF/] },
+      { src: K2, ref: '2327', any: [/		ELSE/] },
+      { src: K2, ref: '2329', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '2330',
+        any: [
+          /				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1%…温柔一点…这样…反而会更舒服也说不定呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2331',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的身体自然地追求着快感，渴求着%SAVESTR:PLAYER%的插入……/,
+        ],
+      },
+      { src: K2, ref: '2333', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '2334',
+        any: [/				PRINTFORMW 「主人的身体…好暖和…胸部的触感…也很喜欢么？」/],
+      },
+      {
+        src: K2,
+        ref: '2335',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%用背抵住%SAVESTR:TARGET%的胸腹，开始慢慢转动腰部向下滑去……/,
+        ],
+      },
+      { src: K2, ref: '2337', any: [/			ELSE/] },
+      { src: K2, ref: '2338', any: [/				PRINTFORMW 「哎呀…好可怕…啊啊！」/] },
+      {
+        src: K2,
+        ref: '2339',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从身后抱住，肆意地抽动起来……/,
+        ],
+      },
+      { src: K2, ref: '2340', any: [/			ENDIF/] },
+      { src: K2, ref: '2341', any: [/		ENDIF/] },
+      { src: K2, ref: '2342', any: [/		CFLAG:324 = 1/] },
+      { src: K2, ref: '2343', any: [/		RETURN 0/] },
+      { src: K2, ref: '2345', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2347',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:324 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2348', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2349',
+        any: [/				PRINTFORMW 「啊…哈…啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2350',
+        any: [
+          /				PRINTFORMW 「从背后被操的感觉…好…好棒%UNICODE\(0x2661\) \*1% 更…再激烈一些%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2351',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的小穴被肉棒搅动着，发出压抑不住的愉悦声……/,
+        ],
+      },
+      { src: K2, ref: '2352', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2353',
+        any: [
+          /				PRINTFORMW 「啊啊…啊啊%UNICODE\(0x2661\) \*1%…大肉棒地形状…已经深深记在脑海里了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2354',
+        any: [
+          /				PRINTFORMW 小腹上鼓起小穴被阴茎贯穿的形状，%SAVESTR:TARGET%一边抚摸一边压抑不住地呻吟起来……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2355',
+        any: [
+          /				PRINTFORMW 「啊啊快要被操坏了啊%UNICODE\(0x2661\) \*1%…啊%UNICODE\(0x2661\) \*1% 不要停！…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2356', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2357',
+        any: [
+          /				PRINTFORMW 「好…好棒的感觉%UNICODE\(0x2661\) \*1% 人家的小穴…被刺穿了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2358',
+        any: [
+          /				PRINTFORMW 「%SAVESTR:TARGET%淫乱的小穴请多多惩罚吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2359', any: [/			ENDIF/] },
+      { src: K2, ref: '2360', any: [/			CFLAG:324 = 6/] },
+      {
+        src: K2,
+        ref: '2362',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:324 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2363', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2364',
+        any: [
+          /				PRINTFORMW 「人家%UNICODE\(0x2661\) \*1%好！好舒服！主人%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2365',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%双手用力搓揉着%SAVESTR:TARGET%的乳房，阴茎更加用力地挺动着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2366',
+        any: [
+          /				PRINTFORMW 「啊…温柔什么的见鬼去吧…请、请更加激烈的侵犯人家！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2367', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2368',
+        any: [
+          /				PRINTFORMW 「啊啊啊…鸡鸡的形状…已经清清楚楚咯…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2369',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%扭动着小腹摩擦着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2370', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2371',
+        any: [/				PRINTFORMW 「%SELF_CALL\(TARGET\)%也…也想要动一下…啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '2372',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%颤抖着向上抬动腰部，%SAVESTR:PLAYER%追击似的再一次深深顶入……/,
+        ],
+      },
+      { src: K2, ref: '2373', any: [/			ENDIF/] },
+      { src: K2, ref: '2374', any: [/			CFLAG:324 = 5/] },
+      {
+        src: K2,
+        ref: '2376',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:324 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2377',
+        any: [/			PRINTFORMW 「啊…好舒服啊…腰已经自己动起来了…好奇怪…\?」/],
+      },
+      {
+        src: K2,
+        ref: '2378',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的腰部开始上下摇动，贪婪地追求着更多快感……/,
+        ],
+      },
+      { src: K2, ref: '2379', any: [/			CFLAG:324 = 4/] },
+      {
+        src: K2,
+        ref: '2381',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:324 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2382',
+        any: [/			PRINTFORMW 「人家还不习惯这种姿势…请放过我…」/],
+      },
+      {
+        src: K2,
+        ref: '2383',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%哀求着想要逃开，%SAVESTR:PLAYER%追击似的再一次深深顶入……/,
+        ],
+      },
+      { src: K2, ref: '2384', any: [/			CFLAG:324 = 3/] },
+      { src: K2, ref: '2386', any: [/		ELSEIF CFLAG:324 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '2387',
+        any: [/			PRINTFORMW 「啊\?啊啊…！不可以…这种姿势不可以！」/],
+      },
+      {
+        src: K2,
+        ref: '2388',
+        any: [
+          /			PRINTFORMW %SAVESTR:PLAYER%紧紧抓住%SAVESTR:TARGET%的腰部深深顶入……/,
+        ],
+      },
+      { src: K2, ref: '2389', any: [/			CFLAG:324 = 2/] },
+      { src: K2, ref: '2390', any: [/		ENDIF/] },
+      { src: K2, ref: '2391', any: [/		RETURN 0/] },
+      { src: K2, ref: '2392', any: [/	ENDIF/] },
+      { src: K2, ref: '2393', any: [/ENDIF/] },
+      { src: K2, ref: '2398', any: [/IF SELECTCOM == 26/] },
+      { src: K2, ref: '2400', any: [/	IF CFLAG:TARGET:327 == 0/] },
+      { src: K2, ref: '2402', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2403',
+        any: [
+          /			PRINTFORMW 「啊啊啊…屁眼…%UNICODE\(0x2661\) \*1% 完全被插进来了…好舒服呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2404',
+        any: [
+          /			PRINTFORMW 「啊啊…就这样被魔王大人的精液刻下印记了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2405',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%开心地笑着，缩动了一下肛门……/],
+      },
+      { src: K2, ref: '2407', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2408',
+        any: [
+          /			PRINTFORMW 「%SELF_CALL\(TARGET\)%后面的小穴…主人只要你喜欢就好……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2409',
+        any: [
+          /			PRINTFORMW 「只要主人能得到欢愉…用哪里侍奉都没有问题…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2410',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%高兴地掰开臀部接受%SAVESTR:PLAYER%的蹂躏……/,
+        ],
+      },
+      { src: K2, ref: '2412', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '2413',
+        any: [/			PRINTFORMW 「不、不行…那里明明是用来…啊！啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '2414',
+        any: [
+          /			PRINTFORMW 悲鸣着的%SAVESTR:TARGET%被用力按住，%SAVESTR:PLAYER%愉快地从肛门插入了……/,
+        ],
+      },
+      { src: K2, ref: '2415', any: [/		ENDIF/] },
+      { src: K2, ref: '2416', any: [/		CFLAG:TARGET:327 = 1/] },
+      { src: K2, ref: '2417', any: [/		RETURN 0/] },
+      { src: K2, ref: '2419', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2421',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2422', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2423',
+        any: [
+          /				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1% %SELF_CALL\(TARGET\)%居然…屁股小穴被插入…还这么高兴……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2424',
+        any: [
+          /				PRINTFORMW 「高潮了……人家还真是个变态呢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2425',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%说着下流话让%SAVESTR:PLAYER%肛交得更加起劲了……/,
+        ],
+      },
+      { src: K2, ref: '2426', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2427',
+        any: [
+          /				PRINTFORMW 「唔…被玩坏了…屁眼要被玩坏了…但是好舒服…要被玩坏了呀%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2428',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%欢喜地哽咽着，%SAVESTR:PLAYER%的阴茎被缩紧的肛门死死吸住。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2429',
+        any: [
+          /				PRINTFORMW 「人家是魔王大人…专用的肛交性奴…请用力地操进来%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2430', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2431',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1%…屁眼的快感在蔓延…好舒服…整个人都要酥软了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2432',
+        any: [
+          /				PRINTFORMW 「侵犯后面…请一直从后面调教我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2433',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%无法抑制地露出牝犬般的表情……/],
+      },
+      { src: K2, ref: '2434', any: [/			ENDIF/] },
+      { src: K2, ref: '2435', any: [/			CFLAG:327 = 7/] },
+      {
+        src: K2,
+        ref: '2437',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:327 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2438',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1%…屁眼的快感在蔓延…好舒服…整个人都要酥软了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2439',
+        any: [
+          /				PRINTFORMW 「侵犯后面…请一直从后面调教我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2440', any: [/			CFLAG:327 = 6/] },
+      {
+        src: K2,
+        ref: '2442',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2443', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2444',
+        any: [
+          /				PRINTFORMW 「啊！屁股小穴！内部在被搅动！好舒服啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2445',
+        any: [
+          /				PRINTFORMW 「啊哈！感觉好舒服！快乐得要死了啊！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2446',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的脸上浮现出牝犬般的表情，沉醉在尻穴的快感中……/,
+        ],
+      },
+      { src: K2, ref: '2447', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2448',
+        any: [
+          /				PRINTFORMW 「要被玩坏了啊…后面的小穴…主人…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2449',
+        any: [
+          /				PRINTFORMW 「后面的小穴…今后就是专属于主人肉棒的了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2450',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的嘴角留着口水，沉醉在肛门的快感中……/,
+        ],
+      },
+      { src: K2, ref: '2451', any: [/			ENDIF/] },
+      { src: K2, ref: '2452', any: [/			CFLAG:327 = 5/] },
+      {
+        src: K2,
+        ref: '2454',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:327 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2455',
+        any: [/			PRINTFORMW 「只要主人要求…哪里都可以…唔！嗯\?」/],
+      },
+      {
+        src: K2,
+        ref: '2456',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%羞红了脸，一边被侵犯着尻穴一边发出了甜美的呻吟……/,
+        ],
+      },
+      { src: K2, ref: '2457', any: [/			CFLAG:327 = 4/] },
+      {
+        src: K2,
+        ref: '2459',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:327 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '2460', any: [/			PRINTFORMW 「尻穴的话…感觉好…奇怪…」/] },
+      {
+        src: K2,
+        ref: '2461',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%羞耻地用手捂着脸……/],
+      },
+      { src: K2, ref: '2462', any: [/			CFLAG:327 = 3/] },
+      {
+        src: K2,
+        ref: '2464',
+        any: [/		ELSEIF  CFLAG:327 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '2465',
+        any: [/			PRINTFORMW 「不…不要…好痛…拜托…快停下…」/],
+      },
+      {
+        src: K2,
+        ref: '2466',
+        any: [
+          /			PRINTFORMW 悲鸣着的%SAVESTR:TARGET%被用力按住，%SAVESTR:PLAYER%愉快地从肛门插入了……/,
+        ],
+      },
+      { src: K2, ref: '2467', any: [/			CFLAG:327 = 2/] },
+      { src: K2, ref: '2468', any: [/		ENDIF/] },
+      { src: K2, ref: '2469', any: [/		RETURN 0/] },
+      { src: K2, ref: '2470', any: [/	ENDIF/] },
+      { src: K2, ref: '2471', any: [/ENDIF/] },
+      { src: K2, ref: '2476', any: [/IF SELECTCOM == 27/] },
+      { src: K2, ref: '2478', any: [/	IF CFLAG:TARGET:328 == 0/] },
+      { src: K2, ref: '2480', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2481',
+        any: [
+          /			PRINTFORMW 「这次的调教是……%UNICODE\(0x2661\) \*1% 从后面…被侵犯喽%UNICODE\(0x2661\) \*1% 屁眼…也没问题哟%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2482',
+        any: [
+          /			PRINTFORMW 「啊啊啊啊啊啊啊…这样被侵犯着…插得…好深…后面的小穴要被玩坏了呀%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2484', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2485',
+        any: [
+          /			PRINTFORMW 「从、从后面……屁股洞洞吗……好的%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2486',
+        any: [
+          /			PRINTFORMW 「啊…好厉害…这无法压抑的快感……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2487',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%背部向后仰起，欢喜地呻吟了出来……/],
+      },
+      { src: K2, ref: '2489', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '2490',
+        any: [/			PRINTFORMW 「不、不行…不要这么用力…真的不！啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '2491',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%被你用力按住，从肛门狠狠地侵犯了……/],
+      },
+      { src: K2, ref: '2492', any: [/		ENDIF/] },
+      { src: K2, ref: '2493', any: [/		CFLAG:TARGET:328 = 1/] },
+      { src: K2, ref: '2494', any: [/		RETURN 0/] },
+      { src: K2, ref: '2496', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2498',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2499', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2500',
+        any: [
+          /				PRINTFORMW 「啊啊…%UNICODE\(0x2661\) \*1% 那种程度的插入%UNICODE\(0x2661\) \*1% 就已经受不了啦…好厉害%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2501',
+        any: [
+          /				PRINTFORMW 「后、后面…已经这样敏…敏感了么…啊…这甜美的快感%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2502', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2503',
+        any: [
+          /				PRINTFORMW 「啊…唔…%UNICODE\(0x2661\) \*1% 淫荡母狗%SAVESTR:TARGET%的屁眼…请用力地插进来！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2504',
+        any: [
+          /				PRINTFORMW 「嗯嗯…啊%UNICODE\(0x2661\) \*1%…主人的大肉棒%UNICODE\(0x2661\) \*1%…哈啊啊啊啊啊啊…好…好厉害…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2505', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2506',
+        any: [
+          /				PRINTFORMW 「呼呼…后面的小穴…已经可以随意玩弄了%UNICODE\(0x2661\) \*1% 不插前面也没有关系…请务必狠狠地操我后面的小穴吧！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2507',
+        any: [
+          /				PRINTFORMW 「啊啊…请让我成为…主人…专用的肛交性奴吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2508', any: [/			ENDIF/] },
+      { src: K2, ref: '2509', any: [/			CFLAG:328 = 7/] },
+      {
+        src: K2,
+        ref: '2511',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2512',
+        any: [
+          /			PRINTFORMW 「啊啊…%UNICODE\(0x2661\) \*1% 那种程度的插入%UNICODE\(0x2661\) \*1% 就已经受不了啦…好厉害%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2513',
+        any: [
+          /			PRINTFORMW 「后、后面…已经这样敏…敏感了么…啊…这甜美的快感%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2514', any: [/			CFLAG:328 = 6/] },
+      {
+        src: K2,
+        ref: '2516',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2517', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2518',
+        any: [
+          /				PRINTFORMW 「高！高潮了！…肛门…原来…也可以这么舒服…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2519',
+        any: [
+          /				PRINTFORMW 「更…还要更多！请随意的玩弄人家的屁眼吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2520',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%一下又一下用力地插动阴茎，%SAVESTR:TARGET%的臀部上泛起了情欲的肉感……/,
+        ],
+      },
+      { src: K2, ref: '2521', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2522',
+        any: [/				PRINTFORMW 「屁股…好舒服…舒服的要疯了！」/],
+      },
+      {
+        src: K2,
+        ref: '2523',
+        any: [
+          /				PRINTFORMW 「满了…被塞满了！主人的大肉棒好厉害%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2524',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%的阴茎完全插入%SAVESTR:TARGET%的后庭，尻穴里的黏膜被带动着翻卷起来……/,
+        ],
+      },
+      { src: K2, ref: '2525', any: [/			ENDIF/] },
+      { src: K2, ref: '2526', any: [/			CFLAG:328 = 5/] },
+      {
+        src: K2,
+        ref: '2528',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2529',
+        any: [/			PRINTFORMW 「主人的鸡鸡…好热…好舒服啊…」/],
+      },
+      {
+        src: K2,
+        ref: '2530',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的肛门收缩，用力地缠住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2531', any: [/			CFLAG:328 = 4/] },
+      {
+        src: K2,
+        ref: '2533',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2534',
+        any: [/			PRINTFORMW 「好舒服…舒服的…后面…已…已经要融化了……」/],
+      },
+      {
+        src: K2,
+        ref: '2535',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%抬起臀部，%SAVESTR:PLAYER%毫不犹豫地再次顶入……/,
+        ],
+      },
+      { src: K2, ref: '2536', any: [/			CFLAG:328 = 3/] },
+      {
+        src: K2,
+        ref: '2538',
+        any: [/		ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '2539',
+        any: [/			PRINTFORMW 「拜托…好痛…请放过我…放过我吧…」/],
+      },
+      {
+        src: K2,
+        ref: '2540',
+        any: [
+          /			PRINTFORMW %SAVESTR:PLAYER%无视着身下的悲鸣，用力地插进%SAVESTR:TARGET%的肛门……/,
+        ],
+      },
+      { src: K2, ref: '2541', any: [/			CFLAG:328 = 2/] },
+      { src: K2, ref: '2542', any: [/		ENDIF/] },
+      { src: K2, ref: '2543', any: [/		RETURN 0/] },
+      { src: K2, ref: '2544', any: [/	ENDIF/] },
+      { src: K2, ref: '2545', any: [/ENDIF/] },
+      { src: K2, ref: '2550', any: [/IF SELECTCOM == 28/] },
+      { src: K2, ref: '2552', any: [/	IF CFLAG:TARGET:329 == 0/] },
+      { src: K2, ref: '2554', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2555',
+        any: [
+          /			PRINTFORMW 「啊啊…插到底了…屁眼被贯穿了……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2556',
+        any: [/			PRINTFORMW 「更多…好可爱的大鸡鸡%UNICODE\(0x2661\) \*3%」/],
+      },
+      { src: K2, ref: '2558', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2559',
+        any: [/			PRINTFORMW 「主人的脸…越看越性感呢…\?」/],
+      },
+      {
+        src: K2,
+        ref: '2560',
+        any: [/			PRINTFORMW 「快感从屁股小穴…扩散开来了…」/],
+      },
+      { src: K2, ref: '2562', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '2563',
+        any: [/			PRINTFORMW 「不、不行…那里插的太深…了！全、全都进来了！」/],
+      },
+      { src: K2, ref: '2564', any: [/		ENDIF/] },
+      { src: K2, ref: '2565', any: [/		CFLAG:TARGET:329 = 1/] },
+      { src: K2, ref: '2566', any: [/		RETURN 0/] },
+      { src: K2, ref: '2568', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2570',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2571', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2572',
+        any: [
+          /				PRINTFORMW 「啊啊啊啊啊%UNICODE\(0x2661\) \*1%屁眼…甜美的感觉…啊哈…更用力地顶进来%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2573',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%奄奄一息仍乞求%SAVESTR:PLAYER%从身下的侵犯……/,
+        ],
+      },
+      { src: K2, ref: '2574', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2575',
+        any: [
+          /				PRINTFORMW 「不要%UNICODE\(0x2661\) \*1%…不要停%UNICODE\(0x2661\) \*1%…快感…快感在蔓延…%SELF_CALL\(TARGET\)%要被玩坏了…玩坏了啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2576',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%抱住%SAVESTR:PLAYER%的腰贪婪地渴求更多……/,
+        ],
+      },
+      { src: K2, ref: '2577', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2578',
+        any: [
+          /				PRINTFORMW 「啊啊啊…插到底了…整根…啊啊…都进来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2579',
+        any: [
+          /				PRINTFORMW 「屁眼已经…舒服得要高潮了%UNICODE\(0x2661\) \*1% 全都插进来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2580',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%撒娇般地抱住了%SAVESTR:PLAYER%……/],
+      },
+      { src: K2, ref: '2581', any: [/			ENDIF/] },
+      { src: K2, ref: '2582', any: [/			CFLAG:329 = 7/] },
+      {
+        src: K2,
+        ref: '2584',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:329 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2585',
+        any: [
+          /			PRINTFORMW 「啊啊…插到底了…屁眼被贯穿了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2586',
+        any: [
+          /			PRINTFORMW 「屁眼已经…舒服得要高潮了%UNICODE\(0x2661\) \*1% 全都插进来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2587', any: [/			CFLAG:329 = 6/] },
+      {
+        src: K2,
+        ref: '2589',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2590', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2591',
+        any: [/				PRINTFORMW 「啊…主人！更用力…顶进来！%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2592',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%颤抖着抱住%SAVESTR:PLAYER%的腰贪婪地渴求更多……/,
+        ],
+      },
+      { src: K2, ref: '2593', any: [/			ELSE/] },
+      { src: K2, ref: '2594', any: [/				PRINTFORMW 「主人…感觉好奇怪…\?」/] },
+      {
+        src: K2,
+        ref: '2595',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的强力抽插操到奄奄一息了……/,
+        ],
+      },
+      { src: K2, ref: '2596', any: [/			ENDIF/] },
+      { src: K2, ref: '2597', any: [/			CFLAG:329 = 5/] },
+      {
+        src: K2,
+        ref: '2599',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:329 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2600',
+        any: [
+          /			PRINTFORMW 「哈…哈…主人啊…好喜欢…好喜欢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2601',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%被侵犯的同时在%SAVESTR:PLAYER%耳边继续爱的低语…/,
+        ],
+      },
+      { src: K2, ref: '2602', any: [/			CFLAG:329 = 4/] },
+      {
+        src: K2,
+        ref: '2604',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:329 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2605',
+        any: [/			PRINTFORMW 「后面的小穴…好舒服…快要…高潮了…」/],
+      },
+      { src: K2, ref: '2606', any: [/			CFLAG:329 = 3/] },
+      {
+        src: K2,
+        ref: '2608',
+        any: [/		ELSEIF  CFLAG:329 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '2609',
+        any: [/			PRINTFORMW 「又…全部插进来…好痛…好痛啊…」/],
+      },
+      { src: K2, ref: '2610', any: [/			CFLAG:329 = 2/] },
+      { src: K2, ref: '2611', any: [/		ENDIF/] },
+      { src: K2, ref: '2612', any: [/		RETURN 0/] },
+      { src: K2, ref: '2613', any: [/	ENDIF/] },
+      { src: K2, ref: '2614', any: [/ENDIF/] },
+      { src: K2, ref: '2619', any: [/IF SELECTCOM == 29/] },
+      { src: K2, ref: '2621', any: [/	IF CFLAG:TARGET:330 == 0/] },
+      { src: K2, ref: '2623', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2624',
+        any: [
+          /			PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% 屁眼…已经被开发得很好了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2625',
+        any: [/			PRINTFORMW 「整个…屁眼被塞得满满的…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '2627', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '2628', any: [/			PRINTFORMW 「主人…紧紧地抱我…」/] },
+      {
+        src: K2,
+        ref: '2629',
+        any: [
+          /			PRINTFORMW 「从后面还是有点害怕…啊…啊啊啊…进来、来了……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2630',
+        any: [/			PRINTFORMW 「这样感受主人的大鸡鸡…有点奇怪呢……\?」/],
+      },
+      { src: K2, ref: '2632', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '2633',
+        any: [/			PRINTFORMW 「啊、痛！…插得好深…咿！好痛啊！」/],
+      },
+      { src: K2, ref: '2634', any: [/		ENDIF/] },
+      { src: K2, ref: '2635', any: [/		CFLAG:TARGET:330 = 1/] },
+      { src: K2, ref: '2636', any: [/		RETURN 0/] },
+      { src: K2, ref: '2638', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2640',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:330 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2641', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2642',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% 屁眼…里面已经变成大肉棒的形状了%UNICODE\(0x2661\) \*1% 不要拔出来！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2643',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的肛门痉挛着收缩起来，用力地缠住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2644', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2645',
+        any: [
+          /				PRINTFORMW 「屁眼好舒服%UNICODE\(0x2661\) \*1%…啊…更…用力地操进来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2646',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%摇摆着臀部，肛门主动吞吐着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2647', any: [/			ENDIF/] },
+      { src: K2, ref: '2648', any: [/			CFLAG:330 = 7/] },
+      {
+        src: K2,
+        ref: '2650',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:330 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2651',
+        any: [
+          /			PRINTFORMW 「屁眼好舒服%UNICODE\(0x2661\) \*1%…啊…更…用力地操进来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2652',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%摇摆着臀部，肛门主动吞吐着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2653', any: [/			CFLAG:330 = 6/] },
+      {
+        src: K2,
+        ref: '2655',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:330 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2656', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2657',
+        any: [/				PRINTFORMW 「肛门…好舒服…不行了啊啊啊啊…！」/],
+      },
+      {
+        src: K2,
+        ref: '2658',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%摇摆着臀部，肛门主动吞吐着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2659', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2660',
+        any: [/				PRINTFORMW 「好舒服…主人！好舒服…不要拔出来！」/],
+      },
+      {
+        src: K2,
+        ref: '2661',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的肛门痉挛着收缩起来，用力地缠住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2662', any: [/			ENDIF/] },
+      { src: K2, ref: '2663', any: [/			CFLAG:330 = 5/] },
+      {
+        src: K2,
+        ref: '2665',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:330 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2666',
+        any: [/			PRINTFORMW 「哈啊…主人…后面的小穴…好舒服呢…」/],
+      },
+      {
+        src: K2,
+        ref: '2667',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%摇摆着臀部，肛门主动吞吐着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2668', any: [/			CFLAG:330 = 4/] },
+      {
+        src: K2,
+        ref: '2670',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:330 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '2671',
+        any: [
+          /			PRINTFORMW 「后面的小穴…好舒服呢…啊…好喜欢主人的大肉棒…这样插进来…啊啊！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2672',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的肛门被调教的十分敏感，颤抖着扭动腰部沉浸在更多的快感中……/,
+        ],
+      },
+      { src: K2, ref: '2673', any: [/			CFLAG:330 = 3/] },
+      {
+        src: K2,
+        ref: '2675',
+        any: [/		ELSEIF  CFLAG:330 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '2676',
+        any: [/			PRINTFORMW 「哎呀…好奇怪…这样…好奇怪…」/],
+      },
+      { src: K2, ref: '2677', any: [/			CFLAG:330 = 2/] },
+      { src: K2, ref: '2678', any: [/		ENDIF/] },
+      { src: K2, ref: '2679', any: [/		RETURN 0/] },
+      { src: K2, ref: '2680', any: [/	ENDIF/] },
+      { src: K2, ref: '2681', any: [/ENDIF/] },
+      { src: K2, ref: '2686', any: [/IF SELECTCOM == 30/] },
+      { src: K2, ref: '2688', any: [/	IF CFLAG:TARGET:331 == 0/] },
+      { src: K2, ref: '2690', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2691',
+        any: [
+          /			PRINTFORMW 「啊啊…大肉棒…还在抖动着%UNICODE\(0x2661\) \*1% 嗯～真是好可爱呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2692',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边说着一边用手指紧紧地缠住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2694', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2695',
+        any: [/			PRINTFORMW 「主人的大肉棒…好可爱…要好好抚摸呢。」/],
+      },
+      {
+        src: K2,
+        ref: '2696',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边淫笑着一边用手指紧紧地缠住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2698', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '2699',
+        any: [/			PRINTFORMW 「像这样…侍奉…大鸡鸡可以么？…呵呵…好可爱呢……」/],
+      },
+      { src: K2, ref: '2701', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '2702',
+        any: [/			PRINTFORMW 「哎、哎呀…好可怕…用手去摸的话…有点害怕…」/],
+      },
+      {
+        src: K2,
+        ref: '2703',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%提心吊胆地摸着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2704', any: [/		ENDIF/] },
+      { src: K2, ref: '2705', any: [/		CFLAG:TARGET:331 = 1/] },
+      { src: K2, ref: '2706', any: [/		RETURN 0/] },
+      { src: K2, ref: '2708', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2710',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2711', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2712',
+        any: [
+          /				PRINTFORMW 「大鸡鸡…哈哈%UNICODE\(0x2661\) \*1% 大鸡鸡正在被人家套弄%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2713',
+        any: [
+          /				PRINTFORMW 「啊%UNICODE\(0x2661\) \*1%…用手就感觉到了…啊啊…光是…套弄着就让人家的阴蒂硬起来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2714',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%用力地搓揉着%SAVESTR:PLAYER%的阴茎，脸上露出淫荡的笑容……/,
+        ],
+      },
+      { src: K2, ref: '2715', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2716',
+        any: [
+          /				PRINTFORMW 「啊啊…大肉棒…还在抖动着%UNICODE\(0x2661\) \*1% 嗯～真想全部塞进下体呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2717',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%温柔地套弄起%SAVESTR:PLAYER%的阴茎，脸上露出温柔的笑容/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2718',
+        any: [
+          /				PRINTFORMW 「可以射出来哦%UNICODE\(0x2661\) \*1% %SELF_CALL\(TARGET\)%的手也很舒服吗%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2719', any: [/			ENDIF/] },
+      { src: K2, ref: '2720', any: [/			CFLAG:331 = 7/] },
+      {
+        src: K2,
+        ref: '2722',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2723',
+        any: [
+          /			PRINTFORMW 「啊啊…大肉棒…还在抖动着%UNICODE\(0x2661\) \*1% 嗯～真想全部塞进下体呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2724',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用力地搓揉着%SAVESTR:PLAYER%的阴茎，脸上露出饥渴的表情……/,
+        ],
+      },
+      { src: K2, ref: '2725', any: [/			CFLAG:331 = 6/] },
+      {
+        src: K2,
+        ref: '2727',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2728', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2729',
+        any: [/				PRINTFORMW 「啊哈，这样可以吗？还是更用力些？」/],
+      },
+      {
+        src: K2,
+        ref: '2730',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%脸上带着微笑，用力地搓揉着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2731', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2732',
+        any: [/				PRINTFORMW 「已经这么硬邦邦的了…好可爱…好想亲一下呢…\?」/],
+      },
+      {
+        src: K2,
+        ref: '2733',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%卖力地套弄起%SAVESTR:PLAYER%的阴茎，脸上露出饥渴的表情……/,
+        ],
+      },
+      { src: K2, ref: '2734', any: [/			ENDIF/] },
+      { src: K2, ref: '2735', any: [/			CFLAG:331 = 5/] },
+      {
+        src: K2,
+        ref: '2737',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2738',
+        any: [/			PRINTFORMW 「主人的大肉棒…好可爱…需要更用力些吗？」/],
+      },
+      {
+        src: K2,
+        ref: '2739',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%脸上带着微笑，用力地搓揉着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2740', any: [/			CFLAG:331 = 4/] },
+      {
+        src: K2,
+        ref: '2742',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2743', any: [/			PRINTFORMW 「大鸡鸡…好热…好可爱…」/] },
+      {
+        src: K2,
+        ref: '2744',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%熟练地搓揉起%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2745', any: [/			CFLAG:331 = 3/] },
+      { src: K2, ref: '2747', any: [/		ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '2748', any: [/			PRINTFORMW 「哎呀…这样好讨厌」/] },
+      {
+        src: K2,
+        ref: '2749',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一副快要哭出来的表情，提心吊胆地套弄着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2750', any: [/			CFLAG:331 = 2/] },
+      { src: K2, ref: '2751', any: [/		ENDIF/] },
+      { src: K2, ref: '2752', any: [/		RETURN 0/] },
+      { src: K2, ref: '2753', any: [/	ENDIF/] },
+      { src: K2, ref: '2754', any: [/ENDIF/] },
+      { src: K2, ref: '2759', any: [/IF SELECTCOM == 31/] },
+      { src: K2, ref: '2761', any: [/	IF CFLAG:TARGET:332 == 0/] },
+      { src: K2, ref: '2763', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2764',
+        any: [
+          /			PRINTFORMW 「啊啊…用嘴来服务吗%UNICODE\(0x2661\) \*1% 没有问题哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2765',
+        any: [
+          /			PRINTFORMW 「唔%UNICODE\(0x2661\) \*1%…嗯%UNICODE\(0x2661\) \*1%…哦…嗯…大肉棒也很美味呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2766',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%仿佛饥渴的野兽一样发出呻吟，生涩地用舌头舔弄着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2768', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2769',
+        any: [
+          /			PRINTFORMW 「啊唔…嗯…嗯…嗯嗯…呼呼…肉棒…在嘴里跳动着…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2770',
+        any: [
+          /			PRINTFORMW 「大鸡鸡…好美味…%UNICODE\(0x2661\) \*1% 唔嗯…唔嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2771',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%没有任何犹豫地蹲在%SAVESTR:PLAYER%两腿之间开始吮吸肉棒……/,
+        ],
+      },
+      { src: K2, ref: '2773', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      { src: K2, ref: '2774', any: [/			PRINTFORMW 「用嘴巴…应该可以的吧…」/] },
+      { src: K2, ref: '2775', any: [/			PRINTFORMW 「只，只是舔一下的话…\?」/] },
+      { src: K2, ref: '2777', any: [/		ELSE/] },
+      { src: K2, ref: '2778', any: [/			PRINTFORMW 「那里…不舔不行吗…？」/] },
+      {
+        src: K2,
+        ref: '2779',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%蹲在%SAVESTR:PLAYER%的胯下，踌躇地舔弄着你的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2780', any: [/		ENDIF/] },
+      { src: K2, ref: '2781', any: [/		CFLAG:TARGET:332 = 1/] },
+      { src: K2, ref: '2782', any: [/		RETURN 0/] },
+      { src: K2, ref: '2784', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2786',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2787', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2788',
+        any: [
+          /				PRINTFORMW 「啊啊…用嘴来服务吗%UNICODE\(0x2661\) \*1% 没有问题哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2789',
+        any: [
+          /				PRINTFORMW 「唔%UNICODE\(0x2661\) \*1%…嗯%UNICODE\(0x2661\) \*1%…哦…嗯…大肉棒也很美味呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2790',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%仿佛饥渴的野兽一样发出呻吟，熟练地用舌头裹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2791', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2792',
+        any: [
+          /				PRINTFORMW 「真是的%UNICODE\(0x2661\) \*1%…只有尝过…主人的大鸡巴%UNICODE\(0x2661\) \*1%…人生才算圆满呐…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2793',
+        any: [
+          /				PRINTFORMW 「嘴巴已经习惯这根…大鸡巴了哟…哈…好好吃%UNICODE\(0x2661\) \*1%…龟头漏出的…淫液…承蒙款待%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2794',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%用舌头缠绕着龟头不停舔弄，发出一阵阵用力地啜吸声……/,
+        ],
+      },
+      { src: K2, ref: '2795', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2796',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%的嘴巴…请塞满吧…唔唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2797',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%的嘴被肉棒整根没入，抵到了深处。/],
+      },
+      {
+        src: K2,
+        ref: '2798',
+        any: [
+          /				PRINTFORMW 「嘴巴已经习惯这根%UNICODE\(0x2661\) \*1%…大鸡巴了哟%UNICODE\(0x2661\) \*1%…哈…好好吃…啊哈…随便射吧…射进嘴里吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2799', any: [/			ENDIF/] },
+      { src: K2, ref: '2800', any: [/			CFLAG:332 = 5/] },
+      {
+        src: K2,
+        ref: '2802',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2803', any: [/			IF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '2804',
+        any: [
+          /				PRINTFORMW 「啊唔…嗯…嗯…嗯嗯…呼呼…肉棒…在嘴里跳动着…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2805',
+        any: [
+          /				PRINTFORMW 「主人的肉棒…好美味…%UNICODE\(0x2661\) \*1% 唔嗯…更多%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2806',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%用舌头温柔侍奉着%SAVESTR:PLAYER%的阴茎，脸上露出了微笑……/,
+        ],
+      },
+      { src: K2, ref: '2807', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2808',
+        any: [
+          /				PRINTFORMW 「啊哈…大肉棒…好喜欢%UNICODE\(0x2661\) \*1% 又硬又热的大肉棒…好精神呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2809',
+        any: [
+          /				PRINTFORMW 「全身上下都是属于您的%UNICODE\(0x2661\) \*1%…想用哪里来侍奉都可以…想射出来也可以…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2810',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%爱慕地望着%SAVESTR:PLAYER%，舌头也在附和着……/,
+        ],
+      },
+      { src: K2, ref: '2811', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2812',
+        any: [
+          /				PRINTFORMW 「啊唔%UNICODE\(0x2661\) \*1%…呼呼%UNICODE\(0x2661\) \*1%…嗯…嗯～～～%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2813',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%用牙齿轻轻划过龟头，黏糊糊的舌头缠绕着肉棒。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2814',
+        any: [
+          /				PRINTFORMW 性奋地%SAVESTR:TARGET%眯起了眼睛，更加卖力地舔吸起肉棒……/,
+        ],
+      },
+      { src: K2, ref: '2815', any: [/			ENDIF/] },
+      { src: K2, ref: '2816', any: [/			CFLAG:332 = 4/] },
+      {
+        src: K2,
+        ref: '2818',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2819',
+        any: [/			PRINTFORMW 「唔…嗯…唔嗯…这样可以吗…舒服吗…？」/],
+      },
+      {
+        src: K2,
+        ref: '2820',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%仰望着你，细心地用嘴服务着……/],
+      },
+      { src: K2, ref: '2821', any: [/			CFLAG:332 = 3/] },
+      { src: K2, ref: '2823', any: [/		ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '2824', any: [/			PRINTFORMW 「居然…啊呜…要用…我的…嘴…」/] },
+      {
+        src: K2,
+        ref: '2825',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%眼眶里泪珠打转，努力地舔弄着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2826', any: [/			CFLAG:332 = 2/] },
+      { src: K2, ref: '2827', any: [/		ENDIF/] },
+      { src: K2, ref: '2828', any: [/		RETURN 0/] },
+      { src: K2, ref: '2829', any: [/	ENDIF/] },
+      { src: K2, ref: '2830', any: [/ENDIF/] },
+      { src: K2, ref: '2835', any: [/IF SELECTCOM == 32/] },
+      { src: K2, ref: '2837', any: [/	IF CFLAG:TARGET:333 == 0/] },
+      { src: K2, ref: '2839', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2840',
+        any: [
+          /			PRINTFORMW 「啊哈…%SELF_CALL\(TARGET\)%的胸部也不放过么%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2841',
+        any: [
+          /			PRINTFORMW 「好啊…乳交什么的%UNICODE\(0x2661\) \*1% 还没试过呢%UNICODE\(0x2661\) \*1%人家的乳房也很可爱哟%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2843',
+        any: [
+          /				PRINTFORMW 「哈啊…乳交吗…%SELF_CALL\(TARGET\)%的胸部…也算有了用武之地呢%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2844',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%淫荡地笑着，用胸部紧紧地夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2846', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2847',
+        any: [
+          /			PRINTFORMW 「%SELF_CALL\(TARGET\)%的乳房也能为主人服务了…人家好开心呢，主人」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2849',
+        any: [
+          /				PRINTFORMW 「主人曾说过…喜欢大大的胸部呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2850',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%脸上露出淫猥的笑容，温柔地用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2852', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '2853',
+        any: [/			PRINTFORMW 「用乳房吗？…只、只要魔王大人舒服怎样都好…」/],
+      },
+      {
+        src: K2,
+        ref: '2854',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%微笑着用胸部夹住你的阴茎……/],
+      },
+      { src: K2, ref: '2856', any: [/		ELSE/] },
+      { src: K2, ref: '2857', any: [/			PRINTFORMW 「用乳房夹住…什么的…」/] },
+      {
+        src: K2,
+        ref: '2858',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%害羞地用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2859', any: [/		ENDIF/] },
+      { src: K2, ref: '2860', any: [/		CFLAG:TARGET:333 = 1/] },
+      { src: K2, ref: '2861', any: [/		RETURN 0/] },
+      { src: K2, ref: '2863', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2865',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2866', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2867',
+        any: [
+          /				PRINTFORMW 「呼呼…大肉棒好精神%UNICODE\(0x2661\) \*1%…胸部也很舒服呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2868',
+        any: [
+          /				PRINTFORMW 「哈呼…好奇怪%UNICODE\(0x2661\) \*1% 明明只是简单地夹住…为什么心情会这么愉悦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2870',
+        any: [
+          /						PRINTFORMW 「啊啊…胸部够大真的是太好了%UNICODE\(0x2661\) \*1% 还可以这样～使用%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2871',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%色情地托住胸部，上下摩擦着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2872', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2873',
+        any: [/				PRINTFORMW 「啊啊乳交什么的好喜欢呢%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2874',
+        any: [
+          /				PRINTFORMW 「呼…最喜欢乳交了%UNICODE\(0x2661\) \*1% 嗯…好开心%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2876',
+        any: [
+          /						PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%的大咪咪…又要被射得黏糊糊了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2877',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%色情地托住胸部，上下摩擦着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2878', any: [/			ENDIF/] },
+      { src: K2, ref: '2879', any: [/			CFLAG:333 = 7/] },
+      {
+        src: K2,
+        ref: '2881',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2882',
+        any: [
+          /			PRINTFORMW 「嘻嘻…很喜欢%SELF_CALL\(TARGET\)%的胸部吗%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2883',
+        any: [
+          /			PRINTFORMW 「好啊…乳交什么的%UNICODE\(0x2661\) \*1% 还没试过呢%UNICODE\(0x2661\) \*1%人家的乳房也很可爱哟%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2885',
+        any: [
+          /					PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%的大咪咪…又要被射得黏糊糊了呢%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2886',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%脸上露出淫猥的笑容，温柔地用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2887', any: [/			CFLAG:333 = 6/] },
+      {
+        src: K2,
+        ref: '2889',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:333 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '2890', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '2891',
+        any: [/				PRINTFORMW 「哈…哈…主人…胸部侍奉得舒服吗？」/],
+      },
+      {
+        src: K2,
+        ref: '2893',
+        any: [
+          /						PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1%大肉棒被夹的紧紧地呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2894',
+        any: [
+          /				PRINTFORMW 「呼呼…%SELF_CALL\(TARGET\)%连…连人家也性奋…起来了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2895',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%高兴地笑着，用胸部紧紧地夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2896', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '2897',
+        any: [
+          /				PRINTFORMW 「%SELF_CALL\(TARGET\)%的乳房也能为主人服务呢…人家好开心呢，主人」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2899',
+        any: [
+          /						PRINTFORMW 「主人曾说过…喜欢大大的胸部呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2900',
+        any: [/				PRINTFORMW 「呼…大肉棒好热…好喜欢%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '2901',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%脸上露出淫猥的笑容，温柔地用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2902', any: [/			ENDIF/] },
+      { src: K2, ref: '2903', any: [/			CFLAG:333 = 5/] },
+      {
+        src: K2,
+        ref: '2905',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:333 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2906',
+        any: [
+          /			PRINTFORMW 「%SELF_CALL\(TARGET\)%的乳房也能为主人服务呢…人家好开心，主人」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2908',
+        any: [
+          /				PRINTFORMW 「主人曾说过…喜欢大大的胸部呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2909',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%脸上露出淫猥的笑容，温柔地用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2910', any: [/			CFLAG:333 = 4/] },
+      {
+        src: K2,
+        ref: '2912',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:333 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2913',
+        any: [
+          /			PRINTFORMW 「好舒服…只要舒服就好…%SELF_CALL\(TARGET\)%也好开心…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2914',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%害羞地笑着，用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2915', any: [/			CFLAG:333 = 3/] },
+      {
+        src: K2,
+        ref: '2917',
+        any: [/		ELSEIF  CFLAG:333 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '2918',
+        any: [/			PRINTFORMW 「难道这样心情就会好么…真奇怪…」/],
+      },
+      {
+        src: K2,
+        ref: '2919',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%笨拙地用胸部夹住%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '2920', any: [/			CFLAG:333 = 2/] },
+      { src: K2, ref: '2921', any: [/		ENDIF/] },
+      { src: K2, ref: '2922', any: [/		RETURN 0/] },
+      { src: K2, ref: '2923', any: [/	ENDIF/] },
+      { src: K2, ref: '2924', any: [/ENDIF/] },
+      { src: K2, ref: '2929', any: [/IF SELECTCOM == 33/] },
+      { src: K2, ref: '2931', any: [/	IF CFLAG:TARGET:334 == 0/] },
+      { src: K2, ref: '2933', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '2934',
+        any: [
+          /			PRINTFORMW 「啊啊…大鸡鸡已经热成这样了么…啊哈…没问题…无论用哪里服务都可以哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2935',
+        any: [
+          /			PRINTFORMW 「啊啊啊%UNICODE\(0x2661\) \*1%…啊…鸡巴…摩擦的温度%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2937', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '2938',
+        any: [
+          /			PRINTFORMW 「呵呵，只要主人喜欢，什么都可以…这样真的能让你舒服吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2939', any: [/			PRINTFORMW 「主人好色哟……」/] },
+      { src: K2, ref: '2941', any: [/		ELSE/] },
+      { src: K2, ref: '2942', any: [/			PRINTFORMW 「这样…就可以吗…？」/] },
+      { src: K2, ref: '2943', any: [/		ENDIF/] },
+      { src: K2, ref: '2944', any: [/		CFLAG:TARGET:334 = 1/] },
+      { src: K2, ref: '2945', any: [/		RETURN 0/] },
+      { src: K2, ref: '2947', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '2949',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2950',
+        any: [
+          /			PRINTFORMW 「啊啊…请…不要再挑逗%SELF_CALL\(TARGET\)%了…%UNICODE\(0x2661\) \*1%…好想被操啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2951',
+        any: [
+          /			PRINTFORMW 「真是的…用这根大鸡鸡…%UNICODE\(0x2661\) \*1% 来夺走人家的处女吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2952',
+        any: [
+          /			PRINTFORMW 「放错地方了啦！%UNICODE\(0x2661\) \*1%放错地方啦！%UNICODE\(0x2661\) \*1%嘻嘻，开玩笑的…快来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2953', any: [/			CFLAG:334 = 6/] },
+      {
+        src: K2,
+        ref: '2955',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:334 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2956',
+        any: [
+          /			PRINTFORMW 「啊哈…大鸡鸡好热…啊哈…用大腿…来做吗%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2957',
+        any: [
+          /			PRINTFORMW 「啊啊啊%UNICODE\(0x2661\) \*1%…啊…鸡鸡…摩擦的温度%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2958',
+        any: [
+          /			PRINTFORMW 「大腿深处…爱液…已经流出来了…啊啊啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2959', any: [/			CFLAG:334 = 5/] },
+      {
+        src: K2,
+        ref: '2961',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2962',
+        any: [
+          /			PRINTFORMW 「这滚烫的大肉棒…什么时候才会插进%SELF_CALL\(TARGET\)%的小穴呢？主人…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2963',
+        any: [/			PRINTFORMW 「摩擦摩擦…什么时候才能被破处啊…\?」/],
+      },
+      {
+        src: K2,
+        ref: '2964',
+        any: [
+          /			PRINTFORMW 无视已经发情的呢喃，%SAVESTR:PLAYER%火热的肉棒在%SAVESTR:TARGET%大腿之间继续摩擦……/,
+        ],
+      },
+      { src: K2, ref: '2965', any: [/			CFLAG:334 = 4/] },
+      {
+        src: K2,
+        ref: '2967',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:334 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2968',
+        any: [/			PRINTFORMW 「哎呀…大肉棒离小穴这么近…却不插进来吗…？」/],
+      },
+      {
+        src: K2,
+        ref: '2969',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%眼泪往往地夹紧大腿，露出了失望的表情……/,
+        ],
+      },
+      { src: K2, ref: '2970', any: [/			CFLAG:334 = 3/] },
+      { src: K2, ref: '2972', any: [/		ELSEIF CFLAG:334 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '2973',
+        any: [/			PRINTFORMW 「嗯…这样就会舒服吗？…啊啊啊…肉棒在抖动…」/],
+      },
+      { src: K2, ref: '2974', any: [/			CFLAG:334 = 2/] },
+      { src: K2, ref: '2975', any: [/		ENDIF/] },
+      { src: K2, ref: '2976', any: [/		RETURN 0/] },
+      { src: K2, ref: '2977', any: [/	ENDIF/] },
+      { src: K2, ref: '2978', any: [/ENDIF/] },
+      { src: K2, ref: '2983', any: [/IF SELECTCOM == 34/] },
+      { src: K2, ref: '2985', any: [/	IF CFLAG:TARGET:335 == 0/] },
+      { src: K2, ref: '2987', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '2989', any: [/			IF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '2991', any: [/				IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '2992',
+        any: [
+          /					PRINTFORMW 「这…这种姿势吗，%SELF_CALL\(TARGET\)%可是第一次呢…没办法呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2993',
+        any: [
+          /					PRINTFORMW 「谁让这是%UNICODE\(0x2661\) \*1%…魔王大人的命令，所以啊…一定要按魔王大人要求的～做～呢」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2994',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%露出淫荡的笑容，慢慢地坐了下去。/],
+      },
+      {
+        src: K2,
+        ref: '2995',
+        any: [
+          /					PRINTFORMW 「啊啊啊啊…呼…魔王大人的大鸡鸡%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%的小穴%UNICODE\(0x2661\) \*1%…已经…融为一体…了啊%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '2996',
+        any: [
+          /					PRINTFORMW 「不行…啊，不行%UNICODE\(0x2661\) \*1%…还没动起来…呢%UNICODE\(0x2661\) \*1% 啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '2998', any: [/				ELSE/] },
+      { src: K2, ref: '3000', any: [/					IF TALENT:TARGET:317 == 4/] },
+      {
+        src: K2,
+        ref: '3001',
+        any: [
+          /						PRINTFORMW 「嘿嘿嘿%UNICODE\(0x2661\) \*1% %SELF_CALL\(TARGET\)%的处女…是留给魔王大人的呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3002',
+        any: [
+          /						PRINTFORMW 「啊啊…啊…没、没关系…只是有一点痛…啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3003',
+        any: [
+          /						PRINTFORMW 不知为何%SAVESTR:TARGET%突然想起连面容都已模糊的故乡恋人，不过转瞬又遗忘了。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3004',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%迟疑了一瞬，%SAVESTR:PLAYER%用力刺进了小穴，鲜血顺着阴茎向下流出。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3005',
+        any: [
+          /						PRINTFORMW 「哈…哈…嘿嘿嘿…这个小穴以后就是专属于魔王大人的东西了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3006',
+        any: [
+          /						PRINTFORMW 「啊啊啊%UNICODE\(0x2661\) \*1%…为什么…哭了？…不对…这是侍奉魔王大人…流下的喜悦的泪水吧……」/,
+        ],
+      },
+      { src: K2, ref: '3007', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '3008',
+        any: [
+          /						PRINTFORMW 「嘿嘿嘿%UNICODE\(0x2661\) \*1% %SELF_CALL\(TARGET\)%的处女…是留给魔王大人的呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3009',
+        any: [
+          /						PRINTFORMW 「啊啊…啊…没、没关系…只是有一点痛…啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3010',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%慢慢坐到了底，痛得呼吸艰难。/],
+      },
+      {
+        src: K2,
+        ref: '3011',
+        any: [
+          /						PRINTFORMW 「哈…哈…嘿嘿嘿…这个小穴以后就是专属于魔王大人的东西了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3012',
+        any: [
+          /						PRINTFORMW 「啊啊啊%UNICODE\(0x2661\) \*1%…更多…以后%UNICODE\(0x2661\) \*1%…要和魔王大人做更多更色的事哟%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3013', any: [/					ENDIF/] },
+      { src: K2, ref: '3014', any: [/				ENDIF/] },
+      { src: K2, ref: '3016', any: [/			ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '3018', any: [/				IF TALENT:TARGET:314 == 9/] },
+      {
+        src: K2,
+        ref: '3019',
+        any: [
+          /					PRINTFORMW 「啊啊…魔王大人…%SELF_CALL\(TARGET\)%是…属于你的…因为…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3020',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%面带笑容慢慢坐到了底。处女膜被刺穿后突然想到了什么。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3021',
+        any: [
+          /					PRINTFORMW 「小穴…好痛…啊…能够…与主人合为一体…好、好开心%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3022',
+        any: [
+          /					PRINTFORMW 「嗯…啊啊%UNICODE\(0x2661\) \*1%…痛…明明…啊…明明还很痛%UNICODE\(0x2661\) \*1%…可是腰…已经不自觉地……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3023',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%扭动着腰部，引导着魔王的阴茎插入小穴最深处。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3024',
+        any: [
+          /					PRINTFORMW 「啊啊…主人的大肉棒…好可爱%UNICODE\(0x2661\) \*1% 欲罢不能了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3026', any: [/				ELSE/] },
+      { src: K2, ref: '3028', any: [/					IF TALENT:TARGET:317 == 4 /] },
+      {
+        src: K2,
+        ref: '3029',
+        any: [
+          /						PRINTFORMW 「呼…%SELF_CALL\(TARGET\)%的第一次…是献给…啊啊…啊…魔王…魔王大人的……！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3030',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%流下了欢喜的眼泪，随着处女膜被刺穿，%SAVESTR:PLAYER%的整根阴茎都插了进去。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3031',
+        any: [
+          /						PRINTFORMW 「啊啊…啊…%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%的全部…都是属于主人的…啊啊…啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3032',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%突然间好像想起了谁，但转眼又忘了……/],
+      },
+      { src: K2, ref: '3033', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '3034',
+        any: [/						PRINTFORMW 「主人啊…全部都…奉献给你……」/],
+      },
+      {
+        src: K2,
+        ref: '3035',
+        any: [
+          /						PRINTFORMW 「嘿嘿…真的，主人…这就奉上…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3036',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%面带笑容坐到了底。象征处女的黏膜被慢慢刺穿。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3037',
+        any: [
+          /						PRINTFORMW 「小穴…啊…进来了…全部…全部都…插进来了…请尽情地使用吧…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3038',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%失身的疼痛被忽视了，高兴地开始慢慢扭动腰部……/,
+        ],
+      },
+      { src: K2, ref: '3039', any: [/					ENDIF/] },
+      { src: K2, ref: '3040', any: [/				ENDIF/] },
+      { src: K2, ref: '3042', any: [/			ELSE/] },
+      { src: K2, ref: '3044', any: [/				IF TALENT:TARGET:317 == 4 /] },
+      { src: K2, ref: '3045', any: [/					PRINTFORMW 「或、或许…这样还…好硬…！」/] },
+      {
+        src: K2,
+        ref: '3046',
+        any: [
+          /					PRINTFORMW 「对不起…原谅我…原谅我，啊…全部…都进来了…啊…啊啊啊！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3047',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%亲自向%SAVESTR:PLAYER%献上了自己的贞操。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3048',
+        any: [
+          /					PRINTFORMW 随后%SAVESTR:TARGET%想起了故乡的恋人，为自己的软弱流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '3049', any: [/				ELSE/] },
+      { src: K2, ref: '3050', any: [/					PRINTFORMW 「或、或许…这样还…好硬…！」/] },
+      {
+        src: K2,
+        ref: '3051',
+        any: [/					PRINTFORMW 「啊！全部…都进来了…痛…好痛啊！」/],
+      },
+      {
+        src: K2,
+        ref: '3052',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%亲自向%SAVESTR:PLAYER%献上了自己的贞操……/,
+        ],
+      },
+      { src: K2, ref: '3053', any: [/				ENDIF/] },
+      { src: K2, ref: '3054', any: [/			ENDIF/] },
+      { src: K2, ref: '3056', any: [/		ELSE/] },
+      { src: K2, ref: '3058', any: [/			IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '3059',
+        any: [
+          /				PRINTFORMW 「嘿嘿嘿%UNICODE\(0x2661\) \*1%…小蜜穴可是很享受呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3060',
+        any: [
+          /				PRINTFORMW 「啊…老实说这种程度还不够呀…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3062', any: [/			ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '3063',
+        any: [/				PRINTFORMW 「主人…%SELF_CALL\(TARGET\)%…也会努力扭动的…！」/],
+      },
+      {
+        src: K2,
+        ref: '3064',
+        any: [
+          /				PRINTFORMW 「主人的…全部都进来了…好舒服……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3066', any: [/			ELSE/] },
+      { src: K2, ref: '3067', any: [/				PRINTFORMW 「啊啊…插到最深处…好痛…」/] },
+      { src: K2, ref: '3068', any: [/			ENDIF/] },
+      { src: K2, ref: '3069', any: [/		ENDIF/] },
+      { src: K2, ref: '3070', any: [/		CFLAG:TARGET:335 = 1/] },
+      { src: K2, ref: '3071', any: [/		RETURN 0/] },
+      { src: K2, ref: '3073', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3075',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3076', any: [/			IF RAND:4 == 0/] },
+      {
+        src: K2,
+        ref: '3077',
+        any: [
+          /				PRINTFORMW 「哈…现在…这辆可爱的鸡鸡列车已经到站了%UNICODE\(0x2661\) \*1%…啊啊全部进站了啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3078',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%淫猥地扭动腰部，小穴吞吐着整根阴茎。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3079',
+        any: [
+          /				PRINTFORMW 「啊…主人的…啊啊…大鸡鸡好厉害%UNICODE\(0x2661\) \*1%…再激烈一点%UNICODE\(0x2661\) \*1%…操坏…也没有关系啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3080', any: [/			ELSEIF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '3081',
+        any: [
+          /				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1%…真是没想到…居然会这么舒服…啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3082',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的身体随着%SAVESTR:PLAYER%的动作上下起伏着，腰部忘情地扭动着要求更多。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3083',
+        any: [
+          /				PRINTFORMW 「啊%UNICODE\(0x2661\) \*1%…哼%UNICODE\(0x2661\) \*1%…高潮%UNICODE\(0x2661\) \*1%…小穴要高潮了…啊啊啊啊啊～～！！！」」/,
+        ],
+      },
+      { src: K2, ref: '3084', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '3085',
+        any: [
+          /				PRINTFORMW 「这根大鸡巴%UNICODE\(0x2661\) \*1%…是%SELF_CALL\(TARGET\)%的宝贝呢…谁…谁都别想抢走…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3086',
+        any: [
+          /				PRINTFORMW 「呼呼呼…啊…大鸡巴…好厉害%UNICODE\(0x2661\) \*1%…大鸡巴…好厉害啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3087',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%带着无上幸福的表情，细细地品味着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '3088', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3089',
+        any: [
+          /				PRINTFORMW 「小穴…已经到尽头了…啊…大鸡鸡%UNICODE\(0x2661\) \*1%…全部都进来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3090',
+        any: [
+          /				PRINTFORMW 「子宫口亲亲…好舒服…嗯%UNICODE\(0x2661\) \*1%高潮了%UNICODE\(0x2661\) \*1%要高潮了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3091',
+        any: [
+          /				PRINTFORMW 「啊…淫乱的%SELF_CALL\(TARGET\)%请随意操…操坏…操坏也没关系…用力地插进来吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3092', any: [/			ENDIF/] },
+      { src: K2, ref: '3093', any: [/			CFLAG:335 = 6/] },
+      {
+        src: K2,
+        ref: '3095',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3096', any: [/			IF RAND:4 == 0/] },
+      {
+        src: K2,
+        ref: '3097',
+        any: [
+          /				PRINTFORMW 「主人…想要射精也没问题…不要拔出去啊啊啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3098',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%的腰部前后摇动着，一次又一次地迎接%SAVESTR:PLAYER%的大肉棒深深顶进小穴……/,
+        ],
+      },
+      { src: K2, ref: '3099', any: [/			ELSEIF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '3100',
+        any: [
+          /				PRINTFORMW 「主人的大肉棒…一次比一次深入…好厉害啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3101',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%颤抖着，一次又一次地迎接%SAVESTR:PLAYER%的大肉棒深深顶进小穴……/,
+        ],
+      },
+      { src: K2, ref: '3102', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '3103',
+        any: [
+          /				PRINTFORMW 「还是这样从下面插进来…更有感觉呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3104',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%充满爱意地享受着%SAVESTR:TARGET%大肉棒由下而上的抽动……/,
+        ],
+      },
+      { src: K2, ref: '3105', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3106',
+        any: [/				PRINTFORMW 「主人！主人\? 主人啊%UNICODE\(0x2661\) \*3%」/],
+      },
+      {
+        src: K2,
+        ref: '3107',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%不知疲倦般地扭动腰部，渴求着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '3108', any: [/			ENDIF/] },
+      { src: K2, ref: '3109', any: [/			CFLAG:335 = 5/] },
+      {
+        src: K2,
+        ref: '3111',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3112', any: [/			IF RAND:4 == 0/] },
+      {
+        src: K2,
+        ref: '3113',
+        any: [/				PRINTFORMW 「不行…腰部…不受控制了…可是好舒服…咿！」/],
+      },
+      {
+        src: K2,
+        ref: '3114',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%皱着眉头，一副快要哭出来的样子，但是腰仍然在扭动着渴求更多……/,
+        ],
+      },
+      { src: K2, ref: '3115', any: [/			ELSEIF RAND:3 == 0/] },
+      {
+        src: K2,
+        ref: '3116',
+        any: [
+          /				PRINTFORMW 「居然！？可以这么舒服…！腰部已经…不由自主地动起来了…！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3117',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被快感击溃，腰部拼命地扭动着渴求着更多……/,
+        ],
+      },
+      { src: K2, ref: '3118', any: [/			ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '3119',
+        any: [/				PRINTFORMW 「不要啊…虽然感觉好舒服…好可怕！」/],
+      },
+      {
+        src: K2,
+        ref: '3120',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的身上自我矛盾着，身体却不由自主地高潮了……/,
+        ],
+      },
+      { src: K2, ref: '3121', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3122',
+        any: [/				PRINTFORMW 「不行了…腰…快要断了似的…但是好舒服…咿！」/],
+      },
+      {
+        src: K2,
+        ref: '3123',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被快感击溃，腰部拼命地扭动着渴求着更多……/,
+        ],
+      },
+      { src: K2, ref: '3124', any: [/			ENDIF/] },
+      { src: K2, ref: '3125', any: [/			CFLAG:335 = 4/] },
+      {
+        src: K2,
+        ref: '3127',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3128',
+        any: [/			PRINTFORMW 「这样…腰部这样动的话…可以吗…？」/],
+      },
+      {
+        src: K2,
+        ref: '3129',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%在你的命令下生硬地扭动腰部……/],
+      },
+      { src: K2, ref: '3130', any: [/			CFLAG:335 = 3/] },
+      { src: K2, ref: '3132', any: [/		ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '3133', any: [/			PRINTFORMW 「哈…呼…像这样…可以吗…？」/] },
+      {
+        src: K2,
+        ref: '3134',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%在你的命令下生硬地扭动腰部……/],
+      },
+      { src: K2, ref: '3135', any: [/			CFLAG:335 = 2/] },
+      { src: K2, ref: '3136', any: [/		ENDIF/] },
+      { src: K2, ref: '3137', any: [/		RETURN 0/] },
+      { src: K2, ref: '3138', any: [/	ENDIF/] },
+      { src: K2, ref: '3139', any: [/ENDIF/] },
+      { src: K2, ref: '3144', any: [/IF SELECTCOM == 35/] },
+      { src: K2, ref: '3146', any: [/	IF CFLAG:TARGET:336 == 0/] },
+      { src: K2, ref: '3148', any: [/		IF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '3149',
+        any: [/			PRINTFORMW 「哈…奇怪…明明心情很好…为什么会觉得很奇怪呢…」/],
+      },
+      { src: K2, ref: '3151', any: [/		ELSE/] },
+      { src: K2, ref: '3152', any: [/			PRINTFORMW 「嗯，嗯…这样可以了吗？？」/] },
+      {
+        src: K2,
+        ref: '3153',
+        any: [/			PRINTFORMW 「啊啊抱歉…粘糊糊的…做…啊啊啊！」/],
+      },
+      { src: K2, ref: '3154', any: [/		ENDIF/] },
+      { src: K2, ref: '3155', any: [/		CFLAG:TARGET:336 = 1/] },
+      { src: K2, ref: '3156', any: [/		RETURN 0/] },
+      { src: K2, ref: '3158', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3160',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:336 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3161',
+        any: [
+          /			PRINTFORMW 「嘿嘿嘿…身上哪个部位最漂亮呢…是那里和…这里啊…%UNICODE\(0x2661\) \*1%…那里？%UNICODE\(0x2661\) \*1%…真的吗？」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3162',
+        any: [
+          /			PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%…既然是最漂亮的部位%UNICODE\(0x2661\) \*1%…被射满精液的话会不会更漂亮？」/,
+        ],
+      },
+      { src: K2, ref: '3163', any: [/			CFLAG:336 = 5/] },
+      {
+        src: K2,
+        ref: '3165',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:336 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3166',
+        any: [
+          /			PRINTFORMW 「主人的身体和…%SELF_CALL\(TARGET\)%都洗干净了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3167',
+        any: [
+          /			PRINTFORMW 「啊哈…不行啊…恶作剧那么多…哼%UNICODE\(0x2661\) \*1%…啊哈%UNICODE\(0x2661\) \*1%…嗯哼%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3168', any: [/			CFLAG:336 = 4/] },
+      {
+        src: K2,
+        ref: '3170',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:336 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3171',
+        any: [
+          /			PRINTFORMW 「哎…胸部又脏了…%SELF_CALL\(TARGET\)%的乳房可是很漂亮的呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3172', any: [/			CFLAG:336 = 3/] },
+      {
+        src: K2,
+        ref: '3174',
+        any: [/		ELSEIF  CFLAG:336 <= 1 \|\| FLAG:7 == 2/],
+      },
+      { src: K2, ref: '3175', any: [/			PRINTFORMW 「这样就…好了…什么…啊啊！」/] },
+      { src: K2, ref: '3176', any: [/			PRINTFORMW 「粘糊糊的…做…又…啊啊啊」/] },
+      { src: K2, ref: '3177', any: [/			CFLAG:336 = 2/] },
+      { src: K2, ref: '3178', any: [/		ENDIF/] },
+      { src: K2, ref: '3179', any: [/		RETURN 0/] },
+      { src: K2, ref: '3180', any: [/	ENDIF/] },
+      { src: K2, ref: '3181', any: [/ENDIF/] },
+      { src: K2, ref: '3186', any: [/IF SELECTCOM == 36/] },
+      { src: K2, ref: '3188', any: [/	IF CFLAG:TARGET:337 == 0/] },
+      { src: K2, ref: '3190', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '3191',
+        any: [
+          /			PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1%…用屁眼侍奉吗%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3192',
+        any: [
+          /			PRINTFORMW 「好厉害%UNICODE\(0x2661\) \*1% 大鸡鸡…抖动着…又变大了%UNICODE\(0x2661\) \*1%…好棒%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3194', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '3195',
+        any: [
+          /			PRINTFORMW 「主人的大肉棒…%SELF_CALL\(TARGET\)%用屁股洞洞来侍奉吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3196',
+        any: [
+          /			PRINTFORMW 「主人只要躺着就好…呼…好热…屁股好像都要融化了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3198', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3199',
+        any: [/			PRINTFORMW 「要%SELF_CALL\(TARGET\)%…自己动吗…唔嗯…啊…」/],
+      },
+      {
+        src: K2,
+        ref: '3200',
+        any: [/			PRINTFORMW 「啊啊…在扩张着…后面的小穴…在扩张…唔……！」/],
+      },
+      { src: K2, ref: '3201', any: [/		ENDIF/] },
+      { src: K2, ref: '3202', any: [/		CFLAG:TARGET:337 = 1/] },
+      { src: K2, ref: '3203', any: [/		RETURN 0/] },
+      { src: K2, ref: '3205', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3207',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3208', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '3209',
+        any: [
+          /				PRINTFORMW 「呼呼呼%SELF_CALL\(TARGET\)%的屁眼已经越来越有感觉了%UNICODE\(0x2661\) \*1%…今后就是魔王大人的鸡鸡专属的了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3210',
+        any: [
+          /				PRINTFORMW 「还想要更多嘛，%UNICODE\(0x2661\) \*1% 用大鸡鸡在体内刻下印记吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3211', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3212',
+        any: [
+          /				PRINTFORMW 「啊哈%UNICODE\(0x2661\) \*1% 地方插对了，整个身体都跟着愉悦起来了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3213',
+        any: [
+          /				PRINTFORMW 「加上…心情也变好了…腰部居然也开始不由自主地…扭动起来了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3214', any: [/			ENDIF/] },
+      { src: K2, ref: '3215', any: [/		CFLAG:337 = 7/] },
+      {
+        src: K2,
+        ref: '3217',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:337 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3218',
+        any: [
+          /			PRINTFORMW 「嘻嘻%UNICODE\(0x2661\) \*1%…用后面的小穴来侍奉么%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3219',
+        any: [
+          /			PRINTFORMW 「啊%UNICODE\(0x2661\) \*1%后面的小穴…已经越来越有感觉了…好棒%UNICODE\(0x2661\) \*1%…好棒%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3220', any: [/			CFLAG:337 = 6/] },
+      {
+        src: K2,
+        ref: '3222',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3223', any: [/			IF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '3224',
+        any: [
+          /				PRINTFORMW 「啊啊啊…好棒！屁股小穴好舒服！主人啊！请原谅我！原谅我！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3225',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%淫荡地抖动着腰部，追求更多的快感…/],
+      },
+      { src: K2, ref: '3226', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3227',
+        any: [
+          /				PRINTFORMW 「明明是后面那里…可为什么这么舒服…好奇怪啊…主人帮帮我…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3228',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%一面说着一面开始激烈地扭动臀部，后面的小穴也不由自主地收缩起来…/,
+        ],
+      },
+      { src: K2, ref: '3229', any: [/			ENDIF/] },
+      { src: K2, ref: '3230', any: [/		CFLAG:337 = 5/] },
+      {
+        src: K2,
+        ref: '3232',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:337 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3233',
+        any: [
+          /			PRINTFORMW 「屁股小穴也…只要是主人的要求都可以%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3234',
+        any: [/			PRINTFORMW 「啊啊啊…快要被撑破了%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '3235', any: [/			CFLAG:337 = 4/] },
+      {
+        src: K2,
+        ref: '3237',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:337 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3238',
+        any: [
+          /			PRINTFORMW 「哎…屁眼居然也可以这么舒服…腰都情不自禁地扭动起来了…！」/,
+        ],
+      },
+      { src: K2, ref: '3239', any: [/			CFLAG:337 = 3/] },
+      {
+        src: K2,
+        ref: '3241',
+        any: [/		ELSEIF  CFLAG:337 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '3242',
+        any: [/			PRINTFORMW 「又…啊啊啊啊啊啊啊…哎呀…哎呀…」/],
+      },
+      { src: K2, ref: '3243', any: [/			CFLAG:337 = 2/] },
+      { src: K2, ref: '3244', any: [/		ENDIF/] },
+      { src: K2, ref: '3245', any: [/		RETURN 0/] },
+      { src: K2, ref: '3246', any: [/	ENDIF/] },
+      { src: K2, ref: '3247', any: [/ENDIF/] },
+      { src: K2, ref: '3252', any: [/IF SELECTCOM == 37/] },
+      { src: K2, ref: '3254', any: [/	IF CFLAG:TARGET:338 == 0/] },
+      { src: K2, ref: '3256', any: [/		IF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '3257',
+        any: [/			PRINTFORMW 「是…只要是魔王大人…怎样…都…可以…」/],
+      },
+      {
+        src: K2,
+        ref: '3258',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%高兴地笑着，伸出舌头舔弄%SAVESTR:PLAYER%的肛门……/,
+        ],
+      },
+      { src: K2, ref: '3260', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3261',
+        any: [/			PRINTFORMW 「好讨厌…啊…啊啊…MUA…这样…啊啊…真的…无法接受……！」/],
+      },
+      {
+        src: K2,
+        ref: '3262',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%含着泪，伸出舌头舔弄%SAVESTR:PLAYER%的肛门……/,
+        ],
+      },
+      { src: K2, ref: '3263', any: [/		ENDIF/] },
+      { src: K2, ref: '3264', any: [/		CFLAG:TARGET:338 = 1/] },
+      { src: K2, ref: '3265', any: [/		RETURN 0/] },
+      { src: K2, ref: '3267', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3269',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3270',
+        any: [/			PRINTFORMW 「呼呼呼呼…嗯嗯…真是美味呢%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3271',
+        any: [
+          /			PRINTFORMW 「真是没想到…自己…啊啊啊啊…连舌头都如此淫荡了么%UNICODE\(0x2661\) \*1% 还想要服务更多%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3272',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%黏糊糊的舌头将%SAVESTR:PLAYER%肛门的深处都清洁了……/,
+        ],
+      },
+      { src: K2, ref: '3273', any: [/			CFLAG:338 = 5/] },
+      {
+        src: K2,
+        ref: '3275',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3276',
+        any: [
+          /			PRINTFORMW 「呼啊…主人的肛门很美味呢…我舔…啊呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3277',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%欢喜地颤抖着舌头继续服务%SAVESTR:PLAYER%的肛门……/,
+        ],
+      },
+      { src: K2, ref: '3278', any: [/			CFLAG:338 = 4/] },
+      {
+        src: K2,
+        ref: '3280',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3281', any: [/			PRINTFORMW 「好吧…我舔…不过…还是挺…」/] },
+      {
+        src: K2,
+        ref: '3282',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一丝不苟地服务着%SAVESTR:PLAYER%的肛门……/,
+        ],
+      },
+      { src: K2, ref: '3283', any: [/			CFLAG:338 = 3/] },
+      { src: K2, ref: '3285', any: [/		ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3286',
+        any: [/			PRINTFORMW 「老实说…啊…啊啊…MUA…这样…啊啊…还是…有点奇怪……！」/],
+      },
+      {
+        src: K2,
+        ref: '3287',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%含着泪，伸出舌头舔弄%SAVESTR:PLAYER%的肛门……/,
+        ],
+      },
+      { src: K2, ref: '3288', any: [/			CFLAG:338 = 2/] },
+      { src: K2, ref: '3289', any: [/		ENDIF/] },
+      { src: K2, ref: '3290', any: [/		RETURN 0/] },
+      { src: K2, ref: '3291', any: [/	ENDIF/] },
+      { src: K2, ref: '3292', any: [/ENDIF/] },
+      { src: K2, ref: '3297', any: [/IF SELECTCOM == 40/] },
+      { src: K2, ref: '3299', any: [/	IF CFLAG:TARGET:341 == 0/] },
+      {
+        src: K2,
+        ref: '3300',
+        any: [/		PRINTFORMW 「这是……要做什么！？呀！好痛！好可怕！快停下呀！」/],
+      },
+      { src: K2, ref: '3301', any: [/		CFLAG:TARGET:341 = 1/] },
+      { src: K2, ref: '3302', any: [/		RETURN 0/] },
+      { src: K2, ref: '3304', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3306',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:341 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3307',
+        any: [
+          /			PRINTFORMW 「呼嗯%UNICODE\(0x2661\) \*1%…被惩罚…还这么兴奋的我真是个变态呢…请继续啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3308',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的拍打下发出了欢喜的淫叫声……/,
+        ],
+      },
+      { src: K2, ref: '3309', any: [/			CFLAG:TARGET:341 = 5/] },
+      {
+        src: K2,
+        ref: '3311',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:341 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3312',
+        any: [
+          /			PRINTFORMW 「惩罚我！欺负我！狠狠地责备，这么下流的我吧！……魔王大人啊～\?%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3313',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的巴掌下发出了欢喜的淫叫声……/,
+        ],
+      },
+      { src: K2, ref: '3314', any: [/			CFLAG:TARGET:341 = 4/] },
+      { src: K2, ref: '3315', any: [/			RETURN 0/] },
+      {
+        src: K2,
+        ref: '3317',
+        any: [
+          /		ELSEIF MARK:0 == 3 && MARK:2 == 3 && \(CFLAG:341 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3318',
+        any: [
+          /			PRINTFORMW 「痛…痛啊…啊啊！…忍耐…好像…也不是不能忍耐……啊！啊啊啊！」/,
+        ],
+      },
+      { src: K2, ref: '3319', any: [/			CFLAG:TARGET:341 = 3/] },
+      { src: K2, ref: '3320', any: [/			RETURN 0/] },
+      { src: K2, ref: '3322', any: [/		ELSEIF CFLAG:341 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3323',
+        any: [/			PRINTFORMW 「不！不啊！痛呀！停啊啊！」/],
+      },
+      { src: K2, ref: '3324', any: [/			CFLAG:TARGET:341 = 2/] },
+      { src: K2, ref: '3325', any: [/		ENDIF/] },
+      { src: K2, ref: '3326', any: [/		RETURN 0/] },
+      { src: K2, ref: '3327', any: [/	ENDIF/] },
+      { src: K2, ref: '3328', any: [/ENDIF/] },
+      { src: K2, ref: '3333', any: [/IF SELECTCOM == 41/] },
+      { src: K2, ref: '3335', any: [/	IF CFLAG:TARGET:342 == 0/] },
+      { src: K2, ref: '3337', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '3338',
+        any: [
+          /			PRINTFORMW 「呼…该如何惩罚淫荡的%SAVESTR:TARGET%呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3340', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '3341',
+        any: [/			PRINTFORMW 「请多关照…啊啊…请温柔一些哦……啊！」/],
+      },
+      { src: K2, ref: '3343', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3344',
+        any: [/			PRINTFORMW 「快停下！好痛！好痛！这样好痛啊！」/],
+      },
+      { src: K2, ref: '3345', any: [/		ENDIF/] },
+      { src: K2, ref: '3346', any: [/		CFLAG:TARGET:342 = 1/] },
+      { src: K2, ref: '3347', any: [/		RETURN 0/] },
+      { src: K2, ref: '3349', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3351',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3352',
+        any: [
+          /			PRINTFORMW 「啊…呼呀…不行…不要停止惩罚！…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3353',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%鞭痕累累的身体发出了愉悦的叫声。/],
+      },
+      {
+        src: K2,
+        ref: '3354',
+        any: [
+          /			PRINTFORMW 「还是这样…更有感觉吗…请继续…继续惩罚我吧…不要停呀！！啊啊啊啊啊啊啊啊啊啊！！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3355',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%扭动着身体希望被鞭打得更多，私处的汁液不停飞溅出来……/,
+        ],
+      },
+      { src: K2, ref: '3356', any: [/			CFLAG:TARGET:342 = 9/] },
+      {
+        src: K2,
+        ref: '3358',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:342 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3359',
+        any: [
+          /			PRINTFORMW 「啊哈…%SAVESTR:TARGET%还真是越来越变态了呢…请继续…继续惩罚我吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3360',
+        any: [
+          /			PRINTFORMW 「呀啊%UNICODE\(0x2661\) \*1%…啊啊啊…好棒…啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3361',
+        any: [
+          /			PRINTFORMW %SAVESTR:PLAYER%的皮鞭无情抽打%SAVESTR:TARGET%的身躯，娇喘声随着鞭子的舞动起伏着……/,
+        ],
+      },
+      { src: K2, ref: '3362', any: [/			CFLAG:TARGET:342 = 8/] },
+      {
+        src: K2,
+        ref: '3364',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:342 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3365',
+        any: [/			PRINTFORMW 「啊啊啊…被惩罚了…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3366',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%拼命忍耐着皮鞭抽打身体的痛苦……/],
+      },
+      { src: K2, ref: '3367', any: [/			CFLAG:TARGET:342 = 7/] },
+      {
+        src: K2,
+        ref: '3369',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3370', any: [/			PRINTFORMW 「不要停！用力地抽打吧！」/] },
+      {
+        src: K2,
+        ref: '3371',
+        any: [/			PRINTFORMW 「请继续鞭打我！惩罚我吧！」/],
+      },
+      {
+        src: K2,
+        ref: '3372',
+        any: [
+          /			PRINTFORMW 在%SAVESTR:PLAYER%的皮鞭无情抽打下，%SAVESTR:TARGET%两腿之间爱液泌出了……/,
+        ],
+      },
+      { src: K2, ref: '3373', any: [/			CFLAG:TARGET:342 = 6/] },
+      {
+        src: K2,
+        ref: '3375',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:342 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3376',
+        any: [/			PRINTFORMW 「身体的！感觉…变奇怪了呀%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3377',
+        any: [
+          /			PRINTFORMW 在%SAVESTR:PLAYER%的皮鞭无情抽打下，%SAVESTR:TARGET%的双腿不停摩擦忍耐着……/,
+        ],
+      },
+      { src: K2, ref: '3378', any: [/			CFLAG:TARGET:342 = 5/] },
+      {
+        src: K2,
+        ref: '3380',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:342 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3381',
+        any: [/			PRINTFORMW 「啊…真是的…啊啊！原谅你了哟…一点都不痛…」/],
+      },
+      {
+        src: K2,
+        ref: '3382',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%在鞭子抽打下扭动着身体强行忍耐着……/],
+      },
+      { src: K2, ref: '3383', any: [/			CFLAG:TARGET:342 = 4/] },
+      {
+        src: K2,
+        ref: '3385',
+        any: [/		ELSEIF ABL:21 >= 3 && \(CFLAG:342 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3386',
+        any: [/			PRINTFORMW 「痛！痛啊…啊啊…明明很痛…可是那里却痒痒的…」/],
+      },
+      {
+        src: K2,
+        ref: '3387',
+        any: [
+          /			PRINTFORMW 在%SAVESTR:PLAYER%的皮鞭无情抽打下，%SAVESTR:TARGET%的双腿不停摩擦忍耐着……/,
+        ],
+      },
+      { src: K2, ref: '3388', any: [/			CFLAG:TARGET:342 = 3/] },
+      { src: K2, ref: '3390', any: [/		ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3391',
+        any: [/			PRINTFORMW 「好痛…好痛…不…不…不行！好过分！好过分啊！」/],
+      },
+      {
+        src: K2,
+        ref: '3392',
+        any: [/			PRINTFORMW 「身体的疼痛…已经…快到极限了……」/],
+      },
+      { src: K2, ref: '3393', any: [/			CFLAG:TARGET:342 = 2/] },
+      { src: K2, ref: '3394', any: [/			ENDIF/] },
+      { src: K2, ref: '3395', any: [/		RETURN 0/] },
+      { src: K2, ref: '3396', any: [/	ENDIF/] },
+      { src: K2, ref: '3397', any: [/ENDIF/] },
+      { src: K2, ref: '3402', any: [/IF SELECTCOM == 42/] },
+      { src: K2, ref: '3404', any: [/	IF CFLAG:TARGET:343 == 0/] },
+      { src: K2, ref: '3406', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '3407',
+        any: [
+          /			PRINTFORMW 「啊啊啊…敏感的地方…请…请刺…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3409', any: [/		ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '3410', any: [/			PRINTFORMW 「拜托…一定要温柔哦…」/] },
+      { src: K2, ref: '3412', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3413',
+        any: [/			PRINTFORMW 「停，停下…那个太…不行…不行不行不行！！」/],
+      },
+      { src: K2, ref: '3414', any: [/		ENDIF/] },
+      { src: K2, ref: '3415', any: [/		CFLAG:TARGET:343 = 1/] },
+      { src: K2, ref: '3416', any: [/		RETURN 0/] },
+      { src: K2, ref: '3418', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3420',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3421',
+        any: [
+          /			PRINTFORMW 「可以的…刺得好深…好…更多…啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3422',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%细嫩的皮肤轻易地被针刺破，血珠涌出来的同时却发出了快乐的喘息声……/,
+        ],
+      },
+      { src: K2, ref: '3423', any: [/			CFLAG:TARGET:343 = 9/] },
+      {
+        src: K2,
+        ref: '3425',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:343 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3426',
+        any: [
+          /			PRINTFORMW 「哈啊？…啊啊啊…停…好、好奇怪…针头的感觉…啊啊啊…变奇怪了……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3427',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%对被针刺后皮肤上传来的疼痛麻痹茫然失措……/,
+        ],
+      },
+      { src: K2, ref: '3428', any: [/			CFLAG:TARGET:343 = 8/] },
+      {
+        src: K2,
+        ref: '3430',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:343 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3431',
+        any: [/			PRINTFORMW 「不可以啊啊啊…啊啊…那、那个…刺得好深！」/],
+      },
+      {
+        src: K2,
+        ref: '3432',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%尖叫着承受针头尖锐的疼痛……/],
+      },
+      { src: K2, ref: '3433', any: [/			CFLAG:TARGET:343 = 7/] },
+      {
+        src: K2,
+        ref: '3435',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3436',
+        any: [/			PRINTFORMW 「哦哦！身体…在渴求更多…更多呀…！」/],
+      },
+      {
+        src: K2,
+        ref: '3437',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%细嫩的皮肤轻易地被针刺破，血珠涌出来的同时却发出了快乐的喘息声……/,
+        ],
+      },
+      { src: K2, ref: '3438', any: [/			CFLAG:TARGET:343 = 6/] },
+      {
+        src: K2,
+        ref: '3440',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:343 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3441',
+        any: [/			PRINTFORMW 「啊啊啊…只要是主人…只有主人…才会让我变奇怪啊！」/],
+      },
+      {
+        src: K2,
+        ref: '3442',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%对被针刺后皮肤上传来的疼痛麻痹茫然失措……/,
+        ],
+      },
+      { src: K2, ref: '3443', any: [/			CFLAG:TARGET:343 = 5/] },
+      {
+        src: K2,
+        ref: '3445',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:343 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3446',
+        any: [/			PRINTFORMW 「可以的…只要是主人的…怎样都是可以的…」/],
+      },
+      {
+        src: K2,
+        ref: '3447',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%承受着针头尖锐的疼痛……/],
+      },
+      { src: K2, ref: '3448', any: [/			CFLAG:TARGET:343 = 4/] },
+      {
+        src: K2,
+        ref: '3450',
+        any: [/		ELSEIF ABL:21 >= 3 && \(CFLAG:343 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3451',
+        any: [/			PRINTFORMW 「好奇怪…被针扎…身体却在发烫…感觉好甜蜜…」/],
+      },
+      {
+        src: K2,
+        ref: '3452',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%对被针刺后皮肤上传来的疼痛麻痹茫然失措……/,
+        ],
+      },
+      { src: K2, ref: '3453', any: [/			CFLAG:TARGET:343 = 3/] },
+      { src: K2, ref: '3455', any: [/		ELSEIF CFLAG:343 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3456',
+        any: [/			PRINTFORMW 「快拿走！不要啊！好痛啊讨厌讨厌！」/],
+      },
+      {
+        src: K2,
+        ref: '3457',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%哭叫着承受针头尖锐的疼痛……/],
+      },
+      { src: K2, ref: '3458', any: [/			CFLAG:TARGET:343 = 2/] },
+      { src: K2, ref: '3459', any: [/		ENDIF/] },
+      { src: K2, ref: '3460', any: [/		RETURN 0/] },
+      { src: K2, ref: '3461', any: [/	ENDIF/] },
+      { src: K2, ref: '3462', any: [/ENDIF/] },
+      { src: K2, ref: '3468', any: [/IF SELECTCOM == 43 && TEQUIP:43/] },
+      { src: K2, ref: '3470', any: [/	IF CFLAG:TARGET:344 == 0/] },
+      { src: K2, ref: '3472', any: [/		IF TALENT:76 == 1/] },
+      { src: K2, ref: '3473', any: [/			PRINTFORMW 「新玩意儿吗？」/] },
+      { src: K2, ref: '3475', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '3476',
+        any: [/			PRINTFORMW 「戴上以后…心里很忐忑啊…主人」/],
+      },
+      { src: K2, ref: '3478', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3479',
+        any: [/			PRINTFORMW 「人家好…好害怕…请早点摘掉…」/],
+      },
+      { src: K2, ref: '3480', any: [/		ENDIF/] },
+      { src: K2, ref: '3481', any: [/		CFLAG:TARGET:344 = 1/] },
+      { src: K2, ref: '3482', any: [/		RETURN 0/] },
+      { src: K2, ref: '3484', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3486',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3487',
+        any: [/			PRINTFORMW （心里七上八下的…主人把眼睛蒙上…我已经准备好了哟）/],
+      },
+      {
+        src: K2,
+        ref: '3488',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%期待得双腿不停摩擦起来……/],
+      },
+      { src: K2, ref: '3489', any: [/			CFLAG:TARGET:344 = 9/] },
+      {
+        src: K2,
+        ref: '3491',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3492',
+        any: [
+          /			PRINTFORMW （呼呼…光是眼睛被蒙上…身体就期待得发热了…%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3493',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%沉默又性奋地期待着……/],
+      },
+      { src: K2, ref: '3494', any: [/			CFLAG:TARGET:344 = 8/] },
+      {
+        src: K2,
+        ref: '3496',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:344 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3497',
+        any: [/			PRINTFORMW （会发生什么呢…我已经准备好了…\?）/],
+      },
+      {
+        src: K2,
+        ref: '3498',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%沉默又性奋地期待着……/],
+      },
+      { src: K2, ref: '3499', any: [/			CFLAG:TARGET:344 = 7/] },
+      {
+        src: K2,
+        ref: '3501',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3502',
+        any: [/			PRINTFORMW （心里七上八下的…主人把眼睛蒙上…我已经准备好了哟）/],
+      },
+      {
+        src: K2,
+        ref: '3503',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%期待得双腿不停摩擦起来。/],
+      },
+      { src: K2, ref: '3504', any: [/			CFLAG:TARGET:344 = 6/] },
+      {
+        src: K2,
+        ref: '3506',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3507',
+        any: [/			PRINTFORMW （呼呼…光是眼睛被蒙上…身体就期待得发热了…）/],
+      },
+      { src: K2, ref: '3508', any: [/			CFLAG:TARGET:344 = 5/] },
+      {
+        src: K2,
+        ref: '3510',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3511', any: [/			PRINTFORMW （主人…我已经准备好了哟…）/] },
+      { src: K2, ref: '3512', any: [/			CFLAG:TARGET:344 = 4/] },
+      {
+        src: K2,
+        ref: '3514',
+        any: [/		ELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3515',
+        any: [/			PRINTFORMW （眼睛被蒙住了…有点可怕…忐忑呢…）/],
+      },
+      { src: K2, ref: '3516', any: [/			CFLAG:TARGET:344 = 3/] },
+      { src: K2, ref: '3518', any: [/		ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3519',
+        any: [/			PRINTFORMW （可恶…%SELF_CALL\(TARGET\)%…将会被怎么样…？）/],
+      },
+      { src: K2, ref: '3520', any: [/			CFLAG:TARGET:344 = 2/] },
+      { src: K2, ref: '3521', any: [/		ENDIF/] },
+      { src: K2, ref: '3522', any: [/		RETURN 0/] },
+      { src: K2, ref: '3523', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '3525',
+        any: [/ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0/],
+      },
+      {
+        src: K2,
+        ref: '3527',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:380 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '3528', any: [/		PRINTFORMW 「哈…哈……」/] },
+      { src: K2, ref: '3529', any: [/		CFLAG:380 = 3/] },
+      {
+        src: K2,
+        ref: '3531',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:380 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3532',
+        any: [/		PRINTFORMW 「主人啊…眼睛被蒙上以后…看不到你的脸会很寂寞呢…」/],
+      },
+      { src: K2, ref: '3533', any: [/		CFLAG:380 = 2/] },
+      { src: K2, ref: '3535', any: [/	ELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3536',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%脸上露出了安心的表情。/],
+      },
+      { src: K2, ref: '3537', any: [/		CFLAG:380 = 1/] },
+      { src: K2, ref: '3538', any: [/	ENDIF/] },
+      { src: K2, ref: '3539', any: [/	RETURN 0/] },
+      { src: K2, ref: '3540', any: [/ENDIF/] },
+      { src: K2, ref: '3546', any: [/IF SELECTCOM == 44 && TEQUIP:44/] },
+      { src: K2, ref: '3548', any: [/	IF CFLAG:TARGET:345 == 0/] },
+      { src: K2, ref: '3550', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '3551',
+        any: [
+          /			PRINTFORMW 「啊…绑得好紧…感觉有点奇怪…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3553', any: [/		ELSEIF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '3554',
+        any: [/			PRINTFORMW 「主人…把人家绑住…有点害怕呢…」/],
+      },
+      { src: K2, ref: '3556', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3557',
+        any: [/			PRINTFORMW 「好可怕…求你快点解开好么…」/],
+      },
+      { src: K2, ref: '3558', any: [/		ENDIF/] },
+      { src: K2, ref: '3559', any: [/		CFLAG:TARGET:345 = 1/] },
+      { src: K2, ref: '3560', any: [/		RETURN 0/] },
+      { src: K2, ref: '3562', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3564',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3565',
+        any: [
+          /			PRINTFORMW 「啊啊…又绑…不光是身体…心里…啊…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3566',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%紧紧地被绳子束缚，爱液顺着双腿潺潺流出……/,
+        ],
+      },
+      { src: K2, ref: '3567', any: [/			CFLAG:TARGET:345 = 9/] },
+      {
+        src: K2,
+        ref: '3569',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:345 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3570',
+        any: [
+          /			PRINTFORMW 「哈…啊啊…又…要被绑起来玩弄了么…呼呼…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3571',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%随着熟悉的束缚感眼眶不自觉地湿润了……/,
+        ],
+      },
+      { src: K2, ref: '3572', any: [/			CFLAG:TARGET:345 = 8/] },
+      {
+        src: K2,
+        ref: '3574',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:345 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3575',
+        any: [/			PRINTFORMW 「啊啊啊…又要被绑起来么…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3576',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%高兴地接受了……/],
+      },
+      { src: K2, ref: '3577', any: [/			CFLAG:TARGET:345 = 7/] },
+      {
+        src: K2,
+        ref: '3579',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3580',
+        any: [
+          /			PRINTFORMW 「被绑起来…说不定更有感觉呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3581', any: [/			CFLAG:TARGET:345 = 6/] },
+      {
+        src: K2,
+        ref: '3583',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:345 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3584',
+        any: [
+          /			PRINTFORMW 「又被绑住了…不知为何心跳得好厉害……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3585', any: [/			CFLAG:TARGET:345 = 5/] },
+      {
+        src: K2,
+        ref: '3587',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:345 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3588',
+        any: [/			PRINTFORMW 「害怕…但是主人的话…就没问题」/],
+      },
+      { src: K2, ref: '3589', any: [/			CFLAG:TARGET:345 = 4/] },
+      {
+        src: K2,
+        ref: '3591',
+        any: [/		ELSEIF ABL:21 >= 3 && \(CFLAG:345 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3592',
+        any: [
+          /			PRINTFORMW 「紧绷绷的束缚感…%SELF_CALL\(TARGET\)%，变得好奇怪了呀」/,
+        ],
+      },
+      { src: K2, ref: '3593', any: [/			CFLAG:TARGET:345 = 3/] },
+      { src: K2, ref: '3595', any: [/		ELSEIF CFLAG:345 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '3596', any: [/			PRINTFORMW 「好可怕…求求你快点解开…」/] },
+      { src: K2, ref: '3597', any: [/			CFLAG:TARGET:345 = 2/] },
+      { src: K2, ref: '3598', any: [/		ENDIF/] },
+      { src: K2, ref: '3599', any: [/		RETURN 0/] },
+      { src: K2, ref: '3600', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '3602',
+        any: [/ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0/],
+      },
+      {
+        src: K2,
+        ref: '3604',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:385 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3605',
+        any: [
+          /		PRINTFORMW 「哈…哈…啊啊啊…明明还没问题的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3606', any: [/		CFLAG:385 = 3/] },
+      {
+        src: K2,
+        ref: '3608',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:385 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3609',
+        any: [
+          /		PRINTFORMW 「这次…仿佛连%SELF_CALL\(TARGET\)%的心都被绑住了呢…」/,
+        ],
+      },
+      { src: K2, ref: '3610', any: [/		CFLAG:385 = 2/] },
+      { src: K2, ref: '3612', any: [/	ELSEIF CFLAG:385 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3613',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%被解开后长出了一口气。/],
+      },
+      { src: K2, ref: '3614', any: [/		CFLAG:385 = 1/] },
+      { src: K2, ref: '3615', any: [/	ENDIF/] },
+      { src: K2, ref: '3616', any: [/	RETURN 0/] },
+      { src: K2, ref: '3617', any: [/ENDIF/] },
+      { src: K2, ref: '3623', any: [/IF SELECTCOM == 45 && TEQUIP:45/] },
+      { src: K2, ref: '3625', any: [/	IF CFLAG:TARGET:346 == 0/] },
+      { src: K2, ref: '3627', any: [/		IF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '3628',
+        any: [/			PRINTFORMW 「唔…唔…哈…真是的%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '3630', any: [/		ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '3631', any: [/			PRINTFORMW 「唔…呼…」/] },
+      {
+        src: K2,
+        ref: '3632',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的呼吸变得粗重，鼻翼兴奋地张合着……/],
+      },
+      { src: K2, ref: '3634', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3635',
+        any: [/			PRINTFORMW 「唔…！唔呀！嗯嗯！嗯唔嗯！」/],
+      },
+      { src: K2, ref: '3636', any: [/		ENDIF/] },
+      { src: K2, ref: '3637', any: [/		CFLAG:TARGET:346 = 1/] },
+      { src: K2, ref: '3638', any: [/		RETURN 0/] },
+      { src: K2, ref: '3640', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3642',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:346 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3643',
+        any: [/			PRINTFORMW 「呼…呼…嗯…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3644',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的口塞上有口水慢慢流下……/],
+      },
+      { src: K2, ref: '3645', any: [/			CFLAG:TARGET:346 = 9/] },
+      {
+        src: K2,
+        ref: '3647',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:346 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3648',
+        any: [/			PRINTFORMW 「呼…呼…嗯…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3649',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的呼吸变得粗重，鼻翼兴奋地张合着……/],
+      },
+      { src: K2, ref: '3650', any: [/			CFLAG:TARGET:346 = 8/] },
+      {
+        src: K2,
+        ref: '3652',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:346 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3653',
+        any: [/			PRINTFORMW 「呼…呼…嗯…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3654',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%无法说话，只能用鼻音哀鸣着……/],
+      },
+      { src: K2, ref: '3655', any: [/			CFLAG:TARGET:346 = 7/] },
+      {
+        src: K2,
+        ref: '3657',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:346 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3658', any: [/			PRINTFORMW 「呼…嗯…嗯…唔！…唔！」/] },
+      {
+        src: K2,
+        ref: '3659',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的口塞上有口水慢慢流下……/],
+      },
+      { src: K2, ref: '3660', any: [/			CFLAG:TARGET:346 = 6/] },
+      {
+        src: K2,
+        ref: '3662',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:346 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3663', any: [/			PRINTFORMW 「呼…嗯…嗯…唔！…唔！」/] },
+      {
+        src: K2,
+        ref: '3664',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的呼吸变得粗重，鼻翼兴奋地张合着……/],
+      },
+      { src: K2, ref: '3665', any: [/			CFLAG:TARGET:346 = 5/] },
+      {
+        src: K2,
+        ref: '3667',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:346 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3668', any: [/			PRINTFORMW 「呼…嗯…嗯…唔！…唔！」/] },
+      {
+        src: K2,
+        ref: '3669',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%无法说话，只能用鼻音哀鸣着……/],
+      },
+      { src: K2, ref: '3670', any: [/			CFLAG:TARGET:346 = 4/] },
+      {
+        src: K2,
+        ref: '3672',
+        any: [/		ELSEIF ABL:21 >= 3 && \(CFLAG:346 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '3673', any: [/			PRINTFORMW 「呼…嗯…嗯…唔！…唔！」/] },
+      {
+        src: K2,
+        ref: '3674',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的呼吸变得粗重，鼻翼兴奋地张合着……/],
+      },
+      { src: K2, ref: '3675', any: [/			CFLAG:TARGET:346 = 3/] },
+      { src: K2, ref: '3677', any: [/		ELSEIF CFLAG:346 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '3678', any: [/			PRINTFORMW 「唔…唔…呼！唔！」/] },
+      {
+        src: K2,
+        ref: '3679',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%害怕得不行。/],
+      },
+      { src: K2, ref: '3680', any: [/			CFLAG:TARGET:346 = 2/] },
+      { src: K2, ref: '3681', any: [/		ENDIF/] },
+      { src: K2, ref: '3682', any: [/		RETURN 0/] },
+      { src: K2, ref: '3683', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '3685',
+        any: [/ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0/],
+      },
+      {
+        src: K2,
+        ref: '3687',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:386 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3688',
+        any: [/		PRINTFORMW 「啊哈…哈…哈…哈…主人…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '3689', any: [/		CFLAG:386 = 3/] },
+      {
+        src: K2,
+        ref: '3691',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:386 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3692', any: [/		PRINTFORMW 「唔唔…哈…哈…主人啊…」/] },
+      { src: K2, ref: '3693', any: [/		CFLAG:386 = 2/] },
+      { src: K2, ref: '3695', any: [/	ELSEIF CFLAG:386 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3696',
+        any: [/		PRINTFORMW 随着口塞被取出，%SAVESTR:TARGET%终于长出了一口气。/],
+      },
+      { src: K2, ref: '3697', any: [/		CFLAG:386 = 1/] },
+      { src: K2, ref: '3698', any: [/	ENDIF/] },
+      { src: K2, ref: '3699', any: [/	RETURN 0/] },
+      { src: K2, ref: '3700', any: [/ENDIF/] },
+      { src: K2, ref: '3706', any: [/IF SELECTCOM == 46 && TEQUIP:46/] },
+      { src: K2, ref: '3708', any: [/	IF CFLAG:TARGET:347 == 0/] },
+      { src: K2, ref: '3710', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '3711',
+        any: [
+          /			PRINTFORMW 「啊啊啊…流进来了…灌肠液…流进来了啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3713', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '3714', any: [/			PRINTFORMW 「唔…难过…好难过…主人…」/] },
+      { src: K2, ref: '3716', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3717',
+        any: [/			PRINTFORMW 「肚子…好难受…快停下…放过我…放过我吧…」/],
+      },
+      { src: K2, ref: '3718', any: [/		ENDIF/] },
+      { src: K2, ref: '3719', any: [/		CFLAG:TARGET:347 = 1/] },
+      { src: K2, ref: '3720', any: [/		RETURN 0/] },
+      { src: K2, ref: '3722', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '3724',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3725',
+        any: [/			PRINTFORMW 「唔唔…在发烫…灌肠液在发烫%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '3726',
+        any: [
+          /			PRINTFORMW 「哈啊…啊啊哼%UNICODE\(0x2661\) \*1% 肛门…肛门…啊啊啊…塞子…要喷出来了！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3727', any: [/			CFLAG:347 = 7/] },
+      {
+        src: K2,
+        ref: '3729',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:347 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3730',
+        any: [
+          /			PRINTFORMW 「啊啊啊…流进来了…灌肠液…流进来了啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3731',
+        any: [/			PRINTFORMW 「肚子里…咕噜咕噜地响起来……」/],
+      },
+      { src: K2, ref: '3732', any: [/			CFLAG:347 = 6/] },
+      {
+        src: K2,
+        ref: '3734',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3735',
+        any: [/			PRINTFORMW 「主人啊…更多…再多注入一些吧…」/],
+      },
+      { src: K2, ref: '3736', any: [/			PRINTFORMW 「肚子在咕噜咕噜地响呢」/] },
+      { src: K2, ref: '3737', any: [/			CFLAG:347 = 5/] },
+      {
+        src: K2,
+        ref: '3739',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:347 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3740',
+        any: [/			PRINTFORMW 「好难受…但…还可以继续…主人啊…」/],
+      },
+      { src: K2, ref: '3741', any: [/			CFLAG:347 = 4/] },
+      {
+        src: K2,
+        ref: '3743',
+        any: [
+          /		ELSEIF ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3744',
+        any: [
+          /			PRINTFORMW 「更多…再多注入一些吧！肚子咕噜咕噜地响…快要喷出来了啊！」/,
+        ],
+      },
+      { src: K2, ref: '3745', any: [/			CFLAG:347 = 3/] },
+      {
+        src: K2,
+        ref: '3747',
+        any: [/		ELSEIF  CFLAG:347 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: K2,
+        ref: '3748',
+        any: [/			PRINTFORMW 「难受…好难受啊…快停下…谁来救救我…」/],
+      },
+      { src: K2, ref: '3749', any: [/			CFLAG:347 = 2/] },
+      { src: K2, ref: '3750', any: [/		ENDIF/] },
+      { src: K2, ref: '3751', any: [/		RETURN 0/] },
+      { src: K2, ref: '3752', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '3754',
+        any: [/ELSEIF SELECTCOM == 46 && TEQUIP:46 == 0/],
+      },
+      {
+        src: K2,
+        ref: '3756',
+        any: [/	IF TALENT:TARGET:76 == 1 && \(CFLAG:386 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3757',
+        any: [
+          /		PRINTFORMW 「啊…拔出去的一瞬间…主人啊啊啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3759',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:386 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3760',
+        any: [/		PRINTFORMW 「好舒服…不，不要…不要看那里！」/],
+      },
+      { src: K2, ref: '3762', any: [/	ELSEIF CFLAG:386 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '3763',
+        any: [
+          /		PRINTFORMW 「啊啊啊啊啊啊啊啊啊…哇啊啊啊啊啊啊…啊啊…啊……啊啊你……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3764',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%肛门喷出粪便的同时嚎啕大哭起来……/],
+      },
+      { src: K2, ref: '3765', any: [/	ENDIF/] },
+      { src: K2, ref: '3766', any: [/	RETURN 0/] },
+      { src: K2, ref: '3767', any: [/ENDIF/] },
+      { src: K2, ref: '3772', any: [/IF SELECTCOM == 55/] },
+      { src: K2, ref: '3774', any: [/	IF CFLAG:356 == 0/] },
+      { src: K2, ref: '3776', any: [/		IF ASSI > 0 && ASSIPLAY/] },
+      { src: K2, ref: '3777', any: [/			PRINTFORMW %SAVESTR:TARGET%被冷落了……/] },
+      { src: K2, ref: '3779', any: [/		ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '3780', any: [/			PRINTFORMW 「啊，那个…发生什么了……？」/] },
+      {
+        src: K2,
+        ref: '3781',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%一脸不明状况的表情……/],
+      },
+      { src: K2, ref: '3783', any: [/		ELSEIF TALENT:76 == 1/] },
+      {
+        src: K2,
+        ref: '3784',
+        any: [/			PRINTFORMW 「为什么停下…不做色色的事情了吗…？」/],
+      },
+      {
+        src: K2,
+        ref: '3785',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%一脸欲求不满的表情……/],
+      },
+      { src: K2, ref: '3787', any: [/		ELSE/] },
+      { src: K2, ref: '3788', any: [/			PRINTFORMW 「……发生了什么？」/] },
+      {
+        src: K2,
+        ref: '3789',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%好奇地眨了眨眼……/],
+      },
+      { src: K2, ref: '3790', any: [/		ENDIF/] },
+      { src: K2, ref: '3791', any: [/		PRINTL/] },
+      {
+        src: K2,
+        ref: '3794',
+        any: [
+          /			PRINTFORMW 蠕虫继续在%SAVESTR:TARGET%的小穴里蠕动，不知疲倦地搅动着阴道。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3797',
+        any: [
+          /			PRINTFORMW 蠕虫继续在%SAVESTR:TARGET%的肛门里不知疲倦地蠕动着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3800',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%肛门中的肛珠依旧在发挥着作用……/],
+      },
+      {
+        src: K2,
+        ref: '3803',
+        any: [/			PRINTFORMW 私处上的电动阴蒂夹持续地刺激着%SAVESTR:TARGET%。/],
+      },
+      {
+        src: K2,
+        ref: '3806',
+        any: [/			PRINTFORMW 乳头上的夹子持续地刺激着%SAVESTR:TARGET%。/],
+      },
+      {
+        src: K2,
+        ref: '3809',
+        any: [
+          /			PRINTFORML 乳房上安装的榨乳器依旧在持续地从%SAVESTR:TARGET%双峰中榨取乳汁。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3812',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的阴茎被飞机杯套弄着，充血的龟头快要射精一般微微颤抖。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3815',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的眼罩依旧戴着。/],
+      },
+      {
+        src: K2,
+        ref: '3818',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%依旧被绳子束缚着身体。/],
+      },
+      {
+        src: K2,
+        ref: '3821',
+        any: [
+          /			PRINTFORMW 被灌肠液注入的%SAVESTR:TARGET%肚子在咕噜咕噜地作响，好像下一秒肛塞就要被排泄物顶出来了。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3824',
+        any: [
+          /			PRINTFORMW 电极在肛门里持续震动，电流在无时不刻地折磨着%SAVESTR:TARGET%的括约肌。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3827',
+        any: [
+          /			PRINTFORMW 然而，水晶球依然在记录着%SAVESTR:TARGET%的一举一动……/,
+        ],
+      },
+      { src: K2, ref: '3828', any: [/		CFLAG:356 = 1/] },
+      { src: K2, ref: '3829', any: [/		RETURN 0/] },
+      { src: K2, ref: '3831', any: [/	ELSE/] },
+      { src: K2, ref: '3833', any: [/		IF ASSI > 0 && ASSIPLAY/] },
+      { src: K2, ref: '3834', any: [/			PRINTFORMW %SAVESTR:TARGET%被冷落了……/] },
+      {
+        src: K2,
+        ref: '3836',
+        any: [
+          /		ELSEIF TALENT:76 == 1 && PALAM:5 >= PALAMLV:3 && \(CFLAG:356 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3837',
+        any: [/			PRINTFORMW 「喂，喂…拜托…不要做到一半就…快点回来继续嘛…」/],
+      },
+      {
+        src: K2,
+        ref: '3838',
+        any: [
+          /			PRINTFORMW %SAVESTR:PLAYER%的手被拉住，%SAVESTR:TARGET%的眼睛因为发情而湿润了……/,
+        ],
+      },
+      { src: K2, ref: '3839', any: [/			CFLAG:356 = 6/] },
+      {
+        src: K2,
+        ref: '3841',
+        any: [/		ELSEIF TALENT:76 == 1 && \(CFLAG:356 <= 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3842',
+        any: [/			PRINTFORMW 「喂喂…快来继续玩弄人家嘛…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '3843', any: [/			CFLAG:356 = 5/] },
+      {
+        src: K2,
+        ref: '3845',
+        any: [
+          /		ELSEIF TALENT:85 == 1 && PALAM:5 >= PALAMLV:3 && \(CFLAG:356 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '3846', any: [/			PRINTFORMW 「主人…怎么突然停下了…？」/] },
+      {
+        src: K2,
+        ref: '3847',
+        any: [
+          /			PRINTFORMW 「%SELF_CALL_FIRST\(TARGET\)%，%SELF_CALL\(TARGET\)%…好奇怪呢…」/,
+        ],
+      },
+      { src: K2, ref: '3848', any: [/			CFLAG:356 = 4/] },
+      {
+        src: K2,
+        ref: '3850',
+        any: [/		ELSEIF TALENT:85 == 1 && \(CFLAG:356 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '3851',
+        any: [/			PRINTFORMW 「主人啊…光是这么看着的话…会害羞」/],
+      },
+      { src: K2, ref: '3852', any: [/			PRINTFORMW %SAVESTR:TARGET%脸红了……/] },
+      { src: K2, ref: '3853', any: [/			CFLAG:356 = 3/] },
+      { src: K2, ref: '3855', any: [/		ELSEIF CFLAG:356 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '3856', any: [/			PRINTFORMW 「……发生了什么？」/] },
+      {
+        src: K2,
+        ref: '3857',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%好奇地眨了眨眼……/],
+      },
+      { src: K2, ref: '3858', any: [/			CFLAG:356 = 2/] },
+      { src: K2, ref: '3859', any: [/		ENDIF/] },
+      { src: K2, ref: '3860', any: [/		PRINTL/] },
+      {
+        src: K2,
+        ref: '3863',
+        any: [
+          /			PRINTFORMW 蠕虫继续在%SAVESTR:TARGET%的小穴里蠕动，不知疲倦地搅动着阴道。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3866',
+        any: [
+          /			PRINTFORMW 蠕虫继续在%SAVESTR:TARGET%的肛门里不知疲倦地蠕动着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3869',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%肛门中的肛珠依旧在发挥着作用……/],
+      },
+      {
+        src: K2,
+        ref: '3872',
+        any: [/			PRINTFORMW 私处上的电动阴蒂夹持续地刺激着%SAVESTR:TARGET%。/],
+      },
+      {
+        src: K2,
+        ref: '3875',
+        any: [/			PRINTFORMW 乳头上的夹子持续地刺激着%SAVESTR:TARGET%。/],
+      },
+      {
+        src: K2,
+        ref: '3878',
+        any: [
+          /			PRINTFORML 乳房上安装的榨乳器依旧在持续地从%SAVESTR:TARGET%双峰中榨取乳汁。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3881',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%的阴茎被飞机杯套弄着，充血的龟头快要射精一般微微颤抖。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3884',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%的眼罩依旧戴着。/],
+      },
+      {
+        src: K2,
+        ref: '3887',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%依旧被绳子束缚着身体。/],
+      },
+      {
+        src: K2,
+        ref: '3890',
+        any: [
+          /			PRINTFORMW 被灌肠液注入的%SAVESTR:TARGET%肚子在咕噜咕噜地作响，好像下一秒肛塞就要被排泄物顶出来了。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3893',
+        any: [
+          /			PRINTFORMW 电极在肛门里持续震动，电流在无时不刻地折磨着%SAVESTR:TARGET%的括约肌。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3896',
+        any: [
+          /			PRINTFORMW 然而，水晶球依然在记录着%SAVESTR:TARGET%的一举一动……/,
+        ],
+      },
+      { src: K2, ref: '3897', any: [/		RETURN 0/] },
+      { src: K2, ref: '3898', any: [/	ENDIF/] },
+      { src: K2, ref: '3899', any: [/ENDIF/] },
+      { src: K2, ref: '3908', any: [/IF SELECTCOM == 56/] },
+      { src: K2, ref: '3910', any: [/	IF CFLAG:357 == 0/] },
+      { src: K2, ref: '3912', any: [/		IF TEQUIP:53 == 1/] },
+      {
+        src: K2,
+        ref: '3913',
+        any: [/			PRINTFORML %NAME:MASTER%让%SAVESTR:TARGET%做个自我介绍。/],
+      },
+      {
+        src: K2,
+        ref: '3914',
+        any: [/			IF RAND:3 == 0 && \(TALENT:89 \|\| ABL:17 >= 5\)/],
+      },
+      {
+        src: K2,
+        ref: '3915',
+        any: [/				PRINTFORM 于是%SAVESTR:TARGET%将自己的本名、之前的性体验/],
+      },
+      {
+        src: K2,
+        ref: '3917',
+        any: [/					PRINTFORM 还有一个人手淫的时候想着谁之类的/],
+      },
+      { src: K2, ref: '3918', any: [/				PRINTFORML 面带微笑的说了出来……/] },
+      {
+        src: K2,
+        ref: '3919',
+        any: [
+          /				PRINTFORMW 水晶球前的%SAVESTR:TARGET%一边说着，一边不自觉地弄湿了股间……/,
+        ],
+      },
+      { src: K2, ref: '3920', any: [/				TFLAG:32 \|= 2/] },
+      { src: K2, ref: '3921', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '3922',
+        any: [/				PRINTFORML %SAVESTR:TARGET%露出下流的神色开始了自我介绍。/],
+      },
+      {
+        src: K2,
+        ref: '3923',
+        any: [
+          /				PRINTFORMW 「你、你好…我叫%SELF_CALL\(TARGET\)%原来%SAVESTR:TARGET%可是个所谓的勇者呢」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3924',
+        any: [
+          /				PRINTFORMW 「嗯、嗯可是…自从被…魔王大人调教以后，%SELF_CALL\(TARGET\)%已经…变成了一个好色的女孩了…大家都是见证人哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3925',
+        any: [
+          /				PRINTFORMW 「魔王大人…真的好色哦…把%SELF_CALL\(TARGET\)%身上所有能插的洞洞…全都操了个遍哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3926',
+        any: [
+          /				PRINTFORMW 「哈%UNICODE\(0x2661\) \*1%…不过人家也很喜欢这样…现在连不自慰的时候，脑子里也在想色色的事情呐%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3927', any: [/				TFLAG:32 \|= 2/] },
+      { src: K2, ref: '3928', any: [/			ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '3929',
+        any: [/				PRINTFORML %SAVESTR:TARGET%向着水晶球开始了自我介绍。/],
+      },
+      {
+        src: K2,
+        ref: '3930',
+        any: [
+          /				PRINTFORMW 「您好…%SELF_CALL\(TARGET\)%是…爱恋着%NAME:MASTER%的人呢…还、还有点不好意思呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3931',
+        any: [
+          /				PRINTFORMW 「嘿…不光是被外表吸引…%NAME:MASTER%也是非常温柔的…现在每天都过的很快乐呢。%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '3932', any: [/				PRINTFORMW 「所以啊…大家不用担心呐…」/] },
+      {
+        src: K2,
+        ref: '3933',
+        any: [
+          /				PRINTFORMW 「有多被宠爱吗？…下面就给大家演示一下…眼睛不要眨哦」/,
+        ],
+      },
+      { src: K2, ref: '3934', any: [/				TFLAG:32 \|= 2/] },
+      {
+        src: K2,
+        ref: '3935',
+        any: [/			ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\)/],
+      },
+      {
+        src: K2,
+        ref: '3936',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边对水晶球自我介绍着，一边淫靡地扭摆着腰臀。/,
+        ],
+      },
+      { src: K2, ref: '3937', any: [/				TFLAG:32 \|= 2/] },
+      {
+        src: K2,
+        ref: '3938',
+        any: [/			ELSEIF ABL:10 >= 3 \|\| ABL:11 >= 4 \|\| ABL:17 >= 2/],
+      },
+      {
+        src: K2,
+        ref: '3939',
+        any: [/				PRINTFORML %SAVESTR:TARGET%向着水晶球开始了自我介绍。/],
+      },
+      { src: K2, ref: '3940', any: [/				TFLAG:32 \|= 2/] },
+      { src: K2, ref: '3941', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3942',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%耷拉着脑袋一言不发。/],
+      },
+      { src: K2, ref: '3943', any: [/			ENDIF/] },
+      { src: K2, ref: '3944', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '3946',
+        any: [
+          /			IF PALAM:5 >= PALAMLV:4 && \(TALENT:85 \|\| ABL:10 >= 5\) && TFLAG:60/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3947',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边淫靡地扭动着腰臀，一边与%SAVESTR:PLAYER%说着情话。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3948',
+        any: [
+          /			ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3949',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边淫靡地扭动着腰臀，一边继续对%SAVESTR:PLAYER%说着下流的话语。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3950',
+        any: [
+          /			ELSEIF \(PALAM:4 >= PALAMLV:4 \|\| ABL:10 >= 5 \|\| TALENT:85 \|\| TALENT:76\) && PALAM:5 >= PALAMLV:4/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3951',
+        any: [/				PRINTFORM %SAVESTR:TARGET%一边竭力按捺住/],
+      },
+      {
+        src: K2,
+        ref: '3952',
+        any: [
+          /				IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
+        ],
+      },
+      { src: K2, ref: '3953', any: [/					PRINT 快乐的/] },
+      { src: K2, ref: '3954', any: [/				ELSEIF TEQUIP:44 \|\| TEQUIP:49/] },
+      { src: K2, ref: '3955', any: [/					PRINT 痛苦的/] },
+      { src: K2, ref: '3956', any: [/				ELSE/] },
+      { src: K2, ref: '3957', any: [/					PRINT 自己的/] },
+      { src: K2, ref: '3958', any: [/				ENDIF/] },
+      {
+        src: K2,
+        ref: '3959',
+        any: [/				PRINTFORML 声音，一边努力地回应着%SAVESTR:PLAYER%。/],
+      },
+      { src: K2, ref: '3961', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '3962',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边淫靡地扭动着腰臀，一边与%SAVESTR:PLAYER%说着下流的话。/,
+        ],
+      },
+      { src: K2, ref: '3963', any: [/				PRINTFORMW 「更想用下面的嘴来聊天呢…」/] },
+      {
+        src: K2,
+        ref: '3964',
+        any: [/			ELSEIF PALAM:4 >= PALAMLV:4 \|\| TALENT:85 \|\| ABL:10 >= 5/],
+      },
+      {
+        src: K2,
+        ref: '3965',
+        any: [/				PRINTFORML %SAVESTR:TARGET%淫靡地扭动着腰臀抱住了魔王/],
+      },
+      { src: K2, ref: '3966', any: [/				PRINTFORMW 「主人啊…一直在我身边呢……」/] },
+      {
+        src: K2,
+        ref: '3967',
+        any: [/			ELSEIF PALAM:4 >= PALAMLV:2 \|\|  ABL:10 >= 3/],
+      },
+      {
+        src: K2,
+        ref: '3968',
+        any: [/					PRINTFORML %SAVESTR:TARGET%唯唯诺诺的回应着%SAVESTR:PLAYER%。/],
+      },
+      { src: K2, ref: '3969', any: [/				PRINTFORMW 「嗯，啊，是…」/] },
+      { src: K2, ref: '3970', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '3971',
+        any: [/				PRINTFORML %SAVESTR:TARGET%只是认真的聆听着…/],
+      },
+      { src: K2, ref: '3972', any: [/			ENDIF/] },
+      { src: K2, ref: '3973', any: [/		ENDIF/] },
+      { src: K2, ref: '3974', any: [/		CFLAG:357 = 1/] },
+      { src: K2, ref: '3975', any: [/		RETURN 0/] },
+      { src: K2, ref: '3977', any: [/	ELSE/] },
+      { src: K2, ref: '3979', any: [/		IF TEQUIP:53 == 1/] },
+      {
+        src: K2,
+        ref: '3980',
+        any: [/			PRINTFORML %NAME:MASTER%催促着%SAVESTR:TARGET%来个自我介绍，/],
+      },
+      {
+        src: K2,
+        ref: '3981',
+        any: [
+          /			IF PALAM:5 >= PALAMLV:4 && \(TALENT:85 \|\| ABL:10 >= 5\) && TFLAG:60/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3982',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边对水晶球说着情话，一边淫靡地扭动着腰臀。/,
+        ],
+      },
+      { src: K2, ref: '3983', any: [/				TFLAG:32 \|= 2/] },
+      {
+        src: K2,
+        ref: '3984',
+        any: [
+          /			ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3985',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边对水晶球说着下流的话，一边淫靡地扭动着腰臀。/,
+        ],
+      },
+      { src: K2, ref: '3986', any: [/				TFLAG:32 \|= 2/] },
+      {
+        src: K2,
+        ref: '3987',
+        any: [/			ELSEIF RAND:3 == 0 && \(TALENT:89 \|\| ABL:17 >= 5\)/],
+      },
+      {
+        src: K2,
+        ref: '3988',
+        any: [/				PRINTFORM 于是%SAVESTR:TARGET%将自己的本名、之前的性体验/],
+      },
+      {
+        src: K2,
+        ref: '3990',
+        any: [/					PRINTFORM 还有一个人手淫的时候想着谁之类的/],
+      },
+      { src: K2, ref: '3991', any: [/				PRINTFORML 面带微笑的说了出来……/] },
+      {
+        src: K2,
+        ref: '3992',
+        any: [
+          /				PRINTFORML 水晶球前的%SAVESTR:TARGET%一边说着，一边不自觉地弄湿了股间……/,
+        ],
+      },
+      { src: K2, ref: '3993', any: [/				TFLAG:32 \|= 2/] },
+      { src: K2, ref: '3994', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '3995',
+        any: [/				PRINTFORML %SAVESTR:TARGET%露出下流的神色开始自我介绍/],
+      },
+      {
+        src: K2,
+        ref: '3996',
+        any: [
+          /				PRINTFORMW 「你、你好…我叫%SAVESTR:TARGET%……原来的%SELF_CALL\(TARGET\)%可是个所谓的勇者呢」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3997',
+        any: [
+          /				PRINTFORMW 「嗯、嗯可是…自从被…魔王大人调教以后，%SELF_CALL\(TARGET\)%已经…变成了一个好色的女孩了…大家都是见证人哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3998',
+        any: [
+          /				PRINTFORMW 「魔王大人…真的好色哦…把%SELF_CALL\(TARGET\)%身上所有能插的洞洞…全都插了个遍哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '3999',
+        any: [
+          /				PRINTFORMW 「哈%UNICODE\(0x2661\) \*1%…不过人家也很喜欢这样…现在连不自慰的时候，脑子里也在想色色的事情呐%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4000', any: [/				TFLAG:32 \|= 2/] },
+      { src: K2, ref: '4001', any: [/			ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4002',
+        any: [/				PRINTFORML %SAVESTR:TARGET%对着水晶球开始自我介绍/],
+      },
+      {
+        src: K2,
+        ref: '4003',
+        any: [
+          /				PRINTFORMW 「您、您好…%SELF_CALL\(TARGET\)%已经…已经成为%NAME:MASTER%的恋人了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4004',
+        any: [
+          /				PRINTFORMW 「嘿嘿嘿…很漂亮吧…魔王大人也非常温柔…每天都过的很快乐嘛。%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4005',
+        any: [/				PRINTFORMW 「所以啊…大家不用担心呐。…」/],
+      },
+      {
+        src: K2,
+        ref: '4006',
+        any: [/				PRINTFORMW 「有多被爱吗？…那么从现在开始表演了…眼睛不要眨哦」/],
+      },
+      { src: K2, ref: '4007', any: [/				TFLAG:32 \|= 2/] },
+      {
+        src: K2,
+        ref: '4008',
+        any: [/			ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\)/],
+      },
+      {
+        src: K2,
+        ref: '4009',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边这么说着下流的话，一边对水晶球淫靡地扭腰摆臀。/,
+        ],
+      },
+      { src: K2, ref: '4010', any: [/				TFLAG:32 \|= 2/] },
+      {
+        src: K2,
+        ref: '4011',
+        any: [/			ELSEIF ABL:10 >= 3 \|\| ABL:11 >= 4 \|\| ABL:17 >= 2/],
+      },
+      {
+        src: K2,
+        ref: '4012',
+        any: [/				PRINTFORML %SAVESTR:TARGET%对着水晶球开始了自我介绍。/],
+      },
+      { src: K2, ref: '4013', any: [/				TFLAG:32 \|= 2/] },
+      { src: K2, ref: '4014', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4015',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%耷拉着脑袋一言不发。/],
+      },
+      { src: K2, ref: '4016', any: [/			ENDIF/] },
+      { src: K2, ref: '4017', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4019',
+        any: [
+          /			IF PALAM:5 >= PALAMLV:4 && \(TALENT:85 \|\| ABL:10 >= 5\) && TFLAG:60/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4020',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边淫靡地扭动着腰臀，一边与%SAVESTR:PLAYER%说着情话。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4021',
+        any: [
+          /			ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4022',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边淫靡地扭动着腰臀，一边继续对%SAVESTR:PLAYER%说着下流的话语。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4023',
+        any: [
+          /			ELSEIF \(PALAM:4 >= PALAMLV:4 \|\| ABL:10 >= 5 \|\| TALENT:85 \|\| TALENT:76\) && PALAM:5 >= PALAMLV:4/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4024',
+        any: [/				PRINTFORM %SAVESTR:TARGET%一边竭力按捺住/],
+      },
+      {
+        src: K2,
+        ref: '4025',
+        any: [
+          /				IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
+        ],
+      },
+      { src: K2, ref: '4026', any: [/					PRINT 快乐的/] },
+      { src: K2, ref: '4027', any: [/				ELSEIF TEQUIP:44 \|\| TEQUIP:49/] },
+      { src: K2, ref: '4028', any: [/					PRINT 痛苦的/] },
+      { src: K2, ref: '4029', any: [/				ELSE/] },
+      { src: K2, ref: '4030', any: [/					PRINT 自己的/] },
+      { src: K2, ref: '4031', any: [/				ENDIF/] },
+      {
+        src: K2,
+        ref: '4032',
+        any: [/				PRINTFORML 声音，一边努力地回应着%SAVESTR:PLAYER%。/],
+      },
+      { src: K2, ref: '4034', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4035',
+        any: [
+          /				PRINTFORML %SAVESTR:TARGET%一边淫靡地扭动着腰臀，一边与%SAVESTR:PLAYER%说着下流的话。/,
+        ],
+      },
+      { src: K2, ref: '4036', any: [/				PRINTFORMW 「更想用下面的嘴来聊天呢…」/] },
+      {
+        src: K2,
+        ref: '4037',
+        any: [/			ELSEIF PALAM:4 >= PALAMLV:4 \|\| TALENT:85 \|\| ABL:10 >= 5/],
+      },
+      {
+        src: K2,
+        ref: '4038',
+        any: [/				PRINTFORML %SAVESTR:TARGET%淫靡地扭动着腰臀抱住了魔王/],
+      },
+      { src: K2, ref: '4039', any: [/				PRINTFORMW 「主人啊…一直在我身边呢……」/] },
+      {
+        src: K2,
+        ref: '4040',
+        any: [/			ELSEIF PALAM:4 >= PALAMLV:2 \|\|  ABL:10 >= 3/],
+      },
+      {
+        src: K2,
+        ref: '4041',
+        any: [/					PRINTFORML %SAVESTR:TARGET%唯唯诺诺的回应着%SAVESTR:PLAYER%。/],
+      },
+      { src: K2, ref: '4042', any: [/				PRINTFORMW 「嗯，啊，是…」/] },
+      { src: K2, ref: '4043', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4044',
+        any: [/				PRINTFORML %SAVESTR:TARGET%只是认真的聆听着…/],
+      },
+      { src: K2, ref: '4045', any: [/			ENDIF/] },
+      { src: K2, ref: '4046', any: [/		ENDIF/] },
+      { src: K2, ref: '4047', any: [/		RETURN 0/] },
+      { src: K2, ref: '4048', any: [/	ENDIF/] },
+      { src: K2, ref: '4049', any: [/ENDIF/] },
+      { src: K2, ref: '4054', any: [/IF SELECTCOM == 123/] },
+      { src: K2, ref: '4056', any: [/	IF CFLAG:TARGET:360 == 0/] },
+      { src: K2, ref: '4058', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4059',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，嘴巴含弄着从乳沟中露出的龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4061',
+        any: [
+          /					PRINTFORMW 「呼呼…%SELF_CALL\(TARGET\)%这么大的胸部…居然还能漏出来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4062',
+        any: [
+          /			PRINTFORMW 「唔…大鸡鸡好有精神%UNICODE\(0x2661\) \*1% 人家也很舒服呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4064', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4065',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，俏皮地亲吻着从乳沟中露出充血的龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4067',
+        any: [
+          /					PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%这么大的胸部…居然还能漏出来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4068',
+        any: [
+          /			PRINTFORMW 「chu%UNICODE\(0x2661\) \*1%…好喜欢呢%UNICODE\(0x2661\) \*1%…还在抖动着…啊啊啊…大肉棒好精神…真的好喜欢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4070', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '4071',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，舌头不断舔弄着从乳沟中露出的龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4073',
+        any: [
+          /					PRINTFORMW 「唔…这样欺负人家的胸部…啊哈%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4074',
+        any: [
+          /			PRINTFORMW 「chu…唧啾%UNICODE\(0x2661\) \*1%…呼…感觉如何…啊…？」/,
+        ],
+      },
+      { src: K2, ref: '4076', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4077',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，无奈地舔弄着从乳沟中露出充血的龟头。/,
+        ],
+      },
+      { src: K2, ref: '4079', any: [/					PRINTFORMW 「唔…这样欺负人家的胸部…」/] },
+      {
+        src: K2,
+        ref: '4080',
+        any: [/			PRINTFORMW 「chu…唧啾…呼…哈…哈…唧啾……」/],
+      },
+      { src: K2, ref: '4081', any: [/		ENDIF/] },
+      { src: K2, ref: '4082', any: [/		CFLAG:TARGET:360 = 1/] },
+      { src: K2, ref: '4083', any: [/		RETURN 0/] },
+      { src: K2, ref: '4085', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4087',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:360 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4088',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，嘴巴含弄着从乳沟中露出的龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4090',
+        any: [
+          /					PRINTFORMW 「呼呼…%SELF_CALL\(TARGET\)%这么大的胸部…居然还能漏出来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4091',
+        any: [
+          /			PRINTFORMW 「唔…大鸡鸡好有精神%UNICODE\(0x2661\) \*1% 人家也很舒服呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4092', any: [/			CFLAG:360 = 5/] },
+      {
+        src: K2,
+        ref: '4094',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:360 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4095',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，俏皮地亲吻着从乳沟中露出充血的龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4097',
+        any: [
+          /					PRINTFORMW 「呼呼%UNICODE\(0x2661\) \*1%…%SELF_CALL\(TARGET\)%的胸部可不小哦…这样还是裹不住呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4098',
+        any: [
+          /			PRINTFORMW 「chu%UNICODE\(0x2661\) \*1%…好喜欢呢%UNICODE\(0x2661\) \*1%…还在抖动着…啊啊啊…大肉棒好精神…真的好喜欢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4099', any: [/			CFLAG:360 = 4/] },
+      {
+        src: K2,
+        ref: '4101',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:360 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4102',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，舌头不断舔弄着从乳沟中露出的龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4104',
+        any: [
+          /					PRINTFORMW 「唔…这样欺负人家的胸部…啊哈%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4105',
+        any: [
+          /			PRINTFORMW 「chu…唧啾%UNICODE\(0x2661\) \*1%…呼…感觉如何…啊…？」/,
+        ],
+      },
+      { src: K2, ref: '4106', any: [/			CFLAG:360 = 3/] },
+      { src: K2, ref: '4108', any: [/		ELSEIF CFLAG:360 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '4109',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%用胸夹住%NAME:MASTER%的阴茎，无奈地舔弄着从乳沟中露出充血的龟头。/,
+        ],
+      },
+      { src: K2, ref: '4111', any: [/					PRINTFORMW 「唔…这样欺负人家的胸部…」/] },
+      {
+        src: K2,
+        ref: '4112',
+        any: [/			PRINTFORMW 「chu…唧啾…呼…哈…哈…唧啾……」/],
+      },
+      { src: K2, ref: '4113', any: [/			CFLAG:360 = 2/] },
+      { src: K2, ref: '4114', any: [/		ENDIF/] },
+      { src: K2, ref: '4115', any: [/		RETURN 0/] },
+      { src: K2, ref: '4116', any: [/	ENDIF/] },
+      { src: K2, ref: '4117', any: [/ENDIF/] },
+      { src: K2, ref: '4121', any: [/IF SELECTCOM == 125/] },
+      { src: K2, ref: '4123', any: [/	IF CFLAG:TARGET:361 == 0/] },
+      { src: K2, ref: '4125', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4126',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边用力吮吸着魔王的阴茎，一边将手指插进自己的小穴手淫起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4127',
+        any: [
+          /			PRINTFORMW 「就是这样…唔唔…要高潮了…呼呼…啊，快插进来%UNICODE\(0x2661\) \*1%…快插进来嘛！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4129', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4130',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边努力地含弄着大肉棒，一边搓揉着自己的小穴自慰起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4131',
+        any: [
+          /			PRINTFORMW 「啊啊啊…明明想要集中精神%UNICODE\(0x2661\) \*1%…侍奉魔王大人…啊哈%UNICODE\(0x2661\) \*1%…唔…已经失去控制了…好舒服…快要高潮了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4133', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '4134',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%被命令着开始一边口交一边自慰。/],
+      },
+      {
+        src: K2,
+        ref: '4135',
+        any: [
+          /			PRINTFORMW 「chu…chu…高潮了啊…啊哈…啊啊啊啊…好好…一边含着一边手淫…唧啾…呼…」/,
+        ],
+      },
+      { src: K2, ref: '4137', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4138',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%被命令着开始一边口交一边自慰。/],
+      },
+      {
+        src: K2,
+        ref: '4139',
+        any: [
+          /			PRINTFORMW 「chu…chu…高潮了啊…啊哈…啊啊啊啊…好好…一边含着一边手淫…唧啾…呼…」/,
+        ],
+      },
+      { src: K2, ref: '4140', any: [/		ENDIF/] },
+      { src: K2, ref: '4141', any: [/		CFLAG:TARGET:361 = 1/] },
+      { src: K2, ref: '4142', any: [/		RETURN 0/] },
+      { src: K2, ref: '4144', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4146',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:361 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4147',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边用力吮吸着魔王的阴茎，一边将手指插进自己的小穴手淫起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4148',
+        any: [
+          /			PRINTFORMW 「就是这样…唔唔…要高潮了…呼呼…啊，快插进来%UNICODE\(0x2661\) \*1%…快插进来！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4149',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%已经兴奋得无视口水从嘴角滴下来，手指在小穴里搅动得更加剧烈了……/,
+        ],
+      },
+      { src: K2, ref: '4150', any: [/			CFLAG:361 = 5/] },
+      {
+        src: K2,
+        ref: '4152',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:361 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4153',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边努力地含弄着大肉棒，一边搓揉着自己的小穴自慰起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4154',
+        any: [
+          /			PRINTFORMW 「啊啊啊…明明想要集中精神%UNICODE\(0x2661\) \*1%…侍奉魔王大人…啊哈%UNICODE\(0x2661\) \*1%…唔…已经失去控制了…好舒服…快要高潮了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4155',
+        any: [
+          /			PRINTFORMW 「呼唔%UNICODE\(0x2661\) \*1%…一面侍奉着魔王大人%UNICODE\(0x2661\) \*1%一面……比起普通的自慰感觉更真实啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4156', any: [/			CFLAG:361 = 4/] },
+      {
+        src: K2,
+        ref: '4158',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:361 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4159',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%被命令着开始一边口交一边自慰。/],
+      },
+      {
+        src: K2,
+        ref: '4160',
+        any: [/			PRINTFORMW 「chu…chu…高潮了啊…啊哈…更加…有感觉呢…\?」/],
+      },
+      { src: K2, ref: '4161', any: [/			CFLAG:361 = 3/] },
+      { src: K2, ref: '4163', any: [/		ELSEIF CFLAG:361 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '4164',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%被命令着开始一边口交一边自慰。/],
+      },
+      {
+        src: K2,
+        ref: '4165',
+        any: [
+          /			PRINTFORMW 「chu…chu…高潮了啊…啊哈…啊啊啊啊…好好…一边含着一边手淫…唧啾…呼…」/,
+        ],
+      },
+      { src: K2, ref: '4166', any: [/			CFLAG:361 = 2/] },
+      { src: K2, ref: '4167', any: [/		ENDIF/] },
+      { src: K2, ref: '4168', any: [/		RETURN 0/] },
+      { src: K2, ref: '4169', any: [/	ENDIF/] },
+      { src: K2, ref: '4170', any: [/ENDIF/] },
+      { src: K2, ref: '4175', any: [/IF SELECTCOM == 126/] },
+      { src: K2, ref: '4177', any: [/	IF CFLAG:TARGET:362 == 0/] },
+      { src: K2, ref: '4179', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4180',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%露出淫靡的笑容将阴茎握住，一边用力地搓弄一边把龟头含进嘴里。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4181',
+        any: [
+          /			PRINTFORMW 「嗯哼…嘿嘿嘿%UNICODE\(0x2661\) \*1% 龟头硬成这样～好多精子在等着喷射出来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4183', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4184',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%含住了龟头后用湿润的眼睛仰望着你，双手握住了阴茎用力搓揉起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4185',
+        any: [
+          /			PRINTFORMW 「嗯哼…呼呼…chu%UNICODE\(0x2661\) \*1%chu%UNICODE\(0x2661\) \*1%…啊啊…大肉棒好热%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4187', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '4188',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%含住了龟头，双手握住阴茎搓揉着。/],
+      },
+      {
+        src: K2,
+        ref: '4189',
+        any: [/			PRINTFORMW 「哈哈…啊唔…唧啾…chu…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '4191', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4192',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%含住了龟头，双手握住阴茎搓揉着。/],
+      },
+      {
+        src: K2,
+        ref: '4193',
+        any: [/			PRINTFORMW 「哈哈…啊唔…唧啾…chu…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '4194', any: [/		ENDIF/] },
+      { src: K2, ref: '4195', any: [/		CFLAG:TARGET:362 = 1/] },
+      { src: K2, ref: '4196', any: [/		RETURN 0/] },
+      { src: K2, ref: '4198', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4200',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:362 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4201',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%露出淫靡的笑容将阴茎握住，一边用力地搓弄一边把龟头含进嘴里。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4202',
+        any: [
+          /			PRINTFORMW 「嗯哼…嘿嘿嘿%UNICODE\(0x2661\) \*1% 龟头硬成这样～好多精子在等着喷射出来吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4203',
+        any: [
+          /			PRINTFORMW 「舒服吗？大鸡鸡舒服嘛…龟头被吮吸得已经受不了了吧？…快用精子来喂饱我哟%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      { src: K2, ref: '4204', any: [/			CFLAG:362 = 5/] },
+      {
+        src: K2,
+        ref: '4206',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:362 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4207',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%含住了龟头后用湿润的眼睛仰望着你，双手握住了阴茎用力搓揉起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4208',
+        any: [
+          /			PRINTFORMW 「嗯哼…呼呼…chu%UNICODE\(0x2661\) \*1%chu%UNICODE\(0x2661\) \*1%…啊啊…大肉棒好热%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4209',
+        any: [
+          /			PRINTFORMW 「大肉棒摸上去好舒服…手…嘴也…停不下来…chu…chu…啊哈…哈…哈%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4210', any: [/			CFLAG:362 = 4/] },
+      {
+        src: K2,
+        ref: '4212',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:362 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4213',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%含住了龟头，双手握住阴茎搓揉着。/],
+      },
+      {
+        src: K2,
+        ref: '4214',
+        any: [/			PRINTFORMW 「哈哈…啊唔…唧啾…chu…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '4215', any: [/			CFLAG:362 = 3/] },
+      { src: K2, ref: '4217', any: [/		ELSEIF CFLAG:362 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '4218',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%含住了龟头，双手握住阴茎搓揉着。/],
+      },
+      {
+        src: K2,
+        ref: '4219',
+        any: [/			PRINTFORMW 「哈哈…啊唔…唧啾…chu…呼%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '4220', any: [/			CFLAG:362 = 2/] },
+      { src: K2, ref: '4221', any: [/		ENDIF/] },
+      { src: K2, ref: '4222', any: [/		RETURN 0/] },
+      { src: K2, ref: '4223', any: [/	ENDIF/] },
+      { src: K2, ref: '4224', any: [/ENDIF/] },
+      { src: K2, ref: '4230', any: [/IF SELECTCOM == 127/] },
+      { src: K2, ref: '4232', any: [/	IF CFLAG:TARGET:363 == 0/] },
+      { src: K2, ref: '4234', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4235',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%舔了舔嘴唇看着阴茎，卖力地吮吸着起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4236',
+        any: [
+          /			PRINTFORMW 「呼…好辛苦…但是好舒服…请%UNICODE\(0x2661\) \*1% 射进来…是的唔唔唔…是的唔唔唔唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4238', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4239',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%兴奋地吮吸着阴茎，一边发出响声一边用舌头舔弄着龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4240',
+        any: [
+          /			PRINTFORMW 「一大半%UNICODE\(0x2661\) \*1% 都%UNICODE\(0x2661\) \*1%都被%UNICODE\(0x2661\) \*1%…含住了…唔唔唔唔唔唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4242', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '4243',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%把阴茎吸进嘴里，用力吮吸起来后似乎说话都很费力。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4244',
+        any: [
+          /			PRINTFORMW 「顶住喉咙了…噗…呼呼呼…吸得太用力…呼呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4246', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4247',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%把阴茎吸进嘴里，用力吮吸起来后似乎说话都很费力。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4248',
+        any: [
+          /			PRINTFORMW 「顶住喉咙了…噗…呼呼呼…吸得太用力…呼呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4249', any: [/		ENDIF/] },
+      { src: K2, ref: '4250', any: [/		CFLAG:TARGET:363 = 1/] },
+      { src: K2, ref: '4251', any: [/		RETURN 0/] },
+      { src: K2, ref: '4253', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4255',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4256',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%舔了舔嘴唇看着阴茎，卖力地吮吸着起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4257',
+        any: [
+          /			PRINTFORMW 「呼…好辛苦…但是好舒服…请%UNICODE\(0x2661\) \*1% 射进来…是的唔唔唔…是的唔唔唔唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4258',
+        any: [
+          /			PRINTFORMW 「啊哈…顶到喉咙最深处了…一定要多多…射进来啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4259', any: [/			CFLAG:363 = 5/] },
+      {
+        src: K2,
+        ref: '4261',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:363 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4262',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%兴奋地吮吸着阴茎，一边发出响声一边用舌头舔弄着龟头。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4263',
+        any: [
+          /			PRINTFORMW 「一大半%UNICODE\(0x2661\) \*1% 都%UNICODE\(0x2661\) \*1%都被%UNICODE\(0x2661\) \*1%…含住了…唔唔唔唔唔唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4264',
+        any: [
+          /			PRINTFORMW 「大肉棒…已经和%SELF_CALL\(TARGET\)%越来越亲近了呢…都抵到喉咙了%UNICODE\(0x2661\) \*1% 外面还有这么长一截%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4265', any: [/			CFLAG:363 = 4/] },
+      {
+        src: K2,
+        ref: '4267',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:363 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4268',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%把阴茎吸进嘴里，用力吮吸起来后似乎说话都很费力。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4269',
+        any: [
+          /			PRINTFORMW 「顶住喉咙了…噗…呼呼呼…吸得太用力…呼呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4270',
+        any: [/			PRINTFORMW 「啊哈…鸡鸡…被吸得…哈啊…舒服吗？」/],
+      },
+      { src: K2, ref: '4271', any: [/			CFLAG:363 = 3/] },
+      { src: K2, ref: '4273', any: [/		ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '4274',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%把阴茎吸进嘴里，用力吮吸起来后似乎说话都很费力。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4275',
+        any: [
+          /			PRINTFORMW 「顶住喉咙了…噗…呼呼呼…吸得太用力…呼呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4276', any: [/			CFLAG:363 = 2/] },
+      { src: K2, ref: '4277', any: [/		ENDIF/] },
+      { src: K2, ref: '4278', any: [/		RETURN 0/] },
+      { src: K2, ref: '4279', any: [/	ENDIF/] },
+      { src: K2, ref: '4280', any: [/ENDIF/] },
+      { src: K2, ref: '4285', any: [/IF SELECTCOM == 69/] },
+      { src: K2, ref: '4287', any: [/	IF CFLAG:TARGET:364 == 0/] },
+      { src: K2, ref: '4289', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4290',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%在小穴快感的不断刺激下，紧紧含住阴茎吮吸着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4291',
+        any: [
+          /			PRINTFORMW 「这种快感…%SELF_CALL\(TARGET\)%也满满地还给你了哟%UNICODE\(0x2661\) \*1% 唔唔唔不要停…呼呼%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4293', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4294',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%忍受着小穴传来的快感专心舔弄着阴茎。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4295',
+        any: [
+          /			PRINTFORMW 「啊真是的…这么激烈…人家没法专心为侍奉主人了啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4297', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '4298',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%被小穴传来的快感击溃，发出淫乱的求饶声。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4299',
+        any: [
+          /			PRINTFORMW 「唔唔…不，不行哟…恶作剧是不行的说…不…不要那么激烈…呀！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4301', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4302',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%被下身连绵不断的快感刺激到连屁股都颤抖起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4303',
+        any: [/			PRINTFORMW 「啊啊啊…不行…不行的说…已经无法控制住身体了……」/],
+      },
+      { src: K2, ref: '4304', any: [/		ENDIF/] },
+      { src: K2, ref: '4305', any: [/		CFLAG:TARGET:364 = 1/] },
+      { src: K2, ref: '4306', any: [/		RETURN 0/] },
+      { src: K2, ref: '4308', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4310',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:364 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4311',
+        any: [
+          /			PRINTFORMW  %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%在小穴快感的不断刺激下，紧紧含住阴茎吮吸着。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4312',
+        any: [
+          /			PRINTFORMW 「这种快感…%SELF_CALL\(TARGET\)%也满满地还给你了哟%UNICODE\(0x2661\) \*1% 唔唔唔不要停…呼呼%UNICODE\(0x2661\) \*1%%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4313', any: [/			CFLAG:364 = 5/] },
+      {
+        src: K2,
+        ref: '4315',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:364 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4316',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%忍受着小穴传来的快感专心舔弄着阴茎。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4317',
+        any: [
+          /			PRINTFORMW 「啊真是的…这么激烈…人家没法专心为侍奉主人了啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4318', any: [/			CFLAG:364 = 4/] },
+      {
+        src: K2,
+        ref: '4320',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:364 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4321',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%被小穴传来的快感击溃，发出淫乱的求饶声。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4322',
+        any: [
+          /			PRINTFORMW 「唔唔…不，不行哟…恶作剧是不行的说…不…不要那么激烈…呀！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4323', any: [/			CFLAG:364 = 3/] },
+      { src: K2, ref: '4325', any: [/		ELSEIF CFLAG:364 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '4326',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%在彼此的胯下互相舔弄着。%SAVESTR:TARGET%被下身连绵不断的快感刺激到连屁股都颤抖起来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4327',
+        any: [/			PRINTFORMW 「啊啊啊…不行…不行的说…已经无法控制住身体了……」/],
+      },
+      { src: K2, ref: '4328', any: [/			CFLAG:364 = 2/] },
+      { src: K2, ref: '4329', any: [/		ENDIF/] },
+      { src: K2, ref: '4330', any: [/		RETURN 0/] },
+      { src: K2, ref: '4331', any: [/	ENDIF/] },
+      { src: K2, ref: '4332', any: [/ENDIF/] },
+      { src: K2, ref: '4337', any: [/IF SELECTCOM == 124/] },
+      { src: K2, ref: '4339', any: [/	IF CFLAG:TARGET:365 == 0/] },
+      { src: K2, ref: '4341', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '4342',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%嘴唇紧紧含住阴茎，直到整根没入抵住喉咙最深处。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4343',
+        any: [
+          /			PRINTFORMW 「唔%UNICODE\(0x2661\) \*1%…呼…嗯咕…整根都放进来了%UNICODE\(0x2661\) \*1%…唔唔～！」/,
+        ],
+      },
+      { src: K2, ref: '4345', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '4346',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%被整根阴茎塞进嘴巴后，发出了粗重的鼻音开始吮吸。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4347',
+        any: [
+          /			PRINTFORMW 「嗯咕%UNICODE\(0x2661\) \*1%…呼呼%UNICODE\(0x2661\) \*1%呼%UNICODE\(0x2661\) \*1%…唔唔唔唔唔唔！」/,
+        ],
+      },
+      { src: K2, ref: '4349', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      {
+        src: K2,
+        ref: '4350',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%辛苦地含住了整根阴茎后，开始用口腔侍奉魔王。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4351',
+        any: [/			PRINTFORMW 「嗯…嗯嗯…嗯咕…嗯唔！？…嗯…嗯…唔…嗯嗯…\?」/],
+      },
+      { src: K2, ref: '4353', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4354',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%辛苦地含住了整根阴茎后，开始用口腔侍奉魔王。/,
+        ],
+      },
+      { src: K2, ref: '4355', any: [/			PRINTFORMW 「嗯…嗯嗯…嗯咕…嗯唔！？」/] },
+      { src: K2, ref: '4356', any: [/		ENDIF/] },
+      { src: K2, ref: '4357', any: [/		CFLAG:TARGET:365 = 1/] },
+      { src: K2, ref: '4358', any: [/		RETURN 0/] },
+      { src: K2, ref: '4360', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4362',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4363',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%嘴唇紧紧含住阴茎，直到整根没入抵住喉咙最深处。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4364',
+        any: [
+          /			PRINTFORMW 「唔%UNICODE\(0x2661\) \*1%…呼…嗯咕…整根都放进来了%UNICODE\(0x2661\) \*1%…唔唔～！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4365',
+        any: [
+          /			PRINTFORMW （啊哈…%SELF_CALL\(TARGET\)%的嘴里…已经充满了大鸡鸡的味道了呀…%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      { src: K2, ref: '4366', any: [/			CFLAG:365 = 5/] },
+      {
+        src: K2,
+        ref: '4368',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:363 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4369',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%被整根阴茎塞进嘴巴后，发出了粗重的鼻音开始吮吸。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4370',
+        any: [
+          /			PRINTFORMW 「嗯咕%UNICODE\(0x2661\) \*1%…呼呼%UNICODE\(0x2661\) \*1%呼%UNICODE\(0x2661\) \*1%…唔唔唔唔唔唔！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4371',
+        any: [
+          /			PRINTFORMW （呼呼…喉咙的深处也…感受到肉棒的美味了…唔…这甜美的触感…%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      { src: K2, ref: '4372', any: [/			CFLAG:365 = 4/] },
+      {
+        src: K2,
+        ref: '4374',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:363 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4375',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%辛苦地含住了整根阴茎后，开始用口腔侍奉魔王。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4376',
+        any: [/			PRINTFORMW 「嗯…嗯嗯…嗯咕…嗯唔！？…嗯…嗯…唔…嗯嗯…\?」/],
+      },
+      { src: K2, ref: '4377', any: [/			CFLAG:365 = 3/] },
+      { src: K2, ref: '4379', any: [/		ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '4380',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%辛苦地含住了整根阴茎后，开始用口腔侍奉魔王。/,
+        ],
+      },
+      { src: K2, ref: '4381', any: [/			PRINTFORMW 「嗯…嗯嗯…嗯咕…嗯唔！？」/] },
+      { src: K2, ref: '4382', any: [/			CFLAG:365 = 2/] },
+      { src: K2, ref: '4383', any: [/		ENDIF/] },
+      { src: K2, ref: '4384', any: [/		RETURN 0/] },
+      { src: K2, ref: '4385', any: [/	ENDIF/] },
+      { src: K2, ref: '4386', any: [/ENDIF/] },
+      { src: K2, ref: '4393', any: [/IF SELECTCOM == 80/] },
+      { src: K2, ref: '4395', any: [/	IF CFLAG:TARGET:381 == 0/] },
+      { src: K2, ref: '4397', any: [/		IF ABL:TARGET:16 >= 3/] },
+      { src: K2, ref: '4398', any: [/			PRINTFORMW 「嗯！？噗…噗…嗯嗯嗯～！」/] },
+      {
+        src: K2,
+        ref: '4399',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%骤然被%SAVESTR:PLAYER%的阴茎插到了喉咙深处，眼皮不停地颤动起来……/,
+        ],
+      },
+      { src: K2, ref: '4401', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '4402',
+        any: [/			PRINTFORMW 「唔！嗯咕…唔唔唔唔唔唔！！！！」/],
+      },
+      {
+        src: K2,
+        ref: '4403',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%翻着白眼，口水也抑制不住地从嘴角流出…看上去快要气绝的样子……/,
+        ],
+      },
+      { src: K2, ref: '4404', any: [/		ENDIF/] },
+      { src: K2, ref: '4405', any: [/		CFLAG:TARGET:381 = 1/] },
+      { src: K2, ref: '4406', any: [/		RETURN 0/] },
+      { src: K2, ref: '4408', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4410',
+        any: [
+          /		IF TALENT:TARGET:76 == 1 && \(CFLAG:381 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4411',
+        any: [/			PRINTFORMW 「唔…唔唔咕…唔…嗯…嗯咕…唔唔唔～～～！！！」/],
+      },
+      {
+        src: K2,
+        ref: '4412',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%喉咙被激烈侵犯的同时，巧妙地用舌头拨弄着阴茎。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4413',
+        any: [
+          /			PRINTFORMW 「更多地…插进%SELF_CALL\(TARGET\)%的嘴巴里…欺负…请欺负%UNICODE\(0x2661\) \*1%…唔唔唔唔唔唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '4414', any: [/			CFLAG:381 = 5/] },
+      {
+        src: K2,
+        ref: '4416',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:381 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4417',
+        any: [
+          /			PRINTFORMW 「嗯哼…唔唔！不要…呼…是…呼呼%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4418',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%被强按住头部仍然在微弱地反抗着，被%SAVESTR:PLAYER%的阴茎插进嘴里后却用舌头紧紧地缠了上来……/,
+        ],
+      },
+      { src: K2, ref: '4419', any: [/			CFLAG:381 = 4/] },
+      {
+        src: K2,
+        ref: '4421',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:381 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4422', any: [/			PRINTFORMW 「呼…不…嗯…呼…唔唔！」/] },
+      {
+        src: K2,
+        ref: '4423',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%一边翻着白眼一边仍努力地用喉咙深处侍奉着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '4424', any: [/			CFLAG:381 = 3/] },
+      { src: K2, ref: '4426', any: [/		ELSEIF CFLAG:381 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '4427', any: [/			PRINTFORMW 「嗯…嗯…嗯…！唔！？」/] },
+      {
+        src: K2,
+        ref: '4428',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%翻着白眼拼命地想向外吐%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '4429', any: [/			CFLAG:381 = 2/] },
+      { src: K2, ref: '4430', any: [/		ENDIF/] },
+      { src: K2, ref: '4431', any: [/		RETURN 0/] },
+      { src: K2, ref: '4432', any: [/	ENDIF/] },
+      { src: K2, ref: '4433', any: [/ENDIF/] },
+      { src: K2, ref: '4440', any: [/IF SELECTCOM == 87/] },
+      { src: K2, ref: '4443', any: [/	IF CFLAG:TARGET:348 == 0/] },
+      { src: K2, ref: '4445', any: [/		IF ASSI > 0 && ASSIPLAY/] },
+      { src: K2, ref: '4446', any: [/			PRINTFORM /] },
+      { src: K2, ref: '4448', any: [/		ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '4450', any: [/			IF CFLAG:7 & P/] },
+      {
+        src: K2,
+        ref: '4451',
+        any: [
+          /				PRINTFORMW 由于是第一次在皮肤上打孔，疼痛让%SAVESTR:TARGET%忍不住发出了悲鸣。/,
+        ],
+      },
+      { src: K2, ref: '4453', any: [/				IF P == 1/] },
+      {
+        src: K2,
+        ref: '4454',
+        any: [
+          /					PRINTFORMW 「啊啊啊…这么可爱的乳头，不跟着立刻射一发吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4455',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%炫耀似的向后仰倒，乳环也跟着摇晃起来……/,
+        ],
+      },
+      { src: K2, ref: '4457', any: [/				ELSEIF P == 2/] },
+      {
+        src: K2,
+        ref: '4458',
+        any: [/					PRINTFORMW 「啊啊…要不要在其他地方也…\?」/],
+      },
+      {
+        src: K2,
+        ref: '4459',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%诱惑地用手指在脐环四周划动……/],
+      },
+      { src: K2, ref: '4461', any: [/				ELSEIF P == 4/] },
+      {
+        src: K2,
+        ref: '4462',
+        any: [
+          /					PRINTFORMW 「哈…哈…%SELF_CALL\(TARGET\)%的身体…自己都开始讨厌起来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4463',
+        any: [
+          /					PRINTFORMW 穿孔后残余的疼痛让%SAVESTR:TARGET%的身体开始不由自主地颤栗起来……/,
+        ],
+      },
+      { src: K2, ref: '4465', any: [/				ELSEIF P == 8/] },
+      { src: K2, ref: '4466', any: [/					IF TALENT:121 \|\| TALENT:122/] },
+      {
+        src: K2,
+        ref: '4467',
+        any: [
+          /						PRINTFORMW 「啊啊啊…小鸡鸡…小鸡鸡更加…可爱了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4468',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%看着阴茎上的环，欢喜得出神了……/],
+      },
+      { src: K2, ref: '4469', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '4470',
+        any: [
+          /						PRINTFORMW 「哈哈…这样看上去…更加可爱了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4471',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%看着被穿环的阴蒂，欢喜得出神了……/],
+      },
+      { src: K2, ref: '4472', any: [/					ENDIF/] },
+      { src: K2, ref: '4474', any: [/				ELSEIF P == 16/] },
+      {
+        src: K2,
+        ref: '4475',
+        any: [
+          /					PRINTFORMW 「啊啊…奇怪的…的感觉…口交起来会不会…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4476',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%伸出舌环舔了舔嘴唇……/],
+      },
+      { src: K2, ref: '4478', any: [/				ELSEIF P == 32/] },
+      {
+        src: K2,
+        ref: '4479',
+        any: [/					PRINTFORMW 「嗯…唔呼呼…看上去怎么样？」/],
+      },
+      {
+        src: K2,
+        ref: '4480',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%一边舔着嘴唇一边确认……/],
+      },
+      { src: K2, ref: '4482', any: [/				ELSEIF P == 64/] },
+      { src: K2, ref: '4483', any: [/					PRINTFORMW 「呼…奇怪的感觉哟……」/] },
+      {
+        src: K2,
+        ref: '4484',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%忍不住反复摩挲着鼻环……/],
+      },
+      { src: K2, ref: '4485', any: [/				ENDIF/] },
+      { src: K2, ref: '4487', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4488',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%抚摸着除环后皮肤上残留下的疤痕……/],
+      },
+      { src: K2, ref: '4489', any: [/			ENDIF/] },
+      { src: K2, ref: '4491', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '4493', any: [/			IF CFLAG:7 & P/] },
+      {
+        src: K2,
+        ref: '4494',
+        any: [
+          /				PRINTFORMW 由于是第一次在皮肤上打孔，疼痛让%SAVESTR:TARGET%忍不住发出了悲鸣。/,
+        ],
+      },
+      { src: K2, ref: '4496', any: [/				IF P == 1/] },
+      {
+        src: K2,
+        ref: '4497',
+        any: [
+          /					PRINTFORMW 「啊啊…这就是爱的证据啊…呼……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4498',
+        any: [
+          /					PRINTFORMW 乳环在%SAVESTR:TARGET%勃起的乳头上轻轻摇晃着，发出闪亮的反光……/,
+        ],
+      },
+      { src: K2, ref: '4500', any: [/				ELSEIF P == 2/] },
+      { src: K2, ref: '4501', any: [/					PRINTFORMW 「在这里…为什么？……」/] },
+      {
+        src: K2,
+        ref: '4502',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%抚摸着脐环四周……/],
+      },
+      { src: K2, ref: '4504', any: [/				ELSEIF P == 4/] },
+      {
+        src: K2,
+        ref: '4505',
+        any: [/					PRINTFORMW 「唔…啊，不行…那里好痛…啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '4506',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%因为阴唇上穿环的剧痛而发出了悲鸣……/],
+      },
+      { src: K2, ref: '4508', any: [/				ELSEIF P == 8/] },
+      { src: K2, ref: '4509', any: [/					IF TALENT:121 \|\| TALENT:122/] },
+      {
+        src: K2,
+        ref: '4510',
+        any: [
+          /						PRINTFORMW 「啊啊啊…小鸡鸡有…小鸡鸡有啊…啊啊啊…这样的…啊啊啊……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4511',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%阴茎上被穿环后，流着泪的脸上露出了笑容……/,
+        ],
+      },
+      { src: K2, ref: '4512', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '4513',
+        any: [/						PRINTFORMW 「啊啊啊…阴蒂上穿环…这样…感觉太…奇怪的说……」/],
+      },
+      {
+        src: K2,
+        ref: '4514',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%阴蒂上被穿环后，流着泪的脸上露出了笑容……/,
+        ],
+      },
+      { src: K2, ref: '4515', any: [/					ENDIF/] },
+      { src: K2, ref: '4517', any: [/				ELSEIF P == 16/] },
+      {
+        src: K2,
+        ref: '4518',
+        any: [/					PRINTFORMW 「啊啊啊…是…在舌尖上固定了…\?」/],
+      },
+      {
+        src: K2,
+        ref: '4519',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%伸出穿环的舌头欢喜地炫耀着……/],
+      },
+      { src: K2, ref: '4521', any: [/				ELSEIF P == 32/] },
+      {
+        src: K2,
+        ref: '4522',
+        any: [/					PRINTFORMW 「呼呼…这样的打扮的也不错啊…\?」/],
+      },
+      {
+        src: K2,
+        ref: '4523',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%用舌头舔着嘴唇确认……/],
+      },
+      { src: K2, ref: '4525', any: [/				ELSEIF P == 64/] },
+      {
+        src: K2,
+        ref: '4526',
+        any: [/					PRINTFORMW 「啊啊…这，漂亮吗……？哦，真的……？」/],
+      },
+      {
+        src: K2,
+        ref: '4527',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%摸着鼻环，有点害羞的笑了……/],
+      },
+      { src: K2, ref: '4528', any: [/				ENDIF/] },
+      { src: K2, ref: '4530', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4531',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%寂寞地抚摸着除环的疤痕……/],
+      },
+      { src: K2, ref: '4532', any: [/			ENDIF/] },
+      { src: K2, ref: '4534', any: [/		ELSE/] },
+      { src: K2, ref: '4536', any: [/			IF CFLAG:7 & P/] },
+      {
+        src: K2,
+        ref: '4537',
+        any: [
+          /				PRINTFORMW 由于是第一次在皮肤上打孔，疼痛让%SAVESTR:TARGET%泪流满面，发出了悲鸣。/,
+        ],
+      },
+      { src: K2, ref: '4539', any: [/				IF P == 1/] },
+      { src: K2, ref: '4540', any: [/					PRINTFORMW 「呜呜…过分…好过分……」/] },
+      {
+        src: K2,
+        ref: '4541',
+        any: [
+          /					PRINTFORMW 乳头传来剧烈的疼痛，%SAVESTR:TARGET%忍不住哭了出来……/,
+        ],
+      },
+      { src: K2, ref: '4543', any: [/				ELSEIF P == 2/] },
+      { src: K2, ref: '4544', any: [/					PRINTFORMW 「肚脐都要被撕裂的感觉……」/] },
+      {
+        src: K2,
+        ref: '4545',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%看着脐环，眼泪无法压抑地流了出来……/],
+      },
+      { src: K2, ref: '4547', any: [/				ELSEIF P == 4/] },
+      {
+        src: K2,
+        ref: '4548',
+        any: [/					PRINTFORMW 「这里也…放过我…请放过我……」/],
+      },
+      {
+        src: K2,
+        ref: '4549',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%忍受着阴唇被穿环的痛苦，流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4551', any: [/				ELSEIF P == 8/] },
+      { src: K2, ref: '4552', any: [/					IF TALENT:121 \|\| TALENT:122/] },
+      {
+        src: K2,
+        ref: '4553',
+        any: [/						PRINTFORMW 「啊…啊…讨厌…讨厌…这样的话啊……」/],
+      },
+      {
+        src: K2,
+        ref: '4554',
+        any: [
+          /						PRINTFORMW 看着被穿环的阴茎，%SAVESTR:TARGET%痛苦地流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4555', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '4556',
+        any: [
+          /						PRINTFORMW 「%SELF_CALL\(TARGET\)%觉得这是这世上…最…痛苦…的事情了……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4557',
+        any: [
+          /						PRINTFORMW 看着被穿环的阴蒂，%SAVESTR:TARGET%痛苦地流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4558', any: [/					ENDIF/] },
+      { src: K2, ref: '4560', any: [/				ELSEIF P == 16/] },
+      { src: K2, ref: '4561', any: [/					PRINTFORMW 「啊呜…吧…堂苦…好堂……」/] },
+      {
+        src: K2,
+        ref: '4562',
+        any: [
+          /					PRINTFORMW 因为舌头被穿环，连话都说不清的%SAVESTR:TARGET%流下了痛苦的眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4564', any: [/				ELSEIF P == 32/] },
+      { src: K2, ref: '4565', any: [/					PRINTFORMW 「呜呜…这样…好过分……」/] },
+      {
+        src: K2,
+        ref: '4566',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%的嘴唇上被穿环后痛哭出声……/],
+      },
+      { src: K2, ref: '4568', any: [/				ELSEIF P == 64/] },
+      {
+        src: K2,
+        ref: '4569',
+        any: [
+          /					PRINTFORMW 「啊啊…啊啊…这里也…过分…好讨厌……%SELF_CALL\(TARGET\)%岂不是…变得和家畜一样……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4570',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%摸着鼻环想到了田里被穿环而痛苦低鸣的牛，眼泪止不住地涌了出来……/,
+        ],
+      },
+      { src: K2, ref: '4571', any: [/				ENDIF/] },
+      { src: K2, ref: '4573', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4574',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%抚摸着除环后残留的伤口……/],
+      },
+      { src: K2, ref: '4575', any: [/			ENDIF/] },
+      { src: K2, ref: '4576', any: [/		ENDIF/] },
+      { src: K2, ref: '4577', any: [/		CFLAG:TARGET:348 = 1/] },
+      { src: K2, ref: '4578', any: [/		RETURN 0/] },
+      { src: K2, ref: '4580', any: [/	ELSE/] },
+      { src: K2, ref: '4582', any: [/		IF ASSI > 0 && ASSIPLAY/] },
+      { src: K2, ref: '4583', any: [/			PRINTFORM/] },
+      {
+        src: K2,
+        ref: '4585',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4587', any: [/			IF CFLAG:7 & P/] },
+      { src: K2, ref: '4589', any: [/				IF P == 1/] },
+      {
+        src: K2,
+        ref: '4590',
+        any: [
+          /					PRINTFORMW 「啊啊啊…这么可爱的乳头，不跟着立刻射一发吗…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4591',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%炫耀似的向后仰倒，乳环也跟着摇晃起来……/,
+        ],
+      },
+      { src: K2, ref: '4593', any: [/				ELSEIF P == 2/] },
+      {
+        src: K2,
+        ref: '4594',
+        any: [/					PRINTFORMW 「啊啊…要不要在其他地方也…\?」/],
+      },
+      {
+        src: K2,
+        ref: '4595',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%诱惑地用手指在脐环四周划动……/],
+      },
+      { src: K2, ref: '4597', any: [/				ELSEIF P == 4/] },
+      {
+        src: K2,
+        ref: '4598',
+        any: [
+          /					PRINTFORMW 「哈…哈…%SELF_CALL\(TARGET\)%的身体…自己都开始讨厌起来…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4599',
+        any: [
+          /					PRINTFORMW 穿孔后残余的疼痛让%SAVESTR:TARGET%的身体开始不由自主地颤栗起来……/,
+        ],
+      },
+      { src: K2, ref: '4601', any: [/				ELSEIF P == 8/] },
+      { src: K2, ref: '4602', any: [/					IF TALENT:121 \|\| TALENT:122/] },
+      {
+        src: K2,
+        ref: '4603',
+        any: [
+          /						PRINTFORMW 「啊啊啊…小鸡鸡…小鸡鸡更加…可爱了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4604',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%看着阴茎上的环，欢喜得出神了……/],
+      },
+      { src: K2, ref: '4605', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '4606',
+        any: [
+          /						PRINTFORMW 「哈哈…这样看上去…更加可爱了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4607',
+        any: [/						PRINTFORMW %SAVESTR:TARGET%看着被穿环的阴蒂，欢喜得出神了……/],
+      },
+      { src: K2, ref: '4608', any: [/					ENDIF/] },
+      { src: K2, ref: '4610', any: [/				ELSEIF P == 16/] },
+      {
+        src: K2,
+        ref: '4611',
+        any: [
+          /					PRINTFORMW 「啊啊…奇怪的…的感觉…口交起来会不会…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4612',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%伸出舌环舔了舔嘴唇……/],
+      },
+      { src: K2, ref: '4614', any: [/				ELSEIF P == 32/] },
+      {
+        src: K2,
+        ref: '4615',
+        any: [/					PRINTFORMW 「嗯…唔呼呼…看上去怎么样？」/],
+      },
+      {
+        src: K2,
+        ref: '4616',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%一边舔着嘴唇一边确认……/],
+      },
+      { src: K2, ref: '4618', any: [/				ELSEIF P == 64/] },
+      { src: K2, ref: '4619', any: [/					PRINTFORMW 「呼…奇怪的感觉哟……」/] },
+      {
+        src: K2,
+        ref: '4620',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%忍不住反复摩挲着鼻环……/],
+      },
+      { src: K2, ref: '4621', any: [/				ENDIF/] },
+      { src: K2, ref: '4623', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4624',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%抚摸着除环后皮肤上残留下的疤痕……/],
+      },
+      { src: K2, ref: '4625', any: [/			ENDIF/] },
+      { src: K2, ref: '4626', any: [/			CFLAG:348 = 4/] },
+      {
+        src: K2,
+        ref: '4628',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:348 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4630', any: [/			IF CFLAG:7 & P/] },
+      { src: K2, ref: '4632', any: [/				IF P == 1/] },
+      {
+        src: K2,
+        ref: '4633',
+        any: [
+          /					PRINTFORMW 「啊啊…这就是爱的证据啊…呼……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4634',
+        any: [
+          /					PRINTFORMW 乳环在%SAVESTR:TARGET%勃起的乳头上轻轻摇晃着，发出闪亮的反光……/,
+        ],
+      },
+      { src: K2, ref: '4636', any: [/				ELSEIF P == 2/] },
+      { src: K2, ref: '4637', any: [/					PRINTFORMW 「在这里…为什么？……」/] },
+      {
+        src: K2,
+        ref: '4638',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%抚摸着脐环四周……/],
+      },
+      { src: K2, ref: '4640', any: [/				ELSEIF P == 4/] },
+      {
+        src: K2,
+        ref: '4641',
+        any: [/					PRINTFORMW 「唔…啊，不行…那里好痛…啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '4642',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%因为阴唇上穿环的剧痛而发出了悲鸣……/],
+      },
+      { src: K2, ref: '4644', any: [/				ELSEIF P == 8/] },
+      { src: K2, ref: '4645', any: [/					IF TALENT:121 \|\| TALENT:122/] },
+      {
+        src: K2,
+        ref: '4646',
+        any: [
+          /						PRINTFORMW 「啊啊啊…小鸡鸡有…小鸡鸡有啊…啊啊啊…这样的…啊啊啊……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4647',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%阴茎上被穿环后，流着泪的脸上露出了笑容……/,
+        ],
+      },
+      { src: K2, ref: '4648', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '4649',
+        any: [/						PRINTFORMW 「啊啊啊…阴蒂上穿环…这样…感觉太…奇怪的说……」/],
+      },
+      {
+        src: K2,
+        ref: '4650',
+        any: [
+          /						PRINTFORMW %SAVESTR:TARGET%阴蒂上被穿环后，流着泪的脸上露出了笑容……/,
+        ],
+      },
+      { src: K2, ref: '4651', any: [/					ENDIF/] },
+      { src: K2, ref: '4653', any: [/				ELSEIF P == 16/] },
+      {
+        src: K2,
+        ref: '4654',
+        any: [/					PRINTFORMW 「啊啊啊…是…在舌尖上固定了…\?」/],
+      },
+      {
+        src: K2,
+        ref: '4655',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%伸出穿环的舌头欢喜地炫耀着……/],
+      },
+      { src: K2, ref: '4657', any: [/				ELSEIF P == 32/] },
+      {
+        src: K2,
+        ref: '4658',
+        any: [/					PRINTFORMW 「呼呼…这样的打扮的也不错啊…\?」/],
+      },
+      {
+        src: K2,
+        ref: '4659',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%用舌头舔着嘴唇确认……/],
+      },
+      { src: K2, ref: '4661', any: [/				ELSEIF P == 64/] },
+      {
+        src: K2,
+        ref: '4662',
+        any: [/					PRINTFORMW 「啊啊…这，漂亮吗……？哦，真的……？」/],
+      },
+      {
+        src: K2,
+        ref: '4663',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%摸着鼻环，有点害羞地笑了……/],
+      },
+      { src: K2, ref: '4664', any: [/				ENDIF/] },
+      { src: K2, ref: '4666', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4667',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%寂寞地抚摸着除环的疤痕……/],
+      },
+      { src: K2, ref: '4668', any: [/			ENDIF/] },
+      { src: K2, ref: '4669', any: [/			CFLAG:348 = 3/] },
+      { src: K2, ref: '4671', any: [/		ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '4673', any: [/			IF CFLAG:7 & P/] },
+      { src: K2, ref: '4675', any: [/				IF P == 1/] },
+      { src: K2, ref: '4676', any: [/					PRINTFORMW 「呜呜…过分…好过分……」/] },
+      {
+        src: K2,
+        ref: '4677',
+        any: [
+          /					PRINTFORMW 乳头传来剧烈的疼痛，%SAVESTR:TARGET%忍不住哭了出来……/,
+        ],
+      },
+      { src: K2, ref: '4679', any: [/				ELSEIF P == 2/] },
+      { src: K2, ref: '4680', any: [/					PRINTFORMW 「肚脐都要被撕裂的感觉……」/] },
+      {
+        src: K2,
+        ref: '4681',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%看着脐环，眼泪无法压抑地流了出来……/],
+      },
+      { src: K2, ref: '4683', any: [/				ELSEIF P == 4/] },
+      {
+        src: K2,
+        ref: '4684',
+        any: [/					PRINTFORMW 「这里也…放过我…请放过我……」/],
+      },
+      {
+        src: K2,
+        ref: '4685',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%忍受着阴唇被穿环的痛苦，流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4687', any: [/				ELSEIF P == 8/] },
+      { src: K2, ref: '4688', any: [/					IF TALENT:121 \|\| TALENT:122/] },
+      {
+        src: K2,
+        ref: '4689',
+        any: [/						PRINTFORMW 「啊…啊…讨厌…讨厌…这样的话啊……」/],
+      },
+      {
+        src: K2,
+        ref: '4690',
+        any: [
+          /						PRINTFORMW 看着被穿环的阴茎，%SAVESTR:TARGET%痛苦地流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4691', any: [/					ELSE/] },
+      {
+        src: K2,
+        ref: '4692',
+        any: [
+          /						PRINTFORMW 「%SELF_CALL\(TARGET\)%觉得这是这世上…最…痛苦…的事情了……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4693',
+        any: [
+          /						PRINTFORMW 看着被穿环的阴蒂，%SAVESTR:TARGET%痛苦地流下了眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4694', any: [/					ENDIF/] },
+      { src: K2, ref: '4696', any: [/				ELSEIF P == 16/] },
+      { src: K2, ref: '4697', any: [/					PRINTFORMW 「啊呜…吧…堂苦…好堂……」/] },
+      {
+        src: K2,
+        ref: '4698',
+        any: [
+          /					PRINTFORMW 因为舌头被穿环，连话都说不清的%SAVESTR:TARGET%流下了痛苦的眼泪……/,
+        ],
+      },
+      { src: K2, ref: '4700', any: [/				ELSEIF P == 32/] },
+      { src: K2, ref: '4701', any: [/					PRINTFORMW 「呜呜…这样…好过分……」/] },
+      {
+        src: K2,
+        ref: '4702',
+        any: [/					PRINTFORMW %SAVESTR:TARGET%的嘴唇上被穿环后痛哭出声……/],
+      },
+      { src: K2, ref: '4704', any: [/				ELSEIF P == 64/] },
+      {
+        src: K2,
+        ref: '4705',
+        any: [
+          /					PRINTFORMW 「啊啊…啊啊…这里也…过分…好讨厌……%SELF_CALL\(TARGET\)%岂不是…变得和家畜一样……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4706',
+        any: [
+          /					PRINTFORMW %SAVESTR:TARGET%摸着鼻环想到了田里被穿环而痛苦低鸣的牛，眼泪止不住地涌了出来……/,
+        ],
+      },
+      { src: K2, ref: '4707', any: [/				ENDIF/] },
+      { src: K2, ref: '4709', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '4710',
+        any: [/				PRINTFORMW %SAVESTR:TARGET%抚摸着除环后残留的伤口……/],
+      },
+      { src: K2, ref: '4711', any: [/			ENDIF/] },
+      { src: K2, ref: '4712', any: [/			CFLAG:348 = 2/] },
+      { src: K2, ref: '4713', any: [/		ENDIF/] },
+      { src: K2, ref: '4714', any: [/	ENDIF/] },
+      { src: K2, ref: '4715', any: [/	RETURN 0/] },
+      { src: K2, ref: '4716', any: [/ENDIF/] },
+      { src: K2, ref: '4722', any: [/@DOG_KOJO_2/] },
+      { src: K2, ref: '4727', any: [/IF SELECTCOM == 0/] },
+      { src: K2, ref: '4729', any: [/	IF CFLAG:301 == 0/] },
+      { src: K2, ref: '4731', any: [/		IF MARK:2 >= 2/] },
+      { src: K2, ref: '4732', any: [/			PRINTFORMW 「呜……」/] },
+      { src: K2, ref: '4734', any: [/		ELSE/] },
+      { src: K2, ref: '4735', any: [/			PRINTFORMW 「呓……」/] },
+      { src: K2, ref: '4736', any: [/		ENDIF/] },
+      { src: K2, ref: '4737', any: [/		CFLAG:301 = 1/] },
+      { src: K2, ref: '4738', any: [/		RETURN 0/] },
+      { src: K2, ref: '4740', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4742',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '4743',
+        any: [
+          /			PRINTFORMW 「狗狗好可爱哦……♪　%SELF_CALL\(TARGET\)%也觉得很舒服哦……♪」/,
+        ],
+      },
+      { src: K2, ref: '4744', any: [/			CFLAG:301 = 7/] },
+      {
+        src: K2,
+        ref: '4746',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4747', any: [/			PRINTFORMW 「狗狗好可爱啊♪」/] },
+      { src: K2, ref: '4748', any: [/			CFLAG:301 = 6/] },
+      {
+        src: K2,
+        ref: '4750',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4751', any: [/			PRINTFORMW 「狗狗好可爱啊♪」/] },
+      { src: K2, ref: '4752', any: [/			CFLAG:301 = 5/] },
+      {
+        src: K2,
+        ref: '4754',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4755', any: [/			PRINTFORMW 「这样子做很开心吗？」/] },
+      { src: K2, ref: '4756', any: [/			CFLAG:301 = 4/] },
+      {
+        src: K2,
+        ref: '4758',
+        any: [/		ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4759', any: [/			PRINTFORMW 「奇怪的感觉……」/] },
+      { src: K2, ref: '4760', any: [/			CFLAG:301 = 3/] },
+      {
+        src: K2,
+        ref: '4762',
+        any: [/		ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4763', any: [/			PRINTFORMW 「呜……这样的事……」/] },
+      { src: K2, ref: '4764', any: [/			CFLAG:301 = 2/] },
+      { src: K2, ref: '4765', any: [/		ENDIF/] },
+      { src: K2, ref: '4766', any: [/		RETURN 0/] },
+      { src: K2, ref: '4767', any: [/	ENDIF/] },
+      { src: K2, ref: '4768', any: [/ENDIF/] },
+      { src: K2, ref: '4773', any: [/IF SELECTCOM == 1/] },
+      { src: K2, ref: '4775', any: [/	IF CFLAG:302 == 0/] },
+      { src: K2, ref: '4777', any: [/		IF TALENT:TARGET:0 == 1/] },
+      { src: K2, ref: '4778', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4780', any: [/		ELSE/] },
+      { src: K2, ref: '4781', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4782', any: [/		ENDIF/] },
+      { src: K2, ref: '4783', any: [/		CFLAG:302 = 1/] },
+      { src: K2, ref: '4784', any: [/		RETURN 0/] },
+      { src: K2, ref: '4786', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4788',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4789', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4790', any: [/			CFLAG:302 = 6/] },
+      {
+        src: K2,
+        ref: '4792',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4793', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4794', any: [/			CFLAG:302 = 5/] },
+      {
+        src: K2,
+        ref: '4796',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4797', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4798', any: [/			CFLAG:302 = 4/] },
+      {
+        src: K2,
+        ref: '4800',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4801', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4802', any: [/			CFLAG:302 = 3/] },
+      { src: K2, ref: '4804', any: [/		ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '4805', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4806', any: [/			CFLAG:302 = 2/] },
+      { src: K2, ref: '4807', any: [/		ENDIF/] },
+      { src: K2, ref: '4808', any: [/		RETURN 0/] },
+      { src: K2, ref: '4809', any: [/	ENDIF/] },
+      { src: K2, ref: '4810', any: [/ENDIF/] },
+      { src: K2, ref: '4816', any: [/IF SELECTCOM == 5/] },
+      { src: K2, ref: '4818', any: [/	IF CFLAG:306 == 0/] },
+      { src: K2, ref: '4820', any: [/		IF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '4821', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4823', any: [/		ELSE/] },
+      { src: K2, ref: '4824', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4825', any: [/		ENDIF/] },
+      { src: K2, ref: '4826', any: [/		CFLAG:TARGET:306 = 1/] },
+      { src: K2, ref: '4827', any: [/		RETURN 0/] },
+      { src: K2, ref: '4829', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4831',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4832', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4833', any: [/			CFLAG:306 = 6/] },
+      {
+        src: K2,
+        ref: '4835',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4836', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4837', any: [/			CFLAG:306 = 5/] },
+      {
+        src: K2,
+        ref: '4839',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4840', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4841', any: [/			CFLAG:306 = 4/] },
+      {
+        src: K2,
+        ref: '4843',
+        any: [/		ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4844', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4845', any: [/			CFLAG:306 = 3/] },
+      { src: K2, ref: '4847', any: [/		ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '4848', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4849', any: [/			CFLAG:306 = 2/] },
+      { src: K2, ref: '4850', any: [/		ENDIF/] },
+      { src: K2, ref: '4851', any: [/		RETURN 0/] },
+      { src: K2, ref: '4852', any: [/	ENDIF/] },
+      { src: K2, ref: '4853', any: [/ENDIF/] },
+      { src: K2, ref: '4858', any: [/IF SELECTCOM == 6/] },
+      { src: K2, ref: '4860', any: [/	IF CFLAG:307 == 0 && TFLAG:13/] },
+      { src: K2, ref: '4862', any: [/		IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '4863', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4865', any: [/		ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '4866', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4868', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '4869', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4871', any: [/		ELSE/] },
+      { src: K2, ref: '4872', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4873', any: [/		ENDIF/] },
+      { src: K2, ref: '4874', any: [/		CFLAG:307 = 1/] },
+      { src: K2, ref: '4875', any: [/		RETURN 0/] },
+      { src: K2, ref: '4877', any: [/	ELSEIF CFLAG:307 == 0/] },
+      { src: K2, ref: '4879', any: [/		IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '4880', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4882', any: [/		ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '4883', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4885', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '4886', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4888', any: [/		ELSE/] },
+      { src: K2, ref: '4889', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4890', any: [/		ENDIF/] },
+      { src: K2, ref: '4891', any: [/		CFLAG:307 = 1/] },
+      { src: K2, ref: '4892', any: [/		RETURN 0/] },
+      { src: K2, ref: '4894', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4896',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4897', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4898', any: [/			CFLAG:307 = 6/] },
+      {
+        src: K2,
+        ref: '4900',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4901', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4902', any: [/			CFLAG:307 = 5/] },
+      {
+        src: K2,
+        ref: '4904',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4905', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4906', any: [/			CFLAG:307 = 4/] },
+      {
+        src: K2,
+        ref: '4908',
+        any: [/		ELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4909', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4910', any: [/			CFLAG:307 = 3/] },
+      { src: K2, ref: '4912', any: [/		ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '4913', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4914', any: [/			CFLAG:307 = 2/] },
+      { src: K2, ref: '4915', any: [/		ENDIF/] },
+      { src: K2, ref: '4916', any: [/		RETURN 0/] },
+      { src: K2, ref: '4917', any: [/	ENDIF/] },
+      { src: K2, ref: '4918', any: [/ENDIF/] },
+      { src: K2, ref: '4923', any: [/IF SELECTCOM == 9/] },
+      { src: K2, ref: '4925', any: [/	IF CFLAG:310 == 0/] },
+      { src: K2, ref: '4927', any: [/		IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '4928', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4930', any: [/		ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '4931', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4933', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '4934', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4936', any: [/		ELSE/] },
+      { src: K2, ref: '4937', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4938', any: [/		ENDIF/] },
+      { src: K2, ref: '4939', any: [/		CFLAG:TARGET:310 = 1/] },
+      { src: K2, ref: '4940', any: [/		RETURN 0/] },
+      { src: K2, ref: '4942', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '4944',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4945', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4946', any: [/			CFLAG:310 = 6/] },
+      {
+        src: K2,
+        ref: '4948',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4949', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4950', any: [/			CFLAG:310 = 5/] },
+      {
+        src: K2,
+        ref: '4952',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:310 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '4953', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4954', any: [/			CFLAG:310 = 4/] },
+      {
+        src: K2,
+        ref: '4956',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:310 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '4957', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4958', any: [/			CFLAG:310 = 3/] },
+      { src: K2, ref: '4960', any: [/		ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '4961', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '4962', any: [/			CFLAG:310 = 2/] },
+      { src: K2, ref: '4963', any: [/		ENDIF/] },
+      { src: K2, ref: '4964', any: [/		RETURN 0/] },
+      { src: K2, ref: '4965', any: [/	ENDIF/] },
+      { src: K2, ref: '4966', any: [/ENDIF/] },
+      { src: K2, ref: '4971', any: [/IF SELECTCOM == 21/] },
+      { src: K2, ref: '4973', any: [/	IF CFLAG:TARGET:322 == 0/] },
+      { src: K2, ref: '4975', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '4977', any: [/			IF TALENT:136 == 1/] },
+      { src: K2, ref: '4978', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '4980', any: [/			ELSEIF TALENT:76 == 1/] },
+      { src: K2, ref: '4981', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '4983', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '4984', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '4987', any: [/			ELSE/] },
+      { src: K2, ref: '4988', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '4989', any: [/			ENDIF/] },
+      { src: K2, ref: '4991', any: [/		ELSE/] },
+      { src: K2, ref: '4993', any: [/			IF TALENT:136 == 1/] },
+      { src: K2, ref: '4994', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '4996', any: [/			ELSEIF TALENT:76 == 1/] },
+      { src: K2, ref: '4997', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '4999', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '5000', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5002', any: [/			ELSE/] },
+      { src: K2, ref: '5003', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5004', any: [/			ENDIF/] },
+      { src: K2, ref: '5005', any: [/		ENDIF/] },
+      { src: K2, ref: '5006', any: [/		CFLAG:322 = 1/] },
+      { src: K2, ref: '5007', any: [/		RETURN 0/] },
+      { src: K2, ref: '5009', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5011',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5012', any: [/			IF RAND:3 == 0/] },
+      { src: K2, ref: '5013', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5014', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5015', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5016', any: [/			ELSE/] },
+      { src: K2, ref: '5017', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5018', any: [/			ENDIF/] },
+      { src: K2, ref: '5019', any: [/			CFLAG:322 = 7/] },
+      {
+        src: K2,
+        ref: '5021',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5022', any: [/			IF RAND:3 == 0/] },
+      { src: K2, ref: '5023', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5024', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5025', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5026', any: [/			ELSE/] },
+      { src: K2, ref: '5027', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5028', any: [/			ENDIF/] },
+      { src: K2, ref: '5029', any: [/			CFLAG:322 = 6/] },
+      {
+        src: K2,
+        ref: '5031',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5032', any: [/			IF RAND:3 == 0/] },
+      { src: K2, ref: '5033', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5034', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5035', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5036', any: [/			ELSE/] },
+      { src: K2, ref: '5037', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5038', any: [/			ENDIF/] },
+      { src: K2, ref: '5039', any: [/			CFLAG:322 = 5/] },
+      {
+        src: K2,
+        ref: '5041',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:322 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5042', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5043', any: [/			CFLAG:322 = 4/] },
+      {
+        src: K2,
+        ref: '5045',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:322 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '5046', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5047', any: [/			CFLAG:322 = 3/] },
+      { src: K2, ref: '5049', any: [/		ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5050', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5052', any: [/			CFLAG:322 = 2/] },
+      { src: K2, ref: '5053', any: [/		ENDIF/] },
+      { src: K2, ref: '5054', any: [/		RETURN 0/] },
+      { src: K2, ref: '5055', any: [/	ENDIF/] },
+      { src: K2, ref: '5056', any: [/ENDIF/] },
+      { src: K2, ref: '5061', any: [/IF SELECTCOM == 27/] },
+      { src: K2, ref: '5063', any: [/	IF CFLAG:TARGET:328 == 0/] },
+      { src: K2, ref: '5065', any: [/		IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '5066', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5068', any: [/		ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '5069', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5071', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5072', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5074', any: [/		ELSE/] },
+      { src: K2, ref: '5075', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5076', any: [/		ENDIF/] },
+      { src: K2, ref: '5077', any: [/		CFLAG:TARGET:328 = 1/] },
+      { src: K2, ref: '5078', any: [/		RETURN 0/] },
+      { src: K2, ref: '5080', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5082',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5083', any: [/			IF RAND:2 == 0/] },
+      { src: K2, ref: '5084', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5085', any: [/			ELSE/] },
+      { src: K2, ref: '5086', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5087', any: [/			ENDIF/] },
+      { src: K2, ref: '5088', any: [/			CFLAG:328 = 7/] },
+      {
+        src: K2,
+        ref: '5090',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5091', any: [/			IF RAND:2 == 0/] },
+      { src: K2, ref: '5092', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5093', any: [/			ELSE/] },
+      { src: K2, ref: '5094', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5095', any: [/			ENDIF/] },
+      { src: K2, ref: '5096', any: [/			CFLAG:328 = 6/] },
+      {
+        src: K2,
+        ref: '5098',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5099', any: [/			IF RAND:2 == 0/] },
+      { src: K2, ref: '5100', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5101', any: [/			ELSE/] },
+      { src: K2, ref: '5102', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5103', any: [/			ENDIF/] },
+      { src: K2, ref: '5104', any: [/			CFLAG:328 = 5/] },
+      {
+        src: K2,
+        ref: '5106',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5107', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5108', any: [/			CFLAG:328 = 4/] },
+      {
+        src: K2,
+        ref: '5110',
+        any: [/		ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '5111', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5112', any: [/			CFLAG:328 = 3/] },
+      {
+        src: K2,
+        ref: '5114',
+        any: [/		ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2/],
+      },
+      { src: K2, ref: '5115', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5116', any: [/			CFLAG:328 = 2/] },
+      { src: K2, ref: '5117', any: [/		ENDIF/] },
+      { src: K2, ref: '5118', any: [/		RETURN 0/] },
+      { src: K2, ref: '5119', any: [/	ENDIF/] },
+      { src: K2, ref: '5120', any: [/ENDIF/] },
+      { src: K2, ref: '5125', any: [/IF SELECTCOM == 30/] },
+      { src: K2, ref: '5127', any: [/	IF CFLAG:TARGET:331 == 0/] },
+      { src: K2, ref: '5129', any: [/		IF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '5130', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5132', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5133', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5135', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      { src: K2, ref: '5136', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5138', any: [/		ELSE/] },
+      { src: K2, ref: '5139', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5140', any: [/		ENDIF/] },
+      { src: K2, ref: '5141', any: [/		CFLAG:TARGET:331 = 1/] },
+      { src: K2, ref: '5142', any: [/		RETURN 0/] },
+      { src: K2, ref: '5144', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5146',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5147', any: [/			IF RAND:2 == 0/] },
+      { src: K2, ref: '5148', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5149', any: [/			ELSE/] },
+      { src: K2, ref: '5150', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5151', any: [/			ENDIF/] },
+      { src: K2, ref: '5152', any: [/			CFLAG:331 = 7/] },
+      {
+        src: K2,
+        ref: '5154',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5155', any: [/			IF RAND:2 == 0/] },
+      { src: K2, ref: '5156', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5157', any: [/			ELSE/] },
+      { src: K2, ref: '5158', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5159', any: [/			ENDIF/] },
+      { src: K2, ref: '5160', any: [/			CFLAG:331 = 6/] },
+      {
+        src: K2,
+        ref: '5162',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5163', any: [/			IF RAND:2 == 0/] },
+      { src: K2, ref: '5164', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5165', any: [/			ELSE/] },
+      { src: K2, ref: '5166', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5167', any: [/			ENDIF/] },
+      { src: K2, ref: '5168', any: [/			CFLAG:331 = 5/] },
+      {
+        src: K2,
+        ref: '5170',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5171', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5172', any: [/			CFLAG:331 = 4/] },
+      {
+        src: K2,
+        ref: '5174',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5175', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5176', any: [/			CFLAG:331 = 3/] },
+      { src: K2, ref: '5178', any: [/		ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5179', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5180', any: [/			CFLAG:331 = 2/] },
+      { src: K2, ref: '5181', any: [/		ENDIF/] },
+      { src: K2, ref: '5182', any: [/		RETURN 0/] },
+      { src: K2, ref: '5183', any: [/	ENDIF/] },
+      { src: K2, ref: '5184', any: [/ENDIF/] },
+      { src: K2, ref: '5189', any: [/IF SELECTCOM == 31/] },
+      { src: K2, ref: '5191', any: [/	IF CFLAG:TARGET:332 == 0/] },
+      { src: K2, ref: '5193', any: [/		IF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '5194', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5196', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5197', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5199', any: [/		ELSEIF ABL:TARGET:16 >= 3/] },
+      { src: K2, ref: '5200', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5202', any: [/		ELSE/] },
+      { src: K2, ref: '5203', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5204', any: [/		ENDIF/] },
+      { src: K2, ref: '5205', any: [/		CFLAG:TARGET:332 = 1/] },
+      { src: K2, ref: '5206', any: [/		RETURN 0/] },
+      { src: K2, ref: '5208', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5210',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5211', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5212', any: [/			CFLAG:332 = 7/] },
+      {
+        src: K2,
+        ref: '5214',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5215', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5216', any: [/			CFLAG:332 = 6/] },
+      {
+        src: K2,
+        ref: '5218',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5219', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5220', any: [/			CFLAG:332 = 5/] },
+      {
+        src: K2,
+        ref: '5222',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5223', any: [/				PRINTFORML /] },
+      { src: K2, ref: '5224', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5225', any: [/			CFLAG:332 = 4/] },
+      {
+        src: K2,
+        ref: '5227',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5228', any: [/			PRINTFORML /] },
+      { src: K2, ref: '5229', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5230', any: [/			CFLAG:332 = 3/] },
+      { src: K2, ref: '5232', any: [/		ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5233', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5234', any: [/			CFLAG:332 = 2/] },
+      { src: K2, ref: '5235', any: [/		ENDIF/] },
+      { src: K2, ref: '5236', any: [/		RETURN 0/] },
+      { src: K2, ref: '5237', any: [/	ENDIF/] },
+      { src: K2, ref: '5238', any: [/ENDIF/] },
+      { src: K2, ref: '5243', any: [/IF SELECTCOM == 34/] },
+      { src: K2, ref: '5245', any: [/	IF CFLAG:TARGET:335 == 0/] },
+      { src: K2, ref: '5247', any: [/		IF TALENT:0 == 1/] },
+      { src: K2, ref: '5249', any: [/			IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '5250', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5252', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '5253', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5255', any: [/			ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5256', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5258', any: [/			ELSE/] },
+      { src: K2, ref: '5259', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5260', any: [/			ENDIF/] },
+      { src: K2, ref: '5262', any: [/		ELSE/] },
+      { src: K2, ref: '5264', any: [/			IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '5265', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5267', any: [/			ELSEIF TALENT:76 == 1/] },
+      { src: K2, ref: '5268', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5270', any: [/			ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '5271', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5273', any: [/			ELSE/] },
+      { src: K2, ref: '5274', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5275', any: [/			ENDIF/] },
+      { src: K2, ref: '5276', any: [/		ENDIF/] },
+      { src: K2, ref: '5277', any: [/		CFLAG:TARGET:335 = 1/] },
+      { src: K2, ref: '5278', any: [/		RETURN 0/] },
+      { src: K2, ref: '5280', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5282',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5283', any: [/			IF RAND:3 == 0/] },
+      { src: K2, ref: '5284', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5285', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5286', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5287', any: [/			ELSE/] },
+      { src: K2, ref: '5288', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5289', any: [/			ENDIF/] },
+      { src: K2, ref: '5290', any: [/			CFLAG:335 = 7/] },
+      {
+        src: K2,
+        ref: '5292',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5293', any: [/			IF RAND:4 == 0/] },
+      { src: K2, ref: '5294', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5295', any: [/			ELSEIF RAND:3 == 0/] },
+      { src: K2, ref: '5296', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5297', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5298', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5299', any: [/			ELSE/] },
+      { src: K2, ref: '5300', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5301', any: [/			ENDIF/] },
+      { src: K2, ref: '5302', any: [/			CFLAG:335 = 6/] },
+      {
+        src: K2,
+        ref: '5304',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5305', any: [/			IF RAND:4 == 0/] },
+      { src: K2, ref: '5306', any: [/				PRINTFORML /] },
+      { src: K2, ref: '5307', any: [/			ELSEIF RAND:3 == 0/] },
+      { src: K2, ref: '5308', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5309', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5310', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5311', any: [/			ELSE/] },
+      { src: K2, ref: '5312', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5313', any: [/			ENDIF/] },
+      { src: K2, ref: '5314', any: [/			CFLAG:335 = 5/] },
+      {
+        src: K2,
+        ref: '5316',
+        any: [
+          /		ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5317', any: [/			IF RAND:4 == 0/] },
+      { src: K2, ref: '5318', any: [/				PRINTFORMW/] },
+      { src: K2, ref: '5319', any: [/			ELSEIF RAND:3 == 0/] },
+      { src: K2, ref: '5320', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5321', any: [/			ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '5322', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5323', any: [/			ELSE/] },
+      { src: K2, ref: '5324', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5325', any: [/			ENDIF/] },
+      { src: K2, ref: '5326', any: [/			CFLAG:335 = 4/] },
+      {
+        src: K2,
+        ref: '5328',
+        any: [/		ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '5329', any: [/			PRINTFORML /] },
+      { src: K2, ref: '5330', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5331', any: [/			CFLAG:335 = 3/] },
+      { src: K2, ref: '5333', any: [/		ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5334', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5335', any: [/			CFLAG:335 = 2/] },
+      { src: K2, ref: '5336', any: [/		ENDIF/] },
+      { src: K2, ref: '5337', any: [/		RETURN 0/] },
+      { src: K2, ref: '5338', any: [/	ENDIF/] },
+      { src: K2, ref: '5339', any: [/ENDIF/] },
+      { src: K2, ref: '5344', any: [/IF SELECTCOM == 37/] },
+      { src: K2, ref: '5346', any: [/	IF CFLAG:TARGET:338 == 0/] },
+      { src: K2, ref: '5348', any: [/		IF ABL:TARGET:16 >= 3/] },
+      { src: K2, ref: '5349', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5351', any: [/		ELSE/] },
+      { src: K2, ref: '5352', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5353', any: [/		ENDIF/] },
+      { src: K2, ref: '5354', any: [/		CFLAG:TARGET:338 = 1/] },
+      { src: K2, ref: '5355', any: [/		RETURN 0/] },
+      { src: K2, ref: '5357', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5359',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5360', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5361', any: [/			CFLAG:338 = 6/] },
+      {
+        src: K2,
+        ref: '5363',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5364', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5365', any: [/			CFLAG:338 = 5/] },
+      {
+        src: K2,
+        ref: '5367',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5368', any: [/				PRINTFORML /] },
+      { src: K2, ref: '5369', any: [/			CFLAG:338 = 4/] },
+      {
+        src: K2,
+        ref: '5371',
+        any: [
+          /		ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5372', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5373', any: [/			CFLAG:338 = 3/] },
+      { src: K2, ref: '5375', any: [/		ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5376', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5377', any: [/			CFLAG:338 = 2/] },
+      { src: K2, ref: '5378', any: [/		ENDIF/] },
+      { src: K2, ref: '5379', any: [/		RETURN 0/] },
+      { src: K2, ref: '5380', any: [/	ENDIF/] },
+      { src: K2, ref: '5381', any: [/ENDIF/] },
+      { src: K2, ref: '5387', any: [/IF SELECTCOM == 43 && TEQUIP:43/] },
+      { src: K2, ref: '5389', any: [/	IF CFLAG:TARGET:344 == 0/] },
+      { src: K2, ref: '5391', any: [/		IF TALENT:136 == 1/] },
+      { src: K2, ref: '5392', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5394', any: [/		ELSEIF TALENT:76 == 1/] },
+      { src: K2, ref: '5395', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5397', any: [/		ELSEIF TALENT:85 == 1/] },
+      { src: K2, ref: '5398', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5400', any: [/		ELSE/] },
+      { src: K2, ref: '5401', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5402', any: [/		ENDIF/] },
+      { src: K2, ref: '5403', any: [/		CFLAG:TARGET:344 = 1/] },
+      { src: K2, ref: '5404', any: [/		RETURN 0/] },
+      { src: K2, ref: '5406', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5408',
+        any: [
+          /		IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5409', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5410', any: [/			CFLAG:TARGET:344 = 10/] },
+      {
+        src: K2,
+        ref: '5412',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5413', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5414', any: [/			CFLAG:TARGET:344 = 9/] },
+      {
+        src: K2,
+        ref: '5416',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 7 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5417', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5418', any: [/			CFLAG:TARGET:344 = 8/] },
+      {
+        src: K2,
+        ref: '5420',
+        any: [
+          /		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:344 <= 6 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5421', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5422', any: [/			CFLAG:TARGET:344 = 7/] },
+      {
+        src: K2,
+        ref: '5424',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5425', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5426', any: [/			CFLAG:TARGET:344 = 6/] },
+      {
+        src: K2,
+        ref: '5428',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5429', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5430', any: [/			CFLAG:TARGET:344 = 5/] },
+      {
+        src: K2,
+        ref: '5432',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5433', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5434', any: [/			CFLAG:TARGET:344 = 4/] },
+      {
+        src: K2,
+        ref: '5436',
+        any: [/		ELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '5437', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5438', any: [/			CFLAG:TARGET:344 = 3/] },
+      { src: K2, ref: '5440', any: [/		ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5441', any: [/			PRINTFORMW /] },
+      { src: K2, ref: '5442', any: [/			CFLAG:TARGET:344 = 2/] },
+      { src: K2, ref: '5443', any: [/		ENDIF/] },
+      { src: K2, ref: '5444', any: [/		RETURN 0/] },
+      { src: K2, ref: '5445', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '5447',
+        any: [/ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0/],
+      },
+      {
+        src: K2,
+        ref: '5449',
+        any: [
+          /	IF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5450', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '5451', any: [/		CFLAG:444 = 4/] },
+      {
+        src: K2,
+        ref: '5453',
+        any: [
+          /	ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5454', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '5455', any: [/		CFLAG:444 = 3/] },
+      {
+        src: K2,
+        ref: '5457',
+        any: [
+          /	ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:338 < 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5458', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '5459', any: [/		CFLAG:444 = 2/] },
+      { src: K2, ref: '5461', any: [/	ELSEIF CFLAG:444 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5462', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '5463', any: [/		CFLAG:444 = 1/] },
+      { src: K2, ref: '5464', any: [/	ENDIF/] },
+      { src: K2, ref: '5465', any: [/	RETURN 0/] },
+      { src: K2, ref: '5466', any: [/ENDIF/] },
+      { src: K2, ref: '5472', any: [/IF SELECTCOM == 56/] },
+      { src: K2, ref: '5474', any: [/	IF CFLAG:357 == 0/] },
+      { src: K2, ref: '5475', any: [/		IF TEQUIP:53/] },
+      { src: K2, ref: '5478', any: [/			IF TALENT:TARGET:136 == 1/] },
+      { src: K2, ref: '5479', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5481', any: [/			ELSEIF TALENT:TARGET:76 == 1/] },
+      { src: K2, ref: '5482', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5484', any: [/			ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5485', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5487', any: [/			ELSE/] },
+      { src: K2, ref: '5488', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5489', any: [/			ENDIF/] },
+      { src: K2, ref: '5490', any: [/		ENDIF/] },
+      { src: K2, ref: '5491', any: [/		CFLAG:357 = 1/] },
+      { src: K2, ref: '5492', any: [/		RETURN 0/] },
+      { src: K2, ref: '5494', any: [/	ELSE/] },
+      { src: K2, ref: '5495', any: [/		IF TEQUIP:53/] },
+      {
+        src: K2,
+        ref: '5498',
+        any: [
+          /			IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5499', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5500', any: [/				CFLAG:357 = 5/] },
+      {
+        src: K2,
+        ref: '5502',
+        any: [
+          /			ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5503', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5504', any: [/				CFLAG:357 = 4/] },
+      {
+        src: K2,
+        ref: '5506',
+        any: [
+          /			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:357 <= 2 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      { src: K2, ref: '5507', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5508', any: [/				CFLAG:357 = 3/] },
+      { src: K2, ref: '5510', any: [/			ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5511', any: [/				PRINTFORMW /] },
+      { src: K2, ref: '5512', any: [/				CFLAG:357 = 2/] },
+      { src: K2, ref: '5513', any: [/			ENDIF/] },
+      { src: K2, ref: '5514', any: [/		ENDIF/] },
+      { src: K2, ref: '5515', any: [/		RETURN 0/] },
+      { src: K2, ref: '5516', any: [/	ENDIF/] },
+      { src: K2, ref: '5517', any: [/ENDIF/] },
+      { src: K2, ref: '5520', any: [/RETURN 0/] },
+      { src: K2, ref: '5527', any: [/@KOJO_MESSAGE_PALAMCNG_2/] },
+      { src: K2, ref: '5530', any: [/	RETURN 0 /] },
+      { src: K2, ref: '5533', any: [/	RETURN 0/] },
+      { src: K2, ref: '5536', any: [/	RETURN 0/] },
+      { src: K2, ref: '5539', any: [/	RETURN 0/] },
+      { src: K2, ref: '5542', any: [/	RETURN 0/] },
+      { src: K2, ref: '5545', any: [/	RETURN 0/] },
+      { src: K2, ref: '5548', any: [/	RETURN 0/] },
+      { src: K2, ref: '5556', any: [/P = PALAM:3 \+ UP:3/] },
+      {
+        src: K2,
+        ref: '5557',
+        any: [/IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0/],
+      },
+      { src: K2, ref: '5559', any: [/	IF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5561', any: [/		IF SELECTCOM == 50/] },
+      {
+        src: K2,
+        ref: '5562',
+        any: [/			PRINTFORMW 「啊啊，浑身都变得黏糊糊的…」/],
+      },
+      { src: K2, ref: '5563', any: [/			PRINTFORMW ―――润滑第一次超过 LV2 了。/] },
+      { src: K2, ref: '5565', any: [/		ELSE/] },
+      { src: K2, ref: '5566', any: [/			PRINTFORMW 「厉害…滑溜溜的…」/] },
+      { src: K2, ref: '5567', any: [/			PRINTFORMW ―――润滑第一次超过 LV2 了。/] },
+      { src: K2, ref: '5568', any: [/		ENDIF/] },
+      { src: K2, ref: '5570', any: [/	ELSE/] },
+      { src: K2, ref: '5572', any: [/		IF SELECTCOM == 50/] },
+      { src: K2, ref: '5573', any: [/			PRINTFORMW 「呀…好厉害，粘滑滑的……」/] },
+      { src: K2, ref: '5574', any: [/			PRINTFORMW ―――润滑第一次超过 LV2 了。/] },
+      { src: K2, ref: '5576', any: [/		ELSE/] },
+      { src: K2, ref: '5577', any: [/			PRINTFORMW 「啊啊…为什么会湿了……」/] },
+      { src: K2, ref: '5578', any: [/			PRINTFORMW ―――润滑第一次超过 LV2 了。/] },
+      { src: K2, ref: '5579', any: [/		ENDIF/] },
+      { src: K2, ref: '5580', any: [/	ENDIF/] },
+      { src: K2, ref: '5581', any: [/	CFLAG:TARGET:221 = 1/] },
+      { src: K2, ref: '5582', any: [/ENDIF/] },
+      { src: K2, ref: '5587', any: [/P = PALAM:5 \+ UP:5/] },
+      { src: K2, ref: '5588', any: [/IF P > PALAMLV:2 && CFLAG:222 == 0/] },
+      { src: K2, ref: '5590', any: [/	IF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5592', any: [/		IF SELECTCOM == 51/] },
+      {
+        src: K2,
+        ref: '5593',
+        any: [/			PRINTFORMW 「哎，哎呀…身体热起来了…好厉害…」/],
+      },
+      { src: K2, ref: '5594', any: [/			PRINTFORMW ―――欲情第一次超过 LV2 了。/] },
+      { src: K2, ref: '5596', any: [/		ELSE/] },
+      { src: K2, ref: '5597', any: [/			PRINTFORMW 「主人啊…拜托…快抱我…」/] },
+      { src: K2, ref: '5598', any: [/			PRINTFORMW ―――欲情第一次超过 LV2 了。/] },
+      { src: K2, ref: '5599', any: [/		ENDIF/] },
+      { src: K2, ref: '5601', any: [/	ELSE/] },
+      { src: K2, ref: '5603', any: [/		IF SELECTCOM == 51/] },
+      {
+        src: K2,
+        ref: '5604',
+        any: [/			PRINTFORMW 「那里…还有身体…都在发热…这是…啊啊…」/],
+      },
+      { src: K2, ref: '5605', any: [/			PRINTFORMW ―――欲情第一次超过 LV2 了。/] },
+      { src: K2, ref: '5607', any: [/		ELSE/] },
+      { src: K2, ref: '5608', any: [/			PRINTFORMW 「身体…在发热…好奇怪…」/] },
+      { src: K2, ref: '5609', any: [/			PRINTFORMW ―――欲情第一次超过 LV2 了。/] },
+      { src: K2, ref: '5610', any: [/		ENDIF/] },
+      { src: K2, ref: '5611', any: [/	ENDIF/] },
+      { src: K2, ref: '5612', any: [/	CFLAG:222 = 1/] },
+      { src: K2, ref: '5613', any: [/ENDIF/] },
+      { src: K2, ref: '5618', any: [/P = PALAM:8 \+ UP:8/] },
+      { src: K2, ref: '5619', any: [/IF P > PALAMLV:2 && CFLAG:223 == 0/] },
+      { src: K2, ref: '5621', any: [/	IF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '5622',
+        any: [/		PRINTFORMW 「是的，不好意思…好害羞啊…」/],
+      },
+      { src: K2, ref: '5623', any: [/		PRINTFORMW ―――耻情第一次超过 LV2 了。/] },
+      { src: K2, ref: '5625', any: [/	ELSE/] },
+      { src: K2, ref: '5626', any: [/		PRINTFORMW 「不要…好害羞…」/] },
+      { src: K2, ref: '5627', any: [/		PRINTFORMW ―――耻情第一次超过 LV2 了。/] },
+      { src: K2, ref: '5628', any: [/	ENDIF/] },
+      { src: K2, ref: '5629', any: [/	CFLAG:223 = 1/] },
+      { src: K2, ref: '5630', any: [/ENDIF/] },
+      { src: K2, ref: '5635', any: [/P = PALAM:10 \+ UP:10/] },
+      { src: K2, ref: '5636', any: [/IF P > PALAMLV:2 && CFLAG:224 == 0/] },
+      { src: K2, ref: '5638', any: [/	IF TALENT:TARGET:85 == 1/] },
+      { src: K2, ref: '5639', any: [/		PRINTFORMW 「呀！…可怕…好可怕…主人啊」/] },
+      { src: K2, ref: '5640', any: [/		PRINTFORMW ――― 恐怖第一次超过 LV2 了。/] },
+      { src: K2, ref: '5642', any: [/	ELSE/] },
+      { src: K2, ref: '5643', any: [/		PRINTFORMW 「好可怕…请放过我…」/] },
+      { src: K2, ref: '5644', any: [/		PRINTFORMW ――― 恐怖第一次超过 LV2 了。/] },
+      { src: K2, ref: '5645', any: [/	ENDIF/] },
+      { src: K2, ref: '5646', any: [/	CFLAG:224 = 1/] },
+      { src: K2, ref: '5647', any: [/ENDIF/] },
+      { src: K2, ref: '5652', any: [/IF NOWEX:0 > 0 && CFLAG:225 == 0/] },
+      { src: K2, ref: '5654', any: [/	IF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '5655',
+        any: [/		PRINTFORMW 「咦呀呀呀！？…好厉害…眼前一片雪白…」/],
+      },
+      {
+        src: K2,
+        ref: '5656',
+        any: [
+          /		PRINTFORMW 应该是第一次吧，%SAVESTR:TARGET%被阴蒂上传来的快感刺激到绝顶了。/,
+        ],
+      },
+      { src: K2, ref: '5658', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5659',
+        any: [/		PRINTFORMW 「咦呀呀呀！？高潮了高潮了高潮了！不行了呃呃呃！」/],
+      },
+      {
+        src: K2,
+        ref: '5660',
+        any: [
+          /		PRINTFORMW 应该是第一次吧，%SAVESTR:TARGET%被阴蒂上传来的快感刺激到绝顶了。/,
+        ],
+      },
+      { src: K2, ref: '5661', any: [/	ENDIF/] },
+      { src: K2, ref: '5662', any: [/	CFLAG:225 = 1/] },
+      { src: K2, ref: '5663', any: [/ENDIF/] },
+      { src: K2, ref: '5668', any: [/IF NOWEX:1 > 0 && CFLAG:226 == 0/] },
+      { src: K2, ref: '5670', any: [/	IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '5671',
+        any: [
+          /		PRINTFORMW 「哈啊啊啊！？…高、高潮了要…啊啊…小穴…小穴要去了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5672',
+        any: [
+          /		PRINTFORMW 「不要停…用力地操我…操坏掉…要对这感觉上瘾了啦！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5673',
+        any: [/		PRINTFORMW 「啊哈啊啊哦哦哦哦哦…噢啊啊啊啊啊啊。」/],
+      },
+      {
+        src: K2,
+        ref: '5674',
+        any: [
+          /		PRINTFORMW 第一次体验阴道高潮的快感，%SAVESTR:TARGET%的脸上露出幸福满足的表情……/,
+        ],
+      },
+      { src: K2, ref: '5676', any: [/	ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '5677',
+        any: [
+          /		PRINTFORMW 「唔哦哦！？里面…有什么…这？！～%UNICODE\(0x2661\) \*3%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5678',
+        any: [
+          /		PRINTFORMW 「好厉害…会对这种感觉上瘾的啦…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5679',
+        any: [
+          /		PRINTFORMW 第一次体验阴道高潮的快感，%SAVESTR:TARGET%的脸上露出幸福满足的表情……/,
+        ],
+      },
+      { src: K2, ref: '5681', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5682',
+        any: [
+          /		PRINTFORMW 「唔唔哦！大鸡鸡在阴道里搅动着！啊啊啊啊啊啊啊啊！！！！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5683',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%第一次体验阴道高潮的快感。眼泪和口水飞溅到%SAVESTR:PLAYER%冷酷的脸上……/,
+        ],
+      },
+      { src: K2, ref: '5684', any: [/	ENDIF/] },
+      { src: K2, ref: '5685', any: [/	CFLAG:TARGET:226 = 1/] },
+      { src: K2, ref: '5686', any: [/ENDIF/] },
+      { src: K2, ref: '5691', any: [/IF NOWEX:2 > 0 && CFLAG:227 == 0/] },
+      { src: K2, ref: '5693', any: [/	IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '5694',
+        any: [
+          /		PRINTFORMW 「呼啊…啊啊啊啊啊…啊，好棒…屁股那里也可以这么舒服%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5695',
+        any: [
+          /		PRINTFORMW 「高潮了%UNICODE\(0x2661\) \*1%高潮了%UNICODE\(0x2661\) \*1%第一次用屁股小穴高潮了啊啊啊啊啊%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5696',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%全身痉挛般着迎来了人生第一次的肛门高潮……/,
+        ],
+      },
+      { src: K2, ref: '5698', any: [/	ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '5699',
+        any: [/		PRINTFORMW 「屁股！屁股好舒服！整个人都奇怪了呜！」/],
+      },
+      {
+        src: K2,
+        ref: '5700',
+        any: [
+          /		PRINTFORMW 「啊啊啊啊…！屁股…不行了啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5701',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%害羞得涨红了脸，身体颤抖着迎来了人生第一次的肛门高潮……/,
+        ],
+      },
+      { src: K2, ref: '5703', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5704',
+        any: [/		PRINTFORMW 「怎么会！屁股…还可以这么…舒服的！」/],
+      },
+      {
+        src: K2,
+        ref: '5705',
+        any: [/		PRINTFORMW 「不行了啊！屁股要高潮了！」」/],
+      },
+      {
+        src: K2,
+        ref: '5706',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%一脸陶醉惊讶的表情看着%SAVESTR:PLAYER%迎来了人生第一次的肛门高潮……/,
+        ],
+      },
+      { src: K2, ref: '5707', any: [/	ENDIF/] },
+      { src: K2, ref: '5708', any: [/	CFLAG:227 = 1/] },
+      { src: K2, ref: '5709', any: [/ENDIF/] },
+      { src: K2, ref: '5714', any: [/IF NOWEX:3 > 0 && CFLAG:228 == 0/] },
+      { src: K2, ref: '5716', any: [/	IF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '5717',
+        any: [/		PRINTFORMW 「啊啊…胸部…乳房…好像，好像要溶化了呀！」/],
+      },
+      {
+        src: K2,
+        ref: '5718',
+        any: [/		PRINTFORMW 「胸部也是…主人的东西了…？」/],
+      },
+      {
+        src: K2,
+        ref: '5719',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%第一次被胸部的快感刺激到高潮……/],
+      },
+      { src: K2, ref: '5721', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5722',
+        any: [/		PRINTFORMW 「唔！胸部好舒服！奇怪了！变奇怪了呀！」/],
+      },
+      {
+        src: K2,
+        ref: '5723',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%第一次被胸部的快感刺激到高潮……/],
+      },
+      { src: K2, ref: '5724', any: [/	ENDIF/] },
+      { src: K2, ref: '5725', any: [/	CFLAG:TARGET:228 = 1/] },
+      { src: K2, ref: '5726', any: [/ENDIF/] },
+      { src: K2, ref: '5731', any: [/A = UP:11 \+ UP:12/] },
+      { src: K2, ref: '5732', any: [/IF TFLAG:3 == 1 && CFLAG:229 == 0/] },
+      { src: K2, ref: '5734', any: [/	IF TFLAG:20 == 1/] },
+      {
+        src: K2,
+        ref: '5736',
+        any: [/		IF TALENT:TARGET:76 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)/],
+      },
+      {
+        src: K2,
+        ref: '5737',
+        any: [
+          /			PRINTFORMW 「啊啊…终于…魔王大人的大鸡鸡啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5738',
+        any: [
+          /			PRINTFORMW 「现在已经…正式成为女人了呢，魔王大人%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5739',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%露出淫乱的表情抱住%SAVESTR:PLAYER%……/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5741',
+        any: [
+          /		ELSEIF TALENT:TARGET:85 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)/,
+        ],
+      },
+      { src: K2, ref: '5742', any: [/			PRINTFORMW 「好痛…」/] },
+      {
+        src: K2,
+        ref: '5743',
+        any: [
+          /			PRINTFORMW 「终于把自己献给魔王大人了呢…%SELF_CALL\(TARGET\)%…好开心……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5744',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%带着陶醉的表情在%SAVESTR:PLAYER%的怀里撒起娇来……/,
+        ],
+      },
+      { src: K2, ref: '5746', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '5747',
+        any: [/			PRINTFORMW 「不要…插…进来…哈…了…不要…这样…好过分……呜」/],
+      },
+      {
+        src: K2,
+        ref: '5748',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%因为破瓜的痛苦而流下了眼泪……/],
+      },
+      { src: K2, ref: '5749', any: [/		ENDIF/] },
+      { src: K2, ref: '5751', any: [/	ELSE/] },
+      { src: K2, ref: '5753', any: [/		IF TALENT:TARGET:76 == 1/] },
+      {
+        src: K2,
+        ref: '5754',
+        any: [/			PRINTFORMW 「啊啊啊…终于不是处女了…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K2,
+        ref: '5755',
+        any: [/			PRINTFORMW 「嗯…谁破的都无所谓啦，不过，从今往后…」/],
+      },
+      {
+        src: K2,
+        ref: '5756',
+        any: [
+          /			PRINTFORMW 「唔呼呼…今后%SELF_CALL\(TARGET\)%的淫乱小穴…可以随意使用了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '5758', any: [/		ELSEIF TALENT:TARGET:85 == 1/] },
+      {
+        src: K2,
+        ref: '5759',
+        any: [/			PRINTFORMW 「主人……想把处女奉献给主人的……」/],
+      },
+      {
+        src: K2,
+        ref: '5760',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%悲伤地看着破瓜的血迹……/],
+      },
+      { src: K2, ref: '5762', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '5763',
+        any: [/			PRINTFORMW 「呜呜…简直…太残酷了…这样…」/],
+      },
+      {
+        src: K2,
+        ref: '5764',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%流着泪忍受着破瓜的痛苦……/],
+      },
+      { src: K2, ref: '5765', any: [/		ENDIF/] },
+      { src: K2, ref: '5766', any: [/	ENDIF/] },
+      { src: K2, ref: '5767', any: [/	CFLAG:TARGET:229 = 1/] },
+      { src: K2, ref: '5768', any: [/ENDIF/] },
+      { src: K2, ref: '5775', any: [/@KOJO_MESSAGE_MARKCNG_2/] },
+      { src: K2, ref: '5778', any: [/	RETURN 0 /] },
+      { src: K2, ref: '5781', any: [/	RETURN 0/] },
+      { src: K2, ref: '5784', any: [/	RETURN 0/] },
+      { src: K2, ref: '5787', any: [/	RETURN 0/] },
+      { src: K2, ref: '5790', any: [/	RETURN 0/] },
+      { src: K2, ref: '5793', any: [/	RETURN 0/] },
+      { src: K2, ref: '5796', any: [/	RETURN 0/] },
+      { src: K2, ref: '5801', any: [/IF TFLAG:22 == 3 && CFLAG:297 == 0/] },
+      { src: K2, ref: '5803', any: [/	IF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '5804',
+        any: [/		PRINTFORMW 「呀！？不过，痛…还是可以忍耐…」/],
+      },
+      { src: K2, ref: '5805', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5806',
+        any: [/		PRINTFORMW 「至于…痛楚…还是有点讨厌呐…」/],
+      },
+      { src: K2, ref: '5807', any: [/	ENDIF/] },
+      { src: K2, ref: '5808', any: [/	CFLAG:297 = 1/] },
+      { src: K2, ref: '5809', any: [/ENDIF/] },
+      { src: K2, ref: '5814', any: [/IF TFLAG:23 == 3 && CFLAG:298 == 0/] },
+      { src: K2, ref: '5816', any: [/	IF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '5817',
+        any: [/		PRINTFORMW 「啊啊…仅仅是被主人抚摸…就这么愉悦…」/],
+      },
+      { src: K2, ref: '5818', any: [/	ELSE/] },
+      { src: K2, ref: '5819', any: [/		PRINTFORMW 「哎呀…舒服…呼呼…哎呀呀」/] },
+      { src: K2, ref: '5820', any: [/	ENDIF/] },
+      { src: K2, ref: '5821', any: [/	CFLAG:298 = 1/] },
+      { src: K2, ref: '5822', any: [/ENDIF/] },
+      { src: K2, ref: '5827', any: [/IF TFLAG:24 == 3 && CFLAG:299 == 0/] },
+      { src: K2, ref: '5829', any: [/	IF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '5830',
+        any: [/		PRINTFORMW （啊，已经不行了吧…绝对无法抗拒主人的要求……）/],
+      },
+      { src: K2, ref: '5831', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5832',
+        any: [/		PRINTFORMW 「只要是主人的要求，一定会遵从的……」/],
+      },
+      { src: K2, ref: '5833', any: [/	ENDIF/] },
+      { src: K2, ref: '5834', any: [/	CFLAG:299 = 1/] },
+      { src: K2, ref: '5835', any: [/ENDIF/] },
+      { src: K2, ref: '5840', any: [/IF TFLAG:21 == 3 && CFLAG:300 == 0/] },
+      { src: K2, ref: '5842', any: [/	IF TALENT:85 == 1/] },
+      {
+        src: K2,
+        ref: '5843',
+        any: [
+          /		PRINTFORMW 「杀了他…一定要杀了他…可是做不到吧…做不到的……呜呜、呜呜呜呜…」/,
+        ],
+      },
+      { src: K2, ref: '5844', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5845',
+        any: [/		PRINTFORMW 「人生第一次觉得这么痛恨一个人…」/],
+      },
+      { src: K2, ref: '5846', any: [/	ENDIF/] },
+      { src: K2, ref: '5847', any: [/	CFLAG:300 = 1/] },
+      { src: K2, ref: '5848', any: [/ENDIF/] },
+      { src: K2, ref: '5854', any: [/@SELF_KOJO_K2/] },
+      { src: K2, ref: '5858', any: [/IF TFLAG:13 == 1/] },
+      { src: K2, ref: '5860', any: [/	IF Q == 1/] },
+      {
+        src: K2,
+        ref: '5861',
+        any: [
+          /		PRINTFORML 「是啊…好想和%SAVESTR:ASSI%大人再来一次…%SAVESTR:ASSI%大人啊……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5862',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%用手指抚摸着方才%SAVESTR:ASSI%滴落的爱液……/,
+        ],
+      },
+      { src: K2, ref: '5864', any: [/	ELSEIF Q == 2/] },
+      {
+        src: K2,
+        ref: '5865',
+        any: [
+          /		PRINTFORML 「呼是呀…野狗的肉棒…好像要…手指好像不够用了……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5866',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%已经无法用手指满足自己了……/],
+      },
+      { src: K2, ref: '5868', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '5870',
+        any: [/		IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5871',
+        any: [
+          /			PRINTFORMW 「啊哈…小穴和屁股都还在发烫…还没有被插够呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5872',
+        any: [
+          /			PRINTFORMW 「好厉害%UNICODE\(0x2661\) \*1%…哦啊啊啊…已经…不行了啊…啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '5873', any: [/			CFLAG:261 = 4/] },
+      {
+        src: K2,
+        ref: '5875',
+        any: [/		ELSEIF TALENT:85 && \(CFLAG:261 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5876',
+        any: [
+          /			PRINTFORMW 「主人…主人啊…快点再来抱我…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5877',
+        any: [/			PRINTFORMW 「还想要更多主人的爱啊啊啊……」/],
+      },
+      { src: K2, ref: '5878', any: [/			CFLAG:261 = 3/] },
+      {
+        src: K2,
+        ref: '5880',
+        any: [/		ELSEIF ABL:31 >= 3 && \(CFLAG:261 < 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5881',
+        any: [/			PRINTFORMW 「哎呀…不够…不够哟…即便都塞满了，但是还是不够哟…」/],
+      },
+      { src: K2, ref: '5882', any: [/			CFLAG:261 = 2/] },
+      { src: K2, ref: '5884', any: [/		ELSEIF CFLAG:261 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '5885',
+        any: [/			PRINTFORMW 「哎呀…那里还没有…不能忍耐…」/],
+      },
+      { src: K2, ref: '5886', any: [/			CFLAG:261 = 1/] },
+      { src: K2, ref: '5887', any: [/		ENDIF/] },
+      { src: K2, ref: '5888', any: [/	ENDIF/] },
+      { src: K2, ref: '5889', any: [/ENDIF/] },
+      { src: K2, ref: '5894', any: [/IF TFLAG:13 == 2/] },
+      {
+        src: K2,
+        ref: '5896',
+        any: [/	IF TALENT:76 && \(CFLAG:262 < 5 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5897',
+        any: [
+          /		PRINTFORMW 「啊啊…女孩之间也…这么快乐啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5898',
+        any: [/		PRINTFORMW 「呼呼…给我更多的快乐吧%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '5899', any: [/		CFLAG:262 = 5/] },
+      {
+        src: K2,
+        ref: '5901',
+        any: [/	ELSEIF TALENT:85 && \(CFLAG:262 < 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5902',
+        any: [/		PRINTFORMW 「啊啊啊…身体发热了…快要忍不住了啊…」/],
+      },
+      {
+        src: K2,
+        ref: '5903',
+        any: [/		PRINTFORMW 「奴隶之间互相安慰…主人也一定明白…一定…会想到的……」/],
+      },
+      { src: K2, ref: '5904', any: [/		CFLAG:262 = 4/] },
+      {
+        src: K2,
+        ref: '5906',
+        any: [/	ELSEIF ABL:33 >= 3 && \(CFLAG:262 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5907',
+        any: [/		PRINTFORMW 「女女这种事最喜欢了…为什么不能做更多呢\?」/],
+      },
+      { src: K2, ref: '5908', any: [/		CFLAG:262 = 3/] },
+      {
+        src: K2,
+        ref: '5910',
+        any: [/	ELSEIF ABL:22 >= 3 && \(CFLAG:262 < 2 \|\| FLAG:7 == 2\)/],
+      },
+      { src: K2, ref: '5911', any: [/		PRINTFORMW 「唔呼呼…女女真的好舒服…」/] },
+      { src: K2, ref: '5912', any: [/		CFLAG:262 = 2/] },
+      { src: K2, ref: '5914', any: [/	ELSEIF CFLAG:262 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5915', any: [/		PRINTFORMW 「呼呼…女女也…也不错呢…」/] },
+      { src: K2, ref: '5916', any: [/		CFLAG:262 = 1/] },
+      { src: K2, ref: '5917', any: [/	ENDIF/] },
+      { src: K2, ref: '5918', any: [/ENDIF/] },
+      { src: K2, ref: '5923', any: [/IF TFLAG:13 == 3/] },
+      {
+        src: K2,
+        ref: '5925',
+        any: [/	IF TALENT:76 == 1 && \(CFLAG:263 < 4 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5926',
+        any: [
+          /		PRINTFORMW 「唔啊%UNICODE\(0x2661\) \*1%…嗯咕…呼…啊啊，这里还有精液…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5927',
+        any: [
+          /		PRINTFORMW 「啊，早上好啊魔王大人%UNICODE\(0x2661\) \*1% 一大早您的大肉棒就超有精神的啦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5928',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%微笑着吮吸刚刚喷射出的精液，随后低下头继续为魔王口交。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5929',
+        any: [
+          /		PRINTFORMW 「嗯咕…呼呼…唔啊…呼呼…嗯嗯嗯嗯…大鸡鸡好美味呢呼呼…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '5930', any: [/		CFLAG:263 = 4/] },
+      {
+        src: K2,
+        ref: '5932',
+        any: [/	ELSEIF TALENT:85 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5933',
+        any: [
+          /		PRINTFORMW 「早上好，主人…呼…肉棒里宝贵的精液…请放心的射出来呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5934',
+        any: [
+          /		PRINTFORMW 「主人的肉棒从早上就很精神呢…这样不会生小孩比较安全啦…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5935',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%露出淫荡的表情继续用嘴巴服务起来……/],
+      },
+      { src: K2, ref: '5936', any: [/		CFLAG:263 = 3/] },
+      {
+        src: K2,
+        ref: '5938',
+        any: [/	ELSEIF ABL:16 >= 5 && \(CFLAG:263 < 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5939',
+        any: [/		PRINTFORMW 「早上好，今天也要好好的…想要射精也可以哦…？」/],
+      },
+      { src: K2, ref: '5940', any: [/		CFLAG:263 = 2/] },
+      { src: K2, ref: '5942', any: [/	ELSEIF CFLAG:263 < 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K2,
+        ref: '5943',
+        any: [/		PRINTFORMW 「早上好，忍不住想要…主人的大肉棒呢…对不起…」/],
+      },
+      { src: K2, ref: '5944', any: [/		CFLAG:263 = 1/] },
+      { src: K2, ref: '5945', any: [/	ENDIF/] },
+      { src: K2, ref: '5946', any: [/ENDIF/] },
+      { src: K2, ref: '5951', any: [/IF TFLAG:13 == 4/] },
+      {
+        src: K2,
+        ref: '5953',
+        any: [/	IF ABL:2 >= 4 && \(CFLAG:264 < 2 \|\| FLAG:7 == 2\)/],
+      },
+      {
+        src: K2,
+        ref: '5954',
+        any: [
+          /		PRINTFORMW 「主人快点回来再抱住我…小穴空荡荡的好难受…！求求您了！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5956',
+        any: [
+          /				PRINTFORMW 「啊啊啊…淫乱的肉体好难受啊…快给我大肉棒吧…不行呢哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5958',
+        any: [
+          /				PRINTFORMW 「啊啊%UNICODE\(0x2661\) \*1% 能这样抱一下什么的…好高兴呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '5959', any: [/		CFLAG:264 = 2/] },
+      { src: K2, ref: '5961', any: [/	ELSEIF CFLAG:264 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5962', any: [/		PRINTFORMW 「啊…啊…忍无可忍…对不起…」/] },
+      { src: K2, ref: '5963', any: [/		CFLAG:264 = 1/] },
+      { src: K2, ref: '5964', any: [/	ENDIF/] },
+      { src: K2, ref: '5965', any: [/ENDIF/] },
+      { src: K2, ref: '5970', any: [/IF TFLAG:13 == 5/] },
+      { src: K2, ref: '5971', any: [/	IF CFLAG:265 < 1 \|\| FLAG:7 == 2/] },
+      { src: K2, ref: '5972', any: [/		PRINTFORMW 「嘿嘿…私通了啊…」/] },
+      {
+        src: K2,
+        ref: '5973',
+        any: [/		PRINTFORMW 「那样的地方一个人睡觉是很寂寞的哦…？」/],
+      },
+      { src: K2, ref: '5974', any: [/		CFLAG:265 = 1/] },
+      { src: K2, ref: '5975', any: [/	ENDIF/] },
+      { src: K2, ref: '5976', any: [/ENDIF/] },
+      { src: K2, ref: '5981', any: [/IF TFLAG:13 == 6/] },
+      { src: K2, ref: '5983', any: [/	IF TALENT:85 && MARK:3 < 3/] },
+      {
+        src: K2,
+        ref: '5984',
+        any: [/		PRINTFORMW 「为什么…为什么…我有什么不好…你…」/],
+      },
+      {
+        src: K2,
+        ref: '5985',
+        any: [/		PRINTFORMW 怪物们驾着%SAVESTR:TARGET%的双手将其塞进马车。/],
+      },
+      {
+        src: K2,
+        ref: '5986',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%从小窗口向你不断呼唤，和怪兽们的沉默不语形成了鲜明的反差。/,
+        ],
+      },
+      { src: K2, ref: '5987', any: [/		PRINTFORMW 马车越来越远。/] },
+      {
+        src: K2,
+        ref: '5988',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%透过小窗望着你的眼神成了最后的一幕。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5989',
+        any: [
+          /		PRINTFORMW 然而直到最后你依旧什么都没有说，只是用冰冷的眼神目送%SAVESTR:TARGET%的离开。/,
+        ],
+      },
+      { src: K2, ref: '5991', any: [/	ELSEIF MARK:3 == 3/] },
+      {
+        src: K2,
+        ref: '5992',
+        any: [/		PRINTFORMW 「再也不用看着你的脸了…好痛快」/],
+      },
+      {
+        src: K2,
+        ref: '5993',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%朝地上啐了一口后自己爬上马车。/],
+      },
+      { src: K2, ref: '5995', any: [/	ELSEIF TALENT:76/] },
+      {
+        src: K2,
+        ref: '5996',
+        any: [
+          /		PRINTFORMW 「你的调教最棒了啊%UNICODE\(0x2661\) \*1%……没想到就这样离别了呢…啊…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '5997',
+        any: [/		PRINTFORMW 你亲吻了%SAVESTR:TARGET%的脸颊作为告别。/],
+      },
+      { src: K2, ref: '5999', any: [/	ELSE/] },
+      { src: K2, ref: '6000', any: [/		PRINTFORMW 「再见…主人…请多保重…」/] },
+      { src: K2, ref: '6001', any: [/	ENDIF/] },
+      { src: K2, ref: '6002', any: [/	PRINTFORML /] },
+      { src: K2, ref: '6004', any: [/		CALL SELL_MATURO_K0/] },
+      { src: K2, ref: '6005', any: [/ENDIF/] },
+      { src: K2, ref: '6011', any: [/IF TFLAG:13 == 11/] },
+      { src: K2, ref: '6012', any: [/	IF CFLAG:271 == 0/] },
+      { src: K2, ref: '6014', any: [/		IF TALENT:9 == 1/] },
+      {
+        src: K2,
+        ref: '6015',
+        any: [
+          /			PRINTFORMW 「啊哈…哈哈…啊哈…%SELF_CALL\(TARGET\)%怀上了魔物的孩子…啊哈…骗人…骗人…一定是假的…啊啊啊啊啊」/,
+        ],
+      },
+      { src: K2, ref: '6017', any: [/		ELSEIF TALENT:85 && CFLAG:102 == 1/] },
+      {
+        src: K2,
+        ref: '6018',
+        any: [
+          /			PRINTFORMW 「呼…难道%SELF_CALL\(TARGET\)%怀上了魔王大人的孩子吗…得赶快告诉魔王大人…」/,
+        ],
+      },
+      { src: K2, ref: '6020', any: [/		ELSEIF CFLAG:102 == 2/] },
+      {
+        src: K2,
+        ref: '6021',
+        any: [/			PRINTFORMW 「啊啊…那样的…勇者居然会孕育魔物的子嗣……」/],
+      },
+      { src: K2, ref: '6023', any: [/		ELSEIF CFLAG:102 == 3/] },
+      {
+        src: K2,
+        ref: '6024',
+        any: [/			PRINTFORMW 「啊啊…那样的…勇者居然会孕育魔物的子嗣……」/],
+      },
+      { src: K2, ref: '6026', any: [/		ELSEIF CFLAG:102 == 5/] },
+      { src: K2, ref: '6027', any: [/			IF TALENT:136 == 1/] },
+      {
+        src: K2,
+        ref: '6028',
+        any: [/				PRINTFORMW 「那个…居然怀上了野狗的孩子……」/],
+      },
+      { src: K2, ref: '6029', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '6030',
+        any: [/				PRINTFORMW 「呼，骗人…野狗的孩子…一定是假的……」/],
+      },
+      { src: K2, ref: '6031', any: [/			ENDIF/] },
+      { src: K2, ref: '6033', any: [/		ELSEIF CFLAG:102 == 7/] },
+      {
+        src: K2,
+        ref: '6034',
+        any: [
+          /			PRINTFORMW 「为、为什么%SELF_CALL\(TARGET\)%会怀上狂王的孩子…！」/,
+        ],
+      },
+      { src: K2, ref: '6036', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6037',
+        any: [/			PRINTFORMW 「有…哎，哎呀…这是真的…怀孕…了…那样的……」/],
+      },
+      { src: K2, ref: '6038', any: [/		ENDIF/] },
+      { src: K2, ref: '6039', any: [/		CFLAG:271 = 1/] },
+      { src: K2, ref: '6041', any: [/	ELSE/] },
+      { src: K2, ref: '6043', any: [/		IF TALENT:9 == 1/] },
+      {
+        src: K2,
+        ref: '6044',
+        any: [
+          /			PRINTFORMW 「啊哈…哈哈…啊哈…%SELF_CALL\(TARGET\)%怀上了魔物的孩子…啊哈…骗人…骗人…一定是假的…啊啊啊啊啊」/,
+        ],
+      },
+      { src: K2, ref: '6046', any: [/		ELSEIF TALENT:85 && CFLAG:102 == 1/] },
+      {
+        src: K2,
+        ref: '6047',
+        any: [
+          /			PRINTFORMW 「魔王大人要和%SELF_CALL\(TARGET\)%一起变成父母了吗…得赶快告诉他呢…」/,
+        ],
+      },
+      { src: K2, ref: '6049', any: [/		ELSEIF CFLAG:102 == 2/] },
+      {
+        src: K2,
+        ref: '6050',
+        any: [/			PRINTFORMW 「啊啊…那样的…勇者居然会孕育魔物的子嗣……」/],
+      },
+      { src: K2, ref: '6052', any: [/		ELSEIF CFLAG:102 == 3/] },
+      {
+        src: K2,
+        ref: '6053',
+        any: [/			PRINTFORMW 「啊啊…那样的…勇者居然会孕育魔物的子嗣……」/],
+      },
+      { src: K2, ref: '6055', any: [/		ELSEIF CFLAG:102 == 5/] },
+      { src: K2, ref: '6056', any: [/			IF TALENT:136 == 1/] },
+      {
+        src: K2,
+        ref: '6057',
+        any: [/				PRINTFORMW 「那个…居然怀上了野狗的孩子……」/],
+      },
+      { src: K2, ref: '6058', any: [/			ELSE/] },
+      {
+        src: K2,
+        ref: '6059',
+        any: [/				PRINTFORMW 「呼，骗人…野狗的孩子…一定是假的……」/],
+      },
+      { src: K2, ref: '6060', any: [/			ENDIF/] },
+      { src: K2, ref: '6062', any: [/		ELSEIF CFLAG:102 == 7/] },
+      {
+        src: K2,
+        ref: '6063',
+        any: [
+          /			PRINTFORMW 「为、为什么%SELF_CALL\(TARGET\)%会怀上狂王的孩子…！」/,
+        ],
+      },
+      { src: K2, ref: '6065', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6066',
+        any: [/			PRINTFORMW 「有…哎，哎呀…这是真的…怀孕…了…那样的……」/],
+      },
+      { src: K2, ref: '6067', any: [/		ENDIF/] },
+      { src: K2, ref: '6068', any: [/		CFLAG:271 = 1/] },
+      { src: K2, ref: '6069', any: [/	ENDIF/] },
+      { src: K2, ref: '6070', any: [/ENDIF/] },
+      { src: K2, ref: '6077', any: [/IF TFLAG:13 == 12/] },
+      { src: K2, ref: '6078', any: [/	IF CFLAG:272 == 0/] },
+      { src: K2, ref: '6080', any: [/		IF TALENT:9 == 1/] },
+      {
+        src: K2,
+        ref: '6081',
+        any: [
+          /			PRINTFORMW 「哈哈哈哈…%SELF_CALL\(TARGET\)%的孩子…会不会毛茸茸的～就像猴子一样啊？还长着魔鬼之角啊？啊哈哈哈哈哈」/,
+        ],
+      },
+      { src: K2, ref: '6083', any: [/		ELSEIF TALENT:85 && CFLAG:102 == 1/] },
+      {
+        src: K2,
+        ref: '6084',
+        any: [
+          /			PRINTFORMW 「请看一下…是个健康的孩子，和你长的一模一样哦…唔呼呼」/,
+        ],
+      },
+      { src: K2, ref: '6086', any: [/		ELSEIF CFLAG:102 == 2/] },
+      {
+        src: K2,
+        ref: '6087',
+        any: [/			PRINTFORMW 「啊啊…生产什么的…啊啊…啊啊……」/],
+      },
+      { src: K2, ref: '6089', any: [/		ELSEIF CFLAG:102 == 3/] },
+      {
+        src: K2,
+        ref: '6090',
+        any: [/			PRINTFORMW 「啊啊…生产什么的…啊啊…啊啊……」/],
+      },
+      { src: K2, ref: '6092', any: [/		ELSEIF CFLAG:102 == 5/] },
+      {
+        src: K2,
+        ref: '6093',
+        any: [
+          /			PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%的肚子…已经…像狗一样的孩子不可以生下来……」/,
+        ],
+      },
+      { src: K2, ref: '6095', any: [/		ELSEIF CFLAG:102 == 7/] },
+      {
+        src: K2,
+        ref: '6096',
+        any: [/			PRINTFORMW 「啊啊…生出来了…狂王大人的后代…」/],
+      },
+      { src: K2, ref: '6098', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6099',
+        any: [
+          /			PRINTFORMW 「呜…吧…啊…哈…哈哈…这是%SELF_CALL\(TARGET\)%的孩子……」/,
+        ],
+      },
+      { src: K2, ref: '6100', any: [/		ENDIF/] },
+      { src: K2, ref: '6101', any: [/		CFLAG:272 = 1/] },
+      { src: K2, ref: '6103', any: [/	ELSE/] },
+      { src: K2, ref: '6105', any: [/		IF TALENT:9 == 1/] },
+      {
+        src: K2,
+        ref: '6106',
+        any: [
+          /			PRINTFORMW 「哈哈哈哈…%SELF_CALL\(TARGET\)%的孩子…会不会毛茸茸的～就像猴子一样啊？还长着魔鬼之角啊？啊哈哈哈哈哈」/,
+        ],
+      },
+      { src: K2, ref: '6108', any: [/		ELSEIF TALENT:85 && CFLAG:102 == 1/] },
+      {
+        src: K2,
+        ref: '6109',
+        any: [
+          /			PRINTFORMW 「请看一下…是个健康的孩子，和你长的一模一样哦…唔呼呼」/,
+        ],
+      },
+      { src: K2, ref: '6111', any: [/		ELSEIF CFLAG:102 == 2/] },
+      {
+        src: K2,
+        ref: '6112',
+        any: [/			PRINTFORMW 「啊啊…生产什么的…啊啊…啊啊……」/],
+      },
+      { src: K2, ref: '6114', any: [/		ELSEIF CFLAG:102 == 3/] },
+      {
+        src: K2,
+        ref: '6115',
+        any: [/			PRINTFORMW 「啊啊…生产什么的…啊啊…啊啊……」/],
+      },
+      { src: K2, ref: '6117', any: [/		ELSEIF CFLAG:102 == 5/] },
+      {
+        src: K2,
+        ref: '6118',
+        any: [
+          /			PRINTFORMW 「啊啊…%SELF_CALL\(TARGET\)%的肚子…已经…像狗一样的孩子不可以生下来……」/,
+        ],
+      },
+      { src: K2, ref: '6120', any: [/		ELSEIF CFLAG:102 == 7/] },
+      {
+        src: K2,
+        ref: '6121',
+        any: [/			PRINTFORMW 「啊啊…生出来了…狂王大人的后代…」/],
+      },
+      { src: K2, ref: '6123', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6124',
+        any: [
+          /			PRINTFORMW 「呜…吧…啊…哈…哈哈…这是%SELF_CALL\(TARGET\)%的孩子……」/,
+        ],
+      },
+      { src: K2, ref: '6125', any: [/		ENDIF/] },
+      { src: K2, ref: '6126', any: [/		CFLAG:272 = 1/] },
+      { src: K2, ref: '6127', any: [/	ENDIF/] },
+      { src: K2, ref: '6128', any: [/ENDIF/] },
+      { src: K2, ref: '6134', any: [/IF TFLAG:13 == 13/] },
+      { src: K2, ref: '6136', any: [/	IF TALENT:85 \|\| TALENT:76/] },
+      { src: K2, ref: '6138', any: [/		IF TALENT:153/] },
+      {
+        src: K2,
+        ref: '6139',
+        any: [/			PRINTFORMW 「有点不安呢…孩子生出来会是什么样的？……」/],
+      },
+      {
+        src: K2,
+        ref: '6140',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%抚摸着即将临盆的腹部……/],
+      },
+      { src: K2, ref: '6142', any: [/		ELSEIF TALENT:154/] },
+      {
+        src: K2,
+        ref: '6143',
+        any: [/			PRINTFORMW 「啊啊，精力充沛的孩子真的是太好了！」/],
+      },
+      {
+        src: K2,
+        ref: '6144',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%幸福地哄着孩子……/],
+      },
+      { src: K2, ref: '6145', any: [/		ENDIF/] },
+      { src: K2, ref: '6146', any: [/	ENDIF/] },
+      { src: K2, ref: '6147', any: [/	CFLAG:273 = 1/] },
+      { src: K2, ref: '6148', any: [/ENDIF/] },
+      { src: K2, ref: '6153', any: [/IF TFLAG:13 == 14/] },
+      { src: K2, ref: '6155', any: [/	IF TALENT:85 \|\| TALENT:76/] },
+      {
+        src: K2,
+        ref: '6156',
+        any: [/		PRINTFORMW 「呜呜…怎么会…%SELF_CALL\(TARGET\)%的孩子……」/],
+      },
+      { src: K2, ref: '6157', any: [/	ENDIF/] },
+      { src: K2, ref: '6158', any: [/	CFLAG:274 = 1/] },
+      { src: K2, ref: '6159', any: [/ENDIF/] },
+      { src: K2, ref: '6165', any: [/IF TFLAG:13 == 999/] },
+      { src: K2, ref: '6167', any: [/	IF TALENT:85/] },
+      {
+        src: K2,
+        ref: '6168',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%死亡了。被埋葬在迷宫内。/],
+      },
+      { src: K2, ref: '6169', any: [/		PRINTFORML /] },
+      {
+        src: K2,
+        ref: '6170',
+        any: [
+          /		PRINTFORMW 部下在整理%SAVESTR:TARGET%的房间时将%SELF_CALL\(TARGET\)%的遗物送了过来，你在其中发现了一本日记。/,
+        ],
+      },
+      { src: K2, ref: '6171', any: [/		PRINTFORMW ……/] },
+      { src: K2, ref: '6172', any: [/		PRINTFORMW ……/] },
+      { src: K2, ref: '6173', any: [/		PRINTFORMW …/] },
+      {
+        src: K2,
+        ref: '6174',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%从故乡出发之后的事被事无巨细地记录下来。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6175',
+        any: [/		PRINTFORMW 被你抓住后，每天接受调教的过程记录的特别详细。/],
+      },
+      {
+        src: K2,
+        ref: '6176',
+        any: [
+          /		PRINTFORMW 日记的最后还写着“能和魔王大人相遇实在是太好了”“明天也要继续在一起哦”之类感谢的话语。/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6177',
+        any: [/		PRINTFORMW 从此写日记变成了你每天重要的工作之一……/],
+      },
+      { src: K2, ref: '6179', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6180',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%死亡了。被埋葬在迷宫内。/],
+      },
+      { src: K2, ref: '6181', any: [/	ENDIF/] },
+      { src: K2, ref: '6182', any: [/ENDIF/] },
+      { src: K2, ref: '6187', any: [/IF TFLAG:13 == 998/] },
+      { src: K2, ref: '6189', any: [/	IF TALENT:85/] },
+      { src: K2, ref: '6190', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6192', any: [/	ELSE/] },
+      { src: K2, ref: '6193', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6194', any: [/	ENDIF/] },
+      { src: K2, ref: '6195', any: [/ENDIF/] },
+      { src: K2, ref: '6200', any: [/TFLAG:13 = 0/] },
+      { src: K2, ref: '6202', any: [/RETURN 0/] },
+      { src: K2, ref: '6229', any: [/@DUNGEON_RYOUZYOKU_K2/] },
+      { src: K2, ref: '6234', any: [/IF TALENT:0 == 1/] },
+      {
+        src: K2,
+        ref: '6236',
+        any: [
+          /	PRINTFORMW 「讨厌…呀啊啊啊啊！　%SELF_CALL\(TARGET\)%的第一次…」/,
+        ],
+      },
+      { src: K2, ref: '6238', any: [/	IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6240', any: [/		PRINTFORMW 「不要…」/] },
+      { src: K2, ref: '6241', any: [/		RETURN 0/] },
+      {
+        src: K2,
+        ref: '6242',
+        any: [/	ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1/],
+      },
+      {
+        src: K2,
+        ref: '6244',
+        any: [
+          /		PRINTFORMW 「对不起！对不起！什么都可以，只要放过我，什么都可以！求求你，请放过我…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6247',
+        any: [
+          /			PRINTFORMW 「屁股！屁股也可以啊！脏脏的后面的小穴，不过，还是会努力地接受的！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6250',
+        any: [/			PRINTFORMW 「嘴上也会努力的！我会拼命地舐，还请放过我…」/],
+      },
+      {
+        src: K2,
+        ref: '6251',
+        any: [
+          /	ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6254',
+        any: [/		PRINTFORMW 「你们之类，完全…没什么好怕的啊！」/],
+      },
+      {
+        src: K2,
+        ref: '6255',
+        any: [/	ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/],
+      },
+      { src: K2, ref: '6257', any: [/		PRINTFORMW 「被侵犯…好绝望…被侵犯了…」/] },
+      { src: K2, ref: '6258', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6260',
+        any: [/		PRINTFORMW 「请放过我！无论什么都可以，请放过我！」/],
+      },
+      { src: K2, ref: '6261', any: [/	ENDIF/] },
+      { src: K2, ref: '6262', any: [/ELSE/] },
+      {
+        src: K2,
+        ref: '6264',
+        any: [/	PRINTFORMW 「哎…这样子…被侵犯…骗人…骗人的…」/],
+      },
+      { src: K2, ref: '6266', any: [/	IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6268', any: [/		PRINTFORMW 「嘘…」/] },
+      { src: K2, ref: '6269', any: [/		RETURN 0/] },
+      {
+        src: K2,
+        ref: '6270',
+        any: [/	ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1/],
+      },
+      {
+        src: K2,
+        ref: '6272',
+        any: [
+          /		PRINTFORMW 「放过我，不，不要杀我！什么都可以！什么都可以！我只是喜欢探险啊！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6275',
+        any: [
+          /			PRINTFORMW 「屁股也可以！　%SELF_CALL\(TARGET\)%，会好好承受的…所以请…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6278',
+        any: [/			PRINTFORMW 「一定会努力舔大鸡鸡的！拼命努力…所以，放过我…」/],
+      },
+      {
+        src: K2,
+        ref: '6279',
+        any: [
+          /	ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6282',
+        any: [
+          /		PRINTFORMW 「不要害怕…不要害怕…%SELF_CALL\(TARGET\)%可、可是不会输的…」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6283',
+        any: [/	ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/],
+      },
+      {
+        src: K2,
+        ref: '6285',
+        any: [/		PRINTFORMW 「难道这就是%SELF_CALL\(TARGET\)%的…命运…」/],
+      },
+      { src: K2, ref: '6286', any: [/	ELSE/] },
+      { src: K2, ref: '6288', any: [/		PRINTFORMW 「放过…拜托，请放过我…」/] },
+      { src: K2, ref: '6289', any: [/	ENDIF/] },
+      { src: K2, ref: '6290', any: [/ENDIF/] },
+      { src: K2, ref: '6292', any: [/RETURN 0/] },
+      { src: K2, ref: '6295', any: [/@DUNGEON_RYOUZYOKU_AFTER_K2/] },
+      { src: K2, ref: '6300', any: [/IF TALENT:0 == 1/] },
+      { src: K2, ref: '6302', any: [/	PRINTFORMW 「那里…没关系…」/] },
+      { src: K2, ref: '6304', any: [/	IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6306', any: [/		PRINTFORMW 「呜呜…」/] },
+      { src: K2, ref: '6307', any: [/		RETURN 0/] },
+      { src: K2, ref: '6308', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '6312',
+        any: [/		PRINTFORMW 「好过分…屁股快要坏掉了…被这样持续地猛操…」/],
+      },
+      { src: K2, ref: '6316', any: [/		PRINTFORMW 「已经，不想再舔了…」/] },
+      { src: K2, ref: '6320', any: [/		PRINTFORMW 「这么…竟然被灌了这么多」/] },
+      { src: K2, ref: '6321', any: [/ELSE/] },
+      { src: K2, ref: '6323', any: [/	PRINTFORMW 「没关系…请随意吧…」/] },
+      { src: K2, ref: '6325', any: [/	IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6327', any: [/		PRINTFORMW 「讨厌…」/] },
+      { src: K2, ref: '6328', any: [/		RETURN 0/] },
+      { src: K2, ref: '6329', any: [/	ENDIF/] },
+      { src: K2, ref: '6333', any: [/		PRINTFORMW 「那里…变得乱七八糟了…」/] },
+      { src: K2, ref: '6337', any: [/		PRINTFORMW 「好过分…屁股快要坏掉了…」/] },
+      { src: K2, ref: '6341', any: [/		PRINTFORMW 「已经，不想再舔了…」/] },
+      { src: K2, ref: '6345', any: [/		PRINTFORMW 「不可以吐出来…？好过分……」/] },
+      { src: K2, ref: '6346', any: [/ENDIF/] },
+      { src: K2, ref: '6349', any: [/@BENKI_KOUJO_K2/] },
+      { src: K2, ref: '6368', any: [/IF FLAG:62 == 0/] },
+      { src: K2, ref: '6371', any: [/	IF FLAG:63 == 1/] },
+      {
+        src: K2,
+        ref: '6372',
+        any: [
+          /		PRINTFORMW 「『施舍』吗……%SELF_CALL\(A\)%的『工作』也是够肮脏的啊……」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6373',
+        any: [
+          /		PRINTFORMW 「但是被催眠了也是没办法的嘛♪　来、请把肉棒掏出来吧」/,
+        ],
+      },
+      { src: K2, ref: '6375', any: [/	ELSEIF TALENT:A:76 == 1/] },
+      {
+        src: K2,
+        ref: '6376',
+        any: [/		PRINTFORMW 「啊哈、不行的哦。按顺序来哦……♪」/],
+      },
+      { src: K2, ref: '6378', any: [/	ELSEIF TALENT:A:85/] },
+      {
+        src: K2,
+        ref: '6379',
+        any: [/		PRINTFORMW 「会施舍的啦……请按顺序排好吧」/],
+      },
+      { src: K2, ref: '6381', any: [/	ELSEIF ABL:A:16 >= 5/] },
+      { src: K2, ref: '6382', any: [/		PRINTFORMW 「会施舍的啦……」/] },
+      { src: K2, ref: '6384', any: [/	ELSE/] },
+      { src: K2, ref: '6385', any: [/		PRINTFORMW 「这样的工作……真讨厌」/] },
+      { src: K2, ref: '6386', any: [/	ENDIF/] },
+      { src: K2, ref: '6387', any: [/ELSEIF FLAG:62 == 1/] },
+      { src: K2, ref: '6390', any: [/	IF TALENT:A:76 == 1/] },
+      { src: K2, ref: '6391', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6393', any: [/	ELSEIF TALENT:A:85/] },
+      { src: K2, ref: '6394', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6396', any: [/	ELSEIF ABL:A:16 >= 5/] },
+      { src: K2, ref: '6397', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6399', any: [/	ELSE/] },
+      { src: K2, ref: '6400', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6401', any: [/	ENDIF/] },
+      { src: K2, ref: '6402', any: [/ELSEIF FLAG:62 == 2/] },
+      { src: K2, ref: '6405', any: [/	IF TALENT:A:76 == 1/] },
+      { src: K2, ref: '6406', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6408', any: [/	ELSEIF TALENT:A:85/] },
+      { src: K2, ref: '6409', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6411', any: [/	ELSEIF ABL:A:16 >= 5/] },
+      { src: K2, ref: '6412', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6414', any: [/	ELSE/] },
+      { src: K2, ref: '6415', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6416', any: [/	ENDIF/] },
+      { src: K2, ref: '6417', any: [/ELSEIF  FLAG:62 == 3/] },
+      { src: K2, ref: '6420', any: [/	IF FLAG:63 == 1/] },
+      {
+        src: K2,
+        ref: '6421',
+        any: [
+          /		PRINTFORMW 「乱交吗、到处都是男人的大肉棒……这些全都、要靠%SELF_CALL\(A\)%的肉穴来解决啊」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6422',
+        any: [
+          /		PRINTFORMW 「会努力的……！　%SELF_CALL\(A\)%可是肉便器啊、感觉非常受用啊！」/,
+        ],
+      },
+      { src: K2, ref: '6424', any: [/	ELSEIF TALENT:A:76 == 1/] },
+      {
+        src: K2,
+        ref: '6425',
+        any: [
+          /		PRINTFORMW 「哇……到处都是男人的大肉棒……受得住吗、%SELF_CALL\(A\)%的小穴受的住吗……♪」/,
+        ],
+      },
+      { src: K2, ref: '6427', any: [/	ELSEIF TALENT:A:85/] },
+      {
+        src: K2,
+        ref: '6428',
+        any: [
+          /		PRINTFORMW 「有点怕啊……会在一旁看着？　%SELF_CALL\(A\)%、会加油的！」/,
+        ],
+      },
+      { src: K2, ref: '6430', any: [/	ELSEIF ABL:A:16 >= 5/] },
+      { src: K2, ref: '6431', any: [/		PRINTFORMW 「……会努力的」/] },
+      { src: K2, ref: '6433', any: [/	ELSE/] },
+      { src: K2, ref: '6434', any: [/		PRINTFORMW 「噫、这些全部都要……！？」/] },
+      { src: K2, ref: '6435', any: [/	ENDIF/] },
+      { src: K2, ref: '6436', any: [/ELSEIF  FLAG:62 == 4/] },
+      { src: K2, ref: '6439', any: [/	IF TALENT:A:76 == 1/] },
+      { src: K2, ref: '6440', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6442', any: [/	ELSEIF TALENT:A:85/] },
+      { src: K2, ref: '6443', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6445', any: [/	ELSEIF ABL:A:16 >= 5/] },
+      { src: K2, ref: '6446', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6448', any: [/	ELSE/] },
+      { src: K2, ref: '6449', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6450', any: [/	ENDIF/] },
+      { src: K2, ref: '6451', any: [/ELSEIF  FLAG:62 == 5/] },
+      { src: K2, ref: '6454', any: [/	IF TALENT:A:76 == 1/] },
+      { src: K2, ref: '6455', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6457', any: [/	ELSEIF TALENT:A:85/] },
+      { src: K2, ref: '6458', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6460', any: [/	ELSEIF ABL:A:16 >= 5/] },
+      { src: K2, ref: '6461', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6463', any: [/	ELSE/] },
+      { src: K2, ref: '6464', any: [/		PRINTFORMW /] },
+      { src: K2, ref: '6465', any: [/	ENDIF/] },
+      { src: K2, ref: '6466', any: [/ENDIF/] },
+      { src: K2, ref: '6468', any: [/RETURN 0/] },
+      { src: K2, ref: '6471', any: [/@DUNGEON_VICTORY_K2/] },
+      { src: K2, ref: '6476', any: [/PRINTFORMW 「呼~真危险」/] },
+      { src: K2, ref: '6478', any: [/IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6481', any: [/	PRINTFORMW 「……」/] },
+      { src: K2, ref: '6483', any: [/	RETURN 0/] },
+      {
+        src: K2,
+        ref: '6484',
+        any: [
+          /ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/,
+        ],
+      },
+      { src: K2, ref: '6487', any: [/	IF RAND:3 == 0 /] },
+      { src: K2, ref: '6488', any: [/		PRINTFORMW 「哼，我是不会被打败的！」/] },
+      { src: K2, ref: '6489', any: [/	ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '6490', any: [/		PRINTFORMW 「这种程度不会输的！」/] },
+      { src: K2, ref: '6491', any: [/	ELSE/] },
+      { src: K2, ref: '6492', any: [/		PRINTFORMW 「哈，胜利了…！」/] },
+      { src: K2, ref: '6493', any: [/	ENDIF/] },
+      {
+        src: K2,
+        ref: '6495',
+        any: [/ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/],
+      },
+      { src: K2, ref: '6498', any: [/	PRINTFORMW 「要不要再找些帮手呢…」/] },
+      { src: K2, ref: '6500', any: [/	RETURN 0/] },
+      { src: K2, ref: '6501', any: [/ELSE/] },
+      { src: K2, ref: '6504', any: [/	IF RAND:3 == 0 /] },
+      { src: K2, ref: '6505', any: [/		PRINTFORMW 「…呼」/] },
+      { src: K2, ref: '6506', any: [/	ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '6507', any: [/		PRINTFORMW 「这迷宫…到底有多大？」/] },
+      { src: K2, ref: '6508', any: [/	ELSE/] },
+      { src: K2, ref: '6509', any: [/		PRINTFORMW 「这种程度不会输的…」/] },
+      { src: K2, ref: '6510', any: [/	ENDIF/] },
+      { src: K2, ref: '6512', any: [/ENDIF/] },
+      {
+        src: K2,
+        ref: '6514',
+        any: [
+          /IF \(BASE:A:0 \* 100 \/ MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 \/ MAXBASE:A:1 < 50\)/,
+        ],
+      },
+      { src: K2, ref: '6516', any: [/	PRINTFORMW （真的…危险！？）/] },
+      { src: K2, ref: '6517', any: [/ELSE/] },
+      { src: K2, ref: '6519', any: [/	PRINTFORMW 「…好！」/] },
+      { src: K2, ref: '6520', any: [/ENDIF/] },
+      { src: K2, ref: '6522', any: [/RETURN 0/] },
+      { src: K2, ref: '6525', any: [/@DUNGEON_ATTACK_K2/] },
+      { src: K2, ref: '6530', any: [/IF CFLAG:1 == 2/] },
+      { src: K2, ref: '6532', any: [/	IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6535', any: [/		PRINTFORMW 「……」/] },
+      { src: K2, ref: '6537', any: [/		RETURN 0/] },
+      {
+        src: K2,
+        ref: '6538',
+        any: [
+          /	ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/,
+        ],
+      },
+      { src: K2, ref: '6541', any: [/		IF TALENT:276/] },
+      {
+        src: K2,
+        ref: '6543',
+        any: [/			PRINTFORMW 「接招吧……%SELF_CALL\(TARGET\)%的连发……冰晶术！」/],
+      },
+      { src: K2, ref: '6544', any: [/		ELSEIF RAND:3 == 0 /] },
+      { src: K2, ref: '6545', any: [/			PRINTFORMW 「不会输！」/] },
+      { src: K2, ref: '6546', any: [/		ELSEIF RAND:2 == 0/] },
+      {
+        src: K2,
+        ref: '6547',
+        any: [/			PRINTFORMW 「%SELF_CALL\(TARGET\)%现在……没问题！」/],
+      },
+      { src: K2, ref: '6548', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6549',
+        any: [/			PRINTFORMW 「%SELF_CALL\(TARGET\)%也要……战斗！」/],
+      },
+      { src: K2, ref: '6550', any: [/		ENDIF/] },
+      {
+        src: K2,
+        ref: '6552',
+        any: [/	ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/],
+      },
+      { src: K2, ref: '6555', any: [/		IF TALENT:250/] },
+      { src: K2, ref: '6557', any: [/			PRINTFORMW 「噫、忍法……替身之术」/] },
+      { src: K2, ref: '6558', any: [/		ELSE/] },
+      { src: K2, ref: '6559', any: [/			PRINTFORMW 「有点厌倦战斗了……」/] },
+      { src: K2, ref: '6560', any: [/		ENDIF/] },
+      { src: K2, ref: '6562', any: [/		RETURN 0/] },
+      { src: K2, ref: '6563', any: [/	ELSE/] },
+      { src: K2, ref: '6566', any: [/		IF TALENT:314 == 10/] },
+      {
+        src: K2,
+        ref: '6568',
+        any: [/			PRINTFORMW 「虽然是小不点……但%SELF_CALL\(TARGET\)%会努力的！」/],
+      },
+      { src: K2, ref: '6569', any: [/		ELSEIF RAND:3 == 0 /] },
+      {
+        src: K2,
+        ref: '6570',
+        any: [/			PRINTFORMW 「%SELF_CALL\(TARGET\)%也……！」/],
+      },
+      { src: K2, ref: '6571', any: [/		ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '6572', any: [/			PRINTFORMW 「小菜一碟！」/] },
+      { src: K2, ref: '6573', any: [/		ELSE/] },
+      { src: K2, ref: '6574', any: [/			PRINTFORMW 「呀」/] },
+      { src: K2, ref: '6575', any: [/		ENDIF/] },
+      { src: K2, ref: '6577', any: [/	ENDIF/] },
+      { src: K2, ref: '6578', any: [/ELSE/] },
+      { src: K2, ref: '6580', any: [/	IF TALENT:21 == 1 \|\| TALENT:22 == 1/] },
+      { src: K2, ref: '6583', any: [/		PRINTFORMW 「……」/] },
+      { src: K2, ref: '6585', any: [/		RETURN 0/] },
+      {
+        src: K2,
+        ref: '6586',
+        any: [
+          /	ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/,
+        ],
+      },
+      { src: K2, ref: '6589', any: [/		IF RAND:3 == 0 /] },
+      {
+        src: K2,
+        ref: '6590',
+        any: [
+          /			PRINTFORMW 「这涌出的魔力…%SELF_CALL\(TARGET\)%仿佛获得新生一般的力量！」/,
+        ],
+      },
+      { src: K2, ref: '6591', any: [/		ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '6592', any: [/			PRINTFORMW 「对手已经变弱了！」/] },
+      { src: K2, ref: '6593', any: [/		ELSE/] },
+      { src: K2, ref: '6594', any: [/			PRINTFORMW 「就是这样…这力量！」/] },
+      { src: K2, ref: '6595', any: [/		ENDIF/] },
+      {
+        src: K2,
+        ref: '6597',
+        any: [/	ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/],
+      },
+      { src: K2, ref: '6600', any: [/		PRINTFORMW 「好像变得…强大了一点」/] },
+      { src: K2, ref: '6602', any: [/		RETURN 0/] },
+      { src: K2, ref: '6603', any: [/	ELSE/] },
+      { src: K2, ref: '6606', any: [/		IF RAND:3 == 0 /] },
+      {
+        src: K2,
+        ref: '6607',
+        any: [/			PRINTFORMW 「今日的%SELF_CALL\(TARGET\)%已变得更强了！」/],
+      },
+      { src: K2, ref: '6608', any: [/		ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '6609', any: [/			PRINTFORMW 「魔王大人一般的力量……！」/] },
+      { src: K2, ref: '6610', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6611',
+        any: [/			PRINTFORMW 「这就是…%SELF_CALL\(TARGET\)%！？」/],
+      },
+      { src: K2, ref: '6612', any: [/		ENDIF/] },
+      { src: K2, ref: '6614', any: [/	ENDIF/] },
+      { src: K2, ref: '6615', any: [/ENDIF/] },
+      { src: K2, ref: '6619', any: [/RETURN 0/] },
+      { src: K2, ref: '6627', any: [/@COLOSSEUM_KOJO_2/] },
+      { src: K2, ref: '6631', any: [/IF SELECTCOM == 55/] },
+      { src: K2, ref: '6633', any: [/	IF BASE:1 <= 0/] },
+      {
+        src: K2,
+        ref: '6634',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%似乎连站起来的力气都没有了……/],
+      },
+      { src: K2, ref: '6635', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6636',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%面对着死斗场的狂热和接下来的对手，忍不住哆嗦起来……/,
+        ],
+      },
+      { src: K2, ref: '6637', any: [/	ENDIF/] },
+      { src: K2, ref: '6638', any: [/	RETURN 0/] },
+      { src: K2, ref: '6639', any: [/ENDIF/] },
+      { src: K2, ref: '6643', any: [/IF SELECTCOM == 56/] },
+      { src: K2, ref: '6645', any: [/	IF BASE:1 <= 0/] },
+      { src: K2, ref: '6647', any: [/		IF ASSI > 0 && ASSIPLAY/] },
+      {
+        src: K2,
+        ref: '6648',
+        any: [/			PRINTFORMW 「啊啊啊…就是因为这个…最讨厌战斗了……」/],
+      },
+      {
+        src: K2,
+        ref: '6649',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%瘫成一个“大”字型躺在死斗场中喃喃自语……/,
+        ],
+      },
+      { src: K2, ref: '6650', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6651',
+        any: [/			PRINTFORMW 「啊啊…啊啊啊啊…啊啊…%SELF_CALL\(TARGET\)%…已经……」/],
+      },
+      {
+        src: K2,
+        ref: '6652',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%瘫成一个“大”字型躺在死斗场中喃喃自语……/,
+        ],
+      },
+      { src: K2, ref: '6653', any: [/		ENDIF/] },
+      { src: K2, ref: '6654', any: [/	ELSE/] },
+      { src: K2, ref: '6656', any: [/		IF ASSI > 0 && ASSIPLAY/] },
+      {
+        src: K2,
+        ref: '6657',
+        any: [/			PRINTFORMW 「啊啊啊…在%SAVESTR:ASSI%的注视下战斗什么的……」/],
+      },
+      {
+        src: K2,
+        ref: '6658',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%在%NAME:MASTER%命令下装备妥当后踏入死斗场时，%SAVESTR:ASSI%的目光瞬间打消了战斗的勇气……/,
+        ],
+      },
+      { src: K2, ref: '6659', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6660',
+        any: [
+          /			PRINTFORMW 「啊，和这样的家伙战斗什么的……%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%会死在这里的吧……！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6661',
+        any: [/			PRINTFORMW %SAVESTR:TARGET%看着自己接下来的对手不寒而栗……/],
+      },
+      { src: K2, ref: '6662', any: [/		ENDIF/] },
+      { src: K2, ref: '6663', any: [/	ENDIF/] },
+      { src: K2, ref: '6664', any: [/	RETURN 0/] },
+      { src: K2, ref: '6665', any: [/ENDIF/] },
+      { src: K2, ref: '6670', any: [/IF SELECTCOM == 31/] },
+      { src: K2, ref: '6672', any: [/	IF ASSI > 0 && ASSIPLAY/] },
+      {
+        src: K2,
+        ref: '6673',
+        any: [/		PRINTFORMW 「是…这里不可以…嗯嗯…啊…唔唔！」/],
+      },
+      { src: K2, ref: '6674', any: [/		PRINTFORM %SAVESTR:ASSI%把/] },
+      { src: K2, ref: '6676', any: [/			PRINT 阴茎/] },
+      { src: K2, ref: '6678', any: [/			PRINT 假阳具/] },
+      {
+        src: K2,
+        ref: '6679',
+        any: [
+          /		PRINTFORMW 塞入%SAVESTR:TARGET%的口中，她一脸愉悦的吞吐着肉棒……/,
+        ],
+      },
+      { src: K2, ref: '6680', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6681',
+        any: [/		PRINTFORMW 「哈啊…哈啊…唔唔唔…呼…臭臭的…啊啊……」/],
+      },
+      {
+        src: K2,
+        ref: '6682',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%热情洋溢地舔弄着面前散发出令人作呕气味的阴茎……/,
+        ],
+      },
+      { src: K2, ref: '6683', any: [/	ENDIF/] },
+      { src: K2, ref: '6684', any: [/	RETURN 0/] },
+      { src: K2, ref: '6685', any: [/ENDIF/] },
+      { src: K2, ref: '6689', any: [/IF SELECTCOM == 5/] },
+      { src: K2, ref: '6691', any: [/	IF ASSI > 0 && ASSIPLAY/] },
+      {
+        src: K2,
+        ref: '6692',
+        any: [/		PRINTFORMW 「%SAVESTR:ASSI%…这里…啊啊啊…啊呼！」/],
+      },
+      {
+        src: K2,
+        ref: '6693',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%一脸陶醉的样子……/],
+      },
+      { src: K2, ref: '6694', any: [/	ELSE/] },
+      { src: K2, ref: '6695', any: [/		PRINTFORMW 「啊啊啊…呼…哪里…好…痛……」/] },
+      {
+        src: K2,
+        ref: '6696',
+        any: [
+          /		PRINTFORMW %SAVESTR:TARGET%的胸部被用力地搓揉着，发出了痛苦的呻吟……/,
+        ],
+      },
+      { src: K2, ref: '6697', any: [/	ENDIF/] },
+      { src: K2, ref: '6698', any: [/	RETURN 0/] },
+      { src: K2, ref: '6699', any: [/ENDIF/] },
+      { src: K2, ref: '6703', any: [/IF SELECTCOM == 21/] },
+      { src: K2, ref: '6705', any: [/	IF ASSI > 0 && ASSIPLAY/] },
+      {
+        src: K2,
+        ref: '6706',
+        any: [/		PRINTFORMW 「对不起，对不起啊…已经无法反抗了…啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '6707',
+        any: [/		PRINTFORM %SAVESTR:ASSI%仔细聆听传来的悲鸣，用/],
+      },
+      { src: K2, ref: '6709', any: [/			PRINT 阴茎/] },
+      { src: K2, ref: '6711', any: [/			PRINT 假阳具/] },
+      {
+        src: K2,
+        ref: '6712',
+        any: [/		PRINTFORMW 将%SAVESTR:TARGET%的小穴无情地蹂躏着……/],
+      },
+      { src: K2, ref: '6714', any: [/	ELSEIF TFLAG:400 == 206/] },
+      {
+        src: K2,
+        ref: '6715',
+        any: [/		PRINTFORMW 「唔啊…要坏掉了…不可以…不可以啊……」/],
+      },
+      {
+        src: K2,
+        ref: '6716',
+        any: [
+          /		PRINTFORMW 无助的%SAVESTR:TARGET%像破布娃娃般被粗壮的巨魔压在身下肆意玩弄……/,
+        ],
+      },
+      { src: K2, ref: '6717', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6718',
+        any: [/		PRINTFORMW 「快停下…唔啊…这样不可以啊啊啊！」」/],
+      },
+      {
+        src: K2,
+        ref: '6719',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%尖叫着反抗魔物的侵犯……/],
+      },
+      { src: K2, ref: '6720', any: [/	ENDIF/] },
+      { src: K2, ref: '6721', any: [/	RETURN 0/] },
+      { src: K2, ref: '6722', any: [/ENDIF/] },
+      { src: K2, ref: '6727', any: [/IF SELECTCOM == 27/] },
+      { src: K2, ref: '6729', any: [/	IF ASSI > 0 && ASSIPLAY/] },
+      {
+        src: K2,
+        ref: '6730',
+        any: [
+          /		PRINTFORMW 「对不起，对不起…已经无法反抗了啊…啊啊啊！要，要被用坏了啊！」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6731',
+        any: [/		PRINTFORM %SAVESTR:ASSI%仔细聆听传来的悲鸣，用/],
+      },
+      { src: K2, ref: '6733', any: [/			PRINT 阴茎/] },
+      { src: K2, ref: '6735', any: [/			PRINT 假阳具/] },
+      {
+        src: K2,
+        ref: '6736',
+        any: [/		PRINTFORMW 将%SAVESTR:TARGET%的肛门无情地蹂躏着……/],
+      },
+      { src: K2, ref: '6738', any: [/	ELSEIF TFLAG:400 == 206/] },
+      {
+        src: K2,
+        ref: '6739',
+        any: [/		PRINTFORMW 「唔啊…要坏掉了…不可以…不可以啊……」/],
+      },
+      {
+        src: K2,
+        ref: '6740',
+        any: [
+          /		PRINTFORMW 无助的%SAVESTR:TARGET%像破布娃娃般被粗壮的巨魔压在身下肆意玩弄……/,
+        ],
+      },
+      { src: K2, ref: '6741', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6742',
+        any: [/		PRINTFORMW 「快停下…唔啊…这样不可以啊啊啊！」/],
+      },
+      {
+        src: K2,
+        ref: '6743',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%尖叫着反抗魔物的侵犯……/],
+      },
+      { src: K2, ref: '6744', any: [/	ENDIF/] },
+      { src: K2, ref: '6745', any: [/	RETURN 0/] },
+      { src: K2, ref: '6746', any: [/ENDIF/] },
+      { src: K2, ref: '6751', any: [/IF SELECTCOM == 51/] },
+      { src: K2, ref: '6752', any: [/	PRINTFORMW 「身体…居然在发热…！」/] },
+      { src: K2, ref: '6753', any: [/	RETURN 0/] },
+      { src: K2, ref: '6754', any: [/ENDIF/] },
+      { src: K2, ref: '6757', any: [/RETURN 0/] },
+      { src: K2, ref: '6760', any: [/@NTR_KOUJO_K2/] },
+      { src: K2, ref: '6764', any: [/	CFLAG:650 = 1/] },
+      { src: K2, ref: '6767', any: [/IF P == 1/] },
+      { src: K2, ref: '6769', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6770',
+        any: [/		PRINTFORMW 「哎呀…啊啊啊…这是打算献给主人的啊！」/],
+      },
+      { src: K2, ref: '6771', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6772',
+        any: [/		PRINTFORMW 「咿呀…这种…明明很讨厌的…啊啊啊啊！」/],
+      },
+      { src: K2, ref: '6773', any: [/	ENDIF/] },
+      { src: K2, ref: '6774', any: [/	CFLAG:651 = 1/] },
+      { src: K2, ref: '6776', any: [/ELSEIF P == 2/] },
+      { src: K2, ref: '6777', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6778',
+        any: [/		PRINTFORMW 「啊啊啊…不是吧…屁股…被侵犯了啊……\?」/],
+      },
+      { src: K2, ref: '6779', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6780',
+        any: [/		PRINTFORMW 「啊啊对不起…狂王啊…请原谅我吧！」/],
+      },
+      { src: K2, ref: '6781', any: [/	ENDIF/] },
+      { src: K2, ref: '6782', any: [/	CFLAG:652 = 1/] },
+      { src: K2, ref: '6784', any: [/ELSEIF P == 3/] },
+      { src: K2, ref: '6785', any: [/	IF TALENT:136/] },
+      {
+        src: K2,
+        ref: '6786',
+        any: [/		PRINTFORMW 「啊……好过分！被狗狗侵犯！不要看啊…不要看！！」/],
+      },
+      { src: K2, ref: '6787', any: [/	ELSEIF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6788',
+        any: [
+          /		PRINTFORMW 「这样…被很多人看…人家…竟然被狗强奸…啊啊啊啊啊啊啊啊！」/,
+        ],
+      },
+      { src: K2, ref: '6789', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6790',
+        any: [/		PRINTFORMW 「啊啊原谅！狗之类的…做！啊啊啊！」/],
+      },
+      { src: K2, ref: '6791', any: [/	ENDIF/] },
+      { src: K2, ref: '6792', any: [/	CFLAG:653 = 1/] },
+      { src: K2, ref: '6794', any: [/ELSEIF P == 4/] },
+      { src: K2, ref: '6795', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6796',
+        any: [
+          /		PRINTFORMW 「啊…是…哼…啊啊啊啊啊啊啊啊…更…还是更喜欢…狂王大人！…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '6797', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6798',
+        any: [
+          /		PRINTFORMW 「有…啊啊啊…更…更多…被狂王大人侵犯什么的啊…三生有幸……」/,
+        ],
+      },
+      { src: K2, ref: '6799', any: [/	ENDIF/] },
+      { src: K2, ref: '6800', any: [/	CFLAG:654 = 1/] },
+      { src: K2, ref: '6802', any: [/ELSEIF P == 5/] },
+      { src: K2, ref: '6803', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6804',
+        any: [
+          /		PRINTFORMW 「啊啊啊…这样好可爱…从此大家就是好朋友了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '6805', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6806',
+        any: [
+          /		PRINTFORMW 「不要停…不要停…连后面也一起用力…同时…插满两边的小穴吧……！」/,
+        ],
+      },
+      { src: K2, ref: '6807', any: [/	ENDIF/] },
+      { src: K2, ref: '6808', any: [/	CFLAG:655 = 1/] },
+      { src: K2, ref: '6810', any: [/ELSEIF P == 6/] },
+      { src: K2, ref: '6811', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6812',
+        any: [
+          /		PRINTFORMW 「啊哈…魔王的仆人要给做了坏事的%SAVESTR:TARGET%惩罚，请在那里…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '6813', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6814',
+        any: [
+          /		PRINTFORMW 「已经…%SELF_CALL\(TARGET\)%成为…大家的公共厕所…是为了大家的精液而活…」/,
+        ],
+      },
+      { src: K2, ref: '6815', any: [/	ENDIF/] },
+      { src: K2, ref: '6816', any: [/	CFLAG:656 = 1/] },
+      { src: K2, ref: '6818', any: [/ELSEIF P == 7/] },
+      { src: K2, ref: '6819', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      {
+        src: K2,
+        ref: '6820',
+        any: [
+          /		PRINTFORMW 「呼呼…侍奉过狂王大人后…%SELF_CALL\(TARGET\)%…就觉得…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6821',
+        any: [
+          /		PRINTFORMW 「相比魔王…还是侍奉狂王大人…更愉快呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6822',
+        any: [/		PRINTFORMW %SAVESTR:TARGET%一边说着一边再次开始取悦狂王了……/],
+      },
+      { src: K2, ref: '6823', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6824',
+        any: [/		PRINTFORMW 「%SELF_CALL\(TARGET\)%…已经是属于狂王大人的了…」/],
+      },
+      { src: K2, ref: '6825', any: [/	ENDIF/] },
+      { src: K2, ref: '6826', any: [/	CFLAG:657 = 1/] },
+      { src: K2, ref: '6828', any: [/ELSEIF P == 20/] },
+      { src: K2, ref: '6829', any: [/	IF TALENT:76 \|\| TALENT:85/] },
+      { src: K2, ref: '6830', any: [/		IF CFLAG:102 == 1/] },
+      {
+        src: K2,
+        ref: '6831',
+        any: [
+          /			PRINTFORMW 「还给我……请还给我……那个孩子是%SELF_CALL\(TARGET\)%和魔王大人的孩子呢……啊啊啊……」/,
+        ],
+      },
+      { src: K2, ref: '6832', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '6833',
+        any: [/			PRINTFORMW 「把%SELF_CALL\(TARGET\)%的孩子还给我…啊啊…唔呀……」/],
+      },
+      { src: K2, ref: '6834', any: [/		ENDIF/] },
+      { src: K2, ref: '6835', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '6836',
+        any: [/		PRINTFORMW 「啊啊啊……从此以后…子宫就是属于狂王殿下的东西了…」/],
+      },
+      { src: K2, ref: '6837', any: [/	ENDIF/] },
+      { src: K2, ref: '6838', any: [/ENDIF/] },
+      { src: K2, ref: '6840', any: [/RETURN 0/] },
+      { src: K2, ref: '6843', any: [/@EXUCUTION_KOUJO_K2/] },
+      { src: K2, ref: '6846', any: [/IF TFLAG:16 == 4/] },
+      {
+        src: K2,
+        ref: '6847',
+        any: [
+          /	PRINTFORMW 「肉便器…%SELF_CALL\(TARGET\)%已经成为奴隶的玩物了吗……」/,
+        ],
+      },
+      { src: K2, ref: '6849', any: [/ELSEIF TFLAG:16 == 5/] },
+      {
+        src: K2,
+        ref: '6850',
+        any: [/	PRINTFORMW 「%SELF_CALL\(TARGET\)%的意志已经…消失…了………」/],
+      },
+      { src: K2, ref: '6852', any: [/ELSEIF TFLAG:16 == 6/] },
+      {
+        src: K2,
+        ref: '6853',
+        any: [/	PRINTFORMW 「呜呜呜…为什么…为什么做了这样的事情………」/],
+      },
+      { src: K2, ref: '6855', any: [/ELSEIF TFLAG:16 == 7/] },
+      { src: K2, ref: '6856', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6857', any: [/ENDIF/] },
+      { src: K2, ref: '6860', any: [/@MUSEUM_KOUJO_K2/] },
+      { src: K2, ref: '6863', any: [/IF TFLAG:500 == 0/] },
+      {
+        src: K2,
+        ref: '6864',
+        any: [
+          /	PRINTFORMW 「%SELF_CALL\(TARGET\)%石化了…？收藏品…？那是…什……」/,
+        ],
+      },
+      { src: K2, ref: '6866', any: [/ELSEIF TFLAG:500 == 1/] },
+      {
+        src: K2,
+        ref: '6867',
+        any: [/	PRINTFORMW 「标本…%SELF_CALL\(TARGET\)%，明明还活着……」/],
+      },
+      { src: K2, ref: '6869', any: [/ELSEIF TFLAG:500 == 2/] },
+      { src: K2, ref: '6870', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6872', any: [/ELSEIF TFLAG:500 == 3/] },
+      {
+        src: K2,
+        ref: '6873',
+        any: [/	PRINTFORMW 「那、那个…找您吩咐这样做了…到底要做什么呢…？」/],
+      },
+      { src: K2, ref: '6875', any: [/ELSEIF TFLAG:500 == 4/] },
+      {
+        src: K2,
+        ref: '6876',
+        any: [
+          /	PRINTFORMW 「%SELF_CALL\(TARGET\)%的身体……不要……这样的…请变回去、变……回……」/,
+        ],
+      },
+      { src: K2, ref: '6878', any: [/ELSEIF TFLAG:500 == 5/] },
+      { src: K2, ref: '6879', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6881', any: [/ELSEIF TFLAG:500 == 6/] },
+      { src: K2, ref: '6882', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6884', any: [/ELSEIF TFLAG:500 == 7/] },
+      { src: K2, ref: '6885', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6887', any: [/ELSEIF TFLAG:500 == 8/] },
+      { src: K2, ref: '6888', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6890', any: [/ELSEIF TFLAG:500 == 9/] },
+      { src: K2, ref: '6891', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6892', any: [/ENDIF/] },
+      { src: K2, ref: '6895', any: [/@BANISHMENT_KOUJO_K2/] },
+      { src: K2, ref: '6899', any: [/IF TFLAG:510 == 0/] },
+      {
+        src: K2,
+        ref: '6900',
+        any: [
+          /	PRINTFORMW 「那种…力量被夺走的话……%SELF_CALL\(TARGET\)%该如何继续生存下去…啊啊…」/,
+        ],
+      },
+      { src: K2, ref: '6902', any: [/ELSEIF TFLAG:510 == 1/] },
+      { src: K2, ref: '6903', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6905', any: [/ELSEIF TFLAG:510 == 2/] },
+      { src: K2, ref: '6906', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6908', any: [/ELSEIF TFLAG:510 == 3/] },
+      { src: K2, ref: '6909', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6911', any: [/ELSEIF TFLAG:510 == 4/] },
+      { src: K2, ref: '6912', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6913', any: [/ENDIF/] },
+      { src: K2, ref: '6916', any: [/@PUBLIC_EXUCUTION_KOUJO_K2/] },
+      { src: K2, ref: '6920', any: [/IF TFLAG:520 == 0/] },
+      {
+        src: K2,
+        ref: '6921',
+        any: [
+          /	PRINTFORMW 「好多人！要死！要死了啊…呼呼…啊啊啊啊小穴要被用坏了！」/,
+        ],
+      },
+      { src: K2, ref: '6923', any: [/ELSEIF TFLAG:520 == 1/] },
+      {
+        src: K2,
+        ref: '6924',
+        any: [/	PRINTFORMW 「相比如今的结局，果然还是勇者比较好吗……」/],
+      },
+      { src: K2, ref: '6926', any: [/ELSEIF TFLAG:520 == 2/] },
+      { src: K2, ref: '6927', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6928', any: [/ENDIF/] },
+      { src: K2, ref: '6931', any: [/@GROTESQUE_KOUJO_K2/] },
+      { src: K2, ref: '6935', any: [/IF TFLAG:530 == 0/] },
+      { src: K2, ref: '6936', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6938', any: [/ELSEIF TFLAG:530 == 1/] },
+      { src: K2, ref: '6939', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6941', any: [/ELSEIF TFLAG:530 == 2/] },
+      { src: K2, ref: '6942', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6944', any: [/ELSEIF TFLAG:530 == 3/] },
+      { src: K2, ref: '6945', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6947', any: [/ELSEIF TFLAG:530 == 4/] },
+      { src: K2, ref: '6948', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6950', any: [/ELSEIF TFLAG:530 == 5/] },
+      { src: K2, ref: '6951', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6953', any: [/ELSEIF TFLAG:530 == 6/] },
+      { src: K2, ref: '6954', any: [/	PRINTFORMW /] },
+      { src: K2, ref: '6955', any: [/ENDIF/] },
+      { src: K2, ref: '6958', any: [/@ENTERENEMY_KOUJO_K2/] },
+      {
+        src: K2,
+        ref: '6961',
+        any: [/IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1/],
+      },
+      { src: K2, ref: '6963', any: [/	PRINTFORMW 「……不，不太想去」/] },
+      {
+        src: K2,
+        ref: '6964',
+        any: [
+          /ELSEIF TALENT:A:11 == 1 \|\| TALENT:A:12 == 1 \|\| TALENT:A:15 == 1 \|\| TALENT:A:30 == 1 \|\| TALENT:A:34 == 1/,
+        ],
+      },
+      {
+        src: K2,
+        ref: '6966',
+        any: [/	PRINTFORMW 「%SELF_CALL\(A\)%的话，一定会，没事的」/],
+      },
+      {
+        src: K2,
+        ref: '6967',
+        any: [/ELSEIF TALENT:A:10 == 1 \|\| TALENT:A:26 == 1/],
+      },
+      {
+        src: K2,
+        ref: '6969',
+        any: [/	PRINTFORMW 「%SELF_CALL\(A\)%真的要进去吗……？」/],
+      },
+      { src: K2, ref: '6970', any: [/ELSE/] },
+      {
+        src: K2,
+        ref: '6972',
+        any: [/	PRINTFORMW 「没关系…%SELF_CALL\(A\)%一定会没事的……！」/],
+      },
+      { src: K2, ref: '6973', any: [/ENDIF/] },
+      { src: K2, ref: '6976', any: [/@GOHOUBI_REQUEST_KOUJO_K2/] },
+      { src: K2, ref: '6979', any: [/IF CFLAG:A:504 == 0/] },
+      { src: K2, ref: '6981', any: [/	PRINTFORMW 「那个…回来后给我钱就好啦」/] },
+      {
+        src: K2,
+        ref: '6982',
+        any: [
+          /ELSEIF CFLAG:A:504 == 1 \|\| CFLAG:A:504 == 2 \|\| CFLAG:A:504 == 3/,
+        ],
+      },
+      { src: K2, ref: '6984', any: [/	PRINTFORM 「那个…回来的话…能让/] },
+      { src: K2, ref: '6985', any: [/	IF CFLAG:A:504 == 1/] },
+      { src: K2, ref: '6986', any: [/		PRINT 狗/] },
+      { src: K2, ref: '6987', any: [/	ELSEIF CFLAG:A:504 == 2/] },
+      { src: K2, ref: '6988', any: [/		PRINT 猪/] },
+      { src: K2, ref: '6989', any: [/	ELSEIF CFLAG:A:504 == 3/] },
+      { src: K2, ref: '6990', any: [/		PRINT 马/] },
+      { src: K2, ref: '6991', any: [/	ENDIF/] },
+      { src: K2, ref: '6992', any: [/	PRINTFORMW 来和我…做…吗」/] },
+      { src: K2, ref: '6993', any: [/ELSEIF CFLAG:A:504 == 4/] },
+      { src: K2, ref: '6995', any: [/	PRINTFORMW 「得胜归来的话…亲我吧…！」/] },
+      { src: K2, ref: '6996', any: [/ELSEIF CFLAG:A:504 == 5/] },
+      {
+        src: K2,
+        ref: '6998',
+        any: [
+          /	PRINTFORMW 「得胜归来的话…要好好的和%SELF_CALL\(A\)%做一次爱哦…」/,
+        ],
+      },
+      { src: K2, ref: '6999', any: [/ELSEIF CFLAG:A:504 == 6/] },
+      {
+        src: K2,
+        ref: '7001',
+        any: [/	PRINTFORMW 「那个…奖赏的话…用精液喂饱我吧…」/],
+      },
+      { src: K2, ref: '7002', any: [/ELSEIF CFLAG:A:504 == 7/] },
+      {
+        src: K2,
+        ref: '7004',
+        any: [/	PRINTFORMW 「赢了的话…希望能一次和…许多人一起做…」/],
+      },
+      { src: K2, ref: '7005', any: [/ELSEIF CFLAG:A:504 == 8/] },
+      {
+        src: K2,
+        ref: '7007',
+        any: [
+          /	PRINTFORMW 「%SELF_CALL\(A\)%…为了魔王大人的尿液…什么都可以做到！」/,
+        ],
+      },
+      { src: K2, ref: '7008', any: [/ELSEIF CFLAG:A:504 == 9/] },
+      {
+        src: K2,
+        ref: '7010',
+        any: [/	PRINTFORMW 「奖赏…请让我夺走…他人的贞操吧……」/],
+      },
+      { src: K2, ref: '7011', any: [/ENDIF/] },
+      { src: K2, ref: '7014', any: [/@GOHOUBI_AFTER_KOUJO_K2/] },
+      { src: K2, ref: '7020', any: [/IF TFLAG:18 == 0/] },
+      { src: K2, ref: '7021', any: [/	PRINTFORMW 「哇…我知道了…」/] },
+      { src: K2, ref: '7022', any: [/	RETURN 0/] },
+      { src: K2, ref: '7024', any: [/ELSEIF TFLAG:18 == 1/] },
+      { src: K2, ref: '7025', any: [/	PRINTFORMW 「那我就收下了」/] },
+      { src: K2, ref: '7026', any: [/	RETURN 0/] },
+      { src: K2, ref: '7027', any: [/ELSEIF TFLAG:18 == 2/] },
+      { src: K2, ref: '7029', any: [/	IF CFLAG:A:504 == 0/] },
+      {
+        src: K2,
+        ref: '7030',
+        any: [/		PRINTFORMW 「哇，这么多！谢谢魔王大人」/],
+      },
+      { src: K2, ref: '7032', any: [/	ELSEIF CFLAG:A:504 == 1/] },
+      { src: K2, ref: '7034', any: [/		IF TALENT:A:0 == 1/] },
+      {
+        src: K2,
+        ref: '7035',
+        any: [/			PRINTFORMW 「好棒！和狗肛交果然最棒了啊！」/],
+      },
+      { src: K2, ref: '7036', any: [/		ELSE/] },
+      { src: K2, ref: '7037', any: [/			PRINTFORMW 「好棒！和狗最棒了啊！」/] },
+      { src: K2, ref: '7038', any: [/		ENDIF/] },
+      { src: K2, ref: '7040', any: [/	ELSEIF CFLAG:A:504 == 2/] },
+      { src: K2, ref: '7042', any: [/		IF TALENT:A:0 == 1/] },
+      {
+        src: K2,
+        ref: '7043',
+        any: [/			PRINTFORMW 「好棒！和猪肛交果然最棒了啊！」/],
+      },
+      { src: K2, ref: '7044', any: [/		ELSE/] },
+      { src: K2, ref: '7045', any: [/			PRINTFORMW 「好棒！和猪最棒了啊！」/] },
+      { src: K2, ref: '7046', any: [/		ENDIF/] },
+      { src: K2, ref: '7048', any: [/	ELSEIF CFLAG:A:504 == 3/] },
+      { src: K2, ref: '7050', any: [/		IF TALENT:A:0 == 1/] },
+      {
+        src: K2,
+        ref: '7051',
+        any: [/			PRINTFORMW 「好棒！用马鞭肛交最棒了啊！」/],
+      },
+      { src: K2, ref: '7052', any: [/		ELSE/] },
+      { src: K2, ref: '7053', any: [/			PRINTFORMW 「好棒！用马鞭最棒了啊！」/] },
+      { src: K2, ref: '7054', any: [/		ENDIF/] },
+      { src: K2, ref: '7056', any: [/	ELSEIF CFLAG:A:504 == 4/] },
+      {
+        src: K2,
+        ref: '7057',
+        any: [/		PRINTFORMW 「是…啊…还想要更多…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '7059', any: [/	ELSEIF CFLAG:A:504 == 5/] },
+      { src: K2, ref: '7061', any: [/		IF ABL:A:2 > ABL:A:3/] },
+      {
+        src: K2,
+        ref: '7062',
+        any: [
+          /			PRINTFORMW 「魔王大人！快来操%SELF_CALL\(A\)%小穴吧！要操到我尖叫为止哦！」/,
+        ],
+      },
+      { src: K2, ref: '7064', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '7065',
+        any: [
+          /			PRINTFORMW 「魔王大人！快来操%SELF_CALL\(A\)%的屁眼吧！要操到我尖叫为止哦！」/,
+        ],
+      },
+      { src: K2, ref: '7066', any: [/		ENDIF/] },
+      { src: K2, ref: '7068', any: [/	ELSEIF CFLAG:A:504 == 6/] },
+      {
+        src: K2,
+        ref: '7069',
+        any: [/		PRINTFORMW 「美味的精液…啊啊…给我更多…」/],
+      },
+      { src: K2, ref: '7071', any: [/	ELSEIF CFLAG:A:504 == 7/] },
+      { src: K2, ref: '7073', any: [/		IF TALENT:A:0 == 1/] },
+      {
+        src: K2,
+        ref: '7074',
+        any: [/			PRINTFORMW 「啊啊…果然还是乱交最棒…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '7075', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '7076',
+        any: [/			PRINTFORMW 「啊啊…果然还是乱交最棒…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K2, ref: '7077', any: [/		ENDIF/] },
+      { src: K2, ref: '7079', any: [/	ELSEIF CFLAG:A:504 == 8/] },
+      {
+        src: K2,
+        ref: '7080',
+        any: [/		PRINTFORMW 「您的尿液果然是最棒的，魔王大人……」/],
+      },
+      { src: K2, ref: '7082', any: [/	ELSEIF CFLAG:A:504 == 9/] },
+      { src: K2, ref: '7084', any: [/		IF ABL:A:2 > ABL:A:3/] },
+      {
+        src: K2,
+        ref: '7085',
+        any: [/			PRINTFORMW 「啊啊，感觉怎么样？可是最棒的哟！谢谢啦……」/],
+      },
+      { src: K2, ref: '7087', any: [/		ELSE/] },
+      {
+        src: K2,
+        ref: '7088',
+        any: [/			PRINTFORMW 「%SELF_CALL\(A\)%的屁股期待了很久了呀？」/],
+      },
+      { src: K2, ref: '7089', any: [/		ENDIF/] },
+      { src: K2, ref: '7090', any: [/	ELSE/] },
+      { src: K2, ref: '7091', any: [/	ENDIF/] },
+      { src: K2, ref: '7092', any: [/ENDIF/] },
+      { src: K2, ref: '7094', any: [/@OSIOKI_KOUJO_K2/] },
+      { src: K2, ref: '7100', any: [/IF TFLAG:18 == 0/] },
+      { src: K2, ref: '7101', any: [/	PRINTFORMW 「谢谢……」/] },
+      { src: K2, ref: '7103', any: [/ELSEIF TFLAG:18 == 1/] },
+      { src: K2, ref: '7105', any: [/	IF ABL:A:21 >= 3/] },
+      {
+        src: K2,
+        ref: '7106',
+        any: [/		PRINTFORMW 「啊啊！不要停！再来！感觉快要疯掉了啊！」/],
+      },
+      { src: K2, ref: '7107', any: [/	ELSE/] },
+      { src: K2, ref: '7108', any: [/		PRINTFORMW 「不要！不要再电了！」/] },
+      { src: K2, ref: '7109', any: [/	ENDIF/] },
+      { src: K2, ref: '7111', any: [/ELSEIF TFLAG:18 == 2/] },
+      { src: K2, ref: '7113', any: [/	IF ABL:A:17 >= 4/] },
+      {
+        src: K2,
+        ref: '7114',
+        any: [
+          /		PRINTFORMW 「心情不错哟%UNICODE\(0x2661\) \*1% 能被大家这么赤裸裸地盯着，感觉好高兴%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '7115', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '7116',
+        any: [/		PRINTFORMW 「可、可恶…不要看…不要看我……」/],
+      },
+      { src: K2, ref: '7117', any: [/	ENDIF/] },
+      { src: K2, ref: '7119', any: [/ELSEIF TFLAG:18 == 3/] },
+      { src: K2, ref: '7121', any: [/	IF ABL:A:17 >= 6/] },
+      {
+        src: K2,
+        ref: '7122',
+        any: [
+          /		PRINTFORMW 「啊啊…只有我这样的超级变态……才会在这个时候想要手淫吧…哼啊真是的%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K2, ref: '7123', any: [/	ELSE/] },
+      {
+        src: K2,
+        ref: '7124',
+        any: [
+          /		PRINTFORMW 「呜呜，%SELF_CALL\(A\)%不是变态啊…不一样这不一样啊……」/,
+        ],
+      },
+      { src: K2, ref: '7125', any: [/	ENDIF/] },
+      { src: K2, ref: '7127', any: [/ELSEIF TFLAG:18 == 4/] },
+      { src: K2, ref: '7129', any: [/	IF ABL:A:21 >= 3/] },
+      {
+        src: K2,
+        ref: '7130',
+        any: [/		PRINTFORMW 「再来！魔王大人请继续无情的鞭挞我吧！」/],
+      },
+      { src: K2, ref: '7131', any: [/	ELSE/] },
+      { src: K2, ref: '7132', any: [/		PRINTFORMW 「请原谅我！好痛啊！」/] },
+      { src: K2, ref: '7133', any: [/	ENDIF/] },
+      { src: K2, ref: '7135', any: [/ELSEIF TFLAG:18 == 5/] },
+      {
+        src: K2,
+        ref: '7137',
+        any: [/	IF TALENT:A:88 == 1 \|\| TALENT:A:76 == 1/],
+      },
+      { src: K2, ref: '7138', any: [/		PRINTFORMW 「尿液…真是…好美味呢…\?」/] },
+      { src: K2, ref: '7139', any: [/	ELSE/] },
+      { src: K2, ref: '7140', any: [/		PRINTFORMW 「啊唔…呜呜…呜呜呜呜…」/] },
+      { src: K2, ref: '7141', any: [/	ENDIF/] },
+      { src: K2, ref: '7143', any: [/ELSEIF TFLAG:18 == 6/] },
+      { src: K2, ref: '7144', any: [/	PRINTW 「事到如今清理便池已经…」/] },
+      { src: K2, ref: '7146', any: [/ELSEIF TFLAG:18 == 7/] },
+      { src: K2, ref: '7147', any: [/	PRINTW 「肚子…饿了…」/] },
+      { src: K2, ref: '7149', any: [/ELSEIF TFLAG:18 == 8/] },
+      {
+        src: K2,
+        ref: '7150',
+        any: [
+          /	PRINTFORMW 「魔王大人！做什么都可以！什么过分的事都可以承受！快来侵犯我！求求你快来侵犯我啊！」/,
+        ],
+      },
+      { src: K2, ref: '7152', any: [/ELSEIF TFLAG:18 == 9/] },
+      { src: K2, ref: '7153', any: [/	PRINTFORMW 「但是，这次……」/] },
+      { src: K2, ref: '7154', any: [/ENDIF/] },
+      { src: K2, ref: '7157', any: [/@GOBI_KOUJO_K2, ARG:0/] },
+      { src: K2, ref: '7160', any: [/IF ARG:0 == 1/] },
+      { src: K2, ref: '7162', any: [/	PRINTFORM 啊～/] },
+      { src: K2, ref: '7163', any: [/ELSEIF ARG:0 == 2/] },
+      { src: K2, ref: '7165', any: [/	PRINTFORM 哟！/] },
+      { src: K2, ref: '7166', any: [/ELSEIF ARG:0 == 3/] },
+      { src: K2, ref: '7168', any: [/	PRINTFORM 啊……。/] },
+      { src: K2, ref: '7169', any: [/ELSEIF ARG:0 == 4/] },
+      { src: K2, ref: '7171', any: [/	PRINTFORM 啊啊……。/] },
+      { src: K2, ref: '7172', any: [/ELSEIF ARG:0 == 5/] },
+      { src: K2, ref: '7174', any: [/	PRINTFORM 呼……唔唔。/] },
+      { src: K2, ref: '7175', any: [/ELSE/] },
+      { src: K2, ref: '7178', any: [/	IF RAND:3 == 0/] },
+      { src: K2, ref: '7179', any: [/		PRINTFORM 唔。/] },
+      { src: K2, ref: '7180', any: [/	ELSEIF RAND:2 == 0/] },
+      { src: K2, ref: '7181', any: [/		PRINTFORM 什么啊。/] },
+      { src: K2, ref: '7182', any: [/	ELSE/] },
+      { src: K2, ref: '7183', any: [/		PRINTFORM 什么啊。/] },
+      { src: K2, ref: '7184', any: [/	ENDIF/] },
+      { src: K2, ref: '7185', any: [/ENDIF/] },
     ],
   },
   {

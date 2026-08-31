@@ -394,4 +394,56 @@ export default [
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
     must_mention: 'TALENT:122 置位 → 哥哥臂',
   },
+  {
+    desc: 'M1470 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.爱抚 = 1; // :893',
+    replace: '      kojo.爱抚 = 2; // :893（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1471 K2 淫乱素质判据错格（TALENT:76 改 77）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :898`,
+    replace: `      if (
+        era.get(\`talent:\${target}:77\`) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :898`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '淫乱分支',
+  },
+  {
+    desc: 'M1472 K2 阈值闸旁路失效（FLAG:7 == 2 改 === 3）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `      } else if (
+        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
+      ) {
+        // :916`,
+    replace: `      } else if (
+        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (kojo.爱抚 <= 1 || game.kojo.口上开关 === 3)
+      ) {
+        // :916`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '阈值闸',
+  },
+  {
+    desc: 'M1473 凌辱口上分发回退成写死 call(0)（#233）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: `  const ryou_local = get_kojo_num();
+  if ((ryou_local >= 100 && ryou_local < 140) || ryou_local > 1000) {
+    await ryouzyoku_kojo_family.call(ryou_local - 100, {`,
+    replace: `  const ryou_local = 0;
+  if (true) {
+    await ryouzyoku_kojo_family.call(0, {`,
+    tests: ['kojo-k2-timid'],
+    must_mention: 'GET_KOJO_NUM',
+  },
 ];
