@@ -12,9 +12,6 @@
 
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const fs = require('node:fs');
-const path = require('node:path');
-
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
@@ -356,19 +353,12 @@ test('A60-73：无射精旗时不打「族票未落地」占位行；A72 有源�
   assert.ok(!lines.some((l) => l.includes('指令')), 'A72 不得是存根占位行');
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本族 INCEST 域内存根', () => {
+test('本族无运行时存根：INCEST 走 #220 共用真身', () => {
   const world = seed_world();
   const { STUBBED_CALLS } = world.fixture.load_module(
     'system/train/com-assistant',
   );
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs/stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(STUBBED_CALLS, ['INCEST']);
-  for (const name of STUBBED_CALLS) {
-    assert.ok(registry.includes(name), `docs/stub-registry.md 缺少 ${name}`);
-  }
+  assert.deepEqual(STUBBED_CALLS, []);
 });
 
 test('严格 TIMES：十进制逐步截断且负数朝零', () => {
@@ -504,4 +494,28 @@ test('A62/A68/A69：射精旗打开后走源侧反应文', async () => {
       .text_lines()
       .some((line) => line.includes('把精液喝下去了')),
   );
+});
+
+test('COM69：有亲族打前缀，无亲族静默', async () => {
+  const silent = seed_world();
+  assert.equal(await run_com(silent, 69), 1);
+  assert.ok(silent.fixture.text_lines().includes('六九式'));
+  assert.ok(
+    !silent.fixture
+      .text_lines()
+      .some((line) =>
+        ['母女', '父子', '姐妹', '兄弟', '兄妹', '表姐弟'].includes(line),
+      ),
+    '无亲族不得打前缀',
+  );
+
+  const kin = seed_world();
+  // CFLAG:21 = -1 且 PLAYER 是主人 → TFLAG:14 = 1（父母）；双方皆女 → 母女
+  kin.fixture.store.set(`cflag:${TARGET}:21`, -1);
+  assert.equal(await run_com(kin, 69), 1);
+  assert.ok(
+    kin.fixture.text_lines().includes('母女'),
+    '目标是 PLAYER 的亲族则出前缀',
+  );
+  assert.ok(kin.fixture.text_lines().includes('六九式'));
 });

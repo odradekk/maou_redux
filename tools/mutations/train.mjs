@@ -3949,6 +3949,15 @@ export default [
     must_mention: '射精旗打开后走源侧反应文',
   },
   {
+    desc: 'M1418 COM69 亲族路径不调 INCEST 真身（#225）',
+    file: 'ere/system/train/com-assistant.js',
+    find: '  incest(target, player);\n  const prefix = incest_prefix(player);',
+    replace:
+      '  // 变异：不调 INCEST 真身\n  const prefix = incest_prefix(player);',
+    tests: ['com-assistant'],
+    must_mention: '目标是 PLAYER 的亲族则出前缀',
+  },
+  {
     desc: 'M1450 COM_ABLE120 的 FLAG:71==1 守卫删（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  if (game.train.自由调教跳转 === 1) return 0; // 追加指令未许可\n  if (skill) return 0;',

@@ -30,8 +30,9 @@
  * - CASE 1/4（→ 69）已由 com-caress.js 注册；CASE 31（→ 69/64）与 CASE 33
  *   （→ 70）已由 com-service.js 注册。本票只注册本族入口 CASE 61。
  * - COM63_AUTO 属于自动调教票 #218，本模块不重复实现。
- * - @INCEST 真身由 #220 建：本族只保留域内存根 + TFLAG:14 首行重置，不建
- *   第二份实现（SOP §2）。@HAIRSET / TALK_1 / TALK_2 定义在 COMF73 内，自足。
+ * - @INCEST 真身在 ere/system/train/incest.js（#220）：本族 require 共用实现，
+ *   传 (target, player)。CFLAG:25 命中读 CFLAG:24 的上游缺陷 1:1 保留。
+ *   @HAIRSET / TALK_1 / TALK_2 定义在 COMF73 内，自足。
  * - 原作无 EQUIP_COM60-73，故不注册装备持续效果。
  *
  * TRAIN_MESSAGE_A/B 只登记本族 ID 在源文件里显式出现的 SELECTCOM 分支：
@@ -60,17 +61,15 @@ const {
   com_ejac_player_milk,
   confirm_lost_virgin,
 } = require('#/system/train/com-vaginasex');
+const { incest } = require('#/system/train/incest');
 const {
   train_message_a_family,
   train_message_b,
   train_message_b_family,
 } = require('#/system/train/train-message');
 
-/**
- * 本族域内的 INCEST 存根。真身由 #220 建，合并后复用；TFLAG:14 重置照
- * SYSTEM_SOURCE_SUB2.ERB:338 的首行 1:1。
- */
-const STUBBED_CALLS = ['INCEST'];
+/** 本文件没有自行存根化的原作调用；INCEST 走 #220 共用真身。 */
+const STUBBED_CALLS = [];
 
 const MASTER = 0;
 const PBAND = 4;
@@ -117,12 +116,6 @@ function fainted() {
 function same_trainer() {
   const t50 = era.get('tflag:50') || 0;
   return (era_flag.assiplay && t50 !== 0) || (!era_flag.assiplay && t50 === 0);
-}
-
-/** CALL INCEST（SUB2:324）：TFLAG:14 重置 1:1 + 在册存根（#220 建真身） */
-function incest() {
-  era.set('tflag:14', 0);
-  stub_line('INCEST', '亲族关系判定', '真身由 #220 建，合并后复用');
 }
 
 /** JUMPFORM COM{RESULT}：目标未落地时沿项目既有约定走登记存根。 */
@@ -1127,10 +1120,7 @@ async function com62() {
   const target = era_flag.target;
   const assi = era_flag.assi;
   const src = make_src(target);
-  const saved_player = era_flag.player;
-  era_flag.player = assi;
-  incest();
-  era_flag.player = saved_player;
+  incest(target, assi);
   const t14 = era.get('tflag:14') || 0;
   era.print('侵犯助手');
   const { parts, state, t } = await start_judge();
@@ -1203,10 +1193,7 @@ async function com62() {
   if (t14 === 1 || t14 === 2) raise_abl10(target, 3);
   else if (kin) raise_abl10(target, 2);
   era.set('tflag:14', 0);
-  const saved = era_flag.target;
-  era_flag.target = assi;
-  incest();
-  era_flag.target = saved;
+  incest(assi, era_flag.player);
   const t14b = era.get('tflag:14') || 0;
   if (chara(MASTER).train.童贞) {
     chara(MASTER).train.童贞 = 0;
@@ -1479,7 +1466,7 @@ async function com64() {
     chara(target).dungeon.性交经验 += 1;
     era.print('性交经验＋１');
     era.set('tflag:14', 0);
-    incest();
+    incest(target, era_flag.player);
     let z = 0;
     if (tal(target, 0) && !tal(era_flag.player, 122)) z += 1;
     const t14 = era.get('tflag:14') || 0;
@@ -1497,7 +1484,7 @@ async function com64() {
   }
   if (site_used(1)) {
     era.set('tflag:14', 0);
-    incest();
+    incest(target, era_flag.player);
     if (chara(era_flag.player).train.童贞) {
       chara(era_flag.player).train.童贞 = 0;
       era.print('【童贞丧失】');
@@ -1585,7 +1572,7 @@ async function com65() {
   const player = era_flag.player;
   const src = make_src(target);
   era.set('tflag:14', 0);
-  incest();
+  incest(target, player);
   const t14 = era.get('tflag:14') || 0;
   era.print('逆侵犯助手');
   const { parts, state, t } = await start_judge();
@@ -1920,7 +1907,7 @@ async function com68() {
   const assi = era_flag.assi;
   const src = make_src(target);
   era.set('tflag:14', 0);
-  incest();
+  incest(target, era_flag.player);
   const prefix = incest_prefix(assi);
   if (prefix) era.print(prefix);
   era.print('双人口交');
@@ -2022,7 +2009,7 @@ async function com69() {
   const player = era_flag.player;
   const src = make_src(target);
   era.set('tflag:14', 0);
-  incest();
+  incest(target, player);
   const prefix = incest_prefix(player);
   if (prefix) era.print(prefix);
   era.print('六九式');
@@ -2137,10 +2124,7 @@ async function com70() {
   const assi = era_flag.assi;
   const src = make_src(target);
   era.set('tflag:14', 0);
-  const saved_player = era_flag.player;
-  era_flag.player = assi;
-  incest();
-  era_flag.player = saved_player;
+  incest(target, assi);
   const prefix = incest_prefix(assi);
   if (prefix) era.print(prefix);
   era.print('双人股间性交');
@@ -2275,7 +2259,7 @@ async function com71() {
   const assi = era_flag.assi;
   const src = make_src(target);
   era.set('tflag:14', 0);
-  incest();
+  incest(target, era_flag.player);
   const prefix = incest_prefix(assi);
   if (prefix) era.print(prefix);
   era.print('双人乳交');
