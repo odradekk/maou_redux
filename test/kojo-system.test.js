@@ -46,8 +46,10 @@ async function setup_kojo(seed) {
     seed(fixture);
   }
   fixture.load_module('kojo/kojo-system');
+  fixture.load_module('kojo/kojo-k0-tender');
   fixture.load_module('kojo/kojo-k3-noble');
   fixture.load_module('kojo/kojo-k5-mao');
+
   return fixture;
 }
 
@@ -142,16 +144,18 @@ test('@EVENTSHOP #PRI：FLAG:7 == 0 补 2；1 与 -1 不动（关掉不自开）
   }
 });
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（两模块各自一对）', async () => {
+test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（三模块各自一对）', async () => {
   const fixture = await setup_kojo((f) => f.store.delete('flag:7'));
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('flag:100'), 1); // K0 存在标志
   assert.equal(fixture.store.get('flag:103'), 1); // K3 存在标志
   assert.equal(fixture.store.get('flag:105'), 1); // K5 存在标志
   assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
 
   await emit('EVENTEND');
+  assert.equal(fixture.store.get('flag:100'), 0);
   assert.equal(fixture.store.get('flag:103'), 0);
   assert.equal(fixture.store.get('flag:105'), 0);
 });
@@ -171,8 +175,10 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   // 挂载顺序同 main-loop：页面先、口上后——档位序保证 #PRI 先跑）
   const { run_shop } = fixture.load_module('page/page-shop');
   fixture.load_module('kojo/kojo-system');
+  fixture.load_module('kojo/kojo-k0-tender');
   fixture.load_module('kojo/kojo-k3-noble');
   fixture.load_module('kojo/kojo-k5-mao');
+
   // 走一轮面板切换（500 是已打印按钮，#130：引擎只送达已打印按钮的快捷
   // 键；原用例的 9999 属无效输入，引擎侧根本不会送达）后输入耗尽
   fixture.set_inputs(500);
@@ -248,7 +254,7 @@ test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过
   const probe = await setup_kojo();
   const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
   const handlers = [...kojo_message_com_family.implemented.entries()];
-  assert.ok(handlers.length >= 2, '契约至少要覆盖已注册的 K3/K5');
+  assert.ok(handlers.length >= 3, '契约至少要覆盖已注册的 K0/K3/K5');
 
   for (const [num, handler] of handlers) {
     for (const [name, seed_guard] of KOJO_GUARD_STATES) {

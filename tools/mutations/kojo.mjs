@@ -135,9 +135,10 @@ export default [
     file: 'ere/kojo/kojo-text.js',
     find: "  return '♡'.repeat(n);",
     replace: "  return '';",
-    tests: ['kojo-k3-noble', 'kojo-k5-mao'],
+    tests: ['kojo-k3-noble', 'kojo-k5-mao', 'kojo-k0-tender'],
     must_mention: '♡',
   },
+
   {
     desc: 'M73 自称插值回落错字（「我」改「本人」）',
     file: 'ere/kojo/kojo-text.js',
@@ -393,5 +394,65 @@ export default [
       if (era.get('talent:122') || 0) {`,
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
     must_mention: 'TALENT:122 置位 → 哥哥臂',
+  },
+
+  // —— #231 J21 口上·K0 慈爱（第一刀：七道守卫 + COM0 爱抚） ——
+  {
+    desc: 'M1470 K0 首次状态推进写错（CFLAG:301 = 1 改 2）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.爱抚 = 1; // :720',
+    replace: '      kojo.爱抚 = 2; // :720（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '状态推进到 1',
+  },
+  {
+    desc: 'M1471 K0 首次刻印分档边界（MARK:2 >= 2 改 >= 3）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      if (mark(2) >= 2) {',
+    replace: '      if (mark(2) >= 3) {',
+    tests: ['kojo-k0-tender'],
+    must_mention: '老实支两句',
+  },
+  {
+    desc: 'M1472 K0 淫乱素质判据错格（TALENT:76 改 77）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      era.get(`talent:${target}:76`) === 1 &&',
+    replace: '      era.get(`talent:${target}:77`) === 1 &&',
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱分支',
+  },
+  {
+    desc: 'M1473 K0 淫乱门槛的 FLAG:7 == 2 旁路失效（改 === 3）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 3)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '阈值闸',
+  },
+  {
+    desc: 'M1474 K0 @EVENTEND #LATER 清标志删除',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    game.kojo.口上存在_0 = 0; // :81',
+    replace: '    // 变异：清标志删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTEND 清 FLAG:100',
+  },
+  {
+    desc: 'M1475 K0 失神守卫删除（TFLAG:899 改恒 false）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :687-688 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (game.train.失神) {`,
+    replace: `  // :687-688 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (false) { // 变异：失神守卫删除`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '失神（TFLAG:899）：不输出',
+  },
+  {
+    desc: 'M1476 主启动图删 K0 口上注册（KOJO_MESSAGE_COM_0 不进实际运行图）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k0-tender');",
+    replace: '// 变异：K0 口上不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: 'KOJO_MESSAGE_COM_0 必须经主启动图注册',
   },
 ];

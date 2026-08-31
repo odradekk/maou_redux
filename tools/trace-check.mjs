@@ -152,8 +152,10 @@ const SEIIN_ERB = 'target/ERB/調教相關/SEIIN.ERB';
 const TEXT_FIX_ERB = 'target/ERB/魔改新增/文本校正.ERB';
 const SHOP_VER = 'target/ERB/SHOP/SHOP ver1.0.2.ERB';
 const EVENT_K = 'target/ERB/EVENT/EVENT_K.ERB';
+const K0 = 'target/ERB/口上/EVENT_K0_慈愛.ERB';
 const K3 = 'target/ERB/口上/EVENT_K3_高貴.ERB';
 const K5 = 'target/ERB/口上/EVENT_K5_マオ.ERB';
+
 const EXCOM = 'target/ERB/其他/EXCOM.ERB';
 const SELF_CALL_ERB = 'target/ERB/キャラ関数/SELF_CALL.ERB';
 const DRAW_MAINMENU = 'target/ERB/SHOP/DRAW_MAINMENU.ERB';
@@ -10102,7 +10104,147 @@ const FILES = [
   },
 
   {
+    js: 'ere/kojo/kojo-k0-tender.js',
+    refs: [
+      { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
+      { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
+      { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-752', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
+      { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
+      { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
+      {
+        src: K0,
+        ref: '676-699',
+        any: [/死斗场中は専用口上/, /SIF TEQUIP:90/],
+      },
+      {
+        src: K0,
+        ref: '676-678',
+        any: [/死斗场中は専用口上/, /^\tCALL COLOSSEUM_KOJO_0$/m],
+      },
+      { src: K0, ref: '681-682', any: [/SIF ASSI > 0 && ASSIPLAY/] },
+      { src: K0, ref: '684-685', any: [/SIF TEQUIP:45 && SELECTCOM != 45/] },
+      { src: K0, ref: '687-688', any: [/SIF TFLAG:899/] },
+      { src: K0, ref: '690-691', any: [/SIF TALENT:TARGET:9 == 1/] },
+      {
+        src: K0,
+        ref: '693-695',
+        any: [/兽奸PLAY中は口上を専用領域へ/, /^\tCALL DOG_KOJO_0$/m],
+      },
+      { src: K0, ref: '698-699', any: [/SIF TEQUIP:90/] },
+
+      { src: K0, ref: '708', any: [/^IF SELECTCOM == 0$/m] },
+      { src: K0, ref: '708-752', any: [/^IF SELECTCOM == 0$/m] },
+      { src: K0, ref: '710-721', any: [/^\tIF CFLAG:301 == 0$/m] },
+      { src: K0, ref: '712-719', any: [/^\t\tIF MARK:2 >= 2$/m] },
+      {
+        src: K0,
+        ref: '713',
+        any: [/PRINTFORMW 「啊啊…我会、老实的…所以…啊～啊啊～！」/],
+      },
+      {
+        src: K0,
+        ref: '714',
+        any: [/PRINTFORMW %SAVESTR:TARGET%乖乖的被你爱抚着身体/],
+      },
+      { src: K0, ref: '717', any: [/PRINTFORMW 「你的爱是虚假的」/] },
+      {
+        src: K0,
+        ref: '718',
+        any: [/PRINTFORMW %SAVESTR:TARGET%紧锁眉头、蜷缩着身体/],
+      },
+      { src: K0, ref: '720', any: [/^\t\tCFLAG:301 = 1$/m] },
+      { src: K0, ref: '721', any: [/^\t\tRETURN 0$/m] },
+      { src: K0, ref: '723-750', any: [/^\tELSE$/m] },
+      {
+        src: K0,
+        ref: '725-728',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '726',
+        any: [/PRINTFORMW 「啊～…额呵呵…那个地方…再多摸摸…/],
+      },
+      {
+        src: K0,
+        ref: '727',
+        any: [/PRINTFORMW 只是稍微摸了摸%SAVESTR:TARGET%她就把持不住了/],
+      },
+      { src: K0, ref: '728', any: [/^\t\t\tCFLAG:301 = 6$/m] },
+      {
+        src: K0,
+        ref: '730-733',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '731',
+        any: [/PRINTFORMW 「再来…请把我揉得乱七八糟吧……！」/],
+      },
+      {
+        src: K0,
+        ref: '732',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%像引诱%SAVESTR:PLAYER%的手似的扭着身体/,
+        ],
+      },
+      { src: K0, ref: '733', any: [/^\t\t\tCFLAG:301 = 5$/m] },
+      {
+        src: K0,
+        ref: '735-738',
+        any: [
+          /^\t\tELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '736', any: [/PRINTFORMW 「哈啊…哈啊…啊啊啊～」/] },
+      {
+        src: K0,
+        ref: '737',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的嘴里呼着热气/],
+      },
+      { src: K0, ref: '738', any: [/^\t\t\tCFLAG:301 = 4$/m] },
+      {
+        src: K0,
+        ref: '740-743',
+        any: [
+          /^\t\tELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '741',
+        any: [/PRINTFORMW 「才不会…觉得舒服呢！　絶対不会！」/],
+      },
+      {
+        src: K0,
+        ref: '742',
+        any: [/PRINTFORMW %SAVESTR:TARGET%扭动着身体忍耐着的样子/],
+      },
+      { src: K0, ref: '743', any: [/^\t\t\tCFLAG:301 = 3$/m] },
+      {
+        src: K0,
+        ref: '745-748',
+        any: [
+          /^\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '746', any: [/PRINTFORMW 「…好恶心」/] },
+      { src: K0, ref: '747', any: [/PRINTFORMW %SAVESTR:TARGET%叹了口气/] },
+      { src: K0, ref: '748', any: [/^\t\t\tCFLAG:301 = 2$/m] },
+      { src: K0, ref: '750', any: [/^\t\tRETURN 0$/m] },
+      { src: K0, ref: '752', any: [/^ENDIF$/m] },
+    ],
+  },
+
+  {
     js: 'ere/kojo/kojo-k3-noble.js',
+
     refs: [
       { src: K3, ref: '81-85', any: [/^@EVENTTRAIN$/m, /^FLAG:103 = 1$/m] },
       { src: K3, ref: '87-89', any: [/^@EVENTEND$/m, /^FLAG:103 = 0$/m] },
