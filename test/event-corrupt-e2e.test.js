@@ -51,7 +51,8 @@ test('端到端：角色堕落长跑（调教回路闭合与刻印推进）', as
   fixture.load_module('event/source-check');
   fixture.load_module('page/page-train');
   fixture.load_module('page/page-usercom');
-  fixture.load_module('system/train/com0-caress');
+  // COM0 自 com0-caress.js 搬入本族模块（#219 J9，原文件删除）
+  fixture.load_module('system/train/com-caress');
   fixture.load_module('system/train/com-sm');
   const { com_family, com_able_family } = fixture.load_module(
     'system/train/com-family',
