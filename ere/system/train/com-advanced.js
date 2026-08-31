@@ -45,6 +45,7 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { game } = require('#/facade/game');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
+const { com_order } = require('#/system/train/com-order');
 const {
   com_after_vagina_sex,
   com_ejac_player_sex,
@@ -55,7 +56,7 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { read_train_name } = require('#/system/train/train-name');
-const { chara_callname } = require('#/utils/callname-utils');
+const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 
 /** CASE 21 升格可能命中、但尚未由助手族落地的目标。 */
@@ -77,6 +78,8 @@ const special = (id) => era.get(`cflag:${id}:42`) || 0;
 const clothes_on = () => (era.get('flag:37') || 0) !== 0;
 const target_name = () => chara_callname(era_flag.target);
 const player_name = () => chara_callname(era_flag.player);
+const player_nickname = () => chara_nickname(era_flag.player);
+const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 const has_pband = () => (era.get('item:4') || 0) !== 0;
 const has_mat = () =>
   (era.get('item:13') || 0) !== 0 || (era.get('noitem:0') || 0) !== 0;
@@ -1013,10 +1016,262 @@ async function com121() {
   return 1;
 }
 
+function palam_ladder(value) {
+  if (value < PALAMLV[1]) return 0;
+  if (value < PALAMLV[2]) return 1;
+  if (value < PALAMLV[3]) return 2;
+  if (value < PALAMLV[4]) return 3;
+  if (value < PALAMLV[5]) return 4;
+  return 5;
+}
+
+function append_term(parts, state, label, amount) {
+  if (state.s) parts.push(amount >= 0 ? ' + ' : ' - ');
+  else if (amount < 0) parts.push(' - ');
+  parts.push(`${label}(${Math.abs(amount)})`);
+  state.a += amount;
+  state.s = 1;
+}
+
+function dirty_penalty_122() {
+  const player = era_flag.player;
+  const cid = era_flag.target;
+  let y = 0;
+  if (stain(player, 2) & 1) y += 1;
+  if (stain(player, 2) & 4) y += 3;
+  if (stain(player, 2) & 8) y += 7;
+  if (stain(player, 2) & 16) y += 1;
+  if (stain(player, 4) & 32) y += 3;
+  if (tal(cid, 61)) y = Math.floor(y / 3);
+  if (tal(cid, 62)) y *= 2;
+  return Math.floor(y / 3);
+}
+
+async function order122() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const { a, s, parts } = await com_order(0, 0);
+  const state = { a, s };
+  if (abl(cid, 11)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 11)}LV${abl(cid, 11)}`,
+      abl(cid, 11) * 2,
+    );
+  }
+  if (abl(cid, 16)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 16)}LV${abl(cid, 16)}`,
+      abl(cid, 16) * 4,
+    );
+  }
+  if (abl(cid, 32)) {
+    append_term(
+      parts,
+      state,
+      `${name_of('ablname', 32)}LV${abl(cid, 32)}`,
+      abl(cid, 32),
+    );
+  }
+  const mark1 = Math.floor(era.get(`mark:${cid}:1`) || 0);
+  if (mark1) {
+    append_term(parts, state, `${name_of('markname', 1)}LV${mark1}`, mark1 * 2);
+  }
+  const lust = palam_ladder(palam(cid, 5));
+  if (lust) {
+    append_term(parts, state, `${name_of('palamname', 5)}LV${lust}`, lust * 3);
+  }
+  if (tal(cid, 35)) append_term(parts, state, name_of('talentname', 35), -1);
+  if (tal(cid, 71)) append_term(parts, state, name_of('talentname', 71), -3);
+  if (tal(cid, 82) && tal(player, 122)) {
+    append_term(parts, state, name_of('talentname', 82), -7);
+  }
+  if (tal(cid, 85) && !era_flag.assiplay) {
+    append_term(parts, state, name_of('talentname', 85), 3);
+    state.s = 3; // 源侧 S = 3（COMF122:114）
+  }
+  if (tal(player, 121)) {
+    append_term(parts, state, name_of('talentname', 121), 8);
+  }
+  if (tequip(cid, 21)) {
+    append_term(parts, state, name_of('itemname', 26), 6);
+  }
+  const y = dirty_penalty_122();
+  if (y) {
+    const dirty_label = tal(cid, 61)
+      ? `脏、${name_of('talentname', 61)}`
+      : tal(cid, 62)
+        ? `脏、${name_of('talentname', 62)}`
+        : '脏';
+    append_term(parts, state, dirty_label, -y);
+  }
+  parts.push(` = ${state.a}`);
+  parts.push(state.a < 20 ? ' < ' : state.a === 20 ? ' = ' : ' > ');
+  parts.push('实行值20');
+  era.print(parts.join(''));
+  await era.waitAnyKey();
+  return state.a >= 20;
+}
+
+function source122() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  add_lose(cid, 0, 30);
+  add_lose(cid, 1, 90);
+  set_src(cid, 12, 250);
+  set_src(cid, 13, 400);
+  set_src(cid, 14, 300);
+  set_src(cid, 11, [200, 120, 60, 20, 0, 0][Math.min(abl(cid, 10), 5)]);
+  const clit = [
+    [20, 0, 0, 20, 0.8],
+    [80, 10, 50, 20, 0.9],
+    [350, 50, 100, 20, 1],
+    [750, 100, 300, 20, 1.1],
+    [1200, 700, 600, 20, 1.2],
+    [1750, 2000, 1000, 20, 1.3],
+  ][Math.min(abl(cid, 0), 5)];
+  set_src(cid, 0, clit[0]);
+  set_src(cid, 4, clit[1]);
+  set_src(cid, 5, clit[2]);
+  set_src(cid, 13, clit[3]);
+  times_src(cid, 12, clit[4]);
+  const skill = [0.5, 0.8, 1, 1.1, 1.3, 1.5][Math.min(abl(cid, 12), 5)];
+  times_src(cid, 4, skill);
+  times_src(cid, 5, skill);
+  times_src(cid, 13, skill);
+  const player_clit = [
+    [0.8, 0.5],
+    [0.9, 0.7],
+    [1, 1],
+    [1.1, 1.2],
+    [1.2, 1.4],
+    [1.3, 1.7],
+  ][Math.min(abl(player, 0), 5)];
+  times_src(cid, 4, player_clit[0]);
+  times_src(cid, 5, player_clit[1]);
+  const lube = palam_ladder(palam(cid, 3));
+  times_src(cid, 0, [0.5, 0.75, 1, 1.5, 2, 2.5][lube]);
+  times_src(cid, 5, [0.6, 0.8, 1, 1.2, 1.4, 1.6][lube]);
+}
+
+function ejac122() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  let b = [1500, 2100, 2900, 4000, 5000, 6000][Math.min(abl(cid, 12), 5)];
+  b = times(b, [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)]);
+  b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][palam_ladder(palam(cid, 3))]);
+  b = times(b, [1, 1.5, 2, 2.5, 3.5, 5][Math.min(abl(player, 0), 5)]);
+  if (tal(player, 121) || tal(player, 122)) {
+    era.add(`base:${player}:2`, b);
+  }
+  const s = era.get(`base:${player}:2`) || 0;
+  const ejac = era.get(`maxbase:${player}:2`) || 0;
+  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+  if (e) {
+    times_src(cid, 4, 3);
+    const poison = [
+      [0, 2, 6],
+      [500, 3, 4.5],
+      [1200, 4, 3.5],
+      [3000, 6, 3],
+      [6000, 9, 2],
+      [12000, 15, 1.5],
+    ][Math.min(abl(cid, 32), 5)];
+    set_src(cid, 7, poison[0]);
+    times_src(cid, 5, poison[1]);
+    times_src(cid, 13, poison[2]);
+  }
+  if (e === 2) {
+    times_src(cid, 7, 2);
+    times_src(cid, 5, 1.5);
+    era.add(`exp:${player}:3`, 2);
+    era.add(`exp:${cid}:20`, 9);
+    era.print('大量射精');
+    era.print('精液经验＋９');
+    era.set(`stain:${player}:2`, stain(player, 2) | 4);
+    era.add(`base:${player}:2`, -(ejac * 2));
+    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
+      era.set(`base:${player}:2`, ejac - 1);
+    }
+    game.train.股间射精 = 2;
+  } else if (e === 1) {
+    era.add(`exp:${player}:3`, 1);
+    era.add(`exp:${cid}:20`, 3);
+    era.print('射精');
+    era.print('精液经验＋３');
+    era.set(`stain:${player}:2`, stain(player, 2) | 4);
+    era.add(`base:${player}:2`, -ejac);
+    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
+      era.set(`base:${player}:2`, ejac - 1);
+    }
+    game.train.股间射精 = 1;
+  }
+  const merged = stain(cid, 2) | stain(player, 2);
+  era.set(`stain:${cid}:2`, merged);
+  era.set(`stain:${player}:2`, merged);
+  if (tal(cid, 122) === 1 && tal(player, 122) === 1) {
+    era.print(`${name_of('expname', 41)}+8`);
+    era.add(`exp:${cid}:41`, 8);
+  }
+  if (!era_flag.assiplay && abl(cid, 0) >= 3) {
+    game.train.主人经验 += 1;
+  }
+  game.train.快乐经验 = 1;
+}
+
+async function message_b122() {
+  if (palam(era_flag.target, 3) > PALAMLV[3]) {
+    era.print(
+      `${player_nickname()}用${target_name()}已经湿掉的阴茎摩擦着自己的阴茎……`,
+    );
+  } else {
+    era.print(`${player_nickname()}和${target_name()}用勃起的阴茎相互摩擦着……`);
+  }
+}
+
+async function message_a122() {
+  const amount = era.get('tflag:9') || 0;
+  const target_ejac = era.get('tflag:10') || 0;
+  if (amount === 0) {
+    if (target_ejac >= 1) {
+      era.print(
+        `${target_name()}射精出的${target_ejac >= 2 ? '大量' : ''}精液、将${player_name()}的阴茎用精液一吐为快了…`,
+      );
+    }
+    return;
+  }
+  const both =
+    target_ejac >= 1 &&
+    (tal(era_flag.player, 122) || tal(era_flag.player, 121));
+  if (amount === 1) {
+    if (both) {
+      era.print('两人同时射精、对彼此的阴茎用精液一吐为快了…');
+    } else {
+      era.print(`射出的精液、把${target_name()}的阴茎弄脏了…`);
+    }
+    return;
+  }
+  if (amount === 2) {
+    if (both) {
+      era.print('两人同时射精、对彼此的阴茎用大量的精液一吐为快…');
+    } else {
+      era.print(
+        `${player_name()}射出大量的精液、把${target_name()}的阴茎搞得黏黏糊糊…`,
+      );
+    }
+  }
+}
+
 /** @COM122（COMF122_兜あわせ.ERB）阴茎互捅。可直选。 */
 async function com122() {
   era.print('阴茎互捅');
+  if (!(await order122())) return 0;
   await train_message_b();
+  source122();
+  ejac122();
   return 1;
 }
 
@@ -1073,10 +1328,12 @@ train_message_b_family.register(120, message_b120);
 train_message_a_family.register(120, message_a120);
 train_message_b_family.register(121, message_b121);
 train_message_a_family.register(121, message_a121);
+train_message_b_family.register(122, message_b122);
+train_message_a_family.register(122, message_a122);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
 for (const id of [
-  122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
+  123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
 ]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);

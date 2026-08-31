@@ -3842,4 +3842,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM121',
   },
+  {
+    desc: 'M1456 COM122 默认档润滑乘算删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  times_src(cid, 0, [0.5, 0.75, 1, 1.5, 2, 2.5][lube]);',
+    replace: '  // 变异：COM122 润滑乘算删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM122：默认档 SOURCE',
+  },
 ];

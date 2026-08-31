@@ -212,10 +212,51 @@ test('@COM121 B/A：子宫叩击行与直接注入精液', async () => {
 
 test('@COM122：阴茎互捅（可直选），不回填 SELECTCOM', async () => {
   const world = seed_world();
+  world.fixture.store.set('abl:31:16', 5);
   const result = await run_com(world, 122);
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 122);
   assert.ok(world.fixture.text_lines().includes('阴茎互捅'));
+});
+
+test('@COM122：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await run_com(world, 122);
+  assert.equal(result, 0);
+  assert.equal(world.era_flag.selectcom, 122);
+  assert.equal(world.fixture.store.get('source:31:12'), undefined);
+});
+
+test('@COM122：默认档 SOURCE / TFLAG', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:16', 5);
+  await run_com(world, 122);
+  // ABL:0=0 → S0=20 ×0.50（润滑）=10；S12=250 ×0.80=200；
+  // S13 被阴蒂感觉段覆写为 20 再 ×0.50（技巧）=10。
+  assert.equal(world.fixture.store.get('source:31:0'), 10);
+  assert.equal(world.fixture.store.get('source:31:11'), 200);
+  assert.equal(world.fixture.store.get('source:31:12'), 200);
+  assert.equal(world.fixture.store.get('source:31:13'), 10);
+  assert.equal(world.fixture.store.get('source:31:14'), 300);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -30);
+  assert.equal(world.fixture.store.get('tflag:100'), 1);
+});
+
+test('@COM122 B/A：互摩擦行与射精弄脏', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:16', 5);
+  await run_com(world, 122);
+  const lines = world.fixture.text_lines();
+  assert.ok(lines.includes('你和温妮用勃起的阴茎相互摩擦着……'));
+
+  world.fixture.store.set('tflag:9', 1);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(
+    world.fixture.text_lines().includes('射出的精液、把温妮的阴茎弄脏了…'),
+  );
 });
 
 test('@COM125：口交时自慰，显式回填 SELECTCOM=125', async () => {
