@@ -3874,4 +3874,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM125：默认档 SOURCE',
   },
+  {
+    desc: 'M1460 COM126 默认档技巧 SOURCE:4 乘算删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  times_src(cid, 4, [0.8, 1, 1.2, 1.5, 1.8, 2.4][skill]);',
+    replace: '  // 变异：COM126 技巧 SOURCE:4 乘算删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM126：手搓口交，回填 SELECTCOM 与默认 SOURCE',
+  },
 ];

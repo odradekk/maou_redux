@@ -419,6 +419,50 @@ test('@COM135：自助舔阴（可直选）；扶她改自我口交', async () =
   assert.ok(world.fixture.text_lines().includes('自我口交'));
 });
 
+test('@COM126：手搓口交，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 31;
+  world.fixture.store.set('abl:31:11', 40);
+  const result = await world.com_family.call(126);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 126, '原作显式 SELECTCOM = 126');
+  assert.ok(world.fixture.text_lines().includes('手搓口交'));
+  // ABL:16=0 → S4=500 ×0.80（技巧）=400；S5=150 ×0.50=75；
+  // S8=100 ×4.00=400；S13=1500；S14=500。
+  assert.equal(world.fixture.store.get('source:31:4'), 400);
+  assert.equal(world.fixture.store.get('source:31:5'), 75);
+  assert.equal(world.fixture.store.get('source:31:8'), 400);
+  assert.equal(world.fixture.store.get('source:31:13'), 1500);
+  assert.equal(world.fixture.store.get('source:31:14'), 500);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -20);
+  assert.equal(world.fixture.store.get('tflag:100'), 1);
+  assert.equal(world.fixture.store.get('tflag:200'), 2);
+});
+
+test('@COM126：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await world.com_family.call(126);
+  assert.equal(result, 0);
+  assert.equal(world.era_flag.selectcom, 126);
+  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+});
+
+test('@COM126 B/A：吸啜按摩行与口中注入', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 40);
+  await world.com_family.call(126);
+  assert.ok(
+    world.fixture.text_lines().includes('温妮吸啜着阴茎、按摩着阴茎的根部。'),
+  );
+
+  world.fixture.store.set('tflag:0', 1);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(world.fixture.text_lines().includes('精液注入到温妮的口中了…'));
+});
+
 test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
   const world = seed_world();
   enable_oral(world.fixture);

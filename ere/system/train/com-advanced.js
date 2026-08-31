@@ -2314,7 +2314,155 @@ async function com125() {
   return 1;
 }
 
-const com126 = make_advanced_com(126, '手搓口交');
+function source126(y) {
+  const cid = era_flag.target;
+  if (tal(cid, 47)) {
+    add_lose(cid, 0, 10);
+    add_lose(cid, 1, 90);
+  } else {
+    add_lose(cid, 0, 20);
+    add_lose(cid, 1, 150);
+  }
+  set_src(cid, 13, 1500);
+  set_src(cid, 14, 500);
+  set_src(cid, 8, y * 40 + 100);
+  const service = [
+    [500, 150, 4],
+    [600, 300, 2.5],
+    [700, 600, 1.5],
+    [800, 900, 1],
+    [900, 1500, 0.5],
+    [1000, 2200, 0.1],
+  ][Math.min(abl(cid, 16), 5)];
+  set_src(cid, 4, service[0]);
+  set_src(cid, 5, service[1]);
+  times_src(cid, 8, service[2]);
+  const skill = Math.min(abl(cid, 12), 5);
+  times_src(cid, 4, [0.8, 1, 1.2, 1.5, 1.8, 2.4][skill]);
+  times_src(cid, 5, [0.5, 0.8, 1, 1.2, 1.5, 2][skill]);
+}
+
+function gauge126() {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  let b = [1200, 1700, 2300, 3000, 3600, 4200][Math.min(abl(cid, 12), 5)];
+  b = times(b, [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)]);
+  b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][Math.min(abl(cid, 13), 5)]);
+  b = times(b, [1, 1.2, 1.3, 1.5, 1.7, 2][Math.min(abl(cid, 32), 5)]);
+  if (tal(cid, 52)) b = times(b, 2);
+  b = times(b, [1, 1.5, 2, 2.5, 3.5, 5][Math.min(abl(player, 0), 5)]);
+  if (tal(player, 119) || tal(player, 122) || tal(player, 121)) {
+    era.add(`base:${player}:2`, b);
+  }
+  return b;
+}
+
+function after126(e) {
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  const finger = stain(cid, 1) | stain(player, 2);
+  era.set(`stain:${cid}:1`, finger);
+  era.set(`stain:${player}:2`, finger);
+  const mouth = stain(cid, 0) | stain(player, 2);
+  era.set(`stain:${cid}:0`, mouth);
+  era.set(`stain:${player}:2`, mouth);
+  if (abl(cid, 16) >= 2 && abl(cid, 12) >= 2) {
+    era.set(`stain:${player}:2`, 2);
+    if (e >= 1) game.train.口交射精后 = 1;
+  }
+  if (tal(cid, 122) === 0 && tal(player, 122) === 0) {
+    era.print(`${name_of('expname', 40)}+7`);
+    era.add(`exp:${cid}:40`, 7);
+  } else if (tal(cid, 122) === 1 && tal(player, 122) === 1) {
+    era.print(`${name_of('expname', 41)}+7`);
+    era.add(`exp:${cid}:41`, 7);
+  }
+  if (!era_flag.assiplay && exp(cid, 0) >= EXPLV[3]) {
+    game.train.主人经验 += 1;
+  }
+  if ((era.get(`cflag:${cid}:16`) || 0) === -1) {
+    era.set(`cflag:${cid}:16`, 201);
+    era.set(`cstr:${cid}:4`, chara_callname(player));
+    era.set('tflag:13', 1);
+  }
+  const love = tal(cid, 122) ? 2 : 1;
+  if ((era.get(`cflag:${cid}:2`) || 0) >= 1000 && !era_flag.assiplay) {
+    era.print(`${name_of('expname', 23)}+${love}`);
+    era.add(`exp:${cid}:23`, love);
+  }
+  if (tal(player, 121)) set_src(cid, 13, Math.floor(src(cid, 13) / 2));
+  game.train.快乐经验 = 1;
+  game.train.屈服刻印结算 = 2;
+}
+
+async function message_b126() {
+  const cid = era_flag.target;
+  let line = target_name();
+  if (tal(cid, 85)) line += '带着对你拳拳在念的表情、';
+  if (tal(cid, 52)) line += '用舌头灵活地缠绕着棒身、';
+  line += tal(era_flag.player, 122)
+    ? '吸啜着阴茎、一只手按摩着阴囊、另一只手按摩着阴茎的根部。'
+    : '吸啜着阴茎、按摩着阴茎的根部。';
+  era.print(line);
+}
+
+async function message_a126() {
+  const amount = era.get('tflag:0') || 0;
+  if (amount !== 1 && amount !== 2) return;
+  const cid = era_flag.target;
+  const player = era_flag.player;
+  if (amount === 1) {
+    era.print(
+      abl(cid, 16) >= 3
+        ? `${target_name()}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`
+        : `精液注入到${target_name()}的口中了…`,
+    );
+    if (abl(cid, 32) >= 3 && tal(player, 122)) {
+      era.print(
+        `${target_name()}揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
+      );
+    }
+    if (abl(cid, 32) >= 3 && tal(player, 121)) {
+      era.print(
+        `${target_name()}撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
+      );
+    }
+    return;
+  }
+  era.print(
+    abl(cid, 16) >= 3
+      ? `没喝完的精液、从${target_name()}的嘴里溢出了…`
+      : `满满的精液、把${target_name()}的喉咙叩开了…`,
+  );
+  if (abl(cid, 32) >= 3 && tal(player, 122)) {
+    era.print(
+      `满溢的精液、将${target_name()}的嘴边搞得一塌糊涂。揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
+    );
+  }
+  if (abl(cid, 32) >= 3 && tal(player, 121)) {
+    era.print(
+      `满溢的精液、将${target_name()}的嘴边搞得一塌糊涂。撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
+    );
+  }
+}
+
+/** @COM126（COMF126_手コキフェラ.ERB）手搓口交。高级 COM。 */
+async function com126() {
+  era_flag.selectcom = 126; // 原作显式 SELECTCOM = 126（升格抵达时回填号位）
+  era.print('手搓口交');
+  const y = dirty_penalty_125();
+  if (!(await order124(y))) return 0;
+  await train_message_b();
+  era.print(`${name_of('expname', 22)}＋１`);
+  era.add(`exp:${era_flag.target}:22`, 1);
+  source126(y);
+  const b = gauge126();
+  const e = ejac124();
+  await com_ejac_player_milk(b);
+  after126(e);
+  return 1;
+}
+
 const com127 = make_advanced_com(127, '真空口交');
 const com128 = make_advanced_com(128, '正常位・接吻');
 const com129 = make_advanced_com(129, '正常位・胸爱抚');
@@ -2363,9 +2511,11 @@ train_message_b_family.register(124, message_b124);
 train_message_a_family.register(124, message_a124);
 train_message_b_family.register(125, message_b125);
 train_message_a_family.register(125, message_a125);
+train_message_b_family.register(126, message_b126);
+train_message_a_family.register(126, message_a126);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [126, 127, 128, 129, 130, 131, 132, 133, 134, 135]) {
+for (const id of [127, 128, 129, 130, 131, 132, 133, 134, 135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }
