@@ -3917,9 +3917,17 @@ export default [
   {
     desc: 'M1465 COM131 默认档 EXP 档疼痛 SOURCE:6 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '    set_src(cid, 6, 30);',
-    replace: '    // 变异：COM131 EXP 档疼痛删除',
+    find: '    set_src(cid, 6, 30);\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [',
+    replace: '    // 变异：COM131 EXP 档疼痛删除\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [',
     tests: ['com-advanced'],
     must_mention: 'COM131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
+  },
+  {
+    desc: 'M1466 COM132 默认档 PALAM:9 覆写疼痛 SOURCE:6 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  if (pain < PALAMLV[1]) set_src(cid, 6, 300);',
+    replace: '  // 变异：COM132 PALAM:9 疼痛覆写删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE',
   },
 ];

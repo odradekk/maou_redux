@@ -682,6 +682,43 @@ test('@COM131 B/A：从后揉胸行', async () => {
   );
 });
 
+test('@COM132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 21;
+  world.fixture.store.set('abl:31:2', 3);
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
+  const result = await world.com_family.call(132);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 132, '原作显式 SELECTCOM = 132');
+  assert.ok(world.fixture.text_lines().includes('背后位・打屁股'));
+  assert.equal(world.fixture.store.get('tflag:19'), 1);
+  // ABL:2=3 → S1=1000、S3=350；EXP < EXPLV:3 → S1×1、S6=30；
+  // 润滑 < LV3 → S1×1、S6×0.50=15；欲情 < LV1 → S1×0.60=600、S3×0.30=105；
+  // 顺从 0 → S1×0.50=300、S3×0.60=63；PALAM:9 < LV1 覆写 S6=300；
+  // ABL:21=0 → S1×0.60=180、S10×0.80=640、S13×0.80=640。
+  assert.equal(world.fixture.store.get('source:31:1'), 180);
+  assert.equal(world.fixture.store.get('source:31:3'), 63);
+  assert.equal(world.fixture.store.get('source:31:6'), 300);
+  assert.equal(world.fixture.store.get('source:31:10'), 640);
+  assert.equal(world.fixture.store.get('source:31:12'), 800);
+  assert.equal(world.fixture.store.get('source:31:13'), 640);
+  assert.equal(world.fixture.store.get('source:31:14'), 500);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -100);
+});
+
+test('@COM132 B/A：打屁股痛苦行', async () => {
+  const world = seed_world();
+  await world.com_family.call(132);
+  const lines = world.fixture.text_lines();
+  assert.ok(lines.includes('温妮被从后侵犯着、颤抖着的屁股被打着…'));
+  assert.ok(
+    lines.includes(
+      '温妮一边被贯穿着、一边承受着屁股上的痛苦、面容扭曲、脸都歪了…',
+    ),
+  );
+});
+
 test('@GET_ADV_COM CASE 135：PREVCOM 口交系且 COM_ABLE125 可 → 125；非口交不升', async () => {
   const world = seed_world();
   enable_oral(world.fixture);

@@ -3174,7 +3174,175 @@ async function com131() {
   return 1;
 }
 
-const com132 = make_advanced_com(132, '背后位・打屁股');
+function source132() {
+  const cid = era_flag.target;
+  add_lose(cid, 0, 100);
+  add_lose(cid, 1, 120);
+  set_src(cid, 10, 800);
+  set_src(cid, 12, 800);
+  set_src(cid, 13, 800);
+  set_src(cid, 14, 500);
+  const v_feel = [
+    [40, 50],
+    [150, 150],
+    [400, 250],
+    [1000, 350],
+    [1700, 600],
+    [2200, 850],
+  ][Math.min(abl(cid, 2), 5)];
+  set_src(cid, 1, v_feel[0]);
+  set_src(cid, 3, v_feel[1]);
+  const e0 = exp(cid, 0);
+  if (e0 < EXPLV[1]) {
+    times_src(cid, 1, 0.2);
+    set_src(cid, 6, 5000);
+    if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
+      era.print(`${name_of('expname', 50)}＋１`);
+      era.add(`exp:${cid}:50`, 1);
+    }
+  } else if (e0 < EXPLV[2]) {
+    times_src(cid, 1, 0.6);
+    set_src(cid, 6, 220);
+  } else if (e0 < EXPLV[3]) {
+    times_src(cid, 1, 1);
+    set_src(cid, 6, 30);
+  } else if (e0 < EXPLV[4]) {
+    times_src(cid, 1, 1.2);
+    set_src(cid, 6, 5);
+  } else if (e0 < EXPLV[5]) {
+    times_src(cid, 1, 1.3);
+    set_src(cid, 6, 0);
+  } else {
+    times_src(cid, 1, 1.8);
+    set_src(cid, 6, 0);
+  }
+  const lube = palam(cid, 3);
+  if (lube < PALAMLV[1]) {
+    times_src(cid, 1, 0.1);
+    add_src(cid, 6, 900);
+    times_src(cid, 6, 3);
+  } else if (lube < PALAMLV[2]) {
+    times_src(cid, 1, 0.4);
+    add_src(cid, 6, 250);
+    times_src(cid, 6, 1);
+  } else if (lube < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 6, 0.5);
+  } else if (lube < PALAMLV[4]) {
+    times_src(cid, 1, 1.4);
+    times_src(cid, 6, 0.2);
+  } else {
+    times_src(cid, 1, 1.8);
+    times_src(cid, 6, 0.1);
+  }
+  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (tal(cid, 99)) times_src(cid, 6, 1.8);
+  if (tal(cid, 100)) times_src(cid, 6, 2);
+  if (tal(cid, 30)) {
+    times_src(cid, 3, 0.6);
+    set_src(cid, 15, e0 === 0 ? 10000 : 1000);
+  } else if (tal(cid, 31)) {
+    if (e0 === 0) {
+      times_src(cid, 3, 0.6);
+      set_src(cid, 15, 300);
+    }
+  } else if (e0 === 0) {
+    set_src(cid, 15, 3000);
+  }
+  const lust = palam(cid, 5);
+  if (lust < PALAMLV[1]) {
+    times_src(cid, 1, 0.6);
+    times_src(cid, 3, 0.3);
+  } else if (lust < PALAMLV[2]) {
+    times_src(cid, 1, 0.8);
+    times_src(cid, 3, 0.6);
+  } else if (lust < PALAMLV[3]) {
+    times_src(cid, 1, 1);
+    times_src(cid, 3, 1);
+  } else if (lust < PALAMLV[4]) {
+    times_src(cid, 1, 1.2);
+    times_src(cid, 3, 1.5);
+  } else {
+    times_src(cid, 1, 1.5);
+    times_src(cid, 3, 1.8);
+  }
+  const obey = [
+    [0.5, 0.6, 2],
+    [0.8, 0.8, 1.5],
+    [1, 1, 1],
+    [1.3, 1.2, 0.8],
+    [1.6, 1.4, 0.6],
+    [2, 1.6, 0.3],
+  ][Math.min(abl(cid, 10), 5)];
+  times_src(cid, 1, obey[0]);
+  times_src(cid, 3, obey[1]);
+  times_src(cid, 15, obey[2]);
+  const pain = palam(cid, 9);
+  if (pain < PALAMLV[1]) set_src(cid, 6, 300);
+  else if (pain < PALAMLV[2]) set_src(cid, 6, 500);
+  else if (pain < PALAMLV[3]) set_src(cid, 6, 800);
+  else if (pain < PALAMLV[4]) set_src(cid, 6, 1200);
+  else set_src(cid, 6, 1800);
+  const masochist = [
+    [0.6, 0.8, 0.8],
+    [0.8, 1, 1],
+    [1, 1.2, 1.5],
+    [1.1, 1.4, 3],
+    [1.2, 2, 5],
+    [1.3, 3, 8],
+  ][Math.min(abl(cid, 21), 5)];
+  times_src(cid, 1, masochist[0]);
+  times_src(cid, 10, masochist[1]);
+  times_src(cid, 13, masochist[2]);
+}
+
+async function message_b132() {
+  const cid = era_flag.target;
+  era.print(`${target_name()}被从后侵犯着、颤抖着的屁股被打着…`);
+  if ((era.get('tflag:899') || 0) !== 0) return;
+  const masochist = abl(cid, 21);
+  if (masochist < 3) {
+    era.print(
+      `${target_name()}一边被贯穿着、一边承受着屁股上的痛苦、面容扭曲、脸都歪了…`,
+    );
+  } else if (masochist < 5) {
+    era.print(
+      `${target_name()}每被打一下屁股、私处就更湿一分、主动扭动腰肢、抬起屁股、沉醉在被欺凌的快感之中…`,
+    );
+  } else {
+    era.print(
+      `屁股被打得通红、${target_name()}已经分不清痛苦和快感的区别、私处兴奋至极、肉壁不自觉地蠕动着、发出混合着悲鸣与快乐的高亢呻吟、快要疯掉了…`,
+    );
+  }
+}
+
+async function message_a132() {
+  await train_message_a_sex_common();
+}
+
+/** @COM132（COMF132_後背位・スパンキング.ERB）背后位・打屁股。高级 COM。 */
+async function com132() {
+  era_flag.selectcom = 132; // 原作显式 SELECTCOM = 132（升格抵达时回填号位）
+  if ((await confirm_lost_virgin()) === 0) return 0;
+  if (!(await confirm_condom())) return 0;
+  era.print('背后位・打屁股');
+  await train_message_b();
+  const cid = era_flag.target;
+  game.train.伴V经验指令 = 1;
+  if (
+    tal(cid, 85) &&
+    !era_flag.assiplay &&
+    exp(cid, 0) === 0 &&
+    !tequip(cid, 89)
+  ) {
+    game.train.主人导致处女丧失 = 1;
+  }
+  await com_ejac_player_sex();
+  source132();
+  await com_after_vagina_sex();
+  return 1;
+}
+
 const com133 = make_advanced_com(133, '站立背后位');
 const com134 = make_advanced_com(134, '背后位ＳＰ');
 
@@ -3229,9 +3397,11 @@ train_message_b_family.register(130, message_b130);
 train_message_a_family.register(130, message_a130);
 train_message_b_family.register(131, message_b131);
 train_message_a_family.register(131, message_a131);
+train_message_b_family.register(132, message_b132);
+train_message_a_family.register(132, message_a132);
 
 // TRAIN_MESSAGE 空操作占位：先把分发面占住，避免「族票未落地」占位行。
-for (const id of [132, 133, 134, 135]) {
+for (const id of [133, 134, 135]) {
   train_message_b_family.register(id, async () => 0);
   train_message_a_family.register(id, async () => 0);
 }
