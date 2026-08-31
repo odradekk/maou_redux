@@ -57,6 +57,7 @@ const TRAIN_PATH_MODULES = [
   'system/train/com-colosseum',
   'system/train/com-advanced',
   'system/train/com-assistant',
+  'system/train/com-tentacle',
   'system/train/juel-check',
   'system/train/train-message',
 ];
