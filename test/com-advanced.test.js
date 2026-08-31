@@ -259,6 +259,55 @@ test('@COM122 B/A：互摩擦行与射精弄脏', async () => {
   );
 });
 
+test('@COM123：乳夹口交，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 32;
+  world.fixture.store.set('abl:31:11', 36);
+  const result = await world.com_family.call(123);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 123, '原作显式 SELECTCOM = 123');
+  assert.ok(world.fixture.text_lines().includes('乳夹口交'));
+  // ABL:16=0 → S4=620 ×0.80（技巧）=496；S5=150 ×0.80=120；
+  // S8=100 ×4.00=400；S13=2200；S14=900；S17=100。
+  assert.equal(world.fixture.store.get('source:31:4'), 496);
+  assert.equal(world.fixture.store.get('source:31:5'), 120);
+  assert.equal(world.fixture.store.get('source:31:8'), 400);
+  assert.equal(world.fixture.store.get('source:31:13'), 2200);
+  assert.equal(world.fixture.store.get('source:31:14'), 900);
+  assert.equal(world.fixture.store.get('source:31:17'), 100);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -30);
+  assert.equal(world.fixture.store.get('tflag:100'), 1);
+  assert.equal(world.fixture.store.get('tflag:200'), 3);
+});
+
+test('@COM123：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await world.com_family.call(123);
+  assert.equal(result, 0);
+  assert.equal(world.era_flag.selectcom, 123);
+  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+});
+
+test('@COM123 B/A：乳夹侍奉行与口中倾泻', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 36);
+  await world.com_family.call(123);
+  assert.ok(
+    world.fixture.text_lines().includes('温妮用胸部夹着阴茎、舔舐刺激着…'),
+  );
+
+  world.fixture.store.set('tflag:0', 1);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(
+    world.fixture
+      .text_lines()
+      .includes('你的阴茎、一边被胸部紧紧夹住、一边在温妮的嘴里倾泻精液…'),
+  );
+});
+
 test('@COM125：口交时自慰，显式回填 SELECTCOM=125', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;

@@ -3850,4 +3850,12 @@ export default [
     tests: ['com-advanced'],
     must_mention: 'COM122：默认档 SOURCE',
   },
+  {
+    desc: 'M1457 COM123 默认档侍奉精神 SOURCE:4 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  set_src(cid, 4, service[0]);',
+    replace: '  // 变异：COM123 侍奉精神 SOURCE:4 删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM123：乳夹口交，回填 SELECTCOM 与默认 SOURCE',
+  },
 ];
