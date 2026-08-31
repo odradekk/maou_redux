@@ -79,10 +79,12 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 的 guard 再滤掉误列菜单；#220 的 com-toy 同时进清单，配 item:0 / item:2
   // 的持有播种（golden 方格只出现 振动宝石[10] 与 振动杖[12]）。
   // 三者合并态实测 74 → 36，匹配与未解释数不变。
+  // 【#229（J19）追加与高级族落地后重测】COM_ABLE120-135 的真实 guard 再滤
+  // 掉误列菜单，存根 36 → 34。匹配与未解释数不变。
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 36,
+    stub: 34,
     unexplained: 0,
   });
 });
