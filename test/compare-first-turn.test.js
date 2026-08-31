@@ -79,10 +79,13 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 的 guard 再滤掉误列菜单；#220 的 com-toy 同时进清单，配 item:0 / item:2
   // 的持有播种（golden 方格只出现 振动宝石[10] 与 振动杖[12]）。
   // 三者合并态实测 74 → 36，匹配与未解释数不变。
+  // 【#227（J17）触手族落地后重测】无 talent:325 / item:90 的回放世界里
+  // COM_ABLE100-109/150/208 被真实 guard 滤掉，存根 36 → 25。匹配与未
+  // 解释数不变。
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 36,
+    stub: 25,
     unexplained: 0,
   });
 });

@@ -372,7 +372,8 @@ test('A 公共头的 TFLAG:15 死斗场两臂（SELECTCOM 21/27/31 的灌精文�
     ':135-141 的死斗场 ==2 臂',
   );
 
-  // 三支之外的 SELECTCOM 无输出；不在死斗场（触手臂随 J17）同样无输出。
+  // 三支之外的 SELECTCOM 无输出。死斗场命中 IF 链后 ELSEIF 触手臂不再落
+  // （源形状，1:1）。非死斗场的触手两臂随 J17 落地，但本用例在死斗场中。
   // A 分发段的占位行随 SELECTCOM 逐条出现，与此处无关——只数两臂的文本
   const arm_texts = () =>
     fixture
@@ -386,7 +387,7 @@ test('A 公共头的 TFLAG:15 死斗场两臂（SELECTCOM 21/27/31 的灌精文�
   assert.equal(arm_texts(), 2, 'SELECTCOM 206 无新增（三支之外）');
   assert.ok(
     !fixture.text_lines().some((l) => l.includes('触手、吐出了体液')),
-    '非死斗场的触手臂随 J17，当前不得出现',
+    '死斗场中触手臂不落（SIF 要求 TEQUIP:55 != 1）',
   );
 });
 

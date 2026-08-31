@@ -106,9 +106,13 @@ const REPO = path.resolve(__dirname, '..');
 // 只出现 振动宝石[10] 与 振动杖[12]，11 / 13-19 一次都没有，可证 NOITEM 关闭
 // 而玩家恰好持有这两件。COM10/COM12 因此真执行，natural 匹配 940 → 1108。
 // 下面是合并态的实测值。未解释恒 0。
+// 【#227（J17）触手族落地后重测】无 talent:325 / item:90 的回放世界里
+// 100-109/150/208 被真实 guard 滤掉，不再误记为「COM_ABLE 未移植」存根：
+// 自然态 933 → 746、升格态 365 → 310。输出匹配数不变（本族在两样本里
+// 一次都没被选中执行）。下面是合并态的实测值。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1108, version: 0, stub: 933, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 365, unexplained: 0 },
+  'train-natural': { matched: 1108, version: 0, stub: 746, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 310, unexplained: 0 },
 };
 
 async function build_report(sample) {

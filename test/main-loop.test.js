@@ -184,3 +184,20 @@ test('主启动图注册道具系：COM10 与 COM_ABLE10 可由主循环侧的 r
   assert.equal(com_family.has(10), true, 'COM10 必须经主启动图注册');
   assert.equal(com_able_family.has(10), true, 'COM_ABLE10 必须经主启动图注册');
 });
+
+test('主启动图注册触手系：COM100 / COM150 / COM208 可由主循环侧的 require 发现', async () => {
+  const fixture = create_era_fixture();
+  fixture.load_module('system/flow/main-loop');
+  const { com_family, com_able_family } = fixture.load_module(
+    'system/train/com-family',
+  );
+
+  assert.equal(com_family.has(100), true, 'COM100 必须经主启动图注册');
+  assert.equal(
+    com_able_family.has(100),
+    true,
+    'COM_ABLE100 必须经主启动图注册',
+  );
+  assert.equal(com_family.has(150), true, 'COM150 必须经主启动图注册');
+  assert.equal(com_family.has(208), true, 'COM208 必须经主启动图注册');
+});
