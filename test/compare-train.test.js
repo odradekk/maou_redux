@@ -96,12 +96,19 @@ const REPO = path.resolve(__dirname, '..');
 // −142、升格态 −36。
 //
 // 【#220（J10）亲族共用真身后重测】两样本均未设置亲族 CFLAG，原作 @INCEST
-// 静默早退；过去每个 SOURCE_CHECK 仍凭空输出一行 INCEST 存根。共享真身接入
-// source-check / com-vaginasex 后，这些伪行消失：自然态 −6、升格态 −3；匹配
-// 数与未解释数不变。这里仅更新行为进度计，不改变 compare 工具、回放或夹具。
+// 静默早退；过去每个 SOURCE_CHECK 仍凭空输出一行 INCEST 存根，这些伪行消失。
+// 【#274 回放补装 com-sm / com-hardcore / com-special / com-service】漏装形态
+// 同 #221：COM_ABLE 走缺失即可执行，菜单误列。补装后真实 guard 过滤掉的条目
+// 不再进存根；COM30/COM55 真执行使 natural 多匹配若干输出。
+// 顺带：COM_ABLE32 要巨乳（技巧 LV1 过乳交门槛，golden 脱衣后每屏都有
+// 乳交[32]）；COM_ABLE33 因 ere 润滑未达 2000 滤掉股间性交，记名归因。
+// 另：com-toy（#220）同时进清单，并补种 item:0 / item:2——golden 的指令方格
+// 只出现 振动宝石[10] 与 振动杖[12]，11 / 13-19 一次都没有，可证 NOITEM 关闭
+// 而玩家恰好持有这两件。COM10/COM12 因此真执行，natural 匹配 940 → 1108。
+// 下面是合并态的实测值。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 940, version: 0, stub: 1700, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 553, unexplained: 0 },
+  'train-natural': { matched: 1108, version: 0, stub: 933, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 365, unexplained: 0 },
 };
 
 async function build_report(sample) {

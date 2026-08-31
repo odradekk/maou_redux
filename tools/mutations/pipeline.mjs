@@ -326,4 +326,12 @@ export default [
     tests: ['compare-train'],
     must_mention: 'COM20 必须随回放装载',
   },
+  {
+    desc: 'M1371 回放漏装奉仕系（COM30-38 的真实 guard 不生效）（#274）',
+    file: 'tools/compare/replay.js',
+    find: "  'system/train/com-service',",
+    replace: '  // 变异：回放漏装奉仕系',
+    tests: ['com-family-wiring'],
+    must_mention: '回放清单漏装：com-service',
+  },
 ];

@@ -3936,4 +3936,12 @@ export default [
     tests: ['main-loop'],
     must_mention: 'COM10 必须经主启动图注册',
   },
+  {
+    desc: 'M1370 主启动图删着装脱衣系注册（COM110/111 不进实际运行图）（#274）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/system/train/com-cloth');",
+    replace: '// 变异：着装脱衣系不在主启动图注册',
+    tests: ['com-family-wiring'],
+    must_mention: '主启动图漏装：com-cloth',
+  },
 ];
