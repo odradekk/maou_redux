@@ -6,7 +6,7 @@
  *     @KOJO_MESSAGE_COM_3（:887；七道跳过判定 :888-912；爱抚 CFLAG:301
  *     状态机 :920-1105——黄金样本 emuera.log:26 出自 :1097；舔阴 CFLAG:302
  *     :1110-1147；肛门爱抚 CFLAG:303 :1152-1197；自慰 CFLAG:304 :1202-1323；
- *     胸爱抚 CFLAG:306 :1328-1406）
+ *     胸爱抚 CFLAG:306 :1328-1406；接吻 CFLAG:307 :1412-1517）
  *
  * == 状态机（CFLAG:301，:918 注释「コマンド実行時のセリフ CFLAG 301～400
  *    を使用」） ==
@@ -33,6 +33,11 @@
  * 胸爱抚（CFLAG:306）初回按母乳体质 / 乳头环+抖M气质Lv3 / 爱＆淫乱 /
  * それ以外分档后推进到 1；二次以后母乳与非母乳各走「淫乱 → 爱慕 →
  * B感覚Lv3 → それ以外」，写入 5/4/3/2。
+ *
+ * 接吻（CFLAG:307）分三段：初吻（TFLAG:13，种族 314 / 恋人 317 / 侵攻
+ * FLAG:81 分档）与调教首次均推进到 1；二次以后按「淫乱 → 爱慕 → 顺从
+ * Lv2 → それ以外」写入 5/4/3/2。
+ *
  * 这张票存根（docs/stub-registry.md）：COLOSSEUM_KOJO_3 / DOG_KOJO_3（守卫
  * 岔开的专用口上）与尚未落地的其余 SELECTCOM 分支。
  */
@@ -1041,13 +1046,219 @@ async function kojo_message_com_3(rand) {
     return 0; // :1404
   }
 
-  // :1406 ENDIF（IF SELECTCOM == 5 的收口）——其余指令待办，占位一行
+  // :1406 ENDIF（IF SELECTCOM == 5 的收口）
+
+  // :1412 IF SELECTCOM == 6（接吻 CFLAG:307）
+  if (era_flag.selectcom === 6) {
+    const system = chara(target).system;
+    const first_kiss = game.train.初吻与自我口上;
+    const assiplay = era_flag.assiplay;
+    const no_beast_tentacle =
+      (era.get(`tequip:${target}:89`) || 0) === 0 &&
+      (era.get(`tequip:${target}:90`) || 0) === 0;
+
+    // :1414-1472 初吻（CFLAG:307 == 0 && TFLAG:13）
+    if (kojo.接吻 === 0 && first_kiss) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        assiplay === 0 &&
+        no_beast_tentacle
+      ) {
+        // :1416 淫乱かつ主人
+        if (era.get(`talent:${target}:314`) === 7) {
+          // :1418 高贵ダークエルフ
+          await era.printAndWait(
+            `${master_name}抓住${target_name}的下巴将她的脸转了过来、强行地将嘴唇重合了起来。`,
+          ); // :1420
+          await era.printAndWait(
+            `「嗯唔…嗯啾~…嗯呼~…嗯呼嗯~…~！…嗯唔~…嗯~嗯嗯~~呜~…呜~~！！！${heart(1)}」`,
+          ); // :1421
+          await era.printAndWait(
+            `${target_name}通红着脸沉浸在和${master_name}的亲吻当中。`,
+          ); // :1422
+          await era.printAndWait(
+            `「嗯哈啊啊~…啊啊…好棒…${sc()}淫乱的嘴唇能献给主人您真是荣幸呢~…${heart(3)}」`,
+          ); // :1423
+        } else if (era.get(`talent:${target}:317`) === 4) {
+          // :1428 故郷に恋人がいる場合
+          await era.printAndWait(
+            `「嗯呼呜~${heart(1)} 嗯呜~…啾呜~…啾呼~…呸咯~…嗯~嗯~嗯嗯嗯~${heart(1)}」`,
+          ); // :1429
+          await era.printAndWait(
+            `${target_name}环抱着${master_name}、热情地将舌头缠绕起来。`,
+          ); // :1430
+          await era.printAndWait(
+            `「亲吻原来…是会让人变得那么淫乱的感觉的啊…啊啊…还要…${heart(3)}」`,
+          ); // :1431
+          await era.printAndWait(
+            `${target_name}沉浸在了和${master_name}亲吻之中，脑海里的故乡的恋人就好像已经不在了一样………`,
+          ); // :1432
+        } else {
+          await era.printAndWait(
+            `「嗯呼~${heart(1)} 嗯啾…啾~…啾呼~…呸咯~…嗯~嗯~嗯嗯嗯~${heart(1)}」`,
+          ); // :1434
+          await era.printAndWait(
+            `${target_name}环抱着${master_name}、热情地将舌头缠绕起来。`,
+          ); // :1435
+          await era.printAndWait(
+            `「亲吻原来…是会让人变得那么淫乱的感觉的啊…啊啊…还要…${heart(3)}」`,
+          ); // :1436
+        }
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        assiplay === 0 &&
+        no_beast_tentacle
+      ) {
+        // :1439 爱かつ主人
+        if (era.get(`talent:${target}:314`) === 1) {
+          // :1441 高贵エルフ
+          await era.printAndWait(
+            `「那、那个、${sc()}那个所谓的心理准备还没…啊嗯~！」`,
+          ); // :1442
+          await era.printAndWait(
+            `趁着${target_name}还在迷惑的时候将其抱住后、${master_name}直接将她的嘴唇夺走了。`,
+          ); // :1443
+          await era.printAndWait(
+            '「嗯呼~…嗯…嗯呜~…嗯…啾…啾…噗哈~…啊啊~…啊~…♪」',
+          ); // :1444
+          await era.printAndWait(
+            '「真、真是的…真是那个…对大人您真是无奈了呀…啊嗯~！」',
+          ); // :1445
+          await era.printAndWait(
+            `${master_name}再次将这个有点小啰嗦的精灵族小姑娘的嘴唇给夺走了………`,
+          ); // :1446
+        } else if (era.get(`talent:${target}:317`) === 4) {
+          // :1450 故郷に恋人がいる場合
+          await era.printAndWait(
+            `「嗯哼哼~…这是${sc()}的初吻来的噢~………♪」`,
+          ); // :1451
+          await era.printAndWait(
+            `「啊嗯~…噗~请不要那么坏心眼啦…真的是初吻来的嘛…不管是第二回…还是第三回都是…${heart(1)}」`,
+          ); // :1452
+          await era.printAndWait(
+            `${target_name}可爱地微笑了一下后，便不停地跟${master_name}亲吻了起来………`,
+          ); // :1453
+        } else {
+          await era.printAndWait(
+            '「嗯呜~…是、是的…能否再来一次吗？」',
+          ); // :1455
+          await era.printAndWait(
+            `「${target_name}想要…好好地记住大人您的吻………」`,
+          ); // :1456
+          await era.printAndWait(
+            `${target_name}可爱地微笑了一下后，再度跟${master_name}亲吻了一下………`,
+          ); // :1457
+        }
+      } else if (
+        era.get(`talent:${target}:317`) === 4 &&
+        (era.get('flag:81') || 0) >= 5000
+      ) {
+        // :1462 故郷に恋人がいる場合、なおかつ侵攻度が５０００を越えている場合
+        await era.printAndWait(
+          '「亲、亲吻的话…真的会…放那个人走对吧………」',
+        ); // :1463
+        await era.printAndWait(
+          `${target_name}将自己的吻和在故乡的恋人的生命放在天枰衡量了一下、便向${master_name}献出了嘴唇。`,
+        ); // :1464
+        await era.printAndWait(
+          '「嗯~…嗯呜~…~！………已、已经…够了吧…」',
+        ); // :1465
+        await era.printAndWait(
+          `「！…怎，怎么能…那么卑鄙…让${scf()}、${sc()}自己来做什么的…唔…呜呜呜~………」`,
+        ); // :1466
+        await era.printAndWait(
+          `${target_name}的身体颤抖着，自己上前亲吻了${master_name}………`,
+        ); // :1467
+      } else {
+        await era.printAndWait(
+          `「啊啊…啊…${sc()}的…初吻被………」`,
+        ); // :1469
+      }
+      kojo.接吻 = 1; // :1472
+      return 0; // :1473
+    }
+
+    // :1475-1488 （調教では）初めて
+    if (kojo.接吻 === 0) {
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「嗯呜~…嗯啾~…嗯呼~...哼啊~…啊啊…非常地舒服呢~………${heart(1)}」`,
+        ); // :1478
+        await era.printAndWait(
+          `${target_name}的脸红得发烫，沉醉在和${master_name}的亲吻之中。`,
+        ); // :1479
+        await era.printAndWait(
+          `「${sc()}的嘴唇…全部都是主人的东西来的…请更加的…渴求${sc()}的嘴唇吧~~${heart(1)}」`,
+        ); // :1480
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        await era.printAndWait(
+          '「哈啊啊~…和喜欢的对方亲吻什么的居然会那么舒服来的呀…♪」',
+        ); // :1483
+        await era.printAndWait('「啊啊…请再…亲更多次吧~………」'); // :1484
+      } else {
+        await era.printAndWait(
+          '「嗯呜~…这，这样的…才不算什么呢！…！」',
+        ); // :1487
+      }
+      kojo.接吻 = 1; // :1489
+      return 0; // :1490
+    }
+
+    // :1492-1516 二回目以降
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「嗯唔…嗯啾~…嗯噗…呼啊…啊啊~…非常的舒服啊~………${heart(1)}」`,
+      ); // :1495
+      await era.printAndWait(
+        `${target_name}脸红得发烫，沉醉在和${master_name}的亲吻之中。`,
+      ); // :1496
+      await era.printAndWait(
+        `「${sc()}的嘴唇…全部都是主人的东西来的…请更加的…渴求${sc()}的嘴唇吧~~${heart(1)}」`,
+      ); // :1497
+      kojo.接吻 = 5; // :1498
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「嗯~…嗯啾~…啾~…哈啊啊~…感觉脑袋里变得一片空白了呢~…♪」',
+      ); // :1501
+      await era.printAndWait(
+        `「啊啊啊…只是亲吻就变得那么舒服什么的………${heart(1)}」`,
+      ); // :1502
+      await era.printAndWait(
+        `${target_name}如同说梦话地一样喃喃自语着，可见多么地沉浸在亲吻之中………`,
+      ); // :1503
+      kojo.接吻 = 4; // :1504
+    } else if (
+      system.顺从 >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「好、的…亲吻…对吧…嗯~…哈啊啊…还、还要更多吗？」',
+      ); // :1507
+      await era.printAndWait(
+        '「真、真是没有办法呢…嗯啾…啾…啾…♪」',
+      ); // :1508
+      kojo.接吻 = 3; // :1509
+    } else if (kojo.接吻 <= 1 || game.kojo.口上开关 === 2) {
+      await era.printAndWait('「哈啊…哈啊…这样…这样的………」'); // :1512
+      kojo.接吻 = 2; // :1513
+    }
+    return 0; // :1515
+  }
+
+  // :1517 ENDIF（IF SELECTCOM == 6 的收口）——其余指令待办，占位一行
   stub_line(
     'KOJO_MESSAGE_COM_3',
     `指令 ${era_flag.selectcom} 的口上`,
     '随各自指令票',
   );
   return 0;
+
 
 
 }

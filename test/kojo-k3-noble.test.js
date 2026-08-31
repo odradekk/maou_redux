@@ -676,16 +676,87 @@ test('胸爱抚二次以后：淫乱 / 爱慕 / B感覚Lv3 / それ以外', asyn
   assert.equal(other.store.get('cflag:31:306'), 2, '胸爱抚それ以外推进到 2');
 });
 
-test('爱抚与舔阴与肛门爱抚与自慰与胸爱抚外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+test('接吻调教首次（CFLAG:307 == 0 且非 TFLAG:13）：才不算什么 + 推进到 1', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 6; // 接吻，本切片尚未落地
+    era_flag.selectcom = 6;
   });
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 6 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
+    '「嗯呜~…这，这样的…才不算什么呢！…！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:307'), 1);
+});
+
+test('接吻二次以后：淫乱 / 爱慕 / 顺从Lv2 / それ以外', async () => {
+  const lewd = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('cflag:31:307', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k3(lewd, seq_rand(0, 0));
+  assert.deepEqual(lewd.text_lines(), [
+    '「嗯唔…嗯啾~…嗯噗…呼啊…啊啊~…非常的舒服啊~………♡」',
+    '温妮脸红得发烫，沉醉在和你的亲吻之中。',
+    '「我的嘴唇…全部都是主人的东西来的…请更加的…渴求我的嘴唇吧~~♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:307'), 5, '接吻淫乱推进到 5');
+
+  const love = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('cflag:31:307', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k3(love, seq_rand(0, 0));
+  assert.deepEqual(love.text_lines(), [
+    '「嗯~…嗯啾~…啾~…哈啊啊~…感觉脑袋里变得一片空白了呢~…♪」',
+    '「啊啊啊…只是亲吻就变得那么舒服什么的………♡」',
+    '温妮如同说梦话地一样喃喃自语着，可见多么地沉浸在亲吻之中………',
+  ]);
+  assert.equal(love.store.get('cflag:31:307'), 4, '接吻爱慕推进到 4');
+
+  const obey = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('cflag:31:307', 1);
+    f.store.set('abl:31:10', 2);
+  });
+  await speak_k3(obey, seq_rand(0, 0));
+  assert.deepEqual(
+    obey.text_lines(),
+    [
+      '「好、的…亲吻…对吧…嗯~…哈啊啊…还、还要更多吗？」',
+      '「真、真是没有办法呢…嗯啾…啾…啾…♪」',
+    ],
+    '接吻顺从Lv2推进到 3',
+  );
+  assert.equal(obey.store.get('cflag:31:307'), 3, '接吻顺从Lv2推进到 3');
+
+  const other = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('cflag:31:307', 1);
+  });
+  await speak_k3(other, seq_rand(0, 0));
+  assert.deepEqual(other.text_lines(), [
+    '「哈啊…哈啊…这样…这样的………」',
+  ]);
+  assert.equal(other.store.get('cflag:31:307'), 2, '接吻それ以外推进到 2');
+});
+
+test('爱抚与舔阴与肛门爱抚与自慰与胸爱抚与接吻外指令（SELECTCOM 未移植）：落占位行（分支待办可见）', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7; // 自己扒开，本切片尚未落地
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), [
+    '（指令 7 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_3，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
+
 
 
 

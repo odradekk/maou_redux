@@ -518,7 +518,34 @@ export default [
     tests: ['kojo-k3-noble'],
     must_mention: '胸爱抚B感覚Lv3推进到 3',
   },
+  {
+    desc: 'M1512 K3 接吻调教首次推进写错（CFLAG:307 = 1 改 2）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.接吻 = 1; // :1489',
+    replace: '      kojo.接吻 = 2; // :1489（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '接吻调教首次（CFLAG:307 == 0 且非 TFLAG:13）',
+  },
+  {
+    desc: 'M1513 K3 接吻淫乱推进写错（CFLAG:307 = 5 改 4）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.接吻 = 5; // :1498',
+    replace: '      kojo.接吻 = 4; // :1498（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '接吻淫乱推进到 5',
+  },
+  {
+    desc: 'M1514 K3 接吻顺从门槛错（ABL:10 >= 2 改 >= 3）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      system.顺从 >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)`,
+    replace: `      system.顺从 >= 3 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '接吻顺从Lv2推进到 3',
+  },
 ];
+
 
 
 
