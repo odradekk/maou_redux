@@ -48,6 +48,9 @@ require('#/system/train/com-caress');
 // @COM20-29「性交系」族（#221 J11）：阴道性交、逆侵犯与肛交的 @COM /
 // @COM_ABLE、TRAIN_MESSAGE 与 GET_ADV_COM 注册必须在主启动图实际加载。
 require('#/system/train/com-sex');
+// @COM30-38「奉仕系」族（#222 J12）：@COM/@COM_ABLE 真身 + TRAIN_MESSAGE 分支
+// + GET_ADV_COM 的 CASE 30-34 升格规则
+require('#/system/train/com-service');
 // @COM40-49「SM 系」族（#223 J13）：@COM/@COM_ABLE 真身 + EQUIP_COM43-49
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
 require('#/system/train/com-sm');

@@ -2001,11 +2001,17 @@ function message_a_ejaculation() {
       era.print(
         `阴茎拔出后、阴部处${large ? '、' : ''}${blood}${large ? '大量的精液滴出来了…' : '精液滴出来了…'}`,
       );
-    } else if ([26, 27, 28, 29].includes(com)) {
+    } else if ([26, 27, 28, 29, 36].includes(com)) {
       era.print(
         large
           ? '从肛门里漏出大量的精液沿着股沟向下流………'
           : '从肛门里漏出来的精液沿着股沟向下流……',
+      );
+    } else if (com === 34) {
+      era.print(
+        large
+          ? `阴茎拔出后、阴部处、${blood}大量的精液渗出来了…`
+          : `阴茎拔出后、阴部处${blood}精液渗出来了…`,
       );
     } else if (com === 25) {
       era.print(
@@ -2032,7 +2038,7 @@ function message_a_ejaculation() {
         ? '直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把插入的阴茎紧紧夹住了…'
         : '精液溢出的直肠、细微地颤抖着、把插入的阴茎紧紧夹住了…',
     );
-  } else if ((large ? [26, 27, 28, 29] : [27, 28, 29]).includes(com)) {
+  } else if ((large ? [26, 27, 28, 29, 36] : [27, 28, 29, 36]).includes(com)) {
     era.print(
       large
         ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${player_name()}的阴茎紧紧夹住了…`
@@ -2158,14 +2164,22 @@ function message_a_position() {
   else era.print(`${target_name()}的背脊后仰、坐到${player_name()}的怀里…`);
 }
 
-async function message_a_sex() {
+/**
+ * 性交 A 文的共享尾段。服务族的 COM34/36 复用它，但各自仍由服务模块注册，
+ * 因为骑乘位还要追加自己的 UP:2 反应。
+ */
+async function train_message_a_sex_common() {
   // EVENT_TRAIN_MESSAGE_A 的公共性交尾段按原 IF / ELSEIF / ELSE 顺序：
   // 先高潮总述（其中含目标射精附文），再玩家射精或无射精余韵，最后独立的
-  // 处女相关文本与姿势反应。
+  // 处女相关文本。
   message_a_orgasm();
   if (get('tflag:2')) message_a_ejaculation();
   else message_a_orgasm_afterglow();
   message_a_virgin_tail();
+}
+
+async function message_a_sex() {
+  await train_message_a_sex_common();
   message_a_position();
 }
 
@@ -2234,4 +2248,5 @@ module.exports = {
   source27,
   source28,
   source29,
+  train_message_a_sex_common,
 };

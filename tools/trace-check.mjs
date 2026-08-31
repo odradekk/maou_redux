@@ -95,6 +95,8 @@ const COMABLE = 'target/ERB/調教相關/COMABLE.ERB';
 const COMF_JUMP = 'target/ERB/調教相關/COMF_JUMP.ERB';
 // #226（J16：重度调教族 80-90——@COM/@COM_ABLE/@EQUIP_COM89/TRAIN_MESSAGE/CASE 80）
 const COMF80 = 'target/ERB/調教相關/COMF80_イラマチオ.ERB';
+const COMF30 = 'target/ERB/調教相關/COMF30_手淫.ERB';
+const COMF34 = 'target/ERB/調教相關/COMF34_騎乗位.ERB';
 const COMF40 = 'target/ERB/調教相關/COMF40_スパンキング.ERB';
 const COMF41 = 'target/ERB/調教相關/COMF41_鞭.ERB';
 const COMF42 = 'target/ERB/調教相關/COMF42_針.ERB';
@@ -2160,6 +2162,11 @@ const FILES = [
         ref: '226',
         any: [/SELECTCOM:\(COUNT \+ 1\) = FLAG:\(551 \+ COUNT\)/],
       },
+      {
+        src: SOURCE,
+        ref: '545',
+        any: [/^PREVCOM = SELECTCOM$/m],
+      },
     ],
   },
 
@@ -3026,6 +3033,30 @@ const FILES = [
   },
 
   {
+    // #222（J12）：COM30–38 奉仕系的公共 A 文分支与骑乘位反应。
+    js: 'ere/system/train/com-service.js',
+    refs: [
+      { src: MESSAGE_A, ref: '30-108', any: [/IF TFLAG:9 == 0/m] },
+      {
+        src: MESSAGE_A,
+        ref: '1175-1203',
+        any: [/ELSEIF SELECTCOM == 34 \|\| SELECTCOM == 36/m],
+      },
+      { src: COMABLE, ref: '1447-1870', any: [/@COM_ABLE30/m, /@COM_ABLE38/m] },
+      {
+        src: MESSAGE_B,
+        ref: '1485-1739',
+        any: [/ELSEIF SELECTCOM == 30/m, /ELSEIF SELECTCOM == 38/m],
+      },
+      { src: COMF30, ref: '1-11', any: [/@COM30/m, /CALL GET_ADV_COM/m] },
+      {
+        src: COMF34,
+        ref: '12-17',
+        any: [/CALL GET_ADV_COM,LOCAL/m, /FLAG:71 = 0/m],
+      },
+    ],
+  },
+  {
     // #213：@GET_ADV_COM 升格骨架（SELECTCASE 全文；零规则态）
     js: 'ere/system/train/com-adv.js',
     refs: [{ src: COMF_JUMP, ref: '1-684', any: [/@GET_ADV_COM/] }],
@@ -3819,6 +3850,7 @@ const FILES = [
       { src: MESSAGE_A, ref: '135-141', any: [/被怪物大量的粘稠精液灌满了/m] },
       { src: MESSAGE_A, ref: '143-145', any: [/身上的触手、吐出了体液/m] },
       { src: MESSAGE_A, ref: '30-108', any: [/IF TFLAG:9 == 0/m] },
+      { src: MESSAGE_B, ref: '3041-3046', any: [/IF TFLAG:31 == 2/m] },
     ],
   },
   // —— #215 J5 服装：ere/system/cloth-lookup.js ——
