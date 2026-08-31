@@ -428,7 +428,7 @@ export default [
   // 选择器的危险不是「选错」，是「选少了还不说」。三条变异分别拆掉
   // 全局锁、拆掉退回全量的兜底、把目录探针退化回全目录——都必须红。
   {
-    desc: 'M730 全局锁改成只在 --no-locks 时才加（交付闸不再带扫全树的那 11 个，跨域回归当场失明）',
+    desc: 'M730 全局锁改成只在 --no-locks 时才加（交付闸不再带扫全树的那 13 个，跨域回归当场失明）',
     file: 'tools/select-tests.mjs',
     find: '      if (!args.no_locks) for (const t of locks) tests.add(t);',
     replace:

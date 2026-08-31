@@ -47,7 +47,12 @@ const TRAIN_PATH_MODULES = [
   'page/page-train',
   'page/page-usercom',
   'system/train/com-caress',
+  'system/train/com-toy',
   'system/train/com-sex',
+  'system/train/com-service',
+  'system/train/com-sm',
+  'system/train/com-hardcore',
+  'system/train/com-special',
   'system/train/com-cloth',
   'system/train/com-colosseum',
   'system/train/com-advanced',
@@ -138,6 +143,13 @@ function seed_winnie_world(fixture) {
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:41', 5);
   fixture.store.set('cflag:31:40', 12);
+
+  // —— 道具持有（#274：com-toy 进回放清单后才有指令读它）——
+  //    golden 的指令方格里只出现 振动宝石[10] 与 振动杖[12]，11 / 13-19
+  //    一次都没有 → NOITEM 关闭，玩家恰好持有这两件（Item.csv:0 振动宝石、
+  //    :2 振动杖）。种多一件都会让方格多出 golden 没有的条目。
+  fixture.store.set('item:0', 1);
+  fixture.store.set('item:2', 1);
 
   // —— EX / 世界指针 ——
   fixture.store.set('ex:31:0', 1); // [阴蒂绝顶：1次]（log:51）
@@ -289,7 +301,12 @@ function seed_train_world(fixture, sample) {
   fixture.store.set('talent:0:122', 1);
   // 温妮非男人（TALENT:31:122 不写）：阴核参数名（train-natural-log:101）
   fixture.store.set('talent:31:163', 1); // 高貴（K3 口上挂载的前提）
-
+  // TALENT:31:110（巨乳）：COM_ABLE32 在技巧 LV1 仍放行乳交
+  // （train-natural-log:241 起、脱衣后每屏都有「乳交[32]」）。源
+  // COMABLE.ERB:1530 在非爆乳/巨乳/超乳时要求技巧 3+，种子技巧是 LV1
+  // （train-natural-log:946），故必须有这三档之一。胸围档日志无明文，
+  // 取中间档巨乳——#274 补装奉仕系后 COM_ABLE32 真身才消费到这条。
+  fixture.store.set('talent:31:110', 1);
   // —— 调教域表先开（三段寻址守卫；run_train 内的 beginTrain 幂等）——
   fixture.era.beginTrain(0, 31);
 
@@ -334,6 +351,12 @@ function seed_train_world(fixture, sample) {
   // (181)=165×1.1（master_skill_check 的档位乘算，train-natural-log:127 的实证；档内
   // 具体值不可知、已实现路径只消费档位，取代表值 200）
   fixture.store.set('cflag:31:2', 200);
+  // —— 道具持有（#274：com-toy 进回放清单后才有指令读它）——
+  //    golden 的指令方格里只出现 振动宝石[10] 与 振动杖[12]，11 / 13-19
+  //    一次都没有 → NOITEM 关闭，玩家恰好持有这两件（Item.csv:0 振动宝石、
+  //    :2 振动杖）。种多一件都会让方格多出 golden 没有的条目。
+  fixture.store.set('item:0', 1);
+  fixture.store.set('item:2', 1);
   // —— 服装（#215 J5 起 TRAIN_MESSAGE_B 服装前缀与 SHOW_STATUS 的
   //    【PRINT_CLOTHTYPE】为真身，两侧对得上要求播种着衣态）——
   // FLAG:37 = 1（着衣系统开）：状态屏【紧身衣＆裙甲的姿态】在场为证

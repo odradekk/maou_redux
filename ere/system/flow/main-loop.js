@@ -61,9 +61,14 @@ require('#/system/train/com-hardcore');
 // @COM50-59「特殊」族（#224 J14）：药剂、录像与场景切换真身、可用性、
 // TRAIN_MESSAGE 分支及 EQUIP_COM53/54/57/58/59 持续效果
 require('#/system/train/com-special');
+// @COM110/111「着装脱衣」族（#228 J18）：穿衣 / 脱衣。漏 require 时游戏里
+// 这两条指令根本没注册（#274 通用锁的起因之一）。
+require('#/system/train/com-cloth');
 // 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
 // @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
 require('#/system/train/com-colosseum');
+// @COM10-19「道具使用」族（#220 J10）：真身、可用性、装备持续效果与训练消息分支
+require('#/system/train/com-toy');
 // @COM120-135「追加与高级」族（#229 J19）：高级 COM 真身 + COM_ABLE +
 // TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 135 升格规则
 require('#/system/train/com-advanced');
