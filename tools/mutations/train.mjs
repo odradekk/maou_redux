@@ -3853,9 +3853,17 @@ export default [
   {
     desc: 'M1457 COM123 默认档侍奉精神 SOURCE:4 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  set_src(cid, 4, service[0]);',
-    replace: '  // 变异：COM123 侍奉精神 SOURCE:4 删除',
+    find: '  set_src(cid, 4, service[0]);\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
+    replace: '  // 变异：COM123 侍奉精神 SOURCE:4 删除\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
     tests: ['com-advanced'],
     must_mention: 'COM123：乳夹口交，回填 SELECTCOM 与默认 SOURCE',
+  },
+  {
+    desc: 'M1458 COM124 默认档苦痛 SOURCE:6 删除（#229）',
+    file: 'ere/system/train/com-advanced.js',
+    find: '  set_src(cid, 6, 200);',
+    replace: '  // 变异：COM124 苦痛 SOURCE:6 删除',
+    tests: ['com-advanced'],
+    must_mention: 'COM124：深喉，回填 SELECTCOM 与默认 SOURCE',
   },
 ];

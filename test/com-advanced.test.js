@@ -308,6 +308,53 @@ test('@COM123 B/A：乳夹侍奉行与口中倾泻', async () => {
   );
 });
 
+test('@COM124：深喉，回填 SELECTCOM 与默认 SOURCE', async () => {
+  const world = seed_world();
+  world.era_flag.selectcom = 31;
+  world.fixture.store.set('abl:31:11', 40);
+  const result = await world.com_family.call(124);
+  assert.equal(result, 1);
+  assert.equal(world.era_flag.selectcom, 124, '原作显式 SELECTCOM = 124');
+  assert.ok(world.fixture.text_lines().includes('深喉'));
+  // ABL:16=0 → S4=620 ×0.50（技巧）=310；S5=150 ×0.50=75；
+  // S8=100 ×4.00=400；S6=200；S13=1800；S14=600。
+  assert.equal(world.fixture.store.get('source:31:4'), 310);
+  assert.equal(world.fixture.store.get('source:31:5'), 75);
+  assert.equal(world.fixture.store.get('source:31:6'), 200);
+  assert.equal(world.fixture.store.get('source:31:8'), 400);
+  assert.equal(world.fixture.store.get('source:31:13'), 1800);
+  assert.equal(world.fixture.store.get('source:31:14'), 600);
+  assert.equal(world.fixture.store.get('deltabase:31:0'), -50);
+  assert.equal(world.fixture.store.get('tflag:100'), 1);
+  assert.equal(world.fixture.store.get('tflag:200'), 2);
+});
+
+test('@COM124：实行值不足则取消回合', async () => {
+  const world = seed_world();
+  const result = await world.com_family.call(124);
+  assert.equal(result, 0);
+  assert.equal(world.era_flag.selectcom, 124);
+  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+});
+
+test('@COM124 B/A：喉咙最深处与抓住头射出', async () => {
+  const world = seed_world();
+  world.fixture.store.set('abl:31:11', 40);
+  await world.com_family.call(124);
+  assert.ok(
+    world.fixture.text_lines().includes('温妮用喉咙最深处对阴茎又吸又夹…'),
+  );
+
+  world.fixture.store.set('tflag:0', 1);
+  const { train_message_a } = world.fixture.load_module(
+    'system/train/train-message',
+  );
+  await train_message_a();
+  assert.ok(
+    world.fixture.text_lines().includes('紧紧抓住温妮的头、在她喉咙深处射出…'),
+  );
+});
+
 test('@COM125：口交时自慰，显式回填 SELECTCOM=125', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;
