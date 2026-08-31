@@ -1009,6 +1009,11 @@ const FILES = [
         any: [/@AFTERTRAIN_MASTURBATION_CHECK/],
       },
       { src: AFTER_TRAIN, ref: '708-842', any: [/@AFTERTRAIN_BEASTSEX_CHECK/] },
+      // #270：三处与源对齐的内联行号
+      { src: AFTER_TRAIN, ref: '231-232', any: [/^TFLAG:13 = 4$/m] },
+      { src: AFTER_TRAIN, ref: '480-481', any: [/^TFLAG:13 = 2$/m] },
+      { src: AFTER_TRAIN, ref: '669-670', any: [/^TFLAG:13 = 1$/m] },
+      { src: AFTER_TRAIN, ref: '837', any: [/^\tJUEL:8 \+= A\*200$/m] },
     ],
   },
   {

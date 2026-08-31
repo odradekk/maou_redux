@@ -3676,4 +3676,51 @@ export default [
     tests: ['com-special'],
     must_mention: 'SOURCE_CHECK 调用时输出原作反应',
   },
+  {
+    desc: 'M1310 AFTERTRAIN: sex_check 经验落点改回肛门（exp:0 → exp:1）（#270）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  chara(target).dungeon.私处经验 += s;',
+    replace: '  chara(target).dungeon.肛门经验 += s; // 变异：落点改回肛门',
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_sex_check 通常性交与 ABL 判定',
+  },
+  {
+    desc: 'M1311 AFTERTRAIN: sex_check 缺 TFLAG:13=4 与 SELF_KOJO（#270）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  game.train.初吻与自我口上 = 4;
+  await self_kojo();`,
+    replace: '  // 变异：性交臂不设 tflag:13、不调 self_kojo',
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_sex_check 通常性交与 ABL 判定',
+  },
+  {
+    desc: 'M1312 AFTERTRAIN: lesbian 臂漏设 tflag:13=2（#270）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
+  game.train.初吻与自我口上 = 2;`,
+    replace: `  // 变异：百合臂不设 tflag:13
+  // game.train.初吻与自我口上 = 2;`,
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_lesbiansex_check 百合性交',
+  },
+  {
+    desc: 'M1313 AFTERTRAIN: masturbation 臂漏设 tflag:13=1（#270）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+  game.train.初吻与自我口上 = 1;`,
+    replace: `  // 变异：自慰臂不设 tflag:13
+  // game.train.初吻与自我口上 = 1;`,
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_masturbation_check 自慰检查',
+  },
+  {
+    desc: 'M1314 AFTERTRAIN: 兽奸报告二次累加改成 b（把原作 A 残留「修好」）（#270）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '    era.add(`juel:${target}:8`, leftover_a * 200);',
+    replace:
+      '    era.add(`juel:${target}:8`, b * 200); // 变异：把原作 A 残留修好成 B',
+    tests: ['event-aftertrain'],
+    must_mention: '兽奸报告二次累加 A≠B 时按自慰回数而非兽奸回数',
+  },
 ];

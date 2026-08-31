@@ -9,13 +9,27 @@
  *     @AFTERTRAIN_LESBIANSEX_CHECK（:354-546）
  *     @AFTERTRAIN_MASTURBATION_CHECK（:551-703）
  *     @AFTERTRAIN_BEASTSEX_CHECK（:708-842）
+ *
+ * 原作缺陷 1:1 照抄（#14 / #270）：兽奸报告分支源 :837 `JUEL:8 += A*200`
+ * 而打印用 `B*200`。本模块用 leftover_a 只建模同模块内自慰→兽奸那一跳，
+ * 跨模块残留不建模。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
 const { self_kojo } = require('#/kojo/kojo-system');
+const { chara_callname } = require('#/utils/callname-utils');
+
+/**
+ * 原作 A 是跨函数全局（技能指南 glossary.md:151）。本项目只建模同模块内
+ * 的那一跳：aftertrain_masturbation_check 写、aftertrain_beastsex_check 读。
+ * 跨模块残留不建模（已知偏差，#14 / #270）。兽奸报告分支源 :837 写
+ * `JUEL:8 += A*200` 而打印用 `B*200`——原作缺陷，1:1 照抄。
+ */
+let leftover_a = 0;
+
 /**
  * 获取角色称呼（SAVESTR / CALLNAME）
  * @param {number} cid
@@ -97,6 +111,10 @@ async function aftertrain_sex_check() {
   era.print(`回到床上做了${s}次…`);
   era.print('');
 
+  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  game.train.初吻与自我口上 = 4;
+  await self_kojo();
+
   era.print(`V经验＋${s}`);
   era.print(`性交经验＋${s}`);
   era.print(`快V点数＋${s * 200}`);
@@ -105,7 +123,7 @@ async function aftertrain_sex_check() {
   await era.waitAnyKey();
 
   const { chara } = require('#/facade/chara');
-  chara(target).dungeon.肛门经验 += s;
+  chara(target).dungeon.私处经验 += s;
   chara(target).dungeon.性交经验 += s;
   era.add(`juel:${target}:1`, s * 200);
   era.add(`juel:${target}:4`, s * 100);
@@ -304,8 +322,7 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
   era.print(`${target_name}和${assi_name}好像又百合PLAY了${n}回。`);
   await era.waitAnyKey();
 
-  // 口上
-  const { game } = require('#/facade/game');
+  // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
   game.train.初吻与自我口上 = 2;
   await self_kojo();
 
@@ -416,6 +433,7 @@ async function aftertrain_masturbation_check(
   if ((era.get(`base:${target}:0`) || 0) < 500) return 0;
 
   let a = 0;
+  leftover_a = 0;
   const abl31 = era.get(`abl:${target}:31`) || 0; // 自慰中毒
   if (abl31 === 1) a += 1;
   else if (abl31 === 2) a += 2;
@@ -440,8 +458,8 @@ async function aftertrain_masturbation_check(
   if (abl11 >= 5 && abl17 >= 4 && palam5 >= palamlv4) a += 1;
   if (abl11 >= 4 && abl17 >= 3 && palam5 >= palamlv4) a += 1;
 
+  leftover_a = a;
   if (a <= 0) return 0;
-
   if (era.get(`talent:${target}:74`)) a = Math.floor(a * 1.5);
   if (assi >= 0 && era.get(`talent:${assi}:118`)) a = Math.floor(a * 1.2);
 
@@ -456,6 +474,8 @@ async function aftertrain_masturbation_check(
   else if (era.get(`talent:${target}:71`)) a -= 2;
 
   if (era.get(`talent:${target}:76`)) a += 1;
+
+  leftover_a = a;
 
   if (a <= 0) return 0;
 
@@ -493,8 +513,7 @@ async function aftertrain_masturbation_check(
     q = 0;
   }
 
-  // 口上
-  const { game } = require('#/facade/game');
+  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
   game.train.初吻与自我口上 = 1;
   await self_kojo();
 
@@ -633,7 +652,8 @@ async function aftertrain_beastsex_check() {
     const tail = era.get(`talent:${target}:124`) ? '摇着尾巴，' : '';
     era.print(`在那之后${target_name}${tail}来报告了。`);
     era.print(`耻情点数＋${b * 200}`);
-    era.add(`juel:${target}:8`, b * 200);
+    // 源 :837 `JUEL:8 += A*200`：A 是自慰回数残留（#14 / #270），打印仍用 B
+    era.add(`juel:${target}:8`, leftover_a * 200);
   }
 
   return 1;

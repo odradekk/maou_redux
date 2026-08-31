@@ -20,11 +20,9 @@
  *   - @SELF_CHECK 五条派发臂的互斥与优先次序（男性→肛门、女性 V<A→肛门、
  *     处女+A感觉≥3→肛门、其余→性交），以及失神守卫与逆强暴复位。
  *
- * 已知移植差异（未在断言中固化，登记 issue #218）：
- *   - aftertrain_sex_check 写 exp:1（肛门经验）而源 ERB 写 EXP:0（私处经验）；
- *   - aftertrain_sex_check 缺 TFLAG:13 = 4; CALL SELF_KOJO（源 ERB:231-232）；
- *   - aftertrain_beastsex_check 报告分支写 juel:8 = b*200 而源 ERB 写
- *     JUEL:8 += A*200（A 是自慰回数残留——原作缺陷嫌疑）。
+ * 原作缺陷（#14 / #270，1:1 照抄不修）：
+ *   - aftertrain_beastsex_check 报告分支写 juel:8 += leftover_a*200
+ *     （源 :837 `JUEL:8 += A*200`，A 是自慰回数残留；打印仍用 B*200）。
  */
 
 const assert = require('node:assert/strict');
@@ -70,15 +68,7 @@ function satisfy_sex_gates(fixture, { abl_index, abl_value } = {}) {
 }
 
 test('AFTERTRAIN: aftertrain_sex_check 通常性交与 ABL 判定', async () => {
-  const fixture = create_era_fixture();
-  preset_gamebase(fixture);
-  fixture.seed_chara(0, { name: '魔王', callname: '魔王' });
-  fixture.seed_chara(17, { name: '玛奥', callname: '玛奥' });
-
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 17;
-  era_flag.player = 0;
-
+  const { fixture } = seed_aftertrain_world();
   const { aftertrain_sex_check } = fixture.load_module(
     'event/event-aftertrain',
   );
@@ -97,7 +87,9 @@ test('AFTERTRAIN: aftertrain_sex_check 通常性交与 ABL 判定', async () => 
   assert.equal(res, 1);
   // S = 1 (V感觉 4) + 1 (淫乱) = 2 回
   assert.equal(fixture.store.get('exp:17:5'), 37);
+  assert.equal(fixture.store.get('exp:17:0'), 2); // 私处经验 EXP:0
   assert.equal(fixture.store.get('juel:17:1'), 400);
+  assert.equal(fixture.store.get('tflag:13'), 4); // 源 :231 TFLAG:13 = 4
 });
 
 test('AFTERTRAIN: aftertrain_sex_check 逐道门槛负例（只关一道闸，结果就变）', async () => {
@@ -159,6 +151,7 @@ test('AFTERTRAIN: aftertrain_sex_check 的 S 计算数值锚', async () => {
   satisfy_sex_gates(fixture, { abl_index: 2, abl_value: 5 });
   assert.equal(await aftertrain_sex_check(), 1);
   assert.equal(fixture.store.get('exp:17:5'), 38);
+  assert.equal(fixture.store.get('exp:17:0'), 3); // 私处经验
   assert.equal(fixture.store.get('juel:17:1'), 600);
   assert.equal(fixture.store.get('juel:17:4'), 300);
   assert.equal(fixture.store.get('juel:17:5'), 750);
@@ -335,6 +328,7 @@ test('AFTERTRAIN: aftertrain_lesbiansex_check 百合性交', async () => {
   const res = await aftertrain_lesbiansex_check(0);
   assert.equal(res, 1);
   assert(fixture.store.get('juel:17:0') > 0);
+  assert.equal(fixture.store.get('tflag:13'), 2); // 源 :480 TFLAG:13 = 2
 });
 
 test('AFTERTRAIN: aftertrain_lesbiansex_check 逐道门槛负例', async () => {
@@ -550,6 +544,7 @@ test('AFTERTRAIN: aftertrain_masturbation_check 自慰检查', async () => {
   const res = await aftertrain_masturbation_check(0, 0, () => 0);
   assert.equal(res, 1);
   assert.equal(fixture.store.get('exp:17:10'), 2);
+  assert.equal(fixture.store.get('tflag:13'), 1); // 源 :669 TFLAG:13 = 1
 });
 
 test('AFTERTRAIN: aftertrain_masturbation_check 逐道门槛负例', async () => {
@@ -811,6 +806,10 @@ test('AFTERTRAIN: aftertrain_beastsex_check 报告分支（顺从+露出+抖M≥
     '动物耳目标报告时必须有「摇着尾巴」',
   );
   assert.ok(fixture.text_lines().some((l) => l.includes('来报告了')));
+  // 第一次 juel:8 += B*200；第二次源 :837 用 A*200。单独调用兽奸时
+  // leftover_a = 0（跨模块残留不建模），故二次累加为 0。
+  // B = 中毒 3→+1 + 动物耳后置 +1 = 2；第一次 +400，第二次 +0 → 400。
+  assert.equal(fixture.store.get('juel:17:8'), 400);
 });
 
 test('AFTERTRAIN: self_check 失神跳过守卫与五条派发臂', async () => {
@@ -932,9 +931,9 @@ test('AFTERTRAIN: self_check 派发——其余（非男非处女且 V≥A）→
   fixture.store.set('abl:17:3', 2); // A感觉 2
   await self_check(() => 0);
   assert.ok(fixture.text_lines().some((l) => l.includes('V经验＋')));
-  // 注意：sex_check 的 exp:0 写入有移植差异（写成了 exp:1），此处只断言
-  // 性交经验与珠，不碰 exp:0
+  assert.equal(fixture.store.get('exp:17:0'), 2); // 私处经验 EXP:0
   assert.equal(fixture.store.get('exp:17:5'), 37); // S = 1(V4)+1(爱慕) = 2
+  assert.equal(fixture.store.get('tflag:13'), 4);
 });
 
 test('AFTERTRAIN: self_check 逆强暴复位与目标为空守卫', async () => {
@@ -946,4 +945,32 @@ test('AFTERTRAIN: self_check 逆强暴复位与目标为空守卫', async () => 
 
   era_flag.target = -1;
   assert.equal(await self_check(() => 0), 0, '目标为空直接返回 0');
+});
+
+test('AFTERTRAIN: 兽奸报告二次累加 A≠B 时按自慰回数而非兽奸回数（#270）', async () => {
+  const { fixture, era_flag } = seed_aftertrain_world();
+  const { aftertrain_masturbation_check, aftertrain_beastsex_check } =
+    fixture.load_module('event/event-aftertrain');
+
+  fixture.store.set('abl:17:0', 3);
+  fixture.store.set('abl:17:11', 2);
+  fixture.store.set('abl:17:31', 5); // A += 9
+  fixture.store.set('base:17:0', 1000);
+  era_flag.time = 0;
+  assert.equal(await aftertrain_masturbation_check(0, 0, () => 0), 1);
+  assert.equal(fixture.store.get('exp:17:10'), 9);
+
+  fixture.store.set('exp:17:56', 60);
+  fixture.store.set('item:22', 1);
+  fixture.store.set('abl:17:39', 3); // B += 1
+  fixture.store.set('talent:17:124', 1); // 后置 +1 → B = 2
+  fixture.store.set('palam:17:5', 5000);
+  fixture.store.set('abl:17:10', 5);
+  fixture.store.set('abl:17:17', 5);
+  fixture.store.set('abl:17:21', 5);
+  await aftertrain_beastsex_check();
+
+  // 第一次 += B*200 = 400；第二次 += A*200 = 1800 → 2200。
+  // 若误写成 B*200，会得到 800。反向变异「改成 b 即红」落在这里。
+  assert.equal(fixture.store.get('juel:17:8'), 2 * 200 + 9 * 200);
 });
