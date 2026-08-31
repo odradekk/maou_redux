@@ -29,6 +29,21 @@ class TrainFacade {
   }
 
   /**
+   * 野外露出经验（cflag:cid:5 ↔ CFLAG:5）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:5 野外露出経験
+   * @returns {number}
+   */
+  get 野外露出经验() {
+    return era.get(`cflag:${this.cid}:5`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 野外露出经验(v) {
+    era.set(`cflag:${this.cid}:5`, v);
+  }
+
+  /**
    * 初体验对象（cflag:cid:15 ↔ CFLAG:15）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
    * @returns {number}
@@ -56,6 +71,21 @@ class TrainFacade {
    */
   set 初吻对象(v) {
     era.set(`cflag:${this.cid}:16`, v);
+  }
+
+  /**
+   * 媚药禁断症状（cflag:cid:32 ↔ CFLAG:32）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:32 媚薬中毒の禁断症状判定
+   * @returns {number}
+   */
+  get 媚药禁断症状() {
+    return era.get(`cflag:${this.cid}:32`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 媚药禁断症状(v) {
+    era.set(`cflag:${this.cid}:32`, v);
   }
 
   /**
@@ -164,6 +194,36 @@ class TrainFacade {
   }
 
   /**
+   * 录像时间（cflag:cid:491 ↔ CFLAG:491）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:491 撮影時間
+   * @returns {number}
+   */
+  get 录像时间() {
+    return era.get(`cflag:${this.cid}:491`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 录像时间(v) {
+    era.set(`cflag:${this.cid}:491`, v);
+  }
+
+  /**
+   * 水晶球充能次数（cflag:cid:499 ↔ CFLAG:499）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:499 水晶球充能回数
+   * @returns {number}
+   */
+  get 水晶球充能次数() {
+    return era.get(`cflag:${this.cid}:499`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 水晶球充能次数(v) {
+    era.set(`cflag:${this.cid}:499`, v);
+  }
+
+  /**
    * 自动调教（cflag:cid:666 ↔ CFLAG:666）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 = 自動調教
    * @returns {number}
@@ -196,6 +256,36 @@ class TrainFacade {
 
   // —— tequip ——
   /**
+   * 淋浴中（tequip:cid:18 ↔ TEQUIP:18）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行507 TEQUIP:18 シャワー使用中
+   * @returns {number}
+   */
+  get 淋浴中() {
+    return era.get(`tequip:${this.cid}:18`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 淋浴中(v) {
+    era.set(`tequip:${this.cid}:18`, v);
+  }
+
+  /**
+   * 媚药效果（tequip:cid:21 ↔ TEQUIP:21）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行509 TEQUIP:21 しあわせ草
+   * @returns {number}
+   */
+  get 媚药效果() {
+    return era.get(`tequip:${this.cid}:21`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 媚药效果(v) {
+    era.set(`tequip:${this.cid}:21`, v);
+  }
+
+  /**
    * 对象避孕套（tequip:cid:37 ↔ TEQUIP:37）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行513 TEQUIP:37 調教対象がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:427-430 的 system 跨域清零）
    * @returns {number}
@@ -226,6 +316,36 @@ class TrainFacade {
   }
 
   /**
+   * 录像摄影（tequip:cid:53 ↔ TEQUIP:53）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行521 TEQUIP:53 ビデオ撮影
+   * @returns {number}
+   */
+  get 录像摄影() {
+    return era.get(`tequip:${this.cid}:53`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 录像摄影(v) {
+    era.set(`tequip:${this.cid}:53`, v);
+  }
+
+  /**
+   * 野外PLAY（tequip:cid:54 ↔ TEQUIP:54）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行522 TEQUIP:54 野外プレイ
+   * @returns {number}
+   */
+  get 野外PLAY() {
+    return era.get(`tequip:${this.cid}:54`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 野外PLAY(v) {
+    era.set(`tequip:${this.cid}:54`, v);
+  }
+
+  /**
    * 死斗场（tequip:cid:55 ↔ TEQUIP:55）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行523 TEQUIP:55 コロシアム
    * @returns {number}
@@ -238,6 +358,51 @@ class TrainFacade {
    */
   set 死斗场(v) {
     era.set(`tequip:${this.cid}:55`, v);
+  }
+
+  /**
+   * 羞耻PLAY（tequip:cid:57 ↔ TEQUIP:57）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行524 TEQUIP:57 羞恥プレイ
+   * @returns {number}
+   */
+  get 羞耻PLAY() {
+    return era.get(`tequip:${this.cid}:57`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 羞耻PLAY(v) {
+    era.set(`tequip:${this.cid}:57`, v);
+  }
+
+  /**
+   * 浴室PLAY（tequip:cid:58 ↔ TEQUIP:58）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行525 TEQUIP:58 お風呂場プレイ
+   * @returns {number}
+   */
+  get 浴室PLAY() {
+    return era.get(`tequip:${this.cid}:58`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 浴室PLAY(v) {
+    era.set(`tequip:${this.cid}:58`, v);
+  }
+
+  /**
+   * 新妻PLAY（tequip:cid:59 ↔ TEQUIP:59）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行526 TEQUIP:59 新妻プレイ
+   * @returns {number}
+   */
+  get 新妻PLAY() {
+    return era.get(`tequip:${this.cid}:59`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 新妻PLAY(v) {
+    era.set(`tequip:${this.cid}:59`, v);
   }
 
   /**

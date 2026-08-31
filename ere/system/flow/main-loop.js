@@ -55,6 +55,9 @@ require('#/system/train/com-sm');
 // 魔兽 PLAY、兽奸 PLAY、乳内插入的 @COM/@COM_ABLE 真身 + EQUIP_COM89
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 80 升格规则
 require('#/system/train/com-hardcore');
+// @COM50-59「特殊」族（#224 J14）：药剂、录像与场景切换真身、可用性、
+// TRAIN_MESSAGE 分支及 EQUIP_COM53/54/57/58/59 持续效果
+require('#/system/train/com-special');
 // 死斗场与怪物族 @COM200-207（#230 J20）：TEQUIP:55 的写入方与
 // @COM_AFTER_ARENA/@ARENA_*_POINT 的宿主（J17 触手接线时复用后两者）
 require('#/system/train/com-colosseum');

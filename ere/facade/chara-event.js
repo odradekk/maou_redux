@@ -59,6 +59,21 @@ class EventFacade {
   }
 
   /**
+   * 媚药残留度（cflag:cid:31 ↔ CFLAG:31）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:31 体内媚薬残留度
+   * @returns {number}
+   */
+  get 媚药残留度() {
+    return era.get(`cflag:${this.cid}:31`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 媚药残留度(v) {
+    era.set(`cflag:${this.cid}:31`, v);
+  }
+
+  /**
    * 贞操带钥匙（cflag:cid:50 ↔ CFLAG:50）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行304 CFLAG:50 = 貞操帯のカギをダンジョンで見つけた
    * @returns {number}

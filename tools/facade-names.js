@@ -78,6 +78,14 @@ const cflag = {
     '灌肠经验',
     src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),
   ),
+  5: named_tail('野外露出经验', src(SRC_FLAG, 'CFLAG:5 野外露出経験')),
+  31: named_tail('媚药残留度', src(SRC_FLAG, 'CFLAG:31 体内媚薬残留度')),
+  32: named_tail(
+    '媚药禁断症状',
+    src(SRC_FLAG, 'CFLAG:32 媚薬中毒の禁断症状判定'),
+  ),
+  491: named_tail('录像时间', src(SRC_FLAG, 'CFLAG:491 撮影時間')),
+  499: named_tail('水晶球充能次数', src(SRC_FLAG, 'CFLAG:499 水晶球充能回数')),
   9: named(
     '等级',
     src(SRC_FLAG, 'CFLAG:9 レベル（LVUP.ERB の CFLAG:(ARG:0):9）'),
@@ -759,6 +767,8 @@ const deltabase = {
 //    train 域内——族票写它时可直写也可走门面，具名是给可读性）。
 //    其余属主下标随各自族票补名（#71 裁定三：未命名不进门面）。——
 const tequip = {
+  18: named_tail('淋浴中', src(SRC_FLAG, ':507 TEQUIP:18 シャワー使用中')),
+  21: named_tail('媚药效果', src(SRC_FLAG, ':509 TEQUIP:21 しあわせ草')),
   22: named_tail(
     '利尿剂',
     src(
@@ -781,7 +791,12 @@ const tequip = {
     ),
   ),
   45: named_tail('口塞', src(SRC_FLAG, ':516 TEQUIP:45 ボールギャグ装着')),
+  53: named_tail('录像摄影', src(SRC_FLAG, ':521 TEQUIP:53 ビデオ撮影')),
+  54: named_tail('野外PLAY', src(SRC_FLAG, ':522 TEQUIP:54 野外プレイ')),
   55: named_tail('死斗场', src(SRC_FLAG, ':523 TEQUIP:55 コロシアム')),
+  57: named_tail('羞耻PLAY', src(SRC_FLAG, ':524 TEQUIP:57 羞恥プレイ')),
+  58: named_tail('浴室PLAY', src(SRC_FLAG, ':525 TEQUIP:58 お風呂場プレイ')),
+  59: named_tail('新妻PLAY', src(SRC_FLAG, ':526 TEQUIP:59 新妻プレイ')),
   89: named_tail('兽奸', src(SRC_FLAG, ':527 TEQUIP:89 獣姦プレイ')),
   90: named_tail('触手', src(SRC_FLAG, ':528 TEQUIP:90 触手調教')),
 };

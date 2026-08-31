@@ -18,7 +18,7 @@
  *   - `SAVESTR:x` 在本作里由 `%NAME:x%` 赋值（SYSTEM ver1.0.3.ERB:105），
  *     所以它等价于名前，不是呼び名。
  * 两者仍分成两个函数：SAVESTR 是可被游戏改写的存档字串、NAME 是静态预设，
- * 将来可能分家；呼び名（-2）等 CALLNAME:x 的消费者出现时再加。
+ * 将来可能分家。CALLNAME:x 的消费者通过 chara_nickname 读取呼び名（-2）。
  *
  * 读未声明键返回 undefined（#13），消费者要空串——一律 ?? '' 兜底。
  */
@@ -43,4 +43,13 @@ function chara_name(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-module.exports = { chara_callname, chara_name };
+/**
+ * 角色的呼び名（CALLNAME:x 的等价物）。
+ * @param {number} cid 角色 ID
+ * @returns {string}
+ */
+function chara_nickname(cid) {
+  return era.get(`callname:${cid}:-2`) ?? '';
+}
+
+module.exports = { chara_callname, chara_name, chara_nickname };
