@@ -54,10 +54,6 @@ const {
   train_message_b,
   train_message_b_family,
 } = require('#/system/train/train-message');
-const {
-  arena_slave_point,
-  com_after_arena,
-} = require('#/system/train/com-colosseum');
 const { chara_callname } = require('#/utils/callname-utils');
 
 const STUBBED_CALLS = [];
@@ -388,6 +384,14 @@ async function com150() {
 }
 
 async function com208(rand = default_rand) {
+  // 延迟读取：主启动图的死斗场族注册（COM200-207）仍仅由 com-colosseum
+  // 自己负责；本族只在 COM208 真身里复用其死斗场结算 helper。顶层 require
+  // 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接线锁与 M1249
+  // 一起失明（#288 全树守卫抓到现存这一处，与 #233/#234 同形态）。
+  const {
+    arena_slave_point,
+    com_after_arena,
+  } = require('#/system/train/com-colosseum');
   const target = era_flag.target;
   era.print('触手'); // :9
   await train_message_b(); // :11
