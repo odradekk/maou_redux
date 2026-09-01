@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 13; // 肛门虫——COM12 落地后改用尚未填的指令
+    era_flag.selectcom = 14; // 后庭振动棒——COM13 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 13 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 14 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -1442,6 +1442,106 @@ test('振动杖二次：淫乱 / 爱慕 / 阈值闸', async () => {
     '「啊～啊啊～…明明被用这种东西玩弄…但是好舒服…啊啊～！啊～～！」',
   ]);
   assert.equal(yield3.store.get('cflag:31:313'), 3);
+});
+
+test('肛门虫开始首次：淫乱 + A钝感附加句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 13;
+    f.store.set('tequip:31:13', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('talent:31:105', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊～…连尻穴里都被虫子钻进去了…好棒…额呵呵…」',
+    '曾被称作圣女的琼脑袋里已经被淫欲所污染了………',
+    '于是琼钝感的肛门被快乐所开发、由于肛门虫的刺激而发出了很带感的呻吟声………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:314'), 1, '肛门虫首次推进到 1');
+});
+
+test('肛门虫开始二次：淫乱+A感觉拍摄 / 无A感觉写 6 / 阈值闸', async () => {
+  const film = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 13;
+    f.store.set('tequip:31:13', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('talent:31:105', 1);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('cflag:31:314', 1);
+  });
+  await speak_k0(film);
+  assert.deepEqual(film.text_lines(), [
+    '「请看吧♡　这么粗的蠕虫要插进我屁股眼里去了哦～♡」',
+    '琼妖艳的那期蠕虫、舔了舔嘴唇。',
+    '琼钝感的肛门被调教出了快感、由于肛门虫的刺激而发出了很带感的呻吟声………',
+  ]);
+  assert.equal(film.store.get('cflag:31:314'), 6);
+
+  const no_a = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 13;
+    f.store.set('tequip:31:13', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:314', 1);
+  });
+  await speak_k0(no_a);
+  assert.deepEqual(no_a.text_lines(), [
+    '「虫子…在…里面……～！动着…要变的…变的…奇怪了啊啊～～♡」',
+  ]);
+  assert.equal(
+    no_a.store.get('cflag:31:314'),
+    6,
+    '肛门虫二次淫乱无A感觉也写 6',
+  );
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 13;
+    f.store.set('tequip:31:13', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('cflag:31:314', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「啊咿～…啊～啊～啊啊啊啊！屁股眼～！屁股眼好舒服～！再往里钻吧～～！」',
+  ]);
+  assert.equal(
+    at_cap.store.get('cflag:31:314'),
+    6,
+    '肛门虫二次阈值闸 <=6 写回 6',
+  );
+});
+
+test('肛门虫脱着：淫乱写 CFLAG:374 = 4，门槛是 < 不是 <=', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 13;
+    f.store.set('tequip:31:13', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊啊～…要是能一整天都能被抽插着就好了…♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:374'), 4, '肛门虫着脱推进到 4');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 13;
+    f.store.set('tequip:31:13', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:374', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), []);
+  assert.equal(at_cap.store.get('cflag:31:374'), 4, '肛门虫着脱阈值闸用 < 4');
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

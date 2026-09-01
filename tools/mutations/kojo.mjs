@@ -1019,4 +1019,40 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '明明被用这种东西玩弄',
   },
+  {
+    desc: 'M1806 K0 肛门虫首次状态推进写错（CFLAG:314 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛门虫 = 1; // :1528',
+    replace: '      kojo.肛门虫 = 2; // :1528',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫首次推进到 1',
+  },
+  {
+    desc: 'M1807 K0 肛门虫二次淫乱+A感觉门槛错位（CFLAG:314 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫开始二次：淫乱+A感觉拍摄 / 无A感觉写 6 / 阈值闸',
+  },
+  {
+    desc: 'M1808 K0 肛门虫二次淫乱无A感觉写回错档（CFLAG:314 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛门虫 = 6; // :1551',
+    replace: '      kojo.肛门虫 = 5; // :1551',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫二次淫乱无A感觉也写 6',
+  },
+  {
+    desc: 'M1809 K0 肛门虫脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.肛门虫着脱 < 4 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.肛门虫着脱 <= 4 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫脱着：淫乱写 CFLAG:374 = 4，门槛是 < 不是 <=',
+  },
 ];

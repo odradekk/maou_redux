@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -10,7 +10,9 @@
  *     自己扒开 CFLAG:308 状态机 :1153-1189；插入手指 CFLAG:309 状态机 :1194-1248；
  *     舔肛 CFLAG:310 状态机 :1252-1310；振动宝石 CFLAG:311 状态机 :1314-1352；
  *     壶虫开始 CFLAG:312 :1358-1433、脱着 CFLAG:372 :1435-1450；
- *     振动杖 CFLAG:313 状态机 :1455-1499）
+ *     振动杖 CFLAG:313 状态机 :1455-1499；
+ *     肛门虫开始 CFLAG:314 :1505-1588、脱着 CFLAG:374 :1590-1609）
+
 
 
 
@@ -80,7 +82,8 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-1499）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖。
+ * @KOJO_MESSAGE_COM_0（:674-1609）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫。
+
 
 
 
@@ -1365,6 +1368,199 @@ async function kojo_message_com_0(rand) {
         '「啊～…啊啊～…这样…好有感觉、不要…不要啊…咕呜嗯～」',
       ); // :1494
       kojo.振动杖 = 2; // :1495
+    }
+    return 0;
+  }
+
+  // :1505 IF SELECTCOM == 13 && TEQUIP:13（肛门虫开始，CFLAG:314）
+  if (era_flag.selectcom === 13 && era.get(`tequip:${target}:13`)) {
+    const a_sense = era.get(`abl:${target}:3`) || 0;
+    const a_insensible = era.get(`talent:${target}:105`) === 1;
+    const filming = era.get(`tequip:${target}:53`);
+
+    // :1507-1529 初めて（CFLAG:314 == 0）
+    if (kojo.肛门虫 === 0) {
+      // :1509-1514 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          '「啊啊～…连尻穴里都被虫子钻进去了…好棒…额呵呵…」',
+        ); // :1510
+        await era.printAndWait(
+          `曾被称作圣女的${target_name}脑袋里已经被淫欲所污染了………`,
+        ); // :1511
+        // :1513-1514 A感覚Lv3以上＋A鈍感
+        if (a_sense >= 3 && a_insensible) {
+          await era.printAndWait(
+            `于是${target_name}钝感的肛门被快乐所开发、由于肛门虫的刺激而发出了很带感的呻吟声………`,
+          ); // :1514
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1516-1520 爱慕
+        await era.printAndWait(
+          '「没、没事的…这、这种程度完全能够承受的下来…啊呜呜…咕～…」',
+        ); // :1517
+        // :1519-1520 A感覚Lv3以上＋A鈍感
+        if (a_sense >= 3 && a_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的肛门被快乐所开发、由于肛门虫的刺激而娇喘出声………`,
+          ); // :1520
+        }
+      } else {
+        // :1522-1526 それ以外
+        await era.printAndWait(
+          '「咿呀～…那、那里不能进去～！不能进去啊～！啊啊啊！」',
+        ); // :1523
+        // :1525-1526 A鈍感
+        if (a_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的肛门被肛门虫蠕动着钻了进去、${target_name}发出了悲鸣………`,
+          ); // :1526
+        }
+      }
+      kojo.肛门虫 = 1; // :1528
+      return 0;
+    }
+
+    // :1530-1588 二回目以降
+    // :1533-1544 淫乱＋A感覚Lv3以上
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)
+    ) {
+      if (filming) {
+        // :1535-1537 撮影中
+        await era.printAndWait(
+          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          `「请看吧${heart(1)}　这么粗的蠕虫要插进${sc()}屁股眼里去了哦～${heart(1)}」`,
+        ); // :1536
+        await era.printAndWait(`${target_name}妖艳的那期蠕虫、舔了舔嘴唇。`); // :1537
+      } else {
+        await era.printAndWait(
+          '「啊咿～…啊～啊～啊啊啊啊！屁股眼～！屁股眼好舒服～！再往里钻吧～～！」',
+        ); // :1539
+      }
+      // :1542-1543 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门被调教出了快感、由于肛门虫的刺激而发出了很带感的呻吟声………`,
+        ); // :1543
+      }
+      kojo.肛门虫 = 6; // :1544
+    } else if (
+      // :1546-1551 淫乱
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「虫子…在…里面……～！动着…要变的…变的…奇怪了啊啊～～${heart(1)}」`,
+      ); // :1547
+      // :1549-1550 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}还很钝感的肛门被肛门虫蠕动着钻了进去、${target_name}好像很开心的晃着屁股作为回应………`,
+        ); // :1550
+      }
+      kojo.肛门虫 = 6; // :1551
+    } else if (
+      // :1553-1564 爱＋A感覚Lv3以上
+      era.get(`talent:${target}:85`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      if (filming) {
+        // :1555-1557 撮影中
+        await era.printAndWait(
+          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          `「见请看吧♪　这么粗的蠕虫要被${sc()}的屁股眼吞下去了呦♪」`,
+        ); // :1556
+        await era.printAndWait(
+          `${target_name}抱起一抖一抖的扭动着的蠕虫、妖艳的笑着。`,
+        ); // :1557
+      } else {
+        await era.printAndWait(
+          '「啊～啊啊～…嗯呜唔～…屁股眼…感觉…好棒呢…啊～啊啊～再往里钻吧！」',
+        ); // :1559
+      }
+      // :1562-1563 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门被调教出了快感、由于肛门虫的刺激娇喘出声………`,
+        ); // :1563
+      }
+      kojo.肛门虫 = 5; // :1564
+    } else if (
+      // :1566-1571 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.肛门虫 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「屁、屁股…好奇怪…变的好奇怪…不要…真的不要啊…」'); // :1567
+      // :1569-1570 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门一被肛门虫蠕动着钻了进去、${target_name}就皱起眉头发出了好像很痛苦的呻吟………`,
+        ); // :1570
+      }
+      kojo.肛门虫 = 4; // :1571
+    } else if (
+      // :1573-1578 A感覚Lv3以上
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「啊～…啊啊啊～…讨厌～…屁股眼爽的不行了…明明不能这样的！啊啊～～♪」',
+      ); // :1574
+      // :1576-1577 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门被开发而觉醒了快感、由于肛门虫的刺激而娇喘出声………`,
+        ); // :1577
+      }
+      kojo.肛门虫 = 3; // :1578
+    } else if (kojo.肛门虫 <= 1 || game.kojo.口上开关 === 2) {
+      // :1580-1585 それ以外
+      await era.printAndWait('「咕呜～…好难受…好难受啊…」'); // :1581
+      // :1583-1584 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门一被肛门虫蠕动着钻了进去、${target_name}就发出了悲鸣………`,
+        ); // :1584
+      }
+      kojo.肛门虫 = 2; // :1585
+    }
+    return 0;
+  }
+
+  // :1590 ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0（肛门虫脱着，CFLAG:374）
+  if (era_flag.selectcom === 13 && !era.get(`tequip:${target}:13`)) {
+    const a_sense = era.get(`abl:${target}:3`) || 0;
+    // :1592-1594 淫乱（门槛是 < 不是 <=）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.肛门虫着脱 < 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊啊～…要是能一整天都能被抽插着就好了…${heart(1)}」`,
+      ); // :1593
+      kojo.肛门虫着脱 = 4; // :1594
+    } else if (
+      // :1596-1598 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.肛门虫着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「哈啊…哈啊…啊啊…总觉得屁股眼感到寂寞了呢…」'); // :1597
+      kojo.肛门虫着脱 = 3; // :1598
+    } else if (
+      // :1600-1602 A感覚Lv3以上
+      a_sense >= 3 &&
+      (kojo.肛门虫着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「嗯～…啊啊…总觉得…屁股眼…还意犹未尽…♪」'); // :1601
+      kojo.肛门虫着脱 = 2; // :1602
+    } else if (kojo.肛门虫着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :1604-1606 それ以外
+      await era.printAndWait('「哈啊…哈啊…哈啊………」'); // :1605
+      kojo.肛门虫着脱 = 1; // :1606
     }
     return 0;
   }
