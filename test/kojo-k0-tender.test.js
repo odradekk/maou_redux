@@ -4641,3 +4641,118 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     );
   }
 });
+
+// —— PALAMCNG / MARKCNG 参数变动与刻印取得口上 ——
+
+// 经分发族调用（TRYCALLFORM KOJO_MESSAGE_PALAMCNG_0 的等价物）
+async function palamcng_k0(fixture) {
+  const { kojo_message_palamcng } = fixture.load_module('kojo/kojo-system');
+  return kojo_message_palamcng();
+}
+
+// 经分发族调用（TRYCALLFORM KOJO_MESSAGE_MARKCNG_0 的等价物）
+async function markcng_k0(fixture) {
+  const { kojo_message_markcng } = fixture.load_module('kojo/kojo-system');
+  return kojo_message_markcng();
+}
+
+test('PALAMCNG：润滑度首次超过 LV2 触发首次口上并写 CFLAG:221', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('palam:31:3', 5);
+    f.store.set('delta:31:3', 5); // P = 10 > PALAMLV:2 = 5
+    f.store.set('palamlv:2', 5);
+  });
+  await palamcng_k0(fixture);
+  assert.match(fixture.text_lines()[0], /湿掉了/);
+  assert.equal(fixture.store.get('cflag:31:221'), 1, '记录首次润滑');
+});
+
+test('PALAMCNG：CFLAG:221 已置位时不重复出声', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('palam:31:3', 5);
+    f.store.set('delta:31:3', 5);
+    f.store.set('palamlv:2', 5);
+    f.store.set('cflag:31:221', 1);
+  });
+  await palamcng_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('PALAMCNG：总开关 FLAG:7 <= 0 静默', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('flag:7', 0);
+    f.store.set('palam:31:3', 5);
+    f.store.set('delta:31:3', 5);
+    f.store.set('palamlv:2', 5);
+  });
+  await palamcng_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('PALAMCNG：助手调教跳过', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('palam:31:3', 5);
+    f.store.set('delta:31:3', 5);
+    f.store.set('palamlv:2', 5);
+  });
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.assi = 1;
+  era_flag.assiplay = 1;
+  await palamcng_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('MARKCNG：苦痛刻印 Lv3 取得（TFLAG:22 == 3）触发并写 CFLAG:297', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tflag:22', 3);
+  });
+  await markcng_k0(fixture);
+  assert.match(fixture.text_lines()[0], /痛/);
+  assert.equal(fixture.store.get('cflag:31:297'), 1, '记录苦痛刻印');
+});
+
+test('MARKCNG：CFLAG:297 已置位时不重复出声', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tflag:22', 3);
+    f.store.set('cflag:31:297', 1);
+  });
+  await markcng_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('MARKCNG：快乐刻印取得（TFLAG:23）触发并写 CFLAG:298', async () => {
+  const fixture = await setup_k0((f) => f.store.set('tflag:23', 3));
+  await markcng_k0(fixture);
+  assert.match(fixture.text_lines()[0], /好爽/);
+  assert.equal(fixture.store.get('cflag:31:298'), 1);
+});
+
+test('MARKCNG：屈服刻印取得（TFLAG:24）触发并写 CFLAG:299', async () => {
+  const fixture = await setup_k0((f) => f.store.set('tflag:24', 3));
+  await markcng_k0(fixture);
+  assert.match(fixture.text_lines()[0], /反抗/);
+  assert.equal(fixture.store.get('cflag:31:299'), 1);
+});
+
+test('MARKCNG：反抗刻印取得（TFLAG:21）触发并写 CFLAG:300', async () => {
+  const fixture = await setup_k0((f) => f.store.set('tflag:21', 3));
+  await markcng_k0(fixture);
+  assert.match(fixture.text_lines()[0], /为什么/);
+  assert.equal(fixture.store.get('cflag:31:300'), 1);
+});
+
+test('MARKCNG：总开关 FLAG:7 <= 0 静默', async () => {
+  const fixture = await setup_k0((f) => f.store.set('flag:7', 0));
+  fixture.store.set('tflag:22', 3);
+  await markcng_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('MARKCNG：助手调教跳过', async () => {
+  const fixture = await setup_k0((f) => f.store.set('tflag:22', 3));
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.assi = 1;
+  era_flag.assiplay = 1;
+  await markcng_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});

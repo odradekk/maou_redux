@@ -187,10 +187,83 @@ async function self_kojo(rand, q = 0) {
   return 0;
 }
 
+/** @KOJO_MESSAGE_PALAMCNG_K{N} 族：参数变动口上（:169-182 的分派目标） */
+const palamcng_family = new DispatchFamily(
+  'KOJO_MESSAGE_PALAMCNG',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @KOJO_MESSAGE_MARKCNG_K{N} 族：刻印取得口上（:188-201 的分派目标） */
+const markcng_family = new DispatchFamily(
+  'KOJO_MESSAGE_MARKCNG',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * @KOJO_MESSAGE_PALAMCNG（:169-182）：参数变动后触发口上。
+ *
+ * 三道守卫：FLAG:7 <= 0 直接返回（:170-171）；存在判定 FLAG:LOCAL == 0
+ * 返回（:174-176，EX_FLAG 臂待办见文件头）；编号空间外不拼函数名。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @returns {Promise<number>} 0
+ */
+async function kojo_message_palamcng(rand) {
+  // :170-171 总开关
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0;
+  }
+
+  // :174-176 存在判定
+  const local = get_kojo_num();
+  if ((era.get(`flag:${local}`) || 0) === 0) {
+    return 0;
+  }
+
+  // :180-181 TRYCALLFORM KOJO_MESSAGE_PALAMCNG_{LOCAL - 100}
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await palamcng_family.call(local - 100, {
+      whenMissing: 0,
+      args: [rand],
+    });
+  }
+  return 0;
+}
+
+/**
+ * @KOJO_MESSAGE_MARKCNG（:188-201）：刻印取得后触发口上。
+ *
+ * 两道守卫：FLAG:7 <= 0 直接返回（:189-190）；存在判定被原作注释
+ * （:195-197，不判）。编号空间外不拼函数名。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @returns {Promise<number>} 0
+ */
+async function kojo_message_markcng(rand) {
+  // :189-190 总开关
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0;
+  }
+
+  // :199-200 TRYCALLFORM KOJO_MESSAGE_MARKCNG_{LOCAL - 100}
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await markcng_family.call(local - 100, {
+      whenMissing: 0,
+      args: [rand],
+    });
+  }
+  return 0;
+}
+
 module.exports = {
   get_kojo_num,
   kojo_message_com,
   kojo_message_com_family,
   self_kojo,
   self_kojo_family,
+  kojo_message_palamcng,
+  palamcng_family,
+  kojo_message_markcng,
+  markcng_family,
 };

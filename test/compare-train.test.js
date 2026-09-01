@@ -112,8 +112,8 @@ const REPO = path.resolve(__dirname, '..');
 // 技巧门槛、装备位）过滤掉误列菜单：自然态 899 → 712、升格态 355 → 300。
 // 下面是合并态的实测值。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1108, version: 0, stub: 525, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 245, unexplained: 0 },
+  'train-natural': { matched: 1108, version: 0, stub: 495, unexplained: 0 },
+  'train-upgrade': { matched: 257, version: 0, stub: 239, unexplained: 0 },
 };
 
 async function build_report(sample) {

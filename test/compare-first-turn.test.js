@@ -86,7 +86,7 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 12,
+    stub: 10,
     unexplained: 0,
   });
 });

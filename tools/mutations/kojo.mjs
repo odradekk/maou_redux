@@ -18,7 +18,7 @@ export default [
   {
     desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
     file: 'ere/kojo/kojo-system.js',
-    find: '  if ((era.get(`flag:${local}`) || 0) === 0) {',
+    find: '  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）\n  if ((era.get(`flag:${local}`) || 0) === 0) {',
     replace: '  if (false) { // 变异：存在判定删除',
     tests: ['kojo-system'],
     must_mention: '存在判定',
@@ -490,7 +490,7 @@ export default [
   {
     desc: 'M1610 K0 死斗场守卫删除（TEQUIP:55 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (era.get(`tequip:${target}:55`)) {',
+    find: '  // :676-678 死斗场中は専用口上\n  if (era.get(`tequip:${target}:55`)) {',
     replace: '  if (false) { // 变异：死斗场守卫删除',
     tests: ['kojo-k0-tender'],
     must_mention: '死斗场（TEQUIP:55）',
@@ -530,7 +530,7 @@ export default [
   {
     desc: 'M1614 K0 兽奸守卫删除（TEQUIP:89 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (era.get(`tequip:${target}:89`)) {',
+    find: '  // :693-695 兽奸PLAY中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
     replace: '  if (false) { // 变异：兽奸守卫删除',
     tests: ['kojo-k0-tender'],
     must_mention: '兽奸（TEQUIP:89）',
@@ -538,7 +538,7 @@ export default [
   {
     desc: 'M1615 K0 触手守卫删除（TEQUIP:90 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (era.get(`tequip:${target}:90`)) {',
+    find: '  // :698-699 触手調教中（TEQUIP:90）\n  if (era.get(`tequip:${target}:90`)) {',
     replace: '  if (false) { // 变异：触手守卫删除',
     tests: ['kojo-k0-tender'],
     must_mention: '触手（TEQUIP:90）',
@@ -2943,5 +2943,74 @@ export default [
     // :6836`,
     tests: ['kojo-k0-tender'],
     must_mention: 'TFLAG:13==1 自慰 Q==0 主人档（淫乱推进 CFLAG:261）',
+  },
+
+  {
+    desc: 'M1989 K0 PALAMCNG 润滑首超守卫删松（P 阈值改恒 true）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (\n    p > (era.get('palamlv:2') || 0) &&\n    (era.get(`cflag:${target}:221`) || 0) === 0\n  ) {",
+    replace:
+      '  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (true) { // 变异：P 阈值删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：润滑度首次超过 LV2 触发首次口上并写 CFLAG:221',
+  },
+  {
+    desc: 'M1990 K0 PALAMCNG CFLAG:221 防重删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (\n    p > (era.get('palamlv:2') || 0) &&\n    (era.get(`cflag:${target}:221`) || 0) === 0\n  ) {",
+    replace:
+      "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (p > (era.get('palamlv:2') || 0) && false) { // 变异：防重删松",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：CFLAG:221 已置位时不重复出声',
+  },
+  {
+    desc: 'M1991 K0 PALAMCNG 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-system.js',
+    find: "  // :170-171 总开关\n  if ((era.get('flag:7') || 0) <= 0) {",
+    replace: "  // :170-171 总开关\n  if ((era.get('flag:7') || 0) < 0) {",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：总开关 FLAG:7 <= 0 静默',
+  },
+  {
+    desc: 'M1992 K0 PALAMCNG 助手调教守卫删松（ASSI/ASSIPLAY 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    // :6510',
+    replace: '  if (false) { // 变异：助手守卫删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：助手调教跳过',
+  },
+  {
+    desc: 'M1993 K0 MARKCNG 苦痛刻印触发删松（TFLAG:22==3 改恒 true）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (\n    game.system.苦痛刻印变动 === 3 &&\n    (era.get(`cflag:${target}:297`) || 0) === 0\n  ) {',
+    replace: '  if (true) { // 变异：触发删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      'MARKCNG：苦痛刻印 Lv3 取得（TFLAG:22 == 3）触发并写 CFLAG:297',
+  },
+  {
+    desc: 'M1994 K0 MARKCNG CFLAG:297 防重删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (\n    game.system.苦痛刻印变动 === 3 &&\n    (era.get(`cflag:${target}:297`) || 0) === 0\n  ) {',
+    replace:
+      '  if (game.system.苦痛刻印变动 === 3 && false) { // 变异：防重删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MARKCNG：CFLAG:297 已置位时不重复出声',
+  },
+  {
+    desc: 'M1995 K0 MARKCNG 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-system.js',
+    find: "  // :189-190 总开关\n  if ((era.get('flag:7') || 0) <= 0) {",
+    replace: "  // :189-190 总开关\n  if ((era.get('flag:7') || 0) < 0) {",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MARKCNG：总开关 FLAG:7 <= 0 静默',
+  },
+  {
+    desc: 'M1996 K0 MARKCNG 助手调教守卫删松（ASSI/ASSIPLAY 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    // :6759',
+    replace: '  if (false) { // 变异：助手守卫删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MARKCNG：助手调教跳过',
   },
 ];
