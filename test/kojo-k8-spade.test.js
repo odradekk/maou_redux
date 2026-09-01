@@ -1383,8 +1383,71 @@ test('SELECTCOM 27 背后位アナル，二回目以降·それ以外：CFLAG:32
   assert.equal(fixture.store.get('cflag:31:328'), 2, 'CFLAG:328 推进到 2');
 });
 
-test('骨架期：SELECTCOM 28（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
-  const fixture = await setup_k8(undefined, 28);
+test('SELECTCOM 28 对面座位アナル，初めて·淫乱（A感觉Lv3未満）：CFLAG:329 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  }, 28);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呜…啊啊…啊…啊…全部都进到我的肛门里来了…～！」',
+    '你掰开银黑桃的屁股，插进了她未开发的肛门。',
+    '银黑桃有些痛苦的抱着你。',
+    '「啊啊…被你的阴茎继续插的话…很快就会变舒服的…啊啊…别想太多侵犯我吧…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:329'), 1, 'CFLAG:329 推进到 1');
+});
+
+test('SELECTCOM 28 对面座位アナル，二回目以降·淫乱+A感觉Lv3以上 RAND1：CFLAG:329 推进到 7', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:329', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+  }, 28);
+  await speak_k8(fixture, () => 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃利用自己的体重，把你的阴茎直到根部位置一口气都插进了自己的肛门里。',
+    '「呜…啊啊…啊…啊啊啊啊♡ 全都…全都是我的♡」',
+    '银黑桃细细品味着你的阴茎，前后摇动着腰。',
+    '「你的阴茎…嗯…啊啊…是我的东西…嗯…嗯嗯…啊啊…嗯…啊啊♡」',
+    '「绝对不会放开的…啊嗯…啊啊…啾…嗯啾…啾…♡」',
+    '银黑桃紧紧抱住你接着吻，肛门又变得更紧了………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:329'), 7, 'CFLAG:329 推进到 7');
+});
+
+test('SELECTCOM 28 对面座位アナル，二回目以降·A感觉Lv3以上（无好感）：CFLAG:329 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:329', 1);
+    f.store.set('abl:31:3', 3);
+  }, 28);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊！不、不要…不要抱着我啊…呜…咕…啊…啊啊！」',
+    '你抱着银黑桃，集中侵犯着她的肛门。',
+    '银黑桃被开发过的肛门和银黑桃的意志相反，轻易地接受了你的阴茎。',
+    '「啊啊啊！全部…全部都进来…不要…不要啊…啊啊啊啊！」',
+    '银黑桃因为肛门和背部升起快感而感到战栗、反射性的抱住了你………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:329'), 3, 'CFLAG:329 推进到 3');
+});
+
+test('SELECTCOM 28 对面座位アナル，二回目以降·それ以外：源作误写缺失结尾引号 1:1 保真，CFLAG:329 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:329', 1);
+  }, 28);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊、走开…我可没兴趣和你抱在一起…呜…啊啊！」',
+    '你抱着银黑桃集中蹂躏着肛门，一次又一次的向上突刺着。',
+    '「停、停下…求你了…啊…啊啊…呀啊啊啊！',
+    '未开发的肛门紧紧地包裹着你的阴茎。',
+    '而为了忍耐那份疼痛，银黑桃只能抱着你………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:329'), 2, 'CFLAG:329 推进到 2');
+});
+
+test('骨架期：SELECTCOM 29（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 29);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
