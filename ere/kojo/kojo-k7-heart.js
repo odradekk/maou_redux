@@ -1443,3 +1443,106 @@ async function k7_kojo2() {
   }
   return 0;
 }
+
+/**
+ * @EVENTEND（:825-907，普通档）：调教结束时的口上。
+ *
+ * 守卫（:826-827/:828-829/:831-832）：FLAG:7 <= 0 跳过、TALENT:167 != 1
+ * 跳过、BASE:0 <= 0（角色死亡）跳过。此后按崩坏 → 反抗刻印Lv3+爱无 →
+ * 屈服刻印Lv1以下/Lv2/Lv3+爱无 → 淫乱/爱慕（各按体力 BASE:0 ≥/≤ 500
+ * 分档）取首个命中。BASE:0 省略角色位按 Emuera TARGET 简写展开。
+ */
+on('EVENTEND', async () => {
+  const target = era_flag.target;
+  if (era0('flag:7') <= 0) {
+    return 0;
+  }
+  if (era0(`talent:${target}:167`) != 1) {
+    return 0;
+  }
+  if (era0(`base:${target}:0`) <= 0) {
+    // キャラ死亡時は口上をスキップ
+    return 0;
+  }
+
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+
+  if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {
+    // 崩坏
+    era.drawLine();
+    await era.printAndWait(`「不…讨厌…怪物的孩子不要生下来…不要………」`); // :841
+    await era.printAndWait(`${target_name}脸上混着泪水与口水目光呆滞的躺在地上………`); // :842
+    return 1;
+  } else if (
+    era0(`mark:${target}:3`) == 3 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    // 反抗刻印Lv3+爱无
+    era.drawLine();
+    await era.printAndWait(`「可…可恨至极………！」`); // :847
+    await era.printAndWait(`${target_name}的指甲在地上“吱吱”的抓着，带着恶鬼般的表情看着${player_name}………`); // :848
+    return 1;
+  } else if (
+    era0(`mark:${target}:2`) <= 1 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    // 屈服刻印Lv1以下+爱无
+    era.drawLine();
+    await era.printAndWait(`「额…结束了吗…？」`); // :854
+    await era.printAndWait(`${target_name}擦了擦嘴角、把脸背向${player_name}………`); // :855
+    return 1;
+  } else if (
+    era0(`mark:${target}:2`) == 2 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    // 屈服刻印Lv2+爱无
+    era.drawLine();
+    await era.printAndWait(`「呼呼…终于结束了、请你快回去………」`); // :861
+    await era.printAndWait(`${target_name}擦着眼角、用床单将身体包裹起来………`); // :862
+    return 1;
+  } else if (
+    era0(`mark:${target}:2`) == 3 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    // 屈服刻印Lv3+爱无
+    era.drawLine();
+    await era.printAndWait(`「已经…如果再这样下去…我就………呼…呼…」`); // :868
+    await era.printAndWait(`${target_name}伏在床上剧烈的呼吸着。`); // :869
+    await era.printAndWait(`「狂王大人救救我………」`); // :870
+    return 1;
+  } else if (era0(`talent:${target}:76`) == 1 && era0(`base:${target}:0`) >= 500) {
+    // 淫乱(体力500以上)
+    era.drawLine();
+    await era.printAndWait(`「啊啊真是的…我感觉一点也不够啊…呐…难道是对我的身体厌倦了吗？」`); // :876
+    await era.printAndWait(`${target_name}相当不满的嘟着嘴。`); // :877
+    await era.printAndWait(`「下次…要更加激烈的………啊？」`); // :878
+    return 1;
+  } else if (era0(`talent:${target}:76`) == 1 && era0(`base:${target}:0`) <= 500) {
+    // 淫乱(体力500未満)
+    era.drawLine();
+    await era.printAndWait(`「呼啊呼啊…如果再抱我一下…就满足了………${heart(1)}」`); // :883
+    await era.printAndWait(`被汗水和各种其他体液沾满的${target_name}横倒在一旁。`); // :884
+    await era.printAndWait(`「呐…下次什么时候侵犯我呢…？」`); // :885
+    return 1;
+  } else if (era0(`talent:${target}:85`) == 1 && era0(`base:${target}:0`) >= 500) {
+    // 爱慕(体力500以上)
+    era.drawLine();
+    await era.printAndWait(`「今天…只是这样就可以了吗…？」`); // :891
+    await era.printAndWait(`${target_name}有点担心的窥探着你的表情。`); // :892
+    await era.printAndWait(`「更…更肆无忌惮一点的做也没关系哦………」`); // :893
+    return 1;
+  } else if (era0(`talent:${target}:85`) == 1 && era0(`base:${target}:0`) <= 500) {
+    // 爱慕(体力500未満)
+    era.drawLine();
+    await era.printAndWait(`「哈呼…您是这么的爱我啊…实在是万分感谢${heart(1)}」`); // :898
+    await era.printAndWait(`${target_name}把脸贴在你的手上回味着。`); // :899
+    await era.printAndWait(`「我是魔王大人的东西，让我更加的和您在一起吧………」`); // :900
+    return 1;
+  }
+  return 0;
+});

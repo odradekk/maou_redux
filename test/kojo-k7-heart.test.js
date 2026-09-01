@@ -256,3 +256,46 @@ test('助手黑方片（NO:ASSI == 22）二回目以降 CFLAG:203==2 分支缺 R
   );
   void result;
 });
+
+// —— @EVENTEND：调教结束口上 ——
+
+test('@EVENTEND 死亡守卫（BASE:0 <= 0）：静默跳过', async () => {
+  const fixture = await setup_k7((f) => f.store.set('base:20:0', 0));
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('@EVENTEND 崩坏：TALENT:9==1 && FLAG:7==2', async () => {
+  const fixture = await setup_k7((f) => {
+    f.store.set('base:20:0', 100);
+    f.store.set('talent:20:9', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), [
+    '「不…讨厌…怪物的孩子不要生下来…不要………」',
+    '金红桃脸上混着泪水与口水目光呆滞的躺在地上………',
+  ]);
+});
+
+test('@EVENTEND 淫乱体力分档：BASE:0 >= 500 与 <= 500 两臂不同台词', async () => {
+  const high = await setup_k7((f) => {
+    f.store.set('base:20:0', 600);
+    f.store.set('talent:20:76', 1);
+  });
+  const { emit: emit1 } = high.load_module('system/event/registry');
+  await emit1('EVENTEND');
+  assert.equal(
+    high.text_lines()[0],
+    '「啊啊真是的…我感觉一点也不够啊…呐…难道是对我的身体厌倦了吗？」',
+  );
+
+  const low = await setup_k7((f) => {
+    f.store.set('base:20:0', 400);
+    f.store.set('talent:20:76', 1);
+  });
+  const { emit: emit2 } = low.load_module('system/event/registry');
+  await emit2('EVENTEND');
+  assert.equal(low.text_lines()[0], '「呼啊呼啊…如果再抱我一下…就满足了………♡」');
+});

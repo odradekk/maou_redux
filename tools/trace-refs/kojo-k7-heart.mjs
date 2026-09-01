@@ -2265,6 +2265,141 @@ export const FILES = [
         ref: '484',
         any: [/ELSEIF CFLAG:203 == 2 && FLAG:7 ==2/],
       }, // ELSEIF CFLAG:203 == 2 && FLAG:7 ==2
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '825-907',
+        any: [/@EVENTEND/],
+      }, // @EVENTEND
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '826-827',
+        any: [/SIF FLAG:7 <= 0/],
+      }, // SIF FLAG:7 <= 0
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '828-829',
+        any: [/SIF TALENT:167 != 1/],
+      }, // SIF TALENT:167 != 1
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '831-832',
+        any: [/;キャラ死亡時は口上をスキップ/],
+      }, // ;キャラ死亡時は口上をスキップ
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '841',
+        any: [/PRINTFORMW 「不…讨厌…怪物的孩子不要生下来…不要………」/],
+      }, // PRINTFORMW 「不…讨厌…怪物的孩子不要生下来…不要………」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '842',
+        any: [/PRINTFORMW %SAVESTR:TARGET%脸上混着泪水与口水目光呆滞的躺在地上………/],
+      }, // PRINTFORMW %SAVESTR:TARGET%脸上混着泪水与口水目光呆滞
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '847',
+        any: [/PRINTFORMW 「可…可恨至极………！」/],
+      }, // PRINTFORMW 「可…可恨至极………！」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '848',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的指甲在地上“吱吱”的抓着，带着恶鬼般的表情看着%SAVESTR:PLAYER%………/],
+      }, // PRINTFORMW %SAVESTR:TARGET%的指甲在地上“吱吱”的抓着
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '854',
+        any: [/PRINTFORMW 「额…结束了吗…？」/],
+      }, // PRINTFORMW 「额…结束了吗…？」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '855',
+        any: [/PRINTFORMW %SAVESTR:TARGET%擦了擦嘴角、把脸背向%SAVESTR:PLAYER%………/],
+      }, // PRINTFORMW %SAVESTR:TARGET%擦了擦嘴角、把脸背向%SA
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '861',
+        any: [/PRINTFORMW 「呼呼…终于结束了、请你快回去………」/],
+      }, // PRINTFORMW 「呼呼…终于结束了、请你快回去………」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '862',
+        any: [/PRINTFORMW %SAVESTR:TARGET%擦着眼角、用床单将身体包裹起来………/],
+      }, // PRINTFORMW %SAVESTR:TARGET%擦着眼角、用床单将身体包裹
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '868',
+        any: [/PRINTFORMW 「已经…如果再这样下去…我就………呼…呼…」/],
+      }, // PRINTFORMW 「已经…如果再这样下去…我就………呼…呼…」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '869',
+        any: [/PRINTFORMW %SAVESTR:TARGET%伏在床上剧烈的呼吸着。/],
+      }, // PRINTFORMW %SAVESTR:TARGET%伏在床上剧烈的呼吸着。
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '870',
+        any: [/PRINTFORMW 「狂王大人救救我………」/],
+      }, // PRINTFORMW 「狂王大人救救我………」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '876',
+        any: [/PRINTFORMW 「啊啊真是的…我感觉一点也不够啊…呐…难道是对我的身体厌倦了吗？」/],
+      }, // PRINTFORMW 「啊啊真是的…我感觉一点也不够啊…呐…难道是对我的身体厌倦
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '877',
+        any: [/PRINTFORMW %SAVESTR:TARGET%相当不满的嘟着嘴。/],
+      }, // PRINTFORMW %SAVESTR:TARGET%相当不满的嘟着嘴。
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '878',
+        any: [/PRINTFORMW 「下次…要更加激烈的………啊？」/],
+      }, // PRINTFORMW 「下次…要更加激烈的………啊？」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '883',
+        any: [/PRINTFORMW 「呼啊呼啊…如果再抱我一下…就满足了………%UNICODE\(0x2661\) \*1%」/],
+      }, // PRINTFORMW 「呼啊呼啊…如果再抱我一下…就满足了………%UNICODE
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '884',
+        any: [/PRINTFORMW 被汗水和各种其他体液沾满的%SAVESTR:TARGET%横倒在一旁。/],
+      }, // PRINTFORMW 被汗水和各种其他体液沾满的%SAVESTR:TARGET%
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '885',
+        any: [/PRINTFORMW 「呐…下次什么时候侵犯我呢…？」/],
+      }, // PRINTFORMW 「呐…下次什么时候侵犯我呢…？」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '891',
+        any: [/PRINTFORMW 「今天…只是这样就可以了吗…？」/],
+      }, // PRINTFORMW 「今天…只是这样就可以了吗…？」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '892',
+        any: [/PRINTFORMW %SAVESTR:TARGET%有点担心的窥探着你的表情。/],
+      }, // PRINTFORMW %SAVESTR:TARGET%有点担心的窥探着你的表情。
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '893',
+        any: [/PRINTFORMW 「更…更肆无忌惮一点的做也没关系哦………」/],
+      }, // PRINTFORMW 「更…更肆无忌惮一点的做也没关系哦………」
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '898',
+        any: [/PRINTFORMW 「哈呼…您是这么的爱我啊…实在是万分感谢%UNICODE\(0x2661\) \*1%」/],
+      }, // PRINTFORMW 「哈呼…您是这么的爱我啊…实在是万分感谢%UNICODE(
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '899',
+        any: [/PRINTFORMW %SAVESTR:TARGET%把脸贴在你的手上回味着。/],
+      }, // PRINTFORMW %SAVESTR:TARGET%把脸贴在你的手上回味着。
+      {
+        src: 'target/ERB/口上/EVENT_K7_ハート.ERB',
+        ref: '900',
+        any: [/PRINTFORMW 「我是魔王大人的东西，让我更加的和您在一起吧………」/],
+      }, // PRINTFORMW 「我是魔王大人的东西，让我更加的和您在一起吧………」
     ],
   },
 ];
