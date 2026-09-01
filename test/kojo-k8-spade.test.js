@@ -1678,8 +1678,67 @@ test('SELECTCOM 32 乳交，二回目以降·弄乳狂单独 RAND1：CFLAG:333 �
   assert.equal(fixture.store.get('cflag:31:333'), 4, 'CFLAG:333 推进到 4');
 });
 
-test('骨架期：SELECTCOM 33（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+test('SELECTCOM 33 股间性交，初めて·それ以外（爱無し）：CFLAG:334 推进到 1', async () => {
   const fixture = await setup_k8(undefined, 33);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…让我做这种事…呜…咕…啊…啊…啊嗯」',
+    '「嗯啊…你的那个太精神、好像快从胯下飞出来了似的………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:334'), 1, 'CFLAG:334 推进到 1');
+});
+
+test('SELECTCOM 33 股间性交，二回目以降·淫乱+处女：CFLAG:334 推进到 6', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:334', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+  }, 33);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…呐…什么时候才会取走我的处女呢？」',
+    '银黑桃的秘裂流着、每次摩擦都会发出下流的声音。',
+    '「你看…你看…明明我想要你的阴茎想要得不得了…你却不来拿…啊啊♡」',
+    '银黑桃激烈的动着腰的两腿之间，你拔走了阴茎。',
+    '「如果太难忍的话…啊…啊啊…呵呵呵、就这样直接插进来也可以哦…♡」',
+    '「………开、开玩笑而已、我会好好的奉仕啦。只要让咱们两个都更舒服这件事不会忘的…啊啊♪」',
+    '银黑桃扑哧一笑，用股间把你的阴茎重新夹好、再次开始了股间性交奉仕………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:334'), 6, 'CFLAG:334 推进到 6');
+});
+
+test('SELECTCOM 33 股间性交，二回目以降·爱有り（无处女）：CFLAG:334 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:334', 1);
+    f.store.set('talent:31:85', 1);
+  }, 33);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊、舒服吗？我很舒服哦…啊…嗯…啊啊…啊啊…♡」',
+    '银黑桃经过锻炼的细长大腿为了更舒服而努力加紧。',
+    '「你的阴茎也这么热…啊啊…我的腿好像快融化了…嗯…啊嗯…啊啊嗯♡」',
+    '「我…想要你的…快忍不住了…求你了…快点插进来吧！」',
+    '面对银黑桃的祈求，你打了银黑桃的屁股，然后继续股间性交奉仕。',
+    '「啊啊…对不起…我会让你更舒服的………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:334'), 3, 'CFLAG:334 推进到 3');
+});
+
+test('SELECTCOM 33 股间性交，二回目以降·それ以外（爱無し）：CFLAG:334 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:334', 1);
+  }, 33);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「额…啊啊…你的…感觉好热…啊啊…」',
+    '银黑桃一边快要哭了一般皱着眉，一边夹紧大腿继续着股间性交。',
+    '「这么做的话，我会有感觉的…啊…啊嗯…啊啊！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:334'), 2, 'CFLAG:334 推进到 2');
+});
+
+test('骨架期：SELECTCOM 34（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 34);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),

@@ -13084,6 +13084,284 @@ export const FILES = [
         ref: '3557',
         any: [/CFLAG:333 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3566-3626',
+        any: [
+          /PRINTFORMW 「用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3568-3579',
+        any: [
+          /PRINTFORMW 「用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3571',
+        any: [
+          /PRINTFORMW 「用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3574',
+        any: [
+          /PRINTFORMW 「啊啊、舒服吗？我也很舒服…啊…嗯…啊啊…啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3577',
+        any: [/PRINTFORMW 「啊啊…让我做这种事…呜…咕…啊…啊…啊嗯」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3578',
+        any: [
+          /PRINTFORMW 「嗯啊…你的那个太精神、好像快从胯下飞出来了似的………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3580',
+        any: [/CFLAG:TARGET:334 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3583-3625',
+        any: [/PRINTFORMW 「啊啊…呐…什么时候才会取走我的处女呢？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3586-3592',
+        any: [/PRINTFORMW 「啊啊…呐…什么时候才会取走我的处女呢？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3586',
+        any: [/PRINTFORMW 「啊啊…呐…什么时候才会取走我的处女呢？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3587',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的秘裂流着、每次摩擦都会发出下流的声音。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3588',
+        any: [
+          /PRINTFORMW 「你看…你看…明明我想要你的阴茎想要得不得了…你却不来拿…啊啊%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3589',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%激烈的动着腰的两腿之间，%SAVESTR:PLAYER%拔走了阴茎/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3590',
+        any: [
+          /PRINTFORMW 「如果太难忍的话…啊…啊啊…呵呵呵、就这样直接插进来也可以哦…%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3591',
+        any: [
+          /PRINTFORMW 「………开、开玩笑而已、我会好好的奉仕啦。只要让咱们两个都更舒服这件事不会忘的…啊啊♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3592',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%扑哧一笑，用股间把%SAVESTR:PLAYER%的阴茎重新夹好、/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3593',
+        any: [/CFLAG:334 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3596-3600',
+        any: [
+          /PRINTFORMW 「呵呵呵、用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3596',
+        any: [
+          /PRINTFORMW 「呵呵呵、用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3597',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的蜜裂里不停的溢出着的爱液沾满了%SAVESTR:PLAYER%的/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3598',
+        any: [
+          /PRINTFORMW 「我为了你的阴茎明明什么都能得到、啊啊…好好…好好的插入我的小穴啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3599',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%哀求着、但是%SAVESTR:PLAYER%就像是要继续看她这种姿/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3600',
+        any: [
+          /PRINTFORMW 「嗯…嗯…啊啊…好过分…我的小穴…明明想要你想要的不得了…啊啊%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3601',
+        any: [/CFLAG:334 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3604-3608',
+        any: [
+          /PRINTFORMW 「啊啊…好舒服…你的阴茎热得…我好想快融化一样…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3604',
+        any: [
+          /PRINTFORMW 「啊啊…好舒服…你的阴茎热得…我好想快融化一样…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3605',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%还不知道男性的蜜裂里漏出的爱液让那里变得更滑了。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3606',
+        any: [
+          /PRINTFORMW 「啊呢啊…%UNICODE\(0x2661\) \*1% 我…嗯啊…变得这么舒服真的没关系吗…啊啊%UN/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3607',
+        any: [
+          /PRINTFORMW 「呐…你的东西插进我那里的话会变得更舒服吗？啊恩…啊啊…对、对不起、会好好的把股间性交做的更舒服的/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3608',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%用被打了屁股而含着眼泪的眼睛看着%SAVESTR:PLAYER%继/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3609',
+        any: [/CFLAG:334 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3612-3617',
+        any: [
+          /PRINTFORMW 「啊啊、舒服吗？我很舒服哦…啊…嗯…啊啊…啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3612',
+        any: [
+          /PRINTFORMW 「啊啊、舒服吗？我很舒服哦…啊…嗯…啊啊…啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3613',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%经过锻炼的细长大腿为了更舒服而努力加紧。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3614',
+        any: [
+          /PRINTFORMW 「你的阴茎也这么热…啊啊…我的腿好像快融化了…嗯…啊嗯…啊啊嗯%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3615',
+        any: [/PRINTFORMW 「我…想要你的…快忍不住了…求你了…快点插进来吧！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3616',
+        any: [
+          /PRINTFORMW 面对%SAVESTR:TARGET%的祈求，%SAVESTR:PLAYER%打了%SAVESTR:/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3617',
+        any: [/PRINTFORMW 「啊啊…对不起…我会让你更舒服的………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3618',
+        any: [/CFLAG:334 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3621-3623',
+        any: [/PRINTFORMW 「额…啊啊…你的…感觉好热…啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3621',
+        any: [/PRINTFORMW 「额…啊啊…你的…感觉好热…啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3622',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边快要哭了一般皱着眉，一边夹紧大腿继续着股间性交。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3623',
+        any: [/PRINTFORMW 「这么做的话，我会有感觉的…啊…啊嗯…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3624',
+        any: [/CFLAG:334 = 2/],
+      },
     ],
   },
 ];

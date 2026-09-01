@@ -1673,8 +1673,8 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123,
-    124, 125, 126, 127,
+    34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124,
+    125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -6285,6 +6285,132 @@ async function kojo_message_com_8(rand) {
         `${target_name}用笨拙的动作继续刺激着${player_name}的阴茎………`,
       ); // :3556
       kojo.乳交 = 2; // :3557 CFLAG:333 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 33) {
+    // :3566-3626 股间性交 CFLAG:334（无 RAND；二回目以降五档，顶两档额外要求 TALENT:0 处女）
+    if (kojo.股间性交 == 0) {
+      // :3568-3579 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        // 淫乱
+        await era.printAndWait(
+          `「用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩」`,
+        ); // :3571
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // 爱有り
+        await era.printAndWait(
+          `「啊啊、舒服吗？我也很舒服…啊…嗯…啊啊…啊啊…${heart(1)}」`,
+        ); // :3574
+      } else {
+        // それ以外（爱無し）
+        await era.printAndWait(`「啊啊…让我做这种事…呜…咕…啊…啊…啊嗯」`); // :3577
+        await era.printAndWait(
+          `「嗯啊…你的那个太精神、好像快从胯下飞出来了似的………」`,
+        ); // :3578
+      }
+      kojo.股间性交 = 1; // :3580 CFLAG:TARGET:334 = 1
+      return 0;
+    }
+    // :3583-3625 二回目以降（五档）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`talent:${target}:0`) == 1 &&
+      (kojo.股间性交 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :3586-3592 淫乱+处女
+      await era.printAndWait(`「啊啊…呐…什么时候才会取走我的处女呢？」`); // :3586
+      await era.printAndWait(
+        `${target_name}的秘裂流着、每次摩擦都会发出下流的声音。`,
+      ); // :3587
+      await era.printAndWait(
+        `「你看…你看…明明我想要你的阴茎想要得不得了…你却不来拿…啊啊${heart(1)}」`,
+      ); // :3588
+      await era.printAndWait(
+        `${target_name}激烈的动着腰的两腿之间，${player_name}拔走了阴茎。`,
+      ); // :3589
+      await era.printAndWait(
+        `「如果太难忍的话…啊…啊啊…呵呵呵、就这样直接插进来也可以哦…${heart(1)}」`,
+      ); // :3590
+      await era.printAndWait(
+        `「………开、开玩笑而已、我会好好的奉仕啦。只要让咱们两个都更舒服这件事不会忘的…啊啊♪」`,
+      ); // :3591
+      await era.printAndWait(
+        `${target_name}扑哧一笑，用股间把${player_name}的阴茎重新夹好、再次开始了股间性交奉仕………`,
+      ); // :3592
+      kojo.股间性交 = 6; // :3593 CFLAG:334 = 6
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.股间性交 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :3596-3600 淫乱
+      await era.printAndWait(
+        `「呵呵呵、用这种要活活急死人的姿势…啊啊…你好可恨啊…嗯…啊恩♪」`,
+      ); // :3596
+      await era.printAndWait(
+        `${target_name}的蜜裂里不停的溢出着的爱液沾满了${player_name}的阴茎。`,
+      ); // :3597
+      await era.printAndWait(
+        `「我为了你的阴茎明明什么都能得到、啊啊…好好…好好的插入我的小穴啊！」`,
+      ); // :3598
+      await era.printAndWait(
+        `${target_name}哀求着、但是${player_name}就像是要继续看她这种姿态一般，继续用阴茎摩擦这蜜裂。`,
+      ); // :3599
+      await era.printAndWait(
+        `「嗯…嗯…啊啊…好过分…我的小穴…明明想要你想要的不得了…啊啊${heart(1)}」`,
+      ); // :3600
+      kojo.股间性交 = 5; // :3601 CFLAG:334 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`talent:${target}:0`) == 1 &&
+      (kojo.股间性交 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :3604-3608 爱有り+处女
+      await era.printAndWait(
+        `「啊啊…好舒服…你的阴茎热得…我好想快融化一样…${heart(1)}」`,
+      ); // :3604
+      await era.printAndWait(
+        `${target_name}还不知道男性的蜜裂里漏出的爱液让那里变得更滑了。`,
+      ); // :3605
+      await era.printAndWait(
+        `「啊呢啊…${heart(1)} 我…嗯啊…变得这么舒服真的没关系吗…啊啊${heart(1)}」`,
+      ); // :3606
+      await era.printAndWait(
+        `「呐…你的东西插进我那里的话会变得更舒服吗？啊恩…啊啊…对、对不起、会好好的把股间性交做的更舒服的！」`,
+      ); // :3607
+      await era.printAndWait(
+        `${target_name}用被打了屁股而含着眼泪的眼睛看着${player_name}继续着股间性交奉仕………`,
+      ); // :3608
+      kojo.股间性交 = 4; // :3609 CFLAG:334 = 4
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.股间性交 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :3612-3617 爱有り
+      await era.printAndWait(
+        `「啊啊、舒服吗？我很舒服哦…啊…嗯…啊啊…啊啊…${heart(1)}」`,
+      ); // :3612
+      await era.printAndWait(
+        `${target_name}经过锻炼的细长大腿为了更舒服而努力加紧。`,
+      ); // :3613
+      await era.printAndWait(
+        `「你的阴茎也这么热…啊啊…我的腿好像快融化了…嗯…啊嗯…啊啊嗯${heart(1)}」`,
+      ); // :3614
+      await era.printAndWait(
+        `「我…想要你的…快忍不住了…求你了…快点插进来吧！」`,
+      ); // :3615
+      await era.printAndWait(
+        `面对${target_name}的祈求，${player_name}打了${target_name}的屁股，然后继续股间性交奉仕。`,
+      ); // :3616
+      await era.printAndWait(`「啊啊…对不起…我会让你更舒服的………」`); // :3617
+      kojo.股间性交 = 3; // :3618 CFLAG:334 = 3
+    } else if (kojo.股间性交 <= 1 || game.kojo.口上开关 == 2) {
+      // :3621-3623 それ以外（爱無し）
+      await era.printAndWait(`「额…啊啊…你的…感觉好热…啊啊…」`); // :3621
+      await era.printAndWait(
+        `${target_name}一边快要哭了一般皱着眉，一边夹紧大腿继续着股间性交。`,
+      ); // :3622
+      await era.printAndWait(`「这么做的话，我会有感觉的…啊…啊嗯…啊啊！」`); // :3623
+      kojo.股间性交 = 2; // :3624 CFLAG:334 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
