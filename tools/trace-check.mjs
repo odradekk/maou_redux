@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-2854', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-2968', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -14825,6 +14825,302 @@ const FILES = [
       },
       { src: K0, ref: '2848-2849', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
       { src: K0, ref: '2850', any: [/\t\t\tCFLAG:327 = 2/m] },
+      { src: K0, ref: '2859', any: [/IF\ SELECTCOM\ ==\ 27/m] },
+      { src: K0, ref: '2859-2968', any: [/^IF SELECTCOM == 27$/m] },
+      { src: K0, ref: '2870', any: [/ELSEIF TALENT:TARGET:85 == 1/] },
+      { src: K0, ref: '2896', any: [/ELSEif RAND:2 == 0/] },
+      { src: K0, ref: '2911', any: [/ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:328 <= 5/] },
+      { src: K0, ref: '2919', any: [/ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4/] },
+      { src: K0, ref: '2940', any: [/ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3/] },
+      { src: K0, ref: '2947', any: [/ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2/] },
+      { src: K0, ref: '2958', any: [/ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2/] },
+      { src: K0, ref: '2859', any: [/IF SELECTCOM == 27/m] },
+      { src: K0, ref: '2861', any: [/\tIF CFLAG:TARGET:328 == 0/m] },
+      { src: K0, ref: '2863', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '2864',
+        any: [
+          /「啊啊～…这样子…做着禽兽也不会做的事情…好美妙～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2865',
+        any: [
+          /%SAVESTR:TARGET%的肛门由于对被侵犯的期待感而下流的敞开了、吞下了%SAVESTR:PLAYER%的大鸡鸡………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2867',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      {
+        src: K0,
+        ref: '2867-2868',
+        any: [
+          /%SAVESTR:TARGET%開発过的肛门、将从后面插进来的鸡鸡全部吞下、带给了鸡鸡迷醉不已的快感………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2871',
+        any: [/「啊啊～…那、那里不是能插的地…嗯～…咕嗯～…咿～♪」/],
+      },
+      {
+        src: K0,
+        ref: '2872',
+        any: [
+          /嘴上说不要身体却很老实的%SAVESTR:TARGET%用肛门将鸡鸡吞了下去………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2874',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      {
+        src: K0,
+        ref: '2874-2875',
+        any: [
+          /%SAVESTR:TARGET%開発过的肛门、将从后面插进来的鸡鸡全部吞下、带给了鸡鸡一阵阵的快感………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2877-2878',
+        any: [/「不、不要～…住手～…咿～咿～～～～！」/],
+      },
+      {
+        src: K0,
+        ref: '2879',
+        any: [
+          /一边按住想逃走的%SAVESTR:TARGET%、一边侵犯着%SAVESTR:PLAYER%的肛门………/,
+        ],
+      },
+      { src: K0, ref: '2881', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2881-2882',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门每次被鸡鸡一抽送、%SAVESTR:TARGET%就会发出悲鳴………/,
+        ],
+      },
+      { src: K0, ref: '2884-2885', any: [/\t\tCFLAG:TARGET:328 = 1/m] },
+      {
+        src: K0,
+        ref: '2887-2889',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '2890', any: [/\t\t\tIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '2891',
+        any: [/「哈啊～～…啊啊～啊啊～哈啊啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '2892',
+        any: [
+          /「更多的…侵犯屁股眼吧…疯狂的侵犯我吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '2894', any: [/\t\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2894-2895',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被調教出了快感、将从后面插进来的鸡鸡连根吞下、%SAVESTR:TARGET%发出了淫乱的呻吟声…/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2897',
+        any: [
+          /「啊啊啊啊…屁股眼被撑开了～～…屁股眼记住主人的大鸡鸡的形状了～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2898',
+        any: [
+          /「啊～咿～～…不行…这…样～…！太…激…烈…了～！不～～行～～！要…不…行了～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '2900', any: [/\t\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2900-2901',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被調教出了快感、不断地被鸡鸡从后面抽送着、%SAVESTR:TARGET%发出了淫荡的呻吟声………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2902-2903',
+        any: [
+          /「哈～啊啊～啊～啊…啊啊～…不行了…再这样下去的话要不行了…真的…要变的除了屁股其他什么事情都不想了啊～～～…%UNICODE\(0x2661/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2904',
+        any: [/「啊～啊～啊啊啊～…哈啊啊啊啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '2906', any: [/\t\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2906-2907',
+        any: [
+          /%SAVESTR:TARGET%被開発过的鈍感肛门变成了分泌快楽的器官、每次被鸡鸡抽送、就会给%SAVESTR:TARGET%带来源源不绝的/,
+        ],
+      },
+      { src: K0, ref: '2909', any: [/\t\t\tCFLAG:328 = 7/m] },
+      {
+        src: K0,
+        ref: '2912',
+        any: [
+          /「哈～啊啊～啊～啊…啊啊～…不行了…再这样下去的话要不行了…真的…要变的除了屁股其他什么事情都不想了啊～～～…」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2913',
+        any: [/「啊～啊～啊啊啊～…哈啊啊啊啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '2915', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2915-2916',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门一将鸡鸡连根吞下、%SAVESTR:TARGET%就尖叫起来………/,
+        ],
+      },
+      { src: K0, ref: '2917', any: [/\t\t\tCFLAG:328 = 6/m] },
+      { src: K0, ref: '2921', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2922', any: [/\t\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '2923',
+        any: [
+          /「啊～啊啊啊～…明明被用这么羞耻的姿势…抽插着屁股眼…但是好爽…好爽啊啊～～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2924',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被開発得觉醒了快感、每次被鸡鸡抽送、%SAVESTR:TARGET%就会娇喘出声………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2925-2926',
+        any: [
+          /「咿啊啊～…啊啊～嗯～…不行了…要不行了…爽过头了…啊～啊啊～啊啊啊啊啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2927',
+        any: [
+          /%SAVESTR:TARGET%被開発过的鈍感肛门变成了分泌快楽的器官、每次被鸡鸡抽送、就会给%SAVESTR:TARGET%带来源源不绝的/,
+        ],
+      },
+      { src: K0, ref: '2929-2930', any: [/\t\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '2931',
+        any: [
+          /「啊～啊啊啊～…明明被用这么羞耻的姿势…抽插着屁股眼…但是好爽…好爽啊啊～～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2932',
+        any: [
+          /%SAVESTR:TARGET%被調教过的肛门很轻松地吞下了%SAVESTR:PLAYER%的大鸡鸡………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2933-2934',
+        any: [
+          /「咿啊啊～…啊啊～嗯～…不行了…要不行了…爽过头了…啊～啊啊～啊啊啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2935',
+        any: [/%SAVESTR:TARGET%被从后面侵犯着調教过的肛门、娇喘出声………/],
+      },
+      { src: K0, ref: '2938', any: [/\t\t\tCFLAG:328 = 5/m] },
+      {
+        src: K0,
+        ref: '2941',
+        any: [/「啊～啊啊啊啊…插到里面来～…嗯～…好…好棒哦…♪」/],
+      },
+      { src: K0, ref: '2943', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2943-2944',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门每次被鸡鸡一抽送、%SAVESTR:TARGET%就尖叫起来………/,
+        ],
+      },
+      { src: K0, ref: '2945', any: [/\t\t\tCFLAG:328 = 4/m] },
+      { src: K0, ref: '2949', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2950',
+        any: [
+          /「明明讨厌…这样的姿势…啊呜嗯～…啊啊～但是好舒服哦…小屁屁快不行了～」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2951',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被開発得觉醒了快感、每次被鸡鸡抽送、%SAVESTR:TARGET%就会娇喘出声………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2952-2953',
+        any: [
+          /「明明讨厌…这样的姿势…啊呜嗯～…啊啊～但是好舒服哦…小屁屁快不行了～」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2954',
+        any: [
+          /%SAVESTR:TARGET%的肛门通过調教变的能产生快感了、嘴里发出了甜蜜的呻吟………/,
+        ],
+      },
+      { src: K0, ref: '2956', any: [/\t\t\tCFLAG:328 = 3/m] },
+      {
+        src: K0,
+        ref: '2959',
+        any: [/「啊啊～…呀～…好难受呀…好难受啊…啊啊～」/],
+      },
+      {
+        src: K0,
+        ref: '2960',
+        any: [/一边按住想逃走的%SAVESTR:TARGET%一边侵犯着肛门………/],
+      },
+      { src: K0, ref: '2962', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2962-2963',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门每次被鸡鸡一抽送、%SAVESTR:TARGET%就会发出悲鳴………/,
+        ],
+      },
+      { src: K0, ref: '2964', any: [/\t\t\tCFLAG:328 = 2/m] },
     ],
   },
 
