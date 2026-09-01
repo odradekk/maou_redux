@@ -214,7 +214,9 @@ export default [
     find: '    if (tbl.char_map.has(ch) || !TRAD_SIDE_SET.has(ch)) {',
     replace: '    if (true) { // 变异：表外繁体永不报',
     tests: ['lang-normalize', 'output-lang-lock'],
-    must_mention: '贖',
+    // 锚取断言消息而非具体汉字：#236 把「贖」加进归一表后，表外检测器不再
+    // 报它，旧锚当场失配。断言消息不随表增长而漂。
+    must_mention: '不在归一表——这正是 #188 的失明点，由参考集报出',
   },
   {
     desc: 'M371 参考集数据删锚点字（贖 移出繁侧集——数据侧坏，判定器跟着失明）',

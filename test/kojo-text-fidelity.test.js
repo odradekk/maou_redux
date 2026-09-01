@@ -86,6 +86,8 @@ const ERB_TOKEN_RULES = [
   [/^GET_LOOK_INFO\(TARGET,\s*"种族"\)$/, 'RACE'],
   [/^SELF_CALL_FIRST\(A\)$/, 'SCFA'],
   [/^CSTR:2$/, 'CSTR2'],
+  [/^SAVESTR:A$/, 'ANAME'],
+  [/^S$/, 'S'],
 
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^SAVESTR:ARG$/, 'ARGNAME'],
@@ -159,6 +161,8 @@ const JS_TOKEN_RULES = [
   [/^get_look_info\(target,\s*'种族'\)$/, 'RACE'],
   [/^self_call_first\(a\)$/, 'SCFA'],
   [/^cstr2$/, 'CSTR2'],
+  [/^chara_callname\(a\)$/, 'ANAME'],
+  [/^S$/, 'S'],
 
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],

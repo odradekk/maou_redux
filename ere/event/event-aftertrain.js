@@ -35,12 +35,15 @@ let leftover_a = 0;
  */
 let leftover_q = 0;
 /**
- * 原作 S 是跨函数全局：调教后性交检查（AFTERTRAIN_SEX_CHECK）算出的
- * 本回性交次数，源 :231-232 `CALL SELF_KOJO` 前才赋值，:238 之后的
- * 经验/参数结算仍读它。SELF_KOJO（K7 等）里 `SIF s >= 3` 一支同款需要
- * 读到这个值（issue #238 发现，K7 是首个引用它的性格）。
+ * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写次数，SELF_KOJO 的
+ * 调教后性交支读 `s`（K5 :6223 源文就是小写 s；K6 的 SELF_KOJO 同读）。
  */
 let leftover_s = 0;
+/**
+ * 原作 S 在出售链是卖出价。SELL_CHARA 写完再 CALL SELF_KOJO；
+ * 出售主体未移植时由测试写入。
+ */
+let leftover_sale = 0;
 
 /**
  * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
@@ -51,11 +54,35 @@ function peek_aftertrain_q() {
 }
 
 /**
- * SELF_KOJO 读的原作 S（AFTERTRAIN 性交检查的本回执行次数）。
+ * SELF_KOJO 读的原作性交次数 S（K5 源文 :6223 写作小写 s）。
  * @returns {number}
  */
 function peek_aftertrain_s() {
   return leftover_s;
+}
+
+/**
+ * SELF_KOJO 出售支读的原作卖出价 S（K5 :6250 注释「Sは売却値」）。
+ * @returns {number}
+ */
+function peek_sale_price() {
+  return leftover_sale;
+}
+
+/**
+ * 出售主体未移植前，测试写入卖出价（原作 SELL_CHARA 的 S）。
+ * @param {number} v
+ */
+function remember_sale_price(v) {
+  leftover_sale = v;
+}
+
+/**
+ * AFTERTRAIN 性交检查未跑时，测试写入性交回数（原作 S / K5 源文 s）。
+ * @param {number} v
+ */
+function remember_aftertrain_s(v) {
+  leftover_s = v;
 }
 
 /**
@@ -72,6 +99,7 @@ function chara_name(cid) {
  * @returns {Promise<number>} 执行回数或 0
  */
 async function aftertrain_sex_check() {
+  leftover_s = 0;
   const target = era_flag.target;
   if (target < 0) return 0;
   if (era.get(`talent:${target}:135`)) return 0; // 未成熟
@@ -139,8 +167,8 @@ async function aftertrain_sex_check() {
   era.print(`回到床上做了${s}次…`);
   era.print('');
 
-  leftover_s = s; // SELF_KOJO（K7 等）读 s >= 3 分支需要，须在 CALL SELF_KOJO 前落好
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  leftover_s = s;
   game.train.初吻与自我口上 = 4;
   await self_kojo();
   era.print(`V经验＋${s}`);
@@ -741,5 +769,8 @@ module.exports = {
   aftertrain_sex_check,
   peek_aftertrain_q,
   peek_aftertrain_s,
+  peek_sale_price,
+  remember_aftertrain_s,
+  remember_sale_price,
   self_check,
 };
