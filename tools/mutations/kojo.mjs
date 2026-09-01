@@ -773,6 +773,24 @@ export default [
     must_mention: 'docs/stub-registry.md 必须收录',
   },
   {
+    desc: 'M1690 K1 PALAMCNG 首次C绝顶回退成二段 nowex（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `    (era.get(\`nowex:\${target}:0\`) || 0) > 0 &&
+    chara(target).kojo.首次C绝顶 === 0`,
+    replace: `    (era.get('nowex:0') || 0) > 0 &&
+    chara(target).kojo.首次C绝顶 === 0`,
+    tests: ['kojo-k1-confident', 'chara-table-addressing'],
+    must_mention: '首次C绝顶默认台词',
+  },
+  {
+    desc: 'M1691 K1 PALAMCNG 首次C绝顶标志写错（CFLAG:225 = 1 改 0）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    chara(target).kojo.首次C绝顶 = 1; // :6607',
+    replace: '    chara(target).kojo.首次C绝顶 = 0; // :6607 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '首次C绝顶推进',
+  },
+  {
     desc: 'M1540 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '      kojo.爱抚 = 1; // :893',

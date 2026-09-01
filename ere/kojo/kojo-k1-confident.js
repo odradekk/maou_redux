@@ -11273,7 +11273,10 @@ async function kojo_message_palamcng_1() {
     chara(target).kojo.首次恐怖Lv2 = 1; // :6591
   } // :6591-6592
 
-  if (era.get('nowex:0') > 0 && chara(target).kojo.首次C绝顶 === 0) {
+  if (
+    (era.get(`nowex:${target}:0`) || 0) > 0 &&
+    chara(target).kojo.首次C绝顶 === 0
+  ) {
     // :6597
 
     if (era.get(`talent:${target}:85`) === 1) {
@@ -11289,7 +11292,10 @@ async function kojo_message_palamcng_1() {
     chara(target).kojo.首次C绝顶 = 1; // :6607
   } // :6607-6608
 
-  if (era.get('nowex:1') > 0 && chara(target).kojo.首次V绝顶 === 0) {
+  if (
+    (era.get(`nowex:${target}:1`) || 0) > 0 &&
+    chara(target).kojo.首次V绝顶 === 0
+  ) {
     // :6613
 
     if (era.get(`talent:${target}:76`) === 1) {
@@ -11321,7 +11327,10 @@ async function kojo_message_palamcng_1() {
     chara(target).kojo.首次V绝顶 = 1; // :6629
   } // :6629-6630
 
-  if (era.get('nowex:2') > 0 && chara(target).kojo.首次A绝顶 === 0) {
+  if (
+    (era.get(`nowex:${target}:2`) || 0) > 0 &&
+    chara(target).kojo.首次A绝顶 === 0
+  ) {
     // :6635
 
     if (era.get(`talent:${target}:76`) === 1) {
@@ -11350,7 +11359,10 @@ async function kojo_message_palamcng_1() {
     chara(target).kojo.首次A绝顶 = 1; // :6652
   } // :6652-6653
 
-  if (era.get('nowex:3') > 0 && chara(target).kojo.首次B绝顶 === 0) {
+  if (
+    (era.get(`nowex:${target}:3`) || 0) > 0 &&
+    chara(target).kojo.首次B绝顶 === 0
+  ) {
     // :6658
 
     if (era.get(`talent:${target}:85`) === 1) {

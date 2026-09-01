@@ -264,6 +264,31 @@ test('PALAMCNG：首次润滑超过 LV2', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:221`), 1, '首次润滑Lv2 推进');
 });
 
+test('PALAMCNG：首次 C 绝顶（nowex:target:0 > 0 且标志为 0）', async () => {
+  const fixture = await setup_k1((f) => f.store.set(`nowex:${CID}:0`, 1));
+  const { kojo_message_palamcng } = fixture.load_module('kojo/kojo-system');
+  await kojo_message_palamcng();
+  assert.ok(
+    fixture.text_lines().includes('「咕…咿咿！？」'),
+    '首次C绝顶默认台词',
+  );
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('第一次被刺激阴蒂绝顶')),
+    '首次C绝顶叙述',
+  );
+  assert.equal(fixture.store.get(`cflag:${CID}:225`), 1, '首次C绝顶推进');
+});
+
+test('PALAMCNG：首次 C 绝顶标志已置则不重复', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`nowex:${CID}:0`, 1);
+    f.store.set(`cflag:${CID}:225`, 1);
+  });
+  const { kojo_message_palamcng } = fixture.load_module('kojo/kojo-system');
+  await kojo_message_palamcng();
+  assert.deepEqual(fixture.text_lines(), [], '首次C绝顶不重复');
+});
+
 test('MARKCNG：苦痛刻印 Lv3 真身', async () => {
   const fixture = await setup_k1((f) => f.store.set('tflag:22', 3));
   const { kojo_message_markcng } = fixture.load_module('kojo/kojo-system');
