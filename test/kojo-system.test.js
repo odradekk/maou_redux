@@ -48,6 +48,7 @@ async function setup_kojo(seed) {
   fixture.load_module('kojo/kojo-system');
   fixture.load_module('kojo/kojo-k3-noble');
   fixture.load_module('kojo/kojo-k5-mao');
+  fixture.load_module('kojo/kojo-k2-timid');
   return fixture;
 }
 
@@ -248,8 +249,7 @@ test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过
   const probe = await setup_kojo();
   const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
   const handlers = [...kojo_message_com_family.implemented.entries()];
-  assert.ok(handlers.length >= 2, '契约至少要覆盖已注册的 K3/K5');
-
+  assert.ok(handlers.length >= 3, '契约至少要覆盖已注册的 K2/K3/K5');
   for (const [num, handler] of handlers) {
     for (const [name, seed_guard] of KOJO_GUARD_STATES) {
       const fixture = await setup_kojo();

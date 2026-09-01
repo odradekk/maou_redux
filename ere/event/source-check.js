@@ -49,9 +49,9 @@
  *     UP:9 ≥ 阈值、TALENT:73）在当前写入面下全为 0/无预设，整支登记；
  *   - 膣内射精チェック（:426-473）已随 #221 J11 落地：目标侧避孕套、
  *     主人/助手/兽奸/死斗场/触手与逆侵犯的计数链按原 if/else-if 顺序结算；
- *   - KOJO_MESSAGE_PALAMCNG / MARKCNG（:504/:512，FLAG:7 > 0 才达，口上
- *     触发点待办随各自口上票）；指令口上 KOJO_MESSAGE_COM（:11-12）已随
- *     #46 接真身（kojo/kojo-system.js）。
+ *   - KOJO_MESSAGE_PALAMCNG / MARKCNG（:504/:512，FLAG:7 > 0 才达）：分发层
+ *     已随 #232 落地；K1 真身注册，其余性格 = TRYCALL 落空（静默）；
+ *     指令口上 KOJO_MESSAGE_COM（:11-12）已随 #46 接真身。
  * 其余无条件代码（含全部 SOURCE_CHECK_UP_*、UP_TALENT 两函数、PLAYER/
  * MASTER_SKILL、EX_CHECK、MARK_GOT、MASTER_FLAG 的好感度累积）都在爱抚
  * 的执行路径上，1:1 移植。
@@ -75,11 +75,14 @@ const {
   EQUIP_COM_CHAIN,
   equip_com_family,
 } = require('#/system/train/com-family');
-const { kojo_message_com } = require('#/kojo/kojo-system');
+const {
+  kojo_message_com,
+  kojo_message_palamcng,
+  kojo_message_markcng,
+} = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { incest } = require('#/system/train/incest');
-
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
@@ -2292,22 +2295,20 @@ on('SOURCE_CHECK', async () => {
   ) {
     passout_palam_up();
     mark_got_check();
-    if ((era.get('flag:7') || 0) > 0) {
-      stub_line('KOJO_MESSAGE_MARKCNG', '刻印取得口上', '随口上票 #46');
-    }
+    await kojo_message_markcng();
   }
   // :499 绝顶漏尿（TEQUIP:22/TALENT:57 门槛，登记）
   stub_line('PISSING_ECST_CHECK', '绝顶漏尿', '随漏尿票');
 
-  // :504-513 参数变动口上 / 刻印取得口上（FLAG:7，#46）
+  // :504-513 参数变动口上 / 刻印取得口上（FLAG:7，#46/#232）
   if ((era.get('flag:7') || 0) > 0) {
-    stub_line('KOJO_MESSAGE_PALAMCNG', '参数变动口上', '随口上票 #46');
+    await kojo_message_palamcng();
   }
 
   // :510 刻印取得
   mark_got_check();
   if ((era.get('flag:7') || 0) > 0) {
-    stub_line('KOJO_MESSAGE_MARKCNG', '刻印取得口上', '随口上票 #46');
+    await kojo_message_markcng();
   }
 
   // :518 / :523 经验检查与容易陷落（生效门槛不可达，登记）

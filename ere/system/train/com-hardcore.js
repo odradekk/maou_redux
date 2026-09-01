@@ -61,6 +61,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { piercing_state } = require('#/system/train/piercing-state');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -1380,8 +1381,7 @@ async function com85() {
 }
 
 /** @COM87（COMF87_ピアシング.ERB）穿环。跨 CALL TRAIN_MESSAGE_B 存活的部位
- * 位域 P（com-caress.js order_state 同款存活态）。 */
-const piercing_state = { p: 0 };
+ * 位域 P（com-caress.js order_state 同款存活态；模块抽出见 piercing-state.js）。 */
 
 const PIERCING_BITS = [1, 2, 4, 8, 16, 32, 64];
 const PIERCING_INSTALL_V = {
@@ -2558,6 +2558,7 @@ equip_com_family.register(89, equip_com89);
 
 module.exports = {
   STUBBED_CALLS,
+  piercing_state,
   able80,
   able81,
   able82,
