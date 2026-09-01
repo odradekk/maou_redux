@@ -9,8 +9,7 @@
  *     （唯一真相源）——报「表内登记的」非简体字符；
  *   - find_outside_trad（#188 新增）：独立参考集判定（tools/lang-simp-ref.js，
  *     OpenCC 繁→简字表派生），报「归一表外的」繁侧字——补上查表命中对表外
- *     繁体的失明（find_offenders('救贖我的吧') 曾返回 []，贖 不在归一表）。
- *
+ *     繁体的失明（find_offenders('巖穴里的赠礼') 曾返回 []，巖 不在归一表）。
  * 形状参照 test/static-table-coverage.test.js 与 test/kojo-text-fidelity.test.js：
  * **从源码扫、逐条探**，新模块 / 新产物自动纳入——文件二不用登记。
  *
@@ -195,12 +194,12 @@ test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后�
       [
         '// 探针模块（test/output-lang-lock.test.js 写入，跑完即删）：',
         '// 四类违规各一——字级（繁体）、词级（日文残留词）、假名、',
-        '// 表外繁侧字（#188：归一表没有 贖，查表命中看不见，靠参考集抓）。',
+        '// 表外繁侧字（#188：归一表没有 巖，查表命中看不见，靠参考集抓）。',
         "const era = require('#/era-electron');",
         "exports.run = () => era.print('你這個變態…別碰我！');",
         "exports.run2 = () => era.print('因奴隷的爱而回復了気力');",
         "exports.run3 = () => era.print('華胥の亡靈式的未豁免串');",
-        "exports.run4 = () => era.print('救贖我的吧');",
+        "exports.run4 = () => era.print('巖穴里的赠礼');",
         '',
       ].join('\n'),
       'utf8',
@@ -231,8 +230,8 @@ test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后�
       '假名命中未报出',
     );
     assert.ok(
-      probe_hits.some((p) => p.includes('outside:贖')),
-      '表外繁侧字命中未报出（outside:贖）——#188 收紧的判定器失守',
+      probe_hits.some((p) => p.includes('outside:巖')),
+      '表外繁侧字命中未报出（outside:巖）——#188 收紧的判定器失守',
     );
   } finally {
     cleanup();
