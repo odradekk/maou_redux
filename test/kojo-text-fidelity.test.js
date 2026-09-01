@@ -136,6 +136,17 @@ const ERB_TOKEN_RULES = [
   [/^\(TALENT:TARGET:76 == 1\) \? 主人大人 # 你$/, 'TERN_MASTER_YOU'],
   [/^\(TALENT:TARGET:76 == 1\) \? 大人 #$/, 'TERN_MASTER_SUFFIX'],
   [/^\(TALENT:TARGET:76 == 1\) \? 主人大人 # 女$/, 'TERN_MASTER_WOMAN'],
+  // —— #238：K7 金红桃口上补充 ——
+  [/^SAVESTR:MASTER$/, 'MASTER'], // :5364/:5435（同 CALLNAME:MASTER，无独立昵称）
+  [/^s$/, 'S_COUNT'], // :7687/:7697（AFTERTRAIN_SEX_CHECK 跨函数全局 S，本回性交次数）
+  [/^TIME == 0 \? 今日 # 今夜$/, 'TERN_TIME_NIGHT'], // :473/:487/:515/:570/:766
+  [/^TIME == 0 \? 今日 # 今宵$/, 'TERN_TIME_TONIGHT'], // :779/:800
+  [/^RAND:2 == 0 \? 菊花 # 小穴$/, 'TERN_HOLE'], // :570
+  [/^CFLAG:10$/, 'VISIT_COUNT'], // :212（金红桃已被会面/侵犯次数）
+  [
+    /^RAND:2 == 0 \? %SAVESTR:TARGET%四肢都贴在地上，抬起屁股左右晃着祈求两人的肉棒。 # %SAVESTR:TARGET%躺在地上分开大腿，用手指插进小穴和肛门狠狠的搅动着、引诱着%SAVESTR:PLAYER%和%SAVESTR:ASSI%。$/,
+    'TERN_POSE',
+  ], // :569（RAND:2 三目：整句二选一，JS 侧预算两支再用单个 ${} 包一层三目取值）
 ];
 
 const JS_TOKEN_RULES = [
@@ -207,6 +218,14 @@ const JS_TOKEN_RULES = [
   [/^master_or_you$/, 'TERN_MASTER_YOU'],
   [/^master_suffix$/, 'TERN_MASTER_SUFFIX'],
   [/^master_or_woman$/, 'TERN_MASTER_WOMAN'],
+  // —— #238：K7 金红桃口上补充 ——
+  [/^s$/, 'S_COUNT'],
+  [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
+  [/^time_word$/, 'TERN_TIME_NIGHT'],
+  [/^time_word2$/, 'TERN_TIME_TONIGHT'],
+  [/^hole_word$/, 'TERN_HOLE'],
+  [/^visit_count$/, 'VISIT_COUNT'],
+  [/^rand_n\(2\) === 0 \? pose_a : pose_b$/, 'TERN_POSE'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
