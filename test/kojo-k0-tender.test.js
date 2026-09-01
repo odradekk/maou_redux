@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 32; // 乳交——COM31 落地后改用尚未填的指令
+    era_flag.selectcom = 33; // 股间性交——COM32 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 32 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 33 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -2628,6 +2628,65 @@ test('口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸', a
     f.store.set('talent:0:318', 1);
   });
   await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('乳交首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 32;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「额呵呵～…用乳房做舒服吗♡　请尽情的射精吧♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:333'), 1, '乳交首次推进到 1');
+});
+
+test('乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 32;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:333', 1);
+    f.store.set('cflag:31:332', 1);
+  });
+  await speak_k0(r0, seq_rand(0));
+  assert.deepEqual(r0.text_lines(), [
+    '「嗯～…啊～…哈啊～～…再继续侵犯我的乳房吧…♡」',
+    '「啊呜唔…要射精的话…请满满的射在乳房上吧～♡」',
+    '琼一边露出淫猥的笑容一边倾斜着乳房奉仕着鸡鸡………',
+  ]);
+  assert.equal(r0.store.get('cflag:31:333'), 6, '乳交二次淫乱+侍奉写 6');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 32;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:333', 9); // 本档耗尽；若门槛改回 333 则静默
+    f.store.set('cflag:31:332', 5); // 口交档仍 <=5，正确读 332 才出声
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap, seq_rand(0));
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag:332=5 且 FLAG:7==1 仍出声（门槛读口交 CFLAG:332 <=5）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:333'), 6);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 32;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:333', 9);
+    f.store.set('cflag:31:332', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted, seq_rand(0));
   assert.deepEqual(exhausted.text_lines(), []);
 });
 

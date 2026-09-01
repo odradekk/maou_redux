@@ -1595,4 +1595,54 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
   },
+  {
+    desc: 'M1862 K0 乳交首次状态推进写错（CFLAG:333 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.乳交 = 1; // :3397-3398',
+    replace: '      kojo.乳交 = 2; // :3397-3398',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交首次推进到 1',
+  },
+  {
+    desc: 'M1863 K0 乳交二次淫乱+侍奉门槛读回本档（CFLAG:332 改 CFLAG:333）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402
+        if (rand_n(2) === 0) {`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.乳交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402
+        if (rand_n(2) === 0) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸',
+  },
+  {
+    desc: 'M1864 K0 乳交二次淫乱+侍奉门槛错位（CFLAG:332 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸',
+  },
+  {
+    desc: 'M1865 K0 乳交二次淫乱+侍奉写回错档（CFLAG:333 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.乳交 = 6; // :3416',
+    replace: '        kojo.乳交 = 5; // :3416',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交二次淫乱+侍奉写 6',
+  },
 ];

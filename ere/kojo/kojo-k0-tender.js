@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -25,7 +25,8 @@
  *     对面座位肛交 CFLAG:329 状态机 :2973-3074；
  *     背面座位肛交 CFLAG:330 状态机 :3079-3189；
  *     手淫 CFLAG:331 状态机 :3194-3288；
- *     口交 CFLAG:332 状态机 :3293-3376）
+ *     口交 CFLAG:332 状态机 :3293-3376；
+ *     乳交 CFLAG:333 状态机 :3381-3456）
 
 
 
@@ -103,7 +104,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-3376）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交。
+ * @KOJO_MESSAGE_COM_0（:674-3456）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交。
 
 
 
@@ -4859,6 +4860,162 @@ async function kojo_message_com_0(rand) {
           `「啊姆呜…嗯～…呗咯～…嗯呜唔…这样…含着…嗯～！嗯～！嗯嗯呜唔！」`,
         ); // :3371
         kojo.口交_奴 = 2; // :3372
+      }
+      return 0;
+    }
+  }
+
+  // :3381 IF SELECTCOM == 32（乳交，CFLAG:333）
+  if (era_flag.selectcom === 32) {
+    const serve = era.get(`abl:${target}:16`) || 0;
+    const semen_addict = era.get(`abl:${target}:32`) || 0;
+
+    if (kojo.乳交 === 0) {
+      // :3383
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :3385
+        await era.printAndWait(
+          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          `「额呵呵～…用乳房做舒服吗${heart(1)}　请尽情的射精吧${heart(1)}」`,
+        ); // :3386
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :3388
+        await era.printAndWait(
+          `「啊啊…${sc()}的乳房是为了这样奉仕您而存在的呢…请变的更舒服吧～♪」`,
+        ); // :3389
+      } else if (serve >= 3) {
+        // :3391
+        await era.printAndWait(
+          `「嗯～…乳房还能这样用呢…额呵呵、比预想的更有趣呢………」`,
+        ); // :3392
+      } else {
+        await era.printAndWait(
+          `「咕呜～…我、我的胸部…是给小宝宝哺乳用的啊…啊…哈啊………」`,
+        ); // :3394-3395
+      }
+      kojo.乳交 = 1; // :3397-3398
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402
+        if (rand_n(2) === 0) {
+          // :3403
+          await era.printAndWait(
+            `「嗯～…啊～…哈啊～～…再继续侵犯我的乳房吧…${heart(1)}」`,
+          ); // :3404
+          await era.printAndWait(
+            `「啊呜唔…要射精的话…请满满的射在乳房上吧～${heart(1)}」`,
+          ); // :3405
+          if (semen_addict >= 3) {
+            // :3406-3407
+            await era.printAndWait(
+              `「我会把精液全部舔干净的～…啊哈啊${heart(1)}」`,
+            ); // :3406-3407
+          }
+          await era.printAndWait(
+            `${target_name}一边露出淫猥的笑容一边倾斜着乳房奉仕着鸡鸡………`,
+          ); // :3408
+        } else {
+          await era.printAndWait(`「啊啊～…乳房被侵犯了～…${heart(1)}」`); // :3409-3410
+          await era.printAndWait(
+            `「尽情射精吧～…请把乳房浇满腥臭的精液吧～${heart(1)}」`,
+          ); // :3411
+          if (semen_addict >= 3) {
+            // :3412-3413
+            await era.printAndWait(
+              `「精液…想咻噜咻噜的全部吸光呢…${heart(1)}」`,
+            ); // :3412-3413
+          }
+          await era.printAndWait(
+            `${target_name}继续用丰满的两乳淫猥地进行奉仕………`,
+          ); // :3414
+        }
+        kojo.乳交 = 6; // :3416
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3418
+        await era.printAndWait(`「啊啊～…更多地侵犯乳房吧～…${heart(1)}」`); // :3419
+        if (
+          era.get(`talent:${target}:110`) === 1 ||
+          era.get(`talent:${target}:114`) === 1 ||
+          era.get(`talent:${target}:119`) === 1
+        ) {
+          // :3420-3421
+          await era.printAndWait(`${target_name}不断地用丰满的两乳施加刺激………`); // :3420-3421
+        }
+        if (semen_addict >= 3) {
+          // :3422-3423
+          await era.printAndWait(
+            `「请把精液满满地射出来吧…${heart(1)} 赐给${sc()}吧${heart(1)}」`,
+          ); // :3422-3423
+        }
+        kojo.乳交 = 5; // :3424
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        serve >= 5 &&
+        (kojo.乳交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3426
+        if (rand_n(2) === 0) {
+          // :3427
+          await era.printAndWait(
+            `「啊～…嗯～嗯呼呜…和主人一起做快乐的事、总觉得非常…开心呢…啊啊～…♪」`,
+          ); // :3428
+          await era.printAndWait(
+            `「哈啊啊～…${sc()}也…觉得乳房…好舒服呢…啊～…还要…我还要再奉仕～♪」`,
+          ); // :3429
+          await era.printAndWait(`${target_name}开心的眯起眼沉浸在奉仕中………`); // :3430
+          if (semen_addict >= 3) {
+            // :3431-3432
+            await era.printAndWait(
+              `「变的好舒服啊…精液…请把精液射出来吧…啊啊…${sc()}也好想要呢${heart(1)}」`,
+            ); // :3431-3432
+          }
+        } else {
+          await era.printAndWait(
+            `「啊啊…请更多的…更多的把${sc()}的乳房…当玩具用吧～………♪」`,
+          ); // :3433-3434
+          await era.printAndWait(
+            `「啊～咿～…啊～啊啊啊～…哈啊啊啊…乳房…好舒服…多摩擦大鸡鸡一下吧………${heart(1)}」`,
+          ); // :3435
+          await era.printAndWait(
+            `${target_name}一边露出圣女般的笑容一边继续着淫靡的奉仕………`,
+          ); // :3436
+          if (semen_addict >= 3) {
+            // :3437-3438
+            await era.printAndWait(
+              `「啊啊～…黏糊糊的精液…满满的射在…${sc()}的身体上了…${heart(1)}」`,
+            ); // :3437-3438
+          }
+        }
+        kojo.乳交 = 4; // :3440
+      } else if (serve >= 3 && (kojo.乳交 <= 2 || game.kojo.口上开关 === 2)) {
+        // :3442
+        await era.printAndWait(
+          `「哈啊～…啊～啊～～…讨、讨厌…明明只是用乳房摩擦大鸡鸡而已………」`,
+        ); // :3443
+        await era.printAndWait(
+          `「为什么…会这么爽呢…啊啊～…更多…更多的摩擦吧…♪」`,
+        ); // :3444
+        await era.printAndWait(`${target_name}开心的眯起眼沉浸在奉仕中………`); // :3445
+        if (semen_addict >= 3) {
+          // :3446-3447
+          await era.printAndWait(
+            `「啊啊～…大鸡鸡一颤一颤的…精液…精液要出来了吗？…请尽情射出来吧${heart(1)}」`,
+          ); // :3446-3447
+        }
+        kojo.乳交 = 3; // :3448
+      } else if (kojo.乳交 <= 1 || game.kojo.口上开关 === 2) {
+        // :3450
+        await era.printAndWait(`「哈啊…啊啊…感、感觉怎样…会舒服…吗…？」`); // :3451
+        kojo.乳交 = 2; // :3452
       }
       return 0;
     }

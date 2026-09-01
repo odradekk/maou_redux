@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3376', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3456', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -16022,6 +16022,190 @@ const FILES = [
         any: [/「啊姆呜…嗯～…呗咯～…嗯呜唔…这样…含着…嗯～！嗯～！嗯嗯呜唔！」/],
       },
       { src: K0, ref: '3372', any: [/\t\t\tCFLAG:332 = 2/m] },
+      { src: K0, ref: '3381', any: [/IF\ SELECTCOM\ ==\ 32/m] },
+      { src: K0, ref: '3381-3456', any: [/^IF SELECTCOM == 32$/m] },
+      { src: K0, ref: '3381', any: [/IF SELECTCOM == 32/m] },
+      { src: K0, ref: '3383', any: [/\tIF CFLAG:TARGET:333 == 0/m] },
+      { src: K0, ref: '3385', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3386',
+        any: [
+          /「额呵呵～…用乳房做舒服吗%UNICODE\(0x2661\) \*1%　请尽情的射精吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3388', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '3389',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%的乳房是为了这样奉仕您而存在的呢…请变的更舒服吧～♪」/,
+        ],
+      },
+      { src: K0, ref: '3391', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '3392',
+        any: [/「嗯～…乳房还能这样用呢…额呵呵、比预想的更有趣呢………」/],
+      },
+      {
+        src: K0,
+        ref: '3394-3395',
+        any: [/「咕呜～…我、我的胸部…是给小宝宝哺乳用的啊…啊…哈啊………」/],
+      },
+      { src: K0, ref: '3397-3398', any: [/\t\tCFLAG:TARGET:333 = 1/m] },
+      {
+        src: K0,
+        ref: '3400-3402',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3403', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3404',
+        any: [
+          /「嗯～…啊～…哈啊～～…再继续侵犯我的乳房吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3405',
+        any: [
+          /「啊呜唔…要射精的话…请满满的射在乳房上吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3406-3407', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '3408',
+        any: [/%SAVESTR:TARGET%一边露出淫猥的笑容一边倾斜着乳房奉仕着鸡鸡………/],
+      },
+      {
+        src: K0,
+        ref: '3409-3410',
+        any: [/「啊啊～…乳房被侵犯了～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3411',
+        any: [
+          /「尽情射精吧～…请把乳房浇满腥臭的精液吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3412-3413', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '3414',
+        any: [/%SAVESTR:TARGET%继续用豊満的両乳淫猥地进行奉仕………/],
+      },
+      { src: K0, ref: '3416', any: [/\t\t\tCFLAG:333 = 6/m] },
+      {
+        src: K0,
+        ref: '3418',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3419',
+        any: [/「啊啊～…更多地侵犯乳房吧～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3420-3421',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      { src: K0, ref: '3422-3423', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3424', any: [/\t\t\tCFLAG:333 = 5/m] },
+      {
+        src: K0,
+        ref: '3426',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:333 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3427', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3428',
+        any: [
+          /「啊～…嗯～嗯呼呜…和主人一起做快乐的事、总觉得非常…开心呢…啊啊～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3429',
+        any: [
+          /「哈啊啊～…%SELF_CALL\(TARGET\)%也…觉得乳房…好舒服呢…啊～…还要…我还要再奉仕～♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3430',
+        any: [/%SAVESTR:TARGET%开心的眯起眼沉浸在奉仕中………/],
+      },
+      { src: K0, ref: '3431-3432', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '3433-3434',
+        any: [
+          /「啊啊…请更多的…更多的把%SELF_CALL\(TARGET\)%的乳房…当玩具用吧～………♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3435',
+        any: [
+          /「啊～咿～…啊～啊啊啊～…哈啊啊啊…乳房…好舒服…多摩擦大鸡鸡一下吧………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3436',
+        any: [/%SAVESTR:TARGET%一边露出聖女般的笑容一边继续着淫靡的奉仕………/],
+      },
+      { src: K0, ref: '3437-3438', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3440', any: [/\t\t\tCFLAG:333 = 4/m] },
+      {
+        src: K0,
+        ref: '3442',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:333 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3443',
+        any: [/「哈啊～…啊～啊～～…讨、讨厌…明明只是用乳房摩擦大鸡鸡而已………」/],
+      },
+      {
+        src: K0,
+        ref: '3444',
+        any: [/「为什么…会这么爽呢…啊啊～…更多…更多的摩擦吧…♪」/],
+      },
+      {
+        src: K0,
+        ref: '3445',
+        any: [/%SAVESTR:TARGET%开心的眯起眼沉浸在奉仕中………/],
+      },
+      { src: K0, ref: '3446-3447', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3448', any: [/\t\t\tCFLAG:333 = 3/m] },
+      {
+        src: K0,
+        ref: '3450',
+        any: [/\t\tELSEIF  CFLAG:333 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3451',
+        any: [/「哈啊…啊啊…感、感觉怎样…会舒服…吗…？」/],
+      },
+      { src: K0, ref: '3452', any: [/\t\t\tCFLAG:333 = 2/m] },
     ],
   },
 
