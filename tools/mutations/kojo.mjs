@@ -990,6 +990,33 @@ export default [
     replace: '      (kojo.壶虫着脱 <= 3 || game.kojo.口上开关 === 2)',
     tests: ['kojo-k0-tender'],
     must_mention: '壶虫脱着：淫乱写 CFLAG:372 = 3，门槛是 < 不是 <=',
-
+  },
+  {
+    desc: 'M1803 K0 振动杖首次状态推进写错（CFLAG:313 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.振动杖 = 1; // :1474',
+    replace: '      kojo.振动杖 = 2; // :1474',
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动杖首次推进到 1',
+  },
+  {
+    desc: 'M1804 K0 振动杖二次淫乱门槛错位（CFLAG:313 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动杖二次：淫乱 / 爱慕 / 阈值闸',
+  },
+  {
+    desc: 'M1805 K0 振动杖二次屈服刻印错格（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1489-1491 屈服刻印Lv3
+      (era.get(\`mark:\${target}:2\`) || 0) === 3 &&`,
+    replace: `      // :1489-1491 屈服刻印Lv3
+      (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '明明被用这种东西玩弄',
   },
 ];
