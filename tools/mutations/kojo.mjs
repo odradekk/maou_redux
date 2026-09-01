@@ -2103,4 +2103,37 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1860 K8 SELECTCOM 28 对面座位アナル初めて推进写错（CFLAG:329 = 1 改 0，恒不推进，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.对面座位肛交 = 1; // :3107 CFLAG:TARGET:329 = 1',
+    replace: '      kojo.对面座位肛交 = 0; // :3107（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1861 K8 SELECTCOM 28 对面座位アナル淫乱+A感觉Lv3以上分档丢失（TALENT:76==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:76`) == 1 &&\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.对面座位肛交 <= 6 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.对面座位肛交 <= 6 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 7',
+  },
+  {
+    desc: 'M1862 K8 SELECTCOM 28 对面座位アナル A感觉Lv3以上（无好感）推进写错（CFLAG:329 = 3 改 2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.对面座位肛交 = 3; // :3162 CFLAG:329 = 3',
+    replace: '      kojo.对面座位肛交 = 2; // :3162（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1863 K8 SELECTCOM 28 对面座位アナルそれ以外守卫丢失（CFLAG:329 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.对面座位肛交 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
