@@ -2287,4 +2287,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1882 K8 SELECTCOM 34 骑乘位初めて处女分档丢失（TALENT:314==9 改 false，恒不命中魔族分支，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        if (era0(`talent:${target}:314`) == 9) {\n          // :3639-3677 魔族',
+    replace:
+      '        if (false) {\n          // :3639-3677 魔族（变异：判定删除）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '张开了双翼',
+  },
+  {
+    desc: 'M1883 K8 SELECTCOM 34 骑乘位淫乱+V感觉Lv3以上推进写错（CFLAG:335 = 8 改 7，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.骑乘位 = 8; // :3767 CFLAG:335 = 8',
+    replace: '      kojo.骑乘位 = 7; // :3767（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 8',
+  },
+  {
+    desc: 'M1884 K8 SELECTCOM 34 骑乘位屈服刻印Lv3+V感觉Lv3以上守卫丢失（ABL:2>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`mark:${target}:2`) == 3 &&\n      era0(`abl:${target}:2`) >= 3 &&\n      (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      era0(`mark:${target}:2`) == 3 &&\n      false &&\n      (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1885 K8 SELECTCOM 34 骑乘位屈服刻印Lv3推进写错（CFLAG:335 = 3 改 2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.骑乘位 = 3; // :3832 CFLAG:335 = 3',
+    replace: '      kojo.骑乘位 = 2; // :3832（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
 ];
