@@ -10104,2169 +10104,810 @@ const FILES = [
   {
     js: 'ere/kojo/kojo-k3-noble.js',
     refs: [
-      { src: K3, ref: '81-85', any: [/^@EVENTTRAIN$/m, /^FLAG:103 = 1$/m] },
-      { src: K3, ref: '87-89', any: [/^@EVENTEND$/m, /^FLAG:103 = 0$/m] },
-      { src: K3, ref: '887-1105', any: [/^@KOJO_MESSAGE_COM_3$/m] },
+      // —— #234（J24 口上·K3 高貴）：台词/写入/条件行号；ENDIF/ELSE/RETURN 0/DRAWLINE 不保留锚。空 PRINTFORM 因保真锁 A 必须留行锚（锁力在行号，不在正文） ——
+      { src: K3, ref: '81-85', any: [/FLAG:103\ =\ 1/] },
+      { src: K3, ref: '87-89', any: [/FLAG:103\ =\ 0/] },
+      { src: K3, ref: '887', any: [/@KOJO_MESSAGE_COM_3/] },
       {
         src: K3,
-        ref: '888-892',
-        any: [/死斗场中は専用口上/, /^\tCALL COLOSSEUM_KOJO_3$/m],
+        ref: '888-912',
+        any: [/SIF\ TEQUIP:45\ \&\&\ SELECTCOM\ !=\ 45/],
       },
-      { src: K3, ref: '894-895', any: [/SIF ASSI > 0 && ASSIPLAY/] },
-      { src: K3, ref: '897-898', any: [/SIF TEQUIP:45 && SELECTCOM != 45/] },
-      { src: K3, ref: '900-901', any: [/SIF TFLAG:899/] },
       {
         src: K3,
-        ref: '903-906',
-        any: [/兽奸PLAY中は専用口上/, /^\tCALL DOG_KOJO_3$/m],
+        ref: '920-1105',
+        any: [
+          /PRINTFORMW\ 被变化带来的快乐的波浪玩弄、%SAVESTR:TARGET%先前还用憎恨的眼神看着%SAVESTR:PLAYER%、而现在眼睛却湿润了起来，依靠着%SAVESTR:PLAYER%。/,
+        ],
       },
-      { src: K3, ref: '908-909', any: [/SIF TALENT:TARGET:9 == 1/] },
-      { src: K3, ref: '911-912', any: [/SIF TEQUIP:90/] },
-      { src: K3, ref: '920', any: [/^IF SELECTCOM == 0$/m] },
-      { src: K3, ref: '921-931', any: [/^\tIF CFLAG:301 == 0$/m] },
-      { src: K3, ref: '923-929', any: [/^\t\tIF MARK:2 >= 2$/m] },
+      {
+        src: K3,
+        ref: '1097',
+        any: [
+          /PRINTFORMW\ 「哈呜、%SAVESTR:TARGET%、可是，一心地，想要杀了…嗯、为什么、那么地……啊\~、这么…温柔地…啊、啊啊……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1110-1147',
+        any: [
+          /PRINTFORMW\ 「请更加地…欺负%SAVESTR:TARGET%的小穴吧\~…将変態%SAVESTR:TARGET%的小穴弄得乱七八糟的吧啊啊\~！%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1152-1197',
+        any: [
+          /PRINTFORMW\ 「嗯啊\~……哈啊嗯\~%UNICODE\(0x2661\)\ \*1%　指尖在…嗯\~…在挖着…啊\~%UNICODE\(0x2661\)\ \*1%这个嗯\~\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1202-1323',
+        any: [
+          /PRINTFORMW\ 「这个手指…这个手指如果是主人的大鸡巴的话%UNICODE\(0x2661\)\ \*1%　就会…就会变地更加舒服起来了呀\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1328-1406',
+        any: [
+          /PRINTFORMW\ 「啊嗯\~…可以的哦\~…请再喝更多一点吧…%SELF_CALL\(TARGET\)%的可爱的大人………%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1412-1517',
+        any: [
+          /PRINTFORMW\ 「！…怎，怎么能…那么卑鄙…让%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%自己来做什么的…唔…呜呜呜\~………」/,
+        ],
+      },
+      { src: K3, ref: '918', any: [/;爱撫\ CFLAG:301/] },
+      {
+        src: K3,
+        ref: '978',
+        any: [
+          /;;追記者／回数で口上が進む（CFLAG:301　百の桁は大別？（改変前の数値）／一の桁が回数）/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1022',
+        any: [
+          /;;追記者／回数で口上が進む（CFLAG:301　百の桁は大別？（改変前の数値）／一の桁が回数）/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1053',
+        any: [
+          /;;追記者／回数で口上が進む（CFLAG:301　百の桁は大別？（改変前の数値）／一の桁が回数）/,
+        ],
+      },
+      { src: K3, ref: '83', any: [/FLAG:103\ =\ 1/] },
+      { src: K3, ref: '84-85', any: [/FLAG:7\ =\ 2/] },
+      { src: K3, ref: '89', any: [/FLAG:103\ =\ 0/] },
+      {
+        src: K3,
+        ref: '887-1105',
+        any: [
+          /PRINTFORMW\ 被变化带来的快乐的波浪玩弄、%SAVESTR:TARGET%先前还用憎恨的眼神看着%SAVESTR:PLAYER%、而现在眼睛却湿润了起来，依靠着%SAVESTR:PLAYER%。/,
+        ],
+      },
+      { src: K3, ref: '888-892', any: [/IF\ TEQUIP:55/] },
+      { src: K3, ref: '894-895', any: [/SIF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      {
+        src: K3,
+        ref: '897-898',
+        any: [/SIF\ TEQUIP:45\ \&\&\ SELECTCOM\ !=\ 45/],
+      },
+      { src: K3, ref: '900-901', any: [/SIF\ TFLAG:899/] },
+      { src: K3, ref: '903-906', any: [/IF\ TEQUIP:89/] },
+      { src: K3, ref: '908-909', any: [/SIF\ TALENT:TARGET:9\ ==\ 1/] },
+      { src: K3, ref: '911-912', any: [/SIF\ TEQUIP:90/] },
+      { src: K3, ref: '920', any: [/IF\ SELECTCOM\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '921-931',
+        any: [
+          /PRINTFORMW\ 「嗯呼嗯\~…啊\~…呃\~…请更加温柔…一…点……哈啊嗯\~！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '923-929',
+        any: [
+          /PRINTFORMW\ 「嗯呼嗯\~…啊\~…呃\~…请更加温柔…一…点……哈啊嗯\~！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '925',
+        any: [
+          /PRINTFORMW\ 「嗯呼嗯\~…啊\~…呃\~…请更加温柔…一…点……哈啊嗯\~！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '928',
+        any: [/PRINTFORMW\ 「不，不要触摸…呃呜…呜呃呜\~\~\~………」/],
+      },
+      { src: K3, ref: '930', any: [/CFLAG:301\ =\ 1/] },
+      {
+        src: K3,
+        ref: '932-1104',
+        any: [
+          /PRINTFORMW\ 被变化带来的快乐的波浪玩弄、%SAVESTR:TARGET%先前还用憎恨的眼神看着%SAVESTR:PLAYER%、而现在眼睛却湿润了起来，依靠着%SAVESTR:PLAYER%。/,
+        ],
+      },
       {
         src: K3,
         ref: '934-953',
         any: [
-          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 599 \|\| FLAG:7 == 2\)$/m,
-          /^\t\t\tCFLAG:301 = 600$/m,
+          /PRINTFORMW\ 「啊哈啊嗯\~…%UNICODE\(0x2661\)\ \*1%\ 好棒……果然,主人的手指，真的好美妙啊\~%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      { src: K3, ref: '936', any: [/;;ランダムで口上が変化する/] },
+      {
+        src: K3,
+        ref: '938',
+        any: [
+          /PRINTFORMW\ 「呜哈嗯啊\~…主人\~…请更加摩擦那里吧\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '939',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%张开自己的双腿，诱导着%SAVESTR:PLAYER%的手………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '940',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身体是…被下流的抚摸了的话…就会热得要燃烧起来了%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '941',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%淫乱地蠕动着身体、接受着%SAVESTR:PLAYER%的爱抚………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '943',
+        any: [
+          /PRINTFORMW\ 「啊、啊啊\~……主人\~…这里、这里\~……请用、主人的手指来、好好地欺负一下\~……」/,
         ],
       },
       {
         src: K3,
         ref: '944',
-        any: [/^\t\t\t\tPRINTFORML %SAVESTR:PLAYER%开始爱抚后、/],
+        any: [
+          /PRINTFORML\ %SAVESTR:PLAYER%开始爱抚后、%SAVESTR:TARGET%立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。/,
+        ],
       },
+      {
+        src: K3,
+        ref: '945',
+        any: [
+          /PRINTFORMW\ 慢慢将手靠近蜜穴后、期待让%SAVESTR:TARGET%的腰部颤抖了起来、呼吸变得凌乱了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '946',
+        any: [
+          /PRINTFORMW\ 「啊哈啊嗯\~…%UNICODE\(0x2661\)\ \*1%\ 好棒……果然,主人的手指，真的好美妙啊\~%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '948',
+        any: [
+          /PRINTFORMW\ 「啊嗯\~、嗯\~、呜\~…！更、更多、激烈地…更多、请更加粗暴地做吧\~……啊\~、啊、啊……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '949',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%将生来的高贵姿态完全扔掉了，不像样的将双脚敞开、沉醉在了%SAVESTR:PLAYER%的爱抚之下。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '950',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%只是贪图着给予的快乐而已、如同用淫猥之声演奏的乐器一样，娇喘的音高随着爱抚的手指动作而一上一下。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '951',
+        any: [
+          /PRINTFORMW\ 「啊啊\~！请将%SELF_CALL\(TARGET\)%下流的身体、玩弄地翻来覆去吧……\.\.\.\.\.\.\.\.直到坏掉为止\.\.\.\.\.\.！」/,
+        ],
+      },
+      { src: K3, ref: '953', any: [/CFLAG:301\ =\ 600/] },
       {
         src: K3,
         ref: '955-975',
         any: [
-          /^\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 499 \|\| FLAG:7 == 2\)$/m,
-          /^\t\t\tCFLAG:301 = 500$/m,
+          /PRINTFORMW\ 为了感受到更加强烈的刺激而将%SAVESTR:PLAYER%手用力地向下压、还轻轻地用手指对%SAVESTR:PLAYER%的手背爱抚着。/,
         ],
       },
-      { src: K3, ref: '959', any: [/每当被%NAME:MASTER%触摸后都会发出娇喘/] },
+      { src: K3, ref: '956', any: [/;;ランダムで口上が変化する/] },
+      {
+        src: K3,
+        ref: '958',
+        any: [
+          /PRINTFORMW\ 「啊\~…嗯\~…%SAVESTR:PLAYER%太…太过温柔了…感觉有点害怕呀\~………♪」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '959',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%每当被%NAME:MASTER%触摸后都会发出娇喘………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '960',
+        any: [
+          /PRINTFORMW\ 「啊啊…喜欢…喜欢的说…被做了这样的事情…%SELF_CALL\(TARGET\)%…已经\~…♪」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '961',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的娇喘慢慢变成越来越急促的喘息声………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '963',
+        any: [
+          /PRINTFORMW\ 「啊哈……啊啊、%SAVESTR:PLAYER%…请……更加地、用自己喜欢的方式来、抚摸吧\~……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '964',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%让%SAVESTR:PLAYER%更加容易抚摸而将脚张开，将身子靠向了你。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '965',
+        any: [/PRINTFORML\ 还不仅仅如此、是为了更加感受到爱抚带来的刺激吧、/],
+      },
+      {
+        src: K3,
+        ref: '966',
+        any: [
+          /PRINTFORMW\ %SAVESTR:PLAYER%的手触碰到的部位、都会向着手压过去。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '967',
+        any: [
+          /PRINTFORMW\ 「%SAVESTR:TARGET%的身体，已经变成仅仅是被%SAVESTR:PLAYER%大人抚摸就能感到无上的愉悦感的身体了……%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '969',
+        any: [
+          /PRINTFORMW\ 「啊、啊嗯\~、%SAVESTR:PLAYER%大人的手……最喜欢的、最令人怜爱的手……哈啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '970',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%将自己的手放在了%SAVESTR:PLAYER%手的上方、开始对自己的身体爱抚了起来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '971',
+        any: [
+          /PRINTFORMW\ 为了感受到更加强烈的刺激而将%SAVESTR:PLAYER%手用力地向下压、还轻轻地用手指对%SAVESTR:PLAYER%的手背爱抚着。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '972',
+        any: [
+          /PRINTFORMW\ 「让%SELF_CALL\(TARGET\)%的心折服了的、残酷的手……教给%SELF_CALL\(TARGET\)%的身体、如何感受淫乐的温柔的手……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '973',
+        any: [
+          /PRINTFORMW\ 「呜啊\~、嗯\~…%SELF_CALL\(TARGET\)%会……任由这只手的摆布的……被这只手引导的话、不管堕落到哪里都愿意……%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      { src: K3, ref: '975', any: [/CFLAG:301\ =\ 500/] },
       {
         src: K3,
         ref: '977-1019',
         any: [
-          /^\t\tELSEIF MARK:2 == 3 && \(CFLAG:301 <= 399 \|\| FLAG:7 == 2\)$/m,
-          /^\t\t\t\tCFLAG:301 = 403$/m,
+          /PRINTFORMW\ 被变化带来的快乐的波浪玩弄、%SAVESTR:TARGET%先前还用憎恨的眼神看着%SAVESTR:PLAYER%、而现在眼睛却湿润了起来，依靠着%SAVESTR:PLAYER%。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '980-988',
+        any: [
+          /PRINTFORMW\ 「啊\~…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的……身体……已经、太舒服了…完全……反抗不了了呀……」/,
         ],
       },
       {
         src: K3,
         ref: '982',
-        any: [/SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的……身体/],
+        any: [
+          /PRINTFORMW\ 「啊\~…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的……身体……已经、太舒服了…完全……反抗不了了呀……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '983',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%发出了屈服宣言和喘息混合起来的娇喘，将身子托付给了正在爱抚的双手。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '984',
+        any: [
+          /PRINTFORMW\ %SAVESTR:PLAYER%稍微提高正在爱抚的手的力度后、就如同%SAVESTR:TARGET%自己所说的那样根本不反抗，直率地发出了大声的娇喘。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '985',
+        any: [
+          /PRINTFORMW\ 「啊哈\~…啊\~！啊、呜啊\~……！被，被这么地、爱抚的话…%SELF_CALL\(TARGET\)%要……啊哈呜\~……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '987',
+        any: [
+          /PRINTFORMW\ 「哈啊…啊\~…嗯\~…啊呃嗯\~…为、为什么…会那么舒服的…呢……啊\~♪」/,
+        ],
+      },
+      { src: K3, ref: '989', any: [/CFLAG:301\ =\ 401/] },
+      {
+        src: K3,
+        ref: '991-1002',
+        any: [
+          /PRINTFORMW\ 「但，但是…如果可以做得到的话、请温柔地……%SELF_CALL\(TARGET\)%也会、害怕疼的……啊哈嗯、啊嗯\~…嗯嗯、嗯\~……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '993',
+        any: [
+          /PRINTFORMW\ 「啊、啊啊…为、为什么……嗯\~、为什么、这么……温柔地、抚摸呢……啊\~……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '994',
+        any: [
+          /PRINTFORML\ 被不停重复地给予着不太强烈，也不太弱的刺激、%SAVESTR:TARGET%全身的皮肤都冒出湿润的汗。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '995',
+        any: [
+          /PRINTFORMW\ 蜜穴微微地渗出了水滴、用手指稍微粗鲁一点的话，便出现了哔啦哔啦的水声。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '996',
+        any: [
+          /PRINTFORMW\ 「不要嗯\~…声音、怎么会……像这样、被弄出声音来…的话、嗯…快…快要羞死了%SELF_CALL\(TARGET\)%……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '998',
+        any: [
+          /PRINTFORMW\ 「啊…温柔的、抚摸的话……就不会、就不会抵抗了…啊\~！当、当然、其…其他的也……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '999',
+        any: [
+          /PRINTFORML\ 温柔地用手来回抚摸后、%SAVESTR:TARGET%为了更加享受抚摸带来的感觉的那样将眼睛闭上了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1000',
+        any: [/PRINTFORMW\ 然后伴随着细微的喘息声、恍惚地喃喃自语着。/],
+      },
+      {
+        src: K3,
+        ref: '1001',
+        any: [
+          /PRINTFORMW\ 「但，但是…如果可以做得到的话、请温柔地……%SELF_CALL\(TARGET\)%也会、害怕疼的……啊哈嗯、啊嗯\~…嗯嗯、嗯\~……」/,
+        ],
+      },
+      { src: K3, ref: '1003', any: [/CFLAG:301\ =\ 402/] },
+      {
+        src: K3,
+        ref: '1005',
+        any: [
+          /PRINTFORMW\ 「啊、啊嗯\~、啊……哈啊…哈啊……啊哈唔！？嗯\~、突、突然，变快的话……啊呼嗯呜\~！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1006',
+        any: [
+          /PRINTFORML\ 对于习惯了爱抚的速度、而放松了的%SAVESTR:TARGET%、突然加快了爱抚的速度。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1007',
+        any: [
+          /PRINTFORMW\ 被变化带来的快乐的波浪玩弄、%SAVESTR:TARGET%先前还用憎恨的眼神看着%SAVESTR:PLAYER%、而现在眼睛却湿润了起来，依靠着%SAVESTR:PLAYER%。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1008',
+        any: [
+          /PRINTFORMW\ 「哈呜嗯\~！嗯\~、那…那个手在……将%SELF_CALL\(TARGET\)%的身体、弄出了下流的声音了……啊、嗯…%SAVESTR:PLAYER%的…啊\~！」/,
+        ],
+      },
+      { src: K3, ref: '1009', any: [/CFLAG:301\ =\ 403/] },
+      {
+        src: K3,
+        ref: '1010-1019',
+        any: [
+          /PRINTFORMW\ 「哈啊啊\~…啊啊啊\~…被、被这么地…这么地…爱抚了的话……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET,\ 1\)%、已经……嗯嗯\~！」/,
+        ],
       },
       {
         src: K3,
         ref: '1013',
-        any: [/%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET, 1\)%、已经……嗯嗯~！/],
+        any: [
+          /PRINTFORMW\ 「哈啊啊\~…啊啊啊\~…被、被这么地…这么地…爱抚了的话……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET,\ 1\)%、已经……嗯嗯\~！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1015',
+        any: [
+          /PRINTFORMW\ 「哼唔呜\~……！嗯呜\~！嗯\~嗯\~嗯\~！嗯呜呜\~……已经…太过舒服了、%SELF_CALL\(TARGET\)%要…啊啊\~……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1017',
+        any: [
+          /PRINTFORMW\ 「好、好棒……是的、那里……就是那里来的、那里\~……啊\~！那里、好舒服的啊\~……啊嗯\~！」/,
+        ],
       },
       {
         src: K3,
         ref: '1021-1050',
         any: [
-          /^\t\tELSEIF MARK:2 == 2 && MARK:1 == 3 && \(CFLAG:301 <= 299 \|\| FLAG:7 == 2\)$/m,
-          /^\t\t\t\tCFLAG:301 = 303$/m,
+          /PRINTFORMW\ 「再，再这样下去的话……%SELF_CALL\(TARGET\)%…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%要……啊嗯\~、嗯\~…嗯哈呜嗯\~……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1024',
+        any: [
+          /PRINTFORMW\ 「哈呜呜嗯\~…嗯\~、嗯…不、不行…要、要忍不住了…啊\~、啊……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1025',
+        any: [
+          /PRINTFORML\ 只是稍微地给蜜穴挠了一下痒、%SAVESTR:TARGET%的身体就大幅度地颤抖起来了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1026',
+        any: [
+          /PRINTFORMW\ 是因为被铭刻在身体深处的愉悦的记忆被引出来了吧、颤抖着大声地娇喘起来了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1027',
+        any: [
+          /PRINTFORMW\ 「啊\~、啊……！不行\~、忍…忍不……忍不住……了啊…哈啊嗯\~…！」/,
+        ],
+      },
+      { src: K3, ref: '1028', any: [/CFLAG:301\ =\ 301/] },
+      {
+        src: K3,
+        ref: '1030',
+        any: [
+          /PRINTFORMW\ 「请，请原…哈呜啊\~！请原谅…嗯\~！原谅了……！再这样…再这样、被抚摸了的话……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1031',
+        any: [
+          /PRINTFORML\ %SAVESTR:TARGET%微弱地扭动着身体、想要尝试逃离%SAVESTR:PLAYER%的双手。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1032',
+        any: [
+          /PRINTFORMW\ 但是、被温柔地抚摸而失去了力气、又回到了%SAVESTR:PLAYER%的手的旁边将身体靠了过去。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1033',
+        any: [
+          /PRINTFORMW\ 「请，请不要…改变……再这样下去、%SELF_CALL\(TARGET\)%就要…啊、这个……哼啊\~、那个…太舒服了……啊啊\~……」/,
+        ],
+      },
+      { src: K3, ref: '1034', any: [/CFLAG:301\ =\ 302/] },
+      {
+        src: K3,
+        ref: '1036',
+        any: [
+          /PRINTFORMW\ 「啊、啊啊…已经、不行……已经…忍…不住了……啊、嗯、啊啊\~……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1037',
+        any: [
+          /PRINTFORML\ 现在已经将厌恶感什么的给忘记了吧、%SAVESTR:TARGET%貌似习惯被触碰了的那样，将身体交给爱抚的双手。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1038',
+        any: [
+          /PRINTFORMW\ 双腿的绷紧的肌肉一跳一跳地、但是完全没有抵抗，只是快乐带来的反射而已，而且还从嘴边漏出了淫艳的娇喘声。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1039',
+        any: [
+          /PRINTFORMW\ 「再，再这样下去的话……%SELF_CALL\(TARGET\)%…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%要……啊嗯\~、嗯\~…嗯哈呜嗯\~……！」/,
+        ],
+      },
+      { src: K3, ref: '1040', any: [/CFLAG:301\ =\ 303/] },
+      {
+        src: K3,
+        ref: '1042-1049',
+        any: [
+          /PRINTFORMW\ 「呀…！嗯\~、嗯呀\~……啊\~、忍…忍耐……啊哈\~！啊\~、啊\~啊\~……啊！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1044',
+        any: [
+          /PRINTFORMW\ 「呀…！嗯\~、嗯呀\~……啊\~、忍…忍耐……啊哈\~！啊\~、啊\~啊\~……啊！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1046',
+        any: [
+          /PRINTFORMW\ 「这\~、这样\~…嗯\~、明明被，当成玩具来…呼嗯\~、呜啊啊\~……！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1048',
+        any: [
+          /PRINTFORMW\ 「哈\~、啊……啊\~、啊啊啊……！啊、呜啊\~、不要啊\~……」/,
         ],
       },
       {
         src: K3,
         ref: '1052-1102',
         any: [
-          /^\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)$/m,
-          /^\t\t\t\tCFLAG:301 = 203$/m,
+          /PRINTFORMW\ %SAVESTR:PLAYER%轻轻地抚摸了一下%SAVESTR:TARGET%紧紧闭着的眼皮子旁边后、%SAVESTR:TARGET%的身体颤抖起来，惊叫了一下。/,
         ],
       },
-      { src: K3, ref: '1067', any: [/^\t\t\t\tCFLAG:301 = 201$/m] },
-      { src: K3, ref: '1091', any: [/^\t\t\t\tCFLAG:301 = 203$/m] },
       {
         src: K3,
-        ref: '1097',
-        any: [/哈呜、%SAVESTR:TARGET%、可是，一心地，想要杀了/],
-      },
-      { src: K3, ref: '1103', any: [/^\t\tRETURN 0$/m] },
-
-      { src: K3, ref: '95', any: [/@EVENTTRAIN/] },
-      { src: K3, ref: '97', any: [/RETURN\ 0/] },
-      { src: K3, ref: '99', any: [/RETURN\ 0/] },
-      { src: K3, ref: '104', any: [/IF\ CFLAG:201\ ==\ 0/] },
-      { src: K3, ref: '105', any: [/DRAWLINE/] },
-      { src: K3, ref: '107', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      { src: K3, ref: '109', any: [/IF\ FLAG:87\ >=\ 1/] },
-      {
-        src: K3,
-        ref: '110',
-        any: [
-          /PRINTFORMW\ 「就算…就算%SELF_CALL\(TARGET\)%的国家覆灭了也好…也不会向你这种家伙屈服呢………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '111',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%哪怕知道自己的国家被你占领了也好，也没有崩溃掉，保持着毅然的态度。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '112',
-        any: [
-          /PRINTFORMW\ 「而且…最重要的是%SELF_CALL\(TARGET\)%才不是什么为了成为你的慰安妇的玩具来的…！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '113',
-        any: [
-          /PRINTFORMW\ 但是，你十分清楚%SAVESTR:TARGET%进到牢笼里的时候，因为恐惧和悲伤而哭着颤抖着身体………/,
-        ],
-      },
-      { src: K3, ref: '114', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '115',
-        any: [/PRINTFORMW\ 「！请不要触碰%SELF_CALL\(TARGET\)%」/],
-      },
-      {
-        src: K3,
-        ref: '116',
-        any: [/PRINTFORMW\ 「以为%SELF_CALL\(TARGET\)%是谁来的啊！？」/],
-      },
-      {
-        src: K3,
-        ref: '117',
-        any: [
-          /PRINTFORMW\ 「对被称为精灵族的姬勇士的%SAVESTR:TARGET%来说………」/,
-        ],
-      },
-      { src: K3, ref: '118', any: [/PRINTL/] },
-      { src: K3, ref: '119', any: [/PRINTFORMW\ 「…………！」/] },
-      {
-        src: K3,
-        ref: '120',
-        any: [
-          /PRINTFORMW\ 「是啊…你就是魔王…哼哼、以为这样就能让%SELF_CALL\(TARGET\)%怎么样了吗？」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '121',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%无畏的笑着，哪怕在败北的时候被俘也好………/,
-        ],
-      },
-      { src: K3, ref: '122', any: [/ENDIF/] },
-      { src: K3, ref: '123', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '125', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 2/] },
-      {
-        src: K3,
-        ref: '126',
-        any: [
-          /PRINTFORMW\ 「哼\~…快点将%SELF_CALL\(TARGET\)%放开，这样至少会让你轻松一点死掉呢。」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '127',
-        any: [
-          /PRINTFORMW\ 人狼的%SAVESTR:TARGET%哪怕被抓住也表现出了一脸有余裕的样子。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '128',
-        any: [
-          /PRINTFORMW\ 看来对于自身的肉体强韧有着很大的自信啊…不过，很快就会明白这种事情在这里没有意义的吧………/,
-        ],
-      },
-      { src: K3, ref: '129', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '131', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 3/] },
-      {
-        src: K3,
-        ref: '132',
-        any: [
-          /PRINTFORMW\ 「呼哼…被这样抓到的还是第一次来着…跟你这种下贱的东西做对手还是让人兴趣缺缺啊」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '133',
-        any: [/PRINTFORMW\ 吸血鬼的%SAVESTR:TARGET%冷冷地看着你。/],
-      },
-      {
-        src: K3,
-        ref: '134',
-        any: [/PRINTFORMW\ 「快点将%SELF_CALL\(TARGET\)%放开呐」/],
-      },
-      { src: K3, ref: '135', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '137', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 4/] },
-      {
-        src: K3,
-        ref: '138',
-        any: [/PRINTFORMW\ 「原谅什么的…怎样哭喊求饶你才会原谅呢？」/],
-      },
-      {
-        src: K3,
-        ref: '139',
-        any: [/PRINTFORMW\ 作为无头骑士的%SAVESTR:TARGET%比想象地还要冷静。/],
-      },
-      {
-        src: K3,
-        ref: '140',
-        any: [/PRINTFORMW\ （看着吧…肯定会找到机会逃出这里的………）/],
-      },
-      { src: K3, ref: '141', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '143', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 5/] },
-      {
-        src: K3,
-        ref: '144',
-        any: [
-          /PRINTFORMW\ 「呃…要不是力量被封印住的话，像你这种家伙一瞬间就会消失了…！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '145',
-        any: [/PRINTFORMW\ 龙少女的%SAVESTR:TARGET%用憎恨的眼神瞪着你。/],
-      },
-      {
-        src: K3,
-        ref: '146',
-        any: [
-          /PRINTFORMW\ 「对于将%SELF_CALL\(TARGET\)%关在这种地方的事情，必定会让你后悔的！！」/,
-        ],
-      },
-      { src: K3, ref: '147', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '149', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 6/] },
-      {
-        src: K3,
-        ref: '150',
-        any: [
-          /PRINTFORMW\ 「呃…不管怎样对待%SELF_CALL\(TARGET\)%都好、%SELF_CALL\(TARGET\)%也不会屈服的！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '151',
-        any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身体可是伟大的父亲的东西来的！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '152',
-        any: [
-          /PRINTFORMW\ 作为天使的%SAVESTR:TARGET%哪怕力量被封印了也没有改变态度………/,
-        ],
-      },
-      { src: K3, ref: '153', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '155', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 9/] },
-      {
-        src: K3,
-        ref: '156',
-        any: [
-          /PRINTFORMW\ 「骗…骗人…%SELF_CALL\(TARGET\)%居然…居然变成了如此污秽的魔族了………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '157',
-        any: [
-          /PRINTFORMW\ 看来%SAVESTR:TARGET%还没有被改造成为魔族，成为魔族其中一员的自觉啊。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '158',
-        any: [
-          /PRINTFORMW\ 沉浸在震惊和悲伤的%SAVESTR:TARGET%注意到你的存在后用魔族的眼睛瞪向了你。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '159',
-        any: [/PRINTFORMW\ 「绝对…绝对不会原谅你的…！」/],
-      },
-      {
-        src: K3,
-        ref: '160',
-        any: [
-          /PRINTFORMW\ 还以为成为了魔族就会安分下来了、看来会变得更加有趣起来了………/,
-        ],
-      },
-      { src: K3, ref: '161', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '163', any: [/CFLAG:370\ =\ 1/] },
-      { src: K3, ref: '165', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 10/] },
-      {
-        src: K3,
-        ref: '166',
-        any: [/PRINTFORMW\ 「快点将%SELF_CALL\(TARGET\)%放开！」/],
-      },
-      {
-        src: K3,
-        ref: '167',
-        any: [
-          /PRINTFORMW\ 哪怕跟霍比特人一样小的身体、%SAVESTR:TARGET%强势的态度也没有改变………/,
-        ],
-      },
-      { src: K3, ref: '168', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '170', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 11/] },
-      {
-        src: K3,
-        ref: '171',
-        any: [
-          /PRINTFORMW\ 「将%SELF_CALL\(TARGET\)%放了的话可是会有赎金的噢！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '172',
-        any: [
-          /PRINTFORMW\ 这样的提案你对此嗤之以鼻、向着作为矮人的%SAVESTR:TARGET%慢慢地靠近了………/,
-        ],
-      },
-      { src: K3, ref: '173', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '175', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '176',
-        any: [/PRINTFORMW\ 「这种事情…不可能…不可能来的啊！」/],
-      },
-      {
-        src: K3,
-        ref: '177',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%被扔进了这辈子都没有考虑过的恶劣环境里、歇斯底里地哭喊着。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '178',
-        any: [
-          /PRINTFORMW\ 看来得从头教育一下，在这种活着是怎样的一件事情来着………/,
-        ],
-      },
-      { src: K3, ref: '179', any: [/ENDIF/] },
-      { src: K3, ref: '180', any: [/CFLAG:201\ =\ 1/] },
-      { src: K3, ref: '181', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '185',
-        any: [
-          /ELSEIF\ CFLAG:201\ <\ 5\ \&\&\ CFLAG:370\ ==\ 0\ \&\&\ TALENT:TARGET:314\ ==\ 9\ \&\&\ TALENT:TARGE/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '186',
-        any: [
-          /PRINTFORMW\ 「哪怕被改造成这种样子也好…还不能自我了断什么的………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '187',
-        any: [
-          /PRINTFORMW\ 按照你所希望的那样，%SAVESTR:TARGET%被改造成了魔族，成为了魔族的新的一员了。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '188',
-        any: [
-          /PRINTFORMW\ 哪怕无法相信般幸运地逃到地面上了也好，她也不会被人类社会而接纳了吧。/,
-        ],
-      },
-      { src: K3, ref: '189', any: [/PRINTFORMW\ 「不，不要过来这边…………」/] },
-      {
-        src: K3,
-        ref: '191',
-        any: [
-          /PRINTFORMW\ 「不要…不要再将%SELF_CALL\(TARGET\)%当成玩具了………」/,
-        ],
-      },
-      { src: K3, ref: '193', any: [/CFLAG:370\ =\ 2/] },
-      { src: K3, ref: '194', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '199',
-        any: [/ELSEIF\ CFLAG:201\ >=\ 1\ \&\&\ CFLAG:650\ ==\ 1/],
-      },
-      { src: K3, ref: '200', any: [/IF\ TALENT:85\ \|\|\ TALENT:76/] },
-      { src: K3, ref: '201', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '202',
-        any: [
-          /PRINTFORMW\ 看到那个水晶球的事情告诉了%SAVESTR:TARGET%后，%SAVESTR:TARGET%的脸色就变了。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '203',
-        any: [
-          /PRINTFORMW\ 「啊啊…魔王大人…请…请原谅%SAVESTR:TARGET%………那个时候是…是没有办法的事情来得………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '204',
-        any: [
-          /PRINTFORMW\ 「让%SELF_CALL\(TARGET\)%做任何事情补偿都可以…所以…所以请原谅不贞的%SELF_CALL\(TARGET\)%吧…………」/,
-        ],
-      },
-      { src: K3, ref: '206', any: [/CFLAG:650\ =\ 0/] },
-      { src: K3, ref: '207', any: [/ELSE/] },
-      { src: K3, ref: '208', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '209',
-        any: [
-          /PRINTFORMW\ 「又再抓回来调教什么的…对于背叛者赐予死刑不好吗？」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '210',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%讽刺般笑着………/],
-      },
-      { src: K3, ref: '212', any: [/CFLAG:650\ =\ 0/] },
-      { src: K3, ref: '213', any: [/ENDIF/] },
-      { src: K3, ref: '214', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '219',
-        any: [
-          /ELSEIF\ CFLAG:201\ <\ 2\ \&\&\ MARK:2\ ==\ 1\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76/,
-        ],
-      },
-      { src: K3, ref: '220', any: [/DRAWLINE/] },
-      { src: K3, ref: '222', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '223',
-        any: [/PRINTFORMW\ 「哼\~、这种程度的事情%SELF_CALL\(TARGET\)%才…！」/],
-      },
-      {
-        src: K3,
-        ref: '224',
-        any: [
-          /PRINTFORMW\ 哪怕坐在地板上%SAVESTR:TARGET%反抗的态度也可见一斑………/,
-        ],
-      },
-      { src: K3, ref: '226', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '227',
-        any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%不要再触碰我了！…无礼之徒！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '228',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%哪怕身体颤抖着也用毅然的态度目不转睛地盯着你………/,
-        ],
-      },
-      { src: K3, ref: '229', any: [/ENDIF/] },
-      { src: K3, ref: '230', any: [/CFLAG:201\ =\ 2/] },
-      { src: K3, ref: '231', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '234',
-        any: [
-          /ELSEIF\ CFLAG:201\ <\ 3\ \&\&\ MARK:2\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76/,
-        ],
-      },
-      { src: K3, ref: '235', any: [/DRAWLINE/] },
-      { src: K3, ref: '237', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '238',
-        any: [
-          /PRINTFORMW\ 「呃…%SELF_CALL_FIRST\(TARGET\)%、请不要触碰%SELF_CALL\(TARGET\)%………！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '239',
-        any: [
-          /PRINTFORMW\ 虽然说着强势的台词，但是%SAVESTR:TARGET%胆怯地看着你………/,
-        ],
-      },
-      { src: K3, ref: '241', any: [/ELSE/] },
-      { src: K3, ref: '242', any: [/PRINTFORMW\ 「不会认输…才不会认输呐…」/] },
-      {
-        src: K3,
-        ref: '243',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%趴在了地板上，但是哪怕这样还是没有屈服的样子………/,
-        ],
-      },
-      { src: K3, ref: '244', any: [/ENDIF/] },
-      { src: K3, ref: '245', any: [/CFLAG:201\ =\ 3/] },
-      { src: K3, ref: '246', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '249',
-        any: [
-          /ELSEIF\ CFLAG:201\ <\ 4\ \&\&\ MARK:2\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76/,
-        ],
-      },
-      { src: K3, ref: '250', any: [/DRAWLINE/] },
-      { src: K3, ref: '252', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '253',
-        any: [
-          /PRINTFORMW\ 「不，不要靠近过来…不要对%SELF_CALL\(TARGET\)%…做残酷的事情…」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '254',
-        any: [/PRINTFORMW\ 「拜托了…请…不要做残酷的事情………」/],
-      },
-      {
-        src: K3,
-        ref: '255',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%瘫倒在了地板上，因为恐怖而颤抖着………/,
-        ],
-      },
-      { src: K3, ref: '257', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '258',
-        any: [/PRINTFORMW\ 「已经…输掉了…也没关系了吗…」/],
-      },
-      {
-        src: K3,
-        ref: '259',
-        any: [/PRINTFORMW\ 恍惚的%SAVESTR:TARGET%这样喃喃自语着………/],
-      },
-      { src: K3, ref: '260', any: [/ENDIF/] },
-      { src: K3, ref: '261', any: [/CFLAG:201\ =\ 4/] },
-      { src: K3, ref: '262', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '265',
-        any: [
-          /ELSEIF\ CFLAG:201\ <\ 5\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT/,
-        ],
-      },
-      { src: K3, ref: '266', any: [/DRAWLINE/] },
-      { src: K3, ref: '268', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
-      {
-        src: K3,
-        ref: '269',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%在冰冷的地板上正坐着。/],
-      },
-      { src: K3, ref: '270', any: [/PRINTFORMW\ 「主人\~…那个…那个…」/] },
-      {
-        src: K3,
-        ref: '271',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%的眼神飘忽不定，拼命地想要说出话来。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '272',
-        any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%…%SELF_CALL\(TARGET\)%想…想要…主人、主人的、大、大鸡巴…请主人赏，/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '273',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%咕噜地吞了一口口水、眼睛盯着%SAVESTR:PLAYER%的股间。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '274',
-        any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%是…没有主人的大鸡巴的话…就无法活下…可怜而淫乱的精灵来的………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '275',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%的双目慢慢地失去了理性的光芒。/],
-      },
-      { src: K3, ref: '276', any: [/PRINTFORMW\ 「请…怜悯…怜悯一下吧\~………」/] },
-      {
-        src: K3,
-        ref: '277',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%一边说着一边土下座，%SAVESTR:TARGET%的屁股正淫乱地左右摇晃着………/,
-        ],
-      },
-      { src: K3, ref: '279', any: [/ELSE/] },
-      { src: K3, ref: '280', any: [/PRINTFORMW\ 「啊啊嗯\~…主人哈嗯\~…」/] },
-      {
-        src: K3,
-        ref: '281',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%露出了可爱的笑容像你抱了过来。/],
-      },
-      {
-        src: K3,
-        ref: '282',
-        any: [
-          /PRINTFORMW\ 「怎么都…怎么都忍不住呐…请对%SELF_CALL\(TARGET\)%淫靡而下流的身体…赐予调教吧…」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '283',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%露出了虽然淫乱却还残留着高贵的样子像你撒起了娇………/,
-        ],
-      },
-      { src: K3, ref: '284', any: [/ENDIF/] },
-      { src: K3, ref: '285', any: [/CFLAG:201\ =\ 5/] },
-      { src: K3, ref: '286', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '289',
-        any: [
-          /ELSEIF\ TALENT:TARGET:314\ ==\ 9\ \&\&\ CFLAG:201\ <\ 6\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALEN/,
-        ],
-      },
-      { src: K3, ref: '290', any: [/DRAWLINE/] },
-      { src: K3, ref: '292', any: [/IF\ CFLAG:370\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '293',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…从以前就开始想了\~…魔王大人的味道闻起来怎么那么好啊\~…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '294',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%魔族的瞳孔湿润了起来、也不隐藏自己在发情的这件事情向你走了过来。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '295',
-        any: [
-          /PRINTFORMW\ 「侍奉…请让%SELF_CALL\(TARGET\)%来侍奉吧…%UNICODE\(0x2661\)\ \*1%\ 想要给魔王大人的身体好好地侍奉呢\~%/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '296',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%依偎在你的身上，在你的耳朵，脖子，胸口等地方降下了亲吻之雨。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '297',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…已经忍不住了呀\~…%UNICODE\(0x2661\)\ \*1%\ 大鸡巴、想要大鸡巴\~%UNICODE\(0x2661\)\ \*3%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '298',
-        any: [
-          /PRINTFORMW\ 看着完全堕落了的%SAVESTR:TARGET%、你如同鄙视地一般朝她笑了起来。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '299',
-        any: [
-          /PRINTFORMW\ 「啊哈嗯\~…请不要用这种眼神看着\~…%SELF_CALL\(TARGET\)%只是…想要大鸡巴而已嘛…%UNICODE\(0x2661\)\ \*1%/,
-        ],
-      },
-      { src: K3, ref: '300', any: [/CFLAG:201\ =\ 6/] },
-      { src: K3, ref: '301', any: [/RETURN\ 1/] },
-      { src: K3, ref: '303', any: [/ELSEIF\ CFLAG:370\ ==\ 2/] },
-      {
-        src: K3,
-        ref: '304',
-        any: [
-          /PRINTFORMW\ 「最近，给魔王大人侍奉的时候…心里感觉特别地安定呢…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '305',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%魔族的瞳孔湿润了起来、靠向了你。/],
-      },
-      {
-        src: K3,
-        ref: '306',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…不行了…已经离不开魔王大人的身边了…%UNICODE\(0x2661\)\ \*3%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '307',
-        any: [
-          /PRINTFORMW\ 轻轻依偎在%NAME:MASTER%的身边后用手掌温柔地抚摸起了%NAME:MASTER%的身体。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '308',
-        any: [
-          /PRINTFORMW\ 「请让我…更多侍奉吧…%UNICODE\(0x2661\)\ \*1%\ 请将…%SELF_CALL\(TARGET\)%弄脏吧…%UNICODE\(0x/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '309',
-        any: [
-          /PRINTFORMW\ 完全堕落的%SAVESTR:TARGET%嘴边流下了唾液向你撒起了娇………/,
-        ],
-      },
-      { src: K3, ref: '310', any: [/CFLAG:201\ =\ 6/] },
-      { src: K3, ref: '311', any: [/RETURN\ 1/] },
-      { src: K3, ref: '313', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '314',
-        any: [
-          /PRINTFORMW\ 「啊哈呜\~…%UNICODE\(0x2661\)\ \*1%\ 成为魔族原来是这样的感觉啊%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '315',
-        any: [
-          /PRINTFORMW\ 你一来到%SAVESTR:TARGET%的表情就变得H了起来、好像立马就会从嘴边流下口水了。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '316',
-        any: [
-          /PRINTFORMW\ 「魔王大人的魔力…渗进了%SELF_CALL\(TARGET\)%的身体里了…啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '317',
-        any: [
-          /PRINTFORMW\ 「啊啊…脑袋里好热…已经不行了…小穴和肛穴都好…都想要被好好地干一番啊%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '318',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%好像现在立马就会开始自慰起来般发情了………/,
-        ],
-      },
-      { src: K3, ref: '319', any: [/IF\ TALENT:TARGET:0\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '320',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%将最后如同没有的自尊心给扔掉了、将两条腿大幅度的敞开了。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '321',
-        any: [
-          /PRINTFORMW\ 「魔王大人\~…请将大鸡巴塞进%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%的魔王大人专用处女小穴里吧\~%/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '322',
-        any: [
-          /PRINTFORMW\ 「拜托了啦\~…如果不行的话…就让魔物们或者狗狗们侵犯好了\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '323',
-        any: [
-          /PRINTFORMW\ 看来已经是抑制不住了的样子、是时候好好疼爱疼爱了吧………/,
-        ],
-      },
-      { src: K3, ref: '324', any: [/ENDIF/] },
-      { src: K3, ref: '325', any: [/CFLAG:201\ =\ 6/] },
-      { src: K3, ref: '326', any: [/RETURN\ 1/] },
-      { src: K3, ref: '327', any: [/ENDIF/] },
-      {
-        src: K3,
-        ref: '330',
-        any: [
-          /ELSEIF\ CFLAG:201\ <\ 7\ \&\&\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:76\ ==\ 0\ \&\&\ TALENT/,
-        ],
-      },
-      { src: K3, ref: '331', any: [/DRAWLINE/] },
-      { src: K3, ref: '333', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '334',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…我这个%SELF_CALL\(TARGET\)%居然…居然会有这样的感觉什么的………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '335',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%展露出了至今都没有见过的温柔的表情向你看了过来。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '336',
-        any: [
-          /PRINTFORMW\ 「魔王大人…%SELF_CALL\(TARGET\)%…想要跟你永远在一起呢\~…如果，可以的话………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '337',
-        any: [
-          /PRINTFORMW\ \ 迅速地向你靠近的%SAVESTR:TARGET%、在你的耳边用精灵语小声地说着什么。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '338',
-        any: [
-          /PRINTFORMW\ \ 貌似包含了什么恋慕的意义在里面，但是因为是精灵语所以细节部分不是很清楚。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '339',
-        any: [
-          /PRINTFORMW\ \ %SAVESTR:TARGET%长长的耳朵全部变红了，轻轻地离开了突然呆住的你的身旁………/,
-        ],
-      },
-      { src: K3, ref: '340', any: [/PRINTFORML/] },
-      {
-        src: K3,
-        ref: '341',
-        any: [
-          /PRINTFORMW\ 「请让%SELF_CALL\(TARGET\)%一直伺候在您的身旁吧………」/,
-        ],
-      },
-      { src: K3, ref: '343', any: [/ELSE/] },
-      { src: K3, ref: '344', any: [/PRINTFORMW\ 「啊、魔王大人………」/] },
-      {
-        src: K3,
-        ref: '345',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%的脸上并没有一丝的恐惧而是温柔地看着你………/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '346',
-        any: [/PRINTFORMW\ 「那、那个…我有个…请求来着………」/],
-      },
-      { src: K3, ref: '347', any: [/PRINTFORML/] },
-      {
-        src: K3,
-        ref: '348',
-        any: [/PRINTFORMW\ 「…用亲爱的来称呼您也…没关系吗…？」/],
-      },
-      { src: K3, ref: '349', any: [/ENDIF/] },
-      { src: K3, ref: '350', any: [/CFLAG:201\ =\ 7/] },
-      { src: K3, ref: '351', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '354',
-        any: [
-          /ELSEIF\ TALENT:TARGET:314\ ==\ 9\ \&\&\ CFLAG:201\ <\ 8\ \&\&\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALEN/,
-        ],
-      },
-      { src: K3, ref: '355', any: [/DRAWLINE/] },
-      { src: K3, ref: '357', any: [/IF\ CFLAG:370\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '358',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%向你靠近后、用十分自然地动作俯下身亲吻了%NAME:MASTER%的脚趾甲。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '359',
-        any: [
-          /PRINTFORMW\ 那个动作完全没有一丝犹豫。在被%SAVESTR:TARGET%平时都完全想象不出来、居然会做出如此谦卑的动作的你面前，%SAVESTR:T/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '360',
-        any: [
-          /PRINTFORMW\ 「魔王大人…%SELF_CALL\(TARGET\)%…会像你发誓保证永远的忠诚的…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      { src: K3, ref: '361', any: [/PRINTL/] },
-      {
-        src: K3,
-        ref: '362',
-        any: [
-          /PRINTFORMW\ 你稍微想了一下后，温柔地抚摸了%SAVESTR:TARGET%的脸颊作为你的回答。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '363',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…啊啊\~…%SELF_CALL\(TARGET\)%…好幸福啊\~…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '364',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%的尾巴摇晃着，身体因为喜悦而颤抖着………/,
-        ],
-      },
-      { src: K3, ref: '365', any: [/CFLAG:201\ =\ 8/] },
-      { src: K3, ref: '366', any: [/RETURN\ 1/] },
-      { src: K3, ref: '368', any: [/ELSEIF\ CFLAG:370\ ==\ 2/] },
-      {
-        src: K3,
-        ref: '369',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%向你靠近后、用十分自然的动作来亲吻%NAME:MASTER%的脚趾甲。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '370',
-        any: [
-          /PRINTFORMW\ 她的动作没有任何的犹豫。在被%SAVESTR:TARGET%平时都完全想象不出来、居然会做出如此谦卑的动作的你面前，%SAVESTR:TA/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '371',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的住所、已经…只能是这里了…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '372',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%就像狗一样在你的脚边谄媚着。那个姿态已经是一点高贵的样子都没有了。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '373',
-        any: [
-          /PRINTFORMW\ 「啊啊…啊啊…请让%SAVESTR:TARGET%一直在魔王大人的身边吧…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      { src: K3, ref: '374', any: [/CFLAG:201\ =\ 8/] },
-      { src: K3, ref: '375', any: [/RETURN\ 1/] },
-      { src: K3, ref: '377', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '378',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…终于成为了魔族了呐\~\~%UNICODE\(0x2661\)\ \*1%\ 好高兴呢\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '379',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%因为太过开心而颤抖着、张开了翅膀甩起了尾巴向你展现着她的身姿。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '380',
-        any: [
-          /PRINTFORMW\ 「想要一直这样下去呢…更多地侍奉您…大人您的孩子…想要…想要的说………%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '381',
-        any: [
-          /PRINTFORMW\ 就像是疼爱系少女的一样露出了羞涩的笑容、作为原勇者的她成为了魔族的新成员，向你撒起了娇………/,
-        ],
-      },
-      { src: K3, ref: '382', any: [/CFLAG:201\ =\ 8/] },
-      { src: K3, ref: '383', any: [/RETURN\ 1/] },
-      { src: K3, ref: '384', any: [/ENDIF/] },
-      {
-        src: K3,
-        ref: '387',
-        any: [/ELSEIF\ TALENT:TARGET:9\ ==\ 1\ \&\&\ CFLAG:201\ <\ 9/],
-      },
-      { src: K3, ref: '388', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '389',
-        any: [
-          /PRINTFORMW\ 「不要…不要\~…请将我从这里放出来吧…父亲大人！！母亲大人！！…啊啊\~！啊\~！啊啊啊啊啊～！！！」」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '390',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%用两手不断地向墙壁敲打着。那双手已经鲜血淋漓了。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '391',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%坏掉的精神已经回不到以前了吧………/],
-      },
-      { src: K3, ref: '392', any: [/CFLAG:201\ =\ 9/] },
-      { src: K3, ref: '393', any: [/RETURN\ 1/] },
-      { src: K3, ref: '397', any: [/ELSEIF\ ASSI\ <\ 0/] },
-      { src: K3, ref: '398', any: [/CALL\ K3_KOJO2/] },
-      { src: K3, ref: '407', any: [/ELSEIF\ NO:ASSI\ ==\ 17/] },
-      { src: K3, ref: '409', any: [/DRAWLINE/] },
-      { src: K3, ref: '412', any: [/IF\ CFLAG:202\ ==\ 0/] },
-      { src: K3, ref: '414', any: [/IF\ TALENT:TARGET:9\ ==\ 1/] },
-      { src: K3, ref: '415', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '416',
-        any: [/PRINTFORMW\ 『…主人、这个人已经坏掉了哦』/],
-      },
-      { src: K3, ref: '417', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '419',
-        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ CFLAG:201\ >=\ 5/],
-      },
-      {
-        src: K3,
-        ref: '420',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%感到些许奇怪。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '421',
-        any: [
-          /PRINTFORMW\ 「啊啦？那个孩子是………嗯哼哼\~、你也被主人做了各种各样的事情了吧\~…」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '422',
-        any: [
-          /PRINTFORMW\ 懒散地床上起来后，%SAVESTR:TARGET%整理着自己凌乱的头发。/,
-        ],
-      },
-      { src: K3, ref: '423', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '424',
-        any: [
-          /PRINTFORMW\ 『哎\~\~、果然是这样吗？…今天呢\~、是跟姐姐一起玩耍的噢，主人这么说的呢♪』/,
-        ],
-      },
-      { src: K3, ref: '425', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '426',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%如同撒娇一般抱住后就这样推到了………/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '428',
-        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ CFLAG:201\ >=\ 7/],
-      },
-      {
-        src: K3,
-        ref: '429',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%向这边瞪了过来。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '430',
-        any: [
-          /PRINTFORMW\ 「明明已经有了%SELF_CALL\(TARGET\)%…却还要带那个孩子过来…！」/,
-        ],
-      },
-      { src: K3, ref: '432', any: [/IF\ TALENT:ASSI:85\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '433',
-        any: [
-          /PRINTFORMW\ 如果是以前村女的那一会的话以%SAVESTR:TARGET%的眼力就会晕过去了吧、但是%SAVESTR:ASSI%轻松的招架住了。/,
-        ],
-      },
-      { src: K3, ref: '434', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '435',
-        any: [
-          /PRINTFORMW\ 『哇啊\~好可怕\~、不行的哦\~“原”勇者大人、摆出这么一张因为嫉妒而发狂的表情\~♪』/,
-        ],
-      },
-      { src: K3, ref: '436', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '437',
-        any: [
-          /PRINTFORMW\ 「啊…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%、才、才没有嫉妒什么的呢………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '438',
-        any: [
-          /PRINTFORMW\ 可能是因为在%NAME:MASTER%的面前露出了这样的表情而感到羞耻的%SAVESTR:TARGET%“啪”地用两手遮住了脸。/,
-        ],
-      },
-      { src: K3, ref: '439', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '440',
-        any: [
-          /PRINTFORMW\ 『所以作为同样都喜欢主人的同伴、我们更加地搞好关系吧\~？呐\~？』/,
-        ],
-      },
-      { src: K3, ref: '441', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '442',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%抓住这样的%SAVESTR:TARGET%的间隙将她推到了………/,
-        ],
-      },
-      { src: K3, ref: '444', any: [/ELSE/] },
-      { src: K3, ref: '445', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '446',
-        any: [
-          /PRINTFORMW\ 『啊哈哈\~…大姐姐嫉妒了\~♪\ 明明不管是不是我的主人，魔王大人也没关系，和谁抱在一起都一样嘛\~♪』/,
-        ],
-      },
-      { src: K3, ref: '447', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '448',
-        any: [
-          /PRINTFORMW\ 「不，不要乱开玩笑…你不知道%SELF_CALL\(TARGET\)%对那位大人有多………啊啊\~、快将手放开」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '449',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%的手抓住强行抱了过来。/,
-        ],
-      },
-      { src: K3, ref: '450', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '451',
-        any: [
-          /PRINTFORMW\ 『但是今天…俺在魔王大人的面前、将大姐姐给抱住了哦…%UNICODE\(0x2661\)\ \*1%』/,
-        ],
-      },
-      { src: K3, ref: '452', any: [/RESETCOLOR/] },
-      { src: K3, ref: '453', any: [/ENDIF/] },
-      { src: K3, ref: '455', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '456',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%就一直瞪着这边。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '457',
-        any: [/PRINTFORMW\ 「将这样的小姑娘带过来…到底想要干嘛呢…！」/],
-      },
-      { src: K3, ref: '458', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '459',
-        any: [
-          /PRINTFORMW\ 『呜哇\~…真是一副了不起的样子呢\~…初次见面，大姐姐、今天是由玛奥来调教的噢………』/,
-        ],
-      },
-      { src: K3, ref: '460', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '461',
-        any: [/PRINTFORMW\ 「什…请…请别在那里胡闹了！！」/],
-      },
-      { src: K3, ref: '462', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '463',
-        any: [/PRINTFORMW\ 『才没有在胡闹哦\~\.\.\.这可是主人的命令来的嘛♪』/],
-      },
-      { src: K3, ref: '464', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '465',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%将因不愿意而撇着嘴的%SAVESTR:TARGET%推到了………/,
-        ],
-      },
-      { src: K3, ref: '466', any: [/ENDIF/] },
-      { src: K3, ref: '467', any: [/CFLAG:202\ =\ 1/] },
-      { src: K3, ref: '468', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '470',
-        any: [/ELSEIF\ CFLAG:202\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
-      },
-      { src: K3, ref: '472', any: [/IF\ TALENT:TARGET:9\ ==\ 1/] },
-      { src: K3, ref: '473', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '474',
-        any: [/PRINTFORMW\ 『已经坏掉了的话…那就弄得更加坏掉也没关系吧★』/],
-      },
-      { src: K3, ref: '475', any: [/RESETCOLOR/] },
-      { src: K3, ref: '477', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '478',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带到这里来后、%SAVESTR:TARGET%不知道为什么摆出了一副伤心的表情。/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '479',
-        any: [/PRINTFORMW\ 「再也不说魔王大人您任性了…哈啊………」/],
-      },
-      { src: K3, ref: '481', any: [/IF\ TALENT:ASSI:85\ ==\ 1/] },
-      { src: K3, ref: '482', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '483',
-        any: [
-          /PRINTFORMW\ 『别摆出这样阴暗的表情嘛…俺只是想要跟勇者大人搞好关系而已嘛\~\~♪』/,
-        ],
-      },
-      { src: K3, ref: '484', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '485',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…不，不行的…%SELF_CALL\(TARGET\)%的身体是…那位大人的…嗯\~」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '486',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%的脸颊被抚摸着、不情愿地将身体交给了%SAVESTR:ASSI%。/,
-        ],
-      },
-      { src: K3, ref: '487', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '488',
-        any: [/PRINTFORMW\ 『看吧\~…俺们关系变好的话\~、主人也会高兴的………♪』/],
-      },
-      { src: K3, ref: '489', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '490',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%对%SAVESTR:ASSI%使了一下眼色后，%SAVESTR:ASSI%便将%SAVESTR:TARGET%推/,
-        ],
-      },
-      { src: K3, ref: '491', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '492',
-        any: [
-          /PRINTFORMW\ 「啊啊\~…但是…请至少、请至少不要在大人的面前……做这样的事情……」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '493',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%只能在%NAME:MASTER%和%SAVESTR:ASSI%的面前微弱地呻吟而已。/,
-        ],
-      },
-      { src: K3, ref: '494', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '495',
-        any: [
-          /PRINTFORMW\ 『（啊啊\~…主人是想要看这个人的这种表情啊\~………♪）』/,
-        ],
-      },
-      { src: K3, ref: '496', any: [/RESETCOLOR/] },
-      { src: K3, ref: '497', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '498',
-        any: [
-          /PRINTFORMW\ 『不是的哦～、这可是主人的命令来的啦…来变得淫乱起来吧\~♪』/,
-        ],
-      },
-      { src: K3, ref: '499', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '500',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%将正微弱抵抗的%SAVESTR:TARGET%给推倒了………/,
-        ],
-      },
-      { src: K3, ref: '501', any: [/ENDIF/] },
-      { src: K3, ref: '503', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '504',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%不知道为什么一副很高兴的样子。/,
-        ],
-      },
-      { src: K3, ref: '505', any: [/PRINTFORMW\ 「啊啊\~…快来这边吧…」/] },
-      { src: K3, ref: '507', any: [/IF\ TALENT:ASSI:76\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '508',
-        any: [/PRINTFORMW\ 「在主人的面前…让我们都变得淫乱起来吧…♪」/],
-      },
-      {
-        src: K3,
-        ref: '509',
-        any: [
-          /PRINTFORMW\ 可能在助手的身上感觉到了相同的气息吧，%SAVESTR:TARGET%不像样地将双腿给摊开了。/,
-        ],
-      },
-      { src: K3, ref: '510', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '511',
-        any: [
-          /PRINTFORMW\ 『啊哈哈\~…在主人的面前做个爽、称赞得个爽吧\~………♪』/,
-        ],
-      },
-      { src: K3, ref: '512', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '513',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:ASSI%就像蛇一样互相缠绕在一起了………/,
-        ],
-      },
-      { src: K3, ref: '514', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '515',
-        any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%想要…将%SAVESTR:ASSI%酱的技术铭刻在身体里啊\~…♪」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '516',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%从嘴边露出了淫靡的笑声，将身体摊开了。/,
-        ],
-      },
-      { src: K3, ref: '517', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '518',
-        any: [/PRINTFORMW\ 『啊哈嗯\~…大姐姐\~\~…今天也做个爽吧\~\~………』/],
-      },
-      { src: K3, ref: '519', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '520',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%就像宠溺一样抱住她就这样将其推倒了………/,
-        ],
-      },
-      { src: K3, ref: '521', any: [/ENDIF/] },
-      { src: K3, ref: '523', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '524',
-        any: [
-          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带到这里来后、%SAVESTR:TARGET%脸上露出了一副貌似放弃了的表情。/,
-        ],
-      },
-      { src: K3, ref: '525', any: [/SETCOLOR\ 255,204,255/] },
-      {
-        src: K3,
-        ref: '526',
-        any: [
-          /PRINTFORMW\ 『呜呼呼\~…不管大姐姐怎么说不要都好，俺都会好好玩弄大姐姐的\~♪』/,
-        ],
-      },
-      { src: K3, ref: '527', any: [/RESETCOLOR/] },
-      {
-        src: K3,
-        ref: '528',
-        any: [
-          /PRINTFORMW\ %SAVESTR:ASSI%一副完全沉浸在调教原勇者的乐趣里的样子。/,
-        ],
-      },
-      { src: K3, ref: '529', any: [/IF\ MARK:2\ ==\ 3/] },
-      { src: K3, ref: '530', any: [/PRINTFORMW\ 「已经…随便你们好了………」/] },
-      {
-        src: K3,
-        ref: '531',
-        any: [
-          /PRINTFORMW\ 看着如同放弃了一般横躺着的%SAVESTR:TARGET%，%SAVESTR:ASSI%的施虐心受到了更强烈的刺激………/,
-        ],
-      },
-      { src: K3, ref: '532', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '533',
-        any: [/PRINTFORMW\ 「哈呜\~…呃呜\~\~…真，真是屈辱啊………」/],
-      },
-      {
-        src: K3,
-        ref: '534',
-        any: [
-          /PRINTFORMW\ 在这个房间里%SAVESTR:TARGET%不能充分地使用力量，只能在%SAVESTR:ASSI%的身下挣扎而已………/,
-        ],
-      },
-      { src: K3, ref: '535', any: [/ENDIF/] },
-      { src: K3, ref: '536', any: [/ENDIF/] },
-      { src: K3, ref: '537', any: [/RETURN\ 1/] },
-      { src: K3, ref: '538', any: [/ENDIF/] },
-      { src: K3, ref: '594', any: [/ELSE/] },
-      { src: K3, ref: '595', any: [/CALL\ K3_KOJO2/] },
-      { src: K3, ref: '596', any: [/ENDIF/] },
-      {
-        src: K3,
-        ref: '604',
-        any: [/IF\ TALENT:TARGET:9\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
-      },
-      { src: K3, ref: '605', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '606',
-        any: [
-          /PRINTFORMW\ 「父亲大人…请原谅…父亲大人…%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%已经…啊啊啊啊啊啊啊！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '607',
-        any: [
-          /PRINTFORMW\ 在精神崩溃了的%SAVESTR:TARGET%的身上已经期待不了像样的反应了吧………/,
-        ],
-      },
-      { src: K3, ref: '608', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '611',
-        any: [/ELSEIF\ MARK:3\ ==\ 3\ \&\&\ FLAG:7\ ==\ 2/],
-      },
-      { src: K3, ref: '612', any: [/DRAWLINE/] },
-      { src: K3, ref: '614', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '615',
-        any: [
-          /PRINTFORMW\ 「呃…！敢摸一下试试…%SAVESTR:TARGET%会将你的喉咙给咬断的…！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '616',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%用好像随时都会飞扑过来的眼神瞪着这边………/,
-        ],
-      },
-      { src: K3, ref: '618', any: [/ELSE/] },
-      { src: K3, ref: '619', any: [/PRINTFORMW\ 「你这个人渣！」/] },
-      {
-        src: K3,
-        ref: '620',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%的怒火仿佛能看到地一样熊熊燃烧着………/,
-        ],
-      },
-      { src: K3, ref: '621', any: [/ENDIF/] },
-      { src: K3, ref: '622', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '625',
-        any: [
-          /ELSEIF\ MARK:2\ ==\ 0\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ =/,
-        ],
-      },
-      { src: K3, ref: '626', any: [/DRAWLINE/] },
-      { src: K3, ref: '628', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      { src: K3, ref: '629', any: [/PRINTFORMW\ 「真是肮脏…不要看过来！」/] },
-      {
-        src: K3,
-        ref: '630',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%紧咬着牙，怒视着%SAVESTR:PLAYER%………/,
-        ],
-      },
-      { src: K3, ref: '632', any: [/ELSE/] },
-      { src: K3, ref: '634', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
-      {
-        src: K3,
-        ref: '635',
-        any: [
-          /PRINTFORMW\ 「能触碰%SELF_CALL\(TARGET\)%的人…也就只有那个人而已！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '636',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%用如同看着污垢之物的眼神看着%SAVESTR:PLAYER%………/,
-        ],
-      },
-      { src: K3, ref: '637', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '638',
-        any: [
-          /PRINTFORMW\ 「请不要用你那肮脏的手来触碰%SELF_CALL\(TARGET\)%…」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '639',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%用鼻子‘哼’地一声，一副不爽的样子将脸撇向一边………/,
-        ],
-      },
-      { src: K3, ref: '640', any: [/ENDIF/] },
-      { src: K3, ref: '641', any: [/ENDIF/] },
-      { src: K3, ref: '642', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '645',
-        any: [
-          /ELSEIF\ MARK:2\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ =/,
-        ],
-      },
-      { src: K3, ref: '646', any: [/DRAWLINE/] },
-      { src: K3, ref: '648', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      { src: K3, ref: '649', any: [/PRINTFORMW\ 「哼、哼嗯…这点小事…！」/] },
-      {
-        src: K3,
-        ref: '650',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%还是一副强硬的样子………/],
-      },
-      { src: K3, ref: '652', any: [/ELSE/] },
-      { src: K3, ref: '654', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
-      {
-        src: K3,
-        ref: '655',
-        any: [
-          /PRINTFORMW\ 「居然被这种下贱的人给触碰了身体…%SAVESTR:TARGET%真的是对不起那个人啊………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '656',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%一副气愤地样子盯着这边………/],
-      },
-      { src: K3, ref: '657', any: [/ELSE/] },
-      { src: K3, ref: '658', any: [/PRINTFORMW\ 「被这种下贱的家伙给…」/] },
-      {
-        src: K3,
-        ref: '659',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%阴沉着脸、抚摸自己起了鸡皮疙瘩的皮肤………/,
-        ],
-      },
-      { src: K3, ref: '660', any: [/ENDIF/] },
-      { src: K3, ref: '661', any: [/ENDIF/] },
-      { src: K3, ref: '662', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '665',
-        any: [
-          /ELSEIF\ MARK:2\ ==\ 2\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ =/,
-        ],
-      },
-      { src: K3, ref: '666', any: [/DRAWLINE/] },
-      { src: K3, ref: '668', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '669',
-        any: [/PRINTFORMW\ 「呜……%SELF_CALL\(TARGET\)%才…不会在这种地方……」/],
-      },
-      {
-        src: K3,
-        ref: '670',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%还没有抛弃希望的样子、不过看来差不到要到极限了………/,
-        ],
-      },
-      { src: K3, ref: '672', any: [/ELSE/] },
-      { src: K3, ref: '674', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
-      {
-        src: K3,
-        ref: '675',
-        any: [/PRINTFORMW\ 「啊…啊啊…至少请再温柔一点…吧………」/],
-      },
-      {
-        src: K3,
-        ref: '676',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%一副稍微有点放弃了地样子喃喃自语着………/,
-        ],
-      },
-      { src: K3, ref: '677', any: [/ELSE/] },
-      { src: K3, ref: '678', any: [/PRINTFORMW\ 「……今……今天也要…」/] },
-      {
-        src: K3,
-        ref: '679',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%一副稍微有点放弃了地样子喃喃自语着………/,
-        ],
-      },
-      { src: K3, ref: '680', any: [/ENDIF/] },
-      { src: K3, ref: '681', any: [/ENDIF/] },
-      { src: K3, ref: '682', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '685',
-        any: [
-          /ELSEIF\ MARK:2\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:76\ =/,
-        ],
-      },
-      { src: K3, ref: '686', any: [/DRAWLINE/] },
-      { src: K3, ref: '688', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
-      {
-        src: K3,
-        ref: '689',
-        any: [/PRINTFORMW\ 「如果不做太过分的事情的话…就没关系………」/],
-      },
-      {
-        src: K3,
-        ref: '690',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%一副已经完全放弃了的样子………/],
-      },
-      { src: K3, ref: '692', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '694',
-        any: [/IF\ TALENT:TARGET:317\ ==\ 4\ \&\&\ FLAG:81\ >=\ 5000/],
-      },
-      {
-        src: K3,
-        ref: '695',
-        any: [
-          /PRINTFORMW\ 「拜、拜托了…对%SELF_CALL\(TARGET\)%的身体随便做什么都没关系…但是……」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '696',
-        any: [
-          /PRINTFORMW\ 「……至少放过，在那条街…那条街的那个人的孩子的生命…………」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '697',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%一副为了故乡的恋人而献上自己身体的虚伪样子、看着用这种理由抱过来的%SAVESTR:TARGET%你感到十/,
-        ],
-      },
-      { src: K3, ref: '698', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '699',
-        any: [
-          /PRINTFORMW\ 「%SAVESTR:TARGET%明白了…随便怎么做都可以了\.\.\.\.」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '700',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%好像下定决心了、坦率地顺从着%SAVESTR:PLAYER%………/,
-        ],
-      },
-      { src: K3, ref: '701', any: [/ENDIF/] },
-      { src: K3, ref: '702', any: [/ENDIF/] },
-      { src: K3, ref: '703', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '705',
-        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
-      },
-      { src: K3, ref: '706', any: [/DRAWLINE/] },
-      { src: K3, ref: '708', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
-      { src: K3, ref: '710', any: [/IF\ RAND:3\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '711',
-        any: [
-          /PRINTFORMW\ 「啊啊\~主人\~…热得忍不了了\~…请用大鸡鸡…塞满%SAVESTR:TARGET%吧%UNICODE\(0x2661\)\ \*3%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '712',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%匍匐在%NAME:MASTER%的脚边着、将自己的脸埋在了股间，自傲的长耳朵被压到扭曲了也不管………/,
-        ],
-      },
-      { src: K3, ref: '713', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '714',
-        any: [
-          /PRINTFORMW\ 「哈啊\~…嗯\~…身体…好热啊\~%UNICODE\(0x2661\)\ \*3%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '715',
+        ref: '1056-1066',
         any: [
-          /PRINTFORMW\ 「自慰居然会那么舒服什么的\~…已经…已经…啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
+          /PRINTFORML\ %SAVESTR:TARGET%大声地发出了困惑的声音，但是身体实实在在地对爱抚有所反应。/,
         ],
       },
       {
         src: K3,
-        ref: '716',
+        ref: '1057',
         any: [
-          /PRINTFORMW\ 「啊嗯\~…主人…敬请欣赏\.\.\.\.淫乱的堕落女精灵的小穴之舞吧…%UNICODE\(0x2661\)\ \*5%」/,
+          /PRINTFORMW\ 「啊嗯\~、嗯\~……明明…应该…感觉恶心来的……应该感觉、恶心来的呀…！」/,
         ],
       },
       {
         src: K3,
-        ref: '717',
+        ref: '1058',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%擅自开始了自慰…对于这样不懂事的姑娘一定要好好惩罚一下才可以………/,
+          /PRINTFORML\ %SAVESTR:TARGET%大声地发出了困惑的声音，但是身体实实在在地对爱抚有所反应。/,
         ],
       },
-      { src: K3, ref: '718', any: [/ELSE/] },
       {
         src: K3,
-        ref: '719',
+        ref: '1059',
         any: [
-          /PRINTFORMW\ 「请负起将%SELF_CALL\(TARGET\)%的身体变得如此淫乱的责任吧…哈呜嗯\~…%UNICODE\(0x2661\)\ \*1%」/,
+          /PRINTFORMW\ 如同在服从着%SAVESTR:PLAYER%的手指那样、摇摇晃晃地晃动着腰部。/,
         ],
       },
       {
         src: K3,
-        ref: '720',
+        ref: '1060',
         any: [
-          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的这个胸部也好…屁股也好…那里也好…都是主人的东西来的…%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「嗯呜……呼\~、呜…不行……啊\~！明明、那么令人恶心……的事情……」/,
         ],
       },
       {
         src: K3,
-        ref: '721',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%舔着嘴唇、长长的耳朵一抽一抽地靠向了%NAME:MASTER%………/,
-        ],
-      },
-      { src: K3, ref: '722', any: [/ENDIF/] },
-      { src: K3, ref: '724', any: [/ELSE/] },
-      { src: K3, ref: '726', any: [/IF\ RAND:3\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '727',
-        any: [
-          /PRINTFORMW\ 「啊\~主人\~%UNICODE\(0x2661\)\ \*1%　今天用%SELF_CALL\(TARGET\)%的嘴巴来侍奉也没有关系吧\~%UNICOD/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '728',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%在%SAVESTR:PLAYER%的耳边撒娇般轻声说着………/,
-        ],
-      },
-      { src: K3, ref: '729', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '730',
-        any: [
-          /PRINTFORMW\ 「主人\~\~…%UNICODE\(0x2661\)\ \*1%　对淫乱而又下流的%SAVESTR:TARGET%…」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '731',
-        any: [/PRINTFORMW\ 「好好地惩罚一下吧\~%UNICODE\(0x2661\)\ \*3%」/],
-      },
-      {
-        src: K3,
-        ref: '732',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%用双手将自己的桃尻掰开，诱惑着%SAVESTR:PLAYER%………/,
-        ],
-      },
-      { src: K3, ref: '733', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '734',
-        any: [
-          /PRINTFORMW\ 「哈啊…哈啊…快点\~…主人\~…请给予大鸡巴吧\~…%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '735',
-        any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身体哪里都可以…让主人舒服起来的哦\~\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      { src: K3, ref: '736', any: [/ENDIF/] },
-      { src: K3, ref: '737', any: [/ENDIF/] },
-      { src: K3, ref: '738', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '740',
-        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
-      },
-      { src: K3, ref: '741', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '743',
-        any: [
-          /IF\ CFLAG:TARGET:230\ >=\ 1\ \&\&\ \(TALENT:TARGET:190\ ==\ 1\ \|\|\ TALENT:TARGET:191\ ==\ 1\)/,
-        ],
-      },
-      { src: K3, ref: '744', any: [/IF\ RAND:3\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '745',
-        any: [
-          /PRINTFORML\ 「嗯哼哼\~…居然长得那么大了呢\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '746',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%很怜爱地、抚摸着因为蠕虫寄生而怀孕膨胀了的肚子………/,
-        ],
-      },
-      { src: K3, ref: '747', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '748',
-        any: [
-          /PRINTFORML\ 「被大人植入在肚子里面的孩子们\~、正在不停地长大着呢\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '749',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%眯着眼睛、怜爱地抚摸着因为寄生虫的卵而膨胀变大的肚子……/,
-        ],
-      },
-      { src: K3, ref: '750', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '751',
-        any: [
-          /PRINTFORML\ 「在%SAVESTR:TARGET%的肚子里面的孩子……能快一点出来活动就好了呢\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '752',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%一副恍惚地表情、抚摸着因为塞满着蠕虫的卵而膨胀起来的肚子……/,
-        ],
-      },
-      { src: K3, ref: '753', any: [/ENDIF/] },
-      { src: K3, ref: '755', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 1/] },
-      { src: K3, ref: '757', any: [/IF\ RAND:3\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '758',
-        any: [/PRINTFORMW\ 「已经…故乡什么的…已经怎么样都可以了…」/],
-      },
-      {
-        src: K3,
-        ref: '759',
-        any: [/PRINTFORMW\ 「请让%SELF_CALL\(TARGET\)%一直呆在这里吧………」/],
-      },
-      { src: K3, ref: '760', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
-      { src: K3, ref: '761', any: [/PRINTFORMW\ 「啊\~…魔王大人\~♪」/] },
-      {
-        src: K3,
-        ref: '762',
-        any: [/PRINTFORMW\ 「一直、在等待这您的到来呢…撒、请快点来这边吧…」/],
+        ref: '1062-1063',
+        any: [/PRINTFORMW\ 「哈呜…这样的…只是要忍耐而已…而已…嗯\~！」/],
       },
-      { src: K3, ref: '763', any: [/ELSE/] },
       {
         src: K3,
-        ref: '764',
-        any: [
-          /PRINTFORMW\ 「哈啊\~…为什么…为什么会如此地恋慕身为魔族之王的那个大人呢………」/,
-        ],
+        ref: '1065',
+        any: [/PRINTFORMW\ 「感觉真恶心…不要在…这样…触，触碰了…！」/],
       },
+      { src: K3, ref: '1067', any: [/CFLAG:301\ =\ 201/] },
       {
         src: K3,
-        ref: '765',
+        ref: '1069-1078',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%就这样…堕落到地狱也没有关系………」/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%轻轻地抚摸了一下%SAVESTR:TARGET%紧紧闭着的眼皮子旁边后、%SAVESTR:TARGET%的身体颤抖起来，惊叫了一下。/,
         ],
       },
       {
         src: K3,
-        ref: '766',
+        ref: '1071',
         any: [
-          /PRINTFORMW\ 「………呜啊啊！？刚、刚刚的都听到了吗？请请请、请都忘掉吧！！！」/,
+          /PRINTFORMW\ 「不、不要啊…啊哈唔、呀\~…！不、不要摸啊……啊\~、啊啊…！」/,
         ],
       },
-      { src: K3, ref: '767', any: [/ENDIF/] },
-      { src: K3, ref: '769', any: [/ELSE/] },
-      { src: K3, ref: '771', any: [/IF\ RAND:3\ ==\ 0/] },
       {
         src: K3,
-        ref: '772',
-        any: [/PRINTFORMW\ 「大人\~、今天也要做对吧\~…♪」/],
-      },
-      {
-        src: K3,
-        ref: '773',
+        ref: '1073',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%将你的手放在脸颊上，可爱地用脸蹭着你的手心………/,
+          /PRINTFORMW\ 「不是，说了、不要摸了没听到吗…嗯\~！说了不要摸了啊…！」/,
         ],
-      },
-      { src: K3, ref: '774', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
-      {
-        src: K3,
-        ref: '775',
-        any: [/PRINTFORMW\ 「大人、等…等您已经等了好久了啊\~…」/],
       },
       {
         src: K3,
-        ref: '776',
+        ref: '1075',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%眼睛微微闭着，向你的脸轻轻亲了一下………/,
+          /PRINTFORML\ %SAVESTR:TARGET%将眼睛闭起来、安静地忍耐着爱抚带来的刺激。/,
         ],
-      },
-      { src: K3, ref: '777', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '778',
-        any: [/PRINTFORMW\ 「请温柔一点\.\.\.\.\.\.温柔地做吧\~…」/],
       },
       {
         src: K3,
-        ref: '779',
+        ref: '1076',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%用手指玩弄着自己的发鬓，好像很害羞地请求道………/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%轻轻地抚摸了一下%SAVESTR:TARGET%紧紧闭着的眼皮子旁边后、%SAVESTR:TARGET%的身体颤抖起来，惊叫了一下。/,
         ],
-      },
-      { src: K3, ref: '780', any: [/ENDIF/] },
-      { src: K3, ref: '781', any: [/ENDIF/] },
-      { src: K3, ref: '782', any: [/RETURN\ 1/] },
-      { src: K3, ref: '783', any: [/ENDIF/] },
-      { src: K3, ref: '784', any: [/RETURN\ 0/] },
-      { src: K3, ref: '790', any: [/@EVENTEND/] },
-      { src: K3, ref: '793', any: [/CFLAG:301\ =\ 1/] },
-      { src: K3, ref: '796', any: [/RETURN\ 0/] },
-      { src: K3, ref: '798', any: [/RETURN\ 0/] },
-      { src: K3, ref: '802', any: [/RETURN\ 0/] },
-      {
-        src: K3,
-        ref: '808',
-        any: [/IF\ TALENT:TARGET:9\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
       },
-      { src: K3, ref: '809', any: [/DRAWLINE/] },
       {
         src: K3,
-        ref: '810',
-        any: [/PRINTFORMW\ 「呜…呃呜…黑暗的…不要…狭窄的…不要………」/],
+        ref: '1077',
+        any: [/PRINTFORMW\ 「啊呜…！呃呜、呜\~…怎、怎么……嗯嗯\~！」/],
       },
+      { src: K3, ref: '1078', any: [/CFLAG:301\ =\ 202/] },
       {
         src: K3,
-        ref: '811',
+        ref: '1080-1091',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%的脸被眼泪和口水弄得一塌糊涂地横躺在那里………/,
+          /PRINTFORMW\ 每次触碰都会让%SAVESTR:TARGET%的话语中断、身体颤抖起来喘息也变得急促起来了。/,
         ],
       },
-      { src: K3, ref: '812', any: [/RETURN\ 1/] },
       {
         src: K3,
-        ref: '815',
-        any: [
-          /ELSEIF\ MARK:3\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
-        ],
-      },
-      { src: K3, ref: '816', any: [/DRAWLINE/] },
-      { src: K3, ref: '817', any: [/PRINTFORMW\ 「……真是无法置信」/] },
-      { src: K3, ref: '818', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '821',
-        any: [
-          /ELSEIF\ MARK:2\ <=\ 1\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
-        ],
+        ref: '1082',
+        any: [/PRINTFORMW\ 「已，已经…啊\~！快、不要…啊啊！快住手吧……！」/],
       },
-      { src: K3, ref: '822', any: [/DRAWLINE/] },
-      { src: K3, ref: '823', any: [/PRINTFORMW\ 「终于结束了啊………」/] },
-      { src: K3, ref: '824', any: [/RETURN\ 1/] },
       {
         src: K3,
-        ref: '827',
+        ref: '1083',
         any: [
-          /ELSEIF\ MARK:2\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+          /PRINTFORML\ 哪怕嘴上说着一堆拒绝的话语、%SAVESTR:TARGET%的瞳孔也因为快乐而湿润了起来。/,
         ],
-      },
-      { src: K3, ref: '828', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '829',
-        any: [/PRINTFORMW\ 「到底打算继续到什么时候呐…？」/],
       },
-      { src: K3, ref: '830', any: [/RETURN\ 1/] },
       {
         src: K3,
-        ref: '833',
+        ref: '1084',
         any: [
-          /ELSEIF\ MARK:2\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+          /PRINTFORMW\ 每次触碰都会让%SAVESTR:TARGET%的话语中断、身体颤抖起来喘息也变得急促起来了。/,
         ],
-      },
-      { src: K3, ref: '834', any: [/DRAWLINE/] },
-      {
-        src: K3,
-        ref: '835',
-        any: [/PRINTFORMW\ 「这种程度才不会屈服…来的………」/],
-      },
-      { src: K3, ref: '836', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '839',
-        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ BASE:0\ >=\ 500/],
       },
-      { src: K3, ref: '840', any: [/DRAWLINE/] },
-      { src: K3, ref: '842', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
       {
         src: K3,
-        ref: '843',
+        ref: '1086',
         any: [
-          /PRINTFORMW\ 「啊\~…%SELF_CALL\(TARGET\)%的身体…比起人类来还更加结实一点的啦………」/,
+          /PRINTFORMW\ 「够、够了…嗯嗯\~……哼嗯\~、呜……请，请适可而止吧…！」/,
         ],
       },
       {
         src: K3,
-        ref: '844',
-        any: [/PRINTFORMW\ 「所以请更加不留情面地做H的事情吧………」/],
+        ref: '1087',
+        any: [/PRINTFORML\ %SAVESTR:TARGET%的眼中、厌恶的神情并没有消失。/],
       },
-      { src: K3, ref: '845', any: [/ELSE/] },
       {
         src: K3,
-        ref: '846',
-        any: [/PRINTFORMW\ 「啊嗯\~…更多…请继续做更多H的事情吧\~………」/],
-      },
-      { src: K3, ref: '847', any: [/ENDIF/] },
-      { src: K3, ref: '848', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '850',
-        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ BASE:0\ <=\ 500/],
-      },
-      { src: K3, ref: '851', any: [/DRAWLINE/] },
-      { src: K3, ref: '853', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
-      {
-        src: K3,
-        ref: '854',
-        any: [
-          /PRINTFORMW\ 「哈啊…哈啊…太舒服了…脑子里都要融化掉了啊\~%UNICODE\(0x2661\)\ \*1%」/,
-        ],
-      },
-      { src: K3, ref: '855', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '856',
+        ref: '1088',
         any: [
-          /PRINTFORMW\ 「哈啊…哈啊…那里…还有…感觉着呢\~%UNICODE\(0x2661\)\ \*1%」/,
+          /PRINTFORMW\ 但是也没有压抑着住无情的爱抚带来的刺激、而从嘴边漏出了颤抖的娇喘声。/,
         ],
-      },
-      { src: K3, ref: '857', any: [/ENDIF/] },
-      { src: K3, ref: '858', any: [/RETURN\ 1/] },
-      {
-        src: K3,
-        ref: '860',
-        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ BASE:0\ >=\ 500/],
       },
-      { src: K3, ref: '861', any: [/DRAWLINE/] },
-      { src: K3, ref: '863', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
         src: K3,
-        ref: '864',
+        ref: '1090',
         any: [
-          /PRINTFORMW\ 「嗯啊\~…%SELF_CALL\(TARGET\)%…没想到自己的欲望居然会那么深…」/,
+          /PRINTFORMW\ 「为、为什么…啊\~、这…这样……这样的、事情……啊嗯\~……」/,
         ],
-      },
-      {
-        src: K3,
-        ref: '865',
-        any: [/PRINTFORMW\ 「…请更加用力地疼爱%SELF_CALL\(TARGET\)%吧………」/],
       },
-      { src: K3, ref: '866', any: [/ELSE/] },
+      { src: K3, ref: '1091', any: [/CFLAG:301\ =\ 203/] },
       {
         src: K3,
-        ref: '867',
+        ref: '1093-1101',
         any: [
-          /PRINTFORMW\ 「啊啦、更加用力地疼爱%SELF_CALL\(TARGET\)%也没关系的说\.\.\.\.\.\.」/,
+          /PRINTFORMW\ 「哈呜、%SAVESTR:TARGET%、可是，一心地，想要杀了…嗯、为什么、那么地……啊\~、这么…温柔地…啊、啊啊……」/,
         ],
       },
-      { src: K3, ref: '868', any: [/ENDIF/] },
-      { src: K3, ref: '869', any: [/RETURN\ 1/] },
       {
         src: K3,
-        ref: '871',
-        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ BASE:0\ <=\ 500/],
+        ref: '1095',
+        any: [/PRINTFORMW\ 「呀…啊、不要啊……请、请快住手，停下来吧…」/],
       },
-      { src: K3, ref: '872', any: [/DRAWLINE/] },
-      { src: K3, ref: '874', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
         src: K3,
-        ref: '875',
-        any: [/PRINTFORMW\ 「啊哈啊嗯\~…果然、最喜欢大人您了\~…♪」/],
+        ref: '1099',
+        any: [/PRINTFORMW\ 「嗯\~、嗯\~嗯\~……明明…说了、快住手了……啊嗯\~……」/],
       },
-      { src: K3, ref: '876', any: [/ELSE/] },
-      { src: K3, ref: '877', any: [/PRINTFORMW\ 「十分满足的说…♪」/] },
-      { src: K3, ref: '878', any: [/ENDIF/] },
-      { src: K3, ref: '879', any: [/RETURN\ 1/] },
-      { src: K3, ref: '880', any: [/ENDIF/] },
-      { src: K3, ref: '881', any: [/RETURN\ 0/] },
       { src: K3, ref: '1110', any: [/IF\ SELECTCOM\ ==\ 1/] },
-      { src: K3, ref: '1110-1147', any: [/IF\ SELECTCOM\ ==\ 1/] },
-      { src: K3, ref: '1112-1121', any: [/IF\ CFLAG:302\ ==\ 0/] },
-      { src: K3, ref: '1114-1118', any: [/IF\ TALENT:TARGET:0\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '1112-1121',
+        any: [
+          /PRINTFORMW\ 「嗯啊啊\~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1114-1118',
+        any: [
+          /PRINTFORMW\ 「嗯啊啊\~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」/,
+        ],
+      },
       {
         src: K3,
         ref: '1115',
@@ -12280,12 +10921,11 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊…怎么会…舌头…哈呜…啊\~…啊呜\~\~\~\~！」/],
       },
       { src: K3, ref: '1120', any: [/CFLAG:302\ =\ 1/] },
-      { src: K3, ref: '1121', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '1123-1145',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ \(CFLAG:302\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
+          /PRINTFORMW\ 「请更加地…欺负%SAVESTR:TARGET%的小穴吧\~…将変態%SAVESTR:TARGET%的小穴弄得乱七八糟的吧啊啊\~！%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -12299,7 +10939,7 @@ const FILES = [
         src: K3,
         ref: '1126',
         any: [
-          /PRINTFORMW\ 「哈啊啊…更加地…更加地\.\.\.将小穴弄得更加黏糊糊地吧%UNICODE\(0x2661\)\ \*1%…更加地欺负小穴吧哈呜\~\~%UNICODE\(/,
+          /PRINTFORMW\ 「哈啊啊…更加地…更加地\.\.\.将小穴弄得更加黏糊糊地吧%UNICODE\(0x2661\)\ \*1%…更加地欺负小穴吧哈呜\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -12313,7 +10953,7 @@ const FILES = [
         src: K3,
         ref: '1128',
         any: [
-          /PRINTFORMW\ 「请更加地…欺负%SAVESTR:TARGET%的小穴吧\~…将変態%SAVESTR:TARGET%的小穴弄得乱七八糟的吧啊啊\~！%UNIC/,
+          /PRINTFORMW\ 「请更加地…欺负%SAVESTR:TARGET%的小穴吧\~…将変態%SAVESTR:TARGET%的小穴弄得乱七八糟的吧啊啊\~！%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '1129', any: [/CFLAG:302\ =\ 5/] },
@@ -12374,20 +11014,26 @@ const FILES = [
         ],
       },
       { src: K3, ref: '1143', any: [/CFLAG:302\ =\ 2/] },
-      { src: K3, ref: '1145', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1147', any: [/ENDIF/] },
       { src: K3, ref: '1152', any: [/IF\ SELECTCOM\ ==\ 2/] },
-      { src: K3, ref: '1152-1197', any: [/IF\ SELECTCOM\ ==\ 2/] },
-      { src: K3, ref: '1154-1157', any: [/IF\ CFLAG:303\ ==\ 0/] },
+      { src: K3, ref: '1160', any: [/P\ =\ PALAM:3\ \+\ UP:3/] },
+      {
+        src: K3,
+        ref: '1154-1157',
+        any: [/PRINTFORMW\ 「呜，呜哇啊！？那、那里是不行的！」/],
+      },
       {
         src: K3,
         ref: '1155',
         any: [/PRINTFORMW\ 「呜，呜哇啊！？那、那里是不行的！」/],
       },
       { src: K3, ref: '1156', any: [/CFLAG:TARGET:303\ =\ 1/] },
-      { src: K3, ref: '1157', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1159-1195', any: [/P\ =\ PALAM:3\ \+\ UP:3/] },
-      { src: K3, ref: '1160', any: [/P\ =\ PALAM:3\ \+\ UP:3/] },
+      {
+        src: K3,
+        ref: '1159-1195',
+        any: [
+          /PRINTFORMW\ 「嗯啊\~……哈啊嗯\~%UNICODE\(0x2661\)\ \*1%　指尖在…嗯\~…在挖着…啊\~%UNICODE\(0x2661\)\ \*1%这个嗯\~\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
       {
         src: K3,
         ref: '1162',
@@ -12399,7 +11045,7 @@ const FILES = [
         src: K3,
         ref: '1163',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%…啊\~%UNICODE\(0x2661\)\ \*1%…哈呜啊啊啊\~%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%…啊\~%UNICODE\(0x2661\)\ \*1%…哈呜啊啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -12428,7 +11074,7 @@ const FILES = [
         src: K3,
         ref: '1169',
         any: [
-          /PRINTFORMW\ 「嗯啊\~……哈啊嗯\~%UNICODE\(0x2661\)\ \*1%　指尖在…嗯\~…在挖着…啊\~%UNICODE\(0x2661\)\ \*1%这个嗯\~\~/,
+          /PRINTFORMW\ 「嗯啊\~……哈啊嗯\~%UNICODE\(0x2661\)\ \*1%　指尖在…嗯\~…在挖着…啊\~%UNICODE\(0x2661\)\ \*1%这个嗯\~\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -12450,7 +11096,7 @@ const FILES = [
         src: K3,
         ref: '1174',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ P\ >=\ PALAMLV:2\ \&\&\ \(CFLAG:303\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2/,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ P\ >=\ PALAMLV:2\ \&\&\ \(CFLAG:303\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -12535,30 +11181,30 @@ const FILES = [
         ],
       },
       { src: K3, ref: '1193', any: [/CFLAG:303\ =\ 2/] },
-      { src: K3, ref: '1195', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1197', any: [/ENDIF/] },
       { src: K3, ref: '1202', any: [/IF\ SELECTCOM\ ==\ 3/] },
-      { src: K3, ref: '1202-1323', any: [/IF\ SELECTCOM\ ==\ 3/] },
-      { src: K3, ref: '1204-1207', any: [/IF\ CFLAG:304\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '1204-1207',
+        any: [/PRINTFORMW\ 「居然…不能不做这样的事情…这是……何等的…屈辱啊…」/],
+      },
       {
         src: K3,
         ref: '1205',
         any: [/PRINTFORMW\ 「居然…不能不做这样的事情…这是……何等的…屈辱啊…」/],
       },
       { src: K3, ref: '1206', any: [/CFLAG:TARGET:304\ =\ 1/] },
-      { src: K3, ref: '1207', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '1209-1321',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:304\ <=\ 8\ \|\|\ FLAG:7\ ==/,
+          /PRINTFORMW\ 「这个手指…这个手指如果是主人的大鸡巴的话%UNICODE\(0x2661\)\ \*1%　就会…就会变地更加舒服起来了呀\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '1211',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:304\ <=\ 8\ \|\|\ FLAG:7\ ==/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:304\ <=\ 8\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -12572,7 +11218,7 @@ const FILES = [
         src: K3,
         ref: '1213',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身心…明明\.\.\.\.都变得…如此地淫乱了…啊啊\~%UNICODE\(0x2661\)\ \*1%也不拿走%/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身心…明明\.\.\.\.都变得…如此地淫乱了…啊啊\~%UNICODE\(0x2661\)\ \*1%也不拿走%SELF_CALL\(TARGET\)%重要的东西什么的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -12593,7 +11239,7 @@ const FILES = [
         src: K3,
         ref: '1216',
         any: [
-          /PRINTFORMW\ 「拜托了%UNICODE\(0x2661\)\ \*1%请将%SELF_CALL\(TARGET\)%的…淫乱小穴…用%NAME:MASTER%大人的/,
+          /PRINTFORMW\ 「拜托了%UNICODE\(0x2661\)\ \*1%请将%SELF_CALL\(TARGET\)%的…淫乱小穴…用%NAME:MASTER%大人的大鸡巴来贯穿了吧\~\~\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
       {
@@ -12651,7 +11297,7 @@ const FILES = [
         src: K3,
         ref: '1232',
         any: [
-          /PRINTFORMW\ 「哈啊\~…啊\~…啊啊\~…这么的…舒服的事情嗯\~…谁都没有告诉%SAVESTR:TARGET%啊嗯\~…%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「哈啊\~…啊\~…啊啊\~…这么的…舒服的事情嗯\~…谁都没有告诉%SAVESTR:TARGET%啊嗯\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -12675,7 +11321,6 @@ const FILES = [
           /PRINTFORMW\ 「为什么大家…不做这么舒服的事情呢\~？%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '1236', any: [/ELSE/] },
       {
         src: K3,
         ref: '1237',
@@ -12687,7 +11332,7 @@ const FILES = [
         src: K3,
         ref: '1238',
         any: [
-          /PRINTFORMW\ 「但是停不下来呢\~\~%UNICODE\(0x2661\)\ \*1%\ 这么舒服的事情，根本停不下来呀\~\~\~%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「但是停不下来呢\~\~%UNICODE\(0x2661\)\ \*1%\ 这么舒服的事情，根本停不下来呀\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -12737,10 +11382,9 @@ const FILES = [
         src: K3,
         ref: '1254',
         any: [
-          /PRINTFORMW\ 「这个手指…这个手指如果是主人的大鸡巴的话%UNICODE\(0x2661\)\ \*1%　就会…就会变地更加舒服起来了呀\~\~%UNICODE\(0/,
+          /PRINTFORMW\ 「这个手指…这个手指如果是主人的大鸡巴的话%UNICODE\(0x2661\)\ \*1%　就会…就会变地更加舒服起来了呀\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '1255', any: [/ELSE/] },
       {
         src: K3,
         ref: '1256',
@@ -12760,7 +11404,7 @@ const FILES = [
         src: K3,
         ref: '1262',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:304\ <=\ 5\ \|\|\ FLAG:/,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:304\ <=\ 5\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -12854,7 +11498,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%每当将手指伸进蜜穴里后便会有下流的水声响起、爱液不提地滴到了地板上………/,
         ],
       },
-      { src: K3, ref: '1284', any: [/ELSE/] },
       {
         src: K3,
         ref: '1285',
@@ -12889,10 +11532,9 @@ const FILES = [
         src: K3,
         ref: '1295',
         any: [
-          /PRINTFORMW\ 「居然是那么舒服的事情来的呀…请更加地…更加地看着%SELF_CALL\(TARGET\)%自慰的姿态吧\~\~\~%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「居然是那么舒服的事情来的呀…请更加地…更加地看着%SELF_CALL\(TARGET\)%自慰的姿态吧\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '1296', any: [/ELSE/] },
       {
         src: K3,
         ref: '1297',
@@ -12904,7 +11546,7 @@ const FILES = [
         src: K3,
         ref: '1298',
         any: [
-          /PRINTFORMW\ 「主人\~%UNICODE\(0x2661\)\ \*1%\ 请更加地…疼爱%SELF_CALL\(TARGET\)%吧…啊\~啊啊啊\~嗯\~%UNICODE/,
+          /PRINTFORMW\ 「主人\~%UNICODE\(0x2661\)\ \*1%\ 请更加地…疼爱%SELF_CALL\(TARGET\)%吧…啊\~啊啊啊\~嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '1300', any: [/CFLAG:304\ =\ 4/] },
@@ -12923,7 +11565,6 @@ const FILES = [
           /PRINTFORMW\ 「明明…不行…来的…但是\.\.\.为什么…手却…停不下来呀\~………啊嗯\~！」/,
         ],
       },
-      { src: K3, ref: '1306', any: [/ELSE/] },
       {
         src: K3,
         ref: '1307',
@@ -12950,7 +11591,6 @@ const FILES = [
           /PRINTFORMW\ 「呃呜…呜\~…啊\~…这样的一点也…哼呜\~…啊\~…哈呜\~！」/,
         ],
       },
-      { src: K3, ref: '1316', any: [/ELSE/] },
       {
         src: K3,
         ref: '1317',
@@ -12959,16 +11599,19 @@ const FILES = [
         ],
       },
       { src: K3, ref: '1319', any: [/CFLAG:304\ =\ 2/] },
-      { src: K3, ref: '1321', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1323', any: [/ENDIF/] },
       { src: K3, ref: '1328', any: [/IF\ SELECTCOM\ ==\ 5/] },
-      { src: K3, ref: '1328-1406', any: [/IF\ SELECTCOM\ ==\ 5/] },
-      { src: K3, ref: '1330-1358', any: [/IF\ CFLAG:306\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '1330-1358',
+        any: [
+          /PRINTFORML\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 被那么用力地揉的话\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
       {
         src: K3,
         ref: '1332',
         any: [
-          /IF\ TALENT:TARGET:130\ ==\ 1\ \&\&\ PALAM:5\ >\ PALAMLV:3\ \&\&\ TEQUIP:16\ ==\ 0\ \&\&\ TEQUIP:15\ /,
+          /IF\ TALENT:TARGET:130\ ==\ 1\ \&\&\ PALAM:5\ >\ PALAMLV:3\ \&\&\ TEQUIP:16\ ==\ 0\ \&\&\ TEQUIP:15\ ==\ 0/,
         ],
       },
       {
@@ -13028,19 +11671,18 @@ const FILES = [
         any: [/PRINTFORMW\ 「嗯呜…不要…弄得那么疼………」/],
       },
       { src: K3, ref: '1357', any: [/CFLAG:TARGET:306\ =\ 1/] },
-      { src: K3, ref: '1358', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '1360-1406',
         any: [
-          /IF\ TALENT:TARGET:130\ ==\ 1\ \&\&\ PALAM:5\ >\ PALAMLV:3\ \&\&\ TEQUIP:16\ ==\ 0\ \&\&\ TEQUIP:15\ /,
+          /PRINTFORMW\ 「啊嗯\~…可以的哦\~…请再喝更多一点吧…%SELF_CALL\(TARGET\)%的可爱的大人………%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '1362',
         any: [
-          /IF\ TALENT:TARGET:130\ ==\ 1\ \&\&\ PALAM:5\ >\ PALAMLV:3\ \&\&\ TEQUIP:16\ ==\ 0\ \&\&\ TEQUIP:15\ /,
+          /IF\ TALENT:TARGET:130\ ==\ 1\ \&\&\ PALAM:5\ >\ PALAMLV:3\ \&\&\ TEQUIP:16\ ==\ 0\ \&\&\ TEQUIP:15\ ==\ 0/,
         ],
       },
       {
@@ -13143,14 +11785,13 @@ const FILES = [
         any: [/PRINTFORMW\ 「不…不要…唔…不要再…欺负胸部…啊\~…啊啊\~！」/],
       },
       { src: K3, ref: '1402', any: [/CFLAG:306\ =\ 2/] },
-      { src: K3, ref: '1404', any: [/ENDIF/] },
-      { src: K3, ref: '1406', any: [/ENDIF/] },
       { src: K3, ref: '1412', any: [/IF\ SELECTCOM\ ==\ 6/] },
-      { src: K3, ref: '1412-1517', any: [/IF\ SELECTCOM\ ==\ 6/] },
       {
         src: K3,
         ref: '1414-1472',
-        any: [/IF\ CFLAG:307\ ==\ 0\ \&\&\ TFLAG:13/],
+        any: [
+          /PRINTFORMW\ 「！…怎，怎么能…那么卑鄙…让%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%自己来做什么的…唔…呜呜呜\~………」/,
+        ],
       },
       {
         src: K3,
@@ -13185,14 +11826,7 @@ const FILES = [
         src: K3,
         ref: '1422',
         any: [
-          /PRINTFORMW\ 「嗯哈啊啊\~…啊啊…好棒…%SELF_CALL\(TARGET\)%淫乱的嘴唇能献给主人您真是荣幸呢\~…%UNICODE\(0x2661\)\ \*3/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '1427',
-        any: [
-          /PRINTFORMW\ 「嗯呼呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~…啾呜\~…啾呼\~…呸咯\~…嗯\~嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「嗯哈啊啊\~…啊啊…好棒…%SELF_CALL\(TARGET\)%淫乱的嘴唇能献给主人您真是荣幸呢\~…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -13200,6 +11834,13 @@ const FILES = [
         ref: '1428',
         any: [
           /PRINTFORMW\ %SAVESTR:TARGET%环抱着%NAME:MASTER%、热情地将舌头缠绕起来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '1427',
+        any: [
+          /PRINTFORMW\ 「嗯呼呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~…啾呜\~…啾呼\~…呸咯\~…嗯\~嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -13335,7 +11976,7 @@ const FILES = [
         src: K3,
         ref: '1466',
         any: [
-          /PRINTFORMW\ 「！…怎，怎么能…那么卑鄙…让%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%自己来做什么的…唔/,
+          /PRINTFORMW\ 「！…怎，怎么能…那么卑鄙…让%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%自己来做什么的…唔…呜呜呜\~………」/,
         ],
       },
       {
@@ -13351,8 +11992,13 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊…啊…%SELF_CALL\(TARGET\)%的…初吻被………」/],
       },
       { src: K3, ref: '1472', any: [/CFLAG:307\ =\ 1/] },
-      { src: K3, ref: '1473', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1475-1488', any: [/ELSEIF\ CFLAG:307\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '1475-1488',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴唇…全部都是主人的东西来的…请更加的…渴求%SELF_CALL\(TARGET\)%的嘴唇吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
       {
         src: K3,
         ref: '1478',
@@ -13371,7 +12017,7 @@ const FILES = [
         src: K3,
         ref: '1480',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴唇…全部都是主人的东西来的…请更加的…渴求%SELF_CALL\(TARGET\)%的嘴唇吧\~\~%/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴唇…全部都是主人的东西来的…请更加的…渴求%SELF_CALL\(TARGET\)%的嘴唇吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -13392,12 +12038,11 @@ const FILES = [
         any: [/PRINTFORMW\ 「嗯呜\~…这，这样的…才不算什么呢！…！」/],
       },
       { src: K3, ref: '1489', any: [/CFLAG:307\ =\ 1/] },
-      { src: K3, ref: '1490', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '1492-1516',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ \(CFLAG:307\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴唇…全部都是主人的东西来的…请更加的…渴求%SELF_CALL\(TARGET\)%的嘴唇吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -13418,7 +12063,7 @@ const FILES = [
         src: K3,
         ref: '1497',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴唇…全部都是主人的东西来的…请更加的…渴求%SELF_CALL\(TARGET\)%的嘴唇吧\~\~%/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴唇…全部都是主人的东西来的…请更加的…渴求%SELF_CALL\(TARGET\)%的嘴唇吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '1498', any: [/CFLAG:307\ =\ 5/] },
@@ -13461,8 +12106,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊…哈啊…这样…这样的………」/],
       },
       { src: K3, ref: '1513', any: [/CFLAG:307\ =\ 2/] },
-      { src: K3, ref: '1515', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1517', any: [/ENDIF/] },
       { src: K3, ref: '1522', any: [/IF\ SELECTCOM\ ==\ 7/] },
       { src: K3, ref: '1524', any: [/IF\ CFLAG:308\ ==\ 0/] },
       { src: K3, ref: '1526', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -13481,7 +12124,6 @@ const FILES = [
           /PRINTFORMW\ …这样的…自己张开那里让大人您看什么的…明明…很羞耻，的事情来的/,
         ],
       },
-      { src: K3, ref: '1532', any: [/ELSE/] },
       {
         src: K3,
         ref: '1533',
@@ -13489,9 +12131,7 @@ const FILES = [
           /PRINTFORMW\ 「不，不行了啊…已经不能再张开了…哈呜！…%SELF_CALL\(TARGET\)%明、明白了…会张得…更大的………」/,
         ],
       },
-      { src: K3, ref: '1534', any: [/ENDIF/] },
       { src: K3, ref: '1535', any: [/CFLAG:TARGET:308\ =\ 1/] },
-      { src: K3, ref: '1536', any: [/RETURN\ 0/] },
       { src: K3, ref: '1538', any: [/ELSEIF\ TEQUIP:53\ ==\ 1/] },
       {
         src: K3,
@@ -13517,10 +12157,9 @@ const FILES = [
         src: K3,
         ref: '1545',
         any: [
-          /PRINTFORMW\ 「一想到要被好多人看到后…身，身体就要变得…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊啊\~%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「一想到要被好多人看到后…身，身体就要变得…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '1546', any: [/ELSE/] },
       { src: K3, ref: '1547', any: [/PRINTFORMW\ 「呜……」/] },
       {
         src: K3,
@@ -13529,14 +12168,12 @@ const FILES = [
           /PRINTFORMW\ 不甘心地咬着自己得下嘴唇、%SAVESTR:TARGET%向着眼前的水晶球张开了自己的秘处。/,
         ],
       },
-      { src: K3, ref: '1549', any: [/ENDIF/] },
-      { src: K3, ref: '1550', any: [/ELSE/] },
       { src: K3, ref: '1552', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
       {
         src: K3,
         ref: '1553',
         any: [
-          /PRINTFORMW\ 「嗯哼\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%明白了\~。就按照主人说的那样、给大\~家、大饱眼福一下吧\~/,
+          /PRINTFORMW\ 「嗯哼\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%明白了\~。就按照主人说的那样、给大\~家、大饱眼福一下吧\~」/,
         ],
       },
       { src: K3, ref: '1555', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -13547,7 +12184,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊……虽然感到十分地羞耻、但是会按照%NAME:MASTER%所说的那样……」/,
         ],
       },
-      { src: K3, ref: '1557', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1559',
@@ -13559,7 +12195,7 @@ const FILES = [
         src: K3,
         ref: '1560',
         any: [
-          /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…淫乱雌犬%SAVESTR:TARGET%的、处女小穴/,
+          /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…淫乱雌犬%SAVESTR:TARGET%的、处女小穴来的…/,
         ],
       },
       {
@@ -13614,7 +12250,7 @@ const FILES = [
         src: K3,
         ref: '1572',
         any: [
-          /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…淫乱雌犬%SAVESTR:TARGET%的、小穴来的/,
+          /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…淫乱雌犬%SAVESTR:TARGET%的、小穴来的…/,
         ],
       },
       {
@@ -13629,7 +12265,7 @@ const FILES = [
         src: K3,
         ref: '1576',
         any: [
-          /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…淫乱雌犬%SAVESTR:TARGET%的、小穴来的/,
+          /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…淫乱雌犬%SAVESTR:TARGET%的、小穴来的…/,
         ],
       },
       { src: K3, ref: '1578', any: [/ELSEIF\ TALENT:TARGET:271\ ==\ 1/] },
@@ -13637,7 +12273,7 @@ const FILES = [
         src: K3,
         ref: '1579',
         any: [
-          /PRINTFORML\ 正在看的大家……能不能看见呢\~？这个、%SELF_CALL\(TARGET\)%的…%SAVESTR:TARGET%的小穴是、一直都是黏糊糊的/,
+          /PRINTFORML\ 正在看的大家……能不能看见呢\~？这个、%SELF_CALL\(TARGET\)%的…%SAVESTR:TARGET%的小穴是、一直都是黏糊糊的噢\~。/,
         ],
       },
       {
@@ -13647,7 +12283,6 @@ const FILES = [
           /PRINTFORML\ 　要说为什么的话、那是因为魔王大人一直都将快乐和愉悦交给%SELF_CALL\(TARGET\)%的原因…/,
         ],
       },
-      { src: K3, ref: '1582', any: [/ELSE/] },
       {
         src: K3,
         ref: '1583',
@@ -13655,7 +12290,6 @@ const FILES = [
           /PRINTFORML\ 「正在看的大家……能不能看见呢\~？这个就是、%SELF_CALL\(TARGET\)%的…%SAVESTR:TARGET%的、小穴来的…/,
         ],
       },
-      { src: K3, ref: '1584', any: [/ENDIF/] },
       { src: K3, ref: '1586', any: [/IF\ TALENT:TARGET:89\ ==\ 1/] },
       {
         src: K3,
@@ -13669,7 +12303,6 @@ const FILES = [
           /PRINTFORML\ 　明明都没有在大家的面前…不对、只有魔王大人的视线也会很快就会湿掉了。/,
         ],
       },
-      { src: K3, ref: '1589', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1591',
@@ -13708,7 +12341,6 @@ const FILES = [
           /PRINTFORML\ 　所以说还没有对这里调教过、不知道以后用这里侍奉能不能符合魔王大人的喜好、十分地担心……/,
         ],
       },
-      { src: K3, ref: '1598', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1600',
@@ -13731,7 +12363,6 @@ const FILES = [
         ref: '1604',
         any: [/PRINTFORML\ 　想要让魔王大人来擦来擦去、一直都痒地不行呢。/],
       },
-      { src: K3, ref: '1605', any: [/ENDIF/] },
       { src: K3, ref: '1607', any: [/IF\ TALENT:TARGET:74\ ==\ 1/] },
       {
         src: K3,
@@ -13745,7 +12376,6 @@ const FILES = [
         ref: '1609',
         any: [/PRINTFORML\ 　就像这样一样……嗯\~、嗯\~……/],
       },
-      { src: K3, ref: '1610', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1612',
@@ -13770,7 +12400,6 @@ const FILES = [
           /PRINTFORML\ 　不管被鞭子打也好、还是被拿针刺都好、%SELF_CALL\(TARGET\)%的这里都会流出开心的泪水。/,
         ],
       },
-      { src: K3, ref: '1617', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1619',
@@ -13795,10 +12424,9 @@ const FILES = [
         src: K3,
         ref: '1624',
         any: [
-          /PRINTFORML\ 　不只是用来侍奉的小穴来的、%SELF_CALL\(TARGET\)%自身也会有感觉的、不知道多少次因为太有感觉而恍惚了…唔哼哼\~%UNICO/,
+          /PRINTFORML\ 　不只是用来侍奉的小穴来的、%SELF_CALL\(TARGET\)%自身也会有感觉的、不知道多少次因为太有感觉而恍惚了…唔哼哼\~%UNICODE\(0x2661\)\ \*1%/,
         ],
       },
-      { src: K3, ref: '1626', any: [/ELSE/] },
       {
         src: K3,
         ref: '1627',
@@ -13806,13 +12434,12 @@ const FILES = [
           /PRINTFORML\ 　前面也好、后面也好…小穴也好、肛穴也好、身体全部都被魔王大人、给予了调教了%UNICODE\(0x2661\)\ \*1%/,
         ],
       },
-      { src: K3, ref: '1628', any: [/ENDIF/] },
       { src: K3, ref: '1630', any: [/ELSEIF\ TALENT:TARGET:77\ ==\ 1/] },
       {
         src: K3,
         ref: '1631',
         any: [
-          /PRINTFORML\ 　不只是前面，后面也很厉害的噢、%SELF_CALL\(TARGET\)%。因为魔王大人只专注调教这边的原因、%SELF_CALL\(TARGE/,
+          /PRINTFORML\ 　不只是前面，后面也很厉害的噢、%SELF_CALL\(TARGET\)%。因为魔王大人只专注调教这边的原因、%SELF_CALL\(TARGET\)%的肛穴…/,
         ],
       },
       { src: K3, ref: '1633', any: [/IF\ TALENT:TARGET:0\ ==\ 1/] },
@@ -13820,10 +12447,9 @@ const FILES = [
         src: K3,
         ref: '1634',
         any: [
-          /PRINTFORML\ 　已经、完全变成了只为侍奉而用的肛穴了。%SELF_CALL\(TARGET\)%自身也，也变得奇怪地敏感起来了…唔哼哼%UNICODE\(0x/,
+          /PRINTFORML\ 　已经、完全变成了只为侍奉而用的肛穴了。%SELF_CALL\(TARGET\)%自身也，也变得奇怪地敏感起来了…唔哼哼%UNICODE\(0x2661\)\ \*1%/,
         ],
       },
-      { src: K3, ref: '1636', any: [/ELSE/] },
       {
         src: K3,
         ref: '1637',
@@ -13831,8 +12457,6 @@ const FILES = [
           /PRINTFORML\ 　跟小穴一样、肛穴也……不对、不只是肛穴，全身都被魔王大人蹂蹑过，给予了调教了%UNICODE\(0x2661\)\ \*1%/,
         ],
       },
-      { src: K3, ref: '1638', any: [/ENDIF/] },
-      { src: K3, ref: '1639', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1640',
@@ -13891,7 +12515,6 @@ const FILES = [
           /PRINTFORML\ 　哪怕是这样、只要魔王大人下命令的话……%SELF_CALL\(TARGET\)%就会、打从欣喜接受其命令。/,
         ],
       },
-      { src: K3, ref: '1666', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1667',
@@ -13899,7 +12522,6 @@ const FILES = [
           /PRINTFORMW\ 　当然、如果你没有对魔王大人抱有绝对的忠诚的话……真是没有缘分的话题呢、对吧」/,
         ],
       },
-      { src: K3, ref: '1668', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1671',
@@ -13921,7 +12543,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~……虽然很害羞来着、%NAME:MASTER%想要看的话……」/,
         ],
       },
-      { src: K3, ref: '1678', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1680',
@@ -14010,10 +12631,9 @@ const FILES = [
         src: K3,
         ref: '1702',
         any: [
-          /PRINTFORML\ 「只是视线而已、就会变得那么湿的%SELF_CALL\(TARGET\)%的小穴也可以的话……%SELF_CALL\(TARGET\)%自己也就、/,
+          /PRINTFORML\ 「只是视线而已、就会变得那么湿的%SELF_CALL\(TARGET\)%的小穴也可以的话……%SELF_CALL\(TARGET\)%自己也就、拜托您了……/,
         ],
       },
-      { src: K3, ref: '1704', any: [/ELSE/] },
       {
         src: K3,
         ref: '1705',
@@ -14021,7 +12641,6 @@ const FILES = [
           /PRINTFORML\ 「请吧\~、请鉴赏吧\~…%SELF_CALL\(TARGET\)%的全部、都是魔王大人的东西来的啦……/,
         ],
       },
-      { src: K3, ref: '1706', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1708',
@@ -14042,7 +12661,6 @@ const FILES = [
         ref: '1712',
         any: [/PRINTFORML\ 　只是胸部还是不满足呢、也请充分地调教这边吧。/],
       },
-      { src: K3, ref: '1713', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1715',
@@ -14067,7 +12685,6 @@ const FILES = [
           /PRINTFORML\ 　也请别只是看而已、就想要在这里感受魔王大人呢。给%SELF_CALL\(TARGET\)%、教给真正的抽插狂吧\~…！/,
         ],
       },
-      { src: K3, ref: '1720', any: [/ENDIF/] },
       { src: K3, ref: '1722', any: [/IF\ TALENT:TARGET:74\ ==\ 1/] },
       {
         src: K3,
@@ -14076,7 +12693,6 @@ const FILES = [
           /PRINTFORML\ 啊啊\~…！就这样也好、也好想要自慰、好想自慰地不行……！/,
         ],
       },
-      { src: K3, ref: '1724', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1727',
@@ -14126,8 +12742,6 @@ const FILES = [
           /PRINTFORMW\ 　请抱住%SELF_CALL\(TARGET\)%、深处的里面想要被贯穿呢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '1741', any: [/ENDIF/] },
-      { src: K3, ref: '1743', any: [/ELSE/] },
       {
         src: K3,
         ref: '1745',
@@ -14144,7 +12758,7 @@ const FILES = [
         src: K3,
         ref: '1747',
         any: [
-          /PRINTFORMW\ 「如果实在忍不住了的话…就这样%SELF_CALL\(TARGET\)%推倒吧…强奸到失神也没有关系的噢%UNICODE\(0x2661\)\ \*3/,
+          /PRINTFORMW\ 「如果实在忍不住了的话…就这样%SELF_CALL\(TARGET\)%推倒吧…强奸到失神也没有关系的噢%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -14200,7 +12814,7 @@ const FILES = [
         src: K3,
         ref: '1759',
         any: [
-          /PRINTFORMW\ 「一明白实在被看到的话…啊啊\~身体就变热起来了…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊啊\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「一明白实在被看到的话…啊啊\~身体就变热起来了…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '1760', any: [/CFLAG:306\ =\ 103/] },
@@ -14220,10 +12834,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「想、想看的话，那就看更多一点就好了啊…！」/],
       },
       { src: K3, ref: '1765', any: [/CFLAG:306\ =\ 102/] },
-      { src: K3, ref: '1766', any: [/ENDIF/] },
-      { src: K3, ref: '1767', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1768', any: [/ENDIF/] },
-      { src: K3, ref: '1769', any: [/ENDIF/] },
       { src: K3, ref: '1774', any: [/IF\ SELECTCOM\ ==\ 8/] },
       { src: K3, ref: '1776', any: [/IF\ CFLAG:TARGET:309\ ==\ 0/] },
       { src: K3, ref: '1778', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -14231,7 +12841,7 @@ const FILES = [
         src: K3,
         ref: '1779',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 主人的手指…在%SELF_CALL\(TARGET\)%的小穴里…%UNICODE\(0x26/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 主人的手指…在%SELF_CALL\(TARGET\)%的小穴里…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -14246,7 +12856,6 @@ const FILES = [
           /PRINTFORMW\ 「好的\~…%SELF_CALL\(TARGET\)%没关系的啦\~…请按照大人您想要的做吧\~…嗯\~…那里…好棒…的说\~唔嗯\~♪」/,
         ],
       },
-      { src: K3, ref: '1784', any: [/ELSE/] },
       {
         src: K3,
         ref: '1785',
@@ -14254,10 +12863,7 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…不行…不行的啊啊…伸地那么进去的…唔哈啊啊啊！」/,
         ],
       },
-      { src: K3, ref: '1786', any: [/ENDIF/] },
       { src: K3, ref: '1787', any: [/CFLAG:TARGET:309\ =\ 1/] },
-      { src: K3, ref: '1788', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1790', any: [/ELSE/] },
       {
         src: K3,
         ref: '1792',
@@ -14269,14 +12875,14 @@ const FILES = [
         src: K3,
         ref: '1793',
         any: [
-          /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(0x2661\)\ \*1%\ 更加抽插那里吧\~%UNICODE\(0x2/,
+          /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(0x2661\)\ \*1%\ 更加抽插那里吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '1794',
         any: [
-          /PRINTFORMW\ 「请用主人的手指来…扣着%SELF_CALL\(TARGET\)%淫乱的小穴吧哈呜呜呜呜哎哎哎\~\~\~\~%UNICODE\(0x2661\)\ \*3%/,
+          /PRINTFORMW\ 「请用主人的手指来…扣着%SELF_CALL\(TARGET\)%淫乱的小穴吧哈呜呜呜呜哎哎哎\~\~\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '1795', any: [/CFLAG:309\ =\ 5/] },
@@ -14333,10 +12939,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊\~…手指在…那么的…粗鲁地做…嗯…呜…啊啊\~…」/],
       },
       { src: K3, ref: '1809', any: [/CFLAG:309\ =\ 2/] },
-      { src: K3, ref: '1810', any: [/ENDIF/] },
-      { src: K3, ref: '1811', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1812', any: [/ENDIF/] },
-      { src: K3, ref: '1813', any: [/ENDIF/] },
       { src: K3, ref: '1820', any: [/IF\ SELECTCOM\ ==\ 9/] },
       { src: K3, ref: '1822', any: [/IF\ CFLAG:310\ ==\ 0/] },
       { src: K3, ref: '1824', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -14365,7 +12967,6 @@ const FILES = [
           /PRINTFORMW\ 「好、好痒呀\~、这、这样的\~…啊\~啊啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '1832', any: [/ELSE/] },
       {
         src: K3,
         ref: '1833',
@@ -14373,10 +12974,7 @@ const FILES = [
           /PRINTFORMW\ 「哈呜嗯\~！居、居然舔那种地方什么的…脑、脑袋变奇怪了吗！」/,
         ],
       },
-      { src: K3, ref: '1834', any: [/ENDIF/] },
       { src: K3, ref: '1835', any: [/CFLAG:TARGET:310\ =\ 1/] },
-      { src: K3, ref: '1836', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1838', any: [/ELSE/] },
       {
         src: K3,
         ref: '1840',
@@ -14448,10 +13046,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊\~…不、不要…说了不要了啊…啊\~啊啊\~！」/],
       },
       { src: K3, ref: '1857', any: [/CFLAG:310\ =\ 2/] },
-      { src: K3, ref: '1858', any: [/ENDIF/] },
-      { src: K3, ref: '1859', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1860', any: [/ENDIF/] },
-      { src: K3, ref: '1861', any: [/ENDIF/] },
       { src: K3, ref: '1867', any: [/IF\ SELECTCOM\ ==\ 10/] },
       { src: K3, ref: '1869', any: [/IF\ CFLAG:TARGET:311\ ==\ 0/] },
       { src: K3, ref: '1871', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -14474,7 +13068,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~…啊啊嗯\~♪…是、是的没问题的\~…请更加…用力压下去吧…请将%SELF_CALL\(TARGET\)%当成玩具来玩耍吧\~…♪」/,
         ],
       },
-      { src: K3, ref: '1877', any: [/ELSE/] },
       {
         src: K3,
         ref: '1878',
@@ -14482,10 +13075,7 @@ const FILES = [
           /PRINTFORMW\ 「呜呀\~…这、这是什么啊、哪个是…不、不要…不要压下去…啊\~啊啊啊啊啊\~！」/,
         ],
       },
-      { src: K3, ref: '1879', any: [/ENDIF/] },
       { src: K3, ref: '1880', any: [/CFLAG:TARGET:311\ =\ 1/] },
-      { src: K3, ref: '1881', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1883', any: [/ELSE/] },
       {
         src: K3,
         ref: '1885',
@@ -14572,10 +13162,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '1903', any: [/CFLAG:311\ =\ 2/] },
-      { src: K3, ref: '1904', any: [/ENDIF/] },
-      { src: K3, ref: '1905', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1906', any: [/ENDIF/] },
-      { src: K3, ref: '1907', any: [/ENDIF/] },
       { src: K3, ref: '1913', any: [/IF\ SELECTCOM\ ==\ 11\ \&\&\ TEQUIP:11/] },
       { src: K3, ref: '1915', any: [/IF\ CFLAG:TARGET:312\ ==\ 0/] },
       { src: K3, ref: '1917', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -14584,7 +13170,7 @@ const FILES = [
         src: K3,
         ref: '1920',
         any: [
-          /PRINTFORMW\ 「啊啊啊\~…好棒…的啊\~…用那个丑恶的蠕虫…将%SELF_CALL\(TARGET\)%的处女给夺走对吧\~…%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「啊啊啊\~…好棒…的啊\~…用那个丑恶的蠕虫…将%SELF_CALL\(TARGET\)%的处女给夺走对吧\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -14633,7 +13219,6 @@ const FILES = [
           /PRINTFORMW\ 被丑恶到极致的蠕虫给夺走处女的%SAVESTR:TARGET%只在不停地留着眼泪………/,
         ],
       },
-      { src: K3, ref: '1931', any: [/ELSE/] },
       {
         src: K3,
         ref: '1932',
@@ -14641,8 +13226,6 @@ const FILES = [
           /PRINTFORMW\ 「呜嗯…呜…哈啊…哈啊…被这种东西…%SELF_CALL\(TARGET\)%的第一次给…………」/,
         ],
       },
-      { src: K3, ref: '1933', any: [/ENDIF/] },
-      { src: K3, ref: '1935', any: [/ELSE/] },
       { src: K3, ref: '1937', any: [/IF\ TALENT:76\ ==\ 1/] },
       {
         src: K3,
@@ -14673,7 +13256,6 @@ const FILES = [
           /PRINTFORMW\ 喜欢恶作剧的阴道虫在%SAVESTR:TARGET%的蜜穴里面激烈地蠕动着来回钻着………/,
         ],
       },
-      { src: K3, ref: '1945', any: [/ELSE/] },
       {
         src: K3,
         ref: '1946',
@@ -14681,11 +13263,7 @@ const FILES = [
           /PRINTFORMW\ 「不，不要…好恶心…不要嗯呜啊啊…啊啊呜…在里面动着啊啊啊…啊啊\~！」/,
         ],
       },
-      { src: K3, ref: '1947', any: [/ENDIF/] },
-      { src: K3, ref: '1948', any: [/ENDIF/] },
       { src: K3, ref: '1949', any: [/CFLAG:312\ =\ 1/] },
-      { src: K3, ref: '1950', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1952', any: [/ELSE/] },
       {
         src: K3,
         ref: '1954',
@@ -14779,9 +13357,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '1973', any: [/CFLAG:312\ =\ 2/] },
-      { src: K3, ref: '1974', any: [/ENDIF/] },
-      { src: K3, ref: '1975', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1976', any: [/ENDIF/] },
       {
         src: K3,
         ref: '1978',
@@ -14838,9 +13413,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「呜啊…啊啊………哈啊…哈啊…哈啊…」/],
       },
       { src: K3, ref: '1992', any: [/CFLAG:372\ =\ 1/] },
-      { src: K3, ref: '1993', any: [/ENDIF/] },
-      { src: K3, ref: '1994', any: [/RETURN\ 0/] },
-      { src: K3, ref: '1995', any: [/ENDIF/] },
       { src: K3, ref: '2002', any: [/IF\ SELECTCOM\ ==\ 12/] },
       { src: K3, ref: '2004', any: [/IF\ CFLAG:313\ ==\ 0/] },
       { src: K3, ref: '2006', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -14877,7 +13449,7 @@ const FILES = [
         src: K3,
         ref: '2013',
         any: [
-          /PRINTFORMW\ %SAVESTR:PLAYER%往%SAVESTR:TARGET%的胸部还有脚放上了振动之杖，享受着%SAVESTR:TARGET%的反应/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%往%SAVESTR:TARGET%的胸部还有脚放上了振动之杖，享受着%SAVESTR:TARGET%的反应。/,
         ],
       },
       {
@@ -14899,16 +13471,12 @@ const FILES = [
           /PRINTFORMW\ 「哈啊呜\~！嗯呀啊啊！？不、不行了\~\~…不要…呜呀\~呜嗯\~呜嗯\~呜呀啊啊啊啊！？！？」/,
         ],
       },
-      { src: K3, ref: '2018', any: [/ELSE/] },
       {
         src: K3,
         ref: '2019',
         any: [/PRINTFORMW\ 「呀呜呜嗯\~…不、不要再压下去…不、不行嗯\~\~…！」/],
       },
-      { src: K3, ref: '2020', any: [/ENDIF/] },
       { src: K3, ref: '2021', any: [/CFLAG:313\ =\ 1/] },
-      { src: K3, ref: '2022', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2024', any: [/ELSE/] },
       {
         src: K3,
         ref: '2026',
@@ -14927,14 +13495,14 @@ const FILES = [
         src: K3,
         ref: '2028',
         any: [
-          /PRINTFORMW\ 「果然%SELF_CALL\(TARGET\)%的身体…被那么强烈的刺激了的话%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(/,
+          /PRINTFORMW\ 「果然%SELF_CALL\(TARGET\)%的身体…被那么强烈的刺激了的话%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2029',
         any: [
-          /PRINTFORMW\ 「就会变得更加舒服起来了啊啊\~\~\~%UNICODE\(0x2661\)\ \*3%…请更加地…欺负%SELF_CALL\(TARGET\)%吧%UNI/,
+          /PRINTFORMW\ 「就会变得更加舒服起来了啊啊\~\~\~%UNICODE\(0x2661\)\ \*3%…请更加地…欺负%SELF_CALL\(TARGET\)%吧%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
       { src: K3, ref: '2030', any: [/CFLAG:313\ =\ 5/] },
@@ -14978,7 +13546,7 @@ const FILES = [
         src: K3,
         ref: '2039',
         any: [
-          /PRINTFORMW\ 「哈呜\~…拜托了…请不要再这样\.\.\.啊\~…%SELF_CALL\(TARGET\)%…真的要…啊啊\~哈呜啊啊\~…嗯\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「哈呜\~…拜托了…请不要再这样\.\.\.啊\~…%SELF_CALL\(TARGET\)%…真的要…啊啊\~哈呜啊啊\~…嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -15002,10 +13570,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '2045', any: [/CFLAG:313\ =\ 2/] },
-      { src: K3, ref: '2046', any: [/ENDIF/] },
-      { src: K3, ref: '2047', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2048', any: [/ENDIF/] },
-      { src: K3, ref: '2049', any: [/ENDIF/] },
       { src: K3, ref: '2055', any: [/IF\ SELECTCOM\ ==\ 13\ \&\&\ TEQUIP:13/] },
       { src: K3, ref: '2057', any: [/IF\ CFLAG:TARGET:314\ ==\ 0/] },
       { src: K3, ref: '2059', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -15038,7 +13602,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~哈啊\~啊嗯\~！…请、请不要这样欺负那里啊\~………」/,
         ],
       },
-      { src: K3, ref: '2067', any: [/ELSE/] },
       {
         src: K3,
         ref: '2068',
@@ -15046,10 +13609,7 @@ const FILES = [
           /PRINTFORMW\ 「不，不要…屁股在被…啊啊\~…好奇怪感觉\~…要变奇怪了啊\~………」/,
         ],
       },
-      { src: K3, ref: '2069', any: [/ENDIF/] },
       { src: K3, ref: '2070', any: [/CFLAG:TARGET:314\ =\ 1/] },
-      { src: K3, ref: '2071', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2073', any: [/ELSE/] },
       {
         src: K3,
         ref: '2075',
@@ -15220,9 +13780,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '2109', any: [/CFLAG:314\ =\ 2/] },
-      { src: K3, ref: '2110', any: [/ENDIF/] },
-      { src: K3, ref: '2111', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2112', any: [/ENDIF/] },
       {
         src: K3,
         ref: '2114',
@@ -15290,9 +13847,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊…好、好难受…来的………」/],
       },
       { src: K3, ref: '2132', any: [/CFLAG:374\ =\ 1/] },
-      { src: K3, ref: '2133', any: [/ENDIF/] },
-      { src: K3, ref: '2134', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2135', any: [/ENDIF/] },
       { src: K3, ref: '2141', any: [/IF\ SELECTCOM\ ==\ 14\ \&\&\ TEQUIP:14/] },
       { src: K3, ref: '2143', any: [/IF\ CFLAG:315\ ==\ 0/] },
       { src: K3, ref: '2145', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -15311,7 +13865,6 @@ const FILES = [
           /PRINTFORMW\ 「哈嗯呜\~！…不，不行的啊…那里被吸得那么紧的话…啊啊\~！」/,
         ],
       },
-      { src: K3, ref: '2151', any: [/ELSE/] },
       {
         src: K3,
         ref: '2152',
@@ -15319,10 +13872,7 @@ const FILES = [
           /PRINTFORMW\ 「以为用这种东西…就能将%SELF_CALL\(TARGET\)%怎么样了吗…哈啊啊呜\~！？吸、吸地那么紧…呜唔\~」/,
         ],
       },
-      { src: K3, ref: '2153', any: [/ENDIF/] },
       { src: K3, ref: '2154', any: [/CFLAG:315\ =\ 1/] },
-      { src: K3, ref: '2155', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2157', any: [/ELSE/] },
       {
         src: K3,
         ref: '2159',
@@ -15376,9 +13926,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈嗯呜\~…不、不行\~…振动…不行…的啊………」/],
       },
       { src: K3, ref: '2171', any: [/CFLAG:315\ =\ 2/] },
-      { src: K3, ref: '2172', any: [/ENDIF/] },
-      { src: K3, ref: '2173', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2174', any: [/ENDIF/] },
       {
         src: K3,
         ref: '2176',
@@ -15425,9 +13972,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊…哈啊…终于…拿掉了………」/],
       },
       { src: K3, ref: '2188', any: [/CFLAG:375\ =\ 1/] },
-      { src: K3, ref: '2189', any: [/ENDIF/] },
-      { src: K3, ref: '2190', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2191', any: [/ENDIF/] },
       { src: K3, ref: '2198', any: [/IF\ SELECTCOM\ ==\ 15\ \&\&\ TEQUIP:15/] },
       { src: K3, ref: '2200', any: [/IF\ CFLAG:316\ ==\ 0/] },
       { src: K3, ref: '2202', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -15446,17 +13990,13 @@ const FILES = [
           /PRINTFORMW\ 「哈呜\~…！请不要欺负乳头\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2208', any: [/ELSE/] },
       { src: K3, ref: '2209', any: [/PRINTFORMW\ 「哈呜呜\~…这样的…不行！」/] },
       {
         src: K3,
         ref: '2210',
         any: [/PRINTFORMW\ 「乳，乳头…肿起来了啊…啊啊\~！」/],
       },
-      { src: K3, ref: '2211', any: [/ENDIF/] },
       { src: K3, ref: '2212', any: [/CFLAG:316\ =\ 1/] },
-      { src: K3, ref: '2213', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2215', any: [/ELSE/] },
       {
         src: K3,
         ref: '2217',
@@ -15512,9 +14052,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「明，明明说了…不行来的…嗯\~嗯嗯\~…啊啊啊\~！」/],
       },
       { src: K3, ref: '2229', any: [/CFLAG:316\ =\ 2/] },
-      { src: K3, ref: '2230', any: [/ENDIF/] },
-      { src: K3, ref: '2231', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2232', any: [/ENDIF/] },
       {
         src: K3,
         ref: '2234',
@@ -15559,9 +14096,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊…哈啊…乳头…好奇怪啊………」/],
       },
       { src: K3, ref: '2246', any: [/CFLAG:376\ =\ 1/] },
-      { src: K3, ref: '2247', any: [/ENDIF/] },
-      { src: K3, ref: '2248', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2249', any: [/ENDIF/] },
       { src: K3, ref: '2256', any: [/IF\ SELECTCOM\ ==\ 16\ \&\&\ TEQUIP:16/] },
       { src: K3, ref: '2258', any: [/IF\ CFLAG:317\ ==\ 0/] },
       { src: K3, ref: '2260', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -15594,7 +14128,6 @@ const FILES = [
           /PRINTFORMW\ 从%SAVESTR:TARGET%的乳头渗出了浓厚的母乳、一点一点地将奶罐给装满了………/,
         ],
       },
-      { src: K3, ref: '2268', any: [/ELSE/] },
       {
         src: K3,
         ref: '2269',
@@ -15607,10 +14140,7 @@ const FILES = [
           /PRINTFORMW\ 从%SAVESTR:TARGET%的乳头渗出了母乳、一点一点地将奶罐给装满了………/,
         ],
       },
-      { src: K3, ref: '2271', any: [/ENDIF/] },
       { src: K3, ref: '2272', any: [/CFLAG:317\ =\ 1/] },
-      { src: K3, ref: '2273', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2275', any: [/ELSE/] },
       {
         src: K3,
         ref: '2277',
@@ -15673,9 +14203,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '2290', any: [/CFLAG:317\ =\ 2/] },
-      { src: K3, ref: '2291', any: [/ENDIF/] },
-      { src: K3, ref: '2292', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2293', any: [/ENDIF/] },
       {
         src: K3,
         ref: '2295',
@@ -15722,9 +14249,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊…居然出来…那么多的母乳了………」/],
       },
       { src: K3, ref: '2307', any: [/CFLAG:377\ =\ 1/] },
-      { src: K3, ref: '2308', any: [/ENDIF/] },
-      { src: K3, ref: '2309', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2310', any: [/ENDIF/] },
       { src: K3, ref: '2372', any: [/IF\ SELECTCOM\ ==\ 19\ \&\&\ TEQUIP:19/] },
       { src: K3, ref: '2374', any: [/IF\ CFLAG:TARGET:320\ ==\ 0/] },
       { src: K3, ref: '2376', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -15748,7 +14272,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…又要欺负屁股了对吧\~…嗯\~…呼哈\~…啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2383', any: [/ELSE/] },
       {
         src: K3,
         ref: '2384',
@@ -15756,10 +14279,7 @@ const FILES = [
           /PRINTFORMW\ 「哈呜\~…屁股的洞洞里…塞进这种东西是不…啊啊\~呀啊啊啊\~！」/,
         ],
       },
-      { src: K3, ref: '2385', any: [/ENDIF/] },
       { src: K3, ref: '2386', any: [/CFLAG:TARGET:320\ =\ 1/] },
-      { src: K3, ref: '2387', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2389', any: [/ELSE/] },
       {
         src: K3,
         ref: '2391',
@@ -15783,7 +14303,7 @@ const FILES = [
         src: K3,
         ref: '2394',
         any: [
-          /PRINTFORMW\ 「在里面…转来转去地动呢\~…哈啊啊\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%的屁股好像要不行了呀啊/,
+          /PRINTFORMW\ 「在里面…转来转去地动呢\~…哈啊啊\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%的屁股好像要不行了呀啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '2395', any: [/CFLAG:320\ =\ 7/] },
@@ -15825,7 +14345,7 @@ const FILES = [
         src: K3,
         ref: '2404',
         any: [
-          /PRINTFORMW\ 「魔王大人\~…虽然是这种喜欢被欺负肛穴无可救药的变态来的…但也请让%SAVESTR:TARGET%呆在您的身旁吧\~%UNICODE\(0x2/,
+          /PRINTFORMW\ 「魔王大人\~…虽然是这种喜欢被欺负肛穴无可救药的变态来的…但也请让%SAVESTR:TARGET%呆在您的身旁吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -15882,9 +14402,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「好难、好难受啊…肚子的里面…好难受啊啊…………」/],
       },
       { src: K3, ref: '2419', any: [/CFLAG:320\ =\ 2/] },
-      { src: K3, ref: '2420', any: [/ENDIF/] },
-      { src: K3, ref: '2421', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2422', any: [/ENDIF/] },
       {
         src: K3,
         ref: '2424',
@@ -15946,9 +14463,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊啊\~…啊\~…哈啊…哈啊…」/],
       },
       { src: K3, ref: '2440', any: [/CFLAG:379\ =\ 1/] },
-      { src: K3, ref: '2441', any: [/ENDIF/] },
-      { src: K3, ref: '2442', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2443', any: [/ENDIF/] },
       { src: K3, ref: '2448', any: [/IF\ SELECTCOM\ ==\ 20/] },
       { src: K3, ref: '2450', any: [/IF\ CFLAG:TARGET:321\ ==\ 0/] },
       { src: K3, ref: '2452', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -15972,14 +14486,14 @@ const FILES = [
         src: K3,
         ref: '2459',
         any: [
-          /PRINTFORMW\ 「哼啊…啊…不、不要…%SELF_CALL\(TARGET\)%…明明…是第一次来的…嗯\~…啊\~…却立马对主人的大鸡巴有感觉了\~…哈呜嗯\~%U/,
+          /PRINTFORMW\ 「哼啊…啊…不、不要…%SELF_CALL\(TARGET\)%…明明…是第一次来的…嗯\~…啊\~…却立马对主人的大鸡巴有感觉了\~…哈呜嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2460',
         any: [
-          /PRINTFORMW\ 「啊啊\~…主人的大鸡巴好热\~…啊啊\~不行\~…明明只是大鸡鸡进去了而已\.\.\.脑袋…变得…奇怪起来了\~%UNICODE\(0x2661\)\ \*3%/,
+          /PRINTFORMW\ 「啊啊\~…主人的大鸡巴好热\~…啊啊\~不行\~…明明只是大鸡鸡进去了而已\.\.\.脑袋…变得…奇怪起来了\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -15993,10 +14507,9 @@ const FILES = [
         src: K3,
         ref: '2462',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%好像为了让%SAVESTR:PLAYER%不逃掉的一样，用双腿将%SAVESTR:PLAYER%的腰给缠住/,
+          /PRINTFORMW\ %SAVESTR:TARGET%好像为了让%SAVESTR:PLAYER%不逃掉的一样，用双腿将%SAVESTR:PLAYER%的腰给缠住………/,
         ],
       },
-      { src: K3, ref: '2464', any: [/ELSE/] },
       { src: K3, ref: '2466', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -16023,7 +14536,7 @@ const FILES = [
         src: K3,
         ref: '2470',
         any: [
-          /PRINTFORMW\ 「撒\~…请更加…更加像野兽一样地侵犯吧\~%UNICODE\(0x2661\)\ \*1%让%SAVESTR:TARGET%成为主人的东西吧\~%UN/,
+          /PRINTFORMW\ 「撒\~…请更加…更加像野兽一样地侵犯吧\~%UNICODE\(0x2661\)\ \*1%让%SAVESTR:TARGET%成为主人的东西吧\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -16031,7 +14544,6 @@ const FILES = [
         ref: '2471',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%再也没有想起在故乡的恋人了………/],
       },
-      { src: K3, ref: '2472', any: [/ELSE/] },
       {
         src: K3,
         ref: '2473',
@@ -16060,8 +14572,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%说着这样的话的时候也在忍耐着破瓜之疼………/,
         ],
       },
-      { src: K3, ref: '2477', any: [/ENDIF/] },
-      { src: K3, ref: '2478', any: [/ENDIF/] },
       { src: K3, ref: '2480', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '2482', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
@@ -16089,7 +14599,7 @@ const FILES = [
         src: K3,
         ref: '2486',
         any: [
-          /PRINTFORMW\ 「啊啊\~…这、这样的没有关系的啦…快点…请让%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…成/,
+          /PRINTFORMW\ 「啊啊\~…这、这样的没有关系的啦…快点…请让%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…成为、大人您的东西吧………%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -16099,7 +14609,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%长长的耳朵完全变得通红起来，将自己交给了%SAVESTR:PLAYER%………/,
         ],
       },
-      { src: K3, ref: '2489', any: [/ELSE/] },
       { src: K3, ref: '2491', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -16112,21 +14621,21 @@ const FILES = [
         src: K3,
         ref: '2493',
         any: [
-          /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的处女膜给捅破了、因为太疼在%SAVESTR:PLAYER%的背后挠出了/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的处女膜给捅破了、因为太疼在%SAVESTR:PLAYER%的背后挠出了抓痕。/,
         ],
       },
       {
         src: K3,
         ref: '2494',
         any: [
-          /PRINTFORMW\ 「啊啊\~…啊\~\~%UNICODE\(0x2661\)\ \*1%…啊啊啊\~～%UNICODE\(0x2661\)\ \*1%………好、好热\~…好像要变奇怪/,
+          /PRINTFORMW\ 「啊啊\~…啊\~\~%UNICODE\(0x2661\)\ \*1%…啊啊啊\~～%UNICODE\(0x2661\)\ \*1%………好、好热\~…好像要变奇怪了啊\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2495',
         any: [
-          /PRINTFORMW\ 「这样，%SELF_CALL\(TARGET\)%…就变成了大人您东西来的了…绝对…不会离开您的身边…啊啊\~…更多…请更加地%UNICODE\(/,
+          /PRINTFORMW\ 「这样，%SELF_CALL\(TARGET\)%…就变成了大人您东西来的了…绝对…不会离开您的身边…啊啊\~…更多…请更加地%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -16136,7 +14645,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%一瞬间好像想起了某个重要的人，但是很快就忘记掉了………/,
         ],
       },
-      { src: K3, ref: '2497', any: [/ELSE/] },
       {
         src: K3,
         ref: '2498',
@@ -16146,7 +14654,7 @@ const FILES = [
         src: K3,
         ref: '2499',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%没关系的啊\~…就像平时一样…毫不留情地将%SE/,
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%没关系的啊\~…就像平时一样…毫不留情地将%SELF_CALL\(TARGET\)%…哼啊\~…啊\~啊啊啊啊～！！！」/,
         ],
       },
       {
@@ -16163,9 +14671,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊…哈啊啊…啊啊\.\.\.这样，%SELF_CALL\(TARGET\)%就成为了大人您的东西了啊…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2502', any: [/ENDIF/] },
-      { src: K3, ref: '2503', any: [/ENDIF/] },
-      { src: K3, ref: '2505', any: [/ELSE/] },
       { src: K3, ref: '2507', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -16195,7 +14700,6 @@ const FILES = [
           /PRINTFORMW\ 听着%SAVESTR:TARGET%的哭声%SAVESTR:PLAYER%继续侵犯着………/,
         ],
       },
-      { src: K3, ref: '2512', any: [/ELSE/] },
       {
         src: K3,
         ref: '2513',
@@ -16210,9 +14714,6 @@ const FILES = [
           /PRINTFORMW\ 「不、不行的啊…还、还不可以动…啊\~啊\~！哈啊呜呜\~！」/,
         ],
       },
-      { src: K3, ref: '2515', any: [/ENDIF/] },
-      { src: K3, ref: '2516', any: [/ENDIF/] },
-      { src: K3, ref: '2518', any: [/ELSE/] },
       { src: K3, ref: '2520', any: [/IF\ TALENT:76\ ==\ 1/] },
       {
         src: K3,
@@ -16248,7 +14749,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~！…呀，呀嗯\~…这、这么地…突然那么激烈得话…嗯\~啊\~哈啊嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2529', any: [/ELSE/] },
       {
         src: K3,
         ref: '2530',
@@ -16256,11 +14756,7 @@ const FILES = [
           /PRINTFORMW\ 「哈啊…男人都是像这样…做的对吧…嗯\~…嗯\~…嗯哼唔\~………」/,
         ],
       },
-      { src: K3, ref: '2531', any: [/ENDIF/] },
-      { src: K3, ref: '2532', any: [/ENDIF/] },
       { src: K3, ref: '2533', any: [/CFLAG:321\ =\ 1/] },
-      { src: K3, ref: '2534', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2536', any: [/ELSE/] },
       {
         src: K3,
         ref: '2538',
@@ -16295,14 +14791,14 @@ const FILES = [
         src: K3,
         ref: '2544',
         any: [
-          /PRINTFORMW\ 「啊哈嗯唔\~…哈唉呜\~…小穴SEX…最棒了啊\~%UNICODE\(0x2661\)\ \*1%…请更多地…更加地侵犯那里吧\~%UNICODE\(0x/,
+          /PRINTFORMW\ 「啊哈嗯唔\~…哈唉呜\~…小穴SEX…最棒了啊\~%UNICODE\(0x2661\)\ \*1%…请更多地…更加地侵犯那里吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2545',
         any: [
-          /PRINTFORMW\ 「请播种子进去吧…好想被播种子进去啦\~%UNICODE\(0x2661\)\ \*1%…精液\~…请给精液给%SELF_CALL\(TARGET\)%吧/,
+          /PRINTFORMW\ 「请播种子进去吧…好想被播种子进去啦\~%UNICODE\(0x2661\)\ \*1%…精液\~…请给精液给%SELF_CALL\(TARGET\)%吧\~\~…呀\~…呀啊啊\~…啊\~啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -16310,7 +14806,6 @@ const FILES = [
         ref: '2546',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%如同雌犬一样不断地呻吟着………/],
       },
-      { src: K3, ref: '2547', any: [/ELSE/] },
       {
         src: K3,
         ref: '2548',
@@ -16332,10 +14827,9 @@ const FILES = [
         src: K3,
         ref: '2551',
         any: [
-          /PRINTFORMW\ 「哈啊啊\~%UNICODE\(0x2661\)\ \*1%\ 请往%SELF_CALL\(TARGET\)%的\~%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「哈啊啊\~%UNICODE\(0x2661\)\ \*1%\ 请往%SELF_CALL\(TARGET\)%的\~%UNICODE\(0x2661\)\ \*1%\ 淫乱小穴里\~%UNICODE\(0x2661\)\ \*1%\ 播下种子吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2552', any: [/ENDIF/] },
       { src: K3, ref: '2553', any: [/CFLAG:321\ =\ 6/] },
       {
         src: K3,
@@ -16356,14 +14850,14 @@ const FILES = [
         src: K3,
         ref: '2558',
         any: [
-          /PRINTFORMW\ 「喜欢…好喜欢的啊\~\~%UNICODE\(0x2661\)\ \*1%…所以…请更加激烈地…疼爱%SELF_CALL\(TARGET\)%吧\~%UNI/,
+          /PRINTFORMW\ 「喜欢…好喜欢的啊\~\~%UNICODE\(0x2661\)\ \*1%…所以…请更加激烈地…疼爱%SELF_CALL\(TARGET\)%吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2559',
         any: [
-          /PRINTFORMW\ 「啊啊\~…那里…那里好棒啊啊\~…让%SELF_CALL\(TARGET\)%的身体…更加地成为%SAVESTR:PLAYER%大人的东西吧\~\~/,
+          /PRINTFORMW\ 「啊啊\~…那里…那里好棒啊啊\~…让%SELF_CALL\(TARGET\)%的身体…更加地成为%SAVESTR:PLAYER%大人的东西吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '2560', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -16385,10 +14879,9 @@ const FILES = [
         src: K3,
         ref: '2563',
         any: [
-          /PRINTFORMW\ %SAVESTR:PLAYER%侵犯着%SAVESTR:TARGET%、每当腔内深处被顶到%SAVESTR:TARGET%都会从嘴边漏出一/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%侵犯着%SAVESTR:TARGET%、每当腔内深处被顶到%SAVESTR:TARGET%都会从嘴边漏出一声娇喘………/,
         ],
       },
-      { src: K3, ref: '2564', any: [/ELSE/] },
       {
         src: K3,
         ref: '2565',
@@ -16410,7 +14903,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%用双手将%SAVESTR:PLAYER%来回、好像很舒服地呻吟着………/,
         ],
       },
-      { src: K3, ref: '2568', any: [/ENDIF/] },
       { src: K3, ref: '2569', any: [/CFLAG:321\ =\ 5/] },
       {
         src: K3,
@@ -16472,10 +14964,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '2584', any: [/CFLAG:321\ =\ 2/] },
-      { src: K3, ref: '2585', any: [/ENDIF/] },
-      { src: K3, ref: '2586', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2587', any: [/ENDIF/] },
-      { src: K3, ref: '2588', any: [/ENDIF/] },
       { src: K3, ref: '2594', any: [/IF\ SELECTCOM\ ==\ 21/] },
       { src: K3, ref: '2596', any: [/IF\ CFLAG:TARGET:322\ ==\ 0/] },
       { src: K3, ref: '2598', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -16512,7 +15000,7 @@ const FILES = [
         src: K3,
         ref: '2608',
         any: [
-          /PRINTFORMW\ 看着没有被理睬差不多要哭出来的%SAVESTR:TARGET%兴奋起来的%SAVESTR:PLAYER%抓住%SAVESTR:TARGET/,
+          /PRINTFORMW\ 看着没有被理睬差不多要哭出来的%SAVESTR:TARGET%兴奋起来的%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰部后，毫不犹豫直接将阴茎往腔内插进去了/,
         ],
       },
       {
@@ -16522,7 +15010,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊呜\~！？这、这样…突然就%UNICODE\(0x2661\)\ \*1%…噢\~…嗯噢噢噢噢\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
-      { src: K3, ref: '2611', any: [/ELSE/] },
       { src: K3, ref: '2613', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -16535,28 +15022,28 @@ const FILES = [
         src: K3,
         ref: '2615',
         any: [
-          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的…处，处女膜能看到吗…是为了让主人捅破而存在的噢%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的…处，处女膜能看到吗…是为了让主人捅破而存在的噢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2616',
         any: [
-          /PRINTFORMW\ 「前一个情人也没有给的%SELF_CALL\(TARGET\)%的小穴…一抽一抽地\~…想要被主人侵犯呢\~%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「前一个情人也没有给的%SELF_CALL\(TARGET\)%的小穴…一抽一抽地\~…想要被主人侵犯呢\~%UNICODE\(0x2661\)\ \*1%…啊\~啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2617',
         any: [
-          /PRINTFORMW\ 听着%SAVESTR:TARGET%诱惑的话语，%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰，毫不留情地将腔内/,
+          /PRINTFORMW\ 听着%SAVESTR:TARGET%诱惑的话语，%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰，毫不留情地将腔内蹂蹑起来了。/,
         ],
       },
       {
         src: K3,
         ref: '2618',
         any: [
-          /PRINTFORMW\ 「哈呜嗯\~…主人的%UNICODE\(0x2661\)\ \*1%…大鸡巴%UNICODE\(0x2661\)\ \*1%…大鸡巴\~%UNICODE\(0x/,
+          /PRINTFORMW\ 「哈呜嗯\~…主人的%UNICODE\(0x2661\)\ \*1%…大鸡巴%UNICODE\(0x2661\)\ \*1%…大鸡巴\~%UNICODE\(0x2661\)\ \*1%…到里面…来了………啊啊啊啊\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
       {
@@ -16564,7 +15051,6 @@ const FILES = [
         ref: '2619',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%再也没有想起故乡的恋人了………/],
       },
-      { src: K3, ref: '2620', any: [/ELSE/] },
       {
         src: K3,
         ref: '2621',
@@ -16576,32 +15062,30 @@ const FILES = [
         src: K3,
         ref: '2622',
         any: [
-          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的…处，处女膜能看到吗…是为了让主人捅破而存在的噢%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的…处，处女膜能看到吗…是为了让主人捅破而存在的噢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2623',
         any: [
-          /PRINTFORMW\ 「啊\~、不要的呀\~…没想到真的能看到里面啊\~…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…/,
+          /PRINTFORMW\ 「啊\~、不要的呀\~…没想到真的能看到里面啊\~…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…不、不要…只是被看着就%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2624',
         any: [
-          /PRINTFORMW\ 看着，被看着就好像要去了的%SAVESTR:TARGET%就兴奋起来的%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%/,
+          /PRINTFORMW\ 看着，被看着就好像要去了的%SAVESTR:TARGET%就兴奋起来的%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰好不犹豫地将阴茎塞进了腔内。/,
         ],
       },
       {
         src: K3,
         ref: '2625',
         any: [
-          /PRINTFORMW\ 「嘎哈啊\~…啊\~…啊啊啊\~…大鸡巴%UNICODE\(0x2661\)\ \*1%…大鸡巴%UNICODE\(0x2661\)\ \*1%…到里面…来了…/,
+          /PRINTFORMW\ 「嘎哈啊\~…啊\~…啊啊啊\~…大鸡巴%UNICODE\(0x2661\)\ \*1%…大鸡巴%UNICODE\(0x2661\)\ \*1%…到里面…来了………啊啊啊啊\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
-      { src: K3, ref: '2626', any: [/ENDIF/] },
-      { src: K3, ref: '2627', any: [/ENDIF/] },
       { src: K3, ref: '2629', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '2631', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
@@ -16639,7 +15123,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%长长的耳朵颤抖着，发出了欢快的娇喘………/,
         ],
       },
-      { src: K3, ref: '2638', any: [/ELSE/] },
       { src: K3, ref: '2640', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -16659,31 +15142,30 @@ const FILES = [
         src: K3,
         ref: '2643',
         any: [
-          /PRINTFORMW\ 「已经…只能给%SELF_CALL\(TARGET\)%看到这样的样子…的说…请拿下%SELF_CALL_FIRST\(TARGET\)%、%SE/,
+          /PRINTFORMW\ 「已经…只能给%SELF_CALL\(TARGET\)%看到这样的样子…的说…请拿下%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的贞洁吧…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2644',
         any: [
-          /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的腰抓住，结果%SAVESTR:TARGET%发出了好像期待已久的甜美呻/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的腰抓住，结果%SAVESTR:TARGET%发出了好像期待已久的甜美呻吟。/,
         ],
       },
       {
         src: K3,
         ref: '2645',
         any: [
-          /PRINTFORMW\ 「是这样啊\~%UNICODE\(0x2661\)\ \*1%\ 这个是…让%SELF_CALL\(TARGET\)%真的成为大人您的东西的重要…仪式来的/,
+          /PRINTFORMW\ 「是这样啊\~%UNICODE\(0x2661\)\ \*1%\ 这个是…让%SELF_CALL\(TARGET\)%真的成为大人您的东西的重要…仪式来的对吧…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2646',
         any: [
-          /PRINTFORMW\ 「哈嗯呜\~%UNICODE\(0x2661\)\ \*1%\ 大鸡巴%UNICODE\(0x2661\)\ \*1%…到深处…哈呜嗯\~…进、进来\~…进来了呀/,
+          /PRINTFORMW\ 「哈嗯呜\~%UNICODE\(0x2661\)\ \*1%\ 大鸡巴%UNICODE\(0x2661\)\ \*1%…到深处…哈呜嗯\~…进、进来\~…进来了呀啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2647', any: [/ELSE/] },
       {
         src: K3,
         ref: '2648',
@@ -16718,9 +15200,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~啊啊\~…到深处了…大鸡巴\~！到深处了啊\~\~！…哈啊啊\~啊\~啊啊啊啊啊啊啊啊\~～～～！！！」/,
         ],
       },
-      { src: K3, ref: '2654', any: [/ENDIF/] },
-      { src: K3, ref: '2655', any: [/ENDIF/] },
-      { src: K3, ref: '2657', any: [/ELSE/] },
       { src: K3, ref: '2659', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -16750,7 +15229,6 @@ const FILES = [
           /PRINTFORMW\ 听着%SAVESTR:TARGET%的哭声%SAVESTR:PLAYER%继续侵犯下去了………/,
         ],
       },
-      { src: K3, ref: '2664', any: [/ELSE/] },
       {
         src: K3,
         ref: '2665',
@@ -16772,9 +15250,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的头往床上压下去，毫不留情地对准腰部抽插起来………/,
         ],
       },
-      { src: K3, ref: '2668', any: [/ENDIF/] },
-      { src: K3, ref: '2669', any: [/ENDIF/] },
-      { src: K3, ref: '2671', any: [/ELSE/] },
       { src: K3, ref: '2673', any: [/IF\ TALENT:76\ ==\ 1/] },
       {
         src: K3,
@@ -16803,7 +15278,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…请、请吧…就这样将后面给…侵犯了吧\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2681', any: [/ELSE/] },
       {
         src: K3,
         ref: '2682',
@@ -16818,11 +15292,7 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的脑袋往下压下去毫不留情地对准腰部抽插起来………/,
         ],
       },
-      { src: K3, ref: '2684', any: [/ENDIF/] },
-      { src: K3, ref: '2685', any: [/ENDIF/] },
       { src: K3, ref: '2686', any: [/CFLAG:322\ =\ 1/] },
-      { src: K3, ref: '2687', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2689', any: [/ELSE/] },
       {
         src: K3,
         ref: '2691',
@@ -16839,7 +15309,6 @@ const FILES = [
           /PRINTFORMW\ 「被绑住就会有感觉了啊\~…请对淫乱的%SAVESTR:TARGET%的小穴……尽情地处罚吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2695', any: [/ELSE/] },
       {
         src: K3,
         ref: '2696',
@@ -16847,7 +15316,6 @@ const FILES = [
           /PRINTFORMW\ 「%SAVESTR:TARGET%最喜欢…被捆绑着侵犯了\~……喜欢到完全忍不住的程度\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2697', any: [/ENDIF/] },
       { src: K3, ref: '2698', any: [/IF\ RAND:3\ ==\ 0/] },
       {
         src: K3,
@@ -16862,7 +15330,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊\~%UNICODE\(0x2661\)\ \*1%\ 真是好棒的啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2702', any: [/ELSE/] },
       {
         src: K3,
         ref: '2703',
@@ -16870,8 +15337,6 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%是…让大鸡巴插进来，侍奉大鸡巴的肉便器来的\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2704', any: [/ENDIF/] },
-      { src: K3, ref: '2705', any: [/ELSE/] },
       { src: K3, ref: '2706', any: [/IF\ RAND:3\ ==\ 0/] },
       {
         src: K3,
@@ -16906,10 +15371,9 @@ const FILES = [
         src: K3,
         ref: '2712',
         any: [
-          /PRINTFORMW\ 「被这样做的话…%SELF_CALL\(TARGET\)%…就能感觉到自己就是为了被大鸡巴插而出生的\~%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「被这样做的话…%SELF_CALL\(TARGET\)%…就能感觉到自己就是为了被大鸡巴插而出生的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2713', any: [/ELSE/] },
       {
         src: K3,
         ref: '2714',
@@ -16929,8 +15393,6 @@ const FILES = [
           /PRINTFORMW\ 「就像野兽一样%UNICODE\(0x2661\)\ \*1%\ 野兽SEX最棒了\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2717', any: [/ENDIF/] },
-      { src: K3, ref: '2718', any: [/ENDIF/] },
       { src: K3, ref: '2719', any: [/CFLAG:322\ =\ 6/] },
       {
         src: K3,
@@ -16969,10 +15431,9 @@ const FILES = [
         src: K3,
         ref: '2728',
         any: [
-          /PRINTFORMW\ 「请更尽情的做吧\~%UNICODE\(0x2661\)\ \*1%\ 就这样播下种子…让%SELF_CALL\(TARGET\)%怀孕了吧\~\~\~%UNI/,
+          /PRINTFORMW\ 「请更尽情的做吧\~%UNICODE\(0x2661\)\ \*1%\ 就这样播下种子…让%SELF_CALL\(TARGET\)%怀孕了吧\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2729', any: [/ELSE/] },
       {
         src: K3,
         ref: '2730',
@@ -16994,7 +15455,6 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%…已经要变得不行了呀\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2733', any: [/ENDIF/] },
       { src: K3, ref: '2734', any: [/CFLAG:322\ =\ 5/] },
       {
         src: K3,
@@ -17014,7 +15474,7 @@ const FILES = [
         src: K3,
         ref: '2738',
         any: [
-          /PRINTFORMW\ 「却有感觉…什么的…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…已经…不行了啊\~…啊\~…啊/,
+          /PRINTFORMW\ 「却有感觉…什么的…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…已经…不行了啊\~…啊\~…啊\~啊啊\~嗯啊啊\~！」/,
         ],
       },
       { src: K3, ref: '2739', any: [/CFLAG:322\ =\ 4/] },
@@ -17051,10 +15511,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '2748', any: [/CFLAG:322\ =\ 2/] },
-      { src: K3, ref: '2749', any: [/ENDIF/] },
-      { src: K3, ref: '2750', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2751', any: [/ENDIF/] },
-      { src: K3, ref: '2752', any: [/ENDIF/] },
       { src: K3, ref: '2759', any: [/IF\ SELECTCOM\ ==\ 22/] },
       { src: K3, ref: '2760', any: [/IF\ CFLAG:TARGET:323\ ==\ 0/] },
       { src: K3, ref: '2762', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -17062,10 +15518,7 @@ const FILES = [
       { src: K3, ref: '2765', any: [/PRINTFORMW/] },
       { src: K3, ref: '2767', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '2768', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2770', any: [/ELSE/] },
       { src: K3, ref: '2771', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2772', any: [/ENDIF/] },
-      { src: K3, ref: '2774', any: [/ELSE/] },
       { src: K3, ref: '2776', any: [/IF\ TALENT:76\ ==\ 1/] },
       {
         src: K3,
@@ -17106,7 +15559,6 @@ const FILES = [
           /PRINTFORMW\ 「这个姿势…真是相爱得好姿势呢\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2786', any: [/ELSE/] },
       {
         src: K3,
         ref: '2787',
@@ -17114,11 +15566,7 @@ const FILES = [
           /PRINTFORMW\ 「恩呀唔！从，从下面往上顶不行啊、不行来的啊………！」/,
         ],
       },
-      { src: K3, ref: '2788', any: [/ENDIF/] },
-      { src: K3, ref: '2789', any: [/ENDIF/] },
       { src: K3, ref: '2790', any: [/CFLAG:323\ =\ 1/] },
-      { src: K3, ref: '2791', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2793', any: [/ELSE/] },
       {
         src: K3,
         ref: '2795',
@@ -17151,14 +15599,14 @@ const FILES = [
         src: K3,
         ref: '2801',
         any: [
-          /PRINTFORMW\ 「啊\~…嗯\~%UNICODE\(0x2661\)\ \*1%\ 哈啊\~%UNICODE\(0x2661\)\ \*1%…好，好棒的啊\~%UNICODE\(0x/,
+          /PRINTFORMW\ 「啊\~…嗯\~%UNICODE\(0x2661\)\ \*1%\ 哈啊\~%UNICODE\(0x2661\)\ \*1%…好，好棒的啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '2802',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的…的小穴%UNICODE\(0x2661\)\ \*1%\ 被主人的大鸡巴给塞满了啊%UNICODE\(0x/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的…的小穴%UNICODE\(0x2661\)\ \*1%\ 被主人的大鸡巴给塞满了啊%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -17168,7 +15616,6 @@ const FILES = [
           /PRINTFORMW\ 「嗯哼唔\~…想奉献上一个吻给主人呢\~…嗯啾\~…啾\~…啾呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2804', any: [/ELSE/] },
       {
         src: K3,
         ref: '2805',
@@ -17180,7 +15627,7 @@ const FILES = [
         src: K3,
         ref: '2806',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的淫乱小穴是…为了将大鸡巴吞下才存在的呀\~%UNICODE\(0x2661\)\ \*1%\ 完全没有问题吧/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的淫乱小穴是…为了将大鸡巴吞下才存在的呀\~%UNICODE\(0x2661\)\ \*1%\ 完全没有问题吧\~？」/,
         ],
       },
       {
@@ -17190,7 +15637,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…已经\~…已经\~…感觉真的要变得不行了\~………♪」/,
         ],
       },
-      { src: K3, ref: '2808', any: [/ENDIF/] },
       { src: K3, ref: '2809', any: [/CFLAG:323\ =\ 6/] },
       {
         src: K3,
@@ -17233,7 +15679,7 @@ const FILES = [
         src: K3,
         ref: '2818',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%会好好动起来的啦\~…所以大人请完全交给%SELF_CALL\(TARGET\)%吧%UNICODE\(0/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%会好好动起来的啦\~…所以大人请完全交给%SELF_CALL\(TARGET\)%吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -17250,7 +15696,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~…啊嗯\~…嗯\~…请用力地…将%SELF_CALL\(TARGET\)%…抱住吧…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2821', any: [/ELSE/] },
       {
         src: K3,
         ref: '2822',
@@ -17270,7 +15715,6 @@ const FILES = [
           /PRINTFORMW\ 「这个姿势…真是相爱得好姿势呢\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2825', any: [/ENDIF/] },
       { src: K3, ref: '2826', any: [/CFLAG:323\ =\ 5/] },
       {
         src: K3,
@@ -17330,10 +15774,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '2841', any: [/CFLAG:323\ =\ 2/] },
-      { src: K3, ref: '2842', any: [/ENDIF/] },
-      { src: K3, ref: '2843', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2844', any: [/ENDIF/] },
-      { src: K3, ref: '2845', any: [/ENDIF/] },
       { src: K3, ref: '2851', any: [/IF\ SELECTCOM\ ==\ 23/] },
       { src: K3, ref: '2852', any: [/IF\ CFLAG:TARGET:324\ ==\ 0/] },
       { src: K3, ref: '2854', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -17341,10 +15781,7 @@ const FILES = [
       { src: K3, ref: '2857', any: [/PRINTFORMW/] },
       { src: K3, ref: '2859', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '2860', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2862', any: [/ELSE/] },
       { src: K3, ref: '2863', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2864', any: [/ENDIF/] },
-      { src: K3, ref: '2866', any: [/ELSE/] },
       { src: K3, ref: '2868', any: [/IF\ TALENT:76\ ==\ 1/] },
       {
         src: K3,
@@ -17373,17 +15810,12 @@ const FILES = [
           /PRINTFORMW\ 「这，这么地…粗鲁的话怎么可能会有…哈啊呜\~%UNICODE\(0x2661\)\ \*1%…哈呀嗯呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2876', any: [/ELSE/] },
       {
         src: K3,
         ref: '2877',
         any: [/PRINTFORMW\ 「啊\~…啊啊\~…进到…里面了…嗯呜呜！」/],
       },
-      { src: K3, ref: '2878', any: [/ENDIF/] },
-      { src: K3, ref: '2879', any: [/ENDIF/] },
       { src: K3, ref: '2880', any: [/CFLAG:324\ =\ 1/] },
-      { src: K3, ref: '2881', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2883', any: [/ELSE/] },
       {
         src: K3,
         ref: '2885',
@@ -17433,12 +15865,11 @@ const FILES = [
           /PRINTFORMW\ 被从下往上抽插着而不断说着淫猥的话语的%SAVESTR:TARGET%的身上完全感受不到以往的一丝高贵姿态了………/,
         ],
       },
-      { src: K3, ref: '2894', any: [/ELSE/] },
       {
         src: K3,
         ref: '2895',
         any: [
-          /PRINTFORMW\ 「啊\~…啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 哈啊\~%UNICODE\(0x2661\)\ \*1%\ 嗯啊啊\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「啊\~…啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 哈啊\~%UNICODE\(0x2661\)\ \*1%\ 嗯啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -17448,7 +15879,6 @@ const FILES = [
           /PRINTFORMW\ 「好棒…好棒的啊！\~%UNICODE\(0x2661\)\ \*1%\ 请更加地…欺负小穴吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2897', any: [/ENDIF/] },
       { src: K3, ref: '2898', any: [/CFLAG:324\ =\ 6/] },
       {
         src: K3,
@@ -17476,7 +15906,7 @@ const FILES = [
         src: K3,
         ref: '2904',
         any: [
-          /PRINTFORMW\ 「嗯哈啊\~…啊\~%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊啊啊嗯\~%UNICODE\(0x/,
+          /PRINTFORMW\ 「嗯哈啊\~…啊\~%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(0x2661\)\ \*1%\ 啊啊啊啊嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '2905', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -17501,7 +15931,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%如同撒娇一样发出了娇喘晃动起了腰部………/,
         ],
       },
-      { src: K3, ref: '2909', any: [/ELSE/] },
       {
         src: K3,
         ref: '2910',
@@ -17523,7 +15952,6 @@ const FILES = [
           /PRINTFORMW\ 「被温柔…抱着…然后被贯穿\~…太幸福了\~…感觉就要去了啊\~…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '2913', any: [/ENDIF/] },
       { src: K3, ref: '2914', any: [/CFLAG:324\ =\ 5/] },
       {
         src: K3,
@@ -17578,10 +16006,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊…哈啊啊…啊、小穴…被扩大了…啊\~啊啊\~！」/],
       },
       { src: K3, ref: '2928', any: [/CFLAG:324\ =\ 2/] },
-      { src: K3, ref: '2929', any: [/ENDIF/] },
-      { src: K3, ref: '2930', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2931', any: [/ENDIF/] },
-      { src: K3, ref: '2932', any: [/ENDIF/] },
       { src: K3, ref: '2937', any: [/IF\ SELECTCOM\ ==\ 24/] },
       { src: K3, ref: '2938', any: [/IF\ CFLAG:TARGET:325\ ==\ 0/] },
       { src: K3, ref: '2940', any: [/IF\ TALENT:PLAYER:0\ ==\ 1/] },
@@ -17590,7 +16014,7 @@ const FILES = [
         src: K3,
         ref: '2943',
         any: [
-          /PRINTFORMW\ 「%SAVESTR:PLAYER%的处女小穴%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%会好好地疼爱的/,
+          /PRINTFORMW\ 「%SAVESTR:PLAYER%的处女小穴%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%会好好地疼爱的噢\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -17602,26 +16026,18 @@ const FILES = [
       },
       { src: K3, ref: '2946', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '2947', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2949', any: [/ELSE/] },
       {
         src: K3,
         ref: '2950',
         any: [/PRINTFORMW\ 「居然想要做这样的事情什么的……」/],
       },
       { src: K3, ref: '2951', any: [/PRINTFORMW\ 「真是够恶趣味的呢……」/] },
-      { src: K3, ref: '2952', any: [/ENDIF/] },
-      { src: K3, ref: '2954', any: [/ELSE/] },
       { src: K3, ref: '2956', any: [/IF\ TALENT:76\ ==\ 1/] },
       { src: K3, ref: '2957', any: [/PRINTFORMW/] },
       { src: K3, ref: '2959', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '2960', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2962', any: [/ELSE/] },
       { src: K3, ref: '2963', any: [/PRINTFORMW/] },
-      { src: K3, ref: '2964', any: [/ENDIF/] },
-      { src: K3, ref: '2965', any: [/ENDIF/] },
       { src: K3, ref: '2966', any: [/CFLAG:325\ =\ 1/] },
-      { src: K3, ref: '2967', any: [/RETURN\ 0/] },
-      { src: K3, ref: '2969', any: [/ELSE/] },
       {
         src: K3,
         ref: '2971',
@@ -17660,7 +16076,6 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%会好好地调教你，让你也变成出色的雌豚噢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '2983', any: [/ELSE/] },
       {
         src: K3,
         ref: '2984',
@@ -17673,7 +16088,6 @@ const FILES = [
           /PRINTFORMW\ 「来吧\~…快说被%SELF_CALL\(TARGET\)%侵犯地很舒服吧\~」/,
         ],
       },
-      { src: K3, ref: '2986', any: [/ENDIF/] },
       { src: K3, ref: '2987', any: [/CFLAG:325\ =\ 4/] },
       {
         src: K3,
@@ -17708,18 +16122,12 @@ const FILES = [
         ref: '2996',
         any: [/PRINTFORMW\ 「至少…会用不怎么痛的方式来疼爱你吧」/],
       },
-      { src: K3, ref: '2997', any: [/ELSE/] },
       {
         src: K3,
         ref: '2998',
         any: [/PRINTFORMW\ 「呜唔…这样的行为、恶趣味也请适可而止一点啊」/],
       },
-      { src: K3, ref: '2999', any: [/ENDIF/] },
       { src: K3, ref: '3000', any: [/CFLAG:325\ =\ 2/] },
-      { src: K3, ref: '3001', any: [/ENDIF/] },
-      { src: K3, ref: '3002', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3003', any: [/ENDIF/] },
-      { src: K3, ref: '3004', any: [/ENDIF/] },
       { src: K3, ref: '3010', any: [/IF\ SELECTCOM\ ==\ 26/] },
       { src: K3, ref: '3012', any: [/IF\ CFLAG:TARGET:327\ ==\ 0/] },
       { src: K3, ref: '3014', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -17752,7 +16160,6 @@ const FILES = [
           /PRINTFORMW\ 「请将%SELF_CALL\(TARGET\)%变成主人专用的肛穴奴隶吧\~\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
-      { src: K3, ref: '3022', any: [/ELSE/] },
       {
         src: K3,
         ref: '3023',
@@ -17774,7 +16181,6 @@ const FILES = [
           /PRINTFORMW\ 「撒\~…请往%SELF_CALL\(TARGET\)%的肛穴里面～射一堆用来标记的精液吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3026', any: [/ENDIF/] },
       { src: K3, ref: '3028', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
       { src: K3, ref: '3030', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
@@ -17795,7 +16201,7 @@ const FILES = [
         src: K3,
         ref: '3033',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…没、没有关系的…%UNICODE\(0x266/,
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…没、没有关系的…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -17805,7 +16211,6 @@ const FILES = [
           /PRINTFORMW\ 「不，不过哪怕是这样…也请…温柔一点………%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3036', any: [/ELSE/] },
       {
         src: K3,
         ref: '3037',
@@ -17823,8 +16228,6 @@ const FILES = [
         ref: '3039',
         any: [/PRINTFORMW\ 「请…尽情地享受吧\~…%UNICODE\(0x2661\)\ \*3%」/],
       },
-      { src: K3, ref: '3040', any: [/ENDIF/] },
-      { src: K3, ref: '3042', any: [/ELSE/] },
       {
         src: K3,
         ref: '3043',
@@ -17837,10 +16240,7 @@ const FILES = [
         ref: '3044',
         any: [/PRINTFORMW\ 「不、不要啊…不要啊啊啊\~」/],
       },
-      { src: K3, ref: '3045', any: [/ENDIF/] },
       { src: K3, ref: '3046', any: [/CFLAG:TARGET:327\ =\ 1/] },
-      { src: K3, ref: '3047', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3049', any: [/ELSE/] },
       {
         src: K3,
         ref: '3051',
@@ -17892,7 +16292,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的脑袋中已经只剩下肛穴给予的快乐的样子………/,
         ],
       },
-      { src: K3, ref: '3060', any: [/ELSE/] },
       {
         src: K3,
         ref: '3061',
@@ -17911,10 +16310,9 @@ const FILES = [
         src: K3,
         ref: '3063',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 啊哈啊啊啊\~%UNICODE\(0x266/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 啊哈啊啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3064', any: [/ENDIF/] },
       { src: K3, ref: '3065', any: [/CFLAG:327\ =\ 7/] },
       {
         src: K3,
@@ -17934,7 +16332,7 @@ const FILES = [
         src: K3,
         ref: '3069',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的肛穴…被再干多一点的话…里面的形状就会更加贴合主人的大鸡巴的形状了\~%UNICODE\(0x266/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的肛穴…被再干多一点的话…里面的形状就会更加贴合主人的大鸡巴的形状了\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '3070', any: [/CFLAG:327\ =\ 6/] },
@@ -17950,14 +16348,14 @@ const FILES = [
         src: K3,
         ref: '3074',
         any: [
-          /PRINTFORMW\ 「啊\~、嗯\~…啊啊\~…居然…%SELF_CALL\(TARGET\)%的肛穴居然有感觉起来了…嗯\~、哼啊啊嗯\~%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「啊\~、嗯\~…啊啊\~…居然…%SELF_CALL\(TARGET\)%的肛穴居然有感觉起来了…嗯\~、哼啊啊嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
         src: K3,
         ref: '3075',
         any: [
-          /PRINTFORMW\ 「啊啊\~、请不要看着…贪图肛穴给予的快乐而摆出一副不像样姿态的、%SELF_CALL\(TARGET\)%的脸…请、请不要看…哈呜嗯\~%UNI/,
+          /PRINTFORMW\ 「啊啊\~、请不要看着…贪图肛穴给予的快乐而摆出一副不像样姿态的、%SELF_CALL\(TARGET\)%的脸…请、请不要看…哈呜嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -17967,7 +16365,6 @@ const FILES = [
           /PRINTFORMW\ 「明，明明说了…不能看了…坏、坏心…啊啊嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3077', any: [/ELSE/] },
       {
         src: K3,
         ref: '3078',
@@ -17989,7 +16386,6 @@ const FILES = [
           /PRINTFORMW\ 「啊哈呀啊嗯\~♪…要去了，要去了啊啊\~…肛门SEX…好棒呀啊\~\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
-      { src: K3, ref: '3081', any: [/ENDIF/] },
       { src: K3, ref: '3082', any: [/CFLAG:327\ =\ 5/] },
       {
         src: K3,
@@ -18046,10 +16442,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '3096', any: [/CFLAG:327\ =\ 2/] },
-      { src: K3, ref: '3097', any: [/ENDIF/] },
-      { src: K3, ref: '3098', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3099', any: [/ENDIF/] },
-      { src: K3, ref: '3100', any: [/ENDIF/] },
       { src: K3, ref: '3106', any: [/IF\ SELECTCOM\ ==\ 27/] },
       { src: K3, ref: '3108', any: [/IF\ CFLAG:TARGET:328\ ==\ 0/] },
       { src: K3, ref: '3110', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -18065,7 +16457,7 @@ const FILES = [
         src: K3,
         ref: '3114',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%就像让%SAVESTR:PLAYER%看到屁股一样用双手将自己的屁股张开了。%SAVESTR:PLAYER/,
+          /PRINTFORMW\ %SAVESTR:TARGET%就像让%SAVESTR:PLAYER%看到屁股一样用双手将自己的屁股张开了。%SAVESTR:PLAYER%接受了她的诱惑从后面插进了肛门里了。/,
         ],
       },
       {
@@ -18089,12 +16481,11 @@ const FILES = [
           /PRINTFORMW\ 「被当成飞机杯也可以的\~…请尽情地变得舒服起来吧\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
-      { src: K3, ref: '3119', any: [/ELSE/] },
       {
         src: K3,
         ref: '3120',
         any: [
-          /PRINTFORMW\ 「请尽情地侵犯\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:PLAYER%的肛穴吧\~%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「请尽情地侵犯\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:PLAYER%的肛穴吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -18111,7 +16502,6 @@ const FILES = [
           /PRINTFORMW\ 「哈呀啊\~…好厉害，大鸡巴好厉害啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3123', any: [/ENDIF/] },
       { src: K3, ref: '3125', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
       { src: K3, ref: '3127', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
@@ -18125,14 +16515,14 @@ const FILES = [
         src: K3,
         ref: '3129',
         any: [
-          /PRINTFORMW\ 「哼\~…啊…啊啊%UNICODE\(0x2661\)\ \*1%\ …被大鸡巴侵犯着呢\~%UNICODE\(0x2661\)\ \*1%哈啊嗯\~%UNICO/,
+          /PRINTFORMW\ 「哼\~…啊…啊啊%UNICODE\(0x2661\)\ \*1%\ …被大鸡巴侵犯着呢\~%UNICODE\(0x2661\)\ \*1%哈啊嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3130',
         any: [
-          /PRINTFORMW\ 「才…才不是呢…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%……被干肛穴…而感到高兴什么的\./,
+          /PRINTFORMW\ 「才…才不是呢…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%……被干肛穴…而感到高兴什么的\.\.\.才没有呢\.\.\.哈呀啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -18146,10 +16536,9 @@ const FILES = [
         src: K3,
         ref: '3132',
         any: [
-          /PRINTFORMW\ 「作为工口精灵族的%SAVESTR:TARGET%是一个…肛穴被侵犯就感到快乐的大变态来的…啊\~啊啊啊\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「作为工口精灵族的%SAVESTR:TARGET%是一个…肛穴被侵犯就感到快乐的大变态来的…啊\~啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3134', any: [/ELSE/] },
       {
         src: K3,
         ref: '3135',
@@ -18178,8 +16567,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 被从后面侵犯着肛穴…却高兴起来了\~…」/,
         ],
       },
-      { src: K3, ref: '3139', any: [/ENDIF/] },
-      { src: K3, ref: '3141', any: [/ELSE/] },
       {
         src: K3,
         ref: '3142',
@@ -18187,10 +16574,7 @@ const FILES = [
           /PRINTFORMW\ 「请、请快住手…这种姿势…%SELF_CALL\(TARGET\)%才不会有感觉…啊啊\~…不…不要啊\~！」/,
         ],
       },
-      { src: K3, ref: '3143', any: [/ENDIF/] },
       { src: K3, ref: '3144', any: [/CFLAG:TARGET:328\ =\ 1/] },
-      { src: K3, ref: '3145', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3147', any: [/ELSE/] },
       {
         src: K3,
         ref: '3149',
@@ -18217,7 +16601,7 @@ const FILES = [
         src: K3,
         ref: '3153',
         any: [
-          /PRINTFORMW\ 「啊啊\~…已经%UNICODE\(0x2661\)\ \*1%…除了大鸡巴之外%UNICODE\(0x2661\)\ \*1%\ 什么都想不了了啊\~%UNI/,
+          /PRINTFORMW\ 「啊啊\~…已经%UNICODE\(0x2661\)\ \*1%…除了大鸡巴之外%UNICODE\(0x2661\)\ \*1%\ 什么都想不了了啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '3154', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -18249,7 +16633,6 @@ const FILES = [
           /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 噢\~噢噢\~哦哦哦哦哦\~！」/,
         ],
       },
-      { src: K3, ref: '3159', any: [/ELSE/] },
       {
         src: K3,
         ref: '3160',
@@ -18271,7 +16654,6 @@ const FILES = [
           /PRINTFORMW\ 「只有%SELF_CALL\(TARGET\)%变得舒服起来开心起来…那就不公平了啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3163', any: [/ENDIF/] },
       { src: K3, ref: '3164', any: [/CFLAG:328\ =\ 7/] },
       {
         src: K3,
@@ -18317,7 +16699,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊啊\~……请更加侵犯那里吧\~…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3175', any: [/ELSE/] },
       {
         src: K3,
         ref: '3176',
@@ -18339,7 +16720,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…不行\~…已经要不行了啊\~…已经随便怎样都好了啊\~！」/,
         ],
       },
-      { src: K3, ref: '3179', any: [/ENDIF/] },
       { src: K3, ref: '3180', any: [/CFLAG:328\ =\ 5/] },
       {
         src: K3,
@@ -18398,10 +16778,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '3194', any: [/CFLAG:328\ =\ 2/] },
-      { src: K3, ref: '3195', any: [/ENDIF/] },
-      { src: K3, ref: '3196', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3197', any: [/ENDIF/] },
-      { src: K3, ref: '3198', any: [/ENDIF/] },
       { src: K3, ref: '3204', any: [/IF\ SELECTCOM\ ==\ 28/] },
       { src: K3, ref: '3206', any: [/IF\ CFLAG:TARGET:329\ ==\ 0/] },
       { src: K3, ref: '3208', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -18437,7 +16813,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%好像很害羞地抱住了%SAVESTR:PLAYER%………/,
         ],
       },
-      { src: K3, ref: '3217', any: [/ELSE/] },
       {
         src: K3,
         ref: '3218',
@@ -18452,10 +16827,7 @@ const FILES = [
           /PRINTFORMW\ 「好、好的、会好好地将整根塞进去的…啊啊\~请不要动起来」/,
         ],
       },
-      { src: K3, ref: '3220', any: [/ENDIF/] },
       { src: K3, ref: '3221', any: [/CFLAG:TARGET:329\ =\ 1/] },
-      { src: K3, ref: '3222', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3224', any: [/ELSE/] },
       {
         src: K3,
         ref: '3226',
@@ -18475,7 +16847,7 @@ const FILES = [
         src: K3,
         ref: '3229',
         any: [
-          /PRINTFORMW\ 「啊啊\~…已经忍耐不了了呀\~…要开始动了噢…%SELF_CALL\(TARGET\)%要自己就变得舒服起来了噢\~%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「啊啊\~…已经忍耐不了了呀\~…要开始动了噢…%SELF_CALL\(TARGET\)%要自己就变得舒服起来了噢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -18507,12 +16879,11 @@ const FILES = [
           /PRINTFORMW\ 完全不知道羞耻吐露着淫猥的话语的%SAVESTR:TARGET%身上、完全感受不到过去的高贵姿态了………/,
         ],
       },
-      { src: K3, ref: '3235', any: [/ELSE/] },
       {
         src: K3,
         ref: '3236',
         any: [
-          /PRINTFORMW\ 「哈啊啊\~…肛穴要融化掉了\~%UNICODE\(0x2661\)\ \*1%\ 因为大鸡巴塞进来了所以肛穴很高兴呢%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「哈啊啊\~…肛穴要融化掉了\~%UNICODE\(0x2661\)\ \*1%\ 因为大鸡巴塞进来了所以肛穴很高兴呢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -18522,7 +16893,6 @@ const FILES = [
           /PRINTFORMW\ 「啊哈啊…怎么样啊\~？肛穴…就像这样收紧的话是不是很舒服呀\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3238', any: [/ENDIF/] },
       { src: K3, ref: '3239', any: [/CFLAG:329\ =\ 7/] },
       {
         src: K3,
@@ -18576,7 +16946,6 @@ const FILES = [
           /PRINTFORMW\ 「请不要…讨厌%SELF_CALL\(TARGET\)%…啊啊\~…嗯\~哈啊嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3252', any: [/ELSE/] },
       {
         src: K3,
         ref: '3253',
@@ -18591,7 +16960,6 @@ const FILES = [
           /PRINTFORMW\ 「嗯\~…♪\ 更加…激烈地抽插那里，也没有关系的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3255', any: [/ENDIF/] },
       { src: K3, ref: '3256', any: [/CFLAG:329\ =\ 5/] },
       {
         src: K3,
@@ -18644,10 +17012,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊\~…屁股…再被扩大着…好、好难受啊…」/],
       },
       { src: K3, ref: '3270', any: [/CFLAG:329\ =\ 2/] },
-      { src: K3, ref: '3271', any: [/ENDIF/] },
-      { src: K3, ref: '3272', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3273', any: [/ENDIF/] },
-      { src: K3, ref: '3274', any: [/ENDIF/] },
       { src: K3, ref: '3279', any: [/IF\ SELECTCOM\ ==\ 29/] },
       { src: K3, ref: '3281', any: [/IF\ CFLAG:TARGET:330\ ==\ 0/] },
       { src: K3, ref: '3283', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -18685,7 +17049,6 @@ const FILES = [
           /PRINTFORMW\ 「这种…姿势来…恩哈呜\~…被侵犯什么的…明明…不要来的…啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3292', any: [/ELSE/] },
       {
         src: K3,
         ref: '3293',
@@ -18693,10 +17056,7 @@ const FILES = [
           /PRINTFORMW\ 「不…不要啊…那么地…将腿张开的话…啊\~啊啊\~！进去了哈呜\~\~！？」/,
         ],
       },
-      { src: K3, ref: '3294', any: [/ENDIF/] },
       { src: K3, ref: '3295', any: [/CFLAG:TARGET:330\ =\ 1/] },
-      { src: K3, ref: '3296', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3298', any: [/ELSE/] },
       {
         src: K3,
         ref: '3300',
@@ -18726,7 +17086,6 @@ const FILES = [
           /PRINTFORMW\ 「请到坏掉为止，不停地侵犯吧%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3305', any: [/ELSE/] },
       {
         src: K3,
         ref: '3306',
@@ -18748,7 +17107,6 @@ const FILES = [
           /PRINTFORMW\ 「处罚，请处罚吧啊\~%UNICODE\(0x2661\)\ \*1%\ 请给淫乱肛穴处罚吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3309', any: [/ENDIF/] },
       { src: K3, ref: '3310', any: [/CFLAG:330\ =\ 7/] },
       {
         src: K3,
@@ -18768,7 +17126,7 @@ const FILES = [
         src: K3,
         ref: '3314',
         any: [
-          /PRINTFORMW\ 「哈呜哈啊\~%UNICODE\(0x2661\)\ \*1%\ 啊\~…哈啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 请更加…侵犯吧\~%UNIC/,
+          /PRINTFORMW\ 「哈呜哈啊\~%UNICODE\(0x2661\)\ \*1%\ 啊\~…哈啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 请更加…侵犯吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3315', any: [/CFLAG:330\ =\ 6/] },
@@ -18799,7 +17157,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…连屁股的洞…都要变得不行了\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3322', any: [/ELSE/] },
       {
         src: K3,
         ref: '3323',
@@ -18811,10 +17168,9 @@ const FILES = [
         src: K3,
         ref: '3324',
         any: [
-          /PRINTFORMW\ 「不行的啊\~…真的…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 要融化掉了…腰往下的地方都要融化掉了腰%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「不行的啊\~…真的…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 要融化掉了…腰往下的地方都要融化掉了腰%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3325', any: [/ENDIF/] },
       { src: K3, ref: '3326', any: [/CFLAG:330\ =\ 5/] },
       {
         src: K3,
@@ -18871,10 +17227,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '3340', any: [/CFLAG:330\ =\ 2/] },
-      { src: K3, ref: '3341', any: [/ENDIF/] },
-      { src: K3, ref: '3342', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3343', any: [/ENDIF/] },
-      { src: K3, ref: '3344', any: [/ENDIF/] },
       { src: K3, ref: '3349', any: [/IF\ SELECTCOM\ ==\ 30/] },
       { src: K3, ref: '3351', any: [/IF\ CFLAG:TARGET:331\ ==\ 0/] },
       { src: K3, ref: '3353', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -18918,7 +17270,6 @@ const FILES = [
         ref: '3363',
         any: [/PRINTFORMW\ 「啊啊\~…这么烫…好、好的…会温柔…地、地做的啦………」/],
       },
-      { src: K3, ref: '3365', any: [/ELSE/] },
       {
         src: K3,
         ref: '3366',
@@ -18926,15 +17277,12 @@ const FILES = [
           /PRINTFORMW\ 「呜呜\~…居，居然要握住这种东西…啊啊\~…好、好烫…的啊………」/,
         ],
       },
-      { src: K3, ref: '3367', any: [/ENDIF/] },
       { src: K3, ref: '3368', any: [/CFLAG:TARGET:331\ =\ 1/] },
-      { src: K3, ref: '3369', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3371', any: [/ELSE/] },
       {
         src: K3,
         ref: '3373',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 3\ \&\&\ \(CFLAG:331\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 3\ \&\&\ \(CFLAG:331\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       { src: K3, ref: '3374', any: [/IF\ TALENT:PLAYER:318\ ==\ 1/] },
@@ -18950,7 +17298,7 @@ const FILES = [
         src: K3,
         ref: '3379',
         any: [
-          /PRINTFORMW\ 「小孩子似的鲜肉棒棒，拼尽全力地勃起着呢%UNICODE\(0x2661\)\ \*1%　这样子还不够挑逗女人哦？%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「小孩子似的鲜肉棒棒，拼尽全力地勃起着呢%UNICODE\(0x2661\)\ \*1%　这样子还不够挑逗女人哦？%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3380', any: [/ELSEIF\ TALENT:PLAYER:318\ ==\ 3/] },
@@ -18969,13 +17317,12 @@ const FILES = [
           /PRINTFORMW\ 「这样的马肉棒，插进来的话一定会让女人疯掉的吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3386', any: [/ENDIF/] },
       { src: K3, ref: '3387', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '3388',
         any: [
-          /PRINTFORMW\ 「啊哈啊\~…大鸡巴\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%会更加加油地撸的…%UNICODE\(0/,
+          /PRINTFORMW\ 「啊哈啊\~…大鸡巴\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%会更加加油地撸的…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -18985,12 +17332,11 @@ const FILES = [
           /PRINTFORMW\ 「请尽情地射出来…变得舒服起来吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3390', any: [/ELSE/] },
       {
         src: K3,
         ref: '3391',
         any: [
-          /PRINTFORMW\ 「啊啊\~…明明只是用手握住侍奉而已…%SELF_CALL\(TARGET\)%的那里就湿掉了真是毫无办法呢\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「啊啊\~…明明只是用手握住侍奉而已…%SELF_CALL\(TARGET\)%的那里就湿掉了真是毫无办法呢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19000,7 +17346,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊啊\~…看着大鸡巴变舒服起来…%SELF_CALL\(TARGET\)%也都…啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3393', any: [/ENDIF/] },
       { src: K3, ref: '3394', any: [/CFLAG:331\ =\ 7/] },
       {
         src: K3,
@@ -19035,7 +17380,7 @@ const FILES = [
         src: K3,
         ref: '3402',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:331\ <=\ 4\ \|\|\ FLAG:7\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:331\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       { src: K3, ref: '3403', any: [/IF\ TALENT:PLAYER:318\ ==\ 1/] },
@@ -19070,7 +17415,6 @@ const FILES = [
           /PRINTFORMW\ 「这样的马肉棒，插进来的话一定会让我疯掉的吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3415', any: [/ENDIF/] },
       { src: K3, ref: '3416', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
@@ -19093,7 +17437,6 @@ const FILES = [
           /PRINTFORMW\ 「%SAVESTR:TARGET%会专注地侍奉的\~…在大人您满足之前…会一直侍奉下去的…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3420', any: [/ELSE/] },
       {
         src: K3,
         ref: '3421',
@@ -19113,7 +17456,6 @@ const FILES = [
           /PRINTFORMW\ 「撒\~…请变得更加舒服起来吧%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3424', any: [/ENDIF/] },
       { src: K3, ref: '3425', any: [/CFLAG:331\ =\ 5/] },
       {
         src: K3,
@@ -19133,7 +17475,7 @@ const FILES = [
         src: K3,
         ref: '3429',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的手中这个顽皮的家伙\~…啊啊\~一跳一跳地\~…真是一个十分可爱得东西呢\~%UNICODE\(0x266/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的手中这个顽皮的家伙\~…啊啊\~一跳一跳地\~…真是一个十分可爱得东西呢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19148,7 +17490,7 @@ const FILES = [
         src: K3,
         ref: '3433',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 3\ \&\&\ \(CFLAG:331\ <=\ 2\ \|\|\ FLAG:7\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 3\ \&\&\ \(CFLAG:331\ <=\ 2\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -19175,10 +17517,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊…哈啊…好，好热…这个…手好像要变奇怪了啊………」/],
       },
       { src: K3, ref: '3440', any: [/CFLAG:331\ =\ 2/] },
-      { src: K3, ref: '3441', any: [/ENDIF/] },
-      { src: K3, ref: '3442', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3443', any: [/ENDIF/] },
-      { src: K3, ref: '3444', any: [/ENDIF/] },
       { src: K3, ref: '3450', any: [/IF\ SELECTCOM\ ==\ 31/] },
       { src: K3, ref: '3452', any: [/IF\ CFLAG:TARGET:332\ ==\ 0/] },
       { src: K3, ref: '3454', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -19193,7 +17531,7 @@ const FILES = [
         src: K3,
         ref: '3456',
         any: [
-          /PRINTFORMW\ 「%SAVESTR:TARGET%会尽\~情地…用嘴巴来侍奉的\~%UNICODE\(0x2661\)\ \*1%…啊啊\~唔嗯…哈唔嗯\~%UNICOD/,
+          /PRINTFORMW\ 「%SAVESTR:TARGET%会尽\~情地…用嘴巴来侍奉的\~%UNICODE\(0x2661\)\ \*1%…啊啊\~唔嗯…哈唔嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19215,7 +17553,7 @@ const FILES = [
         src: K3,
         ref: '3461',
         any: [
-          /PRINTFORMW\ 「嗯啊\~…哈嗯\~…嗯\~…嗯嗯呜…哈啊…嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「嗯啊\~…哈嗯\~…嗯\~…嗯嗯呜…哈啊…嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19236,18 +17574,14 @@ const FILES = [
         ref: '3466',
         any: [/PRINTFORMW\ 「嗯哈啊\~…嗯\~…嗯哼\~…嗯\~…哈啊啊…啊啊\~」/],
       },
-      { src: K3, ref: '3468', any: [/ELSE/] },
       {
         src: K3,
         ref: '3469',
         any: [
-          /PRINTFORMW\ 「嗯呜…明，明明都这样了…还要用%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的嘴巴来…啊啊…/,
+          /PRINTFORMW\ 「嗯呜…明，明明都这样了…还要用%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的嘴巴来…啊啊…好、好过分的啊…嗯…啾…啾呜…」/,
         ],
       },
-      { src: K3, ref: '3470', any: [/ENDIF/] },
       { src: K3, ref: '3471', any: [/CFLAG:TARGET:332\ =\ 1/] },
-      { src: K3, ref: '3472', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3474', any: [/ELSE/] },
       {
         src: K3,
         ref: '3476',
@@ -19267,7 +17601,7 @@ const FILES = [
         src: K3,
         ref: '3479',
         any: [
-          /PRINTFORMW\ 「嗯呜\~…嗯哼呜呜\~…嗯啾\~…啾噗嗯\~…啾\~…嗯\~%UNICODE\(0x2661\)\ \*1%嗯\~%UNICODE\(0x2661\)\ \*1%嗯\~/,
+          /PRINTFORMW\ 「嗯呜\~…嗯哼呜呜\~…嗯啾\~…啾噗嗯\~…啾\~…嗯\~%UNICODE\(0x2661\)\ \*1%嗯\~%UNICODE\(0x2661\)\ \*1%嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -19294,10 +17628,9 @@ const FILES = [
         src: K3,
         ref: '3484',
         any: [
-          /PRINTFORMW\ 「啊啊\~…大鸡巴…太喜欢了啊\~\~…%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…不行了\~…哈呜嗯\~…啾噜啾呜\.\.\.啾呜呜呜\~%UNIC/,
+          /PRINTFORMW\ 「啊啊\~…大鸡巴…太喜欢了啊\~\~…%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…不行了\~…哈呜嗯\~…啾噜啾呜\.\.\.啾呜呜呜\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3485', any: [/ELSE/] },
       {
         src: K3,
         ref: '3486',
@@ -19307,17 +17640,16 @@ const FILES = [
         src: K3,
         ref: '3487',
         any: [
-          /PRINTFORMW\ 「嗯呜\~…啾\~%UNICODE\(0x2661\)\ \*1%\ 啾\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~\~%UNICODE\(0x266/,
+          /PRINTFORMW\ 「嗯呜\~…啾\~%UNICODE\(0x2661\)\ \*1%\ 啾\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~\~%UNICODE\(0x2661\)\ \*1%\ 大鸡巴…大鸡巴…好好吃啊\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
         src: K3,
         ref: '3488',
         any: [
-          /PRINTFORMW\ 「精液%UNICODE\(0x2661\)\ \*1%…请尽情地%UNICODE\(0x2661\)\ \*1%\ 将全部的精液都射出来吧\~%UNICODE/,
+          /PRINTFORMW\ 「精液%UNICODE\(0x2661\)\ \*1%…请尽情地%UNICODE\(0x2661\)\ \*1%\ 将全部的精液都射出来吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3489', any: [/ENDIF/] },
       { src: K3, ref: '3490', any: [/CFLAG:332\ =\ 5/] },
       {
         src: K3,
@@ -19331,7 +17663,7 @@ const FILES = [
         src: K3,
         ref: '3494',
         any: [
-          /PRINTFORMW\ 「嗯哼唔\~…好热好硬的东西哈啊\~\~%UNICODE\(0x2661\)\ \*1%\ 请用%SELF_CALL\(TARGET\)%嘴巴来…尽情地享受吧/,
+          /PRINTFORMW\ 「嗯哼唔\~…好热好硬的东西哈啊\~\~%UNICODE\(0x2661\)\ \*1%\ 请用%SELF_CALL\(TARGET\)%嘴巴来…尽情地享受吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19345,7 +17677,7 @@ const FILES = [
         src: K3,
         ref: '3496',
         any: [
-          /PRINTFORMW\ 「哈呜嗯%UNICODE\(0x2661\)\ \*1%\ 嗯\~%UNICODE\(0x2661\)\ \*1%\ 嗯呼呜\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「哈呜嗯%UNICODE\(0x2661\)\ \*1%\ 嗯\~%UNICODE\(0x2661\)\ \*1%\ 嗯呼呜\~%UNICODE\(0x2661\)\ \*1%…啾\~…啾噗…呸咯\~♪」/,
         ],
       },
       { src: K3, ref: '3497', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -19367,10 +17699,9 @@ const FILES = [
         src: K3,
         ref: '3500',
         any: [
-          /PRINTFORMW\ 「嗯呜嗯\~♪嗯\~嗯嗯\~…啾呜\~…啾噗呜\~…呸咯\~…噗哈啊\~…呐\~\~%UNICODE\(0x2661\)\ \*1%\ 已经上瘾了呢\~%UNICODE/,
+          /PRINTFORMW\ 「嗯呜嗯\~♪嗯\~嗯嗯\~…啾呜\~…啾噗呜\~…呸咯\~…噗哈啊\~…呐\~\~%UNICODE\(0x2661\)\ \*1%\ 已经上瘾了呢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3501', any: [/ELSE/] },
       {
         src: K3,
         ref: '3502',
@@ -19389,10 +17720,9 @@ const FILES = [
         src: K3,
         ref: '3504',
         any: [
-          /PRINTFORMW\ 「嗯\~嗯\~嗯呼呜\~…啊啊\~…请原谅吧\~…请将精\~液射到%SAVESTR:TARGET%的嘴巴里吧\~%UNICODE\(0x2661\)\ \*3%/,
+          /PRINTFORMW\ 「嗯\~嗯\~嗯呼呜\~…啊啊\~…请原谅吧\~…请将精\~液射到%SAVESTR:TARGET%的嘴巴里吧\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3505', any: [/ENDIF/] },
       { src: K3, ref: '3506', any: [/CFLAG:332\ =\ 4/] },
       {
         src: K3,
@@ -19427,10 +17757,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「这样的…明、明明不要的…啾\~…啾\~…呸咯…」/],
       },
       { src: K3, ref: '3515', any: [/CFLAG:332\ =\ 2/] },
-      { src: K3, ref: '3516', any: [/ENDIF/] },
-      { src: K3, ref: '3517', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3518', any: [/ENDIF/] },
-      { src: K3, ref: '3519', any: [/ENDIF/] },
       { src: K3, ref: '3524', any: [/IF\ SELECTCOM\ ==\ 32/] },
       { src: K3, ref: '3526', any: [/IF\ CFLAG:TARGET:333\ ==\ 0/] },
       { src: K3, ref: '3528', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -19474,21 +17800,17 @@ const FILES = [
           /PRINTFORMW\ 「用，用胸部来夹住什么的…啊\~…嗯\~…胸部好热啊\~…♪」/,
         ],
       },
-      { src: K3, ref: '3540', any: [/ELSE/] },
       {
         src: K3,
         ref: '3541',
         any: [/PRINTFORMW\ 「呜…这、这样的会感觉到舒服吗………？」/],
       },
-      { src: K3, ref: '3542', any: [/ENDIF/] },
       { src: K3, ref: '3543', any: [/CFLAG:TARGET:333\ =\ 1/] },
-      { src: K3, ref: '3544', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3546', any: [/ELSE/] },
       {
         src: K3,
         ref: '3548',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:332\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:332\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       { src: K3, ref: '3549', any: [/IF\ RAND:2\ ==\ 0/] },
@@ -19516,7 +17838,6 @@ const FILES = [
         ref: '3554',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%一脸荡漾的表情继续着侍奉………/],
       },
-      { src: K3, ref: '3555', any: [/ELSE/] },
       {
         src: K3,
         ref: '3556',
@@ -19536,7 +17857,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%将舌头下流地伸出来、好像现在就会将阴茎吞下去………/,
         ],
       },
-      { src: K3, ref: '3559', any: [/ENDIF/] },
       { src: K3, ref: '3560', any: [/CFLAG:333\ =\ 7/] },
       {
         src: K3,
@@ -19574,7 +17894,7 @@ const FILES = [
         src: K3,
         ref: '3570',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:333\ <=\ 4\ \|\|\ FLAG:7\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:333\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       { src: K3, ref: '3571', any: [/IF\ RAND:2\ ==\ 0/] },
@@ -19599,7 +17919,6 @@ const FILES = [
           /PRINTFORMW\ 「能给大人您派上用场真是好高兴呢\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3576', any: [/ELSE/] },
       {
         src: K3,
         ref: '3577',
@@ -19614,7 +17933,6 @@ const FILES = [
           /PRINTFORMW\ 「这个胸部是为了大人您而存在得…终于明白了呢\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3579', any: [/ENDIF/] },
       { src: K3, ref: '3580', any: [/CFLAG:333\ =\ 5/] },
       {
         src: K3,
@@ -19678,10 +17996,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊…哈啊…胸部…好热…的啊………」/],
       },
       { src: K3, ref: '3596', any: [/CFLAG:333\ =\ 2/] },
-      { src: K3, ref: '3597', any: [/ENDIF/] },
-      { src: K3, ref: '3598', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3599', any: [/ENDIF/] },
-      { src: K3, ref: '3600', any: [/ENDIF/] },
       { src: K3, ref: '3606', any: [/IF\ SELECTCOM\ ==\ 33/] },
       { src: K3, ref: '3608', any: [/IF\ CFLAG:TARGET:334\ ==\ 0/] },
       { src: K3, ref: '3610', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -19689,7 +18003,7 @@ const FILES = [
         src: K3,
         ref: '3611',
         any: [
-          /PRINTFORMW\ 「啊\~…嗯呜\~…%SELF_CALL\(TARGET\)%什么时候都准备好来着的\~…也不插进来…就这样做什么的…%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「啊\~…嗯呜\~…%SELF_CALL\(TARGET\)%什么时候都准备好来着的\~…也不插进来…就这样做什么的…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19717,7 +18031,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%虽然嘴上说着这样的话，但其实很高兴地用股间来侍奉着………/,
         ],
       },
-      { src: K3, ref: '3619', any: [/ELSE/] },
       {
         src: K3,
         ref: '3620',
@@ -19725,15 +18038,12 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…不、不要啊啊…%SELF_CALL\(TARGET\)%的爱液…居然漏出来了………」/,
         ],
       },
-      { src: K3, ref: '3621', any: [/ENDIF/] },
       { src: K3, ref: '3622', any: [/CFLAG:TARGET:334\ =\ 1/] },
-      { src: K3, ref: '3623', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3625', any: [/ELSE/] },
       {
         src: K3,
         ref: '3627',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:334\ <=\ 5\ \|\|\ FLAG:7\ ==/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:334\ <=\ 5\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -19783,7 +18093,7 @@ const FILES = [
         src: K3,
         ref: '3636',
         any: [
-          /PRINTFORMW\ 「只是夹着而已…爱液就停不下来了啊\~\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…是个淫乱小穴真的是对不起%UNICODE\(0x26/,
+          /PRINTFORMW\ 「只是夹着而已…爱液就停不下来了啊\~\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…是个淫乱小穴真的是对不起%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19798,7 +18108,7 @@ const FILES = [
         src: K3,
         ref: '3640',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:334\ <=\ 3\ \|\|\ FLAG:/,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:0\ ==\ 1\ \&\&\ \(CFLAG:334\ <=\ 3\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -19855,7 +18165,7 @@ const FILES = [
         src: K3,
         ref: '3650',
         any: [
-          /PRINTFORMW\ %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰，如同拒绝插进去一样，用阴茎摩擦着%SAVESTR:TARGET%/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰，如同拒绝插进去一样，用阴茎摩擦着%SAVESTR:TARGET%的蜜穴………/,
         ],
       },
       { src: K3, ref: '3651', any: [/CFLAG:334\ =\ 3/] },
@@ -19877,10 +18187,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「爱、爱液…黏糊糊地…停不下来了呀\~………」/],
       },
       { src: K3, ref: '3656', any: [/CFLAG:334\ =\ 2/] },
-      { src: K3, ref: '3657', any: [/ENDIF/] },
-      { src: K3, ref: '3658', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3659', any: [/ENDIF/] },
-      { src: K3, ref: '3660', any: [/ENDIF/] },
       { src: K3, ref: '3666', any: [/IF\ SELECTCOM\ ==\ 34/] },
       { src: K3, ref: '3668', any: [/IF\ CFLAG:TARGET:335\ ==\ 0/] },
       { src: K3, ref: '3670', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -19897,7 +18203,7 @@ const FILES = [
         src: K3,
         ref: '3676',
         any: [
-          /PRINTFORMW\ 「啊啊啊%UNICODE\(0x2661\)\ \*1%…”自己献上处女吧\~”像这样这样的命令什么的…主人可知道%SELF_CALL\(TARGET/,
+          /PRINTFORMW\ 「啊啊啊%UNICODE\(0x2661\)\ \*1%…”自己献上处女吧\~”像这样这样的命令什么的…主人可知道%SELF_CALL\(TARGET\)%到底等了这样命令等了多久了呀\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19930,7 +18236,7 @@ const FILES = [
         src: K3,
         ref: '3681',
         any: [
-          /PRINTFORMW\ 「噢\~、噢噢噢\~%UNICODE\(0x2661\)\ \*3%到深、深处了…已经全部都进到里面去了啊啊\~%UNICODE\(0x2661\)\ \*5%/,
+          /PRINTFORMW\ 「噢\~、噢噢噢\~%UNICODE\(0x2661\)\ \*3%到深、深处了…已经全部都进到里面去了啊啊\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
       {
@@ -19944,10 +18250,9 @@ const FILES = [
         src: K3,
         ref: '3683',
         any: [
-          /PRINTFORMW\ 「呜嗯\~…啊\~…哈啊\~…啊、啊啊啊啊啊\~～%UNICODE\(0x2661\)\ \*5%\ 进、进去了啊\~…%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「呜嗯\~…啊\~…哈啊\~…啊、啊啊啊啊啊\~～%UNICODE\(0x2661\)\ \*5%\ 进、进去了啊\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3685', any: [/ELSE/] },
       { src: K3, ref: '3687', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -19965,7 +18270,7 @@ const FILES = [
         src: K3,
         ref: '3690',
         any: [
-          /PRINTFORMW\ 「………其实%SELF_CALL\(TARGET\)%、在故乡里有着婚约者呢…名字？样子？…那种东西…已经都忘掉了呀\~…%UNICODE\(0x/,
+          /PRINTFORMW\ 「………其实%SELF_CALL\(TARGET\)%、在故乡里有着婚约者呢…名字？样子？…那种东西…已经都忘掉了呀\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -19986,10 +18291,9 @@ const FILES = [
         src: K3,
         ref: '3693',
         any: [
-          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%已经…是主人的东西来的了呀%UNICODE\(0x2661\)\ \*1%\ 请一直…使唤%SELF/,
+          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%已经…是主人的东西来的了呀%UNICODE\(0x2661\)\ \*1%\ 请一直…使唤%SELF_CALL\(TARGET\)%吧…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3694', any: [/ELSE/] },
       {
         src: K3,
         ref: '3695',
@@ -20013,7 +18317,7 @@ const FILES = [
         src: K3,
         ref: '3698',
         any: [
-          /PRINTFORMW\ 「早中晚从不休息…一直都被主人给侵犯的日子…啊啊\~%UNICODE\(0x2661\)\ \*1%…啊啊啊\~%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「早中晚从不休息…一直都被主人给侵犯的日子…啊啊\~%UNICODE\(0x2661\)\ \*1%…啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20037,8 +18341,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~…啊啊…好棒…好棒啊\~…主人的全部…都好想要啊\~\~…啊\~啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3702', any: [/ENDIF/] },
-      { src: K3, ref: '3703', any: [/ENDIF/] },
       { src: K3, ref: '3705', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
       { src: K3, ref: '3707', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
       {
@@ -20064,7 +18366,7 @@ const FILES = [
         src: K3,
         ref: '3711',
         any: [
-          /PRINTFORMW\ 「但，但是…啊嗯\~%UNICODE\(0x2661\)\ \*1%…大人您…嗯\~%UNICODE\(0x2661\)\ \*1%…无论如何…都\~%UNIC/,
+          /PRINTFORMW\ 「但，但是…啊嗯\~%UNICODE\(0x2661\)\ \*1%…大人您…嗯\~%UNICODE\(0x2661\)\ \*1%…无论如何…都\~%UNICODE\(0x2661\)\ \*1%…要%SAVESTR:TARGET%这样做的话…啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20088,20 +18390,19 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%说完后就自己将腰压下来、为了献上处女而将异物塞进了的腔内的深处………/,
         ],
       },
-      { src: K3, ref: '3716', any: [/ELSE/] },
       { src: K3, ref: '3718', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
         ref: '3719',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 是、是的…%SELF_CALL\(TARGET\)%作为原勇者的%SAVESTR:TARGE/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 是、是的…%SELF_CALL\(TARGET\)%作为原勇者的%SAVESTR:TARGET%的…不为了其它人而是为了大人您而留下来的处女现在奉献给您\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3720',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%就像骑马一样骑在%SAVESTR:PLAYER%身上，用一只手撑住保持平衡，然后用另一只手将%SAVEST/,
+          /PRINTFORMW\ %SAVESTR:TARGET%就像骑马一样骑在%SAVESTR:PLAYER%身上，用一只手撑住保持平衡，然后用另一只手将%SAVESTR:PLAYER%的阴茎对准蜜穴。/,
         ],
       },
       {
@@ -20115,7 +18416,7 @@ const FILES = [
         src: K3,
         ref: '3722',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%慢慢地将腰扭动着压下去。%SAVESTR:PLAYER%的阴茎将其处女膜捅破穿过、%SAVESTR:TAR/,
+          /PRINTFORMW\ %SAVESTR:TARGET%慢慢地将腰扭动着压下去。%SAVESTR:PLAYER%的阴茎将其处女膜捅破穿过、%SAVESTR:TARGET%的脸因为破瓜之痛而扭曲了。/,
         ],
       },
       {
@@ -20132,38 +18433,34 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%突然感到了心塞了一下、而那个原因早就被她所忘记了………/,
         ],
       },
-      { src: K3, ref: '3725', any: [/ELSE/] },
       {
         src: K3,
         ref: '3726',
         any: [
-          /PRINTFORMW\ 「啊啊啊\~%UNICODE\(0x2661\)\ \*1%\ 哈啊…啊啊\~…居然是…这样地一种方式献上纯洁什么的…%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「啊啊啊\~%UNICODE\(0x2661\)\ \*1%\ 哈啊…啊啊\~…居然是…这样地一种方式献上纯洁什么的…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3727',
         any: [
-          /PRINTFORMW\ 「不过…请让%SELF_CALL\(TARGET\)%成为大人您的东西吧…%UNICODE\(0x2661\)\ \*1%\ 请在%SELF_CALL\(/,
+          /PRINTFORMW\ 「不过…请让%SELF_CALL\(TARGET\)%成为大人您的东西吧…%UNICODE\(0x2661\)\ \*1%\ 请在%SELF_CALL\(TARGET\)%的身体里刻上大人您的印记吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3728',
         any: [
-          /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的腰部抓住，强硬地往下拉、将%SAVESTR:TARGET%的处女膜给捅/,
+          /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的腰部抓住，强硬地往下拉、将%SAVESTR:TARGET%的处女膜给捅破了。/,
         ],
       },
       {
         src: K3,
         ref: '3729',
         any: [
-          /PRINTFORMW\ 「哼唔啊啊\~…！啊啊\~…请从今以后\.\.\.好好地珍惜%SELF_CALL\(TARGET\)%的这里吧\~……%UNICODE\(0x2661\)\ \*/,
+          /PRINTFORMW\ 「哼唔啊啊\~…！啊啊\~…请从今以后\.\.\.好好地珍惜%SELF_CALL\(TARGET\)%的这里吧\~……%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3730', any: [/ENDIF/] },
-      { src: K3, ref: '3731', any: [/ENDIF/] },
-      { src: K3, ref: '3733', any: [/ELSE/] },
       { src: K3, ref: '3735', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
       {
         src: K3,
@@ -20176,7 +18473,7 @@ const FILES = [
         src: K3,
         ref: '3737',
         any: [
-          /PRINTFORMW\ 「对不起…真的\.\.\.对不起………%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%太弱…的原因…啊/,
+          /PRINTFORMW\ 「对不起…真的\.\.\.对不起………%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%太弱…的原因…啊啊…啊…………啊哼…哼啊啊！」/,
         ],
       },
       {
@@ -20186,7 +18483,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%一边向着故乡的恋人道歉一边被%SAVESTR:PLAYER%从下往上地抽插侵犯着………/,
         ],
       },
-      { src: K3, ref: '3739', any: [/ELSE/] },
       {
         src: K3,
         ref: '3740',
@@ -20201,9 +18497,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:PLAYER%将%SAVESTR:TARGET%的腰抓住后，直接强硬地插进去了………/,
         ],
       },
-      { src: K3, ref: '3742', any: [/ENDIF/] },
-      { src: K3, ref: '3743', any: [/ENDIF/] },
-      { src: K3, ref: '3745', any: [/ELSE/] },
       { src: K3, ref: '3747', any: [/IF\ TALENT:76\ ==\ 1/] },
       {
         src: K3,
@@ -20234,7 +18527,6 @@ const FILES = [
           /PRINTFORMW\ 「连接在一起的地方…啊\~啊啊啊\~…♪\ 好像要融化掉了呀\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3755', any: [/ELSE/] },
       {
         src: K3,
         ref: '3756',
@@ -20242,11 +18534,7 @@ const FILES = [
           /PRINTFORMW\ 「啊\~啊啊啊\.\.\.不、不行的啊\~\~…再这样…就太羞耻了动不了了…啊\~啊啊啊\~！请不要向上顶啊啊\~」/,
         ],
       },
-      { src: K3, ref: '3757', any: [/ENDIF/] },
-      { src: K3, ref: '3758', any: [/ENDIF/] },
       { src: K3, ref: '3759', any: [/CFLAG:TARGET:335\ =\ 1/] },
-      { src: K3, ref: '3760', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3762', any: [/ELSE/] },
       {
         src: K3,
         ref: '3764',
@@ -20259,14 +18547,14 @@ const FILES = [
         src: K3,
         ref: '3766',
         any: [
-          /PRINTFORMW\ 「啊啊\~…腰要…停不下来了啊\~%UNICODE\(0x2661\)\ \*1%\ 主人\~…太舒服了\~…呜\~%UNICODE\(0x2661\)\ \*1%啊/,
+          /PRINTFORMW\ 「啊啊\~…腰要…停不下来了啊\~%UNICODE\(0x2661\)\ \*1%\ 主人\~…太舒服了\~…呜\~%UNICODE\(0x2661\)\ \*1%啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3767',
         any: [
-          /PRINTFORMW\ 「变成喜欢大鸡巴的淫乱女人真是对不起…在去之前%UNICODE\(0x2661\)\ \*1%在去之前腰都不会停下来的啊啊\~\~%UNICODE\(0/,
+          /PRINTFORMW\ 「变成喜欢大鸡巴的淫乱女人真是对不起…在去之前%UNICODE\(0x2661\)\ \*1%在去之前腰都不会停下来的啊啊\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '3768', any: [/ELSEIF\ RAND:3\ ==\ 0/] },
@@ -20274,14 +18562,14 @@ const FILES = [
         src: K3,
         ref: '3769',
         any: [
-          /PRINTFORMW\ 「嗯哼唔\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%…好喜欢这种姿势啊…因为\.\.\.\.\.\.因为啦\~%U/,
+          /PRINTFORMW\ 「嗯哼唔\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%…好喜欢这种姿势啊…因为\.\.\.\.\.\.因为啦\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3770',
         any: [
-          /PRINTFORMW\ 「能十分地感觉到…小穴…将大鸡巴给吞下去了呢\~%UNICODE\(0x2661\)\ \*3%啊啊\~…好舒服啊啊\~%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「能十分地感觉到…小穴…将大鸡巴给吞下去了呢\~%UNICODE\(0x2661\)\ \*3%啊啊\~…好舒服啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3771', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -20289,22 +18577,21 @@ const FILES = [
         src: K3,
         ref: '3772',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%…那么淫乱真的很对不起\~…自己就…随便地…变得舒服起来了真是对不起%UNICODE\(0x2/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%…那么淫乱真的很对不起\~…自己就…随便地…变得舒服起来了真是对不起%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3773',
         any: [
-          /PRINTFORMW\ 「大鸡巴太舒服了呀\~\~…啊啊\~…请用大鸡巴…更多地…操到%SELF_CALL\(TARGET\)%失神为止吧\~\~%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「大鸡巴太舒服了呀\~\~…啊啊\~…请用大鸡巴…更多地…操到%SELF_CALL\(TARGET\)%失神为止吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3774', any: [/ELSE/] },
       {
         src: K3,
         ref: '3775',
         any: [
-          /PRINTFORMW\ 「噢\~噢\~哦哈啊啊\~%UNICODE\(0x2661\)\ \*1%…啊啊\~…不行不行不行不行\~%UNICODE\(0x2661\)\ \*1%\ 不行的啊/,
+          /PRINTFORMW\ 「噢\~噢\~哦哈啊啊\~%UNICODE\(0x2661\)\ \*1%…啊啊\~…不行不行不行不行\~%UNICODE\(0x2661\)\ \*1%\ 不行的啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20321,7 +18608,6 @@ const FILES = [
           /PRINTFORMW\ 「整个人都要变奇怪了…脑袋里只能…想到大鸡巴而已了…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3778', any: [/ENDIF/] },
       { src: K3, ref: '3779', any: [/CFLAG:335\ =\ 6/] },
       {
         src: K3,
@@ -20342,14 +18628,14 @@ const FILES = [
         src: K3,
         ref: '3784',
         any: [
-          /PRINTFORMW\ 请将%SELF_CALL\(TARGET\)%所～有都交给%SELF_CALL\(TARGET\)%吧\~%UNICODE\(0x2661\)\ \*1%\ /,
+          /PRINTFORMW\ 请将%SELF_CALL\(TARGET\)%所～有都交给%SELF_CALL\(TARGET\)%吧\~%UNICODE\(0x2661\)\ \*1%\ 啊\~%UNICODE\(0x2661\)\ \*1%\ 恶作剧可不行的呀\~」/,
         ],
       },
       {
         src: K3,
         ref: '3785',
         any: [
-          /PRINTFORML\ 「%SELF_CALL\(TARGET\)%会让大鸡巴…变得…嗯呜\~…舒服起来的…啊\~啊啊哈啊\~…啊啊啊\~…嗯\~%UNICODE\(0x2661/,
+          /PRINTFORML\ 「%SELF_CALL\(TARGET\)%会让大鸡巴…变得…嗯呜\~…舒服起来的…啊\~啊啊哈啊\~…啊啊啊\~…嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '3786', any: [/ELSEIF\ RAND:3\ ==\ 0/] },
@@ -20357,7 +18643,7 @@ const FILES = [
         src: K3,
         ref: '3787',
         any: [
-          /PRINTFORMW\ 「啊啊\~…喜欢…好喜欢的啊\~…%UNICODE\(0x2661\)\ \*1%\ 像这样自己动起来的话…哦\~噢噢\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「啊啊\~…喜欢…好喜欢的啊\~…%UNICODE\(0x2661\)\ \*1%\ 像这样自己动起来的话…哦\~噢噢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20371,7 +18657,7 @@ const FILES = [
         src: K3,
         ref: '3789',
         any: [
-          /PRINTFORMW\ 「哈嗯呜\~…不行\~…腰停不下来了啊\~%UNICODE\(0x2661\)\ \*1%在去之前完全停不下来啊\~\~%UNICODE\(0x2661\)\ \*/,
+          /PRINTFORMW\ 「哈嗯呜\~…不行\~…腰停不下来了啊\~%UNICODE\(0x2661\)\ \*1%在去之前完全停不下来啊\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3790', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -20379,17 +18665,16 @@ const FILES = [
         src: K3,
         ref: '3791',
         any: [
-          /PRINTFORMW\ 「啊\~…啊啊\~…真的是对不起%UNICODE\(0x2661\)\ \*1%\ 因为大鸡巴塞到了里面去了…所以在去之前…腰完全停不下来的啊\~%UNI/,
+          /PRINTFORMW\ 「啊\~…啊啊\~…真的是对不起%UNICODE\(0x2661\)\ \*1%\ 因为大鸡巴塞到了里面去了…所以在去之前…腰完全停不下来的啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3792',
         any: [
-          /PRINTFORMW\ 「是个H的小穴真是对不起%UNICODE\(0x2661\)\ \*1%\ 但是，但是…怎么都停不下来啊啊\~%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「是个H的小穴真是对不起%UNICODE\(0x2661\)\ \*1%\ 但是，但是…怎么都停不下来啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3793', any: [/ELSE/] },
       {
         src: K3,
         ref: '3794',
@@ -20404,7 +18689,6 @@ const FILES = [
           /PRINTFORMW\ 「好想一直一直就这样…腰部融化跟大人您合为一体呀\~…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3796', any: [/ENDIF/] },
       { src: K3, ref: '3797', any: [/CFLAG:335\ =\ 5/] },
       {
         src: K3,
@@ -20441,7 +18725,6 @@ const FILES = [
         ref: '3805',
         any: [/PRINTFORMW\ 「明明…不能动的…腰却…自己动起来了啊\~………♪」/],
       },
-      { src: K3, ref: '3806', any: [/ELSE/] },
       {
         src: K3,
         ref: '3807',
@@ -20454,7 +18737,6 @@ const FILES = [
           /PRINTFORMW\ 「大鸡巴…太舒服了…请不要看着腰晃动的地方啦…啊啊\~啊\~♪」/,
         ],
       },
-      { src: K3, ref: '3809', any: [/ENDIF/] },
       { src: K3, ref: '3810', any: [/CFLAG:335\ =\ 4/] },
       {
         src: K3,
@@ -20489,10 +18771,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '3819', any: [/CFLAG:335\ =\ 2/] },
-      { src: K3, ref: '3820', any: [/ENDIF/] },
-      { src: K3, ref: '3821', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3822', any: [/ENDIF/] },
-      { src: K3, ref: '3823', any: [/ENDIF/] },
       { src: K3, ref: '3829', any: [/IF\ SELECTCOM\ ==\ 35/] },
       { src: K3, ref: '3831', any: [/IF\ CFLAG:TARGET:336\ ==\ 0/] },
       { src: K3, ref: '3833', any: [/IF\ ABL:TARGET:16\ >=\ 3/] },
@@ -20508,12 +18786,11 @@ const FILES = [
         ref: '3835',
         any: [/PRINTFORMW\ 「啊啊嗯\~…那、那里是不能碰的啦\~…♪」/],
       },
-      { src: K3, ref: '3837', any: [/ELSE/] },
       {
         src: K3,
         ref: '3838',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%只用身体来帮忙洗澡什么的…真、真是不知羞耻的事/,
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%只用身体来帮忙洗澡什么的…真、真是不知羞耻的事情啊！」/,
         ],
       },
       {
@@ -20523,15 +18800,12 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:PLAYER%觉得，嘴上这么说但是已经在做准备的%SAVESTR:TARGET%是多么地惹人疼爱………/,
         ],
       },
-      { src: K3, ref: '3840', any: [/ENDIF/] },
       { src: K3, ref: '3841', any: [/CFLAG:TARGET:336\ =\ 1/] },
-      { src: K3, ref: '3842', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3844', any: [/ELSE/] },
       {
         src: K3,
         ref: '3846',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:336\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:336\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -20545,7 +18819,7 @@ const FILES = [
         src: K3,
         ref: '3848',
         any: [
-          /PRINTFORMW\ 「啊\~%UNICODE\(0x2661\)\ \*1%…嗯哼唔\~%UNICODE\(0x2661\)\ \*1%…唔哼哼\~…啊啊嗯\~、不能做恶作剧啦\~%U/,
+          /PRINTFORMW\ 「啊\~%UNICODE\(0x2661\)\ \*1%…嗯哼唔\~%UNICODE\(0x2661\)\ \*1%…唔哼哼\~…啊啊嗯\~、不能做恶作剧啦\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20560,7 +18834,7 @@ const FILES = [
         src: K3,
         ref: '3852',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:336\ <=\ 3\ \|\|\ FLAG:7\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:336\ <=\ 3\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -20574,7 +18848,7 @@ const FILES = [
         src: K3,
         ref: '3854',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%会好好地帮大人洗干净的…哈嗯呜\~…啊、那、那、那种地方也不用洗得很干净吧…哈嗯呜\~%UNICODE/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%会好好地帮大人洗干净的…哈嗯呜\~…啊、那、那、那种地方也不用洗得很干净吧…哈嗯呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3855', any: [/CFLAG:336\ =\ 4/] },
@@ -20611,10 +18885,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '3864', any: [/CFLAG:336\ =\ 2/] },
-      { src: K3, ref: '3865', any: [/ENDIF/] },
-      { src: K3, ref: '3866', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3867', any: [/ENDIF/] },
-      { src: K3, ref: '3868', any: [/ENDIF/] },
       { src: K3, ref: '3874', any: [/IF\ SELECTCOM\ ==\ 36/] },
       { src: K3, ref: '3876', any: [/IF\ CFLAG:TARGET:337\ ==\ 0/] },
       { src: K3, ref: '3878', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -20622,7 +18892,7 @@ const FILES = [
         src: K3,
         ref: '3879',
         any: [
-          /PRINTFORMW\ 「嗯哼哼\~%UNICODE\(0x2661\)\ \*1%…%SAVESTR:TARGET%会用肛穴来好好侍奉大人您的\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「嗯哼哼\~%UNICODE\(0x2661\)\ \*1%…%SAVESTR:TARGET%会用肛穴来好好侍奉大人您的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20647,7 +18917,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊恩\~\~%UNICODE\(0x2661\)\ \*1%\ 大鸡巴…连根部都吞进去了呀\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3886', any: [/ELSE/] },
       {
         src: K3,
         ref: '3887',
@@ -20655,10 +18924,7 @@ const FILES = [
           /PRINTFORMW\ 「呜啊…啊啊\~…不要啊…屁股的洞在…扩、扩大着…哈呜，啊呜呜呜\~」/,
         ],
       },
-      { src: K3, ref: '3888', any: [/ENDIF/] },
       { src: K3, ref: '3889', any: [/CFLAG:TARGET:337\ =\ 1/] },
-      { src: K3, ref: '3890', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3892', any: [/ELSE/] },
       {
         src: K3,
         ref: '3894',
@@ -20678,17 +18944,16 @@ const FILES = [
         src: K3,
         ref: '3897',
         any: [
-          /PRINTFORMW\ 「肛穴要…不行\~%UNICODE\(0x2661\)\ \*1%不行的呀\~%UNICODE\(0x2661\)\ \*1%\ 腰自己就动起来了呀%UNICO/,
+          /PRINTFORMW\ 「肛穴要…不行\~%UNICODE\(0x2661\)\ \*1%不行的呀\~%UNICODE\(0x2661\)\ \*1%\ 腰自己就动起来了呀%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '3898',
         any: [
-          /PRINTFORMW\ 「嗯啊啊\~%UNICODE\(0x2661\)\ \*1%请处罚不懂事的%SELF_CALL\(TARGET\)%吧！请尽情地处罚吧\~\~%UNICOD/,
+          /PRINTFORMW\ 「嗯啊啊\~%UNICODE\(0x2661\)\ \*1%请处罚不懂事的%SELF_CALL\(TARGET\)%吧！请尽情地处罚吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3899', any: [/ELSE/] },
       {
         src: K3,
         ref: '3900',
@@ -20710,7 +18975,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…弄坏掉吧…将%SELF_CALL\(TARGET\)%弄坏掉吧%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3903', any: [/ENDIF/] },
       { src: K3, ref: '3904', any: [/CFLAG:337\ =\ 7/] },
       {
         src: K3,
@@ -20730,7 +18994,7 @@ const FILES = [
         src: K3,
         ref: '3908',
         any: [
-          /PRINTFORMW\ 「呜哼哼\~%UNICODE\(0x2661\)\ \*1%\ 肛穴…居然会那么有感觉什么的…%SELF_CALL\(TARGET\)%是个淫乱的姑娘真是/,
+          /PRINTFORMW\ 「呜哼哼\~%UNICODE\(0x2661\)\ \*1%\ 肛穴…居然会那么有感觉什么的…%SELF_CALL\(TARGET\)%是个淫乱的姑娘真是对不起\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3909', any: [/CFLAG:337\ =\ 6/] },
@@ -20753,15 +19017,14 @@ const FILES = [
         src: K3,
         ref: '3914',
         any: [
-          /PRINTFORMW\ 「哈啊嗯\~%UNICODE\(0x2661\)\ \*1%阴茎完美地和肛门重合了\~%UNICODE\(0x2661\)\ \*1%…啊啊\~%UNICODE/,
+          /PRINTFORMW\ 「哈啊嗯\~%UNICODE\(0x2661\)\ \*1%阴茎完美地和肛门重合了\~%UNICODE\(0x2661\)\ \*1%…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 嗯\~…不行\~…腰要动起来了\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '3915', any: [/ELSE/] },
       {
         src: K3,
         ref: '3916',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 真是对不起\~…%SELF_CALL\(TARGET\)%是个肛门敏感的变态姑娘真的是对不起\~/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ 真是对不起\~…%SELF_CALL\(TARGET\)%是个肛门敏感的变态姑娘真的是对不起\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -20778,7 +19041,6 @@ const FILES = [
           /PRINTFORMW\ 「大人\~非常感谢…%SELF_CALL\(TARGET\)%…就要变成肛门有感觉的变态了\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '3919', any: [/ENDIF/] },
       { src: K3, ref: '3920', any: [/CFLAG:337\ =\ 5/] },
       {
         src: K3,
@@ -20791,7 +19053,7 @@ const FILES = [
         src: K3,
         ref: '3923',
         any: [
-          /PRINTFORMW\ 「嗯啊啊\~…请使用%SELF_CALL\(TARGET\)%H的肛门小穴来…尽\~情地…变得舒服起来吧\~\~%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「嗯啊啊\~…请使用%SELF_CALL\(TARGET\)%H的肛门小穴来…尽\~情地…变得舒服起来吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3924', any: [/CFLAG:337\ =\ 4/] },
@@ -20806,7 +19068,7 @@ const FILES = [
         src: K3,
         ref: '3927',
         any: [
-          /PRINTFORMW\ 「啊啊嗯\~…屁股的小穴…有感觉了\~…%SELF_CALL\(TARGET\)%…要，要尽情地动起来了哦…%UNICODE\(0x2661\)\ \*1/,
+          /PRINTFORMW\ 「啊啊嗯\~…屁股的小穴…有感觉了\~…%SELF_CALL\(TARGET\)%…要，要尽情地动起来了哦…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '3928', any: [/CFLAG:337\ =\ 3/] },
@@ -20823,10 +19085,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '3932', any: [/CFLAG:337\ =\ 2/] },
-      { src: K3, ref: '3933', any: [/ENDIF/] },
-      { src: K3, ref: '3934', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3935', any: [/ENDIF/] },
-      { src: K3, ref: '3936', any: [/ENDIF/] },
       { src: K3, ref: '3942', any: [/IF\ SELECTCOM\ ==\ 37/] },
       { src: K3, ref: '3944', any: [/IF\ CFLAG:TARGET:338\ ==\ 0/] },
       { src: K3, ref: '3946', any: [/IF\ ABL:TARGET:16\ >=\ 3/] },
@@ -20842,21 +19100,17 @@ const FILES = [
         ref: '3948',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%对着肛门用嘴巴侍奉起来了………/],
       },
-      { src: K3, ref: '3950', any: [/ELSE/] },
       {
         src: K3,
         ref: '3951',
         any: [/PRINTFORMW\ 「呜\~…居，居然要用嘴巴往这种地方…嗯、恩呜呜…」/],
       },
-      { src: K3, ref: '3952', any: [/ENDIF/] },
       { src: K3, ref: '3953', any: [/CFLAG:TARGET:338\ =\ 1/] },
-      { src: K3, ref: '3954', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3956', any: [/ELSE/] },
       {
         src: K3,
         ref: '3958',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:338\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:338\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -20885,7 +19139,7 @@ const FILES = [
         src: K3,
         ref: '3964',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:338\ <=\ 3\ \|\|\ FLAG:7\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:338\ <=\ 3\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -20935,10 +19189,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊\~…啊啊\~…请、请原谅，已经…请原谅吧………」/],
       },
       { src: K3, ref: '3977', any: [/CFLAG:338\ =\ 2/] },
-      { src: K3, ref: '3978', any: [/ENDIF/] },
-      { src: K3, ref: '3979', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3980', any: [/ENDIF/] },
-      { src: K3, ref: '3981', any: [/ENDIF/] },
       { src: K3, ref: '3986', any: [/IF\ SELECTCOM\ ==\ 38/] },
       { src: K3, ref: '3988', any: [/IF\ CFLAG:TARGET:339\ ==\ 0/] },
       {
@@ -20947,8 +19197,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「想要被踩吗\~？……真是奇怪的兴趣来的呢\~」/],
       },
       { src: K3, ref: '3990', any: [/CFLAG:TARGET:339\ =\ 1/] },
-      { src: K3, ref: '3991', any: [/RETURN\ 0/] },
-      { src: K3, ref: '3993', any: [/ELSE/] },
       {
         src: K3,
         ref: '3995',
@@ -20962,16 +19210,13 @@ const FILES = [
         ref: '3997',
         any: [/PRINTFORM\ 「哼哼\~%UNICODE\(0x2661\)\ \*1%/],
       },
-      { src: K3, ref: '3998', any: [/ELSE/] },
       { src: K3, ref: '3999', any: [/PRINTFORM\ 「这样做很舒服对吧\~？/] },
-      { src: K3, ref: '4000', any: [/ENDIF/] },
       { src: K3, ref: '4001', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '4002',
         any: [/PRINTFORMW\ 哭吧\~…哭得更好听一点吧\~」/],
       },
-      { src: K3, ref: '4003', any: [/ELSE/] },
       {
         src: K3,
         ref: '4004',
@@ -20979,7 +19224,6 @@ const FILES = [
           /PRINTFORMW\ 想要被做什么事情快说出来让%SELF_CALL_FIRST\(TARGET\)%听听啊\~、变态桑\~」/,
         ],
       },
-      { src: K3, ref: '4005', any: [/ENDIF/] },
       { src: K3, ref: '4006', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
@@ -20988,7 +19232,6 @@ const FILES = [
           /PRINTFORMW\ 「如果说出来的话就让你更加爽噢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4008', any: [/ELSE/] },
       {
         src: K3,
         ref: '4009',
@@ -20996,7 +19239,6 @@ const FILES = [
           /PRINTFORMW\ 「如果说出来的话就让你感受一下被夹紧的感觉噢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4010', any: [/ENDIF/] },
       { src: K3, ref: '4011', any: [/CFLAG:TARGET:339\ =\ 5/] },
       {
         src: K3,
@@ -21018,7 +19260,6 @@ const FILES = [
         ref: '4017',
         any: [/PRINTFORMW\ 「请做好觉悟吧\~%UNICODE\(0x2661\)\ \*3%」/],
       },
-      { src: K3, ref: '4018', any: [/ELSE/] },
       {
         src: K3,
         ref: '4019',
@@ -21033,9 +19274,7 @@ const FILES = [
           /PRINTFORMW\ 「居然还想要被虐什么的，真是下流的家伙呢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4021', any: [/ENDIF/] },
       { src: K3, ref: '4022', any: [/CFLAG:TARGET:339\ =\ 4/] },
-      { src: K3, ref: '4023', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '4025',
@@ -21045,13 +19284,11 @@ const FILES = [
       },
       { src: K3, ref: '4026', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '4027', any: [/PRINTFORMW\ 「来吧…想要被踩对吧\~？」/] },
-      { src: K3, ref: '4028', any: [/ELSE/] },
       {
         src: K3,
         ref: '4029',
         any: [/PRINTFORMW\ 「想被%SELF_CALL_FIRST\(TARGET\)%踩对吧\|\~？」/],
       },
-      { src: K3, ref: '4030', any: [/ENDIF/] },
       { src: K3, ref: '4031', any: [/IF\ RAND:3\ ==\ 0/] },
       {
         src: K3,
@@ -21064,15 +19301,12 @@ const FILES = [
         ref: '4034',
         any: [/PRINTFORMW\ 「你真是无可奈何的变态来的呢\~」/],
       },
-      { src: K3, ref: '4035', any: [/ELSE/] },
       {
         src: K3,
         ref: '4036',
         any: [/PRINTFORMW\ 「你真的是个最差劲的渣滓呢\~」/],
       },
-      { src: K3, ref: '4037', any: [/ENDIF/] },
       { src: K3, ref: '4038', any: [/CFLAG:TARGET:339\ =\ 3/] },
-      { src: K3, ref: '4039', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '4041',
@@ -21080,19 +19314,11 @@ const FILES = [
       },
       { src: K3, ref: '4042', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '4043', any: [/PRINTFORMW\ 「要用脚来做嘛？？」/] },
-      { src: K3, ref: '4044', any: [/ELSE/] },
       { src: K3, ref: '4045', any: [/PRINTFORMW\ 「想要用脚来做的吗？？」/] },
-      { src: K3, ref: '4046', any: [/ENDIF/] },
       { src: K3, ref: '4047', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '4048', any: [/PRINTFORMW\ 「完全无法理解呢……」/] },
-      { src: K3, ref: '4049', any: [/ELSE/] },
       { src: K3, ref: '4050', any: [/PRINTFORMW\ 「真是无法理解呢……」/] },
-      { src: K3, ref: '4051', any: [/ENDIF/] },
       { src: K3, ref: '4052', any: [/CFLAG:TARGET:339\ =\ 2/] },
-      { src: K3, ref: '4053', any: [/ENDIF/] },
-      { src: K3, ref: '4054', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4055', any: [/ENDIF/] },
-      { src: K3, ref: '4056', any: [/ENDIF/] },
       { src: K3, ref: '4062', any: [/IF\ SELECTCOM\ ==\ 40/] },
       { src: K3, ref: '4064', any: [/IF\ CFLAG:TARGET:341\ ==\ 0/] },
       {
@@ -21103,8 +19329,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4066', any: [/CFLAG:TARGET:341\ =\ 1/] },
-      { src: K3, ref: '4067', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4069', any: [/ELSE/] },
       {
         src: K3,
         ref: '4071',
@@ -21116,7 +19340,7 @@ const FILES = [
         src: K3,
         ref: '4072',
         any: [
-          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%啊\~%UNICODE\(0x2661\)\ \*1%啊\~%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%啊\~%UNICODE\(0x2661\)\ \*1%啊\~%UNICODE\(0x2661\)\ \*1%啊啊嗯\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -21145,7 +19369,7 @@ const FILES = [
         src: K3,
         ref: '4078',
         any: [
-          /PRINTFORMW\ 「哈呜\~%UNICODE\(0x2661\)\ \*1%\ 啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 哈啊啊\~…%UNICODE\(0x266/,
+          /PRINTFORMW\ 「哈呜\~%UNICODE\(0x2661\)\ \*1%\ 啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 哈啊啊\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -21163,7 +19387,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4081', any: [/CFLAG:TARGET:341\ =\ 4/] },
-      { src: K3, ref: '4082', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '4084',
@@ -21186,7 +19409,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4087', any: [/CFLAG:TARGET:341\ =\ 3/] },
-      { src: K3, ref: '4088', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '4090',
@@ -21205,10 +19427,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4093', any: [/CFLAG:TARGET:341\ =\ 2/] },
-      { src: K3, ref: '4094', any: [/ENDIF/] },
-      { src: K3, ref: '4095', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4096', any: [/ENDIF/] },
-      { src: K3, ref: '4097', any: [/ENDIF/] },
       { src: K3, ref: '4103', any: [/IF\ SELECTCOM\ ==\ 41/] },
       { src: K3, ref: '4105', any: [/IF\ CFLAG:TARGET:342\ ==\ 0/] },
       { src: K3, ref: '4107', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -21232,16 +19450,12 @@ const FILES = [
         ref: '4112',
         any: [/PRINTFORMW\ 「啊啊\~…这样的…只是…疼一下而已………」/],
       },
-      { src: K3, ref: '4114', any: [/ELSE/] },
       {
         src: K3,
         ref: '4115',
         any: [/PRINTFORMW\ 「啊啊\~…哈呜…啊啊\~…不要啊………被打的不要………」/],
       },
-      { src: K3, ref: '4116', any: [/ENDIF/] },
       { src: K3, ref: '4117', any: [/CFLAG:TARGET:342\ =\ 1/] },
-      { src: K3, ref: '4118', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4120', any: [/ELSE/] },
       {
         src: K3,
         ref: '4122',
@@ -21282,7 +19496,7 @@ const FILES = [
         src: K3,
         ref: '4129',
         any: [
-          /PRINTFORMW\ 「嗯哈啊啊\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%是一只鞭子挥下来就会有感觉的母猪来的%UNIC/,
+          /PRINTFORMW\ 「嗯哈啊啊\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%是一只鞭子挥下来就会有感觉的母猪来的%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -21329,14 +19543,14 @@ const FILES = [
         src: K3,
         ref: '4140',
         any: [
-          /PRINTFORMW\ 「啊啊\~…啊\~…啊啊啊啊\~%UNICODE\(0x2661\)\ \*1%…哈啊…哈啊…啊啊…被打到的地方…正在一抽一抽的%UNICODE\(0x2/,
+          /PRINTFORMW\ 「啊啊\~…啊\~…啊啊啊啊\~%UNICODE\(0x2661\)\ \*1%…哈啊…哈啊…啊啊…被打到的地方…正在一抽一抽的%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '4141',
         any: [
-          /PRINTFORMW\ 「更加欺负%SELF_CALL\(TARGET\)%…请更加欺负%SELF_CALL\(TARGET\)%吧…%UNICODE\(0x2661\)\ \*/,
+          /PRINTFORMW\ 「更加欺负%SELF_CALL\(TARGET\)%…请更加欺负%SELF_CALL\(TARGET\)%吧…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '4142', any: [/CFLAG:TARGET:342\ =\ 6/] },
@@ -21413,10 +19627,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「不、不要啊…已经…被打的不要啊…不要啊………」/],
       },
       { src: K3, ref: '4161', any: [/CFLAG:TARGET:342\ =\ 2/] },
-      { src: K3, ref: '4162', any: [/ENDIF/] },
-      { src: K3, ref: '4163', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4164', any: [/ENDIF/] },
-      { src: K3, ref: '4165', any: [/ENDIF/] },
       { src: K3, ref: '4171', any: [/IF\ SELECTCOM\ ==\ 42/] },
       { src: K3, ref: '4173', any: [/IF\ CFLAG:TARGET:343\ ==\ 0/] },
       { src: K3, ref: '4175', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -21432,10 +19642,9 @@ const FILES = [
         src: K3,
         ref: '4179',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%到底…做了什么错事了吗…啊\~啊啊\~啊啊啊啊\~！/,
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%到底…做了什么错事了吗…啊\~啊啊\~啊啊啊啊\~！」/,
         ],
       },
-      { src: K3, ref: '4181', any: [/ELSE/] },
       {
         src: K3,
         ref: '4182',
@@ -21443,10 +19652,7 @@ const FILES = [
           /PRINTFORMW\ 「哈呜\~…用、用这种东西到底想要干什么…难、难道…不要\~不要不要啊啊啊啊啊！」/,
         ],
       },
-      { src: K3, ref: '4183', any: [/ENDIF/] },
       { src: K3, ref: '4184', any: [/CFLAG:TARGET:343\ =\ 1/] },
-      { src: K3, ref: '4185', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4187', any: [/ELSE/] },
       {
         src: K3,
         ref: '4189',
@@ -21458,7 +19664,7 @@ const FILES = [
         src: K3,
         ref: '4190',
         any: [
-          /PRINTFORMW\ 「啊\~…啊啊\~…哈啊嗯\~%UNICODE\(0x2661\)\ \*1%…好奇怪啊\~…明明好痛来的…明明好痛来的呀%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「啊\~…啊啊\~…哈啊嗯\~%UNICODE\(0x2661\)\ \*1%…好奇怪啊\~…明明好痛来的…明明好痛来的呀%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -21602,22 +19808,14 @@ const FILES = [
         any: [/PRINTFORMW\ 「嗯呜！…不要不要不要啊啊啊啊啊！」/],
       },
       { src: K3, ref: '4226', any: [/CFLAG:TARGET:343\ =\ 2/] },
-      { src: K3, ref: '4227', any: [/ENDIF/] },
-      { src: K3, ref: '4228', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4229', any: [/ENDIF/] },
-      { src: K3, ref: '4230', any: [/ENDIF/] },
       { src: K3, ref: '4236', any: [/IF\ SELECTCOM\ ==\ 43\ \&\&\ TEQUIP:43/] },
       { src: K3, ref: '4238', any: [/IF\ CFLAG:TARGET:344\ ==\ 0/] },
       { src: K3, ref: '4240', any: [/IF\ TALENT:76\ ==\ 1/] },
       { src: K3, ref: '4241', any: [/PRINTFORMW/] },
       { src: K3, ref: '4243', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
       { src: K3, ref: '4244', any: [/PRINTFORMW/] },
-      { src: K3, ref: '4246', any: [/ELSE/] },
       { src: K3, ref: '4247', any: [/PRINTFORMW/] },
-      { src: K3, ref: '4248', any: [/ENDIF/] },
       { src: K3, ref: '4249', any: [/CFLAG:TARGET:344\ =\ 1/] },
-      { src: K3, ref: '4250', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4252', any: [/ELSE/] },
       {
         src: K3,
         ref: '4254',
@@ -21688,9 +19886,6 @@ const FILES = [
       },
       { src: K3, ref: '4283', any: [/PRINTFORMW/] },
       { src: K3, ref: '4284', any: [/CFLAG:TARGET:344\ =\ 2/] },
-      { src: K3, ref: '4285', any: [/ENDIF/] },
-      { src: K3, ref: '4286', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4287', any: [/ENDIF/] },
       {
         src: K3,
         ref: '4289',
@@ -21721,9 +19916,6 @@ const FILES = [
       },
       { src: K3, ref: '4300', any: [/PRINTFORMW/] },
       { src: K3, ref: '4301', any: [/CFLAG:380\ =\ 1/] },
-      { src: K3, ref: '4302', any: [/ENDIF/] },
-      { src: K3, ref: '4303', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4304', any: [/ENDIF/] },
       { src: K3, ref: '4311', any: [/IF\ SELECTCOM\ ==\ 44\ \&\&\ TEQUIP:44/] },
       { src: K3, ref: '4313', any: [/IF\ CFLAG:TARGET:345\ ==\ 0/] },
       { src: K3, ref: '4315', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -21742,16 +19934,12 @@ const FILES = [
           /PRINTFORMW\ 「明明不用做这种情况…%SELF_CALL\(TARGET\)%早就是大人您的东西来的了…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4321', any: [/ELSE/] },
       {
         src: K3,
         ref: '4322',
         any: [/PRINTFORMW\ 「啊啊\~…快、快点解开啊！」/],
       },
-      { src: K3, ref: '4323', any: [/ENDIF/] },
       { src: K3, ref: '4324', any: [/CFLAG:TARGET:345\ =\ 1/] },
-      { src: K3, ref: '4325', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4327', any: [/ELSE/] },
       {
         src: K3,
         ref: '4329',
@@ -21790,7 +19978,7 @@ const FILES = [
         src: K3,
         ref: '4336',
         any: [
-          /PRINTFORMW\ 「哈啊%UNICODE\(0x2661\)\ \*1%哈啊%UNICODE\(0x2661\)\ \*1%\ 绳子…陷进肉里了%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「哈啊%UNICODE\(0x2661\)\ \*1%哈啊%UNICODE\(0x2661\)\ \*1%\ 绳子…陷进肉里了%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -21939,9 +20127,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4370', any: [/CFLAG:TARGET:345\ =\ 2/] },
-      { src: K3, ref: '4371', any: [/ENDIF/] },
-      { src: K3, ref: '4372', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4373', any: [/ENDIF/] },
       {
         src: K3,
         ref: '4375',
@@ -21988,9 +20173,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈啊哈啊…啊啊…绳子的勒痕…那么地…」/],
       },
       { src: K3, ref: '4387', any: [/CFLAG:385\ =\ 1/] },
-      { src: K3, ref: '4388', any: [/ENDIF/] },
-      { src: K3, ref: '4389', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4390', any: [/ENDIF/] },
       { src: K3, ref: '4397', any: [/IF\ SELECTCOM\ ==\ 45\ \&\&\ TEQUIP:45/] },
       { src: K3, ref: '4399', any: [/IF\ CFLAG:TARGET:346\ ==\ 0/] },
       { src: K3, ref: '4401', any: [/IF\ TALENT:76\ ==\ 1/] },
@@ -22009,16 +20191,12 @@ const FILES = [
           /PRINTFORMW\ 「嗯\~…嗯呜\~…嗯呼…嗯嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4407', any: [/ELSE/] },
       {
         src: K3,
         ref: '4408',
         any: [/PRINTFORMW\ 「嗯\~…嗯呜\~…嗯呼\~…嗯嗯\~」/],
       },
-      { src: K3, ref: '4409', any: [/ENDIF/] },
       { src: K3, ref: '4410', any: [/CFLAG:TARGET:346\ =\ 1/] },
-      { src: K3, ref: '4411', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4413', any: [/ELSE/] },
       {
         src: K3,
         ref: '4415',
@@ -22133,9 +20311,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「嗯\~…嗯呜\~…嗯呼\~…嗯嗯\~」/],
       },
       { src: K3, ref: '4445', any: [/CFLAG:TARGET:346\ =\ 2/] },
-      { src: K3, ref: '4446', any: [/ENDIF/] },
-      { src: K3, ref: '4447', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4448', any: [/ENDIF/] },
       {
         src: K3,
         ref: '4450',
@@ -22178,9 +20353,6 @@ const FILES = [
       },
       { src: K3, ref: '4461', any: [/PRINTFORMW\ 「嗯哈啊…哈啊…哈啊…哈啊…」/] },
       { src: K3, ref: '4462', any: [/CFLAG:386\ =\ 1/] },
-      { src: K3, ref: '4463', any: [/ENDIF/] },
-      { src: K3, ref: '4464', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4465', any: [/ENDIF/] },
       { src: K3, ref: '4472', any: [/IF\ SELECTCOM\ ==\ 46\ \&\&\ TEQUIP:46/] },
       { src: K3, ref: '4474', any: [/IF\ CFLAG:TARGET:347\ ==\ 0/] },
       { src: K3, ref: '4476', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -22188,7 +20360,7 @@ const FILES = [
         src: K3,
         ref: '4477',
         any: [
-          /PRINTFORMW\ 「啊啊\~…进来了呀\~\~\~%UNICODE\(0x2661\)\ \*1%…啊啊\~%UNICODE\(0x2661\)\ \*1%浣腸液%UNICODE\(0/,
+          /PRINTFORMW\ 「啊啊\~…进来了呀\~\~\~%UNICODE\(0x2661\)\ \*1%…啊啊\~%UNICODE\(0x2661\)\ \*1%浣腸液%UNICODE\(0x2661\)\ \*1%好热\~\~好舒服\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '4479', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -22196,24 +20368,20 @@ const FILES = [
         src: K3,
         ref: '4480',
         any: [
-          /PRINTFORMW\ 「不，不行的呀…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…肚子的感觉便奇怪了\~啊啊\~…好/,
+          /PRINTFORMW\ 「不，不行的呀…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…肚子的感觉便奇怪了\~啊啊\~…好烫！浣腸液好烫呀\~\~\~」/,
         ],
       },
-      { src: K3, ref: '4482', any: [/ELSE/] },
       {
         src: K3,
         ref: '4483',
         any: [/PRINTFORMW\ 「啊\~啊\~…嗯呃啊…肚子…好难受…请、请快停下来………」/],
       },
-      { src: K3, ref: '4484', any: [/ENDIF/] },
       { src: K3, ref: '4485', any: [/CFLAG:TARGET:347\ =\ 1/] },
-      { src: K3, ref: '4486', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4488', any: [/ELSE/] },
       {
         src: K3,
         ref: '4490',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:3\ >=\ 3\ \&\&\ ABL:21\ >=\ 3\ \&\&\ \(CFLAG:347\ <=\ 6\ \|\|\ FLAG/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:3\ >=\ 3\ \&\&\ ABL:21\ >=\ 3\ \&\&\ \(CFLAG:347\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -22227,7 +20395,7 @@ const FILES = [
         src: K3,
         ref: '4492',
         any: [
-          /PRINTFORMW\ 「啊哈哦\~%UNICODE\(0x2661\)\ \*1%不要不要…肚子要\~%UNICODE\(0x2661\)\ \*1%\ 请不要那么温柔地%UNICO/,
+          /PRINTFORMW\ 「啊哈哦\~%UNICODE\(0x2661\)\ \*1%不要不要…肚子要\~%UNICODE\(0x2661\)\ \*1%\ 请不要那么温柔地%UNICODE\(0x2661\)\ \*1%\ 抚摸肚子了%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -22264,7 +20432,7 @@ const FILES = [
         src: K3,
         ref: '4501',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:3\ >=\ 3\ \&\&\ ABL:21\ >=\ 3\ \&\&\ \(CFLAG:347\ <=\ 4\ \|\|\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:3\ >=\ 3\ \&\&\ ABL:21\ >=\ 3\ \&\&\ \(CFLAG:347\ <=\ 4\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -22349,7 +20517,6 @@ const FILES = [
           /PRINTFORMW\ 「不、不要啊！　不要再那样了啊啊…肚子、进来了啊………」/,
         ],
       },
-      { src: K3, ref: '4521', any: [/ELSE/] },
       {
         src: K3,
         ref: '4522',
@@ -22357,11 +20524,7 @@ const FILES = [
           /PRINTFORMW\ 「肚子…好、好难受啊…请，请不要再这样欺负%SELF_CALL\(TARGET\)%了………」/,
         ],
       },
-      { src: K3, ref: '4523', any: [/ENDIF/] },
       { src: K3, ref: '4524', any: [/CFLAG:347\ =\ 2/] },
-      { src: K3, ref: '4525', any: [/ENDIF/] },
-      { src: K3, ref: '4526', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4527', any: [/ENDIF/] },
       {
         src: K3,
         ref: '4529',
@@ -22398,7 +20561,7 @@ const FILES = [
         src: K3,
         ref: '4539',
         any: [
-          /PRINTFORMW\ 「咿…哈噢哦唔呜呜嗯%UNICODE\(0x2764\)\ \*1%　好好看着哦%UNICODE\(0x2764\)\ \*1%　好好录下来哦%UNICO/,
+          /PRINTFORMW\ 「咿…哈噢哦唔呜呜嗯%UNICODE\(0x2764\)\ \*1%　好好看着哦%UNICODE\(0x2764\)\ \*1%　好好录下来哦%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
@@ -22420,14 +20583,14 @@ const FILES = [
         src: K3,
         ref: '4544',
         any: [
-          /PRINTFORMW\ 「哦欧唔…%UNICODE\(0x2764\)\ \*1%　啊%UNICODE\(0x2764\)\ \*1%　啊%UNICODE\(0x2764\)\ \*1%/,
+          /PRINTFORMW\ 「哦欧唔…%UNICODE\(0x2764\)\ \*1%　啊%UNICODE\(0x2764\)\ \*1%　啊%UNICODE\(0x2764\)\ \*1%　嗯嗯…啊昂…吼哦、吼唔噢噢噢噢%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '4545',
         any: [
-          /PRINTFORMW\ 「来了、拉出来了啦%UNICODE\(0x2764\)\ \*1%　在人前、张开着菊、菊穴…粪便…嗯、%SELF_CALL\(TARGET,5\)%呃/,
+          /PRINTFORMW\ 「来了、拉出来了啦%UNICODE\(0x2764\)\ \*1%　在人前、张开着菊、菊穴…粪便…嗯、%SELF_CALL\(TARGET,5\)%呃%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
@@ -22442,24 +20605,23 @@ const FILES = [
         src: K3,
         ref: '4549',
         any: [
-          /PRINTFORMW\ 「%SAVESTR:TARGET%的喷粪秀%UNICODE\(0x2764\)\ \*1%　请一定要好好看着哦…%UNICODE\(0x2764\)\ /,
+          /PRINTFORMW\ 「%SAVESTR:TARGET%的喷粪秀%UNICODE\(0x2764\)\ \*1%　请一定要好好看着哦…%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '4550',
         any: [
-          /PRINTFORMW\ 「哦吼%UNICODE\(0x2764\)\ \*1%　嘤嘤咿咿、咕唔%UNICODE\(0x2764\)\ \*1%　要拉出来了%UNICODE\(0x2/,
+          /PRINTFORMW\ 「哦吼%UNICODE\(0x2764\)\ \*1%　嘤嘤咿咿、咕唔%UNICODE\(0x2764\)\ \*1%　要拉出来了%UNICODE\(0x2764\)\ \*1%　拉出来了吧%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '4551',
         any: [
-          /PRINTFORMW\ 「刺溜刺溜的%UNICODE\(0x2764\)\ \*1%　乱成一团了…%UNICODE\(0x2764\)\ \*1%　%SELF_CALL\(TARG/,
+          /PRINTFORMW\ 「刺溜刺溜的%UNICODE\(0x2764\)\ \*1%　乱成一团了…%UNICODE\(0x2764\)\ \*1%　%SELF_CALL\(TARGET,3\)%、要变成白痴了啊……%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4553', any: [/ELSE/] },
       {
         src: K3,
         ref: '4554',
@@ -22471,17 +20633,16 @@ const FILES = [
         src: K3,
         ref: '4555',
         any: [
-          /PRINTFORMW\ 「哈嗷嗷嗷啊啊嗷嗷唔%UNICODE\(0x2764\)\ \*1%　真是耻辱极了%UNICODE\(0x2764\)\ \*1%　太耻辱了%UNICOD/,
+          /PRINTFORMW\ 「哈嗷嗷嗷啊啊嗷嗷唔%UNICODE\(0x2764\)\ \*1%　真是耻辱极了%UNICODE\(0x2764\)\ \*1%　太耻辱了%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '4556',
         any: [
-          /PRINTFORMW\ 「这才是和变态淫乱奴隶的%SELF_CALL\(TARGET\)%相称的调教啊%UNICODE\(0x2764\)\ \*1%　这样的、才够过分啊%U/,
+          /PRINTFORMW\ 「这才是和变态淫乱奴隶的%SELF_CALL\(TARGET\)%相称的调教啊%UNICODE\(0x2764\)\ \*1%　这样的、才够过分啊%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4557', any: [/ENDIF/] },
       { src: K3, ref: '4559', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
       {
         src: K3,
@@ -22494,7 +20655,7 @@ const FILES = [
         src: K3,
         ref: '4561',
         any: [
-          /PRINTFORMW\ 「啊%UNICODE\(0x2764\)\ \*1%　啊%UNICODE\(0x2764\)\ \*1%　嗷嗷、啊%UNICODE\(0x2764\)\ \*1%/,
+          /PRINTFORMW\ 「啊%UNICODE\(0x2764\)\ \*1%　啊%UNICODE\(0x2764\)\ \*1%　嗷嗷、啊%UNICODE\(0x2764\)\ \*1%　拉、拉出来了…停不下来…出来了、好多啊啊啊啊……%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '4563', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -22514,7 +20675,7 @@ const FILES = [
         src: K3,
         ref: '4567',
         any: [
-          /IF\ TALENT:成为勇者前的生活\ ==\ 5\ \|\|\ TALENT:成为勇者前的生活\ ==\ 7\ \|\|\ TALENT:成为勇者前的生活\ ==\ 9\ \|\|\ TALEN/,
+          /IF\ TALENT:成为勇者前的生活\ ==\ 5\ \|\|\ TALENT:成为勇者前的生活\ ==\ 7\ \|\|\ TALENT:成为勇者前的生活\ ==\ 9\ \|\|\ TALENT:成为勇者前的生活\ ==\ 20/,
         ],
       },
       { src: K3, ref: '4568', any: [/IF\ TALENT:成为勇者前的生活\ ==\ 5/] },
@@ -22529,7 +20690,6 @@ const FILES = [
         any: [/ELSEIF\ TALENT:成为勇者前的生活\ ==\ 20/],
       },
       { src: K3, ref: '4575', any: [/PRINTFORM\ 「从奴隶/] },
-      { src: K3, ref: '4576', any: [/ENDIF/] },
       {
         src: K3,
         ref: '4577',
@@ -22556,7 +20716,6 @@ const FILES = [
           /PRINTFORMW\ 「噫！　呀…呀啊啊啊啊…强制排泄什么的…怎么…怎么会…这么…舒服…的啊啊……」/,
         ],
       },
-      { src: K3, ref: '4582', any: [/ELSE/] },
       {
         src: K3,
         ref: '4583',
@@ -22571,13 +20730,11 @@ const FILES = [
           /PRINTFORMW\ 「不、不是吧！　这种事应该不会舒服才…啊？　嗷嗷？　哈、啊啊啊…啊啊啊啊嗷%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4585', any: [/ENDIF/] },
-      { src: K3, ref: '4587', any: [/ELSE/] },
       {
         src: K3,
         ref: '4588',
         any: [
-          /IF\ TALENT:成为勇者前的生活\ ==\ 5\ \|\|\ TALENT:成为勇者前的生活\ ==\ 7\ \|\|\ TALENT:成为勇者前的生活\ ==\ 9\ \|\|\ TALEN/,
+          /IF\ TALENT:成为勇者前的生活\ ==\ 5\ \|\|\ TALENT:成为勇者前的生活\ ==\ 7\ \|\|\ TALENT:成为勇者前的生活\ ==\ 9\ \|\|\ TALENT:成为勇者前的生活\ ==\ 20/,
         ],
       },
       {
@@ -22597,13 +20754,12 @@ const FILES = [
         any: [/ELSEIF\ TALENT:成为勇者前的生活\ ==\ 20/],
       },
       { src: K3, ref: '4597', any: [/PRINTFORM\ 奴隶/] },
-      { src: K3, ref: '4598', any: [/ENDIF/] },
       { src: K3, ref: '4599', any: [/PRINTFORMW\ 还不如的待遇！！」/] },
       {
         src: K3,
         ref: '4600',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%っ，都成为勇者…成为勇者摆脱这些了啊…呀、呀啊/,
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%っ，都成为勇者…成为勇者摆脱这些了啊…呀、呀啊啊啊！？」/,
         ],
       },
       {
@@ -22683,7 +20839,6 @@ const FILES = [
           /PRINTFORMW\ 「不行了…呜！　又、又拉了、泄出来了…啊啊啊、不要看…啊！！」/,
         ],
       },
-      { src: K3, ref: '4619', any: [/ELSE/] },
       {
         src: K3,
         ref: '4620',
@@ -22703,16 +20858,12 @@ const FILES = [
         ref: '4622',
         any: [/PRINTFORMW\ 「…啊、啊啊啊！　又要、出来…出来了啊…！！」/],
       },
-      { src: K3, ref: '4623', any: [/ENDIF/] },
-      { src: K3, ref: '4624', any: [/ENDIF/] },
       { src: K3, ref: '4625', any: [/CFLAG:TARGET:387\ =\ 1/] },
-      { src: K3, ref: '4626', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4628', any: [/ELSE/] },
       {
         src: K3,
         ref: '4630',
         any: [
-          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:3\ >=\ 3\ \&\&\ ABL:21\ >=\ 3\ \&\&\ \(CFLAG:387\ <=\ 6\ \|\|\ FLAG/,
+          /IF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ ABL:3\ >=\ 3\ \&\&\ ABL:21\ >=\ 3\ \&\&\ \(CFLAG:387\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       { src: K3, ref: '4632', any: [/IF\ TEQUIP:54\ ==\ 1/] },
@@ -22722,39 +20873,33 @@ const FILES = [
         ref: '4635',
         any: [/PRINTFORM\ 「哈唉呜\~%UNICODE\(0x2661\)\ \*1%/],
       },
-      { src: K3, ref: '4636', any: [/ELSE/] },
       {
         src: K3,
         ref: '4637',
         any: [/PRINTFORM\ 「哈唉呜\~%UNICODE\(0x2661\)\ \*1%/],
       },
-      { src: K3, ref: '4638', any: [/ENDIF/] },
       { src: K3, ref: '4639', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '4640',
         any: [/PRINTFORM\ 嗯哦哦哦\~%UNICODE\(0x2661\)\ \*3%/],
       },
-      { src: K3, ref: '4641', any: [/ELSE/] },
       {
         src: K3,
         ref: '4642',
         any: [/PRINTFORM\ 哦吼噢噢\~%UNICODE\(0x2661\)\ \*3%/],
       },
-      { src: K3, ref: '4643', any: [/ENDIF/] },
       { src: K3, ref: '4644', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '4645',
         any: [/PRINTFORMW\ 噢噢噢哦\~%UNICODE\(0x2661\)\ \*3%」/],
       },
-      { src: K3, ref: '4646', any: [/ELSE/] },
       {
         src: K3,
         ref: '4647',
         any: [/PRINTFORMW\ 啊啊啊\~%UNICODE\(0x2661\)\ \*3%」/],
       },
-      { src: K3, ref: '4648', any: [/ENDIF/] },
       { src: K3, ref: '4650', any: [/REPEAT\ CHARANUM/] },
       {
         src: K3,
@@ -22775,9 +20920,7 @@ const FILES = [
       { src: K3, ref: '4655', any: [/PRINTFORM\ 找到/] },
       { src: K3, ref: '4656', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '4657', any: [/PRINTFORM\ 一不小心捡到/] },
-      { src: K3, ref: '4658', any: [/ELSE/] },
       { src: K3, ref: '4659', any: [/PRINTFORM\ 无意中踩到/] },
-      { src: K3, ref: '4660', any: [/ENDIF/] },
       {
         src: K3,
         ref: '4661',
@@ -22802,15 +20945,14 @@ const FILES = [
         src: K3,
         ref: '4665',
         any: [
-          /PRINTFORMW\ 「快要靠近的的勇者…马上就要%UNICODE\(0x2764\)\ \*1%　看到%SELF_CALL\(TARGET\)%拉臭臭的样子啦啊啊…%UN/,
+          /PRINTFORMW\ 「快要靠近的的勇者…马上就要%UNICODE\(0x2764\)\ \*1%　看到%SELF_CALL\(TARGET\)%拉臭臭的样子啦啊啊…%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4666', any: [/ELSE/] },
       {
         src: K3,
         ref: '4667',
         any: [
-          /PRINTFORMW\ 「主人大人、还有其他的各位、来看看吧%UNICODE\(0x2764\)\ \*1%　哦、哦哦、哦吼吼哦…%UNICODE\(0x2764\)\ \*1%/,
+          /PRINTFORMW\ 「主人大人、还有其他的各位、来看看吧%UNICODE\(0x2764\)\ \*1%　哦、哦哦、哦吼吼哦…%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
@@ -22820,10 +20962,7 @@ const FILES = [
           /PRINTFORMW\ 「全裸的%SAVESTR:TARGET%、在地下城…从菊穴拉出臭臭来了…请好好看着这不雅的姿态吧%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4669', any: [/ENDIF/] },
       { src: K3, ref: '4670', any: [/CFLAG:387\ =\ 7/] },
-      { src: K3, ref: '4671', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4672', any: [/ENDIF/] },
       { src: K3, ref: '4673', any: [/REND/] },
       { src: K3, ref: '4675', any: [/IF\ TEQUIP:53\ ==\ 1/] },
       { src: K3, ref: '4676', any: [/IF\ RAND:3\ ==\ 0/] },
@@ -22831,7 +20970,7 @@ const FILES = [
         src: K3,
         ref: '4677',
         any: [
-          /PRINTFORMW\ 「拍下来啦%UNICODE\(0x2764\)\ \*1%　%SAVESTR:TARGET%的、野外排泄…被拍下来了啦%UNICODE\(0x276/,
+          /PRINTFORMW\ 「拍下来啦%UNICODE\(0x2764\)\ \*1%　%SAVESTR:TARGET%的、野外排泄…被拍下来了啦%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '4678', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -22839,19 +20978,16 @@ const FILES = [
         src: K3,
         ref: '4679',
         any: [
-          /PRINTFORMW\ 「出来了出来了…%UNICODE\(0x2764\)\ \*1%　嗷嗷%UNICODE\(0x2764\)\ \*1%　再多看看啊…再多拍一些啊%UNIC/,
+          /PRINTFORMW\ 「出来了出来了…%UNICODE\(0x2764\)\ \*1%　嗷嗷%UNICODE\(0x2764\)\ \*1%　再多看看啊…再多拍一些啊%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4680', any: [/ELSE/] },
       {
         src: K3,
         ref: '4681',
         any: [
-          /PRINTFORMW\ 「野外露出%UNICODE\(0x2764\)\ \*1%　还野外排泄了…太有感觉了%UNICODE\(0x2764\)\ \*1%　请再多拍一些哦……%/,
+          /PRINTFORMW\ 「野外露出%UNICODE\(0x2764\)\ \*1%　还野外排泄了…太有感觉了%UNICODE\(0x2764\)\ \*1%　请再多拍一些哦……%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4682', any: [/ENDIF/] },
-      { src: K3, ref: '4684', any: [/ELSE/] },
       { src: K3, ref: '4685', any: [/IF\ RAND:3\ ==\ 0/] },
       {
         src: K3,
@@ -22868,17 +21004,13 @@ const FILES = [
           /PRINTFORMW\ 「主人大人…%SELF_CALL\(TARGET\)%的…野外排泄…看吧…看着吧啊啊啊…%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4689', any: [/ELSE/] },
       {
         src: K3,
         ref: '4690',
         any: [
-          /PRINTFORMW\ 「停不下来啊%UNICODE\(0x2764\)\ \*1%　光着身子…拉了好多…野外排泄%UNICODE\(0x2764\)\ \*1%　好多…%UNI/,
+          /PRINTFORMW\ 「停不下来啊%UNICODE\(0x2764\)\ \*1%　光着身子…拉了好多…野外排泄%UNICODE\(0x2764\)\ \*1%　好多…%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4691', any: [/ENDIF/] },
-      { src: K3, ref: '4692', any: [/ENDIF/] },
-      { src: K3, ref: '4694', any: [/ELSE/] },
       { src: K3, ref: '4695', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
@@ -22887,16 +21019,13 @@ const FILES = [
           /PRINTFORMW\ 「停不下来…根本停不下来啊…%UNICODE\(0x2764\)\ \*1%　拉臭臭…好舒服啊…%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4697', any: [/ELSE/] },
       {
         src: K3,
         ref: '4698',
         any: [
-          /PRINTFORMW\ 「嗯嗯…吼…吼哦%UNICODE\(0x2764\)\ \*1%　哈啊啊、嘤咿咿%UNICODE\(0x2764\)\ \*1%　灌肠灌了好多出来…好棒%/,
+          /PRINTFORMW\ 「嗯嗯…吼…吼哦%UNICODE\(0x2764\)\ \*1%　哈啊啊、嘤咿咿%UNICODE\(0x2764\)\ \*1%　灌肠灌了好多出来…好棒%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '4699', any: [/ENDIF/] },
-      { src: K3, ref: '4700', any: [/ENDIF/] },
       { src: K3, ref: '4701', any: [/CFLAG:387\ =\ 7/] },
       {
         src: K3,
@@ -22912,39 +21041,33 @@ const FILES = [
         ref: '4708',
         any: [/PRINTFORM\ 「哈唉呜\~%UNICODE\(0x2661\)\ \*1%/],
       },
-      { src: K3, ref: '4709', any: [/ELSE/] },
       {
         src: K3,
         ref: '4710',
         any: [/PRINTFORM\ 「哈唉呜\~%UNICODE\(0x2661\)\ \*1%/],
       },
-      { src: K3, ref: '4711', any: [/ENDIF/] },
       { src: K3, ref: '4712', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '4713',
         any: [/PRINTFORM\ 嗯哦哦哦\~%UNICODE\(0x2661\)\ \*3%/],
       },
-      { src: K3, ref: '4714', any: [/ELSE/] },
       {
         src: K3,
         ref: '4715',
         any: [/PRINTFORM\ 哦吼噢噢\~%UNICODE\(0x2661\)\ \*3%/],
       },
-      { src: K3, ref: '4716', any: [/ENDIF/] },
       { src: K3, ref: '4717', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '4718',
         any: [/PRINTFORMW\ 噢噢噢哦\~%UNICODE\(0x2661\)\ \*3%」/],
       },
-      { src: K3, ref: '4719', any: [/ELSE/] },
       {
         src: K3,
         ref: '4720',
         any: [/PRINTFORMW\ 啊啊啊\~%UNICODE\(0x2661\)\ \*3%」/],
       },
-      { src: K3, ref: '4721', any: [/ENDIF/] },
       { src: K3, ref: '4722', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
@@ -22953,16 +21076,13 @@ const FILES = [
           /PRINTFORMW\ 「主人\~…哈唉呜\~%UNICODE\(0x2661\)\ \*1%\ 请，请不要看着那里\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '4724', any: [/ELSE/] },
       {
         src: K3,
         ref: '4725',
         any: [
-          /PRINTFORMW\ 「停…停不下来啊\~\~……在这种地方…%SELF_CALL_FIRST\(TARGET\)%要、要拉出来了呀啊啊啊\~%UNICODE\(0x266/,
+          /PRINTFORMW\ 「停…停不下来啊\~\~……在这种地方…%SELF_CALL_FIRST\(TARGET\)%要、要拉出来了呀啊啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '4726', any: [/ENDIF/] },
-      { src: K3, ref: '4728', any: [/ELSE/] },
       {
         src: K3,
         ref: '4729',
@@ -22970,7 +21090,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊\~%UNICODE\(0x2661\)\ \*1%\ 主人…要、要拉出来了呀啊啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '4730', any: [/ENDIF/] },
       { src: K3, ref: '4731', any: [/CFLAG:387\ =\ 6/] },
       {
         src: K3,
@@ -23030,7 +21149,6 @@ const FILES = [
           /PRINTFORMW\ 「在还有其他人的气息的地下城里…光着身子拉臭臭…要上瘾了啊啊…♪」/,
         ],
       },
-      { src: K3, ref: '4751', any: [/ELSE/] },
       {
         src: K3,
         ref: '4752',
@@ -23045,9 +21163,7 @@ const FILES = [
           /PRINTFORMW\ 「在地下城、裸体排便、不想停不下来…太舒服了啊啊啊啊…♪」/,
         ],
       },
-      { src: K3, ref: '4754', any: [/ENDIF/] },
       { src: K3, ref: '4755', any: [/CFLAG:387\ =\ 3/] },
-      { src: K3, ref: '4756', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '4757',
@@ -23070,8 +21186,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4760', any: [/CFLAG:387\ =\ 3/] },
-      { src: K3, ref: '4761', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4762', any: [/ENDIF/] },
       { src: K3, ref: '4763', any: [/REND/] },
       { src: K3, ref: '4765', any: [/IF\ TEQUIP:54\ ==\ 1/] },
       { src: K3, ref: '4766', any: [/IF\ RAND:3\ ==\ 0/] },
@@ -23079,7 +21193,7 @@ const FILES = [
         src: K3,
         ref: '4767',
         any: [
-          /PRINTFORMW\ 「在外面…在地下城里…光着身子的这幅丑态、%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%……竟/,
+          /PRINTFORMW\ 「在外面…在地下城里…光着身子的这幅丑态、%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%……竟然」/,
         ],
       },
       { src: K3, ref: '4768', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
@@ -23090,7 +21204,6 @@ const FILES = [
           /PRINTFORMW\ 「请原谅…请原谅我啊！！　啊、啊啊啊啊啊、出来了…出来了啊啊啊啊…唔！？　啊、啊嗷嗷嗷♪」/,
         ],
       },
-      { src: K3, ref: '4770', any: [/ELSE/] },
       {
         src: K3,
         ref: '4771',
@@ -23098,8 +21211,6 @@ const FILES = [
           /PRINTFORMW\ 「啊…啊啊、泄出来了…！　连衣服都没穿的在地下城里…可是、怎么会、这么舒服…啊啊！」/,
         ],
       },
-      { src: K3, ref: '4772', any: [/ENDIF/] },
-      { src: K3, ref: '4774', any: [/ELSE/] },
       {
         src: K3,
         ref: '4775',
@@ -23111,10 +21222,7 @@ const FILES = [
       { src: K3, ref: '4777', any: [/PRINTFORMW\ 着……竟然…」/] },
       { src: K3, ref: '4778', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '4779', any: [/PRINTFORMW\ 着……唔！」/] },
-      { src: K3, ref: '4780', any: [/ELSE/] },
       { src: K3, ref: '4781', any: [/PRINTFORMW\ 着…明明不可以的……」/] },
-      { src: K3, ref: '4782', any: [/ENDIF/] },
-      { src: K3, ref: '4783', any: [/ENDIF/] },
       { src: K3, ref: '4784', any: [/CFLAG:387\ =\ 3/] },
       {
         src: K3,
@@ -23145,8 +21253,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4794', any: [/CFLAG:387\ =\ 2/] },
-      { src: K3, ref: '4795', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4796', any: [/ENDIF/] },
       { src: K3, ref: '4797', any: [/REND/] },
       {
         src: K3,
@@ -23179,7 +21285,6 @@ const FILES = [
         ref: '4807',
         any: [/PRINTFORMW\ 「呜呜…别看啊、至少…请不要拍、啊……」/],
       },
-      { src: K3, ref: '4809', any: [/ELSE/] },
       { src: K3, ref: '4810', any: [/PRINTFORM\ 「原、原谅我…啊啊啊啊！！/] },
       { src: K3, ref: '4811', any: [/IF\ RAND:3\ ==\ 0/] },
       {
@@ -23193,15 +21298,11 @@ const FILES = [
         ref: '4814',
         any: [/PRINTFORMW\ 请、请怜悯下…！　啊？　啊啊、不要啊啊……」/],
       },
-      { src: K3, ref: '4815', any: [/ELSE/] },
       {
         src: K3,
         ref: '4816',
         any: [/PRINTFORMW\ 不要…请原俩…啊啊啊！　啊啊啊……」」/],
       },
-      { src: K3, ref: '4817', any: [/ENDIF/] },
-      { src: K3, ref: '4818', any: [/ENDIF/] },
-      { src: K3, ref: '4820', any: [/ELSE/] },
       { src: K3, ref: '4822', any: [/REPEAT\ CHARANUM/] },
       {
         src: K3,
@@ -23225,8 +21326,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4826', any: [/CFLAG:387\ =\ 2/] },
-      { src: K3, ref: '4827', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4828', any: [/ENDIF/] },
       { src: K3, ref: '4829', any: [/REND/] },
       {
         src: K3,
@@ -23256,19 +21355,12 @@ const FILES = [
           /PRINTFORMW\ 「厕所、快点去厕所…不行、在这里拍什么的…请原谅、啊啊啊、不要啊啊啊……！！」/,
         ],
       },
-      { src: K3, ref: '4839', any: [/ELSE/] },
       {
         src: K3,
         ref: '4840',
         any: [/PRINTFORMW\ 「请、请原谅…啊啊啊啊\~！！」/],
       },
-      { src: K3, ref: '4841', any: [/ENDIF/] },
-      { src: K3, ref: '4842', any: [/ENDIF/] },
       { src: K3, ref: '4843', any: [/CFLAG:387\ =\ 2/] },
-      { src: K3, ref: '4844', any: [/ENDIF/] },
-      { src: K3, ref: '4845', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4846', any: [/ENDIF/] },
-      { src: K3, ref: '4847', any: [/ENDIF/] },
       { src: K3, ref: '4852', any: [/IF\ SELECTCOM\ ==\ 55/] },
       { src: K3, ref: '4854', any: [/IF\ CFLAG:356\ ==\ 0/] },
       { src: K3, ref: '4856', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
@@ -23305,14 +21397,12 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的眼睛湿润起来，向%SAVESTR:PLAYER%撒起娇来了………/,
         ],
       },
-      { src: K3, ref: '4867', any: [/ELSE/] },
       { src: K3, ref: '4868', any: [/PRINTFORMW\ 「嗯\~………什么也不做吗？」/] },
       {
         src: K3,
         ref: '4869',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%一脸若无其事地看着这边………/],
       },
-      { src: K3, ref: '4870', any: [/ENDIF/] },
       { src: K3, ref: '4871', any: [/PRINTL/] },
       {
         src: K3,
@@ -23395,8 +21485,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '4908', any: [/CFLAG:356\ =\ 1/] },
-      { src: K3, ref: '4909', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4911', any: [/ELSE/] },
       { src: K3, ref: '4913', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
       { src: K3, ref: '4914', any: [/PRINTFORMW\ 「………什么都不做吗？」/] },
       {
@@ -23415,7 +21503,7 @@ const FILES = [
         src: K3,
         ref: '4918',
         any: [
-          /PRINTFORMW\ 「好，好过分啊…用这种眼神看着这边…啊啊\~啊\~…明明，%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGE/,
+          /PRINTFORMW\ 「好，好过分啊…用这种眼神看着这边…啊啊\~啊\~…明明，%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…已经、变、变得奇怪起来了\~………%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -23459,7 +21547,7 @@ const FILES = [
         src: K3,
         ref: '4928',
         any: [
-          /PRINTFORMW\ 「不要休息了啦…快点…将%SELF_CALL\(TARGET\)%…啊嗯\~…将%SELF_CALL\(TARGET\)%啊\~………%UNICODE/,
+          /PRINTFORMW\ 「不要休息了啦…快点…将%SELF_CALL\(TARGET\)%…啊嗯\~…将%SELF_CALL\(TARGET\)%啊\~………%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -23500,7 +21588,6 @@ const FILES = [
         any: [/PRINTFORMW\ %SAVESTR:TARGET%一脸若无其事地看着这边………/],
       },
       { src: K3, ref: '4940', any: [/CFLAG:356\ =\ 2/] },
-      { src: K3, ref: '4941', any: [/ENDIF/] },
       { src: K3, ref: '4942', any: [/PRINTL/] },
       {
         src: K3,
@@ -23582,9 +21669,6 @@ const FILES = [
           /PRINTFORMW\ 还有、这样的%SAVESTR:TARGET%的姿态由始至终都被录下来了………/,
         ],
       },
-      { src: K3, ref: '4979', any: [/RETURN\ 0/] },
-      { src: K3, ref: '4980', any: [/ENDIF/] },
-      { src: K3, ref: '4981', any: [/ENDIF/] },
       { src: K3, ref: '4988', any: [/IF\ SELECTCOM\ ==\ 56/] },
       { src: K3, ref: '4990', any: [/IF\ CFLAG:357\ ==\ 0/] },
       { src: K3, ref: '4992', any: [/IF\ TEQUIP:53\ ==\ 1/] },
@@ -23636,7 +21720,7 @@ const FILES = [
         src: K3,
         ref: '5006',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%被魔王大人调教…变成了怎样一个淫乱的女人…请大家好好鉴赏吧%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%被魔王大人调教…变成了怎样一个淫乱的女人…请大家好好鉴赏吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5007', any: [/TFLAG:32\ \|=\ 2/] },
@@ -23659,7 +21743,7 @@ const FILES = [
         src: K3,
         ref: '5013',
         any: [
-          /PRINTFORMW\ 「今天…作为%SELF_CALL\(TARGET\)%的…恋人来…证明我们到底有多么地相亲相爱…请大家好好地见证吧\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「今天…作为%SELF_CALL\(TARGET\)%的…恋人来…证明我们到底有多么地相亲相爱…请大家好好地见证吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -23696,15 +21780,11 @@ const FILES = [
         any: [/PRINTFORML\ %SAVESTR:TARGET%对着水晶球开始了自我介绍/],
       },
       { src: K3, ref: '5021', any: [/TFLAG:32\ \|=\ 2/] },
-      { src: K3, ref: '5022', any: [/ELSE/] },
       {
         src: K3,
         ref: '5023',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%岔开了视线什么都没说。/],
       },
-      { src: K3, ref: '5024', any: [/ENDIF/] },
-      { src: K3, ref: '5025', any: [/ELSE/] },
-
       {
         src: K3,
         ref: '5027',
@@ -23737,7 +21817,7 @@ const FILES = [
         src: K3,
         ref: '5031',
         any: [
-          /ELSEIF\ \(PALAM:4\ >=\ PALAMLV:4\ \|\|\ ABL:10\ >=\ 5\ \|\|\ TALENT:85\ \|\|\ TALENT:76\)\ \&\&\ PALAM:/,
+          /ELSEIF\ \(PALAM:4\ >=\ PALAMLV:4\ \|\|\ ABL:10\ >=\ 5\ \|\|\ TALENT:85\ \|\|\ TALENT:76\)\ \&\&\ PALAM:5\ >=\ PALAMLV:4/,
         ],
       },
       {
@@ -23755,7 +21835,6 @@ const FILES = [
       { src: K3, ref: '5034', any: [/PRINT\ 欢喜的/] },
       { src: K3, ref: '5035', any: [/ELSEIF\ TEQUIP:44\ \|\|\ TEQUIP:49/] },
       { src: K3, ref: '5036', any: [/PRINT\ 苦痛的/] },
-      { src: K3, ref: '5037', any: [/ENDIF/] },
       { src: K3, ref: '5038', any: [/PRINTFORML\ 叫声，拼命地向你回话了。/] },
       { src: K3, ref: '5040', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
       {
@@ -23804,7 +21883,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '5048', any: [/PRINTFORMW\ 「啊、是、是的…」/] },
-      { src: K3, ref: '5049', any: [/ELSE/] },
       {
         src: K3,
         ref: '5050',
@@ -23812,11 +21890,7 @@ const FILES = [
           /PRINTFORML\ 向其搭话后，%SAVESTR:TARGET%好像根本没有听到一样………/,
         ],
       },
-      { src: K3, ref: '5051', any: [/ENDIF/] },
-      { src: K3, ref: '5052', any: [/ENDIF/] },
       { src: K3, ref: '5053', any: [/CFLAG:357\ =\ 1/] },
-      { src: K3, ref: '5054', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5056', any: [/ELSE/] },
       { src: K3, ref: '5058', any: [/IF\ TEQUIP:53\ ==\ 1/] },
       {
         src: K3,
@@ -23898,7 +21972,7 @@ const FILES = [
         src: K3,
         ref: '5078',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%被魔王大人调教…变成了怎样一个淫乱的女人…请大家好好鉴赏吧%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%被魔王大人调教…变成了怎样一个淫乱的女人…请大家好好鉴赏吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5079', any: [/TFLAG:32\ \|=\ 2/] },
@@ -23925,7 +21999,7 @@ const FILES = [
         src: K3,
         ref: '5085',
         any: [
-          /PRINTFORMW\ 「今天…作为%SELF_CALL\(TARGET\)%的…恋人来…证明我们到底有多么地相亲相爱…请大家好好地见证吧\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「今天…作为%SELF_CALL\(TARGET\)%的…恋人来…证明我们到底有多么地相亲相爱…请大家好好地见证吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -23962,15 +22036,11 @@ const FILES = [
         any: [/PRINTFORML\ %SAVESTR:TARGET%对着水晶球开始了自我介绍/],
       },
       { src: K3, ref: '5093', any: [/TFLAG:32\ \|=\ 2/] },
-      { src: K3, ref: '5094', any: [/ELSE/] },
       {
         src: K3,
         ref: '5095',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%岔开了视线什么都没说。/],
       },
-      { src: K3, ref: '5096', any: [/ENDIF/] },
-      { src: K3, ref: '5097', any: [/ELSE/] },
-
       {
         src: K3,
         ref: '5099',
@@ -24003,7 +22073,7 @@ const FILES = [
         src: K3,
         ref: '5103',
         any: [
-          /ELSEIF\ \(PALAM:4\ >=\ PALAMLV:4\ \|\|\ ABL:10\ >=\ 5\ \|\|\ TALENT:85\ \|\|\ TALENT:76\)\ \&\&\ PALAM:/,
+          /ELSEIF\ \(PALAM:4\ >=\ PALAMLV:4\ \|\|\ ABL:10\ >=\ 5\ \|\|\ TALENT:85\ \|\|\ TALENT:76\)\ \&\&\ PALAM:5\ >=\ PALAMLV:4/,
         ],
       },
       {
@@ -24021,7 +22091,6 @@ const FILES = [
       { src: K3, ref: '5106', any: [/PRINT\ 欢喜的/] },
       { src: K3, ref: '5107', any: [/ELSEIF\ TEQUIP:44\ \|\|\ TEQUIP:49/] },
       { src: K3, ref: '5108', any: [/PRINT\ 苦痛的/] },
-      { src: K3, ref: '5109', any: [/ENDIF/] },
       { src: K3, ref: '5110', any: [/PRINTFORML\ 叫声，拼命地向你回话了。/] },
       { src: K3, ref: '5112', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
       {
@@ -24070,7 +22139,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '5120', any: [/PRINTFORMW\ 「啊、是、是的…」/] },
-      { src: K3, ref: '5121', any: [/ELSE/] },
       {
         src: K3,
         ref: '5122',
@@ -24078,11 +22146,6 @@ const FILES = [
           /PRINTFORML\ \ 向其搭话后，%SAVESTR:TARGET%好像根本没有听到一样………/,
         ],
       },
-      { src: K3, ref: '5123', any: [/ENDIF/] },
-      { src: K3, ref: '5124', any: [/ENDIF/] },
-      { src: K3, ref: '5125', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5126', any: [/ENDIF/] },
-      { src: K3, ref: '5127', any: [/ENDIF/] },
       { src: K3, ref: '5132', any: [/IF\ SELECTCOM\ ==\ 123/] },
       { src: K3, ref: '5134', any: [/IF\ CFLAG:TARGET:360\ ==\ 0/] },
       { src: K3, ref: '5136', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -24097,7 +22160,7 @@ const FILES = [
         src: K3,
         ref: '5138',
         any: [
-          /PRINTFORMW\ 「嗯哈恩\~…只用一根大鸡巴就能侵犯%SELF_CALL\(TARGET\)%的胸部还有嘴巴什么的…真是太棒了…嗯\~嗯哼唔\~…就呜呜\~%UNIC/,
+          /PRINTFORMW\ 「嗯哈恩\~…只用一根大鸡巴就能侵犯%SELF_CALL\(TARGET\)%的胸部还有嘴巴什么的…真是太棒了…嗯\~嗯哼唔\~…就呜呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5140', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -24112,7 +22175,7 @@ const FILES = [
         src: K3,
         ref: '5142',
         any: [
-          /PRINTFORMW\ 「啊哈啊嗯\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%好\~好\~地…亲吻%SAVESTR:PLAYER%大人/,
+          /PRINTFORMW\ 「啊哈啊嗯\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%好\~好\~地…亲吻%SAVESTR:PLAYER%大人的大鸡巴的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5144', any: [/ELSEIF\ ABL:TARGET:16\ >=\ 3/] },
@@ -24127,10 +22190,9 @@ const FILES = [
         src: K3,
         ref: '5146',
         any: [
-          /PRINTFORMW\ 「嗯呼呜\~…%UNICODE\(0x2661\)\ \*1%\ 请让%SAVESTR:TARGET%来侍奉大鸡巴吧\~%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「嗯呼呜\~…%UNICODE\(0x2661\)\ \*1%\ 请让%SAVESTR:TARGET%来侍奉大鸡巴吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '5148', any: [/ELSE/] },
       {
         src: K3,
         ref: '5149',
@@ -24143,10 +22205,7 @@ const FILES = [
         ref: '5150',
         any: [/PRINTFORMW\ 「啊啊\~…这样…不知羞耻的…啾\~…啾\~…嗯呜嗯\~………」/],
       },
-      { src: K3, ref: '5151', any: [/ENDIF/] },
       { src: K3, ref: '5152', any: [/CFLAG:TARGET:360\ =\ 1/] },
-      { src: K3, ref: '5153', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5155', any: [/ELSE/] },
       {
         src: K3,
         ref: '5157',
@@ -24165,7 +22224,7 @@ const FILES = [
         src: K3,
         ref: '5159',
         any: [
-          /PRINTFORMW\ 「嗯哈恩\~…只用一根大鸡巴就能侵犯%SELF_CALL\(TARGET\)%的胸部还有嘴巴什么的…真是太棒了…嗯\~嗯哼唔\~…就呜呜\~%UNIC/,
+          /PRINTFORMW\ 「嗯哈恩\~…只用一根大鸡巴就能侵犯%SELF_CALL\(TARGET\)%的胸部还有嘴巴什么的…真是太棒了…嗯\~嗯哼唔\~…就呜呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5160', any: [/CFLAG:360\ =\ 5/] },
@@ -24187,7 +22246,7 @@ const FILES = [
         src: K3,
         ref: '5164',
         any: [
-          /PRINTFORMW\ 「啊哈啊嗯\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%好\~好\~地…亲吻%SAVESTR:PLAYER%大人/,
+          /PRINTFORMW\ 「啊哈啊嗯\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%好\~好\~地…亲吻%SAVESTR:PLAYER%大人的大鸡巴的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5165', any: [/CFLAG:360\ =\ 4/] },
@@ -24206,7 +22265,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%用胸部将%SAVESTR:PLAYER%的阴茎夹住、从胸部之间伸出来的阴茎前端陶醉地舔着。/,
         ],
       },
-      { src: K3, ref: '5170', any: [/ELSE/] },
       {
         src: K3,
         ref: '5171',
@@ -24214,16 +22272,14 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%用胸部将%SAVESTR:PLAYER%的阴茎包裹住、用舌尖舔着埋藏在胸部里的阴茎。/,
         ],
       },
-      { src: K3, ref: '5172', any: [/ENDIF/] },
       { src: K3, ref: '5173', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '5174',
         any: [
-          /PRINTFORMW\ 「嗯呼呜\~…%UNICODE\(0x2661\)\ \*1%\ 非常感谢让%SELF_CALL\(TARGET\)%来侍奉大鸡巴啊\~%UNICODE\(0/,
+          /PRINTFORMW\ 「嗯呼呜\~…%UNICODE\(0x2661\)\ \*1%\ 非常感谢让%SELF_CALL\(TARGET\)%来侍奉大鸡巴啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '5175', any: [/ELSE/] },
       {
         src: K3,
         ref: '5176',
@@ -24231,7 +22287,6 @@ const FILES = [
           /PRINTFORMW\ 「真是没办法呢\~%UNICODE\(0x2661\)\ \*1%\ …%SELF_CALL\(TARGET\)%的胸部就那么地舒服吗\~？」/,
         ],
       },
-      { src: K3, ref: '5177', any: [/ENDIF/] },
       { src: K3, ref: '5178', any: [/CFLAG:360\ =\ 3/] },
       {
         src: K3,
@@ -24251,10 +22306,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊\~…这样…不知羞耻的…啾\~…啾\~…嗯呜嗯\~………」/],
       },
       { src: K3, ref: '5183', any: [/CFLAG:360\ =\ 2/] },
-      { src: K3, ref: '5184', any: [/ENDIF/] },
-      { src: K3, ref: '5185', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5186', any: [/ENDIF/] },
-      { src: K3, ref: '5187', any: [/ENDIF/] },
       { src: K3, ref: '5191', any: [/IF\ SELECTCOM\ ==\ 125/] },
       { src: K3, ref: '5193', any: [/IF\ CFLAG:TARGET:361\ ==\ 0/] },
       { src: K3, ref: '5195', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -24269,7 +22320,7 @@ const FILES = [
         src: K3,
         ref: '5197',
         any: [
-          /PRINTFORMW\ 「哈啊%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~…啾呼呜\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…大鸡巴…好吃%UNICO/,
+          /PRINTFORMW\ 「哈啊%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~…啾呼呜\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…大鸡巴…好吃%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5199', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -24299,10 +22350,9 @@ const FILES = [
         src: K3,
         ref: '5205',
         any: [
-          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边/,
+          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边口交…一边自慰的…」/,
         ],
       },
-      { src: K3, ref: '5207', any: [/ELSE/] },
       {
         src: K3,
         ref: '5208',
@@ -24314,13 +22364,10 @@ const FILES = [
         src: K3,
         ref: '5209',
         any: [
-          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边/,
+          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边口交…一边自慰的…」/,
         ],
       },
-      { src: K3, ref: '5210', any: [/ENDIF/] },
       { src: K3, ref: '5211', any: [/CFLAG:TARGET:361\ =\ 1/] },
-      { src: K3, ref: '5212', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5214', any: [/ELSE/] },
       {
         src: K3,
         ref: '5216',
@@ -24339,7 +22386,7 @@ const FILES = [
         src: K3,
         ref: '5218',
         any: [
-          /PRINTFORMW\ 「哈啊%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~…啾呼呜\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…大鸡巴…好吃%UNICO/,
+          /PRINTFORMW\ 「哈啊%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~…啾呼呜\~%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…大鸡巴…好吃%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -24375,7 +22422,7 @@ const FILES = [
         src: K3,
         ref: '5225',
         any: [
-          /PRINTFORMW\ 「但是、%SELF_CALL\(TARGET,\ 1\)%…为了%SAVESTR:PLAYER%大人的话…不管怎样H而下流的事情都会做的…嗯啊啊/,
+          /PRINTFORMW\ 「但是、%SELF_CALL\(TARGET,\ 1\)%…为了%SAVESTR:PLAYER%大人的话…不管怎样H而下流的事情都会做的…嗯啊啊\~…哈呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5226', any: [/CFLAG:361\ =\ 4/] },
@@ -24397,7 +22444,7 @@ const FILES = [
         src: K3,
         ref: '5230',
         any: [
-          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边/,
+          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边口交…一边自慰的…」/,
         ],
       },
       { src: K3, ref: '5231', any: [/CFLAG:361\ =\ 3/] },
@@ -24417,14 +22464,10 @@ const FILES = [
         src: K3,
         ref: '5235',
         any: [
-          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边/,
+          /PRINTFORMW\ 「嗯唔嗯\~\~…嗯啾\~…啾呜\~…啊\~…哈啊…哈啊…%SAVESTR:TARGET%明，明白了…%SAVESTR:TARGET%会好好地…一边口交…一边自慰的…」/,
         ],
       },
       { src: K3, ref: '5236', any: [/CFLAG:361\ =\ 2/] },
-      { src: K3, ref: '5237', any: [/ENDIF/] },
-      { src: K3, ref: '5238', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5239', any: [/ENDIF/] },
-      { src: K3, ref: '5240', any: [/ENDIF/] },
       { src: K3, ref: '5245', any: [/IF\ SELECTCOM\ ==\ 126/] },
       { src: K3, ref: '5247', any: [/IF\ CFLAG:TARGET:362\ ==\ 0/] },
       { src: K3, ref: '5249', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -24472,7 +22515,6 @@ const FILES = [
           /PRINTFORMW\ 「嗯啾\~…啾\~呸咯\~…嗯哼唔\~…啊啊\~…大鸡巴好烫啊…♪」/,
         ],
       },
-      { src: K3, ref: '5261', any: [/ELSE/] },
       {
         src: K3,
         ref: '5262',
@@ -24480,10 +22522,7 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%将龟头含入了口中、用双手套弄起了阴茎。/,
         ],
       },
-      { src: K3, ref: '5263', any: [/ENDIF/] },
       { src: K3, ref: '5264', any: [/CFLAG:TARGET:362\ =\ 1/] },
-      { src: K3, ref: '5265', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5267', any: [/ELSE/] },
       {
         src: K3,
         ref: '5269',
@@ -24509,7 +22548,7 @@ const FILES = [
         src: K3,
         ref: '5272',
         any: [
-          /PRINTFORMW\ 「怎么样呀\~？大鸡巴被套弄着…是不是很舒服呀\~？%SELF_CALL\(TARGET\)%…手还有嘴巴都变得好烫了…感觉整个人都要不行了\~\~%/,
+          /PRINTFORMW\ 「怎么样呀\~？大鸡巴被套弄着…是不是很舒服呀\~？%SELF_CALL\(TARGET\)%…手还有嘴巴都变得好烫了…感觉整个人都要不行了\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '5273', any: [/CFLAG:362\ =\ 5/] },
@@ -24538,7 +22577,7 @@ const FILES = [
         src: K3,
         ref: '5278',
         any: [
-          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%会更加地…更加地侍奉大鸡巴的\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「啊啊\~%UNICODE\(0x2661\)\ \*1%\ %SAVESTR:TARGET%会更加地…更加地侍奉大鸡巴的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5279', any: [/CFLAG:362\ =\ 4/] },
@@ -24584,10 +22623,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '5289', any: [/CFLAG:362\ =\ 2/] },
-      { src: K3, ref: '5290', any: [/ENDIF/] },
-      { src: K3, ref: '5291', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5292', any: [/ENDIF/] },
-      { src: K3, ref: '5293', any: [/ENDIF/] },
       { src: K3, ref: '5299', any: [/IF\ SELECTCOM\ ==\ 127/] },
       { src: K3, ref: '5301', any: [/IF\ CFLAG:TARGET:363\ ==\ 0/] },
       { src: K3, ref: '5303', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -24602,7 +22637,7 @@ const FILES = [
         src: K3,
         ref: '5305',
         any: [
-          /PRINTFORMW\ 「啾唔嗯\~\~\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%…啾呜嗯\~呜呜\~\~%UNI/,
+          /PRINTFORMW\ 「啾唔嗯\~\~\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%…啾呜嗯\~呜呜\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5307', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -24617,7 +22652,7 @@ const FILES = [
         src: K3,
         ref: '5309',
         any: [
-          /PRINTFORMW\ 「啾唔嗯\~\~\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%…啾呜嗯\~呜呜\~\~%UNI/,
+          /PRINTFORMW\ 「啾唔嗯\~\~\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%…啾呜嗯\~呜呜\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5311', any: [/ELSEIF\ ABL:TARGET:16\ >=\ 3/] },
@@ -24635,7 +22670,6 @@ const FILES = [
           /PRINTFORMW\ 「嗯啾呜\~…呜嗯\~…啾噜嗯\~啾唔哼\~…嗯啾呜呜呜\~！」/,
         ],
       },
-      { src: K3, ref: '5315', any: [/ELSE/] },
       {
         src: K3,
         ref: '5316',
@@ -24650,10 +22684,7 @@ const FILES = [
           /PRINTFORMW\ 「嗯啾呜\~…呜嗯\~…啾噜嗯\~啾唔哼\~…嗯啾呜呜呜\~！」/,
         ],
       },
-      { src: K3, ref: '5318', any: [/ENDIF/] },
       { src: K3, ref: '5319', any: [/CFLAG:TARGET:363\ =\ 1/] },
-      { src: K3, ref: '5320', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5322', any: [/ELSE/] },
       {
         src: K3,
         ref: '5324',
@@ -24672,14 +22703,14 @@ const FILES = [
         src: K3,
         ref: '5326',
         any: [
-          /PRINTFORMW\ 「啾唔嗯\~\~\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%…啾呜嗯\~呜呜\~\~%UNI/,
+          /PRINTFORMW\ 「啾唔嗯\~\~\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…啾呜\~%UNICODE\(0x2661\)\ \*1%…啾呜嗯\~呜呜\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '5327',
         any: [
-          /PRINTFORMW\ 「嗯唔呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~…啾噜呜嗯\~\~…%UNICODE\(0x2661\)\ \*1%\ 精液\~…%SAVES/,
+          /PRINTFORMW\ 「嗯唔呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~…啾噜呜嗯\~\~…%UNICODE\(0x2661\)\ \*1%\ 精液\~…%SAVESTR:TARGET%会全部吸出来的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5328', any: [/CFLAG:363\ =\ 5/] },
@@ -24701,14 +22732,14 @@ const FILES = [
         src: K3,
         ref: '5332',
         any: [
-          /PRINTFORMW\ 「啾呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾嗯啾呜\~\~%UNICODE\(0x2661\)\ \*1%\ 唔呜嗯\~%UNICODE\(0x2/,
+          /PRINTFORMW\ 「啾呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾嗯啾呜\~\~%UNICODE\(0x2661\)\ \*1%\ 唔呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾啾\~…啾呜呜呜\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '5333',
         any: [
-          /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 精液\~…%SAVESTR:TARGET%会全部吸出来的\~%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 精液\~…%SAVESTR:TARGET%会全部吸出来的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5334', any: [/CFLAG:363\ =\ 4/] },
@@ -24761,10 +22792,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '5345', any: [/CFLAG:363\ =\ 2/] },
-      { src: K3, ref: '5346', any: [/ENDIF/] },
-      { src: K3, ref: '5347', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5348', any: [/ENDIF/] },
-      { src: K3, ref: '5349', any: [/ENDIF/] },
       { src: K3, ref: '5354', any: [/IF\ SELECTCOM\ ==\ 69/] },
       { src: K3, ref: '5356', any: [/IF\ CFLAG:TARGET:364\ ==\ 0/] },
       { src: K3, ref: '5358', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -24772,14 +22799,14 @@ const FILES = [
         src: K3,
         ref: '5359',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%每当蜜穴/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%每当蜜穴传来一阵刺激后就会紧紧地吸着阴茎。/,
         ],
       },
       {
         src: K3,
         ref: '5360',
         any: [
-          /PRINTFORMW\ 「嗯啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 做恶作剧…可是不行的噢\~%UNICODE\(0x2661\)\ \*1%\ 让%SAVESTR/,
+          /PRINTFORMW\ 「嗯啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 做恶作剧…可是不行的噢\~%UNICODE\(0x2661\)\ \*1%\ 让%SAVESTR:TARGET%更加吮吸大鸡巴吧\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '5362', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -24787,7 +22814,7 @@ const FILES = [
         src: K3,
         ref: '5363',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%一边忍耐/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%一边忍耐着蜜穴带来的快感一边吮吸着阴茎。/,
         ],
       },
       {
@@ -24802,7 +22829,7 @@ const FILES = [
         src: K3,
         ref: '5367',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%因为蜜穴/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%因为蜜穴带来的快感而娇喘连连。/,
         ],
       },
       {
@@ -24812,12 +22839,11 @@ const FILES = [
           /PRINTFORMW\ 「嗯哈呜嗯\~…不、不行的啊…这、这样就不能侍奉大鸡巴了呀\~…哈嗯呀呜\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '5370', any: [/ELSE/] },
       {
         src: K3,
         ref: '5371',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%摇晃屁股/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%摇晃屁股来忍耐着蜜穴带来的快感。/,
         ],
       },
       {
@@ -24825,10 +22851,7 @@ const FILES = [
         ref: '5372',
         any: [/PRINTFORMW\ 「嗯…要、要不行了啊…请原谅%SAVESTR:TARGET%吧………」/],
       },
-      { src: K3, ref: '5373', any: [/ENDIF/] },
       { src: K3, ref: '5374', any: [/CFLAG:TARGET:364\ =\ 1/] },
-      { src: K3, ref: '5375', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5377', any: [/ELSE/] },
       {
         src: K3,
         ref: '5379',
@@ -24840,21 +22863,21 @@ const FILES = [
         src: K3,
         ref: '5380',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%每当蜜穴/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%每当蜜穴传来一阵刺激后就会紧紧地吸着阴茎/,
         ],
       },
       {
         src: K3,
         ref: '5381',
         any: [
-          /PRINTFORMW\ 「嗯啊啊啊\~%UNICODE\(0x2661\)\ \*1%\ 恶作剧…可是不行的噢\~%UNICODE\(0x2661\)\ \*1%\ 让%SAVESTR:/,
+          /PRINTFORMW\ 「嗯啊啊啊\~%UNICODE\(0x2661\)\ \*1%\ 恶作剧…可是不行的噢\~%UNICODE\(0x2661\)\ \*1%\ 让%SAVESTR:TARGET%更加吮吸大鸡巴吧\~%UNICODE\(0x2661\)\ \*3%/,
         ],
       },
       {
         src: K3,
         ref: '5382',
         any: [
-          /PRINTFORMW\ 「嗯哼嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾噜啾噜%UNICODE\(0x2661\)\ \*1%啾噜\~…呸咯\~…嗯呜嗯\~嗯\~嗯嗯嗯\~%/,
+          /PRINTFORMW\ 「嗯哼嗯\~%UNICODE\(0x2661\)\ \*1%\ 啾噜啾噜%UNICODE\(0x2661\)\ \*1%啾噜\~…呸咯\~…嗯呜嗯\~嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5383', any: [/CFLAG:364\ =\ 5/] },
@@ -24869,7 +22892,7 @@ const FILES = [
         src: K3,
         ref: '5386',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%一边忍耐/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%一边忍耐着蜜穴带来的快感一边吮吸着阴茎。/,
         ],
       },
       {
@@ -24883,7 +22906,7 @@ const FILES = [
         src: K3,
         ref: '5388',
         any: [
-          /PRINTFORMW\ 「真是…真是坏呢\~%UNICODE\(0x2661\)\ \*1%…啾噜噜%UNICODE\(0x2661\)\ \*1%\ 啾呜\~…呸咯\~%UNICODE/,
+          /PRINTFORMW\ 「真是…真是坏呢\~%UNICODE\(0x2661\)\ \*1%…啾噜噜%UNICODE\(0x2661\)\ \*1%\ 啾呜\~…呸咯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '5389', any: [/CFLAG:364\ =\ 4/] },
@@ -24898,7 +22921,7 @@ const FILES = [
         src: K3,
         ref: '5392',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%因为蜜穴/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%因为蜜穴带来的快感而娇喘连连。/,
         ],
       },
       {
@@ -24918,7 +22941,7 @@ const FILES = [
         src: K3,
         ref: '5397',
         any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%摇晃屁股/,
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪地用嘴巴舔着对方的股间。%SAVESTR:TARGET%摇晃屁股来忍耐着蜜穴带来的快感。/,
         ],
       },
       {
@@ -24927,10 +22950,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「嗯…要、要不行了啊…请原谅%SAVESTR:TARGET%吧………」/],
       },
       { src: K3, ref: '5399', any: [/CFLAG:364\ =\ 2/] },
-      { src: K3, ref: '5400', any: [/ENDIF/] },
-      { src: K3, ref: '5401', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5402', any: [/ENDIF/] },
-      { src: K3, ref: '5403', any: [/ENDIF/] },
       { src: K3, ref: '5408', any: [/IF\ SELECTCOM\ ==\ 124/] },
       { src: K3, ref: '5410', any: [/IF\ CFLAG:TARGET:365\ ==\ 0/] },
       { src: K3, ref: '5412', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -24945,7 +22964,7 @@ const FILES = [
         src: K3,
         ref: '5414',
         any: [
-          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1%…呜哈啊啊\~%UNICO/,
+          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1%…呜哈啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5416', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
@@ -24960,7 +22979,7 @@ const FILES = [
         src: K3,
         ref: '5418',
         any: [
-          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 嗯啾噜嗯\~%UNICODE\(0x2661\)\ \*1%\ 唔呜啊嘛\~%UNICODE\(0x2/,
+          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 嗯啾噜嗯\~%UNICODE\(0x2661\)\ \*1%\ 唔呜啊嘛\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~\~\~…啾噜呜呜呜呜\~\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5420', any: [/ELSEIF\ ABL:TARGET:16\ >=\ 3/] },
@@ -24978,7 +22997,6 @@ const FILES = [
           /PRINTFORMW\ 「嗯呜\~！？嗯\~…嗯噗\~…嗯嗯\~…嗯呜嗯\~…嗯\~嗯\~嗯呜呜呜呜呜！！」/,
         ],
       },
-      { src: K3, ref: '5424', any: [/ELSE/] },
       {
         src: K3,
         ref: '5425',
@@ -24993,10 +23011,7 @@ const FILES = [
           /PRINTFORMW\ 「嗯呜\~！？嗯\~…嗯噗\~…嗯嗯\~…嗯呜呃\~……嗯\~嗯\~嗯嗯嗯嗯嗯\~～～！？」/,
         ],
       },
-      { src: K3, ref: '5427', any: [/ENDIF/] },
       { src: K3, ref: '5428', any: [/CFLAG:TARGET:365\ =\ 1/] },
-      { src: K3, ref: '5429', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5431', any: [/ELSE/] },
       {
         src: K3,
         ref: '5433',
@@ -25015,14 +23030,14 @@ const FILES = [
         src: K3,
         ref: '5435',
         any: [
-          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1%…呜哈啊啊\~%UNICO/,
+          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%…恩呼嗯\~…嗯\~嗯嗯嗯\~%UNICODE\(0x2661\)\ \*1%…呜哈啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '5436',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴巴是…大鸡巴专用通道来的%UNICODE\(0x2661\)\ \*1%\ 嗯呜嗯哈啊\~…嗯\~嗯\~嗯嗯\~/,
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的嘴巴是…大鸡巴专用通道来的%UNICODE\(0x2661\)\ \*1%\ 嗯呜嗯哈啊\~…嗯\~嗯\~嗯嗯\~\~～%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5437', any: [/CFLAG:365\ =\ 5/] },
@@ -25044,14 +23059,14 @@ const FILES = [
         src: K3,
         ref: '5441',
         any: [
-          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 嗯啾噜嗯\~%UNICODE\(0x2661\)\ \*1%\ 唔呜啊嘛\~%UNICODE\(0x2/,
+          /PRINTFORMW\ 「嗯呜嗯\~%UNICODE\(0x2661\)\ \*1%\ 嗯啾噜嗯\~%UNICODE\(0x2661\)\ \*1%\ 唔呜啊嘛\~%UNICODE\(0x2661\)\ \*1%\ 啾呜\~\~\~…啾噜呜呜呜呜\~\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
         src: K3,
         ref: '5442',
         any: [
-          /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 不行的啊\~…因为大鸡巴的味道…脑袋…要变得奇怪起来了…%UNICODE\(0x2661\)/,
+          /PRINTFORMW\ 「嗯哈啊\~%UNICODE\(0x2661\)\ \*1%\ 不行的啊\~…因为大鸡巴的味道…脑袋…要变得奇怪起来了…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5443', any: [/CFLAG:365\ =\ 4/] },
@@ -25104,10 +23119,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '5454', any: [/CFLAG:365\ =\ 2/] },
-      { src: K3, ref: '5455', any: [/ENDIF/] },
-      { src: K3, ref: '5456', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5457', any: [/ENDIF/] },
-      { src: K3, ref: '5458', any: [/ENDIF/] },
       { src: K3, ref: '5464', any: [/IF\ SELECTCOM\ ==\ 80/] },
       { src: K3, ref: '5466', any: [/IF\ CFLAG:TARGET:381\ ==\ 0/] },
       { src: K3, ref: '5468', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -25115,7 +23126,7 @@ const FILES = [
         src: K3,
         ref: '5469',
         any: [
-          /PRINTFORMW\ 「嗯哼呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯呼\~…嗯呜呜\~\~\~\~%UNICODE/,
+          /PRINTFORMW\ 「嗯哼呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯呼\~…嗯呜呜\~\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -25138,7 +23149,6 @@ const FILES = [
         ref: '5474',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%的嘴巴就被这样侵犯着………/],
       },
-      { src: K3, ref: '5476', any: [/ELSE/] },
       {
         src: K3,
         ref: '5477',
@@ -25149,10 +23159,7 @@ const FILES = [
         ref: '5478',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%因为喉咙的深处被抽插着流下眼泪………/],
       },
-      { src: K3, ref: '5479', any: [/ENDIF/] },
       { src: K3, ref: '5480', any: [/CFLAG:TARGET:381\ =\ 1/] },
-      { src: K3, ref: '5481', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5483', any: [/ELSE/] },
       {
         src: K3,
         ref: '5485',
@@ -25164,7 +23171,7 @@ const FILES = [
         src: K3,
         ref: '5486',
         any: [
-          /PRINTFORMW\ 「嗯呼\~%UNICODE\(0x2661\)\ \*1%\ 恩噗呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯嗯呜\~…恩噗呜嗯嗯\~\~%UNICOD/,
+          /PRINTFORMW\ 「嗯呼\~%UNICODE\(0x2661\)\ \*1%\ 恩噗呜\~%UNICODE\(0x2661\)\ \*1%\ 嗯嗯呜\~…恩噗呜嗯嗯\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -25178,7 +23185,7 @@ const FILES = [
         src: K3,
         ref: '5488',
         any: [
-          /PRINTFORMW\ 「噗啊\~\~%UNICODE\(0x2661\)\ \*1%…非常感谢主人…噗嗯啊\~…使用这个主人专用的嘴巴小穴\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「噗啊\~\~%UNICODE\(0x2661\)\ \*1%…非常感谢主人…噗嗯啊\~…使用这个主人专用的嘴巴小穴\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5489', any: [/CFLAG:381\ =\ 5/] },
@@ -25186,7 +23193,7 @@ const FILES = [
         src: K3,
         ref: '5491',
         any: [
-          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:381\ <=\ 3\ \|\|\ FLAG:7\ /,
+          /ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ ABL:TARGET:16\ >=\ 5\ \&\&\ \(CFLAG:381\ <=\ 3\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
@@ -25207,7 +23214,7 @@ const FILES = [
         src: K3,
         ref: '5494',
         any: [
-          /PRINTFORMW\ 「啊哈啊\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%的嘴巴\~…已经变成小穴了…嘴巴小穴\~…%UNIC/,
+          /PRINTFORMW\ 「啊哈啊\~%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%的嘴巴\~…已经变成小穴了…嘴巴小穴\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5495', any: [/CFLAG:381\ =\ 4/] },
@@ -25258,10 +23265,6 @@ const FILES = [
         any: [/PRINTFORMW\ %SAVESTR:TARGET%因为喉咙的深处被抽插着流下眼泪………/],
       },
       { src: K3, ref: '5506', any: [/CFLAG:381\ =\ 2/] },
-      { src: K3, ref: '5507', any: [/ENDIF/] },
-      { src: K3, ref: '5508', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5509', any: [/ENDIF/] },
-      { src: K3, ref: '5510', any: [/ENDIF/] },
       { src: K3, ref: '5517', any: [/IF\ SELECTCOM\ ==\ 87/] },
       { src: K3, ref: '5520', any: [/IF\ CFLAG:TARGET:348\ ==\ 0/] },
       { src: K3, ref: '5522', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
@@ -25330,7 +23333,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为阴茎被打环后、露出了恍惚的表情………/,
         ],
       },
-      { src: K3, ref: '5546', any: [/ELSE/] },
       {
         src: K3,
         ref: '5547',
@@ -25345,7 +23347,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的阴蒂被打孔后、露出了恍惚的表情………/,
         ],
       },
-      { src: K3, ref: '5549', any: [/ENDIF/] },
       { src: K3, ref: '5551', any: [/ELSEIF\ P\ ==\ 16/] },
       {
         src: K3,
@@ -25383,14 +23384,11 @@ const FILES = [
         ref: '5561',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%不停地擦拭着鼻环………/],
       },
-      { src: K3, ref: '5562', any: [/ENDIF/] },
-      { src: K3, ref: '5564', any: [/ELSE/] },
       {
         src: K3,
         ref: '5565',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%抚摸着拿掉环后的痕迹………/],
       },
-      { src: K3, ref: '5566', any: [/ENDIF/] },
       { src: K3, ref: '5568', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
       { src: K3, ref: '5570', any: [/IF\ CFLAG:7\ \&\ P/] },
       {
@@ -25449,7 +23447,7 @@ const FILES = [
         src: K3,
         ref: '5587',
         any: [
-          /PRINTFORMW\ 「哈啊…哈啊…小鸡鸡…变得好奇怪了…%SELF_CALL\(TARGET\)%的小鸡鸡…啊、啊啊啊\~～%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「哈啊…哈啊…小鸡鸡…变得好奇怪了…%SELF_CALL\(TARGET\)%的小鸡鸡…啊、啊啊啊\~～%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -25459,12 +23457,11 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为阴茎被打上了环、脸颊变得通红起来………/,
         ],
       },
-      { src: K3, ref: '5589', any: [/ELSE/] },
       {
         src: K3,
         ref: '5590',
         any: [
-          /PRINTFORMW\ 「不，不行的啊\~\~\~…被做这样的事情的话%SELF_CALL\(TARGET\)%…已经…变得淫乱起来了啊…%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「不，不行的啊\~\~\~…被做这样的事情的话%SELF_CALL\(TARGET\)%…已经…变得淫乱起来了啊…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -25474,7 +23471,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为阴蒂被打上了环、脸颊变得通红起来………/,
         ],
       },
-      { src: K3, ref: '5592', any: [/ENDIF/] },
       { src: K3, ref: '5594', any: [/ELSEIF\ P\ ==\ 16/] },
       {
         src: K3,
@@ -25516,8 +23512,6 @@ const FILES = [
         ref: '5604',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%擦拭着鼻环………/],
       },
-      { src: K3, ref: '5605', any: [/ENDIF/] },
-      { src: K3, ref: '5607', any: [/ELSE/] },
       {
         src: K3,
         ref: '5608',
@@ -25525,8 +23519,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%貌似有点伤心地抚摸着被拿掉环后的痕迹………/,
         ],
       },
-      { src: K3, ref: '5609', any: [/ENDIF/] },
-      { src: K3, ref: '5611', any: [/ELSE/] },
       { src: K3, ref: '5613', any: [/IF\ CFLAG:7\ \&\ P/] },
       {
         src: K3,
@@ -25592,12 +23584,11 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的阴茎被穿上孔、阴茎环正闪烁着沉闷的光………/,
         ],
       },
-      { src: K3, ref: '5632', any: [/ELSE/] },
       {
         src: K3,
         ref: '5633',
         any: [
-          /PRINTFORMW\ 「拜，拜托了…什么都会做的…请将…环拿掉吧…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…要/,
+          /PRINTFORMW\ 「拜，拜托了…什么都会做的…请将…环拿掉吧…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…要变奇怪了啊…啊啊\~！」/,
         ],
       },
       {
@@ -25607,7 +23598,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的阴蒂被穿上了孔、阴蒂环正闪烁着沉闷的光………/,
         ],
       },
-      { src: K3, ref: '5635', any: [/ENDIF/] },
       { src: K3, ref: '5637', any: [/ELSEIF\ P\ ==\ 16/] },
       {
         src: K3,
@@ -25651,18 +23641,12 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的鼻子打上了跟牛的环一样的鼻环、眼泪哗啦啦地流下来了………/,
         ],
       },
-      { src: K3, ref: '5648', any: [/ENDIF/] },
-      { src: K3, ref: '5650', any: [/ELSE/] },
       {
         src: K3,
         ref: '5651',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%擦拭着拿掉环后的痕迹………/],
       },
-      { src: K3, ref: '5652', any: [/ENDIF/] },
-      { src: K3, ref: '5653', any: [/ENDIF/] },
       { src: K3, ref: '5654', any: [/CFLAG:TARGET:348\ =\ 1/] },
-      { src: K3, ref: '5655', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5657', any: [/ELSE/] },
       { src: K3, ref: '5659', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
       { src: K3, ref: '5660', any: [/PRINTFORM/] },
       {
@@ -25728,7 +23712,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为阴茎被打环后、露出了恍惚的表情………/,
         ],
       },
-      { src: K3, ref: '5682', any: [/ELSE/] },
       {
         src: K3,
         ref: '5683',
@@ -25743,7 +23726,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的阴蒂被打孔后、露出了恍惚的表情………/,
         ],
       },
-      { src: K3, ref: '5685', any: [/ENDIF/] },
       { src: K3, ref: '5687', any: [/ELSEIF\ P\ ==\ 16/] },
       {
         src: K3,
@@ -25781,14 +23763,11 @@ const FILES = [
         ref: '5697',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%不停地擦拭着鼻环………/],
       },
-      { src: K3, ref: '5698', any: [/ENDIF/] },
-      { src: K3, ref: '5700', any: [/ELSE/] },
       {
         src: K3,
         ref: '5701',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%抚摸着拿掉环后的痕迹………/],
       },
-      { src: K3, ref: '5702', any: [/ENDIF/] },
       { src: K3, ref: '5703', any: [/CFLAG:348\ =\ 4/] },
       {
         src: K3,
@@ -25847,7 +23826,7 @@ const FILES = [
         src: K3,
         ref: '5723',
         any: [
-          /PRINTFORMW\ 「哈啊…哈啊…小鸡鸡…变得好奇怪了…%SELF_CALL\(TARGET\)%的小鸡鸡…啊、啊啊啊\~～%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「哈啊…哈啊…小鸡鸡…变得好奇怪了…%SELF_CALL\(TARGET\)%的小鸡鸡…啊、啊啊啊\~～%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -25857,12 +23836,11 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为阴茎被打上了环、脸颊变得通红起来………/,
         ],
       },
-      { src: K3, ref: '5725', any: [/ELSE/] },
       {
         src: K3,
         ref: '5726',
         any: [
-          /PRINTFORMW\ 「不，不行的啊\~\~\~…被做这样的事情的话%SELF_CALL\(TARGET\)%…已经…变得淫乱起来了啊…%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「不，不行的啊\~\~\~…被做这样的事情的话%SELF_CALL\(TARGET\)%…已经…变得淫乱起来了啊…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -25872,7 +23850,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为阴蒂被打上了环、脸颊变得通红起来………/,
         ],
       },
-      { src: K3, ref: '5728', any: [/ENDIF/] },
       { src: K3, ref: '5730', any: [/ELSEIF\ P\ ==\ 16/] },
       {
         src: K3,
@@ -25914,8 +23891,6 @@ const FILES = [
         ref: '5740',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%擦拭着鼻环………/],
       },
-      { src: K3, ref: '5741', any: [/ENDIF/] },
-      { src: K3, ref: '5743', any: [/ELSE/] },
       {
         src: K3,
         ref: '5744',
@@ -25923,7 +23898,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%貌似有点伤心地抚摸着被拿掉环后的痕迹\.………/,
         ],
       },
-      { src: K3, ref: '5745', any: [/ENDIF/] },
       { src: K3, ref: '5746', any: [/CFLAG:348\ =\ 3/] },
       {
         src: K3,
@@ -25988,12 +23962,11 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的阴茎被穿上孔、阴茎环正闪烁着沉闷的光………/,
         ],
       },
-      { src: K3, ref: '5768', any: [/ELSE/] },
       {
         src: K3,
         ref: '5769',
         any: [
-          /PRINTFORMW\ 「拜，拜托了…什么都会做的…请将…环拿掉吧…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…要/,
+          /PRINTFORMW\ 「拜，拜托了…什么都会做的…请将…环拿掉吧…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…要变奇怪了啊…啊啊\~！」/,
         ],
       },
       {
@@ -26003,7 +23976,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的阴蒂被穿上了孔、阴蒂环正闪烁着沉闷的光………/,
         ],
       },
-      { src: K3, ref: '5771', any: [/ENDIF/] },
       { src: K3, ref: '5773', any: [/ELSEIF\ P\ ==\ 16/] },
       {
         src: K3,
@@ -26047,19 +24019,1971 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%的鼻子打上了跟牛的环一样的鼻环、眼泪哗啦啦地流下来了………/,
         ],
       },
-      { src: K3, ref: '5784', any: [/ENDIF/] },
-      { src: K3, ref: '5786', any: [/ELSE/] },
       {
         src: K3,
         ref: '5787',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%擦拭着拿掉环后的痕迹………/],
       },
-      { src: K3, ref: '5788', any: [/ENDIF/] },
       { src: K3, ref: '5789', any: [/CFLAG:348\ =\ 2/] },
-      { src: K3, ref: '5790', any: [/ENDIF/] },
-      { src: K3, ref: '5791', any: [/ENDIF/] },
-      { src: K3, ref: '5792', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5793', any: [/ENDIF/] },
+      { src: K3, ref: '95', any: [/@EVENTTRAIN/] },
+      { src: K3, ref: '790', any: [/@EVENTEND/] },
+      { src: K3, ref: '104', any: [/IF\ CFLAG:201\ ==\ 0/] },
+      { src: K3, ref: '107', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      { src: K3, ref: '109', any: [/IF\ FLAG:87\ >=\ 1/] },
+      {
+        src: K3,
+        ref: '110',
+        any: [
+          /PRINTFORMW\ 「就算…就算%SELF_CALL\(TARGET\)%的国家覆灭了也好…也不会向你这种家伙屈服呢………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '111',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%哪怕知道自己的国家被你占领了也好，也没有崩溃掉，保持着毅然的态度。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '112',
+        any: [
+          /PRINTFORMW\ 「而且…最重要的是%SELF_CALL\(TARGET\)%才不是什么为了成为你的慰安妇的玩具来的…！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '113',
+        any: [
+          /PRINTFORMW\ 但是，你十分清楚%SAVESTR:TARGET%进到牢笼里的时候，因为恐惧和悲伤而哭着颤抖着身体………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '115',
+        any: [/PRINTFORMW\ 「！请不要触碰%SELF_CALL\(TARGET\)%」/],
+      },
+      {
+        src: K3,
+        ref: '116',
+        any: [/PRINTFORMW\ 「以为%SELF_CALL\(TARGET\)%是谁来的啊！？」/],
+      },
+      {
+        src: K3,
+        ref: '117',
+        any: [
+          /PRINTFORMW\ 「对被称为精灵族的姬勇士的%SAVESTR:TARGET%来说………」/,
+        ],
+      },
+      { src: K3, ref: '118', any: [/PRINTL/] },
+      { src: K3, ref: '119', any: [/PRINTFORMW\ 「…………！」/] },
+      {
+        src: K3,
+        ref: '120',
+        any: [
+          /PRINTFORMW\ 「是啊…你就是魔王…哼哼、以为这样就能让%SELF_CALL\(TARGET\)%怎么样了吗？」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '121',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%无畏的笑着，哪怕在败北的时候被俘也好………/,
+        ],
+      },
+      { src: K3, ref: '123', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '125', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 2/] },
+      {
+        src: K3,
+        ref: '126',
+        any: [
+          /PRINTFORMW\ 「哼\~…快点将%SELF_CALL\(TARGET\)%放开，这样至少会让你轻松一点死掉呢。」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '127',
+        any: [
+          /PRINTFORMW\ 人狼的%SAVESTR:TARGET%哪怕被抓住也表现出了一脸有余裕的样子。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '128',
+        any: [
+          /PRINTFORMW\ 看来对于自身的肉体强韧有着很大的自信啊…不过，很快就会明白这种事情在这里没有意义的吧………/,
+        ],
+      },
+      { src: K3, ref: '129', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '131', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 3/] },
+      {
+        src: K3,
+        ref: '132',
+        any: [
+          /PRINTFORMW\ 「呼哼…被这样抓到的还是第一次来着…跟你这种下贱的东西做对手还是让人兴趣缺缺啊」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '133',
+        any: [/PRINTFORMW\ 吸血鬼的%SAVESTR:TARGET%冷冷地看着你。/],
+      },
+      {
+        src: K3,
+        ref: '134',
+        any: [/PRINTFORMW\ 「快点将%SELF_CALL\(TARGET\)%放开呐」/],
+      },
+      { src: K3, ref: '135', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '137', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 4/] },
+      {
+        src: K3,
+        ref: '138',
+        any: [/PRINTFORMW\ 「原谅什么的…怎样哭喊求饶你才会原谅呢？」/],
+      },
+      {
+        src: K3,
+        ref: '139',
+        any: [/PRINTFORMW\ 作为无头骑士的%SAVESTR:TARGET%比想象地还要冷静。/],
+      },
+      {
+        src: K3,
+        ref: '140',
+        any: [/PRINTFORMW\ （看着吧…肯定会找到机会逃出这里的………）/],
+      },
+      { src: K3, ref: '141', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '143', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 5/] },
+      {
+        src: K3,
+        ref: '144',
+        any: [
+          /PRINTFORMW\ 「呃…要不是力量被封印住的话，像你这种家伙一瞬间就会消失了…！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '145',
+        any: [/PRINTFORMW\ 龙少女的%SAVESTR:TARGET%用憎恨的眼神瞪着你。/],
+      },
+      {
+        src: K3,
+        ref: '146',
+        any: [
+          /PRINTFORMW\ 「对于将%SELF_CALL\(TARGET\)%关在这种地方的事情，必定会让你后悔的！！」/,
+        ],
+      },
+      { src: K3, ref: '147', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '149', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 6/] },
+      {
+        src: K3,
+        ref: '150',
+        any: [
+          /PRINTFORMW\ 「呃…不管怎样对待%SELF_CALL\(TARGET\)%都好、%SELF_CALL\(TARGET\)%也不会屈服的！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '151',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身体可是伟大的父亲的东西来的！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '152',
+        any: [
+          /PRINTFORMW\ 作为天使的%SAVESTR:TARGET%哪怕力量被封印了也没有改变态度………/,
+        ],
+      },
+      { src: K3, ref: '153', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '155', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 9/] },
+      {
+        src: K3,
+        ref: '156',
+        any: [
+          /PRINTFORMW\ 「骗…骗人…%SELF_CALL\(TARGET\)%居然…居然变成了如此污秽的魔族了………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '157',
+        any: [
+          /PRINTFORMW\ 看来%SAVESTR:TARGET%还没有被改造成为魔族，成为魔族其中一员的自觉啊。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '158',
+        any: [
+          /PRINTFORMW\ 沉浸在震惊和悲伤的%SAVESTR:TARGET%注意到你的存在后用魔族的眼睛瞪向了你。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '159',
+        any: [/PRINTFORMW\ 「绝对…绝对不会原谅你的…！」/],
+      },
+      {
+        src: K3,
+        ref: '160',
+        any: [
+          /PRINTFORMW\ 还以为成为了魔族就会安分下来了、看来会变得更加有趣起来了………/,
+        ],
+      },
+      { src: K3, ref: '161', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '163', any: [/CFLAG:370\ =\ 1/] },
+      { src: K3, ref: '165', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 10/] },
+      {
+        src: K3,
+        ref: '166',
+        any: [/PRINTFORMW\ 「快点将%SELF_CALL\(TARGET\)%放开！」/],
+      },
+      {
+        src: K3,
+        ref: '167',
+        any: [
+          /PRINTFORMW\ 哪怕跟霍比特人一样小的身体、%SAVESTR:TARGET%强势的态度也没有改变………/,
+        ],
+      },
+      { src: K3, ref: '168', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '170', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 11/] },
+      {
+        src: K3,
+        ref: '171',
+        any: [
+          /PRINTFORMW\ 「将%SELF_CALL\(TARGET\)%放了的话可是会有赎金的噢！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '172',
+        any: [
+          /PRINTFORMW\ 这样的提案你对此嗤之以鼻、向着作为矮人的%SAVESTR:TARGET%慢慢地靠近了………/,
+        ],
+      },
+      { src: K3, ref: '173', any: [/CFLAG:201\ =\ 1/] },
+      {
+        src: K3,
+        ref: '176',
+        any: [/PRINTFORMW\ 「这种事情…不可能…不可能来的啊！」/],
+      },
+      {
+        src: K3,
+        ref: '177',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被扔进了这辈子都没有考虑过的恶劣环境里、歇斯底里地哭喊着。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '178',
+        any: [
+          /PRINTFORMW\ 看来得从头教育一下，在这种活着是怎样的一件事情来着………/,
+        ],
+      },
+      { src: K3, ref: '180', any: [/CFLAG:201\ =\ 1/] },
+      { src: K3, ref: '181', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '185',
+        any: [
+          /ELSEIF\ CFLAG:201\ <\ 5\ \&\&\ CFLAG:370\ ==\ 0\ \&\&\ TALENT:TARGET:314\ ==\ 9\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '186',
+        any: [
+          /PRINTFORMW\ 「哪怕被改造成这种样子也好…还不能自我了断什么的………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '187',
+        any: [
+          /PRINTFORMW\ 按照你所希望的那样，%SAVESTR:TARGET%被改造成了魔族，成为了魔族的新的一员了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '188',
+        any: [
+          /PRINTFORMW\ 哪怕无法相信般幸运地逃到地面上了也好，她也不会被人类社会而接纳了吧。/,
+        ],
+      },
+      { src: K3, ref: '189', any: [/PRINTFORMW\ 「不，不要过来这边…………」/] },
+      {
+        src: K3,
+        ref: '191',
+        any: [
+          /PRINTFORMW\ 「不要…不要再将%SELF_CALL\(TARGET\)%当成玩具了………」/,
+        ],
+      },
+      { src: K3, ref: '193', any: [/CFLAG:370\ =\ 2/] },
+      { src: K3, ref: '194', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '199',
+        any: [/ELSEIF\ CFLAG:201\ >=\ 1\ \&\&\ CFLAG:650\ ==\ 1/],
+      },
+      { src: K3, ref: '200', any: [/IF\ TALENT:85\ \|\|\ TALENT:76/] },
+      {
+        src: K3,
+        ref: '202',
+        any: [
+          /PRINTFORMW\ 看到那个水晶球的事情告诉了%SAVESTR:TARGET%后，%SAVESTR:TARGET%的脸色就变了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '203',
+        any: [
+          /PRINTFORMW\ 「啊啊…魔王大人…请…请原谅%SAVESTR:TARGET%………那个时候是…是没有办法的事情来得………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '204',
+        any: [
+          /PRINTFORMW\ 「让%SELF_CALL\(TARGET\)%做任何事情补偿都可以…所以…所以请原谅不贞的%SELF_CALL\(TARGET\)%吧…………」/,
+        ],
+      },
+      { src: K3, ref: '206', any: [/CFLAG:650\ =\ 0/] },
+      {
+        src: K3,
+        ref: '209',
+        any: [
+          /PRINTFORMW\ 「又再抓回来调教什么的…对于背叛者赐予死刑不好吗？」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '210',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%讽刺般笑着………/],
+      },
+      { src: K3, ref: '212', any: [/CFLAG:650\ =\ 0/] },
+      { src: K3, ref: '214', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '219',
+        any: [
+          /ELSEIF\ CFLAG:201\ <\ 2\ \&\&\ MARK:2\ ==\ 1\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '222', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '223',
+        any: [/PRINTFORMW\ 「哼\~、这种程度的事情%SELF_CALL\(TARGET\)%才…！」/],
+      },
+      {
+        src: K3,
+        ref: '224',
+        any: [
+          /PRINTFORMW\ 哪怕坐在地板上%SAVESTR:TARGET%反抗的态度也可见一斑………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '227',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%不要再触碰我了！…无礼之徒！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '228',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%哪怕身体颤抖着也用毅然的态度目不转睛地盯着你………/,
+        ],
+      },
+      { src: K3, ref: '230', any: [/CFLAG:201\ =\ 2/] },
+      { src: K3, ref: '231', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '234',
+        any: [
+          /ELSEIF\ CFLAG:201\ <\ 3\ \&\&\ MARK:2\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '237', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '238',
+        any: [
+          /PRINTFORMW\ 「呃…%SELF_CALL_FIRST\(TARGET\)%、请不要触碰%SELF_CALL\(TARGET\)%………！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '239',
+        any: [
+          /PRINTFORMW\ 虽然说着强势的台词，但是%SAVESTR:TARGET%胆怯地看着你………/,
+        ],
+      },
+      { src: K3, ref: '242', any: [/PRINTFORMW\ 「不会认输…才不会认输呐…」/] },
+      {
+        src: K3,
+        ref: '243',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%趴在了地板上，但是哪怕这样还是没有屈服的样子………/,
+        ],
+      },
+      { src: K3, ref: '245', any: [/CFLAG:201\ =\ 3/] },
+      { src: K3, ref: '246', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '249',
+        any: [
+          /ELSEIF\ CFLAG:201\ <\ 4\ \&\&\ MARK:2\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '252', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '253',
+        any: [
+          /PRINTFORMW\ 「不，不要靠近过来…不要对%SELF_CALL\(TARGET\)%…做残酷的事情…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '254',
+        any: [/PRINTFORMW\ 「拜托了…请…不要做残酷的事情………」/],
+      },
+      {
+        src: K3,
+        ref: '255',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%瘫倒在了地板上，因为恐怖而颤抖着………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '258',
+        any: [/PRINTFORMW\ 「已经…输掉了…也没关系了吗…」/],
+      },
+      {
+        src: K3,
+        ref: '259',
+        any: [/PRINTFORMW\ 恍惚的%SAVESTR:TARGET%这样喃喃自语着………/],
+      },
+      { src: K3, ref: '261', any: [/CFLAG:201\ =\ 4/] },
+      { src: K3, ref: '262', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '265',
+        any: [
+          /ELSEIF\ CFLAG:201\ <\ 5\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 1\ \&\&\ TALENT:TARGET:314\ !=\ 9/,
+        ],
+      },
+      { src: K3, ref: '268', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
+      {
+        src: K3,
+        ref: '269',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%在冰冷的地板上正坐着。/],
+      },
+      { src: K3, ref: '270', any: [/PRINTFORMW\ 「主人\~…那个…那个…」/] },
+      {
+        src: K3,
+        ref: '271',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的眼神飘忽不定，拼命地想要说出话来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '272',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%…%SELF_CALL\(TARGET\)%想…想要…主人、主人的、大、大鸡巴…请主人赏，赏赐…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '273',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%咕噜地吞了一口口水、眼睛盯着%SAVESTR:PLAYER%的股间。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '274',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%是…没有主人的大鸡巴的话…就无法活下…可怜而淫乱的精灵来的………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '275',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%的双目慢慢地失去了理性的光芒。/],
+      },
+      { src: K3, ref: '276', any: [/PRINTFORMW\ 「请…怜悯…怜悯一下吧\~………」/] },
+      {
+        src: K3,
+        ref: '277',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%一边说着一边土下座，%SAVESTR:TARGET%的屁股正淫乱地左右摇晃着………/,
+        ],
+      },
+      { src: K3, ref: '280', any: [/PRINTFORMW\ 「啊啊嗯\~…主人哈嗯\~…」/] },
+      {
+        src: K3,
+        ref: '281',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%露出了可爱的笑容像你抱了过来。/],
+      },
+      {
+        src: K3,
+        ref: '282',
+        any: [
+          /PRINTFORMW\ 「怎么都…怎么都忍不住呐…请对%SELF_CALL\(TARGET\)%淫靡而下流的身体…赐予调教吧…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '283',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%露出了虽然淫乱却还残留着高贵的样子像你撒起了娇………/,
+        ],
+      },
+      { src: K3, ref: '285', any: [/CFLAG:201\ =\ 5/] },
+      { src: K3, ref: '286', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '289',
+        any: [
+          /ELSEIF\ TALENT:TARGET:314\ ==\ 9\ \&\&\ CFLAG:201\ <\ 6\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 1/,
+        ],
+      },
+      { src: K3, ref: '292', any: [/IF\ CFLAG:370\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '293',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…从以前就开始想了\~…魔王大人的味道闻起来怎么那么好啊\~…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '294',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%魔族的瞳孔湿润了起来、也不隐藏自己在发情的这件事情向你走了过来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '295',
+        any: [
+          /PRINTFORMW\ 「侍奉…请让%SELF_CALL\(TARGET\)%来侍奉吧…%UNICODE\(0x2661\)\ \*1%\ 想要给魔王大人的身体好好地侍奉呢\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '296',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%依偎在你的身上，在你的耳朵，脖子，胸口等地方降下了亲吻之雨。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '297',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…已经忍不住了呀\~…%UNICODE\(0x2661\)\ \*1%\ 大鸡巴、想要大鸡巴\~%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '298',
+        any: [
+          /PRINTFORMW\ 看着完全堕落了的%SAVESTR:TARGET%、你如同鄙视地一般朝她笑了起来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '299',
+        any: [
+          /PRINTFORMW\ 「啊哈嗯\~…请不要用这种眼神看着\~…%SELF_CALL\(TARGET\)%只是…想要大鸡巴而已嘛…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      { src: K3, ref: '300', any: [/CFLAG:201\ =\ 6/] },
+      { src: K3, ref: '301', any: [/RETURN\ 1/] },
+      { src: K3, ref: '303', any: [/ELSEIF\ CFLAG:370\ ==\ 2/] },
+      {
+        src: K3,
+        ref: '304',
+        any: [
+          /PRINTFORMW\ 「最近，给魔王大人侍奉的时候…心里感觉特别地安定呢…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '305',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%魔族的瞳孔湿润了起来、靠向了你。/],
+      },
+      {
+        src: K3,
+        ref: '306',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…不行了…已经离不开魔王大人的身边了…%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '307',
+        any: [
+          /PRINTFORMW\ 轻轻依偎在%NAME:MASTER%的身边后用手掌温柔地抚摸起了%NAME:MASTER%的身体。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '308',
+        any: [
+          /PRINTFORMW\ 「请让我…更多侍奉吧…%UNICODE\(0x2661\)\ \*1%\ 请将…%SELF_CALL\(TARGET\)%弄脏吧…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '309',
+        any: [
+          /PRINTFORMW\ 完全堕落的%SAVESTR:TARGET%嘴边流下了唾液向你撒起了娇………/,
+        ],
+      },
+      { src: K3, ref: '310', any: [/CFLAG:201\ =\ 6/] },
+      { src: K3, ref: '311', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '314',
+        any: [
+          /PRINTFORMW\ 「啊哈呜\~…%UNICODE\(0x2661\)\ \*1%\ 成为魔族原来是这样的感觉啊%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '315',
+        any: [
+          /PRINTFORMW\ 你一来到%SAVESTR:TARGET%的表情就变得H了起来、好像立马就会从嘴边流下口水了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '316',
+        any: [
+          /PRINTFORMW\ 「魔王大人的魔力…渗进了%SELF_CALL\(TARGET\)%的身体里了…啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '317',
+        any: [
+          /PRINTFORMW\ 「啊啊…脑袋里好热…已经不行了…小穴和肛穴都好…都想要被好好地干一番啊%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '318',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%好像现在立马就会开始自慰起来般发情了………/,
+        ],
+      },
+      { src: K3, ref: '319', any: [/IF\ TALENT:TARGET:0\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '320',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%将最后如同没有的自尊心给扔掉了、将两条腿大幅度的敞开了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '321',
+        any: [
+          /PRINTFORMW\ 「魔王大人\~…请将大鸡巴塞进%UNICODE\(0x2661\)\ \*1%\ %SELF_CALL\(TARGET\)%的魔王大人专用处女小穴里吧\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '322',
+        any: [
+          /PRINTFORMW\ 「拜托了啦\~…如果不行的话…就让魔物们或者狗狗们侵犯好了\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '323',
+        any: [
+          /PRINTFORMW\ 看来已经是抑制不住了的样子、是时候好好疼爱疼爱了吧………/,
+        ],
+      },
+      { src: K3, ref: '325', any: [/CFLAG:201\ =\ 6/] },
+      { src: K3, ref: '326', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '330',
+        any: [
+          /ELSEIF\ CFLAG:201\ <\ 7\ \&\&\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:76\ ==\ 0\ \&\&\ TALENT:TARGET:314\ !=\ 9/,
+        ],
+      },
+      { src: K3, ref: '333', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '334',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…我这个%SELF_CALL\(TARGET\)%居然…居然会有这样的感觉什么的………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '335',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%展露出了至今都没有见过的温柔的表情向你看了过来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '336',
+        any: [
+          /PRINTFORMW\ 「魔王大人…%SELF_CALL\(TARGET\)%…想要跟你永远在一起呢\~…如果，可以的话………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '337',
+        any: [
+          /PRINTFORMW\ \ 迅速地向你靠近的%SAVESTR:TARGET%、在你的耳边用精灵语小声地说着什么。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '338',
+        any: [
+          /PRINTFORMW\ \ 貌似包含了什么恋慕的意义在里面，但是因为是精灵语所以细节部分不是很清楚。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '339',
+        any: [
+          /PRINTFORMW\ \ %SAVESTR:TARGET%长长的耳朵全部变红了，轻轻地离开了突然呆住的你的身旁………/,
+        ],
+      },
+      { src: K3, ref: '340', any: [/PRINTFORML/] },
+      {
+        src: K3,
+        ref: '341',
+        any: [
+          /PRINTFORMW\ 「请让%SELF_CALL\(TARGET\)%一直伺候在您的身旁吧………」/,
+        ],
+      },
+      { src: K3, ref: '344', any: [/PRINTFORMW\ 「啊、魔王大人………」/] },
+      {
+        src: K3,
+        ref: '345',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的脸上并没有一丝的恐惧而是温柔地看着你………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '346',
+        any: [/PRINTFORMW\ 「那、那个…我有个…请求来着………」/],
+      },
+      { src: K3, ref: '347', any: [/PRINTFORML/] },
+      {
+        src: K3,
+        ref: '348',
+        any: [/PRINTFORMW\ 「…用亲爱的来称呼您也…没关系吗…？」/],
+      },
+      { src: K3, ref: '350', any: [/CFLAG:201\ =\ 7/] },
+      { src: K3, ref: '351', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '354',
+        any: [
+          /ELSEIF\ TALENT:TARGET:314\ ==\ 9\ \&\&\ CFLAG:201\ <\ 8\ \&\&\ TALENT:TARGET:85\ ==\ 1\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '357', any: [/IF\ CFLAG:370\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '358',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%向你靠近后、用十分自然地动作俯下身亲吻了%NAME:MASTER%的脚趾甲。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '359',
+        any: [
+          /PRINTFORMW\ 那个动作完全没有一丝犹豫。在被%SAVESTR:TARGET%平时都完全想象不出来、居然会做出如此谦卑的动作的你面前，%SAVESTR:TARGET%看着你可爱地笑了起来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '360',
+        any: [
+          /PRINTFORMW\ 「魔王大人…%SELF_CALL\(TARGET\)%…会像你发誓保证永远的忠诚的…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      { src: K3, ref: '361', any: [/PRINTL/] },
+      {
+        src: K3,
+        ref: '362',
+        any: [
+          /PRINTFORMW\ 你稍微想了一下后，温柔地抚摸了%SAVESTR:TARGET%的脸颊作为你的回答。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '363',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…啊啊\~…%SELF_CALL\(TARGET\)%…好幸福啊\~…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '364',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的尾巴摇晃着，身体因为喜悦而颤抖着………/,
+        ],
+      },
+      { src: K3, ref: '365', any: [/CFLAG:201\ =\ 8/] },
+      { src: K3, ref: '366', any: [/RETURN\ 1/] },
+      { src: K3, ref: '368', any: [/ELSEIF\ CFLAG:370\ ==\ 2/] },
+      {
+        src: K3,
+        ref: '369',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%向你靠近后、用十分自然的动作来亲吻%NAME:MASTER%的脚趾甲。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '370',
+        any: [
+          /PRINTFORMW\ 她的动作没有任何的犹豫。在被%SAVESTR:TARGET%平时都完全想象不出来、居然会做出如此谦卑的动作的你面前，%SAVESTR:TARGET%看着你可爱地笑了起来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '371',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的住所、已经…只能是这里了…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '372',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%就像狗一样在你的脚边谄媚着。那个姿态已经是一点高贵的样子都没有了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '373',
+        any: [
+          /PRINTFORMW\ 「啊啊…啊啊…请让%SAVESTR:TARGET%一直在魔王大人的身边吧…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      { src: K3, ref: '374', any: [/CFLAG:201\ =\ 8/] },
+      { src: K3, ref: '375', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '378',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…终于成为了魔族了呐\~\~%UNICODE\(0x2661\)\ \*1%\ 好高兴呢\~\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '379',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%因为太过开心而颤抖着、张开了翅膀甩起了尾巴向你展现着她的身姿。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '380',
+        any: [
+          /PRINTFORMW\ 「想要一直这样下去呢…更多地侍奉您…大人您的孩子…想要…想要的说………%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '381',
+        any: [
+          /PRINTFORMW\ 就像是疼爱系少女的一样露出了羞涩的笑容、作为原勇者的她成为了魔族的新成员，向你撒起了娇………/,
+        ],
+      },
+      { src: K3, ref: '382', any: [/CFLAG:201\ =\ 8/] },
+      { src: K3, ref: '383', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '387',
+        any: [/ELSEIF\ TALENT:TARGET:9\ ==\ 1\ \&\&\ CFLAG:201\ <\ 9/],
+      },
+      {
+        src: K3,
+        ref: '389',
+        any: [
+          /PRINTFORMW\ 「不要…不要\~…请将我从这里放出来吧…父亲大人！！母亲大人！！…啊啊\~！啊\~！啊啊啊啊啊～！！！」」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '390',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%用两手不断地向墙壁敲打着。那双手已经鲜血淋漓了。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '391',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%坏掉的精神已经回不到以前了吧………/],
+      },
+      { src: K3, ref: '392', any: [/CFLAG:201\ =\ 9/] },
+      { src: K3, ref: '393', any: [/RETURN\ 1/] },
+      { src: K3, ref: '397', any: [/ELSEIF\ ASSI\ <\ 0/] },
+      { src: K3, ref: '398', any: [/CALL\ K3_KOJO2/] },
+      { src: K3, ref: '407', any: [/ELSEIF\ NO:ASSI\ ==\ 17/] },
+      { src: K3, ref: '412', any: [/IF\ CFLAG:202\ ==\ 0/] },
+      { src: K3, ref: '414', any: [/IF\ TALENT:TARGET:9\ ==\ 1/] },
+      { src: K3, ref: '415', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '416',
+        any: [/PRINTFORMW\ 『…主人、这个人已经坏掉了哦』/],
+      },
+      { src: K3, ref: '417', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '419',
+        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ CFLAG:201\ >=\ 5/],
+      },
+      {
+        src: K3,
+        ref: '420',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%感到些许奇怪。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '421',
+        any: [
+          /PRINTFORMW\ 「啊啦？那个孩子是………嗯哼哼\~、你也被主人做了各种各样的事情了吧\~…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '422',
+        any: [
+          /PRINTFORMW\ 懒散地床上起来后，%SAVESTR:TARGET%整理着自己凌乱的头发。/,
+        ],
+      },
+      { src: K3, ref: '423', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '424',
+        any: [
+          /PRINTFORMW\ 『哎\~\~、果然是这样吗？…今天呢\~、是跟姐姐一起玩耍的噢，主人这么说的呢♪』/,
+        ],
+      },
+      { src: K3, ref: '425', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '426',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%如同撒娇一般抱住后就这样推到了………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '428',
+        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ CFLAG:201\ >=\ 7/],
+      },
+      {
+        src: K3,
+        ref: '429',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%向这边瞪了过来。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '430',
+        any: [
+          /PRINTFORMW\ 「明明已经有了%SELF_CALL\(TARGET\)%…却还要带那个孩子过来…！」/,
+        ],
+      },
+      { src: K3, ref: '432', any: [/IF\ TALENT:ASSI:85\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '433',
+        any: [
+          /PRINTFORMW\ 如果是以前村女的那一会的话以%SAVESTR:TARGET%的眼力就会晕过去了吧、但是%SAVESTR:ASSI%轻松的招架住了。/,
+        ],
+      },
+      { src: K3, ref: '434', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '435',
+        any: [
+          /PRINTFORMW\ 『哇啊\~好可怕\~、不行的哦\~“原”勇者大人、摆出这么一张因为嫉妒而发狂的表情\~♪』/,
+        ],
+      },
+      { src: K3, ref: '436', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '437',
+        any: [
+          /PRINTFORMW\ 「啊…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%、才、才没有嫉妒什么的呢………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '438',
+        any: [
+          /PRINTFORMW\ 可能是因为在%NAME:MASTER%的面前露出了这样的表情而感到羞耻的%SAVESTR:TARGET%“啪”地用两手遮住了脸。/,
+        ],
+      },
+      { src: K3, ref: '439', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '440',
+        any: [
+          /PRINTFORMW\ 『所以作为同样都喜欢主人的同伴、我们更加地搞好关系吧\~？呐\~？』/,
+        ],
+      },
+      { src: K3, ref: '441', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '442',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%抓住这样的%SAVESTR:TARGET%的间隙将她推到了………/,
+        ],
+      },
+      { src: K3, ref: '445', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '446',
+        any: [
+          /PRINTFORMW\ 『啊哈哈\~…大姐姐嫉妒了\~♪\ 明明不管是不是我的主人，魔王大人也没关系，和谁抱在一起都一样嘛\~♪』/,
+        ],
+      },
+      { src: K3, ref: '447', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '448',
+        any: [
+          /PRINTFORMW\ 「不，不要乱开玩笑…你不知道%SELF_CALL\(TARGET\)%对那位大人有多………啊啊\~、快将手放开」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '449',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%的手抓住强行抱了过来。/,
+        ],
+      },
+      { src: K3, ref: '450', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '451',
+        any: [
+          /PRINTFORMW\ 『但是今天…俺在魔王大人的面前、将大姐姐给抱住了哦…%UNICODE\(0x2661\)\ \*1%』/,
+        ],
+      },
+      { src: K3, ref: '452', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '456',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%就一直瞪着这边。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '457',
+        any: [/PRINTFORMW\ 「将这样的小姑娘带过来…到底想要干嘛呢…！」/],
+      },
+      { src: K3, ref: '458', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '459',
+        any: [
+          /PRINTFORMW\ 『呜哇\~…真是一副了不起的样子呢\~…初次见面，大姐姐、今天是由玛奥来调教的噢………』/,
+        ],
+      },
+      { src: K3, ref: '460', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '461',
+        any: [/PRINTFORMW\ 「什…请…请别在那里胡闹了！！」/],
+      },
+      { src: K3, ref: '462', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '463',
+        any: [/PRINTFORMW\ 『才没有在胡闹哦\~\.\.\.这可是主人的命令来的嘛♪』/],
+      },
+      { src: K3, ref: '464', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '465',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%将因不愿意而撇着嘴的%SAVESTR:TARGET%推到了………/,
+        ],
+      },
+      { src: K3, ref: '467', any: [/CFLAG:202\ =\ 1/] },
+      { src: K3, ref: '468', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '470',
+        any: [/ELSEIF\ CFLAG:202\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
+      },
+      { src: K3, ref: '472', any: [/IF\ TALENT:TARGET:9\ ==\ 1/] },
+      { src: K3, ref: '473', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '474',
+        any: [/PRINTFORMW\ 『已经坏掉了的话…那就弄得更加坏掉也没关系吧★』/],
+      },
+      { src: K3, ref: '475', any: [/RESETCOLOR/] },
+      { src: K3, ref: '477', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '478',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带到这里来后、%SAVESTR:TARGET%不知道为什么摆出了一副伤心的表情。/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '479',
+        any: [/PRINTFORMW\ 「再也不说魔王大人您任性了…哈啊………」/],
+      },
+      { src: K3, ref: '481', any: [/IF\ TALENT:ASSI:85\ ==\ 1/] },
+      { src: K3, ref: '482', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '483',
+        any: [
+          /PRINTFORMW\ 『别摆出这样阴暗的表情嘛…俺只是想要跟勇者大人搞好关系而已嘛\~\~♪』/,
+        ],
+      },
+      { src: K3, ref: '484', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '485',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…不，不行的…%SELF_CALL\(TARGET\)%的身体是…那位大人的…嗯\~」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '486',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的脸颊被抚摸着、不情愿地将身体交给了%SAVESTR:ASSI%。/,
+        ],
+      },
+      { src: K3, ref: '487', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '488',
+        any: [/PRINTFORMW\ 『看吧\~…俺们关系变好的话\~、主人也会高兴的………♪』/],
+      },
+      { src: K3, ref: '489', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '490',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%对%SAVESTR:ASSI%使了一下眼色后，%SAVESTR:ASSI%便将%SAVESTR:TARGET%推倒了………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '492',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…但是…请至少、请至少不要在大人的面前……做这样的事情……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '493',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%只能在%NAME:MASTER%和%SAVESTR:ASSI%的面前微弱地呻吟而已。/,
+        ],
+      },
+      { src: K3, ref: '494', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '495',
+        any: [
+          /PRINTFORMW\ 『（啊啊\~…主人是想要看这个人的这种表情啊\~………♪）』/,
+        ],
+      },
+      { src: K3, ref: '496', any: [/RESETCOLOR/] },
+      { src: K3, ref: '497', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '498',
+        any: [
+          /PRINTFORMW\ 『不是的哦～、这可是主人的命令来的啦…来变得淫乱起来吧\~♪』/,
+        ],
+      },
+      { src: K3, ref: '499', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '500',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%将正微弱抵抗的%SAVESTR:TARGET%给推倒了………/,
+        ],
+      },
+      { src: K3, ref: '503', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '504',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带过来后、%SAVESTR:TARGET%不知道为什么一副很高兴的样子。/,
+        ],
+      },
+      { src: K3, ref: '505', any: [/PRINTFORMW\ 「啊啊\~…快来这边吧…」/] },
+      { src: K3, ref: '507', any: [/IF\ TALENT:ASSI:76\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '508',
+        any: [/PRINTFORMW\ 「在主人的面前…让我们都变得淫乱起来吧…♪」/],
+      },
+      {
+        src: K3,
+        ref: '509',
+        any: [
+          /PRINTFORMW\ 可能在助手的身上感觉到了相同的气息吧，%SAVESTR:TARGET%不像样地将双腿给摊开了。/,
+        ],
+      },
+      { src: K3, ref: '510', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '511',
+        any: [
+          /PRINTFORMW\ 『啊哈哈\~…在主人的面前做个爽、称赞得个爽吧\~………♪』/,
+        ],
+      },
+      { src: K3, ref: '512', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '513',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%和%SAVESTR:ASSI%就像蛇一样互相缠绕在一起了………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '515',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%想要…将%SAVESTR:ASSI%酱的技术铭刻在身体里啊\~…♪」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '516',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%从嘴边露出了淫靡的笑声，将身体摊开了。/,
+        ],
+      },
+      { src: K3, ref: '517', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '518',
+        any: [/PRINTFORMW\ 『啊哈嗯\~…大姐姐\~\~…今天也做个爽吧\~\~………』/],
+      },
+      { src: K3, ref: '519', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '520',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%将%SAVESTR:TARGET%就像宠溺一样抱住她就这样将其推倒了………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '524',
+        any: [
+          /PRINTFORMW\ %NAME:MASTER%将%SAVESTR:ASSI%带到这里来后、%SAVESTR:TARGET%脸上露出了一副貌似放弃了的表情。/,
+        ],
+      },
+      { src: K3, ref: '525', any: [/SETCOLOR\ 255,204,255/] },
+      {
+        src: K3,
+        ref: '526',
+        any: [
+          /PRINTFORMW\ 『呜呼呼\~…不管大姐姐怎么说不要都好，俺都会好好玩弄大姐姐的\~♪』/,
+        ],
+      },
+      { src: K3, ref: '527', any: [/RESETCOLOR/] },
+      {
+        src: K3,
+        ref: '528',
+        any: [
+          /PRINTFORMW\ %SAVESTR:ASSI%一副完全沉浸在调教原勇者的乐趣里的样子。/,
+        ],
+      },
+      { src: K3, ref: '529', any: [/IF\ MARK:2\ ==\ 3/] },
+      { src: K3, ref: '530', any: [/PRINTFORMW\ 「已经…随便你们好了………」/] },
+      {
+        src: K3,
+        ref: '531',
+        any: [
+          /PRINTFORMW\ 看着如同放弃了一般横躺着的%SAVESTR:TARGET%，%SAVESTR:ASSI%的施虐心受到了更强烈的刺激………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '533',
+        any: [/PRINTFORMW\ 「哈呜\~…呃呜\~\~…真，真是屈辱啊………」/],
+      },
+      {
+        src: K3,
+        ref: '534',
+        any: [
+          /PRINTFORMW\ 在这个房间里%SAVESTR:TARGET%不能充分地使用力量，只能在%SAVESTR:ASSI%的身下挣扎而已………/,
+        ],
+      },
+      { src: K3, ref: '537', any: [/RETURN\ 1/] },
+      { src: K3, ref: '595', any: [/CALL\ K3_KOJO2/] },
+      { src: K3, ref: '793', any: [/CFLAG:301\ =\ 1/] },
+      {
+        src: K3,
+        ref: '808',
+        any: [/IF\ TALENT:TARGET:9\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
+      },
+      {
+        src: K3,
+        ref: '810',
+        any: [/PRINTFORMW\ 「呜…呃呜…黑暗的…不要…狭窄的…不要………」/],
+      },
+      {
+        src: K3,
+        ref: '811',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的脸被眼泪和口水弄得一塌糊涂地横躺在那里………/,
+        ],
+      },
+      { src: K3, ref: '812', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '815',
+        any: [
+          /ELSEIF\ MARK:3\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '817', any: [/PRINTFORMW\ 「……真是无法置信」/] },
+      { src: K3, ref: '818', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '821',
+        any: [
+          /ELSEIF\ MARK:2\ <=\ 1\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '823', any: [/PRINTFORMW\ 「终于结束了啊………」/] },
+      { src: K3, ref: '824', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '827',
+        any: [
+          /ELSEIF\ MARK:2\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '829',
+        any: [/PRINTFORMW\ 「到底打算继续到什么时候呐…？」/],
+      },
+      { src: K3, ref: '830', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '833',
+        any: [
+          /ELSEIF\ MARK:2\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '835',
+        any: [/PRINTFORMW\ 「这种程度才不会屈服…来的………」/],
+      },
+      { src: K3, ref: '836', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '839',
+        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ BASE:0\ >=\ 500/],
+      },
+      { src: K3, ref: '842', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
+      {
+        src: K3,
+        ref: '843',
+        any: [
+          /PRINTFORMW\ 「啊\~…%SELF_CALL\(TARGET\)%的身体…比起人类来还更加结实一点的啦………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '844',
+        any: [/PRINTFORMW\ 「所以请更加不留情面地做H的事情吧………」/],
+      },
+      {
+        src: K3,
+        ref: '846',
+        any: [/PRINTFORMW\ 「啊嗯\~…更多…请继续做更多H的事情吧\~………」/],
+      },
+      { src: K3, ref: '848', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '850',
+        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ BASE:0\ <=\ 500/],
+      },
+      { src: K3, ref: '853', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
+      {
+        src: K3,
+        ref: '854',
+        any: [
+          /PRINTFORMW\ 「哈啊…哈啊…太舒服了…脑子里都要融化掉了啊\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '856',
+        any: [
+          /PRINTFORMW\ 「哈啊…哈啊…那里…还有…感觉着呢\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      { src: K3, ref: '858', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '860',
+        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ BASE:0\ >=\ 500/],
+      },
+      { src: K3, ref: '863', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '864',
+        any: [
+          /PRINTFORMW\ 「嗯啊\~…%SELF_CALL\(TARGET\)%…没想到自己的欲望居然会那么深…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '865',
+        any: [/PRINTFORMW\ 「…请更加用力地疼爱%SELF_CALL\(TARGET\)%吧………」/],
+      },
+      {
+        src: K3,
+        ref: '867',
+        any: [
+          /PRINTFORMW\ 「啊啦、更加用力地疼爱%SELF_CALL\(TARGET\)%也没关系的说\.\.\.\.\.\.」/,
+        ],
+      },
+      { src: K3, ref: '869', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '871',
+        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ BASE:0\ <=\ 500/],
+      },
+      { src: K3, ref: '874', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '875',
+        any: [/PRINTFORMW\ 「啊哈啊嗯\~…果然、最喜欢大人您了\~…♪」/],
+      },
+      { src: K3, ref: '877', any: [/PRINTFORMW\ 「十分满足的说…♪」/] },
+      { src: K3, ref: '879', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '604',
+        any: [/IF\ TALENT:TARGET:9\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
+      },
+      {
+        src: K3,
+        ref: '606',
+        any: [
+          /PRINTFORMW\ 「父亲大人…请原谅…父亲大人…%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%已经…啊啊啊啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '607',
+        any: [
+          /PRINTFORMW\ 在精神崩溃了的%SAVESTR:TARGET%的身上已经期待不了像样的反应了吧………/,
+        ],
+      },
+      { src: K3, ref: '608', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '611',
+        any: [/ELSEIF\ MARK:3\ ==\ 3\ \&\&\ FLAG:7\ ==\ 2/],
+      },
+      { src: K3, ref: '614', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '615',
+        any: [
+          /PRINTFORMW\ 「呃…！敢摸一下试试…%SAVESTR:TARGET%会将你的喉咙给咬断的…！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '616',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%用好像随时都会飞扑过来的眼神瞪着这边………/,
+        ],
+      },
+      { src: K3, ref: '619', any: [/PRINTFORMW\ 「你这个人渣！」/] },
+      {
+        src: K3,
+        ref: '620',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%的怒火仿佛能看到地一样熊熊燃烧着………/,
+        ],
+      },
+      { src: K3, ref: '622', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '625',
+        any: [
+          /ELSEIF\ MARK:2\ ==\ 0\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '628', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      { src: K3, ref: '629', any: [/PRINTFORMW\ 「真是肮脏…不要看过来！」/] },
+      {
+        src: K3,
+        ref: '630',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%紧咬着牙，怒视着%SAVESTR:PLAYER%………/,
+        ],
+      },
+      { src: K3, ref: '634', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
+      {
+        src: K3,
+        ref: '635',
+        any: [
+          /PRINTFORMW\ 「能触碰%SELF_CALL\(TARGET\)%的人…也就只有那个人而已！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '636',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%用如同看着污垢之物的眼神看着%SAVESTR:PLAYER%………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '638',
+        any: [
+          /PRINTFORMW\ 「请不要用你那肮脏的手来触碰%SELF_CALL\(TARGET\)%…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '639',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%用鼻子‘哼’地一声，一副不爽的样子将脸撇向一边………/,
+        ],
+      },
+      { src: K3, ref: '642', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '645',
+        any: [
+          /ELSEIF\ MARK:2\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '648', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      { src: K3, ref: '649', any: [/PRINTFORMW\ 「哼、哼嗯…这点小事…！」/] },
+      {
+        src: K3,
+        ref: '650',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%还是一副强硬的样子………/],
+      },
+      { src: K3, ref: '654', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
+      {
+        src: K3,
+        ref: '655',
+        any: [
+          /PRINTFORMW\ 「居然被这种下贱的人给触碰了身体…%SAVESTR:TARGET%真的是对不起那个人啊………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '656',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%一副气愤地样子盯着这边………/],
+      },
+      { src: K3, ref: '658', any: [/PRINTFORMW\ 「被这种下贱的家伙给…」/] },
+      {
+        src: K3,
+        ref: '659',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%阴沉着脸、抚摸自己起了鸡皮疙瘩的皮肤………/,
+        ],
+      },
+      { src: K3, ref: '662', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '665',
+        any: [
+          /ELSEIF\ MARK:2\ ==\ 2\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '668', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '669',
+        any: [/PRINTFORMW\ 「呜……%SELF_CALL\(TARGET\)%才…不会在这种地方……」/],
+      },
+      {
+        src: K3,
+        ref: '670',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%还没有抛弃希望的样子、不过看来差不到要到极限了………/,
+        ],
+      },
+      { src: K3, ref: '674', any: [/IF\ TALENT:TARGET:317\ ==\ 4/] },
+      {
+        src: K3,
+        ref: '675',
+        any: [/PRINTFORMW\ 「啊…啊啊…至少请再温柔一点…吧………」/],
+      },
+      {
+        src: K3,
+        ref: '676',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%一副稍微有点放弃了地样子喃喃自语着………/,
+        ],
+      },
+      { src: K3, ref: '678', any: [/PRINTFORMW\ 「……今……今天也要…」/] },
+      {
+        src: K3,
+        ref: '679',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%一副稍微有点放弃了地样子喃喃自语着………/,
+        ],
+      },
+      { src: K3, ref: '682', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '685',
+        any: [
+          /ELSEIF\ MARK:2\ ==\ 3\ \&\&\ TALENT:TARGET:85\ ==\ 0\ \&\&\ FLAG:7\ ==\ 2\ \&\&\ TALENT:TARGET:76\ ==\ 0/,
+        ],
+      },
+      { src: K3, ref: '688', any: [/IF\ TALENT:TARGET:314\ ==\ 1/] },
+      {
+        src: K3,
+        ref: '689',
+        any: [/PRINTFORMW\ 「如果不做太过分的事情的话…就没关系………」/],
+      },
+      {
+        src: K3,
+        ref: '690',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%一副已经完全放弃了的样子………/],
+      },
+      {
+        src: K3,
+        ref: '694',
+        any: [/IF\ TALENT:TARGET:317\ ==\ 4\ \&\&\ FLAG:81\ >=\ 5000/],
+      },
+      {
+        src: K3,
+        ref: '695',
+        any: [
+          /PRINTFORMW\ 「拜、拜托了…对%SELF_CALL\(TARGET\)%的身体随便做什么都没关系…但是……」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '696',
+        any: [
+          /PRINTFORMW\ 「……至少放过，在那条街…那条街的那个人的孩子的生命…………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '697',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%一副为了故乡的恋人而献上自己身体的虚伪样子、看着用这种理由抱过来的%SAVESTR:TARGET%你感到十分的满意………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '699',
+        any: [
+          /PRINTFORMW\ 「%SAVESTR:TARGET%明白了…随便怎么做都可以了\.\.\.\.」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '700',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%好像下定决心了、坦率地顺从着%SAVESTR:PLAYER%………/,
+        ],
+      },
+      { src: K3, ref: '703', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '705',
+        any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
+      },
+      { src: K3, ref: '708', any: [/IF\ TALENT:TARGET:314\ ==\ 7/] },
+      { src: K3, ref: '710', any: [/IF\ RAND:3\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '711',
+        any: [
+          /PRINTFORMW\ 「啊啊\~主人\~…热得忍不了了\~…请用大鸡鸡…塞满%SAVESTR:TARGET%吧%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '712',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%匍匐在%NAME:MASTER%的脚边着、将自己的脸埋在了股间，自傲的长耳朵被压到扭曲了也不管………/,
+        ],
+      },
+      { src: K3, ref: '713', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '714',
+        any: [
+          /PRINTFORMW\ 「哈啊\~…嗯\~…身体…好热啊\~%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '715',
+        any: [
+          /PRINTFORMW\ 「自慰居然会那么舒服什么的\~…已经…已经…啊啊\~%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '716',
+        any: [
+          /PRINTFORMW\ 「啊嗯\~…主人…敬请欣赏\.\.\.\.淫乱的堕落女精灵的小穴之舞吧…%UNICODE\(0x2661\)\ \*5%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '717',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%擅自开始了自慰…对于这样不懂事的姑娘一定要好好惩罚一下才可以………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '719',
+        any: [
+          /PRINTFORMW\ 「请负起将%SELF_CALL\(TARGET\)%的身体变得如此淫乱的责任吧…哈呜嗯\~…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '720',
+        any: [
+          /PRINTFORMW\ 「啊啊\~…%SELF_CALL\(TARGET\)%的这个胸部也好…屁股也好…那里也好…都是主人的东西来的…%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '721',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%舔着嘴唇、长长的耳朵一抽一抽地靠向了%NAME:MASTER%………/,
+        ],
+      },
+      { src: K3, ref: '726', any: [/IF\ RAND:3\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '727',
+        any: [
+          /PRINTFORMW\ 「啊\~主人\~%UNICODE\(0x2661\)\ \*1%　今天用%SELF_CALL\(TARGET\)%的嘴巴来侍奉也没有关系吧\~%UNICODE\(0x2661\)\ \*3%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '728',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%在%SAVESTR:PLAYER%的耳边撒娇般轻声说着………/,
+        ],
+      },
+      { src: K3, ref: '729', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '730',
+        any: [
+          /PRINTFORMW\ 「主人\~\~…%UNICODE\(0x2661\)\ \*1%　对淫乱而又下流的%SAVESTR:TARGET%…」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '731',
+        any: [/PRINTFORMW\ 「好好地惩罚一下吧\~%UNICODE\(0x2661\)\ \*3%」/],
+      },
+      {
+        src: K3,
+        ref: '732',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%用双手将自己的桃尻掰开，诱惑着%SAVESTR:PLAYER%………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '734',
+        any: [
+          /PRINTFORMW\ 「哈啊…哈啊…快点\~…主人\~…请给予大鸡巴吧\~…%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '735',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的身体哪里都可以…让主人舒服起来的哦\~\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      { src: K3, ref: '738', any: [/RETURN\ 1/] },
+      {
+        src: K3,
+        ref: '740',
+        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1\ \&\&\ FLAG:7\ ==\ 2/],
+      },
+      {
+        src: K3,
+        ref: '743',
+        any: [
+          /IF\ CFLAG:TARGET:230\ >=\ 1\ \&\&\ \(TALENT:TARGET:190\ ==\ 1\ \|\|\ TALENT:TARGET:191\ ==\ 1\)/,
+        ],
+      },
+      { src: K3, ref: '744', any: [/IF\ RAND:3\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '745',
+        any: [
+          /PRINTFORML\ 「嗯哼哼\~…居然长得那么大了呢\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '746',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%很怜爱地、抚摸着因为蠕虫寄生而怀孕膨胀了的肚子………/,
+        ],
+      },
+      { src: K3, ref: '747', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '748',
+        any: [
+          /PRINTFORML\ 「被大人植入在肚子里面的孩子们\~、正在不停地长大着呢\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '749',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%眯着眼睛、怜爱地抚摸着因为寄生虫的卵而膨胀变大的肚子……/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '751',
+        any: [
+          /PRINTFORML\ 「在%SAVESTR:TARGET%的肚子里面的孩子……能快一点出来活动就好了呢\~%UNICODE\(0x2661\)\ \*1%」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '752',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%一副恍惚地表情、抚摸着因为塞满着蠕虫的卵而膨胀起来的肚子……/,
+        ],
+      },
+      { src: K3, ref: '755', any: [/ELSEIF\ TALENT:TARGET:314\ ==\ 1/] },
+      { src: K3, ref: '757', any: [/IF\ RAND:3\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '758',
+        any: [/PRINTFORMW\ 「已经…故乡什么的…已经怎么样都可以了…」/],
+      },
+      {
+        src: K3,
+        ref: '759',
+        any: [/PRINTFORMW\ 「请让%SELF_CALL\(TARGET\)%一直呆在这里吧………」/],
+      },
+      { src: K3, ref: '760', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
+      { src: K3, ref: '761', any: [/PRINTFORMW\ 「啊\~…魔王大人\~♪」/] },
+      {
+        src: K3,
+        ref: '762',
+        any: [/PRINTFORMW\ 「一直、在等待这您的到来呢…撒、请快点来这边吧…」/],
+      },
+      {
+        src: K3,
+        ref: '764',
+        any: [
+          /PRINTFORMW\ 「哈啊\~…为什么…为什么会如此地恋慕身为魔族之王的那个大人呢………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '765',
+        any: [
+          /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%就这样…堕落到地狱也没有关系………」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '766',
+        any: [
+          /PRINTFORMW\ 「………呜啊啊！？刚、刚刚的都听到了吗？请请请、请都忘掉吧！！！」/,
+        ],
+      },
+      { src: K3, ref: '771', any: [/IF\ RAND:3\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '772',
+        any: [/PRINTFORMW\ 「大人\~、今天也要做对吧\~…♪」/],
+      },
+      {
+        src: K3,
+        ref: '773',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%将你的手放在脸颊上，可爱地用脸蹭着你的手心………/,
+        ],
+      },
+      { src: K3, ref: '774', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
+      {
+        src: K3,
+        ref: '775',
+        any: [/PRINTFORMW\ 「大人、等…等您已经等了好久了啊\~…」/],
+      },
+      {
+        src: K3,
+        ref: '776',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%眼睛微微闭着，向你的脸轻轻亲了一下………/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '778',
+        any: [/PRINTFORMW\ 「请温柔一点\.\.\.\.\.\.温柔地做吧\~…」/],
+      },
+      {
+        src: K3,
+        ref: '779',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%用手指玩弄着自己的发鬓，好像很害羞地请求道………/,
+        ],
+      },
+      { src: K3, ref: '782', any: [/RETURN\ 1/] },
       { src: K3, ref: '5805', any: [/IF\ SELECTCOM\ ==\ 0/] },
       { src: K3, ref: '5807', any: [/IF\ CFLAG:301\ ==\ 0/] },
       { src: K3, ref: '5809', any: [/IF\ TALENT:TARGET:136\ ==\ 1/] },
@@ -26092,16 +26016,12 @@ const FILES = [
           /PRINTFORMW\ 「为…为什么、%SELF_CALL\(TARGET\)%要受到这样的……！」/,
         ],
       },
-      { src: K3, ref: '5821', any: [/ELSE/] },
       {
         src: K3,
         ref: '5822',
         any: [/PRINTFORMW\ 「不……不要啊！才…才不要做这种事情！！」/],
       },
-      { src: K3, ref: '5823', any: [/ENDIF/] },
       { src: K3, ref: '5824', any: [/CFLAG:301\ =\ 1/] },
-      { src: K3, ref: '5825', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5827', any: [/ELSE/] },
       {
         src: K3,
         ref: '5829',
@@ -26199,10 +26119,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「快、快离开！这个……呜呜\~……！」/],
       },
       { src: K3, ref: '5855', any: [/CFLAG:301\ =\ 2/] },
-      { src: K3, ref: '5856', any: [/ENDIF/] },
-      { src: K3, ref: '5857', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5858', any: [/ENDIF/] },
-      { src: K3, ref: '5859', any: [/ENDIF/] },
       { src: K3, ref: '5864', any: [/IF\ SELECTCOM\ ==\ 1/] },
       { src: K3, ref: '5866', any: [/IF\ CFLAG:302\ ==\ 0/] },
       { src: K3, ref: '5868', any: [/IF\ TALENT:TARGET:136\ ==\ 1/] },
@@ -26227,16 +26143,12 @@ const FILES = [
         ref: '5875',
         any: [/PRINTFORMW\ 「哈呜啊！不要啊……不要！不要呀啊啊！」/],
       },
-      { src: K3, ref: '5877', any: [/ELSE/] },
       {
         src: K3,
         ref: '5878',
         any: [/PRINTFORMW\ 「啊呜……不、不要…在做什……呜啊啊！不要啊！」/],
       },
-      { src: K3, ref: '5879', any: [/ENDIF/] },
       { src: K3, ref: '5880', any: [/CFLAG:302\ =\ 1/] },
-      { src: K3, ref: '5881', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5883', any: [/ELSE/] },
       {
         src: K3,
         ref: '5885',
@@ -26248,7 +26160,7 @@ const FILES = [
         src: K3,
         ref: '5886',
         any: [
-          /PRINTFORMW\ 「来吧…老公大人\~%UNICODE\(0x2661\)\ \*1%\ 就像平常地一样、这里…啊哈嗯啊\~！真，真熟练呢\~\~\~…%UNICODE\(0x2/,
+          /PRINTFORMW\ 「来吧…老公大人\~%UNICODE\(0x2661\)\ \*1%\ 就像平常地一样、这里…啊哈嗯啊\~！真，真熟练呢\~\~\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5887', any: [/CFLAG:302\ =\ 7/] },
@@ -26317,10 +26229,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「请快住手！不…不要啊……！」/],
       },
       { src: K3, ref: '5907', any: [/CFLAG:302\ =\ 2/] },
-      { src: K3, ref: '5908', any: [/ENDIF/] },
-      { src: K3, ref: '5909', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5910', any: [/ENDIF/] },
-      { src: K3, ref: '5911', any: [/ENDIF/] },
       { src: K3, ref: '5917', any: [/IF\ SELECTCOM\ ==\ 5/] },
       { src: K3, ref: '5919', any: [/IF\ CFLAG:306\ ==\ 0/] },
       { src: K3, ref: '5921', any: [/IF\ TALENT:130\ ==\ 1/] },
@@ -26329,7 +26237,7 @@ const FILES = [
         src: K3,
         ref: '5924',
         any: [
-          /PRINTFORMW\ 「啊啊\~…对狗狗的味道、对狗狗的舌头有反应了……%SELF_CALL\(TARGET\)%的乳房…母狗的奶要渗出来了啊%UNICODE\(0x2/,
+          /PRINTFORMW\ 「啊啊\~…对狗狗的味道、对狗狗的舌头有反应了……%SELF_CALL\(TARGET\)%的乳房…母狗的奶要渗出来了啊%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5926', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -26337,10 +26245,9 @@ const FILES = [
         src: K3,
         ref: '5927',
         any: [
-          /PRINTFORMW\ 「明明是野狗作对象来的……淫乱的%SELF_CALL\(TARGET\)%的胸部、居然会溢出那么多的奶出来…%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「明明是野狗作对象来的……淫乱的%SELF_CALL\(TARGET\)%的胸部、居然会溢出那么多的奶出来…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '5929', any: [/ELSE/] },
       {
         src: K3,
         ref: '5930',
@@ -26348,7 +26255,6 @@ const FILES = [
           /PRINTFORMW\ 「不、不要…这样的不要啊……啊啊……明明讨厌来着、胸部却……」/,
         ],
       },
-      { src: K3, ref: '5931', any: [/ENDIF/] },
       { src: K3, ref: '5933', any: [/ELSEIF\ TALENT:TARGET:136\ ==\ 1/] },
       {
         src: K3,
@@ -26365,28 +26271,24 @@ const FILES = [
           /PRINTFORMW\ 「啊嗯\~、明明是野狗来的…明明是野狗来的\~、身体却有反应了\~…」/,
         ],
       },
-      { src: K3, ref: '5939', any: [/ELSE/] },
       {
         src: K3,
         ref: '5940',
         any: [/PRINTFORMW\ 「不要…！不要、在舔哪里呢……！」/],
       },
-      { src: K3, ref: '5941', any: [/ENDIF/] },
       { src: K3, ref: '5942', any: [/CFLAG:TARGET:306\ =\ 1/] },
-      { src: K3, ref: '5943', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5945', any: [/ELSE/] },
       {
         src: K3,
         ref: '5947',
         any: [
-          /IF\ TALENT:TARGET:136\ ==\ 1\ \&\&\ CFLAG:601\ ==\ 900\ \&\&\ TALENT:130\ ==\ 1\ \&\&\ \(CFLAG:306\ </,
+          /IF\ TALENT:TARGET:136\ ==\ 1\ \&\&\ CFLAG:601\ ==\ 900\ \&\&\ TALENT:130\ ==\ 1\ \&\&\ \(CFLAG:306\ <=\ 7\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
         src: K3,
         ref: '5948',
         any: [
-          /PRINTFORMW\ 「啊哈啊\~！老，老公大人真是的%UNICODE\(0x2661\)\ \*1%\ 这样舔来舔去的话、乳房…乳房要\~%UNICODE\(0x2661\)\ /,
+          /PRINTFORMW\ 「啊哈啊\~！老，老公大人真是的%UNICODE\(0x2661\)\ \*1%\ 这样舔来舔去的话、乳房…乳房要\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5949', any: [/CFLAG:306\ =\ 8/] },
@@ -26394,14 +26296,14 @@ const FILES = [
         src: K3,
         ref: '5951',
         any: [
-          /ELSEIF\ TALENT:TARGET:136\ ==\ 1\ \&\&\ CFLAG:601\ ==\ 900\ \&\&\ \(CFLAG:306\ <=\ 6\ \|\|\ FLAG:7\ =/,
+          /ELSEIF\ TALENT:TARGET:136\ ==\ 1\ \&\&\ CFLAG:601\ ==\ 900\ \&\&\ \(CFLAG:306\ <=\ 6\ \|\|\ FLAG:7\ ==\ 2\)/,
         ],
       },
       {
         src: K3,
         ref: '5952',
         any: [
-          /PRINTFORMW\ 「啊啊\~…好温柔啊\~好温柔啊\~、老公大人%UNICODE\(0x2661\)\ \*1%\ 更加地、用力地疼爱%SELF_CALL\(TARGET\)%/,
+          /PRINTFORMW\ 「啊啊\~…好温柔啊\~好温柔啊\~、老公大人%UNICODE\(0x2661\)\ \*1%\ 更加地、用力地疼爱%SELF_CALL\(TARGET\)%，也可以的哦…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '5953', any: [/CFLAG:306\ =\ 7/] },
@@ -26464,10 +26366,6 @@ const FILES = [
       },
       { src: K3, ref: '5972', any: [/PRINTFORMW\ 「真、真是好恶心啊……！」/] },
       { src: K3, ref: '5973', any: [/CFLAG:306\ =\ 2/] },
-      { src: K3, ref: '5974', any: [/ENDIF/] },
-      { src: K3, ref: '5975', any: [/RETURN\ 0/] },
-      { src: K3, ref: '5976', any: [/ENDIF/] },
-      { src: K3, ref: '5977', any: [/ENDIF/] },
       { src: K3, ref: '5983', any: [/IF\ SELECTCOM\ ==\ 6/] },
       { src: K3, ref: '5985', any: [/IF\ CFLAG:307\ ==\ 0\ \&\&\ TFLAG:13/] },
       {
@@ -26510,7 +26408,6 @@ const FILES = [
           /PRINTFORMW\ 「吻被、野狗给夺走了…而且、还是第一次…哈啊啊\~…要兴奋起来了啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '5998', any: [/ELSE/] },
       {
         src: K3,
         ref: '5999',
@@ -26518,16 +26415,14 @@ const FILES = [
           /PRINTFORMW\ 「不、不要……！　呜呜\~…怎么会……第一次…居然是，这样的野狗做对象什么的……」/,
         ],
       },
-      { src: K3, ref: '6000', any: [/ENDIF/] },
       { src: K3, ref: '6001', any: [/CFLAG:307\ =\ 1/] },
-      { src: K3, ref: '6002', any: [/RETURN\ 0/] },
       { src: K3, ref: '6004', any: [/ELSEIF\ CFLAG:307\ ==\ 0/] },
       { src: K3, ref: '6006', any: [/IF\ TALENT:TARGET:136\ ==\ 1/] },
       {
         src: K3,
         ref: '6008',
         any: [
-          /PRINTFORMW\ 「和野狗亲吻什么的、心脏还会小鹿乱撞什么的……唔哼哼\~、%SAVESTR:TARGET%身心都变成雌犬了呢\~%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「和野狗亲吻什么的、心脏还会小鹿乱撞什么的……唔哼哼\~、%SAVESTR:TARGET%身心都变成雌犬了呢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '6010', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
@@ -26538,16 +26433,12 @@ const FILES = [
           /PRINTFORMW\ 「被野狗给、将嘴唇给夺走什么的……哈啊\~…兴奋地好像身体都要燃起来了呀\~」/,
         ],
       },
-      { src: K3, ref: '6014', any: [/ELSE/] },
       {
         src: K3,
         ref: '6016',
         any: [/PRINTFORMW\ 「怎么能……和野狗亲吻什么的……」/],
       },
-      { src: K3, ref: '6017', any: [/ENDIF/] },
       { src: K3, ref: '6018', any: [/CFLAG:307\ =\ 1/] },
-      { src: K3, ref: '6019', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6021', any: [/ELSE/] },
       {
         src: K3,
         ref: '6023',
@@ -26561,7 +26452,6 @@ const FILES = [
         ref: '6027',
         any: [/PRINTFORML\ 「哈啊\~…真是好棒啊\~%UNICODE\(0x2661\)\ \*1%」/],
       },
-      { src: K3, ref: '6028', any: [/ELSE/] },
       {
         src: K3,
         ref: '6029',
@@ -26569,13 +26459,10 @@ const FILES = [
           /PRINTFORML\ 「嗯\~…好像要融化掉了一样啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '6030', any: [/ENDIF/] },
       { src: K3, ref: '6031', any: [/PRINTFORM\ %SAVESTR:TARGET%/] },
       { src: K3, ref: '6032', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '6033', any: [/PRINT\ 一脸陶醉的表情/] },
-      { src: K3, ref: '6034', any: [/ELSE/] },
       { src: K3, ref: '6035', any: [/PRINT\ 专心地/] },
-      { src: K3, ref: '6036', any: [/ENDIF/] },
       { src: K3, ref: '6037', any: [/PRINTW\ 和野狗用舌头缠绕在一起了。/] },
       { src: K3, ref: '6038', any: [/CFLAG:307\ =\ 6/] },
       {
@@ -26600,13 +26487,11 @@ const FILES = [
       },
       { src: K3, ref: '6047', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '6048', any: [/PRINTFORMW\ 「为什么啊……魔王大人……」/] },
-      { src: K3, ref: '6049', any: [/ELSE/] },
       {
         src: K3,
         ref: '6050',
         any: [/PRINTFORMW\ 「这是在测试%SAVESTR:TARGET%的爱意吗……魔王大人……」/],
       },
-      { src: K3, ref: '6051', any: [/ENDIF/] },
       { src: K3, ref: '6052', any: [/CFLAG:307\ =\ 4/] },
       {
         src: K3,
@@ -26617,13 +26502,11 @@ const FILES = [
       },
       { src: K3, ref: '6056', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '6057', any: [/PRINTFORMW\ 「和野狗亲吻什么的……」/] },
-      { src: K3, ref: '6058', any: [/ELSE/] },
       {
         src: K3,
         ref: '6059',
         any: [/PRINTFORMW\ 「%SAVESTR:TARGET%明白了…会和狗亲吻的……」/],
       },
-      { src: K3, ref: '6060', any: [/ENDIF/] },
       { src: K3, ref: '6061', any: [/CFLAG:307\ =\ 3/] },
       {
         src: K3,
@@ -26636,10 +26519,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「好臭啊…啊啊\~、这样的……」/],
       },
       { src: K3, ref: '6066', any: [/CFLAG:307\ =\ 2/] },
-      { src: K3, ref: '6067', any: [/ENDIF/] },
-      { src: K3, ref: '6068', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6069', any: [/ENDIF/] },
-      { src: K3, ref: '6070', any: [/ENDIF/] },
       { src: K3, ref: '6076', any: [/IF\ SELECTCOM\ ==\ 9/] },
       { src: K3, ref: '6078', any: [/IF\ CFLAG:310\ ==\ 0/] },
       { src: K3, ref: '6080', any: [/IF\ TALENT:TARGET:136\ ==\ 1/] },
@@ -26660,16 +26539,12 @@ const FILES = [
       },
       { src: K3, ref: '6088', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
       { src: K3, ref: '6090', any: [/PRINTFORMW\ 「好、好羞耻啊……」/] },
-      { src: K3, ref: '6092', any: [/ELSE/] },
       {
         src: K3,
         ref: '6094',
         any: [/PRINTFORMW\ 「不要啊……请原、请原谅%SAVESTR:TARGET%吧……」/],
       },
-      { src: K3, ref: '6095', any: [/ENDIF/] },
       { src: K3, ref: '6096', any: [/CFLAG:TARGET:310\ =\ 1/] },
-      { src: K3, ref: '6097', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6099', any: [/ELSE/] },
       {
         src: K3,
         ref: '6101',
@@ -26736,10 +26611,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哼呜\~…为什么要做这样的事情啊……」/],
       },
       { src: K3, ref: '6126', any: [/CFLAG:310\ =\ 2/] },
-      { src: K3, ref: '6127', any: [/ENDIF/] },
-      { src: K3, ref: '6128', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6129', any: [/ENDIF/] },
-      { src: K3, ref: '6130', any: [/ENDIF/] },
       { src: K3, ref: '6135', any: [/IF\ SELECTCOM\ ==\ 21/] },
       { src: K3, ref: '6137', any: [/IF\ CFLAG:TARGET:322\ ==\ 0/] },
       { src: K3, ref: '6139', any: [/IF\ TALENT:0\ ==\ 1/] },
@@ -26748,7 +26619,7 @@ const FILES = [
         src: K3,
         ref: '6145',
         any: [
-          /PRINTFORML\ 「好高兴啊\~%UNICODE\(0x2661\)\ \*1%\ 将第一次先给犬大人什么的\~……请、请粗鲁地侵犯%SELF_CALL\(TARGET\)%/,
+          /PRINTFORML\ 「好高兴啊\~%UNICODE\(0x2661\)\ \*1%\ 将第一次先给犬大人什么的\~……请、请粗鲁地侵犯%SELF_CALL\(TARGET\)%这只雌犬吧\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -26763,7 +26634,7 @@ const FILES = [
         src: K3,
         ref: '6150',
         any: [
-          /PRINTFORMW\ 「初次的对象是野狗什么的\~……对呢、作为献上像%SAVESTR:TARGET%这样的淫乱处女的对象还真是不错呢\~%UNICODE\(0x26/,
+          /PRINTFORMW\ 「初次的对象是野狗什么的\~……对呢、作为献上像%SAVESTR:TARGET%这样的淫乱处女的对象还真是不错呢\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '6152', any: [/ELSEIF\ TALENT:85\ ==\ 1/] },
@@ -26774,10 +26645,7 @@ const FILES = [
           /PRINTFORMW\ 「魔王大人……希望这样做的话，那%SAVESTR:TARGET%就接受其命运……」/,
         ],
       },
-      { src: K3, ref: '6156', any: [/ELSE/] },
       { src: K3, ref: '6158', any: [/PRINTFORMW\ 「不要啊啊\~！！」/] },
-      { src: K3, ref: '6159', any: [/ENDIF/] },
-      { src: K3, ref: '6161', any: [/ELSE/] },
       { src: K3, ref: '6163', any: [/IF\ TALENT:136\ ==\ 1/] },
       {
         src: K3,
@@ -26800,13 +26668,8 @@ const FILES = [
         ref: '6175',
         any: [/PRINTFORMW\ 「咕…魔王大人、请再考虑一下……」/],
       },
-      { src: K3, ref: '6177', any: [/ELSE/] },
       { src: K3, ref: '6179', any: [/PRINTFORMW\ 「和狗什么的…不要啊！！」/] },
-      { src: K3, ref: '6180', any: [/ENDIF/] },
-      { src: K3, ref: '6181', any: [/ENDIF/] },
       { src: K3, ref: '6182', any: [/CFLAG:322\ =\ 1/] },
-      { src: K3, ref: '6183', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6185', any: [/ELSE/] },
       {
         src: K3,
         ref: '6187',
@@ -26819,14 +26682,14 @@ const FILES = [
         src: K3,
         ref: '6190',
         any: [
-          /PRINTFORML\ 「请看吧%UNICODE\(0x2661\)\ \*1%\ 狗肉棒插进了%SELF_CALL\(TARGET\)%的小穴里……%UNICODE\(0x26/,
+          /PRINTFORML\ 「请看吧%UNICODE\(0x2661\)\ \*1%\ 狗肉棒插进了%SELF_CALL\(TARGET\)%的小穴里……%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
         src: K3,
         ref: '6191',
         any: [
-          /PRINTFORML\ 「狗肉棒%UNICODE\(0x2661\)\ \*1%\ 深深地插进来了%UNICODE\(0x2661\)\ \*2%\ 真正的交尾啊%UNICODE\(0/,
+          /PRINTFORML\ 「狗肉棒%UNICODE\(0x2661\)\ \*1%\ 深深地插进来了%UNICODE\(0x2661\)\ \*2%\ 真正的交尾啊%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -26878,12 +26741,11 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%将作为人类的尊严完全丢掉了，作为一头野兽享受着被野狗侵犯所带来的快乐。/,
         ],
       },
-      { src: K3, ref: '6201', any: [/ELSE/] },
       {
         src: K3,
         ref: '6202',
         any: [
-          /PRINTFORML\ 「请塞进来吧%UNICODE\(0x2661\)\ \*1%\ 塞进%SAVESTR:TARGET%这个狗狗大人专用的肉便器里吧\~%UNICODE\(/,
+          /PRINTFORML\ 「请塞进来吧%UNICODE\(0x2661\)\ \*1%\ 塞进%SAVESTR:TARGET%这个狗狗大人专用的肉便器里吧\~%UNICODE\(0x2661\)\ \*1%\ 」/,
         ],
       },
       {
@@ -26893,7 +26755,6 @@ const FILES = [
           /PRINTFORMW\ 如同邀请野狗一样将屁股生出来、让野狗看见那已经濡湿了的蜜穴，%SAVESTR:TARGET%露出了妖艳的笑容。/,
         ],
       },
-      { src: K3, ref: '6204', any: [/ENDIF/] },
       { src: K3, ref: '6205', any: [/CFLAG:322\ =\ 7/] },
       {
         src: K3,
@@ -26925,13 +26786,11 @@ const FILES = [
           /PRINTFORMW\ 「魔王大人…%SAVESTR:TARGET%会一生都努力侍奉您的、所以……请大发慈悲吧」/,
         ],
       },
-      { src: K3, ref: '6216', any: [/ELSE/] },
       {
         src: K3,
         ref: '6217',
         any: [/PRINTFORMW\ 「请…请不要看着%SAVESTR:TARGET%的这种样子……」/],
       },
-      { src: K3, ref: '6218', any: [/ENDIF/] },
       { src: K3, ref: '6219', any: [/CFLAG:322\ =\ 5/] },
       {
         src: K3,
@@ -26968,10 +26827,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '6234', any: [/CFLAG:322\ =\ 2/] },
-      { src: K3, ref: '6235', any: [/ENDIF/] },
-      { src: K3, ref: '6236', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6237', any: [/ENDIF/] },
-      { src: K3, ref: '6238', any: [/ENDIF/] },
       { src: K3, ref: '6243', any: [/IF\ SELECTCOM\ ==\ 27/] },
       { src: K3, ref: '6245', any: [/IF\ CFLAG:TARGET:328\ ==\ 0/] },
       { src: K3, ref: '6247', any: [/IF\ TALENT:TARGET:136\ ==\ 1/] },
@@ -26999,16 +26854,12 @@ const FILES = [
         ref: '6258',
         any: [/PRINTFORMW\ 「这种肮脏的行为、还是第一次♪」/],
       },
-      { src: K3, ref: '6260', any: [/ELSE/] },
       {
         src: K3,
         ref: '6262',
         any: [/PRINTFORMW\ 「这种肮脏的行为、我不想干啊……」/],
       },
-      { src: K3, ref: '6263', any: [/ENDIF/] },
       { src: K3, ref: '6264', any: [/CFLAG:TARGET:328\ =\ 1/] },
-      { src: K3, ref: '6265', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6267', any: [/ELSE/] },
       {
         src: K3,
         ref: '6269',
@@ -27035,7 +26886,7 @@ const FILES = [
         src: K3,
         ref: '6273',
         any: [
-          /PRINTFORML\ 「%SELF_CALL\(TARGET\)%…有感觉了%UNICODE\(0x2661\)\ \*1%\ 请欣赏因为不净之穴在含着狗肉棒而有感觉的%SE/,
+          /PRINTFORML\ 「%SELF_CALL\(TARGET\)%…有感觉了%UNICODE\(0x2661\)\ \*1%\ 请欣赏因为不净之穴在含着狗肉棒而有感觉的%SELF_CALL\(TARGET\)%吧%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -27063,7 +26914,6 @@ const FILES = [
         ref: '6278',
         any: [/PRINTFORMW\ 到了这种程度的话，%SAVESTR:TARGET%已经变不回来了吧/],
       },
-      { src: K3, ref: '6279', any: [/ELSE/] },
       {
         src: K3,
         ref: '6280',
@@ -27081,7 +26931,6 @@ const FILES = [
         ref: '6282',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%向野兽献媚的姿态简直连畜生都不如/],
       },
-      { src: K3, ref: '6283', any: [/ENDIF/] },
       { src: K3, ref: '6284', any: [/CFLAG:328\ =\ 7/] },
       {
         src: K3,
@@ -27142,13 +26991,7 @@ const FILES = [
       },
       { src: K3, ref: '6308', any: [/PRINTFORMW\ 「好肮脏啊…」/] },
       { src: K3, ref: '6309', any: [/CFLAG:328\ =\ 2/] },
-      { src: K3, ref: '6310', any: [/ENDIF/] },
-      { src: K3, ref: '6311', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6312', any: [/ENDIF/] },
-      { src: K3, ref: '6313', any: [/ENDIF/] },
       { src: K3, ref: '6666', any: [/IF\ SELECTCOM\ ==\ 56/] },
-      { src: K3, ref: '6668', any: [/IF\ CFLAG:357\ ==\ 0/] },
-      { src: K3, ref: '6669', any: [/IF\ TEQUIP:53/] },
       { src: K3, ref: '6671', any: [/LOCAL\ =\ TALENT:320/] },
       { src: K3, ref: '6675-6676', any: [/LOCAL:3\ =\ LOCAL\ %\ 1000/] },
       { src: K3, ref: '6678-6679', any: [/LOCAL:4\ =\ LOCAL\ %\ 10000/] },
@@ -27161,6 +27004,8 @@ const FILES = [
         ref: '6693',
         any: [/LOCAL:9\ =\ LOCAL:5\ \+\ LOCAL:6\ \+\ LOCAL:7\ \+\ LOCAL:8/],
       },
+      { src: K3, ref: '6668', any: [/IF\ CFLAG:357\ ==\ 0/] },
+      { src: K3, ref: '6669', any: [/IF\ TEQUIP:53/] },
       {
         src: K3,
         ref: '6696',
@@ -27233,7 +27078,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '6713', any: [/PRINTFORMW\ 「这是你的……新爸爸哦♪」/] },
-      { src: K3, ref: '6714', any: [/ENDIF/] },
       { src: K3, ref: '6716', any: [/IF\ LOCAL:9\ >\ 0/] },
       { src: K3, ref: '6717', any: [/PRINTFORM\ 「%SELF_CALL\(TARGET\)%是有/] },
       {
@@ -27286,9 +27130,7 @@ const FILES = [
       { src: K3, ref: '6745', any: [/PRINT\ 妹妹/] },
       { src: K3, ref: '6746', any: [/ELSEIF\ LOCAL:8/] },
       { src: K3, ref: '6747', any: [/PRINT\ 弟弟/] },
-      { src: K3, ref: '6748', any: [/ELSE/] },
       { src: K3, ref: '6749', any: [/PRINT\ 兄弟姐妹/] },
-      { src: K3, ref: '6750', any: [/ENDIF/] },
       { src: K3, ref: '6751', any: [/PRINTFORMW\ 的♪」/] },
       { src: K3, ref: '6753', any: [/IF\ LOCAL:5\ \&\&\ LOCAL:6/] },
       {
@@ -27335,7 +27177,6 @@ const FILES = [
           /PRINTFORMW\ 「请欣赏血脉相连的妹妹和野兽性交的身姿吧、哥哥看着来手淫吧♪」/,
         ],
       },
-      { src: K3, ref: '6762', any: [/ENDIF/] },
       { src: K3, ref: '6764', any: [/IF\ LOCAL:7\ \&\&\ LOCAL:8/] },
       {
         src: K3,
@@ -27377,8 +27218,6 @@ const FILES = [
           /PRINTFORMW\ 「我是个变态的姐姐真对不起♪　看着女人作为雌性的身姿、手淫一下可爱的包茎肉棒吧♪」/,
         ],
       },
-      { src: K3, ref: '6773', any: [/ENDIF/] },
-      { src: K3, ref: '6775', any: [/ENDIF/] },
       { src: K3, ref: '6777', any: [/ELSEIF\ TALENT:TARGET:136\ ==\ 1/] },
       {
         src: K3,
@@ -27452,7 +27291,6 @@ const FILES = [
         ref: '6792',
         any: [/PRINTFORMW\ 「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」/],
       },
-      { src: K3, ref: '6793', any: [/ENDIF/] },
       { src: K3, ref: '6795', any: [/IF\ LOCAL:9\ >\ 0/] },
       { src: K3, ref: '6796', any: [/PRINTFORM\ 「%SELF_CALL\(TARGET\)%是有/] },
       {
@@ -27505,9 +27343,7 @@ const FILES = [
       { src: K3, ref: '6824', any: [/PRINT\ 妹妹/] },
       { src: K3, ref: '6825', any: [/ELSEIF\ LOCAL:8/] },
       { src: K3, ref: '6826', any: [/PRINT\ 弟弟/] },
-      { src: K3, ref: '6827', any: [/ELSE/] },
       { src: K3, ref: '6828', any: [/PRINT\ 兄弟姐妹/] },
-      { src: K3, ref: '6829', any: [/ENDIF/] },
       { src: K3, ref: '6830', any: [/PRINTFORMW\ 的♪」/] },
       { src: K3, ref: '6832', any: [/IF\ LOCAL:5\ \&\&\ LOCAL:6/] },
       {
@@ -27554,7 +27390,6 @@ const FILES = [
           /PRINTFORMW\ 「请欣赏血脉相连的妹妹和野兽性交的身姿吧、哥哥看着来手淫吧♪」/,
         ],
       },
-      { src: K3, ref: '6841', any: [/ENDIF/] },
       { src: K3, ref: '6843', any: [/IF\ LOCAL:7\ \&\&\ LOCAL:8/] },
       {
         src: K3,
@@ -27596,8 +27431,6 @@ const FILES = [
           /PRINTFORMW\ 「我是个变态的姐姐真对不起♪　看着女人作为雌性的身姿、手淫一下可爱的包茎肉棒吧♪」/,
         ],
       },
-      { src: K3, ref: '6852', any: [/ENDIF/] },
-      { src: K3, ref: '6854', any: [/ENDIF/] },
       { src: K3, ref: '6856', any: [/ELSEIF\ TALENT:TARGET:76\ ==\ 1/] },
       {
         src: K3,
@@ -27634,7 +27467,6 @@ const FILES = [
         ref: '6864',
         any: [/PRINTFORMW\ 「虽然很不习惯、请您一边欣赏一边手淫♪」/],
       },
-      { src: K3, ref: '6866', any: [/ELSE/] },
       {
         src: K3,
         ref: '6867',
@@ -27650,11 +27482,7 @@ const FILES = [
         ],
       },
       { src: K3, ref: '6869', any: [/PRINTFORMW\ 「饶了我吧……饶了我吧……」/] },
-      { src: K3, ref: '6870', any: [/ENDIF/] },
-      { src: K3, ref: '6871', any: [/ENDIF/] },
       { src: K3, ref: '6872', any: [/CFLAG:357\ =\ 1/] },
-      { src: K3, ref: '6873', any: [/RETURN\ 0/] },
-      { src: K3, ref: '6875', any: [/ELSE/] },
       { src: K3, ref: '6876', any: [/IF\ TEQUIP:53/] },
       {
         src: K3,
@@ -27748,7 +27576,6 @@ const FILES = [
           /PRINTFORMW\ 「为了制造出你的新的弟弟妹妹、我会和新的爸爸一起努力造孩子的♪」/,
         ],
       },
-      { src: K3, ref: '6897', any: [/ENDIF/] },
       { src: K3, ref: '6899', any: [/IF\ LOCAL:9\ >\ 0/] },
       { src: K3, ref: '6900', any: [/PRINTFORM\ 「%SELF_CALL\(TARGET\)%是有/] },
       {
@@ -27801,9 +27628,7 @@ const FILES = [
       { src: K3, ref: '6928', any: [/PRINT\ 妹妹/] },
       { src: K3, ref: '6929', any: [/ELSEIF\ LOCAL:8/] },
       { src: K3, ref: '6930', any: [/PRINT\ 弟弟/] },
-      { src: K3, ref: '6931', any: [/ELSE/] },
       { src: K3, ref: '6932', any: [/PRINT\ 兄弟姐妹/] },
-      { src: K3, ref: '6933', any: [/ENDIF/] },
       { src: K3, ref: '6934', any: [/PRINTFORMW\ 的♪」/] },
       { src: K3, ref: '6936', any: [/IF\ LOCAL:5\ \&\&\ LOCAL:6/] },
       {
@@ -27850,7 +27675,6 @@ const FILES = [
           /PRINTFORMW\ 「请欣赏血脉相连的妹妹像野兽性交的身姿吧、如果可以的话就送来断绝关系书信吧♪」/,
         ],
       },
-      { src: K3, ref: '6945', any: [/ENDIF/] },
       { src: K3, ref: '6947', any: [/IF\ LOCAL:7\ \&\&\ LOCAL:8/] },
       {
         src: K3,
@@ -27896,8 +27720,6 @@ const FILES = [
           /PRINTFORMW\ 「我是个变态的姐姐真对不起♪　看着女人作为雌性的身姿、手淫一下可爱的包茎肉棒吧♪」/,
         ],
       },
-      { src: K3, ref: '6956', any: [/ENDIF/] },
-      { src: K3, ref: '6958', any: [/ENDIF/] },
       { src: K3, ref: '6960', any: [/CFLAG:357\ =\ 6/] },
       {
         src: K3,
@@ -27978,7 +27800,6 @@ const FILES = [
         ref: '6978',
         any: [/PRINTFORMW\ 「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」/],
       },
-      { src: K3, ref: '6979', any: [/ENDIF/] },
       { src: K3, ref: '6981', any: [/IF\ LOCAL:9\ >\ 0/] },
       { src: K3, ref: '6982', any: [/PRINTFORM\ 「%SELF_CALL\(TARGET\)%是有/] },
       {
@@ -28031,9 +27852,7 @@ const FILES = [
       { src: K3, ref: '7010', any: [/PRINT\ 妹妹/] },
       { src: K3, ref: '7011', any: [/ELSEIF\ LOCAL:8/] },
       { src: K3, ref: '7012', any: [/PRINT\ 弟弟/] },
-      { src: K3, ref: '7013', any: [/ELSE/] },
       { src: K3, ref: '7014', any: [/PRINT\ 兄弟姐妹/] },
-      { src: K3, ref: '7015', any: [/ENDIF/] },
       { src: K3, ref: '7016', any: [/PRINTFORMW\ 的♪」/] },
       { src: K3, ref: '7018', any: [/IF\ LOCAL:5\ \&\&\ LOCAL:6/] },
       {
@@ -28080,7 +27899,6 @@ const FILES = [
           /PRINTFORMW\ 「请欣赏血脉相连的妹妹像野兽性交的身姿吧、如果可以的话就送来断绝关系书信吧♪」/,
         ],
       },
-      { src: K3, ref: '7027', any: [/ENDIF/] },
       { src: K3, ref: '7029', any: [/IF\ LOCAL:7\ \&\&\ LOCAL:8/] },
       {
         src: K3,
@@ -28126,8 +27944,6 @@ const FILES = [
           /PRINTFORMW\ 「我是个变态的姐姐真对不起♪　看着女人作为雌性的身姿、手淫一下可爱的包茎肉棒吧♪」/,
         ],
       },
-      { src: K3, ref: '7038', any: [/ENDIF/] },
-      { src: K3, ref: '7040', any: [/ENDIF/] },
       { src: K3, ref: '7042', any: [/CFLAG:357\ =\ 5/] },
       {
         src: K3,
@@ -28200,19 +28016,219 @@ const FILES = [
       },
       { src: K3, ref: '7059', any: [/PRINTFORMW\ 「饶了我吧……饶了我吧……」/] },
       { src: K3, ref: '7060', any: [/CFLAG:357\ =\ 2/] },
-      { src: K3, ref: '7061', any: [/ENDIF/] },
-      { src: K3, ref: '7062', any: [/ENDIF/] },
-      { src: K3, ref: '7063', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7064', any: [/ENDIF/] },
-      { src: K3, ref: '7065', any: [/ENDIF/] },
-      { src: K3, ref: '7066', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7078', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7081', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7084', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7087', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7090', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7093', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7096', any: [/RETURN\ 0/] },
+      { src: K3, ref: '8449', any: [/IF\ SELECTCOM\ ==\ 55/] },
+      { src: K3, ref: '8451', any: [/IF\ BASE:1\ <=\ 0/] },
+      {
+        src: K3,
+        ref: '8452',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%连站起来的力气都没有的样子……/],
+      },
+      {
+        src: K3,
+        ref: '8454',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%被角斗场的热气和被接下来要战斗的对手凝视着而吓得直发抖……/,
+        ],
+      },
+      { src: K3, ref: '8461', any: [/IF\ SELECTCOM\ ==\ 56/] },
+      { src: K3, ref: '8463', any: [/IF\ BASE:1\ <=\ 0/] },
+      { src: K3, ref: '8465', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      { src: K3, ref: '8466', any: [/PRINTFORMW\ 「请，请不要继续下去了……」/] },
+      {
+        src: K3,
+        ref: '8467',
+        any: [
+          /PRINTFORMW\ 气力用尽了的%SAVESTR:TARGET%在角斗场的土地之上喘气已经是极限了的样子……/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8469',
+        any: [/PRINTFORMW\ 「不…不要啊……被那么侵犯了什么的…不要啊……」/],
+      },
+      {
+        src: K3,
+        ref: '8470',
+        any: [
+          /PRINTFORMW\ 气力用尽了的%SAVESTR:TARGET%在角斗场的土地之上喘气已经是极限了的样子……/,
+        ],
+      },
+      { src: K3, ref: '8474', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      {
+        src: K3,
+        ref: '8475',
+        any: [/PRINTFORMW\ 「跟%SAVESTR:ASSI%做对手什么的…根本不知道啊……」/],
+      },
+      {
+        src: K3,
+        ref: '8476',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%看着收到%NAME:MASTER%的指令而武装起来的%SAVESTR:ASSI%留下了冷汗……/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8478',
+        any: [/PRINTFORMW\ 「居，居然会有这么丑陋的生物存在什么的……！」/],
+      },
+      {
+        src: K3,
+        ref: '8479',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%看到了在角斗场上丑陋的生物感到了恐惧……/,
+        ],
+      },
+      { src: K3, ref: '8488', any: [/IF\ SELECTCOM\ ==\ 31/] },
+      { src: K3, ref: '8490', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      {
+        src: K3,
+        ref: '8491',
+        any: [
+          /PRINTFORMW\ 「啊哼嗯…嗯呜…再、再这样做的话…呜噗嗯！？嗯噗嗯嗯噗嗯……！」/,
+        ],
+      },
+      { src: K3, ref: '8492', any: [/PRINTFORM\ %SAVESTR:ASSI%用/] },
+      { src: K3, ref: '8494', any: [/PRINT\ 大鸡巴/] },
+      { src: K3, ref: '8496', any: [/PRINT\ 假阳具/] },
+      {
+        src: K3,
+        ref: '8497',
+        any: [/PRINTFORMW\ 让%SAVESTR:TARGET%吸着，露出了愉悦的表情……/],
+      },
+      {
+        src: K3,
+        ref: '8499',
+        any: [/PRINTFORMW\ 「啊啊…这，这么臭的东西…嗯呜…嗯噗…嗯啾…噗噜呸……」/],
+      },
+      {
+        src: K3,
+        ref: '8500',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%舔舐着闻着就让人想吐的味道的阴茎……/],
+      },
+      { src: K3, ref: '8507', any: [/IF\ SELECTCOM\ ==\ 5/] },
+      { src: K3, ref: '8509', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      {
+        src: K3,
+        ref: '8510',
+        any: [
+          /PRINTFORMW\ 「哈呜\~…呜…哪，哪怕被做这样的事情%SELF_CALL\(TARGET\)%也…啊呜\~！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8511',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%的胸部，被持续地揉着……/],
+      },
+      {
+        src: K3,
+        ref: '8513',
+        any: [
+          /PRINTFORMW\ 「快…快放开手！%SELF_CALL\(TARGET\)%才不会因为这种事情…呜呼嗯！！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8514',
+        any: [
+          /PRINTFORMW\ %SAVESTR:TARGET%因为胸部被大力地揉着而从嘴边漏出了痛苦的声音……/,
+        ],
+      },
+      { src: K3, ref: '8521', any: [/IF\ SELECTCOM\ ==\ 21/] },
+      { src: K3, ref: '8523', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      {
+        src: K3,
+        ref: '8524',
+        any: [
+          /PRINTFORMW\ 「啊啊\~！不，不行的啊…这样…强行做这样的…啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8525',
+        any: [/PRINTFORM\ %SAVESTR:ASSI%一边听着悲鸣一边用/],
+      },
+      { src: K3, ref: '8527', any: [/PRINT\ 大鸡巴/] },
+      { src: K3, ref: '8529', any: [/PRINT\ 假阳具/] },
+      {
+        src: K3,
+        ref: '8530',
+        any: [/PRINTFORMW\ 将%SAVESTR:TARGET%的小穴毫不留情地侵犯着……/],
+      },
+      { src: K3, ref: '8532', any: [/ELSEIF\ TFLAG:400\ ==\ 206/] },
+      {
+        src: K3,
+        ref: '8533',
+        any: [/PRINTFORMW\ 「噶啊…呃哈啊…呃啊啊…呜啊啊啊……」/],
+      },
+      {
+        src: K3,
+        ref: '8534',
+        any: [
+          /PRINTFORMW\ 可怜的%SAVESTR:TARGET%发出了如同蟾蜍被碾碎了一样的声音，继续被巨魔侵犯着……/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8536',
+        any: [
+          /PRINTFORMW\ 「不…不要啊…这样的…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的…啊啊！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8537',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%继续被怪物侵犯着……/],
+      },
+      { src: K3, ref: '8545', any: [/IF\ SELECTCOM\ ==\ 27/] },
+      { src: K3, ref: '8547', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
+      {
+        src: K3,
+        ref: '8548',
+        any: [/PRINTFORMW\ 「啊啊\~！啊\~啊啊\~！屁股…要坏掉了啊\~…\~！」/],
+      },
+      {
+        src: K3,
+        ref: '8549',
+        any: [/PRINTFORM\ %SAVESTR:ASSI%一边听着悲鸣一边用/],
+      },
+      { src: K3, ref: '8551', any: [/PRINT\ 大鸡巴/] },
+      { src: K3, ref: '8553', any: [/PRINT\ 假阳具/] },
+      {
+        src: K3,
+        ref: '8554',
+        any: [/PRINTFORMW\ 将%SAVESTR:TARGET%的肛穴毫不留情地侵犯着……/],
+      },
+      { src: K3, ref: '8556', any: [/ELSEIF\ TFLAG:400\ ==\ 206/] },
+      {
+        src: K3,
+        ref: '8557',
+        any: [/PRINTFORMW\ 「呃啊…呃哈啊…呜呃…呜呃呃呃……」/],
+      },
+      {
+        src: K3,
+        ref: '8558',
+        any: [
+          /PRINTFORMW\ 可怜的%SAVESTR:TARGET%发出了如同蟾蜍被碾碎了一样的声音，继续被巨魔侵犯着……/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8560',
+        any: [
+          /PRINTFORMW\ 「不…不要啊…这样的…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的…啊啊！的肛门啊啊啊！」/,
+        ],
+      },
+      {
+        src: K3,
+        ref: '8561',
+        any: [/PRINTFORMW\ %SAVESTR:TARGET%继续被怪物侵犯着肛门……/],
+      },
+      { src: K3, ref: '8569', any: [/IF\ SELECTCOM\ ==\ 51/] },
+      {
+        src: K3,
+        ref: '8570',
+        any: [/PRINTFORMW\ 「这种…区区媚薬而已……啊呜嗯！」/],
+      },
       { src: K3, ref: '7104', any: [/P\ =\ PALAM:3\ \+\ UP:3/] },
       {
         src: K3,
@@ -28227,7 +28243,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「哈嗯呜\~…好、冷啊\~…而且还黏糊糊地\~\~…」/],
       },
       { src: K3, ref: '7111', any: [/PRINTFORMW\ ―――第一次超过了润滑lv2了。/] },
-      { src: K3, ref: '7113', any: [/ELSE/] },
       {
         src: K3,
         ref: '7114',
@@ -28236,8 +28251,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7115', any: [/PRINTFORMW\ ―――第一次超过了润滑lv2了。/] },
-      { src: K3, ref: '7116', any: [/ENDIF/] },
-      { src: K3, ref: '7118', any: [/ELSE/] },
       { src: K3, ref: '7120', any: [/IF\ SELECTCOM\ ==\ 50/] },
       {
         src: K3,
@@ -28245,17 +28258,13 @@ const FILES = [
         any: [/PRINTFORMW\ 「这，这种液体什么的…才，才不舒服呢………」/],
       },
       { src: K3, ref: '7122', any: [/PRINTFORMW\ ―――第一次超过了润滑lv2了。/] },
-      { src: K3, ref: '7124', any: [/ELSE/] },
       {
         src: K3,
         ref: '7125',
         any: [/PRINTFORMW\ 「啊\~…这，这个难道是…漏，漏了…啊啊…」/],
       },
       { src: K3, ref: '7126', any: [/PRINTFORMW\ ―――第一次超过了润滑lv2了。/] },
-      { src: K3, ref: '7127', any: [/ENDIF/] },
-      { src: K3, ref: '7128', any: [/ENDIF/] },
       { src: K3, ref: '7129', any: [/CFLAG:TARGET:221\ =\ 1/] },
-      { src: K3, ref: '7130', any: [/ENDIF/] },
       { src: K3, ref: '7135', any: [/P\ =\ PALAM:5\ \+\ UP:5/] },
       {
         src: K3,
@@ -28272,7 +28281,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7142', any: [/PRINTFORMW\ ―――第一次超过了欲情lv2了。/] },
-      { src: K3, ref: '7144', any: [/ELSE/] },
       {
         src: K3,
         ref: '7145',
@@ -28281,8 +28289,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7146', any: [/PRINTFORMW\ ―――第一次超过了欲情lv2了。/] },
-      { src: K3, ref: '7147', any: [/ENDIF/] },
-      { src: K3, ref: '7149', any: [/ELSE/] },
       { src: K3, ref: '7151', any: [/IF\ SELECTCOM\ ==\ 51/] },
       {
         src: K3,
@@ -28292,17 +28298,13 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7153', any: [/PRINTFORMW\ ―――第一次超过了欲情lv2了。/] },
-      { src: K3, ref: '7155', any: [/ELSE/] },
       {
         src: K3,
         ref: '7156',
         any: [/PRINTFORMW\ 「哈啊…啊啊\~…稍，稍微摸一下…也可以吧………」/],
       },
       { src: K3, ref: '7157', any: [/PRINTFORMW\ ―――第一次超过了欲情lv2了。/] },
-      { src: K3, ref: '7158', any: [/ENDIF/] },
-      { src: K3, ref: '7159', any: [/ENDIF/] },
       { src: K3, ref: '7160', any: [/CFLAG:222\ =\ 1/] },
-      { src: K3, ref: '7161', any: [/ENDIF/] },
       { src: K3, ref: '7166', any: [/P\ =\ PALAM:8\ \+\ UP:8/] },
       {
         src: K3,
@@ -28318,12 +28320,9 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7171', any: [/PRINTFORMW\ ―――第一次超过了耻情lv2了。/] },
-      { src: K3, ref: '7173', any: [/ELSE/] },
       { src: K3, ref: '7174', any: [/PRINTFORMW\ 「看，看过来可不行啊………」/] },
       { src: K3, ref: '7175', any: [/PRINTFORMW\ ―――第一次超过了耻情lv2了。/] },
-      { src: K3, ref: '7176', any: [/ENDIF/] },
       { src: K3, ref: '7177', any: [/CFLAG:223\ =\ 1/] },
-      { src: K3, ref: '7178', any: [/ENDIF/] },
       { src: K3, ref: '7183', any: [/P\ =\ PALAM:10\ \+\ UP:10/] },
       {
         src: K3,
@@ -28337,16 +28336,13 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊，啊啊…不，不要过来…请不要过来…」/],
       },
       { src: K3, ref: '7188', any: [/PRINTFORMW\ ―――第一次超过了恐怖LV2了。/] },
-      { src: K3, ref: '7190', any: [/ELSE/] },
       {
         src: K3,
         ref: '7191',
         any: [/PRINTFORMW\ 「啊，啊啊…不，不要过来…请不要过来…」/],
       },
       { src: K3, ref: '7192', any: [/PRINTFORMW\ ―――第一次超过了恐怖LV2了。/] },
-      { src: K3, ref: '7193', any: [/ENDIF/] },
       { src: K3, ref: '7194', any: [/CFLAG:224\ =\ 1/] },
-      { src: K3, ref: '7195', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7200',
@@ -28367,7 +28363,6 @@ const FILES = [
           /PRINTFORMW\ 看来%SAVESTR:TARGET%第一次因为小豆豆的刺激而高潮了。/,
         ],
       },
-      { src: K3, ref: '7206', any: [/ELSE/] },
       {
         src: K3,
         ref: '7207',
@@ -28382,9 +28377,7 @@ const FILES = [
           /PRINTFORMW\ 看来%SAVESTR:TARGET%第一次因为小豆豆的刺激而高潮了。/,
         ],
       },
-      { src: K3, ref: '7209', any: [/ENDIF/] },
       { src: K3, ref: '7210', any: [/CFLAG:225\ =\ 1/] },
-      { src: K3, ref: '7211', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7216',
@@ -28431,7 +28424,7 @@ const FILES = [
         src: K3,
         ref: '7226',
         any: [
-          /PRINTFORMW\ 「呜哈嗯啊\~\~%UNICODE\(0x2661\)\ \*1%\ 呜\~…嗯哈\~…啊啊\~…不，不行\~\~…啊啊\~…啊\~…啊啊啊嗯\~\~%UNICODE\(0/,
+          /PRINTFORMW\ 「呜哈嗯啊\~\~%UNICODE\(0x2661\)\ \*1%\ 呜\~…嗯哈\~…啊啊\~…不，不行\~\~…啊啊\~…啊\~…啊啊啊嗯\~\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -28446,7 +28439,6 @@ const FILES = [
         ref: '7228',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%因为第一次的阴道高潮而感到舒服………/],
       },
-      { src: K3, ref: '7230', any: [/ELSE/] },
       {
         src: K3,
         ref: '7231',
@@ -28468,9 +28460,7 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%因为第一次的阴道高潮而靠在你的肩膀喘息着………/,
         ],
       },
-      { src: K3, ref: '7234', any: [/ENDIF/] },
       { src: K3, ref: '7235', any: [/CFLAG:TARGET:226\ =\ 1/] },
-      { src: K3, ref: '7236', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7241',
@@ -28502,7 +28492,7 @@ const FILES = [
         src: K3,
         ref: '7248',
         any: [
-          /PRINTFORMW\ 「菊穴、好厉害%UNICODE\(0x2764\)\ \*1%　嗯哈啊啊嗯%UNICODE\(0x2764\)\ \*1%　菊穴要化了啊啊…要变成肉穴、变/,
+          /PRINTFORMW\ 「菊穴、好厉害%UNICODE\(0x2764\)\ \*1%　嗯哈啊啊嗯%UNICODE\(0x2764\)\ \*1%　菊穴要化了啊啊…要变成肉穴、变成肉穴了嗷嗷嗷%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
       {
@@ -28512,7 +28502,6 @@ const FILES = [
           /PRINTFORMW\ \ %SAVESTR:TARGET%迎来了初次的菊花高潮的同时把粪便喷得到处都是。满身污物一脸恍惚地沉浸在菊花高潮当中……/,
         ],
       },
-      { src: K3, ref: '7251', any: [/ELSE/] },
       {
         src: K3,
         ref: '7252',
@@ -28531,7 +28520,7 @@ const FILES = [
         src: K3,
         ref: '7254',
         any: [
-          /PRINTFORMW\ 「啊\~啊啊\~%UNICODE\(0x2661\)\ \*1%嗯哈啊嗯\~\~%UNICODE\(0x2661\)\ \*1%肛门小穴要去了要去了要要去去去了了/,
+          /PRINTFORMW\ 「啊\~啊啊\~%UNICODE\(0x2661\)\ \*1%嗯哈啊嗯\~\~%UNICODE\(0x2661\)\ \*1%肛门小穴要去了要去了要要去去去了了了了了\~\~\~\~%UNICODE\(0x2661\)\ \*5%」/,
         ],
       },
       {
@@ -28541,7 +28530,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%带着淫荡无比的神色，第一次因为后庭而高潮了…………/,
         ],
       },
-      { src: K3, ref: '7256', any: [/ENDIF/] },
       { src: K3, ref: '7258', any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/] },
       {
         src: K3,
@@ -28571,7 +28559,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%好像是第一次因为肛门而高潮的样子被看到了，所以闹起了别扭………/,
         ],
       },
-      { src: K3, ref: '7264', any: [/ELSE/] },
       {
         src: K3,
         ref: '7266',
@@ -28593,7 +28580,7 @@ const FILES = [
         src: K3,
         ref: '7269',
         any: [
-          /PRINTFORMW\ 「嘤咦啊啊…不要…不要！　请把、把这个拔出去啊…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%/,
+          /PRINTFORMW\ 「嘤咦啊啊…不要…不要！　请把、把这个拔出去啊…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%、要变奇怪了……啊！？」/,
         ],
       },
       {
@@ -28642,7 +28629,6 @@ const FILES = [
         ref: '7280',
         any: [/PRINTFORMW\ 在初次尝肛门排泄绝顶的困惑中、早已泣不成声……/],
       },
-      { src: K3, ref: '7281', any: [/ELSE/] },
       {
         src: K3,
         ref: '7282',
@@ -28650,12 +28636,11 @@ const FILES = [
           /PRINTFORMW\ 污物喷出的同时全身颤抖了起来、肛门绝顶的余韵令其困惑不已……/,
         ],
       },
-      { src: K3, ref: '7283', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7284',
         any: [
-          /PRINTFORMW\ 「唔、呜呜…！　%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…屁股…排便、竟然会、舒服什么的/,
+          /PRINTFORMW\ 「唔、呜呜…！　%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…屁股…排便、竟然会、舒服什么的…啊啊啊啊啊……！！」/,
         ],
       },
       {
@@ -28688,7 +28673,7 @@ const FILES = [
         src: K3,
         ref: '7290',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET,4\)%！　明明是这幅丑态、屁股…骗人…骗人的吧…/,
+          /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET,4\)%！　明明是这幅丑态、屁股…骗人…骗人的吧……！」/,
         ],
       },
       {
@@ -28724,7 +28709,6 @@ const FILES = [
           /PRINTFORMW\ 「出来了…拉出来了、这、好舒服…不…不要…！　不……%UNICODE\(0x2764\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '7298', any: [/ELSE/] },
       {
         src: K3,
         ref: '7299',
@@ -28739,10 +28723,7 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%第一次因为菊花而高潮的样子、身体颤抖着，不知道发出了多少次悲鸣………/,
         ],
       },
-      { src: K3, ref: '7301', any: [/ENDIF/] },
-      { src: K3, ref: '7302', any: [/ENDIF/] },
       { src: K3, ref: '7303', any: [/CFLAG:227\ =\ 1/] },
-      { src: K3, ref: '7304', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7309',
@@ -28753,7 +28734,7 @@ const FILES = [
         src: K3,
         ref: '7312',
         any: [
-          /PRINTFORMW\ 「哈嗯啊\~…胸部\~…要融化掉了\~%UNICODE\(0x2661\)\ \*1%\ 哈唉呜\~%UNICODE\(0x2661\)\ \*1%\ 有什么要来，要/,
+          /PRINTFORMW\ 「哈嗯啊\~…胸部\~…要融化掉了\~%UNICODE\(0x2661\)\ \*1%\ 哈唉呜\~%UNICODE\(0x2661\)\ \*1%\ 有什么要来，要来了！…啊啊嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -28761,7 +28742,6 @@ const FILES = [
         ref: '7313',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%第一次因为胸部刺激而高潮了………/],
       },
-      { src: K3, ref: '7315', any: [/ELSE/] },
       {
         src: K3,
         ref: '7316',
@@ -28774,9 +28754,7 @@ const FILES = [
         ref: '7317',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%第一次因为胸部刺激而高潮了………/],
       },
-      { src: K3, ref: '7318', any: [/ENDIF/] },
       { src: K3, ref: '7319', any: [/CFLAG:TARGET:228\ =\ 1/] },
-      { src: K3, ref: '7320', any: [/ENDIF/] },
       { src: K3, ref: '7326', any: [/A\ =\ UP:11\ \+\ UP:12/] },
       {
         src: K3,
@@ -28836,7 +28814,6 @@ const FILES = [
         ref: '7339',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%露出了很高兴的表情向你撒起了娇………/],
       },
-      { src: K3, ref: '7341', any: [/ELSE/] },
       {
         src: K3,
         ref: '7342',
@@ -28851,8 +28828,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%为了不让你看见将脸遮起来‘呜呜’地流下了眼泪………/,
         ],
       },
-      { src: K3, ref: '7344', any: [/ENDIF/] },
-      { src: K3, ref: '7346', any: [/ELSE/] },
       { src: K3, ref: '7348', any: [/IF\ TALENT:TARGET:76\ ==\ 1/] },
       {
         src: K3,
@@ -28881,7 +28856,6 @@ const FILES = [
         ref: '7354',
         any: [/PRINTFORMW\ 「哈啊…真是笨蛋呢……（哭）」/],
       },
-      { src: K3, ref: '7356', any: [/ELSE/] },
       {
         src: K3,
         ref: '7357',
@@ -28896,15 +28870,12 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%为了不让你看见将脸遮起来‘呜呜’地流下了眼泪………/,
         ],
       },
-      { src: K3, ref: '7359', any: [/ENDIF/] },
-      { src: K3, ref: '7360', any: [/ENDIF/] },
       { src: K3, ref: '7361', any: [/CFLAG:TARGET:229\ =\ 1/] },
-      { src: K3, ref: '7362', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7367',
         any: [
-          /IF\ \(\(NOWEX:0\ \&\&\ CFLAG:225\ ==\ 1\)\ \|\|\ \(NOWEX:1\ \&\&\ CFLAG:226\ ==\ 1\)\ \|\|\ \(NOWEX:2\ \&\&\ CF/,
+          /IF\ \(\(NOWEX:0\ \&\&\ CFLAG:225\ ==\ 1\)\ \|\|\ \(NOWEX:1\ \&\&\ CFLAG:226\ ==\ 1\)\ \|\|\ \(NOWEX:2\ \&\&\ CFLAG:227\ ==\ 1\)\ \|\|\ \(NOWEX:3\ \&\&\ CFLAG:228\ ==\ 1\)\)\ \&\&\ \(TALENT:TARGET:190\ ==\ 1\ \|\|\ TALENT:TARGET:191\ ==\ 1\)/,
         ],
       },
       { src: K3, ref: '7368', any: [/IF\ CFLAG:TARGET:230\ >=\ 100/] },
@@ -28929,7 +28900,6 @@ const FILES = [
           /PRINTFORML\ 「不、不行……要生出来了啊啊啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '7374', any: [/ELSE/] },
       {
         src: K3,
         ref: '7375',
@@ -28937,7 +28907,6 @@ const FILES = [
           /PRINTFORMW\ 「……撒、现在就将%SAVESTR:TARGET%可爱的孩子们生出来了\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
-      { src: K3, ref: '7376', any: [/ENDIF/] },
       { src: K3, ref: '7377', any: [/ELSEIF\ CFLAG:TARGET:230\ ==\ 75/] },
       {
         src: K3,
@@ -28951,7 +28920,6 @@ const FILES = [
           /PRINTFORMW\ 「不管怎样生…怎样生都好、都满足不了啊\~……想要生更多…更多的蛋出来了啊\~……」/,
         ],
       },
-      { src: K3, ref: '7380', any: [/ELSE/] },
       {
         src: K3,
         ref: '7382',
@@ -28960,9 +28928,7 @@ const FILES = [
       { src: K3, ref: '7383', any: [/PRINT\ 「啊啊\~…我的/] },
       { src: K3, ref: '7384', any: [/IF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '7385', any: [/PRINT\ 两个小穴/] },
-      { src: K3, ref: '7386', any: [/ELSE/] },
       { src: K3, ref: '7387', any: [/PRINT\ 小穴还有屁股/] },
-      { src: K3, ref: '7388', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7389',
@@ -28977,17 +28943,13 @@ const FILES = [
           /PRINTFORMW\ 「嗯呜\~…啊啊\~、被这样刺激了的话、要、要生出来了啊啊\~、啊啊啊\~！！」/,
         ],
       },
-      { src: K3, ref: '7394', any: [/ELSE/] },
       { src: K3, ref: '7395', any: [/PRINTFORMW/] },
-      { src: K3, ref: '7396', any: [/ENDIF/] },
-      { src: K3, ref: '7398', any: [/ELSE/] },
       { src: K3, ref: '7399', any: [/IF\ RAND:2\ ==\ 0/] },
       {
         src: K3,
         ref: '7400',
         any: [/PRINTFORMW\ 「哈呜\~、要、要从屁股里、出来了啊啊啊\~！！」/],
       },
-      { src: K3, ref: '7401', any: [/ELSE/] },
       {
         src: K3,
         ref: '7402',
@@ -28995,18 +28957,7 @@ const FILES = [
           /PRINTFORMW\ 「哈呜\~、要从%SAVESTR:TARGET%的屁股里…啊啊、生、生出来了啊啊\~！！」/,
         ],
       },
-      { src: K3, ref: '7403', any: [/ENDIF/] },
-      { src: K3, ref: '7404', any: [/ENDIF/] },
-      { src: K3, ref: '7405', any: [/ENDIF/] },
       { src: K3, ref: '7406', any: [/CFLAG:TARGET:230\ \+=\ 1/] },
-      { src: K3, ref: '7407', any: [/ENDIF/] },
-      { src: K3, ref: '7417', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7420', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7423', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7426', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7429', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7432', any: [/RETURN\ 0/] },
-      { src: K3, ref: '7435', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '7439',
@@ -29020,15 +28971,12 @@ const FILES = [
           /PRINTFORMW\ 「哈嗯呜\~！…请更，请更多地…在%SELF_CALL\(TARGET\)%的身体上刻下印记吧………」/,
         ],
       },
-      { src: K3, ref: '7443', any: [/ELSE/] },
       {
         src: K3,
         ref: '7444',
         any: [/PRINTFORMW\ 「啊嗯\~！…好，痛…好疼的…不，不行的…的说…」/],
       },
-      { src: K3, ref: '7445', any: [/ENDIF/] },
       { src: K3, ref: '7446', any: [/CFLAG:297\ =\ 1/] },
-      { src: K3, ref: '7447', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7452',
@@ -29042,7 +28990,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊啊\~…不行\~…再这样…舒服下去的话…真的要…离不开了…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '7456', any: [/ELSE/] },
       {
         src: K3,
         ref: '7457',
@@ -29050,9 +28997,7 @@ const FILES = [
           /PRINTFORMW\ 「哈啊…哈呜呜\~…这样…好舒服的事情…还是第一次来的…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '7458', any: [/ENDIF/] },
       { src: K3, ref: '7459', any: [/CFLAG:298\ =\ 1/] },
-      { src: K3, ref: '7460', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7465',
@@ -29066,7 +29011,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊…%SELF_CALL\(TARGET\)%会…好好听命令得…自己的立场…明白的…%SELF_CALL\(TARGET\)%明白的………」/,
         ],
       },
-      { src: K3, ref: '7469', any: [/ELSE/] },
       {
         src: K3,
         ref: '7470',
@@ -29074,9 +29018,7 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…不，不会再反抗了…绝对…绝对不会再次反抗了………」/,
         ],
       },
-      { src: K3, ref: '7471', any: [/ENDIF/] },
       { src: K3, ref: '7472', any: [/CFLAG:299\ =\ 1/] },
-      { src: K3, ref: '7473', any: [/ENDIF/] },
       {
         src: K3,
         ref: '7478',
@@ -29088,15 +29030,12 @@ const FILES = [
         ref: '7481',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%无言地盯着你看………/],
       },
-      { src: K3, ref: '7482', any: [/ELSE/] },
       {
         src: K3,
         ref: '7483',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%无言地瞪着你………/],
       },
-      { src: K3, ref: '7484', any: [/ENDIF/] },
       { src: K3, ref: '7485', any: [/CFLAG:300\ =\ 1/] },
-      { src: K3, ref: '7486', any: [/ENDIF/] },
       { src: K3, ref: '7496', any: [/IF\ TFLAG:13\ ==\ 1/] },
       { src: K3, ref: '7498', any: [/IF\ Q\ ==\ 1/] },
       {
@@ -29128,7 +29067,6 @@ const FILES = [
           /PRINTFORML\ 堕落的愉悦让%SAVESTR:TARGET%哪怕觉得苦恼也不会停下自慰………/,
         ],
       },
-      { src: K3, ref: '7506', any: [/ELSE/] },
       {
         src: K3,
         ref: '7508',
@@ -29138,7 +29076,7 @@ const FILES = [
         src: K3,
         ref: '7509',
         any: [
-          /PRINTFORMW\ 「哼嗯\~…不管是小穴%UNICODE\(0x2661\)\ \*1%…还是肛穴%UNICODE\(0x2661\)\ \*1%…都好热啊…%UNICODE/,
+          /PRINTFORMW\ 「哼嗯\~…不管是小穴%UNICODE\(0x2661\)\ \*1%…还是肛穴%UNICODE\(0x2661\)\ \*1%…都好热啊…%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
@@ -29165,7 +29103,7 @@ const FILES = [
         src: K3,
         ref: '7515',
         any: [
-          /PRINTFORMW\ 「嗯哈嗯\~%UNICODE\(0x2661\)\ \*1%\ 身体…好热…好痒…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 大人\~%UNICOD/,
+          /PRINTFORMW\ 「嗯哈嗯\~%UNICODE\(0x2661\)\ \*1%\ 身体…好热…好痒…啊啊\~%UNICODE\(0x2661\)\ \*1%\ 大人\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '7516', any: [/CFLAG:261\ =\ 3/] },
@@ -29195,9 +29133,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊啊\~…身体\~…好热好痒啊…！」/],
       },
       { src: K3, ref: '7524', any: [/CFLAG:261\ =\ 1/] },
-      { src: K3, ref: '7525', any: [/ENDIF/] },
-      { src: K3, ref: '7526', any: [/ENDIF/] },
-      { src: K3, ref: '7527', any: [/ENDIF/] },
       { src: K3, ref: '7531', any: [/IF\ TFLAG:13\ ==\ 2/] },
       {
         src: K3,
@@ -29280,8 +29215,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「啊\~…这，这样的不奇怪吗…和女孩子做什么的………」/],
       },
       { src: K3, ref: '7553', any: [/CFLAG:262\ =\ 1/] },
-      { src: K3, ref: '7554', any: [/ENDIF/] },
-      { src: K3, ref: '7555', any: [/ENDIF/] },
       { src: K3, ref: '7560', any: [/IF\ TFLAG:13\ ==\ 3/] },
       {
         src: K3,
@@ -29315,7 +29248,7 @@ const FILES = [
         src: K3,
         ref: '7566',
         any: [
-          /PRINTFORMW\ 「嗯呃…啾噜啾噜嗯\~…呸噜嗯\~%UNICODE\(0x2661\)\ \*1%…嗯嗯\~…嗯啊嗯嗯啊嗯噗嗯\~…嗯噗呜呜\~嗯\~%UNICODE\(0x2/,
+          /PRINTFORMW\ 「嗯呃…啾噜啾噜嗯\~…呸噜嗯\~%UNICODE\(0x2661\)\ \*1%…嗯嗯\~…嗯啊嗯嗯啊嗯噗嗯\~…嗯噗呜呜\~嗯\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       { src: K3, ref: '7567', any: [/CFLAG:263\ =\ 4/] },
@@ -29330,14 +29263,14 @@ const FILES = [
         src: K3,
         ref: '7570',
         any: [
-          /PRINTFORMW\ 「啾噜嗯\~…啾啾\~…啾噜噜嗯\~…啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 早上好\~\~。我最爱的大人\~%UNICODE\(0x2661/,
+          /PRINTFORMW\ 「啾噜嗯\~…啾啾\~…啾噜噜嗯\~…啊啊嗯\~%UNICODE\(0x2661\)\ \*1%\ 早上好\~\~。我最爱的大人\~%UNICODE\(0x2661\)\ \*3%」/,
         ],
       },
       {
         src: K3,
         ref: '7571',
         any: [
-          /PRINTFORMW\ 「这个大鸡鸡\~\~%UNICODE\(0x2661\)\ \*1%…%SAVESTR:TARGET%会用嘴巴来弄干净的\~…请在等一下吧\~%UNICO/,
+          /PRINTFORMW\ 「这个大鸡鸡\~\~%UNICODE\(0x2661\)\ \*1%…%SAVESTR:TARGET%会用嘴巴来弄干净的\~…请在等一下吧\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -29386,8 +29319,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7583', any: [/CFLAG:263\ =\ 1/] },
-      { src: K3, ref: '7584', any: [/ENDIF/] },
-      { src: K3, ref: '7585', any: [/ENDIF/] },
       { src: K3, ref: '7590', any: [/IF\ TFLAG:13\ ==\ 4/] },
       {
         src: K3,
@@ -29427,8 +29358,6 @@ const FILES = [
         any: [/PRINTFORMW\ 「所，所以啦…请抱，抱一下吧………」/],
       },
       { src: K3, ref: '7600', any: [/CFLAG:264\ =\ 1/] },
-      { src: K3, ref: '7601', any: [/ENDIF/] },
-      { src: K3, ref: '7602', any: [/ENDIF/] },
       { src: K3, ref: '7607', any: [/IF\ TFLAG:13\ ==\ 5/] },
       {
         src: K3,
@@ -29439,7 +29368,7 @@ const FILES = [
         src: K3,
         ref: '7609',
         any: [
-          /PRINTFORMW\ 「晚，晚上好……啊……%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…是来给主人抱抱来的%UN/,
+          /PRINTFORMW\ 「晚，晚上好……啊……%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…是来给主人抱抱来的%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -29457,8 +29386,6 @@ const FILES = [
         ],
       },
       { src: K3, ref: '7612', any: [/CFLAG:265\ =\ 1/] },
-      { src: K3, ref: '7613', any: [/ENDIF/] },
-      { src: K3, ref: '7614', any: [/ENDIF/] },
       { src: K3, ref: '7619', any: [/IF\ TFLAG:13\ ==\ 6/] },
       { src: K3, ref: '7621', any: [/IF\ TALENT:136/] },
       {
@@ -29550,7 +29477,6 @@ const FILES = [
         ref: '7641',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%会哭到什么时候呢……。/],
       },
-      { src: K3, ref: '7643', any: [/ELSE/] },
       {
         src: K3,
         ref: '7644',
@@ -29575,7 +29501,6 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%想…想和大人你在一起来的啊…呜呜呜！」/,
         ],
       },
-      { src: K3, ref: '7648', any: [/ENDIF/] },
       { src: K3, ref: '7650', any: [/ELSEIF\ MARK:3\ ==\ 3/] },
       {
         src: K3,
@@ -29608,7 +29533,6 @@ const FILES = [
         ref: '7659',
         any: [/PRINTFORMW\ 「嗯哼哼、再见了\~………要保重噢、魔王大人…………」/],
       },
-      { src: K3, ref: '7661', any: [/ELSE/] },
       {
         src: K3,
         ref: '7662',
@@ -29628,17 +29552,13 @@ const FILES = [
         ref: '7664',
         any: [/PRINTFORMW\ 「………真的、在这里的生活………觉得有点快乐的啊………」/],
       },
-      { src: K3, ref: '7665', any: [/ENDIF/] },
-      { src: K3, ref: '7667', any: [/ELSE/] },
       {
         src: K3,
         ref: '7668',
         any: [/PRINTFORMW\ 「%SELF_CALL\(TARGET\)%…接下来…会变成怎样呢………？」/],
       },
-      { src: K3, ref: '7669', any: [/ENDIF/] },
       { src: K3, ref: '7670', any: [/PRINTFORML/] },
       { src: K3, ref: '7672', any: [/CALL\ SELL_MATURO_K0/] },
-      { src: K3, ref: '7673', any: [/ENDIF/] },
       { src: K3, ref: '7679', any: [/IF\ TFLAG:13\ ==\ 11/] },
       { src: K3, ref: '7680', any: [/IF\ CFLAG:271\ ==\ 0/] },
       { src: K3, ref: '7682', any: [/IF\ TALENT:9\ ==\ 1/] },
@@ -29676,7 +29596,7 @@ const FILES = [
         src: K3,
         ref: '7691',
         any: [
-          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地/,
+          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地跟主人，解释一下才可以………」/,
         ],
       },
       {
@@ -29696,7 +29616,7 @@ const FILES = [
         src: K3,
         ref: '7696',
         any: [
-          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地/,
+          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地跟主人，解释一下才可以………」/,
         ],
       },
       {
@@ -29718,7 +29638,6 @@ const FILES = [
         ref: '7702',
         any: [/PRINTFORMW\ 「居然怀上了可爱的狗宝宝种子真是幸福呢\~♪」/],
       },
-      { src: K3, ref: '7703', any: [/ELSE/] },
       {
         src: K3,
         ref: '7704',
@@ -29726,7 +29645,6 @@ const FILES = [
           /PRINTFORMW\ 「怎么会…%SELF_CALL\(TARGET\)%居然怀上了那个野狗的孩子…骗、骗人的………」/,
         ],
       },
-      { src: K3, ref: '7705', any: [/ENDIF/] },
       { src: K3, ref: '7707', any: [/ELSEIF\ CFLAG:102\ ==\ 7/] },
       {
         src: K3,
@@ -29735,12 +29653,11 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%居然怀上了狂王的孩子…骗人…怎么会…」/,
         ],
       },
-      { src: K3, ref: '7710', any: [/ELSE/] },
       {
         src: K3,
         ref: '7711',
         any: [
-          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好的/,
+          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好的跟主人…解释一下才可以了………」/,
         ],
       },
       {
@@ -29748,9 +29665,7 @@ const FILES = [
         ref: '7712',
         any: [/PRINTFORMW\ 「但是…该怎么说才好啊…啊啊、啊啊………」/],
       },
-      { src: K3, ref: '7713', any: [/ENDIF/] },
       { src: K3, ref: '7714', any: [/CFLAG:271\ =\ 1/] },
-      { src: K3, ref: '7716', any: [/ELSE/] },
       { src: K3, ref: '7718', any: [/IF\ TALENT:9\ ==\ 1/] },
       {
         src: K3,
@@ -29786,7 +29701,7 @@ const FILES = [
         src: K3,
         ref: '7727',
         any: [
-          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地/,
+          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地跟主人，解释一下才可以………」/,
         ],
       },
       {
@@ -29806,7 +29721,7 @@ const FILES = [
         src: K3,
         ref: '7732',
         any: [
-          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地/,
+          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好地跟主人，解释一下才可以………」/,
         ],
       },
       {
@@ -29828,7 +29743,6 @@ const FILES = [
         ref: '7738',
         any: [/PRINTFORMW\ 「居然怀上了可爱的狗宝宝种子真是幸福呢\~♪」/],
       },
-      { src: K3, ref: '7739', any: [/ELSE/] },
       {
         src: K3,
         ref: '7740',
@@ -29836,7 +29750,6 @@ const FILES = [
           /PRINTFORMW\ 「怎么会…%SELF_CALL\(TARGET\)%居然怀上了那个野狗的孩子…骗、骗人的………」/,
         ],
       },
-      { src: K3, ref: '7741', any: [/ENDIF/] },
       { src: K3, ref: '7743', any: [/ELSEIF\ CFLAG:102\ ==\ 7/] },
       {
         src: K3,
@@ -29845,12 +29758,11 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%居然怀上了狂王的孩子…骗人…怎么会…」/,
         ],
       },
-      { src: K3, ref: '7746', any: [/ELSE/] },
       {
         src: K3,
         ref: '7747',
         any: [
-          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好的/,
+          /PRINTFORMW\ 「啊啊\~…骗人…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…居然怀孕了什么的…要，要好好的跟主人…解释一下才可以了……」/,
         ],
       },
       {
@@ -29858,10 +29770,7 @@ const FILES = [
         ref: '7748',
         any: [/PRINTFORMW\ 「但是…该怎么说才好啊…啊啊、啊啊………」/],
       },
-      { src: K3, ref: '7749', any: [/ENDIF/] },
       { src: K3, ref: '7750', any: [/CFLAG:271\ =\ 1/] },
-      { src: K3, ref: '7751', any: [/ENDIF/] },
-      { src: K3, ref: '7752', any: [/ENDIF/] },
       { src: K3, ref: '7759', any: [/IF\ TFLAG:13\ ==\ 12/] },
       { src: K3, ref: '7760', any: [/IF\ CFLAG:272\ ==\ 0/] },
       { src: K3, ref: '7762', any: [/IF\ TALENT:9\ ==\ 1/] },
@@ -29881,7 +29790,7 @@ const FILES = [
         src: K3,
         ref: '7766',
         any: [
-          /PRINTFORMW\ 「哈啊…哈啊…啊啊…果然…跟%SELF_CALL\(TARGET\)%想象一样的小宝宝…跟大人你一摸一样呢%UNICODE\(0x2661\)\ \*/,
+          /PRINTFORMW\ 「哈啊…哈啊…啊啊…果然…跟%SELF_CALL\(TARGET\)%想象一样的小宝宝…跟大人你一摸一样呢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '7768', any: [/ELSEIF\ CFLAG:102\ ==\ 2/] },
@@ -29903,28 +29812,23 @@ const FILES = [
         ref: '7776',
         any: [/PRINTFORMW\ 「要、要生出来了、可爱的狗宝宝\~♪」/],
       },
-      { src: K3, ref: '7777', any: [/ELSE/] },
       {
         src: K3,
         ref: '7778',
         any: [/PRINTFORMW\ 「呜…呜呜\~…%SELF_CALL\(TARGET\)%的小宝宝要………」/],
       },
-      { src: K3, ref: '7779', any: [/ENDIF/] },
       { src: K3, ref: '7781', any: [/ELSEIF\ CFLAG:102\ ==\ 7/] },
       {
         src: K3,
         ref: '7782',
         any: [/PRINTFORMW\ 「要、要生出来了、狂王大人的孩子…但是…」/],
       },
-      { src: K3, ref: '7784', any: [/ELSE/] },
       {
         src: K3,
         ref: '7785',
         any: [/PRINTFORMW\ 「呜…呜呜…%SELF_CALL\(TARGET\)%的小宝宝要………」/],
       },
-      { src: K3, ref: '7786', any: [/ENDIF/] },
       { src: K3, ref: '7787', any: [/CFLAG:272\ =\ 1/] },
-      { src: K3, ref: '7789', any: [/ELSE/] },
       { src: K3, ref: '7791', any: [/IF\ TALENT:9\ ==\ 1/] },
       {
         src: K3,
@@ -29942,7 +29846,7 @@ const FILES = [
         src: K3,
         ref: '7795',
         any: [
-          /PRINTFORMW\ 「哈啊…哈啊…啊啊…果然…跟%SELF_CALL\(TARGET\)%想象一样的小宝宝…跟大人你一摸一样呢%UNICODE\(0x2661\)\ \*/,
+          /PRINTFORMW\ 「哈啊…哈啊…啊啊…果然…跟%SELF_CALL\(TARGET\)%想象一样的小宝宝…跟大人你一摸一样呢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '7797', any: [/ELSEIF\ CFLAG:102\ ==\ 2/] },
@@ -29964,29 +29868,23 @@ const FILES = [
         ref: '7805',
         any: [/PRINTFORMW\ 「要、要生出来了、可爱的狗宝宝\~♪」/],
       },
-      { src: K3, ref: '7806', any: [/ELSE/] },
       {
         src: K3,
         ref: '7807',
         any: [/PRINTFORMW\ 「呜…呜呜\~…%SELF_CALL\(TARGET\)%的小宝宝要………」/],
       },
-      { src: K3, ref: '7808', any: [/ENDIF/] },
       { src: K3, ref: '7810', any: [/ELSEIF\ CFLAG:102\ ==\ 7/] },
       {
         src: K3,
         ref: '7811',
         any: [/PRINTFORMW\ 「要、要生出来了、狂王大人的孩子…但是…」/],
       },
-      { src: K3, ref: '7813', any: [/ELSE/] },
       {
         src: K3,
         ref: '7814',
         any: [/PRINTFORMW\ 「呜…呜呜\~…%SELF_CALL\(TARGET\)%的小宝宝要………」/],
       },
-      { src: K3, ref: '7815', any: [/ENDIF/] },
       { src: K3, ref: '7816', any: [/CFLAG:272\ =\ 1/] },
-      { src: K3, ref: '7817', any: [/ENDIF/] },
-      { src: K3, ref: '7818', any: [/ENDIF/] },
       { src: K3, ref: '7823', any: [/IF\ TFLAG:13\ ==\ 13/] },
       { src: K3, ref: '7825', any: [/IF\ TALENT:85\ \|\|\ TALENT:76/] },
       { src: K3, ref: '7827', any: [/IF\ TALENT:153/] },
@@ -30011,10 +29909,7 @@ const FILES = [
         ref: '7833',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%抱着一个小孩子………/],
       },
-      { src: K3, ref: '7834', any: [/ENDIF/] },
-      { src: K3, ref: '7835', any: [/ENDIF/] },
       { src: K3, ref: '7836', any: [/CFLAG:273\ =\ 1/] },
-      { src: K3, ref: '7837', any: [/ENDIF/] },
       { src: K3, ref: '7842', any: [/IF\ TFLAG:13\ ==\ 14/] },
       { src: K3, ref: '7844', any: [/IF\ TALENT:85\ \|\|\ TALENT:76/] },
       {
@@ -30024,25 +29919,16 @@ const FILES = [
           /PRINTFORMW\ 「（哭）…为什么，要从%SELF_CALL\(TARGET\)%的身边离开呢………」/,
         ],
       },
-      { src: K3, ref: '7846', any: [/ENDIF/] },
       { src: K3, ref: '7847', any: [/CFLAG:274\ =\ 1/] },
-      { src: K3, ref: '7848', any: [/ENDIF/] },
       { src: K3, ref: '7854', any: [/IF\ TFLAG:13\ ==\ 999/] },
       { src: K3, ref: '7856', any: [/IF\ TALENT:85/] },
       { src: K3, ref: '7857', any: [/PRINTFORMW/] },
-      { src: K3, ref: '7859', any: [/ELSE/] },
       { src: K3, ref: '7860', any: [/PRINTFORMW/] },
-      { src: K3, ref: '7861', any: [/ENDIF/] },
-      { src: K3, ref: '7862', any: [/ENDIF/] },
       { src: K3, ref: '7867', any: [/IF\ TFLAG:13\ ==\ 998/] },
       { src: K3, ref: '7869', any: [/IF\ TALENT:85/] },
       { src: K3, ref: '7870', any: [/PRINTFORMW/] },
-      { src: K3, ref: '7872', any: [/ELSE/] },
       { src: K3, ref: '7873', any: [/PRINTFORMW/] },
-      { src: K3, ref: '7874', any: [/ENDIF/] },
-      { src: K3, ref: '7875', any: [/ENDIF/] },
       { src: K3, ref: '7880', any: [/TFLAG:13\ =\ 0/] },
-      { src: K3, ref: '7882', any: [/RETURN\ 0/] },
       { src: K3, ref: '7913', any: [/IF\ TALENT:0\ ==\ 1/] },
       {
         src: K3,
@@ -30055,7 +29941,6 @@ const FILES = [
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '7920', any: [/PRINTFORMW\ 「全部…都结束了啊…」/] },
-      { src: K3, ref: '7922', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '7923',
@@ -30088,7 +29973,7 @@ const FILES = [
         src: K3,
         ref: '7936',
         any: [
-          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ T/,
+          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ TALENT:34\ ==\ 1/,
         ],
       },
       {
@@ -30106,7 +29991,6 @@ const FILES = [
         ref: '7945',
         any: [/PRINTFORMW\ 「若是知道如此的话…早就应该将处女丢掉才对啊…」/],
       },
-      { src: K3, ref: '7947', any: [/ELSE/] },
       {
         src: K3,
         ref: '7950',
@@ -30114,8 +29998,6 @@ const FILES = [
           /PRINTFORMW\ 「以为%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%是谁啊！？」/,
         ],
       },
-      { src: K3, ref: '7952', any: [/ENDIF/] },
-      { src: K3, ref: '7953', any: [/ELSE/] },
       {
         src: K3,
         ref: '7955',
@@ -30129,7 +30011,6 @@ const FILES = [
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '7960', any: [/PRINTFORMW\ 「这是一场梦来的…」/] },
-      { src: K3, ref: '7962', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '7963',
@@ -30162,7 +30043,7 @@ const FILES = [
         src: K3,
         ref: '7976',
         any: [
-          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ T/,
+          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ TALENT:34\ ==\ 1/,
         ],
       },
       {
@@ -30184,7 +30065,6 @@ const FILES = [
           /PRINTFORMW\ 「不要啊！　杀\.\.\.\.\.\.杀掉%SELF_CALL\(TARGET\)%吧！」/,
         ],
       },
-      { src: K3, ref: '7987', any: [/ELSE/] },
       {
         src: K3,
         ref: '7990',
@@ -30192,9 +30072,6 @@ const FILES = [
           /PRINTFORMW\ 「居然%SELF_CALL\(TARGET\)%受到这种屈辱…绝对不会原谅的！」/,
         ],
       },
-      { src: K3, ref: '7992', any: [/ENDIF/] },
-      { src: K3, ref: '7993', any: [/ENDIF/] },
-      { src: K3, ref: '7995', any: [/RETURN\ 0/] },
       { src: K3, ref: '8003', any: [/IF\ TALENT:0\ ==\ 1/] },
       { src: K3, ref: '8005', any: [/PRINTFORMW\ 「太好了…还是…没问题的…」/] },
       {
@@ -30203,19 +30080,15 @@ const FILES = [
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '8010', any: [/PRINTFORMW\ 「只要我还活着就…」/] },
-      { src: K3, ref: '8012', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8013', any: [/ENDIF/] },
       { src: K3, ref: '8016', any: [/IF\ EXP:1\ >\ 20/] },
       { src: K3, ref: '8017', any: [/PRINTFORMW\ 「屁股…已经…不行…」/] },
       { src: K3, ref: '8018', any: [/PRINTFORMW\ 「咕呜…呜哎哎\~\~」/] },
-      { src: K3, ref: '8019', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8023',
         any: [/PRINTFORMW\ 「…已经不知道吃了多少根…呜哎哎\~\~」/],
       },
       { src: K3, ref: '8027', any: [/PRINTFORMW\ 「这么…残酷的事情…」/] },
-      { src: K3, ref: '8028', any: [/ELSE/] },
       { src: K3, ref: '8030', any: [/PRINTFORMW\ 「结束了吗…？」/] },
       {
         src: K3,
@@ -30223,8 +30096,6 @@ const FILES = [
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '8035', any: [/PRINTFORMW\ （已经…不想再思考了…）/] },
-      { src: K3, ref: '8037', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8038', any: [/ENDIF/] },
       { src: K3, ref: '8041', any: [/IF\ EXP:0\ >\ 20/] },
       {
         src: K3,
@@ -30232,18 +30103,15 @@ const FILES = [
         any: [/PRINTFORMW\ 「这样的事情做得再多…也没有用的…」/],
       },
       { src: K3, ref: '8043', any: [/PRINTFORMW\ 「这种…这种事情…」/] },
-      { src: K3, ref: '8044', any: [/ENDIF/] },
       { src: K3, ref: '8047', any: [/IF\ EXP:1\ >\ 20/] },
       { src: K3, ref: '8048', any: [/PRINTFORMW\ 「屁股要…好痛苦…」/] },
       { src: K3, ref: '8049', any: [/PRINTFORMW\ 「请停下…」/] },
-      { src: K3, ref: '8050', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8054',
         any: [/PRINTFORMW\ 「喔哎哎\~…居然要舔那种东西…」/],
       },
       { src: K3, ref: '8058', any: [/PRINTFORMW\ 「不要…再将我…弄脏了…」/] },
-      { src: K3, ref: '8059', any: [/ENDIF/] },
       { src: K3, ref: '8081', any: [/IF\ FLAG:62\ ==\ 0/] },
       { src: K3, ref: '8084', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30271,9 +30139,7 @@ const FILES = [
       { src: K3, ref: '8093', any: [/PRINTFORMW/] },
       { src: K3, ref: '8095', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8096', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8098', any: [/ELSE/] },
       { src: K3, ref: '8099', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8100', any: [/ENDIF/] },
       { src: K3, ref: '8101', any: [/ELSEIF\ FLAG:62\ ==\ 1/] },
       { src: K3, ref: '8104', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30303,9 +30169,7 @@ const FILES = [
       { src: K3, ref: '8113', any: [/PRINTFORMW/] },
       { src: K3, ref: '8115', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8116', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8118', any: [/ELSE/] },
       { src: K3, ref: '8119', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8120', any: [/ENDIF/] },
       { src: K3, ref: '8121', any: [/ELSEIF\ FLAG:62\ ==\ 2/] },
       { src: K3, ref: '8124', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30335,9 +30199,7 @@ const FILES = [
       { src: K3, ref: '8133', any: [/PRINTFORMW/] },
       { src: K3, ref: '8135', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8136', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8138', any: [/ELSE/] },
       { src: K3, ref: '8139', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8140', any: [/ENDIF/] },
       { src: K3, ref: '8141', any: [/ELSEIF\ \ FLAG:62\ ==\ 3/] },
       { src: K3, ref: '8144', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30367,9 +30229,7 @@ const FILES = [
       { src: K3, ref: '8153', any: [/PRINTFORMW/] },
       { src: K3, ref: '8155', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8156', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8158', any: [/ELSE/] },
       { src: K3, ref: '8159', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8160', any: [/ENDIF/] },
       { src: K3, ref: '8161', any: [/ELSEIF\ \ FLAG:62\ ==\ 4/] },
       { src: K3, ref: '8164', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30399,9 +30259,7 @@ const FILES = [
       { src: K3, ref: '8173', any: [/PRINTFORMW/] },
       { src: K3, ref: '8175', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8176', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8178', any: [/ELSE/] },
       { src: K3, ref: '8179', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8180', any: [/ENDIF/] },
       { src: K3, ref: '8181', any: [/ELSEIF\ \ FLAG:62\ ==\ 5/] },
       { src: K3, ref: '8184', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30431,9 +30289,7 @@ const FILES = [
       { src: K3, ref: '8193', any: [/PRINTFORMW/] },
       { src: K3, ref: '8195', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8196', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8198', any: [/ELSE/] },
       { src: K3, ref: '8199', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8200', any: [/ENDIF/] },
       { src: K3, ref: '8201', any: [/ELSEIF\ \ FLAG:62\ ==\ 6/] },
       { src: K3, ref: '8204', any: [/IF\ FLAG:63\ ==\ 1/] },
       { src: K3, ref: '8205', any: [/PRINTFORM\ 「请/] },
@@ -30465,9 +30321,7 @@ const FILES = [
       { src: K3, ref: '8215', any: [/PRINTFORMW/] },
       { src: K3, ref: '8217', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8218', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8220', any: [/ELSE/] },
       { src: K3, ref: '8221', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8222', any: [/ENDIF/] },
       { src: K3, ref: '8223', any: [/ELSEIF\ \ FLAG:62\ ==\ 7/] },
       { src: K3, ref: '8226', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30504,9 +30358,7 @@ const FILES = [
       { src: K3, ref: '8236', any: [/PRINTFORMW/] },
       { src: K3, ref: '8238', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8239', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8241', any: [/ELSE/] },
       { src: K3, ref: '8242', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8243', any: [/ENDIF/] },
       { src: K3, ref: '8244', any: [/ELSEIF\ \ FLAG:62\ ==\ 9/] },
       { src: K3, ref: '8247', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30534,7 +30386,7 @@ const FILES = [
         src: K3,
         ref: '8251',
         any: [
-          /PRINTFORMW\ 「%SELF_CALL\(A\)%的人生虽然已经混乱不堪了…但今后会一直赤身裸体的所以一点问题也没有咯%UNICODE\(0x2661\)\ \*1%/,
+          /PRINTFORMW\ 「%SELF_CALL\(A\)%的人生虽然已经混乱不堪了…但今后会一直赤身裸体的所以一点问题也没有咯%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       { src: K3, ref: '8253', any: [/ELSEIF\ TALENT:A:76\ ==\ 1/] },
@@ -30543,9 +30395,7 @@ const FILES = [
       { src: K3, ref: '8257', any: [/PRINTFORMW/] },
       { src: K3, ref: '8259', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8260', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8262', any: [/ELSE/] },
       { src: K3, ref: '8263', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8264', any: [/ENDIF/] },
       { src: K3, ref: '8265', any: [/ELSEIF\ \ FLAG:62\ ==\ 12/] },
       { src: K3, ref: '8268', any: [/IF\ FLAG:63\ ==\ 1/] },
       {
@@ -30582,11 +30432,7 @@ const FILES = [
       { src: K3, ref: '8278', any: [/PRINTFORMW/] },
       { src: K3, ref: '8280', any: [/ELSEIF\ ABL:A:16\ >=\ 5/] },
       { src: K3, ref: '8281', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8283', any: [/ELSE/] },
       { src: K3, ref: '8284', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8285', any: [/ENDIF/] },
-      { src: K3, ref: '8286', any: [/ENDIF/] },
-      { src: K3, ref: '8288', any: [/RETURN\ 0/] },
       { src: K3, ref: '8296', any: [/PRINTFORMW\ 「呵呵～赢啦！♪」/] },
       {
         src: K3,
@@ -30594,41 +30440,33 @@ const FILES = [
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '8301', any: [/PRINTFORMW\ 「……」/] },
-      { src: K3, ref: '8303', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '8304',
         any: [
-          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ T/,
+          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ TALENT:34\ ==\ 1/,
         ],
       },
       { src: K3, ref: '8307', any: [/IF\ RAND:3\ ==\ 0/] },
       { src: K3, ref: '8308', any: [/PRINTFORMW\ 「真是对不起了\~♪」/] },
       { src: K3, ref: '8309', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '8310', any: [/PRINTFORMW\ 「真是不像样……」/] },
-      { src: K3, ref: '8311', any: [/ELSE/] },
       { src: K3, ref: '8312', any: [/PRINTFORMW\ 「完全没有可能会输嘛！」/] },
-      { src: K3, ref: '8313', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8315',
         any: [/ELSEIF\ TALENT:10\ ==\ 1\ \|\|\ TALENT:26\ ==\ 1/],
       },
       { src: K3, ref: '8318', any: [/PRINTFORMW\ 「该怎么说好呢……」/] },
-      { src: K3, ref: '8320', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8321', any: [/ELSE/] },
       { src: K3, ref: '8324', any: [/IF\ RAND:3\ ==\ 0/] },
       { src: K3, ref: '8325', any: [/PRINTFORMW\ 「真是肮脏…！」/] },
       { src: K3, ref: '8326', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '8327', any: [/PRINTFORMW\ 「看到了吗！」/] },
-      { src: K3, ref: '8328', any: [/ELSE/] },
       {
         src: K3,
         ref: '8329',
         any: [/PRINTFORMW\ 「也就只是这种东西而已嘛♪」/],
       },
-      { src: K3, ref: '8330', any: [/ENDIF/] },
-      { src: K3, ref: '8332', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8334',
@@ -30641,10 +30479,7 @@ const FILES = [
         ref: '8336',
         any: [/PRINTFORMW\ （但是…差点\.\.\.\.\.\.？！？）/],
       },
-      { src: K3, ref: '8337', any: [/ELSE/] },
       { src: K3, ref: '8339', any: [/PRINTFORMW\ 「祝你愉快\~♪」/] },
-      { src: K3, ref: '8340', any: [/ENDIF/] },
-      { src: K3, ref: '8342', any: [/RETURN\ 0/] },
       { src: K3, ref: '8350', any: [/IF\ CFLAG:1\ ==\ 2/] },
       {
         src: K3,
@@ -30652,12 +30487,11 @@ const FILES = [
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '8355', any: [/PRINTFORMW\ 「……」/] },
-      { src: K3, ref: '8357', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '8358',
         any: [
-          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ T/,
+          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ TALENT:34\ ==\ 1/,
         ],
       },
       { src: K3, ref: '8361', any: [/IF\ TALENT:278/] },
@@ -30670,7 +30504,6 @@ const FILES = [
       { src: K3, ref: '8365', any: [/PRINTFORMW\ 「才不会输的!！」/] },
       { src: K3, ref: '8366', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '8367', any: [/PRINTFORMW\ 「区区你这样的家伙！」/] },
-      { src: K3, ref: '8368', any: [/ELSE/] },
       {
         src: K3,
         ref: '8369',
@@ -30678,7 +30511,6 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%的力量……好好地见识一下吧！」/,
         ],
       },
-      { src: K3, ref: '8370', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8372',
@@ -30690,11 +30522,7 @@ const FILES = [
         ref: '8377',
         any: [/PRINTFORMW\ 「咳呜咳呜……偏偏这种时候……」/],
       },
-      { src: K3, ref: '8378', any: [/ELSE/] },
       { src: K3, ref: '8379', any: [/PRINTFORMW\ 「呜啊、还、还不想死啊……」/] },
-      { src: K3, ref: '8380', any: [/ENDIF/] },
-      { src: K3, ref: '8382', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8383', any: [/ELSE/] },
       { src: K3, ref: '8386', any: [/IF\ TALENT:258/] },
       {
         src: K3,
@@ -30709,30 +30537,24 @@ const FILES = [
         ref: '8392',
         any: [/PRINTFORMW\ 「到%SELF_CALL\(TARGET\)%的回合了！」/],
       },
-      { src: K3, ref: '8393', any: [/ELSE/] },
       { src: K3, ref: '8394', any: [/PRINTFORMW\ 「才不会输呢！」/] },
-      { src: K3, ref: '8395', any: [/ENDIF/] },
-      { src: K3, ref: '8397', any: [/ENDIF/] },
-      { src: K3, ref: '8398', any: [/ELSE/] },
       {
         src: K3,
         ref: '8400',
         any: [/IF\ TALENT:21\ ==\ 1\ \|\|\ TALENT:22\ ==\ 1/],
       },
       { src: K3, ref: '8403', any: [/PRINTFORMW\ 「……」/] },
-      { src: K3, ref: '8405', any: [/RETURN\ 0/] },
       {
         src: K3,
         ref: '8406',
         any: [
-          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ T/,
+          /ELSEIF\ TALENT:11\ ==\ 1\ \|\|\ TALENT:12\ ==\ 1\ \|\|\ TALENT:15\ ==\ 1\ \|\|\ TALENT:30\ ==\ 1\ \|\|\ TALENT:34\ ==\ 1/,
         ],
       },
       { src: K3, ref: '8409', any: [/IF\ RAND:3\ ==\ 0/] },
       { src: K3, ref: '8410', any: [/PRINTFORMW\ 「向魔王大人屈服吧！」/] },
       { src: K3, ref: '8411', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '8412', any: [/PRINTFORMW\ 「不要再做无用的抵抗了！」/] },
-      { src: K3, ref: '8413', any: [/ELSE/] },
       {
         src: K3,
         ref: '8414',
@@ -30740,273 +30562,21 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%新的力量……好好地见识一下吧！」/,
         ],
       },
-      { src: K3, ref: '8415', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8417',
         any: [/ELSEIF\ TALENT:10\ ==\ 1\ \|\|\ TALENT:26\ ==\ 1/],
       },
       { src: K3, ref: '8420', any: [/PRINTFORMW\ 「神圣的力量……呜呜」/] },
-      { src: K3, ref: '8422', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8423', any: [/ELSE/] },
       { src: K3, ref: '8426', any: [/IF\ RAND:3\ ==\ 0/] },
       { src: K3, ref: '8427', any: [/PRINTFORMW\ 「你也总有一天会明白的」/] },
       { src: K3, ref: '8428', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '8429', any: [/PRINTFORMW\ 「美妙的力量啊……」/] },
-      { src: K3, ref: '8430', any: [/ELSE/] },
       {
         src: K3,
         ref: '8431',
         any: [/PRINTFORMW\ 「啊啊……这涌上来的力量……！」/],
       },
-      { src: K3, ref: '8432', any: [/ENDIF/] },
-      { src: K3, ref: '8434', any: [/ENDIF/] },
-      { src: K3, ref: '8435', any: [/ENDIF/] },
-      { src: K3, ref: '8439', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8449', any: [/IF\ SELECTCOM\ ==\ 55/] },
-      { src: K3, ref: '8451', any: [/IF\ BASE:1\ <=\ 0/] },
-      {
-        src: K3,
-        ref: '8452',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%连站起来的力气都没有的样子……/],
-      },
-      { src: K3, ref: '8453', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8454',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%被角斗场的热气和被接下来要战斗的对手凝视着而吓得直发抖……/,
-        ],
-      },
-      { src: K3, ref: '8455', any: [/ENDIF/] },
-      { src: K3, ref: '8456', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8457', any: [/ENDIF/] },
-      { src: K3, ref: '8461', any: [/IF\ SELECTCOM\ ==\ 56/] },
-      { src: K3, ref: '8463', any: [/IF\ BASE:1\ <=\ 0/] },
-      { src: K3, ref: '8465', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
-      { src: K3, ref: '8466', any: [/PRINTFORMW\ 「请，请不要继续下去了……」/] },
-      {
-        src: K3,
-        ref: '8467',
-        any: [
-          /PRINTFORMW\ 气力用尽了的%SAVESTR:TARGET%在角斗场的土地之上喘气已经是极限了的样子……/,
-        ],
-      },
-      { src: K3, ref: '8468', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8469',
-        any: [/PRINTFORMW\ 「不…不要啊……被那么侵犯了什么的…不要啊……」/],
-      },
-      {
-        src: K3,
-        ref: '8470',
-        any: [
-          /PRINTFORMW\ 气力用尽了的%SAVESTR:TARGET%在角斗场的土地之上喘气已经是极限了的样子……/,
-        ],
-      },
-      { src: K3, ref: '8471', any: [/ENDIF/] },
-      { src: K3, ref: '8472', any: [/ELSE/] },
-      { src: K3, ref: '8474', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
-      {
-        src: K3,
-        ref: '8475',
-        any: [/PRINTFORMW\ 「跟%SAVESTR:ASSI%做对手什么的…根本不知道啊……」/],
-      },
-      {
-        src: K3,
-        ref: '8476',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%看着收到%NAME:MASTER%的指令而武装起来的%SAVESTR:ASSI%留下了冷汗……/,
-        ],
-      },
-      { src: K3, ref: '8477', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8478',
-        any: [/PRINTFORMW\ 「居，居然会有这么丑陋的生物存在什么的……！」/],
-      },
-      {
-        src: K3,
-        ref: '8479',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%看到了在角斗场上丑陋的生物感到了恐惧……/,
-        ],
-      },
-      { src: K3, ref: '8480', any: [/ENDIF/] },
-      { src: K3, ref: '8481', any: [/ENDIF/] },
-      { src: K3, ref: '8482', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8483', any: [/ENDIF/] },
-      { src: K3, ref: '8488', any: [/IF\ SELECTCOM\ ==\ 31/] },
-      { src: K3, ref: '8490', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
-      {
-        src: K3,
-        ref: '8491',
-        any: [
-          /PRINTFORMW\ 「啊哼嗯…嗯呜…再、再这样做的话…呜噗嗯！？嗯噗嗯嗯噗嗯……！」/,
-        ],
-      },
-      { src: K3, ref: '8492', any: [/PRINTFORM\ %SAVESTR:ASSI%用/] },
-      { src: K3, ref: '8494', any: [/PRINT\ 大鸡巴/] },
-      { src: K3, ref: '8496', any: [/PRINT\ 假阳具/] },
-      {
-        src: K3,
-        ref: '8497',
-        any: [/PRINTFORMW\ 让%SAVESTR:TARGET%吸着，露出了愉悦的表情……/],
-      },
-      { src: K3, ref: '8498', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8499',
-        any: [/PRINTFORMW\ 「啊啊…这，这么臭的东西…嗯呜…嗯噗…嗯啾…噗噜呸……」/],
-      },
-      {
-        src: K3,
-        ref: '8500',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%舔舐着闻着就让人想吐的味道的阴茎……/],
-      },
-      { src: K3, ref: '8501', any: [/ENDIF/] },
-      { src: K3, ref: '8502', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8503', any: [/ENDIF/] },
-      { src: K3, ref: '8507', any: [/IF\ SELECTCOM\ ==\ 5/] },
-      { src: K3, ref: '8509', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
-      {
-        src: K3,
-        ref: '8510',
-        any: [
-          /PRINTFORMW\ 「哈呜\~…呜…哪，哪怕被做这样的事情%SELF_CALL\(TARGET\)%也…啊呜\~！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '8511',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%的胸部，被持续地揉着……/],
-      },
-      { src: K3, ref: '8512', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8513',
-        any: [
-          /PRINTFORMW\ 「快…快放开手！%SELF_CALL\(TARGET\)%才不会因为这种事情…呜呼嗯！！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '8514',
-        any: [
-          /PRINTFORMW\ %SAVESTR:TARGET%因为胸部被大力地揉着而从嘴边漏出了痛苦的声音……/,
-        ],
-      },
-      { src: K3, ref: '8515', any: [/ENDIF/] },
-      { src: K3, ref: '8516', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8517', any: [/ENDIF/] },
-      { src: K3, ref: '8521', any: [/IF\ SELECTCOM\ ==\ 21/] },
-      { src: K3, ref: '8523', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
-      {
-        src: K3,
-        ref: '8524',
-        any: [
-          /PRINTFORMW\ 「啊啊\~！不，不行的啊…这样…强行做这样的…啊啊啊啊！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '8525',
-        any: [/PRINTFORM\ %SAVESTR:ASSI%一边听着悲鸣一边用/],
-      },
-      { src: K3, ref: '8527', any: [/PRINT\ 大鸡巴/] },
-      { src: K3, ref: '8529', any: [/PRINT\ 假阳具/] },
-      {
-        src: K3,
-        ref: '8530',
-        any: [/PRINTFORMW\ 将%SAVESTR:TARGET%的小穴毫不留情地侵犯着……/],
-      },
-      { src: K3, ref: '8532', any: [/ELSEIF\ TFLAG:400\ ==\ 206/] },
-      {
-        src: K3,
-        ref: '8533',
-        any: [/PRINTFORMW\ 「噶啊…呃哈啊…呃啊啊…呜啊啊啊……」/],
-      },
-      {
-        src: K3,
-        ref: '8534',
-        any: [
-          /PRINTFORMW\ 可怜的%SAVESTR:TARGET%发出了如同蟾蜍被碾碎了一样的声音，继续被巨魔侵犯着……/,
-        ],
-      },
-      { src: K3, ref: '8535', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8536',
-        any: [
-          /PRINTFORMW\ 「不…不要啊…这样的…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的…啊啊！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '8537',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%继续被怪物侵犯着……/],
-      },
-      { src: K3, ref: '8538', any: [/ENDIF/] },
-      { src: K3, ref: '8539', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8540', any: [/ENDIF/] },
-      { src: K3, ref: '8545', any: [/IF\ SELECTCOM\ ==\ 27/] },
-      { src: K3, ref: '8547', any: [/IF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/] },
-      {
-        src: K3,
-        ref: '8548',
-        any: [/PRINTFORMW\ 「啊啊\~！啊\~啊啊\~！屁股…要坏掉了啊\~…\~！」/],
-      },
-      {
-        src: K3,
-        ref: '8549',
-        any: [/PRINTFORM\ %SAVESTR:ASSI%一边听着悲鸣一边用/],
-      },
-      { src: K3, ref: '8551', any: [/PRINT\ 大鸡巴/] },
-      { src: K3, ref: '8553', any: [/PRINT\ 假阳具/] },
-      {
-        src: K3,
-        ref: '8554',
-        any: [/PRINTFORMW\ 将%SAVESTR:TARGET%的肛穴毫不留情地侵犯着……/],
-      },
-      { src: K3, ref: '8556', any: [/ELSEIF\ TFLAG:400\ ==\ 206/] },
-      {
-        src: K3,
-        ref: '8557',
-        any: [/PRINTFORMW\ 「呃啊…呃哈啊…呜呃…呜呃呃呃……」/],
-      },
-      {
-        src: K3,
-        ref: '8558',
-        any: [
-          /PRINTFORMW\ 可怜的%SAVESTR:TARGET%发出了如同蟾蜍被碾碎了一样的声音，继续被巨魔侵犯着……/,
-        ],
-      },
-      { src: K3, ref: '8559', any: [/ELSE/] },
-      {
-        src: K3,
-        ref: '8560',
-        any: [
-          /PRINTFORMW\ 「不…不要啊…这样的…%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%的…啊啊！的肛门啊啊啊！」/,
-        ],
-      },
-      {
-        src: K3,
-        ref: '8561',
-        any: [/PRINTFORMW\ %SAVESTR:TARGET%继续被怪物侵犯着肛门……/],
-      },
-      { src: K3, ref: '8562', any: [/ENDIF/] },
-      { src: K3, ref: '8563', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8564', any: [/ENDIF/] },
-      { src: K3, ref: '8569', any: [/IF\ SELECTCOM\ ==\ 51/] },
-      {
-        src: K3,
-        ref: '8570',
-        any: [/PRINTFORMW\ 「这种…区区媚薬而已……啊呜嗯！」/],
-      },
-      { src: K3, ref: '8571', any: [/RETURN\ 0/] },
-      { src: K3, ref: '8572', any: [/ENDIF/] },
-      { src: K3, ref: '8575', any: [/RETURN\ 0/] },
       { src: K3, ref: '8583', any: [/CFLAG:650\ =\ 1/] },
       { src: K3, ref: '8586', any: [/IF\ P\ ==\ 1/] },
       { src: K3, ref: '8588', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31022,7 +30592,6 @@ const FILES = [
           /PRINTFORMW\ %SAVESTR:TARGET%流着眼泪对无法将纯洁献给%NAME:MASTER%的事情不停地道歉………/,
         ],
       },
-      { src: K3, ref: '8591', any: [/ELSE/] },
       {
         src: K3,
         ref: '8592',
@@ -31030,7 +30599,6 @@ const FILES = [
           /PRINTFORMW\ 「快，快停下来…不、不要继续下去了…啊啊啊…不要啊啊啊！」/,
         ],
       },
-      { src: K3, ref: '8593', any: [/ENDIF/] },
       { src: K3, ref: '8594', any: [/CFLAG:651\ =\ 1/] },
       { src: K3, ref: '8596', any: [/ELSEIF\ P\ ==\ 2/] },
       { src: K3, ref: '8597', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31041,13 +30609,11 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~\~…肛门…有感觉了…明明不可以的…啊…啊啊\~…嗯\~！」/,
         ],
       },
-      { src: K3, ref: '8599', any: [/ELSE/] },
       {
         src: K3,
         ref: '8600',
         any: [/PRINTFORMW\ 「狂王大人…玩笑…过分了…哇…啊啊啊啊！」/],
       },
-      { src: K3, ref: '8601', any: [/ENDIF/] },
       { src: K3, ref: '8602', any: [/CFLAG:652\ =\ 1/] },
       { src: K3, ref: '8604', any: [/ELSEIF\ P\ ==\ 3/] },
       { src: K3, ref: '8605', any: [/IF\ TALENT:136/] },
@@ -31064,7 +30630,6 @@ const FILES = [
         ref: '8608',
         any: [/PRINTFORMW\ 「啊啊…居然被这样对待…魔王大人…救…命………」/],
       },
-      { src: K3, ref: '8609', any: [/ELSE/] },
       {
         src: K3,
         ref: '8610',
@@ -31072,7 +30637,6 @@ const FILES = [
           /PRINTFORMW\ 「不要看呀…不要看呀…哈啊哈啊哈啊嗯！腰…不要这样动啊…啊嗯啊啊啊\~！」/,
         ],
       },
-      { src: K3, ref: '8611', any: [/ENDIF/] },
       { src: K3, ref: '8612', any: [/CFLAG:653\ =\ 1/] },
       { src: K3, ref: '8614', any: [/ELSEIF\ P\ ==\ 4/] },
       { src: K3, ref: '8615', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31083,7 +30647,6 @@ const FILES = [
           /PRINTFORMW\ 「啊\~…哈\~…啊嗯啊\~…被狂王大人侵犯什么的…十分舒服的说\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8617', any: [/ELSE/] },
       {
         src: K3,
         ref: '8618',
@@ -31091,7 +30654,6 @@ const FILES = [
           /PRINTFORMW\ 「狂王大人\~…更加…请更多侵犯%SELF_CALL\(TARGET\)%吧…请更加侵犯%SELF_CALL\(TARGET\)%吧\~\~\~\~……♪」/,
         ],
       },
-      { src: K3, ref: '8619', any: [/ENDIF/] },
       { src: K3, ref: '8620', any: [/CFLAG:654\ =\ 1/] },
       { src: K3, ref: '8622', any: [/ELSEIF\ P\ ==\ 5/] },
       { src: K3, ref: '8623', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31099,10 +30661,9 @@ const FILES = [
         src: K3,
         ref: '8624',
         any: [
-          /PRINTFORMW\ 「大家\~\~\~…请更多…请更多地侵犯%SELF_CALL\(TARGET\)%吧…不管是肛穴还是小穴都想要被大家侵犯呢%UNICODE\(0x26/,
+          /PRINTFORMW\ 「大家\~\~\~…请更多…请更多地侵犯%SELF_CALL\(TARGET\)%吧…不管是肛穴还是小穴都想要被大家侵犯呢%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8625', any: [/ELSE/] },
       {
         src: K3,
         ref: '8626',
@@ -31110,7 +30671,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…这样…这样淫乱的…啊哈嗯呜\~\~\~！肛门…肛门是不行的呀\~…♪」/,
         ],
       },
-      { src: K3, ref: '8627', any: [/ENDIF/] },
       { src: K3, ref: '8628', any: [/CFLAG:655\ =\ 1/] },
       { src: K3, ref: '8630', any: [/ELSEIF\ P\ ==\ 6/] },
       { src: K3, ref: '8631', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31121,7 +30681,6 @@ const FILES = [
           /PRINTFORMW\ 「咕嗯噗呼…给予精液真是非常感谢♪　…啊嗯\~\~咕嗯\~…请往小穴里将精液都射出来吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8633', any: [/ELSE/] },
       {
         src: K3,
         ref: '8634',
@@ -31129,7 +30688,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊哈啊\~…是的…%SELF_CALL\(TARGET\)%的小穴是免费的哦…不管射多少都没关系的\~\~\~♪」/,
         ],
       },
-      { src: K3, ref: '8635', any: [/ENDIF/] },
       { src: K3, ref: '8636', any: [/CFLAG:656\ =\ 1/] },
       { src: K3, ref: '8638', any: [/ELSEIF\ P\ ==\ 7/] },
       { src: K3, ref: '8639', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31144,7 +30702,7 @@ const FILES = [
         src: K3,
         ref: '8641',
         any: [
-          /PRINTFORMW\ 「成为了狂王大人的仆人了呢…%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…%SELF_CALL\(TARGET\)%会…更多地侍奉狂王大人/,
+          /PRINTFORMW\ 「成为了狂王大人的仆人了呢…%UNICODE\(0x2661\)\ \*1%\ 啊啊\~…%SELF_CALL\(TARGET\)%会…更多地侍奉狂王大人的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
       {
@@ -31154,7 +30712,6 @@ const FILES = [
           /PRINTFORMW\ 这样说着的%SAVESTR:TARGET%再次开始了对狂王的侍奉………/,
         ],
       },
-      { src: K3, ref: '8643', any: [/ELSE/] },
       {
         src: K3,
         ref: '8644',
@@ -31162,7 +30719,6 @@ const FILES = [
           /PRINTFORMW\ 「啊啊\~…狂王大人\~…感觉舒服吗\~\~？\ 嗯哼哼\~\~……%SELF_CALL\(TARGET\)%会让狂热大人更加舒服起来的呀\~\~\~\~♪」/,
         ],
       },
-      { src: K3, ref: '8645', any: [/ENDIF/] },
       { src: K3, ref: '8646', any: [/CFLAG:657\ =\ 1/] },
       { src: K3, ref: '8648', any: [/ELSEIF\ P\ ==\ 20/] },
       { src: K3, ref: '8649', any: [/IF\ TALENT:76\ \|\|\ TALENT:85/] },
@@ -31172,7 +30728,6 @@ const FILES = [
         ref: '8651',
         any: [/PRINTFORMW\ 「不要啊！那个人的孩子！快回去！快回去啦！」/],
       },
-      { src: K3, ref: '8652', any: [/ELSE/] },
       {
         src: K3,
         ref: '8653',
@@ -31180,8 +30735,6 @@ const FILES = [
           /PRINTFORMW\ 「呜呜呜…被做了这种事情，%SELF_CALL\(TARGET\)%已经…呜呜呜」/,
         ],
       },
-      { src: K3, ref: '8654', any: [/ENDIF/] },
-      { src: K3, ref: '8655', any: [/ELSE/] },
       {
         src: K3,
         ref: '8656',
@@ -31189,9 +30742,6 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL\(TARGET\)%连肚子的里面都是狂王大人的东西了呀\~…啊啊\~♪」/,
         ],
       },
-      { src: K3, ref: '8657', any: [/ENDIF/] },
-      { src: K3, ref: '8658', any: [/ENDIF/] },
-      { src: K3, ref: '8659', any: [/RETURN\ 0/] },
       { src: K3, ref: '8665', any: [/IF\ TFLAG:16\ ==\ 4/] },
       {
         src: K3,
@@ -31218,7 +30768,6 @@ const FILES = [
       },
       { src: K3, ref: '8674', any: [/ELSEIF\ TFLAG:16\ ==\ 7/] },
       { src: K3, ref: '8675', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8676', any: [/ENDIF/] },
       { src: K3, ref: '8682', any: [/IF\ TFLAG:500\ ==\ 0/] },
       {
         src: K3,
@@ -31259,7 +30808,6 @@ const FILES = [
       { src: K3, ref: '8707', any: [/PRINTFORMW/] },
       { src: K3, ref: '8709', any: [/ELSEIF\ TFLAG:500\ ==\ 9/] },
       { src: K3, ref: '8710', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8711', any: [/ENDIF/] },
       { src: K3, ref: '8718', any: [/IF\ TFLAG:510\ ==\ 0/] },
       {
         src: K3,
@@ -31276,7 +30824,6 @@ const FILES = [
       { src: K3, ref: '8728', any: [/PRINTFORMW/] },
       { src: K3, ref: '8730', any: [/ELSEIF\ TFLAG:510\ ==\ 4/] },
       { src: K3, ref: '8731', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8732', any: [/ENDIF/] },
       { src: K3, ref: '8739', any: [/IF\ TFLAG:520\ ==\ 0/] },
       {
         src: K3,
@@ -31289,7 +30836,6 @@ const FILES = [
       { src: K3, ref: '8743', any: [/PRINTFORMW\ 「这样终于能轻松了呢………」/] },
       { src: K3, ref: '8745', any: [/ELSEIF\ TFLAG:520\ ==\ 2/] },
       { src: K3, ref: '8746', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8747', any: [/ENDIF/] },
       { src: K3, ref: '8754', any: [/IF\ TFLAG:530\ ==\ 0/] },
       { src: K3, ref: '8755', any: [/PRINTFORMW/] },
       { src: K3, ref: '8757', any: [/ELSEIF\ TFLAG:530\ ==\ 1/] },
@@ -31304,7 +30850,6 @@ const FILES = [
       { src: K3, ref: '8770', any: [/PRINTFORMW/] },
       { src: K3, ref: '8772', any: [/ELSEIF\ TFLAG:530\ ==\ 6/] },
       { src: K3, ref: '8773', any: [/PRINTFORMW/] },
-      { src: K3, ref: '8774', any: [/ENDIF/] },
       {
         src: K3,
         ref: '8780',
@@ -31319,7 +30864,7 @@ const FILES = [
         src: K3,
         ref: '8783',
         any: [
-          /ELSEIF\ TALENT:A:11\ ==\ 1\ \|\|\ TALENT:A:12\ ==\ 1\ \|\|\ TALENT:A:15\ ==\ 1\ \|\|\ TALENT:A:30\ =/,
+          /ELSEIF\ TALENT:A:11\ ==\ 1\ \|\|\ TALENT:A:12\ ==\ 1\ \|\|\ TALENT:A:15\ ==\ 1\ \|\|\ TALENT:A:30\ ==\ 1\ \|\|\ TALENT:A:34\ ==\ 1/,
         ],
       },
       {
@@ -31341,13 +30886,11 @@ const FILES = [
           /PRINTFORMW\ 「%SELF_CALL_FIRST\(A\)%、只凭%SELF_CALL\(A\)%真的能将魔王给打倒吗…？」/,
         ],
       },
-      { src: K3, ref: '8789', any: [/ELSE/] },
       {
         src: K3,
         ref: '8791',
         any: [/PRINTFORMW\ 「%SELF_CALL\(A\)%绝对不会输给…魔王什么的！！」/],
       },
-      { src: K3, ref: '8792', any: [/ENDIF/] },
       { src: K3, ref: '8798', any: [/IF\ CFLAG:A:504\ ==\ 0/] },
       {
         src: K3,
@@ -31372,7 +30915,6 @@ const FILES = [
       { src: K3, ref: '8807', any: [/PRINT\ 猪/] },
       { src: K3, ref: '8808', any: [/ELSEIF\ CFLAG:A:504\ ==\ 3/] },
       { src: K3, ref: '8809', any: [/PRINT\ 马/] },
-      { src: K3, ref: '8810', any: [/ENDIF/] },
       { src: K3, ref: '8811', any: [/PRINTFORMW\ 交配想得受不了了\~…！」/] },
       { src: K3, ref: '8812', any: [/ELSEIF\ CFLAG:A:504\ ==\ 4/] },
       {
@@ -31418,7 +30960,6 @@ const FILES = [
         ref: '8829',
         any: [/PRINTFORMW\ 「童贞的大鸡巴…作为胜利的报酬是不是很好呀\~？」/],
       },
-      { src: K3, ref: '8830', any: [/ENDIF/] },
       { src: K3, ref: '8839', any: [/IF\ TFLAG:18\ ==\ 0/] },
       {
         src: K3,
@@ -31451,7 +30992,6 @@ const FILES = [
           /PRINTFORMW\ 「哈嗯呜\~！%SELF_CALL\(A\)%是最喜欢跟狗狗肛交的变态来的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8853', any: [/ELSE/] },
       {
         src: K3,
         ref: '8854',
@@ -31459,7 +30999,6 @@ const FILES = [
           /PRINTFORMW\ 「哈嗯呜\~！%SELF_CALL\(A\)%是最喜欢和狗狗做爱的变态来的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8855', any: [/ENDIF/] },
       { src: K3, ref: '8857', any: [/ELSEIF\ CFLAG:A:504\ ==\ 2/] },
       { src: K3, ref: '8859', any: [/IF\ TALENT:A:0\ ==\ 1/] },
       {
@@ -31469,7 +31008,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊嗯呜\~！%SELF_CALL\(A\)%是最喜欢跟猪肛交的大变态来的\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8861', any: [/ELSE/] },
       {
         src: K3,
         ref: '8862',
@@ -31477,7 +31015,6 @@ const FILES = [
           /PRINTFORMW\ 「哈啊嗯哈\~！%SELF_CALL\(A\)%是最喜欢跟猪做H的事情的变态来的\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8863', any: [/ENDIF/] },
       { src: K3, ref: '8865', any: [/ELSEIF\ CFLAG:A:504\ ==\ 3/] },
       { src: K3, ref: '8867', any: [/IF\ TALENT:A:0\ ==\ 1/] },
       {
@@ -31487,7 +31024,6 @@ const FILES = [
           /PRINTFORMW\ 「啊呜啊嗯呜呜\~\~\~！%SELF_CALL\(A\)%是最喜欢跟马肛交的大变态来的\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8869', any: [/ELSE/] },
       {
         src: K3,
         ref: '8870',
@@ -31495,7 +31031,6 @@ const FILES = [
           /PRINTFORMW\ 「啊呜啊嗯呜呜\~\~\~！%SELF_CALL\(A\)%是最喜欢跟马SEX的大变态来的%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8871', any: [/ENDIF/] },
       { src: K3, ref: '8873', any: [/ELSEIF\ CFLAG:A:504\ ==\ 4/] },
       { src: K3, ref: '8874', any: [/PRINTFORMW\ ，今天的KISS十分地甜蜜呢/] },
       { src: K3, ref: '8876', any: [/ELSEIF\ CFLAG:A:504\ ==\ 5/] },
@@ -31507,7 +31042,6 @@ const FILES = [
           /PRINTFORMW\ 「奖励SEX最棒了\~…啊啊嗯\~\~\~！啊嗯\~\~\~…请给%SELF_CALL\(A\)%更多的SEX吧\~\~！」/,
         ],
       },
-      { src: K3, ref: '8881', any: [/ELSE/] },
       {
         src: K3,
         ref: '8882',
@@ -31515,7 +31049,6 @@ const FILES = [
           /PRINTFORMW\ 「啊嗯\~\~！肛交SEX好棒，好舒服啊嗯\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8883', any: [/ENDIF/] },
       { src: K3, ref: '8885', any: [/ELSEIF\ CFLAG:A:504\ ==\ 6/] },
       {
         src: K3,
@@ -31533,7 +31066,6 @@ const FILES = [
           /PRINTFORMW\ 「啊、啊啊啊嗯\~\~…乱交派对真是太棒了呀\~\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8892', any: [/ELSE/] },
       {
         src: K3,
         ref: '8893',
@@ -31541,7 +31073,6 @@ const FILES = [
           /PRINTFORMW\ 「啊、啊哈啊嗯\~…乱交派对真是最棒的呀\~\~\~…%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8894', any: [/ENDIF/] },
       { src: K3, ref: '8896', any: [/ELSEIF\ CFLAG:A:504\ ==\ 8/] },
       {
         src: K3,
@@ -31557,7 +31088,6 @@ const FILES = [
         ref: '8902',
         any: [/PRINTFORMW\ 「啊啊\~\~…童真狩猎要变成癖好了呀\~\~♪」/],
       },
-      { src: K3, ref: '8904', any: [/ELSE/] },
       {
         src: K3,
         ref: '8905',
@@ -31565,10 +31095,6 @@ const FILES = [
           /PRINTFORMW\ 「呜哼哼\~\~、想要塞进小穴那里是吧\~？　真是残念呢、小穴那是属于魔王大人的东西来的\~♪」/,
         ],
       },
-      { src: K3, ref: '8906', any: [/ENDIF/] },
-      { src: K3, ref: '8907', any: [/ELSE/] },
-      { src: K3, ref: '8908', any: [/ENDIF/] },
-      { src: K3, ref: '8909', any: [/ENDIF/] },
       { src: K3, ref: '8917', any: [/IF\ TFLAG:18\ ==\ 0/] },
       { src: K3, ref: '8918', any: [/PRINTFORMW\ 「得、得救了呀………」/] },
       { src: K3, ref: '8920', any: [/ELSEIF\ TFLAG:18\ ==\ 1/] },
@@ -31580,13 +31106,11 @@ const FILES = [
           /PRINTFORMW\ 「哔哩哔哩地！啊\~\~哈啊\~\~\~！哔哩\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8924', any: [/ELSE/] },
       {
         src: K3,
         ref: '8925',
         any: [/PRINTFORMW\ 「不，不要啊\~\~\~！电什么的不要啊！啊哇哇哇哇哇」/],
       },
-      { src: K3, ref: '8926', any: [/ENDIF/] },
       { src: K3, ref: '8928', any: [/ELSEIF\ TFLAG:18\ ==\ 2/] },
       { src: K3, ref: '8930', any: [/IF\ ABL:A:17\ >=\ 4/] },
       {
@@ -31596,7 +31120,6 @@ const FILES = [
           /PRINTFORMW\ 「请看着%SELF_CALL\(A\)%的自慰来好好地撸一发吧\~\~♪　啊，触碰可是严禁的噢」/,
         ],
       },
-      { src: K3, ref: '8932', any: [/ELSE/] },
       {
         src: K3,
         ref: '8933',
@@ -31604,7 +31127,6 @@ const FILES = [
           /PRINTFORMW\ 「啊、啊啊啊…在那么多人的面前自慰什么的…脑袋好像要沸腾一样了………」/,
         ],
       },
-      { src: K3, ref: '8934', any: [/ENDIF/] },
       { src: K3, ref: '8936', any: [/ELSEIF\ TFLAG:18\ ==\ 3/] },
       { src: K3, ref: '8938', any: [/IF\ ABL:A:17\ >=\ 6/] },
       {
@@ -31614,7 +31136,6 @@ const FILES = [
           /PRINTFORMW\ 「哦吼吼…在被大家注目着自慰什么，真是受不了啊\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8940', any: [/ELSE/] },
       {
         src: K3,
         ref: '8941',
@@ -31622,7 +31143,6 @@ const FILES = [
           /PRINTFORMW\ 「“长着一张好脸蛋，出来的味道连鼻子都要臭歪了什么的”…好过分、好过分啊………」/,
         ],
       },
-      { src: K3, ref: '8942', any: [/ENDIF/] },
       { src: K3, ref: '8944', any: [/ELSEIF\ TFLAG:18\ ==\ 4/] },
       { src: K3, ref: '8946', any: [/IF\ ABL:A:21\ >=\ 3/] },
       {
@@ -31632,13 +31152,11 @@ const FILES = [
           /PRINTFORMW\ 「啊哈嗯呜\~\~！请用鞭子将%SELF_CALL\(A\)%打到气绝为止吧\~\~%UNICODE\(0x2661\)\ \*1%」/,
         ],
       },
-      { src: K3, ref: '8948', any: [/ELSE/] },
       {
         src: K3,
         ref: '8949',
         any: [/PRINTFORMW\ 「已经不要了啊\~！不要再打了啊啊！」/],
       },
-      { src: K3, ref: '8950', any: [/ENDIF/] },
       { src: K3, ref: '8952', any: [/ELSEIF\ TFLAG:18\ ==\ 5/] },
       {
         src: K3,
@@ -31652,13 +31170,11 @@ const FILES = [
           /PRINTFORMW\ 「哈呼嗯\~、哼嗯\~…小便对脸蛋是有美容效果的噢、所以请往%SELF_CALL\(A\)%的脸上尿尿吧\~♪」/,
         ],
       },
-      { src: K3, ref: '8956', any: [/ELSE/] },
       {
         src: K3,
         ref: '8957',
         any: [/PRINTFORMW\ 「呜噗嗯…呜嗯…咕嗯…呜呜呜…不要…不要了啊………」/],
       },
-      { src: K3, ref: '8958', any: [/ENDIF/] },
       { src: K3, ref: '8960', any: [/ELSEIF\ TFLAG:18\ ==\ 6/] },
       {
         src: K3,
@@ -31681,7 +31197,6 @@ const FILES = [
       },
       { src: K3, ref: '8969', any: [/ELSEIF\ TFLAG:18\ ==\ 9/] },
       { src: K3, ref: '8970', any: [/PRINTFORMW\ 「啊呜呃嗯啊～不要啊～」/] },
-      { src: K3, ref: '8971', any: [/ENDIF/] },
       { src: K3, ref: '8977', any: [/IF\ ARG:0\ ==\ 1/] },
       { src: K3, ref: '8979', any: [/PRINTFORM\ 的噢\~♪/] },
       { src: K3, ref: '8980', any: [/ELSEIF\ ARG:0\ ==\ 2/] },
@@ -31692,17 +31207,14 @@ const FILES = [
       { src: K3, ref: '8988', any: [/PRINTFORM\ 来的……呢\~。/] },
       { src: K3, ref: '8989', any: [/ELSEIF\ ARG:0\ ==\ 5/] },
       { src: K3, ref: '8991', any: [/PRINTFORM\ 的噢……呜\~。/] },
-      { src: K3, ref: '8992', any: [/ELSE/] },
       { src: K3, ref: '8995', any: [/IF\ RAND:3\ ==\ 0/] },
       { src: K3, ref: '8996', any: [/PRINTFORM\ 的说。/] },
       { src: K3, ref: '8997', any: [/ELSEIF\ RAND:2\ ==\ 0/] },
       { src: K3, ref: '8998', any: [/PRINTFORM\ 噢。/] },
-      { src: K3, ref: '8999', any: [/ELSE/] },
       { src: K3, ref: '9000', any: [/PRINTFORM\ 噢。/] },
-      { src: K3, ref: '9001', any: [/ENDIF/] },
-      { src: K3, ref: '9002', any: [/ENDIF/] },
     ],
   },
+
   {
     js: 'ere/kojo/kojo-k5-mao.js',
     refs: [
