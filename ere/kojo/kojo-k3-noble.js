@@ -74,7 +74,6 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
-const { piercing_state } = require('#/system/train/com-hardcore');
 const {
   gohoubi_after_koujo_family,
   osioski_koujo_family,
@@ -8538,6 +8537,10 @@ async function kojo_message_com_3(rand) {
 
   if (era_flag.selectcom === 87) {
     // :5517
+    // 延迟读取：主启动图的 COM80-90 注册仍仅由 com-hardcore 自己负责。顶层
+    // require 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接线锁与
+    // M1249 一起失明（#233 全量变异抓到，本票重犯一次）
+    const { piercing_state } = require('#/system/train/com-hardcore');
     p = piercing_state.p;
 
     if (kojo.穿环 === 0) {
