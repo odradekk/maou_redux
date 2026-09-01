@@ -69,7 +69,7 @@ const SEGMENT_MIN = 4;
 // 的 :175 PRINTL 与 :197 PRINTW 空行）。`[ \t]+` 只吃半角空白，全角空格是
 // 参数内容（如 `PRINTFORMW` 后接全角空格开头的文本，参数以全角空格开头，#183 实测）。
 const PRINTFORM_RE =
-  /^\s*PRINTFORM(W|L)?(?:[ \t]+(.*))?$|^\s*PRINT(W|L)?(?:[ \t]+(.*))?$/;
+  /^\s*PRINTFORM(W|L)?(?:[ \t]+(.*))?$|^\s*PRINT(W|L)?(?:[ \t]+(.*))?$/i;
 
 // —— 插值记号的归一表（ERB %…% → 归一名 ← JS ${…}） ——
 
@@ -400,10 +400,9 @@ function find_printform(erb_lines, n, m) {
   for (let i = n; i <= m; i += 1) {
     const match = erb_lines[i - 1]?.match(PRINTFORM_RE);
     if (match) {
-      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?
-      const variant =
-        match[1] ||
-        (match[3] === 'W' ? 'W' : match[3] === 'L' ? 'L' : undefined);
+      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?；/i 认小写 printformw（K0 :2147）
+      const variant_raw = match[1] || match[3];
+      const variant = variant_raw ? variant_raw.toUpperCase() : undefined;
       const arg = match[2] ?? match[4] ?? '';
       return { line_no: i, variant, arg };
     }

@@ -823,9 +823,10 @@ export default [
   {
     desc: 'M1645 K0 接吻初吻故乡恋人判据错格（TALENT:317 == 4 改 == 5）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '    const hometown_lover = era.get(`talent:${target}:317`) === 4;',
-    replace:
-      '    const hometown_lover = era.get(`talent:${target}:317`) === 5;',
+    find: `    const hometown_lover = era.get(\`talent:\${target}:317\`) === 4;
+    const first_kiss = game.train.初吻与自我口上;`,
+    replace: `    const hometown_lover = era.get(\`talent:\${target}:317\`) === 5;
+    const first_kiss = game.train.初吻与自我口上;`,
     tests: ['kojo-k0-tender'],
     must_mention: '故乡恋人',
   },
@@ -1178,5 +1179,65 @@ export default [
     replace: '      (kojo.肛珠着脱 <= 4 || game.kojo.口上开关 === 2)',
     tests: ['kojo-k0-tender'],
     must_mention: '肛珠脱着：淫乱写 CFLAG:379 = 4，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M1824 K0 正常位首次状态推进写错（CFLAG:321 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.正常位 = 1; // :2032-2033',
+    replace: '      kojo.正常位 = 2; // :2032-2033',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位首次推进到 1',
+  },
+  {
+    desc: 'M1825 K0 正常位二次淫乱+性爱狂门槛错位（CFLAG:321 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次淫乱+性爱狂：RAND 三支 / 写 9',
+  },
+  {
+    desc: 'M1826 K0 正常位二次淫乱+性爱狂写回错档（CFLAG:321 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.正常位 = 9; // :2053',
+    replace: '        kojo.正常位 = 8; // :2053',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M1827 K0 正常位二次爱慕门槛错位（CFLAG:321 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.正常位 <= 4 || game.kojo.口上开关 === 2)
+      ) {`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.正常位 <= 3 || game.kojo.口上开关 === 2)
+      ) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次爱慕 + V钝感：小写 printformw 也出声 / 阈值闸',
+  },
+  {
+    desc: 'M1828 K0 正常位二次爱慕 V钝感小写 printformw 删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `            await era.printAndWait(
+              \`但是比起这个\${target_name}更为被\${player_name}所抱住的这一事实而心动不已………\`,
+            ); // :2147`,
+    replace: `            // deleted lowercase printformw :2147`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '但是比起这个琼更为被你所抱住的这一事实而心动不已',
+  },
+  {
+    desc: 'M1829 K0 正常位二次屈服Lv3+V感觉写回错档（CFLAG:321 = 4 改 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.正常位 = 4; // :2191',
+    replace: '        kojo.正常位 = 3; // :2191',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次屈服Lv3+V感觉：自称首字插值，推进到 4',
   },
 ];
