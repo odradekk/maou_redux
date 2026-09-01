@@ -142,6 +142,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { stub_line } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { get_kojo_num } = require('#/kojo/kojo-system');
 const { e_get, e_set } = require('#/dungeon/monster-data');
 const { monstername } = require('#/dungeon/monster-data');
 const { equip_database } = require('#/system/equip/equip-lookup');
@@ -265,9 +266,14 @@ async function ryouzyoku(arg, rand) {
   // :57 TARGET = ARG（口上钩子的 GET_KOJO_NUM 缺省读它）
   era_flag.target = arg;
 
-  // :58 CALL DUNGEON_RYOUZYOKU（口上前置钩子，角色口上票落地后注册）
-  await ryouzyoku_kojo_family.call(0, { whenMissing: 0, args: [] });
-
+  // :58 CALL DUNGEON_RYOUZYOKU（EVENT_K.ERB:249-257：按 GET_KOJO_NUM 分派）
+  const ryou_local = get_kojo_num();
+  if ((ryou_local >= 100 && ryou_local < 140) || ryou_local > 1000) {
+    await ryouzyoku_kojo_family.call(ryou_local - 100, {
+      whenMissing: 0,
+      args: [],
+    });
+  }
   // —— 主循环（:60-160）：逐列处理怪物凌辱 ——
   mon_count = 0; // :60
   while (mon_count < 300) {
@@ -401,9 +407,17 @@ async function ryouzyoku(arg, rand) {
     chara(0).train.初体验对象 = 104; // :165 CFLAG:15 = 104（怪物）
   }
 
-  // :168 CALL DUNGEON_RYOUZYOKU_AFTER（口上后置钩子，角色口上票落地后注册）
-  await ryouzyoku_after_kojo_family.call(0, { whenMissing: 0, args: [] });
-
+  // :168 CALL DUNGEON_RYOUZYOKU_AFTER（EVENT_K.ERB:263-271：按 GET_KOJO_NUM 分派）
+  const ryou_after_local = get_kojo_num();
+  if (
+    (ryou_after_local >= 100 && ryou_after_local < 140) ||
+    ryou_after_local > 1000
+  ) {
+    await ryouzyoku_after_kojo_family.call(ryou_after_local - 100, {
+      whenMissing: 0,
+      args: [],
+    });
+  }
   // :172 CALL DUNGEON_RYOUZYOKU_ESCAPE,ARG
   await dungeon_ryouzyoku_escape(arg, rand_n);
 
@@ -4017,6 +4031,8 @@ async function dungeon_ryouzyoku_escape(arg, rand) {
 
 module.exports = {
   STUBBED_CALLS,
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
   ryouzyoku,
   orc_ryou,
   slime_ryou,

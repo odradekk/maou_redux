@@ -2558,6 +2558,7 @@ equip_com_family.register(89, equip_com89);
 
 module.exports = {
   STUBBED_CALLS,
+  piercing_state,
   able80,
   able81,
   able82,
