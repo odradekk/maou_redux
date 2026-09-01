@@ -60,8 +60,10 @@ export default [
   {
     desc: 'M63 K5 淫乱素质判据错格（TALENT:76 改 77）',
     file: 'ere/kojo/kojo-k5-mao.js',
-    find: '      era.get(`talent:${target}:76`) === 1 &&',
-    replace: '      era.get(`talent:${target}:77`) === 1 &&',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:77\`) === 1 &&
+      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)`,
     tests: ['kojo-k5-mao'],
     must_mention: '淫乱分支',
   },
@@ -1673,6 +1675,225 @@ export default [
     replace: '    if (Q === 9) {\n      // :5860',
     tests: ['kojo-k2-timid'],
     must_mention: 'SELF_KOJO 助手妄想支出声',
+  },
+  // —— #236（J26）：K5 マオ 口上模块（M1790-M1814 号段） ——
+  {
+    desc: 'M1790 K5 舔阴首次推进写错（CFLAG:302 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.舔阴 = 1; // :866',
+    replace: '      kojo.舔阴 = 2; // :866（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:302 = 1',
+  },
+  {
+    desc: 'M1791 K5 肛门爱抚首次推进写错（CFLAG:303 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.肛门爱抚 = 1; // :914',
+    replace: '      kojo.肛门爱抚 = 2; // :914（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:303 = 1',
+  },
+  {
+    desc: 'M1792 K5 胸爱抚首次推进写错（CFLAG:306 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.胸爱抚 = 1; // :1144',
+    replace: '      kojo.胸爱抚 = 2; // :1144（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:306 = 1',
+  },
+  {
+    desc: 'M1793 K5 正常位首次推进写错（CFLAG:321 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.正常位 = 1; // :2326',
+    replace: '      kojo.正常位 = 2; // :2326（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:321 = 1',
+  },
+  {
+    desc: 'M1794 K5 口塞首次推进写错（CFLAG:346 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.口塞 = 1; // :4532',
+    replace: '      kojo.口塞 = 2; // :4532（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'cflag:17:346',
+  },
+  {
+    desc: 'M1795 K5 穿环首次推进写错（CFLAG:348 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.穿环 = 1; // :5506',
+    replace: '      kojo.穿环 = 2; // :5506（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:348 = 1',
+  },
+  {
+    desc: 'M1796 K5 死斗场入口错号（SELECTCOM == 55 改 54）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (era_flag.selectcom === 55) {\n    // :7231',
+    replace: '  if (era_flag.selectcom === 54) {\n    // :7231',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'SELECTCOM==0 静默、==55 走真身',
+  },
+  {
+    desc: 'M1797 K5 PALAMCNG 处女丧失推进写错（CFLAG:229 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '    kojo.处女丧失 = 1; // :5719',
+    replace: '    kojo.处女丧失 = 2; // :5719（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:229 = 1',
+  },
+  {
+    desc: 'M1798 K5 MARKCNG 苦痛刻印入口错档（=== 3 改 === 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (game.system.苦痛刻印变动 === 3 && kojo.苦痛刻印Lv3 === 0) {',
+    replace:
+      '  if (game.system.苦痛刻印变动 === 2 && kojo.苦痛刻印Lv3 === 0) {',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:297 = 1',
+  },
+  {
+    desc: 'M1799 K5 SELF_KOJO leftover_s 门槛抬一档（>= 3 改 >= 9）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      if (s >= 3) {',
+    replace: '      if (s >= 9) {',
+    tests: ['kojo-k5-mao'],
+    must_mention: '被中出之后看上去十分满足',
+  },
+  {
+    desc: 'M1800 K5 SELF_KOJO 出售门槛抬一档（S >= 1000000 改 2000000）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '        if (S >= 1000000) {\n          // :6262',
+    replace: '        if (S >= 2000000) {\n          // :6262',
+    tests: ['kojo-k5-mao'],
+    must_mention: '被魔界的某位贵族买下',
+  },
+  {
+    desc: 'M1801 K5 NTR 入口推进写错（CFLAG:650 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '    kojo.NTR再捕获 = 1; // :7365',
+    replace: '    kojo.NTR再捕获 = 2; // :7365（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'CFLAG:650/651',
+  },
+  {
+    desc: 'M1802 K5 GOBI ARG:0 == 1 改 9（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (arg_0 === 1) {\n    // :7748',
+    replace: '  if (arg_0 === 9) {\n    // :7748',
+    tests: ['kojo-k5-mao'],
+    must_mention: '的噢~♪',
+  },
+  {
+    desc: 'M1803 K5 奖赏后口上 choice == 0 改 9（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (choice === 0) {\n    // :7609',
+    replace: '  if (choice === 9) {\n    // :7609',
+    tests: ['kojo-k5-mao'],
+    must_mention: '真小气',
+  },
+  {
+    desc: 'M1804 K5 惩罚口上 choice == 0 改 9（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (choice === 0) {\n    // :7687',
+    replace: '  if (choice === 9) {\n    // :7687',
+    tests: ['kojo-k5-mao'],
+    must_mention: '十分感谢',
+  },
+  {
+    desc: 'M1805 K5 迷宫胜利淫乱入口错格（TALENT:76 改 77）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (era.get(`talent:${a}:76`) === 1) {\n    // :7142',
+    replace: '  if (era.get(`talent:${a}:77`) === 1) {\n    // :7142',
+    tests: ['kojo-k5-mao'],
+    must_mention: '快点来侵犯我啊',
+  },
+  {
+    desc: 'M1806 K5 EVENTTRAIN 人类初调教台词改字（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '你这家伙是谁啊',
+    replace: '你这家伙是何人啊',
+    tests: ['kojo-k5-mao'],
+    must_mention: '人类初调教必须出声',
+  },
+  {
+    desc: 'M1807 K5 COM 口塞守卫删（TEQUIP:45 不再跳过）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
+    return 0;
+  }`,
+    replace: `  if (false && era_flag.selectcom !== 45) {
+    return 0;
+  }`,
+    tests: ['kojo-k5-mao'],
+    must_mention: 'SELECTCOM != 45 跳过',
+  },
+  {
+    desc: 'M1808 K5 COM 兽奸守卫删（TEQUIP:89 不再跳过）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: `  // :781-782 獣姦プレイ中（K5 是静默跳过，无 DOG_KOJO 调用）
+  if (era.get(\`tequip:\${target}:89\`)) {
+    return 0;
+  }`,
+    replace: `  // :781-782 獣姦プレイ中（K5 是静默跳过，无 DOG_KOJO 调用）
+  if (false) {
+    return 0;
+  }`,
+    tests: ['kojo-k5-mao'],
+    must_mention: '静默跳过（无 DOG_KOJO 占位行）',
+  },
+  {
+    desc: 'M1809 K5 COM 死斗场岔路丢失（TEQUIP:55 不再调 COLOSSEUM）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: `  if (era.get(\`tequip:\${target}:55\`)) {
+    await colosseum_kojo_5(rand_n); // :788
+    return 0;
+  }`,
+    replace: `  if (era.get(\`tequip:\${target}:55\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k5-mao'],
+    must_mention: 'SELECTCOM==0 静默、==55 走真身',
+  },
+  {
+    desc: 'M1810 K5 PALAMCNG 爱慕档门槛抬（A < 500 改 A < 1）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (A < 500 || game.system.反抗刻印回避 === 1)`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (A < 1 || game.system.反抗刻印回避 === 1)`,
+    tests: ['kojo-k5-mao'],
+    must_mention: '主人的…进到小穴里面',
+  },
+  {
+    desc: 'M1811 K5 SELF_KOJO 自慰入口错档（TFLAG:13 == 1 改 9）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (game.train.初吻与自我口上 === 1) {\n    // :6064',
+    replace: '  if (game.train.初吻与自我口上 === 9) {\n    // :6064',
+    tests: ['kojo-k5-mao'],
+    must_mention: 'SELF_KOJO 自慰支出声',
+  },
+  {
+    desc: 'M1812 K5 奖赏请求钱档入口错（要求奖赏 === 0 改 9）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (chara(a).stronghold.要求奖赏 === 0) {\n    // :7569',
+    replace: '  if (chara(a).stronghold.要求奖赏 === 9) {\n    // :7569',
+    tests: ['kojo-k5-mao'],
+    must_mention: '尽可能多的钱',
+  },
+  {
+    desc: 'M1813 K5 NTR P==1 入口错档（P === 1 改 9）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  if (P === 1) {\n    // :7367',
+    replace: '  if (P === 9) {\n    // :7367',
+    tests: ['kojo-k5-mao'],
+    must_mention: '我明明只是个村娘',
+  },
+  {
+    desc: 'M1814 K5 EVENTTRAIN 人类初调教推进写错（CFLAG:201 = 1 改 2）（#236）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      kojo.初调教 = 1; // :126',
+    replace: '      kojo.初调教 = 2; // :126（变异）',
+    tests: ['kojo-k5-mao'],
+    must_mention: '推进 CFLAG:201',
   },
 
   {

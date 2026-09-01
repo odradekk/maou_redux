@@ -61,6 +61,17 @@ export const FILES = [
         ref: '837',
         any: [/^\tJUEL:8 \+= A\*200$/m],
       },
+      // #236：K5 SELF_KOJO 读 leftover S（性交次数 :6223 / 卖出价 :6250）
+      {
+        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
+        ref: '6223',
+        any: [/SIF s >= 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
+        ref: '6250',
+        any: [/Sは売却値/],
+      },
     ],
   },
 ];
