@@ -375,8 +375,56 @@ test('头部守卫：触手（TEQUIP:90）跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('骨架期：SELECTCOM 0 落 KOJO_MESSAGE_COM_8 占位行', async () => {
-  const fixture = await setup_k8(undefined, 0);
+// —— KOJO_MESSAGE_COM_8：SELECTCOM 0 爱撫 / 1 舔阴（已实现的两支） ——
+
+test('SELECTCOM 0 爱撫，初めて（CFLAG:301 == 0）：屈服刻印Lv2以上分档 + 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('mark:31:2', 2);
+  }, 0);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵…就像稍微强一点的按摩一样呢」',
+    '「嗯…啊…啊哈哈…好痒啊」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:301'), 1, 'CFLAG:301 推进到 1');
+});
+
+test('SELECTCOM 0 爱撫，二回目以降·淫乱：CFLAG:301 推进到 6', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:301', 3);
+    f.store.set('talent:31:76', 1);
+  }, 0);
+  await speak_k8(fixture);
+  assert.equal(fixture.text_lines()[2], '银黑桃被你爱抚着，腰部扭动了起来………');
+  assert.equal(fixture.store.get('cflag:31:301'), 6, 'CFLAG:301 推进到 6');
+});
+
+test('SELECTCOM 1 舔阴，初めて（CFLAG:302 == 0）：处女分档 + 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:0', 1);
+  }, 1);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、知道了吗？我还是处女呢…嗯…嗯…因为是处女所以兴奋了吗、啊啊…那么用力…！」',
+    '你开始舔着银黑桃散发着处女味道的秘裂………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:302'), 1, 'CFLAG:302 推进到 1');
+});
+
+test('SELECTCOM 1 舔阴，二回目以降·それ以外（屈服刻印Lv3未满）：CFLAG:302 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:302', 1);
+  }, 1);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「唔…啊啊…唔…呜…！简直跟狗一样的舔法…啊啊！」',
+    '银黑桃扭动着腰想要从你的嘴边逃开、就那样被你压住了腰………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:302'), 2, 'CFLAG:302 推进到 2');
+});
+
+test('骨架期：SELECTCOM 2（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 2);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),

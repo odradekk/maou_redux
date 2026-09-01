@@ -3114,6 +3114,322 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '923-968',
+        any: [/IF SELECTCOM == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '925-935',
+        any: [/IF CFLAG:301 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '928',
+        any: [/PRINTFORMW 「呵呵呵…就像稍微强一点的按摩一样呢」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '929',
+        any: [/PRINTFORMW 「嗯…啊…啊哈哈…好痒啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '932',
+        any: [/PRINTFORMW 「真恶心…话说你有好好洗过手吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '934',
+        any: [/CFLAG:301 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '937-967',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '939-943',
+        any: [
+          /IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '940',
+        any: [
+          /PRINTFORMW 「再用力点…啊啊%UNICODE\(0x2661\) \*1%…胸…啊嗯…抓着…啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '941',
+        any: [
+          /PRINTFORMW 「啊…欺负人…这么想挑逗我吗？ 啊…啊啊………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '942',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%爱抚着，腰部扭动了起来………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '943',
+        any: [/CFLAG:301 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '945-949',
+        any: [
+          /PRINTFORMW 「啊嗯…嗯…继续摸也可以哟…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '946',
+        any: [
+          /PRINTFORMW 「啊嗯…嗯…继续摸也可以哟…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '947',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%爱抚的发出了可爱的声音。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '948',
+        any: [
+          /PRINTFORMW 「我的身体怎么样…啊啊…这双温柔的手…喜欢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '949',
+        any: [/CFLAG:301 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '951-954',
+        any: [/PRINTFORMW 「哈啊…啊啊…嗯…啊、好舒服…哈啊…啊啊…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '952',
+        any: [/PRINTFORMW 「哈啊…啊啊…嗯…啊、好舒服…哈啊…啊啊…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '953',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%爱抚的发出了很舒服的声音………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '954',
+        any: [/CFLAG:301 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '956-959',
+        any: [/PRINTFORMW 「哈啊哈啊…你的按摩也开始变得不错起来了…嗯…嗯~」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '957',
+        any: [/PRINTFORMW 「哈啊哈啊…你的按摩也开始变得不错起来了…嗯…嗯~」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '958',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%爱抚的发出了忍耐着的声音………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '959',
+        any: [/CFLAG:301 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '961-964',
+        any: [/PRINTFORMW 「摸爽了就赶快松手」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '962',
+        any: [/PRINTFORMW 「摸爽了就赶快松手」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '963',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%爱抚着，但是一脸阴沉………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '964',
+        any: [/CFLAG:301 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '973-1012',
+        any: [/IF SELECTCOM == 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '975-985',
+        any: [/IF CFLAG:302 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '978',
+        any: [
+          /PRINTFORMW 「呵呵呵、知道了吗？我还是处女呢…嗯…嗯…因为是处女所以兴奋了吗、啊啊…那么用力…！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '979',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%开始舔着%SAVESTR:TARGET%散发着处女味道的秘裂………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '982',
+        any: [/PRINTFORMW 「嗯…啊啊…你也经常舔那些别的女人吧…啊…唔！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '984',
+        any: [/CFLAG:302 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '987-1011',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '989-993',
+        any: [
+          /IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '990',
+        any: [
+          /PRINTFORMW 「呵呵呵、我这么美味吗？那么…嗯…热心的…啊~啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '991',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%舔着秘裂、腰淫荡的摇着，手压着%SAVESTR:PLAYER%的头部。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '992',
+        any: [
+          /PRINTFORMW 「啊啊…不能逃哦、在我去之前…都要不停地舔…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '993',
+        any: [/CFLAG:302 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '995-999',
+        any: [/PRINTFORMW 「啊啊…多舔舔我…啊嗯…嗯…再…深点…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '996',
+        any: [/PRINTFORMW 「啊啊…多舔舔我…啊嗯…嗯…再…深点…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '997',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%舔着秘裂发出了淫荡的声音。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '998',
+        any: [
+          /PRINTFORMW 「嗯…嗯嗯！…你的舌头…好舒服啊…啊啊…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '999',
+        any: [/CFLAG:302 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1001-1004',
+        any: [
+          /PRINTFORMW 「啊嗯…啊嗯…嗯…唔…啊啊！ 哈啊…啊…变得更舒服了…嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1002',
+        any: [
+          /PRINTFORMW 「啊嗯…啊嗯…嗯…唔…啊啊！ 哈啊…啊…变得更舒服了…嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1003',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%脸颊通红，被%SAVESTR:PLAYER%舔着秘裂，露出了喘息声………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1004',
+        any: [/CFLAG:302 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1006-1009',
+        any: [/PRINTFORMW 「唔…啊啊…唔…呜…！简直跟狗一样的舔法…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1007',
+        any: [/PRINTFORMW 「唔…啊啊…唔…呜…！简直跟狗一样的舔法…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1008',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%扭动着腰想要从%SAVESTR:PLAYER%的嘴边逃开、就那样被%SAVESTR:PLAYER%压住了腰………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1009',
+        any: [/CFLAG:302 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
         ref: '5446-6245',
         any: [/@DOG_KOJO_8/],
       },
