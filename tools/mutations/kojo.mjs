@@ -2173,9 +2173,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1868 K8 SELECTCOM 30 手淫初めて分档丢失（ABL:16>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      } else if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上',
+    find: '      } else if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上\n        await era.printAndWait(`「我不做这种事不行么…真没办法…呵呵呵」`); // :3329',
     replace:
-      '      } else if (false) {\n        // 侍奉精神Lv3以上（变异：判定删除）',
+      '      } else if (false) {\n        // 侍奉精神Lv3以上（变异：判定删除）\n        await era.printAndWait(`「我不做这种事不行么…真没办法…呵呵呵」`); // :3329',
     tests: ['kojo-k8-spade'],
     must_mention: '侍奉精神Lv3以上（无 TALENT）',
   },
@@ -2203,5 +2203,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '      (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)',
     tests: ['kojo-k8-spade'],
     must_mention: '源作死区',
+  },
+  {
+    desc: 'M1872 K8 SELECTCOM 31 口交淫乱推进写错（CFLAG:332 = 5 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.口交_奴 = 5; // :3437 CFLAG:332 = 5',
+    replace: '      kojo.口交_奴 = 4; // :3437（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1873 K8 SELECTCOM 31 口交爱慕守卫丢失（CFLAG:332 <= 3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:85`) == 1 &&\n      (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1874 K8 SELECTCOM 31 口交侍奉精神Lv3以上推进写错（CFLAG:332 = 3 改 2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.口交_奴 = 3; // :3459 CFLAG:332 = 3',
+    replace: '      kojo.口交_奴 = 2; // :3459（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1875 K8 SELECTCOM 31 口交それ以外守卫丢失（CFLAG:332 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.口交_奴 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
   },
 ];
