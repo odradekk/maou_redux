@@ -4275,6 +4275,22 @@ export default [
     must_mention: '主启动图漏装：com-cloth',
   },
   {
+    desc: 'M1520 主启动图删 K3 高貴口上注册（KOJO 3 不进实际运行图）（#282）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k3-noble');",
+    replace: '// 变异：K3 高貴口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k3-noble',
+  },
+  {
+    desc: 'M1521 主启动图删 K5 マオ口上注册（KOJO 5 不进实际运行图）（#282）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k5-mao');",
+    replace: '// 变异：K5 マオ口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k5-mao',
+  },
+  {
     desc: 'M1330 COM_ABLE100 秘密知识守卫删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(player, 325) === 0) return 0; // 调教者须秘密知识',
