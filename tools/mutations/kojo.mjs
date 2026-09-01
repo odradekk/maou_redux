@@ -1674,4 +1674,23 @@ export default [
     tests: ['kojo-k2-timid'],
     must_mention: 'SELF_KOJO 助手妄想支出声',
   },
+
+  {
+    desc: 'M1790 K3 顶层 require com-hardcore（延迟 require 挪回文件头，#288）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: "const era = require('#/era-electron');",
+    replace: `const era = require('#/era-electron');
+const { piercing_state } = require('#/system/train/com-hardcore'); // 变异：顶层 require（#288 守卫的靶子）`,
+    tests: ['top-level-wiring'],
+    must_mention: '顶层 require：ere/kojo/kojo-k3-noble.js',
+  },
+  {
+    desc: 'M1791 com-tentacle 顶层 require com-colosseum（延迟 require 挪回文件头，#288）',
+    file: 'ere/system/train/com-tentacle.js',
+    find: "const era = require('#/era-electron');",
+    replace: `const era = require('#/era-electron');
+const { arena_slave_point, com_after_arena } = require('#/system/train/com-colosseum'); // 变异：顶层 require（#288 守卫的靶子）`,
+    tests: ['top-level-wiring'],
+    must_mention: '顶层 require：ere/system/train/com-tentacle.js',
+  },
 ];
