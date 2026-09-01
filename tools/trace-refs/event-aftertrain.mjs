@@ -48,6 +48,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '238',
+        any: [/^PRINTFORMW %PALAMNAME:5%点数＋\{S\*250\}$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
         ref: '480-481',
         any: [/^TFLAG:13 = 2$/m],
       },

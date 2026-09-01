@@ -34,6 +34,13 @@ let leftover_a = 0;
  * （调教后自慰口上里 Q == 1 助手 / Q == 2 野狗）。
  */
 let leftover_q = 0;
+/**
+ * 原作 S 是跨函数全局：调教后性交检查（AFTERTRAIN_SEX_CHECK）算出的
+ * 本回性交次数，源 :231-232 `CALL SELF_KOJO` 前才赋值，:238 之后的
+ * 经验/参数结算仍读它。SELF_KOJO（K7 等）里 `SIF s >= 3` 一支同款需要
+ * 读到这个值（issue #238 发现，K7 是首个引用它的性格）。
+ */
+let leftover_s = 0;
 
 /**
  * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
@@ -41,6 +48,14 @@ let leftover_q = 0;
  */
 function peek_aftertrain_q() {
   return leftover_q;
+}
+
+/**
+ * SELF_KOJO 读的原作 S（AFTERTRAIN 性交检查的本回执行次数）。
+ * @returns {number}
+ */
+function peek_aftertrain_s() {
+  return leftover_s;
 }
 
 /**
@@ -124,6 +139,7 @@ async function aftertrain_sex_check() {
   era.print(`回到床上做了${s}次…`);
   era.print('');
 
+  leftover_s = s; // SELF_KOJO（K7 等）读 s >= 3 分支需要，须在 CALL SELF_KOJO 前落好
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
   game.train.初吻与自我口上 = 4;
   await self_kojo();
@@ -724,5 +740,6 @@ module.exports = {
   aftertrain_masturbation_check,
   aftertrain_sex_check,
   peek_aftertrain_q,
+  peek_aftertrain_s,
   self_check,
 };
