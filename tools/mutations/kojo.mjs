@@ -2237,4 +2237,29 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1876 K8 SELECTCOM 32 乳交弄乳狂+淫乱推进写错（CFLAG:333 = 8 改 7，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.乳交 = 8; // :3513 CFLAG:333 = 8',
+    replace: '      kojo.乳交 = 7; // :3513（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 8',
+  },
+  {
+    desc: 'M1877 K8 SELECTCOM 32 乳交弄乳狂单独推进写错（CFLAG:333 = 4 改 3，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.乳交 = 4; // :3547 CFLAG:333 = 4',
+    replace: '      kojo.乳交 = 3; // :3547（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1878 K8 SELECTCOM 32 乳交初めて分档丢失（TALENT:78==1 改 false，恒不命中弄乳狂，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (era0(`talent:${target}:78`) == 1) {\n        // 弄乳狂\n        await era.printAndWait(`「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」`); // :3478',
+    replace:
+      '      if (false) {\n        // 弄乳狂（变异：判定删除）\n        await era.printAndWait(`「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」`); // :3478',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 1',
+  },
 ];
