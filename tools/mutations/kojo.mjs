@@ -1055,4 +1055,30 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '肛门虫脱着：淫乱写 CFLAG:374 = 4，门槛是 < 不是 <=',
   },
+  {
+    desc: 'M1810 K0 阴蒂夹首次状态推进写错（CFLAG:315 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.阴蒂夹 = 1; // :1628',
+    replace: '      kojo.阴蒂夹 = 2; // :1628',
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴蒂夹首次推进到 1',
+  },
+  {
+    desc: 'M1811 K0 阴蒂夹二次淫乱门槛错位（CFLAG:315 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.阴蒂夹 <= 3 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.阴蒂夹 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴蒂夹开始二次：淫乱 / 阈值闸',
+  },
+  {
+    desc: 'M1812 K0 阴蒂夹脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.阴蒂夹着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.阴蒂夹着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴蒂夹脱着：淫乱写 CFLAG:375 = 3，门槛是 < 不是 <=',
+  },
 ];

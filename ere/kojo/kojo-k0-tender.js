@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -11,7 +11,9 @@
  *     舔肛 CFLAG:310 状态机 :1252-1310；振动宝石 CFLAG:311 状态机 :1314-1352；
  *     壶虫开始 CFLAG:312 :1358-1433、脱着 CFLAG:372 :1435-1450；
  *     振动杖 CFLAG:313 状态机 :1455-1499；
- *     肛门虫开始 CFLAG:314 :1505-1588、脱着 CFLAG:374 :1590-1609）
+ *     肛门虫开始 CFLAG:314 :1505-1588、脱着 CFLAG:374 :1590-1609；
+ *     阴蒂夹开始 CFLAG:315 :1615-1646、脱着 CFLAG:375 :1648-1663）
+
 
 
 
@@ -82,7 +84,8 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-1609）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫。
+ * @KOJO_MESSAGE_COM_0（:674-1663）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹。
+
 
 
 
@@ -1561,6 +1564,83 @@ async function kojo_message_com_0(rand) {
       // :1604-1606 それ以外
       await era.printAndWait('「哈啊…哈啊…哈啊………」'); // :1605
       kojo.肛门虫着脱 = 1; // :1606
+    }
+    return 0;
+  }
+
+  // :1615 IF SELECTCOM == 14 && TEQUIP:14（阴蒂夹开始，CFLAG:315）
+  if (era_flag.selectcom === 14 && era.get(`tequip:${target}:14`)) {
+    // :1617-1629 初めて（CFLAG:315 == 0）
+    if (kojo.阴蒂夹 === 0) {
+      // :1619-1620 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          '「啊～～…厉、厉害…请再夹紧一点…咿～！震起来了！？震起来了～～～～～～～！」',
+        ); // :1620
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1622-1623 爱慕
+        await era.printAndWait(
+          '「没、没事的…请再夹紧一点…咿～！震起来了～～！」',
+        ); // :1623
+      } else {
+        // :1625-1626 それ以外
+        await era.printAndWait(
+          `「不、不管用这种东西怎么折腾${sc()}都是没用的…咿啊啊啊～！震起来了不要啊啊啊！」`,
+        ); // :1626
+      }
+      kojo.阴蒂夹 = 1; // :1628
+      return 0;
+    }
+
+    // :1630-1646 二回目以降
+    // :1633-1635 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.阴蒂夹 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊～啊啊～啊啊啊～！请再强烈些、再强烈些！把阴蒂玩到坏掉为止吧～${heart(1)}」`,
+      ); // :1634
+      kojo.阴蒂夹 = 4; // :1635
+    } else if (
+      // :1637-1639 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.阴蒂夹 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「嗯呜唔呜～！啊啊～…小阴蒂一颤一颤的…变的好奇怪…♪」',
+      ); // :1638
+      kojo.阴蒂夹 = 3; // :1639
+    } else if (kojo.阴蒂夹 <= 1 || game.kojo.口上开关 === 2) {
+      // :1641-1643 それ以外
+      await era.printAndWait(
+        '「哈啊…哈啊…啊啊呜呜～！不要震了…求求你不要再震了～！」',
+      ); // :1642
+      kojo.阴蒂夹 = 2; // :1643
+    }
+    return 0;
+  }
+
+  // :1648 ELSEIF SELECTCOM == 14 && TEQUIP:14 == 0（阴蒂夹脱着，CFLAG:375）
+  if (era_flag.selectcom === 14 && !era.get(`tequip:${target}:14`)) {
+    // :1650-1652 淫乱（门槛是 < 不是 <=）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.阴蒂夹着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(`「哈啊～哈啊～…还在麻麻的呢…${heart(1)}」`); // :1651
+      kojo.阴蒂夹着脱 = 3; // :1652
+    } else if (
+      // :1654-1656 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.阴蒂夹着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「哈啊啊…好像还想再被夹着呢………」'); // :1655
+      kojo.阴蒂夹着脱 = 2; // :1656
+    } else if (kojo.阴蒂夹着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :1658-1660 それ以外
+      await era.printAndWait('「哈啊…哈啊…哈啊…呜呜～」'); // :1659
+      kojo.阴蒂夹着脱 = 1; // :1660
     }
     return 0;
   }
