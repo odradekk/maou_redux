@@ -2004,4 +2004,37 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1848 K8 SELECTCOM 23 TEQUIP:57 镜子加成分支源作误写缺失结尾引号被"修正"（破坏 1:1 保真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '`「啊啊…阴茎全部插进…我的小穴·里来了…全部…啊啊——${heart(1)}`,\n          ); // :2772',
+    replace:
+      '`「啊啊…阴茎全部插进…我的小穴·里来了…全部…啊啊——${heart(1)}」`,\n          ); // :2772（变异：补写了缺失的收尾引号）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '镜子加成',
+  },
+  {
+    desc: 'M1849 K8 SELECTCOM 23 背面座位淫乱推进写错（CFLAG:324 = 6 改 5，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.背面座位 = 6; // :2776 CFLAG:324 = 6',
+    replace: '      kojo.背面座位 = 5; // :2776（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '镜子加成',
+  },
+  {
+    desc: 'M1850 K8 SELECTCOM 23 背面座位屈服刻印Lv3推进写错（CFLAG:324 = 3 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.背面座位 = 3; // :2839 CFLAG:324 = 3',
+    replace: '      kojo.背面座位 = 4; // :2839（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1851 K8 SELECTCOM 23 背面座位それ以外守卫丢失（CFLAG:324 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.背面座位 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
