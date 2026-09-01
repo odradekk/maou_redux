@@ -1330,4 +1330,45 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321',
   },
+  {
+    desc: 'M1838 K0 背面座位首次状态推进写错（CFLAG:324 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背面座位 = 1; // :2627-2628',
+    replace: '      kojo.背面座位 = 2; // :2627-2628',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位首次推进到 1',
+  },
+  {
+    desc: 'M1839 K0 背面座位二次淫乱+性爱狂门槛改回 CFLAG:324（原文读 321）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2630-2632`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.背面座位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2630-2632`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321',
+  },
+  {
+    desc: 'M1840 K0 背面座位二次淫乱+性爱狂写回错档（CFLAG:324 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背面座位 = 9; // :2646',
+    replace: '        kojo.背面座位 = 8; // :2646',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M1841 K0 背面座位首次淫乱黑心插值改成白心（heart_black→heart）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '            `「呀啊～…啊～…啊啊～…主人…请更多的…更多的欺负我吧…${heart_black(3)}」`,',
+    replace:
+      '            `「呀啊～…啊～…啊啊～…主人…请更多的…更多的欺负我吧…${heart(3)}」`,',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位首次非处女：淫乱 + 黑心插值',
+  },
 ];
