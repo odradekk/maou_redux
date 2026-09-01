@@ -1446,8 +1446,74 @@ test('SELECTCOM 28 对面座位アナル，二回目以降·それ以外：源�
   assert.equal(fixture.store.get('cflag:31:329'), 2, 'CFLAG:329 推进到 2');
 });
 
-test('骨架期：SELECTCOM 29（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
-  const fixture = await setup_k8(undefined, 29);
+test('SELECTCOM 29 背面座位肛交，初めて·爱慕·A感觉Lv3以上：羞耻PLAY 档1（TEQUIP:57+ABL:17+TALENT:85），CFLAG:330 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('tequip:31:57', 1);
+    f.store.set('abl:31:17', 1);
+  }, 29);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '肛门被开发了的银黑桃坐在了你上面身上、粗重的喘息着。',
+    '「啊…啊啊…嗯、啊啊啊啊啊………嗯啊…腰自己动起来了…啊啊…继续抱我…！」',
+    '银黑桃的肛门很舒服似的把你的阴茎连根部都吞了下去………',
+    '「啊啊…我的肛门能把你的全部放进来…我是多么幸福的人啊………♡」',
+    '银黑桃看着镜子中映出的自己的痴态，更加兴奋了………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:330'), 1, 'CFLAG:330 推进到 1');
+});
+
+test('SELECTCOM 29 背面座位肛交，二回目以降·それ以外（无 TEQUIP:57，无羞耻PLAY）：CFLAG:330 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:330', 1);
+  }, 29);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…嗯啊…咕…呜…嗯…啊啊啊！停、停下…啊…啊啊！」',
+    '你从后面抱着银黑桃从下往上插着肛门。',
+    '银黑桃发出了好像很痛苦的声音。',
+    '「啊咕…呜…呜…不、不要…这…样…啊嗯！',
+    '你一边愉快的听着银黑桃的呻吟、一边开始爱抚乳房和蜜裂………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:330'), 2, 'CFLAG:330 推进到 2');
+});
+
+test('SELECTCOM 29 背面座位肛交，二回目以降·爱慕 + 羞耻PLAY 档1：源作误写缺失结尾引号 1:1 保真', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:330', 1);
+    f.store.set('tequip:31:57', 1);
+    f.store.set('abl:31:17', 1);
+    f.store.set('talent:31:85', 1);
+  }, 29);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…还要继续被你侵犯…嗯啊啊…啊啊啊嗯！」',
+    '银黑桃把身体交给你、未开发的肛门被从下不停的突刺着。',
+    '「我没关系的…在肛门中满满的出来吧…嗯…啊啊♡」',
+    '「啊啊…我的肛门能把你的全部放进来…我是多么幸福的人啊………♡',
+    '银黑桃看着镜子中映出的自己的痴态，更加兴奋了………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:330'), 4, 'CFLAG:330 推进到 4');
+});
+
+test('SELECTCOM 29 背面座位肛交，二回目以降·爱+A感觉Lv3以上 RAND1（嵌套 RAND 未命中）：CFLAG:330 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:330', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:3', 3);
+  }, 29);
+  await speak_k8(fixture, () => 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…啊…啊啊…屁股…自己动起来了…我的肛门已经…是你的东西了♡ 啊啊♡」',
+    '银黑桃被开发了的肛门、黏糊糊的肠壁向你阴茎缠绕了上去。',
+    '「啊啊啊…啊…啊…啊嗯啊…从肛门哪里来来回回的敲打着子宫…啊啊啊♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:330'), 5, 'CFLAG:330 推进到 5');
+});
+
+test('骨架期：SELECTCOM 30（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 30);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
