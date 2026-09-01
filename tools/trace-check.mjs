@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-2757', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-2854', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -14618,6 +14618,213 @@ const FILES = [
         any: [/%SAVESTR:TARGET%被鸡鸡插进阴道深处有点痛苦的喘息着………/],
       },
       { src: K0, ref: '2753', any: [/\t\t\tCFLAG:324 = 2/m] },
+      { src: K0, ref: '2762', any: [/IF\ SELECTCOM\ ==\ 26/m] },
+      { src: K0, ref: '2762-2854', any: [/^IF SELECTCOM == 26$/m] },
+      { src: K0, ref: '2762', any: [/IF SELECTCOM == 26/m] },
+      { src: K0, ref: '2764', any: [/\tIF CFLAG:TARGET:327 == 0/m] },
+      { src: K0, ref: '2766', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '2767',
+        any: [/「啊～…啊啊～…咕呜嗯～…啊啊～明明是不能插进去的地方…」/],
+      },
+      {
+        src: K0,
+        ref: '2768',
+        any: [/「肉棒…把屁股眼撑大了…咿啊啊～啊啊～%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '2770-2771',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      { src: K0, ref: '2773', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '2774',
+        any: [/「不、不行啊、那种地方大鸡鸡怎么能插得进去…呀呜～！」/],
+      },
+      {
+        src: K0,
+        ref: '2775',
+        any: [/「啊啊…啊…不会吧…全部…插进去了…啊啊～…啊～啊哈啊～！」/],
+      },
+      {
+        src: K0,
+        ref: '2777-2778',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      {
+        src: K0,
+        ref: '2780-2781',
+        any: [
+          /「不、不要啊～…不要…插进来…啊啊～…连屁股眼…都被你的东西玷污了…」/,
+        ],
+      },
+      { src: K0, ref: '2783-2784', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2786-2787', any: [/\t\tCFLAG:TARGET:327 = 1/m] },
+      {
+        src: K0,
+        ref: '2789-2791',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '2792', any: [/\t\t\tIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '2793',
+        any: [/「啊～啊啊～…屁股眼好爽啊～%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '2794',
+        any: [
+          /「更多的侵犯我吧～！啊～咿～啊啊～啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '2795', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '2796',
+        any: [
+          /「咿啊～啊啊～啊啊啊…已经…不行了…%SELF_CALL\(TARGET\)%已经快不行了～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2797',
+        any: [
+          /「要变成被侵犯屁股眼也会感到愉悦的淫乱女孩子了～…已经…已经要不行了啊～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2798-2799',
+        any: [
+          /「啊啊～…主人～…屁股眼～！请更多更多地侵犯吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2800',
+        any: [
+          /「咿～…还差一点、还差一点～…要去了…去了啊～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '2803-2804', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2805', any: [/\t\t\tCFLAG:327 = 7/m] },
+      {
+        src: K0,
+        ref: '2807',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:327 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '2809', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '2810',
+        any: [
+          /「啊啊～…主人～…请更多的侵犯我的屁股眼吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2811',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门将鸡鸡连根吞下、%SAVESTR:TARGET%好像很舒服的扭着身体………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2812-2813',
+        any: [
+          /「啊啊～…主人～…请更多的侵犯我的屁股眼吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2814',
+        any: [
+          /「咿～…还差一点、还差一点～…要去了…去了啊～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '2816', any: [/\t\t\tCFLAG:327 = 6/m] },
+      {
+        src: K0,
+        ref: '2818',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '2819', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '2820',
+        any: [/「啊啊～…插到里面来啦～…啊～啊啊～…哈啊啊～♪」/],
+      },
+      {
+        src: K0,
+        ref: '2821',
+        any: [
+          /「明明…明明不可以这样的…屁股…感觉太刺激啦…啊～啊啊～啊啊啊%UNICODE\(0x2665\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2822-2823',
+        any: [/「啊啊～…屁眼太有感觉了…对不起～～对不起～咿～」/],
+      },
+      {
+        src: K0,
+        ref: '2824',
+        any: [/「不过～不过～…实在是忍不住了啊～%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '2827-2828', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2829', any: [/\t\t\tCFLAG:327 = 5/m] },
+      {
+        src: K0,
+        ref: '2831',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:327 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2832',
+        any: [
+          /「啊～啊啊啊啊～…被撑开了…被撑开了啊～～～…屁股眼…变成色情的洞洞了啊～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '2834-2835', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2836', any: [/\t\t\tCFLAG:327 = 4/m] },
+      {
+        src: K0,
+        ref: '2838',
+        any: [/\t\tELSEIF ABL:3 >= 3 && \(CFLAG:327 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '2839',
+        any: [
+          /「啊～啊啊～哈啊～～…不行～…不能再这样下去了～…人会…会变得奇怪的～…」/,
+        ],
+      },
+      { src: K0, ref: '2841-2842', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2843', any: [/\t\t\tCFLAG:327 = 3/m] },
+      {
+        src: K0,
+        ref: '2845',
+        any: [/\t\tELSEIF  CFLAG:327 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '2846',
+        any: [/「啊啊～…这样…这样是不对的…求求你…不要再这样了…呀呜～」/],
+      },
+      { src: K0, ref: '2848-2849', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2850', any: [/\t\t\tCFLAG:327 = 2/m] },
     ],
   },
 
