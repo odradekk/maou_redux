@@ -12438,6 +12438,319 @@ export const FILES = [
         ref: '3383',
         any: [/CFLAG:331 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3392-3466',
+        any: [
+          /PRINTFORMW 「啊啊、你的阴茎…我开动了%UNICODE\(0x2661\) \*1% 啊呜…嗯呜嗯…咕噜…啾…嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3394-3416',
+        any: [
+          /PRINTFORMW 「啊啊、你的阴茎…我开动了%UNICODE\(0x2661\) \*1% 啊呜…嗯呜嗯…咕噜…啾…嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3397',
+        any: [
+          /PRINTFORMW 「啊啊、你的阴茎…我开动了%UNICODE\(0x2661\) \*1% 啊呜…嗯呜嗯…咕噜…啾…嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3398',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%突然抓起%SAVESTR:PLAYER%的阴茎，以猛烈的势头吞了下/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3399',
+        any: [
+          /PRINTFORMW 「嗯…嗯呼…我、我…一直想舔你的阴茎想的不得了、一直都等着呢！嗯咕噜…嗯…啾%UNICODE\(0x/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3402',
+        any: [/PRINTFORMW 「即使是你的阴茎，这么突然让我舔你觉得可能吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3403',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%这么说着，一边撸着%SAVESTR:PLAYER%的阴茎，一边吻向/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3404',
+        any: [
+          /PRINTFORMW 「嗯…呵呵呵、首先要先接吻…%UNICODE\(0x2661\) \*1% 然后…嗯咕嗯…再舔舔龟头吧%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3407',
+        any: [/PRINTFORMW 「啊啊…你那肮脏的阴茎…变干净了…嗯…啊…嗯…咕噜…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3408',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%眯着眼看起来很高兴的把%SAVESTR:PLAYER%的阴茎吸入口/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3409',
+        any: [/PRINTFORMW 「咕噜…啊…明明味道这么重…啊…嗯…嗯…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3412',
+        any: [
+          /PRINTFORMW 「啊啊…终于我也到了用嘴来含住这根肮脏的阴茎的时候了…嗯…嗯…咕噜」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3413',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%战战兢兢的舔起了%SAVESTR:PLAYER%的阴茎。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3414',
+        any: [/PRINTFORMW 「毕竟输了，这种程度是理所当然的呢…啊…嗯…咕………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3415',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%带着因悔恨而歪曲的表情，继续着口腔奉仕………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3417',
+        any: [/CFLAG:TARGET:332 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3420-3465',
+        any: [
+          /PRINTFORMW 「啊啊，你的阴茎…每天都想舔…嗯…咕噜…嗯啾%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3423-3436',
+        any: [
+          /PRINTFORMW 「啊啊，你的阴茎…每天都想舔…嗯…咕噜…嗯啾%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3424',
+        any: [
+          /PRINTFORMW 「啊啊，你的阴茎…每天都想舔…嗯…咕噜…嗯啾%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3425',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%吞下%SAVESTR:PLAYER%阴茎直到喉咙的深处。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3426',
+        any: [
+          /PRINTFORMW 「嗯啾…啾…啾…嗯嗯…啊啊…阴茎…阴茎…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3428',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%眼前伸出了阴茎、%SAVESTR:TARGET%张开嘴咬住了阴茎。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3429',
+        any: [
+          /PRINTFORMW 「啊呜…嗯…嗯…这是在奖励我把？ 啊啊…阴茎真好吃…咕噜…嗯啾…嗯%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3430',
+        any: [
+          /PRINTFORMW 「受不了了、我感觉吸的时候最舒服…嗯嗯…咕噜…就…嗯啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3431',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%脱去酷酷的女忍者这层假面之后、已经沦为了奉仕%SAVESTR:PL/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3433',
+        any: [
+          /PRINTFORMW 「啊呜…嗯…嗯…你的阴茎实在太好吃了…咕噜…啊啊…就这样放在我的嘴里吧%UNICODE\(0x266/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3434',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%用恍惚的眼神一边注视着%SAVESTR:PLAYER%的阴茎，一边/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3435',
+        any: [
+          /PRINTFORMW 「啾…咕噜…啊啊…你的阴茎已经让我上瘾了、嗯咕…嗯啾…啾…嗯咕%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3437',
+        any: [/CFLAG:332 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3440-3452',
+        any: [
+          /PRINTFORMW 「啊呜…嗯…这是我的阴茎、给其他的别的谁可不行…啊啊…嗯…%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3441',
+        any: [
+          /PRINTFORMW 「啊呜…嗯…这是我的阴茎、给其他的别的谁可不行…啊啊…嗯…%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3442',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%亲了尿道口好几次后、大口吞下了%SAVESTR:PLAYER%的阴/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3443',
+        any: [
+          /PRINTFORMW 「嗯啾…嗯…啊…我的嘴舒服吗？…啊啊…变得更舒服吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3445',
+        any: [
+          /PRINTFORMW 「嗯…嗯…嗯咕…咕噜…嗯…嗯嗯…在我嘴里满满的射出来吧…啊啊…嗯嗯%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3446',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%看起来很舒服似得眯起了眼、继续舔着%SAVESTR:PLAYER%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3447',
+        any: [
+          /PRINTFORMW 「好吃…你的阴茎实在太好吃了…咕噜…嗯…啾啾…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3449',
+        any: [
+          /PRINTFORMW 「啊啊…只是含着男人的阴茎而已…就这么幸福什么的…我好想已经变得不对劲了…%UNICODE\(0x2/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3450',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%干起来很高兴的舔着%SAVESTR:PLAYER%的阴茎。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3451',
+        any: [
+          /PRINTFORMW 「咕…啾…啾嗯…啊啊…明明味道这么重但我就是停不下来%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3453',
+        any: [/CFLAG:332 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3456-3458',
+        any: [/PRINTFORMW 「嗯啊…嗯…啊嗯…咕噜…啾…啊…嗯啊…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3456',
+        any: [/PRINTFORMW 「嗯啊…嗯…啊嗯…咕噜…啾…啊…嗯啊…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3457',
+        any: [/PRINTFORMW %SAVESTR:TARGET%热心的舔着%SAVESTR:PLAYER%的阴茎。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3458',
+        any: [/PRINTFORMW 「让我做到这种程度什么的…你这家伙…嗯…啊…咕噜…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3459',
+        any: [/CFLAG:332 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3462-3463',
+        any: [/PRINTFORMW 「嗯…嗯嗯…咕噜…嗯啊…嗯…让我继续舔？ 啊…嗯啾啾！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3462',
+        any: [/PRINTFORMW 「嗯…嗯嗯…咕噜…嗯啊…嗯…让我继续舔？ 啊…嗯啾啾！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3463',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%带着不甘心的表情继续舔着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3464',
+        any: [/CFLAG:332 = 2/],
+      },
     ],
   },
 ];

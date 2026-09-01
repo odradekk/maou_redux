@@ -1570,8 +1570,75 @@ test('SELECTCOM 30 手淫，源作误写死区：TALENT:85+侍奉精神Lv3以上
   assert.equal(fixture.store.get('cflag:31:331'), 4, 'CFLAG:331 保持不变');
 });
 
-test('骨架期：SELECTCOM 31（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
-  const fixture = await setup_k8(undefined, 31);
+test('SELECTCOM 31 口交，初めて·爱慕：CFLAG:332 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+  }, 31);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「即使是你的阴茎，这么突然让我舔你觉得可能吗？」',
+    '银黑桃这么说着，一边撸着你的阴茎，一边吻向了阴茎的顶部。',
+    '「嗯…呵呵呵、首先要先接吻…♡ 然后…嗯咕嗯…再舔舔龟头吧♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:332'), 1, 'CFLAG:332 推进到 1');
+});
+
+test('SELECTCOM 31 口交，二回目以降·淫乱 RAND3=0：CFLAG:332 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:332', 1);
+    f.store.set('talent:31:76', 1);
+  }, 31);
+  await speak_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊，你的阴茎…每天都想舔…嗯…咕噜…嗯啾♡」',
+    '银黑桃吞下你阴茎直到喉咙的深处。',
+    '「嗯啾…啾…啾…嗯嗯…啊啊…阴茎…阴茎…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:332'), 5, 'CFLAG:332 推进到 5');
+});
+
+test('SELECTCOM 31 口交，二回目以降·爱慕 RAND3=2（末臂）：CFLAG:332 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:332', 1);
+    f.store.set('talent:31:85', 1);
+  }, 31);
+  await speak_k8(fixture, () => 2);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…只是含着男人的阴茎而已…就这么幸福什么的…我好想已经变得不对劲了…♡」',
+    '银黑桃干起来很高兴的舔着你的阴茎。',
+    '「咕…啾…啾嗯…啊啊…明明味道这么重但我就是停不下来♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:332'), 4, 'CFLAG:332 推进到 4');
+});
+
+test('SELECTCOM 31 口交，二回目以降·侍奉精神Lv3以上：CFLAG:332 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:332', 1);
+    f.store.set('abl:31:16', 3);
+  }, 31);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…嗯…啊嗯…咕噜…啾…啊…嗯啊…♪」',
+    '银黑桃热心的舔着你的阴茎。',
+    '「让我做到这种程度什么的…你这家伙…嗯…啊…咕噜…」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:332'), 3, 'CFLAG:332 推进到 3');
+});
+
+test('SELECTCOM 31 口交，二回目以降·それ以外：CFLAG:332 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:332', 1);
+  }, 31);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…嗯嗯…咕噜…嗯啊…嗯…让我继续舔？ 啊…嗯啾啾！」',
+    '银黑桃带着不甘心的表情继续舔着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:332'), 2, 'CFLAG:332 推进到 2');
+});
+
+test('骨架期：SELECTCOM 32（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 32);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),

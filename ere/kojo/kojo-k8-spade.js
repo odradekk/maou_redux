@@ -1673,8 +1673,8 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87,
-    123, 124, 125, 126, 127,
+    32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123,
+    124, 125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -5974,6 +5974,157 @@ async function kojo_message_com_8(rand) {
         `${target_name}一边撅起嘴唇，一边服侍着${player_name}的阴茎………`,
       ); // :3382
       kojo.手淫 = 2; // :3383 CFLAG:331 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 31) {
+    // :3392-3466 口交 CFLAG:332（无 A感覚 分档，四档；二回目以降淫乱/爱慕臂各接 RAND:3→RAND:2 双层三选一）
+    if (kojo.口交_奴 == 0) {
+      // :3394-3416 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        // 淫乱
+        await era.printAndWait(
+          `「啊啊、你的阴茎…我开动了${heart(1)} 啊呜…嗯呜嗯…咕噜…啾…嗯！」`,
+        ); // :3397
+        await era.printAndWait(
+          `${target_name}突然抓起${player_name}的阴茎，以猛烈的势头吞了下去。`,
+        ); // :3398
+        await era.printAndWait(
+          `「嗯…嗯呼…我、我…一直想舔你的阴茎想的不得了、一直都等着呢！嗯咕噜…嗯…啾${heart(1)}」`,
+        ); // :3399
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // 爱慕
+        await era.printAndWait(
+          `「即使是你的阴茎，这么突然让我舔你觉得可能吗？」`,
+        ); // :3402
+        await era.printAndWait(
+          `${target_name}这么说着，一边撸着${player_name}的阴茎，一边吻向了阴茎的顶部。`,
+        ); // :3403
+        await era.printAndWait(
+          `「嗯…呵呵呵、首先要先接吻…${heart(1)} 然后…嗯咕嗯…再舔舔龟头吧${heart(1)}」`,
+        ); // :3404
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        // 侍奉精神Lv3以上
+        await era.printAndWait(
+          `「啊啊…你那肮脏的阴茎…变干净了…嗯…啊…嗯…咕噜…」`,
+        ); // :3407
+        await era.printAndWait(
+          `${target_name}眯着眼看起来很高兴的把${player_name}的阴茎吸入口中舔了起来。`,
+        ); // :3408
+        await era.printAndWait(`「咕噜…啊…明明味道这么重…啊…嗯…嗯…♪」`); // :3409
+      } else {
+        // それ以外（侍奉精神Lv3未満）
+        await era.printAndWait(
+          `「啊啊…终于我也到了用嘴来含住这根肮脏的阴茎的时候了…嗯…嗯…咕噜」`,
+        ); // :3412
+        await era.printAndWait(
+          `${target_name}战战兢兢的舔起了${player_name}的阴茎。`,
+        ); // :3413
+        await era.printAndWait(
+          `「毕竟输了，这种程度是理所当然的呢…啊…嗯…咕………」`,
+        ); // :3414
+        await era.printAndWait(
+          `${target_name}带着因悔恨而歪曲的表情，继续着口腔奉仕………`,
+        ); // :3415
+      }
+      kojo.口交_奴 = 1; // :3417 CFLAG:TARGET:332 = 1
+      return 0;
+    }
+    // :3420-3465 二回目以降（四档）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :3423-3436 淫乱（RAND:3→RAND:2 双层三选一）
+      if (rand_n(3) == 0) {
+        await era.printAndWait(
+          `「啊啊，你的阴茎…每天都想舔…嗯…咕噜…嗯啾${heart(1)}」`,
+        ); // :3424
+        await era.printAndWait(
+          `${target_name}吞下${player_name}阴茎直到喉咙的深处。`,
+        ); // :3425
+        await era.printAndWait(
+          `「嗯啾…啾…啾…嗯嗯…啊啊…阴茎…阴茎…${heart(1)}」`,
+        ); // :3426
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `${target_name}眼前伸出了阴茎、${target_name}张开嘴咬住了阴茎。`,
+        ); // :3428
+        await era.printAndWait(
+          `「啊呜…嗯…嗯…这是在奖励我把？ 啊啊…阴茎真好吃…咕噜…嗯啾…嗯${heart(1)}」`,
+        ); // :3429
+        await era.printAndWait(
+          `「受不了了、我感觉吸的时候最舒服…嗯嗯…咕噜…就…嗯啊${heart(1)}」`,
+        ); // :3430
+        await era.printAndWait(
+          `${target_name}脱去酷酷的女忍者这层假面之后、已经沦为了奉仕${player_name}的阴茎的一匹牝犬………`,
+        ); // :3431
+      } else {
+        await era.printAndWait(
+          `「啊呜…嗯…嗯…你的阴茎实在太好吃了…咕噜…啊啊…就这样放在我的嘴里吧${heart(1)}」`,
+        ); // :3433
+        await era.printAndWait(
+          `${target_name}用恍惚的眼神一边注视着${player_name}的阴茎，一边。`,
+        ); // :3434
+        await era.printAndWait(
+          `「啾…咕噜…啊啊…你的阴茎已经让我上瘾了、嗯咕…嗯啾…啾…嗯咕${heart(1)}」`,
+        ); // :3435
+      }
+      kojo.口交_奴 = 5; // :3437 CFLAG:332 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :3440-3452 爱慕（RAND:3→RAND:2 双层三选一）
+      if (rand_n(3) == 0) {
+        await era.printAndWait(
+          `「啊呜…嗯…这是我的阴茎、给其他的别的谁可不行…啊啊…嗯…${heart(1)}」`,
+        ); // :3441
+        await era.printAndWait(
+          `${target_name}亲了尿道口好几次后、大口吞下了${player_name}的阴茎。`,
+        ); // :3442
+        await era.printAndWait(
+          `「嗯啾…嗯…啊…我的嘴舒服吗？…啊啊…变得更舒服吧…${heart(1)}」`,
+        ); // :3443
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「嗯…嗯…嗯咕…咕噜…嗯…嗯嗯…在我嘴里满满的射出来吧…啊啊…嗯嗯${heart(1)}」`,
+        ); // :3445
+        await era.printAndWait(
+          `${target_name}看起来很舒服似得眯起了眼、继续舔着${player_name}的阴茎。`,
+        ); // :3446
+        await era.printAndWait(
+          `「好吃…你的阴茎实在太好吃了…咕噜…嗯…啾啾…${heart(1)}」`,
+        ); // :3447
+      } else {
+        await era.printAndWait(
+          `「啊啊…只是含着男人的阴茎而已…就这么幸福什么的…我好想已经变得不对劲了…${heart(1)}」`,
+        ); // :3449
+        await era.printAndWait(
+          `${target_name}干起来很高兴的舔着${player_name}的阴茎。`,
+        ); // :3450
+        await era.printAndWait(
+          `「咕…啾…啾嗯…啊啊…明明味道这么重但我就是停不下来${heart(1)}」`,
+        ); // :3451
+      }
+      kojo.口交_奴 = 4; // :3453 CFLAG:332 = 4
+    } else if (
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.口交_奴 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :3456-3458 侍奉精神Lv3以上
+      await era.printAndWait(`「嗯啊…嗯…啊嗯…咕噜…啾…啊…嗯啊…♪」`); // :3456
+      await era.printAndWait(`${target_name}热心的舔着${player_name}的阴茎。`); // :3457
+      await era.printAndWait(`「让我做到这种程度什么的…你这家伙…嗯…啊…咕噜…」`); // :3458
+      kojo.口交_奴 = 3; // :3459 CFLAG:332 = 3
+    } else if (kojo.口交_奴 <= 1 || game.kojo.口上开关 == 2) {
+      // :3462-3463 それ以外（侍奉精神Lv3未満）
+      await era.printAndWait(
+        `「嗯…嗯嗯…咕噜…嗯啊…嗯…让我继续舔？ 啊…嗯啾啾！」`,
+      ); // :3462
+      await era.printAndWait(
+        `${target_name}带着不甘心的表情继续舔着${player_name}的阴茎………`,
+      ); // :3463
+      kojo.口交_奴 = 2; // :3464 CFLAG:332 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
