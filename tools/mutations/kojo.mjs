@@ -2070,4 +2070,37 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1856 K8 SELECTCOM 27 背后位アナル爱慕守卫丢失（CFLAG:328 <= 3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:85`) == 1 &&\n      (kojo.背后位肛交 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      (kojo.背后位肛交 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1857 K8 SELECTCOM 27 背后位アナル淫乱推进写错（CFLAG:328 = 6 改 5，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.背后位肛交 = 6; // :3020 CFLAG:328 = 6',
+    replace: '      kojo.背后位肛交 = 5; // :3020（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 6',
+  },
+  {
+    desc: 'M1858 K8 SELECTCOM 27 背后位アナル爱慕推进写错（CFLAG:328 = 4 改 3，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.背后位肛交 = 4; // :3041 CFLAG:328 = 4',
+    replace: '      kojo.背后位肛交 = 3; // :3041（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1859 K8 SELECTCOM 27 背后位アナルそれ以外守卫丢失（CFLAG:328 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.背后位肛交 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
