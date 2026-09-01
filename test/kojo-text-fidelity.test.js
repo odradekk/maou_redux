@@ -79,6 +79,7 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
+  [/^SELF_CALL\(ASSI,\s*CFLAG:ASSI:450\)$/, 'SC_ASSI'], // ARG:1 废弃，同值
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^SAVESTR:ARG$/, 'ARGNAME'],
@@ -132,6 +133,7 @@ const JS_TOKEN_RULES = [
   [/^assi_name$/, 'ASSI'],
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
+  [/^self_call\(assi\)$/, 'SC_ASSI'],
   [/^scf\(\)$/, 'SCF'],
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],

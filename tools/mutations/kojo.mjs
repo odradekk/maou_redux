@@ -516,8 +516,14 @@ export default [
   {
     desc: 'M1613 K0 崩坏守卫删除（TALENT:9 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (era.get(`talent:${target}:9`) === 1) {',
-    replace: '  if (false) { // 变异：崩坏守卫删除',
+    find: `  // :690-691 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前
+  if (era.get(\`talent:\${target}:9\`) === 1) {
+    return 0;
+  }`,
+    replace: `  // :690-691 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前
+  if (false) { // 变异：崩坏守卫删除
+    return 0;
+  }`,
     tests: ['kojo-k0-tender'],
     must_mention: '崩坏（TALENT:9）',
   },
@@ -2623,5 +2629,227 @@ export default [
         // :5207`,
     tests: ['kojo-k0-tender'],
     must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
+  },
+  {
+    desc: 'M1957 K0 EVENTTRAIN NORMAL 总开关守卫删松（<= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (game.kojo.口上开关 <= 0) {
+    // :88-89
+    return 0;
+  }`,
+    replace: `  if (game.kojo.口上开关 < 0) {
+    // :88-89
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'FLAG:7 <= 0 静默',
+  },
+  {
+    desc: 'M1958 K0 EVENTTRAIN NORMAL 慈爱素质守卫错格（!== 1 改 !== 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (chara(target).chara.慈爱 !== 1) {
+    // :90-91
+    return 0;
+  }`,
+    replace: `  if (chara(target).chara.慈爱 !== 0) {
+    // :90-91
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTTRAIN NORMAL：非慈爱素质静默',
+  },
+  {
+    desc: 'M1959 K0 EVENTTRAIN NORMAL 首次精灵状态推进写错（CFLAG:201 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.初调教 = 1; // :103`,
+    replace: `      kojo.初调教 = 2; // :103`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次精灵推进到 1',
+  },
+  {
+    desc: 'M1960 K0 EVENTTRAIN NORMAL 首次魔族不写 CFLAG:370（改 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.初调教 = 1; // :140
+      kojo.魔族化 = 1; // :142`,
+    replace: `      kojo.初调教 = 1; // :140
+      kojo.魔族化 = 0; // :142`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次魔族同时写 CFLAG:370 = 1',
+  },
+  {
+    desc: 'M1961 K0 EVENTTRAIN NORMAL 魔族化二次写 2 改 3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.魔族化 = 2; // :172-173`,
+    replace: `    kojo.魔族化 = 3; // :172-173`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '魔族化二次写 2',
+  },
+  {
+    desc: 'M1962 K0 EVENTTRAIN NORMAL 魔族化二次门槛 < 5 改 < 4（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 < 5 &&
+    kojo.魔族化 === 0 &&
+    chara(target).chara.种族 === 9 &&`,
+    replace: `    kojo.初调教 < 4 &&
+    kojo.魔族化 === 0 &&
+    chara(target).chara.种族 === 9 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '魔族化二次写 2',
+  },
+  {
+    desc: 'M1963 K0 EVENTTRAIN NORMAL NTR 再捕获不清 650（写 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.NTR再捕获 = 0; // :185`,
+    replace: `      kojo.NTR再捕获 = 1; // :185`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'NTR 再捕获爱慕清 650',
+  },
+  {
+    desc: 'M1964 K0 EVENTTRAIN NORMAL NTR 未陷落不清 650（写 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.NTR再捕获 = 0; // :192`,
+    replace: `      kojo.NTR再捕获 = 1; // :192`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'NTR 再捕获未陷落清 650',
+  },
+  {
+    desc: 'M1965 K0 EVENTTRAIN NORMAL 屈服 Lv1 写 2 改 3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 2; // :203-204`,
+    replace: `    kojo.初调教 = 3; // :203-204`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '屈服 Lv1 写 2',
+  },
+  {
+    desc: 'M1966 K0 EVENTTRAIN NORMAL 淫乱写 5 改 6（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 5; // :228-229`,
+    replace: `    kojo.初调教 = 6; // :228-229`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱写 5',
+  },
+  {
+    desc: 'M1967 K0 EVENTTRAIN NORMAL 淫乱+调教前魔族门槛读错自己的 CFLAG:201（改 魔族化）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    chara(target).chara.种族 === 9 &&
+    kojo.初调教 < 6 &&
+    era.get(\`talent:\${target}:85\`) !== 1 &&
+    era.get(\`talent:\${target}:76\`) === 1`,
+    replace: `    chara(target).chara.种族 === 9 &&
+    kojo.魔族化 < 6 &&
+    era.get(\`talent:\${target}:85\`) !== 1 &&
+    era.get(\`talent:\${target}:76\`) === 1`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱+调教前魔族写 6',
+  },
+  {
+    desc: 'M1968 K0 EVENTTRAIN NORMAL 爱慕写 7 改 8（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 7; // :290-291`,
+    replace: `    kojo.初调教 = 8; // :290-291`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '爱慕写 7',
+  },
+  {
+    desc: 'M1969 K0 EVENTTRAIN NORMAL 崩坏写 9 改 8（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 9; // :334-335`,
+    replace: `    kojo.初调教 = 8; // :334-335`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '崩坏写 9',
+  },
+  {
+    desc: 'M1970 K0 二次口上崩坏 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 2) {
+    // :491`,
+    replace: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 1) {
+    // :491`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '无助手落入二次口上（崩坏祈祷）',
+  },
+  {
+    desc: 'M1971 K0 二次口上故乡恋人 TALENT:317 == 4 改 5（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    if (chara(target).chara.喜欢的东西 === 4) {
+      // :508`,
+    replace: `    if (chara(target).chara.喜欢的东西 === 5) {
+      // :508`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '屈服 Lv0 故乡恋人',
+  },
+  {
+    desc: 'M1972 K0 二次口上淫乱 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  } else if (era.get(\`talent:\${target}:76\`) === 1 && game.kojo.口上开关 === 2) {
+    era.drawLine(); // :555-556`,
+    replace: `  } else if (era.get(\`talent:\${target}:76\`) === 1 && game.kojo.口上开关 === 1) {
+    era.drawLine(); // :555-556`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 二次口上：FLAG:7==1 静默',
+  },
+  {
+    desc: 'M1973 K0 EVENTTRAIN NORMAL 村娘助手首次写 202 = 1 改 2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        kojo.简易助手_0 = 1; // :387-388`,
+    replace: `        kojo.简易助手_0 = 2; // :387-388`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '村娘助手首次写 202 = 1',
+  },
+  {
+    desc: 'M1974 K0 EVENTTRAIN NORMAL 村娘助手二次 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      } else if (kojo.简易助手_0 === 1 && game.kojo.口上开关 === 2) {`,
+    replace: `      } else if (kojo.简易助手_0 === 1 && game.kojo.口上开关 === 1) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '村娘助手二次 FLAG:7==1 静默',
+  },
+  {
+    desc: 'M1975 K0 EVENTEND NORMAL 死亡守卫 <= 0 改 < 0（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (chara(target).dungeon.体力 <= 0) {
+    // :608-609
+    return 0;
+  }`,
+    replace: `  if (chara(target).dungeon.体力 < 0) {
+    // :608-609
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '角色死亡 BASE:0 <= 0 静默',
+  },
+  {
+    desc: 'M1976 K0 EVENTEND NORMAL 崩坏 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 2) {
+    // :615`,
+    replace: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 1) {
+    // :615`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '崩坏 FLAG:7==2 出声',
+  },
+  {
+    desc: 'M1977 K0 EVENTEND NORMAL 淫乱体力门槛 >= 500 改 > 500（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    era.get(\`talent:\${target}:76\`) === 1 &&
+    chara(target).dungeon.体力 >= 500`,
+    replace: `    era.get(\`talent:\${target}:76\`) === 1 &&
+    chara(target).dungeon.体力 > 500`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱体力 500 走 >= 不是 <',
+  },
+  {
+    desc: 'M1978 K0 EVENTEND NORMAL 慈爱素质守卫错格（!== 1 改 !== 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (chara(target).chara.慈爱 !== 1) {
+    // :604-605
+    return 0;
+  }`,
+    replace: `  if (chara(target).chara.慈爱 !== 0) {
+    // :604-605
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTEND NORMAL：非慈爱素质静默',
   },
 ];

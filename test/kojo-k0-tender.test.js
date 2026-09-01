@@ -10,6 +10,7 @@
  *   - 爱抚外指令落占位行；
  *   - 舔阴 / 肛门爱抚 / 自慰状态机（自慰含拍摄拼接与 RAND:3/RAND:2）；
  *   - @EVENTTRAIN #PRI / @EVENTEND #LATER 的存在标志；
+ *   - @EVENTTRAIN / @EVENTEND NORMAL 与二次口上 k0_kojo2（CFLAG:201 / 370 / 650 / 202）；
  *   - 存根清单核对（docs/stub-registry.md）。
 
  */
@@ -2122,6 +2123,328 @@ test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async (
   assert.equal(fixture.store.get('flag:7'), 2, 'K0 EVENTTRAIN 总开关补 0→2');
   await emit('EVENTEND');
   assert.equal(fixture.store.get('flag:100'), 0, 'K0 EVENTEND 清 FLAG:100');
+});
+
+async function emit_k0(fixture, event, rand) {
+  const { emit } = fixture.load_module('system/event/registry');
+  return emit(event, rand);
+}
+
+test('K0 EVENTTRAIN NORMAL：FLAG:7 <= 0 静默', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('flag:7', -1); // PRI 只补 0→2，负数总开关继续关
+    f.store.set('talent:31:314', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:31:201'), undefined);
+});
+
+test('K0 EVENTTRAIN NORMAL：非慈爱素质静默', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:160', 0);
+    f.store.set('talent:31:314', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:31:201'), undefined);
+});
+
+test('K0 EVENTTRAIN NORMAL：首次精灵写 CFLAG:201 = 1', async () => {
+  const fixture = await setup_k0((f) => f.store.set('talent:31:314', 1));
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「请、请不要再做出那样的野蛮暴行了！」',
+    '琼直到现在还摆出高高在上的嘴脸说教着。',
+    '只是想想如何去玷污这个女精灵你就猛地硬了起来………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:201'), 1, '首次精灵推进到 1');
+});
+
+test('K0 EVENTTRAIN NORMAL：首次魔族写 CFLAG:201 = 1 且 CFLAG:370 = 1', async () => {
+  const fixture = await setup_k0((f) => f.store.set('talent:31:314', 9));
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('即便被变成了魔族')),
+  );
+  assert.equal(fixture.store.get('cflag:31:201'), 1, '首次魔族推进到 1');
+  assert.equal(
+    fixture.store.get('cflag:31:370'),
+    1,
+    '首次魔族同时写 CFLAG:370 = 1',
+  );
+});
+
+test('K0 EVENTTRAIN NORMAL：魔族化二次写 CFLAG:370 = 2', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:314', 9);
+    f.store.set('cflag:31:201', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('被多次改造已经完全变成了魔族')),
+  );
+  assert.equal(fixture.store.get('cflag:31:370'), 2, '魔族化二次写 2');
+  assert.equal(
+    fixture.store.get('cflag:31:201'),
+    1,
+    '魔族化二次不改 CFLAG:201',
+  );
+});
+
+test('K0 EVENTTRAIN NORMAL：NTR 再捕获爱慕清 CFLAG:650', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('cflag:31:650', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('已经看过那些水晶球')),
+  );
+  assert.equal(fixture.store.get('cflag:31:650'), 0, 'NTR 再捕获爱慕清 650');
+});
+
+test('K0 EVENTTRAIN NORMAL：NTR 再捕获未陷落清 CFLAG:650', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('cflag:31:650', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「又被你抓住了」',
+    '「既被狂王玷污、又被你玷污………看来我的命运也就到此为止了…………」',
+    '看起来琼已经接受了自己的命运………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:650'), 0, 'NTR 再捕获未陷落清 650');
+});
+
+test('K0 EVENTTRAIN NORMAL：屈服刻印 Lv1 写 CFLAG:201 = 2', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('mark:31:2', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「能不能不要…再让我做这些事了…你觉得怎样呢………」',
+    '（不行…明明知道这样很奇怪…）',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:201'), 2, '屈服 Lv1 写 2');
+});
+
+test('K0 EVENTTRAIN NORMAL：淫乱写 CFLAG:201 = 5', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:314', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(fixture.text_lines().some((line) => line.includes('色情宠物')));
+  assert.equal(fixture.store.get('cflag:31:201'), 5, '淫乱写 5');
+});
+
+test('K0 EVENTTRAIN NORMAL：淫乱+调教前魔族写 CFLAG:201 = 6', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('cflag:31:370', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:314', 9);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(fixture.text_lines().some((line) => line.includes('啊…魔王大人')));
+  assert.equal(fixture.store.get('cflag:31:201'), 6, '淫乱+调教前魔族写 6');
+});
+
+test('K0 EVENTTRAIN NORMAL：爱慕写 CFLAG:201 = 7', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('talent:31:314', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(fixture.text_lines().some((line) => line.includes('是你的所有物')));
+  assert.equal(fixture.store.get('cflag:31:201'), 7, '爱慕写 7');
+});
+
+test('K0 EVENTTRAIN NORMAL：崩坏写 CFLAG:201 = 9', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('talent:31:9', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('面向屋子的角落向神祈祷')),
+  );
+  assert.equal(fixture.store.get('cflag:31:201'), 9, '崩坏写 9');
+});
+
+test('K0 EVENTTRAIN NORMAL：无助手落入二次口上（崩坏祈祷）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 9);
+    f.store.set('talent:31:9', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「嘻嘻～…嘻～…请不要打扰我的祈祷…嘻～…嘻～」',
+    '已经无法期待精神崩坏的琼做出什么正常的反应了吧……',
+  ]);
+});
+
+test('K0 EVENTTRAIN NORMAL：村娘助手首次写 CFLAG:202 = 1', async () => {
+  const fixture = await setup_k0((f) => {
+    join_slave_chara(f, 17, '玛奥');
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.assi = 17;
+    f.store.set('cflag:31:201', 9);
+    f.store.set('talent:17:165', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '一看到你所带来的玛奥，琼的脸就僵住了。',
+    '「啊啊…那个孩子是邻村的…你…对这样的小孩子都下手………！」',
+    '玛奥一边看着害怕着的琼一边笑了笑。',
+    '『勇者大人啊…和我一起玩一会儿吧…？』',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:202'), 1, '村娘助手首次写 202 = 1');
+  const colors = fixture.calls.filter((c) => c.api === 'setColor');
+  assert.deepEqual(
+    colors.map((c) => c.args[0]),
+    ['#ffccff', ''],
+    '村娘助手それ以外无条件着色',
+  );
+});
+
+test('K0 EVENTTRAIN NORMAL：村娘助手二次 FLAG:7==1 静默', async () => {
+  const fixture = await setup_k0((f) => {
+    join_slave_chara(f, 17, '玛奥');
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.assi = 17;
+    f.store.set('cflag:31:201', 9);
+    f.store.set('cflag:31:202', 1);
+    f.store.set('talent:17:165', 1);
+    f.store.set('flag:7', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:31:202'), 1);
+});
+
+test('K0 EVENTTRAIN NORMAL：非村娘助手落入二次口上', async () => {
+  const fixture = await setup_k0((f) => {
+    join_slave_chara(f, 32, '助手桑');
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.assi = 32;
+    f.store.set('cflag:31:201', 9);
+    f.store.set('talent:31:9', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('请不要打扰我的祈祷')),
+  );
+});
+
+test('K0 二次口上：屈服 Lv0 故乡恋人', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 9);
+    f.store.set('mark:31:2', 0);
+    f.store.set('talent:31:317', 4);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「没用的…我不会认输的…」',
+    '（啊啊…无论发生什么…我都会与你同在……）',
+    '琼像是在向故乡的恋人祈祷的样子………',
+  ]);
+});
+
+test('K0 二次口上：淫乱 RAND:3==0 精液中毒', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 9);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:32', 3);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN', seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊～…主人…请让我好好侍奉您那出色的大肉棒吧…♡」',
+    '「所以呢…请赐我精液～…我想要精液～…满满地淋过来吧…♡」',
+  ]);
+});
+
+test('K0 二次口上：FLAG:7==1 静默', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 9);
+    f.store.set('talent:31:76', 1);
+    f.store.set('flag:7', 1);
+  });
+  await emit_k0(fixture, 'EVENTTRAIN', seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('K0 EVENTEND NORMAL：角色死亡 BASE:0 <= 0 静默', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('base:31:0', 0);
+    f.store.set('talent:31:85', 1);
+  });
+  await emit_k0(fixture, 'EVENTEND');
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('K0 EVENTEND NORMAL：非慈爱素质静默', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:160', 0);
+    f.store.set('base:31:0', 1800);
+    f.store.set('talent:31:85', 1);
+  });
+  await emit_k0(fixture, 'EVENTEND');
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('K0 EVENTEND NORMAL：崩坏 FLAG:7==2 出声', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('base:31:0', 1800);
+    f.store.set('talent:31:9', 1);
+  });
+  await emit_k0(fixture, 'EVENTEND');
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('没法再祈祷下去了')),
+  );
+});
+
+test('K0 EVENTEND NORMAL：崩坏 FLAG:7==1 不走崩坏支、落入屈服 Lv1 以下', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('base:31:0', 1800);
+    f.store.set('talent:31:9', 1);
+    f.store.set('flag:7', 1);
+  });
+  await emit_k0(fixture, 'EVENTEND');
+  assert.deepEqual(fixture.text_lines(), ['「你真是、无可药救了…」']);
+});
+
+test('K0 EVENTEND NORMAL：淫乱体力 500 走 >= 不是 <', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('talent:31:76', 1);
+  });
+  await emit_k0(fixture, 'EVENTEND');
+  assert.deepEqual(fixture.text_lines(), [
+    '「再…再继续做嘛…请把小穴操到要发疯吧～…♡」',
+  ]);
+});
+
+test('K0 EVENTEND NORMAL：爱慕体力不足两句', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('base:31:0', 499);
+    f.store.set('talent:31:85', 1);
+  });
+  await emit_k0(fixture, 'EVENTEND');
+  assert.deepEqual(fixture.text_lines(), [
+    '「爱…好沉重呢」',
+    '琼红着脸神情陶醉的躺在床上………',
+  ]);
 });
 
 test('对面座位首次处女：空 PRINTFORMW 仍等待，推进到 1', async () => {
