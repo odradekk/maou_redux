@@ -36,7 +36,7 @@ let leftover_a = 0;
 let leftover_q = 0;
 /**
  * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写次数，SELF_KOJO 的
- * 调教后性交支读 `s`（K5 :6223 源文就是小写 s）。
+ * 调教后性交支读 `s`（K5 :6223 源文就是小写 s；K6 的 SELF_KOJO 同读）。
  */
 let leftover_s = 0;
 /**
@@ -99,6 +99,7 @@ function chara_name(cid) {
  * @returns {Promise<number>} 执行回数或 0
  */
 async function aftertrain_sex_check() {
+  leftover_s = 0;
   const target = era_flag.target;
   if (target < 0) return 0;
   if (era.get(`talent:${target}:135`)) return 0; // 未成熟
@@ -166,8 +167,8 @@ async function aftertrain_sex_check() {
   era.print(`回到床上做了${s}次…`);
   era.print('');
 
-  leftover_s = s;
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  leftover_s = s;
   game.train.初吻与自我口上 = 4;
   await self_kojo();
   era.print(`V经验＋${s}`);

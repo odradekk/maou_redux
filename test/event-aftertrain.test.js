@@ -671,6 +671,21 @@ test('AFTERTRAIN: leftover_q 把妄想对象交给 SELF_KOJO', async () => {
   assert.equal(peek_aftertrain_q(), 1, 'q=1 助手分支必须写入 leftover_q');
 });
 
+test('AFTERTRAIN: leftover_s 把回数交给 SELF_KOJO', async () => {
+  const { fixture } = seed_aftertrain_world();
+  const { aftertrain_sex_check, peek_aftertrain_s } = fixture.load_module(
+    'event/event-aftertrain',
+  );
+  satisfy_sex_gates(fixture, { abl_index: 2, abl_value: 5 });
+  await aftertrain_sex_check();
+  assert.equal(peek_aftertrain_s(), 3, 'S=3 必须写入 leftover_s');
+
+  fixture.store.set('talent:17:76', 0);
+  fixture.store.set('talent:17:85', 0);
+  assert.equal(await aftertrain_sex_check(), 0);
+  assert.equal(peek_aftertrain_s(), 0, '门槛未过必须清 leftover_s');
+});
+
 test('AFTERTRAIN: aftertrain_masturbation_check 男人阴茎点数分支', async () => {
   const { fixture } = seed_aftertrain_world();
   const { aftertrain_masturbation_check } = fixture.load_module(
