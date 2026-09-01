@@ -1693,4 +1693,73 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['top-level-wiring'],
     must_mention: '顶层 require：ere/system/train/com-tentacle.js',
   },
+  // —— #239（J29）：K8 银黑桃 口上模块（M1813- 号段，按实际交付定，随分段填充继续增补） ——
+  {
+    desc: 'M1813 K8 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_8，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `  if (era0(\`tequip:\${target}:89\`)) {
+    await dog_kojo_8(rand); // :903 CALL DOG_KOJO_8
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:89\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '@DOG_KOJO_8',
+  },
+  {
+    desc: 'M1814 K8 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_8，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `  if (era0(\`tequip:\${target}:55\`)) {
+    await colosseum_kojo_8(); // :908 CALL COLOSSEUM_KOJO_8
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:55\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '@COLOSSEUM_KOJO_8',
+  },
+  {
+    desc: 'M1815 K8 初調教推进写错（CFLAG:201 = 1 改 2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        kojo.初调教 = 1; // :106 CFLAG:201 = 1',
+    replace: '        kojo.初调教 = 2; // :106 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:201 推进到 1',
+  },
+  {
+    desc: 'M1816 K8 K8_KOJO2 反抗刻印Lv3 分档条件写错（MARK:3 == 3 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (era0(`mark:${target}:3`) == 3 && game.kojo.口上开关 == 2) {\n    era.drawLine(); // :616',
+    replace:
+      '  } else if (era0(`mark:${target}:3`) == 4 && game.kojo.口上开关 == 2) {\n    era.drawLine(); // :616 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: '反抗刻印Lv3',
+  },
+  {
+    desc: 'M1817 K8 SELECTCOM 0 爱撫初回刻印分档删（MARK:2 >= 2 臂丢失，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (era0(`mark:${target}:2`) >= 2) {\n        await era.printAndWait(`「呵呵呵…就像稍微强一点的按摩一样呢」`); // :928',
+    replace:
+      '      if (era0(`mark:${target}:2`) >= 3) {\n        await era.printAndWait(`「呵呵呵…就像稍微强一点的按摩一样呢」`); // :928 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: '屈服刻印Lv2以上分档',
+  },
+  {
+    desc: 'M1818 K8 SELECTCOM 0 爱撫淫乱档推进写错（CFLAG:301 = 6 改 5，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.爱抚 = 6; // :943 CFLAG:301 = 6',
+    replace: '      kojo.爱抚 = 5; // :943 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:301 推进到 6',
+  },
+  {
+    desc: 'M1819 K8 SELECTCOM 1 舔阴初回推进写错（CFLAG:302 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.舔阴 = 1; // :984 CFLAG:302 = 1',
+    replace: '      kojo.舔阴 = 0; // :984 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:302 推进到 1',
+  },
 ];

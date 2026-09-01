@@ -94,7 +94,7 @@ test('初調教（CFLAG:201 == 0）：种族分档（人间）+ 推进到 1', as
       '（唔…早知道这样应该接受女忍的训练的！）',
     ].map((line) => (line.startsWith('在') ? `银黑桃${line}` : line)),
   );
-  assert.equal(fixture.store.get('cflag:31:201'), 1);
+  assert.equal(fixture.store.get('cflag:31:201'), 1, 'CFLAG:201 推进到 1');
   assert.equal(fixture.store.get('cflag:31:370'), undefined);
 });
 
@@ -189,7 +189,10 @@ test('淫乱（无处女）：CFLAG:201 推进到 5', async () => {
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
   assert.equal(fixture.text_lines().length, 9);
-  assert.ok(fixture.text_lines()[8].includes('赐给牝奴隶的我吧'));
+  assert.ok(
+    fixture.text_lines()[8].includes('赐给牝奴隶的我吧'),
+    '淫乱分档末句：赐给牝奴隶的我吧',
+  );
   assert.equal(fixture.store.get('cflag:31:201'), 5);
 });
 
@@ -262,6 +265,7 @@ test('简易助手·金红桃（NO:ASSI == 20）：初回落在爱/淫乱之外�
   await emit('EVENTTRAIN');
   assert.ok(
     fixture.text_lines().some((line) => line.includes('看来是银黑桃的初吻')),
+    '初吻旁白：看来是银黑桃的初吻',
   );
   assert.equal(fixture.store.get('cflag:31:16'), 1);
   assert.equal(fixture.store.get('cflag:31:202'), 1);
@@ -349,7 +353,10 @@ test('头部守卫：兽奸（TEQUIP:89）岔去 DOG_KOJO_8 真身（骨架期�
   const fixture = await setup_k8();
   fixture.store.set('tequip:31:89', 1);
   await speak_k8(fixture);
-  assert.ok(fixture.text_lines().some((line) => line.includes('@DOG_KOJO_8')));
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('@DOG_KOJO_8')),
+    '占位行含 @DOG_KOJO_8',
+  );
 });
 
 test('头部守卫：死斗场（TEQUIP:55）岔去 COLOSSEUM_KOJO_8 真身（骨架期打占位）', async () => {
@@ -358,6 +365,7 @@ test('头部守卫：死斗场（TEQUIP:55）岔去 COLOSSEUM_KOJO_8 真身（�
   await speak_k8(fixture);
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@COLOSSEUM_KOJO_8')),
+    '占位行含 @COLOSSEUM_KOJO_8',
   );
 });
 
@@ -428,6 +436,7 @@ test('骨架期：SELECTCOM 2（未实现分支）落 KOJO_MESSAGE_COM_8 占位�
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
+    '占位行含 @KOJO_MESSAGE_COM_8',
   );
 });
 // —— 存根清单核对 ——
