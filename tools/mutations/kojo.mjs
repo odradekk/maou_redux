@@ -471,8 +471,11 @@ export default [
   {
     desc: 'M1608 K0 舔阴处女素质判据错格（TALENT:0 改 1）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '      if (era.get(`talent:${target}:0`) === 1) {',
-    replace: '      if (era.get(`talent:${target}:1`) === 1) {',
+    find: `      // :761-767 处女（TALENT:0）
+      if (era.get(\`talent:\${target}:0\`) === 1) {`,
+    replace: `      // :761-767 处女（TALENT:0）
+      if (era.get(\`talent:\${target}:1\`) === 1) {`,
+
     tests: ['kojo-k0-tender'],
     must_mention: '处女的味道',
   },
@@ -951,5 +954,42 @@ export default [
       (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
     tests: ['kojo-k0-tender'],
     must_mention: '忍耐阴核的震动',
+  },
+  {
+    desc: 'M1799 K0 壶虫首次状态推进写错（CFLAG:312 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.壶虫 = 1; // :1399',
+    replace: '      kojo.壶虫 = 2; // :1399',
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫首次推进到 1',
+  },
+  {
+    desc: 'M1800 K0 壶虫开始二次淫乱门槛错位（CFLAG:312 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫开始二次：淫乱 + V钝感附加句',
+  },
+  {
+    desc: 'M1801 K0 壶虫开始二次 V钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1407-1408 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {`,
+    replace: `      // :1407-1408 V感覚Lv3以上＋V鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '把壶虫贪婪的连根吞了进去',
+  },
+  {
+    desc: 'M1802 K0 壶虫脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.壶虫着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.壶虫着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫脱着：淫乱写 CFLAG:372 = 3，门槛是 < 不是 <=',
+
   },
 ];

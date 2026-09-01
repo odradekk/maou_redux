@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 11; // 壶虫——COM10 落地后改用尚未填的指令
+    era_flag.selectcom = 12; // 电动按摩棒——COM11 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 11 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 12 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -1275,6 +1275,79 @@ test('振动宝石二次：淫乱 / 爱慕+屈服 / 阈值闸', async () => {
     '琼扭着腰身因为愉悦而颤抖不已………',
   ]);
   assert.equal(at_cap.store.get('cflag:31:311'), 5, '振动宝石二次阈值闸');
+});
+
+test('壶虫开始首次处女：淫乱三句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 11;
+    f.store.set('tequip:31:11', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「咕呜…啊啊～…渐渐地钻进…小穴里面去了………」',
+    '「主人的小鸡鸡…明明一直在等待着…明明一直在等待着…结果就这样…」',
+    '琼有点悲伤地忍耐着破瓜的疼痛………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:312'), 1, '壶虫首次推进到 1');
+});
+
+test('壶虫开始二次：淫乱 + V钝感附加句 / 阈值闸', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 11;
+    f.store.set('tequip:31:11', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:2', 3);
+    f.store.set('talent:31:103', 1);
+    f.store.set('cflag:31:312', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊～…！不要…讨厌…明明是虫子而已…竟然会这么爽…要、要死了…咕呜呜～♡」',
+    '琼钝感的私处已经被完全开发了、把壶虫贪婪的连根吞了进去………',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:312'), 5);
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 11;
+    f.store.set('tequip:31:11', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:312', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「啊～…！不要…讨厌…明明是虫子而已…竟然会这么爽…要、要死了…咕呜呜～♡」',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:312'), 5, '壶虫开始二次阈值闸');
+});
+
+test('壶虫脱着：淫乱写 CFLAG:372 = 3，门槛是 < 不是 <=', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 11;
+    f.store.set('tequip:31:11', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), ['「哈啊啊…下次…要把什么插进来呢…？」']);
+  assert.equal(lewd.store.get('cflag:31:372'), 3, '壶虫着脱推进到 3');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 11;
+    f.store.set('tequip:31:11', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:372', 3);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), []);
+  assert.equal(at_cap.store.get('cflag:31:372'), 3, '壶虫着脱阈值闸用 < 3');
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

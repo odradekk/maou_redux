@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -8,7 +8,9 @@
  *     肛门爱抚 CFLAG:303 状态机 :799-856；自慰 CFLAG:304 状态机 :861-968；
  *     胸爱抚 CFLAG:306 状态机 :973-1060；接吻 CFLAG:307 状态机 :1065-1148；
  *     自己扒开 CFLAG:308 状态机 :1153-1189；插入手指 CFLAG:309 状态机 :1194-1248；
- *     舔肛 CFLAG:310 状态机 :1252-1310；振动宝石 CFLAG:311 状态机 :1314-1352）
+ *     舔肛 CFLAG:310 状态机 :1252-1310；振动宝石 CFLAG:311 状态机 :1314-1352；
+ *     壶虫开始 CFLAG:312 :1358-1433、脱着 CFLAG:372 :1435-1450）
+
 
 
 
@@ -76,7 +78,8 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-1352）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石。
+ * @KOJO_MESSAGE_COM_0（:674-1450）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫。
+
 
  *
 
@@ -1132,6 +1135,155 @@ async function kojo_message_com_0(rand) {
         '「哈啊～…啊～～…嗯～…啊…啊呜呜～…再、再这样下去的话…」',
       ); // :1347
       kojo.振动宝石 = 2; // :1348
+    }
+    return 0;
+  }
+
+  // :1358 IF SELECTCOM == 11 && TEQUIP:11（壶虫开始，CFLAG:312）
+  if (era_flag.selectcom === 11 && era.get(`tequip:${target}:11`)) {
+    const v_sense = era.get(`abl:${target}:2`) || 0;
+    const v_insensible = era.get(`talent:${target}:103`) === 1;
+
+    // :1360-1400 初めて（CFLAG:312 == 0）
+    if (kojo.壶虫 === 0) {
+      // :1362-1376 处女
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :1364-1367 淫乱
+        if (era.get(`talent:${target}:76`) === 1) {
+          await era.printAndWait('「咕呜…啊啊～…渐渐地钻进…小穴里面去了………」'); // :1365
+          await era.printAndWait(
+            '「主人的小鸡鸡…明明一直在等待着…明明一直在等待着…结果就这样…」',
+          ); // :1366
+          await era.printAndWait(`${target_name}有点悲伤地忍耐着破瓜的疼痛………`); // :1367
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :1369-1372 爱慕
+          await era.printAndWait(
+            '「哈咕呜～…没、没事的…一点也不痛…咕…呜呜～！」',
+          ); // :1370
+          await era.printAndWait(`${target_name}咬牙忍耐着破瓜的痛楚………`); // :1371
+          await era.printAndWait('「哈啊…哈啊…下次…想要…………主人的…东西………」'); // :1372
+        } else {
+          // :1374-1375 それ以外
+          await era.printAndWait('「哈啊…哈啊…啊啊…好狠心…好狠心啊…啊咕呜…」'); // :1375
+        }
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :1380-1384 非处女＋淫乱
+        await era.printAndWait(
+          '「啊啊～！这样被张开…好厉害啊…在里面蠕动着…啊～啊～啊啊啊！」',
+        ); // :1381
+        // :1383-1384 V感覚Lv3以上＋V鈍感
+        if (v_sense >= 3 && v_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的私处已经被完全开发了、把壶虫贪婪的连根吞了进去………`,
+          ); // :1384
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1386-1390 非处女＋爱慕
+        await era.printAndWait(
+          `「这、这东西在${sc()}的阴道里…啊啊～…好厉害…这种感觉…还是第一次…♪」`,
+        ); // :1387
+        // :1389-1390 V感覚Lv3以上＋V鈍感
+        if (v_sense >= 3 && v_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的私处已经被完全开发了、把壶虫连根吞了进去………`,
+          ); // :1390
+        }
+      } else {
+        // :1392-1396 非处女＋それ以外
+        await era.printAndWait(
+          `「啊～！不、不要！在${sc()}的里面蠕动着…咿咿咿咿～！」`,
+        ); // :1393
+        // :1395-1396 V鈍感
+        if (v_insensible) {
+          await era.printAndWait(
+            `因为${target_name}的私处不太容易有感觉、被壶虫连根插入的${target_name}好像很痛苦似的呻吟着………`,
+          ); // :1396
+        }
+      }
+      kojo.壶虫 = 1; // :1399
+      return 0;
+    }
+
+    // :1402-1433 二回目以降
+    // :1404-1409 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊～…！不要…讨厌…明明是虫子而已…竟然会这么爽…要、要死了…咕呜呜～${heart(1)}」`,
+      ); // :1405
+      // :1407-1408 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的私处已经被完全开发了、把壶虫贪婪的连根吞了进去………`,
+        ); // :1408
+      }
+      kojo.壶虫 = 5; // :1409
+    } else if (
+      // :1411-1416 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「好…吧…请把${sc()}的这里…弄得更加一塌糊涂吧…♪」`,
+      ); // :1412
+      // :1414-1415 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的私处已经被完全开发了、好像很愉快似的轻松把壶虫连根吞了进去………`,
+        ); // :1415
+      }
+      kojo.壶虫 = 4; // :1416
+    } else if (
+      // :1418-1423 V感覚Lv3以上
+      v_sense >= 3 &&
+      (kojo.壶虫 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「不、不对…怎么会这么舒服…腰…都舒服的动不了了…啊啊～不对啊～」',
+      ); // :1419
+      // :1421-1422 V感覚Lv3以上＋V鈍感
+      if (v_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的私处已经被完全开发了、把壶虫连根吞了进去………`,
+        ); // :1422
+      }
+      kojo.壶虫 = 3; // :1423
+    } else if (kojo.壶虫 <= 1 || game.kojo.口上开关 === 2) {
+      // :1425-1430 それ以外
+      await era.printAndWait('「咕呜～…啊～…咿～～…不、不要～…」'); // :1426
+      // :1428-1429 V鈍感
+      if (v_insensible) {
+        await era.printAndWait(
+          `因为${target_name}的私处不太容易有感觉、被壶虫连根插入的${target_name}好像很痛苦似的呻吟着………`,
+        ); // :1429
+      }
+      kojo.壶虫 = 2; // :1430
+    }
+    return 0;
+  }
+
+  // :1435 ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0（壶虫脱着，CFLAG:372）
+  if (era_flag.selectcom === 11 && !era.get(`tequip:${target}:11`)) {
+    // :1437-1439 淫乱（门槛是 < 不是 <=）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.壶虫着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「哈啊啊…下次…要把什么插进来呢…？」'); // :1438
+      kojo.壶虫着脱 = 3; // :1439
+    } else if (
+      // :1441-1443 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.壶虫着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「咕呜嗯～…下次想要…主人的东西…」'); // :1442
+      kojo.壶虫着脱 = 2; // :1443
+    } else if (kojo.壶虫着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :1445-1447 それ以外
+      await era.printAndWait('「哈啊…哈啊…啊啊…大张的小穴空出来了…」'); // :1446
+      kojo.壶虫着脱 = 1; // :1447
     }
     return 0;
   }
