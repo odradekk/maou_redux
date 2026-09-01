@@ -1081,4 +1081,40 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '阴蒂夹脱着：淫乱写 CFLAG:375 = 3，门槛是 < 不是 <=',
   },
+  {
+    desc: 'M1813 K0 乳头夹首次状态推进写错（CFLAG:316 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.乳头夹 = 1; // :1693',
+    replace: '      kojo.乳头夹 = 2; // :1693',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳头夹首次推进到 1',
+  },
+  {
+    desc: 'M1814 K0 乳头夹二次淫乱门槛错位（CFLAG:316 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳头夹开始二次：淫乱 + B钝感附加句',
+  },
+  {
+    desc: 'M1815 K0 乳头夹二次 B钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1702-1703 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {`,
+    replace: `      // :1702-1703 B感覚Lv3以上＋B鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '器具毫不间断的持续为乳头带来快乐',
+  },
+  {
+    desc: 'M1816 K0 乳头夹脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.乳头夹着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.乳头夹着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳头夹脱着：淫乱写 CFLAG:376 = 3，门槛是 < 不是 <=',
+  },
 ];

@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -12,7 +12,9 @@
  *     壶虫开始 CFLAG:312 :1358-1433、脱着 CFLAG:372 :1435-1450；
  *     振动杖 CFLAG:313 状态机 :1455-1499；
  *     肛门虫开始 CFLAG:314 :1505-1588、脱着 CFLAG:374 :1590-1609；
- *     阴蒂夹开始 CFLAG:315 :1615-1646、脱着 CFLAG:375 :1648-1663）
+ *     阴蒂夹开始 CFLAG:315 :1615-1646、脱着 CFLAG:375 :1648-1663；
+ *     乳头夹开始 CFLAG:316 :1669-1722、脱着 CFLAG:376 :1724-1739）
+
 
 
 
@@ -84,7 +86,8 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-1663）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹。
+ * @KOJO_MESSAGE_COM_0（:674-1739）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹。
+
 
 
 
@@ -1641,6 +1644,130 @@ async function kojo_message_com_0(rand) {
       // :1658-1660 それ以外
       await era.printAndWait('「哈啊…哈啊…哈啊…呜呜～」'); // :1659
       kojo.阴蒂夹着脱 = 1; // :1660
+    }
+    return 0;
+  }
+
+  // :1669 IF SELECTCOM == 15 && TEQUIP:15（乳头夹开始，CFLAG:316）
+  if (era_flag.selectcom === 15 && era.get(`tequip:${target}:15`)) {
+    const b_sense = era.get(`abl:${target}:1`) || 0;
+    const b_insensible = era.get(`talent:${target}:107`) === 1;
+
+    // :1671-1694 初めて（CFLAG:316 == 0）
+    if (kojo.乳头夹 === 0) {
+      // :1673-1678 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「额呵呵…还有这样的色情道具呢…好吧…请用乳房～${heart(1)}」`,
+        ); // :1674
+        await era.printAndWait(
+          `${target_name}神情陶醉的看着器具夹到了乳头上………`,
+        ); // :1675
+        // :1677-1678 B感覚Lv3以上＋B鈍感
+        if (b_sense >= 3 && b_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的乳头已被完全开发、器具毫不间断的持续为乳头带来快乐………`,
+          ); // :1678
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1680-1685 爱慕
+        await era.printAndWait(
+          '「啊～～…好吧…请用这个色情的道具…来更多地欺负乳头吧…♪」',
+        ); // :1681
+        await era.printAndWait(`${target_name}莞然一笑、把胸部伸了出来………`); // :1682
+        // :1684-1685 B感覚Lv3以上＋B鈍感
+        if (b_sense >= 3 && b_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的乳头一被乳头夹挟住、器具就毫不间断的持续为已被开发完毕的乳头带来快乐………`,
+          ); // :1685
+        }
+      } else {
+        // :1687-1691 それ以外
+        await era.printAndWait(
+          `「即、即使是这样${sc()}也…啊咿～～…咕呜…（可、可怕…好可怕啊…）」`,
+        ); // :1688
+        // :1690-1691 B感覚Lv3以上＋B鈍感
+        if (b_sense >= 3 && b_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的乳头一被乳头夹挟住、器具就毫不间断的持续为已被开发完毕的乳头带来快乐………`,
+          ); // :1691
+        }
+      }
+      kojo.乳头夹 = 1; // :1693
+      return 0;
+    }
+
+    // :1695-1722 二回目以降
+    // :1698-1704 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊啊～…好爽…感觉全身心都变得淫荡起来了～${heart(1)}」`,
+      ); // :1699
+      await era.printAndWait(
+        `从${target_name}不像话的表情上完全看不出圣女时期的清纯了………`,
+      ); // :1700
+      // :1702-1703 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的乳头已被完全开发、器具毫不间断的持续为乳头带来快乐………`,
+        ); // :1703
+      }
+      kojo.乳头夹 = 4; // :1704
+    } else if (
+      // :1706-1712 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「嗯嗯～…乳头好舒服…还要…我还要～～♪」'); // :1707
+      await era.printAndWait(
+        `「一被主人欺负…就会感觉到主人的爱呢…${heart(1)}」`,
+      ); // :1708
+      // :1710-1711 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的乳头已被完全开发、器具毫不间断的持续为乳头带来快乐………`,
+        ); // :1711
+      }
+      kojo.乳头夹 = 3; // :1712
+    } else if (kojo.乳头夹 <= 1 || game.kojo.口上开关 === 2) {
+      // :1714-1719 それ以外
+      await era.printAndWait(
+        '「啊呜～…呜～…啊啊…不、不要…再这样下去的话…啊啊～～！」',
+      ); // :1715
+      // :1717-1718 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的乳头已被完全开发、器具毫不间断的持续为乳头带来快乐………`,
+        ); // :1718
+      }
+      kojo.乳头夹 = 2; // :1719
+    }
+    return 0;
+  }
+
+  // :1724 ELSEIF SELECTCOM == 15 && TEQUIP:15 == 0（乳头夹脱着，CFLAG:376）
+  if (era_flag.selectcom === 15 && !era.get(`tequip:${target}:15`)) {
+    // :1726-1728 淫乱（门槛是 < 不是 <=）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.乳头夹着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(`「啊～～…明明还想再用一会儿的…${heart(1)}」`); // :1727
+      kojo.乳头夹着脱 = 3; // :1728
+    } else if (
+      // :1730-1732 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.乳头夹着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「啊啊…乳头麻麻的…好厉害的感觉…♪」'); // :1731
+      kojo.乳头夹着脱 = 2; // :1732
+    } else if (kojo.乳头夹着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :1734-1736 それ以外
+      await era.printAndWait('「咕呜嗯～…哈啊…哈啊…」'); // :1735
+      kojo.乳头夹着脱 = 1; // :1736
     }
     return 0;
   }

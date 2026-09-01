@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 15; // 乳头夹——COM14 落地后改用尚未填的指令
+    era_flag.selectcom = 16; // 榨乳器——COM15 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 15 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 16 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -1632,6 +1632,82 @@ test('阴蒂夹脱着：淫乱写 CFLAG:375 = 3，门槛是 < 不是 <=', async 
   await speak_k0(at_cap);
   assert.deepEqual(at_cap.text_lines(), []);
   assert.equal(at_cap.store.get('cflag:31:375'), 3, '阴蒂夹着脱阈值闸用 < 3');
+});
+
+test('乳头夹开始首次：淫乱 + B钝感附加句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 15;
+    f.store.set('tequip:31:15', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:1', 3);
+    f.store.set('talent:31:107', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「额呵呵…还有这样的色情道具呢…好吧…请用乳房～♡」',
+    '琼神情陶醉的看着器具夹到了乳头上………',
+    '琼钝感的乳头已被完全开发、器具毫不间断的持续为乳头带来快乐………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:316'), 1, '乳头夹首次推进到 1');
+});
+
+test('乳头夹开始二次：淫乱 + B钝感附加句 / 阈值闸', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 15;
+    f.store.set('tequip:31:15', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:1', 3);
+    f.store.set('talent:31:107', 1);
+    f.store.set('cflag:31:316', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊啊～…好爽…感觉全身心都变得淫荡起来了～♡」',
+    '从琼不像话的表情上完全看不出圣女时期的清纯了………',
+    '琼钝感的乳头已被完全开发、器具毫不间断的持续为乳头带来快乐………',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:316'), 4);
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 15;
+    f.store.set('tequip:31:15', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:316', 3);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「啊啊～…好爽…感觉全身心都变得淫荡起来了～♡」',
+    '从琼不像话的表情上完全看不出圣女时期的清纯了………',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:316'), 4, '乳头夹二次阈值闸');
+});
+
+test('乳头夹脱着：淫乱写 CFLAG:376 = 3，门槛是 < 不是 <=', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 15;
+    f.store.set('tequip:31:15', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), ['「啊～～…明明还想再用一会儿的…♡」']);
+  assert.equal(lewd.store.get('cflag:31:376'), 3, '乳头夹着脱推进到 3');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 15;
+    f.store.set('tequip:31:15', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:376', 3);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), []);
+  assert.equal(at_cap.store.get('cflag:31:376'), 3, '乳头夹着脱阈值闸用 < 3');
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {
