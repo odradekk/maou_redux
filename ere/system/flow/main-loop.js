@@ -92,6 +92,7 @@ require('#/kojo/kojo-k3-noble');
 require('#/kojo/kojo-k5-mao');
 require('#/kojo/kojo-k1-confident');
 require('#/kojo/kojo-k4-stoic');
+require('#/kojo/kojo-k8-spade');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
