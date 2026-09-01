@@ -84,6 +84,15 @@ const {
   markcng_family,
 } = require('#/kojo/kojo-system');
 const {
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
+} = require('#/kojo/kojo-dungeon-ravish');
+const {
+  gohoubi_request_koujo_family,
+  gohoubi_after_koujo_family,
+  osioski_koujo_family,
+} = require('#/kojo/kojo-dungeon-after');
+const {
   heart,
   heart_black,
   self_call,
@@ -1516,6 +1525,503 @@ async function self_kojo_k0(_rand, q = 0) {
 }
 
 self_kojo_family.register(0, self_kojo_k0);
+
+/**
+ * @DUNGEON_RYOUZYOKU_K0（:7236-7299）：迷宫凌辱前的口上。
+ *
+ * 处女（TALENT:0）与非处女分支；每支按 淫乱/献身（21/22）→
+ * 胆怯/淫荡/易陷落（17/31/36）→ 强气/男胜/好色（11/12/15/30/34）→
+ * 恋慕/献身爱（10/26）→ それ以外 分档；处女支含 EXP:1/22 追加。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function dungeon_ryouzyoku_k0() {
+  /* eslint-disable no-irregular-whitespace -- 原文全角空格（DUNGEON_RYOUZYOKU 台词，多行模板内无法逐行 disable） */
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  if (era.get(`talent:${target}:0`) === 1) {
+    // :7241
+
+    await era.printAndWait(`「${sc()}的第一次…竟然是你们这些…」`); // :7243
+
+    if (
+      era.get(`talent:${target}:21`) === 1 ||
+      era.get(`talent:${target}:22`) === 1
+    ) {
+      // :7245
+
+      await era.printAndWait(`「………好吧、尽管来吧」`); // :7247
+      return 0; // :7248
+    } else if (
+      era.get(`talent:${target}:17`) === 1 ||
+      era.get(`talent:${target}:31`) === 1 ||
+      era.get(`talent:${target}:36`) === 1
+    ) {
+      // :7249
+
+      await era.printAndWait(
+        `「拜托了…只要留下我的命…！　这个身体不管怎么玷污都无所谓…！」`,
+      ); // :7251
+
+      if (
+        era.get(`talent:${target}:106`) === 1 ||
+        era.get(`exp:${target}:1`) > 0
+      ) {
+        // :7254
+        await era.printAndWait(
+          `「请、请务必用屁股来！　前面…只有前面还请放过！」`,
+        ); // :7254
+      } // :7254
+
+      if (era.get(`exp:${target}:22`) > 0) {
+        // :7257
+        await era.printAndWait(`「嘴巴请随便用…会竭尽全力舔的…」`); // :7257
+      } // :7257
+    } else if (
+      era.get(`talent:${target}:11`) === 1 ||
+      era.get(`talent:${target}:12`) === 1 ||
+      era.get(`talent:${target}:15`) === 1 ||
+      era.get(`talent:${target}:30`) === 1 ||
+      era.get(`talent:${target}:34`) === 1
+    ) {
+      // :7258
+
+      await era.printAndWait(
+        `「不管这个身体被怎么玷污…也绝对不会…屈服于你们的…！」`,
+      ); // :7261
+    } else if (
+      era.get(`talent:${target}:10`) === 1 ||
+      era.get(`talent:${target}:26`) === 1
+    ) {
+      // :7262
+
+      await era.printAndWait(`「…至今为止为爱而活着的生活就这样…结束了吗…？」`); // :7264
+    } else {
+      // :7265
+
+      await era.printAndWait(`「要做什么…这样…不对…」`); // :7267
+    } // :7268
+  } else {
+    // :7269
+
+    await era.printAndWait(`「${sc()}呦…你打算怎么办呢…？」`); // :7271
+
+    if (
+      era.get(`talent:${target}:21`) === 1 ||
+      era.get(`talent:${target}:22`) === 1
+    ) {
+      // :7273
+
+      await era.printAndWait(`「………什么也…不想相信了」`); // :7275
+      return 0; // :7276
+    } else if (
+      era.get(`talent:${target}:17`) === 1 ||
+      era.get(`talent:${target}:31`) === 1 ||
+      era.get(`talent:${target}:36`) === 1
+    ) {
+      // :7277
+
+      await era.printAndWait(
+        `「不管怎么用${sc()}的性器都可以…！　只要…留下我的命…！」`,
+      ); // :7279
+
+      if (
+        era.get(`talent:${target}:106`) === 1 ||
+        era.get(`exp:${target}:1`) > 0
+      ) {
+        // :7282
+        await era.printAndWait(
+          `「不管怎么玷污我的屁股都无所谓…求求你们…别杀我…」`,
+        ); // :7282
+      } // :7282
+
+      if (era.get(`exp:${target}:22`) > 0) {
+        // :7285
+        await era.printAndWait(`「我可以用嘴…一定会尽心尽力的…怎样…」`); // :7285
+      } // :7285
+    } else if (
+      era.get(`talent:${target}:11`) === 1 ||
+      era.get(`talent:${target}:12`) === 1 ||
+      era.get(`talent:${target}:15`) === 1 ||
+      era.get(`talent:${target}:30`) === 1 ||
+      era.get(`talent:${target}:34`) === 1
+    ) {
+      // :7286
+
+      await era.printAndWait(`「不管怎么被发泄肉欲…我的内心…也不会污浊的！」`); // :7289
+    } else if (
+      era.get(`talent:${target}:10`) === 1 ||
+      era.get(`talent:${target}:26`) === 1
+    ) {
+      // :7290
+
+      await era.printAndWait(`「已经再也见不到…阳光了吗…」`); // :7292
+    } else {
+      // :7293
+
+      await era.printAndWait(`「你们没有一点爱心吗…？」`); // :7295
+    } // :7296
+  } // :7297
+
+  return 0; // :7299
+}
+/* eslint-enable no-irregular-whitespace */
+
+/**
+ * @DUNGEON_RYOUZYOKU_AFTER_K0（:7302-7358）：迷宫凌辱后的口上。
+ *
+ * 处女/非处女分支；EXP:0/1/20/22 超 20 的追加台词（肛门崩坏、
+ * 吞精、喝尿等）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function dungeon_ryouzyoku_after_k0() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+
+  if (era.get(`talent:${target}:0`) === 1) {
+    // :7307
+
+    await era.printAndWait(`「太好了…前面还在…呜～…呜呜～」`); // :7309
+
+    if (
+      era.get(`talent:${target}:21`) === 1 ||
+      era.get(`talent:${target}:22`) === 1
+    ) {
+      // :7311
+
+      await era.printAndWait(`（………究竟能…守到什么时候呢…）`); // :7313
+      return 0; // :7314
+    } // :7315
+
+    if (era.get(`exp:${target}:1`) > 20) {
+      // :7318
+      await era.printAndWait(
+        `${target_name}的肛门崩坏了、在被恢复薬再生之前不断的流着脏东西`,
+      ); // :7319
+      await era.printAndWait(`「屁股…被玩坏了……」`); // :7320
+    } // :7321
+
+    if (era.get(`exp:${target}:22`) > 20) {
+      // :7325
+      await era.printAndWait(`「已经…不想舔了…」`); // :7325
+    } // :7325
+
+    if (era.get(`exp:${target}:20`) > 20) {
+      // :7329
+      await era.printAndWait(`「这东西…简直不是人喝的…哦诶诶」`); // :7329
+    } // :7329
+  } else {
+    // :7330
+
+    await era.printAndWait(`「对不起…对不起…」`); // :7332
+
+    if (
+      era.get(`talent:${target}:21`) === 1 ||
+      era.get(`talent:${target}:22`) === 1
+    ) {
+      // :7334
+
+      await era.printAndWait(`「够了…不要…」`); // :7336
+      return 0; // :7337
+    } // :7338
+
+    if (era.get(`exp:${target}:0`) > 20) {
+      // :7341
+      await era.printAndWait(
+        `被不知多少人的鸡鸡贯穿过的${target_name}的性器红肿了起来`,
+      ); // :7342
+      await era.printAndWait(`「好难受…」`); // :7343
+    } // :7344
+
+    if (era.get(`exp:${target}:1`) > 20) {
+      // :7346
+      await era.printAndWait(
+        `${target_name}的肛门崩坏了、在被恢复薬再生之前不断的流着脏东西`,
+      ); // :7347
+      await era.printAndWait(`「屁股…被玩坏了……」`); // :7348
+    } // :7349
+
+    if (era.get(`exp:${target}:22`) > 20) {
+      // :7353
+      await era.printAndWait(`「不知吞了多少人份了…已经…不想继续了…」`); // :7353
+    } // :7353
+
+    if (era.get(`exp:${target}:20`) > 20) {
+      // :7357
+      await era.printAndWait(`「这样喝下去的话…咳咳～」`); // :7357
+    } // :7357
+  } // :7358
+}
+
+// 注册进分发族（TRYCALLFORM DUNGEON_RYOUZYOKU_K0 的等价物）
+ryouzyoku_kojo_family.register(0, dungeon_ryouzyoku_k0);
+ryouzyoku_after_kojo_family.register(0, dungeon_ryouzyoku_after_k0);
+/**
+ * @GOHOUBI_REQUEST_KOUJO（K0 慈爱）：奖赏请求口上（:8102-8160，CFLAG:504 分档 0-9）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function gohoubi_request_koujo_k0() {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if ((era.get(`cflag:${target}:504`) || 0) === 0) {
+    // :8128
+
+    await era.printAndWait(`「要是${sc()}打倒勇者的话、请给我奖金」`); // :8130
+  } else if (
+    (era.get(`cflag:${target}:504`) || 0) === 1 ||
+    (era.get(`cflag:${target}:504`) || 0) === 2 ||
+    (era.get(`cflag:${target}:504`) || 0) === 3
+  ) {
+    // :8131
+
+    await era.print(`「要是${sc()}打倒勇者的话…`); // :8133
+    if ((era.get(`cflag:${target}:504`) || 0) === 1) {
+      // :8134
+      await era.print(`可以奖励我与犬`); // :8135
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 2) {
+      // :8136
+      await era.print(`可以奖励我与猪`); // :8137
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 3) {
+      // :8138
+      await era.print(`可以奖励我与马`); // :8139
+    } // :8140
+    await era.printAndWait(`做爱吗…？」`); // :8141
+  } else if ((era.get(`cflag:${target}:504`) || 0) === 4) {
+    // :8142
+
+    await era.printAndWait(`「要是我胜利归来的话…请给我…凯旋的吻！」`); // :8144
+  } else if ((era.get(`cflag:${target}:504`) || 0) === 5) {
+    // :8145
+
+    await era.printAndWait(`「要是我胜利归来的话…请和我做爱吧♪」`); // :8147
+  } else if ((era.get(`cflag:${target}:504`) || 0) === 6) {
+    // :8148
+
+    await era.printAndWait(`「请用魔王大人的精液、来作为奖赏吧♪」`); // :8150
+  } else if ((era.get(`cflag:${target}:504`) || 0) === 7) {
+    // :8151
+
+    await era.printAndWait(`「请准备好男男女女的大乱交聚会、来作为奖赏吧♪」`); // :8153
+  } else if ((era.get(`cflag:${target}:504`) || 0) === 8) {
+    // :8154
+
+    await era.printAndWait(
+      `「要是能请我喝魔王大人的小便的话、我一定会把勇者打倒给你看的」`,
+    ); // :8156
+  } else if ((era.get(`cflag:${target}:504`) || 0) === 9) {
+    // :8157
+
+    await era.printAndWait(`「赢了的话…我想要…童贞的处男～」`); // :8159
+  } // :8160
+}
+
+/**
+ * @GOHOUBI_AFTER_KOUJO（K0 慈爱）：奖赏结算后口上（:8163-8238，choice 分档 0-9，CFLAG:504 追加）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function gohoubi_after_koujo_k0(cid, choice) {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (choice === 0) {
+    // :8167
+    await era.printAndWait(`「………那个、不、没什么」`); // :8168
+  } else if (choice === 1) {
+    // :8170
+    await era.printAndWait(`「怎么样、看上去合适吗？」`); // :8171
+  } else if (choice === 2) {
+    // :8172
+
+    if ((era.get(`cflag:${target}:504`) || 0) === 0) {
+      // :8174
+      await era.printAndWait(`「啊啊、这样就能给受伤的怪物们买治疗薬了」`); // :8175
+      await era.printAndWait(`${target_name}露出了慈母般的微笑………`); // :8176
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 1) {
+      // :8178
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :8180
+        await era.printAndWait(`「啊啊～！被小狗狗侵犯屁股了～…啊～啊啊～♪」`); // :8181
+      } else {
+        // :8182
+        await era.printAndWait(`「啊啊～！被小狗狗侵犯了～…啊～啊啊～♪」`); // :8183
+      } // :8184
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 2) {
+      // :8186
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :8188
+        await era.printAndWait(`「啊啊～！被小猪猪侵犯屁股了…啊～啊啊～♪」`); // :8189
+      } else {
+        // :8190
+        await era.printAndWait(`「啊啊～！被小猪猪侵犯了…啊～啊啊～♪」`); // :8191
+      } // :8192
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 3) {
+      // :8194
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :8196
+        await era.printAndWait(`「啊啊～！被马先生侵犯屁股了…啊～啊啊～♪」`); // :8197
+      } else {
+        // :8198
+        await era.printAndWait(`「啊啊～！被马先生侵犯了…啊～啊啊～♪」`); // :8199
+      } // :8200
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 4) {
+      // :8202
+      await era.printAndWait(`「啊～…嗯…好棒…好像麻麻的呢………${heart(1)}」`); // :8203
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 5) {
+      // :8205
+
+      if (era.get(`abl:${target}:2`) > era.get(`abl:${target}:3`)) {
+        // :8207
+        await era.printAndWait(`「啊～～！再抱我…再抱紧我～！」`); // :8208
+      } else {
+        // :8210
+        await era.printAndWait(`「还要～！把屁股…干坏为止～！继续做吧～！」`); // :8211
+      } // :8212
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 6) {
+      // :8214
+      await era.printAndWait(`「啊～${heart(1)} 美味的精液…还想再要呢♪」`); // :8215
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 7) {
+      // :8217
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :8219
+        await era.printAndWait(`「啊哈啊…再来…再来啊～…${heart(1)}」`); // :8220
+      } else {
+        // :8221
+        await era.printAndWait(`「啊哈啊…再来…再来啊～…${heart(1)}」`); // :8222
+      } // :8223
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 8) {
+      // :8225
+      await era.printAndWait(
+        `「美味的小便…魔王大人的小便真美味啊${heart(1)}」`,
+      ); // :8226
+    } else if ((era.get(`cflag:${target}:504`) || 0) === 9) {
+      // :8228
+
+      if (era.get(`abl:${target}:2`) > era.get(`abl:${target}:3`)) {
+        // :8230
+        await era.printAndWait(
+          `「呵呵呵、这就是女人的味道哦。第一次能被我${sc()}收下真是太好了呢${heart(1)}」`,
+        ); // :8231
+      } else {
+        // :8233
+        await era.printAndWait(
+          `「能用屁股拿走你的初体验、真是很不错的经验呢${heart(1)}」`,
+        ); // :8234
+      } // :8235
+    } else {
+      // :8236
+    } // :8237
+  } // :8238
+}
+
+/**
+ * @OSIOSKI_KOUJO（K0 慈爱）：惩罚口上（:8240-8298，choice 分档 0-9，ABL 门槛分档）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function osioski_koujo_k0(cid, choice) {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (choice === 0) {
+    // :8244
+    await era.printAndWait(`「感、感谢您的宽大处理」`); // :8245
+  } else if (choice === 1) {
+    // :8247
+
+    if (era.get(`abl:${target}:21`) >= 3) {
+      // :8249
+      await era.printAndWait(`「哈咿～～！哔哩哔哩～哔哩哔哩的好爽啊～！」`); // :8250
+    } else {
+      // :8251
+      await era.printAndWait(`「啊～咿～！饶命啊～！请饶了我吧咿咿咿～！」`); // :8252
+    } // :8253
+  } else if (choice === 2) {
+    // :8255
+
+    if (era.get(`abl:${target}:17`) >= 4) {
+      // :8257
+      await era.printAndWait(
+        `「啊啊～…大家请看${heart(1)} 请好好看${sc()}自慰并即将高潮的地方吧～${heart(1)}」`,
+      ); // :8258
+    } else {
+      // :8259
+      await era.printAndWait(
+        `「不、不行…请、请不要看…${sc()}的那个地方…不要看…啊啊～！」`,
+      ); // :8260
+    } // :8261
+  } else if (choice === 3) {
+    // :8263
+
+    if (era.get(`abl:${target}:17`) >= 6) {
+      // :8265
+      await era.printAndWait(
+        `「啊啊啊～♪一边被看着这么羞人的样子一边自慰…为什么会这么爽呢～${heart(1)}」`,
+      ); // :8266
+    } else {
+      // :8267
+      await era.printAndWait(
+        `「呜呜～…被看到了…被看到了～…不要看…不要看啊………」`,
+      ); // :8268
+    } // :8269
+  } else if (choice === 4) {
+    // :8271
+
+    if (era.get(`abl:${target}:21`) >= 3) {
+      // :8273
+      await era.printAndWait(
+        `「啊～～！啊～！啊啊～${heart(1)} 请更多～…更多的惩罚我吧～！」`,
+      ); // :8274
+    } else {
+      // :8275
+      await era.printAndWait(
+        `「咿～～～！不要～不要啊～！好痛～不要～！呜咕～咕呜唔～！」`,
+      ); // :8276
+    } // :8277
+  } else if (choice === 5) {
+    // :8279
+
+    if (
+      era.get(`talent:${target}:88`) === 1 ||
+      era.get(`talent:${target}:76`) === 1
+    ) {
+      // :8281
+      await era.printAndWait(
+        `「啊哈啊～～…再多把小便淋到我身上吧${heart(1)} 对～、好好瞄准${sc()}的脸…嗯～嗯咕噗～嗯咕～嗯呜唔～」`,
+      ); // :8282
+    } else {
+      // :8283
+      await era.printAndWait(`「对不起对不起对不起………」`); // :8284
+    } // :8285
+  } else if (choice === 6) {
+    // :8287
+    await era.printAndWait(`「为什么${sc()}得做这种事…」`); // :8288
+  } else if (choice === 7) {
+    // :8290
+    await era.printAndWait(`「好、好狠心………」`); // :8291
+  } else if (choice === 8) {
+    // :8293
+    await era.printAndWait(
+      `「不要啊～！我快不行了魔王大人～！小穴好想要～！好想要啊～！求您了～！侵犯${sc()}吧～！侵犯我吧～！」`,
+    ); // :8294
+  } else if (choice === 9) {
+    // :8296
+    await era.printAndWait(`「～～♪」`); // :8297
+  } // :8298
+}
+
+// 注册进分发族（TRYCALLFORM GOHOUBI_REQUEST/AFTER_KOUJO_K0、OSIOKI_KOUJO_K0 的等价物）
+gohoubi_request_koujo_family.register(0, gohoubi_request_koujo_k0);
+gohoubi_after_koujo_family.register(0, gohoubi_after_koujo_k0);
+osioski_koujo_family.register(0, osioski_koujo_k0);
 
 /**
  * @KOJO_MESSAGE_PALAMCNG_0（:6505-6754）：参数变动后口上。

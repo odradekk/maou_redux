@@ -60,8 +60,36 @@ const osioski_koujo_family = new DispatchFamily(
   DECLARED_KOJO_IDS,
 );
 
+/** @GOHOUBI_REQUEST_KOUJO_K{N} 族：奖赏请求口上（EVENT_K.ERB:450-466） */
+const gohoubi_request_koujo_family = new DispatchFamily(
+  'GOHOUBI_REQUEST_KOUJO',
+  DECLARED_KOJO_IDS,
+);
+
 /**
- * @GOHOUBI_AFTER_KOUJO（EVENT_K.ERB:468-476）：奖赏结算后的口上入口。
+/** @GOHOUBI_REQUEST_KOUJO（EVENT_K.ERB:450-466）：奖赏请求口上入口。
+ *
+ * 与原作同构：SWAP 暂存 TARGET → TARGET = A → 分发 → SWAP 还原。存在判定
+ * 被原作注释（:454-457），不判。
+ *
+ * @param {number} cid 角色 ID（原作全局 A）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function gohoubi_request_koujo(cid) {
+  const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
+  era_flag.target = cid; // TARGET = A
+  const local = get_kojo_num(cid);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await gohoubi_request_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [cid],
+    });
+  }
+  era_flag.target = target_pool; // SWAP 还原
+  return 0;
+}
+
+/** @GOHOUBI_AFTER_KOUJO（EVENT_K.ERB:468-476）：奖赏结算后的口上入口。
  *
  * @param {number} cid 角色 ID（原作全局 A——@GOHOUBI 的结算对象）
  * @param {number} choice 奖赏选择序号（原作 TFLAG:18 的链内传递，文件头）
@@ -104,6 +132,8 @@ async function osioski_koujo(cid, choice) {
 }
 
 module.exports = {
+  gohoubi_request_koujo,
+  gohoubi_request_koujo_family,
   gohoubi_after_koujo,
   osioski_koujo,
   gohoubi_after_koujo_family,

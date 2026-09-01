@@ -4756,3 +4756,118 @@ test('MARKCNG：助手调教跳过', async () => {
   await markcng_k0(fixture);
   assert.deepEqual(fixture.text_lines(), []);
 });
+
+// —— DUNGEON_RYOUZYOKU_K0 / AFTER：迷宫凌辱前后口上 ——
+
+test('DUNGEON_RYOUZYOKU：处女（TALENT:0）按素质分档出声', async () => {
+  const fixture = await setup_k0((f) => f.store.set('talent:31:0', 1));
+  const { ryouzyoku_kojo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-ravish',
+  );
+  await ryouzyoku_kojo_family.call(0, { args: [] });
+  assert.match(fixture.text_lines()[0], /第一次/);
+});
+
+test('DUNGEON_RYOUZYOKU：非处女 + 淫乱（TALENT:76）分档出声', async () => {
+  const fixture = await setup_k0((f) => f.store.set('talent:31:76', 1));
+  const { ryouzyoku_kojo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-ravish',
+  );
+  await ryouzyoku_kojo_family.call(0, { args: [] });
+  assert.match(fixture.text_lines()[0], /你打算怎么办/);
+});
+
+test('DUNGEON_RYOUZYOKU_AFTER：处女 + EXP:0 高 → 追加台词', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:0', 1);
+    f.store.set('exp:31:0', 30);
+  });
+  const { ryouzyoku_after_kojo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-ravish',
+  );
+  await ryouzyoku_after_kojo_family.call(0, { args: [] });
+  assert.match(fixture.text_lines()[0], /太好了/);
+});
+
+test('DUNGEON_RYOUZYOKU_AFTER：非处女 + EXP:1 > 20 → 肛门崩坏', async () => {
+  const fixture = await setup_k0((f) => f.store.set('exp:31:1', 30));
+  const { ryouzyoku_after_kojo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-ravish',
+  );
+  await ryouzyoku_after_kojo_family.call(0, { args: [] });
+  assert.match(fixture.text_lines()[0], /对不起/);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('肛门崩坏')),
+    '应含肛门崩坏台词',
+  );
+});
+
+// —— GOHOUBI_REQUEST / AFTER / OSIOKI：奖赏与惩罚口上 ——
+
+test('GOHOUBI_REQUEST：CFLAG:504==0 奖金请求', async () => {
+  const fixture = await setup_k0();
+  const { gohoubi_request_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  await gohoubi_request_koujo(31);
+  assert.match(fixture.text_lines()[0], /奖金/);
+});
+
+test('GOHOUBI_REQUEST：CFLAG:504==1 与犬做爱请求', async () => {
+  const fixture = await setup_k0((f) => f.store.set('cflag:31:504', 1));
+  const { gohoubi_request_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  await gohoubi_request_koujo(31);
+  assert.ok(
+    fixture.text_lines().some((l) => /犬/.test(l)),
+    '应含与犬做爱请求',
+  );
+});
+
+test('GOHOUBI_AFTER：choice==0 无特别', async () => {
+  const fixture = await setup_k0();
+  const { gohoubi_after_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  await gohoubi_after_koujo(31, 0);
+  assert.match(fixture.text_lines()[0], /没什么/);
+});
+
+test('GOHOUBI_AFTER：choice==2 && CFLAG:504==0 买药台词', async () => {
+  const fixture = await setup_k0();
+  const { gohoubi_after_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  await gohoubi_after_koujo(31, 2);
+  assert.match(fixture.text_lines()[0], /治疗薬/);
+});
+
+test('OSIOKI：choice==0 宽大处理', async () => {
+  const fixture = await setup_k0();
+  const { osioski_koujo } = fixture.load_module('kojo/kojo-dungeon-after');
+  await osioski_koujo(31, 0);
+  assert.match(fixture.text_lines()[0], /宽大处理/);
+});
+
+test('OSIOKI：choice==1 && ABL:21 >= 3 快感台词', async () => {
+  const fixture = await setup_k0((f) => f.store.set('abl:31:21', 3));
+  const { osioski_koujo } = fixture.load_module('kojo/kojo-dungeon-after');
+  await osioski_koujo(31, 1);
+  assert.match(fixture.text_lines()[0], /哔哩哔哩/);
+});
+
+test('DUNGEON_RYOUZYOKU：处女 + 献身（TALENT:21）→ 好吧、尽管来吧', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:0', 1);
+    f.store.set('talent:31:21', 1);
+  });
+  const { ryouzyoku_kojo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-ravish',
+  );
+  await ryouzyoku_kojo_family.call(0, { args: [] });
+  assert.ok(
+    fixture.text_lines().some((l) => /好吧、尽管来吧/.test(l)),
+    '处女 + 献身应输出投降台词',
+  );
+});

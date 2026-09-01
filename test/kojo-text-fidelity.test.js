@@ -75,10 +75,12 @@ const PRINTFORM_RE =
 
 const ERB_TOKEN_RULES = [
   [/^SAVESTR:TARGET$/, 'TARGET'],
+  [/^SAVESTR:A$/, 'TARGET'], // TARGET = A 的调用点形态
   [/^SAVESTR:PLAYER$/, 'PLAYER'],
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
+  [/^SELF_CALL\(A\)$/, 'SC'], // ARG:1 废弃，同值（TARGET = A 的调用点形态）
   [/^SELF_CALL\(ASSI,\s*CFLAG:ASSI:450\)$/, 'SC_ASSI'], // ARG:1 废弃，同值
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——

@@ -142,6 +142,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { stub_line } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { get_kojo_num } = require('#/kojo/kojo-system');
 const { e_get, e_set } = require('#/dungeon/monster-data');
 const { monstername } = require('#/dungeon/monster-data');
 const { equip_database } = require('#/system/equip/equip-lookup');
@@ -266,7 +267,10 @@ async function ryouzyoku(arg, rand) {
   era_flag.target = arg;
 
   // :58 CALL DUNGEON_RYOUZYOKU（口上前置钩子，角色口上票落地后注册）
-  await ryouzyoku_kojo_family.call(0, { whenMissing: 0, args: [] });
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await ryouzyoku_kojo_family.call(local - 100, { whenMissing: 0, args: [] });
+  }
 
   // —— 主循环（:60-160）：逐列处理怪物凌辱 ——
   mon_count = 0; // :60
@@ -402,7 +406,13 @@ async function ryouzyoku(arg, rand) {
   }
 
   // :168 CALL DUNGEON_RYOUZYOKU_AFTER（口上后置钩子，角色口上票落地后注册）
-  await ryouzyoku_after_kojo_family.call(0, { whenMissing: 0, args: [] });
+  const local_after = get_kojo_num();
+  if ((local_after >= 100 && local_after < 140) || local_after > 1000) {
+    await ryouzyoku_after_kojo_family.call(local_after - 100, {
+      whenMissing: 0,
+      args: [],
+    });
+  }
 
   // :172 CALL DUNGEON_RYOUZYOKU_ESCAPE,ARG
   await dungeon_ryouzyoku_escape(arg, rand_n);
@@ -4017,6 +4027,8 @@ async function dungeon_ryouzyoku_escape(arg, rand) {
 
 module.exports = {
   STUBBED_CALLS,
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
   ryouzyoku,
   orc_ryou,
   slime_ryou,

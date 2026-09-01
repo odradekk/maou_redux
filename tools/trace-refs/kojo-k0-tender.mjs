@@ -2379,6 +2379,973 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7236-7299',
+        any: [/^@DUNGEON_RYOUZYOKU_K0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7241',
+        any: [/IF TALENT:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7243',
+        any: [/「%SELF_CALL\(TARGET\)%的第一次…竟然是你们这些…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7245',
+        any: [/\tIF TALENT:21 == 1 \|\| TALENT:22 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7247',
+        any: [/「………好吧、尽管来吧」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7248',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7249',
+        any: [
+          /\tELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7251',
+        any: [/「拜托了…只要留下我的命…！　这个身体不管怎么玷污都无所谓…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7254',
+        any: [/「请、请务必用屁股来！　前面…只有前面还请放过！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7257',
+        any: [/「嘴巴请随便用…会竭尽全力舔的…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7258',
+        any: [
+          /\tELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7261',
+        any: [/「不管这个身体被怎么玷污…也绝对不会…屈服于你们的…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7262',
+        any: [/\tELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7264',
+        any: [/「…至今为止为爱而活着的生活就这样…结束了吗…？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7265',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7267',
+        any: [/「要做什么…这样…不对…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7268',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7269',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7271',
+        any: [/「%SELF_CALL\(TARGET\)%呦…你打算怎么办呢…？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7273',
+        any: [/\tIF TALENT:21 == 1 \|\| TALENT:22 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7275',
+        any: [/「………什么也…不想相信了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7276',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7277',
+        any: [
+          /\tELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7279',
+        any: [
+          /「不管怎么用%SELF_CALL\(TARGET\)%的性器都可以…！　只要…留下我的命…！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7282',
+        any: [/「不管怎么玷污我的屁股都无所谓…求求你们…别殺我…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7285',
+        any: [/「我可以用嘴…一定会尽心尽力的…怎样…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7286',
+        any: [
+          /\tELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7289',
+        any: [/「不管怎么被发泄肉欲…我的内心…也不会污浊的！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7290',
+        any: [/\tELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7292',
+        any: [/「已经再也见不到…阳光了吗…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7293',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7295',
+        any: [/「你们没有一点爱心吗…？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7296',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7297',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7299',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7307',
+        any: [/IF TALENT:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7309',
+        any: [/「太好了…前面还在…呜～…呜呜～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7311',
+        any: [/\tIF TALENT:21 == 1 \|\| TALENT:22 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7313',
+        any: [/（………究竟能…守到什么时候呢…）/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7314',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7315',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7318',
+        any: [/\tIF EXP:1 > 20/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7319',
+        any: [
+          /%SAVESTR:TARGET%的肛门崩坏了、在被回復薬再生之前不断的流着脏东西/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7320',
+        any: [/「屁股…被玩坏了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7321',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7325',
+        any: [/「已经…不想舔了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7329',
+        any: [/「这东西…简直不是人喝的…哦诶诶」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7330',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7332',
+        any: [/「对不起…对不起…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7334',
+        any: [/\tIF TALENT:21 == 1 \|\| TALENT:22 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7336',
+        any: [/「够了…不要…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7337',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7338',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7341',
+        any: [/\tIF EXP:0 > 20/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7342',
+        any: [/被不知多少人的鸡鸡贯穿过的%SAVESTR:TARGET%的性器红肿了起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7343',
+        any: [/「好难受…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7344',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7346',
+        any: [/\tIF EXP:1 > 20/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7347',
+        any: [
+          /%SAVESTR:TARGET%的肛门崩坏了、在被回復薬再生之前不断的流着脏东西/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7348',
+        any: [/「屁股…被玩坏了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7349',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7353',
+        any: [/「不知吞了多少人份了…已经…不想继续了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7357',
+        any: [/「这样喝下去的话…咳咳～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7358',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8128',
+        any: [/IF CFLAG:A:504 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8130',
+        any: [/「要是%SELF_CALL\(A\)%打倒勇者的话、请给我奖金」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8131',
+        any: [
+          /ELSEIF CFLAG:A:504 == 1 \|\| CFLAG:A:504 == 2 \|\| CFLAG:A:504 == 3/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8133',
+        any: [/「要是%SELF_CALL\(A\)%打倒勇者的话…/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8134',
+        any: [/\tIF CFLAG:A:504 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8135',
+        any: [/可以奖励我与犬/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8136',
+        any: [/\tELSEIF CFLAG:A:504 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8137',
+        any: [/可以奖励我与猪/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8138',
+        any: [/\tELSEIF CFLAG:A:504 == 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8139',
+        any: [/可以奖励我与馬/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8140',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8141',
+        any: [/做爱吗…？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8142',
+        any: [/ELSEIF CFLAG:A:504 == 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8144',
+        any: [/「要是我胜利归来的话…请给我…凯旋的吻！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8145',
+        any: [/ELSEIF CFLAG:A:504 == 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8147',
+        any: [/「要是我胜利归来的话…请和我做爱吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8148',
+        any: [/ELSEIF CFLAG:A:504 == 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8150',
+        any: [/「请用魔王大人的精液、来作为奖赏吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8151',
+        any: [/ELSEIF CFLAG:A:504 == 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8153',
+        any: [/「请准备好男男女女的大乱交聚会、来作为奖赏吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8154',
+        any: [/ELSEIF CFLAG:A:504 == 8/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8156',
+        any: [/「要是能请我喝魔王大人的小便的话、我一定会把勇者打倒给你看的」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8157',
+        any: [/ELSEIF CFLAG:A:504 == 9/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8159',
+        any: [/「赢了的话…我想要…童贞的处男～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8160',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8167',
+        any: [/IF TFLAG:18 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8168',
+        any: [/「………那个、不、没什么」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8170',
+        any: [/ELSEIF TFLAG:18 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8171',
+        any: [/「怎么样、看上去合适吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8172',
+        any: [/ELSEIF TFLAG:18 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8174',
+        any: [/\tIF CFLAG:A:504 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8175',
+        any: [/「啊啊、这样就能给受伤的怪物们买治療薬了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8176',
+        any: [/%SAVESTR:A%露出了慈母般的微笑………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8178',
+        any: [/\tELSEIF CFLAG:A:504 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8180',
+        any: [/\t\tIF TALENT:A:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8181',
+        any: [/「啊啊～！被小狗狗侵犯屁股了～…啊～啊啊～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8182',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8183',
+        any: [/「啊啊～！被小狗狗侵犯了～…啊～啊啊～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8184',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8186',
+        any: [/\tELSEIF CFLAG:A:504 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8188',
+        any: [/\t\tIF TALENT:A:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8189',
+        any: [/「啊啊～！被小猪猪侵犯屁股了…啊～啊啊～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8190',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8191',
+        any: [/「啊啊～！被小猪猪侵犯了…啊～啊啊～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8192',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8194',
+        any: [/\tELSEIF CFLAG:A:504 == 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8196',
+        any: [/\t\tIF TALENT:A:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8197',
+        any: [/「啊啊～！被马先生侵犯屁股了…啊～啊啊～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8198',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8199',
+        any: [/「啊啊～！被马先生侵犯了…啊～啊啊～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8200',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8202',
+        any: [/\tELSEIF CFLAG:A:504 == 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8203',
+        any: [/「啊～…嗯…好棒…好像麻麻的呢………%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8205',
+        any: [/\tELSEIF CFLAG:A:504 == 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8207',
+        any: [/\t\tIF ABL:A:2 > ABL:A:3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8208',
+        any: [/「啊～～！再抱我…再抱紧我～！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8210',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8211',
+        any: [/「还要～！把屁股…干壊为止～！继续做吧～！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8212',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8214',
+        any: [/\tELSEIF CFLAG:A:504 == 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8215',
+        any: [/「啊～%UNICODE\(0x2661\) \*1% 美味的精液…还想再要呢♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8217',
+        any: [/\tELSEIF CFLAG:A:504 == 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8219',
+        any: [/\t\tIF TALENT:A:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8220',
+        any: [/「啊哈啊…再来…再来啊～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8221',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8222',
+        any: [/「啊哈啊…再来…再来啊～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8223',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8225',
+        any: [/\tELSEIF CFLAG:A:504 == 8/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8226',
+        any: [/「美味的小便…魔王大人的小便真美味啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8228',
+        any: [/\tELSEIF CFLAG:A:504 == 9/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8230',
+        any: [/\t\tIF ABL:A:2 > ABL:A:3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8231',
+        any: [
+          /「呵呵呵、这就是女人的味道哦。第一次能被我%SELF_CALL\(A\)%收下真是太好了呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8233',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8234',
+        any: [
+          /「能用屁股拿走你的初体验、真是很不错的経験呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8235',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8236',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8237',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8238',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8244',
+        any: [/IF TFLAG:18 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8245',
+        any: [/「感、感谢您的寛大处理」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8247',
+        any: [/ELSEIF TFLAG:18 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8249',
+        any: [/\tIF ABL:A:21 >= 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8250',
+        any: [/「哈咿～～！哔哩哔哩～哔哩哔哩的好爽啊～！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8251',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8252',
+        any: [/「啊～咿～！饶命啊～！请饶了我吧咿咿咿～！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8253',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8255',
+        any: [/ELSEIF TFLAG:18 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8257',
+        any: [/\tIF ABL:A:17 >= 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8258',
+        any: [
+          /「啊啊～…大家请看%UNICODE\(0x2661\) \*1% 请好好看%SELF_CALL\(A\)%自慰并即将高潮的地方吧～%UNICODE\(0/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8259',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8260',
+        any: [
+          /「不、不行…请、请不要看…%SELF_CALL\(A\)%的那个地方…不要看…啊啊～！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8261',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8263',
+        any: [/ELSEIF TFLAG:18 == 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8265',
+        any: [/\tIF ABL:A:17 >= 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8266',
+        any: [
+          /「啊啊啊～♪一边被看着这么羞人的样子一边自慰…为什么会这么爽呢～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8267',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8268',
+        any: [/「呜呜～…被看到了…被看到了～…不要看…不要看啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8269',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8271',
+        any: [/ELSEIF TFLAG:18 == 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8273',
+        any: [/\tIF ABL:A:21 >= 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8274',
+        any: [
+          /「啊～～！啊～！啊啊～%UNICODE\(0x2661\) \*1% 请更多～…更多的惩罚我吧～！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8275',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8276',
+        any: [/「咿～～～！不要～不要啊～！好痛～不要～！呜咕～咕呜唔～！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8277',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8279',
+        any: [/ELSEIF TFLAG:18 == 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8281',
+        any: [/\tIF TALENT:A:88 == 1 \|\| TALENT:A:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8282',
+        any: [
+          /「啊哈啊～～…再多把小便淋到我身上吧%UNICODE\(0x2661\) \*1% 对～、好好瞄准%SELF_CALL\(A\)%的脸…嗯～嗯咕噗～嗯/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8283',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8284',
+        any: [/「对不起对不起对不起………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8285',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8287',
+        any: [/ELSEIF TFLAG:18 == 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8288',
+        any: [/「为什么%SELF_CALL\(A\)%得做这种事…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8290',
+        any: [/ELSEIF TFLAG:18 == 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8291',
+        any: [/「好、好狠心………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8293',
+        any: [/ELSEIF TFLAG:18 == 8/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8294',
+        any: [
+          /「不要啊～！我快不行了魔王大人～！小穴好想要～！好想要啊～！求您了～！侵犯%SELF_CALL\(A\)%吧～！侵犯我吧～！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8296',
+        any: [/ELSEIF TFLAG:18 == 9/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8297',
+        any: [/「～～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8298',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7302-7358',
+        any: [/^@DUNGEON_RYOUZYOKU_AFTER_K0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8102-8160',
+        any: [/^@GOHOUBI_REQUEST_KOUJO_K0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8163-8238',
+        any: [/^@GOHOUBI_AFTER_KOUJO_K0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8240-8298',
+        any: [/^@OSIOKI_KOUJO_K0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '87-483',
         any: [/^@EVENTTRAIN$/m],
       },
