@@ -1839,4 +1839,59 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1829 K8 SELECTCOM 11 壶虫開始時初回推进写错（CFLAG:312 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.壶虫 = 1; // :1624 CFLAG:312 = 1',
+    replace: '      kojo.壶虫 = 0; // :1624 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:312 推进到 1',
+  },
+  {
+    desc: 'M1830 K8 SELECTCOM 12 振动杖屈服刻印Lv3分支删除（MARK:2==3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `    } else if (
+      era0(\`mark:\${target}:2\`) == 3 &&
+      (kojo.振动杖 <= 2 || game.kojo.口上开关 == 2)
+    ) {`,
+    replace: '    } else if (false) {\n      // 变异：屈服刻印Lv3 判定删除',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
+  {
+    desc: 'M1831 K8 SELECTCOM 13 肛门虫開始時それ以外·A感覚Lv3以上分档判定丢失（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `        await era.printAndWait(\`\${target_name}因为肛门被蠕虫钻入而发出悲鸣……\`); // :1735
+      } else if (era0(\`abl:\${target}:3\`) >= 3) {`,
+    replace: `        await era.printAndWait(\`\${target_name}因为肛门被蠕虫钻入而发出悲鸣……\`); // :1735
+      } else if (true) {`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1832 K8 SELECTCOM 14 阴蒂夹脱着時初回推进写错（CFLAG:375 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.阴蒂夹着脱 = 1; // :1859 CFLAG:375 = 1',
+    replace: '      kojo.阴蒂夹着脱 = 0; // :1859 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:375 推进到 1',
+  },
+  {
+    desc: 'M1833 K8 SELECTCOM 16 榨乳器二回目分支寻址被"修正"（源作误写 CFLAG:316 改回 CFLAG:317，破坏 1:1 保真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.榨乳器 = 5; // :1982 CFLAG:317 = 5',
+    replace: '      kojo.乳头夹 = 5; // :1982（变异：误"修正"寻址）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '真正的榨乳器计数',
+  },
+  {
+    desc: 'M1834 K8 SELECTCOM 19 肛珠開始時それ以外·肛门感觉Lv3以上分档判定丢失（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `      } else if (era0(\`abl:\${target}:3\`) >= 3) {
+        // :2091-2093 それ以外·肛门感觉Lv3以上`,
+    replace: `      } else if (true) {
+        // :2091-2093（变异：肛门感觉Lv3以上判定删除）`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 1',
+  },
 ];
