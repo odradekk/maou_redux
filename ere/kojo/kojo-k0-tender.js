@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -22,7 +22,8 @@
  *     背面座位 CFLAG:324 状态机 :2590-2757；
  *     正常位肛交 CFLAG:327 状态机 :2762-2854；
  *     背后位肛交 CFLAG:328 状态机 :2859-2968；
- *     对面座位肛交 CFLAG:329 状态机 :2973-3074）
+ *     对面座位肛交 CFLAG:329 状态机 :2973-3074；
+ *     背面座位肛交 CFLAG:330 状态机 :3079-3189）
 
 
 
@@ -100,7 +101,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-3074）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交。
+ * @KOJO_MESSAGE_COM_0（:674-3189）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交。
 
 
 
@@ -4273,6 +4274,224 @@ async function kojo_message_com_0(rand) {
           ); // :3068-3069
         }
         kojo.对面座位肛交 = 2; // :3070
+      }
+      return 0;
+    }
+  }
+
+  // :3079 IF SELECTCOM == 29（背面座位肛交，CFLAG:330）
+  if (era_flag.selectcom === 29) {
+    const a_sense = era.get(`abl:${target}:3`) || 0;
+    const a_insensible = era.get(`talent:${target}:105`) === 1;
+
+    if (kojo.背面座位肛交 === 0) {
+      // :3081
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :3083
+        await era.printAndWait(
+          `「啊呜唔呜～！…屁股眼被侵犯了好爽好爽啊～～～～！」`,
+        ); // :3084
+        await era.printAndWait(
+          `「再用力点…抱我…请尽情侵犯我的屁眼吧～${heart(1)}」`,
+        ); // :3085
+
+        if (a_sense >= 3 && a_insensible) {
+          // :3087-3088
+          await era.printAndWait(
+            `${target_name}钝感的肛门被调教出了快感、将鸡鸡连根吞下、${target_name}发出了淫乱的呻吟声………`,
+          ); // :3087-3088
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :3090
+        await era.printAndWait(
+          `「啊啊呜～…明明难得的被从背后温柔地抱住…嗯～♪」`,
+        ); // :3091
+        await era.printAndWait(
+          `「被用这种姿势插进尻穴什么的…啊～…啊～…哈啊啊…啊～～${heart(1)}」`,
+        ); // :3092
+
+        if (a_sense >= 3 && a_insensible) {
+          // :3094-3095
+          await era.printAndWait(
+            `${target_name}钝感的肛门被开发得觉醒了快感、一将鸡鸡连根吞下、${target_name}就娇喘出声………`,
+          ); // :3094-3095
+        }
+      } else {
+        await era.printAndWait(
+          `「呜、咕、啊啊啊…撑开了…被撑开了～…屁眼被撑开了～………」`,
+        ); // :3097-3098
+
+        if (a_insensible) {
+          // :3100
+          await era.printAndWait(
+            `${target_name}钝感的肛门一将鸡鸡连根吞下、${target_name}就发出了悲鸣………`,
+          ); // :3101
+        } else {
+          await era.printAndWait(
+            `${target_name}被从下方抽插着肛门、痛苦地呻吟着………`,
+          ); // :3102-3103
+        }
+      }
+      kojo.背面座位肛交 = 1; // :3106-3107
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :3109-3111
+        if (rand_n(2) === 0) {
+          // :3112
+          await era.printAndWait(
+            `「咿呀啊啊～…屁股眼好舒服～好舒服啊～…啊啊啊啊啊…${heart(1)}」`,
+          ); // :3113
+          await era.printAndWait(
+            `「屁股眼～…不行了…已、已经…爽得什么事都不想去想了～…咿呜～啊啊～啊啊啊啊啊${heart(1)}」`,
+          ); // :3114
+
+          if (a_insensible) {
+            // :3116
+            await era.printAndWait(
+              `${target_name}钝感的肛门被调教出了快感、将鸡鸡连根吞下、${target_name}发出了淫乱的呻吟声………`,
+            ); // :3117
+          } else {
+            await era.printAndWait(
+              `${target_name}嘴边流着口水沉浸在肛门的快感之中………`,
+            ); // :3118-3119
+          }
+        } else {
+          await era.printAndWait(
+            `「嗯咿咿～～～！不行～～不行～～～…不要随便动屁股啊～～～${heart(1)}」`,
+          ); // :3121-3122
+          await era.printAndWait(
+            `「真是的…只欺负屁股眼～…屁股眼变的好爽啊～${heart(1)}」`,
+          ); // :3123
+
+          if (a_insensible) {
+            // :3125
+            await era.printAndWait(
+              `${target_name}钝感的肛门被调教出了快感、贪婪的连根吞下了鸡鸡、${target_name}像磨盘似的扭着腰………`,
+            ); // :3126
+          } else {
+            await era.printAndWait(
+              `${target_name}淫猥地摇着腰身、一边不断地收缩肛门一边品味着${player_name}的鸡鸡………`,
+            ); // :3127-3128
+          }
+        }
+        kojo.背面座位肛交 = 7; // :3131
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.背面座位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3133
+        await era.printAndWait(
+          `「嗯咿咿～～～！不行～～不行～～～…不要随便动屁股啊～～～${heart(1)}」`,
+        ); // :3134
+        await era.printAndWait(
+          `「真是的…只欺负屁股眼～…屁股眼变的好爽啊～${heart(1)}」`,
+        ); // :3135
+
+        if (a_insensible) {
+          // :3137
+          await era.printAndWait(
+            `${target_name}钝感的肛门将${player_name}的鸡鸡连根吞下、${target_name}愉悦的像磨盘似的扭着腰………`,
+          ); // :3138
+        } else {
+          await era.printAndWait(
+            `${target_name}淫猥地摇着腰身品味着你的鸡鸡………`,
+          ); // :3139-3140
+        }
+        kojo.背面座位肛交 = 6; // :3142
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3144
+        if (rand_n(2) === 0) {
+          // :3145
+          await era.printAndWait(
+            `「啊啊啊～…虽然是这种姿势…尻穴也好有感觉啊…啊～啊啊～…啊咕呜～…再来…」`,
+          ); // :3146
+          await era.printAndWait(
+            `「再…再来啊～！…请…更多…更多的！欺…欺负～…屁股…眼儿吧～…♪」`,
+          ); // :3147
+
+          if (a_insensible) {
+            // :3149-3150
+            await era.printAndWait(
+              `${target_name}钝感的肛门被开发得觉醒了快感、一将鸡鸡连根吞下、${target_name}就央求着更多………`,
+            ); // :3149-3150
+          }
+        } else {
+          await era.printAndWait(
+            `「咕咿～…自从知道…屁股眼儿…能这么舒服之后～…」`,
+          ); // :3151-3152
+          await era.printAndWait(
+            `「已经…没办法…没办法…再舍弃这种滋味了～…嗯～嗯啊啊～哈啊～～♪」`,
+          ); // :3153
+
+          if (a_insensible) {
+            // :3155
+            await era.printAndWait(
+              `${target_name}钝感的肛门被开发得觉醒了快感、一将鸡鸡连根吞下、${target_name}就由于肛门的快乐而陶醉了………`,
+            ); // :3156
+          } else {
+            await era.printAndWait(
+              `沉醉于肛门的快乐之中的${target_name}已经完全找不到身为圣女时的样貌了………`,
+            ); // :3157-3158
+          }
+        }
+        kojo.背面座位肛交 = 5; // :3161
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.背面座位肛交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3163
+        await era.printAndWait(
+          `「哈啊……啊啊～啊～～…被这样欺负屁股眼、也…好舒服…啊～…」`,
+        ); // :3164
+
+        if (a_insensible) {
+          // :3166-3167
+          await era.printAndWait(
+            `${target_name}钝感的肛门一将${player_name}的鸡鸡连根吞下、${target_name}就很愉悦的样子………`,
+          ); // :3166-3167
+        }
+        kojo.背面座位肛交 = 4; // :3168
+      } else if (
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :3170
+        await era.printAndWait(
+          `「啊～咿啊～…啊啊～～…屁股眼…竟然…这么的舒服…咿～♪」`,
+        ); // :3171
+
+        if (a_insensible) {
+          // :3173-3174
+          await era.printAndWait(
+            `${target_name}钝感的肛门被开发得觉醒了快感、一将鸡鸡连根吞下、${target_name}就高喊出声………`,
+          ); // :3173-3174
+        }
+        kojo.背面座位肛交 = 3; // :3175
+      } else if (kojo.背面座位肛交 <= 1 || game.kojo.口上开关 === 2) {
+        // :3177
+        await era.printAndWait(`「哈啊…啊啊～…咕呜～…咕…呜呜～！」`); // :3178
+
+        if (a_insensible) {
+          // :3180
+          await era.printAndWait(
+            `${target_name}钝感的肛门一将鸡鸡连根吞下、${target_name}就发出了悲鸣………`,
+          ); // :3181
+        } else {
+          await era.printAndWait(
+            `${target_name}被从下方抽插着肛门、痛苦的呻吟着………`,
+          ); // :3182-3183
+        }
+        kojo.背面座位肛交 = 2; // :3185
       }
       return 0;
     }

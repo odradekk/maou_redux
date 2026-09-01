@@ -1467,4 +1467,36 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '对面座位肛交二次淫乱+A感觉写 7',
   },
+  {
+    desc: 'M1851 K0 背面座位肛交首次状态推进写错（CFLAG:330 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背面座位肛交 = 1; // :3106-3107',
+    replace: '      kojo.背面座位肛交 = 2; // :3106-3107',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位肛交首次推进到 1',
+  },
+  {
+    desc: 'M1852 K0 背面座位肛交二次淫乱+A感觉门槛错位（CFLAG:330 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :3109-3111`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3109-3111`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位肛交二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M1853 K0 背面座位肛交二次淫乱+A感觉写回错档（CFLAG:330 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背面座位肛交 = 7; // :3131',
+    replace: '        kojo.背面座位肛交 = 6; // :3131',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位肛交二次淫乱+A感觉写 7',
+  },
 ];

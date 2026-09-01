@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 29; // 背面座位肛交——COM28 落地后改用尚未填的指令
+    era_flag.selectcom = 30; // 手淫——COM29 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 29 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 30 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -2434,6 +2434,74 @@ test('对面座位肛交二次：淫乱+A感觉写 7 / 阈值闸', async () => {
     f.store.set('talent:31:76', 1);
     f.store.set('abl:31:3', 3);
     f.store.set('cflag:31:329', 7);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted, seq_rand(0));
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('背面座位肛交首次：淫乱 + A钝感附加句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 29;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('talent:31:105', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊呜唔呜～！…屁股眼被侵犯了好爽好爽啊～～～～！」',
+    '「再用力点…抱我…请尽情侵犯我的屁眼吧～♡」',
+    '琼钝感的肛门被调教出了快感、将鸡鸡连根吞下、琼发出了淫乱的呻吟声………',
+  ]);
+  assert.equal(
+    fixture.store.get('cflag:31:330'),
+    1,
+    '背面座位肛交首次推进到 1',
+  );
+});
+
+test('背面座位肛交二次：淫乱+A感觉写 7 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 29;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('cflag:31:330', 1);
+  });
+  await speak_k0(r0, seq_rand(0));
+  assert.deepEqual(r0.text_lines(), [
+    '「咿呀啊啊～…屁股眼好舒服～好舒服啊～…啊啊啊啊啊…♡」',
+    '「屁股眼～…不行了…已、已经…爽得什么事都不想去想了～…咿呜～啊啊～啊啊啊啊啊♡」',
+    '琼嘴边流着口水沉浸在肛门的快感之中………',
+  ]);
+  assert.equal(
+    r0.store.get('cflag:31:330'),
+    7,
+    '背面座位肛交二次淫乱+A感觉写 7',
+  );
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 29;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('cflag:31:330', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap, seq_rand(0));
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=6 且 FLAG:7==1 仍出声（门槛是 <=6）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:330'), 7);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 29;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('cflag:31:330', 7);
     f.store.set('flag:7', 1);
   });
   await speak_k0(exhausted, seq_rand(0));
