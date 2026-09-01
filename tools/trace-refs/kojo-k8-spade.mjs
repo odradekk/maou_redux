@@ -8244,6 +8244,932 @@ export const FILES = [
         ref: '2347',
         any: [/CFLAG:321 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2356-2560',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2358-2449',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2360-2429',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2362-2397',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2365',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2366',
+        any: [
+          /PRINTFORMW 「啊嗯…别那么急啦…我可是一直都在等你侵犯我啊…啊嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2367',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%的阴茎慢慢插入了%SAVESTR:TARGET%。扑哧一声%SAV/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2368',
+        any: [
+          /PRINTFORMW 「嗯、啊啊%UNICODE\(0x2661\) \*1% 进来了，你的太粗了…啊啊%UNICODE\(0x/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2369',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为破瓜的疼痛和连最深处都被贯穿的触感而发出了娇喘。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2370',
+        any: [
+          /PRINTFORMW 「啊啊嗯嗯啊啊啊…啊啊嗯…快点动起来…侵犯我里面吧…啊啊啊%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2371',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%把阴茎插入最深处，缓缓的放出了魔力。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2372',
+        any: [
+          /PRINTFORMW 已经是魔族的%SAVESTR:TARGET%的身体内部染上了%SAVESTR:PLAYER%的魔力/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2373',
+        any: [
+          /PRINTFORMW 「你的魔力在我体内…变热了…啊啊…嗯…啊——%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2374',
+        any: [/PRINTFORMW %SAVESTR:TARGET%舒服得张开了背后的翅膀。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2375',
+        any: [/PRINTFORMW 看着她这个样子，%SAVESTR:PLAYER%慢慢开始抽送阴茎…/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2378',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2379',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…没关系…把我的…我的第一次…拿走…啊啊…快、快点…%UNICODE\(0x2661\) /,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2380',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%的阴茎慢慢插入了%SAVESTR:TARGET%。扑哧一声%SAV/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2381',
+        any: [
+          /PRINTFORMW 「嗯…啊咕…嗯你的…全部在我里面…啊嗯…啊啊…已经习惯疼痛了，所以…动起来吧…把我变成你的东西吧！/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2382',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%把阴茎插入最深处，缓缓的放出了魔力。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2383',
+        any: [
+          /PRINTFORMW 已经是魔族的%SAVESTR:TARGET%的身体内部染上了%SAVESTR:PLAYER%的魔力/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2384',
+        any: [
+          /PRINTFORMW 「你那温暖的魔力在我体内…啊…不行了，快点动起来侵犯我的里面吧…啊啊%UNICODE\(0x2661/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2385',
+        any: [/PRINTFORMW %SAVESTR:TARGET%忍耐不住的发出了恳求的声音。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2386',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%默默地笑着并慢慢的用阴茎开始抽送………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2389',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%缓缓的把阴茎沉入%SAVESTR:TARGET%的阴道。%SAVE/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2390',
+        any: [
+          /PRINTFORMW 「啊咕…不、不要做这种不上不下的事情…快点插进来把！…啊啊…嗯…啊啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2391',
+        any: [
+          /PRINTFORMW 听到这句话%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰一口气贯穿到最深/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2392',
+        any: [
+          /PRINTFORMW 「啊…啊啊…嗯…嗯啊…嗯…啊啊…这…么…痛什么的…啊咕…咕嗯」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2393',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为破瓜的疼痛而发出了哭喊，哭喊声在%SAVESTR:PLAYER/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2394',
+        any: [
+          /PRINTFORMW 然后%SAVESTR:PLAYER%的阴茎释放出的魔力从%SAVESTR:TARGET%的腔内深处/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2395',
+        any: [
+          /PRINTFORMW 「嗯啊…啊啊…总觉…好温暖…明明是被侵犯…被凌辱…我要变得奇怪了…啊啊啊…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2396',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%为了让%SAVESTR:TARGET%好好明白谁才是主人，慢慢的开/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2399-2427',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰，慢慢的把阴茎差劲了蜜裂。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2401',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰，慢慢的把阴茎差劲了蜜裂。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2402',
+        any: [
+          /PRINTFORMW 「啊嗯…别那么急啦…我可是一直都在等你侵犯我啊…啊嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2403',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%的阴茎慢慢插入了%SAVESTR:TARGET%。扑哧一声%SAV/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2404',
+        any: [
+          /PRINTFORMW 「嗯、啊啊%UNICODE\(0x2661\) \*1% 进来了，你的太粗了…啊啊%UNICODE\(0x/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2405',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为破瓜的疼痛和连最深处都被贯穿的触感而发出了娇喘。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2406',
+        any: [
+          /PRINTFORMW 「啊啊嗯嗯啊啊啊…啊啊嗯…快点动起来…侵犯我里面吧…啊啊啊%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2407',
+        any: [/PRINTFORMW 看着她这个样子，%SAVESTR:PLAYER%慢慢开始抽送阴茎…/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2408',
+        any: [
+          /PRINTFORMW 「嗯…啊啊…不用这么慢也…啊嗯…我…想要更激烈点啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2411',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰慢慢的插进了她的小穴。%S/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2412',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…没关系…把我的…我的第一次…拿走…啊啊…快、快点…%UNICODE\(0x2661\) /,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2413',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%的阴茎慢慢插入了%SAVESTR:TARGET%。扑哧一声%SAV/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2414',
+        any: [
+          /PRINTFORMW 「嗯…啊咕…嗯你的…全部在我里面…啊嗯…啊啊…已经习惯疼痛了，所以…动起来吧…把我变成你的东西吧！/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2415',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%忍耐不住的恳求的声音扭动着腰，虽然%SAVESTR:PLAYER%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2416',
+        any: [
+          /PRINTFORMW 「求你了…侵犯我吧…啊啊…我等这一天已经很久了…啊啊——%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2417',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%默默地笑着并慢慢的用阴茎开始抽送………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2418',
+        any: [
+          /PRINTFORMW 「嗯…啊嗯…你的快动起来…啊…啊啊…刺进来…啊嗯…啊啊…嗯…嗯…啊啊——%UNICODE\(0x26/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2421',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%缓缓的把阴茎沉入%SAVESTR:TARGET%的小穴。%SAVE/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2422',
+        any: [
+          /PRINTFORMW 「啊咕…不、不要做这种不上不下的事情…快点插进来把！…啊啊…嗯…啊啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2423',
+        any: [
+          /PRINTFORMW 听到这句话%SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的腰一口气贯穿到最深/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2424',
+        any: [
+          /PRINTFORMW 「啊…啊啊…嗯…嗯啊…嗯…啊啊…这…么…痛什么的…啊咕…咕嗯」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2425',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为破瓜的疼痛而发出了哭喊，哭喊声在%SAVESTR:PLAYER/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2426',
+        any: [
+          /PRINTFORMW 「啊啊啊啊…我的…第一次就这样…嗯…还、还不要动…啊啊…不要」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2427',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%为了让%SAVESTR:TARGET%好好的清楚谁是主人，阴茎再次/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2431-2447',
+        any: [
+          /PRINTFORMW 「嗯…从我后面侵犯我吧…嗯啊…啊嗯…阴茎好棒…你的阴茎好棒啊%UNICODE\(0x2661\) \*1/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2434',
+        any: [
+          /PRINTFORMW 「嗯…从我后面侵犯我吧…嗯啊…啊嗯…阴茎好棒…你的阴茎好棒啊%UNICODE\(0x2661\) \*1/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2435',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%为了让%SAVESTR:PLAYER%更加容易侵犯一样，高高抬起了/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2436',
+        any: [
+          /PRINTFORMW 「嗯…啊啊…这、这样…这样好舒服…更多的侵犯我吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2439',
+        any: [
+          /PRINTFORMW 「啊…从后面什么的…看不到你的脸好可怕…啊嗯…啊…啊啊嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2440',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从后面抓住双臂，就那样侵犯着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2441',
+        any: [
+          /PRINTFORMW 「嗯…啊…啊啊…不行…的啊…要是更激烈的话…我…就会…啊啊——」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2444',
+        any: [
+          /PRINTFORMW 「哼…男的都喜欢从后面侵犯女人呢…嗯…咕…啊啊…不、不要…嗯…啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2445',
+        any: [
+          /PRINTFORMW 「这么激烈…嗯…啊啊…不…不行啊…啊啊…咕痛啊…嗯…啊啊——」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2446',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%压住%SAVESTR:TARGET%的后颈，腰更加激烈的动了起来…/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2449',
+        any: [/CFLAG:322 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2452-2558',
+        any: [
+          /PRINTFORMW 「继续…继续从后面侵犯我吧…嗯啊…啊嗯…阴茎好棒…你的阴茎好棒%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2454-2489',
+        any: [
+          /PRINTFORMW 「继续…继续从后面侵犯我吧…嗯啊…啊嗯…阴茎好棒…你的阴茎好棒%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2456',
+        any: [
+          /PRINTFORMW 「继续…继续从后面侵犯我吧…嗯啊…啊嗯…阴茎好棒…你的阴茎好棒%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2457',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%为了让%SAVESTR:PLAYER%更加容易侵犯一样，高高抬起了/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2458',
+        any: [
+          /PRINTFORMW 「嗯…啊啊…这、这样…这样好舒服…更多的侵犯我吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2460',
+        any: [
+          /PRINTFORMW 每次被%SAVESTR:PLAYER%的腰撞到，%SAVESTR:TARGET%的蜜裂都会有爱液飞/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2461',
+        any: [
+          /PRINTFORMW 「啊啊啊…啊嗯…啊…啊啊——%UNICODE\(0x2661\) \*1% 这样好舒服%UNICODE\(/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2462',
+        any: [
+          /PRINTFORMW 「往更深的地方插进去，我的小穴要坏了…要坏了啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2464',
+        any: [
+          /PRINTFORMW 「把我的小穴弄得更加乱七八糟的%UNICODE\(0x2661\) \*1% 变成你中意的小穴吧%UNI/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2467',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…继续…继续…侵犯我吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2468',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从后面抓住双臂，就那样侵犯着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2469',
+        any: [
+          /PRINTFORMW 「用你的阴茎让我更加疯狂吧…啊啊…啊啊——%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2471',
+        any: [
+          /PRINTFORMW 每次被%SAVESTR:PLAYER%的腰撞到，%SAVESTR:TARGET%的蜜裂都会有爱液飞/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2472',
+        any: [
+          /PRINTFORMW 「啊啊…你的阴茎是最棒的%UNICODE\(0x2661\) \*1%不要再拔出来，一直侵犯我吧%UNI/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2473',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…嗯…嗯…那里…继续插进更深的地方…让我发疯吧%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2475',
+        any: [
+          /PRINTFORMW 「嗯…啊啊…嗯啊…嗯…嗯…嗯…继续使用我的小穴吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2478',
+        any: [
+          /PRINTFORMW 「问…我已经不行了…啊、明明已经说了不行了…啊嗯…啊啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2479',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%好像受不了了，精疲力尽的趴在地板上。但是%SAVESTR:PLAY/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2481',
+        any: [
+          /PRINTFORMW 「啊啊…这么做的话我就要被弄坏了…被你的阴茎弄坏了…啊啊…啊…啊啊啊啊啊%UNICODE\(0x26/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2482',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%侵犯着，发出疯了一样的娇喘。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2483',
+        any: [
+          /PRINTFORMW 「啊…啊啊…呀啊啊啊…小穴不行了啊啊…阴茎…阴茎继续…啊啊——%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2484',
+        any: [
+          /PRINTFORMW 随着蜜裂发出扑哧扑哧的声音，%SAVESTR:TARGET%的爱液在地板上的面积越来越大。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2486',
+        any: [
+          /PRINTFORMW 「啊…啊啊啊…阴茎在里面摩擦着…我的小穴要变得奇怪了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2487',
+        any: [/PRINTFORMW %SAVESTR:TARGET%像青蛙一样张着腿，从后面被侵犯着……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2490',
+        any: [/CFLAG:322 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2492-2529',
+        any: [
+          /ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 ==/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2494',
+        any: [
+          /PRINTFORMW 「啊…从后面什么的…看不到你的脸好可怕…啊嗯…啊…啊啊嗯。%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2495',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从后面抓住双臂，就那样侵犯着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2496',
+        any: [
+          /PRINTFORMW 「嗯…啊…啊啊…不行…的啊…要是更激烈的话…我…就会…啊啊——」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2498',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被开发过的蜜裂像是不想%SAVESTR:PLAYER%的阴茎离开一/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2499',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…插到深处来吧…嗯…啊啊%UNICODE\(0x2661\) \*1% 嗯啊…已经不行了…不/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2501',
+        any: [
+          /PRINTFORMW 「请、请再温柔一点…啊啊…被插得这么深…好痛…啊嗯…啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2502',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为蜜裂开发的还不够而发出了疲劳和痛苦的声音/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2505',
+        any: [
+          /PRINTFORMW 「被你从后面侵犯什么的…啊啊…好棒…你的好棒%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2506',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从抓住腰，一次次的从后面插着，随/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2508',
+        any: [
+          /PRINTFORMW 「我…被侵犯的好舒服…啊啊…继续侵犯我吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2509',
+        any: [
+          /PRINTFORMW 从后面被侵犯着露出阿黑颜的%SAVESTR:TARGET%，那个样子已经完全看不出酷酷的女忍者的影/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2510',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…嗯%UNICODE\(0x2661\) \*1% 我已经…被你抱着就变得奇怪了%UNICO/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2512',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…啊咕…虽然有点痛…但是被你侵犯的话…就没事、没问题的…啊啊%UNICODE\(0x266/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2513',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%听到这句话更加用力插进了%SAVESTR:TARGET%的小穴。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2514',
+        any: [/PRINTFORMW 「嗯…啊啊…坏心眼…你真是坏心眼的…啊啊——」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2517',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%抓住%SAVESTR:TARGET%的屁股慢慢抽送着阴茎。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2518',
+        any: [
+          /PRINTFORMW 「嗯…啊…啊啊…嗯…啊啊啊啊啊…%UNICODE\(0x2661\) \*1% 你的插进来了…啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2520',
+        any: [
+          /PRINTFORMW 「啊啊…你好温柔啊…啊嗯…恩…这种程度的话…啊嗯…啊啊…是不会痛的…嗯…啊嗯%UNICODE\(0x/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2521',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边从蜜裂滴下爱液，一边发出了喘息声/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2522',
+        any: [
+          /PRINTFORMW 「嗯啊…被你这样疼爱的话…我要…变得黏糊糊的了…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2524',
+        any: [/PRINTFORMW 「在激烈一点…侵犯我吧…不要这么慢得让我着急啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2525',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%厚着脸皮恳求着%SAVESTR:PLAYER%。这个样子如果让她以/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2526',
+        any: [
+          /PRINTFORMW 「我想要你慢慢的爱…所以想要你更激烈…啊…啊啊…来了…来了啊%UNICODE\(0x2661\) \*1/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2527',
+        any: [
+          /PRINTFORMW 「啊嗯%UNICODE\(0x2661\) \*1%啊啊啊%UNICODE\(0x2661\) \*1%…把我/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2530',
+        any: [/CFLAG:322 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2533-2543',
+        any: [
+          /PRINTFORMW 「嗯…嗯咕…啊啊…啊…嗯…嗯…啊啊啊…不、不行…如果再激烈的话…啊啊…啊啊——」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2534',
+        any: [
+          /PRINTFORMW 「嗯…嗯咕…啊啊…啊…嗯…嗯…啊啊啊…不、不行…如果再激烈的话…啊啊…啊啊——」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2535',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为被开发的蜜裂被侵犯着而忍不住发出了快乐的声音/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2536',
+        any: [
+          /PRINTFORMW 「啊嗯…恩…啊啊…不行…不行啊…这样输了的话…啊…啊啊——♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2537',
+        any: [
+          /PRINTFORMW 随着%SAVESTR:PLAYER%从后面一次次突刺，%SAVESTR:TARGET%发出了尖锐的/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2539',
+        any: [
+          /PRINTFORMW 「嗯…啊…啊啊…不能有感觉…但是…啊…从背后被侵犯…我…啊啊…嗯♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2540',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%满脸不情愿的摇着头，但被开发了的蜜裂却把%SAVESTR:PLAY/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2541',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…不行…快点拔出去…我会变得奇怪的…啊啊呀嗯啊啊啊♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2542',
+        any: [
+          /PRINTFORMW 「嗯…嗯啊…啊啊…不能输…才不能就这样认输…嗯…啊…啊啊啊…啊♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2544',
+        any: [/CFLAG:322 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2547-2549',
+        any: [/PRINTFORMW 「啊啊…啊…嗯…嗯咕…咕…嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2547',
+        any: [/PRINTFORMW 「啊啊…啊…嗯…嗯咕…咕…嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2548',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%从后面抓着腰侵犯着。大概是作为最/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2549',
+        any: [/PRINTFORMW 「我不能…就这样…输掉…嗯…嗯…咕…嗯…嗯——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2550',
+        any: [/CFLAG:322 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2552-2555',
+        any: [/ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2553',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%按着后颈，就这样不停的侵犯着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2554',
+        any: [/PRINTFORMW 「嗯咕…嗯…啊啊…咕…嗯…住、助手…啊…啊咕…嗯」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2555',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%听着%SAVESTR:TARGET%痛苦的声音，就那样很舒服的继续/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '2556',
+        any: [/CFLAG:322 = 2/],
+      },
     ],
   },
 ];

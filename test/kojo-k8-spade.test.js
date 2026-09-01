@@ -1026,8 +1026,98 @@ test('SELECTCOM 20 正常位，二回目以降·それ以外：CFLAG:321 推进�
   assert.equal(fixture.store.get('cflag:31:321'), 2, 'CFLAG:321 推进到 2');
 });
 
-test('骨架期：SELECTCOM 21（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+test('SELECTCOM 21 背后位，初めて·处女+人間+爱慕：CFLAG:322 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:0', 1);
+    f.store.set('talent:31:85', 1);
+  }, 21);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你抓住银黑桃的腰慢慢的插进了她的小穴。银黑桃敏感的屁股颤抖了起来。',
+    '「啊嗯…啊啊…没关系…把我的…我的第一次…拿走…啊啊…快、快点…♡」',
+    '你的阴茎慢慢插入了银黑桃。扑哧一声银黑桃的处女膜破了。',
+    '「嗯…啊咕…嗯你的…全部在我里面…啊嗯…啊啊…已经习惯疼痛了，所以…动起来吧…把我变成你的东西吧！」',
+    '银黑桃忍耐不住的恳求的声音扭动着腰，虽然你努力的压着，但是还是没压住。',
+    '「求你了…侵犯我吧…啊啊…我等这一天已经很久了…啊啊——♡」',
+    '你默默地笑着并慢慢的用阴茎开始抽送………',
+    '「嗯…啊嗯…你的快动起来…啊…啊啊…刺进来…啊嗯…啊啊…嗯…嗯…啊啊——♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:322'), 1, 'CFLAG:322 推进到 1');
+});
+
+test('SELECTCOM 21 背后位，初めて·非处女それ以外', async () => {
   const fixture = await setup_k8(undefined, 21);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「哼…男的都喜欢从后面侵犯女人呢…嗯…咕…啊啊…不、不要…嗯…啊啊」',
+    '「这么激烈…嗯…啊啊…不…不行啊…啊啊…咕痛啊…嗯…啊啊——」',
+    '你压住银黑桃的后颈，腰更加激烈的动了起来……',
+  ]);
+});
+
+test('SELECTCOM 21 背后位，二回目以降·淫乱：CFLAG:322 推进到 6', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:322', 1);
+    f.store.set('talent:31:76', 1);
+  }, 21);
+  await speak_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「继续…继续从后面侵犯我吧…嗯啊…啊嗯…阴茎好棒…你的阴茎好棒♡」',
+    '银黑桃为了让你更加容易侵犯一样，高高抬起了腰。',
+    '「嗯…啊啊…这、这样…这样好舒服…更多的侵犯我吧♡」',
+    '「把我的小穴弄得更加乱七八糟的♡ 变成你中意的小穴吧♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:322'), 6, 'CFLAG:322 推进到 6');
+});
+
+test('SELECTCOM 21 背后位，二回目以降·屈服刻印Lv3：CFLAG:322 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:322', 1);
+    f.store.set('mark:31:2', 3);
+  }, 21);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…啊…嗯…嗯咕…咕…嗯！」',
+    '银黑桃被你从后面抓着腰侵犯着。大概是作为最低限度的抵抗而尽量不发出着声音',
+    '「我不能…就这样…输掉…嗯…嗯…咕…嗯…嗯——！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:322'), 3, 'CFLAG:322 推进到 3');
+});
+
+test('SELECTCOM 21 背后位，二回目以降·それ以外：CFLAG:322 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:322', 1);
+  }, 21);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃被你按着后颈，就这样不停的侵犯着',
+    '「嗯咕…嗯…啊啊…咕…嗯…住、助手…啊…啊咕…嗯」',
+    '你听着银黑桃痛苦的声音，就那样很舒服的继续动着腰……',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:322'), 2, 'CFLAG:322 推进到 2');
+});
+
+test('SELECTCOM 21 背后位，二回目以降·淫乱 RAND1+V感覚Lv3以上：源作误写双引号 1:1 保真', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:322', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:2', 3);
+  }, 21);
+  const seq = [1, 0];
+  let i = 0;
+  await speak_k8(fixture, () => seq[i++]);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…继续…继续…侵犯我吧♡」',
+    '银黑桃被你从后面抓住双臂，就那样侵犯着。',
+    '「用你的阴茎让我更加疯狂吧…啊啊…啊啊——♡」',
+    '每次被你的腰撞到，银黑桃的蜜裂都会有爱液飞散出来。',
+    '「啊啊…你的阴茎是最棒的♡不要再拔出来，一直侵犯我吧♡」',
+    '「啊嗯…啊啊…嗯…嗯…那里…继续插进更深的地方…让我发疯吧♡」」',
+  ]);
+});
+
+test('骨架期：SELECTCOM 22（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 22);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
