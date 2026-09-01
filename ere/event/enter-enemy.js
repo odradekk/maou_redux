@@ -66,6 +66,7 @@ const { enterenemy_koujo } = require('#/kojo/kojo-system');
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
+  'ENTERENEMY_KOUJO',
   'SHOW_CHARA_INFO',
   'CHAR_BODY_GENERATE_WAPPED',
   'FAMILY_REGISTER',
@@ -268,10 +269,8 @@ async function enter_enemy(arg0 = 0, rand) {
     chara(a).chara.善恶值 = -100;
   }
 
-  // :105 来袭口上（向 21 个口上文件的 @ENTERENEMY_KOUJO_K<n> 分派——
-  // 口上归裁定 7，随 #107）
+  // :105 来袭口上（向 21 个口上文件的 @ENTERENEMY_KOUJO_K<n> 分派）
   await enterenemy_koujo(a);
-
   // :107-133 初期金钱（Ref DUNGEON_TOWN.ERB；七条修正 + 等级补正 + 下限）
   let money = 0; // :110 LOCAL = 0
   const tv = (n) => era.get(`talent:${a}:${n}`) || 0;

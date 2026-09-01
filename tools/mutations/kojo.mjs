@@ -18,8 +18,10 @@ export default [
   {
     desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
     file: 'ere/kojo/kojo-system.js',
-    find: '  if ((era.get(`flag:${local}`) || 0) === 0) {',
-    replace: '  if (false) { // 变异：存在判定删除',
+    find: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
+  if ((era.get(\`flag:\${local}\`) || 0) === 0) {`,
+    replace: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
+  if (false) { // 变异：存在判定删除`,
     tests: ['kojo-system'],
     must_mention: '存在判定',
   },
@@ -397,6 +399,698 @@ export default [
       if (era.get('talent:122') || 0) {`,
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
     must_mention: 'TALENT:122 置位 → 哥哥臂',
+  },
+  // —— #235（J25）：K4 冷徹 口上模块（M1750-M1789 号段） ——
+  {
+    desc: 'M1750 K4 COM 口塞守卫删（TEQUIP:45 不再跳过，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0;
+  }`,
+    replace: `  if (false && era_flag.selectcom != 45) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
+  },
+  {
+    desc: 'M1751 K4 COM 失神守卫删（TFLAG:899 不再跳过，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0;
+  }
+
+  if (era0('tflag:899')) {
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0;
+  }
+
+  if (false) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '失神（TFLAG:899）：静默跳过',
+  },
+  {
+    desc: 'M1752 K4 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_4，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:89\`)) {
+    await dog_kojo_4(); // :533 CALL DOG_KOJO_4
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:89\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_4',
+  },
+  {
+    desc: 'M1753 K4 触手守卫删（TEQUIP:90 不再跳过，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:90\`)) {
+    return 0;
+  }`,
+    replace: `  if (false) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '触手（TEQUIP:90）：静默跳过',
+  },
+  {
+    desc: 'M1754 K4 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_4，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:55\`)) {
+    await colosseum_kojo_4(); // :541 CALL COLOSSEUM_KOJO_4
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:55\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_4',
+  },
+  {
+    desc: 'M1755 K4 爱撫初回刻印分档删（MARK:2 >= 2 臂丢失，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `      if (era0(\`mark:\${target}:2\`) >= 2) {
+        await era.printAndWait(\`「唔～唔……」「哼，这不挺配合的嘛！」\`); // :556
+      } else {`,
+    replace: `      if (era0(\`mark:\${target}:2\`) >= 3) {
+        await era.printAndWait(\`「唔～唔……」「哼，这不挺配合的嘛！」\`); // :556 变异
+      } else {`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '爱撫初回的刻印分档（MARK:2 >= 2）：配合台词',
+  },
+  {
+    desc: 'M1756 K4 爱撫初回推进写错（CFLAG:301 = 1 改 2，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「讨厌！这变态！」\`); // :559
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 1);
+      return 0;`,
+    replace: `        await era.printAndWait(\`「讨厌！这变态！」\`); // :559
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 2);
+      return 0;`,
+    tests: ['kojo-k4-stoic'],
+    must_mention:
+      '爱撫初回（CFLAG:301 == 0 且 MARK:2 < 2）：一句拒绝 + 推进到 1',
+  },
+  {
+    desc: 'M1757 K4 爱撫淫乱档推进写错（CFLAG:301 = 6 改 5，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `          \`「唔…噢～…再弄，再弄我……胸，胸部也好……那里！……还有屁股，再揉啊～～…」\`,
+        ); // :567
+        // CFLAG:301  = 6（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 6);`,
+    replace: `          \`「唔…噢～…再弄，再弄我……胸，胸部也好……那里！……还有屁股，再揉啊～～…」\`,
+        ); // :567
+        // CFLAG:301  = 6（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 5);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '淫乱 TALENT:76 → CFLAG:301 = 6',
+  },
+  {
+    desc: 'M1758 K4 爱撫爱慕档推进写错（CFLAG:301 = 5 改 4，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `          \`「那么细腻，温柔的手法……人家会……啊！……噢～啊啊！……有，有感觉了～～…」\`,
+        ); // :571
+        // CFLAG:301  = 5（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 5);`,
+    replace: `          \`「那么细腻，温柔的手法……人家会……啊！……噢～啊啊！……有，有感觉了～～…」\`,
+        ); // :571
+        // CFLAG:301  = 5（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 4);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '爱慕 TALENT:85 → CFLAG:301 = 5',
+  },
+  {
+    desc: 'M1759 K4 爱撫屈服Lv3档推进写错（CFLAG:301 = 4 改 3，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「啊…好…那里……」\`); // :575
+        // CFLAG:301  = 4（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 4);`,
+    replace: `        await era.printAndWait(\`「啊…好…那里……」\`); // :575
+        // CFLAG:301  = 4（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 3);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '屈服刻印Lv3 → 4',
+  },
+  {
+    desc: 'M1760 K4 爱撫屈服Lv2档推进写错（CFLAG:301 = 3 改 2，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「快住手啊……再这样摸的话……我会………」\`); // :579
+        // CFLAG:301  = 3（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 3);`,
+    replace: `        await era.printAndWait(\`「快住手啊……再这样摸的话……我会………」\`); // :579
+        // CFLAG:301  = 3（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 2);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '屈服刻印Lv2 → 3',
+  },
+  {
+    desc: 'M1761 K4 爱撫それ以外档推进写错（CFLAG:301 = 2 改 1，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「变态！！…完全不舒服，不要再摸了！」\`); // :583
+        // CFLAG:301  = 2（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 2);`,
+    replace: `        await era.printAndWait(\`「变态！！…完全不舒服，不要再摸了！」\`); // :583
+        // CFLAG:301  = 2（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 1);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'それ以外（MARK:2 <= 1）→ 2',
+  },
+  {
+    desc: 'M1762 K4 阶段耗尽静默锁删（FLAG:7 == 1 时也出声，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `      if (
+        era0(\`talent:\${target}:76\`) == 1 &&
+        (era0(\`cflag:\${target}:301\`) <= 5 || era0('flag:7') == 2)
+      ) {`,
+    replace: `      if (
+        era0(\`talent:\${target}:76\`) == 1 &&
+        (era0(\`cflag:\${target}:301\`) <= 5 || era0('flag:7') == 1)
+      ) {`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '阶段耗尽后（FLAG:7 == 1）静默',
+  },
+  {
+    desc: 'M1763 K4 DOG_KOJO 初回推进写错（CFLAG:301 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「讨，讨厌！别舔啊！」\`); // :3107
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 1);
+      return 0;`,
+    replace: `        await era.printAndWait(\`「讨，讨厌！别舔啊！」\`); // :3107
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 0);
+      return 0;`,
+    tests: ['kojo-k4-stoic'],
+    must_mention:
+      '兽奸爱撫初回（DOG_KOJO_4 :3101 CFLAG:301 == 0 且 MARK:2 < 2）',
+  },
+  {
+    desc: 'M1764 K4 PALAMCNG 处女丧失的 A 加算改错（UP:12 丢，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  const A =
+    (era0(\`delta:\${target}:11\`) || 0) + (era0(\`delta:\${target}:12\`) || 0);`,
+    replace: `  const A =
+    (era0(\`delta:\${target}:11\`) || 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '处女丧失 A >= 500 落それ以外档（UP:12 参与加算）',
+  },
+  {
+    desc: 'M1765 K4 MARKCNG 苦痛刻印取得推进写错（CFLAG:297 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:297  = 1（变量语义：CFLAG 族，297）
+    era.set(\`cflag:\${target}:297\`, 1);`,
+    replace: `    // CFLAG:297  = 1（变量语义：CFLAG 族，297）
+    era.set(\`cflag:\${target}:297\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '苦痛刻印Lv3 CFLAG:297 = 1',
+  },
+  {
+    desc: 'M1766 K4 MARKCNG 快乐刻印取得推进写错（CFLAG:298 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:298  = 1（变量语义：CFLAG 族，298）
+    era.set(\`cflag:\${target}:298\`, 1);`,
+    replace: `    // CFLAG:298  = 1（变量语义：CFLAG 族，298）
+    era.set(\`cflag:\${target}:298\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '快乐刻印Lv3 CFLAG:298 = 1',
+  },
+  {
+    desc: 'M1767 K4 MARKCNG 屈服刻印取得推进写错（CFLAG:299 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:299  = 1（变量语义：CFLAG 族，299）
+    era.set(\`cflag:\${target}:299\`, 1);`,
+    replace: `    // CFLAG:299  = 1（变量语义：CFLAG 族，299）
+    era.set(\`cflag:\${target}:299\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '屈服刻印Lv3 CFLAG:299 = 1',
+  },
+  {
+    desc: 'M1768 K4 MARKCNG 反抗刻印取得推进写错（CFLAG:300 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:300  = 1（变量语义：CFLAG 族，300）
+    era.set(\`cflag:\${target}:300\`, 1);`,
+    replace: `    // CFLAG:300  = 1（变量语义：CFLAG 族，300）
+    era.set(\`cflag:\${target}:300\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '反抗刻印Lv3',
+  },
+  {
+    desc: 'M1769 K4 SELF_KOJO 调教后自慰档位写错（CFLAG:261 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `      // CFLAG:261  = 1（变量语义：CFLAG 族，261）
+      era.set(\`cflag:\${target}:261\`, 1);`,
+    replace: `      // CFLAG:261  = 1（变量语义：CFLAG 族，261）
+      era.set(\`cflag:\${target}:261\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '调教后自慰（TFLAG:13 == 1）：それ以外初回 → CFLAG:261 = 1',
+  },
+  {
+    desc: 'M1770 K4 SELF_KOJO 卖却分支存根丢（SELL_MATURO_K0 不落，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: "      stub_line('SELL_MATURO_K0', '卖却分支（成熟贩卖）', '随售却票');",
+    replace: '      // 变异：SELL_MATURO_K0 存根丢',
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'SELL_MATURO_K0',
+  },
+  {
+    desc: 'M1771 K4 NTR_KOUJO P == 1 的分支写错（cflag:651 推进丢，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:651  = 1（变量语义：CFLAG 族，651）
+    era.set(\`cflag:\${target}:651\`, 1);`,
+    replace: '    // 变异：cflag:651 推进丢',
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'NTR_KOUJO P == 1（处女丧失）',
+  },
+  {
+    desc: 'M1772 K4 GOBI_KOUJO ARG:0 == 1 支改错（哦～♪ 变 哦！，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: '    await era.print(\`哦～♪\`); // :5434',
+    replace: '    await era.print(\`哦！\`); // :5434 变异',
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一',
+  },
+  {
+    desc: 'M1773 K4 主启动图删 K4 冷徹口上注册（KOJO 4 不进实际运行图，#235）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k4-stoic');",
+    replace: '// 变异：K4 冷徹口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k4-stoic',
+  },
+  {
+    desc: 'M1774 K4 插值槽位错配（CALLNAME:MASTER 与 NAME:MASTER 混，#235 保真）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        \`四脚爬爬，扭动着腰，用炽热的视线仰视着\${master_name}。\`,
+      ); // :152`,
+    replace: `        \`四脚爬爬，扭动着腰，用炽热的视线仰视着\${target_name}。\`,
+      ); // :152 变异：填错孔`,
+    tests: ['kojo-text-fidelity'],
+    must_mention: '槽位序',
+  },
+
+  {
+    desc: 'M1650 K1 首次爱抚推进写错（CFLAG:301 = 1 改 2）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '      chara(target).kojo.爱抚 = 1; // :1026',
+    replace: '      chara(target).kojo.爱抚 = 2; // :1026（变异）',
+    tests: ['kojo-k1-confident'],
+    must_mention: '首次爱抚推进到 1',
+  },
+  {
+    desc: 'M1651 K1 首次刻印分档边界（MARK:2 >= 2 改 >= 3）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `      } else if (era.get(\`mark:\${target}:2\`) >= 2) {
+        // :1020`,
+    replace: `      } else if (era.get(\`mark:\${target}:2\`) >= 3) {
+        // :1020（变异）`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '刻印分档也推进到 1',
+  },
+  {
+    desc: 'M1652 K1 二次爱抚推进写错（CFLAG:301 = 2 改 3）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        chara(target).kojo.爱抚 = 2; // :1056',
+    replace: '        chara(target).kojo.爱抚 = 3; // :1056（变异）',
+    tests: ['kojo-k1-confident'],
+    must_mention: '爱抚推进到 2',
+  },
+  {
+    desc: 'M1653 K1 屈服 Lv3 推进写错（CFLAG:301 = 4 改 3）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        chara(target).kojo.爱抚 = 4; // :1047',
+    replace: '        chara(target).kojo.爱抚 = 3; // :1047（变异）',
+    tests: ['kojo-k1-confident'],
+    must_mention: '爱抚推进到 4',
+  },
+  {
+    desc: 'M1654 K1 淫乱素质判据错格（TALENT:76 改 77）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (chara(target).kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :1034`,
+    replace: `        era.get(\`talent:\${target}:77\`) === 1 &&
+        (chara(target).kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :1034`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '淫乱爱抚台词',
+  },
+  {
+    desc: 'M1655 K1 爱慕素质判据错格（TALENT:85 改 86）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (chara(target).kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :1039`,
+    replace: `        era.get(\`talent:\${target}:86\`) === 1 &&
+        (chara(target).kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :1039`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '爱慕爱抚台词',
+  },
+  {
+    desc: 'M1656 K1 FLAG:7 == 2 旁路失效（爱抚上限旁路改 === 3）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (chara(target).kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
+      ) {
+        // :1054`,
+    replace: `        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (chara(target).kojo.爱抚 <= 1 || game.kojo.口上开关 === 3)
+      ) {
+        // :1054`,
+    tests: ['kojo-k1-confident'],
+    must_mention: 'FLAG:7 == 2 旁路重出声',
+  },
+  {
+    desc: 'M1657 K1 FLAG:7 == 1 阈值闸失效（爱抚上限 <= 1 改 <= 2）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (chara(target).kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
+      ) {
+        // :1054`,
+    replace: `        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (chara(target).kojo.爱抚 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :1054`,
+    tests: ['kojo-k1-confident'],
+    must_mention: 'FLAG:7 == 1 阶段耗尽不出声',
+  },
+  {
+    desc: 'M1658 K1 @EVENTTRAIN #PRI 存在标志写错（FLAG:101 = 1 改 2）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '  game.kojo.口上存在_1 = 1; // :86',
+    replace: '  game.kojo.口上存在_1 = 2; // :86（变异）',
+    tests: ['kojo-k1-confident'],
+    must_mention: 'K1 存在标志置 1',
+  },
+  {
+    desc: 'M1659 K1 @EVENTEND #LATER 清标志删除（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '  game.kojo.口上存在_1 = 0; // :92',
+    replace: '  // 变异：清标志删除',
+    tests: ['kojo-k1-confident'],
+    must_mention: 'K1 存在标志清 0',
+  },
+  {
+    desc: 'M1660 K1 助手调教真身删除（ASSI 分支改恒 false）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :1017
+        await era.printAndWait(\`\${target_name}转过脸就这样看着\${assi_name}………\`); // :1018`,
+    replace: `      if (false) {
+        // :1017 变异：助手调教不出台词
+        await era.printAndWait(\`\${target_name}转过脸就这样看着\${assi_name}………\`); // :1018`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '助手调教不跳过出台词',
+  },
+  {
+    desc: 'M1661 K1 口塞守卫删除（TEQUIP:45 改恒 false）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
+    // :990-991`,
+    replace: `  if (false && era_flag.selectcom !== 45) {
+    // :990-991 变异`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '口塞非 45 指令跳过',
+  },
+  {
+    desc: 'M1662 K1 口塞 SELECTCOM == 45 豁免失效（去掉 !== 45）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
+    // :990-991`,
+    replace: `  if (era.get(\`tequip:\${target}:45\`)) {
+    // :990-991 变异：口塞 45 豁免失效`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '口塞指令自己说话',
+  },
+  {
+    desc: 'M1663 K1 失神守卫删除（TFLAG:899 改恒 false）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (game.train.失神) {
+    // :993-994`,
+    replace: `  if (false) {
+    // :993-994 变异：失神守卫删除`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '失神：跳过',
+  },
+  {
+    desc: 'M1664 K1 崩坏守卫错格（TALENT:9 改 8）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) === 1) {
+    // :996-997`,
+    replace: `  if (era.get(\`talent:\${target}:8\`) === 1) {
+    // :996-997 变异`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '崩坏：跳过',
+  },
+  {
+    desc: 'M1665 K1 触手守卫删除（TEQUIP:90 改恒 false）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (era.get(\`tequip:\${target}:90\`)) {
+    // :1004-1005`,
+    replace: `  if (false) {
+    // :1004-1005 变异：触手守卫删除`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '触手：跳过',
+  },
+  {
+    desc: 'M1666 K1 死斗场守卫错位（TEQUIP:55 改 56）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // :982`,
+    replace: `  if (era.get(\`tequip:\${target}:56\`)) {
+    // :982 变异`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '看到死斗场的热浪',
+  },
+  {
+    desc: 'M1667 K1 死斗场真身 CALL 删除（COLOSSEUM_KOJO_1 不调）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    await colosseum_kojo_1(rand); // CALL COLOSSEUM_KOJO_1 // :983',
+    replace: '    // 变异：死斗场真身不调',
+    tests: ['kojo-k1-confident'],
+    must_mention: '看到死斗场的热浪',
+  },
+  {
+    desc: 'M1668 K1 兽奸守卫错位（TEQUIP:89 改 88）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // :999`,
+    replace: `  if (era.get(\`tequip:\${target}:88\`)) {
+    // :999 变异`,
+    tests: ['kojo-k1-confident'],
+    must_mention: '「讨厌啊！　不要靠过来！」',
+  },
+  {
+    desc: 'M1669 K1 兽奸真身 CALL 删除（DOG_KOJO_1 不调）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    await dog_kojo_1(rand); // CALL DOG_KOJO_1 // :1000',
+    replace: '    // 变异：兽奸真身不调',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「讨厌啊！　不要靠过来！」',
+  },
+  {
+    desc: 'M1670 K1 兽奸首次台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        await era.printAndWait(`「讨厌啊！　不要靠过来！」`); // :5596',
+    replace:
+      '        await era.printAndWait(`「讨厌啊！不要靠过来！」`); // :5596 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「讨厌啊！　不要靠过来！」',
+  },
+  {
+    desc: 'M1671 K1 PALAMCNG 润滑 LV2 门槛抬高（PALAMLV[2] 改 [3]）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `  if (P > PALAMLV[2] && chara(target).kojo.首次润滑Lv2 === 0) {
+    // :6502`,
+    replace: `  if (P > PALAMLV[3] && chara(target).kojo.首次润滑Lv2 === 0) {
+    // :6502 变异`,
+    tests: ['kojo-k1-confident'],
+    must_mention: 'PALAMCNG 润滑 LV2',
+  },
+  {
+    desc: 'M1672 K1 PALAMCNG 首次润滑标志写错（CFLAG:221 = 1 改 0）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    chara(target).kojo.首次润滑Lv2 = 1; // :6526',
+    replace: '    chara(target).kojo.首次润滑Lv2 = 0; // :6526 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '首次润滑Lv2 推进',
+  },
+  {
+    desc: 'M1673 K1 MARKCNG 苦痛刻印台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '      await era.printAndWait(`「啊啊啊…再…痛…啊」`); // :6744',
+    replace:
+      '      await era.printAndWait(`「啊啊啊…再…痛啊」`); // :6744 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「啊啊啊…再…痛…啊」',
+  },
+  {
+    desc: 'M1674 K1 MARKCNG 苦痛刻印标志写错（CFLAG:297 = 1 改 0）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    chara(target).kojo.苦痛刻印Lv3 = 1; // :6746',
+    replace: '    chara(target).kojo.苦痛刻印Lv3 = 0; // :6746 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '苦痛刻印Lv3 推进',
+  },
+  {
+    desc: 'M1675 K1 BENKI 默认支台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '      await era.printAndWait(`「噫、好脏……」`); // :7475',
+    replace: '      await era.printAndWait(`「噫、好脏…」`); // :7475 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「噫、好脏……」',
+  },
+  {
+    desc: 'M1676 K1 NTR P=1 台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        `「啊啊啊…为什么…这样…啊嗯！不行了…这样弄不行了啊！」`,',
+    replace: '        `「啊啊啊…为什么…这样…啊嗯！不行了…这样弄不行啊！」`,',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「啊啊啊…为什么…这样…啊嗯！不行了…这样弄不行了啊！」',
+  },
+  {
+    desc: 'M1677 K1 NTR CFLAG:651 推进写错（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    chara(target).kojo.NTR_651 = 1; // :7862',
+    replace: '    chara(target).kojo.NTR_651 = 0; // :7862 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: 'NTR_651 推进',
+  },
+  {
+    desc: 'M1678 K1 NTR 再捕获标志写错（CFLAG:650 = 1 改 0）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    chara(target).kojo.NTR再捕获 = 1; // :7853',
+    replace: '    chara(target).kojo.NTR再捕获 = 0; // :7853 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: 'NTR再捕获推进',
+  },
+  {
+    desc: 'M1679 K1 ENTERENEMY 默认支台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    await era.printAndWait(`「虽然不怎么了解魔王的实力、不过觉悟吧！！」`); // :8063',
+    replace:
+      '    await era.printAndWait(`「虽然不怎么了解魔王的实力、不过觉悟吧！」`); // :8063 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '虽然不怎么了解魔王的实力',
+  },
+  {
+    desc: 'M1680 K1 GOBI ARG=1 语尾改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    await era.print(`哎哟♪`); // :8251',
+    replace: '    await era.print(`哎哟`); // :8251 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '哎哟♪',
+  },
+  {
+    desc: 'M1681 K1 胜利口上开场改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '  await era.printAndWait(`「${sc()}赢不了啊！」`); // :7577',
+    replace: '  await era.printAndWait(`「${sc()}赢不了！」`); // :7577 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '胜利口上开场',
+  },
+  {
+    desc: 'M1682 K1 攻击口上 TALENT:11 台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        await era.printAndWait(`「怪物！　死吧！」`); // :7643',
+    replace:
+      '        await era.printAndWait(`「怪物！死吧！」`); // :7643 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「怪物！　死吧！」',
+  },
+  {
+    desc: 'M1683 K1 首次爱抚拒绝台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        await era.printAndWait(`「放过我吧！别再来了…唔哇」`); // :1024',
+    replace:
+      '        await era.printAndWait(`「放过我吧！别再来了唔哇」`); // :1024 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「放过我吧！别再来了…唔哇」',
+  },
+  {
+    desc: 'M1684 K1 二次爱抚台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        await era.printAndWait(`「哈…放过我吧…这样一点儿也…咕！」`); // :1055',
+    replace:
+      '        await era.printAndWait(`「哈…放过我吧…这样一点儿也咕！」`); // :1055 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「哈…放过我吧…这样一点儿也…咕！」',
+  },
+  {
+    desc: 'M1685 K1 口塞首次台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        await era.printAndWait(`「呜呜…呜…呼…呼」`); // :4478',
+    replace:
+      '        await era.printAndWait(`「呜呜…呜…呼呼」`); // :4478 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '「呜呜…呜…呼…呼」',
+  },
+  {
+    desc: 'M1686 K1 死斗场气力>0 台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        `${target_name}看到死斗场的热浪和将要面对的对手吓得直哆嗦……`,',
+    replace:
+      '        `${target_name}看到死斗场的热浪和将要面对的对手吓得直哆嗦…`,',
+    tests: ['kojo-k1-confident'],
+    must_mention: '看到死斗场的热浪',
+  },
+  {
+    desc: 'M1687 K1 屈服 Lv3 台词改坏（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '        await era.printAndWait(`「哈…爱抚…更多的爱抚呦…」`); // :1045',
+    replace:
+      '        await era.printAndWait(`「哈…爱抚…更多的爱抚呦」`); // :1045 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '屈服 Lv3 台词',
+  },
+  {
+    desc: 'M1688 K1 兽奸爱抚推进写错（DOG CFLAG:301 = 1 改 2）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '      chara(target).kojo.爱抚 = 1; // :5598',
+    replace: '      chara(target).kojo.爱抚 = 2; // :5598 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '兽奸爱抚也推进到 1',
+  },
+  {
+    desc: 'M1689 K1 存根清单漏登记（SELL_MATURO_K0 改名）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: "const STUBBED_CALLS = ['SELL_MATURO_K0'];",
+    replace: "const STUBBED_CALLS = ['SELL_MATURO_K1'];",
+    tests: ['kojo-k1-confident'],
+    must_mention: 'docs/stub-registry.md 必须收录',
+  },
+  {
+    desc: 'M1690 K1 PALAMCNG 首次C绝顶回退成二段 nowex（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: `    (era.get(\`nowex:\${target}:0\`) || 0) > 0 &&
+    chara(target).kojo.首次C绝顶 === 0`,
+    replace: `    (era.get('nowex:0') || 0) > 0 &&
+    chara(target).kojo.首次C绝顶 === 0`,
+    tests: ['kojo-k1-confident', 'chara-table-addressing'],
+    must_mention: '首次C绝顶默认台词',
+  },
+  {
+    desc: 'M1691 K1 PALAMCNG 首次C绝顶标志写错（CFLAG:225 = 1 改 0）（#232）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    chara(target).kojo.首次C绝顶 = 1; // :6607',
+    replace: '    chara(target).kojo.首次C绝顶 = 0; // :6607 变异',
+    tests: ['kojo-k1-confident'],
+    must_mention: '首次C绝顶推进',
   },
   {
     desc: 'M1700 K3 舔阴首次推进写错（CFLAG:302 = 1 改 2）（#234）',

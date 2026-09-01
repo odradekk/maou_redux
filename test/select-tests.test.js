@@ -4,7 +4,7 @@
  * 这个工具的危险不在「选错」，在**选少了还不说**。所以锁的重点是那几条
  * 保守性质，而不是「某个输入选出某个集合」：
  *
- *   1. 全局锁恒在：不带 --no-locks 时，LOCKS 那 13 个文件一个不少。
+ *   1. 全局锁恒在：不带 --no-locks 时，LOCKS 那 17 个文件一个不少。
  *   2. 兜底必须退回全量：任一改动文件解析不出测试面，输出就是全部
  *      test/*.test.js——**正确性不依赖规则表的完备性**，这是整套分层能
  *      成立的前提。规则表将来长草，代价只是慢，不是漏测。
@@ -62,6 +62,10 @@ const LOCKS = [
   'test/asar-candidates.test.js',
   'test/compare-first-turn.test.js',
   'test/compare-train.test.js',
+  'test/chara-table-addressing.test.js',
+  'test/com-family-wiring.test.js',
+  'test/kojo-family-wiring.test.js',
+  'test/kojo-text-fidelity.test.js',
   'test/domain-check.test.js',
   'test/engine-contract-check.test.js',
   'test/mutation-check.test.js',
@@ -74,7 +78,7 @@ const LOCKS = [
   'test/worktree-write-lock.test.js',
 ];
 
-test('全局锁恒在：条目表命中的改动也带上 LOCKS 全部 13 个', () => {
+test('全局锁恒在：条目表命中的改动也带上 LOCKS 全部 17 个', () => {
   const { status, files } = run('--files', 'ere/chara/chara-make.js');
   assert.equal(status, 0);
   for (const lock of LOCKS) {

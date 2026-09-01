@@ -50,12 +50,12 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
   self_kojo_family,
-  palamcng_family,
-  markcng_family,
+  kojo_message_palamcng_family,
+  kojo_message_markcng_family,
   benki_koujo_family,
   enterenemy_koujo_family,
-  victory_koujo_family,
-  attack_koujo_family,
+  dungeon_victory_family,
+  dungeon_attack_family,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
@@ -14413,8 +14413,8 @@ async function gobi_koujo_k3(rand, arg_0 = 0) {
 // 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_3 的等价物；重复注册抛错）
 kojo_message_com_family.register(3, kojo_message_com_3);
 self_kojo_family.register(3, self_kojo_k3);
-palamcng_family.register(3, kojo_message_palamcng_3);
-markcng_family.register(3, kojo_message_markcng_3);
+kojo_message_palamcng_family.register(3, kojo_message_palamcng_3);
+kojo_message_markcng_family.register(3, kojo_message_markcng_3);
 gohoubi_after_koujo_family.register(3, (cid, choice) =>
   gohoubi_after_koujo_k3(undefined, cid, choice),
 );
@@ -14427,8 +14427,8 @@ ryouzyoku_after_kojo_family.register(3, dungeon_ryouzyoku_after_k3);
 gobi_koujo_family.register(3, gobi_koujo_k3);
 benki_koujo_family.register(3, benki_koujo_k3);
 enterenemy_koujo_family.register(3, enterenemy_koujo_k3);
-victory_koujo_family.register(3, dungeon_victory_k3);
-attack_koujo_family.register(3, dungeon_attack_k3);
+dungeon_victory_family.register(3, dungeon_victory_k3);
+dungeon_attack_family.register(3, dungeon_attack_k3);
 ntr_koujo_family.register(3, ntr_koujo_k3);
 exucution_koujo_family.register(3, exucution_koujo_k3);
 museum_koujo_family.register(3, museum_koujo_k3);

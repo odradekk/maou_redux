@@ -104,6 +104,10 @@ const LOCKS = [
   'resource-media', // 引擎默认配置形状逐键比对
   'compare-first-turn', // 调教首回合对拍基线：ere/ 改动常移动存根数（#220/#274）
   'compare-train', // 调教段对拍基线：同上，natural/upgrade 四数恒锁
+  'chara-table-addressing', // 角色表二段字面量：新文件写 'nowex:0' 即红（#232 验收踩中）
+  'com-family-wiring', // 指令族接线对账：新 com-* 模块漏进 main-loop / replay 即红（#274）
+  'kojo-family-wiring', // 口上模块接线对账：新 kojo-* 模块漏进 main-loop 即红（#282）
+  'kojo-text-fidelity', // 口上 D 文与 ERB 逐字保真：新口上文件必查
 ];
 
 // —— 参数 ——

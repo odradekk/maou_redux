@@ -18,8 +18,8 @@
  *      ——无锚的口上输出不可追溯，锁 B/C/D 对它无从谈起；
  *   B. W/L 变体：ERB 的 PRINTFORMW → printAndWait、PRINTFORML → print，
  *      按行锚逐语句配对；
- *   C. 插值槽位序：ERB 行内的 %...% 记号序列与 JS 同语句的 ${...} 序列
- *      各自归一（TARGET/PLAYER/ASSI/MASTER/SC/SCF/HEARTn）后逐项相等；
+ *   C. 插值槽位序：ERB 行内的 %...% / {…} / \@...\@ 记号序列与 JS 同语句的
+ *      ${...} 序列各自归一后逐项相等（#232 扩：ERB 三元 \@ 也是插值槽）；
  *   D. 字面量片段双向：ERB 片段（按 %...% 切开）⊂ JS 语句文本，JS 字面量
  *      片段（按 ${...} 切开）⊂ ERB 行文本——防手抄错漏。**#60 起归一**：
  *      ERB 侧先经 tools/lang-table.js 归一（繁/日 → 简，词级优先）再比对，
@@ -78,9 +78,12 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:PLAYER$/, 'PLAYER'],
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
+  [/^CALLNAME:MASTER$/, 'MASTER'], // #235：K4 冷徹 :152/:160/:162（呼び名，MASTER 恒角色 0）
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
   [/^SELF_CALL\(A(,\s*\d+)?\)$/, 'SC'], // EVENT_K 分发前 TARGET=A，与 TARGET 同值（#233）
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
+  [/^SAVESTR\s*:\s*TARGET$/, 'TARGET'],
+  [/^GET_LOOK_INFO\(TARGET,\s*"种族"\)$/, 'RACE'],
   [/^SELF_CALL_FIRST\(A\)$/, 'SCFA'],
   [/^CSTR:2$/, 'CSTR2'],
 
@@ -127,6 +130,10 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:SIDEA$/, 'SIDEA'],
   [/^SAVESTR:SIDEB$/, 'SIDEB'],
   [/^MONSTERNAME\(LOCAL:1\)$/, 'MONSTERNAME'],
+  // —— #232：ERB \@ 三元（K1 出售成熟奴隶口上） ——
+  [/^\(TALENT:TARGET:76 == 1\) \? 主人大人 # 你$/, 'TERN_MASTER_YOU'],
+  [/^\(TALENT:TARGET:76 == 1\) \? 大人 #$/, 'TERN_MASTER_SUFFIX'],
+  [/^\(TALENT:TARGET:76 == 1\) \? 主人大人 # 女$/, 'TERN_MASTER_WOMAN'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -137,6 +144,7 @@ const JS_TOKEN_RULES = [
   [/^sc\(\)$/, 'SC'],
   [/^self_call\(a\)$/, 'SC'],
   [/^scf\(\)$/, 'SCF'],
+  [/^get_look_info\(target,\s*'种族'\)$/, 'RACE'],
   [/^self_call_first\(a\)$/, 'SCFA'],
   [/^cstr2$/, 'CSTR2'],
 
@@ -191,6 +199,10 @@ const JS_TOKEN_RULES = [
   [/^arg_name_of\(sideb\)$/, 'SIDEB'],
   [/^monstername\(local_1\)$/, 'MONSTERNAME'],
   [/^pick\(/, 'PICK'],
+  // —— #232：ERB \@ 三元展开后的局部 ——
+  [/^master_or_you$/, 'TERN_MASTER_YOU'],
+  [/^master_suffix$/, 'TERN_MASTER_SUFFIX'],
+  [/^master_or_woman$/, 'TERN_MASTER_WOMAN'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
@@ -652,8 +664,10 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
         continue; // #184：PRINTDATA 随机文本结构不参与槽位序比对
       }
       const erb_tokens = [
-        ...stmt.printform.arg.matchAll(/%([^%]+)%|{([^}]+)}/g),
-      ].map((m) => m[1] ?? m[2]);
+        ...stmt.printform.arg.matchAll(
+          /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
+        ),
+      ].map((m) => m[1] ?? m[2] ?? m[3]);
       const js_tokens = [];
       for (const s of stmt.strings) {
         if (s.quote === '`') {
@@ -731,7 +745,9 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
       }
       // 正向：ERB 字面量片段（按 %…% 与 {…} 切开、归一后）⊂ JS 语句原文
       //（#184 扩：{…} 是 ERB 的显示插值，与 %…% 同属插值记号）
-      for (const seg of erb_arg.split(/%[^%]+%|{[^}]+}/)) {
+      for (const seg of erb_arg.split(
+        /%[^%]+%|{[^}]+}|\\@(?:(?!\\@)[\s\S])*\\@/,
+      )) {
         if (seg.trim().length >= SEGMENT_MIN) {
           erb_checked += 1;
           // 只去尾随空白（行尾 tab/空格是编辑残留，转译器不保留）；

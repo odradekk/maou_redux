@@ -63,7 +63,8 @@ const { benki_koujo } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。分发层在 kojo-system.js：未注册性格
+ * 仍打占位行（K3/K5 路径），K1 真身随 #232 落地。
  */
 const STUBBED_CALLS = [];
 /** 原作 RAND:N（0..N-1）的缺省实现 */

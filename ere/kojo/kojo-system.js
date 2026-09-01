@@ -40,19 +40,11 @@
  *     era 表——**只读游戏状态**，跨域写一律走门面（#71）；
  *   - 输出面：台词用 era.printAndWait；除此之外不得有任何输出或等待；
  *   - **七道头部守卫先于任何 SELECTCOM 分支**（实测 EVENT_K3_高貴.ERB
- *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各文件 1:1）：
- *       1. TEQUIP:55（死斗场）→ 岔去专用口上（COLOSSEUM_KOJO_<n>）；
- *       2. ASSI > 0 && ASSIPLAY（助手调教）→ 跳过；
- *       3. TEQUIP:45 && SELECTCOM != 45（口塞；口塞指令自己不算）→ 跳过；
- *       4. TFLAG:899（失神）→ 跳过；
- *       5. TEQUIP:89（兽奸）→ 岔去专用口上（DOG_KOJO_<n>；有的性格是
- *          静默跳过，按各文件 1:1）；
- *       6. TALENT:9 == 1（崩坏）→ 跳过；
- *       7. TEQUIP:90（触手）→ 跳过。
- *     守卫读 TEQUIP:55/45/89/90 只读（TEQUIP 建模归 J5，#215）。契约测试
- *     （test/kojo-system.test.js）对**已注册的全部 handler** 逐条置位驱
- *     动：守卫命中时不得出现台词（无等待、无台词输出）——口上票落地即
- *     自动进契约，无需逐票自写守卫用例。
+ *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各文件 1:1；
+ *     K1 自信家（#232）顺序不同：TEQUIP:55 →（助手调教不跳过）→ TEQUIP:45
+ *     → TFLAG:899 → TALENT:9 → TEQUIP:89 → TEQUIP:90。死斗场/兽奸岔真身，
+ *     助手调教出台词。契约测试对跳过类守卫逐条置位；助手与专用口上按
+ *     各 handler 1:1 拆开。
  *   - SELECTCOM 分支：指令族票（轴 A）落地一条 @COM<n> 时，同一编号的
  *     台词分支在各口上 handler 内各自扩展（各文件 1:1，分支序/条件随
  *     ERB 原文）。
@@ -72,6 +64,7 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
 // @EVENTSHOP #PRI（:12-15）：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
 // 玩家关掉（-1）不自开，1（少量模式）不改
@@ -93,7 +86,7 @@ const DECLARED_KOJO_COM_IDS = [
   ...Array.from({ length: 700 }, (_, i) => i + 901),
 ];
 
-/** @KOJO_MESSAGE_COM_{N}：指令口上族（这张票注册 3 与 5，见 kojo-k3-noble / kojo-k5-mao） */
+/** @KOJO_MESSAGE_COM_{N}：指令口上族（K3 / K5 / K1） */
 const kojo_message_com_family = new DispatchFamily(
   'KOJO_MESSAGE_COM',
   DECLARED_KOJO_COM_IDS,
@@ -102,80 +95,77 @@ const kojo_message_com_family = new DispatchFamily(
 /** @SELF_KOJO_K{N}：事件口上族（随各口上票落地） */
 const self_kojo_family = new DispatchFamily('SELF_KOJO', DECLARED_KOJO_COM_IDS);
 
-/** @KOJO_MESSAGE_PALAMCNG_{N}：参数变动口上族 */
-const palamcng_family = new DispatchFamily(
+/** @KOJO_MESSAGE_PALAMCNG_{N}：参数变动口上（#232 起 K1 真身） */
+const kojo_message_palamcng_family = new DispatchFamily(
   'KOJO_MESSAGE_PALAMCNG',
   DECLARED_KOJO_COM_IDS,
 );
 
-/** @KOJO_MESSAGE_MARKCNG_{N}：刻印取得口上族 */
-const markcng_family = new DispatchFamily(
+/** @KOJO_MESSAGE_MARKCNG_{N}：刻印取得口上（#232 起 K1 真身） */
+const kojo_message_markcng_family = new DispatchFamily(
   'KOJO_MESSAGE_MARKCNG',
   DECLARED_KOJO_COM_IDS,
 );
 
-/** @BENKI_KOUJO_K{N}：肉便器口上族 */
+const dog_kojo_family = new DispatchFamily('DOG_KOJO', DECLARED_KOJO_COM_IDS);
+const colosseum_kojo_family = new DispatchFamily(
+  'COLOSSEUM_KOJO',
+  DECLARED_KOJO_COM_IDS,
+);
 const benki_koujo_family = new DispatchFamily(
   'BENKI_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @ENTERENEMY_KOUJO_K{N}：来袭口上族 */
-const enterenemy_koujo_family = new DispatchFamily(
-  'ENTERENEMY_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @DUNGEON_VICTORY_K{N}：战斗胜利口上族 */
-const victory_koujo_family = new DispatchFamily(
+const dungeon_victory_family = new DispatchFamily(
   'DUNGEON_VICTORY',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @DUNGEON_ATTACK_K{N}：攻击台词口上族 */
-const attack_koujo_family = new DispatchFamily(
+const dungeon_attack_family = new DispatchFamily(
   'DUNGEON_ATTACK',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @NTR_KOUJO_K{N} */
 const ntr_koujo_family = new DispatchFamily('NTR_KOUJO', DECLARED_KOJO_COM_IDS);
-
-/** @EXUCUTION_KOUJO_K{N} */
 const exucution_koujo_family = new DispatchFamily(
   'EXUCUTION_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @MUSEUM_KOUJO_K{N} */
 const museum_koujo_family = new DispatchFamily(
   'MUSEUM_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @BANISHMENT_KOUJO_K{N} */
 const banishment_koujo_family = new DispatchFamily(
   'BANISHMENT_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @PUBLIC_EXUCUTION_KOUJO_K{N} */
 const public_exucution_koujo_family = new DispatchFamily(
   'PUBLIC_EXUCUTION_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @GROTESQUE_KOUJO_K{N} */
 const grotesque_koujo_family = new DispatchFamily(
   'GROTESQUE_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-
-/** @GOBI_KOUJO_K{N}：语尾口上族 */
+const enterenemy_koujo_family = new DispatchFamily(
+  'ENTERENEMY_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const gohoubi_request_koujo_family = new DispatchFamily(
+  'GOHOUBI_REQUEST_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
 const gobi_koujo_family = new DispatchFamily(
   'GOBI_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
+
+/** 分发守卫能拼出的性格编号；空间外（含无性格 → 0）返回 -1 */
+function kojo_handler_id(arg = -1) {
+  const local = get_kojo_num(arg);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    return local - 100;
+  }
+  return -1;
+}
 /**
  * @GET_KOJO_NUM（:86-144）：角色 → 口上编号。
  *
@@ -237,9 +227,10 @@ async function kojo_message_com(rand) {
  * 两道守卫：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @param {number} [q] 自慰妄想对象（EVENT_AFTERTRAIN :657-665 的 Q：0 主人 / 1 助手 / 2 野狗）
  * @returns {Promise<number>} 0
  */
-async function self_kojo(rand) {
+async function self_kojo(rand, q) {
   // 第一道守卫：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {
     const { game } = require('#/facade/game');
@@ -254,86 +245,185 @@ async function self_kojo(rand) {
   if ((local >= 100 && local < 140) || local > 1000) {
     await self_kojo_family.call(local - 100, {
       whenMissing: 0,
-      args: [rand],
+      args: [rand, q],
     });
   }
   return 0;
 }
 
 /**
- * 按 GET_KOJO_NUM 分发到已注册的口上实现。空间内缺失 = TRYCALL 落空。
- * @param {DispatchFamily} family
- * @param {unknown[]} [args]
+ * 已注册则走真身，否则打存根。K3/K5 路径的占位行因此保持，K1 落地后自动换真身。
  */
-async function dispatch_kojo(family, args = []) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await family.call(local - 100, { whenMissing: 0, args });
+async function try_kojo_or_stub(
+  family,
+  stub_name,
+  stub_desc,
+  stub_ticket,
+  arg = -1,
+  extra_args = [],
+  wait = false,
+) {
+  const id = kojo_handler_id(arg);
+  if (id >= 0 && family.has(id)) {
+    return family.call(id, { whenMissing: 0, args: extra_args });
+  }
+  if (wait) {
+    await stub_line_wait(stub_name, stub_desc, stub_ticket);
+  } else {
+    stub_line(stub_name, stub_desc, stub_ticket);
   }
   return 0;
 }
 
 async function kojo_message_palamcng(rand) {
-  return dispatch_kojo(palamcng_family, [rand]);
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0;
+  }
+  const local = get_kojo_num();
+  if ((era.get(`flag:${local}`) || 0) === 0) {
+    return 0;
+  }
+  return try_kojo_or_stub(
+    kojo_message_palamcng_family,
+    'KOJO_MESSAGE_PALAMCNG',
+    '参数变动口上',
+    '随口上票 #46',
+    -1,
+    [rand],
+  );
 }
 
 async function kojo_message_markcng(rand) {
-  return dispatch_kojo(markcng_family, [rand]);
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0;
+  }
+  return try_kojo_or_stub(
+    kojo_message_markcng_family,
+    'KOJO_MESSAGE_MARKCNG',
+    '刻印取得口上',
+    '随口上票 #46',
+    -1,
+    [rand],
+  );
 }
 
 async function benki_koujo(rand) {
-  return dispatch_kojo(benki_koujo_family, [rand]);
+  return try_kojo_or_stub(
+    benki_koujo_family,
+    'BENKI_KOUJO',
+    '肉便器口上',
+    '随口上票',
+    -1,
+    [rand],
+  );
+}
+
+async function victory_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid;
+  }
+  const result = await try_kojo_or_stub(
+    dungeon_victory_family,
+    'VICTORY_KOUJO',
+    '胜利口上',
+    '随口上票',
+    cid ?? -1,
+    [rand],
+    true,
+  );
+  era_flag.target = target_pool;
+  return result;
+}
+
+async function attack_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid;
+  }
+  const result = await try_kojo_or_stub(
+    dungeon_attack_family,
+    'ATTACK_KOUJO',
+    '攻击口上',
+    '随口上票',
+    cid ?? -1,
+    [rand],
+    true,
+  );
+  era_flag.target = target_pool;
+  return result;
 }
 
 async function enterenemy_koujo(cid, rand) {
   const target_pool = era_flag.target;
   era_flag.target = cid;
-  const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await enterenemy_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [rand],
-    });
-  }
+  const result = await try_kojo_or_stub(
+    enterenemy_koujo_family,
+    'ENTERENEMY_KOUJO',
+    '来袭口上',
+    '随 #107 口上票',
+    cid,
+    [rand],
+  );
   era_flag.target = target_pool;
-  return 0;
+  return result;
 }
 
-async function victory_koujo(rand) {
-  return dispatch_kojo(victory_koujo_family, [rand]);
+async function gohoubi_request_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  era_flag.target = cid;
+  const result = await try_kojo_or_stub(
+    gohoubi_request_koujo_family,
+    'GOHOUBI_REQUEST_KOUJO',
+    '奖赏请求口上',
+    '随口上票',
+    cid,
+    [cid, rand],
+  );
+  era_flag.target = target_pool;
+  return result;
 }
 
-async function attack_koujo(rand) {
-  return dispatch_kojo(attack_koujo_family, [rand]);
+async function gobi_koujo(arg0, rand) {
+  return try_kojo_or_stub(
+    gobi_koujo_family,
+    'GOBI_KOUJO',
+    '语尾口上',
+    '随语尾口上票',
+    -1,
+    [arg0, rand],
+  );
 }
 
-async function gobi_koujo(arg_0 = 0, rand) {
-  return dispatch_kojo(gobi_koujo_family, [rand, arg_0]);
-}
 module.exports = {
   get_kojo_num,
+  kojo_handler_id,
   kojo_message_com,
   kojo_message_com_family,
+  kojo_message_palamcng,
+  kojo_message_palamcng_family,
+  kojo_message_markcng,
+  kojo_message_markcng_family,
   self_kojo,
   self_kojo_family,
-  palamcng_family,
-  markcng_family,
-  kojo_message_palamcng,
-  kojo_message_markcng,
-  benki_koujo_family,
+  dog_kojo_family,
+  colosseum_kojo_family,
   benki_koujo,
-  enterenemy_koujo_family,
-  enterenemy_koujo,
-  victory_koujo_family,
+  benki_koujo_family,
   victory_koujo,
-  attack_koujo_family,
+  dungeon_victory_family,
   attack_koujo,
+  dungeon_attack_family,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
   banishment_koujo_family,
   public_exucution_koujo_family,
   grotesque_koujo_family,
-  gobi_koujo_family,
+  enterenemy_koujo,
+  enterenemy_koujo_family,
+  gohoubi_request_koujo,
+  gohoubi_request_koujo_family,
   gobi_koujo,
+  gobi_koujo_family,
 };

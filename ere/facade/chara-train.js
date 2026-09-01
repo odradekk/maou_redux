@@ -59,6 +59,21 @@ class TrainFacade {
   }
 
   /**
+   * 穿环状态（cflag:cid:7 ↔ CFLAG:7）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）
+   * @returns {number}
+   */
+  get 穿环状态() {
+    return era.get(`cflag:${this.cid}:7`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 穿环状态(v) {
+    era.set(`cflag:${this.cid}:7`, v);
+  }
+
+  /**
    * 初体验对象（cflag:cid:15 ↔ CFLAG:15）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
    * @returns {number}
