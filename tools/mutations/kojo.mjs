@@ -526,12 +526,12 @@ export default [
     must_mention: '口塞非 45 指令跳过',
   },
   {
-    desc: 'M1662 K1 口塞 SELECTCOM == 45 豁免失效（!== 45 改 !== 0）（#232）',
+    desc: 'M1662 K1 口塞 SELECTCOM == 45 豁免失效（去掉 !== 45）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
     // :990-991`,
-    replace: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 0) {
-    // :990-991 变异`,
+    replace: `  if (era.get(\`tequip:\${target}:45\`)) {
+    // :990-991 变异：口塞 45 豁免失效`,
     tests: ['kojo-k1-confident'],
     must_mention: '口塞指令自己说话',
   },

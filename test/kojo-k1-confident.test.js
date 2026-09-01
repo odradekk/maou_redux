@@ -70,9 +70,11 @@ test('首次爱抚（CFLAG:301 == 0 且 MARK:2 < 2）：一句拒绝 + 推进到
 test('首次爱抚的刻印分档（MARK:2 >= 2）：温柔台词仍推进到 1', async () => {
   const fixture = await setup_k1((f) => f.store.set(`mark:${CID}:2`, 2));
   await speak_k1(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '「真的！…但、只要忍住就好了…啊…啊啊啊！」',
-  ]);
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['「真的！…但、只要忍住就好了…啊…啊啊啊！」'],
+    '刻印分档也推进到 1',
+  );
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 1, '刻印分档也推进到 1');
 });
 
