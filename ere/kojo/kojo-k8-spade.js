@@ -1673,8 +1673,8 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80,
-    87, 123, 124, 125, 126, 127,
+    31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87,
+    123, 124, 125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -5832,6 +5832,148 @@ async function kojo_message_com_8(rand) {
       await era.printAndWait(
         `${target_name}看着大镜子里自己被张开双腿侵犯肛门的痴态，不甘心的移开了目光………`,
       ); // :3307
+    }
+    return 0;
+  } else if (era_flag.selectcom == 30) {
+    // :3316-3386 手淫 CFLAG:331（无 A感覚 分档，按 TALENT/侍奉精神 ABL:16 分档；
+    // 源作误写：二回目以降顶档与次档均写 CFLAG:331 <= 5，:3341 原文如此，1:1 保真不修正——
+    // 顶档 7 与次档 6 因此共用同一守卫，cflag=6 且 FLAG:7 != 2 时会跳过两者直接落到更低档）
+    if (kojo.手淫 == 0) {
+      // :3318-3335 初めて（单层：无 ABL:3 细分）
+      if (era0(`talent:${target}:76`) == 1) {
+        // 淫乱
+        await era.printAndWait(`「啊啊…你的阴茎好热…啊啊…啊啊…${heart(1)}」`); // :3321
+        await era.printAndWait(
+          `${target_name}一边喘着粗气，一边激烈的对待着${player_name}的阴茎………`,
+        ); // :3322
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // 爱慕
+        await era.printAndWait(
+          `「你的阴茎…在我的手里变得这么硬…啊啊…好厉害…好高兴…♪」`,
+        ); // :3325
+        await era.printAndWait(
+          `${target_name}一边喘着粗气，一边温柔的侍奉着${player_name}的阴茎………`,
+        ); // :3326
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        // 侍奉精神Lv3以上
+        await era.printAndWait(`「我不做这种事不行么…真没办法…呵呵呵」`); // :3329
+        await era.printAndWait(
+          `${target_name}一边舔着嘴唇。一边侍奉着${player_name}的阴茎………`,
+        ); // :3330
+      } else {
+        // それ以外（侍奉精神Lv3未満）
+        await era.printAndWait(
+          `「用着双手服侍你的东西…嗯…疼么？…那就这么握碎…切…连这种程度的力量都用不出来么」`,
+        ); // :3333
+        await era.printAndWait(
+          `${target_name}一边露出不甘心的表情，一边侍奉着${player_name}阴茎………`,
+        ); // :3334
+      }
+      kojo.手淫 = 1; // :3336 CFLAG:TARGET:331 = 1
+      return 0;
+    }
+    // :3339-3384 二回目以降（七档）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :3341-3350 淫乱＋侍奉精神Lv3以上（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「看，你的阴茎勃起的更厉害了、因为我把你弄得更舒服了吧${heart(1)}」`,
+        ); // :3343
+        await era.printAndWait(
+          `${target_name}的左手紧紧握着${player_name}阴茎的根部，右手撸动着。`,
+        ); // :3344
+        await era.printAndWait(
+          `「啊啊${heart(1)}啊啊${heart(1)} …这么红，好棒…${heart(1)}」`,
+        ); // :3345
+      } else {
+        await era.printAndWait(
+          `「只是握着你热乎乎的阴茎、我的头就已经开始发晕了…${heart(1)}」`,
+        ); // :3347
+        await era.printAndWait(
+          `${target_name}不自觉的张着嘴、带着晕乎乎的眼神侍奉着${player_name}的阴茎。`,
+        ); // :3348
+        await era.printAndWait(
+          `「啊啊…如果继续这么热的话…我的手都快烫伤了…${heart(1)}」`,
+        ); // :3349
+      }
+      kojo.手淫 = 7; // :3351 CFLAG:331 = 7
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :3354-3355 淫乱
+      await era.printAndWait(
+        `「啊啊…一想到这根阴茎在我里面乱搞…啊…啊啊${heart(1)}」`,
+      ); // :3354
+      await era.printAndWait(
+        `${target_name}带着一副出神的表情服侍着${player_name}的阴茎………`,
+      ); // :3355
+      kojo.手淫 = 6; // :3356 CFLAG:331 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :3359-3367 爱＋侍奉精神Lv5（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「嗯啊…这根阴茎…是只属于我的阴茎…啊…绝对不会放手的${heart(1)}」`,
+        ); // :3360
+        await era.printAndWait(
+          `${target_name}带着一副出神的表情侍奉着${player_name}的阴茎。`,
+        ); // :3361
+        await era.printAndWait(
+          `「就这样变得非常非常舒服…射出非常非常多的精液来吧…♪」`,
+        ); // :3362
+      } else {
+        await era.printAndWait(
+          `「啊啊…现在好像马上就要咻咻的射精出来哦…你的阴茎${heart(1)}」`,
+        ); // :3364
+        await era.printAndWait(
+          `${target_name}用湿润的眼睛凝视着${player_name}的阴茎。`,
+        ); // :3365
+        await era.printAndWait(
+          `「就这样…用我的手变得非常非常舒服…射出非常非常多的精液来吧…♪」`,
+        ); // :3366
+      }
+      kojo.手淫 = 5; // :3368 CFLAG:331 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :3371-3372 爱＋侍奉精神Lv3以上
+      await era.printAndWait(
+        `「你的阴茎…在我的手里变得这么硬…啊啊…好厉害…好高兴…♪」`,
+      ); // :3371
+      await era.printAndWait(
+        `${target_name}一边喘着粗气，一边温柔的侍奉着${player_name}的阴茎………`,
+      ); // :3372
+      kojo.手淫 = 4; // :3373 CFLAG:331 = 4
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :3376-3377 侍奉精神Lv3以上（与上一档共用 TALENT:85+ABL:16>=3，仅门槛 CFLAG 不同，源作如此）
+      await era.printAndWait(
+        `「这样就好了吗？………呵呵呵、真的露出了好像很舒服似的脸啊、你」`,
+      ); // :3376
+      await era.printAndWait(
+        `${target_name}一边舔着嘴唇，一边侍奉着${player_name}的阴茎………`,
+      ); // :3377
+      kojo.手淫 = 3; // :3378 CFLAG:331 = 3
+    } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {
+      // :3381-3382 それ以外（侍奉精神Lv3未満）
+      await era.printAndWait(`「啊啊…用手服侍你的东西什么的，真是屈辱………」`); // :3381
+      await era.printAndWait(
+        `${target_name}一边撅起嘴唇，一边服侍着${player_name}的阴茎………`,
+      ); // :3382
+      kojo.手淫 = 2; // :3383 CFLAG:331 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {

@@ -1512,8 +1512,66 @@ test('SELECTCOM 29 背面座位肛交，二回目以降·爱+A感觉Lv3以上 RA
   assert.equal(fixture.store.get('cflag:31:330'), 5, 'CFLAG:330 推进到 5');
 });
 
-test('骨架期：SELECTCOM 30（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
-  const fixture = await setup_k8(undefined, 30);
+test('SELECTCOM 30 手淫，初めて·侍奉精神Lv3以上（无 TALENT）：CFLAG:331 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('abl:31:16', 3);
+  }, 30);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我不做这种事不行么…真没办法…呵呵呵」',
+    '银黑桃一边舔着嘴唇。一边侍奉着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 1, 'CFLAG:331 推进到 1');
+});
+
+test('SELECTCOM 30 手淫，二回目以降·淫乱+侍奉精神Lv3以上 RAND0：CFLAG:331 推进到 7', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:331', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 3);
+  }, 30);
+  await speak_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「看，你的阴茎勃起的更厉害了、因为我把你弄得更舒服了吧♡」',
+    '银黑桃的左手紧紧握着你阴茎的根部，右手撸动着。',
+    '「啊啊♡啊啊♡ …这么红，好棒…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 7, 'CFLAG:331 推进到 7');
+});
+
+test('SELECTCOM 30 手淫，二回目以降·爱+侍奉精神Lv5 RAND1：CFLAG:331 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:331', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:16', 5);
+  }, 30);
+  await speak_k8(fixture, () => 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…现在好像马上就要咻咻的射精出来哦…你的阴茎♡」',
+    '银黑桃用湿润的眼睛凝视着你的阴茎。',
+    '「就这样…用我的手变得非常非常舒服…射出非常非常多的精液来吧…♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 5, 'CFLAG:331 推进到 5');
+});
+
+test('SELECTCOM 30 手淫，源作误写死区：TALENT:85+侍奉精神Lv3以上、CFLAG:331=4、口上开关关闭时无分支命中，1:1 保真不修补', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:331', 4);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:16', 3);
+    f.store.set('flag:7', 0);
+  }, 30);
+  await speak_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '源作死区：无分支命中，不打印任何文本',
+  );
+  assert.equal(fixture.store.get('cflag:31:331'), 4, 'CFLAG:331 保持不变');
+});
+
+test('骨架期：SELECTCOM 31（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 31);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
