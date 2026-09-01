@@ -59,11 +59,12 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { v_able } = require('#/system/train/v-able');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
+const { benki_koujo } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。分发层在 kojo-system.js：未注册性格
+ * 仍打占位行（K3/K5 路径），K1 真身随 #232 落地。
  */
 const STUBBED_CALLS = ['BENKI_KOUJO'];
 
@@ -524,7 +525,7 @@ async function run_benki(arg, rand_n = default_rand) {
 
   // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
   era_flag.target = arg;
-  stub_line('BENKI_KOUJO', '肉便器口上', '随口上票');
+  await benki_koujo();
 
   // —— :624-757 配信清算（BENKI_MENU:6 >= 3）——
   if (menu[6] >= 3) {
@@ -646,7 +647,7 @@ async function run_benki(arg, rand_n = default_rand) {
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;
-    stub_line('BENKI_KOUJO', '肉便器口上', '随口上票');
+    await benki_koujo();
 
     // 珠与经验结算
     juel_settle(arg, play);
@@ -738,7 +739,7 @@ async function run_benki(arg, rand_n = default_rand) {
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;
-    stub_line('BENKI_KOUJO', '肉便器口上', '随口上票');
+    await benki_koujo();
 
     // 珠与经验结算
     juel_settle(arg, play);
@@ -822,7 +823,7 @@ async function run_benki(arg, rand_n = default_rand) {
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;
-    stub_line('BENKI_KOUJO', '肉便器口上', '随口上票');
+    await benki_koujo();
 
     // 珠与经验结算
     juel_settle(arg, play);
@@ -918,7 +919,7 @@ async function run_benki(arg, rand_n = default_rand) {
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;
-    stub_line('BENKI_KOUJO', '肉便器口上', '随口上票');
+    await benki_koujo();
 
     // 珠与经验结算
     juel_settle(arg, play);

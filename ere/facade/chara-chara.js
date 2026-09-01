@@ -178,6 +178,21 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:601`, v);
   }
 
+  /**
+   * 结婚爱情（cflag:cid:602 ↔ CFLAG:602）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行465 CFLAG:602 = 結婚愛情
+   * @returns {number}
+   */
+  get 结婚爱情() {
+    return era.get(`cflag:${this.cid}:602`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 结婚爱情(v) {
+    era.set(`cflag:${this.cid}:602`, v);
+  }
+
   // —— cstr ——
   /**
    * 加入时名字（cstr:cid:1 ↔ CSTR:1）
