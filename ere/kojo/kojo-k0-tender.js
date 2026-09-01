@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -32,7 +32,8 @@
  *     全身擦洗 CFLAG:336 状态机 :3800-3835；
  *     骑乘位肛交 CFLAG:337 状态机 :3840-3955；
  *     肛门侍奉 CFLAG:338 状态机 :3960-4001；
- *     打屁股 CFLAG:341 状态机 :4006-4037）
+ *     打屁股 CFLAG:341 状态机 :4006-4037；
+ *     鞭 CFLAG:342 状态机 :4042-4105）
 
 
 
@@ -110,7 +111,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4037）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股。
+ * @KOJO_MESSAGE_COM_0（:674-4105）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭。
 
 
 
@@ -6073,6 +6074,127 @@ async function kojo_message_com_0(rand) {
           `${target_name}泪流不止悲痛地叫喊着、承受着屁股上的击打………`,
         ); // :4032
         kojo.打屁股 = 2; // :4033
+      }
+      return 0;
+    }
+  }
+
+  // :4042 IF SELECTCOM == 41（鞭，CFLAG:342）
+  if (era_flag.selectcom === 41) {
+    const masochism = era.get(`abl:${target}:21`) || 0;
+
+    if (kojo.鞭 === 0) {
+      // :4044
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :4046
+        await era.printAndWait(`「啊啊…虽然被抽也不是不可以…${heart(1)}」`); // :4047
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :4049
+        await era.printAndWait(
+          `「${scf()}、${sc()}是不会反抗的…所以求您了…不要这样…呀呜呜呜～！」`,
+        ); // :4050
+      } else {
+        await era.printAndWait(`「咿～…这、这样子…啊啊～！好痛～好痛啊～！」`); // :4052-4053
+      }
+      kojo.鞭 = 1; // :4055-4056
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        masochism >= 5 &&
+        (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4058-4060
+        await era.printAndWait(`「啊啊～…啊～…嗯咿咿咿～…${heart(1)}」`); // :4061
+        await era.printAndWait(
+          `「啊啊啊啊…被这样打…为什么会这么舒服呢…已经…再也变不回去了…嗯～啊～…哈啊啊啊………${heart(1)}」`,
+        ); // :4062
+        await era.printAndWait(
+          `每次被鞭子抽打、爱液就会从${target_name}的私处飞散开来………`,
+        ); // :4063
+        kojo.鞭 = 9; // :4064
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        masochism >= 3 &&
+        (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4066
+        await era.printAndWait(
+          `「啊～…啊～…呀呜唔嗯～…啊～哈啊～啊啊～…已经不觉得怎么痛了…因为有感觉了～${heart(1)}」`,
+        ); // :4067
+        await era.printAndWait(
+          `${target_name}每次被鞭子抽打就会发出娇艳的呻吟、惹来了更加强烈的鞭打………`,
+        ); // :4068
+        kojo.鞭 = 8; // :4069
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.鞭 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :4071
+        await era.printAndWait(
+          `「呀呜呜～～…请赐给我这只色情的母狗…更多的痛苦吧…请我更多的惩罚吧${heart(1)}」`,
+        ); // :4072
+        await era.printAndWait(
+          `${target_name}每次被鞭打就会蜷曲着身体发出悲鸣声………`,
+        ); // :4073
+        kojo.鞭 = 7; // :4074
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 5 &&
+        (kojo.鞭 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4076
+        await era.printAndWait(
+          `「啊啊～…啊～…啊啊啊～～！…哈啊…哈啊…啊啊…好奇怪…这样…好奇怪啊………」`,
+        ); // :4077
+        await era.printAndWait(
+          `${target_name}每次被鞭打就会摩擦起双腿、露出陶醉的表情。`,
+        ); // :4078
+        await era.printAndWait(
+          `「总觉得…好舒服呢…啊啊～请更多地…鞭笞我吧………」`,
+        ); // :4079
+        kojo.鞭 = 6; // :4080
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 3 &&
+        (kojo.鞭 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4082
+        await era.printAndWait(
+          `「啊啊～…嗯～…嗯啊～…咿～…啊啊…为…什么…明明…是被鞭打…啊啊～！」`,
+        ); // :4083
+        await era.printAndWait(
+          `${target_name}不断地被鞭打着。但是比起痛楚更多的是一种奇妙的瘙痒感………`,
+        ); // :4084
+        kojo.鞭 = 5; // :4085
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.鞭 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4087
+        await era.printAndWait(
+          `「${sc()}是…不会…反抗你的…不会反抗的…啊啊…所以…请饶了我吧…咿～～！」`,
+        ); // :4088
+        await era.printAndWait(`${target_name}一被鞭打就出声讨饶………`); // :4089
+        kojo.鞭 = 4; // :4090
+      } else if (masochism >= 3 && (kojo.鞭 <= 2 || game.kojo.口上开关 === 2)) {
+        // :4092
+        await era.printAndWait(
+          `「啊啊～！…啊啊…不、不对…这是…咿呀～～…啊～啊啊啊～～！」`,
+        ); // :4093
+        await era.printAndWait(
+          `${player_name}的鞭子在${target_name}的身上一次又一次的抽打着。`,
+        ); // :4094
+        await era.printAndWait(
+          `然后每鞭打数次${target_name}就会发出一声娇艳的呻吟………`,
+        ); // :4095
+        kojo.鞭 = 3; // :4096
+      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 === 2) {
+        // :4098
+        await era.printAndWait(`「啊啊～…求你了…快住手吧…求你了…」`); // :4099
+        await era.printAndWait(`${target_name}泪流满面、祈求饶恕………`); // :4100
+        kojo.鞭 = 2; // :4101
       }
       return 0;
     }

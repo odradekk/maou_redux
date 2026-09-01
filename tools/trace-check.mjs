@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4037', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4105', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -17729,6 +17729,191 @@ const FILES = [
         any: [/%SAVESTR:TARGET%泪流不止悲痛地叫喊着、承受着屁股上的击打………/],
       },
       { src: K0, ref: '4033', any: [/\t\t\tCFLAG:TARGET:341 = 2/m] },
+      { src: K0, ref: '4042', any: [/IF\ SELECTCOM\ ==\ 41/m] },
+      { src: K0, ref: '4042-4105', any: [/^IF SELECTCOM == 41$/m] },
+      { src: K0, ref: '4042', any: [/IF SELECTCOM == 41/m] },
+      { src: K0, ref: '4044', any: [/\tIF CFLAG:TARGET:342 == 0/m] },
+      { src: K0, ref: '4046', any: [/\t\tIF TALENT:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4047',
+        any: [/「啊啊…虽然被抽也不是不可以…%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '4049', any: [/\t\tELSEIF TALENT:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4050',
+        any: [
+          /「%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%是不会反抗的…所以求您了…不要这样…呀呜呜呜～！/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4052-4053',
+        any: [/「咿～…这、这样子…啊啊～！好痛～好痛啊～！」/],
+      },
+      { src: K0, ref: '4055-4056', any: [/\t\tCFLAG:TARGET:342 = 1/m] },
+      {
+        src: K0,
+        ref: '4058-4060',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 8 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4061',
+        any: [/「啊啊～…啊～…嗯咿咿咿～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '4062',
+        any: [
+          /「啊啊啊啊…被这样打…为什么会这么舒服呢…已经…再也变不回去了…嗯～啊～…哈啊啊啊………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4063',
+        any: [/每次被鞭子抽打、爱液就会从%SAVESTR:TARGET%的私处飞散开来………/],
+      },
+      { src: K0, ref: '4064', any: [/\t\t\tCFLAG:TARGET:342 = 9/m] },
+      {
+        src: K0,
+        ref: '4066',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:342 <= 7 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4067',
+        any: [
+          /「啊～…啊～…呀呜唔嗯～…啊～哈啊～啊啊～…已经不觉得怎么痛了…因为有感觉了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4068',
+        any: [
+          /%SAVESTR:TARGET%每次被鞭子抽打就会发出娇艳的呻吟、惹来了更加强烈的鞭打………/,
+        ],
+      },
+      { src: K0, ref: '4069', any: [/\t\t\tCFLAG:TARGET:342 = 8/m] },
+      {
+        src: K0,
+        ref: '4071',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:342 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4072',
+        any: [
+          /「呀呜呜～～…请赐给我这只色情的母狗…更多的痛苦吧…请我更多的惩罚吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4073',
+        any: [/%SAVESTR:TARGET%每次被鞭打就会蜷曲着身体发出悲鸣声………/],
+      },
+      { src: K0, ref: '4074', any: [/\t\t\tCFLAG:TARGET:342 = 7/m] },
+      {
+        src: K0,
+        ref: '4076',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4077',
+        any: [
+          /「啊啊～…啊～…啊啊啊～～！…哈啊…哈啊…啊啊…好奇怪…这样…好奇怪啊………」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4078',
+        any: [/%SAVESTR:TARGET%每次被鞭打就会摩擦起双腿、露出陶醉的表情。/],
+      },
+      {
+        src: K0,
+        ref: '4079',
+        any: [/「总觉得…好舒服呢…啊啊～请更多地…鞭笞我吧………」/],
+      },
+      { src: K0, ref: '4080', any: [/\t\t\tCFLAG:TARGET:342 = 6/m] },
+      {
+        src: K0,
+        ref: '4082',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:342 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4083',
+        any: [
+          /「啊啊～…嗯～…嗯啊～…咿～…啊啊…为…什么…明明…是被鞭打…啊啊～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4084',
+        any: [
+          /%SAVESTR:TARGET%不断地被鞭打着。但是比起痛楚更多的是一种奇妙的瘙痒感………/,
+        ],
+      },
+      { src: K0, ref: '4085', any: [/\t\t\tCFLAG:TARGET:342 = 5/m] },
+      {
+        src: K0,
+        ref: '4087',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:342 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4088',
+        any: [
+          /「%SELF_CALL\(TARGET\)%是…不会…反抗你的…不会反抗的…啊啊…所以…请饶了我吧…咿～～！」/,
+        ],
+      },
+      { src: K0, ref: '4089', any: [/%SAVESTR:TARGET%一被鞭打就出声讨饶………/] },
+      { src: K0, ref: '4090', any: [/\t\t\tCFLAG:TARGET:342 = 4/m] },
+      {
+        src: K0,
+        ref: '4092',
+        any: [/\t\tELSEIF ABL:21 >= 3 && \(CFLAG:342 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '4093',
+        any: [/「啊啊～！…啊啊…不、不对…这是…咿呀～～…啊～啊啊啊～～！」/],
+      },
+      {
+        src: K0,
+        ref: '4094',
+        any: [
+          /%SAVESTR:PLAYER%的鞭子在%SAVESTR:TARGET%的身上一次又一次的抽打着。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4095',
+        any: [/然后每鞭打数次%SAVESTR:TARGET%就会发出一声娇艳的呻吟………/],
+      },
+      { src: K0, ref: '4096', any: [/\t\t\tCFLAG:TARGET:342 = 3/m] },
+      {
+        src: K0,
+        ref: '4098',
+        any: [/\t\tELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      { src: K0, ref: '4099', any: [/「啊啊～…求你了…快住手吧…求你了…」/] },
+      { src: K0, ref: '4100', any: [/%SAVESTR:TARGET%泪流满面、祈求饶恕………/] },
+      { src: K0, ref: '4101', any: [/\t\t\tCFLAG:TARGET:342 = 2/m] },
     ],
   },
 

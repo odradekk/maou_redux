@@ -1880,4 +1880,45 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '打屁股二次：淫乱+抖M写 5 / 末支须 FLAG:7==2 / 阈值闸',
   },
+  {
+    desc: 'M1887 K0 鞭首次状态推进写错（CFLAG:342 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.鞭 = 1; // :4055-4056',
+    replace: '      kojo.鞭 = 2; // :4055-4056',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭首次推进到 1',
+  },
+  {
+    desc: 'M1888 K0 鞭二次淫乱+抖M门槛错位（CFLAG:342 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4058-4060`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4058-4060`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸',
+  },
+  {
+    desc: 'M1889 K0 鞭二次淫乱+抖M写回错档（CFLAG:342 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.鞭 = 9; // :4064',
+    replace: '        kojo.鞭 = 8; // :4064',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭二次淫乱+抖M写 9',
+  },
+  {
+    desc: 'M1890 K0 鞭二次末支门槛改回自己的 CFLAG:342（应读 CFLAG:335）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 === 2) {\n        // :4098',
+    replace:
+      '      } else if (kojo.鞭 <= 1 || game.kojo.口上开关 === 2) {\n        // :4098',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸',
+  },
 ];
