@@ -2037,4 +2037,37 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1852 K8 SELECTCOM 26 正常位肛交淫乱+A感觉Lv3以上推进写错（CFLAG:327 = 7 改 6，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.正常位肛交 = 7; // :2907 CFLAG:327 = 7',
+    replace: '      kojo.正常位肛交 = 6; // :2907（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 7',
+  },
+  {
+    desc: 'M1853 K8 SELECTCOM 26 正常位肛交淫乱（A感觉Lv3未満）推进写错（CFLAG:327 = 6 改 5，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.正常位肛交 = 6; // :2913 CFLAG:327 = 6',
+    replace: '      kojo.正常位肛交 = 5; // :2913（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 6',
+  },
+  {
+    desc: 'M1854 K8 SELECTCOM 26 正常位肛交 A感觉Lv3以上（无好感）守卫丢失（ABL:3>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.正常位肛交 <= 2 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      (kojo.正常位肛交 <= 2 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1855 K8 SELECTCOM 26 正常位肛交それ以外守卫丢失（CFLAG:327 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.正常位肛交 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
