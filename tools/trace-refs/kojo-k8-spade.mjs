@@ -3533,6 +3533,2217 @@ export const FILES = [
         ref: '7918-7953',
         any: [/@GOBI_KOUJO_K8, ARG:0/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1018-1069',
+        any: [/IF SELECTCOM == 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1020-1029',
+        any: [/IF CFLAG:303 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1022',
+        any: [/PRINTFORMW 「啊…啊~啊！菊花…嗯…啊哈…好舒服…啊啊…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1023',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被开发了的肛门因为%SAV/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1025',
+        any: [/PRINTFORMW 「啊…那、那里…很脏…呀…不、不要…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1026',
+        any: [/PRINTFORMW %SAVESTR:TARGET%因为被%SAVESTR:P/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1028',
+        any: [/CFLAG:TARGET:303 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1031-1068',
+        any: [/P = PALAM:3 \+ UP:3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1032',
+        any: [/P = PALAM:3 \+ UP:3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1034-1039',
+        any: [/IF TALENT:TARGET:76 == 1 && P >= PALAMLV/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1035',
+        any: [/PRINTFORMW 「啊…啊啊…再摸摸我的肛门吧%UNICODE\(0x2661/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1037',
+        any: [
+          /PRINTFORMW 「哈啊哈啊…啊啊…更多…更多…侵犯我的菊花吧…啊啊…要发疯/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1038',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1039',
+        any: [/CFLAG:303 = 7/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1041-1044',
+        any: [/PRINTFORMW 「嗯…啊嗯…不要那么粗暴的对待我的肛门…啊…咕！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1042',
+        any: [/PRINTFORMW 「嗯…啊嗯…不要那么粗暴的对待我的肛门…啊…咕！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1043',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的肛门润滑度貌似不足。%S/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1044',
+        any: [/CFLAG:303 = 6/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1046-1051',
+        any: [/PRINTFORMW 「啊…啊啊…我的肛门…嗯…好舒服…啊…啊啊%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1047',
+        any: [/PRINTFORMW 「啊…啊啊…我的肛门…嗯…好舒服…啊…啊啊%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1049',
+        any: [/PRINTFORMW 「哈啊…啊啊…继续%UNICODE\(0x2661\) \*1%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1050',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1051',
+        any: [/CFLAG:303 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1053-1056',
+        any: [
+          /PRINTFORMW 「嗯…啊啊…虽、虽然欺负我的肛门也可以…不过再稍微温柔一点/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1054',
+        any: [
+          /PRINTFORMW 「嗯…啊啊…虽、虽然欺负我的肛门也可以…不过再稍微温柔一点/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1055',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的肛门润滑度貌似不足。%S/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1056',
+        any: [/CFLAG:303 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1058-1061',
+        any: [/PRINTFORMW 「啊啊…嗯…啊…啊…我、我的肛门…啊啊…变的奇怪了…嗯…唔/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1059',
+        any: [/PRINTFORMW 「啊啊…嗯…啊…啊…我、我的肛门…啊啊…变的奇怪了…嗯…唔/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1060',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的肛门下流的收缩着、%SA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1061',
+        any: [/CFLAG:303 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1063-1066',
+        any: [/PRINTFORMW 「咕…呜…不、不要…啊啊…不要啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1064',
+        any: [/PRINTFORMW 「咕…呜…不、不要…啊啊…不要啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1065',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%爱抚着%SAVESTR:T/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1066',
+        any: [/CFLAG:303 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1075-1178',
+        any: [/IF SELECTCOM == 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1077-1081',
+        any: [/IF CFLAG:304 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1078',
+        any: [/PRINTFORMW 「哈啊哈啊…啊…啊啊…嗯…哈啊哈啊…啊…嗯！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1079',
+        any: [/PRINTFORMW %SAVESTR:TARGET%闭着眼睛自慰着、好像是在想/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1080',
+        any: [/CFLAG:TARGET:304 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1083-1177',
+        any: [/;淫乱＋处女/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1085-1089',
+        any: [/IF TALENT:TARGET:76 == 1 && TALENT:TARGE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1086',
+        any: [/PRINTFORMW 「啊…快点让我变成你的东西…啊…啊啊%UNICODE\(0x/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1087',
+        any: [/PRINTFORMW %SAVESTR:TARGET%还没有尝过男人的秘裂发出了/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1088',
+        any: [
+          /PRINTFORMW 「已经那么放松了…已经准备好了哦？　快点品尝味道吧…啊…嗯/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1089',
+        any: [/CFLAG:304 = 9/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1091-1106',
+        any: [
+          /;ランダムで口上が変化する（使わない場合和すべて同じにすればよい）/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1094',
+        any: [/PRINTFORMW 「啊啊…哈啊…啊啊…嗯…自慰好舒服…啊嗯…啊啊%UNICO/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1095',
+        any: [/PRINTFORMW %SAVESTR:TARGET%娇喘着继续自慰、发出着马上/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1096',
+        any: [/PRINTFORMW 「哈啊哈啊…啊啊…啊啊…去…要去了…啊啊…啊啊~%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1098',
+        any: [/PRINTFORMW 「我、我的…自慰…一直看着…啊啊啊请看着吧%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1099',
+        any: [/PRINTFORMW %SAVESTR:TARGET%双腿分的很开诱惑着%SAV/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1100',
+        any: [/PRINTFORMW 「啊啊…嗯…哈啊…啊…啊…%UNICODE\(0x2661\)/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1102',
+        any: [/PRINTFORMW 「啊…嗯…自慰被看着…啊啊%UNICODE\(0x2661\)/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1103',
+        any: [/PRINTFORMW %SAVESTR:TARGET%黑色的眼睛淫荡的濡湿了、沉/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1104',
+        any: [/PRINTFORMW 「哈啊哈啊…啊…啊…唔…啊啊~%UNICODE\(0x266/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1106',
+        any: [/CFLAG:304 = 8/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1108-1117',
+        any: [
+          /;ランダムで口上が変化する（使わない場合和すべて同じにすればよい）/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1111',
+        any: [/PRINTFORMW 「啊啊…比起这个…更想要你的那个…嗯…嗯嗯%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1112',
+        any: [/PRINTFORMW %SAVESTR:TARGET%这么说着，但是熟练的自慰还/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1114',
+        any: [/PRINTFORMW 「哈啊哈啊…啊啊…果然自慰好舒服…啊…啊啊%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1115',
+        any: [/PRINTFORMW %SAVESTR:TARGET%发出着激烈的水声继续自慰着/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1117',
+        any: [/CFLAG:304 = 7/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1119-1123',
+        any: [/PRINTFORMW 「啊啊…不要再这样欺负我了…啊…啊啊…啊啊%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1120',
+        any: [/PRINTFORMW 「啊啊…不要再这样欺负我了…啊…啊啊…啊啊%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1121',
+        any: [/PRINTFORMW 「明明知道我还是处女，还让我做这种事情…啊啊…」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1122',
+        any: [/PRINTFORMW %SAVESTR:TARGET%一脸不开心的样子对着%SA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1123',
+        any: [/CFLAG:304 = 6/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1125-1140',
+        any: [
+          /;ランダムで口上が変化する（使わない場合和すべて同じにすればよい）/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1128',
+        any: [/PRINTFORMW 「哈、啊、啊啊%UNICODE\(0x2661\) \*1% 嗯/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1129',
+        any: [/PRINTFORMW %SAVESTR:TARGET%呼出了微热的吐息。有了以前/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1130',
+        any: [/PRINTFORMW 「嗯…啊啊…我…我…啊啊啊…啊嗯…啊哈…啊啊%UNICOD/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1132',
+        any: [/PRINTFORMW 「嗯…啊啊…啊…唔、啊哈、嗯%UNICODE\(0x2661/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1133',
+        any: [/PRINTFORMW %SAVESTR:TARGET%手指动作渐渐激烈起来、确实/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1134',
+        any: [/PRINTFORMW 「啊啊…我的H的地方…继续看吧…啊…啊啊%UNICODE\(/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1136',
+        any: [/PRINTFORMW 「啊呜…被你一边看着…一边被命令自慰…居然这么舒服%UNI/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1137',
+        any: [/PRINTFORMW %SAVESTR:TARGET%一脸淫荡的看着你自慰着。/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1138',
+        any: [/PRINTFORMW 「啊啊…我…我…要去了…啊啊…被看着…啊…去了…啊啊啊啊%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1140',
+        any: [/CFLAG:304 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1142-1151',
+        any: [
+          /;ランダムで口上が変化する（使わない場合和すべて同じにすればよい）/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1145',
+        any: [
+          /PRINTFORMW 「嗯、虽然不想被你看到…不过是命令的话就没办法了…啊…嗯…/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1146',
+        any: [/PRINTFORMW %SAVESTR:TARGET%相当熟练的继续自慰着………/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1148',
+        any: [/PRINTFORMW 「呜、嗯…很舒服哦…啊…啊啊…哈啊哈啊…啊…唔！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1149',
+        any: [/PRINTFORMW %SAVESTR:TARGET%羞耻地笑着，继续自慰着……/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1151',
+        any: [/CFLAG:304 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1153-1164',
+        any: [
+          /;ランダムで口上が変化する（使わない場合和すべて同じにすればよい）/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1156',
+        any: [/PRINTFORMW 「啊啊…哈啊哈啊…不要看啊…啊…唔…哈、啊、啊啊嗯♪」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1157',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的自慰越来越激励了起来。/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1158',
+        any: [/PRINTFORMW 「我、我…啊啊…啊…嗯…唔…啊啊…！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1160',
+        any: [/PRINTFORMW 「我的手指…啊啊…已经…哈…啊啊…停不下来了…啊…啊嗯♪」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1161',
+        any: [/PRINTFORMW 「哈啊哈啊…啊…啊…啊…唔…啊！！唔！！唔唔！………！！！/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1162',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的自慰越来越激励了起来、听/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1164',
+        any: [/CFLAG:304 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1166-1175',
+        any: [
+          /;ランダムで口上が変化する（使わない場合和すべて同じにすればよい）/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1169',
+        any: [/PRINTFORMW 「哈…啊…嗯…嗯…哈啊哈啊…啊…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1170',
+        any: [/PRINTFORMW %SAVESTR:TARGET%非常熟练的自慰着………/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1172',
+        any: [/PRINTFORMW 「啊嗯…啊啊…啊…哈啊哈啊…啊、能不能不那么看着我…嗯」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1173',
+        any: [/PRINTFORMW %SAVESTR:TARGET%一边羞耻的笑着一边自慰……/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1175',
+        any: [/CFLAG:304 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1184-1299',
+        any: [/IF SELECTCOM == 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1186-1206',
+        any: [/IF CFLAG:306 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1188',
+        any: [/IF TALENT:TARGET:130 == 1 && PALAM:5 > P/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1191',
+        any: [
+          /PRINTFORMW 「好棒…！吸得更用力点…！吸出母乳来了…胸部舒服的要发狂了/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1193',
+        any: [
+          /PRINTFORMW 「啊啊…从我的胸部里，母乳…啊嗯…那么吸的话…啊啊…我…我/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1197-1201',
+        any: [/IF TALENT:TARGET:78 == 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1198',
+        any: [/PRINTFORMW 「啊…啊啊！继续…抚摸…我的胸部…嗯…哈啊…啊…啊啊%UN/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1199',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的乳头想要爆炸了一样膨胀了/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1200',
+        any: [/PRINTFORMW 「唔…呜…呜…啊啊啊%UNICODE\(0x2661\) \*1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1201',
+        any: [
+          /PRINTFORMW 乳房被爱撫喘息的那个身姿、已经一点都看不出以前那个酷酷的女/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1203',
+        any: [
+          /PRINTFORMW 「啊…嗯…嗯…啊…稍微温柔一点啊…我的胸部很敏感的…啊、没/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1206',
+        any: [/CFLAG:TARGET:306 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1209-1297',
+        any: [/;母乳体质/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1213-1217',
+        any: [/IF TALENT:TARGET:78 == 1 && TALENT:TARGE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1214',
+        any: [/PRINTFORMW 「继续吸…我的母乳吧…啊啊%UNICODE\(0x2661\)/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1215',
+        any: [/PRINTFORMW %SAVESTR:TARGET%抱住了正吮吸着的%SAVE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1216',
+        any: [/PRINTFORMW 「唔…唔…啊…我的母乳…被吸着…矣…呀…啊…要去了%UNI/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1217',
+        any: [/CFLAG:306 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1219-1223',
+        any: [
+          /PRINTFORMW 「啊…没想到你会吸我的母乳呢…我…啊啊…但是、这样也挺好的/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1220',
+        any: [
+          /PRINTFORMW 「啊…没想到你会吸我的母乳呢…我…啊啊…但是、这样也挺好的/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1221',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1222',
+        any: [/PRINTFORMW 「啊…嗯…嗯…啊啊…被吸着母乳…好棒%UNICODE\(0x/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1223',
+        any: [/CFLAG:306 = 7/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1225-1229',
+        any: [/PRINTFORMW 「啊啊…继续吸没关系的…嘴不要离开乳头…啊啊…啊%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1226',
+        any: [/PRINTFORMW 「啊啊…继续吸没关系的…嘴不要离开乳头…啊啊…啊%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1227',
+        any: [/PRINTFORMW %SAVESTR:TARGET%抱住了正吮吸着的%SAVE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1228',
+        any: [/PRINTFORMW 「哈啊…呀…我已经…要去…要去了…啊啊%UNICODE\(0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1229',
+        any: [/CFLAG:306 = 6/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1231-1235',
+        any: [/PRINTFORMW 「呵呵呵…这么吸的话…给婴儿的份就不够了哦…啊啊%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1232',
+        any: [/PRINTFORMW 「呵呵呵…这么吸的话…给婴儿的份就不够了哦…啊啊%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1233',
+        any: [/PRINTFORMW %SAVESTR:TARGET%抚摸着吮吸着的%SAVES/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1234',
+        any: [/PRINTFORMW 「嗯…嗯…啊啊…哈啊…好舒服…好棒…继续吸…吸吧…%UNI/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1235',
+        any: [/CFLAG:306 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1237-1241',
+        any: [/PRINTFORMW 「嗯…！继续吸吧…！吸着母乳…胸部好像要发狂了~~~~…啊/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1238',
+        any: [/PRINTFORMW 「嗯…！继续吸吧…！吸着母乳…胸部好像要发狂了~~~~…啊/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1239',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%用嘴唇咬着%SAVESTR/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1240',
+        any: [/PRINTFORMW 「啊啊…我…我…只是胸部被吸着就要去了…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1241',
+        any: [/CFLAG:306 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1243-1247',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…不行啊…这么吸我的母乳的话…啊啊！我…太舒服了/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1244',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…不行啊…这么吸我的母乳的话…啊啊！我…太舒服了/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1245',
+        any: [/PRINTFORMW %SAVESTR:TARGET%已经彻底勃起的乳头被%SA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1246',
+        any: [/PRINTFORMW 「哈…啊…啊啊…啊…再继续的话…啊啊」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1247',
+        any: [/CFLAG:306 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1249-1252',
+        any: [
+          /PRINTFORMW 「啊啊…从我的胸部里，母乳…啊啊…那么吸的话…啊啊…我…我/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1250',
+        any: [
+          /PRINTFORMW 「啊啊…从我的胸部里，母乳…啊啊…那么吸的话…啊啊…我…我/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1251',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1252',
+        any: [/CFLAG:306 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1256-1260',
+        any: [/IF TALENT:TARGET:78 == 1 && TALENT:TARGE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1257',
+        any: [/PRINTFORMW 「啊%UNICODE\(0x2661\) \*1% 像要榨取…我/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1258',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1259',
+        any: [/PRINTFORMW 「啊啊…%UNICODE\(0x2661\) \*1% 啊啊…啊/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1260',
+        any: [/CFLAG:306 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1262-1266',
+        any: [/PRINTFORMW 「我的胸部…啊啊…如果是你的话不管怎么样…嗯…啊啊…嗯%U/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1263',
+        any: [/PRINTFORMW 「我的胸部…啊啊…如果是你的话不管怎么样…嗯…啊啊…嗯%U/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1264',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1265',
+        any: [/PRINTFORMW 「啊啊…舒服得…好像要飞起来一样…啊啊…更多…%UNICO/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1266',
+        any: [/CFLAG:306 = 7/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1268-1272',
+        any: [/PRINTFORMW 「继续揉我的胸部…啊…呀%UNICODE\(0x2661\) /],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1269',
+        any: [/PRINTFORMW 「继续揉我的胸部…啊…呀%UNICODE\(0x2661\) /],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1270',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的被%SAVESTR:PL/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1271',
+        any: [/PRINTFORMW 「啊啊…啊%UNICODE\(0x2661\) \*1% 嗯…好/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1272',
+        any: [/CFLAG:306 = 6/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1274-1278',
+        any: [
+          /PRINTFORMW 「虽然我的胸部因为比较碍事所以一直都用布缠起来…啊啊…如果/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1275',
+        any: [
+          /PRINTFORMW 「虽然我的胸部因为比较碍事所以一直都用布缠起来…啊啊…如果/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1276',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1277',
+        any: [/PRINTFORMW 「哈啊哈啊…嗯…继续…我的胸部…乳房…叫什么都好…啊啊…让/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1278',
+        any: [/CFLAG:306 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1280-1284',
+        any: [/PRINTFORMW 「啊…啊啊！我的…胸部…继续抚摸吧…嗯…哈…啊…%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1281',
+        any: [/PRINTFORMW 「啊…啊啊！我的…胸部…继续抚摸吧…嗯…哈…啊…%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1282',
+        any: [/PRINTFORMW %SAVESTR:TARGET%乳头像要爆炸一样膨胀着，只/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1283',
+        any: [/PRINTFORMW 「唔………啊啊啊~~%UNICODE\(0x2661\) \*1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1284',
+        any: [/CFLAG:306 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1286-1290',
+        any: [/PRINTFORMW 「啊…嗯…啊啊…胸部…好舒服…我的胸部…变得奇怪了…啊啊！/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1287',
+        any: [/PRINTFORMW 「啊…嗯…啊啊…胸部…好舒服…我的胸部…变得奇怪了…啊啊！/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1288',
+        any: [/PRINTFORMW %SAVESTR:TARGET%只是被%SAVESTR:P/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1289',
+        any: [/PRINTFORMW 「啊！更多的…抚摸我的胸部…啊…」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1290',
+        any: [/CFLAG:306 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1292-1295',
+        any: [
+          /PRINTFORMW 「啊…嗯…嗯咕…哈啊哈啊…确实的进攻我的弱点，不愧是魔王呢/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1293',
+        any: [
+          /PRINTFORMW 「啊…嗯…嗯咕…哈啊哈啊…确实的进攻我的弱点，不愧是魔王呢/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1294',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1295',
+        any: [/CFLAG:306 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1305-1376',
+        any: [/IF SELECTCOM == 6/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1307-1327',
+        any: [/IF CFLAG:307 == 0 && TFLAG:13/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1309-1314',
+        any: [/IF TALENT:TARGET:76 == 1 && ASSIPLAY == /],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1310',
+        any: [/PRINTFORMW 「嗯…啾…啾…嗯…%UNICODE\(0x2661\) \*1%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1311',
+        any: [/PRINTFORMW %SAVESTR:TARGET%用手臂转动着%SAVEST/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1312',
+        any: [/PRINTFORMW 「哈%UNICODE\(0x2661\) \*1% …啾%UNI/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1313',
+        any: [
+          /PRINTFORMW 「怎么样？我的初吻的味道…还不过瘾的话…要不要再来？」/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1314',
+        any: [/PRINTFORMW %SAVESTR:TARGET%舔了舔沾满唾液的嘴唇、眼睛/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1316-1320',
+        any: [
+          /PRINTFORMW 「嗯…哈啊…哈啊…呵呵呵、这是我的初吻哦…是什么味道啊？」/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1317',
+        any: [
+          /PRINTFORMW 「嗯…哈啊…哈啊…呵呵呵、这是我的初吻哦…是什么味道啊？」/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1318',
+        any: [/PRINTFORMW %SAVESTR:TARGET%抱着%SAVESTR:PL/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1319',
+        any: [
+          /PRINTFORMW 「很意外吧、但是是真的哦…如果无法不相信的话…嗯…嗯…啾…/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1320',
+        any: [/PRINTFORMW 然后%SAVESTR:TARGET%又一次和%SAVEST/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1322-1324',
+        any: [/PRINTFORMW 「嗯…咕…别这样…为什么第一次是你…！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1323',
+        any: [/PRINTFORMW 「嗯…咕…别这样…为什么第一次是你…！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1324',
+        any: [/PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1326',
+        any: [/CFLAG:307 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1329-1348',
+        any: [/;淫乱/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1331-1335',
+        any: [/IF TALENT:TARGET:76 == 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1332',
+        any: [/PRINTFORMW 「嗯…啾……嗯…%UNICODE\(0x2661\) \*1% /],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1333',
+        any: [/PRINTFORMW %SAVESTR:TARGET%用手臂转动着%SAVEST/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1334',
+        any: [/PRINTFORMW 「嗯……%UNICODE\(0x2661\) \*1% …啾%U/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1335',
+        any: [/PRINTFORMW %SAVESTR:TARGET%舔了舔沾满唾液的嘴唇、眼睛/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1337-1341',
+        any: [/PRINTFORMW 「嗯…哈啊…哈啊…呵呵呵、我的嘴唇…是什么味道？」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1338',
+        any: [/PRINTFORMW 「嗯…哈啊…哈啊…呵呵呵、我的嘴唇…是什么味道？」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1339',
+        any: [/PRINTFORMW %SAVESTR:TARGET%抱着%SAVESTR:PL/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1340',
+        any: [/PRINTFORMW 「啊、不过瘾吗？ 那再来…再继续吧…呐？」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1341',
+        any: [/PRINTFORMW 然后%SAVESTR:TARGET%又一次和%SAVEST/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1343-1345',
+        any: [/PRINTFORMW 「嗯、呼…快…离开…唔…从我嘴里把你的………」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1344',
+        any: [/PRINTFORMW 「嗯、呼…快…离开…唔…从我嘴里把你的………」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1345',
+        any: [/PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1347',
+        any: [/CFLAG:307 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1350-1375',
+        any: [/;淫乱/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1352-1356',
+        any: [/IF TALENT:TARGET:76 == 1 && \(CFLAG:307 </],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1353',
+        any: [/PRINTFORMW 「我的嘴唇…好吃吗？…啊…那就给你更好吃的吧%UNICOD/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1354',
+        any: [/PRINTFORMW %SAVESTR:TARGET%发出着啪嗒啪嗒的声音和%S/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1355',
+        any: [/PRINTFORMW 「嗯啾…啾…哈啊…哈啊…哇啊…啊…喜欢%UNICODE\(0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1356',
+        any: [/CFLAG:307 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1358-1362',
+        any: [/PRINTFORMW 「啊…嗯…继续吻我…啊…吻我…已经…嗯…啾…啾…哈啊%UN/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1359',
+        any: [/PRINTFORMW 「啊…嗯…继续吻我…啊…吻我…已经…嗯…啾…啾…哈啊%UN/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1360',
+        any: [/PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1361',
+        any: [/PRINTFORMW 「嗯…啊…已经迷上了…和你接吻…嗯…啊…哈%UNICODE/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1362',
+        any: [/CFLAG:307 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1364-1367',
+        any: [/PRINTFORMW 「哈啊哈啊…嗯…咕…哈啊…啾…嗯啾…」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1365',
+        any: [/PRINTFORMW 「哈啊哈啊…嗯…咕…哈啊…啾…嗯啾…」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1366',
+        any: [/PRINTFORMW %SAVESTR:TARGET%接受着%SAVESTR:P/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1367',
+        any: [/CFLAG:307 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1369-1372',
+        any: [/PRINTFORMW 「呜…呜呜…嘴唇…果然很不舒服…啊…呜！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1370',
+        any: [/PRINTFORMW 「呜…呜呜…嘴唇…果然很不舒服…啊…呜！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1371',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%把%SAVESTR:TAR/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1372',
+        any: [/CFLAG:307 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1381-1448',
+        any: [/IF SELECTCOM == 7/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1383-1407',
+        any: [/IF CFLAG:308 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1385-1391',
+        any: [/IF TALENT:TARGET:76 == 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1386',
+        any: [/PRINTFORMW 「我的小穴…看啊…啊…这个小穴随便你怎么弄哦…啊啊%UNI/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1387',
+        any: [/PRINTFORMW %SAVESTR:TARGET%大大的张开自己的大腿、用手/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1388',
+        any: [/PRINTFORMW 然后%SAVESTR:TARGET%对%SAVESTR:P/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1389',
+        any: [/PRINTFORMW 「啊啊…我的小穴…只是被看着就好有感觉%UNICODE\(0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1390',
+        any: [/SIF TALENT:TARGET:0 == 1 && EXP:0 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1391',
+        any: [
+          /PRINTFORMW 「啊啊…难道说是想看我的处女膜？ 那么…啊啊、再打开一点哦/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1393-1398',
+        any: [
+          /PRINTFORMW 「啊啊…你真是好色的啊…但是如果是你的话不管做什么都没关系/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1394',
+        any: [
+          /PRINTFORMW 「啊啊…你真是好色的啊…但是如果是你的话不管做什么都没关系/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1395',
+        any: [/PRINTFORMW %SAVESTR:TARGET%大大的张开自己的大腿、用手/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1396',
+        any: [/PRINTFORMW 「继续看…继续看我的小穴吧…已经…变的黏糊糊了%UNICO/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1398',
+        any: [
+          /PRINTFORMW 「能看我的处女膜吗？呵呵呵、我一直期待着你能把它夺走呢……/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1400-1405',
+        any: [/PRINTFORMW 「唔…屈辱啊…这个样子………」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1401',
+        any: [/PRINTFORMW 「唔…屈辱啊…这个样子………」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1402',
+        any: [/PRINTFORMW %SAVESTR:TARGET%大大的张开自己的大腿、用手/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1403',
+        any: [/PRINTFORMW 「笨、笨蛋…”漂亮”是什么意思啊…呜！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1405',
+        any: [
+          /PRINTFORMW 「诶、你说看见了处女膜？ 开、开什么玩笑！只打开那么一点怎/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1407',
+        any: [/CFLAG:TARGET:308 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1410-1446',
+        any: [/;淫乱/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1412-1419',
+        any: [/IF TALENT:TARGET:76 == 1 && \(CFLAG:308 </],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1413',
+        any: [/PRINTFORMW 「我的小穴…你专用的小穴…%UNICODE\(0x2661\)/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1414',
+        any: [/PRINTFORMW %SAVESTR:TARGET%大大的张开自己的大腿、用手/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1415',
+        any: [/PRINTFORMW 然后对%SAVESTR:PLAYER%的视线起了反应，从蜜/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1416',
+        any: [/PRINTFORMW 「这个黏糊糊%UNICODE\(0x2661\) \*1% 咕啾/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1418',
+        any: [
+          /PRINTFORMW 「啊啊…难道说是想看我的处女膜？ 那么…啊啊、再打开一点哦/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1419',
+        any: [/CFLAG:306 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1421-1428',
+        any: [/PRINTFORMW 「唔…啊啊…看着我的小穴…%UNICODE\(0x2661\)/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1422',
+        any: [/PRINTFORMW 「唔…啊啊…看着我的小穴…%UNICODE\(0x2661\)/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1423',
+        any: [/PRINTFORMW %SAVESTR:TARGET%大大的张开自己的大腿、用手/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1424',
+        any: [/PRINTFORMW 然后%SAVESTR:PLAYER%为了更好地看着提了提上/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1425',
+        any: [/PRINTFORMW 「继续看着我黏糊糊的小穴……啊啊%UNICODE\(0x26/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1427',
+        any: [
+          /PRINTFORMW 「能看我的处女膜吗？呵呵呵、我一直期待着你能把它夺走呢……/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1428',
+        any: [/CFLAG:306 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1430-1436',
+        any: [/PRINTFORMW 「哈啊哈啊…啊…我的那里…仔细看吧…啊啊…嗯……很漂亮吧…/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1431',
+        any: [/PRINTFORMW 「哈啊哈啊…啊…我的那里…仔细看吧…啊啊…嗯……很漂亮吧…/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1432',
+        any: [/PRINTFORMW %SAVESTR:TARGET%打开了自己的蜜裂、%SAV/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1433',
+        any: [/PRINTFORMW 「啊…我的…啊啊…小穴…看着小穴…哈…啊啊…有感觉了♪」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1435',
+        any: [/PRINTFORMW 「唔嗯…也看看我的处女膜…啊啊…！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1436',
+        any: [/CFLAG:306 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1438-1444',
+        any: [
+          /PRINTFORMW 「哈啊…哈啊……不用继续摆这个姿势了吧？ 诶、还有5分钟？/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1439',
+        any: [
+          /PRINTFORMW 「哈啊…哈啊……不用继续摆这个姿势了吧？ 诶、还有5分钟？/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1440',
+        any: [/PRINTFORMW %SAVESTR:TARGET%服从着%SAVESTR:P/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1441',
+        any: [/PRINTFORMW 「啊、啊啊…我已经………」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1443',
+        any: [
+          /PRINTFORMW 「我的处女膜很漂亮什么的…别说这么明显的假话…啊啊！」/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1444',
+        any: [/CFLAG:306 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1453-1495',
+        any: [/IF SELECTCOM == 8/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1455-1467',
+        any: [/IF CFLAG:TARGET:309 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1458',
+        any: [/PRINTFORMW 「嗯啊…我的小穴…被你的手指…啊啊…好深…好棒%UNICO/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1461',
+        any: [/PRINTFORMW 「啊…啊啊…你的手指…嗯…好深…啊啊…好棒…%UNICOD/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1464',
+        any: [
+          /PRINTFORMW 「嗯…唔…你的手指…再稍微温柔一点啊…啊啊…！啊、这么深…/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1466',
+        any: [/CFLAG:TARGET:309 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1469-1493',
+        any: [/;淫乱/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1471-1475',
+        any: [/IF TALENT:TARGET:76 == 1 && \(CFLAG:309 </],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1472',
+        any: [/PRINTFORMW 「继续在我的女阴里搅动…啊啊%UNICODE\(0x2661/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1473',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1474',
+        any: [/PRINTFORMW 「嗯…啊…小穴…小穴舒服%UNICODE\(0x2661\) /],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1475',
+        any: [/CFLAG:309 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1477-1481',
+        any: [/PRINTFORMW 「啊啊…你…嗯…啊啊啊…我的小学里面…嗯…啊%UNICOD/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1478',
+        any: [/PRINTFORMW 「啊啊…你…嗯…啊啊啊…我的小学里面…嗯…啊%UNICOD/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1479',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1480',
+        any: [/PRINTFORMW 「啊…啊啊…你的手指…嗯…好深…啊…啊啊啊…好棒…%UNI/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1481',
+        any: [/CFLAG:309 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1483-1486',
+        any: [/PRINTFORMW 「嗯…啊…咕…啊啊——！我…这么…啊啊…啊啊——！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1484',
+        any: [/PRINTFORMW 「嗯…啊…咕…啊啊——！我…这么…啊啊…啊啊——！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1485',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1486',
+        any: [/PRINTFORMW 「咕…嗯…在稍微温柔…一点…啊」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1487',
+        any: [/CFLAG:309 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1489-1490',
+        any: [/PRINTFORMW 「我的…啊啊啊…那里…被这样玩弄的话…咕…啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1490',
+        any: [/PRINTFORMW 「我的…啊啊啊…那里…被这样玩弄的话…咕…啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1491',
+        any: [/CFLAG:309 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1500-1541',
+        any: [/IF SELECTCOM == 9/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1502-1512',
+        any: [/IF CFLAG:310 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1505',
+        any: [/PRINTFORMW 「啊嗯…继续舔…我的肛门…啊啊…好舒服%UNICODE\(0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1508',
+        any: [/PRINTFORMW 「啊啊…我的…我的屁股…啊…明明很脏的…啊…停下…啊啊～！/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1511',
+        any: [/PRINTFORMW 「嗯…嗯…啊啊…快住…快助手啊！…我的…那个地方…啊啊明明/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1513',
+        any: [/CFLAG:TARGET:310 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1516-1540',
+        any: [/;淫乱/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1518-1522',
+        any: [/IF TALENT:TARGET:76 == 1 && \(CFLAG:310 </],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1519',
+        any: [/PRINTFORMW 「啊嗯…好舒服…好舒服啊%UNICODE\(0x2661\) /],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1520',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%如%SAVESTR:TAR/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1521',
+        any: [/PRINTFORMW 「啊嗯…嗯…嗯啊…我的肛门…好吃吗？那就继续舔吧%UNIC/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1522',
+        any: [/CFLAG:310 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1524-1527',
+        any: [
+          /PRINTFORMW 「不、不行啊…屁股被你…啊…这么舔的话，我…要变得奇怪了…/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1525',
+        any: [
+          /PRINTFORMW 「不、不行啊…屁股被你…啊…这么舔的话，我…要变得奇怪了…/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1526',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%舔着%SAVESTR:TA/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1527',
+        any: [/PRINTFORMW 「啊嗯…啊啊…我的屁股…要变得奇怪了…啊啊…嗯…啊啊嗯，%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1528',
+        any: [/CFLAG:310 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1530-1532',
+        any: [/PRINTFORMW 「嗯…啊嗯…啊啊…嗯、啊…我、我已经…我…啊啊」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1531',
+        any: [/PRINTFORMW 「嗯…啊嗯…啊啊…嗯、啊…我、我已经…我…啊啊」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1532',
+        any: [/PRINTFORMW %SAVESTR:TARGET%一边发出很害羞的声音，一边/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1533',
+        any: [/CFLAG:310 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1535-1537',
+        any: [
+          /PRINTFORMW 「哈…嗯…嗯…不、不要再这样了…啊啊…我的屁股…啊啊快停下/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1536',
+        any: [
+          /PRINTFORMW 「哈…嗯…嗯…不、不要再这样了…啊啊…我的屁股…啊啊快停下/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1537',
+        any: [/PRINTFORMW %SAVESTR:PLAYER%用舌头让%SAVESTR:/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1538',
+        any: [/CFLAG:310 = 2/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1547-1589',
+        any: [/IF SELECTCOM == 10/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1549-1560',
+        any: [/IF CFLAG:TARGET:311 == 0/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1552',
+        any: [/PRINTFORMW 「那是我的…敏感部位…继续…啊啊%UNICODE\(0x26/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1555',
+        any: [/PRINTFORMW 「啊…嗯…啊…%UNICODE\(0x2661\) \*1% 好/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1558',
+        any: [/PRINTFORMW 「嗯…这个稍微有点痒啊…啊嗯…已、已经…嗯…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1560',
+        any: [/CFLAG:TARGET:311 = 1/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1563-1588',
+        any: [/;淫乱/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1565-1568',
+        any: [/IF TALENT:TARGET:76 == 1 && \(CFLAG:311 </],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1566',
+        any: [/PRINTFORMW 「那是我的…敏感部位…继续…啊啊%UNICODE\(0x26/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1567',
+        any: [/PRINTFORMW %SAVESTR:TARGET%振动宝石贴住阴蒂的刺激让她/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1568',
+        any: [/PRINTFORMW 「啊啊啊,我的阴蒂%UNICODE\(0x2661\) \*1%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1569',
+        any: [/CFLAG:311 = 5/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1571-1574',
+        any: [/PRINTFORMW 「啊嗯…啊…啊嗯…%UNICODE\(0x2661\) \*1%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1572',
+        any: [/PRINTFORMW 「啊嗯…啊…啊嗯…%UNICODE\(0x2661\) \*1%/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1573',
+        any: [/PRINTFORMW %SAVESTR:TARGET%敏感部分被振动宝石贴着，露/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1574',
+        any: [/PRINTFORMW 「哈…哈…啊…嗯…啊嗯%UNICODE\(0x2661\) \*/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1575',
+        any: [/CFLAG:311 = 4/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1577-1580',
+        any: [/PRINTFORMW 「啊…嗯…这个…好舒服啊…啊嗯…啊…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1578',
+        any: [/PRINTFORMW 「啊…嗯…这个…好舒服啊…啊嗯…啊…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1579',
+        any: [/PRINTFORMW %SAVESTR:TARGET%振动宝石贴住阴蒂的刺激让她/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1580',
+        any: [/PRINTFORMW 「但是我的阴蒂…才…才不会有什么感觉呢……哼」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1581',
+        any: [/CFLAG:311 = 3/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1583-1585',
+        any: [/PRINTFORMW 「嗯…这个稍微有点痒啊…啊嗯…已、已经…嗯…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1584',
+        any: [/PRINTFORMW 「嗯…这个稍微有点痒啊…啊嗯…已、已经…嗯…啊啊！」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1585',
+        any: [/PRINTFORMW %SAVESTR:TARGET%敏感部分被振动宝石贴着而发/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '1586',
+        any: [/CFLAG:311 = 2/],
+      },
     ],
   },
 ];

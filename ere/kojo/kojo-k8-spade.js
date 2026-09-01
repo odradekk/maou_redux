@@ -1637,6 +1637,9 @@ async function kojo_message_com_8(rand) {
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
   const kojo = chara(target).kojo;
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const palam = (i) => era0(`palam:${target}:${i}`) || 0;
+  const delta = (i) => era0(`delta:${target}:${i}`) || 0;
 
   // :893-894 助手が調教した時に口上をスキップする
   if (era_flag.assi > 0 && era_flag.assiplay) {
@@ -1670,9 +1673,9 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27,
-    28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56,
-    69, 80, 87, 123, 124, 125, 126, 127,
+    11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28, 29, 30, 31, 32, 33,
+    34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124,
+    125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -1815,6 +1818,1027 @@ async function kojo_message_com_8(rand) {
         `${target_name}扭动着腰想要从${player_name}的嘴边逃开、就那样被${player_name}压住了腰………`,
       ); // :1008
       kojo.舔阴 = 2; // :1009 CFLAG:302 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 2) {
+    // :1018-1069 阿纳尔爱撫 CFLAG:303
+    if (kojo.肛门爱抚 == 0) {
+      // :1020-1029 初めて
+      if (era0(`abl:${target}:3`) >= 3) {
+        await era.printAndWait(`「啊…啊~啊！菊花…嗯…啊哈…好舒服…啊啊…啊啊！」`); // :1022
+        await era.printAndWait(
+          `${target_name}被开发了的肛门因为${player_name}的爱抚，反应很敏感………`,
+        ); // :1023
+      } else {
+        await era.printAndWait(`「啊…那、那里…很脏…呀…不、不要…啊啊！」`); // :1025
+        await era.printAndWait(
+          `${target_name}因为被${player_name}粗暴的爱抚着肛门而不禁发出了悲鸣………`,
+        ); // :1026
+      }
+      kojo.肛门爱抚 = 1; // :1028 CFLAG:TARGET:303 = 1
+      return 0;
+    }
+    // :1031-1068 二回目以降
+    {
+      const P = palam(3) + delta(3); // :1032 P = PALAM:3 + UP:3
+      if (
+        era0(`talent:${target}:76`) == 1 &&
+        P >= era0('palamlv:2') &&
+        (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :1034-1039 淫乱+润滑Lv2以上
+        await era.printAndWait(
+          `「啊…啊啊…再摸摸我的肛门吧${heart(1)} 嗯…好舒服${heart(1)}」`,
+        ); // :1035
+        if (era0(`abl:${target}:3`) >= 3) {
+          await era.printAndWait(
+            `「哈啊哈啊…啊啊…更多…更多…侵犯我的菊花吧…啊啊…要发疯了${heart(1)}」`,
+          ); // :1037
+        }
+        await era.printAndWait(
+          `${target_name}被${player_name}爱抚着发出了娇艳的声音………`,
+        ); // :1038
+        kojo.肛门爱抚 = 7; // :1039 CFLAG:303 = 7
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        P < era0('palamlv:2') &&
+        (kojo.肛门爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :1041-1044 淫乱+润滑Lv2未満
+        await era.printAndWait(
+          `「嗯…啊嗯…不要那么粗暴的对待我的肛门…啊…咕！」`,
+        ); // :1042
+        await era.printAndWait(
+          `${target_name}的肛门润滑度貌似不足。${target_name}发出了痛苦的声音………`,
+        ); // :1043
+        kojo.肛门爱抚 = 6; // :1044 CFLAG:303 = 6
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        P >= era0('palamlv:2') &&
+        (kojo.肛门爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :1046-1051 爱慕+润滑Lv2以上
+        await era.printAndWait(
+          `「啊…啊啊…我的肛门…嗯…好舒服…啊…啊啊${heart(1)}」`,
+        ); // :1047
+        if (era0(`abl:${target}:3`) >= 3) {
+          await era.printAndWait(
+            `「哈啊…啊啊…继续${heart(1)} 继续…欺负我的肛门吧${heart(1)}」`,
+          ); // :1049
+        }
+        await era.printAndWait(
+          `${target_name}被${player_name}爱抚着肛门发出了娇艳的声音………`,
+        ); // :1050
+        kojo.肛门爱抚 = 5; // :1051 CFLAG:303 = 5
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        P < era0('palamlv:2') &&
+        (kojo.肛门爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :1053-1056 爱慕+润滑Lv2未満
+        await era.printAndWait(
+          `「嗯…啊啊…虽、虽然欺负我的肛门也可以…不过再稍微温柔一点啊…啊、嗯！」`,
+        ); // :1054
+        await era.printAndWait(
+          `${target_name}的肛门润滑度貌似不足。${target_name}发出了痛苦的声音………`,
+        ); // :1055
+        kojo.肛门爱抚 = 4; // :1056 CFLAG:303 = 4
+      } else if (
+        P >= era0('palamlv:2') &&
+        era0(`abl:${target}:3`) >= 3 &&
+        (kojo.肛门爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :1058-1061 润滑Lv2以上＋A感覚Lv3以上
+        await era.printAndWait(
+          `「啊啊…嗯…啊…啊…我、我的肛门…啊啊…变的奇怪了…嗯…唔！」`,
+        ); // :1059
+        await era.printAndWait(
+          `${target_name}的肛门下流的收缩着、${player_name}的爱抚使得她的腰不停的晃动着………`,
+        ); // :1060
+        kojo.肛门爱抚 = 3; // :1061 CFLAG:303 = 3
+      } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 == 2) {
+        // :1063-1066 それ以外（爱無し、润滑Lv2未満、A感覚Lv3未満；源 CFLAG:223，非
+        // CFLAG:303，1:1 保留原作寻址）
+        await era.printAndWait(`「咕…呜…不、不要…啊啊…不要啊！」`); // :1064
+        await era.printAndWait(
+          `${player_name}爱抚着${target_name}花蕾般的肛门、而${target_name}则用悲鸣来回应………`,
+        ); // :1065
+        kojo.肛门爱抚 = 2; // :1066 CFLAG:303 = 2
+      }
+    }
+    return 0;
+  } else if (era_flag.selectcom == 3) {
+    // :1075-1178 自慰 CFLAG:304
+    if (kojo.自慰 == 0) {
+      // :1077-1081 初めて
+      await era.printAndWait(`「哈啊哈啊…啊…啊啊…嗯…哈啊哈啊…啊…嗯！」`); // :1078
+      await era.printAndWait(
+        `${target_name}闭着眼睛自慰着、好像是在想着谁似得………`,
+      ); // :1079
+      kojo.自慰 = 1; // :1080 CFLAG:TARGET:304 = 1
+      return 0;
+    }
+    // :1083-1177 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`talent:${target}:0`) == 1 &&
+      (kojo.自慰 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :1085-1089 淫乱＋处女
+      await era.printAndWait(`「啊…快点让我变成你的东西…啊…啊啊${heart(1)}」`); // :1086
+      await era.printAndWait(
+        `${target_name}还没有尝过男人的秘裂发出了激烈的水流的声音。`,
+      ); // :1087
+      await era.printAndWait(
+        `「已经那么放松了…已经准备好了哦？　快点品尝味道吧…啊…嗯………${heart(1)}」`,
+      ); // :1088
+      kojo.自慰 = 9; // :1089 CFLAG:304 = 9
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:31`) >= 3 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :1091-1106 淫乱＋自慰中毒Lv3以上（RAND:3 三选一）
+      if (rand_n(3) == 0) {
+        await era.printAndWait(
+          `「啊啊…哈啊…啊啊…嗯…自慰好舒服…啊嗯…啊啊${heart(1)}」`,
+        ); // :1094
+        await era.printAndWait(
+          `${target_name}娇喘着继续自慰、发出着马上就要绝顶了似的水流声`,
+        ); // :1095
+        await era.printAndWait(
+          `「哈啊哈啊…啊啊…啊啊…去…要去了…啊啊…啊啊~${heart(1)}」`,
+        ); // :1096
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「我、我的…自慰…一直看着…啊啊啊请看着吧${heart(1)}」`,
+        ); // :1098
+        await era.printAndWait(
+          `${target_name}双腿分的很开诱惑着${player_name}十分艳丽的摇着腰部。`,
+        ); // :1099
+        await era.printAndWait(
+          `「啊啊…嗯…哈啊…啊…啊…${heart(1)} 啊啊…哈啊哈啊…侵犯我吧…${heart(1)}」`,
+        ); // :1100
+      } else {
+        await era.printAndWait(`「啊…嗯…自慰被看着…啊啊${heart(1)}」`); // :1102
+        await era.printAndWait(
+          `${target_name}黑色的眼睛淫荡的濡湿了、沉迷在自慰中。`,
+        ); // :1103
+        await era.printAndWait(
+          `「哈啊哈啊…啊…啊…唔…啊啊~${heart(1)} 我…我…要变得…更奇怪了…啊啊${heart(1)}」`,
+        ); // :1104
+      }
+      kojo.自慰 = 8; // :1106 CFLAG:304 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:31`) < 3 &&
+      (kojo.自慰 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :1108-1117 淫乱＋自慰中毒Lv3未満（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「啊啊…比起这个…更想要你的那个…嗯…嗯嗯${heart(1)}」`,
+        ); // :1111
+        await era.printAndWait(
+          `${target_name}这么说着，但是熟练的自慰还在继续………`,
+        ); // :1112
+      } else {
+        await era.printAndWait(
+          `「哈啊哈啊…啊啊…果然自慰好舒服…啊…啊啊${heart(1)}」`,
+        ); // :1114
+        await era.printAndWait(`${target_name}发出着激烈的水声继续自慰着………`); // :1115
+      }
+      kojo.自慰 = 7; // :1117 CFLAG:304 = 7
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`talent:${target}:0`) == 1 &&
+      (kojo.自慰 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :1119-1123 爱＋处女
+      await era.printAndWait(
+        `「啊啊…不要再这样欺负我了…啊…啊啊…啊啊${heart(1)}」`,
+      ); // :1120
+      await era.printAndWait(`「明明知道我还是处女，还让我做这种事情…啊啊…」`); // :1121
+      await era.printAndWait(
+        `${target_name}一脸不开心的样子对着${player_name}用手指撑开自己的处女穴自慰着………`,
+      ); // :1122
+      kojo.自慰 = 6; // :1123 CFLAG:304 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:31`) >= 3 &&
+      (kojo.自慰 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1125-1140 爱＋自慰中毒Lv3以上（RAND:3 三选一）
+      if (rand_n(3) == 0) {
+        await era.printAndWait(
+          `「哈、啊、啊啊${heart(1)} 嗯…好棒…好棒啊…啊啊…我的自慰…有好好的看着吗？啊、啊啊${heart(1)}」`,
+        ); // :1128
+        await era.printAndWait(
+          `${target_name}呼出了微热的吐息。有了以前的调教，现在已经完全中毒了的样子。`,
+        ); // :1129
+        await era.printAndWait(
+          `「嗯…啊啊…我…我…啊啊啊…啊嗯…啊哈…啊啊${heart(1)}」`,
+        ); // :1130
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「嗯…啊啊…啊…唔、啊哈、嗯${heart(1)} 自慰停不下来啊…啊啊${heart(1)}」`,
+        ); // :1132
+        await era.printAndWait(
+          `${target_name}手指动作渐渐激烈起来、确实的向着自己舒服的地方不断的爱抚着。`,
+        ); // :1133
+        await era.printAndWait(
+          `「啊啊…我的H的地方…继续看吧…啊…啊啊${heart(1)}」`,
+        ); // :1134
+      } else {
+        await era.printAndWait(
+          `「啊呜…被你一边看着…一边被命令自慰…居然这么舒服${heart(1)}」`,
+        ); // :1136
+        await era.printAndWait(`${target_name}一脸淫荡的看着你自慰着。`); // :1137
+        await era.printAndWait(
+          `「啊啊…我…我…要去了…啊啊…被看着…啊…去了…啊啊啊啊${heart(1)}」`,
+        ); // :1138
+      }
+      kojo.自慰 = 5; // :1140 CFLAG:304 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:31`) < 3 &&
+      (kojo.自慰 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1142-1151 爱＋自慰中毒Lv3未満（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「嗯、虽然不想被你看到…不过是命令的话就没办法了…啊…嗯…啊！」`,
+        ); // :1145
+        await era.printAndWait(`${target_name}相当熟练的继续自慰着………`); // :1146
+      } else {
+        await era.printAndWait(`「呜、嗯…很舒服哦…啊…啊啊…哈啊哈啊…啊…唔！」`); // :1148
+        await era.printAndWait(`${target_name}羞耻地笑着，继续自慰着………`); // :1149
+      }
+      kojo.自慰 = 4; // :1151 CFLAG:304 = 4
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      era0(`abl:${target}:31`) >= 1 &&
+      (kojo.自慰 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1153-1164 屈服刻印Lv3+自慰中毒Lv1以上（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「啊啊…哈啊哈啊…不要看啊…啊…唔…哈、啊、啊啊嗯♪」`,
+        ); // :1156
+        await era.printAndWait(`${target_name}的自慰越来越激励了起来。`); // :1157
+        await era.printAndWait(`「我、我…啊啊…啊…嗯…唔…啊啊…！」`); // :1158
+      } else {
+        await era.printAndWait(
+          `「我的手指…啊啊…已经…哈…啊啊…停不下来了…啊…啊嗯♪」`,
+        ); // :1160
+        await era.printAndWait(
+          `「哈啊哈啊…啊…啊…啊…唔…啊！！唔！！唔唔！………！！！」`,
+        ); // :1161
+        await era.printAndWait(
+          `${target_name}的自慰越来越激励了起来、听起来好像在呼唤着谁的名字………`,
+        ); // :1162
+      }
+      kojo.自慰 = 3; // :1164 CFLAG:304 = 3
+    } else if (kojo.自慰 <= 1 || game.kojo.口上开关 == 2) {
+      // :1166-1175 それ以外（爱無し、自慰中毒Lv1未満，RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(`「哈…啊…嗯…嗯…哈啊哈啊…啊…啊啊！」`); // :1169
+        await era.printAndWait(`${target_name}非常熟练的自慰着………`); // :1170
+      } else {
+        await era.printAndWait(
+          `「啊嗯…啊啊…啊…哈啊哈啊…啊、能不能不那么看着我…嗯」`,
+        ); // :1172
+        await era.printAndWait(`${target_name}一边羞耻的笑着一边自慰………`); // :1173
+      }
+      kojo.自慰 = 2; // :1175 CFLAG:304 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 5) {
+    // :1184-1299 胸爱撫 CFLAG:306
+    const milk_body =
+      era0(`talent:${target}:130`) == 1 &&
+      palam(5) > era0('palamlv:3') &&
+      era0(`tequip:${target}:16`) == 0 &&
+      era0(`tequip:${target}:15`) == 0; // :1188 母乳体质有效条件
+    if (kojo.胸爱抚 == 0) {
+      // :1186-1206 初めて
+      if (milk_body) {
+        if (era0(`talent:${target}:78`) == 1) {
+          await era.printAndWait(
+            `「好棒…！吸得更用力点…！吸出母乳来了…胸部舒服的要发狂了…啊啊~！」`,
+          ); // :1191
+        } else {
+          await era.printAndWait(
+            `「啊啊…从我的胸部里，母乳…啊嗯…那么吸的话…啊啊…我…我…已经…」`,
+          ); // :1193
+        }
+      } else if (era0(`talent:${target}:78`) == 1) {
+        // :1197-1201 弄乳狂
+        await era.printAndWait(
+          `「啊…啊啊！继续…抚摸…我的胸部…嗯…哈啊…啊…啊啊${heart(1)}」`,
+        ); // :1198
+        await era.printAndWait(
+          `${target_name}的乳头想要爆炸了一样膨胀了起来、只是被碰到，${target_name}就会发出疯了一样的喘息声。`,
+        ); // :1199
+        await era.printAndWait(
+          `「唔…呜…呜…啊啊啊${heart(1)} 我…已经…啊…呜…啊啊${heart(1)}」`,
+        ); // :1200
+        await era.printAndWait(
+          `乳房被爱抚喘息的那个身姿、已经一点都看不出以前那个酷酷的女忍者的影子了………`,
+        ); // :1201
+      } else {
+        await era.printAndWait(
+          `「啊…嗯…嗯…啊…稍微温柔一点啊…我的胸部很敏感的…啊、没什么…啊、嗯！」`,
+        ); // :1203
+      }
+      kojo.胸爱抚 = 1; // :1206 CFLAG:TARGET:306 = 1
+      return 0;
+    }
+    // :1209-1297 二回目以降
+    if (milk_body) {
+      if (
+        era0(`talent:${target}:78`) == 1 &&
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.胸爱抚 <= 7 || game.kojo.口上开关 == 2)
+      ) {
+        // :1213-1217 淫乱+弄乳狂
+        await era.printAndWait(
+          `「继续吸…我的母乳吧…啊啊${heart(1)} 要疯了，感觉要疯了${heart(1)}」`,
+        ); // :1214
+        await era.printAndWait(
+          `${target_name}抱住了正吮吸着的${player_name}的头。`,
+        ); // :1215
+        await era.printAndWait(
+          `「唔…唔…啊…我的母乳…被吸着…矣…呀…啊…要去了${heart(1)}」`,
+        ); // :1216
+        kojo.胸爱抚 = 4; // :1217 CFLAG:306 = 4
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.胸爱抚 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :1219-1223 淫乱
+        await era.printAndWait(
+          `「啊…没想到你会吸我的母乳呢…我…啊啊…但是、这样也挺好的…嗯嗯${heart(1)}」`,
+        ); // :1220
+        await era.printAndWait(
+          `${target_name}被${player_name}吸着母乳，发出了粗重的鼻息。`,
+        ); // :1221
+        await era.printAndWait(`「啊…嗯…嗯…啊啊…被吸着母乳…好棒${heart(1)}」`); // :1222
+        kojo.胸爱抚 = 7; // :1223 CFLAG:306 = 7
+      } else if (
+        era0(`talent:${target}:78`) == 1 &&
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.胸爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :1225-1229 爱慕+弄乳狂
+        await era.printAndWait(
+          `「啊啊…继续吸没关系的…嘴不要离开乳头…啊啊…啊${heart(1)}」`,
+        ); // :1226
+        await era.printAndWait(
+          `${target_name}抱住了正吮吸着的${player_name}的头。`,
+        ); // :1227
+        await era.printAndWait(
+          `「哈啊…呀…我已经…要去…要去了…啊啊${heart(1)}」`,
+        ); // :1228
+        kojo.胸爱抚 = 6; // :1229 CFLAG:306 = 6
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :1231-1235 爱慕
+        await era.printAndWait(
+          `「呵呵呵…这么吸的话…给婴儿的份就不够了哦…啊啊${heart(1)}」`,
+        ); // :1232
+        await era.printAndWait(
+          `${target_name}抚摸着吮吸着的${player_name}的头出了神。`,
+        ); // :1233
+        await era.printAndWait(
+          `「嗯…嗯…啊啊…哈啊…好舒服…好棒…继续吸…吸吧…${heart(1)}」`,
+        ); // :1234
+        kojo.胸爱抚 = 5; // :1235 CFLAG:306 = 5
+      } else if (
+        era0(`talent:${target}:78`) == 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :1237-1241 弄乳狂
+        await era.printAndWait(
+          `「嗯…！继续吸吧…！吸着母乳…胸部好像要发狂了~~~~…啊啊！」`,
+        ); // :1238
+        await era.printAndWait(
+          `${player_name}用嘴唇咬着${target_name}好像要破裂似得勃起的乳头。`,
+        ); // :1239
+        await era.printAndWait(`「啊啊…我…我…只是胸部被吸着就要去了…啊啊！」`); // :1240
+        kojo.胸爱抚 = 4; // :1241 CFLAG:306 = 4
+      } else if (
+        era0(`abl:${target}:1`) >= 3 &&
+        (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :1243-1247 B感覚Lv3以上
+        await era.printAndWait(
+          `「啊啊…嗯…不行啊…这么吸我的母乳的话…啊啊！我…太舒服了要去了…啊啊…啊…」`,
+        ); // :1244
+        await era.printAndWait(
+          `${target_name}已经彻底勃起的乳头被${player_name}吸着，流出了母乳。`,
+        ); // :1245
+        await era.printAndWait(`「哈…啊…啊啊…啊…再继续的话…啊啊」`); // :1246
+        kojo.胸爱抚 = 3; // :1247 CFLAG:306 = 3
+      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // :1249-1252 それ以外（爱無し、B感覚Lv3未満）
+        await era.printAndWait(
+          `「啊啊…从我的胸部里，母乳…啊啊…那么吸的话…啊啊…我…我…已经…」`,
+        ); // :1250
+        await era.printAndWait(
+          `${target_name}被${player_name}吸着母乳，反应很敏感的样子………`,
+        ); // :1251
+        kojo.胸爱抚 = 2; // :1252 CFLAG:306 = 2
+      }
+    } else {
+      if (
+        era0(`talent:${target}:78`) == 1 &&
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.胸爱抚 <= 7 || game.kojo.口上开关 == 2)
+      ) {
+        // :1256-1260 淫乱+弄乳狂
+        await era.printAndWait(
+          `「啊${heart(1)} 像要榨取…我的胸部那样…继续…啊啊…弄的乱七八糟吧${heart(1)}」`,
+        ); // :1257
+        await era.printAndWait(
+          `${target_name}被${player_name}像要留下痕迹那样抓着胸部，发出了快乐的声音。`,
+        ); // :1258
+        await era.printAndWait(
+          `「啊啊…${heart(1)} 啊啊…啊啊${heart(1)} 这个…好棒${heart(1)} 脑袋里面好像要融化一样${heart(1)}」`,
+        ); // :1259
+        kojo.胸爱抚 = 4; // :1260 CFLAG:306 = 4
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.胸爱抚 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :1262-1266 淫乱
+        await era.printAndWait(
+          `「我的胸部…啊啊…如果是你的话不管怎么样…嗯…啊啊…嗯${heart(1)}」`,
+        ); // :1263
+        await era.printAndWait(
+          `${target_name}被${player_name}爱抚着胸部发出了灼热的吐息。`,
+        ); // :1264
+        await era.printAndWait(
+          `「啊啊…舒服得…好像要飞起来一样…啊啊…更多…${heart(1)}」`,
+        ); // :1265
+        kojo.胸爱抚 = 7; // :1266 CFLAG:306 = 7
+      } else if (
+        era0(`talent:${target}:78`) == 1 &&
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.胸爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :1268-1272 爱慕+弄乳狂
+        await era.printAndWait(
+          `「继续揉我的胸部…啊…呀${heart(1)} 再用力点…啊啊…要坏掉了${heart(1)}」`,
+        ); // :1269
+        await era.printAndWait(
+          `${target_name}的被${player_name}大力的揉着胸部，好像要昏过去了一样。`,
+        ); // :1270
+        await era.printAndWait(
+          `「啊啊…啊${heart(1)} 嗯…好…棒…啊啊${heart(1)} 啊啊${heart(1)}」`,
+        ); // :1271
+        kojo.胸爱抚 = 6; // :1272 CFLAG:306 = 6
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :1274-1278 爱慕
+        await era.printAndWait(
+          `「虽然我的胸部因为比较碍事所以一直都用布缠起来…啊啊…如果你要摸的话以后就不缠了…嗯…啊嗯${heart(1)}」`,
+        ); // :1275
+        await era.printAndWait(
+          `${target_name}被${player_name}爱抚着胸部发出了灼热的吐息。`,
+        ); // :1276
+        await era.printAndWait(
+          `「哈啊哈啊…嗯…继续…我的胸部…乳房…叫什么都好…啊啊…让我舒服吧……${heart(1)}」`,
+        ); // :1277
+        kojo.胸爱抚 = 5; // :1278 CFLAG:306 = 5
+      } else if (
+        era0(`talent:${target}:78`) == 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :1280-1284 弄乳狂
+        await era.printAndWait(
+          `「啊…啊啊！我的…胸部…继续抚摸吧…嗯…哈…啊…${heart(1)}」`,
+        ); // :1281
+        await era.printAndWait(
+          `${target_name}乳头像要爆炸一样膨胀着，只是轻触就让${target_name}发出了狂乱的声音。`,
+        ); // :1282
+        await era.printAndWait(
+          `「唔………啊啊啊~~${heart(1)} 我…唔…呀……啊啊啊${heart(1)}」`,
+        ); // :1283
+        kojo.胸爱抚 = 4; // :1284 CFLAG:306 = 4
+      } else if (
+        era0(`abl:${target}:1`) >= 3 &&
+        (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :1286-1290 B感覚Lv3以上
+        await era.printAndWait(
+          `「啊…嗯…啊啊…胸部…好舒服…我的胸部…变得奇怪了…啊啊！」`,
+        ); // :1287
+        await era.printAndWait(
+          `${target_name}只是被${player_name}抚摸着胸部，就露出了快要融化似的表情。`,
+        ); // :1288
+        await era.printAndWait(`「啊！更多的…抚摸我的胸部…啊…」`); // :1289
+        kojo.胸爱抚 = 3; // :1290 CFLAG:306 = 3
+      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // :1292-1295 それ以外（爱無し、B感覚Lv3未満）
+        await era.printAndWait(
+          `「啊…嗯…嗯咕…哈啊哈啊…确实的进攻我的弱点，不愧是魔王呢…啊…！」`,
+        ); // :1293
+        await era.printAndWait(
+          `${target_name}被${player_name}爱抚着胸部，反应很敏感的样子………`,
+        ); // :1294
+        kojo.胸爱抚 = 2; // :1295 CFLAG:306 = 2
+      }
+    }
+    return 0;
+  } else if (era_flag.selectcom == 6) {
+    // :1305-1376 接吻 CFLAG:307
+    if (kojo.接吻 == 0 && era0('tflag:13')) {
+      // :1307-1327 初吻（主人调教）
+      if (
+        era0(`talent:${target}:76`) == 1 &&
+        era_flag.assi == 0 &&
+        era0(`tequip:${target}:89`) == 0 &&
+        era0(`tequip:${target}:90`) == 0
+      ) {
+        // :1309-1314 淫乱かつ主人
+        await era.printAndWait(
+          `「嗯…啾…啾…嗯…${heart(1)} 嗯…不行、不要离开…嗯…啾…${heart(1)}」`,
+        ); // :1310
+        await era.printAndWait(
+          `${target_name}用手臂转动着${player_name}的头像是在说“不要离开”那样，舌头缠在一起。`,
+        ); // :1311
+        await era.printAndWait(
+          `「哈${heart(1)} …啾${heart(1)} …啾${heart(1)} …哈…」`,
+        ); // :1312
+        await era.printAndWait(
+          `「怎么样？我的初吻的味道…还不过瘾的话…要不要再来？」`,
+        ); // :1313
+        await era.printAndWait(
+          `${target_name}舔了舔沾满唾液的嘴唇、眼睛一片湿润的看着${player_name}`,
+        ); // :1314
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era_flag.assi == 0 &&
+        era0(`tequip:${target}:89`) == 0 &&
+        era0(`tequip:${target}:90`) == 0
+      ) {
+        // :1316-1320 爱かつ主人
+        await era.printAndWait(
+          `「嗯…哈啊…哈啊…呵呵呵、这是我的初吻哦…是什么味道啊？」`,
+        ); // :1317
+        await era.printAndWait(`${target_name}抱着${player_name}说着。`); // :1318
+        await era.printAndWait(
+          `「很意外吧、但是是真的哦…如果无法不相信的话…嗯…嗯…啾…啾…呵呵、那我就单单不和你接吻好了…${heart(1)}」`,
+        ); // :1319
+        await era.printAndWait(
+          `然后${target_name}又一次和${player_name}接了吻………`,
+        ); // :1320
+      } else {
+        // :1322-1324 それ以外
+        await era.printAndWait(`「嗯…咕…别这样…为什么第一次是你…！」`); // :1323
+        await era.printAndWait(
+          `${target_name}和${player_name}嘴唇分开后抹了抹嘴角………`,
+        ); // :1324
+      }
+      kojo.接吻 = 1; // :1326 CFLAG:307 = 1
+      return 0;
+    } else if (kojo.接吻 == 0) {
+      // :1329-1348 （調教で）初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        // :1331-1335 淫乱
+        await era.printAndWait(
+          `「嗯…啾……嗯…${heart(1)} …不行、不要离开…嗯……${heart(1)}」`,
+        ); // :1332
+        await era.printAndWait(
+          `${target_name}用手臂转动着${player_name}的头像是在说“不要离开”那样，舌头缠在一起。`,
+        ); // :1333
+        await era.printAndWait(
+          `「嗯……${heart(1)} …啾${heart(1)} …恩${heart(1)} …嗯…${heart(1)}」`,
+        ); // :1334
+        await era.printAndWait(
+          `${target_name}舔了舔沾满唾液的嘴唇、眼睛一片湿润的看着${player_name}………`,
+        ); // :1335
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :1337-1341 爱慕
+        await era.printAndWait(
+          `「嗯…哈啊…哈啊…呵呵呵、我的嘴唇…是什么味道？」`,
+        ); // :1338
+        await era.printAndWait(`${target_name}抱着${player_name}说着。`); // :1339
+        await era.printAndWait(`「啊、不过瘾吗？ 那再来…再继续吧…呐？」`); // :1340
+        await era.printAndWait(
+          `然后${target_name}又一次和${player_name}接了吻………`,
+        ); // :1341
+      } else {
+        // :1343-1345 それ以外
+        await era.printAndWait(`「嗯、呼…快…离开…唔…从我嘴里把你的………」`); // :1344
+        await era.printAndWait(
+          `${target_name}和${player_name}嘴唇分开后抹了抹嘴角………`,
+        ); // :1345
+      }
+      kojo.接吻 = 1; // :1347 CFLAG:307 = 1
+      return 0;
+    }
+    // :1350-1375 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1352-1356 淫乱
+      await era.printAndWait(
+        `「我的嘴唇…好吃吗？…啊…那就给你更好吃的吧${heart(1)} 嗯…啾…啾…嗯${heart(1)}」`,
+      ); // :1353
+      await era.printAndWait(
+        `${target_name}发出着啪嗒啪嗒的声音和${player_name}接着吻。两人口腔里都是黏黏的唾液。`,
+      ); // :1354
+      await era.printAndWait(
+        `「嗯啾…啾…哈啊…哈啊…哇啊…啊…喜欢${heart(1)} …继续接吻吧…继续吻我…${heart(1)}」`,
+      ); // :1355
+      kojo.接吻 = 5; // :1356 CFLAG:307 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1358-1362 爱慕
+      await era.printAndWait(
+        `「啊…嗯…继续吻我…啊…吻我…已经…嗯…啾…啾…哈啊${heart(1)}」`,
+      ); // :1359
+      await era.printAndWait(`${target_name}和${player_name}不停的吻在一起。`); // :1360
+      await era.printAndWait(
+        `「嗯…啊…已经迷上了…和你接吻…嗯…啊…哈${heart(1)}」`,
+      ); // :1361
+      kojo.接吻 = 4; // :1362 CFLAG:307 = 4
+    } else if (
+      era0(`abl:${target}:10`) >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1364-1367 顺从Lv2以上
+      await era.printAndWait(`「哈啊哈啊…嗯…咕…哈啊…啾…嗯啾…」`); // :1365
+      await era.printAndWait(
+        `${target_name}接受着${player_name}的吻，舌头缠绕在了一起………`,
+      ); // :1366
+      kojo.接吻 = 3; // :1367 CFLAG:307 = 3
+    } else if (kojo.接吻 <= 1 || game.kojo.口上开关 == 2) {
+      // :1369-1372 それ以外
+      await era.printAndWait(`「呜…呜呜…嘴唇…果然很不舒服…啊…呜！」`); // :1370
+      await era.printAndWait(
+        `${player_name}把${target_name}抱在怀里，不停的亲吻着………`,
+      ); // :1371
+      kojo.接吻 = 2; // :1372 CFLAG:307 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 7) {
+    // :1381-1448 自己扒开 CFLAG:308
+    if (kojo.自己扒开 == 0) {
+      // :1383-1407 初めて
+      const virgin_hidden =
+        era0(`talent:${target}:0`) == 1 && era0(`exp:${target}:0`) == 0; // :1390 TALENT:0==1 && EXP:0==0（处女且未破处）
+      if (era0(`talent:${target}:76`) == 1) {
+        // :1385-1391 淫乱
+        await era.printAndWait(
+          `「我的小穴…看啊…啊…这个小穴随便你怎么弄哦…啊啊${heart(1)}」`,
+        ); // :1386
+        await era.printAndWait(
+          `${target_name}大大的张开自己的大腿、用手指分开着自己的小穴。`,
+        ); // :1387
+        await era.printAndWait(
+          `然后${target_name}对${player_name}的视线起了反应，从蜜裂里流出了蜜汁。`,
+        ); // :1388
+        await era.printAndWait(
+          `「啊啊…我的小穴…只是被看着就好有感觉${heart(1)}」`,
+        ); // :1389
+        if (virgin_hidden) {
+          await era.printAndWait(
+            `「啊啊…难道说是想看我的处女膜？ 那么…啊啊、再打开一点哦…啊${heart(1)}」`,
+          ); // :1391
+        }
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :1393-1398 爱慕
+        await era.printAndWait(
+          `「啊啊…你真是好色的啊…但是如果是你的话不管做什么都没关系的…啊啊${heart(1)}」`,
+        ); // :1394
+        await era.printAndWait(
+          `${target_name}大大的张开自己的大腿、用手指分开着自己的小穴。`,
+        ); // :1395
+        await era.printAndWait(
+          `「继续看…继续看我的小穴吧…已经…变的黏糊糊了${heart(1)}」`,
+        ); // :1396
+        if (virgin_hidden) {
+          await era.printAndWait(
+            `「能看我的处女膜吗？呵呵呵、我一直期待着你能把它夺走呢………」`,
+          ); // :1398
+        }
+      } else {
+        // :1400-1405 それ以外（爱無し）
+        await era.printAndWait(`「唔…屈辱啊…这个样子………」`); // :1401
+        await era.printAndWait(
+          `${target_name}大大的张开自己的大腿、用手指分开着自己的小穴。脸上因为羞耻而十分红润。`,
+        ); // :1402
+        await era.printAndWait(`「笨、笨蛋…”漂亮”是什么意思啊…呜！」`); // :1403
+        if (virgin_hidden) {
+          await era.printAndWait(
+            `「诶、你说看见了处女膜？ 开、开什么玩笑！只打开那么一点怎么可能看见…！」`,
+          ); // :1405
+        }
+      }
+      kojo.自己扒开 = 1; // :1407 CFLAG:TARGET:308 = 1
+      return 0;
+    }
+    // :1410-1446 二回目以降（源作各分支误写为 CFLAG:306，1:1 保留原作寻址）
+    const virgin_hidden =
+      era0(`talent:${target}:0`) == 1 && era0(`exp:${target}:0`) == 0; // TALENT:0==1 && EXP:0==0
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1412-1419 淫乱
+      await era.printAndWait(
+        `「我的小穴…你专用的小穴…${heart(1)} 多看看啊…啊啊${heart(1)}」`,
+      ); // :1413
+      await era.printAndWait(
+        `${target_name}大大的张开自己的大腿、用手指分开着自己的小穴。`,
+      ); // :1414
+      await era.printAndWait(
+        `然后对${player_name}的视线起了反应，从蜜裂里流出了蜜汁。`,
+      ); // :1415
+      await era.printAndWait(
+        `「这个黏糊糊${heart(1)} 咕啾咕啾${heart(1)} 的小穴想要你的阴茎想要得不得了${heart(1)}」`,
+      ); // :1416
+      if (virgin_hidden) {
+        await era.printAndWait(
+          `「啊啊…难道说是想看我的处女膜？ 那么…啊啊、再打开一点哦…啊${heart(1)}」`,
+        ); // :1418
+      }
+      kojo.胸爱抚 = 5; // :1419 CFLAG:306 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1421-1428 爱慕
+      await era.printAndWait(
+        `「唔…啊啊…看着我的小穴…${heart(1)} 只要想到你在看…啊啊${heart(1)}」`,
+      ); // :1422
+      await era.printAndWait(
+        `${target_name}大大的张开自己的大腿、用手指分开着自己的小穴。`,
+      ); // :1423
+      await era.printAndWait(`然后${player_name}为了更好地看着提了提上半身。`); // :1424
+      await era.printAndWait(`「继续看着我黏糊糊的小穴……啊啊${heart(1)}」`); // :1425
+      if (virgin_hidden) {
+        await era.printAndWait(
+          `「能看我的处女膜吗？呵呵呵、我一直期待着你能把它夺走呢………」`,
+        ); // :1427
+      }
+      kojo.胸爱抚 = 4; // :1428 CFLAG:306 = 4
+    } else if (
+      era0(`abl:${target}:17`) >= 3 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1430-1436 露出癖Lv3以上
+      await era.printAndWait(
+        `「哈啊哈啊…啊…我的那里…仔细看吧…啊啊…嗯……很漂亮吧…你不是说过吗…啊啊」`,
+      ); // :1431
+      await era.printAndWait(
+        `${target_name}打开了自己的蜜裂、${player_name}为了更好地看着提了提上半身。`,
+      ); // :1432
+      await era.printAndWait(
+        `「啊…我的…啊啊…小穴…看着小穴…哈…啊啊…有感觉了♪」`,
+      ); // :1433
+      if (virgin_hidden) {
+        await era.printAndWait(`「唔嗯…也看看我的处女膜…啊啊…！」`); // :1435
+      }
+      kojo.胸爱抚 = 3; // :1436 CFLAG:306 = 3
+    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+      // :1438-1444 それ以外（爱無し、露出癖Lv3未満）
+      await era.printAndWait(
+        `「哈啊…哈啊……不用继续摆这个姿势了吧？ 诶、还有5分钟？唔…呜…饶、饶了我吧…啊啊！」`,
+      ); // :1439
+      await era.printAndWait(
+        `${target_name}服从着${player_name}那屈辱的命令。`,
+      ); // :1440
+      await era.printAndWait(`「啊、啊啊…我已经………」`); // :1441
+      if (virgin_hidden) {
+        await era.printAndWait(
+          `「我的处女膜很漂亮什么的…别说这么明显的假话…啊啊！」`,
+        ); // :1443
+      }
+      kojo.胸爱抚 = 2; // :1444 CFLAG:306 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 8) {
+    // :1453-1495 插入手指 CFLAG:309
+    if (kojo.插入手指 == 0) {
+      // :1455-1467 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「嗯啊…我的小穴…被你的手指…啊啊…好深…好棒${heart(1)}」`,
+        ); // :1458
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        era0(`talent:${target}:85`) == 1
+      ) {
+        await era.printAndWait(
+          `「啊…啊啊…你的手指…嗯…好深…啊啊…好棒…${heart(1)}」`,
+        ); // :1461
+      } else {
+        await era.printAndWait(
+          `「嗯…唔…你的手指…再稍微温柔一点啊…啊啊…！啊、这么深…啊啊！」`,
+        ); // :1464
+      }
+      kojo.插入手指 = 1; // :1466 CFLAG:TARGET:309 = 1
+      return 0;
+    }
+    // :1469-1493 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1471-1475 淫乱
+      await era.printAndWait(
+        `「继续在我的女阴里搅动…啊啊${heart(1)} 被你弄得乱七八糟了${heart(1)}」`,
+      ); // :1472
+      await era.printAndWait(
+        `${target_name}被${player_name}爱抚着阴道深处，发出着娇喘`,
+      ); // :1473
+      await era.printAndWait(`「嗯…啊…小穴…小穴舒服${heart(1)}」`); // :1474
+      kojo.插入手指 = 5; // :1475 CFLAG:309 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1477-1481 爱＋屈服刻印Lv3
+      await era.printAndWait(
+        `「啊啊…你…嗯…啊啊啊…我的小学里面…嗯…啊${heart(1)}」`,
+      ); // :1478
+      await era.printAndWait(
+        `${target_name}被${player_name}爱抚着阴道深处，发出着娇喘`,
+      ); // :1479
+      await era.printAndWait(
+        `「啊…啊啊…你的手指…嗯…好深…啊…啊啊啊…好棒…${heart(1)}」`,
+      ); // :1480
+      kojo.插入手指 = 4; // :1481 CFLAG:309 = 4
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.插入手指 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1483-1486 屈服刻印Lv3
+      await era.printAndWait(`「嗯…啊…咕…啊啊——！我…这么…啊啊…啊啊——！」`); // :1484
+      await era.printAndWait(
+        `${target_name}被${player_name}搅动着阴道，悲鸣着`,
+      ); // :1485
+      await era.printAndWait(`「咕…嗯…在稍微温柔…一点…啊」`); // :1486
+      kojo.插入手指 = 3; // :1487 CFLAG:309 = 3
+    } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 == 2) {
+      // :1489-1490 それ以外
+      await era.printAndWait(`「我的…啊啊啊…那里…被这样玩弄的话…咕…啊！」`); // :1490
+      kojo.插入手指 = 2; // :1491 CFLAG:309 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 9) {
+    // :1500-1541 舔肛 CFLAG:310
+    if (kojo.舔肛 == 0) {
+      // :1502-1512 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「啊嗯…继续舔…我的肛门…啊啊…好舒服${heart(1)}」`,
+        ); // :1505
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(
+          `「啊啊…我的…我的屁股…啊…明明很脏的…啊…停下…啊啊～！${heart(1)}」`,
+        ); // :1508
+      } else {
+        await era.printAndWait(
+          `「嗯…嗯…啊啊…快住…快助手啊！…我的…那个地方…啊啊明明很脏的！」`,
+        ); // :1511
+      }
+      kojo.舔肛 = 1; // :1513 CFLAG:TARGET:310 = 1
+      return 0;
+    }
+    // :1516-1540 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.舔肛 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1518-1522 淫乱
+      await era.printAndWait(
+        `「啊嗯…好舒服…好舒服啊${heart(1)} 继续舔…我的肛门吧${heart(1)}」`,
+      ); // :1519
+      await era.printAndWait(
+        `${player_name}如${target_name}所愿的那样，肛门的皱褶每一根都舔到了`,
+      ); // :1520
+      await era.printAndWait(
+        `「啊嗯…嗯…嗯啊…我的肛门…好吃吗？那就继续舔吧${heart(1)}」`,
+      ); // :1521
+      kojo.舔肛 = 5; // :1522 CFLAG:310 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.舔肛 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1524-1527 爱慕（源尾附「sao」，为源文件遗留字符，1:1 保留）
+      await era.printAndWait(
+        `「不、不行啊…屁股被你…啊…这么舔的话，我…要变得奇怪了…嗯…啊嗯${heart(1)}」sao`,
+      ); // :1525
+      await era.printAndWait(
+        `${player_name}舔着${target_name}的肛门，因为舌头扫过一窈窕皱褶而发出甜美的呻吟。`,
+      ); // :1526
+      await era.printAndWait(
+        `「啊嗯…啊啊…我的屁股…要变得奇怪了…啊啊…嗯…啊啊嗯，${heart(1)}」`,
+      ); // :1527
+      kojo.舔肛 = 4; // :1528 CFLAG:310 = 4
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.舔肛 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1530-1532 屈服刻印Lv3
+      await era.printAndWait(`「嗯…啊嗯…啊啊…嗯、啊…我、我已经…我…啊啊」`); // :1531
+      await era.printAndWait(
+        `${target_name}一边发出很害羞的声音，一边被${player_name}舔着肛门………`,
+      ); // :1532
+      kojo.舔肛 = 3; // :1533 CFLAG:310 = 3
+    } else if (kojo.舔肛 <= 1 || game.kojo.口上开关 == 2) {
+      // :1535-1537 それ以外（屈服刻印Lv3未満）
+      await era.printAndWait(
+        `「哈…嗯…嗯…不、不要再这样了…啊啊…我的屁股…啊啊快停下啊！」`,
+      ); // :1536
+      await era.printAndWait(
+        `${player_name}用舌头让${target_name}紧固的花蕾一点点开始变习惯了………`,
+      ); // :1537
+      kojo.舔肛 = 2; // :1538 CFLAG:310 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 10) {
+    // :1547-1589 振动宝石 CFLAG:311
+    if (kojo.振动宝石 == 0) {
+      // :1549-1560 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(`「那是我的…敏感部位…继续…啊啊${heart(1)}」`); // :1552
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        era0(`talent:${target}:85`) == 1
+      ) {
+        await era.printAndWait(
+          `「啊…嗯…啊…${heart(1)} 好舒服啊…啊啊啊${heart(1)}」`,
+        ); // :1555
+      } else {
+        await era.printAndWait(
+          `「嗯…这个稍微有点痒啊…啊嗯…已、已经…嗯…啊啊！」`,
+        ); // :1558
+      }
+      kojo.振动宝石 = 1; // :1560 CFLAG:TARGET:311 = 1
+      return 0;
+    }
+    // :1563-1588 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.振动宝石 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1565-1568 淫乱
+      await era.printAndWait(`「那是我的…敏感部位…继续…啊啊${heart(1)}」`); // :1566
+      await era.printAndWait(
+        `${target_name}振动宝石贴住阴蒂的刺激让她发出了娇喘`,
+      ); // :1567
+      await era.printAndWait(
+        `「啊啊啊,我的阴蒂${heart(1)} 啊啊啊啊啊${heart(1)} 做更多舒服的事情吧${heart(1)}」`,
+      ); // :1568
+      kojo.振动宝石 = 5; // :1569 CFLAG:311 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.振动宝石 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1571-1574 爱＋屈服刻印Lv3
+      await era.printAndWait(
+        `「啊嗯…啊…啊嗯…${heart(1)} 好舒服…啊，啊啊啊…${heart(1)}」`,
+      ); // :1572
+      await era.printAndWait(
+        `${target_name}敏感部分被振动宝石贴着，露出了甜美的娇喘`,
+      ); // :1573
+      await era.printAndWait(
+        `「哈…哈…啊…嗯…啊嗯${heart(1)} 啊啊啊…啊——${heart(1)}」`,
+      ); // :1574
+      kojo.振动宝石 = 4; // :1575 CFLAG:311 = 4
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.振动宝石 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1577-1580 屈服刻印Lv3
+      await era.printAndWait(`「啊…嗯…这个…好舒服啊…啊嗯…啊…啊啊！」`); // :1578
+      await era.printAndWait(
+        `${target_name}振动宝石贴住阴蒂的刺激让她发出激烈的娇喘`,
+      ); // :1579
+      await era.printAndWait(`「但是我的阴蒂…才…才不会有什么感觉呢……哼」`); // :1580
+      kojo.振动宝石 = 3; // :1581 CFLAG:311 = 3
+    } else if (kojo.振动宝石 <= 1 || game.kojo.口上开关 == 2) {
+      // :1583-1585 それ以外
+      await era.printAndWait(`「嗯…这个稍微有点痒啊…啊嗯…已、已经…嗯…啊啊！」`); // :1584
+      await era.printAndWait(
+        `${target_name}敏感部分被振动宝石贴着而发出了叫声`,
+      ); // :1585
+      kojo.振动宝石 = 2; // :1586 CFLAG:311 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
