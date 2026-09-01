@@ -78,6 +78,7 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:PLAYER$/, 'PLAYER'],
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
+  [/^CALLNAME:MASTER$/, 'MASTER'], // #235：K4 冷徹 :152/:160/:162（呼び名，MASTER 恒角色 0）
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
   [/^SELF_CALL\(A\)$/, 'SC'], // EVENT_K 分发前 TARGET=A，与 TARGET 同值
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
