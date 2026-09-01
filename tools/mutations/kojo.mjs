@@ -498,8 +498,10 @@ export default [
   {
     desc: 'M1611 K0 助手调教守卫删除（ASSI/ASSIPLAY 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (era_flag.assi > 0 && era_flag.assiplay) {',
-    replace: '  if (false) { // 变异：助手守卫删除',
+    find: `  // :681-682 助手が調教した時に口上をスキップする
+  if (era_flag.assi > 0 && era_flag.assiplay) {`,
+    replace: `  // :681-682 助手が調教した時に口上をスキップする
+  if (false) { // 变异：助手守卫删除`,
     tests: ['kojo-k0-tender'],
     must_mention: '助手调教中',
   },
@@ -2150,5 +2152,69 @@ export default [
     replace: '        // :4468-4469 空等待被删',
     tests: ['kojo-k0-tender'],
     must_mention: '空 PRINTFORMW 仍等待',
+  },
+  {
+    desc: 'M1912 K0 放置PLAY首次状态推进写错（CFLAG:356 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.放置PLAY = 1; // :4566-4567',
+    replace: '      kojo.放置PLAY = 2; // :4566-4567',
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY首次推进到 1',
+  },
+  {
+    desc: 'M1913 K0 放置PLAY二次淫乱+欲情门槛错位（CFLAG:356 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    replace: `        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
+  },
+  {
+    desc: 'M1914 K0 放置PLAY二次淫乱+欲情写回错档（CFLAG:356 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.放置PLAY = 6; // :4577',
+    replace: '        kojo.放置PLAY = 5; // :4577',
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次淫乱+欲情写 6',
+  },
+  {
+    desc: 'M1915 K0 放置PLAY二次欲情门槛改成 PALAMLV[4]（原文是 PALAMLV[3]）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[4] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
+  },
+  {
+    desc: 'M1916 K0 放置PLAY首次壶虫 SIF 守卫删除（TEQUIP:11 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      if (era.get(\`tequip:\${target}:11\`)) {
+        // :4531-4532`,
+    replace: `      if (false) {
+        // :4531-4532`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次装备 SIF：壶虫',
+  },
+  {
+    desc: 'M1917 K0 放置PLAY二次 PRINTL 空行被删（耗尽档应仍输出）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "      era.print(''); // :4599",
+    replace: '      // :4599 PRINTL 被删',
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
   },
 ];

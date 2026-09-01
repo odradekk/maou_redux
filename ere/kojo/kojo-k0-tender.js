@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY 分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -38,7 +38,8 @@
  *     眼罩开始 CFLAG:344 :4176-4212、脱着 CFLAG:380 :4214-4225；
  *     绳子开始 CFLAG:345 :4231-4298、脱着 CFLAG:385 :4300-4315；
  *     口塞开始 CFLAG:346 :4321-4357、脱着 CFLAG:386 :4359-4370；
- *     灌肠+肛塞开始 CFLAG:347 :4376-4424、脱着 RAND 拼句 :4427-4497）
+ *     灌肠+肛塞开始 CFLAG:347 :4376-4424、脱着 RAND 拼句 :4427-4497；
+ *     放置PLAY CFLAG:356 :4510-4638）
 
 
 
@@ -116,7 +117,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4497）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞。
+ * @KOJO_MESSAGE_COM_0（:674-4638）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY。
 
 
 
@@ -6804,6 +6805,240 @@ async function kojo_message_com_0(rand) {
       await era.printAndWait(''); // :4494-4495
     }
     return 0;
+  }
+
+  // :4510 IF SELECTCOM == 55（放置PLAY，CFLAG:356）
+  if (era_flag.selectcom === 55) {
+    if (kojo.放置PLAY === 0) {
+      // :4512
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :4514
+        await era.printAndWait(`${target_name}偷偷看着这边………`); // :4515
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :4517
+        await era.printAndWait(`「哈啊…哈啊…主人～…${heart(1)}」`); // :4518
+        await era.printAndWait(`${target_name}露出苦闷的表情………`); // :4519
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :4521
+        await era.printAndWait(`「嗯…那、那个…请…再调教我吧………♪」`); // :4522
+        await era.printAndWait(`${target_name}好像还很欲求不满的样子………`); // :4523
+      } else {
+        await era.printAndWait(`「休、休息一下是吗………？」`); // :4525-4526
+        await era.printAndWait(`${target_name}偷偷看着这边………`); // :4527
+      }
+      era.print(''); // :4529
+
+      if (era.get(`tequip:${target}:11`)) {
+        // :4531-4532
+        await era.printAndWait(
+          `壶虫在${target_name}的私处里蠢动着、毫不留情的搅动着阴道。`,
+        ); // :4531-4532
+      }
+
+      if (era.get(`tequip:${target}:13`)) {
+        // :4534-4535
+        await era.printAndWait(
+          `肛门虫在${target_name}的肛门里蠢动着、毫不留情的蹂躙着肛门。`,
+        ); // :4534-4535
+      }
+
+      if (era.get(`tequip:${target}:19`)) {
+        // :4537-4538
+        await era.printAndWait(
+          `${target_name}的肛门被塞入了肛珠、肛门一颤一颤的。`,
+        ); // :4537-4538
+      }
+
+      if (era.get(`tequip:${target}:14`)) {
+        // :4540-4541
+        await era.printAndWait(
+          `${target_name}的阴蒂被装上了电动阴蒂夹持续地被刺激着。`,
+        ); // :4540-4541
+      }
+
+      if (era.get(`tequip:${target}:15`)) {
+        // :4543-4544
+        await era.printAndWait(
+          `${target_name}的乳头被装上了乳头跳蛋持续地被刺激着。`,
+        ); // :4543-4544
+      }
+
+      if (era.get(`tequip:${target}:16`)) {
+        // :4546-4547
+        era.print(`${target_name}的胸被装上了榨乳器被吸取着母乳。`); // :4546-4547
+      }
+
+      if (era.get(`tequip:${target}:17`)) {
+        // :4549-4550
+        await era.printAndWait(
+          `${target_name}的阴茎被套上了飞机杯现在也像快射精似的颤动着。`,
+        ); // :4549-4550
+      }
+
+      if (era.get(`tequip:${target}:43`)) {
+        // :4552-4553
+        await era.printAndWait(`${target_name}被戴着眼罩。`); // :4552-4553
+      }
+
+      if (era.get(`tequip:${target}:44`)) {
+        // :4555-4556
+        await era.printAndWait(`${target_name}的身体被身子绑住动弹不得。`); // :4555-4556
+      }
+
+      if (era.get(`tequip:${target}:46`)) {
+        // :4558-4559
+        await era.printAndWait(
+          `${target_name}的肚子因为灌肠的原因发出了咕噜咕噜的声音、如果把塞子拔掉就会马上一泻千里的样子。`,
+        ); // :4558-4559
+      }
+
+      if (era.get(`tequip:${target}:49`)) {
+        // :4561-4562
+        await era.printAndWait(
+          `${target_name}的肛门插着电极、每当轻微的电流通过、括约肌就会颤动起来。`,
+        ); // :4561-4562
+      }
+
+      if (era.get(`tequip:${target}:53`)) {
+        // :4564-4565
+        await era.printAndWait(
+          `于是、${target_name}的模样就这样继续被录了下来………`,
+        ); // :4564-4565
+      }
+      kojo.放置PLAY = 1; // :4566-4567
+      return 0;
+    } else {
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :4569-4571
+        await era.printAndWait(`${target_name}偷偷看着这边………`); // :4572
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (era.get(`palam:${target}:5`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574
+        await era.printAndWait(`「啊啊～…主人…求、求你了…请不要不理我…嗯！」`); // :4575
+        await era.printAndWait(
+          `${target_name}露出发情般的表情向${player_name}撒娇…………`,
+        ); // :4576
+        kojo.放置PLAY = 6; // :4577
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.放置PLAY <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4579
+        await era.printAndWait(`「嗯…那、那个…请…再调教我吧………♪」`); // :4580
+        await era.printAndWait(`${target_name}好像还很欲求不满的样子………`); // :4581
+        kojo.放置PLAY = 5; // :4582
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (era.get(`palam:${target}:5`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4584
+        await era.printAndWait(
+          `「主人…你、你好坏啊～…${sc()}明明…这么想奉仕您…${heart(1)}」`,
+        ); // :4585
+        await era.printAndWait(
+          `${target_name}露出发情般的表情看着${player_name}………`,
+        ); // :4586
+        kojo.放置PLAY = 4; // :4587
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.放置PLAY <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :4589
+        await era.printAndWait(`「哈啊…哈啊…主人～…${heart(1)}」`); // :4590
+        await era.printAndWait(`${target_name}露出苦闷的表情………`); // :4591
+        kojo.放置PLAY = 3; // :4592
+      } else if (kojo.放置PLAY <= 1 || game.kojo.口上开关 === 2) {
+        // :4594
+        await era.printAndWait(`「休、休息一下是吗………？」`); // :4595
+        await era.printAndWait(`${target_name}偷偷看着这边………`); // :4596
+        kojo.放置PLAY = 2; // :4597
+      }
+      era.print(''); // :4599
+
+      if (era.get(`tequip:${target}:11`)) {
+        // :4601-4602
+        await era.printAndWait(
+          `壶虫在${target_name}的私处里蠢动着、毫不留情的搅动着阴道。`,
+        ); // :4601-4602
+      }
+
+      if (era.get(`tequip:${target}:13`)) {
+        // :4604-4605
+        await era.printAndWait(
+          `肛门虫在${target_name}的肛门里蠢动着、毫不留情的蹂躙着肛门。`,
+        ); // :4604-4605
+      }
+
+      if (era.get(`tequip:${target}:19`)) {
+        // :4607-4608
+        await era.printAndWait(
+          `${target_name}的肛门被塞入了肛珠、肛门一颤一颤的。`,
+        ); // :4607-4608
+      }
+
+      if (era.get(`tequip:${target}:14`)) {
+        // :4610-4611
+        await era.printAndWait(
+          `${target_name}的阴蒂被装上了电动阴蒂夹持续地被刺激着。`,
+        ); // :4610-4611
+      }
+
+      if (era.get(`tequip:${target}:15`)) {
+        // :4613-4614
+        await era.printAndWait(
+          `${target_name}的乳头被装上了乳头跳蛋持续地被刺激着。`,
+        ); // :4613-4614
+      }
+
+      if (era.get(`tequip:${target}:16`)) {
+        // :4616-4617
+        era.print(`${target_name}的胸被装上了榨乳器被吸取着母乳。`); // :4616-4617
+      }
+
+      if (era.get(`tequip:${target}:17`)) {
+        // :4619-4620
+        await era.printAndWait(
+          `${target_name}的阴茎被套上了飞机杯现在也像快射精似的颤动着。`,
+        ); // :4619-4620
+      }
+
+      if (era.get(`tequip:${target}:43`)) {
+        // :4622-4623
+        await era.printAndWait(`${target_name}被戴着眼罩。`); // :4622-4623
+      }
+
+      if (era.get(`tequip:${target}:44`)) {
+        // :4625-4626
+        await era.printAndWait(`${target_name}的身体被身子绑住动弹不得。`); // :4625-4626
+      }
+
+      if (era.get(`tequip:${target}:46`)) {
+        // :4628-4629
+        await era.printAndWait(
+          `${target_name}的肚子因为灌肠的原因发出了咕噜咕噜的声音、如果把塞子拔掉就会马上一泻千里的样子。`,
+        ); // :4628-4629
+      }
+
+      if (era.get(`tequip:${target}:49`)) {
+        // :4631-4632
+        await era.printAndWait(
+          `${target_name}的肛门插着电极、每当轻微的电流通过、括约肌就会颤动起来。`,
+        ); // :4631-4632
+      }
+
+      if (era.get(`tequip:${target}:53`)) {
+        // :4634-4635
+        await era.printAndWait(
+          `于是、${target_name}的模样就这样继续被录了下来………`,
+        ); // :4634-4635
+      }
+      return 0;
+    }
   }
 
   // 其余指令待办，占位一行
