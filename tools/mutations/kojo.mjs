@@ -1499,4 +1499,44 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '背面座位肛交二次淫乱+A感觉写 7',
   },
+  {
+    desc: 'M1854 K0 手淫首次状态推进写错（CFLAG:331 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.手淫 = 1; // :3210-3211',
+    replace: '      kojo.手淫 = 2; // :3210-3211',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫首次推进到 1',
+  },
+  {
+    desc: 'M1855 K0 手淫二次淫乱+侍奉门槛错位（CFLAG:331 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3213-3215`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3213-3215`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M1856 K0 手淫二次淫乱+侍奉写回错档（CFLAG:331 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.手淫 = 6; // :3241',
+    replace: '        kojo.手淫 = 5; // :3241',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫二次淫乱+侍奉写 6',
+  },
+  {
+    desc: 'M1857 K0 手淫二次阴茎形状读 TARGET 而非 PLAYER（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    const penis = era.get(`talent:${era_flag.player}:318`) || 0;',
+    replace: '    const penis = era.get(`talent:${target}:318`) || 0;',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
 ];

@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3189', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3288', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -15608,6 +15608,219 @@ const FILES = [
         any: [/%SAVESTR:TARGET%被从下方抽插着肛门、痛苦的呻吟着………/],
       },
       { src: K0, ref: '3185', any: [/\t\t\tCFLAG:330 = 2/m] },
+      { src: K0, ref: '3194', any: [/IF\ SELECTCOM\ ==\ 30/m] },
+      { src: K0, ref: '3194-3288', any: [/^IF SELECTCOM == 30$/m] },
+      { src: K0, ref: '3194', any: [/IF SELECTCOM == 30/m] },
+      { src: K0, ref: '3196', any: [/\tIF CFLAG:TARGET:331 == 0/m] },
+      { src: K0, ref: '3198', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3199',
+        any: [
+          /「额呵呵…这样一上一下地…玩弄大肉棒真不错呢%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3201', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '3202',
+        any: [/「啊哈啊啊…能摸到主人的大鸡鸡…真不错呢…我一定会努力奉仕的～♪」/],
+      },
+      { src: K0, ref: '3204', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      { src: K0, ref: '3205', any: [/「哈啊…哈啊…大鸡鸡…好烫…好厉害哦………」/] },
+      {
+        src: K0,
+        ref: '3207-3208',
+        any: [/「讨、讨厌…这东西…咿呀～…好烫………」/],
+      },
+      { src: K0, ref: '3210-3211', any: [/\t\tCFLAG:TARGET:331 = 1/m] },
+      {
+        src: K0,
+        ref: '3213-3215',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3216', any: [/\t\t\tIF TALENT:PLAYER:318 == 1/m] },
+      {
+        src: K0,
+        ref: '3218',
+        any: [/「好雄伟的肉棒…两只手都抓不住%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '3219', any: [/\t\t\tELSEIF TALENT:PLAYER:318 == 2/m] },
+      {
+        src: K0,
+        ref: '3221',
+        any: [
+          /「小孩子似的鲜肉棒，很有活力地勃起着呢%UNICODE\(0x2661\) \*1%　好可爱%UNICODE\(0x2661\) \*1%　想咻咻地射出/,
+        ],
+      },
+      { src: K0, ref: '3222', any: [/\t\t\tELSEIF TALENT:PLAYER:318 == 3/m] },
+      {
+        src: K0,
+        ref: '3224',
+        any: [
+          /「啊……%UNICODE\(0x2661\) \*1%　包茎肉棒，剥开就满是雄性的味道……好高兴%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3225', any: [/\t\t\tELSEIF TALENT:PLAYER:318 == 4/m] },
+      {
+        src: K0,
+        ref: '3227',
+        any: [
+          /「马肉棒好厉害……%UNICODE\(0x2661\) \*1%　脑袋要变得奇怪了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3229', any: [/\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3230',
+        any: [
+          /「啊啊～…单是摸到大肉棒就已经按捺不住了～………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3231',
+        any: [
+          /「当、当然让我奉仕大肉棒一整天也是能做到的、不过…啊啊～不要让大肉棒这么興奮嘛%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3232-3233', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '3234-3235',
+        any: [
+          /「啊啊啊啊…大肉棒～…好高兴…可以的话就请射精吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3236',
+        any: [
+          /%SELF_CALL\(TARGET\)%像打心眼里喜欢似的、慈爱地用手不断撸着阴茎。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3237',
+        any: [
+          /「全部…全部都是%SELF_CALL\(TARGET\)%的哦～…啊啊啊…大肉棒好棒～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3238-3239', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3241', any: [/\t\t\tCFLAG:331 = 6/m] },
+      {
+        src: K0,
+        ref: '3243',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3244', any: [/\t\t\tIF TALENT:PLAYER:318 == 1/m] },
+      {
+        src: K0,
+        ref: '3246',
+        any: [/「好雄伟的棒棒…两只手都抓不住%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '3247', any: [/\t\t\tELSEIF TALENT:PLAYER:318 == 2/m] },
+      {
+        src: K0,
+        ref: '3249',
+        any: [
+          /「小孩子似的鲜肉棒棒，很有活力地勃起着呢%UNICODE\(0x2661\) \*1%　好可爱%UNICODE\(0x2661\) \*1%　想咻咻地射/,
+        ],
+      },
+      { src: K0, ref: '3250', any: [/\t\t\tELSEIF TALENT:PLAYER:318 == 3/m] },
+      {
+        src: K0,
+        ref: '3252',
+        any: [
+          /「啊……%UNICODE\(0x2661\) \*1%　包茎棒棒，剥开就满是雄性的味道……好高兴%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3253', any: [/\t\t\tELSEIF TALENT:PLAYER:318 == 4/m] },
+      {
+        src: K0,
+        ref: '3255',
+        any: [
+          /「马棒棒好厉害……%UNICODE\(0x2661\) \*1%　脑袋要变得奇怪了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3257', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3258',
+        any: [
+          /「啊啊…明明只是用手摸到…又硬又烫的大鸡鸡…就总觉…%SELF_CALL\(TARGET\)%也…嗯嗯～」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3259',
+        any: [/曾经慈爱地给人们带来治愈的这双手、现在只是为了撸鸡鸡而存在。/],
+      },
+      {
+        src: K0,
+        ref: '3260',
+        any: [/「啊～…感、感觉怎样…会舒服吗？………好的～！会让您更舒服的～♪」/],
+      },
+      { src: K0, ref: '3261-3262', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '3263-3264',
+        any: [/「啊啊啊…只是摸了摸大鸡鸡…好像就興奮起来了呢………」/],
+      },
+      {
+        src: K0,
+        ref: '3265',
+        any: [
+          /%SELF_CALL\(TARGET\)%像打心眼里喜欢似的、慈爱地用手不断撸着阴茎。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3266',
+        any: [
+          /「能让%SELF_CALL\(TARGET\)%做这么色情的事情的只有主人哦～………啊…啊啊…」/,
+        ],
+      },
+      { src: K0, ref: '3267-3268', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3270', any: [/\t\t\tCFLAG:331 = 5/m] },
+      {
+        src: K0,
+        ref: '3272',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3273', any: [/「额呵呵…大鸡鸡对我”服服帖帖”的呢～♪」/] },
+      { src: K0, ref: '3274-3275', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3276', any: [/\t\t\tCFLAG:331 = 4/m] },
+      {
+        src: K0,
+        ref: '3278',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3279',
+        any: [/「总觉得…能分辨出能让大鸡鸡感到舒服的地方了呢…啊～～♪」/],
+      },
+      { src: K0, ref: '3280', any: [/\t\t\tCFLAG:331 = 3/m] },
+      {
+        src: K0,
+        ref: '3282',
+        any: [/\t\tELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3283',
+        any: [/「哈啊哈啊…呀啊啊…大鸡鸡…变的…这么硬了…感觉好怪…」/],
+      },
+      { src: K0, ref: '3284', any: [/\t\t\tCFLAG:331 = 2/m] },
     ],
   },
 

@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -23,7 +23,8 @@
  *     正常位肛交 CFLAG:327 状态机 :2762-2854；
  *     背后位肛交 CFLAG:328 状态机 :2859-2968；
  *     对面座位肛交 CFLAG:329 状态机 :2973-3074；
- *     背面座位肛交 CFLAG:330 状态机 :3079-3189）
+ *     背面座位肛交 CFLAG:330 状态机 :3079-3189；
+ *     手淫 CFLAG:331 状态机 :3194-3288）
 
 
 
@@ -101,7 +102,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-3189）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交。
+ * @KOJO_MESSAGE_COM_0（:674-3288）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫。
 
 
 
@@ -4492,6 +4493,200 @@ async function kojo_message_com_0(rand) {
           ); // :3182-3183
         }
         kojo.背面座位肛交 = 2; // :3185
+      }
+      return 0;
+    }
+  }
+
+  // :3194 IF SELECTCOM == 30（手淫，CFLAG:331）
+  if (era_flag.selectcom === 30) {
+    const serve = era.get(`abl:${target}:16`) || 0;
+    const semen_addict = era.get(`abl:${target}:32`) || 0;
+    const penis = era.get(`talent:${era_flag.player}:318`) || 0;
+
+    if (kojo.手淫 === 0) {
+      // :3196
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :3198
+        await era.printAndWait(
+          `「额呵呵…这样一上一下地…玩弄大肉棒真不错呢${heart(1)}」`,
+        ); // :3199
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :3201
+        await era.printAndWait(
+          `「啊哈啊啊…能摸到主人的大鸡鸡…真不错呢…我一定会努力奉仕的～♪」`,
+        ); // :3202
+      } else if (serve >= 3) {
+        // :3204
+        await era.printAndWait(`「哈啊…哈啊…大鸡鸡…好烫…好厉害哦………」`); // :3205
+      } else {
+        await era.printAndWait(`「讨、讨厌…这东西…咿呀～…好烫………」`); // :3207-3208
+      }
+      kojo.手淫 = 1; // :3210-3211
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3213-3215
+        if (penis === 1) {
+          // :3216
+
+          await era.printAndWait(`「好雄伟的肉棒…两只手都抓不住${heart(1)}」`); // :3218
+        } else if (penis === 2) {
+          // :3219
+
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「小孩子似的鲜肉棒，很有活力地勃起着呢${heart(1)}　好可爱${heart(1)}　想咻咻地射出来吗${heart(1)}」`,
+          ); // :3221
+        } else if (penis === 3) {
+          // :3222
+
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「啊……${heart(1)}　包茎肉棒，剥开就满是雄性的味道……好高兴${heart(1)}」`,
+          ); // :3224
+        } else if (penis === 4) {
+          // :3225
+
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「马肉棒好厉害……${heart(1)}　脑袋要变得奇怪了${heart(1)}」`,
+          ); // :3227
+        }
+        if (rand_n(2) === 0) {
+          // :3229
+          await era.printAndWait(
+            `「啊啊～…单是摸到大肉棒就已经按捺不住了～………${heart(1)}」`,
+          ); // :3230
+          await era.printAndWait(
+            `「当、当然让我奉仕大肉棒一整天也是能做到的、不过…啊啊～不要让大肉棒这么兴奋嘛${heart(1)}」`,
+          ); // :3231
+          if (semen_addict >= 3) {
+            // :3232-3233
+            await era.printAndWait(
+              `「要是想射精的话…就射在${sc()}淫荡的嘴里吧…求你了～${heart(1)} 渴的没办法了～${heart(1)}」`,
+            ); // :3232-3233
+          }
+        } else {
+          await era.printAndWait(
+            `「啊啊啊啊…大肉棒～…好高兴…可以的话就请射精吧～${heart(1)}」`,
+          ); // :3234-3235
+          await era.printAndWait(
+            `${sc()}像打心眼里喜欢似的、慈爱地用手不断撸着阴茎。`,
+          ); // :3236
+          await era.printAndWait(
+            `「全部…全部都是${sc()}的哦～…啊啊啊…大肉棒好棒～…${heart(1)}」`,
+          ); // :3237
+          if (semen_addict >= 3) {
+            // :3238-3239
+            await era.printAndWait(
+              `「精液…请把精液给我吧…请把精液赐给淫荡下流的${sc()}吧～${heart(1)}」`,
+            ); // :3238-3239
+          }
+        }
+        kojo.手淫 = 6; // :3241
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        serve >= 5 &&
+        (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3243
+        if (penis === 1) {
+          // :3244
+
+          await era.printAndWait(`「好雄伟的棒棒…两只手都抓不住${heart(1)}」`); // :3246
+        } else if (penis === 2) {
+          // :3247
+
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「小孩子似的鲜肉棒棒，很有活力地勃起着呢${heart(1)}　好可爱${heart(1)}　想咻咻地射出来吗${heart(1)}」`,
+          ); // :3249
+        } else if (penis === 3) {
+          // :3250
+
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「啊……${heart(1)}　包茎棒棒，剥开就满是雄性的味道……好高兴${heart(1)}」`,
+          ); // :3252
+        } else if (penis === 4) {
+          // :3253
+
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「马棒棒好厉害……${heart(1)}　脑袋要变得奇怪了${heart(1)}」`,
+          ); // :3255
+        }
+        if (rand_n(2) === 0) {
+          // :3257
+          await era.printAndWait(
+            `「啊啊…明明只是用手摸到…又硬又烫的大鸡鸡…就总觉…${sc()}也…嗯嗯～」`,
+          ); // :3258
+          await era.printAndWait(
+            `曾经慈爱地给人们带来治愈的这双手、现在只是为了撸鸡鸡而存在。`,
+          ); // :3259
+          await era.printAndWait(
+            `「啊～…感、感觉怎样…会舒服吗？………好的～！会让您更舒服的～♪」`,
+          ); // :3260
+          if (semen_addict >= 3) {
+            // :3261-3262
+            await era.printAndWait(
+              `「如果舒服的话…请不用顾虑尽管射出来吧…啊啊～…啊啊…精液…好想要精液～…${heart(1)}」`,
+            ); // :3261-3262
+          }
+        } else {
+          await era.printAndWait(
+            `「啊啊啊…只是摸了摸大鸡鸡…好像就兴奋起来了呢………」`,
+          ); // :3263-3264
+          await era.printAndWait(
+            `${sc()}像打心眼里喜欢似的、慈爱地用手不断撸着阴茎。`,
+          ); // :3265
+          await era.printAndWait(
+            `「能让${sc()}做这么色情的事情的只有主人哦～………啊…啊啊…」`,
+          ); // :3266
+          if (semen_addict >= 3) {
+            // :3267-3268
+            await era.printAndWait(
+              `「啊啊…变的…更爽吧…把精液满满地射出来吧…${heart(1)}」`,
+            ); // :3267-3268
+          }
+        }
+        kojo.手淫 = 5; // :3270
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3272
+        await era.printAndWait(`「额呵呵…大鸡鸡对我”服服帖帖”的呢～♪」`); // :3273
+        if (semen_addict >= 3) {
+          // :3274-3275
+          await era.printAndWait(
+            `「觉得舒服的话…不用顾虑尽管射吧…啊啊～…啊啊…精液…好想要精液～…${heart(1)}」`,
+          ); // :3274-3275
+        }
+        kojo.手淫 = 4; // :3276
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :3278
+        await era.printAndWait(
+          `「总觉得…能分辨出能让大鸡鸡感到舒服的地方了呢…啊～～♪」`,
+        ); // :3279
+        kojo.手淫 = 3; // :3280
+      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {
+        // :3282
+        await era.printAndWait(
+          `「哈啊哈啊…呀啊啊…大鸡鸡…变的…这么硬了…感觉好怪…」`,
+        ); // :3283
+        kojo.手淫 = 2; // :3284
       }
       return 0;
     }
