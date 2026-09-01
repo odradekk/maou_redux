@@ -1035,6 +1035,4278 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5481-6500',
+        any: [/^@DOG_KOJO_0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5486',
+        any: [/IF SELECTCOM == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5488',
+        any: [/\tIF CFLAG:301 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5490',
+        any: [/\t\tIF MARK:2 >= 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5491',
+        any: [/「是、是……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5493',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5494',
+        any: [/「讨厌！　你要、你要干什么……！？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5495',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5496',
+        any: [/\t\tCFLAG:301 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5497',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5499',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5501',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5502',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5503',
+        any: [/「狗狗大人…哈啊…那个地方再多舔舔……嗯…啊啊啊～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5504',
+        any: [
+          /被野狗舔舐得难以自已，%SAVESTR:TARGET%两腿之间的爱液就流了出来，有些害羞地摩擦着双腿/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5505',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%已经不行了……光是被狗狗的舌头碰到…哈……就湿的不成样子了。」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5506',
+        any: [
+          /%SAVESTR:TARGET%沉迷在野狗所带来的爱抚中，脸上已经完全找不到被称作圣女的清纯痕迹了/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5507',
+        any: [/「嗯…啊呼…更…更进一步也没关系哦…咕……啾哈…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5508',
+        any: [
+          /为了渴求更多的宠爱，%SAVESTR:TARGET%光裸的身子热情蹭着野狗的皮毛/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5509',
+        any: [/「哈……就是这样…继续……啊啊…啾…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5510',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5511',
+        any: [
+          /当野狗慢慢靠近时，%SAVESTR:TARGET%主动将身体缠了上去，把乳首送到野狗口中/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5512',
+        any: [/「啊哈…狗狗大人……更多的玩弄%SELF_CALL\(TARGET\)%的乳房吧…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5513',
+        any: [/贪图着野狗给予的快乐，%SAVESTR:TARGET%的娇喘越发甜美起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5514',
+        any: [
+          /「啊啊…好熟练…被做了这样的事情……%SELF_CALL\(TARGET\)%…已…已经……」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5515',
+        any: [/%SAVESTR:TARGET%紧紧环抱着野狗摩擦，呼吸变得更加凌乱急促/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5516',
+        any: [/「请……更加地…用喜欢的方式来…抚摸%SELF_CALL\(TARGET\)%吧～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5517',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5518',
+        any: [
+          /%SAVESTR:TARGET%被野狗来回舔吮爱抚着，唾液在光裸的身子上留下一道道反光的痕迹/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5519',
+        any: [/「呣…这么突然……哈…你就是爱舔东西呢～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5520',
+        any: [/享受着突如其来的爱抚，%SAVESTR:TARGET%张开双腿引导野狗向下舔舐/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5521',
+        any: [/「这里……请好好享用…哈…狗狗大人的舌头…真的好美妙……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5522',
+        any: [
+          /粗糙的舌头驾轻就熟地爱抚着全身，%SAVESTR:TARGET%的呻吟越发甜美高亢起来/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5523',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5524',
+        any: [/\t\t\tCFLAG:301 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5526',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5527',
+        any: [/「啊哈哈、小狗狗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5528',
+        any: [/\t\t\tCFLAG:301 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5530',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5531',
+        any: [/「比起狗更想要主人…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5532',
+        any: [/\t\t\tCFLAG:301 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5534',
+        any: [/\t\tELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5535',
+        any: [/「……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5536',
+        any: [/\t\t\tCFLAG:301 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5538',
+        any: [/\t\tELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5539',
+        any: [/「呜～……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5540',
+        any: [/\t\t\tCFLAG:301 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5542',
+        any: [/\t\tELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5543',
+        any: [/「讨厌……住手～！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5544',
+        any: [/\t\t\tCFLAG:301 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5545',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5546',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5547',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5548',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5553',
+        any: [/IF SELECTCOM == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5555',
+        any: [/\tIF CFLAG:302 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5557',
+        any: [/\t\tIF TALENT:TARGET:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5558',
+        any: [/「怎么会……不要啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5560',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5561',
+        any: [/「怎么会……不要啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5562',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5563',
+        any: [/\t\tCFLAG:302 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5564',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5566',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5568',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5569',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5570',
+        any: [/「味道不错吧……？啊哈…好舒服……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5571',
+        any: [/仰起头闭起眼，被舔着小穴的%SAVESTR:TARGET%很是陶醉的样子/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5572',
+        any: [/「啊…舌头…太深入了…好有感觉…哈……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5573',
+        any: [/伸手按住野狗的脑袋，%SAVESTR:TARGET%随着舌头的抽插晃动着腰/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5574',
+        any: [/「再激烈一点也没关系……好棒…要…要去了啊啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5575',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5576',
+        any: [/「呜…咕…嗯嗯…狗狗的舌头…在我的里面…哈啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5577',
+        any: [
+          /%SAVESTR:TARGET%主动打开双腿，小穴和阴蒂在野狗灵巧地舔弄下，已经有了明显的快感/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5578',
+        any: [/「唔…还是…有些难为情的……哼…但是……不行了…真的…好舒服～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5579',
+        any: [
+          /不知是因为羞耻还是快感，%SAVESTR:TARGET%的脸涨得通红，曾经的圣女就这么屈服在了兽爱的快感中/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5580',
+        any: [/「这…这样下去……啊啊…再深一点也没关系…嗯啊啊…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5581',
+        any: [
+          /%SAVESTR:TARGET%的呻吟越发甜美起来，受到鼓舞的野狗努力将舌头刺的更深/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5582',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5583',
+        any: [/%SAVESTR:TARGET%压着野狗的脑袋向下，邀请它品尝自己的小穴/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5584',
+        any: [/「想试试吗？来尝尝看吧，我的野狗大人♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5585',
+        any: [
+          /野狗听话得伸出舌头舔舐起来，%SAVESTR:TARGET%的小穴渐渐覆盖上了一层泛着光的野狗唾液/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5586',
+        any: [
+          /「好棒……野狗大人的舌头…嗯…请多玩弄一下%SELF_CALL\(TARGET\)%…哈…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5587',
+        any: [
+          /通人性的野狗用犬牙轻咬着阴蒂，%SAVESTR:TARGET%的身体宛如通了电一样的颤抖起来/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5588',
+        any: [/「啊啊啊啊…！这种玩法…好厉害……啊……不行…已…已经…！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5589',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5590',
+        any: [/\t\t\tCFLAG:302 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5592',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5593',
+        any: [/「啊哈哈、好痒呢……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5594',
+        any: [/%SAVESTR:TARGET%还不太习惯獣爱的感覚的样子。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5595',
+        any: [/\t\t\tCFLAG:302 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5597',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5598',
+        any: [/「不行～、好痒啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5599',
+        any: [/\t\t\tCFLAG:302 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5601',
+        any: [/\t\tELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5602',
+        any: [/「呜呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5603',
+        any: [/\t\t\tCFLAG:302 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5605',
+        any: [/\t\tELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5606',
+        any: [/「讨厌！　住手……求你了！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5607',
+        any: [/\t\t\tCFLAG:302 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5608',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5609',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5610',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5611',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5617',
+        any: [/IF SELECTCOM == 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5619',
+        any: [/\tIF CFLAG:306 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5621',
+        any: [/\t\tIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5622',
+        any: [/「……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5624',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5625',
+        any: [/「呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5626',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5627',
+        any: [/\t\tCFLAG:TARGET:306 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5628',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5630',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5632',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5633',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5634',
+        any: [/「啊哈～我的乳房很有弹性哦～唔…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5635',
+        any: [
+          /%SAVESTR:TARGET%的胸被野狗用前足和舌头爱抚着，因为乳头传来连绵快意而止不住地喘息着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5636',
+        any: [/「真是爱撒娇啊…嗯……踩的再用力一点也不要紧哦…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5637',
+        any: [/%SAVESTR:TARGET%陶醉地闭上双眼，胸部不断起伏配合着野狗的动作/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5638',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5639',
+        any: [/「粗糙的舌头…弄得好舒服…爪子…指甲不可以伸出来哦…嗯啊……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5640',
+        any: [
+          /%SAVESTR:TARGET%搂住在怀中的野狗，任由它对自己挺起的乳头又摸又舔/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5641',
+        any: [/「没关系，更大胆的舔吧…啊啊……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5642',
+        any: [
+          /%SAVESTR:TARGET%被野狗爱抚着胸部，露出陶醉的神情，喉咙里溢出快乐的呻吟/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5643',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5644',
+        any: [/\t\t\tCFLAG:306 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5646',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5647',
+        any: [/「啊哈～、不要把爪子伸出来哦……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5648',
+        any: [/\t\t\tCFLAG:306 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5650',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5651',
+        any: [/「唔嗯～……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5652',
+        any: [/\t\t\tCFLAG:306 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5654',
+        any: [/\t\tELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5655',
+        any: [/「呜呜……被狗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5656',
+        any: [/\t\t\tCFLAG:306 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5658',
+        any: [/\t\tELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5659',
+        any: [/「不、不要……快住手……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5660',
+        any: [/\t\t\tCFLAG:306 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5661',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5662',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5663',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5664',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5669',
+        any: [/IF SELECTCOM == 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5671',
+        any: [/\tIF CFLAG:307 == 0 && TFLAG:13/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5673',
+        any: [/\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5674',
+        any: [
+          /野狗将前爪踩在%SAVESTR:TARGET%肩上半立起来，热情的舔舐着%SAVESTR:TARGET%的脸颊/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5675',
+        any: [/「嗯？是想做什么吗？啊…难道……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5676',
+        any: [/按住焦躁不安的野狗，%SAVESTR:TARGET%似乎是想到了什么而脸红起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5677',
+        any: [
+          /「啊，好的…如果是狗狗大人的话……%SELF_CALL\(TARGET\)%，很愿意这样做。」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5678',
+        any: [
+          /下了决定的%SAVESTR:TARGET%伸手搂住了野狗的脖子，稍稍偏过脑袋，探出小舌羞怯的去触碰野狗的舌头/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5679',
+        any: [
+          /「啾…咕啾……是…这是%SAVESTR:TARGET%的初吻……唔…献给心爱的狗狗大人…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5680',
+        any: [
+          /得到回应的野狗变得贪心起来，炽热的舌头卷起%SELF_CALL\(TARGET\)%的小舌来回纠缠着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5681',
+        any: [/「哈呜…嗯……很舒服…%SELF_CALL\(TARGET\)%的唇…味道如何？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5682',
+        any: [
+          /生涩的回应着野狗，%SAVESTR:TARGET%吸吮着交缠的舌头，吞咽着彼此的唾液/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5683',
+        any: [/「%SELF_CALL\(TARGET\)%的初吻能献给狗狗大人真的是很幸福呢……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5684',
+        any: [
+          /将野狗当做恋人，%SAVESTR:TARGET%的目光湿润，神情温柔地与野狗持续舌吻着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5686',
+        any: [/\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5687',
+        any: [/「初吻是和狗吗…好微妙呢…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5689',
+        any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5690',
+        any: [/「明明想把初吻献给魔王大人的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5692',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5693',
+        any: [/「讨厌、把初吻给狗什么的……真是恶梦啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5694',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5695',
+        any: [/\t\tCFLAG:307 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5696',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5698',
+        any: [/\tELSEIF CFLAG:307 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5700',
+        any: [/\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5701',
+        any: [/「嗯？狗狗大人……？唔…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5702',
+        any: [/毫无防备的被野狗扑倒，%SAVESTR:TARGET%就这样被野兽夺走了唇舌/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5703',
+        any: [
+          /「嗯啾…原来…是想接吻吗……咕唔…好的…%SELF_CALL\(TARGET\)%的唇，是属于狗狗大人的…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5704',
+        any: [
+          /完全没有任何抵触，%SAVESTR:TARGET%紧搂着野狗的身体，热情回应起来/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5705',
+        any: [/「哈呜…嗯……很舒服…%SELF_CALL\(TARGET\)%的唇…味道如何？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5706',
+        any: [
+          /熟练地回应着野狗，%SAVESTR:TARGET%吸吮着交缠的舌头，吞咽着彼此的唾液/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5707',
+        any: [/「呣呒…狗狗大人…再吻得的激烈一点好吗…啾……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5709',
+        any: [/\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5710',
+        any: [/「小狗狗……啾～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5712',
+        any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5713',
+        any: [/「和狗吗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5715',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5716',
+        any: [/「讨厌、和狗接吻什么的……真是恶梦啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5717',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5718',
+        any: [/\t\tCFLAG:307 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5719',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5721',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5723',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5724',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5725',
+        any: [
+          /「%SELF_CALL\(TARGET\)%啊…咕……很喜欢接吻的……和狗狗大人的话……啾唔…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5726',
+        any: [/搂抱住压在身上的野狗，%SAVESTR:TARGET%热情的和野狗唇舌交缠着/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5727',
+        any: [/「呣呒…舌头，再伸进来一些……哈…光是被吻着…就好像要到了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5728',
+        any: [
+          /%SAVESTR:TARGET%将野狗的舌头含进口中，仿佛口交一般咕啾咕啾的吸着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5729',
+        any: [/「嗯…嗯呒……舒服吗…？狗狗大人的舌头…好美味…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5730',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5731',
+        any: [/%SAVESTR:TARGET%抚着野狗的皮毛，主动偏头向野兽献上了自己的唇/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5732',
+        any: [
+          /「来接吻吧…狗狗大人……啾…啾唔…%SELF_CALL\(TARGET\)%已经离不开你了…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5733',
+        any: [
+          /小舌纠缠着野狗粗糙的舌头，%SAVESTR:TARGET%吞咽着野狗的唾液，诉说着自己的爱恋/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5734',
+        any: [/「唔啊…吻我…咕…哈啾……好喜欢…我的狗狗大人…最喜欢你了……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5735',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5736',
+        any: [/「唔呣…舌头进来了～哈…狗狗大人……很心急呢…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5737',
+        any: [
+          /被野狗粗暴的扑倒在地，%SAVESTR:TARGET%温柔的笑着张开唇，任由黏腻的舌头入侵/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5738',
+        any: [
+          /得到允许的野狗变得更加贪心起来，粗糙的舌头贪婪得探索着%SAVESTR:PLAYER%口腔的每一个角落/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5739',
+        any: [/「……很舒服…咕…原来狗狗是这么喜欢接吻的……多少次……都行……啾唔…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5740',
+        any: [/%SAVESTR:TARGET%脸红得发烫，沉醉在和野兽的亲吻中/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5741',
+        any: [/「%SELF_CALL\(TARGET\)%………哈…是狗狗大人爱着的小母狗呢…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5742',
+        any: [/%SAVESTR:TARGET%被野狗深吻着，露出全然陶醉的幸福表情/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5743',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5744',
+        any: [/\t\t\tCFLAG:307 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5746',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5747',
+        any: [/「小狗狗……啾～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5748',
+        any: [/\t\t\tCFLAG:307 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5750',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5751',
+        any: [/「和狗吗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5752',
+        any: [/\t\t\tCFLAG:307 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5754',
+        any: [/\t\tELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5755',
+        any: [/「呜呜……抽泣～……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5756',
+        any: [/\t\t\tCFLAG:307 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5758',
+        any: [/\t\tELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5759',
+        any: [/「讨厌、和狗接吻什么的……真是恶梦啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5760',
+        any: [/\t\t\tCFLAG:307 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5761',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5762',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5763',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5764',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5769',
+        any: [/IF SELECTCOM == 9/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5771',
+        any: [/\tIF CFLAG:310 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5773',
+        any: [/\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5774',
+        any: [/「狗狗大人……在舔%SELF_CALL\(TARGET\)%肮脏的地方……嗯啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5775',
+        any: [/%SAVESTR:TARGET%被舔着肛门有些不安的样子，红着脸挣扎起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5776',
+        any: [
+          /「……不行…这样舔下去的话……%SELF_CALL\(TARGET\)%要变得…奇怪了………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5777',
+        any: [/逃脱不了野兽的舔舐，%SAVESTR:TARGET%干脆放任自己享受起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5778',
+        any: [/「头脑都没办法思考了……舔这种地方的话…咿呀…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5780',
+        any: [/\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5781',
+        any: [/「呀啊！　好痒」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5783',
+        any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5784',
+        any: [/「唔嗯～……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5786',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5787',
+        any: [/「不要……不要舔……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5788',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5789',
+        any: [/\t\tCFLAG:TARGET:310 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5790',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5792',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5794',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5795',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5796',
+        any: [/「狗狗大人……肛门…好舒服啊……嗯啊～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5797',
+        any: [
+          /%SAVESTR:TARGET%摇晃着腰配合着野兽的舔舐，敏感的肠肉纠缠着入侵的舌尖/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5798',
+        any: [/「更激烈一点…更粗暴的侵犯肛门吧…啊啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5799',
+        any: [/「要变得奇怪了…！%SELF_CALL\(TARGET\)%…已经……要到了……！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5800',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5801',
+        any: [/「舔那种地方的话…哈啊～真的……好舒服……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5802',
+        any: [
+          /完全陷落在肉体的快感中，%SAVESTR:TARGET%仰起头发出一阵阵淫媚的娇喘/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5803',
+        any: [
+          /「更加…更加往深处…哈啊……请继续用舌头来玩弄%SELF_CALL\(TARGET\)%……」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5804',
+        any: [/难耐得摇晃着腰，%SAVESTR:TARGET%享受着被侵犯肛门的快感/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5805',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5806',
+        any: [/野狗将舌头卷起，尽可能的刺入肛穴的更深处/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5807',
+        any: [/「唔啊啊……都已经进到这么深了…狗狗大人……哈啊…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5808',
+        any: [
+          /完全觉醒了被玩弄肛门的快感，%SAVESTR:TARGET%熟练的配合着野狗的动作/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5809',
+        any: [/「要去了…后面的穴……也已经要被狗狗大人玩坏了……咿呀…！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5810',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5811',
+        any: [/\t\t\tCFLAG:310 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5813',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5814',
+        any: [/「呀啊！　好痒……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5815',
+        any: [/\t\t\tCFLAG:310 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5817',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:310 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5818',
+        any: [/「唔嗯～……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5819',
+        any: [/\t\t\tCFLAG:310 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5821',
+        any: [/\t\tELSEIF MARK:2 == 3 && \(CFLAG:310 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5822',
+        any: [/「请……不要舔……呜呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5823',
+        any: [/\t\t\tCFLAG:310 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5825',
+        any: [/\t\tELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5826',
+        any: [/「讨厌！　快住手……求你了！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5827',
+        any: [/\t\t\tCFLAG:310 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5828',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5829',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5830',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5831',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5836',
+        any: [/IF SELECTCOM == 21/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5838',
+        any: [/\tIF CFLAG:TARGET:322 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5840',
+        any: [/\t\tIF TALENT:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5842',
+        any: [/\t\t\tIF TALENT:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5843',
+        any: [/「好开心……%SELF_CALL\(TARGET\)%的处子身…要交给狗狗大人了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5844',
+        any: [/%SAVESTR:TARGET%趴在地上，用手扒开湿漉漉的小穴，向野狗献上自己/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5845',
+        any: [
+          /被本能驱使的野狗喘着粗气，压在%SAVESTR:TARGET%背上，通红的阴茎一口气贯穿至最深处/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5846',
+        any: [/「咿呀……！痛！好大……太深了……啊…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5847',
+        any: [/没给%SAVESTR:TARGET%适应的时间，野兽迫不及待的抽插起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5848',
+        any: [/「没关系……哈……狗狗大人…请尽情享用%SELF_CALL\(TARGET\)%……啊～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5849',
+        any: [
+          /膨胀的兽茎激烈摩擦着阴道壁，%SAVESTR:TARGET%的痛呼中开始夹杂些许呻吟/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5850',
+        any: [/「啊啊…动起来了……好快…开始…变得舒服了……哈啊……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5851',
+        any: [
+          /%SAVESTR:TARGET%生涩得配合着野狗的动作，小穴本能收缩绞着侵入的肉棒，发出咕啾咕啾的水音/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5852',
+        any: [/「请射在里面……狗狗大人的精子…都射在子宫里……唔噢噢噢！！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5854',
+        any: [/\t\t\tELSEIF TALENT:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5855',
+        any: [/「第一次是给小狗狗……还不错嘛」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5857',
+        any: [/\t\t\tELSEIF TALENT:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5858',
+        any: [/「明明想把第一次献给魔王大人的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5861',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5862',
+        any: [/「咿、咿呀啊啊啊啊啊啊！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5863',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5865',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5867',
+        any: [/\t\t\tIF TALENT:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5868',
+        any: [/「好开心……%SELF_CALL\(TARGET\)%…终于要和狗狗大人交配了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5869',
+        any: [/%SAVESTR:TARGET%趴在地上，用手扒开湿漉漉的小穴，向野狗献上自己/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5870',
+        any: [
+          /被本能驱使的野狗喘着粗气，压在%SAVESTR:TARGET%背上，通红的阴茎一口气贯穿至最深处/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5871',
+        any: [/「咿呀……！好大……比起人类的都大…好深……啊…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5872',
+        any: [/没给%SAVESTR:TARGET%适应的时间，野兽迫不及待的抽插起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5873',
+        any: [
+          /膨胀的兽茎激烈的摩擦着阴道壁，%SAVESTR:TARGET%的痛呼中夹杂些许呻吟/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5874',
+        any: [/「啊啊…动起来了……好快……变得好舒服……哈啊……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5875',
+        any: [
+          /%SAVESTR:TARGET%尽力配合着野狗的动作，小穴本能的收缩绞着侵入的肉棒，发出咕啾咕啾的水音/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5876',
+        any: [/「请射在里面……狗狗大人的精子…都射在子宫里……唔噢噢噢！！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5878',
+        any: [/\t\t\tELSEIF TALENT:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5879',
+        any: [/「和小狗狗……做吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5881',
+        any: [/\t\t\tELSEIF TALENT:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5882',
+        any: [/「和魔王大人做感觉会更好呢……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5884',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5885',
+        any: [/「不要、不要啊啊啊啊啊！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5886',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5887',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5888',
+        any: [/\t\tCFLAG:322 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5889',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5891',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5893',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5894',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5895',
+        any: [
+          /「已经忍到极限了…狗狗大人…快点，快来把%SELF_CALL\(TARGET\)%搞得一团乱吧……♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5896',
+        any: [/%SAVESTR:TARGET%高高抬起屁股等待野狗的插入，裸露的小穴湿润异常/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5897',
+        any: [
+          /受到邀请的野狗低吼着，肿胀的阴茎一口气刺入了最深处，毫不留情的抽送起来/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5898',
+        any: [/「啊啊嗯…！被侵犯着…%SELF_CALL\(TARGET\)%…在被野狗侵犯着……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5899',
+        any: [
+          /已经毫不在意人狗交媾后的业报之类的东西了，现在的%SAVESTR:TARGET%完全沉浸在兽交所带来的快感中/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5900',
+        any: [
+          /「哈啊…好厉害……唔…都顶到最深处了…请…请就这样射在里面吧…啊啊啊…！！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5901',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5902',
+        any: [/「啊啊～狗狗大人……%SELF_CALL\(TARGET\)%…正在和野狗交配着～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5903',
+        any: [/小穴绞着粗大的狗根，%SAVESTR:TARGET%在野狗身下喘息呻吟着/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5904',
+        any: [/「好厉害……好棒…啊啊…深一些…最喜欢这样的感觉了……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5905',
+        any: [/野狗低吠着，每一次的抽插都会带出大量的体液，响起下流水声/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5906',
+        any: [/「嗯…哈……就这样射精……让%SELF_CALL\(TARGET\)%怀孕吧～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5907',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5908',
+        any: [/「狗狗大人……请往我的小穴里注入精液吧……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5909',
+        any: [/%SAVESTR:TARGET%渴望被雄犬填满，打开双腿向野狗发出邀请/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5910',
+        any: [/野狗沉下身体，膨胀的阴茎完全没入了%SAVESTR:TARGET%的小穴/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5911',
+        any: [/「唔哦哦哦……！好棒…狗狗大人的肉棒……哈啊…最棒了…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5912',
+        any: [
+          /熟练得扭动腰肢配合着野狗的动作，%SAVESTR:TARGET%的呻吟声越发高亢起来/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5913',
+        any: [
+          /「交配…狗狗大人…更多的……在%SELF_CALL\(TARGET\)%的子宫里…用精液播种吧…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5914',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5915',
+        any: [/\t\t\tCFLAG:322 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5917',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5918',
+        any: [/「和小狗狗做吗……也好」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5919',
+        any: [/\t\t\tCFLAG:322 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5921',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5922',
+        any: [/「不能和魔王大人做吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5923',
+        any: [/\t\t\tCFLAG:322 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5925',
+        any: [
+          /\t\tELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:322 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5926',
+        any: [/「呜呜……呜呜呜………有感觉了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5927',
+        any: [/\t\t\tCFLAG:322 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5929',
+        any: [/\t\tELSEIF MARK:2 == 3 && \(CFLAG:322 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5930',
+        any: [/「呜呜呜……呜呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5931',
+        any: [/\t\t\tCFLAG:322 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5933',
+        any: [/\t\tELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5934',
+        any: [/「不、不要、不要啊啊啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5936',
+        any: [/\t\t\tCFLAG:322 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5937',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5938',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5939',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5940',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5945',
+        any: [/IF SELECTCOM == 27/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5947',
+        any: [/\tIF CFLAG:TARGET:328 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5949',
+        any: [/\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5950',
+        any: [/「哎？后…后面的穴也……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5951',
+        any: [/察觉到野狗阴茎抵上了自己的肛门，%SAVESTR:TARGET%紧张地挣扎起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5952',
+        any: [/「狗狗大人，这么脏的地方……会弄脏你的…唔……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5953',
+        any: [
+          /丝毫不顾身下人的反抗，野狗从背后贯穿了%SAVESTR:TARGET%的肛门，快速地抽插/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5954',
+        any: [
+          /「唔啊啊啊啊啊……！！进…进来了……狗狗大人的肉棒…在直肠里搅来搅去……！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5955',
+        any: [/在%SAVESTR:TARGET%的喘息痛呼中，野狗越发奋力地撞击起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5957',
+        any: [/\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5958',
+        any: [/「屁股眼好爽哦……小狗狗……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5960',
+        any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5961',
+        any: [/「明明和魔王大人做会更好……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5963',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5964',
+        any: [/「咿呀啊啊啊啊！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5965',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5966',
+        any: [/\t\tCFLAG:TARGET:328 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5967',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5969',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5971',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5972',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5973',
+        any: [/「狗狗大人就这么喜欢后面的穴吗……？啊…已经进来了……哈啊～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5974',
+        any: [
+          /%SAVESTR:TARGET%高高抬起屁股方便野狗阴茎插入肛门，发出了满足的喘息/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5975',
+        any: [/「好大好烫……嗯啊……腰…自己就动起来了…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5976',
+        any: [
+          /「狗狗大人…请更加欺负肛穴……%SAVESTR:TARGET%的屁股就是为了像这样被狗狗大人侵犯而存在的呢…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5977',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5978',
+        any: [/「狗狗大人♪请尽情使用%SELF_CALL\(TARGET\)%的肛穴吧～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5979',
+        any: [
+          /%SAVESTR:TARGET%用双手将自己的肛门张开了，被诱惑的野狗急切地将阴茎插了进去/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5980',
+        any: [/「更加…激烈地抽插那里，也没有关系的……咿呀…！好棒～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5981',
+        any: [
+          /「请射在里面…野兽的精液……把%SELF_CALL\(TARGET\)%的直肠都染白吧♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5982',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5983',
+        any: [/%SAVESTR:TARGET%纤细的腰被野兽抱着，野狗阴茎从背后贯穿了肛门/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5984',
+        any: [/「哈啊…明明被温柔地抱着……却在被侵犯着屁股什么的…狗狗大人……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5985',
+        any: [/%SAVESTR:TARGET%摇摆腰肢配合着野狗的抽插，呻吟越发甜美高亢起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5986',
+        any: [
+          /「嗯…啊啊～腰部完全停不下来…脑袋变得迷迷糊糊起来了…唔啊啊啊啊……！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5987',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5988',
+        any: [/\t\t\tCFLAG:328 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5990',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5991',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5992',
+        any: [/「和小狗狗也行吧……啊啊～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5993',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5994',
+        any: [/「小狗狗……也行吧……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5995',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5996',
+        any: [/\t\t\tCFLAG:328 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5998',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '5999',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6000',
+        any: [/「明明不是和魔王大人做……竟然有感觉了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6001',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6002',
+        any: [/「嗯啊啊啊～！　屁股要融化了～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6003',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6004',
+        any: [/\t\t\tCFLAG:328 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6006',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6007',
+        any: [/「明明和魔王大人更好……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6008',
+        any: [/\t\t\tCFLAG:328 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6010',
+        any: [/\t\tELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6011',
+        any: [/「呼呜、呼呜……咕～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6012',
+        any: [/\t\t\tCFLAG:328 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6014',
+        any: [/\t\tELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6015',
+        any: [/「不要、不要啊啊啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6016',
+        any: [/\t\t\tCFLAG:328 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6017',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6018',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6019',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6020',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6025',
+        any: [/IF SELECTCOM == 30/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6027',
+        any: [/\tIF CFLAG:TARGET:331 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6029',
+        any: [/\t\tIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6030',
+        any: [/「啊哈、好大……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6032',
+        any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6033',
+        any: [/「这就是……小狗狗的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6035',
+        any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6036',
+        any: [/「我做……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6038',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6039',
+        any: [/「咿～……讨厌！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6040',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6041',
+        any: [/\t\tCFLAG:TARGET:331 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6042',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6044',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6046',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6047',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6048',
+        any: [/「狗狗大人……舒服吗？啊哈，都变的这么大了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6049',
+        any: [
+          /%SAVESTR:TARGET%温柔地用手套弄着野狗的阴茎，赤裸的小穴已经泛起了湿意/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6050',
+        any: [/「勃起的肉棒，十分的烫呢……这个顽皮的家伙…还在一跳一跳地♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6051',
+        any: [
+          /%SAVESTR:TARGET%的瞳孔完全染上了欲望的颜色，手上的动作越来越激烈……/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6052',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6053',
+        any: [/「好厉害……一颤一颤的……好像会很美味的样子」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6054',
+        any: [/%SAVESTR:TARGET%脸上一片绯红，感受着手里乱跳的野狗阴茎触感/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6055',
+        any: [/「%SELF_CALL\(TARGET\)%会温柔得做的…请狗狗大人尽情地享受吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6056',
+        any: [/毫无保留得奉献自己，%SAVESTR:TARGET%越发尽力地为野狗手交/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6057',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6058',
+        any: [/\t\t\tCFLAG:331 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6060',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6061',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6062',
+        any: [/「舒服吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6063',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6064',
+        any: [/「舒服吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6065',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6066',
+        any: [/\t\t\tCFLAG:331 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6068',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6069',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6070',
+        any: [/「舒服吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6071',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6072',
+        any: [/「舒服吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6073',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6074',
+        any: [/\t\t\tCFLAG:331 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6076',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6077',
+        any: [/「舒服吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6078',
+        any: [/\t\t\tCFLAG:331 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6080',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6081',
+        any: [/「……我做」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6082',
+        any: [/\t\t\tCFLAG:331 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6084',
+        any: [/\t\tELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6085',
+        any: [/「讨厌……抽泣～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6086',
+        any: [/\t\t\tCFLAG:331 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6087',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6088',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6089',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6090',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6095',
+        any: [/IF SELECTCOM == 31/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6097',
+        any: [/\tIF CFLAG:TARGET:332 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6099',
+        any: [/\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6100',
+        any: [/「狗狗大人的肉棒…野兽的气息…看起来真美味啊……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6101',
+        any: [/%SAVESTR:TARGET%将脑袋探到野狗下身，小心翼翼地闻了闻/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6102',
+        any: [/「嗯啾……%SELF_CALL\(TARGET\)%…唔……会好好侍奉狗狗大人的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6103',
+        any: [/认真的使用着舌头和嘴唇，%SAVESTR:TARGET%温柔得刺激着野狗的阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6104',
+        any: [/野狗低低吠着，顺着%SAVESTR:TARGET%的动作快速抽插起来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6105',
+        any: [/「咕唔…！这么突然…咕啾……射在嘴里…哈……也没关系的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6107',
+        any: [/\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6108',
+        any: [/「要含住小狗狗的鸡鸡吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6110',
+        any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6111',
+        any: [/「要含住小狗狗的鸡鸡吗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6113',
+        any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6114',
+        any: [/「是、我做……我做……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6116',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6117',
+        any: [/「讨厌……讨厌、呜诶诶……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6118',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6119',
+        any: [/\t\tCFLAG:TARGET:332 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6120',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6122',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6124',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6125',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6126',
+        any: [/「哈啊哈啊……大肉棒……狗狗大人的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6127',
+        any: [
+          /%SAVESTR:TARGET%痴痴地吞咽着野狗的阴茎，灵活的小舌挑逗着狗根的顶部/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6128',
+        any: [/不过是只野兽，野狗哪里受得了这种技巧，狗根勃起得更加明显了/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6129',
+        any: [
+          /「好像很舒服的动着呢～啾呜…请射在%SELF_CALL\(TARGET\)%嘴里…嗯……」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6130',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6131',
+        any: [/「狗狗大人～♪%SELF_CALL\(TARGET\)%的舌头舒服吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6132',
+        any: [/%SAVESTR:TARGET%将头探到野狗下腹，含住了半勃起的阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6133',
+        any: [/「咕唔……野兽的气味…唔啾……真令人上瘾…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6134',
+        any: [
+          /野狗耸动着腰部在%SAVESTR:TARGET%的口中抽插着，%SAVESTR:TARGET%熟练的配合着野狗的动作/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6135',
+        any: [/「好像已经要到极限了…哈……来吧狗狗大人♪请全都射出来……咕啾…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6136',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6137',
+        any: [/\t\t\tCFLAG:332 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6139',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6140',
+        any: [/「小狗狗……舒服吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6141',
+        any: [/%SAVESTR:TARGET%露出媚态舔舐着野狗的阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6142',
+        any: [/\t\t\tCFLAG:332 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6144',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6145',
+        any: [/「小狗狗的……额呵呵、真是好孩子……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6146',
+        any: [/\t\t\tCFLAG:332 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6148',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6149',
+        any: [/「小狗狗的……额呵呵、真是好孩子……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6150',
+        any: [/\t\t\tCFLAG:332 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6152',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6153',
+        any: [/「我知道了、会去舔的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6154',
+        any: [/\t\t\tCFLAG:332 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6156',
+        any: [/\t\tELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6157',
+        any: [/「呜诶……讨厌」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6158',
+        any: [/\t\t\tCFLAG:332 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6159',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6160',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6161',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6162',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6167',
+        any: [/IF SELECTCOM == 34/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6169',
+        any: [/\tIF CFLAG:TARGET:335 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6171',
+        any: [/\t\tIF TALENT:0 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6173',
+        any: [/\t\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6174',
+        any: [
+          /「%SELF_CALL\(TARGET\)%的身体是用来侍奉神明的……%SELF_CALL\(TARGET\)%一直这么相信着。」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6175',
+        any: [
+          /%SAVESTR:TARGET%温柔抚摸野狗向上袒露的肚皮，神情恍惚得自言自语着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6176',
+        any: [
+          /「但是，已经不这么想了，%SELF_CALL\(TARGET\)%…比起神明，现在更想要侍奉狗狗大人…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6177',
+        any: [
+          /起身跨骑在野狗身上，%SAVESTR:TARGET%握住野狗勃起的阴茎对准自己的小穴/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6178',
+        any: [
+          /「已经这么精神了……狗狗大人，请收下吧，这是%SELF_CALL\(TARGET\)%的处子身…唔……」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6179',
+        any: [
+          /湿润紧致的小穴艰难地吞下狗根，猩红的处子血混着爱液逐渐滴落在野狗的皮毛上/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6180',
+        any: [/「啊啊……！！痛…好大…又好烫………哈…一颤一颤地跳动着……真可爱…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6181',
+        any: [
+          /%SAVESTR:TARGET%轻抚自己微微凸起的小腹喘息起来，上下起伏身体，慢慢套弄着野狗的阴茎/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6182',
+        any: [/「哈啊…腰…开始自己就动起来了……肉棒好深…子宫口都咕噜咕噜的…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6183',
+        any: [
+          /在忍过开始的疼痛之后，%SAVESTR:TARGET%摇摆着腰肢，开始追求起交配的乐趣来/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6184',
+        any: [/「啊～啊啊…即使怀孕也没关系哦…就这样把精子射进来吧，咿呀……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6186',
+        any: [/\t\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6187',
+        any: [/「第一次是给小狗狗呢……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6189',
+        any: [/\t\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6190',
+        any: [/「明明是想献给主人的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6192',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6193',
+        any: [/「呜呜呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6194',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6196',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6198',
+        any: [/\t\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6199',
+        any: [
+          /「已经被玷污的身体还能够侍奉神明吗……？%SELF_CALL\(TARGET\)%一直在考虑着这些。」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6200',
+        any: [
+          /%SAVESTR:TARGET%温柔抚摸野狗向上袒露的肚皮，神情恍惚得自言自语着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6201',
+        any: [
+          /「但是，已经都无所谓了，%SELF_CALL\(TARGET\)%…比起神明，现在更想要侍奉狗狗大人…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6202',
+        any: [
+          /起身跨骑在野狗身上，%SAVESTR:TARGET%握住野狗勃起的阴茎对准自己的小穴/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6203',
+        any: [
+          /「已经这么精神了……狗狗大人，请收下吧，这是%SELF_CALL\(TARGET\)%身子…唔……」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6204',
+        any: [/湿润的小穴顺利地吞下狗根，透明的爱液逐渐滴落在野狗的皮毛上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6205',
+        any: [/「啊啊……！！好大…又好烫………哈…一颤一颤地跳动着……真可爱…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6206',
+        any: [
+          /%SAVESTR:TARGET%轻抚自己微微凸起的小腹喘息起来，上下起伏身体，慢慢套弄着野狗的阴茎/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6207',
+        any: [/「哈啊…腰…开始自己就动起来了……肉棒好深…子宫口都咕噜咕噜的…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6208',
+        any: [/%SAVESTR:TARGET%摇摆着腰肢，开始追求起交配的乐趣来/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6209',
+        any: [/「啊～啊啊…即使怀孕也没关系哦…就这样把精子射进来吧，咿呀……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6211',
+        any: [/\t\t\tELSEIF TALENT:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6212',
+        any: [/「小狗狗没事吧」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6214',
+        any: [/\t\t\tELSEIF TALENT:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6215',
+        any: [/「小狗狗……没事吧？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6217',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6218',
+        any: [/「呜呜呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6219',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6220',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6221',
+        any: [/\t\tCFLAG:TARGET:335 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6222',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6224',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6226',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6227',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6228',
+        any: [/「%SELF_CALL\(TARGET\)%的小穴是狗狗大人的专用小穴……舒服吗……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6229',
+        any: [
+          /%SAVESTR:TARGET%就像骑马一样跨在野狗身上，一点点把野狗的阴茎吞了进去/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6230',
+        any: [/「啊啊……这种硬度…太棒了……嗯啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6231',
+        any: [
+          /%SAVESTR:TARGET%舔着嘴唇前后扭动着腰，那副淫乱姿态已经看不出一点圣女的影子了/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6232',
+        any: [/「哈……碰到子宫口了…啊…别……咿呀……都插进去了……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6233',
+        any: [
+          /随着抽送而发出咕啾咕啾的声音，彻底开发的小穴完全容纳了粗大的狗根/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6234',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6235',
+        any: [
+          /「啊啊～、狗狗大人……%SELF_CALL\(TARGET\)%是变态母狗～♪　对不起～」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6236',
+        any: [
+          /%SAVESTR:TARGET%骑在野狗身上贪求着快乐，飞出的爱液打湿了野狗肚子上的皮毛/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6237',
+        any: [
+          /「啊啊啊…为什么…能这么舒服……狗狗大人的精液…请全都射到%SELF_CALL\(TARGET\)%的子宫里…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6238',
+        any: [
+          /仿佛要把野狗的精液全部榨出来似的，%SAVESTR:TARGET%认着的动起了腰/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6239',
+        any: [/「哈嗯啊啊…啊啊啊嗯…小穴好舒服……最喜欢狗狗大人的肉棒了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6240',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6241',
+        any: [/「我要把狗狗大人的精液榨光～……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6242',
+        any: [
+          /%SAVESTR:TARGET%跨起着野狗发出下流的宣言，一点也没有圣女该有的模样/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6243',
+        any: [
+          /「觉得舒服的话什么时候射都可以哦…让%SELF_CALL\(TARGET\)%怀上小狗崽吧…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6244',
+        any: [/在野狗身上熟练的起伏身子，湿润的小穴愉快得吞吐着阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6245',
+        any: [/「哈啊～好深…子宫口也想要了……狗狗大人…就这样插到子宫里吧～♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6246',
+        any: [/「嗯哈…就这样射到最深处……要来了…咿呀……！精子…好烫……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6247',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6248',
+        any: [/\t\t\tCFLAG:335 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6250',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6251',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6252',
+        any: [/「小狗狗……好吧……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6253',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6254',
+        any: [/「嗯……呼呜……小狗狗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6255',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6256',
+        any: [/「被小狗狗弄得有感觉了……这样下去……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6257',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6258',
+        any: [/\t\t\tCFLAG:335 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6260',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6261',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6262',
+        any: [/「小狗狗……好吧……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6263',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6264',
+        any: [/「嗯……呼呜……小狗狗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6265',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6266',
+        any: [/「被小狗狗弄得有感觉了……这样下去……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6267',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6268',
+        any: [/\t\t\tCFLAG:335 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6270',
+        any: [
+          /\t\tELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6271',
+        any: [/\t\t\tIF RAND:3 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6272',
+        any: [/「被狗弄得有感觉什么的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6273',
+        any: [/\t\t\tELSEIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6274',
+        any: [/「不行……这样下去……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6275',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6276',
+        any: [/「不会吧……这样下去……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6277',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6278',
+        any: [/\t\t\tCFLAG:335 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6280',
+        any: [/\t\tELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6281',
+        any: [/「…………我知道了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6282',
+        any: [/\t\t\tCFLAG:335 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6284',
+        any: [/\t\tELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6285',
+        any: [/「讨厌、不要……絶対不要！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6286',
+        any: [/\t\t\tCFLAG:335 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6287',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6288',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6289',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6290',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6295',
+        any: [/IF SELECTCOM == 37/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6297',
+        any: [/\tIF CFLAG:TARGET:338 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6299',
+        any: [/\t\tIF ABL:TARGET:16 >= 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6300',
+        any: [/「要舔小狗狗的屁股……！？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6302',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6303',
+        any: [/「讨厌……讨厌、呜呜……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6304',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6305',
+        any: [/\t\tCFLAG:TARGET:338 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6306',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6308',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6310',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6311',
+        any: [/\t\t\tIF RAND:2 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6312',
+        any: [/「狗狗大人的屁股好可爱……舒服吗♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6313',
+        any: [/%SAVESTR:TARGET%把舌头伸进野狗的肛门舔舐并搅动着/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6314',
+        any: [
+          /「味道…有些奇怪呢……不过%SELF_CALL\(TARGET\)%会努力奉仕的…啾……」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6315',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6316',
+        any: [
+          /「哈啊哈啊…狗狗大人…果然很喜欢%SELF_CALL\(TARGET\)%的舌头吧～♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6317',
+        any: [/%SAVESTR:TARGET%用舌尖探入野狗的肛门，仔细得爱抚着肠壁上的褶皱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6318',
+        any: [/「咕呣……咕呣…肠液…哈…流了好多…是舌头这样舔感觉很舒服吗……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6319',
+        any: [
+          /故意发出着下流的声音，%SAVESTR:TARGET%完全沉浸在侍奉野狗的快感中了/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6320',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6321',
+        any: [/\t\t\tCFLAG:338 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6323',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6324',
+        any: [/「屁股……舔过来舔过去～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6325',
+        any: [/%SAVESTR:TARGET%用舌头舔着野狗的肛门/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6326',
+        any: [/\t\t\tCFLAG:338 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6328',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6329',
+        any: [/「我只亲哦……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6330',
+        any: [/%SAVESTR:TARGET%亲吻了野狗的肛门/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6331',
+        any: [/\t\t\tCFLAG:338 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6333',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6334',
+        any: [/「屁股……让我亲一亲吧……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6335',
+        any: [/\t\t\tCFLAG:338 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6337',
+        any: [/\t\tELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6338',
+        any: [/「呜呜呜……讨厌……狗屁股什么的……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6339',
+        any: [/\t\t\tCFLAG:338 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6340',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6341',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6342',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6343',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6349',
+        any: [/IF SELECTCOM == 43 && TEQUIP:43/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6351',
+        any: [/\tIF CFLAG:TARGET:344 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6353',
+        any: [/\t\tIF TALENT:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6354',
+        any: [/「究竟…要带%SELF_CALL\(TARGET\)%去哪里？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6355',
+        any: [/戴着眼罩的%SAVESTR:TARGET%显得很紧张，语气中充满了不安/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6356',
+        any: [/「听到狗狗大人的声音了……！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6358',
+        any: [/\t\tELSEIF TALENT:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6359',
+        any: [/「什么……？　要干什么……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6361',
+        any: [/\t\tELSEIF TALENT:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6362',
+        any: [/「什么……？　要干什么……？/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6364',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6365',
+        any: [/「到底要干什么啊……住手……不要啊！！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6366',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6367',
+        any: [/\t\tCFLAG:TARGET:344 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6368',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6370',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6372',
+        any: [
+          /\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6373',
+        any: [/「狗狗大人……会从哪边来呢……？　好期待……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6374',
+        any: [/「这种无法反抗的状态…和狗狗大人交尾的话……好棒…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6375',
+        any: [/\t\t\tCFLAG:TARGET:344 = 10/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6377',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6378',
+        any: [/「啊哈……%SELF_CALL\(TARGET\)%、和小狗狗交尾了……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6379',
+        any: [/\t\t\tCFLAG:TARGET:344 = 9/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6381',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 7 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6382',
+        any: [/「小狗狗来了吗……？　呜呼……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6383',
+        any: [/\t\t\tCFLAG:TARGET:344 = 8/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6385',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:344 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6386',
+        any: [/「有……有什么过来了……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6387',
+        any: [/\t\t\tCFLAG:TARGET:344 = 7/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6389',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6390',
+        any: [/「主人……请随意享用……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6391',
+        any: [/\t\t\tCFLAG:TARGET:344 = 6/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6393',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6394',
+        any: [/「小狗狗的气息……好近……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6395',
+        any: [/\t\t\tCFLAG:TARGET:344 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6397',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6398',
+        any: [/「小狗狗……？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6399',
+        any: [/\t\t\tCFLAG:TARGET:344 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6401',
+        any: [/\t\tELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6402',
+        any: [/「啊啊……来了呢……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6403',
+        any: [/\t\t\tCFLAG:TARGET:344 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6405',
+        any: [/\t\tELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6406',
+        any: [/「咿～咿～……咿～～」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6407',
+        any: [/\t\t\tCFLAG:TARGET:344 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6408',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6409',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6410',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6412',
+        any: [/ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6414',
+        any: [
+          /\tIF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6415',
+        any: [/「狗狗大人…怎么了？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6416',
+        any: [/看着即将离开的野狗，%SAVESTR:TARGET%不安的询问着/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6417',
+        any: [
+          /「是已经累了吗？%SELF_CALL\(TARGET\)%…会一直祈祷能快些再见面的。」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6418',
+        any: [/满心依恋着野狗的%SAVESTR:TARGET%依依不舍地送走了野狗/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6419',
+        any: [/\t\tCFLAG:444 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6421',
+        any: [
+          /\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6422',
+        any: [/「小狗狗……喘的好厉害……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6423',
+        any: [/\t\tCFLAG:444 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6425',
+        any: [
+          /\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:338 < 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6426',
+        any: [/「差不多该轮到主人了吧……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6427',
+        any: [/\t\tCFLAG:444 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6429',
+        any: [/\tELSEIF CFLAG:444 < 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6430',
+        any: [/「好可怕……被狗那啥的」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6431',
+        any: [/\t\tCFLAG:444 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6432',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6433',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6434',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6440',
+        any: [/IF SELECTCOM == 56/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6442',
+        any: [/\tIF CFLAG:357 == 0/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6443',
+        any: [/\t\tIF TEQUIP:53/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6446',
+        any: [/\t\t\tIF TALENT:TARGET:136 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6447',
+        any: [
+          /「大家好。你们过的还不错吧？　%SELF_CALL\(TARGET\)%不当勇者之后成为狗狗大人的雌犬奴隶了……♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6448',
+        any: [
+          /「虽然不能再做勇者的工作了，不过作为雌犬存在的%SELF_CALL\(TARGET\)%现在感到非常的幸福」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6449',
+        any: [
+          /「%SELF_CALL\(TARGET\)%真的非常喜欢狗狗大人……。接下来，请尽情欣赏%SELF_CALL\(TARGET\)%和狗狗大人之间爱的/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6450',
+        any: [
+          /「然后希望大家能从被淋满兽类精液的%SELF_CALL\(TARGET\)%身上感受到幸福♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6451',
+        any: [/「那么开始吧，狗狗大人……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6453',
+        any: [/\t\t\tELSEIF TALENT:TARGET:76 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6454',
+        any: [/「大家……好……%SELF_CALL\(TARGET\)%接下来要和这只小狗狗交尾……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6455',
+        any: [
+          /「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6457',
+        any: [/\t\t\tELSEIF TALENT:TARGET:85 == 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6458',
+        any: [/「大家……好……%SELF_CALL\(TARGET\)%接下来要和这只小狗狗交尾……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6459',
+        any: [
+          /「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6461',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6462',
+        any: [
+          /「你们好……%SELF_CALL\(TARGET\)%……接下来……要和这个小狗狗……呜呜～、救、救救我吧～」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6463',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6464',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6465',
+        any: [/\t\tCFLAG:357 = 1/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6466',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6468',
+        any: [/^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6469',
+        any: [/\t\tIF TEQUIP:53/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6472',
+        any: [
+          /\t\t\tIF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6473',
+        any: [
+          /「再次见面了，大家过的还不错吧？大家对%SELF_CALL\(TARGET\)%的上一部的兽交作品感觉如何呢？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6474',
+        any: [
+          /「一定感觉很不错吧？毕竟这是%SELF_CALL\(TARGET\)%和狗狗大人爱的录像呢♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6475',
+        any: [
+          /「%SELF_CALL\(TARGET\)%真的是全心全意爱着狗狗大人呢……。那么接下来，依旧是%SELF_CALL\(TARGET\)%和狗狗大人/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6476',
+        any: [/「狗狗大人的肉棒，真的是最棒的了♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6477',
+        any: [/「让大家看看你有多棒吧，%SELF_CALL\(TARGET\)%的狗狗大人……♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6478',
+        any: [/\t\t\t\tCFLAG:357 = 5/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6480',
+        any: [
+          /\t\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6481',
+        any: [/「大家……好……%SELF_CALL\(TARGET\)%接下来要和这只小狗狗交尾……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6482',
+        any: [
+          /「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6483',
+        any: [/\t\t\t\tCFLAG:357 = 4/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6485',
+        any: [
+          /\t\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:357 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6486',
+        any: [/「大家……好……%SELF_CALL\(TARGET\)%接下来要和这只小狗狗交尾……」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6487',
+        any: [
+          /「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6488',
+        any: [/\t\t\t\tCFLAG:357 = 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6490',
+        any: [/\t\t\tELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6491',
+        any: [
+          /「你们好……%SELF_CALL\(TARGET\)%……接下来……要和这个小狗狗……呜呜～、救、救救我吧～」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6492',
+        any: [/\t\t\t\tCFLAG:357 = 2/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6493',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6494',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6495',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6496',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6497',
+        any: [/^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '6500',
+        any: [/^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '6505-6754',
         any: [/^@KOJO_MESSAGE_PALAMCNG_0$/m],
       },

@@ -226,12 +226,17 @@ test('崩坏（TALENT:9）在兽奸前：不输出', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 占位行', async () => {
-  const fixture = await setup_k0((f) => f.store.set('tequip:31:89', 1));
+test('兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tequip:31:89', 1);
+    f.store.set('mark:31:2', 0);
+  });
   await speak_k0(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '（兽奸专用口上尚未移植，此处为占位——原作 @DOG_KOJO_0，随兽奸票，见 docs/stub-registry.md。）',
-  ]);
+  assert.ok(
+    fixture.text_lines().some((l) => /讨厌/.test(l)),
+    '兽奸 selectcom 0 初次应输出反抗台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:301'), 1, '初次写 CFLAG:301');
 });
 
 test('触手（TEQUIP:90）：不输出', async () => {

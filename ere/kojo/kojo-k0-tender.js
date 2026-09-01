@@ -94,6 +94,7 @@ const {
   public_exucution_koujo_family,
   grotesque_koujo_family,
   colosseum_kojo_family,
+  dog_kojo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -120,7 +121,7 @@ const { stub_line } = require('#/utils/stub-line');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['DOG_KOJO_0', 'KOJO_MESSAGE_COM_0'];
+const STUBBED_CALLS = ['KOJO_MESSAGE_COM_0'];
 
 // @EVENTTRAIN #PRI（:73-77）：存在标志 + 总开关补 0
 on(
@@ -3112,6 +3113,1853 @@ grotesque_koujo_family.register(0, grotesque_koujo_k0);
 colosseum_kojo_family.register(0, colosseum_kojo_0);
 
 /**
+ * @DOG_KOJO_0（K0 慈爱）：兽奸专用口上（:5481-6500，SELECTCOM 0/1/5/6/9/
+ * 21/27/30/31/34/37/43/56 分派，CFLAG:301-357 兽奸状态机 + RAND 随机分支）。
+ *
+ * COM 守卫 TEQUIP:89 岔出（:693-695）；与 COM 状态机同编号但兽奸场景。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function dog_kojo_0(rand) {
+  /* eslint-disable no-irregular-whitespace -- 原文全角空格（DOG 台词，多行模板内无法逐行 disable） */
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (era_flag.selectcom === 0) {
+    // :5486
+
+    if ((era.get(`cflag:${target}:301`) || 0) === 0) {
+      // :5488
+
+      if (era.get(`mark:${target}:2`) >= 2) {
+        // :5490
+        await era.printAndWait(`「是、是……」`); // :5491
+      } else {
+        // :5493
+        await era.printAndWait(`「讨厌！　你要、你要干什么……！？」`); // :5494
+      } // :5495
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :5496
+      era.set(`cflag:${target}:301`, 1); // :5496
+      return 0; // :5497
+    } else {
+      // :5499
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:301`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :5501
+        if (rand_n(3) === 0) {
+          // :5502
+          await era.printAndWait(
+            `「狗狗大人…哈啊…那个地方再多舔舔……嗯…啊啊啊～」`,
+          ); // :5503
+          await era.printAndWait(
+            `被野狗舔舐得难以自已，${target_name}两腿之间的爱液就流了出来，有些害羞地摩擦着双腿`,
+          ); // :5504
+          await era.printAndWait(
+            `「啊啊…${sc()}已经不行了……光是被狗狗的舌头碰到…哈……就湿的不成样子了。」`,
+          ); // :5505
+          await era.printAndWait(
+            `${target_name}沉迷在野狗所带来的爱抚中，脸上已经完全找不到被称作圣女的清纯痕迹了`,
+          ); // :5506
+          await era.printAndWait(`「嗯…啊呼…更…更进一步也没关系哦…咕……啾哈…」`); // :5507
+          await era.printAndWait(
+            `为了渴求更多的宠爱，${target_name}光裸的身子热情蹭着野狗的皮毛`,
+          ); // :5508
+          await era.printAndWait(`「哈……就是这样…继续……啊啊…啾…」`); // :5509
+        } else if (rand_n(2) === 0) {
+          // :5510
+          await era.printAndWait(
+            `当野狗慢慢靠近时，${target_name}主动将身体缠了上去，把乳首送到野狗口中`,
+          ); // :5511
+          await era.printAndWait(
+            `「啊哈…狗狗大人……更多的玩弄${sc()}的乳房吧…」`,
+          ); // :5512
+          await era.printAndWait(
+            `贪图着野狗给予的快乐，${target_name}的娇喘越发甜美起来`,
+          ); // :5513
+          await era.printAndWait(
+            `「啊啊…好熟练…被做了这样的事情……${sc()}…已…已经……」`,
+          ); // :5514
+          await era.printAndWait(
+            `${target_name}紧紧环抱着野狗摩擦，呼吸变得更加凌乱急促`,
+          ); // :5515
+          await era.printAndWait(
+            `「请……更加地…用喜欢的方式来…抚摸${sc()}吧～」`,
+          ); // :5516
+        } else {
+          // :5517
+          await era.printAndWait(
+            `${target_name}被野狗来回舔吮爱抚着，唾液在光裸的身子上留下一道道反光的痕迹`,
+          ); // :5518
+          await era.printAndWait(`「呣…这么突然……哈…你就是爱舔东西呢～」`); // :5519
+          await era.printAndWait(
+            `享受着突如其来的爱抚，${target_name}张开双腿引导野狗向下舔舐`,
+          ); // :5520
+          await era.printAndWait(
+            `「这里……请好好享用…哈…狗狗大人的舌头…真的好美妙……」`,
+          ); // :5521
+          await era.printAndWait(
+            `粗糙的舌头驾轻就熟地爱抚着全身，${target_name}的呻吟越发甜美高亢起来`,
+          ); // :5522
+        } // :5523
+        // CFLAG:301  = 7（变量语义：CFLAG 族，301） // :5524
+        era.set(`cflag:${target}:301`, 7); // :5524
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:301`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5526
+        await era.printAndWait(`「啊哈哈、小狗狗……」`); // :5527
+        // CFLAG:301  = 6（变量语义：CFLAG 族，301） // :5528
+        era.set(`cflag:${target}:301`, 6); // :5528
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:301`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5530
+        await era.printAndWait(`「比起狗更想要主人…」`); // :5531
+        // CFLAG:301  = 5（变量语义：CFLAG 族，301） // :5532
+        era.set(`cflag:${target}:301`, 5); // :5532
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        ((era.get(`cflag:${target}:301`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :5534
+        await era.printAndWait(`「……」`); // :5535
+        // CFLAG:301  = 4（变量语义：CFLAG 族，301） // :5536
+        era.set(`cflag:${target}:301`, 4); // :5536
+      } else if (
+        era.get(`mark:${target}:2`) === 2 &&
+        ((era.get(`cflag:${target}:301`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :5538
+        await era.printAndWait(`「呜～……」`); // :5539
+        // CFLAG:301  = 3（变量语义：CFLAG 族，301） // :5540
+        era.set(`cflag:${target}:301`, 3); // :5540
+      } else if (
+        era.get(`mark:${target}:2`) <= 1 &&
+        ((era.get(`cflag:${target}:301`) || 0) <= 1 || era.get('flag:7') === 2)
+      ) {
+        // :5542
+        await era.printAndWait(`「讨厌……住手～！」`); // :5543
+        // CFLAG:301  = 2（变量语义：CFLAG 族，301） // :5544
+        era.set(`cflag:${target}:301`, 2); // :5544
+      } // :5545
+      return 0; // :5546
+    } // :5547
+  } // :5548
+
+  if (era_flag.selectcom === 1) {
+    // :5553
+
+    if ((era.get(`cflag:${target}:302`) || 0) === 0) {
+      // :5555
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :5557
+        await era.printAndWait(`「怎么会……不要啊」`); // :5558
+      } else {
+        // :5560
+        await era.printAndWait(`「怎么会……不要啊」`); // :5561
+      } // :5562
+      // CFLAG:302  = 1（变量语义：CFLAG 族，302） // :5563
+      era.set(`cflag:${target}:302`, 1); // :5563
+      return 0; // :5564
+    } else {
+      // :5566
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:302`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5568
+        if (rand_n(3) === 0) {
+          // :5569
+          await era.printAndWait(`「味道不错吧……？啊哈…好舒服……」`); // :5570
+          await era.printAndWait(
+            `仰起头闭起眼，被舔着小穴的${target_name}很是陶醉的样子`,
+          ); // :5571
+          await era.printAndWait(`「啊…舌头…太深入了…好有感觉…哈……」`); // :5572
+          await era.printAndWait(
+            `伸手按住野狗的脑袋，${target_name}随着舌头的抽插晃动着腰`,
+          ); // :5573
+          await era.printAndWait(
+            `「再激烈一点也没关系……好棒…要…要去了啊啊啊…」`,
+          ); // :5574
+        } else if (rand_n(2) === 0) {
+          // :5575
+          await era.printAndWait(`「呜…咕…嗯嗯…狗狗的舌头…在我的里面…哈啊…」`); // :5576
+          await era.printAndWait(
+            `${target_name}主动打开双腿，小穴和阴蒂在野狗灵巧地舔弄下，已经有了明显的快感`,
+          ); // :5577
+          await era.printAndWait(
+            `「唔…还是…有些难为情的……哼…但是……不行了…真的…好舒服～」`,
+          ); // :5578
+          await era.printAndWait(
+            `不知是因为羞耻还是快感，${target_name}的脸涨得通红，曾经的圣女就这么屈服在了兽爱的快感中`,
+          ); // :5579
+          await era.printAndWait(
+            `「这…这样下去……啊啊…再深一点也没关系…嗯啊啊…！」`,
+          ); // :5580
+          await era.printAndWait(
+            `${target_name}的呻吟越发甜美起来，受到鼓舞的野狗努力将舌头刺的更深`,
+          ); // :5581
+        } else {
+          // :5582
+          await era.printAndWait(
+            `${target_name}压着野狗的脑袋向下，邀请它品尝自己的小穴`,
+          ); // :5583
+          await era.printAndWait(`「想试试吗？来尝尝看吧，我的野狗大人♪」`); // :5584
+          await era.printAndWait(
+            `野狗听话得伸出舌头舔舐起来，${target_name}的小穴渐渐覆盖上了一层泛着光的野狗唾液`,
+          ); // :5585
+          await era.printAndWait(
+            `「好棒……野狗大人的舌头…嗯…请多玩弄一下${sc()}…哈…」`,
+          ); // :5586
+          await era.printAndWait(
+            `通人性的野狗用犬牙轻咬着阴蒂，${target_name}的身体宛如通了电一样的颤抖起来`,
+          ); // :5587
+          await era.printAndWait(
+            `「啊啊啊啊…！这种玩法…好厉害……啊……不行…已…已经…！！」`,
+          ); // :5588
+        } // :5589
+        // CFLAG:302  = 6（变量语义：CFLAG 族，302） // :5590
+        era.set(`cflag:${target}:302`, 6); // :5590
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:302`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5592
+        await era.printAndWait(`「啊哈哈、好痒呢……」`); // :5593
+        await era.printAndWait(`${target_name}还不太习惯兽爱的感觉的样子。`); // :5594
+        // CFLAG:302  = 5（变量语义：CFLAG 族，302） // :5595
+        era.set(`cflag:${target}:302`, 5); // :5595
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:302`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :5597
+        await era.printAndWait(`「不行～、好痒啊……」`); // :5598
+        // CFLAG:302  = 4（变量语义：CFLAG 族，302） // :5599
+        era.set(`cflag:${target}:302`, 4); // :5599
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        ((era.get(`cflag:${target}:302`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :5601
+        await era.printAndWait(`「呜呜……」`); // :5602
+        // CFLAG:302  = 3（变量语义：CFLAG 族，302） // :5603
+        era.set(`cflag:${target}:302`, 3); // :5603
+      } else if (
+        (era.get(`cflag:${target}:302`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :5605
+        await era.printAndWait(`「讨厌！　住手……求你了！」`); // :5606
+        // CFLAG:302  = 2（变量语义：CFLAG 族，302） // :5607
+        era.set(`cflag:${target}:302`, 2); // :5607
+      } // :5608
+      return 0; // :5609
+    } // :5610
+  } // :5611
+
+  if (era_flag.selectcom === 5) {
+    // :5617
+
+    if ((era.get(`cflag:${target}:306`) || 0) === 0) {
+      // :5619
+
+      if (era.get(`talent:${target}:85`) === 1) {
+        // :5621
+        await era.printAndWait(`「……」`); // :5622
+      } else {
+        // :5624
+        await era.printAndWait(`「呜……」`); // :5625
+      } // :5626
+      // CFLAG:TARGET:306  = 1（变量语义：CFLAG 族，TARGET:306） // :5627
+      era.set(`cflag:${target}:306`, 1); // :5627
+      return 0; // :5628
+    } else {
+      // :5630
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:306`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5632
+        if (rand_n(2) === 0) {
+          // :5633
+          await era.printAndWait(`「啊哈～我的乳房很有弹性哦～唔…♪」`); // :5634
+          await era.printAndWait(
+            `${target_name}的胸被野狗用前足和舌头爱抚着，因为乳头传来连绵快意而止不住地喘息着`,
+          ); // :5635
+          await era.printAndWait(
+            `「真是爱撒娇啊…嗯……踩的再用力一点也不要紧哦…」`,
+          ); // :5636
+          await era.printAndWait(
+            `${target_name}陶醉地闭上双眼，胸部不断起伏配合着野狗的动作`,
+          ); // :5637
+        } else {
+          // :5638
+          await era.printAndWait(
+            `「粗糙的舌头…弄得好舒服…爪子…指甲不可以伸出来哦…嗯啊……♪」`,
+          ); // :5639
+          await era.printAndWait(
+            `${target_name}搂住在怀中的野狗，任由它对自己挺起的乳头又摸又舔`,
+          ); // :5640
+          await era.printAndWait(`「没关系，更大胆的舔吧…啊啊……♪」`); // :5641
+          await era.printAndWait(
+            `${target_name}被野狗爱抚着胸部，露出陶醉的神情，喉咙里溢出快乐的呻吟`,
+          ); // :5642
+        } // :5643
+        // CFLAG:306  = 6（变量语义：CFLAG 族，306） // :5644
+        era.set(`cflag:${target}:306`, 6); // :5644
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:306`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5646
+        await era.printAndWait(`「啊哈～、不要把爪子伸出来哦……♪」`); // :5647
+        // CFLAG:306  = 5（变量语义：CFLAG 族，306） // :5648
+        era.set(`cflag:${target}:306`, 5); // :5648
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:306`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :5650
+        await era.printAndWait(`「唔嗯～……」`); // :5651
+        // CFLAG:306  = 4（变量语义：CFLAG 族，306） // :5652
+        era.set(`cflag:${target}:306`, 4); // :5652
+      } else if (
+        era.get(`abl:${target}:1`) >= 3 &&
+        ((era.get(`cflag:${target}:306`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :5654
+        await era.printAndWait(`「呜呜……被狗……」`); // :5655
+        // CFLAG:306  = 3（变量语义：CFLAG 族，306） // :5656
+        era.set(`cflag:${target}:306`, 3); // :5656
+      } else if (
+        (era.get(`cflag:${target}:306`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :5658
+        await era.printAndWait(`「不、不要……快住手……」`); // :5659
+        // CFLAG:306  = 2（变量语义：CFLAG 族，306） // :5660
+        era.set(`cflag:${target}:306`, 2); // :5660
+      } // :5661
+      return 0; // :5662
+    } // :5663
+  } // :5664
+
+  if (era_flag.selectcom === 6) {
+    // :5669
+
+    if ((era.get(`cflag:${target}:307`) || 0) === 0 && era.get('tflag:13')) {
+      // :5671
+
+      if (era.get(`talent:${target}:136`) === 1) {
+        // :5673
+        await era.printAndWait(
+          `野狗将前爪踩在${target_name}肩上半立起来，热情的舔舐着${target_name}的脸颊`,
+        ); // :5674
+        await era.printAndWait(`「嗯？是想做什么吗？啊…难道……」`); // :5675
+        await era.printAndWait(
+          `按住焦躁不安的野狗，${target_name}似乎是想到了什么而脸红起来`,
+        ); // :5676
+        await era.printAndWait(
+          `「啊，好的…如果是狗狗大人的话……${sc()}，很愿意这样做。」`,
+        ); // :5677
+        await era.printAndWait(
+          `下了决定的${target_name}伸手搂住了野狗的脖子，稍稍偏过脑袋，探出小舌羞怯的去触碰野狗的舌头`,
+        ); // :5678
+        await era.printAndWait(
+          `「啾…咕啾……是…这是${target_name}的初吻……唔…献给心爱的狗狗大人…♪」`,
+        ); // :5679
+        await era.printAndWait(
+          `得到回应的野狗变得贪心起来，炽热的舌头卷起${sc()}的小舌来回纠缠着`,
+        ); // :5680
+        await era.printAndWait(`「哈呜…嗯……很舒服…${sc()}的唇…味道如何？」`); // :5681
+        await era.printAndWait(
+          `生涩的回应着野狗，${target_name}吸吮着交缠的舌头，吞咽着彼此的唾液`,
+        ); // :5682
+        await era.printAndWait(
+          `「${sc()}的初吻能献给狗狗大人真的是很幸福呢……」`,
+        ); // :5683
+        await era.printAndWait(
+          `将野狗当做恋人，${target_name}的目光湿润，神情温柔地与野狗持续舌吻着`,
+        ); // :5684
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :5686
+        await era.printAndWait(`「初吻是和狗吗…好微妙呢…」`); // :5687
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :5689
+        await era.printAndWait(`「明明想把初吻献给魔王大人的……」`); // :5690
+      } else {
+        // :5692
+        await era.printAndWait(`「讨厌、把初吻给狗什么的……真是恶梦啊……」`); // :5693
+      } // :5694
+      // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :5695
+      era.set(`cflag:${target}:307`, 1); // :5695
+      return 0; // :5696
+    } else if ((era.get(`cflag:${target}:307`) || 0) === 0) {
+      // :5698
+
+      if (era.get(`talent:${target}:136`) === 1) {
+        // :5700
+        await era.printAndWait(`「嗯？狗狗大人……？唔…」`); // :5701
+        await era.printAndWait(
+          `毫无防备的被野狗扑倒，${target_name}就这样被野兽夺走了唇舌`,
+        ); // :5702
+        await era.printAndWait(
+          `「嗯啾…原来…是想接吻吗……咕唔…好的…${sc()}的唇，是属于狗狗大人的…」`,
+        ); // :5703
+        await era.printAndWait(
+          `完全没有任何抵触，${target_name}紧搂着野狗的身体，热情回应起来`,
+        ); // :5704
+        await era.printAndWait(`「哈呜…嗯……很舒服…${sc()}的唇…味道如何？」`); // :5705
+        await era.printAndWait(
+          `熟练地回应着野狗，${target_name}吸吮着交缠的舌头，吞咽着彼此的唾液`,
+        ); // :5706
+        await era.printAndWait(`「呣呒…狗狗大人…再吻得的激烈一点好吗…啾……」`); // :5707
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :5709
+        await era.printAndWait(`「小狗狗……啾～」`); // :5710
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :5712
+        await era.printAndWait(`「和狗吗……」`); // :5713
+      } else {
+        // :5715
+        await era.printAndWait(`「讨厌、和狗接吻什么的……真是恶梦啊……」`); // :5716
+      } // :5717
+      // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :5718
+      era.set(`cflag:${target}:307`, 1); // :5718
+      return 0; // :5719
+    } else {
+      // :5721
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:307`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5723
+        if (rand_n(3) === 0) {
+          // :5724
+          await era.print(
+            `「${sc()}啊…咕……很喜欢接吻的……和狗狗大人的话……啾唔…」`,
+          ); // :5725
+          await era.printAndWait(
+            `搂抱住压在身上的野狗，${target_name}热情的和野狗唇舌交缠着`,
+          ); // :5726
+          await era.printAndWait(
+            `「呣呒…舌头，再伸进来一些……哈…光是被吻着…就好像要到了…」`,
+          ); // :5727
+          await era.printAndWait(
+            `${target_name}将野狗的舌头含进口中，仿佛口交一般咕啾咕啾的吸着`,
+          ); // :5728
+          await era.printAndWait(
+            `「嗯…嗯呒……舒服吗…？狗狗大人的舌头…好美味…」`,
+          ); // :5729
+        } else if (rand_n(2) === 0) {
+          // :5730
+          await era.print(
+            `${target_name}抚着野狗的皮毛，主动偏头向野兽献上了自己的唇`,
+          ); // :5731
+          await era.printAndWait(
+            `「来接吻吧…狗狗大人……啾…啾唔…${sc()}已经离不开你了…」`,
+          ); // :5732
+          await era.printAndWait(
+            `小舌纠缠着野狗粗糙的舌头，${target_name}吞咽着野狗的唾液，诉说着自己的爱恋`,
+          ); // :5733
+          await era.printAndWait(
+            `「唔啊…吻我…咕…哈啾……好喜欢…我的狗狗大人…最喜欢你了……！」`,
+          ); // :5734
+        } else {
+          // :5735
+          await era.print(`「唔呣…舌头进来了～哈…狗狗大人……很心急呢…」`); // :5736
+          await era.printAndWait(
+            `被野狗粗暴的扑倒在地，${target_name}温柔的笑着张开唇，任由黏腻的舌头入侵`,
+          ); // :5737
+          await era.print(
+            `得到允许的野狗变得更加贪心起来，粗糙的舌头贪婪得探索着${player_name}口腔的每一个角落`,
+          ); // :5738
+          await era.printAndWait(
+            `「……很舒服…咕…原来狗狗是这么喜欢接吻的……多少次……都行……啾唔…」`,
+          ); // :5739
+          await era.print(`${target_name}脸红得发烫，沉醉在和野兽的亲吻中`); // :5740
+          await era.printAndWait(`「${sc()}………哈…是狗狗大人爱着的小母狗呢…」`); // :5741
+          await era.print(`${target_name}被野狗深吻着，露出全然陶醉的幸福表情`); // :5742
+        } // :5743
+        // CFLAG:307  = 6（变量语义：CFLAG 族，307） // :5744
+        era.set(`cflag:${target}:307`, 6); // :5744
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:307`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5746
+        await era.printAndWait(`「小狗狗……啾～」`); // :5747
+        // CFLAG:307  = 5（变量语义：CFLAG 族，307） // :5748
+        era.set(`cflag:${target}:307`, 5); // :5748
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:307`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :5750
+        await era.printAndWait(`「和狗吗……」`); // :5751
+        // CFLAG:307  = 4（变量语义：CFLAG 族，307） // :5752
+        era.set(`cflag:${target}:307`, 4); // :5752
+      } else if (
+        era.get(`abl:${target}:10`) >= 2 &&
+        ((era.get(`cflag:${target}:307`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :5754
+        await era.printAndWait(`「呜呜……抽泣～……」`); // :5755
+        // CFLAG:307  = 3（变量语义：CFLAG 族，307） // :5756
+        era.set(`cflag:${target}:307`, 3); // :5756
+      } else if (
+        (era.get(`cflag:${target}:307`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :5758
+        await era.printAndWait(`「讨厌、和狗接吻什么的……真是恶梦啊……」`); // :5759
+        // CFLAG:307  = 2（变量语义：CFLAG 族，307） // :5760
+        era.set(`cflag:${target}:307`, 2); // :5760
+      } // :5761
+      return 0; // :5762
+    } // :5763
+  } // :5764
+
+  if (era_flag.selectcom === 9) {
+    // :5769
+
+    if ((era.get(`cflag:${target}:310`) || 0) === 0) {
+      // :5771
+
+      if (era.get(`talent:${target}:136`) === 1) {
+        // :5773
+        await era.printAndWait(`「狗狗大人……在舔${sc()}肮脏的地方……嗯啊……」`); // :5774
+        await era.printAndWait(
+          `${target_name}被舔着肛门有些不安的样子，红着脸挣扎起来`,
+        ); // :5775
+        await era.printAndWait(
+          `「……不行…这样舔下去的话……${sc()}要变得…奇怪了………」`,
+        ); // :5776
+        await era.printAndWait(
+          `逃脱不了野兽的舔舐，${target_name}干脆放任自己享受起来`,
+        ); // :5777
+        await era.printAndWait(
+          `「头脑都没办法思考了……舔这种地方的话…咿呀…！」`,
+        ); // :5778
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :5780
+        await era.printAndWait(`「呀啊！　好痒」`); // :5781
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :5783
+        await era.printAndWait(`「唔嗯～……」`); // :5784
+      } else {
+        // :5786
+        await era.printAndWait(`「不要……不要舔……」`); // :5787
+      } // :5788
+      // CFLAG:TARGET:310  = 1（变量语义：CFLAG 族，TARGET:310） // :5789
+      era.set(`cflag:${target}:310`, 1); // :5789
+      return 0; // :5790
+    } else {
+      // :5792
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:310`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5794
+        if (rand_n(3) === 0) {
+          // :5795
+          await era.printAndWait(`「狗狗大人……肛门…好舒服啊……嗯啊～」`); // :5796
+          await era.printAndWait(
+            `${target_name}摇晃着腰配合着野兽的舔舐，敏感的肠肉纠缠着入侵的舌尖`,
+          ); // :5797
+          await era.printAndWait(`「更激烈一点…更粗暴的侵犯肛门吧…啊啊……」`); // :5798
+          await era.printAndWait(
+            `「要变得奇怪了…！${sc()}…已经……要到了……！！」`,
+          ); // :5799
+        } else if (rand_n(2) === 0) {
+          // :5800
+          await era.print(`「舔那种地方的话…哈啊～真的……好舒服……♪」`); // :5801
+          await era.printAndWait(
+            `完全陷落在肉体的快感中，${target_name}仰起头发出一阵阵淫媚的娇喘`,
+          ); // :5802
+          await era.print(
+            `「更加…更加往深处…哈啊……请继续用舌头来玩弄${sc()}……」`,
+          ); // :5803
+          await era.print(
+            `难耐得摇晃着腰，${target_name}享受着被侵犯肛门的快感`,
+          ); // :5804
+        } else {
+          // :5805
+          await era.print(`野狗将舌头卷起，尽可能的刺入肛穴的更深处`); // :5806
+          await era.printAndWait(
+            `「唔啊啊……都已经进到这么深了…狗狗大人……哈啊…♪」`,
+          ); // :5807
+          await era.print(
+            `完全觉醒了被玩弄肛门的快感，${target_name}熟练的配合着野狗的动作`,
+          ); // :5808
+          await era.printAndWait(
+            `「要去了…后面的穴……也已经要被狗狗大人玩坏了……咿呀…！！」`,
+          ); // :5809
+        } // :5810
+        // CFLAG:310  = 6（变量语义：CFLAG 族，310） // :5811
+        era.set(`cflag:${target}:310`, 6); // :5811
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:310`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5813
+        await era.printAndWait(`「呀啊！　好痒……」`); // :5814
+        // CFLAG:310  = 5（变量语义：CFLAG 族，310） // :5815
+        era.set(`cflag:${target}:310`, 5); // :5815
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:310`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :5817
+        await era.printAndWait(`「唔嗯～……」`); // :5818
+        // CFLAG:310  = 4（变量语义：CFLAG 族，310） // :5819
+        era.set(`cflag:${target}:310`, 4); // :5819
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        ((era.get(`cflag:${target}:310`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :5821
+        await era.printAndWait(`「请……不要舔……呜呜……」`); // :5822
+        // CFLAG:310  = 3（变量语义：CFLAG 族，310） // :5823
+        era.set(`cflag:${target}:310`, 3); // :5823
+      } else if (
+        (era.get(`cflag:${target}:310`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :5825
+        await era.printAndWait(`「讨厌！　快住手……求你了！」`); // :5826
+        // CFLAG:310  = 2（变量语义：CFLAG 族，310） // :5827
+        era.set(`cflag:${target}:310`, 2); // :5827
+      } // :5828
+      return 0; // :5829
+    } // :5830
+  } // :5831
+
+  if (era_flag.selectcom === 21) {
+    // :5836
+
+    if ((era.get(`cflag:${target}:322`) || 0) === 0) {
+      // :5838
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :5840
+
+        if (era.get(`talent:${target}:136`) === 1) {
+          // :5842
+          await era.printAndWait(
+            `「好开心……${sc()}的处子身…要交给狗狗大人了……」`,
+          ); // :5843
+          await era.printAndWait(
+            `${target_name}趴在地上，用手扒开湿漉漉的小穴，向野狗献上自己`,
+          ); // :5844
+          await era.printAndWait(
+            `被本能驱使的野狗喘着粗气，压在${target_name}背上，通红的阴茎一口气贯穿至最深处`,
+          ); // :5845
+          await era.printAndWait(`「咿呀……！痛！好大……太深了……啊…！」`); // :5846
+          await era.printAndWait(
+            `没给${target_name}适应的时间，野兽迫不及待的抽插起来`,
+          ); // :5847
+          await era.printAndWait(
+            `「没关系……哈……狗狗大人…请尽情享用${sc()}……啊～」`,
+          ); // :5848
+          await era.printAndWait(
+            `膨胀的兽茎激烈摩擦着阴道壁，${target_name}的痛呼中开始夹杂些许呻吟`,
+          ); // :5849
+          await era.printAndWait(
+            `「啊啊…动起来了……好快…开始…变得舒服了……哈啊……♪」`,
+          ); // :5850
+          await era.printAndWait(
+            `${target_name}生涩得配合着野狗的动作，小穴本能收缩绞着侵入的肉棒，发出咕啾咕啾的水音`,
+          ); // :5851
+          await era.printAndWait(
+            `「请射在里面……狗狗大人的精子…都射在子宫里……唔噢噢噢！！！」`,
+          ); // :5852
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :5854
+          await era.printAndWait(`「第一次是给小狗狗……还不错嘛」`); // :5855
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :5857
+          await era.printAndWait(`「明明想把第一次献给魔王大人的……」`); // :5858
+        } else {
+          // :5861
+          await era.printAndWait(`「咿、咿呀啊啊啊啊啊啊！！」`); // :5862
+        } // :5863
+      } else {
+        // :5865
+
+        if (era.get(`talent:${target}:136`) === 1) {
+          // :5867
+          await era.printAndWait(
+            `「好开心……${sc()}…终于要和狗狗大人交配了……」`,
+          ); // :5868
+          await era.printAndWait(
+            `${target_name}趴在地上，用手扒开湿漉漉的小穴，向野狗献上自己`,
+          ); // :5869
+          await era.printAndWait(
+            `被本能驱使的野狗喘着粗气，压在${target_name}背上，通红的阴茎一口气贯穿至最深处`,
+          ); // :5870
+          await era.printAndWait(
+            `「咿呀……！好大……比起人类的都大…好深……啊…！」`,
+          ); // :5871
+          await era.printAndWait(
+            `没给${target_name}适应的时间，野兽迫不及待的抽插起来`,
+          ); // :5872
+          await era.printAndWait(
+            `膨胀的兽茎激烈的摩擦着阴道壁，${target_name}的痛呼中夹杂些许呻吟`,
+          ); // :5873
+          await era.printAndWait(`「啊啊…动起来了……好快……变得好舒服……哈啊……」`); // :5874
+          await era.printAndWait(
+            `${target_name}尽力配合着野狗的动作，小穴本能的收缩绞着侵入的肉棒，发出咕啾咕啾的水音`,
+          ); // :5875
+          await era.printAndWait(
+            `「请射在里面……狗狗大人的精子…都射在子宫里……唔噢噢噢！！！」`,
+          ); // :5876
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :5878
+          await era.printAndWait(`「和小狗狗……做吗？」`); // :5879
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :5881
+          await era.printAndWait(`「和魔王大人做感觉会更好呢……」`); // :5882
+        } else {
+          // :5884
+          await era.printAndWait(`「不要、不要啊啊啊啊啊！！」`); // :5885
+        } // :5886
+      } // :5887
+      // CFLAG:322  = 1（变量语义：CFLAG 族，322） // :5888
+      era.set(`cflag:${target}:322`, 1); // :5888
+      return 0; // :5889
+    } else {
+      // :5891
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:322`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :5893
+        if (rand_n(3) === 0) {
+          // :5894
+          await era.printAndWait(
+            `「已经忍到极限了…狗狗大人…快点，快来把${sc()}搞得一团乱吧……♪」`,
+          ); // :5895
+          await era.printAndWait(
+            `${target_name}高高抬起屁股等待野狗的插入，裸露的小穴湿润异常`,
+          ); // :5896
+          await era.printAndWait(
+            `受到邀请的野狗低吼着，肿胀的阴茎一口气刺入了最深处，毫不留情的抽送起来`,
+          ); // :5897
+          await era.printAndWait(
+            `「啊啊嗯…！被侵犯着…${sc()}…在被野狗侵犯着……」`,
+          ); // :5898
+          await era.printAndWait(
+            `已经毫不在意人狗交媾后的业报之类的东西了，现在的${target_name}完全沉浸在兽交所带来的快感中`,
+          ); // :5899
+          await era.printAndWait(
+            `「哈啊…好厉害……唔…都顶到最深处了…请…请就这样射在里面吧…啊啊啊…！！」`,
+          ); // :5900
+        } else if (rand_n(2) === 0) {
+          // :5901
+          await era.printAndWait(
+            `「啊啊～狗狗大人……${sc()}…正在和野狗交配着～♪」`,
+          ); // :5902
+          await era.printAndWait(
+            `小穴绞着粗大的狗根，${target_name}在野狗身下喘息呻吟着`,
+          ); // :5903
+          await era.printAndWait(
+            `「好厉害……好棒…啊啊…深一些…最喜欢这样的感觉了……♪」`,
+          ); // :5904
+          await era.print(
+            `野狗低吠着，每一次的抽插都会带出大量的体液，响起下流水声`,
+          ); // :5905
+          await era.printAndWait(`「嗯…哈……就这样射精……让${sc()}怀孕吧～♪」`); // :5906
+        } else {
+          // :5907
+          await era.printAndWait(`「狗狗大人……请往我的小穴里注入精液吧……♪」`); // :5908
+          await era.printAndWait(
+            `${target_name}渴望被雄犬填满，打开双腿向野狗发出邀请`,
+          ); // :5909
+          await era.printAndWait(
+            `野狗沉下身体，膨胀的阴茎完全没入了${target_name}的小穴`,
+          ); // :5910
+          await era.printAndWait(
+            `「唔哦哦哦……！好棒…狗狗大人的肉棒……哈啊…最棒了…！」`,
+          ); // :5911
+          await era.printAndWait(
+            `熟练得扭动腰肢配合着野狗的动作，${target_name}的呻吟声越发高亢起来`,
+          ); // :5912
+          await era.print(
+            `「交配…狗狗大人…更多的……在${sc()}的子宫里…用精液播种吧…♪」`,
+          ); // :5913
+        } // :5914
+        // CFLAG:322  = 7（变量语义：CFLAG 族，322） // :5915
+        era.set(`cflag:${target}:322`, 7); // :5915
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:322`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5917
+        await era.printAndWait(`「和小狗狗做吗……也好」`); // :5918
+        // CFLAG:322  = 6（变量语义：CFLAG 族，322） // :5919
+        era.set(`cflag:${target}:322`, 6); // :5919
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:322`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5921
+        await era.printAndWait(`「不能和魔王大人做吗……？」`); // :5922
+        // CFLAG:322  = 5（变量语义：CFLAG 族，322） // :5923
+        era.set(`cflag:${target}:322`, 5); // :5923
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        era.get(`abl:${target}:2`) >= 3 &&
+        ((era.get(`cflag:${target}:322`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :5925
+        await era.printAndWait(`「呜呜……呜呜呜………有感觉了……」`); // :5926
+        // CFLAG:322  = 4（变量语义：CFLAG 族，322） // :5927
+        era.set(`cflag:${target}:322`, 4); // :5927
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        ((era.get(`cflag:${target}:322`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :5929
+        await era.printAndWait(`「呜呜呜……呜呜……」`); // :5930
+        // CFLAG:322  = 3（变量语义：CFLAG 族，322） // :5931
+        era.set(`cflag:${target}:322`, 3); // :5931
+      } else if (
+        (era.get(`cflag:${target}:322`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :5933
+        await era.printAndWait(`「不、不要、不要啊啊啊啊！」`); // :5934
+
+        // CFLAG:322  = 2（变量语义：CFLAG 族，322） // :5936
+        era.set(`cflag:${target}:322`, 2); // :5936
+      } // :5937
+      return 0; // :5938
+    } // :5939
+  } // :5940
+
+  if (era_flag.selectcom === 27) {
+    // :5945
+
+    if ((era.get(`cflag:${target}:328`) || 0) === 0) {
+      // :5947
+
+      if (era.get(`talent:${target}:136`) === 1) {
+        // :5949
+        await era.printAndWait(`「哎？后…后面的穴也……？」`); // :5950
+        await era.printAndWait(
+          `察觉到野狗阴茎抵上了自己的肛门，${target_name}紧张地挣扎起来`,
+        ); // :5951
+        await era.printAndWait(`「狗狗大人，这么脏的地方……会弄脏你的…唔……！」`); // :5952
+        await era.printAndWait(
+          `丝毫不顾身下人的反抗，野狗从背后贯穿了${target_name}的肛门，快速地抽插`,
+        ); // :5953
+        await era.printAndWait(
+          `「唔啊啊啊啊啊……！！进…进来了……狗狗大人的肉棒…在直肠里搅来搅去……！」`,
+        ); // :5954
+        await era.printAndWait(
+          `在${target_name}的喘息痛呼中，野狗越发奋力地撞击起来`,
+        ); // :5955
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :5957
+        await era.printAndWait(`「屁股眼好爽哦……小狗狗……♪」`); // :5958
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :5960
+        await era.printAndWait(`「明明和魔王大人做会更好……」`); // :5961
+      } else {
+        // :5963
+        await era.printAndWait(`「咿呀啊啊啊啊！！」`); // :5964
+      } // :5965
+      // CFLAG:TARGET:328  = 1（变量语义：CFLAG 族，TARGET:328） // :5966
+      era.set(`cflag:${target}:328`, 1); // :5966
+      return 0; // :5967
+    } else {
+      // :5969
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        ((era.get(`cflag:${target}:328`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :5971
+        if (rand_n(3) === 0) {
+          // :5972
+          await era.printAndWait(
+            `「狗狗大人就这么喜欢后面的穴吗……？啊…已经进来了……哈啊～」`,
+          ); // :5973
+          await era.printAndWait(
+            `${target_name}高高抬起屁股方便野狗阴茎插入肛门，发出了满足的喘息`,
+          ); // :5974
+          await era.printAndWait(`「好大好烫……嗯啊……腰…自己就动起来了…♪」`); // :5975
+          await era.printAndWait(
+            `「狗狗大人…请更加欺负肛穴……${target_name}的屁股就是为了像这样被狗狗大人侵犯而存在的呢…♪」`,
+          ); // :5976
+        } else if (rand_n(2) === 0) {
+          // :5977
+          await era.printAndWait(`「狗狗大人♪请尽情使用${sc()}的肛穴吧～」`); // :5978
+          await era.printAndWait(
+            `${target_name}用双手将自己的肛门张开了，被诱惑的野狗急切地将阴茎插了进去`,
+          ); // :5979
+          await era.printAndWait(
+            `「更加…激烈地抽插那里，也没有关系的……咿呀…！好棒～」`,
+          ); // :5980
+          await era.printAndWait(
+            `「请射在里面…野兽的精液……把${sc()}的直肠都染白吧♪」`,
+          ); // :5981
+        } else {
+          // :5982
+          await era.print(
+            `${target_name}纤细的腰被野兽抱着，野狗阴茎从背后贯穿了肛门`,
+          ); // :5983
+          await era.printAndWait(
+            `「哈啊…明明被温柔地抱着……却在被侵犯着屁股什么的…狗狗大人……♪」`,
+          ); // :5984
+          await era.printAndWait(
+            `${target_name}摇摆腰肢配合着野狗的抽插，呻吟越发甜美高亢起来`,
+          ); // :5985
+          await era.printAndWait(
+            `「嗯…啊啊～腰部完全停不下来…脑袋变得迷迷糊糊起来了…唔啊啊啊啊……！」`,
+          ); // :5986
+        } // :5987
+        // CFLAG:328  = 7（变量语义：CFLAG 族，328） // :5988
+        era.set(`cflag:${target}:328`, 7); // :5988
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        ((era.get(`cflag:${target}:328`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :5990
+        if (rand_n(2) === 0) {
+          // :5991
+          await era.printAndWait(`「和小狗狗也行吧……啊啊～」`); // :5992
+        } else {
+          // :5993
+          await era.printAndWait(`「小狗狗……也行吧……」`); // :5994
+        } // :5995
+        // CFLAG:328  = 6（变量语义：CFLAG 族，328） // :5996
+        era.set(`cflag:${target}:328`, 6); // :5996
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        ((era.get(`cflag:${target}:328`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :5998
+        if (rand_n(2) === 0) {
+          // :5999
+          await era.printAndWait(`「明明不是和魔王大人做……竟然有感觉了……」`); // :6000
+        } else {
+          // :6001
+          await era.printAndWait(`「嗯啊啊啊～！　屁股要融化了～」`); // :6002
+        } // :6003
+        // CFLAG:328  = 5（变量语义：CFLAG 族，328） // :6004
+        era.set(`cflag:${target}:328`, 5); // :6004
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:328`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :6006
+        await era.printAndWait(`「明明和魔王大人更好……」`); // :6007
+        // CFLAG:328  = 4（变量语义：CFLAG 族，328） // :6008
+        era.set(`cflag:${target}:328`, 4); // :6008
+      } else if (
+        era.get(`abl:${target}:3`) >= 3 &&
+        ((era.get(`cflag:${target}:328`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :6010
+        await era.printAndWait(`「呼呜、呼呜……咕～」`); // :6011
+        // CFLAG:328  = 3（变量语义：CFLAG 族，328） // :6012
+        era.set(`cflag:${target}:328`, 3); // :6012
+      } else if (
+        (era.get(`cflag:${target}:328`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :6014
+        await era.printAndWait(`「不要、不要啊啊啊啊！」`); // :6015
+        // CFLAG:328  = 2（变量语义：CFLAG 族，328） // :6016
+        era.set(`cflag:${target}:328`, 2); // :6016
+      } // :6017
+      return 0; // :6018
+    } // :6019
+  } // :6020
+
+  if (era_flag.selectcom === 30) {
+    // :6025
+
+    if ((era.get(`cflag:${target}:331`) || 0) === 0) {
+      // :6027
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :6029
+        await era.printAndWait(`「啊哈、好大……」`); // :6030
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6032
+        await era.printAndWait(`「这就是……小狗狗的……」`); // :6033
+      } else if (era.get(`abl:${target}:16`) >= 3) {
+        // :6035
+        await era.printAndWait(`「我做……」`); // :6036
+      } else {
+        // :6038
+        await era.printAndWait(`「咿～……讨厌！」`); // :6039
+      } // :6040
+      // CFLAG:TARGET:331  = 1（变量语义：CFLAG 族，TARGET:331） // :6041
+      era.set(`cflag:${target}:331`, 1); // :6041
+      return 0; // :6042
+    } else {
+      // :6044
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:331`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :6046
+        if (rand_n(2) === 0) {
+          // :6047
+          await era.printAndWait(
+            `「狗狗大人……舒服吗？啊哈，都变的这么大了……」`,
+          ); // :6048
+          await era.printAndWait(
+            `${target_name}温柔地用手套弄着野狗的阴茎，赤裸的小穴已经泛起了湿意`,
+          ); // :6049
+          await era.printAndWait(
+            `「勃起的肉棒，十分的烫呢……这个顽皮的家伙…还在一跳一跳地♪」`,
+          ); // :6050
+          await era.printAndWait(
+            `${target_name}的瞳孔完全染上了欲望的颜色，手上的动作越来越激烈……`,
+          ); // :6051
+        } else {
+          // :6052
+          await era.printAndWait(`「好厉害……一颤一颤的……好像会很美味的样子」`); // :6053
+          await era.printAndWait(
+            `${target_name}脸上一片绯红，感受着手里乱跳的野狗阴茎触感`,
+          ); // :6054
+          await era.printAndWait(
+            `「${sc()}会温柔得做的…请狗狗大人尽情地享受吧♪」`,
+          ); // :6055
+          await era.printAndWait(
+            `毫无保留得奉献自己，${target_name}越发尽力地为野狗手交`,
+          ); // :6056
+        } // :6057
+        // CFLAG:331  = 7（变量语义：CFLAG 族，331） // :6058
+        era.set(`cflag:${target}:331`, 7); // :6058
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:331`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :6060
+        if (rand_n(2) === 0) {
+          // :6061
+          await era.printAndWait(`「舒服吗……？」`); // :6062
+        } else {
+          // :6063
+          await era.printAndWait(`「舒服吗……？」`); // :6064
+        } // :6065
+        // CFLAG:331  = 6（变量语义：CFLAG 族，331） // :6066
+        era.set(`cflag:${target}:331`, 6); // :6066
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        ((era.get(`cflag:${target}:331`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :6068
+        if (rand_n(2) === 0) {
+          // :6069
+          await era.printAndWait(`「舒服吗……？」`); // :6070
+        } else {
+          // :6071
+          await era.printAndWait(`「舒服吗……？」`); // :6072
+        } // :6073
+        // CFLAG:331  = 5（变量语义：CFLAG 族，331） // :6074
+        era.set(`cflag:${target}:331`, 5); // :6074
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:331`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :6076
+        await era.printAndWait(`「舒服吗……？」`); // :6077
+        // CFLAG:331  = 4（变量语义：CFLAG 族，331） // :6078
+        era.set(`cflag:${target}:331`, 4); // :6078
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:331`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :6080
+        await era.printAndWait(`「……我做」`); // :6081
+        // CFLAG:331  = 3（变量语义：CFLAG 族，331） // :6082
+        era.set(`cflag:${target}:331`, 3); // :6082
+      } else if (
+        (era.get(`cflag:${target}:331`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :6084
+        await era.printAndWait(`「讨厌……抽泣～」`); // :6085
+        // CFLAG:331  = 2（变量语义：CFLAG 族，331） // :6086
+        era.set(`cflag:${target}:331`, 2); // :6086
+      } // :6087
+      return 0; // :6088
+    } // :6089
+  } // :6090
+
+  if (era_flag.selectcom === 31) {
+    // :6095
+
+    if ((era.get(`cflag:${target}:332`) || 0) === 0) {
+      // :6097
+
+      if (era.get(`talent:${target}:136`) === 1) {
+        // :6099
+        await era.printAndWait(
+          `「狗狗大人的肉棒…野兽的气息…看起来真美味啊……♪」`,
+        ); // :6100
+        await era.printAndWait(
+          `${target_name}将脑袋探到野狗下身，小心翼翼地闻了闻`,
+        ); // :6101
+        await era.printAndWait(`「嗯啾……${sc()}…唔……会好好侍奉狗狗大人的……」`); // :6102
+        await era.printAndWait(
+          `认真的使用着舌头和嘴唇，${target_name}温柔得刺激着野狗的阴茎`,
+        ); // :6103
+        await era.print(`野狗低低吠着，顺着${target_name}的动作快速抽插起来`); // :6104
+        await era.printAndWait(
+          `「咕唔…！这么突然…咕啾……射在嘴里…哈……也没关系的……」`,
+        ); // :6105
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :6107
+        await era.printAndWait(`「要含住小狗狗的鸡鸡吗……？」`); // :6108
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6110
+        await era.printAndWait(`「要含住小狗狗的鸡鸡吗……？」`); // :6111
+      } else if (era.get(`abl:${target}:16`) >= 3) {
+        // :6113
+        await era.printAndWait(`「是、我做……我做……」`); // :6114
+      } else {
+        // :6116
+        await era.printAndWait(`「讨厌……讨厌、呜诶诶……」`); // :6117
+      } // :6118
+      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332） // :6119
+      era.set(`cflag:${target}:332`, 1); // :6119
+      return 0; // :6120
+    } else {
+      // :6122
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:332`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :6124
+        if (rand_n(2) === 0) {
+          // :6125
+          await era.printAndWait(`「哈啊哈啊……大肉棒……狗狗大人的……」`); // :6126
+          await era.printAndWait(
+            `${target_name}痴痴地吞咽着野狗的阴茎，灵活的小舌挑逗着狗根的顶部`,
+          ); // :6127
+          await era.printAndWait(
+            `不过是只野兽，野狗哪里受得了这种技巧，狗根勃起得更加明显了`,
+          ); // :6128
+          await era.printAndWait(
+            `「好像很舒服的动着呢～啾呜…请射在${sc()}嘴里…嗯……」`,
+          ); // :6129
+        } else {
+          // :6130
+          await era.print(`「狗狗大人～♪${sc()}的舌头舒服吗？」`); // :6131
+          await era.print(`${target_name}将头探到野狗下腹，含住了半勃起的阴茎`); // :6132
+          await era.print(`「咕唔……野兽的气味…唔啾……真令人上瘾…」`); // :6133
+          await era.print(
+            `野狗耸动着腰部在${target_name}的口中抽插着，${target_name}熟练的配合着野狗的动作`,
+          ); // :6134
+          await era.print(
+            `「好像已经要到极限了…哈……来吧狗狗大人♪请全都射出来……咕啾…」`,
+          ); // :6135
+        } // :6136
+        // CFLAG:332  = 7（变量语义：CFLAG 族，332） // :6137
+        era.set(`cflag:${target}:332`, 7); // :6137
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        ((era.get(`cflag:${target}:332`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :6139
+        await era.printAndWait(`「小狗狗……舒服吗？」`); // :6140
+        await era.printAndWait(`${target_name}露出媚态舔舐着野狗的阴茎`); // :6141
+        // CFLAG:332  = 6（变量语义：CFLAG 族，332） // :6142
+        era.set(`cflag:${target}:332`, 6); // :6142
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:332`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :6144
+        await era.printAndWait(`「小狗狗的……额呵呵、真是好孩子……」`); // :6145
+        // CFLAG:332  = 5（变量语义：CFLAG 族，332） // :6146
+        era.set(`cflag:${target}:332`, 5); // :6146
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        ((era.get(`cflag:${target}:332`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :6148
+        await era.printAndWait(`「小狗狗的……额呵呵、真是好孩子……」`); // :6149
+        // CFLAG:332  = 4（变量语义：CFLAG 族，332） // :6150
+        era.set(`cflag:${target}:332`, 4); // :6150
+      } else if (
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:332`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :6152
+        await era.printAndWait(`「我知道了、会去舔的……」`); // :6153
+        // CFLAG:332  = 3（变量语义：CFLAG 族，332） // :6154
+        era.set(`cflag:${target}:332`, 3); // :6154
+      } else if (
+        (era.get(`cflag:${target}:332`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :6156
+        await era.printAndWait(`「呜诶……讨厌」`); // :6157
+        // CFLAG:332  = 2（变量语义：CFLAG 族，332） // :6158
+        era.set(`cflag:${target}:332`, 2); // :6158
+      } // :6159
+      return 0; // :6160
+    } // :6161
+  } // :6162
+
+  if (era_flag.selectcom === 34) {
+    // :6167
+
+    if ((era.get(`cflag:${target}:335`) || 0) === 0) {
+      // :6169
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :6171
+
+        if (era.get(`talent:${target}:136`) === 1) {
+          // :6173
+          await era.printAndWait(
+            `「${sc()}的身体是用来侍奉神明的……${sc()}一直这么相信着。」`,
+          ); // :6174
+          await era.printAndWait(
+            `${target_name}温柔抚摸野狗向上袒露的肚皮，神情恍惚得自言自语着`,
+          ); // :6175
+          await era.printAndWait(
+            `「但是，已经不这么想了，${sc()}…比起神明，现在更想要侍奉狗狗大人…」`,
+          ); // :6176
+          await era.printAndWait(
+            `起身跨骑在野狗身上，${target_name}握住野狗勃起的阴茎对准自己的小穴`,
+          ); // :6177
+          await era.printAndWait(
+            `「已经这么精神了……狗狗大人，请收下吧，这是${sc()}的处子身…唔……」`,
+          ); // :6178
+          await era.printAndWait(
+            `湿润紧致的小穴艰难地吞下狗根，猩红的处子血混着爱液逐渐滴落在野狗的皮毛上`,
+          ); // :6179
+          await era.printAndWait(
+            `「啊啊……！！痛…好大…又好烫………哈…一颤一颤地跳动着……真可爱…♪」`,
+          ); // :6180
+          await era.printAndWait(
+            `${target_name}轻抚自己微微凸起的小腹喘息起来，上下起伏身体，慢慢套弄着野狗的阴茎`,
+          ); // :6181
+          await era.printAndWait(
+            `「哈啊…腰…开始自己就动起来了……肉棒好深…子宫口都咕噜咕噜的…♪」`,
+          ); // :6182
+          await era.printAndWait(
+            `在忍过开始的疼痛之后，${target_name}摇摆着腰肢，开始追求起交配的乐趣来`,
+          ); // :6183
+          await era.printAndWait(
+            `「啊～啊啊…即使怀孕也没关系哦…就这样把精子射进来吧，咿呀……！」`,
+          ); // :6184
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :6186
+          await era.printAndWait(`「第一次是给小狗狗呢……」`); // :6187
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :6189
+          await era.printAndWait(`「明明是想献给主人的……」`); // :6190
+        } else {
+          // :6192
+          await era.printAndWait(`「呜呜呜……」`); // :6193
+        } // :6194
+      } else {
+        // :6196
+
+        if (era.get(`talent:${target}:136`) === 1) {
+          // :6198
+          await era.printAndWait(
+            `「已经被玷污的身体还能够侍奉神明吗……？${sc()}一直在考虑着这些。」`,
+          ); // :6199
+          await era.printAndWait(
+            `${target_name}温柔抚摸野狗向上袒露的肚皮，神情恍惚得自言自语着`,
+          ); // :6200
+          await era.printAndWait(
+            `「但是，已经都无所谓了，${sc()}…比起神明，现在更想要侍奉狗狗大人…」`,
+          ); // :6201
+          await era.printAndWait(
+            `起身跨骑在野狗身上，${target_name}握住野狗勃起的阴茎对准自己的小穴`,
+          ); // :6202
+          await era.printAndWait(
+            `「已经这么精神了……狗狗大人，请收下吧，这是${sc()}身子…唔……」`,
+          ); // :6203
+          await era.printAndWait(
+            `湿润的小穴顺利地吞下狗根，透明的爱液逐渐滴落在野狗的皮毛上`,
+          ); // :6204
+          await era.printAndWait(
+            `「啊啊……！！好大…又好烫………哈…一颤一颤地跳动着……真可爱…♪」`,
+          ); // :6205
+          await era.printAndWait(
+            `${target_name}轻抚自己微微凸起的小腹喘息起来，上下起伏身体，慢慢套弄着野狗的阴茎`,
+          ); // :6206
+          await era.printAndWait(
+            `「哈啊…腰…开始自己就动起来了……肉棒好深…子宫口都咕噜咕噜的…♪」`,
+          ); // :6207
+          await era.printAndWait(
+            `${target_name}摇摆着腰肢，开始追求起交配的乐趣来`,
+          ); // :6208
+          await era.printAndWait(
+            `「啊～啊啊…即使怀孕也没关系哦…就这样把精子射进来吧，咿呀……！」`,
+          ); // :6209
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :6211
+          await era.printAndWait(`「小狗狗没事吧」`); // :6212
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :6214
+          await era.printAndWait(`「小狗狗……没事吧？」`); // :6215
+        } else {
+          // :6217
+          await era.printAndWait(`「呜呜呜……」`); // :6218
+        } // :6219
+      } // :6220
+      // CFLAG:TARGET:335  = 1（变量语义：CFLAG 族，TARGET:335） // :6221
+      era.set(`cflag:${target}:335`, 1); // :6221
+      return 0; // :6222
+    } else {
+      // :6224
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:335`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :6226
+        if (rand_n(3) === 0) {
+          // :6227
+          await era.printAndWait(
+            `「${sc()}的小穴是狗狗大人的专用小穴……舒服吗……♪」`,
+          ); // :6228
+          await era.printAndWait(
+            `${target_name}就像骑马一样跨在野狗身上，一点点把野狗的阴茎吞了进去`,
+          ); // :6229
+          await era.printAndWait(`「啊啊……这种硬度…太棒了……嗯啊…」`); // :6230
+          await era.printAndWait(
+            `${target_name}舔着嘴唇前后扭动着腰，那副淫乱姿态已经看不出一点圣女的影子了`,
+          ); // :6231
+          await era.printAndWait(
+            `「哈……碰到子宫口了…啊…别……咿呀……都插进去了……！」`,
+          ); // :6232
+          await era.printAndWait(
+            `随着抽送而发出咕啾咕啾的声音，彻底开发的小穴完全容纳了粗大的狗根`,
+          ); // :6233
+        } else if (rand_n(2) === 0) {
+          // :6234
+          await era.printAndWait(
+            `「啊啊～、狗狗大人……${sc()}是变态母狗～♪　对不起～」`,
+          ); // :6235
+          await era.printAndWait(
+            `${target_name}骑在野狗身上贪求着快乐，飞出的爱液打湿了野狗肚子上的皮毛`,
+          ); // :6236
+          await era.printAndWait(
+            `「啊啊啊…为什么…能这么舒服……狗狗大人的精液…请全都射到${sc()}的子宫里…♪」`,
+          ); // :6237
+          await era.printAndWait(
+            `仿佛要把野狗的精液全部榨出来似的，${target_name}认着的动起了腰`,
+          ); // :6238
+          await era.printAndWait(
+            `「哈嗯啊啊…啊啊啊嗯…小穴好舒服……最喜欢狗狗大人的肉棒了…」`,
+          ); // :6239
+        } else {
+          // :6240
+          await era.printAndWait(`「我要把狗狗大人的精液榨光～……♪」`); // :6241
+          await era.printAndWait(
+            `${target_name}跨起着野狗发出下流的宣言，一点也没有圣女该有的模样`,
+          ); // :6242
+          await era.printAndWait(
+            `「觉得舒服的话什么时候射都可以哦…让${sc()}怀上小狗崽吧…♪」`,
+          ); // :6243
+          await era.printAndWait(
+            `在野狗身上熟练的起伏身子，湿润的小穴愉快得吞吐着阴茎`,
+          ); // :6244
+          await era.printAndWait(
+            `「哈啊～好深…子宫口也想要了……狗狗大人…就这样插到子宫里吧～♪」`,
+          ); // :6245
+          await era.printAndWait(
+            `「嗯哈…就这样射到最深处……要来了…咿呀……！精子…好烫……！」`,
+          ); // :6246
+        } // :6247
+        // CFLAG:335  = 7（变量语义：CFLAG 族，335） // :6248
+        era.set(`cflag:${target}:335`, 7); // :6248
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:335`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :6250
+        if (rand_n(3) === 0) {
+          // :6251
+          await era.printAndWait(`「小狗狗……好吧……」`); // :6252
+        } else if (rand_n(2) === 0) {
+          // :6253
+          await era.printAndWait(`「嗯……呼呜……小狗狗……」`); // :6254
+        } else {
+          // :6255
+          await era.printAndWait(`「被小狗狗弄得有感觉了……这样下去……」`); // :6256
+        } // :6257
+        // CFLAG:335  = 6（变量语义：CFLAG 族，335） // :6258
+        era.set(`cflag:${target}:335`, 6); // :6258
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:335`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :6260
+        if (rand_n(3) === 0) {
+          // :6261
+          await era.printAndWait(`「小狗狗……好吧……」`); // :6262
+        } else if (rand_n(2) === 0) {
+          // :6263
+          await era.printAndWait(`「嗯……呼呜……小狗狗……」`); // :6264
+        } else {
+          // :6265
+          await era.printAndWait(`「被小狗狗弄得有感觉了……这样下去……」`); // :6266
+        } // :6267
+        // CFLAG:335  = 5（变量语义：CFLAG 族，335） // :6268
+        era.set(`cflag:${target}:335`, 5); // :6268
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        era.get(`abl:${target}:2`) >= 3 &&
+        ((era.get(`cflag:${target}:335`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :6270
+        if (rand_n(3) === 0) {
+          // :6271
+          await era.printAndWait(`「被狗弄得有感觉什么的……」`); // :6272
+        } else if (rand_n(2) === 0) {
+          // :6273
+          await era.printAndWait(`「不行……这样下去……」`); // :6274
+        } else {
+          // :6275
+          await era.printAndWait(`「不会吧……这样下去……」`); // :6276
+        } // :6277
+        // CFLAG:335  = 4（变量语义：CFLAG 族，335） // :6278
+        era.set(`cflag:${target}:335`, 4); // :6278
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        ((era.get(`cflag:${target}:335`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :6280
+        await era.printAndWait(`「…………我知道了」`); // :6281
+        // CFLAG:335  = 3（变量语义：CFLAG 族，335） // :6282
+        era.set(`cflag:${target}:335`, 3); // :6282
+      } else if (
+        (era.get(`cflag:${target}:335`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :6284
+        await era.printAndWait(`「讨厌、不要……绝对不要！」`); // :6285
+        // CFLAG:335  = 2（变量语义：CFLAG 族，335） // :6286
+        era.set(`cflag:${target}:335`, 2); // :6286
+      } // :6287
+      return 0; // :6288
+    } // :6289
+  } // :6290
+
+  if (era_flag.selectcom === 37) {
+    // :6295
+
+    if ((era.get(`cflag:${target}:338`) || 0) === 0) {
+      // :6297
+
+      if (era.get(`abl:${target}:16`) >= 3) {
+        // :6299
+        await era.printAndWait(`「要舔小狗狗的屁股……！？」`); // :6300
+      } else {
+        // :6302
+        await era.printAndWait(`「讨厌……讨厌、呜呜……」`); // :6303
+      } // :6304
+      // CFLAG:TARGET:338  = 1（变量语义：CFLAG 族，TARGET:338） // :6305
+      era.set(`cflag:${target}:338`, 1); // :6305
+      return 0; // :6306
+    } else {
+      // :6308
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        era.get(`abl:${target}:16`) === 5 &&
+        ((era.get(`cflag:${target}:338`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :6310
+        if (rand_n(2) === 0) {
+          // :6311
+          await era.printAndWait(`「狗狗大人的屁股好可爱……舒服吗♪」`); // :6312
+          await era.printAndWait(
+            `${target_name}把舌头伸进野狗的肛门舔舐并搅动着`,
+          ); // :6313
+          await era.printAndWait(
+            `「味道…有些奇怪呢……不过${sc()}会努力奉仕的…啾……」`,
+          ); // :6314
+        } else {
+          // :6315
+          await era.print(`「哈啊哈啊…狗狗大人…果然很喜欢${sc()}的舌头吧～♪」`); // :6316
+          await era.printAndWait(
+            `${target_name}用舌尖探入野狗的肛门，仔细得爱抚着肠壁上的褶皱`,
+          ); // :6317
+          await era.printAndWait(
+            `「咕呣……咕呣…肠液…哈…流了好多…是舌头这样舔感觉很舒服吗……」`,
+          ); // :6318
+          await era.printAndWait(
+            `故意发出着下流的声音，${target_name}完全沉浸在侍奉野狗的快感中了`,
+          ); // :6319
+        } // :6320
+        // CFLAG:338  = 6（变量语义：CFLAG 族，338） // :6321
+        era.set(`cflag:${target}:338`, 6); // :6321
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        ((era.get(`cflag:${target}:338`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :6323
+        await era.printAndWait(`「屁股……舔过来舔过去～」`); // :6324
+        await era.printAndWait(`${target_name}用舌头舔着野狗的肛门`); // :6325
+        // CFLAG:338  = 5（变量语义：CFLAG 族，338） // :6326
+        era.set(`cflag:${target}:338`, 5); // :6326
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        ((era.get(`cflag:${target}:338`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :6328
+        await era.printAndWait(`「我只亲哦……？」`); // :6329
+        await era.printAndWait(`${target_name}亲吻了野狗的肛门`); // :6330
+        // CFLAG:338  = 4（变量语义：CFLAG 族，338） // :6331
+        era.set(`cflag:${target}:338`, 4); // :6331
+      } else if (
+        era.get(`abl:${target}:16`) >= 3 &&
+        ((era.get(`cflag:${target}:338`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :6333
+        await era.printAndWait(`「屁股……让我亲一亲吧……」`); // :6334
+        // CFLAG:338  = 3（变量语义：CFLAG 族，338） // :6335
+        era.set(`cflag:${target}:338`, 3); // :6335
+      } else if (
+        (era.get(`cflag:${target}:338`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :6337
+        await era.printAndWait(`「呜呜呜……讨厌……狗屁股什么的……」`); // :6338
+        // CFLAG:338  = 2（变量语义：CFLAG 族，338） // :6339
+        era.set(`cflag:${target}:338`, 2); // :6339
+      } // :6340
+      return 0; // :6341
+    } // :6342
+  } // :6343
+
+  if (era_flag.selectcom === 43 && era.get(`tequip:${target}:43`)) {
+    // :6349
+
+    if ((era.get(`cflag:${target}:344`) || 0) === 0) {
+      // :6351
+
+      if (era.get(`talent:${target}:136`) === 1) {
+        // :6353
+        await era.printAndWait(`「究竟…要带${sc()}去哪里？」`); // :6354
+        await era.printAndWait(
+          `戴着眼罩的${target_name}显得很紧张，语气中充满了不安`,
+        ); // :6355
+        await era.printAndWait(`「听到狗狗大人的声音了……！」`); // :6356
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :6358
+        await era.printAndWait(`「什么……？　要干什么……？」`); // :6359
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6361
+        await era.printAndWait(`「什么……？　要干什么……？`); // :6362
+      } else {
+        // :6364
+        await era.printAndWait(`「到底要干什么啊……住手……不要啊！！」`); // :6365
+      } // :6366
+      // CFLAG:TARGET:344  = 1（变量语义：CFLAG 族，TARGET:344） // :6367
+      era.set(`cflag:${target}:344`, 1); // :6367
+      return 0; // :6368
+    } else {
+      // :6370
+
+      if (
+        era.get(`talent:${target}:136`) === 1 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 9 || era.get('flag:7') === 2)
+      ) {
+        // :6372
+        await era.printAndWait(`「狗狗大人……会从哪边来呢……？　好期待……♪」`); // :6373
+        await era.printAndWait(
+          `「这种无法反抗的状态…和狗狗大人交尾的话……好棒…♪」`,
+        ); // :6374
+        // CFLAG:TARGET:344  = 10（变量语义：CFLAG 族，TARGET:344） // :6375
+        era.set(`cflag:${target}:344`, 10); // :6375
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`abl:${target}:21`) >= 5 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 8 || era.get('flag:7') === 2)
+      ) {
+        // :6377
+        await era.printAndWait(`「啊哈……${sc()}、和小狗狗交尾了……」`); // :6378
+        // CFLAG:TARGET:344  = 9（变量语义：CFLAG 族，TARGET:344） // :6379
+        era.set(`cflag:${target}:344`, 9); // :6379
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`abl:${target}:21`) >= 3 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 7 || era.get('flag:7') === 2)
+      ) {
+        // :6381
+        await era.printAndWait(`「小狗狗来了吗……？　呜呼……」`); // :6382
+        // CFLAG:TARGET:344  = 8（变量语义：CFLAG 族，TARGET:344） // :6383
+        era.set(`cflag:${target}:344`, 8); // :6383
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 6 || era.get('flag:7') === 2)
+      ) {
+        // :6385
+        await era.printAndWait(`「有……有什么过来了……？」`); // :6386
+        // CFLAG:TARGET:344  = 7（变量语义：CFLAG 族，TARGET:344） // :6387
+        era.set(`cflag:${target}:344`, 7); // :6387
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:21`) >= 5 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 5 || era.get('flag:7') === 2)
+      ) {
+        // :6389
+        await era.printAndWait(`「主人……请随意享用……」`); // :6390
+        // CFLAG:TARGET:344  = 6（变量语义：CFLAG 族，TARGET:344） // :6391
+        era.set(`cflag:${target}:344`, 6); // :6391
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`abl:${target}:21`) >= 3 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 4 || era.get('flag:7') === 2)
+      ) {
+        // :6393
+        await era.printAndWait(`「小狗狗的气息……好近……」`); // :6394
+        // CFLAG:TARGET:344  = 5（变量语义：CFLAG 族，TARGET:344） // :6395
+        era.set(`cflag:${target}:344`, 5); // :6395
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 3 || era.get('flag:7') === 2)
+      ) {
+        // :6397
+        await era.printAndWait(`「小狗狗……？」`); // :6398
+        // CFLAG:TARGET:344  = 4（变量语义：CFLAG 族，TARGET:344） // :6399
+        era.set(`cflag:${target}:344`, 4); // :6399
+      } else if (
+        era.get(`abl:${target}:21`) >= 3 &&
+        ((era.get(`cflag:${target}:344`) || 0) <= 2 || era.get('flag:7') === 2)
+      ) {
+        // :6401
+        await era.printAndWait(`「啊啊……来了呢……」`); // :6402
+        // CFLAG:TARGET:344  = 3（变量语义：CFLAG 族，TARGET:344） // :6403
+        era.set(`cflag:${target}:344`, 3); // :6403
+      } else if (
+        (era.get(`cflag:${target}:344`) || 0) <= 1 ||
+        era.get('flag:7') === 2
+      ) {
+        // :6405
+        await era.printAndWait(`「咿～咿～……咿～～」`); // :6406
+        // CFLAG:TARGET:344  = 2（变量语义：CFLAG 族，TARGET:344） // :6407
+        era.set(`cflag:${target}:344`, 2); // :6407
+      } // :6408
+      return 0; // :6409
+    } // :6410
+  } else if (
+    era_flag.selectcom === 43 &&
+    era.get(`tequip:${target}:43`) === 0
+  ) {
+    // :6412
+
+    if (
+      era.get(`talent:${target}:136`) === 1 &&
+      ((era.get(`cflag:${target}:338`) || 0) < 3 || era.get('flag:7') === 2)
+    ) {
+      // :6414
+      await era.printAndWait(`「狗狗大人…怎么了？」`); // :6415
+      await era.printAndWait(`看着即将离开的野狗，${target_name}不安的询问着`); // :6416
+      await era.printAndWait(
+        `「是已经累了吗？${sc()}…会一直祈祷能快些再见面的。」`,
+      ); // :6417
+      await era.printAndWait(
+        `满心依恋着野狗的${target_name}依依不舍地送走了野狗`,
+      ); // :6418
+      // CFLAG:444  = 4（变量语义：CFLAG 族，444） // :6419
+      era.set(`cflag:${target}:444`, 4); // :6419
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      ((era.get(`cflag:${target}:338`) || 0) < 3 || era.get('flag:7') === 2)
+    ) {
+      // :6421
+      await era.printAndWait(`「小狗狗……喘的好厉害……」`); // :6422
+      // CFLAG:444  = 3（变量语义：CFLAG 族，444） // :6423
+      era.set(`cflag:${target}:444`, 3); // :6423
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      ((era.get(`cflag:${target}:338`) || 0) < 2 || era.get('flag:7') === 2)
+    ) {
+      // :6425
+      await era.printAndWait(`「差不多该轮到主人了吧……」`); // :6426
+      // CFLAG:444  = 2（变量语义：CFLAG 族，444） // :6427
+      era.set(`cflag:${target}:444`, 2); // :6427
+    } else if (
+      (era.get(`cflag:${target}:444`) || 0) < 1 ||
+      era.get('flag:7') === 2
+    ) {
+      // :6429
+      await era.printAndWait(`「好可怕……被狗那啥的」`); // :6430
+      // CFLAG:444  = 1（变量语义：CFLAG 族，444） // :6431
+      era.set(`cflag:${target}:444`, 1); // :6431
+    } // :6432
+    return 0; // :6433
+  } // :6434
+
+  if (era_flag.selectcom === 56) {
+    // :6440
+
+    if ((era.get(`cflag:${target}:357`) || 0) === 0) {
+      // :6442
+      if (era.get(`tequip:${target}:53`)) {
+        // :6443
+
+        if (era.get(`talent:${target}:136`) === 1) {
+          // :6446
+          await era.printAndWait(
+            `「大家好。你们过的还不错吧？　${sc()}不当勇者之后成为狗狗大人的雌犬奴隶了……♪」`,
+          ); // :6447
+          await era.printAndWait(
+            `「虽然不能再做勇者的工作了，不过作为雌犬存在的${sc()}现在感到非常的幸福」`,
+          ); // :6448
+          await era.printAndWait(
+            `「${sc()}真的非常喜欢狗狗大人……。接下来，请尽情欣赏${sc()}和狗狗大人之间爱的交尾吧」`,
+          ); // :6449
+          await era.printAndWait(
+            `「然后希望大家能从被淋满兽类精液的${sc()}身上感受到幸福♪」`,
+          ); // :6450
+          await era.printAndWait(`「那么开始吧，狗狗大人……♪」`); // :6451
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :6453
+          await era.printAndWait(
+            `「大家……好……${sc()}接下来要和这只小狗狗交尾……」`,
+          ); // :6454
+          await era.printAndWait(
+            `「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」`,
+          ); // :6455
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :6457
+          await era.printAndWait(
+            `「大家……好……${sc()}接下来要和这只小狗狗交尾……」`,
+          ); // :6458
+          await era.printAndWait(
+            `「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」`,
+          ); // :6459
+        } else {
+          // :6461
+          await era.printAndWait(
+            `「你们好……${sc()}……接下来……要和这个小狗狗……呜呜～、救、救救我吧～」`,
+          ); // :6462
+        } // :6463
+      } // :6464
+      // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :6465
+      era.set(`cflag:${target}:357`, 1); // :6465
+      return 0; // :6466
+    } else {
+      // :6468
+      if (era.get(`tequip:${target}:53`)) {
+        // :6469
+
+        if (
+          era.get(`talent:${target}:136`) === 1 &&
+          ((era.get(`cflag:${target}:357`) || 0) <= 4 ||
+            era.get('flag:7') === 2)
+        ) {
+          // :6472
+          await era.printAndWait(
+            `「再次见面了，大家过的还不错吧？大家对${sc()}的上一部的兽交作品感觉如何呢？」`,
+          ); // :6473
+          await era.printAndWait(
+            `「一定感觉很不错吧？毕竟这是${sc()}和狗狗大人爱的录像呢♪」`,
+          ); // :6474
+          await era.printAndWait(
+            `「${sc()}真的是全心全意爱着狗狗大人呢……。那么接下来，依旧是${sc()}和狗狗大人之间交尾转播」`,
+          ); // :6475
+          await era.printAndWait(`「狗狗大人的肉棒，真的是最棒的了♪」`); // :6476
+          await era.printAndWait(
+            `「让大家看看你有多棒吧，${sc()}的狗狗大人……♪」`,
+          ); // :6477
+          // CFLAG:357  = 5（变量语义：CFLAG 族，357） // :6478
+          era.set(`cflag:${target}:357`, 5); // :6478
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          ((era.get(`cflag:${target}:357`) || 0) <= 3 ||
+            era.get('flag:7') === 2)
+        ) {
+          // :6480
+          await era.printAndWait(
+            `「大家……好……${sc()}接下来要和这只小狗狗交尾……」`,
+          ); // :6481
+          await era.printAndWait(
+            `「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」`,
+          ); // :6482
+          // CFLAG:357  = 4（变量语义：CFLAG 族，357） // :6483
+          era.set(`cflag:${target}:357`, 4); // :6483
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          ((era.get(`cflag:${target}:357`) || 0) <= 2 ||
+            era.get('flag:7') === 2)
+        ) {
+          // :6485
+          await era.printAndWait(
+            `「大家……好……${sc()}接下来要和这只小狗狗交尾……」`,
+          ); // :6486
+          await era.printAndWait(
+            `「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」`,
+          ); // :6487
+          // CFLAG:357  = 3（变量语义：CFLAG 族，357） // :6488
+          era.set(`cflag:${target}:357`, 3); // :6488
+        } else if (
+          (era.get(`cflag:${target}:357`) || 0) <= 1 ||
+          era.get('flag:7') === 2
+        ) {
+          // :6490
+          await era.printAndWait(
+            `「你们好……${sc()}……接下来……要和这个小狗狗……呜呜～、救、救救我吧～」`,
+          ); // :6491
+          // CFLAG:357  = 2（变量语义：CFLAG 族，357） // :6492
+          era.set(`cflag:${target}:357`, 2); // :6492
+        } // :6493
+      } // :6494
+      return 0; // :6495
+    } // :6496
+  } // :6497
+
+  return 0; // :6500
+}
+
+/* eslint-enable no-irregular-whitespace */
+
+// 注册进分发族（TRYCALLFORM DOG_KOJO_0 的等价物）
+dog_kojo_family.register(0, dog_kojo_0);
+
+/**
  * @KOJO_MESSAGE_PALAMCNG_0（:6505-6754）：参数变动后口上。
  *
  * 六道守卫（:6510-6528）：助手调教 → 口塞 → 失神 → 崩坏 → 兽奸 → 触手 → 死斗场
@@ -3654,7 +5502,7 @@ async function kojo_message_com_0(rand) {
   }
   // :693-695 兽奸PLAY中は専用口上
   if (era.get(`tequip:${target}:89`)) {
-    stub_line('DOG_KOJO_0', '兽奸专用口上', '随兽奸票');
+    await dog_kojo_0(rand);
     return 0;
   }
   // :698-699 触手調教中（TEQUIP:90）

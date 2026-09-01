@@ -3155,4 +3155,23 @@ export default [
     must_mention:
       '死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_0 真身（selectcom 55 + 体力低）',
   },
+
+  {
+    desc: 'M2014 K0 DOG selectcom 0 初次分支删松（CFLAG:301==0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.selectcom === 0) {\n    // :5486',
+    replace: '  if (false) { // 变异：selectcom 0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
+  },
+  {
+    desc: 'M2015 K0 DOG 初次写 CFLAG:301 删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    if ((era.get(`cflag:${target}:301`) || 0) === 0) {',
+    replace: '  if (false) { // 变异：初次判定删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
+  },
 ];

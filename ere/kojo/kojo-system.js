@@ -490,6 +490,9 @@ const colosseum_kojo_family = new DispatchFamily(
   DECLARED_KOJO_COM_IDS,
 );
 
+/** @DOG_KOJO_{N} 族：兽奸口上（兽奸子系统，COM 守卫岔出） */
+const dog_kojo_family = new DispatchFamily('DOG_KOJO', DECLARED_KOJO_COM_IDS);
+
 /** @GOBI_KOUJO_K{N} 族：语尾口上（EVENT_K.ERB:504-522 的分派目标） */
 const gobi_koujo_family = new DispatchFamily(
   'GOBI_KOUJO',
@@ -541,6 +544,7 @@ module.exports = {
   grotesque_koujo,
   grotesque_koujo_family,
   colosseum_kojo_family,
+  dog_kojo_family,
   dungeon_victory_koujo,
   dungeon_victory_family,
   dungeon_attack_koujo,
