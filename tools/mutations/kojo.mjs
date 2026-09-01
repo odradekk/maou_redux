@@ -2321,4 +2321,39 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 3',
   },
+  {
+    desc: 'M1886 K8 SELECTCOM 35 全身擦洗初めて分档丢失（ABL:16>=3 改 false，恒不命中侍奉精神分支，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上\n        await era.printAndWait(`「来，伸出手…这样帮你洗就行了吧？」`); // :3853',
+    replace:
+      '      if (false) {\n        // 侍奉精神Lv3以上（变异：判定删除）\n        await era.printAndWait(`「来，伸出手…这样帮你洗就行了吧？」`); // :3853',
+    tests: ['kojo-k8-spade'],
+    must_mention: '把身体洗干净是很舒服',
+  },
+  {
+    desc: 'M1887 K8 SELECTCOM 35 全身擦洗淫乱＋侍奉精神Lv5推进写错（CFLAG:336 = 5 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.全身擦洗 = 5; // :3872 CFLAG:336 = 5',
+    replace: '      kojo.全身擦洗 = 4; // :3872（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1888 K8 SELECTCOM 35 全身擦洗爱＋侍奉精神Lv5分档丢失（TALENT:85==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:85`) == 1 &&\n      era0(`abl:${target}:16`) >= 5 &&\n      (kojo.全身擦洗 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      era0(`abl:${target}:16`) >= 5 &&\n      (kojo.全身擦洗 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1889 K8 SELECTCOM 35 全身擦洗侍奉精神Lv3以上 SIF 独立分支丢失（RAND:3 == 0 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (rand_n(3) == 0) {\n        await era.printAndWait(`「总觉得想起了帮弟弟洗澡的时候………」`); // :3887\n      }',
+    replace:
+      '      if (false) {\n        // 变异：SIF 独立分支判定删除\n        await era.printAndWait(`「总觉得想起了帮弟弟洗澡的时候………」`); // :3887\n      }',
+    tests: ['kojo-k8-spade'],
+    must_mention: '总觉得想起了帮弟弟洗澡的时候',
+  },
 ];
