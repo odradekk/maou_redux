@@ -197,6 +197,10 @@ function norm_erb_token(raw) {
   if (heart_match) {
     return `HEART${heart_match[1]}`;
   }
+  const heart_black_match = tok.match(/^UNICODE\(0x2665\)\s*\*(\d+)$/);
+  if (heart_black_match) {
+    return `HEART_BLACK${heart_black_match[1]}`;
+  }
   // #183：{MON_NUM} / {MON_NUM * 10} 计算插值（迷宫凌辱的怪物数量）
   if (tok === 'MON_NUM') {
     return 'MONNUM';
@@ -225,6 +229,10 @@ function norm_js_token(raw) {
   const heart_match = tok.match(/^heart\((\d+)\)$/);
   if (heart_match) {
     return `HEART${heart_match[1]}`;
+  }
+  const heart_black_match = tok.match(/^heart_black\((\d+)\)$/);
+  if (heart_black_match) {
+    return `HEART_BLACK${heart_black_match[1]}`;
   }
   // #183：JS 侧 ${mon_num} / ${mon_num * 10} 与 ERB 的 {MON_NUM} 配对
   if (tok === 'mon_num') {
