@@ -1369,6 +1369,22 @@ export default [
     must_mention: 'SELL_MATURO_K0',
   },
   {
+    desc: 'M1729 try_kojo_or_stub 已注册仍打占位（family.has 恒 false）（#234）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  if (id >= 0 && family.has(id)) {',
+    replace: '  if (false) { // 变异：已注册也打占位',
+    tests: ['kojo-k3-noble', 'benki'],
+    must_mention: 'K3 真身不打占位行',
+  },
+  {
+    desc: 'M1730 try_kojo_or_stub 未注册不再打占位（stub_line 删）（#234）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    stub_line(stub_name, stub_desc, stub_ticket);',
+    replace: '    /* 变异：未注册静默 */',
+    tests: ['benki'],
+    must_mention: '未注册性格打 @BENKI_KOUJO 占位行',
+  },
+  {
     desc: 'M1540 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '      kojo.爱抚 = 1; // :893',

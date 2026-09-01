@@ -252,7 +252,9 @@ async function self_kojo(rand, q) {
 }
 
 /**
- * 已注册则走真身，否则打存根。K3/K5 路径的占位行因此保持，K1 落地后自动换真身。
+ * 已注册则走真身，否则打存根。未落地性格的占位行因此可见；对应口上
+ * 模块 register 后自动换真身。原作 TRYCALLFORM 落空静默，全性格落地
+ * 后再收占位。
  */
 async function try_kojo_or_stub(
   family,

@@ -13,6 +13,7 @@
  *   - **黄金样本 :1097 逐字比对**——期望值运行时读自 target/emuera.log:26
  *     与 ERB 原文两处（比对能有的最强形式）；
  *   - 七道跳过判定（含 K3 特有：死斗场最先、兽奸岔 DOG_KOJO_3）；
+ *   - BENKI_KOUJO 真身（常识改写支）；
  *   - 存根清单核对（docs/stub-registry.md）。
  */
 
@@ -803,13 +804,33 @@ test('EVENTEND NORMAL：CFLAG:301 >= 1 钳回 1 + 调教结束台词', async () 
 
 test('PALAMCNG：首次润滑 Lv2 非爱慕支写 CFLAG:221', async () => {
   const fixture = await setup_k3((f) => f.store.set('palam:31:3', 501));
-  const { kojo_message_palamcng_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } =
+    fixture.load_module('kojo/kojo-system');
   await kojo_message_palamcng_family.call(3);
   assert.deepEqual(fixture.text_lines(), [
     '「啊~…这，这个难道是…漏，漏了…啊啊…」',
     '―――第一次超过了润滑lv2了。',
   ]);
   assert.equal(fixture.store.get('cflag:31:221'), 1, '首次润滑Lv2');
+});
+
+test('BENKI_KOUJO：肉便器行动 0 常识改写真身', async () => {
+  const fixture = await setup_k3((f) => {
+    f.store.set('flag:62', 0);
+    f.store.set('flag:63', 1);
+  });
+  const { benki_koujo } = fixture.load_module('kojo/kojo-system');
+  await benki_koujo();
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵…别那么吃惊嘛这没什么的哦♪」',
+    '「『就算对象是污秽的贱民也会做最高级的侍奉』…在我家里可是『当然』的啊」',
+    '「来、向我掏出那丑陋脏污的鸡巴吧♪好啦、快点嘛♡」',
+  ]);
+  assert.equal(
+    fixture.text_lines().filter((l) => l.includes('@BENKI_KOUJO')).length,
+    0,
+    'K3 真身不打占位行',
+  );
 });
 
 // —— 存根清单核对 ——
