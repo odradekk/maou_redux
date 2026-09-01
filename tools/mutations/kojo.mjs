@@ -1117,4 +1117,66 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '乳头夹脱着：淫乱写 CFLAG:376 = 3，门槛是 < 不是 <=',
   },
+  {
+    desc: 'M1817 K0 榨乳器首次状态推进写错（CFLAG:317 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.榨乳器 = 1; // :1770',
+    replace: '      kojo.榨乳器 = 2; // :1770',
+    tests: ['kojo-k0-tender'],
+    must_mention: '榨乳器首次推进到 1',
+  },
+  {
+    desc: 'M1818 K0 榨乳器二次淫乱门槛错位（CFLAG:317 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '榨乳器开始二次：淫乱 + B钝感附加句',
+  },
+  {
+    desc: 'M1819 K0 榨乳器脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.榨乳器着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.榨乳器着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '榨乳器脱着：淫乱写 CFLAG:377 = 3，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M1820 K0 肛珠首次状态推进写错（CFLAG:320 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛珠 = 1; // :1891',
+    replace: '      kojo.肛珠 = 2; // :1891',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠首次推进到 1',
+  },
+  {
+    desc: 'M1821 K0 肛珠二次淫乱+A感觉门槛错位（CFLAG:320 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛珠 <= 6 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛珠 <= 5 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠开始二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M1822 K0 肛珠二次淫乱+A感觉写回错档（CFLAG:320 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛珠 = 7; // :1902',
+    replace: '      kojo.肛珠 = 6; // :1902',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M1823 K0 肛珠脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.肛珠着脱 < 4 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.肛珠着脱 <= 4 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠脱着：淫乱写 CFLAG:379 = 4，门槛是 < 不是 <=',
+  },
 ];
