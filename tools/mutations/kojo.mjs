@@ -2852,4 +2852,96 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: 'K0 EVENTEND NORMAL：非慈爱素质静默',
   },
+  {
+    desc: 'M1979 K0 SELF_KOJO 自慰淫乱档写 4 改 3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.set(\`cflag:\${target}:261\`, 4); // :6854`,
+    replace: `        era.set(\`cflag:\${target}:261\`, 3); // :6854`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==1 自慰 Q==0 主人档（淫乱推进 CFLAG:261）',
+  },
+  {
+    desc: 'M1980 K0 SELF_KOJO 自慰 Q==2 野狗支删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    } else if (q === 2) {
+      // :6842
+      era.print(\`「啊啊～…狗狗大人…还是狗狗大人的肉棒最棒～………！」\`); // :6843`,
+    replace: `    } else if (q === 2) {
+      // :6842
+      era.print(\`变异：野狗支删除\`); // :6843`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==1 自慰 Q==2 野狗支',
+  },
+  {
+    desc: 'M1981 K0 SELF_KOJO 百合淫乱档写 5 改 4（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:262\`, 5); // :6878`,
+    replace: `      era.set(\`cflag:\${target}:262\`, 4); // :6878`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==2 百合（淫乱推进 CFLAG:262）',
+  },
+  {
+    desc: 'M1982 K0 SELF_KOJO 口交淫乱档写 3 改 2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:263\`, 3); // :6909`,
+    replace: `      era.set(\`cflag:\${target}:263\`, 2); // :6909`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==3 口交（淫乱推进 CFLAG:263）',
+  },
+  {
+    desc: 'M1983 K0 SELF_KOJO 性交档写 2 改 1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:264\`, 2); // :6943`,
+    replace: `      era.set(\`cflag:\${target}:264\`, 1); // :6943`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==4 性交（ABL:2>=4 推进 CFLAG:264）',
+  },
+  {
+    desc: 'M1984 K0 SELF_KOJO 夜间档写 1 改 2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:265\`, 1); // :6961`,
+    replace: `      era.set(\`cflag:\${target}:265\`, 2); // :6961`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==5 夜间（推进 CFLAG:265）',
+  },
+  {
+    desc: 'M1985 K0 SELF_KOJO 卖出爱慕支素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    if (era.get(\`talent:\${target}:85\`)) {
+      // :7196`,
+    replace: `    if (era.get(\`talent:\${target}:86\`)) {
+      // :7196`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==6 卖出（爱慕支 + 结尾清理 TFLAG:13=0）',
+  },
+  {
+    desc: 'M1986 K0 SELF_KOJO 结尾 TFLAG:13 清理删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  game.train.初吻与自我口上 = 0; // :7207 TFLAG:13 = 0（跨域走门面）`,
+    replace: `  // 变异：TFLAG:13 清理删除`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '结尾清 TFLAG:13',
+  },
+  {
+    desc: 'M1987 K0 SELF_KOJO 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  if ((era.get('flag:7') || 0) <= 0) {
+    const { game } = require('#/facade/game');
+    game.train.怪物射精或购入金 = 0;`,
+    replace: `  if ((era.get('flag:7') || 0) < 0) {
+    const { game } = require('#/facade/game');
+    game.train.怪物射精或购入金 = 0;`,
+    tests: ['kojo-system'],
+    must_mention: 'SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15',
+  },
+  {
+    desc: 'M1988 K0 SELF_KOJO 自慰档读 TFLAG:13 改成 TFLAG:14（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (game.train.初吻与自我口上 === 1) {
+    // :6836`,
+    replace: `  if (game.train.初吻与自我口上 === 14) {
+    // :6836`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==1 自慰 Q==0 主人档（淫乱推进 CFLAG:261）',
+  },
 ];

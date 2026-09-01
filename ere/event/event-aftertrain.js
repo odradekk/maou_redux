@@ -113,7 +113,7 @@ async function aftertrain_sex_check() {
 
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
   game.train.初吻与自我口上 = 4;
-  await self_kojo();
+  await self_kojo(undefined, 0); // :231-232 性交段 Q 不读
 
   era.print(`V经验＋${s}`);
   era.print(`性交经验＋${s}`);
@@ -324,7 +324,7 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
 
   // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
   game.train.初吻与自我口上 = 2;
-  await self_kojo();
+  await self_kojo(undefined, 0); // :480-481 百合段 Q 不读
 
   const exp2_add = Math.floor((n * 100 * abl10) / 500);
   era.print(`百合经验＋${n * 20}`);
@@ -515,7 +515,7 @@ async function aftertrain_masturbation_check(
 
   // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
   game.train.初吻与自我口上 = 1;
-  await self_kojo();
+  await self_kojo(rand, q); // :669-670 自慰段 Q 1=助手/2=野狗/0=主人
 
   era.print(`自慰经验＋${a}`);
   const { chara } = require('#/facade/chara');

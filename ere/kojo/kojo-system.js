@@ -161,11 +161,12 @@ async function kojo_message_com(rand) {
  * @SELF_KOJO（:225-241）：事件口上入口（EVENT_AFTERTRAIN 等处的 CALL SELF_KOJO）。
  *
  * 两道守卫：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
- *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @param {number} [q] 调教后自慰对象（EVENT_AFTERTRAIN 的 Q：1=助手 /
+ *   2=野狗 / 0=主人；其余 TFLAG:13 段不读它，默认 0）
  * @returns {Promise<number>} 0
  */
-async function self_kojo(rand) {
+async function self_kojo(rand, q = 0) {
   // 第一道守卫：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {
     const { game } = require('#/facade/game');
@@ -180,7 +181,7 @@ async function self_kojo(rand) {
   if ((local >= 100 && local < 140) || local > 1000) {
     await self_kojo_family.call(local - 100, {
       whenMissing: 0,
-      args: [rand],
+      args: [rand, q],
     });
   }
   return 0;

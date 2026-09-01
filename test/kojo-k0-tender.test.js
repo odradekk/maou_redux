@@ -4507,6 +4507,124 @@ test('穿环二次：それ以外写 2', async () => {
   assert.equal(fixture.store.get('cflag:31:348'), 2, '穿环二次それ以外写 2');
 });
 
+// —— SELF_KOJO_K0（调教后事件口上，TFLAG:13 分段） ——
+
+// 经 @SELF_KOJO 真身分发（TRYCALLFORM SELF_KOJO_K0 的等价物）
+async function self_kojo_k0(fixture, q, rand) {
+  const { self_kojo } = fixture.load_module('kojo/kojo-system');
+  return self_kojo(rand, q);
+}
+
+test('SELF_KOJO：TFLAG:13==1 自慰 Q==0 主人档（淫乱推进 CFLAG:261）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('tflag:13', 1);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('身体好痒')),
+    '淫乱档自慰台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:261'), 4, '淫乱档写 4');
+});
+
+test('SELF_KOJO：TFLAG:13==1 自慰 Q==1 助手支', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tflag:13', 1);
+  });
+  await self_kojo_k0(fixture, 1);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('那孩子')),
+    '助手支台词',
+  );
+});
+
+test('SELF_KOJO：TFLAG:13==1 自慰 Q==2 野狗支', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tflag:13', 1);
+  });
+  await self_kojo_k0(fixture, 2);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('狗狗大人')),
+    '野狗支台词',
+  );
+});
+
+test('SELF_KOJO：TFLAG:13==2 百合（淫乱推进 CFLAG:262）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('tflag:13', 2);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('别人的小穴')),
+    '百合淫乱档台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:262'), 5, '百合淫乱档写 5');
+});
+
+test('SELF_KOJO：TFLAG:13==3 口交（淫乱推进 CFLAG:263）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('tflag:13', 3);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('口腔奉仕')),
+    '口交淫乱档台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:263'), 3, '口交淫乱档写 3');
+});
+
+test('SELF_KOJO：TFLAG:13==4 性交（ABL:2>=4 推进 CFLAG:264）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('abl:31:2', 4);
+    f.store.set('tflag:13', 4);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('小穴的躁动')),
+    '性交档台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:264'), 2, '性交档写 2');
+});
+
+test('SELF_KOJO：TFLAG:13==5 夜间（推进 CFLAG:265）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tflag:13', 5);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('晚上好')),
+    '夜间档台词',
+  );
+  assert.equal(fixture.store.get('cflag:31:265'), 1, '夜间档写 1');
+});
+
+test('SELF_KOJO：TFLAG:13==6 卖出（爱慕支 + 结尾清理 TFLAG:13=0）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('tflag:13', 6);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('明明以为你了解了')),
+    '卖出爱慕支台词',
+  );
+  assert.equal(fixture.store.get('tflag:13'), 0, '结尾清 TFLAG:13');
+});
+
+test('SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('flag:7', 0);
+    f.store.set('tflag:13', 1);
+    f.store.set('tflag:15', 7);
+  });
+  await self_kojo_k0(fixture, 0);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('tflag:15'), 0, 'FLAG:7 关闭时 TFLAG:15 清 0');
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
