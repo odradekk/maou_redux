@@ -1193,31 +1193,30 @@ test('@COM40 的 JUMPFORM 落点：升格目标缺失 → 占位行 + RETURN 1�
 // —— TEQUIP:45 写入路径 → @KOJO_MESSAGE_COM 头部守卫（#213 接触面） ——
 
 test('口塞装上（COM45 真身）→ K3 守卫跳过；SELECTCOM = 45 豁免（第 3 道守卫）', async () => {
-  // 判别器：TEQUIP:89（兽奸，第 5 道守卫）会打 DOG_KOJO_3 占位行——若口塞
-  // 守卫先生效（SELECTCOM != 45），占位行不出现；SELECTCOM = 45 豁免后才轮到它
+  // 判别器：口塞守卫（SELECTCOM != 45）静默；SELECTCOM = 45 豁免后落到
+  // 口塞着脱真台词（#234 起 DOG_KOJO_3 已是真身，不再打占位行）。
   const world = seed_world({ assi: -1 });
   world.fixture.load_module('kojo/kojo-k3-noble');
   const { kojo_message_com_3 } =
     world.fixture.load_module('kojo/kojo-k3-noble');
 
-  // 经 COM45 真身装上口塞（写入路径的端到端）
   world.era_flag.selectcom = 45;
   await world.com_family.call(45);
   assert.equal(world.fixture.store.get('tequip:31:45'), 1);
 
-  world.fixture.store.set('tequip:31:89', 1);
   world.era_flag.selectcom = 0;
   await kojo_message_com_3(() => 0);
-  assert.ok(
-    !world.fixture.text_lines().some((l) => l.includes('DOG_KOJO_3')),
+  assert.deepEqual(
+    world.fixture.text_lines().filter((l) => l.includes('嗯~')),
+    [],
     '口塞守卫先跳过（SELECTCOM = 0 ≠ 45）',
   );
 
   world.era_flag.selectcom = 45;
   await kojo_message_com_3(() => 0);
   assert.ok(
-    world.fixture.text_lines().some((l) => l.includes('DOG_KOJO_3')),
-    'SELECTCOM = 45 豁免口塞守卫 → 走到兽奸支',
+    world.fixture.text_lines().some((l) => l.includes('嗯~…嗯呜~…嗯呼~…嗯嗯~')),
+    'SELECTCOM = 45 豁免口塞守卫 → 走到口塞着脱支',
   );
 });
 

@@ -140,13 +140,14 @@ test('四个口上守卫位经 train 域门面可写：口塞 45 / 死斗场 55 
 test('守卫真实触发：死斗场位置位 → K3 口上走 COLOSSEUM_KOJO 支（:888-892）', async () => {
   const fixture = seed_world();
   fixture.store.set('tequip:31:55', 1);
+  fixture.store.set('base:31:1', 100);
   const { kojo_message_com_3 } = fixture.load_module('kojo/kojo-k3-noble');
   const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.selectcom = 0;
+  era_flag.selectcom = 55;
   await kojo_message_com_3(() => 0);
   assert(
-    fixture.text_lines().some((line) => line.includes('@COLOSSEUM_KOJO_3')),
-    '死斗场专用口上的占位行在场（分发层已通）',
+    fixture.text_lines().some((line) => line.includes('吓得直发抖')),
+    '死斗场专用口上的真台词在场（分发层已通）',
   );
 });
 

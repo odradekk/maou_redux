@@ -14,7 +14,7 @@
  *   - 跨域写走门面（flag:63 经 game.dungeon、exp 属主 dungeon 经
  *     chara(cid).dungeon）——domain-check 判绿；
  *   - TEQUIP 只读不写（#215 建模归 J5）：本文件无 tequip 写入；
- *   - 存根清单核对（docs/stub-registry.md）——BENKI_KOUJO 随口上票。
+ *   - 存根清单核对（docs/stub-registry.md）——未加载口上时 BENKI_KOUJO 打占位行；K3 真身随 #234。
  *
  * 随机源注入：run_benki / select_benki_menu 接受 rand 参数（[0, n) 整数），
  * 测试用定值序固定分支（fs_bitch_looks 的 DICE=2 覆盖与 RAND:4 共用同一
@@ -229,7 +229,7 @@ test('GET_EXP_BENKI_MENU：手淫（30）→ 无经验行、习得/屈服点数'
 
 // —— @BENKI 的行动分派与结算 ——
 
-test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KOUJO 存根 + 珠/经验结算', async () => {
+test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KOUJO 占位行 + 珠/经验结算', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
   const lines = fixture.text_lines();
@@ -243,10 +243,13 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KO
     lines.some((l) => l.includes('任魔族男性将阴茎塞入了口中')),
     '第二段演出',
   );
-  // 口上存根两次（开头部 + 分支结算前）
+  // 本夹具不加载口上模块：try_kojo_or_stub 对未注册性格打占位行
+  // （22 份里目前只落地 5 份；1:1 TRYCALL 静默等全落地后再收）
+  // 一般分派走公共段 :591 + 一般段 :1310 两处 CALL
   const stub_count = lines.filter((l) => l.includes('@BENKI_KOUJO')).length;
-  assert.equal(stub_count, 2, 'BENKI_KOUJO 存根两次');
+  assert.equal(stub_count, 2, '未注册性格打 @BENKI_KOUJO 占位行');
   // flag:62 = 6（フェラ便器）、flag:64 = 3（魔族男性）
+
   assert.equal(flag_of(fixture, 62), 6);
   assert.equal(flag_of(fixture, 64), 3);
   // 珠结算：阴核/欲情/耻情
@@ -261,6 +264,28 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KO
   assert.equal(fixture.store.get('exp:31:80'), 1);
   // TARGET 还原：era_flag.target 回到调用前值
   assert.equal(fixture.store.get('flag:10005'), 0);
+});
+
+test('run_benki：加载 K3 口上后不打占位行，走常识改写真身', async () => {
+  const { fixture, mod } = setup_benki((f) => {
+    f.store.set('talent:31:163', 1); // 高貴 → GET_KOJO_NUM = 103
+    f.store.set('talent:31:283', 1); // 常识改变【日常】→ FLAG:63=1、奉仕分派 FLAG:62=0
+    f.store.set('flag:103', 1);
+    f.store.set('flag:7', 2);
+  });
+  fixture.load_module('kojo/kojo-system');
+  fixture.load_module('kojo/kojo-k3-noble');
+  await mod.run_benki(31, seq_rand(0));
+  const lines = fixture.text_lines();
+  assert.equal(
+    lines.filter((l) => l.includes('@BENKI_KOUJO')).length,
+    0,
+    'K3 真身不打占位行',
+  );
+  assert.ok(
+    lines.some((l) => l.includes('呵呵…别那么吃惊嘛这没什么的哦')),
+    'K3 肉便器常识改写真台词',
+  );
 });
 
 test('run_benki：奉仕分派（menu:0 >= 3）——最下層民奉仕 + 聖者/圣女噂', async () => {
@@ -392,13 +417,13 @@ test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
 
 // —— 存根清单核对 ——
 
-test('存根清单可检索：docs/stub-registry.md 收录 benki.js 的 BENKI_KOUJO', () => {
+test('存根清单可检索：benki.js 的 STUBBED_CALLS 已空（BENKI_KOUJO 换真分发）', () => {
   const { mod } = setup_benki();
   const registry = fs.readFileSync(
     path.join(REPO, 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.deepEqual(mod.STUBBED_CALLS, ['BENKI_KOUJO']);
+  assert.deepEqual(mod.STUBBED_CALLS, []);
   for (const name of mod.STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

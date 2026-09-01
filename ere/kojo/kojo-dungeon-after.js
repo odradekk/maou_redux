@@ -60,6 +60,11 @@ const osioski_koujo_family = new DispatchFamily(
   DECLARED_KOJO_IDS,
 );
 
+/** @GOHOUBI_REQUEST_KOUJO_K{N} 族：奖赏请求口上 */
+const gohoubi_request_koujo_family = new DispatchFamily(
+  'GOHOUBI_REQUEST_KOUJO',
+  DECLARED_KOJO_IDS,
+);
 /**
  * @GOHOUBI_AFTER_KOUJO（EVENT_K.ERB:468-476）：奖赏结算后的口上入口。
  *
@@ -108,4 +113,5 @@ module.exports = {
   osioski_koujo,
   gohoubi_after_koujo_family,
   osioski_koujo_family,
+  gohoubi_request_koujo_family,
 };

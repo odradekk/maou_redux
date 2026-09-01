@@ -30,6 +30,15 @@ function heart(n) {
 }
 
 /**
+ * %UNICODE(0x2764) *N%：实心心形（排泄等支）。与 heart() 的 ♡ 不同字。
+ * @param {number} n 次数
+ * @returns {string}
+ */
+function black_heart(n) {
+  return '❤'.repeat(n);
+}
+
+/**
  * %SELF_CALL(x)%：角色的自称（CSTR:60 非空取值，否则「我」）。
  * @param {number} cid 角色 ID（原作形参是 TARGET 或显式角色号）
  * @returns {string}
@@ -47,4 +56,4 @@ function self_call_first(cid) {
   return Array.from(self_call(cid))[0];
 }
 
-module.exports = { heart, self_call, self_call_first };
+module.exports = { heart, black_heart, self_call, self_call_first };

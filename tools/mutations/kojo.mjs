@@ -68,8 +68,12 @@ export default [
   {
     desc: 'M64 K3 爱慕素质判据错格（TALENT:85 改 86）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: '      era.get(`talent:${target}:85`) === 1 &&',
-    replace: '      era.get(`talent:${target}:86`) === 1 &&',
+    find: `      // :955-975 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.爱抚 <= 499 || game.kojo.口上开关 === 2)`,
+    replace: `      // :955-975 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:86\`) === 1 &&
+      (kojo.爱抚 <= 499 || game.kojo.口上开关 === 2)`,
     tests: ['kojo-k3-noble'],
     must_mention: '爱慕分支',
   },
@@ -1087,6 +1091,298 @@ export default [
     replace: '    chara(target).kojo.首次C绝顶 = 0; // :6607 变异',
     tests: ['kojo-k1-confident'],
     must_mention: '首次C绝顶推进',
+  },
+  {
+    desc: 'M1700 K3 舔阴首次推进写错（CFLAG:302 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.舔阴 = 1; // :1120',
+    replace: '      kojo.舔阴 = 2; // :1120（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '舔阴首次（CFLAG:302 == 0 且非处女）',
+  },
+  {
+    desc: 'M1701 K3 舔阴处女分档删（TALENT:0 臂拿掉）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      if (era.get(\`talent:\${target}:0\`) === 1) {
+        await era.printAndWait(
+          '「嗯啊啊~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」',
+        ); // :1115
+      } else {`,
+    replace: `      if (false) { // 变异：处女分档删除
+        await era.printAndWait(
+          '「嗯啊啊~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」',
+        ); // :1115
+      } else {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '舔阴首次处女分档',
+  },
+  {
+    desc: 'M1702 K3 舔阴淫乱推进写错（CFLAG:302 = 5 改 4）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.舔阴 = 5; // :1129',
+    replace: '      kojo.舔阴 = 4; // :1129（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '舔阴二次以后',
+  },
+  {
+    desc: 'M1703 K3 肛门爱抚首次推进写错（CFLAG:303 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.肛门爱抚 = 1; // :1156',
+    replace: '      kojo.肛门爱抚 = 2; // :1156（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '肛门爱抚首次',
+  },
+  {
+    desc: 'M1704 K3 肛门爱抚润滑阈值错（PALAMLV[2] 改 PALAMLV[3]）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[3] &&
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '肛门爱抚二次以后',
+  },
+  {
+    desc: 'M1705 K3 肛门爱抚それ以外读错槽（CFLAG:223 改 303）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {',
+    replace: '    } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 === 2) {',
+    tests: ['kojo-k3-noble'],
+    must_mention: '肛门爱抚それ以外读 CFLAG:223',
+  },
+  {
+    desc: 'M1706 K3 自慰首次推进写错（CFLAG:304 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.自慰 = 1; // :1206',
+    replace: '      kojo.自慰 = 2; // :1206（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '自慰首次（CFLAG:304 == 0）',
+  },
+  {
+    desc: 'M1707 K3 自慰淫乱处女推进写错（CFLAG:304 = 9 改 8）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.自慰 = 9; // :1218',
+    replace: '      kojo.自慰 = 8; // :1218（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '淫乱处女推进到 9',
+  },
+  {
+    desc: 'M1708 K3 自慰淫乱自慰中毒门槛错（ABL:31 >= 3 改 >= 4）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      train.自慰中毒 >= 4 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '淫乱自慰中毒Lv3推进到 8',
+  },
+  {
+    desc: 'M1709 K3 胸爱抚首次推进写错（CFLAG:306 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.胸爱抚 = 1; // :1357',
+    replace: '      kojo.胸爱抚 = 2; // :1357（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '胸爱抚首次（CFLAG:306 == 0）',
+  },
+  {
+    desc: 'M1710 K3 胸爱抚淫乱推进写错（CFLAG:306 = 5 改 4）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.胸爱抚 = 5; // :1388',
+    replace: '      kojo.胸爱抚 = 4; // :1388（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '胸爱抚淫乱推进到 5',
+  },
+  {
+    desc: 'M1711 K3 胸爱抚B感覚门槛错（乳房感觉 >= 3 改 >= 4）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      system.乳房感觉 >= 3 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「啊啊~…胸部…胸部居然会那么有感觉什么的…」'); // :1396`,
+    replace: `      system.乳房感觉 >= 4 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「啊啊~…胸部…胸部居然会那么有感觉什么的…」'); // :1396`,
+    tests: ['kojo-k3-noble'],
+
+    must_mention: '胸爱抚B感覚Lv3推进到 3',
+  },
+  {
+    desc: 'M1712 K3 接吻调教首次推进写错（CFLAG:307 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.接吻 = 1; // :1489',
+    replace: '      kojo.接吻 = 2; // :1489（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '接吻调教首次（CFLAG:307 == 0 且非 TFLAG:13）',
+  },
+  {
+    desc: 'M1713 K3 接吻淫乱推进写错（CFLAG:307 = 5 改 4）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.接吻 = 5; // :1498',
+    replace: '      kojo.接吻 = 4; // :1498（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '接吻淫乱推进到 5',
+  },
+  {
+    desc: 'M1714 K3 接吻顺从门槛错（ABL:10 >= 2 改 >= 3）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `      system.顺从 >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)`,
+    replace: `      system.顺从 >= 3 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '接吻顺从Lv2推进到 3',
+  },
+  {
+    desc: 'M1715 K3 死斗场守卫删松（TEQUIP:55 恒 false）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :888-892 死斗场中は専用口上
+  if (era.get(\`tequip:\${target}:55\`)) {`,
+    replace: `  // :888-892 死斗场中は専用口上
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '死斗场（TEQUIP:55）最先',
+  },
+  {
+    desc: 'M1716 K3 助手调教守卫删松（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :894-895 助手が調教した時に口上をスキップする
+  if (era_flag.assi > 0 && era_flag.assiplay) {`,
+    replace: `  // :894-895 助手が調教した時に口上をスキップする
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '助手调教：静默跳过',
+  },
+  {
+    desc: 'M1717 K3 口塞守卫删松（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :897-898 口塞着用時（SELECTCOM == 45 自己说话不算）
+  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {`,
+    replace: `  // :897-898 口塞着用時（SELECTCOM == 45 自己说话不算）
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '口塞：静默跳过',
+  },
+  {
+    desc: 'M1718 K3 失神守卫删松（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (game.train.失神) {`,
+    replace: `  // :900-901 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '失神：静默跳过',
+  },
+  {
+    desc: 'M1719 K3 兽奸守卫删松（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :903-906 兽奸PLAY中は専用口上
+  if (era.get(\`tequip:\${target}:89\`)) {`,
+    replace: `  // :903-906 兽奸PLAY中は専用口上
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '兽奸（TEQUIP:89）',
+  },
+  {
+    desc: 'M1720 K3 崩坏守卫删松（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :908-909 崩坏した場合（TALENT:9）
+  if (era.get(\`talent:\${target}:9\`) === 1) {`,
+    replace: `  // :908-909 崩坏した場合（TALENT:9）
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '崩坏：静默跳过',
+  },
+  {
+    desc: 'M1721 K3 触手守卫删松（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  // :911-912 触手調教中（TEQUIP:90）
+  if (era.get(\`tequip:\${target}:90\`)) {`,
+    replace: `  // :911-912 触手調教中（TEQUIP:90）
+  if (false) {`,
+    tests: ['kojo-k3-noble'],
+    must_mention: '触手：静默跳过',
+  },
+  {
+    desc: 'M1722 K3 自己扒开首次推进写错（CFLAG:308 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.自己扒开 = 1; // :1535',
+    replace: '      kojo.自己扒开 = 2; // :1535（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '自己扒开首次推进到 1',
+  },
+  {
+    desc: 'M1723 K3 EVENTTRAIN 初调教推进写错（CFLAG:201 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '    kojo.初调教 = 1; // :180',
+    replace: '    kojo.初调教 = 2; // :180（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '初调教推进到 1',
+  },
+  {
+    desc: 'M1724 K3 EVENTEND CFLAG:301 钳回删掉（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '    kojo.爱抚 = 1; // :793',
+    replace: '    // 变异：CFLAG:301 钳回删除',
+    tests: ['kojo-k3-noble'],
+    must_mention: '爱抚计数钳回 1',
+  },
+  {
+    desc: 'M1725 K3 PALAMCNG 首次润滑Lv2 推进写错（CFLAG:221 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '    kojo.首次润滑Lv2 = 1; // :7129',
+    replace: '    kojo.首次润滑Lv2 = 2; // :7129（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '首次润滑Lv2',
+  },
+  {
+    desc: 'M1726 K3 兽奸爱抚首次推进写错（CFLAG:301 = 1 改 2）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      kojo.爱抚 = 1; // :5824',
+    replace: '      kojo.爱抚 = 2; // :5824（变异）',
+    tests: ['kojo-k3-noble'],
+    must_mention: '兽奸爱抚首次推进到 1',
+  },
+  {
+    desc: 'M1727 K3 死斗场 SELECTCOM 55 条件错（改 56）（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `  const scf = () => self_call_first(target);
+
+  if (era_flag.selectcom === 55) {`,
+    replace: `  const scf = () => self_call_first(target);
+
+  if (era_flag.selectcom === 56) {`,
+    tests: ['kojo-k3-noble'],
+
+    must_mention: '死斗场（TEQUIP:55）最先',
+  },
+  {
+    desc: 'M1728 K3 存根清单漏 SELL_MATURO_K0（#234）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: "const STUBBED_CALLS = ['SELL_MATURO_K0'];",
+    replace: 'const STUBBED_CALLS = [];',
+    tests: ['kojo-k3-noble'],
+    must_mention: 'SELL_MATURO_K0',
+  },
+  {
+    desc: 'M1729 try_kojo_or_stub 已注册仍打占位（family.has 恒 false）（#234）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  if (id >= 0 && family.has(id)) {',
+    replace: '  if (false) { // 变异：已注册也打占位',
+    tests: ['kojo-k3-noble', 'benki'],
+    must_mention: 'K3 真身不打占位行',
+  },
+  {
+    desc: 'M1730 try_kojo_or_stub 未注册不再打占位（stub_line 删）（#234）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    stub_line(stub_name, stub_desc, stub_ticket);',
+    replace: '    /* 变异：未注册静默 */',
+    tests: ['benki'],
+    must_mention: '未注册性格打 @BENKI_KOUJO 占位行',
   },
   {
     desc: 'M1540 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
