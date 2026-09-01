@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3506', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3793', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -16324,6 +16324,842 @@ const FILES = [
         any: [/「啊呜～…大鸡鸡…好烫…感觉变得好奇怪啊………」/],
       },
       { src: K0, ref: '3502', any: [/\t\t\tCFLAG:334 = 2/m] },
+      { src: K0, ref: '3511', any: [/IF\ SELECTCOM\ ==\ 34/m] },
+      { src: K0, ref: '3511-3793', any: [/^IF SELECTCOM == 34$/m] },
+      { src: K0, ref: '3511', any: [/IF SELECTCOM == 34/m] },
+      { src: K0, ref: '3513', any: [/\tIF CFLAG:TARGET:335 == 0/m] },
+      { src: K0, ref: '3515', any: [/\t\tIF TALENT:0 == 1/m] },
+      { src: K0, ref: '3517', any: [/\t\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3518',
+        any: [
+          /「啊啊啊…主人～…%SELF_CALL\(TARGET\)%的处女…请收下吧%UNICODE\(0x2661\) \*1%……额呵呵、总觉得心跳不已呢/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3519',
+        any: [
+          /「哈呜～…咕…啊啊…就这样插进去…啊啊～啊～、啊啊啊啊啊啊啊～～！！！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3520',
+        any: [/%SAVESTR:TARGET%自己沉下腰把处女献了出来。/],
+      },
+      {
+        src: K0,
+        ref: '3521',
+        any: [
+          /「哈啊…哈啊…啊啊啊…主人的大肉棒…进到里面去了～…啊～啊啊～啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3523', any: [/\t\t\t\t\tIF TALENT:TARGET:317 == 4/m] },
+      {
+        src: K0,
+        ref: '3524',
+        any: [
+          /%SAVESTR:TARGET%开心的笑了并为了战胜破瓜的疼痛开始慢慢地动起了腰。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3525',
+        any: [
+          /「大肉棒…大肉棒…好棒～…这样子的话…已经什么也不用在意了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3526',
+        any: [
+          /随着腰身的上下运动%SAVESTR:TARGET%脑海中故郷恋人的事情像被橡皮擦擦去一般的消失了。/,
+        ],
+      },
+      { src: K0, ref: '3527', any: [/已经连他的脸和表情都想不起来了吧………/] },
+      {
+        src: K0,
+        ref: '3528-3529',
+        any: [
+          /%SAVESTR:TARGET%开心的笑了并为了战胜破瓜的疼痛开始慢慢地动起了腰。…/,
+        ],
+      },
+      { src: K0, ref: '3532', any: [/\t\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      { src: K0, ref: '3533', any: [/「嗯、真是的…要让我自己…插进去吗…」/] },
+      {
+        src: K0,
+        ref: '3534',
+        any: [
+          /「好吧…%SELF_CALL\(TARGET\)%的处女…请收下吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3535',
+        any: [
+          /「这可是…一直珍惜着的东西呢…啊～～…哈～…呜～…咕呜呜呜～…嗯～！」/,
+        ],
+      },
+      { src: K0, ref: '3537', any: [/\t\t\t\t\tIF TALENT:TARGET:317 == 4/m] },
+      {
+        src: K0,
+        ref: '3538',
+        any: [
+          /（啊啊…%SELF_CALL\(TARGET\)%从现在起…为了你…而生～…%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3539',
+        any: [
+          /是想起了故郷的恋人了吗、%SAVESTR:TARGET%的眼角流下了一滴眼泪………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3540-3541',
+        any: [/%SAVESTR:TARGET%的眼角流下了一滴眼泪………/],
+      },
+      { src: K0, ref: '3544-3545', any: [/「啊啊～…要这样…自己插进去吗…」/] },
+      {
+        src: K0,
+        ref: '3546',
+        any: [/「啊呜呜～…不、不要…抓着…腰…咿咿咿～～！啊～啊啊啊啊！」」/],
+      },
+      { src: K0, ref: '3548', any: [/\t\t\t\t\tIF TALENT:TARGET:317 == 4/m] },
+      {
+        src: K0,
+        ref: '3549',
+        any: [
+          /（我、%SELF_CALL\(TARGET\)%…已经…回不了故郷了…再也回不去了………呜！）/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3550',
+        any: [/是想起了故郷的恋人了吗、%SAVESTR:TARGET%的双眼泪流不止………/],
+      },
+      { src: K0, ref: '3551-3552', any: [/%SAVESTR:TARGET%的双眼泪流不止………/] },
+      { src: K0, ref: '3556-3558', any: [/\t\t\tIF TALENT:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3559',
+        any: [
+          /「啊啊…插进去的地方～…全部被看到了…嗯～嗯呼呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3560',
+        any: [/「啊啊啊…被看着好有感觉啊～～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3562-3563',
+        any: [/\t\t\t\tSIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      { src: K0, ref: '3565', any: [/\t\t\tELSEIF TALENT:85 == 1/m] },
+      { src: K0, ref: '3566', any: [/「骑在主人身上…啊啊、总觉得好淫荡啊♪」/] },
+      {
+        src: K0,
+        ref: '3567',
+        any: [
+          /「啊～啊啊～…那么这样…插进去的地方…就全部被看光了呢…啊啊～啊啊啊～！」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3569-3570',
+        any: [/\t\t\t\tSIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      { src: K0, ref: '3572-3573', any: [/「咕呜呜～…进到…里面去了……」/] },
+      { src: K0, ref: '3575', any: [/\t\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3576',
+        any: [
+          /因为%SAVESTR:TARGET%的私处不太容易有感觉、被插入的異物感令%SAVESTR:TARGET%忍不住发出了痛苦的呻吟………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3577-3578',
+        any: [/%SAVESTR:TARGET%皱着眉头忍耐着異物感………/],
+      },
+      { src: K0, ref: '3582-3583', any: [/\t\tCFLAG:TARGET:335 = 1/m] },
+      {
+        src: K0,
+        ref: '3585-3587',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && TALENT:TARGET:75 == 1 && \(CFLAG:321 <= 8 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3588', any: [/\t\t\tIF RAND:4 == 0/m] },
+      {
+        src: K0,
+        ref: '3589',
+        any: [
+          /「咿啊啊～…啊～啊啊啊啊…腰完全停不下来啊～～…大肉棒实在是太爽了～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3590',
+        any: [/%SAVESTR:TARGET%淫猥地扭着腰、用整个阴道品味着阴茎。/],
+      },
+      {
+        src: K0,
+        ref: '3591',
+        any: [
+          /「把精液射进来吧…呐…求您了～…把%SELF_CALL\(TARGET\)%淫乱的小穴里～…用主人的精液到处打满记号吧～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3592-3593',
+        any: [/\t\t\t\tSIF TALENT:TARGET:153 != 1/m],
+      },
+      { src: K0, ref: '3594', any: [/\t\t\tELSEIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3595',
+        any: [
+          /「请更多的…欺负我吧…%SELF_CALL\(TARGET\)%的淫乱小穴…已经湿成一片了～…让我变的更爽吧～%UNICODE\(0x2661\) /,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3596',
+        any: [
+          /%SAVESTR:TARGET%好不容易集中起残存的理性却只是向%SAVESTR:PLAYER%提出了下流的要求。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3597',
+        any: [
+          /「尽情的…欺负～…小穴…黏糊糊湿答答的…已经…已经…忍不住了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3598',
+        any: [
+          /「啊～啊～…咿～…咕呜～…啊啊～…啊～…啊啊啊啊啊啊啊啊啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3599', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3600',
+        any: [
+          /「明明觉得…不能再这样下去了…啊～…啊～～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3601',
+        any: [
+          /「淫乱的小穴…一被弄得黏糊糊的…就忍不住了～…%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3602',
+        any: [
+          /「好像做梦一样…被侵犯…被侵犯…要变得奇怪了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3603',
+        any: [/%SAVESTR:TARGET%为了贪求快乐扭动着腰身………/],
+      },
+      {
+        src: K0,
+        ref: '3604-3605',
+        any: [
+          /「啊啊～啊啊…啊呼呜～…啊～啊啊啊～…更多的…黏糊糊地插进来吧！把我弄坏吧～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3606',
+        any: [
+          /「啊啊、这样子…紧紧黏在一起…要变成主人専用的阴茎容器了～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3607',
+        any: [/%SAVESTR:TARGET%一脸陶醉地收紧着阴道口………/],
+      },
+      { src: K0, ref: '3609', any: [/\t\t\tCFLAG:335 = 9/m] },
+      {
+        src: K0,
+        ref: '3611',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:75 == 1 && \(CFLAG:321 <= 7 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3612', any: [/\t\t\tIF RAND:4 == 0/m] },
+      {
+        src: K0,
+        ref: '3613',
+        any: [/%SAVESTR:TARGET%把阴茎放进阴道深处、发出了轻轻的呻吟。/],
+      },
+      {
+        src: K0,
+        ref: '3614',
+        any: [/「咕啊啊――――――啊～…哈啊啊啊啊%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3615',
+        any: [
+          /「稍微…高潮了一下呢…让%SELF_CALL\(TARGET\)%变的、这么不知羞耻…你可要…负起责任…呢…啊～～%UNICODE\(0x2661/,
+        ],
+      },
+      { src: K0, ref: '3616', any: [/\t\t\tELSEIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3617',
+        any: [
+          /「啊～嗯～…嗯啊啊～…啊～～…被这样抽插着…要不行了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3618',
+        any: [
+          /%SAVESTR:TARGET%被调教的即使被毫不留情的抽插、也能通过阴道里的刺激得到快感的样子。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3619',
+        any: [
+          /%SAVESTR:TARGET%已经完全将沉浸在与%SAVESTR:PLAYER%的快楽之中作为活下去的理由的样子。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3620',
+        any: [
+          /「马上就要去了…所以先别射哦…请让我变得更舒服吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3621', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3622',
+        any: [
+          /「啊啊…主人～…喜欢你～%UNICODE\(0x2661\) \*1% 好喜欢你啊%UNICODE\(0x2661\) \*1% 所以再多操我的小穴吧%/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3623',
+        any: [/%SAVESTR:TARGET%沉溺在強烈的快楽中、半苦半叫地扭动着腰/],
+      },
+      {
+        src: K0,
+        ref: '3624',
+        any: [
+          /「已经不能…没有这个了…不能…即使一天不做也忍不下去了啊…啊啊～…还想要～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3625-3626',
+        any: [/「啊～…唔嗯～…嗯～嗯嗯～♪…嗯呼呜～♪」/],
+      },
+      {
+        src: K0,
+        ref: '3627',
+        any: [
+          /「主人的精液…%SELF_CALL\(TARGET\)%全部…收下了呢…啊啊～啊～啊哈啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3628',
+        any: [/%SAVESTR:TARGET%在%SAVESTR:PLAYER%的身上扭动着腰娇喘不已………/],
+      },
+      { src: K0, ref: '3630', any: [/\t\t\tCFLAG:335 = 8/m] },
+      {
+        src: K0,
+        ref: '3632',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:75 == 1 && \(CFLAG:321 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3633', any: [/\t\t\tIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3634',
+        any: [
+          /「啊啊～…明明是这么羞耻的姿势…但是好爽啊～！…啊啊～啊～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3635',
+        any: [
+          /%SAVESTR:TARGET%自己前后舂动着腰贪求着快楽、她的表情因为淫乱而扭曲、平常的清纯模样早已烟消云散。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3636',
+        any: [
+          /「大肉棒…真舒服～%UNICODE\(0x2661\) \*1% 好舒服啊～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3637', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3638',
+        any: [/「大肉棒…全部插进去了～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3639',
+        any: [
+          /「明明既不是結婚对象…也不是恋人…啊啊～啊～…但是太舒服了实在没办法啊～…咿～啊呜啊啊啊～%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3640',
+        any: [
+          /抓住沉溺于快楽中的%SAVESTR:TARGET%的腰、每次往阴道里捅就会发出高亢的娇喘声………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3641-3642',
+        any: [
+          /「啊啊～…好深…好深啊…%UNICODE\(0x2661\) \*1% 小穴里面…完全被大肉棒侵占啦～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3643',
+        any: [
+          /%SAVESTR:TARGET%为了贪求%SAVESTR:PLAYER%的鸡鸡不断上下扭动着腰。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3644',
+        any: [
+          /「啊啊～%UNICODE\(0x2661\) \*1% 更多地…惩罚成为肉棒奴隷的%SELF_CALL\(TARGET\)%吧～%UNICODE\(0x/,
+        ],
+      },
+      { src: K0, ref: '3646', any: [/\t\t\tCFLAG:335 = 7/m] },
+      {
+        src: K0,
+        ref: '3648',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3649', any: [/\t\t\tIF RAND:4 == 0/m] },
+      {
+        src: K0,
+        ref: '3650',
+        any: [
+          /「咿啊啊～…啊～啊啊啊啊…腰完全停不下来啊～～…大肉棒实在是太爽了～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3652',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3653',
+        any: [
+          /%SAVESTR:TARGET%曾是聖女的一部分的鈍感私处被开发的感觉到了无穷的快感。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3654',
+        any: [
+          /”淫乱”的%SAVESTR:TARGET%完全沉溺在了快楽之中、淫猥地摇晃着腰品味着阴茎………/,
+        ],
+      },
+      { src: K0, ref: '3656', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3657',
+        any: [/%SAVESTR:TARGET%淫猥地揺着腰身、品味着阴茎………/],
+      },
+      { src: K0, ref: '3659', any: [/\t\t\tELSEIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3660',
+        any: [
+          /「哈啊啊～…嗯呼呜%UNICODE\(0x2661\) \*1%　这样子插得好深啊～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3661',
+        any: [
+          /「紧密地%UNICODE\(0x2661\) \*1% 紧密地%UNICODE\(0x2661\) \*1% 扭着腰…好喜欢…嗯啊啊～～%UNICODE/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3663',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3664',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被調教出了快感、坦率的接受快感的%SAVESTR:TARGET%很愉快的前后扭着腰、身体一次又一次/,
+        ],
+      },
+      { src: K0, ref: '3666', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3667',
+        any: [
+          /%SAVESTR:TARGET%每次扭动腰身、就会一颤一颤地痙攣起来、品味着快楽………/,
+        ],
+      },
+      { src: K0, ref: '3669', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3670',
+        any: [
+          /「嗯呜唔～…啊啊～…啊～～…啊啊啊啊～…%SELF_CALL_FIRST\(TARGET\)%～%SELF_CALL\(TARGET\)%的淫乱小穴/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3671',
+        any: [
+          /「不过～…腰…停不下来啊～…小穴太淫乱了真是对不起～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3672',
+        any: [
+          /「啊啊～…主人～%UNICODE\(0x2661\) \*1%　更多的…更多的欺负我吧～～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3674',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3675',
+        any: [
+          /%SAVESTR:TARGET%的私处已经被开发得忘记鈍感时候的感觉了、%SAVESTR:TARGET%带着陶醉的表情激烈的摇动着腰喘息不已/,
+        ],
+      },
+      { src: K0, ref: '3677', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3678',
+        any: [
+          /%SAVESTR:TARGET%带着陶醉的表情、激烈的摇动着腰沉浸在快乐之中………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3680-3681',
+        any: [/「嗯唔～…啊咿～…不要…不要…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3682',
+        any: [
+          /「啊～啊啊啊～…嗯～咕呜～…呜啊…已经…不行了…已经…除了小穴其他什么也不想嘞…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3684',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3685',
+        any: [
+          /%SAVESTR:TARGET%的私处已经被开发得忘记鈍感时候的感觉了、%SAVESTR:TARGET%嘴边耷拉着口水贪求着快乐………/,
+        ],
+      },
+      { src: K0, ref: '3687', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3688',
+        any: [/%SAVESTR:TARGET%嘴边耷拉着口水贪求着快乐………/],
+      },
+      { src: K0, ref: '3691', any: [/\t\t\tCFLAG:335 = 6/m] },
+      {
+        src: K0,
+        ref: '3693',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3694', any: [/\t\t\tIF RAND:4 == 0/m] },
+      {
+        src: K0,
+        ref: '3695',
+        any: [/「嗯～…啊、啊啊～…不用动也可以哦…能让主人舒服的话…就行～♪」/],
+      },
+      {
+        src: K0,
+        ref: '3697',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3698',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、为了进一步品尝那种滋味%SAVESTR:TARGET%一边开心的笑着一边上下动/,
+        ],
+      },
+      { src: K0, ref: '3700', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3701',
+        any: [/%SAVESTR:TARGET%一边开心的笑着一边扭动着腰品味着快乐………/],
+      },
+      { src: K0, ref: '3703', any: [/\t\t\tELSEIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3704',
+        any: [/「啊～…嗯嗯～…啊～～…不行爽过头了～…忍不住了～…♪」」/],
+      },
+      {
+        src: K0,
+        ref: '3706',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3707',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、自己将%SAVESTR:PLAYER%的阴茎连根吞下并发出了很带感的呻吟声……/,
+        ],
+      },
+      { src: K0, ref: '3709', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3710',
+        any: [/%SAVESTR:TARGET%一把你的阴茎吞入体内就欢喜的颤抖不已………/],
+      },
+      { src: K0, ref: '3712', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      { src: K0, ref: '3713', any: [/「喜欢…好喜欢主人的东西啊…啊啊～…♪」/] },
+      {
+        src: K0,
+        ref: '3714',
+        any: [
+          /「这里…也希望主人能变的更舒服点呢…啊～啊啊～…哈唔呜～…让我…来奉仕您吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3716',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3717',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、尝到这种快楽的%SAVESTR:TARGET%淫笑着摇动着腰持续进行着仕奉……/,
+        ],
+      },
+      { src: K0, ref: '3719', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3720',
+        any: [
+          /%SAVESTR:TARGET%一边淫笑着、一边继续努力侍奉着%SAVESTR:PLAYER%………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3722-3723',
+        any: [/「啊～…唔嗯～…嗯呜唔呜…嗯呼呜～♪」/],
+      },
+      {
+        src: K0,
+        ref: '3724',
+        any: [/「啊啊～…这么的舒服…已经变的离不开它了…啊～啊啊～啊啊啊啊！」/],
+      },
+      {
+        src: K0,
+        ref: '3726',
+        any: [/\t\t\t\tIF ABL:2 >= 3 && TALENT:TARGET:103/m],
+      },
+      {
+        src: K0,
+        ref: '3727',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处已经变成了产生快感的蜜壺、%SAVESTR:TARGET%神情陶醉的舂动着腰品味着快楽………/,
+        ],
+      },
+      { src: K0, ref: '3729', any: [/\t\t\t\tELSEIF ABL:2 >= 3/m] },
+      {
+        src: K0,
+        ref: '3730',
+        any: [/%SAVESTR:TARGET%陶醉地舂动着腰引诱着%SAVESTR:PLAYER%射精………/],
+      },
+      { src: K0, ref: '3733', any: [/\t\t\tCFLAG:335 = 5/m] },
+      {
+        src: K0,
+        ref: '3735',
+        any: [
+          /\t\tELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3736', any: [/\t\t\tIF RAND:4 == 0/m] },
+      {
+        src: K0,
+        ref: '3737',
+        any: [/「啊～…嗯咕～…咿～！？…这、这是什么…啊～哈啊～！」/],
+      },
+      { src: K0, ref: '3739', any: [/\t\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3740',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、%SAVESTR:TARGET%开始有感觉了………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3741-3742',
+        any: [
+          /%SAVESTR:TARGET%因为自己私处传来的快感而感到迷惑、开始有感觉了的样子………/,
+        ],
+      },
+      { src: K0, ref: '3744', any: [/\t\t\tELSEIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3745',
+        any: [
+          /「啊咿呀～！？…啊～…啊～啊啊～…总觉得…好奇怪啊…那里变的…好奇怪哦～」/,
+        ],
+      },
+      { src: K0, ref: '3747', any: [/\t\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3748',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、慢慢的沉溺于溢出的快感之中………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3749-3750',
+        any: [/%SAVESTR:TARGET%慢慢的沉溺于溢出的快感之中………/],
+      },
+      { src: K0, ref: '3752', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3753',
+        any: [
+          /「啊～…唔诶…啊～嗯～！嗯～！…爽、好爽～！？……啊啊、这样、好爽…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3755', any: [/\t\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3756',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、慢慢的沉溺于溢出的快感之中………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3757-3758',
+        any: [/%SAVESTR:TARGET%慢慢的沉溺于溢出的快感之中………/],
+      },
+      {
+        src: K0,
+        ref: '3760-3761',
+        any: [/「啊～…嗯咕～…咿～！？…这、这是怎么回事…啊～哈啊～！」/],
+      },
+      { src: K0, ref: '3763', any: [/\t\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3764',
+        any: [
+          /%SAVESTR:TARGET%鈍感的私处被開発得觉醒了快感、%SAVESTR:TARGET%对快感有些迷茫但还是上下动起了腰………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3765-3766',
+        any: [
+          /%SAVESTR:TARGET%因为自己私处传来的快感而感到迷惑、开始有感觉了的样子………/,
+        ],
+      },
+      { src: K0, ref: '3769', any: [/\t\t\tCFLAG:335 = 4/m] },
+      {
+        src: K0,
+        ref: '3771',
+        any: [/\t\tELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '3772',
+        any: [/「啊～…嗯呜唔…这、这样做的话…会舒服吗…？」/],
+      },
+      { src: K0, ref: '3774', any: [/\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3775',
+        any: [
+          /%SAVESTR:TARGET%自己动着私处、但不是很有感觉、被插入的異物感令%SAVESTR:TARGET%忍不住发出了痛苦的呻吟………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3776-3777',
+        any: [/%SAVESTR:TARGET%生硬地遵从着你的命令………/],
+      },
+      { src: K0, ref: '3779', any: [/\t\t\tCFLAG:335 = 3/m] },
+      {
+        src: K0,
+        ref: '3781',
+        any: [/\t\tELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3782',
+        any: [/「啊…咕、呜唔…啊～啊啊～！…这样动就可以了吧…嗯～！」/],
+      },
+      { src: K0, ref: '3784', any: [/\t\t\tIF TALENT:TARGET:103/m] },
+      {
+        src: K0,
+        ref: '3785',
+        any: [
+          /因为%SAVESTR:TARGET%的私处不太容易有感觉、被插入的異物感令%SAVESTR:TARGET%忍不住发出了痛苦的呻吟………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3786-3787',
+        any: [/%SAVESTR:TARGET%皱着眉头忍耐着異物感………/],
+      },
+      { src: K0, ref: '3789', any: [/\t\t\tCFLAG:335 = 2/m] },
     ],
   },
 

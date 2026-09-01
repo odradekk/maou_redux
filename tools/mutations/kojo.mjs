@@ -1694,4 +1694,54 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '股间性交二次：淫乱+处女写 6 / 阈值闸',
   },
+  {
+    desc: 'M1870 K0 骑乘位首次状态推进写错（CFLAG:335 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.骑乘位 = 1; // :3582-3583',
+    replace: '      kojo.骑乘位 = 2; // :3582-3583',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位首次推进到 1',
+  },
+  {
+    desc: 'M1871 K0 骑乘位二次淫乱+性爱狂门槛读回本档（CFLAG:321 改 CFLAG:335）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587
+        if (rand_n(4) === 0) {`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.骑乘位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587
+        if (rand_n(4) === 0) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:321 / 阈值闸',
+  },
+  {
+    desc: 'M1872 K0 骑乘位二次淫乱+性爱狂门槛错位（CFLAG:321 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:321 / 阈值闸',
+  },
+  {
+    desc: 'M1873 K0 骑乘位二次淫乱+性爱狂写回错档（CFLAG:335 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.骑乘位 = 9; // :3609',
+    replace: '        kojo.骑乘位 = 8; // :3609',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位二次淫乱+性爱狂写 9',
+  },
 ];
