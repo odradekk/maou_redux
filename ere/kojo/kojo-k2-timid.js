@@ -43,7 +43,6 @@ const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { PALAMLV } = require('#/era-utils/palam-level');
-const { piercing_state } = require('#/system/train/com-hardcore');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
@@ -1280,6 +1279,10 @@ async function kojo_message_com_2(rand) {
     scf,
     kojo,
   } = bind_ctx(rand);
+  // 延迟读取：主启动图的 COM80–90 注册仍仅由 com-hardcore 自己负责；本模块
+  // 只在 COM 口上读穿环位图。顶层 require 会让 main-loop 漏装时模块仍被间接
+  // 拉进来，#274/#282 接线锁与 M1249 一起失明（#233 全量变异抓到）。
+  const { piercing_state } = require('#/system/train/com-hardcore');
   let P = piercing_state.p;
 
   if (era.get(`tequip:${target}:55`)) {
