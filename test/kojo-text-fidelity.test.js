@@ -123,6 +123,7 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:SIDEA$/, 'SIDEA'],
   [/^SAVESTR:SIDEB$/, 'SIDEB'],
   [/^MONSTERNAME\(LOCAL:1\)$/, 'MONSTERNAME'],
+  [/^阴核\(TARGET\)$/, 'CLITORIS'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -182,6 +183,7 @@ const JS_TOKEN_RULES = [
   [/^arg_name_of\(sidea\)$/, 'SIDEA'],
   [/^arg_name_of\(sideb\)$/, 'SIDEB'],
   [/^monstername\(local_1\)$/, 'MONSTERNAME'],
+  [/^clitoris_word\(target\)$/, 'CLITORIS'],
   [/^pick\(/, 'PICK'],
 ];
 

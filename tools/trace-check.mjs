@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-5192', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-5475', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -13717,7 +13717,7 @@ const FILES = [
       { src: K0, ref: '2424', any: [/\t\tIF TALENT:0 == 1/m] },
       { src: K0, ref: '2426', any: [/\t\t\tIF TALENT:85 == 1/m] },
       { src: K0, ref: '2426-2427', any: [/IF TALENT:85 == 1/] },
-      { src: K0, ref: '2429-2430', any: [/PRINTFORMW/] },
+      { src: K0, ref: '2429-2430', any: [/^\s*PRINTFORMW\s*$/m] },
       { src: K0, ref: '2433-2435', any: [/\t\t\tIF TALENT:76 == 1/m] },
       {
         src: K0,
@@ -14171,7 +14171,7 @@ const FILES = [
       { src: K0, ref: '2590', any: [/IF\ SELECTCOM\ ==\ 23/m] },
       { src: K0, ref: '2590-2757', any: [/^IF SELECTCOM == 23$/m] },
       { src: K0, ref: '2595-2596', any: [/IF TALENT:85 == 1/] },
-      { src: K0, ref: '2598-2599', any: [/PRINTFORMW/] },
+      { src: K0, ref: '2598-2599', any: [/^\s*PRINTFORMW\s*$/m] },
       { src: K0, ref: '2590', any: [/IF SELECTCOM == 23/m] },
       { src: K0, ref: '2591', any: [/\tIF CFLAG:TARGET:324 == 0/m] },
       { src: K0, ref: '2593', any: [/\t\tIF TALENT:0 == 1/m] },
@@ -18100,7 +18100,7 @@ const FILES = [
       { src: K0, ref: '4176', any: [/IF SELECTCOM == 43 && TEQUIP:43/m] },
       { src: K0, ref: '4178', any: [/\tIF CFLAG:TARGET:344 == 0/m] },
       { src: K0, ref: '4180-4181', any: [/\t\tIF TALENT:85 == 1/m] },
-      { src: K0, ref: '4183-4184', any: [/PRINTFORMW/] },
+      { src: K0, ref: '4183-4184', any: [/^\s*PRINTFORMW\s*$/m] },
       { src: K0, ref: '4186-4187', any: [/\t\tCFLAG:TARGET:344 = 1/m] },
       {
         src: K0,
@@ -18705,7 +18705,7 @@ const FILES = [
       { src: K0, ref: '4462', any: [/肛門/] },
       { src: K0, ref: '4463-4464', any: [/肛穴/] },
       { src: K0, ref: '4466', any: [/之中，可以看清那内壁正在痙攣着……/] },
-      { src: K0, ref: '4468-4469', any: [/PRINTFORMW/] },
+      { src: K0, ref: '4468-4469', any: [/^\s*PRINTFORMW\s*$/m] },
       { src: K0, ref: '4472', any: [/\tELSEIF TALENT:TARGET:85 == 1/m] },
       { src: K0, ref: '4474', any: [/\t\tIF ABL:3 >= 3 && ABL:21 >= 3/m] },
       { src: K0, ref: '4475', any: [/「主人…%SELF_CALL\(TARGET\)%那/] },
@@ -18717,13 +18717,13 @@ const FILES = [
       { src: K0, ref: '4483', any: [/\t\t\tIF RAND:2 == 0/m] },
       { src: K0, ref: '4484', any: [/请您好好地观赏……」/] },
       { src: K0, ref: '4485-4486', any: [/请您好好地疼爱……」/] },
-      { src: K0, ref: '4488-4489', any: [/PRINTFORMW/] },
+      { src: K0, ref: '4488-4489', any: [/^\s*PRINTFORMW\s*$/m] },
       {
         src: K0,
         ref: '4492-4493',
         any: [/\tELSEIF ABL:3 >= 3 && ABL:21 >= 3/m],
       },
-      { src: K0, ref: '4494-4495', any: [/PRINTFORMW/] },
+      { src: K0, ref: '4494-4495', any: [/^\s*PRINTFORMW\s*$/m] },
       { src: K0, ref: '4510', any: [/IF\ SELECTCOM\ ==\ 55/m] },
       { src: K0, ref: '4510-4638', any: [/^IF SELECTCOM == 55$/m] },
       { src: K0, ref: '4510', any: [/IF SELECTCOM == 55/m] },
@@ -20247,6 +20247,659 @@ const FILES = [
         ],
       },
       { src: K0, ref: '5188', any: [/\t\t\tCFLAG:381 = 2/m] },
+      { src: K0, ref: '5199', any: [/IF SELECTCOM == 87/m] },
+      { src: K0, ref: '5199-5475', any: [/^IF SELECTCOM == 87$/m] },
+      { src: K0, ref: '5202', any: [/\tIF CFLAG:TARGET:348 == 0/m] },
+      { src: K0, ref: '5204', any: [/\t\tIF ASSI > 0 && ASSIPLAY/m] },
+      { src: K0, ref: '5205', any: [/^\s*PRINTFORM\s*$/m] },
+      { src: K0, ref: '5207', any: [/\t\tELSEIF TALENT:TARGET:76 == 1/m] },
+      { src: K0, ref: '5209', any: [/\t\t\tIF CFLAG:7 & P/m] },
+      {
+        src: K0,
+        ref: '5210',
+        any: [/%SAVESTR:TARGET%因为肌肤头一次被开洞而痛得禁不住悲鸣起来。/],
+      },
+      { src: K0, ref: '5212', any: [/\t\t\t\tIF P == 1/m] },
+      {
+        src: K0,
+        ref: '5213',
+        any: [
+          /「啊啊～！…哈啊…哈啊…这样一来乳头就可以拉伸了…请好好疼爱………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5214',
+        any: [
+          /%SAVESTR:TARGET%像为了展示因为痛苦而勃起的乳头和环似的挺起了胸部………/,
+        ],
+      },
+      { src: K0, ref: '5216', any: [/\t\t\t\tELSEIF P == 2/m] },
+      {
+        src: K0,
+        ref: '5217',
+        any: [
+          /「嗯～…额呵呵、不只是肚脐…我还想要更多的环%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5218',
+        any: [/%SAVESTR:TARGET%这样说着用舌头舔了舔嘴唇………/],
+      },
+      { src: K0, ref: '5220', any: [/\t\t\t\tELSEIF P == 4/m] },
+      {
+        src: K0,
+        ref: '5221',
+        any: [
+          /「啊啊～…好、好厉害…只是被风一吹…就感觉一颤一颤的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5222',
+        any: [/%SAVESTR:TARGET%在阴唇上被穿了环、因为这一刺激而戦慄着身体………/],
+      },
+      { src: K0, ref: '5224', any: [/\t\t\t\tELSEIF P == 8/m] },
+      {
+        src: K0,
+        ref: '5225',
+        any: [/\t\t\t\t\tIF TALENT:121 \|\| TALENT:122/m],
+      },
+      {
+        src: K0,
+        ref: '5226',
+        any: [
+          /「啊啊啊～…被这样弄的话会興奮过头的、会一直勃起的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5227',
+        any: [/%SAVESTR:TARGET%在阴茎上被穿了环、阴茎持续地勃起着………/],
+      },
+      {
+        src: K0,
+        ref: '5228-5229',
+        any: [
+          /「如何…这淫乱的环…这可是和淫乱的小穴相称的环哦…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5230',
+        any: [
+          /%SAVESTR:TARGET%像为了展示%阴核\(TARGET\)%上的环似的左右摇晃着腰身………/,
+        ],
+      },
+      { src: K0, ref: '5233', any: [/\t\t\t\tELSEIF P == 16/m] },
+      {
+        src: K0,
+        ref: '5234',
+        any: [
+          /「嘻嘻…真想就这样舔舔大肉棒试试呢…嘞咯～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5235',
+        any: [/%SAVESTR:TARGET%像为了展示舌尖上的环似的下流的舔了舔嘴唇………/],
+      },
+      { src: K0, ref: '5237', any: [/\t\t\t\tELSEIF P == 32/m] },
+      { src: K0, ref: '5238', any: [/「额呵呵～…很时尚吧？」/] },
+      {
+        src: K0,
+        ref: '5239',
+        any: [/%SAVESTR:TARGET%舔着唇上的环好像在确认情况的样子………/],
+      },
+      { src: K0, ref: '5241', any: [/\t\t\t\tELSEIF P == 64/m] },
+      {
+        src: K0,
+        ref: '5242',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%是为主人而生的、淫乱的母猪哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '5243', any: [/%SAVESTR:TARGET%不停地翕动着鼻环………/] },
+      {
+        src: K0,
+        ref: '5246-5247',
+        any: [/%SAVESTR:TARGET%抚摸着取掉环后留下的伤痕………/],
+      },
+      { src: K0, ref: '5250', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      { src: K0, ref: '5252', any: [/\t\t\tIF CFLAG:7 & P/m] },
+      {
+        src: K0,
+        ref: '5253',
+        any: [/%SAVESTR:TARGET%因为肌肤头一次被开洞而痛得小声地悲鸣起来………/],
+      },
+      { src: K0, ref: '5255', any: [/\t\t\t\tIF P == 1/m] },
+      {
+        src: K0,
+        ref: '5256',
+        any: [
+          /「啊啊…已经再也不会在主人面前一丝不挂了…啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5257',
+        any: [/%SAVESTR:TARGET%装在勃起的双乳头上的环在闪闪发光………/],
+      },
+      { src: K0, ref: '5259', any: [/\t\t\t\tELSEIF P == 2/m] },
+      { src: K0, ref: '5260', any: [/「这就是所谓的时尚吧…嗯～…」/] },
+      {
+        src: K0,
+        ref: '5261',
+        any: [/%SAVESTR:TARGET%抚摸着被穿环的肚脐的周边………/],
+      },
+      { src: K0, ref: '5263', any: [/\t\t\t\tELSEIF P == 4/m] },
+      {
+        src: K0,
+        ref: '5264',
+        any: [/「啊啊啊～！请…请不要这样拉扯啊…咿～～！」/],
+      },
+      {
+        src: K0,
+        ref: '5265',
+        any: [/%SAVESTR:TARGET%因为被拉扯穿环而扩张开的阴唇而悲鳴起来………/],
+      },
+      { src: K0, ref: '5267', any: [/\t\t\t\tELSEIF P == 8/m] },
+      {
+        src: K0,
+        ref: '5268',
+        any: [/\t\t\t\t\tIF TALENT:121 \|\| TALENT:122/m],
+      },
+      {
+        src: K0,
+        ref: '5269',
+        any: [
+          /「%SELF_CALL\(TARGET\)%的鸡鸡…变的…这么漂亮了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5270',
+        any: [/%SAVESTR:TARGET%的鸡鸡因为被穿环的痛楚与兴奋而挺立起来………/],
+      },
+      {
+        src: K0,
+        ref: '5271-5272',
+        any: [
+          /「啊啊…这种地方被穿了环的话…%SELF_CALL\(TARGET\)%…就没办法不去想主人的事情了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5273',
+        any: [/%SAVESTR:TARGET%因为阴蒂被穿环而兴奋不已的样子………/],
+      },
+      { src: K0, ref: '5276', any: [/\t\t\t\tELSEIF P == 16/m] },
+      {
+        src: K0,
+        ref: '5277',
+        any: [
+          /「呐…亲我～…有点担心能不能和主人好好接吻呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5278',
+        any: [/%SAVESTR:TARGET%咂着被穿环的舌头蠢蠢欲动的诱惑着……/],
+      },
+      { src: K0, ref: '5280', any: [/\t\t\t\tELSEIF P == 32/m] },
+      {
+        src: K0,
+        ref: '5281',
+        any: [/「呐…请亲亲我的嘴唇吧…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '5282',
+        any: [/%SAVESTR:TARGET%舔着唇上的环好像在确认情况的样子………/],
+      },
+      { src: K0, ref: '5284', any: [/\t\t\t\tELSEIF P == 64/m] },
+      {
+        src: K0,
+        ref: '5285',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%是主人的母猪～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5286',
+        any: [/%SAVESTR:TARGET%因为被穿了鼻环而兴奋地喘着粗气………/],
+      },
+      {
+        src: K0,
+        ref: '5289-5290',
+        any: [/%SAVESTR:TARGET%好像有点寂寞的抚摸着取掉环后的伤痕………/],
+      },
+      { src: K0, ref: '5293-5295', any: [/\t\t\tIF CFLAG:7 & P/m] },
+      {
+        src: K0,
+        ref: '5296',
+        any: [
+          /%SAVESTR:TARGET%因为肌肤头一次被开洞而痛得悲鸣起来、流下了眼泪。/,
+        ],
+      },
+      { src: K0, ref: '5298', any: [/\t\t\t\tIF P == 1/m] },
+      {
+        src: K0,
+        ref: '5299',
+        any: [/「竟然…%SELF_CALL\(TARGET\)%竟然被这样的侮辱了…呜呜～………」/],
+      },
+      {
+        src: K0,
+        ref: '5300',
+        any: [/%SAVESTR:TARGET%因为乳头被穿环的痛楚而流下了屈辱的眼泪………/],
+      },
+      { src: K0, ref: '5302', any: [/\t\t\t\tELSEIF P == 2/m] },
+      { src: K0, ref: '5303', any: [/「呜呜～…痛、好痛………」/] },
+      {
+        src: K0,
+        ref: '5304',
+        any: [/%SAVESTR:TARGET%因为肚脐被穿环的痛楚而泪流满面………/],
+      },
+      { src: K0, ref: '5306', any: [/\t\t\t\tELSEIF P == 4/m] },
+      {
+        src: K0,
+        ref: '5307',
+        any: [/「啊啊～…取下来…快取下来…已经…受不了了………」/],
+      },
+      {
+        src: K0,
+        ref: '5308',
+        any: [/%SAVESTR:TARGET%因为阴唇被穿环的痛苦而流下了屈辱的眼泪………/],
+      },
+      { src: K0, ref: '5310', any: [/\t\t\t\tELSEIF P == 8/m] },
+      {
+        src: K0,
+        ref: '5311',
+        any: [/\t\t\t\t\tIF TALENT:121 \|\| TALENT:122/m],
+      },
+      {
+        src: K0,
+        ref: '5312',
+        any: [
+          /「请、请不要再做这种事情了…啊啊～…为什么…要做这种亵渎的事…呜！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5313',
+        any: [/%SAVESTR:TARGET%因为鸡鸡被穿环的痛楚不停地流着眼泪………/],
+      },
+      {
+        src: K0,
+        ref: '5314-5315',
+        any: [/「啊啊～…请把环取下来吧…好痛…要疯了…呜！」/],
+      },
+      {
+        src: K0,
+        ref: '5316',
+        any: [/%SAVESTR:TARGET%因为阴蒂被穿环的痛楚不停地流着眼泪………/],
+      },
+      { src: K0, ref: '5319', any: [/\t\t\t\tELSEIF P == 16/m] },
+      { src: K0, ref: '5320', any: [/「讨厌…舌环…请取下来吧………」/] },
+      {
+        src: K0,
+        ref: '5321',
+        any: [/%SAVESTR:TARGET%的舌尖被穿了环、痛的流下泪来………/],
+      },
+      { src: K0, ref: '5323', any: [/\t\t\t\tELSEIF P == 32/m] },
+      { src: K0, ref: '5324', any: [/「够了…请饶了我吧………」/] },
+      {
+        src: K0,
+        ref: '5325',
+        any: [/%SAVESTR:TARGET%的唇被穿了环、流下了屈辱的泪水………/],
+      },
+      { src: K0, ref: '5327', any: [/\t\t\t\tELSEIF P == 64/m] },
+      {
+        src: K0,
+        ref: '5328',
+        any: [/「%SELF_CALL\(TARGET\)%才不是…你说的什么母猪…呜呜呜～」/],
+      },
+      {
+        src: K0,
+        ref: '5329',
+        any: [
+          /%SAVESTR:TARGET%不想被看到鼻环似的毫不犹豫的背过脸去流下了眼泪………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5332-5333',
+        any: [/%SAVESTR:TARGET%擦拭着取下环后的伤痕………/],
+      },
+      { src: K0, ref: '5336-5337', any: [/\t\tCFLAG:TARGET:348 = 1/m] },
+      { src: K0, ref: '5339-5341', any: [/\t\tIF ASSI > 0 && ASSIPLAY/m] },
+      { src: K0, ref: '5342', any: [/^\s*PRINTFORM\s*$/m] },
+      {
+        src: K0,
+        ref: '5344',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '5346', any: [/\t\t\tIF CFLAG:7 & P/m] },
+      { src: K0, ref: '5348', any: [/\t\t\t\tIF P == 1/m] },
+      {
+        src: K0,
+        ref: '5349',
+        any: [
+          /「啊啊～！…哈啊…哈啊…这样一来乳头就可以拉伸了…请好好疼爱………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5350',
+        any: [
+          /%SAVESTR:TARGET%像为了展示因为痛苦而勃起的乳头和环似的挺起了胸部………/,
+        ],
+      },
+      { src: K0, ref: '5352', any: [/\t\t\t\tELSEIF P == 2/m] },
+      {
+        src: K0,
+        ref: '5353',
+        any: [
+          /「嗯～…额呵呵、不只是肚脐…我还想要更多的环%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5354',
+        any: [/%SAVESTR:TARGET%这样说着用舌头舔了舔嘴唇………/],
+      },
+      { src: K0, ref: '5356', any: [/\t\t\t\tELSEIF P == 4/m] },
+      {
+        src: K0,
+        ref: '5357',
+        any: [
+          /「啊啊～…好、好厉害…只是被风一吹…就感觉一颤一颤的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5358',
+        any: [/%SAVESTR:TARGET%在阴唇上被穿了环、因为这一刺激而戦慄着身体………/],
+      },
+      { src: K0, ref: '5360', any: [/\t\t\t\tELSEIF P == 8/m] },
+      {
+        src: K0,
+        ref: '5361',
+        any: [/\t\t\t\t\tIF TALENT:121 \|\| TALENT:122/m],
+      },
+      {
+        src: K0,
+        ref: '5362',
+        any: [
+          /「啊啊啊～…被这样弄的话会興奮过头的、会一直勃起的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5363',
+        any: [/%SAVESTR:TARGET%在阴茎上被穿了环、阴茎持续地勃起着………/],
+      },
+      {
+        src: K0,
+        ref: '5364-5365',
+        any: [
+          /「如何…这淫乱的环…这可是和淫乱的小穴相称的环哦…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5366',
+        any: [
+          /%SAVESTR:TARGET%像为了展示%阴核\(TARGET\)%上的环似的左右摇晃着腰身………/,
+        ],
+      },
+      { src: K0, ref: '5369', any: [/\t\t\t\tELSEIF P == 16/m] },
+      {
+        src: K0,
+        ref: '5370',
+        any: [
+          /「嘻嘻…真想就这样舔舔大肉棒试试呢…嘞咯～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5371',
+        any: [/%SAVESTR:TARGET%像为了展示舌尖上的环似的下流的舔了舔嘴唇………/],
+      },
+      { src: K0, ref: '5373', any: [/\t\t\t\tELSEIF P == 32/m] },
+      { src: K0, ref: '5374', any: [/「额呵呵～…很时尚吧？」/] },
+      {
+        src: K0,
+        ref: '5375',
+        any: [/%SAVESTR:TARGET%舔着唇上的环好像在确认情况的样子………/],
+      },
+      { src: K0, ref: '5377', any: [/\t\t\t\tELSEIF P == 64/m] },
+      {
+        src: K0,
+        ref: '5378',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%是为主人而生的、淫乱的母猪哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '5379', any: [/%SAVESTR:TARGET%不停地翕动着鼻环………/] },
+      {
+        src: K0,
+        ref: '5382-5383',
+        any: [/%SAVESTR:TARGET%抚摸着取掉环后留下的伤痕………/],
+      },
+      { src: K0, ref: '5385', any: [/\t\t\tCFLAG:348 = 4/m] },
+      {
+        src: K0,
+        ref: '5387',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:348 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '5389', any: [/\t\t\tIF CFLAG:7 & P/m] },
+      { src: K0, ref: '5391', any: [/\t\t\t\tIF P == 1/m] },
+      {
+        src: K0,
+        ref: '5392',
+        any: [
+          /「啊啊…已经再也不会在主人面前一丝不挂了…啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5393',
+        any: [/%SAVESTR:TARGET%装在勃起的双乳上的环在闪闪发光………/],
+      },
+      { src: K0, ref: '5395', any: [/\t\t\t\tELSEIF P == 2/m] },
+      { src: K0, ref: '5396', any: [/「额呵呵、好像很时尚呢…♪」/] },
+      {
+        src: K0,
+        ref: '5397',
+        any: [/%SAVESTR:TARGET%抚摸着被穿环的肚脐的周边………/],
+      },
+      { src: K0, ref: '5399', any: [/\t\t\t\tELSEIF P == 4/m] },
+      {
+        src: K0,
+        ref: '5400',
+        any: [/「啊啊啊～！请…请不要这样拉扯啊…咿～～！」/],
+      },
+      {
+        src: K0,
+        ref: '5401',
+        any: [/%SAVESTR:TARGET%因为被拉扯穿环而扩张开的阴唇而悲鳴起来………/],
+      },
+      { src: K0, ref: '5403', any: [/\t\t\t\tELSEIF P == 8/m] },
+      {
+        src: K0,
+        ref: '5404',
+        any: [/\t\t\t\t\tIF TALENT:121 \|\| TALENT:122/m],
+      },
+      {
+        src: K0,
+        ref: '5405',
+        any: [
+          /「%SELF_CALL\(TARGET\)%的鸡鸡…变的…这么漂亮了呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5406',
+        any: [/%SAVESTR:TARGET%的鸡鸡因为被穿环的痛楚与兴奋而挺立起来………/],
+      },
+      {
+        src: K0,
+        ref: '5407-5408',
+        any: [
+          /「啊啊…这种地方被穿了环的话…%SELF_CALL\(TARGET\)%…就没办法不去想主人的事情了…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5409',
+        any: [/%SAVESTR:TARGET%因为阴蒂被穿环而兴奋不已的样子………/],
+      },
+      { src: K0, ref: '5412', any: [/\t\t\t\tELSEIF P == 16/m] },
+      {
+        src: K0,
+        ref: '5413',
+        any: [
+          /「呐…亲我～…有点担心能不能和主人好好接吻呢…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5414',
+        any: [/%SAVESTR:TARGET%咂着被穿环的舌头蠢蠢欲动的诱惑着……/],
+      },
+      { src: K0, ref: '5416', any: [/\t\t\t\tELSEIF P == 32/m] },
+      {
+        src: K0,
+        ref: '5417',
+        any: [/「呐…请亲亲我的嘴唇吧…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '5418',
+        any: [/%SAVESTR:TARGET%舔着唇上的环好像在确认情况的样子………/],
+      },
+      { src: K0, ref: '5420', any: [/\t\t\t\tELSEIF P == 64/m] },
+      {
+        src: K0,
+        ref: '5421',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%是主人的母猪～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5422',
+        any: [/%SAVESTR:TARGET%因为被穿了鼻环而兴奋地喘着粗气………/],
+      },
+      {
+        src: K0,
+        ref: '5425-5426',
+        any: [/%SAVESTR:TARGET%好像有点寂寞的抚摸着取掉环后的痕迹………/],
+      },
+      { src: K0, ref: '5428', any: [/\t\t\tCFLAG:348 = 3/m] },
+      {
+        src: K0,
+        ref: '5430',
+        any: [/\t\tELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      { src: K0, ref: '5432', any: [/\t\t\tIF CFLAG:7 & P/m] },
+      { src: K0, ref: '5434', any: [/\t\t\t\tIF P == 1/m] },
+      {
+        src: K0,
+        ref: '5435',
+        any: [/「竟然…%SELF_CALL\(TARGET\)%竟然被这样的侮辱了…呜呜～………」/],
+      },
+      {
+        src: K0,
+        ref: '5436',
+        any: [/%SAVESTR:TARGET%因为乳头被穿环的痛楚而屈辱地流下了眼泪………/],
+      },
+      { src: K0, ref: '5438', any: [/\t\t\t\tELSEIF P == 2/m] },
+      { src: K0, ref: '5439', any: [/「呜呜～…痛、好痛………」/] },
+      {
+        src: K0,
+        ref: '5440',
+        any: [/%SAVESTR:TARGET%因为肚脐被穿环的痛楚而泪流满面………/],
+      },
+      { src: K0, ref: '5442', any: [/\t\t\t\tELSEIF P == 4/m] },
+      {
+        src: K0,
+        ref: '5443',
+        any: [/「啊啊～…取下来…快取下来…已经…受不了了………」/],
+      },
+      {
+        src: K0,
+        ref: '5444',
+        any: [/%SAVESTR:TARGET%因为阴唇被穿环的痛苦而流下了屈辱的眼泪………/],
+      },
+      { src: K0, ref: '5446', any: [/\t\t\t\tELSEIF P == 8/m] },
+      {
+        src: K0,
+        ref: '5447',
+        any: [/\t\t\t\t\tIF TALENT:121 \|\| TALENT:122/m],
+      },
+      {
+        src: K0,
+        ref: '5448',
+        any: [
+          /「请、请不要再做这种事情了…啊啊～…为什么…要做这种亵渎的事…呜！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5449',
+        any: [/%SAVESTR:TARGET%因为鸡鸡被穿环的痛楚不停地流着眼泪………/],
+      },
+      {
+        src: K0,
+        ref: '5450-5451',
+        any: [/「啊啊～…请把环取下来吧…好痛…要疯了…呜！」/],
+      },
+      {
+        src: K0,
+        ref: '5452',
+        any: [/%SAVESTR:TARGET%因为阴蒂被穿环的痛楚不停地流着眼泪………/],
+      },
+      { src: K0, ref: '5455', any: [/\t\t\t\tELSEIF P == 16/m] },
+      { src: K0, ref: '5456', any: [/「讨厌…舌环…请取下来吧………」/] },
+      {
+        src: K0,
+        ref: '5457',
+        any: [/%SAVESTR:TARGET%的舌尖被穿了环、痛的流下泪来………/],
+      },
+      { src: K0, ref: '5459', any: [/\t\t\t\tELSEIF P == 32/m] },
+      { src: K0, ref: '5460', any: [/「够了…请饶了我吧………」/] },
+      {
+        src: K0,
+        ref: '5461',
+        any: [/%SAVESTR:TARGET%的唇被穿了环、流下了屈辱的泪水………/],
+      },
+      { src: K0, ref: '5463', any: [/\t\t\t\tELSEIF P == 64/m] },
+      {
+        src: K0,
+        ref: '5464',
+        any: [/「%SELF_CALL\(TARGET\)%才不是…你说的什么母猪…呜呜呜～」/],
+      },
+      {
+        src: K0,
+        ref: '5465',
+        any: [
+          /%SAVESTR:TARGET%不想被看到鼻环似的毫不犹豫的背过脸去流下了眼泪………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5468-5469',
+        any: [/%SAVESTR:TARGET%擦拭着取下环后的伤痕………/],
+      },
+      { src: K0, ref: '5471', any: [/\t\t\tCFLAG:348 = 2/m] },
     ],
   },
 

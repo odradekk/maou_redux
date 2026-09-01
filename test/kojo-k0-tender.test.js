@@ -229,11 +229,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 87; // 穿环——口系指令落地后改用尚未填的指令
+    era_flag.selectcom = 4; // COM4 原作无口上；COM87 穿环落地后改用未填指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 87 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 4 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -4055,6 +4055,133 @@ test('强制口交二次：淫乱写 5 / 黑心 / 阈值闸', async () => {
   });
   await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:7', 1); // CFLAG:7 & P，P=1 乳头
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 1;
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('乳头就可以拉伸了')),
+  );
+  assert.equal(fixture.store.get('cflag:31:348'), 1, '穿环首次推进到 1');
+});
+
+test('穿环首次：淫乱 + 阴核位（P=8）走 阴核(TARGET) 插值', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:7', 8); // CFLAG:7 & P，P=8 阴核
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 8;
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('像为了展示阴核上的环似的左右摇晃着腰身')),
+  );
+  assert.equal(fixture.store.get('cflag:31:348'), 1);
+});
+
+test('穿环首次：淫乱取下（CFLAG:7 无对应位）', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:7', 0);
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 1;
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), ['琼抚摸着取掉环后留下的伤痕………']);
+  assert.equal(fixture.store.get('cflag:31:348'), 1);
+});
+
+test('穿环二次：淫乱写 4 / 阈值闸', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:348', 1);
+    f.store.set('cflag:31:7', 1);
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 1;
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('乳头就可以拉伸了')),
+  );
+  assert.equal(fixture.store.get('cflag:31:348'), 4, '穿环二次淫乱写 4');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:348', 3);
+    f.store.set('cflag:31:7', 1);
+    f.store.set('flag:7', 1);
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 1;
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=3 且 FLAG:7==1 仍出声（门槛是 <=3）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:348'), 4);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:348', 4);
+    f.store.set('cflag:31:7', 1);
+    f.store.set('flag:7', 1);
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 1;
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('穿环二次：爱慕写 3 / 阴茎位走鸡鸡支', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('talent:31:85', 1);
+    f.store.set('talent:31:122', 1); // 男人 → 阴茎支
+    f.store.set('cflag:31:348', 1);
+    f.store.set('cflag:31:7', 8);
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 8;
+  });
+  await speak_k0(fixture);
+  assert.ok(fixture.text_lines().some((line) => line.includes('鸡鸡')));
+  assert.equal(fixture.store.get('cflag:31:348'), 3, '穿环二次爱慕写 3');
+});
+
+test('穿环二次：それ以外写 2', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 87;
+    f.store.set('cflag:31:348', 1);
+    f.store.set('cflag:31:7', 1);
+    const { piercing_state } = f.load_module('system/train/com-hardcore');
+    piercing_state.p = 1;
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('竟然被这样的侮辱了')),
+  );
+  assert.equal(fixture.store.get('cflag:31:348'), 2, '穿环二次それ以外写 2');
 });
 
 // —— 存根清单核对 ——

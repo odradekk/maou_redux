@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈 / 乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 深喉 / 强制口交分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈 / 乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 深喉 / 强制口交 / 穿环分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -44,7 +44,8 @@
  *     乳夹口交 CFLAG:360 :4763-4838；口交时自慰 CFLAG:361 :4842-4897；
  *     手搓口交 CFLAG:362 :4902-4957；真空口交 CFLAG:363 :4963-5018；
  *     六九式 CFLAG:364 :5023-5076；深喉 CFLAG:365 :5081-5138（二次门槛读 CFLAG:363）；
- *     强制口交 CFLAG:381 :5143-5192）
+ *     强制口交 CFLAG:381 :5143-5192；
+ *     穿环 CFLAG:348 :5199-5475，部位位域 CFLAG:7 & piercing_state.p）
  *
  * == 状态机（CFLAG:301，个位数推进） ==
  *
@@ -64,12 +65,13 @@
  * 与 SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
  * 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
- * 44, 45, 46, 55, 56, 87（17 在原文已注释；口系 69/80/123–127 已落地）。
+ * 44, 45, 46, 55, 56（17 在原文已注释；口系 69/80/123–127 与穿环 87 已落地）。
  */
 
 const era = require('#/era-electron');
 
 const { on, TIER } = require('#/system/event/registry');
+const { piercing_state } = require('#/system/train/com-hardcore');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { kojo_message_com_family } = require('#/kojo/kojo-system');
@@ -113,7 +115,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-5192）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈 / 乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 深喉 / 强制口交。
+ * @KOJO_MESSAGE_COM_0（:674-5475）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈 / 乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 深喉 / 强制口交 / 穿环。
  *
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
  * 崩坏 → 兽奸（专用口上）→ 触手。
@@ -130,6 +132,9 @@ async function kojo_message_com_0(rand) {
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   const scf = () => self_call_first(target); // %SELF_CALL_FIRST(TARGET)%
+  // %阴核(TARGET)%（魔改新增/文本校正.ERB @阴核）：TALENT:122 则「阴茎」否则「阴核」
+  const clitoris_word = (cid) =>
+    (era.get(`talent:${cid}:122`) || 0) !== 0 ? '阴茎' : '阴核';
   const master_name = chara_name(0); // %NAME:MASTER%（MASTER 恒角色 0）
   const kojo = chara(target).kojo;
 
@@ -2725,7 +2730,7 @@ async function kojo_message_com_0(rand) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
         era.get(`talent:${target}:75`) === 1 &&
-        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+        (kojo.背后位 <= 8 || game.kojo.口上开关 === 2)
       ) {
         // :2280-2282
         if (rand_n(3) === 0) {
@@ -8158,6 +8163,473 @@ async function kojo_message_com_0(rand) {
       }
       return 0;
     }
+  }
+
+  // :5199 IF SELECTCOM == 87（穿环，CFLAG:348；部位位域 piercing_state.p）
+  if (era_flag.selectcom === 87) {
+    const assi = era_flag.assi;
+    const assiplay = era_flag.assiplay;
+    const p = piercing_state.p;
+    const train = chara(target).train;
+
+    if (kojo.穿环 === 0) {
+      // :5202
+      if (assi > 0 && assiplay) {
+        // :5204
+        era.print(''); // :5205
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // :5207
+        if (train.穿环位图 & p) {
+          // :5209
+          await era.printAndWait(
+            `${target_name}因为肌肤头一次被开洞而痛得禁不住悲鸣起来。`,
+          ); // :5210
+          if (p === 1) {
+            // :5212
+            await era.printAndWait(
+              `「啊啊～！…哈啊…哈啊…这样一来乳头就可以拉伸了…请好好疼爱………${heart(1)}」`,
+            ); // :5213
+            await era.printAndWait(
+              `${target_name}像为了展示因为痛苦而勃起的乳头和环似的挺起了胸部………`,
+            ); // :5214
+          } else if (p === 2) {
+            // :5216
+            await era.printAndWait(
+              `「嗯～…额呵呵、不只是肚脐…我还想要更多的环${heart(1)}」`,
+            ); // :5217
+            await era.printAndWait(`${target_name}这样说着用舌头舔了舔嘴唇………`); // :5218
+          } else if (p === 4) {
+            // :5220
+            await era.printAndWait(
+              `「啊啊～…好、好厉害…只是被风一吹…就感觉一颤一颤的…${heart(1)}」`,
+            ); // :5221
+            await era.printAndWait(
+              `${target_name}在阴唇上被穿了环、因为这一刺激而战栗着身体………`,
+            ); // :5222
+          } else if (p === 8) {
+            // :5224
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :5225
+              await era.printAndWait(
+                `「啊啊啊～…被这样弄的话会兴奋过头的、会一直勃起的…${heart(1)}」`,
+              ); // :5226
+              await era.printAndWait(
+                `${target_name}在阴茎上被穿了环、阴茎持续地勃起着………`,
+              ); // :5227
+            } else {
+              await era.printAndWait(
+                `「如何…这淫乱的环…这可是和淫乱的小穴相称的环哦…${heart(1)}」`,
+              ); // :5228-5229
+              await era.printAndWait(
+                `${target_name}像为了展示${clitoris_word(target)}上的环似的左右摇晃着腰身………`,
+              ); // :5230
+            }
+          } else if (p === 16) {
+            // :5233
+            await era.printAndWait(
+              `「嘻嘻…真想就这样舔舔大肉棒试试呢…嘞咯～${heart(1)}」`,
+            ); // :5234
+            await era.printAndWait(
+              `${target_name}像为了展示舌尖上的环似的下流的舔了舔嘴唇………`,
+            ); // :5235
+          } else if (p === 32) {
+            // :5237
+            await era.printAndWait(`「额呵呵～…很时尚吧？」`); // :5238
+            await era.printAndWait(
+              `${target_name}舔着唇上的环好像在确认情况的样子………`,
+            ); // :5239
+          } else if (p === 64) {
+            // :5241
+            await era.printAndWait(
+              `「啊啊…${sc()}是为主人而生的、淫乱的母猪哦${heart(1)}」`,
+            ); // :5242
+            await era.printAndWait(`${target_name}不停地翕动着鼻环………`); // :5243
+          }
+        } else {
+          await era.printAndWait(`${target_name}抚摸着取掉环后留下的伤痕………`); // :5246-5247
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :5250
+        if (train.穿环位图 & p) {
+          // :5252
+          await era.printAndWait(
+            `${target_name}因为肌肤头一次被开洞而痛得小声地悲鸣起来………`,
+          ); // :5253
+          if (p === 1) {
+            // :5255
+            await era.printAndWait(
+              `「啊啊…已经再也不会在主人面前一丝不挂了…啊啊～${heart(1)}」`,
+            ); // :5256
+            await era.printAndWait(
+              `${target_name}装在勃起的双乳头上的环在闪闪发光………`,
+            ); // :5257
+          } else if (p === 2) {
+            // :5259
+            await era.printAndWait(`「这就是所谓的时尚吧…嗯～…」`); // :5260
+            await era.printAndWait(`${target_name}抚摸着被穿环的肚脐的周边………`); // :5261
+          } else if (p === 4) {
+            // :5263
+            await era.printAndWait(
+              `「啊啊啊～！请…请不要这样拉扯啊…咿～～！」`,
+            ); // :5264
+            await era.printAndWait(
+              `${target_name}因为被拉扯穿环而扩张开的阴唇而悲鸣起来………`,
+            ); // :5265
+          } else if (p === 8) {
+            // :5267
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :5268
+              await era.printAndWait(
+                `「${sc()}的鸡鸡…变的…这么漂亮了呢…${heart(1)}」`,
+              ); // :5269
+              await era.printAndWait(
+                `${target_name}的鸡鸡因为被穿环的痛楚与兴奋而挺立起来………`,
+              ); // :5270
+            } else {
+              await era.printAndWait(
+                `「啊啊…这种地方被穿了环的话…${sc()}…就没办法不去想主人的事情了…${heart(1)}」`,
+              ); // :5271-5272
+              await era.printAndWait(
+                `${target_name}因为阴蒂被穿环而兴奋不已的样子………`,
+              ); // :5273
+            }
+          } else if (p === 16) {
+            // :5276
+            await era.printAndWait(
+              `「呐…亲我～…有点担心能不能和主人好好接吻呢…${heart(1)}」`,
+            ); // :5277
+            await era.printAndWait(
+              `${target_name}咂着被穿环的舌头蠢蠢欲动的诱惑着……`,
+            ); // :5278
+          } else if (p === 32) {
+            // :5280
+            await era.printAndWait(`「呐…请亲亲我的嘴唇吧…${heart(1)}」`); // :5281
+            await era.printAndWait(
+              `${target_name}舔着唇上的环好像在确认情况的样子………`,
+            ); // :5282
+          } else if (p === 64) {
+            // :5284
+            await era.printAndWait(
+              `「啊啊…${sc()}是主人的母猪～…${heart(1)}」`,
+            ); // :5285
+            await era.printAndWait(
+              `${target_name}因为被穿了鼻环而兴奋地喘着粗气………`,
+            ); // :5286
+          }
+        } else {
+          await era.printAndWait(
+            `${target_name}好像有点寂寞的抚摸着取掉环后的伤痕………`,
+          ); // :5289-5290
+        }
+      } else {
+        if (train.穿环位图 & p) {
+          // :5293-5295
+          await era.printAndWait(
+            `${target_name}因为肌肤头一次被开洞而痛得悲鸣起来、流下了眼泪。`,
+          ); // :5296
+          if (p === 1) {
+            // :5298
+            await era.printAndWait(
+              `「竟然…${sc()}竟然被这样的侮辱了…呜呜～………」`,
+            ); // :5299
+            await era.printAndWait(
+              `${target_name}因为乳头被穿环的痛楚而流下了屈辱的眼泪………`,
+            ); // :5300
+          } else if (p === 2) {
+            // :5302
+            await era.printAndWait(`「呜呜～…痛、好痛………」`); // :5303
+            await era.printAndWait(
+              `${target_name}因为肚脐被穿环的痛楚而泪流满面………`,
+            ); // :5304
+          } else if (p === 4) {
+            // :5306
+            await era.printAndWait(
+              `「啊啊～…取下来…快取下来…已经…受不了了………」`,
+            ); // :5307
+            await era.printAndWait(
+              `${target_name}因为阴唇被穿环的痛苦而流下了屈辱的眼泪………`,
+            ); // :5308
+          } else if (p === 8) {
+            // :5310
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :5311
+              await era.printAndWait(
+                `「请、请不要再做这种事情了…啊啊～…为什么…要做这种亵渎的事…呜！」`,
+              ); // :5312
+              await era.printAndWait(
+                `${target_name}因为鸡鸡被穿环的痛楚不停地流着眼泪………`,
+              ); // :5313
+            } else {
+              await era.printAndWait(
+                `「啊啊～…请把环取下来吧…好痛…要疯了…呜！」`,
+              ); // :5314-5315
+              await era.printAndWait(
+                `${target_name}因为阴蒂被穿环的痛楚不停地流着眼泪………`,
+              ); // :5316
+            }
+          } else if (p === 16) {
+            // :5319
+            await era.printAndWait(`「讨厌…舌环…请取下来吧………」`); // :5320
+            await era.printAndWait(
+              `${target_name}的舌尖被穿了环、痛的流下泪来………`,
+            ); // :5321
+          } else if (p === 32) {
+            // :5323
+            await era.printAndWait(`「够了…请饶了我吧………」`); // :5324
+            await era.printAndWait(
+              `${target_name}的唇被穿了环、流下了屈辱的泪水………`,
+            ); // :5325
+          } else if (p === 64) {
+            // :5327
+            await era.printAndWait(`「${sc()}才不是…你说的什么母猪…呜呜呜～」`); // :5328
+            await era.printAndWait(
+              `${target_name}不想被看到鼻环似的毫不犹豫的背过脸去流下了眼泪………`,
+            ); // :5329
+          }
+        } else {
+          await era.printAndWait(`${target_name}擦拭着取下环后的伤痕………`); // :5332-5333
+        }
+      }
+      kojo.穿环 = 1; // :5336-5337
+      return 0;
+    } else {
+      if (assi > 0 && assiplay) {
+        // :5339-5341
+        era.print(''); // :5342
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.穿环 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :5344
+        if (train.穿环位图 & p) {
+          // :5346
+          if (p === 1) {
+            // :5348
+            await era.printAndWait(
+              `「啊啊～！…哈啊…哈啊…这样一来乳头就可以拉伸了…请好好疼爱………${heart(1)}」`,
+            ); // :5349
+            await era.printAndWait(
+              `${target_name}像为了展示因为痛苦而勃起的乳头和环似的挺起了胸部………`,
+            ); // :5350
+          } else if (p === 2) {
+            // :5352
+            await era.printAndWait(
+              `「嗯～…额呵呵、不只是肚脐…我还想要更多的环${heart(1)}」`,
+            ); // :5353
+            await era.printAndWait(`${target_name}这样说着用舌头舔了舔嘴唇………`); // :5354
+          } else if (p === 4) {
+            // :5356
+            await era.printAndWait(
+              `「啊啊～…好、好厉害…只是被风一吹…就感觉一颤一颤的…${heart(1)}」`,
+            ); // :5357
+            await era.printAndWait(
+              `${target_name}在阴唇上被穿了环、因为这一刺激而战栗着身体………`,
+            ); // :5358
+          } else if (p === 8) {
+            // :5360
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :5361
+              await era.printAndWait(
+                `「啊啊啊～…被这样弄的话会兴奋过头的、会一直勃起的…${heart(1)}」`,
+              ); // :5362
+              await era.printAndWait(
+                `${target_name}在阴茎上被穿了环、阴茎持续地勃起着………`,
+              ); // :5363
+            } else {
+              await era.printAndWait(
+                `「如何…这淫乱的环…这可是和淫乱的小穴相称的环哦…${heart(1)}」`,
+              ); // :5364-5365
+              await era.printAndWait(
+                `${target_name}像为了展示${clitoris_word(target)}上的环似的左右摇晃着腰身………`,
+              ); // :5366
+            }
+          } else if (p === 16) {
+            // :5369
+            await era.printAndWait(
+              `「嘻嘻…真想就这样舔舔大肉棒试试呢…嘞咯～${heart(1)}」`,
+            ); // :5370
+            await era.printAndWait(
+              `${target_name}像为了展示舌尖上的环似的下流的舔了舔嘴唇………`,
+            ); // :5371
+          } else if (p === 32) {
+            // :5373
+            await era.printAndWait(`「额呵呵～…很时尚吧？」`); // :5374
+            await era.printAndWait(
+              `${target_name}舔着唇上的环好像在确认情况的样子………`,
+            ); // :5375
+          } else if (p === 64) {
+            // :5377
+            await era.printAndWait(
+              `「啊啊…${sc()}是为主人而生的、淫乱的母猪哦${heart(1)}」`,
+            ); // :5378
+            await era.printAndWait(`${target_name}不停地翕动着鼻环………`); // :5379
+          }
+        } else {
+          await era.printAndWait(`${target_name}抚摸着取掉环后留下的伤痕………`); // :5382-5383
+        }
+        kojo.穿环 = 4; // :5385
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.穿环 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :5387
+        if (train.穿环位图 & p) {
+          // :5389
+          if (p === 1) {
+            // :5391
+            await era.printAndWait(
+              `「啊啊…已经再也不会在主人面前一丝不挂了…啊啊～${heart(1)}」`,
+            ); // :5392
+            await era.printAndWait(
+              `${target_name}装在勃起的双乳上的环在闪闪发光………`,
+            ); // :5393
+          } else if (p === 2) {
+            // :5395
+            await era.printAndWait(`「额呵呵、好像很时尚呢…♪」`); // :5396
+            await era.printAndWait(`${target_name}抚摸着被穿环的肚脐的周边………`); // :5397
+          } else if (p === 4) {
+            // :5399
+            await era.printAndWait(
+              `「啊啊啊～！请…请不要这样拉扯啊…咿～～！」`,
+            ); // :5400
+            await era.printAndWait(
+              `${target_name}因为被拉扯穿环而扩张开的阴唇而悲鸣起来………`,
+            ); // :5401
+          } else if (p === 8) {
+            // :5403
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :5404
+              await era.printAndWait(
+                `「${sc()}的鸡鸡…变的…这么漂亮了呢…${heart(1)}」`,
+              ); // :5405
+              await era.printAndWait(
+                `${target_name}的鸡鸡因为被穿环的痛楚与兴奋而挺立起来………`,
+              ); // :5406
+            } else {
+              await era.printAndWait(
+                `「啊啊…这种地方被穿了环的话…${sc()}…就没办法不去想主人的事情了…${heart(1)}」`,
+              ); // :5407-5408
+              await era.printAndWait(
+                `${target_name}因为阴蒂被穿环而兴奋不已的样子………`,
+              ); // :5409
+            }
+          } else if (p === 16) {
+            // :5412
+            await era.printAndWait(
+              `「呐…亲我～…有点担心能不能和主人好好接吻呢…${heart(1)}」`,
+            ); // :5413
+            await era.printAndWait(
+              `${target_name}咂着被穿环的舌头蠢蠢欲动的诱惑着……`,
+            ); // :5414
+          } else if (p === 32) {
+            // :5416
+            await era.printAndWait(`「呐…请亲亲我的嘴唇吧…${heart(1)}」`); // :5417
+            await era.printAndWait(
+              `${target_name}舔着唇上的环好像在确认情况的样子………`,
+            ); // :5418
+          } else if (p === 64) {
+            // :5420
+            await era.printAndWait(
+              `「啊啊…${sc()}是主人的母猪～…${heart(1)}」`,
+            ); // :5421
+            await era.printAndWait(
+              `${target_name}因为被穿了鼻环而兴奋地喘着粗气………`,
+            ); // :5422
+          }
+        } else {
+          await era.printAndWait(
+            `${target_name}好像有点寂寞的抚摸着取掉环后的痕迹………`,
+          ); // :5425-5426
+        }
+        kojo.穿环 = 3; // :5428
+      } else if (kojo.穿环 <= 1 || game.kojo.口上开关 === 2) {
+        // :5430
+        if (train.穿环位图 & p) {
+          // :5432
+          if (p === 1) {
+            // :5434
+            await era.printAndWait(
+              `「竟然…${sc()}竟然被这样的侮辱了…呜呜～………」`,
+            ); // :5435
+            await era.printAndWait(
+              `${target_name}因为乳头被穿环的痛楚而屈辱地流下了眼泪………`,
+            ); // :5436
+          } else if (p === 2) {
+            // :5438
+            await era.printAndWait(`「呜呜～…痛、好痛………」`); // :5439
+            await era.printAndWait(
+              `${target_name}因为肚脐被穿环的痛楚而泪流满面………`,
+            ); // :5440
+          } else if (p === 4) {
+            // :5442
+            await era.printAndWait(
+              `「啊啊～…取下来…快取下来…已经…受不了了………」`,
+            ); // :5443
+            await era.printAndWait(
+              `${target_name}因为阴唇被穿环的痛苦而流下了屈辱的眼泪………`,
+            ); // :5444
+          } else if (p === 8) {
+            // :5446
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :5447
+              await era.printAndWait(
+                `「请、请不要再做这种事情了…啊啊～…为什么…要做这种亵渎的事…呜！」`,
+              ); // :5448
+              await era.printAndWait(
+                `${target_name}因为鸡鸡被穿环的痛楚不停地流着眼泪………`,
+              ); // :5449
+            } else {
+              await era.printAndWait(
+                `「啊啊～…请把环取下来吧…好痛…要疯了…呜！」`,
+              ); // :5450-5451
+              await era.printAndWait(
+                `${target_name}因为阴蒂被穿环的痛楚不停地流着眼泪………`,
+              ); // :5452
+            }
+          } else if (p === 16) {
+            // :5455
+            await era.printAndWait(`「讨厌…舌环…请取下来吧………」`); // :5456
+            await era.printAndWait(
+              `${target_name}的舌尖被穿了环、痛的流下泪来………`,
+            ); // :5457
+          } else if (p === 32) {
+            // :5459
+            await era.printAndWait(`「够了…请饶了我吧………」`); // :5460
+            await era.printAndWait(
+              `${target_name}的唇被穿了环、流下了屈辱的泪水………`,
+            ); // :5461
+          } else if (p === 64) {
+            // :5463
+            await era.printAndWait(`「${sc()}才不是…你说的什么母猪…呜呜呜～」`); // :5464
+            await era.printAndWait(
+              `${target_name}不想被看到鼻环似的毫不犹豫的背过脸去流下了眼泪………`,
+            ); // :5465
+          }
+        } else {
+          await era.printAndWait(`${target_name}擦拭着取下环后的伤痕………`); // :5468-5469
+        }
+        kojo.穿环 = 2; // :5471
+      }
+    }
+    return 0;
   }
 
   // 其余指令待办，占位一行

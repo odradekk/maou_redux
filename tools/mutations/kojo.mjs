@@ -2522,4 +2522,106 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '强制口交二次：淫乱写 5 / 黑心 / 阈值闸',
   },
+  {
+    desc: 'M1947 K0 穿环首次状态推进写错（CFLAG:348 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.穿环 = 1; // :5336-5337',
+    replace: '      kojo.穿环 = 2; // :5336-5337',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次推进到 1',
+  },
+  {
+    desc: 'M1948 K0 穿环二次淫乱写回错档（CFLAG:348 = 4 改 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.穿环 = 4; // :5385',
+    replace: '        kojo.穿环 = 3; // :5385',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次淫乱写 4',
+  },
+  {
+    desc: 'M1949 K0 穿环二次淫乱门槛错位（CFLAG:348 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.穿环 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :5344`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.穿环 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :5344`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次：淫乱写 4 / 阈值闸',
+  },
+  {
+    desc: 'M1950 K0 穿环二次爱慕写回错档（CFLAG:348 = 3 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.穿环 = 3; // :5428',
+    replace: '        kojo.穿环 = 2; // :5428',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次爱慕写 3',
+  },
+  {
+    desc: 'M1951 K0 穿环二次それ以外写回错档（CFLAG:348 = 2 改 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.穿环 = 2; // :5471',
+    replace: '        kojo.穿环 = 1; // :5471',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次それ以外写 2',
+  },
+  {
+    desc: 'M1952 K0 穿环首次 CFLAG:7 位图闸改恒真（取下支失效）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        if (train.穿环位图 & p) {
+          // :5209`,
+    replace: `        if (true) {
+          // :5209`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次：淫乱取下（CFLAG:7 无对应位）',
+  },
+  {
+    desc: 'M1953 K0 穿环 阴核(TARGET) 插值恒改成阴茎（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  const clitoris_word = (cid) =>
+    (era.get(\`talent:\${cid}:122\`) || 0) !== 0 ? '阴茎' : '阴核';`,
+    replace: `  const clitoris_word = (cid) =>
+    (era.get(\`talent:\${cid}:122\`) || 0) !== 0 ? '阴茎' : '阴茎';`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴核(TARGET) 插值',
+  },
+  {
+    desc: 'M1954 K0 穿环二次爱慕阴茎支 TALENT:122 错格（改 123）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `            if (
+              era.get(\`talent:\${target}:121\`) ||
+              era.get(\`talent:\${target}:122\`)
+            ) {
+              // :5404`,
+    replace: `            if (
+              era.get(\`talent:\${target}:121\`) ||
+              era.get(\`talent:\${target}:123\`)
+            ) {
+              // :5404`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次：爱慕写 3 / 阴茎位走鸡鸡支',
+  },
+  {
+    desc: 'M1955 K0 穿环首次乳头位 P==1 改 P==2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          if (p === 1) {
+            // :5212`,
+    replace: `          if (p === 2) {
+            // :5212`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
+  },
+  {
+    desc: 'M1956 K0 穿环首次淫乱素质判据错格（TALENT:76 改 77）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // :5207`,
+    replace: `      } else if (era.get(\`talent:\${target}:77\`) === 1) {
+        // :5207`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
+  },
 ];
