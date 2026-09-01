@@ -35,10 +35,15 @@ let leftover_a = 0;
  */
 let leftover_q = 0;
 /**
- * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写，SELF_KOJO（K6 等）读
- * （调教后性交口上 `{S}` 回中出次数）。
+ * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写次数，SELF_KOJO 的
+ * 调教后性交支读 `s`（K5 :6223 源文就是小写 s；K6 的 SELF_KOJO 同读）。
  */
 let leftover_s = 0;
+/**
+ * 原作 S 在出售链是卖出价。SELL_CHARA 写完再 CALL SELF_KOJO；
+ * 出售主体未移植时由测试写入。
+ */
+let leftover_sale = 0;
 
 /**
  * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
@@ -49,11 +54,35 @@ function peek_aftertrain_q() {
 }
 
 /**
- * SELF_KOJO 读的原作 S（AFTERTRAIN 性交检查的回数）。
+ * SELF_KOJO 读的原作性交次数 S（K5 源文 :6223 写作小写 s）。
  * @returns {number}
  */
 function peek_aftertrain_s() {
   return leftover_s;
+}
+
+/**
+ * SELF_KOJO 出售支读的原作卖出价 S（K5 :6250 注释「Sは売却値」）。
+ * @returns {number}
+ */
+function peek_sale_price() {
+  return leftover_sale;
+}
+
+/**
+ * 出售主体未移植前，测试写入卖出价（原作 SELL_CHARA 的 S）。
+ * @param {number} v
+ */
+function remember_sale_price(v) {
+  leftover_sale = v;
+}
+
+/**
+ * AFTERTRAIN 性交检查未跑时，测试写入性交回数（原作 S / K5 源文 s）。
+ * @param {number} v
+ */
+function remember_aftertrain_s(v) {
+  leftover_s = v;
 }
 
 /**
@@ -740,5 +769,8 @@ module.exports = {
   aftertrain_sex_check,
   peek_aftertrain_q,
   peek_aftertrain_s,
+  peek_sale_price,
+  remember_aftertrain_s,
+  remember_sale_price,
   self_check,
 };
