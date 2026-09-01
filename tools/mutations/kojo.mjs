@@ -1762,4 +1762,81 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: 'CFLAG:302 推进到 1',
   },
+  {
+    desc: 'M1820 K8 SELECTCOM 2 阿纳尔爱撫初回推进写错（CFLAG:303 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.肛门爱抚 = 1; // :1028 CFLAG:TARGET:303 = 1',
+    replace: '      kojo.肛门爱抚 = 0; // :1028 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:303 推进到 1',
+  },
+  {
+    desc: 'M1821 K8 SELECTCOM 2 淫乱+润滑Lv2以上推进写错（CFLAG:303 = 7 改 6，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        kojo.肛门爱抚 = 7; // :1039 CFLAG:303 = 7',
+    replace: '        kojo.肛门爱抚 = 6; // :1039 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:303 推进到 7',
+  },
+  {
+    desc: 'M1822 K8 SELECTCOM 3 自慰初回推进写错（CFLAG:304 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.自慰 = 1; // :1080 CFLAG:TARGET:304 = 1',
+    replace: '      kojo.自慰 = 0; // :1080 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:304 推进到 1',
+  },
+  {
+    desc: 'M1823 K8 SELECTCOM 5 母乳体质判定丢失（TALENT:130 条件删除，恒真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `    const milk_body =
+      era0(\`talent:\${target}:130\`) == 1 &&
+      palam(5) > era0('palamlv:3') &&
+      era0(\`tequip:\${target}:16\`) == 0 &&
+      era0(\`tequip:\${target}:15\`) == 0; // :1188 母乳体质有效条件`,
+    replace: '    const milk_body = true; // 变异：条件删除，恒真',
+    tests: ['kojo-k8-spade'],
+    must_mention: '非母乳体质',
+  },
+  {
+    desc: 'M1824 K8 SELECTCOM 6 初吻门槛丢失（TFLAG:13 判定删除，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: "    if (kojo.接吻 == 0 && era0('tflag:13')) {",
+    replace: '    if (kojo.接吻 == 0 && true) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1825 K8 SELECTCOM 7 二回目分支寻址被"修正"（源作误写 CFLAG:306 改回 CFLAG:308，破坏 1:1 保真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.胸爱抚 = 2; // :1444 CFLAG:306 = 2',
+    replace: '      kojo.自己扒开 = 2; // :1444（变异：误"修正"寻址）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2，复现源作寻址错误',
+  },
+  {
+    desc: 'M1826 K8 SELECTCOM 8 それ以外分支删除（CFLAG:309 <= 1 守卫改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 == 2) {\n      // :1489-1490 それ以外',
+    replace:
+      '    } else if (false) {\n      // :1489-1490 それ以外（变异：守卫删除）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '那里…被这样玩弄的话',
+  },
+  {
+    desc: 'M1827 K8 SELECTCOM 9 舔肛初回推进写错（CFLAG:310 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.舔肛 = 1; // :1513 CFLAG:TARGET:310 = 1',
+    replace: '      kojo.舔肛 = 0; // :1513 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:310 推进到 1',
+  },
+  {
+    desc: 'M1828 K8 SELECTCOM 10 淫乱推进写错（CFLAG:311 = 5 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.振动宝石 = 5; // :1569 CFLAG:311 = 5',
+    replace: '      kojo.振动宝石 = 4; // :1569 变异',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
