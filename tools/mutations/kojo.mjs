@@ -394,4 +394,302 @@ export default [
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
     must_mention: 'TALENT:122 置位 → 哥哥臂',
   },
+  // —— #235（J25）：K4 冷徹 口上模块（M1750-M1789 号段） ——
+  {
+    desc: 'M1750 K4 COM 口塞守卫删（TEQUIP:45 不再跳过，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0;
+  }`,
+    replace: `  if (false && era_flag.selectcom != 45) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
+  },
+  {
+    desc: 'M1751 K4 COM 失神守卫删（TFLAG:899 不再跳过，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0;
+  }
+
+  if (era0('tflag:899')) {
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0;
+  }
+
+  if (false) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '失神（TFLAG:899）：静默跳过',
+  },
+  {
+    desc: 'M1752 K4 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_4，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:89\`)) {
+    await dog_kojo_4(); // :533 CALL DOG_KOJO_4
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:89\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_4',
+  },
+  {
+    desc: 'M1753 K4 触手守卫删（TEQUIP:90 不再跳过，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:90\`)) {
+    return 0;
+  }`,
+    replace: `  if (false) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '触手（TEQUIP:90）：静默跳过',
+  },
+  {
+    desc: 'M1754 K4 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_4，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  if (era0(\`tequip:\${target}:55\`)) {
+    await colosseum_kojo_4(); // :541 CALL COLOSSEUM_KOJO_4
+    return 0;
+  }`,
+    replace: `  if (era0(\`tequip:\${target}:55\`)) {
+    return 0;
+  }`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_4',
+  },
+  {
+    desc: 'M1755 K4 爱撫初回刻印分档删（MARK:2 >= 2 臂丢失，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `      if (era0(\`mark:\${target}:2\`) >= 2) {
+        await era.printAndWait(\`「唔～唔……」「哼，这不挺配合的嘛！」\`); // :556
+      } else {`,
+    replace: `      if (era0(\`mark:\${target}:2\`) >= 3) {
+        await era.printAndWait(\`「唔～唔……」「哼，这不挺配合的嘛！」\`); // :556 变异
+      } else {`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '爱撫初回的刻印分档（MARK:2 >= 2）：配合台词',
+  },
+  {
+    desc: 'M1756 K4 爱撫初回推进写错（CFLAG:301 = 1 改 2，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「讨厌！这变态！」\`); // :559
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 1);
+      return 0;`,
+    replace: `        await era.printAndWait(\`「讨厌！这变态！」\`); // :559
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 2);
+      return 0;`,
+    tests: ['kojo-k4-stoic'],
+    must_mention:
+      '爱撫初回（CFLAG:301 == 0 且 MARK:2 < 2）：一句拒绝 + 推进到 1',
+  },
+  {
+    desc: 'M1757 K4 爱撫淫乱档推进写错（CFLAG:301 = 6 改 5，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `          \`「唔…噢～…再弄，再弄我……胸，胸部也好……那里！……还有屁股，再揉啊～～…」\`,
+        ); // :567
+        // CFLAG:301  = 6（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 6);`,
+    replace: `          \`「唔…噢～…再弄，再弄我……胸，胸部也好……那里！……还有屁股，再揉啊～～…」\`,
+        ); // :567
+        // CFLAG:301  = 6（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 5);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '淫乱 TALENT:76 → CFLAG:301 = 6',
+  },
+  {
+    desc: 'M1758 K4 爱撫爱慕档推进写错（CFLAG:301 = 5 改 4，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `          \`「那么细腻，温柔的手法……人家会……啊！……噢～啊啊！……有，有感觉了～～…」\`,
+        ); // :571
+        // CFLAG:301  = 5（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 5);`,
+    replace: `          \`「那么细腻，温柔的手法……人家会……啊！……噢～啊啊！……有，有感觉了～～…」\`,
+        ); // :571
+        // CFLAG:301  = 5（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 4);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '爱慕 TALENT:85 → CFLAG:301 = 5',
+  },
+  {
+    desc: 'M1759 K4 爱撫屈服Lv3档推进写错（CFLAG:301 = 4 改 3，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「啊…好…那里……」\`); // :575
+        // CFLAG:301  = 4（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 4);`,
+    replace: `        await era.printAndWait(\`「啊…好…那里……」\`); // :575
+        // CFLAG:301  = 4（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 3);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '屈服刻印Lv3 → 4',
+  },
+  {
+    desc: 'M1760 K4 爱撫屈服Lv2档推进写错（CFLAG:301 = 3 改 2，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「快住手啊……再这样摸的话……我会………」\`); // :579
+        // CFLAG:301  = 3（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 3);`,
+    replace: `        await era.printAndWait(\`「快住手啊……再这样摸的话……我会………」\`); // :579
+        // CFLAG:301  = 3（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 2);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '屈服刻印Lv2 → 3',
+  },
+  {
+    desc: 'M1761 K4 爱撫それ以外档推进写错（CFLAG:301 = 2 改 1，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「变态！！…完全不舒服，不要再摸了！」\`); // :583
+        // CFLAG:301  = 2（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 2);`,
+    replace: `        await era.printAndWait(\`「变态！！…完全不舒服，不要再摸了！」\`); // :583
+        // CFLAG:301  = 2（变量语义：CFLAG 族，301）
+        era.set(\`cflag:\${target}:301\`, 1);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'それ以外（MARK:2 <= 1）→ 2',
+  },
+  {
+    desc: 'M1762 K4 阶段耗尽静默锁删（FLAG:7 == 1 时也出声，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `      if (
+        era0(\`talent:\${target}:76\`) == 1 &&
+        (era0(\`cflag:\${target}:301\`) <= 5 || era0('flag:7') == 2)
+      ) {`,
+    replace: `      if (
+        era0(\`talent:\${target}:76\`) == 1 &&
+        (era0(\`cflag:\${target}:301\`) <= 5 || era0('flag:7') == 1)
+      ) {`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '阶段耗尽后（FLAG:7 == 1）静默',
+  },
+  {
+    desc: 'M1763 K4 DOG_KOJO 初回推进写错（CFLAG:301 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        await era.printAndWait(\`「讨，讨厌！别舔啊！」\`); // :3107
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 1);
+      return 0;`,
+    replace: `        await era.printAndWait(\`「讨，讨厌！别舔啊！」\`); // :3107
+      }
+      // CFLAG:301  = 1（变量语义：CFLAG 族，301）
+      era.set(\`cflag:\${target}:301\`, 0);
+      return 0;`,
+    tests: ['kojo-k4-stoic'],
+    must_mention:
+      '兽奸爱撫初回（DOG_KOJO_4 :3101 CFLAG:301 == 0 且 MARK:2 < 2）',
+  },
+  {
+    desc: 'M1764 K4 PALAMCNG 处女丧失的 A 加算改错（UP:12 丢，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `  const A =
+    (era0(\`delta:\${target}:11\`) || 0) + (era0(\`delta:\${target}:12\`) || 0);`,
+    replace: `  const A =
+    (era0(\`delta:\${target}:11\`) || 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '处女丧失 A >= 500 落それ以外档（UP:12 参与加算）',
+  },
+  {
+    desc: 'M1765 K4 MARKCNG 苦痛刻印取得推进写错（CFLAG:297 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:297  = 1（变量语义：CFLAG 族，297）
+    era.set(\`cflag:\${target}:297\`, 1);`,
+    replace: `    // CFLAG:297  = 1（变量语义：CFLAG 族，297）
+    era.set(\`cflag:\${target}:297\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '苦痛刻印Lv3 CFLAG:297 = 1',
+  },
+  {
+    desc: 'M1766 K4 MARKCNG 快乐刻印取得推进写错（CFLAG:298 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:298  = 1（变量语义：CFLAG 族，298）
+    era.set(\`cflag:\${target}:298\`, 1);`,
+    replace: `    // CFLAG:298  = 1（变量语义：CFLAG 族，298）
+    era.set(\`cflag:\${target}:298\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '快乐刻印Lv3 CFLAG:298 = 1',
+  },
+  {
+    desc: 'M1767 K4 MARKCNG 屈服刻印取得推进写错（CFLAG:299 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:299  = 1（变量语义：CFLAG 族，299）
+    era.set(\`cflag:\${target}:299\`, 1);`,
+    replace: `    // CFLAG:299  = 1（变量语义：CFLAG 族，299）
+    era.set(\`cflag:\${target}:299\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '屈服刻印Lv3 CFLAG:299 = 1',
+  },
+  {
+    desc: 'M1768 K4 MARKCNG 反抗刻印取得推进写错（CFLAG:300 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:300  = 1（变量语义：CFLAG 族，300）
+    era.set(\`cflag:\${target}:300\`, 1);`,
+    replace: `    // CFLAG:300  = 1（变量语义：CFLAG 族，300）
+    era.set(\`cflag:\${target}:300\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '反抗刻印Lv3',
+  },
+  {
+    desc: 'M1769 K4 SELF_KOJO 调教后自慰档位写错（CFLAG:261 = 1 改 0，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `      // CFLAG:261  = 1（变量语义：CFLAG 族，261）
+      era.set(\`cflag:\${target}:261\`, 1);`,
+    replace: `      // CFLAG:261  = 1（变量语义：CFLAG 族，261）
+      era.set(\`cflag:\${target}:261\`, 0);`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '调教后自慰（TFLAG:13 == 1）：それ以外初回 → CFLAG:261 = 1',
+  },
+  {
+    desc: 'M1770 K4 SELF_KOJO 卖却分支存根丢（SELL_MATURO_K0 不落，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: "      stub_line('SELL_MATURO_K0', '卖却分支（成熟贩卖）', '随售却票');",
+    replace: '      // 变异：SELL_MATURO_K0 存根丢',
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'SELL_MATURO_K0',
+  },
+  {
+    desc: 'M1771 K4 NTR_KOUJO P == 1 的分支写错（cflag:651 推进丢，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `    // CFLAG:651  = 1（变量语义：CFLAG 族，651）
+    era.set(\`cflag:\${target}:651\`, 1);`,
+    replace: '    // 变异：cflag:651 推进丢',
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'NTR_KOUJO P == 1（处女丧失）',
+  },
+  {
+    desc: 'M1772 K4 GOBI_KOUJO ARG:0 == 1 支改错（哦～♪ 变 哦！，#235）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: '    await era.print(\`哦～♪\`); // :5434',
+    replace: '    await era.print(\`哦！\`); // :5434 变异',
+    tests: ['kojo-k4-stoic'],
+    must_mention: 'GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一',
+  },
+  {
+    desc: 'M1773 K4 主启动图删 K4 冷徹口上注册（KOJO 4 不进实际运行图，#235）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k4-stoic');",
+    replace: '// 变异：K4 冷徹口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k4-stoic',
+  },
+  {
+    desc: 'M1774 K4 插值槽位错配（CALLNAME:MASTER 与 NAME:MASTER 混，#235 保真）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        \`四脚爬爬，扭动着腰，用炽热的视线仰视着\${master_name}。\`,
+      ); // :152`,
+    replace: `        \`四脚爬爬，扭动着腰，用炽热的视线仰视着\${target_name}。\`,
+      ); // :152 变异：填错孔`,
+    tests: ['kojo-text-fidelity'],
+    must_mention: '槽位序',
+  },
 ];
