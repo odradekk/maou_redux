@@ -1673,8 +1673,8 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46,
-    55, 56, 69, 80, 87, 123, 124, 125, 126, 127,
+    27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55,
+    56, 69, 80, 87, 123, 124, 125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -4914,6 +4914,200 @@ async function kojo_message_com_8(rand) {
       ); // :2843
       await era.printAndWait(`「快、快…住手…啊…啊咕…呜…嗯嗯嗯——！」`); // :2844
       kojo.背面座位 = 2; // :2845 CFLAG:324 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 26) {
+    // :2854-2949 正常位肛交 CFLAG:327（无处女判定，按 A感覚/ABL:3 分档；二回目细分 7 档）
+    if (kojo.正常位肛交 == 0) {
+      // :2856-2889 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        // 淫乱
+        if (era0(`abl:${target}:3`) >= 3) {
+          await era.printAndWait(
+            `「啊啊…继续侵犯我的肛门吧…还想要你的阴茎…啊啊——${heart(1)}」`,
+          ); // :2860
+          await era.printAndWait(
+            `${target_name}久经开发的肛门轻易地把${player_name}的阴茎吞了下去，并紧紧的包裹住了`,
+          ); // :2861
+          await era.printAndWait(
+            `「啊嗯啊啊，肛门好舒服啊${heart(1)} 再快点，快点侵犯我吧${heart(1)}」`,
+          ); // :2862
+        } else {
+          await era.printAndWait(
+            `「嗯…咕…我的肛门…被你填满了${heart(1)} 啊啊——」`,
+          ); // :2864
+          await era.printAndWait(
+            `${player_name}贯穿了${target_name}的未开发的肛门`,
+          ); // :2865
+          await era.printAndWait(`「嗯…嗯…你还真是毫不留情啊…啊…啊…啊啊——」`); // :2866
+        }
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // 爱慕
+        if (era0(`abl:${target}:3`) >= 3) {
+          await era.printAndWait(
+            `「嗯…咕…嗯啊${heart(1)} 啊啊…你插进来了…嗯…我的肛门里…啊啊${heart(1)}」`,
+          ); // :2871
+          await era.printAndWait(
+            `${target_name}久经开发的肛门轻易地的吞下了${player_name}的阴茎`,
+          ); // :2872
+          await era.printAndWait(
+            `「嗯啊嗯啊，好好品尝…我下流的肛门吧…嗯啊${heart(1)}」`,
+          ); // :2873
+        } else {
+          await era.printAndWait(
+            `「啊咕…果、果然对我来说…稍微有些早…不过我会忍耐的…啊嗯…啊啊」`,
+          ); // :2875
+          await era.printAndWait(
+            `未被开发的肛门被贯穿，${target_name}的脸因为痛苦而扭曲着。`,
+          ); // :2876
+          await era.printAndWait(
+            `${player_name}为了继续看那样的表情而开始激烈的侵犯着肛门………`,
+          ); // :2877
+        }
+      } else {
+        // それ以外（爱無し）
+        if (era0(`abl:${target}:3`) >= 3) {
+          await era.printAndWait(
+            `「啊啊！明明都说了好几次不是该插进这里…嗯…啊啊…咕…啊啊啊啊」`,
+          ); // :2882
+          await era.printAndWait(
+            `${player_name}按住${target_name}侵犯着肛门。`,
+          ); // :2883
+          await era.printAndWait(
+            `无论多么不愿意，${target_name}被开发过的肛门都为了接受阴茎而张开着`,
+          ); // :2884
+        } else {
+          await era.printAndWait(
+            `「啊啊啊…嗯不行…不行…啊啊！不是插进这里…啊啊啊啊啊」`,
+          ); // :2886
+          await era.printAndWait(
+            `${target_name}的还未开发的肛门被${player_name}阴茎了进去，充分的侵犯着……`,
+          ); // :2887
+        }
+      }
+      kojo.正常位肛交 = 1; // :2890 CFLAG:TARGET:327 = 1
+      return 0;
+    }
+    // :2893-2947 二回目以降（七档：淫乱+A感觉Lv3以上 7 / 淫乱 6 / 爱+A感觉Lv3以上 5 / 爱慕 4 / A感觉Lv3以上 3 / それ以外 2）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.正常位肛交 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「我的肛门${heart(1)} 和你的阴茎相性很好的样子…啊啊${heart(1)}」`,
+        ); // :2897
+        await era.printAndWait(
+          `${target_name}久经开发的肛门轻易地的吞下了${player_name}的阴茎`,
+        ); // :2898
+        await era.printAndWait(
+          `${target_name}的肛门啾的包住了${player_name}的阴茎。`,
+        ); // :2899
+        await era.printAndWait(
+          `「啊啊啊…我的肛门！继续！继续侵犯啊！啊啊…啊啊啊啊啊～${heart(1)}」`,
+        ); // :2900
+      } else {
+        await era.printAndWait(
+          `${player_name}压住${target_name}的分开的双腿，侵犯着她的肛门`,
+        ); // :2902
+        await era.printAndWait(
+          `「啊啊！我的小穴和肛门…全都被看见了！啊…继续继续看吧${heart(1)}」`,
+        ); // :2903
+        await era.printAndWait(
+          `${player_name}极速抽插着，${target_name}不断发出诱人的呻吟`,
+        ); // :2904
+        await era.printAndWait(
+          `「啊啊…嗯…肛门…我的肛门…继续侵犯…把我弄得乱七八糟的${heart(1)}啊啊啊${heart(1)} 」`,
+        ); // :2905
+      }
+      kojo.正常位肛交 = 7; // :2907 CFLAG:327 = 7
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.正常位肛交 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :2910-2912 淫乱
+      await era.printAndWait(
+        `「嗯啊…你的话想要怎么侵犯我都可以啊…啊啊嗯…啊啊…嗯啊…嗯！」`,
+      ); // :2910
+      await era.printAndWait(
+        `${player_name}贯穿了${target_name}正在开发途中的肛门、${target_name}因为痛苦而不禁皱起了眉`,
+      ); // :2911
+      await era.printAndWait(`「请、请在温柔一点…啊…啊啊——！」`); // :2912
+      kojo.正常位肛交 = 6; // :2913 CFLAG:327 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.正常位肛交 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :2916-2926 爱＋A感覚Lv3以上（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「啊…啊啊…你的…全部进来了…嗯…啊嗯${heart(1)}」`,
+        ); // :2917
+        await era.printAndWait(
+          `${target_name}久经开发的肛门轻易地的吞下了${player_name}的阴茎`,
+        ); // :2918
+        await era.printAndWait(
+          `${target_name}的肛门啾的包住了${player_name}的阴茎。`,
+        ); // :2919
+        await era.printAndWait(`「啊嗯…我的肛门想要你的…好害羞啊…啊啊！」`); // :2920
+      } else {
+        await era.printAndWait(
+          `「嗯啊…嗯…啊啊…肛门有感觉什么的…明明很害羞的…我…啊嗯啊啊啊啊${heart(1)}」`,
+        ); // :2922
+        await era.printAndWait(
+          `${target_name}被开发过的肛门紧紧的包住了${player_name}的阴茎`,
+        ); // :2923
+        await era.printAndWait(
+          `一边感叹着被抱住的感觉，${player_name}一边继续侵犯着肛门`,
+        ); // :2924
+        await era.printAndWait(
+          `「啊嗯…肛门要坏掉了…啊…啊啊啊…不行啊…再继续的话我…啊…啊啊啊——${heart(1)}」`,
+        ); // :2925
+      }
+      kojo.正常位肛交 = 5; // :2927 CFLAG:327 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.正常位肛交 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :2930-2932 爱慕
+      await era.printAndWait(`「我会忍耐的…插进肛门也可以哦…嗯…呜…咕」`); // :2930
+      await era.printAndWait(
+        `${target_name}正在开发途中的肛门被贯穿，脸因为痛苦而扭曲着`,
+      ); // :2931
+      await era.printAndWait(
+        `${player_name}为了继续看那样的表情而开始激烈的侵犯着肛门`,
+      ); // :2932
+      kojo.正常位肛交 = 4; // :2933 CFLAG:327 = 4
+    } else if (
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.正常位肛交 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :2936-2939 A感覚Lv3以上
+      await era.printAndWait(
+        `「还要…继续侵犯…我的肛门…啊…啊啊！不、不要…明明不想要…咕——」`,
+      ); // :2936
+      await era.printAndWait(`${player_name}按住${target_name}侵犯着肛门`); // :2937
+      await era.printAndWait(
+        `无论多么不愿意，${target_name}被开发过的肛门都为了接受阴茎而张开着`,
+      ); // :2938
+      await era.printAndWait(
+        `「嗯啊…啊嗯…嗯…咕…我明明不能就这样…就有…感觉…啊啊啊啊啊」`,
+      ); // :2939
+      kojo.正常位肛交 = 3; // :2940 CFLAG:327 = 3
+    } else if (kojo.正常位肛交 <= 1 || game.kojo.口上开关 == 2) {
+      // :2943-2945 それ以外（爱無し、A感覚Lv3未満）
+      await era.printAndWait(
+        `「恩爱…啊啊…好疼…好疼啊…快、快点…停下…啊…啊啊啊」`,
+      ); // :2943
+      await era.printAndWait(
+        `${target_name}的还未开发的肛门被${player_name}阴茎了进去，充分的侵犯着……`,
+      ); // :2944
+      await era.printAndWait(
+        `压住扭动身体想要挣脱的${target_name}的肩膀，${player_name}享受着在肛门里抽送的快乐……`,
+      ); // :2945
+      kojo.正常位肛交 = 2; // :2946 CFLAG:327 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
