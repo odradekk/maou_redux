@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -16,7 +16,8 @@
  *     乳头夹开始 CFLAG:316 :1669-1722、脱着 CFLAG:376 :1724-1739；
  *     榨乳器开始 CFLAG:317 :1745-1800、脱着 CFLAG:377 :1802-1820；
  *     肛珠开始 CFLAG:320 :1869-1942、脱着 CFLAG:379 :1944-1963；
- *     正常位 CFLAG:321 状态机 :1968-2210）
+ *     正常位 CFLAG:321 状态机 :1968-2210；
+ *     背后位 CFLAG:322 状态机 :2215-2416）
 
 
 
@@ -89,7 +90,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-2210）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位。
+ * @KOJO_MESSAGE_COM_0（:674-2416）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位。
 
 
 
@@ -2579,6 +2580,417 @@ async function kojo_message_com_0(rand) {
           ); // :2205
         }
         kojo.正常位 = 2; // :2206-2208
+      }
+      return 0;
+    }
+  }
+
+  // :2215 IF SELECTCOM == 21（背后位，CFLAG:322）
+  if (era_flag.selectcom === 21) {
+    const hometown_lover = era.get(`talent:${target}:317`) === 4;
+    const v_sense = era.get(`abl:${target}:2`) || 0;
+    const v_insensible = era.get(`talent:${target}:103`) === 1;
+
+    if (kojo.背后位 === 0) {
+      // :2217
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :2219
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :2221
+          await era.printAndWait(
+            `${target_name}用跪坐的姿势并把头贴在地上、将屁股高高抬起。`,
+          ); // :2222
+          await era.printAndWait(
+            `「能被您夺走${sc()}的第一次……我从心底表示感谢～${heart(1)}」`,
+          ); // :2223
+          await era.printAndWait(
+            `${player_name}抓住她的腰毫不犹豫的把肉棒插进了阴道深处。`,
+          ); // :2224
+          await era.printAndWait(
+            `途中感到穿破了处女膜。肉棒一进入深处就被温热的阴道壁紧紧包住。`,
+          ); // :2225
+          await era.printAndWait(
+            `「呀啊呜唔～…淫乱的处女膜被弄破了～…啊啊～…好开心～好开心啊～！」`,
+          ); // :2226
+
+          if (hometown_lover) {
+            // :2228
+            await era.printAndWait(
+              `${target_name}比起故乡的恋人而选择了能为自己带来无限快乐的鸡鸡的样子。`,
+            ); // :2229
+            await era.printAndWait(
+              `「嗯～♪…${sc()}的恋人是…世界上所有的大鸡鸡～…不过最喜欢的是现在插进来的大鸡鸡哦…${heart(1)}」`,
+            ); // :2230
+          }
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :2233
+          await era.printAndWait(
+            `「从、从后面来吗…没、没事的…那、那个请温柔一点…咿呀啊啊～～！」`,
+          ); // :2234
+          await era.printAndWait(
+            `${player_name}向${target_name}发出了决定性的一击将阴茎插进了阴道里。`,
+          ); // :2235
+          await era.printAndWait(
+            `途中感到穿破了处女膜。${target_name}禁不住悲鸣起来。`,
+          ); // :2236
+          await era.printAndWait(
+            `「啊～啊咿～～～！…总觉得～…这样好像和动物似的呢…好棒～…好棒啊～♪」`,
+          ); // :2237
+
+          if (hometown_lover) {
+            // :2239
+            await era.printAndWait(
+              `「啊啊～…${sc()}是…魔王大人的所有物～…绝对不会背离的${heart(1)}…啊啊啊～${heart(1)}」`,
+            ); // :2240
+            await era.printAndWait(
+              `${target_name}的脑海里已经把故乡的恋人完全忘掉了的样子………`,
+            ); // :2241
+          }
+        } else {
+          await era.printAndWait(
+            `「这、这种像动物一般的姿势…咕呜…呜呜～…啊～啊啊啊啊啊～！」`,
+          ); // :2244-2245
+
+          if (hometown_lover) {
+            // :2247
+            await era.printAndWait(`「啊啊～…对不起…对不起～…呜呜～！」`); // :2248
+            await era.printAndWait(
+              `${target_name}想起故乡的恋人、流下了眼泪………`,
+            ); // :2249
+          }
+        }
+      } else {
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :2253-2255
+          await era.printAndWait(
+            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            `「是～…请尽管从后面来吧${heart(1)}　哈啊～～…果然被侵犯真是最棒了～${heart(1)}」`,
+          ); // :2256
+          await era.printAndWait(`「再来啊…把我侵犯到坏掉吧～！」`); // :2257
+
+          if (v_sense >= 3 && v_insensible) {
+            // :2260
+            await era.printAndWait(
+              `${target_name}钝感的私处被调教出了快感、很愉快的吞下了从后面插进来的${player_name}的大鸡鸡………`,
+            ); // :2260
+          }
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :2262
+          await era.printAndWait(`「啊～…这个姿势好害羞…不过………」`); // :2263
+          await era.printAndWait(
+            `「啊～啊啊啊～…！讨厌…明明很害羞却兴奋起来了～…♪」`,
+          ); // :2264
+          await era.printAndWait(`「更多…请更多的疼爱我吧…♪」`); // :2265
+
+          if (v_sense >= 3 && v_insensible) {
+            // :2268
+            await era.printAndWait(
+              `${target_name}钝感的私处经过开发觉醒了快感、很愉快的吞下了从后面插进来的${player_name}的大鸡鸡………`,
+            ); // :2268
+          }
+        } else {
+          await era.printAndWait(
+            `「不要用这种像动物一样的姿势…这样…不行…啊啊啊～」`,
+          ); // :2270-2271
+
+          if (v_insensible) {
+            // :2274
+            await era.printAndWait(
+              `因为${target_name}的私处不太容易有感觉、由于被从后面插入的异物感而皱起了眉头。${target_name}发出了痛苦的声音………`,
+            ); // :2274
+          }
+        }
+      }
+      kojo.背后位 = 1; // :2277-2278
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`talent:${target}:75`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2280-2282
+        if (rand_n(3) === 0) {
+          // :2283
+          await era.printAndWait(
+            `「嗯哈啊～啊～啊啊～咿啊啊啊～！${heart(1)} 再用力插我～${heart(1)}」`,
+          ); // :2284
+          await era.printAndWait(
+            `「还想再要大肉棒～${heart(1)} 想要更多…更多的大肉棒啊～${heart(1)}」`,
+          ); // :2285
+        } else if (rand_n(2) === 0) {
+          // :2286
+          await era.printAndWait(
+            `「已经…只要有大肉棒插进来的话…是谁都无所谓了～…${heart(1)}」`,
+          ); // :2287
+          await era.printAndWait(
+            `${player_name}抓住${target_name}的腰好像为了拍打屁股似的一次一次地把腰向前送。`,
+          ); // :2288
+          await era.printAndWait(
+            `「啊咿呀啊～${heart(1)} 好棒～${heart(1)}好棒～${heart(1)} 对不起～…这个大肉棒～…主人的大肉棒实在太棒了～${heart(1)}」`,
+          ); // :2289
+        } else {
+          await era.printAndWait(
+            `「嗯～嗯嗯～嗯～…啊呜唔呜…不要拔出来…不要把大肉棒拔出来…${heart(1)}」`,
+          ); // :2290-2291
+          await era.printAndWait(
+            `${target_name}淫荡的扭着屁股、向${player_name}撒娇。`,
+          ); // :2292
+          await era.printAndWait(
+            `「我已经…没有大肉棒…就活不去了～…呜啊…不要拔…啊～${heart(1)}啊啊～${heart(1)}啊哈啊～${heart(1)}」`,
+          ); // :2293
+        }
+        kojo.背后位 = 9; // :2295
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`talent:${target}:75`) === 1 &&
+        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :2297
+        if (rand_n(3) === 0) {
+          // :2298
+          await era.printAndWait(`「啊啊～…再来～…再来啊～${heart(1)}」`); // :2299
+          await era.printAndWait(
+            `${target_name}用平常想象不出来的样子淫荡地扭着屁股。`,
+          ); // :2300
+          await era.printAndWait(
+            `「好深…好棒～…主人…请再侵犯我的小穴吧…～${heart(1)}」`,
+          ); // :2301
+        } else if (rand_n(2) === 0) {
+          // :2302
+          await era.printAndWait(
+            `「${sc()}的屁股…小穴…都是为了取悦主人而存在的…${heart(1)}」」`,
+          ); // :2303
+          await era.printAndWait(`「所以…请尽管随意使用吧～${heart(1)}」`); // :2304
+          await era.printAndWait(
+            `${target_name}为了能让自己被更多的侵犯而用令人心神荡漾的声音向你撒娇………`,
+          ); // :2305
+        } else {
+          await era.printAndWait(`「请更多地欺负我的小穴吧～${heart(1)}」`); // :2306-2307
+          await era.printAndWait(
+            `「请在主人专用的小穴里用精液播种吧～${heart(1)}」`,
+          ); // :2308
+          await era.printAndWait(
+            `已经完全陷落并沉溺于性爱的快乐中的${target_name}不知羞耻地淫荡地呻吟着………`,
+          ); // :2309
+        }
+        kojo.背后位 = 8; // :2311
+      } else if (
+        era.get(`talent:${target}:75`) === 1 &&
+        (kojo.正常位 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :2313
+        if (rand_n(3) === 0) {
+          // :2314
+          await era.printAndWait(
+            `「啊啊～…请再像…动物一样的操我吧～…${heart(1)}」`,
+          ); // :2315
+          await era.printAndWait(
+            `「${scf()}…${sc()}已经是…大肉棒的奴隶了～${heart(1)}」`,
+          ); // :2316
+          await era.printAndWait(
+            `每次抽送、${target_name}的私处都会溢出泡沫一样的爱液………`,
+          ); // :2317
+        } else if (rand_n(2) === 0) {
+          // :2318
+          await era.printAndWait(
+            `「再…用力插…想被大肉棒塞得满满的～…${heart(1)}」`,
+          ); // :2319
+          await era.printAndWait(`「已经…不会再去想做爱之外的事情了～…」`); // :2320
+          await era.printAndWait(
+            `${target_name}好像想被进一步侵犯似的高高抬起了屁股………`,
+          ); // :2321
+        } else {
+          await era.printAndWait(
+            `「不管被侵犯几次…都不会生厌…已经…不会去想…没有做爱的生活了～…」`,
+          ); // :2322-2323
+          await era.printAndWait(`「所以～…更多更多地侵犯我吧～…${heart(1)}」`); // :2324
+          await era.printAndWait(
+            `${target_name}像变成一只动物似的、连子宫口都臣服于做爱的快感中而敞开了………`,
+          ); // :2325
+        }
+        kojo.背后位 = 7; // :2327
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.背后位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :2329
+        if (rand_n(3) === 0) {
+          // :2330
+          await era.printAndWait(
+            `「呀呜～！哈啊…啊啊～…咿呀～～！好爽啊～…随心所欲的叫床！要变成动物了～！」`,
+          ); // :2331
+          await era.printAndWait(
+            `「咿呀～啊啊～…啊啊～…好喜欢！像动物一样的做爱好喜欢啊！」`,
+          ); // :2332
+        } else if (rand_n(2) === 0) {
+          // :2333
+          await era.printAndWait(
+            `「啊～…啊啊～…好紧～！再来～…再使用${sc()}的身体吧…请尽情使用～${heart(1)}」`,
+          ); // :2334
+          await era.printAndWait(
+            `「${target_name}是非常喜欢被人从后面哧噗哧噗地侵犯的变态勇者啊～♪」`,
+          ); // :2335
+        } else {
+          await era.printAndWait(
+            `「啊～啊啊～…像动物一样的做爱好爽啊…${heart(1)}」`,
+          ); // :2336-2337
+          await era.printAndWait(
+            `「一被这样侵犯…就好像自己变成了最低等的动物似的…最棒…了～${heart(1)}」`,
+          ); // :2338
+        }
+        if (v_sense >= 3 && v_insensible) {
+          // :2341
+          await era.printAndWait(
+            `${target_name}钝感的私处被调教出了快感、好像很愉快的吞下了从后面插进来的${player_name}的大鸡鸡、滴落出了爱液………`,
+          ); // :2342
+        } else if (v_insensible) {
+          // :2344
+          await era.printAndWait(
+            `虽然${target_name}的私处不容易有感觉、但还是感觉到了自己正被从后面侵犯的事实的样子………`,
+          ); // :2345
+        }
+        kojo.背后位 = 6; // :2347
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.背后位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :2349
+        if (rand_n(3) === 0) {
+          // :2350
+          await era.printAndWait(
+            `「啊啊～…啊～…好舒服～！请继续…侵犯我吧…！」`,
+          ); // :2351
+          await era.printAndWait(
+            `「被你这样做是最…最舒服的事情了…咿呀～～…啊啊～…好开心…♪」`,
+          ); // :2352
+
+          if (v_sense >= 3 && v_insensible) {
+            // :2354
+            await era.printAndWait(
+              `${target_name}钝感的私处被开发得觉醒了快感、很愉快的吞下了从后面插进来的${player_name}的大鸡鸡………`,
+            ); // :2355
+          } else if (v_insensible) {
+            // :2357
+            await era.printAndWait(
+              `因为${target_name}的私处不太容易有感觉、由于被从后面插入的异物感而皱起了眉头。`,
+            ); // :2358
+            await era.printAndWait(
+              `但是比起这个${target_name}更为被${player_name}所抱住的这一事实而心动不已………`,
+            ); // :2359
+          }
+        } else if (rand_n(2) === 0) {
+          // :2361
+          await era.printAndWait(
+            `「啊啊～…${sc()}的屁股就是为了像这样被主人侵犯而存在的呢…♪」`,
+          ); // :2362
+          await era.printAndWait(
+            `「是～…直到主人满足为止…请把精液满满地注入进来吧♪」`,
+          ); // :2363
+
+          if (v_sense >= 3 && v_insensible) {
+            // :2365
+            await era.printAndWait(
+              `${target_name}钝感的私处被开发得觉醒了快感、很愉快的吞下了从后面插进来的${player_name}的大鸡鸡………`,
+            ); // :2366
+          } else if (v_insensible) {
+            // :2368
+            await era.printAndWait(
+              `因为${target_name}的私处不太容易有感觉、由于被从后面插入的异物感而皱起了眉头。`,
+            ); // :2369
+            await era.printAndWait(
+              `但是比起这个${target_name}更为被${player_name}所抱住的这一事实而心动不已………`,
+            ); // :2370
+          }
+        } else {
+          await era.printAndWait(
+            `「哈啊～～…不要太过欺负${sc()}的小穴啊～…咿咿咿咿～！」`,
+          ); // :2372-2373
+          await era.printAndWait(
+            `${player_name}抓住哀叫着的${target_name}的屁股、更加粗暴地往阴道里面抽插`,
+          ); // :2374
+          await era.printAndWait(`${target_name}发出了格外尖厉的悲鸣声。`); // :2375
+
+          if (v_sense >= 3 && v_insensible) {
+            // :2377
+            await era.printAndWait(
+              `「咿呀～…呀呜～啊～啊啊啊～！对不起～…其实被欺负真的好爽啊～${heart(1)}」`,
+            ); // :2378
+            await era.printAndWait(
+              `${target_name}钝感的私处被开发得觉醒了快感、毫不间断的持续为${target_name}带来快感………`,
+            ); // :2379
+          } else if (v_insensible) {
+            // :2381
+            await era.printAndWait(
+              `虽然${target_name}的私处不容易有感觉、但还是感觉到了自己正被从后面侵犯的事实的样子………`,
+            ); // :2382
+          } else {
+            await era.printAndWait(
+              `「咿呀～…呀呜～啊～啊啊啊～！对不起～…其实被欺负真的好爽啊～${heart(1)}」`,
+            ); // :2383-2384
+          }
+        }
+        kojo.背后位 = 5; // :2387
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        v_sense >= 3 &&
+        (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :2389
+        await era.printAndWait(
+          `「哈啊～…啊啊～啊～…啊啊～！不、不行…再这样被用力地做的话～…」`,
+        ); // :2390
+        await era.printAndWait(
+          `「就、就会变的只知道…只知道大鸡鸡了啊～…啊啊啊～！」`,
+        ); // :2391
+
+        if (v_insensible) {
+          // :2394
+          await era.printAndWait(
+            `${target_name}钝感的私处被开发得觉醒了快感、很愉快的吞下了从后面插进来的${player_name}的大鸡鸡………`,
+          ); // :2394
+        }
+        kojo.背后位 = 4; // :2395
+      } else if (
+        era.get(`mark:${target}:2`) === 3 &&
+        (kojo.背后位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :2397
+        await era.printAndWait(
+          `（啊啊…${sc()}竟然把屁股抬得这么高也能无动于衷…呜呜）`,
+        ); // :2398
+        await era.printAndWait(
+          `${target_name}咬牙忍耐着并在阴道深处被侵犯时发出呻吟。`,
+        ); // :2399
+        await era.printAndWait(
+          `「哈啊～…啊啊～啊～…啊啊～！…咕呜～…咿～…嗯～啊呜呜～！」`,
+        ); // :2400
+
+        if (v_insensible) {
+          // :2403
+          await era.printAndWait(
+            `因为${target_name}的私处不太容易有感觉、由于被从后面插入的异物感而皱起了眉头。${target_name}高声悲鸣起来………`,
+          ); // :2403
+        }
+        kojo.背后位 = 3; // :2404
+      } else if (kojo.背后位 <= 1 || game.kojo.口上开关 === 2) {
+        // :2406
+        await era.printAndWait(
+          `「这样…完全算不了什么…咦～…这不是像动物一样吗…？不、不对…你搞错了…吧」`,
+        ); // :2407
+        await era.printAndWait(
+          `「${scf()}、${sc()}是…人类啊…这种动物一样的姿势才不会…有、感觉～…啊～…啊呜呜～！」`,
+        ); // :2408
+
+        if (v_insensible) {
+          // :2411
+          await era.printAndWait(
+            `因为${target_name}的私处不太容易有感觉、由于被从后面插入的异物感而皱起了眉头。${target_name}发出了痛苦的声音………`,
+          ); // :2411
+        }
+        kojo.背后位 = 2; // :2412-2414
       }
       return 0;
     }

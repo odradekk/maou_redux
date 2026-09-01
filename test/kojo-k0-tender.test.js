@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 21; // 背后位——COM20 落地后改用尚未填的指令
+    era_flag.selectcom = 22; // 对面座位——COM21 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 21 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 22 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -1997,6 +1997,119 @@ test('正常位二次屈服Lv3+V感觉：自称首字插值，推进到 4', asyn
     '「真的…不行了…要不行了啊…明明是被侵犯…竟然会这么的…啊啊～！」',
   ]);
   assert.equal(fixture.store.get('cflag:31:321'), 4);
+});
+
+test('背后位首次处女淫乱 + 故乡恋人附加句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:0', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:317', 4);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '琼用跪坐的姿势并把头贴在地上、将屁股高高抬起。',
+    '「能被您夺走我的第一次……我从心底表示感谢～♡」',
+    '你抓住她的腰毫不犹豫的把肉棒插进了阴道深处。',
+    '途中感到穿破了处女膜。肉棒一进入深处就被温热的阴道壁紧紧包住。',
+    '「呀啊呜唔～…淫乱的处女膜被弄破了～…啊啊～…好开心～好开心啊～！」',
+    '琼比起故乡的恋人而选择了能为自己带来无限快乐的鸡鸡的样子。',
+    '「嗯～♪…我的恋人是…世界上所有的大鸡鸡～…不过最喜欢的是现在插进来的大鸡鸡哦…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:322'), 1, '背后位首次推进到 1');
+});
+
+test('背后位二次淫乱+性爱狂：门槛读 CFLAG:321 不是 322', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:322', 1);
+    f.store.set('cflag:31:321', 8);
+  });
+  await speak_k0(r0, seq_rand(0));
+  assert.deepEqual(r0.text_lines(), [
+    '「嗯哈啊～啊～啊啊～咿啊啊啊～！♡ 再用力插我～♡」',
+    '「还想再要大肉棒～♡ 想要更多…更多的大肉棒啊～♡」',
+  ]);
+  assert.equal(r0.store.get('cflag:31:322'), 9, '背后位二次淫乱+性爱狂写 9');
+  assert.equal(r0.store.get('cflag:31:321'), 8, '门槛读 321，不改写正常位');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:322', 1);
+    f.store.set('cflag:31:321', 8);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap, seq_rand(0));
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'CFLAG:321=8 且 FLAG:7==1 仍出声（门槛是 321 <=8）',
+  );
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:322', 1);
+    f.store.set('cflag:31:321', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted, seq_rand(0));
+  // 321 耗尽只跳过性爱狂档，落到淫乱档（门槛改回 322 则会仍走性爱狂）
+  assert.deepEqual(exhausted.text_lines(), [
+    '「呀呜～！哈啊…啊啊～…咿呀～～！好爽啊～…随心所欲的叫床！要变成动物了～！」',
+    '「咿呀～啊啊～…啊啊～…好喜欢！像动物一样的做爱好喜欢啊！」',
+  ]);
+  assert.equal(exhausted.store.get('cflag:31:322'), 6, '落到淫乱档写 6');
+});
+
+test('背后位二次爱慕 + V钝感附加句 / 阈值闸', async () => {
+  const dull = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:85', 1);
+    f.store.set('talent:31:103', 1);
+    f.store.set('cflag:31:322', 1);
+  });
+  await speak_k0(dull, seq_rand(0));
+  assert.deepEqual(dull.text_lines(), [
+    '「啊啊～…啊～…好舒服～！请继续…侵犯我吧…！」',
+    '「被你这样做是最…最舒服的事情了…咿呀～～…啊啊～…好开心…♪」',
+    '因为琼的私处不太容易有感觉、由于被从后面插入的异物感而皱起了眉头。',
+    '但是比起这个琼更为被你所抱住的这一事实而心动不已………',
+  ]);
+  assert.equal(dull.store.get('cflag:31:322'), 5);
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:322', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap, seq_rand(0));
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:322'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 21;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:322', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted, seq_rand(0));
+  assert.deepEqual(exhausted.text_lines(), []);
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

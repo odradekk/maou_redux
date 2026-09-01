@@ -1193,10 +1193,14 @@ export default [
     file: 'ere/kojo/kojo-k0-tender.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         era.get(\`talent:\${target}:75\`) === 1 &&
-        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)`,
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2035-2038`,
     replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
         era.get(\`talent:\${target}:75\`) === 1 &&
-        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)`,
+        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :2035-2038`,
     tests: ['kojo-k0-tender'],
     must_mention: '正常位二次淫乱+性爱狂：RAND 三支 / 写 9',
   },
@@ -1239,5 +1243,51 @@ export default [
     replace: '        kojo.正常位 = 3; // :2191',
     tests: ['kojo-k0-tender'],
     must_mention: '正常位二次屈服Lv3+V感觉：自称首字插值，推进到 4',
+  },
+  {
+    desc: 'M1830 K0 背后位首次状态推进写错（CFLAG:322 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背后位 = 1; // :2277-2278',
+    replace: '      kojo.背后位 = 2; // :2277-2278',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位首次推进到 1',
+  },
+  {
+    desc: 'M1831 K0 背后位二次淫乱+性爱狂门槛改回 CFLAG:322（原文读 321）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2280-2282`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.背后位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2280-2282`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位二次淫乱+性爱狂：门槛读 CFLAG:321 不是 322',
+  },
+  {
+    desc: 'M1832 K0 背后位二次淫乱+性爱狂写回错档（CFLAG:322 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背后位 = 9; // :2295',
+    replace: '        kojo.背后位 = 8; // :2295',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M1833 K0 背后位二次爱慕门槛错位（CFLAG:322 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.背后位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :2349`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :2349`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位二次爱慕 + V钝感附加句 / 阈值闸',
   },
 ];
