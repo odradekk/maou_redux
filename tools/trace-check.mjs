@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4170', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4225', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -18086,6 +18086,77 @@ const FILES = [
         ],
       },
       { src: K0, ref: '4166', any: [/\t\t\tCFLAG:TARGET:343 = 2/m] },
+      { src: K0, ref: '4176', any: [/IF\ SELECTCOM\ ==\ 43 && TEQUIP:43/m] },
+      {
+        src: K0,
+        ref: '4176-4212',
+        any: [/^IF SELECTCOM == 43 && TEQUIP:43$/m],
+      },
+      {
+        src: K0,
+        ref: '4214-4225',
+        any: [/^ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0$/m],
+      },
+      { src: K0, ref: '4176', any: [/IF SELECTCOM == 43 && TEQUIP:43/m] },
+      { src: K0, ref: '4178', any: [/\tIF CFLAG:TARGET:344 == 0/m] },
+      { src: K0, ref: '4180-4181', any: [/\t\tIF TALENT:85 == 1/m] },
+      { src: K0, ref: '4183-4184', any: [/PRINTFORMW/] },
+      { src: K0, ref: '4186-4187', any: [/\t\tCFLAG:TARGET:344 = 1/m] },
+      {
+        src: K0,
+        ref: '4189-4192',
+        any: [
+          /\t\tIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '4193', any: [/\t\t\tCFLAG:TARGET:344 = 6/m] },
+      {
+        src: K0,
+        ref: '4195-4196',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '4197', any: [/\t\t\tCFLAG:TARGET:344 = 5/m] },
+      {
+        src: K0,
+        ref: '4199-4200',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '4201', any: [/\t\t\tCFLAG:TARGET:344 = 4/m] },
+      {
+        src: K0,
+        ref: '4203-4204',
+        any: [/\t\tELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      { src: K0, ref: '4205', any: [/\t\t\tCFLAG:TARGET:344 = 3/m] },
+      {
+        src: K0,
+        ref: '4207-4208',
+        any: [/\t\tELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      { src: K0, ref: '4209', any: [/\t\t\tCFLAG:TARGET:344 = 2/m] },
+      {
+        src: K0,
+        ref: '4214',
+        any: [/ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0/m],
+      },
+      {
+        src: K0,
+        ref: '4216-4217',
+        any: [
+          /\tIF TALENT:TARGET:85 == 1 && \(CFLAG:380 < 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '4218', any: [/\t\tCFLAG:380 = 2/m] },
+      {
+        src: K0,
+        ref: '4220-4221',
+        any: [/\tELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2/m],
+      },
+      { src: K0, ref: '4222', any: [/\t\tCFLAG:380 = 1/m] },
     ],
   },
 

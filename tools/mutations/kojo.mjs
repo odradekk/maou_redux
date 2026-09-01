@@ -1953,4 +1953,44 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '针二次淫乱+抖M写 9',
   },
+  {
+    desc: 'M1894 K0 眼罩开始首次状态推进写错（CFLAG:344 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.眼罩 = 1; // :4186-4187',
+    replace: '      kojo.眼罩 = 2; // :4186-4187',
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩首次推进到 1',
+  },
+  {
+    desc: 'M1895 K0 眼罩开始二次爱慕+抖M门槛错位（CFLAG:344 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.眼罩 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4189-4192`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.眼罩 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4189-4192`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩开始二次：爱慕+抖M写 6 / 阈值闸',
+  },
+  {
+    desc: 'M1896 K0 眼罩开始二次爱慕+抖M写回错档（CFLAG:344 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.眼罩 = 6; // :4193',
+    replace: '        kojo.眼罩 = 5; // :4193',
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩开始二次爱慕+抖M写 6',
+  },
+  {
+    desc: 'M1897 K0 眼罩脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.眼罩着脱 < 2 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.眼罩着脱 <= 2 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩脱着：爱慕写 CFLAG:380 = 2，门槛是 < 不是 <=',
+  },
 ];

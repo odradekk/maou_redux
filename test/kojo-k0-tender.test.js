@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 43; // 眼罩——COM42 落地后改用尚未填的指令
+    era_flag.selectcom = 44; // 绳子——COM43 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 43 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 44 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -3197,6 +3197,84 @@ test('针二次：淫乱+抖M写 9 / 阈值闸', async () => {
   });
   await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('眼罩开始首次：空 PRINTFORMW 仍等待，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 43;
+    f.store.set('tequip:31:43', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:344'), 1, '眼罩首次推进到 1');
+});
+
+test('眼罩开始二次：爱慕+抖M写 6 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 43;
+    f.store.set('tequip:31:43', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:344', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), ['']);
+  assert.equal(r0.store.get('cflag:31:344'), 6, '眼罩开始二次爱慕+抖M写 6');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 43;
+    f.store.set('tequip:31:43', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:344', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=5 且 FLAG:7==1 仍出声（门槛是 <=5）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:344'), 6);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 43;
+    f.store.set('tequip:31:43', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:344', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('眼罩脱着：爱慕写 CFLAG:380 = 2，门槛是 < 不是 <=', async () => {
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 43;
+    f.store.set('tequip:31:43', 0);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), ['']);
+  assert.equal(love.store.get('cflag:31:380'), 2, '眼罩着脱推进到 2');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 43;
+    f.store.set('tequip:31:43', 0);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:380', 2);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), []);
+  assert.equal(at_cap.store.get('cflag:31:380'), 2, '眼罩着脱阈值闸用 < 2');
 });
 
 // —— 存根清单核对 ——
