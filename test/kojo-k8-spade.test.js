@@ -1820,8 +1820,106 @@ test('SELECTCOM 34 骑乘位，二回目以降·屈服刻印Lv3（无 V感觉）
   assert.equal(fixture.store.get('cflag:31:335'), 3, 'CFLAG:335 推进到 3');
 });
 
-test('骨架期：SELECTCOM 35（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+test('SELECTCOM 35 全身擦洗，初めて·侍奉精神Lv3以上：CFLAG:336 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('abl:31:16', 3);
+  }, 35);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「来，伸出手…这样帮你洗就行了吧？」',
+    '「啊…啊嗯！不、不要欺负我啊！…啊…嗯嗯！就不能好好地洗澡么？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 1, 'CFLAG:336 推进到 1');
+});
+
+test('SELECTCOM 35 全身擦洗，初めて·それ以外：CFLAG:336 推进到 1', async () => {
   const fixture = await setup_k8(undefined, 35);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…我也是个女孩子啊…把身体洗干净是很舒服…但是不得不洗你的身体什么的…啊啊」',
+    '「而我的身体………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 1, 'CFLAG:336 推进到 1');
+});
+
+test('SELECTCOM 35 全身擦洗，二回目以降·淫乱＋侍奉精神Lv5：CFLAG:336 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:336', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+  }, 35);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯啊…啊啊…把手指…插进我里面也可以呦…啊啊♡」',
+    '银黑桃一边抱住你互相摩擦着上半身、一边把你的手拉到了自己的股间。',
+    '「我的小穴…啊啊！要用你的手指来洗…啊啊…嗯！再粗暴些也没关系♡」',
+    '银黑桃的喘息吹到了你的耳边，腰颤抖，痉挛着。',
+    '你的手指一根根的插了进去，搅拌着银黑桃的蜜裂。',
+    '「啊啊…我的身体…变干净了…嗯…啊嗯…啊啊…嗯…啊啊——♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 5, 'CFLAG:336 推进到 5');
+});
+
+test('SELECTCOM 35 全身擦洗，二回目以降·爱＋侍奉精神Lv5：CFLAG:336 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:336', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:16', 5);
+  }, 35);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…啊嗯…洗澡好舒服啊、啊啊…呵呵呵、有感觉养的地方吗？」',
+    '银黑桃抱着你，用肌肤摩擦着他的后背、勃起的乳头的触感理所当然的能清楚的感觉到。',
+    '「这里痒的已经快受不了了吧？」',
+    '银黑桃一边坏笑着把手伸向你的股间握住了阴茎，一边继续洗背。',
+    '「啊啊…啊嗯…你的阴茎一抖一抖的…啊啊…洗起来好舒服！好舒服啊♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 4, 'CFLAG:336 推进到 4');
+});
+
+test('SELECTCOM 35 全身擦洗，二回目以降·侍奉精神Lv3以上 RAND3=0：追加弟弟台词，CFLAG:336 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:336', 1);
+    f.store.set('abl:31:16', 3);
+  }, 35);
+  await speak_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…嗯啊…我帮你洗的很舒服吧？嗯啊…啊啊…啊嗯…啊啊…」',
+    '银黑桃把你加到了泡沫中的胸部中间、摩擦着。',
+    '「继续摸…我的胸部也可以…啊啊…所以老实的把澡洗完…嗯！嗯嗯！」',
+    '「总觉得想起了帮弟弟洗澡的时候………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 3, 'CFLAG:336 推进到 3');
+});
+
+test('SELECTCOM 35 全身擦洗，二回目以降·侍奉精神Lv3以上 RAND3=1：SIF 未命中不追加台词，CFLAG:336 仍推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:336', 1);
+    f.store.set('abl:31:16', 3);
+  }, 35);
+  await speak_k8(fixture, () => 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…嗯啊…我帮你洗的很舒服吧？嗯啊…啊啊…啊嗯…啊啊…」',
+    '银黑桃把你加到了泡沫中的胸部中间、摩擦着。',
+    '「继续摸…我的胸部也可以…啊啊…所以老实的把澡洗完…嗯！嗯嗯！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 3, 'CFLAG:336 推进到 3');
+});
+
+test('SELECTCOM 35 全身擦洗，二回目以降·それ以外：CFLAG:336 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:336', 1);
+  }, 35);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「老实点、这样我不是没法好好帮你洗了吗…啊嗯…嗯…啊啊！…喂、不要碰那里…啊啊！」',
+    '银黑桃开始用身体帮你洗澡。银黑桃勃起的乳头碰到了你的后背………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 2, 'CFLAG:336 推进到 2');
+});
+
+test('骨架期：SELECTCOM 36（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 36);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),

@@ -14369,6 +14369,215 @@ export const FILES = [
         ref: '3839',
         any: [/CFLAG:335 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3848-3895',
+        any: [/PRINTFORMW 「来，伸出手…这样帮你洗就行了吧？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3850-3859',
+        any: [/PRINTFORMW 「来，伸出手…这样帮你洗就行了吧？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3853',
+        any: [/PRINTFORMW 「来，伸出手…这样帮你洗就行了吧？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3854',
+        any: [
+          /PRINTFORMW 「啊…啊嗯！不、不要欺负我啊！…啊…嗯嗯！就不能好好地洗澡么？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3857',
+        any: [
+          /PRINTFORMW 「啊啊…我也是个女孩子啊…把身体洗干净是很舒服…但是不得不洗你的身体什么的…啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3858',
+        any: [/PRINTFORMW 「而我的身体………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3860',
+        any: [/CFLAG:TARGET:336 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3863-3894',
+        any: [
+          /PRINTFORMW 「啊嗯啊…啊啊…把手指…插进我里面也可以呦…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3866-3871',
+        any: [
+          /PRINTFORMW 「啊嗯啊…啊啊…把手指…插进我里面也可以呦…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3866',
+        any: [
+          /PRINTFORMW 「啊嗯啊…啊啊…把手指…插进我里面也可以呦…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3867',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边抱住%SAVESTR:PLAYER%互相摩擦着上半身、一边把%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3868',
+        any: [
+          /PRINTFORMW 「我的小穴…啊啊！要用你的手指来洗…啊啊…嗯！再粗暴些也没关系%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3869',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的喘息吹到了%SAVESTR:PLAYER%的耳边，腰颤抖，痉挛着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3870',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%的手指一根根的插了进去，搅拌着%SAVESTR:TARGET%的蜜/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3871',
+        any: [
+          /PRINTFORMW 「啊啊…我的身体…变干净了…嗯…啊嗯…啊啊…嗯…啊啊——%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3872',
+        any: [/CFLAG:336 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3875-3879',
+        any: [
+          /PRINTFORMW 「啊啊…啊嗯…洗澡好舒服啊、啊啊…呵呵呵、有感觉养的地方吗？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3875',
+        any: [
+          /PRINTFORMW 「啊啊…啊嗯…洗澡好舒服啊、啊啊…呵呵呵、有感觉养的地方吗？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3876',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%抱着%SAVESTR:PLAYER%，用肌肤摩擦着他的后背、勃起的/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3877',
+        any: [/PRINTFORMW 「这里痒的已经快受不了了吧？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3878',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边坏笑着把手伸向%SAVESTR:PLAYER%的股间握住了阴茎/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3879',
+        any: [
+          /PRINTFORMW 「啊啊…啊嗯…你的阴茎一抖一抖的…啊啊…洗起来好舒服！好舒服啊%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3880',
+        any: [/CFLAG:336 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3883-3888',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…嗯啊…我帮你洗的很舒服吧？嗯啊…啊啊…啊嗯…啊啊…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3883',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…嗯啊…我帮你洗的很舒服吧？嗯啊…啊啊…啊嗯…啊啊…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3884',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%把%SAVESTR:PLAYER%加到了泡沫中的胸部中间、摩擦着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3885',
+        any: [
+          /PRINTFORMW 「继续摸…我的胸部也可以…啊啊…所以老实的把澡洗完…嗯！嗯嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3887',
+        any: [/PRINTFORMW 「总觉得想起了帮弟弟洗澡的时候………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3888',
+        any: [/CFLAG:336 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3891-3892',
+        any: [
+          /PRINTFORMW 「老实点、这样我不是没法好好帮你洗了吗…啊嗯…嗯…啊啊！…喂、不要碰那里…啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3891',
+        any: [
+          /PRINTFORMW 「老实点、这样我不是没法好好帮你洗了吗…啊嗯…嗯…啊啊！…喂、不要碰那里…啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3892',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%开始用身体帮%SAVESTR:PLAYER%洗澡。%SAVESTR/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3893',
+        any: [/CFLAG:336 = 2/],
+      },
     ],
   },
 ];

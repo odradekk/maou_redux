@@ -1673,8 +1673,8 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125,
-    126, 127,
+    36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126,
+    127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -6869,6 +6869,101 @@ async function kojo_message_com_8(rand) {
         `看着在${player_name}的腰上跳舞一样的${target_name}、${player_name}把腰挺得更高了………`,
       ); // :3838
       kojo.骑乘位 = 2; // :3839 CFLAG:335 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 35) {
+    // :3848-3895 全身擦洗 CFLAG:336（无 A感覚 分档，四档；侍奉精神Lv3以上（三档）内嵌一条 SIF 独立于 CFLAG 推进）
+    if (kojo.全身擦洗 == 0) {
+      // :3850-3859 初めて
+      if (era0(`abl:${target}:16`) >= 3) {
+        // 侍奉精神Lv3以上
+        await era.printAndWait(`「来，伸出手…这样帮你洗就行了吧？」`); // :3853
+        await era.printAndWait(
+          `「啊…啊嗯！不、不要欺负我啊！…啊…嗯嗯！就不能好好地洗澡么？」`,
+        ); // :3854
+      } else {
+        // それ以外
+        await era.printAndWait(
+          `「啊啊…我也是个女孩子啊…把身体洗干净是很舒服…但是不得不洗你的身体什么的…啊啊」`,
+        ); // :3857
+        await era.printAndWait(`「而我的身体………」`); // :3858
+      }
+      kojo.全身擦洗 = 1; // :3860 CFLAG:TARGET:336 = 1
+      return 0;
+    }
+    // :3863-3894 二回目以降（四档）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.全身擦洗 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :3866-3871 淫乱＋侍奉精神Lv5
+      await era.printAndWait(
+        `「啊嗯啊…啊啊…把手指…插进我里面也可以呦…啊啊${heart(1)}」`,
+      ); // :3866
+      await era.printAndWait(
+        `${target_name}一边抱住${player_name}互相摩擦着上半身、一边把${player_name}的手拉到了自己的股间。`,
+      ); // :3867
+      await era.printAndWait(
+        `「我的小穴…啊啊！要用你的手指来洗…啊啊…嗯！再粗暴些也没关系${heart(1)}」`,
+      ); // :3868
+      await era.printAndWait(
+        `${target_name}的喘息吹到了${player_name}的耳边，腰颤抖，痉挛着。`,
+      ); // :3869
+      await era.printAndWait(
+        `${player_name}的手指一根根的插了进去，搅拌着${target_name}的蜜裂。`,
+      ); // :3870
+      await era.printAndWait(
+        `「啊啊…我的身体…变干净了…嗯…啊嗯…啊啊…嗯…啊啊——${heart(1)}」`,
+      ); // :3871
+      kojo.全身擦洗 = 5; // :3872 CFLAG:336 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.全身擦洗 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :3875-3879 爱＋侍奉精神Lv5
+      await era.printAndWait(
+        `「啊啊…啊嗯…洗澡好舒服啊、啊啊…呵呵呵、有感觉养的地方吗？」`,
+      ); // :3875
+      await era.printAndWait(
+        `${target_name}抱着${player_name}，用肌肤摩擦着他的后背、勃起的乳头的触感理所当然的能清楚的感觉到。`,
+      ); // :3876
+      await era.printAndWait(`「这里痒的已经快受不了了吧？」`); // :3877
+      await era.printAndWait(
+        `${target_name}一边坏笑着把手伸向${player_name}的股间握住了阴茎，一边继续洗背。`,
+      ); // :3878
+      await era.printAndWait(
+        `「啊啊…啊嗯…你的阴茎一抖一抖的…啊啊…洗起来好舒服！好舒服啊${heart(1)}」`,
+      ); // :3879
+      kojo.全身擦洗 = 4; // :3880 CFLAG:336 = 4
+    } else if (
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.全身擦洗 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :3883-3888 侍奉精神Lv3以上（SIF 独立分支，仅台词条件出现，CFLAG 推进不受影响）
+      await era.printAndWait(
+        `「啊啊…嗯…嗯啊…我帮你洗的很舒服吧？嗯啊…啊啊…啊嗯…啊啊…」`,
+      ); // :3883
+      await era.printAndWait(
+        `${target_name}把${player_name}加到了泡沫中的胸部中间、摩擦着。`,
+      ); // :3884
+      await era.printAndWait(
+        `「继续摸…我的胸部也可以…啊啊…所以老实的把澡洗完…嗯！嗯嗯！」`,
+      ); // :3885
+      if (rand_n(3) == 0) {
+        await era.printAndWait(`「总觉得想起了帮弟弟洗澡的时候………」`); // :3887
+      }
+      kojo.全身擦洗 = 3; // :3888 CFLAG:336 = 3
+    } else if (kojo.全身擦洗 <= 1 || game.kojo.口上开关 == 2) {
+      // :3891-3892 それ以外
+      await era.printAndWait(
+        `「老实点、这样我不是没法好好帮你洗了吗…啊嗯…嗯…啊啊！…喂、不要碰那里…啊啊！」`,
+      ); // :3891
+      await era.printAndWait(
+        `${target_name}开始用身体帮${player_name}洗澡。${target_name}勃起的乳头碰到了${player_name}的后背………`,
+      ); // :3892
+      kojo.全身擦洗 = 2; // :3893 CFLAG:336 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
