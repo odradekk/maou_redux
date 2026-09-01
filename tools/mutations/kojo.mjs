@@ -2136,4 +2136,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1864 K8 SELECTCOM 29 背面座位肛交二回目羞耻PLAY 档1 源作误写缺失结尾引号被"修正"（破坏 1:1 保真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        `「啊啊…我的肛门能把你的全部放进来…我是多么幸福的人啊………${heart(1)}`,\n      ); // :3298',
+    replace:
+      '        `「啊啊…我的肛门能把你的全部放进来…我是多么幸福的人啊………${heart(1)}」`,\n      ); // :3298（变异："修正"缺失引号）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '源作误写缺失结尾引号 1:1 保真',
+  },
+  {
+    desc: 'M1865 K8 SELECTCOM 29 背面座位肛交それ以外守卫丢失（CFLAG:330 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.背面座位肛交 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
+  {
+    desc: 'M1866 K8 SELECTCOM 29 背面座位肛交爱慕推进写错（CFLAG:330 = 4 改 3，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.背面座位肛交 = 4; // :3279 CFLAG:330 = 4',
+    replace: '      kojo.背面座位肛交 = 3; // :3279（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '缺失结尾引号 1:1 保真',
+  },
+  {
+    desc: 'M1867 K8 SELECTCOM 29 背面座位肛交爱+A感觉Lv3以上分档丢失（TALENT:85==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:85`) == 1 &&\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.背面座位肛交 <= 4 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.背面座位肛交 <= 4 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
 ];
