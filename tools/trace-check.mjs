@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3793', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3835', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -17160,6 +17160,84 @@ const FILES = [
         any: [/%SAVESTR:TARGET%皱着眉头忍耐着異物感………/],
       },
       { src: K0, ref: '3789', any: [/\t\t\tCFLAG:335 = 2/m] },
+      { src: K0, ref: '3800', any: [/IF\ SELECTCOM\ ==\ 35/m] },
+      { src: K0, ref: '3800-3835', any: [/^IF SELECTCOM == 35$/m] },
+      { src: K0, ref: '3800', any: [/IF SELECTCOM == 35/m] },
+      { src: K0, ref: '3802', any: [/\tIF CFLAG:TARGET:336 == 0/m] },
+      { src: K0, ref: '3804', any: [/\t\tIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '3805',
+        any: [/「额呵呵～…还有这样的洗法啊…我会努力奉仕的哦…♪」/],
+      },
+      {
+        src: K0,
+        ref: '3807-3808',
+        any: [
+          /「诶、要用%SELF_CALL\(TARGET\)%的身体来为%SELF_CALL_FIRST\(TARGET\)%做擦洗吗…？」/,
+        ],
+      },
+      { src: K0, ref: '3810-3811', any: [/\t\tCFLAG:TARGET:336 = 1/m] },
+      {
+        src: K0,
+        ref: '3813-3815',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:336 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3816',
+        any: [
+          /「啊啊啊…感觉如何呢…%SELF_CALL\(TARGET\)%的身体～…额呵呵、这样擦洗身体…总觉得…嗯…啊…哈啊～～♪」/,
+        ],
+      },
+      { src: K0, ref: '3817', any: [/%SAVESTR:TARGET%故意发出了喘息声………/] },
+      { src: K0, ref: '3818', any: [/\t\t\tCFLAG:336 = 5/m] },
+      {
+        src: K0,
+        ref: '3820',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:336 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3821',
+        any: [
+          /「啊啊～…嗯呼呜…明明是在奉仕…%SELF_CALL\(TARGET\)%却自己舒服起来了…啊啊～…对不起～～%UNICODE\(0x2661\) /,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3822',
+        any: [/%SAVESTR:TARGET%的两腿之间溢出了不是泡沫的粘稠物质………/],
+      },
+      { src: K0, ref: '3823', any: [/\t\t\tCFLAG:336 = 4/m] },
+      {
+        src: K0,
+        ref: '3825',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:336 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3826',
+        any: [/「嗯～…嗯唔～…啊啊～…啊啊…总觉得掌握到诀窍了呢…嗯呼呜♪」/],
+      },
+      { src: K0, ref: '3827', any: [/\t\t\tCFLAG:336 = 3/m] },
+      {
+        src: K0,
+        ref: '3829',
+        any: [/\t\tELSEIF  CFLAG:336 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3830',
+        any: [/「啊啊～…哈…嗯唔…啊、这、这样做是吗………」/],
+      },
+      { src: K0, ref: '3831', any: [/\t\t\tCFLAG:336 = 2/m] },
     ],
   },
 

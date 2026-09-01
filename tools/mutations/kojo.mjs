@@ -1744,4 +1744,36 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '骑乘位二次淫乱+性爱狂写 9',
   },
+  {
+    desc: 'M1874 K0 全身擦洗首次状态推进写错（CFLAG:336 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.全身擦洗 = 1; // :3810-3811',
+    replace: '      kojo.全身擦洗 = 2; // :3810-3811',
+    tests: ['kojo-k0-tender'],
+    must_mention: '全身擦洗首次推进到 1',
+  },
+  {
+    desc: 'M1875 K0 全身擦洗二次淫乱+侍奉门槛错位（CFLAG:336 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.全身擦洗 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3813-3815`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.全身擦洗 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3813-3815`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '全身擦洗二次：淫乱+侍奉写 5 / 阈值闸',
+  },
+  {
+    desc: 'M1876 K0 全身擦洗二次淫乱+侍奉写回错档（CFLAG:336 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.全身擦洗 = 5; // :3818',
+    replace: '        kojo.全身擦洗 = 4; // :3818',
+    tests: ['kojo-k0-tender'],
+    must_mention: '全身擦洗二次淫乱+侍奉写 5',
+  },
 ];

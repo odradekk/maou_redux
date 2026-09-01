@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 35; // 全身擦洗——COM34 落地后改用尚未填的指令
+    era_flag.selectcom = 36; // 骑乘位肛交——COM35 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 35 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 36 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -2823,6 +2823,61 @@ test('骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:321 / 阈值闸'
     6,
     'CFLAG:321=9 跳过性爱狂档、落到淫乱档写 6',
   );
+});
+
+test('全身擦洗首次：侍奉 >= 3，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 35;
+    f.store.set('abl:31:16', 3);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「额呵呵～…还有这样的洗法啊…我会努力奉仕的哦…♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:336'), 1, '全身擦洗首次推进到 1');
+});
+
+test('全身擦洗二次：淫乱+侍奉写 5 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 35;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:336', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '「啊啊啊…感觉如何呢…我的身体～…额呵呵、这样擦洗身体…总觉得…嗯…啊…哈啊～～♪」',
+    '琼故意发出了喘息声………',
+  ]);
+  assert.equal(r0.store.get('cflag:31:336'), 5, '全身擦洗二次淫乱+侍奉写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 35;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:336', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:336'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 35;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:336', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
 });
 
 // —— 存根清单核对 ——
