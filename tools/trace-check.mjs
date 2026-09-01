@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3288', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3376', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -15821,6 +15821,207 @@ const FILES = [
         any: [/「哈啊哈啊…呀啊啊…大鸡鸡…变的…这么硬了…感觉好怪…」/],
       },
       { src: K0, ref: '3284', any: [/\t\t\tCFLAG:331 = 2/m] },
+      { src: K0, ref: '3293', any: [/IF\ SELECTCOM\ ==\ 31/m] },
+      { src: K0, ref: '3293-3376', any: [/^IF SELECTCOM == 31$/m] },
+      { src: K0, ref: '3293', any: [/IF SELECTCOM == 31/m] },
+      { src: K0, ref: '3295', any: [/\tIF CFLAG:TARGET:332 == 0/m] },
+      { src: K0, ref: '3297', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3298',
+        any: [
+          /「啊啊～…能奉仕大肉棒～…好开心啊…嗯啾～啾～嘞噗～…嘞咯～…噗呼呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3300', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '3301',
+        any: [
+          /「哈啊啊…能尽情的吮吸了呢…嗯噗～…嗯啊…哈姆呜…啾～啾呜唔…嘞咯～♪」/,
+        ],
+      },
+      { src: K0, ref: '3303', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '3304',
+        any: [/「好、好的…会、努力奉仕的…哈姆呜…啾～啾噗…嘞咯～…」/],
+      },
+      {
+        src: K0,
+        ref: '3306-3307',
+        any: [/「用、用嘴奉仕吗…知、知道了…啊啊嗯…哈姆…嗯啾…啾…呜啊…好咸………」/],
+      },
+      { src: K0, ref: '3309-3310', any: [/\t\tCFLAG:TARGET:332 = 1/m] },
+      {
+        src: K0,
+        ref: '3312-3314',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3315', any: [/\t\t\t\tIF TALENT:PLAYER:318 == 1/m] },
+      {
+        src: K0,
+        ref: '3317',
+        any: [/「啊，雄伟的肉棒……我开动了%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '3318', any: [/\t\t\t\tELSEIF TALENT:PLAYER:318 == 2/m] },
+      {
+        src: K0,
+        ref: '3320',
+        any: [
+          /「小孩子似的鲜肉棒啊，努力地勃起着呢%UNICODE\(0x2661\) \*1%　真可爱%UNICODE\(0x2661\) \*1%　这就好好给你…/,
+        ],
+      },
+      { src: K0, ref: '3321', any: [/\t\t\t\tELSEIF TALENT:PLAYER:318 == 3/m] },
+      {
+        src: K0,
+        ref: '3323',
+        any: [
+          /「满是男人味包皮肉棒啊……心跳加速了呢%UNICODE\(0x2661\) \*1%　我开动咯……哈呣%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3324', any: [/\t\t\t\tELSEIF TALENT:PLAYER:318 == 4/m] },
+      {
+        src: K0,
+        ref: '3326',
+        any: [
+          /「巨大的马肉棒……下巴可得脱臼了吧%UNICODE\(0x2661\) \*1%　我开动咯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3328',
+        any: [
+          /「嗯姆啾呜…哈啊…哈啊…大肉棒…美味…好美味啊…啊～～…呗咯～…啾～啾呜唔呜唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3329',
+        any: [
+          /「嘴巴要融化了～…嗯噗～…啾啪啊～…嘞噗～啾～啾呜呜～啾呜唔%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3330-3331', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '3332',
+        any: [/%SAVESTR:TARGET%把精液吞进喉咙深处、享受着口交奉仕………/],
+      },
+      { src: K0, ref: '3333', any: [/\t\t\tCFLAG:332 = 6/m] },
+      {
+        src: K0,
+        ref: '3335',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3336',
+        any: [
+          /「啊啊～…喜欢大肉棒…好喜欢大肉棒啊…请让我更多…更多的侍奉它吧～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3337',
+        any: [
+          /%SAVESTR:TARGET%单是口交就已经把持不住的样子、一边摩擦着合并起来的双腿一边奉仕着………/,
+        ],
+      },
+      { src: K0, ref: '3338-3339', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3340', any: [/\t\t\tCFLAG:332 = 5/m] },
+      {
+        src: K0,
+        ref: '3342',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3343', any: [/\t\t\t\tIF TALENT:PLAYER:318 == 1/m] },
+      {
+        src: K0,
+        ref: '3345',
+        any: [/「啊…雄伟的棒棒…被迷倒了%UNICODE\(0x2661\) \*1%」/],
+      },
+      { src: K0, ref: '3346', any: [/\t\t\t\tELSEIF TALENT:PLAYER:318 == 2/m] },
+      {
+        src: K0,
+        ref: '3348',
+        any: [
+          /「小孩子似的鲜肉棒棒，努力地勃起着呢%UNICODE\(0x2661\) \*1%　真可爱%UNICODE\(0x2661\) \*1%　这就好好给你…/,
+        ],
+      },
+      { src: K0, ref: '3349', any: [/\t\t\t\tELSEIF TALENT:PLAYER:318 == 3/m] },
+      {
+        src: K0,
+        ref: '3351',
+        any: [
+          /「满是男人味包皮棒棒……心跳加速了呢%UNICODE\(0x2661\) \*1%　我开动咯……哈呣%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3352', any: [/\t\t\t\tELSEIF TALENT:PLAYER:318 == 4/m] },
+      {
+        src: K0,
+        ref: '3354',
+        any: [
+          /「巨大的马棒棒……下巴可得脱臼了吧%UNICODE\(0x2661\) \*1%　我开动咯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3356',
+        any: [
+          /「啊啊…%SELF_CALL\(TARGET\)%的嘴…是为了这样侍奉大鸡鸡而存在的～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3357',
+        any: [/「啊啊…已经完全含住了…所以请不用顾虑地把精液射进嘴里吧…♪」/],
+      },
+      {
+        src: K0,
+        ref: '3358',
+        any: [/%SAVESTR:TARGET%带着喜悦的表情继续着口交奉仕………/],
+      },
+      { src: K0, ref: '3359-3360', any: [/\t\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3361', any: [/\t\t\tCFLAG:332 = 4/m] },
+      {
+        src: K0,
+        ref: '3363',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3364',
+        any: [
+          /「嗯咕～…嗯啾…嘞噗～…呼啊…哈啊哈啊…不让我再吮我可不会满足哦？…额呵呵～」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3365',
+        any: [/%SAVESTR:TARGET%用舌头舔了舔嘴唇之后、再次用舌头舔起了阴茎………/],
+      },
+      { src: K0, ref: '3366-3367', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '3368', any: [/\t\t\tCFLAG:332 = 3/m] },
+      {
+        src: K0,
+        ref: '3370',
+        any: [/\t\tELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3371',
+        any: [/「啊姆呜…嗯～…呗咯～…嗯呜唔…这样…含着…嗯～！嗯～！嗯嗯呜唔！」/],
+      },
+      { src: K0, ref: '3372', any: [/\t\t\tCFLAG:332 = 2/m] },
     ],
   },
 

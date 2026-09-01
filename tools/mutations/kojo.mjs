@@ -1534,9 +1534,65 @@ export default [
   {
     desc: 'M1857 K0 手淫二次阴茎形状读 TARGET 而非 PLAYER（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '    const penis = era.get(`talent:${era_flag.player}:318`) || 0;',
-    replace: '    const penis = era.get(`talent:${target}:318`) || 0;',
+    find: `  // :3194 IF SELECTCOM == 30（手淫，CFLAG:331）
+  if (era_flag.selectcom === 30) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${era_flag.player}:318\`) || 0;`,
+    replace: `  // :3194 IF SELECTCOM == 30（手淫，CFLAG:331）
+  if (era_flag.selectcom === 30) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${target}:318\`) || 0;`,
     tests: ['kojo-k0-tender'],
     must_mention: '手淫二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M1858 K0 口交首次状态推进写错（CFLAG:332 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.口交_奴 = 1; // :3309-3310',
+    replace: '      kojo.口交_奴 = 2; // :3309-3310',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交首次推进到 1',
+  },
+  {
+    desc: 'M1859 K0 口交二次淫乱+侍奉门槛错位（CFLAG:332 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3312-3314`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :3312-3314`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M1860 K0 口交二次淫乱+侍奉写回错档（CFLAG:332 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.口交_奴 = 6; // :3333',
+    replace: '        kojo.口交_奴 = 5; // :3333',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交二次淫乱+侍奉写 6',
+  },
+  {
+    desc: 'M1861 K0 口交二次阴茎形状读 TARGET 而非 PLAYER（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :3293 IF SELECTCOM == 31（口交，CFLAG:332）
+  if (era_flag.selectcom === 31) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${era_flag.player}:318\`) || 0;`,
+    replace: `  // :3293 IF SELECTCOM == 31（口交，CFLAG:332）
+  if (era_flag.selectcom === 31) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${target}:318\`) || 0;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
   },
 ];

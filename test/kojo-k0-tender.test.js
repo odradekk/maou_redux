@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 31; // 口交——COM30 落地后改用尚未填的指令
+    era_flag.selectcom = 32; // 乳交——COM31 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 31 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 32 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -2566,6 +2566,68 @@ test('手淫二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸', a
     f.store.set('talent:0:318', 1);
   });
   await speak_k0(exhausted, seq_rand(0));
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('口交首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 31;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊～…能奉仕大肉棒～…好开心啊…嗯啾～啾～嘞噗～…嘞咯～…噗呼呜♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:332'), 1, '口交首次推进到 1');
+});
+
+test('口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 31;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:332', 1);
+    f.store.set('talent:0:318', 1); // TALENT:PLAYER:318 == 1 巨根
+    f.store.set('talent:31:318', 4); // 若误读 TARGET 会落到马肉棒档
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '「啊，雄伟的肉棒……我开动了♡」',
+    '「嗯姆啾呜…哈啊…哈啊…大肉棒…美味…好美味啊…啊～～…呗咯～…啾～啾呜唔呜唔♡」',
+    '「嘴巴要融化了～…嗯噗～…啾啪啊～…嘞噗～啾～啾呜呜～啾呜唔♡」',
+    '琼把精液吞进喉咙深处、享受着口交奉仕………',
+  ]);
+  assert.equal(r0.store.get('cflag:31:332'), 6, '口交二次淫乱+侍奉写 6');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 31;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:332', 3);
+    f.store.set('flag:7', 1);
+    f.store.set('talent:0:318', 1);
+    f.store.set('talent:31:318', 4);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=3 且 FLAG:7==1 仍出声（门槛是 <=3）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:332'), 6);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 31;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+    f.store.set('cflag:31:332', 6);
+    f.store.set('flag:7', 1);
+    f.store.set('talent:0:318', 1);
+  });
+  await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
 });
 
