@@ -188,17 +188,16 @@ test('口塞（TEQUIP:45）：SELECTCOM != 45 跳过、== 45 不被此判定拦'
   await speak_k0(gagged);
   assert.deepEqual(gagged.text_lines(), []);
 
-  // SELECTCOM == 45：不跳过——爱抚外分支落占位行
+  // SELECTCOM == 45：不跳过——走口塞开始真身
   const speaking = await setup_k0((f) => {
     f.store.set('tequip:31:45', 1);
+    f.store.set('talent:31:85', 1);
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 45;
   });
   await speak_k0(speaking);
-  assert.ok(
-    speaking.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_0')),
-    '口塞中的 45 指令走到爱抚外分支的占位行',
-  );
+  assert.deepEqual(speaking.text_lines(), ['「哈咕～…嗯～♡」']);
+  assert.equal(speaking.store.get('cflag:31:346'), 1);
 });
 
 test('失神（TFLAG:899）：不输出', async () => {
@@ -230,11 +229,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 45; // 口塞——COM44 落地后改用尚未填的指令
+    era_flag.selectcom = 46; // 灌肠+肛塞——COM45 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 45 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 46 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -3362,6 +3361,84 @@ test('绳子脱着：淫乱写 CFLAG:385 = 2，门槛是 < 不是 <=', async () 
   await speak_k0(at_cap);
   assert.deepEqual(at_cap.text_lines(), []);
   assert.equal(at_cap.store.get('cflag:31:385'), 2, '绳子着脱阈值闸用 < 2');
+});
+
+test('口塞开始首次：爱慕，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 45;
+    f.store.set('tequip:31:45', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「哈咕～…嗯～♡」']);
+  assert.equal(fixture.store.get('cflag:31:346'), 1, '口塞首次推进到 1');
+});
+
+test('口塞开始二次：爱慕+抖M写 6 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 45;
+    f.store.set('tequip:31:45', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:346', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), ['「哈咕～…嗯～♡」']);
+  assert.equal(r0.store.get('cflag:31:346'), 6, '口塞开始二次爱慕+抖M写 6');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 45;
+    f.store.set('tequip:31:45', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:346', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=5 且 FLAG:7==1 仍出声（门槛是 <=5）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:346'), 6);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 45;
+    f.store.set('tequip:31:45', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:346', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('口塞脱着：爱慕或淫乱写 CFLAG:386 = 2，门槛是 < 不是 <=', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 45;
+    f.store.set('tequip:31:45', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), ['「嗯咕～…噗啊…哈啊…哈啊…哈啊…♡」']);
+  assert.equal(lewd.store.get('cflag:31:386'), 2, '口塞着脱推进到 2');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 45;
+    f.store.set('tequip:31:45', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:386', 2);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), []);
+  assert.equal(at_cap.store.get('cflag:31:386'), 2, '口塞着脱阈值闸用 < 2');
 });
 
 // —— 存根清单核对 ——

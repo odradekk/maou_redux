@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -36,7 +36,8 @@
  *     鞭 CFLAG:342 状态机 :4042-4105；
  *     针 CFLAG:343 状态机 :4110-4170；
  *     眼罩开始 CFLAG:344 :4176-4212、脱着 CFLAG:380 :4214-4225；
- *     绳子开始 CFLAG:345 :4231-4298、脱着 CFLAG:385 :4300-4315）
+ *     绳子开始 CFLAG:345 :4231-4298、脱着 CFLAG:385 :4300-4315；
+ *     口塞开始 CFLAG:346 :4321-4357、脱着 CFLAG:386 :4359-4370）
 
 
 
@@ -114,7 +115,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4315）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子。
+ * @KOJO_MESSAGE_COM_0（:674-4370）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞。
 
 
 
@@ -6536,6 +6537,79 @@ async function kojo_message_com_0(rand) {
       // :4310
       await era.printAndWait(`「哈啊哈啊…这、这样子…啊啊～会留下痕迹的………」`); // :4311
       kojo.绳子着脱 = 1; // :4312
+    }
+    return 0;
+  }
+
+  // :4321 IF SELECTCOM == 45 && TEQUIP:45（口塞开始，CFLAG:346）
+  if (era_flag.selectcom === 45 && era.get(`tequip:${target}:45`)) {
+    const masochism = era.get(`abl:${target}:21`) || 0;
+
+    if (kojo.口塞 === 0) {
+      // :4323
+
+      if (era.get(`talent:${target}:85`) === 1) {
+        // :4325
+        await era.printAndWait(`「哈咕～…嗯～${heart(1)}」`); // :4326
+      } else {
+        await era.printAndWait(`「哈咕～…呜呜…」`); // :4328-4329
+      }
+      kojo.口塞 = 1; // :4331-4332
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 5 &&
+        (kojo.口塞 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4334-4336
+        await era.printAndWait(`「哈咕～…嗯～${heart(1)}」`); // :4337
+        kojo.口塞 = 6; // :4338
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 3 &&
+        (kojo.口塞 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4340
+        await era.printAndWait(`「哈咕～…嗯～${heart(1)}」`); // :4341
+        kojo.口塞 = 5; // :4342
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.口塞 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4344
+        await era.printAndWait(`「哈咕～…嗯～${heart(1)}」`); // :4345
+        kojo.口塞 = 4; // :4346
+      } else if (
+        masochism >= 3 &&
+        (kojo.口塞 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :4348
+        await era.printAndWait(`「哈咕～…呜唔嗯…${heart(1)}」`); // :4349
+        kojo.口塞 = 3; // :4350
+      } else if (kojo.口塞 <= 1 || game.kojo.口上开关 === 2) {
+        // :4352
+        await era.printAndWait(`「哈咕～…呜呜…」`); // :4353
+        kojo.口塞 = 2; // :4354
+      }
+      return 0;
+    }
+  }
+
+  // :4359 ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0（口塞脱着，CFLAG:386）
+  if (era_flag.selectcom === 45 && !era.get(`tequip:${target}:45`)) {
+    if (
+      (era.get(`talent:${target}:85`) === 1 ||
+        era.get(`talent:${target}:76`) === 1) &&
+      (kojo.口塞着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4361
+      await era.printAndWait(`「嗯咕～…噗啊…哈啊…哈啊…哈啊…${heart(1)}」`); // :4362
+      kojo.口塞着脱 = 2; // :4363
+    } else if (kojo.口塞着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :4365
+      await era.printAndWait(`「嗯咕～…噗啊…哈啊…哈啊…哈啊…」`); // :4366
+      kojo.口塞着脱 = 1; // :4367
     }
     return 0;
   }
