@@ -549,7 +549,7 @@ test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
 
 test('全树：主启动图清单里的族模块不被别处顶层 require', () => {
   // 违规时报「顶层 require：ere/xxx.js → #/system/train/com-yyy」——
-  // M1790/M1791 的 must_mention 锚
+  // M2118/M2120 的 must_mention 锚（#288 原编号 M1790/M1791，#295 消重后改号）
   const protected_map = protected_modules();
   const violations = [];
   for (const rel of list_js_files('ere')) {

@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/chara/（角色域）。字段与运行方式见
 // tools/mutation-check.mjs 头注释；新增/删除条目必须同步改工具里的
-// LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，只作
+// 引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——重号
+// 由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M307 CM_STP 的 CFLAG:A:1 = 2 改 3（接入点触发条件被改坏——三分叉测试必须红）',
