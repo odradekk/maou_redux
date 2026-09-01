@@ -25,8 +25,8 @@
  *     TRYCALL 落空的等价物），不是注册清单——锁对的是「每个注册号都必须
  *     经主启动图装上」，不是「空间被填满」。
  *   - `self_kojo_family` 与 `kojo_message_com_family` **同一套键**
- *     （SELF_KOJO_K{LOCAL - 100}，kojo-system.js:100/136-141），当前无模块
- *     注册（K3/K5 只注册 kojo_message_com_family）。锁对两个族都扫——将来
+ *     （SELF_KOJO_K{LOCAL - 100}，kojo-system.js:100/136-141）。K3 已注册
+ *     `SELF_KOJO_K3`（#234）；K5 事件口上仍随各自票落地。锁对两个族都扫——
  *     任何口上文件往里注册时，主启动图漏 require 立即红。
  *
  * == 为什么只锁主启动图一张清单（#282 工单第二问） ==
@@ -145,8 +145,8 @@ test('源码扫描能拿到每个口上模块的分发族注册号', () => {
     ),
     [5],
   );
-  // 两个文件都没有 self_kojo 注册（事件口上随各自票落地）
-  assert.equal(by_module.get('kojo-k3-noble').self_kojo_family.size, 0);
+  // K3 已落地 SELF_KOJO_K3（#234）；K5 事件口上仍随各自票
+  assert.equal(by_module.get('kojo-k3-noble').self_kojo_family.size, 1);
   assert.equal(by_module.get('kojo-k5-mao').self_kojo_family.size, 0);
   // 底座与纯工具模块不进表
   assert.ok(!by_module.has('kojo-system'));

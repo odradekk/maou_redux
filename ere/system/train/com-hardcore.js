@@ -2579,5 +2579,4 @@ module.exports = {
   com89,
   com90,
   equip_com89,
-  piercing_state,
 };

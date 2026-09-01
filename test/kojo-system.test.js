@@ -245,15 +245,16 @@ const KOJO_GUARD_STATES = [
   ['TEQUIP:90 触手 → 跳过', (fixture) => fixture.store.set('tequip:17:90', 1)],
 ];
 
-test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过（守卫命中不得出台词；K3 死斗场/兽奸走真身）', async () => {
+test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过（守卫命中不得出台词；K2/K3 死斗场走真身，K3 兽奸走真身）', async () => {
   // 对 family 里已注册的每个 handler × 每道守卫：置位 → 直调 → 返回 0。
   // 跳过类守卫不得等待、不得出台词；死斗场/兽奸岔去专用口上——K5 死斗场
-  // 仍是占位行、兽奸静默，K3 两边都已随 #234 换真台词。
+  // 仍是占位行、兽奸静默；K2 死斗场已随 #233 换真台词、兽奸仍静默；
+  // K3 两边都已随 #234 换真台词。
   const probe = await setup_kojo();
   const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
   const handlers = [...kojo_message_com_family.implemented.entries()];
   assert.ok(handlers.length >= 3, '契约至少要覆盖已注册的 K2/K3/K5');
-  for (const [num, handler] of handlers) {
+  for (const [num] of handlers) {
     for (const [name, seed_guard] of KOJO_GUARD_STATES) {
       const fixture = await setup_kojo();
       const flag = fixture.load_module('era-utils/era-flag');
@@ -263,6 +264,13 @@ test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过
       const handler = kojo_message_com_family.implemented.get(num);
       const result = await handler();
       assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 守卫「${name}」返回 0`);
+      if (num === 2 && name.startsWith('TEQUIP:55')) {
+        assert.ok(
+          fixture.text_lines().some((l) => l.includes('死斗场的狂热')),
+          `KOJO_MESSAGE_COM_${num} 守卫「${name}」走死斗场真台词`,
+        );
+        continue;
+      }
       if (num === 3 && name.startsWith('TEQUIP:55')) {
         assert.ok(
           fixture.text_lines().some((l) => l.includes('吓得直发抖')),

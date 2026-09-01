@@ -79,7 +79,7 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
-  [/^SELF_CALL\(A(,\s*\d+)?\)$/, 'SCA'],
+  [/^SELF_CALL\(A(,\s*\d+)?\)$/, 'SC'], // EVENT_K 分发前 TARGET=A，与 TARGET 同值（#233）
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   [/^SELF_CALL_FIRST\(A\)$/, 'SCFA'],
   [/^CSTR:2$/, 'CSTR2'],
@@ -135,7 +135,7 @@ const JS_TOKEN_RULES = [
   [/^assi_name$/, 'ASSI'],
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
-  [/^self_call\(a\)$/, 'SCA'],
+  [/^self_call\(a\)$/, 'SC'],
   [/^scf\(\)$/, 'SCF'],
   [/^self_call_first\(a\)$/, 'SCFA'],
   [/^cstr2$/, 'CSTR2'],

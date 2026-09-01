@@ -4061,6 +4061,4 @@ module.exports = {
   brain_ryou_yusya,
   horse_ryou_yusya,
   dungeon_ryouzyoku_escape,
-  ryouzyoku_kojo_family,
-  ryouzyoku_after_kojo_family,
 };

@@ -79,6 +79,13 @@ const cflag = {
     src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),
   ),
   5: named_tail('野外露出经验', src(SRC_FLAG, 'CFLAG:5 野外露出経験')),
+  7: named(
+    '穿孔装着',
+    src(
+      SRC_FLAG,
+      'CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）',
+    ),
+  ),
   31: named_tail('媚药残留度', src(SRC_FLAG, 'CFLAG:31 体内媚薬残留度')),
   32: named_tail(
     '媚药禁断症状',
@@ -470,6 +477,7 @@ const cflag = {
     ),
   ),
   601: named_tail('结婚对象', src(SRC_FLAG, ':464 CFLAG:601 = 結婚相手')),
+  504: named('要求奖赏', src(SRC_FLAG, ':405 CFLAG:504 = 要求したご褒美')),
   // —— 2D 地下城模式的跨域写（#181 H12 @UNIT_MOVE；named_tail 落表尾，
   //    #170-#172 先例。510/511 属主 event（dungeon 文件写）——2D 单位的
   //    格子位置，词条取まとめ文档 :412-413 的「X座標/Y座標」归一简体）——
