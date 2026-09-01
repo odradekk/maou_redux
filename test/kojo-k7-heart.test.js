@@ -409,6 +409,54 @@ test('TEQUIP:55（死斗场）：头部守卫岔去 COLOSSEUM_KOJO_7 真身', as
   assert.deepEqual(fixture.text_lines(), ['金红桃连站起来的气力都没有了……']);
 });
 
+// —— 头部七道守卫的余下五道（#238 验收补测；TEQUIP:89/:55 已在上方两例覆盖）——
+
+test('ASSI > 0 && ASSIPLAY（助手调教中）：头部第 1 道守卫静默跳过', async () => {
+  const fixture = await setup_k7((f, era_flag) => {
+    era_flag.assi = 21;
+    era_flag.assiplay = 1;
+  }, 0);
+  await speak_k7(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(
+    fixture.store.get('cflag:20:301'),
+    undefined,
+    '守卫直接 return 0，不进状态机',
+  );
+});
+
+test('TEQUIP:45（口塞）且 SELECTCOM != 45：头部第 2 道守卫静默跳过', async () => {
+  const fixture = await setup_k7((f) => {
+    f.store.set('tequip:20:45', 1);
+  }, 0);
+  await speak_k7(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('TFLAG:899（失神）：头部第 3 道守卫静默跳过', async () => {
+  const fixture = await setup_k7((f) => {
+    f.store.set('tflag:899', 1);
+  }, 0);
+  await speak_k7(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('TALENT:9 == 1（崩坏）：头部第 6 道守卫静默跳过', async () => {
+  const fixture = await setup_k7((f) => {
+    f.store.set('talent:20:9', 1);
+  }, 0);
+  await speak_k7(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('TEQUIP:90（触手调教中）：头部第 7 道守卫静默跳过', async () => {
+  const fixture = await setup_k7((f) => {
+    f.store.set('tequip:20:90', 1);
+  }, 0);
+  await speak_k7(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
 test('COLOSSEUM SELECTCOM==31：ITEM:PBAND(=4) 修正为 item:4，非字符串具名寻址', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tequip:20:55', 1);

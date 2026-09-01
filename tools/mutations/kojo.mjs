@@ -1693,4 +1693,496 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['top-level-wiring'],
     must_mention: '顶层 require：ere/system/train/com-tentacle.js',
   },
+
+  // —— #238（J28）：K7 ハート 口上模块（M2000-M2069 号段） ——
+  {
+    desc: 'M2000 K7 @EVENTTRAIN #PRI 存在标志错值（FLAG:107 = 1 改 0，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `game.kojo.口上存在_7 = 1; // :64 FLAG:107 = 1（K7 口上存在标志）`,
+    replace: `game.kojo.口上存在_7 = 0; // :64（变异：存在标志错值）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'K7 一对',
+  },
+  {
+    desc: 'M2001 K7 @EVENTEND #LATER 清标志删除（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `game.kojo.口上存在_7 = 0; // :69`,
+    replace: `    // 变异：清标志删除`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'K7 一对',
+  },
+  {
+    desc: 'M2002 K7 初調教人间分档推进值错（CFLAG:201 = 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:201\`, 1); // :112`,
+    replace: `era.set(\`cflag:\${target}:201\`, 2); // :112（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M2003 K7 初調教魔族分档判据错格（TALENT:314 == 9 改 8，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `    // 魔族
+    if (era0(\`talent:\${target}:314\`) == 9) {`,
+    replace: `    // 魔族
+    if (era0(\`talent:\${target}:314\`) == 8) {`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '初调教魔族分档',
+  },
+  {
+    desc: 'M2004 K7 魔族化（１回のみ）改造标记写错（CFLAG:370 = 2 改 3，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:370\`, 2); // :132`,
+    replace: `era.set(\`cflag:\${target}:370\`, 3); // :132（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '魔族化',
+  },
+  {
+    desc: 'M2005 K7 NTR再捕獲爱慕支解除标记写错（CFLAG:650 = 0 改 1，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:650\`, 0); // :150 NTRスイッチ解除`,
+    replace: `era.set(\`cflag:\${target}:650\`, 1); // :150（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'NTR再捕獲',
+  },
+  {
+    desc: 'M2006 K7 屈服刻印Lv1推进值错（CFLAG:201 = 2 改 3，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:201\`, 2); // :180`,
+    replace: `era.set(\`cflag:\${target}:201\`, 3); // :180（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '屈服刻印',
+  },
+  {
+    desc: 'M2007 K7 屈服刻印Lv3推进值错（CFLAG:201 = 4 改 5，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:201\`, 4); // :205`,
+    replace: `era.set(\`cflag:\${target}:201\`, 5); // :205（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '屈服刻印',
+  },
+  {
+    desc: 'M2008 K7 淫乱推进值错（CFLAG:201 = 5 改 6，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:201\`, 5); // :223`,
+    replace: `era.set(\`cflag:\${target}:201\`, 6); // :223（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '处女附注',
+  },
+  {
+    desc: 'M2009 K7 爱慕推进值错（CFLAG:201 = 7 改 8，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:201\`, 7); // :282`,
+    replace: `era.set(\`cflag:\${target}:201\`, 8); // :282（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '爱慕',
+  },
+  {
+    desc: 'M2010 K7 崩坏推进值错（CFLAG:201 = 9 改 8，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:201\`, 9); // :328`,
+    replace: `era.set(\`cflag:\${target}:201\`, 8); // :328（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '崩坏',
+  },
+  {
+    desc: 'M2011 K7 崩坏只播一次守卫删松（CFLAG:201 < 9 改 <= 9，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era0(\`talent:\${target}:9\`) == 1 &&
+    era0(\`cflag:\${target}:201\`) < 9
+  ) {
+    // 崩坏`,
+    replace: `era0(\`talent:\${target}:9\`) == 1 &&
+    era0(\`cflag:\${target}:201\`) <= 9 // 变异：守卫删松
+  ) {
+    // 崩坏`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '崩坏只播一次',
+  },
+  {
+    desc: 'M2012 K7 无名助手判据错格（TALENT:MASTER:122 == 0 改 1，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era0(\`talent:0:122\`) == 0) {`,
+    replace: `era0(\`talent:0:122\`) == 1) {  // 变异`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'K7_KOJO2',
+  },
+  {
+    desc: 'M2013 K7 @EVENTEND 死亡守卫删松（BASE:0 <= 0 改 < 0，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era0(\`base:\${target}:0\`) <= 0) {`,
+    replace: `era0(\`base:\${target}:0\`) < 0) {  // 变异`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '死亡守卫',
+  },
+  {
+    desc: 'M2014 K7 @EVENTEND 崩坏判据错格（FLAG:7 == 2 改 3，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (era0(\`talent:\${target}:9\`) == 1 && era0('flag:7') == 2) {
+    // 崩坏
+    era.drawLine();
+    await era.printAndWait(\`「不…讨厌…怪物的孩子不要生下来…不要………」\`); // :841`,
+    replace: `if (era0(\`talent:\${target}:9\`) == 1 && era0('flag:7') == 3) {
+    // 崩坏（变异：FLAG:7 判据错格）
+    era.drawLine();
+    await era.printAndWait(\`「不…讨厌…怪物的孩子不要生下来…不要………」\`); // :841`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '@EVENTEND 崩坏',
+  },
+  {
+    desc: 'M2015 K7 @EVENTEND 淫乱体力分档阈值错（BASE:0 >= 500 改 >= 700，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era0(\`talent:\${target}:76\`) == 1 &&
+    era0(\`base:\${target}:0\`) >= 500
+  ) {
+    // 淫乱(体力500以上)`,
+    replace: `era0(\`talent:\${target}:76\`) == 1 &&
+    era0(\`base:\${target}:0\`) >= 700 // 变异
+  ) {
+    // 淫乱(体力500以上)`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '淫乱体力分档',
+  },
+  {
+    desc: 'M2016 K7 助手银黑桃初めて推进值错（CFLAG:202 = 2 改 3，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:202\`, 2); // :359`,
+    replace: `era.set(\`cflag:\${target}:202\`, 3); // :359（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '爱取得済み分档',
+  },
+  {
+    desc: 'M2017 K7 助手白梅花守卫删除（TALENT:ASSI:121 == 0 改恒 false，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (era0(\`talent:\${assi}:121\`) == 0) {
+      return 0;
+    }`,
+    replace: `if (false) {  // 变异：白梅花守卫删除
+      return 0;
+    }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '静默跳过',
+  },
+  {
+    desc: 'M2018 K7 助手黑方片 CFLAG:203==2 分支路由旁路失效（FLAG:7 == 2 改 3，#238；此支源本就缺 RETURN 1，1:1 保留见 issue #238 验收）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (era0(\`cflag:\${target}:203\`) == 2 && era0('flag:7') == 2) {`,
+    replace: `} else if (era0(\`cflag:\${target}:203\`) == 2 && era0('flag:7') == 3) {  // 变异`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '黑方片',
+  },
+  {
+    desc: 'M2019 K7 头部守卫①：ASSI>0&&ASSIPLAY 删除（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :909-910 助手调教时跳过
+  if (era_flag.assi > 0 && era_flag.assiplay) {
+    return 0;
+  }`,
+    replace: `// :909-910 助手调教时跳过
+  if (false) {  // 变异：助手调教守卫删除
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '头部第 1 道守卫',
+  },
+  {
+    desc: 'M2020 K7 头部守卫②：TEQUIP:45 口塞守卫删除（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :912-913 口塞着用时跳过（SELECTCOM == 45 自己说话不算）
+  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
+    return 0;
+  }`,
+    replace: `// :912-913 口塞着用时跳过（SELECTCOM == 45 自己说话不算）
+  if (false) {  // 变异：口塞守卫删除
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '头部第 2 道守卫',
+  },
+  {
+    desc: 'M2021 K7 头部守卫③：TFLAG:899 失神删除（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :915-916 失神时跳过
+  if (era0('tflag:899')) {
+    return 0;
+  }`,
+    replace: `// :915-916 失神时跳过
+  if (false) {  // 变异：失神守卫删除
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '头部第 3 道守卫',
+  },
+  {
+    desc: 'M2022 K7 头部守卫④：TEQUIP:89 不再岔去 DOG_KOJO_7（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :918-921 兽奸PLAY中是专用口上——岔去本文件真身
+  if (era0(\`tequip:\${target}:89\`)) {
+    await dog_kojo_7(rand_n);
+    return 0;
+  }`,
+    replace: `// :918-921 兽奸PLAY中是专用口上——岔去本文件真身
+  if (false) {  // 变异：兽奸岔出删除
+    await dog_kojo_7(rand_n);
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'DOG_KOJO_7',
+  },
+  {
+    desc: 'M2023 K7 头部守卫⑤：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_7（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :923-926 死斗场中是专用口上——岔去本文件真身
+  if (era0(\`tequip:\${target}:55\`)) {
+    await colosseum_kojo_7(rand_n);
+    return 0;
+  }`,
+    replace: `// :923-926 死斗场中是专用口上——岔去本文件真身
+  if (false) {  // 变异：死斗场岔出删除
+    await colosseum_kojo_7(rand_n);
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'COLOSSEUM_KOJO_7',
+  },
+  {
+    desc: 'M2024 K7 头部守卫⑥：TALENT:9 崩坏删除（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :928-929 崩坏时跳过
+  if (era0(\`talent:\${target}:9\`) == 1) {
+    return 0;
+  }`,
+    replace: `// :928-929 崩坏时跳过
+  if (false) {  // 变异：崩坏守卫删除
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '头部第 6 道守卫',
+  },
+  {
+    desc: 'M2025 K7 头部守卫⑦：TEQUIP:90 触手删除（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `// :931-932 触手调教中跳过
+  if (era0(\`tequip:\${target}:90\`)) {
+    return 0;
+  }`,
+    replace: `// :931-932 触手调教中跳过
+  if (false) {  // 变异：触手守卫删除
+    return 0;
+  }`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '头部第 7 道守卫',
+  },
+  {
+    desc: 'M2026 K7 SELECTCOM==0 爱抚初回推进值错（CFLAG:301 = 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:301\`, 1); // :957`,
+    replace: `era.set(\`cflag:\${target}:301\`, 2); // :957（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M2027 K7 SELECTCOM==87 穿环 p==1 判据错格（改 p==9，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `          if (p == 1) {
+            await era.printAndWait(
+              \`「啊啊…敏感度上升了啊…来吧拉一下试试吧…\${heart(1)}」\`,
+            ); // :5994`,
+    replace: `          if (p == 9) {  // 变异
+            await era.printAndWait(
+              \`「啊啊…敏感度上升了啊…来吧拉一下试试吧…\${heart(1)}」\`,
+            ); // :5994`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'piercing_state',
+  },
+  {
+    desc: 'M2028 K7 COLOSSEUM ITEM:4 回退成 ITEM:PBAND 具名寻址（#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `        era0('item:4') == 1
+      ) {
+        await era.print(\`假阴茎\`); // :8258`,
+    replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址
+      ) {
+        await era.print(\`假阴茎\`); // :8258`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '非字符串具名寻址',
+  },
+  {
+    desc: 'M2029 K7 PALAMCNG 首超阈值状态写错（CFLAG:221 = 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:221\`, 1); // :7140`,
+    replace: `era.set(\`cflag:\${target}:221\`, 2); // :7140（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '首次超过',
+  },
+  {
+    desc: 'M2030 K7 MARKCNG 苦痛刻印Lv3判据错格（TFLAG:22 == 3 改 4，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (era0('tflag:22') == 3 && era0(\`cflag:\${target}:297\`) == 0) {`,
+    replace: `if (era0('tflag:22') == 4 && era0(\`cflag:\${target}:297\`) == 0) {  // 变异`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '苦痛刻印Lv3',
+  },
+  {
+    desc: 'M2031 K7 SELF_KOJO 跨模块全局 S 阈值错（s >= 3 改 s >= 9，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (s >= 3) {`,
+    replace: `if (s >= 9) {  // 变异：peek_aftertrain_s 阈值错格`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'peek_aftertrain_s',
+  },
+  {
+    desc: 'M2032 K7 DUNGEON_VICTORY 体力过半追加台词阈值错（50 改 5，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `    (era0(\`base:\${a}:0\`) * 100) / era0(\`maxbase:\${a}:0\`) < 50 ||
+    (era0(\`base:\${a}:1\`) * 100) / era0(\`maxbase:\${a}:1\`) < 50`,
+    replace: `    (era0(\`base:\${a}:0\`) * 100) / era0(\`maxbase:\${a}:0\`) < 5 || // 变异
+    (era0(\`base:\${a}:1\`) * 100) / era0(\`maxbase:\${a}:1\`) < 50`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '体力低于五成',
+  },
+  {
+    desc: 'M2033 K7 DUNGEON_RYOUZYOKU 处女判据错格（TALENT:0 == 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `  if (era0(\`talent:\${target}:0\`) == 1) {
+    await era.printAndWait(\`「能夺走我处女的幸运儿会是谁呢？」\`); // :7982`,
+    replace: `  if (era0(\`talent:\${target}:0\`) == 2) {  // 变异
+    await era.printAndWait(\`「能夺走我处女的幸运儿会是谁呢？」\`); // :7982`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '迷宫败北与凌辱结束口上',
+  },
+  {
+    desc: 'M2034 K7 GOHOUBI_REQUEST CFLAG:A:504 判据错格（== 0 改 1，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (era0(\`cflag:\${cid}:504\`) == 0) {
+    await era.printAndWait(\`「说道奖励当然想要钱了」\`); // :8677`,
+    replace: `if (era0(\`cflag:\${cid}:504\`) == 1) {  // 变异
+    await era.printAndWait(\`「说道奖励当然想要钱了」\`); // :8677`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '请求金钱',
+  },
+  {
+    desc: 'M2035 K7 GOHOUBI_AFTER choice==0 判据错格（改 choice==9，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `async function gohoubi_after_koujo_k7(cid, choice) {
+  if (choice == 0) {`,
+    replace: `async function gohoubi_after_koujo_k7(cid, choice) {
+  if (choice == 9) {  // 变异`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'TFLAG:18 改经 choice',
+  },
+  {
+    desc: 'M2036 K7 OSIOKI choice==6 判据错格（改 choice==16，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (choice == 6) {
+    await era.printAndWait(\`「好臭啊………」\`); // :8843`,
+    replace: `} else if (choice == 16) {  // 变异
+    await era.printAndWait(\`「好臭啊………」\`); // :8843`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '好臭啊',
+  },
+  {
+    desc: 'M2037 K7 GOBI arg_0==3 判据错格（改 arg_0==13，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (arg_0 == 3) {
+    await era.print(\`哦……。\`); // :8869`,
+    replace: `} else if (arg_0 == 13) {  // 变异
+    await era.print(\`哦……。\`); // :8869`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'ARG:0 取语尾编号',
+  },
+  {
+    desc: 'M2038 K7 BENKI 门面 game.train.肉便器行动 判据错格（== 0 改 1，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (game.train.肉便器行动 == 0) {
+    if (era0(\`talent:\${target}:76\`) == 1) {`,
+    replace: `if (game.train.肉便器行动 == 1) {  // 变异
+    if (era0(\`talent:\${target}:76\`) == 1) {`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '门面 game.train.肉便器行动',
+  },
+  {
+    desc: 'M2039 K7 ENTERENEMY 爱慕判据错格（TALENT:85 == 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (era0(\`talent:\${a}:85\`) == 1) {
+    await era.printAndWait(
+      \`「啊啊…魔王大人。现、现在就去见你了.....\${heart(1)}」\`,
+    ); // :8666`,
+    replace: `} else if (era0(\`talent:\${a}:85\`) == 2) {  // 变异
+    await era.printAndWait(
+      \`「啊啊…魔王大人。现、现在就去见你了.....\${heart(1)}」\`,
+    ); // :8666`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '来袭口上按角色素质分岔',
+  },
+  {
+    desc: 'M2040 K7 NTR_KOUJO 首次标记写错（CFLAG:650 = 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `era.set(\`cflag:\${target}:650\`, 1); // :8354`,
+    replace: `era.set(\`cflag:\${target}:650\`, 2); // :8354（变异）`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '首次经 CFLAG:650 标记',
+  },
+  {
+    desc: 'M2041 K7 EXUCUTION TFLAG:16 判据错格（== 5 改 6，#238；6 支已有台词，改后仍会输出但文本不同，红在断言精确台词）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (era0('tflag:16') == 5) {
+    await era.printAndWait(\`「下达命令…主人………」\`); // :8546`,
+    replace: `} else if (era0('tflag:16') == 6) {  // 变异
+    await era.printAndWait(\`「下达命令…主人………」\`); // :8546`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '注册且可调用',
+  },
+  {
+    desc: 'M2042 K7 BANISHMENT TFLAG:510 判据错格（== 0 改 1，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `if (era0('tflag:510') == 0) {
+    await era.printAndWait(\`「回不去了…狂王大人那里…已经回不去了………」\`); // :8596`,
+    replace: `if (era0('tflag:510') == 1) {  // 变异
+    await era.printAndWait(\`「回不去了…狂王大人那里…已经回不去了………」\`); // :8596`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '回不去了',
+  },
+  {
+    desc: 'M2043 K7 PUBLIC_EXUCUTION TFLAG:520 判据错格（== 1 改 2，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (era0('tflag:520') == 1) {
+    await era.printAndWait(\`「这里…这个绞刑台是我最后的舞台吗…」\`); // :8624`,
+    replace: `} else if (era0('tflag:520') == 2) {  // 变异
+    await era.printAndWait(\`「这里…这个绞刑台是我最后的舞台吗…」\`); // :8624`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '绞刑台',
+  },
+  {
+    desc: 'M2044 K7 GROTESQUE TFLAG:530 判据错格（== 0 改 1，#238；源全空，红在分支路由而非文本）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `async function grotesque_koujo_k7() {
+  if (era0('tflag:530') == 0) {
+    await era.printAndWait(''); // :8636-8637`,
+    replace: `async function grotesque_koujo_k7() {
+  if (era0('tflag:530') == 1) {  // 变异
+    await era.printAndWait(''); // :8636-8637`,
+    tests: ['kojo-k7-heart'],
+    must_mention: 'GROTESQUE_KOUJO_K7',
+  },
+  {
+    desc: 'M2045 K7 MUSEUM 蝋人形化死分支「顺手修好」（TFLAG:500 第二个 == 0 改 == 2，1:1 保留原作缺陷的守护条目，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `} else if (era0('tflag:500') == 0) {
+    // :8565-8567 源误写 == 0（原意 == 2，蝋人形化），死分支 1:1 保留
+    await era.printAndWait(''); // :8566-8567`,
+    replace: `} else if (era0('tflag:500') == 2) {  // 变异：顺手修好
+    // :8565-8567 源误写 == 0（原意 == 2，蝋人形化），死分支 1:1 保留
+    await era.printAndWait(''); // :8566-8567`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '两支都判不到 2',
+  },
+  {
+    desc: 'M2046 K7 DOG_KOJO_7 空台词「顺手补写」（:6291-6292 填入台词，1:1 保留原作缺陷的守护条目，#238）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: `await era.printAndWait(''); // :6291-6292`,
+    replace: `await era.printAndWait('（变异：误填补写台词）'); // :6291-6292`,
+    tests: ['kojo-k7-heart'],
+    must_mention: '全部空文本',
+  },
 ];
