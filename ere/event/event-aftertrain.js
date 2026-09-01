@@ -34,6 +34,11 @@ let leftover_a = 0;
  * （调教后自慰口上里 Q == 1 助手 / Q == 2 野狗）。
  */
 let leftover_q = 0;
+/**
+ * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写，SELF_KOJO（K6 等）读
+ * （调教后性交口上 `{S}` 回中出次数）。
+ */
+let leftover_s = 0;
 
 /**
  * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
@@ -41,6 +46,14 @@ let leftover_q = 0;
  */
 function peek_aftertrain_q() {
   return leftover_q;
+}
+
+/**
+ * SELF_KOJO 读的原作 S（AFTERTRAIN 性交检查的回数）。
+ * @returns {number}
+ */
+function peek_aftertrain_s() {
+  return leftover_s;
 }
 
 /**
@@ -57,6 +70,7 @@ function chara_name(cid) {
  * @returns {Promise<number>} 执行回数或 0
  */
 async function aftertrain_sex_check() {
+  leftover_s = 0;
   const target = era_flag.target;
   if (target < 0) return 0;
   if (era.get(`talent:${target}:135`)) return 0; // 未成熟
@@ -125,6 +139,7 @@ async function aftertrain_sex_check() {
   era.print('');
 
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  leftover_s = s;
   game.train.初吻与自我口上 = 4;
   await self_kojo();
   era.print(`V经验＋${s}`);
@@ -724,5 +739,6 @@ module.exports = {
   aftertrain_masturbation_check,
   aftertrain_sex_check,
   peek_aftertrain_q,
+  peek_aftertrain_s,
   self_check,
 };

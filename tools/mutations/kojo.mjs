@@ -1674,4 +1674,269 @@ export default [
     tests: ['kojo-k2-timid'],
     must_mention: 'SELF_KOJO 助手妄想支出声',
   },
+  // —— #237（J27）：K6 悪女 口上模块（M1780-M1804 号段） ——
+  {
+    desc: 'M1780 K6 COM 助手调教守卫删（ASSIPLAY 不再跳过，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
+    // :681
+    return 0; // :681
+  } // :681`,
+    replace: `  if (false) {
+    // :681 变异
+    return 0; // :681
+  } // :681`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '助手调教（ASSI > 0 && ASSIPLAY）：静默跳过',
+  },
+  {
+    desc: 'M1781 K6 COM 口塞守卫删（TEQUIP:45 不再跳过，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
+    // :684
+    return 0; // :684
+  } // :684`,
+    replace: `  if (false && era_flag.selectcom !== 45) {
+    // :684 变异
+    return 0; // :684
+  } // :684`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
+  },
+  {
+    desc: 'M1782 K6 COM 失神守卫删（TFLAG:899 不再跳过，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (game.train.失神) {
+    // :687
+    return 0; // :687
+  } // :687`,
+    replace: `  if (false) {
+    // :687 变异
+    return 0; // :687
+  } // :687`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '失神（TFLAG:899）：静默跳过',
+  },
+  {
+    desc: 'M1783 K6 COM 崩坏守卫删（TALENT:9 不再跳过，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if ((era.get(\`talent:\${target}:9\`) || 0) === 1) {
+    // :690
+    return 0; // :690
+  } // :690`,
+    replace: `  if (false) {
+    // :690 变异
+    return 0; // :690
+  } // :690`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '崩坏（TALENT:9）：静默跳过',
+  },
+  {
+    desc: 'M1784 K6 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_6，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // :692
+    await dog_kojo_6(rand_n); // CALL DOG_KOJO_6 // :693
+    return 0; // :694
+  } // :695`,
+    replace: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // :692
+    return 0; // :694 变异
+  } // :695`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_6',
+  },
+  {
+    desc: 'M1785 K6 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_6，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // :697
+    await colosseum_kojo_6(rand_n); // CALL COLOSSEUM_KOJO_6 // :698
+    return 0; // :699
+  } // :700`,
+    replace: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // :697
+    return 0; // :699 变异
+  } // :700`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_6',
+  },
+  {
+    desc: 'M1786 K6 爱撫初回推进写错（CFLAG:301 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      kojo.爱抚 = 1; // :720',
+    replace: '      kojo.爱抚 = 2; // :720（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '爱撫初回 CFLAG:301 = 1',
+  },
+  {
+    desc: 'M1787 K6 爱撫淫乱档推进写错（CFLAG:301 = 6 改 5，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '        kojo.爱抚 = 6; // :728',
+    replace: '        kojo.爱抚 = 5; // :728（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '淫乱 TALENT:76 → CFLAG:301 = 6',
+  },
+  {
+    desc: 'M1788 K6 爱撫爱慕档推进写错（CFLAG:301 = 5 改 4，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '        kojo.爱抚 = 5; // :733',
+    replace: '        kojo.爱抚 = 4; // :733（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '爱慕 TALENT:85 → CFLAG:301 = 5',
+  },
+  {
+    desc: 'M1789 K6 爱撫屈服Lv3档推进写错（CFLAG:301 = 4 改 3，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '        kojo.爱抚 = 4; // :738',
+    replace: '        kojo.爱抚 = 3; // :738（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '屈服刻印 Lv3 → CFLAG:301 = 4',
+  },
+  {
+    desc: 'M1790 K6 爱撫屈服Lv2档推进写错（CFLAG:301 = 3 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '        kojo.爱抚 = 3; // :743',
+    replace: '        kojo.爱抚 = 2; // :743（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '屈服刻印 Lv2 → CFLAG:301 = 3',
+  },
+  {
+    desc: 'M1791 K6 爱撫それ以外档推进写错（CFLAG:301 = 2 改 1，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '        kojo.爱抚 = 2; // :748',
+    replace: '        kojo.爱抚 = 1; // :748（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: 'それ以外 → CFLAG:301 = 2',
+  },
+  {
+    desc: 'M1792 K6 阶段耗尽静默锁删（FLAG:7 == 1 时也出声，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `      if (
+        (era.get(\`talent:\${target}:76\`) || 0) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :725`,
+    replace: `      if (
+        (era.get(\`talent:\${target}:76\`) || 0) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 1)
+      ) {
+        // :725 变异`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: 'FLAG:7 == 1 阶段耗尽后不出声',
+  },
+  {
+    desc: 'M1793 K6 舔阴首次推进写错（CFLAG:302 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      kojo.舔阴 = 1; // :769',
+    replace: '      kojo.舔阴 = 2; // :769（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '舔陰初回 CFLAG:302 = 1',
+  },
+  {
+    desc: 'M1794 K6 自己扒开首次推进写错（CFLAG:308 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      kojo.自己扒开 = 1; // :1221',
+    replace: '      kojo.自己扒开 = 2; // :1221（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '自己扒开初回 CFLAG:308 = 1',
+  },
+  {
+    desc: 'M1795 K6 胸爱抚首次推进写错（CFLAG:306 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      kojo.胸爱抚 = 1; // :1023',
+    replace: '      kojo.胸爱抚 = 2; // :1023（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '胸爱抚初回 CFLAG:306 = 1',
+  },
+  {
+    desc: 'M1796 K6 EVENTTRAIN 初调教推进写错（CFLAG:201 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      kojo.初调教 = 1; // :163',
+    replace: '      kojo.初调教 = 2; // :163（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '初調教推进到 1',
+  },
+  {
+    desc: 'M1797 K6 EVENTEND 反抗刻印台词改（去死吧！，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '    await era.printAndWait(`「去死吧！」`); // :608',
+    replace: '    await era.printAndWait(`「滚开吧！」`); // :608 变异',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '反抗刻印Lv3 终了出声',
+  },
+  {
+    desc: 'M1798 K6 DOG_KOJO 首次推进写错（CFLAG:301 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      kojo.爱抚 = 1; // :5293',
+    replace: '      kojo.爱抚 = 2; // :5293（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '兽奸爱撫初回（DOG_KOJO_6 CFLAG:301 == 0 且 MARK:2 < 2）',
+  },
+  {
+    desc: 'M1799 K6 PALAMCNG 处女丧失的 A 加算改错（UP:12 丢，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  A =
+    (era.get(\`delta:\${target}:11\`) || 0) + (era.get(\`delta:\${target}:12\`) || 0); // UP:11 + UP:12 // :6334`,
+    replace: `  A =
+    (era.get(\`delta:\${target}:11\`) || 0); // 变异：丢 UP:12`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '处女丧失 A >= 500 落それ以外档（UP:12 参与加算）',
+  },
+  {
+    desc: 'M1800 K6 MARKCNG 苦痛刻印取得推进写错（CFLAG:297 = 1 改 0，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '    kojo.苦痛刻印Lv3 = 1; // :6408',
+    replace: '    kojo.苦痛刻印Lv3 = 0; // :6408（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '苦痛刻印Lv3 CFLAG:297 = 1',
+  },
+  {
+    desc: 'M1801 K6 NTR 入口推进写错（CFLAG:650 = 1 改 2，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '    kojo.NTR再捕获 = 1; // :7581',
+    replace: '    kojo.NTR再捕获 = 2; // :7581（变异）',
+    tests: ['kojo-k6-wicked'],
+    must_mention: 'CFLAG:650',
+  },
+  {
+    desc: 'M1802 K6 奖赏后口上 choice == 0 改 9（#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (choice === 0) {
+    // :7838`,
+    replace: `  if (choice === 9) {
+    // :7838 变异`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '这样的事情可不能长久',
+  },
+  {
+    desc: 'M1803 K6 惩罚口上 choice == 0 改 9（#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `  if (choice === 0) {
+    // :7914`,
+    replace: `  if (choice === 9) {
+    // :7914 变异`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '惩罚口上',
+  },
+  {
+    desc: 'M1804 K6 SELF_KOJO leftover_q 助手支入口错档（Q === 1 改 9，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `    } else if (Q === 1) {
+      // :6467`,
+    replace: `    } else if (Q === 9) {
+      // :6467 变异`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: 'SELF_KOJO 助手妄想支出声',
+  },
+  {
+    desc: 'M1806 K6 SELF_KOJO leftover_s 回数门槛错档（S >= 3 改 99，#237）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `      if (S >= 3) {
+        // :6594`,
+    replace: `      if (S >= 99) {
+        // :6594 变异`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: 'leftover_s 回数插值',
+  },
 ];
