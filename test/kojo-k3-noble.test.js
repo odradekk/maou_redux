@@ -803,8 +803,8 @@ test('EVENTEND NORMAL：CFLAG:301 >= 1 钳回 1 + 调教结束台词', async () 
 
 test('PALAMCNG：首次润滑 Lv2 非爱慕支写 CFLAG:221', async () => {
   const fixture = await setup_k3((f) => f.store.set('palam:31:3', 501));
-  const { palamcng_family } = fixture.load_module('kojo/kojo-system');
-  await palamcng_family.call(3);
+  const { kojo_message_palamcng_family } = fixture.load_module('kojo/kojo-system');
+  await kojo_message_palamcng_family.call(3);
   assert.deepEqual(fixture.text_lines(), [
     '「啊~…这，这个难道是…漏，漏了…啊啊…」',
     '―――第一次超过了润滑lv2了。',

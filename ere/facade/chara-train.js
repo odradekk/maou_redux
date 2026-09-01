@@ -29,21 +29,6 @@ class TrainFacade {
   }
 
   /**
-   * 穿孔装着（cflag:cid:7 ↔ CFLAG:7）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）
-   * @returns {number}
-   */
-  get 穿孔装着() {
-    return era.get(`cflag:${this.cid}:7`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 穿孔装着(v) {
-    era.set(`cflag:${this.cid}:7`, v);
-  }
-
-  /**
    * 野外露出经验（cflag:cid:5 ↔ CFLAG:5）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:5 野外露出経験
    * @returns {number}

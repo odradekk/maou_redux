@@ -44,21 +44,6 @@ class StrongholdFacade {
   }
 
   /**
-   * 要求奖赏（cflag:cid:504 ↔ CFLAG:504）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行405 CFLAG:504 = 要求したご褒美
-   * @returns {number}
-   */
-  get 要求奖赏() {
-    return era.get(`cflag:${this.cid}:504`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 要求奖赏(v) {
-    era.set(`cflag:${this.cid}:504`, v);
-  }
-
-  /**
    * 胸罩状态（cflag:cid:44 ↔ CFLAG:44）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行298 CFLAG:44 ブラジャーの状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
    * @returns {number}
