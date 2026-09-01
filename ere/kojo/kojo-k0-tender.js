@@ -64,8 +64,13 @@
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
  * 崩坏 → 兽奸（专用口上）→ 触手。与 K3（兽奸在崩坏前）不同，各文件 1:1。
  *
- * 这张票存根（docs/stub-registry.md）：DOG_KOJO_0（兽奸专用）
- * 与 SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
+ * 非调教入口已全部落地：PALAMCNG/MARKCNG（参数/刻印变动）、SELF_KOJO_K0
+ * （调教后事件）、DUNGEON_RYOUZYOKU/AFTER/VICTORY/ATTACK（迷宫）、
+ * BENKI（肉便器）、GOHOUBI_REQUEST/AFTER、OSIOKI、NTR、处刑系五入口、
+ * COLOSSEUM（死斗场）、DOG（兽奸）、GOBI（语尾）。
+ *
+ * 这张票存根（docs/stub-registry.md）：仅 KOJO_MESSAGE_COM_0 的
+ * SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
  * 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
  * 44, 45, 46, 55, 56（17 在原文已注释；口系 69/80/123–127 与穿环 87 已落地）。
