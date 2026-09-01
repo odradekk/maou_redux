@@ -1971,4 +1971,37 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '源作误写双引号 1:1 保真',
   },
+  {
+    desc: 'M1844 K8 SELECTCOM 22 对面座位处女空白引号占位被"补写"（破坏 1:1 保真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        await era.printAndWait(`「」`); // :2569',
+    replace:
+      '        await era.printAndWait(`「（变异：补写了源作没有的台词）」`); // :2569',
+    tests: ['kojo-k8-spade'],
+    must_mention: '源作空白引号占位 1:1 保真',
+  },
+  {
+    desc: 'M1845 K8 SELECTCOM 22 对面座位淫乱推进写错（CFLAG:323 = 6 改 5，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.对面座位 = 6; // :2631 CFLAG:323 = 6',
+    replace: '      kojo.对面座位 = 5; // :2631（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 6',
+  },
+  {
+    desc: 'M1846 K8 SELECTCOM 22 对面座位屈服刻印Lv3+V感覚Lv3以上推进写错（CFLAG:323 = 4 改 3，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.对面座位 = 4; // :2683 CFLAG:323 = 4',
+    replace: '      kojo.对面座位 = 3; // :2683（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1847 K8 SELECTCOM 22 对面座位それ以外守卫丢失（CFLAG:323 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.对面座位 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
