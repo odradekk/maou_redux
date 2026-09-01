@@ -29,6 +29,19 @@ const { chara_callname } = require('#/utils/callname-utils');
  * `JUEL:8 += A*200` 而打印用 `B*200`——原作缺陷，1:1 照抄。
  */
 let leftover_a = 0;
+/**
+ * 原作 Q 是跨函数全局。AFTERTRAIN 自慰检查写，SELF_KOJO（K2 等）读
+ * （调教后自慰口上里 Q == 1 助手 / Q == 2 野狗）。
+ */
+let leftover_q = 0;
+
+/**
+ * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
+ * @returns {number}
+ */
+function peek_aftertrain_q() {
+  return leftover_q;
+}
 
 /**
  * 获取角色称呼（SAVESTR / CALLNAME）
@@ -433,6 +446,7 @@ async function aftertrain_masturbation_check(
 
   let a = 0;
   leftover_a = 0;
+  leftover_q = 0;
   const abl31 = era.get(`abl:${target}:31`) || 0; // 自慰中毒
   if (abl31 === 1) a += 1;
   else if (abl31 === 2) a += 2;
@@ -513,6 +527,7 @@ async function aftertrain_masturbation_check(
   }
 
   // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+  leftover_q = q;
   game.train.初吻与自我口上 = 1;
   await self_kojo(undefined, q);
   era.print(`自慰经验＋${a}`);
@@ -708,5 +723,6 @@ module.exports = {
   aftertrain_lesbiansex_check,
   aftertrain_masturbation_check,
   aftertrain_sex_check,
+  peek_aftertrain_q,
   self_check,
 };

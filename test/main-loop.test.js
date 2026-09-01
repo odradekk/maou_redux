@@ -227,3 +227,14 @@ test('主启动图注册触手系：COM100 / COM150 / COM208 可由主循环侧�
   assert.equal(com_family.has(150), true, 'COM150 必须经主启动图注册');
   assert.equal(com_family.has(208), true, 'COM208 必须经主启动图注册');
 });
+
+test('主启动图注册 K2 口上：KOJO_MESSAGE_COM_2 可由主循环侧的 require 发现', async () => {
+  const fixture = create_era_fixture();
+  fixture.load_module('system/flow/main-loop');
+  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  assert.equal(
+    kojo_message_com_family.has(2),
+    true,
+    'KOJO_MESSAGE_COM_2 必须经主启动图注册',
+  );
+});

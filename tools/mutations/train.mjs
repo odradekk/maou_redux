@@ -3708,8 +3708,10 @@ export default [
     desc: 'M1313 AFTERTRAIN: masturbation 臂漏设 tflag:13=1（#270）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+  leftover_q = q;
   game.train.初吻与自我口上 = 1;`,
     replace: `  // 变异：自慰臂不设 tflag:13
+  leftover_q = q;
   // game.train.初吻与自我口上 = 1;`,
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_masturbation_check 自慰检查',
@@ -4273,6 +4275,22 @@ export default [
     must_mention: '主启动图漏装：com-cloth',
   },
   {
+    desc: 'M1520 主启动图删 K3 高貴口上注册（KOJO 3 不进实际运行图）（#282）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k3-noble');",
+    replace: '// 变异：K3 高貴口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k3-noble',
+  },
+  {
+    desc: 'M1521 主启动图删 K5 マオ口上注册（KOJO 5 不进实际运行图）（#282）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k5-mao');",
+    replace: '// 变异：K5 マオ口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k5-mao',
+  },
+  {
     desc: 'M1330 COM_ABLE100 秘密知识守卫删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(player, 325) === 0) return 0; // 调教者须秘密知识',
@@ -4602,5 +4620,21 @@ export default [
     replace: 'for (const id of []) { // 变异：显式无操作注册删',
     tests: ['com-tentacle'],
     must_mention: '显式无操作压掉分发骨架占位行',
+  },
+  {
+    desc: 'M1544 主启动图删 K2 口上注册（#233）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k2-timid');",
+    replace: '// 变异：K2 口上不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: '主启动图注册 K2',
+  },
+  {
+    desc: 'M1545 AFTERTRAIN leftover_q 不写入（#233）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  leftover_q = q;',
+    replace: '  leftover_q = 0; // 变异：不写入妄想对象',
+    tests: ['event-aftertrain'],
+    must_mention: 'leftover_q',
   },
 ];
