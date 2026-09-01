@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3456', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3506', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -16206,6 +16206,124 @@ const FILES = [
         any: [/「哈啊…啊啊…感、感觉怎样…会舒服…吗…？」/],
       },
       { src: K0, ref: '3452', any: [/\t\t\tCFLAG:333 = 2/m] },
+      { src: K0, ref: '3461', any: [/IF\ SELECTCOM\ ==\ 33/m] },
+      { src: K0, ref: '3461-3506', any: [/^IF SELECTCOM == 33$/m] },
+      { src: K0, ref: '3461', any: [/IF SELECTCOM == 33/m] },
+      { src: K0, ref: '3463', any: [/\tIF CFLAG:TARGET:334 == 0/m] },
+      { src: K0, ref: '3465', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3466',
+        any: [/「额呵呵～…这就是所谓的”素股”吧…啊啊…大鸡鸡好烫啊…」/],
+      },
+      { src: K0, ref: '3468', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '3469',
+        any: [
+          /「大鸡鸡不用插进来吗…？诶、只要舒服就行？啊…嗯～…啊哈啊%UNICODE\(0x2665\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3471-3472',
+        any: [/「啊啊～…不、不能不做这样的事吗…啊～…啊～～…」/],
+      },
+      { src: K0, ref: '3474-3475', any: [/\t\tCFLAG:TARGET:334 = 1/m] },
+      {
+        src: K0,
+        ref: '3477-3479',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3480',
+        any: [
+          /「啊啊～啊～哈啊啊啊…嗯呼呜…呐、主人～…要是肉棒…就这样…插进%SELF_CALL\(TARGET\)%的小穴里去了该怎么办呢？」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3481',
+        any: [
+          /「…额呵呵～…没关系哦…%SELF_CALL\(TARGET\)%的贞洁该怎么处置…就全交由主人判断啦…呵呵…额呵呵%UNICODE\(0x266/,
+        ],
+      },
+      { src: K0, ref: '3482', any: [/\t\t\tCFLAG:334 = 6/m] },
+      {
+        src: K0,
+        ref: '3484',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:334 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3485',
+        any: [/「啊啊～～…不要挑逗人家嘛…求你了～…%UNICODE\(0x2665\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3486',
+        any: [
+          /「明明好想要…大肉棒啊…啊啊～…啊～…啊～～…把人家弄得不上不下的…要疯了～%UNICODE\(0x2665\) \*3%」/,
+        ],
+      },
+      { src: K0, ref: '3487', any: [/\t\t\tCFLAG:334 = 5/m] },
+      {
+        src: K0,
+        ref: '3489',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3490',
+        any: [/「啊～…嗯呜唔～…哈啊啊～…那、那个…主人…总觉得…好难受啊…」/],
+      },
+      {
+        src: K0,
+        ref: '3491',
+        any: [/「咕呜嗯～…啊啊～…哈啊啊～…大鸡鸡…都这么烫了…」/],
+      },
+      {
+        src: K0,
+        ref: '3492',
+        any: [/%SAVESTR:TARGET%现在有点神情沮丧地继续做着素股………/],
+      },
+      { src: K0, ref: '3493', any: [/\t\t\tCFLAG:334 = 4/m] },
+      {
+        src: K0,
+        ref: '3495',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:334 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3496',
+        any: [/「啊啊～…鸡鸡好烫…啊啊～…真的…好想被插进来呢…」/],
+      },
+      {
+        src: K0,
+        ref: '3497',
+        any: [/「是、是～、我知道了～…会努力奉仕的哦………♪」/],
+      },
+      { src: K0, ref: '3498', any: [/\t\t\tCFLAG:334 = 3/m] },
+      {
+        src: K0,
+        ref: '3500',
+        any: [/\t\tELSEIF CFLAG:334 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3501',
+        any: [/「啊呜～…大鸡鸡…好烫…感觉变得好奇怪啊………」/],
+      },
+      { src: K0, ref: '3502', any: [/\t\t\tCFLAG:334 = 2/m] },
     ],
   },
 

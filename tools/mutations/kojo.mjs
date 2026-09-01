@@ -1645,4 +1645,53 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '乳交二次淫乱+侍奉写 6',
   },
+  {
+    desc: 'M1866 K0 股间性交首次状态推进写错（CFLAG:334 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.股间性交 = 1; // :3474-3475',
+    replace: '      kojo.股间性交 = 2; // :3474-3475',
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交首次推进到 1',
+  },
+  {
+    desc: 'M1867 K0 股间性交二次淫乱+处女门槛错位（CFLAG:334 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交二次：淫乱+处女写 6 / 阈值闸',
+  },
+  {
+    desc: 'M1868 K0 股间性交二次淫乱+处女写回错档（CFLAG:334 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.股间性交 = 6; // :3482',
+    replace: '        kojo.股间性交 = 5; // :3482',
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交二次淫乱+处女写 6',
+  },
+  {
+    desc: 'M1869 K0 股间性交二次丢掉处女条件（TALENT:0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479
+        await era.printAndWait(`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479
+        await era.printAndWait(`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交二次：淫乱+处女写 6 / 阈值闸',
+  },
 ];

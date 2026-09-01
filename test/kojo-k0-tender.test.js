@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 33; // 股间性交——COM32 落地后改用尚未填的指令
+    era_flag.selectcom = 34; // 骑乘位——COM33 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 33 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 34 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -2687,6 +2687,77 @@ test('乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸', asyn
     f.store.set('flag:7', 1);
   });
   await speak_k0(exhausted, seq_rand(0));
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('股间性交首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 33;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「额呵呵～…这就是所谓的”素股”吧…啊啊…大鸡鸡好烫啊…」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:334'), 1, '股间性交首次推进到 1');
+});
+
+test('股间性交二次：淫乱+处女写 6 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 33;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1); // TALENT:0 处女；夹具不从 Chara31.yml 装载
+    f.store.set('flag:7', 1); // 关掉每次出声，处女条件必须成立才写 6
+    f.store.set('cflag:31:334', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '「啊啊～啊～哈啊啊啊…嗯呼呜…呐、主人～…要是肉棒…就这样…插进我的小穴里去了该怎么办呢？」',
+    '「…额呵呵～…没关系哦…我的贞洁该怎么处置…就全交由主人判断啦…呵呵…额呵呵♥」',
+  ]);
+  assert.equal(r0.store.get('cflag:31:334'), 6, '股间性交二次淫乱+处女写 6');
+
+  const no_virgin = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 33;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 0);
+    f.store.set('flag:7', 1);
+    f.store.set('cflag:31:334', 1);
+  });
+  await speak_k0(no_virgin);
+  assert.deepEqual(no_virgin.text_lines(), [
+    '「啊啊～～…不要挑逗人家嘛…求你了～…♥」',
+    '「明明好想要…大肉棒啊…啊啊～…啊～…啊～～…把人家弄得不上不下的…要疯了～♥♥♥」',
+  ]);
+  assert.equal(no_virgin.store.get('cflag:31:334'), 5, '非处女走淫乱档写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 33;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:334', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=5 且 FLAG:7==1 仍出声（门槛是 <=5）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:334'), 6);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 33;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('cflag:31:334', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
 });
 
