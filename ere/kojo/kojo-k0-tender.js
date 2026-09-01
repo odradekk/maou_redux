@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -7,7 +7,9 @@
  *     爱抚 CFLAG:301 状态机 :708-752；舔阴 CFLAG:302 状态机 :757-794；
  *     肛门爱抚 CFLAG:303 状态机 :799-856；自慰 CFLAG:304 状态机 :861-968；
  *     胸爱抚 CFLAG:306 状态机 :973-1060；接吻 CFLAG:307 状态机 :1065-1148；
- *     自己扒开 CFLAG:308 状态机 :1153-1189）
+ *     自己扒开 CFLAG:308 状态机 :1153-1189；插入手指 CFLAG:309 状态机 :1194-1248；
+ *     舔肛 CFLAG:310 状态机 :1252-1310）
+
 
  *
  * == 状态机（CFLAG:301，个位数推进） ==
@@ -73,7 +75,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-1189）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开。
+ * @KOJO_MESSAGE_COM_0（:674-1310）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛。
  *
 
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
@@ -864,6 +866,204 @@ async function kojo_message_com_0(rand) {
       // :1183-1185 それ以外（爱無し、露出癖Lv3未満）
       await era.printAndWait('「咕呜～…求你了…别看了…不要看那种地方…」'); // :1184
       kojo.胸爱抚 = 2;
+    }
+    return 0;
+  }
+
+  // :1194 IF SELECTCOM == 8（插入手指，CFLAG:309）
+  if (era_flag.selectcom === 8) {
+    const v_sense = era.get(`abl:${target}:2`) || 0;
+    const v_insensible = era.get(`talent:${target}:103`) === 1;
+
+    // :1196-1214 初めて（CFLAG:309 == 0）
+    if (kojo.插入手指 === 0) {
+      // :1198-1199 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「啊～…嗯咕～…再继续…往里面插…尽情蹂躏${sc()}的阴道吧…${heart(1)}」`,
+        ); // :1199
+      } else if (
+        // :1201-1203 屈服刻印Lv3+爱
+        (era.get(`mark:${target}:2`) || 0) === 3 &&
+        era.get(`talent:${target}:85`) === 1
+      ) {
+        await era.printAndWait('「好、好的…我会忍耐的…请再往里面插…」'); // :1202
+        await era.printAndWait('「呀～～…啊啊…是的、没问题…啊啊～♪」'); // :1203
+      } else {
+        // :1205-1209 それ以外
+        await era.printAndWait('「哈呜～…咕～…呜唔…啊…住手…住手啊…啊～…！」'); // :1206
+        // :1208-1209 V鈍感
+        if (v_insensible) {
+          await era.printAndWait(
+            `因为${target_name}的私处不太容易有感觉、${target_name}好像很痛苦的呻吟着………`,
+          ); // :1209
+        }
+      }
+      kojo.插入手指 = 1; // :1211
+      return 0;
+    }
+
+    // :1214-1246 二回目以降
+    // :1216-1221 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「啊啊～再往里面插吧！把小穴弄得湿漉漉的吧！」'); // :1217
+      // :1219-1220 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的私处已经被完全开发了、贪婪的吞下了${player_name}所有的爱抚………`,
+        ); // :1220
+      }
+      kojo.插入手指 = 5; // :1221
+    } else if (
+      // :1223-1229 爱＋屈服刻印Lv3
+      era.get(`talent:${target}:85`) === 1 &&
+      (era.get(`mark:${target}:2`) || 0) === 3 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「啊～…嗯～…主人的手指…好温柔…咿呀～～！啊～！那里是～！」',
+      ); // :1224
+      await era.printAndWait('「………你、你欺负人啊…啊啊～！」'); // :1225
+      // :1227-1228 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的私处已经被完全开发了、完全接受了${player_name}的爱抚………`,
+        ); // :1228
+      }
+      kojo.插入手指 = 4; // :1229
+    } else if (
+      // :1231-1236 屈服刻印Lv3
+      (era.get(`mark:${target}:2`) || 0) === 3 &&
+      (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「我不会反抗的、所以…再温柔一点…咕呜…嗯呜唔…啊～啊啊～！」',
+      ); // :1232
+      // :1234-1235 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的私处已经被完全开发了、${target_name}不成体统的挺着腰………`,
+        ); // :1235
+      }
+      kojo.插入手指 = 3; // :1236
+    } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 === 2) {
+      // :1238-1243 それ以外
+      await era.printAndWait(
+        `「啊啊～…住、住手…即使被做了这样的事${sc()}也…咕呜～」`,
+      ); // :1239
+      // :1241-1242 V鈍感
+      if (v_insensible) {
+        await era.printAndWait(
+          `因为${target_name}的私处不太容易有感觉、每次在里面摩擦${target_name}就会痛苦的呻吟起来………`,
+        ); // :1242
+      }
+      kojo.插入手指 = 2; // :1243
+    }
+    return 0;
+  }
+
+  // :1252 IF SELECTCOM == 9（舔肛，CFLAG:310）
+  if (era_flag.selectcom === 9) {
+    const a_sense = era.get(`abl:${target}:3`) || 0;
+    const a_insensible = era.get(`talent:${target}:105`) === 1;
+
+    // :1254-1276 初めて（CFLAG:310 == 0）
+    if (kojo.舔肛 === 0) {
+      // :1256-1260 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          '「咿呀～～…那、那种地方被舐了的话…呜啊～…啊啊～…还要…再舐舐吧…」',
+        ); // :1257
+        // :1259-1260 A感覚Lv3以上＋A鈍感
+        if (a_sense >= 3 && a_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的肛门被开发了、被${player_name}的舌头弄得发出了非常带感的声音………`,
+          ); // :1260
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1262-1266 爱慕
+        await era.printAndWait(
+          '「那、那里很脏啊…太羞人了…请、请住手吧…咕呜呜～～」',
+        ); // :1263
+        // :1265-1266 A感覚Lv3以上＋A鈍感
+        if (a_sense >= 3 && a_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的肛门被开发了、被${player_name}的舌头弄得娇喘起来………`,
+          ); // :1266
+        }
+      } else {
+        // :1268-1272 それ以外（爱無し）
+        await era.printAndWait('「噫～！那、那种地方被舐了的话…不、不要啊～」'); // :1269
+        // :1271-1272 A鈍感
+        if (a_insensible) {
+          await era.printAndWait(
+            `${target_name}不知是不是真的因为肛门被舔而感到难过发出了高亢的悲鸣声………`,
+          ); // :1272
+        }
+      }
+      kojo.舔肛 = 1; // :1274
+      return 0;
+    }
+
+    // :1277-1308 二回目以降
+    // :1279-1284 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「咿呀呜～…啊啊…主人～…再…再用舌头舔我吧～${heart(1)}」`,
+      ); // :1280
+      // :1282-1283 A感覚Lv3以上＋A鈍感
+      if (a_sense >= 3 && a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门被开发了、被${player_name}的舌头弄得发出了非常带感的声音………`,
+        ); // :1283
+      }
+      kojo.舔肛 = 5; // :1284
+    } else if (
+      // :1286-1291 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「啊～～…嗯唔～…啊啊～…再、再温柔一点…舐的话…就更好了…哈啊～♪」',
+      ); // :1287
+      // :1289-1290 A感覚Lv3以上＋A鈍感
+      if (a_sense >= 3 && a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门被开发了、被${player_name}的舌头弄得娇喘出声………`,
+        ); // :1290
+      }
+      kojo.舔肛 = 4; // :1291
+    } else if (
+      // :1293-1298 屈服刻印Lv3
+      (era.get(`mark:${target}:2`) || 0) === 3 &&
+      (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「咕呜～…呜～…！…没、没事的、所以…请再…舔我吧…嗯嗯～！」',
+      ); // :1294
+      // :1296-1297 A感覚Lv3以上＋A鈍感
+      if (a_sense >= 3 && a_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的肛门被开发了、被${player_name}的舌头搅得发出了快乐的声音………`,
+        ); // :1297
+      }
+      kojo.舔肛 = 3; // :1298
+    } else if (kojo.舔肛 <= 1 || game.kojo.口上开关 === 2) {
+      // :1300-1305 それ以外（屈服刻印Lv3未満）
+      await era.printAndWait('「讨厌…明明很脏…咿～…请饶了我吧…」'); // :1301
+      // :1303-1304 A鈍感
+      if (a_insensible) {
+        await era.printAndWait(
+          `${target_name}不知是不是真的因为肛门被舔而感到难过、发出了悲鸣声………`,
+        ); // :1304
+      }
+      kojo.舔肛 = 2; // :1305
     }
     return 0;
   }

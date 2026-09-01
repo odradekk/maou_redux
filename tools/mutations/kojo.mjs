@@ -866,4 +866,60 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '自己扒开二次写 CFLAG:306',
   },
+  {
+    desc: 'M1790 K0 插入手指首次状态推进写错（CFLAG:309 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.插入手指 = 1; // :1211',
+    replace: '      kojo.插入手指 = 2; // :1211',
+    tests: ['kojo-k0-tender'],
+    must_mention: '插入手指首次推进到 1',
+  },
+  {
+    desc: 'M1791 K0 插入手指二次淫乱门槛错位（CFLAG:309 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '插入手指二次：淫乱 + V钝感附加句',
+  },
+  {
+    desc: 'M1792 K0 插入手指二次 V钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1219-1220 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {`,
+    replace: `      // :1219-1220 V感覚Lv3以上＋V鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '贪婪的吞下了你所有的爱抚',
+  },
+  {
+    desc: 'M1793 K0 舔肛首次状态推进写错（CFLAG:310 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.舔肛 = 1; // :1274',
+    replace: '      kojo.舔肛 = 2; // :1274',
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔肛首次推进到 1',
+  },
+  {
+    desc: 'M1794 K0 舔肛二次淫乱门槛错位（CFLAG:310 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔肛二次：淫乱 + A钝感附加句',
+  },
+  {
+    desc: 'M1795 K0 舔肛二次 A钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1282-1283 A感覚Lv3以上＋A鈍感
+      if (a_sense >= 3 && a_insensible) {`,
+    replace: `      // :1282-1283 A感覚Lv3以上＋A鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '被你的舌头弄得发出了非常带感的声音',
+  },
 ];
