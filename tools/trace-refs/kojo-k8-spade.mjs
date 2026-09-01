@@ -12751,6 +12751,339 @@ export const FILES = [
         ref: '3464',
         any: [/CFLAG:332 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3473-3559',
+        any: [/PRINTFORMW 「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3475-3497',
+        any: [/PRINTFORMW 「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3478',
+        any: [/PRINTFORMW 「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3479',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的眼角垂了下来、为用胸部侍奉而兴奋这。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3480',
+        any: [/PRINTFORMW 「胸部变得太舒服…啊啊…要融化了………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3483',
+        any: [/PRINTFORMW 「嗯…用你的阴茎侵犯我的胸部吧…啊啊…啊啊♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3484',
+        any: [/PRINTFORMW %SAVESTR:TARGET%高兴的舔着嘴唇，用胸部开始了奉仕………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3487',
+        any: [/PRINTFORMW 「呵呵呵、我的胸部…让你很舒服啊…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3488',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%像是摩擦这艳丽的乳头一样，开始奉仕%SAVESTR:PLAYER%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3491',
+        any: [/PRINTFORMW 「总觉得…啊啊…胸部好热…啊、嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3492',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%带着出神的表情，继续奉仕着%SAVESTR:PLAYER%的阴茎…/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3495',
+        any: [/PRINTFORMW 「嗯…嗯啊…这、这样的话舒服吗、你…嗯…啊嗯」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3496',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%虽然对胸部奉仕感到困惑，但还是在继续刺激着%SAVESTR:PLA/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3498',
+        any: [/CFLAG:TARGET:333 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3501-3558',
+        any: [
+          /PRINTFORMW 「继续侵犯我的胸部吧…啊啊…用你的阴茎的话我多少次都能高潮…啊啊啊%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3503-3512',
+        any: [
+          /PRINTFORMW 「继续侵犯我的胸部吧…啊啊…用你的阴茎的话我多少次都能高潮…啊啊啊%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3505',
+        any: [
+          /PRINTFORMW 「继续侵犯我的胸部吧…啊啊…用你的阴茎的话我多少次都能高潮…啊啊啊%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3506',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%露出放荡的表情用乳房蹭着%SAVESTR:PLAYER%的阴茎。随/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3507',
+        any: [
+          /PRINTFORMW 「嗯…啊嗯…啊啊…嗯%UNICODE\(0x2661\) \*1% 就这样射精…然后就这样让我更舒服吧%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3509',
+        any: [
+          /PRINTFORMW 「啊啊…好舒服…我的胸部被侵犯得好舒服%UNICODE\(0x2661\) \*1% 啊啊…嗯啊…嗯…啊/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3510',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%用乳房奉仕着，想要绝顶那样兴奋着。那表情好像要被快乐和下流融化一样/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3511',
+        any: [
+          /PRINTFORMW 「我的胸部…已经…不行了…这是这么做就这么舒服什么的…啊…啊啊…阴茎好热啊…%UNICODE\(0x/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3513',
+        any: [/CFLAG:333 = 8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3516-3518',
+        any: [/PRINTFORMW 「嗯…用你的阴茎侵犯我的胸部吧…啊啊…啊啊♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3516',
+        any: [/PRINTFORMW 「嗯…用你的阴茎侵犯我的胸部吧…啊啊…啊啊♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3517',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%看起来很高兴的舔了舔嘴唇，开始了胸部的奉仕。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3518',
+        any: [
+          /PRINTFORMW 「我的胸部是为了让你舒服而存在的…啊啊啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3519',
+        any: [/CFLAG:333 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3522-3530',
+        any: [
+          /PRINTFORMW 「啊啊…我明明应该让你的阴茎感到舒服才对…啊…嗯…嗯啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3523',
+        any: [
+          /PRINTFORMW 「啊啊…我明明应该让你的阴茎感到舒服才对…啊…嗯…嗯啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3524',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%用胸部奉仕着%SAVESTR:PLAYER%阴茎、乳头完全勃起，品/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3525',
+        any: [
+          /PRINTFORMW 「我的胸部…已经彻底变得奇怪了…啊啊…明明只是为你服务而已…好舒服啊%UNICODE\(0x2661/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3527',
+        any: [
+          /PRINTFORMW 「就这样用的胸部变得舒服…啊啊…满满的射出来啊…嗯…啊啊…嗯啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3528',
+        any: [/PRINTFORMW %SAVESTR:TARGET%带着出神的表情边用乳房奉仕边说道。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3529',
+        any: [
+          /PRINTFORMW 「你觉得舒服的话、我也会感觉很幸福的…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3531',
+        any: [/CFLAG:333 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3534-3536',
+        any: [/PRINTFORMW 「呵呵呵、我的胸部…会让你很舒服的…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3534',
+        any: [/PRINTFORMW 「呵呵呵、我的胸部…会让你很舒服的…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3535',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%像摩擦艳丽的乳头那样，开始奉仕%SAVESTR:PLAYER%的阴/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3536',
+        any: [
+          /PRINTFORMW 「用我的…用我的胸部满满的射出来吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3537',
+        any: [/CFLAG:333 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3540-3545',
+        any: [/PRINTFORMW 「啊啊…我的胸部…被你的阴茎侵犯了呦…啊啊♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3541',
+        any: [/PRINTFORMW 「啊啊…我的胸部…被你的阴茎侵犯了呦…啊啊♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3542',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%看起来很高兴的笑着用乳房夹住%SAVESTR:PLAYER%的阴茎/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3544',
+        any: [
+          /PRINTFORMW 「明明是这么屈辱的姿势…我的胸部太舒服了…啊啊…要融化了啊………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3545',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的两个乳头完全勃起着、%SAVESTR:PLAYER%的阴茎品味着/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3547',
+        any: [/CFLAG:333 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3550-3551',
+        any: [/PRINTFORMW 「好像…啊啊…胸部变热了…啊、嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3550',
+        any: [/PRINTFORMW 「好像…啊啊…胸部变热了…啊、嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3551',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%带着出神的表情继续奉仕着%SAVESTR:PLAYER%的阴茎……/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3552',
+        any: [/CFLAG:333 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3555-3556',
+        any: [
+          /PRINTFORMW 「嗯…嗯啊…总觉得胸部…啊嗯…我的胸部变得好奇怪…啊啊………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3555',
+        any: [
+          /PRINTFORMW 「嗯…嗯啊…总觉得胸部…啊嗯…我的胸部变得好奇怪…啊啊………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3556',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%用笨拙的动作继续刺激着%SAVESTR:PLAYER%的阴茎………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '3557',
+        any: [/CFLAG:333 = 2/],
+      },
     ],
   },
 ];

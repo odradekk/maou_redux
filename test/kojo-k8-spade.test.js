@@ -1637,8 +1637,49 @@ test('SELECTCOM 31 口交，二回目以降·それ以外：CFLAG:332 推进到 
   assert.equal(fixture.store.get('cflag:31:332'), 2, 'CFLAG:332 推进到 2');
 });
 
-test('骨架期：SELECTCOM 32（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
-  const fixture = await setup_k8(undefined, 32);
+test('SELECTCOM 32 乳交，初めて·弄乳狂：CFLAG:333 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:78', 1);
+  }, 32);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」',
+    '银黑桃的眼角垂了下来、为用胸部侍奉而兴奋这。',
+    '「胸部变得太舒服…啊啊…要融化了………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:333'), 1, 'CFLAG:333 推进到 1');
+});
+
+test('SELECTCOM 32 乳交，二回目以降·弄乳狂+淫乱 RAND0：CFLAG:333 推进到 8', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:333', 1);
+    f.store.set('talent:31:78', 1);
+    f.store.set('talent:31:76', 1);
+  }, 32);
+  await speak_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「继续侵犯我的胸部吧…啊啊…用你的阴茎的话我多少次都能高潮…啊啊啊♡」',
+    '银黑桃露出放荡的表情用乳房蹭着你的阴茎。随着身体的上下摇动，又大又硬的乳头勃起着。',
+    '「嗯…啊嗯…啊啊…嗯♡ 就这样射精…然后就这样让我更舒服吧♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:333'), 8, 'CFLAG:333 推进到 8');
+});
+
+test('SELECTCOM 32 乳交，二回目以降·弄乳狂单独 RAND1：CFLAG:333 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:333', 1);
+    f.store.set('talent:31:78', 1);
+  }, 32);
+  await speak_k8(fixture, () => 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「明明是这么屈辱的姿势…我的胸部太舒服了…啊啊…要融化了啊………」',
+    '银黑桃的两个乳头完全勃起着、你的阴茎品味着快乐好像变得大了………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:333'), 4, 'CFLAG:333 推进到 4');
+});
+
+test('骨架期：SELECTCOM 33（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 33);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),

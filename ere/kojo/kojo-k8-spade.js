@@ -1673,7 +1673,7 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123,
+    33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123,
     124, 125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
@@ -6125,6 +6125,166 @@ async function kojo_message_com_8(rand) {
         `${target_name}带着不甘心的表情继续舔着${player_name}的阴茎………`,
       ); // :3463
       kojo.口交_奴 = 2; // :3464 CFLAG:332 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 32) {
+    // :3473-3559 乳交 CFLAG:333（八档：TALENT:78 弄乳狂与 TALENT:76/85 组合出更高档；初めて 单层五分）
+    if (kojo.乳交 == 0) {
+      // :3475-3497 初めて
+      if (era0(`talent:${target}:78`) == 1) {
+        // 弄乳狂
+        await era.printAndWait(`「啊…用我的好色的胸部让你的阴茎更舒服吧…♪」`); // :3478
+        await era.printAndWait(
+          `${target_name}的眼角垂了下来、为用胸部侍奉而兴奋这。`,
+        ); // :3479
+        await era.printAndWait(`「胸部变得太舒服…啊啊…要融化了………」`); // :3480
+      } else if (era0(`talent:${target}:76`) == 1) {
+        // 淫乱
+        await era.printAndWait(`「嗯…用你的阴茎侵犯我的胸部吧…啊啊…啊啊♪」`); // :3483
+        await era.printAndWait(
+          `${target_name}高兴的舔着嘴唇，用胸部开始了奉仕………`,
+        ); // :3484
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // 爱慕
+        await era.printAndWait(`「呵呵呵、我的胸部…让你很舒服啊…♪」`); // :3487
+        await era.printAndWait(
+          `${target_name}像是摩擦这艳丽的乳头一样，开始奉仕${player_name}的阴茎………`,
+        ); // :3488
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        // 侍奉精神Lv3以上
+        await era.printAndWait(`「总觉得…啊啊…胸部好热…啊、嗯！」`); // :3491
+        await era.printAndWait(
+          `${target_name}带着出神的表情，继续奉仕着${player_name}的阴茎………`,
+        ); // :3492
+      } else {
+        // それ以外（侍奉精神Lv3未満）
+        await era.printAndWait(`「嗯…嗯啊…这、这样的话舒服吗、你…嗯…啊嗯」`); // :3495
+        await era.printAndWait(
+          `${target_name}虽然对胸部奉仕感到困惑，但还是在继续刺激着${player_name}的阴茎………`,
+        ); // :3496
+      }
+      kojo.乳交 = 1; // :3498 CFLAG:TARGET:333 = 1
+      return 0;
+    }
+    // :3501-3558 二回目以降（八档）
+    if (
+      era0(`talent:${target}:78`) == 1 &&
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.乳交 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :3503-3512 弄乳狂+淫乱（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「继续侵犯我的胸部吧…啊啊…用你的阴茎的话我多少次都能高潮…啊啊啊${heart(1)}」`,
+        ); // :3505
+        await era.printAndWait(
+          `${target_name}露出放荡的表情用乳房蹭着${player_name}的阴茎。随着身体的上下摇动，又大又硬的乳头勃起着。`,
+        ); // :3506
+        await era.printAndWait(
+          `「嗯…啊嗯…啊啊…嗯${heart(1)} 就这样射精…然后就这样让我更舒服吧${heart(1)}」`,
+        ); // :3507
+      } else {
+        await era.printAndWait(
+          `「啊啊…好舒服…我的胸部被侵犯得好舒服${heart(1)} 啊啊…嗯啊…嗯…啊啊${heart(1)}」`,
+        ); // :3509
+        await era.printAndWait(
+          `${target_name}用乳房奉仕着，想要绝顶那样兴奋着。那表情好像要被快乐和下流融化一样。`,
+        ); // :3510
+        await era.printAndWait(
+          `「我的胸部…已经…不行了…这是这么做就这么舒服什么的…啊…啊啊…阴茎好热啊…${heart(1)}」`,
+        ); // :3511
+      }
+      kojo.乳交 = 8; // :3513 CFLAG:333 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.乳交 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :3516-3518 淫乱
+      await era.printAndWait(`「嗯…用你的阴茎侵犯我的胸部吧…啊啊…啊啊♪」`); // :3516
+      await era.printAndWait(
+        `${target_name}看起来很高兴的舔了舔嘴唇，开始了胸部的奉仕。`,
+      ); // :3517
+      await era.printAndWait(
+        `「我的胸部是为了让你舒服而存在的…啊啊啊…${heart(1)}」`,
+      ); // :3518
+      kojo.乳交 = 7; // :3519 CFLAG:333 = 7
+    } else if (
+      era0(`talent:${target}:78`) == 1 &&
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.乳交 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :3522-3530 弄乳狂+爱（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          `「啊啊…我明明应该让你的阴茎感到舒服才对…啊…嗯…嗯啊${heart(1)}」`,
+        ); // :3523
+        await era.printAndWait(
+          `${target_name}用胸部奉仕着${player_name}阴茎、乳头完全勃起，品味着快感。`,
+        ); // :3524
+        await era.printAndWait(
+          `「我的胸部…已经彻底变得奇怪了…啊啊…明明只是为你服务而已…好舒服啊${heart(1)}」`,
+        ); // :3525
+      } else {
+        await era.printAndWait(
+          `「就这样用的胸部变得舒服…啊啊…满满的射出来啊…嗯…啊啊…嗯啊」`,
+        ); // :3527
+        await era.printAndWait(
+          `${target_name}带着出神的表情边用乳房奉仕边说道。`,
+        ); // :3528
+        await era.printAndWait(
+          `「你觉得舒服的话、我也会感觉很幸福的…啊啊${heart(1)}」`,
+        ); // :3529
+      }
+      kojo.乳交 = 6; // :3531 CFLAG:333 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.乳交 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :3534-3536 爱慕
+      await era.printAndWait(`「呵呵呵、我的胸部…会让你很舒服的…♪」`); // :3534
+      await era.printAndWait(
+        `${target_name}像摩擦艳丽的乳头那样，开始奉仕${player_name}的阴茎。`,
+      ); // :3535
+      await era.printAndWait(`「用我的…用我的胸部满满的射出来吧…${heart(1)}」`); // :3536
+      kojo.乳交 = 5; // :3537 CFLAG:333 = 5
+    } else if (
+      era0(`talent:${target}:78`) == 1 &&
+      (kojo.乳交 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :3540-3545 弄乳狂（RAND:2 二选一）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(`「啊啊…我的胸部…被你的阴茎侵犯了呦…啊啊♪」`); // :3541
+        await era.printAndWait(
+          `${target_name}看起来很高兴的笑着用乳房夹住${player_name}的阴茎、继续着奉仕………`,
+        ); // :3542
+      } else {
+        await era.printAndWait(
+          `「明明是这么屈辱的姿势…我的胸部太舒服了…啊啊…要融化了啊………」`,
+        ); // :3544
+        await era.printAndWait(
+          `${target_name}的两个乳头完全勃起着、${player_name}的阴茎品味着快乐好像变得大了………`,
+        ); // :3545
+      }
+      kojo.乳交 = 4; // :3547 CFLAG:333 = 4
+    } else if (
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.乳交 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :3550-3551 侍奉精神Lv3以上
+      await era.printAndWait(`「好像…啊啊…胸部变热了…啊、嗯！」`); // :3550
+      await era.printAndWait(
+        `${target_name}带着出神的表情继续奉仕着${player_name}的阴茎………`,
+      ); // :3551
+      kojo.乳交 = 3; // :3552 CFLAG:333 = 3
+    } else if (kojo.乳交 <= 1 || game.kojo.口上开关 == 2) {
+      // :3555-3556 それ以外（侍奉精神Lv3未満）
+      await era.printAndWait(
+        `「嗯…嗯啊…总觉得胸部…啊嗯…我的胸部变得好奇怪…啊啊………」`,
+      ); // :3555
+      await era.printAndWait(
+        `${target_name}用笨拙的动作继续刺激着${player_name}的阴茎………`,
+      ); // :3556
+      kojo.乳交 = 2; // :3557 CFLAG:333 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
