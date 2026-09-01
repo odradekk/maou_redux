@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -33,7 +33,8 @@
  *     骑乘位肛交 CFLAG:337 状态机 :3840-3955；
  *     肛门侍奉 CFLAG:338 状态机 :3960-4001；
  *     打屁股 CFLAG:341 状态机 :4006-4037；
- *     鞭 CFLAG:342 状态机 :4042-4105）
+ *     鞭 CFLAG:342 状态机 :4042-4105；
+ *     针 CFLAG:343 状态机 :4110-4170）
 
 
 
@@ -111,7 +112,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4105）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭。
+ * @KOJO_MESSAGE_COM_0（:674-4170）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针。
 
 
 
@@ -6195,6 +6196,118 @@ async function kojo_message_com_0(rand) {
         await era.printAndWait(`「啊啊～…求你了…快住手吧…求你了…」`); // :4099
         await era.printAndWait(`${target_name}泪流满面、祈求饶恕………`); // :4100
         kojo.鞭 = 2; // :4101
+      }
+      return 0;
+    }
+  }
+
+  // :4110 IF SELECTCOM == 42（针，CFLAG:343）
+  if (era_flag.selectcom === 42) {
+    const masochism = era.get(`abl:${target}:21`) || 0;
+
+    if (kojo.针 === 0) {
+      // :4112
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :4114
+        await era.printAndWait(
+          `「啊啊啊…这次要这样开发${sc()}吗～…是～…我会好好忍耐的…」`,
+        ); // :4115
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :4117
+        await era.printAndWait(
+          `「不、不要～…${sc()}是…不会反抗的…所以只有会痛的事情…啊啊啊～！」`,
+        ); // :4118
+      } else {
+        await era.printAndWait(
+          `「要、要用这根针做什么…啊啊～住～､住手啊啊啊啊啊啊！！」`,
+        ); // :4120-4121
+      }
+      kojo.针 = 1; // :4123-4124
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        masochism >= 5 &&
+        (kojo.针 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4126-4128
+        await era.printAndWait(
+          `「啊～…哈呜～…嗯～…那里～…还要…还想被刺啊～～～～！」`,
+        ); // :4129
+        await era.printAndWait(
+          `${target_name}发出了快乐的呻吟声、血从柔嫩的肌肤上滴落下来………`,
+        ); // :4130
+        kojo.针 = 9; // :4131
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        masochism >= 3 &&
+        (kojo.针 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4133
+        await era.printAndWait(
+          `「嗯呼呜…继续…继续插我～…嗯咿～…总觉得好麻啊…啊～啊～♪」`,
+        ); // :4134
+        await era.printAndWait(`${target_name}因为被针刺的麻痒感觉而迷惑了………`); // :4135
+        kojo.针 = 8; // :4136
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.针 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :4138
+        await era.printAndWait(
+          `「嗯啊～…啊～…哈咕呜…果然…还是很痛～…咕…嗯嗯嗯～！」`,
+        ); // :4139
+        await era.printAndWait(`${target_name}忍耐着被针刺的疼痛………`); // :4140
+        kojo.针 = 7; // :4141
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 5 &&
+        (kojo.针 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4143
+        await era.printAndWait(
+          `「明明…应该…只会感到痛的…嗯呼呜…为什么会有感觉…呢…………呀啊啊～♪」`,
+        ); // :4144
+        await era.printAndWait(
+          `${target_name}发出了快乐的呻吟声、血从柔嫩的肌肤上滴落下来………`,
+        ); // :4145
+        kojo.针 = 6; // :4146
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 3 &&
+        (kojo.针 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4148
+        await era.printAndWait(
+          `「啊～…啊～…嗯呼呜…明明是被刺着…为什么…啊啊～！」`,
+        ); // :4149
+        await era.printAndWait(`${target_name}因为被针刺的麻痒感觉而迷惑了………`); // :4150
+        kojo.针 = 5; // :4151
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.针 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4153
+        await era.printAndWait(
+          `「啊啊…求求你…${sc()}是不会反抗你的…所以不要再让我痛了…啊啊啊～！」`,
+        ); // :4154
+        await era.printAndWait(`${target_name}每次被针戳就会发出悲鸣声………`); // :4155
+        kojo.针 = 4; // :4156
+      } else if (masochism >= 3 && (kojo.针 <= 2 || game.kojo.口上开关 === 2)) {
+        // :4158
+        await era.printAndWait(
+          `「咕呜～…嗯～…啊啊～…啊啊啊啊…总觉得…像过电似的…好奇怪…呢………」`,
+        ); // :4159
+        await era.printAndWait(`${target_name}因为被针刺的麻痒感觉而迷惑了………`); // :4160
+        kojo.针 = 3; // :4161
+      } else if (kojo.针 <= 1 || game.kojo.口上开关 === 2) {
+        // :4163
+        await era.printAndWait(`「咕呜～…呜啊啊…啊～…咕呜呜～…咿～～…」`); // :4164
+        await era.printAndWait(
+          `${target_name}咬着嘴唇忍受着痛楚、但还是从嘴边漏出了痛苦的声音………`,
+        ); // :4165
+        kojo.针 = 2; // :4166
       }
       return 0;
     }

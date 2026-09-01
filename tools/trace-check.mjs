@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4105', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4170', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -17914,6 +17914,178 @@ const FILES = [
       { src: K0, ref: '4099', any: [/「啊啊～…求你了…快住手吧…求你了…」/] },
       { src: K0, ref: '4100', any: [/%SAVESTR:TARGET%泪流满面、祈求饶恕………/] },
       { src: K0, ref: '4101', any: [/\t\t\tCFLAG:TARGET:342 = 2/m] },
+      { src: K0, ref: '4110', any: [/IF\ SELECTCOM\ ==\ 42/m] },
+      { src: K0, ref: '4110-4170', any: [/^IF SELECTCOM == 42$/m] },
+      { src: K0, ref: '4110', any: [/IF SELECTCOM == 42/m] },
+      { src: K0, ref: '4112', any: [/\tIF CFLAG:TARGET:343 == 0/m] },
+      { src: K0, ref: '4114', any: [/\t\tIF TALENT:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4115',
+        any: [
+          /「啊啊啊…这次要这样開発%SELF_CALL\(TARGET\)%吗～…是～…我会好好忍耐的…」/,
+        ],
+      },
+      { src: K0, ref: '4117', any: [/\t\tELSEIF TALENT:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4118',
+        any: [
+          /「不、不要～…%SELF_CALL\(TARGET\)%是…不会反抗的…所以只有会痛的事情…啊啊啊～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4120-4121',
+        any: [/「要、要用这根针做什么…啊啊～住～､住手啊啊啊啊啊啊！！」/],
+      },
+      { src: K0, ref: '4123-4124', any: [/\t\tCFLAG:TARGET:343 = 1/m] },
+      {
+        src: K0,
+        ref: '4126-4128',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 8 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4129',
+        any: [/「啊～…哈呜～…嗯～…那里～…还要…还想被刺啊～～～～！」/],
+      },
+      {
+        src: K0,
+        ref: '4130',
+        any: [
+          /%SAVESTR:TARGET%发出了快乐的呻吟声、血从柔嫩的肌肤上滴落下来………/,
+        ],
+      },
+      { src: K0, ref: '4131', any: [/\t\t\tCFLAG:TARGET:343 = 9/m] },
+      {
+        src: K0,
+        ref: '4133',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:343 <= 7 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4134',
+        any: [/「嗯呼呜…继续…继续插我～…嗯咿～…总觉得好麻啊…啊～啊～♪」/],
+      },
+      {
+        src: K0,
+        ref: '4135',
+        any: [/%SAVESTR:TARGET%因为被针刺的麻痒感觉而迷惑了………/],
+      },
+      { src: K0, ref: '4136', any: [/\t\t\tCFLAG:TARGET:343 = 8/m] },
+      {
+        src: K0,
+        ref: '4138',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:343 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4139',
+        any: [/「嗯啊～…啊～…哈咕呜…果然…还是很痛～…咕…嗯嗯嗯～！」/],
+      },
+      { src: K0, ref: '4140', any: [/%SAVESTR:TARGET%忍耐着被针刺的疼痛………/] },
+      { src: K0, ref: '4141', any: [/\t\t\tCFLAG:TARGET:343 = 7/m] },
+      {
+        src: K0,
+        ref: '4143',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4144',
+        any: [
+          /「明明…应该…只会感到痛的…嗯呼呜…为什么会有感觉…呢…………呀啊啊～♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4145',
+        any: [
+          /%SAVESTR:TARGET%发出了快乐的呻吟声、血从柔嫩的肌肤上滴落下来………/,
+        ],
+      },
+      { src: K0, ref: '4146', any: [/\t\t\tCFLAG:TARGET:343 = 6/m] },
+      {
+        src: K0,
+        ref: '4148',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:343 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4149',
+        any: [/「啊～…啊～…嗯呼呜…明明是被刺着…为什么…啊啊～！」/],
+      },
+      {
+        src: K0,
+        ref: '4150',
+        any: [/%SAVESTR:TARGET%因为被针刺的麻痒感觉而迷惑了………/],
+      },
+      { src: K0, ref: '4151', any: [/\t\t\tCFLAG:TARGET:343 = 5/m] },
+      {
+        src: K0,
+        ref: '4153',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:343 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4154',
+        any: [
+          /「啊啊…求求你…%SELF_CALL\(TARGET\)%是不会反抗你的…所以不要再让我痛了…啊啊啊～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4155',
+        any: [/%SAVESTR:TARGET%每次被针戳就会发出悲鸣声………/],
+      },
+      { src: K0, ref: '4156', any: [/\t\t\tCFLAG:TARGET:343 = 4/m] },
+      {
+        src: K0,
+        ref: '4158',
+        any: [/\t\tELSEIF ABL:21 >= 3 && \(CFLAG:343 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '4159',
+        any: [/「咕呜～…嗯～…啊啊～…啊啊啊啊…总觉得…像过电似的…好奇怪…呢………」/],
+      },
+      {
+        src: K0,
+        ref: '4160',
+        any: [/%SAVESTR:TARGET%因为被针刺的麻痒感觉而迷惑了………/],
+      },
+      { src: K0, ref: '4161', any: [/\t\t\tCFLAG:TARGET:343 = 3/m] },
+      {
+        src: K0,
+        ref: '4163',
+        any: [/\t\tELSEIF CFLAG:343 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4164',
+        any: [/「咕呜～…呜啊啊…啊～…咕呜呜～…咿～～…」/],
+      },
+      {
+        src: K0,
+        ref: '4165',
+        any: [
+          /%SAVESTR:TARGET%咬着嘴唇忍受着痛楚、但还是从嘴边漏出了痛苦的声音………/,
+        ],
+      },
+      { src: K0, ref: '4166', any: [/\t\t\tCFLAG:TARGET:343 = 2/m] },
     ],
   },
 

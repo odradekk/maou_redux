@@ -1921,4 +1921,36 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸',
   },
+  {
+    desc: 'M1891 K0 针首次状态推进写错（CFLAG:343 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.针 = 1; // :4123-4124',
+    replace: '      kojo.针 = 2; // :4123-4124',
+    tests: ['kojo-k0-tender'],
+    must_mention: '针首次推进到 1',
+  },
+  {
+    desc: 'M1892 K0 针二次淫乱+抖M门槛错位（CFLAG:343 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.针 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4126-4128`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.针 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4126-4128`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '针二次：淫乱+抖M写 9 / 阈值闸',
+  },
+  {
+    desc: 'M1893 K0 针二次淫乱+抖M写回错档（CFLAG:343 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.针 = 9; // :4131',
+    replace: '        kojo.针 = 8; // :4131',
+    tests: ['kojo-k0-tender'],
+    must_mention: '针二次淫乱+抖M写 9',
+  },
 ];
