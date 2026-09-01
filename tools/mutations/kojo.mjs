@@ -1894,4 +1894,48 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 1',
   },
+  {
+    desc: 'M1835 K8 SELECTCOM 20 正常位淫乱推进写错（CFLAG:321 = 6 改 5，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.正常位 = 6; // :2294 CFLAG:321 = 6',
+    replace: '      kojo.正常位 = 5; // :2294（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 6',
+  },
+  {
+    desc: 'M1836 K8 SELECTCOM 20 正常位爱慕推进写错（CFLAG:321 = 5 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.正常位 = 5; // :2319 CFLAG:321 = 5',
+    replace: '      kojo.正常位 = 4; // :2319（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1837 K8 SELECTCOM 20 正常位屈服刻印Lv3分档条件写错（MARK:2==3 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `      era0(\`mark:\${target}:2\`) == 3 &&
+      (kojo.正常位 <= 2 || game.kojo.口上开关 == 2)`,
+    replace: `      era0(\`mark:\${target}:2\`) == 4 &&
+      (kojo.正常位 <= 2 || game.kojo.口上开关 == 2)`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1838 K8 SELECTCOM 20 正常位それ以外守卫丢失（CFLAG:321 <= 1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '} else if (kojo.正常位 <= 1 || game.kojo.口上开关 == 2) {',
+    replace: '} else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
+  {
+    desc: 'M1839 K8 SELECTCOM 20 正常位处女+魔族判定丢失（TALENT:314==9 改恒真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `        if (era0(\`talent:\${target}:314\`) == 9) {
+          // :2175-2206 魔族`,
+    replace: `        if (true) {
+          // :2175-2206（变异：种族判定删除）`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '处女+人間+それ以外',
+  },
 ];
