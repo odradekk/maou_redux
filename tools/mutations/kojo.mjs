@@ -2170,4 +2170,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 5',
   },
+  {
+    desc: 'M1868 K8 SELECTCOM 30 手淫初めて分档丢失（ABL:16>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      } else if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上',
+    replace:
+      '      } else if (false) {\n        // 侍奉精神Lv3以上（变异：判定删除）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '侍奉精神Lv3以上（无 TALENT）',
+  },
+  {
+    desc: 'M1869 K8 SELECTCOM 30 手淫淫乱+侍奉精神Lv3以上推进写错（CFLAG:331 = 7 改 6，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.手淫 = 7; // :3351 CFLAG:331 = 7',
+    replace: '      kojo.手淫 = 6; // :3351（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 7',
+  },
+  {
+    desc: 'M1870 K8 SELECTCOM 30 手淫爱+侍奉精神Lv5 门槛写错（ABL:16>=5 改 >=3，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`abl:${target}:16`) >= 5 &&\n      (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)',
+    replace:
+      '      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1871 K8 SELECTCOM 30 手淫源作死区被"修正"（CFLAG:331 <= 3 改 <= 4，破坏 1:1 保真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)',
+    replace: '      (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '源作死区',
+  },
 ];
