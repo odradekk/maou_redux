@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4758', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-5192', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -19182,6 +19182,1071 @@ const FILES = [
           /虽然%SAVESTR:TARGET%说了话，但%SAVESTR:TARGET%却好像没听到似的…/,
         ],
       },
+      { src: K0, ref: '4763-4838', any: [/^IF SELECTCOM == 123$/m] },
+      { src: K0, ref: '4763', any: [/IF SELECTCOM == 123/m] },
+      { src: K0, ref: '4765', any: [/\tIF CFLAG:TARGET:360 == 0/m] },
+      { src: K0, ref: '4767', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4768',
+        any: [
+          /%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并把前端含进嘴里开始细致的舔舐起来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4769-4770',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4771',
+        any: [
+          /「好烫啊～…大肉棒～%UNICODE\(0x2661\) \*1% 大肉棒～%UNICODE\(0x2661\) \*1% 啊啊啊…嗯～嗯咕呜～嗯咻～咻/,
+        ],
+      },
+      { src: K0, ref: '4772-4773', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4775', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4776',
+        any: [
+          /%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并温柔地亲吻着前端。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4777-4778',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4779',
+        any: [
+          /「啾～啾～…%UNICODE\(0x2661\) \*1% 请变的更爽吧～…嗯啾啾～…嘞咯～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4780-4781', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4783', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '4784',
+        any: [
+          /%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并舔舐起了前端。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4785-4786',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4787',
+        any: [
+          /「嗯姆呜～…嗯～嗯～%UNICODE\(0x2661\) \*1%…嗯哈啊…会让你…变的…更舒服的………」/,
+        ],
+      },
+      { src: K0, ref: '4788-4789', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      {
+        src: K0,
+        ref: '4791-4792',
+        any: [/%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并亲吻着前端。/],
+      },
+      {
+        src: K0,
+        ref: '4793-4794',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4795',
+        any: [/「嗯啾噜～…嗯～…啊呼呜…啊啊…哈啊哈啊……这、这样可以吗…？」/],
+      },
+      { src: K0, ref: '4797-4798', any: [/\t\tCFLAG:TARGET:360 = 1/m] },
+      {
+        src: K0,
+        ref: '4800-4802',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:360 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4803',
+        any: [
+          /%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并把前端含进嘴里开始细致的舔舐起来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4804-4805',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4806',
+        any: [
+          /「好烫啊～…大肉棒～%UNICODE\(0x2661\) \*1% 大肉棒～%UNICODE\(0x2661\) \*1% 啊啊啊…嗯～嗯咕呜～嗯咻～咻/,
+        ],
+      },
+      { src: K0, ref: '4807-4808', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4809', any: [/\t\t\tCFLAG:360 = 5/m] },
+      {
+        src: K0,
+        ref: '4811',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:360 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4812',
+        any: [
+          /%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并温柔地亲吻着前端。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4813-4814',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4815',
+        any: [
+          /「啾～啾～…%UNICODE\(0x2661\) \*1% 请变的更爽吧～…嗯啾啾～…嘞咯～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4816-4817', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4818', any: [/\t\t\tCFLAG:360 = 4/m] },
+      {
+        src: K0,
+        ref: '4820',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:360 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4821',
+        any: [
+          /%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并舔舐起了前端。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4822-4823',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4824',
+        any: [
+          /「嗯姆呜～…嗯～嗯～%UNICODE\(0x2661\) \*1%…嗯哈啊…会让你…变的…更舒服的………」/,
+        ],
+      },
+      { src: K0, ref: '4825-4826', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4827', any: [/\t\t\tCFLAG:360 = 3/m] },
+      {
+        src: K0,
+        ref: '4829',
+        any: [/\t\tELSEIF CFLAG:360 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4830',
+        any: [/%SAVESTR:TARGET%用双乳夹住了%NAME:MASTER%的阴茎并亲吻着前端。/],
+      },
+      {
+        src: K0,
+        ref: '4831-4832',
+        any: [
+          /\t\t\t\tSIF TALENT:TARGET:110 == 1 \|\| TALENT:TARGET:114 == 1 \|\| TALENT:TARGET:119 == 1/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4833',
+        any: [/「嗯啾噜～…嗯～…啊呼呜…啊啊…哈啊哈啊……这、这样可以吗…？」/],
+      },
+      { src: K0, ref: '4834', any: [/\t\t\tCFLAG:360 = 2/m] },
+      { src: K0, ref: '4842-4897', any: [/^IF SELECTCOM == 125$/m] },
+      { src: K0, ref: '4842', any: [/IF SELECTCOM == 125/m] },
+      { src: K0, ref: '4844', any: [/\tIF CFLAG:TARGET:361 == 0/m] },
+      { src: K0, ref: '4846', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4847',
+        any: [
+          /%SAVESTR:TARGET%用一只手伸向自己的阴部、同时嘟起嘴含住了阴茎开始自慰起来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4848',
+        any: [
+          /「嗯咕～…嘞噗～…嘞咯～…嗯咕～嗯咕～…嗯唔～嗯呼呜呜呜呜%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      { src: K0, ref: '4850', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4851',
+        any: [
+          /%SAVESTR:TARGET%遵照命令将一只手伸向自己的阴部、一边自慰一边亲吻着阴茎。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4852',
+        any: [
+          /「哈啊…虽然一边含着大鸡鸡一边自慰什么的…很不像话…但实在是忍不住嘛…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4854', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '4855',
+        any: [/%SAVESTR:TARGET%遵照命令在口交的同时开始自慰起来。/],
+      },
+      {
+        src: K0,
+        ref: '4856',
+        any: [/「嗯～…明明这样很不像话…啊啊～…嗯～嗯呜唔～………」/],
+      },
+      {
+        src: K0,
+        ref: '4858-4859',
+        any: [/%SAVESTR:TARGET%遵照命令在口交的同时开始自慰起来。/],
+      },
+      {
+        src: K0,
+        ref: '4860',
+        any: [/「嗯～…明明这样很不像话…啊啊～…嗯～嗯呜唔～………」/],
+      },
+      { src: K0, ref: '4862-4863', any: [/\t\tCFLAG:TARGET:361 = 1/m] },
+      {
+        src: K0,
+        ref: '4865-4867',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:361 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4868',
+        any: [
+          /%SAVESTR:TARGET%用一只手伸向自己的阴部、同时嘟起嘴含住了阴茎开始自慰起来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4869',
+        any: [
+          /「嗯咕～…嘞噗～…嘞咯～…嗯咕～嗯咕～…嗯唔～嗯呼呜呜呜呜%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4870',
+        any: [
+          /%SAVESTR:TARGET%开心的一边流着口水、一边啧啧有声地玩弄着私处………/,
+        ],
+      },
+      { src: K0, ref: '4871-4872', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4873', any: [/\t\t\tCFLAG:361 = 5/m] },
+      {
+        src: K0,
+        ref: '4875',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:361 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4876',
+        any: [
+          /%SAVESTR:TARGET%遵照命令将一只手伸向自己的阴部、一边自慰一边亲吻着阴茎。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4877',
+        any: [
+          /「哈啊…虽然一边含着大鸡鸡一边自慰什么的…很不像话…但实在是忍不住嘛…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4878',
+        any: [
+          /「啊咕～…嗯啾…咻噜呜～…嘞噗～…嗯咕～…嗯～嗯嗯嗯～嗯呼呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4879-4880', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4881', any: [/\t\t\tCFLAG:361 = 4/m] },
+      {
+        src: K0,
+        ref: '4883',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:361 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4884',
+        any: [/%SAVESTR:TARGET%遵照命令在口交的同时开始自慰起来。/],
+      },
+      {
+        src: K0,
+        ref: '4885',
+        any: [/「嗯～…明明这样很不像话…啊啊～…嗯～嗯呜唔～………」/],
+      },
+      { src: K0, ref: '4886-4887', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4888', any: [/\t\t\tCFLAG:361 = 3/m] },
+      {
+        src: K0,
+        ref: '4890',
+        any: [/\t\tELSEIF CFLAG:361 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4891',
+        any: [/%SAVESTR:TARGET%遵照命令在口交的同时开始自慰起来。/],
+      },
+      {
+        src: K0,
+        ref: '4892',
+        any: [/「嗯～…明明这样很不像话…啊啊～…嗯～嗯呜唔～………」/],
+      },
+      { src: K0, ref: '4893', any: [/\t\t\tCFLAG:361 = 2/m] },
+      { src: K0, ref: '4902-4957', any: [/^IF SELECTCOM == 126$/m] },
+      { src: K0, ref: '4902', any: [/IF SELECTCOM == 126/m] },
+      { src: K0, ref: '4904', any: [/\tIF CFLAG:TARGET:362 == 0/m] },
+      { src: K0, ref: '4906', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4907',
+        any: [
+          /%SAVESTR:TARGET%淫笑着用手握住阴茎、细致温柔地撸着并用嘴含住了亀頭。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4908',
+        any: [
+          /「我会很卖力的撸啦～…请将你的心意赏到%SELF_CALL\(TARGET\)%的嘴里吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4910', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4911',
+        any: [
+          /%SAVESTR:TARGET%脉脉含情的看着你、用嘴含住了亀頭开始撸起了阴茎。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4912',
+        any: [
+          /「啊啊啊…能为你做奉仕真开心…嗯唔～…啾～嘞噗～…嗯咕～…嗯呼呜…啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4914', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '4915',
+        any: [/%SAVESTR:TARGET%把亀頭含在嘴里、开始撸起了阴茎。/],
+      },
+      {
+        src: K0,
+        ref: '4916',
+        any: [/「嗯～…哈啊…啊啊～…嘴巴和手好像被火烫到了似的…嗯～嗯呜唔～♪」/],
+      },
+      {
+        src: K0,
+        ref: '4918-4919',
+        any: [/%SAVESTR:TARGET%把亀頭含在嘴里、不情愿的撸起了阴茎。/],
+      },
+      {
+        src: K0,
+        ref: '4920',
+        any: [/「哈啊哈啊…啊姆～…啾～啾～…呗咯～…啊啊啊…这样的………」/],
+      },
+      { src: K0, ref: '4922-4923', any: [/\t\tCFLAG:TARGET:362 = 1/m] },
+      {
+        src: K0,
+        ref: '4925-4927',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:362 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4928',
+        any: [
+          /%SAVESTR:TARGET%淫笑着用手握住阴茎、细致温柔地撸着并用嘴含住了亀頭。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4929',
+        any: [
+          /「我会很卖力的撸啦～…请将你的心意赏到%SELF_CALL\(TARGET\)%的嘴里吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4930',
+        any: [
+          /「嗯咻～…咻噜～…啾～啾唔呜唔%UNICODE\(0x2661\) \*1% 一撸起来…嘴里的大肉棒就一颤一颤的、好可爱～%UNICODE\(0x2/,
+        ],
+      },
+      { src: K0, ref: '4931-4932', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4933', any: [/\t\t\tCFLAG:362 = 5/m] },
+      {
+        src: K0,
+        ref: '4935',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:362 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4936',
+        any: [
+          /%SAVESTR:TARGET%脉脉含情的看着你、用嘴含住了亀頭开始撸起了阴茎。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4937',
+        any: [
+          /「啊啊啊…能为你做奉仕真开心…嗯唔～…啾～嘞噗～…嗯咕～…嗯呼呜…啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4938',
+        any: [
+          /「射出来…请全部射出来吧…那样%SELF_CALL\(TARGET\)%会很高兴的%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4939-4940', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4941', any: [/\t\t\tCFLAG:362 = 4/m] },
+      {
+        src: K0,
+        ref: '4943',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:362 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4944',
+        any: [/%SAVESTR:TARGET%把亀頭含在嘴里、开始撸起了阴茎。/],
+      },
+      {
+        src: K0,
+        ref: '4945',
+        any: [/「嗯～…哈啊…啊啊～…嘴巴和手好像被火烫到了似的…嗯～嗯呜唔～♪」/],
+      },
+      { src: K0, ref: '4946-4947', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4948', any: [/\t\t\tCFLAG:362 = 3/m] },
+      {
+        src: K0,
+        ref: '4950',
+        any: [/\t\tELSEIF CFLAG:362 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4951',
+        any: [/%SAVESTR:TARGET%把亀頭含在嘴里、不情愿的撸起了阴茎。/],
+      },
+      {
+        src: K0,
+        ref: '4952',
+        any: [/「哈啊哈啊…啊姆～…啾～啾～…呗咯～…啊啊啊…这样的………」/],
+      },
+      { src: K0, ref: '4953', any: [/\t\t\tCFLAG:362 = 2/m] },
+      { src: K0, ref: '4963-5018', any: [/^IF SELECTCOM == 127$/m] },
+      { src: K0, ref: '4963', any: [/IF SELECTCOM == 127/m] },
+      { src: K0, ref: '4965', any: [/\tIF CFLAG:TARGET:363 == 0/m] },
+      { src: K0, ref: '4967', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4968',
+        any: [
+          /%SAVESTR:TARGET%把阴茎吞入喉咙深处、发出下流的声音开始吮吸起来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4969',
+        any: [
+          /「嗯咕呜～…嗯噗～…咻噜呜～咻噗～…咻～咻噜～呜呜呜呜%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      { src: K0, ref: '4971', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4972',
+        any: [/%SAVESTR:TARGET%把阴茎吞入喉咙深处、嗞嗞作响地吮吸起来。/],
+      },
+      {
+        src: K0,
+        ref: '4973',
+        any: [
+          /「咻噜呜～…啾～啾呜呜～%UNICODE\(0x2661\) \*1% 啊啊啊…大鸡鸡…真好嗤…啾呜～嘞噗～…噗啾呜呜～%UNICODE\(0x26/,
+        ],
+      },
+      { src: K0, ref: '4975', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '4976',
+        any: [/%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、嗞嗞作响地吮吸起来。/],
+      },
+      {
+        src: K0,
+        ref: '4977',
+        any: [/「嗯咕呜呜～…嗯～…嗯唔～…嗯～唔呜唔～…唔呜呜…」/],
+      },
+      {
+        src: K0,
+        ref: '4979-4980',
+        any: [/%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、嗞嗞作响地吮吸起来。/],
+      },
+      {
+        src: K0,
+        ref: '4981',
+        any: [/「嗯咕呜呜～…嗯～…嗯唔～…嗯～唔呜唔～…唔呜呜…」/],
+      },
+      { src: K0, ref: '4983-4984', any: [/\t\tCFLAG:TARGET:363 = 1/m] },
+      {
+        src: K0,
+        ref: '4986-4988',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4989',
+        any: [
+          /%SAVESTR:TARGET%把阴茎吞入喉咙深处、发出下流的声音开始吮吸起来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4990',
+        any: [
+          /「嗯咕呜～…嗯噗～…咻噜呜～咻噗～…咻～咻噜～呜呜呜呜%UNICODE\(0x2661\) \*1%」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4991',
+        any: [
+          /「全部…这大肉棒全部都是%SELF_CALL\(TARGET\)%的～%UNICODE\(0x2661\) \*1% 把精液满满的灌进喉咙里吧～…%U/,
+        ],
+      },
+      { src: K0, ref: '4992-4993', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '4994', any: [/\t\t\tCFLAG:363 = 5/m] },
+      {
+        src: K0,
+        ref: '4996',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:363 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4997',
+        any: [/%SAVESTR:TARGET%把阴茎吞入喉咙深处、嗞嗞作响地吮吸起来。/],
+      },
+      {
+        src: K0,
+        ref: '4998',
+        any: [
+          /「哈姆呜～%UNICODE\(0x2661\) \*1% 嗯咕～%UNICODE\(0x2661\) \*1%嗯咻呜%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4999',
+        any: [
+          /「大鸡鸡…全部都是%SELF_CALL\(TARGET\)%的～…哈姆呜～%UNICODE\(0x2661\) \*1% 嗯啾～啾～啾呜呜呜%UNIC/,
+        ],
+      },
+      { src: K0, ref: '5000-5001', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5002', any: [/\t\t\tCFLAG:363 = 4/m] },
+      {
+        src: K0,
+        ref: '5004',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:363 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5005',
+        any: [/%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、嗞嗞作响地吮吸起来。/],
+      },
+      {
+        src: K0,
+        ref: '5006',
+        any: [/「嗯咕呜呜～…嗯～…嗯唔～…嗯～唔呜唔～…唔呜呜…」/],
+      },
+      { src: K0, ref: '5007-5008', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5009', any: [/\t\t\tCFLAG:363 = 3/m] },
+      {
+        src: K0,
+        ref: '5011',
+        any: [/\t\tELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '5012',
+        any: [/%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、嗞嗞作响地吮吸起来。/],
+      },
+      {
+        src: K0,
+        ref: '5013',
+        any: [/「嗯咕呜呜～…嗯～…嗯唔～…嗯～唔呜唔～…唔呜呜…」/],
+      },
+      { src: K0, ref: '5014', any: [/\t\t\tCFLAG:363 = 2/m] },
+      { src: K0, ref: '5023-5076', any: [/^IF SELECTCOM == 69$/m] },
+      { src: K0, ref: '5023', any: [/IF SELECTCOM == 69/m] },
+      { src: K0, ref: '5025', any: [/\tIF CFLAG:TARGET:364 == 0/m] },
+      { src: K0, ref: '5027', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '5028',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%每当私处被刺激就/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5029',
+        any: [
+          /「嗯呜唔～%UNICODE\(0x2661\) \*1% …继续欺负我～…我也会继续舔肉棒的～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '5031', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '5032',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%一边承受着私处传/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5033',
+        any: [
+          /「啊啊～…那里一被欺负…啊～啊啊～%UNICODE\(0x2661\) \*1% 就没法好好奉仕大鸡鸡了～～%UNICODE\(0x2661\) \*1/,
+        ],
+      },
+      { src: K0, ref: '5035', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '5036',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%因为私处传来的刺/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5037',
+        any: [
+          /「嗯咕～…嗯～…哈啊啊…被这样逗弄的话…奉仕就…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5039-5040',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%由于私处传来的刺/,
+        ],
+      },
+      { src: K0, ref: '5041', any: [/「啊啊～…不行～…这样不行～…啊～～！」/] },
+      { src: K0, ref: '5043-5044', any: [/\t\tCFLAG:TARGET:364 = 1/m] },
+      {
+        src: K0,
+        ref: '5046-5048',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:364 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5049',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%每当私处被刺激就/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5050',
+        any: [
+          /「嗯呜唔～%UNICODE\(0x2661\) \*1% …继续欺负我～…我也会继续舔肉棒的～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '5051-5052', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5053', any: [/\t\t\tCFLAG:364 = 5/m] },
+      {
+        src: K0,
+        ref: '5055',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:364 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5056',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%一边承受着私处传/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5057',
+        any: [
+          /「啊啊～…那里一被欺负…啊～啊啊～%UNICODE\(0x2661\) \*1% 就没法好好奉仕大肉棒了～～%UNICODE\(0x2661\) \*1/,
+        ],
+      },
+      { src: K0, ref: '5058-5059', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5060', any: [/\t\t\tCFLAG:364 = 4/m] },
+      {
+        src: K0,
+        ref: '5062',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:364 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5063',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%因为私处传来的刺/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5064',
+        any: [
+          /「嗯咕～…嗯～…哈啊啊…被这样逗弄的话…奉仕就…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '5065-5066', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5067', any: [/\t\t\tCFLAG:364 = 3/m] },
+      {
+        src: K0,
+        ref: '5069',
+        any: [/\t\tELSEIF CFLAG:364 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '5070',
+        any: [
+          /%SAVESTR:TARGET%和%SAVESTR:PLAYER%互相贪婪的亲吻着两腿之间。%SAVESTR:TARGET%由于私处传来的刺/,
+        ],
+      },
+      { src: K0, ref: '5071', any: [/「啊啊～…不行～…这样不行～…啊～～！」/] },
+      { src: K0, ref: '5072', any: [/\t\t\tCFLAG:364 = 2/m] },
+      { src: K0, ref: '5081-5138', any: [/^IF SELECTCOM == 124$/m] },
+      { src: K0, ref: '5081', any: [/IF SELECTCOM == 124/m] },
+      { src: K0, ref: '5083', any: [/\tIF CFLAG:TARGET:365 == 0/m] },
+      { src: K0, ref: '5085', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '5086',
+        any: [/%SAVESTR:TARGET%把阴茎吞入喉咙深处、用嘴唇紧紧含着根部。/],
+      },
+      {
+        src: K0,
+        ref: '5087',
+        any: [
+          /「嗯噗呜唔…嗯咻噜～咻噜…咻噜噗呜～%UNICODE\(0x2661\) \*1% 咻噜～咻～咻噗呜%UNICODE\(0x2661\) \*1%…嗯咕/,
+        ],
+      },
+      { src: K0, ref: '5089', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '5090',
+        any: [
+          /%SAVESTR:TARGET%把阴茎吞入喉咙深处、一边吸一边发出了下流的声音。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5091',
+        any: [
+          /「咻噗～咻噜～…嗯～嗯～…咻噜～呜～%UNICODE\(0x2661\) \*1% 嘞噗～…嗯咕～%UNICODE\(0x2661\) \*1% 嗯嗯嗯/,
+        ],
+      },
+      { src: K0, ref: '5093', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '5094',
+        any: [
+          /%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、虽然好像喘不过气来但还是开始了口腔奉仕。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5095',
+        any: [
+          /「嗯唔～…嗯嗯～…嗯咻～…嗯噗呜～！？…嗯唔～…嗯姆呜…嘞咯～噢…嗯～嗯～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5097-5098',
+        any: [
+          /%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、虽然好像喘不过气来但还是开始了口腔奉仕。/,
+        ],
+      },
+      { src: K0, ref: '5099', any: [/「嗯唔～…嗯嗯～…嗯咻～…嗯噗呜～！？」/] },
+      { src: K0, ref: '5101-5102', any: [/\t\tCFLAG:TARGET:365 = 1/m] },
+      {
+        src: K0,
+        ref: '5104-5106',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5107',
+        any: [/%SAVESTR:TARGET%把阴茎吞入喉咙深处、用嘴唇紧紧含着根部。/],
+      },
+      {
+        src: K0,
+        ref: '5108',
+        any: [
+          /「嗯噗呜唔…嗯咻噜～咻噜…咻噜噗呜～%UNICODE\(0x2661\) \*1% 咻噜～咻～咻噗呜%UNICODE\(0x2661\) \*1%…嗯咕/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5109',
+        any: [/（喉咙里面…被肉棒塞得满满的…好开心…%UNICODE\(0x2661\) \*1%）/],
+      },
+      { src: K0, ref: '5110-5111', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5112', any: [/\t\t\tCFLAG:365 = 5/m] },
+      {
+        src: K0,
+        ref: '5114',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:363 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5115',
+        any: [
+          /%SAVESTR:TARGET%把阴茎吞入喉咙深处、一边吸一边发出了下流的声音。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5116',
+        any: [
+          /「咻噗～咻噜～…嗯～嗯～…咻噜～呜～%UNICODE\(0x2661\) \*1% 嘞噗～…嗯咕～%UNICODE\(0x2661\) \*1% 嗯嗯嗯/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5117',
+        any: [
+          /（啊啊～…连喉咙里面都被大鸡鸡侵犯了…好激动啊………%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      { src: K0, ref: '5118-5119', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5120', any: [/\t\t\tCFLAG:365 = 4/m] },
+      {
+        src: K0,
+        ref: '5122',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:363 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5123',
+        any: [
+          /%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、虽然好像喘不过气来但还是开始了口腔奉仕。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5124',
+        any: [
+          /「嗯唔～…嗯嗯～…嗯咻～…嗯噗呜～！？…嗯唔～…嗯姆呜…嘞咯～噢…嗯～嗯～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5125',
+        any: [
+          /（喉咙的里面也被插了～…嗯咕～…明明…很难受…%UNICODE\(0x2661\) \*1%）/,
+        ],
+      },
+      { src: K0, ref: '5126-5127', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5128', any: [/\t\t\tCFLAG:365 = 3/m] },
+      {
+        src: K0,
+        ref: '5130',
+        any: [/\t\tELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '5131',
+        any: [
+          /%SAVESTR:TARGET%尽量把阴茎含进喉咙深处、虽然好像喘不过气来但还是开始了口腔奉仕。/,
+        ],
+      },
+      { src: K0, ref: '5132', any: [/「嗯唔～…嗯嗯～…嗯咻～…嗯噗呜～！？」/] },
+      { src: K0, ref: '5133', any: [/\t\t\tCFLAG:365 = 2/m] },
+      { src: K0, ref: '5143-5192', any: [/^IF SELECTCOM == 80$/m] },
+      { src: K0, ref: '5143', any: [/IF SELECTCOM == 80/m] },
+      { src: K0, ref: '5145', any: [/\tIF CFLAG:TARGET:381 == 0/m] },
+      { src: K0, ref: '5147', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '5148',
+        any: [
+          /「嗯噗呜呜～嗯咕～！？嗯～嗯呼呜呜～…嗯呼呜呜呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5149',
+        any: [/%SAVESTR:TARGET%一边翻着白眼一边被鸡鸡插进了喉咙深处………/],
+      },
+      { src: K0, ref: '5151', any: [/\t\tELSEIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '5152',
+        any: [/「嗯呼呜～…嗯啾～…啾噗啊…嗯咕！？嗯呜唔～…嗯～…嗯～…嗯～♪」/],
+      },
+      { src: K0, ref: '5153', any: [/%SAVESTR:TARGET%就这样被侵犯着口腔………/] },
+      {
+        src: K0,
+        ref: '5155-5156',
+        any: [
+          /「嗯嗯嗯～～！？咕呼～…嗯咕呜呜～！？嗯～～嗯噗呜～…嗯咕～嗯咕～嗯咕呜呜呜呜！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5157',
+        any: [/%SAVESTR:TARGET%被鸡鸡插进喉咙深处好像很痛苦的样子………/],
+      },
+      { src: K0, ref: '5159-5160', any: [/\t\tCFLAG:TARGET:381 = 1/m] },
+      {
+        src: K0,
+        ref: '5162-5164',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:381 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5165',
+        any: [
+          /「嗯呜唔～…嗯～嗯噗…嗯咕～…嗯～嗯呼呜呜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5166',
+        any: [
+          /「可以哦…%SELF_CALL\(TARGET\)%的嘴巴就是为了含住大肉棒而存在的…请随意使用吧～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5167',
+        any: [
+          /「嗯～嗯呼唔呜…嗯～…嗯姆呜呜…嗯～%UNICODE\(0x2665\) \*1%嗯～%UNICODE\(0x2665\) \*1%嗯～%UNICODE/,
+        ],
+      },
+      { src: K0, ref: '5168-5169', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5170', any: [/\t\t\tCFLAG:381 = 5/m] },
+      {
+        src: K0,
+        ref: '5172',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:381 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5173',
+        any: [
+          /「嗯～嗯呼唔呜…嗯～…嗯姆呜呜…嗯～%UNICODE\(0x2665\) \*1%嗯～%UNICODE\(0x2665\) \*1%嗯～%UNICODE/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5174',
+        any: [
+          /「哈啊啊啊…让我…让我更多地奉仕你吧…嗯～！？嗯呼呜呜…嗯～嗯～嗯～♪」/,
+        ],
+      },
+      { src: K0, ref: '5175-5176', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5177', any: [/\t\t\tCFLAG:381 = 4/m] },
+      {
+        src: K0,
+        ref: '5179',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:381 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '5180',
+        any: [/「嗯咕呼呜…嗯噗～…嗯～嗯呜唔…嗯呜唔～…咳咳～咳咳～…」/],
+      },
+      {
+        src: K0,
+        ref: '5181',
+        any: [/「哈啊…哈啊…对不起…下次会好好地…嗯呼呜呜呜！？」/],
+      },
+      { src: K0, ref: '5182-5183', any: [/\t\t\t\tSIF ABL:32 >= 3/m] },
+      { src: K0, ref: '5184', any: [/\t\t\tCFLAG:381 = 3/m] },
+      {
+        src: K0,
+        ref: '5186',
+        any: [/\t\tELSEIF CFLAG:381 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '5187',
+        any: [
+          /「嗯咕～…嗯～嗯噗…嗯噗…噗哈…咳咳～咳咳咳咳～…拜托…不要再继续了…嗯嗯～！」/,
+        ],
+      },
+      { src: K0, ref: '5188', any: [/\t\t\tCFLAG:381 = 2/m] },
     ],
   },
 

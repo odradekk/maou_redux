@@ -229,11 +229,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 123; // 乳夹口交——COM56 落地后改用尚未填的指令
+    era_flag.selectcom = 87; // 穿环——口系指令落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 123 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 87 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -3700,6 +3700,361 @@ test('交谈二次：不写 CFLAG / 插着不拔情话 / 沉默', async () => {
   ]);
   assert.equal(silent.store.get('tflag:32'), undefined, '沉默支不写 TFLAG:32');
   assert.equal(silent.store.get('cflag:31:357'), 1, '交谈二次沉默也不写 CFLAG');
+});
+
+test('乳夹口交首次：淫乱，推进到 1 / 巨乳 SIF', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 123;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '琼用双乳夹住了你的阴茎并把前端含进嘴里开始细致的舔舐起来。',
+    '「好烫啊～…大肉棒～♡ 大肉棒～♡ 啊啊啊…嗯～嗯咕呜～嗯咻～咻噜呜～♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:360'), 1, '乳夹口交首次推进到 1');
+
+  const bust = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 123;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:110', 1);
+  });
+  await speak_k0(bust);
+  assert.ok(
+    bust.text_lines().some((line) => line.includes('淫乱大乳房')),
+    '巨乳 SIF：TALENT:110',
+  );
+});
+
+test('乳夹口交二次：淫乱写 5 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 123;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:360', 1);
+  });
+  await speak_k0(r0);
+  assert.equal(r0.store.get('cflag:31:360'), 5, '乳夹口交二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 123;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:360', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:360'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 123;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:360', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('口交时自慰首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 125;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('含住了阴茎开始自慰起来')),
+  );
+  assert.equal(fixture.store.get('cflag:31:361'), 1, '口交时自慰首次推进到 1');
+});
+
+test('口交时自慰二次：淫乱写 5 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 125;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:361', 1);
+  });
+  await speak_k0(r0);
+  assert.equal(r0.store.get('cflag:31:361'), 5, '口交时自慰二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 125;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:361', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:361'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 125;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:361', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('手搓口交首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 126;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.ok(fixture.text_lines().some((line) => line.includes('握住阴茎')));
+  assert.equal(fixture.store.get('cflag:31:362'), 1, '手搓口交首次推进到 1');
+});
+
+test('手搓口交二次：淫乱写 5 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 126;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:362', 1);
+  });
+  await speak_k0(r0);
+  assert.equal(r0.store.get('cflag:31:362'), 5, '手搓口交二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 126;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:362', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:362'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 126;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:362', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('真空口交首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 127;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('把阴茎吞入喉咙深处')),
+  );
+  assert.equal(fixture.store.get('cflag:31:363'), 1, '真空口交首次推进到 1');
+});
+
+test('真空口交二次：淫乱写 5 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 127;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:363', 1);
+  });
+  await speak_k0(r0);
+  assert.equal(r0.store.get('cflag:31:363'), 5, '真空口交二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 127;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:363', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:363'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 127;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:363', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('六九式首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 69;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('互相贪婪的亲吻着两腿之间')),
+  );
+  assert.equal(fixture.store.get('cflag:31:364'), 1, '六九式首次推进到 1');
+});
+
+test('六九式二次：淫乱写 5 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 69;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:364', 1);
+  });
+  await speak_k0(r0);
+  assert.equal(r0.store.get('cflag:31:364'), 5, '六九式二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 69;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:364', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:364'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 69;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:364', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('深喉二次：读 CFLAG:363 写 CFLAG:365 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 124;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:365', 1);
+  });
+  await speak_k0(r0);
+  assert.equal(r0.store.get('cflag:31:365'), 5, '深喉二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 124;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:365', 9);
+    f.store.set('cflag:31:363', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'own=9 且 CFLAG:363=4 且 FLAG:7==1 仍出声（门槛读 363）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:365'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 124;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:365', 9);
+    f.store.set('cflag:31:363', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('深喉首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 124;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('用嘴唇紧紧含着根部')),
+  );
+  assert.equal(fixture.store.get('cflag:31:365'), 1, '深喉首次推进到 1');
+});
+
+test('强制口交首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 80;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯噗呜呜～嗯咕～！？嗯～嗯呼呜呜～…嗯呼呜呜呜呜♡」',
+    '琼一边翻着白眼一边被鸡鸡插进了喉咙深处………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:381'), 1, '强制口交首次推进到 1');
+});
+
+test('强制口交二次：淫乱写 5 / 黑心 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 80;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:381', 1);
+  });
+  await speak_k0(r0);
+  assert.ok(r0.text_lines().some((line) => line.includes('♥')));
+  assert.equal(r0.store.get('cflag:31:381'), 5, '强制口交二次淫乱写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 80;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:381', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:381'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 80;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:381', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
 });
 
 // —— 存根清单核对 ——
