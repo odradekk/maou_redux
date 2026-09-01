@@ -139,7 +139,6 @@ const ERB_TOKEN_RULES = [
   // —— #238：K7 金红桃口上补充 ——
   [/^SAVESTR:MASTER$/, 'MASTER'], // :5364/:5435（同 CALLNAME:MASTER，无独立昵称）
   [/^s$/, 'S_COUNT'], // :7687/:7697（AFTERTRAIN_SEX_CHECK 跨函数全局 S，本回性交次数）
-  [/^SAVESTR:A$/, 'A_NAME'], // GOHOUBI_REQUEST_KOUJO_K7 等：A 是调用方传入的角色 ID
   [/^TIME == 0 \? 今日 # 今夜$/, 'TERN_TIME_NIGHT'], // :473/:487/:515/:570/:766
   [/^TIME == 0 \? 今日 # 今宵$/, 'TERN_TIME_TONIGHT'], // :779/:800
   [/^RAND:2 == 0 \? 菊花 # 小穴$/, 'TERN_HOLE'], // :570
@@ -221,7 +220,7 @@ const JS_TOKEN_RULES = [
   [/^master_or_woman$/, 'TERN_MASTER_WOMAN'],
   // —— #238：K7 金红桃口上补充 ——
   [/^s$/, 'S_COUNT'],
-  [/^cid_name$/, 'A_NAME'],
+  [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
   [/^time_word$/, 'TERN_TIME_NIGHT'],
   [/^time_word2$/, 'TERN_TIME_TONIGHT'],
   [/^hole_word$/, 'TERN_HOLE'],
