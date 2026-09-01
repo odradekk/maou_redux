@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 10; // 振动宝石——COM8/COM9 落地后改用尚未填的指令
+    era_flag.selectcom = 11; // 壶虫——COM10 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 10 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 11 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -1199,6 +1199,82 @@ test('舔肛二次：淫乱 + A钝感附加句 / 阈值闸', async () => {
     '「咿呀呜～…啊啊…主人～…再…再用舌头舔我吧～♡」',
   ]);
   assert.equal(at_cap.store.get('cflag:31:310'), 5, '舔肛二次阈值闸');
+});
+
+test('振动宝石首次：淫乱 / 屈服Lv3+爱慕 / それ以外，推进到 1', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 10;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「咕呼呜～…这样的震动太美妙了…再来…再继续按在那里～♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:311'), 1, '振动宝石首次推进到 1');
+
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 10;
+    f.store.set('mark:31:2', 3);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), [
+    '「啊～…嗯～…没、没事的、再来…请尽情使用吧…♪」',
+  ]);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 10;
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), [
+    '「咿呀～…这、这到底是什么东西…咿呀啊～！？」',
+  ]);
+});
+
+test('振动宝石二次：淫乱 / 爱慕+屈服 / 阈值闸', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 10;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:311', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊～～…嗯～…呜呼…啊啊啊～！我还要更多、更多～！」',
+    '琼扭着腰身因为愉悦而颤抖不已………',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:311'), 5);
+
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 10;
+    f.store.set('talent:31:85', 1);
+    f.store.set('mark:31:2', 3);
+    f.store.set('cflag:31:311', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), [
+    '「咿～…呜～…啊…哈啊～…请再…继续吧…这东西…真厉害啊…嗯～」',
+    '琼像为了忍耐阴核的震动似的蜷曲着身体………',
+  ]);
+  assert.equal(love.store.get('cflag:31:311'), 4);
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 10;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:311', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「啊～～…嗯～…呜呼…啊啊啊～！我还要更多、更多～！」',
+    '琼扭着腰身因为愉悦而颤抖不已………',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:311'), 5, '振动宝石二次阈值闸');
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

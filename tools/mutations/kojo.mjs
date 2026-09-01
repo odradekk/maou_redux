@@ -922,4 +922,34 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '被你的舌头弄得发出了非常带感的声音',
   },
+  {
+    desc: 'M1796 K0 振动宝石首次状态推进写错（CFLAG:311 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.振动宝石 = 1; // :1327',
+    replace: '      kojo.振动宝石 = 2; // :1327',
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动宝石首次推进到 1',
+  },
+  {
+    desc: 'M1797 K0 振动宝石二次淫乱门槛错位（CFLAG:311 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动宝石 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动宝石二次：淫乱 / 爱慕+屈服',
+  },
+  {
+    desc: 'M1798 K0 振动宝石二次爱慕+屈服刻印错格（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1337-1340 爱＋屈服刻印Lv3
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (era.get(\`mark:\${target}:2\`) || 0) === 3 &&`,
+    replace: `      // :1337-1340 爱＋屈服刻印Lv3
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '忍耐阴核的震动',
+  },
 ];
