@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 5; // 胸爱抚——COM3 落地后改用尚未填的指令
+    era_flag.selectcom = 6; // 接吻——COM5 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 5 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 6 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -758,6 +758,172 @@ test('自慰阈值闸：FLAG:7 == 1 时上限生效，== 2 时旁路', async () 
     '「不管是用狗～！还是用怪物～！什么都好～！把我的小穴捣进去吧～～～！」',
     '琼的脸上已经再也找不到一丝被称作圣女时候的清纯痕迹了………',
   ]);
+});
+
+test('胸爱抚首次母乳+爱慕/淫乱：吮吸邀请，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「吸吧～！我的乳房～…请你吮吸并品尝母乳吧～…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:306'), 1, '胸爱抚首次推进到 1');
+});
+
+test('胸爱抚首次母乳+非爱慕：拒绝 + B钝感附加句', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('talent:31:107', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊啊～…乳房被吸了…不要啊～…呜啊…啊啊～！」',
+    '琼钝感的乳头被吸吮着、被刺激的红肿起来………',
+  ]);
+});
+
+test('胸爱抚首次非母乳：爱慕邀请 / 非爱慕拒绝', async () => {
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), ['「请你随心所欲的揉吧…♪」']);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), ['「讨厌、变态！」']);
+});
+
+test('胸爱抚二次母乳淫乱 / 爱慕 / B感觉 / それ以外', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:306', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「主人～…再吸吧～…乳房一被吸…就好像要去了似的呢～♡」',
+    '琼一颤一颤的痉挛着往你的嘴里喷出母乳、沉浸在快乐之中………',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:306'), 5);
+
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:306', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), [
+    '「主人～…再吸吧～…吸我的奶来恢复精神吧♡」',
+    '琼像慈母般微笑着看着吮吸着乳头的你、摸着你的头………',
+  ]);
+  assert.equal(love.store.get('cflag:31:306'), 4);
+
+  const sense = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('abl:31:1', 3);
+    f.store.set('cflag:31:306', 1);
+  });
+  await speak_k0(sense);
+  assert.deepEqual(sense.text_lines(), [
+    '「啊啊～…这、这样吸下去的话…噫～…这可是小宝宝吸的…东西啊…啊啊～♪」',
+    '琼每当乳头溢出母乳就会沉浸在愉悦之中………',
+  ]);
+  assert.equal(sense.store.get('cflag:31:306'), 3);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('cflag:31:306', 1);
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), [
+    '「啊啊～…饶了我吧～！乳房…不要吸乳房啊～…啊～啊啊～！」',
+    '琼的乳头溢出了母乳、渐渐沉溺于母乳流出所带来的炽热快感中………',
+  ]);
+  assert.equal(other.store.get('cflag:31:306'), 2);
+});
+
+test('胸爱抚二次母乳阈值闸：FLAG:7 == 1 时上限生效', async () => {
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:130', 1);
+    f.store.set('palam:31:5', 3001);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:306', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「主人～…再吸吧～…乳房一被吸…就好像要去了似的呢～♡」',
+    '琼一颤一颤的痉挛着往你的嘴里喷出母乳、沉浸在快乐之中………',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:306'), 5, '胸爱抚母乳阈值闸');
+});
+
+test('胸爱抚二次非母乳：淫乱 + B钝感附加句 / 阈值闸', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:1', 3);
+    f.store.set('talent:31:107', 1);
+    f.store.set('cflag:31:306', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「再来～…虽然很痛但也被弄得好舒服呢…啊啊♡」',
+    '琼钝感的乳头已被完全开发、被含进嘴里舔得完全勃起了………',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:306'), 5);
+
+  const quiet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:306', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(quiet);
+  assert.deepEqual(quiet.text_lines(), []);
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:306', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「再来～…虽然很痛但也被弄得好舒服呢…啊啊♡」',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:306'), 5, '胸爱抚阈值闸');
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

@@ -1,11 +1,13 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
  *     @KOJO_MESSAGE_COM_0（:674；七道跳过判定 :676-699，**崩坏在兽奸前**；
  *     爱抚 CFLAG:301 状态机 :708-752；舔阴 CFLAG:302 状态机 :757-794；
- *     肛门爱抚 CFLAG:303 状态机 :799-856；自慰 CFLAG:304 状态机 :861-968）
+ *     肛门爱抚 CFLAG:303 状态机 :799-856；自慰 CFLAG:304 状态机 :861-968；
+ *     胸爱抚 CFLAG:306 状态机 :973-1060）
+
  *
  * == 状态机（CFLAG:301，个位数推进） ==
  *
@@ -23,9 +25,10 @@
  *
  * 这张票第一刀存根（docs/stub-registry.md）：COLOSSEUM_KOJO_0 / DOG_KOJO_0
  * 与 SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
- * 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
+ * 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
  * 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127（17 在原文已注释）。
+
  */
 
 const era = require('#/era-electron');
@@ -69,8 +72,9 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-968）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰。
+ * @KOJO_MESSAGE_COM_0（:674-1060）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚。
  *
+
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
  * 崩坏 → 兽奸（专用口上）→ 触手。
  *
@@ -520,12 +524,167 @@ async function kojo_message_com_0(rand) {
     return 0;
   }
 
+  // :973 IF SELECTCOM == 5（胸爱抚，CFLAG:306）
+  if (era_flag.selectcom === 5) {
+    const milk_body =
+      era.get(`talent:${target}:130`) === 1 &&
+      (era.get(`palam:${target}:5`) || 0) > PALAMLV[3] &&
+      !era.get(`tequip:${target}:16`) &&
+      !era.get(`tequip:${target}:15`);
+    const b_insensible = era.get(`talent:${target}:107`);
+    const b_sense = era.get(`abl:${target}:1`) || 0;
+
+    // :975-1001 初めて（CFLAG:306 == 0）
+    if (kojo.胸爱抚 === 0) {
+      // :977-987 母乳体质
+      if (milk_body) {
+        // :979-986 爱＆淫乱
+        if (
+          era.get(`talent:${target}:85`) === 1 ||
+          era.get(`talent:${target}:76`) === 1
+        ) {
+          await era.printAndWait(
+            `「吸吧～！${sc()}的乳房～…请你吮吸并品尝母乳吧～…${heart(1)}」`,
+          ); // :980
+        } else {
+          await era.printAndWait(
+            '「啊啊啊～…乳房被吸了…不要啊～…呜啊…啊啊～！」',
+          ); // :983
+          // :986 B鈍感
+          if (b_insensible) {
+            await era.printAndWait(
+              `${target_name}钝感的乳头被吸吮着、被刺激的红肿起来………`,
+            ); // :986
+          }
+        }
+      } else if (
+        // :990-997 爱＆淫乱
+        era.get(`talent:${target}:85`) === 1 ||
+        era.get(`talent:${target}:76`) === 1
+      ) {
+        await era.printAndWait('「请你随心所欲的揉吧…♪」'); // :991
+      } else {
+        await era.printAndWait('「讨厌、变态！」'); // :994
+        // :997 B鈍感
+        if (b_insensible) {
+          await era.printAndWait(
+            `${target_name}钝感的乳头被吸吮着、被刺激的红肿起来………`,
+          ); // :997
+        }
+      }
+      kojo.胸爱抚 = 1; // :1000
+      return 0;
+    }
+
+    // :1003-1058 二回目以降
+    // :1005-1026 母乳体质
+    if (milk_body) {
+      // :1007-1010 淫乱
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          `「主人～…再吸吧～…乳房一被吸…就好像要去了似的呢～${heart(1)}」`,
+        ); // :1008
+        await era.printAndWait(
+          `${target_name}一颤一颤的痉挛着往${player_name}的嘴里喷出母乳、沉浸在快乐之中………`,
+        ); // :1009
+        kojo.胸爱抚 = 5; // :1010
+      } else if (
+        // :1012-1015 爱慕
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          `「主人～…再吸吧～…吸${sc()}的奶来恢复精神吧${heart(1)}」`,
+        ); // :1013
+        await era.printAndWait(
+          `${target_name}像慈母般微笑着看着吮吸着乳头的${player_name}、摸着${player_name}的头………`,
+        ); // :1014
+        kojo.胸爱抚 = 4; // :1015
+      } else if (
+        // :1017-1020 B感覚Lv3以上
+        b_sense >= 3 &&
+        (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          '「啊啊～…这、这样吸下去的话…噫～…这可是小宝宝吸的…东西啊…啊啊～♪」',
+        ); // :1018
+        await era.printAndWait(
+          `${target_name}每当乳头溢出母乳就会沉浸在愉悦之中………`,
+        ); // :1019
+        kojo.胸爱抚 = 3; // :1020
+      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 === 2) {
+        // :1022-1025 それ以外
+        await era.printAndWait(
+          '「啊啊～…饶了我吧～！乳房…不要吸乳房啊～…啊～啊啊～！」',
+        ); // :1023
+        await era.printAndWait(
+          `${target_name}的乳头溢出了母乳、渐渐沉溺于母乳流出所带来的炽热快感中………`,
+        ); // :1024
+        kojo.胸爱抚 = 2; // :1025
+      }
+    } else if (
+      // :1029-1034 淫乱
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「再来～…虽然很痛但也被弄得好舒服呢…啊啊${heart(1)}」`,
+      ); // :1030
+      // :1033 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的乳头已被完全开发、被含进嘴里舔得完全勃起了………`,
+        ); // :1033
+      }
+      kojo.胸爱抚 = 5; // :1034
+    } else if (
+      // :1036-1041 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(`「手好温暖…啊啊…好舒服啊…${heart(1)}」`); // :1037
+      // :1040 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的乳头已被完全开发、鼓鼓胀胀地完全勃起了………`,
+        ); // :1040
+      }
+      kojo.胸爱抚 = 4; // :1041
+    } else if (
+      // :1043-1048 B感覚Lv3以上
+      b_sense >= 3 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「好有感觉…真舒服…」'); // :1044
+      // :1047 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {
+        await era.printAndWait(
+          `${target_name}钝感的乳头已被完全开发、被刺激得勃了起来………`,
+        ); // :1047
+      }
+      kojo.胸爱抚 = 3; // :1048
+    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 === 2) {
+      // :1050-1055 それ以外
+      await era.printAndWait('「虽然被这样揉很疼…咕呜～」'); // :1051
+      // :1054 B鈍感
+      if (b_insensible) {
+        await era.printAndWait(`${target_name}钝感的乳头被刺激得红肿起来………`); // :1054
+      }
+      kojo.胸爱抚 = 2; // :1055
+    }
+    return 0;
+  }
+
   // 其余指令待办，占位一行
   stub_line(
     'KOJO_MESSAGE_COM_0',
     `指令 ${era_flag.selectcom} 的口上`,
     '随各自指令票',
   );
+
   return 0;
 }
 

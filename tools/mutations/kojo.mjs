@@ -727,4 +727,79 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '飞起来了～飞起来了～',
   },
+  {
+    desc: 'M1636 K0 胸爱抚首次状态推进写错（CFLAG:306 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.胸爱抚 = 1; // :1000',
+    replace: '      kojo.胸爱抚 = 2; // :1000（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '胸爱抚首次推进到 1',
+  },
+  {
+    desc: 'M1637 K0 胸爱抚母乳体质判据错格（TALENT:130 改 131）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      era.get(`talent:${target}:130`) === 1 &&',
+    replace: '      era.get(`talent:${target}:131`) === 1 &&',
+    tests: ['kojo-k0-tender'],
+    must_mention: '吮吸并品尝母乳',
+  },
+  {
+    desc: 'M1638 K0 胸爱抚母乳欲情阈值错档（PALAMLV[3] 改 PALAMLV[4]）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (era.get(`palam:${target}:5`) || 0) > PALAMLV[3] &&',
+    replace: '      (era.get(`palam:${target}:5`) || 0) > PALAMLV[4] &&',
+    tests: ['kojo-k0-tender'],
+    must_mention: '吮吸并品尝母乳',
+  },
+  {
+    desc: 'M1639 K0 胸爱抚首次 B钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          // :986 B鈍感
+          if (b_insensible) {`,
+    replace: `          // :986 B鈍感
+          if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '钝感的乳头被吸吮着、被刺激的红肿起来',
+  },
+  {
+    desc: 'M1640 K0 胸爱抚二次母乳淫乱门槛错位（CFLAG:306 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '胸爱抚二次母乳阈值闸',
+
+  },
+  {
+    desc: 'M1641 K0 胸爱抚二次非母乳淫乱门槛错位（CFLAG:306 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '虽然很痛但也被弄得好舒服呢',
+  },
+  {
+    desc: 'M1642 K0 胸爱抚二次非母乳 B钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1033 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {`,
+    replace: `      // :1033 B感覚Lv3以上＋B鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '被含进嘴里舔得完全勃起了',
+  },
+  {
+    desc: 'M1643 K0 胸爱抚二次母乳爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        // :1012-1015 爱慕
+        era.get(\`talent:\${target}:85\`) === 1 &&`,
+    replace: `        // :1012-1015 爱慕
+        era.get(\`talent:\${target}:86\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '吸我的奶来恢复精神吧',
+  },
 ];

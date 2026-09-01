@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-968', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-1060', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -10728,6 +10728,204 @@ const FILES = [
       { src: K0, ref: '960', any: [/PRINTFORMW 「好难为情…」/] },
       { src: K0, ref: '962', any: [/PRINTFORMW 「真讨厌…」/] },
       { src: K0, ref: '964', any: [/^\t\t\tCFLAG:304 = 2$/m] },
+
+      { src: K0, ref: '973', any: [/^IF SELECTCOM == 5$/m] },
+      { src: K0, ref: '973-1060', any: [/^IF SELECTCOM == 5$/m] },
+      { src: K0, ref: '975-1001', any: [/^\tIF CFLAG:306 == 0$/m] },
+      {
+        src: K0,
+        ref: '977-987',
+        any: [
+          /^\t\tIF TALENT:TARGET:130 == 1 && PALAM:5 > PALAMLV:3 && TEQUIP:16 == 0 && TEQUIP:15 == 0$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '979-986',
+        any: [/^\t\t\tIF TALENT:TARGET:85 == 1 \|\| TALENT:TARGET:76 == 1$/m],
+      },
+      {
+        src: K0,
+        ref: '980',
+        any: [/请你吮吸并品尝母乳吧/],
+      },
+      {
+        src: K0,
+        ref: '983',
+        any: [/PRINTFORMW 「啊啊啊～…乳房被吸了…不要啊～…呜啊…啊啊～！」/],
+      },
+      {
+        src: K0,
+        ref: '986',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的乳头被吸吮着、被刺激的红肿起来/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '990-997',
+        any: [/PRINTFORMW 「请你随心所欲的揉吧…♪」/],
+      },
+      { src: K0, ref: '991', any: [/PRINTFORMW 「请你随心所欲的揉吧…♪」/] },
+      { src: K0, ref: '994', any: [/PRINTFORMW 「讨厌、変態！」/] },
+      {
+        src: K0,
+        ref: '997',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%鈍感的乳头被吸吮着、被刺激的红肿起来/,
+        ],
+      },
+      { src: K0, ref: '1000', any: [/^\t\tCFLAG:TARGET:306 = 1$/m] },
+      {
+        src: K0,
+        ref: '1003-1058',
+        any: [
+          /^\t\tIF TALENT:TARGET:130 == 1 && PALAM:5 > PALAMLV:3 && TEQUIP:16 == 0 && TEQUIP:15 == 0$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1005-1026',
+        any: [
+          /^\t\tIF TALENT:TARGET:130 == 1 && PALAM:5 > PALAMLV:3 && TEQUIP:16 == 0 && TEQUIP:15 == 0$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1007-1010',
+        any: [
+          /^\t\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1008',
+        any: [/乳房一被吸…就好像要去了似的呢/],
+      },
+      {
+        src: K0,
+        ref: '1009',
+        any: [/一颤一颤的痙攣着往%SAVESTR:PLAYER%的嘴里喷出母乳/],
+      },
+      { src: K0, ref: '1010', any: [/^\t\t\t\tCFLAG:306 = 5$/m] },
+      {
+        src: K0,
+        ref: '1012-1015',
+        any: [
+          /^\t\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1013',
+        any: [/吸%SELF_CALL\(TARGET\)%的奶来恢复精神吧/],
+      },
+      {
+        src: K0,
+        ref: '1014',
+        any: [/像慈母般微笑着看着吮吸着乳头的%SAVESTR:PLAYER%/],
+      },
+      { src: K0, ref: '1015', any: [/^\t\t\t\tCFLAG:306 = 4$/m] },
+      {
+        src: K0,
+        ref: '1017-1020',
+        any: [
+          /^\t\t\tELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1018',
+        any: [/这可是小宝宝吸的…东西啊/],
+      },
+      {
+        src: K0,
+        ref: '1019',
+        any: [/每当乳头溢出母乳就会沉浸在愉悦之中/],
+      },
+      { src: K0, ref: '1020', any: [/^\t\t\t\tCFLAG:306 = 3$/m] },
+      {
+        src: K0,
+        ref: '1022-1025',
+        any: [/^\t\t\tELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      {
+        src: K0,
+        ref: '1023',
+        any: [/乳房…不要吸乳房啊～/],
+      },
+      {
+        src: K0,
+        ref: '1024',
+        any: [/渐渐沉溺于母乳流出所带来的炽熱快感中/],
+      },
+      { src: K0, ref: '1025', any: [/^\t\t\t\tCFLAG:306 = 2$/m] },
+      {
+        src: K0,
+        ref: '1029-1034',
+        any: [
+          /^\t\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1030',
+        any: [/虽然很痛但也被弄得好舒服呢/],
+      },
+      {
+        src: K0,
+        ref: '1033',
+        any: [/鈍感的乳头已被完全開発、被含进嘴里舔得完全勃起了/],
+      },
+      { src: K0, ref: '1034', any: [/^\t\t\t\tCFLAG:306 = 5$/m] },
+      {
+        src: K0,
+        ref: '1036-1041',
+        any: [
+          /^\t\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '1037',
+        any: [/PRINTFORMW 「手好温暖…啊啊…好舒服啊…/],
+      },
+      {
+        src: K0,
+        ref: '1040',
+        any: [/鈍感的乳头已被完全開発、鼓鼓胀胀地完全勃起了/],
+      },
+      { src: K0, ref: '1041', any: [/^\t\t\t\tCFLAG:306 = 4$/m] },
+      {
+        src: K0,
+        ref: '1043-1048',
+        any: [
+          /^\t\t\tELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '1044', any: [/PRINTFORMW 「好有感觉…真舒服…」/] },
+      {
+        src: K0,
+        ref: '1047',
+        any: [/鈍感的乳头已被完全開発、被刺激得勃了起来/],
+      },
+      { src: K0, ref: '1048', any: [/^\t\t\t\tCFLAG:306 = 3$/m] },
+      {
+        src: K0,
+        ref: '1050-1055',
+        any: [/^\t\t\tELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      {
+        src: K0,
+        ref: '1051',
+        any: [/PRINTFORMW 「虽然被这样揉很疼…咕呜～」/],
+      },
+      {
+        src: K0,
+        ref: '1054',
+        any: [/鈍感的乳头被刺激得红肿起来/],
+      },
+      { src: K0, ref: '1055', any: [/^\t\t\t\tCFLAG:306 = 2$/m] },
     ],
   },
 
