@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4370', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4497', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -18507,6 +18507,223 @@ const FILES = [
       },
       { src: K0, ref: '4366', any: [/「嗯咕～…噗啊…哈啊…哈啊…哈啊…」/] },
       { src: K0, ref: '4367', any: [/\t\tCFLAG:386 = 1/m] },
+      { src: K0, ref: '4376', any: [/IF\ SELECTCOM\ ==\ 46 && TEQUIP:46/m] },
+      {
+        src: K0,
+        ref: '4376-4424',
+        any: [/^IF SELECTCOM == 46 && TEQUIP:46$/m],
+      },
+      {
+        src: K0,
+        ref: '4427-4497',
+        any: [/^ELSEIF SELECTCOM == 46 && TEQUIP:46 == 0$/m],
+      },
+      { src: K0, ref: '4376', any: [/IF SELECTCOM == 46 && TEQUIP:46/m] },
+      { src: K0, ref: '4378', any: [/\tIF CFLAG:TARGET:347 == 0/m] },
+      { src: K0, ref: '4380', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4381',
+        any: [/「呼啊啊～…肚子鼓起来了…啊啊～…这是…什么…肚子…啊啊～…啊～」/],
+      },
+      { src: K0, ref: '4383', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '4384',
+        any: [/「肚子好难受…好难受呢…请不要…太欺负我了………」/],
+      },
+      {
+        src: K0,
+        ref: '4386-4387',
+        any: [/「咿～…不要不要不要啊～…像这样灌进去的话…呜～…咕呜…好难受～…」/],
+      },
+      { src: K0, ref: '4389-4390', any: [/\t\tCFLAG:TARGET:347 = 1/m] },
+      {
+        src: K0,
+        ref: '4392-4394',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4395',
+        any: [/「啊～…啊啊～…再灌啊…灌到极限为止～…把肚子灌成水桶似的吧…！」/],
+      },
+      {
+        src: K0,
+        ref: '4396',
+        any: [
+          /「嗯～…哈啊…哈啊…%SELF_CALL\(TARGET\)%的肚子…已经变成主人的玩具了～…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4397',
+        any: [
+          /「接下来…肚子里的东西全部喷出来的不堪入目的样子…请好好欣赏吧～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4398', any: [/\t\t\tCFLAG:347 = 7/m] },
+      {
+        src: K0,
+        ref: '4400',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:347 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4401',
+        any: [/「咿呀啊啊啊…浣腸液…咕噜咕噜的灌进肚子里面去了～…♪」/],
+      },
+      {
+        src: K0,
+        ref: '4402',
+        any: [
+          /「啊啊啊啊…%SELF_CALL\(TARGET\)%肚子里的丑陋的东西…要全部排出来啦………♪」/,
+        ],
+      },
+      { src: K0, ref: '4403', any: [/\t\t\tCFLAG:347 = 6/m] },
+      {
+        src: K0,
+        ref: '4405',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4406',
+        any: [
+          /「啊～啊啊～…是～…浣腸液…还能再进来一些…咿～咿～咿咿咿咿～！」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4407',
+        any: [
+          /「啊～…啊啊啊…被浣腸液这么灌进来…为什么%SELF_CALL\(TARGET\)%却感到高兴呢…？」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4408',
+        any: [
+          /（%SELF_CALL\(TARGET\)%的身体…甚至连排泄…都已经是主人的玩物了…）/,
+        ],
+      },
+      { src: K0, ref: '4409', any: [/\t\t\tCFLAG:347 = 5/m] },
+      {
+        src: K0,
+        ref: '4411',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:347 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4412',
+        any: [
+          /「啊啊～…这样子灌进来的话…很快…就要全部排出来了…好害羞～…不要欺负我………」/,
+        ],
+      },
+      { src: K0, ref: '4413', any: [/\t\t\tCFLAG:347 = 4/m] },
+      {
+        src: K0,
+        ref: '4415',
+        any: [
+          /\t\tELSEIF ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4416',
+        any: [
+          /「啊～啊啊啊～…明明应该很难受的…啊～啊啊～…屁股…好奇怪啊～…屁股要变的不像话了～………♪」/,
+        ],
+      },
+      { src: K0, ref: '4417', any: [/\t\t\tCFLAG:347 = 3/m] },
+      {
+        src: K0,
+        ref: '4419',
+        any: [/\t\tELSEIF  CFLAG:347 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4420',
+        any: [/「啊啊～…肚子好难受…好狠心…好狠心啊………」/],
+      },
+      { src: K0, ref: '4421', any: [/\t\t\tCFLAG:347 = 2/m] },
+      {
+        src: K0,
+        ref: '4427',
+        any: [/ELSEIF SELECTCOM == 46 && TEQUIP:46 == 0/m],
+      },
+      { src: K0, ref: '4429', any: [/\tIF TALENT:TARGET:76 == 1/m] },
+      { src: K0, ref: '4431', any: [/\t\tIF ABL:3 >= 3 && ABL:21 >= 3/m] },
+      { src: K0, ref: '4432', any: [/\t\t\tIF RAND:2 == 0/m] },
+      { src: K0, ref: '4433', any: [/「呀…嗯啊、啊、啊啊！/] },
+      { src: K0, ref: '4434-4435', any: [/「啊啊～！、不行、不、不要看、/] },
+      { src: K0, ref: '4437', any: [/\t\t\tIF RAND:2 == 0/m] },
+      { src: K0, ref: '4438', any: [/出来了、/] },
+      { src: K0, ref: '4439-4440', any: [/出来、要出来了、/] },
+      { src: K0, ref: '4442', any: [/\t\t\tIF RAND:3 == 0/m] },
+      { src: K0, ref: '4443', any: [/全部/] },
+      { src: K0, ref: '4445', any: [/要排出来了啊%UNICODE\(0x2661\) \*3%」/] },
+      { src: K0, ref: '4446', any: [/\t\t\tIF TEQUIP:11/m] },
+      { src: K0, ref: '4447', any: [/\t\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '4448',
+        any: [/以Ｍ字的状态大开双腿的%SAVESTR:TARGET%那秘所之中/],
+      },
+      {
+        src: K0,
+        ref: '4449-4450',
+        any: [/四肢着地的%SAVESTR:TARGET%那股間之中/],
+      },
+      { src: K0, ref: '4452', any: [/极粗的蠕虫正在蠢动着、/] },
+      { src: K0, ref: '4454', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '4455',
+        any: [
+          /%SAVESTR:TARGET%露出欢愉又夹杂着苦痛的表情、因为排泄的快感而扭动着身体。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4456-4457',
+        any: [
+          /随着下流的声音，那污物正从%SAVESTR:TARGET%的肛門之中喷吐而出、%SAVESTR:TARGET%露出了恍惚失神的表情。/,
+        ],
+      },
+      { src: K0, ref: '4459', any: [/\t\t\tIF EXP:53 >= 5/m] },
+      { src: K0, ref: '4460', any: [/那扩张开来无法闭合的/] },
+      { src: K0, ref: '4461', any: [/\t\t\t\tIF RAND:2 == 0/m] },
+      { src: K0, ref: '4462', any: [/肛門/] },
+      { src: K0, ref: '4463-4464', any: [/肛穴/] },
+      { src: K0, ref: '4466', any: [/之中，可以看清那内壁正在痙攣着……/] },
+      { src: K0, ref: '4468-4469', any: [/PRINTFORMW/] },
+      { src: K0, ref: '4472', any: [/\tELSEIF TALENT:TARGET:85 == 1/m] },
+      { src: K0, ref: '4474', any: [/\t\tIF ABL:3 >= 3 && ABL:21 >= 3/m] },
+      { src: K0, ref: '4475', any: [/「主人…%SELF_CALL\(TARGET\)%那/] },
+      { src: K0, ref: '4476', any: [/\t\t\tIF RAND:3 == 0/m] },
+      { src: K0, ref: '4477', any: [/排泄的地方也/] },
+      { src: K0, ref: '4478', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      { src: K0, ref: '4479', any: [/肮脏的地方也/] },
+      { src: K0, ref: '4480-4481', any: [/出来的地方也/] },
+      { src: K0, ref: '4483', any: [/\t\t\tIF RAND:2 == 0/m] },
+      { src: K0, ref: '4484', any: [/请您好好地观赏……」/] },
+      { src: K0, ref: '4485-4486', any: [/请您好好地疼爱……」/] },
+      { src: K0, ref: '4488-4489', any: [/PRINTFORMW/] },
+      {
+        src: K0,
+        ref: '4492-4493',
+        any: [/\tELSEIF ABL:3 >= 3 && ABL:21 >= 3/m],
+      },
+      { src: K0, ref: '4494-4495', any: [/PRINTFORMW/] },
     ],
   },
 

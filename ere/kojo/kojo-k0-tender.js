@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -37,7 +37,8 @@
  *     针 CFLAG:343 状态机 :4110-4170；
  *     眼罩开始 CFLAG:344 :4176-4212、脱着 CFLAG:380 :4214-4225；
  *     绳子开始 CFLAG:345 :4231-4298、脱着 CFLAG:385 :4300-4315；
- *     口塞开始 CFLAG:346 :4321-4357、脱着 CFLAG:386 :4359-4370）
+ *     口塞开始 CFLAG:346 :4321-4357、脱着 CFLAG:386 :4359-4370；
+ *     灌肠+肛塞开始 CFLAG:347 :4376-4424、脱着 RAND 拼句 :4427-4497）
 
 
 
@@ -115,7 +116,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4370）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞。
+ * @KOJO_MESSAGE_COM_0（:674-4497）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞。
 
 
 
@@ -6610,6 +6611,197 @@ async function kojo_message_com_0(rand) {
       // :4365
       await era.printAndWait(`「嗯咕～…噗啊…哈啊…哈啊…哈啊…」`); // :4366
       kojo.口塞着脱 = 1; // :4367
+    }
+    return 0;
+  }
+
+  // :4376 IF SELECTCOM == 46 && TEQUIP:46（灌肠+肛塞开始，CFLAG:347）
+  if (era_flag.selectcom === 46 && era.get(`tequip:${target}:46`)) {
+    const a_sense = era.get(`abl:${target}:3`) || 0;
+    const masochism = era.get(`abl:${target}:21`) || 0;
+
+    if (kojo.灌肠肛塞 === 0) {
+      // :4378
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :4380
+        await era.printAndWait(
+          `「呼啊啊～…肚子鼓起来了…啊啊～…这是…什么…肚子…啊啊～…啊～」`,
+        ); // :4381
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :4383
+        await era.printAndWait(`「肚子好难受…好难受呢…请不要…太欺负我了………」`); // :4384
+      } else {
+        await era.printAndWait(
+          `「咿～…不要不要不要啊～…像这样灌进去的话…呜～…咕呜…好难受～…」`,
+        ); // :4386-4387
+      }
+      kojo.灌肠肛塞 = 1; // :4389-4390
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :4392-4394
+        await era.printAndWait(
+          `「啊～…啊啊～…再灌啊…灌到极限为止～…把肚子灌成水桶似的吧…！」`,
+        ); // :4395
+        await era.printAndWait(
+          `「嗯～…哈啊…哈啊…${sc()}的肚子…已经变成主人的玩具了～…♪」`,
+        ); // :4396
+        await era.printAndWait(
+          `「接下来…肚子里的东西全部喷出来的不堪入目的样子…请好好欣赏吧～${heart(1)}」`,
+        ); // :4397
+        kojo.灌肠肛塞 = 7; // :4398
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.灌肠肛塞 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4400
+        await era.printAndWait(
+          `「咿呀啊啊啊…浣肠液…咕噜咕噜的灌进肚子里面去了～…♪」`,
+        ); // :4401
+        await era.printAndWait(
+          `「啊啊啊啊…${sc()}肚子里的丑陋的东西…要全部排出来啦………♪」`,
+        ); // :4402
+        kojo.灌肠肛塞 = 6; // :4403
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4405
+        await era.printAndWait(
+          `「啊～啊啊～…是～…浣肠液…还能再进来一些…咿～咿～咿咿咿咿～！」」`,
+        ); // :4406
+        await era.printAndWait(
+          `「啊～…啊啊啊…被浣肠液这么灌进来…为什么${sc()}却感到高兴呢…？」`,
+        ); // :4407
+        await era.printAndWait(
+          `（${sc()}的身体…甚至连排泄…都已经是主人的玩物了…）`,
+        ); // :4408
+        kojo.灌肠肛塞 = 5; // :4409
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.灌肠肛塞 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4411
+        await era.printAndWait(
+          `「啊啊～…这样子灌进来的话…很快…就要全部排出来了…好害羞～…不要欺负我………」`,
+        ); // :4412
+        kojo.灌肠肛塞 = 4; // :4413
+      } else if (
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :4415
+        await era.printAndWait(
+          `「啊～啊啊啊～…明明应该很难受的…啊～啊啊～…屁股…好奇怪啊～…屁股要变的不像话了～………♪」`,
+        ); // :4416
+        kojo.灌肠肛塞 = 3; // :4417
+      } else if (kojo.灌肠肛塞 <= 1 || game.kojo.口上开关 === 2) {
+        // :4419
+        await era.printAndWait(`「啊啊～…肚子好难受…好狠心…好狠心啊………」`); // :4420
+        kojo.灌肠肛塞 = 2; // :4421
+      }
+      return 0;
+    }
+  }
+
+  // :4427 ELSEIF SELECTCOM == 46 && TEQUIP:46 == 0（灌肠+肛塞脱着，RAND 拼句）
+  if (era_flag.selectcom === 46 && !era.get(`tequip:${target}:46`)) {
+    const a_sense = era.get(`abl:${target}:3`) || 0;
+    const masochism = era.get(`abl:${target}:21`) || 0;
+
+    if (era.get(`talent:${target}:76`) === 1) {
+      // :4429
+
+      if (a_sense >= 3 && masochism >= 3) {
+        // :4431
+        if (rand_n(2) === 0) {
+          // :4432
+          era.print(`「呀…嗯啊、啊、啊啊！`); // :4433
+        } else {
+          era.print(`「啊啊～！、不行、不、不要看、`); // :4434-4435
+        }
+        if (rand_n(2) === 0) {
+          // :4437
+          era.print(`出来了、`); // :4438
+        } else {
+          era.print(`出来、要出来了、`); // :4439-4440
+        }
+        if (rand_n(3) === 0) {
+          // :4442
+          era.print(`全部`); // :4443
+        }
+        await era.printAndWait(`要排出来了啊${heart(3)}」`); // :4445
+        if (era.get(`tequip:${target}:11`)) {
+          // :4446
+          if (rand_n(2) === 0) {
+            // :4447
+            era.print(`以Ｍ字的状态大开双腿的${target_name}那秘所之中`); // :4448
+          } else {
+            era.print(`四肢着地的${target_name}那股间之中`); // :4449-4450
+          }
+          await era.printAndWait(`极粗的蠕虫正在蠢动着、`); // :4452
+        }
+        if (rand_n(2) === 0) {
+          // :4454
+          await era.printAndWait(
+            `${target_name}露出欢愉又夹杂着苦痛的表情、因为排泄的快感而扭动着身体。`,
+          ); // :4455
+        } else {
+          await era.printAndWait(
+            `随着下流的声音，那污物正从${target_name}的肛门之中喷吐而出、${target_name}露出了恍惚失神的表情。`,
+          ); // :4456-4457
+        }
+        if (era.get(`exp:${target}:53`) >= 5) {
+          // :4459
+          era.print(`那扩张开来无法闭合的`); // :4460
+          if (rand_n(2) === 0) {
+            // :4461
+            era.print(`肛门`); // :4462
+          } else {
+            era.print(`肛穴`); // :4463-4464
+          }
+          await era.printAndWait(`之中，可以看清那内壁正在痉挛着……`); // :4466
+        }
+      } else {
+        await era.printAndWait(''); // :4468-4469
+      }
+    } else if (era.get(`talent:${target}:85`) === 1) {
+      // :4472
+
+      if (a_sense >= 3 && masochism >= 3) {
+        // :4474
+        era.print(`「主人…${sc()}那`); // :4475
+        if (rand_n(3) === 0) {
+          // :4476
+          era.print(`排泄的地方也`); // :4477
+        } else if (rand_n(2) === 0) {
+          // :4478
+          era.print(`肮脏的地方也`); // :4479
+        } else {
+          era.print(`出来的地方也`); // :4480-4481
+        }
+        if (rand_n(2) === 0) {
+          // :4483
+          await era.printAndWait(`请您好好地观赏……」`); // :4484
+        } else {
+          await era.printAndWait(`请您好好地疼爱……」`); // :4485-4486
+        }
+      } else {
+        await era.printAndWait(''); // :4488-4489
+      }
+    } else if (a_sense >= 3 && masochism >= 3) {
+      await era.printAndWait(''); // :4492-4493
+    } else {
+      await era.printAndWait(''); // :4494-4495
     }
     return 0;
   }

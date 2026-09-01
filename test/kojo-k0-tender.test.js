@@ -229,11 +229,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 46; // 灌肠+肛塞——COM45 落地后改用尚未填的指令
+    era_flag.selectcom = 55; // 放置PLAY——COM46 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 46 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 55 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -3439,6 +3439,116 @@ test('口塞脱着：爱慕或淫乱写 CFLAG:386 = 2，门槛是 < 不是 <=', 
   await speak_k0(at_cap);
   assert.deepEqual(at_cap.text_lines(), []);
   assert.equal(at_cap.store.get('cflag:31:386'), 2, '口塞着脱阈值闸用 < 2');
+});
+
+test('灌肠+肛塞开始首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呼啊啊～…肚子鼓起来了…啊啊～…这是…什么…肚子…啊啊～…啊～」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:347'), 1, '灌肠肛塞首次推进到 1');
+});
+
+test('灌肠+肛塞开始二次：淫乱+A感觉+抖M写 7 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+    f.store.set('cflag:31:347', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '「啊～…啊啊～…再灌啊…灌到极限为止～…把肚子灌成水桶似的吧…！」',
+    '「嗯～…哈啊…哈啊…我的肚子…已经变成主人的玩具了～…♪」',
+    '「接下来…肚子里的东西全部喷出来的不堪入目的样子…请好好欣赏吧～♡」',
+  ]);
+  assert.equal(
+    r0.store.get('cflag:31:347'),
+    7,
+    '灌肠肛塞开始二次淫乱+A感觉+抖M写 7',
+  );
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+    f.store.set('cflag:31:347', 6);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=6 且 FLAG:7==1 仍出声（门槛是 <=6）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:347'), 7);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+    f.store.set('cflag:31:347', 7);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('灌肠+肛塞脱着：淫乱+A感觉拼句 / 壶虫 / 空 PRINTFORMW 仍等待', async () => {
+  const splice = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+  });
+  await speak_k0(splice, seq_rand(0, 0, 0, 0, 0, 0));
+  assert.deepEqual(splice.text_lines(), [
+    '「呀…嗯啊、啊、啊啊！',
+    '出来了、',
+    '全部',
+    '要排出来了啊♡♡♡」',
+    '琼露出欢愉又夹杂着苦痛的表情、因为排泄的快感而扭动着身体。',
+  ]);
+
+  const worm = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 0);
+    f.store.set('tequip:31:11', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+  });
+  await speak_k0(worm, seq_rand(0, 0, 1, 0, 0, 0));
+  assert.ok(
+    worm.text_lines().some((line) => line.includes('极粗的蠕虫正在蠢动着、')),
+    'TEQUIP:11 壶虫支要说出蠕虫',
+  );
+
+  const empty = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(empty);
+  assert.deepEqual(empty.text_lines(), [''], '空 PRINTFORMW 仍等待');
 });
 
 // —— 存根清单核对 ——

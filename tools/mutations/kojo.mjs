@@ -2087,4 +2087,68 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '口塞脱着：爱慕或淫乱写 CFLAG:386 = 2，门槛是 < 不是 <=',
   },
+  {
+    desc: 'M1906 K0 灌肠肛塞开始首次状态推进写错（CFLAG:347 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.灌肠肛塞 = 1; // :4389-4390',
+    replace: '      kojo.灌肠肛塞 = 2; // :4389-4390',
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠肛塞首次推进到 1',
+  },
+  {
+    desc: 'M1907 K0 灌肠肛塞开始二次淫乱+A感觉+抖M门槛错位（CFLAG:347 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :4392-4394`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4392-4394`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠+肛塞开始二次：淫乱+A感觉+抖M写 7 / 阈值闸',
+  },
+  {
+    desc: 'M1908 K0 灌肠肛塞开始二次淫乱+A感觉+抖M写回错档（CFLAG:347 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.灌肠肛塞 = 7; // :4398',
+    replace: '        kojo.灌肠肛塞 = 6; // :4398',
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠肛塞开始二次淫乱+A感觉+抖M写 7',
+  },
+  {
+    desc: 'M1909 K0 灌肠肛塞脱着 RAND:2 首支旁路失效（=== 0 改 === 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        if (rand_n(2) === 0) {
+          // :4432
+          era.print(\`「呀…嗯啊、啊、啊啊！\`); // :4433`,
+    replace: `        if (rand_n(2) === 1) {
+          // :4432
+          era.print(\`「呀…嗯啊、啊、啊啊！\`); // :4433`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠+肛塞脱着：淫乱+A感觉拼句',
+  },
+  {
+    desc: 'M1910 K0 灌肠肛塞脱着壶虫守卫删除（TEQUIP:11 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        if (era.get(\`tequip:\${target}:11\`)) {
+          // :4446`,
+    replace: `        if (false) {
+          // :4446`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫',
+  },
+  {
+    desc: 'M1911 K0 灌肠肛塞脱着空 PRINTFORMW 等待被删（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "        await era.printAndWait(''); // :4468-4469",
+    replace: '        // :4468-4469 空等待被删',
+    tests: ['kojo-k0-tender'],
+    must_mention: '空 PRINTFORMW 仍等待',
+  },
 ];
