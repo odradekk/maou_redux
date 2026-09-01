@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY 分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -39,7 +39,8 @@
  *     绳子开始 CFLAG:345 :4231-4298、脱着 CFLAG:385 :4300-4315；
  *     口塞开始 CFLAG:346 :4321-4357、脱着 CFLAG:386 :4359-4370；
  *     灌肠+肛塞开始 CFLAG:347 :4376-4424、脱着 RAND 拼句 :4427-4497；
- *     放置PLAY CFLAG:356 :4510-4638）
+ *     放置PLAY CFLAG:356 :4510-4638；
+ *     交谈 CFLAG:357 :4645-4758，二次不写 CFLAG，录像支 TFLAG:32 |= 2）
 
 
 
@@ -117,7 +118,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4638）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY。
+ * @KOJO_MESSAGE_COM_0（:674-4758）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈。
 
 
 
@@ -7036,6 +7037,266 @@ async function kojo_message_com_0(rand) {
         await era.printAndWait(
           `于是、${target_name}的模样就这样继续被录了下来………`,
         ); // :4634-4635
+      }
+      return 0;
+    }
+  }
+
+  // :4645 IF SELECTCOM == 56（交谈，CFLAG:357）
+  if (era_flag.selectcom === 56) {
+    if (kojo.交谈 === 0) {
+      // :4647
+
+      if (era.get(`tequip:${target}:53`)) {
+        // :4649
+        era.print(`${master_name}让${target_name}做个自我介绍。`); // :4650
+        if (
+          rand_n(3) === 0 &&
+          (era.get(`talent:${target}:89`) === 1 ||
+            (era.get(`abl:${target}:17`) || 0) >= 5)
+        ) {
+          // :4651
+          era.print(`于是${target_name}就将自己的本名、至今为止的性体验`); // :4652
+          if ((era.get(`abl:${target}:31`) || 0) >= 3) {
+            // :4653-4654
+            era.print(`以及自慰时妄想的内容`); // :4653-4654
+          }
+          era.print(`开始愉快的说了起来……`); // :4655
+          era.print(
+            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,
+          ); // :4656
+          game.kojo.录像内容 |= 2; // :4657
+        } else if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:76`) === 1 ||
+            (era.get(`abl:${target}:11`) || 0) >= 5)
+        ) {
+          // :4658
+          era.print(`于是${target_name}就对着水晶球开始说起了下流的话。`); // :4659
+          game.kojo.录像内容 |= 2; // :4660
+        } else if (
+          era.get(`talent:${target}:85`) === 1 ||
+          (era.get(`abl:${target}:10`) || 0) >= 3 ||
+          (era.get(`abl:${target}:11`) || 0) >= 4 ||
+          (era.get(`abl:${target}:17`) || 0) >= 2
+        ) {
+          // :4661
+          era.print(`于是${target_name}就对着水晶球做起了自我介绍。`); // :4662
+          game.kojo.录像内容 |= 2; // :4663
+        } else {
+          await era.printAndWait(`但${target_name}把头转向一边什么话也不说。`); // :4664-4665
+        }
+      } else {
+        if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:85`) === 1 ||
+            (era.get(`abl:${target}:10`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4668-4669
+          era.print(`${target_name}一边扭动着腰一边与${player_name}说着情话。`); // :4670
+        } else if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:76`) === 1 ||
+            (era.get(`abl:${target}:11`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4671
+          era.print(
+            `${target_name}一边扭动着腰一边与${player_name}说着下流的话。`,
+          ); // :4672
+        } else if (
+          ((era.get(`palam:${target}:4`) || 0) >= PALAMLV[4] ||
+            (era.get(`abl:${target}:10`) || 0) >= 5 ||
+            era.get(`talent:${target}:85`) === 1 ||
+            era.get(`talent:${target}:76`) === 1) &&
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4]
+        ) {
+          // :4673
+          era.print(`${target_name}一边竭力按捺住`); // :4674
+          if (
+            era.get(`tequip:${target}:11`) ||
+            era.get(`tequip:${target}:13`) ||
+            era.get(`tequip:${target}:14`) ||
+            era.get(`tequip:${target}:15`) ||
+            era.get(`tequip:${target}:16`) ||
+            era.get(`tequip:${target}:17`)
+          ) {
+            // :4675
+            era.print(`快乐的`); // :4676
+          } else if (
+            era.get(`tequip:${target}:44`) ||
+            era.get(`tequip:${target}:49`)
+          ) {
+            // :4677
+            era.print(`痛苦的`); // :4678
+          } else {
+            era.print(`自己的`); // :4679-4680
+          }
+          era.print(`声音，一边回应着${player_name}。`); // :4682
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :4684
+          era.print(
+            `${target_name}用比起会话更想做爱的态度与${player_name}说着话。`,
+          ); // :4685
+          await era.printAndWait(`「明明谈话什么的怎样都好………」`); // :4686
+        } else if (
+          (era.get(`palam:${target}:4`) || 0) >= PALAMLV[4] ||
+          era.get(`talent:${target}:85`) === 1 ||
+          (era.get(`abl:${target}:10`) || 0) >= 5
+        ) {
+          // :4687
+          era.print(`${target_name}在很融洽的气氛中与${player_name}说着话。`); // :4688
+          await era.printAndWait(`「从来没想过能在这种气氛下和你谈话呢………」`); // :4689
+        } else if (
+          (era.get(`palam:${target}:4`) || 0) >= PALAMLV[2] ||
+          (era.get(`abl:${target}:10`) || 0) >= 3
+        ) {
+          // :4690
+          era.print(`面对${player_name}的搭话，怯生生的${target_name}回问道`); // :4691
+          await era.printAndWait(`「您…是在和我说话吗…？」`); // :4692
+        } else {
+          era.print(
+            `虽然${target_name}说了话，但${target_name}却好像没听到似的…`,
+          ); // :4693-4694
+        }
+      }
+      kojo.交谈 = 1; // :4697-4698
+      return 0;
+    } else {
+      if (era.get(`tequip:${target}:53`)) {
+        // :4700-4702
+        era.print(`${master_name}让${target_name}作个自我介绍。`); // :4703
+        if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:85`) === 1 ||
+            (era.get(`abl:${target}:10`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4704
+          era.print(`${target_name}一边扭动着腰一边对着水晶球说着情话。`); // :4705
+          game.kojo.录像内容 |= 2; // :4706
+        } else if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:76`) === 1 ||
+            (era.get(`abl:${target}:11`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4707
+          era.print(
+            `${target_name}一边扭动着腰一边对着水晶球不停地说着下流的话。`,
+          ); // :4708
+          game.kojo.录像内容 |= 2; // :4709
+        } else if (
+          rand_n(3) === 0 &&
+          (era.get(`talent:${target}:89`) === 1 ||
+            (era.get(`abl:${target}:17`) || 0) >= 5)
+        ) {
+          // :4710
+          era.print(`于是${target_name}就将自己的本名、至今为止的性体验`); // :4711
+          if ((era.get(`abl:${target}:31`) || 0) >= 3) {
+            // :4712-4713
+            era.print(`以及自慰时妄想的内容`); // :4712-4713
+          }
+          era.print(`开始愉快的说了起来……`); // :4714
+          era.print(
+            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,
+          ); // :4715
+          game.kojo.录像内容 |= 2; // :4716
+        } else if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:76`) === 1 ||
+            (era.get(`abl:${target}:11`) || 0) >= 5)
+        ) {
+          // :4717
+          era.print(`于是${target_name}就对着水晶球开始说起了下流的话。`); // :4718
+          game.kojo.录像内容 |= 2; // :4719
+        } else if (
+          era.get(`talent:${target}:85`) === 1 ||
+          (era.get(`abl:${target}:10`) || 0) >= 3 ||
+          (era.get(`abl:${target}:11`) || 0) >= 4 ||
+          (era.get(`abl:${target}:17`) || 0) >= 2
+        ) {
+          // :4720
+          era.print(`于是${target_name}就对着水晶球作起了自我介绍。`); // :4721
+          game.kojo.录像内容 |= 2; // :4722
+        } else {
+          await era.printAndWait(`但${target_name}把头转向一边什么话也不说。`); // :4723-4724
+        }
+      } else {
+        if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:85`) === 1 ||
+            (era.get(`abl:${target}:10`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4727-4728
+          era.print(`${target_name}一边扭动着腰一边与${player_name}说着情话。`); // :4729
+        } else if (
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4] &&
+          (era.get(`talent:${target}:76`) === 1 ||
+            (era.get(`abl:${target}:11`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4730
+          era.print(
+            `${target_name}一边扭动着腰一边与${player_name}说着下流的话。`,
+          ); // :4731
+        } else if (
+          ((era.get(`palam:${target}:4`) || 0) >= PALAMLV[4] ||
+            (era.get(`abl:${target}:10`) || 0) >= 5 ||
+            era.get(`talent:${target}:85`) === 1 ||
+            era.get(`talent:${target}:76`) === 1) &&
+          (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4]
+        ) {
+          // :4732
+          era.print(`${target_name}一边竭力按捺住`); // :4733
+          if (
+            era.get(`tequip:${target}:11`) ||
+            era.get(`tequip:${target}:13`) ||
+            era.get(`tequip:${target}:14`) ||
+            era.get(`tequip:${target}:15`) ||
+            era.get(`tequip:${target}:16`) ||
+            era.get(`tequip:${target}:17`)
+          ) {
+            // :4734
+            era.print(`快乐的`); // :4735
+          } else if (
+            era.get(`tequip:${target}:44`) ||
+            era.get(`tequip:${target}:49`)
+          ) {
+            // :4736
+            era.print(`痛苦的`); // :4737
+          } else {
+            era.print(`自己的`); // :4738-4739
+          }
+          era.print(`声音，一边回应着${player_name}。`); // :4741
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // :4743
+          era.print(
+            `${target_name}用比起会话更想做爱的态度与${player_name}说着话。`,
+          ); // :4744
+          await era.printAndWait(`「明明谈话什么的怎样都好………」`); // :4745
+        } else if (
+          (era.get(`palam:${target}:4`) || 0) >= PALAMLV[4] ||
+          era.get(`talent:${target}:85`) === 1 ||
+          (era.get(`abl:${target}:10`) || 0) >= 5
+        ) {
+          // :4746
+          era.print(`${target_name}在很融洽的气氛中与${player_name}说着话。`); // :4747
+          await era.printAndWait(`「从来没想过能在这种气氛下和你谈话呢………」`); // :4748
+        } else if (
+          (era.get(`palam:${target}:4`) || 0) >= PALAMLV[2] ||
+          (era.get(`abl:${target}:10`) || 0) >= 3
+        ) {
+          // :4749
+          era.print(`面对${player_name}的搭话，怯生生的${target_name}回问道`); // :4750
+          await era.printAndWait(`「您…是在和我说话吗…？」`); // :4751
+        } else {
+          era.print(
+            `虽然${target_name}说了话，但${target_name}却好像没听到似的…`,
+          ); // :4752-4753
+        }
       }
       return 0;
     }

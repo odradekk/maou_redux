@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4638', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4758', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -18849,6 +18849,339 @@ const FILES = [
       { src: K0, ref: '4634-4635', any: [/\t\tSIF TEQUIP:53/m] },
       { src: K0, ref: '4529', any: [/PRINTL/] },
       { src: K0, ref: '4599', any: [/PRINTL/] },
+      { src: K0, ref: '4645', any: [/IF\ SELECTCOM\ ==\ 56/m] },
+      { src: K0, ref: '4645-4758', any: [/^IF SELECTCOM == 56$/m] },
+      { src: K0, ref: '4645', any: [/IF SELECTCOM == 56/m] },
+      { src: K0, ref: '4647', any: [/\tIF CFLAG:357 == 0/m] },
+      { src: K0, ref: '4649', any: [/\t\tIF TEQUIP:53 == 1/m] },
+      {
+        src: K0,
+        ref: '4650',
+        any: [/%NAME:MASTER%让%SAVESTR:TARGET%做个自我介绍。/],
+      },
+      {
+        src: K0,
+        ref: '4651',
+        any: [/\t\t\tIF RAND:3 == 0 && \(TALENT:89 \|\| ABL:17 >= 5\)/m],
+      },
+      {
+        src: K0,
+        ref: '4652',
+        any: [/于是%SAVESTR:TARGET%就将自己的本名、至今为止的性体験/],
+      },
+      { src: K0, ref: '4653-4654', any: [/\t\t\t\tSIF ABL:31 >= 3/m] },
+      { src: K0, ref: '4655', any: [/开始愉快的说了起来……/] },
+      {
+        src: K0,
+        ref: '4656',
+        any: [
+          /单是想到这个水晶球会流传到故郷认识的人手里，%SAVESTR:TARGET%两腿之间就变的湿润起来了……/,
+        ],
+      },
+      { src: K0, ref: '4657', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4658',
+        any: [
+          /\t\t\tELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4659',
+        any: [/于是%SAVESTR:TARGET%就对着水晶球开始说起了下流的话。/],
+      },
+      { src: K0, ref: '4660', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4661',
+        any: [
+          /\t\t\tELSEIF TALENT:85 \|\| ABL:10 >= 3 \|\| ABL:11 >= 4 \|\| ABL:17 >= 2/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4662',
+        any: [/于是%SAVESTR:TARGET%就对着水晶球做起了自我介绍。/],
+      },
+      { src: K0, ref: '4663', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4664-4665',
+        any: [/但%SAVESTR:TARGET%把头转向一边什么话也不说。/],
+      },
+      {
+        src: K0,
+        ref: '4668-4669',
+        any: [
+          /\t\t\tIF PALAM:5 >= PALAMLV:4 && \(TALENT:85 \|\| ABL:10 >= 5\) && TFLAG:60/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4670',
+        any: [/%SAVESTR:TARGET%一边扭动着腰一边与%SAVESTR:PLAYER%说着情话。/],
+      },
+      {
+        src: K0,
+        ref: '4671',
+        any: [
+          /\t\t\tELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4672',
+        any: [
+          /%SAVESTR:TARGET%一边扭动着腰一边与%SAVESTR:PLAYER%说着下流的话。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4673',
+        any: [
+          /\t\t\tELSEIF \(PALAM:4 >= PALAMLV:4 \|\| ABL:10 >= 5 \|\| TALENT:85 \|\| TALENT:76\) && PALAM:5 >= PALAMLV:4/m,
+        ],
+      },
+      { src: K0, ref: '4674', any: [/%SAVESTR:TARGET%一边竭力按捺住/] },
+      {
+        src: K0,
+        ref: '4675',
+        any: [
+          /\t\t\t\tIF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/m,
+        ],
+      },
+      { src: K0, ref: '4676', any: [/快楽的/] },
+      {
+        src: K0,
+        ref: '4677',
+        any: [/\t\t\t\tELSEIF TEQUIP:44 \|\| TEQUIP:49/m],
+      },
+      { src: K0, ref: '4678', any: [/痛苦的/] },
+      { src: K0, ref: '4679-4680', any: [/自己的/] },
+      { src: K0, ref: '4682', any: [/声音，一边回应着%SAVESTR:PLAYER%。/] },
+      { src: K0, ref: '4684', any: [/\t\t\tELSEIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4685',
+        any: [
+          /%SAVESTR:TARGET%用比起会話更想做爱的態度与%SAVESTR:PLAYER%说着话。/,
+        ],
+      },
+      { src: K0, ref: '4686', any: [/「明明谈话什么的怎样都好………」/] },
+      {
+        src: K0,
+        ref: '4687',
+        any: [
+          /\t\t\tELSEIF PALAM:4 >= PALAMLV:4 \|\| TALENT:85 \|\| ABL:10 >= 5/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4688',
+        any: [/%SAVESTR:TARGET%在很融洽的气氛中与%SAVESTR:PLAYER%说着话。/],
+      },
+      {
+        src: K0,
+        ref: '4689',
+        any: [/「从来没想过能在这种气氛下和你谈话呢………」/],
+      },
+      {
+        src: K0,
+        ref: '4690',
+        any: [/\t\t\tELSEIF PALAM:4 >= PALAMLV:2 \|\|  ABL:10 >= 3/m],
+      },
+      {
+        src: K0,
+        ref: '4691',
+        any: [/面对%SAVESTR:PLAYER%的搭话，怯生生的%SAVESTR:TARGET%回问道/],
+      },
+      { src: K0, ref: '4692', any: [/「您…是在和我说话吗…？」/] },
+      {
+        src: K0,
+        ref: '4693-4694',
+        any: [
+          /虽然%SAVESTR:TARGET%说了话，但%SAVESTR:TARGET%却好像没听到似的…/,
+        ],
+      },
+      { src: K0, ref: '4697-4698', any: [/\t\tCFLAG:357 = 1/m] },
+      { src: K0, ref: '4700-4702', any: [/\t\tIF TEQUIP:53 == 1/m] },
+      {
+        src: K0,
+        ref: '4703',
+        any: [/%NAME:MASTER%让%SAVESTR:TARGET%作个自我介绍。/],
+      },
+      {
+        src: K0,
+        ref: '4704',
+        any: [
+          /\t\t\tIF PALAM:5 >= PALAMLV:4 && \(TALENT:85 \|\| ABL:10 >= 5\) && TFLAG:60/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4705',
+        any: [/%SAVESTR:TARGET%一边扭动着腰一边对着水晶球说着情话。/],
+      },
+      { src: K0, ref: '4706', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4707',
+        any: [
+          /\t\t\tELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4708',
+        any: [/%SAVESTR:TARGET%一边扭动着腰一边对着水晶球不停地说着下流的话。/],
+      },
+      { src: K0, ref: '4709', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4710',
+        any: [/\t\t\tELSEIF RAND:3 == 0 && \(TALENT:89 \|\| ABL:17 >= 5\)/m],
+      },
+      {
+        src: K0,
+        ref: '4711',
+        any: [/于是%SAVESTR:TARGET%就将自己的本名、至今为止的性体験/],
+      },
+      { src: K0, ref: '4712-4713', any: [/\t\t\t\tSIF ABL:31 >= 3/m] },
+      { src: K0, ref: '4714', any: [/开始愉快的说了起来……/] },
+      {
+        src: K0,
+        ref: '4715',
+        any: [
+          /单是想到这个水晶球会流传到故郷认识的人手里，%SAVESTR:TARGET%两腿之间就变的湿润起来了……/,
+        ],
+      },
+      { src: K0, ref: '4716', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4717',
+        any: [
+          /\t\t\tELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4718',
+        any: [/于是%SAVESTR:TARGET%就对着水晶球开始说起了下流的话。/],
+      },
+      { src: K0, ref: '4719', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4720',
+        any: [
+          /\t\t\tELSEIF TALENT:85 \|\| ABL:10 >= 3 \|\| ABL:11 >= 4 \|\| ABL:17 >= 2/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4721',
+        any: [/于是%SAVESTR:TARGET%就对着水晶球作起了自我介绍。/],
+      },
+      { src: K0, ref: '4722', any: [/\t\t\t\tTFLAG:32 \|= 2/m] },
+      {
+        src: K0,
+        ref: '4723-4724',
+        any: [/但%SAVESTR:TARGET%把头转向一边什么话也不说。/],
+      },
+      {
+        src: K0,
+        ref: '4727-4728',
+        any: [
+          /\t\t\tIF PALAM:5 >= PALAMLV:4 && \(TALENT:85 \|\| ABL:10 >= 5\) && TFLAG:60/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4729',
+        any: [/%SAVESTR:TARGET%一边扭动着腰一边与%SAVESTR:PLAYER%说着情话。/],
+      },
+      {
+        src: K0,
+        ref: '4730',
+        any: [
+          /\t\t\tELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4731',
+        any: [
+          /%SAVESTR:TARGET%一边扭动着腰一边与%SAVESTR:PLAYER%说着下流的话。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4732',
+        any: [
+          /\t\t\tELSEIF \(PALAM:4 >= PALAMLV:4 \|\| ABL:10 >= 5 \|\| TALENT:85 \|\| TALENT:76\) && PALAM:5 >= PALAMLV:4/m,
+        ],
+      },
+      { src: K0, ref: '4733', any: [/%SAVESTR:TARGET%一边竭力按捺住/] },
+      {
+        src: K0,
+        ref: '4734',
+        any: [
+          /\t\t\t\tIF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/m,
+        ],
+      },
+      { src: K0, ref: '4735', any: [/快楽的/] },
+      {
+        src: K0,
+        ref: '4736',
+        any: [/\t\t\t\tELSEIF TEQUIP:44 \|\| TEQUIP:49/m],
+      },
+      { src: K0, ref: '4737', any: [/痛苦的/] },
+      { src: K0, ref: '4738-4739', any: [/自己的/] },
+      { src: K0, ref: '4741', any: [/声音，一边回应着%SAVESTR:PLAYER%。/] },
+      { src: K0, ref: '4743', any: [/\t\t\tELSEIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4744',
+        any: [
+          /%SAVESTR:TARGET%用比起会話更想做爱的態度与%SAVESTR:PLAYER%说着话。/,
+        ],
+      },
+      { src: K0, ref: '4745', any: [/「明明谈话什么的怎样都好………」/] },
+      {
+        src: K0,
+        ref: '4746',
+        any: [
+          /\t\t\tELSEIF PALAM:4 >= PALAMLV:4 \|\| TALENT:85 \|\| ABL:10 >= 5/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4747',
+        any: [/%SAVESTR:TARGET%在很融洽的气氛中与%SAVESTR:PLAYER%说着话。/],
+      },
+      {
+        src: K0,
+        ref: '4748',
+        any: [/「从来没想过能在这种气氛下和你谈话呢………」/],
+      },
+      {
+        src: K0,
+        ref: '4749',
+        any: [/\t\t\tELSEIF PALAM:4 >= PALAMLV:2 \|\|  ABL:10 >= 3/m],
+      },
+      {
+        src: K0,
+        ref: '4750',
+        any: [/面对%SAVESTR:PLAYER%的搭话，怯生生的%SAVESTR:TARGET%回问道/],
+      },
+      { src: K0, ref: '4751', any: [/「您…是在和我说话吗…？」/] },
+      {
+        src: K0,
+        ref: '4752-4753',
+        any: [
+          /虽然%SAVESTR:TARGET%说了话，但%SAVESTR:TARGET%却好像没听到似的…/,
+        ],
+      },
     ],
   },
 

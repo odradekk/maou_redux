@@ -229,11 +229,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 56; // 交谈——COM55 落地后改用尚未填的指令
+    era_flag.selectcom = 123; // 乳夹口交——COM56 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 56 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 123 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -3635,6 +3635,71 @@ test('放置PLAY二次：淫乱+欲情写 6 / 阈值闸 / 耗尽仍 PRINTL', asy
     5,
     '欲情不足 PALAMLV[3] 落到淫乱档写 5',
   );
+});
+
+test('交谈首次：淫乱推进到 1 / 录像自白写 TFLAG:32 |= 2', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '琼用比起会话更想做爱的态度与你说着话。',
+    '「明明谈话什么的怎样都好………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:357'), 1, '交谈首次推进到 1');
+
+  const video = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:89', 1);
+    f.store.set('abl:31:31', 3);
+    f.store.set('tflag:32', 1);
+  });
+  await speak_k0(video, seq_rand(0));
+  assert.deepEqual(video.text_lines(), [
+    '你让琼做个自我介绍。',
+    '于是琼就将自己的本名、至今为止的性体验',
+    '以及自慰时妄想的内容',
+    '开始愉快的说了起来……',
+    '单是想到这个水晶球会流传到故乡认识的人手里，琼两腿之间就变的湿润起来了……',
+  ]);
+  assert.equal(
+    video.store.get('tflag:32'),
+    3,
+    '录像自白 TFLAG:32 |= 2（1|2=3）',
+  );
+  assert.equal(video.store.get('cflag:31:357'), 1);
+});
+
+test('交谈二次：不写 CFLAG / 插着不拔情话 / 沉默', async () => {
+  const talk = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    f.store.set('cflag:31:357', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('palam:31:5', 10000);
+    f.store.set('tflag:60', 1);
+  });
+  await speak_k0(talk);
+  assert.deepEqual(talk.text_lines(), ['琼一边扭动着腰一边与你说着情话。']);
+  assert.equal(talk.store.get('cflag:31:357'), 1, '交谈二次不写 CFLAG');
+
+  const silent = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    f.store.set('cflag:31:357', 1);
+    f.store.set('tequip:31:53', 1);
+  });
+  await speak_k0(silent, seq_rand(1));
+  assert.deepEqual(silent.text_lines(), [
+    '你让琼作个自我介绍。',
+    '但琼把头转向一边什么话也不说。',
+  ]);
+  assert.equal(silent.store.get('tflag:32'), undefined, '沉默支不写 TFLAG:32');
+  assert.equal(silent.store.get('cflag:31:357'), 1, '交谈二次沉默也不写 CFLAG');
 });
 
 // —— 存根清单核对 ——

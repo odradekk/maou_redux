@@ -2217,4 +2217,59 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
   },
+  {
+    desc: 'M1918 K0 交谈首次状态推进写错（CFLAG:357 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.交谈 = 1; // :4697-4698',
+    replace: '      kojo.交谈 = 2; // :4697-4698',
+    tests: ['kojo-k0-tender'],
+    must_mention: '交谈首次推进到 1',
+  },
+  {
+    desc: 'M1919 K0 交谈录像自白 TFLAG:32 按位或改成赋值（|= 2 改 = 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '          game.kojo.录像内容 |= 2; // :4657',
+    replace: '          game.kojo.录像内容 = 2; // :4657',
+    tests: ['kojo-k0-tender'],
+    must_mention: '录像自白 TFLAG:32 |= 2',
+  },
+  {
+    desc: 'M1920 K0 交谈二次录像沉默支仍写 TFLAG:32（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          await era.printAndWait(\`但\${target_name}把头转向一边什么话也不说。\`); // :4723-4724`,
+    replace: `          await era.printAndWait(\`但\${target_name}把头转向一边什么话也不说。\`); // :4723-4724
+          game.kojo.录像内容 |= 2;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '沉默支不写 TFLAG:32',
+  },
+  {
+    desc: 'M1921 K0 交谈二次插着不拔门面改成 tflag:59（原文是 TFLAG:60）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          (era.get(\`abl:\${target}:10\`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4727-4728`,
+    replace: `          (era.get(\`abl:\${target}:10\`) || 0) >= 5) &&
+          era.get('tflag:59')
+        ) {
+          // :4727-4728`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '交谈二次：不写 CFLAG / 插着不拔情话',
+  },
+  {
+    desc: 'M1922 K0 交谈首次录像自白 RAND:3 旁路失效（=== 0 改 === 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          rand_n(3) === 0 &&
+          (era.get(\`talent:\${target}:89\`) === 1 ||
+            (era.get(\`abl:\${target}:17\`) || 0) >= 5)
+        ) {
+          // :4651`,
+    replace: `          rand_n(3) === 1 &&
+          (era.get(\`talent:\${target}:89\`) === 1 ||
+            (era.get(\`abl:\${target}:17\`) || 0) >= 5)
+        ) {
+          // :4651`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '交谈首次：淫乱推进到 1 / 录像自白写 TFLAG:32 |= 2',
+  },
 ];
