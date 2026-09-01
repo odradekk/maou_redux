@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-1060', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-1189', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -10926,6 +10926,158 @@ const FILES = [
         any: [/鈍感的乳头被刺激得红肿起来/],
       },
       { src: K0, ref: '1055', any: [/^\t\t\t\tCFLAG:306 = 2$/m] },
+
+      { src: K0, ref: '1065', any: [/^IF SELECTCOM == 6$/m] },
+      { src: K0, ref: '1065-1148', any: [/^IF SELECTCOM == 6$/m] },
+
+      {
+        src: K0,
+        ref: '1067-1097',
+        any: [/^\tIF CFLAG:307 == 0 && TFLAG:13$/m],
+      },
+      {
+        src: K0,
+        ref: '1069-1076',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0$/m,
+        ],
+      },
+      { src: K0, ref: '1070', any: [/嘞噗～啾～啾～～/] },
+      { src: K0, ref: '1071', any: [/在初吻时就用难以想象的热情/] },
+      { src: K0, ref: '1072', any: [/再多和我…亲吻一会儿吧/] },
+      { src: K0, ref: '1075', any: [/已经没有故郷恋人的存在了吧/] },
+      {
+        src: K0,
+        ref: '1078-1085',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0$/m,
+        ],
+      },
+      { src: K0, ref: '1079', any: [/%SELF_CALL\(TARGET\)%的初吻/] },
+      { src: K0, ref: '1080', any: [/忸忸怩怩很害羞的样子/] },
+      { src: K0, ref: '1081', any: [/你要负起…责任哦/] },
+      {
+        src: K0,
+        ref: '1084',
+        any: [/这样微笑着的%SAVESTR:TARGET%脑子里已经没有故郷恋人/],
+      },
+      { src: K0, ref: '1087-1094', any: [/%SELF_CALL\(TARGET\)%的第一次/] },
+      { src: K0, ref: '1088', any: [/%SELF_CALL\(TARGET\)%的第一次/] },
+      { src: K0, ref: '1089', any: [/饶有兴致的品味着/] },
+      { src: K0, ref: '1092', any: [/对不起…对不起/] },
+      { src: K0, ref: '1093', any: [/想起故郷的恋人流下了眼泪/] },
+
+      { src: K0, ref: '1099-1124', any: [/^\tELSEIF CFLAG:307 == 0$/m] },
+      {
+        src: K0,
+        ref: '1101-1106',
+        any: [/^\t\tIF TALENT:TARGET:76 == 1$/m, /我还想再接吻/],
+      },
+      { src: K0, ref: '1102', any: [/我还想再接吻/] },
+      {
+        src: K0,
+        ref: '1105',
+        any: [/痴痴笑着的%SAVESTR:TARGET%脑子里已经没有故郷恋人/],
+      },
+      {
+        src: K0,
+        ref: '1108-1113',
+        any: [/^\t\tELSEIF TALENT:TARGET:85 == 1$/m, /可以再来一次吗/],
+      },
+      { src: K0, ref: '1109', any: [/可以再来一次吗/] },
+      {
+        src: K0,
+        ref: '1112',
+        any: [/这样微笑着的%SAVESTR:TARGET%脑子里已经没有故郷恋人/],
+      },
+      { src: K0, ref: '1115-1121', any: [/好、好恶毒/] },
+      { src: K0, ref: '1116', any: [/好、好恶毒/] },
+      { src: K0, ref: '1119', any: [/对不起…对不起/] },
+      { src: K0, ref: '1120', any: [/想起故郷的恋人流下了眼泪/] },
+      {
+        src: K0,
+        ref: '1126-1146',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+
+      {
+        src: K0,
+        ref: '1128-1130',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '1129', any: [/请再多吻我吧/] },
+      {
+        src: K0,
+        ref: '1132-1135',
+        any: [
+          /^\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '1133', any: [/我只是说喜欢接吻罢了/] },
+      { src: K0, ref: '1134', any: [/不断地接吻着/] },
+      {
+        src: K0,
+        ref: '1137-1139',
+        any: [
+          /^\t\tELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '1138', any: [/这、这样就可以了吧/] },
+      {
+        src: K0,
+        ref: '1141-1144',
+        any: [/^\t\tELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      { src: K0, ref: '1142', any: [/PRINTFORMW 「嗯～…咕～…」/] },
+      { src: K0, ref: '1143', any: [/把唇移开、不好意思的躲闪着视线/] },
+      { src: K0, ref: '1153', any: [/^IF SELECTCOM == 7$/m] },
+      { src: K0, ref: '1153-1189', any: [/^IF SELECTCOM == 7$/m] },
+
+      { src: K0, ref: '1155-1167', any: [/^\tIF CFLAG:308 == 0$/m] },
+      { src: K0, ref: '1157-1159', any: [/淫乱小穴/] },
+      { src: K0, ref: '1158', any: [/淫乱小穴/] },
+      { src: K0, ref: '1160-1162', any: [/如果是主人的命令的话/] },
+      { src: K0, ref: '1161', any: [/如果是主人的命令的话/] },
+      { src: K0, ref: '1163-1165', any: [/这、这样…是不对的/] },
+      { src: K0, ref: '1164', any: [/这、这样…是不对的/] },
+      {
+        src: K0,
+        ref: '1169-1187',
+        any: [
+          /^\t\tIF TALENT:TARGET:76 == 1 && \(CFLAG:308 <= 4 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+
+      {
+        src: K0,
+        ref: '1171-1173',
+        any: [/^\t\t\tCFLAG:306 = 5$/m, /迫不及待地想被小鸡鸡插来插去了呢/],
+      },
+      { src: K0, ref: '1172', any: [/迫不及待地想被小鸡鸡插来插去了呢/] },
+      {
+        src: K0,
+        ref: '1175-1177',
+        any: [/SELF_CALL_FIRST\(TARGET\)/, /^\t\t\tCFLAG:306 = 4$/m],
+      },
+      { src: K0, ref: '1176', any: [/不要老是盯着这里看嘛/] },
+      {
+        src: K0,
+        ref: '1179-1181',
+        any: [
+          /^\t\tELSEIF ABL:17 >= 3 && \(CFLAG:308 <= 2 \|\| FLAG:7 == 2\)$/m,
+        ],
+      },
+      { src: K0, ref: '1180', any: [/小穴被看着好有感觉啊/] },
+      {
+        src: K0,
+        ref: '1183-1185',
+        any: [/^\t\tELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2$/m],
+      },
+      { src: K0, ref: '1184', any: [/不要看那种地方/] },
     ],
   },
 

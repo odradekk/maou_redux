@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 6; // 接吻——COM5 落地后改用尚未填的指令
+    era_flag.selectcom = 8; // 插入手指——COM6/COM7 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 6 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 8 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -924,6 +924,148 @@ test('胸爱抚二次非母乳：淫乱 + B钝感附加句 / 阈值闸', async (
     '「再来～…虽然很痛但也被弄得好舒服呢…啊啊♡」',
   ]);
   assert.equal(at_cap.store.get('cflag:31:306'), 5, '胸爱抚阈值闸');
+});
+
+test('接吻初吻+淫乱主人：三句 + 故乡恋人附加句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('tflag:13', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:317', 4);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊～～…嗯啾…啾～…嘞咯～…嘞噗～啾～啾～～♡」',
+    '琼在初吻时就用难以想象的热情与你激吻中………',
+    '「哈啊啊～…再来…早该这样了…呐、再多和我…亲吻一会儿吧♡」',
+    '痴痴笑着的琼脑子里已经没有故乡恋人的存在了吧………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:307'), 1, '接吻首次推进到 1');
+});
+
+test('接吻调教首次非初吻：爱慕一句，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…啾…哈啊啊…感觉到爱了…那个、可以再来一次吗？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:307'), 1);
+});
+
+test('接吻二次淫乱 / 爱慕 / 顺从 / それ以外', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:307', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「嗯嘞咯～♪…啾～…啾噗…啾～…嗯～…请再多吻我吧…♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:307'), 5);
+
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:307', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), [
+    '「哈啊啊…喜欢…好喜欢…不、我只是说喜欢接吻罢了…啊～～♪」',
+    '你如琼所愿、不断地接吻着………',
+  ]);
+  assert.equal(love.store.get('cflag:31:307'), 4);
+
+  const obedient = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('abl:31:10', 2);
+    f.store.set('cflag:31:307', 1);
+  });
+  await speak_k0(obedient);
+  assert.deepEqual(obedient.text_lines(), [
+    '「嗯～…哈啊啊…这、这样就可以了吧？…啊～、不要～…嗯嗯呜～！」',
+  ]);
+  assert.equal(obedient.store.get('cflag:31:307'), 3);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('cflag:31:307', 1);
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), [
+    '「嗯～…咕～…」',
+    '琼把唇移开、不好意思的躲闪着视线………',
+  ]);
+  assert.equal(other.store.get('cflag:31:307'), 2);
+});
+
+test('接吻二次阈值闸：FLAG:7 == 1 时上限生效', async () => {
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 6;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:307', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), [
+    '「嗯嘞咯～♪…啾～…啾噗…啾～…嗯～…请再多吻我吧…♡」',
+  ]);
+  assert.equal(at_cap.store.get('cflag:31:307'), 5, '接吻二次阈值闸');
+});
+
+test('自己扒开首次淫乱 / 爱慕 / それ以外，推进到 1', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「好的～…张开啦～♡…怎么样呢…我的淫乱小穴…因为想要主人的大肉棒、大大的张开了哦～♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:308'), 1, '自己扒开首次推进到 1');
+
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k0(love);
+  assert.deepEqual(love.text_lines(), [
+    '「虽、虽然很害羞…如果是主人的命令的话…啊～～…讨厌…爱液流出来了～～………嗯」',
+  ]);
+
+  const other = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+  });
+  await speak_k0(other);
+  assert.deepEqual(other.text_lines(), ['「咕呜…这、这样…是不对的…」']);
+});
+
+test('自己扒开二次：原文把推进写进 CFLAG:306（胸爱抚），不是 308', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:308', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:306'), 5, '自己扒开二次写 CFLAG:306');
+  assert.equal(lewd.store.get('cflag:31:308'), 1, 'CFLAG:308 保持首次后的 1');
 });
 
 test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {

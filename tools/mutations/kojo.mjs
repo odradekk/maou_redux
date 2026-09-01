@@ -770,7 +770,6 @@ export default [
         (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)`,
     tests: ['kojo-k0-tender'],
     must_mention: '胸爱抚二次母乳阈值闸',
-
   },
   {
     desc: 'M1641 K0 胸爱抚二次非母乳淫乱门槛错位（CFLAG:306 <= 4 改 <= 3）（#231）',
@@ -801,5 +800,70 @@ export default [
         era.get(\`talent:\${target}:86\`) === 1 &&`,
     tests: ['kojo-k0-tender'],
     must_mention: '吸我的奶来恢复精神吧',
+  },
+  {
+    desc: 'M1644 K0 接吻首次状态推进写错（CFLAG:307 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.接吻 = 1;
+      return 0;
+    }
+
+    // :1099-1124 （調教では）初めて（CFLAG:307 == 0）`,
+    replace: `      kojo.接吻 = 2;
+      return 0;
+    }
+
+    // :1099-1124 （調教では）初めて（CFLAG:307 == 0）`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '接吻首次推进到 1',
+  },
+  {
+    desc: 'M1645 K0 接吻初吻故乡恋人判据错格（TALENT:317 == 4 改 == 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    const hometown_lover = era.get(`talent:${target}:317`) === 4;',
+    replace:
+      '    const hometown_lover = era.get(`talent:${target}:317`) === 5;',
+    tests: ['kojo-k0-tender'],
+    must_mention: '故乡恋人',
+  },
+  {
+    desc: 'M1646 K0 接吻二次淫乱门槛错位（CFLAG:307 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '接吻二次阈值闸',
+  },
+  {
+    desc: 'M1647 K0 接吻二次顺从门槛错档（ABL:10 >= 2 改 >= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1137-1139 顺从Lv2以上
+      (era.get(\`abl:\${target}:10\`) || 0) >= 2 &&`,
+    replace: `      // :1137-1139 顺从Lv2以上
+      (era.get(\`abl:\${target}:10\`) || 0) >= 3 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '这样就可以了吧',
+  },
+  {
+    desc: 'M1648 K0 自己扒开首次状态推进写错（CFLAG:308 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.自己扒开 = 1;',
+    replace: '      kojo.自己扒开 = 2;',
+    tests: ['kojo-k0-tender'],
+    must_mention: '自己扒开首次推进到 1',
+  },
+  {
+    desc: 'M1649 K0 自己扒开二次推进写回 CFLAG:308（原文是 306）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        \`「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢\${heart(1)}」\`,
+      ); // :1172
+      kojo.胸爱抚 = 5;`,
+    replace: `        \`「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢\${heart(1)}」\`,
+      ); // :1172
+      kojo.自己扒开 = 5;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '自己扒开二次写 CFLAG:306',
   },
 ];

@@ -1,12 +1,13 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
  *     @KOJO_MESSAGE_COM_0（:674；七道跳过判定 :676-699，**崩坏在兽奸前**；
  *     爱抚 CFLAG:301 状态机 :708-752；舔阴 CFLAG:302 状态机 :757-794；
  *     肛门爱抚 CFLAG:303 状态机 :799-856；自慰 CFLAG:304 状态机 :861-968；
- *     胸爱抚 CFLAG:306 状态机 :973-1060）
+ *     胸爱抚 CFLAG:306 状态机 :973-1060；接吻 CFLAG:307 状态机 :1065-1148；
+ *     自己扒开 CFLAG:308 状态机 :1153-1189）
 
  *
  * == 状态机（CFLAG:301，个位数推进） ==
@@ -37,11 +38,11 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { kojo_message_com_family } = require('#/kojo/kojo-system');
-const { heart, self_call } = require('#/kojo/kojo-text');
+const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
-const { chara_callname } = require('#/utils/callname-utils');
+const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 
 /**
@@ -72,7 +73,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-1060）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚。
+ * @KOJO_MESSAGE_COM_0（:674-1189）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开。
  *
 
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
@@ -89,6 +90,8 @@ async function kojo_message_com_0(rand) {
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  const scf = () => self_call_first(target); // %SELF_CALL_FIRST(TARGET)%
+  const master_name = chara_name(0); // %NAME:MASTER%（MASTER 恒角色 0）
   const kojo = chara(target).kojo;
 
   // :676-678 死斗场中は専用口上
@@ -674,6 +677,193 @@ async function kojo_message_com_0(rand) {
         await era.printAndWait(`${target_name}钝感的乳头被刺激得红肿起来………`); // :1054
       }
       kojo.胸爱抚 = 2; // :1055
+    }
+    return 0;
+  }
+
+  // :1065 IF SELECTCOM == 6（接吻，CFLAG:307）
+  if (era_flag.selectcom === 6) {
+    const hometown_lover = era.get(`talent:${target}:317`) === 4;
+    const first_kiss = game.train.初吻与自我口上;
+    const master_play =
+      !era_flag.assiplay &&
+      !era.get(`tequip:${target}:89`) &&
+      !era.get(`tequip:${target}:90`);
+
+    // :1067-1097 初吻（CFLAG:307 == 0 && TFLAG:13）
+    if (kojo.接吻 === 0 && first_kiss) {
+      // :1069-1076 淫乱かつ主人
+      if (era.get(`talent:${target}:76`) === 1 && master_play) {
+        await era.printAndWait(
+          `「啊～～…嗯啾…啾～…嘞咯～…嘞噗～啾～啾～～${heart(1)}」`,
+        ); // :1070
+        await era.printAndWait(
+          `${target_name}在初吻时就用难以想象的热情与${master_name}激吻中………`,
+        ); // :1071
+        await era.printAndWait(
+          `「哈啊啊～…再来…早该这样了…呐、再多和我…亲吻一会儿吧${heart(1)}」`,
+        ); // :1072
+        if (hometown_lover) {
+          await era.printAndWait(
+            `痴痴笑着的${target_name}脑子里已经没有故乡恋人的存在了吧………`,
+          ); // :1075
+        }
+      } else if (era.get(`talent:${target}:85`) === 1 && master_play) {
+        // :1078-1085 爱かつ主人
+        await era.printAndWait(
+          `「嗯～…嗯唔…那、那个…这是…${sc()}的初吻…所以…那个…」`,
+        ); // :1079
+        await era.printAndWait(`${target_name}忸忸怩怩很害羞的样子。`); // :1080
+        await era.printAndWait(
+          `「啊哈哈…${heart(1)}………那个…你要负起…责任哦？」`,
+        ); // :1081
+        if (hometown_lover) {
+          await era.printAndWait(
+            `这样微笑着的${target_name}脑子里已经没有故乡恋人的存在了吧………`,
+          ); // :1084
+        }
+      } else {
+        // :1087-1094 それ以外
+        await era.printAndWait(`「啊～…啊啊…${sc()}的第一次…就这样…没了吗！」`); // :1088
+        await era.printAndWait(
+          `${player_name}饶有兴致的品味着${target_name}的唇………`,
+        ); // :1089
+        if (hometown_lover) {
+          await era.printAndWait('（啊啊…对不起…对不起………）'); // :1092
+          await era.printAndWait(`${target_name}想起故乡的恋人流下了眼泪………`); // :1093
+        }
+      }
+      kojo.接吻 = 1;
+      return 0;
+    }
+
+    // :1099-1124 （調教では）初めて（CFLAG:307 == 0）
+    if (kojo.接吻 === 0) {
+      // :1101-1106 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「嗯啾…啾…噗呼…嘞咯～…哈啊…再来…我还想再接吻…${heart(1)}」`,
+        ); // :1102
+        if (hometown_lover) {
+          await era.printAndWait(
+            `痴痴笑着的${target_name}脑子里已经没有故乡恋人的存在了吧………`,
+          ); // :1105
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1108-1113 爱慕
+        await era.printAndWait(
+          '「嗯…啾…哈啊啊…感觉到爱了…那个、可以再来一次吗？」',
+        ); // :1109
+        if (hometown_lover) {
+          await era.printAndWait(
+            `这样微笑着的${target_name}脑子里已经没有故乡恋人的存在了吧………`,
+          ); // :1112
+        }
+      } else {
+        // :1115-1121 それ以外
+        await era.printAndWait('「嗯～！…嗯咕～…咕呜呜…好、好恶毒………」'); // :1116
+        if (hometown_lover) {
+          await era.printAndWait('（啊啊…对不起…对不起………）'); // :1119
+          await era.printAndWait(`${target_name}想起故乡的恋人流下了眼泪………`); // :1120
+        }
+      }
+      kojo.接吻 = 1;
+      return 0;
+    }
+
+    // :1126-1146 二回目以降
+    // :1128-1130 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「嗯嘞咯～♪…啾～…啾噗…啾～…嗯～…请再多吻我吧…${heart(1)}」`,
+      ); // :1129
+      kojo.接吻 = 5;
+    } else if (
+      // :1132-1135 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「哈啊啊…喜欢…好喜欢…不、我只是说喜欢接吻罢了…啊～～♪」',
+      ); // :1133
+      await era.printAndWait(
+        `${player_name}如${target_name}所愿、不断地接吻着………`,
+      ); // :1134
+      kojo.接吻 = 4;
+    } else if (
+      // :1137-1139 顺从Lv2以上
+      (era.get(`abl:${target}:10`) || 0) >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        '「嗯～…哈啊啊…这、这样就可以了吧？…啊～、不要～…嗯嗯呜～！」',
+      ); // :1138
+      kojo.接吻 = 3;
+    } else if (kojo.接吻 <= 1 || game.kojo.口上开关 === 2) {
+      // :1141-1144 それ以外
+      await era.printAndWait('「嗯～…咕～…」'); // :1142
+      await era.printAndWait(`${target_name}把唇移开、不好意思的躲闪着视线………`); // :1143
+      kojo.接吻 = 2;
+    }
+    return 0;
+  }
+
+  // :1153 IF SELECTCOM == 7（自己扒开，CFLAG:308）
+  if (era_flag.selectcom === 7) {
+    // :1155-1167 初めて（CFLAG:308 == 0）
+    if (kojo.自己扒开 === 0) {
+      // :1157-1159 淫乱
+      if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「好的～…张开啦～${heart(1)}…怎么样呢…${sc()}的淫乱小穴…因为想要主人的大肉棒、大大的张开了哦～${heart(1)}」`,
+        ); // :1158
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :1160-1162 爱慕
+        await era.printAndWait(
+          '「虽、虽然很害羞…如果是主人的命令的话…啊～～…讨厌…爱液流出来了～～………嗯」',
+        ); // :1161
+      } else {
+        // :1163-1165 それ以外（爱無し）
+        await era.printAndWait('「咕呜…这、这样…是不对的…」'); // :1164
+      }
+      kojo.自己扒开 = 1;
+      return 0;
+    }
+
+    // :1169-1187 二回目以降
+    // 原文二次推进写进 CFLAG:306（胸爱抚），不是 308
+    // :1171-1173 淫乱
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢${heart(1)}」`,
+      ); // :1172
+      kojo.胸爱抚 = 5;
+    } else if (
+      // :1175-1177 爱慕
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「啊啊…不要老是盯着这里看嘛…一被主人看着里面…${scf()}、${sc()}…就好有感觉…要变得…奇怪了～」`,
+      ); // :1176
+      kojo.胸爱抚 = 4;
+    } else if (
+      // :1179-1181 露出癖Lv3以上
+      (era.get(`abl:${target}:17`) || 0) >= 3 &&
+      (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait('「啊啊～好有感觉～…小穴被看着好有感觉啊………」'); // :1180
+      kojo.胸爱抚 = 3;
+    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 === 2) {
+      // :1183-1185 それ以外（爱無し、露出癖Lv3未満）
+      await era.printAndWait('「咕呜～…求你了…别看了…不要看那种地方…」'); // :1184
+      kojo.胸爱抚 = 2;
     }
     return 0;
   }
