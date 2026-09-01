@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-2968', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3074', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -14829,11 +14829,27 @@ const FILES = [
       { src: K0, ref: '2859-2968', any: [/^IF SELECTCOM == 27$/m] },
       { src: K0, ref: '2870', any: [/ELSEIF TALENT:TARGET:85 == 1/] },
       { src: K0, ref: '2896', any: [/ELSEif RAND:2 == 0/] },
-      { src: K0, ref: '2911', any: [/ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:328 <= 5/] },
-      { src: K0, ref: '2919', any: [/ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4/] },
-      { src: K0, ref: '2940', any: [/ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3/] },
+      {
+        src: K0,
+        ref: '2911',
+        any: [/ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:328 <= 5/],
+      },
+      {
+        src: K0,
+        ref: '2919',
+        any: [/ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4/],
+      },
+      {
+        src: K0,
+        ref: '2940',
+        any: [/ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3/],
+      },
       { src: K0, ref: '2947', any: [/ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2/] },
-      { src: K0, ref: '2958', any: [/ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2/] },
+      {
+        src: K0,
+        ref: '2958',
+        any: [/ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2/],
+      },
       { src: K0, ref: '2859', any: [/IF SELECTCOM == 27/m] },
       { src: K0, ref: '2861', any: [/\tIF CFLAG:TARGET:328 == 0/m] },
       { src: K0, ref: '2863', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
@@ -15121,6 +15137,223 @@ const FILES = [
         ],
       },
       { src: K0, ref: '2964', any: [/\t\t\tCFLAG:328 = 2/m] },
+      { src: K0, ref: '2973', any: [/IF\ SELECTCOM\ ==\ 28/m] },
+      { src: K0, ref: '2973-3074', any: [/^IF SELECTCOM == 28$/m] },
+      { src: K0, ref: '2973', any: [/IF SELECTCOM == 28/m] },
+      { src: K0, ref: '2975', any: [/\tIF CFLAG:TARGET:329 == 0/m] },
+      { src: K0, ref: '2977', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '2978',
+        any: [
+          /「啊啊～…屁眼变的好舒服啊…额呵呵、%SELF_CALL\(TARGET\)%也很舒服哦%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2980-2981',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      { src: K0, ref: '2983', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '2984',
+        any: [
+          /「啊～啊啊～…被用这种姿势…插进…屁眼…里面去了…啊～～…%SELF_CALL\(TARGET\)%…已经完全混乱了…能好好抱我吗？」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '2986-2987',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      {
+        src: K0,
+        ref: '2989-2990',
+        any: [/「啊啊～…插进…里面去了～…屁股眼变的奇怪了…」/],
+      },
+      { src: K0, ref: '2992-2993', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '2995-2996', any: [/\t\tCFLAG:TARGET:329 = 1/m] },
+      {
+        src: K0,
+        ref: '2998-3000',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3001', any: [/\t\t\tIF RAND:3 == 0/m] },
+      {
+        src: K0,
+        ref: '3002',
+        any: [/「啊啊～…啊～啊～～！用力插啊～～～！%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3003',
+        any: [
+          /「咿啊啊～啊～…呀～啊啊啊～～！屁股眼被撑开了～…变的奇怪了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3005', any: [/\t\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3006',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被調教出了快感、一将鸡鸡连根吞下、%SAVESTR:TARGET%就抱住%SAVESTR:PLAY/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3007-3008',
+        any: [
+          /%SAVESTR:TARGET%每次被从下方抽插肛门就会用力抱住%SAVESTR:PLAYER%在耳边发出娇喘………/,
+        ],
+      },
+      { src: K0, ref: '3010', any: [/\t\t\tELSEIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3011',
+        any: [
+          /「呜啊～啊啊～…啊啊～！喜欢肛交～好喜欢～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3012', any: [/「啊啊～…更多的…更多的欺负我吧～…♪」/] },
+      { src: K0, ref: '3014-3015', any: [/\t\t\t\tSIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3016-3017',
+        any: [
+          /「呀啊啊～…好爽啊～～～～～屁股的…洞…好…爽…好…爽啊～～…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3018',
+        any: [
+          /「更多的…欺负欺负我吧～…除了大肉棒已经什么都不想了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3020-3021', any: [/\t\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '3023', any: [/\t\t\tCFLAG:329 = 7/m] },
+      {
+        src: K0,
+        ref: '3025',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:329 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3027', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3028',
+        any: [
+          /「啊啊～…啊～啊～～！再插…再用力插啊～！%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3029',
+        any: [
+          /「呀啊啊～啊～…呀～啊啊啊～～！屁股眼被撑开了～…变的奇怪了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3030',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门一将%SAVESTR:PLAYER%的鸡鸡连根吞下、%SAVESTR:TARGET%就抱住%SAV/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3031-3032',
+        any: [/「啊啊～…啊～啊～～！用力插啊～！%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3033',
+        any: [
+          /「呀啊啊～啊～…呀～啊啊啊～～！屁股眼被撑开了～…变的奇怪了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3034',
+        any: [/%SAVESTR:TARGET%每次被从下方抽插肛门就会发出娇喘声………/],
+      },
+      { src: K0, ref: '3036', any: [/\t\t\tCFLAG:329 = 6/m] },
+      {
+        src: K0,
+        ref: '3038',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3039', any: [/\t\t\tIF RAND:2 == 0/m] },
+      { src: K0, ref: '3040', any: [/「啊啊～…啊～…更加…激烈一点吧～～…♪」/] },
+      {
+        src: K0,
+        ref: '3041',
+        any: [
+          /「这个尻穴…已经变成…主人的専用物了…啊～咿呀啊～啊啊～！更多的爱我吧～！」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3042-3043',
+        any: [
+          /「嗯咿～…啊～啊啊啊～…明明…这么被这么粗暴地对待…但是好舒服啊～～…」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3044',
+        any: [
+          /「想永远被主人爱着～…啊～啊啊～哈啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3047-3048', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '3049', any: [/\t\t\tCFLAG:329 = 5/m] },
+      {
+        src: K0,
+        ref: '3051',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:329 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3052',
+        any: [/「啊～…啊啊～…请再继续…动起来吧…好喜欢这样…」/],
+      },
+      { src: K0, ref: '3054-3055', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '3056', any: [/\t\t\tCFLAG:329 = 4/m] },
+      {
+        src: K0,
+        ref: '3058',
+        any: [/\t\tELSEIF ABL:3 >= 3 && \(CFLAG:329 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '3059',
+        any: [
+          /「啊啊～…啊…啊～～…咕呜呜呜～…要变成…%SELF_CALL\(TARGET\)%的玩具了～…啊～～♪」/,
+        ],
+      },
+      { src: K0, ref: '3061-3062', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '3063', any: [/\t\t\tCFLAG:329 = 3/m] },
+      {
+        src: K0,
+        ref: '3065',
+        any: [/\t\tELSEIF  CFLAG:329 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3066',
+        any: [/「啊啊～…不要～…好难受…再这样下去…真的…啊啊～」/],
+      },
+      { src: K0, ref: '3068-3069', any: [/\t\t\tSIF TALENT:TARGET:105/m] },
+      { src: K0, ref: '3070', any: [/\t\t\tCFLAG:329 = 2/m] },
     ],
   },
 
