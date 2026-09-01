@@ -1679,13 +1679,13 @@ export default [
     desc: 'M1780 K6 COM 助手调教守卫删（ASSIPLAY 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
-    // :681
-    return 0; // :681
-  } // :681`,
+    // :680-681
+    return 0; // :680-681
+  } // :680-681`,
     replace: `  if (false) {
-    // :681 变异
-    return 0; // :681
-  } // :681`,
+    // :680-681 变异
+    return 0; // :680-681
+  } // :680-681`,
     tests: ['kojo-k6-wicked'],
     must_mention: '助手调教（ASSI > 0 && ASSIPLAY）：静默跳过',
   },
@@ -1693,13 +1693,13 @@ export default [
     desc: 'M1781 K6 COM 口塞守卫删（TEQUIP:45 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
-    // :684
-    return 0; // :684
-  } // :684`,
+    // :683-684
+    return 0; // :683-684
+  } // :683-684`,
     replace: `  if (false && era_flag.selectcom !== 45) {
-    // :684 变异
-    return 0; // :684
-  } // :684`,
+    // :683-684 变异
+    return 0; // :683-684
+  } // :683-684`,
     tests: ['kojo-k6-wicked'],
     must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
@@ -1707,13 +1707,13 @@ export default [
     desc: 'M1782 K6 COM 失神守卫删（TFLAG:899 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  if (game.train.失神) {
-    // :687
-    return 0; // :687
-  } // :687`,
+    // :686-687
+    return 0; // :686-687
+  } // :686-687`,
     replace: `  if (false) {
-    // :687 变异
-    return 0; // :687
-  } // :687`,
+    // :686-687 变异
+    return 0; // :686-687
+  } // :686-687`,
     tests: ['kojo-k6-wicked'],
     must_mention: '失神（TFLAG:899）：静默跳过',
   },
@@ -1721,13 +1721,13 @@ export default [
     desc: 'M1783 K6 COM 崩坏守卫删（TALENT:9 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  if ((era.get(\`talent:\${target}:9\`) || 0) === 1) {
-    // :690
-    return 0; // :690
-  } // :690`,
+    // :689-690
+    return 0; // :689-690
+  } // :689-690`,
     replace: `  if (false) {
-    // :690 变异
-    return 0; // :690
-  } // :690`,
+    // :689-690 变异
+    return 0; // :689-690
+  } // :689-690`,
     tests: ['kojo-k6-wicked'],
     must_mention: '崩坏（TALENT:9）：静默跳过',
   },
@@ -1737,12 +1737,12 @@ export default [
     find: `  if (era.get(\`tequip:\${target}:89\`)) {
     // :692
     await dog_kojo_6(rand_n); // CALL DOG_KOJO_6 // :693
-    return 0; // :694
-  } // :695`,
+    return 0; // :693-694
+  } // :695-696`,
     replace: `  if (era.get(\`tequip:\${target}:89\`)) {
     // :692
-    return 0; // :694 变异
-  } // :695`,
+    return 0; // :693-694 变异
+  } // :695-696`,
     tests: ['kojo-k6-wicked'],
     must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_6',
   },
@@ -1752,12 +1752,12 @@ export default [
     find: `  if (era.get(\`tequip:\${target}:55\`)) {
     // :697
     await colosseum_kojo_6(rand_n); // CALL COLOSSEUM_KOJO_6 // :698
-    return 0; // :699
-  } // :700`,
+    return 0; // :698-699
+  } // :698-700`,
     replace: `  if (era.get(\`tequip:\${target}:55\`)) {
     // :697
-    return 0; // :699 变异
-  } // :700`,
+    return 0; // :698-699 变异
+  } // :698-700`,
     tests: ['kojo-k6-wicked'],
     must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_6',
   },
