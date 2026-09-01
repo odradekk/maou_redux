@@ -1840,4 +1840,44 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '肛门侍奉二次淫乱+侍奉写 5',
   },
+  {
+    desc: 'M1883 K0 打屁股首次状态推进写错（CFLAG:341 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.打屁股 = 1; // :4010-4011',
+    replace: '      kojo.打屁股 = 2; // :4010-4011',
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股首次推进到 1',
+  },
+  {
+    desc: 'M1884 K0 打屁股二次淫乱+抖M门槛错位（CFLAG:341 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 3 &&
+        (kojo.打屁股 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4013-4015`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 3 &&
+        (kojo.打屁股 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4013-4015`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股二次：淫乱+抖M写 5 / 末支须 FLAG:7==2 / 阈值闸',
+  },
+  {
+    desc: 'M1885 K0 打屁股二次淫乱+抖M写回错档（CFLAG:341 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.打屁股 = 5; // :4018',
+    replace: '        kojo.打屁股 = 4; // :4018',
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股二次淫乱+抖M写 5',
+  },
+  {
+    desc: 'M1886 K0 打屁股二次末支 AND 改成 OR（FLAG:7==2 闸失效）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      } else if (kojo.打屁股 <= 1 && game.kojo.口上开关 === 2) {',
+    replace: '      } else if (kojo.打屁股 <= 1 || game.kojo.口上开关 === 2) {',
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股二次：淫乱+抖M写 5 / 末支须 FLAG:7==2 / 阈值闸',
+  },
 ];

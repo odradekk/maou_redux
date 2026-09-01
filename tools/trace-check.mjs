@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4001', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4037', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -17643,6 +17643,92 @@ const FILES = [
         ],
       },
       { src: K0, ref: '3997', any: [/\t\t\tCFLAG:338 = 2/m] },
+      { src: K0, ref: '4006', any: [/IF\ SELECTCOM\ ==\ 40/m] },
+      { src: K0, ref: '4006-4037', any: [/^IF SELECTCOM == 40$/m] },
+      { src: K0, ref: '4006', any: [/IF SELECTCOM == 40/m] },
+      { src: K0, ref: '4008', any: [/\tIF CFLAG:TARGET:341 == 0/m] },
+      {
+        src: K0,
+        ref: '4009',
+        any: [/「呀啊啊～！…啊啊～…为、为什么要打我啊～…咿～！不要打～！」/],
+      },
+      { src: K0, ref: '4010-4011', any: [/\t\tCFLAG:TARGET:341 = 1/m] },
+      {
+        src: K0,
+        ref: '4013-4015',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:341 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4016',
+        any: [
+          /「啊～…咿呀～～…啊～～！嗯呼呜…啊～…哈啊啊啊啊～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4017',
+        any: [
+          /%SAVESTR:TARGET%像引诱你似的左右摇着屁股、每次被打就会发出娇艳的呻吟声、爱液从大腿上垂落下来………/,
+        ],
+      },
+      { src: K0, ref: '4018', any: [/\t\t\tCFLAG:TARGET:341 = 5/m] },
+      {
+        src: K0,
+        ref: '4020',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:341 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4021',
+        any: [/「咿呀～～…啊～…哈唔嗯～…啊啊～…请更多的…更多的打我吧………」/],
+      },
+      {
+        src: K0,
+        ref: '4022',
+        any: [
+          /%SAVESTR:TARGET%像引诱你似的左右摇着屁股、每次被打都会发出色气满满的声音………/,
+        ],
+      },
+      { src: K0, ref: '4023', any: [/\t\t\tCFLAG:TARGET:341 = 4/m] },
+      {
+        src: K0,
+        ref: '4025',
+        any: [
+          /\t\tELSEIF MARK:0 == 3 && MARK:2 == 3 && \(CFLAG:341 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4026',
+        any: [/「嗯～…咕呜～啊～…啊～～…咿～…咕、这、这样的…啊啊～！」/],
+      },
+      {
+        src: K0,
+        ref: '4027',
+        any: [/%SAVESTR:TARGET%已经放弃了似的自己把屁股伸出来承受着击打………/],
+      },
+      { src: K0, ref: '4028', any: [/\t\t\tCFLAG:TARGET:341 = 3/m] },
+      {
+        src: K0,
+        ref: '4030',
+        any: [/\t\tELSEIF CFLAG:341 <= 1 && FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4031',
+        any: [/「啊啊～…咕～…咿～…好痛～好痛啊～…请你住手吧～～～！」/],
+      },
+      {
+        src: K0,
+        ref: '4032',
+        any: [/%SAVESTR:TARGET%泪流不止悲痛地叫喊着、承受着屁股上的击打………/],
+      },
+      { src: K0, ref: '4033', any: [/\t\t\tCFLAG:TARGET:341 = 2/m] },
     ],
   },
 

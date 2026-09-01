@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 40; // 打屁股——COM37 落地后改用尚未填的指令
+    era_flag.selectcom = 41; // 鞭——COM40 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 40 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 41 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -2989,6 +2989,83 @@ test('肛门侍奉二次：淫乱+侍奉写 5 / 阈值闸', async () => {
   });
   await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('打屁股首次：推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 40;
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呀啊啊～！…啊啊～…为、为什么要打我啊～…咿～！不要打～！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:341'), 1, '打屁股首次推进到 1');
+});
+
+test('打屁股二次：淫乱+抖M写 5 / 末支须 FLAG:7==2 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 40;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 3);
+    f.store.set('cflag:31:341', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '「啊～…咿呀～～…啊～～！嗯呼呜…啊～…哈啊啊啊啊～～♡」',
+    '琼像引诱你似的左右摇着屁股、每次被打就会发出娇艳的呻吟声、爱液从大腿上垂落下来………',
+  ]);
+  assert.equal(r0.store.get('cflag:31:341'), 5, '打屁股二次淫乱+抖M写 5');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 40;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 3);
+    f.store.set('cflag:31:341', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=4 且 FLAG:7==1 仍出声（门槛是 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:341'), 5);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 40;
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 3);
+    f.store.set('cflag:31:341', 5);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+
+  // 末支是 AND FLAG:7==2，不是 OR：cflag=1 且 FLAG:7==1 时沉默
+  const last_and = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 40;
+    f.store.set('cflag:31:341', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(last_and);
+  assert.deepEqual(last_and.text_lines(), []);
+
+  const last_on = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 40;
+    f.store.set('cflag:31:341', 1);
+    f.store.set('flag:7', 2);
+  });
+  await speak_k0(last_on);
+  assert.ok(
+    last_on.text_lines().length > 0,
+    '末支 cflag=1 且 FLAG:7==2 才出声',
+  );
+  assert.equal(last_on.store.get('cflag:31:341'), 2);
 });
 
 // —— 存根清单核对 ——
