@@ -1776,4 +1776,36 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '全身擦洗二次淫乱+侍奉写 5',
   },
+  {
+    desc: 'M1877 K0 骑乘位肛交首次状态推进写错（CFLAG:337 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.骑乘位肛交 = 1; // :3865-3866',
+    replace: '      kojo.骑乘位肛交 = 2; // :3865-3866',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位肛交首次推进到 1',
+  },
+  {
+    desc: 'M1878 K0 骑乘位肛交二次淫乱+A感觉门槛错位（CFLAG:337 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.骑乘位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :3868-3870`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.骑乘位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3868-3870`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位肛交二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M1879 K0 骑乘位肛交二次淫乱+A感觉写回错档（CFLAG:337 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.骑乘位肛交 = 7; // :3888',
+    replace: '        kojo.骑乘位肛交 = 6; // :3888',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位肛交二次淫乱+A感觉写 7',
+  },
 ];

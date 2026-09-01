@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3835', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-3955', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -17238,6 +17238,299 @@ const FILES = [
         any: [/「啊啊～…哈…嗯唔…啊、这、这样做是吗………」/],
       },
       { src: K0, ref: '3831', any: [/\t\t\tCFLAG:336 = 2/m] },
+      { src: K0, ref: '3840', any: [/IF\ SELECTCOM\ ==\ 36/m] },
+      { src: K0, ref: '3840-3955', any: [/^IF SELECTCOM == 36$/m] },
+      { src: K0, ref: '3840', any: [/IF SELECTCOM == 36/m] },
+      { src: K0, ref: '3842', any: [/\tIF CFLAG:TARGET:337 == 0/m] },
+      { src: K0, ref: '3844', any: [/\t\tIF TALENT:TARGET:76 == 1/m] },
+      {
+        src: K0,
+        ref: '3845',
+        any: [
+          /「啊啊～…快看…大肉棒被%SELF_CALL\(TARGET\)%的…屁股眼…啊～哈啊啊啊…全部吞进去了～咕呜～%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3847-3848',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      { src: K0, ref: '3850', any: [/\t\tELSEIF TALENT:TARGET:85 == 1/m] },
+      {
+        src: K0,
+        ref: '3851',
+        any: [
+          /「嗯啊…哈啊啊…屁股眼…被撑开了………嗯咕呜～…先、先不要动哦～…就让%SELF_CALL\(TARGET\)%来…全力地动吧♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3853-3854',
+        any: [/\t\t\tSIF ABL:3 >= 3 && TALENT:TARGET:105/m],
+      },
+      {
+        src: K0,
+        ref: '3856-3857',
+        any: [/「咕呜…不要全放进去啊…嗯～…嗯～…呜呜呜呜呜～！」/],
+      },
+      { src: K0, ref: '3859', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3860',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门一将鸡鸡连根吞下、%SAVESTR:TARGET%就发出了悲鳴………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3861-3862',
+        any: [/%SAVESTR:TARGET%被从下方抽插着肛门、痛苦的呻吟着………/],
+      },
+      { src: K0, ref: '3865-3866', any: [/\t\tCFLAG:TARGET:337 = 1/m] },
+      {
+        src: K0,
+        ref: '3868-3870',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3871', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3872',
+        any: [
+          /「啊～…嗯呼呜呜呜…不行不行不行了…屁股眼被…大肉棒…全部…插进来了～…啊啊啊啊啊～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3873',
+        any: [
+          /%SAVESTR:TARGET%放弃抵抗苦闷的喘息着、用肛门将阴茎全部收纳进来。/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3874',
+        any: [
+          /「哈咕呜…呜啊啊～…啊啊～…呜～…呼呜～…啊啊～…已经、已经…要不行了…已经…停不下来了～～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3876', any: [/\t\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3877',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被開発得品尝到了快感、用肛门将阴茎连根吞入、%SAVESTR:TARGET%激烈的上下动着腰………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3879-3880',
+        any: [/「嗯咿～…咿呜…啊啊～屁股眼好爽啊～%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3881',
+        any: [
+          /「爽爆了～…总觉得其他事情都已经变的无所谓了～…啊啊～已经不能不去侍奉主人了啊～」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3882',
+        any: [
+          /「啊啊～啊～哈啊啊啊～！屁股眼…更多的欺负～欺负～欺负吧啊～～～～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3884', any: [/\t\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3885',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被開発得品尝到了快感、%SAVESTR:TARGET%不断地上下动着腰用肛门贪求着快感…/,
+        ],
+      },
+      { src: K0, ref: '3888', any: [/\t\tCFLAG:337 = 7/m] },
+      {
+        src: K0,
+        ref: '3890',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:337 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3891',
+        any: [/「嗯咿～…咿呜…啊啊～屁股眼好爽啊～%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '3892',
+        any: [
+          /「爽爆了～…总觉得其他事情都已经变的无所谓了～…啊啊～已经不能不去侍奉主人了啊～」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3893',
+        any: [
+          /「啊啊～啊～哈啊啊啊～！屁股眼…更多的欺负～欺负～欺负吧啊～～～～～～～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3895', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3896',
+        any: [
+          /虽然%SAVESTR:TARGET%的肛门还在纠正鈍感的開発途中、但%SAVESTR:TARGET%还是淫猥地揺着腰身、用肛门品味起了阴茎…/,
+        ],
+      },
+      { src: K0, ref: '3898', any: [/\t\t\tCFLAG:337 = 6/m] },
+      {
+        src: K0,
+        ref: '3900',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '3901', any: [/\t\t\tIF RAND:2 == 0/m] },
+      {
+        src: K0,
+        ref: '3902',
+        any: [/「啊～啊啊～…啊啊～…用屁股眼…竟然这么的有感觉～………」/],
+      },
+      {
+        src: K0,
+        ref: '3903',
+        any: [
+          /「已经…再也离不开主人了～～～…啊～啊～～啊呼呜～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3905', any: [/\t\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3906',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被開発而觉醒了快感、%SAVESTR:TARGET%一边前后摇晃着纤细的腰一边品味着肛门的快感……/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3907-3908',
+        any: [/%SAVESTR:TARGET%一边前后摇晃着纤细的腰一边品味着肛门的快感………/],
+      },
+      {
+        src: K0,
+        ref: '3910-3911',
+        any: [/「嗯～…啊啊～啊～～！咿呀～…哈呜呜嗯～…咿呀～♪」/],
+      },
+      {
+        src: K0,
+        ref: '3912',
+        any: [
+          /「啊啊～…对不起～…明明想好好奉仕的…但因为屁股眼实在太舒服了…腰停不下来了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3914', any: [/\t\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3915',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被开发的能产生出快感了、%SAVESTR:TARGET%因为这种快乐而按捺不住了、腰身的上下运动已/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3916-3917',
+        any: [
+          /%SAVESTR:TARGET%由于肛门的快楽而按捺不住了、腰身的上下运动已经停不下来了的样子………/,
+        ],
+      },
+      { src: K0, ref: '3920', any: [/\t\tCFLAG:337 = 5/m] },
+      {
+        src: K0,
+        ref: '3922',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:337 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3923',
+        any: [/「嗯～…啊啊～啊～～！咿呀～…哈呜呜嗯～…咿呀～♪」/],
+      },
+      {
+        src: K0,
+        ref: '3924',
+        any: [
+          /「啊啊～…对不起～…明明想好好奉仕的…但因为屁股眼实在太舒服了…腰停不下来了～%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '3926', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3927',
+        any: [
+          /虽然%SAVESTR:TARGET%的肛门还在纠正鈍感的開発途中、但因为是被所爱慕的%SAVESTR:PLAYER%侵犯的缘故、开心的腰都停/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3928-3929',
+        any: [
+          /%SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%侵犯了、%SAVESTR:TARGET%一边开心地娇喘着一边上下动着/,
+        ],
+      },
+      { src: K0, ref: '3931', any: [/\t\t\tCFLAG:337 = 4/m] },
+      {
+        src: K0,
+        ref: '3933',
+        any: [/\t\tELSEIF ABL:3 >= 3 && \(CFLAG:337 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '3934',
+        any: [/「啊咿～～…不行…不行了…屁股眼爽到不行了～…啊～啊啊～！」/],
+      },
+      { src: K0, ref: '3936', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3937',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门被開発了、%SAVESTR:TARGET%一边呻吟着一边上下动着腰………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3938-3939',
+        any: [/%SAVESTR:TARGET%觉醒了肛门的快感、一边呻吟一边上下动着腰………/],
+      },
+      { src: K0, ref: '3941', any: [/\t\t\tCFLAG:337 = 3/m] },
+      {
+        src: K0,
+        ref: '3943',
+        any: [/\t\tELSEIF  CFLAG:337 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3944',
+        any: [/「咕～…呜呜～…嗯嗯～…已经…不想再动了～…啊啊～…啊呜～！」/],
+      },
+      { src: K0, ref: '3946', any: [/\t\t\tIF TALENT:TARGET:105/m] },
+      {
+        src: K0,
+        ref: '3947',
+        any: [
+          /%SAVESTR:TARGET%鈍感的肛门一将鸡鸡连根吞下、%SAVESTR:TARGET%就发出了悲鳴………/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3948-3949',
+        any: [/%SAVESTR:TARGET%被从下方抽插着肛门、痛苦的呻吟着………/],
+      },
+      { src: K0, ref: '3951', any: [/\t\t\tCFLAG:337 = 2/m] },
     ],
   },
 
