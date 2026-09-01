@@ -658,6 +658,19 @@ test('AFTERTRAIN: aftertrain_masturbation_check 妄想对象 q=0 主人分支', 
   );
 });
 
+test('AFTERTRAIN: leftover_q 把妄想对象交给 SELF_KOJO', async () => {
+  const { fixture } = seed_aftertrain_world({ assi: 1 });
+  const { aftertrain_masturbation_check, peek_aftertrain_q } =
+    fixture.load_module('event/event-aftertrain');
+  fixture.store.set('abl:17:0', 3);
+  fixture.store.set('abl:17:11', 2);
+  fixture.store.set('abl:17:31', 2);
+  fixture.store.set('abl:17:22', 4);
+  fixture.store.set('base:17:0', 1000);
+  await aftertrain_masturbation_check(0, 1, () => 2);
+  assert.equal(peek_aftertrain_q(), 1, 'q=1 助手分支必须写入 leftover_q');
+});
+
 test('AFTERTRAIN: aftertrain_masturbation_check 男人阴茎点数分支', async () => {
   const { fixture } = seed_aftertrain_world();
   const { aftertrain_masturbation_check } = fixture.load_module(

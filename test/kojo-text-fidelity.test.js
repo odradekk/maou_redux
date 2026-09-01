@@ -79,6 +79,7 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
+  [/^SELF_CALL\(A\)$/, 'SC'], // EVENT_K 分发前 TARGET=A，与 TARGET 同值
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^SAVESTR:ARG$/, 'ARGNAME'],

@@ -394,4 +394,294 @@ export default [
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
     must_mention: 'TALENT:122 置位 → 哥哥臂',
   },
+  {
+    desc: 'M1540 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.爱抚 = 1; // :893',
+    replace: '      kojo.爱抚 = 2; // :893（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1541 K2 淫乱素质判据错格（TALENT:76 改 77）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :898`,
+    replace: `      if (
+        era.get(\`talent:\${target}:77\`) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :898`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '淫乱分支',
+  },
+  {
+    desc: 'M1542 K2 阈值闸旁路失效（それ以外支 FLAG:7 == 2 改 === 3）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `      } else if (
+        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
+      ) {
+        // :916`,
+    replace: `      } else if (
+        (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+        (kojo.爱抚 <= 1 || game.kojo.口上开关 === 3)
+      ) {
+        // :916`,
+    tests: ['kojo-k2-timid'],
+    must_mention: 'それ以外支 FLAG:7',
+  },
+  {
+    desc: 'M1543 凌辱口上分发回退成写死 call(0)（#233）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: `  const ryou_local = get_kojo_num();
+  if ((ryou_local >= 100 && ryou_local < 140) || ryou_local > 1000) {
+    await ryouzyoku_kojo_family.call(ryou_local - 100, {`,
+    replace: `  const ryou_local = 0;
+  if (true) {
+    await ryouzyoku_kojo_family.call(0, {`,
+    tests: ['kojo-k2-timid'],
+    must_mention: 'GET_KOJO_NUM',
+  },
+  {
+    desc: 'M1546 K2 死斗场守卫删除（TEQUIP:55 改恒 false）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // :854
+    await colosseum_kojo_2(rand_n); // :855`,
+    replace: `  if (false) {
+    // :854
+    await colosseum_kojo_2(rand_n); // :855`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '死斗场（TEQUIP:55）最先',
+  },
+  {
+    desc: 'M1547 K2 助手调教守卫删除（ASSIPLAY 改恒 false）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
+    // :859
+    return 0;
+  }`,
+    replace: `  if (false) {
+    // :859
+    return 0;
+  }`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '助手调教（ASSI > 0 && ASSIPLAY）',
+  },
+  {
+    desc: 'M1548 K2 口塞例外失效（SELECTCOM != 45 改 != 46）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
+    replace:
+      '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 46) {',
+    tests: ['kojo-k2-timid'],
+    must_mention: '口塞中的 45 指令不被头部守卫拦',
+  },
+  {
+    desc: 'M1549 K2 失神守卫删除（TFLAG:899 改恒 false）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `  if (game.train.失神) {
+    // :865
+    return 0;
+  }`,
+    replace: `  if (false) {
+    // :865
+    return 0;
+  }`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '失神（TFLAG:899）：静默跳过',
+  },
+  {
+    desc: 'M1550 K2 崩坏守卫删除（TALENT:9 改恒 false）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) === 1) {
+    // :868
+    return 0;
+  }`,
+    replace: `  if (false) {
+    // :868
+    return 0;
+  }`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '崩坏（TALENT:9）：静默跳过',
+  },
+  {
+    desc: 'M1551 K2 兽奸守卫删除（TEQUIP:89 改恒 false）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // :871
+    return 0;
+  }`,
+    replace: `  if (false) {
+    // :871
+    return 0;
+  }`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '不调 DOG_KOJO_2',
+  },
+  {
+    desc: 'M1552 K2 触手守卫删除（TEQUIP:90 改恒 false）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `  if (era.get(\`tequip:\${target}:90\`)) {
+    // :874
+    return 0;
+  }`,
+    replace: `  if (false) {
+    // :874
+    return 0;
+  }`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '触手（TEQUIP:90）：静默跳过',
+  },
+  {
+    desc: 'M1553 K2 爱慕素质判据错格（TALENT:85 改 86）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :903`,
+    replace: `        era.get(\`talent:\${target}:86\`) === 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :903`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '爱慕分支',
+  },
+  {
+    desc: 'M1554 K2 屈服刻印 Lv3 判据错格（MARK:2 == 3 改 4）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `        (era.get(\`mark:\${target}:2\`) || 0) === 3 &&
+        (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :908`,
+    replace: `        (era.get(\`mark:\${target}:2\`) || 0) === 4 &&
+        (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :908`,
+    tests: ['kojo-k2-timid'],
+    must_mention: '屈服刻印 Lv3',
+  },
+  {
+    desc: 'M1555 K2 舔阴首次推进写错（CFLAG:302 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.舔阴 = 1; // :938',
+    replace: '      kojo.舔阴 = 2; // :938（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'CFLAG:302',
+  },
+  {
+    desc: 'M1556 K2 正常位首次推进写错（CFLAG:321 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.正常位 = 1; // :2021',
+    replace: '      kojo.正常位 = 2; // :2021（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'CFLAG:321',
+  },
+  {
+    desc: 'M1557 K2 穿环首次推进写错（CFLAG:348 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.穿环 = 1; // :4577',
+    replace: '      kojo.穿环 = 2; // :4577（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'CFLAG:348',
+  },
+  {
+    desc: 'M1558 K2 EVENTTRAIN 初调教推进写错（CFLAG:201 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.初调教 = 1; // :166',
+    replace: '      kojo.初调教 = 2; // :166（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'CFLAG:201',
+  },
+  {
+    desc: 'M1559 K2 EVENTEND 屈服低档爱慕判据反相（TALENT:85 == 0 改 == 1）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: `    (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+    era.get(\`talent:\${target}:85\`) === 0
+  ) {
+    // :766`,
+    replace: `    (era.get(\`mark:\${target}:2\`) || 0) <= 1 &&
+    era.get(\`talent:\${target}:85\`) === 1
+  ) {
+    // :766`,
+    tests: ['kojo-k2-timid'],
+    must_mention: 'EVENTEND 普通档必须出声',
+  },
+  {
+    desc: 'M1560 K2 @EVENTEND #LATER 清标志删除（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '    game.kojo.口上存在_2 = 0; // :88',
+    replace: '    // 变异：清标志删除',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'FLAG:102',
+  },
+  {
+    desc: 'M1561 K2 死斗场专用口上入口错号（SELECTCOM == 55 改 54）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '  if (era_flag.selectcom === 55) {\n    // :6631',
+    replace: '  if (era_flag.selectcom === 54) {\n    // :6631',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'COLOSSEUM_KOJO_2 在 selectcom=55',
+  },
+  {
+    desc: 'M1562 K2 DOG_KOJO 首次推进写错（CFLAG:301 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      kojo.爱抚 = 1; // :4737',
+    replace: '      kojo.爱抚 = 2; // :4737（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'DOG_KOJO_2 爱抚首次',
+  },
+  {
+    desc: 'M1563 K2 PALAMCNG 润滑阈值抬一档（PALAMLV[2] 改 [3]）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '  if (P > PALAMLV[2] && kojo.首次润滑Lv2 === 0) {',
+    replace: '  if (P > PALAMLV[3] && kojo.首次润滑Lv2 === 0) {',
+    tests: ['kojo-k2-timid'],
+    must_mention: '润滑首次超过 LV2',
+  },
+  {
+    desc: 'M1564 K2 MARKCNG 苦痛刻印 LV3 入口错档（=== 3 改 === 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '  if (game.system.苦痛刻印变动 === 3 && kojo.苦痛刻印Lv3 === 0) {',
+    replace:
+      '  if (game.system.苦痛刻印变动 === 2 && kojo.苦痛刻印Lv3 === 0) {',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'MARKCNG 苦痛刻印 LV3',
+  },
+  {
+    desc: 'M1565 K2 奖赏后口上 choice == 0 改 9（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '  if (choice === 0) {\n    // :7020',
+    replace: '  if (choice === 9) {\n    // :7020',
+    tests: ['kojo-k2-timid'],
+    must_mention: '哇…我知道了',
+  },
+  {
+    desc: 'M1566 K2 惩罚口上 choice == 0 改 9（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '  if (choice === 0) {\n    // :7100',
+    replace: '  if (choice === 9) {\n    // :7100',
+    tests: ['kojo-k2-timid'],
+    must_mention: '惩罚口上',
+  },
+  {
+    desc: 'M1567 K2 NTR 入口推进写错（CFLAG:650 = 1 改 2）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '    kojo.NTR再捕获 = 1; // :6764',
+    replace: '    kojo.NTR再捕获 = 2; // :6764（变异）',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'CFLAG:650',
+  },
+  {
+    desc: 'M1568 K2 SELF_KOJO leftover_q 助手支入口错档（Q === 1 改 9）（#233）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '    if (Q === 1) {\n      // :5860',
+    replace: '    if (Q === 9) {\n      // :5860',
+    tests: ['kojo-k2-timid'],
+    must_mention: 'SELF_KOJO 助手妄想支出声',
+  },
 ];
