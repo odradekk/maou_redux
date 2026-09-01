@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-4225', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4315', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -18157,6 +18157,269 @@ const FILES = [
         any: [/\tELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2/m],
       },
       { src: K0, ref: '4222', any: [/\t\tCFLAG:380 = 1/m] },
+      { src: K0, ref: '4231', any: [/IF\ SELECTCOM\ ==\ 44 && TEQUIP:44/m] },
+      {
+        src: K0,
+        ref: '4231-4298',
+        any: [/^IF SELECTCOM == 44 && TEQUIP:44$/m],
+      },
+      {
+        src: K0,
+        ref: '4300-4315',
+        any: [/^ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0$/m],
+      },
+      { src: K0, ref: '4231', any: [/IF SELECTCOM == 44 && TEQUIP:44/m] },
+      { src: K0, ref: '4233', any: [/\tIF CFLAG:TARGET:345 == 0/m] },
+      { src: K0, ref: '4235', any: [/\t\tIF TALENT:76 == 1/m] },
+      {
+        src: K0,
+        ref: '4236',
+        any: [/「啊啊啊…请再绑紧一点～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '4237',
+        any: [
+          /%SAVESTR:TARGET%的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………/,
+        ],
+      },
+      { src: K0, ref: '4239', any: [/\t\tELSEIF TALENT:85 == 1/m] },
+      { src: K0, ref: '4240', any: [/「这就是所谓的爱的奴隷…吧…？」/] },
+      {
+        src: K0,
+        ref: '4241',
+        any: [
+          /「额呵呵、%SELF_CALL\(TARGET\)%即使没被绳子绑起来…也不会想逃走啦………♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4242',
+        any: [
+          /%SAVESTR:TARGET%的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………/,
+        ],
+      },
+      { src: K0, ref: '4244-4245', any: [/「哈啊哈啊…这、这样子…没事…」/] },
+      {
+        src: K0,
+        ref: '4246',
+        any: [
+          /%SAVESTR:TARGET%的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………/,
+        ],
+      },
+      { src: K0, ref: '4248-4249', any: [/\t\tCFLAG:TARGET:345 = 1/m] },
+      {
+        src: K0,
+        ref: '4251-4253',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 8 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4254',
+        any: [/「啊啊啊～…被绳子绑的紧紧的～%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '4255',
+        any: [
+          /「啊啊～…明明被绳子绑着应该感到又痛又怕的…啊～啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4256',
+        any: [/%SAVESTR:TARGET%被绳子绑着、爱液不停地滴落下来………/],
+      },
+      { src: K0, ref: '4257', any: [/\t\t\tCFLAG:TARGET:345 = 9/m] },
+      {
+        src: K0,
+        ref: '4259',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:345 <= 7 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4260',
+        any: [/「是～…我喜欢被…捆绑呢%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '4261',
+        any: [/「因为喜欢…所以请更多的…绑我吧………%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '4262',
+        any: [/%SAVESTR:TARGET%扭扭捏捏的用期待的眼神看着你………/],
+      },
+      { src: K0, ref: '4263', any: [/\t\t\tCFLAG:TARGET:345 = 8/m] },
+      {
+        src: K0,
+        ref: '4265',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:345 <= 6 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4266',
+        any: [/「嗯呼呜…要被绳子吃掉了…好爽～…%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: K0,
+        ref: '4267',
+        any: [/%SAVESTR:TARGET%被粗绳子绑着显得很愉悦的样子………/],
+      },
+      { src: K0, ref: '4268', any: [/\t\t\tCFLAG:TARGET:345 = 7/m] },
+      {
+        src: K0,
+        ref: '4270',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 5 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4271',
+        any: [
+          /「啊啊啊…果然%SELF_CALL\(TARGET\)%是…主人的所有物…再次得到確認了…♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4272',
+        any: [
+          /「啊～～…被绑着…虽然痛…但是好舒服～…咿呀～～！啊～～！啊啊～♪」」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4273',
+        any: [/%SAVESTR:TARGET%露出发情的母狗般的表情被粗绳子绑住了………/],
+      },
+      { src: K0, ref: '4274', any: [/\t\t\tCFLAG:TARGET:345 = 6/m] },
+      {
+        src: K0,
+        ref: '4276',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:345 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      { src: K0, ref: '4277', any: [/「嗯呜唔…总觉的…感觉变的好奇怪～…♪」/] },
+      {
+        src: K0,
+        ref: '4278',
+        any: [
+          /「请再绑紧一点…让%SELF_CALL\(TARGET\)%再也逃不出主人的五指山………♪」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4279',
+        any: [/%SAVESTR:TARGET%一脸愉悦地被粗绳子绑住………/],
+      },
+      { src: K0, ref: '4280', any: [/\t\t\tCFLAG:TARGET:345 = 5/m] },
+      {
+        src: K0,
+        ref: '4282',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:345 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4283',
+        any: [
+          /「啊啊啊…请再绑紧一点～…这就是%SELF_CALL\(TARGET\)%是主人的所有物的证据…啊啊啊啊………」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4284',
+        any: [/%SAVESTR:TARGET%一脸陶醉地被粗绳子绑住………/],
+      },
+      { src: K0, ref: '4285', any: [/\t\t\tCFLAG:TARGET:345 = 4/m] },
+      {
+        src: K0,
+        ref: '4287',
+        any: [/\t\tELSEIF ABL:21 >= 3 && \(CFLAG:345 <= 2 \|\| FLAG:7 == 2\)/m],
+      },
+      {
+        src: K0,
+        ref: '4288',
+        any: [
+          /「啊啊啊…为什么…明明被绑起来了…那个地方却痒痒的…啊～、我刚才什么也没说…什么也没有」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4289',
+        any: [
+          /%SAVESTR:TARGET%的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………/,
+        ],
+      },
+      { src: K0, ref: '4290', any: [/\t\t\tCFLAG:TARGET:345 = 3/m] },
+      {
+        src: K0,
+        ref: '4292',
+        any: [/\t\tELSEIF CFLAG:345 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      { src: K0, ref: '4293', any: [/「哈啊～…啊～…嗯～…这样、不算什么………」/] },
+      {
+        src: K0,
+        ref: '4294',
+        any: [
+          /%SAVESTR:TARGET%的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………/,
+        ],
+      },
+      { src: K0, ref: '4295', any: [/\t\t\tCFLAG:TARGET:345 = 2/m] },
+      {
+        src: K0,
+        ref: '4300',
+        any: [/ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0/m],
+      },
+      {
+        src: K0,
+        ref: '4302',
+        any: [
+          /\tIF TALENT:TARGET:76 == 1 && \(CFLAG:385 < 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4303',
+        any: [
+          /「哈啊…哈啊…啊啊…明明可以再绑一会儿的…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      { src: K0, ref: '4304', any: [/\t\tCFLAG:385 = 2/m] },
+      {
+        src: K0,
+        ref: '4306',
+        any: [
+          /\tELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:385 < 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '4307',
+        any: [/「额呵呵…下次什么时候再把我绑起来吧…？」/],
+      },
+      { src: K0, ref: '4308', any: [/\t\tCFLAG:385 = 2/m] },
+      {
+        src: K0,
+        ref: '4310',
+        any: [/\tELSEIF CFLAG:385 < 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '4311',
+        any: [/「哈啊哈啊…这、这样子…啊啊～会留下痕迹的………」/],
+      },
+      { src: K0, ref: '4312', any: [/\t\tCFLAG:385 = 1/m] },
     ],
   },
 

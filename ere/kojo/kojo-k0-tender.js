@@ -1,5 +1,5 @@
 /**
- * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩分支（issue #231）。
+ * @file 慈爱性格口上 K0：指令口上的爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子分支（issue #231）。
  *
  * 源: target/ERB/口上/EVENT_K0_慈愛.ERB  @EVENTTRAIN #PRI（:73-77，存在
  *     标志 FLAG:100）@EVENTEND #LATER（:79-81，清标志）
@@ -35,7 +35,8 @@
  *     打屁股 CFLAG:341 状态机 :4006-4037；
  *     鞭 CFLAG:342 状态机 :4042-4105；
  *     针 CFLAG:343 状态机 :4110-4170；
- *     眼罩开始 CFLAG:344 :4176-4212、脱着 CFLAG:380 :4214-4225）
+ *     眼罩开始 CFLAG:344 :4176-4212、脱着 CFLAG:380 :4214-4225；
+ *     绳子开始 CFLAG:345 :4231-4298、脱着 CFLAG:385 :4300-4315）
 
 
 
@@ -113,7 +114,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-4225）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩。
+ * @KOJO_MESSAGE_COM_0（:674-4315）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子。
 
 
 
@@ -6382,6 +6383,159 @@ async function kojo_message_com_0(rand) {
       // :4220-4221
       await era.printAndWait(''); // :4220-4221
       kojo.眼罩着脱 = 1; // :4222
+    }
+    return 0;
+  }
+
+  // :4231 IF SELECTCOM == 44 && TEQUIP:44（绳子开始，CFLAG:345）
+  if (era_flag.selectcom === 44 && era.get(`tequip:${target}:44`)) {
+    const masochism = era.get(`abl:${target}:21`) || 0;
+
+    if (kojo.绳子 === 0) {
+      // :4233
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :4235
+        await era.printAndWait(`「啊啊啊…请再绑紧一点～…${heart(1)}」`); // :4236
+        await era.printAndWait(
+          `${target_name}的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………`,
+        ); // :4237
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :4239
+        await era.printAndWait(`「这就是所谓的爱的奴隶…吧…？」`); // :4240
+        await era.printAndWait(
+          `「额呵呵、${sc()}即使没被绳子绑起来…也不会想逃走啦………♪」`,
+        ); // :4241
+        await era.printAndWait(
+          `${target_name}的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………`,
+        ); // :4242
+      } else {
+        await era.printAndWait(`「哈啊哈啊…这、这样子…没事…」`); // :4244-4245
+        await era.printAndWait(
+          `${target_name}的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………`,
+        ); // :4246
+      }
+      kojo.绳子 = 1; // :4248-4249
+      return 0;
+    } else {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        masochism >= 5 &&
+        (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4251-4253
+        await era.printAndWait(`「啊啊啊～…被绳子绑的紧紧的～${heart(1)}」`); // :4254
+        await era.printAndWait(
+          `「啊啊～…明明被绳子绑着应该感到又痛又怕的…啊～啊啊啊啊啊${heart(1)}」`,
+        ); // :4255
+        await era.printAndWait(
+          `${target_name}被绳子绑着、爱液不停地滴落下来………`,
+        ); // :4256
+        kojo.绳子 = 9; // :4257
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        masochism >= 3 &&
+        (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4259
+        await era.printAndWait(`「是～…我喜欢被…捆绑呢${heart(1)}」`); // :4260
+        await era.printAndWait(
+          `「因为喜欢…所以请更多的…绑我吧………${heart(1)}」`,
+        ); // :4261
+        await era.printAndWait(`${target_name}扭扭捏捏的用期待的眼神看着你………`); // :4262
+        kojo.绳子 = 8; // :4263
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.绳子 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :4265
+        await era.printAndWait(`「嗯呼呜…要被绳子吃掉了…好爽～…${heart(1)}」`); // :4266
+        await era.printAndWait(`${target_name}被粗绳子绑着显得很愉悦的样子………`); // :4267
+        kojo.绳子 = 7; // :4268
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 5 &&
+        (kojo.绳子 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4270
+        await era.printAndWait(
+          `「啊啊啊…果然${sc()}是…主人的所有物…再次得到确认了…♪」`,
+        ); // :4271
+        await era.printAndWait(
+          `「啊～～…被绑着…虽然痛…但是好舒服～…咿呀～～！啊～～！啊啊～♪」」`,
+        ); // :4272
+        await era.printAndWait(
+          `${target_name}露出发情的母狗般的表情被粗绳子绑住了………`,
+        ); // :4273
+        kojo.绳子 = 6; // :4274
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        masochism >= 3 &&
+        (kojo.绳子 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4276
+        await era.printAndWait(`「嗯呜唔…总觉的…感觉变的好奇怪～…♪」`); // :4277
+        await era.printAndWait(
+          `「请再绑紧一点…让${sc()}再也逃不出主人的五指山………♪」`,
+        ); // :4278
+        await era.printAndWait(`${target_name}一脸愉悦地被粗绳子绑住………`); // :4279
+        kojo.绳子 = 5; // :4280
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.绳子 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4282
+        await era.printAndWait(
+          `「啊啊啊…请再绑紧一点～…这就是${sc()}是主人的所有物的证据…啊啊啊啊………」`,
+        ); // :4283
+        await era.printAndWait(`${target_name}一脸陶醉地被粗绳子绑住………`); // :4284
+        kojo.绳子 = 4; // :4285
+      } else if (
+        masochism >= 3 &&
+        (kojo.绳子 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :4287
+        await era.printAndWait(
+          `「啊啊啊…为什么…明明被绑起来了…那个地方却痒痒的…啊～、我刚才什么也没说…什么也没有」`,
+        ); // :4288
+        await era.printAndWait(
+          `${target_name}的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………`,
+        ); // :4289
+        kojo.绳子 = 3; // :4290
+      } else if (kojo.绳子 <= 1 || game.kojo.口上开关 === 2) {
+        // :4292
+        await era.printAndWait(`「哈啊～…啊～…嗯～…这样、不算什么………」`); // :4293
+        await era.printAndWait(
+          `${target_name}的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………`,
+        ); // :4294
+        kojo.绳子 = 2; // :4295
+      }
+      return 0;
+    }
+  }
+
+  // :4300 ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0（绳子脱着，CFLAG:385）
+  if (era_flag.selectcom === 44 && !era.get(`tequip:${target}:44`)) {
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4302
+      await era.printAndWait(
+        `「哈啊…哈啊…啊啊…明明可以再绑一会儿的…${heart(1)}」`,
+      ); // :4303
+      kojo.绳子着脱 = 2; // :4304
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4306
+      await era.printAndWait(`「额呵呵…下次什么时候再把我绑起来吧…？」`); // :4307
+      kojo.绳子着脱 = 2; // :4308
+    } else if (kojo.绳子着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :4310
+      await era.printAndWait(`「哈啊哈啊…这、这样子…啊啊～会留下痕迹的………」`); // :4311
+      kojo.绳子着脱 = 1; // :4312
     }
     return 0;
   }

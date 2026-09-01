@@ -1993,4 +1993,50 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: '眼罩脱着：爱慕写 CFLAG:380 = 2，门槛是 < 不是 <=',
   },
+  {
+    desc: 'M1898 K0 绳子开始首次状态推进写错（CFLAG:345 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.绳子 = 1; // :4248-4249',
+    replace: '      kojo.绳子 = 2; // :4248-4249',
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子首次推进到 1',
+  },
+  {
+    desc: 'M1899 K0 绳子开始二次淫乱+抖M门槛错位（CFLAG:345 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4251-4253`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4251-4253`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子开始二次：淫乱+抖M写 9 / 阈值闸',
+  },
+  {
+    desc: 'M1900 K0 绳子开始二次淫乱+抖M写回错档（CFLAG:345 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.绳子 = 9; // :4257',
+    replace: '        kojo.绳子 = 8; // :4257',
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子开始二次淫乱+抖M写 9',
+  },
+  {
+    desc: 'M1901 K0 绳子脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4302`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.绳子着脱 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4302`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子脱着：淫乱写 CFLAG:385 = 2，门槛是 < 不是 <=',
+  },
 ];

@@ -230,11 +230,11 @@ test('触手（TEQUIP:90）：不输出', async () => {
 test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 44; // 绳子——COM43 落地后改用尚未填的指令
+    era_flag.selectcom = 45; // 口塞——COM44 落地后改用尚未填的指令
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '（指令 44 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
+    '（指令 45 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
   ]);
 });
 
@@ -3275,6 +3275,93 @@ test('眼罩脱着：爱慕写 CFLAG:380 = 2，门槛是 < 不是 <=', async () 
   await speak_k0(at_cap);
   assert.deepEqual(at_cap.text_lines(), []);
   assert.equal(at_cap.store.get('cflag:31:380'), 2, '眼罩着脱阈值闸用 < 2');
+});
+
+test('绳子开始首次：淫乱，推进到 1', async () => {
+  const fixture = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 44;
+    f.store.set('tequip:31:44', 1);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊啊…请再绑紧一点～…♡」',
+    '琼的柔嫩肌肤被粗绳子相当紧的五花大绑起来了的样子………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:345'), 1, '绳子首次推进到 1');
+});
+
+test('绳子开始二次：淫乱+抖M写 9 / 阈值闸', async () => {
+  const r0 = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 44;
+    f.store.set('tequip:31:44', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:345', 1);
+  });
+  await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '「啊啊啊～…被绳子绑的紧紧的～♡」',
+    '「啊啊～…明明被绳子绑着应该感到又痛又怕的…啊～啊啊啊啊啊♡」',
+    '琼被绳子绑着、爱液不停地滴落下来………',
+  ]);
+  assert.equal(r0.store.get('cflag:31:345'), 9, '绳子开始二次淫乱+抖M写 9');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 44;
+    f.store.set('tequip:31:44', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:345', 8);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag=8 且 FLAG:7==1 仍出声（门槛是 <=8）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:345'), 9);
+
+  const exhausted = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 44;
+    f.store.set('tequip:31:44', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('cflag:31:345', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhausted);
+  assert.deepEqual(exhausted.text_lines(), []);
+});
+
+test('绳子脱着：淫乱写 CFLAG:385 = 2，门槛是 < 不是 <=', async () => {
+  const lewd = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 44;
+    f.store.set('tequip:31:44', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k0(lewd);
+  assert.deepEqual(lewd.text_lines(), [
+    '「哈啊…哈啊…啊啊…明明可以再绑一会儿的…♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:385'), 2, '绳子着脱推进到 2');
+
+  const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 44;
+    f.store.set('tequip:31:44', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:385', 2);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.deepEqual(at_cap.text_lines(), []);
+  assert.equal(at_cap.store.get('cflag:31:385'), 2, '绳子着脱阈值闸用 < 2');
 });
 
 // —— 存根清单核对 ——
