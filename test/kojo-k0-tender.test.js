@@ -162,12 +162,25 @@ test('阈值闸：FLAG:7 == 1 时上限生效（阶段耗尽后不出声），==
 
 // —— 七道跳过判定（:676-699，K0 顺序：死斗场最先、崩坏在兽奸前） ——
 
-test('死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_0 占位行', async () => {
+test('死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_0 真身（selectcom 55 + 体力低）', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('tequip:31:55', 1);
+    f.store.set('base:31:1', 0);
+  });
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.selectcom = 55;
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((l) => /没有力气/.test(l)),
+    '死斗场 selectcom 55 + 体力 0 应输出没力气',
+  );
+  assert.equal(fixture.store.get('cflag:31:301'), undefined);
+});
+
+test('死斗场（TEQUIP:55）最先：selectcom 不匹配时静默返回', async () => {
   const fixture = await setup_k0((f) => f.store.set('tequip:31:55', 1));
   await speak_k0(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '（死斗场专用口上尚未移植，此处为占位——原作 @COLOSSEUM_KOJO_0，随死斗场票，见 docs/stub-registry.md。）',
-  ]);
+  assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get('cflag:31:301'), undefined);
 });
 
@@ -4923,4 +4936,56 @@ test('ENTERENEMY：献身（TALENT:21）→ 我是不会输的', async () => {
   const { enterenemy_koujo } = fixture.load_module('kojo/kojo-system');
   await enterenemy_koujo(31);
   assert.match(fixture.text_lines()[0], /不会输/);
+});
+
+// —— NTR / 处刑系 / COLOSSEUM 口上 ——
+
+test('NTR：P==1 + 淫乱（TALENT:76）→ 求饶台词 + CFLAG:651 记录', async () => {
+  const fixture = await setup_k0((f) => f.store.set('talent:31:76', 1));
+  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  await ntr_koujo_family.call(0, { args: [1] });
+  assert.ok(fixture.text_lines().some((l) => /饶/.test(l)));
+  assert.equal(fixture.store.get('cflag:31:651'), 1, 'P==1 写 CFLAG:651');
+});
+
+test('EXUCUTION：事件类型 4 → 求饶台词', async () => {
+  const fixture = await setup_k0();
+  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  await exucution_koujo_family.call(0, { args: [4] });
+  assert.ok(fixture.text_lines().some((l) => /饶了我吧/.test(l)));
+});
+
+test('MUSEUM：事件类型 3 → 不想变成这样', async () => {
+  const fixture = await setup_k0();
+  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+  await museum_koujo_family.call(0, { args: [3] });
+  assert.ok(fixture.text_lines().some((l) => /变成·这·样/.test(l)));
+});
+
+test('BANISHMENT：事件类型 0 → 失去力量也有能做的事', async () => {
+  const fixture = await setup_k0();
+  const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
+  await banishment_koujo_family.call(0, { args: [0] });
+  assert.ok(fixture.text_lines().some((l) => /失去力量/.test(l)));
+});
+
+test('PUBLIC_EXUCUTION：事件类型 0 → 为什么这样对待', async () => {
+  const fixture = await setup_k0();
+  const { public_exucution_koujo_family } =
+    fixture.load_module('kojo/kojo-system');
+  await public_exucution_koujo_family.call(0, { args: [0] });
+  assert.ok(fixture.text_lines().some((l) => /为什么要/.test(l)));
+});
+
+test('COLOSSEUM：selectcom 31 + 助手调教 → 助手名插值', async () => {
+  const fixture = await setup_k0((f) => f.store.set('tequip:31:55', 1));
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.selectcom = 31;
+  era_flag.assi = 17;
+  era_flag.assiplay = 1;
+  await speak_k0(fixture);
+  assert.ok(
+    fixture.text_lines().some((l) => /愉悦的表情/.test(l)),
+    'selectcom 31 助手调教应输出愉悦表情',
+  );
 });

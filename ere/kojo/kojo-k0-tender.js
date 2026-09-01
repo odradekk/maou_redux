@@ -64,7 +64,7 @@
  * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
  * 崩坏 → 兽奸（专用口上）→ 触手。与 K3（兽奸在崩坏前）不同，各文件 1:1。
  *
- * 这张票第一刀存根（docs/stub-registry.md）：COLOSSEUM_KOJO_0 / DOG_KOJO_0
+ * 这张票存根（docs/stub-registry.md）：DOG_KOJO_0（兽奸专用）
  * 与 SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
  * 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
@@ -87,6 +87,13 @@ const {
   enterenemy_koujo_family,
   dungeon_victory_family,
   dungeon_attack_family,
+  ntr_koujo_family,
+  exucution_koujo_family,
+  museum_koujo_family,
+  banishment_koujo_family,
+  public_exucution_koujo_family,
+  grotesque_koujo_family,
+  colosseum_kojo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -113,7 +120,7 @@ const { stub_line } = require('#/utils/stub-line');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['COLOSSEUM_KOJO_0', 'DOG_KOJO_0', 'KOJO_MESSAGE_COM_0'];
+const STUBBED_CALLS = ['DOG_KOJO_0', 'KOJO_MESSAGE_COM_0'];
 
 // @EVENTTRAIN #PRI（:73-77）：存在标志 + 总开关补 0
 on(
@@ -2594,6 +2601,515 @@ dungeon_victory_family.register(0, dungeon_victory_k0);
 dungeon_attack_family.register(0, dungeon_attack_k0);
 gobi_koujo_family.register(0, gobi_koujo_k0);
 enterenemy_koujo_family.register(0, enterenemy_koujo_k0);
+/**
+ * @NTR_KOUJO_K0（K0 慈爱）：NTR 事件口上（:7866-7943，P 分档 1-7/20，CFLAG:650-657 记录）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function ntr_koujo_k0(p) {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (era.get(`cflag:${target}:650`) === 0) {
+    // :7870
+    // CFLAG:650  = 1（变量语义：CFLAG 族，650） // :7870
+    era.set(`cflag:${target}:650`, 1); // :7870
+  } // :7870
+
+  if (p === 1) {
+    // :7873
+
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7875
+      await era.printAndWait(
+        `「饶、饶了我吧…不要再继续了…啊～啊啊啊～！…对不起…魔王大人…………」`,
+      ); // :7876
+    } else {
+      // :7877
+      await era.printAndWait(
+        `「啊啊～…无论如何…咿～咿啊～…啊啊～！请原谅我～！」`,
+      ); // :7878
+    } // :7879
+    // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :7880
+    era.set(`cflag:${target}:651`, 1); // :7880
+  } else if (p === 2) {
+    // :7882
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7883
+      await era.printAndWait(
+        `「嗯咿～～！屁股眼…被撑的太大啦…啊啊～啊…咿～…咿～～！不、不要…再这样下去的话…♪」`,
+      ); // :7884
+    } else {
+      // :7885
+      await era.printAndWait(
+        `「这、这样…不、不行啊～…啊啊～…饶了我吧～啊～啊啊啊～！」`,
+      ); // :7886
+    } // :7887
+    // CFLAG:652  = 1（变量语义：CFLAG 族，652） // :7888
+    era.set(`cflag:${target}:652`, 1); // :7888
+  } else if (p === 3) {
+    // :7890
+    if (era.get(`talent:${target}:136`)) {
+      // :7891
+      await era.printAndWait(
+        `「啊啊～…${sc()}是…${sc()}是被狗侵犯也觉得很爽的母狗是也～…啊咿～…咿咿咿～～！」`,
+      ); // :7892
+    } else if (
+      era.get(`talent:${target}:76`) ||
+      era.get(`talent:${target}:85`)
+    ) {
+      // :7893
+      await era.printAndWait(
+        `「啊～…啊啊～…求你了…救救我…请救救我…魔王大人………」`,
+      ); // :7894
+    } else {
+      // :7895
+      await era.printAndWait(
+        `「大家…不要看我…请不要看我啊…啊～啊啊啊～…讨厌啊～！」`,
+      ); // :7896
+    } // :7897
+    // CFLAG:653  = 1（变量语义：CFLAG 族，653） // :7898
+    era.set(`cflag:${target}:653`, 1); // :7898
+  } else if (p === 4) {
+    // :7900
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7901
+      await era.printAndWait(
+        `「啊啊～！好爽…好爽啊～${heart(1)} 更多的…侵犯我…啊～啊啊～…啊～${heart(1)}」`,
+      ); // :7902
+    } else {
+      // :7903
+      await era.printAndWait(
+        `「啊啊～…好深…好深啊～…咿～…咿～～…${sc()}…已…已经…啊～啊啊啊～♪」`,
+      ); // :7904
+    } // :7905
+    // CFLAG:654  = 1（变量语义：CFLAG 族，654） // :7906
+    era.set(`cflag:${target}:654`, 1); // :7906
+  } else if (p === 5) {
+    // :7908
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7909
+      await era.printAndWait(
+        `「啊哈啊…请更多的侵犯我吧…请净化被魔王玷污过的${sc()}的身体吧～…${heart(1)}」`,
+      ); // :7910
+    } else {
+      // :7911
+      await era.printAndWait(
+        `「啊～～…请大家…惩罚…屈服于魔王军的背叛者${sc()}吧…啊～～…没错…前面和后面都要…啊啊～♪」`,
+      ); // :7912
+    } // :7913
+    // CFLAG:655  = 1（变量语义：CFLAG 族，655） // :7914
+    era.set(`cflag:${target}:655`, 1); // :7914
+  } else if (p === 6) {
+    // :7916
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7917
+      await era.printAndWait(
+        `「嗯噗呜…是…请下一个…${sc()}的小穴只要１０Ｇ…后面的就全部免费了…请尽情发泄欲望吧${heart(1)}」`,
+      ); // :7918
+    } else {
+      // :7919
+      await era.printAndWait(
+        `「更多的…更多的玷污吧…将${sc()}的肮脏身体…更多的…♪」`,
+      ); // :7920
+    } // :7921
+    // CFLAG:656  = 1（变量语义：CFLAG 族，656） // :7922
+    era.set(`cflag:${target}:656`, 1); // :7922
+  } else if (p === 7) {
+    // :7924
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7925
+      await era.printAndWait(
+        `「嗯哈啊…狂王大人的东西好美味啊…好想一直奉仕下去呢${heart(1)}」`,
+      ); // :7926
+    } else {
+      // :7927
+      await era.printAndWait(
+        `「是…${sc()}是狂王大人专用的肉便器～…所以请让我更多的进行奉仕吧♪」`,
+      ); // :7928
+    } // :7929
+    // CFLAG:657  = 1（变量语义：CFLAG 族，657） // :7930
+    era.set(`cflag:${target}:657`, 1); // :7930
+  } else if (p === 20) {
+    // :7932
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :7933
+      if (era.get(`cflag:${target}:102`) === 1) {
+        // :7934
+        await era.printAndWait(
+          `「呜咕～咿咕～…魔王大人和${sc()}的小宝宝…啊啊啊～对不起～对不起～～！」`,
+        ); // :7935
+      } else {
+        // :7936
+        await era.printAndWait(
+          `「啊呜～呜呜～…对不起、对不起…${sc()}的可爱宝宝………」`,
+        ); // :7937
+      } // :7938
+    } else {
+      // :7939
+      await era.printAndWait(
+        `「哈啊哈啊…是、${sc()}的子宫是狂王大人的专用孕袋…啊啊啊…」`,
+      ); // :7940
+    } // :7941
+  } // :7942
+  return 0; // :7943
+}
+
+/**
+ * @EXUCUTION_KOUJO_K0（K0 慈爱）：处刑口上（:7946-7962，事件类型 4-7 分档）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function exucution_koujo_k0(event_type) {
+  if (event_type === 4) {
+    // :7949
+    await era.printAndWait(
+      `「咿～！不要～！不要啊～！饶了我吧～！请饶了我吧～！」`,
+    ); // :7950
+  } else if (event_type === 5) {
+    // :7952
+    await era.printAndWait(`「啊…啊啊…意识…变的远去了…去了………」`); // :7953
+  } else if (event_type === 6) {
+    // :7955
+    await era.printAndWait(`「被示众了呢………」`); // :7956
+  } else if (event_type === 7) {
+    // :7958
+    await era.printAndWait(''); // :7959
+  } // :7960
+}
+
+/**
+ * @MUSEUM_KOUJO_K0（K0 慈爱）：雕像馆口上（:7963-7999，事件类型 0-9 分档）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function museum_koujo_k0(event_type) {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (event_type === 0) {
+    // :7966
+    await era.printAndWait(`「住、住手…啊…啊啊～…不要啊～！」`); // :7967
+  } else if (event_type === 1) {
+    // :7969
+    await era.printAndWait(`「这样的…死法……」`); // :7970
+  } else if (event_type === 2) {
+    // :7972
+    await era.printAndWait(''); // :7973
+  } else if (event_type === 3) {
+    // :7975
+    await era.printAndWait(`「${sc()}、不想…变成·这·样…」`); // :7976
+  } else if (event_type === 4) {
+    // :7978
+    await era.printAndWait(
+      `「咿！…救、救命…！？脚、脚尖…已经…动不……了……啊……」`,
+    ); // :7979
+  } else if (event_type === 5) {
+    // :7981
+    await era.printAndWait(''); // :7982
+  } else if (event_type === 6) {
+    // :7984
+    await era.printAndWait(''); // :7985
+  } else if (event_type === 7) {
+    // :7987
+    await era.printAndWait(''); // :7988
+  } else if (event_type === 8) {
+    // :7990
+    await era.printAndWait(''); // :7991
+  } else if (event_type === 9) {
+    // :7993
+    await era.printAndWait(''); // :7994
+  } // :7995
+}
+
+/**
+ * @BANISHMENT_KOUJO_K0（K0 慈爱）：追放处刑口上（:7998-8020，事件类型 0-4 分档）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function banishment_koujo_k0(event_type) {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (event_type === 0) {
+    // :8002
+    await era.printAndWait(`「即使失去力量…${sc()}也有能做的事…！」`); // :8003
+  } else if (event_type === 1) {
+    // :8005
+    await era.printAndWait(''); // :8006
+  } else if (event_type === 2) {
+    // :8008
+    await era.printAndWait(''); // :8009
+  } else if (event_type === 3) {
+    // :8011
+    await era.printAndWait(''); // :8012
+  } else if (event_type === 4) {
+    // :8014
+    await era.printAndWait(''); // :8015
+  } // :8016
+}
+
+/**
+ * @PUBLIC_EXUCUTION_KOUJO_K0（K0 慈爱）：公开处刑口上（:8019-8035，事件类型 0-2 分档）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function public_exucution_koujo_k0(event_type) {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (event_type === 0) {
+    // :8023
+    await era.printAndWait(
+      `「啊啊…啊啊…为什么要…这样对待${sc()}…咿…咿呀啊啊啊啊啊啊啊啊！」`,
+    ); // :8024
+  } else if (event_type === 1) {
+    // :8026
+    await era.printAndWait(`「绞刑…${sc()}要被…像罪人一样地被绞死吗………」`); // :8027
+  } else if (event_type === 2) {
+    // :8029
+    await era.printAndWait(''); // :8030
+  } // :8031
+}
+
+/**
+ * @GROTESQUE_KOUJO_K0（K0 慈爱）：猎奇处刑口上（:8034-8061，事件类型 0-6 分档）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function grotesque_koujo_k0(event_type) {
+  if (event_type === 0) {
+    // :8038
+    await era.printAndWait(''); // :8039
+  } else if (event_type === 1) {
+    // :8041
+    await era.printAndWait(''); // :8042
+  } else if (event_type === 2) {
+    // :8044
+    await era.printAndWait(''); // :8045
+  } else if (event_type === 3) {
+    // :8047
+    await era.printAndWait(''); // :8048
+  } else if (event_type === 4) {
+    // :8050
+    await era.printAndWait(''); // :8051
+  } else if (event_type === 5) {
+    // :8053
+    await era.printAndWait(''); // :8054
+  } else if (event_type === 6) {
+    // :8056
+    await era.printAndWait(''); // :8057
+  } // :8058
+}
+
+/**
+ * @COLOSSEUM_KOJO_0（K0 慈爱）：死斗场口上（:7735-7863，SELECTCOM 55/56/31/5/21/27/51 分派）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function colosseum_kojo_0() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const assi = era_flag.assi; // NO:ASSI（助手角色 ID）
+  const assi_name = assi >= 0 ? chara_callname(assi) : ''; // %SAVESTR:ASSI%
+  const master_name = chara_name(0); // %NAME:MASTER%
+
+  if (era_flag.selectcom === 55) {
+    // :7739
+
+    if (era.get(`base:${target}:1`) <= 0) {
+      // :7741
+      await era.printAndWait(
+        `${target_name}虽然站着但好像已经没有力气了的样子……`,
+      ); // :7742
+    } else {
+      // :7743
+      await era.printAndWait(
+        `${target_name}因为竞技场的灼热气氛与接下来的战斗对手而颤抖不已……`,
+      ); // :7744
+    } // :7745
+    return 0; // :7746
+  } // :7747
+
+  if (era_flag.selectcom === 56) {
+    // :7751
+
+    if (era.get(`base:${target}:1`) <= 0) {
+      // :7753
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :7755
+        await era.printAndWait(`「${assi_name}小姐……请、请饶了我吧………」`); // :7756
+        await era.printAndWait(`${target_name}放下武器请求饶恕……`); // :7757
+      } else {
+        // :7758
+        await era.printAndWait(`「已经…已经不行了…打不下去了………」`); // :7759
+        await era.printAndWait(`${target_name}放下武器请求饶恕……`); // :7760
+      } // :7761
+    } else {
+      // :7762
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :7764
+        await era.printAndWait(
+          `「怎、怎么会这样…要和${assi_name}小姐战斗什么的…」`,
+        ); // :7765
+        await era.printAndWait(
+          `${target_name}看着被${master_name}命令而武装起来的${assi_name}感到了害怕……`,
+        ); // :7766
+      } else {
+        // :7767
+        await era.printAndWait(`「才、才不要和那些家伙战斗……」`); // :7768
+        await era.printAndWait(
+          `${target_name}已经失去了身为勇者的気概、对战斗怕的不得了……`,
+        ); // :7769
+      } // :7770
+    } // :7771
+    return 0; // :7772
+  } // :7773
+
+  if (era_flag.selectcom === 31) {
+    // :7778
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :7780
+      await era.printAndWait(`「嗯咕呜～…嗯噗～…嗯～嗯呼呜……」`); // :7781
+      await era.print(`${assi_name}让`); // :7782
+      if (
+        era.get(`talent:${assi}:121`) === 1 ||
+        era.get(`talent:${assi}:122`) === 1
+      ) {
+        // :7784
+        await era.print(`吞咽着肉棒的`); // :7784
+      } // :7784
+      if (
+        era.get(`talent:${assi}:121`) != 1 &&
+        era.get(`talent:${assi}:122`) != 1 &&
+        era.get('item:PBAND') === 1
+      ) {
+        // :7786
+        await era.print(`吞咽着假阳具的`); // :7786
+      } // :7786
+      await era.printAndWait(`${target_name}露出了愉悦的表情……`); // :7787
+    } else {
+      // :7788
+      await era.printAndWait(`「哈啊哈啊…嗯咕～…嗯～…嗯噗呜……」`); // :7789
+      await era.printAndWait(
+        `${target_name}舔舐并吞咽着发出令人作呕气味的阴茎……`,
+      ); // :7790
+    } // :7791
+    return 0; // :7792
+  } // :7793
+
+  if (era_flag.selectcom === 5) {
+    // :7797
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :7799
+      await era.printAndWait(`「请…请住手啊…${assi_name}…小姐…啊呜～！」`); // :7800
+      await era.printAndWait(`${target_name}就这样被爱抚着……`); // :7801
+    } else {
+      // :7802
+      await era.printAndWait(`「啊啊～…疼、疼～～……」`); // :7803
+      await era.printAndWait(`${target_name}被用力揉着胸发出了痛苦的呻吟声……`); // :7804
+    } // :7805
+    return 0; // :7806
+  } // :7807
+
+  if (era_flag.selectcom === 21) {
+    // :7811
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :7813
+      await era.printAndWait(
+        `「啊啊～…嗯！不要～…不要～…请、请饶了我吧～…嗯！」`,
+      ); // :7814
+      await era.print(`${assi_name}一边听着悲鸣一边`); // :7815
+      if (
+        era.get(`talent:${assi}:121`) === 1 ||
+        era.get(`talent:${assi}:122`) === 1
+      ) {
+        // :7817
+        await era.print(`用肉棒`); // :7817
+      } // :7817
+      if (
+        era.get(`talent:${assi}:121`) != 1 &&
+        era.get(`talent:${assi}:122`) != 1 &&
+        era.get('item:PBAND') === 1
+      ) {
+        // :7819
+        await era.print(`用假阳具`); // :7819
+      } // :7819
+      await era.printAndWait(`毫不留情地持续蹂躙着${target_name}的阴道……`); // :7820
+    } else if (era.get('tflag:400') === 206) {
+      // :7822
+      await era.printAndWait(`「嘎～…嘎哈～…咕嘿～…咕诶诶诶……」`); // :7823
+      await era.printAndWait(
+        `可怜的${target_name}一边发出蛤蟆似的坏掉的的声音一边被巨魔侵犯着……`,
+      ); // :7824
+    } else {
+      // :7825
+      await era.printAndWait(`「不…不要啊…这样的…啊啊～！」`); // :7826
+      await era.printAndWait(`${target_name}就这样被怪物侵犯着……`); // :7827
+    } // :7828
+    return 0; // :7829
+  } // :7830
+
+  if (era_flag.selectcom === 27) {
+    // :7835
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :7837
+      await era.printAndWait(
+        `「啊啊～…嗯！不要～…不要～…请、请饶了我吧～…嗯！！」`,
+      ); // :7838
+      await era.print(`${assi_name}一边听着悲鸣一边`); // :7839
+      if (
+        era.get(`talent:${assi}:121`) === 1 ||
+        era.get(`talent:${assi}:122`) === 1
+      ) {
+        // :7841
+        await era.print(`用肉棒`); // :7841
+      } // :7841
+      if (
+        era.get(`talent:${assi}:121`) != 1 &&
+        era.get(`talent:${assi}:122`) != 1 &&
+        era.get('item:PBAND') === 1
+      ) {
+        // :7843
+        await era.print(`用假阳具`); // :7843
+      } // :7843
+      await era.printAndWait(`毫不留情地持续蹂躙着${target_name}的肛门……`); // :7844
+    } else if (era.get('tflag:400') === 206) {
+      // :7846
+      await era.printAndWait(`「嘎～…嘎哈～…咕嘿～…咕诶诶诶……」`); // :7847
+      await era.printAndWait(
+        `可怜的${target_name}一边发出蛤蟆似的坏掉的的声音一边被巨魔侵犯着……`,
+      ); // :7848
+    } else {
+      // :7849
+      await era.printAndWait(`「不…不要啊…这样的…啊啊～！」`); // :7850
+      await era.printAndWait(`${target_name}就这样被怪物侵犯着肛门……`); // :7851
+    } // :7852
+    return 0; // :7853
+  } // :7854
+
+  if (era_flag.selectcom === 51) {
+    // :7859
+    await era.printAndWait(`「啊咕呜～…这、这是…媚、媚薬吗…啊啊～…！」`); // :7860
+    return 0; // :7861
+  } // :7862
+  return 0; // :7863
+}
+
+// 注册进分发族（TRYCALLFORM NTR/处刑系/COLOSSEUM_KOUJO_K0 的等价物）
+ntr_koujo_family.register(0, ntr_koujo_k0);
+exucution_koujo_family.register(0, exucution_koujo_k0);
+museum_koujo_family.register(0, museum_koujo_k0);
+banishment_koujo_family.register(0, banishment_koujo_k0);
+public_exucution_koujo_family.register(0, public_exucution_koujo_k0);
+grotesque_koujo_family.register(0, grotesque_koujo_k0);
+colosseum_kojo_family.register(0, colosseum_kojo_0);
 
 /**
  * @KOJO_MESSAGE_PALAMCNG_0（:6505-6754）：参数变动后口上。
@@ -3117,7 +3633,7 @@ async function kojo_message_com_0(rand) {
 
   // :676-678 死斗场中は専用口上
   if (era.get(`tequip:${target}:55`)) {
-    stub_line('COLOSSEUM_KOJO_0', '死斗场专用口上', '随死斗场票');
+    await colosseum_kojo_0(rand);
     return 0;
   }
   // :681-682 助手が調教した時に口上をスキップする

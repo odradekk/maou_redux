@@ -370,6 +370,126 @@ async function enterenemy_koujo(cid) {
   return 0;
 }
 
+/** @NTR_KOUJO_K{N} 族：NTR 口上（EVENT_K.ERB:342-354 的分派目标） */
+const ntr_koujo_family = new DispatchFamily('NTR_KOUJO', DECLARED_KOJO_COM_IDS);
+
+/**
+ * @NTR_KOUJO（EVENT_K.ERB:342-354）：NTR 事件口上入口。
+ *
+ * 与原作同构：GET_KOJO_NUM → 分发。存在判定被原作注释（:346-348），不判。
+ *
+ * @param {number} [p] 事件类型（原作全局 P）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function ntr_koujo(p = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await ntr_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [p],
+    });
+  }
+  return 0;
+}
+
+/** @EXUCUTION_KOUJO_K{N} 族：处刑口上（EVENT_K.ERB:357-369 的分派目标） */
+const exucution_koujo_family = new DispatchFamily(
+  'EXUCUTION_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @MUSEUM_KOUJO_K{N} 族：雕像馆口上（EVENT_K.ERB:372-384 的分派目标） */
+const museum_koujo_family = new DispatchFamily(
+  'MUSEUM_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @BANISHMENT_KOUJO_K{N} 族：追放处刑口上（EVENT_K.ERB:387-399 的分派目标） */
+const banishment_koujo_family = new DispatchFamily(
+  'BANISHMENT_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @PUBLIC_EXUCUTION_KOUJO_K{N} 族：公开处刑口上（EVENT_K.ERB:402-414 的分派目标） */
+const public_exucution_koujo_family = new DispatchFamily(
+  'PUBLIC_EXUCUTION_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @GROTESQUE_KOUJO_K{N} 族：猎奇处刑口上（EVENT_K.ERB:417-429 的分派目标） */
+const grotesque_koujo_family = new DispatchFamily(
+  'GROTESQUE_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * 处刑系入口（@EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/GROTESQUE_KOUJO，
+ * EVENT_K.ERB:357-429）：与原作同构，GET_KOJO_NUM → 分发；存在判定被
+ * 原作注释，不判。当前无调用点（处刑子系统未移植），族与入口先就绪。
+ * @param {number} [event_type] 事件类型（原作 TFLAG:16/500/510/520/530）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function exucution_koujo(event_type = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await exucution_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [event_type],
+    });
+  }
+  return 0;
+}
+
+async function museum_koujo(event_type = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await museum_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [event_type],
+    });
+  }
+  return 0;
+}
+
+async function banishment_koujo(event_type = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await banishment_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [event_type],
+    });
+  }
+  return 0;
+}
+
+async function public_exucution_koujo(event_type = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await public_exucution_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [event_type],
+    });
+  }
+  return 0;
+}
+
+async function grotesque_koujo(event_type = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await grotesque_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [event_type],
+    });
+  }
+  return 0;
+}
+
+/** @COLOSSEUM_KOJO_{N} 族：死斗场口上（死斗场子系统，COM 守卫岔出） */
+const colosseum_kojo_family = new DispatchFamily(
+  'COLOSSEUM_KOJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
 /** @GOBI_KOUJO_K{N} 族：语尾口上（EVENT_K.ERB:504-522 的分派目标） */
 const gobi_koujo_family = new DispatchFamily(
   'GOBI_KOUJO',
@@ -408,6 +528,19 @@ module.exports = {
   markcng_family,
   benki_koujo,
   benki_koujo_family,
+  ntr_koujo,
+  ntr_koujo_family,
+  exucution_koujo,
+  exucution_koujo_family,
+  museum_koujo,
+  museum_koujo_family,
+  banishment_koujo,
+  banishment_koujo_family,
+  public_exucution_koujo,
+  public_exucution_koujo_family,
+  grotesque_koujo,
+  grotesque_koujo_family,
+  colosseum_kojo_family,
   dungeon_victory_koujo,
   dungeon_victory_family,
   dungeon_attack_koujo,
