@@ -4871,3 +4871,56 @@ test('DUNGEON_RYOUZYOKU：处女 + 献身（TALENT:21）→ 好吧、尽管来�
     '处女 + 献身应输出投降台词',
   );
 });
+
+// —— BENKI / VICTORY / ATTACK / GOBI / ENTERENEMY 口上 ——
+
+test('BENKI_KOUJO：FLAG:62=0 + FLAG:63=1 → 施舍工作台词', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('flag:62', 0);
+    f.store.set('flag:63', 1);
+  });
+  const { benki_koujo } = fixture.load_module('kojo/kojo-system');
+  await benki_koujo(31);
+  assert.ok(
+    fixture.text_lines().some((l) => /施舍/.test(l)),
+    '应含施舍台词',
+  );
+});
+
+test('VICTORY：素质分档 + 体力比判定', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('base:31:0', 200);
+    f.store.set('maxbase:31:0', 500); // 40% < 50%
+  });
+  const { dungeon_victory_koujo } = fixture.load_module('kojo/kojo-system');
+  await dungeon_victory_koujo(31);
+  assert.match(fixture.text_lines()[0], /爱能拯救世界/);
+});
+
+test('ATTACK：CFLAG:1==2 + 强气素质 → 爱的火焰', async () => {
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:1', 2);
+    f.store.set('talent:31:11', 1);
+    f.store.set('talent:31:275', 1);
+  });
+  const { dungeon_attack_koujo } = fixture.load_module('kojo/kojo-system');
+  await dungeon_attack_koujo(31);
+  assert.ok(
+    fixture.text_lines().some((l) => /爱的火焰/.test(l)),
+    '强气+275 应输出爱的火焰',
+  );
+});
+
+test('GOBI：arg_0=1 → ♪ 语尾', async () => {
+  const fixture = await setup_k0();
+  const { gobi_koujo } = fixture.load_module('kojo/kojo-system');
+  await gobi_koujo(1);
+  assert.ok(fixture.text_lines().some((l) => l.includes('♪')));
+});
+
+test('ENTERENEMY：献身（TALENT:21）→ 我是不会输的', async () => {
+  const fixture = await setup_k0((f) => f.store.set('talent:31:21', 1));
+  const { enterenemy_koujo } = fixture.load_module('kojo/kojo-system');
+  await enterenemy_koujo(31);
+  assert.match(fixture.text_lines()[0], /不会输/);
+});

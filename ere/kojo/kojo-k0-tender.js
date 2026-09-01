@@ -82,6 +82,11 @@ const {
   self_kojo_family,
   palamcng_family,
   markcng_family,
+  benki_koujo_family,
+  gobi_koujo_family,
+  enterenemy_koujo_family,
+  dungeon_victory_family,
+  dungeon_attack_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -2022,6 +2027,573 @@ async function osioski_koujo_k0(cid, choice) {
 gohoubi_request_koujo_family.register(0, gohoubi_request_koujo_k0);
 gohoubi_after_koujo_family.register(0, gohoubi_after_koujo_k0);
 osioski_koujo_family.register(0, osioski_koujo_k0);
+/**
+ * @BENKI_KOUJO_K0（K0 慈爱）：肉便器配信口上（:7415-7634，FLAG:62 分档 0-10 × FLAG:63/素质）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function benki_koujo_k0() {
+  /* eslint-disable no-irregular-whitespace -- 原文全角空格（BENKI 台词，多行模板内无法逐行 disable） */
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (era.get('flag:62') === 0) {
+    // :7435
+
+    if (era.get('flag:63') === 1) {
+      // :7438
+      await era.printAndWait(
+        `「给予『施舍』是${sc()}的『工作』来着，${sc()}会努力的！」`,
+      ); // :7439
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7441
+      await era.printAndWait(
+        `「舒服吗……？　呵呵、不要急……我会把爱施与每个人的♪」`,
+      ); // :7442
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7444
+      await era.printAndWait(`「没关系的、我会施舍大家的……把爱施与给大家……」`); // :7445
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7447
+      await era.printAndWait(`「让我来施舍你们吧……」`); // :7448
+    } else {
+      // :7450
+      await era.printAndWait(`「讨厌……连这些家伙……也要施舍吗？」`); // :7451
+    } // :7452
+  } else if (era.get('flag:62') === 1) {
+    // :7453
+
+    if (era.get('flag:63') === 1) {
+      // :7456
+      await era.printAndWait(
+        `「是的，${sc()}是最喜欢女孩子的，一想到现在开始的『施舍』腰就不自觉地动起来了……♪」`,
+      ); // :7457
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7459
+      await era.printAndWait(`「不分男女、让我把爱施与你们吧♪」`); // :7460
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7462
+      await era.printAndWait(`「没关系、${sc()}也是女的、这全是爱哦」`); // :7463
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7465
+      await era.printAndWait(`「让我来施舍你们吧……」`); // :7466
+    } else {
+      // :7468
+      await era.printAndWait(`「讨厌……与不认识的女人做爱什么的……」`); // :7469
+    } // :7470
+  } else if (era.get('flag:62') === 2) {
+    // :7471
+
+    if (era.get('flag:63') === 1) {
+      // :7474
+      await era.printAndWait(
+        `「${sc()}是比家畜还低贱的野兽啊，像这样子的『施舍』才是野兽肉便器该做的吧……这很奇怪吗？」`,
+      ); // :7475
+    } else if (era.get(`talent:${target}:136`)) {
+      // :7477
+      await era.printAndWait(`「哈啊哈啊……兽阴○茎♪　不、这是爱的施舍呢……♪」`); // :7478
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7479
+      await era.printAndWait(`「即使是动物们、也要施与爱……♪」`); // :7480
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7482
+      await era.printAndWait(`「即使是动物们、也要施与爱……♪」`); // :7483
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7485
+      await era.printAndWait(`「这是……施舍」`); // :7486
+    } else {
+      // :7488
+      await era.printAndWait(`「住手……不要啊」`); // :7489
+    } // :7490
+  } else if (era.get('flag:62') === 3) {
+    // :7491
+
+    if (era.get('flag:63') === 1) {
+      // :7494
+      await era.print(`「和`); // :7495
+      // CALL BENKI_PLAYER_NAME // :7496
+      await era.printAndWait(`来同时用小穴和菊花来做爱了♪」`); // :7497
+      await era.printAndWait(
+        `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
+      ); // :7498
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7500
+      await era.printAndWait(`「啊啊……哪个穴都好舒服啊……♪」`); // :7501
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7503
+      await era.printAndWait(`「咕……哈……呜咕」`); // :7504
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7506
+      await era.printAndWait(`「让我来施舍吧……」`); // :7507
+    } else {
+      // :7509
+      await era.printAndWait(`「不，不要啊！」`); // :7510
+    } // :7511
+  } else if (era.get('flag:62') === 4) {
+    // :7512
+
+    if (era.get('flag:63') === 1) {
+      // :7515
+      await era.print(`「和`); // :7516
+      // CALL BENKI_PLAYER_NAME // :7517
+      await era.printAndWait(`用小穴做爱做到潮如泉涌咯♪」`); // :7518
+      await era.printAndWait(
+        `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
+      ); // :7519
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7521
+      await era.printAndWait(`「啊啊……小穴好舒服啊……♪」`); // :7522
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7524
+      await era.printAndWait(`「咕……哈……呜咕」`); // :7525
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7527
+      await era.printAndWait(`「让我来施舍吧……」`); // :7528
+    } else {
+      // :7530
+      await era.printAndWait(`「不，不要啊！」`); // :7531
+    } // :7532
+  } else if (era.get('flag:62') === 5) {
+    // :7533
+
+    if (era.get('flag:63') === 1) {
+      // :7536
+      await era.print(`「和`); // :7537
+      // CALL BENKI_PLAYER_NAME // :7538
+      await era.printAndWait(`用菊花做爱做到湿滑不已咯♪」`); // :7539
+      await era.printAndWait(
+        `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
+      ); // :7540
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7542
+      await era.printAndWait(`「啊啊……菊花好舒服啊……♪」`); // :7543
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7545
+      await era.printAndWait(`「咕……哈……呜咕」`); // :7546
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7548
+      await era.printAndWait(`「让我来施舍吧……」`); // :7549
+    } else {
+      // :7551
+      await era.printAndWait(`「不，不要啊！」`); // :7552
+    } // :7553
+  } else if (era.get('flag:62') === 6) {
+    // :7554
+
+    if (era.get('flag:63') === 1) {
+      // :7557
+      await era.print(`「给予`); // :7558
+      // CALL BENKI_PLAYER_NAME // :7559
+      await era.printAndWait(`先生的肉棒大人的『施舍』哦♪」`); // :7560
+      await era.printAndWait(
+        `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
+      ); // :7561
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7563
+      await era.printAndWait(`「啊……好想要精液……♪」`); // :7564
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7566
+      await era.printAndWait(`「咕……哈……呜咕」`); // :7567
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7569
+      await era.printAndWait(`「让我来施舍吧……」`); // :7570
+    } else {
+      // :7572
+      await era.printAndWait(`「不，不要啊！」`); // :7573
+    } // :7574
+  } else if (era.get('flag:62') === 7) {
+    // :7575
+
+    if (era.get('flag:63') === 1) {
+      // :7578
+      await era.printAndWait(`「感谢观看♪」`); // :7579
+      await era.printAndWait(
+        `「进行了肉便器洗脑的${sc()}现在是能感受到野兽○棒的爱意的变态女♪」`,
+      ); // :7580
+      await era.printAndWait(`「水晶球也被传得到处都是的了，人生完蛋了呢♪」`); // :7581
+    } else if (era.get(`talent:${target}:136`)) {
+      // :7583
+      await era.printAndWait(
+        `「大家在看吗……爱上兽阴○茎的变态女的交尾剧哦～♪」`,
+      ); // :7584
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7586
+      await era.printAndWait(`「大家在看吗？　对动物们施与爱……♪」`); // :7587
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7589
+      await era.printAndWait(`「大家在看吗？　对动物们施与爱……♪」`); // :7590
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7592
+      await era.printAndWait(`「讨厌……这个、会在哪里公映呢……？」`); // :7593
+    } else {
+      // :7595
+      await era.printAndWait(`「住手……不要拍～！」`); // :7596
+    } // :7597
+  } else if (era.get('flag:62') === 9) {
+    // :7598
+
+    if (era.get('flag:63') === 1) {
+      // :7601
+      await era.printAndWait(`「感谢观看♪」`); // :7602
+      await era.printAndWait(
+        `「进行了肉便器洗脑的${sc()}现在是最喜欢在野外全裸露出变态女啦♪」`,
+      ); // :7603
+      await era.printAndWait(`「水晶球也被传得到处都是的了，人生完蛋了呢♪」`); // :7604
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7606
+      await era.printAndWait(
+        `「大家好……${sc()}现在……用羞人的样子出现在野外呢♪」`,
+      ); // :7607
+    } else if (era.get(`talent:${target}:85`)) {
+      // :7609
+      await era.printAndWait(
+        `「大家好……${sc()}奉主人的命令……在野外光着身子呢♪」`,
+      ); // :7610
+    } else if (era.get(`abl:${target}:16`) >= 5) {
+      // :7612
+      await era.printAndWait(`「大家好……呜呜～……${sc()}……」`); // :7613
+    } else {
+      // :7615
+      await era.printAndWait(`「住手……不要拍～！」`); // :7616
+    } // :7617
+  } else if (era.get('flag:62') === 10) {
+    // :7618
+
+    if (era.get('flag:63') === 1) {
+      // :7621
+      await era.printAndWait(`「感谢观看哦♪」`); // :7622
+      await era.printAndWait(
+        `「${sc()}现在正尝试着当便器呢！　『被命令就会兴奋』嘛、没办法嘛♪」`,
+      ); // :7623
+      await era.printAndWait(
+        `「过会请让${sc()}沐浴在小便中吧。『因为喜欢才做』的嘛、比之前更加兴奋了！」`,
+      ); // :7624
+    } else if (era.get(`talent:${target}:76`) === 1) {
+      // :7626
+      await era.printAndWait(
+        `「大家好……${sc()}现在……受主人大人命令正在当便器哦♪」`,
+      ); // :7627
+    } else {
+      // :7629
+      await era.printAndWait(`「呜呜……被这么样对待的话……活不下去了啦……」`); // :7630
+    } // :7631
+  } // :7632
+
+  return 0; // :7634
+}
+/* eslint-enable no-irregular-whitespace */
+
+/**
+ * @DUNGEON_VICTORY_K0（K0 慈爱）：战斗胜利口上（:7361-7412，素质分档 + 体力比判定）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function dungeon_victory_k0(_cid, rand) {
+  /* eslint-disable no-irregular-whitespace -- 原文全角空格（VICTORY 台词，多行模板内无法逐行 disable） */
+  const target = era_flag.target;
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+
+  await era.printAndWait(`「爱能拯救世界！」`); // :7366
+
+  if (
+    era.get(`talent:${target}:21`) === 1 ||
+    era.get(`talent:${target}:22`) === 1
+  ) {
+    // :7368
+
+    await era.printAndWait(`「……就这样吧」`); // :7371
+
+    return 0; // :7373
+  } else if (
+    era.get(`talent:${target}:11`) === 1 ||
+    era.get(`talent:${target}:12`) === 1 ||
+    era.get(`talent:${target}:15`) === 1 ||
+    era.get(`talent:${target}:30`) === 1 ||
+    era.get(`talent:${target}:34`) === 1
+  ) {
+    // :7374
+
+    if (rand_n(3) === 0) {
+      // :7377
+      await era.printAndWait(`「我是绝不会输给不懂得爱的家伙的！」`); // :7378
+    } else if (rand_n(2) === 0) {
+      // :7379
+      await era.printAndWait(`「为世界带来和平…」`); // :7380
+    } else {
+      // :7381
+      await era.printAndWait(`「我是不会输的！」`); // :7382
+    } // :7383
+  } else if (
+    era.get(`talent:${target}:10`) === 1 ||
+    era.get(`talent:${target}:26`) === 1
+  ) {
+    // :7385
+
+    await era.printAndWait(`「虽然这么说…呜呜」`); // :7388
+
+    return 0; // :7390
+  } else {
+    // :7391
+
+    if (rand_n(3) === 0) {
+      // :7394
+      await era.printAndWait(`「如果相信爱的话…」`); // :7395
+    } else if (rand_n(2) === 0) {
+      // :7396
+      await era.printAndWait(`「将和平…」`); // :7397
+    } else {
+      // :7398
+      await era.printAndWait(`「没事的…没事的」`); // :7399
+    } // :7400
+  } // :7402
+
+  if (
+    (era.get(`base:${target}:0`) * 100) / era.get(`maxbase:${target}:0`) < 50 ||
+    (era.get(`base:${target}:1`) * 100) / era.get(`maxbase:${target}:1`) < 50
+  ) {
+    // :7404
+
+    await era.printAndWait(`（光有爱是赢不了的吗…？）`); // :7406
+  } else {
+    // :7407
+
+    await era.printAndWait(`「看好了！　这就是爱的力量！」`); // :7409
+  } // :7410
+
+  return 0; // :7412
+}
+
+/**
+ * @DUNGEON_ATTACK_K0（K0 慈爱）：战斗攻击口上（:7637-7729，CFLAG:1 分档 + 素质/随机）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function dungeon_attack_k0(_cid, rand) {
+  /* eslint-disable no-irregular-whitespace -- 原文全角空格（ATTACK 台词，多行模板内无法逐行 disable） */
+  const target = era_flag.target;
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+
+  if (era.get(`cflag:${target}:1`) === 2) {
+    // :7642
+
+    if (
+      era.get(`talent:${target}:21`) === 1 ||
+      era.get(`talent:${target}:22`) === 1
+    ) {
+      // :7644
+
+      await era.printAndWait(`「……」`); // :7647
+
+      return 0; // :7649
+    } else if (
+      era.get(`talent:${target}:11`) === 1 ||
+      era.get(`talent:${target}:12`) === 1 ||
+      era.get(`talent:${target}:15`) === 1 ||
+      era.get(`talent:${target}:30`) === 1 ||
+      era.get(`talent:${target}:34`) === 1
+    ) {
+      // :7650
+
+      if (era.get(`talent:${target}:275`)) {
+        // :7653
+
+        await era.printAndWait(`「就让爱的火焰……将你烧尽吧！」`); // :7655
+      } else if (rand_n(3) === 0) {
+        // :7656
+        await era.printAndWait(`「请感受这份爱吧！」`); // :7657
+      } else if (rand_n(2) === 0) {
+        // :7658
+        await era.printAndWait(`「不懂爱的家伙哦！」`); // :7659
+      } else {
+        // :7660
+        await era.printAndWait(`「倒下吧！」`); // :7661
+      } // :7662
+    } else if (
+      era.get(`talent:${target}:10`) === 1 ||
+      era.get(`talent:${target}:26`) === 1
+    ) {
+      // :7664
+
+      if (era.get(`talent:${target}:140`)) {
+        // :7667
+
+        await era.printAndWait(`「咿～～、妈妈……救救我……」`); // :7669
+      } else if (era.get(`talent:${target}:141`)) {
+        // :7670
+
+        await era.printAndWait(`「咿～～、爸爸……救救我……」`); // :7672
+      } else {
+        // :7673
+        await era.printAndWait(`「咿～～、请倒下吧！」`); // :7674
+      } // :7675
+
+      return 0; // :7677
+    } else {
+      // :7678
+
+      if (rand_n(3) === 0) {
+        // :7681
+        await era.printAndWait(`「爱还不够呢」`); // :7682
+      } else if (rand_n(2) === 0) {
+        // :7683
+        await era.printAndWait(`「对不起…！」`); // :7684
+      } else {
+        // :7685
+        await era.printAndWait(`「抱歉…！」`); // :7686
+      } // :7687
+    } // :7689
+  } else {
+    // :7690
+
+    if (
+      era.get(`talent:${target}:21`) === 1 ||
+      era.get(`talent:${target}:22`) === 1
+    ) {
+      // :7692
+
+      await era.printAndWait(`「……这是命令」`); // :7695
+
+      return 0; // :7697
+    } else if (
+      era.get(`talent:${target}:11`) === 1 ||
+      era.get(`talent:${target}:12`) === 1 ||
+      era.get(`talent:${target}:15`) === 1 ||
+      era.get(`talent:${target}:30`) === 1 ||
+      era.get(`talent:${target}:34`) === 1
+    ) {
+      // :7698
+
+      if (rand_n(3) === 0) {
+        // :7701
+        await era.printAndWait(`「请你也感受一下魔王大人的爱吧！」`); // :7702
+      } else if (rand_n(2) === 0) {
+        // :7703
+        await era.printAndWait(`「好可爱啊、你还不知道真正的爱是什么吧～」`); // :7704
+      } else {
+        // :7705
+        await era.printAndWait(`「让你清醒一下吧」`); // :7706
+      } // :7707
+    } else if (
+      era.get(`talent:${target}:10`) === 1 ||
+      era.get(`talent:${target}:26`) === 1
+    ) {
+      // :7709
+
+      await era.printAndWait(`「为什么……不明白这份爱呢」`); // :7712
+
+      return 0; // :7714
+    } else {
+      // :7715
+
+      if (rand_n(3) === 0) {
+        // :7718
+        await era.printAndWait(`「你也……应该知道下美妙的爱吧」`); // :7719
+      } else if (rand_n(2) === 0) {
+        // :7720
+        await era.printAndWait(`「什么是美妙的事情……让我好好教教你吧」`); // :7721
+      } else {
+        // :7722
+        await era.printAndWait(`「让我教教你什么是爱吧……真正的爱」`); // :7723
+      } // :7724
+    } // :7726
+  } // :7727
+
+  return 0; // :7729
+}
+/* eslint-enable no-irregular-whitespace */
+
+/**
+ * @GOBI_KOUJO_K0（K0 慈爱）：语尾口上（:8301-8329，ARG:0 分档 0-5）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function gobi_koujo_k0(arg_0) {
+  const rand_n = (n) => Math.floor(Math.random() * n); // 语尾随机，无注入
+
+  if (arg_0 === 1) {
+    // :8304
+
+    await era.print(`♪`); // :8306
+  } else if (arg_0 === 2) {
+    // :8307
+
+    await era.print(`！`); // :8309
+  } else if (arg_0 === 3) {
+    // :8310
+
+    await era.print(`……。`); // :8312
+  } else if (arg_0 === 4) {
+    // :8313
+
+    await era.print(`……。`); // :8315
+  } else if (arg_0 === 5) {
+    // :8316
+
+    await era.print(`……呜呜。`); // :8318
+  } else {
+    // :8319
+
+    if (rand_n(3) === 0) {
+      // :8322
+      await era.print(`。`); // :8323
+    } else if (rand_n(2) === 0) {
+      // :8324
+      await era.print(`哟。`); // :8325
+    } else {
+      // :8326
+      await era.print(`呢。`); // :8327
+    } // :8328
+  } // :8329
+}
+
+/**
+ * @ENTERENEMY_KOUJO_K0（K0 慈爱）：迷宫来袭口上（:8063-8076 素质分档；:8079-8121 家人检索待办）。
+ *
+ * @returns {Promise<number>} 0（RETURN 0）
+ */
+async function enterenemy_koujo_k0() {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+
+  if (
+    era.get(`talent:${target}:21`) === 1 ||
+    era.get(`talent:${target}:22`) === 1
+  ) {
+    // :8064
+
+    await era.printAndWait(`「……我是不会输的」`); // :8066
+  } else if (
+    era.get(`talent:${target}:11`) === 1 ||
+    era.get(`talent:${target}:12`) === 1 ||
+    era.get(`talent:${target}:15`) === 1 ||
+    era.get(`talent:${target}:30`) === 1 ||
+    era.get(`talent:${target}:34`) === 1
+  ) {
+    // :8067
+
+    await era.printAndWait(`「用${sc()}的爱来打倒魔王！」`); // :8069
+  } else if (
+    era.get(`talent:${target}:10`) === 1 ||
+    era.get(`talent:${target}:26`) === 1
+  ) {
+    // :8070
+
+    await era.printAndWait(`「${sc()}的爱能打倒魔王吗…？」`); // :8072
+  } else {
+    // :8073
+
+    await era.printAndWait(`「用${sc()}的爱…让世界恢复和平！」`); // :8075
+  } // :8076
+  // :8079-8121 SEARCH_FAMILY 未移植，家人检索 switch 段待办（随家人检索票）
+  return 0; // :8121
+}
+
+// 注册进分发族（TRYCALLFORM BENKI/VICTORY/ATTACK/GOBI/ENTERENEMY_KOUJO_K0 的等价物）
+benki_koujo_family.register(0, benki_koujo_k0);
+dungeon_victory_family.register(0, dungeon_victory_k0);
+dungeon_attack_family.register(0, dungeon_attack_k0);
+gobi_koujo_family.register(0, gobi_koujo_k0);
+enterenemy_koujo_family.register(0, enterenemy_koujo_k0);
 
 /**
  * @KOJO_MESSAGE_PALAMCNG_0（:6505-6754）：参数变动后口上。

@@ -3063,4 +3063,46 @@ export default [
     tests: ['kojo-k0-tender'],
     must_mention: 'OSIOKI：choice==1 && ABL:21 >= 3 快感台词',
   },
+
+  {
+    desc: 'M2003 K0 BENKI 分档删松（FLAG:62==0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "  if (era.get('flag:62') === 0) {\n    // :7435",
+    replace: '  if (false) { // 变异：FLAG:62==0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'BENKI_KOUJO：FLAG:62=0 + FLAG:63=1 → 施舍工作台词',
+  },
+  {
+    desc: 'M2004 K0 VICTORY 首句删松（改恒 true）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  await era.printAndWait(`「爱能拯救世界！」`); // :7366',
+    replace:
+      '  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));\n  // 变异：首句删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'VICTORY：素质分档 + 体力比判定',
+  },
+  {
+    desc: 'M2005 K0 ATTACK CFLAG:1==2 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era.get(`cflag:${target}:1`) === 2) {\n    // :7642',
+    replace: '  if (false) { // 变异：CFLAG:1==2 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'ATTACK：CFLAG:1==2 + 强气素质 → 爱的火焰',
+  },
+  {
+    desc: 'M2006 K0 GOBI arg_0==1 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (arg_0 === 1) {\n    // :8304',
+    replace: '  if (false) { // 变异：arg_0==1 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'GOBI：arg_0=1 → ♪ 语尾',
+  },
+  {
+    desc: 'M2007 K0 ENTERENEMY 献身分支删松（TALENT:21/22 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    era.get(`talent:${target}:21`) === 1 ||\n    era.get(`talent:${target}:22`) === 1\n  ) {\n    // :8064',
+    replace: '  if (false) { // 变异：献身分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'ENTERENEMY：献身（TALENT:21）→ 我是不会输的',
+  },
 ];

@@ -256,6 +256,146 @@ async function kojo_message_markcng(rand) {
   return 0;
 }
 
+/** @BENKI_KOUJO_K{N} 族：肉便器口上（EVENT_K.ERB:277-289 的分派目标） */
+const benki_koujo_family = new DispatchFamily(
+  'BENKI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * @BENKI_KOUJO（EVENT_K.ERB:277-289）：肉便器配信时的口上入口。
+ *
+ * 与原作同构：TARGET = A → GET_KOJO_NUM → 分发。存在判定被原作注释
+ * （:283-285），不判。
+ *
+ * @param {number} cid 角色 ID（原作全局 A）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function benki_koujo(cid) {
+  const target_pool = era_flag.target; // 调用点已置 TARGET = ARG
+  era_flag.target = cid; // TARGET = A
+  const local = get_kojo_num(cid);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await benki_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [cid],
+    });
+  }
+  era_flag.target = target_pool;
+  return 0;
+}
+
+/** @DUNGEON_VICTORY_K{N} 族：战斗胜利口上（EVENT_K.ERB:294-303 的分派目标） */
+const dungeon_victory_family = new DispatchFamily(
+  'DUNGEON_VICTORY',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * @VICTORY_KOUJO（EVENT_K.ERB:294-303）：战斗胜利时的口上入口。
+ *
+ * 与原作同构：TARGET = A → 分发。存在判定被原作注释（:299-301），不判。
+ *
+ * @param {number} cid 胜利者角色 ID（原作全局 A）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function dungeon_victory_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  era_flag.target = cid; // TARGET = A
+  const local = get_kojo_num(cid);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await dungeon_victory_family.call(local - 100, {
+      whenMissing: 0,
+      args: [cid, rand],
+    });
+  }
+  era_flag.target = target_pool;
+  return 0;
+}
+
+/** @DUNGEON_ATTACK_K{N} 族：攻击口上（EVENT_K.ERB:311-317 的分派目标） */
+const dungeon_attack_family = new DispatchFamily(
+  'DUNGEON_ATTACK',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * @ATTACK_KOUJO（EVENT_K.ERB:311-317）：攻击时的口上入口。
+ *
+ * 与原作同构：TARGET = ARG:0 → 分发。存在判定被原作注释（:315-316），不判。
+ *
+ * @param {number} cid 攻击者角色 ID（原作 ARG:0）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function dungeon_attack_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  era_flag.target = cid; // TARGET = ARG:0
+  const local = get_kojo_num(cid);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await dungeon_attack_family.call(local - 100, {
+      whenMissing: 0,
+      args: [cid, rand],
+    });
+  }
+  era_flag.target = target_pool;
+  return 0;
+}
+
+/** @ENTERENEMY_KOUJO_K{N} 族：来袭口上（EVENT_K.ERB:432-440 的分派目标） */
+const enterenemy_koujo_family = new DispatchFamily(
+  'ENTERENEMY_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * @ENTERENEMY_KOUJO（EVENT_K.ERB:432-440）：迷宫攻略开始时的来袭口上。
+ *
+ * 与原作同构：SWAP 暂存 TARGET → TARGET = A → 分发 → SWAP 还原。存在判定
+ * 被原作注释（:436-438），不判。
+ *
+ * @param {number} cid 角色 ID（原作全局 A）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function enterenemy_koujo(cid) {
+  const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
+  era_flag.target = cid; // TARGET = A
+  const local = get_kojo_num(cid);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await enterenemy_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [cid],
+    });
+  }
+  era_flag.target = target_pool; // SWAP 还原
+  return 0;
+}
+
+/** @GOBI_KOUJO_K{N} 族：语尾口上（EVENT_K.ERB:504-522 的分派目标） */
+const gobi_koujo_family = new DispatchFamily(
+  'GOBI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/**
+ * @GOBI_KOUJO（EVENT_K.ERB:504-522）：语尾口上入口。
+ *
+ * 与原作同构：GET_KOJO_NUM → TRYCALLFORM GOBI_KOUJO_K{LOCAL-100}, ARG:0。
+ * 存在判定被原作注释（:513-515），不判。
+ *
+ * @param {number} arg_0 语尾类型（0 默认 / 1 喜 / 2 怒 / 3 悲 / 4 羞 / 5 情け）
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function gobi_koujo(arg_0 = 0) {
+  const local = get_kojo_num();
+  if ((local >= 100 && local < 140) || local > 1000) {
+    await gobi_koujo_family.call(local - 100, {
+      whenMissing: 0,
+      args: [arg_0],
+    });
+  }
+  return 0;
+}
+
 module.exports = {
   get_kojo_num,
   kojo_message_com,
@@ -266,4 +406,14 @@ module.exports = {
   palamcng_family,
   kojo_message_markcng,
   markcng_family,
+  benki_koujo,
+  benki_koujo_family,
+  dungeon_victory_koujo,
+  dungeon_victory_family,
+  dungeon_attack_koujo,
+  dungeon_attack_family,
+  enterenemy_koujo,
+  enterenemy_koujo_family,
+  gobi_koujo,
+  gobi_koujo_family,
 };

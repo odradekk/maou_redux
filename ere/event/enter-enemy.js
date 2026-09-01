@@ -59,13 +59,13 @@ const { chara } = require('#/facade/chara');
 const { char_make, char_make_inport } = require('#/chara/char-make');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { enterenemy_koujo } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'ENTERENEMY_KOUJO',
   'SHOW_CHARA_INFO',
   'CHAR_BODY_GENERATE_WAPPED',
   'FAMILY_REGISTER',
@@ -270,7 +270,7 @@ async function enter_enemy(arg0 = 0, rand) {
 
   // :105 来袭口上（向 21 个口上文件的 @ENTERENEMY_KOUJO_K<n> 分派——
   // 口上归裁定 7，随 #107）
-  stub_line('ENTERENEMY_KOUJO', '来袭口上', '随 #107 口上票');
+  await enterenemy_koujo(a); // :432-440 CALL ENTERENEMY_KOUJO（TARGET = A）
 
   // :107-133 初期金钱（Ref DUNGEON_TOWN.ERB；七条修正 + 等级补正 + 下限）
   let money = 0; // :110 LOCAL = 0
@@ -384,7 +384,7 @@ async function k_11_lily() {
   era.println(); // :215
   era.print(`村娘${name}开始了地下城的攻略！`); // :216-218
   era.print('*****************************************'); // :219
-  stub_line('ENTERENEMY_KOUJO', '来袭口上', '随 #107 口上票'); // :220
+  await enterenemy_koujo(a); // :432-440 CALL ENTERENEMY_KOUJO（TARGET = A）
   era.println(); // :221
   return 0;
 }
@@ -479,7 +479,7 @@ async function k_34_crazylord(rand_n) {
   era.print(
     '*****************************************************************************',
   ); // :290
-  stub_line('ENTERENEMY_KOUJO', '来袭口上', '随 #107 口上票'); // :291
+  await enterenemy_koujo(a); // :432-440 CALL ENTERENEMY_KOUJO（TARGET = A）
   era.println(); // :292
   era.println(); // :293
   // :294-295 仪式性确认输入（无分支；printButton 的偏离说明见

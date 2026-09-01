@@ -45,6 +45,10 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const {
+  dungeon_attack_koujo,
+  dungeon_victory_koujo,
+} = require('#/kojo/kojo-system');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
 const { equip_database } = require('#/system/equip/equip-lookup');
 const {
@@ -79,8 +83,6 @@ const STUBBED_CALLS = [
   'BEFORE_AUTOTRAIN',
   'COM13_AUTO',
   'SOURCE_CHECK_AUTO',
-  'ATTACK_KOUJO',
-  'VICTORY_KOUJO',
 ];
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
@@ -161,16 +163,16 @@ async function source_check_auto() {
  * @ATTACK_KOUJO 存根（口上，#107 转译线）：攻击时的口上台词。
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function attack_koujo() {
-  await stub_line_wait('ATTACK_KOUJO', '攻击口上', '随口上票');
+async function attack_koujo(cid = era_flag.target) {
+  return dungeon_attack_koujo(cid);
 }
 
 /**
  * @VICTORY_KOUJO 存根（口上，#107 转译线）：胜利时的口上台词。
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
-async function victory_koujo() {
-  await stub_line_wait('VICTORY_KOUJO', '胜利口上', '随口上票');
+async function victory_koujo(cid = era_flag.target) {
+  return dungeon_victory_koujo(cid);
 }
 
 /**

@@ -22,14 +22,10 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
-
-const REPO = path.resolve(__dirname, '..');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
 const seq_rand =
@@ -46,12 +42,17 @@ function setup_benki(seed) {
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
   fixture.store.set('talent:31:204', 1); // 肉便器
+  fixture.store.set('talent:31:160', 1); // 慈爱 → GET_KOJO_NUM = 100（K0）
+  fixture.store.set('flag:100', 1); // K0 存在标志
+  fixture.store.set('flag:7', 2);
   fixture.store.set('base:31:0', 500);
   fixture.store.set('base:31:1', 200);
   if (seed) {
     seed(fixture);
   }
   const mod = fixture.load_module('system/train/benki');
+  fixture.load_module('kojo/kojo-system');
+  fixture.load_module('kojo/kojo-k0-tender');
   return { fixture, mod };
 }
 
@@ -243,9 +244,11 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KO
     lines.some((l) => l.includes('任魔族男性将阴茎塞入了口中')),
     '第二段演出',
   );
-  // 口上存根两次（开头部 + 分支结算前）
-  const stub_count = lines.filter((l) => l.includes('@BENKI_KOUJO')).length;
-  assert.equal(stub_count, 2, 'BENKI_KOUJO 存根两次');
+  // 口上真身（K0 慈爱）：FLAG:62=6 フェラ便器、FLAG:63=0 且无素质 → else 分支
+  assert.ok(
+    lines.some((l) => l.includes('不要啊')),
+    'BENKI_KOUJO K0 口上（FLAG:62=6 else）',
+  );
   // flag:62 = 6（フェラ便器）、flag:64 = 3（魔族男性）
   assert.equal(flag_of(fixture, 62), 6);
   assert.equal(flag_of(fixture, 64), 3);
@@ -391,15 +394,3 @@ test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
 });
 
 // —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录 benki.js 的 BENKI_KOUJO', () => {
-  const { mod } = setup_benki();
-  const registry = fs.readFileSync(
-    path.join(REPO, 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(mod.STUBBED_CALLS, ['BENKI_KOUJO']);
-  for (const name of mod.STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
