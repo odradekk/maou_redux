@@ -10109,7 +10109,7 @@ const FILES = [
       { src: K0, ref: '73-77', any: [/^@EVENTTRAIN$/m, /^FLAG:100 = 1$/m] },
       { src: K0, ref: '79-81', any: [/^@EVENTEND$/m, /^FLAG:100 = 0$/m] },
       { src: K0, ref: '674', any: [/^@KOJO_MESSAGE_COM_0$/m] },
-      { src: K0, ref: '674-3955', any: [/^@KOJO_MESSAGE_COM_0$/m] },
+      { src: K0, ref: '674-4001', any: [/^@KOJO_MESSAGE_COM_0$/m] },
       { src: K0, ref: '75', any: [/^FLAG:100 = 1$/m] },
       { src: K0, ref: '77', any: [/^\tFLAG:7 = 2$/m] },
       { src: K0, ref: '81', any: [/^FLAG:100 = 0$/m] },
@@ -17531,6 +17531,118 @@ const FILES = [
         any: [/%SAVESTR:TARGET%被从下方抽插着肛门、痛苦的呻吟着………/],
       },
       { src: K0, ref: '3951', any: [/\t\t\tCFLAG:337 = 2/m] },
+      { src: K0, ref: '3960', any: [/IF\ SELECTCOM\ ==\ 37/m] },
+      { src: K0, ref: '3960-4001', any: [/^IF SELECTCOM == 37$/m] },
+      { src: K0, ref: '3960', any: [/IF SELECTCOM == 37/m] },
+      { src: K0, ref: '3962', any: [/\tIF CFLAG:TARGET:338 == 0/m] },
+      { src: K0, ref: '3964', any: [/\t\tIF ABL:TARGET:16 >= 3/m] },
+      {
+        src: K0,
+        ref: '3965',
+        any: [/「嗯…咕…啾…呗咯…呗咯～…嘞咯…哈啊啊…好苦………」/],
+      },
+      {
+        src: K0,
+        ref: '3966',
+        any: [/%SAVESTR:TARGET%下定决心用舌头舔起了%SAVESTR:PLAYER%的肛门………/],
+      },
+      {
+        src: K0,
+        ref: '3968-3969',
+        any: [/「要用嘴…舔这种地方…嗯～…好臭…呜唔～…呜呜～」/],
+      },
+      {
+        src: K0,
+        ref: '3970',
+        any: [/%SAVESTR:TARGET%一边落泪一边亲吻着%SAVESTR:PLAYER%的肛门………/],
+      },
+      { src: K0, ref: '3972-3973', any: [/\t\tCFLAG:TARGET:338 = 1/m] },
+      {
+        src: K0,
+        ref: '3975-3977',
+        any: [
+          /\t\tIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3978',
+        any: [
+          /「哈啊啊…嗯～…嗯啾呜…嘞咯～…呗咯～…呗咯…啊啊～好美味啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3979',
+        any: [
+          /%SAVESTR:TARGET%神情陶醉的将舌头深入%SAVESTR:PLAYER%的肛门之中持续地奉仕着………/,
+        ],
+      },
+      { src: K0, ref: '3980', any: [/\t\t\tCFLAG:338 = 5/m] },
+      {
+        src: K0,
+        ref: '3982',
+        any: [
+          /\t\tELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3983',
+        any: [/「啊哈啊…主人～…舌头伸到里面感觉舒服吗？嗯啾…啾…啾呜呜呜」/],
+      },
+      {
+        src: K0,
+        ref: '3984',
+        any: [/%SAVESTR:TARGET%开心的将舌头深入肛门不断奉仕着。/],
+      },
+      {
+        src: K0,
+        ref: '3985',
+        any: [/「哈啊啊啊…奉仕太棒了…真想永远这样舔主人的肛门呢～………♪」/],
+      },
+      {
+        src: K0,
+        ref: '3986',
+        any: [/一脸陶醉的%SAVESTR:TARGET%大有将肛门侍奉持续一整天的势头………/],
+      },
+      { src: K0, ref: '3987', any: [/\t\t\tCFLAG:338 = 4/m] },
+      {
+        src: K0,
+        ref: '3989',
+        any: [
+          /\t\tELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)/m,
+        ],
+      },
+      {
+        src: K0,
+        ref: '3990',
+        any: [/「嘞噗～…啾呜…嘞咯～…啾～啾唔呜唔………哈啊…哈啊…」/],
+      },
+      {
+        src: K0,
+        ref: '3991',
+        any: [/%SAVESTR:TARGET%已经习惯了肛门侍奉的样子………/],
+      },
+      { src: K0, ref: '3992', any: [/\t\t\tCFLAG:338 = 3/m] },
+      {
+        src: K0,
+        ref: '3994',
+        any: [/\t\tELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2/m],
+      },
+      {
+        src: K0,
+        ref: '3995',
+        any: [/「嗯咕～…啾～…啾…嘞咯～…呗咯…啾……呜唔…」/],
+      },
+      {
+        src: K0,
+        ref: '3996',
+        any: [
+          /%SAVESTR:TARGET%一边落泪一边用舌头舔着%SAVESTR:PLAYER%的肛门………/,
+        ],
+      },
+      { src: K0, ref: '3997', any: [/\t\t\tCFLAG:338 = 2/m] },
     ],
   },
 
