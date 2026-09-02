@@ -2156,6 +2156,19 @@ test('K0 EVENTTRAIN NORMAL：FLAG:7 <= 0 静默', async () => {
   assert.equal(fixture.store.get('cflag:31:201'), undefined);
 });
 
+test('K0 EVENTTRAIN NORMAL：直调绕 #PRI，FLAG:7 <= 0 静默边界（==0 时守卫拦，M1957 隔离守卫）', async () => {
+  // #PRI 会把 0 补成 2，事件链里 0 到不了 NORMAL——直调导出的
+  // eventtrain_normal_k0 才能单测「总开关 == 0」这道守卫（变异改成 < 0
+  // 后 0 不再拦 → 走初调教分支出声写 CFLAG:201，本断言必红）
+  const fixture = await setup_k0((f) => {
+    f.store.set('flag:7', 0);
+  });
+  const mod = fixture.load_module('kojo/kojo-k0-tender');
+  await mod.eventtrain_normal_k0();
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:31:201'), undefined);
+});
+
 test('K0 EVENTTRAIN NORMAL：非慈爱素质静默', async () => {
   const fixture = await setup_k0((f) => {
     f.store.set('talent:31:160', 0);
@@ -2207,6 +2220,27 @@ test('K0 EVENTTRAIN NORMAL：魔族化二次写 CFLAG:370 = 2', async () => {
     fixture.store.get('cflag:31:201'),
     1,
     '魔族化二次不改 CFLAG:201',
+  );
+});
+
+test('K0 EVENTTRAIN NORMAL：魔族化二次边界 初调教=4（M1962 隔离守卫）', async () => {
+  // 门槛 < 5：初调教 = 4 命中（4 < 5）；变异改成 < 4 后 4 不再拦 → 落
+  // 后续分支、不写 CFLAG:370 = 2，本断言必红
+  const fixture = await setup_k0((f) => {
+    f.store.set('talent:31:314', 9);
+    f.store.set('cflag:31:201', 4);
+  });
+  const mod = fixture.load_module('kojo/kojo-k0-tender');
+  await mod.eventtrain_normal_k0();
+  assert.equal(
+    fixture.store.get('cflag:31:370'),
+    2,
+    '魔族化二次写 2（边界 初调教=4）',
+  );
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('被多次改造已经完全变成了魔族')),
   );
 });
 
@@ -2271,6 +2305,25 @@ test('K0 EVENTTRAIN NORMAL：淫乱+调教前魔族写 CFLAG:201 = 6', async () 
   await emit_k0(fixture, 'EVENTTRAIN');
   assert.ok(fixture.text_lines().some((line) => line.includes('啊…魔王大人')));
   assert.equal(fixture.store.get('cflag:31:201'), 6, '淫乱+调教前魔族写 6');
+});
+
+test('K0 EVENTTRAIN NORMAL：淫乱+调教前魔族 魔族化已高仍进（门槛读初调教，M1967）', async () => {
+  // 分支门槛是 kojo.初调教 < 6——不是魔族化。构造「初调教=1 但魔族化=6」：
+  // 变异错读成魔族化 < 6 后 6 不再拦 → 落后续分支、不写 CFLAG:201 = 6
+  const fixture = await setup_k0((f) => {
+    f.store.set('cflag:31:201', 1);
+    f.store.set('cflag:31:370', 6);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:314', 9);
+  });
+  const mod = fixture.load_module('kojo/kojo-k0-tender');
+  await mod.eventtrain_normal_k0();
+  // 魔族化=6（非 1/2）走分支内 else 子支，同样写 CFLAG:201 = 6
+  assert.equal(
+    fixture.store.get('cflag:31:201'),
+    6,
+    '淫乱+调教前魔族写 6（门槛读初调教非魔族化）',
+  );
 });
 
 test('K0 EVENTTRAIN NORMAL：爱慕写 CFLAG:201 = 7', async () => {
@@ -4561,8 +4614,10 @@ test('SELF_KOJO：TFLAG:13==1 自慰 Q==2 野狗支', async () => {
   });
   await self_kojo_k0(fixture, 2);
   assert.ok(
-    fixture.text_lines().some((line) => line.includes('狗狗大人')),
-    '野狗支台词',
+    fixture
+      .text_lines()
+      .some((line) => line.includes('还是狗狗大人的肉棒最棒')),
+    '野狗支台词（首句，M1980 变异删这句必红）',
   );
 });
 

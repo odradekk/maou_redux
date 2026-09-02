@@ -3215,8 +3215,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/system/flow/main-loop.js',
     find: "require('#/kojo/kojo-k0-tender');",
     replace: '// 变异：K0 口上不在主启动图注册',
-    tests: ['main-loop'],
-    must_mention: 'KOJO_MESSAGE_COM_0 必须经主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k0-tender（KOJO 0）',
   },
   {
     desc: 'M1607 K0 舔阴首次状态推进写错（CFLAG:302 = 1 改 2）（#231）',
@@ -5665,10 +5665,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1985 K0 SELF_KOJO 卖出爱慕支素质判据错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: `    if (era.get(\`talent:\${target}:85\`)) {
-      // :7196`,
-    replace: `    if (era.get(\`talent:\${target}:86\`)) {
-      // :7196`,
+    find: `    if (
+      era.get(\`talent:\${target}:85\`) &&
+      (era.get(\`mark:\${target}:3\`) || 0) < 3
+    ) {`,
+    replace: `    if (
+      era.get(\`talent:\${target}:86\`) &&
+      (era.get(\`mark:\${target}:3\`) || 0) < 3
+    ) {`,
     tests: ['kojo-k0-tender'],
     must_mention: 'TFLAG:13==6 卖出（爱慕支 + 结尾清理 TFLAG:13=0）',
   },
@@ -5689,7 +5693,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: `  if ((era.get('flag:7') || 0) < 0) {
     const { game } = require('#/facade/game');
     game.train.怪物射精或购入金 = 0;`,
-    tests: ['kojo-system'],
+    tests: ['kojo-k0-tender'],
     must_mention: 'SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15',
   },
   {

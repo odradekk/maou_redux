@@ -331,8 +331,10 @@ async function k0_kojo2(rand) {
 }
 
 // @EVENTTRAIN NORMAL（:87-483）：初调教 / 魔族化 / NTR 再捕获 / 屈服刻印 /
-// 淫乱 / 爱慕 / 崩坏 / 村娘助手 / 二次口上。
-on('EVENTTRAIN', async (rand) => {
+// 淫乱 / 爱慕 / 崩坏 / 村娘助手 / 二次口上。抽成命名函数导出，测试可直调
+// 单测守卫（M1957：EVENTTRAIN 的 #PRI 会把 0 补成 2，事件链里 0 到不了
+// NORMAL，只有直调才能隔离「总开关 == 0」这道守卫）。
+async function eventtrain_normal_k0(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const sc = () => self_call(target);
@@ -871,7 +873,10 @@ on('EVENTTRAIN', async (rand) => {
   } else {
     await k0_kojo2(rand); // :481-482
   }
-});
+}
+
+// @EVENTTRAIN NORMAL 注册（直调函数上方；测试可经导出函数绕 #PRI 单测守卫）
+on('EVENTTRAIN', eventtrain_normal_k0);
 
 // @EVENTEND NORMAL（:601-668）：调教结束口上。死亡（BASE:0 <= 0）跳过。
 on('EVENTEND', async () => {
@@ -13988,4 +13993,4 @@ kojo_message_palamcng_family.register(0, kojo_message_palamcng_0);
 kojo_message_markcng_family.register(0, kojo_message_markcng_0);
 kojo_message_com_family.register(0, kojo_message_com_0);
 
-module.exports = { STUBBED_CALLS, kojo_message_com_0 };
+module.exports = { STUBBED_CALLS, kojo_message_com_0, eventtrain_normal_k0 };
