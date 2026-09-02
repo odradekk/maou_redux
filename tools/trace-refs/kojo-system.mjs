@@ -86,6 +86,11 @@ export const FILES = [
         ref: '657-665',
         any: [/^	Q = 1$/m, /^	Q = 2$/m, /^	Q = 0$/m],
       },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '219-227',
+        any: [/^SIF S <= 0$/m, /回到床上做了\{S\}次/],
+      },
     ],
   },
 ];

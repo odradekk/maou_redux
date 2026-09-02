@@ -228,9 +228,11 @@ async function kojo_message_com(rand) {
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @param {number} [q] 自慰妄想对象（EVENT_AFTERTRAIN :657-665 的 Q：0 主人 / 1 助手 / 2 野狗）
+ * @param {number} [s] 调教后加做次数（EVENT_AFTERTRAIN :219-227 的 S，TFLAG:13 == 4
+ *   分支专用——K8 SELF_KOJO_K8 的「調教後セックス」小节读它，#239）
  * @returns {Promise<number>} 0
  */
-async function self_kojo(rand, q) {
+async function self_kojo(rand, q, s) {
   // 第一道守卫：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {
     const { game } = require('#/facade/game');
@@ -245,7 +247,7 @@ async function self_kojo(rand, q) {
   if ((local >= 100 && local < 140) || local > 1000) {
     await self_kojo_family.call(local - 100, {
       whenMissing: 0,
-      args: [rand, q],
+      args: [rand, q, s],
     });
   }
   return 0;
