@@ -75,6 +75,14 @@
 // 条目，测试零第三方依赖，node_modules 与引擎不进副本）。副本先跑一遍
 // 不变异的对照全量——副本缺文件会表现为测试红，不先对照会被误判成
 // 「变异被拦截」，是并行模式误报通过的最大来源。
+//
+// **报告路径一律 process.exitCode，不许 process.exit**（#304）：管道上
+// process.stdout 是异步的，exit() 会把排队未写完的输出直接丢掉。实测写
+// 836038 字节后立即 exit(1)，管道对端只收到 65536 字节（管道缓冲区大小），
+// 末行截断在半个字符上、SUMMARY 行整个没了。并行模式把每个子进程的输出
+// 整块转发，正好撞上这条——CI 上表现为「跑到一半神秘崩溃」，而本机把
+// stdout 重定向到文件时是同步写、一个字节不丢，所以本机永远复现不出来。
+// 只有 SIGINT 处理器可以用 exit（中断时先把靶文件还原要紧）。
 
 import { spawn, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -196,7 +204,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 1268; // #214 +26；#215 +24；#217 +17；#216 +40；#228 +20 −1；#223 +40；#230 +34；#219 +12；#218 +9；#221 +10；#218 补轮 +16；#226 +20；#224 +25（M1190-M1214）；#270 +5（M1310-M1314）；#222 +7（M1110-M1116）；#220 +15（M1060-M1074）；#274 +2（M1370-M1371）；#229 +20（M1450-M1469）；#225 +18（M1400-M1417）+1（M1418 incest 真身）；#227 +40（M1330-M1369）；#282 +2（M1520-M1521）；#233 +29（M1540-M1568）；#232 +42（M1650-M1691）；#235 +25（M1750-M1775）；#234 +31（M1700-M1730）；#236 +25（M1790-M1814）；#237 +27（M1780-M1806，#295 消重后：M1780-M1789 + M2119、M2121-M2136）；#288 +2（M2118、M2120，原 M1790-M1791，#295 消重后改号）；#290 +3（M2137-M2139，原 M1810-M1812，#295 消重后改号）；#238 +47（M2000-M2046）；#295 +2（M2080-M2081，唯一性门自身的自证——把门删掉，mutation-check/kojo-text-fidelity 的自测必须红；另消 37 处编号重号，只改后来者，条目总数不变）；#240 +40（M2200-M2239）；#241 +70（M2270-M2339）
+const LEDGER_COUNT_BASELINE = 1272; // #214 +26；#215 +24；#217 +17；#216 +40；#228 +20 −1；#223 +40；#230 +34；#219 +12；#218 +9；#221 +10；#218 补轮 +16；#226 +20；#224 +25（M1190-M1214）；#270 +5（M1310-M1314）；#222 +7（M1110-M1116）；#220 +15（M1060-M1074）；#274 +2（M1370-M1371）；#229 +20（M1450-M1469）；#225 +18（M1400-M1417）+1（M1418 incest 真身）；#227 +40（M1330-M1369）；#282 +2（M1520-M1521）；#233 +29（M1540-M1568）；#232 +42（M1650-M1691）；#235 +25（M1750-M1775）；#234 +31（M1700-M1730）；#236 +25（M1790-M1814）；#237 +27（M1780-M1806，#295 消重后：M1780-M1789 + M2119、M2121-M2136）；#288 +2（M2118、M2120，原 M1790-M1791，#295 消重后改号）；#290 +3（M2137-M2139，原 M1810-M1812，#295 消重后改号）；#238 +47（M2000-M2046）；#295 +2（M2080-M2081，唯一性门自身的自证——把门删掉，mutation-check/kojo-text-fidelity 的自测必须红；另消 37 处编号重号，只改后来者，条目总数不变）；#240 +40（M2200-M2239）；#241 +70（M2270-M2339）；#304 +4（M2900-M2903，并行模式的输出/计数/子进程参数）
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -434,6 +442,11 @@ function gate_engine_declared(entries, args) {
   // 期望值是错的（那是**运行时**跳过数的覆盖开关，不是声明数），
   // 首版这么写，当场打死了夹具用例 8。
   if (args.ledger_dir !== DEFAULT_LEDGER_DIR) return [];
+  // 并行子进程（--slice）跑的是父进程副本里的条目表，路径恰好等于它自己的
+  // DEFAULT_LEDGER_DIR——于是上面那条豁免对它失效。这道门属于父进程：父进程
+  // 在 spawn 之前已经对真条目表跑过全套门（main 里的 run_gates），子进程再跑
+  // 一遍不增加信息，却会让「父进程换了表」的情形在副本里当场撞门（#304）。
+  if (args.slice !== undefined) return [];
   const declared = entries.filter((m) => m.engine === true).length;
   return declared === ENGINE_SKIP_BASELINE
     ? []
@@ -780,6 +793,12 @@ async function execute_jobs(args) {
         return { caught: 0, skipped: 0, red: 1 };
       }
     }
+    // 子进程要继承父进程的条目表与计数基线：只传 --slice 时，子进程会用
+    // 默认的 tools/mutations 与内置基线跑——真仓库上恰好一致所以看不出来，
+    // 换表/换基线（测试夹具、诊断）就会在副本里当场撞门（#304）。
+    // --ledger-dir 落在 root 内时按相对路径改指副本内的同一处。
+    const rel_ledger = path.relative(args.root, args.ledger_dir);
+    const in_root = rel_ledger !== '' && !rel_ledger.startsWith('..');
     const results = await Promise.all(
       copies.map((copy, i) =>
         spawn_capture(
@@ -791,6 +810,10 @@ async function execute_jobs(args) {
             String(jobs),
             '--skip-baseline',
             'off',
+            '--baseline',
+            String(args.baseline),
+            '--ledger-dir',
+            in_root ? path.join(copy, rel_ledger) : args.ledger_dir,
           ],
           { cwd: copy },
         ),
@@ -800,16 +823,23 @@ async function execute_jobs(args) {
     results.forEach((r, i) => {
       process.stdout.write(r.output);
       const m = SUMMARY_RE.exec(r.output);
-      if (r.code !== 0 || !m) {
-        tally.red += 1;
-        if (!m) {
-          console.log(`✗ 子进程 ${i} 没有给出可解析的 SUMMARY 行`);
-        }
+      if (m) {
+        // 子进程判红时自己就退 1——那是**它已经报告过的红**，照它的计数
+        // 汇总即可。旧写法在 code !== 0 时改记「红 +1」并丢掉整份 caught，
+        // 于是一个子进程发现一条红，父进程的拦截数就少掉它那一整片（#304）。
+        tally.caught += Number(m[1]);
+        tally.skipped += Number(m[2]);
+        tally.red += Number(m[3]);
         return;
       }
-      tally.caught += Number(m[1]);
-      tally.skipped += Number(m[2]);
-      tally.red += Number(m[3]);
+      // 没有 SUMMARY = 子进程没跑完（崩溃/被杀/参数错）。这时必须报出
+      // 足以定位的信息，否则排查一半的成本花在「它到底怎么了」上（#304）。
+      tally.red += 1;
+      const tail = r.output.split('\n').slice(-25).join('\n');
+      console.log(
+        `✗ 子进程 ${i} 没有给出可解析的 SUMMARY 行（退出码 ${r.code}）——` +
+          `它没跑完，不是判红。末尾 25 行：\n${tail}`,
+      );
     });
     return tally;
   } finally {
@@ -833,11 +863,13 @@ async function main() {
     } else {
       console.log('✗ 结构校验未过（三项检查见上）');
     }
-    process.exit(gates_ok ? 0 : 1);
+    process.exitCode = gates_ok ? 0 : 1;
+    return;
   }
   if (!gates_ok) {
     console.log('✗ 三项检查未过，拒绝执行');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   const engine_present = Boolean(locate_asar(args.root, args.asar));
   if (!engine_present) {
@@ -859,10 +891,10 @@ async function main() {
   console.log(
     `SUMMARY caught=${tally.caught} skipped=${tally.skipped} red=${tally.red}`,
   );
-  process.exit(problems.length === 0 ? 0 : 1);
+  process.exitCode = problems.length === 0 ? 0 : 1;
 }
 
 main().catch((e) => {
   console.error(e?.stack || e);
-  process.exit(1);
+  process.exitCode = 1;
 });
