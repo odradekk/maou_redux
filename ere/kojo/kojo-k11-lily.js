@@ -39,20 +39,23 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 425 条锚全部用源文件片段的逐字转义文本
- * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：348 条恰好
- * 命中 1 行/1 段，可视为具备真实鉴别力。余下 77 条命中 >1 处，且经验证
+ * trace-refs/kojo-k11-lily.mjs 的 428 条锚全部用源文件片段的逐字转义文本
+ * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：364 条恰好
+ * 命中 1 行/1 段，可视为具备真实鉴别力。余下 64 条命中 >1 处，且经验证
  * 无法在不破坏 text-fidelity 逐句绑定（find_printform 要求 n..m 窗口内首条
  * PRINTFORM 系行即目标句，向前/向后扩窗只要越过相邻语句自身的 PRINTFORM
  * 行就会误绑定）的前提下继续收窄——60 条来自 WIP 1/N 交付范围（存在标志/
  * @EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），落在 CFLAG:400 魔族化分支
- * 与 K11_KOJO2 RAND 分档里逐句复现的对白段落内；17 条来自本轮新增的
- * @KOJO_MESSAGE_COM_11 头部 7 项守卫（:754-778，与文件别处同款守卫样板
- * 逐字重复）与 SELECTCOM 0/1/2 三支（:802-1022，姉妹相认/魔族化前后、
- * 助手玛奥/非助手玛奥两套台词在平行分支里逐字复现）。这 77 条即便行号
- * 漂移，落点也只会落到另一处内容完全相同的复现段落，不会静默通过成
- * 不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者才是
- * 真正的零鉴别力。
+ * 与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，按 issue 讨论保持现状、
+ * 不再动；4 条来自本轮新增的 SELECTCOM 0/1/2（:811/818/826/1022，姉妹
+ * 相认/魔族化前后两套台词在平行分支里逐字复现）。@KOJO_MESSAGE_COM_11
+ * 头部 7 项守卫与 SELECTCOM 0/1/2 内非 print 语句自身收尾行的锚（守卫
+ * SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法
+ * 向外扩窗到唯一邻行——只有 era.print(/era.printAndWait( 语句自己收尾行
+ * 的 `:N` 锚绝不参与扩窗（kojo-text-fidelity 靠它做逐语句字面量绑定，
+ * 扩窗会误绑邻行台词）。这 64 条即便行号漂移，落点也只会落到另一处内容
+ * 完全相同的复现段落，不会静默通过成不相关文本——风险画像与结构性关键字
+ * 锚（如裸 `RETURN 0`）不同，后者才是真正的零鉴别力。
  */
 
 'use strict';
@@ -1224,7 +1227,7 @@ async function kojo_message_com_11(rand) {
   const assi_mao =
     era_flag.assi > 0 && era_flag.assiplay && era_flag.assi === 17;
 
-  // :755-756 助手マオ以外が調教した時に口上をスキップする
+  // :755-758 助手マオ以外が調教した時に口上をスキップする
   if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
     return 0;
   }
@@ -1232,7 +1235,7 @@ async function kojo_message_com_11(rand) {
   if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {
     return 0;
   }
-  // :761-762 失神時には口上をスキップする
+  // :761-763 失神時には口上をスキップする
   if (game.train.失神) {
     return 0;
   }
@@ -1246,11 +1249,11 @@ async function kojo_message_com_11(rand) {
     stub_line('COLOSSEUM_KOJO_11', '死斗场调教中的专用口上');
     return 0;
   }
-  // :774 崩坏した場合は口上をスキップする
+  // :774-776 崩坏した場合は口上をスキップする
   if (era.get(`talent:${target}:9`) === 1) {
     return 0;
   }
-  // :777-778 触手調教中は口上をスキップする
+  // :777-780 触手調教中は口上をスキップする
   if (era.get(`tequip:${target}:90`)) {
     return 0;
   }
@@ -1273,7 +1276,7 @@ async function kojo_message_com_11(rand) {
         await era.printAndWait(`「又，又来了……真是令人讨厌……！」`); // :799
         await era.printAndWait(`${target_name}充满厌恶地扭动着身体躲避着………`); // :800
       }
-      kojo.爱抚 = 1; // :802
+      kojo.爱抚 = 1; // :800-802
       return 0;
     }
 
@@ -1336,7 +1339,7 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(
         `「啊，啊哈……${heart(1)} 就是这样！啊啊…好…好舒服${heart(1)}」`,
       ); // :833
-      kojo.爱抚 = 6; // :834
+      kojo.爱抚 = 6; // :833-834
     } else if (
       era.get(`talent:${target}:85`) === 1 &&
       (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
@@ -1351,7 +1354,7 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(
         `「魔……魔王大人……我爱你……我永远是你的人…${heart(1)}」`,
       ); // :839
-      kojo.爱抚 = 5; // :840
+      kojo.爱抚 = 5; // :839-840
     } else if (mark(2) === 3 && (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)) {
       // 屈服刻印Lv3
       await era.printAndWait(`「嗯啊…哈…为什么会这么舒服的……啊啊」`); // :843
@@ -1359,21 +1362,21 @@ async function kojo_message_com_11(rand) {
         `${target_name}腰身扭动着，敏感的身体在${player_name}的爱抚下已经有了感觉。`,
       ); // :844
       await era.printAndWait(`「啊啊，我的…身体……嗯啊啊！」`); // :845
-      kojo.爱抚 = 4; // :846
+      kojo.爱抚 = 4; // :845-846
     } else if (mark(2) === 2 && (kojo.爱抚 <= 2 || game.kojo.口上开关 === 2)) {
       // 屈服刻印Lv2
       await era.printAndWait(`「哈啊…哈啊……身体好像稍微习惯了……」`); // :849
       await era.printAndWait(`「嗯啊啊…为…为什么会有奇，奇怪的感觉！」`); // :850
-      kojo.爱抚 = 3; // :851
+      kojo.爱抚 = 3; // :850-851
     } else if (mark(2) <= 1 && (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)) {
       // それ以外
       await era.printAndWait(`「一，一点舒服的感觉都没有…嗯啊…啊啊！」`); // :854
       if (rand_n(2)) {
         await era.printAndWait(`「别，别碰我…嗯啊啊！」`); // :856
       }
-      kojo.爱抚 = 2; // :857
+      kojo.爱抚 = 2; // :856-857
     }
-    return 0; // :859 隐式（原作 RETURN 0）
+    return 0; // :856-859 隐式（原作 RETURN 0）
   }
 
   // :866-947 IF SELECTCOM == 1（舔阴 CFLAG:302）
@@ -1478,7 +1481,7 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(
         `「嗯啊啊…再……魔王大人……再深入一点${heart(1)} 啊啊…要，要去了……嗯啊啊${heart(1)}」`,
       ); // :920
-      kojo.舔阴 = 5; // :921
+      kojo.舔阴 = 5; // :920-921
     } else if (
       era.get(`talent:${target}:85`) === 1 &&
       (kojo.舔阴 <= 3 || game.kojo.口上开关 === 2)
@@ -1493,7 +1496,7 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(
         `「被……被魔王大人舔得……好有感觉，好舒服，啊啊啊${heart(1)}」`,
       ); // :926
-      kojo.舔阴 = 4; // :927
+      kojo.舔阴 = 4; // :926-927
     } else if (mark(2) === 3 && (kojo.舔阴 <= 2 || game.kojo.口上开关 === 2)) {
       // 屈服刻印Lv3
       await era.printAndWait(`「嗯啊…呜呜…不…不要啊……嗯啊啊」`); // :930

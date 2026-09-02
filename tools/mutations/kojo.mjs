@@ -3226,7 +3226,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2377 COM_11 助手非玛奥守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `  // :755-756 助手マオ以外が調教した時に口上をスキップする
+    find: `  // :755-758 助手マオ以外が調教した時に口上をスキップする
   if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
     return 0;
   }`,
@@ -3248,7 +3248,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2379 COM_11 失神守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `  // :761-762 失神時には口上をスキップする
+    find: `  // :761-763 失神時には口上をスキップする
   if (game.train.失神) {
     return 0;
   }`,
@@ -3285,7 +3285,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2382 COM_11 崩坏守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `  // :774 崩坏した場合は口上をスキップする
+    find: `  // :774-776 崩坏した場合は口上をスキップする
   if (era.get(\`talent:\${target}:9\`) === 1) {
     return 0;
   }`,
@@ -3296,7 +3296,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2383 COM_11 触手守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `  // :777-778 触手調教中は口上をスキップする
+    find: `  // :777-780 触手調教中は口上をスキップする
   if (era.get(\`tequip:\${target}:90\`)) {
     return 0;
   }`,
@@ -3326,7 +3326,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2386 COM0 初めて CFLAG:301 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `      kojo.爱抚 = 1; // :802`,
+    find: `      kojo.爱抚 = 1; // :800-802`,
     replace: `      kojo.爱抚 = 0; // 变异`,
     tests: ['kojo-k11-lily'],
     must_mention:
