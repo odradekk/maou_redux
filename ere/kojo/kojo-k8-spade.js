@@ -94,8 +94,6 @@ const era0 = (k) => era.get(k) || 0;
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
 const STUBBED_CALLS = [
-  'KOJO_MESSAGE_COM_8',
-  'DOG_KOJO_8',
   'KOJO_MESSAGE_PALAMCNG_8',
   'KOJO_MESSAGE_MARKCNG_8',
   'SELF_KOJO_K8',
@@ -1673,7 +1671,6 @@ async function kojo_message_com_8(rand) {
     return 0;
   }
 
-  const selectcom_ids = []; // #239 收口：SELECTCOM 分支全部落地，此表恒空（保留以兼容分发兜底结构）
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
     if (kojo.爱抚 == 0) {
@@ -9382,13 +9379,6 @@ async function kojo_message_com_8(rand) {
       kojo.穿环 = 2; // :5434 CFLAG:348 = 2
     }
     return 0;
-  } else if (selectcom_ids.includes(era_flag.selectcom)) {
-    // TODO(#239)：分支内容按源码顺序分段填充，此前占位
-    stub_line(
-      'KOJO_MESSAGE_COM_8',
-      `指令 ${era_flag.selectcom} 的口上`,
-      '本票分段填充',
-    );
   }
   return 0;
 }
@@ -9398,15 +9388,905 @@ kojo_message_com_family.register(8, kojo_message_com_8);
 
 /**
  * @DOG_KOJO_8（:5446-6245）：兽奸 PLAY 的专用口上（头部守卫 TEQUIP:89 岔入）。
- * TODO(#239)：13 个 SELECTCOM 分支待填充。
+ * 与主 COM_8 同构：SELECTCOM 0/1/5/6/9/21/27/30/31/34/37/43/56 各支 +
+ * 牝犬（TALENT:136）分档。**源文全部 PRINTFORMW/PRINTFORML 均为空参数**
+ * （汉化版兽奸对白被整段删除，仅保留状态机骨架，逐行核对确认，1:1 保真
+ * 不补写台词）；CFLAG 计数器与主 COM_8 对应指令共用同一存储（301=爱抚、
+ * 302=舔阴、306=胸爱抚、307=接吻、310=舔肛、322=背后位、328=背后位肛交、
+ * 331=手淫、332=口交_奴、335=骑乘位、338=肛门侍奉、344=眼罩、357=交谈，
+ * 兽奸眼罩终了时另写 444）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */
-// eslint-disable-next-line no-unused-vars
 async function dog_kojo_8(rand) {
-  stub_line('DOG_KOJO_8', '兽奸专用口上', '本票分段填充');
-  return 0;
+  const target = era_flag.target;
+  const kojo = chara(target).kojo;
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+
+  if (era_flag.selectcom == 0) {
+    // :5448-5491 兽奸爱撫 CFLAG:301
+    if (kojo.爱抚 == 0) {
+      // :5451-5459 初めて（源作空参数，1:1 保真不补写）
+      if (era0(`mark:${target}:2`) >= 2) {
+        await era.printAndWait(''); // :5455 屈服刻印Lv2以上
+      } else {
+        await era.printAndWait(''); // :5458 それ以外
+      }
+      kojo.爱抚 = 1; // :5460
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.爱抚 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :5464-5467 牝犬
+      await era.printAndWait(''); // :5466
+      kojo.爱抚 = 7; // :5467
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.爱抚 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5468-5471 淫乱
+      await era.printAndWait(''); // :5470
+      kojo.爱抚 = 6; // :5471
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.爱抚 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5472-5475 爱慕
+      await era.printAndWait(''); // :5474
+      kojo.爱抚 = 5; // :5475
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.爱抚 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5476-5479 屈服刻印Lv3
+      await era.printAndWait(''); // :5478
+      kojo.爱抚 = 4; // :5479
+    } else if (
+      era0(`mark:${target}:2`) == 2 &&
+      (kojo.爱抚 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5480-5483 屈服刻印Lv2
+      await era.printAndWait(''); // :5482
+      kojo.爱抚 = 3; // :5483
+    } else if (
+      era0(`mark:${target}:2`) <= 1 &&
+      (kojo.爱抚 <= 1 || game.kojo.口上开关 == 2)
+    ) {
+      // :5484-5487 それ以外
+      await era.printAndWait(''); // :5486
+      kojo.爱抚 = 2; // :5487
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 1) {
+    // :5494-5533 兽奸舔阴 CFLAG:302
+    if (kojo.舔阴 == 0) {
+      // :5497-5505 初めて
+      if (era0(`talent:${target}:0`) == 1) {
+        await era.printAndWait(''); // :5501 处女
+      } else {
+        await era.printAndWait(''); // :5504 それ以外
+      }
+      kojo.舔阴 = 1; // :5506
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.舔阴 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5510-5513 牝犬
+      await era.printAndWait(''); // :5512
+      kojo.舔阴 = 6; // :5513
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.舔阴 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5514-5517 淫乱
+      await era.printAndWait(''); // :5516
+      kojo.舔阴 = 5; // :5517
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.舔阴 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5518-5521 爱慕
+      await era.printAndWait(''); // :5520
+      kojo.舔阴 = 4; // :5521
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.舔阴 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5522-5525 屈服刻印Lv3
+      await era.printAndWait(''); // :5524
+      kojo.舔阴 = 3; // :5525
+    } else if (kojo.舔阴 <= 1 || game.kojo.口上开关 == 2) {
+      // :5526-5529 それ以外（屈服刻印Lv3未満）
+      await era.printAndWait(''); // :5528
+      kojo.舔阴 = 2; // :5529
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 5) {
+    // :5539-5576 兽奸胸爱撫 CFLAG:306
+    if (kojo.胸爱抚 == 0) {
+      // :5541-5548 初めて
+      if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5544 爱慕
+      } else {
+        await era.printAndWait(''); // :5547 それ以外（爱無し）
+      }
+      kojo.胸爱抚 = 1; // :5549
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.胸爱抚 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5554-5556 牝犬
+      await era.printAndWait(''); // :5555
+      kojo.胸爱抚 = 6; // :5556
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5557-5560 淫乱
+      await era.printAndWait(''); // :5559
+      kojo.胸爱抚 = 5; // :5560
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5561-5564 爱慕
+      await era.printAndWait(''); // :5563
+      kojo.胸爱抚 = 4; // :5564
+    } else if (
+      era0(`abl:${target}:1`) >= 3 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5565-5568 B感觉Lv3以上
+      await era.printAndWait(''); // :5567
+      kojo.胸爱抚 = 3; // :5568
+    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+      // :5569-5572 それ以外（爱無し、B感觉Lv3未満）
+      await era.printAndWait(''); // :5571
+      kojo.胸爱抚 = 2; // :5572
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 6) {
+    // :5581-5641 兽奸キス CFLAG:307
+    if (kojo.接吻 == 0 && era0('tflag:13')) {
+      // :5583-5596 初吻
+      if (era0(`talent:${target}:136`) == 1) {
+        await era.printAndWait(''); // :5586 牝犬
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :5589 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5592 爱慕
+      } else {
+        await era.printAndWait(''); // :5595 それ以外
+      }
+      kojo.接吻 = 1; // :5597
+      return 0;
+    } else if (kojo.接吻 == 0) {
+      // :5600-5613 （調教で和）初めて
+      if (era0(`talent:${target}:136`) == 1) {
+        await era.printAndWait(''); // :5603 牝犬
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :5606 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5609 爱慕
+      } else {
+        await era.printAndWait(''); // :5612 それ以外
+      }
+      kojo.接吻 = 1; // :5614
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.接吻 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5618-5621 二回目以降·牝犬
+      await era.printAndWait(''); // :5620
+      kojo.接吻 = 6; // :5621
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5622-5625 淫乱
+      await era.printAndWait(''); // :5624
+      kojo.接吻 = 5; // :5625
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5626-5629 爱慕
+      await era.printAndWait(''); // :5628
+      kojo.接吻 = 4; // :5629
+    } else if (
+      era0(`abl:${target}:10`) >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5630-5633 顺从Lv2以上
+      await era.printAndWait(''); // :5632
+      kojo.接吻 = 3; // :5633
+    } else if (kojo.接吻 <= 1 || game.kojo.口上开关 == 2) {
+      // :5634-5637 それ以外
+      await era.printAndWait(''); // :5636
+      kojo.接吻 = 2; // :5637
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 9) {
+    // :5646-5689 兽奸舔肛 CFLAG:310
+    if (kojo.舔肛 == 0) {
+      // :5648-5661 初めて
+      if (era0(`talent:${target}:136`) == 1) {
+        await era.printAndWait(''); // :5651 牝犬
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :5654 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5657 爱慕
+      } else {
+        await era.printAndWait(''); // :5660 それ以外（爱無し）
+      }
+      kojo.舔肛 = 1; // :5662
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.舔肛 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5667-5669 牝犬
+      await era.printAndWait(''); // :5668
+      kojo.舔肛 = 6; // :5669
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.舔肛 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5671-5673 淫乱
+      await era.printAndWait(''); // :5672
+      kojo.舔肛 = 5; // :5673
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.舔肛 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5675-5677 爱慕
+      await era.printAndWait(''); // :5676
+      kojo.舔肛 = 4; // :5677
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.舔肛 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5679-5681 屈服刻印Lv3
+      await era.printAndWait(''); // :5680
+      kojo.舔肛 = 3; // :5681
+    } else if (kojo.舔肛 <= 1 || game.kojo.口上开关 == 2) {
+      // :5683-5685 それ以外（屈服刻印Lv3未満）
+      await era.printAndWait(''); // :5684
+      kojo.舔肛 = 2; // :5685
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 21) {
+    // :5694-5779 兽奸背后位 CFLAG:322
+    if (kojo.背后位 == 0) {
+      // :5696-5728 初めて
+      if (era0(`talent:${target}:0`) == 1) {
+        // :5698-5712 处女
+        if (era0(`talent:${target}:136`) == 1) {
+          await era.printAndWait(''); // :5701 牝犬
+        } else if (era0(`talent:${target}:76`) == 1) {
+          await era.printAndWait(''); // :5704 淫乱
+        } else if (era0(`talent:${target}:85`) == 1) {
+          await era.printAndWait(''); // :5707 爱慕
+        } else {
+          await era.printAndWait(''); // :5711 それ以外
+        }
+      } else {
+        // :5713-5727 非处女
+        if (era0(`talent:${target}:136`) == 1) {
+          await era.printAndWait(''); // :5717 牝犬
+        } else if (era0(`talent:${target}:76`) == 1) {
+          await era.printAndWait(''); // :5720 淫乱
+        } else if (era0(`talent:${target}:85`) == 1) {
+          await era.printAndWait(''); // :5723 爱慕
+        } else {
+          await era.printAndWait(''); // :5726 それ以外
+        }
+      }
+      kojo.背后位 = 1; // :5729
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.背后位 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :5734-5742 牝犬（RAND:3 三选一，源作三档均空参数，1:1 保真）
+      if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :5736
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5738
+      } else {
+        await era.printAndWait(''); // :5740
+      }
+      kojo.背后位 = 7; // :5742
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.背后位 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5744-5752 淫乱
+      if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :5746
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5748
+      } else {
+        await era.printAndWait(''); // :5750
+      }
+      kojo.背后位 = 6; // :5752
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.背后位 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5754-5762 爱慕
+      if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :5756
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5758
+      } else {
+        await era.printAndWait(''); // :5760
+      }
+      kojo.背后位 = 5; // :5762
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      era0(`abl:${target}:2`) >= 3 &&
+      (kojo.背后位 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5764-5766 屈服刻印Lv3＋V感觉Lv3以上
+      await era.printAndWait(''); // :5765
+      kojo.背后位 = 4; // :5766
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.背后位 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5768-5770 屈服刻印Lv3
+      await era.printAndWait(''); // :5769
+      kojo.背后位 = 3; // :5770
+    } else if (kojo.背后位 <= 1 || game.kojo.口上开关 == 2) {
+      // :5772-5775 それ以外
+      await era.printAndWait(''); // :5773
+      kojo.背后位 = 2; // :5775
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 27) {
+    // :5784-5843 兽奸背后位アナル CFLAG:328
+    if (kojo.背后位肛交 == 0) {
+      // :5786-5799 初めて
+      if (era0(`talent:${target}:136`) == 1) {
+        await era.printAndWait(''); // :5789 牝犬
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :5792 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5795 爱慕
+      } else {
+        await era.printAndWait(''); // :5798 それ以外（爱無し）
+      }
+      kojo.背后位肛交 = 1; // :5800
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.背后位肛交 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :5805-5811 牝犬＋A感觉Lv3以上（RAND:2 二选一，源作两档均空参数，1:1 保真）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5807
+      } else {
+        await era.printAndWait(''); // :5809
+      }
+      kojo.背后位肛交 = 7; // :5811
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.背后位肛交 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5813-5819 淫乱＋A感觉Lv3以上
+      if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5815
+      } else {
+        await era.printAndWait(''); // :5817
+      }
+      kojo.背后位肛交 = 6; // :5819
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.背后位肛交 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5821-5827 爱＋A感觉Lv3以上
+      if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5823
+      } else {
+        await era.printAndWait(''); // :5825
+      }
+      kojo.背后位肛交 = 5; // :5827
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.背后位肛交 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5829-5831 爱慕
+      await era.printAndWait(''); // :5830
+      kojo.背后位肛交 = 4; // :5831
+    } else if (
+      era0(`abl:${target}:3`) >= 3 &&
+      (kojo.背后位肛交 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5833-5835 A感觉Lv3以上
+      await era.printAndWait(''); // :5834
+      kojo.背后位肛交 = 3; // :5835
+    } else if (kojo.背后位肛交 <= 1 || game.kojo.口上开关 == 2) {
+      // :5837-5839 それ以外（爱無し、A感觉Lv3未満）
+      await era.printAndWait(''); // :5838
+      kojo.背后位肛交 = 2; // :5839
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 30) {
+    // :5848-5907 兽奸手淫 CFLAG:331
+    if (kojo.手淫 == 0) {
+      // :5850-5863 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :5853 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5856 爱慕
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        await era.printAndWait(''); // :5859 侍奉精神Lv3以上
+      } else {
+        await era.printAndWait(''); // :5862 それ以外（侍奉精神Lv3未満）
+      }
+      kojo.手淫 = 1; // :5864
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :5869-5875 牝犬＋侍奉精神Lv3以上（RAND:2 二选一，1:1 保真）
+      if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5871
+      } else {
+        await era.printAndWait(''); // :5873
+      }
+      kojo.手淫 = 7; // :5875
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5877-5883 淫乱＋侍奉精神Lv3以上
+      if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5879
+      } else {
+        await era.printAndWait(''); // :5881
+      }
+      kojo.手淫 = 6; // :5883
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5885-5891 爱＋侍奉精神Lv5
+      if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :5887
+      } else {
+        await era.printAndWait(''); // :5889
+      }
+      kojo.手淫 = 5; // :5891
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5893-5895 爱＋侍奉精神Lv3以上
+      await era.printAndWait(''); // :5894
+      kojo.手淫 = 4; // :5895
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5897-5899 侍奉精神Lv3以上（源作死区：此档要求 TALENT:85，与上一档条件几乎重复，1:1 保真）
+      await era.printAndWait(''); // :5898
+      kojo.手淫 = 3; // :5899
+    } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {
+      // :5901-5903 それ以外（侍奉精神Lv3未満）
+      await era.printAndWait(''); // :5902
+      kojo.手淫 = 2; // :5903
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 31) {
+    // :5912-5961 兽奸口交 CFLAG:332
+    if (kojo.口交_奴 == 0) {
+      // :5914-5927 初めて
+      if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :5917 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :5920 爱慕
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        await era.printAndWait(''); // :5923 侍奉精神Lv3以上
+      } else {
+        await era.printAndWait(''); // :5926 それ以外（侍奉精神Lv3未満）
+      }
+      kojo.口交_奴 = 1; // :5928
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.口交_奴 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :5933-5935 牝犬＋侍奉精神Lv5
+      await era.printAndWait(''); // :5934
+      kojo.口交_奴 = 7; // :5935
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5937-5939 淫乱＋侍奉精神Lv5
+      await era.printAndWait(''); // :5938
+      kojo.口交_奴 = 6; // :5939
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5941-5943 淫乱
+      await era.printAndWait(''); // :5942
+      kojo.口交_奴 = 5; // :5943
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5945-5948 爱＋侍奉精神Lv5
+      await era.print(''); // :5946 PRINTFORML
+      await era.printAndWait(''); // :5947
+      kojo.口交_奴 = 4; // :5948
+    } else if (
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.口交_奴 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5950-5953 侍奉精神Lv3以上
+      await era.print(''); // :5951 PRINTFORML
+      await era.printAndWait(''); // :5952
+      kojo.口交_奴 = 3; // :5953
+    } else if (kojo.口交_奴 <= 1 || game.kojo.口上开关 == 2) {
+      // :5955-5957 それ以外（侍奉精神Lv3未満）
+      await era.printAndWait(''); // :5956
+      kojo.口交_奴 = 2; // :5957
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 34) {
+    // :5966-6062 兽奸骑乘位 CFLAG:335
+    if (kojo.骑乘位 == 0) {
+      // :5968-5999 初めて
+      if (era0(`talent:${target}:0`) == 1) {
+        // :5970-5983 处女
+        if (era0(`talent:${target}:136`) == 1) {
+          await era.printAndWait(''); // :5973 牝犬
+        } else if (era0(`talent:${target}:76`) == 1) {
+          await era.printAndWait(''); // :5976 淫乱
+        } else if (era0(`talent:${target}:85`) == 1) {
+          await era.printAndWait(''); // :5979 爱慕
+        } else {
+          await era.printAndWait(''); // :5982 それ以外（爱無し）
+        }
+      } else {
+        // :5986-5998 非处女
+        if (era0(`talent:${target}:136`) == 1) {
+          await era.printAndWait(''); // :5988 牝犬
+        } else if (era0(`talent:${target}:76`) == 1) {
+          await era.printAndWait(''); // :5991 淫乱
+        } else if (era0(`talent:${target}:85`) == 1) {
+          await era.printAndWait(''); // :5994 爱慕
+        } else {
+          await era.printAndWait(''); // :5997 それ以外
+        }
+      }
+      kojo.骑乘位 = 1; // :6000
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.骑乘位 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :6005-6013 牝犬（RAND:3 三选一，1:1 保真）
+      if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :6007
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :6009
+      } else {
+        await era.printAndWait(''); // :6011
+      }
+      kojo.骑乘位 = 7; // :6013
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.骑乘位 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :6015-6025 淫乱（RAND:4 四选一，1:1 保真）
+      if (rand_n(4) == 0) {
+        await era.printAndWait(''); // :6017
+      } else if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :6019
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :6021
+      } else {
+        await era.printAndWait(''); // :6023
+      }
+      kojo.骑乘位 = 6; // :6025
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.骑乘位 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :6028-6037 爱慕（RAND:4 四选一，首档 PRINTFORML，其余 PRINTFORMW，1:1 保真）
+      if (rand_n(4) == 0) {
+        await era.print(''); // :6029
+      } else if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :6031
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :6033
+      } else {
+        await era.printAndWait(''); // :6035
+      }
+      kojo.骑乘位 = 5; // :6037
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      era0(`abl:${target}:2`) >= 3 &&
+      (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :6040-6049 屈服刻印Lv3＋V感觉Lv3以上（RAND:4 四选一，1:1 保真）
+      if (rand_n(4) == 0) {
+        await era.printAndWait(''); // :6041
+      } else if (rand_n(3) == 0) {
+        await era.printAndWait(''); // :6043
+      } else if (rand_n(2) == 0) {
+        await era.printAndWait(''); // :6045
+      } else {
+        await era.printAndWait(''); // :6047
+      }
+      kojo.骑乘位 = 4; // :6049
+    } else if (
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.骑乘位 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :6051-6054 屈服刻印Lv3
+      await era.print(''); // :6052 PRINTFORML
+      await era.printAndWait(''); // :6053
+      kojo.骑乘位 = 3; // :6054
+    } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+      // :6056-6058 それ以外（爱無し、顺从Lv5未満——源作注释误写"顺从"，实际条件是纯 CFLAG 兜底，1:1 保真）
+      await era.printAndWait(''); // :6057
+      kojo.骑乘位 = 2; // :6058
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 37) {
+    // :6067-6104 兽奸肛门侍奉 CFLAG:338
+    if (kojo.肛门侍奉 == 0) {
+      // :6069-6076 初めて
+      if (era0(`abl:${target}:16`) >= 3) {
+        await era.printAndWait(''); // :6072 侍奉精神Lv3以上
+      } else {
+        await era.printAndWait(''); // :6075 それ以外（侍奉精神Lv3未満）
+      }
+      kojo.肛门侍奉 = 1; // :6077
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.肛门侍奉 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :6082-6084 牝犬＋侍奉精神Lv5
+      await era.printAndWait(''); // :6083
+      kojo.肛门侍奉 = 6; // :6084
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :6086-6088 淫乱＋侍奉精神Lv5
+      await era.printAndWait(''); // :6087
+      kojo.肛门侍奉 = 5; // :6088
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :6090-6092 爱＋侍奉精神Lv5（源作仅一句 PRINTFORML，无 PRINTFORMW 收尾，1:1 保真）
+      await era.print(''); // :6091
+      kojo.肛门侍奉 = 4; // :6092
+    } else if (
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :6094-6096 侍奉精神Lv3以上
+      await era.printAndWait(''); // :6095
+      kojo.肛门侍奉 = 3; // :6096
+    } else if (kojo.肛门侍奉 <= 1 || game.kojo.口上开关 == 2) {
+      // :6098-6100 それ以外（侍奉精神Lv3未満）
+      await era.printAndWait(''); // :6099
+      kojo.肛门侍奉 = 2; // :6100
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`)) {
+    // :6110-6168 兽奸眼罩 開始時 CFLAG:344
+    if (kojo.眼罩 == 0) {
+      // :6112-6125 初めて
+      if (era0(`talent:${target}:136`) == 1) {
+        await era.printAndWait(''); // :6115 牝犬
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(''); // :6118 淫乱
+      } else if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(''); // :6121 爱慕
+      } else {
+        await era.printAndWait(''); // :6124 それ以外
+      }
+      kojo.眼罩 = 1; // :6126
+      return 0;
+    } else if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.眼罩 <= 9 || game.kojo.口上开关 == 2)
+    ) {
+      // :6131-6133 牝犬
+      await era.printAndWait(''); // :6132
+      kojo.眼罩 = 10; // :6133
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.眼罩 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :6135-6137 淫乱＋受虐狂っ気Lv5以上
+      await era.printAndWait(''); // :6136
+      kojo.眼罩 = 9; // :6137
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.眼罩 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :6139-6141 淫乱＋受虐狂っ気Lv3以上
+      await era.printAndWait(''); // :6140
+      kojo.眼罩 = 8; // :6141
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.眼罩 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :6143-6145 淫乱
+      await era.printAndWait(''); // :6144
+      kojo.眼罩 = 7; // :6145
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.眼罩 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :6147-6149 爱＋受虐狂っ気Lv5以上
+      await era.printAndWait(''); // :6148
+      kojo.眼罩 = 6; // :6149
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.眼罩 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :6151-6153 爱＋受虐狂っ気Lv3以上
+      await era.printAndWait(''); // :6152
+      kojo.眼罩 = 5; // :6153
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.眼罩 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :6155-6157 爱慕
+      await era.printAndWait(''); // :6156
+      kojo.眼罩 = 4; // :6157
+    } else if (
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.眼罩 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :6159-6161 受虐狂っ気Lv3以上
+      await era.printAndWait(''); // :6160
+      kojo.眼罩 = 3; // :6161
+    } else if (kojo.眼罩 <= 1 || game.kojo.口上开关 == 2) {
+      // :6163-6165 それ以外
+      await era.printAndWait(''); // :6164
+      kojo.眼罩 = 2; // :6165
+    }
+    return 0;
+  } else if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`) == 0) {
+    // :6170-6189 兽奸眼罩 終了時 CFLAG:444
+    // 源作守卫误读 CFLAG:338（肛门侍奉）而非 CFLAG:444 自身（前三档），仅
+    // 末档正确读 CFLAG:444；写入目标始终是 CFLAG:444，1:1 保真不改正
+    if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :6172-6174 牝犬
+      await era.printAndWait(''); // :6173
+      kojo.兽奸眼罩 = 4; // :6174
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :6176-6178 淫乱
+      await era.printAndWait(''); // :6177
+      kojo.兽奸眼罩 = 3; // :6178
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.肛门侍奉 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :6180-6182 爱慕
+      await era.printAndWait(''); // :6181
+      kojo.兽奸眼罩 = 2; // :6182
+    } else if (kojo.兽奸眼罩 < 1 || game.kojo.口上开关 == 2) {
+      // :6184-6186 それ以外
+      await era.printAndWait(''); // :6185
+      kojo.兽奸眼罩 = 1; // :6186
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 56) {
+    // :6195-6240 兽奸会話 CFLAG:357（源注释：狗不能对话，仅有自我介绍）
+    if (kojo.交谈 == 0) {
+      // :6197-6213 初めて
+      if (era0(`tequip:${target}:53`)) {
+        // :6198-6212 ビデオ自己紹介
+        if (era0(`talent:${target}:136`) == 1) {
+          await era.printAndWait(''); // :6202 牝犬
+        } else if (era0(`talent:${target}:76`) == 1) {
+          await era.printAndWait(''); // :6205 淫乱
+        } else if (era0(`talent:${target}:85`) == 1) {
+          await era.printAndWait(''); // :6208 爱慕
+        } else {
+          await era.printAndWait(''); // :6211 それ以外
+        }
+      }
+      kojo.交谈 = 1; // :6214
+      return 0;
+    } else if (era0(`tequip:${target}:53`)) {
+      // :6218-6237 二回目以降·ビデオ自己紹介（源作无摄像分支时直接跳过，不打印任何文本）
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.交谈 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        await era.printAndWait(''); // :6222 牝犬
+        kojo.交谈 = 5; // :6223
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        await era.printAndWait(''); // :6226 淫乱
+        kojo.交谈 = 4; // :6227
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.交谈 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        await era.printAndWait(''); // :6230 爱慕
+        kojo.交谈 = 3; // :6231
+      } else if (kojo.交谈 <= 1 || game.kojo.口上开关 == 2) {
+        await era.printAndWait(''); // :6234 それ以外
+        kojo.交谈 = 2; // :6235
+      }
+    }
+    return 0;
+  }
+
+  return 0; // :6243
 }
 
 /**
