@@ -519,4 +519,21 @@ export default [
     tests: ['trace-check'],
     must_mention: '登记后的样本前缀引用必须让工具全绿',
   },
+  // —— #302：CI 补引擎后，有引擎那一侧的守护 ——
+  {
+    desc: 'M2770 有引擎侧基线从 0 改成 3（默许跳过三个用例而不报警）（#302）',
+    file: 'test/engine-present-skip-baseline.txt',
+    find: '\n0\n',
+    replace: '\n3\n',
+    tests: ['skip-count-check'],
+    must_mention: '有引擎侧基线不是 0',
+  },
+  {
+    desc: 'M2771 跑错环境的方向提示被删（基线 0 时不再指向 asar 与门控）（#302）',
+    file: 'tools/skip-count-check.mjs',
+    find: "  const wrong_env =\n    baseline === 0\n      ? '\\n  基线为 0 = 有引擎环境：跳过不为 0 多半是 asar 没被 locate_asar 认出来，' +\n        '或该用例的门控条件写错了。'\n      : '';",
+    replace: "  const wrong_env = '';",
+    tests: ['skip-count-check'],
+    must_mention: '基线为 0 时应提示 asar',
+  },
 ];
