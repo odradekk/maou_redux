@@ -15064,6 +15064,186 @@ export const FILES = [
         ref: '4014',
         any: [/CFLAG:337 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4023-4066',
+        any: [
+          /PRINTFORMW 「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4025-4034',
+        any: [
+          /PRINTFORMW 「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4028',
+        any: [
+          /PRINTFORMW 「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4029',
+        any: [/PRINTFORMW 「嗯…嗯嗯…嗯…啾…就…嗯啾…嗯…嗯啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4032',
+        any: [
+          /PRINTFORMW 「这么干怎么说都有点………唉、我明白的、不想干也得干对吧？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4033',
+        any: [/PRINTFORMW 「嗯咕…呜…呜…啾…嗯…嗯啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4035',
+        any: [/CFLAG:TARGET:338 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4038-4065',
+        any: [/PRINTFORMW 「如果弄得很舒服的话…有奖励吧？…嗯、啊啊啊………♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4041-4045',
+        any: [/PRINTFORMW 「如果弄得很舒服的话…有奖励吧？…嗯、啊啊啊………♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4041',
+        any: [/PRINTFORMW 「如果弄得很舒服的话…有奖励吧？…嗯、啊啊啊………♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4042',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%高兴的张开嘴一边下流的留着口水一边开始舔舐%SAVESTR:PLA/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4043',
+        any: [
+          /PRINTFORMW 「嗯咕…啾咕…啾…嗯…嗯啾…啾…你的肛门真美味…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4044',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%眼睛中的情欲松弛了下来、完全不在意的舔舐着%SAVESTR:PLA/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4045',
+        any: [
+          /PRINTFORMW 「你看、我要把舌头放进你的肛门里了…再放松点…嗯…嗯…啾…%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4046',
+        any: [/CFLAG:338 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4049-4052',
+        any: [
+          /PRINTFORMW 「啊啊…只是舔着你的肛门而已、就这么幸福什么的、我已经离不开你了…啾」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4049',
+        any: [
+          /PRINTFORMW 「啊啊…只是舔着你的肛门而已、就这么幸福什么的、我已经离不开你了…啾」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4050',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%高兴地张开嘴伸出舌头、发出着水声舔舐着%SAVESTR:PLAYE/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4051',
+        any: [/PRINTFORMW 「嗯啾…啾…啾…嗯…嗯啾…啾…嗯…啊啊」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4052',
+        any: [/PRINTFORMW 「啊啊…我给你当狗也可以…啾%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4053',
+        any: [/CFLAG:338 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4056-4058',
+        any: [
+          /PRINTFORMW 「嗯…舔你的肛门什么的，明明应该很屈辱…嗯…嗯啊…啊啊…啾…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4056',
+        any: [
+          /PRINTFORMW 「嗯…舔你的肛门什么的，明明应该很屈辱…嗯…嗯啊…啊啊…啾…♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4057',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边喘着粗气一边舔着%SAVESTR:PLAYER%的肛门。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4058',
+        any: [/PRINTFORMW 「嗯啾…啾…嗯…啾…♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4059',
+        any: [/CFLAG:338 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4062-4063',
+        any: [/PRINTFORMW 「嗯嗯…我的舌头…会烂掉的…嗯…嗯嗯…咕…嗯嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4062',
+        any: [/PRINTFORMW 「嗯嗯…我的舌头…会烂掉的…嗯…嗯嗯…咕…嗯嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4063',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边眼里含着泪，一边服侍着%SAVESTR:PLAYER%的肛门…/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4064',
+        any: [/CFLAG:338 = 2/],
+      },
     ],
   },
 ];

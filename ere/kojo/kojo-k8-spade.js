@@ -1673,7 +1673,7 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    37, 40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127,
+    40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -7187,6 +7187,86 @@ async function kojo_message_com_8(rand) {
       ); // :4012
       await era.printAndWait(`「快、快停下…啊啊…咕、啊嗯…啊啊——！」`); // :4013
       kojo.骑乘位肛交 = 2; // :4014 CFLAG:337 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 37) {
+    // :4023-4066 肛门侍奉 CFLAG:338（无 A感觉/淫乱-爱慕 初めて分档，结构同 SELECTCOM 35 的二回目四档）
+    if (kojo.肛门侍奉 == 0) {
+      // :4025-4034 初めて
+      if (era0(`abl:${target}:16`) >= 3) {
+        // 侍奉精神Lv3以上
+        await era.printAndWait(
+          `「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」`,
+        ); // :4028
+        await era.printAndWait(`「嗯…嗯嗯…嗯…啾…就…嗯啾…嗯…嗯啊」`); // :4029
+      } else {
+        // それ以外（侍奉精神Lv3未满）
+        await era.printAndWait(
+          `「这么干怎么说都有点………唉、我明白的、不想干也得干对吧？」`,
+        ); // :4032
+        await era.printAndWait(`「嗯咕…呜…呜…啾…嗯…嗯啊」`); // :4033
+      }
+      kojo.肛门侍奉 = 1; // :4035 CFLAG:TARGET:338 = 1
+      return 0;
+    }
+    // :4038-4065 二回目以降（四档：淫乱＋侍奉精神Lv5(5)/爱＋侍奉精神Lv5(4)/侍奉精神Lv3以上(3)/それ以外(2)）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4041-4045 淫乱＋侍奉精神Lv5
+      await era.printAndWait(
+        `「如果弄得很舒服的话…有奖励吧？…嗯、啊啊啊………♪」`,
+      ); // :4041
+      await era.printAndWait(
+        `${target_name}高兴的张开嘴一边下流的留着口水一边开始舔舐${player_name}的肛门。`,
+      ); // :4042
+      await era.printAndWait(
+        `「嗯咕…啾咕…啾…嗯…嗯啾…啾…你的肛门真美味…${heart(1)}」`,
+      ); // :4043
+      await era.printAndWait(
+        `${target_name}眼睛中的情欲松弛了下来、完全不在意的舔舐着${player_name}的不净的场所。`,
+      ); // :4044
+      await era.printAndWait(
+        `「你看、我要把舌头放进你的肛门里了…再放松点…嗯…嗯…啾…${heart(1)}」`,
+      ); // :4045
+      kojo.肛门侍奉 = 5; // :4046 CFLAG:338 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4049-4052 爱＋侍奉精神Lv5
+      await era.printAndWait(
+        `「啊啊…只是舔着你的肛门而已、就这么幸福什么的、我已经离不开你了…啾」`,
+      ); // :4049
+      await era.printAndWait(
+        `${target_name}高兴地张开嘴伸出舌头、发出着水声舔舐着${player_name}的肛门。`,
+      ); // :4050
+      await era.printAndWait(`「嗯啾…啾…啾…嗯…嗯啾…啾…嗯…啊啊」`); // :4051
+      await era.printAndWait(`「啊啊…我给你当狗也可以…啾${heart(1)}」`); // :4052
+      kojo.肛门侍奉 = 4; // :4053 CFLAG:338 = 4
+    } else if (
+      era0(`abl:${target}:16`) >= 3 &&
+      (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4056-4058 侍奉精神Lv3以上
+      await era.printAndWait(
+        `「嗯…舔你的肛门什么的，明明应该很屈辱…嗯…嗯啊…啊啊…啾…♪」`,
+      ); // :4056
+      await era.printAndWait(
+        `${target_name}一边喘着粗气一边舔着${player_name}的肛门。`,
+      ); // :4057
+      await era.printAndWait(`「嗯啾…啾…嗯…啾…♪」`); // :4058
+      kojo.肛门侍奉 = 3; // :4059 CFLAG:338 = 3
+    } else if (kojo.肛门侍奉 <= 1 || game.kojo.口上开关 == 2) {
+      // :4062-4063 それ以外（侍奉精神Lv3未满）
+      await era.printAndWait(`「嗯嗯…我的舌头…会烂掉的…嗯…嗯嗯…咕…嗯嗯！」`); // :4062
+      await era.printAndWait(
+        `${target_name}一边眼里含着泪，一边服侍着${player_name}的肛门………`,
+      ); // :4063
+      kojo.肛门侍奉 = 2; // :4064 CFLAG:338 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {

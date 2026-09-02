@@ -2051,8 +2051,89 @@ test('SELECTCOM 36 骑乘位肛交，二回目以降·それ以外：CFLAG:337 �
   assert.equal(fixture.store.get('cflag:31:337'), 2, 'CFLAG:337 推进到 2');
 });
 
-test('骨架期：SELECTCOM 37（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+test('SELECTCOM 37 肛门侍奉，初めて·侍奉精神Lv3以上：CFLAG:338 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('abl:31:16', 3);
+  }, 37);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」',
+    '「嗯…嗯嗯…嗯…啾…就…嗯啾…嗯…嗯啊」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:338'), 1, 'CFLAG:338 推进到 1');
+});
+
+test('SELECTCOM 37 肛门侍奉，初めて·それ以外：CFLAG:338 推进到 1', async () => {
   const fixture = await setup_k8(undefined, 37);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「这么干怎么说都有点………唉、我明白的、不想干也得干对吧？」',
+    '「嗯咕…呜…呜…啾…嗯…嗯啊」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:338'), 1, 'CFLAG:338 推进到 1');
+});
+
+test('SELECTCOM 37 肛门侍奉，二回目以降·淫乱＋侍奉精神Lv5：CFLAG:338 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:338', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 5);
+  }, 37);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「如果弄得很舒服的话…有奖励吧？…嗯、啊啊啊………♪」',
+    '银黑桃高兴的张开嘴一边下流的留着口水一边开始舔舐你的肛门。',
+    '「嗯咕…啾咕…啾…嗯…嗯啾…啾…你的肛门真美味…♡」',
+    '银黑桃眼睛中的情欲松弛了下来、完全不在意的舔舐着你的不净的场所。',
+    '「你看、我要把舌头放进你的肛门里了…再放松点…嗯…嗯…啾…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:338'), 5, 'CFLAG:338 推进到 5');
+});
+
+test('SELECTCOM 37 肛门侍奉，二回目以降·爱＋侍奉精神Lv5：CFLAG:338 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:338', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:16', 5);
+  }, 37);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…只是舔着你的肛门而已、就这么幸福什么的、我已经离不开你了…啾」',
+    '银黑桃高兴地张开嘴伸出舌头、发出着水声舔舐着你的肛门。',
+    '「嗯啾…啾…啾…嗯…嗯啾…啾…嗯…啊啊」',
+    '「啊啊…我给你当狗也可以…啾♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:338'), 4, 'CFLAG:338 推进到 4');
+});
+
+test('SELECTCOM 37 肛门侍奉，二回目以降·侍奉精神Lv3以上：CFLAG:338 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:338', 1);
+    f.store.set('abl:31:16', 3);
+  }, 37);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…舔你的肛门什么的，明明应该很屈辱…嗯…嗯啊…啊啊…啾…♪」',
+    '银黑桃一边喘着粗气一边舔着你的肛门。',
+    '「嗯啾…啾…嗯…啾…♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:338'), 3, 'CFLAG:338 推进到 3');
+});
+
+test('SELECTCOM 37 肛门侍奉，二回目以降·それ以外：CFLAG:338 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:338', 1);
+  }, 37);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯嗯…我的舌头…会烂掉的…嗯…嗯嗯…咕…嗯嗯！」',
+    '银黑桃一边眼里含着泪，一边服侍着你的肛门………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:338'), 2, 'CFLAG:338 推进到 2');
+});
+
+test('骨架期：SELECTCOM 40（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 40);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
