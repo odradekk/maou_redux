@@ -110,16 +110,14 @@ const REPO = path.resolve(__dirname, '..');
 // 升格态 365 → 355。
 // 【#225（J15）助手与蕾丝族落地后重测】COM_ABLE60-73 的真实 guard（助手在场、
 // 技巧门槛、装备位）过滤掉误列菜单：自然态 899 → 712、升格态 355 → 300。
-// 【#231（K0 慈爱）PALAMCNG/MARKCNG 落地后重测】@KOJO_MESSAGE_PALAMCNG_0 /
-// @KOJO_MESSAGE_MARKCNG_0 真身落地后，source-check 的两处 stub_line 换真
-// 调用，每屏的占位行消失：natural 525 → 495、upgrade 245 → 239。两样本的
-// 调教窗口里 PALAMCNG/MARKCNG 的首超分支本就恒静默（润滑等远未达 LV2 阈值、
-// 无刻印取得），golden 侧无对应行——所以只减 stub 计数、matched 不动
-// （1108/257 不变），与 #216/#220 的先例同构。
 // 下面是合并态的实测值。未解释恒 0。
+// 【#234（J24）K3 高贵口上真身落地后重测】PALAMCNG/EVENTTRAIN/COM56 交谈
+// 不再走存根占位：自然态 matched 1108→1114、stub 525→483；升格态
+// matched 257→259、stub 245→236。回放预置 CFLAG:201/221-225，中途档
+// 不再打出首次台词。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1108, version: 0, stub: 495, unexplained: 0 },
-  'train-upgrade': { matched: 257, version: 0, stub: 239, unexplained: 0 },
+  'train-natural': { matched: 1114, version: 0, stub: 483, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 236, unexplained: 0 },
 };
 
 async function build_report(sample) {

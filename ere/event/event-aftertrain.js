@@ -29,6 +29,61 @@ const { chara_callname } = require('#/utils/callname-utils');
  * `JUEL:8 += A*200` 而打印用 `B*200`——原作缺陷，1:1 照抄。
  */
 let leftover_a = 0;
+/**
+ * 原作 Q 是跨函数全局。AFTERTRAIN 自慰检查写，SELF_KOJO（K2 等）读
+ * （调教后自慰口上里 Q == 1 助手 / Q == 2 野狗）。
+ */
+let leftover_q = 0;
+/**
+ * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写次数，SELF_KOJO 的
+ * 调教后性交支读 `s`（K5 :6223 源文就是小写 s；K6 的 SELF_KOJO 同读）。
+ */
+let leftover_s = 0;
+/**
+ * 原作 S 在出售链是卖出价。SELL_CHARA 写完再 CALL SELF_KOJO；
+ * 出售主体未移植时由测试写入。
+ */
+let leftover_sale = 0;
+
+/**
+ * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
+ * @returns {number}
+ */
+function peek_aftertrain_q() {
+  return leftover_q;
+}
+
+/**
+ * SELF_KOJO 读的原作性交次数 S（K5 源文 :6223 写作小写 s）。
+ * @returns {number}
+ */
+function peek_aftertrain_s() {
+  return leftover_s;
+}
+
+/**
+ * SELF_KOJO 出售支读的原作卖出价 S（K5 :6250 注释「Sは売却値」）。
+ * @returns {number}
+ */
+function peek_sale_price() {
+  return leftover_sale;
+}
+
+/**
+ * 出售主体未移植前，测试写入卖出价（原作 SELL_CHARA 的 S）。
+ * @param {number} v
+ */
+function remember_sale_price(v) {
+  leftover_sale = v;
+}
+
+/**
+ * AFTERTRAIN 性交检查未跑时，测试写入性交回数（原作 S / K5 源文 s）。
+ * @param {number} v
+ */
+function remember_aftertrain_s(v) {
+  leftover_s = v;
+}
 
 /**
  * 获取角色称呼（SAVESTR / CALLNAME）
@@ -44,6 +99,7 @@ function chara_name(cid) {
  * @returns {Promise<number>} 执行回数或 0
  */
 async function aftertrain_sex_check() {
+  leftover_s = 0;
   const target = era_flag.target;
   if (target < 0) return 0;
   if (era.get(`talent:${target}:135`)) return 0; // 未成熟
@@ -112,9 +168,9 @@ async function aftertrain_sex_check() {
   era.print('');
 
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  leftover_s = s;
   game.train.初吻与自我口上 = 4;
-  await self_kojo(undefined, 0); // :231-232 性交段 Q 不读
-
+  await self_kojo();
   era.print(`V经验＋${s}`);
   era.print(`性交经验＋${s}`);
   era.print(`快V点数＋${s * 200}`);
@@ -324,7 +380,7 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
 
   // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
   game.train.初吻与自我口上 = 2;
-  await self_kojo(undefined, 0); // :480-481 百合段 Q 不读
+  await self_kojo();
 
   const exp2_add = Math.floor((n * 100 * abl10) / 500);
   era.print(`百合经验＋${n * 20}`);
@@ -434,6 +490,7 @@ async function aftertrain_masturbation_check(
 
   let a = 0;
   leftover_a = 0;
+  leftover_q = 0;
   const abl31 = era.get(`abl:${target}:31`) || 0; // 自慰中毒
   if (abl31 === 1) a += 1;
   else if (abl31 === 2) a += 2;
@@ -514,9 +571,9 @@ async function aftertrain_masturbation_check(
   }
 
   // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+  leftover_q = q;
   game.train.初吻与自我口上 = 1;
-  await self_kojo(rand, q); // :669-670 自慰段 Q 1=助手/2=野狗/0=主人
-
+  await self_kojo(undefined, q);
   era.print(`自慰经验＋${a}`);
   const { chara } = require('#/facade/chara');
   chara(target).dungeon.自慰经验 += a;
@@ -710,5 +767,10 @@ module.exports = {
   aftertrain_lesbiansex_check,
   aftertrain_masturbation_check,
   aftertrain_sex_check,
+  peek_aftertrain_q,
+  peek_aftertrain_s,
+  peek_sale_price,
+  remember_aftertrain_s,
+  remember_sale_price,
   self_check,
 };

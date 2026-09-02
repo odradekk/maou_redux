@@ -40,19 +40,11 @@
  *     era 表——**只读游戏状态**，跨域写一律走门面（#71）；
  *   - 输出面：台词用 era.printAndWait；除此之外不得有任何输出或等待；
  *   - **七道头部守卫先于任何 SELECTCOM 分支**（实测 EVENT_K3_高貴.ERB
- *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各文件 1:1）：
- *       1. TEQUIP:55（死斗场）→ 岔去专用口上（COLOSSEUM_KOJO_<n>）；
- *       2. ASSI > 0 && ASSIPLAY（助手调教）→ 跳过；
- *       3. TEQUIP:45 && SELECTCOM != 45（口塞；口塞指令自己不算）→ 跳过；
- *       4. TFLAG:899（失神）→ 跳过；
- *       5. TEQUIP:89（兽奸）→ 岔去专用口上（DOG_KOJO_<n>；有的性格是
- *          静默跳过，按各文件 1:1）；
- *       6. TALENT:9 == 1（崩坏）→ 跳过；
- *       7. TEQUIP:90（触手）→ 跳过。
- *     守卫读 TEQUIP:55/45/89/90 只读（TEQUIP 建模归 J5，#215）。契约测试
- *     （test/kojo-system.test.js）对**已注册的全部 handler** 逐条置位驱
- *     动：守卫命中时不得出现台词（无等待、无台词输出）——口上票落地即
- *     自动进契约，无需逐票自写守卫用例。
+ *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各文件 1:1；
+ *     K1 自信家（#232）顺序不同：TEQUIP:55 →（助手调教不跳过）→ TEQUIP:45
+ *     → TFLAG:899 → TALENT:9 → TEQUIP:89 → TEQUIP:90。死斗场/兽奸岔真身，
+ *     助手调教出台词。契约测试对跳过类守卫逐条置位；助手与专用口上按
+ *     各 handler 1:1 拆开。
  *   - SELECTCOM 分支：指令族票（轴 A）落地一条 @COM<n> 时，同一编号的
  *     台词分支在各口上 handler 内各自扩展（各文件 1:1，分支序/条件随
  *     ERB 原文）。
@@ -72,6 +64,7 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
 // @EVENTSHOP #PRI（:12-15）：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
 // 玩家关掉（-1）不自开，1（少量模式）不改
@@ -93,7 +86,7 @@ const DECLARED_KOJO_COM_IDS = [
   ...Array.from({ length: 700 }, (_, i) => i + 901),
 ];
 
-/** @KOJO_MESSAGE_COM_{N}：指令口上族（这张票注册 3 与 5，见 kojo-k3-noble / kojo-k5-mao） */
+/** @KOJO_MESSAGE_COM_{N}：指令口上族（K3 / K5 / K1） */
 const kojo_message_com_family = new DispatchFamily(
   'KOJO_MESSAGE_COM',
   DECLARED_KOJO_COM_IDS,
@@ -102,6 +95,77 @@ const kojo_message_com_family = new DispatchFamily(
 /** @SELF_KOJO_K{N}：事件口上族（随各口上票落地） */
 const self_kojo_family = new DispatchFamily('SELF_KOJO', DECLARED_KOJO_COM_IDS);
 
+/** @KOJO_MESSAGE_PALAMCNG_{N}：参数变动口上（#232 起 K1 真身） */
+const kojo_message_palamcng_family = new DispatchFamily(
+  'KOJO_MESSAGE_PALAMCNG',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** @KOJO_MESSAGE_MARKCNG_{N}：刻印取得口上（#232 起 K1 真身） */
+const kojo_message_markcng_family = new DispatchFamily(
+  'KOJO_MESSAGE_MARKCNG',
+  DECLARED_KOJO_COM_IDS,
+);
+
+const dog_kojo_family = new DispatchFamily('DOG_KOJO', DECLARED_KOJO_COM_IDS);
+const colosseum_kojo_family = new DispatchFamily(
+  'COLOSSEUM_KOJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const benki_koujo_family = new DispatchFamily(
+  'BENKI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const dungeon_victory_family = new DispatchFamily(
+  'DUNGEON_VICTORY',
+  DECLARED_KOJO_COM_IDS,
+);
+const dungeon_attack_family = new DispatchFamily(
+  'DUNGEON_ATTACK',
+  DECLARED_KOJO_COM_IDS,
+);
+const ntr_koujo_family = new DispatchFamily('NTR_KOUJO', DECLARED_KOJO_COM_IDS);
+const exucution_koujo_family = new DispatchFamily(
+  'EXUCUTION_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const museum_koujo_family = new DispatchFamily(
+  'MUSEUM_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const banishment_koujo_family = new DispatchFamily(
+  'BANISHMENT_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const public_exucution_koujo_family = new DispatchFamily(
+  'PUBLIC_EXUCUTION_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const grotesque_koujo_family = new DispatchFamily(
+  'GROTESQUE_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const enterenemy_koujo_family = new DispatchFamily(
+  'ENTERENEMY_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const gohoubi_request_koujo_family = new DispatchFamily(
+  'GOHOUBI_REQUEST_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const gobi_koujo_family = new DispatchFamily(
+  'GOBI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+
+/** 分发守卫能拼出的性格编号；空间外（含无性格 → 0）返回 -1 */
+function kojo_handler_id(arg = -1) {
+  const local = get_kojo_num(arg);
+  if ((local >= 100 && local < 140) || local > 1000) {
+    return local - 100;
+  }
+  return -1;
+}
 /**
  * @GET_KOJO_NUM（:86-144）：角色 → 口上编号。
  *
@@ -161,12 +225,12 @@ async function kojo_message_com(rand) {
  * @SELF_KOJO（:225-241）：事件口上入口（EVENT_AFTERTRAIN 等处的 CALL SELF_KOJO）。
  *
  * 两道守卫：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
+ *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @param {number} [q] 调教后自慰对象（EVENT_AFTERTRAIN 的 Q：1=助手 /
- *   2=野狗 / 0=主人；其余 TFLAG:13 段不读它，默认 0）
+ * @param {number} [q] 自慰妄想对象（EVENT_AFTERTRAIN :657-665 的 Q：0 主人 / 1 助手 / 2 野狗）
  * @returns {Promise<number>} 0
  */
-async function self_kojo(rand, q = 0) {
+async function self_kojo(rand, q) {
   // 第一道守卫：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {
     const { game } = require('#/facade/game');
@@ -187,370 +251,181 @@ async function self_kojo(rand, q = 0) {
   return 0;
 }
 
-/** @KOJO_MESSAGE_PALAMCNG_K{N} 族：参数变动口上（:169-182 的分派目标） */
-const palamcng_family = new DispatchFamily(
-  'KOJO_MESSAGE_PALAMCNG',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @KOJO_MESSAGE_MARKCNG_K{N} 族：刻印取得口上（:188-201 的分派目标） */
-const markcng_family = new DispatchFamily(
-  'KOJO_MESSAGE_MARKCNG',
-  DECLARED_KOJO_COM_IDS,
-);
-
 /**
- * @KOJO_MESSAGE_PALAMCNG（:169-182）：参数变动后触发口上。
- *
- * 三道守卫：FLAG:7 <= 0 直接返回（:170-171）；存在判定 FLAG:LOCAL == 0
- * 返回（:174-176，EX_FLAG 臂待办见文件头）；编号空间外不拼函数名。
- *
- * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @returns {Promise<number>} 0
+ * 已注册则走真身，否则打存根。未落地性格的占位行因此可见；对应口上
+ * 模块 register 后自动换真身。原作 TRYCALLFORM 落空静默，全性格落地
+ * 后再收占位。
  */
+async function try_kojo_or_stub(
+  family,
+  stub_name,
+  stub_desc,
+  stub_ticket,
+  arg = -1,
+  extra_args = [],
+  wait = false,
+) {
+  const id = kojo_handler_id(arg);
+  if (id >= 0 && family.has(id)) {
+    return family.call(id, { whenMissing: 0, args: extra_args });
+  }
+  if (wait) {
+    await stub_line_wait(stub_name, stub_desc, stub_ticket);
+  } else {
+    stub_line(stub_name, stub_desc, stub_ticket);
+  }
+  return 0;
+}
+
 async function kojo_message_palamcng(rand) {
-  // :170-171 总开关
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
-
-  // :174-176 存在判定
   const local = get_kojo_num();
   if ((era.get(`flag:${local}`) || 0) === 0) {
     return 0;
   }
-
-  // :180-181 TRYCALLFORM KOJO_MESSAGE_PALAMCNG_{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await palamcng_family.call(local - 100, {
-      whenMissing: 0,
-      args: [rand],
-    });
-  }
-  return 0;
+  return try_kojo_or_stub(
+    kojo_message_palamcng_family,
+    'KOJO_MESSAGE_PALAMCNG',
+    '参数变动口上',
+    '随口上票 #46',
+    -1,
+    [rand],
+  );
 }
 
-/**
- * @KOJO_MESSAGE_MARKCNG（:188-201）：刻印取得后触发口上。
- *
- * 两道守卫：FLAG:7 <= 0 直接返回（:189-190）；存在判定被原作注释
- * （:195-197，不判）。编号空间外不拼函数名。
- *
- * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @returns {Promise<number>} 0
- */
 async function kojo_message_markcng(rand) {
-  // :189-190 总开关
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
-
-  // :199-200 TRYCALLFORM KOJO_MESSAGE_MARKCNG_{LOCAL - 100}
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await markcng_family.call(local - 100, {
-      whenMissing: 0,
-      args: [rand],
-    });
-  }
-  return 0;
+  return try_kojo_or_stub(
+    kojo_message_markcng_family,
+    'KOJO_MESSAGE_MARKCNG',
+    '刻印取得口上',
+    '随口上票 #46',
+    -1,
+    [rand],
+  );
 }
 
-/** @BENKI_KOUJO_K{N} 族：肉便器口上（EVENT_K.ERB:277-289 的分派目标） */
-const benki_koujo_family = new DispatchFamily(
-  'BENKI_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/**
- * @BENKI_KOUJO（EVENT_K.ERB:277-289）：肉便器配信时的口上入口。
- *
- * 与原作同构：TARGET = A → GET_KOJO_NUM → 分发。存在判定被原作注释
- * （:283-285），不判。
- *
- * @param {number} cid 角色 ID（原作全局 A）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function benki_koujo(cid) {
-  const target_pool = era_flag.target; // 调用点已置 TARGET = ARG
-  era_flag.target = cid; // TARGET = A
-  const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await benki_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [cid],
-    });
-  }
-  era_flag.target = target_pool;
-  return 0;
+async function benki_koujo(rand) {
+  return try_kojo_or_stub(
+    benki_koujo_family,
+    'BENKI_KOUJO',
+    '肉便器口上',
+    '随口上票',
+    -1,
+    [rand],
+  );
 }
 
-/** @DUNGEON_VICTORY_K{N} 族：战斗胜利口上（EVENT_K.ERB:294-303 的分派目标） */
-const dungeon_victory_family = new DispatchFamily(
-  'DUNGEON_VICTORY',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/**
- * @VICTORY_KOUJO（EVENT_K.ERB:294-303）：战斗胜利时的口上入口。
- *
- * 与原作同构：TARGET = A → 分发。存在判定被原作注释（:299-301），不判。
- *
- * @param {number} cid 胜利者角色 ID（原作全局 A）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function dungeon_victory_koujo(cid, rand) {
+async function victory_koujo(cid, rand) {
   const target_pool = era_flag.target;
-  era_flag.target = cid; // TARGET = A
-  const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await dungeon_victory_family.call(local - 100, {
-      whenMissing: 0,
-      args: [cid, rand],
-    });
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid;
   }
+  const result = await try_kojo_or_stub(
+    dungeon_victory_family,
+    'VICTORY_KOUJO',
+    '胜利口上',
+    '随口上票',
+    cid ?? -1,
+    [rand],
+    true,
+  );
   era_flag.target = target_pool;
-  return 0;
+  return result;
 }
 
-/** @DUNGEON_ATTACK_K{N} 族：攻击口上（EVENT_K.ERB:311-317 的分派目标） */
-const dungeon_attack_family = new DispatchFamily(
-  'DUNGEON_ATTACK',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/**
- * @ATTACK_KOUJO（EVENT_K.ERB:311-317）：攻击时的口上入口。
- *
- * 与原作同构：TARGET = ARG:0 → 分发。存在判定被原作注释（:315-316），不判。
- *
- * @param {number} cid 攻击者角色 ID（原作 ARG:0）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function dungeon_attack_koujo(cid, rand) {
+async function attack_koujo(cid, rand) {
   const target_pool = era_flag.target;
-  era_flag.target = cid; // TARGET = ARG:0
-  const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await dungeon_attack_family.call(local - 100, {
-      whenMissing: 0,
-      args: [cid, rand],
-    });
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid;
   }
+  const result = await try_kojo_or_stub(
+    dungeon_attack_family,
+    'ATTACK_KOUJO',
+    '攻击口上',
+    '随口上票',
+    cid ?? -1,
+    [rand],
+    true,
+  );
   era_flag.target = target_pool;
-  return 0;
+  return result;
 }
 
-/** @ENTERENEMY_KOUJO_K{N} 族：来袭口上（EVENT_K.ERB:432-440 的分派目标） */
-const enterenemy_koujo_family = new DispatchFamily(
-  'ENTERENEMY_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/**
- * @ENTERENEMY_KOUJO（EVENT_K.ERB:432-440）：迷宫攻略开始时的来袭口上。
- *
- * 与原作同构：SWAP 暂存 TARGET → TARGET = A → 分发 → SWAP 还原。存在判定
- * 被原作注释（:436-438），不判。
- *
- * @param {number} cid 角色 ID（原作全局 A）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function enterenemy_koujo(cid) {
-  const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
-  era_flag.target = cid; // TARGET = A
-  const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await enterenemy_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [cid],
-    });
-  }
-  era_flag.target = target_pool; // SWAP 还原
-  return 0;
+async function enterenemy_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  era_flag.target = cid;
+  const result = await try_kojo_or_stub(
+    enterenemy_koujo_family,
+    'ENTERENEMY_KOUJO',
+    '来袭口上',
+    '随 #107 口上票',
+    cid,
+    [rand],
+  );
+  era_flag.target = target_pool;
+  return result;
 }
 
-/** @NTR_KOUJO_K{N} 族：NTR 口上（EVENT_K.ERB:342-354 的分派目标） */
-const ntr_koujo_family = new DispatchFamily('NTR_KOUJO', DECLARED_KOJO_COM_IDS);
-
-/**
- * @NTR_KOUJO（EVENT_K.ERB:342-354）：NTR 事件口上入口。
- *
- * 与原作同构：GET_KOJO_NUM → 分发。存在判定被原作注释（:346-348），不判。
- *
- * @param {number} [p] 事件类型（原作全局 P）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function ntr_koujo(p = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await ntr_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [p],
-    });
-  }
-  return 0;
+async function gohoubi_request_koujo(cid, rand) {
+  const target_pool = era_flag.target;
+  era_flag.target = cid;
+  const result = await try_kojo_or_stub(
+    gohoubi_request_koujo_family,
+    'GOHOUBI_REQUEST_KOUJO',
+    '奖赏请求口上',
+    '随口上票',
+    cid,
+    [cid, rand],
+  );
+  era_flag.target = target_pool;
+  return result;
 }
 
-/** @EXUCUTION_KOUJO_K{N} 族：处刑口上（EVENT_K.ERB:357-369 的分派目标） */
-const exucution_koujo_family = new DispatchFamily(
-  'EXUCUTION_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @MUSEUM_KOUJO_K{N} 族：雕像馆口上（EVENT_K.ERB:372-384 的分派目标） */
-const museum_koujo_family = new DispatchFamily(
-  'MUSEUM_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @BANISHMENT_KOUJO_K{N} 族：追放处刑口上（EVENT_K.ERB:387-399 的分派目标） */
-const banishment_koujo_family = new DispatchFamily(
-  'BANISHMENT_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @PUBLIC_EXUCUTION_KOUJO_K{N} 族：公开处刑口上（EVENT_K.ERB:402-414 的分派目标） */
-const public_exucution_koujo_family = new DispatchFamily(
-  'PUBLIC_EXUCUTION_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @GROTESQUE_KOUJO_K{N} 族：猎奇处刑口上（EVENT_K.ERB:417-429 的分派目标） */
-const grotesque_koujo_family = new DispatchFamily(
-  'GROTESQUE_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/**
- * 处刑系入口（@EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/GROTESQUE_KOUJO，
- * EVENT_K.ERB:357-429）：与原作同构，GET_KOJO_NUM → 分发；存在判定被
- * 原作注释，不判。当前无调用点（处刑子系统未移植），族与入口先就绪。
- * @param {number} [event_type] 事件类型（原作 TFLAG:16/500/510/520/530）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function exucution_koujo(event_type = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await exucution_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [event_type],
-    });
-  }
-  return 0;
-}
-
-async function museum_koujo(event_type = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await museum_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [event_type],
-    });
-  }
-  return 0;
-}
-
-async function banishment_koujo(event_type = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await banishment_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [event_type],
-    });
-  }
-  return 0;
-}
-
-async function public_exucution_koujo(event_type = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await public_exucution_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [event_type],
-    });
-  }
-  return 0;
-}
-
-async function grotesque_koujo(event_type = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await grotesque_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [event_type],
-    });
-  }
-  return 0;
-}
-
-/** @COLOSSEUM_KOJO_{N} 族：死斗场口上（死斗场子系统，COM 守卫岔出） */
-const colosseum_kojo_family = new DispatchFamily(
-  'COLOSSEUM_KOJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @DOG_KOJO_{N} 族：兽奸口上（兽奸子系统，COM 守卫岔出） */
-const dog_kojo_family = new DispatchFamily('DOG_KOJO', DECLARED_KOJO_COM_IDS);
-
-/** @GOBI_KOUJO_K{N} 族：语尾口上（EVENT_K.ERB:504-522 的分派目标） */
-const gobi_koujo_family = new DispatchFamily(
-  'GOBI_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/**
- * @GOBI_KOUJO（EVENT_K.ERB:504-522）：语尾口上入口。
- *
- * 与原作同构：GET_KOJO_NUM → TRYCALLFORM GOBI_KOUJO_K{LOCAL-100}, ARG:0。
- * 存在判定被原作注释（:513-515），不判。
- *
- * @param {number} arg_0 语尾类型（0 默认 / 1 喜 / 2 怒 / 3 悲 / 4 羞 / 5 情け）
- * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
- */
-async function gobi_koujo(arg_0 = 0) {
-  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
-    await gobi_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [arg_0],
-    });
-  }
-  return 0;
+async function gobi_koujo(arg0, rand) {
+  return try_kojo_or_stub(
+    gobi_koujo_family,
+    'GOBI_KOUJO',
+    '语尾口上',
+    '随语尾口上票',
+    -1,
+    [arg0, rand],
+  );
 }
 
 module.exports = {
   get_kojo_num,
+  kojo_handler_id,
   kojo_message_com,
   kojo_message_com_family,
+  kojo_message_palamcng,
+  kojo_message_palamcng_family,
+  kojo_message_markcng,
+  kojo_message_markcng_family,
   self_kojo,
   self_kojo_family,
-  kojo_message_palamcng,
-  palamcng_family,
-  kojo_message_markcng,
-  markcng_family,
+  dog_kojo_family,
+  colosseum_kojo_family,
   benki_koujo,
   benki_koujo_family,
-  ntr_koujo,
-  ntr_koujo_family,
-  exucution_koujo,
-  exucution_koujo_family,
-  museum_koujo,
-  museum_koujo_family,
-  banishment_koujo,
-  banishment_koujo_family,
-  public_exucution_koujo,
-  public_exucution_koujo_family,
-  grotesque_koujo,
-  grotesque_koujo_family,
-  colosseum_kojo_family,
-  dog_kojo_family,
-  dungeon_victory_koujo,
+  victory_koujo,
   dungeon_victory_family,
-  dungeon_attack_koujo,
+  attack_koujo,
   dungeon_attack_family,
+  ntr_koujo_family,
+  exucution_koujo_family,
+  museum_koujo_family,
+  banishment_koujo_family,
+  public_exucution_koujo_family,
+  grotesque_koujo_family,
   enterenemy_koujo,
   enterenemy_koujo_family,
+  gohoubi_request_koujo,
+  gohoubi_request_koujo_family,
   gobi_koujo,
   gobi_koujo_family,
 };

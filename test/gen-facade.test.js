@@ -85,12 +85,13 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   // #228（J18 着装脱衣）补 1 个：44（stronghold 胸罩状态——COM111 撕胸罩
   // 的 CFLAG:44 = -3 跨域写走门面）；#221（J11）补 101/103/104（system）
   // 与 106/107（dungeon）的射精结算计数。
-  // #231（J21 K0 慈爱）补 1 个：7（train 穿环位图——COM87 口上跨域读 CFLAG:7）
+  // #232（J22 K1）补 3 个：7（train 穿环位域）、504（stronghold 要求奖赏）、
+  // 602（chara 结婚爱情）
   const NON_KOJO_NAMED = [
     1, 2, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 31, 32, 40, 41, 42, 44, 45,
     46, 50, 61, 81, 82, 101, 102, 103, 104, 106, 107, 109, 120, 130, 131, 151,
-    451, 452, 491, 499, 500, 501, 502, 503, 506, 507, 508, 510, 511, 521, 534,
-    550, 551, 552, 570, 580, 582, 601, 666, 667,
+    451, 452, 491, 499, 500, 501, 502, 503, 504, 506, 507, 508, 510, 511, 521,
+    534, 550, 551, 552, 570, 580, 582, 601, 602, 666, 667,
   ];
   const manual_keys = Object.keys(NAMES.cflag)
     .map(Number)
@@ -298,7 +299,7 @@ test('尾部条目分区（named_tail，#170）：同表既有条目之后发射
     // #181（2D 地下城）追加 event 510/511（X/Y 坐标，UNIT_MOVE 落笔）；
     // #215（J5 服装）追加 chara 42（特别服装类型——AFTERTRAIN_CLOTH 的
     // train 跨域写走门面）
-    chara: [6, 42, 151, 601],
+    chara: [6, 42, 151, 601, 602],
     dungeon: [11, 12, 106, 107, 501, 508, 580],
     event: [31, 50, 502, 510, 511, 667],
     invasion: [521],
@@ -395,7 +396,11 @@ test('tequip 不进一维门面：JS 侧是三段寻址，按一维切会写错�
 });
 
 test('口上样本里已有门面的读写不再拼 era.get/set 字符串', () => {
-  for (const file of ['kojo-k3-noble.js', 'kojo-k5-mao.js']) {
+  for (const file of [
+    'kojo-k3-noble.js',
+    'kojo-k5-mao.js',
+    'kojo-k6-wicked.js',
+  ]) {
     const text = fs.readFileSync(
       path.join(REPO_ROOT, 'ere', 'kojo', file),
       'utf8',

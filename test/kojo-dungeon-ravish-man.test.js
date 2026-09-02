@@ -188,11 +188,11 @@ test('食脑魔凌辱（RAND:2 == 0）：支配精神 + 异常经验', async () 
   assert.equal(fixture.store.get('exp:31:1'), 50); // 肛门经验 * 10
 });
 
-test('GOBI_KOUJO 存根：语尾口上占位行', async () => {
+test('GOBI_KOUJO 分发：语尾口上经 kojo-system（K 实现随口上票）', async () => {
   const fixture = await setup_ravish((f) => f.store.set('talent:31:17', 1));
   const mod = fixture_module(fixture);
   // orc：rand_n(5)=2 不中口交、rand_n(4)=1 不中全穴、rand_n(3)=0 中屈辱；
-  // 屈辱内 rand_n(3)（落書き）取 ?? 0
+  // 屈辱内 rand_n(3)（落書き）取 ?? 0。未注册性格 → TRYCALL 落空静默。
   await mod.orc_ryou_man(31, 5, seq_rand(2, 1, 0));
 });
 

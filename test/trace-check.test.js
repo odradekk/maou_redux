@@ -1,6 +1,6 @@
 /**
  * @file trace-check 的行为锁（issue #63）：工具不只「表内一致」，还要
- * 「表外即红」——五条行为在此固定：
+ * 「表外即红」——五条行为在此固定；#290 起锚表按 js 文件分片，再加两条：
  *
  *   1. 全绿运行：tools/trace-check.mjs 退出码 0（锚校验 + 两侧扫描完整性
  *      + 豁免核对全过）。本用例把工具并入 npm test——锚表烂掉、完整性
@@ -20,6 +20,12 @@
  *   5. 样本前缀的登记路径真的可走通：副本里登记锚表 + 伪造样本文件，
  *      工具全绿；再把样本内容改得锚不命中，必须红且报出该样本引用——
  *      「登记后才能过锚校验」两头都有行为靶，防登记机制空转。
+ *   6. #290 分片粒度：`tools/trace-refs/` 下一份 js 一份锚表。按域拆不够
+ *      ——二十张口上票全落 `kojo.mjs` 仍互撞；判据是后面十五张票各自新增
+ *      条目时不会改到别人的行。
+ *   7. #290 新分片即入账：往副本的 `tools/trace-refs/` 丢一份新锚表（不改
+ *      任何既有文件），工具必须认得——加载器按目录扫描，不靠 index 的
+ *      import 清单（那份清单会变成下一处跨票冲突面）。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  *
@@ -28,10 +34,10 @@
  * 四红），而整棵递归拷贝又会撞上并行探针的文件增删（cpSync 中途 ENOENT）。
  * 副本清单 = 工具的全部判定面：ere/ + tools/ + test/（两侧完整性扫描与
  * FILES 表的 js 侧）+ golden/（#156 样本落点，探针 5 伪造样本用）+ 从工具
- * 源码文本机械提取的 target/ 引用（FILES 表的 src 侧与 emuera.log——
- * 手抄会过期失效）。进程内单例、文件内用例串行复用，探针残骸先清、条目表
- * 改动 finally 清单回拷还原。副本的 tools/ 运行时从真树拷入，变异到工具
- * 本体的条目（M94 一类）仍传得进副本。
+ * 与锚表分片的源码文本机械提取的 target/ 引用（FILES 表的 src 侧与
+ * emuera.log——手抄会过期失效）。进程内单例、文件内用例串行复用，探针
+ * 残骸先清、条目表改动 finally 清单回拷还原。副本的 tools/ 运行时从真树
+ * 拷入，变异到工具本体的条目（M94 一类）仍传得进副本。
  */
 
 'use strict';
@@ -61,15 +67,38 @@ function run_tool() {
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
-// 探针副本清单：工具的全部判定面。target/ 引用从工具源码文本提取
-// （FILES 表的 src、EMUERA_LOG 等——散在数据表里，手抄会过期失效）。
-// golden/ 是 #156 的样本落点（探针 5 在副本里伪造样本文件用）。
+// 探针副本清单：工具的全部判定面。target/ 引用从工具与锚表分片的源码
+// 文本提取（FILES 表的 src、EMUERA_LOG 等——散在数据表里，手抄会过期
+// 失效）。golden/ 是 #156 的样本落点（探针 5 伪造样本文件用）。
+function listed_trace_sources() {
+  const files = ['tools/trace-check.mjs'];
+  const dir = path.join(REPO_ROOT, 'tools', 'trace-refs');
+  if (fs.existsSync(dir)) {
+    for (const name of fs.readdirSync(dir).sort()) {
+      if (name.endsWith('.mjs')) {
+        files.push(`tools/trace-refs/${name}`);
+      }
+    }
+  }
+  const seen = new Set();
+  const out = [];
+  for (const rel of files) {
+    for (const p of extract_paths(rel, /['"](target\/[^'"]+)['"]/g)) {
+      if (!seen.has(p)) {
+        seen.add(p);
+        out.push(p);
+      }
+    }
+  }
+  return out;
+}
+
 const PROBE_REPO_ENTRIES = [
   'ere',
   'tools',
   'test',
   'golden',
-  ...extract_paths('tools/trace-check.mjs', /['"](target\/[^'"]+)['"]/g),
+  ...listed_trace_sources(),
 ];
 
 let probe_repo_cache;
@@ -106,6 +135,21 @@ test('trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，�
     status,
     0,
     `trace-check 应全绿，实际退出 ${status}：\n${output}`,
+  );
+  // #290 拆分时锁死过 24162/24303/432 三个数以证等价，但这三个数**每张新
+  // 移植票都会长**（引用变多）、豁免数则按 #63 只减不增——写死等于卡住后面
+  // 每一张票（#236 验收当场撞上）。等价性是一次性迁移的判据，已由 #290 的
+  // 多重集逐条比对完成，不该留成永久断言。这里改锁结构性质：
+  const m = output.match(
+    /✓ (\d+) 条内联行号引用全部与源文件一致；ERB 完整性：ere\/ (\d+) 条引用全数登记或豁免（豁免 (\d+)\/(\d+) 条/,
+  );
+  assert.ok(m, `trace-check 输出形状变了：\n${output}`);
+  const [, inline, erb, exempt, exempt_total] = m.map(Number);
+  assert.ok(inline > 0 && erb >= inline, `引用数不合理：${inline} / ${erb}`);
+  // 豁免清单是 #63 冻结的，只减不增——涨了说明有人往里塞新条目
+  assert.ok(
+    exempt <= 432,
+    `豁免数只减不增（#63 冻结基线 432），实际 ${exempt}/${exempt_total}`,
   );
 });
 
@@ -261,7 +305,6 @@ test('样本前缀引用：样本名未登记或引用未进锚表，都必须�
 
 test('样本前缀引用：登记后全绿，样本内容漂移必须红（登记机制两头有靶）', () => {
   const root = probe_repo();
-  const tool_path = path.join(root, 'tools', 'trace-check.mjs');
   const golden_dir = path.join(root, 'golden');
   // 探针样本名挑 SAMPLE_LOG_REFS 里**没有既有登记**的一个（#161 样本入库
   // 后 golden/ 全是真实样本：伪造内容会覆盖副本里的真文件，撞上其它文件
@@ -270,18 +313,18 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
   const probe_sample = 'daycycle-max';
   const sample_path = path.join(golden_dir, `${probe_sample}.log`);
   const probe_path = path.join(root, 'ere', '__sample_ref_probe__.js');
+  // #290：登记走新分片，不改既有文件——加载器按目录扫描即入账。
+  const shard_path = path.join(
+    root,
+    'tools',
+    'trace-refs',
+    '__sample_ref_probe__.mjs',
+  );
   // 拼接构造（不用模板串）：扫描器会把源码里的带前缀引用文本当真引用
   // 扫进完整性检查，拼接让源码文本里不存在该形态（#156 阶段一的既有写法）
   const token = `${probe_sample}` + '-log:' + '1';
-  const inject_anchor = 'const SAMPLE_LOG_REFS = {';
-  const original_tool = fs.readFileSync(tool_path, 'utf8');
-  if (!original_tool.includes(inject_anchor)) {
-    throw new Error(
-      '注入锚不在 trace-check.mjs 里——SAMPLE_LOG_REFS 结构变了？',
-    );
-  }
   const cleanup = () => {
-    for (const p of [probe_path]) {
+    for (const p of [probe_path, shard_path]) {
       if (fs.existsSync(p)) {
         fs.unlinkSync(p);
       }
@@ -296,13 +339,20 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
     );
   };
   try {
-    // 1) 副本里登记锚表 + 伪造样本内容（第 1 行命中锚）+ 探针引用 → 全绿
+    // 1) 副本里登记锚表（新分片）+ 伪造样本内容（第 1 行命中锚）+ 探针引用 → 全绿
+    fs.mkdirSync(path.dirname(shard_path), { recursive: true });
     fs.writeFileSync(
-      tool_path,
-      original_tool.replace(
-        inject_anchor,
-        `${inject_anchor}\n  '${probe_sample}': [\n    { js: 'ere/__sample_ref_probe__.js', refs: [{ ref: '1', any: [/^第7日/m] }] },\n  ],`,
-      ),
+      shard_path,
+      [
+        'export const FILES = [];',
+        'export const LOG_REFS = [];',
+        'export const SAMPLE_LOG_REFS = {',
+        `  '${probe_sample}': [`,
+        "    { js: 'ere/__sample_ref_probe__.js', refs: [{ ref: '1', any: [/^第7日/m] }] },",
+        '  ],',
+        '};',
+        '',
+      ].join('\n'),
       'utf8',
     );
     fs.mkdirSync(golden_dir, { recursive: true });
@@ -339,7 +389,7 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
   } finally {
     cleanup();
     restore_sample(); // 被伪造内容覆盖的真实样本回拷还原
-    refresh_probe_repo(root, PROBE_REPO_ENTRIES); // 还原被注入的工具
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
   // 还原之后复绿
   const restored = run_tool_in(root);
@@ -348,4 +398,92 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
     0,
     `还原后还红——副本或工具有一边不对：\n${restored.output}`,
   );
+});
+
+test('锚表按 js 文件分片：每个 ere js 至多一份 FILES 表（#290）', () => {
+  const dir = path.join(REPO_ROOT, 'tools', 'trace-refs');
+  assert.ok(fs.existsSync(dir), 'tools/trace-refs/ 必须存在——锚表已按文件拆开');
+  const shards = fs.readdirSync(dir).filter((n) => n.endsWith('.mjs'));
+  assert.ok(
+    shards.length > 1,
+    `分片目录只有 ${shards.length} 个文件，没有拆开`,
+  );
+  const ere_shards = shards.filter((n) => n !== '_log.mjs');
+  const stems = ere_shards.map((n) => n.replace(/\.mjs$/, ''));
+  assert.equal(
+    new Set(stems).size,
+    stems.length,
+    `分片文件名撞车：${stems.sort().join(', ')}`,
+  );
+  // 口上分片必须按角色拆开：k1/k2/k3/k4 各自一份，不能合成 kojo.mjs
+  for (const stem of [
+    'kojo-k1-confident',
+    'kojo-k2-timid',
+    'kojo-k3-noble',
+    'kojo-k4-stoic',
+  ]) {
+    assert.ok(
+      stems.includes(stem),
+      `口上 ${stem} 必须独占一份锚表，否则后续口上票仍会互撞`,
+    );
+  }
+  assert.ok(
+    !stems.includes('kojo') && !stems.includes('index'),
+    '按域合成的 kojo.mjs / 显式 index.mjs 会变成下一处跨票冲突面',
+  );
+});
+
+test('新分片即入账：往 tools/trace-refs/ 丢一份假模块锚表，不改既有文件', () => {
+  const root = probe_repo();
+  const shard_path = path.join(
+    root,
+    'tools',
+    'trace-refs',
+    'kojo-k99-probe.mjs',
+  );
+  const probe_js = path.join(root, 'ere', 'kojo', 'kojo-k99-probe.js');
+  const cleanup = () => {
+    for (const p of [shard_path, probe_js]) {
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    }
+  };
+  cleanup();
+  try {
+    fs.mkdirSync(path.dirname(probe_js), { recursive: true });
+    fs.writeFileSync(
+      probe_js,
+      [
+        '// 假口上模块（test/trace-check.test.js 写入，跑完即删）',
+        '// :1 @KOJO_K99',
+        'module.exports = {};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    fs.mkdirSync(path.dirname(shard_path), { recursive: true });
+    fs.writeFileSync(
+      shard_path,
+      [
+        "const K99 = 'target/ERB/口上/EVENT_K1_自信家.ERB';",
+        'export const FILES = [',
+        "  { js: 'ere/kojo/kojo-k99-probe.js', refs: [{ src: K99, ref: '1', any: [/=======/] }] },",
+        '];',
+        'export const LOG_REFS = [];',
+        'export const SAMPLE_LOG_REFS = {};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const { status, output } = run_tool_in(root);
+    assert.equal(status, 0, `新分片必须被加载器扫到并让工具全绿：\n${output}`);
+    assert.match(
+      output,
+      /✓ \d+ 条内联行号引用/,
+      `全绿输出形态变了：\n${output}`,
+    );
+  } finally {
+    cleanup();
+  }
+  const restored = run_tool_in(root);
+  assert.equal(restored.status, 0, `假模块删了还红：\n${restored.output}`);
 });

@@ -67,12 +67,10 @@
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
-const { gobi_koujo } = require('#/kojo/kojo-system');
-
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。GOBI_KOUJO 已随 K0 口上票落地
- * （#231，kojo-system 的 gobi_koujo 分派），全库调用点换真身。
+ * 核对固定）；名单变动必须同步清单。GOBI_KOUJO 是语尾口上分派
+ * （EVENT_K.ERB 的 @GOBI_KOUJO），全库多文件调用、未移植。
  */
 const STUBBED_CALLS = [];
 
@@ -427,18 +425,18 @@ async function orc_ryou_man(arg, mon_num, rand) {
     await era.print('『猪'); // :308
     if (t(17)) {
       // :309-312 プライド低い → 喜び
-      await gobi_koujo(1); // :312 CALL GOBI_KOUJO, 1
+      await require('#/kojo/kojo-system').gobi_koujo(1); // :312 CALL GOBI_KOUJO, 1
     } else {
       // :313-316 情けない
-      await gobi_koujo(5); // :315 CALL GOBI_KOUJO, 5
+      await require('#/kojo/kojo-system').gobi_koujo(5); // :315 CALL GOBI_KOUJO, 5
     }
     await era.print('还自称冒险者……简直傻了'); // :317
 
     if (t(17)) {
       // :319-326
-      await gobi_koujo(1); // :322 CALL GOBI_KOUJO, 1
+      await require('#/kojo/kojo-system').gobi_koujo(1); // :322 CALL GOBI_KOUJO, 1
     } else {
-      await gobi_koujo(5); // :325 CALL GOBI_KOUJO, 5
+      await require('#/kojo/kojo-system').gobi_koujo(5); // :325 CALL GOBI_KOUJO, 5
     }
     await era.printAndWait('　噗噗，噗嘻！』'); // :328
 

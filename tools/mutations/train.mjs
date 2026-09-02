@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
@@ -3688,9 +3689,11 @@ export default [
     desc: 'M1311 AFTERTRAIN: sex_check 缺 TFLAG:13=4 与 SELF_KOJO（#270）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  leftover_s = s;
   game.train.初吻与自我口上 = 4;
-  await self_kojo(undefined, 0); // :231-232 性交段 Q 不读`,
-    replace: '  // 变异：性交臂不设 tflag:13、不调 self_kojo',
+  await self_kojo();`,
+    replace: `  leftover_s = s;
+  // 变异：性交臂不设 tflag:13、不调 self_kojo`,
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_sex_check 通常性交与 ABL 判定',
   },
@@ -3708,8 +3711,10 @@ export default [
     desc: 'M1313 AFTERTRAIN: masturbation 臂漏设 tflag:13=1（#270）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+  leftover_q = q;
   game.train.初吻与自我口上 = 1;`,
     replace: `  // 变异：自慰臂不设 tflag:13
+  leftover_q = q;
   // game.train.初吻与自我口上 = 1;`,
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_masturbation_check 自慰检查',
@@ -4273,6 +4278,22 @@ export default [
     must_mention: '主启动图漏装：com-cloth',
   },
   {
+    desc: 'M1520 主启动图删 K3 高貴口上注册（KOJO 3 不进实际运行图）（#282）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k3-noble');",
+    replace: '// 变异：K3 高貴口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k3-noble',
+  },
+  {
+    desc: 'M1521 主启动图删 K5 マオ口上注册（KOJO 5 不进实际运行图）（#282）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k5-mao');",
+    replace: '// 变异：K5 マオ口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k5-mao',
+  },
+  {
     desc: 'M1330 COM_ABLE100 秘密知识守卫删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(player, 325) === 0) return 0; // 调教者须秘密知识',
@@ -4602,5 +4623,29 @@ export default [
     replace: 'for (const id of []) { // 变异：显式无操作注册删',
     tests: ['com-tentacle'],
     must_mention: '显式无操作压掉分发骨架占位行',
+  },
+  {
+    desc: 'M1544 主启动图删 K2 口上注册（#233）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k2-timid');",
+    replace: '// 变异：K2 口上不在主启动图注册',
+    tests: ['main-loop'],
+    must_mention: '主启动图注册 K2',
+  },
+  {
+    desc: 'M1545 AFTERTRAIN leftover_q 不写入（#233）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  leftover_q = q;',
+    replace: '  leftover_q = 0; // 变异：不写入妄想对象',
+    tests: ['event-aftertrain'],
+    must_mention: 'leftover_q',
+  },
+  {
+    desc: 'M2135 AFTERTRAIN leftover_s 不写入（#237）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  leftover_s = s;',
+    replace: '  leftover_s = 0; // 变异：不写入回数',
+    tests: ['event-aftertrain', 'kojo-k6-wicked'],
+    must_mention: 'leftover_s',
   },
 ];

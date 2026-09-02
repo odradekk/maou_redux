@@ -490,6 +490,16 @@ const cflag = {
   82: named_tail('蓄积欲情', src(SRC_FLAG, ':318 CFLAG:82 = 蓄積欲情')),
   666: named_tail('自动调教', src(SRC_FLAG, 'CFLAG:666 = 自動調教')),
   667: named_tail('自动调教回数', src(SRC_FLAG, 'CFLAG:667 = 自動調教回数')),
+  // #232（J22 K1 自信家）：口上读穿环位域 / 奖赏请求 / 结婚爱情，跨域读走门面
+  7: named_tail(
+    '穿环状态',
+    src(
+      SRC_FLAG,
+      'CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）',
+    ),
+  ),
+  504: named_tail('要求奖赏', src(SRC_FLAG, 'CFLAG:504 = 要求したご褒美')),
+  602: named_tail('结婚爱情', src(SRC_FLAG, ':465 CFLAG:602 = 結婚愛情')),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

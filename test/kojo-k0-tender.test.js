@@ -4822,19 +4822,23 @@ test('DUNGEON_RYOUZYOKU_AFTER：非处女 + EXP:1 > 20 → 肛门崩坏', async 
 
 test('GOHOUBI_REQUEST：CFLAG:504==0 奖金请求', async () => {
   const fixture = await setup_k0();
-  const { gohoubi_request_koujo } = fixture.load_module(
+  const { gohoubi_request_koujo_family } = fixture.load_module(
     'kojo/kojo-dungeon-after',
   );
-  await gohoubi_request_koujo(31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  await gohoubi_request_koujo_family.call(0, { args: [31] });
   assert.match(fixture.text_lines()[0], /奖金/);
 });
 
 test('GOHOUBI_REQUEST：CFLAG:504==1 与犬做爱请求', async () => {
   const fixture = await setup_k0((f) => f.store.set('cflag:31:504', 1));
-  const { gohoubi_request_koujo } = fixture.load_module(
+  const { gohoubi_request_koujo_family } = fixture.load_module(
     'kojo/kojo-dungeon-after',
   );
-  await gohoubi_request_koujo(31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  await gohoubi_request_koujo_family.call(0, { args: [31] });
   assert.ok(
     fixture.text_lines().some((l) => /犬/.test(l)),
     '应含与犬做爱请求',
@@ -4908,8 +4912,8 @@ test('VICTORY：素质分档 + 体力比判定', async () => {
     f.store.set('base:31:0', 200);
     f.store.set('maxbase:31:0', 500); // 40% < 50%
   });
-  const { dungeon_victory_koujo } = fixture.load_module('kojo/kojo-system');
-  await dungeon_victory_koujo(31);
+  const { victory_koujo } = fixture.load_module('kojo/kojo-system');
+  await victory_koujo(31);
   assert.match(fixture.text_lines()[0], /爱能拯救世界/);
 });
 
@@ -4919,8 +4923,8 @@ test('ATTACK：CFLAG:1==2 + 强气素质 → 爱的火焰', async () => {
     f.store.set('talent:31:11', 1);
     f.store.set('talent:31:275', 1);
   });
-  const { dungeon_attack_koujo } = fixture.load_module('kojo/kojo-system');
-  await dungeon_attack_koujo(31);
+  const { attack_koujo } = fixture.load_module('kojo/kojo-system');
+  await attack_koujo(31);
   assert.ok(
     fixture.text_lines().some((l) => /爱的火焰/.test(l)),
     '强气+275 应输出爱的火焰',

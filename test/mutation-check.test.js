@@ -35,6 +35,10 @@
  *      `engine: true` → 退出码 1。全量变异退到阶段闸之后，门 4 只数得出
  *      声明的**个数**；数对了但标错了哪一条，只有这条逐条核对能看见。
  *      （门 4 本身只对真条目表生效，夹具换表时跳过，由变异条目 M733 守。）
+ *  13. M 编号唯一性（#295）：desc 开头的 M 编号相同、正文不同（如
+ *      "M1 A" 与 "M1 B"）→ 退出码 1，报错点名编号与两条 desc——M 编号是
+ *      简报/issue/验收评论里指认条目的引用句柄，重号让句柄失效。desc
+ *      完全相同（真重复）已由用例 6 的 desc 重复覆盖，不与本条重叠。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -292,6 +296,42 @@ test('计数检查双向：丢条目 / 未宣告增长 / desc 重复都退出码
       '0',
     ]);
     assert.notEqual(rd.status, 0, 'desc 重复必须非 0——引用锚点不容二义');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('M 编号唯一性（#295）：desc 开头的 M 编号相同、正文不同 → 退出码 1，点名编号与两条 desc', () => {
+  const root = make_fixture();
+  try {
+    const first = { ...GOOD_ENTRY, desc: 'M1 加倍系数改坏（n*2 → n*3）' };
+    // 同一 find/replace 只换 desc：两条各自单独执行都合法（都会被真拦下），
+    // 唯一的问题是共用了 M1——这样门失守时执行阶段不会因别的原因意外变红，
+    // 断言落在真正想守的那句话上。
+    const second = { ...GOOD_ENTRY, desc: 'M1 另一条撞了同一个编号' };
+    const ledger = write_ledger(root, [first, second]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '2',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ]);
+    assert.notEqual(
+      status,
+      0,
+      'M 编号相同但 desc 不同必须非 0——引用句柄不容二义',
+    );
+    assert.ok(output.includes('M1 编号重复'), `应点名重复的编号：\n${output}`);
+    assert.ok(
+      output.includes(first.desc) && output.includes(second.desc),
+      `应点名两条冲突的 desc：\n${output}`,
+    );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

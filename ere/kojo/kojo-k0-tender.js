@@ -79,14 +79,13 @@
 const era = require('#/era-electron');
 
 const { on, TIER } = require('#/system/event/registry');
-const { piercing_state } = require('#/system/train/com-hardcore');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
   self_kojo_family,
-  palamcng_family,
-  markcng_family,
+  kojo_message_palamcng_family,
+  kojo_message_markcng_family,
   benki_koujo_family,
   gobi_koujo_family,
   enterenemy_koujo_family,
@@ -1842,7 +1841,6 @@ async function gohoubi_request_koujo_k0() {
  */
 async function gohoubi_after_koujo_k0(cid, choice) {
   const target = era_flag.target;
-  const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
 
   if (choice === 0) {
@@ -1857,7 +1855,7 @@ async function gohoubi_after_koujo_k0(cid, choice) {
     if ((era.get(`cflag:${target}:504`) || 0) === 0) {
       // :8174
       await era.printAndWait(`「啊啊、这样就能给受伤的怪物们买治疗薬了」`); // :8175
-      await era.printAndWait(`${target_name}露出了慈母般的微笑………`); // :8176
+      await era.printAndWait(`${chara_callname(cid)}露出了慈母般的微笑………`); // :8176 %SAVESTR:A%
     } else if ((era.get(`cflag:${target}:504`) || 0) === 1) {
       // :8178
 
@@ -13512,6 +13510,9 @@ async function kojo_message_com_0(rand) {
 
   // :5199 IF SELECTCOM == 87（穿环，CFLAG:348；部位位域 piercing_state.p）
   if (era_flag.selectcom === 87) {
+    // 延迟读取：主启动图的 COM80-90 注册仍仅由 com-hardcore 自己负责。顶层
+    // require 会让 main-loop 漏装时模块仍被间接拉进来（#233/#234 先例）
+    const { piercing_state } = require('#/system/train/com-hardcore');
     const assi = era_flag.assi;
     const assiplay = era_flag.assiplay;
     const p = piercing_state.p;
@@ -13524,7 +13525,7 @@ async function kojo_message_com_0(rand) {
         era.print(''); // :5205
       } else if (era.get(`talent:${target}:76`) === 1) {
         // :5207
-        if (train.穿环位图 & p) {
+        if (train.穿环状态 & p) {
           // :5209
           await era.printAndWait(
             `${target_name}因为肌肤头一次被开洞而痛得禁不住悲鸣起来。`,
@@ -13598,7 +13599,7 @@ async function kojo_message_com_0(rand) {
         }
       } else if (era.get(`talent:${target}:85`) === 1) {
         // :5250
-        if (train.穿环位图 & p) {
+        if (train.穿环状态 & p) {
           // :5252
           await era.printAndWait(
             `${target_name}因为肌肤头一次被开洞而痛得小声地悲鸣起来………`,
@@ -13673,7 +13674,7 @@ async function kojo_message_com_0(rand) {
           ); // :5289-5290
         }
       } else {
-        if (train.穿环位图 & p) {
+        if (train.穿环状态 & p) {
           // :5293-5295
           await era.printAndWait(
             `${target_name}因为肌肤头一次被开洞而痛得悲鸣起来、流下了眼泪。`,
@@ -13755,7 +13756,7 @@ async function kojo_message_com_0(rand) {
         (kojo.穿环 <= 3 || game.kojo.口上开关 === 2)
       ) {
         // :5344
-        if (train.穿环位图 & p) {
+        if (train.穿环状态 & p) {
           // :5346
           if (p === 1) {
             // :5348
@@ -13830,7 +13831,7 @@ async function kojo_message_com_0(rand) {
         (kojo.穿环 <= 2 || game.kojo.口上开关 === 2)
       ) {
         // :5387
-        if (train.穿环位图 & p) {
+        if (train.穿环状态 & p) {
           // :5389
           if (p === 1) {
             // :5391
@@ -13904,7 +13905,7 @@ async function kojo_message_com_0(rand) {
         kojo.穿环 = 3; // :5428
       } else if (kojo.穿环 <= 1 || game.kojo.口上开关 === 2) {
         // :5430
-        if (train.穿环位图 & p) {
+        if (train.穿环状态 & p) {
           // :5432
           if (p === 1) {
             // :5434
@@ -13983,8 +13984,8 @@ async function kojo_message_com_0(rand) {
 
 // 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_0 的等价物；重复注册抛错）
 // 注册进分发族（TRYCALLFORM KOJO_MESSAGE_PALAMCNG_0 / _MARKCNG_0 的等价物）
-palamcng_family.register(0, kojo_message_palamcng_0);
-markcng_family.register(0, kojo_message_markcng_0);
+kojo_message_palamcng_family.register(0, kojo_message_palamcng_0);
+kojo_message_markcng_family.register(0, kojo_message_markcng_0);
 kojo_message_com_family.register(0, kojo_message_com_0);
 
 module.exports = { STUBBED_CALLS, kojo_message_com_0 };

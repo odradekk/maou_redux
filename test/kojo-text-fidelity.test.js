@@ -13,13 +13,13 @@
  * 不手抄镜像——期望值运行时取自 target/ 的 ERB 原文；ere/kojo/ 新增模块
  * 自动纳入（后续 19 个口上文件落地即受锁，这是本文件存在的理由）。
  *
- * 四道锁（每道一个 test，跨模块聚合失败、逐条列明位置）：
+ * 五道锁（每道一个 test，跨模块聚合失败、逐条列明位置）：
  *   A. 锚覆盖：kojo 模块里每个 era.print* 调用都被捕获且绑定了 // :N 行锚
  *      ——无锚的口上输出不可追溯，锁 B/C/D 对它无从谈起；
  *   B. W/L 变体：ERB 的 PRINTFORMW → printAndWait、PRINTFORML → print，
  *      按行锚逐语句配对；
- *   C. 插值槽位序：ERB 行内的 %...% 记号序列与 JS 同语句的 ${...} 序列
- *      各自归一（TARGET/PLAYER/ASSI/MASTER/SC/SCF/HEARTn）后逐项相等；
+ *   C. 插值槽位序：ERB 行内的 %...% / {…} / \@...\@ 记号序列与 JS 同语句的
+ *      ${...} 序列各自归一后逐项相等（#232 扩：ERB 三元 \@ 也是插值槽）；
  *   D. 字面量片段双向：ERB 片段（按 %...% 切开）⊂ JS 语句文本，JS 字面量
  *      片段（按 ${...} 切开）⊂ ERB 行文本——防手抄错漏。**#60 起归一**：
  *      ERB 侧先经 tools/lang-table.js 归一（繁/日 → 简，词级优先）再比对，
@@ -28,6 +28,9 @@
  *      照样红（归一是确定性映射，片段要么两边一致要么对不上）；且**多守
  *      一类**——JS 侧若还留着非简体字符（忘了转换），归一后的 ERB 片段
  *      在 JS 原文里找不到、反向比对即红。
+ *   E. 归一表模式唯一（#295）：ERB_TOKEN_RULES / JS_TOKEN_RULES 各自内部
+ *      不许有两条规则用同一个正则源码——「先匹配者胜」下重复模式不报错，
+ *      只是静默遮蔽（#238 的 SAVESTR:A 教训），与具体口上语料无关。
  *
  * 锚绑定两条路：语句收尾行的尾锚（`; // :N`）优先；否则看语句前一行的
  * 纯注释（如 K3 的 `// :925`、`// :1062-1063 …`），且仅当该行号窗口在源
@@ -75,14 +78,22 @@ const PRINTFORM_RE =
 
 const ERB_TOKEN_RULES = [
   [/^SAVESTR:TARGET$/, 'TARGET'],
-  [/^SAVESTR:A$/, 'TARGET'], // TARGET = A 的调用点形态
   [/^SAVESTR:PLAYER$/, 'PLAYER'],
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
+  [/^CALLNAME:MASTER$/, 'MASTER'], // #235：K4 冷徹 :152/:160/:162（呼び名，MASTER 恒角色 0）
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
-  [/^SELF_CALL\(A\)$/, 'SC'], // ARG:1 废弃，同值（TARGET = A 的调用点形态）
-  [/^SELF_CALL\(ASSI,\s*CFLAG:ASSI:450\)$/, 'SC_ASSI'], // ARG:1 废弃，同值
+  [/^SELF_CALL\(A(,\s*\d+)?\)$/, 'SC'], // EVENT_K 分发前 TARGET=A，与 TARGET 同值（#233）
+  [/^SELF_CALL\(ASSI,\s*CFLAG:ASSI:450\)$/, 'SC_ASSI'], // ARG:1 废弃，同值（#231 K0）
+  [/^阴核\(TARGET\)$/, 'CLITORIS'], // #231 K0：%阴核(TARGET)%（PRINTFORM 里直接写字）
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
+  [/^SAVESTR\s*:\s*TARGET$/, 'TARGET'],
+  [/^GET_LOOK_INFO\(TARGET,\s*"种族"\)$/, 'RACE'],
+  [/^SELF_CALL_FIRST\(A\)$/, 'SCFA'],
+  [/^CSTR:2$/, 'CSTR2'],
+  [/^SAVESTR:A$/, 'ANAME'],
+  [/^S$/, 'S'],
+
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^SAVESTR:ARG$/, 'ARGNAME'],
   [/^FS_BITCH\("LOOKS", ARG\)$/, 'LOOKS'], // #185：%FS_BITCH("LOOKS", ARG)%
@@ -126,7 +137,21 @@ const ERB_TOKEN_RULES = [
   [/^SAVESTR:SIDEA$/, 'SIDEA'],
   [/^SAVESTR:SIDEB$/, 'SIDEB'],
   [/^MONSTERNAME\(LOCAL:1\)$/, 'MONSTERNAME'],
-  [/^阴核\(TARGET\)$/, 'CLITORIS'],
+  // —— #232：ERB \@ 三元（K1 出售成熟奴隶口上） ——
+  [/^\(TALENT:TARGET:76 == 1\) \? 主人大人 # 你$/, 'TERN_MASTER_YOU'],
+  [/^\(TALENT:TARGET:76 == 1\) \? 大人 #$/, 'TERN_MASTER_SUFFIX'],
+  [/^\(TALENT:TARGET:76 == 1\) \? 主人大人 # 女$/, 'TERN_MASTER_WOMAN'],
+  // —— #238：K7 金红桃口上补充 ——
+  [/^SAVESTR:MASTER$/, 'MASTER'], // :5364/:5435（同 CALLNAME:MASTER，无独立昵称）
+  [/^s$/, 'S_COUNT'], // :7687/:7697（AFTERTRAIN_SEX_CHECK 跨函数全局 S，本回性交次数）
+  [/^TIME == 0 \? 今日 # 今夜$/, 'TERN_TIME_NIGHT'], // :473/:487/:515/:570/:766
+  [/^TIME == 0 \? 今日 # 今宵$/, 'TERN_TIME_TONIGHT'], // :779/:800
+  [/^RAND:2 == 0 \? 菊花 # 小穴$/, 'TERN_HOLE'], // :570
+  [/^CFLAG:10$/, 'VISIT_COUNT'], // :212（金红桃已被会面/侵犯次数）
+  [
+    /^RAND:2 == 0 \? %SAVESTR:TARGET%四肢都贴在地上，抬起屁股左右晃着祈求两人的肉棒。 # %SAVESTR:TARGET%躺在地上分开大腿，用手指插进小穴和肛门狠狠的搅动着、引诱着%SAVESTR:PLAYER%和%SAVESTR:ASSI%。$/,
+    'TERN_POSE',
+  ], // :569（RAND:2 三目：整句二选一，JS 侧预算两支再用单个 ${} 包一层三目取值）
 ];
 
 const JS_TOKEN_RULES = [
@@ -135,8 +160,17 @@ const JS_TOKEN_RULES = [
   [/^assi_name$/, 'ASSI'],
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
-  [/^self_call\(assi\)$/, 'SC_ASSI'],
+  [/^self_call\(a\)$/, 'SC'],
+  [/^self_call\(assi\)$/, 'SC_ASSI'], // #231 K0：${self_call(assi)}
   [/^scf\(\)$/, 'SCF'],
+  [/^clitoris_word\(target\)$/, 'CLITORIS'], // #231 K0：${clitoris_word(target)}
+  [/^get_look_info\(target,\s*'种族'\)$/, 'RACE'],
+  [/^self_call_first\(a\)$/, 'SCFA'],
+  [/^cstr2$/, 'CSTR2'],
+  [/^chara_callname\(a\)$/, 'ANAME'],
+  [/^chara_callname\(cid\)$/, 'ANAME'], // #231 K0：GOHOUBI_AFTER 的 A 上下文
+  [/^S$/, 'S'],
+
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],
   [/^arg_name$/, 'ARGNAME'], // #183：H14 用 arg_name 变量名承载 %SAVESTR:ARG%
@@ -187,8 +221,19 @@ const JS_TOKEN_RULES = [
   [/^arg_name_of\(sidea\)$/, 'SIDEA'],
   [/^arg_name_of\(sideb\)$/, 'SIDEB'],
   [/^monstername\(local_1\)$/, 'MONSTERNAME'],
-  [/^clitoris_word\(target\)$/, 'CLITORIS'],
   [/^pick\(/, 'PICK'],
+  // —— #232：ERB \@ 三元展开后的局部 ——
+  [/^master_or_you$/, 'TERN_MASTER_YOU'],
+  [/^master_suffix$/, 'TERN_MASTER_SUFFIX'],
+  [/^master_or_woman$/, 'TERN_MASTER_WOMAN'],
+  // —— #238：K7 金红桃口上补充 ——
+  [/^s$/, 'S_COUNT'],
+  [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
+  [/^time_word$/, 'TERN_TIME_NIGHT'],
+  [/^time_word2$/, 'TERN_TIME_TONIGHT'],
+  [/^hole_word$/, 'TERN_HOLE'],
+  [/^visit_count$/, 'VISIT_COUNT'],
+  [/^rand_n\(2\) === 0 \? pose_a : pose_b$/, 'TERN_POSE'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
@@ -203,10 +248,15 @@ function norm_erb_token(raw) {
   if (heart_match) {
     return `HEART${heart_match[1]}`;
   }
+  const black_heart_match = tok.match(/^UNICODE\(0x2764\)\s*\*(\d+)$/);
+  if (black_heart_match) {
+    return `BLACKHEART${black_heart_match[1]}`;
+  }
   const heart_black_match = tok.match(/^UNICODE\(0x2665\)\s*\*(\d+)$/);
   if (heart_black_match) {
     return `HEART_BLACK${heart_black_match[1]}`;
   }
+
   // #183：{MON_NUM} / {MON_NUM * 10} 计算插值（迷宫凌辱的怪物数量）
   if (tok === 'MON_NUM') {
     return 'MONNUM';
@@ -236,10 +286,18 @@ function norm_js_token(raw) {
   if (heart_match) {
     return `HEART${heart_match[1]}`;
   }
+  const black_heart_match = tok.match(/^black_heart\((\d+)\)$/);
+  if (black_heart_match) {
+    return `BLACKHEART${black_heart_match[1]}`;
+  }
   const heart_black_match = tok.match(/^heart_black\((\d+)\)$/);
   if (heart_black_match) {
     return `HEART_BLACK${heart_black_match[1]}`;
   }
+  if (tok === "'\\u3000'") {
+    return 'IDEOGRAPHIC_SPACE';
+  }
+
   // #183：JS 侧 ${mon_num} / ${mon_num * 10} 与 ERB 的 {MON_NUM} 配对
   if (tok === 'mon_num') {
     return 'MONNUM';
@@ -414,9 +472,10 @@ function find_printform(erb_lines, n, m) {
   for (let i = n; i <= m; i += 1) {
     const match = erb_lines[i - 1]?.match(PRINTFORM_RE);
     if (match) {
-      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?；/i 认小写 printformw（K0 :2147）
-      const variant_raw = match[1] || match[3];
-      const variant = variant_raw ? variant_raw.toUpperCase() : undefined;
+      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?——#231 起正则带 i（K0 源文件
+      // 4 处小写 printformw），variant 归一大写再判
+      const variant =
+        (match[1] || match[3] || '').toUpperCase() || undefined;
       const arg = match[2] ?? match[4] ?? '';
       return { line_no: i, variant, arg };
     }
@@ -644,12 +703,19 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
         continue; // #184：PRINTDATA 随机文本结构不参与槽位序比对
       }
       const erb_tokens = [
-        ...stmt.printform.arg.matchAll(/%([^%]+)%|{([^}]+)}/g),
-      ].map((m) => m[1] ?? m[2]);
+        ...stmt.printform.arg.matchAll(
+          /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
+        ),
+      ].map((m) => m[1] ?? m[2] ?? m[3]);
       const js_tokens = [];
       for (const s of stmt.strings) {
         if (s.quote === '`') {
           for (const m of s.content.matchAll(/\$\{([^}]*)\}/g)) {
+            const tok = m[1].trim();
+            if (tok === "'\\u3000'" || tok === "'u3000'") {
+              continue;
+            }
+
             js_tokens.push(m[1]);
           }
         }
@@ -718,14 +784,18 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
       }
       // 正向：ERB 字面量片段（按 %…% 与 {…} 切开、归一后）⊂ JS 语句原文
       //（#184 扩：{…} 是 ERB 的显示插值，与 %…% 同属插值记号）
-      for (const seg of erb_arg.split(/%[^%]+%|{[^}]+}/)) {
+      for (const seg of erb_arg.split(
+        /%[^%]+%|{[^}]+}|\\@(?:(?!\\@)[\s\S])*\\@/,
+      )) {
         if (seg.trim().length >= SEGMENT_MIN) {
           erb_checked += 1;
           // 只去尾随空白（行尾 tab/空格是编辑残留，转译器不保留）；
           // 保留前导空白——M81 守的正是「句中前导空格丢失」（#46）
-          if (!stmt.raw.includes(seg.trimEnd())) {
+          const needle = seg.trimEnd();
+          const js_raw = stmt.raw.replace(/\$\{\s*'\\u3000'\s*\}/g, '\u3000');
+          if (!js_raw.includes(needle) && !stmt.raw.includes(needle)) {
             problems.push(
-              `${where}: ERB 片段（归一后）未见于 JS：「${seg.trimEnd()}」`,
+              `${where}: ERB 片段（归一后）未见于 JS：「${needle}」`,
             );
           }
         }
@@ -761,5 +831,68 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
     problems,
     [],
     `字面量片段错漏（手抄错漏、空格丢失、JS 侧残留非简体都在这里红）：\n  ${problems.join('\n  ')}`,
+  );
+});
+
+// —— 锁 E：归一表模式唯一（#295） ——
+//
+// ERB_TOKEN_RULES / JS_TOKEN_RULES 是「先匹配者胜」的有序数组：同一个正则
+// 源码出现两次时，第二条永远吃不到，且不报错——静默遮蔽。#238 合并时踩过
+// 一次（[/^SAVESTR:A$/, ANAME] 与后加的 [/^SAVESTR:A$/, A_NAME] 并存，ERB
+// 侧与 JS 侧归一到不同记号，五处槽位序失配，已在 c481ed7 统一）。这道锁把
+// 「同一张表里两条规则用了同一个正则」当结构性错误钉住，与具体语料无关。
+
+/** 找出 [正则, 名] 数组里 regex.source 重复的条目：{source, names: [先, 后]}[] */
+function find_duplicate_patterns(rules) {
+  const seen = new Map(); // regex.source -> 先见到的记号
+  const dups = [];
+  for (const [re, name] of rules) {
+    const prior = seen.get(re.source);
+    if (prior !== undefined) {
+      dups.push({ source: re.source, names: [prior, name] });
+    } else {
+      seen.set(re.source, name);
+    }
+  }
+  return dups;
+}
+
+test('归一表重复检测器：合成用例锁本身（防检测逻辑被拆，#295）', () => {
+  // 不读真实表——真实表此刻可能没有重复，测不出「检测器被拆」。合成
+  // 一个三条、含一处重复的输入，直接验证检测器的行为契约。
+  const dup = find_duplicate_patterns([
+    [/^DUP_PROBE$/, 'FIRST'],
+    [/^OTHER$/, 'OTHER'],
+    [/^DUP_PROBE$/, 'SECOND'],
+  ]);
+  assert.equal(
+    dup.length,
+    1,
+    `合成用例应检出 1 处重复正则，实测 ${dup.length} 处——find_duplicate_patterns 的检测逻辑被拆了`,
+  );
+  assert.deepEqual(
+    dup[0],
+    { source: '^DUP_PROBE$', names: ['FIRST', 'SECOND'] },
+    `应点名冲突的两个记号：${JSON.stringify(dup[0])}`,
+  );
+});
+
+test('归一表模式唯一：ERB_TOKEN_RULES / JS_TOKEN_RULES 内部无重复正则源码（#295，先匹配者胜，重复静默遮蔽）', () => {
+  const erb_dups = find_duplicate_patterns(ERB_TOKEN_RULES);
+  const js_dups = find_duplicate_patterns(JS_TOKEN_RULES);
+  const problems = [
+    ...erb_dups.map(
+      (d) =>
+        `ERB_TOKEN_RULES 重复正则 /${d.source}/：记号 ${d.names.join(' 与 ')}`,
+    ),
+    ...js_dups.map(
+      (d) =>
+        `JS_TOKEN_RULES 重复正则 /${d.source}/：记号 ${d.names.join(' 与 ')}`,
+    ),
+  ];
+  assert.deepEqual(
+    problems,
+    [],
+    `归一表重复模式（先匹配者胜，第二条永远吃不到，见 #238 SAVESTR:A 教训）：\n  ${problems.join('\n  ')}`,
   );
 });
