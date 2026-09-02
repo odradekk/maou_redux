@@ -3221,4 +3221,283 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       '经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志',
   },
+  // —— #242（J32 续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 头部守卫 +
+  // SELECTCOM 0/1/2（M2377-M2401 号段） ——
+  {
+    desc: 'M2377 COM_11 助手非玛奥守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :755-756 助手マオ以外が調教した時に口上をスキップする
+  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
+    return 0;
+  }`,
+    replace: `  // 变异：助手非玛奥守卫删`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：助手非玛奥调教时静默跳过',
+  },
+  {
+    desc: 'M2378 COM_11 口塞守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :758-759 ボールギャグ着用時には口上をスキップする（SELECTCOM==45 自己说话不算）
+  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
+    return 0;
+  }`,
+    replace: `  // 变异：口塞守卫删`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：口塞中（非口塞指令）静默跳过',
+  },
+  {
+    desc: 'M2379 COM_11 失神守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :761-762 失神時には口上をスキップする
+  if (game.train.失神) {
+    return 0;
+  }`,
+    replace: `  // 变异：失神守卫删`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：失神中静默跳过',
+  },
+  {
+    desc: 'M2380 COM_11 兽奸守卫改走真实台词而非存根（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  if (era.get(\`tequip:\${target}:89\`)) {
+    stub_line('DOG_KOJO_11', '兽奸调教中的专用口上');
+    return 0;
+  }`,
+    replace: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // 变异：兽奸守卫改走 COM0 分支
+  }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：兽奸中改走存根占位（DOG_KOJO_11）',
+  },
+  {
+    desc: 'M2381 COM_11 死斗场守卫改走真实台词而非存根（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  if (era.get(\`tequip:\${target}:55\`)) {
+    stub_line('COLOSSEUM_KOJO_11', '死斗场调教中的专用口上');
+    return 0;
+  }`,
+    replace: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // 变异：死斗场守卫改走 COM0 分支
+  }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：死斗场中改走存根占位（COLOSSEUM_KOJO_11）',
+  },
+  {
+    desc: 'M2382 COM_11 崩坏守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :774 崩坏した場合は口上をスキップする
+  if (era.get(\`talent:\${target}:9\`) === 1) {
+    return 0;
+  }`,
+    replace: `  // 变异：崩坏守卫删`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：崩坏后静默跳过',
+  },
+  {
+    desc: 'M2383 COM_11 触手守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :777-778 触手調教中は口上をスキップする
+  if (era.get(\`tequip:\${target}:90\`)) {
+    return 0;
+  }`,
+    replace: `  // 变异：触手守卫删`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM_11 守卫：触手调教中静默跳过',
+  },
+  {
+    desc: 'M2384 COM0 初めて助手玛奥判据错格（ASSIPLAY 丢失，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  const assi_mao =
+    era_flag.assi > 0 && era_flag.assiplay && era_flag.assi === 17;`,
+    replace: `  const assi_mao = era_flag.assi > 0 && era_flag.assi === 17; // 变异：ASSIPLAY 丢失`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM0 初めて：ASSI 是玛奥但 ASSIPLAY 为 0 时不算助手玛奥分档',
+  },
+  {
+    desc: 'M2385 COM0 初めて屈服刻印Lv2以上判据错格（>=2 改 >=3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (mark(2) >= 2) {
+        // 屈服刻印Lv2以上`,
+    replace: `      } else if (mark(2) >= 3) {
+        // 变异：屈服刻印Lv2以上判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM0 初めて：屈服刻印恰为 Lv2（非 Lv3）也命中温柔分档',
+  },
+  {
+    desc: 'M2386 COM0 初めて CFLAG:301 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.爱抚 = 1; // :802`,
+    replace: `      kojo.爱抚 = 0; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM0 初めて：それ以外（非助手玛奥、屈服刻印Lv2未満）推进到 1',
+  },
+  {
+    desc: 'M2387 COM0 二回目助手玛奥+淫乱上限判据错格（<=5 改 <=4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴\${heart(1)}』\`,
+        ); // :810`,
+    replace: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2) // 变异：上限错格
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴\${heart(1)}』\`,
+        ); // :810`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM0 二回目：助手玛奥+淫乱恰在 CFLAG:301==5 时仍命中（<=5 含边界）',
+  },
+  {
+    desc: 'M2388 COM0 二回目屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (mark(2) === 3 && (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)) {
+      // 屈服刻印Lv3`,
+    replace: `    } else if (mark(2) === 2 && (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)) {
+      // 变异：屈服刻印Lv3判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM0 二回目：非助手玛奥 + 屈服刻印Lv3 推进到 4',
+  },
+  {
+    desc: 'M2389 COM0 二回目それ以外 RAND:2 条件颠倒（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      await era.printAndWait(\`「一，一点舒服的感觉都没有…嗯啊…啊啊！」\`); // :854
+      if (rand_n(2)) {`,
+    replace: `      await era.printAndWait(\`「一，一点舒服的感觉都没有…嗯啊…啊啊！」\`); // :854
+      if (!rand_n(2)) {
+        // 变异：RAND:2 条件颠倒`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM0 二回目：非助手玛奥 + それ以外（RAND:2 追加句可控）',
+  },
+  {
+    desc: 'M2390 COM1 初めて处女判据错格（==1 改 ==0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
+    replace: `    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：处女判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM1 初めて：处女 + 非助手玛奥推进到 1',
+  },
+  {
+    desc: 'M2391 COM1 初めて CFLAG:302 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.舔阴 = 1; // :890-893`,
+    replace: `      kojo.舔阴 = 0; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM1 初めて：处女 + 非助手玛奥推进到 1',
+  },
+  {
+    desc: 'M2392 COM1 RAND:2 三目分支写反（TERN_LICK_1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        const lick_line_1 = rand_n(2)
+          ? '舔姐姐的这里，我也觉得很舒服哦'
+          : '啊哈，姐姐感觉很舒服吧♪';`,
+    replace: `        const lick_line_1 = rand_n(2)
+          ? '啊哈，姐姐感觉很舒服吧♪' // 变异：分支写反
+          : '舔姐姐的这里，我也觉得很舒服哦';`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM1 二回目：助手玛奥 + 淫乱，RAND:2 三目分岔可控',
+  },
+  {
+    desc: 'M2393 COM1 二回目反抗刻印Lv1以上判据错格（>=1 改 >=2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      mark(3) >= 1 &&
+      mark(2) <= 2 &&
+      (kojo.舔阴 <= 1 || game.kojo.口上开关 === 2)`,
+    replace: `      mark(3) >= 2 && // 变异：反抗刻印Lv1以上判据错格
+      mark(2) <= 2 &&
+      (kojo.舔阴 <= 1 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM1 二回目：反抗刻印恰为 Lv1（非 Lv2）也命中反抗分档',
+  },
+  {
+    desc: 'M2394 COM1 二回目それ以外 CFLAG:302 写错（2 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.舔阴 = 2; // :943`,
+    replace: `      kojo.舔阴 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM1 二回目：非助手玛奥 + それ以外（屈服刻印Lv3未満）推进到 2',
+  },
+  {
+    desc: 'M2395 COM2 初めて助手玛奥台词分档判据错格（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (kojo.肛门爱抚 === 0) {
+      if (assi_mao) {`,
+    replace: `    if (kojo.肛门爱抚 === 0) {
+      if (!assi_mao) {
+        // 变异：助手玛奥判据颠倒`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM2 初めて：非助手玛奥推进到 1',
+  },
+  {
+    desc: 'M2396 COM2 二回目润滑值丢失 UP:3（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const p = chara(target).train.润滑 + chara(target).train.润滑增量; // :968 P = PALAM:3 + UP:3`,
+    replace: `    const p = chara(target).train.润滑; // 变异：润滑增量 UP:3 丢失`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM2 二回目：润滑增量（delta:3 / UP:3）与本体（palam:3）合计才达阈值',
+  },
+  {
+    desc: 'M2397 COM2 二回目淫乱+润滑高判据错格（PALAMLV[2] 改 [1]，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱+润滑Lv2以上`,
+    replace: `    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[1] && // 变异：润滑阈值错格
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱+润滑Lv2以上`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM2 二回目：淫乱+润滑Lv1（未达Lv2）走低润滑分档，不误入高润滑分档',
+  },
+  {
+    desc: 'M2398 COM2 二回目 CFLAG:303 写错（7 改 6，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.肛门爱抚 = 7; // :982`,
+    replace: `      kojo.肛门爱抚 = 6; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM2 二回目：淫乱 + 润滑Lv2以上推进到 7',
+  },
+  {
+    desc: 'M2399 COM2 二回目それ以外判据错格（首次耻情Lv2 <=1 改 <=0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {`,
+    replace: `    } else if (kojo.首次耻情Lv2 <= 0 || game.kojo.口上开关 === 2) {
+      // 变异：それ以外判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM2 二回目：それ以外恰在 CFLAG:223==1 时仍命中（<=1 含边界）',
+  },
+  {
+    desc: 'M2400 COM2 二回目それ以外 CFLAG:303 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.肛门爱抚 = 2; // :1039`,
+    replace: `      kojo.肛门爱抚 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM2 二回目：それ以外（爱慕無し、润滑Lv2未満、A感覚Lv3未満）推进到 2',
+  },
+  {
+    desc: 'M2401 主启动图删 K11 莉莉指令口上族注册（KOJO_MESSAGE_COM_11 不进实际运行图，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo_message_com_family.register(11, kojo_message_com_11);`,
+    replace: `// 变异：COM_11 分发注册删`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM0 初めて：それ以外（非助手玛奥、屈服刻印Lv2未満）推进到 1',
+  },
 ];

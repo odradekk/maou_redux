@@ -44,6 +44,20 @@ function setup_lily(seed, selectcom = 0) {
   return fixture;
 }
 
+// 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_11 的等价物）
+async function speak_com11(fixture, rand) {
+  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  return kojo_message_com_family.call(11, { args: [rand] });
+}
+
+// RAND:N 定值序：draws 依次被消费，越界取模（K3 test 同款先例）
+const seq_rand =
+  (...draws) =>
+  (n) => {
+    const value = draws.shift() ?? 0;
+    return value % n;
+  };
+
 // —— 存在标志一对 ——
 
 test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）', async () => {
@@ -484,6 +498,25 @@ test('K11_KOJO2：爱慕分档（RAND 三选一，落到隐式 RETURN 0 前提�
   );
 });
 
+// —— 存根清单核对（DOG_KOJO_11/COLOSSEUM_KOJO_11，待各自认领点补真身） ——
+
+test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const fixture = create_era_fixture();
+  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k11-lily');
+  const registry = fs.readFileSync(
+    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
+    'utf8',
+  );
+  for (const name of STUBBED_CALLS) {
+    assert.ok(
+      registry.includes(name),
+      `docs/stub-registry.md 必须收录 ${name}`,
+    );
+  }
+});
+
 // —— @EVENTEND ——
 
 test('@EVENTEND 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过', async () => {
@@ -610,10 +643,286 @@ test('经主启动图 main-loop 加载（而非直接 load_module），K11 EVENT
   );
 });
 
-// —— 存根清单核对（本模块尚无存根，STUBBED_CALLS 恒空） ——
+// —— @KOJO_MESSAGE_COM_11：SELECTCOM 0（爱抚 CFLAG:301）——
 
-test('STUBBED_CALLS 恒为空数组（本文件尚未落地任何存根调用）', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k11-lily');
-  assert.deepEqual(STUBBED_CALLS, []);
+test('COM0 初めて：それ以外（非助手玛奥、屈服刻印Lv2未満）推进到 1', async () => {
+  const fixture = setup_lily();
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「又，又来了……真是令人讨厌……！」',
+    '莉莉充满厌恶地扭动着身体躲避着………',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:301`), 1);
+});
+
+test('COM0 初めて：助手玛奥分档', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '『姐姐的身材，真好，真漂亮…♪』',
+    '「不行…不行啊…啊啊！」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:301`), 1);
+});
+
+test('COM0 二回目：助手玛奥 + 淫乱推进到 6', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:301`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴♡』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:301`), 6);
+});
+
+test('COM0 二回目：非助手玛奥 + 屈服刻印Lv3 推进到 4', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:301`, 1);
+    f.store.set(`mark:${LILY}:2`, 3);
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…哈…为什么会这么舒服的……啊啊」',
+    '莉莉腰身扭动着，敏感的身体在你的爱抚下已经有了感觉。',
+    '「啊啊，我的…身体……嗯啊啊！」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:301`), 4);
+});
+
+test('COM0 二回目：非助手玛奥 + それ以外（RAND:2 追加句可控）', async () => {
+  const on = setup_lily((f) => f.store.set(`cflag:${LILY}:301`, 1));
+  await speak_com11(on, seq_rand(1));
+  assert.deepEqual(on.text_lines(), [
+    '「一，一点舒服的感觉都没有…嗯啊…啊啊！」',
+    '「别，别碰我…嗯啊啊！」',
+  ]);
+  assert.equal(on.store.get(`cflag:${LILY}:301`), 2);
+
+  const off = setup_lily((f) => f.store.set(`cflag:${LILY}:301`, 1));
+  await speak_com11(off, seq_rand(0));
+  assert.deepEqual(off.text_lines(), [
+    '「一，一点舒服的感觉都没有…嗯啊…啊啊！」',
+  ]);
+});
+
+// —— SELECTCOM 1（舔阴 CFLAG:302）——
+
+test('COM1 初めて：处女 + 非助手玛奥推进到 1', async () => {
+  const fixture = setup_lily(undefined, 1);
+  fixture.store.set(`talent:${LILY}:0`, 1);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「住手……停下…快停下啊…那里是小便的地方啊！」',
+    '处女的纯洁，甘甜的气味涌入你的鼻子中，一阵发痒。',
+    '莉莉羞耻万分，拼命扭动着身体想要躲避。而你秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着莉莉的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:302`), 1);
+});
+
+test('COM1 二回目：助手玛奥 + 淫乱，RAND:2 三目分岔可控', async () => {
+  const a = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:302`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 1);
+  await speak_com11(a, seq_rand(0));
+  assert.equal(a.text_lines()[2], '『啊哈，姐姐感觉很舒服吧♪♡』');
+
+  const b = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:302`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 1);
+  await speak_com11(b, seq_rand(1));
+  assert.equal(b.text_lines()[2], '『舔姐姐的这里，我也觉得很舒服哦♡』');
+  assert.equal(b.store.get(`cflag:${LILY}:302`), 5);
+});
+
+test('COM1 二回目：非助手玛奥 + それ以外（屈服刻印Lv3未満）推进到 2', async () => {
+  const fixture = setup_lily((f) => f.store.set(`cflag:${LILY}:302`, 1), 1);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「说，说了那里是尿尿的地方啊！肮脏！不洁！不要舔啊啊啊！」',
+    '莉莉拼命扭动着身体想要逃避，却被你紧紧按着分开的双腿，借着唾液的润滑，在蜜穴和阴蒂处来回舔舐着………',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:302`), 2);
+});
+
+// —— SELECTCOM 2（肛门爱抚 CFLAG:303）——
+
+test('COM2 初めて：非助手玛奥推进到 1', async () => {
+  const fixture = setup_lily(undefined, 2);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「你……你在碰哪里！？不要啊，那种地方不可以的！」',
+    '莉莉的肛门别你毫不留情地用手指玩弄着，发出了一阵阵悲鸣………',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:303`), 1);
+});
+
+test('COM2 二回目：淫乱 + 润滑Lv2以上推进到 7', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:303`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`palam:${LILY}:3`, 500);
+  }, 2);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊！啊啊♡ 好…好舒服，屁股好舒服…♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:303`), 7);
+});
+
+test('COM2 二回目：それ以外（爱慕無し、润滑Lv2未満、A感覚Lv3未満）推进到 2', async () => {
+  const fixture = setup_lily((f) => f.store.set(`cflag:${LILY}:303`, 1), 2);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「住手！好痛啊…求求你！」',
+    '莉莉泪流满面地忍耐着你对肛门的爱抚调教………',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:303`), 2);
+});
+
+// —— 头部守卫（COM_11 专属，与 EVENTTRAIN/EVENTEND 的 FLAG:7/TALENT:171 两道
+//    分开——那两道在分发层 kojo-system.js 已核对，这里只测 COM_11 自身
+//    的七道） ——
+
+test('COM_11 守卫：助手非玛奥调教时静默跳过', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = 5;
+    era_flag.assiplay = 1;
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('COM_11 守卫：兽奸中改走存根占位（DOG_KOJO_11）', async () => {
+  const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:89`, 1));
+  await speak_com11(fixture, seq_rand());
+  assert.ok(fixture.text_lines()[0].includes('DOG_KOJO_11'));
+});
+
+test('COM_11 守卫：死斗场中改走存根占位（COLOSSEUM_KOJO_11）', async () => {
+  const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:55`, 1));
+  await speak_com11(fixture, seq_rand());
+  assert.ok(fixture.text_lines()[0].includes('COLOSSEUM_KOJO_11'));
+});
+
+test('COM_11 守卫：口塞中（非口塞指令）静默跳过', async () => {
+  const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:45`, 1));
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('COM_11 守卫：失神中静默跳过', async () => {
+  const fixture = setup_lily((f) => f.store.set(`tflag:899`, 1));
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('COM_11 守卫：崩坏后静默跳过', async () => {
+  const fixture = setup_lily((f) => f.store.set(`talent:${LILY}:9`, 1));
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('COM_11 守卫：触手调教中静默跳过', async () => {
+  const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:90`, 1));
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('COM0 初めて：ASSI 是玛奥但 ASSIPLAY 为 0 时不算助手玛奥分档', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 0;
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「又，又来了……真是令人讨厌……！」',
+    '莉莉充满厌恶地扭动着身体躲避着………',
+  ]);
+});
+
+test('COM0 初めて：屈服刻印恰为 Lv2（非 Lv3）也命中温柔分档', async () => {
+  const fixture = setup_lily((f) => f.store.set(`mark:${LILY}:2`, 2));
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「啊啊……再这样摸的话……！」');
+});
+
+test('COM0 二回目：助手玛奥+淫乱恰在 CFLAG:301==5 时仍命中（<=5 含边界）', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支，让 <=5 边界真正生效
+    f.store.set(`cflag:${LILY}:301`, 5);
+    f.store.set(`talent:${LILY}:76`, 1);
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴♡』',
+  );
+});
+
+test('COM1 二回目：反抗刻印恰为 Lv1（非 Lv2）也命中反抗分档', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:302`, 1);
+    f.store.set(`mark:${LILY}:3`, 1);
+  }, 1);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「居……居然像狗一样舔着下面……你这个人……一点尊严都不要的吗……嗯啊啊」',
+  );
+});
+
+test('COM2 二回目：润滑增量（delta:3 / UP:3）与本体（palam:3）合计才达阈值', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:303`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`palam:${LILY}:3`, 400);
+    f.store.set(`delta:${LILY}:3`, 100);
+  }, 2);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊！啊啊♡ 好…好舒服，屁股好舒服…♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:303`), 7);
+});
+
+test('COM2 二回目：淫乱+润滑Lv1（未达Lv2）走低润滑分档，不误入高润滑分档', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:303`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`palam:${LILY}:3`, 300); // >= PALAMLV[1]=100，< PALAMLV[2]=500
+  }, 2);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「真，真是的！屁股都还没湿透就这么把手指插进来……啊别…别停下呀…嗯啊啊啊！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:303`), 6);
+});
+
+test('COM2 二回目：それ以外恰在 CFLAG:223==1 时仍命中（<=1 含边界）', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支，让 <=1 边界真正生效
+    f.store.set(`cflag:${LILY}:303`, 1);
+    f.store.set(`cflag:${LILY}:223`, 1);
+  }, 2);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「住手！好痛啊…求求你！」');
 });

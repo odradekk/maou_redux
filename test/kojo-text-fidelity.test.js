@@ -150,6 +150,16 @@ const ERB_TOKEN_RULES = [
     /^RAND:2 == 0 \? %SAVESTR:TARGET%四肢都贴在地上，抬起屁股左右晃着祈求两人的肉棒。 # %SAVESTR:TARGET%躺在地上分开大腿，用手指插进小穴和肛门狠狠的搅动着、引诱着%SAVESTR:PLAYER%和%SAVESTR:ASSI%。$/,
     'TERN_POSE',
   ], // :569（RAND:2 三目：整句二选一，JS 侧预算两支再用单个 ${} 包一层三目取值）
+  // —— #242：K11 リリィ 舔阴（CFLAG:302）二回目以降，RAND:2 无 == 0 的裸真值三目 ——
+  [
+    /^RAND:2 \? 舔姐姐的这里，我也觉得很舒服哦 # 啊哈，姐姐感觉很舒服吧♪$/,
+    'TERN_LICK_1',
+  ], // :902
+  [
+    /^RAND:2 \? 姐姐的爱液都从蜜穴里流进妹妹嘴里了哦。 # 姐姐已经有感觉了呀，很舒服吧♪$/,
+    'TERN_LICK_2',
+  ], // :908
+  [/^RAND:2 \? 姐姐感觉舒服吗？ # 姐姐觉得我舔得舒服吗？♪$/, 'TERN_LICK_3'], // :913
 ];
 
 const JS_TOKEN_RULES = [
@@ -229,6 +239,10 @@ const JS_TOKEN_RULES = [
   [/^hole_word$/, 'TERN_HOLE'],
   [/^visit_count$/, 'VISIT_COUNT'],
   [/^rand_n\(2\) === 0 \? pose_a : pose_b$/, 'TERN_POSE'],
+  // —— #242：K11 リリィ 舔阴，与 ERB_TOKEN_RULES 的三条 TERN_LICK_* 配对 ——
+  [/^lick_line_1$/, 'TERN_LICK_1'],
+  [/^lick_line_2$/, 'TERN_LICK_2'],
+  [/^lick_line_3$/, 'TERN_LICK_3'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */

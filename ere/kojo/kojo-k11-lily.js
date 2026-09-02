@@ -1,7 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND（issue #242，WIP 1/N，进行中）。
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2，issue #242，
+ *       WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -10,10 +11,14 @@
  *     （各含魔族化分支）+ 崩坏 + 简易助手口上 CFLAG:202）
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
+ *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
+ *     :754-778 与 SELECTCOM 0/1/2 三支 :786-1043——爱抚/舔阴/肛门爱抚，各含
+ *     初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档）
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 94.4%）：@KOJO_MESSAGE_COM_11
- * （源文件第 749 行起至第 10657 行，指令口上主体）、@DOG_KOJO_11（第 10658
- * 至 11462 行，兽奸）、@KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
+ * 本票剩余工作（未落地，占全文 13468 行的约 92.2%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 3 起（源文件第 1048 至 10657 行，约 50 条剩余分支，见源文件内
+ * `IF SELECTCOM ==` 逐条列表）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，
+ * 存根已占位）、@KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
  * 11881 至 12261 行），以及死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
  * 口上（第 12262 至 13468 行）。见 issue #242 的进度评论获取认领点。
@@ -34,18 +39,20 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 279 条锚全部改用源文件片段的逐字转义
- * 文本（而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：
- * 219 条恰好命中 1 行/1 段，可视为具备真实鉴别力；能就地收窄的 42 条
- * 已收窄（CALL K11_KOJO2 四处、@EVENTTRAIN/@EVENTEND 标记、两组守卫、
- * 空白 PRINTFORMW/PRINTL 五处，以及 34 处对白复现段落）。余下 60 条
- * 命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定（find_printform
- * 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/向后扩窗只要越过
- * 相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续收窄——它们全部
- * 落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档里逐句复现的对白段落
- * 内（同一整段台词在姐妹相认/魔族化前/魔族化后等平行分支里逐字重复），
- * 相邻语句彼此紧邻、窗口内无空间可用。这 60 条即便行号漂移，落点也只
- * 会落到另一处内容完全相同的复现段落，不会静默通过成不相关文本。
+ * trace-refs/kojo-k11-lily.mjs 的 425 条锚全部用源文件片段的逐字转义文本
+ * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：348 条恰好
+ * 命中 1 行/1 段，可视为具备真实鉴别力。余下 77 条命中 >1 处，且经验证
+ * 无法在不破坏 text-fidelity 逐句绑定（find_printform 要求 n..m 窗口内首条
+ * PRINTFORM 系行即目标句，向前/向后扩窗只要越过相邻语句自身的 PRINTFORM
+ * 行就会误绑定）的前提下继续收窄——60 条来自 WIP 1/N 交付范围（存在标志/
+ * @EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），落在 CFLAG:400 魔族化分支
+ * 与 K11_KOJO2 RAND 分档里逐句复现的对白段落内；17 条来自本轮新增的
+ * @KOJO_MESSAGE_COM_11 头部 7 项守卫（:754-778，与文件别处同款守卫样板
+ * 逐字重复）与 SELECTCOM 0/1/2 三支（:802-1022，姉妹相认/魔族化前后、
+ * 助手玛奥/非助手玛奥两套台词在平行分支里逐字复现）。这 77 条即便行号
+ * 漂移，落点也只会落到另一处内容完全相同的复现段落，不会静默通过成
+ * 不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者才是
+ * 真正的零鉴别力。
  */
 
 'use strict';
@@ -53,9 +60,13 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { PALAMLV } = require('#/era-utils/palam-level');
+const { kojo_message_com_family } = require('#/kojo/kojo-system');
+const { heart } = require('#/kojo/kojo-text');
+const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
-const { heart } = require('#/kojo/kojo-text');
+const { stub_line } = require('#/utils/stub-line');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
@@ -68,7 +79,7 @@ const MASTER = 0;
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [];
+const STUBBED_CALLS = ['DOG_KOJO_11', 'COLOSSEUM_KOJO_11'];
 
 // @EVENTTRAIN #PRI（:100-105）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -1172,4 +1183,536 @@ on(
   TIER.NORMAL,
 );
 
-module.exports = { STUBBED_CALLS, k11_kojo2 };
+/**
+ * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
+ * SELECTCOM 0/1/2，其余编号留续轮）。
+ *
+ * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
+ * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
+ * （TEQUIP:89）→ 专用口上（DOG_KOJO_11，存根待认领）；死斗场（TEQUIP:55）
+ * → 专用口上（COLOSSEUM_KOJO_11，存根待认领）；崩坏（TALENT:9）→ 跳过；
+ * 触手（TEQUIP:90）→ 跳过。
+ *
+ * SELECTCOM 0（爱抚 CFLAG:301，:786-861）：初めて按「助手玛奥／屈服刻印
+ * Lv2以上／それ以外」三分档写 1；二回目以降先分「助手玛奥」再各自按
+ * 「淫乱→爱慕→（それ以外，仅助手玛奥臂无写点，源作原样）／屈服刻印
+ * Lv3→Lv2→それ以外」写 6/5/4/3/2。
+ *
+ * SELECTCOM 1（舔阴 CFLAG:302，:866-947）：初めて按「处女/それ以外 ×
+ * 助手玛奥/否」四分档写 1；二回目以降先分「助手玛奥」（内部淫乱→爱慕→
+ * それ以外三选，それ以外无写点）再各自按「淫乱→爱慕→屈服刻印Lv3→
+ * 反抗刻印Lv1以上（且屈服Lv2以下）→それ以外」写 5/4/3/2/2。
+ *
+ * SELECTCOM 2（肛门爱抚 CFLAG:303，:952-1043）：初めて按「助手玛奥／否」
+ * 二分档写 1；二回目以降按润滑（P = PALAM:3 + UP:3 对 PALAMLV:2）叠加素质
+ * 分档：「淫乱+润滑Lv2以上→淫乱+润滑Lv2未満→爱慕+润滑Lv2以上→爱慕+
+ * 润滑Lv2未満→润滑Lv2以上+A感覚Lv3以上→それ以外」写 7/6/5/4/3/2，每档
+ * 再按「助手玛奥/否」二分。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
+ *   均匀随机，测试注入定值序）
+ * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
+ */
+async function kojo_message_com_11(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const player = era_flag.player;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(player); // %SAVESTR:PLAYER%
+  const kojo = chara(target).kojo;
+  const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
+  const assi_mao =
+    era_flag.assi > 0 && era_flag.assiplay && era_flag.assi === 17;
+
+  // :755-756 助手マオ以外が調教した時に口上をスキップする
+  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
+    return 0;
+  }
+  // :758-759 ボールギャグ着用時には口上をスキップする（SELECTCOM==45 自己说话不算）
+  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {
+    return 0;
+  }
+  // :761-762 失神時には口上をスキップする
+  if (game.train.失神) {
+    return 0;
+  }
+  // :764-767 獣姦プレイ中は専用口上
+  if (era.get(`tequip:${target}:89`)) {
+    stub_line('DOG_KOJO_11', '兽奸调教中的专用口上');
+    return 0;
+  }
+  // :769-772 コロシアム中は専用口上
+  if (era.get(`tequip:${target}:55`)) {
+    stub_line('COLOSSEUM_KOJO_11', '死斗场调教中的专用口上');
+    return 0;
+  }
+  // :774 崩坏した場合は口上をスキップする
+  if (era.get(`talent:${target}:9`) === 1) {
+    return 0;
+  }
+  // :777-778 触手調教中は口上をスキップする
+  if (era.get(`tequip:${target}:90`)) {
+    return 0;
+  }
+
+  // :786-861 IF SELECTCOM == 0（爱抚 CFLAG:301）
+  if (era_flag.selectcom === 0) {
+    // :788-803 初めて（CFLAG:301 == 0）
+    if (kojo.爱抚 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(`『姐姐的身材，真好，真漂亮…♪』`); // :791
+        await era.printAndWait(`「不行…不行啊…啊啊！」`); // :792
+      } else if (mark(2) >= 2) {
+        // 屈服刻印Lv2以上
+        await era.printAndWait(`「啊啊……再这样摸的话……！」`); // :795
+        await era.printAndWait(
+          `${target_name}的身体被手指来回抚弄，拼命忍耐着………`,
+        ); // :796
+      } else {
+        // それ以外
+        await era.printAndWait(`「又，又来了……真是令人讨厌……！」`); // :799
+        await era.printAndWait(`${target_name}充满厌恶地扭动着身体躲避着………`); // :800
+      }
+      kojo.爱抚 = 1; // :802
+      return 0;
+    }
+
+    // :805-859 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴${heart(1)}』`,
+        ); // :810
+        await era.printAndWait(
+          `${player_name}用手指驾轻就熟地爱抚着${target_name}全身上下。`,
+        ); // :811
+        await era.printAndWait(
+          `「嗯啊啊…因为你的手都摸在敏感点上了…啊啊…继续${heart(1)}」`,
+        ); // :812
+        await era.printAndWait(`${target_name}在爱抚下身子一扭一扭地享受着。`); // :813
+        kojo.爱抚 = 6; // :814
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(`『姐姐、见到魔王大人，心情很愉快吧。』`); // :817
+        await era.printAndWait(
+          `${player_name}用手指驾轻就熟地爱抚着${target_name}全身上下。`,
+        ); // :818
+        await era.printAndWait(
+          `「啊啊…快，快停手啦，不然姐姐生气了…嗯啊啊…真是的…！」`,
+        ); // :819
+        await era.printAndWait(
+          `${target_name}在爱抚下身子一扭一扭，又是躲避又是享受着。`,
+        ); // :820
+        await era.printAndWait(
+          `『不想被魔王大人看见这副色情的样子吗？明明超级想要被魔王大人疼爱嘛！』`,
+        ); // :821
+        kojo.爱抚 = 5; // :822
+      } else {
+        // それ以外（CFLAG:301 不推进——源作原样，助手玛奥臂唯一无写点档）
+        await era.printAndWait(`『呀呀，姐姐的身体再放松一点嘛…♪』`); // :825
+        await era.printAndWait(
+          `${player_name}用手指驾轻就熟地爱抚着${target_name}全身上下。`,
+        ); // :826
+        await era.printAndWait(
+          `「快住手啊……我们是亲姐妹啊…呜呜呜！这样怎么对得起死去的母亲啊！」`,
+        ); // :827
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「啊啊嗯…不用这么温柔啦…嗯啊…摸我的时候再……再粗暴一点…${heart(1)}」`,
+      ); // :831
+      await era.printAndWait(`${target_name}边娇喘着，边淫荡地摇摆着身体。`); // :832
+      await era.printAndWait(
+        `「啊，啊哈……${heart(1)} 就是这样！啊啊…好…好舒服${heart(1)}」`,
+      ); // :833
+      kojo.爱抚 = 6; // :834
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        `「啊啊…魔王大人的爱抚……${target_name}好舒服…好幸福…」`,
+      ); // :837
+      await era.printAndWait(
+        `${target_name}温柔地搂住了${player_name}的脖颈，娇喘着享受着爱抚。`,
+      ); // :838
+      await era.printAndWait(
+        `「魔……魔王大人……我爱你……我永远是你的人…${heart(1)}」`,
+      ); // :839
+      kojo.爱抚 = 5; // :840
+    } else if (mark(2) === 3 && (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)) {
+      // 屈服刻印Lv3
+      await era.printAndWait(`「嗯啊…哈…为什么会这么舒服的……啊啊」`); // :843
+      await era.printAndWait(
+        `${target_name}腰身扭动着，敏感的身体在${player_name}的爱抚下已经有了感觉。`,
+      ); // :844
+      await era.printAndWait(`「啊啊，我的…身体……嗯啊啊！」`); // :845
+      kojo.爱抚 = 4; // :846
+    } else if (mark(2) === 2 && (kojo.爱抚 <= 2 || game.kojo.口上开关 === 2)) {
+      // 屈服刻印Lv2
+      await era.printAndWait(`「哈啊…哈啊……身体好像稍微习惯了……」`); // :849
+      await era.printAndWait(`「嗯啊啊…为…为什么会有奇，奇怪的感觉！」`); // :850
+      kojo.爱抚 = 3; // :851
+    } else if (mark(2) <= 1 && (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)) {
+      // それ以外
+      await era.printAndWait(`「一，一点舒服的感觉都没有…嗯啊…啊啊！」`); // :854
+      if (rand_n(2)) {
+        await era.printAndWait(`「别，别碰我…嗯啊啊！」`); // :856
+      }
+      kojo.爱抚 = 2; // :857
+    }
+    return 0; // :859 隐式（原作 RETURN 0）
+  }
+
+  // :866-947 IF SELECTCOM == 1（舔阴 CFLAG:302）
+  if (era_flag.selectcom === 1) {
+    const virgin = era.get(`talent:${target}:0`) === 1;
+
+    // :868-893 初めて（CFLAG:302 == 0）
+    if (kojo.舔阴 === 0) {
+      if (virgin) {
+        if (assi_mao) {
+          await era.printAndWait(
+            `『啊呀、姐姐的蜜穴真好看…咦，还没有被魔王疼爱过这里吗？』`,
+          ); // :873
+          await era.printAndWait(`「住手……停下…快停下啊…哈啊…啊啊啊！」`); // :874
+          await era.printAndWait(`『不好好回答的话，我就继续舔啦？ 啦啦啦♪』`); // :875
+        } else {
+          await era.printAndWait(
+            `「住手……停下…快停下啊…那里是小便的地方啊！」`,
+          ); // :877
+          await era.printAndWait(
+            `处女的纯洁，甘甜的气味涌入${player_name}的鼻子中，一阵发痒。`,
+          ); // :878
+          await era.printAndWait(
+            `${target_name}羞耻万分，拼命扭动着身体想要躲避。而${player_name}秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着${target_name}的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………`,
+          ); // :879-881
+        }
+      } else if (assi_mao) {
+        await era.printAndWait(
+          `『啊呀、姐姐的蜜穴真好看…哟哟，好像已经被侵犯过了？』`,
+        ); // :885
+        await era.printAndWait(
+          `「啊啊……快住手啊……那里已经……已经变脏了！不能舔那里啊……！」`,
+        ); // :886
+      } else {
+        await era.printAndWait(
+          `「住，住手啊！不要啊！那里……那里是已经被玷污的肮脏地方啊！」`,
+        ); // :888
+        await era.printAndWait(
+          `${target_name}羞耻万分，拼命扭动着身体想要躲避。而${player_name}秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着${target_name}的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………`,
+        ); // :889-891
+      }
+      kojo.舔阴 = 1; // :890-893
+      return 0;
+    }
+
+    // :895-946 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.舔阴 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `『哎呀，姐姐的蜜穴和豆豆都已经变得好敏感了呢…这么一舔就全湿透了……嘻嘻♪』`,
+        ); // :900
+        await era.printAndWait(
+          `「啊啊……嗯啊……是，是啊，姐姐的小穴已经……这么淫荡了呢……啊啊，就是这里${heart(1)}」`,
+        ); // :901
+        const lick_line_1 = rand_n(2)
+          ? '舔姐姐的这里，我也觉得很舒服哦'
+          : '啊哈，姐姐感觉很舒服吧♪';
+        await era.printAndWait(`『${lick_line_1}${heart(1)}』`); // :902
+        kojo.舔阴 = 5; // :903
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.舔阴 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          `『哎呀，姐姐的这里，真是美味呢…呼呼…怎么魔王大人的味道也混在里面啊？』`,
+        ); // :906
+        await era.printAndWait(
+          `「嗯啊…哪…哪有这种事……舌头…太深入了…啊啊啊！」`,
+        ); // :907
+        const lick_line_2 = rand_n(2)
+          ? '姐姐的爱液都从蜜穴里流进妹妹嘴里了哦。'
+          : '姐姐已经有感觉了呀，很舒服吧♪';
+        await era.printAndWait(`『${lick_line_2} 我继续开动了哦♪』`); // :908
+        await era.printAndWait(
+          `${target_name}在${player_name}的舌尖下，不住地娇喘着………`,
+        ); // :909
+        kojo.舔阴 = 4; // :910
+      } else {
+        // それ以外（CFLAG:302 不推进——源作原样，助手玛奥臂唯一无写点档）
+        const lick_line_3 = rand_n(2)
+          ? '姐姐感觉舒服吗？'
+          : '姐姐觉得我舔得舒服吗？♪';
+        await era.printAndWait(`『${lick_line_3} 不回答的话我就再深入了哦♪』`); // :913
+        await era.printAndWait(`「不，不要啊、快停止…停止啊…嗯啊啊啊！」`); // :914
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.舔阴 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「啊啦啦……魔王大人居然像狗一样舔着我的蜜穴……小母狗${target_name}真是三生有幸啊……嗯啊啊……太舒服了……」`,
+      ); // :918
+      await era.printAndWait(
+        `${target_name}主动岔开了双腿，蜜穴和阴蒂在${player_name}舌头灵巧地舔弄下，已经有了明显的快感。`,
+      ); // :919
+      await era.printAndWait(
+        `「嗯啊啊…再……魔王大人……再深入一点${heart(1)} 啊啊…要，要去了……嗯啊啊${heart(1)}」`,
+      ); // :920
+      kojo.舔阴 = 5; // :921
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.舔阴 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        `「啊啊…嗯啊啊…不要啦，魔王大人…那，那里好脏的…啊啊啊${heart(1)}」`,
+      ); // :924
+      await era.printAndWait(
+        `虽然这么说着，${target_name}却不自觉地用双手将${player_name}继续按在自己张开的双腿之间。`,
+      ); // :925
+      await era.printAndWait(
+        `「被……被魔王大人舔得……好有感觉，好舒服，啊啊啊${heart(1)}」`,
+      ); // :926
+      kojo.舔阴 = 4; // :927
+    } else if (mark(2) === 3 && (kojo.舔阴 <= 2 || game.kojo.口上开关 === 2)) {
+      // 屈服刻印Lv3
+      await era.printAndWait(`「嗯啊…呜呜…不…不要啊……嗯啊啊」`); // :930
+      await era.printAndWait(
+        `${target_name}任由${player_name}舔舐着自己的蜜穴和阴蒂，已经完全放弃了抵抗，且似乎已经有了微微的快感。`,
+      ); // :931
+      await era.printAndWait(
+        `只能拼命忍耐着，蜜穴时不时因为快意微微颤动起来………`,
+      ); // :932
+      kojo.舔阴 = 3; // :933-934
+    } else if (
+      mark(3) >= 1 &&
+      mark(2) <= 2 &&
+      (kojo.舔阴 <= 1 || game.kojo.口上开关 === 2)
+    ) {
+      // 反抗刻印Lv1以上（且屈服刻印Lv2以下）
+      await era.printAndWait(
+        `「居……居然像狗一样舔着下面……你这个人……一点尊严都不要的吗……嗯啊啊」`,
+      ); // :936
+      await era.printAndWait(
+        `${target_name}拼命扭着身子逃避着，但是双腿却被${player_name}强行分开，脸埋在其中舔舐着蜜穴和阴蒂`,
+      ); // :937
+      kojo.舔阴 = 2; // :938-939
+    } else if (kojo.舔阴 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外（屈服刻印Lv3未満）
+      await era.printAndWait(
+        `「说，说了那里是尿尿的地方啊！肮脏！不洁！不要舔啊啊啊！」`,
+      ); // :941
+      await era.printAndWait(
+        `${target_name}拼命扭动着身体想要逃避，却被${player_name}紧紧按着分开的双腿，借着唾液的润滑，在蜜穴和阴蒂处来回舔舐着………`,
+      ); // :942
+      kojo.舔阴 = 2; // :943-949
+    }
+    return 0; // :943-949 隐式（原作 RETURN 0）
+  }
+
+  // :952-1043 IF SELECTCOM == 2（肛门爱抚 CFLAG:303）
+  if (era_flag.selectcom === 2) {
+    // :954-965 初めて（CFLAG:303 == 0）
+    if (kojo.肛门爱抚 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(
+          `『魔王大人特别喜欢调教我们的肛门哦，让妹妹来先帮姐姐的屁股做好准备吧♪』`,
+        ); // :957
+        await era.printAndWait(`「不，不要啊！那个部位……太脏了啊啊！」`); // :958
+        await era.printAndWait(
+          `${target_name}的肛门别${player_name}毫不留情地用手指玩弄着，发出了一阵阵悲鸣………`,
+        ); // :959-960
+      } else {
+        await era.printAndWait(
+          `「你……你在碰哪里！？不要啊，那种地方不可以的！」`,
+        ); // :961
+        await era.printAndWait(
+          `${target_name}的肛门别${player_name}毫不留情地用手指玩弄着，发出了一阵阵悲鸣………`,
+        ); // :962-963
+      }
+      kojo.肛门爱抚 = 1; // :964 CFLAG:TARGET:303 = 1（TARGET 即 target，二段三段等价）
+      return 0;
+    }
+
+    // :967-1041 二回目以降
+    const p = chara(target).train.润滑 + chara(target).train.润滑增量; // :968 P = PALAM:3 + UP:3
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      p >= PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱+润滑Lv2以上
+      if (assi_mao) {
+        await era.printAndWait(
+          `『哇哇，姐姐的肛门已经变得超色情了呢♪　魔王大人你看，姐姐的这里已经是名器了呢${heart(1)}』`,
+        ); // :973
+        await era.printAndWait(
+          `「嗯啊啊…要…要去了……屁股${heart(1)} 继…继续，不要停${heart(1)}」`,
+        ); // :974
+        await era.printAndWait(
+          `『好像已经舒服到听不清我在说什么了。姐姐被玩弄肛门时的表情，一脸幸福啊${heart(1)}』`,
+        ); // :975
+        await era.printAndWait(
+          `${player_name}舔着嘴唇，继续用手指抽插，玩弄着${target_name}的肛门………`,
+        ); // :976
+      } else {
+        await era.printAndWait(
+          `「哈啊！啊啊${heart(1)} 好…好舒服，屁股好舒服…${heart(1)}」`,
+        ); // :978
+        await era.printAndWait(
+          `${target_name}流着口水，娇喘着，肛门一张一合地享受着被${player_name}的手指玩弄肛门的连绵快感。`,
+        ); // :979
+        await era.printAndWait(
+          `「嗯啊啊……屁……屁股…光是被手指……就弄得快要去了${heart(1)}」`,
+        ); // :980
+      }
+      kojo.肛门爱抚 = 7; // :982
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      p < PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱+润滑Lv2未満
+      if (assi_mao) {
+        await era.printAndWait(
+          `『姐姐、屁股还没湿透就把手指插进去，感觉是不是很痛呀？』`,
+        ); // :986
+        await era.printAndWait(
+          `「呃啊啊…明明就是故，故意的！就不能稍微温柔一点嘛？」`,
+        ); // :987
+        await era.printAndWait(
+          `『不过姐姐的肛门还是已经感觉到快感了对吧？看，都开始一张一合的了♪』`,
+        ); // :988
+        await era.printAndWait(
+          `${target_name}一边抱怨着，一边却无比享受着${player_name}对肛门的玩弄和连绵的快感………`,
+        ); // :989
+      } else {
+        await era.printAndWait(
+          `「真，真是的！屁股都还没湿透就这么把手指插进来……啊别…别停下呀…嗯啊啊啊！」`,
+        ); // :991
+        await era.printAndWait(
+          `${target_name}的肛门很快被爱液浸透，开始因为连绵的快感而一张一合着………`,
+        ); // :992
+      }
+      kojo.肛门爱抚 = 6; // :994
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      p >= PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕+润滑Lv2以上
+      if (assi_mao) {
+        await era.printAndWait(
+          `『哎呀，姐姐的肛门已经这么敏感地张开了呀…看来已经被魔王大人好好调教，疼爱过了呢…』`,
+        ); // :998
+        await era.printAndWait(
+          `「嗯啊啊…哈啊！因……因为姐姐的肛门，是属于魔王大人的…玩具啊啊${heart(1)}」`,
+        ); // :999
+        await era.printAndWait(
+          `${target_name}不住地娇喘着，感受着被${player_name}玩弄肛门带来的连绵快感。真是一对要好的姐妹呢………`,
+        ); // :1000
+      } else {
+        await era.printAndWait(
+          `「嗯啊啊……屁股……好舒服，好快乐${heart(1)}… ${target_name}是魔王大人的肛门性奴……请……请继续调教，侵犯${target_name}的肛门吧，魔王大人！」`,
+        ); // :1002
+        await era.printAndWait(
+          `${target_name}尽情享受着肛门的快感，摇晃着光洁的臀部诱惑着${player_name}………`,
+        ); // :1003
+      }
+      kojo.肛门爱抚 = 5; // :1005
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      p < PALAMLV[2] &&
+      (kojo.肛门爱抚 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕+润滑Lv2未満
+      if (assi_mao) {
+        await era.printAndWait(
+          `『嘿嘿嘿…姐姐的肛门已经被魔王大人充分调教过了的样子呢♪』`,
+        ); // :1009
+        await era.printAndWait(`「等……等等！润滑……还不够…嗯啊…啊啊啊！」`); // :1010
+        await era.printAndWait(
+          `${player_name}用舌头稍微做了一下润湿，然后又继续开始用手指玩弄，抽插着${target_name}的肛门………`,
+        ); // :1011
+      } else {
+        await era.printAndWait(`「啊啊…魔，魔王大人……请稍微……再温柔一点！」`); // :1013
+        await era.printAndWait(
+          `${target_name}发出痛苦交杂着喜悦的呻吟，感受着${player_name}对肛门的爱抚………`,
+        ); // :1014
+      }
+      kojo.肛门爱抚 = 4; // :1016
+    } else if (
+      p >= PALAMLV[2] &&
+      chara(target).system.肛门感觉 >= 3 &&
+      (kojo.肛门爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 润滑Lv2以上+A感覚Lv3以上
+      if (assi_mao) {
+        await era.printAndWait(
+          `『哎呀呀、姐姐的肛门，这么摸一下就舒服地张开了，还一扭一扭地吸着妹妹的手指呢。魔王大人快看呀♪』`,
+        ); // :1020
+        await era.printAndWait(
+          `「讨…讨厌啊啊！停手，快停手啊！嗯啊啊…才没有感到…舒服！」`,
+        ); // :1021
+        await era.printAndWait(
+          `${player_name}玩弄着${target_name}已经被充分调教开发的肛门，连绵的快感让${target_name}忍不住开始娇喘……`,
+        ); // :1022
+        await era.printAndWait(
+          `『看起来姐姐很快就可以当上魔王大人的肛门性奴了呢♪』`,
+        ); // :1023
+      } else {
+        await era.printAndWait(
+          `「停…停手啊！不…不可以这样…哈啊……嗯啊啊……屁股……为什么这么舒服！」`,
+        ); // :1025
+        await era.printAndWait(
+          `${player_name}玩弄着${target_name}已经被充分调教开发的肛门，连绵的快感让${target_name}忍不住开始娇喘……`,
+        ); // :1026-1027
+      }
+      kojo.肛门爱抚 = 3; // :1028
+    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外（爱慕無し、润滑Lv2未満、A感覚Lv3未満；CFLAG:223 首次耻情Lv2）
+      if (assi_mao) {
+        await era.printAndWait(
+          `『还是太紧了呢，不过没关系，我会把姐姐的这里开发成名器的♪』`,
+        ); // :1032
+        await era.printAndWait(`「住，住手啊、好痛…真的好痛啊啊！」`); // :1033
+        await era.printAndWait(
+          `${player_name}舔着舌头，坏笑着继续用手指来回抠弄着${target_name}的肛门………`,
+        ); // :1034
+      } else {
+        await era.printAndWait(`「住手！好痛啊…求求你！」`); // :1036
+        await era.printAndWait(
+          `${target_name}泪流满面地忍耐着${player_name}对肛门的爱抚调教………`,
+        ); // :1037
+      }
+      kojo.肛门爱抚 = 2; // :1039
+    }
+    return 0; // :1039-1042 隐式（原作 RETURN 0）
+  }
+
+  return 0;
+}
+
+kojo_message_com_family.register(11, kojo_message_com_11);
+
+module.exports = { STUBBED_CALLS, k11_kojo2, kojo_message_com_11 };
