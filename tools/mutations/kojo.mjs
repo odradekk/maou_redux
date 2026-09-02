@@ -3981,4 +3981,194 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k9-diamond'],
     must_mention: '全篇为未填写模板',
   },
+  // —— #242（续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 SELECTCOM 3
+  // （M2402-M2417 号段） ——
+  {
+    desc: 'M2402 COM3 初めて助手玛奥判据颠倒（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      // :1049-1062 初めて（CFLAG:304 == 0）
+      if (assi_mao) {`,
+    replace: `      // :1049-1062 初めて（CFLAG:304 == 0）
+      if (!assi_mao) {
+        // 变异：助手玛奥判据颠倒`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 初めて：助手玛奥分档',
+  },
+  {
+    desc: 'M2403 COM3 初めて CFLAG:304 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 1; // :1061`,
+    replace: `      kojo.自慰 = 0; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 初めて：非助手玛奥分档',
+  },
+  {
+    desc: 'M2404 COM3 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱`,
+    replace: `      if (
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 二回目：助手玛奥 + 淫乱 + 处女推进到 7',
+  },
+  {
+    desc: 'M2405 COM3 二回目 助手玛奥淫乱 CFLAG:304 写错（7 改 6，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 7; // :1081`,
+    replace: `      kojo.自慰 = 6; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 二回目：助手玛奥 + 淫乱 + 处女推进到 7',
+  },
+  {
+    desc: 'M2406 COM3 二回目 助手玛奥爱慕 CFLAG:304 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 5; // :1097`,
+    replace: `      kojo.自慰 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 二回目：助手玛奥 + 爱慕 + 非处女推进到 5',
+  },
+  {
+    desc: 'M2407 COM3 二回目 非助手玛奥淫乱+处女判据错格（TALENT:0 丢失，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      era.get(\`talent:\${target}:0\`) === 1 &&
+      (kojo.自慰 <= 8 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱＋处女`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.自慰 <= 8 || game.kojo.口上开关 === 2) // 变异：TALENT:0 丢失
+    ) {
+      // 淫乱＋处女`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M2408 COM3 二回目 非助手玛奥淫乱+处女 CFLAG:304 写错（9 改 8，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 9; // :1111`,
+    replace: `      kojo.自慰 = 8; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 二回目：非助手玛奥 + 淫乱+处女推进到 9',
+  },
+  {
+    desc: 'M2409 COM3 二回目 淫乱+自慰中毒Lv3以上判据错格（>=3 改 >=2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      chara(target).train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱＋自慰中毒Lv3以上`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      chara(target).train.自慰中毒 >= 2 && // 变异：判据错格
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱＋自慰中毒Lv3以上`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3未満，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M2410 COM3 二回目 淫乱+自慰中毒Lv3以上 RAND:3 首支写反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      // 淫乱＋自慰中毒Lv3以上
+      if (rand_n(3) === 0) {`,
+    replace: `      // 淫乱＋自慰中毒Lv3以上
+      if (rand_n(3) === 1) {
+        // 变异：RAND:3 首支判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M2411 COM3 二回目 淫乱+自慰中毒Lv3以上 CFLAG:304 写错（8 改 7，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 8; // :1128`,
+    replace: `      kojo.自慰 = 7; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M2412 COM3 二回目 淫乱+自慰中毒Lv3未満 CFLAG:304 写错（7 改 6，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 7; // :1141-1142`,
+    replace: `      kojo.自慰 = 6; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3未満，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M2413 COM3 二回目 爱慕+处女判据错格（TALENT:0 丢失，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.get(\`talent:\${target}:85\`) === 1 &&
+      era.get(\`talent:\${target}:0\`) === 1 &&
+      (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋处女`,
+    replace: `      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.自慰 <= 5 || game.kojo.口上开关 === 2) // 变异：TALENT:0 丢失
+    ) {
+      // 爱慕＋处女`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 爱慕+自慰中毒Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M2414 COM3 二回目 爱慕+自慰中毒Lv3以上判据错格（>=3 改 >=2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.get(\`talent:\${target}:85\`) === 1 &&
+      chara(target).train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋自慰中毒Lv3以上`,
+    replace: `      era.get(\`talent:\${target}:85\`) === 1 &&
+      chara(target).train.自慰中毒 >= 2 && // 变异：判据错格
+      (kojo.自慰 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋自慰中毒Lv3以上`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 爱慕+自慰中毒Lv3未満，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M2415 COM3 二回目 爱慕+自慰中毒Lv3未満 CFLAG:304 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 4; // :1173`,
+    replace: `      kojo.自慰 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM3 二回目：非助手玛奥 + 爱慕+自慰中毒Lv3未満，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M2416 COM3 二回目 屈服刻印Lv3+自慰中毒Lv1以上判据错格（MARK:2==3 改 ==2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.get(\`mark:\${target}:2\`) === 3 &&
+      chara(target).train.自慰中毒 >= 1 &&
+      (kojo.自慰 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3+自慰中毒Lv1以上`,
+    replace: `      era.get(\`mark:\${target}:2\`) === 2 && // 变异：判据错格
+      chara(target).train.自慰中毒 >= 1 &&
+      (kojo.自慰 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3+自慰中毒Lv1以上`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 二回目：非助手玛奥 + それ以外推进到 2',
+  },
+  {
+    desc: 'M2417 COM3 二回目 それ以外 CFLAG:304 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.自慰 = 2; // :1194`,
+    replace: `      kojo.自慰 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM3 二回目：非助手玛奥 + それ以外推进到 2',
+  },
 ];

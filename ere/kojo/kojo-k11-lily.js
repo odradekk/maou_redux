@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2，issue #242，
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3，issue #242，
  *       WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
@@ -12,11 +12,11 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2 三支 :786-1043——爱抚/舔阴/肛门爱抚，各含
- *     初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档）
+ *     :754-778 与 SELECTCOM 0/1/2/3 四支 :786-1198——爱抚/舔阴/肛门爱抚/
+ *     自慰，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档）
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 92.2%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 3 起（源文件第 1048 至 10657 行，约 50 条剩余分支，见源文件内
+ * 本票剩余工作（未落地，占全文 13468 行的约 91.4%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 5 起（源文件第 1203 至 10657 行，约 49 条剩余分支，见源文件内
  * `IF SELECTCOM ==` 逐条列表）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，
  * 存根已占位）、@KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -39,23 +39,24 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 428 条锚全部用源文件片段的逐字转义文本
- * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：364 条恰好
+ * trace-refs/kojo-k11-lily.mjs 的 510 条锚全部用源文件片段的逐字转义文本
+ * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：446 条恰好
  * 命中 1 行/1 段，可视为具备真实鉴别力。余下 64 条命中 >1 处，且经验证
  * 无法在不破坏 text-fidelity 逐句绑定（find_printform 要求 n..m 窗口内首条
  * PRINTFORM 系行即目标句，向前/向后扩窗只要越过相邻语句自身的 PRINTFORM
  * 行就会误绑定）的前提下继续收窄——60 条来自 WIP 1/N 交付范围（存在标志/
  * @EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），落在 CFLAG:400 魔族化分支
  * 与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，按 issue 讨论保持现状、
- * 不再动；4 条来自本轮新增的 SELECTCOM 0/1/2（:811/818/826/1022，姉妹
- * 相认/魔族化前后两套台词在平行分支里逐字复现）。@KOJO_MESSAGE_COM_11
- * 头部 7 项守卫与 SELECTCOM 0/1/2 内非 print 语句自身收尾行的锚（守卫
- * SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法
- * 向外扩窗到唯一邻行——只有 era.print(/era.printAndWait( 语句自己收尾行
- * 的 `:N` 锚绝不参与扩窗（kojo-text-fidelity 靠它做逐语句字面量绑定，
- * 扩窗会误绑邻行台词）。这 64 条即便行号漂移，落点也只会落到另一处内容
- * 完全相同的复现段落，不会静默通过成不相关文本——风险画像与结构性关键字
- * 锚（如裸 `RETURN 0`）不同，后者才是真正的零鉴别力。
+ * 不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/1022，姉妹相认/魔族化
+ * 前后两套台词在平行分支里逐字复现）。SELECTCOM 3（本轮新增）经同法扩窗
+ * 后无残留非唯一锚。@KOJO_MESSAGE_COM_11 头部 7 项守卫与 SELECTCOM 0/1/2/3
+ * 内非 print 语句自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿
+ * K9（#240 commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
+ * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-fidelity
+ * 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 64 条即便行号漂移，
+ * 落点也只会落到另一处内容完全相同的复现段落，不会静默通过成不相关
+ * 文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者才是真正的
+ * 零鉴别力。
  */
 
 'use strict';
@@ -1188,7 +1189,7 @@ on(
 
 /**
  * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
- * SELECTCOM 0/1/2，其余编号留续轮）。
+ * SELECTCOM 0/1/2/3，其余编号留续轮）。
  *
  * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
@@ -1211,6 +1212,17 @@ on(
  * 分档：「淫乱+润滑Lv2以上→淫乱+润滑Lv2未満→爱慕+润滑Lv2以上→爱慕+
  * 润滑Lv2未満→润滑Lv2以上+A感覚Lv3以上→それ以外」写 7/6/5/4/3/2，每档
  * 再按「助手玛奥/否」二分。
+ *
+ * SELECTCOM 3（自慰 CFLAG:304，:1048-1198）：初めて按「助手玛奥／否」二
+ * 分档写 1；二回目以降先判「助手玛奥」——命中则走自身内部「淫乱（含处女
+ * 子分档）→爱慕（含处女子分档）→それ以外（无写点）」三选，写 7/5/－；
+ * 未命中则走扁平九支 ELSEIF 链（与助手玛奥支互斥、彼此独立判据，非
+ * 「各档再按助手玛奥二分」的对称结构，1:1 保留源作形状）：淫乱+处女→
+ * 淫乱+自慰中毒Lv3以上（RAND:3 三选一台词）→淫乱+自慰中毒Lv3未満（RAND:2
+ * 二选一）→爱慕+处女→爱慕+自慰中毒Lv3以上（RAND:3 三选一）→爱慕+自慰
+ * 中毒Lv3未満（RAND:2 二选一）→屈服刻印Lv3+自慰中毒Lv1以上（RAND:2 二选
+ * 一）→それ以外（RAND:2 二选一），写 9/8/7/6/5/4/3/2。ABL:31 自慰中毒经
+ * `chara(target).train.自慰中毒` 门面读取。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
@@ -1711,6 +1723,306 @@ async function kojo_message_com_11(rand) {
       kojo.肛门爱抚 = 2; // :1039
     }
     return 0; // :1039-1042 隐式（原作 RETURN 0）
+  }
+
+  // :1048-1198 IF SELECTCOM == 3（自慰 CFLAG:304）
+  if (era_flag.selectcom === 3) {
+    if (kojo.自慰 === 0) {
+      // :1049-1062 初めて（CFLAG:304 == 0）
+      if (assi_mao) {
+        await era.printAndWait(
+          `『姐姐自慰要更认真一点啊，还要告诉我你以前在家都是想着谁，怎么摸的。我可是每次都听见了的哦。』`,
+        ); // :1053
+        await era.printAndWait(
+          `「不，不要说那样的谎话！才没，没有那种事！呜呜呜……」`,
+        ); // :1054
+        await era.printAndWait(
+          `${target_name}在妹妹的命令下，继续屈辱地自慰着………`,
+        ); // :1055
+      } else {
+        await era.printAndWait(
+          `「开，开什么玩笑…为什么要我做……这种事情…呜呜呜…」`,
+        ); // :1057
+        await era.printAndWait(
+          `${target_name}在${player_name}的命令下不得不开始自慰、屈辱的泪水从脸颊纵流而下。`,
+        ); // :1058
+        await era.printAndWait(`「什么…？还，还要继续？呜呜呜……谁来救救我？」`); // :1059
+      }
+      kojo.自慰 = 1; // :1061
+      return 0; // :1061-1062
+    }
+
+    // :1066-1195 二回目以降
+    if (assi_mao) {
+      // 助手玛奥：内部淫乱/爱慕/それ以外三选（それ以外无写点，与非助手支各自独立分档）
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        if (era.get(`talent:${target}:0`) === 1) {
+          // 处女
+          await era.printAndWait(
+            `『啊咧？姐姐的身体都这么色情了，居然还是处女？…』`,
+          ); // :1071
+          await era.printAndWait(`「那，那有什么不好的…恩恩啊…哈啊…嗯啊啊…」`); // :1072
+          await era.printAndWait(
+            `『爱液流了这么多出来，难道正在幻想着被魔王的肉棒狠狠地疼爱吗？』`,
+          ); // :1073
+          await era.printAndWait(
+            `「笨蛋！不要说出来嘛…嗯啊…啊啊啊啊，魔王大人，${target_name}要去了${heart(1)}」`,
+          ); // :1074
+        } else {
+          await era.printAndWait(
+            `『姐姐这么激烈地同时自慰前后两边，好厉害啊…』`,
+          ); // :1076
+          await era.printAndWait(
+            `「嗯啊啊…啊啊…在魔王大人和${player_name}的注视下…手淫…比平时…更加有快感啊${heart(1)}」`,
+          ); // :1077
+          await era.printAndWait(
+            `『啊哈、我已经看出来了…姐姐是个喜欢自慰时被人看着的变态啊♪』`,
+          ); // :1078
+          await era.printAndWait(
+            `「是啊…姐姐是变态色情狂…啊啊…嗯啊啊……好好欣赏姐姐被人看着自慰到高潮的样子吧${heart(1)}」`,
+          ); // :1079
+        }
+        kojo.自慰 = 7; // :1081
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.自慰 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (era.get(`talent:${target}:0`) === 1) {
+          // 处女
+          await era.print(
+            `『咦，姐姐居然还是处女？难道魔王大人不喜欢姐姐的这里吗？』`,
+          ); // :1086
+          await era.printAndWait(
+            `「哪……哪有那样的事……是魔王大人珍…珍惜姐姐的处女之身…所以才……嗯啊啊」`,
+          ); // :1087
+          await era.printAndWait(
+            `${target_name}岔开双腿，弓着腰，在妹妹的命令下进行着自慰，脸上的表情带着些许屈辱，又不可自拔地沉浸在快感中。`,
+          ); // :1088
+          await era.print(
+            `「我说的没错吧魔王大人…但是…啊恩…什么时候…才能…真正疼爱我呢${heart(1)}」`,
+          ); // :1089
+          await era.printAndWait(
+            `（『魔王大人，真正的原因是什么呢？』）${player_name}悄悄和你耳语着。`,
+          ); // :1090
+        } else {
+          await era.printAndWait(
+            `『哎呀呀，姐姐这么热情地自慰着，是希望一会儿能够得到魔王大人的疼爱吗？』`,
+          ); // :1092
+          await era.printAndWait(`「啊…啊……这不是你…你命令的吗……嗯啊啊！」`); // :1093
+          await era.printAndWait(
+            `『啊呀，我这一说，你就湿成这样了、爱液都喷到我身上了。你一定是边想着蜜穴被魔王大人狠狠地侵犯边自慰吧。姐姐真的完全变成魔王大人的性奴了呢…』`,
+          ); // :1094
+          await era.printAndWait(
+            `${target_name}被${player_name}的话羞得脸红到了耳根，然而自慰的动作却一刻也没有放缓………`,
+          ); // :1095
+        }
+        kojo.自慰 = 5; // :1097
+      } else {
+        // それ以外
+        await era.print(
+          `『哎呀呀，姐姐自慰的样子真下流，看得人家都兴奋起来了啊…♪』`,
+        ); // :1100
+        await era.printAndWait(`「不要看，不要看啊…太羞耻了…嗯啊……啊啊！」`); // :1101
+        await era.print(
+          `『姐姐再敢把腿夹起来还说这种话，我就让魔王大人把所有部下都叫过来一起来围观姐姐自慰了哦♪』`,
+        ); // :1102
+        await era.printAndWait(
+          `「不，不要！对不起…对不起…原谅姐姐吧…求求你…！」`,
+        ); // :1103
+        await era.printAndWait(
+          `${target_name}不敢忤逆${player_name}的命令，泪流满面地继续再度张开双腿，在妹妹面前自慰着………`,
+        ); // :1104-1105（それ以外无 CFLAG:304 推进，源作原样）
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      era.get(`talent:${target}:0`) === 1 &&
+      (kojo.自慰 <= 8 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱＋处女
+      await era.printAndWait(
+        `「魔王大人为什么还不肯要了我的处子身呢，嫌弃我吗？…要是太过分的话，我会做什么可就不知道了哦？」`,
+      ); // :1108
+      await era.printAndWait(
+        `「嗯啊…哈啊…为什么……嗯呀啊${heart(1)} 总是让我自己玩自己！嗯啊啊啊${heart(1)}」`,
+      ); // :1109
+      await era.printAndWait(
+        `${target_name}故意张开双腿，挑逗似的在${player_name}动作夸张地自慰着………`,
+      ); // :1110
+      kojo.自慰 = 9; // :1111
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      chara(target).train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱＋自慰中毒Lv3以上
+      if (rand_n(3) === 0) {
+        await era.printAndWait(
+          `「嗯啊啊${heart(1)} 自慰…真是世界上最棒的事了…啊哈啊…好想…被更多人视奸啊${heart(1)}」`,
+        ); // :1116
+        await era.printAndWait(
+          `已经完全沦为自慰狂的${target_name}在${player_name}面前弓着身子，挺起腰不断忘我地自慰着前后两穴。`,
+        ); // :1117
+        await era.printAndWait(
+          `「啊啊嗯${heart(1)} 淫液要喷出来了…啊啊……嗯啊啊啊${heart(1)}」`,
+        ); // :1118
+      } else if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「哎呀哎呀…要人家这个姿势来自慰…真，真是变态呢${heart(1)}」`,
+        ); // :1120
+        await era.printAndWait(
+          `${target_name}按着${player_name}的命令后仰着弓起腰身、分开双腿，在${player_name}的注视下开始自慰。`,
+        ); // :1121
+        await era.printAndWait(
+          `「吖吖${heart(1)}…哈啊…啊啊啊…感觉好棒…嗯啊啊…要去了${heart(1)} 嗯啊啊啊${heart(1)}」`,
+        ); // :1122
+      } else {
+        await era.printAndWait(
+          `「啊哈啊啊…这么想要看我手淫吗…啊啊${heart(1)} 真是受不了你啊…嗯啊啊…哈啊…啊啊${heart(1)}」`,
+        ); // :1124
+        await era.printAndWait(
+          `${target_name}当着${player_name}面，两只手同时忘我地自慰着蜜穴和肛门。爱液飞洒到了床上，地板上、空气中弥散着淫靡的味道。`,
+        ); // :1125
+        await era.printAndWait(
+          `「现在看的满意了吗…恩恩啊${heart(1)} 啊啊快感更强了${heart(1)} 要去了…舒服得要去了${heart(1)}」`,
+        ); // :1126
+      }
+      kojo.自慰 = 8; // :1128
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      chara(target).train.自慰中毒 < 3 &&
+      (kojo.自慰 <= 6 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱＋自慰中毒Lv3未満
+      if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「真是的……明明知道……自慰什么的根本满足不了我的欲火、还让我做这种……嗯啊啊！」`,
+        ); // :1133
+        await era.printAndWait(
+          `${target_name}露出委屈的表情，在${player_name}的命令下，开始自慰。`,
+        ); // :1134
+        await era.printAndWait(
+          `「啊哈啊…已经…全湿透了${heart(1)} 为什么魔王大人不肯亲自${heart(1)}…真是的…嗯啊啊！」`,
+        ); // :1135
+      } else {
+        await era.printAndWait(
+          `「嗯啊啊……就让我把宝贵的高潮这样浪费在自慰中……魔王大人真是残忍呢…嗯啊啊……哈啊${heart(1)}」`,
+        ); // :1137
+        await era.printAndWait(
+          `${target_name}的自慰完全无法满足欲火、却又无可奈何，只能又爱又恨地瞪着${player_name}。`,
+        ); // :1138
+        await era.printAndWait(
+          `「不过话说回来…这样看着你的脸…哈啊…好像更有快感一些…啊恩啊啊${heart(1)}」`,
+        ); // :1139
+      }
+      kojo.自慰 = 7; // :1141-1142
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      era.get(`talent:${target}:0`) === 1 &&
+      (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋处女
+      await era.printAndWait(
+        `「哈啊…哈啊…魔王大人……什么时候才，才会要走我的处子身…啊嗯啊啊${heart(1)}」`,
+      ); // :1144
+      await era.printAndWait(
+        `${target_name}在${player_name}的面前，挑逗地张开双腿，持续自慰着。`,
+      ); // :1145
+      await era.printAndWait(`（明明人家早就已经准备好了…呜！）`); // :1146
+      await era.printAndWait(
+        `尽管已经知道了${target_name}的想法、${player_name}还是尽情欣赏，享受着${target_name}的自慰秀………`,
+      ); // :1147
+      kojo.自慰 = 6; // :1148
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      chara(target).train.自慰中毒 >= 3 &&
+      (kojo.自慰 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋自慰中毒Lv3以上
+      if (rand_n(3) === 0) {
+        await era.printAndWait(
+          `「嗯啊啊${heart(1)}…哈啊…实在…太害羞了…但是手指…就是停不下来…啊啊啊魔王大人…人家这个姿势可以吗${heart(1)}」`,
+        ); // :1153
+        await era.printAndWait(
+          `${target_name}的口中轻吐着娇喘，一边不住地自慰着………`,
+        ); // :1154
+      } else if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「${target_name}好…高兴在魔王大人命令下自慰啊${heart(1)} 嗯啊啊…嗯啊…好舒服啊${heart(1)}」`,
+        ); // :1156
+        await era.printAndWait(
+          `${target_name}在${player_name}炽热的目光注视下，忘我地自慰着………`,
+        ); // :1157
+      } else {
+        await era.printAndWait(
+          `「嗯啊…嗯啊啊…哈啊${heart(1)} 手指…完全停不下来…不，不许看、不许看…人家要……要去了${heart(1)}」`,
+        ); // :1159
+        await era.printAndWait(
+          `${target_name}沉浸在自慰带来的连绵快感中，连口水都流了出来………`,
+        ); // :1160
+      }
+      kojo.自慰 = 5; // :1162-1163
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      chara(target).train.自慰中毒 < 3 &&
+      (kojo.自慰 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋自慰中毒Lv3未満
+      if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「如果是魔王大人的命令的话…！再羞耻的事我也，我也愿意…哈啊…嗯啊啊${heart(1)}」`,
+        ); // :1167
+        await era.printAndWait(
+          `${target_name}脸红耳赤地用手指爱抚着自己得下体、在${player_name}的注视下慢慢展开身体，开始自慰………`,
+        ); // :1168
+      } else {
+        await era.printAndWait(
+          `「太，太羞耻了…但如果魔王大人想要看的话…嗯啊…哈啊……嗯啊啊！」`,
+        ); // :1170
+        await era.printAndWait(
+          `${target_name}双眼因为羞耻而微微湿润，在${player_name}的炽热目光下开始了自慰………`,
+        ); // :1171
+      }
+      kojo.自慰 = 4; // :1173
+    } else if (
+      era.get(`mark:${target}:2`) === 3 &&
+      chara(target).train.自慰中毒 >= 1 &&
+      (kojo.自慰 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3+自慰中毒Lv1以上
+      if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「讨厌，不要看啊…不要看我的脸啊…嗯啊…嗯啊啊！」`,
+        ); // :1178
+        await era.printAndWait(
+          `${target_name}屈辱地躲避着${player_name}的视线，自慰着下体的手指却不自觉地动得更激烈了………`,
+        ); // :1179
+      } else {
+        await era.printAndWait(
+          `「哈啊…哈啊…可…可以停下来了吗？…啊啊，我知道了，我会继续的，我会继续的！嗯啊 啊」`,
+        ); // :1181
+        await era.printAndWait(
+          `${target_name}屈服于${player_name}的命令，持续进行着自慰，却微微浮现了沉浸期其间的表情………`,
+        ); // :1182
+      }
+      kojo.自慰 = 3; // :1184
+    } else if (kojo.自慰 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外（爱慕無し、自慰中毒Lv1未満）
+      if (rand_n(2) === 0) {
+        await era.printAndWait(`「为什么…要我做这样羞耻的事…嗯啊…哈啊」`); // :1189
+      } else {
+        await era.printAndWait(`「饶了我吧，求求你了…！」`); // :1191
+      }
+      await era.printAndWait(
+        `${target_name}的脸一直红到了耳根，在极度的羞愧中开始自慰………`,
+      ); // :1193
+      kojo.自慰 = 2; // :1194
+    }
+    return 0; // :1194-1196 隐式（原作 RETURN 0）
   }
 
   return 0;
