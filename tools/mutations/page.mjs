@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/page/（画面与交互组件）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M3 999 出口：@USERCOM 不再发起 BEGIN AFTERTRAIN',
@@ -312,7 +313,7 @@ export default [
     must_mention: '条后数值列必须真实渲染',
   },
   {
-    desc: 'M157 出兵公式：气力 /25 改 /30（INVASION.ERB:267）',
+    desc: 'M2101 出兵公式：气力 /25 改 /30（INVASION.ERB:267）',
     file: 'ere/page/page-invasion.js',
     find: '  sinkou = Math.floor(chara(0).dungeon.气力 / 25);',
     replace:
@@ -321,7 +322,7 @@ export default [
     must_mention: 'FLAG:81 += 10000/25',
   },
   {
-    desc: 'M158 气力减半删除（失败也照减的 :268 语义）',
+    desc: 'M2102 气力减半删除（失败也照减的 :268 语义）',
     file: 'ere/page/page-invasion.js',
     find: '  chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);',
     replace: '  // 变异：不减半',
@@ -329,7 +330,7 @@ export default [
     must_mention: 'BASE:0:1 减半',
   },
   {
-    desc: 'M159 威望 +2 删除（结算尾 :978）',
+    desc: 'M2103 威望 +2 删除（结算尾 :978）',
     file: 'ere/page/page-invasion.js',
     find: '  era_exflag.prestige = era_exflag.prestige + 2; // :978 EX_FLAG:99 += 2',
     replace: '  // 变异：威望不增',
@@ -337,7 +338,7 @@ export default [
     must_mention: 'EX_FLAG:99 += 2',
   },
   {
-    desc: 'M160 略受质疑折扣公式：(100+(p-60)*2) 改 (100+(p-60))',
+    desc: 'M2104 略受质疑折扣公式：(100+(p-60)*2) 改 (100+(p-60))',
     file: 'ere/page/page-invasion.js',
     find: '      sinkou: Math.floor((sinkou * (100 + (prestige - 60) * 2)) / 100),',
     replace:
@@ -346,7 +347,7 @@ export default [
     must_mention: '略受质疑）的侵攻度增量',
   },
   {
-    desc: 'M161 相安无事档偷偷打折（61-80 无修正的 :285-286）',
+    desc: 'M2105 相安无事档偷偷打折（61-80 无修正的 :285-286）',
     file: 'ere/page/page-invasion.js',
     find: "    era.print('威望值是【相安无事】');\n    return { sinkou, failed: false };",
     replace:
@@ -355,7 +356,7 @@ export default [
     must_mention: '相安无事）的侵攻度增量',
   },
   {
-    desc: 'M162 广受爱戴加成公式：(100+(p-80)) 改 (100+(p-80)*2)',
+    desc: 'M2106 广受爱戴加成公式：(100+(p-80)) 改 (100+(p-80)*2)',
     file: 'ere/page/page-invasion.js',
     find: '      sinkou: Math.floor((sinkou * (100 + (prestige - 80))) / 100),',
     replace:
@@ -364,7 +365,7 @@ export default [
     must_mention: '广受爱戴）的侵攻度增量',
   },
   {
-    desc: 'M163 侵攻度封顶阈值挪走（>=10000 改 >=99999，:617-618）',
+    desc: 'M2107 侵攻度封顶阈值挪走（>=10000 改 >=99999，:617-618）',
     file: 'ere/page/page-invasion.js',
     find: '  if (era_flag.human_realm_invasion >= 10000) {',
     replace:
@@ -373,7 +374,7 @@ export default [
     must_mention: '侵攻度封顶',
   },
   {
-    desc: 'M164 KYOTEN_EVENT 首档阈值 2000 改 3000（FLAG:93 状态机）',
+    desc: 'M2108 KYOTEN_EVENT 首档阈值 2000 改 3000（FLAG:93 状态机）',
     file: 'ere/page/page-invasion.js',
     find: '  if (progress >= 2000 && stage === 0) {',
     replace: '  if (progress >= 3000 && stage === 0) { // 变异：阈值挪走',
@@ -381,7 +382,7 @@ export default [
     must_mention: '占领了村庄',
   },
   {
-    desc: 'M165 首次侵略传闻守卫删掉（FLAG:AREA == 0 恒假，INVASION_EVENT.ERB:257）',
+    desc: 'M2109 首次侵略传闻守卫删掉（FLAG:AREA == 0 恒假，INVASION_EVENT.ERB:257）',
     file: 'ere/page/page-invasion.js',
     find: '  if ((era.get(`flag:${area}`) || 0) === 0) {',
     replace: '  if ((era.get(`flag:${area}`) || 0) === -1) { // 变异：恒假',
@@ -389,7 +390,7 @@ export default [
     must_mention: '精锐部队',
   },
   {
-    desc: 'M166 [999] 取消误报成功（返回 1 消耗回合，:190-191）',
+    desc: 'M2110 [999] 取消误报成功（返回 1 消耗回合，:190-191）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result === 999) {\n      return 0; // :190-191\n    }',
     replace:
@@ -398,7 +399,7 @@ export default [
     must_mention: '零副作用',
   },
   {
-    desc: 'M167 魔王侵略经验丢失（EXP:0:80 += SINKOU/2 的写入删除）',
+    desc: 'M2111 魔王侵略经验丢失（EXP:0:80 += SINKOU/2 的写入删除）',
     file: 'ere/page/page-invasion.js',
     find: '  chara(0).dungeon.战斗经验 += exp_gain; // EXP:0:80（魔王的侵略经验）',
     replace: '  // 变异：经验写入删除',
@@ -406,7 +407,7 @@ export default [
     must_mention: 'EXP:0:80 += SINKOU/2',
   },
   {
-    desc: 'M168 [109] 出兵成功不转场（BEGIN TURNEND 删除，SHOP ver1.0.2.ERB:127）',
+    desc: 'M2112 [109] 出兵成功不转场（BEGIN TURNEND 删除，SHOP ver1.0.2.ERB:127）',
     file: 'ere/page/page-shop.js',
     find: '    if ((await invasion()) === 1) {\n      begin(STATE.TURNEND);\n    }',
     replace: '    await invasion(); // 变异：不转场',
@@ -422,7 +423,7 @@ export default [
     must_mention: '侵略必须是按钮',
   },
   {
-    desc: 'M196 人间界结局判据删掉防重复半边（FLAG:82 == 0）',
+    desc: 'M2115 人间界结局判据删掉防重复半边（FLAG:82 == 0）',
     file: 'ere/page/page-invasion.js',
     find: `  if (
     era_flag.human_realm_invasion >= 10000 &&
@@ -463,7 +464,7 @@ export default [
     must_mention: '仍未通关',
   },
   {
-    desc: 'M197 人间界结局门槛 10000 改 9999（INVASION.ERB:1001）',
+    desc: 'M2116 人间界结局门槛 10000 改 9999（INVASION.ERB:1001）',
     file: 'ere/page/page-invasion.js',
     find: `    era_flag.human_realm_invasion >= 10000 &&
     era_flag.human_realm_fallen === 0`,
@@ -473,7 +474,7 @@ export default [
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M198 精灵领域判据门槛改成恒真（FLAG:86，INVASION.ERB:1005）',
+    desc: 'M2117 精灵领域判据门槛改成恒真（FLAG:86，INVASION.ERB:1005）',
     file: 'ere/page/page-invasion.js',
     find: `    era_flag.elf_realm_invasion >= 10000 &&
     era_flag.elf_realm_conquered === 0`,

@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/kojo/（口上状态机与文本插值）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M57 口上总开关守卫删松（<= 0 改 < 0，flag:7 = 0 不再拦）',
@@ -1676,7 +1677,8 @@ export default [
     tests: ['kojo-k2-timid'],
     must_mention: 'SELF_KOJO 助手妄想支出声',
   },
-  // —— #237（J27）：K6 悪女 口上模块（M1780-M1804 号段） ——
+  // —— #237（J27）：K6 悪女 口上模块。原号段 M1780-M1806，与 #236/#288 撞号
+  // 的一段（原 M1790-M1806）已改到 M2119/M2121-M2136（#295 消重，只改后来者）——
   {
     desc: 'M1780 K6 COM 助手调教守卫删（ASSIPLAY 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
@@ -1796,7 +1798,7 @@ export default [
     must_mention: '屈服刻印 Lv3 → CFLAG:301 = 4',
   },
   {
-    desc: 'M1790 K6 爱撫屈服Lv2档推进写错（CFLAG:301 = 3 改 2，#237）',
+    desc: 'M2119 K6 爱撫屈服Lv2档推进写错（CFLAG:301 = 3 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        kojo.爱抚 = 3; // :743',
     replace: '        kojo.爱抚 = 2; // :743（变异）',
@@ -1804,7 +1806,7 @@ export default [
     must_mention: '屈服刻印 Lv2 → CFLAG:301 = 3',
   },
   {
-    desc: 'M1791 K6 爱撫それ以外档推进写错（CFLAG:301 = 2 改 1，#237）',
+    desc: 'M2121 K6 爱撫それ以外档推进写错（CFLAG:301 = 2 改 1，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        kojo.爱抚 = 2; // :748',
     replace: '        kojo.爱抚 = 1; // :748（变异）',
@@ -1812,7 +1814,7 @@ export default [
     must_mention: 'それ以外 → CFLAG:301 = 2',
   },
   {
-    desc: 'M1792 K6 阶段耗尽静默锁删（FLAG:7 == 1 时也出声，#237）',
+    desc: 'M2122 K6 阶段耗尽静默锁删（FLAG:7 == 1 时也出声，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `      if (
         (era.get(\`talent:\${target}:76\`) || 0) === 1 &&
@@ -1828,7 +1830,7 @@ export default [
     must_mention: 'FLAG:7 == 1 阶段耗尽后不出声',
   },
   {
-    desc: 'M1793 K6 舔阴首次推进写错（CFLAG:302 = 1 改 2，#237）',
+    desc: 'M2123 K6 舔阴首次推进写错（CFLAG:302 = 1 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '      kojo.舔阴 = 1; // :769',
     replace: '      kojo.舔阴 = 2; // :769（变异）',
@@ -1836,7 +1838,7 @@ export default [
     must_mention: '舔陰初回 CFLAG:302 = 1',
   },
   {
-    desc: 'M1794 K6 自己扒开首次推进写错（CFLAG:308 = 1 改 2，#237）',
+    desc: 'M2124 K6 自己扒开首次推进写错（CFLAG:308 = 1 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '      kojo.自己扒开 = 1; // :1221',
     replace: '      kojo.自己扒开 = 2; // :1221（变异）',
@@ -1844,7 +1846,7 @@ export default [
     must_mention: '自己扒开初回 CFLAG:308 = 1',
   },
   {
-    desc: 'M1795 K6 胸爱抚首次推进写错（CFLAG:306 = 1 改 2，#237）',
+    desc: 'M2125 K6 胸爱抚首次推进写错（CFLAG:306 = 1 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '      kojo.胸爱抚 = 1; // :1023',
     replace: '      kojo.胸爱抚 = 2; // :1023（变异）',
@@ -1852,7 +1854,7 @@ export default [
     must_mention: '胸爱抚初回 CFLAG:306 = 1',
   },
   {
-    desc: 'M1796 K6 EVENTTRAIN 初调教推进写错（CFLAG:201 = 1 改 2，#237）',
+    desc: 'M2126 K6 EVENTTRAIN 初调教推进写错（CFLAG:201 = 1 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '      kojo.初调教 = 1; // :163',
     replace: '      kojo.初调教 = 2; // :163（变异）',
@@ -1860,7 +1862,7 @@ export default [
     must_mention: '初調教推进到 1',
   },
   {
-    desc: 'M1797 K6 EVENTEND 反抗刻印台词改（去死吧！，#237）',
+    desc: 'M2127 K6 EVENTEND 反抗刻印台词改（去死吧！，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '    await era.printAndWait(`「去死吧！」`); // :608',
     replace: '    await era.printAndWait(`「滚开吧！」`); // :608 变异',
@@ -1868,7 +1870,7 @@ export default [
     must_mention: '反抗刻印Lv3 终了出声',
   },
   {
-    desc: 'M1798 K6 DOG_KOJO 首次推进写错（CFLAG:301 = 1 改 2，#237）',
+    desc: 'M2128 K6 DOG_KOJO 首次推进写错（CFLAG:301 = 1 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '      kojo.爱抚 = 1; // :5293',
     replace: '      kojo.爱抚 = 2; // :5293（变异）',
@@ -1876,7 +1878,7 @@ export default [
     must_mention: '兽奸爱撫初回（DOG_KOJO_6 CFLAG:301 == 0 且 MARK:2 < 2）',
   },
   {
-    desc: 'M1799 K6 PALAMCNG 处女丧失的 A 加算改错（UP:12 丢，#237）',
+    desc: 'M2129 K6 PALAMCNG 处女丧失的 A 加算改错（UP:12 丢，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  A =
     (era.get(\`delta:\${target}:11\`) || 0) + (era.get(\`delta:\${target}:12\`) || 0); // UP:11 + UP:12 // :6334`,
@@ -1886,7 +1888,7 @@ export default [
     must_mention: '处女丧失 A >= 500 落それ以外档（UP:12 参与加算）',
   },
   {
-    desc: 'M1800 K6 MARKCNG 苦痛刻印取得推进写错（CFLAG:297 = 1 改 0，#237）',
+    desc: 'M2130 K6 MARKCNG 苦痛刻印取得推进写错（CFLAG:297 = 1 改 0，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '    kojo.苦痛刻印Lv3 = 1; // :6408',
     replace: '    kojo.苦痛刻印Lv3 = 0; // :6408（变异）',
@@ -1894,7 +1896,7 @@ export default [
     must_mention: '苦痛刻印Lv3 CFLAG:297 = 1',
   },
   {
-    desc: 'M1801 K6 NTR 入口推进写错（CFLAG:650 = 1 改 2，#237）',
+    desc: 'M2131 K6 NTR 入口推进写错（CFLAG:650 = 1 改 2，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '    kojo.NTR再捕获 = 1; // :7581',
     replace: '    kojo.NTR再捕获 = 2; // :7581（变异）',
@@ -1902,7 +1904,7 @@ export default [
     must_mention: 'CFLAG:650',
   },
   {
-    desc: 'M1802 K6 奖赏后口上 choice == 0 改 9（#237）',
+    desc: 'M2132 K6 奖赏后口上 choice == 0 改 9（#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  if (choice === 0) {
     // :7838`,
@@ -1912,7 +1914,7 @@ export default [
     must_mention: '这样的事情可不能长久',
   },
   {
-    desc: 'M1803 K6 惩罚口上 choice == 0 改 9（#237）',
+    desc: 'M2133 K6 惩罚口上 choice == 0 改 9（#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `  if (choice === 0) {
     // :7914`,
@@ -1922,7 +1924,7 @@ export default [
     must_mention: '惩罚口上',
   },
   {
-    desc: 'M1804 K6 SELF_KOJO leftover_q 助手支入口错档（Q === 1 改 9，#237）',
+    desc: 'M2134 K6 SELF_KOJO leftover_q 助手支入口错档（Q === 1 改 9，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `    } else if (Q === 1) {
       // :6467`,
@@ -1932,7 +1934,7 @@ export default [
     must_mention: 'SELF_KOJO 助手妄想支出声',
   },
   {
-    desc: 'M1806 K6 SELF_KOJO leftover_s 回数门槛错档（S >= 3 改 99，#237）',
+    desc: 'M2136 K6 SELF_KOJO leftover_s 回数门槛错档（S >= 3 改 99，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `      if (S >= 3) {
         // :6594`,
@@ -2162,7 +2164,7 @@ export default [
   },
 
   {
-    desc: 'M1790 K3 顶层 require com-hardcore（延迟 require 挪回文件头，#288）',
+    desc: 'M2118 K3 顶层 require com-hardcore（延迟 require 挪回文件头，#288）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "const era = require('#/era-electron');",
     replace: `const era = require('#/era-electron');
@@ -2171,7 +2173,7 @@ const { piercing_state } = require('#/system/train/com-hardcore'); // 变异：�
     must_mention: '顶层 require：ere/kojo/kojo-k3-noble.js',
   },
   {
-    desc: 'M1791 com-tentacle 顶层 require com-colosseum（延迟 require 挪回文件头，#288）',
+    desc: 'M2120 com-tentacle 顶层 require com-colosseum（延迟 require 挪回文件头，#288）',
     file: 'ere/system/train/com-tentacle.js',
     find: "const era = require('#/era-electron');",
     replace: `const era = require('#/era-electron');

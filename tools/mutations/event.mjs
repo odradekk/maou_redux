@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/event/（调教事件链与 SOURCE_CHECK）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M4 EVENTCOMEND 目标死亡分支：FLAG:35 判据取反',
@@ -175,7 +176,7 @@ export default [
   // —— #114 日循环骨架（EVENTTURNEND 三档；普通档体在 ere/system/
   //    turnend-settle.js，同属事件链代码，条目收本切片）——
   {
-    desc: 'M185 EVENTTURNEND（#PRI）时段判据取反（TIME==1 改 !=）',
+    desc: 'M2114 EVENTTURNEND（#PRI）时段判据取反（TIME==1 改 !=）',
     file: 'ere/event/event-turnend.js',
     find: '    if (era_flag.time === 1) {',
     replace: '    if (era_flag.time !== 1) {',

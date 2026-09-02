@@ -1,7 +1,8 @@
 // 变异条目表切片：test/helpers/（测试夹具与引擎比对助手的镜像语义）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     // 注：find 原覆盖函数头整段（#130 前的形状）；入集合逻辑插进函数体后
@@ -20,7 +21,7 @@ export default [
     must_mention: '分类计数与当前待办清单一致',
   },
   {
-    desc: 'M179 夹具 input 白名单校验被拆（未打印按钮的值照单全收——#130 要防的复发形态）',
+    desc: 'M2113 夹具 input 白名单校验被拆（未打印按钮的值照单全收——#130 要防的复发形态）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (config?.useRule !== false) {`,
     replace: `    if (false && config?.useRule !== false) { // 变异：白名单失守`,
