@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-2191',
+        ref: '786-2278',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -6677,6 +6677,271 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
         ref: '2188-2190',
         any: [/^\s*CFLAG:374 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2197-2278',
+        any: [
+          /^\s*IF SELECTCOM == 14 && TEQUIP:14\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:315 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『嘿嘿，姐姐来戴上这个可爱的饰品吧，保证让姐姐你舒服得上天哦！』\s*$\s*^\s*PRINTFORMW 「不，不，谢谢了，我一点都不觉得…啊啊啊…不要啊…不可以夹在那种地方啊…拿掉它，帮帮我！」\s*$\s*^\s*PRINTFORMW 『嘿嘿，想都别想。这个东西，姐姐自己一个人是拿不下来的哦♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2199-2221',
+        any: [
+          /^\s*IF CFLAG:315 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『嘿嘿，姐姐来戴上这个可爱的饰品吧，保证让姐姐你舒服得上天哦！』\s*$\s*^\s*PRINTFORMW 「不，不，谢谢了，我一点都不觉得…啊啊啊…不要啊…不可以夹在那种地方啊…拿掉它，帮帮我！」\s*$\s*^\s*PRINTFORMW 『嘿嘿，想都别想。这个东西，姐姐自己一个人是拿不下来的哦♪』\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2220',
+        any: [/^\s*CFLAG:315 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2202',
+        any: [
+          /^\s*PRINTFORMW 『嘿嘿，姐姐来戴上这个可爱的饰品吧，保证让姐姐你舒服得上天哦！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2203',
+        any: [
+          /^\s*PRINTFORMW 「不，不，谢谢了，我一点都不觉得…啊啊啊…不要啊…不可以夹在那种地方啊…拿掉它，帮帮我！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2204',
+        any: [
+          /^\s*PRINTFORMW 『嘿嘿，想都别想。这个东西，姐姐自己一个人是拿不下来的哦♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2208',
+        any: [
+          /^\s*PRINTFORMW 「啊哈…嗯啊啊啊啊%UNICODE\(0x2661\) \*1% 这个小玩意，怎么这么…呃啊啊%UNICODE\(0x2661\) \*1% 舒服啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2209',
+        any: [
+          /^\s*PRINTFORMW 夹子开始对%SAVESTR:TARGET%的阴蒂施以强烈的刺激、没法自己一个人取下来，也根本就不打算这么做的%SAVESTR:TARGET%淫浪的娇喘着，尽情地享受着阴蒂传来的连绵快感，宛如来到了极乐的天堂……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2212',
+        any: [
+          /^\s*PRINTFORMW 「啊啊？！这…这是什么…额啊啊……太，太激烈了，魔王大人…能不能稍微…呃啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2213',
+        any: [
+          /^\s*PRINTFORMW 夹子开始对%SAVESTR:TARGET%的阴蒂施以强烈的刺激，没有%SAVESTR:PLAYER%的帮助和允许，无法把夹子取下来的%SAVESTR:TARGET%只能呻吟，喘息着，被动地感受着来自阴蒂的一波又一波强烈的快感刺激，不知自己是到了天国还是地狱…\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2216',
+        any: [
+          /^\s*PRINTFORMW 「呃呃？！这…这东西是什么嗯啊啊啊？！太……太激烈…那里承受，承受不了的啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2217',
+        any: [
+          /^\s*PRINTFORMW 夹子开始对%SAVESTR:TARGET%的阴蒂施以强烈的刺激，没有%SAVESTR:PLAYER%的帮助和允许，无法把夹子取下来的%SAVESTR:TARGET%只能哀鸣着忍受着来自阴蒂的，半是快感，半是痛苦的强烈刺激，好像身陷地狱一般……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2220-2221',
+        any: [/^\s*CFLAG:315 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2223-2260',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1 && \(CFLAG:315 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哈啊…啊啊、还能不能…开得再强烈…一点点…啊啊…哈啊%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*PRINTFORMW 『哎呀，姐姐已经完全上瘾了呢%UNICODE\(0x2661\) \*1% 那么，接下来动力全开了哦%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*CFLAG:315 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2228',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊啊、还能不能…开得再强烈…一点点…啊啊…哈啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2229',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，姐姐已经完全上瘾了呢%UNICODE\(0x2661\) \*1% 那么，接下来动力全开了哦%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2229-2230',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，姐姐已经完全上瘾了呢%UNICODE\(0x2661\) \*1% 那么，接下来动力全开了哦%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*CFLAG:315 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2233',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊啊，这，这样就行了…不要再…加强了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2234',
+        any: [
+          /^\s*PRINTFORMW 『口是心非可是不行的哦姐姐，明明是一脸期待的表情嘛，小豆豆都舒服得胀起来了♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2234-2235',
+        any: [
+          /^\s*PRINTFORMW 『口是心非可是不行的哦姐姐，明明是一脸期待的表情嘛，小豆豆都舒服得胀起来了♪』\s*$\s*^\s*CFLAG:315 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2238',
+        any: [/^\s*PRINTFORMW 「呃啊啊…拿，拿掉它啊…姐姐求求你了…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2239',
+        any: [/^\s*PRINTFORMW 『不行哦、姐姐不是已经尝过有多舒服了吗♪』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2239-2240',
+        any: [
+          /^\s*PRINTFORMW 『不行哦、姐姐不是已经尝过有多舒服了吗♪』\s*$\s*^\s*CFLAG:315 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2245',
+        any: [
+          /^\s*PRINTFORMW 「哈…哈啊…又是这个%UNICODE\(0x2661\) \*1% 阴蒂感觉…太棒了啊啊…整个人都要…嗯啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2246',
+        any: [
+          /^\s*PRINTFORMW 夹子开始对%SAVESTR:TARGET%的阴蒂施以强烈的刺激、没法自己一个人取下来，也根本就不打算这么做的%SAVESTR:TARGET%淫浪的娇喘着，尽情地享受着阴蒂传来的连绵快感，宛如来到了极乐的天堂……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2246-2247',
+        any: [
+          /^\s*PRINTFORMW 夹子开始对%SAVESTR:TARGET%的阴蒂施以强烈的刺激、没法自己一个人取下来，也根本就不打算这么做的%SAVESTR:TARGET%淫浪的娇喘着，尽情地享受着阴蒂传来的连绵快感，宛如来到了极乐的天堂……\s*$\s*^\s*CFLAG:315 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2250',
+        any: [
+          /^\s*PRINTFORMW 「请、请魔王大人随意调教…%SAVESTR:TARGET%的阴蒂…嗯啊啊…啊啊%UNICODE\(0x2661\) \*1%…震动…太强了…整个人好像都要…融化了%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2251',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被阴蒂夹由弱渐渐转强的震动刺激得眼眶都湿润了，分开的双腿微微抽搐着，被动地感受着来自阴蒂的一波又一波强烈的快感刺激，不知自己是到了天国还是地狱…………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2251-2252',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被阴蒂夹由弱渐渐转强的震动刺激得眼眶都湿润了，分开的双腿微微抽搐着，被动地感受着来自阴蒂的一波又一波强烈的快感刺激，不知自己是到了天国还是地狱…………\s*$\s*^\s*CFLAG:315 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2255',
+        any: [
+          /^\s*PRINTFORMW 「呃啊啊！太…太强烈了啊啊…调弱一点…求求你！呜啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2256',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%将阴蒂夹的震动调到了最强档，细细品味着%SAVESTR:TARGET%在阴蒂刺激带来的快感和痛苦交织的地狱中发出的阵阵哀鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2256-2257',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%将阴蒂夹的震动调到了最强档，细细品味着%SAVESTR:TARGET%在阴蒂刺激带来的快感和痛苦交织的地狱中发出的阵阵哀鸣……\s*$\s*^\s*CFLAG:315 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2257-2260',
+        any: [
+          /^\s*CFLAG:315 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2263-2277',
+        any: [
+          /^\s*ELSEIF SELECTCOM == 14 && TEQUIP:14 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:375 < 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哎，哎，不用急着取下来嘛……」\s*$\s*^\s*CFLAG:375 = 3\s*$\s*^\s*;爱慕\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:375 < 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哈…哈…身体还有点…有点…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2266',
+        any: [/^\s*PRINTFORMW 「哎，哎，不用急着取下来嘛……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2267',
+        any: [/^\s*CFLAG:375 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2270',
+        any: [/^\s*PRINTFORMW 「哈…哈…身体还有点…有点…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2271',
+        any: [/^\s*CFLAG:375 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2274',
+        any: [/^\s*PRINTFORMW 「终于…结束了吗…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2275',
+        any: [/^\s*CFLAG:375 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2275-2277',
+        any: [/^\s*CFLAG:375 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
       },
     ],
   },
