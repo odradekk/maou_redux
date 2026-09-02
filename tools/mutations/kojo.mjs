@@ -2673,4 +2673,552 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k7-heart'],
     must_mention: '全部空文本',
   },
+  // —— #242（J32）：K11 莉莉口上模块 WIP 1/N（M2340-M2376 号段） ——
+  {
+    desc: 'M2340 K11 EVENTTRAIN #PRI 存在标志置位丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    game.kojo.口上存在_11 = 1; // :102 FLAG:111 = 1（K11 口上存在标志）
+    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2;`,
+    replace: `    // 变异：K11 口上存在标志置位丢失
+    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2;`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）',
+  },
+  {
+    desc: 'M2341 K11 EVENTEND #LATER 存在标志清零丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    game.kojo.口上存在_11 = 0; // :108 FLAG:111 = 0
+  },
+  TIER.LATER,`,
+    replace: `    // 变异：K11 口上存在标志清零丢失
+  },
+  TIER.LATER,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）',
+  },
+  {
+    desc: 'M2342 EVENTTRAIN 主体 FLAG:7 <= 0 守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    if (era0('flag:7') <= 0) {
+      return 0;
+    }
+    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }`,
+    replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    if (false) {
+      // 变异：FLAG:7 <= 0 守卫删
+      return 0;
+    }
+    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTTRAIN 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
+  },
+  {
+    desc: 'M2343 EVENTTRAIN 主体 TALENT:171 != 1 守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    if (era0('flag:7') <= 0) {
+      return 0;
+    }
+    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }`,
+    replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    if (era0('flag:7') <= 0) {
+      return 0;
+    }
+    if (false) {
+      // 变异：TALENT:171 != 1 守卫删
+      return 0;
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '@EVENTTRAIN 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
+  },
+  {
+    desc: 'M2344 姉妹判定 CFLAG:TARGET:21 姐姐标记写错（317 改 316）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (assi > 0 && assi == 17) {
+      era.set(\`cflag:\${target}:21\`, 317);
+      era.set(\`cflag:\${assi}:21\`, 224);
+    }`,
+    replace: `    if (assi > 0 && assi == 17) {
+      era.set(\`cflag:\${target}:21\`, 316); // 变异
+      era.set(\`cflag:\${assi}:21\`, 224);
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '初调教（CFLAG:201 == 0）：助手是玛奥时走姉妹相认分档，互标肉亲关系并置 CFLAG:202',
+  },
+  {
+    desc: 'M2345 姉妹判定 CFLAG:ASSI:21 妹妹标记写错（224 改 223）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (assi > 0 && assi == 17) {
+      era.set(\`cflag:\${target}:21\`, 317);
+      era.set(\`cflag:\${assi}:21\`, 224);
+    }`,
+    replace: `    if (assi > 0 && assi == 17) {
+      era.set(\`cflag:\${target}:21\`, 317);
+      era.set(\`cflag:\${assi}:21\`, 223); // 变异
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '初调教（CFLAG:201 == 0）：助手是玛奥时走姉妹相认分档，互标肉亲关系并置 CFLAG:202',
+  },
+  {
+    desc: 'M2346 初调教推进 CFLAG:201 写错（1 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      }
+      era.set(\`cflag:\${target}:201\`, 1);
+      return 1;`,
+    replace: `      }
+      era.set(\`cflag:\${target}:201\`, 2); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '初调教（CFLAG:201 == 0）：无玛奥助手时走寻妹对峙分档，推进到 1',
+  },
+  {
+    desc: 'M2347 魔族化推进写错（CFLAG:400 = 2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      // 魔族化（１回のみ，初回调教后、陷落前）
+      await era.printAndWait(''); // :186-187 PRINTFORMW 空行
+      era.set(\`cflag:\${target}:400\`, 2);
+      return 1;`,
+    replace: `      // 魔族化（１回のみ，初回调教后、陷落前）
+      await era.printAndWait(''); // :186-187 PRINTFORMW 空行
+      era.set(\`cflag:\${target}:400\`, 1); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '魔族化（１回のみ）：CFLAG:201<5 且未魔族化时改造，CFLAG:400 = 2',
+  },
+  {
+    desc: 'M2348 NTR再捕获（爱慕/淫乱臂）清零丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (era0(\`talent:\${target}:85\`) || era0(\`talent:\${target}:76\`)) {
+        era.drawLine();
+        await era.printAndWait(''); // :196-198 PRINTFORMW 空行
+        era.set(\`cflag:\${target}:650\`, 0);
+      } else {`,
+    replace: `      if (era0(\`talent:\${target}:85\`) || era0(\`talent:\${target}:76\`)) {
+        era.drawLine();
+        await era.printAndWait(''); // :196-198 PRINTFORMW 空行
+        // 变异：CFLAG:650 清零丢失
+      } else {`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕臂清 NTR 开关',
+  },
+  {
+    desc: 'M2349 屈服刻印Lv1推进写错（2 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      ); // :215
+      era.set(\`cflag:\${target}:201\`, 2);
+      return 1;`,
+    replace: `      ); // :215
+      era.set(\`cflag:\${target}:201\`, 3); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
+  },
+  {
+    desc: 'M2350 屈服刻印Lv2推进写错（3 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      ); // :224
+      era.set(\`cflag:\${target}:201\`, 3);
+      return 1;`,
+    replace: `      ); // :224
+      era.set(\`cflag:\${target}:201\`, 4); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
+  },
+  {
+    desc: 'M2351 屈服刻印Lv3推进写错（4 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      ); // :235
+      era.set(\`cflag:\${target}:201\`, 4);
+      return 1;`,
+    replace: `      ); // :235
+      era.set(\`cflag:\${target}:201\`, 5); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
+  },
+  {
+    desc: 'M2352 淫乱推进写错（5 改 6）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      }
+      era.set(\`cflag:\${target}:201\`, 5);
+      return 1;`,
+    replace: `      }
+      era.set(\`cflag:\${target}:201\`, 6); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '淫乱：CFLAG:201 = 5，处女附注按 TALENT:0 分档',
+  },
+  {
+    desc: 'M2353 淫乱+魔族化推进写错（6 改 7，调教前从魔族档）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          await era.printAndWait(\`\${target_name}的双眼却露出了期待的光芒…\`); // :271-275
+        }
+        era.set(\`cflag:\${target}:201\`, 6);
+        return 1;`,
+    replace: `          await era.printAndWait(\`\${target_name}的双眼却露出了期待的光芒…\`); // :271-275
+        }
+        era.set(\`cflag:\${target}:201\`, 7); // 变异
+        return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '淫乱+魔族化：调教前从魔族（CFLAG:400==1）分档，CFLAG:201 = 6',
+  },
+  {
+    desc: 'M2354 爱慕推进写错（7 改 6）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      }
+      era.set(\`cflag:\${target}:201\`, 7);
+      return 1;`,
+    replace: `      }
+      era.set(\`cflag:\${target}:201\`, 6); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '爱慕：CFLAG:201 = 7',
+  },
+  {
+    desc: 'M2355 崩坏推进写错（9 改 8）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      await era.printAndWait(\`「啊哈…呼呼…啊……哈哈……」\`); // :366
+      era.set(\`cflag:\${target}:201\`, 9);
+      return 1;`,
+    replace: `      await era.printAndWait(\`「啊哈…呼呼…啊……哈哈……」\`); // :366
+      era.set(\`cflag:\${target}:201\`, 8); // 变异
+      return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '崩坏（TALENT:9 == 1 && CFLAG:201 < 9）：CFLAG:201 = 9',
+  },
+  {
+    desc: 'M2356 崩坏后二回目以降 CALL K11_KOJO2 丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (era0(\`talent:\${target}:9\`) == 1) {
+      // 崩坏后（已崩坏，二回目以降）
+      await k11_kojo2(); // :370-371 CALL K11_KOJO2
+    } else if (assi < 0) {`,
+    replace: `    } else if (era0(\`talent:\${target}:9\`) == 1) {
+      // 变异：崩坏后 CALL K11_KOJO2 丢失
+    } else if (assi < 0) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '崩坏后（TALENT:9==1 且 CFLAG:201==9）改走 K11_KOJO2，不再打崩坏台词',
+  },
+  {
+    desc: 'M2357 无助手 CALL K11_KOJO2 丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (assi < 0) {
+      // 无助手
+      await k11_kojo2(); // :373-374 CALL K11_KOJO2
+    } else if (era0(\`talent:\${MASTER}:122\`) == 0) {`,
+    replace: `    } else if (assi < 0) {
+      // 变异：无助手 CALL K11_KOJO2 丢失
+    } else if (era0(\`talent:\${MASTER}:122\`) == 0) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '无助手（ASSI < 0）时岔去 K11_KOJO2，不进简易助手分支',
+  },
+  {
+    desc: 'M2358 主人非男性 CALL K11_KOJO2 丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (era0(\`talent:\${MASTER}:122\`) == 0) {
+      // 主人非男性时二回目以降（简易助手口上不适用）
+      await k11_kojo2(); // :383-384 CALL K11_KOJO2
+    } else if (assi == 17) {`,
+    replace: `    } else if (era0(\`talent:\${MASTER}:122\`) == 0) {
+      // 变异：主人非男性 CALL K11_KOJO2 丢失
+    } else if (assi == 17) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '主人非男性（TALENT:MASTER:122==0）时岔去 K11_KOJO2，不进简易助手分支',
+  },
+  {
+    desc: 'M2359 助手非玛奥 CALL K11_KOJO2 丢失（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else {
+      // 口上のある助手が居ない場合（助手非玛奥，或无助手专属口上）
+      await k11_kojo2(); // :507-508 CALL K11_KOJO2
+    }`,
+    replace: `    } else {
+      // 变异：助手非玛奥 CALL K11_KOJO2 丢失
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '助手非玛奥时岔去 K11_KOJO2，不进简易助手分支',
+  },
+  {
+    desc: 'M2360 助手玛奥初めて それ以外 CFLAG:202 推进写错（1 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          era.set(\`cflag:\${target}:202\`, 1);
+        }
+        return 1;`,
+    replace: `          era.set(\`cflag:\${target}:202\`, 2); // 变异
+        }
+        return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '助手玛奥初めて：未持爱慕/淫乱时それ以外分档，CFLAG:202 = 1',
+  },
+  {
+    desc: 'M2361 助手玛奥初めて 陷落事件（已持爱慕）CFLAG:202 推进写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `            ); // :407
+          }
+          era.set(\`cflag:\${target}:202\`, 2);
+        } else if (
+          era0(\`talent:\${target}:76\`) == 1 &&`,
+    replace: `            ); // :407
+          }
+          era.set(\`cflag:\${target}:202\`, 1); // 变异
+        } else if (
+          era0(\`talent:\${target}:76\`) == 1 &&`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '助手玛奥初めて：已持爱慕且 CFLAG:201>=5 时陷落事件分档，CFLAG:202 = 2',
+  },
+  {
+    desc: 'M2362 助手玛奥二回目以降（爱慕）CFLAG:202 推进写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `            \`看着已经彻底变样了的姐姐，\${assi_name}微笑了起来………\`,
+          ); // :464
+          era.set(\`cflag:\${target}:202\`, 2);
+        } else if (era0(\`talent:\${target}:76\`) == 1) {`,
+    replace: `            \`看着已经彻底变样了的姐姐，\${assi_name}微笑了起来………\`,
+          ); // :464
+          era.set(\`cflag:\${target}:202\`, 1); // 变异
+        } else if (era0(\`talent:\${target}:76\`) == 1) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '助手玛奥二回目以降：CFLAG:202==1 且爱慕时进一步陷落，CFLAG:202 = 2',
+  },
+  {
+    desc: 'M2363 助手玛奥それ以外（拒绝分档）误改为推进 CFLAG:202（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        await era.printAndWait(\`「不要…不要不要不要啊…神啊，救救我………」\`); // :503
+        return 1;`,
+    replace: `        await era.printAndWait(\`「不要…不要不要不要啊…神啊，救救我………」\`); // :503
+        era.set(\`cflag:\${target}:202\`, 2); // 变异：原作それ以外不推进
+        return 1;`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '助手玛奥それ以外（未持爱慕/淫乱、CFLAG:202==1）：拒绝分档，不改 CFLAG:202',
+  },
+  {
+    desc: 'M2364 K11_KOJO2 崩坏判据错格（TALENT:9==1 改 ==0）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  if (era0(\`talent:\${target}:9\`) == 1 && era0('flag:7') == 2) {
+    // 崩坏
+    era.drawLine();`,
+    replace: `  if (era0(\`talent:\${target}:9\`) == 0 && era0('flag:7') == 2) {
+    // 变异：崩坏判据错格
+    era.drawLine();`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '崩坏后（TALENT:9==1 且 CFLAG:201==9）改走 K11_KOJO2，不再打崩坏台词',
+  },
+  {
+    desc: 'M2365 K11_KOJO2 反発刻印Lv3判据错格（MARK:3==3 改 ==2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    return 1;
+  } else if (era0(\`mark:\${target}:3\`) == 3 && era0('flag:7') == 2) {
+    // 反発刻印Lv3`,
+    replace: `    return 1;
+  } else if (era0(\`mark:\${target}:3\`) == 2 && era0('flag:7') == 2) {
+    // 变异：反発刻印Lv3判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'K11_KOJO2：反発刻印Lv3',
+  },
+  {
+    desc: 'M2366 K11_KOJO2 屈服刻印Lv3＋爱慕/淫乱無し CFLAG:202 分档条件颠倒（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    era.drawLine();
+    if (era0(\`cflag:\${target}:202\`) >= 1) {
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          \`「原来你就是用这种方式……把我的妹妹……变成那个样子的吗……」\`,`,
+    replace: `    era.drawLine();
+    if (era0(\`cflag:\${target}:202\`) < 1) {
+      // 变异：条件颠倒
+      if (rand_n(2) == 0) {
+        await era.printAndWait(
+          \`「原来你就是用这种方式……把我的妹妹……变成那个样子的吗……」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'K11_KOJO2：屈服刻印Lv3＋爱慕/淫乱無し，按 CFLAG:202 是否见过妹妹分档',
+  },
+  {
+    desc: 'M2367 K11_KOJO2 淫乱分支守卫错格（TALENT:76==1 改 ==0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  } else if (era0(\`talent:\${target}:76\`) == 1 && era0('flag:7') == 2) {
+    // 淫乱（含魔族化分支）`,
+    replace: `  } else if (era0(\`talent:\${target}:76\`) == 0 && era0('flag:7') == 2) {
+    // 变异：淫乱分支守卫错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'K11_KOJO2：淫乱含魔族化分支',
+  },
+  {
+    desc: 'M2368 K11_KOJO2 爱慕分支守卫错格（TALENT:85==1 改 ==0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  } else if (era0(\`talent:\${target}:85\`) == 1 && era0('flag:7') == 2) {
+    // 爱慕（含魔族化分支）`,
+    replace: `  } else if (era0(\`talent:\${target}:85\`) == 0 && era0('flag:7') == 2) {
+    // 变异：爱慕分支守卫错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'K11_KOJO2：爱慕分档（RAND 三选一，落到隐式 RETURN 0 前提早覆盖为 return 1）',
+  },
+
+  {
+    desc: 'M2369 EVENTEND 主体 FLAG:7 <= 0 守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    if (era0('flag:7') <= 0) {
+      return 0;
+    }
+    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }
+    if (era0(\`base:\${target}:0\`) <= 0) {
+      return 0;
+    }`,
+    replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    if (false) {
+      // 变异：FLAG:7 <= 0 守卫删
+      return 0;
+    }
+    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }
+    if (era0(\`base:\${target}:0\`) <= 0) {
+      return 0;
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
+  },
+  {
+    desc: 'M2370 EVENTEND 主体 TALENT:171 != 1 守卫删（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    if (era0('flag:7') <= 0) {
+      return 0;
+    }
+    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }
+    if (era0(\`base:\${target}:0\`) <= 0) {
+      return 0;
+    }`,
+    replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    if (era0('flag:7') <= 0) {
+      return 0;
+    }
+    if (false) {
+      // 变异：TALENT:171 != 1 守卫删
+      return 0;
+    }
+    if (era0(\`base:\${target}:0\`) <= 0) {
+      return 0;
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
+  },
+  {
+    desc: 'M2371 EVENTEND 死亡守卫删（BASE:0 <= 0 不再跳过）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }
+    if (era0(\`base:\${target}:0\`) <= 0) {
+      return 0;
+    }`,
+    replace: `    if (era0(\`talent:\${target}:171\`) != 1) {
+      return 0;
+    }
+    if (false) {
+      // 变异：BASE:0 <= 0 死亡守卫删
+      return 0;
+    }`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND：角色死亡（BASE:0<=0）时跳过口上',
+  },
+  {
+    desc: 'M2372 EVENTEND 崩坏判据错格（TALENT:9==1 改 ==0）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (era0(\`talent:\${target}:9\`) == 1 && era0('flag:7') == 2) {
+      // 崩坏
+      era.drawLine();
+      await era.printAndWait(\`「咕嘿……咕嘿嘿嘿………」\`); // :663-667`,
+    replace: `    if (era0(\`talent:\${target}:9\`) == 0 && era0('flag:7') == 2) {
+      // 变异：崩坏判据错格
+      era.drawLine();
+      await era.printAndWait(\`「咕嘿……咕嘿嘿嘿………」\`); // :663-667`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND：崩坏分档',
+  },
+  {
+    desc: 'M2373 EVENTEND 反発刻印Lv3+爱慕无 CFLAG:202 分档条件颠倒（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.drawLine();
+      if (era0(\`cflag:\${target}:202\`) >= 1) {
+        await era.printAndWait(\`「我，我是绝对不会认输的……」\`); // :674`,
+    replace: `      era.drawLine();
+      if (era0(\`cflag:\${target}:202\`) < 1) {
+        // 变异：条件颠倒
+        await era.printAndWait(\`「我，我是绝对不会认输的……」\`); // :674`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支',
+  },
+  {
+    desc: 'M2374 EVENTEND 淫乱体力500分档阈值改错（>= 500 改 >= 700）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era0(\`talent:\${target}:76\`) == 1 &&
+      era0(\`base:\${target}:0\`) >= 500
+    ) {
+      // 淫乱(体力500以上)`,
+    replace: `    } else if (
+      era0(\`talent:\${target}:76\`) == 1 &&
+      era0(\`base:\${target}:0\`) >= 700 // 变异
+    ) {
+      // 淫乱(体力500以上)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND：淫乱按体力 500 分档',
+  },
+  {
+    desc: 'M2375 EVENTEND 爱慕体力500分档阈值改错（>= 500 改 >= 700）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era0(\`talent:\${target}:85\`) == 1 &&
+      era0(\`base:\${target}:0\`) >= 500
+    ) {
+      // 爱慕(体力500以上)`,
+    replace: `    } else if (
+      era0(\`talent:\${target}:85\`) == 1 &&
+      era0(\`base:\${target}:0\`) >= 700 // 变异
+    ) {
+      // 爱慕(体力500以上)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '@EVENTEND：爱慕按体力 500 分档',
+  },
+  {
+    desc: 'M2376 主启动图删 K11 莉莉口上注册（KOJO 11 不进实际运行图）（#242）',
+    file: 'ere/system/flow/main-loop.js',
+    find: `require('#/kojo/kojo-k11-lily');`,
+    replace: `// 变异：K11 莉莉口上不在主启动图注册`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志',
+  },
 ];
