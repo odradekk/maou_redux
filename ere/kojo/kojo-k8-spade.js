@@ -12371,8 +12371,11 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
   return 0;
 }
 
-// 注册进 NTR 口上族（TRYCALLFORM NTR_KOUJO_K8 的等价物）
-ntr_koujo_family.register(8, (p_arg) => ntr_koujo_k8(undefined, p_arg));
+// 注册进 NTR 口上族（TRYCALLFORM NTR_KOUJO_K8 的等价物）。族的实参是
+// [rand, P]（K7/K9/K10 同款，见 test/kojo-k7-heart.test.js 的 call），
+// 与本函数签名同形，直接注册即可——不要再包一层只收 P 的适配器，
+// 那会把 rand 当成 P，整段永远静默
+ntr_koujo_family.register(8, ntr_koujo_k8);
 
 /**
  * @EXUCUTION_KOUJO_K8（:7606-7620）：处刑口上。

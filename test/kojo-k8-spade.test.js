@@ -4239,7 +4239,8 @@ test('BENKI：FLAG:62==5 侍奉支；FLAG:62 越界（6）整段静默', async (
 
 async function speak_ntr_k8(fixture, p) {
   const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
-  return ntr_koujo_family.call(8, { args: [p] });
+  // 族实参是 [rand, P]（K7/K9/K10 同款约定）
+  return ntr_koujo_family.call(8, { args: [undefined, p] });
 }
 
 test('NTR：入口无条件补 CFLAG:650（NTR 再捕获位）', async () => {

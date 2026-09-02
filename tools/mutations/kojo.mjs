@@ -5664,4 +5664,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '默认支第二支与第一支同文（源作如此）',
   },
+  {
+    desc: 'M2508 K8 NTR 注册退回只收 P 的适配器（族实参是 [rand, P]，rand 被当成 P → 整段静默，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: 'ntr_koujo_family.register(8, ntr_koujo_k8);',
+    replace:
+      'ntr_koujo_family.register(8, (p_arg) => ntr_koujo_k8(undefined, p_arg));',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'NTR：P==1 陥落済支走巨根（FLAG:500==0），记 CFLAG:651',
+  },
 ];
