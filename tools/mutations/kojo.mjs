@@ -1718,7 +1718,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     return 0;
   }`,
     tests: ['kojo-k8-spade'],
-    must_mention: '@COLOSSEUM_KOJO_8',
+    must_mention: '连站起来的力气都没有了',
   },
   {
     desc: 'M1815 K8 初調教推进写错（CFLAG:201 = 1 改 2，#239）',
@@ -2676,5 +2676,68 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '      kojo.交谈 = 0; // :6214（变异：推进写错）',
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1928 K8 COLOSSEUM_KOJO_8 SC55 放置PLAY 条件反转（BASE:1 <= 0 改 > 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era0(`base:${target}:1`) <= 0) {\n      await era.printAndWait(`${target_name}连站起来的力气都没有了……`); // :7311 气力０以下',
+    replace:
+      '    if (era0(`base:${target}:1`) > 0) {\n      await era.printAndWait(`${target_name}连站起来的力气都没有了……`); // :7311（变异：条件反转）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '连站起来的力气都没有了',
+  },
+  {
+    desc: 'M1929 K8 COLOSSEUM_KOJO_8 SC56 交谈 外层条件反转（BASE:1 <= 0 改 > 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era0(`base:${target}:1`) <= 0) {\n      // :7322-7330 气力０以下',
+    replace:
+      '    if (era0(`base:${target}:1`) > 0) {\n      // :7322-7330（变异：条件反转）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '咕…输给你了',
+  },
+  {
+    desc: 'M1930 K8 COLOSSEUM_KOJO_8 SC31 口交 阴茎判定失效（TALENT:121/122 改 == 9，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {\n        await era.print(`阴茎`); // :7353',
+    replace:
+      '      if (era0(`talent:${assi}:121`) == 9 || era0(`talent:${assi}:122`) == 9) {\n        await era.print(`阴茎`); // :7353（变异）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '阴茎',
+  },
+  {
+    desc: 'M1931 K8 COLOSSEUM_KOJO_8 SC5 胸爱撫 助手守卫失效（ASSI/ASSIPLAY 改 assi > 999，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era_flag.assi > 0 && era_flag.assiplay) {\n      await era.printAndWait(\n        `「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」`,\n      ); // :7369',
+    replace:
+      '    if (era_flag.assi > 999) {\n      await era.printAndWait(\n        `「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」`,\n      ); // :7369（变异）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '因为我是后辈温柔点吧',
+  },
+  {
+    desc: 'M1932 K8 COLOSSEUM_KOJO_8 SC21 背后位 巨魔判定失效（TFLAG:400 == 206 改 == 999，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (game.train.死斗场敌种 == 206) {\n      // :7394-7397 巨魔',
+    replace:
+      '    } else if (game.train.死斗场敌种 == 999) {\n      // :7394-7397（变异：巨魔判定失效）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '要、要坏掉了',
+  },
+  {
+    desc: 'M1933 K8 COLOSSEUM_KOJO_8 SC27 背后位アナル 助手守卫失效（ASSI/ASSIPLAY 改 assi > 999，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era_flag.assi > 0 && era_flag.assiplay) {\n      await era.printAndWait(\n        `「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」`,\n      ); // :7412',
+    replace:
+      '    if (era_flag.assi > 999) {\n      await era.printAndWait(\n        `「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」`,\n      ); // :7412（变异）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '求、求你',
+  },
+  {
+    desc: 'M1934 K8 COLOSSEUM_KOJO_8 SC51 媚药史莱姆 台词内容篡改（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    await era.printAndWait(`「啊啊…史莱姆么…嗯…连这种地方都进来了…啊啊！」`); // :7438',
+    replace:
+      '    await era.printAndWait(`「啊啊…史莱姆…」`); // :7438（变异：台词内容篡改）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '连这种地方都进来了',
   },
 ];

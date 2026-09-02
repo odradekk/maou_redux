@@ -365,14 +365,13 @@ test('头部守卫：兽奸（TEQUIP:89）岔去 DOG_KOJO_8 真身（源作对�
   );
 });
 
-test('头部守卫：死斗场（TEQUIP:55）岔去 COLOSSEUM_KOJO_8 真身（骨架期打占位）', async () => {
-  const fixture = await setup_k8();
+test('头部守卫：死斗场（TEQUIP:55）岔去 COLOSSEUM_KOJO_8 真身（放置PLAY·气力０以下）', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 55;
+  });
   fixture.store.set('tequip:31:55', 1);
   await speak_k8(fixture);
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('@COLOSSEUM_KOJO_8')),
-    '占位行含 @COLOSSEUM_KOJO_8',
-  );
+  assert.deepEqual(fixture.text_lines(), ['银黑桃连站起来的力气都没有了……']);
 });
 
 test('头部守卫：崩坏（TALENT:9 == 1）跳过', async () => {
@@ -3245,6 +3244,164 @@ test('DOG_KOJO_8 SC56 会話 初めて·有摄像（TEQUIP:53）·淫乱：CFLAG
   await dog_kojo_8();
   assert.deepEqual(fixture.text_lines(), ['']);
   assert.equal(fixture.store.get('cflag:31:357'), 1, 'CFLAG:357 推进到 1');
+});
+
+// —— COLOSSEUM_KOJO_8（死斗场专用口上） ——
+
+test('COLOSSEUM_KOJO_8 SC56 交谈 气力０以下·助手在场：CFLAG 不涉及，仅文本区分', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 56;
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「咕…输给你了………」',
+    '银黑桃丢下武器跪了下来……',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC56 交谈 气力０以下·助手不在场', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 56;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「快、快住手…别靠近我………」',
+    '银黑桃丢下武器跪了下来……',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC56 交谈 气力充足·助手在场', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('base:31:1', 100);
+    join_slave_chara(f, 5, '奴隶5');
+    ef.selectcom = 56;
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「我知道我不会输给你的…即使被加上多么不利的条件也是」',
+    '银黑桃架起武器，和奴隶5相对着………',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC31 口交 助手在场·持阴茎（TALENT:121）：拼接"阴茎"', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('talent:5:121', 1);
+    join_slave_chara(f, 5, '奴隶5');
+    ef.selectcom = 31;
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」',
+    '奴隶5因为',
+    '阴茎',
+    '被银黑桃舔着而露出了心旷神怡的表情……',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC31 口交 助手不在场：怪物阴茎档', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 31;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯咕…好、好脏…啊啊啊…啾…啾…嗯啾………」',
+    '银黑桃舔着那带有令人作呕的气味的阴茎……',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC5 胸爱撫 助手不在场：怪物档三行', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 5;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊、放开…放开那肮脏的手…啊…啊啊！」',
+    '像是因为银黑桃高压的态度还不崩溃而生气了、怪物握住了银黑桃的胸部揉了起来。',
+    '「咕——————！好、好疼…快、快住手！」',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC5 胸爱撫 助手在场：三行观众围观档', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    join_slave_chara(f, 5, '奴隶5');
+    ef.selectcom = 5;
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」',
+    '银黑桃就这样任由奴隶5摆弄胸部。',
+    '然后奴隶5为了让观众观赏而开始揉动胸部………',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC21 背后位 巨魔（TFLAG:400 死斗场敌种 == 206）：三行巨魔专属台词', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tflag:400', 206);
+    ef.selectcom = 21;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊啊啊！…要、要坏掉了…啊、啊啊…咕…咕啊啊啊啊！」',
+    '可怜的银黑桃一边发出癞蛤蟆被弄死一样的声音一边就那样任由巨魔摆布着。',
+    '观众一个个都站了起来，沸腾着………',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC21 背后位 普通怪物（非巨魔、无助手）', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 21;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「、不要啊…啊啊…呜…啊啊…啊啊——！嗯…啊啊啊啊啊！」',
+    '银黑桃因为被怪物从后面侵犯而继续发出着悲鸣。',
+    '观众一个个都站了起来，沸腾着………',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC27 背后位アナル 助手在场·无阴茎无假阴茎：不拼接部位词', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    join_slave_chara(f, 5, '奴隶5');
+    ef.selectcom = 27;
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」',
+    '奴隶5一边听着银黑桃的悲鸣。一边用',
+    '一般毫不留情的继续蹂躏着银黑桃的肛门。',
+    '随着银黑桃发出悲鸣，观众沸腾了起来………',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC51 媚药史莱姆：单行台词', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 51;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…史莱姆么…嗯…连这种地方都进来了…啊啊！」',
+  ]);
 });
 // —— 存根清单核对 ——
 
