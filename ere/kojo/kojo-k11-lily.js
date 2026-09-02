@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6，issue
- *       #242，WIP 续轮，进行中）。
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7，
+ *       issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,9 +12,10 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6 六支 :786-1433——爱抚/舔阴/肛门爱抚/
- *     自慰/胸爱抚/接吻，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与
- *     刻印分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13）
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7 七支 :786-1611——爱抚/舔阴/肛门爱抚/
+ *     自慰/胸爱抚/接吻/自己扒开，各含初めて/二回目以降、助手玛奥/非助手玛奥、
+ *     素质与刻印分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含
+ *     处女/非处女文案分岔 TALENT:0）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -22,9 +23,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 89.4%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 7 起（源文件第 1434 至 10657 行，约 47 条剩余分支，见源文件内
- * 存根已占位）、@KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
+ * 本票剩余工作（未落地，占全文 13468 行的约 88.0%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 8 起（源文件第 1612 至 10657 行，约 46 条剩余分支，见源文件内
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
  * 11881 至 12261 行），以及死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
  * 口上（第 12262 至 13468 行）。见 issue #242 的进度评论获取认领点。
@@ -45,12 +45,12 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 646 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
- * 字面量拼接的旧生成法；SELECTCOM 6（本轮新增）起改用 K10（#241）的逐行
- * 独立锚定法——区间内每条非空白源码行各自包一层 `^\s*...\s*$`（大区间只取
- * 开头 8 行），真正多行、鉴别力更强，两种生成法在文件内并存，旧锚未随
- * 本轮重新生成（避免无关格式化改动）。全部锚对每条锚在源全文里做精确
- * 子串计数：578 条恰好命中 1 行/1 段，可视为具备真实鉴别力。余下 68 条
+ * trace-refs/kojo-k11-lily.mjs 的 745 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6/7（本轮新增两支）起改用 K10（#241）的
+ * 逐行独立锚定法——区间内每条非空白源码行各自包一层 `^\s*...\s*$`（大区间
+ * 只取开头 8 行），真正多行、鉴别力更强，两种生成法在文件内并存，旧锚未
+ * 随本轮重新生成（避免无关格式化改动）。全部锚对每条锚在源全文里做精确
+ * 子串计数：671 条恰好命中 1 行/1 段，可视为具备真实鉴别力。余下 74 条
  * 命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定（find_printform
  * 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/向后扩窗只要越过
  * 相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续收窄——60 条来自
@@ -59,13 +59,15 @@
  * 按 issue 讨论保持现状、不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/
  * 1022，姉妹相认/魔族化前后两套台词在平行分支里逐字复现）；4 条来自
  * SELECTCOM 6（:1304/1310/1314/1389，首吻/二回目以降两层里各一对逐字
- * 重复的对白句）。SELECTCOM 3/5/6 内非 print 语句自身收尾行的锚（守卫
- * SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法
- * 向外扩窗到唯一邻行——只有 era.print(/ era.printAndWait( 语句自己收尾行
- * 的 `:N` 锚绝不参与扩窗（kojo-text-fidelity 靠它做逐语句字面量绑定，
- * 扩窗会误绑邻行台词）。这 68 条即便行号漂移，落点也只会落到另一处
- * 内容完全相同的复现段落，不会静默通过成不相关文本——风险画像与结构性
- * 关键字锚（如裸 `RETURN 0`）不同，后者才是真正的零鉴别力。
+ * 重复的对白句）；6 条来自 SELECTCOM 7（:1485/1486/1534/1547/1586/1587，
+ * 处女/非处女子分档与二回目以降两层里各一对逐字重复的对白句）。
+ * SELECTCOM 3/5/6/7 内非 print 语句自身收尾行的锚（守卫 SIF/RETURN、CFLAG
+ * 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法向外扩窗到唯一邻行——
+ * 只有 era.print(/ era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗
+ * （kojo-text-fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这
+ * 74 条即便行号漂移，落点也只会落到另一处内容完全相同的复现段落，不会
+ * 静默通过成不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不
+ * 同，后者才是真正的零鉴别力。
  */
 
 'use strict';
@@ -1183,7 +1185,7 @@ on(
 
 /**
  * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
- * SELECTCOM 0/1/2/3/5/6，其余编号留续轮）。
+ * SELECTCOM 0/1/2/3/5/6/7，其余编号留续轮）。
  *
  * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
@@ -1235,6 +1237,14 @@ on(
  * 「淫乱→爱慕→従順Lv2以上→それ以外」写 5/4/3/2，两支结构对称（与
  * SELECTCOM 0/5 同款）。本支起 trace-refs 新锚改用 K10 逐行独立锚定法
  * （见文件头「锚鉴别力自查」）。
+ *
+ * SELECTCOM 7（自己扒开 CFLAG:308，:1438-1611）：不含首吻专属层。初めて
+ * （CFLAG:308 == 0）按「助手玛奥（内部淫乱→爱慕→それ以外，无处女分档）／
+ * 非助手玛奥（内部淫乱、爱慕两支各再按 TALENT:0 处女/非处女分岔文案，
+ * それ以外无处女分档）」写 1；二回目以降先分「助手玛奥」再各自按「淫乱
+ * →爱慕（淫乱/爱慕两支内层再按处女分岔文案，爱慕另嵌套露出癖Lv3以上
+ * 文案分岔）→露出癖Lv3以上（内层再按处女分岔追加一句）→それ以外（内层
+ * 再按处女分岔追加一句）」写 5/4/3/2，两支结构对称。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -2466,6 +2476,322 @@ async function kojo_message_com_11(rand) {
       kojo.接吻 = 2; // :1427-1428
     }
     return 0; // :1428-1431 隐式（原作 RETURN 0）
+  }
+
+  // :1438-1611 IF SELECTCOM == 7（自己扒开 CFLAG:308）
+  if (era_flag.selectcom === 7) {
+    const virgin = era.get(`talent:${target}:0`) === 1;
+    // :1440-1496 初めて（CFLAG:308 == 0）
+    if (kojo.自己扒开 === 0) {
+      if (assi_mao) {
+        if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            `「啊啊…还是有点害羞呢${heart(1)} 为什么老是要这么欺负姐姐呢${heart(1)}」`,
+          ); // :1445
+          await era.printAndWait(
+            `『哎呀，姐姐别找借口啦♪明明自己都湿成这个样子了』`,
+          ); // :1446
+          await era.printAndWait(
+            `${target_name}遵循着妹妹的命令，摆出了淫荡的姿势和动作。`,
+          ); // :1447
+          await era.printAndWait(
+            `完全堕入淫乱深渊的${target_name}为了取悦${player_name}，毫无廉耻地展示着蜜穴，并且自己也沉浸于别样的心理快感中。`,
+          ); // :1448
+          await era.printAndWait(
+            `两人已经再也变不回以前那种纯洁的姐妹关系了，但现在的她们，某种程度上说也是无比的幸福吧………？`,
+          ); // :1449
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(`「啊啊…这样真是…太羞耻、饶了姐姐吧…」`); // :1452
+          await era.printAndWait(
+            `『不行啊、我都说的清清楚楚了，不是这个姿势♪』`,
+          ); // :1453
+          await era.printAndWait(
+            `${target_name}只能遵循着妹妹的命令，摆出了无比羞耻的姿势和动作。`,
+          ); // :1454
+          await era.printAndWait(
+            `已经听到过很多次，妹妹这样充满恶意地对姐姐下达着淫乱的命令了。`,
+          ); // :1455
+          await era.printAndWait(
+            `两人已经再也变不回以前那种纯洁的姐妹关系了，但现在的她们，某种程度上说也是无比地幸福吧………？`,
+          ); // :1456
+        } else {
+          // それ以外（爱慕無し）
+          await era.printAndWait(
+            `『哎呀，姐姐，在人家面前摆出这么淫荡的姿势，不觉得害羞吗？』`,
+          ); // :1459
+          await era.printAndWait(
+            `「当，当然会觉得羞耻了…但是，但是不是你命令我这么做的吗…呜呜呜」`,
+          ); // :1460
+          await era.printAndWait(
+            `『哎呀，原来姐姐是只要被命令，就什么淫荡下流的事情都可以做的变态呀。姐姐以前的形象，在我心里彻底破灭了呢。』`,
+          ); // :1461
+          await era.printAndWait(
+            `「不是的、不是这样的…不要再欺负姐姐了，求求你………」`,
+          ); // :1462
+          await era.printAndWait(
+            `${player_name}恶意的话语，让${target_name}忍不住泪流满面………`,
+          ); // :1463
+        }
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          `「哈啊、请吧，魔王大人，尽情欣赏少女最私密的地方吧………${heart(1)}」`,
+        ); // :1468
+        await era.printAndWait(
+          `${target_name}扬起眉毛，献媚般地向${player_name}展示着自己的蜜穴深处。`,
+        ); // :1469
+        if (virgin) {
+          await era.printAndWait(
+            `「这个处女膜是为魔王大人保留的，但是也别让我等太久了……否则${heart(1)}」`,
+          ); // :1471
+          await era.printAndWait(
+            `${target_name}舔着嘴唇，用手指一张一合地抚弄着蜜穴，诱惑着${player_name}………`,
+          ); // :1472
+        } else {
+          await era.printAndWait(
+            `「${target_name}的这里…现在最想要的，是魔王大人的精液哟…${heart(1)}」`,
+          ); // :1474
+          await era.printAndWait(
+            `${target_name}露出淫靡的笑容，用语言挑逗，诱惑着${player_name}………`,
+          ); // :1475
+        }
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // 爱慕
+        await era.printAndWait(
+          `「啊，啊啊…请，请尽情看吧，魔王大人………${heart(1)}」`,
+        ); // :1479
+        await era.printAndWait(
+          `${target_name}边害羞地微微喘息着、边向${player_name}展示着自己的蜜穴及更深处。`,
+        ); // :1480
+        if (virgin) {
+          await era.printAndWait(
+            `「我，我的处女膜…漂亮吗…？啊啊啊，我居然说了这么害羞的话！」`,
+          ); // :1482
+          await era.printAndWait(
+            `${target_name}变得脸红耳赤，羞愧地摇着头躲避着魔王的视线………`,
+          ); // :1483
+        } else {
+          await era.printAndWait(
+            `「${target_name}的这里…是属于魔王大人专用的…啊啊啊…${heart(1)}」`,
+          ); // :1485
+          await era.printAndWait(
+            `${target_name}羞得脸红耳赤，撑开蜜穴的手指也松走了………`,
+          ); // :1486
+        }
+      } else {
+        // それ以外（爱慕無し）
+        await era.printAndWait(`「这种，这种事情实在太…羞耻…呜呜呜！」`); // :1490
+        await era.printAndWait(
+          `${target_name}擦了擦满脸的泪水，然后在${player_name}的命令下继续展示着蜜穴。`,
+        ); // :1491
+        await era.printAndWait(`「呜呜呜……给我记住、总有一天，总有一天………」`); // :1492
+      }
+      kojo.自己扒开 = 1; // :1495
+      return 0; // :1495-1496
+    }
+
+    // :1497-1610 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        if (virgin) {
+          await era.printAndWait(
+            `「哈啊，能看见吗，${player_name}，看见姐姐淫荡的蜜穴了吗？」`,
+          ); // :1504
+          await era.printAndWait(`『恩恩，姐姐的处女膜光鲜亮丽，真好看！』`); // :1505
+          await era.printAndWait(
+            `「谢谢夸奖，但其实更想尽早让魔王大人把它弄坏呢…呵呵呵呵${heart(1)}」`,
+          ); // :1506
+          await era.printAndWait(
+            `${target_name}和${player_name}一齐意味深长地望着你，眼中满含秋波………`,
+          ); // :1507
+        } else {
+          await era.printAndWait(
+            `「哈啊、能看见吗，${player_name}，看见姐姐淫荡的蜜穴了吗？嘻嘻嘻${heart(1)}」`,
+          ); // :1509
+          await era.printAndWait(
+            `『啊呀…姐姐这里已经湿得乱七八糟了，已经在想象着被魔王大人侵犯了吗…真是太色情了♪』`,
+          ); // :1510
+          await era.printAndWait(
+            `「这样够一目了然了吗${heart(1)} 要不要姐姐再换个姿势给你看！还是想看姐姐的肛门呢？」`,
+          ); // :1511
+          await era.printAndWait(
+            `${target_name}和${player_name}无比和谐地讨论着下流的话题………`,
+          ); // :1512
+        }
+        kojo.自己扒开 = 5; // :1512-1514
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (virgin) {
+          await era.printAndWait(
+            `『姐姐怎么还是处女呀、快点把这里奉献给魔王大人吧。大人可是很温柔的哦？』`,
+          ); // :1518
+          await era.printAndWait(`「不，不要公然地说…这么羞耻的事啦…」`); // :1519
+          await era.printAndWait(
+            `『哎呀、这样的话，那我就替魔王大人收下啦？怎样？稍等片刻，我准备一下……哎哎哎，姐姐别把腿合上呀，真是的。』`,
+          ); // :1520
+          await era.printAndWait(`「不要开玩笑啦！」`); // :1521
+          if (chara(target).system.露出癖 >= 3) {
+            await era.printAndWait(
+              `${target_name}被${player_name}强行分开大腿，蜜穴在妹妹调戏下已经爱液满溢………`,
+            ); // :1523
+          } else {
+            await era.printAndWait(
+              `${target_name}被${player_name}强行分开大腿，捂着脸发出羞愧的声音………`,
+            ); // :1525
+          }
+        } else {
+          await era.printAndWait(`「太，太羞耻了！这个样子…呜呜呜…」`); // :1528
+          await era.printAndWait(
+            `『不行啊、我都说的清清楚楚了，不是这个姿势♪♪』`,
+          ); // :1529
+          await era.printAndWait(
+            `${target_name}只能遵循着妹妹的命令，摆出更加屈辱的姿势和动作。`,
+          ); // :1530
+          if (chara(target).system.露出癖 >= 3) {
+            await era.printAndWait(
+              `『明明很享受被我和魔王大人视奸嘛，看，着淫荡的蜜穴都湿成这个样子了！说谎是不行的哦姐姐♪』`,
+            ); // :1532
+            await era.printAndWait(`「不，不是的…不是这样的………！」`); // :1533
+            await era.printAndWait(
+              `妹妹的话让${target_name}羞愧得脸红到了耳根、但异样的心理快感却让蜜穴却不住地分泌出更多爱液………`,
+            ); // :1534
+          } else {
+            await era.printAndWait(`『被人这样看着，是不是有感觉了，姐姐？』`); // :1536
+            await era.printAndWait(`「求求你，放过姐姐吧…呜呜呜」`); // :1537
+          }
+        }
+        kojo.自己扒开 = 4; // :1538-1540
+      } else if (
+        chara(target).system.露出癖 >= 3 &&
+        (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 露出癖Lv3以上
+        await era.printAndWait(`「啊啊…这个姿势…能全部看清楚了吗？」`); // :1543
+        await era.printAndWait(
+          `『哎呀，姐姐已经露出上瘾了呢！都不觉得羞耻的吗？』`,
+        ); // :1544
+        await era.printAndWait(`「当，当然会感觉羞耻啊…要不是你的命令………」`); // :1545
+        await era.printAndWait(
+          `『说谎是不行的呢，姐姐！看着你的样子我就明白你现在的感觉啦♪』`,
+        ); // :1546
+        await era.printAndWait(
+          `妹妹的话让${target_name}羞愧得脸红到了耳根、但异样的心理快感却让蜜穴却不住地分泌出更多爱液………`,
+        ); // :1547
+        if (virgin) {
+          await era.printAndWait(
+            `『姐姐的蜜穴好色情，好有诱惑力啊。魔王大人居然还没有侵犯过姐姐这里。如果我是男人的话一定早就………』`,
+          ); // :1549
+          await era.printAndWait(`「在，再说什么呢啊你！」`); // :1550
+        }
+        kojo.自己扒开 = 3; // :1550-1552
+      } else if (kojo.自己扒开 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外（爱慕無し、露出癖Lv3未満）
+        await era.printAndWait(`「这样…这样可以了吗…可以放过我了吧…呜呜」`); // :1555
+        await era.printAndWait(`『哎呀呀，还是想看姐姐做些更羞耻的动作呢♪』`); // :1556
+        await era.printAndWait(
+          `${player_name}看着${target_name}万分羞愧的样子，笑的嘴巴都歪了。本是亲姐妹的两人，现在的关系已经完全不正常了。`,
+        ); // :1557
+        if (virgin) {
+          await era.printAndWait(
+            `『姐姐的处女膜还在呀、怎么还没有献给魔王大人呢？』`,
+          ); // :1559
+          await era.printAndWait(`「不要，不要啊……！」`); // :1560
+        }
+        kojo.自己扒开 = 2; // :1561-1562
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(`「哈啊…这个姿势就能全部看清了吧………${heart(1)}」`); // :1567
+      await era.printAndWait(
+        `${target_name}带着献媚的表情，向${player_name}展示着自己的蜜穴。`,
+      ); // :1568
+      if (virgin) {
+        await era.printAndWait(
+          `「这个处女膜是为魔王大人保留的，但是也别让我等太久哦${heart(1)}」`,
+        ); // :1570
+        await era.printAndWait(
+          `${target_name}舔着嘴唇，又换了个更诱人的姿势，用手将蜜穴一张一合地诱惑着${player_name}。`,
+        ); // :1571
+        await era.printAndWait(
+          `清晰可见得处女膜和满溢的淫液都在表达着对${player_name}的阴茎的渴望………`,
+        ); // :1572
+      } else {
+        await era.printAndWait(
+          `「${target_name}的淫荡蜜穴，现在最想要的…是魔王大人的阴茎和精液哦${heart(1)}」`,
+        ); // :1574
+        await era.printAndWait(
+          `${target_name}露出淫媚的笑容，换了个更诱人的姿势，诱惑着${player_name}………`,
+        ); // :1575
+      }
+      kojo.自己扒开 = 5; // :1575-1577
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(`「魔，魔王大人，请…看个够吧…${heart(1)}」`); // :1580
+      await era.printAndWait(
+        `${target_name}边害羞的喘息着，边向${player_name}展示着自己的蜜穴。`,
+      ); // :1581
+      if (virgin) {
+        await era.printAndWait(
+          `「我的处女膜，魔王大人觉得漂，漂亮吗？啊啊啊，说这种话好羞耻！」`,
+        ); // :1583
+        await era.printAndWait(
+          `${target_name}羞得涨红了脸，别过脸躲避着${player_name}的眼光……`,
+        ); // :1584
+      } else {
+        await era.printAndWait(
+          `「${target_name}的这里…是属于魔王大人专用的…啊啊啊…${heart(1)}」`,
+        ); // :1586
+        await era.printAndWait(
+          `${target_name}羞得脸红耳赤，撑开蜜穴的手指也松走了………`,
+        ); // :1587
+      }
+      kojo.自己扒开 = 4; // :1587-1589
+    } else if (
+      chara(target).system.露出癖 >= 3 &&
+      (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 露出癖Lv3以上
+      await era.printAndWait(
+        `「羞，羞死人了…这个姿势…实在太羞耻了！可是…为什么手指…就是挪不开…哈啊」`,
+      ); // :1592
+      await era.printAndWait(`${target_name}红着脸，口中吐出了甘甜的娇喘。`); // :1593
+      await era.printAndWait(
+        `「啊……哈啊…这，这样就行了吧…什么，什么！还要继续吗？！」`,
+      ); // :1594
+      if (virgin) {
+        await era.printAndWait(`「好，好吧…我继续，继续！」`); // :1596
+        await era.printAndWait(
+          `${target_name}再次向${player_name}分开自己的蜜穴，这次将完好的处女膜也展示出来了………`,
+        ); // :1597
+      }
+      kojo.自己扒开 = 3; // :1597-1599
+    } else if (kojo.自己扒开 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外（爱慕無し、露出癖Lv3未満）
+      await era.printAndWait(`「人家的这里…到底有什么好看的…要看那么多遍！」`); // :1602
+      await era.printAndWait(`对于、咬着嘴唇对着${player_name}怒目而视。`); // :1603
+      if (virgin) {
+        await era.printAndWait(
+          `「处女膜也看见了吧？…这样好了吧…你还想要怎么样！」`,
+        ); // :1605
+      }
+      kojo.自己扒开 = 2; // :1605-1606
+    }
+    return 0; // :1606-1611 隐式（原作 RETURN 0）
   }
 
   return 0;

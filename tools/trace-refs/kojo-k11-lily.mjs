@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-1433',
+        ref: '786-1611',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -4153,6 +4153,661 @@ export const FILES = [
         ref: '1428-1431',
         any: [
           /^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1438-1611',
+        any: [
+          /^\s*IF SELECTCOM == 7\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:308 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW 「啊啊…还是有点害羞呢%UNICODE\(0x2661\) \*1% 为什么老是要这么欺负姐姐呢%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1440-1496',
+        any: [
+          /^\s*IF CFLAG:308 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW 「啊啊…还是有点害羞呢%UNICODE\(0x2661\) \*1% 为什么老是要这么欺负姐姐呢%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*PRINTFORMW 『哎呀，姐姐别找借口啦♪明明自己都湿成这个样子了』\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%遵循着妹妹的命令，摆出了淫荡的姿势和动作。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1495',
+        any: [/^\s*CFLAG:308 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1445',
+        any: [
+          /^\s*PRINTFORMW 「啊啊…还是有点害羞呢%UNICODE\(0x2661\) \*1% 为什么老是要这么欺负姐姐呢%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1446',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，姐姐别找借口啦♪明明自己都湿成这个样子了』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1447',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%遵循着妹妹的命令，摆出了淫荡的姿势和动作。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1448',
+        any: [
+          /^\s*PRINTFORMW 完全堕入淫乱深渊的%SAVESTR:TARGET%为了取悦%SAVESTR:PLAYER%，毫无廉耻地展示着蜜穴，并且自己也沉浸于别样的心理快感中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1449',
+        any: [
+          /^\s*PRINTFORMW 两人已经再也变不回以前那种纯洁的姐妹关系了，但现在的她们，某种程度上说也是无比的幸福吧………？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1452',
+        any: [/^\s*PRINTFORMW 「啊啊…这样真是…太羞耻、饶了姐姐吧…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1453',
+        any: [
+          /^\s*PRINTFORMW 『不行啊、我都说的清清楚楚了，不是这个姿势♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1454',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%只能遵循着妹妹的命令，摆出了无比羞耻的姿势和动作。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1455',
+        any: [
+          /^\s*PRINTFORMW 已经听到过很多次，妹妹这样充满恶意地对姐姐下达着淫乱的命令了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1456',
+        any: [
+          /^\s*PRINTFORMW 两人已经再也变不回以前那种纯洁的姐妹关系了，但现在的她们，某种程度上说也是无比地幸福吧………？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1459',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，姐姐，在人家面前摆出这么淫荡的姿势，不觉得害羞吗？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1460',
+        any: [
+          /^\s*PRINTFORMW 「当，当然会觉得羞耻了…但是，但是不是你命令我这么做的吗…呜呜呜」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1461',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，原来姐姐是只要被命令，就什么淫荡下流的事情都可以做的变态呀。姐姐以前的形象，在我心里彻底破灭了呢。』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1462',
+        any: [
+          /^\s*PRINTFORMW 「不是的、不是这样的…不要再欺负姐姐了，求求你………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1463',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%恶意的话语，让%SAVESTR:TARGET%忍不住泪流满面………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1468',
+        any: [
+          /^\s*PRINTFORMW 「哈啊、请吧，魔王大人，尽情欣赏少女最私密的地方吧………%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1469',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%扬起眉毛，献媚般地向%SAVESTR:PLAYER%展示着自己的蜜穴深处。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1471',
+        any: [
+          /^\s*PRINTFORMW 「这个处女膜是为魔王大人保留的，但是也别让我等太久了……否则%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1472',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%舔着嘴唇，用手指一张一合地抚弄着蜜穴，诱惑着%SAVESTR:PLAYER%………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1474',
+        any: [
+          /^\s*PRINTFORMW 「%SAVESTR:TARGET%的这里…现在最想要的，是魔王大人的精液哟…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1475',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出淫靡的笑容，用语言挑逗，诱惑着%SAVESTR:PLAYER%………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1479',
+        any: [
+          /^\s*PRINTFORMW 「啊，啊啊…请，请尽情看吧，魔王大人………%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1480',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%边害羞地微微喘息着、边向%SAVESTR:PLAYER%展示着自己的蜜穴及更深处。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1482',
+        any: [
+          /^\s*PRINTFORMW 「我，我的处女膜…漂亮吗…？啊啊啊，我居然说了这么害羞的话！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1483',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%变得脸红耳赤，羞愧地摇着头躲避着魔王的视线………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1485',
+        any: [
+          /^\s*PRINTFORMW 「%SAVESTR:TARGET%的这里…是属于魔王大人专用的…啊啊啊…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1486',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞得脸红耳赤，撑开蜜穴的手指也松走了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1490',
+        any: [/^\s*PRINTFORMW 「这种，这种事情实在太…羞耻…呜呜呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1491',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%擦了擦满脸的泪水，然后在%SAVESTR:PLAYER%的命令下继续展示着蜜穴。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1492',
+        any: [
+          /^\s*PRINTFORMW 「呜呜呜……给我记住、总有一天，总有一天………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1495-1496',
+        any: [/^\s*CFLAG:308 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1497-1610',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:308 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF TALENT:TARGET:0 == 1\s*$\s*^\s*PRINTFORMW 「哈啊，能看见吗，%SAVESTR:PLAYER%，看见姐姐淫荡的蜜穴了吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1504',
+        any: [
+          /^\s*PRINTFORMW 「哈啊，能看见吗，%SAVESTR:PLAYER%，看见姐姐淫荡的蜜穴了吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1505',
+        any: [/^\s*PRINTFORMW 『恩恩，姐姐的处女膜光鲜亮丽，真好看！』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1506',
+        any: [
+          /^\s*PRINTFORMW 「谢谢夸奖，但其实更想尽早让魔王大人把它弄坏呢…呵呵呵呵%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1507',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%一齐意味深长地望着你，眼中满含秋波………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1509',
+        any: [
+          /^\s*PRINTFORMW 「哈啊、能看见吗，%SAVESTR:PLAYER%，看见姐姐淫荡的蜜穴了吗？嘻嘻嘻%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1510',
+        any: [
+          /^\s*PRINTFORMW 『啊呀…姐姐这里已经湿得乱七八糟了，已经在想象着被魔王大人侵犯了吗…真是太色情了♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1511',
+        any: [
+          /^\s*PRINTFORMW 「这样够一目了然了吗%UNICODE\(0x2661\) \*1% 要不要姐姐再换个姿势给你看！还是想看姐姐的肛门呢？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1512',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%无比和谐地讨论着下流的话题………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1512-1514',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%无比和谐地讨论着下流的话题………\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1518',
+        any: [
+          /^\s*PRINTFORMW 『姐姐怎么还是处女呀、快点把这里奉献给魔王大人吧。大人可是很温柔的哦？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1519',
+        any: [/^\s*PRINTFORMW 「不，不要公然地说…这么羞耻的事啦…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1520',
+        any: [
+          /^\s*PRINTFORMW 『哎呀、这样的话，那我就替魔王大人收下啦？怎样？稍等片刻，我准备一下……哎哎哎，姐姐别把腿合上呀，真是的。』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1521',
+        any: [/^\s*PRINTFORMW 「不要开玩笑啦！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1523',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%强行分开大腿，蜜穴在妹妹调戏下已经爱液满溢………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1525',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%强行分开大腿，捂着脸发出羞愧的声音………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1528',
+        any: [/^\s*PRINTFORMW 「太，太羞耻了！这个样子…呜呜呜…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1529',
+        any: [
+          /^\s*PRINTFORMW 『不行啊、我都说的清清楚楚了，不是这个姿势♪♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1530',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%只能遵循着妹妹的命令，摆出更加屈辱的姿势和动作。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1532',
+        any: [
+          /^\s*PRINTFORMW 『明明很享受被我和魔王大人视奸嘛，看，着淫荡的蜜穴都湿成这个样子了！说谎是不行的哦姐姐♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1533',
+        any: [/^\s*PRINTFORMW 「不，不是的…不是这样的………！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1534',
+        any: [
+          /^\s*PRINTFORMW 妹妹的话让%SAVESTR:TARGET%羞愧得脸红到了耳根、但异样的心理快感却让蜜穴却不住地分泌出更多爱液………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1536',
+        any: [/^\s*PRINTFORMW 『被人这样看着，是不是有感觉了，姐姐？』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1537',
+        any: [/^\s*PRINTFORMW 「求求你，放过姐姐吧…呜呜呜」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1538-1540',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1543',
+        any: [/^\s*PRINTFORMW 「啊啊…这个姿势…能全部看清楚了吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1544',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，姐姐已经露出上瘾了呢！都不觉得羞耻的吗？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1545',
+        any: [/^\s*PRINTFORMW 「当，当然会感觉羞耻啊…要不是你的命令………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1546',
+        any: [
+          /^\s*PRINTFORMW 『说谎是不行的呢，姐姐！看着你的样子我就明白你现在的感觉啦♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1547',
+        any: [
+          /^\s*PRINTFORMW 妹妹的话让%SAVESTR:TARGET%羞愧得脸红到了耳根、但异样的心理快感却让蜜穴却不住地分泌出更多爱液………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1549',
+        any: [
+          /^\s*PRINTFORMW 『姐姐的蜜穴好色情，好有诱惑力啊。魔王大人居然还没有侵犯过姐姐这里。如果我是男人的话一定早就………』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1550',
+        any: [/^\s*PRINTFORMW 「在，再说什么呢啊你！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1550-1552',
+        any: [
+          /^\s*PRINTFORMW 「在，再说什么呢啊你！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1555',
+        any: [/^\s*PRINTFORMW 「这样…这样可以了吗…可以放过我了吧…呜呜」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1556',
+        any: [
+          /^\s*PRINTFORMW 『哎呀呀，还是想看姐姐做些更羞耻的动作呢♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1557',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%看着%SAVESTR:TARGET%万分羞愧的样子，笑的嘴巴都歪了。本是亲姐妹的两人，现在的关系已经完全不正常了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1559',
+        any: [
+          /^\s*PRINTFORMW 『姐姐的处女膜还在呀、怎么还没有献给魔王大人呢？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1560',
+        any: [/^\s*PRINTFORMW 「不要，不要啊……！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1561-1562',
+        any: [/^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1567',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…这个姿势就能全部看清了吧………%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1568',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着献媚的表情，向%SAVESTR:PLAYER%展示着自己的蜜穴。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1570',
+        any: [
+          /^\s*PRINTFORMW 「这个处女膜是为魔王大人保留的，但是也别让我等太久哦%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1571',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%舔着嘴唇，又换了个更诱人的姿势，用手将蜜穴一张一合地诱惑着%SAVESTR:PLAYER%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1572',
+        any: [
+          /^\s*PRINTFORMW 清晰可见得处女膜和满溢的淫液都在表达着对%SAVESTR:PLAYER%的阴茎的渴望………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1574',
+        any: [
+          /^\s*PRINTFORMW 「%SAVESTR:TARGET%的淫荡蜜穴，现在最想要的…是魔王大人的阴茎和精液哦%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1575',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出淫媚的笑容，换了个更诱人的姿势，诱惑着%SAVESTR:PLAYER%………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1575-1577',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出淫媚的笑容，换了个更诱人的姿势，诱惑着%SAVESTR:PLAYER%………\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1580',
+        any: [
+          /^\s*PRINTFORMW 「魔，魔王大人，请…看个够吧…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1581',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%边害羞的喘息着，边向%SAVESTR:PLAYER%展示着自己的蜜穴。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1583',
+        any: [
+          /^\s*PRINTFORMW 「我的处女膜，魔王大人觉得漂，漂亮吗？啊啊啊，说这种话好羞耻！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1584',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞得涨红了脸，别过脸躲避着%SAVESTR:PLAYER%的眼光……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1586',
+        any: [
+          /^\s*PRINTFORMW 「%SAVESTR:TARGET%的这里…是属于魔王大人专用的…啊啊啊…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1587',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞得脸红耳赤，撑开蜜穴的手指也松走了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1587-1589',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞得脸红耳赤，撑开蜜穴的手指也松走了………\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1592',
+        any: [
+          /^\s*PRINTFORMW 「羞，羞死人了…这个姿势…实在太羞耻了！可是…为什么手指…就是挪不开…哈啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1593',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%红着脸，口中吐出了甘甜的娇喘。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1594',
+        any: [
+          /^\s*PRINTFORMW 「啊……哈啊…这，这样就行了吧…什么，什么！还要继续吗？！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1596',
+        any: [/^\s*PRINTFORMW 「好，好吧…我继续，继续！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1597',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%再次向%SAVESTR:PLAYER%分开自己的蜜穴，这次将完好的处女膜也展示出来了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1597-1599',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%再次向%SAVESTR:PLAYER%分开自己的蜜穴，这次将完好的处女膜也展示出来了………\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:308 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1602',
+        any: [
+          /^\s*PRINTFORMW 「人家的这里…到底有什么好看的…要看那么多遍！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1603',
+        any: [
+          /^\s*PRINTFORMW 对于、咬着嘴唇对着%SAVESTR:PLAYER%怒目而视。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1605',
+        any: [
+          /^\s*PRINTFORMW 「处女膜也看见了吧？…这样好了吧…你还想要怎么样！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1605-1606',
+        any: [
+          /^\s*PRINTFORMW 「处女膜也看见了吧？…这样好了吧…你还想要怎么样！」\s*$\s*^\s*CFLAG:308 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1606-1611',
+        any: [
+          /^\s*CFLAG:308 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
         ],
       },
     ],
