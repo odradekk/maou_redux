@@ -2709,10 +2709,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2203 K9 初調教魔族分档判据错格（TALENT:314 == 9 改 8，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `    if (era.get(\`talent:\${target}:314\`) == 9) {
-      // :78
+      // :78-79
       await era.printAndWait(\`\${target_name}在调教之前，被进行了魔族化改造。\`); // :79`,
     replace: `    if (era.get(\`talent:\${target}:314\`) == 8) { // 变异
-      // :78
+      // :78-79
       await era.printAndWait(\`\${target_name}在调教之前，被进行了魔族化改造。\`); // :79`,
     tests: ['kojo-k9-diamond'],
     must_mention: '魔族化标记',
@@ -2730,11 +2730,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2205 K9 NTR再捕获爱慕支解除标记写错（CFLAG:650 = 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: `      // CFLAG:650  = 0（变量语义：CFLAG 族，650） // :122
-      kojo.NTR再捕获 = 0; // :122
+    find: `      // CFLAG:650  = 0（变量语义：CFLAG 族，650） // :120-122
+      kojo.NTR再捕获 = 0; // :120-122
     } else {`,
     replace: `      // 变异
-      kojo.NTR再捕获 = 1; // :122
+      kojo.NTR再捕获 = 1; // :120-122
     } else {`,
     tests: ['kojo-k9-diamond'],
     must_mention: 'NTR 开关清 0',
@@ -2783,13 +2783,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2210 K9 头部守卫①：ASSI>0&&ASSIPLAY 删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
-    // :880
-    return 0; // :880
-  } // :880`,
+    // :880-882
+    return 0; // :880-882
+  } // :880-882`,
     replace: `  if (false) { // 变异：ASSI>0&&ASSIPLAY 删除
-    // :880
-    return 0; // :880
-  } // :880`,
+    // :880-882
+    return 0; // :880-882
+  } // :880-882`,
     tests: ['kojo-k9-diamond'],
     must_mention: '头部守卫',
   },
@@ -2797,13 +2797,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2211 K9 头部守卫②：TEQUIP:45 口塞守卫删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
-    // :883
-    return 0; // :883
-  } // :883`,
+    // :882-883
+    return 0; // :882-883
+  } // :882-883`,
     replace: `  if (false) { // 变异：TEQUIP:45 口塞守卫删除
-    // :883
-    return 0; // :883
-  } // :883`,
+    // :882-883
+    return 0; // :882-883
+  } // :882-883`,
     tests: ['kojo-k9-diamond'],
     must_mention: '头部守卫',
   },
@@ -2811,13 +2811,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2212 K9 头部守卫③：TFLAG:899 失神删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (game.train.失神) {
-    // :886
-    return 0; // :886
-  } // :886`,
+    // :886-887
+    return 0; // :886-887
+  } // :886-887`,
     replace: `  if (false) { // 变异：TFLAG:899 失神删除
-    // :886
-    return 0; // :886
-  } // :886`,
+    // :886-887
+    return 0; // :886-887
+  } // :886-887`,
     tests: ['kojo-k9-diamond'],
     must_mention: '头部守卫',
   },
@@ -2825,17 +2825,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2213 K9 头部守卫④：TEQUIP:89 不再岔去 DOG_KOJO_9（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`tequip:\${target}:89\`)) {
-    // :888
+    // :887-888
     // 兽奸PLAY中は専用口上
     await dog_kojo_9(rand_n);
-    return 0; // :890
-  } // :891`,
+    return 0; // :889-890
+  } // :891-892`,
     replace: `  if (false) { // 变异：TEQUIP:89 不再岔去 DOG_KOJO_9
-    // :888
+    // :887-888
     // 兽奸PLAY中は専用口上
     await dog_kojo_9(rand_n);
-    return 0; // :890
-  } // :891`,
+    return 0; // :889-890
+  } // :891-892`,
     tests: ['kojo-k9-diamond'],
     must_mention: '全篇为未填写模板',
   },
@@ -2843,17 +2843,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2214 K9 头部守卫⑤：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_9（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`tequip:\${target}:55\`)) {
-    // :893
+    // :892-893
     // 死斗场中は専用口上
     await colosseum_kojo_9(rand_n);
-    return 0; // :895
-  } // :896`,
+    return 0; // :894-895
+  } // :894-896`,
     replace: `  if (false) { // 变异：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_9
-    // :893
+    // :892-893
     // 死斗场中は専用口上
     await colosseum_kojo_9(rand_n);
-    return 0; // :895
-  } // :896`,
+    return 0; // :894-895
+  } // :894-896`,
     tests: ['kojo-k9-diamond'],
     must_mention: '连站起来的力气都没有了',
   },
@@ -2861,13 +2861,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2215 K9 头部守卫⑥：TALENT:9 崩坏删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`talent:\${target}:9\`) == 1) {
-    // :899
-    return 0; // :899
-  } // :899`,
+    // :894-899
+    return 0; // :894-899
+  } // :894-899`,
     replace: `  if (false) { // 变异：TALENT:9 崩坏删除
-    // :899
-    return 0; // :899
-  } // :899`,
+    // :894-899
+    return 0; // :894-899
+  } // :894-899`,
     tests: ['kojo-k9-diamond'],
     must_mention: '头部守卫',
   },
@@ -2875,25 +2875,25 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2216 K9 头部守卫⑦：TEQUIP:90 触手删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`tequip:\${target}:90\`)) {
-    // :902
-    return 0; // :902
-  } // :902`,
+    // :902-905
+    return 0; // :902-905
+  } // :902-905`,
     replace: `  if (false) { // 变异：TEQUIP:90 触手删除
-    // :902
-    return 0; // :902
-  } // :902`,
+    // :902-905
+    return 0; // :902-905
+  } // :902-905`,
     tests: ['kojo-k9-diamond'],
     must_mention: '头部守卫',
   },
   {
     desc: 'M2217 K9 SELECTCOM==0 爱抚初回推进值错（CFLAG:301 = 1 改 2，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: `      // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :920
-      kojo.爱抚 = 1; // :920
-      return 0; // :921`,
+    find: `      // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :918-920
+      kojo.爱抚 = 1; // :918-920
+      return 0; // :918-921`,
     replace: `      // 变异
-      kojo.爱抚 = 2; // :920
-      return 0; // :921`,
+      kojo.爱抚 = 2; // :918-920
+      return 0; // :918-921`,
     tests: ['kojo-k9-diamond'],
     must_mention: 'CFLAG:301 推进到 1',
   },
@@ -2901,12 +2901,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2218 K9 SELECTCOM==87 穿环 P==1 判据错格（改 P==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `          if (P == 1) {
-            // :4932
+            // :4930-4932
             await era.printAndWait(
               \`「嗯哼哼~、怎样呀~…真是跟现在的我特别合适的装饰品呢…\${heart(1)}」\`,
             ); // :4933`,
     replace: `          if (P == 9) { // 变异
-            // :4932
+            // :4930-4932
             await era.printAndWait(
               \`「嗯哼哼~、怎样呀~…真是跟现在的我特别合适的装饰品呢…\${heart(1)}」\`,
             ); // :4933`,
@@ -2956,11 +2956,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2222 K9 SELF_KOJO TFLAG:13==1 崩坏分支判据错格（TALENT:9==1 改 TALENT:9==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `    if (era.get(\`talent:\${target}:9\`) == 1) {
-      // :6402
+      // :6402-6403
       await era.printAndWait(\`\${target_name}就像被弄坏的玩具一样不停地自慰………\`); // :6403
     } else if (q == 1) {`,
     replace: `    if (era.get(\`talent:\${target}:9\`) == 9) { // 变异
-      // :6402
+      // :6402-6403
       await era.printAndWait(\`\${target_name}就像被弄坏的玩具一样不停地自慰………\`); // :6403
     } else if (q == 1) {`,
     tests: ['kojo-k9-diamond'],
@@ -3004,9 +3004,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2226 K9 DUNGEON_RYOUZYOKU 处女判据错格（TALENT:0 == 1 改 2，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`talent:\${target}:0\`) == 1) {
-    // :6803`,
+    // :6802-6803`,
     replace: `  if (era.get(\`talent:\${target}:0\`) == 2) { // 变异
-    // :6803`,
+    // :6802-6803`,
     tests: ['kojo-k9-diamond'],
     must_mention: '不会将第一次交给你们',
   },
@@ -3014,9 +3014,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2227 K9 GOHOUBI_REQUEST CFLAG:A:504 判据错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (chara(a).stronghold.要求奖赏 == 0) {
-    // :7409`,
+    // :7408-7409`,
     replace: `  if (chara(a).stronghold.要求奖赏 == 1) { // 变异
-    // :7409`,
+    // :7408-7409`,
     tests: ['kojo-k9-diamond'],
     must_mention: '我想要金钱作为奖励',
   },
@@ -3024,10 +3024,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2228 K9 GOHOUBI_AFTER choice==0 判据错格（改 choice==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (choice == 0) {
-    // :7452
+    // :7452-7453
     await era.printAndWait(\`「为、为什么啦！」\`); // :7453`,
     replace: `  if (choice == 9) { // 变异
-    // :7452
+    // :7452-7453
     await era.printAndWait(\`「为、为什么啦！」\`); // :7453`,
     tests: ['kojo-k9-diamond'],
     must_mention: '为、为什么啦',
@@ -3036,10 +3036,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2229 K9 OSIOKI choice==0 判据错格（改 choice==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (choice == 0) {
-    // :7528
+    // :7528-7529
     await era.printAndWait(\`「真、真是失礼了」\`); // :7529`,
     replace: `  if (choice == 9) { // 变异
-    // :7528
+    // :7528-7529
     await era.printAndWait(\`「真、真是失礼了」\`); // :7529`,
     tests: ['kojo-k9-diamond'],
     must_mention: '真、真是失礼了',
@@ -3072,9 +3072,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2232 K9 ENTERENEMY 淫乱判据错格（TALENT:76 == 1 改 2，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: `  if (era.get(\`talent:\${a}:76\`) == 1) {
-    // :7396`,
+    // :7396-7397`,
     replace: `  if (era.get(\`talent:\${a}:76\`) == 2) { // 变异
-    // :7396`,
+    // :7396-7397`,
     tests: ['kojo-k9-diamond'],
     must_mention: '真的能被干了个爽吗',
   },
