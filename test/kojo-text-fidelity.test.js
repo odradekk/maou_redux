@@ -82,6 +82,8 @@ const PRINTFORM_RE =
 const ERB_TOKEN_RULES = [
   [/^SAVESTR:TARGET$/, 'TARGET'],
   [/^SAVESTR:PLAYER$/, 'PLAYER'],
+  [/^SAVESTR:player$/, 'PLAYER'], // #241：K10 源文若干处误写小写 player，语义同 PLAYER（原作缺陷 1:1 保留）
+
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^CALLNAME:MASTER$/, 'MASTER'], // #235：K4 冷徹 :152/:160/:162（呼び名，MASTER 恒角色 0）
@@ -164,6 +166,12 @@ const ERB_TOKEN_RULES = [
   ], // :908
   [/^RAND:2 \? 姐姐感觉舒服吗？ # 姐姐觉得我舔得舒服吗？♪$/, 'TERN_LICK_3'], // :913
   [/^RAND:2 \? 继续、继续 # 去了、要去了$/, 'TERN_MOAN'], // :1256
+  // —— #241：K10 俱乐部口上补充 ——
+  [/^\(CFLAG:42 == 83\) \? 扶了扶眼镜 # 向这边转了过来$/, 'TERN_GLASSES'], // :646
+  [/^A$/, 'A_COUNT'], // :6066（单字母全局变量 A，UP:11+UP:12，kojo_message_palamcng_10 写入）
+  [/^\(A > 1\) \? 射精多次后 # 射精后$/, 'TERN_A_EJACULATE'], // :6098
+  [/^\(A > 1\) \? 迎来多次絶頂的 # 迎来絶頂的$/, 'TERN_A_CLIMAX1'], // :6105
+  [/^\(A > 1\) \? 不断迎来絶頂 # 迎来絶頂$/, 'TERN_A_CLIMAX2'], // :6120
 ];
 
 const JS_TOKEN_RULES = [
@@ -248,6 +256,12 @@ const JS_TOKEN_RULES = [
   [/^lick_line_2$/, 'TERN_LICK_2'],
   [/^lick_line_3$/, 'TERN_LICK_3'],
   [/^moan_word$/, 'TERN_MOAN'], // :1256 胸爱抚，与上面 ERB_TOKEN_RULES 的 TERN_MOAN 配对
+  // —— #241：K10 俱乐部口上补充 ——
+  [/^glasses_word$/, 'TERN_GLASSES'],
+  [/^a_count$/, 'A_COUNT'],
+  [/^a_count > 1 \? '射精多次后' : '射精后'$/, 'TERN_A_EJACULATE'],
+  [/^a_count > 1 \? '迎来多次绝顶的' : '迎来绝顶的'$/, 'TERN_A_CLIMAX1'],
+  [/^a_count > 1 \? '不断迎来绝顶' : '迎来绝顶'$/, 'TERN_A_CLIMAX2'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
