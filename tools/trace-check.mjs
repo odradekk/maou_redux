@@ -62,6 +62,16 @@
 //     不回头改已合并模块，但让它们再也涨不上去。
 // 量法并进第 2 步的现有遍历，不另起扫描。
 //
+// 耗时（#298 验收）：鉴别力把整次 trace-check 从 ~5s 抬到 ~14s。热点不是
+// 「每条锚对整份源文件正则全扫」——(src, source, flags) 已去重，真扫的是
+// ~3.7 万个 unique 正则 × 源文件（约 12 GB 的正则扫描、约 3.5s）。建议的
+// 「行内容 → 行号」索引帮不上：unique 正则里整行字面量只有 1.5%，82% 是
+// 子串字面量（`/PRINTFORMW 「…」/`），建索引几乎零命中；indexOf 快路径
+// 与 RegExp 持平。倍数里剩下的是给 PRINTFORM 一类高命中锚物化全部窗口、
+// 以及同一正则被多条引用重复分类。所以这里只做两件事：分类结果按 unique
+// 正则缓存；分类时流式比窗口，判定 diff 之后不再切片。3.5s 的正则扫描
+// 是「全文量鉴别力」本身的价格，不值得为它上 Aho-Corasick。
+//
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
 //       node tools/trace-check.mjs --anchor-quality
 //         另打印鉴别力分布（命中 1 处 / 平行复现 / 空 PRINTFORM 整行锚 /
@@ -95,8 +105,7 @@ const { FILES, LOG_REFS, SAMPLE_LOG_REFS } = await load_trace_refs(
 
 const source_cache = new Map();
 const source_pack_cache = new Map();
-const match_cache = new Map();
-
+const classify_cache = new Map();
 function load_source(rel) {
   if (!source_cache.has(rel)) {
     source_cache.set(
@@ -137,32 +146,25 @@ function with_global_m(anchor) {
   return new RegExp(anchor.source, `${flags}g`);
 }
 
-function match_all_in_source(src, anchor, pack) {
-  const key = `${src}\0${anchor.source}\0${anchor.flags}`;
-  if (match_cache.has(key)) return match_cache.get(key);
+function* iter_regex_hits(pack, anchor) {
   const re = with_global_m(anchor);
-  const hits = [];
   let m;
   let guard = 0;
   while ((m = re.exec(pack.text)) !== null) {
-    const start = m.index;
-    const end = start + m[0].length;
-    const line_from = pos_to_line(pack.starts, start);
-    const line_to = pos_to_line(
-      pack.starts,
-      Math.max(start, end - (end > start ? 1 : 0)),
-    );
-    hits.push({
-      line_from,
-      line_to,
-      window: pack.lines.slice(line_from - 1, line_to).join('\n'),
-    });
+    yield [m.index, m.index + m[0].length];
     if (m[0].length === 0) re.lastIndex += 1;
     guard += 1;
-    if (guard > 200000) break;
+    if (guard > 200000) return;
   }
-  match_cache.set(key, hits);
-  return hits;
+}
+
+function window_at(pack, start, end) {
+  const line_from = pos_to_line(pack.starts, start);
+  const line_to = pos_to_line(
+    pack.starts,
+    Math.max(start, end - (end > start ? 1 : 0)),
+  );
+  return pack.lines.slice(line_from - 1, line_to).join('\n');
 }
 
 function normalize_window(s) {
@@ -207,25 +209,37 @@ const QUALITY_RANK = {
   diff: 4,
 };
 
-function classify_anchor(src, anchor, pack) {
-  const hits = match_all_in_source(src, anchor, pack);
-  if (hits.length <= 1)
-    return { kind: 'unique', hits: hits.length || 1, hits_raw: hits };
-  const windows = hits.map((h) => normalize_window(h.window));
-  const uniq = new Set(windows);
-  if (uniq.size === 1) {
-    if (window_has_payload(windows[0])) {
-      return { kind: 'ident_payload', hits: hits.length, hits_raw: hits };
-    }
-    if (
-      is_whole_line_empty_print(anchor) &&
-      EMPTY_PRINT_CMD_RE.test(windows[0])
-    ) {
-      return { kind: 'ident_empty_print', hits: hits.length, hits_raw: hits };
-    }
-    return { kind: 'ident_no_payload', hits: hits.length, hits_raw: hits };
+function classify_hits(n, first_norm, all_same, anchor) {
+  if (n <= 1) return { kind: 'unique', hits: n || 1 };
+  if (!all_same) return { kind: 'diff', hits: n };
+  if (window_has_payload(first_norm)) {
+    return { kind: 'ident_payload', hits: n };
   }
-  return { kind: 'diff', hits: hits.length, uniq: uniq.size, hits_raw: hits };
+  if (
+    is_whole_line_empty_print(anchor) &&
+    EMPTY_PRINT_CMD_RE.test(first_norm)
+  ) {
+    return { kind: 'ident_empty_print', hits: n };
+  }
+  return { kind: 'ident_no_payload', hits: n };
+}
+
+function classify_anchor(src, anchor, pack) {
+  const key = `${src}\0${anchor.source}\0${anchor.flags}`;
+  if (classify_cache.has(key)) return classify_cache.get(key);
+  let n = 0;
+  let first_norm = null;
+  let all_same = true;
+  for (const [start, end] of iter_regex_hits(pack, anchor)) {
+    n += 1;
+    if (!all_same) continue;
+    const w = normalize_window(window_at(pack, start, end));
+    if (n === 1) first_norm = w;
+    else if (w !== first_norm) all_same = false;
+  }
+  const rec = classify_hits(n, first_norm, all_same, anchor);
+  classify_cache.set(key, rec);
+  return rec;
 }
 
 function unique_nonblank_in_slice(lines, a, b) {
@@ -1047,7 +1061,7 @@ for (const [rel, refs] of Object.entries(ERB_EXEMPT)) {
 // 逐字相同且有正文）与空 PRINTFORM 整行锚不进这张表。扩基线必须显式改
 // 下面两份常量——冻结不是不可变，是「改动必须发生在标着冻结的地方」。
 
-const ANCHOR_QUALITY_BASELINE = 4295; // #298 冻结：弱锚只减不增
+const ANCHOR_QUALITY_BASELINE = 4795; // #298 冻结：弱锚只减不增；#239 K8 并入 +500
 const ANCHOR_QUALITY_BY_FILE = {
   'ere/chara/chara-make.js': 35,
   'ere/data/equip-database.js': 2,
@@ -1087,6 +1101,7 @@ const ANCHOR_QUALITY_BY_FILE = {
   'ere/kojo/kojo-k5-mao.js': 468,
   'ere/kojo/kojo-k6-wicked.js': 564,
   'ere/kojo/kojo-k7-heart.js': 109,
+  'ere/kojo/kojo-k8-spade.js': 500,
   'ere/kojo/kojo-k9-diamond.js': 23,
   'ere/page/page-clothtype.js': 2,
   'ere/page/page-dungeon-setup.js': 1,

@@ -591,9 +591,9 @@ export default [
   {
     desc: 'M2702 鉴别力分类一律当唯一（ENDIF 命中多处也放行——门必须非 0）（#298）',
     file: 'tools/trace-check.mjs',
-    find: "  if (hits.length <= 1)\n    return { kind: 'unique', hits: hits.length || 1, hits_raw: hits };",
+    find: "  if (n <= 1) return { kind: 'unique', hits: n || 1 };",
     replace:
-      "  if (true)\n    return { kind: 'unique', hits: hits.length || 1, hits_raw: hits }; // 变异：分类一律唯一",
+      "  if (true) return { kind: 'unique', hits: n || 1 }; // 变异：分类一律唯一",
     tests: ['trace-check'],
     must_mention: '鉴别力检查对弱锚失明',
   },
