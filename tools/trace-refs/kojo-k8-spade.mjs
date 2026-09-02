@@ -26117,6 +26117,376 @@ export const FILES = [
         ref: '7731',
         any: [/PRINTFORMW 「还真是好久没有只身一人潜入迷宫了呢」/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7735-7777',
+        any: [/@GOHOUBI_REQUEST_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7739',
+        any: [/;お金/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7740',
+        any: [/PRINTFORMW 「雇用我这种等级的忍者就要支付相应的金钱」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7741',
+        any: [/PRINTFORMW %SAVESTR:A%的要求是奖金。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7743',
+        any: [/;獣姦要求/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7744',
+        any: [/PRINTFORM 「我呢，想要和/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7746',
+        any: [/PRINT 犬/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7748',
+        any: [/PRINT 猪/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7750',
+        any: [/PRINT 马/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7752',
+        any: [/PRINTFORMW 交尾的那种%UNICODE\(0x2661\) \*1%」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7753',
+        any: [/PRINTFORMW %SAVESTR:A%要求兽奸作为报酬。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7755',
+        any: [/;キス/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7756',
+        any: [/PRINTFORMW 「回来之后想要魔王大人的吻…想要认真的吻」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7758',
+        any: [/;セックス/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7759',
+        any: [/PRINTFORMW 「抱我行吗、性的意义上」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7760',
+        any: [/PRINTFORMW %SAVESTR:A%要求做爱作为报酬。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7762',
+        any: [/;ザーメン/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7763',
+        any: [/PRINTFORMW 「比如喝魔王大人的精液…刚榨出来的最好」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7764',
+        any: [/PRINTFORMW %SAVESTR:A%要求用你的精液作为报酬。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7766',
+        any: [/;乱交/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7767',
+        any: [
+          /PRINTFORMW 「比如把魔王大人的部下大量的聚集起来…举行乱交party」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7768',
+        any: [/PRINTFORMW %SAVESTR:A%要求乱交party作为报酬。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7770',
+        any: [/;小水/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7771',
+        any: [/PRINTFORMW 「想喝魔王大人的尿呢」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7772',
+        any: [/PRINTFORMW %SAVESTR:A%要求小便作为报酬。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7774',
+        any: [/;童贞狩り/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7775',
+        any: [/PRINTFORMW 「呐、叫个合适的处男来吧」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7776',
+        any: [/PRINTFORMW %SAVESTR:A%要求童贞狩猎作为报酬。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7780-7855',
+        any: [/@GOHOUBI_AFTER_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7783',
+        any: [/;放置PLAY/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7785',
+        any: [/PRINTFORMW 「………知道了、我就这样退下了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7786',
+        any: [/;勲章授与/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7788',
+        any: [/PRINTFORMW 「呵呵呵、很高兴获得勋章」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7790',
+        any: [/;お金を渡す/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7792',
+        any: [/PRINTFORMW 「嗯、勇者捕获的报酬确实收到了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7793',
+        any: [/;犬と獣姦/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7795',
+        any: [/;处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7797',
+        any: [
+          /PRINTFORMW 「嗯嗯！啊啊！果然连声音都不一样…被狗侵犯…我快不行了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7799',
+        any: [
+          /PRINTFORMW 「嗯嗯！啊啊！果然连声音都不一样…被狗侵犯…我快不行了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7801',
+        any: [/;豚と獣姦/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7803',
+        any: [/;处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7805',
+        any: [
+          /PRINTFORMW 「嗯嗯！啊啊！果然连声音都不一样…被猪侵犯…我快不行了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7807',
+        any: [
+          /PRINTFORMW 「嗯嗯！啊啊！果然连声音都不一样…被猪侵犯…我快不行了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7809',
+        any: [/;馬と獣姦/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7811',
+        any: [/;处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7813',
+        any: [
+          /PRINTFORMW 「嗯嗯！啊啊！果然连声音都不一样…被马侵犯…我快不行了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7815',
+        any: [
+          /PRINTFORMW 「嗯嗯！啊啊！果然连声音都不一样…被马侵犯…我快不行了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7817',
+        any: [/;キス/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7819',
+        any: [
+          /PRINTFORMW 「嗯…嗯…不行、还想再要点奖励…嗯…嗯呼%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7820',
+        any: [
+          /PRINTFORMW 就这样%SAVESTR:A%和你反复的接吻了十分钟以上１０分以上………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7821',
+        any: [/;セックス/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7823',
+        any: [/;膣とペニス/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7825',
+        any: [
+          /PRINTFORMW 「继续抱我！啊嗯！哪里！好棒%UNICODE\(0x2661\) \*1% 啊啊嗯！就是那里就是那里！让我融化吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7826',
+        any: [/;アナルとペニス/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7828',
+        any: [
+          /PRINTFORMW 「继续抱我！啊嗯！哪里！好棒%UNICODE\(0x2661\) \*1% 啊啊嗯！就是那里就是那里！让我融化吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7830',
+        any: [/;ザーメン/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7832',
+        any: [
+          /PRINTFORMW 「呵呵、魔王大人的精液是最好的报酬%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7833',
+        any: [/;乱交/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7835',
+        any: [/;处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7837',
+        any: [
+          /PRINTFORMW 「嗯啊…乱交party最棒了、还想再办啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7839',
+        any: [
+          /PRINTFORMW 「嗯啊…乱交party最棒了、还想再办啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7841',
+        any: [/;おしっこ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7843',
+        any: [
+          /PRINTFORMW 「咕噜咕噜…嗯…魔王大人、还有什么想说的么、为了和尿的话我什么都愿意干%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7844',
+        any: [/;童贞狩り/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7846',
+        any: [/;膣/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7848',
+        any: [/PRINTFORMW 「怎么样、我的身体是最棒的吧？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7849',
+        any: [/;アナル/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7851',
+        any: [/PRINTFORMW 「屁股小穴里插着新品阴茎最棒了♪」/],
+      },
     ],
   },
 ];

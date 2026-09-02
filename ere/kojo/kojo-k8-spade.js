@@ -95,6 +95,10 @@ const {
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
+const {
+  gohoubi_request_koujo_family,
+  gohoubi_after_koujo_family,
+} = require('#/kojo/kojo-dungeon-after');
 const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -110,13 +114,7 @@ const era0 = (k) => era.get(k) || 0;
  * 核对固定）；名单变动必须同步清单。骨架阶段：51 个 SELECTCOM 分支合用
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
-const STUBBED_CALLS = [
-  'GOHOUBI_REQUEST_KOUJO_K8',
-  'GOHOUBI_AFTER_KOUJO_K8',
-  'OSIOKI_KOUJO_K8',
-  'GOBI_KOUJO_K8',
-  'SELL_MATURO_K0',
-];
+const STUBBED_CALLS = ['OSIOKI_KOUJO_K8', 'GOBI_KOUJO_K8', 'SELL_MATURO_K0'];
 
 // @EVENTTRAIN #PRI（:61-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -12574,15 +12572,197 @@ public_exucution_koujo_family.register(8, public_exucution_koujo_k8);
 grotesque_koujo_family.register(8, grotesque_koujo_k8);
 enterenemy_koujo_family.register(8, enterenemy_koujo_k8);
 
-/** @GOHOUBI_REQUEST_KOUJO_K8（:7735-7779，TARGET = A）。TODO(#239)：待填充。 */
-async function gohoubi_request_koujo_k8() {
-  stub_line('GOHOUBI_REQUEST_KOUJO_K8', '迎击奖赏要求口上', '本票分段填充');
+/**
+ * @GOHOUBI_REQUEST_KOUJO_K8（:7735-7777）：迎击时的奖赏要求（角色即 A）。
+ * CFLAG:504（要求奖赏）分十档：0 钱 / 1-3 兽奸（犬·猪·马）/ 4 吻 /
+ * 5 性交 / 6 精液 / 7 乱交 / 8 小便 / 9 童贞狩。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function gohoubi_request_koujo_k8(rand) {
+  void rand;
+  const a = era_flag.target;
+  const a_name = chara_callname(a); // %SAVESTR:A%
+  const gohoubi = chara(a).stronghold.要求奖赏;
+
+  if (gohoubi == 0) {
+    // :7739 お金
+    await era.printAndWait(`「雇用我这种等级的忍者就要支付相应的金钱」`); // :7740
+    await era.printAndWait(`${a_name}的要求是奖金。`); // :7741
+  } else if (gohoubi == 1 || gohoubi == 2 || gohoubi == 3) {
+    // :7743 獣姦要求（PRINTFORM/PRINT 不换行，原作与下一行拼成一整句）
+    await era.print(`「我呢，想要和`); // :7744
+    if (gohoubi == 1) {
+      await era.print(`犬`); // :7746
+    } else if (gohoubi == 2) {
+      await era.print(`猪`); // :7748
+    } else if (gohoubi == 3) {
+      await era.print(`马`); // :7750
+    }
+    await era.printAndWait(`交尾的那种${heart(1)}」`); // :7752
+    await era.printAndWait(`${a_name}要求兽奸作为报酬。`); // :7753
+  } else if (gohoubi == 4) {
+    // :7755 キス
+    await era.printAndWait(`「回来之后想要魔王大人的吻…想要认真的吻」`); // :7756
+  } else if (gohoubi == 5) {
+    // :7758 セックス
+    await era.printAndWait(`「抱我行吗、性的意义上」`); // :7759
+    await era.printAndWait(`${a_name}要求做爱作为报酬。`); // :7760
+  } else if (gohoubi == 6) {
+    // :7762 ザーメン
+    await era.printAndWait(`「比如喝魔王大人的精液…刚榨出来的最好」`); // :7763
+    await era.printAndWait(`${a_name}要求用你的精液作为报酬。`); // :7764
+  } else if (gohoubi == 7) {
+    // :7766 乱交
+    await era.printAndWait(
+      `「比如把魔王大人的部下大量的聚集起来…举行乱交party」`,
+    ); // :7767
+    await era.printAndWait(`${a_name}要求乱交party作为报酬。`); // :7768
+  } else if (gohoubi == 8) {
+    // :7770 小水
+    await era.printAndWait(`「想喝魔王大人的尿呢」`); // :7771
+    await era.printAndWait(`${a_name}要求小便作为报酬。`); // :7772
+  } else if (gohoubi == 9) {
+    // :7774 童贞狩り
+    await era.printAndWait(`「呐、叫个合适的处男来吧」`); // :7775
+    await era.printAndWait(`${a_name}要求童贞狩猎作为报酬。`); // :7776
+  }
+
+  return 0;
 }
 
-/** @GOHOUBI_AFTER_KOUJO_K8（:7780-7856，TARGET = A）。TODO(#239)：待填充。 */
-async function gohoubi_after_koujo_k8() {
-  stub_line('GOHOUBI_AFTER_KOUJO_K8', '迎击奖赏口上', '本票分段填充');
+/**
+ * @GOHOUBI_AFTER_KOUJO_K8（:7780-7855）：迎击成功后的奖赏口上（角色即 A）。
+ *
+ * choice（原作 TFLAG:18）三档：0 放置 PLAY / 1 勋章授与 / 2 兑现要求。
+ * 第 2 档再按 CFLAG:504 分十支。
+ *
+ * 源作在五处写了分岔却两支同文，1:1 保真照搬（各支加注）：
+ * 犬·猪·马兽奸的 TALENT:0 处女判、性交的 ABL:2 > ABL:3 膣/肛门判、
+ * 乱交的处女判——分岔条件在，两支文字完全一致。
+ * :7820 的「十分钟以上１０分以上」是汉化重复，照搬不修。
+ * 源作在 CFLAG:504 链末尾写了一个空 ELSE（无输出），移植省略。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} [cid] 角色 ID（族签名给的 A；本实现取 era_flag.target，同 K3）
+ * @param {number} [choice] 奖赏选择序号（原作 TFLAG:18）
+ */
+async function gohoubi_after_koujo_k8(rand, cid, choice) {
+  void rand;
+  void cid;
+  const a = era_flag.target;
+  const a_name = chara_callname(a); // %SAVESTR:A%
+  const gohoubi = chara(a).stronghold.要求奖赏;
+
+  if (choice == 0) {
+    // :7783 放置PLAY
+    await era.printAndWait(`「………知道了、我就这样退下了」`); // :7785
+  } else if (choice == 1) {
+    // :7786 勲章授与
+    await era.printAndWait(`「呵呵呵、很高兴获得勋章」`); // :7788
+  } else if (choice == 2) {
+    if (gohoubi == 0) {
+      // :7790 お金を渡す
+      await era.printAndWait(`「嗯、勇者捕获的报酬确实收到了」`); // :7792
+    } else if (gohoubi == 1) {
+      // :7793 犬と獣姦（源作两支同文，1:1 保真）
+      if (era0(`talent:${a}:0`) == 1) {
+        // :7795 处女
+        await era.printAndWait(
+          `「嗯嗯！啊啊！果然连声音都不一样…被狗侵犯…我快不行了${heart(1)}」`,
+        ); // :7797
+      } else {
+        await era.printAndWait(
+          `「嗯嗯！啊啊！果然连声音都不一样…被狗侵犯…我快不行了${heart(1)}」`,
+        ); // :7799
+      }
+    } else if (gohoubi == 2) {
+      // :7801 豚と獣姦（源作两支同文，1:1 保真）
+      if (era0(`talent:${a}:0`) == 1) {
+        // :7803 处女
+        await era.printAndWait(
+          `「嗯嗯！啊啊！果然连声音都不一样…被猪侵犯…我快不行了${heart(1)}」`,
+        ); // :7805
+      } else {
+        await era.printAndWait(
+          `「嗯嗯！啊啊！果然连声音都不一样…被猪侵犯…我快不行了${heart(1)}」`,
+        ); // :7807
+      }
+    } else if (gohoubi == 3) {
+      // :7809 馬と獣姦（源作两支同文，1:1 保真）
+      if (era0(`talent:${a}:0`) == 1) {
+        // :7811 处女
+        await era.printAndWait(
+          `「嗯嗯！啊啊！果然连声音都不一样…被马侵犯…我快不行了${heart(1)}」`,
+        ); // :7813
+      } else {
+        await era.printAndWait(
+          `「嗯嗯！啊啊！果然连声音都不一样…被马侵犯…我快不行了${heart(1)}」`,
+        ); // :7815
+      }
+    } else if (gohoubi == 4) {
+      // :7817 キス
+      await era.printAndWait(
+        `「嗯…嗯…不行、还想再要点奖励…嗯…嗯呼${heart(1)}」`,
+      ); // :7819
+      // :7820 汉化把「十分钟以上」与「１０分以上」重复写了两遍，1:1 保真不修
+      await era.printAndWait(
+        `就这样${a_name}和你反复的接吻了十分钟以上１０分以上………`,
+      ); // :7820
+    } else if (gohoubi == 5) {
+      // :7821 セックス（源作两支同文，1:1 保真）
+      if (era0(`abl:${a}:2`) > era0(`abl:${a}:3`)) {
+        // :7823 膣とペニス
+        await era.printAndWait(
+          `「继续抱我！啊嗯！哪里！好棒${heart(1)} 啊啊嗯！就是那里就是那里！让我融化吧${heart(1)}」`,
+        ); // :7825
+      } else {
+        // :7826 アナルとペニス
+        await era.printAndWait(
+          `「继续抱我！啊嗯！哪里！好棒${heart(1)} 啊啊嗯！就是那里就是那里！让我融化吧${heart(1)}」`,
+        ); // :7828
+      }
+    } else if (gohoubi == 6) {
+      // :7830 ザーメン
+      await era.printAndWait(`「呵呵、魔王大人的精液是最好的报酬${heart(1)}」`); // :7832
+    } else if (gohoubi == 7) {
+      // :7833 乱交（源作两支同文，1:1 保真）
+      if (era0(`talent:${a}:0`) == 1) {
+        // :7835 处女
+        await era.printAndWait(
+          `「嗯啊…乱交party最棒了、还想再办啊${heart(1)}」`,
+        ); // :7837
+      } else {
+        await era.printAndWait(
+          `「嗯啊…乱交party最棒了、还想再办啊${heart(1)}」`,
+        ); // :7839
+      }
+    } else if (gohoubi == 8) {
+      // :7841 おしっこ
+      await era.printAndWait(
+        `「咕噜咕噜…嗯…魔王大人、还有什么想说的么、为了和尿的话我什么都愿意干${heart(1)}」`,
+      ); // :7843
+    } else if (gohoubi == 9) {
+      // :7844 童贞狩り
+      if (era0(`abl:${a}:2`) > era0(`abl:${a}:3`)) {
+        // :7846 膣
+        await era.printAndWait(`「怎么样、我的身体是最棒的吧？」`); // :7848
+      } else {
+        // :7849 アナル
+        await era.printAndWait(`「屁股小穴里插着新品阴茎最棒了♪」`); // :7851
+      }
+    }
+    // 源作在此处写了一个空 ELSE（无输出），移植省略
+  }
+
+  return 0;
 }
+
+// 注册进奖赏两族（TRYCALLFORM GOHOUBI_*_KOUJO_K8 的等价物，签名同 K3）
+gohoubi_request_koujo_family.register(8, () => gohoubi_request_koujo_k8());
+gohoubi_after_koujo_family.register(8, (cid, choice) =>
+  gohoubi_after_koujo_k8(undefined, cid, choice),
+);
 
 /** @OSIOKI_KOUJO_K8（:7857-7917，TARGET = A）。TODO(#239)：待填充。 */
 async function osioki_koujo_k8() {
