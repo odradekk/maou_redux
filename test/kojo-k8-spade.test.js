@@ -2667,6 +2667,428 @@ test('SELECTCOM 46 灌肠肛塞，源作无終了時分支：TEQUIP:46 未装时
   );
 });
 
+test('SELECTCOM 55 放置PLAY，初めて·それ以外：CFLAG:356 推进到 1，附加装备补充描写（含 PRINTL 空行）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:11', 1);
+    f.store.set('tequip:31:16', 1);
+  }, 55);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「稍微休息一下吗？倒不如就这样永远休息下去也可以呦」',
+    '银黑桃轻蔑的用鼻子笑着………',
+    '',
+    '银黑桃的蜜裂里，蠕虫蠕动着、毫不留情的搅动着腔内。',
+    '银黑桃的胸部上装着榨乳器，吸出着母乳。',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:356'), 1, 'CFLAG:356 推进到 1');
+});
+
+test('SELECTCOM 55 放置PLAY，二回目以降·淫乱＋欲情Lv3以上：CFLAG:356 推进到 6', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:356', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('palam:31:5', 100);
+    f.store.set('palamlv:3', 50);
+  }, 55);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…不被你碰，我都着急得快疯了、你这家伙………♡」',
+    '银黑桃的表情放松了下来、眼睛因为发情而湿润取来。有什么契机的话，好像就会那样把你推到一样………',
+    '',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:356'), 6, 'CFLAG:356 推进到 6');
+});
+
+test('SELECTCOM 56 交谈，初めて·无摄像·それ以外：CFLAG:357 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你',
+    '刚和她交谈了几句、银黑桃就一边发出着',
+    '声音，一边拼命忍耐着的回着话',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:357'), 1, 'CFLAG:357 推进到 1');
+});
+
+test('SELECTCOM 56 交谈，初めて·视频自我介绍·TALENT:89：TFLAG:32 写入位 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:89', 1);
+    f.store.set('abl:31:31', 3);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你催促着银黑桃进行自我介绍、',
+    '银黑桃把自己的本名和至今为止的性经验',
+    '甚至自慰时妄想的内容都',
+    '微笑的娓娓道来……',
+    '只是期待着把水晶球的内容送到狂王那里去，股间就开始湿了……',
+  ]);
+  assert.equal(fixture.store.get('tflag:32'), 2, 'TFLAG:32 写入位 2');
+});
+
+test('SELECTCOM 56 交谈，二回目以降·视频·淫乱＋PALAMLV4＋插着不拔：源作误写"晃着要"应为"晃着腰"，1:1 保真', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('palam:31:5', 100);
+    f.store.set('palamlv:4', 50);
+    f.store.set('tflag:60', 1);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你催促着银黑桃进行自我介绍、',
+    '银黑桃一边晃着要，一边不停的说着猥琐的语言',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，二回目以降·无摄像·TEQUIP:11：拼接"快乐的"', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('palam:31:4', 100);
+    f.store.set('palamlv:4', 50);
+    f.store.set('palam:31:5', 100);
+    f.store.set('tequip:31:11', 1);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你',
+    '刚和她交谈了几句、银黑桃就一边发出着',
+    '快乐的',
+    '声音、一边拼命忍耐着的回着话',
+  ]);
+});
+
+test('SELECTCOM 69 六九式，初めて·それ以外：CFLAG:364 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 69);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…嗯…嗯…恶、恶作剧太过分的话…我、我就要下去了！」',
+    '银黑桃一边像是要忍耐蜜裂的刺激一样左右摇动着屁股，一边舔着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:364'), 1, 'CFLAG:364 推进到 1');
+});
+
+test('SELECTCOM 69 六九式，二回目以降·爱慕：源作结尾多一个引号，1:1 保真，CFLAG:364 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:364', 1);
+    f.store.set('talent:31:85', 1);
+  }, 69);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…不要…这么努力的舔我…我快不能认真舔你的阴茎了…♡」',
+    '银黑桃每次被舔到蜜裂，都会吮吸你的阴茎。',
+    '「啊…嗯…啾…啊…一边被你爱抚一边舔着你，好幸福…♡」',
+    '「嗯…嗯啾…啾…啾…啾…啊…嗯…再继续…♡」」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:364'), 4, 'CFLAG:364 推进到 4');
+});
+
+test('SELECTCOM 69 六九式，二回目以降·それ以外：源作缺失结尾引号，1:1 保真', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:364', 1);
+  }, 69);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…嗯…嗯…啊嗯…嗯啊…嗯…嗯嗯…啾…啾…不、不行啊、这么欺负我的话…啊啊！',
+    '银黑桃一边像是要忍耐蜜裂的刺激一样左右摇动着屁股，一边舔着你的阴茎。',
+    '「啊嗯…小心我会咬你啊…嗯…啊嗯」',
+  ]);
+});
+
+test('SELECTCOM 80 强制口交，初めて·それ以外（无爱慕档）：CFLAG:381 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 80);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯咕…嗯咕…！？…啊、不、不要…嗯咕…嗯…嗯咕！」',
+    '银黑桃的喉咙深处被侵犯着而翻着白眼。偶尔牙齿碰到阴茎的疼痛也无视，继续插了进去………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:381'), 1, 'CFLAG:381 推进到 1');
+});
+
+test('SELECTCOM 80 强制口交，二回目以降·爱＋侍奉精神Lv5（初めて 无此档，档位结构不对称，源作如此）：CFLAG:381 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:381', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:16', 5);
+  }, 80);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯咕…嗯…嗯…嗯咕…嗯…啊嗯…嗯…嗯咕♪」',
+    '银黑桃知道喉咙深处都被侵犯着，为了给予你的阴茎快感而奉仕着。',
+    '黏糊糊的舌头缠绕着你的阴茎，并为了紧闭嘴唇，让牙不碰到阴茎而努力着。',
+    '「嗯啾…啾…嗯咕…嗯…嗯咕…嗯…嗯♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:381'), 4, 'CFLAG:381 推进到 4');
+});
+
+test('SELECTCOM 123 乳夹口交，初めて·弄乳狂＋巨乳（TALENT:110）：拼接巨乳加成台词', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:78', 1);
+    f.store.set('talent:31:110', 1);
+  }, 123);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯…我明明这么舒服…啊啊…胸部太舒服了…嗯…啊嗯…嗯啾…啾♪」',
+    '银黑桃带着出神的表情一边舔着你的阴茎，一边加在乳房中间。',
+    '仔细看的话，银黑桃抓着乳房的手指，正在不停的在乳头上旋转。',
+    '「嗯…嗯咕…嗯…我…我…我的脑袋变奇怪了…嗯…咕啾…啾……♪」',
+    '「被你变大的胸部…变的更舒服了…嗯…咕啾嗯啾啾♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:360'), 1, 'CFLAG:360 推进到 1');
+});
+
+test('SELECTCOM 123 乳夹口交，二回目以降·弄乳狂＋淫乱（无巨乳）：不拼接巨乳加成，CFLAG:360 推进到 8', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:360', 1);
+    f.store.set('talent:31:78', 1);
+    f.store.set('talent:31:76', 1);
+  }, 123);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…我的阴茎…让我变得舒服的阴茎…啾…啾…嗯…啾…啾…♡」',
+    '银黑桃的乳房夹住你的阴茎、一边忍不住的吮吸着阴茎。',
+    '「嗯啾…啾…啾…啊啊…我的嘴和胸部同时被侵犯…我快高潮了…嗯…啾…嗯♡」',
+    '银黑桃一边漏出灼热的吐息、一边不停的亲吻着从胸部中露出来的你的阴茎。',
+    '「啾啾…啾♡ 我最喜欢的阴茎…啊啊…更加更加更加的让我舒服起来吧♡ 啾♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:360'), 8, 'CFLAG:360 推进到 8');
+});
+
+test('SELECTCOM 125 口交时自慰，初めて·淫乱：CFLAG:361 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  }, 125);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃看着眼前伸出来的阴茎、露出了稍微有些为难的表情。',
+    '「啊啊…虽然口交也不错、但还是想集中在自慰上…你还真是坏心眼呢♡ 啊啊…啊嗯…嗯嗯♡」',
+    '银黑桃高兴地一边含着你阴茎，一边开始了自慰………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:361'), 1, 'CFLAG:361 推进到 1');
+});
+
+test('SELECTCOM 125 口交时自慰，二回目以降·それ以外：CFLAG:361 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:361', 1);
+  }, 125);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯咕…嗯…嗯………」',
+    '银黑桃发出着鼻音、一边自慰一边吮吸着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:361'), 2, 'CFLAG:361 推进到 2');
+});
+
+test('SELECTCOM 126 手搓口交，初めて·淫乱：CFLAG:362 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  }, 126);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊嗯…♡ 嗯…啾…啾…嗯啊…你的阴茎…真好吃…嗯♡」',
+    '银黑桃一边激烈地撸着、一边像舔冰激凌那样温柔地舔着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:362'), 1, 'CFLAG:362 推进到 1');
+});
+
+test('SELECTCOM 126 手搓口交，二回目以降·侍奉精神Lv3以上：CFLAG:362 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:362', 1);
+    f.store.set('abl:31:16', 3);
+  }, 126);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啾…嗯…你被这么做就会很舒服呢…嗯…啾…啾…嗯！」',
+    '银黑桃一边脸颊泛红的用手撸着、一边继续口腔奉仕………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:362'), 3, 'CFLAG:362 推进到 3');
+});
+
+test('SELECTCOM 127 真空口交，初めて·侍奉精神Lv3以上：源作结尾多一个引号，1:1 保真，CFLAG:363 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('abl:31:16', 3);
+  }, 127);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…嗯啾…啾…啾…♪啾…啾…♪」」',
+    '银黑桃兴奋的发出着响声，吮吸着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:363'), 1, 'CFLAG:363 推进到 1');
+});
+
+test('SELECTCOM 127 真空口交，二回目以降·爱慕：CFLAG:363 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:363', 1);
+    f.store.set('talent:31:85', 1);
+  }, 127);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「你的阴茎…明明那么臭…对我来说确实最棒的香味呢…啊啊…嗯啾啾啾♡」',
+    '银黑桃因为口腔奉仕而兴奋地发出响声，开始吮吸着你的阴茎。',
+    '「在我嘴里…满满的射出来吧…啊啊…♡ 啾…啾啾…嗯嗯♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:363'), 4, 'CFLAG:363 推进到 4');
+});
+
+test('SELECTCOM 124 深喉，初めて·爱慕：CFLAG:365 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+  }, 124);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…你的阴茎全都是我的东西…嗯咕…啾…嗯…嗯咕♡」',
+    '银黑桃用鼻子喘着气，把你的阴茎一直吞到了喉咙深处………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:365'), 1, 'CFLAG:365 推进到 1');
+});
+
+test('SELECTCOM 124 深喉，二回目以降·CFLAG:363 误读源作 bug：CFLAG:365 已推进但 CFLAG:363（真空口交）碰巧偏高时被锁死，不打印任何文本、CFLAG:365 不变，1:1 保真', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:365', 1);
+    f.store.set('cflag:31:363', 10);
+    f.store.set('talent:31:76', 1);
+    f.store.set('flag:7', 1); // 覆盖 setup_k8 默认的 FLAG:7==2，走正常死区判定
+  }, 124);
+  await speak_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '源作条件读 CFLAG:363 而非 CFLAG:365，误判死区导致无分支命中',
+  );
+  assert.equal(fixture.store.get('cflag:31:365'), 1, 'CFLAG:365 未推进');
+});
+
+test('SELECTCOM 124 深喉，二回目以降·CFLAG:363 未被推高时正常触发淫乱档：CFLAG:365 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:365', 1);
+    f.store.set('cflag:31:363', 0);
+    f.store.set('talent:31:76', 1);
+  }, 124);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…我已经迷上了你的阴茎了…嗯啾…啾…嗯…嗯♡」',
+    '银黑桃用鼻子喘着气，把你的阴茎一直吞到了喉咙深处。',
+    '「啾…嗯…嗯咕…嗯…咕…啊啊…嗯…被侵犯嘴里的感觉，受不了…嗯…嗯啾♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:365'), 5, 'CFLAG:365 推进到 5');
+});
+
+test('SELECTCOM 87 穿环，初めて·淫乱·P=1（乳头）已装：CFLAG:348 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:7', 1);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 1;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
+    '「啊嗯…乳头上装上环的话…会太有感觉的…啊啊♪」',
+    '银黑桃完全勃起的乳头上的环闪着光………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:348'), 1, 'CFLAG:348 推进到 1');
+});
+
+test('SELECTCOM 87 穿环，初めて·それ以外·P=8（阴蒂，无 TALENT:121/122）已装', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:7', 8);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 8;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而悲鸣着。',
+    '「啊啊…嗯…啊啊…对我的敏感的地方…啊啊…做这种…事！」',
+    '银黑桃敏感的阴蒂上被装上了环………',
+  ]);
+});
+
+test('SELECTCOM 87 穿环，初めて·それ以外·P=8（阴茎，TALENT:121）已装：与阴蒂档文本不同', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:7', 8);
+    f.store.set('talent:31:121', 1);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 8;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而悲鸣着。',
+    '「啊咕…咕…这样的东西…不会吧………」',
+    '银黑桃一想到长出的阴茎上被强行装上环的屈辱，就不禁流下了泪………',
+  ]);
+});
+
+test('SELECTCOM 87 穿环，初めて·爱慕·P=16（舌先，源作用 PRINTFORM 不等待，此实现仍逐条 await）已装', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:7', 16);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 16;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
+    '「啊啊…如果和你舌吻的话…会变得很舒服吧…？」',
+    '银黑桃为了展示环而伸出了舌头………',
+  ]);
+});
+
+test('SELECTCOM 87 穿环，初めて·淫乱·取り外し（CFLAG:7 未含 P）：无关部位不打印装着台词', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:7', 0);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 2;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃寂寞的抚摸着取下环而留着的伤痕………',
+  ]);
+});
+
+test('SELECTCOM 87 穿环，初めて·助手在场：不打印任何文本、CFLAG:348 不写入', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.assi = 5;
+    ef.assiplay = 1;
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 1;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(
+    fixture.store.get('cflag:31:348'),
+    undefined,
+    'CFLAG:348 未写入',
+  );
+});
+
+test('SELECTCOM 87 穿环，二回目以降·淫乱·P=64（鼻穴）已装：CFLAG:348 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:348', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:7', 64);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 64;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
+    '「这个还是有点害羞呢…嗯？很酷？是这样吗」',
+    '银黑桃鼻子上的环闪着光………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:348'), 4, 'CFLAG:348 推进到 4');
+});
+
+test('SELECTCOM 87 穿环，二回目以降·助手在场：不打印任何文本、CFLAG:348 不推进', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('cflag:31:348', 1);
+    ef.assi = 5;
+    ef.assiplay = 1;
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 1;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(
+    fixture.store.get('cflag:31:348'),
+    1,
+    'CFLAG:348 保持 1，未推进',
+  );
+});
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
