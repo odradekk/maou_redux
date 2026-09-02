@@ -78,6 +78,7 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
+  kojo_message_markcng_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
@@ -96,7 +97,6 @@ const era0 = (k) => era.get(k) || 0;
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
 const STUBBED_CALLS = [
-  'KOJO_MESSAGE_MARKCNG_8',
   'SELF_KOJO_K8',
   'DUNGEON_RYOUZYOKU_K8',
   'DUNGEON_RYOUZYOKU_AFTER_K8',
@@ -10777,13 +10777,107 @@ kojo_message_palamcng_family.register(8, kojo_message_palamcng_8);
 
 /**
  * @KOJO_MESSAGE_MARKCNG_8（:6568-6648）：刻印取得口上。
- * TODO(#239)：待填充。
+ * 守卫（:6573-6589）：口塞、失神、兽奸、触手、崩坏、死斗场（源注释掉了助手
+ * 调教守卫，:6570-6571，1:1 保真不启用）。苦痛/快乐/屈服/反抗刻印 Lv3
+ * 取得（CFLAG:297-300，TFLAG:22/23/24/21 == 3）。
  */
-// eslint-disable-next-line no-unused-vars
-async function kojo_message_markcng_8(rand) {
-  stub_line('KOJO_MESSAGE_MARKCNG_8', '刻印取得口上', '本票分段填充');
+async function kojo_message_markcng_8() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const kojo = chara(target).kojo;
+
+  if (era0(`tequip:${target}:45`)) {
+    return 0;
+  }
+
+  if (game.train.失神) {
+    return 0;
+  }
+
+  if (era0(`tequip:${target}:89`)) {
+    return 0;
+  }
+
+  if (era0(`tequip:${target}:90`)) {
+    return 0;
+  }
+
+  if (era0(`talent:${target}:9`) == 1) {
+    return 0;
+  }
+
+  if (era0(`tequip:${target}:55`)) {
+    return 0;
+  }
+
+  // :6591-6603 苦痛刻印Lv3取得 CFLAG:297
+  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {
+    if (era0(`talent:${target}:85`) == 1) {
+      // :6595 爱慕
+      await era.printAndWait(`「啊啊…你竟然做到了这种程度…唔…啊…啊啊！」`); // :6596
+      await era.printAndWait(`${target_name}因为超过限度的苦痛而悲鸣着………`); // :6597
+    } else {
+      // :6598-6599 それ以外
+      await era.printAndWait(`「啊啊…这种痛苦…唔……不、不要…不要啊！」`); // :6599
+      await era.printAndWait(`${target_name}因为超过限度的苦痛而悲鸣着………`); // :6600
+    }
+    kojo.苦痛刻印Lv3 = 1; // :6602 CFLAG:297 = 1
+  }
+
+  // :6606-6619 快乐刻印Lv3取得 CFLAG:298
+  if (game.system.快乐刻印变动 == 3 && kojo.快乐刻印Lv3 == 0) {
+    if (era0(`talent:${target}:85`) == 1) {
+      // :6610 爱慕
+      await era.printAndWait(
+        `「被做了这么舒服的事的话…我…会变得离不开你的…啊啊…继续…做下去${heart(1)}」`,
+      ); // :6611
+      await era.printAndWait(
+        `身体里被刻下了强烈的快感的${target_name}、带着快融化一样的表情对${player_name}撒着娇。`,
+      ); // :6612
+      await era.printAndWait(
+        `「嗯啊…对我做更舒服的事吧${heart(1)} …来吧${heart(1)} …啊啊——${heart(1)}」`,
+      ); // :6613
+    } else {
+      // :6614-6615 それ以外
+      await era.printAndWait(
+        `「啊啊…这么舒服…还是第一次…啊啊！不行…再继续被玩弄的话我…已经…啊啊…变得奇怪…回不了头啊！」`,
+      ); // :6615
+      await era.printAndWait(
+        `${target_name}的身体里被刻下了强烈的快感、漏出了快要融化一样的表情………`,
+      ); // :6616
+    }
+    kojo.快乐刻印Lv3 = 1; // :6618 CFLAG:298 = 1
+  }
+
+  // :6624-6629 屈服刻印Lv3取得 CFLAG:299
+  if (game.system.屈服刻印变动 == 3 && kojo.屈服刻印Lv3 == 0) {
+    await era.printAndWait(`「啊啊…我…已经…不会再反抗了…」`); // :6625
+    await era.printAndWait(`「或许这才是我…新的………」`); // :6626
+    await era.printAndWait(`${target_name}完全的屈服了的样子………`); // :6627
+    kojo.屈服刻印Lv3 = 1; // :6628 CFLAG:299 = 1
+  }
+
+  // :6634-6643 反抗刻印Lv3取得 CFLAG:300
+  if (game.system.反抗刻印变动 == 3 && kojo.反抗刻印Lv3 == 0) {
+    if (era0(`talent:${target}:85`) == 1) {
+      // :6636 爱慕
+      await era.printAndWait(`「为…为什么要这么对我…真的会讨厌你的…呜呜」`); // :6637
+    } else {
+      // :6638-6639 それ以外
+      await era.printAndWait(`「咕…嗯…我真的生气了…！」`); // :6639
+      await era.printAndWait(
+        `${target_name}的眼中充满愤怒、瞪着${player_name}………`,
+      ); // :6640
+    }
+    kojo.反抗刻印Lv3 = 1; // :6642 CFLAG:300 = 1
+  }
+
   return 0;
 }
+
+// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_MARKCNG_8 的等价物）
+kojo_message_markcng_family.register(8, kojo_message_markcng_8);
 
 /**
  * @SELF_KOJO_K8（:6649-7072）：事件口上（调教后自慰/レズ/朝フェラ等）。

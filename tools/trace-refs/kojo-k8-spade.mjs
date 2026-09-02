@@ -22970,6 +22970,180 @@ export const FILES = [
         ref: '6496-6497',
         any: [/;それ以外/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6570-6571',
+        any: [/;SIF ASSI > 0 && ASSIPLAY/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6573-6589',
+        any: [/SIF TEQUIP:45/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6591-6603',
+        any: [/PRINTFORMW 「啊啊…你竟然做到了这种程度…唔…啊…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6595',
+        any: [/IF TALENT:85 == 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6596',
+        any: [/PRINTFORMW 「啊啊…你竟然做到了这种程度…唔…啊…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6597',
+        any: [/PRINTFORMW %SAVESTR:TARGET%因为超过限度的苦痛而悲鸣着………/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6599',
+        any: [/PRINTFORMW 「啊啊…这种痛苦…唔……不、不要…不要啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6600',
+        any: [/PRINTFORMW %SAVESTR:TARGET%因为超过限度的苦痛而悲鸣着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6602',
+        any: [/CFLAG:297 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6606-6619',
+        any: [
+          /PRINTFORMW 「被做了这么舒服的事的话…我…会变得离不开你的…啊啊…继续…做下去%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6610',
+        any: [/IF TALENT:85 == 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6611',
+        any: [
+          /PRINTFORMW 「被做了这么舒服的事的话…我…会变得离不开你的…啊啊…继续…做下去%UNICODE\(0x2661\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6612',
+        any: [
+          /PRINTFORMW 身体里被刻下了强烈的快感的%SAVESTR:TARGET%、带着快融化一样的表情对%SAVESTR/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6613',
+        any: [
+          /PRINTFORMW 「嗯啊…对我做更舒服的事吧%UNICODE\(0x2661\) \*1% …来吧%UNICODE\(0x2/,
+        ],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6615',
+        any: [
+          /PRINTFORMW 「啊啊…这么舒服…还是第一次…啊啊！不行…再继续被玩弄的话我…已经…啊啊…变得奇怪…回不了头啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6616',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的身体里被刻下了强烈的快感、漏出了快要融化一样的表情………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6618',
+        any: [/CFLAG:298 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6624-6629',
+        any: [/PRINTFORMW 「啊啊…我…已经…不会再反抗了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6625',
+        any: [/PRINTFORMW 「啊啊…我…已经…不会再反抗了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6626',
+        any: [/PRINTFORMW 「或许这才是我…新的………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6627',
+        any: [/PRINTFORMW %SAVESTR:TARGET%完全的屈服了的样子………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6628',
+        any: [/CFLAG:299 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6634-6643',
+        any: [/PRINTFORMW 「为…为什么要这么对我…真的会讨厌你的…呜呜」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6636',
+        any: [/IF TALENT:85 == 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6637',
+        any: [/PRINTFORMW 「为…为什么要这么对我…真的会讨厌你的…呜呜」/],
+      },
+
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6639',
+        any: [/PRINTFORMW 「咕…嗯…我真的生气了…！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6640',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的眼中充满愤怒、瞪着%SAVESTR:PLAYER%………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6642',
+        any: [/CFLAG:300 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6598-6599',
+        any: [/PRINTFORMW 「啊啊…这种痛苦…唔……不、不要…不要啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6614-6615',
+        any: [
+          /PRINTFORMW 「啊啊…这么舒服…还是第一次…啊啊！不行…再继续被玩弄的话我…已经…啊啊…变得奇怪…回不了头啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '6638-6639',
+        any: [/PRINTFORMW 「咕…嗯…我真的生气了…！」/],
+      },
     ],
   },
 ];
