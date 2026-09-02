@@ -519,6 +519,58 @@ export default [
     tests: ['trace-check'],
     must_mention: '登记后的样本前缀引用必须让工具全绿',
   },
+  // —— #302：CI 补引擎后，有引擎那一侧的守护 ——
+  {
+    desc: 'M2770 有引擎侧基线从 0 改成 3（默许跳过三个用例而不报警）（#302）',
+    file: 'test/engine-present-skip-baseline.txt',
+    find: '\n0\n',
+    replace: '\n3\n',
+    tests: ['skip-count-check'],
+    must_mention: '有引擎侧基线不是 0',
+  },
+  {
+    desc: 'M2771 跑错环境的方向提示被删（基线 0 时不再指向 asar 与门控）（#302）',
+    file: 'tools/skip-count-check.mjs',
+    find: "  const wrong_env =\n    baseline === 0\n      ? '\\n  基线为 0 = 有引擎环境：跳过不为 0 多半是 asar 没被 locate_asar 认出来，' +\n        '或该用例的门控条件写错了。'\n      : '';",
+    replace: "  const wrong_env = '';",
+    tests: ['skip-count-check'],
+    must_mention: '基线为 0 时应提示 asar',
+  },
+
+  // —— #304：并行模式的输出、计数与子进程参数 ——
+  {
+    desc: 'M2900 并行汇总吞掉判红子进程的计数（一条红就丢它那一整片 caught）（#304）',
+    file: 'tools/mutation-check.mjs',
+    find: '      if (m) {',
+    replace: '      if (m && r.code === 0) { // 变异：非零退出即丢计数',
+    tests: ['mutation-check'],
+    must_mention: '父进程应如实累加两片的计数',
+  },
+  {
+    desc: 'M2901 报告路径改回 process.exit（管道上会截断排队的 stdout）（#304）',
+    file: 'tools/mutation-check.mjs',
+    find: '  process.exitCode = problems.length === 0 ? 0 : 1;',
+    replace: '  process.exit(problems.length === 0 ? 0 : 1);',
+    tests: ['mutation-check'],
+    must_mention: '报告路径要用 process.exitCode',
+  },
+  {
+    desc: 'M2902 并行子进程不再继承 --baseline（副本里当场撞计数门）（#304）',
+    file: 'tools/mutation-check.mjs',
+    find: "            '--baseline',\n            String(args.baseline),",
+    replace: '            // 变异：不传 --baseline',
+    tests: ['mutation-check'],
+    must_mention: '父进程应如实累加两片的计数',
+  },
+  {
+    desc: 'M2903 引擎声明门对并行子进程的豁免被删（换表时副本里撞门）（#304）',
+    file: 'tools/mutation-check.mjs',
+    find: '  if (args.slice !== undefined) return [];',
+    replace: '  if (false) return []; // 变异：子进程也跑引擎声明门',
+    tests: ['mutation-check'],
+    must_mention: '父进程应如实累加两片的计数',
+  },
+
   {
     desc: 'M2700 鉴别力门焊死（新弱锚不再按文件报出——ENDIF 探针必须抓到失明）（#298）',
     file: 'tools/trace-check.mjs',
