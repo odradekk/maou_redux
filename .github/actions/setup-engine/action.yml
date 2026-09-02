@@ -9,7 +9,7 @@
 #
 # SHA256 断言是引擎换版的公告点：换版时新开 tag 并改这里，diff 即公告。
 name: 装引擎 bundle
-description: 从 release 下载 app.asar、校验 SHA256、导出 ERE_ENGINE_ASAR
+description: 从 release 下载 app.asar、校验 SHA256、放进 locate_asar 的候选位
 
 runs:
   using: composite
@@ -21,7 +21,14 @@ runs:
         ASAR_SHA256: 98cbd808b08c5d675665c4581ee813ff106b1bba0225102ea2950507e89808ce
       run: |
         set -euo pipefail
-        dest="$RUNNER_TEMP/app.asar"
+        # 落到 ~/.era-engine/app.asar，即 locate_asar 的第 3 号候选，而**不是**
+        # 设 ERE_ENGINE_ASAR（第 1 号候选）。理由是 M374 实测出来的：那条变异
+        # 拆掉 `ERE_ENGINE_ASAR === 'none'` 这道开关，测试要能判红，前提是
+        # 拆掉之后还能找到引擎。用环境变量时，子进程里的 none 覆盖掉它，其余
+        # 候选在 CI 上一个都不存在 → 仍是无引擎 → 测试照过 → 变异漏网。
+        # 放进第 3 号候选就与本机同构，那道开关才真的被守着。
+        dest="$HOME/.era-engine/app.asar"
+        mkdir -p "$(dirname "$dest")"
         curl -sfL --retry 3 --retry-delay 2 -o "$dest" "$ASAR_URL"
         echo "$ASAR_SHA256  $dest" | sha256sum -c -
-        echo "ERE_ENGINE_ASAR=$dest" >> "$GITHUB_ENV"
+        echo "引擎就位：$dest（locate_asar 第 3 号候选）"
