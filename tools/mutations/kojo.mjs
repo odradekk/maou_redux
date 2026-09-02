@@ -2391,4 +2391,39 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 3',
   },
+  {
+    desc: 'M1894 K8 SELECTCOM 37 肛门侍奉初めて分档丢失（ABL:16>=3 改 false，恒不命中侍奉精神分支，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上\n        await era.printAndWait(\n          `「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」`,\n        ); // :4028',
+    replace:
+      '      if (false) {\n        // 侍奉精神Lv3以上（变异：判定删除）\n        await era.printAndWait(\n          `「你都是让别人帮你把那里舔干净吧…啊啊、我明白…真没办法」`,\n        ); // :4028',
+    tests: ['kojo-k8-spade'],
+    must_mention: '这么干怎么说都有点',
+  },
+  {
+    desc: 'M1895 K8 SELECTCOM 37 肛门侍奉淫乱＋侍奉精神Lv5推进写错（CFLAG:338 = 5 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.肛门侍奉 = 5; // :4046 CFLAG:338 = 5',
+    replace: '      kojo.肛门侍奉 = 4; // :4046（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1896 K8 SELECTCOM 37 肛门侍奉爱＋侍奉精神Lv5分档丢失（TALENT:85==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:85`) == 1 &&\n      era0(`abl:${target}:16`) >= 5 &&\n      (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      era0(`abl:${target}:16`) >= 5 &&\n      (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 4',
+  },
+  {
+    desc: 'M1897 K8 SELECTCOM 37 肛门侍奉侍奉精神Lv3以上守卫丢失（ABL:16>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (\n      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // :4056-4058 侍奉精神Lv3以上',
+    replace:
+      '    } else if (\n      false &&\n      (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // :4056-4058 侍奉精神Lv3以上（变异：判定删除）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
 ];
