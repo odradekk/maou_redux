@@ -53,7 +53,7 @@ gh api repos/odradekk/maou_redux/actions/runs/<id>/jobs \
   --jq '.jobs[]|{name,conclusion,runner_name,steps:(.steps|length)}'
 ```
 
-**零步骤 + `runner_name` 为空 + 秒级失败 = 基础设施**（私有仓库的 Actions 配额、权限），与代码无关；有 runner 有步骤才去查代码。两次连红都是有人为别的事顺手 `gh run list` 才撞见的——一次 18 次 4 天（`ENGINE_SKIP_BASELINE` 差 1，真 bug），一次 15 次 2 天（配额耗尽，零 runner）。第二次照第一次的形态白查了一轮 eslint/prettier/裸克隆，**先看 runner 能省这一轮**。
+**零步骤 + `runner_name` 为空 + 秒级失败 = 基础设施**（权限、被 `concurrency` 取消、runner 排队），与代码无关；有 runner 有步骤才去查代码。**配额已不是原因**——仓库自 #302 起公开，标准 runner 分钟数免费不限量；**取消才是**：`concurrency` 只对 PR 开 `cancel-in-progress`，连着合 PR 时旧的 master push 运行会被掐掉并记成 failure（#302 实测 40 次 push 事件里 11 cancelled、8 failure、0 成功，failure 的 job 都只跑了 3–4 秒）。两次连红都是有人为别的事顺手 `gh run list` 才撞见的（18 次 4 天：`ENGINE_SKIP_BASELINE` 差 1，真 bug；15 次 2 天：零 runner）。第二次照第一次的形态白查了一轮 eslint/prettier/裸克隆，**先看 runner 能省这一轮**。
 
 CI 红期间 master 的绿红没有信息量，这比红本身危险：真回归也看不出来。**本地补信号要补到 §5.6 的阶段闸那一档**（不是每票的 T3）——CI 平时替我们跑的正是无引擎那半边与全量变异，它一停，那两项就没有别的执行点了。engineless 那半边要在 `/tmp` 裸克隆里跑并显式 `ERE_ENGINE_ASAR=none`（回落会摸到主 checkout 的引擎）。
 
@@ -152,10 +152,13 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.sh 包一层
 （并发时不把机器压死）。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
 
-**别在红绿切片的内环里跑全量**：全量约 2250 个用例 / 98 秒。
-内环用 bash tools/capped.sh npm run test:inner（只跑改动相关，去全局锁），
-交付前一次 bash tools/capped.sh npm run test:related。全量、无引擎重跑与
-全量变异都由派单人在验收时跑，你不必跑。
+**别在红绿切片的内环里跑全量**。内环用 bash tools/capped.sh npm run test:inner
+（只跑改动相关，去全局锁），交付前一次 bash tools/capped.sh npm run test:related
+＋ eslint ＋ prettier ＋ **node tools/mutation-check.mjs --files <本票改动的文件>**。
+全量 npm test、无引擎重跑、全量变异都由 CI 在每次 push 上跑，你不必跑。
+
+**--files 那一步不许用 --verify 代替**：--verify 只查条目表结构、不执行任何变异。
+#231 只跑了它就交付，全量一跑出来 7 条「红=false」——变异改下去没有任何测试变红。
 
 三个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
 test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k>——**你的新
@@ -216,35 +219,35 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话进展>"
 
 agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 issue 的验收清单。
 
-两种漂移都实测到过，判法不同：**自述的绿是自己重跑**——#161 交付时自称「三项自检全绿」，实测 `eslint --max-warnings 0` 有两处 `no-useless-escape`；**报告里的事实主张要回原始材料核**——#143 的普查报告把一处分歧描述成「误植了 `printWholeImage` 的文档」，而手册里根本没有那些内容，真正的错误是凭空多出的 `duration` 参数。
+**自述的绿现在由 CI 兜住**（#161 自称三项自检全绿、实测 eslint 有两处 `no-useless-escape` 那种事，PR 上一看便知）。**CI 兜不住的是报告里的事实主张**——那要回原始材料核。#143 的普查报告把一处分歧描述成「误植了 `printWholeImage` 的文档」，而手册里根本没有那些内容，真正的错误是凭空多出的 `duration` 参数。
 
 **分支落后 master 时，先按 §5.5 rebase 再验收**——否则要验两遍。
 
 **不必再 `export ERE_ENGINE_ASAR`。** asar 按 `ASAR_CANDIDATES` 逐条回落（含 `~/.era-engine/` 与 `/mnt/d/Code/era` 两条绝对路径），worktree 里没有 `ere-4.8.0-win-x64/` 也能命中；三处定位的同步由 `test/asar-candidates.test.js` 判红。**代价是「无引擎」不再能靠不设变量制造**（`env -u` 照样命中回落），要造得用显式开关 `ERE_ENGINE_ASAR=none`，见 §5.6。
 
-### 分层：每票跑 T3，阶段收口跑 T4
+### 分层：agent 跑 T1/T2，CI 跑 T3，派单人只做机器做不了的
 
-**全量不是每票都跑**（#256）。每票跑满约 11 分钟，其中**无引擎重跑（98s）与全量变异（约 500s）是一个阶段验一次就够**的。下面的秒数都是 `capped.sh` 限 4 核的实测值：
+**#302 起，验证的主力是 CI，不是本机。** 公开仓库的标准 runner 分钟数免费不限量，引擎经 release 资产上 runner（`.github/actions/setup-engine`），所以「全部拦下、零跳过、零红」这条严标准第一次有了自动执行点。
 
-| 层     | 谁     | 何时         | 内容                                                      | 实测          |
-| ------ | ------ | ------------ | --------------------------------------------------------- | ------------- |
-| **T1** | agent  | 每个红绿切片 | `npm run test:inner`（只跑相关，去全局锁）                | **8.5s**      |
-| **T2** | agent  | 提交前一次   | `npm run test:related` + eslint + prettier                | 25s ＋ 43s    |
-| **T3** | 派单人 | **每张票**   | 下面的三步                                                | **约 2.9 分** |
-| **T4** | 派单人 | **阶段收口** | T3 ＋无引擎重跑 ＋全量变异 ＋引擎手工验收 ＋对拍，见 §5.6 | 约 10.5 分    |
+| 层     | 谁     | 何时         | 内容                                                                                                             | 实测                     |
+| ------ | ------ | ------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **T1** | agent  | 每个红绿切片 | `npm run test:inner`                                                                                             | 8.5s                     |
+| **T2** | agent  | 提交前一次   | `test:related` ＋ eslint ＋ prettier ＋ `mutation-check --files <本票改动的文件>`                                | 约 1.5 分                |
+| **T3** | CI     | 每次 push    | `engineless`（无引擎＋跳过数守护＋eslint＋prettier）／`engine`（有引擎，跳过恒 0）／`mutation`（有引擎全量变异） | 3 分／2 分／**20–35 分** |
+| **T4** | 派单人 | 阶段收口     | 引擎手工验收 ＋ 对拍，见 §5.6                                                                                    | 约 5 分                  |
 
-**收益集中在 T1**（98s → 8.5s）与 T3（11 分 → 2.9 分）。**T2 只省一到五成**，别指望更多——真实工单必然会碰 `docs/stub-registry.md`（牵 30 个测试）与 `test/helpers/era-fixture.js`（牵 57 个），那些依赖是真的。六个已合并提交回放实测：三个精确选中、两个退回全量、**零漏测**。
+**派单人每票要做的只剩四件**，其余交给 CI：
 
-**每条都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
+1. **并上 master**（§5.5）——冲突只有人能解，也是最容易出错的一步。
+2. **开 PR，等三个 job 全绿。** 不要在本机重跑 CI 已经跑的东西。
+3. **证伪探针**：防线类交付亲手还原它声称能防的场景（判据 6）。
+4. **逐条对照工单验收清单**（下面十一条判据）。
 
-#### T3 三步（每张票）
+**T2 的 `--files` 那一步是硬要求，不许用 `--verify` 代替。** `--verify` 只查条目表结构、**不执行任何变异**；#231 的报告只跑了它，全量一跑出来 **7 条「红=false」**——变异改下去没有任何测试变红。差别就在这一步。
 
-1. **三项自检（带引擎）**：`bash tools/capped.sh npm test` / `npx eslint . --max-warnings 0` / `npx prettier --check .`。worktree 若缺 `node_modules` 先 `npm ci`——否则 `npx` 会从仓库外拉版本，eslint 与 prettier 都给出与仓库不一致的结果。
-   **这一步不砍成相关性**：它是唯一能发现「改 A 弄红了远处 B」的网，98s 不是瓶颈。
-2. **定向变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --changed`，只跑靶文件在本票改动范围内的条目，通常十几条、几十秒。**严格标准仍是「全部拦下、零跳过」**。
-3. **逐条比对工单验收清单**，并抽查本票新增的变异条目是否真被拦下。
+**引擎在 CI 上的位置有讲究**：asar 要落到 `~/.era-engine/app.asar`（`locate_asar` 的第 3 号候选），**不能只设 `ERE_ENGINE_ASAR`**。#302 首版用环境变量，结果 `M374`（拆掉 `ERE_ENGINE_ASAR === 'none'` 那道开关）在 CI 上判红=false——测试子进程里的 `none` 覆盖掉环境变量，而其余候选在 CI 上一个都不存在，于是拆掉开关后**仍然**是无引擎、测试照过、变异漏网。本机能判红只因为第 3 号候选存在。**CI 与本机不同构的地方，就是守卫会静默失效的地方。**
 
-**把全量变异退到阶段闸，就等于放弃了 `ENGINE_SKIP_BASELINE` 的逐票核对**——而那正是 master 连红 18 次 4 天的那个 bug（#135 的 M222 漏抬）。补偿已经做进工具：依赖引擎的条目带 `engine: true` 声明，门 4 在秒级的 `--verify` 里核对声明数，于是**随每次 `npm test` 都查**；全量模式再交叉核对声明与实测，声明因此不会长草。新增只被引擎比对用例守护的条目，两处一起改。
+**每条本机命令都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
 
 **验收期的读数不能与 `npm test` 或串行变异并发取。** `tools/mutation-check.mjs` 是**就地变异 + 还原**（文件头 `:30` 明写），而 `test/mutation-check.test.js` 的快速模式随 `npm test` 跑——那期间工作树是**间歇性坏的**。阶段 4 验收 #212 时踩过：一边跑着 `npm test`，一边 `node tools/compare/cli.js`，读回 54/112 而真值是 57/107，我据此误报了「对拍退化」。**判据是 `pgrep -f 'capped.sh|mutation-check.mjs'` 为空再读**，或者干脆串行：先跑完测试，再取对拍与快照类读数。`--jobs` 并行路径用隔离副本、不碰工作树，但快速模式与串行全量都碰。
 
@@ -258,7 +261,7 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
 #195 就是这么验的：同样钉死 `Math.random ≡ 0`，master 3 条失败、修复版只剩 1 条（那条是有意保留的假阳性）。这才叫证明。
 
-### 逐条对照清单时的十个判据
+### 逐条对照清单时的十一个判据
 
 1. 凡是验收清单里写着「此行为**必须有测试**」的，**做变异测试**：把那条规则改坏，确认真的有用例失败。#10 的原型曾因一句无条件删除让规则失效，而测试全绿。
 
@@ -270,19 +273,17 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
 2. **条目表的 `✓` 证明不了「新挂的宿主也红」。** `mutation-check` 的判据是「`tests` 列表里**至少一个**文件红、且输出含 `must_mention`」。给已有条目挂上新宿主（如把端到端加进 `tests`）时，很可能是老宿主代红、新宿主全程绿——条目表照样打 ✓。**验法**：把该变异应用一次，**只跑新宿主那一个文件**，确认它自己红。#120 的端到端就是这么验的（M2101/M188/M220 三条单跑均红，M188 下实测天数从 100 掉到 49；M2101 是 #295 消重前的 M157）。
 
-3. **`must_mention` 取的是「失败时打印出来的信息」，不是「被断言的值」。** 这是两回事，认错了就永远匹配不上：
+3. **`must_mention` 是「失败时打印出来的信息」，四种写法会让它永远匹配不上。** 语义是「原始 stdout 包含该片段」，认错了锚就是一条永不判红的死条目。**必须跑一次 `mutation-check --files <靶文件>` 再定，不能靠读代码推。**
+   - **取了被断言的值而不是失败信息。** `assert.ok(lines.includes('某句台词'))` 没有第三参，失败时只打印 `AssertionError` 与源码片段，**台词一个字都不出现**（#227 把游戏台词当锚填了两条，全废）。改法是补消息：`assert.equal(exp, 5, '百合经验+5')`，第三参才是锚。**新写的 `assert.ok` 一律带第三参**——不带时 Node 的默认消息只含表达式源码的**第一行**，prettier 换行后多行断言的锚必落空（#239）。
+   - **变异让代码在到达断言之前就抛错**，输出里连断言都没有，只有测试名取得到（#230）。
+   - **取了被 node 上色的值。** `node --test` 的断言差异经 `util.inspect` 上色，原始 stdout 里夹着 ANSI 转义，肉眼看着一样、`includes` 匹配不上。
+   - **写得太短等于没判。** 片段若在目标测试文件里多处出现，任何一条红都算命中。判据：`grep -c '<片段>' test/<宿主>.test.js` 应为 1。
 
-   ```js
-   assert.equal(exp, 5, '百合经验+5'); // ← 第三参才是失败时打印的，锚要取它
-   ```
+   **锚也不能挂在会变的数据上。** #236 的 M370 把锚取成一个汉字「贖」，那个字后来进了归一表、检测器不再报它，锚当场失配。取断言消息——它不随语料增长而漂。
 
-   `assert.ok(lines.includes('某句台词'))` 没有第三参，失败时只打印 `AssertionError` 与源码片段，**台词本身一个字都不出现**。#227 把游戏台词当锚填了两条，都是这么废掉的；改法是给断言补上消息，让锚真的存在。
+4. **变异条目的 `find` 可能选在一个行为不可观察的位置，那样任何测试都拦不住它。** #231 的 M1985 锚在 `TFLAG:13==998` 段，而那一段的输出是空 `PRINTFORMW`、源本身没内容——改坏它不会有任何可见差异。这比「测试不够严」隐蔽得多：条目表看着有覆盖，实际选错了靶。**只有真跑变异才看得见**，`--verify` 永远查不出来。
 
-   更极端的一种：**变异若让代码在到达断言之前就抛错**，输出里连断言都没有，只有测试名取得到（#230）。所以**锚必须跑一次再定，不能靠读代码推**——`node tools/mutation-check.mjs --files <靶文件>`，从实际输出里挑。
-
-4. **`must_mention` 不能取被 node 上色的值。** 语义是「原始 stdout 包含该片段」，而 `node --test` 的断言差异是经 `util.inspect` 上色的——数组元素、数字、字符串都裹着 ANSI 转义序列。`must_mention: '2, 2, 2, 0, 1'` 看着与输出里的 `actual: [ 0, 2, 2, 2, 0, 1 ]` 对得上，原始字节里却是 `[ ^[[33m0^[[39m, … ]`，**永远匹配不上**（#211 第三段的 M661 验收期查实）。**取断言名或测试名这类纯文本**，它们不上色；顺带满足下一条的鉴别力要求。
-
-5. **`must_mention` 写得太短等于没判。** 语义是「输出包含该片段」，片段若在目标测试文件里多处出现，任何一条含该词的用例变红都算命中。#129 的 M221 原值是 `'侵略'`，而该文件里「侵略」出现 6 次——收紧为断言原文 `'侵略必须是按钮'` 才真的在鉴别。**判据**：`grep -c '<片段>' test/<宿主>.test.js` 应为 1。
+5. **一次性迁移的判据不该留成永久断言。** #290 拆锚表时锁死了 `24162 / 24303 / 432` 三个数以证等价——但前两个数**每张移植票都会长**，于是下一张票（#236）落地就被卡住。等价性是一次性迁移的判据，该在那次迁移里验完；留成断言就是给后面每一张票设路障。改锁结构性质（「引用数 > 0 且 ERB 侧 ≥ 内联侧」「豁免数只减不增」）。
 
 6. **防线类工单，直接还原它声称能防的那个场景。** 只看变异条目表不够——那验的是「条目被拦下」，不是「防线对真实缺口有效」。#130（夹具按钮白名单）的验法是把 `[109]` 按钮从 `page-main-menu.js` 拆掉、还原 #129 的原始状态：6 条用例当场红，而**在该 PR 之前同样拆掉一条都不会红**。这才是防线成立的证据。
 
@@ -304,6 +305,12 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
     **这条只能人工查，不要指望工具。** 机器看不出「语义变没变」，唯一可机器化的子集（扩展角色表字段数变了但版本没抬）覆盖面太窄，不值得再加一处 §2 那样的固定冲突面——这是 ADR-0006 明确权衡后的选择，别顺手加个守卫把它推翻了。
 
+11. **新加的测试要问一句：它在隔离副本里还成不成立。** 变异检查的隔离副本按 `COPY_DENY` 把 `.git` 与 `node_modules` 都排除在外，CI 的 `engine` / `mutation` 两个 job 也不跑 `npm ci`。所以测试里 spawn 外部命令（`prettier`）或依赖仓库结构（`git ls-files`）在那里必然失败——#299 首版两条都踩了，把两个 job 打红。
+
+    改法看这条断言到底锁什么：**锁「我们的代码认不认某个形态」的，把那个形态写死**（外部工具会产出它，这是外部事实，拆成单独一条核对）；**锁「本仓库当前状态」的，先探一下环境**（`git rev-parse --is-inside-work-tree`）。
+
+    **两处都用 `return` 而不是 `t.skip()`。** #302 起有引擎侧的跳过数守护要求跳过恒为 0（`test/engine-present-skip-baseline.txt`），**一个 skip 就把那道门判红**。这是两道守卫互相牵制的地方，容易踩。
+
 最常触发的三类：给 `yml/_fixed.json` 的 `extendedCharaTables` 加表或加字段、改动 `yml/Chara*.yml` 的预设内容、改动已有序号的含义。**新增序号与新增整张表不触发**（引擎 `loadData` 会补 0，而 0 就是新字段的正确初值）。
 
 ### 验收中发现的小瑕疵，就在本分支顺手修
@@ -316,7 +323,22 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
 worktree 建得早于前置票合并时（见 §2），验收前必须先并上 master。**先并再验收，别验两遍。**
 
+**长跑票的真正代价不是冲突，是设计漂移。** 冲突有工具帮忙；两边各自长出同一个东西没有。#231 的基线落后十来张票，期间 master 独立长出了 `kojo_message_palamcng_family` / `kojo_message_markcng_family` 与 `self_kojo(rand, q)`，与它自己的 `palamcng_family` / `markcng_family` / 自加 `q` 是同一个方案的两套命名，23 个 register 点要逐一改接。#239 更狠：它沿用旧的适配器注册写法，而 master 的同族已改成直接注册，**`P` 因此恒 0、整段 NTR 口上永远静默**——它自己的测试用旧约定调，两边自洽，一路全绿。
+
+所以：**跑得久的票，合并交给 agent 自己做**（只有实现者分得清自己的注册点该接到哪），并在派发时就告诉它这条；**中途主动让它合一次 master**，别攒到最后。
+
 **分支提交数多时用 `git merge origin/master`，不要 rebase。** rebase 要逐个提交解一遍同样的冲突面，而这些票的冲突面高度固定（见下表），等于把同一组冲突解 N 遍。#229 有 19 个提交，改用 merge 后只解了一遍。合并进 master 时照样是一个 PR，历史也不难看。
+
+**条目表（`tools/mutations/*.mjs`）的冲突：解完先验可加载，再谈跑测试。**
+
+```
+node -e "import('./tools/mutations/kojo.mjs').then(m=>console.log('ok',m.default.length))"
+node tools/mutation-check.mjs --verify
+```
+
+同一类脚本切坏过**五次**，根因每次都一样：**冲突区两侧末尾的 `},` 常常落在冲突区之外的共享上下文里**，所以「给哪一侧补闭合括号」怎么猜都会错一次。别猜——拼法只有两种（直接相接／中间补一个 `},`），**两种都试、用能 `import` 的那种**。
+
+为什么先验加载而不是先跑测试：切坏了 `npm test` 会给你十个失败用例、没有一个指向根因，而 `import` 或 `prettier --check` 直接给你行号（实测 `SyntaxError: Unexpected token (600:3)`）。
 
 冲突面高度固定，就那五处：
 
@@ -373,31 +395,31 @@ git show <本票 sha>:<path>              # 从这里抽出本票新增的条目
 
 ## 5.6 T4 阶段闸（阶段收口时跑一次）
 
-触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。四项，约 10 分钟：
+触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。**#302 之后这里只剩两项**——无引擎重跑与全量变异都进了 CI 的每次 push，不必再手工跑：
 
-1. **无引擎重跑**：`ERE_ENGINE_ASAR=none bash tools/capped.sh npm test`，跳过数必须等于 `test/engine-skip-baseline.txt` 里的数字。新增依赖引擎的用例必须同步改该数并在注释里写出算式；**rebase 后注释里的算式会失准**（用例总数变了），一并更正。
-2. **全量变异（带引擎）**：`bash tools/capped.sh node tools/mutation-check.mjs --jobs 4`，约 600s（条目表 920 余条）。**严格标准是「全部拦下、零跳过」**。
-3. **引擎手工验收**：在主 checkout 里启动引擎跑一遍本阶段的贯通路径。
-4. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
+1. **引擎手工验收**：在主 checkout（`D:\Code\era`）里启动引擎跑一遍本阶段的贯通路径。CI 没有 GUI，这件事机器做不了。
+2. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
 
-**要在本机造出「无引擎」，`--asar none` 一个人做不到。** 它只改**父进程**对「引擎在不在场」的判定；决定**被测试子进程**能不能看见引擎的是环境变量 `ERE_ENGINE_ASAR`（`run_one` 用 `clean_env()` 透传）。所以有引擎的机器上单给 `--asar none` 会得到「跳过 0 ≠ 基线」的假红。两个一起给：
+**要在本机造出「无引擎」，`--asar none` 一个人做不到。** 它只改**父进程**对「引擎在不在场」的判定；子进程与测试各自走 `locate_asar`，会照样命中回落。两个一起给：
 
 ```
-ERE_ENGINE_ASAR=none bash tools/capped.sh node tools/mutation-check.mjs --asar none --jobs 4
+ERE_ENGINE_ASAR=none bash tools/capped.sh node tools/mutation-check.mjs --asar none --jobs 2
 ```
 
 ## 6. 收尾
 
 ```
 gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<conventional commit>" --body-file -
-gh pr merge <pr> --repo odradekk/maou_redux --squash --delete-branch
+gh pr merge <pr> --repo odradekk/maou_redux --merge --delete-branch=false
 git -C /home/bam00n/era pull --ff-only origin master   # WSL 基座：下一张票的建树基线
 git -C /mnt/d/Code/era  pull --ff-only origin master   # 主 checkout：引擎手工验收用
 orca worktree rm --worktree "path:<绝对路径>" --force --json
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
+- **纯文档改动不必等 CI**：本地 `prettier --check` 过了就直接合。CI 的 `mutation` job 要 20–35 分钟，为一份没动代码的 `.md` 排队没有意义。
 - PR 正文以 `Closes #<n>` 结尾，合并即自动关票。
+- **改到 `.github/workflows/` 的分支要用 `env -u GITHUB_TOKEN` 推**：环境变量里那个 PAT 缺 `workflow` scope，remote 会直接拒收（`refusing to allow a Personal Access Token to create or update workflow`）；`~/.config/gh/hosts.yml` 里的细粒度 token 有。`gh pr create` / `gh pr merge` 同理。
 - **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §5.5 那五处冲突。
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **需要启动引擎的手工验收，在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
