@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7，
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8，
  *       issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
@@ -12,10 +12,10 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7 七支 :786-1611——爱抚/舔阴/肛门爱抚/
- *     自慰/胸爱抚/接吻/自己扒开，各含初めて/二回目以降、助手玛奥/非助手玛奥、
- *     素质与刻印分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含
- *     处女/非处女文案分岔 TALENT:0）
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8 八支 :786-1692——爱抚/舔阴/肛门
+ *     爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入，各含初めて/二回目以降、助手
+ *     玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属分支
+ *     TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -23,8 +23,10 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 88.0%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 8 起（源文件第 1612 至 10657 行，约 46 条剩余分支，见源文件内
+ * 本票剩余工作（未落地，占全文 13468 行的约 87.4%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 9 起（源文件第 1697 至 10657 行，约 45 条剩余分支，见源文件内
+ * 存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
+ * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
  * 11881 至 12261 行），以及死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
  * 口上（第 12262 至 13468 行）。见 issue #242 的进度评论获取认领点。
@@ -45,29 +47,30 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 745 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
- * 字面量拼接的旧生成法；SELECTCOM 6/7（本轮新增两支）起改用 K10（#241）的
+ * trace-refs/kojo-k11-lily.mjs 的 785 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6/7/8（本轮新增三支）起改用 K10（#241）的
  * 逐行独立锚定法——区间内每条非空白源码行各自包一层 `^\s*...\s*$`（大区间
  * 只取开头 8 行），真正多行、鉴别力更强，两种生成法在文件内并存，旧锚未
  * 随本轮重新生成（避免无关格式化改动）。全部锚对每条锚在源全文里做精确
- * 子串计数：671 条恰好命中 1 行/1 段，可视为具备真实鉴别力。余下 74 条
- * 命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定（find_printform
- * 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/向后扩窗只要越过
- * 相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续收窄——60 条来自
- * WIP 1/N 交付范围（存在标志/@EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），
- * 落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，
- * 按 issue 讨论保持现状、不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/
+ * 子串计数：711 条恰好命中 1 行/1 段，可视为具备真实鉴别力（SELECTCOM 8
+ * 新增的 40 条锚全部一次唯一，无新增非唯一）。余下 74 条命中 >1 处，且
+ * 经验证无法在不破坏 text-fidelity 逐句绑定（find_printform 要求 n..m
+ * 窗口内首条 PRINTFORM 系行即目标句，向前/向后扩窗只要越过相邻语句自身
+ * 的 PRINTFORM 行就会误绑定）的前提下继续收窄——60 条来自 WIP 1/N 交付
+ * 范围（存在标志/@EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），落在
+ * CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，按
+ * issue 讨论保持现状、不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/
  * 1022，姉妹相认/魔族化前后两套台词在平行分支里逐字复现）；4 条来自
  * SELECTCOM 6（:1304/1310/1314/1389，首吻/二回目以降两层里各一对逐字
  * 重复的对白句）；6 条来自 SELECTCOM 7（:1485/1486/1534/1547/1586/1587，
  * 处女/非处女子分档与二回目以降两层里各一对逐字重复的对白句）。
- * SELECTCOM 3/5/6/7 内非 print 语句自身收尾行的锚（守卫 SIF/RETURN、CFLAG
- * 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法向外扩窗到唯一邻行——
- * 只有 era.print(/ era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗
- * （kojo-text-fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这
- * 74 条即便行号漂移，落点也只会落到另一处内容完全相同的复现段落，不会
- * 静默通过成不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不
- * 同，后者才是真正的零鉴别力。
+ * SELECTCOM 3/5/6/7/8 内非 print 语句自身收尾行的锚（守卫 SIF/RETURN、
+ * CFLAG 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法向外扩窗到唯一
+ * 邻行——只有 era.print(/ era.printAndWait( 语句自己收尾行的 `:N` 锚绝不
+ * 参与扩窗（kojo-text-fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行
+ * 台词）。这 74 条即便行号漂移，落点也只会落到另一处内容完全相同的复现
+ * 段落，不会静默通过成不相关文本——风险画像与结构性关键字锚（如裸
+ * `RETURN 0`）不同，后者才是真正的零鉴别力。
  */
 
 'use strict';
@@ -1185,7 +1188,7 @@ on(
 
 /**
  * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
- * SELECTCOM 0/1/2/3/5/6/7，其余编号留续轮）。
+ * SELECTCOM 0/1/2/3/5/6/7/8，其余编号留续轮）。
  *
  * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
@@ -1245,6 +1248,12 @@ on(
  * →爱慕（淫乱/爱慕两支内层再按处女分岔文案，爱慕另嵌套露出癖Lv3以上
  * 文案分岔）→露出癖Lv3以上（内层再按处女分岔追加一句）→それ以外（内层
  * 再按处女分岔追加一句）」写 5/4/3/2，两支结构对称。
+ *
+ * SELECTCOM 8（指挿入 CFLAG:309，:1616-1692）：不含处女分岔。初めて
+ * （CFLAG:309 == 0）按「助手玛奥／淫乱／屈服刻印Lv3+爱慕／それ以外」四选
+ * 写 1；二回目以降先分「助手玛奥」再各自按「淫乱→爱慕＋屈服刻印Lv3→
+ * 屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构对称，MARK:2 屈服刻印经
+ * `mark(2)` 局部帮手读取。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -2792,6 +2801,129 @@ async function kojo_message_com_11(rand) {
       kojo.自己扒开 = 2; // :1605-1606
     }
     return 0; // :1606-1611 隐式（原作 RETURN 0）
+  }
+
+  // :1616-1692 IF SELECTCOM == 8（指挿入 CFLAG:309）
+  if (era_flag.selectcom === 8) {
+    // :1618-1636 初めて（CFLAG:309 == 0）
+    if (kojo.插入手指 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(`「不，不要啊…停下…好痛啊啊！」`); // :1621
+        await era.printAndWait(
+          `『我的手指插进去了哦姐姐！怎么用，感觉舒服吗？』`,
+        ); // :1622
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          `「哈啊${heart(1)} 感觉到了，你湿漉漉的手指${heart(1)}」`,
+        ); // :1626
+      } else if (mark(2) === 3 && era.get(`talent:${target}:85`) === 1) {
+        // 屈服刻印Lv3+爱慕
+        await era.printAndWait(`「魔王大人的话…想怎么做什么都可以…嗯啊啊！」`); // :1629
+      } else {
+        // それ以外
+        await era.printAndWait(`「啊啊啊！不，不要那么粗暴啊、会痛的！」`); // :1632
+      }
+      kojo.插入手指 = 1; // :1635
+      return 0; // :1635-1636
+    }
+
+    // :1638-1691 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `「哈啊……请尽情地欺负…姐姐淫荡的蜜穴吧…嗯啊 ${heart(1)}」`,
+        ); // :1643
+        await era.printAndWait(
+          `『哎呀，只是轻轻这样用手指插了几下，姐姐的表情就已经跟高潮了一样。真是的，在我心目中的形象完全破灭了啊』`,
+        ); // :1644
+        await era.printAndWait(
+          `「因，因为，实在是太舒服了啊……姐姐的淫穴！嗯啊啊${heart(1)} 哈…呼…呼呼！」`,
+        ); // :1645
+        kojo.插入手指 = 5; // :1645-1646
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        mark(2) === 3 &&
+        (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋屈服刻印Lv3
+        await era.printAndWait(`「再，再稍微，温柔一点…嗯啊啊！」`); // :1649
+        await era.printAndWait(
+          `『放松一些啦姐姐，明明比我手指更粗的东西都能进得去♪』`,
+        ); // :1650
+        await era.printAndWait(`「呜啊啊…因，因为太羞耻了啦……啊啊！」`); // :1651
+        kojo.插入手指 = 4; // :1651-1652
+      } else if (
+        mark(2) === 3 &&
+        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(`『姐姐变得老实得多了呢，是感觉到快感了吧？』`); // :1655
+        await era.printAndWait(
+          `「才，才不是这样的…嗯啊？…啊啊啊啊！不要，不要再里面搅动啊！」`,
+        ); // :1656
+        await era.printAndWait(
+          `『这是对姐姐撒谎的惩罚哦♪为什么不坦率地承认很舒服呢？』`,
+        ); // :1657
+        kojo.插入手指 = 3; // :1657-1658
+      } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(`「住手，住手啊…啊啊啊！」`); // :1661
+        await era.printAndWait(
+          `『指头已经全部插进姐姐的里面去了哦。怎么样，感觉舒服吗？』`,
+        ); // :1662
+        await era.printAndWait(`「怎，怎么可能会舒服？！快拔出去啊啊啊！」`); // :1663
+        kojo.插入手指 = 2; // :1663-1664
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「哈啊${heart(1)} 蜜穴都湿透了，都是因为你${heart(1)}嗯啊」`,
+      ); // :1669
+      await era.printAndWait(
+        `${target_name}感受着下体被手指抽插的快感，舒服得眼泪都流下来了，不停地娇喘着。`,
+      ); // :1670
+      await era.printAndWait(`「嗯啊啊…好舒服…舒服得…要去了${heart(1)}」`); // :1671
+      kojo.插入手指 = 5; // :1671-1672
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      mark(2) === 3 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋屈服刻印Lv3
+      await era.printAndWait(
+        `「魔，魔王大人的话…想怎么玩${target_name}的那里…哈啊…都可以…嗯啊啊！」`,
+      ); // :1675
+      await era.printAndWait(
+        `${target_name}弓起了腰身，让${player_name}的手指可以更加深入地抽插自己的下体，自己也不住地娇喘着。`,
+      ); // :1676
+      await era.printAndWait(
+        `「哈啊…${target_name}的蜜穴…触感如何…魔王大人${heart(1)}嗯啊啊啊」`,
+      ); // :1677
+      kojo.插入手指 = 4; // :1677-1678
+    } else if (
+      mark(2) === 3 &&
+      (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3
+      await era.printAndWait(
+        `「还要再这样弄多久？什么时候…可以结束？嗯啊啊！」`,
+      ); // :1681
+      await era.printAndWait(`「呼…呼…什么？还，还要再来？」`); // :1682
+      kojo.插入手指 = 3; // :1682-1683
+    } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「呜啊！这么粗暴的动作…讨厌死了！啊啊啊」`); // :1686
+      kojo.插入手指 = 2; // :1686-1687
+    }
+    return 0; // :1687-1690
   }
 
   return 0;

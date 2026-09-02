@@ -4849,6 +4849,214 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 初めて：非助手玛奥 + 淫乱 + 处女',
   },
   {
+    desc: 'M2852 COM8 初めて 淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          \`「哈啊\${heart(1)} 感觉到了，你湿漉漉的手指\${heart(1)}」\`,
+        ); // :1626`,
+    replace: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
+        // 变异：判据错格
+        await era.printAndWait(
+          \`「哈啊\${heart(1)} 感觉到了，你湿漉漉的手指\${heart(1)}」\`,
+        ); // :1626`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 初めて：非助手玛奥 + 淫乱推进到 1',
+  },
+  {
+    desc: 'M2853 COM8 初めて 屈服刻印Lv3+爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (mark(2) === 3 && era.get(\`talent:\${target}:85\`) === 1) {
+        // 屈服刻印Lv3+爱慕`,
+    replace: `      } else if (mark(2) === 3 && era.get(\`talent:\${target}:76\`) === 1) {
+        // 变异：判据错格`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 初めて：非助手玛奥 + 屈服刻印Lv3+爱慕推进到 1',
+  },
+  {
+    desc: 'M2854 COM8 初めて CFLAG:309 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.插入手指 = 1; // :1635
+      return 0; // :1635-1636`,
+    replace: `      kojo.插入手指 = 0; // 变异
+      return 0; // :1635-1636`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 初めて：助手玛奥推进到 1',
+  },
+  {
+    desc: 'M2855 COM8 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (assi_mao) {
+      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+      ) {`,
+    replace: `    if (assi_mao) {
+      if (
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+      ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2856 COM8 二回目 助手玛奥淫乱 CFLAG:309 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.插入手指 = 5; // :1645-1646`,
+    replace: `        kojo.插入手指 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2857 COM8 二回目 助手玛奥爱慕＋屈服刻印Lv3判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        mark(2) === 3 &&
+        (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋屈服刻印Lv3`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        mark(2) === 3 &&
+        (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋屈服刻印Lv3`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
+  },
+  {
+    desc: 'M2858 COM8 二回目 助手玛奥爱慕＋屈服刻印Lv3 CFLAG:309 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.插入手指 = 4; // :1651-1652`,
+    replace: `        kojo.插入手指 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
+  },
+  {
+    desc: 'M2859 COM8 二回目 助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(\`『姐姐变得老实得多了呢，是感觉到快感了吧？』\`); // :1655`,
+    replace: `      } else if (
+        mark(2) === 2 && // 变异：判据错格
+        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(\`『姐姐变得老实得多了呢，是感觉到快感了吧？』\`); // :1655`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2860 COM8 二回目 助手玛奥屈服刻印Lv3 CFLAG:309 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.插入手指 = 3; // :1657-1658`,
+    replace: `        kojo.插入手指 = 2; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2861 COM8 二回目 助手玛奥それ以外 CFLAG:309 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.插入手指 = 2; // :1663-1664`,
+    replace: `        kojo.插入手指 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：助手玛奥 + それ以外推进到 2',
+  },
+  {
+    desc: 'M2862 COM8 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        \`「哈啊\${heart(1)} 蜜穴都湿透了，都是因为你\${heart(1)}嗯啊」\`,
+      ); // :1669`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        \`「哈啊\${heart(1)} 蜜穴都湿透了，都是因为你\${heart(1)}嗯啊」\`,
+      ); // :1669`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2863 COM8 二回目 非助手玛奥淫乱 CFLAG:309 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.插入手指 = 5; // :1671-1672`,
+    replace: `      kojo.插入手指 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2864 COM8 二回目 非助手玛奥爱慕＋屈服刻印Lv3判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      mark(2) === 3 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋屈服刻印Lv3`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      mark(2) === 3 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋屈服刻印Lv3`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
+  },
+  {
+    desc: 'M2865 COM8 二回目 非助手玛奥爱慕＋屈服刻印Lv3 CFLAG:309 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.插入手指 = 4; // :1677-1678`,
+    replace: `      kojo.插入手指 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
+  },
+  {
+    desc: 'M2866 COM8 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      mark(2) === 3 &&
+      (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3`,
+    replace: `    } else if (
+      mark(2) === 2 && // 变异：判据错格
+      (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2867 COM8 二回目 非助手玛奥屈服刻印Lv3 CFLAG:309 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.插入手指 = 3; // :1682-1683`,
+    replace: `      kojo.插入手指 = 2; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2868 COM8 二回目 非助手玛奥それ以外 CFLAG:309 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.插入手指 = 2; // :1686-1687`,
+    replace: `      kojo.插入手指 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM8 二回目：非助手玛奥 + それ以外推进到 2',
+  },
+  {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `game.kojo.口上存在_10 = 1; // :64 FLAG:110 = 1（K10 口上存在标志）`,
