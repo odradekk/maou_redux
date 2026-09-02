@@ -698,6 +698,11 @@ const EXEMPT_STRINGS = [
       why: 'COMF64_３Ｐ.ERB:81/:83/:85 的 PRINTL 部位组合标题，・ 是原作的动作分隔样式，逐字照抄——TRAIN_NAME:128-132 与 USERCOM:211 同款样式与处置（#212 先例，#225 收录）。整串豁免，改写时失配变红。',
     }),
   ),
+  {
+    value: '${player_name}向上挺着腰侵犯着${target_name}肛门……・',
+    where: 'ere/kojo/kojo-k8-spade.js',
+    why: 'EVENT_K8_スペード.ERB:3935 的 PRINTFORMW 行尾多打了一个・（非分隔样式，前面已是句末省略号「……」，此处纯属误触），1:1 保真原样照抄（#239 收录）。整串豁免，改写时失配变红。',
+  },
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；
