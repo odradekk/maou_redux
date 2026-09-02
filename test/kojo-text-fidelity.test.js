@@ -163,6 +163,7 @@ const ERB_TOKEN_RULES = [
     'TERN_LICK_2',
   ], // :908
   [/^RAND:2 \? 姐姐感觉舒服吗？ # 姐姐觉得我舔得舒服吗？♪$/, 'TERN_LICK_3'], // :913
+  [/^RAND:2 \? 继续、继续 # 去了、要去了$/, 'TERN_MOAN'], // :1256
 ];
 
 const JS_TOKEN_RULES = [
@@ -246,6 +247,7 @@ const JS_TOKEN_RULES = [
   [/^lick_line_1$/, 'TERN_LICK_1'],
   [/^lick_line_2$/, 'TERN_LICK_2'],
   [/^lick_line_3$/, 'TERN_LICK_3'],
+  [/^moan_word$/, 'TERN_MOAN'], // :1256 胸爱抚，与上面 ERB_TOKEN_RULES 的 TERN_MOAN 配对
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */

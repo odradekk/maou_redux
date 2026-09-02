@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3，issue #242，
- *       WIP 续轮，进行中）。
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5，issue
+ *       #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,11 +12,12 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3 四支 :786-1198——爱抚/舔阴/肛门爱抚/
- *     自慰，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档）
+ *     :754-778 与 SELECTCOM 0/1/2/3/5 五支 :786-1278——爱抚/舔阴/肛门爱抚/
+ *     自慰/胸爱抚，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与
+ *     刻印分档）
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 91.4%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 5 起（源文件第 1203 至 10657 行，约 49 条剩余分支，见源文件内
+ * 本票剩余工作（未落地，占全文 13468 行的约 90.5%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 6 起（源文件第 1283 至 10657 行，约 48 条剩余分支，见源文件内
  * `IF SELECTCOM ==` 逐条列表）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，
  * 存根已占位）、@KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -39,8 +40,8 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 510 条锚全部用源文件片段的逐字转义文本
- * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：446 条恰好
+ * trace-refs/kojo-k11-lily.mjs 的 558 条锚全部用源文件片段的逐字转义文本
+ * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：494 条恰好
  * 命中 1 行/1 段，可视为具备真实鉴别力。余下 64 条命中 >1 处，且经验证
  * 无法在不破坏 text-fidelity 逐句绑定（find_printform 要求 n..m 窗口内首条
  * PRINTFORM 系行即目标句，向前/向后扩窗只要越过相邻语句自身的 PRINTFORM
@@ -48,8 +49,9 @@
  * @EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），落在 CFLAG:400 魔族化分支
  * 与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，按 issue 讨论保持现状、
  * 不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/1022，姉妹相认/魔族化
- * 前后两套台词在平行分支里逐字复现）。SELECTCOM 3（本轮新增）经同法扩窗
- * 后无残留非唯一锚。@KOJO_MESSAGE_COM_11 头部 7 项守卫与 SELECTCOM 0/1/2/3
+ * 前后两套台词在平行分支里逐字复现）。SELECTCOM 3/5（本轮新增）经同法
+ * 扩窗后无残留非唯一锚。@KOJO_MESSAGE_COM_11 头部 7 项守卫与 SELECTCOM
+ * 0/1/2/3/5
  * 内非 print 语句自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿
  * K9（#240 commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-fidelity
@@ -1189,7 +1191,7 @@ on(
 
 /**
  * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
- * SELECTCOM 0/1/2/3，其余编号留续轮）。
+ * SELECTCOM 0/1/2/3/5，其余编号留续轮）。
  *
  * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
@@ -1223,6 +1225,13 @@ on(
  * 中毒Lv3未満（RAND:2 二选一）→屈服刻印Lv3+自慰中毒Lv1以上（RAND:2 二选
  * 一）→それ以外（RAND:2 二选一），写 9/8/7/6/5/4/3/2。ABL:31 自慰中毒经
  * `chara(target).train.自慰中毒` 门面读取。
+ *
+ * SELECTCOM 5（胸爱抚 CFLAG:306，:1203-1278）：初めて按「助手玛奥／否」
+ * 二分档写 1；二回目以降先分「助手玛奥」再各自按「淫乱→爱慕→B感覚Lv3
+ * 以上→それ以外」写 5/4/3/2，两支结构对称（与 SELECTCOM 0 同款）；助手
+ * 玛奥支的淫乱台词有一处 RAND:2 裸真值三目（源无 == 0，预算 moan_word
+ * 变量，同 SELECTCOM 1 的 lick_line_* 先例）。ABL:1 乳房感觉经
+ * `chara(target).system.乳房感觉` 门面读取。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
@@ -2023,6 +2032,161 @@ async function kojo_message_com_11(rand) {
       kojo.自慰 = 2; // :1194
     }
     return 0; // :1194-1196 隐式（原作 RETURN 0）
+  }
+
+  // :1203-1278 IF SELECTCOM == 5（胸爱抚 CFLAG:306）
+  if (era_flag.selectcom === 5) {
+    if (kojo.胸爱抚 === 0) {
+      // :1204-1217 初めて（CFLAG:306 == 0）
+      if (assi_mao) {
+        await era.printAndWait(
+          `『哇，姐姐的胸部比以前在村子里的时候更大了呢？』`,
+        ); // :1208
+        await era.printAndWait(
+          `「才，才没有那种事呢！不要揉得那么用力！会痛的啊啊！」`,
+        ); // :1209
+        await era.printAndWait(
+          `『呵呵，手感都不一样了，分明在撒谎！撒谎就要惩罚♪』`,
+        ); // :1210
+        await era.printAndWait(
+          `粉红色的乳头被妹妹用力拧着，${target_name}不住地哀鸣………`,
+        ); // :1211
+      } else {
+        await era.printAndWait(`「啊啊！不要揉得那么用力啊…好痛，好痛！」`); // :1213
+        await era.printAndWait(
+          `${target_name}哀鸣着想从${player_name}魔掌下逃脱、却被${player_name}紧紧压住，丰满双乳的调教还在继续………`,
+        ); // :1214
+      }
+      kojo.胸爱抚 = 1; // :1214-1216
+      return 0; // :1214-1217
+    }
+
+    // :1220-1275 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `『姐姐的乳头轻轻摸舔一下就变得这么色情了、啊啊真好，我也想有这样色情的乳头让魔王大人玩弄${heart(1)}』`,
+        ); // :1224
+        await era.printAndWait(
+          `${player_name}边笑着边继续玩弄着姐姐高耸饱满的双峰和因为快感而挺立着的乳头。感受着从乳头传来的连绵的快意，${target_name}从喉咙底发出一阵阵淫乱不堪的声音。。`,
+        ); // :1225
+        await era.printAndWait(
+          `「啊哈…嗯啊啊啊${heart(1)} 姐姐跟你说${heart(1)} 多让魔王大人调教你的胸部，很快妹妹的乳头就会变得和姐姐一样色情了${heart(1)}」`,
+        ); // :1226
+        await era.printAndWait(
+          `『啊哈太好了♪　然后就可以姐妹两人并排挺起色情的胸部，让魔王大人用乳环和链子把我们的乳头穿起来，牵着我们在地上爬${heart(1)}』`,
+        ); // :1227
+        kojo.胸爱抚 = 5; // :1228
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          `『哎呀，姐姐乳房好像经常被魔王大人玩到高潮哟♪　咯咯咯』`,
+        ); // :1231
+        await era.printAndWait(
+          `${player_name}露出坏笑，对着${target_name}挺起的乳头又摸又舔，还含进嘴里吸吮着。`,
+        ); // :1232
+        await era.printAndWait(
+          `「呃啊啊！就…就是这样…姐姐的胸部…是属于魔王大人…性玩具${heart(1)}」`,
+        ); // :1233
+        await era.printAndWait(
+          `『那这次，就由妹妹来让姐姐的乳房高潮吧${heart(1)} 嘻嘻嘻，我继续享用姐姐的乳头了${heart(1)}』`,
+        ); // :1234
+        await era.printAndWait(
+          `「啊啊啊，别…别让…魔王大人看见……姐姐这个样子！拜…托了！嗯啊啊${heart(1)}」`,
+        ); // :1235
+        kojo.胸爱抚 = 4; // :1236
+      } else if (
+        chara(target).system.乳房感觉 >= 3 &&
+        (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // B感覚Lv3以上
+        await era.printAndWait(
+          `『哎呀呀，姐姐的胸部变得好厉害，乳头挺得这么直…』`,
+        ); // :1239
+        await era.printAndWait(
+          `${player_name}用手指捏着${target_name}两边的乳头，不断搓柔着，不时含进嘴里吸吮，听着${target_name}因为快感而止不住地娇喘着。`,
+        ); // :1240
+        await era.printAndWait(
+          `「哈啊…嗯啊啊…不要再玩…啊啊…姐姐的乳头了…不然姐姐要…哈啊…要生气了！」`,
+        ); // :1241
+        await era.printAndWait(
+          `『原来姐姐的弱点是乳头哦，再不用害怕姐姐生气了♪』`,
+        ); // :1242
+        kojo.胸爱抚 = 3; // :1243
+      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外（爱慕無し、B感覚Lv3未満）
+        await era.printAndWait(`『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』`); // :1246
+        await era.printAndWait(
+          `${target_name}被${player_name}肆意，甚至是恶意地玩弄着双乳和乳头，又无能反抗，只能拼命忍耐着。`,
+        ); // :1247
+        await era.printAndWait(
+          `「被…被你这样玩，一点舒服的感觉……都没有！啊啊啊！」`,
+        ); // :1248
+        kojo.胸爱抚 = 2; // :1249
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「我的胸部会变得这么色情…哈啊${heart(1)} 都，都是你的责任${heart(1)} 哈啊，嗯啊啊${heart(1)}」`,
+      ); // :1253
+      await era.printAndWait(
+        `${target_name}被彻底开发，调教的双乳被${player_name}捏在手中肆意玩弄着，舌尖和指尖来回拨弄着挺立的乳头。`,
+      ); // :1254
+      await era.printAndWait(
+        `「嗯啊啊…魔王大人${heart(1)} 请再…粗暴一点…欺负我这对淫荡的巨乳和乳头吧${heart(1)}」`,
+      ); // :1255
+      const moan_word = rand_n(2) ? '继续、继续' : '去了、要去了';
+      await era.printAndWait(
+        `${target_name}似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「${moan_word}」………`,
+      ); // :1256
+      kojo.胸爱抚 = 5; // :1256-1257
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        `「魔王大人…哈啊…这个样子…真是像爱撒娇的孩子一样！嗯啊啊${heart(1)}」`,
+      ); // :1260
+      await era.printAndWait(
+        `${target_name}抱着正把头埋在自己丰满双峰之间，吸吮着乳头的${player_name}，发出一阵阵幸福的娇喘，`,
+      ); // :1261
+      await era.printAndWait(
+        `「嗯啊啊…嗯啊${heart(1)} 继续…魔王大人…哈啊嗯呃${heart(1)}」`,
+      ); // :1262
+      kojo.胸爱抚 = 4; // :1262-1263
+    } else if (
+      chara(target).system.乳房感觉 >= 3 &&
+      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // B感覚Lv3以上
+      await era.printAndWait(
+        `「嗯啊啊…不，不要这么用力的玩我的…胸部…乳头才不是，不是因为舒服才挺起来的、你，你可不要误会了……嗯呜呜」`,
+      ); // :1266
+      await era.printAndWait(
+        `${target_name}已经被充分调教过的乳房很快就有了快感，只能紧抓着床单，拼命遏制自己的呻吟。`,
+      ); // :1267
+      await era.printAndWait(`「好，好难为情…呼哈…快…快停下啦…嗯啊啊！」`); // :1268
+      kojo.胸爱抚 = 3; // :1268-1269
+    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外（爱慕無し、B感覚Lv3未満）
+      await era.printAndWait(`「无论你怎么弄，我，我也不会感觉舒服的…啊呒」`); // :1272
+      await era.printAndWait(
+        `面对${player_name}对自己乳房的爱抚、${target_name}只是双眼紧闭，咬紧牙关，默默忍受着………`,
+      ); // :1273
+      kojo.胸爱抚 = 2; // :1273-1274
+    }
+    return 0; // :1273-1276 隐式（原作 RETURN 0）
   }
 
   return 0;

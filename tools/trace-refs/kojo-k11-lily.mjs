@@ -1869,9 +1869,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-1198',
+        ref: '786-1278',
         any: [
-          /IF SELECTCOM == 0\n	;初めて\n	IF CFLAG:301 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\n			PRINTFORMW 「不行…不行啊…啊啊！」\n		;屈服刻印Lv2以上\n		ELSEIF MARK:2 >= 2\n			PRINTFORMW 「啊啊……再这样摸的话……！」\n			PRINTFORMW %SAVESTR:TARGET%的身体被手指来回抚弄，拼命忍耐着………\n		;それ以外\n		ELSE\n			PRINTFORMW 「又，又来了……真是令人讨厌……！」\n			PRINTFORMW %SAVESTR:TARGET%充满厌恶地扭动着身体躲避着………\n		ENDIF\n		CFLAG:301 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%用手指驾轻就熟地爱抚着%SAVESTR:TARGET%全身上下。\n				PRINTFORMW 「嗯啊啊…因为你的手都摸在敏感点上了…啊啊…继续%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%在爱抚下身子一扭一扭地享受着。\n				CFLAG:301 = 6\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐、见到魔王大人，心情很愉快吧。』\n				PRINTFORMW %SAVESTR:PLAYER%用手指驾轻就熟地爱抚着%SAVESTR:TARGET%全身上下。\n				PRINTFORMW 「啊啊…快，快停手啦，不然姐姐生气了…嗯啊啊…真是的…！」\n				PRINTFORMW %SAVESTR:TARGET%在爱抚下身子一扭一扭，又是躲避又是享受着。\n				PRINTFORMW 『不想被魔王大人看见这副色情的样子吗？明明超级想要被魔王大人疼爱嘛！』\n				CFLAG:301 = 5\n			;それ以外\n			ELSE\n				PRINTFORMW 『呀呀，姐姐的身体再放松一点嘛…♪』\n				PRINTFORMW %SAVESTR:PLAYER%用手指驾轻就熟地爱抚着%SAVESTR:TARGET%全身上下。\n				PRINTFORMW 「快住手啊……我们是亲姐妹啊…呜呜呜！这样怎么对得起死去的母亲啊！」\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啊嗯…不用这么温柔啦…嗯啊…摸我的时候再……再粗暴一点…%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%边娇喘着，边淫荡地摇摆着身体。\n			PRINTFORMW 「啊，啊哈……%UNICODE\(0x2661\) \*1% 就是这样！啊啊…好…好舒服%UNICODE\(0x2661\) \*1%」\n			CFLAG:301 = 6\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啊…魔王大人的爱抚……%SAVESTR:TARGET%好舒服…好幸福…」\n			PRINTFORMW %SAVESTR:TARGET%温柔地搂住了%SAVESTR:PLAYER%的脖颈，娇喘着享受着爱抚。\n			PRINTFORMW 「魔……魔王大人……我爱你……我永远是你的人…%UNICODE\(0x2661\) \*1%」\n			CFLAG:301 = 5\n		;屈服刻印Lv3\n		ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊…哈…为什么会这么舒服的……啊啊」\n			PRINTFORMW %SAVESTR:TARGET%腰身扭动着，敏感的身体在%SAVESTR:PLAYER%的爱抚下已经有了感觉。\n			PRINTFORMW 「啊啊，我的…身体……嗯啊啊！」\n			CFLAG:301 = 4\n		;屈服刻印Lv2\n		ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「哈啊…哈啊……身体好像稍微习惯了……」\n			PRINTFORMW 「嗯啊啊…为…为什么会有奇，奇怪的感觉！」\n			CFLAG:301 = 3\n		;それ以外\n		ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「一，一点舒服的感觉都没有…嗯啊…啊啊！」\n			SIF RAND:2\n				PRINTFORMW 「别，别碰我…嗯啊啊！」\n			CFLAG:301 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;クンニ CFLAG:302\n;-------------------------------------------------\nIF SELECTCOM == 1\n	;初めて\n	IF CFLAG:302 == 0\n		;处女\n		IF TALENT:TARGET:0 == 1\n			;助手マオ\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『啊呀、姐姐的蜜穴真好看…咦，还没有被魔王疼爱过这里吗？』\n				PRINTFORMW 「住手……停下…快停下啊…哈啊…啊啊啊！」\n				PRINTFORMW 『不好好回答的话，我就继续舔啦？ 啦啦啦♪』\n			ELSE\n				PRINTFORMW 「住手……停下…快停下啊…那里是小便的地方啊！」\n				PRINTFORMW 处女的纯洁，甘甜的气味涌入%SAVESTR:PLAYER%的鼻子中，一阵发痒。\n				PRINTFORMW %SAVESTR:TARGET%羞耻万分，拼命扭动着身体想要躲避。而%SAVESTR:PLAYER%秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着%SAVESTR:TARGET%的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………\n			ENDIF\n		;それ以外\n		ELSE\n			;助手マオ\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『啊呀、姐姐的蜜穴真好看…哟哟，好像已经被侵犯过了？』\n				PRINTFORMW 「啊啊……快住手啊……那里已经……已经变脏了！不能舔那里啊……！」\n			ELSE\n				PRINTFORMW 「住，住手啊！不要啊！那里……那里是已经被玷污的肮脏地方啊！」\n				PRINTFORMW %SAVESTR:TARGET%羞耻万分，拼命扭动着身体想要躲避。而%SAVESTR:PLAYER%秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着%SAVESTR:TARGET%的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………\n			ENDIF\n		ENDIF\n		CFLAG:302 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐的蜜穴和豆豆都已经变得好敏感了呢…这么一舔就全湿透了……嘻嘻♪』\n				PRINTFORMW 「啊啊……嗯啊……是，是啊，姐姐的小穴已经……这么淫荡了呢……啊啊，就是这里%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『\\@RAND:2 \? 舔姐姐的这里，我也觉得很舒服哦 # 啊哈，姐姐感觉很舒服吧♪\\@%UNICODE\(0x2661\) \*1%』\n				CFLAG:302 = 5\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐的这里，真是美味呢…呼呼…怎么魔王大人的味道也混在里面啊？』\n				PRINTFORMW 「嗯啊…哪…哪有这种事……舌头…太深入了…啊啊啊！」\n				PRINTFORMW 『\\@RAND:2 \? 姐姐的爱液都从蜜穴里流进妹妹嘴里了哦。 # 姐姐已经有感觉了呀，很舒服吧♪\\@ 我继续开动了哦♪』\n				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的舌尖下，不住地娇喘着………\n				CFLAG:302 = 4\n			;それ以外\n			ELSE\n				PRINTFORMW 『\\@RAND:2 \? 姐姐感觉舒服吗？ # 姐姐觉得我舔得舒服吗？♪\\@ 不回答的话我就再深入了哦♪』\n				PRINTFORMW 「不，不要啊、快停止…停止啊…嗯啊啊啊！」\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啦啦……魔王大人居然像狗一样舔着我的蜜穴……小母狗%SAVESTR:TARGET%真是三生有幸啊……嗯啊啊……太舒服了……」\n			PRINTFORMW %SAVESTR:TARGET%主动岔开了双腿，蜜穴和阴蒂在%SAVESTR:PLAYER%舌头灵巧地舔弄下，已经有了明显的快感。\n			PRINTFORMW 「嗯啊啊…再……魔王大人……再深入一点%UNICODE\(0x2661\) \*1% 啊啊…要，要去了……嗯啊啊%UNICODE\(0x2661\) \*1%」\n			CFLAG:302 = 5\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啊…嗯啊啊…不要啦，魔王大人…那，那里好脏的…啊啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW 虽然这么说着，%SAVESTR:TARGET%却不自觉地用双手将%SAVESTR:PLAYER%继续按在自己张开的双腿之间。\n			PRINTFORMW 「被……被魔王大人舔得……好有感觉，好舒服，啊啊啊%UNICODE\(0x2661\) \*1%」\n			CFLAG:302 = 4\n		;屈服刻印Lv3\n		ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊…呜呜…不…不要啊……嗯啊啊」\n			PRINTFORMW %SAVESTR:TARGET%任由%SAVESTR:PLAYER%舔舐着自己的蜜穴和阴蒂，已经完全放弃了抵抗，且似乎已经有了微微的快感。\n			PRINTFORMW 只能拼命忍耐着，蜜穴时不时因为快意微微颤动起来………\n			CFLAG:302 = 3\n		;反抗刻印lv1以上\n		ELSEIF MARK:3 >= 1 && MARK:2 <= 2 && \(CFLAG:302 <= 1 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「居……居然像狗一样舔着下面……你这个人……一点尊严都不要的吗……嗯啊啊」\n			PRINTFORMW %SAVESTR:TARGET%拼命扭着身子逃避着，但是双腿却被%SAVESTR:PLAYER%强行分开，脸埋在其中舔舐着蜜穴和阴蒂\n			CFLAG:302 = 2\n		;それ以外（屈服刻印Lv3未満）\n		ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\n			PRINTFORMW 「说，说了那里是尿尿的地方啊！肮脏！不洁！不要舔啊啊啊！」\n			PRINTFORMW %SAVESTR:TARGET%拼命扭动着身体想要逃避，却被%SAVESTR:PLAYER%紧紧按着分开的双腿，借着唾液的润滑，在蜜穴和阴蒂处来回舔舐着………\n			CFLAG:302 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;アナル爱慕撫 CFLAG:303\n;-------------------------------------------------\nIF SELECTCOM == 2\n	;初めて\n	IF CFLAG:303 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『魔王大人特别喜欢调教我们的肛门哦，让妹妹来先帮姐姐的屁股做好准备吧♪』\n			PRINTFORMW 「不，不要啊！那个部位……太脏了啊啊！」\n			PRINTFORMW %SAVESTR:TARGET%的肛门别%SAVESTR:PLAYER%毫不留情地用手指玩弄着，发出了一阵阵悲鸣………\n		ELSE\n			PRINTFORMW 「你……你在碰哪里！？不要啊，那种地方不可以的！」\n			PRINTFORMW %SAVESTR:TARGET%的肛门别%SAVESTR:PLAYER%毫不留情地用手指玩弄着，发出了一阵阵悲鸣………\n		ENDIF\n		CFLAG:TARGET:303 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		P = PALAM:3 \+ UP:3\n		;淫乱\+潤滑Lv2以上\n		IF TALENT:TARGET:76 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 6 \|\| FLAG:7 == 2\)\n			;助手マオ\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『哇哇，姐姐的肛门已经变得超色情了呢♪　魔王大人你看，姐姐的这里已经是名器了呢%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW 「嗯啊啊…要…要去了……屁股%UNICODE\(0x2661\) \*1% 继…继续，不要停%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『好像已经舒服到听不清我在说什么了。姐姐被玩弄肛门时的表情，一脸幸福啊%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%舔着嘴唇，继续用手指抽插，玩弄着%SAVESTR:TARGET%的肛门………\n			ELSE\n				PRINTFORMW 「哈啊！啊啊%UNICODE\(0x2661\) \*1% 好…好舒服，屁股好舒服…%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%流着口水，娇喘着，肛门一张一合地享受着被%SAVESTR:PLAYER%的手指玩弄肛门的连绵快感。\n				PRINTFORMW 「嗯啊啊……屁……屁股…光是被手指……就弄得快要去了%UNICODE\(0x2661\) \*1%」\n			ENDIF\n			CFLAG:303 = 7\n		;淫乱\+潤滑Lv2未満\n		ELSEIF TALENT:TARGET:76 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 5 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『姐姐、屁股还没湿透就把手指插进去，感觉是不是很痛呀？』\n				PRINTFORMW 「呃啊啊…明明就是故，故意的！就不能稍微温柔一点嘛？」\n				PRINTFORMW 『不过姐姐的肛门还是已经感觉到快感了对吧？看，都开始一张一合的了♪』\n				PRINTFORMW %SAVESTR:TARGET%一边抱怨着，一边却无比享受着%SAVESTR:PLAYER%对肛门的玩弄和连绵的快感………\n			ELSE\n				PRINTFORMW 「真，真是的！屁股都还没湿透就这么把手指插进来……啊别…别停下呀…嗯啊啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%的肛门很快被爱液浸透，开始因为连绵的快感而一张一合着………\n			ENDIF\n			CFLAG:303 = 6\n		;爱慕\+潤滑Lv2以上\n		ELSEIF TALENT:TARGET:85 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 4 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『哎呀，姐姐的肛门已经这么敏感地张开了呀…看来已经被魔王大人好好调教，疼爱过了呢…』\n				PRINTFORMW 「嗯啊啊…哈啊！因……因为姐姐的肛门，是属于魔王大人的…玩具啊啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%不住地娇喘着，感受着被%SAVESTR:PLAYER%玩弄肛门带来的连绵快感。真是一对要好的姐妹呢………\n			ELSE\n				PRINTFORMW 「嗯啊啊……屁股……好舒服，好快乐%UNICODE\(0x2661\) \*1%… %SAVESTR:TARGET%是魔王大人的肛门性奴……请……请继续调教，侵犯%SAVESTR:TARGET%的肛门吧，魔王大人！」\n				PRINTFORMW %SAVESTR:TARGET%尽情享受着肛门的快感，摇晃着光洁的臀部诱惑着%SAVESTR:PLAYER%………\n			ENDIF\n			CFLAG:303 = 5\n		;爱慕\+潤滑Lv2未満\n		ELSEIF TALENT:TARGET:85 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 3 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『嘿嘿嘿…姐姐的肛门已经被魔王大人充分调教过了的样子呢♪』\n				PRINTFORMW 「等……等等！润滑……还不够…嗯啊…啊啊啊！」\n				PRINTFORMW %SAVESTR:PLAYER%用舌头稍微做了一下润湿，然后又继续开始用手指玩弄，抽插着%SAVESTR:TARGET%的肛门………\n			ELSE\n				PRINTFORMW 「啊啊…魔，魔王大人……请稍微……再温柔一点！」\n				PRINTFORMW %SAVESTR:TARGET%发出痛苦交杂着喜悦的呻吟，感受着%SAVESTR:PLAYER%对肛门的爱抚………\n			ENDIF\n			CFLAG:303 = 4\n		;潤滑Lv2以上＋A感覚Lv3以上\n		ELSEIF P >= PALAMLV:2 && ABL:3 >= 3 && \(CFLAG:303 <= 2 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『哎呀呀、姐姐的肛门，这么摸一下就舒服地张开了，还一扭一扭地吸着妹妹的手指呢。魔王大人快看呀♪』\n				PRINTFORMW 「讨…讨厌啊啊！停手，快停手啊！嗯啊啊…才没有感到…舒服！」\n				PRINTFORMW %SAVESTR:PLAYER%玩弄着%SAVESTR:TARGET%已经被充分调教开发的肛门，连绵的快感让%SAVESTR:TARGET%忍不住开始娇喘……\n				PRINTFORMW 『看起来姐姐很快就可以当上魔王大人的肛门性奴了呢♪』\n			ELSE\n				PRINTFORMW 「停…停手啊！不…不可以这样…哈啊……嗯啊啊……屁股……为什么这么舒服！」\n				PRINTFORMW %SAVESTR:PLAYER%玩弄着%SAVESTR:TARGET%已经被充分调教开发的肛门，连绵的快感让%SAVESTR:TARGET%忍不住开始娇喘……\n			ENDIF\n			CFLAG:303 = 3\n		;それ以外（爱慕無し、潤滑Lv2未満、A感覚Lv3未満）\n		ELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『还是太紧了呢，不过没关系，我会把姐姐的这里开发成名器的♪』\n				PRINTFORMW 「住，住手啊、好痛…真的好痛啊啊！」\n				PRINTFORMW %SAVESTR:PLAYER%舔着舌头，坏笑着继续用手指来回抠弄着%SAVESTR:TARGET%的肛门………\n			ELSE\n				PRINTFORMW 「住手！好痛啊…求求你！」\n				PRINTFORMW %SAVESTR:TARGET%泪流满面地忍耐着%SAVESTR:PLAYER%对肛门的爱抚调教………\n			ENDIF\n			CFLAG:303 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;自慰 CFLAG304\n;-------------------------------------------------\nIF SELECTCOM == 3\n	;初めて\n	IF CFLAG:304 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『姐姐自慰要更认真一点啊，还要告诉我你以前在家都是想着谁，怎么摸的。我可是每次都听见了的哦。』\n			PRINTFORMW 「不，不要说那样的谎话！才没，没有那种事！呜呜呜……」\n			PRINTFORMW %SAVESTR:TARGET%在妹妹的命令下，继续屈辱地自慰着………\n		ELSE\n			PRINTFORMW 「开，开什么玩笑…为什么要我做……这种事情…呜呜呜…」\n			PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下不得不开始自慰、屈辱的泪水从脸颊纵流而下。\n			PRINTFORMW 「什么…？还，还要继续？呜呜呜……谁来救救我？」\n		ENDIF\n		CFLAG:TARGET:304 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\)\n				;处女\n				IF TALENT:TARGET:0 == 1\n					PRINTFORMW 『啊咧？姐姐的身体都这么色情了，居然还是处女？…』\n					PRINTFORMW 「那，那有什么不好的…恩恩啊…哈啊…嗯啊啊…」\n					PRINTFORMW 『爱液流了这么多出来，难道正在幻想着被魔王的肉棒狠狠地疼爱吗？』\n					PRINTFORMW 「笨蛋！不要说出来嘛…嗯啊…啊啊啊啊，魔王大人，%SAVESTR:TARGET%要去了%UNICODE\(0x2661\) \*1%」\n				ELSE\n					PRINTFORMW 『姐姐这么激烈地同时自慰前后两边，好厉害啊…』\n					PRINTFORMW 「嗯啊啊…啊啊…在魔王大人和%SAVESTR:PLAYER%的注视下…手淫…比平时…更加有快感啊%UNICODE\(0x2661\) \*1%」\n					PRINTFORMW 『啊哈、我已经看出来了…姐姐是个喜欢自慰时被人看着的变态啊♪』\n					PRINTFORMW 「是啊…姐姐是变态色情狂…啊啊…嗯啊啊……好好欣赏姐姐被人看着自慰到高潮的样子吧%UNICODE\(0x2661\) \*1%」\n				ENDIF\n				CFLAG:304 = 7\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\)\n				;处女\n				IF TALENT:TARGET:0 == 1\n					PRINTFORML 『咦，姐姐居然还是处女？难道魔王大人不喜欢姐姐的这里吗？』\n					PRINTFORMW 「哪……哪有那样的事……是魔王大人珍…珍惜姐姐的处女之身…所以才……嗯啊啊」\n					PRINTFORMW %SAVESTR:TARGET%岔开双腿，弓着腰，在妹妹的命令下进行着自慰，脸上的表情带着些许屈辱，又不可自拔地沉浸在快感中。\n					PRINTFORML 「我说的没错吧魔王大人…但是…啊恩…什么时候…才能…真正疼爱我呢%UNICODE\(0x2661\) \*1%」\n					PRINTFORMW （『魔王大人，真正的原因是什么呢？』）%SAVESTR:PLAYER%悄悄和你耳语着。\n				ELSE\n					PRINTFORMW 『哎呀呀，姐姐这么热情地自慰着，是希望一会儿能够得到魔王大人的疼爱吗？』\n					PRINTFORMW 「啊…啊……这不是你…你命令的吗……嗯啊啊！」\n					PRINTFORMW 『啊呀，我这一说，你就湿成这样了、爱液都喷到我身上了。你一定是边想着蜜穴被魔王大人狠狠地侵犯边自慰吧。姐姐真的完全变成魔王大人的性奴了呢…』\n					PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的话羞得脸红到了耳根，然而自慰的动作却一刻也没有放缓………\n				ENDIF\n				CFLAG:304 = 5\n			;それ以外\n			ELSE\n				PRINTFORML 『哎呀呀，姐姐自慰的样子真下流，看得人家都兴奋起来了啊…♪』\n				PRINTFORMW 「不要看，不要看啊…太羞耻了…嗯啊……啊啊！」\n				PRINTFORML 『姐姐再敢把腿夹起来还说这种话，我就让魔王大人把所有部下都叫过来一起来围观姐姐自慰了哦♪』\n				PRINTFORMW 「不，不要！对不起…对不起…原谅姐姐吧…求求你…！」\n				PRINTFORMW %SAVESTR:TARGET%不敢忤逆%SAVESTR:PLAYER%的命令，泪流满面地继续再度张开双腿，在妹妹面前自慰着………\n			ENDIF\n		;淫乱＋处女\n		ELSEIF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 8 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「魔王大人为什么还不肯要了我的处子身呢，嫌弃我吗？…要是太过分的话，我会做什么可就不知道了哦？」\n			PRINTFORMW 「嗯啊…哈啊…为什么……嗯呀啊%UNICODE\(0x2661\) \*1% 总是让我自己玩自己！嗯啊啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%故意张开双腿，挑逗似的在%SAVESTR:PLAYER%动作夸张地自慰着………\n			CFLAG:304 = 9\n		;淫乱＋自慰中毒Lv3以上\n		ELSEIF TALENT:TARGET:76 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 7 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:3 == 0\n				PRINTFORMW 「嗯啊啊%UNICODE\(0x2661\) \*1% 自慰…真是世界上最棒的事了…啊哈啊…好想…被更多人视奸啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 已经完全沦为自慰狂的%SAVESTR:TARGET%在%SAVESTR:PLAYER%面前弓着身子，挺起腰不断忘我地自慰着前后两穴。\n				PRINTFORMW 「啊啊嗯%UNICODE\(0x2661\) \*1% 淫液要喷出来了…啊啊……嗯啊啊啊%UNICODE\(0x2661\) \*1%」\n			ELSEIF RAND:2 == 0\n				PRINTFORMW 「哎呀哎呀…要人家这个姿势来自慰…真，真是变态呢%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%按着%SAVESTR:PLAYER%的命令后仰着弓起腰身、分开双腿，在%SAVESTR:PLAYER%的注视下开始自慰。\n				PRINTFORMW 「吖吖%UNICODE\(0x2661\) \*1%…哈啊…啊啊啊…感觉好棒…嗯啊啊…要去了%UNICODE\(0x2661\) \*1% 嗯啊啊啊%UNICODE\(0x2661\) \*1%」\n			ELSE\n				PRINTFORMW 「啊哈啊啊…这么想要看我手淫吗…啊啊%UNICODE\(0x2661\) \*1% 真是受不了你啊…嗯啊啊…哈啊…啊啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%当着%SAVESTR:PLAYER%面，两只手同时忘我地自慰着蜜穴和肛门。爱液飞洒到了床上，地板上、空气中弥散着淫靡的味道。\n				PRINTFORMW 「现在看的满意了吗…恩恩啊%UNICODE\(0x2661\) \*1% 啊啊快感更强了%UNICODE\(0x2661\) \*1% 要去了…舒服得要去了%UNICODE\(0x2661\) \*1%」\n			ENDIF\n			CFLAG:304 = 8\n		;淫乱＋自慰中毒Lv3未満\n		ELSEIF TALENT:TARGET:76 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 6 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「真是的……明明知道……自慰什么的根本满足不了我的欲火、还让我做这种……嗯啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%露出委屈的表情，在%SAVESTR:PLAYER%的命令下，开始自慰。\n				PRINTFORMW 「啊哈啊…已经…全湿透了%UNICODE\(0x2661\) \*1% 为什么魔王大人不肯亲自%UNICODE\(0x2661\) \*1%…真是的…嗯啊啊！」\n			ELSE\n				PRINTFORMW 「嗯啊啊……就让我把宝贵的高潮这样浪费在自慰中……魔王大人真是残忍呢…嗯啊啊……哈啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%的自慰完全无法满足欲火、却又无可奈何，只能又爱又恨地瞪着%SAVESTR:PLAYER%。\n				PRINTFORMW 「不过话说回来…这样看着你的脸…哈啊…好像更有快感一些…啊恩啊啊%UNICODE\(0x2661\) \*1%」\n			ENDIF\n			CFLAG:304 = 7\n		;爱慕＋处女\n		ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「哈啊…哈啊…魔王大人……什么时候才，才会要走我的处子身…啊嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的面前，挑逗地张开双腿，持续自慰着。\n			PRINTFORMW （明明人家早就已经准备好了…呜！）\n			PRINTFORMW 尽管已经知道了%SAVESTR:TARGET%的想法、%SAVESTR:PLAYER%还是尽情欣赏，享受着%SAVESTR:TARGET%的自慰秀………	\n			CFLAG:304 = 6\n		;爱慕＋自慰中毒Lv3以上\n		ELSEIF TALENT:TARGET:85 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:3 == 0\n				PRINTFORMW 「嗯啊啊%UNICODE\(0x2661\) \*1%…哈啊…实在…太害羞了…但是手指…就是停不下来…啊啊啊魔王大人…人家这个姿势可以吗%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%的口中轻吐着娇喘，一边不住地自慰着………\n			ELSEIF RAND:2 == 0\n				PRINTFORMW 「%SAVESTR:TARGET%好…高兴在魔王大人命令下自慰啊%UNICODE\(0x2661\) \*1% 嗯啊啊…嗯啊…好舒服啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%炽热的目光注视下，忘我地自慰着………\n			ELSE\n				PRINTFORMW 「嗯啊…嗯啊啊…哈啊%UNICODE\(0x2661\) \*1% 手指…完全停不下来…不，不许看、不许看…人家要……要去了%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%沉浸在自慰带来的连绵快感中，连口水都流了出来………\n			ENDIF\n			CFLAG:304 = 5\n		;爱慕＋自慰中毒Lv3未満\n		ELSEIF TALENT:TARGET:85 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 3 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「如果是魔王大人的命令的话…！再羞耻的事我也，我也愿意…哈啊…嗯啊啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%脸红耳赤地用手指爱抚着自己得下体、在%SAVESTR:PLAYER%的注视下慢慢展开身体，开始自慰………\n			ELSE\n				PRINTFORMW 「太，太羞耻了…但如果魔王大人想要看的话…嗯啊…哈啊……嗯啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%双眼因为羞耻而微微湿润，在%SAVESTR:PLAYER%的炽热目光下开始了自慰………\n			ENDIF\n			CFLAG:304 = 4\n		;屈服刻印Lv3\+自慰中毒Lv1以上\n		ELSEIF MARK:2 == 3 &&ABL:31 >= 1 && \(CFLAG:304 <= 2 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「讨厌，不要看啊…不要看我的脸啊…嗯啊…嗯啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%屈辱地躲避着%SAVESTR:PLAYER%的视线，自慰着下体的手指却不自觉地动得更激烈了………\n			ELSE\n				PRINTFORMW 「哈啊…哈啊…可…可以停下来了吗？…啊啊，我知道了，我会继续的，我会继续的！嗯啊 啊」\n				PRINTFORMW %SAVESTR:TARGET%屈服于%SAVESTR:PLAYER%的命令，持续进行着自慰，却微微浮现了沉浸期其间的表情………\n			ENDIF\n			CFLAG:304 = 3\n		;それ以外（爱慕無し、自慰中毒Lv1未満）\n		ELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「为什么…要我做这样羞耻的事…嗯啊…哈啊」\n			ELSE\n				PRINTFORMW 「饶了我吧，求求你了…！」\n			ENDIF\n			PRINTFORMW %SAVESTR:TARGET%的脸一直红到了耳根，在极度的羞愧中开始自慰………\n			CFLAG:304 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF/,
+          /IF SELECTCOM == 0\n	;初めて\n	IF CFLAG:301 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\n			PRINTFORMW 「不行…不行啊…啊啊！」\n		;屈服刻印Lv2以上\n		ELSEIF MARK:2 >= 2\n			PRINTFORMW 「啊啊……再这样摸的话……！」\n			PRINTFORMW %SAVESTR:TARGET%的身体被手指来回抚弄，拼命忍耐着………\n		;それ以外\n		ELSE\n			PRINTFORMW 「又，又来了……真是令人讨厌……！」\n			PRINTFORMW %SAVESTR:TARGET%充满厌恶地扭动着身体躲避着………\n		ENDIF\n		CFLAG:301 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%用手指驾轻就熟地爱抚着%SAVESTR:TARGET%全身上下。\n				PRINTFORMW 「嗯啊啊…因为你的手都摸在敏感点上了…啊啊…继续%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%在爱抚下身子一扭一扭地享受着。\n				CFLAG:301 = 6\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐、见到魔王大人，心情很愉快吧。』\n				PRINTFORMW %SAVESTR:PLAYER%用手指驾轻就熟地爱抚着%SAVESTR:TARGET%全身上下。\n				PRINTFORMW 「啊啊…快，快停手啦，不然姐姐生气了…嗯啊啊…真是的…！」\n				PRINTFORMW %SAVESTR:TARGET%在爱抚下身子一扭一扭，又是躲避又是享受着。\n				PRINTFORMW 『不想被魔王大人看见这副色情的样子吗？明明超级想要被魔王大人疼爱嘛！』\n				CFLAG:301 = 5\n			;それ以外\n			ELSE\n				PRINTFORMW 『呀呀，姐姐的身体再放松一点嘛…♪』\n				PRINTFORMW %SAVESTR:PLAYER%用手指驾轻就熟地爱抚着%SAVESTR:TARGET%全身上下。\n				PRINTFORMW 「快住手啊……我们是亲姐妹啊…呜呜呜！这样怎么对得起死去的母亲啊！」\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啊嗯…不用这么温柔啦…嗯啊…摸我的时候再……再粗暴一点…%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%边娇喘着，边淫荡地摇摆着身体。\n			PRINTFORMW 「啊，啊哈……%UNICODE\(0x2661\) \*1% 就是这样！啊啊…好…好舒服%UNICODE\(0x2661\) \*1%」\n			CFLAG:301 = 6\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啊…魔王大人的爱抚……%SAVESTR:TARGET%好舒服…好幸福…」\n			PRINTFORMW %SAVESTR:TARGET%温柔地搂住了%SAVESTR:PLAYER%的脖颈，娇喘着享受着爱抚。\n			PRINTFORMW 「魔……魔王大人……我爱你……我永远是你的人…%UNICODE\(0x2661\) \*1%」\n			CFLAG:301 = 5\n		;屈服刻印Lv3\n		ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊…哈…为什么会这么舒服的……啊啊」\n			PRINTFORMW %SAVESTR:TARGET%腰身扭动着，敏感的身体在%SAVESTR:PLAYER%的爱抚下已经有了感觉。\n			PRINTFORMW 「啊啊，我的…身体……嗯啊啊！」\n			CFLAG:301 = 4\n		;屈服刻印Lv2\n		ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「哈啊…哈啊……身体好像稍微习惯了……」\n			PRINTFORMW 「嗯啊啊…为…为什么会有奇，奇怪的感觉！」\n			CFLAG:301 = 3\n		;それ以外\n		ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「一，一点舒服的感觉都没有…嗯啊…啊啊！」\n			SIF RAND:2\n				PRINTFORMW 「别，别碰我…嗯啊啊！」\n			CFLAG:301 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;クンニ CFLAG:302\n;-------------------------------------------------\nIF SELECTCOM == 1\n	;初めて\n	IF CFLAG:302 == 0\n		;处女\n		IF TALENT:TARGET:0 == 1\n			;助手マオ\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『啊呀、姐姐的蜜穴真好看…咦，还没有被魔王疼爱过这里吗？』\n				PRINTFORMW 「住手……停下…快停下啊…哈啊…啊啊啊！」\n				PRINTFORMW 『不好好回答的话，我就继续舔啦？ 啦啦啦♪』\n			ELSE\n				PRINTFORMW 「住手……停下…快停下啊…那里是小便的地方啊！」\n				PRINTFORMW 处女的纯洁，甘甜的气味涌入%SAVESTR:PLAYER%的鼻子中，一阵发痒。\n				PRINTFORMW %SAVESTR:TARGET%羞耻万分，拼命扭动着身体想要躲避。而%SAVESTR:PLAYER%秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着%SAVESTR:TARGET%的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………\n			ENDIF\n		;それ以外\n		ELSE\n			;助手マオ\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『啊呀、姐姐的蜜穴真好看…哟哟，好像已经被侵犯过了？』\n				PRINTFORMW 「啊啊……快住手啊……那里已经……已经变脏了！不能舔那里啊……！」\n			ELSE\n				PRINTFORMW 「住，住手啊！不要啊！那里……那里是已经被玷污的肮脏地方啊！」\n				PRINTFORMW %SAVESTR:TARGET%羞耻万分，拼命扭动着身体想要躲避。而%SAVESTR:PLAYER%秉承着“性奴的蜜穴必须以最严格的方式调教”的使命感、按着%SAVESTR:TARGET%的腰，从阴蒂到阴唇的每一处都仔细地舔舐着………\n			ENDIF\n		ENDIF\n		CFLAG:302 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐的蜜穴和豆豆都已经变得好敏感了呢…这么一舔就全湿透了……嘻嘻♪』\n				PRINTFORMW 「啊啊……嗯啊……是，是啊，姐姐的小穴已经……这么淫荡了呢……啊啊，就是这里%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『\\@RAND:2 \? 舔姐姐的这里，我也觉得很舒服哦 # 啊哈，姐姐感觉很舒服吧♪\\@%UNICODE\(0x2661\) \*1%』\n				CFLAG:302 = 5\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐的这里，真是美味呢…呼呼…怎么魔王大人的味道也混在里面啊？』\n				PRINTFORMW 「嗯啊…哪…哪有这种事……舌头…太深入了…啊啊啊！」\n				PRINTFORMW 『\\@RAND:2 \? 姐姐的爱液都从蜜穴里流进妹妹嘴里了哦。 # 姐姐已经有感觉了呀，很舒服吧♪\\@ 我继续开动了哦♪』\n				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的舌尖下，不住地娇喘着………\n				CFLAG:302 = 4\n			;それ以外\n			ELSE\n				PRINTFORMW 『\\@RAND:2 \? 姐姐感觉舒服吗？ # 姐姐觉得我舔得舒服吗？♪\\@ 不回答的话我就再深入了哦♪』\n				PRINTFORMW 「不，不要啊、快停止…停止啊…嗯啊啊啊！」\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啦啦……魔王大人居然像狗一样舔着我的蜜穴……小母狗%SAVESTR:TARGET%真是三生有幸啊……嗯啊啊……太舒服了……」\n			PRINTFORMW %SAVESTR:TARGET%主动岔开了双腿，蜜穴和阴蒂在%SAVESTR:PLAYER%舌头灵巧地舔弄下，已经有了明显的快感。\n			PRINTFORMW 「嗯啊啊…再……魔王大人……再深入一点%UNICODE\(0x2661\) \*1% 啊啊…要，要去了……嗯啊啊%UNICODE\(0x2661\) \*1%」\n			CFLAG:302 = 5\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「啊啊…嗯啊啊…不要啦，魔王大人…那，那里好脏的…啊啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW 虽然这么说着，%SAVESTR:TARGET%却不自觉地用双手将%SAVESTR:PLAYER%继续按在自己张开的双腿之间。\n			PRINTFORMW 「被……被魔王大人舔得……好有感觉，好舒服，啊啊啊%UNICODE\(0x2661\) \*1%」\n			CFLAG:302 = 4\n		;屈服刻印Lv3\n		ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊…呜呜…不…不要啊……嗯啊啊」\n			PRINTFORMW %SAVESTR:TARGET%任由%SAVESTR:PLAYER%舔舐着自己的蜜穴和阴蒂，已经完全放弃了抵抗，且似乎已经有了微微的快感。\n			PRINTFORMW 只能拼命忍耐着，蜜穴时不时因为快意微微颤动起来………\n			CFLAG:302 = 3\n		;反抗刻印lv1以上\n		ELSEIF MARK:3 >= 1 && MARK:2 <= 2 && \(CFLAG:302 <= 1 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「居……居然像狗一样舔着下面……你这个人……一点尊严都不要的吗……嗯啊啊」\n			PRINTFORMW %SAVESTR:TARGET%拼命扭着身子逃避着，但是双腿却被%SAVESTR:PLAYER%强行分开，脸埋在其中舔舐着蜜穴和阴蒂\n			CFLAG:302 = 2\n		;それ以外（屈服刻印Lv3未満）\n		ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\n			PRINTFORMW 「说，说了那里是尿尿的地方啊！肮脏！不洁！不要舔啊啊啊！」\n			PRINTFORMW %SAVESTR:TARGET%拼命扭动着身体想要逃避，却被%SAVESTR:PLAYER%紧紧按着分开的双腿，借着唾液的润滑，在蜜穴和阴蒂处来回舔舐着………\n			CFLAG:302 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;アナル爱慕撫 CFLAG:303\n;-------------------------------------------------\nIF SELECTCOM == 2\n	;初めて\n	IF CFLAG:303 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『魔王大人特别喜欢调教我们的肛门哦，让妹妹来先帮姐姐的屁股做好准备吧♪』\n			PRINTFORMW 「不，不要啊！那个部位……太脏了啊啊！」\n			PRINTFORMW %SAVESTR:TARGET%的肛门别%SAVESTR:PLAYER%毫不留情地用手指玩弄着，发出了一阵阵悲鸣………\n		ELSE\n			PRINTFORMW 「你……你在碰哪里！？不要啊，那种地方不可以的！」\n			PRINTFORMW %SAVESTR:TARGET%的肛门别%SAVESTR:PLAYER%毫不留情地用手指玩弄着，发出了一阵阵悲鸣………\n		ENDIF\n		CFLAG:TARGET:303 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		P = PALAM:3 \+ UP:3\n		;淫乱\+潤滑Lv2以上\n		IF TALENT:TARGET:76 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 6 \|\| FLAG:7 == 2\)\n			;助手マオ\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『哇哇，姐姐的肛门已经变得超色情了呢♪　魔王大人你看，姐姐的这里已经是名器了呢%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW 「嗯啊啊…要…要去了……屁股%UNICODE\(0x2661\) \*1% 继…继续，不要停%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『好像已经舒服到听不清我在说什么了。姐姐被玩弄肛门时的表情，一脸幸福啊%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%舔着嘴唇，继续用手指抽插，玩弄着%SAVESTR:TARGET%的肛门………\n			ELSE\n				PRINTFORMW 「哈啊！啊啊%UNICODE\(0x2661\) \*1% 好…好舒服，屁股好舒服…%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%流着口水，娇喘着，肛门一张一合地享受着被%SAVESTR:PLAYER%的手指玩弄肛门的连绵快感。\n				PRINTFORMW 「嗯啊啊……屁……屁股…光是被手指……就弄得快要去了%UNICODE\(0x2661\) \*1%」\n			ENDIF\n			CFLAG:303 = 7\n		;淫乱\+潤滑Lv2未満\n		ELSEIF TALENT:TARGET:76 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 5 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『姐姐、屁股还没湿透就把手指插进去，感觉是不是很痛呀？』\n				PRINTFORMW 「呃啊啊…明明就是故，故意的！就不能稍微温柔一点嘛？」\n				PRINTFORMW 『不过姐姐的肛门还是已经感觉到快感了对吧？看，都开始一张一合的了♪』\n				PRINTFORMW %SAVESTR:TARGET%一边抱怨着，一边却无比享受着%SAVESTR:PLAYER%对肛门的玩弄和连绵的快感………\n			ELSE\n				PRINTFORMW 「真，真是的！屁股都还没湿透就这么把手指插进来……啊别…别停下呀…嗯啊啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%的肛门很快被爱液浸透，开始因为连绵的快感而一张一合着………\n			ENDIF\n			CFLAG:303 = 6\n		;爱慕\+潤滑Lv2以上\n		ELSEIF TALENT:TARGET:85 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 4 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『哎呀，姐姐的肛门已经这么敏感地张开了呀…看来已经被魔王大人好好调教，疼爱过了呢…』\n				PRINTFORMW 「嗯啊啊…哈啊！因……因为姐姐的肛门，是属于魔王大人的…玩具啊啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%不住地娇喘着，感受着被%SAVESTR:PLAYER%玩弄肛门带来的连绵快感。真是一对要好的姐妹呢………\n			ELSE\n				PRINTFORMW 「嗯啊啊……屁股……好舒服，好快乐%UNICODE\(0x2661\) \*1%… %SAVESTR:TARGET%是魔王大人的肛门性奴……请……请继续调教，侵犯%SAVESTR:TARGET%的肛门吧，魔王大人！」\n				PRINTFORMW %SAVESTR:TARGET%尽情享受着肛门的快感，摇晃着光洁的臀部诱惑着%SAVESTR:PLAYER%………\n			ENDIF\n			CFLAG:303 = 5\n		;爱慕\+潤滑Lv2未満\n		ELSEIF TALENT:TARGET:85 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 3 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『嘿嘿嘿…姐姐的肛门已经被魔王大人充分调教过了的样子呢♪』\n				PRINTFORMW 「等……等等！润滑……还不够…嗯啊…啊啊啊！」\n				PRINTFORMW %SAVESTR:PLAYER%用舌头稍微做了一下润湿，然后又继续开始用手指玩弄，抽插着%SAVESTR:TARGET%的肛门………\n			ELSE\n				PRINTFORMW 「啊啊…魔，魔王大人……请稍微……再温柔一点！」\n				PRINTFORMW %SAVESTR:TARGET%发出痛苦交杂着喜悦的呻吟，感受着%SAVESTR:PLAYER%对肛门的爱抚………\n			ENDIF\n			CFLAG:303 = 4\n		;潤滑Lv2以上＋A感覚Lv3以上\n		ELSEIF P >= PALAMLV:2 && ABL:3 >= 3 && \(CFLAG:303 <= 2 \|\| FLAG:7 == 2\)\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『哎呀呀、姐姐的肛门，这么摸一下就舒服地张开了，还一扭一扭地吸着妹妹的手指呢。魔王大人快看呀♪』\n				PRINTFORMW 「讨…讨厌啊啊！停手，快停手啊！嗯啊啊…才没有感到…舒服！」\n				PRINTFORMW %SAVESTR:PLAYER%玩弄着%SAVESTR:TARGET%已经被充分调教开发的肛门，连绵的快感让%SAVESTR:TARGET%忍不住开始娇喘……\n				PRINTFORMW 『看起来姐姐很快就可以当上魔王大人的肛门性奴了呢♪』\n			ELSE\n				PRINTFORMW 「停…停手啊！不…不可以这样…哈啊……嗯啊啊……屁股……为什么这么舒服！」\n				PRINTFORMW %SAVESTR:PLAYER%玩弄着%SAVESTR:TARGET%已经被充分调教开发的肛门，连绵的快感让%SAVESTR:TARGET%忍不住开始娇喘……\n			ENDIF\n			CFLAG:303 = 3\n		;それ以外（爱慕無し、潤滑Lv2未満、A感覚Lv3未満）\n		ELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2\n			IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n				PRINTFORMW 『还是太紧了呢，不过没关系，我会把姐姐的这里开发成名器的♪』\n				PRINTFORMW 「住，住手啊、好痛…真的好痛啊啊！」\n				PRINTFORMW %SAVESTR:PLAYER%舔着舌头，坏笑着继续用手指来回抠弄着%SAVESTR:TARGET%的肛门………\n			ELSE\n				PRINTFORMW 「住手！好痛啊…求求你！」\n				PRINTFORMW %SAVESTR:TARGET%泪流满面地忍耐着%SAVESTR:PLAYER%对肛门的爱抚调教………\n			ENDIF\n			CFLAG:303 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;自慰 CFLAG304\n;-------------------------------------------------\nIF SELECTCOM == 3\n	;初めて\n	IF CFLAG:304 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『姐姐自慰要更认真一点啊，还要告诉我你以前在家都是想着谁，怎么摸的。我可是每次都听见了的哦。』\n			PRINTFORMW 「不，不要说那样的谎话！才没，没有那种事！呜呜呜……」\n			PRINTFORMW %SAVESTR:TARGET%在妹妹的命令下，继续屈辱地自慰着………\n		ELSE\n			PRINTFORMW 「开，开什么玩笑…为什么要我做……这种事情…呜呜呜…」\n			PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下不得不开始自慰、屈辱的泪水从脸颊纵流而下。\n			PRINTFORMW 「什么…？还，还要继续？呜呜呜……谁来救救我？」\n		ENDIF\n		CFLAG:TARGET:304 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\)\n				;处女\n				IF TALENT:TARGET:0 == 1\n					PRINTFORMW 『啊咧？姐姐的身体都这么色情了，居然还是处女？…』\n					PRINTFORMW 「那，那有什么不好的…恩恩啊…哈啊…嗯啊啊…」\n					PRINTFORMW 『爱液流了这么多出来，难道正在幻想着被魔王的肉棒狠狠地疼爱吗？』\n					PRINTFORMW 「笨蛋！不要说出来嘛…嗯啊…啊啊啊啊，魔王大人，%SAVESTR:TARGET%要去了%UNICODE\(0x2661\) \*1%」\n				ELSE\n					PRINTFORMW 『姐姐这么激烈地同时自慰前后两边，好厉害啊…』\n					PRINTFORMW 「嗯啊啊…啊啊…在魔王大人和%SAVESTR:PLAYER%的注视下…手淫…比平时…更加有快感啊%UNICODE\(0x2661\) \*1%」\n					PRINTFORMW 『啊哈、我已经看出来了…姐姐是个喜欢自慰时被人看着的变态啊♪』\n					PRINTFORMW 「是啊…姐姐是变态色情狂…啊啊…嗯啊啊……好好欣赏姐姐被人看着自慰到高潮的样子吧%UNICODE\(0x2661\) \*1%」\n				ENDIF\n				CFLAG:304 = 7\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\)\n				;处女\n				IF TALENT:TARGET:0 == 1\n					PRINTFORML 『咦，姐姐居然还是处女？难道魔王大人不喜欢姐姐的这里吗？』\n					PRINTFORMW 「哪……哪有那样的事……是魔王大人珍…珍惜姐姐的处女之身…所以才……嗯啊啊」\n					PRINTFORMW %SAVESTR:TARGET%岔开双腿，弓着腰，在妹妹的命令下进行着自慰，脸上的表情带着些许屈辱，又不可自拔地沉浸在快感中。\n					PRINTFORML 「我说的没错吧魔王大人…但是…啊恩…什么时候…才能…真正疼爱我呢%UNICODE\(0x2661\) \*1%」\n					PRINTFORMW （『魔王大人，真正的原因是什么呢？』）%SAVESTR:PLAYER%悄悄和你耳语着。\n				ELSE\n					PRINTFORMW 『哎呀呀，姐姐这么热情地自慰着，是希望一会儿能够得到魔王大人的疼爱吗？』\n					PRINTFORMW 「啊…啊……这不是你…你命令的吗……嗯啊啊！」\n					PRINTFORMW 『啊呀，我这一说，你就湿成这样了、爱液都喷到我身上了。你一定是边想着蜜穴被魔王大人狠狠地侵犯边自慰吧。姐姐真的完全变成魔王大人的性奴了呢…』\n					PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的话羞得脸红到了耳根，然而自慰的动作却一刻也没有放缓………\n				ENDIF\n				CFLAG:304 = 5\n			;それ以外\n			ELSE\n				PRINTFORML 『哎呀呀，姐姐自慰的样子真下流，看得人家都兴奋起来了啊…♪』\n				PRINTFORMW 「不要看，不要看啊…太羞耻了…嗯啊……啊啊！」\n				PRINTFORML 『姐姐再敢把腿夹起来还说这种话，我就让魔王大人把所有部下都叫过来一起来围观姐姐自慰了哦♪』\n				PRINTFORMW 「不，不要！对不起…对不起…原谅姐姐吧…求求你…！」\n				PRINTFORMW %SAVESTR:TARGET%不敢忤逆%SAVESTR:PLAYER%的命令，泪流满面地继续再度张开双腿，在妹妹面前自慰着………\n			ENDIF\n		;淫乱＋处女\n		ELSEIF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 8 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「魔王大人为什么还不肯要了我的处子身呢，嫌弃我吗？…要是太过分的话，我会做什么可就不知道了哦？」\n			PRINTFORMW 「嗯啊…哈啊…为什么……嗯呀啊%UNICODE\(0x2661\) \*1% 总是让我自己玩自己！嗯啊啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%故意张开双腿，挑逗似的在%SAVESTR:PLAYER%动作夸张地自慰着………\n			CFLAG:304 = 9\n		;淫乱＋自慰中毒Lv3以上\n		ELSEIF TALENT:TARGET:76 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 7 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:3 == 0\n				PRINTFORMW 「嗯啊啊%UNICODE\(0x2661\) \*1% 自慰…真是世界上最棒的事了…啊哈啊…好想…被更多人视奸啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 已经完全沦为自慰狂的%SAVESTR:TARGET%在%SAVESTR:PLAYER%面前弓着身子，挺起腰不断忘我地自慰着前后两穴。\n				PRINTFORMW 「啊啊嗯%UNICODE\(0x2661\) \*1% 淫液要喷出来了…啊啊……嗯啊啊啊%UNICODE\(0x2661\) \*1%」\n			ELSEIF RAND:2 == 0\n				PRINTFORMW 「哎呀哎呀…要人家这个姿势来自慰…真，真是变态呢%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%按着%SAVESTR:PLAYER%的命令后仰着弓起腰身、分开双腿，在%SAVESTR:PLAYER%的注视下开始自慰。\n				PRINTFORMW 「吖吖%UNICODE\(0x2661\) \*1%…哈啊…啊啊啊…感觉好棒…嗯啊啊…要去了%UNICODE\(0x2661\) \*1% 嗯啊啊啊%UNICODE\(0x2661\) \*1%」\n			ELSE\n				PRINTFORMW 「啊哈啊啊…这么想要看我手淫吗…啊啊%UNICODE\(0x2661\) \*1% 真是受不了你啊…嗯啊啊…哈啊…啊啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%当着%SAVESTR:PLAYER%面，两只手同时忘我地自慰着蜜穴和肛门。爱液飞洒到了床上，地板上、空气中弥散着淫靡的味道。\n				PRINTFORMW 「现在看的满意了吗…恩恩啊%UNICODE\(0x2661\) \*1% 啊啊快感更强了%UNICODE\(0x2661\) \*1% 要去了…舒服得要去了%UNICODE\(0x2661\) \*1%」\n			ENDIF\n			CFLAG:304 = 8\n		;淫乱＋自慰中毒Lv3未満\n		ELSEIF TALENT:TARGET:76 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 6 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「真是的……明明知道……自慰什么的根本满足不了我的欲火、还让我做这种……嗯啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%露出委屈的表情，在%SAVESTR:PLAYER%的命令下，开始自慰。\n				PRINTFORMW 「啊哈啊…已经…全湿透了%UNICODE\(0x2661\) \*1% 为什么魔王大人不肯亲自%UNICODE\(0x2661\) \*1%…真是的…嗯啊啊！」\n			ELSE\n				PRINTFORMW 「嗯啊啊……就让我把宝贵的高潮这样浪费在自慰中……魔王大人真是残忍呢…嗯啊啊……哈啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%的自慰完全无法满足欲火、却又无可奈何，只能又爱又恨地瞪着%SAVESTR:PLAYER%。\n				PRINTFORMW 「不过话说回来…这样看着你的脸…哈啊…好像更有快感一些…啊恩啊啊%UNICODE\(0x2661\) \*1%」\n			ENDIF\n			CFLAG:304 = 7\n		;爱慕＋处女\n		ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「哈啊…哈啊…魔王大人……什么时候才，才会要走我的处子身…啊嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的面前，挑逗地张开双腿，持续自慰着。\n			PRINTFORMW （明明人家早就已经准备好了…呜！）\n			PRINTFORMW 尽管已经知道了%SAVESTR:TARGET%的想法、%SAVESTR:PLAYER%还是尽情欣赏，享受着%SAVESTR:TARGET%的自慰秀………	\n			CFLAG:304 = 6\n		;爱慕＋自慰中毒Lv3以上\n		ELSEIF TALENT:TARGET:85 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:3 == 0\n				PRINTFORMW 「嗯啊啊%UNICODE\(0x2661\) \*1%…哈啊…实在…太害羞了…但是手指…就是停不下来…啊啊啊魔王大人…人家这个姿势可以吗%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%的口中轻吐着娇喘，一边不住地自慰着………\n			ELSEIF RAND:2 == 0\n				PRINTFORMW 「%SAVESTR:TARGET%好…高兴在魔王大人命令下自慰啊%UNICODE\(0x2661\) \*1% 嗯啊啊…嗯啊…好舒服啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%炽热的目光注视下，忘我地自慰着………\n			ELSE\n				PRINTFORMW 「嗯啊…嗯啊啊…哈啊%UNICODE\(0x2661\) \*1% 手指…完全停不下来…不，不许看、不许看…人家要……要去了%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%沉浸在自慰带来的连绵快感中，连口水都流了出来………\n			ENDIF\n			CFLAG:304 = 5\n		;爱慕＋自慰中毒Lv3未満\n		ELSEIF TALENT:TARGET:85 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 3 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「如果是魔王大人的命令的话…！再羞耻的事我也，我也愿意…哈啊…嗯啊啊%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW %SAVESTR:TARGET%脸红耳赤地用手指爱抚着自己得下体、在%SAVESTR:PLAYER%的注视下慢慢展开身体，开始自慰………\n			ELSE\n				PRINTFORMW 「太，太羞耻了…但如果魔王大人想要看的话…嗯啊…哈啊……嗯啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%双眼因为羞耻而微微湿润，在%SAVESTR:PLAYER%的炽热目光下开始了自慰………\n			ENDIF\n			CFLAG:304 = 4\n		;屈服刻印Lv3\+自慰中毒Lv1以上\n		ELSEIF MARK:2 == 3 &&ABL:31 >= 1 && \(CFLAG:304 <= 2 \|\| FLAG:7 == 2\)\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「讨厌，不要看啊…不要看我的脸啊…嗯啊…嗯啊啊！」\n				PRINTFORMW %SAVESTR:TARGET%屈辱地躲避着%SAVESTR:PLAYER%的视线，自慰着下体的手指却不自觉地动得更激烈了………\n			ELSE\n				PRINTFORMW 「哈啊…哈啊…可…可以停下来了吗？…啊啊，我知道了，我会继续的，我会继续的！嗯啊 啊」\n				PRINTFORMW %SAVESTR:TARGET%屈服于%SAVESTR:PLAYER%的命令，持续进行着自慰，却微微浮现了沉浸期其间的表情………\n			ENDIF\n			CFLAG:304 = 3\n		;それ以外（爱慕無し、自慰中毒Lv1未満）\n		ELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2\n			;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\n			IF RAND:2 == 0\n				PRINTFORMW 「为什么…要我做这样羞耻的事…嗯啊…哈啊」\n			ELSE\n				PRINTFORMW 「饶了我吧，求求你了…！」\n			ENDIF\n			PRINTFORMW %SAVESTR:TARGET%的脸一直红到了耳根，在极度的羞愧中开始自慰………\n			CFLAG:304 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF\n\n;-------------------------------------------------\n;胸爱慕撫 CFLAG:306\n;-------------------------------------------------\nIF SELECTCOM == 5\n	;初めて\n	IF CFLAG:306 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『哇，姐姐的胸部比以前在村子里的时候更大了呢？』\n			PRINTFORMW 「才，才没有那种事呢！不要揉得那么用力！会痛的啊啊！」\n			PRINTFORMW 『呵呵，手感都不一样了，分明在撒谎！撒谎就要惩罚♪』\n			PRINTFORMW 粉红色的乳头被妹妹用力拧着，%SAVESTR:TARGET%不住地哀鸣………\n		ELSE\n			PRINTFORMW 「啊啊！不要揉得那么用力啊…好痛，好痛！」\n			PRINTFORMW %SAVESTR:TARGET%哀鸣着想从%SAVESTR:PLAYER%魔掌下逃脱、却被%SAVESTR:PLAYER%紧紧压住，丰满双乳的调教还在继续………\n		ENDIF\n		CFLAG:TARGET:306 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐的乳头轻轻摸舔一下就变得这么色情了、啊啊真好，我也想有这样色情的乳头让魔王大人玩弄%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%边笑着边继续玩弄着姐姐高耸饱满的双峰和因为快感而挺立着的乳头。感受着从乳头传来的连绵的快意，%SAVESTR:TARGET%从喉咙底发出一阵阵淫乱不堪的声音。。\n				PRINTFORMW 「啊哈…嗯啊啊啊%UNICODE\(0x2661\) \*1% 姐姐跟你说%UNICODE\(0x2661\) \*1% 多让魔王大人调教你的胸部，很快妹妹的乳头就会变得和姐姐一样色情了%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『啊哈太好了♪　然后就可以姐妹两人并排挺起色情的胸部，让魔王大人用乳环和链子把我们的乳头穿起来，牵着我们在地上爬%UNICODE\(0x2661\) \*1%』\n				CFLAG:306 = 5\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐乳房好像经常被魔王大人玩到高潮哟♪　咯咯咯』\n				PRINTFORMW %SAVESTR:PLAYER%露出坏笑，对着%SAVESTR:TARGET%挺起的乳头又摸又舔，还含进嘴里吸吮着。\n				PRINTFORMW 「呃啊啊！就…就是这样…姐姐的胸部…是属于魔王大人…性玩具%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『那这次，就由妹妹来让姐姐的乳房高潮吧%UNICODE\(0x2661\) \*1% 嘻嘻嘻，我继续享用姐姐的乳头了%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW 「啊啊啊，别…别让…魔王大人看见……姐姐这个样子！拜…托了！嗯啊啊%UNICODE\(0x2661\) \*1%」\n				CFLAG:306 = 4\n			;B感覚Lv3以上\n			ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀呀，姐姐的胸部变得好厉害，乳头挺得这么直…』\n				PRINTFORMW %SAVESTR:PLAYER%用手指捏着%SAVESTR:TARGET%两边的乳头，不断搓柔着，不时含进嘴里吸吮，听着%SAVESTR:TARGET%因为快感而止不住地娇喘着。\n				PRINTFORMW 「哈啊…嗯啊啊…不要再玩…啊啊…姐姐的乳头了…不然姐姐要…哈啊…要生气了！」\n				PRINTFORMW 『原来姐姐的弱点是乳头哦，再不用害怕姐姐生气了♪』\n				CFLAG:306 = 3\n			;それ以外（爱慕無し、B感覚Lv3未満）\n			ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\n				PRINTFORMW 『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』\n				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%肆意，甚至是恶意地玩弄着双乳和乳头，又无能反抗，只能拼命忍耐着。\n				PRINTFORMW 「被…被你这样玩，一点舒服的感觉……都没有！啊啊啊！」\n				CFLAG:306 = 2\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「我的胸部会变得这么色情…哈啊%UNICODE\(0x2661\) \*1% 都，都是你的责任%UNICODE\(0x2661\) \*1% 哈啊，嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%被彻底开发，调教的双乳被%SAVESTR:PLAYER%捏在手中肆意玩弄着，舌尖和指尖来回拨弄着挺立的乳头。\n			PRINTFORMW 「嗯啊啊…魔王大人%UNICODE\(0x2661\) \*1% 请再…粗暴一点…欺负我这对淫荡的巨乳和乳头吧%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「\\@RAND:2 \? 继续、继续 # 去了、要去了\\@」………\n			CFLAG:306 = 5\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「魔王大人…哈啊…这个样子…真是像爱撒娇的孩子一样！嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%抱着正把头埋在自己丰满双峰之间，吸吮着乳头的%SAVESTR:PLAYER%，发出一阵阵幸福的娇喘，\n			PRINTFORMW 「嗯啊啊…嗯啊%UNICODE\(0x2661\) \*1% 继续…魔王大人…哈啊嗯呃%UNICODE\(0x2661\) \*1%」\n			CFLAG:306 = 4\n		;B感覚Lv3以上\n		ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊啊…不，不要这么用力的玩我的…胸部…乳头才不是，不是因为舒服才挺起来的、你，你可不要误会了……嗯呜呜」\n			PRINTFORMW %SAVESTR:TARGET%已经被充分调教过的乳房很快就有了快感，只能紧抓着床单，拼命遏制自己的呻吟。\n			PRINTFORMW 「好，好难为情…呼哈…快…快停下啦…嗯啊啊！」\n			CFLAG:306 = 3\n		;それ以外（爱慕無し、B感覚Lv3未満）\n		ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\n			PRINTFORMW 「无论你怎么弄，我，我也不会感觉舒服的…啊呒」\n			PRINTFORMW 面对%SAVESTR:PLAYER%对自己乳房的爱抚、%SAVESTR:TARGET%只是双眼紧闭，咬紧牙关，默默忍受着………\n			CFLAG:306 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF/,
         ],
       },
       {
@@ -3258,6 +3258,316 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
         ref: '1194-1196',
         any: [/			CFLAG:304 = 2\n		ENDIF\n		RETURN 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1203-1278',
+        any: [
+          /IF SELECTCOM == 5\n	;初めて\n	IF CFLAG:306 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『哇，姐姐的胸部比以前在村子里的时候更大了呢？』\n			PRINTFORMW 「才，才没有那种事呢！不要揉得那么用力！会痛的啊啊！」\n			PRINTFORMW 『呵呵，手感都不一样了，分明在撒谎！撒谎就要惩罚♪』\n			PRINTFORMW 粉红色的乳头被妹妹用力拧着，%SAVESTR:TARGET%不住地哀鸣………\n		ELSE\n			PRINTFORMW 「啊啊！不要揉得那么用力啊…好痛，好痛！」\n			PRINTFORMW %SAVESTR:TARGET%哀鸣着想从%SAVESTR:PLAYER%魔掌下逃脱、却被%SAVESTR:PLAYER%紧紧压住，丰满双乳的调教还在继续………\n		ENDIF\n		CFLAG:TARGET:306 = 1\n		RETURN 0\n	;二回目以降\n	ELSE\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐的乳头轻轻摸舔一下就变得这么色情了、啊啊真好，我也想有这样色情的乳头让魔王大人玩弄%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%边笑着边继续玩弄着姐姐高耸饱满的双峰和因为快感而挺立着的乳头。感受着从乳头传来的连绵的快意，%SAVESTR:TARGET%从喉咙底发出一阵阵淫乱不堪的声音。。\n				PRINTFORMW 「啊哈…嗯啊啊啊%UNICODE\(0x2661\) \*1% 姐姐跟你说%UNICODE\(0x2661\) \*1% 多让魔王大人调教你的胸部，很快妹妹的乳头就会变得和姐姐一样色情了%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『啊哈太好了♪　然后就可以姐妹两人并排挺起色情的胸部，让魔王大人用乳环和链子把我们的乳头穿起来，牵着我们在地上爬%UNICODE\(0x2661\) \*1%』\n				CFLAG:306 = 5\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐乳房好像经常被魔王大人玩到高潮哟♪　咯咯咯』\n				PRINTFORMW %SAVESTR:PLAYER%露出坏笑，对着%SAVESTR:TARGET%挺起的乳头又摸又舔，还含进嘴里吸吮着。\n				PRINTFORMW 「呃啊啊！就…就是这样…姐姐的胸部…是属于魔王大人…性玩具%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『那这次，就由妹妹来让姐姐的乳房高潮吧%UNICODE\(0x2661\) \*1% 嘻嘻嘻，我继续享用姐姐的乳头了%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW 「啊啊啊，别…别让…魔王大人看见……姐姐这个样子！拜…托了！嗯啊啊%UNICODE\(0x2661\) \*1%」\n				CFLAG:306 = 4\n			;B感覚Lv3以上\n			ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀呀，姐姐的胸部变得好厉害，乳头挺得这么直…』\n				PRINTFORMW %SAVESTR:PLAYER%用手指捏着%SAVESTR:TARGET%两边的乳头，不断搓柔着，不时含进嘴里吸吮，听着%SAVESTR:TARGET%因为快感而止不住地娇喘着。\n				PRINTFORMW 「哈啊…嗯啊啊…不要再玩…啊啊…姐姐的乳头了…不然姐姐要…哈啊…要生气了！」\n				PRINTFORMW 『原来姐姐的弱点是乳头哦，再不用害怕姐姐生气了♪』\n				CFLAG:306 = 3\n			;それ以外（爱慕無し、B感覚Lv3未満）\n			ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\n				PRINTFORMW 『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』\n				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%肆意，甚至是恶意地玩弄着双乳和乳头，又无能反抗，只能拼命忍耐着。\n				PRINTFORMW 「被…被你这样玩，一点舒服的感觉……都没有！啊啊啊！」\n				CFLAG:306 = 2\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「我的胸部会变得这么色情…哈啊%UNICODE\(0x2661\) \*1% 都，都是你的责任%UNICODE\(0x2661\) \*1% 哈啊，嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%被彻底开发，调教的双乳被%SAVESTR:PLAYER%捏在手中肆意玩弄着，舌尖和指尖来回拨弄着挺立的乳头。\n			PRINTFORMW 「嗯啊啊…魔王大人%UNICODE\(0x2661\) \*1% 请再…粗暴一点…欺负我这对淫荡的巨乳和乳头吧%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「\\@RAND:2 \? 继续、继续 # 去了、要去了\\@」………\n			CFLAG:306 = 5\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「魔王大人…哈啊…这个样子…真是像爱撒娇的孩子一样！嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%抱着正把头埋在自己丰满双峰之间，吸吮着乳头的%SAVESTR:PLAYER%，发出一阵阵幸福的娇喘，\n			PRINTFORMW 「嗯啊啊…嗯啊%UNICODE\(0x2661\) \*1% 继续…魔王大人…哈啊嗯呃%UNICODE\(0x2661\) \*1%」\n			CFLAG:306 = 4\n		;B感覚Lv3以上\n		ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊啊…不，不要这么用力的玩我的…胸部…乳头才不是，不是因为舒服才挺起来的、你，你可不要误会了……嗯呜呜」\n			PRINTFORMW %SAVESTR:TARGET%已经被充分调教过的乳房很快就有了快感，只能紧抓着床单，拼命遏制自己的呻吟。\n			PRINTFORMW 「好，好难为情…呼哈…快…快停下啦…嗯啊啊！」\n			CFLAG:306 = 3\n		;それ以外（爱慕無し、B感覚Lv3未満）\n		ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\n			PRINTFORMW 「无论你怎么弄，我，我也不会感觉舒服的…啊呒」\n			PRINTFORMW 面对%SAVESTR:PLAYER%对自己乳房的爱抚、%SAVESTR:TARGET%只是双眼紧闭，咬紧牙关，默默忍受着………\n			CFLAG:306 = 2\n		ENDIF\n		RETURN 0\n	ENDIF\nENDIF/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1204-1217',
+        any: [
+          /	;初めて\n	IF CFLAG:306 == 0\n		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			PRINTFORMW 『哇，姐姐的胸部比以前在村子里的时候更大了呢？』\n			PRINTFORMW 「才，才没有那种事呢！不要揉得那么用力！会痛的啊啊！」\n			PRINTFORMW 『呵呵，手感都不一样了，分明在撒谎！撒谎就要惩罚♪』\n			PRINTFORMW 粉红色的乳头被妹妹用力拧着，%SAVESTR:TARGET%不住地哀鸣………\n		ELSE\n			PRINTFORMW 「啊啊！不要揉得那么用力啊…好痛，好痛！」\n			PRINTFORMW %SAVESTR:TARGET%哀鸣着想从%SAVESTR:PLAYER%魔掌下逃脱、却被%SAVESTR:PLAYER%紧紧压住，丰满双乳的调教还在继续………\n		ENDIF\n		CFLAG:TARGET:306 = 1\n		RETURN 0/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1208',
+        any: [/			PRINTFORMW 『哇，姐姐的胸部比以前在村子里的时候更大了呢？』/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1209',
+        any: [
+          /			PRINTFORMW 「才，才没有那种事呢！不要揉得那么用力！会痛的啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1210',
+        any: [/			PRINTFORMW 『呵呵，手感都不一样了，分明在撒谎！撒谎就要惩罚♪』/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1211',
+        any: [
+          /			PRINTFORMW 粉红色的乳头被妹妹用力拧着，%SAVESTR:TARGET%不住地哀鸣………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1213',
+        any: [/			PRINTFORMW 「啊啊！不要揉得那么用力啊…好痛，好痛！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1214',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%哀鸣着想从%SAVESTR:PLAYER%魔掌下逃脱、却被%SAVESTR:PLAYER%紧紧压住，丰满双乳的调教还在继续………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1214-1216',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%哀鸣着想从%SAVESTR:PLAYER%魔掌下逃脱、却被%SAVESTR:PLAYER%紧紧压住，丰满双乳的调教还在继续………\n		ENDIF\n		CFLAG:TARGET:306 = 1/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1214-1217',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%哀鸣着想从%SAVESTR:PLAYER%魔掌下逃脱、却被%SAVESTR:PLAYER%紧紧压住，丰满双乳的调教还在继续………\n		ENDIF\n		CFLAG:TARGET:306 = 1\n		RETURN 0/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1220-1275',
+        any: [
+          /		;助手マオ\n		IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\n			;淫乱\n			IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『姐姐的乳头轻轻摸舔一下就变得这么色情了、啊啊真好，我也想有这样色情的乳头让魔王大人玩弄%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW %SAVESTR:PLAYER%边笑着边继续玩弄着姐姐高耸饱满的双峰和因为快感而挺立着的乳头。感受着从乳头传来的连绵的快意，%SAVESTR:TARGET%从喉咙底发出一阵阵淫乱不堪的声音。。\n				PRINTFORMW 「啊哈…嗯啊啊啊%UNICODE\(0x2661\) \*1% 姐姐跟你说%UNICODE\(0x2661\) \*1% 多让魔王大人调教你的胸部，很快妹妹的乳头就会变得和姐姐一样色情了%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『啊哈太好了♪　然后就可以姐妹两人并排挺起色情的胸部，让魔王大人用乳环和链子把我们的乳头穿起来，牵着我们在地上爬%UNICODE\(0x2661\) \*1%』\n				CFLAG:306 = 5\n			;爱慕\n			ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀，姐姐乳房好像经常被魔王大人玩到高潮哟♪　咯咯咯』\n				PRINTFORMW %SAVESTR:PLAYER%露出坏笑，对着%SAVESTR:TARGET%挺起的乳头又摸又舔，还含进嘴里吸吮着。\n				PRINTFORMW 「呃啊啊！就…就是这样…姐姐的胸部…是属于魔王大人…性玩具%UNICODE\(0x2661\) \*1%」\n				PRINTFORMW 『那这次，就由妹妹来让姐姐的乳房高潮吧%UNICODE\(0x2661\) \*1% 嘻嘻嘻，我继续享用姐姐的乳头了%UNICODE\(0x2661\) \*1%』\n				PRINTFORMW 「啊啊啊，别…别让…魔王大人看见……姐姐这个样子！拜…托了！嗯啊啊%UNICODE\(0x2661\) \*1%」\n				CFLAG:306 = 4\n			;B感覚Lv3以上\n			ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\n				PRINTFORMW 『哎呀呀，姐姐的胸部变得好厉害，乳头挺得这么直…』\n				PRINTFORMW %SAVESTR:PLAYER%用手指捏着%SAVESTR:TARGET%两边的乳头，不断搓柔着，不时含进嘴里吸吮，听着%SAVESTR:TARGET%因为快感而止不住地娇喘着。\n				PRINTFORMW 「哈啊…嗯啊啊…不要再玩…啊啊…姐姐的乳头了…不然姐姐要…哈啊…要生气了！」\n				PRINTFORMW 『原来姐姐的弱点是乳头哦，再不用害怕姐姐生气了♪』\n				CFLAG:306 = 3\n			;それ以外（爱慕無し、B感覚Lv3未満）\n			ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\n				PRINTFORMW 『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』\n				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%肆意，甚至是恶意地玩弄着双乳和乳头，又无能反抗，只能拼命忍耐着。\n				PRINTFORMW 「被…被你这样玩，一点舒服的感觉……都没有！啊啊啊！」\n				CFLAG:306 = 2\n			ENDIF\n		;淫乱\n		ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「我的胸部会变得这么色情…哈啊%UNICODE\(0x2661\) \*1% 都，都是你的责任%UNICODE\(0x2661\) \*1% 哈啊，嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%被彻底开发，调教的双乳被%SAVESTR:PLAYER%捏在手中肆意玩弄着，舌尖和指尖来回拨弄着挺立的乳头。\n			PRINTFORMW 「嗯啊啊…魔王大人%UNICODE\(0x2661\) \*1% 请再…粗暴一点…欺负我这对淫荡的巨乳和乳头吧%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「\\@RAND:2 \? 继续、继续 # 去了、要去了\\@」………\n			CFLAG:306 = 5\n		;爱慕\n		ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「魔王大人…哈啊…这个样子…真是像爱撒娇的孩子一样！嗯啊啊%UNICODE\(0x2661\) \*1%」\n			PRINTFORMW %SAVESTR:TARGET%抱着正把头埋在自己丰满双峰之间，吸吮着乳头的%SAVESTR:PLAYER%，发出一阵阵幸福的娇喘，\n			PRINTFORMW 「嗯啊啊…嗯啊%UNICODE\(0x2661\) \*1% 继续…魔王大人…哈啊嗯呃%UNICODE\(0x2661\) \*1%」\n			CFLAG:306 = 4\n		;B感覚Lv3以上\n		ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\n			PRINTFORMW 「嗯啊啊…不，不要这么用力的玩我的…胸部…乳头才不是，不是因为舒服才挺起来的、你，你可不要误会了……嗯呜呜」\n			PRINTFORMW %SAVESTR:TARGET%已经被充分调教过的乳房很快就有了快感，只能紧抓着床单，拼命遏制自己的呻吟。\n			PRINTFORMW 「好，好难为情…呼哈…快…快停下啦…嗯啊啊！」\n			CFLAG:306 = 3\n		;それ以外（爱慕無し、B感覚Lv3未満）\n		ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\n			PRINTFORMW 「无论你怎么弄，我，我也不会感觉舒服的…啊呒」\n			PRINTFORMW 面对%SAVESTR:PLAYER%对自己乳房的爱抚、%SAVESTR:TARGET%只是双眼紧闭，咬紧牙关，默默忍受着………\n			CFLAG:306 = 2\n		ENDIF/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1224',
+        any: [
+          /				PRINTFORMW 『姐姐的乳头轻轻摸舔一下就变得这么色情了、啊啊真好，我也想有这样色情的乳头让魔王大人玩弄%UNICODE\(0x2661\) \*1%』/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1225',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%边笑着边继续玩弄着姐姐高耸饱满的双峰和因为快感而挺立着的乳头。感受着从乳头传来的连绵的快意，%SAVESTR:TARGET%从喉咙底发出一阵阵淫乱不堪的声音。。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1226',
+        any: [
+          /				PRINTFORMW 「啊哈…嗯啊啊啊%UNICODE\(0x2661\) \*1% 姐姐跟你说%UNICODE\(0x2661\) \*1% 多让魔王大人调教你的胸部，很快妹妹的乳头就会变得和姐姐一样色情了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1227',
+        any: [
+          /				PRINTFORMW 『啊哈太好了♪　然后就可以姐妹两人并排挺起色情的胸部，让魔王大人用乳环和链子把我们的乳头穿起来，牵着我们在地上爬%UNICODE\(0x2661\) \*1%』/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1228',
+        any: [/				CFLAG:306 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1231',
+        any: [
+          /				PRINTFORMW 『哎呀，姐姐乳房好像经常被魔王大人玩到高潮哟♪　咯咯咯』/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1232',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%露出坏笑，对着%SAVESTR:TARGET%挺起的乳头又摸又舔，还含进嘴里吸吮着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1233',
+        any: [
+          /				PRINTFORMW 「呃啊啊！就…就是这样…姐姐的胸部…是属于魔王大人…性玩具%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1234',
+        any: [
+          /				PRINTFORMW 『那这次，就由妹妹来让姐姐的乳房高潮吧%UNICODE\(0x2661\) \*1% 嘻嘻嘻，我继续享用姐姐的乳头了%UNICODE\(0x2661\) \*1%』/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1235',
+        any: [
+          /				PRINTFORMW 「啊啊啊，别…别让…魔王大人看见……姐姐这个样子！拜…托了！嗯啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1236',
+        any: [/				CFLAG:306 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1239',
+        any: [/				PRINTFORMW 『哎呀呀，姐姐的胸部变得好厉害，乳头挺得这么直…』/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1240',
+        any: [
+          /				PRINTFORMW %SAVESTR:PLAYER%用手指捏着%SAVESTR:TARGET%两边的乳头，不断搓柔着，不时含进嘴里吸吮，听着%SAVESTR:TARGET%因为快感而止不住地娇喘着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1241',
+        any: [
+          /				PRINTFORMW 「哈啊…嗯啊啊…不要再玩…啊啊…姐姐的乳头了…不然姐姐要…哈啊…要生气了！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1242',
+        any: [/				PRINTFORMW 『原来姐姐的弱点是乳头哦，再不用害怕姐姐生气了♪』/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1243',
+        any: [/				CFLAG:306 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1246',
+        any: [/				PRINTFORMW 『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1247',
+        any: [
+          /				PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%肆意，甚至是恶意地玩弄着双乳和乳头，又无能反抗，只能拼命忍耐着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1248',
+        any: [/				PRINTFORMW 「被…被你这样玩，一点舒服的感觉……都没有！啊啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1249',
+        any: [/				CFLAG:306 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1253',
+        any: [
+          /			PRINTFORMW 「我的胸部会变得这么色情…哈啊%UNICODE\(0x2661\) \*1% 都，都是你的责任%UNICODE\(0x2661\) \*1% 哈啊，嗯啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1254',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%被彻底开发，调教的双乳被%SAVESTR:PLAYER%捏在手中肆意玩弄着，舌尖和指尖来回拨弄着挺立的乳头。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1255',
+        any: [
+          /			PRINTFORMW 「嗯啊啊…魔王大人%UNICODE\(0x2661\) \*1% 请再…粗暴一点…欺负我这对淫荡的巨乳和乳头吧%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1256',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「\\@RAND:2 \? 继续、继续 # 去了、要去了\\@」………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1256-1257',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「\\@RAND:2 \? 继续、继续 # 去了、要去了\\@」………\n			CFLAG:306 = 5/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1260',
+        any: [
+          /			PRINTFORMW 「魔王大人…哈啊…这个样子…真是像爱撒娇的孩子一样！嗯啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1261',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%抱着正把头埋在自己丰满双峰之间，吸吮着乳头的%SAVESTR:PLAYER%，发出一阵阵幸福的娇喘，/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1262',
+        any: [
+          /			PRINTFORMW 「嗯啊啊…嗯啊%UNICODE\(0x2661\) \*1% 继续…魔王大人…哈啊嗯呃%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1262-1263',
+        any: [
+          /			PRINTFORMW 「嗯啊啊…嗯啊%UNICODE\(0x2661\) \*1% 继续…魔王大人…哈啊嗯呃%UNICODE\(0x2661\) \*1%」\n			CFLAG:306 = 4/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1266',
+        any: [
+          /			PRINTFORMW 「嗯啊啊…不，不要这么用力的玩我的…胸部…乳头才不是，不是因为舒服才挺起来的、你，你可不要误会了……嗯呜呜」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1267',
+        any: [
+          /			PRINTFORMW %SAVESTR:TARGET%已经被充分调教过的乳房很快就有了快感，只能紧抓着床单，拼命遏制自己的呻吟。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1268',
+        any: [/			PRINTFORMW 「好，好难为情…呼哈…快…快停下啦…嗯啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1268-1269',
+        any: [
+          /			PRINTFORMW 「好，好难为情…呼哈…快…快停下啦…嗯啊啊！」\n			CFLAG:306 = 3/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1272',
+        any: [/			PRINTFORMW 「无论你怎么弄，我，我也不会感觉舒服的…啊呒」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1273',
+        any: [
+          /			PRINTFORMW 面对%SAVESTR:PLAYER%对自己乳房的爱抚、%SAVESTR:TARGET%只是双眼紧闭，咬紧牙关，默默忍受着………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1273-1274',
+        any: [
+          /			PRINTFORMW 面对%SAVESTR:PLAYER%对自己乳房的爱抚、%SAVESTR:TARGET%只是双眼紧闭，咬紧牙关，默默忍受着………\n			CFLAG:306 = 2/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1273-1276',
+        any: [
+          /			PRINTFORMW 面对%SAVESTR:PLAYER%对自己乳房的爱抚、%SAVESTR:TARGET%只是双眼紧闭，咬紧牙关，默默忍受着………\n			CFLAG:306 = 2\n		ENDIF\n		RETURN 0/,
+        ],
       },
     ],
   },

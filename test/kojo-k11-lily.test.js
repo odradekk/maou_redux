@@ -1107,3 +1107,156 @@ test('COM3 二回目：非助手玛奥 + それ以外推进到 2', async () => {
   );
   assert.equal(fixture.store.get(`cflag:${LILY}:304`), 2);
 });
+
+// —— SELECTCOM 5（胸爱抚 CFLAG:306） ——
+
+test('COM5 初めて：助手玛奥分档', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『哇，姐姐的胸部比以前在村子里的时候更大了呢？』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 1);
+});
+
+test('COM5 初めて：非助手玛奥分档', async () => {
+  const fixture = setup_lily(null, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「啊啊！不要揉得那么用力啊…好痛，好痛！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 1);
+});
+
+test('COM5 二回目：助手玛奥 + 淫乱推进到 5', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『姐姐的乳头轻轻摸舔一下就变得这么色情了、啊啊真好，我也想有这样色情的乳头让魔王大人玩弄♡』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 5);
+});
+
+test('COM5 二回目：助手玛奥 + 爱慕推进到 4', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『哎呀，姐姐乳房好像经常被魔王大人玩到高潮哟♪　咯咯咯』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 4);
+});
+
+test('COM5 二回目：助手玛奥 + B感覚Lv3以上推进到 3', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`abl:${LILY}:1`, 3);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『哎呀呀，姐姐的胸部变得好厉害，乳头挺得这么直…』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 3);
+});
+
+test('COM5 二回目：助手玛奥 + 乳房感觉恰为 Lv2（未达 Lv3）不误入 B感覚 分档', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`abl:${LILY}:1`, 2);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 2);
+});
+
+test('COM5 二回目：助手玛奥 + それ以外推进到 2', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:306`, 1);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『哎呀，姐姐不喜欢被我这样玩弄胸部吗？』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 2);
+});
+
+test('COM5 二回目：非助手玛奥 + 淫乱，RAND:2 三目分岔可控，推进到 5', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 5);
+  await speak_com11(fixture, seq_rand(1)); // rand_n(2) 落 1 → truthy 支
+  assert.equal(
+    fixture.text_lines()[3],
+    `莉莉似乎已经被快感弄得完全无法思考了，只是一味地浪叫着，口水不住地从嘴角流出「继续、继续」………`,
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 5);
+});
+
+test('COM5 二回目：非助手玛奥 + 爱慕推进到 4', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「魔王大人…哈啊…这个样子…真是像爱撒娇的孩子一样！嗯啊啊♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 4);
+});
+
+test('COM5 二回目：非助手玛奥 + B感覚Lv3以上推进到 3', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:306`, 1);
+    f.store.set(`abl:${LILY}:1`, 3);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「嗯啊啊…不，不要这么用力的玩我的…胸部…乳头才不是，不是因为舒服才挺起来的、你，你可不要误会了……嗯呜呜」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 3);
+});
+
+test('COM5 二回目：非助手玛奥 + それ以外推进到 2', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    f.store.set(`cflag:${LILY}:306`, 1);
+  }, 5);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「无论你怎么弄，我，我也不会感觉舒服的…啊呒」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:306`), 2);
+});
