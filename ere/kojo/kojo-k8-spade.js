@@ -102,7 +102,6 @@ const STUBBED_CALLS = [
   'DUNGEON_VICTORY_K8',
   'DUNGEON_ATTACK_K8',
   'BENKI_KOUJO_K8',
-  'COLOSSEUM_KOJO_8',
   'NTR_KOUJO_K8',
   'EXUCUTION_KOUJO_K8',
   'MUSEUM_KOUJO_K8',
@@ -10370,11 +10369,193 @@ async function benki_koujo_k8(rand) {
 
 /**
  * @COLOSSEUM_KOJO_8（:7304-7446）：死斗场专用口上（头部守卫 TEQUIP:55 岔入）。
- * TODO(#239)：待填充。
+ * SELECTCOM 55（放置PLAY）/56（交谈）/31（口交）/5（胸爱撫）/21（背后位）/
+ * 27（背后位アナル）/51（媚药史莱姆）各支，含助手调教（ASSI/ASSIPLAY）与
+ * 巨魔（TFLAG:400 == 206）分档。
+ *
+ * @returns {Promise<number>} 0
  */
 async function colosseum_kojo_8() {
-  stub_line('COLOSSEUM_KOJO_8', '死斗场专用口上', '本票分段填充');
-  return 0;
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const assi = era_flag.assi;
+  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+
+  if (era_flag.selectcom == 55) {
+    // :7308-7316 放置PLAY
+    if (era0(`base:${target}:1`) <= 0) {
+      await era.printAndWait(`${target_name}连站起来的力气都没有了……`); // :7311 气力０以下
+    } else {
+      await era.printAndWait(
+        `${target_name}在死斗场的灼热的气氛下看着接下来的对手直发抖……`,
+      ); // :7313
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 56) {
+    // :7320-7342 交谈
+    if (era0(`base:${target}:1`) <= 0) {
+      // :7322-7330 气力０以下
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        await era.printAndWait(`「咕…输给你了………」`); // :7325
+        await era.printAndWait(`${target_name}丢下武器跪了下来……`); // :7326
+      } else {
+        await era.printAndWait(`「快、快住手…别靠近我………」`); // :7328
+        await era.printAndWait(`${target_name}丢下武器跪了下来……`); // :7329
+      }
+    } else {
+      // :7332-7339
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        await era.printAndWait(
+          `「我知道我不会输给你的…即使被加上多么不利的条件也是」`,
+        ); // :7334
+        await era.printAndWait(
+          `${target_name}架起武器，和${assi_name}相对着………`,
+        ); // :7335
+      } else {
+        await era.printAndWait(`「如果力量能恢复的话…咕」`); // :7337
+        await era.printAndWait(
+          `${target_name}一边就这样力量被封印着战斗着一边心急的想着……`,
+        ); // :7338
+      }
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 31) {
+    // :7347-7362 口交
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      await era.printAndWait(
+        `「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」`,
+      ); // :7350
+      await era.print(`${assi_name}因为`); // :7351
+      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
+        await era.print(`阴茎`); // :7353
+      }
+      if (
+        era0(`talent:${assi}:121`) != 1 &&
+        era0(`talent:${assi}:122`) != 1 &&
+        era0('item:PBAND') == 1
+      ) {
+        await era.print(`假阴茎`); // :7355
+      }
+      await era.printAndWait(`被${target_name}舔着而露出了心旷神怡的表情……`); // :7356
+    } else {
+      await era.printAndWait(`「嗯咕…好、好脏…啊啊啊…啾…啾…嗯啾………」`); // :7358
+      await era.printAndWait(`${target_name}舔着那带有令人作呕的气味的阴茎……`); // :7359
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 5) {
+    // :7366-7378 胸爱撫
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      await era.printAndWait(
+        `「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」`,
+      ); // :7369
+      await era.printAndWait(`${target_name}就这样任由${assi_name}摆弄胸部。`); // :7370
+      await era.printAndWait(`然后${assi_name}为了让观众观赏而开始揉动胸部………`); // :7371
+    } else {
+      await era.printAndWait(`「啊、放开…放开那肮脏的手…啊…啊啊！」`); // :7373
+      await era.printAndWait(
+        `像是因为${target_name}高压的态度还不崩溃而生气了、怪物握住了${target_name}的胸部揉了起来。`,
+      ); // :7374
+      await era.printAndWait(`「咕——————！好、好疼…快、快住手！」`); // :7375
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 21) {
+    // :7382-7404 背后位
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      await era.printAndWait(
+        `「嗯…咕…你故意这么激烈…嗯…啊啊…好、好痛…再温柔一点…啊啊——！」`,
+      ); // :7385
+      await era.print(`${assi_name}一边听着${target_name}的悲鸣用`); // :7386
+      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
+        await era.print(`阴茎`); // :7388
+      }
+      if (
+        era0(`talent:${assi}:121`) != 1 &&
+        era0(`talent:${assi}:122`) != 1 &&
+        era0('item:PBAND') == 1
+      ) {
+        await era.print(`假阴茎`); // :7390
+      }
+      await era.printAndWait(`毫不留情的蹂躏着${target_name}的腔内。`); // :7391
+      await era.printAndWait(`随着${target_name}发出悲鸣，观众沸腾了起来………`); // :7392
+    } else if (game.train.死斗场敌种 == 206) {
+      // :7394-7397 巨魔（TFLAG:400 死斗场敌种 == 206，走 game.train.死斗场敌种 门面）
+      await era.printAndWait(
+        `「啊啊啊啊！…要、要坏掉了…啊、啊啊…咕…咕啊啊啊啊！」`,
+      ); // :7395
+      await era.printAndWait(
+        `可怜的${target_name}一边发出癞蛤蟆被弄死一样的声音一边就那样任由巨魔摆布着。`,
+      ); // :7396
+      await era.printAndWait(`观众一个个都站了起来，沸腾着………`); // :7397
+    } else {
+      await era.printAndWait(
+        `「、不要啊…啊啊…呜…啊啊…啊啊——！嗯…啊啊啊啊啊！」`,
+      ); // :7399
+      await era.printAndWait(
+        `${target_name}因为被怪物从后面侵犯而继续发出着悲鸣。`,
+      ); // :7400
+      await era.printAndWait(`观众一个个都站了起来，沸腾着………`); // :7401
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 27) {
+    // :7409-7432 背后位アナル
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      await era.printAndWait(
+        `「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」`,
+      ); // :7412
+      await era.print(`${assi_name}一边听着${target_name}的悲鸣。一边用`); // :7413
+      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
+        await era.print(`阴茎`); // :7415
+      }
+      if (
+        era0(`talent:${assi}:121`) != 1 &&
+        era0(`talent:${assi}:122`) != 1 &&
+        era0('item:PBAND') == 1
+      ) {
+        await era.print(`假阴茎`); // :7417
+      }
+      await era.printAndWait(`一般毫不留情的继续蹂躏着${target_name}的肛门。`); // :7418
+      await era.printAndWait(`随着${target_name}发出悲鸣，观众沸腾了起来………`); // :7419
+    } else if (game.train.死斗场敌种 == 206) {
+      // :7421-7425 巨魔
+      await era.printAndWait(
+        `「嗯…呜咕…呜…停、停下…要…要死了…咕啊…啊嘎啊啊啊啊！」`,
+      ); // :7422
+      await era.printAndWait(
+        `可怜的${target_name}一边发出癞蛤蟆被弄死一样的声音一边用肛门接受着巨魔巨大的阴茎。`,
+      ); // :7423
+      await era.printAndWait(
+        `肛门想要被完全破坏了似的扩张着、终于${target_name}开始口吐白沫了。`,
+      ); // :7424
+      await era.printAndWait(`观众们看着${target_name}这样的身姿、沸腾着………`); // :7425
+    } else {
+      await era.printAndWait(
+        `「肛门要裂开了…快、快停下啊…啊啊…啊…咕…呜呜呜呜呜呜！」`,
+      ); // :7427
+      await era.printAndWait(
+        `${target_name}因为被怪物从后面侵犯着肛门而不停悲鸣着。`,
+      ); // :7428
+      await era.printAndWait(`观众一个个都站了起来，沸腾着………`); // :7429
+    }
+    return 0;
+  }
+
+  if (era_flag.selectcom == 51) {
+    // :7437-7440 媚药史莱姆
+    await era.printAndWait(`「啊啊…史莱姆么…嗯…连这种地方都进来了…啊啊！」`); // :7438
+    return 0;
+  }
+
+  return 0; // :7443
 }
 
 /**

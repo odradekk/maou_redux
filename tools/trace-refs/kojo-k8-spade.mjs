@@ -21560,6 +21560,349 @@ export const FILES = [
         ref: '6243',
         any: [/RETURN 0/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7308-7316',
+        any: [/PRINTFORMW %SAVESTR:TARGET%连站起来的力气都没有了……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7311',
+        any: [/PRINTFORMW %SAVESTR:TARGET%连站起来的力气都没有了……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7313',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%在死斗场的灼热的气氛下看着接下来的对手直发抖……/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7320-7342',
+        any: [/PRINTFORMW 「咕…输给你了………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7322-7330',
+        any: [/PRINTFORMW 「咕…输给你了………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7325',
+        any: [/PRINTFORMW 「咕…输给你了………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7326',
+        any: [/PRINTFORMW %SAVESTR:TARGET%丢下武器跪了下来……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7328',
+        any: [/PRINTFORMW 「快、快住手…别靠近我………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7329',
+        any: [/PRINTFORMW %SAVESTR:TARGET%丢下武器跪了下来……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7332-7339',
+        any: [
+          /PRINTFORMW 「我知道我不会输给你的…即使被加上多么不利的条件也是」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7334',
+        any: [
+          /PRINTFORMW 「我知道我不会输给你的…即使被加上多么不利的条件也是」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7335',
+        any: [/PRINTFORMW %SAVESTR:TARGET%架起武器，和%SAVESTR:ASSI%相对着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7337',
+        any: [/PRINTFORMW 「如果力量能恢复的话…咕」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7338',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边就这样力量被封印着战斗着一边心急的想着……/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7347-7362',
+        any: [/PRINTFORMW 「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7350',
+        any: [/PRINTFORMW 「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7351',
+        any: [/PRINTFORM %SAVESTR:ASSI%因为/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7353',
+        any: [/PRINT 阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7355',
+        any: [/PRINT 假阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7356',
+        any: [/PRINTFORMW 被%SAVESTR:TARGET%舔着而露出了心旷神怡的表情……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7358',
+        any: [/PRINTFORMW 「嗯咕…好、好脏…啊啊啊…啾…啾…嗯啾………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7359',
+        any: [/PRINTFORMW %SAVESTR:TARGET%舔着那带有令人作呕的气味的阴茎……/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7366-7378',
+        any: [
+          /PRINTFORMW 「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7369',
+        any: [
+          /PRINTFORMW 「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7370',
+        any: [/PRINTFORMW %SAVESTR:TARGET%就这样任由%SAVESTR:ASSI%摆弄胸部。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7371',
+        any: [/PRINTFORMW 然后%SAVESTR:ASSI%为了让观众观赏而开始揉动胸部………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7373',
+        any: [/PRINTFORMW 「啊、放开…放开那肮脏的手…啊…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7374',
+        any: [
+          /PRINTFORMW 像是因为%SAVESTR:TARGET%高压的态度还不崩溃而生气了、怪物握住了%SAVESTR:T/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7375',
+        any: [/PRINTFORMW 「咕——————！好、好疼…快、快住手！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7382-7404',
+        any: [
+          /PRINTFORMW 「嗯…咕…你故意这么激烈…嗯…啊啊…好、好痛…再温柔一点…啊啊——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7385',
+        any: [
+          /PRINTFORMW 「嗯…咕…你故意这么激烈…嗯…啊啊…好、好痛…再温柔一点…啊啊——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7386',
+        any: [/PRINTFORM %SAVESTR:ASSI%一边听着%SAVESTR:TARGET%的悲鸣用/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7388',
+        any: [/PRINT 阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7390',
+        any: [/PRINT 假阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7391',
+        any: [/PRINTFORMW 毫不留情的蹂躏着%SAVESTR:TARGET%的腔内。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7392',
+        any: [/PRINTFORMW 随着%SAVESTR:TARGET%发出悲鸣，观众沸腾了起来………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7394-7397',
+        any: [
+          /PRINTFORMW 「啊啊啊啊！…要、要坏掉了…啊、啊啊…咕…咕啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7395',
+        any: [
+          /PRINTFORMW 「啊啊啊啊！…要、要坏掉了…啊、啊啊…咕…咕啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7396',
+        any: [
+          /PRINTFORMW 可怜的%SAVESTR:TARGET%一边发出癞蛤蟆被弄死一样的声音一边就那样任由巨魔摆布着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7397',
+        any: [/PRINTFORMW 观众一个个都站了起来，沸腾着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7399',
+        any: [/PRINTFORMW 「、不要啊…啊啊…呜…啊啊…啊啊——！嗯…啊啊啊啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7400',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为被怪物从后面侵犯而继续发出着悲鸣。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7401',
+        any: [/PRINTFORMW 观众一个个都站了起来，沸腾着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7409-7432',
+        any: [/PRINTFORMW 「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7412',
+        any: [/PRINTFORMW 「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7413',
+        any: [/PRINTFORM %SAVESTR:ASSI%一边听着%SAVESTR:TARGET%的悲鸣。一边用/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7415',
+        any: [/PRINT 阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7417',
+        any: [/PRINT 假阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7418',
+        any: [/PRINTFORMW 一般毫不留情的继续蹂躏着%SAVESTR:TARGET%的肛门。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7419',
+        any: [/PRINTFORMW 随着%SAVESTR:TARGET%发出悲鸣，观众沸腾了起来………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7421-7425',
+        any: [
+          /PRINTFORMW 「嗯…呜咕…呜…停、停下…要…要死了…咕啊…啊嘎啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7422',
+        any: [
+          /PRINTFORMW 「嗯…呜咕…呜…停、停下…要…要死了…咕啊…啊嘎啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7423',
+        any: [
+          /PRINTFORMW 可怜的%SAVESTR:TARGET%一边发出癞蛤蟆被弄死一样的声音一边用肛门接受着巨魔巨大的阴茎/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7424',
+        any: [
+          /PRINTFORMW 肛门想要被完全破坏了似的扩张着、终于%SAVESTR:TARGET%开始口吐白沫了。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7425',
+        any: [/PRINTFORMW 观众们看着%SAVESTR:TARGET%这样的身姿、沸腾着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7427',
+        any: [
+          /PRINTFORMW 「肛门要裂开了…快、快停下啊…啊啊…啊…咕…呜呜呜呜呜呜！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7428',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为被怪物从后面侵犯着肛门而不停悲鸣着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7429',
+        any: [/PRINTFORMW 观众一个个都站了起来，沸腾着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7437-7440',
+        any: [/PRINTFORMW 「啊啊…史莱姆么…嗯…连这种地方都进来了…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7438',
+        any: [/PRINTFORMW 「啊啊…史莱姆么…嗯…连这种地方都进来了…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7443',
+        any: [/RETURN 0/],
+      },
     ],
   },
 ];
