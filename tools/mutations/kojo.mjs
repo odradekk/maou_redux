@@ -3154,4 +3154,873 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k9-diamond'],
     must_mention: '全篇为未填写模板',
   },
+  {
+    desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `game.kojo.口上存在_10 = 1; // :64 FLAG:110 = 1（K10 口上存在标志）`,
+    replace: `game.kojo.口上存在_10 = 2; // :64（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'K10 一对',
+  },
+  {
+    desc: 'M2271 K10 EVENTTRAIN #PRI 口上开关补 0 判据改错（===0 改 ===1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2; // :66
+    }`,
+    replace: `    if (game.kojo.口上开关 === 1) {  // 变异
+      game.kojo.口上开关 = 2; // :66
+    }`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'K10 一对',
+  },
+  {
+    desc: 'M2272 K10 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `game.kojo.口上存在_10 = 0; // :70`,
+    replace: `game.kojo.口上存在_10 = 1; // :70（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'K10 一对',
+  },
+  {
+    desc: 'M2273 K10 EVENTTRAIN 自身守卫①口上开关判据反转（<=0 改 >0，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if ((game.kojo.口上开关 || 0) <= 0) {
+    // :76-80
+    return 0; // :76-80
+  } // :76-80`,
+    replace: `  if ((game.kojo.口上开关 || 0) > 0) {  // 变异
+    // :76-80
+    return 0; // :76-80
+  } // :76-80`,
+    tests: ['kojo-k10-club'],
+    must_mention: '自身守卫①口上开关',
+  },
+  {
+    desc: 'M2274 K10 EVENTTRAIN 自身守卫②TALENT:170 判据反转（!=1 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${target}:170\`) != 1) {
+    // :80-81
+    return 0; // :80-81
+  } // :80-81`,
+    replace: `  if (era.get(\`talent:\${target}:170\`) == 1) {  // 变异
+    // :80-81
+    return 0; // :80-81
+  } // :80-81`,
+
+    tests: ['kojo-k10-club'],
+    must_mention: '自身双守卫',
+  },
+  {
+    desc: 'M2275 K10 EVENTTRAIN 自身守卫③TALENT:121 判据反转（!=1 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${target}:121\`) != 1) {`,
+    replace: `  if (era.get(\`talent:\${target}:121\`) == 1) {  // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '自身双守卫',
+  },
+  {
+    desc: 'M2276 K10 初调教==0 魔族分档推进值写错（=1 改 2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:201  = 1（变量语义：CFLAG 族，201） // :138
+    chara(target).kojo.初调教 = 1; // :138
+    return 1; // :138-140`,
+    replace: `    // CFLAG:201  = 1（变量语义：CFLAG 族，201） // :138
+    chara(target).kojo.初调教 = 2; // :138（变异）
+    return 1; // :138-140`,
+
+    tests: ['kojo-k10-club'],
+    must_mention: '魔族分档',
+  },
+  {
+    desc: 'M2277 K10 初调教==0 魔族化标记写错（=1 改 2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `      // CFLAG:370  = 1（变量语义：CFLAG 族，370） // :112
+      chara(target).kojo.魔族化 = 1; // :112`,
+    replace: `      // CFLAG:370  = 1（变量语义：CFLAG 族，370） // :112
+      chara(target).kojo.魔族化 = 2; // :112（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: '魔族分档',
+  },
+  {
+    desc: 'M2278 K10 屈服刻印 Lv1 推进值写错（初调教=2 改 3，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:201  = 2（变量语义：CFLAG 族，201） // :186
+    chara(target).kojo.初调教 = 2; // :186`,
+    replace: `    // CFLAG:201  = 2（变量语义：CFLAG 族，201） // :186
+    chara(target).kojo.初调教 = 3; // :186（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: '屈服刻印 Lv1',
+  },
+  {
+    desc: 'M2279 K10 屈服刻印 Lv1 判据改错（初调教<2 改 <1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  } else if (
+    chara(target).kojo.初调教 < 2 &&
+    era.get(\`mark:\${target}:2\`) == 1
+  ) {`,
+    replace: `  } else if (
+    chara(target).kojo.初调教 < 1 &&  // 变异
+    era.get(\`mark:\${target}:2\`) == 1
+  ) {`,
+    tests: ['kojo-k10-club'],
+    must_mention: '屈服刻印 Lv1',
+  },
+  {
+    desc: 'M2280 K10 K10_KOJO2 崩坏分档守卫改错（TALENT:9==1 改 ==0，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) == 1 && game.kojo.口上开关 == 2) {
+    // :605
+    era.drawLine(); // :606
+    await era.printAndWait(\`「啊……啊啊…啊………」\`); // :607`,
+    replace: `  if (era.get(\`talent:\${target}:9\`) == 0 && game.kojo.口上开关 == 2) {  // 变异
+    // :605
+    era.drawLine(); // :606
+    await era.printAndWait(\`「啊……啊啊…啊………」\`); // :607`,
+    tests: ['kojo-k10-club'],
+    must_mention: '无值得期待的反应',
+  },
+  {
+    desc: 'M2281 K10 K10_KOJO2 glasses_word 三目分支反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  const glasses_word =
+    chara(target).train.上衣类型 == 83 ? '扶了扶眼镜' : '向这边转了过来'; // (CFLAG:42 == 83) ? 扶了扶眼镜 # 向这边转了过来`,
+    replace: `  const glasses_word =
+    chara(target).train.上衣类型 == 83 ? '向这边转了过来' : '扶了扶眼镜'; // 变异：三目分支反转`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'glasses_word',
+  },
+  {
+    desc: 'M2282 K10 K10_KOJO2 MARK:3==3 判据改错（==3 改 ==2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    if (era.get(\`mark:\${target}:3\`) == 3 && game.kojo.口上开关 == 2) {
+      // :644
+      await era.printAndWait(
+        \`「诶 那个…抱歉哦、是来找我做令人舒服的事情吗？」打开门\${target_name}一副半梦半醒的样子，头发也乱糟糟的翘起了一堆呆毛\`,`,
+    replace: `    if (era.get(\`mark:\${target}:3\`) == 2 && game.kojo.口上开关 == 2) {  // 变异
+      // :644
+      await era.printAndWait(
+        \`「诶 那个…抱歉哦、是来找我做令人舒服的事情吗？」打开门\${target_name}一副半梦半醒的样子，头发也乱糟糟的翘起了一堆呆毛\`,`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'glasses_word',
+  },
+  {
+    desc: 'M2283 K10 KOJO_MESSAGE_COM_10 头部守卫①ASSI&&ASSIPLAY 判据删松（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
+    // :902-905
+
+    return 0; // :902-905
+  } // :902-905`,
+    replace: `  if (era_flag.assi > 0 && !era_flag.assiplay) {  // 变异
+    // :902-905
+
+    return 0; // :902-905
+  } // :902-905`,
+    tests: ['kojo-k10-club'],
+    must_mention: '头部第 1 道守卫',
+  },
+  {
+    desc: 'M2284 K10 KOJO_MESSAGE_COM_10 头部守卫②TEQUIP:45 判据改错（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    // :905-907
+    return 0; // :905-907
+  } // :905-907`,
+    replace: `  if (era.get(\`tequip:\${target}:46\`) && era_flag.selectcom != 45) {  // 变异
+    // :905-907
+    return 0; // :905-907
+  } // :905-907`,
+
+    tests: ['kojo-k10-club'],
+    must_mention: '头部第 2 道守卫',
+  },
+  {
+    desc: 'M2285 K10 KOJO_MESSAGE_COM_10 头部守卫③失神判据反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.train.失神) {
+    // :909-910 TFLAG:899（跨域读走门面）
+    return 0; // :909-910
+  } // :909-910`,
+    replace: `  if (!game.train.失神) {  // 变异
+    // :909-910 TFLAG:899（跨域读走门面）
+    return 0; // :909-910
+  } // :909-910`,
+    tests: ['kojo-k10-club'],
+    must_mention: '头部第 3 道守卫',
+  },
+  {
+    desc: 'M2286 K10 KOJO_MESSAGE_COM_10 头部守卫④TEQUIP:89 分发对象改错（DOG 改 COLOSSEUM，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // :911
+    await dog_kojo_10(rand_n); // :912
+    return 0; // :912-914
+  } // :914-915`,
+    replace: `  if (era.get(\`tequip:\${target}:89\`)) {
+    // :911
+    await colosseum_kojo_10(rand_n); // 变异：调用对象改错
+    return 0; // :912-914
+  } // :914-915`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'DOG_KOJO_10 真身',
+  },
+  {
+    desc: 'M2287 K10 KOJO_MESSAGE_COM_10 头部守卫⑤TEQUIP:55 分发对象改错（COLOSSEUM 改 DOG，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // :916
+    await colosseum_kojo_10(rand_n); // :917
+    return 0; // :917-919
+  } // :919-920`,
+    replace: `  if (era.get(\`tequip:\${target}:55\`)) {
+    // :916
+    await dog_kojo_10(rand_n); // 变异：调用对象改错
+    return 0; // :917-919
+  } // :919-920`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'COLOSSEUM_KOJO_10 真身',
+  },
+  {
+    desc: 'M2288 K10 KOJO_MESSAGE_COM_10 头部守卫⑥TALENT:9 崩坏判据反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) == 1) {
+    // :921-923
+    return 0; // :921-923
+  } // :921-923`,
+    replace: `  if (era.get(\`talent:\${target}:9\`) == 0) {  // 变异
+    // :921-923
+    return 0; // :921-923
+  } // :921-923`,
+    tests: ['kojo-k10-club'],
+    must_mention: '头部第 6 道守卫',
+  },
+  {
+    desc: 'M2289 K10 KOJO_MESSAGE_COM_10 头部守卫⑦TEQUIP:90 判据反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`tequip:\${target}:90\`)) {
+    // :924-927
+    return 0; // :924-927
+  } // :924-927`,
+    replace: `  if (!era.get(\`tequip:\${target}:90\`)) {  // 变异
+    // :924-927
+    return 0; // :924-927
+  } // :924-927`,
+    tests: ['kojo-k10-club'],
+    must_mention: '头部第 7 道守卫',
+  },
+  {
+    desc: 'M2290 K10 SELECTCOM==0 爱抚初回推进值写错（CFLAG:301=1 改 2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `      // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :943
+      kojo.爱抚 = 1; // :943
+      return 0; // :942-947`,
+    replace: `      // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :943
+      kojo.爱抚 = 2; // :943（变异）
+      return 0; // :942-947`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'MARK:2>=2 分档',
+  },
+  {
+    desc: 'M2291 K10 SELECTCOM==0 爱抚初回判据改错（MARK:2>=2 改 >=3，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `      if (era.get(\`mark:\${target}:2\`) >= 2) {
+        // :937
+        await era.printAndWait(
+          \`「啊～…嗯~…更、嗯更多的揉那里也可以哟…啊…就是这样」\`,
+        ); // :938`,
+    replace: `      if (era.get(\`mark:\${target}:2\`) >= 3) {  // 变异
+        // :937
+        await era.printAndWait(
+          \`「啊～…嗯~…更、嗯更多的揉那里也可以哟…啊…就是这样」\`,
+        ); // :938`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'MARK:2>=2 分档',
+  },
+  {
+    desc: 'M2292 K10 SELECTCOM==87 穿环 p 位判据换错（&穿环状态 位判据改错，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `        if (chara(target).train.穿环状态 & p) {
+          // :4573
+          await era.printAndWait(\`「咕～…啊啊～！」\`); // :4574`,
+    replace: `        if (chara(target).train.穿环状态 & (p + 1)) {  // 变异
+          // :4573
+          await era.printAndWait(\`「咕～…啊啊～！」\`); // :4574`,
+    tests: ['kojo-k10-club'],
+    must_mention: '跨模块存活态',
+  },
+  {
+    desc: 'M2293 K10 TEQUIP:55 分发（COLOSSEUM_KOJO_10）SELECTCOM==55 体力判据反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    if (era.get(\`base:\${target}:1\`) <= 0) {
+      // :6722
+      await era.printAndWait(\`\${target_name}连站立的力气都没有了……\`); // :6723`,
+    replace: `    if (era.get(\`base:\${target}:1\`) > 0) {  // 变异
+      // :6722
+      await era.printAndWait(\`\${target_name}连站立的力气都没有了……\`); // :6723`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'COLOSSEUM_KOJO_10 真身',
+  },
+  {
+    desc: 'M2294 K10 KOJO_MESSAGE_PALAMCNG_10 头部守卫①ASSI&&ASSIPLAY 判据反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
+    // :5655-5660
+    return 0; // :5655-5660
+  } // :5655-5660`,
+    replace: `  if (era_flag.assi > 0 && !era_flag.assiplay) {  // 变异
+    // :5655-5660
+    return 0; // :5655-5660
+  } // :5655-5660`,
+    tests: ['kojo-k10-club'],
+    must_mention: '头部守卫①ASSI&&ASSIPLAY 静默跳过',
+  },
+  {
+    desc: 'M2295 K10 KOJO_MESSAGE_PALAMCNG_10 P1 首超润滑写错值（CFLAG:221=1 改 0，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:TARGET:221  = 1（变量语义：CFLAG 族，TARGET:221） // :5707
+    chara(target).kojo.首次润滑Lv2 = 1; // :5707`,
+    replace: `    // CFLAG:TARGET:221  = 1（变量语义：CFLAG 族，TARGET:221） // :5707
+    chara(target).kojo.首次润滑Lv2 = 0; // :5707（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'PALAMCNG_10',
+  },
+  {
+    desc: 'M2296 K10 KOJO_MESSAGE_MARKCNG_10 头部守卫①ASSI&&ASSIPLAY 判据反转（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era_flag.assi > 0 && era_flag.assiplay) {
+    // :5952-5953
+    return 0; // :5952-5953
+  } // :5952-5953`,
+    replace: `  if (era_flag.assi > 0 && !era_flag.assiplay) {  // 变异
+    // :5952-5953
+    return 0; // :5952-5953
+  } // :5952-5953`,
+    tests: ['kojo-k10-club'],
+    must_mention: '头部守卫①ASSI&&ASSIPLAY 静默跳过',
+  },
+  {
+    desc: 'M2297 K10 KOJO_MESSAGE_MARKCNG_10 苦痛刻印Lv3 判据改错（==3 改 ==2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.system.苦痛刻印变动 == 3 && chara(target).kojo.苦痛刻印Lv3 == 0) {
+    // :5974
+
+    if (era.get(\`talent:\${target}:85\`) == 1) {`,
+    replace: `  if (game.system.苦痛刻印变动 == 2 && chara(target).kojo.苦痛刻印Lv3 == 0) {  // 变异
+    // :5974
+
+    if (era.get(\`talent:\${target}:85\`) == 1) {`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'MARKCNG_10',
+  },
+  {
+    desc: 'M2298 K10 KOJO_MESSAGE_MARKCNG_10 苦痛刻印Lv3 写错值（=1 改 2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:297  = 1（变量语义：CFLAG 族，297） // :5983
+    chara(target).kojo.苦痛刻印Lv3 = 1; // :5983`,
+    replace: `    // CFLAG:297  = 1（变量语义：CFLAG 族，297） // :5983
+    chara(target).kojo.苦痛刻印Lv3 = 2; // :5983（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'MARKCNG_10',
+  },
+  {
+    desc: 'M2299 K10 SELF_KOJO_K10 育儿室（TFLAG:13==13）孕育文案判据丢失（TALENT:153 分支删台词，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `      if (era.get(\`talent:\${target}:153\`)) {
+        // :6411
+        await era.printAndWait(
+          \`「很快就要生出来了、请安心期待吧、亲・爱・的\${heart(1)}」\`,
+        ); // :6412`,
+    replace: `      if (!era.get(\`talent:\${target}:153\`)) {  // 变异
+        // :6411
+        await era.printAndWait(
+          \`「很快就要生出来了、请安心期待吧、亲・爱・的\${heart(1)}」\`,
+        ); // :6412`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'CSTR:2 插值',
+  },
+  {
+    desc: 'M2300 K10 SELF_KOJO_K10 育儿室完成标记写错值（CFLAG:273=1 改 0，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:273  = 1（变量语义：CFLAG 族，273） // :6420
+    chara(target).kojo.育儿室 = 1; // :6420`,
+    replace: `    // CFLAG:273  = 1（变量语义：CFLAG 族，273） // :6420
+    chara(target).kojo.育儿室 = 0; // :6420（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'CSTR:2 插值',
+  },
+  {
+    desc: 'M2301 K10 SELF_KOJO_K10 TFLAG:13 派发条件改错（==13 改 ==14，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.train.初吻与自我口上 == 13) {
+    // :6407
+
+    if (era.get(\`talent:\${target}:85\`) || era.get(\`talent:\${target}:76\`)) {`,
+    replace: `  if (game.train.初吻与自我口上 == 14) {  // 变异
+    // :6407
+
+    if (era.get(\`talent:\${target}:85\`) || era.get(\`talent:\${target}:76\`)) {`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'CSTR:2 插值',
+  },
+  {
+    desc: 'M2302 K10 DUNGEON_VICTORY_K10 体力低档追加台词判据删松（<50 改 <500，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (
+    (era.get(\`base:\${a}:0\`) * 100) / era.get(\`maxbase:\${a}:0\`) < 50 ||
+    (era.get(\`base:\${a}:1\`) * 100) / era.get(\`maxbase:\${a}:1\`) < 50
+  ) {`,
+    replace: `  if (
+    (era.get(\`base:\${a}:0\`) * 100) / era.get(\`maxbase:\${a}:0\`) < 500 ||  // 变异
+    (era.get(\`base:\${a}:1\`) * 100) / era.get(\`maxbase:\${a}:1\`) < 50
+  ) {`,
+    tests: ['kojo-k10-club'],
+    must_mention: '体力过半（60%）',
+  },
+  {
+    desc: 'M2303 K10 DUNGEON_VICTORY_K10 随机三选一首档文案改错（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (rand_n(3) == 0) {
+    // :6562
+    await era.printAndWait(\`「唔呼呼、今天的魔力格外顺畅呢♪」\`); // :6563`,
+    replace: `  if (rand_n(3) == 1) {  // 变异
+    // :6562
+    await era.printAndWait(\`「唔呼呼、今天的魔力格外顺畅呢♪」\`); // :6563`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'DUNGEON_VICTORY_K10',
+  },
+  {
+    desc: 'M2304 K10 DUNGEON_RYOUZYOKU_K10 处女判据反转（TALENT:0==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${target}:0\`) == 1) {
+    // :6482
+
+    await era.printAndWait(
+      \`「请！请住手…哈啊～…求、求你们…人家还是处女…所以说…只有那里请…哈啊～！」\`,
+    ); // :6484`,
+    replace: `  if (era.get(\`talent:\${target}:0\`) == 0) {  // 变异
+    // :6482
+
+    await era.printAndWait(
+      \`「请！请住手…哈啊～…求、求你们…人家还是处女…所以说…只有那里请…哈啊～！」\`,
+    ); // :6484`,
+    tests: ['kojo-k10-club'],
+    must_mention: '迷宫败北与凌辱结束口上',
+  },
+  {
+    desc: 'M2305 K10 DUNGEON_RYOUZYOKU_AFTER_K10 处女判据反转（TALENT:0==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${target}:0\`) == 1) {
+    // :6502
+
+    await era.printAndWait(\`「骗人…我竟然还是处女吗………」\`); // :6504`,
+    replace: `  if (era.get(\`talent:\${target}:0\`) == 0) {  // 变异
+    // :6502
+
+    await era.printAndWait(\`「骗人…我竟然还是处女吗………」\`); // :6504`,
+    tests: ['kojo-k10-club'],
+    must_mention: '迷宫败北与凌辱结束口上',
+  },
+  {
+    desc: 'M2306 K10 DUNGEON_ATTACK_K10 侵略状态判据改错（==2 改 ==3，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (chara(target).invasion.状态 == 2) {
+    // :6587
+    if (rand_n(3) == 0) {
+      // :6588
+      await era.printAndWait(\`「燃烧吧！」\`); // :6589`,
+    replace: `  if (chara(target).invasion.状态 == 3) {  // 变异
+    // :6587
+    if (rand_n(3) == 0) {
+      // :6588
+      await era.printAndWait(\`「燃烧吧！」\`); // :6589`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'DUNGEON_ATTACK_K10',
+  },
+  {
+    desc: 'M2307 K10 BENKI_KOUJO_K10 肉便器行动==0 淫乱分档判据反转（TALENT:76，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.train.肉便器行动 == 0) {
+    // :6616
+
+    if (era.get(\`talent:\${a}:76\`) == 1) {
+      // :6619
+      await era.printAndWait(\`「哈啊～…更多更多…用力干人家吧\${heart(1)}」\`); // :6620`,
+    replace: `  if (game.train.肉便器行动 == 0) {
+    // :6616
+
+    if (era.get(\`talent:\${a}:76\`) == 0) {  // 变异
+      // :6619
+      await era.printAndWait(\`「哈啊～…更多更多…用力干人家吧\${heart(1)}」\`); // :6620`,
+    tests: ['kojo-k10-club'],
+    must_mention: '肉便器行动',
+  },
+  {
+    desc: 'M2308 K10 BENKI_KOUJO_K10 肉便器行动分档判据改错（==0 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.train.肉便器行动 == 0) {
+    // :6616
+
+    if (era.get(\`talent:\${a}:76\`) == 1) {`,
+    replace: `  if (game.train.肉便器行动 == 1) {  // 变异
+    // :6616
+
+    if (era.get(\`talent:\${a}:76\`) == 1) {`,
+    tests: ['kojo-k10-club'],
+    must_mention: '肉便器行动',
+  },
+  {
+    desc: 'M2309 K10 ENTERENEMY_KOUJO_K10 淫乱/爱慕分岔顺序改错（TALENT:76 判据反转，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (era.get(\`talent:\${a}:76\`) == 1) {
+    // :7083
+    await era.printAndWait(
+      \`「把魔王大人蹂躏的凄惨兮兮变成人家的宠物什么的…说不定也很有趣呢♪」\`,
+    ); // :7084
+  } else if (era.get(\`talent:\${a}:85\`) == 1) {
+    // :7086
+    await era.printAndWait(\`「不要逃跑哟、魔王大人\${heart(1)}」\`); // :7087`,
+    replace: `  if (era.get(\`talent:\${a}:76\`) == 1) {
+    // :7083
+    await era.printAndWait(
+      \`「把魔王大人蹂躏的凄惨兮兮变成人家的宠物什么的…说不定也很有趣呢♪」\`,
+    ); // :7084
+  } else if (era.get(\`talent:\${a}:85\`) == 0) {  // 变异
+    // :7086
+    await era.printAndWait(\`「不要逃跑哟、魔王大人\${heart(1)}」\`); // :7087`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'ENTERENEMY_KOUJO_K10',
+  },
+  {
+    desc: 'M2310 K10 NTR_KOUJO_K10 首次再捕获标记写错值（CFLAG:650=1 改 0，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:650  = 1（变量语义：CFLAG 族，650） // :6857
+    chara(target).kojo.NTR再捕获 = 1; // :6857`,
+    replace: `    // CFLAG:650  = 1（变量语义：CFLAG 族，650） // :6857
+    chara(target).kojo.NTR再捕获 = 0; // :6857（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'NTR_KOUJO_K10',
+  },
+  {
+    desc: 'M2311 K10 NTR_KOUJO_K10 P==1 分支写入字段改错（CFLAG:651 改 652，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :6874
+    chara(target).kojo.NTR_651 = 1; // :6874`,
+    replace: `    // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :6874
+    chara(target).kojo.NTR_652 = 1; // :6874（变异）`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'NTR_KOUJO_K10',
+  },
+  {
+    desc: 'M2312 K10 NTR_KOUJO_K10 P 分派判据①改错（==1 改 ==2，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (P == 1) {
+    // :6863
+
+    if (era.get(\`talent:\${target}:76\`) || era.get(\`talent:\${target}:85\`)) {
+      // :6865
+      await era.printAndWait(
+        \`「不、不要…哈啊～…被你这样的人…人家的第一次…啊～…啊啊～！」\`,
+      ); // :6866`,
+    replace: `  if (P == 2) {  // 变异
+    // :6863
+
+    if (era.get(\`talent:\${target}:76\`) || era.get(\`talent:\${target}:85\`)) {
+      // :6865
+      await era.printAndWait(
+        \`「不、不要…哈啊～…被你这样的人…人家的第一次…啊～…啊啊～！」\`,
+      ); // :6866`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'NTR_KOUJO_K10',
+  },
+  {
+    desc: 'M2313 K10 EXUCUTION_KOUJO_K10 犬射精或处刑口上判据改错（==4 改 ==5，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.event.犬射精或处刑口上 == 4) {
+    // :6967
+    await era.printAndWait(
+      \`「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」\`,
+    ); // :6968`,
+    replace: `  if (game.event.犬射精或处刑口上 == 5) {  // 变异
+    // :6967
+    await era.printAndWait(
+      \`「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」\`,
+    ); // :6968`,
+    tests: ['kojo-k10-club'],
+    must_mention: '注册且可调用',
+  },
+  {
+    desc: 'M2314 K10 MUSEUM_KOUJO_K10 博物馆口上判据改错（==0 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.event.博物馆口上 == 0) {
+    // :6984
+    await era.printAndWait(
+      \`「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」\`,
+    ); // :6985`,
+    replace: `  if (game.event.博物馆口上 == 1) {  // 变异
+    // :6984
+    await era.printAndWait(
+      \`「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」\`,
+    ); // :6985`,
+    tests: ['kojo-k10-club'],
+    must_mention: '八档，第一档有台词',
+  },
+  {
+    desc: 'M2315 K10 BANISHMENT_KOUJO_K10 流放口上判据改错（==0 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.event.流放口上 == 0) {
+    // :7020
+    await era.printAndWait(\`「我的魔法连让小石头动一下都不行了…啊啊………」\`); // :7021`,
+    replace: `  if (game.event.流放口上 == 1) {  // 变异
+    // :7020
+    await era.printAndWait(\`「我的魔法连让小石头动一下都不行了…啊啊………」\`); // :7021`,
+    tests: ['kojo-k10-club'],
+    must_mention: '注册且可调用',
+  },
+  {
+    desc: 'M2316 K10 PUBLIC_EXUCUTION_KOUJO_K10 公开处刑口上判据改错（==0 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (game.event.公开处刑口上 == 0) {
+    // :7041
+    await era.printAndWait(
+      \`「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」\`,
+    ); // :7042`,
+    replace: `  if (game.event.公开处刑口上 == 1) {  // 变异
+    // :7041
+    await era.printAndWait(
+      \`「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」\`,
+    ); // :7042`,
+    tests: ['kojo-k10-club'],
+    must_mention: '注册且可调用',
+  },
+  {
+    desc: 'M2317 K10 GROTESQUE_KOUJO_K10 猎奇处刑口上判据改错（==0 改 ==1，1:1 保留空文案的分支路由靶，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `async function grotesque_koujo_k10(rand) {
+  void rand;
+
+  if (game.event.猎奇处刑口上 == 0) {
+    // :7056
+    await era.printAndWait(''); // :7057`,
+    replace: `async function grotesque_koujo_k10(rand) {
+  void rand;
+
+  if (game.event.猎奇处刑口上 == 1) {  // 变异
+    // :7056
+    await era.printAndWait(''); // :7057`,
+    tests: ['kojo-k10-club'],
+    must_mention: '注册且可调用',
+  },
+  {
+    desc: 'M2318 K10 GOHOUBI_REQUEST_KOUJO_K10 要求奖赏判据改错（==0 改 ==1，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (chara(a).stronghold.要求奖赏 == 0) {
+    // :7096
+
+    await era.printAndWait(\`「好麻烦，唔，那给我一些钱好了」\`); // :7098`,
+    replace: `  if (chara(a).stronghold.要求奖赏 == 1) {  // 变异
+    // :7096
+
+    await era.printAndWait(\`「好麻烦，唔，那给我一些钱好了」\`); // :7098`,
+    tests: ['kojo-k10-club'],
+    must_mention: '请求金钱',
+  },
+  {
+    desc: 'M2319 K10 GOHOUBI_AFTER_KOUJO_K10 choice==0 判据改错（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (choice == 0) {
+    // :7141
+    await era.printAndWait(\`「就这样不许动？哈？」\`); // :7142`,
+    replace: `  if (choice == 1) {  // 变异
+    // :7141
+    await era.printAndWait(\`「就这样不许动？哈？」\`); // :7142`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'choice 参数传递',
+  },
+  {
+    desc: 'M2320 K10 OSIOKI_KOUJO_K10 choice==6 判据改错（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  } else if (choice == 6) {
+    // :7260
+    await era.printAndWait(\`「真是难以接受」\`); // :7261`,
+    replace: `  } else if (choice == 7) {  // 变异
+    // :7260
+    await era.printAndWait(\`「真是难以接受」\`); // :7261`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'choice 参数传递',
+  },
+  {
+    desc: 'M2321 K10 GOBI_KOUJO_K10 arg0==1 判据改错（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `  if (arg0 == 1) {
+    // :7278
+
+    await era.print(\`所以呢♪\`); // :7280`,
+    replace: `  if (arg0 == 2) {  // 变异
+    // :7278
+
+    await era.print(\`所以呢♪\`); // :7280`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'ARG:0 取语尾编号',
+  },
+  {
+    desc: 'M2322 K10 GOBI_KOUJO_K10 arg0==1 输出文案改错（#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `    await era.print(\`所以呢♪\`); // :7280
+  } else if (arg0 == 2) {
+    // :7281
+
+    await era.print(\`哟！\`); // :7283`,
+    replace: `    await era.print(\`哟！变异\`); // :7280
+  } else if (arg0 == 2) {
+    // :7281
+
+    await era.print(\`哟！\`); // :7283`,
+    tests: ['kojo-k10-club'],
+    must_mention: 'ARG:0 取语尾编号',
+  },
+  {
+    desc: 'M2323 K10 家族接线：kojo_message_com_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `kojo_message_com_family.register(10, kojo_message_com_10);`,
+    replace: `kojo_message_com_family.register(11, kojo_message_com_10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2324 K10 家族接线：self_kojo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `self_kojo_family.register(10, self_kojo_k10);`,
+    replace: `self_kojo_family.register(11, self_kojo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2325 K10 家族接线：kojo_message_palamcng_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `kojo_message_palamcng_family.register(10, kojo_message_palamcng_10);`,
+    replace: `kojo_message_palamcng_family.register(11, kojo_message_palamcng_10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2326 K10 家族接线：kojo_message_markcng_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `kojo_message_markcng_family.register(10, kojo_message_markcng_10);`,
+    replace: `kojo_message_markcng_family.register(11, kojo_message_markcng_10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2327 K10 家族接线：gohoubi_after_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `gohoubi_after_koujo_family.register(10, (cid, choice) =>
+  gohoubi_after_koujo_k10(undefined, cid, choice),
+);`,
+    replace: `gohoubi_after_koujo_family.register(11, (cid, choice) =>  // 变异
+  gohoubi_after_koujo_k10(undefined, cid, choice),
+);`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2328 K10 家族接线：osioski_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `osioski_koujo_family.register(10, (cid, choice) =>
+  osioki_koujo_k10(undefined, cid, choice),
+);`,
+    replace: `osioski_koujo_family.register(11, (cid, choice) =>  // 变异
+  osioki_koujo_k10(undefined, cid, choice),
+);`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2329 K10 家族接线：gohoubi_request_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `gohoubi_request_koujo_family.register(10, () => gohoubi_request_koujo_k10());`,
+    replace: `gohoubi_request_koujo_family.register(11, () => gohoubi_request_koujo_k10()); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2330 K10 家族接线：ryouzyoku_kojo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `ryouzyoku_kojo_family.register(10, dungeon_ryouzyoku_k10);`,
+    replace: `ryouzyoku_kojo_family.register(11, dungeon_ryouzyoku_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2331 K10 家族接线：ryouzyoku_after_kojo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `ryouzyoku_after_kojo_family.register(10, dungeon_ryouzyoku_after_k10);`,
+    replace: `ryouzyoku_after_kojo_family.register(11, dungeon_ryouzyoku_after_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2332 K10 家族接线：gobi_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `gobi_koujo_family.register(10, gobi_koujo_k10);`,
+    replace: `gobi_koujo_family.register(11, gobi_koujo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2333 K10 家族接线：benki_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `benki_koujo_family.register(10, benki_koujo_k10);`,
+    replace: `benki_koujo_family.register(11, benki_koujo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2334 K10 家族接线：enterenemy_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `enterenemy_koujo_family.register(10, enterenemy_koujo_k10);`,
+    replace: `enterenemy_koujo_family.register(11, enterenemy_koujo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2335 K10 家族接线：dungeon_victory_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `dungeon_victory_family.register(10, dungeon_victory_k10);`,
+    replace: `dungeon_victory_family.register(11, dungeon_victory_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2336 K10 家族接线：dungeon_attack_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `dungeon_attack_family.register(10, dungeon_attack_k10);`,
+    replace: `dungeon_attack_family.register(11, dungeon_attack_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2337 K10 家族接线：ntr_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `ntr_koujo_family.register(10, ntr_koujo_k10);`,
+    replace: `ntr_koujo_family.register(11, ntr_koujo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2338 K10 家族接线：exucution_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `exucution_koujo_family.register(10, exucution_koujo_k10);`,
+    replace: `exucution_koujo_family.register(11, exucution_koujo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
+  {
+    desc: 'M2339 K10 家族接线：museum_koujo_family 注册号错位（10 改 11，#241）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `museum_koujo_family.register(10, museum_koujo_k10);`,
+    replace: `museum_koujo_family.register(11, museum_koujo_k10); // 变异`,
+    tests: ['kojo-k10-club'],
+    must_mention: '20 个分发族全部注册了 K10',
+  },
 ];

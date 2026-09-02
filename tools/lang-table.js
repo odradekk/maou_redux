@@ -669,6 +669,12 @@ const EXEMPT_STRINGS = [
     why: '原作函数名（SYSTEM ver1.0.3.ERB:590 的 CALL 自動處刑，繁体）。存根占位行携带原作函数名供检索（docs/stub-registry.md 的检索约定），归一成「自动处刑」会切断与 target/ 的对应。#114 收录。',
   },
   {
+    value: '「很快就要生出来了、请安心期待吧、亲・爱・的${heart(1)}」',
+
+    where: 'ere/kojo/kojo-k10-club.js',
+    why: 'EVENT_K10_クラブ.ERB:6412 的育儿室台词，・ 是原作刻意用的停顿分隔样式（「亲・爱・的」的逐字顿挫），非日文假名——与 DUNGEON_RYOUZYOKU.ERB:1895「好好感・受・吧」同款样式。整串豁免，改写时失配变红。#241 收录。',
+  },
+  {
     value: '个中滋味 好好感・受・吧』',
     where: 'ere/kojo/kojo-dungeon-ravish.js',
     why: 'DUNGEON_RYOUZYOKU.ERB:1895 的 GIRL_RYOU 处女封印台词，・ 是原作刻意用的停顿分隔样式（「好好感・受・吧」的逐字顿挫），非日文假名。lang-normalize 头注明言「・ 用作分隔样式时会有意红一次」——此处是那个「有意」：整串豁免，改写时失配变红。#182 收录。',
