@@ -595,3 +595,90 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+// —— #304：并行模式的输出与计数 ——
+
+test('并行汇总不吞子进程的计数：一片全拦 + 一片判红 → caught 与 red 都如实累加', () => {
+  // 旧写法在子进程退出码非 0 时改记「红 +1」并**丢掉整份 caught**——一个
+  // 子进程发现一条红，父进程的拦截数就少掉它那一整片。判红的子进程自己
+  // 已经把结果报告过了，照它的 SUMMARY 汇总即可。
+  const root = make_fixture();
+  try {
+    // 并行模式假定副本就是一份完整仓库：子进程以 cwd=副本 跑
+    // <副本>/tools/mutation-check.mjs，条目表取默认的 <副本>/tools/mutations。
+    // 所以夹具根要摆成同一形状，工具本体也得拷进去。
+    fs.mkdirSync(path.join(root, 'tools', 'mutations'), { recursive: true });
+    for (const f of ['mutation-check.mjs', 'load-mutations.mjs']) {
+      fs.copyFileSync(
+        path.join(REPO_ROOT, 'tools', f),
+        path.join(root, 'tools', f),
+      );
+    }
+    // 两条条目：一条能被拦下，一条 must_mention 对不上 → 判红（失配）。
+    // --slice 按 sha1(desc) % k 分片，两条 desc 不同即可落到两片或同片，
+    // 无论怎么分，父进程的汇总都必须是 caught=1 / red=1。
+    const entries = [
+      { ...GOOD_ENTRY, desc: 'T8 加倍系数改坏（应被拦下）' },
+      {
+        ...GOOD_ENTRY,
+        desc: 'T9 锚对不上（应判红：失配）',
+        must_mention: '这句话不会出现在任何失败输出里',
+      },
+    ];
+    fs.writeFileSync(
+      path.join(root, 'tools', 'mutations', 'fx.mjs'),
+      'export default ' + JSON.stringify(entries) + ';\n',
+      'utf8',
+    );
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      path.join(root, 'tools', 'mutations'),
+      '--baseline',
+      '2',
+      '--jobs',
+      '2',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(status, 1, `有一条判红，整体应退 1：\n${output}`);
+    // 父进程会把每个子进程的输出原样转发，其中就有子进程自己的 SUMMARY
+    // 行——所以只能取**最后一条**，那才是父进程的汇总。首版没取最后一条，
+    // 证伪探针（把汇总逻辑改回旧写法）当场不红，等于白写。
+    const summaries = [
+      ...output.matchAll(/^SUMMARY caught=(\d+) skipped=(\d+) red=(\d+)$/gm),
+    ];
+    assert.ok(summaries.length >= 1, `没有 SUMMARY 行：\n${output}`);
+    const last = summaries[summaries.length - 1];
+    assert.deepEqual(
+      { caught: Number(last[1]), red: Number(last[3]) },
+      { caught: 1, red: 1 },
+      `父进程应如实累加两片的计数（旧写法会得到 caught=0 red=1）：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('报告路径不许用 process.exit：管道上它会丢弃排队的 stdout（#304）', () => {
+  // 实测：写 836038 字节后立即 process.exit(1)，管道对端只收到 65536 字节
+  // （管道缓冲区大小），末行截断在半个字符上、SUMMARY 行整个没了——CI 上
+  // 「并行模式神秘崩溃」三次都是这个，而本机重定向到文件时 stdout 是同步
+  // 写、一个字节不丢，所以本机永远复现不出来。
+  // 只有 SIGINT 处理器可以用 process.exit（中断时先还原靶文件要紧）。
+  const src = fs.readFileSync(
+    path.join(REPO_ROOT, 'tools', 'mutation-check.mjs'),
+    'utf8',
+  );
+  const calls = src
+    .split('\n')
+    .map((line, i) => [i + 1, line])
+    .filter(([, line]) => /process\.exit\(/.test(line));
+  const outside_sigint = calls.filter(([, line]) => !/exit\(130\)/.test(line));
+  assert.deepEqual(
+    outside_sigint.map(([n, line]) => `:${n} ${line.trim()}`),
+    [],
+    '报告路径要用 process.exitCode 让事件循环自然退出，exit() 会截断管道输出',
+  );
+});
