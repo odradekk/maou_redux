@@ -79,13 +79,6 @@ const cflag = {
     src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),
   ),
   5: named_tail('野外露出经验', src(SRC_FLAG, 'CFLAG:5 野外露出経験')),
-  7: named_tail(
-    '穿环位图',
-    src(
-      SRC_FLAG,
-      ':266 CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）',
-    ),
-  ),
   31: named_tail('媚药残留度', src(SRC_FLAG, 'CFLAG:31 体内媚薬残留度')),
   32: named_tail(
     '媚药禁断症状',
