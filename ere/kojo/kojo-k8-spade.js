@@ -84,6 +84,12 @@ const {
   dungeon_attack_family,
   benki_koujo_family,
   ntr_koujo_family,
+  exucution_koujo_family,
+  museum_koujo_family,
+  banishment_koujo_family,
+  public_exucution_koujo_family,
+  grotesque_koujo_family,
+  enterenemy_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -105,12 +111,6 @@ const era0 = (k) => era.get(k) || 0;
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
 const STUBBED_CALLS = [
-  'EXUCUTION_KOUJO_K8',
-  'MUSEUM_KOUJO_K8',
-  'BANISHMENT_KOUJO_K8',
-  'PUBLIC_EXUCUTION_KOUJO_K8',
-  'GROTESQUE_KOUJO_K8',
-  'ENTERENEMY_KOUJO_K8',
   'GOHOUBI_REQUEST_KOUJO_K8',
   'GOHOUBI_AFTER_KOUJO_K8',
   'OSIOKI_KOUJO_K8',
@@ -12371,35 +12371,208 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
 // 注册进 NTR 口上族（TRYCALLFORM NTR_KOUJO_K8 的等价物）
 ntr_koujo_family.register(8, (p_arg) => ntr_koujo_k8(undefined, p_arg));
 
-/** @EXUCUTION_KOUJO_K8（:7606-7622）。TODO(#239)：待填充。 */
-async function exucution_koujo_k8() {
-  stub_line('EXUCUTION_KOUJO_K8', '处刑口上', '本票分段填充');
+/**
+ * @EXUCUTION_KOUJO_K8（:7606-7620）：处刑口上。
+ * TFLAG:16 分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
+ * 第 7 档源作未填台词（空 PRINTFORMW），1:1 保真出空行。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function exucution_koujo_k8(rand) {
+  void rand;
+
+  if (game.event.犬射精或处刑口上 == 4) {
+    // :7608 肉便器刑
+    await era.printAndWait(
+      `「怎么这样…我一生都要不停的给怪物生孩子什么的…啊…不要，放开我…啊啊啊啊啊啊啊！」`,
+    ); // :7610
+  } else if (game.event.犬射精或处刑口上 == 5) {
+    // :7611 戦闘員化
+    await era.printAndWait(`「什么都好…命令…为了…主人大人………」`); // :7613
+  } else if (game.event.犬射精或处刑口上 == 6) {
+    // :7614 晒し台刑
+    await era.printAndWait(`「啊…啊啊啊…做了这种事…绝对饶不了你………！」`); // :7616
+  } else if (game.event.犬射精或处刑口上 == 7) {
+    // :7617 記憶を消して解放する（源作未填台词）
+    await era.printAndWait(''); // :7619
+  }
+
+  return 0;
 }
 
-/** @MUSEUM_KOUJO_K8（:7623-7657）。TODO(#239)：待填充。 */
-async function museum_koujo_k8() {
-  stub_line('MUSEUM_KOUJO_K8', '博物馆口上', '本票分段填充');
+/**
+ * @MUSEUM_KOUJO_K8（:7623-7655）：博物馆（标本化）口上。
+ * TFLAG:500 分十档，只有 0 石化与 1 剥制化有台词，其余八档（21 蜡人形 /
+ * 3 人形 / 4 球体关节 / 5 金属 / 6 冰像 / 7 宝石 / 8 家具 / 9 绘画封印）
+ * 源作都是空 PRINTFORMW，1:1 保真出空行。档值 21 也照搬（不是笔误的 2）。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function museum_koujo_k8(rand) {
+  void rand;
+
+  if (game.event.博物馆口上 == 0) {
+    // :7625 石化
+    await era.printAndWait(
+      `「啊啊…我、我的身体…变得越来越冷了…啊…啊啊…不要…不………要…………」`,
+    ); // :7627
+  } else if (game.event.博物馆口上 == 1) {
+    // :7628 剥製化
+    await era.printAndWait(`「死了之后还一直暴露着…呜…呜呜呜………」`); // :7630
+  } else if (game.event.博物馆口上 == 21) {
+    // :7631 蝋人形化（源作未填台词；档值 21 照搬）
+    await era.printAndWait(''); // :7633
+  } else if (game.event.博物馆口上 == 3) {
+    // :7634 人形化(マネキン)
+    await era.printAndWait(''); // :7636
+  } else if (game.event.博物馆口上 == 4) {
+    // :7637 人形化(球体間接)
+    await era.printAndWait(''); // :7639
+  } else if (game.event.博物馆口上 == 5) {
+    // :7640 金属化
+    await era.printAndWait(''); // :7642
+  } else if (game.event.博物馆口上 == 6) {
+    // :7643 氷像化
+    await era.printAndWait(''); // :7645
+  } else if (game.event.博物馆口上 == 7) {
+    // :7646 宝石化
+    await era.printAndWait(''); // :7648
+  } else if (game.event.博物馆口上 == 8) {
+    // :7649 家具化
+    await era.printAndWait(''); // :7651
+  } else if (game.event.博物馆口上 == 9) {
+    // :7652 絵画封印
+    await era.printAndWait(''); // :7654
+  }
+
+  return 0;
 }
 
-/** @BANISHMENT_KOUJO_K8（:7658-7678）。TODO(#239)：待填充。 */
-async function banishment_koujo_k8() {
-  stub_line('BANISHMENT_KOUJO_K8', '追放口上', '本票分段填充');
+/**
+ * @BANISHMENT_KOUJO_K8（:7658-7676）：流放口上（处刑内容见 BANISHMENT.ERB）。
+ * TFLAG:510 分五档，只有 0 追放有台词，其余四档源作未填。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function banishment_koujo_k8(rand) {
+  void rand;
+
+  if (game.event.流放口上 == 0) {
+    // :7661 追放
+    await era.printAndWait(`「这样就自由了…但是、失去力量的我的存在价值………」`); // :7663
+  } else if (game.event.流放口上 == 1) {
+    // :7664 男体化（源作未填台词）
+    await era.printAndWait(''); // :7666
+  } else if (game.event.流放口上 == 2) {
+    // :7667 記憶消去
+    await era.printAndWait(''); // :7669
+  } else if (game.event.流放口上 == 3) {
+    // :7670 小動物化
+    await era.printAndWait(''); // :7672
+  } else if (game.event.流放口上 == 4) {
+    // :7673 元の生活に戻す
+    await era.printAndWait(''); // :7675
+  }
+
+  return 0;
 }
 
-/** @PUBLIC_EXUCUTION_KOUJO_K8（:7679-7693）。TODO(#239)：待填充。 */
-async function public_exucution_koujo_k8() {
-  stub_line('PUBLIC_EXUCUTION_KOUJO_K8', '公开处刑口上', '本票分段填充');
+/**
+ * @PUBLIC_EXUCUTION_KOUJO_K8（:7679-7691）：公开处刑口上
+ * （处刑内容见 PUBLIC_EXUCUTION.ERB）。TFLAG:520 分三档：0 凌辱处刑 /
+ * 1 绞首刑 / 2 魂粉碎（源作未填台词）。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function public_exucution_koujo_k8(rand) {
+  void rand;
+
+  if (game.event.公开处刑口上 == 0) {
+    // :7682 陵辱処刑
+    await era.printAndWait(
+      `「那个烙印是…啊…停、停下快停下…呀…啊…啊呀啊啊啊啊啊啊啊啊！」`,
+    ); // :7684
+  } else if (game.event.公开处刑口上 == 1) {
+    // :7685 絞首刑
+    await era.printAndWait(
+      `「能不能至少给我套个皮革袋子、我不想漏出可怜的死相…呜…呜呜呜呜………」`,
+    ); // :7687
+  } else if (game.event.公开处刑口上 == 2) {
+    // :7688 魂粉砕（源作未填台词）
+    await era.printAndWait(''); // :7690
+  }
+
+  return 0;
 }
 
-/** @GROTESQUE_KOUJO_K8（:7694-7720）。TODO(#239)：待填充。 */
-async function grotesque_koujo_k8() {
-  stub_line('GROTESQUE_KOUJO_K8', '猎奇处刑口上', '本票分段填充');
+/**
+ * @GROTESQUE_KOUJO_K8（:7694-7718）：猎奇处刑口上（内容见 GROTESQUE.ERB）。
+ * TFLAG:530 分七档（0 四肢切断 / 1 内脏凌辱 / 2 断头台 / 3 火刑 / 4 食肉 /
+ * 5 死灵化 / 6 丧尸化），源作七档全部未填台词，1:1 保真只出空行。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function grotesque_koujo_k8(rand) {
+  void rand;
+
+  if (game.event.猎奇处刑口上 == 0) {
+    // :7697 四肢切断刑
+    await era.printAndWait(''); // :7699
+  } else if (game.event.猎奇处刑口上 == 1) {
+    // :7700 内臓陵辱刑
+    await era.printAndWait(''); // :7702
+  } else if (game.event.猎奇处刑口上 == 2) {
+    // :7703 ギロチン刑
+    await era.printAndWait(''); // :7705
+  } else if (game.event.猎奇处刑口上 == 3) {
+    // :7706 火あぶりの刑
+    await era.printAndWait(''); // :7708
+  } else if (game.event.猎奇处刑口上 == 4) {
+    // :7709 食肉刑
+    await era.printAndWait(''); // :7711
+  } else if (game.event.猎奇处刑口上 == 5) {
+    // :7712 死霊化
+    await era.printAndWait(''); // :7714
+  } else if (game.event.猎奇处刑口上 == 6) {
+    // :7715 ゾンビ化
+    await era.printAndWait(''); // :7717
+  }
+
+  return 0;
 }
 
-/** @ENTERENEMY_KOUJO_K8（:7721-7734）。TODO(#239)：待填充。 */
-async function enterenemy_koujo_k8() {
-  stub_line('ENTERENEMY_KOUJO_K8', '迷宫攻略开始口上', '本票分段填充');
+/**
+ * @ENTERENEMY_KOUJO_K8（:7721-7732）：迷宫攻略开始时的口上（角色即 A）。
+ * TALENT:76 淫乱 → TALENT:85 爱慕 → それ以外 三选一。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ */
+async function enterenemy_koujo_k8(rand) {
+  void rand;
+  const a = era_flag.target;
+
+  if (era0(`talent:${a}:76`) == 1) {
+    // :7724 淫乱
+    await era.printAndWait(
+      `「想看我被怪物轮奸什么的，魔王大人的趣味还真令人困扰啊${heart(1)}」`,
+    ); // :7726
+  } else if (era0(`talent:${a}:85`) == 1) {
+    // :7727 爱慕
+    await era.printAndWait(`「现在…就去见你魔王大人♪」`); // :7729
+  } else {
+    await era.printAndWait(`「还真是好久没有只身一人潜入迷宫了呢」`); // :7731
+  }
+
+  return 0;
 }
+
+// 注册进各自的分发族（TRYCALLFORM *_KOUJO_K8 的等价物）
+exucution_koujo_family.register(8, exucution_koujo_k8);
+museum_koujo_family.register(8, museum_koujo_k8);
+banishment_koujo_family.register(8, banishment_koujo_k8);
+public_exucution_koujo_family.register(8, public_exucution_koujo_k8);
+grotesque_koujo_family.register(8, grotesque_koujo_k8);
+enterenemy_koujo_family.register(8, enterenemy_koujo_k8);
 
 /** @GOHOUBI_REQUEST_KOUJO_K8（:7735-7779，TARGET = A）。TODO(#239)：待填充。 */
 async function gohoubi_request_koujo_k8() {

@@ -25762,6 +25762,361 @@ export const FILES = [
           /PRINTFORMW 「嗯、嗯…我的子宫是狂王大人专用的育儿袋、今后预定不管几个都要生出来♪」/,
         ],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7606-7620',
+        any: [/@EXUCUTION_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7608',
+        any: [/;肉便器刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7610',
+        any: [
+          /PRINTFORMW 「怎么这样…我一生都要不停的给怪物生孩子什么的…啊…不要，放开我…啊啊啊啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7611',
+        any: [/;戦闘員化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7613',
+        any: [/PRINTFORMW 「什么都好…命令…为了…主人大人………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7614',
+        any: [/;晒し台刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7616',
+        any: [/PRINTFORMW 「啊…啊啊啊…做了这种事…绝对饶不了你………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7617',
+        any: [/;記憶を消して解放する/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7619',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7623-7655',
+        any: [/@MUSEUM_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7625',
+        any: [/;石化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7627',
+        any: [
+          /PRINTFORMW 「啊啊…我、我的身体…变得越来越冷了…啊…啊啊…不要…不………要…………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7628',
+        any: [/;剥製化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7630',
+        any: [/PRINTFORMW 「死了之后还一直暴露着…呜…呜呜呜………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7631',
+        any: [/;蝋人形化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7633',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7634',
+        any: [/;人形化\(マネキン\)/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7636',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7637',
+        any: [/;人形化\(球体間接\)/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7639',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7640',
+        any: [/;金属化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7642',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7643',
+        any: [/;氷像化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7645',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7646',
+        any: [/;宝石化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7648',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7649',
+        any: [/;家具化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7651',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7652',
+        any: [/;絵画封印/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7654',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7658-7676',
+        any: [/@BANISHMENT_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7661',
+        any: [/;追放/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7663',
+        any: [/PRINTFORMW 「这样就自由了…但是、失去力量的我的存在价值………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7664',
+        any: [/;男体化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7666',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7667',
+        any: [/;記憶消去/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7669',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7670',
+        any: [/;小動物化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7672',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7673',
+        any: [/;元の生活に戻す/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7675',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7679-7691',
+        any: [/@PUBLIC_EXUCUTION_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7682',
+        any: [/;陵辱処刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7684',
+        any: [
+          /PRINTFORMW 「那个烙印是…啊…停、停下快停下…呀…啊…啊呀啊啊啊啊啊啊啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7685',
+        any: [/;絞首刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7687',
+        any: [
+          /PRINTFORMW 「能不能至少给我套个皮革袋子、我不想漏出可怜的死相…呜…呜呜呜呜………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7688',
+        any: [/;魂粉砕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7690',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7694-7718',
+        any: [/@GROTESQUE_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7697',
+        any: [/;四肢切断刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7699',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7700',
+        any: [/;内臓陵辱刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7702',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7703',
+        any: [/;ギロチン刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7705',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7706',
+        any: [/;火あぶりの刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7708',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7709',
+        any: [/;食肉刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7711',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7712',
+        any: [/;死霊化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7714',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7715',
+        any: [/;ゾンビ化/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7717',
+        any: [/PRINTFORMW/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7721-7732',
+        any: [/@ENTERENEMY_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7724',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7726',
+        any: [
+          /PRINTFORMW 「想看我被怪物轮奸什么的，魔王大人的趣味还真令人困扰啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7727',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7729',
+        any: [/PRINTFORMW 「现在…就去见你魔王大人♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7731',
+        any: [/PRINTFORMW 「还真是好久没有只身一人潜入迷宫了呢」/],
+      },
     ],
   },
 ];
