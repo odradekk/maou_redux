@@ -255,7 +255,7 @@ function unique_nonblank_in_slice(lines, a, b) {
   return out;
 }
 
-const ANCHOR_QUALITY_BASELINE = 4795; // #298 冻结：弱锚只减不增；#239 K8 并入 +500
+const ANCHOR_QUALITY_BASELINE = 5159; // #298 冻结：弱锚只减不增；#239 K8 并入 +500；#231 K0 并入 +364
 const ANCHOR_QUALITY_BY_FILE = {
   'ere/chara/chara-make.js': 35,
   'ere/data/equip-database.js': 2,
@@ -287,6 +287,10 @@ const ANCHOR_QUALITY_BY_FILE = {
   'ere/kojo/kojo-dungeon-bitch.js': 50,
   'ere/kojo/kojo-dungeon-ravish-man.js': 84,
   'ere/kojo/kojo-dungeon-ravish.js': 193,
+  // K0 与 K8 一样，是在本门存在之前合的（#231 / #239），弱锚按存量冻结。
+  // 这两份的 `ELSEIF TALENT:TARGET:76 == 1` 一类锚一条命中几十处，正是本门
+  // 要拦的形态——冻结只表示「不追溯」，消化时收窄锚、把这两个数一并改小。
+  'ere/kojo/kojo-k0-tender.js': 364,
   'ere/kojo/kojo-k1-confident.js': 784,
   'ere/kojo/kojo-k10-club.js': 32,
   'ere/kojo/kojo-k2-timid.js': 566,
