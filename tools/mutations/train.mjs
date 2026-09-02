@@ -3689,7 +3689,7 @@ export default [
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
   game.train.初吻与自我口上 = 4;
-  await self_kojo();`,
+  await self_kojo(undefined, undefined, s); // s：本次加做次数（K8 SELF_KOJO_K8「調教後セックス」小节用，#239）`,
     replace: '  // 变异：性交臂不设 tflag:13、不调 self_kojo',
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_sex_check 通常性交与 ABL 判定',

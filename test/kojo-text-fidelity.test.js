@@ -137,6 +137,8 @@ const ERB_TOKEN_RULES = [
   // —— #239：ERB \@ 三元（K8 银黑桃口上，TIME 分时用语） ——
   [/^TIME == 0 \? 今日 # 今夜$/, 'TERN_TIME_NIGHT'],
   [/^TIME == 0 \? 今日 # 今宵$/, 'TERN_TIME_EVE'],
+  // —— #239：ERB {s}（K8 SELF_KOJO_K8「調教後セックス」小节，加做次数） ——
+  [/^s$/, 'S_COUNT'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -209,6 +211,9 @@ const JS_TOKEN_RULES = [
   // —— #239：ERB \@ 三元展开后的局部（K8 银黑桃口上） ——
   [/^today_or_night$/, 'TERN_TIME_NIGHT'],
   [/^today_or_eve$/, 'TERN_TIME_EVE'],
+  // —— #239：JS ${s} / ${s || 0}（K8 SELF_KOJO_K8「調教後セックス」小节） ——
+  [/^s$/, 'S_COUNT'],
+  [/^s \|\| 0$/, 'S_COUNT'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */

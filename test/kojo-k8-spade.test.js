@@ -3653,6 +3653,290 @@ test('MARKCNG：反抗刻印Lv3取得 爱慕写 CFLAG:300', async () => {
   ]);
   assert.equal(fixture.store.get('cflag:31:300'), 1, '反抗刻印Lv3');
 });
+
+// —— SELF_KOJO_K8（事件口上，TFLAG:13 分派） ——
+
+async function speak_self_kojo_k8(fixture, rand, q, s) {
+  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  return self_kojo_family.call(8, { args: [rand, q, s] });
+}
+
+test('SELF_KOJO：调教后自慰 崩坏支写空 CFLAG（TALENT:9）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 1);
+    f.store.set('talent:31:9', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯…嗯啊大人嗯大人………」',
+    '银黑桃像坏掉的玩具一样，疯狂的自慰着………',
+  ]);
+  assert.equal(fixture.store.get('tflag:13'), 0, '末行复位');
+});
+
+test('SELF_KOJO：调教后自慰 Q==1 追寻助手残渣（#214 显式传参）', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tflag:13', 1);
+    join_slave_chara(f, 5, '奴隶5');
+    ef.assi = 5;
+  });
+  await speak_self_kojo_k8(fixture, undefined, 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「那个人…还会…来抱我吗…嗯…嗯嗯！」',
+    '银黑桃像是在寻求奴隶5的残渣一样，用手指抚摸着秘所………',
+  ]);
+});
+
+test('SELF_KOJO：调教后自慰 Q==2 追寻野狗幻影', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 1);
+  });
+  await speak_self_kojo_k8(fixture, undefined, 2);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯…忘不了流浪狗大人的阴茎…啊…啊啊啊！」',
+    '银黑桃想象被流浪狗侵犯着，疯狂的自慰着………',
+  ]);
+});
+
+test('SELF_KOJO：调教后自慰 淫乱+处女写 CFLAG:261=4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:0', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.equal(fixture.store.get('cflag:31:261'), 4, '调教后自慰 CFLAG:261');
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('然后银黑桃用手指不停的搅拌着还不知道男性的蜜裂的入口。'),
+  );
+});
+
+test('SELF_KOJO：百合PLAY 崩坏支写 CFLAG:262=6', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tflag:13', 2);
+    f.store.set('talent:31:9', 1);
+    join_slave_chara(f, 5, '奴隶5');
+    ef.assi = 5;
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.equal(fixture.store.get('cflag:31:262'), 6, '百合PLAY CFLAG:262');
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…哇，大人的胸部…哇，大人…人enenenenen——……」',
+    '奴隶5和坏掉的银黑桃享受着这颓废的百合play………',
+  ]);
+});
+
+test('SELF_KOJO：朝口交 それ以外写 CFLAG:263=1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 3);
+    f.store.set('flag:7', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.equal(fixture.store.get('cflag:31:263'), 1, '朝口交 CFLAG:263');
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…总觉得今天早上想要你的呢…所以就稍微偷吃了一下…」',
+    '「会好好的全都清理干净的你别在意…嗯…啾…嗯啾…嗯…嗯………」',
+    '这么说着的银黑桃的脸上从脸颊到耳朵全都通红通红的………',
+  ]);
+});
+
+test('SELF_KOJO：调教后性交 V感觉Lv4以上 s>=3 加中出行', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 4);
+    f.store.set('abl:31:2', 4);
+  });
+  await speak_self_kojo_k8(fixture, undefined, undefined, 3);
+  assert.ok(
+    fixture.text_lines().includes('银黑桃的蜜壶已经被中出了3回，泛起泡沫了。'),
+  );
+  assert.equal(fixture.store.get('cflag:31:264'), 2, '调教后性交 CFLAG:264');
+});
+
+test('SELF_KOJO：调教后性交 V感觉Lv4以上 s<3 不加中出行', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 4);
+    f.store.set('abl:31:2', 4);
+  });
+  await speak_self_kojo_k8(fixture, undefined, undefined, 1);
+  assert.ok(
+    !fixture.text_lines().some((l) => l.includes('中出了')),
+    's<3 不应出现中出补充行',
+  );
+});
+
+test('SELF_KOJO：调教后性交 それ以外写 CFLAG:264=1（含 s 回分精液）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 4);
+    f.store.set('flag:7', 1);
+  });
+  await speak_self_kojo_k8(fixture, undefined, undefined, 5);
+  assert.ok(
+    fixture.text_lines().includes('5回分的精液从银黑桃的股间流了下来………'),
+  );
+  assert.equal(fixture.store.get('cflag:31:264'), 1, '调教后性交 CFLAG:264');
+});
+
+test('SELF_KOJO：经顶层 self_kojo() 分发，s 显式传参一路到达 K8（#214）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 4);
+    f.store.set('abl:31:2', 4);
+  });
+  const { self_kojo } = fixture.load_module('kojo/kojo-system');
+  await self_kojo(undefined, undefined, 7);
+  assert.ok(
+    fixture.text_lines().includes('银黑桃的蜜壶已经被中出了7回，泛起泡沫了。'),
+    's 必须经 self_kojo() 顶层分发一路到达 self_kojo_k8',
+  );
+});
+
+test('SELF_KOJO：夜袭 已达成且总开关非 2 时外层守卫静默', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 5);
+    f.store.set('cflag:31:265', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '外层 CFLAG:265 < 1 守卫应拦下整支',
+  );
+});
+
+test('SELF_KOJO：夜袭 崩坏支写 CFLAG:265=2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 5);
+    f.store.set('talent:31:9', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.equal(fixture.store.get('cflag:31:265'), 2, '夜袭 CFLAG:265');
+  assert.ok(fixture.text_lines().includes('「啊…啊…啊啊…想变成小穴…小穴………」'));
+});
+
+test('SELF_KOJO：卖却 それ以外 + 非扶她尾调 SELL_MATURO_K0', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 6);
+    f.store.set('talent:31:122', 0);
+  });
+  await speak_self_kojo_k8(fixture);
+  const lines = fixture.text_lines();
+  assert.ok(lines.includes('「我的结局就是这样什么的…骗…骗人吧………」'));
+  assert.ok(
+    lines.some((l) => l.includes('SELL_MATURO_K0')),
+    '非扶她应尾调存根 SELL_MATURO_K0',
+  );
+});
+
+test('SELF_KOJO：卖却 扶她（TALENT:122==1）不调 SELL_MATURO_K0', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 6);
+    f.store.set('talent:31:122', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.ok(
+    !fixture.text_lines().some((l) => l.includes('SELL_MATURO_K0')),
+    '扶她应跳过 SELL_MATURO_K0',
+  );
+});
+
+test('SELF_KOJO：妊娠发觉 首次+父親主人爱持ち写 CFLAG:271=1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:102', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呐、今天有令人高兴的报告…看起来我好像有你的孩子了、我绝对要生下来呢………♡」',
+    '银黑桃得意洋洋的吧妊娠的消息报告给了你………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:271'), 1, '妊娠发觉 CFLAG:271');
+});
+
+test('SELF_KOJO：妊娠发觉 二次通知与首次内容 1:1 重复（源作如此）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:102', 1);
+    f.store.set('cflag:31:271', 1); // 已发觉过
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呐、今天有令人高兴的报告…看起来我好像有你的孩子了、我绝对要生下来呢………♡」',
+    '银黑桃得意洋洋的吧妊娠的消息报告给了你………',
+  ]);
+});
+
+test('SELF_KOJO：生产 首次それ以外写 CFLAG:272=1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 12);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「总觉得很不可思议…就算是这种孩子也舍不得扔掉呢」',
+    '银黑桃抱起了孩子，开始哄着他………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:272'), 1, '生产 CFLAG:272');
+});
+
+test('SELF_KOJO：生产 已生产分支源作误写缺失开头引号（1:1 保真）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 12);
+    f.store.set('cflag:31:272', 1); // 已生产过
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '总觉得很不可思议…就算是这样也舍不得扔掉这个孩子呢」',
+    '银黑桃抱起了孩子，开始哄着他………',
+  ]);
+});
+
+test('SELF_KOJO：育儿室 妊娠中支写 CFLAG:273=1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 13);
+    f.store.set('talent:31:85', 1);
+    f.store.set('talent:31:153', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、马上就要生下来了、到底是个怎么样的孩子呢，真期待啊♪」',
+    '银黑桃抚摸着因为临月而膨胀起来的肚子………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:273'), 1, '育儿室 CFLAG:273');
+});
+
+test('SELF_KOJO：亲离 陥落済写 CFLAG:274=1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 14);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「因为是我的孩子、不管去哪里、一定、一定没事的」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:274'), 1, '亲离 CFLAG:274');
+});
+
+test('SELF_KOJO：死亡 两支均为空行（源作未填写，1:1 保真）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 999);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['']);
+});
+
+test('SELF_KOJO：寿命消灭 それ以外支也为空行', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:13', 998);
+  });
+  await speak_self_kojo_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['']);
+});
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
