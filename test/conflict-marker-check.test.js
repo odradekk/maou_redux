@@ -92,6 +92,19 @@ function raw_conflict(left, right) {
 }
 
 test('conflict-marker-check 全绿（跟踪文本无冲突标记，退出码 0）', () => {
+  // 这条断言的对象是**本仓库**。变异检查的隔离副本按 COPY_DENY 把 .git
+  // 排除在外，那里没有仓库可断言（工具靠 git ls-files 取跟踪清单，会以
+  // 退出码 2 报「not a git repository」）——**用 return 而不是 t.skip()**：
+  // 有引擎环境的跳过数守护要求跳过恒为 0，一个 skip 就把那道门判红。
+  // 其余几条探针各自 git init 自己的临时仓库，在副本里照常跑，所以
+  // M2740-M2742 的拦截不受影响。
+  const probe = spawnSync('git', ['rev-parse', '--is-inside-work-tree'], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+  });
+  if (probe.status !== 0) {
+    return;
+  }
   const { status, output } = run_tool();
   assert.equal(
     status,
@@ -139,23 +152,19 @@ test('探针：markdown 的结束标记经 prettier --write 洗净后仍须红',
     const rel = 'docs/washed.md';
     add_file(dir, rel, `${END} origin/master\n`);
     const md = path.join(dir, rel);
-    const pr = spawnSync(process.execPath, [PRETTIER, '--write', md], {
-      cwd: dir,
-      encoding: 'utf8',
-    });
-    assert.equal(
-      pr.status,
-      0,
-      `prettier --write 失败：${pr.stderr || pr.stdout}`,
-    );
+    // 洗净形态直接写死，不在这里现跑 prettier。
+    //
+    // 本用例锁的是**我们的检查器认不认这个形态**；「prettier 会把
+    // `>>>>>>> x` 规范化成 `> > > > > > > x`」是外部事实，由下面那条
+    // 单独的用例在有 node_modules 的环境里核对。分开的理由是环境：
+    // CI 的 engine / mutation 两个 job 不跑 npm ci（变异的隔离副本更是
+    // 按 COPY_DENY 把 node_modules 排除在外），在那里 spawn prettier
+    // 必然 ENOENT——首版合并时这条就把两个 job 打红了（#299 / #302）。
+    fs.writeFileSync(md, `${WASHED} origin/master\n`, 'utf8');
     const washed_body = fs.readFileSync(md, 'utf8');
     assert.ok(
-      washed_body.includes(WASHED),
-      `prettier 没洗成引用块（核心判据的前置)：\n${washed_body}`,
-    );
-    assert.ok(
       !washed_body.includes(END),
-      `prettier 仍留下原始结束标记，洗净步骤没成立：\n${washed_body}`,
+      `洗净形态里不该还有原始结束标记：\n${washed_body}`,
     );
     git(dir, ['add', rel]);
     const { status, output } = run_tool(dir);
@@ -195,6 +204,36 @@ test('markdown 里上一行空白的孤立分隔线仍须红', () => {
     assert.ok(
       output.includes('docs/orphan.md'),
       `孤立分隔线未被报出：\n${output}`,
+    );
+  });
+});
+
+test('外部事实：prettier 确实把 >>>>>>> 规范化成 > > > > > > >（有 node_modules 时才跑）', () => {
+  // 上一条用例把洗净形态写死了，这条负责证明那个形态不是我们臆想的。
+  // 依赖 node_modules 里的 prettier，而 CI 的 engine / mutation job 与变异
+  // 的隔离副本都没有它——**用 return 而不是 t.skip()**：跳过数守护在有
+  // 引擎的环境里要求跳过数恒为 0（test/engine-present-skip-baseline.txt），
+  // 一个 skip 就会把那道门判红。
+  if (!fs.existsSync(PRETTIER)) {
+    return;
+  }
+  with_repo((dir) => {
+    const rel = 'docs/washed-fact.md';
+    add_file(dir, rel, `${END} origin/master\n`);
+    const md = path.join(dir, rel);
+    const pr = spawnSync(process.execPath, [PRETTIER, '--write', md], {
+      cwd: dir,
+      encoding: 'utf8',
+    });
+    assert.equal(
+      pr.status,
+      0,
+      `prettier --write 失败：${pr.stderr || pr.stdout}`,
+    );
+    const body = fs.readFileSync(md, 'utf8');
+    assert.ok(
+      body.includes(WASHED),
+      `prettier 没把结束标记洗成引用块——洗净形态的写死值该跟着改：\n${body}`,
     );
   });
 });
