@@ -1,6 +1,8 @@
 /**
  * @file trace-check 的行为锁（issue #63）：工具不只「表内一致」，还要
- * 「表外即红」——五条行为在此固定；#290 起锚表按 js 文件分片，再加两条：
+ * 「表外即红」——五条行为在此固定；#290 起锚表按 js 文件分片，再加两条；
+ * #298 起再加鉴别力：ENDIF 一类弱锚必须红、平行复现与空 PRINTFORM 整行
+ * 锚放行、基线只减不增、`--anchor-quality` 给出可引用的量法。
  *
  *   1. 全绿运行：tools/trace-check.mjs 退出码 0（锚校验 + 两侧扫描完整性
  *      + 豁免核对全过）。本用例把工具并入 npm test——锚表烂掉、完整性
@@ -58,8 +60,8 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'trace-check.mjs');
 
 /** 跑一遍真树工具，返回 { status, output }（只读的对照用例用） */
-function run_tool() {
-  const r = spawnSync(process.execPath, [TOOL], {
+function run_tool(extra_args = []) {
+  const r = spawnSync(process.execPath, [TOOL, ...extra_args], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
@@ -116,10 +118,10 @@ after(() => {
 });
 
 /** 跑副本里的工具（写坏型探针用，与 run_tool 同款返回） */
-function run_tool_in(root) {
+function run_tool_in(root, extra_args = []) {
   const r = spawnSync(
     process.execPath,
-    [path.join(root, 'tools', 'trace-check.mjs')],
+    [path.join(root, 'tools', 'trace-check.mjs'), ...extra_args],
     {
       cwd: root,
       encoding: 'utf8',
@@ -486,4 +488,269 @@ test('新分片即入账：往 tools/trace-refs/ 丢一份假模块锚表，不�
   }
   const restored = run_tool_in(root);
   assert.equal(restored.status, 0, `假模块删了还红：\n${restored.output}`);
+});
+
+// —— #298：锚鉴别力。trace-check 绿只证明「:N 登记了且能命中声明切片」，
+//    不证明锚有鉴别力。ENDIF / 裸 PRINTFORMW 命中几十上百行，行号漂了
+//    仍绿——这正是 #44 成片偏移 2~30 行时工具该抓却抓不到的那一类。
+//    量法是全文匹配（段级多行锚按「单行逐行」会得到 0 命中，见
+//    tools/trace-refs/kojo-k10-club.mjs 头注）；命中窗口逐字相同且有
+//    正文则放行（#242 平行复现段落：漂移落到内容相同的另一处，无从
+//    产生错误绑定）。空 PRINTFORMW 整行锚（#235）单独放行。其余弱锚
+//    冻结成只减不增的基线，不回头改存量。 ——
+
+/** 在副本里挂一份探针模块 + 源文件 + 锚表分片，跑完即删 */
+function write_quality_probe(root, { js_rel, src_rel, src_text, refs }) {
+  const js_path = path.join(root, js_rel);
+  const src_path = path.join(root, src_rel);
+  const shard_path = path.join(
+    root,
+    'tools',
+    'trace-refs',
+    '__quality_probe__.mjs',
+  );
+  fs.mkdirSync(path.dirname(js_path), { recursive: true });
+  fs.mkdirSync(path.dirname(src_path), { recursive: true });
+  fs.mkdirSync(path.dirname(shard_path), { recursive: true });
+  const comments = refs.map((r) => `// :${r.ref}`).join('\n');
+  fs.writeFileSync(
+    js_path,
+    `// 探针模块（test/trace-check.test.js 写入，跑完即删）\n${comments}\nmodule.exports = {};\n`,
+    'utf8',
+  );
+  fs.writeFileSync(src_path, src_text, 'utf8');
+  const ref_lines = refs
+    .map(
+      (r) =>
+        `      { src: ${JSON.stringify(src_rel)}, ref: ${JSON.stringify(r.ref)}, any: [${r.any}] },`,
+    )
+    .join('\n');
+  fs.writeFileSync(
+    shard_path,
+    [
+      'export const FILES = [',
+      `  { js: ${JSON.stringify(js_rel)}, refs: [`,
+      ref_lines,
+      '  ] },',
+      '];',
+      'export const LOG_REFS = [];',
+      'export const SAMPLE_LOG_REFS = {};',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  return {
+    cleanup() {
+      for (const p of [js_path, src_path, shard_path]) {
+        if (fs.existsSync(p)) fs.unlinkSync(p);
+      }
+    },
+  };
+}
+
+test('鉴别力：把锚改成 ENDIF，门必须红且点名位置与匹配行数', () => {
+  const root = probe_repo();
+  const probe = write_quality_probe(root, {
+    js_rel: 'ere/__quality_endif__.js',
+    src_rel: 'target/ERB/__quality_endif__.ERB',
+    src_text: [
+      '@PROBE_WEAK',
+      'PRINTFORMW 第一句有正文的台词',
+      'ENDIF',
+      'PRINTFORMW 第二句有正文的台词',
+      'ENDIF',
+      'PRINTFORMW 第三句有正文的台词',
+      'ENDIF',
+      '',
+    ].join('\n'),
+    refs: [{ ref: '3', any: String.raw`/^\s*ENDIF\s*$/m` }],
+  });
+  try {
+    const { status, output } = run_tool_in(root);
+    assert.notEqual(
+      status,
+      0,
+      'ENDIF 锚命中多处且窗口无正文，门必须非 0——鉴别力检查对弱锚失明',
+    );
+    assert.ok(
+      output.includes('__quality_endif__') && output.includes(':3'),
+      `必须点名 js 与 :N：\n${output}`,
+    );
+    assert.ok(
+      output.includes('ENDIF') && /命中\s*3\s*处/.test(output),
+      `必须报出锚源码与匹配行数：\n${output}`,
+    );
+    assert.ok(
+      output.includes('鉴别力') || output.includes('弱锚'),
+      `红的原因必须是鉴别力失守，而不是别的检查项先开：\n${output}`,
+    );
+  } finally {
+    probe.cleanup();
+  }
+  const restored = run_tool_in(root);
+  assert.equal(
+    restored.status,
+    0,
+    `探针删了还红——副本或工具有一边不对：\n${restored.output}`,
+  );
+});
+
+test('鉴别力：平行复现段落（命中多处但窗口逐字相同且有正文）放行', () => {
+  const root = probe_repo();
+  const line = 'PRINTFORMW 「这段台词在两个对称分支里逐字相同」';
+  const probe = write_quality_probe(root, {
+    js_rel: 'ere/__quality_parallel__.js',
+    src_rel: 'target/ERB/__quality_parallel__.ERB',
+    src_text: [
+      '@PROBE_PARALLEL',
+      'IF CFLAG:400 == 0',
+      line,
+      'ENDIF',
+      'IF CFLAG:400 == 1',
+      line,
+      'ENDIF',
+      '',
+    ].join('\n'),
+    refs: [
+      {
+        ref: '3',
+        any: String.raw`/^\s*PRINTFORMW 「这段台词在两个对称分支里逐字相同」\s*$/m`,
+      },
+    ],
+  });
+  try {
+    const { status, output } = run_tool_in(root);
+    assert.equal(
+      status,
+      0,
+      `平行复现段落必须放行（#242：漂移落到内容相同的另一处）：\n${output}`,
+    );
+    assert.ok(
+      !output.includes('__quality_parallel__') || !output.includes('弱锚'),
+      `平行复现不该被报成弱锚：\n${output}`,
+    );
+  } finally {
+    probe.cleanup();
+  }
+});
+
+test('鉴别力：空 PRINTFORMW 整行锚（#235）放行', () => {
+  const root = probe_repo();
+  const probe = write_quality_probe(root, {
+    js_rel: 'ere/__quality_printformw__.js',
+    src_rel: 'target/ERB/__quality_printformw__.ERB',
+    src_text: [
+      '@PROBE_PRINT',
+      'PRINTFORMW',
+      'PRINTFORMW 有正文',
+      'PRINTFORMW',
+      '',
+    ].join('\n'),
+    refs: [{ ref: '2', any: String.raw`/^\s*PRINTFORMW\s*$/m` }],
+  });
+  try {
+    const { status, output } = run_tool_in(root);
+    assert.equal(
+      status,
+      0,
+      `空 PRINTFORMW 整行锚是 #235 定的合法形态，必须放行：\n${output}`,
+    );
+  } finally {
+    probe.cleanup();
+  }
+});
+
+test('鉴别力：段级多行锚按全文匹配，不得按单行逐行量成 0 命中', () => {
+  const root = probe_repo();
+  const probe = write_quality_probe(root, {
+    js_rel: 'ere/__quality_multiline__.js',
+    src_rel: 'target/ERB/__quality_multiline__.ERB',
+    src_text: [
+      '@PROBE_MULTI',
+      'FLAG:110 = 1',
+      'SIF FLAG:7 == 0',
+      'FLAG:7 = 2',
+      '',
+    ].join('\n'),
+    refs: [
+      {
+        ref: '2-4',
+        any: String.raw`/^\s*FLAG:110 = 1\s*$\s*^\s*SIF FLAG:7 == 0\s*$\s*^\s*FLAG:7 = 2\s*$/m`,
+      },
+    ],
+  });
+  try {
+    const { status, output } = run_tool_in(root);
+    assert.equal(
+      status,
+      0,
+      `段级多行锚必须按全文匹配放行（#241 K10）：\n${output}`,
+    );
+    const report = run_tool_in(root, ['--anchor-quality']);
+    assert.equal(
+      report.status,
+      0,
+      `--anchor-quality 对段级多行锚必须全绿：\n${report.output}`,
+    );
+    assert.ok(
+      /命中\s*1\s*处/.test(report.output) ||
+        /唯一/.test(report.output) ||
+        /鉴别力/.test(report.output),
+      `--anchor-quality 必须能量出命中数（全文匹配，不是逐行）：\n${report.output}`,
+    );
+  } finally {
+    probe.cleanup();
+  }
+});
+
+test('鉴别力基线只能变短：把冻结数改小一位，工具必须红', () => {
+  const root = probe_repo();
+  const tool_path = path.join(root, 'tools', 'trace-check.mjs');
+  const original = fs.readFileSync(tool_path, 'utf8');
+  const m = original.match(/const ANCHOR_QUALITY_BASELINE = (\d+);/);
+  assert.ok(m, 'ANCHOR_QUALITY_BASELINE 必须内嵌在工具里——规则不复制到别处');
+  const current = Number(m[1]);
+  assert.ok(current > 0, '基线必须大于 0（存量弱锚冻结，不是空表）');
+  try {
+    fs.writeFileSync(
+      tool_path,
+      original.replace(
+        `const ANCHOR_QUALITY_BASELINE = ${current};`,
+        `const ANCHOR_QUALITY_BASELINE = ${current - 1};`,
+      ),
+      'utf8',
+    );
+    const { status, output } = run_tool_in(root);
+    assert.notEqual(
+      status,
+      0,
+      '基线改小一位必须非 0——「只能变短」不在退出码语义里',
+    );
+    assert.ok(
+      output.includes('#298') &&
+        (output.includes('基线') || output.includes('只减不增')),
+      `红的原因必须是鉴别力基线失守：\n${output}`,
+    );
+  } finally {
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  const restored = run_tool_in(root);
+  assert.equal(
+    restored.status,
+    0,
+    `基线还原后还红——副本或工具有一边不对：\n${restored.output}`,
+  );
+});
+
+test('--anchor-quality 给出可引用的量法（命中分布，不必另起扫描）', () => {
+  const { status, output } = run_tool(['--anchor-quality']);
+  assert.equal(status, 0, `--anchor-quality 在真树上必须全绿：\n${output}`);
+  assert.ok(
+    output.includes('鉴别力') && /命中\s*1\s*处/.test(output),
+    `--anchor-quality 必须报出命中 1 处的条数，agent 才能写进完成报告：\n${output}`,
+  );
+  assert.ok(
+    output.includes('弱锚') && /基线/.test(output),
+    `--anchor-quality 必须报出弱锚数与基线，防止再引错成「trace-check 全绿」：\n${output}`,
+  );
 });
