@@ -33,6 +33,11 @@ const { test } = require('node:test');
 const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'skip-count-check.mjs');
 const REAL_BASELINE = path.join(REPO_ROOT, 'test', 'engine-skip-baseline.txt');
+const PRESENT_BASELINE = path.join(
+  REPO_ROOT,
+  'test',
+  'engine-present-skip-baseline.txt',
+);
 
 /** 临时目录夹具：用完即删，测试之间互不污染（做法同 csv-to-yml.test.js） */
 function with_temp_dir(run) {
@@ -192,6 +197,42 @@ test('仓库基线健康：真实基线文件解析出非负整数（烂在本�
     assert.ok(
       output.includes('38') || output.includes('偏离'),
       `真实基线未参与核对：\n${output}`,
+    );
+  });
+});
+
+// —— #302：有引擎那一侧的基线与提示 ——
+
+test('仓库基线健康：有引擎侧的基线只能是 0（改成别的数就是默许跳过）', () => {
+  // 这份基线没有「有意识地改」的空间：引擎装上了还有东西被跳过，只可能是
+  // 门控写错或 asar 没被 locate_asar 认出来。所以它锁的是具体值 0，不是
+  // 「能解析」——与无引擎那侧（72，随覆盖面有意增减）待遇不同。
+  with_temp_dir((dir) => {
+    const tap = path.join(dir, 'report.tap');
+    fs.writeFileSync(tap, make_tap(0, 3), 'utf8');
+    const { status, output } = run_tool(tap, PRESENT_BASELINE);
+    assert.notEqual(
+      status,
+      2,
+      `test/engine-present-skip-baseline.txt 解析失败：\n${output}`,
+    );
+    assert.equal(
+      status,
+      0,
+      `有引擎侧基线不是 0——跳过 0 的 TAP 竟然判红：\n${output}`,
+    );
+  });
+});
+
+test('跑错环境时给得出方向：基线 0 而实际有跳过，提示指向 asar 与门控', () => {
+  with_temp_dir((dir) => {
+    const tap = path.join(dir, 'report.tap');
+    fs.writeFileSync(tap, make_tap(2, 3), 'utf8');
+    const { status, output } = run_tool(tap, PRESENT_BASELINE);
+    assert.equal(status, 1, `应判红：\n${output}`);
+    assert.ok(
+      output.includes('locate_asar'),
+      `基线为 0 时应提示 asar 没被认出来这条最可能的原因：\n${output}`,
     );
   });
 });

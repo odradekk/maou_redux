@@ -86,17 +86,23 @@ npx prettier --check .   # 仅格式，--write 可自动改
 - `.prettierignore` 是必需品：prettier 默认扫描全仓库，没有它 `--write` 会重写只读的 `target/`（68MB，且在其中的 Shift-JIS 日文 HTML 上直接报错退出），也会把 `yml/` 产物的双引号键名改成单引号。
 - **没装 `node_modules` 时 `npx` 会去拉最新版，而 eslint 与 prettier 的失败形态相反——后者更危险。** eslint 拉到 v9 会因找不到 `eslint.config.js` **报错**，一眼看得出是环境问题；prettier 拉到比 `package-lock.json` 钉的版本更新的一支则**静默给出不同答案**：3.9.x 与本仓库钉的 3.8.3 在 markdown 表格对齐与 `for (…;…; )` 的尾空格上判定相反，于是 `--check .` 报出三个「失败」文件（全是假的），而 `--write` 会把真正干净的文件改坏。**先 `npm ci`**；来不及就显式钉版本：`npx prettier@3.8.3`（版本以 `package-lock.json` 为准，不是 `package.json` 的 `^` 范围）。
 
-### CI（无引擎环境）
+### CI
 
-`.github/workflows/ci.yml`（#92）在 PR 与 push 到 master 时于 ubuntu runner 上重跑这三项（`npm run test:ci` → `npx eslint . --max-warnings 0` → `npx prettier --check .`），外加一条**跳过数守护**：CI 机器没有引擎，依赖引擎的用例按 `test/engine-skip-baseline.txt` 的基线数跳过（数字以该文件为唯一真相，定稿勘误见 #92），跳过数偏离基线即红。**新增依赖引擎的用例必须同步改基线**，让覆盖面的收缩是一次有意识的提交。
+`.github/workflows/ci.yml` 在 PR 与 push 到 master 时于 ubuntu runner 上跑三个 job（#92 起，#302 补引擎）：
 
-变异检查（#89）已跨平台，有三个执行点：
+| job          | 环境   | 内容                                                  |
+| ------------ | ------ | ----------------------------------------------------- |
+| `engineless` | 无引擎 | `npm run test:ci` ＋ 跳过数守护 ＋ eslint ＋ prettier |
+| `engine`     | 有引擎 | `npm run test:ci` ＋ 跳过数守护（只能是 0）           |
+| `mutation`   | 有引擎 | 全量变异，隔离副本并行                                |
 
-- **快速模式**（条目表的三项检查）随 `test/mutation-check.test.js` 进 `npm test`；
-- **抽样模式**在 mutation job 里抽 12 条轮转，PR 时跑；
-- **全量模式**在 master push 与手动触发（workflow_dispatch）时跑，隔离副本并行。无引擎环境下，依赖引擎的条目按「跳过」核对工具内嵌的 `ENGINE_SKIP_BASELINE`，偏离即红。
+**引擎经 release 资产上 runner**（`.github/actions/setup-engine`，下载 `engine-4.8.0` 的 `app.asar` 并校验 SHA256，导出 `ERE_ENGINE_ASAR`）。它不进 git——42 MB 会永久留在历史里；也不用 `actions/cache`，7 天不命中就被驱逐、会把「有没有引擎」变成时红时绿。**引擎换版时新开 tag 并改 action 里的 SHA256 断言**，那处 diff 就是换版的公告。
 
-引擎比对不在 CI 内，所以 CI 绿不等于本地全过。**变异检查的严格标准（全部拦下、零跳过）仍须在有引擎的本机跑全量。** 跳过数守护只在无引擎环境有意义：引擎在场时跳过数是 0，对基线必然红。
+**跳过数守护有两侧，两侧都要**：无引擎那侧对 `test/engine-skip-baseline.txt`（现 72），守的是「引擎缺席的代价必须是看得见的数字」——新增依赖引擎的用例必须同步改基线，让覆盖面的收缩是一次有意识的提交；有引擎那侧对 `test/engine-present-skip-baseline.txt`（只能是 0），守的是「引擎装上了却还有东西被跳过」——那意味着门控写错或 asar 没被 `locate_asar` 认出来。
+
+变异检查（#89）有两个执行点：**快速模式**（条目表的结构检查 `--verify`）随 `test/mutation-check.test.js` 进 `npm test`；**全量模式**在 CI 的 `mutation` job 上跑，带引擎，合格线是「全部拦下、零跳过、零红」。`--sample` 仍是工具支持的模式，CI 不再用它——全量在 PR 上就跑，抽样没有信息量了。
+
+**concurrency 只取消 PR 的陈旧运行，不取消 master push**：合并态的全量变异挂在后者上，被后一次 push 掐掉等于那一档从没跑过（#302 之前实测 40 次里 11 cancelled / 8 failure / 0 成功）。
 
 ### 静态数据目录
 

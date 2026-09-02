@@ -269,6 +269,21 @@ class TrainFacade {
     era.set(`cstr:${this.cid}:3`, v);
   }
 
+  /**
+   * 初吻对象名（cstr:cid:4 ↔ CSTR:4）
+   * 源: target/ERB/口上/EVENT_K8_スペード.ERB 行393 CSTR:TARGET:4 = %SAVESTR:ASSI%
+   * @returns {string}
+   */
+  get 初吻对象名() {
+    return era.get(`cstr:${this.cid}:4`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 初吻对象名(v) {
+    era.set(`cstr:${this.cid}:4`, v);
+  }
+
   // —— tequip ——
   /**
    * 淋浴中（tequip:cid:18 ↔ TEQUIP:18）

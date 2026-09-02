@@ -89,6 +89,8 @@ const ERB_TOKEN_RULES = [
   [/^CALLNAME:MASTER$/, 'MASTER'], // #235：K4 冷徹 :152/:160/:162（呼び名，MASTER 恒角色 0）
   [/^SELF_CALL\(TARGET(,\s*\d+)?\)$/, 'SC'], // ARG:1 原作已标注废弃，同值
   [/^SELF_CALL\(A(,\s*\d+)?\)$/, 'SC'], // EVENT_K 分发前 TARGET=A，与 TARGET 同值（#233）
+  [/^SELF_CALL\(ASSI,\s*CFLAG:ASSI:450\)$/, 'SC_ASSI'], // ARG:1 废弃，同值（#231 K0）
+  [/^阴核\(TARGET\)$/, 'CLITORIS'], // #231 K0：%阴核(TARGET)%（PRINTFORM 里直接写字）
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   [/^SAVESTR\s*:\s*TARGET$/, 'TARGET'],
   [/^GET_LOOK_INFO\(TARGET,\s*"种族"\)$/, 'RACE'],
@@ -181,11 +183,14 @@ const JS_TOKEN_RULES = [
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
   [/^self_call\(a\)$/, 'SC'],
+  [/^self_call\(assi\)$/, 'SC_ASSI'], // #231 K0：${self_call(assi)}
   [/^scf\(\)$/, 'SCF'],
+  [/^clitoris_word\(target\)$/, 'CLITORIS'], // #231 K0：${clitoris_word(target)}
   [/^get_look_info\(target,\s*'种族'\)$/, 'RACE'],
   [/^self_call_first\(a\)$/, 'SCFA'],
   [/^cstr2$/, 'CSTR2'],
   [/^chara_callname\(a\)$/, 'ANAME'],
+  [/^chara_callname\(cid\)$/, 'ANAME'], // #231 K0：GOHOUBI_AFTER 的 A 上下文
   [/^S$/, 'S'],
 
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
@@ -246,6 +251,11 @@ const JS_TOKEN_RULES = [
   // —— #238：K7 金红桃口上补充 ——
   [/^s$/, 'S_COUNT'],
   [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
+  // —— #239：K8 银黑桃口上的局部名（记号沿用上面的规范名，勿另起） ——
+  [/^a_name$/, 'ANAME'], // 迎击奖赏两函数承载 %SAVESTR:A%
+  [/^today_or_night$/, 'TERN_TIME_NIGHT'],
+  [/^today_or_eve$/, 'TERN_TIME_TONIGHT'],
+  [/^s \|\| 0$/, 'S_COUNT'],
   [/^time_word$/, 'TERN_TIME_NIGHT'],
   [/^time_word2$/, 'TERN_TIME_TONIGHT'],
   [/^hole_word$/, 'TERN_HOLE'],
@@ -280,6 +290,10 @@ function norm_erb_token(raw) {
   if (black_heart_match) {
     return `BLACKHEART${black_heart_match[1]}`;
   }
+  const heart_black_match = tok.match(/^UNICODE\(0x2665\)\s*\*(\d+)$/);
+  if (heart_black_match) {
+    return `HEART_BLACK${heart_black_match[1]}`;
+  }
 
   // #183：{MON_NUM} / {MON_NUM * 10} 计算插值（迷宫凌辱的怪物数量）
   if (tok === 'MON_NUM') {
@@ -313,6 +327,10 @@ function norm_js_token(raw) {
   const black_heart_match = tok.match(/^black_heart\((\d+)\)$/);
   if (black_heart_match) {
     return `BLACKHEART${black_heart_match[1]}`;
+  }
+  const heart_black_match = tok.match(/^heart_black\((\d+)\)$/);
+  if (heart_black_match) {
+    return `HEART_BLACK${heart_black_match[1]}`;
   }
   if (tok === "'\\u3000'") {
     return 'IDEOGRAPHIC_SPACE';
@@ -492,15 +510,9 @@ function find_printform(erb_lines, n, m) {
   for (let i = n; i <= m; i += 1) {
     const match = erb_lines[i - 1]?.match(PRINTFORM_RE);
     if (match) {
-      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?（大小写不敏感匹配后统一转大写，
-      // 与下方 'W'/'L' 字面量比较口径一致，#240）
-      const variant =
-        (match[1] && match[1].toUpperCase()) ||
-        (match[3]?.toUpperCase() === 'W'
-          ? 'W'
-          : match[3]?.toUpperCase() === 'L'
-            ? 'L'
-            : undefined);
+      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?——#231 与 #240 分别在 K0/K9 撞到小写
+      // printformw，正则带 i，variant 归一大写再判
+      const variant = (match[1] || match[3] || '').toUpperCase() || undefined;
       const arg = match[2] ?? match[4] ?? '';
       return { line_no: i, variant, arg };
     }

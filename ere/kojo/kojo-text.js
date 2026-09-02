@@ -39,6 +39,16 @@ function black_heart(n) {
 }
 
 /**
+ * %UNICODE(0x2665) *N%：黑心（实心黑桃心，K0 慈爱口上专用字——与
+ * black_heart 的 U+2764 不同码位，1:1 保真不混用）。
+ * @param {number} n 次数
+ * @returns {string}
+ */
+function heart_black(n) {
+  return '♥'.repeat(n);
+}
+
+/**
  * %SELF_CALL(x)%：角色的自称（CSTR:60 非空取值，否则「我」）。
  * @param {number} cid 角色 ID（原作形参是 TARGET 或显式角色号）
  * @returns {string}
@@ -56,4 +66,10 @@ function self_call_first(cid) {
   return Array.from(self_call(cid))[0];
 }
 
-module.exports = { heart, black_heart, self_call, self_call_first };
+module.exports = {
+  heart,
+  heart_black,
+  black_heart,
+  self_call,
+  self_call_first,
+};
