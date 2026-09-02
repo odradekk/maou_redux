@@ -519,4 +519,28 @@ export default [
     tests: ['trace-check'],
     must_mention: '登记后的样本前缀引用必须让工具全绿',
   },
+  {
+    desc: 'M2740 原始冲突标记识别被拆（行首开始/分隔/结束标记不再报——#299 探针必须抓到失明）',
+    file: 'tools/conflict-marker-check.mjs',
+    find: "      hits.push({ kind: '原始标记', line: i + 1, text: line.trim() });",
+    replace: '      // 变异：原始标记不再报',
+    tests: ['conflict-marker-check'],
+    must_mention: '原始冲突标记探针必须非 0——未解标记会让登记条目脱离表格',
+  },
+  {
+    desc: 'M2741 prettier 洗净形态识别被拆（七个空格隔开的大于号不再报——只认原始形态等于没修）',
+    file: 'tools/conflict-marker-check.mjs',
+    find: "      hits.push({ kind: 'prettier 洗净', line: i + 1, text: line.trim() });",
+    replace: '      // 变异：prettier 洗净形态不再报',
+    tests: ['conflict-marker-check'],
+    must_mention: 'prettier 洗净后仍须红——只认原始形态等于没修',
+  },
+  {
+    desc: 'M2742 setext 标题下划线排除被拆（合法标题下的七个等号也报——排除按上下文的探针必须红）',
+    file: 'tools/conflict-marker-check.mjs',
+    find: '      if (is_setext_underline(line, prev, markdown)) {',
+    replace: '      if (false && is_setext_underline(line, prev, markdown)) {',
+    tests: ['conflict-marker-check'],
+    must_mention: 'setext 标题下划线不得报为冲突标记，实际退出',
+  },
 ];
