@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-1987',
+        ref: '786-2066',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -6003,6 +6003,266 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
         ref: '1984-1986',
         any: [/^\s*CFLAG:372 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1992-2066',
+        any: [
+          /^\s*IF SELECTCOM == 12\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:313 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』\s*$\s*^\s*PRINTFORMW 「啊咧？什，什么……啊啊啊…拿开啊……哈啊…哈啊！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1994-2015',
+        any: [
+          /^\s*IF CFLAG:313 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』\s*$\s*^\s*PRINTFORMW 「啊咧？什，什么……啊啊啊…拿开啊……哈啊…哈啊！」\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1997',
+        any: [
+          /^\s*PRINTFORMW 『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1998',
+        any: [
+          /^\s*PRINTFORMW 「啊咧？什，什么……啊啊啊…拿开啊……哈啊…哈啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2002',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊…这个震动的频率…太，太快……啊啊啊…好…好舒服啊…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2003',
+        any: [
+          /^\s*PRINTFORMW 双腿之间的震动杖对私处的激烈刺激，%SAVESTR:TARGET%闭上了眼睛，一脸享受的表情………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2006',
+        any: [
+          /^\s*PRINTFORMW 「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2007',
+        any: [
+          /^\s*PRINTFORMW 双腿之间的震动杖对私处的激烈刺激，，让%SAVESTR:TARGET%弓起了腰，全身颤抖了起来………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2010',
+        any: [
+          /^\s*PRINTFORMW 「这，这是什么？！好痒，好痒，哈…啊哈，拿开啊…嗯啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2011',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%抿着嘴，忍耐着双腿之间的震动杖对阴蒂激烈刺激………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2014',
+        any: [/^\s*CFLAG:313 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2014-2015',
+        any: [/^\s*CFLAG:313 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2017-2064',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1 && \(CFLAG:313 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「啊啊啊…姐姐…要上天了…哈啊%UNICODE\(0x2661\) \*1% 实在是……太棒了%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*PRINTFORMW 『哎哎、这个东西还真是厉害呢，碰一下姐姐就变成这个样子了………』\s*$\s*^\s*CFLAG:313 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2022',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊…姐姐…要上天了…哈啊%UNICODE\(0x2661\) \*1% 实在是……太棒了%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2023',
+        any: [
+          /^\s*PRINTFORMW 『哎哎、这个东西还真是厉害呢，碰一下姐姐就变成这个样子了………』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2023-2024',
+        any: [
+          /^\s*PRINTFORMW 『哎哎、这个东西还真是厉害呢，碰一下姐姐就变成这个样子了………』\s*$\s*^\s*CFLAG:313 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2027',
+        any: [
+          /^\s*PRINTFORMW 「哈…啊…又是这个！快，快拿开啊，姐姐怕痒啊啊啊…呼…呼…呃啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2028',
+        any: [
+          /^\s*PRINTFORMW 『痒？明明是很舒服才对吧？哈啊，看我换个角度让姐姐更舒服一点%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2028-2029',
+        any: [
+          /^\s*PRINTFORMW 『痒？明明是很舒服才对吧？哈啊，看我换个角度让姐姐更舒服一点%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*CFLAG:313 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2032',
+        any: [
+          /^\s*PRINTFORMW 『姐姐也开始露出舒服和享受的表情了呢，真是可爱～』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2033',
+        any: [
+          /^\s*PRINTFORMW 「才，才不会有那种表情…啊啊…哈啊…舒服，享受什么的…更不可能…呃啊啊…呜呜」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2033-2034',
+        any: [
+          /^\s*PRINTFORMW 「才，才不会有那种表情…啊啊…哈啊…舒服，享受什么的…更不可能…呃啊啊…呜呜」\s*$\s*^\s*CFLAG:313 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2037',
+        any: [
+          /^\s*PRINTFORMW 『哎呀呀，姐姐，怎么老乱动哦，又想要我惩罚你了吗♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2038',
+        any: [
+          /^\s*PRINTFORMW 「不，不要啊…原谅%SAVESTR:PLAYER%吧，求求你…呃啊啊…嗯啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2038-2039',
+        any: [
+          /^\s*PRINTFORMW 「不，不要啊…原谅%SAVESTR:PLAYER%吧，求求你…呃啊啊…嗯啊啊！」\s*$\s*^\s*CFLAG:313 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2044',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊…这个感觉…好棒呃啊啊…简直太舒服了嗯啊啊啊…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2045',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%张开了双腿，尽情享受着双腿之间震动杖的激烈刺激，娇喘个不停……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2045-2046',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%张开了双腿，尽情享受着双腿之间震动杖的激烈刺激，娇喘个不停……\s*$\s*^\s*CFLAG:313 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2049',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊…太…太激烈了…嗯啊啊…哈…哈…呃啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2050',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着双腿之间震动杖的激烈刺激，在快感之下弓起了腰，不住地娇喘着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2050-2051',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着双腿之间震动杖的激烈刺激，在快感之下弓起了腰，不住地娇喘着……\s*$\s*^\s*CFLAG:313 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2054',
+        any: [
+          /^\s*PRINTFORMW 「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2055',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%只剩下口头上的微弱抗拒，双腿则老实地张开着，忍耐着震动杖对阴蒂的强烈刺激………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2055-2056',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%只剩下口头上的微弱抗拒，双腿则老实地张开着，忍耐着震动杖对阴蒂的强烈刺激………\s*$\s*^\s*CFLAG:313 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2059',
+        any: [/^\s*PRINTFORMW 「呃啊啊啊！停，停下啊！把它拿开啊啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2060',
+        any: [
+          /^\s*PRINTFORMW 震动杖激烈地刺激着%SAVESTR:TARGET%的敏感的阴蒂，让她不住地哀鸣着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2060-2061',
+        any: [
+          /^\s*PRINTFORMW 震动杖激烈地刺激着%SAVESTR:TARGET%的敏感的阴蒂，让她不住地哀鸣着……\s*$\s*^\s*CFLAG:313 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2061-2064',
+        any: [
+          /^\s*CFLAG:313 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
       },
     ],
   },

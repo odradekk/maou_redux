@@ -5809,6 +5809,239 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 脱着時：それ以外推进到 1',
   },
   {
+    desc: 'M2930 COM12 初めて 助手玛奥判据错格（assi_mao 短路失效，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (assi_mao) {
+        await era.printAndWait(
+          \`『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』\`,
+        ); // :1997`,
+    replace: `      if (!assi_mao) {
+        // 变异：判据错格
+        await era.printAndWait(
+          \`『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』\`,
+        ); // :1997`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 初めて：助手玛奥推进到 1',
+  },
+  {
+    desc: 'M2931 COM12 初めて 淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          \`「啊啊啊…这个震动的频率…太，太快……啊啊啊…好…好舒服啊…\${heart(1)}」\`,`,
+    replace: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
+        // 变异：判据错格
+        await era.printAndWait(
+          \`「啊啊啊…这个震动的频率…太，太快……啊啊啊…好…好舒服啊…\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 初めて：非助手玛奥 + 淫乱推进到 1',
+  },
+  {
+    desc: 'M2932 COM12 初めて 爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
+        // 爱慕
+        await era.printAndWait(
+          \`「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」\`,
+        ); // :2006`,
+    replace: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // 变异：判据错格
+        await era.printAndWait(
+          \`「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」\`,
+        ); // :2006`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 初めて：非助手玛奥 + 爱慕推进到 1',
+  },
+  {
+    desc: 'M2933 COM12 初めて CFLAG:313 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.振动杖 = 1; // :2014
+      return 0; // :2014-2015`,
+    replace: `      kojo.振动杖 = 0; // 变异
+      return 0; // :2014-2015`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 初めて：助手玛奥推进到 1',
+  },
+  {
+    desc: 'M2934 COM12 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (assi_mao) {
+      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)
+      ) {`,
+    replace: `    if (assi_mao) {
+      if (
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)
+      ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2935 COM12 二回目 助手玛奥淫乱 CFLAG:313 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.振动杖 = 5; // :2023-2024`,
+    replace: `        kojo.振动杖 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2936 COM12 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          \`「哈…啊…又是这个！快，快拿开啊，姐姐怕痒啊啊啊…呼…呼…呃啊啊啊！」\`,`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          \`「哈…啊…又是这个！快，快拿开啊，姐姐怕痒啊啊啊…呼…呼…呃啊啊啊！」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2937 COM12 二回目 助手玛奥爱慕 CFLAG:313 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.振动杖 = 4; // :2028-2029`,
+    replace: `        kojo.振动杖 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2938 COM12 二回目 助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(
+          \`『姐姐也开始露出舒服和享受的表情了呢，真是可爱～』\`,`,
+    replace: `      } else if (
+        mark(2) === 2 && // 变异：判据错格
+        (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(
+          \`『姐姐也开始露出舒服和享受的表情了呢，真是可爱～』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2939 COM12 二回目 助手玛奥屈服刻印Lv3 CFLAG:313 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.振动杖 = 3; // :2033-2034`,
+    replace: `        kojo.振动杖 = 2; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2940 COM12 二回目 助手玛奥それ以外 CFLAG:313 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.振动杖 = 2; // :2038-2039`,
+    replace: `        kojo.振动杖 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：助手玛奥 + それ以外推进到 2',
+  },
+  {
+    desc: 'M2941 COM12 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        \`「啊啊啊…这个感觉…好棒呃啊啊…简直太舒服了嗯啊啊啊…\${heart(1)}」\`,`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+      (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        \`「啊啊啊…这个感觉…好棒呃啊啊…简直太舒服了嗯啊啊啊…\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2942 COM12 二回目 非助手玛奥淫乱 CFLAG:313 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.振动杖 = 5; // :2045-2046`,
+    replace: `      kojo.振动杖 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2943 COM12 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        \`「啊啊啊…太…太激烈了…嗯啊啊…哈…哈…呃啊啊啊\${heart(1)}」\`,`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        \`「啊啊啊…太…太激烈了…嗯啊啊…哈…哈…呃啊啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2944 COM12 二回目 非助手玛奥爱慕 CFLAG:313 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.振动杖 = 4; // :2050-2051`,
+    replace: `      kojo.振动杖 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2945 COM12 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      mark(2) === 3 &&
+      (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3
+      await era.printAndWait(\`「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」\`); // :2054`,
+    replace: `    } else if (
+      mark(2) === 2 && // 变异：判据错格
+      (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3
+      await era.printAndWait(\`「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」\`); // :2054`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2946 COM12 二回目 非助手玛奥屈服刻印Lv3 CFLAG:313 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.振动杖 = 3; // :2055-2056`,
+    replace: `      kojo.振动杖 = 2; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
+  },
+  {
+    desc: 'M2947 COM12 二回目 非助手玛奥それ以外 CFLAG:313 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.振动杖 = 2; // :2060-2061`,
+    replace: `      kojo.振动杖 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM12 二回目：非助手玛奥 + それ以外推进到 2',
+  },
+  {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `game.kojo.口上存在_10 = 1; // :64 FLAG:110 = 1（K10 口上存在标志）`,
