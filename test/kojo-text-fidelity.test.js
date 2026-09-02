@@ -13,7 +13,7 @@
  * 不手抄镜像——期望值运行时取自 target/ 的 ERB 原文；ere/kojo/ 新增模块
  * 自动纳入（后续 19 个口上文件落地即受锁，这是本文件存在的理由）。
  *
- * 四道锁（每道一个 test，跨模块聚合失败、逐条列明位置）：
+ * 五道锁（每道一个 test，跨模块聚合失败、逐条列明位置）：
  *   A. 锚覆盖：kojo 模块里每个 era.print* 调用都被捕获且绑定了 // :N 行锚
  *      ——无锚的口上输出不可追溯，锁 B/C/D 对它无从谈起；
  *   B. W/L 变体：ERB 的 PRINTFORMW → printAndWait、PRINTFORML → print，
@@ -28,6 +28,9 @@
  *      照样红（归一是确定性映射，片段要么两边一致要么对不上）；且**多守
  *      一类**——JS 侧若还留着非简体字符（忘了转换），归一后的 ERB 片段
  *      在 JS 原文里找不到、反向比对即红。
+ *   E. 归一表模式唯一（#295）：ERB_TOKEN_RULES / JS_TOKEN_RULES 各自内部
+ *      不许有两条规则用同一个正则源码——「先匹配者胜」下重复模式不报错，
+ *      只是静默遮蔽（#238 的 SAVESTR:A 教训），与具体口上语料无关。
  *
  * 锚绑定两条路：语句收尾行的尾锚（`; // :N`）优先；否则看语句前一行的
  * 纯注释（如 K3 的 `// :925`、`// :1062-1063 …`），且仅当该行号窗口在源
@@ -834,5 +837,68 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
     problems,
     [],
     `字面量片段错漏（手抄错漏、空格丢失、JS 侧残留非简体都在这里红）：\n  ${problems.join('\n  ')}`,
+  );
+});
+
+// —— 锁 E：归一表模式唯一（#295） ——
+//
+// ERB_TOKEN_RULES / JS_TOKEN_RULES 是「先匹配者胜」的有序数组：同一个正则
+// 源码出现两次时，第二条永远吃不到，且不报错——静默遮蔽。#238 合并时踩过
+// 一次（[/^SAVESTR:A$/, ANAME] 与后加的 [/^SAVESTR:A$/, A_NAME] 并存，ERB
+// 侧与 JS 侧归一到不同记号，五处槽位序失配，已在 c481ed7 统一）。这道锁把
+// 「同一张表里两条规则用了同一个正则」当结构性错误钉住，与具体语料无关。
+
+/** 找出 [正则, 名] 数组里 regex.source 重复的条目：{source, names: [先, 后]}[] */
+function find_duplicate_patterns(rules) {
+  const seen = new Map(); // regex.source -> 先见到的记号
+  const dups = [];
+  for (const [re, name] of rules) {
+    const prior = seen.get(re.source);
+    if (prior !== undefined) {
+      dups.push({ source: re.source, names: [prior, name] });
+    } else {
+      seen.set(re.source, name);
+    }
+  }
+  return dups;
+}
+
+test('归一表重复检测器：合成用例锁本身（防检测逻辑被拆，#295）', () => {
+  // 不读真实表——真实表此刻可能没有重复，测不出「检测器被拆」。合成
+  // 一个三条、含一处重复的输入，直接验证检测器的行为契约。
+  const dup = find_duplicate_patterns([
+    [/^DUP_PROBE$/, 'FIRST'],
+    [/^OTHER$/, 'OTHER'],
+    [/^DUP_PROBE$/, 'SECOND'],
+  ]);
+  assert.equal(
+    dup.length,
+    1,
+    `合成用例应检出 1 处重复正则，实测 ${dup.length} 处——find_duplicate_patterns 的检测逻辑被拆了`,
+  );
+  assert.deepEqual(
+    dup[0],
+    { source: '^DUP_PROBE$', names: ['FIRST', 'SECOND'] },
+    `应点名冲突的两个记号：${JSON.stringify(dup[0])}`,
+  );
+});
+
+test('归一表模式唯一：ERB_TOKEN_RULES / JS_TOKEN_RULES 内部无重复正则源码（#295，先匹配者胜，重复静默遮蔽）', () => {
+  const erb_dups = find_duplicate_patterns(ERB_TOKEN_RULES);
+  const js_dups = find_duplicate_patterns(JS_TOKEN_RULES);
+  const problems = [
+    ...erb_dups.map(
+      (d) =>
+        `ERB_TOKEN_RULES 重复正则 /${d.source}/：记号 ${d.names.join(' 与 ')}`,
+    ),
+    ...js_dups.map(
+      (d) =>
+        `JS_TOKEN_RULES 重复正则 /${d.source}/：记号 ${d.names.join(' 与 ')}`,
+    ),
+  ];
+  assert.deepEqual(
+    problems,
+    [],
+    `归一表重复模式（先匹配者胜，第二条永远吃不到，见 #238 SAVESTR:A 教训）：\n  ${problems.join('\n  ')}`,
   );
 });

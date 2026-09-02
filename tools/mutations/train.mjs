@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
@@ -4640,7 +4641,7 @@ export default [
     must_mention: 'leftover_q',
   },
   {
-    desc: 'M1805 AFTERTRAIN leftover_s 不写入（#237）',
+    desc: 'M2135 AFTERTRAIN leftover_s 不写入（#237）',
     file: 'ere/event/event-aftertrain.js',
     find: '  leftover_s = s;',
     replace: '  leftover_s = 0; // 变异：不写入回数',
