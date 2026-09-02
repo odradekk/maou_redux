@@ -5673,4 +5673,2788 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: 'NTR：P==1 陥落済支走巨根（FLAG:500==0），记 CFLAG:651',
   },
+
+  // —— #231 J21 口上·K0 慈爱（M1600-M1649 + M1790-M2015；撞号条目并入 M2420-M2599） ——
+  {
+    desc: 'M1600 K0 爱抚首次状态推进写错（CFLAG:301 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.爱抚 = 1; // :720',
+    replace: '      kojo.爱抚 = 2; // :720（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '状态推进到 1',
+  },
+  {
+    desc: 'M1601 K0 爱抚首次刻印分档边界（MARK:2 >= 2 改 >= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      if (mark(2) >= 2) {',
+    replace: '      if (mark(2) >= 3) {',
+    tests: ['kojo-k0-tender'],
+    must_mention: '老实支两句',
+  },
+  {
+    desc: 'M1602 K0 爱抚淫乱素质判据错格（TALENT:76 改 77）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    // :725-728 淫乱（TALENT:76）
+    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&`,
+    replace: `    // :725-728 淫乱（TALENT:76）
+    if (
+      era.get(\`talent:\${target}:77\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱分支',
+  },
+  {
+    desc: 'M1603 K0 爱抚淫乱门槛 FLAG:7 == 2 旁路失效（改 === 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 3)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '阈值闸',
+  },
+  {
+    desc: 'M1604 K0 @EVENTEND #LATER 清标志删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    game.kojo.口上存在_0 = 0; // :81',
+    replace: '    // 变异：清标志删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTEND 清 FLAG:100',
+  },
+  {
+    desc: 'M1605 K0 失神守卫删除（TFLAG:899 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :687-688 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (game.train.失神) {`,
+    replace: `  // :687-688 失神時（TFLAG:899）——跨域读属主 train 的一维门面
+  if (false) { // 变异：失神守卫删除`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '失神（TFLAG:899）：不输出',
+  },
+  {
+    desc: 'M1606 主启动图删 K0 口上注册（KOJO_MESSAGE_COM_0 不进实际运行图）（#231）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k0-tender');",
+    replace: '// 变异：K0 口上不在主启动图注册',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k0-tender（KOJO 0）',
+  },
+  {
+    desc: 'M1607 K0 舔阴首次状态推进写错（CFLAG:302 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.舔阴 = 1; // :768',
+    replace: '      kojo.舔阴 = 2; // :768（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔阴首次推进到 1',
+  },
+  {
+    desc: 'M1608 K0 舔阴处女素质判据错格（TALENT:0 改 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :761-767 处女（TALENT:0）
+      if (era.get(\`talent:\${target}:0\`) === 1) {`,
+    replace: `      // :761-767 处女（TALENT:0）
+      if (era.get(\`talent:\${target}:1\`) === 1) {`,
+
+    tests: ['kojo-k0-tender'],
+    must_mention: '处女的味道',
+  },
+  {
+    desc: 'M1609 K0 舔阴淫乱门槛错位（CFLAG:302 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.舔阴 <= 4 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.舔阴 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔阴阈值闸',
+  },
+  {
+    desc: 'M1610 K0 死斗场守卫删除（TEQUIP:55 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  // :676-678 死斗场中は専用口上\n  if (era.get(`tequip:${target}:55`)) {',
+    replace: '  if (false) { // 变异：死斗场守卫删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: '死斗场（TEQUIP:55）',
+  },
+  {
+    desc: 'M1611 K0 助手调教守卫删除（ASSI/ASSIPLAY 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :681-682 助手が調教した時に口上をスキップする
+  if (era_flag.assi > 0 && era_flag.assiplay) {`,
+    replace: `  // :681-682 助手が調教した時に口上をスキップする
+  if (false) { // 变异：助手守卫删除`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '助手调教中',
+  },
+  {
+    desc: 'M1612 K0 口塞守卫删除（TEQUIP:45 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
+    replace: '  if (false) { // 变异：口塞守卫删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口塞（TEQUIP:45）',
+  },
+  {
+    desc: 'M1613 K0 崩坏守卫删除（TALENT:9 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :690-691 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前
+  if (era.get(\`talent:\${target}:9\`) === 1) {
+    return 0;
+  }`,
+    replace: `  // :690-691 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前
+  if (false) { // 变异：崩坏守卫删除
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '崩坏（TALENT:9）',
+  },
+  {
+    desc: 'M1614 K0 兽奸守卫删除（TEQUIP:89 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  // :693-695 兽奸PLAY中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
+    replace: '  if (false) { // 变异：兽奸守卫删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: '兽奸（TEQUIP:89）',
+  },
+  {
+    desc: 'M1615 K0 触手守卫删除（TEQUIP:90 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  // :698-699 触手調教中（TEQUIP:90）\n  if (era.get(`tequip:${target}:90`)) {',
+    replace: '  if (false) { // 变异：触手守卫删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: '触手（TEQUIP:90）',
+  },
+  {
+    desc: 'M1616 K0 @EVENTTRAIN #PRI 置 FLAG:100 删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    game.kojo.口上存在_0 = 1; // :75 FLAG:100 = 1（K0 口上存在标志）',
+    replace: '    // 变异：置标志删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTTRAIN 置 FLAG:100',
+  },
+  {
+    desc: 'M1617 K0 爱抚爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :730-733 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:85\`) === 1 &&`,
+    replace: `      // :730-733 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:86\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '爱慕分支',
+  },
+  {
+    desc: 'M1618 K0 爱抚屈服刻印 Lv3 分档错位（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :735-738 屈服刻印Lv3
+      mark(2) === 3 &&`,
+    replace: `      // :735-738 屈服刻印Lv3
+      mark(2) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '屈服刻印 Lv3',
+  },
+  {
+    desc: 'M1619 K0 爱抚屈服刻印 Lv2 分档错位（MARK:2 == 2 改 == 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :740-743 屈服刻印Lv2
+      mark(2) === 2 &&`,
+    replace: `      // :740-743 屈服刻印Lv2
+      mark(2) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '屈服刻印 Lv3 / Lv2',
+  },
+  {
+    desc: 'M1620 K0 肛门爱抚首次状态推进写错（CFLAG:303 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛门爱抚 = 1; // :803',
+    replace: '      kojo.肛门爱抚 = 2; // :803（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门爱抚首次推进到 1',
+  },
+  {
+    desc: 'M1621 K0 肛门爱抚润滑 Lv2 阈值错档（PALAMLV[2] 改 PALAMLV[3]）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    // :809-815 淫乱+润滑Lv2以上
+    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[2] &&`,
+    replace: `    // :809-815 淫乱+润滑Lv2以上
+    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      p >= PALAMLV[3] &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门爱抚二次淫乱+润滑 Lv2',
+  },
+  {
+    desc: 'M1622 K0 肛门爱抚末支门槛改回 CFLAG:303（原文是 223）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.首次耻情Lv2 <= 1 ||',
+    replace: '      kojo.肛门爱抚 <= 1 ||',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'CFLAG:223',
+  },
+  {
+    desc: 'M1623 K0 肛门爱抚 A钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :812-813 A感覚Lv3以上＋A鈍感
+      if (a_sense >= 3 && a_insensible) {`,
+    replace: `      // :812-813 A感覚Lv3以上＋A鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '钝感的肛门已经被完全开发好了、张得大大的',
+  },
+  {
+    desc: 'M1624 K0 肛门爱抚润滑合计丢掉 UP:3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    const p = train.润滑 + train.润滑增量;',
+    replace: '    const p = train.润滑;',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'delta 把不足抬过 Lv2',
+  },
+  {
+    desc: 'M1625 K0 舔阴爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :778-781 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:85\`) === 1 &&`,
+    replace: `      // :778-781 爱慕（TALENT:85）
+      era.get(\`talent:\${target}:86\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '好吃吗',
+  },
+  {
+    desc: 'M1626 K0 自慰首次状态推进写错（CFLAG:304 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.自慰 = 1; // :872',
+    replace: '      kojo.自慰 = 2; // :872（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '自慰首次推进到 1',
+  },
+  {
+    desc: 'M1627 K0 自慰首次爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :865-871 爱＆淫乱
+      if (
+        era.get(\`talent:\${target}:85\`) === 1 ||`,
+    replace: `      // :865-871 爱＆淫乱
+      if (
+        era.get(\`talent:\${target}:86\`) === 1 ||`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '请多多的…欣赏吧',
+  },
+  {
+    desc: 'M1628 K0 自慰淫乱+处女门槛错位（CFLAG:304 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.自慰 <= 8 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '自慰阈值闸',
+  },
+  {
+    desc: 'M1629 K0 自慰淫乱拍摄守卫删除（TEQUIP:53 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :885-894 撮影中
+      if (filming) {`,
+    replace: `      // :885-894 撮影中
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '看吧～♡　噗咻噗咻勃起的',
+  },
+  {
+    desc: 'M1630 K0 自慰拍摄鸡鸡判据错格（TALENT:122 改 123）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      era.get(`talent:${target}:122`) || era.get(`talent:${target}:121`);',
+    replace:
+      '      era.get(`talent:${target}:123`) || era.get(`talent:${target}:121`);',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鸡鸡～',
+  },
+  {
+    desc: 'M1631 K0 自慰淫乱中毒 Lv3 阈值错档（ABL:31 >= 3 改 >= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :883-902 淫乱＋自慰中毒Lv3以上
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      masturbation_addiction >= 3 &&`,
+    replace: `      // :883-902 淫乱＋自慰中毒Lv3以上
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      masturbation_addiction >= 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '自慰二次淫乱+自慰中毒 Lv3',
+  },
+  {
+    desc: 'M1632 K0 自慰爱慕+处女素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :913-916 爱＋处女
+      era.get(\`talent:\${target}:85\`) === 1 &&`,
+    replace: `      // :913-916 爱＋处女
+      era.get(\`talent:\${target}:86\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '专属小穴',
+  },
+  {
+    desc: 'M1633 K0 自慰屈服刻印 Lv3 分档错位（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :948-955 屈服刻印Lv3+自慰中毒Lv1以上
+      (era.get(\`mark:\${target}:2\`) || 0) === 3 &&`,
+    replace: `      // :948-955 屈服刻印Lv3+自慰中毒Lv1以上
+      (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '如果这是你希望的话',
+  },
+  {
+    desc: 'M1634 K0 自慰爱慕拍摄守卫删除（TEQUIP:53 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :920-929 撮影中
+      if (filming) {`,
+    replace: `      // :920-929 撮影中
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '看见了吗？～♪　噗咻噗咻勃起的',
+  },
+  {
+    desc: 'M1635 K0 自慰淫乱 RAND:3 首支旁路失效（=== 0 改 === 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        ); // :894
+      } else if (rand_n(3) === 0) {`,
+    replace: `        ); // :894
+      } else if (rand_n(3) === 1) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '飞起来了～飞起来了～',
+  },
+  {
+    desc: 'M1636 K0 胸爱抚首次状态推进写错（CFLAG:306 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.胸爱抚 = 1; // :1000',
+    replace: '      kojo.胸爱抚 = 2; // :1000（变异）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '胸爱抚首次推进到 1',
+  },
+  {
+    desc: 'M1637 K0 胸爱抚母乳体质判据错格（TALENT:130 改 131）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      era.get(`talent:${target}:130`) === 1 &&',
+    replace: '      era.get(`talent:${target}:131`) === 1 &&',
+    tests: ['kojo-k0-tender'],
+    must_mention: '吮吸并品尝母乳',
+  },
+  {
+    desc: 'M1638 K0 胸爱抚母乳欲情阈值错档（PALAMLV[3] 改 PALAMLV[4]）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (era.get(`palam:${target}:5`) || 0) > PALAMLV[3] &&',
+    replace: '      (era.get(`palam:${target}:5`) || 0) > PALAMLV[4] &&',
+    tests: ['kojo-k0-tender'],
+    must_mention: '吮吸并品尝母乳',
+  },
+  {
+    desc: 'M1639 K0 胸爱抚首次 B钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          // :986 B鈍感
+          if (b_insensible) {`,
+    replace: `          // :986 B鈍感
+          if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '钝感的乳头被吸吮着、被刺激的红肿起来',
+  },
+  {
+    desc: 'M1640 K0 胸爱抚二次母乳淫乱门槛错位（CFLAG:306 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '胸爱抚二次母乳阈值闸',
+  },
+  {
+    desc: 'M1641 K0 胸爱抚二次非母乳淫乱门槛错位（CFLAG:306 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '虽然很痛但也被弄得好舒服呢',
+  },
+  {
+    desc: 'M1642 K0 胸爱抚二次非母乳 B钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1033 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {`,
+    replace: `      // :1033 B感覚Lv3以上＋B鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '被含进嘴里舔得完全勃起了',
+  },
+  {
+    desc: 'M1643 K0 胸爱抚二次母乳爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        // :1012-1015 爱慕
+        era.get(\`talent:\${target}:85\`) === 1 &&`,
+    replace: `        // :1012-1015 爱慕
+        era.get(\`talent:\${target}:86\`) === 1 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '吸我的奶来恢复精神吧',
+  },
+  {
+    desc: 'M1644 K0 接吻首次状态推进写错（CFLAG:307 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.接吻 = 1;
+      return 0;
+    }
+
+    // :1099-1124 （調教では）初めて（CFLAG:307 == 0）`,
+    replace: `      kojo.接吻 = 2;
+      return 0;
+    }
+
+    // :1099-1124 （調教では）初めて（CFLAG:307 == 0）`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '接吻首次推进到 1',
+  },
+  {
+    desc: 'M1645 K0 接吻初吻故乡恋人判据错格（TALENT:317 == 4 改 == 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    const hometown_lover = era.get(\`talent:\${target}:317\`) === 4;
+    const first_kiss = game.train.初吻与自我口上;`,
+    replace: `    const hometown_lover = era.get(\`talent:\${target}:317\`) === 5;
+    const first_kiss = game.train.初吻与自我口上;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '故乡恋人',
+  },
+  {
+    desc: 'M1646 K0 接吻二次淫乱门槛错位（CFLAG:307 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '接吻二次阈值闸',
+  },
+  {
+    desc: 'M1647 K0 接吻二次顺从门槛错档（ABL:10 >= 2 改 >= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1137-1139 顺从Lv2以上
+      (era.get(\`abl:\${target}:10\`) || 0) >= 2 &&`,
+    replace: `      // :1137-1139 顺从Lv2以上
+      (era.get(\`abl:\${target}:10\`) || 0) >= 3 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '这样就可以了吧',
+  },
+  {
+    desc: 'M1648 K0 自己扒开首次状态推进写错（CFLAG:308 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.自己扒开 = 1;',
+    replace: '      kojo.自己扒开 = 2;',
+    tests: ['kojo-k0-tender'],
+    must_mention: '自己扒开首次推进到 1',
+  },
+  {
+    desc: 'M1649 K0 自己扒开二次推进写回 CFLAG:308（原文是 306）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        \`「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢\${heart(1)}」\`,
+      ); // :1172
+      kojo.胸爱抚 = 5;`,
+    replace: `        \`「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢\${heart(1)}」\`,
+      ); // :1172
+      kojo.自己扒开 = 5;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '自己扒开二次写 CFLAG:306',
+  },
+  {
+    desc: 'M2420 K0 插入手指首次状态推进写错（CFLAG:309 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.插入手指 = 1; // :1211',
+    replace: '      kojo.插入手指 = 2; // :1211',
+    tests: ['kojo-k0-tender'],
+    must_mention: '插入手指首次推进到 1',
+  },
+  {
+    desc: 'M2421 K0 插入手指二次淫乱门槛错位（CFLAG:309 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '插入手指二次：淫乱 + V钝感附加句',
+  },
+  {
+    desc: 'M2422 K0 插入手指二次 V钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1219-1220 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {`,
+    replace: `      // :1219-1220 V感覚Lv3以上＋V鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '贪婪的吞下了你所有的爱抚',
+  },
+  {
+    desc: 'M2423 K0 舔肛首次状态推进写错（CFLAG:310 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.舔肛 = 1; // :1274',
+    replace: '      kojo.舔肛 = 2; // :1274',
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔肛首次推进到 1',
+  },
+  {
+    desc: 'M2424 K0 舔肛二次淫乱门槛错位（CFLAG:310 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '舔肛二次：淫乱 + A钝感附加句',
+  },
+  {
+    desc: 'M2425 K0 舔肛二次 A钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1282-1283 A感覚Lv3以上＋A鈍感
+      if (a_sense >= 3 && a_insensible) {`,
+    replace: `      // :1282-1283 A感覚Lv3以上＋A鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '被你的舌头弄得发出了非常带感的声音',
+  },
+  {
+    desc: 'M2426 K0 振动宝石首次状态推进写错（CFLAG:311 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.振动宝石 = 1; // :1327',
+    replace: '      kojo.振动宝石 = 2; // :1327',
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动宝石首次推进到 1',
+  },
+  {
+    desc: 'M2427 K0 振动宝石二次淫乱门槛错位（CFLAG:311 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动宝石 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动宝石二次：淫乱 / 爱慕+屈服',
+  },
+  {
+    desc: 'M2428 K0 振动宝石二次爱慕+屈服刻印错格（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1337-1340 爱＋屈服刻印Lv3
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (era.get(\`mark:\${target}:2\`) || 0) === 3 &&`,
+    replace: `      // :1337-1340 爱＋屈服刻印Lv3
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '忍耐阴核的震动',
+  },
+  {
+    desc: 'M2429 K0 壶虫首次状态推进写错（CFLAG:312 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.壶虫 = 1; // :1399',
+    replace: '      kojo.壶虫 = 2; // :1399',
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫首次推进到 1',
+  },
+  {
+    desc: 'M2430 K0 壶虫开始二次淫乱门槛错位（CFLAG:312 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫开始二次：淫乱 + V钝感附加句',
+  },
+  {
+    desc: 'M2431 K0 壶虫开始二次 V钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1407-1408 V感覚Lv3以上＋V鈍感
+      if (v_sense >= 3 && v_insensible) {`,
+    replace: `      // :1407-1408 V感覚Lv3以上＋V鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '把壶虫贪婪的连根吞了进去',
+  },
+  {
+    desc: 'M2432 K0 壶虫脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.壶虫着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.壶虫着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫脱着：淫乱写 CFLAG:372 = 3，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M2433 K0 振动杖首次状态推进写错（CFLAG:313 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.振动杖 = 1; // :1474',
+    replace: '      kojo.振动杖 = 2; // :1474',
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动杖首次推进到 1',
+  },
+  {
+    desc: 'M2434 K0 振动杖二次淫乱门槛错位（CFLAG:313 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '振动杖二次：淫乱 / 爱慕 / 阈值闸',
+  },
+  {
+    desc: 'M2435 K0 振动杖二次屈服刻印错格（MARK:2 == 3 改 == 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1489-1491 屈服刻印Lv3
+      (era.get(\`mark:\${target}:2\`) || 0) === 3 &&`,
+    replace: `      // :1489-1491 屈服刻印Lv3
+      (era.get(\`mark:\${target}:2\`) || 0) === 4 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '明明被用这种东西玩弄',
+  },
+  {
+    desc: 'M2436 K0 肛门虫首次状态推进写错（CFLAG:314 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛门虫 = 1; // :1528',
+    replace: '      kojo.肛门虫 = 2; // :1528',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫首次推进到 1',
+  },
+  {
+    desc: 'M2437 K0 肛门虫二次淫乱+A感觉门槛错位（CFLAG:314 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫开始二次：淫乱+A感觉拍摄 / 无A感觉写 6 / 阈值闸',
+  },
+  {
+    desc: 'M2438 K0 肛门虫二次淫乱无A感觉写回错档（CFLAG:314 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛门虫 = 6; // :1551',
+    replace: '      kojo.肛门虫 = 5; // :1551',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫二次淫乱无A感觉也写 6',
+  },
+  {
+    desc: 'M2439 K0 肛门虫脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.肛门虫着脱 < 4 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.肛门虫着脱 <= 4 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门虫脱着：淫乱写 CFLAG:374 = 4，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M2440 K0 阴蒂夹首次状态推进写错（CFLAG:315 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.阴蒂夹 = 1; // :1628',
+    replace: '      kojo.阴蒂夹 = 2; // :1628',
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴蒂夹首次推进到 1',
+  },
+  {
+    desc: 'M2441 K0 阴蒂夹二次淫乱门槛错位（CFLAG:315 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.阴蒂夹 <= 3 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.阴蒂夹 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴蒂夹开始二次：淫乱 / 阈值闸',
+  },
+  {
+    desc: 'M2442 K0 阴蒂夹脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.阴蒂夹着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.阴蒂夹着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴蒂夹脱着：淫乱写 CFLAG:375 = 3，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M2443 K0 乳头夹首次状态推进写错（CFLAG:316 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.乳头夹 = 1; // :1693',
+    replace: '      kojo.乳头夹 = 2; // :1693',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳头夹首次推进到 1',
+  },
+  {
+    desc: 'M2444 K0 乳头夹二次淫乱门槛错位（CFLAG:316 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳头夹开始二次：淫乱 + B钝感附加句',
+  },
+  {
+    desc: 'M3000 K0 乳头夹二次 B钝感附加句删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      // :1702-1703 B感覚Lv3以上＋B鈍感
+      if (b_sense >= 3 && b_insensible) {`,
+    replace: `      // :1702-1703 B感覚Lv3以上＋B鈍感
+      if (false) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '器具毫不间断的持续为乳头带来快乐',
+  },
+  {
+    desc: 'M3001 K0 乳头夹脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.乳头夹着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.乳头夹着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳头夹脱着：淫乱写 CFLAG:376 = 3，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M3002 K0 榨乳器首次状态推进写错（CFLAG:317 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.榨乳器 = 1; // :1770',
+    replace: '      kojo.榨乳器 = 2; // :1770',
+    tests: ['kojo-k0-tender'],
+    must_mention: '榨乳器首次推进到 1',
+  },
+  {
+    desc: 'M3003 K0 榨乳器二次淫乱门槛错位（CFLAG:317 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '榨乳器开始二次：淫乱 + B钝感附加句',
+  },
+  {
+    desc: 'M3004 K0 榨乳器脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.榨乳器着脱 < 3 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.榨乳器着脱 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '榨乳器脱着：淫乱写 CFLAG:377 = 3，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M3005 K0 肛珠首次状态推进写错（CFLAG:320 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛珠 = 1; // :1891',
+    replace: '      kojo.肛珠 = 2; // :1891',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠首次推进到 1',
+  },
+  {
+    desc: 'M3006 K0 肛珠二次淫乱+A感觉门槛错位（CFLAG:320 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛珠 <= 6 || game.kojo.口上开关 === 2)`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      a_sense >= 3 &&
+      (kojo.肛珠 <= 5 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠开始二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3007 K0 肛珠二次淫乱+A感觉写回错档（CFLAG:320 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛珠 = 7; // :1902',
+    replace: '      kojo.肛珠 = 6; // :1902',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M3008 K0 肛珠脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.肛珠着脱 < 4 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.肛珠着脱 <= 4 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛珠脱着：淫乱写 CFLAG:379 = 4，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M3009 K0 正常位首次状态推进写错（CFLAG:321 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.正常位 = 1; // :2032-2033',
+    replace: '      kojo.正常位 = 2; // :2032-2033',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位首次推进到 1',
+  },
+  {
+    desc: 'M3010 K0 正常位二次淫乱+性爱狂门槛错位（CFLAG:321 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2035-2038`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :2035-2038`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次淫乱+性爱狂：RAND 三支 / 写 9',
+  },
+  {
+    desc: 'M3011 K0 正常位二次淫乱+性爱狂写回错档（CFLAG:321 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.正常位 = 9; // :2053',
+    replace: '        kojo.正常位 = 8; // :2053',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M3012 K0 正常位二次爱慕门槛错位（CFLAG:321 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.正常位 <= 4 || game.kojo.口上开关 === 2)
+      ) {`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.正常位 <= 3 || game.kojo.口上开关 === 2)
+      ) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次爱慕 + V钝感：小写 printformw 也出声 / 阈值闸',
+  },
+  {
+    desc: 'M3013 K0 正常位二次爱慕 V钝感小写 printformw 删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `            await era.printAndWait(
+              \`但是比起这个\${target_name}更为被\${player_name}所抱住的这一事实而心动不已………\`,
+            ); // :2147`,
+    replace: `            // deleted lowercase printformw :2147`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '但是比起这个琼更为被你所抱住的这一事实而心动不已',
+  },
+  {
+    desc: 'M3014 K0 正常位二次屈服Lv3+V感觉写回错档（CFLAG:321 = 4 改 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.正常位 = 4; // :2191',
+    replace: '        kojo.正常位 = 3; // :2191',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位二次屈服Lv3+V感觉：自称首字插值，推进到 4',
+  },
+  {
+    desc: 'M3015 K0 背后位首次状态推进写错（CFLAG:322 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背后位 = 1; // :2277-2278',
+    replace: '      kojo.背后位 = 2; // :2277-2278',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位首次推进到 1',
+  },
+  {
+    desc: 'M3016 K0 背后位二次淫乱+性爱狂门槛改回 CFLAG:322（原文读 321）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2280-2282`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.背后位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2280-2282`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位二次淫乱+性爱狂：门槛读 CFLAG:321 不是 322',
+  },
+  {
+    desc: 'M3017 K0 背后位二次淫乱+性爱狂写回错档（CFLAG:322 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背后位 = 9; // :2295',
+    replace: '        kojo.背后位 = 8; // :2295',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M3018 K0 背后位二次爱慕门槛错位（CFLAG:322 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.背后位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :2349`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :2349`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位二次爱慕 + V钝感附加句 / 阈值闸',
+  },
+  {
+    desc: 'M3019 K0 对面座位首次状态推进写错（CFLAG:323 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.对面座位 = 1; // :2457-2458',
+    replace: '      kojo.对面座位 = 2; // :2457-2458',
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位首次推进到 1',
+  },
+  {
+    desc: 'M3020 K0 对面座位二次淫乱+性爱狂门槛改回 CFLAG:323（原文读 321）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2460-2462`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.对面座位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2460-2462`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321',
+  },
+  {
+    desc: 'M3021 K0 对面座位二次淫乱+性爱狂写回错档（CFLAG:323 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.对面座位 = 9; // :2476',
+    replace: '        kojo.对面座位 = 8; // :2476',
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M3022 K0 对面座位二次淫乱黑心插值改成白心（heart_black→heart）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '            `「呀～啊啊啊～…咕～…好紧～${heart_black(3)}」`,',
+    replace: '            `「呀～啊啊啊～…咕～…好紧～${heart(3)}」`,',
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321',
+  },
+  {
+    desc: 'M3023 K0 背面座位首次状态推进写错（CFLAG:324 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背面座位 = 1; // :2627-2628',
+    replace: '      kojo.背面座位 = 2; // :2627-2628',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位首次推进到 1',
+  },
+  {
+    desc: 'M3024 K0 背面座位二次淫乱+性爱狂门槛改回 CFLAG:324（原文读 321）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2630-2632`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.背面座位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :2630-2632`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321',
+  },
+  {
+    desc: 'M3025 K0 背面座位二次淫乱+性爱狂写回错档（CFLAG:324 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背面座位 = 9; // :2646',
+    replace: '        kojo.背面座位 = 8; // :2646',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M3026 K0 背面座位首次淫乱黑心插值改成白心（heart_black→heart）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '            `「呀啊～…啊～…啊啊～…主人…请更多的…更多的欺负我吧…${heart_black(3)}」`,',
+    replace:
+      '            `「呀啊～…啊～…啊啊～…主人…请更多的…更多的欺负我吧…${heart(3)}」`,',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位首次非处女：淫乱 + 黑心插值',
+  },
+  {
+    desc: 'M3027 K0 正常位肛交首次状态推进写错（CFLAG:327 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.正常位肛交 = 1; // :2786-2787',
+    replace: '      kojo.正常位肛交 = 2; // :2786-2787',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位肛交首次推进到 1',
+  },
+  {
+    desc: 'M3028 K0 正常位肛交二次淫乱+A感觉门槛错位（CFLAG:327 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :2789-2791`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :2789-2791`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位肛交二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3029 K0 正常位肛交二次淫乱+A感觉写回错档（CFLAG:327 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.正常位肛交 = 7; // :2805',
+    replace: '        kojo.正常位肛交 = 6; // :2805',
+    tests: ['kojo-k0-tender'],
+    must_mention: '正常位肛交二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M3030 K0 背后位肛交首次状态推进写错（CFLAG:328 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背后位肛交 = 1; // :2884-2885',
+    replace: '      kojo.背后位肛交 = 2; // :2884-2885',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位肛门首次推进到 1',
+  },
+  {
+    desc: 'M3031 K0 背后位肛交二次淫乱+A感觉门槛错位（CFLAG:328 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背后位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :2887-2889`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背后位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :2887-2889`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位肛门二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3032 K0 背后位肛交二次淫乱+A感觉写回错档（CFLAG:328 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背后位肛交 = 7; // :2909',
+    replace: '        kojo.背后位肛交 = 6; // :2909',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背后位肛门二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M3033 K0 对面座位肛交首次状态推进写错（CFLAG:329 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.对面座位肛交 = 1; // :2995-2996',
+    replace: '      kojo.对面座位肛交 = 2; // :2995-2996',
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位肛交首次推进到 1',
+  },
+  {
+    desc: 'M3034 K0 对面座位肛交二次淫乱+A感觉门槛错位（CFLAG:329 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.对面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :2998-3000`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.对面座位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :2998-3000`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位肛交二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3035 K0 对面座位肛交二次淫乱+A感觉写回错档（CFLAG:329 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.对面座位肛交 = 7; // :3023',
+    replace: '        kojo.对面座位肛交 = 6; // :3023',
+    tests: ['kojo-k0-tender'],
+    must_mention: '对面座位肛交二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M3036 K0 背面座位肛交首次状态推进写错（CFLAG:330 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.背面座位肛交 = 1; // :3106-3107',
+    replace: '      kojo.背面座位肛交 = 2; // :3106-3107',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位肛交首次推进到 1',
+  },
+  {
+    desc: 'M3037 K0 背面座位肛交二次淫乱+A感觉门槛错位（CFLAG:330 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :3109-3111`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.背面座位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3109-3111`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位肛交二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3038 K0 背面座位肛交二次淫乱+A感觉写回错档（CFLAG:330 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.背面座位肛交 = 7; // :3131',
+    replace: '        kojo.背面座位肛交 = 6; // :3131',
+    tests: ['kojo-k0-tender'],
+    must_mention: '背面座位肛交二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M3039 K0 手淫首次状态推进写错（CFLAG:331 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.手淫 = 1; // :3210-3211',
+    replace: '      kojo.手淫 = 2; // :3210-3211',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫首次推进到 1',
+  },
+  {
+    desc: 'M3040 K0 手淫二次淫乱+侍奉门槛错位（CFLAG:331 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3213-3215`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 3 &&
+        (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3213-3215`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M3041 K0 手淫二次淫乱+侍奉写回错档（CFLAG:331 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.手淫 = 6; // :3241',
+    replace: '        kojo.手淫 = 5; // :3241',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫二次淫乱+侍奉写 6',
+  },
+  {
+    desc: 'M3042 K0 手淫二次阴茎形状读 TARGET 而非 PLAYER（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :3194 IF SELECTCOM == 30（手淫，CFLAG:331）
+  if (era_flag.selectcom === 30) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${era_flag.player}:318\`) || 0;`,
+    replace: `  // :3194 IF SELECTCOM == 30（手淫，CFLAG:331）
+  if (era_flag.selectcom === 30) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${target}:318\`) || 0;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '手淫二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M3043 K0 口交首次状态推进写错（CFLAG:332 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.口交_奴 = 1; // :3309-3310',
+    replace: '      kojo.口交_奴 = 2; // :3309-3310',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交首次推进到 1',
+  },
+  {
+    desc: 'M3044 K0 口交二次淫乱+侍奉门槛错位（CFLAG:332 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3312-3314`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :3312-3314`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M3045 K0 口交二次淫乱+侍奉写回错档（CFLAG:332 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.口交_奴 = 6; // :3333',
+    replace: '        kojo.口交_奴 = 5; // :3333',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交二次淫乱+侍奉写 6',
+  },
+  {
+    desc: 'M3046 K0 口交二次阴茎形状读 TARGET 而非 PLAYER（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  // :3293 IF SELECTCOM == 31（口交，CFLAG:332）
+  if (era_flag.selectcom === 31) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${era_flag.player}:318\`) || 0;`,
+    replace: `  // :3293 IF SELECTCOM == 31（口交，CFLAG:332）
+  if (era_flag.selectcom === 31) {
+    const serve = era.get(\`abl:\${target}:16\`) || 0;
+    const semen_addict = era.get(\`abl:\${target}:32\`) || 0;
+    const penis = era.get(\`talent:\${target}:318\`) || 0;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交二次：淫乱+侍奉写 6 / 阴茎形状读 PLAYER / 阈值闸',
+  },
+  {
+    desc: 'M3047 K0 乳交首次状态推进写错（CFLAG:333 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.乳交 = 1; // :3397-3398',
+    replace: '      kojo.乳交 = 2; // :3397-3398',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交首次推进到 1',
+  },
+  {
+    desc: 'M3048 K0 乳交二次淫乱+侍奉门槛读回本档（CFLAG:332 改 CFLAG:333）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402
+        if (rand_n(2) === 0) {`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.乳交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402
+        if (rand_n(2) === 0) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸',
+  },
+  {
+    desc: 'M3049 K0 乳交二次淫乱+侍奉门槛错位（CFLAG:332 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3400-3402`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸',
+  },
+  {
+    desc: 'M3050 K0 乳交二次淫乱+侍奉写回错档（CFLAG:333 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.乳交 = 6; // :3416',
+    replace: '        kojo.乳交 = 5; // :3416',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳交二次淫乱+侍奉写 6',
+  },
+  {
+    desc: 'M3051 K0 股间性交首次状态推进写错（CFLAG:334 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.股间性交 = 1; // :3474-3475',
+    replace: '      kojo.股间性交 = 2; // :3474-3475',
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交首次推进到 1',
+  },
+  {
+    desc: 'M3052 K0 股间性交二次淫乱+处女门槛错位（CFLAG:334 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交二次：淫乱+处女写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3053 K0 股间性交二次淫乱+处女写回错档（CFLAG:334 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.股间性交 = 6; // :3482',
+    replace: '        kojo.股间性交 = 5; // :3482',
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交二次淫乱+处女写 6',
+  },
+  {
+    desc: 'M3054 K0 股间性交二次丢掉处女条件（TALENT:0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479
+        await era.printAndWait(`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3477-3479
+        await era.printAndWait(`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '股间性交二次：淫乱+处女写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3055 K0 骑乘位首次状态推进写错（CFLAG:335 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.骑乘位 = 1; // :3582-3583',
+    replace: '      kojo.骑乘位 = 2; // :3582-3583',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位首次推进到 1',
+  },
+  {
+    desc: 'M3056 K0 骑乘位二次淫乱+性爱狂门槛读回本档（CFLAG:321 改 CFLAG:335）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587
+        if (rand_n(4) === 0) {`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.骑乘位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587
+        if (rand_n(4) === 0) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:321 / 阈值闸',
+  },
+  {
+    desc: 'M3057 K0 骑乘位二次淫乱+性爱狂门槛错位（CFLAG:321 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        era.get(\`talent:\${target}:75\`) === 1 &&
+        (kojo.正常位 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :3585-3587`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:321 / 阈值闸',
+  },
+  {
+    desc: 'M3058 K0 骑乘位二次淫乱+性爱狂写回错档（CFLAG:335 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.骑乘位 = 9; // :3609',
+    replace: '        kojo.骑乘位 = 8; // :3609',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位二次淫乱+性爱狂写 9',
+  },
+  {
+    desc: 'M3059 K0 全身擦洗首次状态推进写错（CFLAG:336 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.全身擦洗 = 1; // :3810-3811',
+    replace: '      kojo.全身擦洗 = 2; // :3810-3811',
+    tests: ['kojo-k0-tender'],
+    must_mention: '全身擦洗首次推进到 1',
+  },
+  {
+    desc: 'M3060 K0 全身擦洗二次淫乱+侍奉门槛错位（CFLAG:336 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.全身擦洗 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3813-3815`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.全身擦洗 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3813-3815`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '全身擦洗二次：淫乱+侍奉写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3061 K0 全身擦洗二次淫乱+侍奉写回错档（CFLAG:336 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.全身擦洗 = 5; // :3818',
+    replace: '        kojo.全身擦洗 = 4; // :3818',
+    tests: ['kojo-k0-tender'],
+    must_mention: '全身擦洗二次淫乱+侍奉写 5',
+  },
+  {
+    desc: 'M3062 K0 骑乘位肛交首次状态推进写错（CFLAG:337 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.骑乘位肛交 = 1; // :3865-3866',
+    replace: '      kojo.骑乘位肛交 = 2; // :3865-3866',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位肛交首次推进到 1',
+  },
+  {
+    desc: 'M3063 K0 骑乘位肛交二次淫乱+A感觉门槛错位（CFLAG:337 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.骑乘位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :3868-3870`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        (kojo.骑乘位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :3868-3870`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位肛交二次：淫乱+A感觉写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3064 K0 骑乘位肛交二次淫乱+A感觉写回错档（CFLAG:337 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.骑乘位肛交 = 7; // :3888',
+    replace: '        kojo.骑乘位肛交 = 6; // :3888',
+    tests: ['kojo-k0-tender'],
+    must_mention: '骑乘位肛交二次淫乱+A感觉写 7',
+  },
+  {
+    desc: 'M3065 K0 肛门侍奉首次状态推进写错（CFLAG:338 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.肛门侍奉 = 1; // :3972-3973',
+    replace: '      kojo.肛门侍奉 = 2; // :3972-3973',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门侍奉首次推进到 1',
+  },
+  {
+    desc: 'M3066 K0 肛门侍奉二次淫乱+侍奉门槛错位（CFLAG:338 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :3975-3977`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        serve >= 5 &&
+        (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :3975-3977`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门侍奉二次：淫乱+侍奉写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3067 K0 肛门侍奉二次淫乱+侍奉写回错档（CFLAG:338 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.肛门侍奉 = 5; // :3980',
+    replace: '        kojo.肛门侍奉 = 4; // :3980',
+    tests: ['kojo-k0-tender'],
+    must_mention: '肛门侍奉二次淫乱+侍奉写 5',
+  },
+  {
+    desc: 'M3068 K0 打屁股首次状态推进写错（CFLAG:341 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.打屁股 = 1; // :4010-4011',
+    replace: '      kojo.打屁股 = 2; // :4010-4011',
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股首次推进到 1',
+  },
+  {
+    desc: 'M3069 K0 打屁股二次淫乱+抖M门槛错位（CFLAG:341 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 3 &&
+        (kojo.打屁股 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4013-4015`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 3 &&
+        (kojo.打屁股 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4013-4015`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股二次：淫乱+抖M写 5 / 末支须 FLAG:7==2 / 阈值闸',
+  },
+  {
+    desc: 'M3070 K0 打屁股二次淫乱+抖M写回错档（CFLAG:341 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.打屁股 = 5; // :4018',
+    replace: '        kojo.打屁股 = 4; // :4018',
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股二次淫乱+抖M写 5',
+  },
+  {
+    desc: 'M3071 K0 打屁股二次末支 AND 改成 OR（FLAG:7==2 闸失效）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      } else if (kojo.打屁股 <= 1 && game.kojo.口上开关 === 2) {',
+    replace: '      } else if (kojo.打屁股 <= 1 || game.kojo.口上开关 === 2) {',
+    tests: ['kojo-k0-tender'],
+    must_mention: '打屁股二次：淫乱+抖M写 5 / 末支须 FLAG:7==2 / 阈值闸',
+  },
+  {
+    desc: 'M3072 K0 鞭首次状态推进写错（CFLAG:342 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.鞭 = 1; // :4055-4056',
+    replace: '      kojo.鞭 = 2; // :4055-4056',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭首次推进到 1',
+  },
+  {
+    desc: 'M3073 K0 鞭二次淫乱+抖M门槛错位（CFLAG:342 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4058-4060`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4058-4060`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸',
+  },
+  {
+    desc: 'M3074 K0 鞭二次淫乱+抖M写回错档（CFLAG:342 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.鞭 = 9; // :4064',
+    replace: '        kojo.鞭 = 8; // :4064',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭二次淫乱+抖M写 9',
+  },
+  {
+    desc: 'M3075 K0 鞭二次末支门槛改回自己的 CFLAG:342（应读 CFLAG:335）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 === 2) {\n        // :4098',
+    replace:
+      '      } else if (kojo.鞭 <= 1 || game.kojo.口上开关 === 2) {\n        // :4098',
+    tests: ['kojo-k0-tender'],
+    must_mention: '鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸',
+  },
+  {
+    desc: 'M3076 K0 针首次状态推进写错（CFLAG:343 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.针 = 1; // :4123-4124',
+    replace: '      kojo.针 = 2; // :4123-4124',
+    tests: ['kojo-k0-tender'],
+    must_mention: '针首次推进到 1',
+  },
+  {
+    desc: 'M3077 K0 针二次淫乱+抖M门槛错位（CFLAG:343 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.针 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4126-4128`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.针 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4126-4128`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '针二次：淫乱+抖M写 9 / 阈值闸',
+  },
+  {
+    desc: 'M3078 K0 针二次淫乱+抖M写回错档（CFLAG:343 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.针 = 9; // :4131',
+    replace: '        kojo.针 = 8; // :4131',
+    tests: ['kojo-k0-tender'],
+    must_mention: '针二次淫乱+抖M写 9',
+  },
+  {
+    desc: 'M3079 K0 眼罩开始首次状态推进写错（CFLAG:344 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.眼罩 = 1; // :4186-4187',
+    replace: '      kojo.眼罩 = 2; // :4186-4187',
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩首次推进到 1',
+  },
+  {
+    desc: 'M3080 K0 眼罩开始二次爱慕+抖M门槛错位（CFLAG:344 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.眼罩 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4189-4192`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.眼罩 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4189-4192`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩开始二次：爱慕+抖M写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3081 K0 眼罩开始二次爱慕+抖M写回错档（CFLAG:344 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.眼罩 = 6; // :4193',
+    replace: '        kojo.眼罩 = 5; // :4193',
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩开始二次爱慕+抖M写 6',
+  },
+  {
+    desc: 'M3082 K0 眼罩脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      (kojo.眼罩着脱 < 2 || game.kojo.口上开关 === 2)',
+    replace: '      (kojo.眼罩着脱 <= 2 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '眼罩脱着：爱慕写 CFLAG:380 = 2，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M3083 K0 绳子开始首次状态推进写错（CFLAG:345 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.绳子 = 1; // :4248-4249',
+    replace: '      kojo.绳子 = 2; // :4248-4249',
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子首次推进到 1',
+  },
+  {
+    desc: 'M3084 K0 绳子开始二次淫乱+抖M门槛错位（CFLAG:345 <= 8 改 <= 7）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :4251-4253`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :4251-4253`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子开始二次：淫乱+抖M写 9 / 阈值闸',
+  },
+  {
+    desc: 'M3085 K0 绳子开始二次淫乱+抖M写回错档（CFLAG:345 = 9 改 8）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.绳子 = 9; // :4257',
+    replace: '        kojo.绳子 = 8; // :4257',
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子开始二次淫乱+抖M写 9',
+  },
+  {
+    desc: 'M3086 K0 绳子脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4302`,
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.绳子着脱 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4302`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '绳子脱着：淫乱写 CFLAG:385 = 2，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M3087 K0 口塞开始首次状态推进写错（CFLAG:346 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.口塞 = 1; // :4331-4332',
+    replace: '      kojo.口塞 = 2; // :4331-4332',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口塞首次推进到 1',
+  },
+  {
+    desc: 'M3088 K0 口塞开始二次爱慕+抖M门槛错位（CFLAG:346 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.口塞 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4334-4336`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        masochism >= 5 &&
+        (kojo.口塞 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4334-4336`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口塞开始二次：爱慕+抖M写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3089 K0 口塞开始二次爱慕+抖M写回错档（CFLAG:346 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.口塞 = 6; // :4338',
+    replace: '        kojo.口塞 = 5; // :4338',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口塞开始二次爱慕+抖M写 6',
+  },
+  {
+    desc: 'M3090 K0 口塞脱着门槛改成 <=（原文是 <）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      (era.get(\`talent:\${target}:85\`) === 1 ||
+        era.get(\`talent:\${target}:76\`) === 1) &&
+      (kojo.口塞着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4361`,
+    replace: `      (era.get(\`talent:\${target}:85\`) === 1 ||
+        era.get(\`talent:\${target}:76\`) === 1) &&
+      (kojo.口塞着脱 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :4361`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口塞脱着：爱慕或淫乱写 CFLAG:386 = 2，门槛是 < 不是 <=',
+  },
+  {
+    desc: 'M3091 K0 灌肠肛塞开始首次状态推进写错（CFLAG:347 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.灌肠肛塞 = 1; // :4389-4390',
+    replace: '      kojo.灌肠肛塞 = 2; // :4389-4390',
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠肛塞首次推进到 1',
+  },
+  {
+    desc: 'M3092 K0 灌肠肛塞开始二次淫乱+A感觉+抖M门槛错位（CFLAG:347 <= 6 改 <= 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :4392-4394`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        a_sense >= 3 &&
+        masochism >= 3 &&
+        (kojo.灌肠肛塞 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4392-4394`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠+肛塞开始二次：淫乱+A感觉+抖M写 7 / 阈值闸',
+  },
+  {
+    desc: 'M3093 K0 灌肠肛塞开始二次淫乱+A感觉+抖M写回错档（CFLAG:347 = 7 改 6）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.灌肠肛塞 = 7; // :4398',
+    replace: '        kojo.灌肠肛塞 = 6; // :4398',
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠肛塞开始二次淫乱+A感觉+抖M写 7',
+  },
+  {
+    desc: 'M3094 K0 灌肠肛塞脱着 RAND:2 首支旁路失效（=== 0 改 === 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        if (rand_n(2) === 0) {
+          // :4432
+          era.print(\`「呀…嗯啊、啊、啊啊！\`); // :4433`,
+    replace: `        if (rand_n(2) === 1) {
+          // :4432
+          era.print(\`「呀…嗯啊、啊、啊啊！\`); // :4433`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '灌肠+肛塞脱着：淫乱+A感觉拼句',
+  },
+  {
+    desc: 'M3095 K0 灌肠肛塞脱着壶虫守卫删除（TEQUIP:11 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        if (era.get(\`tequip:\${target}:11\`)) {
+          // :4446`,
+    replace: `        if (false) {
+          // :4446`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '壶虫',
+  },
+  {
+    desc: 'M3096 K0 灌肠肛塞脱着空 PRINTFORMW 等待被删（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "        await era.printAndWait(''); // :4468-4469",
+    replace: '        // :4468-4469 空等待被删',
+    tests: ['kojo-k0-tender'],
+    must_mention: '空 PRINTFORMW 仍等待',
+  },
+  {
+    desc: 'M3097 K0 放置PLAY首次状态推进写错（CFLAG:356 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.放置PLAY = 1; // :4566-4567',
+    replace: '      kojo.放置PLAY = 2; // :4566-4567',
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY首次推进到 1',
+  },
+  {
+    desc: 'M3098 K0 放置PLAY二次淫乱+欲情门槛错位（CFLAG:356 <= 5 改 <= 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    replace: `        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3099 K0 放置PLAY二次淫乱+欲情写回错档（CFLAG:356 = 6 改 5）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.放置PLAY = 6; // :4577',
+    replace: '        kojo.放置PLAY = 5; // :4577',
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次淫乱+欲情写 6',
+  },
+  {
+    desc: 'M3100 K0 放置PLAY二次欲情门槛改成 PALAMLV[4]（原文是 PALAMLV[3]）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[3] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (era.get(\`palam:\${target}:5\`) || 0) >= PALAMLV[4] &&
+        (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :4574`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3101 K0 放置PLAY首次壶虫 SIF 守卫删除（TEQUIP:11 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      if (era.get(\`tequip:\${target}:11\`)) {
+        // :4531-4532`,
+    replace: `      if (false) {
+        // :4531-4532`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次装备 SIF：壶虫',
+  },
+  {
+    desc: 'M3102 K0 放置PLAY二次 PRINTL 空行被删（耗尽档应仍输出）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "      era.print(''); // :4599",
+    replace: '      // :4599 PRINTL 被删',
+    tests: ['kojo-k0-tender'],
+    must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
+  },
+  {
+    desc: 'M3103 K0 交谈首次状态推进写错（CFLAG:357 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.交谈 = 1; // :4697-4698',
+    replace: '      kojo.交谈 = 2; // :4697-4698',
+    tests: ['kojo-k0-tender'],
+    must_mention: '交谈首次推进到 1',
+  },
+  {
+    desc: 'M3104 K0 交谈录像自白 TFLAG:32 按位或改成赋值（|= 2 改 = 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '          game.kojo.录像内容 |= 2; // :4657',
+    replace: '          game.kojo.录像内容 = 2; // :4657',
+    tests: ['kojo-k0-tender'],
+    must_mention: '录像自白 TFLAG:32 |= 2',
+  },
+  {
+    desc: 'M3105 K0 交谈二次录像沉默支仍写 TFLAG:32（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          await era.printAndWait(\`但\${target_name}把头转向一边什么话也不说。\`); // :4723-4724`,
+    replace: `          await era.printAndWait(\`但\${target_name}把头转向一边什么话也不说。\`); // :4723-4724
+          game.kojo.录像内容 |= 2;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '沉默支不写 TFLAG:32',
+  },
+  {
+    desc: 'M3106 K0 交谈二次插着不拔门面改成 tflag:59（原文是 TFLAG:60）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          (era.get(\`abl:\${target}:10\`) || 0) >= 5) &&
+          game.event.插着不拔
+        ) {
+          // :4727-4728`,
+    replace: `          (era.get(\`abl:\${target}:10\`) || 0) >= 5) &&
+          era.get('tflag:59')
+        ) {
+          // :4727-4728`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '交谈二次：不写 CFLAG / 插着不拔情话',
+  },
+  {
+    desc: 'M3107 K0 交谈首次录像自白 RAND:3 旁路失效（=== 0 改 === 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          rand_n(3) === 0 &&
+          (era.get(\`talent:\${target}:89\`) === 1 ||
+            (era.get(\`abl:\${target}:17\`) || 0) >= 5)
+        ) {
+          // :4651`,
+    replace: `          rand_n(3) === 1 &&
+          (era.get(\`talent:\${target}:89\`) === 1 ||
+            (era.get(\`abl:\${target}:17\`) || 0) >= 5)
+        ) {
+          // :4651`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '交谈首次：淫乱推进到 1 / 录像自白写 TFLAG:32 |= 2',
+  },
+  {
+    desc: 'M3108 K0 乳夹口交首次状态推进写错（CFLAG:360 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.乳夹口交 = 1; // :4797-4798',
+    replace: '      kojo.乳夹口交 = 2; // :4797-4798',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳夹口交首次推进到 1',
+  },
+  {
+    desc: 'M3109 K0 乳夹口交二次淫乱写回错档（CFLAG:360 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.乳夹口交 = 5; // :4809',
+    replace: '        kojo.乳夹口交 = 4; // :4809',
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳夹口交二次淫乱写 5',
+  },
+  {
+    desc: 'M3110 K0 乳夹口交二次淫乱门槛错位（CFLAG:360 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.乳夹口交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4800-4802`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.乳夹口交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4800-4802`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳夹口交二次：淫乱写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3111 K0 乳夹口交首次巨乳 SIF 守卫删除（TALENT:110 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          era.get(\`talent:\${target}:110\`) === 1 ||
+          era.get(\`talent:\${target}:114\`) === 1 ||
+          era.get(\`talent:\${target}:119\`) === 1
+        ) {
+          // :4769-4770`,
+    replace: `          false ||
+          era.get(\`talent:\${target}:114\`) === 1 ||
+          era.get(\`talent:\${target}:119\`) === 1
+        ) {
+          // :4769-4770`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '乳夹口交首次：淫乱，推进到 1 / 巨乳 SIF',
+  },
+  {
+    desc: 'M3112 K0 口交时自慰首次状态推进写错（CFLAG:361 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.口交时自慰 = 1; // :4862-4863',
+    replace: '      kojo.口交时自慰 = 2; // :4862-4863',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交时自慰首次推进到 1',
+  },
+  {
+    desc: 'M3113 K0 口交时自慰二次淫乱写回错档（CFLAG:361 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.口交时自慰 = 5; // :4873',
+    replace: '        kojo.口交时自慰 = 4; // :4873',
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交时自慰二次淫乱写 5',
+  },
+  {
+    desc: 'M3114 K0 口交时自慰二次淫乱门槛错位（CFLAG:361 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.口交时自慰 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4865-4867`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.口交时自慰 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4865-4867`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '口交时自慰二次：淫乱写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3115 K0 手搓口交首次状态推进写错（CFLAG:362 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.手搓口交 = 1; // :4922-4923',
+    replace: '      kojo.手搓口交 = 2; // :4922-4923',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手搓口交首次推进到 1',
+  },
+  {
+    desc: 'M3116 K0 手搓口交二次淫乱写回错档（CFLAG:362 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.手搓口交 = 5; // :4933',
+    replace: '        kojo.手搓口交 = 4; // :4933',
+    tests: ['kojo-k0-tender'],
+    must_mention: '手搓口交二次淫乱写 5',
+  },
+  {
+    desc: 'M3117 K0 手搓口交二次淫乱门槛错位（CFLAG:362 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.手搓口交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4925-4927`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.手搓口交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4925-4927`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '手搓口交二次：淫乱写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3118 K0 真空口交首次状态推进写错（CFLAG:363 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.真空口交 = 1; // :4983-4984',
+    replace: '      kojo.真空口交 = 2; // :4983-4984',
+    tests: ['kojo-k0-tender'],
+    must_mention: '真空口交首次推进到 1',
+  },
+  {
+    desc: 'M3119 K0 真空口交二次淫乱写回错档（CFLAG:363 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.真空口交 = 5; // :4994',
+    replace: '        kojo.真空口交 = 4; // :4994',
+    tests: ['kojo-k0-tender'],
+    must_mention: '真空口交二次淫乱写 5',
+  },
+  {
+    desc: 'M3120 K0 真空口交二次淫乱门槛错位（CFLAG:363 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :4986-4988`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :4986-4988`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '真空口交二次：淫乱写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3121 K0 六九式首次状态推进写错（CFLAG:364 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.六九式 = 1; // :5043-5044',
+    replace: '      kojo.六九式 = 2; // :5043-5044',
+    tests: ['kojo-k0-tender'],
+    must_mention: '六九式首次推进到 1',
+  },
+  {
+    desc: 'M3122 K0 六九式二次淫乱写回错档（CFLAG:364 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.六九式 = 5; // :5053',
+    replace: '        kojo.六九式 = 4; // :5053',
+    tests: ['kojo-k0-tender'],
+    must_mention: '六九式二次淫乱写 5',
+  },
+  {
+    desc: 'M3123 K0 六九式二次淫乱门槛错位（CFLAG:364 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.六九式 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :5046-5048`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.六九式 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :5046-5048`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '六九式二次：淫乱写 5 / 阈值闸',
+  },
+  {
+    desc: 'M3124 K0 深喉首次状态推进写错（CFLAG:365 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.深喉 = 1; // :5101-5102',
+    replace: '      kojo.深喉 = 2; // :5101-5102',
+    tests: ['kojo-k0-tender'],
+    must_mention: '深喉首次推进到 1',
+  },
+  {
+    desc: 'M3125 K0 深喉二次淫乱写回错档（CFLAG:365 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.深喉 = 5; // :5112',
+    replace: '        kojo.深喉 = 4; // :5112',
+    tests: ['kojo-k0-tender'],
+    must_mention: '深喉二次淫乱写 5',
+  },
+  {
+    desc: 'M3126 K0 深喉二次淫乱门槛改回 CFLAG:365（原文读 363）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :5104-5106`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.深喉 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :5104-5106`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '深喉二次：读 CFLAG:363 写 CFLAG:365 / 阈值闸',
+  },
+  {
+    desc: 'M3127 K0 深喉二次淫乱门槛错位（CFLAG:363 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :5104-5106`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :5104-5106`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '深喉二次：读 CFLAG:363 写 CFLAG:365 / 阈值闸',
+  },
+  {
+    desc: 'M3128 K0 强制口交首次状态推进写错（CFLAG:381 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.强制口交 = 1; // :5159-5160',
+    replace: '      kojo.强制口交 = 2; // :5159-5160',
+    tests: ['kojo-k0-tender'],
+    must_mention: '强制口交首次推进到 1',
+  },
+  {
+    desc: 'M3129 K0 强制口交二次淫乱写回错档（CFLAG:381 = 5 改 4）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.强制口交 = 5; // :5170',
+    replace: '        kojo.强制口交 = 4; // :5170',
+    tests: ['kojo-k0-tender'],
+    must_mention: '强制口交二次淫乱写 5',
+  },
+  {
+    desc: 'M3130 K0 强制口交二次淫乱门槛错位（CFLAG:381 <= 4 改 <= 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.强制口交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :5162-5164`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.强制口交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :5162-5164`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '强制口交二次：淫乱写 5 / 黑心 / 阈值闸',
+  },
+  {
+    desc: 'M3131 K0 强制口交二次淫乱黑心插值改成白心（heart_black→heart）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          \`「嗯～嗯呼唔呜…嗯～…嗯姆呜呜…嗯～\${heart_black(1)}嗯～\${heart_black(1)}嗯～\${heart_black(1)}嗯～\${heart_black(1)}嗯～\${heart_black(1)}」\`,
+        ); // :5167`,
+    replace: `          \`「嗯～嗯呼唔呜…嗯～…嗯姆呜呜…嗯～\${heart(1)}嗯～\${heart(1)}嗯～\${heart(1)}嗯～\${heart(1)}嗯～\${heart(1)}」\`,
+        ); // :5167`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '强制口交二次：淫乱写 5 / 黑心 / 阈值闸',
+  },
+  {
+    desc: 'M3132 K0 穿环首次状态推进写错（CFLAG:348 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      kojo.穿环 = 1; // :5336-5337',
+    replace: '      kojo.穿环 = 2; // :5336-5337',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次推进到 1',
+  },
+  {
+    desc: 'M3133 K0 穿环二次淫乱写回错档（CFLAG:348 = 4 改 3）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.穿环 = 4; // :5385',
+    replace: '        kojo.穿环 = 3; // :5385',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次淫乱写 4',
+  },
+  {
+    desc: 'M3134 K0 穿环二次淫乱门槛错位（CFLAG:348 <= 3 改 <= 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.穿环 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :5344`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.穿环 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :5344`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次：淫乱写 4 / 阈值闸',
+  },
+  {
+    desc: 'M3135 K0 穿环二次爱慕写回错档（CFLAG:348 = 3 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.穿环 = 3; // :5428',
+    replace: '        kojo.穿环 = 2; // :5428',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次爱慕写 3',
+  },
+  {
+    desc: 'M3136 K0 穿环二次それ以外写回错档（CFLAG:348 = 2 改 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '        kojo.穿环 = 2; // :5471',
+    replace: '        kojo.穿环 = 1; // :5471',
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次それ以外写 2',
+  },
+  {
+    desc: 'M3137 K0 穿环首次 CFLAG:7 位图闸改恒真（取下支失效）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        if (train.穿环状态 & p) {
+          // :5209`,
+    replace: `        if (true) {
+          // :5209`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次：淫乱取下（CFLAG:7 无对应位）',
+  },
+  {
+    desc: 'M3138 K0 穿环 阴核(TARGET) 插值恒改成阴茎（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  const clitoris_word = (cid) =>
+    (era.get(\`talent:\${cid}:122\`) || 0) !== 0 ? '阴茎' : '阴核';`,
+    replace: `  const clitoris_word = (cid) =>
+    (era.get(\`talent:\${cid}:122\`) || 0) !== 0 ? '阴茎' : '阴茎';`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '阴核(TARGET) 插值',
+  },
+  {
+    desc: 'M3139 K0 穿环二次爱慕阴茎支 TALENT:122 错格（改 123）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `            if (
+              era.get(\`talent:\${target}:121\`) ||
+              era.get(\`talent:\${target}:122\`)
+            ) {
+              // :5404`,
+    replace: `            if (
+              era.get(\`talent:\${target}:121\`) ||
+              era.get(\`talent:\${target}:123\`)
+            ) {
+              // :5404`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环二次：爱慕写 3 / 阴茎位走鸡鸡支',
+  },
+  {
+    desc: 'M3140 K0 穿环首次乳头位 P==1 改 P==2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `          if (p === 1) {
+            // :5212`,
+    replace: `          if (p === 2) {
+            // :5212`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
+  },
+  {
+    desc: 'M3141 K0 穿环首次淫乱素质判据错格（TALENT:76 改 77）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // :5207`,
+    replace: `      } else if (era.get(\`talent:\${target}:77\`) === 1) {
+        // :5207`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
+  },
+  {
+    desc: 'M3142 K0 EVENTTRAIN NORMAL 总开关守卫删松（<= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (game.kojo.口上开关 <= 0) {
+    // :88-89
+    return 0;
+  }`,
+    replace: `  if (game.kojo.口上开关 < 0) {
+    // :88-89
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'FLAG:7 <= 0 静默',
+  },
+  {
+    desc: 'M3143 K0 EVENTTRAIN NORMAL 慈爱素质守卫错格（!== 1 改 !== 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (chara(target).chara.慈爱 !== 1) {
+    // :90-91
+    return 0;
+  }`,
+    replace: `  if (chara(target).chara.慈爱 !== 0) {
+    // :90-91
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTTRAIN NORMAL：非慈爱素质静默',
+  },
+  {
+    desc: 'M3144 K0 EVENTTRAIN NORMAL 首次精灵状态推进写错（CFLAG:201 = 1 改 2）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.初调教 = 1; // :103`,
+    replace: `      kojo.初调教 = 2; // :103`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次精灵推进到 1',
+  },
+  {
+    desc: 'M3145 K0 EVENTTRAIN NORMAL 首次魔族不写 CFLAG:370（改 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.初调教 = 1; // :140
+      kojo.魔族化 = 1; // :142`,
+    replace: `      kojo.初调教 = 1; // :140
+      kojo.魔族化 = 0; // :142`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次魔族同时写 CFLAG:370 = 1',
+  },
+  {
+    desc: 'M3146 K0 EVENTTRAIN NORMAL 魔族化二次写 2 改 3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.魔族化 = 2; // :172-173`,
+    replace: `    kojo.魔族化 = 3; // :172-173`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '魔族化二次写 2',
+  },
+  {
+    desc: 'M3147 K0 EVENTTRAIN NORMAL 魔族化二次门槛 < 5 改 < 4（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 < 5 &&
+    kojo.魔族化 === 0 &&
+    chara(target).chara.种族 === 9 &&`,
+    replace: `    kojo.初调教 < 4 &&
+    kojo.魔族化 === 0 &&
+    chara(target).chara.种族 === 9 &&`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '魔族化二次写 2',
+  },
+  {
+    desc: 'M3148 K0 EVENTTRAIN NORMAL NTR 再捕获不清 650（写 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.NTR再捕获 = 0; // :185`,
+    replace: `      kojo.NTR再捕获 = 1; // :185`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'NTR 再捕获爱慕清 650',
+  },
+  {
+    desc: 'M3149 K0 EVENTTRAIN NORMAL NTR 未陷落不清 650（写 1）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      kojo.NTR再捕获 = 0; // :192`,
+    replace: `      kojo.NTR再捕获 = 1; // :192`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'NTR 再捕获未陷落清 650',
+  },
+  {
+    desc: 'M3150 K0 EVENTTRAIN NORMAL 屈服 Lv1 写 2 改 3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 2; // :203-204`,
+    replace: `    kojo.初调教 = 3; // :203-204`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '屈服 Lv1 写 2',
+  },
+  {
+    desc: 'M3151 K0 EVENTTRAIN NORMAL 淫乱写 5 改 6（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 5; // :228-229`,
+    replace: `    kojo.初调教 = 6; // :228-229`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱写 5',
+  },
+  {
+    desc: 'M1967 K0 EVENTTRAIN NORMAL 淫乱+调教前魔族门槛读错自己的 CFLAG:201（改 魔族化）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    chara(target).chara.种族 === 9 &&
+    kojo.初调教 < 6 &&
+    era.get(\`talent:\${target}:85\`) !== 1 &&
+    era.get(\`talent:\${target}:76\`) === 1`,
+    replace: `    chara(target).chara.种族 === 9 &&
+    kojo.魔族化 < 6 &&
+    era.get(\`talent:\${target}:85\`) !== 1 &&
+    era.get(\`talent:\${target}:76\`) === 1`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱+调教前魔族写 6',
+  },
+  {
+    desc: 'M3152 K0 EVENTTRAIN NORMAL 爱慕写 7 改 8（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 7; // :290-291`,
+    replace: `    kojo.初调教 = 8; // :290-291`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '爱慕写 7',
+  },
+  {
+    desc: 'M3153 K0 EVENTTRAIN NORMAL 崩坏写 9 改 8（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    kojo.初调教 = 9; // :334-335`,
+    replace: `    kojo.初调教 = 8; // :334-335`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '崩坏写 9',
+  },
+  {
+    desc: 'M3154 K0 二次口上崩坏 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 2) {
+    // :491`,
+    replace: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 1) {
+    // :491`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '无助手落入二次口上（崩坏祈祷）',
+  },
+  {
+    desc: 'M3155 K0 二次口上故乡恋人 TALENT:317 == 4 改 5（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    if (chara(target).chara.喜欢的东西 === 4) {
+      // :508`,
+    replace: `    if (chara(target).chara.喜欢的东西 === 5) {
+      // :508`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '屈服 Lv0 故乡恋人',
+  },
+  {
+    desc: 'M3156 K0 二次口上淫乱 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  } else if (era.get(\`talent:\${target}:76\`) === 1 && game.kojo.口上开关 === 2) {
+    era.drawLine(); // :555-556`,
+    replace: `  } else if (era.get(\`talent:\${target}:76\`) === 1 && game.kojo.口上开关 === 1) {
+    era.drawLine(); // :555-556`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 二次口上：FLAG:7==1 静默',
+  },
+  {
+    desc: 'M3157 K0 EVENTTRAIN NORMAL 村娘助手首次写 202 = 1 改 2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        kojo.简易助手_0 = 1; // :387-388`,
+    replace: `        kojo.简易助手_0 = 2; // :387-388`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '村娘助手首次写 202 = 1',
+  },
+  {
+    desc: 'M3158 K0 EVENTTRAIN NORMAL 村娘助手二次 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      } else if (kojo.简易助手_0 === 1 && game.kojo.口上开关 === 2) {`,
+    replace: `      } else if (kojo.简易助手_0 === 1 && game.kojo.口上开关 === 1) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '村娘助手二次 FLAG:7==1 静默',
+  },
+  {
+    desc: 'M3159 K0 EVENTEND NORMAL 死亡守卫 <= 0 改 < 0（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (chara(target).dungeon.体力 <= 0) {
+    // :608-609
+    return 0;
+  }`,
+    replace: `  if (chara(target).dungeon.体力 < 0) {
+    // :608-609
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '角色死亡 BASE:0 <= 0 静默',
+  },
+  {
+    desc: 'M3160 K0 EVENTEND NORMAL 崩坏 FLAG:7==2 改 ==1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 2) {
+    // :615`,
+    replace: `  if (era.get(\`talent:\${target}:9\`) === 1 && game.kojo.口上开关 === 1) {
+    // :615`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '崩坏 FLAG:7==2 出声',
+  },
+  {
+    desc: 'M3161 K0 EVENTEND NORMAL 淫乱体力门槛 >= 500 改 > 500（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    era.get(\`talent:\${target}:76\`) === 1 &&
+    chara(target).dungeon.体力 >= 500`,
+    replace: `    era.get(\`talent:\${target}:76\`) === 1 &&
+    chara(target).dungeon.体力 > 500`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '淫乱体力 500 走 >= 不是 <',
+  },
+  {
+    desc: 'M3162 K0 EVENTEND NORMAL 慈爱素质守卫错格（!== 1 改 !== 0）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (chara(target).chara.慈爱 !== 1) {
+    // :604-605
+    return 0;
+  }`,
+    replace: `  if (chara(target).chara.慈爱 !== 0) {
+    // :604-605
+    return 0;
+  }`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'K0 EVENTEND NORMAL：非慈爱素质静默',
+  },
+  {
+    desc: 'M3163 K0 SELF_KOJO 自慰淫乱档写 4 改 3（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.set(\`cflag:\${target}:261\`, 4); // :6854`,
+    replace: `        era.set(\`cflag:\${target}:261\`, 3); // :6854`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==1 自慰 Q==0 主人档（淫乱推进 CFLAG:261）',
+  },
+  {
+    desc: 'M3164 K0 SELF_KOJO 自慰 Q==2 野狗支删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    } else if (q === 2) {
+      // :6842
+      era.print(\`「啊啊～…狗狗大人…还是狗狗大人的肉棒最棒～………！」\`); // :6843`,
+    replace: `    } else if (q === 2) {
+      // :6842
+      era.print(\`变异：野狗支删除\`); // :6843`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==1 自慰 Q==2 野狗支',
+  },
+  {
+    desc: 'M3165 K0 SELF_KOJO 百合淫乱档写 5 改 4（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:262\`, 5); // :6878`,
+    replace: `      era.set(\`cflag:\${target}:262\`, 4); // :6878`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==2 百合（淫乱推进 CFLAG:262）',
+  },
+  {
+    desc: 'M3166 K0 SELF_KOJO 口交淫乱档写 3 改 2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:263\`, 3); // :6909`,
+    replace: `      era.set(\`cflag:\${target}:263\`, 2); // :6909`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==3 口交（淫乱推进 CFLAG:263）',
+  },
+  {
+    desc: 'M3167 K0 SELF_KOJO 性交档写 2 改 1（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:264\`, 2); // :6943`,
+    replace: `      era.set(\`cflag:\${target}:264\`, 1); // :6943`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==4 性交（ABL:2>=4 推进 CFLAG:264）',
+  },
+  {
+    desc: 'M3168 K0 SELF_KOJO 夜间档写 1 改 2（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `      era.set(\`cflag:\${target}:265\`, 1); // :6961`,
+    replace: `      era.set(\`cflag:\${target}:265\`, 2); // :6961`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==5 夜间（推进 CFLAG:265）',
+  },
+  {
+    desc: 'M3169 K0 SELF_KOJO 卖出爱慕支素质判据错格（TALENT:85 改 86）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `    if (
+      era.get(\`talent:\${target}:85\`) &&
+      (era.get(\`mark:\${target}:3\`) || 0) < 3
+    ) {`,
+    replace: `    if (
+      era.get(\`talent:\${target}:86\`) &&
+      (era.get(\`mark:\${target}:3\`) || 0) < 3
+    ) {`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==6 卖出（爱慕支 + 结尾清理 TFLAG:13=0）',
+  },
+  {
+    desc: 'M3170 K0 SELF_KOJO 结尾 TFLAG:13 清理删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  game.train.初吻与自我口上 = 0; // :7207 TFLAG:13 = 0（跨域走门面）`,
+    replace: `  // 变异：TFLAG:13 清理删除`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '结尾清 TFLAG:13',
+  },
+  {
+    desc: 'M3171 K0 SELF_KOJO 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  if ((era.get('flag:7') || 0) <= 0) {
+    const { game } = require('#/facade/game');
+    game.train.怪物射精或购入金 = 0;`,
+    replace: `  if ((era.get('flag:7') || 0) < 0) {
+    const { game } = require('#/facade/game');
+    game.train.怪物射精或购入金 = 0;`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15',
+  },
+  {
+    desc: 'M3172 K0 SELF_KOJO 自慰档读 TFLAG:13 改成 TFLAG:14（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `  if (game.train.初吻与自我口上 === 1) {
+    // :6836`,
+    replace: `  if (game.train.初吻与自我口上 === 14) {
+    // :6836`,
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TFLAG:13==1 自慰 Q==0 主人档（淫乱推进 CFLAG:261）',
+  },
+
+  {
+    desc: 'M3173 K0 PALAMCNG 润滑首超守卫删松（P 阈值改恒 true）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (\n    p > (era.get('palamlv:2') || 0) &&\n    (era.get(`cflag:${target}:221`) || 0) === 0\n  ) {",
+    replace:
+      '  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (true) { // 变异：P 阈值删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：润滑度首次超过 LV2 触发首次口上并写 CFLAG:221',
+  },
+  {
+    desc: 'M3174 K0 PALAMCNG CFLAG:221 防重删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (\n    p > (era.get('palamlv:2') || 0) &&\n    (era.get(`cflag:${target}:221`) || 0) === 0\n  ) {",
+    replace:
+      "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537\n  if (p > (era.get('palamlv:2') || 0) && false) { // 变异：防重删松",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：CFLAG:221 已置位时不重复出声',
+  },
+  {
+    desc: 'M3175 K0 PALAMCNG 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-system.js',
+    find: "async function kojo_message_palamcng(rand) {\n  if ((era.get('flag:7') || 0) <= 0) {",
+    replace:
+      "async function kojo_message_palamcng(rand) {\n  if ((era.get('flag:7') || 0) < 0) {",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：总开关 FLAG:7 <= 0 静默',
+  },
+  {
+    desc: 'M3176 K0 PALAMCNG 助手调教守卫删松（ASSI/ASSIPLAY 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    // :6509-6510',
+    replace: '  if (false) { // 变异：助手守卫删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PALAMCNG：助手调教跳过',
+  },
+  {
+    desc: 'M3177 K0 MARKCNG 苦痛刻印触发删松（TFLAG:22==3 改恒 true）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (\n    game.system.苦痛刻印变动 === 3 &&\n    (era.get(`cflag:${target}:297`) || 0) === 0\n  ) {',
+    replace: '  if (true) { // 变异：触发删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      'MARKCNG：苦痛刻印 Lv3 取得（TFLAG:22 == 3）触发并写 CFLAG:297',
+  },
+  {
+    desc: 'M3178 K0 MARKCNG CFLAG:297 防重删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (\n    game.system.苦痛刻印变动 === 3 &&\n    (era.get(`cflag:${target}:297`) || 0) === 0\n  ) {',
+    replace:
+      '  if (game.system.苦痛刻印变动 === 3 && false) { // 变异：防重删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MARKCNG：CFLAG:297 已置位时不重复出声',
+  },
+  {
+    desc: 'M3179 K0 MARKCNG 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    file: 'ere/kojo/kojo-system.js',
+    find: "async function kojo_message_markcng(rand) {\n  if ((era.get('flag:7') || 0) <= 0) {",
+    replace:
+      "async function kojo_message_markcng(rand) {\n  if ((era.get('flag:7') || 0) < 0) {",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MARKCNG：总开关 FLAG:7 <= 0 静默',
+  },
+  {
+    desc: 'M3180 K0 MARKCNG 助手调教守卫删松（ASSI/ASSIPLAY 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    // :6758-6759',
+    replace: '  if (false) { // 变异：助手守卫删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MARKCNG：助手调教跳过',
+  },
+
+  {
+    desc: 'M3181 K0 DUNGEON_RYOUZYOKU 处女分支删松（TALENT:0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  if (era.get(`talent:${target}:0`) === 1) {',
+    replace:
+      '  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  if (false) { // 变异：处女分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'DUNGEON_RYOUZYOKU：处女（TALENT:0）按素质分档出声',
+  },
+  {
+    desc: 'M3182 K0 DUNGEON_RYOUZYOKU 淫乱分支删松（TALENT:21/22 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      era.get(`talent:${target}:22`) === 1\n    ) {\n      // :7245',
+    replace: '  if (false) { // 变异：淫乱分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'DUNGEON_RYOUZYOKU：非处女 + 淫乱（TALENT:76）分档出声',
+  },
+  {
+    desc: 'M3183 K0 GOHOUBI_REQUEST 奖金分支删松（CFLAG:504==0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if ((era.get(`cflag:${target}:504`) || 0) === 0) {\n    // :8128',
+    replace: '  if (false) { // 变异：奖金分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'GOHOUBI_REQUEST：CFLAG:504==0 奖金请求',
+  },
+  {
+    desc: 'M2445 K0 GOHOUBI_AFTER choice==0 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (choice === 0) {\n    // :8167',
+    replace: '  if (false) { // 变异：choice==0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'GOHOUBI_AFTER：choice==0 无特别',
+  },
+  {
+    desc: 'M2446 K0 GOHOUBI_AFTER 买药分支删松（CFLAG:504==0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    if ((era.get(`cflag:${target}:504`) || 0) === 0) {\n      // :8174',
+    replace: '  if (false) { // 变异：买药分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'GOHOUBI_AFTER：choice==2 && CFLAG:504==0 买药台词',
+  },
+  {
+    desc: 'M2447 K0 OSIOKI choice==1 快感分支删松（ABL:21 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    if (era.get(`abl:${target}:21`) >= 3) {\n      // :8249',
+    replace: '  if (false) { // 变异：快感分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'OSIOKI：choice==1 && ABL:21 >= 3 快感台词',
+  },
+
+  {
+    desc: 'M2448 K0 BENKI 分档删松（FLAG:62==0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: "  if (era.get('flag:62') === 0) {\n    // :7435",
+    replace: '  if (false) { // 变异：FLAG:62==0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'BENKI_KOUJO：FLAG:62=0 + FLAG:63=1 → 施舍工作台词',
+  },
+  {
+    desc: 'M2449 K0 VICTORY 首句删松（改恒 true）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  await era.printAndWait(`「爱能拯救世界！」`); // :7366',
+    replace:
+      '  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));\n  // 变异：首句删除',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'VICTORY：素质分档 + 体力比判定',
+  },
+  {
+    desc: 'M2450 K0 ATTACK CFLAG:1==2 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era.get(`cflag:${target}:1`) === 2) {\n    // :7642',
+    replace: '  if (false) { // 变异：CFLAG:1==2 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'ATTACK：CFLAG:1==2 + 强气素质 → 爱的火焰',
+  },
+  {
+    desc: 'M2451 K0 GOBI arg_0==1 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (arg_0 === 1) {\n    // :8304',
+    replace: '  if (false) { // 变异：arg_0==1 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'GOBI：arg_0=1 → ♪ 语尾',
+  },
+  {
+    desc: 'M2452 K0 ENTERENEMY 献身分支删松（TALENT:21/22 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    era.get(`talent:${target}:21`) === 1 ||\n    era.get(`talent:${target}:22`) === 1\n  ) {\n    // :8064',
+    replace: '  if (false) { // 变异：献身分支删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'ENTERENEMY：献身（TALENT:21）→ 我是不会输的',
+  },
+
+  {
+    desc: 'M2453 K0 NTR P==1 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (p === 1) {\n    // :7873',
+    replace: '  if (false) { // 变异：P==1 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'NTR：P==1 + 淫乱（TALENT:76）→ 求饶台词 + CFLAG:651 记录',
+  },
+  {
+    desc: 'M2454 K0 EXUCUTION 事件类型 4 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (event_type === 4) {\n    // :7949',
+    replace: '  if (false) { // 变异：事件类型 4 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'EXUCUTION：事件类型 4 → 求饶台词',
+  },
+  {
+    desc: 'M2455 K0 MUSEUM 事件类型 3 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  } else if (event_type === 3) {\n    // :7975',
+    replace: '  if (false) { // 变异：事件类型 3 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'MUSEUM：事件类型 3 → 不想变成这样',
+  },
+  {
+    desc: 'M2456 K0 BANISHMENT 事件类型 0 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (event_type === 0) {\n    // :8002',
+    replace: '  if (false) { // 变异：事件类型 0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'BANISHMENT：事件类型 0 → 失去力量也有能做的事',
+  },
+  {
+    desc: 'M2457 K0 PUBLIC_EXUCUTION 事件类型 0 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (event_type === 0) {\n    // :8023',
+    replace: '  if (false) { // 变异：事件类型 0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'PUBLIC_EXUCUTION：事件类型 0 → 为什么这样对待',
+  },
+  {
+    desc: 'M2458 K0 COLOSSEUM selectcom 55 分支删松（改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.selectcom === 55) {\n    // :7739',
+    replace: '  if (false) { // 变异：selectcom 55 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      '死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_0 真身（selectcom 55 + 体力低）',
+  },
+
+  {
+    desc: 'M2459 K0 DOG selectcom 0 初次分支删松（CFLAG:301==0 改恒 false）（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '  if (era_flag.selectcom === 0) {\n    // :5486',
+    replace: '  if (false) { // 变异：selectcom 0 删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
+  },
+  {
+    desc: 'M2460 K0 DOG 初次写 CFLAG:301 删除（#231）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '    if ((era.get(`cflag:${target}:301`) || 0) === 0) {',
+    replace: '  if (false) { // 变异：初次判定删松',
+    tests: ['kojo-k0-tender'],
+    must_mention:
+      '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
+  },
 ];
