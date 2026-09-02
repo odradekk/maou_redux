@@ -43,13 +43,12 @@
  * == 非调教口上（#209 裁定 2：本票连带） ==
  *
  * DOG_KOJO_8（兽奸）与 COLOSSEUM_KOJO_8（死斗场）由头部守卫直调（真身在
- * 本文件）；BENKI_KOUJO_K8 / NTR_KOUJO_K8 / EXUCUTION_KOUJO_K8 /
- * MUSEUM_KOUJO_K8 / BANISHMENT_KOUJO_K8 / PUBLIC_EXUCUTION_KOUJO_K8 /
- * GROTESQUE_KOUJO_K8 / ENTERENEMY_KOUJO_K8 / GOHOUBI_REQUEST_KOUJO_K8 /
- * GOHOUBI_AFTER_KOUJO_K8 / OSIOKI_KOUJO_K8 / GOBI_KOUJO_K8 /
- * DUNGEON_RYOUZYOKU_K8 / DUNGEON_RYOUZYOKU_AFTER_K8 / DUNGEON_VICTORY_K8 /
- * DUNGEON_ATTACK_K8 以 module 导出随各自调度侧接线（同 K4 先例，ere/kojo/
- * kojo-k4-stoic.js）；SELF_KOJO_K8 注册进 self_kojo_family。
+ * 本文件）；其余入口各自注册进同名分发族——SELF_KOJO_K8、迷宫四函数
+ * （ryouzyoku / ryouzyoku_after / dungeon_victory / dungeon_attack）、
+ * BENKI_KOUJO_K8、NTR_KOUJO_K8、结局/处刑六函数（EXUCUTION / MUSEUM /
+ * BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE / ENTERENEMY）、迎击奖赏三函数
+ * （GOHOUBI_REQUEST / GOHOUBI_AFTER / OSIOKI，后两个的族在
+ * ere/kojo/kojo-dungeon-after.js）、GOBI_KOUJO_K8。族签名随 K1/K3 先例。
  *
  * == 门面（issue #71） ==
  *
@@ -59,16 +58,18 @@
  * 口上存在_8）；FLAG:37/500 走 game.system（着衣系统/狂王性别）；FLAG:62
  * 走 game.train（肉便器行动）；TFLAG:899/13/20/3/400 走 game.train；
  * TFLAG:150/21/22/23/24 走 game.system；TFLAG:16 走 game.event（犬射精或
- * 处刑口上）；TFLAG:500/510/520/530/60 走 game.event；TFLAG:18 走
- * game.dungeon（足交射精或处遇口上）。TALENT/MARK/BASE/TEQUIP 按既有约定
+ * 处刑口上）；TFLAG:500/510/520/530/60 走 game.event。TFLAG:18 不在本文件读：
+ * GOHOUBI_AFTER_KOUJO_K8 与 OSIOKI_KOUJO_K8 由族把它当 choice 实参传进来
+ * （同 K3）。TALENT/MARK/BASE/TEQUIP 按既有约定
  * 保留裸寻址（gen-facade 只禁 cflag/flag/tflag 字面量）。
  *
- * == 本票状态（交付进行中） ==
+ * == 本票状态 ==
  *
- * 骨架票：头部守卫、开局/终局口上（CFLAG:201 状态机）、K8_KOJO2 已落地；
- * KOJO_MESSAGE_COM_8 的 51 个 SELECTCOM 分支与全部非调教函数暂为占位
- * （stub_line，STUBBED_CALLS 逐条列出），按源码顺序分段填充中，完成一段
- * 即从 STUBBED_CALLS 划掉并同步 docs/stub-registry.md。
+ * 源文件 7953 行全部落地：头部守卫、开局/终局口上（CFLAG:201 状态机）、
+ * K8_KOJO2、KOJO_MESSAGE_COM_8 的 51 个 SELECTCOM 分支、DOG_KOJO_8、
+ * COLOSSEUM_KOJO_8、PALAMCNG/MARKCNG、SELF_KOJO_K8 与全部非调教函数。
+ * STUBBED_CALLS 只剩 `SELL_MATURO_K0` 一条真外部调用（成熟出售口上，
+ * 真身属售却票，不在本文件）。
  */
 
 const era = require('#/era-electron');
@@ -1625,8 +1626,8 @@ on(
 /**
  * @KOJO_MESSAGE_COM_8（:891-5442）：指令执行时的口上。
  *
- * 七道头部守卫（源文顺序，见文件头）之后按 SELECTCOM 平铺。骨架阶段：
- * 51 个分支各自占位（stub_line），随本票后续提交逐段填充。
+ * 七道头部守卫（源文顺序，见文件头）之后按 SELECTCOM 平铺，51 个分支
+ * 全部落地。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
