@@ -66,7 +66,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   DECLARED_KOJO_IDS,
 );
 
-/**
 /** @GOHOUBI_REQUEST_KOUJO（EVENT_K.ERB:450-466）：奖赏请求口上入口。
  *
  * 与原作同构：SWAP 暂存 TARGET → TARGET = A → 分发 → SWAP 还原。存在判定

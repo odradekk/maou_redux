@@ -245,15 +245,13 @@ test('触手（TEQUIP:90）：不输出', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('爱抚外指令（SELECTCOM 仍为占位）：落占位行（分支待办可见）', async () => {
+test('ERB 无分支的 SELECTCOM（如 4）：静默返回（原作 COM 末尾 RETURN 0）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 4; // COM4 原作无口上；COM87 穿环落地后改用未填指令
+    era_flag.selectcom = 4; // 原作 @KOJO_MESSAGE_COM_0 无 SELECTCOM == 4 分支
   });
   await speak_k0(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '（指令 4 的口上尚未移植，此处为占位——原作 @KOJO_MESSAGE_COM_0，随各自指令票，见 docs/stub-registry.md。）',
-  ]);
+  assert.deepEqual(fixture.text_lines(), []);
 });
 
 test('舔阴首次处女（TALENT:0）：两句 + 状态推进到 1', async () => {

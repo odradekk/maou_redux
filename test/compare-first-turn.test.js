@@ -83,6 +83,11 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 掉误列菜单，存根 36 → 34。匹配与未解释数不变。
   // 【#225（J15）助手与蕾丝族落地后重测】COM_ABLE60-73 的真实 guard 再滤掉
   // 误列菜单，存根 34 → 23。匹配与未解释数不变。
+  // 【#231（K0 慈爱）PALAMCNG/MARKCNG 落地后重测】source-check 的两处
+  // stub_line（KOJO_MESSAGE_PALAMCNG / KOJO_MESSAGE_MARKCNG）换真调用，
+  // 占位行消失：存根 23 → 12（golden 侧本无对应行，只减 stub 计数、
+  // matched 不动）；#231 后续切片（EVENTTRAIN/EVENTEND 的 k0_kojo2
+  // 输出等）再降 12 → 10。未解释数不变。
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,

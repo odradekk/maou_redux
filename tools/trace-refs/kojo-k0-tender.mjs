@@ -5343,7 +5343,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '6970-6990',
-        any: [/^IF TFLAG:13 == 6$/m],
+        any: [/IF TALENT:85 && MARK:3 < 3/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6648,6 +6648,11 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '7209',
         any: [/^RETURN 0$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '7236-7299',
+        any: [/^@DUNGEON_RYOUZYOKU_K0$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -10064,7 +10069,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '8301-8329',
-        any: [/^@GOBI_KOUJO_K0$/m],
+        any: [/^@GOBI_KOUJO_K0, ARG:0$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -10083,22 +10088,22 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7964-7999',
+        ref: '7963-7999',
         any: [/^@MUSEUM_KOUJO_K0$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8001-8020',
+        ref: '7998-8020',
         any: [/^@BANISHMENT_KOUJO_K0$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8022-8035',
+        ref: '8019-8035',
         any: [/^@PUBLIC_EXUCUTION_KOUJO_K0$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8037-8061',
+        ref: '8034-8061',
         any: [/^@GROTESQUE_KOUJO_K0$/m],
       },
       {
@@ -17208,11 +17213,7 @@ export const FILES = [
         ref: '2412-2414',
         any: [/\	\	\	CFLAG:322\ =\ 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '2421',
-        any: [/IF\ SELECTCOM\ ==\ 22/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '2421-2585',
@@ -17830,11 +17831,7 @@ export const FILES = [
         ref: '2581',
         any: [/\t\t\tCFLAG:323 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '2590',
-        any: [/IF\ SELECTCOM\ ==\ 23/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '2590-2757',
@@ -18424,11 +18421,7 @@ export const FILES = [
         ref: '2753',
         any: [/\t\t\tCFLAG:324 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '2762',
-        any: [/IF\ SELECTCOM\ ==\ 26/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '2762-2854',
@@ -18723,11 +18716,7 @@ export const FILES = [
         ref: '2850',
         any: [/\t\t\tCFLAG:327 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '2859',
-        any: [/IF\ SELECTCOM\ ==\ 27/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '2859-2968',
@@ -19143,11 +19132,7 @@ export const FILES = [
         ref: '2964',
         any: [/\t\t\tCFLAG:328 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '2973',
-        any: [/IF\ SELECTCOM\ ==\ 28/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '2973-3074',
@@ -19468,11 +19453,7 @@ export const FILES = [
         ref: '3070',
         any: [/\t\t\tCFLAG:329 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3079',
-        any: [/IF\ SELECTCOM\ ==\ 29/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3079-3189',
@@ -19822,11 +19803,7 @@ export const FILES = [
         ref: '3185',
         any: [/\t\t\tCFLAG:330 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3194',
-        any: [/IF\ SELECTCOM\ ==\ 30/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3194-3288',
@@ -20155,11 +20132,7 @@ export const FILES = [
         ref: '3284',
         any: [/\t\t\tCFLAG:331 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3293',
-        any: [/IF\ SELECTCOM\ ==\ 31/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3293-3376',
@@ -20456,11 +20429,7 @@ export const FILES = [
         ref: '3372',
         any: [/\t\t\tCFLAG:332 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3381',
-        any: [/IF\ SELECTCOM\ ==\ 32/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3381-3456',
@@ -20724,11 +20693,7 @@ export const FILES = [
         ref: '3452',
         any: [/\t\t\tCFLAG:333 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3461',
-        any: [/IF\ SELECTCOM\ ==\ 33/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3461-3506',
@@ -20890,11 +20855,7 @@ export const FILES = [
         ref: '3502',
         any: [/\t\t\tCFLAG:334 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3511',
-        any: [/IF\ SELECTCOM\ ==\ 34/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3511-3793',
@@ -21966,11 +21927,7 @@ export const FILES = [
         ref: '3789',
         any: [/\t\t\tCFLAG:335 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3800',
-        any: [/IF\ SELECTCOM\ ==\ 35/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3800-3835',
@@ -22088,11 +22045,7 @@ export const FILES = [
         ref: '3831',
         any: [/\t\t\tCFLAG:336 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3840',
-        any: [/IF\ SELECTCOM\ ==\ 36/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3840-3955',
@@ -22477,11 +22430,7 @@ export const FILES = [
         ref: '3951',
         any: [/\t\t\tCFLAG:337 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '3960',
-        any: [/IF\ SELECTCOM\ ==\ 37/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '3960-4001',
@@ -22629,11 +22578,7 @@ export const FILES = [
         ref: '3997',
         any: [/\t\t\tCFLAG:338 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4006',
-        any: [/IF\ SELECTCOM\ ==\ 40/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4006-4037',
@@ -22751,11 +22696,7 @@ export const FILES = [
         ref: '4033',
         any: [/\t\t\tCFLAG:TARGET:341 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4042',
-        any: [/IF\ SELECTCOM\ ==\ 41/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4042-4105',
@@ -23008,11 +22949,7 @@ export const FILES = [
         ref: '4101',
         any: [/\t\t\tCFLAG:TARGET:342 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4110',
-        any: [/IF\ SELECTCOM\ ==\ 42/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4110-4170',
@@ -23244,11 +23181,7 @@ export const FILES = [
         ref: '4166',
         any: [/\t\t\tCFLAG:TARGET:343 = 2/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4176',
-        any: [/IF\ SELECTCOM\ ==\ 43 && TEQUIP:43/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4176-4212',
@@ -23367,11 +23300,7 @@ export const FILES = [
         ref: '4222',
         any: [/\t\tCFLAG:380 = 1/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4231',
-        any: [/IF\ SELECTCOM\ ==\ 44 && TEQUIP:44/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4231-4298',
@@ -23714,11 +23643,7 @@ export const FILES = [
         ref: '4312',
         any: [/\t\tCFLAG:385 = 1/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4321',
-        any: [/IF\ SELECTCOM\ ==\ 45 && TEQUIP:45/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4321-4357',
@@ -23877,11 +23802,7 @@ export const FILES = [
         ref: '4367',
         any: [/\t\tCFLAG:386 = 1/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4376',
-        any: [/IF\ SELECTCOM\ ==\ 46 && TEQUIP:46/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4376-4424',
@@ -24274,11 +24195,7 @@ export const FILES = [
         ref: '4494-4495',
         any: [/^\s*PRINTFORMW\s*$/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4510',
-        any: [/IF\ SELECTCOM\ ==\ 55/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4510-4638',
@@ -24599,11 +24516,7 @@ export const FILES = [
         ref: '4599',
         any: [/PRINTL/],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4645',
-        any: [/IF\ SELECTCOM\ ==\ 56/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4645-4758',

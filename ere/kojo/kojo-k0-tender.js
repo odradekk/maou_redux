@@ -120,13 +120,12 @@ const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['KOJO_MESSAGE_COM_0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:73-77）：存在标志 + 总开关补 0
 on(
@@ -13978,13 +13977,7 @@ async function kojo_message_com_0(rand) {
     return 0;
   }
 
-  // 其余指令待办，占位一行
-  stub_line(
-    'KOJO_MESSAGE_COM_0',
-    `指令 ${era_flag.selectcom} 的口上`,
-    '随各自指令票',
-  );
-
+  // 其余（ERB 无分支的 SELECTCOM）静默返回——原作 COM 末尾 RETURN 0
   return 0;
 }
 
