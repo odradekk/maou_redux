@@ -1673,7 +1673,7 @@ async function kojo_message_com_8(rand) {
   }
 
   const selectcom_ids = [
-    40, 41, 42, 43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127,
+    43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127,
   ];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
@@ -7267,6 +7267,293 @@ async function kojo_message_com_8(rand) {
         `${target_name}一边眼里含着泪，一边服侍着${player_name}的肛门………`,
       ); // :4063
       kojo.肛门侍奉 = 2; // :4064 CFLAG:338 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 40) {
+    // :4073-4109 打屁股 CFLAG:341（初めて 单档；二回目以降四档，受虐狂っ気/ABL:21）
+    if (kojo.打屁股 == 0) {
+      // :4076-4077 初めて
+      await era.printAndWait(
+        `「呃…学别人拷问我么？你这么干的话，很容易就能忍住吧……嗯！啊嗯！」`,
+      ); // :4076
+      await era.printAndWait(
+        `「嗯？…打屁股吗！？…啊啊！我明明已经不是小孩子了！」`,
+      ); // :4077
+      kojo.打屁股 = 1; // :4078 CFLAG:TARGET:341 = 1
+      return 0;
+    }
+    // :4081-4107 二回目以降（四档：淫乱＋受虐狂っ気Lv3(5)/爱＋受虐狂っ気Lv3(4)/苦痛刻印Lv3+屈服刻印Lv3(3)/それ以外(2)）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.打屁股 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4084-4087 淫乱＋受虐狂っ気Lv3
+      await era.printAndWait(
+        `「再继续打我的屁股！啊啊啊！呀…呀啊${heart(1)}」`,
+      ); // :4084
+      await era.printAndWait(
+        `${target_name}随着被打屁股而发出了娇喘、身体一抖一抖的痉挛了起来。`,
+      ); // :4085
+      await era.printAndWait(
+        `「被你打屁股…啊啊…好舒服…啊啊…啊啊啊——${heart(1)}」`,
+      ); // :4086
+      // :4087 "辩证这样"应为"变成这样"（源作误写，1:1 保真）
+      await era.printAndWait(
+        `「啊嗯…我的身体辩证这样，你要负责任啊…啊嗯…啊啊嗯${heart(1)}」`,
+      ); // :4087
+      kojo.打屁股 = 5; // :4088 CFLAG:TARGET:341 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.打屁股 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4091-4094 爱＋受虐狂っ気Lv3
+      await era.printAndWait(
+        `「啊啊…这么中意我的屁股的话…啊嗯…用咬的…就这样吃下去也可以呦…啊嗯${heart(1)}」`,
+      ); // :4091
+      await era.printAndWait(
+        `${target_name}因为被打屁股而漏出了娇喘。连疼痛都变成快感而露出了痴迷的表情。`,
+      ); // :4092
+      await era.printAndWait(`「啊嗯…啊啊…你真是坏心眼、只打我的屁股………啊嗯」`); // :4093
+      await era.printAndWait(`「我想做的事却全都不做…啊…啊啊——！」`); // :4094
+      kojo.打屁股 = 4; // :4095 CFLAG:TARGET:341 = 4
+    } else if (
+      era0(`mark:${target}:0`) == 3 &&
+      era0(`mark:${target}:2`) == 3 &&
+      (kojo.打屁股 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4098-4100 苦痛刻印Lv3+屈服刻印Lv3
+      await era.printAndWait(
+        `「嗯…不要…啊啊…这个打的方式…啊啊啊…和父亲大人打我的方式好像…嗯…咕！」`,
+      ); // :4098
+      await era.printAndWait(
+        `${target_name}想起了曾经屈辱的感觉，一边含着眼泪一边继续被打着。`,
+      ); // :4099
+      await era.printAndWait(
+        `「啊…啊啊…对不起对不起…明明输了还…啊啊…这么屈辱的活着！」`,
+      ); // :4100
+      kojo.打屁股 = 3; // :4101 CFLAG:TARGET:341 = 3
+      // :4103 それ以外分支源作误写用 && 而非 ||（CFLAG:341<=1 && FLAG:7==2）：正常游玩
+      // （FLAG:7!=2）时恒为假，此分支在非口上开关模式下永远不会命中，1:1 保真不修正
+    } else if (kojo.打屁股 <= 1 && game.kojo.口上开关 == 2) {
+      // :4104-4105 それ以外
+      await era.printAndWait(`「不更用力的话…啊…不会痛哦…啊嗯」`); // :4104
+      await era.printAndWait(`${target_name}被打着屁股依然笑着………`); // :4105
+      kojo.打屁股 = 2; // :4106 CFLAG:TARGET:341 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 41) {
+    // :4115-4166 鞭 CFLAG:342（初めて 单档；二回目以降八档，受虐狂っ気/ABL:21 三级门槛叠 淫乱/爱/单独）
+    if (kojo.鞭 == 0) {
+      // :4118-4119 初めて
+      await era.printAndWait(
+        `「啊啊、终于用对待俘虏的方式对待我了。来，照你想的去做吧！」`,
+      ); // :4118
+      await era.printAndWait(
+        `${target_name}看起来很高兴的接受着${player_name}的鞭打………`,
+      ); // :4119
+      kojo.鞭 = 1; // :4120 CFLAG:TARGET:342 = 1
+      return 0;
+    }
+    // :4123-4164 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.鞭 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :4126-4127 淫乱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「啊啊…想要你的鞭子…你的惩罚…做了很多不好的事情哦…啊嗯…啊啊…请继续用鞭子打我！」`,
+      ); // :4126
+      await era.printAndWait(
+        `${target_name}每次被${player_name}打都发出了好像是故意一样的喘息………`,
+      ); // :4127
+      kojo.鞭 = 9; // :4128 CFLAG:TARGET:342 = 9
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.鞭 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :4131-4132 淫乱＋受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「啊嗯…啊啊嗯！我的身体好像变奇怪了…啊嗯…你的鞭子很舒服什么的…」`,
+      ); // :4131
+      await era.printAndWait(
+        `${target_name}每次被${player_name}鞭打都会发出娇喘………`,
+      ); // :4132
+      kojo.鞭 = 8; // :4133 CFLAG:TARGET:342 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.鞭 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :4136-4137 淫乱
+      await era.printAndWait(`「啊嗯…啊啊啊…呵呵呵、这样…啊啊！」`); // :4136
+      await era.printAndWait(
+        `${target_name}就这样被${player_name}用鞭子抽打着，缩成了一团………`,
+      ); // :4137
+      kojo.鞭 = 7; // :4138 CFLAG:TARGET:342 = 7
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.鞭 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4141-4142 爱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「啊嗯…啊啊…继续打我！让我感受你的爱${heart(1)}」`,
+      ); // :4141
+      await era.printAndWait(
+        `${target_name}每次被${player_name}打都发出了好像是故意一样的喘息………`,
+      ); // :4142
+      kojo.鞭 = 6; // :4143 CFLAG:TARGET:342 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.鞭 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4146-4147 爱＋受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「嗯…呵呵呵、感受到了你的爱了…啊啊！就、就是那里…啊嗯！」`,
+      ); // :4146
+      await era.printAndWait(
+        `${target_name}每次被${player_name}鞭打都会发出娇喘………`,
+      ); // :4147
+      kojo.鞭 = 5; // :4148 CFLAG:TARGET:342 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.鞭 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4151-4152 爱慕
+      await era.printAndWait(
+        `「啊啊…用鞭子让我屈服，这是不相信我啊…啊啊…那就继续打吧…啊！」`,
+      ); // :4151
+      await era.printAndWait(
+        `${target_name}就这样被${player_name}用鞭子抽打着，缩成了一团………`,
+      ); // :4152
+      kojo.鞭 = 4; // :4153 CFLAG:TARGET:342 = 4
+    } else if (
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.鞭 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4156-4157 受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「啊啊…由你继续在我的背上刻上伤痕吧…啊…啊啊——！」`,
+      ); // :4156
+      await era.printAndWait(
+        `${target_name}每次被${player_name}鞭打都会发出娇喘………`,
+      ); // :4157
+      kojo.鞭 = 3; // :4158 CFLAG:TARGET:342 = 3
+      // :4160 それ以外分支源作误写引用了 CFLAG:335（骑乘位）而非 CFLAG:342（鞭）本身，
+      // 1:1 保真不修正——正常游玩下这条判定跟着骑乘位的推进走，与鞭的推进无关
+    } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+      // :4161-4162 それ以外
+      await era.printAndWait(
+        `「咕…啊啊！呵呵呵…真不愧是这个鞭子，不是一般的疼啊…上次打出来的红肿还这么显眼，看样子消肿还要很长时间」`,
+      ); // :4161
+      await era.printAndWait(
+        `${target_name}一边开着玩笑一边承受着${player_name}的鞭子………`,
+      ); // :4162
+      kojo.鞭 = 2; // :4163 CFLAG:TARGET:342 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 42) {
+    // :4172-4226 针 CFLAG:343（初めて 单档；二回目以降八档，结构同 SELECTCOM 41 鞭）
+    if (kojo.针 == 0) {
+      // :4175 初めて
+      await era.printAndWait(
+        `「呵呵呵、用针扎人的话，不扎像指甲缝之类更疼的地方可是没用的呦…？」`,
+      ); // :4175
+      kojo.针 = 1; // :4176 CFLAG:TARGET:343 = 1
+      return 0;
+    }
+    // :4179-4224 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.针 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :4182-4185 淫乱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「啊啊…嗯…把针扎刺进我勃起的乳头里吧…啊啊${heart(1)}」`,
+      ); // :4182
+      await era.printAndWait(`「这样我就能高潮了…啊啊…喂、求你了${heart(1)}」`); // :4183
+      await era.printAndWait(
+        `${player_name}听从了${target_name}的愿望、把针刺进了乳头。`,
+      ); // :4184
+      await era.printAndWait(`「咕啊…啊啊…呀——！好厉害…啊啊…去了啊啊啊——！」`); // :4185
+      kojo.针 = 9; // :4186 CFLAG:TARGET:343 = 9
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.针 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :4189-4190 淫乱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊…继续刺下来…啊…啊啊…啊嗯${heart(1)}」`); // :4189
+      await era.printAndWait(
+        `${player_name}如${target_name}所愿的那样，把针一根根的深深插入${target_name}的肌肤………`,
+      ); // :4190
+      kojo.针 = 8; // :4191 CFLAG:TARGET:343 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.针 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :4194-4195 淫乱
+      await era.printAndWait(`「啊啊！…嗯啊…咕…痛！」`); // :4194
+      await era.printAndWait(`${target_name}的身体被针扎着，流着血………`); // :4195
+      kojo.针 = 7; // :4196 CFLAG:TARGET:343 = 7
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.针 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4199-4202 爱＋受虐狂っ気Lv5以上
+      await era.printAndWait(`「不要这么普通的用针扎啊…」`); // :4199
+      await era.printAndWait(
+        `「如果想让我成为你的东西的话…把我的…把我的双眼缝起来，手脚缝在一起…」`,
+      ); // :4200
+      await era.printAndWait(
+        `「我一直就这样等着你…什么时候都可以…啊啊！嗯！」`,
+      ); // :4201
+      await era.printAndWait(
+        `${player_name}为了${target_name}安静下来，姑且先扎了嘴唇………`,
+      ); // :4202
+      kojo.针 = 6; // :4203 CFLAG:TARGET:343 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.针 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4206-4207 爱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊…扎得再深一点…不这样的话感觉不到疼啊！」`); // :4206
+      await era.printAndWait(
+        `如${target_name}所愿的那样，针一根根的深深插入${target_name}的肌肤………`,
+      ); // :4207
+      kojo.针 = 5; // :4208 CFLAG:TARGET:343 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.针 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4211-4212 爱慕
+      await era.printAndWait(`「啊啊…被你扎好舒服…呜…咕…啊！」`); // :4211
+      await era.printAndWait(`${target_name}露出着被针扎着，流着血的身体………`); // :4212
+      kojo.针 = 4; // :4213 CFLAG:TARGET:343 = 4
+    } else if (
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.针 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4216-4217 受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊…你的针…啊嗯…深一点…嗯…啊啊…咕！」`); // :4216
+      await era.printAndWait(`${target_name}的皮肤上到处都流着血、喘着粗气………`); // :4217
+      kojo.针 = 3; // :4218 CFLAG:TARGET:343 = 3
+    } else if (kojo.针 <= 1 || game.kojo.口上开关 == 2) {
+      // :4221-4222 それ以外
+      await era.printAndWait(
+        `「嗯…嗯…咕…嗯！……呵呵呵、还早得很呢…就这样…还没发让我屈服」`,
+      ); // :4221
+      await era.printAndWait(
+        `${target_name}带着有余裕的表情露出了沾满鲜血的身体………`,
+      ); // :4222
+      kojo.针 = 2; // :4223 CFLAG:TARGET:343 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {

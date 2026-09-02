@@ -2132,8 +2132,197 @@ test('SELECTCOM 37 肛门侍奉，二回目以降·それ以外：CFLAG:338 推�
   assert.equal(fixture.store.get('cflag:31:338'), 2, 'CFLAG:338 推进到 2');
 });
 
-test('骨架期：SELECTCOM 40（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+test('SELECTCOM 40 打屁股，初めて：CFLAG:341 推进到 1', async () => {
   const fixture = await setup_k8(undefined, 40);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呃…学别人拷问我么？你这么干的话，很容易就能忍住吧……嗯！啊嗯！」',
+    '「嗯？…打屁股吗！？…啊啊！我明明已经不是小孩子了！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:341'), 1, 'CFLAG:341 推进到 1');
+});
+
+test('SELECTCOM 40 打屁股，二回目以降·淫乱＋受虐狂っ気Lv3：源作误写"辩证这样"1:1 保真，CFLAG:341 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:341', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 3);
+  }, 40);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「再继续打我的屁股！啊啊啊！呀…呀啊♡」',
+    '银黑桃随着被打屁股而发出了娇喘、身体一抖一抖的痉挛了起来。',
+    '「被你打屁股…啊啊…好舒服…啊啊…啊啊啊——♡」',
+    '「啊嗯…我的身体辩证这样，你要负责任啊…啊嗯…啊啊嗯♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:341'), 5, 'CFLAG:341 推进到 5');
+});
+
+test('SELECTCOM 40 打屁股，二回目以降·爱＋受虐狂っ気Lv3：CFLAG:341 推进到 4', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:341', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 3);
+  }, 40);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…这么中意我的屁股的话…啊嗯…用咬的…就这样吃下去也可以呦…啊嗯♡」',
+    '银黑桃因为被打屁股而漏出了娇喘。连疼痛都变成快感而露出了痴迷的表情。',
+    '「啊嗯…啊啊…你真是坏心眼、只打我的屁股………啊嗯」',
+    '「我想做的事却全都不做…啊…啊啊——！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:341'), 4, 'CFLAG:341 推进到 4');
+});
+
+test('SELECTCOM 40 打屁股，二回目以降·苦痛刻印Lv3+屈服刻印Lv3：CFLAG:341 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:341', 1);
+    f.store.set('mark:31:0', 3);
+    f.store.set('mark:31:2', 3);
+  }, 40);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…不要…啊啊…这个打的方式…啊啊啊…和父亲大人打我的方式好像…嗯…咕！」',
+    '银黑桃想起了曾经屈辱的感觉，一边含着眼泪一边继续被打着。',
+    '「啊…啊啊…对不起对不起…明明输了还…啊啊…这么屈辱的活着！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:341'), 3, 'CFLAG:341 推进到 3');
+});
+
+test('SELECTCOM 40 打屁股，源作误写死区：それ以外分支用 && 而非 ||（CFLAG:341<=1 && FLAG:7==2），正常游玩下永不命中，1:1 保真不修补', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:341', 1);
+    f.store.set('flag:7', 0);
+  }, 40);
+  await speak_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '源作死区：正常游玩下无分支命中，不打印任何文本',
+  );
+  assert.equal(fixture.store.get('cflag:31:341'), 1, 'CFLAG:341 保持不变');
+});
+
+test('SELECTCOM 41 鞭，初めて：CFLAG:342 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 41);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊、终于用对待俘虏的方式对待我了。来，照你想的去做吧！」',
+    '银黑桃看起来很高兴的接受着你的鞭打………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:342'), 1, 'CFLAG:342 推进到 1');
+});
+
+test('SELECTCOM 41 鞭，二回目以降·淫乱＋受虐狂っ気Lv5以上：CFLAG:342 推进到 9', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:342', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+  }, 41);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…想要你的鞭子…你的惩罚…做了很多不好的事情哦…啊嗯…啊啊…请继续用鞭子打我！」',
+    '银黑桃每次被你打都发出了好像是故意一样的喘息………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:342'), 9, 'CFLAG:342 推进到 9');
+});
+
+test('SELECTCOM 41 鞭，二回目以降·受虐狂っ気Lv3以上：CFLAG:342 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:342', 1);
+    f.store.set('abl:31:21', 3);
+  }, 41);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…由你继续在我的背上刻上伤痕吧…啊…啊啊——！」',
+    '银黑桃每次被你鞭打都会发出娇喘………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:342'), 3, 'CFLAG:342 推进到 3');
+});
+
+test('SELECTCOM 41 鞭，二回目以降·それ以外：CFLAG:342 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:342', 1);
+  }, 41);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「咕…啊啊！呵呵呵…真不愧是这个鞭子，不是一般的疼啊…上次打出来的红肿还这么显眼，看样子消肿还要很长时间」',
+    '银黑桃一边开着玩笑一边承受着你的鞭子………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:342'), 2, 'CFLAG:342 推进到 2');
+});
+
+test('SELECTCOM 41 鞭，源作误写：それ以外分支判定读的是 CFLAG:335（骑乘位）而非 CFLAG:342（鞭）本身，正常游玩下骑乘位推进过一次即锁死鞭的それ以外分支，1:1 保真不修补', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:342', 1);
+    f.store.set('cflag:31:335', 5);
+    f.store.set('flag:7', 0);
+  }, 41);
+  await speak_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '源作误写导致该分支的守卫读错了变量，正常游玩下骑乘位一旦推进就锁死，不打印任何文本',
+  );
+  assert.equal(
+    fixture.store.get('cflag:31:342'),
+    1,
+    'CFLAG:342 保持不变（锁死）',
+  );
+});
+
+test('SELECTCOM 42 针，初めて：CFLAG:343 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 42);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、用针扎人的话，不扎像指甲缝之类更疼的地方可是没用的呦…？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:343'), 1, 'CFLAG:343 推进到 1');
+});
+
+test('SELECTCOM 42 针，二回目以降·淫乱＋受虐狂っ気Lv5以上：CFLAG:343 推进到 9', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:343', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+  }, 42);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…把针扎刺进我勃起的乳头里吧…啊啊♡」',
+    '「这样我就能高潮了…啊啊…喂、求你了♡」',
+    '你听从了银黑桃的愿望、把针刺进了乳头。',
+    '「咕啊…啊啊…呀——！好厉害…啊啊…去了啊啊啊——！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:343'), 9, 'CFLAG:343 推进到 9');
+});
+
+test('SELECTCOM 42 针，二回目以降·受虐狂っ気Lv3以上：CFLAG:343 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:343', 1);
+    f.store.set('abl:31:21', 3);
+  }, 42);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…你的针…啊嗯…深一点…嗯…啊啊…咕！」',
+    '银黑桃的皮肤上到处都流着血、喘着粗气………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:343'), 3, 'CFLAG:343 推进到 3');
+});
+
+test('SELECTCOM 42 针，二回目以降·それ以外：CFLAG:343 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:343', 1);
+  }, 42);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…嗯…咕…嗯！……呵呵呵、还早得很呢…就这样…还没发让我屈服」',
+    '银黑桃带着有余裕的表情露出了沾满鲜血的身体………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:343'), 2, 'CFLAG:343 推进到 2');
+});
+
+test('骨架期：SELECTCOM 43（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+  const fixture = await setup_k8(undefined, 43);
   await speak_k8(fixture, seq_rand());
   assert.ok(
     fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),

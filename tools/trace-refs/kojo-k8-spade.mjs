@@ -15244,6 +15244,657 @@ export const FILES = [
         ref: '4064',
         any: [/CFLAG:338 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4073-4109',
+        any: [
+          /PRINTFORMW 「呃…学别人拷问我么？你这么干的话，很容易就能忍住吧……嗯！啊嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4076-4077',
+        any: [
+          /PRINTFORMW 「呃…学别人拷问我么？你这么干的话，很容易就能忍住吧……嗯！啊嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4076',
+        any: [
+          /PRINTFORMW 「呃…学别人拷问我么？你这么干的话，很容易就能忍住吧……嗯！啊嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4077',
+        any: [
+          /PRINTFORMW 「嗯？…打屁股吗！？…啊啊！我明明已经不是小孩子了！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4078',
+        any: [/CFLAG:TARGET:341 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4081-4107',
+        any: [
+          /PRINTFORMW 「再继续打我的屁股！啊啊啊！呀…呀啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4084-4087',
+        any: [
+          /PRINTFORMW 「再继续打我的屁股！啊啊啊！呀…呀啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4084',
+        any: [
+          /PRINTFORMW 「再继续打我的屁股！啊啊啊！呀…呀啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4085',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%随着被打屁股而发出了娇喘、身体一抖一抖的痉挛了起来。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4086',
+        any: [
+          /PRINTFORMW 「被你打屁股…啊啊…好舒服…啊啊…啊啊啊——%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4087',
+        any: [
+          /PRINTFORMW 「啊嗯…我的身体辩证这样，你要负责任啊…啊嗯…啊啊嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4088',
+        any: [/CFLAG:TARGET:341 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4091-4094',
+        any: [
+          /PRINTFORMW 「啊啊…这么中意我的屁股的话…啊嗯…用咬的…就这样吃下去也可以呦…啊嗯%UNICODE\(0x266/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4091',
+        any: [
+          /PRINTFORMW 「啊啊…这么中意我的屁股的话…啊嗯…用咬的…就这样吃下去也可以呦…啊嗯%UNICODE\(0x266/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4092',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%因为被打屁股而漏出了娇喘。连疼痛都变成快感而露出了痴迷的表情。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4093',
+        any: [/PRINTFORMW 「啊嗯…啊啊…你真是坏心眼、只打我的屁股………啊嗯」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4094',
+        any: [/PRINTFORMW 「我想做的事却全都不做…啊…啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4095',
+        any: [/CFLAG:TARGET:341 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4098-4100',
+        any: [
+          /PRINTFORMW 「嗯…不要…啊啊…这个打的方式…啊啊啊…和父亲大人打我的方式好像…嗯…咕！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4098',
+        any: [
+          /PRINTFORMW 「嗯…不要…啊啊…这个打的方式…啊啊啊…和父亲大人打我的方式好像…嗯…咕！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4099',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%想起了曾经屈辱的感觉，一边含着眼泪一边继续被打着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4100',
+        any: [
+          /PRINTFORMW 「啊…啊啊…对不起对不起…明明输了还…啊啊…这么屈辱的活着！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4101',
+        any: [/CFLAG:TARGET:341 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4103',
+        any: [/ELSEIF CFLAG:341 <= 1 && FLAG:7 == 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4104-4105',
+        any: [/PRINTFORMW 「不更用力的话…啊…不会痛哦…啊嗯」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4104',
+        any: [/PRINTFORMW 「不更用力的话…啊…不会痛哦…啊嗯」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4105',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被打着屁股依然笑着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4106',
+        any: [/CFLAG:TARGET:341 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4115-4166',
+        any: [
+          /PRINTFORMW 「啊啊、终于用对待俘虏的方式对待我了。来，照你想的去做吧！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4118-4119',
+        any: [
+          /PRINTFORMW 「啊啊、终于用对待俘虏的方式对待我了。来，照你想的去做吧！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4118',
+        any: [
+          /PRINTFORMW 「啊啊、终于用对待俘虏的方式对待我了。来，照你想的去做吧！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4119',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%看起来很高兴的接受着%SAVESTR:PLAYER%的鞭打………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4120',
+        any: [/CFLAG:TARGET:342 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4123-4164',
+        any: [
+          /PRINTFORMW 「啊啊…想要你的鞭子…你的惩罚…做了很多不好的事情哦…啊嗯…啊啊…请继续用鞭子打我！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4126-4127',
+        any: [
+          /PRINTFORMW 「啊啊…想要你的鞭子…你的惩罚…做了很多不好的事情哦…啊嗯…啊啊…请继续用鞭子打我！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4126',
+        any: [
+          /PRINTFORMW 「啊啊…想要你的鞭子…你的惩罚…做了很多不好的事情哦…啊嗯…啊啊…请继续用鞭子打我！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4127',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%每次被%SAVESTR:PLAYER%打都发出了好像是故意一样的喘/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4128',
+        any: [/CFLAG:TARGET:342 = 9/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4131-4132',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊嗯！我的身体好像变奇怪了…啊嗯…你的鞭子很舒服什么的…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4131',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊嗯！我的身体好像变奇怪了…啊嗯…你的鞭子很舒服什么的…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4132',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%每次被%SAVESTR:PLAYER%鞭打都会发出娇喘………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4133',
+        any: [/CFLAG:TARGET:342 = 8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4136-4137',
+        any: [/PRINTFORMW 「啊嗯…啊啊啊…呵呵呵、这样…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4136',
+        any: [/PRINTFORMW 「啊嗯…啊啊啊…呵呵呵、这样…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4137',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%就这样被%SAVESTR:PLAYER%用鞭子抽打着，缩成了一团…/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4138',
+        any: [/CFLAG:TARGET:342 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4141-4142',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…继续打我！让我感受你的爱%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4141',
+        any: [
+          /PRINTFORMW 「啊嗯…啊啊…继续打我！让我感受你的爱%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4142',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%每次被%SAVESTR:PLAYER%打都发出了好像是故意一样的喘/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4143',
+        any: [/CFLAG:TARGET:342 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4146-4147',
+        any: [
+          /PRINTFORMW 「嗯…呵呵呵、感受到了你的爱了…啊啊！就、就是那里…啊嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4146',
+        any: [
+          /PRINTFORMW 「嗯…呵呵呵、感受到了你的爱了…啊啊！就、就是那里…啊嗯！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4147',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%每次被%SAVESTR:PLAYER%鞭打都会发出娇喘………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4148',
+        any: [/CFLAG:TARGET:342 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4151-4152',
+        any: [
+          /PRINTFORMW 「啊啊…用鞭子让我屈服，这是不相信我啊…啊啊…那就继续打吧…啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4151',
+        any: [
+          /PRINTFORMW 「啊啊…用鞭子让我屈服，这是不相信我啊…啊啊…那就继续打吧…啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4152',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%就这样被%SAVESTR:PLAYER%用鞭子抽打着，缩成了一团…/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4153',
+        any: [/CFLAG:TARGET:342 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4156-4157',
+        any: [/PRINTFORMW 「啊啊…由你继续在我的背上刻上伤痕吧…啊…啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4156',
+        any: [/PRINTFORMW 「啊啊…由你继续在我的背上刻上伤痕吧…啊…啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4157',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%每次被%SAVESTR:PLAYER%鞭打都会发出娇喘………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4158',
+        any: [/CFLAG:TARGET:342 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4160',
+        any: [/ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4161-4162',
+        any: [
+          /PRINTFORMW 「咕…啊啊！呵呵呵…真不愧是这个鞭子，不是一般的疼啊…上次打出来的红肿还这么显眼，看样子消肿还要很/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4161',
+        any: [
+          /PRINTFORMW 「咕…啊啊！呵呵呵…真不愧是这个鞭子，不是一般的疼啊…上次打出来的红肿还这么显眼，看样子消肿还要很/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4162',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边开着玩笑一边承受着%SAVESTR:PLAYER%的鞭子………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4163',
+        any: [/CFLAG:TARGET:342 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4172-4226',
+        any: [
+          /PRINTFORMW 「呵呵呵、用针扎人的话，不扎像指甲缝之类更疼的地方可是没用的呦…？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4175',
+        any: [
+          /PRINTFORMW 「呵呵呵、用针扎人的话，不扎像指甲缝之类更疼的地方可是没用的呦…？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4176',
+        any: [/CFLAG:TARGET:343 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4179-4224',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…把针扎刺进我勃起的乳头里吧…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4182-4185',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…把针扎刺进我勃起的乳头里吧…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4182',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…把针扎刺进我勃起的乳头里吧…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4183',
+        any: [
+          /PRINTFORMW 「这样我就能高潮了…啊啊…喂、求你了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4184',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%听从了%SAVESTR:TARGET%的愿望、把针刺进了乳头。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4185',
+        any: [/PRINTFORMW 「咕啊…啊啊…呀——！好厉害…啊啊…去了啊啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4186',
+        any: [/CFLAG:TARGET:343 = 9/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4189-4190',
+        any: [
+          /PRINTFORMW 「啊啊…继续刺下来…啊…啊啊…啊嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4189',
+        any: [
+          /PRINTFORMW 「啊啊…继续刺下来…啊…啊啊…啊嗯%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4190',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%如%SAVESTR:TARGET%所愿的那样，把针一根根的深深插入/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4191',
+        any: [/CFLAG:TARGET:343 = 8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4194-4195',
+        any: [/PRINTFORMW 「啊啊！…嗯啊…咕…痛！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4194',
+        any: [/PRINTFORMW 「啊啊！…嗯啊…咕…痛！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4195',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的身体被针扎着，流着血………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4196',
+        any: [/CFLAG:TARGET:343 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4199-4202',
+        any: [/PRINTFORMW 「不要这么普通的用针扎啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4199',
+        any: [/PRINTFORMW 「不要这么普通的用针扎啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4200',
+        any: [
+          /PRINTFORMW 「如果想让我成为你的东西的话…把我的…把我的双眼缝起来，手脚缝在一起…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4201',
+        any: [/PRINTFORMW 「我一直就这样等着你…什么时候都可以…啊啊！嗯！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4202',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%为了%SAVESTR:TARGET%安静下来，姑且先扎了嘴唇………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4203',
+        any: [/CFLAG:TARGET:343 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4206-4207',
+        any: [/PRINTFORMW 「啊啊…扎得再深一点…不这样的话感觉不到疼啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4206',
+        any: [/PRINTFORMW 「啊啊…扎得再深一点…不这样的话感觉不到疼啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4207',
+        any: [
+          /PRINTFORMW 如%SAVESTR:TARGET%所愿的那样，针一根根的深深插入%SAVESTR:TARGET%的/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4208',
+        any: [/CFLAG:TARGET:343 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4211-4212',
+        any: [/PRINTFORMW 「啊啊…被你扎好舒服…呜…咕…啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4211',
+        any: [/PRINTFORMW 「啊啊…被你扎好舒服…呜…咕…啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4212',
+        any: [/PRINTFORMW %SAVESTR:TARGET%露出着被针扎着，流着血的身体………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4213',
+        any: [/CFLAG:TARGET:343 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4216-4217',
+        any: [/PRINTFORMW 「啊啊…你的针…啊嗯…深一点…嗯…啊啊…咕！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4216',
+        any: [/PRINTFORMW 「啊啊…你的针…啊嗯…深一点…嗯…啊啊…咕！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4217',
+        any: [/PRINTFORMW %SAVESTR:TARGET%的皮肤上到处都流着血、喘着粗气………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4218',
+        any: [/CFLAG:TARGET:343 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4221-4222',
+        any: [
+          /PRINTFORMW 「嗯…嗯…咕…嗯！……呵呵呵、还早得很呢…就这样…还没发让我屈服」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4221',
+        any: [
+          /PRINTFORMW 「嗯…嗯…咕…嗯！……呵呵呵、还早得很呢…就这样…还没发让我屈服」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4222',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%带着有余裕的表情露出了沾满鲜血的身体………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4223',
+        any: [/CFLAG:TARGET:343 = 2/],
+      },
     ],
   },
 ];
