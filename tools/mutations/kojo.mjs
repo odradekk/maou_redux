@@ -2356,4 +2356,39 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '总觉得想起了帮弟弟洗澡的时候',
   },
+  {
+    desc: 'M1890 K8 SELECTCOM 36 骑乘位肛交初めて淫乱分档丢失（TALENT:76==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      if (era0(`talent:${target}:76`) == 1) {\n        // 淫乱\n        if (era0(`abl:${target}:3`) >= 3) {\n          await era.printAndWait(\n            `「嗯…嗯啊…啊啊…你的全部进来了…啊啊${heart(1)}」`,\n          ); // :3908',
+    replace:
+      '      if (false) {\n        // 淫乱（变异：判定删除）\n        if (era0(`abl:${target}:3`) >= 3) {\n          await era.printAndWait(\n            `「嗯…嗯啊…啊啊…你的全部进来了…啊啊${heart(1)}」`,\n          ); // :3908',
+    tests: ['kojo-k8-spade'],
+    must_mention: '你的全部进来了',
+  },
+  {
+    desc: 'M1891 K8 SELECTCOM 36 骑乘位肛交淫乱+A感觉Lv3以上推进写错（CFLAG:337 = 7 改 6，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.骑乘位肛交 = 7; // :3967 CFLAG:337 = 7',
+    replace: '      kojo.骑乘位肛交 = 6; // :3967（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 7',
+  },
+  {
+    desc: 'M1892 K8 SELECTCOM 36 骑乘位肛交爱+A感觉Lv3以上分档丢失（TALENT:85==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:85`) == 1 &&\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.骑乘位肛交 <= 4 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.骑乘位肛交 <= 4 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1893 K8 SELECTCOM 36 骑乘位肛交 A感觉Lv3以上守卫丢失（ABL:3>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.骑乘位肛交 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // :4003-4006 A感觉Lv3以上',
+    replace:
+      '    } else if (\n      false &&\n      (kojo.骑乘位肛交 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // :4003-4006 A感觉Lv3以上（变异：判定删除）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
 ];
