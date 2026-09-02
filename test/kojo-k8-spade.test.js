@@ -3573,6 +3573,86 @@ test('PALAMCNG：处女丧失·主人以外·それ以外', async () => {
     '银黑桃因为破瓜之痛而带着痛苦的表情嘟囔着………',
   ]);
 });
+
+// —— KOJO_MESSAGE_MARKCNG_8（刻印取得口上） ——
+
+async function speak_markcng_k8(fixture) {
+  const { kojo_message_markcng_family } =
+    fixture.load_module('kojo/kojo-system');
+  return kojo_message_markcng_family.call(8);
+}
+
+test('MARKCNG：头部守卫 TEQUIP:45（口塞）跳过', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('tflag:22', 3);
+  });
+  await speak_markcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('MARKCNG：助手调教时不跳过（源作守卫注释掉，1:1 保真）', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tflag:22', 3);
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  await speak_markcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…这种痛苦…唔……不、不要…不要啊！」',
+    '银黑桃因为超过限度的苦痛而悲鸣着………',
+  ]);
+});
+
+test('MARKCNG：苦痛刻印Lv3取得 爱慕写 CFLAG:297', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('tflag:22', 3);
+  });
+  await speak_markcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…你竟然做到了这种程度…唔…啊…啊啊！」',
+    '银黑桃因为超过限度的苦痛而悲鸣着………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:297'), 1, '苦痛刻印Lv3');
+});
+
+test('MARKCNG：快乐刻印Lv3取得 それ以外写 CFLAG:298', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:23', 3);
+  });
+  await speak_markcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…这么舒服…还是第一次…啊啊！不行…再继续被玩弄的话我…已经…啊啊…变得奇怪…回不了头啊！」',
+    '银黑桃的身体里被刻下了强烈的快感、漏出了快要融化一样的表情………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:298'), 1, '快乐刻印Lv3');
+});
+
+test('MARKCNG：屈服刻印Lv3取得写 CFLAG:299（单档，无爱慕分歧）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:24', 3);
+  });
+  await speak_markcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…我…已经…不会再反抗了…」',
+    '「或许这才是我…新的………」',
+    '银黑桃完全的屈服了的样子………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:299'), 1, '屈服刻印Lv3');
+});
+
+test('MARKCNG：反抗刻印Lv3取得 爱慕写 CFLAG:300', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('tflag:21', 3);
+  });
+  await speak_markcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「为…为什么要这么对我…真的会讨厌你的…呜呜」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:300'), 1, '反抗刻印Lv3');
+});
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {

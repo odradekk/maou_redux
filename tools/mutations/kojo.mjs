@@ -2743,9 +2743,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1935 K8 PALAMCNG_8 头部守卫 TEQUIP:45（口塞）短路失效（#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     replace:
-      '  if (era0(`tequip:${target}:45`) && false) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
+      '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:45`) && false) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     tests: ['kojo-k8-spade'],
     must_mention: '弄湿了什么的',
   },
@@ -2839,5 +2839,46 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '        // :6554（变异：台词内容篡改）\n        await era.printAndWait(`「篡改」`); // :6556',
     tests: ['kojo-k8-spade'],
     must_mention: '用自己的手',
+  },
+  {
+    desc: 'M1947 K8 MARKCNG_8 头部守卫 TEQUIP:45（口塞）短路失效（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: 'async function kojo_message_markcng_8() {\n  const target = era_flag.target;\n  const target_name = chara_callname(target); // %SAVESTR:TARGET%\n  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n\n  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }',
+    replace:
+      'async function kojo_message_markcng_8() {\n  const target = era_flag.target;\n  const target_name = chara_callname(target); // %SAVESTR:TARGET%\n  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n\n  if (era0(`tequip:${target}:45`) && false) {\n    return 0;\n  }',
+    tests: ['kojo-k8-spade'],
+    must_mention: '这种痛苦',
+  },
+  {
+    desc: 'M1948 K8 MARKCNG_8 苦痛刻印Lv3 推进写错（CFLAG:297 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    kojo.苦痛刻印Lv3 = 1; // :6602 CFLAG:297 = 1',
+    replace: '    kojo.苦痛刻印Lv3 = 0; // :6602（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '苦痛刻印Lv3',
+  },
+  {
+    desc: 'M1949 K8 MARKCNG_8 快乐刻印Lv3 推进写错（CFLAG:298 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    kojo.快乐刻印Lv3 = 1; // :6618 CFLAG:298 = 1',
+    replace: '    kojo.快乐刻印Lv3 = 0; // :6618（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '快乐刻印Lv3',
+  },
+  {
+    desc: 'M1950 K8 MARKCNG_8 屈服刻印Lv3 推进写错（CFLAG:299 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    kojo.屈服刻印Lv3 = 1; // :6628 CFLAG:299 = 1',
+    replace: '    kojo.屈服刻印Lv3 = 0; // :6628（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '屈服刻印Lv3',
+  },
+  {
+    desc: 'M1951 K8 MARKCNG_8 反抗刻印Lv3 推进写错（CFLAG:300 = 1 改 0，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    kojo.反抗刻印Lv3 = 1; // :6642 CFLAG:300 = 1',
+    replace: '    kojo.反抗刻印Lv3 = 0; // :6642（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '反抗刻印Lv3',
   },
 ];
