@@ -80,7 +80,13 @@ const {
   kojo_message_palamcng_family,
   kojo_message_markcng_family,
   self_kojo_family,
+  dungeon_victory_family,
+  dungeon_attack_family,
 } = require('#/kojo/kojo-system');
+const {
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
+} = require('#/kojo/kojo-dungeon-ravish');
 const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -97,10 +103,6 @@ const era0 = (k) => era.get(k) || 0;
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
 const STUBBED_CALLS = [
-  'DUNGEON_RYOUZYOKU_K8',
-  'DUNGEON_RYOUZYOKU_AFTER_K8',
-  'DUNGEON_VICTORY_K8',
-  'DUNGEON_ATTACK_K8',
   'BENKI_KOUJO_K8',
   'NTR_KOUJO_K8',
   'EXUCUTION_KOUJO_K8',
@@ -11545,37 +11547,190 @@ async function self_kojo_k8(rand, q, s) {
 // 注册进分发族（TRYCALLFORM SELF_KOJO_K8 的等价物）
 self_kojo_family.register(8, self_kojo_k8);
 
-/** @DUNGEON_RYOUZYOKU_K8（:7073-7092）。TODO(#239)：待填充。 */
+/**
+ * @DUNGEON_RYOUZYOKU_K8（:7073-7090）：迷宫凌辱前的一言。
+ * 处女（TALENT:0）与非处女只差中间一行心声，其余两行相同。
+ */
 async function dungeon_ryouzyoku_k8() {
-  stub_line('DUNGEON_RYOUZYOKU_K8', '迷宫凌辱口上', '本票分段填充');
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+
+  if (era0(`talent:${target}:0`) == 1) {
+    // :7079 处女
+    await era.printAndWait(`「咕…是我输了…你想怎么样就怎么样吧………」`); // :7080
+    await era.printAndWait(
+      `（找个破绽…想办法逃出去…！处女被夺走这种事怎么说都行…！）`,
+    ); // :7081
+    await era.printAndWait(`虽然输了，但是${target_name}的眼神还没有放弃………`); // :7082
+  } else {
+    // :7084 非处女
+    await era.printAndWait(`「咕…是我输了…你想怎么样就怎么样吧………」`); // :7085
+    await era.printAndWait(`（找个破绽…想办法逃出去…！）`); // :7086
+    await era.printAndWait(`虽然输了，但是${target_name}的眼神还没有放弃………`); // :7087
+  }
+
   return 0;
 }
 
-/** @DUNGEON_RYOUZYOKU_AFTER_K8（:7093-7145）。TODO(#239)：待填充。 */
+/**
+ * @DUNGEON_RYOUZYOKU_AFTER_K8（:7093-7143）：迷宫凌辱后的一言。
+ * 处女支只按 EXP:1 / EXP:22 / EXP:20 三档追加；非处女支多一档 EXP:0（膣），
+ * 且 EXP:20 档源作多打了一行孤立的「（:7137），1:1 保真原样保留。
+ */
 async function dungeon_ryouzyoku_after_k8() {
-  stub_line('DUNGEON_RYOUZYOKU_AFTER_K8', '迷宫凌辱结算口上', '本票分段填充');
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+
+  if (era0(`talent:${target}:0`) == 1) {
+    // :7099 处女
+    await era.printAndWait(`（啊啊…明明还是处女呢…）`); // :7100
+    await era.printAndWait(`「已经…完了…吧…」`); // :7101
+
+    // :7102 アナルを弄られすぎた感想
+    if (era0(`exp:${target}:1`) > 20) {
+      await era.printAndWait(
+        `${target_name}的肛门里，不只是粘液还是精液的东西溢了出来。`,
+      ); // :7104
+      await era.printAndWait(`「啊啊…屁股…已经什么都感觉不到了…嗯…嗯咕………」`); // :7105
+    }
+
+    // :7107 フェラしすぎた感想
+    if (era0(`exp:${target}:22`) > 20) {
+      await era.printAndWait(
+        `毫无休息的口交的${target_name}的脸上沾满了粘液和精液。`,
+      ); // :7109
+      await era.printAndWait(
+        `「咳咳咳…呜啊…我、我已经不想再喝精液了…饶了我吧………」`,
+      ); // :7110
+    }
+
+    // :7112 精液の味
+    if (era0(`exp:${target}:20`) > 20) {
+      await era.printAndWait(
+        `「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」`,
+      ); // :7114
+      await era.printAndWait(`${target_name}被强迫说着关于精液味道的感想………`); // :7115
+    }
+  } else {
+    // :7118 非处女
+    await era.printAndWait(`「啊啊…被弄得乱七八糟了…啊、啊啊啊啊………」`); // :7119
+
+    // :7120 膣を苛められすぎた感想
+    if (era0(`exp:${target}:0`) > 20) {
+      await era.printAndWait(`「我的小穴里咕噜咕噜的…啊…啊啊………」`); // :7122
+      await era.printAndWait(
+        `${target_name}已经合不上的蜜裂里，不知识粘液还是精液的东西大量的溢了出来。`,
+      ); // :7123
+    }
+
+    // :7125 アナルを弄られすぎた感想
+    if (era0(`exp:${target}:1`) > 20) {
+      await era.printAndWait(
+        `${target_name}的肛门里，不只是粘液还是精液的东西溢了出来。`,
+      ); // :7127
+      await era.printAndWait(`「啊啊…屁股…已经什么都感觉不到了…嗯…嗯咕………」`); // :7128
+    }
+
+    // :7130 フェラしすぎた感想
+    if (era0(`exp:${target}:22`) > 20) {
+      await era.printAndWait(
+        `毫无休息的口交的${target_name}的脸上沾满了粘液和精液。`,
+      ); // :7132
+      await era.printAndWait(
+        `「咳咳咳…呜啊…我、我已经不想再喝精液了…饶了我吧………」`,
+      ); // :7133
+    }
+
+    // :7135 精液の味
+    if (era0(`exp:${target}:20`) > 20) {
+      // :7137 源作多打了一行孤立的开引号（非处女支独有），1:1 保真原样保留
+      await era.printAndWait(`「`); // :7137
+      await era.printAndWait(
+        `「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」`,
+      ); // :7138
+      await era.printAndWait(`${target_name}被强迫说着关于精液味道的感想………`); // :7139
+    }
+  }
+
   return 0;
 }
 
 /**
- * @DUNGEON_VICTORY_K8（:7146-7170）。TODO(#239)：待填充。
+ * @DUNGEON_VICTORY_K8（:7146-7169）：战斗胜利口上。
+ * 决め台詞三选一（RAND:3 / RAND:2 / 其余），再按 BASE:A:0 或 BASE:A:1
+ * 对 MAXBASE 不足半成判「险胜」。原作 A 即 TARGET（VICTORY_KOUJO 前置）。
+ *
  * @param {(n: number) => number} [rand] RAND:N 随机源
  */
-// eslint-disable-next-line no-unused-vars
 async function dungeon_victory_k8(rand) {
-  stub_line('DUNGEON_VICTORY_K8', '战斗胜利口上', '本票分段填充');
+  const target = era_flag.target;
+  const a = era_flag.target; // A（原作 @VICTORY_KOUJO 前置 TARGET = A）
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+
+  // :7150 決め台詞
+  if (rand_n(3) == 0) {
+    await era.printAndWait(`「哼、没有会输的要素、这是理所当然的结果」`); // :7152
+  } else if (rand_n(2) == 0) {
+    await era.printAndWait(`「弱的我都要打出哈欠来了」`); // :7154
+  } else {
+    await era.printAndWait(`「又砍了无聊的东西」`); // :7156
+  }
+
+  if (
+    (era0(`base:${a}:0`) * 100) / era0(`maxbase:${a}:0`) < 50 ||
+    (era0(`base:${a}:1`) * 100) / era0(`maxbase:${a}:1`) < 50
+  ) {
+    // :7160 ピンチかも
+    await era.printAndWait(`（稍微有些得意忘形了吧…不快点休息一下的话…）`); // :7161
+    await era.printAndWait(`${target_name}气喘吁吁的………`); // :7162
+  } else {
+    // :7164 余裕余裕
+    await era.printAndWait(`「那么、今天不如再前进一点吧」`); // :7165
+    await era.printAndWait(`${target_name}蹦蹦跳跳的向迷宫深处迈开了步子………`); // :7166
+  }
+
   return 0;
 }
 
 /**
- * @DUNGEON_ATTACK_K8（:7171-7198）。TODO(#239)：待填充。
+ * @DUNGEON_ATTACK_K8（:7171-7196）：战斗攻击口上。
+ * CFLAG:1 == 2（侵攻中）与其余（迎击中）各三选一。
+ *
  * @param {(n: number) => number} [rand] RAND:N 随机源
  */
-// eslint-disable-next-line no-unused-vars
 async function dungeon_attack_k8(rand) {
-  stub_line('DUNGEON_ATTACK_K8', '战斗攻击口上', '本票分段填充');
+  const target = era_flag.target;
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+
+  // :7176 侵攻中
+  if (chara(target).invasion.状态 == 2) {
+    if (rand_n(3) == 0) {
+      await era.printAndWait(`「到处都是空隙呢」`); // :7179
+    } else if (rand_n(2) == 0) {
+      await era.printAndWait(`「嘿、会心一击」`); // :7181
+    } else {
+      await era.printAndWait(`「就这样从后面…噗的插进去」`); // :7183
+    }
+  } else {
+    // :7185 迎撃中
+    if (rand_n(3) == 0) {
+      await era.printAndWait(`「呵呵呵、你也成为我们的同伴吧♪」`); // :7188
+    } else if (rand_n(2) == 0) {
+      await era.printAndWait(`「你是不可能赢我的，早点投降吧」`); // :7190
+    } else {
+      await era.printAndWait(`「早点认输，一起变得舒服起来吧………♪」`); // :7192
+    }
+  }
+
   return 0;
 }
+
+// 注册进迷宫四族（TRYCALLFORM DUNGEON_*_K8 的等价物）
+ryouzyoku_kojo_family.register(8, dungeon_ryouzyoku_k8);
+ryouzyoku_after_kojo_family.register(8, dungeon_ryouzyoku_after_k8);
+dungeon_victory_family.register(8, dungeon_victory_k8);
+dungeon_attack_family.register(8, dungeon_attack_k8);
 
 /**
  * @BENKI_KOUJO_K8（:7199-7300）：肉便器口上（TARGET = A）。

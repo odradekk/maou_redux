@@ -24574,6 +24574,311 @@ export const FILES = [
           /PRINTFORMW 「我的肚子里…有…什么东西？不要…不想怀上怪物的孩子…不要啊啊啊啊啊啊啊啊啊啊」/,
         ],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7073-7090',
+        any: [/@DUNGEON_RYOUZYOKU_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7079',
+        any: [/;处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7080',
+        any: [/PRINTFORMW 「咕…是我输了…你想怎么样就怎么样吧………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7081',
+        any: [
+          /PRINTFORMW （找个破绽…想办法逃出去…！处女被夺走这种事怎么说都行…！）/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7082',
+        any: [/PRINTFORMW 虽然输了，但是%SAVESTR:TARGET%的眼神还没有放弃………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7084',
+        any: [/;非处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7085',
+        any: [/PRINTFORMW 「咕…是我输了…你想怎么样就怎么样吧………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7086',
+        any: [/PRINTFORMW （找个破绽…想办法逃出去…！）/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7087',
+        any: [/PRINTFORMW 虽然输了，但是%SAVESTR:TARGET%的眼神还没有放弃………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7093-7143',
+        any: [/@DUNGEON_RYOUZYOKU_AFTER_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7099',
+        any: [/;处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7100',
+        any: [/PRINTFORMW （啊啊…明明还是处女呢…）/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7101',
+        any: [/PRINTFORMW 「已经…完了…吧…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7102',
+        any: [/;アナルを弄られすぎた感想/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7104',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的肛门里，不只是粘液还是精液的东西溢了出来。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7105',
+        any: [/PRINTFORMW 「啊啊…屁股…已经什么都感觉不到了…嗯…嗯咕………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7107',
+        any: [/;フェラしすぎた感想/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7109',
+        any: [
+          /PRINTFORMW 毫无休息的口交的%SAVESTR:TARGET%的脸上沾满了粘液和精液。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7110',
+        any: [
+          /PRINTFORMW 「咳咳咳…呜啊…我、我已经不想再喝精液了…饶了我吧………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7112',
+        any: [/;精液の味/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7114',
+        any: [
+          /PRINTFORMW 「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7115',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被强迫说着关于精液味道的感想………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7118',
+        any: [/;非处女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7119',
+        any: [/PRINTFORMW 「啊啊…被弄得乱七八糟了…啊、啊啊啊啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7120',
+        any: [/;膣を苛められすぎた感想/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7122',
+        any: [/PRINTFORMW 「我的小穴里咕噜咕噜的…啊…啊啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7123',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%已经合不上的蜜裂里，不知识粘液还是精液的东西大量的溢了出来。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7125',
+        any: [/;アナルを弄られすぎた感想/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7127',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的肛门里，不只是粘液还是精液的东西溢了出来。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7128',
+        any: [/PRINTFORMW 「啊啊…屁股…已经什么都感觉不到了…嗯…嗯咕………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7130',
+        any: [/;フェラしすぎた感想/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7132',
+        any: [
+          /PRINTFORMW 毫无休息的口交的%SAVESTR:TARGET%的脸上沾满了粘液和精液。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7133',
+        any: [
+          /PRINTFORMW 「咳咳咳…呜啊…我、我已经不想再喝精液了…饶了我吧………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7135',
+        any: [/;精液の味/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7137',
+        any: [/PRINTFORMW 「/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7138',
+        any: [
+          /PRINTFORMW 「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7139',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被强迫说着关于精液味道的感想………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7146-7169',
+        any: [/@DUNGEON_VICTORY_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7150',
+        any: [/;決め台詞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7152',
+        any: [/PRINTFORMW 「哼、没有会输的要素、这是理所当然的结果」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7154',
+        any: [/PRINTFORMW 「弱的我都要打出哈欠来了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7156',
+        any: [/PRINTFORMW 「又砍了无聊的东西」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7160',
+        any: [/;ピンチかも/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7161',
+        any: [/PRINTFORMW （稍微有些得意忘形了吧…不快点休息一下的话…）/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7162',
+        any: [/PRINTFORMW %SAVESTR:TARGET%气喘吁吁的………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7164',
+        any: [/;余裕余裕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7165',
+        any: [/PRINTFORMW 「那么、今天不如再前进一点吧」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7166',
+        any: [/PRINTFORMW %SAVESTR:TARGET%蹦蹦跳跳的向迷宫深处迈开了步子………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7171-7196',
+        any: [/@DUNGEON_ATTACK_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7176',
+        any: [/;侵攻中/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7179',
+        any: [/PRINTFORMW 「到处都是空隙呢」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7181',
+        any: [/PRINTFORMW 「嘿、会心一击」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7183',
+        any: [/PRINTFORMW 「就这样从后面…噗的插进去」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7185',
+        any: [/;迎撃中/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7188',
+        any: [/PRINTFORMW 「呵呵呵、你也成为我们的同伴吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7190',
+        any: [/PRINTFORMW 「你是不可能赢我的，早点投降吧」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7192',
+        any: [/PRINTFORMW 「早点认输，一起变得舒服起来吧………♪」/],
+      },
     ],
   },
 ];
