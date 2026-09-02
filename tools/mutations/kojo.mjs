@@ -3265,8 +3265,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1997 K8 GOHOUBI_AFTER 放置 PLAY 档守卫写错（choice == 0 改 == 1，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  if (choice == 0) {',
-    replace: '  if (choice == 1) {',
+    find:
+      '  if (choice == 0) {\n' +
+      '    // :7783 放置PLAY\n' +
+      '    await era.printAndWait(`「………知道了、我就这样退下了」`); // :7785',
+    replace:
+      '  if (choice == 1) {\n' +
+      '    // :7783（变异：档位守卫写错）\n' +
+      '    await era.printAndWait(`「………知道了、我就这样退下了」`); // :7785',
     tests: ['kojo-k8-spade'],
     must_mention: 'GOHOUBI_AFTER：choice 0/1 各一行，choice 越界静默',
   },
@@ -3286,5 +3292,55 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '        await era.printAndWait(`「屁股小穴里插着新品阴茎最棒了♪」`); // :7848（变异：串支）',
     tests: ['kojo-k8-spade'],
     must_mention: 'GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一条）',
+  },
+  {
+    desc: 'M2000 K8 OSIOKI 脱粪刑门槛被「统一」成自慰刑的 4（源作是 6，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era0(`abl:${a}:17`) >= 6) {',
+    replace: '    if (era0(`abl:${a}:17`) >= 4) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '脱粪刑门槛是 6，Lv4 不够',
+  },
+  {
+    desc: 'M2001 K8 OSIOKI 小便器刑的或判退化成只认受虐狂（TALENT:76 臂丢失，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era0(`talent:${a}:88`) == 1 || era0(`talent:${a}:76`) == 1) {',
+    replace: '    if (era0(`talent:${a}:88`) == 1) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'OSIOKI：小便器刑 受虐狂 TALENT:88 或淫乱 TALENT:76 任一即可',
+  },
+  {
+    desc: 'M2002 K8 OSIOKI 厕所打扫刑与断食刑串档（:7905 换成 :7908 的台词，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    await era.printAndWait(`「这不是我应该做的事啊………」`); // :7905',
+    replace:
+      '    await era.printAndWait(`「这样的刑罚，3天左右没事的」`); // :7905（变异：串档）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'choice 6',
+  },
+  {
+    desc: 'M2003 K8 OSIOKI 末档（choice == 9 未定）丢失（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (choice == 9) {',
+    replace: '  } else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'choice 9',
+  },
+  {
+    desc: 'M2004 K8 GOBI 悲伤档串成害羞档（:7929 换成 :7932 的语尾，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    await era.print(`唉……。`); // :7929',
+    replace: '    await era.print(`嗯……。`); // :7929（变异：串档）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'ARG:0 == 3',
+  },
+  {
+    desc: 'M2005 K8 GOBI 默认支第二支被「去重」成第三支的语尾（源作两支同文，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      await era.print(`啊。`); // :7942',
+    replace:
+      '      await era.print(`什么啊。`); // :7942（变异：源作同文被改）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '默认支第二支与第一支同文（源作如此）',
   },
 ];

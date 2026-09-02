@@ -4723,6 +4723,164 @@ test('GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一
   assert.deepEqual(a.text_lines(), ['「屁股小穴里插着新品阴茎最棒了♪」']);
 });
 
+// —— OSIOKI_KOUJO_K8 / GOBI_KOUJO_K8 ——
+
+async function speak_osioki_k8(fixture, choice) {
+  const { osioski_koujo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  return osioski_koujo_family.call(8, { args: [31, choice] });
+}
+
+async function speak_gobi_k8(fixture, arg_0, rand) {
+  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  return gobi_koujo_family.call(8, { args: [arg_0, rand] });
+}
+
+test('OSIOKI：choice 0 单行；越界（10）静默', async () => {
+  const idle = await setup_k8();
+  await speak_osioki_k8(idle, 0);
+  assert.deepEqual(idle.text_lines(), ['「唔…嗯………失礼了」']);
+
+  const oob = await setup_k8();
+  await speak_osioki_k8(oob, 10);
+  assert.deepEqual(oob.text_lines(), [], 'TFLAG:18 越界静默');
+});
+
+test('OSIOKI：电椅/鞭打两档共用受虐狂っ気 ABL:21 >= 3 门槛', async () => {
+  for (const [choice, maso, normal] of [
+    [
+      1,
+      '「嗯！啊啊，真是的！对我来说这样的拷问是没有效果的♡ 啊啊嗯～♪」',
+      '「唔！咕！电压太高了！…啊…啊咕！」',
+    ],
+    [
+      4,
+      '「啊嗯！更多的惩罚我吧！用你的鞭子！」',
+      '「咕！啊！对不起魔王大人！」',
+    ],
+  ]) {
+    const high = await setup_k8((f) => {
+      f.store.set('abl:31:21', 3);
+    });
+    await speak_osioki_k8(high, choice);
+    assert.deepEqual(
+      high.text_lines(),
+      [maso],
+      `choice ${choice} 受虐狂Lv3以上`,
+    );
+
+    const low = await setup_k8((f) => {
+      f.store.set('abl:31:21', 2);
+    });
+    await speak_osioki_k8(low, choice);
+    assert.deepEqual(low.text_lines(), [normal], `choice ${choice} 门槛不足`);
+  }
+});
+
+test('OSIOKI：自慰刑 ABL:17>=4、脱粪刑 ABL:17>=6（门槛不同）', async () => {
+  const lv4 = await setup_k8((f) => {
+    f.store.set('abl:31:17', 4);
+  });
+  await speak_osioki_k8(lv4, 2);
+  assert.deepEqual(lv4.text_lines(), [
+    '「看我自慰，好好的看着，好兴奋啊，要去了！」',
+  ]);
+
+  // 同一个 Lv4 在脱粪刑（门槛 6）下要落到否定支
+  const lv4_scat = await setup_k8((f) => {
+    f.store.set('abl:31:17', 4);
+  });
+  await speak_osioki_k8(lv4_scat, 3);
+  assert.deepEqual(
+    lv4_scat.text_lines(),
+    ['「嗯咕~~~嗯啊~~~~嗯啊啊啊啊啊~~~~」'],
+    '脱粪刑门槛是 6，Lv4 不够',
+  );
+
+  const lv6 = await setup_k8((f) => {
+    f.store.set('abl:31:17', 6);
+  });
+  await speak_osioki_k8(lv6, 3);
+  assert.deepEqual(lv6.text_lines(), [
+    '「我拉○的时候不好好看着可不行哦？　呵呵…嗯！就那样看着我吧！」',
+  ]);
+});
+
+test('OSIOKI：小便器刑 受虐狂 TALENT:88 或淫乱 TALENT:76 任一即可', async () => {
+  const maso = await setup_k8((f) => {
+    f.store.set('talent:31:88', 1);
+  });
+  await speak_osioki_k8(maso, 5);
+  assert.deepEqual(maso.text_lines(), ['「哈啊…更多、更多的看着我尿尿♡」']);
+
+  const inran = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_osioki_k8(inran, 5);
+  assert.deepEqual(inran.text_lines(), ['「哈啊…更多、更多的看着我尿尿♡」']);
+
+  const neither = await setup_k8();
+  await speak_osioki_k8(neither, 5);
+  assert.deepEqual(neither.text_lines(), ['「唔…不要…不要…不要不要不要………」']);
+});
+
+test('OSIOKI：6-9 档各单行（6/7 源作用 PRINTW）', async () => {
+  const expected = [
+    [6, '「这不是我应该做的事啊………」'],
+    [7, '「这样的刑罚，3天左右没事的」'],
+    [
+      8,
+      '「啊~…啊~…求你了求你了求你了、把我侵犯的乱七八糟的吧！在子宫里不断的插进来插进来！啊！求您了！不回去了！不回去了！」',
+    ],
+    [9, '「嗷嗷！」'],
+  ];
+  for (const [choice, line] of expected) {
+    const fixture = await setup_k8();
+    await speak_osioki_k8(fixture, choice);
+    assert.deepEqual(fixture.text_lines(), [line], `choice ${choice}`);
+  }
+});
+
+test('GOBI：五档情绪各一句', async () => {
+  const expected = [
+    [1, '什么啊♪'],
+    [2, '哼！'],
+    [3, '唉……。'],
+    [4, '嗯……。'],
+    [5, '啊……啊……。'],
+  ];
+  for (const [arg_0, line] of expected) {
+    const fixture = await setup_k8();
+    await speak_gobi_k8(fixture, arg_0);
+    assert.deepEqual(fixture.text_lines(), [line], `ARG:0 == ${arg_0}`);
+  }
+});
+
+test('GOBI：默认支（含 ARG:0==0）三选一，前两支源作同文', async () => {
+  const first = await setup_k8();
+  await speak_gobi_k8(first, 0, () => 0);
+  assert.deepEqual(first.text_lines(), ['啊。'], 'RAND:3==0');
+
+  const second = await setup_k8();
+  // RAND:3 非 0、RAND:2 为 0 → 第二支（源作与第一支同文）
+  let call = 0;
+  await speak_gobi_k8(second, 0, () => (call++ === 0 ? 1 : 0));
+  assert.deepEqual(
+    second.text_lines(),
+    ['啊。'],
+    '默认支第二支与第一支同文（源作如此）',
+  );
+
+  const third = await setup_k8();
+  await speak_gobi_k8(third, 99, () => 1);
+  assert.deepEqual(
+    third.text_lines(),
+    ['什么啊。'],
+    'ARG:0 不在 1-5 内也走默认支',
+  );
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
