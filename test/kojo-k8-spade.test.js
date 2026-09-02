@@ -3937,6 +3937,180 @@ test('SELF_KOJO：寿命消灭 それ以外支也为空行', async () => {
   await speak_self_kojo_k8(fixture);
   assert.deepEqual(fixture.text_lines(), ['']);
 });
+
+// —— 迷宫四函数（DUNGEON_RYOUZYOKU / _AFTER / VICTORY / ATTACK） ——
+
+async function call_dungeon(fixture, family_name, module_path, args = []) {
+  const family = fixture.load_module(module_path)[family_name];
+  return family.call(8, { args });
+}
+
+test('DUNGEON_RYOUZYOKU：处女支心声提处女被夺', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:0', 1);
+  });
+  await call_dungeon(
+    fixture,
+    'ryouzyoku_kojo_family',
+    'kojo/kojo-dungeon-ravish',
+  );
+  assert.deepEqual(fixture.text_lines(), [
+    '「咕…是我输了…你想怎么样就怎么样吧………」',
+    '（找个破绽…想办法逃出去…！处女被夺走这种事怎么说都行…！）',
+    '虽然输了，但是银黑桃的眼神还没有放弃………',
+  ]);
+});
+
+test('DUNGEON_RYOUZYOKU：非处女支心声只剩逃跑', async () => {
+  const fixture = await setup_k8();
+  await call_dungeon(
+    fixture,
+    'ryouzyoku_kojo_family',
+    'kojo/kojo-dungeon-ravish',
+  );
+  assert.deepEqual(fixture.text_lines(), [
+    '「咕…是我输了…你想怎么样就怎么样吧………」',
+    '（找个破绽…想办法逃出去…！）',
+    '虽然输了，但是银黑桃的眼神还没有放弃………',
+  ]);
+});
+
+test('DUNGEON_RYOUZYOKU_AFTER：处女支三档 EXP 全不过门槛只出两行', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:0', 1);
+  });
+  await call_dungeon(
+    fixture,
+    'ryouzyoku_after_kojo_family',
+    'kojo/kojo-dungeon-ravish',
+  );
+  assert.deepEqual(fixture.text_lines(), [
+    '（啊啊…明明还是处女呢…）',
+    '「已经…完了…吧…」',
+  ]);
+});
+
+test('DUNGEON_RYOUZYOKU_AFTER：处女支三档 EXP 全过门槛（无膣档）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:0', 1);
+    f.store.set('exp:31:0', 99); // 膣：处女支不读
+    f.store.set('exp:31:1', 21);
+    f.store.set('exp:31:22', 21);
+    f.store.set('exp:31:20', 21);
+  });
+  await call_dungeon(
+    fixture,
+    'ryouzyoku_after_kojo_family',
+    'kojo/kojo-dungeon-ravish',
+  );
+  assert.deepEqual(fixture.text_lines(), [
+    '（啊啊…明明还是处女呢…）',
+    '「已经…完了…吧…」',
+    '银黑桃的肛门里，不只是粘液还是精液的东西溢了出来。',
+    '「啊啊…屁股…已经什么都感觉不到了…嗯…嗯咕………」',
+    '毫无休息的口交的银黑桃的脸上沾满了粘液和精液。',
+    '「咳咳咳…呜啊…我、我已经不想再喝精液了…饶了我吧………」',
+    '「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」',
+    '银黑桃被强迫说着关于精液味道的感想………',
+  ]);
+});
+
+test('DUNGEON_RYOUZYOKU_AFTER：非处女支四档 EXP 全不过门槛只出一行', async () => {
+  const fixture = await setup_k8();
+  await call_dungeon(
+    fixture,
+    'ryouzyoku_after_kojo_family',
+    'kojo/kojo-dungeon-ravish',
+  );
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['「啊啊…被弄得乱七八糟了…啊、啊啊啊啊………」'],
+    '非处女四档 EXP 全为 0 时只出开场一行',
+  );
+});
+
+test('DUNGEON_RYOUZYOKU_AFTER：非处女支多膣档，且精液味档源作多打一行孤立开引号（1:1 保真）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('exp:31:0', 21);
+    f.store.set('exp:31:20', 21);
+  });
+  await call_dungeon(
+    fixture,
+    'ryouzyoku_after_kojo_family',
+    'kojo/kojo-dungeon-ravish',
+  );
+  assert.deepEqual(
+    fixture.text_lines(),
+    [
+      '「啊啊…被弄得乱七八糟了…啊、啊啊啊啊………」',
+      '「我的小穴里咕噜咕噜的…啊…啊啊………」',
+      '银黑桃已经合不上的蜜裂里，不知识粘液还是精液的东西大量的溢了出来。',
+      '「',
+      '「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」',
+      '银黑桃被强迫说着关于精液味道的感想………',
+    ],
+    '非处女精液味档 源作多打一行孤立开引号',
+  );
+});
+
+test('DUNGEON_VICTORY：RAND:3==0 决胜台词 + 残血险胜', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('base:31:0', 10);
+    f.store.set('maxbase:31:0', 100);
+    f.store.set('base:31:1', 100);
+    f.store.set('maxbase:31:1', 100);
+  });
+  await call_dungeon(fixture, 'dungeon_victory_family', 'kojo/kojo-system', [
+    () => 0,
+  ]);
+  assert.deepEqual(fixture.text_lines(), [
+    '「哼、没有会输的要素、这是理所当然的结果」',
+    '（稍微有些得意忘形了吧…不快点休息一下的话…）',
+    '银黑桃气喘吁吁的………',
+  ]);
+});
+
+test('DUNGEON_VICTORY：RAND 全非零走「又砍了无聊的东西」+ 余裕支', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('base:31:0', 100);
+    f.store.set('maxbase:31:0', 100);
+    f.store.set('base:31:1', 100);
+    f.store.set('maxbase:31:1', 100);
+  });
+  await call_dungeon(fixture, 'dungeon_victory_family', 'kojo/kojo-system', [
+    () => 1,
+  ]);
+  assert.deepEqual(fixture.text_lines(), [
+    '「又砍了无聊的东西」',
+    '「那么、今天不如再前进一点吧」',
+    '银黑桃蹦蹦跳跳的向迷宫深处迈开了步子………',
+  ]);
+});
+
+test('DUNGEON_ATTACK：侵攻中（CFLAG:1 == 2）与迎击中各走各的三选一', async () => {
+  const invading = await setup_k8((f) => {
+    f.store.set('cflag:31:1', 2);
+  });
+  await call_dungeon(invading, 'dungeon_attack_family', 'kojo/kojo-system', [
+    () => 0,
+  ]);
+  assert.deepEqual(
+    invading.text_lines(),
+    ['「到处都是空隙呢」'],
+    '侵攻中 CFLAG:1 == 2',
+  );
+
+  const defending = await setup_k8();
+  await call_dungeon(defending, 'dungeon_attack_family', 'kojo/kojo-system', [
+    () => 0,
+  ]);
+  assert.deepEqual(
+    defending.text_lines(),
+    ['「呵呵呵、你也成为我们的同伴吧♪」'],
+    '迎击中（CFLAG:1 非 2）',
+  );
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {

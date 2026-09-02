@@ -3011,4 +3011,58 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: 's 必须经 self_kojo() 顶层分发一路到达 self_kojo_k8',
   },
+  {
+    desc: 'M1968 K8 DUNGEON_RYOUZYOKU 非处女支心声串成处女支（1:1 保真破坏，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    await era.printAndWait(`（找个破绽…想办法逃出去…！）`); // :7086',
+    replace:
+      '    await era.printAndWait(`（找个破绽…想办法逃出去…！处女被夺走这种事怎么说都行…！）`); // :7086（变异：串支）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'DUNGEON_RYOUZYOKU：非处女支心声只剩逃跑',
+  },
+  {
+    desc: 'M1969 K8 DUNGEON_RYOUZYOKU_AFTER 非处女支膣档门槛丢失（EXP:0 > 20 改恒真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    if (era0(`exp:${target}:0`) > 20) {',
+    replace: '    if (true) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '非处女四档 EXP 全为 0 时只出开场一行',
+  },
+  {
+    desc: 'M1970 K8 DUNGEON_RYOUZYOKU_AFTER 非处女精液味档的孤立开引号被「修正」掉（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      await era.printAndWait(`「`); // :7137',
+    replace: '      // 变异：源作多打的孤立开引号被删掉',
+    tests: ['kojo-k8-spade'],
+    must_mention: '非处女精液味档 源作多打一行孤立开引号',
+  },
+  {
+    desc: 'M1971 K8 DUNGEON_VICTORY 決め台詞首支写错（RAND:3 == 0 串到第三支，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    await era.printAndWait(`「哼、没有会输的要素、这是理所当然的结果」`); // :7152',
+    replace:
+      '    await era.printAndWait(`「又砍了无聊的东西」`); // :7152（变异：串支）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'DUNGEON_VICTORY：RAND:3==0 决胜台词 + 残血险胜',
+  },
+  {
+    desc: 'M1972 K8 DUNGEON_VICTORY 残血判定 || 改 &&（单项残血不再算险胜，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '    (era0(`base:${a}:0`) * 100) / era0(`maxbase:${a}:0`) < 50 ||\n' +
+      '    (era0(`base:${a}:1`) * 100) / era0(`maxbase:${a}:1`) < 50',
+    replace:
+      '    (era0(`base:${a}:0`) * 100) / era0(`maxbase:${a}:0`) < 50 &&\n' +
+      '    (era0(`base:${a}:1`) * 100) / era0(`maxbase:${a}:1`) < 50',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'DUNGEON_VICTORY：RAND:3==0 决胜台词 + 残血险胜',
+  },
+  {
+    desc: 'M1973 K8 DUNGEON_ATTACK 侵攻/迎击守卫取反（CFLAG:1 == 2 改 != 2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  if (chara(target).invasion.状态 == 2) {',
+    replace: '  if (chara(target).invasion.状态 != 2) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '侵攻中 CFLAG:1 == 2',
+  },
 ];
