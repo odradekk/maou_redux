@@ -1,0 +1,27 @@
+# 引擎 bundle 上 runner（issue #302）。
+#
+# 为什么是 release 资产而不是入库：app.asar 42 MB，提交进 git 会永久留在
+# 历史里，且「ere-4.8.0-win-x64/ 不入库」是既有约定（AGENTS.md）。也不用
+# actions/cache——7 天不命中就被驱逐，会把「有没有引擎」变成时红时绿。
+#
+# 为什么不设 token：仓库是公开的，release 资产无需认证即可下载，fork PR
+# 的只读 GITHUB_TOKEN 因此不构成限制。
+#
+# SHA256 断言是引擎换版的公告点：换版时新开 tag 并改这里，diff 即公告。
+name: 装引擎 bundle
+description: 从 release 下载 app.asar、校验 SHA256、导出 ERE_ENGINE_ASAR
+
+runs:
+  using: composite
+  steps:
+    - name: 下载 app.asar 并校验
+      shell: bash
+      env:
+        ASAR_URL: https://github.com/odradekk/maou_redux/releases/download/engine-4.8.0/app.asar
+        ASAR_SHA256: 98cbd808b08c5d675665c4581ee813ff106b1bba0225102ea2950507e89808ce
+      run: |
+        set -euo pipefail
+        dest="$RUNNER_TEMP/app.asar"
+        curl -sfL --retry 3 --retry-delay 2 -o "$dest" "$ASAR_URL"
+        echo "$ASAR_SHA256  $dest" | sha256sum -c -
+        echo "ERE_ENGINE_ASAR=$dest" >> "$GITHUB_ENV"

@@ -1,31 +1,40 @@
-# 无引擎环境 CI（issue #92）：三项自检在干净 Linux 环境上的自动执行点。
-# 边界：CI 机器不放置引擎（ere-4.8.0-win-x64 不入库），引擎比对用例按
-# test/engine-skip-baseline.txt 的基线整组跳过，跳过数由守护步核对——
-# 偏离基线即红，覆盖面的收缩必须是一次有意识的提交。变异检查自 #89 起
-# 有了自动执行点（下方 mutation job 与 npm test 内的快速模式），硬标准
-# （全拦、零跳过）仍须有引擎的本地全量——CI 绿 ≠ 本地全过。
-# Runner 选型（ubuntu：计费 1x）与按月分钟数估算见 issue #92 / #89 的实现评论。
-name: 无引擎环境 CI
+# CI（issue #92 起；#302 补引擎）：三项自检与变异检查在干净 Linux 上的
+# 自动执行点。三个 job 的分工：
+#
+#   engineless —— 不放引擎。引擎比对用例整组跳过，跳过数由守护步对着
+#     test/engine-skip-baseline.txt 核对，偏离即红：覆盖面的收缩必须是
+#     一次有意识的提交。eslint / prettier 也在这里。
+#   engine ——  装引擎（release 资产，见 .github/actions/setup-engine）。
+#     跳过数必须是 0：引擎在场却仍有东西被跳过，说明门控写错或 asar 没被
+#     locate_asar 认出来。
+#   mutation —— 装引擎跑全量变异。「全部拦下、零跳过、零红」这条严标准
+#     自 #302 起有了自动执行点，不再只存在于派单人的本机。
+#
+# 仓库公开后标准 runner 分钟数免费不限量，所以全量变异挂在 pull_request 上
+# 而不是只挂 master push——#302 之前它只在 master push 上跑，而那一档因为
+# concurrency 秒级取消从来没成功过（40 次里 11 cancelled / 8 failure / 0 成功）。
+name: CI
 
 on:
   push:
     branches: [master]
   pull_request:
     branches: [master]
-  workflow_dispatch: # 手动触发变异全量（合并前想看全量拦截时用）
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-# 连推/PR 连更时取消陈旧运行：私有库按分钟计费，旧运行的结果不再有信息量
+# PR 连更时取消陈旧运行（旧运行的结果不再有信息量）；**master push 不取消**
+# ——合并态的全量变异挂在它上面，被后一次 push 掐掉等于那一档从没跑过。
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   engineless:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,17 +52,7 @@ jobs:
       - name: Prettier（格式比对）
         run: npx prettier --check .
 
-  # 变异检查（#89）：「验证其余检查器守得住」的检查器的执行层。第三层
-  # 快速模式（条目表三项检查 --verify）已随 test/mutation-check.test.js 进上面
-  # job 的 npm test。本 job：PR 抽样 12 条按运行号轮转（干净 Linux 实测
-  # 4–48s，取决于抽中条目——抽中重靶如回放比对则一条 ~40s）；master push
-  # 与手动触发跑全量（--jobs 4 隔离临时副本并行，实测 ~112s，主树不写）。
-  # 测试零第三方依赖，无需 npm ci。无引擎处，依赖引擎条目按「跳过」放行；
-  # 跳过数核对 ENGINE_SKIP_BASELINE 只在全量模式生效（子集没有期望跳过数，
-  # #89 整改的阻断 1），偏离即红。残留守护与**检出基线**比对而非假设干净
-  # ——裸检出可能带既有脏度（#96 的 dev-guides CRLF），守护证的是「变异
-  # 逐字节还原」，不是「仓库本来干净」。计费估算见 issue #89 实现评论。
-  mutation:
+  engine:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -61,13 +60,36 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - uses: ./.github/actions/setup-engine
+      - name: 测试（有引擎；TAP 落盘供守护核对）
+        run: npm run test:ci
+      - name: 跳过数守护（引擎在场时只能是 0）
+        run: >-
+          node tools/skip-count-check.mjs test-report.tap
+          --baseline test/engine-present-skip-baseline.txt
+
+  # 变异检查（#89）：「验证其余检查器守得住」的检查器的执行层。条目表的
+  # 三项结构检查（--verify）是秒级的，已随 test/mutation-check.test.js 进
+  # 上面两个 job 的 npm test；本 job 跑的是真执行全量。
+  #
+  # --jobs 4 用隔离临时副本并行，主树不写。残留守护与**检出基线**比对而非
+  # 假设干净——裸检出可能带既有脏度（#96 的 dev-guides CRLF），守护证的是
+  # 「变异逐字节还原」，不是「仓库本来干净」。
+  #
+  # 超时按实测定：条目表 1268 条、本机 4 核约 1740s（且随每张口上票增长）。
+  # 工具零第三方依赖，无需 npm ci。
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: ./.github/actions/setup-engine
       - name: 记录检出基线（裸检出未必干净，见 #96）
         run: git status --porcelain > /tmp/tree-before.txt
-      - name: 变异抽样（抽样模式：12 条按运行号轮转）
-        if: github.event_name == 'pull_request'
-        run: node tools/mutation-check.mjs --sample 12 --seed "${{ github.run_number }}"
-      - name: 变异全量（master push / 手动触发：隔离副本并行）
-        if: github.event_name != 'pull_request'
+      - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
         run: node tools/mutation-check.mjs --jobs 4
       - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）
         run: |
