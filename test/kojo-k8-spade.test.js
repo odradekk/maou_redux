@@ -4111,6 +4111,124 @@ test('DUNGEON_ATTACK：侵攻中（CFLAG:1 == 2）与迎击中各走各的三选
   );
 });
 
+// —— BENKI_KOUJO_K8（肉便器口上，FLAG:62 六档 × 四选一） ——
+
+async function speak_benki_k8(fixture) {
+  const { benki_koujo_family } = fixture.load_module('kojo/kojo-system');
+  return benki_koujo_family.call(8, { args: [] });
+}
+
+test('BENKI：FLAG:62==0 四选一逐档（淫乱/爱慕/侍奉Lv5/それ以外）', async () => {
+  const inran = await setup_k8((f) => {
+    f.store.set('flag:62', 0);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_benki_k8(inran);
+  assert.deepEqual(
+    inran.text_lines(),
+    ['「请快点给我更多阴茎！啊…啊啊…啊嗯啊啊啊啊♡」'],
+    'FLAG:62==0 淫乱',
+  );
+
+  const aibo = await setup_k8((f) => {
+    f.store.set('flag:62', 0);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_benki_k8(aibo);
+  assert.deepEqual(
+    aibo.text_lines(),
+    ['「啊啊…我是魔王大人的…嗯…快、快停下…嗯…啊啊啊——！」'],
+    'FLAG:62==0 爱慕',
+  );
+
+  const shifu = await setup_k8((f) => {
+    f.store.set('flag:62', 0);
+    f.store.set('abl:31:16', 5);
+  });
+  await speak_benki_k8(shifu);
+  assert.deepEqual(
+    shifu.text_lines(),
+    ['「请、请让我服侍大家的阴茎…嗯…嗯咕！？」'],
+    'FLAG:62==0 侍奉精神Lv5以上',
+  );
+
+  const other = await setup_k8((f) => {
+    f.store.set('flag:62', 0);
+  });
+  await speak_benki_k8(other);
+  assert.deepEqual(
+    other.text_lines(),
+    ['「呀！不要碰我！好脏…啊啊！不、不要…啊啊——！」'],
+    'FLAG:62==0 それ以外',
+  );
+});
+
+test('BENKI：FLAG:62==1 爱慕支两行（第二行带角色名）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:62', 1);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_benki_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…被弄得这么脏的话、会再也见不到那个人了吧………」',
+    '面对银黑桃的叹息，周围的女魔族冷冷的笑着………',
+  ]);
+});
+
+test('BENKI：FLAG:62==2 獣姦档それ以外', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:62', 2);
+  });
+  await speak_benki_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「不要…不要…竟然被野兽侵犯什么的…嗯咕！嗯！还、还射在里面…啊啊！还这么大！」',
+  ]);
+});
+
+test('BENKI：FLAG:62==3 侍奉支源作句末多打一个引号（1:1 保真）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:62', 3);
+    f.store.set('abl:31:16', 5);
+  });
+  await speak_benki_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」」'],
+    'A+V 侍奉支 源作句末多打一个引号',
+  );
+});
+
+test('BENKI：FLAG:62==4 淫乱支两处爱心', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:62', 4);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_benki_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯…啊嗯啊♡ 继续侵犯我的小穴…满满的射出精液吧…♡」',
+  ]);
+});
+
+test('BENKI：FLAG:62==5 侍奉支；FLAG:62 越界（6）整段静默', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:62', 5);
+    f.store.set('abl:31:16', 5);
+  });
+  await speak_benki_k8(fixture);
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['「嗯…呀…我是最喜欢肛门的变态便器…啊啊啊…」'],
+    'FLAG:62==5 侍奉精神Lv5以上',
+  );
+
+  const oob = await setup_k8((f) => {
+    f.store.set('flag:62', 6);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_benki_k8(oob);
+  assert.deepEqual(oob.text_lines(), [], 'FLAG:62 越界时六档全不命中');
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {

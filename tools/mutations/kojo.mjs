@@ -3065,4 +3065,58 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '侵攻中 CFLAG:1 == 2',
   },
+  {
+    desc: 'M1974 K8 BENKI 档位守卫写错（FLAG:62 == 0 改 == 1，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  if (game.train.肉便器行动 == 0) {',
+    replace: '  if (game.train.肉便器行动 == 1) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'FLAG:62==0 淫乱',
+  },
+  {
+    desc: 'M1975 K8 BENKI 第 0 档侍奉精神门槛放宽（ABL:16 >= 5 改 >= 0，それ以外支不可达，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '    } else if (era0(`abl:${a}:16`) >= 5) {\n' +
+      '      // :7212 侍奉精神Lv5以上',
+    replace:
+      '    } else if (era0(`abl:${a}:16`) >= 0) {\n' +
+      '      // :7212（变异：门槛放宽）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'FLAG:62==0 それ以外',
+  },
+  {
+    desc: 'M1976 K8 BENKI FLAG:62==1 爱慕支第二行（角色名旁白）丢失（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        `面对${target_name}的叹息，周围的女魔族冷冷的笑着………`,',
+    replace: '        `面对的叹息，周围的女魔族冷冷的笑着………`,',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'BENKI：FLAG:62==1 爱慕支两行（第二行带角色名）',
+  },
+  {
+    desc: 'M1977 K8 BENKI A+V 侍奉支源作多打的句末引号被「修正」（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」」`,',
+    replace:
+      '        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」`,',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'A+V 侍奉支 源作句末多打一个引号',
+  },
+  {
+    desc: 'M1978 K8 BENKI V プレイ淫乱支第二处爱心丢失（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        `「啊嗯…啊嗯啊${heart(1)} 继续侵犯我的小穴…满满的射出精液吧…${heart(1)}」`,',
+    replace:
+      '        `「啊嗯…啊嗯啊${heart(1)} 继续侵犯我的小穴…满满的射出精液吧…」`,',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'BENKI：FLAG:62==4 淫乱支两处爱心',
+  },
+  {
+    desc: 'M1979 K8 BENKI 第 5 档守卫改恒真（FLAG:62 越界不再静默，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (game.train.肉便器行动 == 5) {',
+    replace: '  } else {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'FLAG:62 越界时六档全不命中',
+  },
 ];
