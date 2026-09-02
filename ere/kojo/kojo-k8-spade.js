@@ -84,6 +84,7 @@ const {
   dungeon_attack_family,
   benki_koujo_family,
   ntr_koujo_family,
+  gobi_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
   banishment_koujo_family,
@@ -98,6 +99,7 @@ const {
 const {
   gohoubi_request_koujo_family,
   gohoubi_after_koujo_family,
+  osioski_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
@@ -114,7 +116,7 @@ const era0 = (k) => era.get(k) || 0;
  * 核对固定）；名单变动必须同步清单。骨架阶段：51 个 SELECTCOM 分支合用
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
-const STUBBED_CALLS = ['OSIOKI_KOUJO_K8', 'GOBI_KOUJO_K8', 'SELL_MATURO_K0'];
+const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
 // @EVENTTRAIN #PRI（:61-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -12764,20 +12766,137 @@ gohoubi_after_koujo_family.register(8, (cid, choice) =>
   gohoubi_after_koujo_k8(undefined, cid, choice),
 );
 
-/** @OSIOKI_KOUJO_K8（:7857-7917，TARGET = A）。TODO(#239)：待填充。 */
-async function osioki_koujo_k8() {
-  stub_line('OSIOKI_KOUJO_K8', '迎击惩罚口上', '本票分段填充');
+/**
+ * @OSIOKI_KOUJO_K8（:7857-7915）：迎击失败后的惩罚口上（角色即 A）。
+ *
+ * choice（原作 TFLAG:18）十档：0 放置 PLAY / 1 弱电椅刑 / 2 路上自慰刑 /
+ * 3 路上脱粪刑 / 4 鞭打刑 / 5 人间小便器刑 / 6 厕所打扫刑 / 7 断食刑 /
+ * 8 媚药放置刑 / 9 未定。1-5 档各嵌一层素质/能力分岔（受虐狂っ気 ABL:21、
+ * 露出癖 ABL:17、受虐狂 TALENT:88 或淫乱 TALENT:76），6-9 档单行。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} [cid] 角色 ID（族签名给的 A；本实现取 era_flag.target，同 K3）
+ * @param {number} [choice] 惩罚选择序号（原作 TFLAG:18）
+ */
+async function osioki_koujo_k8(rand, cid, choice) {
+  void rand;
+  void cid;
+  const a = era_flag.target;
+
+  if (choice == 0) {
+    // :7860 放置PLAY
+    await era.printAndWait(`「唔…嗯………失礼了」`); // :7862
+  } else if (choice == 1) {
+    // :7863 弱電気椅子刑
+    if (era0(`abl:${a}:21`) >= 3) {
+      // :7865 受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「嗯！啊啊，真是的！对我来说这样的拷问是没有效果的${heart(1)} 啊啊嗯～♪」`,
+      ); // :7867
+    } else {
+      await era.printAndWait(`「唔！咕！电压太高了！…啊…啊咕！」`); // :7869
+    }
+  } else if (choice == 2) {
+    // :7871 路上自慰刑
+    if (era0(`abl:${a}:17`) >= 4) {
+      // :7873 露出癖Lv4以上
+      await era.printAndWait(`「看我自慰，好好的看着，好兴奋啊，要去了！」`); // :7875
+    } else {
+      await era.printAndWait(`「虽说是魔王大人的惩罚…啊啊啊…屈辱…啊啊！」`); // :7877
+    }
+  } else if (choice == 3) {
+    // :7879 路上脱糞刑
+    if (era0(`abl:${a}:17`) >= 6) {
+      // :7881 露出癖Lv6以上
+      await era.printAndWait(
+        `「我拉○的时候不好好看着可不行哦？　呵呵…嗯！就那样看着我吧！」`,
+      ); // :7883
+    } else {
+      await era.printAndWait(`「嗯咕~~~嗯啊~~~~嗯啊啊啊啊啊~~~~」`); // :7885
+    }
+  } else if (choice == 4) {
+    // :7887 鞭打ち刑
+    if (era0(`abl:${a}:21`) >= 3) {
+      // :7889 受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊嗯！更多的惩罚我吧！用你的鞭子！」`); // :7891
+    } else {
+      await era.printAndWait(`「咕！啊！对不起魔王大人！」`); // :7893
+    }
+  } else if (choice == 5) {
+    // :7895 人間小便器刑
+    if (era0(`talent:${a}:88`) == 1 || era0(`talent:${a}:76`) == 1) {
+      // :7897 受虐狂or淫乱
+      await era.printAndWait(`「哈啊…更多、更多的看着我尿尿${heart(1)}」`); // :7899
+    } else {
+      await era.printAndWait(`「唔…不要…不要…不要不要不要………」`); // :7901
+    }
+  } else if (choice == 6) {
+    // :7903 トイレ掃除刑
+    await era.printAndWait(`「这不是我应该做的事啊………」`); // :7905
+  } else if (choice == 7) {
+    // :7906 ご飯抜き刑
+    await era.printAndWait(`「这样的刑罚，3天左右没事的」`); // :7908
+  } else if (choice == 8) {
+    // :7909 媚药放置刑
+    await era.printAndWait(
+      `「啊~…啊~…求你了求你了求你了、把我侵犯的乱七八糟的吧！在子宫里不断的插进来插进来！啊！求您了！不回去了！不回去了！」`,
+    ); // :7911
+  } else if (choice == 9) {
+    // :7912 未定
+    await era.printAndWait(`「嗷嗷！」`); // :7914
+  }
+
+  return 0;
 }
 
 /**
- * @GOBI_KOUJO_K8（:7918-7953，ARG:0）：语尾口上。TODO(#239)：待填充。
- * @param {number} arg_0 原作 ARG:0
+ * @GOBI_KOUJO_K8（:7918-7946，ARG:0）：语尾口上。
+ *
+ * ARG:0 五档情绪（1 得意 / 2 生气 / 3 悲伤 / 4 害羞 / 5 窘迫），其余（含 0）
+ * 走默认三选一。全部是 bare PRINTFORM——不换行不等待，原作把它接在上一句
+ * 尾巴上。默认支的前两支源作同文（都是「啊。」），1:1 保真照搬。
+ *
+ * @param {number} [arg_0] 原作 ARG:0（情绪编号）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  */
-// eslint-disable-next-line no-unused-vars
 async function gobi_koujo_k8(arg_0, rand) {
-  stub_line('GOBI_KOUJO_K8', '语尾口上', '本票分段填充');
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+
+  if (arg_0 == 1) {
+    // :7922 喜んで誇らしげに
+    await era.print(`什么啊♪`); // :7923
+  } else if (arg_0 == 2) {
+    // :7925 怒って
+    await era.print(`哼！`); // :7926
+  } else if (arg_0 == 3) {
+    // :7928 悲しんで
+    await era.print(`唉……。`); // :7929
+  } else if (arg_0 == 4) {
+    // :7931 恥ずかしそうに
+    await era.print(`嗯……。`); // :7932
+  } else if (arg_0 == 5) {
+    // :7934 情けなさそうに
+    await era.print(`啊……啊……。`); // :7935
+  } else {
+    // :7937-7938 デフォルト（含 ARG:0 == 0）
+    if (rand_n(3) == 0) {
+      await era.print(`啊。`); // :7940
+    } else if (rand_n(2) == 0) {
+      // :7941 源作与上一支同文，1:1 保真
+      await era.print(`啊。`); // :7942
+    } else {
+      await era.print(`什么啊。`); // :7944
+    }
+  }
+
+  return 0;
 }
+
+// 注册进惩罚族与语尾族（TRYCALLFORM OSIOKI_KOUJO_K8 / GOBI_KOUJO_K8 的等价物）
+osioski_koujo_family.register(8, (cid, choice) =>
+  osioki_koujo_k8(undefined, cid, choice),
+);
+gobi_koujo_family.register(8, gobi_koujo_k8);
 
 module.exports = {
   STUBBED_CALLS,

@@ -26487,6 +26487,249 @@ export const FILES = [
         ref: '7851',
         any: [/PRINTFORMW 「屁股小穴里插着新品阴茎最棒了♪」/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7857-7915',
+        any: [/@OSIOKI_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7860',
+        any: [/;放置PLAY/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7862',
+        any: [/PRINTFORMW 「唔…嗯………失礼了」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7863',
+        any: [/;弱電気椅子刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7865',
+        any: [/;受虐狂っ気Lv3以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7867',
+        any: [
+          /PRINTFORMW 「嗯！啊啊，真是的！对我来说这样的拷问是没有效果的%UNICODE\(0x2661\) \*1% 啊啊嗯～♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7869',
+        any: [/PRINTFORMW 「唔！咕！電圧太高了！…啊…啊咕！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7871',
+        any: [/;路上自慰刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7873',
+        any: [/;露出癖Lv4以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7875',
+        any: [/PRINTFORMW 「看我自慰，好好的看着，好兴奋啊，要去了！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7877',
+        any: [/PRINTFORMW 「虽说是魔王大人的惩罚…啊啊啊…屈辱…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7879',
+        any: [/;路上脱糞刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7881',
+        any: [/;露出癖Lv6以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7883',
+        any: [
+          /PRINTFORMW 「我拉○的时候不好好看着可不行哦？　呵呵…嗯！就那样看着我吧！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7885',
+        any: [/PRINTFORMW 「嗯咕~~~嗯啊~~~~嗯啊啊啊啊啊~~~~」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7887',
+        any: [/;鞭打ち刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7889',
+        any: [/;受虐狂っ気Lv3以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7891',
+        any: [/PRINTFORMW 「啊嗯！更多的惩罚我吧！用你的鞭子！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7893',
+        any: [/PRINTFORMW 「咕！啊！对不起魔王大人！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7895',
+        any: [/;人間小便器刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7897',
+        any: [/;受虐狂or淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7899',
+        any: [
+          /PRINTFORMW 「哈啊…更多、更多的看着我尿尿%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7901',
+        any: [/PRINTFORMW 「唔…不要…不要…不要不要不要………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7903',
+        any: [/;トイレ掃除刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7905',
+        any: [/PRINTW 「这不是我应该做的事啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7906',
+        any: [/;ご飯抜き刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7908',
+        any: [/PRINTW 「这样的刑罚，3天左右没事的」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7909',
+        any: [/;媚药放置刑/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7911',
+        any: [
+          /PRINTFORMW 「啊~…啊~…求你了求你了求你了、把我侵犯的乱七八糟的吧！在子宫里不断的插进来插进来！啊！求您了！不回去了！不回去了！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7912',
+        any: [/;未定/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7914',
+        any: [/PRINTFORMW 「嗷嗷！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7918-7946',
+        any: [/@GOBI_KOUJO_K8, ARG:0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7922',
+        any: [/;喜んで誇らしげに/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7923',
+        any: [/PRINTFORM 什么啊♪/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7925',
+        any: [/;怒って/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7926',
+        any: [/PRINTFORM 哼！/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7928',
+        any: [/;悲しんで/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7929',
+        any: [/PRINTFORM 唉……。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7931',
+        any: [/;恥ずかしそうに/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7932',
+        any: [/PRINTFORM 嗯……。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7934',
+        any: [/;情けなさそうに/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7935',
+        any: [/PRINTFORM 啊……啊……。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7937-7938',
+        any: [/;デフォルト/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7940',
+        any: [/PRINTFORM 啊。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7941',
+        any: [/ELSEIF RAND:2 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7942',
+        any: [/PRINTFORM 啊。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7944',
+        any: [/PRINTFORM 什么啊。/],
+      },
     ],
   },
 ];
