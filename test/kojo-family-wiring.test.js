@@ -145,9 +145,9 @@ test('源码扫描能拿到每个口上模块的分发族注册号', () => {
     ),
     [5],
   );
-  // K3 已落地 SELF_KOJO_K3（#234）；K5 事件口上仍随各自票
+  // K3 已落地 SELF_KOJO_K3（#234）；K5 事件口上随 #236
   assert.equal(by_module.get('kojo-k3-noble').self_kojo_family.size, 1);
-  assert.equal(by_module.get('kojo-k5-mao').self_kojo_family.size, 0);
+  assert.equal(by_module.get('kojo-k5-mao').self_kojo_family.size, 1);
   // 底座与纯工具模块不进表
   assert.ok(!by_module.has('kojo-system'));
   assert.ok(!by_module.has('kojo-text'));

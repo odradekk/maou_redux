@@ -76,6 +76,7 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { peek_aftertrain_s } = require('#/event/event-aftertrain');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -114,8 +115,8 @@ const era0 = (k) => era.get(k) || 0;
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。骨架阶段：51 个 SELECTCOM 分支合用
- * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
+ * 核对固定）；名单变动必须同步清单。本文件已整份落地，只剩
+ * `SELL_MATURO_K0` 一条——它是真外部调用（成熟出售口上，真身属售却票）。
  */
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
@@ -10893,11 +10894,12 @@ kojo_message_markcng_family.register(8, kojo_message_markcng_8);
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未直接消费，随族签名保留）
  * @param {number} [q] 自慰妄想对象（Q：0 主人 / 1 助手 / 2 野狗，源 :6659/6663，
  *   #214 决议：Emuera 单字母全局改显式传参）
- * @param {number} [s] 调教后加做次数（S，源 :6801/6802/6812，TFLAG:13 == 4
- *   分支专用，同 #214 决议——调用侧见 ere/event/event-aftertrain.js）
  * @returns {Promise<number>} 0
  */
-async function self_kojo_k8(rand, q, s) {
+async function self_kojo_k8(rand, q) {
+  // 原作跨函数全局 S（调教后加做次数，源 :6801/6802/6812）：TFLAG:13 == 4
+  // 一支要读，走 event-aftertrain 的既有访问器，不进族签名（K7 同款先例）
+  const s = peek_aftertrain_s();
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%

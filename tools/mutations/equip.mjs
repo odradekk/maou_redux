@@ -1,8 +1,9 @@
 // 变异条目表切片：ere/system/equip/ 与 ere/data/equip-database.js（装备系统，
 // #174/H5——EQUIP.ERB 九函数 + USEABLE_EQUIPMENT + WEAPON_RESTORE + 存根接线）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M330 装备数据表数值改坏（支配戒指价格 100000 → 100001——逐分支等价用例红）',

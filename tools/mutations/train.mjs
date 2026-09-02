@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
@@ -3688,9 +3689,11 @@ export default [
     desc: 'M1311 AFTERTRAIN: sex_check 缺 TFLAG:13=4 与 SELF_KOJO（#270）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  leftover_s = s;
   game.train.初吻与自我口上 = 4;
-  await self_kojo(undefined, undefined, s); // s：本次加做次数（K8 SELF_KOJO_K8「調教後セックス」小节用，#239）`,
-    replace: '  // 变异：性交臂不设 tflag:13、不调 self_kojo',
+  await self_kojo();`,
+    replace: `  leftover_s = s;
+  // 变异：性交臂不设 tflag:13、不调 self_kojo`,
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_sex_check 通常性交与 ABL 判定',
   },
@@ -4636,5 +4639,13 @@ export default [
     replace: '  leftover_q = 0; // 变异：不写入妄想对象',
     tests: ['event-aftertrain'],
     must_mention: 'leftover_q',
+  },
+  {
+    desc: 'M2135 AFTERTRAIN leftover_s 不写入（#237）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  leftover_s = s;',
+    replace: '  leftover_s = 0; // 变异：不写入回数',
+    tests: ['event-aftertrain', 'kojo-k6-wicked'],
+    must_mention: 'leftover_s',
   },
 ];

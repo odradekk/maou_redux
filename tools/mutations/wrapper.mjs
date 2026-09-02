@@ -1,7 +1,8 @@
 // 变异条目表切片：ere/facade、ere/era-utils、ere/chara、ere/utils（门面与包装层）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M110 版本戳盖错值（PORT_DATA_VERSION 1 改 2）',

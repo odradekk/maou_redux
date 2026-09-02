@@ -3657,8 +3657,13 @@ test('MARKCNG：反抗刻印Lv3取得 爱慕写 CFLAG:300', async () => {
 // —— SELF_KOJO_K8（事件口上，TFLAG:13 分派） ——
 
 async function speak_self_kojo_k8(fixture, rand, q, s) {
+  // 原作跨函数全局 S 不进族签名：经 event-aftertrain 的既有写入口喂
+  // （K7 kojo-k7-heart.js 同款先例，读侧是 peek_aftertrain_s()）
+  if (s !== undefined) {
+    fixture.load_module('event/event-aftertrain').remember_aftertrain_s(s);
+  }
   const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
-  return self_kojo_family.call(8, { args: [rand, q, s] });
+  return self_kojo_family.call(8, { args: [rand, q] });
 }
 
 test('SELF_KOJO：调教后自慰 崩坏支写空 CFLAG（TALENT:9）', async () => {
@@ -3779,16 +3784,17 @@ test('SELF_KOJO：调教后性交 それ以外写 CFLAG:264=1（含 s 回分精�
   assert.equal(fixture.store.get('cflag:31:264'), 1, '调教后性交 CFLAG:264');
 });
 
-test('SELF_KOJO：经顶层 self_kojo() 分发，s 显式传参一路到达 K8（#214）', async () => {
+test('SELF_KOJO：经顶层 self_kojo() 分发，s 由 peek_aftertrain_s() 跨模块读到', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('tflag:13', 4);
     f.store.set('abl:31:2', 4);
   });
+  fixture.load_module('event/event-aftertrain').remember_aftertrain_s(7);
   const { self_kojo } = fixture.load_module('kojo/kojo-system');
-  await self_kojo(undefined, undefined, 7);
+  await self_kojo();
   assert.ok(
     fixture.text_lines().includes('银黑桃的蜜壶已经被中出了7回，泛起泡沫了。'),
-    's 必须经 self_kojo() 顶层分发一路到达 self_kojo_k8',
+    's 必须由 peek_aftertrain_s() 读到 self_kojo_k8（不走族签名）',
   );
 });
 

@@ -1,7 +1,8 @@
 // 变异条目表切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号是历史惯性编号
-// （M117 曾被两票撞号使用），只作引用锚点保留，不再人工分配。
+// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
+// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
+// 重号由 gate_shape 随 --verify 秒级核对。
 export default [
   {
     desc: 'M94 ERB 完整性检查焊死（未登记引用不再红——探针用例必须抓到失明）',
@@ -85,7 +86,7 @@ export default [
     must_mention: '词边界',
   },
   {
-    desc: "M117 字符串赋值 '= 不再算写入（CSTR 写形用例必须红）",
+    desc: "M2100 字符串赋值 '= 不再算写入（CSTR 写形用例必须红）",
     file: 'tools/ownership-scan.js',
     find: "const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^']|<<|>>)?=[ \\t]*[^=]/;",
     replace: 'const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^]|<<|>>)?=[ \\t]*[^=]/;',
@@ -474,8 +475,28 @@ export default [
     tests: ['mutation-check'],
     must_mention: '漏声明 engine: true 必须非 0',
   },
+
+  // —— #295：M 编号唯一性门自身的自证（M2080-M2099 号段） ——
   {
-    desc: 'M1810 锚表加载器按文件名黑名单跳过新分片（probe 新文件不再入账——#290 目录扫描的存在理由）',
+    desc: 'M2080 M 编号重复检测被拆（同编号不同 desc 静默放行——引用句柄失效无人可见）（#295）',
+    file: 'tools/mutation-check.mjs',
+    find: '      if (prior !== undefined && prior !== m.desc) {',
+    replace:
+      '      if (false && prior !== undefined && prior !== m.desc) { // 变异：M 编号重复检测被拆',
+    tests: ['mutation-check'],
+    must_mention: 'M 编号相同但 desc 不同必须非 0',
+  },
+  {
+    desc: 'M2081 归一表重复正则检测被拆（先匹配者胜下的静默遮蔽——#238 SAVESTR:A 教训无人再守）（#295）',
+    file: 'test/kojo-text-fidelity.test.js',
+    find: '    if (prior !== undefined) {',
+    replace:
+      '    if (false && prior !== undefined) { // 变异：重复正则检测被拆',
+    tests: ['kojo-text-fidelity'],
+    must_mention: 'find_duplicate_patterns 的检测逻辑被拆了',
+  },
+  {
+    desc: 'M2137 锚表加载器按文件名黑名单跳过新分片（probe 新文件不再入账——#290 目录扫描的存在理由）',
     file: 'tools/trace-refs-load.mjs',
     find: "    .filter((n) => n.endsWith('.mjs'))",
     replace: "    .filter((n) => n.endsWith('.mjs') && !n.includes('probe'))",
@@ -483,7 +504,7 @@ export default [
     must_mention: '新分片必须被加载器扫到并让工具全绿',
   },
   {
-    desc: 'M1811 加载器丢掉分片的 FILES（新模块锚表写了也不进汇总——#290 入账路径空转）',
+    desc: 'M2138 加载器丢掉分片的 FILES（新模块锚表写了也不进汇总——#290 入账路径空转）',
     file: 'tools/trace-refs-load.mjs',
     find: '    FILES.push(...mod.FILES);',
     replace: "    if (!name.includes('probe')) FILES.push(...mod.FILES);",
@@ -491,7 +512,7 @@ export default [
     must_mention: '新分片必须被加载器扫到并让工具全绿',
   },
   {
-    desc: 'M1812 加载器丢掉分片的 SAMPLE_LOG_REFS（样本前缀登记走新分片不再入账——#156/#290 登记机制空转）',
+    desc: 'M2139 加载器丢掉分片的 SAMPLE_LOG_REFS（样本前缀登记走新分片不再入账——#156/#290 登记机制空转）',
     file: 'tools/trace-refs-load.mjs',
     find: '      bucket.push(...groups);',
     replace: "      if (!name.includes('probe')) bucket.push(...groups);",
