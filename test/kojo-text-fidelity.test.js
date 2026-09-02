@@ -235,6 +235,11 @@ const JS_TOKEN_RULES = [
   // —— #238：K7 金红桃口上补充 ——
   [/^s$/, 'S_COUNT'],
   [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
+  // —— #239：K8 银黑桃口上的局部名（记号沿用上面的规范名，勿另起） ——
+  [/^a_name$/, 'ANAME'], // 迎击奖赏两函数承载 %SAVESTR:A%
+  [/^today_or_night$/, 'TERN_TIME_NIGHT'],
+  [/^today_or_eve$/, 'TERN_TIME_TONIGHT'],
+  [/^s \|\| 0$/, 'S_COUNT'],
   [/^time_word$/, 'TERN_TIME_NIGHT'],
   [/^time_word2$/, 'TERN_TIME_TONIGHT'],
   [/^hole_word$/, 'TERN_HOLE'],

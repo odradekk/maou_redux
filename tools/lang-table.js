@@ -719,6 +719,11 @@ const EXEMPT_STRINGS = [
     where: 'ere/kojo/kojo-k6-wicked.js',
     why: 'EVENT_K6_悪女.ERB:4128 灌肠肛塞淫乱档原作浊点 ゛（U+309B）是拟声延长，非日文假名词。归一成「啊啊」会切断与源文的 1:1；整串豁免，改写时失配变红。#237 收录。',
   },
+  {
+    value: '${player_name}向上挺着腰侵犯着${target_name}肛门……・',
+    where: 'ere/kojo/kojo-k8-spade.js',
+    why: 'EVENT_K8_スペード.ERB:3935 的 PRINTFORMW 行尾多打了一个・（非分隔样式，前面已是句末省略号「……」，此处纯属误触），1:1 保真原样照抄（#239 收录）。整串豁免，改写时失配变红。',
+  },
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；
