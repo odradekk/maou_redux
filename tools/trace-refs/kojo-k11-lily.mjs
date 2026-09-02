@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-1853',
+        ref: '786-1987',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -5596,6 +5596,413 @@ export const FILES = [
         any: [
           /^\s*CFLAG:311 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
         ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1859-1987',
+        any: [
+          /^\s*IF SELECTCOM == 11 && TEQUIP:11\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:312 == 0\s*$\s*^\s*;处女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『哎哎，姐姐真可怜呢，明明更想把处女留给魔王大人对吧♪可惜再也不可能了呢。』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1861-1920',
+        any: [
+          /^\s*IF CFLAG:TARGET:312 == 0\s*$\s*^\s*;处女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『哎哎，姐姐真可怜呢，明明更想把处女留给魔王大人对吧♪可惜再也不可能了呢。』\s*$\s*^\s*PRINTFORMW %SAVESTR:PLAYER%抓着已经大半进入%SAVESTR:TARGET%蜜穴里的虫子，用力捏着它，刺激着它继续往里钻来钻去。\s*$\s*^\s*PRINTFORMW 看着手中沾满%SAVESTR:TARGET%处女血的蠕虫，%SAVESTR:PLAYER%笑得嘴都歪了，笑容里满是深深的恶意。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1866',
+        any: [
+          /^\s*PRINTFORMW 『哎哎，姐姐真可怜呢，明明更想把处女留给魔王大人对吧♪可惜再也不可能了呢。』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1867',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抓着已经大半进入%SAVESTR:TARGET%蜜穴里的虫子，用力捏着它，刺激着它继续往里钻来钻去。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1868',
+        any: [
+          /^\s*PRINTFORMW 看着手中沾满%SAVESTR:TARGET%处女血的蠕虫，%SAVESTR:PLAYER%笑得嘴都歪了，笑容里满是深深的恶意。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1871',
+        any: [
+          /^\s*PRINTFORMW 「哈啊，啊啊啊…虽说是这样…但是…还是…很舒服啊%UNICODE\(0x2661\) \*1%哈……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1872',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%吃痛地叫了一声，但随即开始发出淫媚与享受的娇喘，淫乱的样子反而让%SAVESTR:PLAYER%有些惊讶和失望……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1875',
+        any: [
+          /^\s*PRINTFORMW 「你，你明明知道我的心情！为什么还要…还要说这么残酷的话？！把它拔出去，拔出去啊！求求你………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1876',
+        any: [
+          /^\s*PRINTFORMW 虫子依旧在%SAVESTR:TARGET%的阴道内肆意爬动，极度的委屈与痛楚使得%SAVESTR:TARGET%泪如泉涌，而看到姐姐这个样子的%SAVESTR:PLAYER%，却更加兴奋………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1879',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊…好痛…好痛啊…为什么要对姐姐做这么残忍的事！！%SAVESTR:PLAYER%，你原来不是这样的人啊……！呜呜呜…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1880',
+        any: [
+          /^\s*PRINTFORMW 虫子依旧在%SAVESTR:TARGET%的阴道内肆意爬动，极度的屈辱与痛楚使得%SAVESTR:TARGET%撕心裂肺地惨叫着，哭泣着，而看到姐姐这个样子的%SAVESTR:PLAYER%，却更加兴奋………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1885',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊！钻进，进来了…我的处女…居然给了这么一个东西…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1886',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用交织着委屈与享受的表情，出神地凝视着已经半身钻入自己下体内，穿透了处女膜的虫子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1889',
+        any: [
+          /^\s*PRINTFORMW 「这是…对我的惩罚吗？魔王大人…我甘心受罚啊啊啊！好痛！好痛啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1890',
+        any: [
+          /^\s*PRINTFORMW 蠕虫猛地钻进了%SAVESTR:TARGET%的蜜穴中，穿破了处女膜，沿着阴道往里钻，痛楚和委屈让她泪流满面地悲泣着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1893',
+        any: [
+          /^\s*PRINTFORMW 「不要不要不要啊…拔出去拔出去——啊啊啊好痛，好痛啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1894',
+        any: [
+          /^\s*PRINTFORMW 蠕虫猛地钻进了%SAVESTR:TARGET%的蜜穴中，穿破了处女膜，沿着阴道往里钻，极度的痛楚和屈辱让她撕心裂肺地惨叫着，哭泣着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1901',
+        any: [/^\s*PRINTFORMW 『啊哈哈、姐姐看，虫子从你下面钻进去了♪』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1902',
+        any: [/^\s*PRINTFORMW 「什，什么？！啊啊啊…好难受，好难受！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1906',
+        any: [/^\s*PRINTFORMW 「哈啊，钻，钻进去了…呃啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1907',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫从自己蜜穴中钻入，开始因为刺激和快感呻吟了起来………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1910',
+        any: [
+          /^\s*PRINTFORMW 「这，这样的东西和魔王大人的…比起来、啊，对，对不起…我…什么都没说！呃啊…哈啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1911',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫从自己蜜穴中钻入，不由得大声地呻吟了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1914',
+        any: [
+          /^\s*PRINTFORMW 「要，要让这样的东西进去…不，不，不要啊，这样的调教…求求你！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1915',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%想要伸手去把虫子拔出去，却被%SAVESTR:PLAYER%按住了手、只能任由蠕虫继续往蜜穴的深处钻入……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1919',
+        any: [/^\s*CFLAG:312 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1919-1920',
+        any: [/^\s*CFLAG:312 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1922-1969',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:312 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』\s*$\s*^\s*PRINTFORMW 「哎呀呀…这样的问题怎么回答呢…哪种东西在姐姐的蜜穴里，就是哪种更舒服…所以，现在当然是虫子啦%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*CFLAG:312 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1927',
+        any: [
+          /^\s*PRINTFORMW 『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1928',
+        any: [
+          /^\s*PRINTFORMW 「哎呀呀…这样的问题怎么回答呢…哪种东西在姐姐的蜜穴里，就是哪种更舒服…所以，现在当然是虫子啦%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1928-1929',
+        any: [
+          /^\s*PRINTFORMW 「哎呀呀…这样的问题怎么回答呢…哪种东西在姐姐的蜜穴里，就是哪种更舒服…所以，现在当然是虫子啦%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*CFLAG:312 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1932',
+        any: [
+          /^\s*PRINTFORMW 『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1933',
+        any: [
+          /^\s*PRINTFORMW 「哎，哎…这种问题怎么回答的出口！啊啊啊，不要让它……爬太深进去啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1933-1934',
+        any: [
+          /^\s*PRINTFORMW 「哎，哎…这种问题怎么回答的出口！啊啊啊，不要让它……爬太深进去啊啊啊！」\s*$\s*^\s*CFLAG:312 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1937',
+        any: [
+          /^\s*PRINTFORMW 『哎呀，姐姐一副口水都要流出来了的表情呢，真的有那么舒服吗%UNICODE\(0x2661\) \*1%虫子已经要全部爬进去了哦哦』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1938',
+        any: [
+          /^\s*PRINTFORMW 「哎，哎，才没露出那种表情…啊啊…在，在里面动起来了…啊哈…嗯啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1938-1939',
+        any: [
+          /^\s*PRINTFORMW 「哎，哎，才没露出那种表情…啊啊…在，在里面动起来了…啊哈…嗯啊啊！」\s*$\s*^\s*CFLAG:312 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1942',
+        any: [
+          /^\s*PRINTFORMW 『姐姐，开始习惯虫子在蜜穴里爬爬的感觉了吗？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1943',
+        any: [
+          /^\s*PRINTFORMW 「这，这种事…永远不会…不会习惯啊啊啊啊…拿出去啊啊，求求你！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1943-1944',
+        any: [
+          /^\s*PRINTFORMW 「这，这种事…永远不会…不会习惯啊啊啊啊…拿出去啊啊，求求你！」\s*$\s*^\s*CFLAG:312 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1949',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊！蜜穴被虫子…！啊啊…好…好舒服%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1950',
+        any: [
+          /^\s*PRINTFORMW 随着虫子渐渐钻入蜜穴之中，%SAVESTR:TARGET%的话音被自己充满享受的娇喘声掩盖了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1950-1951',
+        any: [
+          /^\s*PRINTFORMW 随着虫子渐渐钻入蜜穴之中，%SAVESTR:TARGET%的话音被自己充满享受的娇喘声掩盖了……\s*$\s*^\s*CFLAG:312 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1954',
+        any: [/^\s*PRINTFORMW 「哈啊…啊！进，进去了…虫子…蜜穴里…嗯啊啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1955',
+        any: [
+          /^\s*PRINTFORMW 着虫子渐渐钻入蜜穴之中，%SAVESTR:TARGET%发出了享受的娇喘声………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1955-1956',
+        any: [
+          /^\s*PRINTFORMW 着虫子渐渐钻入蜜穴之中，%SAVESTR:TARGET%发出了享受的娇喘声………\s*$\s*^\s*CFLAG:312 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1959',
+        any: [
+          /^\s*PRINTFORMW 「这，这种东西钻进去…不会感觉到舒服的啦啊啊啊…哈啊…嗯啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1960',
+        any: [
+          /^\s*PRINTFORMW 随着虫子渐渐钻入蜜穴之中，%SAVESTR:TARGET%的辩解被自己充满享受的娇喘声掩盖了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1960-1961',
+        any: [
+          /^\s*PRINTFORMW 随着虫子渐渐钻入蜜穴之中，%SAVESTR:TARGET%的辩解被自己充满享受的娇喘声掩盖了……\s*$\s*^\s*CFLAG:312 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1964',
+        any: [
+          /^\s*PRINTFORMW 「慢，慢一点…稍微…温柔一些不行吗！不…不要再进来了啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1965',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%发出了不满的声音，为了让她明白自己的立场和身份，%SAVESTR:PLAYER%立即粗暴地刺激着虫子继续深入………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1965-1966',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%发出了不满的声音，为了让她明白自己的立场和身份，%SAVESTR:PLAYER%立即粗暴地刺激着虫子继续深入………\s*$\s*^\s*CFLAG:312 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1966-1969',
+        any: [
+          /^\s*CFLAG:312 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1972-1986',
+        any: [
+          /^\s*ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:372 < 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哎，哎哎…虫子出去后，%SAVESTR:TARGET%的蜜穴好寂寞哦%UNICODE\(0x2661\) \*1%，魔王大人」\s*$\s*^\s*CFLAG:372 = 3\s*$\s*^\s*;爱慕\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:372 < 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哈…呼…呼呼…接，接下来，魔王大人%UNICODE\(0x2661\) \*1%？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1975',
+        any: [
+          /^\s*PRINTFORMW 「哎，哎哎…虫子出去后，%SAVESTR:TARGET%的蜜穴好寂寞哦%UNICODE\(0x2661\) \*1%，魔王大人」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1976',
+        any: [/^\s*CFLAG:372 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1979',
+        any: [
+          /^\s*PRINTFORMW 「哈…呼…呼呼…接，接下来，魔王大人%UNICODE\(0x2661\) \*1%？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1980',
+        any: [/^\s*CFLAG:372 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1983',
+        any: [
+          /^\s*PRINTFORMW 「突，突然拔出去…会，会痛的…啊，哈啊，为什么…有一种空虚的感觉……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1984',
+        any: [/^\s*CFLAG:372 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1984-1986',
+        any: [/^\s*CFLAG:372 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
       },
     ],
   },

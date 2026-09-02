@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10，
- *       issue #242，WIP 续轮，进行中）。
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
+ *       11，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,10 +12,12 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10 十支 :786-1853——爱抚/舔阴/
- *     肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/振动宝石，各含初めて/
- *     二回目以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含
- *     首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0）
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11 十一支 :786-1987——爱抚/
+ *     舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/振动宝石/壶虫，
+ *     各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档，
+ *     SELECTCOM 6 另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/非处女
+ *     文案分岔 TALENT:0，SELECTCOM 11 另含 TEQUIP:11 装备/脱着两态（脱着时
+ *     用独立 CFLAG:372 计数，且初めて阶段自身再按处女/非处女分岔文案）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -23,8 +25,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 86.3%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 11 起（源文件第 1859 至 10657 行，约 43 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 85.2%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 12 起（源文件第 1992 至 10657 行，约 42 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -47,14 +49,14 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 864 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
- * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10（本轮新增五支）起改用 K10
- * （#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
+ * trace-refs/kojo-k11-lily.mjs 的 925 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11（本轮新增六支）起改用
+ * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
  * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：786 条恰好命中 1 行/1 段，可视为具备真实
+ * 条锚在源全文里做精确子串计数：845 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
- * 78 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
+ * 80 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
  * 收窄——60 条来自 WIP 1/N 交付范围（存在标志/@EVENTTRAIN/@K11_KOJO2/
@@ -66,7 +68,9 @@
  * （:1485/1486/1534/1547/1586/1587，处女/非处女子分档与二回目以降两层
  * 里各一对逐字重复的对白句）；4 条来自 SELECTCOM 9（:1709/1713/1748/
  * 1770，初めて层淫乱/爱慕两支、二回目以降助手玛奥/非助手玛奥それ以外
- * 分档里各一对逐字重复的对白句）。SELECTCOM 3/5/6/7/8/9/10 内非 print 语句
+ * 分档里各一对逐字重复的对白句）；2 条来自 SELECTCOM 11（:1927/1932，
+ * 助手玛奥二回目以降淫乱/爱慕两支共用同一句反问台词）。SELECTCOM
+ * 3/5/6/7/8/9/10/11 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
@@ -1269,6 +1273,15 @@ on(
  * 屈服刻印Lv3+爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
  * 按「淫乱→爱慕＋屈服刻印Lv3→屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构
  * 对称。
+ *
+ * SELECTCOM 11（壶虫 CFLAG:312／着脱 CFLAG:372，:1859-1987）：唯一同时含
+ * TEQUIP:11 装备/脱着两态判定的分支。装备态（TEQUIP:11 真）初めて
+ * （CFLAG:312 == 0）先按 TALENT:0 处女/非处女分岔文案，处女层再各按
+ * 「助手玛奥（内部再按淫乱/爱慕/それ以外三选文案）／非助手玛奥・淫乱／
+ * 爱慕／それ以外」写 1，非处女层同构但助手玛奥无进一步细分；二回目以降
+ * 先分「助手玛奥」再各自按「淫乱→爱慕→ABL:2（私处感觉）Lv3以上→それ以外」
+ * 写 5/4/3/2，两支结构对称。脱着态（TEQUIP:11 == 0）是独立三选一（淫乱/
+ * 爱慕/それ以外），用另一枚 CFLAG:372 计数，写 3/2/1，无助手玛奥分档。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -3191,6 +3204,231 @@ async function kojo_message_com_11(rand) {
       kojo.振动宝石 = 2; // :1847-1848
     }
     return 0; // :1848-1851
+  }
+
+  // :1859-1987 IF SELECTCOM == 11（壶虫 CFLAG:312／着脱 CFLAG:372，
+  // TEQUIP:11 判定已装/未装两态）
+  if (era_flag.selectcom === 11) {
+    const virgin = era.get(`talent:${target}:0`) === 1;
+
+    if (era.get(`tequip:${target}:11`)) {
+      // :1861-1920 初めて（CFLAG:312 == 0，开始时）
+      if (kojo.壶虫 === 0) {
+        if (virgin) {
+          // 处女
+          if (assi_mao) {
+            await era.printAndWait(
+              `『哎哎，姐姐真可怜呢，明明更想把处女留给魔王大人对吧♪可惜再也不可能了呢。』`,
+            ); // :1866
+            await era.printAndWait(
+              `${player_name}抓着已经大半进入${target_name}蜜穴里的虫子，用力捏着它，刺激着它继续往里钻来钻去。`,
+            ); // :1867
+            await era.printAndWait(
+              `看着手中沾满${target_name}处女血的蠕虫，${player_name}笑得嘴都歪了，笑容里满是深深的恶意。`,
+            ); // :1868
+            if (era.get(`talent:${target}:76`) === 1) {
+              // 淫乱
+              await era.printAndWait(
+                `「哈啊，啊啊啊…虽说是这样…但是…还是…很舒服啊${heart(1)}哈……」`,
+              ); // :1871
+              await era.printAndWait(
+                `${target_name}吃痛地叫了一声，但随即开始发出淫媚与享受的娇喘，淫乱的样子反而让${player_name}有些惊讶和失望……`,
+              ); // :1872
+            } else if (era.get(`talent:${target}:85`) === 1) {
+              // 爱慕
+              await era.printAndWait(
+                `「你，你明明知道我的心情！为什么还要…还要说这么残酷的话？！把它拔出去，拔出去啊！求求你………」`,
+              ); // :1875
+              await era.printAndWait(
+                `虫子依旧在${target_name}的阴道内肆意爬动，极度的委屈与痛楚使得${target_name}泪如泉涌，而看到姐姐这个样子的${player_name}，却更加兴奋………`,
+              ); // :1876
+            } else {
+              // それ以外
+              await era.printAndWait(
+                `「啊啊啊…好痛…好痛啊…为什么要对姐姐做这么残忍的事！！${player_name}，你原来不是这样的人啊……！呜呜呜…」`,
+              ); // :1879
+              await era.printAndWait(
+                `虫子依旧在${target_name}的阴道内肆意爬动，极度的屈辱与痛楚使得${target_name}撕心裂肺地惨叫着，哭泣着，而看到姐姐这个样子的${player_name}，却更加兴奋………`,
+              ); // :1880
+            }
+          } else if (era.get(`talent:${target}:76`) === 1) {
+            // 非助手玛奥・淫乱
+            await era.printAndWait(
+              `「啊啊啊！钻进，进来了…我的处女…居然给了这么一个东西…${heart(1)}」`,
+            ); // :1885
+            await era.printAndWait(
+              `${target_name}用交织着委屈与享受的表情，出神地凝视着已经半身钻入自己下体内，穿透了处女膜的虫子……`,
+            ); // :1886
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // 非助手玛奥・爱慕
+            await era.printAndWait(
+              `「这是…对我的惩罚吗？魔王大人…我甘心受罚啊啊啊！好痛！好痛啊啊！」`,
+            ); // :1889
+            await era.printAndWait(
+              `蠕虫猛地钻进了${target_name}的蜜穴中，穿破了处女膜，沿着阴道往里钻，痛楚和委屈让她泪流满面地悲泣着……`,
+            ); // :1890
+          } else {
+            // 非助手玛奥・それ以外
+            await era.printAndWait(
+              `「不要不要不要啊…拔出去拔出去——啊啊啊好痛，好痛啊！」`,
+            ); // :1893
+            await era.printAndWait(
+              `蠕虫猛地钻进了${target_name}的蜜穴中，穿破了处女膜，沿着阴道往里钻，极度的痛楚和屈辱让她撕心裂肺地惨叫着，哭泣着……`,
+            ); // :1894
+          }
+        } else if (assi_mao) {
+          // 非处女・助手玛奥
+          await era.printAndWait(`『啊哈哈、姐姐看，虫子从你下面钻进去了♪』`); // :1901
+          await era.printAndWait(`「什，什么？！啊啊啊…好难受，好难受！」`); // :1902
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // 非处女・淫乱
+          await era.printAndWait(`「哈啊，钻，钻进去了…呃啊…啊啊！」`); // :1906
+          await era.printAndWait(
+            `${target_name}感受着蠕虫从自己蜜穴中钻入，开始因为刺激和快感呻吟了起来………`,
+          ); // :1907
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 非处女・爱慕
+          await era.printAndWait(
+            `「这，这样的东西和魔王大人的…比起来、啊，对，对不起…我…什么都没说！呃啊…哈啊」`,
+          ); // :1910
+          await era.printAndWait(
+            `${target_name}感受着蠕虫从自己蜜穴中钻入，不由得大声地呻吟了起来。`,
+          ); // :1911
+        } else {
+          // 非处女・それ以外
+          await era.printAndWait(
+            `「要，要让这样的东西进去…不，不，不要啊，这样的调教…求求你！」`,
+          ); // :1914
+          await era.printAndWait(
+            `${target_name}想要伸手去把虫子拔出去，却被${player_name}按住了手、只能任由蠕虫继续往蜜穴的深处钻入……`,
+          ); // :1915
+        }
+        kojo.壶虫 = 1; // :1919
+        return 0; // :1919-1920
+      }
+
+      // :1922-1969 二回目以降
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱
+          await era.printAndWait(
+            `『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』`,
+          ); // :1927
+          await era.printAndWait(
+            `「哎呀呀…这样的问题怎么回答呢…哪种东西在姐姐的蜜穴里，就是哪种更舒服…所以，现在当然是虫子啦${heart(1)}」`,
+          ); // :1928
+          kojo.壶虫 = 5; // :1928-1929
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕
+          await era.printAndWait(
+            `『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』`,
+          ); // :1932
+          await era.printAndWait(
+            `「哎，哎…这种问题怎么回答的出口！啊啊啊，不要让它……爬太深进去啊啊啊！」`,
+          ); // :1933
+          kojo.壶虫 = 4; // :1933-1934
+        } else if (
+          chara(target).system.私处感觉 >= 3 &&
+          (kojo.壶虫 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // V感覚Lv3以上
+          await era.printAndWait(
+            `『哎呀，姐姐一副口水都要流出来了的表情呢，真的有那么舒服吗${heart(1)}虫子已经要全部爬进去了哦哦』`,
+          ); // :1937
+          await era.printAndWait(
+            `「哎，哎，才没露出那种表情…啊啊…在，在里面动起来了…啊哈…嗯啊啊！」`,
+          ); // :1938
+          kojo.壶虫 = 3; // :1938-1939
+        } else if (kojo.壶虫 <= 1 || game.kojo.口上开关 === 2) {
+          // それ以外
+          await era.printAndWait(
+            `『姐姐，开始习惯虫子在蜜穴里爬爬的感觉了吗？』`,
+          ); // :1942
+          await era.printAndWait(
+            `「这，这种事…永远不会…不会习惯啊啊啊啊…拿出去啊啊，求求你！」`,
+          ); // :1943
+          kojo.壶虫 = 2; // :1943-1944
+        }
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `「哈啊…啊！蜜穴被虫子…！啊啊…好…好舒服${heart(1)}」`,
+        ); // :1949
+        await era.printAndWait(
+          `随着虫子渐渐钻入蜜穴之中，${target_name}的话音被自己充满享受的娇喘声掩盖了……`,
+        ); // :1950
+        kojo.壶虫 = 5; // :1950-1951
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(`「哈啊…啊！进，进去了…虫子…蜜穴里…嗯啊啊」`); // :1954
+        await era.printAndWait(
+          `着虫子渐渐钻入蜜穴之中，${target_name}发出了享受的娇喘声………`,
+        ); // :1955
+        kojo.壶虫 = 4; // :1955-1956
+      } else if (
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.壶虫 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // V感覚Lv3以上
+        await era.printAndWait(
+          `「这，这种东西钻进去…不会感觉到舒服的啦啊啊啊…哈啊…嗯啊啊！」`,
+        ); // :1959
+        await era.printAndWait(
+          `随着虫子渐渐钻入蜜穴之中，${target_name}的辩解被自己充满享受的娇喘声掩盖了……`,
+        ); // :1960
+        kojo.壶虫 = 3; // :1960-1961
+      } else if (kojo.壶虫 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(
+          `「慢，慢一点…稍微…温柔一些不行吗！不…不要再进来了啊啊！」`,
+        ); // :1964
+        await era.printAndWait(
+          `${target_name}发出了不满的声音，为了让她明白自己的立场和身份，${player_name}立即粗暴地刺激着虫子继续深入………`,
+        ); // :1965
+        kojo.壶虫 = 2; // :1965-1966
+      }
+      return 0; // :1966-1969
+    }
+
+    // :1972-1986 脱着時（TEQUIP:11 == 0）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.壶虫着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「哎，哎哎…虫子出去后，${target_name}的蜜穴好寂寞哦${heart(1)}，魔王大人」`,
+      ); // :1975
+      kojo.壶虫着脱 = 3; // :1976
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.壶虫着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        `「哈…呼…呼呼…接，接下来，魔王大人${heart(1)}？」`,
+      ); // :1979
+      kojo.壶虫着脱 = 2; // :1980
+    } else if (kojo.壶虫着脱 < 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(
+        `「突，突然拔出去…会，会痛的…啊，哈啊，为什么…有一种空虚的感觉……」`,
+      ); // :1983
+      kojo.壶虫着脱 = 1; // :1984
+    }
+    return 0; // :1984-1986
   }
 
   return 0;
