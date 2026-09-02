@@ -71,8 +71,11 @@ const SEGMENT_MIN = 4;
 // #183 增补：参数可空（PRINTL 空行、PRINTW 空行等待——DUNGEON_RYOUZYOKU_MAN
 // 的 :175 PRINTL 与 :197 PRINTW 空行）。`[ \t]+` 只吃半角空白，全角空格是
 // 参数内容（如 `PRINTFORMW` 后接全角空格开头的文本，参数以全角空格开头，#183 实测）。
+// 源全篇约定用大写关键字，但 Emuera 关键字本身大小写不敏感（K9 :186 转译器
+// 未识别的小写 printformw 是实证——引擎接受，人工补译时保留了原样大小写，
+// 不应据此误判为「不是 PRINT 系行」，锚覆盖锁因此要能识别，#240）。
 const PRINTFORM_RE =
-  /^\s*PRINTFORM(W|L)?(?:[ \t]+(.*))?$|^\s*PRINT(W|L)?(?:[ \t]+(.*))?$/;
+  /^\s*PRINTFORM(W|L)?(?:[ \t]+(.*))?$|^\s*PRINT(W|L)?(?:[ \t]+(.*))?$/i;
 
 // —— 插值记号的归一表（ERB %…% → 归一名 ← JS ${…}） ——
 
@@ -473,10 +476,15 @@ function find_printform(erb_lines, n, m) {
   for (let i = n; i <= m; i += 1) {
     const match = erb_lines[i - 1]?.match(PRINTFORM_RE);
     if (match) {
-      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?
+      // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?（大小写不敏感匹配后统一转大写，
+      // 与下方 'W'/'L' 字面量比较口径一致，#240）
       const variant =
-        match[1] ||
-        (match[3] === 'W' ? 'W' : match[3] === 'L' ? 'L' : undefined);
+        (match[1] && match[1].toUpperCase()) ||
+        (match[3]?.toUpperCase() === 'W'
+          ? 'W'
+          : match[3]?.toUpperCase() === 'L'
+            ? 'L'
+            : undefined);
       const arg = match[2] ?? match[4] ?? '';
       return { line_no: i, variant, arg };
     }
@@ -794,7 +802,18 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
           // 保留前导空白——M81 守的正是「句中前导空格丢失」（#46）
           const needle = seg.trimEnd();
           const js_raw = stmt.raw.replace(/\$\{\s*'\\u3000'\s*\}/g, '\u3000');
-          if (!js_raw.includes(needle) && !stmt.raw.includes(needle)) {
+          // 反斜杠转义（如 \(￣▽￣)/ 这类颜文字要写 `\\` 才能在运行时求值出单个
+          // 反斜杠、字符串里的字面反引号要写 `` \` ``）在 JS 源里比 ERB 侧多算一
+          // 个反斜杠字符——stmt.raw 按源码字符逐个累积、不解转义（K9
+          // :1268/:1291/:1299/:1314 颜文字、:6236 字面反引号）。stmt.strings 的
+          // str_buf 已经在扫描时把「反斜杠+任意字符」折叠成该字符本身（见上方
+          // 扫描器），这里对 js_raw 做同一折叠，口径与反向检查一致（#240）。
+          const js_raw_unescaped = js_raw.replace(/\\(.)/g, '$1');
+          if (
+            !js_raw.includes(needle) &&
+            !stmt.raw.includes(needle) &&
+            !js_raw_unescaped.includes(needle)
+          ) {
             problems.push(
               `${where}: ERB 片段（归一后）未见于 JS：「${needle}」`,
             );
