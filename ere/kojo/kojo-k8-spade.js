@@ -1672,9 +1672,7 @@ async function kojo_message_com_8(rand) {
     return 0;
   }
 
-  const selectcom_ids = [
-    43, 44, 45, 46, 55, 56, 69, 80, 87, 123, 124, 125, 126, 127,
-  ];
+  const selectcom_ids = [55, 56, 69, 80, 87, 123, 124, 125, 126, 127];
   if (era_flag.selectcom == 0) {
     // :923-968 爱撫 CFLAG:301
     if (kojo.爱抚 == 0) {
@@ -7554,6 +7552,463 @@ async function kojo_message_com_8(rand) {
         `${target_name}带着有余裕的表情露出了沾满鲜血的身体………`,
       ); // :4222
       kojo.针 = 2; // :4223 CFLAG:TARGET:343 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`)) {
+    // :4233-4276 眼罩 CFLAG:344（開始時，TEQUIP:43 已装）
+    if (kojo.眼罩 == 0) {
+      // :4236-4237 初めて
+      await era.printAndWait(
+        `「呵呵呵、拷问也好调教也好、遮断感觉都是常用手段呢」`,
+      ); // :4236
+      await era.printAndWait(`${target_name}呼的一笑，戴上了眼罩………`); // :4237
+      kojo.眼罩 = 1; // :4238 CFLAG:TARGET:344 = 1
+      return 0;
+    }
+    // :4241-4274 二回目以降（八档：淫乱/爱两支各叠受虐狂っ気Lv5以上/Lv3以上/单独三级，加受虐狂っ気Lv3以上与それ以外）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.眼罩 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :4244 淫乱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「不光蒙眼…也用绳子把我帮上的话我会很高兴的…啊啊${heart(1)}」`,
+      ); // :4244
+      kojo.眼罩 = 9; // :4245 CFLAG:TARGET:344 = 9
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.眼罩 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :4248 淫乱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「蒙上眼的话…啊啊…敏感度好像确实提高了…」`); // :4248
+      kojo.眼罩 = 8; // :4249 CFLAG:TARGET:344 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.眼罩 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :4252 淫乱
+      await era.printAndWait(`「啊啊、好像兴奋起来了…」`); // :4252
+      kojo.眼罩 = 7; // :4253 CFLAG:TARGET:344 = 7
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.眼罩 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4256 爱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「不光蒙眼…也用绳子把我帮上的话我会很高兴的…啊啊${heart(1)}」`,
+      ); // :4256
+      kojo.眼罩 = 6; // :4257 CFLAG:TARGET:344 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.眼罩 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4260 爱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「蒙上眼的话…啊啊…敏感度好像确实提高了…」`); // :4260
+      kojo.眼罩 = 5; // :4261 CFLAG:TARGET:344 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.眼罩 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4264 爱慕
+      await era.printAndWait(`「想对我恶作剧吗？」`); // :4264
+      kojo.眼罩 = 4; // :4265 CFLAG:TARGET:344 = 4
+    } else if (
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.眼罩 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4268 受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊、蒙着眼真好…来吧、玩弄我的身体吧………♪」`); // :4268
+      kojo.眼罩 = 3; // :4269 CFLAG:TARGET:344 = 3
+    } else if (kojo.眼罩 <= 1 || game.kojo.口上开关 == 2) {
+      // :4272 それ以外
+      await era.printAndWait(`「呵呵呵、还要蒙着眼玩吗？」`); // :4272
+      kojo.眼罩 = 2; // :4273 CFLAG:TARGET:344 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`) == 0) {
+    // :4278-4292 眼罩 CFLAG:380（終了時，TEQUIP:43 已摘下；三档台词相同，仅推进门槛/CFLAG 不同）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.眼罩着脱 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4281 淫乱
+      await era.printAndWait(`「呵呵呵、玩得很高兴」`); // :4281
+      kojo.眼罩着脱 = 3; // :4282 CFLAG:380 = 3
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.眼罩着脱 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4285 爱慕
+      await era.printAndWait(`「呵呵呵、玩得很高兴」`); // :4285
+      kojo.眼罩着脱 = 2; // :4286 CFLAG:380 = 2
+    } else if (kojo.眼罩着脱 < 1 || game.kojo.口上开关 == 2) {
+      // :4287-4290 それ以外
+      await era.printAndWait(`「呵呵呵、玩得很高兴」`); // :4289
+      kojo.眼罩着脱 = 1; // :4290 CFLAG:380 = 1
+    }
+    return 0;
+  } else if (era_flag.selectcom == 44 && era0(`tequip:${target}:44`)) {
+    // :4299-4348 绳子 CFLAG:345（開始時，TEQUIP:44 已装；结构同 SELECTCOM 43 眼罩八档）
+    if (kojo.绳子 == 0) {
+      // :4302-4303 初めて
+      await era.printAndWait(`「呵呵呵、你束缚还真熟练呢」`); // :4302
+      await era.printAndWait(
+        `「啊啊…不过如果不绑的更紧的话，我很容易就能从绳子里出来哦？」`,
+      ); // :4303
+      kojo.绳子 = 1; // :4304 CFLAG:TARGET:345 = 1
+      return 0;
+    }
+    // :4307-4346 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.绳子 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :4310-4311 淫乱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「啊啊…更多的触碰…我被束缚的身体…啊嗯…感受我吧…${heart(1)}」`,
+      ); // :4310
+      await era.printAndWait(
+        `${target_name}的身体被绳子束缚住、乳房像要飞出来一样被绳子挤在一起………`,
+      ); // :4311
+      kojo.绳子 = 9; // :4312 CFLAG:TARGET:345 = 9
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.绳子 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :4315-4316 淫乱＋受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「啊啊…被这么紧的绑住的话…啊啊…就算是我也…${heart(1)}」`,
+      ); // :4315
+      await era.printAndWait(
+        `${target_name}被绳子束缚着，漏出了快融化一样的表情………`,
+      ); // :4316
+      kojo.绳子 = 8; // :4317 CFLAG:TARGET:345 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.绳子 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :4320-4321 淫乱
+      await era.printAndWait(`「呵呵呵、让我更尽兴吧♪」`); // :4320
+      await era.printAndWait(`${target_name}被绳子绑了起来………`); // :4321
+      kojo.绳子 = 7; // :4322 CFLAG:TARGET:345 = 7
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.绳子 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4325-4326 爱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「喂…我漂亮吗…？ 被你用绳子绑起来…啊啊…没法反抗………${heart(1)}」`,
+      ); // :4325
+      await era.printAndWait(
+        `${target_name}的身体被绳子束缚住、乳房像要飞出来一样被绳子挤在一起………`,
+      ); // :4326
+      kojo.绳子 = 6; // :4327 CFLAG:TARGET:345 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.绳子 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4330-4331 爱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊…被绑起来的话…我也、啊…${heart(1)}」`); // :4330
+      await era.printAndWait(
+        `${target_name}被绳子束缚着，漏出了快融化一样的表情………`,
+      ); // :4331
+      kojo.绳子 = 5; // :4332 CFLAG:TARGET:345 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.绳子 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4335-4336 爱慕
+      await era.printAndWait(
+        `「啊啊…如果是以前我很快就能从绳子里出来…被你绑的话就什么都办不到了………」`,
+      ); // :4335
+      await era.printAndWait(`${target_name}因为被绳子绑着而陶醉着………`); // :4336
+      kojo.绳子 = 4; // :4337 CFLAG:TARGET:345 = 4
+    } else if (
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.绳子 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4340-4341 受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊啊、绳子勒得好紧…啊啊…」`); // :4340
+      await era.printAndWait(`${target_name}因为被绳子绑着而陶醉着………`); // :4341
+      kojo.绳子 = 3; // :4342 CFLAG:TARGET:345 = 3
+    } else if (kojo.绳子 <= 1 || game.kojo.口上开关 == 2) {
+      // :4345 それ以外
+      await era.printAndWait(
+        `「嗯…呵呵呵、果然被这么紧的绑住的话…啊啊…还真是逃不了呢」`,
+      ); // :4345
+      kojo.绳子 = 2; // :4345 CFLAG:TARGET:345 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 44 && era0(`tequip:${target}:44`) == 0) {
+    // :4351-4364 绳子 CFLAG:385（終了時，TEQUIP:44 已解开；淫乱/爱慕同档 <2，それ以外 <1）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4354 淫乱
+      await era.printAndWait(`「啊嗯…还不要解开绳子啊！」`); // :4354
+      kojo.绳子着脱 = 2; // :4355 CFLAG:385 = 2
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4358 爱慕
+      await era.printAndWait(`「明明还想继续被绑起来…」`); // :4358
+      kojo.绳子着脱 = 2; // :4359 CFLAG:385 = 2
+    } else if (kojo.绳子着脱 < 1 || game.kojo.口上开关 == 2) {
+      // :4361-4362 それ以外
+      await era.printAndWait(`「这就解开了么？」`); // :4362
+      kojo.绳子着脱 = 1; // :4363 CFLAG:385 = 1
+    }
+    return 0;
+  } else if (era_flag.selectcom == 45 && era0(`tequip:${target}:45`)) {
+    // :4372-4456 口塞 CFLAG:346（開始時，TEQUIP:45 已装；结构同 SC43/44 八档，
+    // 上六档各嵌一层 IF TEQUIP:43（眼罩）分岔追加句尾——PRINTFORM 不换行不等待，
+    // 接续的 PRINTW 才等待，两者拼成一整句）
+    if (kojo.口塞 == 0) {
+      // :4375 初めて
+      await era.printAndWait(
+        `「啊啊…就这样让我戴上口枷…要做很过分的事吗………♪」`,
+      ); // :4375
+      kojo.口塞 = 1; // :4376 CFLAG:TARGET:346 = 1
+      return 0;
+    }
+    // :4379-4454 二回目以降
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.口塞 <= 8 || game.kojo.口上开关 == 2)
+    ) {
+      // :4382-4388 淫乱＋受虐狂っ気Lv5以上
+      await era.printAndWait(
+        `「我舒服起来之后一直都很吵呢…没办法呢……${heart(1)}」`,
+      ); // :4382
+      await era.print(`${target_name}自己戴上了口枷`); // :4383
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4385
+      } else {
+        await era.printAndWait(`眼神快融化了………`); // :4387
+      }
+      kojo.口塞 = 9; // :4389 CFLAG:TARGET:346 = 9
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.口塞 <= 7 || game.kojo.口上开关 == 2)
+    ) {
+      // :4392-4398 淫乱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊啊、带上这个…总觉得怪怪的…嗯咕………」`); // :4392
+      await era.print(`${target_name}被按上了口塞`); // :4393
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4395
+      } else {
+        await era.printAndWait(`眼神快融化了………`); // :4397
+      }
+      kojo.口塞 = 8; // :4399 CFLAG:TARGET:346 = 8
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.口塞 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :4402-4408 淫乱
+      await era.printAndWait(`「我的嘴想要的明明不是这个…嗯…嗯咕…」`); // :4402
+      await era.print(`${target_name}被戴上了口塞`); // :4403
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4405
+      } else {
+        await era.printAndWait(`皱着眉看着${player_name}………`); // :4407
+      }
+      kojo.口塞 = 7; // :4409 CFLAG:TARGET:346 = 7
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 5 &&
+      (kojo.口塞 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4412-4418 爱＋受虐狂っ気Lv5以上
+      await era.printAndWait(`「啊嗯…恩…嗯咕………！」`); // :4412
+      await era.print(`${target_name}被按上了口塞`); // :4413
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4415
+      } else {
+        // :4417 与上两档"眼神快融化了………"不同，此处缺"了"字（源作误写，1:1 保真）
+        await era.printAndWait(`眼神快融化………`); // :4417
+      }
+      kojo.口塞 = 6; // :4419 CFLAG:TARGET:346 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.口塞 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4422-4428 爱＋受虐狂っ気Lv3以上
+      await era.printAndWait(`「啊嗯…恩…嗯咕………！」`); // :4422
+      await era.print(`${target_name}被按上了口塞`); // :4423
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4425
+      } else {
+        await era.printAndWait(`眼神快融化………`); // :4427
+      }
+      kojo.口塞 = 5; // :4429 CFLAG:TARGET:346 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.口塞 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4432-4438 爱慕
+      await era.printAndWait(`「啊嗯…恩…嗯咕………！」`); // :4432
+      await era.print(`${target_name}被按上了口塞`); // :4433
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4435
+      } else {
+        await era.printAndWait(`皱着眉看着${player_name}………`); // :4437
+      }
+      kojo.口塞 = 4; // :4439 CFLAG:TARGET:346 = 4
+    } else if (
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.口塞 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4442-4448 受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「嗯啊…被装上口枷的话，总觉得脑袋都要变成傻瓜了………」`,
+      ); // :4442
+      await era.print(`${target_name}被按上了口塞`); // :4443
+      if (era0(`tequip:${target}:43`)) {
+        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4445
+      } else {
+        await era.printAndWait(`眼神快融化………`); // :4447
+      }
+      kojo.口塞 = 3; // :4449 CFLAG:TARGET:346 = 3
+    } else if (kojo.口塞 <= 1 || game.kojo.口上开关 == 2) {
+      // :4452-4453 それ以外
+      await era.printAndWait(`「啊咕…嗯…」`); // :4452
+      await era.printAndWait(
+        `${target_name}被口塞堵住的嘴的缝隙里，漏出了声音………`,
+      ); // :4453
+      kojo.口塞 = 2; // :4454 CFLAG:TARGET:346 = 2
+    }
+    return 0;
+  } else if (era_flag.selectcom == 45 && era0(`tequip:${target}:45`) == 0) {
+    // :4459-4476 口塞 CFLAG:386（終了時，TEQUIP:45 已取下；三档台词相同，仅推进门槛/CFLAG 不同）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.口塞着脱 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4462-4463 淫乱
+      await era.printAndWait(`「啊啊…嗯…嗯啊………」`); // :4462
+      await era.printAndWait(`取下了口塞的${target_name}的嘴里，流下了唾液………`); // :4463
+      kojo.口塞着脱 = 3; // :4464 CFLAG:386 = 3
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.口塞着脱 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4467-4468 爱慕
+      await era.printAndWait(`「啊啊…嗯…嗯啊………」`); // :4467
+      await era.printAndWait(`取下了口塞的${target_name}的嘴里，流下了唾液………`); // :4468
+      kojo.口塞着脱 = 2; // :4469 CFLAG:386 = 2
+    } else if (kojo.口塞着脱 < 1 || game.kojo.口上开关 == 2) {
+      // :4472-4473 それ以外
+      await era.printAndWait(`「呼啊…嗯啊…」`); // :4472
+      await era.printAndWait(`取下了口塞的${target_name}的嘴里，流下了唾液………`); // :4473
+      kojo.口塞着脱 = 1; // :4474 CFLAG:386 = 1
+    }
+    return 0;
+  } else if (era_flag.selectcom == 46 && era0(`tequip:${target}:46`)) {
+    // :4483-4529 灌肠肛塞 CFLAG:347（開始時，TEQUIP:46 已装；源作无終了時分支，仅此一档）
+    if (kojo.灌肠肛塞 == 0) {
+      // :4486-4488 初めて
+      await era.printAndWait(
+        `「啊啊…嗯啊啊啊…！肚子…啊啊啊…好痛苦…嗯…嗯…快…快停下！」`,
+      ); // :4486
+      await era.printAndWait(
+        `就算是${target_name}，被这样大量的灌肠也开始哭着请求${player_name}的原谅。`,
+      ); // :4487
+      await era.printAndWait(`「求、求你了…至少…厕所…呀…啊咕！」`); // :4488
+      kojo.灌肠肛塞 = 1; // :4489 CFLAG:TARGET:347 = 1
+      return 0;
+    }
+    // :4492-4527 二回目以降（六档：淫乱＋A感觉Lv3以上＋受虐狂っ気Lv3以上(7)/淫乱(6)/爱＋A感觉Lv3以上＋受虐狂っ気Lv3以上(5)/爱慕(4)/A感觉Lv3以上＋受虐狂っ気Lv3以上(3)/それ以外(2)）
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 == 2)
+    ) {
+      // :4495-4497 淫乱＋A感觉Lv3以上＋受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「啊啊！继续…继续把灌肠液灌进来！到我的肚子撑起来为止${heart(1)}」`,
+      ); // :4495
+      await era.printAndWait(
+        `${player_name}如${target_name}所愿一次次的灌着肠、插着肛塞的肛门附近，肚子越来越鼓。`,
+      ); // :4496
+      await era.printAndWait(
+        `「啊啊…啊啊啊…这个拔掉的话…会很厉害的喷出来吧…啊啊…啊啊嗯啊${heart(1)}」`,
+      ); // :4497
+      kojo.灌肠肛塞 = 7; // :4498 CFLAG:347 = 7
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.灌肠肛塞 <= 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4501-4503 淫乱
+      await era.printAndWait(`「啊呜…肚子…啊啊…这么…难受…啊啊…嗯啊啊…」`); // :4501
+      await era.printAndWait(
+        `${target_name}带着痛苦的表情忍耐着灌肠液的热度。`,
+      ); // :4502
+      await era.printAndWait(`「啊啊…我最害羞的地方…被盯着…啊啊啊………」`); // :4503
+      kojo.灌肠肛塞 = 6; // :4504 CFLAG:347 = 6
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      era0(`abl:${target}:3`) >= 3 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4507-4509 爱＋A感觉Lv3以上＋受虐狂っ気Lv3以上
+      // :4507 "全时灌肠液"应为"全是灌肠液"（源作误写，1:1 保真）
+      await era.printAndWait(
+        `「啊…啊嗯嗯！肚子里…全时灌肠液…嗯啊…这样我还有感觉什么的…${heart(1)}」`,
+      ); // :4507
+      await era.printAndWait(
+        `${target_name}一边喘着粗气一边感受着灌肠液的刺激。`,
+      ); // :4508
+      await era.printAndWait(
+        `「啊啊…你的话即使要看我最害羞的地方…啊啊也可以啊！」`,
+      ); // :4509
+      kojo.灌肠肛塞 = 5; // :4510 CFLAG:347 = 5
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.灌肠肛塞 <= 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4513-4515 爱慕
+      await era.printAndWait(`「啊啊…求你了…只、只有你…啊啊不想让你看见！」`); // :4513
+      await era.printAndWait(
+        `${target_name}一边流着泪，一边恳求着${player_name}。`,
+      ); // :4514
+      await era.printAndWait(`「啊咕…灌、灌肠液好热！…啊啊…啊啊咕！」`); // :4515
+      kojo.灌肠肛塞 = 4; // :4516 CFLAG:347 = 4
+    } else if (
+      era0(`abl:${target}:3`) >= 3 &&
+      era0(`abl:${target}:21`) >= 3 &&
+      (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4519-4521 A感觉Lv3以上＋受虐狂っ気Lv3以上
+      await era.printAndWait(
+        `「嗯啊…啊嗯！…我的肚子…啊啊…咕噜咕噜的响着…啊啊…啊嗯嗯嗯——！」`,
+      ); // :4519
+      await era.printAndWait(
+        `${target_name}在灌肠液的刺激下，一边流着汗，一边漏出了喘息。`,
+      ); // :4520
+      await era.printAndWait(`而插上肛塞的时候，发出的声音格外的响………`); // :4521
+      kojo.灌肠肛塞 = 3; // :4522 CFLAG:347 = 3
+    } else if (kojo.灌肠肛塞 <= 1 || game.kojo.口上开关 == 2) {
+      // :4525-4526 それ以外
+      await era.printAndWait(`「不要…啊啊不要！啊啊…！不要这样！」`); // :4525
+      await era.printAndWait(
+        `${target_name}和想起了以前的屈辱而哭泣着，${player_name}毫不留情的灌了肠，并把肛塞塞进了肛门………`,
+      ); // :4526
+      kojo.灌肠肛塞 = 2; // :4527 CFLAG:347 = 2
     }
     return 0;
   } else if (selectcom_ids.includes(era_flag.selectcom)) {
