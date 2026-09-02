@@ -3185,4 +3185,55 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: 'NTR：P==20 公开生产按 CFLAG:102 分岔，且本支不记位',
   },
+  {
+    desc: 'M1988 K8 EXUCUTION 首档守卫写错（TFLAG:16 == 4 改 == 3，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  if (game.event.犬射精或处刑口上 == 4) {',
+    replace: '  if (game.event.犬射精或处刑口上 == 3) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'TFLAG:16==4 肉便器刑',
+  },
+  {
+    desc: 'M1989 K8 MUSEUM 蜡人形档值被「修正」成 2（源作是 21，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (game.event.博物馆口上 == 21) {',
+    replace: '  } else if (game.event.博物馆口上 == 2) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '蝋人形化档值 21（源作如此）',
+  },
+  {
+    desc: 'M1990 K8 BANISHMENT 追放档守卫写错（TFLAG:510 == 0 改 == 1，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  if (game.event.流放口上 == 0) {',
+    replace: '  if (game.event.流放口上 == 1) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'BANISHMENT：TFLAG:510 追放有词，其余四档空行',
+  },
+  {
+    desc: 'M1991 K8 PUBLIC_EXUCUTION 魂粉砕档（源作空台词）被删（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '  } else if (game.event.公开处刑口上 == 2) {\n' +
+      '    // :7688 魂粉砕（源作未填台词）\n' +
+      "    await era.printAndWait(''); // :7690",
+    replace: '  } else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'TFLAG:520==2 源作未填台词',
+  },
+  {
+    desc: 'M1992 K8 GROTESQUE 末档（TFLAG:530 == 6 ゾンビ化）丢失（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (game.event.猎奇处刑口上 == 6) {',
+    replace: '  } else if (false) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'TFLAG:530==6 源作未填台词，只出空行',
+  },
+  {
+    desc: 'M1993 K8 ENTERENEMY 爱慕档守卫丢失（TALENT:85 == 1 改恒真，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (era0(`talent:${a}:85`) == 1) {',
+    replace: '  } else if (true) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一',
+  },
 ];

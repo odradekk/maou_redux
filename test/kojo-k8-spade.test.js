@@ -4387,6 +4387,166 @@ test('NTR：P==20 公开生产按 CFLAG:102 分岔，且本支不记位', async 
   ]);
 });
 
+// —— 结局/处刑六函数（EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION /
+//    GROTESQUE / ENTERENEMY） ——
+
+async function speak_family_k8(fixture, family_name, args = []) {
+  const family = fixture.load_module('kojo/kojo-system')[family_name];
+  return family.call(8, { args });
+}
+
+test('EXUCUTION：TFLAG:16 四档，第 7 档源作未填只出空行；档外静默', async () => {
+  const benki = await setup_k8((f) => {
+    f.store.set('tflag:16', 4);
+  });
+  await speak_family_k8(benki, 'exucution_koujo_family');
+  assert.deepEqual(
+    benki.text_lines(),
+    [
+      '「怎么这样…我一生都要不停的给怪物生孩子什么的…啊…不要，放开我…啊啊啊啊啊啊啊！」',
+    ],
+    'TFLAG:16==4 肉便器刑',
+  );
+
+  const senuin = await setup_k8((f) => {
+    f.store.set('tflag:16', 5);
+  });
+  await speak_family_k8(senuin, 'exucution_koujo_family');
+  assert.deepEqual(
+    senuin.text_lines(),
+    ['「什么都好…命令…为了…主人大人………」'],
+    'TFLAG:16==5 战斗员化',
+  );
+
+  const erase = await setup_k8((f) => {
+    f.store.set('tflag:16', 7);
+  });
+  await speak_family_k8(erase, 'exucution_koujo_family');
+  assert.deepEqual(erase.text_lines(), [''], 'TFLAG:16==7 源作未填台词');
+
+  const oob = await setup_k8((f) => {
+    f.store.set('tflag:16', 3);
+  });
+  await speak_family_k8(oob, 'exucution_koujo_family');
+  assert.deepEqual(oob.text_lines(), [], 'TFLAG:16 档外静默');
+});
+
+test('MUSEUM：TFLAG:500 石化/剥制有词，蜡人形档值是 21（非 2）', async () => {
+  const stone = await setup_k8((f) => {
+    f.store.set('tflag:500', 0);
+  });
+  await speak_family_k8(stone, 'museum_koujo_family');
+  assert.deepEqual(stone.text_lines(), [
+    '「啊啊…我、我的身体…变得越来越冷了…啊…啊啊…不要…不………要…………」',
+  ]);
+
+  const stuffed = await setup_k8((f) => {
+    f.store.set('tflag:500', 1);
+  });
+  await speak_family_k8(stuffed, 'museum_koujo_family');
+  assert.deepEqual(stuffed.text_lines(), [
+    '「死了之后还一直暴露着…呜…呜呜呜………」',
+  ]);
+
+  const wax = await setup_k8((f) => {
+    f.store.set('tflag:500', 21);
+  });
+  await speak_family_k8(wax, 'museum_koujo_family');
+  assert.deepEqual(wax.text_lines(), [''], '蝋人形化档值 21（源作如此）');
+
+  const two = await setup_k8((f) => {
+    f.store.set('tflag:500', 2);
+  });
+  await speak_family_k8(two, 'museum_koujo_family');
+  assert.deepEqual(
+    two.text_lines(),
+    [],
+    'TFLAG:500==2 无对应档（21 不是笔误）',
+  );
+});
+
+test('BANISHMENT：TFLAG:510 追放有词，其余四档空行', async () => {
+  const banish = await setup_k8((f) => {
+    f.store.set('tflag:510', 0);
+  });
+  await speak_family_k8(banish, 'banishment_koujo_family');
+  assert.deepEqual(banish.text_lines(), [
+    '「这样就自由了…但是、失去力量的我的存在价值………」',
+  ]);
+
+  const male = await setup_k8((f) => {
+    f.store.set('tflag:510', 1);
+  });
+  await speak_family_k8(male, 'banishment_koujo_family');
+  assert.deepEqual(male.text_lines(), [''], 'TFLAG:510==1 源作未填台词');
+});
+
+test('PUBLIC_EXUCUTION：TFLAG:520 三档（0/1 有词，2 空行）', async () => {
+  const ryou = await setup_k8((f) => {
+    f.store.set('tflag:520', 0);
+  });
+  await speak_family_k8(ryou, 'public_exucution_koujo_family');
+  assert.deepEqual(ryou.text_lines(), [
+    '「那个烙印是…啊…停、停下快停下…呀…啊…啊呀啊啊啊啊啊啊啊啊！」',
+  ]);
+
+  const hang = await setup_k8((f) => {
+    f.store.set('tflag:520', 1);
+  });
+  await speak_family_k8(hang, 'public_exucution_koujo_family');
+  assert.deepEqual(hang.text_lines(), [
+    '「能不能至少给我套个皮革袋子、我不想漏出可怜的死相…呜…呜呜呜呜………」',
+  ]);
+
+  const soul = await setup_k8((f) => {
+    f.store.set('tflag:520', 2);
+  });
+  await speak_family_k8(soul, 'public_exucution_koujo_family');
+  assert.deepEqual(soul.text_lines(), [''], 'TFLAG:520==2 源作未填台词');
+});
+
+test('GROTESQUE：TFLAG:530 七档源作全未填，逐档只出空行；档外静默', async () => {
+  for (const lv of [0, 1, 2, 3, 4, 5, 6]) {
+    const fixture = await setup_k8((f) => {
+      f.store.set('tflag:530', lv);
+    });
+    await speak_family_k8(fixture, 'grotesque_koujo_family');
+    assert.deepEqual(
+      fixture.text_lines(),
+      [''],
+      `TFLAG:530==${lv} 源作未填台词，只出空行`,
+    );
+  }
+
+  const oob = await setup_k8((f) => {
+    f.store.set('tflag:530', 7);
+  });
+  await speak_family_k8(oob, 'grotesque_koujo_family');
+  assert.deepEqual(oob.text_lines(), [], 'TFLAG:530==7 档外静默');
+});
+
+test('ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一', async () => {
+  const inran = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_family_k8(inran, 'enterenemy_koujo_family');
+  assert.deepEqual(inran.text_lines(), [
+    '「想看我被怪物轮奸什么的，魔王大人的趣味还真令人困扰啊♡」',
+  ]);
+
+  const aibo = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_family_k8(aibo, 'enterenemy_koujo_family');
+  assert.deepEqual(aibo.text_lines(), ['「现在…就去见你魔王大人♪」']);
+
+  const other = await setup_k8();
+  await speak_family_k8(other, 'enterenemy_koujo_family');
+  assert.deepEqual(other.text_lines(), [
+    '「还真是好久没有只身一人潜入迷宫了呢」',
+  ]);
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
