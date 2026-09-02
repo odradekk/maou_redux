@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-2278',
+        ref: '786-2364',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -6942,6 +6942,275 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
         ref: '2275-2277',
         any: [/^\s*CFLAG:375 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2284-2364',
+        any: [
+          /^\s*IF SELECTCOM == 15 && TEQUIP:15\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:316 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『接下来就让姐姐的乳头和这个新玩具合体吧、魔王大人会喜欢姐姐这个样子的哦♪』\s*$\s*^\s*PRINTFORMW 「什，什么合体…啊啊啊…为什么…还会震动的！」\s*$\s*^\s*PRINTFORMW 『姐姐的乳头马上就挺立起来了呢。这么快就已经感觉到舒服了吗，姐姐的胸部果然是弱点呢%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2286-2308',
+        any: [
+          /^\s*IF CFLAG:316 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『接下来就让姐姐的乳头和这个新玩具合体吧、魔王大人会喜欢姐姐这个样子的哦♪』\s*$\s*^\s*PRINTFORMW 「什，什么合体…啊啊啊…为什么…还会震动的！」\s*$\s*^\s*PRINTFORMW 『姐姐的乳头马上就挺立起来了呢。这么快就已经感觉到舒服了吗，姐姐的胸部果然是弱点呢%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2307',
+        any: [/^\s*CFLAG:316 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2289',
+        any: [
+          /^\s*PRINTFORMW 『接下来就让姐姐的乳头和这个新玩具合体吧、魔王大人会喜欢姐姐这个样子的哦♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2290',
+        any: [
+          /^\s*PRINTFORMW 「什，什么合体…啊啊啊…为什么…还会震动的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2291',
+        any: [
+          /^\s*PRINTFORMW 『姐姐的乳头马上就挺立起来了呢。这么快就已经感觉到舒服了吗，姐姐的胸部果然是弱点呢%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2295',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊啊%UNICODE\(0x2661\) \*1% 这个是…？夹在乳头上…感觉还挺合适的…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2296',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%摇晃着自己的丰满双乳，炫耀般地向你展示着乳头上的“新饰品”………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2299',
+        any: [
+          /^\s*PRINTFORMW 「哈，哈啊…这个…还会震动的…不过，好，好舒服…呼，呼，魔王大人…我这样…好看吗%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2300',
+        any: [
+          /^\s*PRINTFORMW 听着%SAVESTR:PLAYER%的称赞、%SAVESTR:TARGET%露出了欣慰的笑容，随即沦陷在乳头夹的刺激带来的快感中…\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2303',
+        any: [
+          /^\s*PRINTFORMW 「这…这是什么啊啊…乳，乳头会坏掉的！拿下来，拿下来呃啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2304',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%忍受着着夹子对乳头施以的强烈震动刺激，不住地哀鸣着，全身都颤抖了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2307-2308',
+        any: [/^\s*CFLAG:316 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2310-2347',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1 && \(CFLAG:316 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 『很般配哦，姐姐粉红色的乳头，戴上这个夹子后更色情了♪』\s*$\s*^\s*PRINTFORMW 「哈…哈啊…又，又开始震动了…姐姐的乳头挺立起来了…感觉实在是…太棒了啊啊…啊啊%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*CFLAG:316 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2315',
+        any: [
+          /^\s*PRINTFORMW 『很般配哦，姐姐粉红色的乳头，戴上这个夹子后更色情了♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2316',
+        any: [
+          /^\s*PRINTFORMW 「哈…哈啊…又，又开始震动了…姐姐的乳头挺立起来了…感觉实在是…太棒了啊啊…啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2316-2317',
+        any: [
+          /^\s*PRINTFORMW 「哈…哈啊…又，又开始震动了…姐姐的乳头挺立起来了…感觉实在是…太棒了啊啊…啊啊%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*CFLAG:316 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2320',
+        any: [
+          /^\s*PRINTFORMW 『这可是魔王大人赏赐的饰品哦，姐姐还不高高兴兴地戴上%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2321',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…哈啊%UNICODE\(0x2661\) \*1% 谢…谢谢魔王大人…啊啊…感觉…好兴奋…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2321-2322',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…哈啊%UNICODE\(0x2661\) \*1% 谢…谢谢魔王大人…啊啊…感觉…好兴奋…%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*CFLAG:316 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2325',
+        any: [
+          /^\s*PRINTFORMW 『今天也继续用这个来调教，开发姐姐的乳头吧%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2326',
+        any: [/^\s*PRINTFORMW 「住，住手啊！乳头…真的会坏掉的啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2326-2327',
+        any: [
+          /^\s*PRINTFORMW 「住，住手啊！乳头…真的会坏掉的啊！」\s*$\s*^\s*CFLAG:316 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2332',
+        any: [
+          /^\s*PRINTFORMW 「啊啊…嗯啊啊%UNICODE\(0x2661\) \*1% 我的乳头…要是坏掉了…你可要…负责人…哈啊…啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2333',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着夹子对乳头的强烈刺激带来的极度快感，泪水和口水都流了下来，带着仿佛要融化了一般的表情望着%SAVESTR:PLAYER%…\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2333-2334',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着夹子对乳头的强烈刺激带来的极度快感，泪水和口水都流了下来，带着仿佛要融化了一般的表情望着%SAVESTR:PLAYER%…\s*$\s*^\s*CFLAG:316 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2337',
+        any: [
+          /^\s*PRINTFORMW 「%SAVESTR:TARGET%更…更希望魔王大人亲自…用嘴…和手指…调教…疼爱%SAVESTR:TARGET%的乳头%UNICODE\(0x2661\) \*1%，这，这种道具…根本比不上…啊啊啊…哈啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2338',
+        any: [
+          /^\s*PRINTFORMW 面对%SAVESTR:TARGET%的请求，%SAVESTR:PLAYER%置若罔闻地调高了乳头夹的震动强度，让%SAVESTR:TARGET%再度沦陷在乳头夹的刺激带来的快感中………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2338-2339',
+        any: [
+          /^\s*PRINTFORMW 面对%SAVESTR:TARGET%的请求，%SAVESTR:PLAYER%置若罔闻地调高了乳头夹的震动强度，让%SAVESTR:TARGET%再度沦陷在乳头夹的刺激带来的快感中………\s*$\s*^\s*CFLAG:316 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2342',
+        any: [
+          /^\s*PRINTFORMW 「不要，不要啊啊 ！好难受……好难受…乳头…会坏掉的啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2343',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的乳头被夹上夹子，打开震动开关，进行着连续不断的，夹杂着痛苦与快感的刺激……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2343-2344',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的乳头被夹上夹子，打开震动开关，进行着连续不断的，夹杂着痛苦与快感的刺激……\s*$\s*^\s*CFLAG:316 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2344-2347',
+        any: [
+          /^\s*CFLAG:316 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2350-2363',
+        any: [
+          /^\s*ELSEIF SELECTCOM == 15 && TEQUIP:15 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:376 < 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哈…哈啊…乳头…变得越来越敏感了…%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*CFLAG:376 = 3\s*$\s*^\s*;爱慕\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:376 < 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「夹子拿掉后…乳头还是有点…痛…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2353',
+        any: [
+          /^\s*PRINTFORMW 「哈…哈啊…乳头…变得越来越敏感了…%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2354',
+        any: [/^\s*CFLAG:376 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2357',
+        any: [/^\s*PRINTFORMW 「夹子拿掉后…乳头还是有点…痛…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2358',
+        any: [/^\s*CFLAG:376 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2361',
+        any: [/^\s*PRINTFORMW 「啊啊啊…乳头肿起来了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2362',
+        any: [/^\s*CFLAG:376 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2362-2363',
+        any: [/^\s*CFLAG:376 = 1\s*$\s*^\s*ENDIF\s*$/m],
       },
     ],
   },

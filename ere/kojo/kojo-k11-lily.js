@@ -2,7 +2,7 @@
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
  *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12/13/14，issue #242，WIP 续轮，进行中）。
+ *       11/12/13/14/15，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,17 +12,18 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14 十四支
- *     :786-2278——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/
- *     振动宝石/壶虫/振动杖/肛门虫/阴蒂夹，各含初めて/二回目以降、助手玛奥/
- *     非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13，
- *     SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0，SELECTCOM 11 另含
- *     TEQUIP:11 装备/脱着两态（脱着时用独立 CFLAG:372 计数，且初めて阶段
- *     自身再按处女/非处女分岔文案），SELECTCOM 12 结构与 SELECTCOM 9 同构
- *     （淫乱→爱慕→屈服刻印Lv3→それ以外简单四选，不含组合判据），
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15 十五支
+ *     :786-2364——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/
+ *     振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹，各含初めて/二回目以降、
+ *     助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属分支
+ *     TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0，SELECTCOM 11
+ *     另含 TEQUIP:11 装备/脱着两态（脱着时用独立 CFLAG:372 计数，且初めて
+ *     阶段自身再按处女/非处女分岔文案），SELECTCOM 12 结构与 SELECTCOM 9
+ *     同构（淫乱→爱慕→屈服刻印Lv3→それ以外简单四选，不含组合判据），
  *     SELECTCOM 13 另含 TEQUIP:13 装备/脱着两态（脱着时用独立 CFLAG:374
  *     计数，二回目以降层淫乱/爱慕各再按 A感覚Lv3以上二分，六选一档），
- *     SELECTCOM 14 结构与 SELECTCOM 9/12 同构（简单四选，不含组合判据）
+ *     SELECTCOM 14/15 结构均与 SELECTCOM 9/12 同构（简单四/三选，不含
+ *     组合判据）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -30,8 +31,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 83.1%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 15 起（源文件第 2285 至 10657 行，约 39 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 82.5%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 16 起（源文件第 2371 至 10657 行，约 38 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -54,12 +55,12 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 1066 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
- * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12/13/14（本轮新增九支）起改用
+ * trace-refs/kojo-k11-lily.mjs 的 1107 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12/13/14/15（本轮新增十支）起改用
  * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
  * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：984 条恰好命中 1 行/1 段，可视为具备真实
+ * 条锚在源全文里做精确子串计数：1025 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
  * 82 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
@@ -77,7 +78,7 @@
  * 助手玛奥二回目以降淫乱/爱慕两支共用同一句反问台词）；2 条来自 SELECTCOM
  * 14（:2209/2246，淫乱初めて分支与二回目以降非助手玛奥分支共用同一句
  * 阴蒂夹刺激描写）。SELECTCOM
- * 3/5/6/7/8/9/10/11/12/13/14 内非 print 语句
+ * 3/5/6/7/8/9/10/11/12/13/14/15 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
@@ -1308,6 +1309,13 @@ on(
  * 玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
  * 按「淫乱→爱慕→それ以外」写 4/3/2，两支结构对称。脱着态（TEQUIP:14 ==
  * 0）是独立三选一（淫乱/爱慕/それ以外），用另一枚 CFLAG:375 计数，写
+ * 3/2/1，无助手玛奥分档。
+ *
+ * SELECTCOM 15（乳头夹 CFLAG:316／着脱 CFLAG:376，:2284-2364）：结构与
+ * SELECTCOM 9/12/14 同构（不含组合判据）。初めて（CFLAG:316 == 0）按「助手
+ * 玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
+ * 按「淫乱→爱慕→それ以外」写 4/3/2，两支结构对称。脱着态（TEQUIP:15 ==
+ * 0）是独立三选一（淫乱/爱慕/それ以外），用另一枚 CFLAG:376 计数，写
  * 3/2/1，无助手玛奥分档。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
@@ -3955,6 +3963,143 @@ async function kojo_message_com_11(rand) {
       kojo.阴蒂夹着脱 = 1; // :2275
     }
     return 0; // :2275-2277
+  }
+
+  // :2284-2364 IF SELECTCOM == 15（乳头夹 CFLAG:316／着脱 CFLAG:376，
+  // TEQUIP:15 判定已装/未装两态）
+  if (era_flag.selectcom === 15) {
+    if (era.get(`tequip:${target}:15`)) {
+      // :2286-2308 初めて（CFLAG:316 == 0，开始时）
+      if (kojo.乳头夹 === 0) {
+        if (assi_mao) {
+          await era.printAndWait(
+            `『接下来就让姐姐的乳头和这个新玩具合体吧、魔王大人会喜欢姐姐这个样子的哦♪』`,
+          ); // :2289
+          await era.printAndWait(`「什，什么合体…啊啊啊…为什么…还会震动的！」`); // :2290
+          await era.printAndWait(
+            `『姐姐的乳头马上就挺立起来了呢。这么快就已经感觉到舒服了吗，姐姐的胸部果然是弱点呢${heart(1)}』`,
+          ); // :2291
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            `「哈啊…啊啊${heart(1)} 这个是…？夹在乳头上…感觉还挺合适的…${heart(1)}」`,
+          ); // :2295
+          await era.printAndWait(
+            `${target_name}摇晃着自己的丰满双乳，炫耀般地向你展示着乳头上的“新饰品”………`,
+          ); // :2296
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            `「哈，哈啊…这个…还会震动的…不过，好，好舒服…呼，呼，魔王大人…我这样…好看吗${heart(1)}」`,
+          ); // :2299
+          await era.printAndWait(
+            `听着${player_name}的称赞、${target_name}露出了欣慰的笑容，随即沦陷在乳头夹的刺激带来的快感中…`,
+          ); // :2300
+        } else {
+          // それ以外
+          await era.printAndWait(
+            `「这…这是什么啊啊…乳，乳头会坏掉的！拿下来，拿下来呃啊啊啊！」`,
+          ); // :2303
+          await era.printAndWait(
+            `${target_name}忍受着着夹子对乳头施以的强烈震动刺激，不住地哀鸣着，全身都颤抖了起来。`,
+          ); // :2304
+        }
+        kojo.乳头夹 = 1; // :2307
+        return 0; // :2307-2308
+      }
+
+      // :2310-2347 二回目以降
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱
+          await era.printAndWait(
+            `『很般配哦，姐姐粉红色的乳头，戴上这个夹子后更色情了♪』`,
+          ); // :2315
+          await era.printAndWait(
+            `「哈…哈啊…又，又开始震动了…姐姐的乳头挺立起来了…感觉实在是…太棒了啊啊…啊啊${heart(1)}」`,
+          ); // :2316
+          kojo.乳头夹 = 4; // :2316-2317
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕
+          await era.printAndWait(
+            `『这可是魔王大人赏赐的饰品哦，姐姐还不高高兴兴地戴上${heart(1)}』`,
+          ); // :2320
+          await era.printAndWait(
+            `「哈啊…哈啊${heart(1)} 谢…谢谢魔王大人…啊啊…感觉…好兴奋…${heart(1)}」`,
+          ); // :2321
+          kojo.乳头夹 = 3; // :2321-2322
+        } else if (kojo.乳头夹 <= 1 || game.kojo.口上开关 === 2) {
+          // それ以外
+          await era.printAndWait(
+            `『今天也继续用这个来调教，开发姐姐的乳头吧${heart(1)}』`,
+          ); // :2325
+          await era.printAndWait(`「住，住手啊！乳头…真的会坏掉的啊！」`); // :2326
+          kojo.乳头夹 = 2; // :2326-2327
+        }
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `「啊啊…嗯啊啊${heart(1)} 我的乳头…要是坏掉了…你可要…负责人…哈啊…啊啊啊${heart(1)}」`,
+        ); // :2332
+        await era.printAndWait(
+          `${target_name}感受着夹子对乳头的强烈刺激带来的极度快感，泪水和口水都流了下来，带着仿佛要融化了一般的表情望着${player_name}…`,
+        ); // :2333
+        kojo.乳头夹 = 4; // :2333-2334
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          `「${target_name}更…更希望魔王大人亲自…用嘴…和手指…调教…疼爱${target_name}的乳头${heart(1)}，这，这种道具…根本比不上…啊啊啊…哈啊」`,
+        ); // :2337
+        await era.printAndWait(
+          `面对${target_name}的请求，${player_name}置若罔闻地调高了乳头夹的震动强度，让${target_name}再度沦陷在乳头夹的刺激带来的快感中………`,
+        ); // :2338
+        kojo.乳头夹 = 3; // :2338-2339
+      } else if (kojo.乳头夹 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(
+          `「不要，不要啊啊 ！好难受……好难受…乳头…会坏掉的啊啊啊！」`,
+        ); // :2342
+        await era.printAndWait(
+          `${target_name}的乳头被夹上夹子，打开震动开关，进行着连续不断的，夹杂着痛苦与快感的刺激……`,
+        ); // :2343
+        kojo.乳头夹 = 2; // :2343-2344
+      }
+      return 0; // :2344-2347
+    }
+
+    // :2350-2363 脱着時（TEQUIP:15 == 0）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.乳头夹着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(`「哈…哈啊…乳头…变得越来越敏感了…${heart(1)}」`); // :2353
+      kojo.乳头夹着脱 = 3; // :2354
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.乳头夹着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(`「夹子拿掉后…乳头还是有点…痛…」`); // :2357
+      kojo.乳头夹着脱 = 2; // :2358
+    } else if (kojo.乳头夹着脱 < 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「啊啊啊…乳头肿起来了……」`); // :2361
+      kojo.乳头夹着脱 = 1; // :2362
+    }
+    return 0; // :2362-2363
   }
 
   return 0;
