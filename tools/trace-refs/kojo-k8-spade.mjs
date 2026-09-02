@@ -25200,6 +25200,568 @@ export const FILES = [
         ref: '7294',
         any: [/PRINTFORMW 「啊啊啊——…要坏掉了…我的屁股要坏掉了…啊啊啊啊………」/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4372',
+        any: [/IF SELECTCOM == 45 && TEQUIP:45/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7447-7601',
+        any: [/@NTR_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7449-7451',
+        any: [/;NTRフラグ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7451',
+        any: [/CFLAG:650 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7453',
+        any: [/;处女喪失/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7455',
+        any: [/;陥落済/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7457',
+        any: [
+          /PRINTFORMW 「狂王…我不能把我的处女给你…咕…呜…不、不要…我已经找到了新的主君了…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7458',
+        any: [
+          /PRINTFORMW 说着强气的台词的%SAVESTR:TARGET%被狂王捆住，束缚着自由、两只脚被大大的分开着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7460',
+        any: [/PRINT 然后、狂王的巨根/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7462',
+        any: [/PRINT 然后、特大号的按摩棒/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7464',
+        any: [
+          /PRINTFORMW 慢慢的插进了%SAVESTR:TARGET%的秘裂。在镜头下%SAVESTR:TARGET%还不知道男人的蜜壶被插进了深处。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7465',
+        any: [
+          /PRINTFORMW 从蜜裂留到屁股上的破瓜之血。在屈辱和疼痛下，即使是刚强的%SAVESTR:TARGET%也只能流下眼泪。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7466',
+        any: [/PRINTFORMW 「对不起…对不起………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7468',
+        any: [/PRINTFORM 还是处女的%SAVESTR:TARGET%的秘裂被/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7470',
+        any: [/PRINT 狂王的巨根/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7472',
+        any: [/PRINT 特大号的按摩棒/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7474',
+        any: [/PRINTFORMW 深深的插了进去。破瓜之血从秘裂里流了出来。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7475',
+        any: [
+          /PRINTFORMW 「啊嗯…多疑的狂王大人这样也明白了吧？我没有背叛、还是纯洁的…啊…啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7476',
+        any: [
+          /PRINTFORMW 狂王默默地笑着一边嘲弄%SAVESTR:TARGET%，一边动了起来。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7477',
+        any: [/PRINTFORMW 「再、再继续的话…啊啊啊！快停下！啊、啊啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7479',
+        any: [/CFLAG:651 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7480',
+        any: [/;处女アナルプレイ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7483',
+        any: [
+          /PRINTFORMW 「呵呵呵、我才不会…嗯…啊嗯…因为这点程度就屈服…啊…啊啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7484',
+        any: [
+          /PRINTFORMW 狂王从后边把%SAVESTR:TARGET%绑起来，从后面有条不紊的插进了肛门。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7485',
+        any: [
+          /PRINTFORMW 大概是好几次灌肠和扩张的原因，%SAVESTR:TARGET%通红的充着血的肛门缠了回去。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7486',
+        any: [/PRINTFORMW 「啊…嗯、太大了…这、这个…啊啊…啊…啊啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7488',
+        any: [/PRINT 狂王的巨根/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7490',
+        any: [/PRINT 特大号的按摩棒/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7492',
+        any: [
+          /PRINTFORMW 在%SAVESTR:TARGET%的肛门里转动着、%SAVESTR:TARGET%露出了喘息的声音………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7494',
+        any: [
+          /PRINTFORMW 「啊啊！对我…对我做这么过分的事什么的！狂王大人你疯了！？啊…不要啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7496',
+        any: [/PRINT 狂王的巨根/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7498',
+        any: [/PRINT 特大号的按摩棒/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7500',
+        any: [
+          /PRINTFORMW 在%SAVESTR:TARGET%的肛门里转动着、%SAVESTR:TARGET%露出了喘息的声音………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7502',
+        any: [/CFLAG:652 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7503',
+        any: [/;獣姦ショー/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7506',
+        any: [
+          /PRINTFORMW 「啊啊——%UNICODE\(0x2661\) \*1% 被野狗大人侵犯最棒了…啊嗯…啊…啊啊——%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7507',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边被周围的观众嘲笑着、一边沉浸在被狗侵犯的快感里………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7509',
+        any: [
+          /PRINTFORMW 「啊啊…嗯…咕…呜…啊啊…这么有感觉什么的…我…啊…不、不要看…不要看…啊啊嗯啊——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7510',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被狗侵犯而有感觉的地方被观众看着、羞耻得满脸通红………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7512',
+        any: [/PRINTFORMW 「呜…呜咕…为什么我…会这样…啊…啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7513',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被狗侵犯而有感觉的地方被观众看着、羞耻得满脸通红………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7515',
+        any: [/CFLAG:653 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7516',
+        any: [/;Vプレイ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7519',
+        any: [
+          /PRINTFORMW 「嗯…啊嗯…啊啊…狂王大人…继续侵犯我的…小穴…啊…嗯…嗯——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7521',
+        any: [/PRINT 狂王的巨根/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7523',
+        any: [/PRINT 特大号的按摩棒/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7525',
+        any: [
+          /PRINTFORMW 不停的侵犯着%SAVESTR:TARGET%的蜜壶、%SAVESTR:TARGET%发出了野兽一样的喘息。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7526',
+        any: [
+          /PRINTFORMW 「啊啊…我要去了…要去了…啊啊…继续，继续插进来…啊啊…啊啊啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7527',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边从秘裂里流出了爱液，一边抱着狂王不停的亲吻着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7528',
+        any: [
+          /PRINTFORMW 水晶球录下了好几个%SAVESTR:TARGET%被狂王抱着不停绝顶的画面………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7530',
+        any: [/PRINTFORMW 「啊啊…嗯…嗯啊…啊啊…再继续的话…我已经…嗯…啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7532',
+        any: [/PRINT 狂王的巨根/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7534',
+        any: [/PRINT 特大号的按摩棒/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7536',
+        any: [
+          /PRINTFORMW 不停的侵犯着%SAVESTR:TARGET%的蜜壶、%SAVESTR:TARGET%发出了逞强的声音。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7537',
+        any: [/PRINTFORMW 「啊…嗯…啊啊…狂王大人…啊啊嗯…恩…啊嗯…啊啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7538',
+        any: [
+          /PRINTFORMW 水晶球录下了好几个%SAVESTR:TARGET%被狂王抱着不停绝顶的画面/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7540',
+        any: [/CFLAG:654 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7541',
+        any: [/;VA乱交プレイ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7544',
+        any: [
+          /PRINTFORMW 「啊啊…我的小穴和肛门…都被侵犯了那么多次！嗯…啊嗯…再激烈点…啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7545',
+        any: [
+          /PRINTFORMW 一边乱交一边淫乱的呻吟着的%SAVESTR:TARGET%的姿态已经一点都看不见当时害羞的追随在%SAVESTR:PLAYER%身旁的影子了。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7546',
+        any: [
+          /PRINTFORMW 「啊嗯…嗯…啊啊…下一个是你呢…好啊…好好的抱我吧………%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7548',
+        any: [
+          /PRINTFORMW 「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7549',
+        any: [/PRINTFORM %SAVESTR:TARGET%的蜜裂和肛门被/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7550',
+        any: [/IF FLAG:500 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7551',
+        any: [/PRINT 阴茎搅动着、精液不停的溢了出来………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7553',
+        any: [/PRINT 假阳具搅动着、爱液不停的溢了出来………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7556',
+        any: [/CFLAG:655 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7557',
+        any: [/;公衆便女/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7560',
+        any: [
+          /PRINTFORMW 「我被魔王抓住，调教，成为了他同伴、一直作为魔王的走狗行动着。而现在以“作为大家的便所来赎罪”这样的理由而活了下来」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7561',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%按照先前教给她的台词对眼前的男人们说着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7562',
+        any: [
+          /PRINTFORMW 「我是便所、靠吃大家的同情…精液才被允许活下去的便所…啊啊快点快点侵犯我！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7563',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%凭空动着腰诱惑着其他男人。看到这里的男人们一边嘲笑着%SAVESTR:TARGET%一边聚集了起来………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7565',
+        any: [
+          /PRINTFORMW 「啊嗯…更多的使用作为便所的我把…现在免费使用小穴也可以…啊嗯啊嗯♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7566',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%凭空动着腰诱惑着其他男人。看到这里的男人们一边嘲笑着%SAVESTR:TARGET%一边聚集了起来………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7568',
+        any: [/CFLAG:656 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7569',
+        any: [/;狂王性欲処理/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7572',
+        any: [
+          /PRINTFORMW 「对不起魔王”大人”、选你作为主君果然好像是哪里弄错了」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7573',
+        any: [
+          /PRINTFORMW 「因为我是…嗯…这么喜欢狂王大人啊…呵呵呵、就这么告别吧、再见魔王大人」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7574',
+        any: [
+          /PRINTFORMW 这么说着的%SAVESTR:TARGET%和狂王的舌头缠在一起接吻着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7575',
+        any: [
+          /PRINTFORMW 「以后也会送我录得H的水晶球给你，你就用那个自慰吧…啊啊啊啊」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7577',
+        any: [
+          /PRINTFORMW 「呵呵呵…在性的方面比起你来我和狂王大人的相性更好…这是这样奉仕了我才明白的呢」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7578',
+        any: [
+          /PRINTFORMW 「那就这样拜拜魔王大人、啊啊…狂王大人…继续疼爱我把…啊啊♪」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7579',
+        any: [/PRINTFORMW 然后水晶球开始播放%SAVESTR:TARGET%奉仕狂王的影像………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7581',
+        any: [/CFLAG:657 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7582',
+        any: [/;NTR公開出産/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7586',
+        any: [/PRINTFORMW 「啊啊…让我抱抱我的孩子…求你了…啊啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7587',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%生出来的%SAVESTR:PLAYER%的孩子被观众们包围着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7588',
+        any: [/PRINTFORMW 被还回来的时候不可能还是正常的状态吧………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7590',
+        any: [
+          /PRINTFORMW 「啊嗯…恩…嗯…我的出产秀怎么样魔王大人、看得高兴吗？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7591',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边隔着摄像机看着%SAVESTR:PLAYER%一边说着。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7592',
+        any: [
+          /PRINTFORMW 「今后也会生下很多小宝宝的…敬请期待%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7595',
+        any: [
+          /PRINTFORMW 「啊啊…做这种事的话…我不是已经回不了魔王大人哪里了吗…」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7596',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被魔王耳语了几句后，说道。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7597',
+        any: [
+          /PRINTFORMW 「嗯、嗯…我的子宫是狂王大人专用的育儿袋、今后预定不管几个都要生出来♪」/,
+        ],
+      },
     ],
   },
 ];

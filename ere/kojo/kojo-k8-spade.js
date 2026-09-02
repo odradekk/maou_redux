@@ -83,6 +83,7 @@ const {
   dungeon_victory_family,
   dungeon_attack_family,
   benki_koujo_family,
+  ntr_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -104,7 +105,6 @@ const era0 = (k) => era.get(k) || 0;
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
 const STUBBED_CALLS = [
-  'NTR_KOUJO_K8',
   'EXUCUTION_KOUJO_K8',
   'MUSEUM_KOUJO_K8',
   'BANISHMENT_KOUJO_K8',
@@ -12084,15 +12084,292 @@ async function colosseum_kojo_8() {
 }
 
 /**
- * @NTR_KOUJO_K8（:7447-7605）：NTR 口上（P 由调用方传入）。
- * TODO(#239)：待填充。
- * @param {number} p
+ * @NTR_KOUJO_K8（:7447-7601）：NTR 口上。
+ *
+ * P（NTR 演出编号）按 #214 决议由调用方显式传入：1 处女丧失 / 2 处女
+ * 肛门 PLAY / 3 獣姦秀 / 4 V PLAY / 5 VA 乱交 / 6 公众便女 / 7 狂王性欲
+ * 处理 / 20 NTR 公开生产。各支末尾记一位 CFLAG:651-657（P == 20 无记位）。
+ *
+ * 多处 `PRINT 狂王的巨根` / `PRINT 特大号的按摩棒` 由 FLAG:500（狂王性别）
+ * 二选一：0·2 扶她走巨根，其余走按摩棒。这些是 Emuera 的 bare PRINT，
+ * 不换行不等待，与接续的 PRINTFORMW 在原作里拼成一整句；本移植按既有
+ * 惯例（本文件 :4372 起口塞段同款）拆成 era.print + era.printAndWait。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} [p_arg] P（NTR 演出编号，#214 决议：Emuera 单字母全局改显式传参）
  */
-// eslint-disable-next-line no-unused-vars
-async function ntr_koujo_k8(p) {
-  stub_line('NTR_KOUJO_K8', 'NTR 口上', '本票分段填充');
+async function ntr_koujo_k8(rand, p_arg = 0) {
+  void rand;
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const kojo = chara(target).kojo;
+  const p = p_arg;
+  // FLAG:500 狂王性别：0·2 扶她（巨根）/ 其余（按摩棒）。六处二选一逐处
+  // 展开成 IF/ELSE，与源文 PRINT 行 1:1 对位（合成三元会让锚失去落点）
+  const futa = () => game.system.狂王性别 == 0 || game.system.狂王性别 == 2;
+  const inran_or_aibo =
+    era0(`talent:${target}:76`) || era0(`talent:${target}:85`);
+
+  // :7449-7451 NTRフラグ
+  if (kojo.NTR再捕获 == 0) {
+    kojo.NTR再捕获 = 1; // :7451 CFLAG:650 = 1
+  }
+
+  if (p == 1) {
+    // :7453 处女喪失
+    if (inran_or_aibo) {
+      // :7455 陥落済
+      await era.printAndWait(
+        `「狂王…我不能把我的处女给你…咕…呜…不、不要…我已经找到了新的主君了…」`,
+      ); // :7457
+      await era.printAndWait(
+        `说着强气的台词的${target_name}被狂王捆住，束缚着自由、两只脚被大大的分开着。`,
+      ); // :7458
+      if (futa()) {
+        await era.print(`然后、狂王的巨根`); // :7460
+      } else {
+        await era.print(`然后、特大号的按摩棒`); // :7462
+      }
+      await era.printAndWait(
+        `慢慢的插进了${target_name}的秘裂。在镜头下${target_name}还不知道男人的蜜壶被插进了深处。`,
+      ); // :7464
+      await era.printAndWait(
+        `从蜜裂留到屁股上的破瓜之血。在屈辱和疼痛下，即使是刚强的${target_name}也只能流下眼泪。`,
+      ); // :7465
+      await era.printAndWait(`「对不起…对不起………」`); // :7466
+    } else {
+      await era.print(`还是处女的${target_name}的秘裂被`); // :7468
+      if (futa()) {
+        await era.print(`狂王的巨根`); // :7470
+      } else {
+        await era.print(`特大号的按摩棒`); // :7472
+      }
+      await era.printAndWait(`深深的插了进去。破瓜之血从秘裂里流了出来。`); // :7474
+      await era.printAndWait(
+        `「啊嗯…多疑的狂王大人这样也明白了吧？我没有背叛、还是纯洁的…啊…啊啊！」`,
+      ); // :7475
+      await era.printAndWait(
+        `狂王默默地笑着一边嘲弄${target_name}，一边动了起来。`,
+      ); // :7476
+      await era.printAndWait(
+        `「再、再继续的话…啊啊啊！快停下！啊、啊啊啊——！」`,
+      ); // :7477
+    }
+    kojo.NTR_651 = 1; // :7479 CFLAG:651 = 1
+  } else if (p == 2) {
+    // :7480 处女アナルプレイ
+    if (inran_or_aibo) {
+      await era.printAndWait(
+        `「呵呵呵、我才不会…嗯…啊嗯…因为这点程度就屈服…啊…啊啊！」`,
+      ); // :7483
+      await era.printAndWait(
+        `狂王从后边把${target_name}绑起来，从后面有条不紊的插进了肛门。`,
+      ); // :7484
+      await era.printAndWait(
+        `大概是好几次灌肠和扩张的原因，${target_name}通红的充着血的肛门缠了回去。`,
+      ); // :7485
+      await era.printAndWait(`「啊…嗯、太大了…这、这个…啊啊…啊…啊啊啊——！」`); // :7486
+      if (futa()) {
+        await era.print(`狂王的巨根`); // :7488
+      } else {
+        await era.print(`特大号的按摩棒`); // :7490
+      }
+      await era.printAndWait(
+        `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,
+      ); // :7492
+    } else {
+      await era.printAndWait(
+        `「啊啊！对我…对我做这么过分的事什么的！狂王大人你疯了！？啊…不要啊！」`,
+      ); // :7494
+      if (futa()) {
+        await era.print(`狂王的巨根`); // :7496
+      } else {
+        await era.print(`特大号的按摩棒`); // :7498
+      }
+      await era.printAndWait(
+        `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,
+      ); // :7500
+    }
+    kojo.NTR_652 = 1; // :7502 CFLAG:652 = 1
+  } else if (p == 3) {
+    // :7503 獣姦ショー
+    if (era0(`talent:${target}:136`)) {
+      await era.printAndWait(
+        `「啊啊——${heart(1)} 被野狗大人侵犯最棒了…啊嗯…啊…啊啊——${heart(1)}」`,
+      ); // :7506
+      await era.printAndWait(
+        `${target_name}一边被周围的观众嘲笑着、一边沉浸在被狗侵犯的快感里………`,
+      ); // :7507
+    } else if (inran_or_aibo) {
+      await era.printAndWait(
+        `「啊啊…嗯…咕…呜…啊啊…这么有感觉什么的…我…啊…不、不要看…不要看…啊啊嗯啊——！」`,
+      ); // :7509
+      await era.printAndWait(
+        `${target_name}被狗侵犯而有感觉的地方被观众看着、羞耻得满脸通红………`,
+      ); // :7510
+    } else {
+      await era.printAndWait(`「呜…呜咕…为什么我…会这样…啊…啊啊——！」`); // :7512
+      await era.printAndWait(
+        `${target_name}被狗侵犯而有感觉的地方被观众看着、羞耻得满脸通红………`,
+      ); // :7513
+    }
+    kojo.NTR_653 = 1; // :7515 CFLAG:653 = 1
+  } else if (p == 4) {
+    // :7516 Vプレイ
+    if (inran_or_aibo) {
+      await era.printAndWait(
+        `「嗯…啊嗯…啊啊…狂王大人…继续侵犯我的…小穴…啊…嗯…嗯——！」`,
+      ); // :7519
+      if (futa()) {
+        await era.print(`狂王的巨根`); // :7521
+      } else {
+        await era.print(`特大号的按摩棒`); // :7523
+      }
+      await era.printAndWait(
+        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了野兽一样的喘息。`,
+      ); // :7525
+      await era.printAndWait(
+        `「啊啊…我要去了…要去了…啊啊…继续，继续插进来…啊啊…啊啊啊啊啊啊${heart(1)}」`,
+      ); // :7526
+      await era.printAndWait(
+        `${target_name}一边从秘裂里流出了爱液，一边抱着狂王不停的亲吻着。`,
+      ); // :7527
+      await era.printAndWait(
+        `水晶球录下了好几个${target_name}被狂王抱着不停绝顶的画面………`,
+      ); // :7528
+    } else {
+      await era.printAndWait(
+        `「啊啊…嗯…嗯啊…啊啊…再继续的话…我已经…嗯…啊啊——！」`,
+      ); // :7530
+      if (futa()) {
+        await era.print(`狂王的巨根`); // :7532
+      } else {
+        await era.print(`特大号的按摩棒`); // :7534
+      }
+      await era.printAndWait(
+        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了逞强的声音。`,
+      ); // :7536
+      await era.printAndWait(`「啊…嗯…啊啊…狂王大人…啊啊嗯…恩…啊嗯…啊啊！」`); // :7537
+      // :7538 源作此行末尾无「………」（同段另一支 :7528 有），1:1 保真不补
+      await era.printAndWait(
+        `水晶球录下了好几个${target_name}被狂王抱着不停绝顶的画面`,
+      ); // :7538
+    }
+    kojo.NTR_654 = 1; // :7540 CFLAG:654 = 1
+  } else if (p == 5) {
+    // :7541 VA乱交プレイ
+    if (inran_or_aibo) {
+      await era.printAndWait(
+        `「啊啊…我的小穴和肛门…都被侵犯了那么多次！嗯…啊嗯…再激烈点…啊啊啊啊${heart(1)}」`,
+      ); // :7544
+      await era.printAndWait(
+        `一边乱交一边淫乱的呻吟着的${target_name}的姿态已经一点都看不见当时害羞的追随在${player_name}身旁的影子了。`,
+      ); // :7545
+      await era.printAndWait(
+        `「啊嗯…嗯…啊啊…下一个是你呢…好啊…好好的抱我吧………${heart(1)}」`,
+      ); // :7546
+    } else {
+      await era.printAndWait(
+        `「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」`,
+      ); // :7548
+      await era.print(`${target_name}的蜜裂和肛门被`); // :7549
+      // :7550 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同），1:1 保真
+      if (game.system.狂王性别 == 0) {
+        await era.print(`阴茎搅动着、精液不停的溢了出来………`); // :7551
+      } else {
+        await era.print(`假阳具搅动着、爱液不停的溢了出来………`); // :7553
+      }
+    }
+    kojo.NTR_655 = 1; // :7556 CFLAG:655 = 1
+  } else if (p == 6) {
+    // :7557 公衆便女
+    if (inran_or_aibo) {
+      await era.printAndWait(
+        `「我被魔王抓住，调教，成为了他同伴、一直作为魔王的走狗行动着。而现在以“作为大家的便所来赎罪”这样的理由而活了下来」`,
+      ); // :7560
+      await era.printAndWait(
+        `${target_name}按照先前教给她的台词对眼前的男人们说着。`,
+      ); // :7561
+      await era.printAndWait(
+        `「我是便所、靠吃大家的同情…精液才被允许活下去的便所…啊啊快点快点侵犯我！」`,
+      ); // :7562
+      await era.printAndWait(
+        `${target_name}凭空动着腰诱惑着其他男人。看到这里的男人们一边嘲笑着${target_name}一边聚集了起来………`,
+      ); // :7563
+    } else {
+      await era.printAndWait(
+        `「啊嗯…更多的使用作为便所的我把…现在免费使用小穴也可以…啊嗯啊嗯♪」`,
+      ); // :7565
+      await era.printAndWait(
+        `${target_name}凭空动着腰诱惑着其他男人。看到这里的男人们一边嘲笑着${target_name}一边聚集了起来………`,
+      ); // :7566
+    }
+    kojo.NTR_656 = 1; // :7568 CFLAG:656 = 1
+  } else if (p == 7) {
+    // :7569 狂王性欲処理
+    if (inran_or_aibo) {
+      await era.printAndWait(
+        `「对不起魔王”大人”、选你作为主君果然好像是哪里弄错了」`,
+      ); // :7572
+      await era.printAndWait(
+        `「因为我是…嗯…这么喜欢狂王大人啊…呵呵呵、就这么告别吧、再见魔王大人」`,
+      ); // :7573
+      await era.printAndWait(
+        `这么说着的${target_name}和狂王的舌头缠在一起接吻着。`,
+      ); // :7574
+      await era.printAndWait(
+        `「以后也会送我录得H的水晶球给你，你就用那个自慰吧…啊啊啊啊」`,
+      ); // :7575
+    } else {
+      await era.printAndWait(
+        `「呵呵呵…在性的方面比起你来我和狂王大人的相性更好…这是这样奉仕了我才明白的呢」`,
+      ); // :7577
+      await era.printAndWait(
+        `「那就这样拜拜魔王大人、啊啊…狂王大人…继续疼爱我把…啊啊♪」`,
+      ); // :7578
+      await era.printAndWait(
+        `然后水晶球开始播放${target_name}奉仕狂王的影像………`,
+      ); // :7579
+    }
+    kojo.NTR_657 = 1; // :7581 CFLAG:657 = 1
+  } else if (p == 20) {
+    // :7582 NTR公開出産（本支不记位，源作如此）
+    if (inran_or_aibo) {
+      // CFLAG:102 妊娠相手：1 = 主人
+      if (chara(target).event.妊娠相手 == 1) {
+        await era.printAndWait(`「啊啊…让我抱抱我的孩子…求你了…啊啊啊…」`); // :7586
+        await era.printAndWait(
+          `${target_name}生出来的${player_name}的孩子被观众们包围着。`,
+        ); // :7587
+        await era.printAndWait(`被还回来的时候不可能还是正常的状态吧………`); // :7588
+      } else {
+        await era.printAndWait(
+          `「啊嗯…恩…嗯…我的出产秀怎么样魔王大人、看得高兴吗？」`,
+        ); // :7590
+        await era.printAndWait(
+          `${target_name}一边隔着摄像机看着${player_name}一边说着。`,
+        ); // :7591
+        await era.printAndWait(
+          `「今后也会生下很多小宝宝的…敬请期待${heart(1)}」`,
+        ); // :7592
+      }
+    } else {
+      await era.printAndWait(
+        `「啊啊…做这种事的话…我不是已经回不了魔王大人哪里了吗…」`,
+      ); // :7595
+      await era.printAndWait(`${target_name}被魔王耳语了几句后，说道。`); // :7596
+      await era.printAndWait(
+        `「嗯、嗯…我的子宫是狂王大人专用的育儿袋、今后预定不管几个都要生出来♪」`,
+      ); // :7597
+    }
+  }
+
   return 0;
 }
+
+// 注册进 NTR 口上族（TRYCALLFORM NTR_KOUJO_K8 的等价物）
+ntr_koujo_family.register(8, (p_arg) => ntr_koujo_k8(undefined, p_arg));
 
 /** @EXUCUTION_KOUJO_K8（:7606-7622）。TODO(#239)：待填充。 */
 async function exucution_koujo_k8() {
