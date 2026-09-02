@@ -72,11 +72,12 @@ jobs:
   # 三项结构检查（--verify）是秒级的，已随 test/mutation-check.test.js 进
   # 上面两个 job 的 npm test；本 job 跑的是真执行全量。
   #
-  # --jobs 4 用隔离临时副本并行，主树不写。残留守护与**检出基线**比对而非
+  # --jobs N 用隔离临时副本并行，主树不写。残留守护与**检出基线**比对而非
   # 假设干净——裸检出可能带既有脏度（#96 的 dev-guides CRLF），守护证的是
   # 「变异逐字节还原」，不是「仓库本来干净」。
   #
-  # 超时按实测定：条目表 1268 条、本机 4 核约 1740s（且随每张口上票增长）。
+  # 超时按实测定：条目表 1270 条、本机 4 核约 1740s（且随每张口上票增长）；
+  # CI 上 --jobs 2 更慢，60 分钟是留了余量的上限，跑通后按实测收紧。
   # 工具零第三方依赖，无需 npm ci。
   mutation:
     runs-on: ubuntu-latest
@@ -89,8 +90,15 @@ jobs:
       - uses: ./.github/actions/setup-engine
       - name: 记录检出基线（裸检出未必干净，见 #96）
         run: git status --porcelain > /tmp/tree-before.txt
+      - name: runner 规格（--jobs 的上限由内存定，不是由核数定）
+        run: |
+          nproc; free -h; df -h /
+      # --jobs 2 而不是 4：#302 首跑用 4 在 17 分钟处被杀（日志在一条 ✓ 中途
+      # 截断、随即 exit 1，是进程被杀的形态而非某条变异判红）。每个隔离副本
+      # 自己还会按核数并发跑 node --test，4 副本 × 4 核 = 16 个 node，每个都
+      # 要把 42 MB 的 asar 解析进内存——内存而不是 CPU 才是这里的约束。
       - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
-        run: node tools/mutation-check.mjs --jobs 4
+        run: node tools/mutation-check.mjs --jobs 2
       - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）
         run: |
           git status --porcelain > /tmp/tree-after.txt
