@@ -474,8 +474,7 @@ function find_printform(erb_lines, n, m) {
     if (match) {
       // 两分支：PRINTFORM(W|L)? 或 PRINT(W|L)?——#231 起正则带 i（K0 源文件
       // 4 处小写 printformw），variant 归一大写再判
-      const variant =
-        (match[1] || match[3] || '').toUpperCase() || undefined;
+      const variant = (match[1] || match[3] || '').toUpperCase() || undefined;
       const arg = match[2] ?? match[4] ?? '';
       return { line_no: i, variant, arg };
     }

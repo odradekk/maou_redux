@@ -66,4 +66,10 @@ function self_call_first(cid) {
   return Array.from(self_call(cid))[0];
 }
 
-module.exports = { heart, heart_black, black_heart, self_call, self_call_first };
+module.exports = {
+  heart,
+  heart_black,
+  black_heart,
+  self_call,
+  self_call_first,
+};

@@ -1567,7 +1567,7 @@ async function dungeon_ryouzyoku_k0() {
       // :7245
 
       await era.printAndWait(`「………好吧、尽管来吧」`); // :7247
-      return 0; // :7248
+      return 0; // :7247-7248
     } else if (
       era.get(`talent:${target}:17`) === 1 ||
       era.get(`talent:${target}:31`) === 1 ||
@@ -1613,12 +1613,12 @@ async function dungeon_ryouzyoku_k0() {
 
       await era.printAndWait(`「…至今为止为爱而活着的生活就这样…结束了吗…？」`); // :7264
     } else {
-      // :7265
+      // :7264-7265
 
       await era.printAndWait(`「要做什么…这样…不对…」`); // :7267
-    } // :7268
+    } // :7267-7268
   } else {
-    // :7269
+    // :7267-7269
 
     await era.printAndWait(`「${sc()}呦…你打算怎么办呢…？」`); // :7271
 
@@ -1629,7 +1629,7 @@ async function dungeon_ryouzyoku_k0() {
       // :7273
 
       await era.printAndWait(`「………什么也…不想相信了」`); // :7275
-      return 0; // :7276
+      return 0; // :7275-7276
     } else if (
       era.get(`talent:${target}:17`) === 1 ||
       era.get(`talent:${target}:31`) === 1 ||
@@ -1673,13 +1673,13 @@ async function dungeon_ryouzyoku_k0() {
 
       await era.printAndWait(`「已经再也见不到…阳光了吗…」`); // :7292
     } else {
-      // :7293
+      // :7292-7293
 
       await era.printAndWait(`「你们没有一点爱心吗…？」`); // :7295
-    } // :7296
-  } // :7297
+    } // :7295-7296
+  } // :7295-7297
 
-  return 0; // :7299
+  return 0; // :7295-7299
 }
 /* eslint-enable no-irregular-whitespace */
 
@@ -1707,8 +1707,8 @@ async function dungeon_ryouzyoku_after_k0() {
       // :7311
 
       await era.printAndWait(`（………究竟能…守到什么时候呢…）`); // :7313
-      return 0; // :7314
-    } // :7315
+      return 0; // :7313-7314
+    } // :7313-7315
 
     if (era.get(`exp:${target}:1`) > 20) {
       // :7318
@@ -1716,7 +1716,7 @@ async function dungeon_ryouzyoku_after_k0() {
         `${target_name}的肛门崩坏了、在被恢复薬再生之前不断的流着脏东西`,
       ); // :7319
       await era.printAndWait(`「屁股…被玩坏了……」`); // :7320
-    } // :7321
+    } // :7320-7321
 
     if (era.get(`exp:${target}:22`) > 20) {
       // :7325
@@ -1728,7 +1728,7 @@ async function dungeon_ryouzyoku_after_k0() {
       await era.printAndWait(`「这东西…简直不是人喝的…哦诶诶」`); // :7329
     } // :7329
   } else {
-    // :7330
+    // :7329-7330
 
     await era.printAndWait(`「对不起…对不起…」`); // :7332
 
@@ -1739,8 +1739,8 @@ async function dungeon_ryouzyoku_after_k0() {
       // :7334
 
       await era.printAndWait(`「够了…不要…」`); // :7336
-      return 0; // :7337
-    } // :7338
+      return 0; // :7336-7337
+    } // :7336-7338
 
     if (era.get(`exp:${target}:0`) > 20) {
       // :7341
@@ -1748,7 +1748,7 @@ async function dungeon_ryouzyoku_after_k0() {
         `被不知多少人的鸡鸡贯穿过的${target_name}的性器红肿了起来`,
       ); // :7342
       await era.printAndWait(`「好难受…」`); // :7343
-    } // :7344
+    } // :7343-7344
 
     if (era.get(`exp:${target}:1`) > 20) {
       // :7346
@@ -1756,7 +1756,7 @@ async function dungeon_ryouzyoku_after_k0() {
         `${target_name}的肛门崩坏了、在被恢复薬再生之前不断的流着脏东西`,
       ); // :7347
       await era.printAndWait(`「屁股…被玩坏了……」`); // :7348
-    } // :7349
+    } // :7348-7349
 
     if (era.get(`exp:${target}:22`) > 20) {
       // :7353
@@ -1767,7 +1767,7 @@ async function dungeon_ryouzyoku_after_k0() {
       // :7357
       await era.printAndWait(`「这样喝下去的话…咳咳～」`); // :7357
     } // :7357
-  } // :7358
+  } // :7357-7358
 }
 
 // 注册进分发族（TRYCALLFORM DUNGEON_RYOUZYOKU_K0 的等价物）
@@ -1803,7 +1803,7 @@ async function gohoubi_request_koujo_k0() {
     } else if ((era.get(`cflag:${target}:504`) || 0) === 3) {
       // :8138
       await era.print(`可以奖励我与马`); // :8139
-    } // :8140
+    } // :8139-8140
     await era.printAndWait(`做爱吗…？」`); // :8141
   } else if ((era.get(`cflag:${target}:504`) || 0) === 4) {
     // :8142
@@ -1831,7 +1831,7 @@ async function gohoubi_request_koujo_k0() {
     // :8157
 
     await era.printAndWait(`「赢了的话…我想要…童贞的处男～」`); // :8159
-  } // :8160
+  } // :8159-8160
 }
 
 /**
@@ -1863,9 +1863,9 @@ async function gohoubi_after_koujo_k0(cid, choice) {
         // :8180
         await era.printAndWait(`「啊啊～！被小狗狗侵犯屁股了～…啊～啊啊～♪」`); // :8181
       } else {
-        // :8182
+        // :8181-8182
         await era.printAndWait(`「啊啊～！被小狗狗侵犯了～…啊～啊啊～♪」`); // :8183
-      } // :8184
+      } // :8183-8184
     } else if ((era.get(`cflag:${target}:504`) || 0) === 2) {
       // :8186
 
@@ -1873,9 +1873,9 @@ async function gohoubi_after_koujo_k0(cid, choice) {
         // :8188
         await era.printAndWait(`「啊啊～！被小猪猪侵犯屁股了…啊～啊啊～♪」`); // :8189
       } else {
-        // :8190
+        // :8189-8190
         await era.printAndWait(`「啊啊～！被小猪猪侵犯了…啊～啊啊～♪」`); // :8191
-      } // :8192
+      } // :8191-8192
     } else if ((era.get(`cflag:${target}:504`) || 0) === 3) {
       // :8194
 
@@ -1883,9 +1883,9 @@ async function gohoubi_after_koujo_k0(cid, choice) {
         // :8196
         await era.printAndWait(`「啊啊～！被马先生侵犯屁股了…啊～啊啊～♪」`); // :8197
       } else {
-        // :8198
+        // :8197-8198
         await era.printAndWait(`「啊啊～！被马先生侵犯了…啊～啊啊～♪」`); // :8199
-      } // :8200
+      } // :8199-8200
     } else if ((era.get(`cflag:${target}:504`) || 0) === 4) {
       // :8202
       await era.printAndWait(`「啊～…嗯…好棒…好像麻麻的呢………${heart(1)}」`); // :8203
@@ -1896,9 +1896,9 @@ async function gohoubi_after_koujo_k0(cid, choice) {
         // :8207
         await era.printAndWait(`「啊～～！再抱我…再抱紧我～！」`); // :8208
       } else {
-        // :8210
+        // :8208-8210
         await era.printAndWait(`「还要～！把屁股…干坏为止～！继续做吧～！」`); // :8211
-      } // :8212
+      } // :8211-8212
     } else if ((era.get(`cflag:${target}:504`) || 0) === 6) {
       // :8214
       await era.printAndWait(`「啊～${heart(1)} 美味的精液…还想再要呢♪」`); // :8215
@@ -1909,9 +1909,9 @@ async function gohoubi_after_koujo_k0(cid, choice) {
         // :8219
         await era.printAndWait(`「啊哈啊…再来…再来啊～…${heart(1)}」`); // :8220
       } else {
-        // :8221
+        // :8220-8221
         await era.printAndWait(`「啊哈啊…再来…再来啊～…${heart(1)}」`); // :8222
-      } // :8223
+      } // :8222-8223
     } else if ((era.get(`cflag:${target}:504`) || 0) === 8) {
       // :8225
       await era.printAndWait(
@@ -1926,15 +1926,15 @@ async function gohoubi_after_koujo_k0(cid, choice) {
           `「呵呵呵、这就是女人的味道哦。第一次能被我${sc()}收下真是太好了呢${heart(1)}」`,
         ); // :8231
       } else {
-        // :8233
+        // :8231-8233
         await era.printAndWait(
           `「能用屁股拿走你的初体验、真是很不错的经验呢${heart(1)}」`,
         ); // :8234
-      } // :8235
+      } // :8234-8235
     } else {
-      // :8236
-    } // :8237
-  } // :8238
+      // :8234-8236
+    } // :8234-8237
+  } // :8234-8238
 }
 
 /**
@@ -1956,9 +1956,9 @@ async function osioski_koujo_k0(cid, choice) {
       // :8249
       await era.printAndWait(`「哈咿～～！哔哩哔哩～哔哩哔哩的好爽啊～！」`); // :8250
     } else {
-      // :8251
+      // :8250-8251
       await era.printAndWait(`「啊～咿～！饶命啊～！请饶了我吧咿咿咿～！」`); // :8252
-    } // :8253
+    } // :8252-8253
   } else if (choice === 2) {
     // :8255
 
@@ -1968,11 +1968,11 @@ async function osioski_koujo_k0(cid, choice) {
         `「啊啊～…大家请看${heart(1)} 请好好看${sc()}自慰并即将高潮的地方吧～${heart(1)}」`,
       ); // :8258
     } else {
-      // :8259
+      // :8258-8259
       await era.printAndWait(
         `「不、不行…请、请不要看…${sc()}的那个地方…不要看…啊啊～！」`,
       ); // :8260
-    } // :8261
+    } // :8260-8261
   } else if (choice === 3) {
     // :8263
 
@@ -1982,11 +1982,11 @@ async function osioski_koujo_k0(cid, choice) {
         `「啊啊啊～♪一边被看着这么羞人的样子一边自慰…为什么会这么爽呢～${heart(1)}」`,
       ); // :8266
     } else {
-      // :8267
+      // :8266-8267
       await era.printAndWait(
         `「呜呜～…被看到了…被看到了～…不要看…不要看啊………」`,
       ); // :8268
-    } // :8269
+    } // :8268-8269
   } else if (choice === 4) {
     // :8271
 
@@ -1996,11 +1996,11 @@ async function osioski_koujo_k0(cid, choice) {
         `「啊～～！啊～！啊啊～${heart(1)} 请更多～…更多的惩罚我吧～！」`,
       ); // :8274
     } else {
-      // :8275
+      // :8274-8275
       await era.printAndWait(
         `「咿～～～！不要～不要啊～！好痛～不要～！呜咕～咕呜唔～！」`,
       ); // :8276
-    } // :8277
+    } // :8276-8277
   } else if (choice === 5) {
     // :8279
 
@@ -2013,9 +2013,9 @@ async function osioski_koujo_k0(cid, choice) {
         `「啊哈啊～～…再多把小便淋到我身上吧${heart(1)} 对～、好好瞄准${sc()}的脸…嗯～嗯咕噗～嗯咕～嗯呜唔～」`,
       ); // :8282
     } else {
-      // :8283
+      // :8282-8283
       await era.printAndWait(`「对不起对不起对不起………」`); // :8284
-    } // :8285
+    } // :8284-8285
   } else if (choice === 6) {
     // :8287
     await era.printAndWait(`「为什么${sc()}得做这种事…」`); // :8288
@@ -2030,7 +2030,7 @@ async function osioski_koujo_k0(cid, choice) {
   } else if (choice === 9) {
     // :8296
     await era.printAndWait(`「～～♪」`); // :8297
-  } // :8298
+  } // :8297-8298
 }
 
 // 注册进分发族（TRYCALLFORM GOHOUBI_REQUEST/AFTER_KOUJO_K0、OSIOKI_KOUJO_K0 的等价物）
@@ -2067,9 +2067,9 @@ async function benki_koujo_k0() {
       // :7447
       await era.printAndWait(`「让我来施舍你们吧……」`); // :7448
     } else {
-      // :7450
+      // :7448-7450
       await era.printAndWait(`「讨厌……连这些家伙……也要施舍吗？」`); // :7451
-    } // :7452
+    } // :7451-7452
   } else if (era.get('flag:62') === 1) {
     // :7453
 
@@ -2088,9 +2088,9 @@ async function benki_koujo_k0() {
       // :7465
       await era.printAndWait(`「让我来施舍你们吧……」`); // :7466
     } else {
-      // :7468
+      // :7466-7468
       await era.printAndWait(`「讨厌……与不认识的女人做爱什么的……」`); // :7469
-    } // :7470
+    } // :7469-7470
   } else if (era.get('flag:62') === 2) {
     // :7471
 
@@ -2112,9 +2112,9 @@ async function benki_koujo_k0() {
       // :7485
       await era.printAndWait(`「这是……施舍」`); // :7486
     } else {
-      // :7488
+      // :7486-7488
       await era.printAndWait(`「住手……不要啊」`); // :7489
-    } // :7490
+    } // :7489-7490
   } else if (era.get('flag:62') === 3) {
     // :7491
 
@@ -2136,9 +2136,9 @@ async function benki_koujo_k0() {
       // :7506
       await era.printAndWait(`「让我来施舍吧……」`); // :7507
     } else {
-      // :7509
+      // :7507-7509
       await era.printAndWait(`「不，不要啊！」`); // :7510
-    } // :7511
+    } // :7510-7511
   } else if (era.get('flag:62') === 4) {
     // :7512
 
@@ -2160,9 +2160,9 @@ async function benki_koujo_k0() {
       // :7527
       await era.printAndWait(`「让我来施舍吧……」`); // :7528
     } else {
-      // :7530
+      // :7528-7530
       await era.printAndWait(`「不，不要啊！」`); // :7531
-    } // :7532
+    } // :7531-7532
   } else if (era.get('flag:62') === 5) {
     // :7533
 
@@ -2184,9 +2184,9 @@ async function benki_koujo_k0() {
       // :7548
       await era.printAndWait(`「让我来施舍吧……」`); // :7549
     } else {
-      // :7551
+      // :7549-7551
       await era.printAndWait(`「不，不要啊！」`); // :7552
-    } // :7553
+    } // :7552-7553
   } else if (era.get('flag:62') === 6) {
     // :7554
 
@@ -2208,9 +2208,9 @@ async function benki_koujo_k0() {
       // :7569
       await era.printAndWait(`「让我来施舍吧……」`); // :7570
     } else {
-      // :7572
+      // :7570-7572
       await era.printAndWait(`「不，不要啊！」`); // :7573
-    } // :7574
+    } // :7573-7574
   } else if (era.get('flag:62') === 7) {
     // :7575
 
@@ -2236,9 +2236,9 @@ async function benki_koujo_k0() {
       // :7592
       await era.printAndWait(`「讨厌……这个、会在哪里公映呢……？」`); // :7593
     } else {
-      // :7595
+      // :7593-7595
       await era.printAndWait(`「住手……不要拍～！」`); // :7596
-    } // :7597
+    } // :7596-7597
   } else if (era.get('flag:62') === 9) {
     // :7598
 
@@ -2263,9 +2263,9 @@ async function benki_koujo_k0() {
       // :7612
       await era.printAndWait(`「大家好……呜呜～……${sc()}……」`); // :7613
     } else {
-      // :7615
+      // :7613-7615
       await era.printAndWait(`「住手……不要拍～！」`); // :7616
-    } // :7617
+    } // :7616-7617
   } else if (era.get('flag:62') === 10) {
     // :7618
 
@@ -2284,12 +2284,12 @@ async function benki_koujo_k0() {
         `「大家好……${sc()}现在……受主人大人命令正在当便器哦♪」`,
       ); // :7627
     } else {
-      // :7629
+      // :7627-7629
       await era.printAndWait(`「呜呜……被这么样对待的话……活不下去了啦……」`); // :7630
-    } // :7631
-  } // :7632
+    } // :7630-7631
+  } // :7630-7632
 
-  return 0; // :7634
+  return 0; // :7630-7634
 }
 /* eslint-enable no-irregular-whitespace */
 
@@ -2313,7 +2313,7 @@ async function dungeon_victory_k0(_cid, rand) {
 
     await era.printAndWait(`「……就这样吧」`); // :7371
 
-    return 0; // :7373
+    return 0; // :7371-7373
   } else if (
     era.get(`talent:${target}:11`) === 1 ||
     era.get(`talent:${target}:12`) === 1 ||
@@ -2330,9 +2330,9 @@ async function dungeon_victory_k0(_cid, rand) {
       // :7379
       await era.printAndWait(`「为世界带来和平…」`); // :7380
     } else {
-      // :7381
+      // :7380-7381
       await era.printAndWait(`「我是不会输的！」`); // :7382
-    } // :7383
+    } // :7382-7383
   } else if (
     era.get(`talent:${target}:10`) === 1 ||
     era.get(`talent:${target}:26`) === 1
@@ -2341,9 +2341,9 @@ async function dungeon_victory_k0(_cid, rand) {
 
     await era.printAndWait(`「虽然这么说…呜呜」`); // :7388
 
-    return 0; // :7390
+    return 0; // :7388-7390
   } else {
-    // :7391
+    // :7388-7391
 
     if (rand_n(3) === 0) {
       // :7394
@@ -2352,10 +2352,10 @@ async function dungeon_victory_k0(_cid, rand) {
       // :7396
       await era.printAndWait(`「将和平…」`); // :7397
     } else {
-      // :7398
+      // :7397-7398
       await era.printAndWait(`「没事的…没事的」`); // :7399
-    } // :7400
-  } // :7402
+    } // :7399-7400
+  } // :7399-7402
 
   if (
     (era.get(`base:${target}:0`) * 100) / era.get(`maxbase:${target}:0`) < 50 ||
@@ -2365,12 +2365,12 @@ async function dungeon_victory_k0(_cid, rand) {
 
     await era.printAndWait(`（光有爱是赢不了的吗…？）`); // :7406
   } else {
-    // :7407
+    // :7406-7407
 
     await era.printAndWait(`「看好了！　这就是爱的力量！」`); // :7409
-  } // :7410
+  } // :7409-7410
 
-  return 0; // :7412
+  return 0; // :7409-7412
 }
 
 /**
@@ -2394,7 +2394,7 @@ async function dungeon_attack_k0(_cid, rand) {
 
       await era.printAndWait(`「……」`); // :7647
 
-      return 0; // :7649
+      return 0; // :7647-7649
     } else if (
       era.get(`talent:${target}:11`) === 1 ||
       era.get(`talent:${target}:12`) === 1 ||
@@ -2415,9 +2415,9 @@ async function dungeon_attack_k0(_cid, rand) {
         // :7658
         await era.printAndWait(`「不懂爱的家伙哦！」`); // :7659
       } else {
-        // :7660
+        // :7659-7660
         await era.printAndWait(`「倒下吧！」`); // :7661
-      } // :7662
+      } // :7661-7662
     } else if (
       era.get(`talent:${target}:10`) === 1 ||
       era.get(`talent:${target}:26`) === 1
@@ -2433,13 +2433,13 @@ async function dungeon_attack_k0(_cid, rand) {
 
         await era.printAndWait(`「咿～～、爸爸……救救我……」`); // :7672
       } else {
-        // :7673
+        // :7672-7673
         await era.printAndWait(`「咿～～、请倒下吧！」`); // :7674
-      } // :7675
+      } // :7674-7675
 
-      return 0; // :7677
+      return 0; // :7674-7677
     } else {
-      // :7678
+      // :7674-7678
 
       if (rand_n(3) === 0) {
         // :7681
@@ -2448,12 +2448,12 @@ async function dungeon_attack_k0(_cid, rand) {
         // :7683
         await era.printAndWait(`「对不起…！」`); // :7684
       } else {
-        // :7685
+        // :7684-7685
         await era.printAndWait(`「抱歉…！」`); // :7686
-      } // :7687
-    } // :7689
+      } // :7686-7687
+    } // :7686-7689
   } else {
-    // :7690
+    // :7686-7690
 
     if (
       era.get(`talent:${target}:21`) === 1 ||
@@ -2463,7 +2463,7 @@ async function dungeon_attack_k0(_cid, rand) {
 
       await era.printAndWait(`「……这是命令」`); // :7695
 
-      return 0; // :7697
+      return 0; // :7695-7697
     } else if (
       era.get(`talent:${target}:11`) === 1 ||
       era.get(`talent:${target}:12`) === 1 ||
@@ -2480,9 +2480,9 @@ async function dungeon_attack_k0(_cid, rand) {
         // :7703
         await era.printAndWait(`「好可爱啊、你还不知道真正的爱是什么吧～」`); // :7704
       } else {
-        // :7705
+        // :7704-7705
         await era.printAndWait(`「让你清醒一下吧」`); // :7706
-      } // :7707
+      } // :7706-7707
     } else if (
       era.get(`talent:${target}:10`) === 1 ||
       era.get(`talent:${target}:26`) === 1
@@ -2491,9 +2491,9 @@ async function dungeon_attack_k0(_cid, rand) {
 
       await era.printAndWait(`「为什么……不明白这份爱呢」`); // :7712
 
-      return 0; // :7714
+      return 0; // :7712-7714
     } else {
-      // :7715
+      // :7712-7715
 
       if (rand_n(3) === 0) {
         // :7718
@@ -2502,13 +2502,13 @@ async function dungeon_attack_k0(_cid, rand) {
         // :7720
         await era.printAndWait(`「什么是美妙的事情……让我好好教教你吧」`); // :7721
       } else {
-        // :7722
+        // :7721-7722
         await era.printAndWait(`「让我教教你什么是爱吧……真正的爱」`); // :7723
-      } // :7724
-    } // :7726
-  } // :7727
+      } // :7723-7724
+    } // :7723-7726
+  } // :7723-7727
 
-  return 0; // :7729
+  return 0; // :7723-7729
 }
 /* eslint-enable no-irregular-whitespace */
 
@@ -2541,7 +2541,7 @@ async function gobi_koujo_k0(arg_0) {
 
     await era.print(`……呜呜。`); // :8318
   } else {
-    // :8319
+    // :8318-8319
 
     if (rand_n(3) === 0) {
       // :8322
@@ -2550,10 +2550,10 @@ async function gobi_koujo_k0(arg_0) {
       // :8324
       await era.print(`哟。`); // :8325
     } else {
-      // :8326
+      // :8325-8326
       await era.print(`呢。`); // :8327
-    } // :8328
-  } // :8329
+    } // :8327-8328
+  } // :8327-8329
 }
 
 /**
@@ -2590,12 +2590,12 @@ async function enterenemy_koujo_k0() {
 
     await era.printAndWait(`「${sc()}的爱能打倒魔王吗…？」`); // :8072
   } else {
-    // :8073
+    // :8072-8073
 
     await era.printAndWait(`「用${sc()}的爱…让世界恢复和平！」`); // :8075
-  } // :8076
+  } // :8075-8076
   // :8079-8121 SEARCH_FAMILY 未移植，家人检索 switch 段待办（随家人检索票）
-  return 0; // :8121
+  return 0; // :8079-8121（SEARCH_FAMILY 未移植）
 }
 
 // 注册进分发族（TRYCALLFORM BENKI/VICTORY/ATTACK/GOBI/ENTERENEMY_KOUJO_K0 的等价物）
@@ -2628,11 +2628,11 @@ async function ntr_koujo_k0(p) {
         `「饶、饶了我吧…不要再继续了…啊～啊啊啊～！…对不起…魔王大人…………」`,
       ); // :7876
     } else {
-      // :7877
+      // :7876-7877
       await era.printAndWait(
         `「啊啊～…无论如何…咿～咿啊～…啊啊～！请原谅我～！」`,
       ); // :7878
-    } // :7879
+    } // :7878-7879
     // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :7880
     era.set(`cflag:${target}:651`, 1); // :7880
   } else if (p === 2) {
@@ -2643,11 +2643,11 @@ async function ntr_koujo_k0(p) {
         `「嗯咿～～！屁股眼…被撑的太大啦…啊啊～啊…咿～…咿～～！不、不要…再这样下去的话…♪」`,
       ); // :7884
     } else {
-      // :7885
+      // :7884-7885
       await era.printAndWait(
         `「这、这样…不、不行啊～…啊啊～…饶了我吧～啊～啊啊啊～！」`,
       ); // :7886
-    } // :7887
+    } // :7886-7887
     // CFLAG:652  = 1（变量语义：CFLAG 族，652） // :7888
     era.set(`cflag:${target}:652`, 1); // :7888
   } else if (p === 3) {
@@ -2666,11 +2666,11 @@ async function ntr_koujo_k0(p) {
         `「啊～…啊啊～…求你了…救救我…请救救我…魔王大人………」`,
       ); // :7894
     } else {
-      // :7895
+      // :7894-7895
       await era.printAndWait(
         `「大家…不要看我…请不要看我啊…啊～啊啊啊～…讨厌啊～！」`,
       ); // :7896
-    } // :7897
+    } // :7896-7897
     // CFLAG:653  = 1（变量语义：CFLAG 族，653） // :7898
     era.set(`cflag:${target}:653`, 1); // :7898
   } else if (p === 4) {
@@ -2681,11 +2681,11 @@ async function ntr_koujo_k0(p) {
         `「啊啊～！好爽…好爽啊～${heart(1)} 更多的…侵犯我…啊～啊啊～…啊～${heart(1)}」`,
       ); // :7902
     } else {
-      // :7903
+      // :7902-7903
       await era.printAndWait(
         `「啊啊～…好深…好深啊～…咿～…咿～～…${sc()}…已…已经…啊～啊啊啊～♪」`,
       ); // :7904
-    } // :7905
+    } // :7904-7905
     // CFLAG:654  = 1（变量语义：CFLAG 族，654） // :7906
     era.set(`cflag:${target}:654`, 1); // :7906
   } else if (p === 5) {
@@ -2696,11 +2696,11 @@ async function ntr_koujo_k0(p) {
         `「啊哈啊…请更多的侵犯我吧…请净化被魔王玷污过的${sc()}的身体吧～…${heart(1)}」`,
       ); // :7910
     } else {
-      // :7911
+      // :7910-7911
       await era.printAndWait(
         `「啊～～…请大家…惩罚…屈服于魔王军的背叛者${sc()}吧…啊～～…没错…前面和后面都要…啊啊～♪」`,
       ); // :7912
-    } // :7913
+    } // :7912-7913
     // CFLAG:655  = 1（变量语义：CFLAG 族，655） // :7914
     era.set(`cflag:${target}:655`, 1); // :7914
   } else if (p === 6) {
@@ -2711,11 +2711,11 @@ async function ntr_koujo_k0(p) {
         `「嗯噗呜…是…请下一个…${sc()}的小穴只要１０Ｇ…后面的就全部免费了…请尽情发泄欲望吧${heart(1)}」`,
       ); // :7918
     } else {
-      // :7919
+      // :7918-7919
       await era.printAndWait(
         `「更多的…更多的玷污吧…将${sc()}的肮脏身体…更多的…♪」`,
       ); // :7920
-    } // :7921
+    } // :7920-7921
     // CFLAG:656  = 1（变量语义：CFLAG 族，656） // :7922
     era.set(`cflag:${target}:656`, 1); // :7922
   } else if (p === 7) {
@@ -2726,11 +2726,11 @@ async function ntr_koujo_k0(p) {
         `「嗯哈啊…狂王大人的东西好美味啊…好想一直奉仕下去呢${heart(1)}」`,
       ); // :7926
     } else {
-      // :7927
+      // :7926-7927
       await era.printAndWait(
         `「是…${sc()}是狂王大人专用的肉便器～…所以请让我更多的进行奉仕吧♪」`,
       ); // :7928
-    } // :7929
+    } // :7928-7929
     // CFLAG:657  = 1（变量语义：CFLAG 族，657） // :7930
     era.set(`cflag:${target}:657`, 1); // :7930
   } else if (p === 20) {
@@ -2743,19 +2743,19 @@ async function ntr_koujo_k0(p) {
           `「呜咕～咿咕～…魔王大人和${sc()}的小宝宝…啊啊啊～对不起～对不起～～！」`,
         ); // :7935
       } else {
-        // :7936
+        // :7935-7936
         await era.printAndWait(
           `「啊呜～呜呜～…对不起、对不起…${sc()}的可爱宝宝………」`,
         ); // :7937
-      } // :7938
+      } // :7937-7938
     } else {
-      // :7939
+      // :7937-7939
       await era.printAndWait(
         `「哈啊哈啊…是、${sc()}的子宫是狂王大人的专用孕袋…啊啊啊…」`,
       ); // :7940
-    } // :7941
-  } // :7942
-  return 0; // :7943
+    } // :7940-7941
+  } // :7940-7942
+  return 0; // :7940-7943
 }
 
 /**
@@ -2778,7 +2778,7 @@ async function exucution_koujo_k0(event_type) {
   } else if (event_type === 7) {
     // :7958
     await era.printAndWait(''); // :7959
-  } // :7960
+  } // :7958-7960
 }
 
 /**
@@ -2822,7 +2822,7 @@ async function museum_koujo_k0(event_type) {
   } else if (event_type === 9) {
     // :7993
     await era.printAndWait(''); // :7994
-  } // :7995
+  } // :7993-7995
 }
 
 /**
@@ -2849,7 +2849,7 @@ async function banishment_koujo_k0(event_type) {
   } else if (event_type === 4) {
     // :8014
     await era.printAndWait(''); // :8015
-  } // :8016
+  } // :8014-8016
 }
 
 /**
@@ -2872,7 +2872,7 @@ async function public_exucution_koujo_k0(event_type) {
   } else if (event_type === 2) {
     // :8029
     await era.printAndWait(''); // :8030
-  } // :8031
+  } // :8029-8031
 }
 
 /**
@@ -2902,7 +2902,7 @@ async function grotesque_koujo_k0(event_type) {
   } else if (event_type === 6) {
     // :8056
     await era.printAndWait(''); // :8057
-  } // :8058
+  } // :8056-8058
 }
 
 /**
@@ -2926,13 +2926,13 @@ async function colosseum_kojo_0() {
         `${target_name}虽然站着但好像已经没有力气了的样子……`,
       ); // :7742
     } else {
-      // :7743
+      // :7742-7743
       await era.printAndWait(
         `${target_name}因为竞技场的灼热气氛与接下来的战斗对手而颤抖不已……`,
       ); // :7744
-    } // :7745
-    return 0; // :7746
-  } // :7747
+    } // :7744-7745
+    return 0; // :7744-7746
+  } // :7744-7747
 
   if (era_flag.selectcom === 56) {
     // :7751
@@ -2945,12 +2945,12 @@ async function colosseum_kojo_0() {
         await era.printAndWait(`「${assi_name}小姐……请、请饶了我吧………」`); // :7756
         await era.printAndWait(`${target_name}放下武器请求饶恕……`); // :7757
       } else {
-        // :7758
+        // :7757-7758
         await era.printAndWait(`「已经…已经不行了…打不下去了………」`); // :7759
         await era.printAndWait(`${target_name}放下武器请求饶恕……`); // :7760
-      } // :7761
+      } // :7760-7761
     } else {
-      // :7762
+      // :7760-7762
 
       if (era_flag.assi > 0 && era_flag.assiplay) {
         // :7764
@@ -2961,15 +2961,15 @@ async function colosseum_kojo_0() {
           `${target_name}看着被${master_name}命令而武装起来的${assi_name}感到了害怕……`,
         ); // :7766
       } else {
-        // :7767
+        // :7766-7767
         await era.printAndWait(`「才、才不要和那些家伙战斗……」`); // :7768
         await era.printAndWait(
           `${target_name}已经失去了身为勇者的気概、对战斗怕的不得了……`,
         ); // :7769
-      } // :7770
-    } // :7771
-    return 0; // :7772
-  } // :7773
+      } // :7769-7770
+    } // :7769-7771
+    return 0; // :7769-7772
+  } // :7769-7773
 
   if (era_flag.selectcom === 31) {
     // :7778
@@ -2995,14 +2995,14 @@ async function colosseum_kojo_0() {
       } // :7786
       await era.printAndWait(`${target_name}露出了愉悦的表情……`); // :7787
     } else {
-      // :7788
+      // :7787-7788
       await era.printAndWait(`「哈啊哈啊…嗯咕～…嗯～…嗯噗呜……」`); // :7789
       await era.printAndWait(
         `${target_name}舔舐并吞咽着发出令人作呕气味的阴茎……`,
       ); // :7790
-    } // :7791
-    return 0; // :7792
-  } // :7793
+    } // :7790-7791
+    return 0; // :7790-7792
+  } // :7790-7793
 
   if (era_flag.selectcom === 5) {
     // :7797
@@ -3012,12 +3012,12 @@ async function colosseum_kojo_0() {
       await era.printAndWait(`「请…请住手啊…${assi_name}…小姐…啊呜～！」`); // :7800
       await era.printAndWait(`${target_name}就这样被爱抚着……`); // :7801
     } else {
-      // :7802
+      // :7801-7802
       await era.printAndWait(`「啊啊～…疼、疼～～……」`); // :7803
       await era.printAndWait(`${target_name}被用力揉着胸发出了痛苦的呻吟声……`); // :7804
-    } // :7805
-    return 0; // :7806
-  } // :7807
+    } // :7804-7805
+    return 0; // :7804-7806
+  } // :7804-7807
 
   if (era_flag.selectcom === 21) {
     // :7811
@@ -3051,12 +3051,12 @@ async function colosseum_kojo_0() {
         `可怜的${target_name}一边发出蛤蟆似的坏掉的的声音一边被巨魔侵犯着……`,
       ); // :7824
     } else {
-      // :7825
+      // :7824-7825
       await era.printAndWait(`「不…不要啊…这样的…啊啊～！」`); // :7826
       await era.printAndWait(`${target_name}就这样被怪物侵犯着……`); // :7827
-    } // :7828
-    return 0; // :7829
-  } // :7830
+    } // :7827-7828
+    return 0; // :7827-7829
+  } // :7827-7830
 
   if (era_flag.selectcom === 27) {
     // :7835
@@ -3090,19 +3090,19 @@ async function colosseum_kojo_0() {
         `可怜的${target_name}一边发出蛤蟆似的坏掉的的声音一边被巨魔侵犯着……`,
       ); // :7848
     } else {
-      // :7849
+      // :7848-7849
       await era.printAndWait(`「不…不要啊…这样的…啊啊～！」`); // :7850
       await era.printAndWait(`${target_name}就这样被怪物侵犯着肛门……`); // :7851
-    } // :7852
-    return 0; // :7853
-  } // :7854
+    } // :7851-7852
+    return 0; // :7851-7853
+  } // :7851-7854
 
   if (era_flag.selectcom === 51) {
     // :7859
     await era.printAndWait(`「啊咕呜～…这、这是…媚、媚薬吗…啊啊～…！」`); // :7860
-    return 0; // :7861
-  } // :7862
-  return 0; // :7863
+    return 0; // :7860-7861
+  } // :7860-7862
+  return 0; // :7860-7863
 }
 
 // 注册进分发族（TRYCALLFORM NTR/处刑系/COLOSSEUM_KOUJO_K0 的等价物）
@@ -3140,14 +3140,14 @@ async function dog_kojo_0(rand) {
         // :5490
         await era.printAndWait(`「是、是……」`); // :5491
       } else {
-        // :5493
+        // :5491-5493
         await era.printAndWait(`「讨厌！　你要、你要干什么……！？」`); // :5494
-      } // :5495
+      } // :5494-5495
       // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :5496
       era.set(`cflag:${target}:301`, 1); // :5496
-      return 0; // :5497
+      return 0; // :5496-5497
     } else {
-      // :5499
+      // :5496-5499
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -3194,7 +3194,7 @@ async function dog_kojo_0(rand) {
             `「请……更加地…用喜欢的方式来…抚摸${sc()}吧～」`,
           ); // :5516
         } else {
-          // :5517
+          // :5516-5517
           await era.printAndWait(
             `${target_name}被野狗来回舔吮爱抚着，唾液在光裸的身子上留下一道道反光的痕迹`,
           ); // :5518
@@ -3208,7 +3208,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `粗糙的舌头驾轻就熟地爱抚着全身，${target_name}的呻吟越发甜美高亢起来`,
           ); // :5522
-        } // :5523
+        } // :5522-5523
         // CFLAG:301  = 7（变量语义：CFLAG 族，301） // :5524
         era.set(`cflag:${target}:301`, 7); // :5524
       } else if (
@@ -3251,10 +3251,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「讨厌……住手～！」`); // :5543
         // CFLAG:301  = 2（变量语义：CFLAG 族，301） // :5544
         era.set(`cflag:${target}:301`, 2); // :5544
-      } // :5545
-      return 0; // :5546
-    } // :5547
-  } // :5548
+      } // :5544-5545
+      return 0; // :5544-5546
+    } // :5544-5547
+  } // :5544-5548
 
   if (era_flag.selectcom === 1) {
     // :5553
@@ -3266,14 +3266,14 @@ async function dog_kojo_0(rand) {
         // :5557
         await era.printAndWait(`「怎么会……不要啊」`); // :5558
       } else {
-        // :5560
+        // :5558-5560
         await era.printAndWait(`「怎么会……不要啊」`); // :5561
-      } // :5562
+      } // :5561-5562
       // CFLAG:302  = 1（变量语义：CFLAG 族，302） // :5563
       era.set(`cflag:${target}:302`, 1); // :5563
-      return 0; // :5564
+      return 0; // :5563-5564
     } else {
-      // :5566
+      // :5563-5566
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -3312,7 +3312,7 @@ async function dog_kojo_0(rand) {
             `${target_name}的呻吟越发甜美起来，受到鼓舞的野狗努力将舌头刺的更深`,
           ); // :5581
         } else {
-          // :5582
+          // :5581-5582
           await era.printAndWait(
             `${target_name}压着野狗的脑袋向下，邀请它品尝自己的小穴`,
           ); // :5583
@@ -3329,7 +3329,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `「啊啊啊啊…！这种玩法…好厉害……啊……不行…已…已经…！！」`,
           ); // :5588
-        } // :5589
+        } // :5588-5589
         // CFLAG:302  = 6（变量语义：CFLAG 族，302） // :5590
         era.set(`cflag:${target}:302`, 6); // :5590
       } else if (
@@ -3365,10 +3365,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「讨厌！　住手……求你了！」`); // :5606
         // CFLAG:302  = 2（变量语义：CFLAG 族，302） // :5607
         era.set(`cflag:${target}:302`, 2); // :5607
-      } // :5608
-      return 0; // :5609
-    } // :5610
-  } // :5611
+      } // :5607-5608
+      return 0; // :5607-5609
+    } // :5607-5610
+  } // :5607-5611
 
   if (era_flag.selectcom === 5) {
     // :5617
@@ -3380,14 +3380,14 @@ async function dog_kojo_0(rand) {
         // :5621
         await era.printAndWait(`「……」`); // :5622
       } else {
-        // :5624
+        // :5622-5624
         await era.printAndWait(`「呜……」`); // :5625
-      } // :5626
+      } // :5625-5626
       // CFLAG:TARGET:306  = 1（变量语义：CFLAG 族，TARGET:306） // :5627
       era.set(`cflag:${target}:306`, 1); // :5627
-      return 0; // :5628
+      return 0; // :5627-5628
     } else {
-      // :5630
+      // :5627-5630
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -3407,7 +3407,7 @@ async function dog_kojo_0(rand) {
             `${target_name}陶醉地闭上双眼，胸部不断起伏配合着野狗的动作`,
           ); // :5637
         } else {
-          // :5638
+          // :5637-5638
           await era.printAndWait(
             `「粗糙的舌头…弄得好舒服…爪子…指甲不可以伸出来哦…嗯啊……♪」`,
           ); // :5639
@@ -3418,7 +3418,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `${target_name}被野狗爱抚着胸部，露出陶醉的神情，喉咙里溢出快乐的呻吟`,
           ); // :5642
-        } // :5643
+        } // :5642-5643
         // CFLAG:306  = 6（变量语义：CFLAG 族，306） // :5644
         era.set(`cflag:${target}:306`, 6); // :5644
       } else if (
@@ -3453,10 +3453,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「不、不要……快住手……」`); // :5659
         // CFLAG:306  = 2（变量语义：CFLAG 族，306） // :5660
         era.set(`cflag:${target}:306`, 2); // :5660
-      } // :5661
-      return 0; // :5662
-    } // :5663
-  } // :5664
+      } // :5660-5661
+      return 0; // :5660-5662
+    } // :5660-5663
+  } // :5660-5664
 
   if (era_flag.selectcom === 6) {
     // :5669
@@ -3502,12 +3502,12 @@ async function dog_kojo_0(rand) {
         // :5689
         await era.printAndWait(`「明明想把初吻献给魔王大人的……」`); // :5690
       } else {
-        // :5692
+        // :5690-5692
         await era.printAndWait(`「讨厌、把初吻给狗什么的……真是恶梦啊……」`); // :5693
-      } // :5694
+      } // :5693-5694
       // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :5695
       era.set(`cflag:${target}:307`, 1); // :5695
-      return 0; // :5696
+      return 0; // :5695-5696
     } else if ((era.get(`cflag:${target}:307`) || 0) === 0) {
       // :5698
 
@@ -3535,14 +3535,14 @@ async function dog_kojo_0(rand) {
         // :5712
         await era.printAndWait(`「和狗吗……」`); // :5713
       } else {
-        // :5715
+        // :5713-5715
         await era.printAndWait(`「讨厌、和狗接吻什么的……真是恶梦啊……」`); // :5716
-      } // :5717
+      } // :5716-5717
       // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :5718
       era.set(`cflag:${target}:307`, 1); // :5718
-      return 0; // :5719
+      return 0; // :5718-5719
     } else {
-      // :5721
+      // :5718-5721
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -3581,7 +3581,7 @@ async function dog_kojo_0(rand) {
             `「唔啊…吻我…咕…哈啾……好喜欢…我的狗狗大人…最喜欢你了……！」`,
           ); // :5734
         } else {
-          // :5735
+          // :5734-5735
           await era.print(`「唔呣…舌头进来了～哈…狗狗大人……很心急呢…」`); // :5736
           await era.printAndWait(
             `被野狗粗暴的扑倒在地，${target_name}温柔的笑着张开唇，任由黏腻的舌头入侵`,
@@ -3595,7 +3595,7 @@ async function dog_kojo_0(rand) {
           await era.print(`${target_name}脸红得发烫，沉醉在和野兽的亲吻中`); // :5740
           await era.printAndWait(`「${sc()}………哈…是狗狗大人爱着的小母狗呢…」`); // :5741
           await era.print(`${target_name}被野狗深吻着，露出全然陶醉的幸福表情`); // :5742
-        } // :5743
+        } // :5742-5743
         // CFLAG:307  = 6（变量语义：CFLAG 族，307） // :5744
         era.set(`cflag:${target}:307`, 6); // :5744
       } else if (
@@ -3630,10 +3630,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「讨厌、和狗接吻什么的……真是恶梦啊……」`); // :5759
         // CFLAG:307  = 2（变量语义：CFLAG 族，307） // :5760
         era.set(`cflag:${target}:307`, 2); // :5760
-      } // :5761
-      return 0; // :5762
-    } // :5763
-  } // :5764
+      } // :5760-5761
+      return 0; // :5760-5762
+    } // :5760-5763
+  } // :5760-5764
 
   if (era_flag.selectcom === 9) {
     // :5769
@@ -3663,14 +3663,14 @@ async function dog_kojo_0(rand) {
         // :5783
         await era.printAndWait(`「唔嗯～……」`); // :5784
       } else {
-        // :5786
+        // :5784-5786
         await era.printAndWait(`「不要……不要舔……」`); // :5787
-      } // :5788
+      } // :5787-5788
       // CFLAG:TARGET:310  = 1（变量语义：CFLAG 族，TARGET:310） // :5789
       era.set(`cflag:${target}:310`, 1); // :5789
-      return 0; // :5790
+      return 0; // :5789-5790
     } else {
-      // :5792
+      // :5789-5792
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -3700,7 +3700,7 @@ async function dog_kojo_0(rand) {
             `难耐得摇晃着腰，${target_name}享受着被侵犯肛门的快感`,
           ); // :5804
         } else {
-          // :5805
+          // :5804-5805
           await era.print(`野狗将舌头卷起，尽可能的刺入肛穴的更深处`); // :5806
           await era.printAndWait(
             `「唔啊啊……都已经进到这么深了…狗狗大人……哈啊…♪」`,
@@ -3711,7 +3711,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `「要去了…后面的穴……也已经要被狗狗大人玩坏了……咿呀…！！」`,
           ); // :5809
-        } // :5810
+        } // :5809-5810
         // CFLAG:310  = 6（变量语义：CFLAG 族，310） // :5811
         era.set(`cflag:${target}:310`, 6); // :5811
       } else if (
@@ -3746,10 +3746,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「讨厌！　快住手……求你了！」`); // :5826
         // CFLAG:310  = 2（变量语义：CFLAG 族，310） // :5827
         era.set(`cflag:${target}:310`, 2); // :5827
-      } // :5828
-      return 0; // :5829
-    } // :5830
-  } // :5831
+      } // :5827-5828
+      return 0; // :5827-5829
+    } // :5827-5830
+  } // :5827-5831
 
   if (era_flag.selectcom === 21) {
     // :5836
@@ -3797,11 +3797,11 @@ async function dog_kojo_0(rand) {
           // :5857
           await era.printAndWait(`「明明想把第一次献给魔王大人的……」`); // :5858
         } else {
-          // :5861
+          // :5858-5861
           await era.printAndWait(`「咿、咿呀啊啊啊啊啊啊！！」`); // :5862
-        } // :5863
+        } // :5862-5863
       } else {
-        // :5865
+        // :5862-5865
 
         if (era.get(`talent:${target}:136`) === 1) {
           // :5867
@@ -3837,15 +3837,15 @@ async function dog_kojo_0(rand) {
           // :5881
           await era.printAndWait(`「和魔王大人做感觉会更好呢……」`); // :5882
         } else {
-          // :5884
+          // :5882-5884
           await era.printAndWait(`「不要、不要啊啊啊啊啊！！」`); // :5885
-        } // :5886
-      } // :5887
+        } // :5885-5886
+      } // :5885-5887
       // CFLAG:322  = 1（变量语义：CFLAG 族，322） // :5888
       era.set(`cflag:${target}:322`, 1); // :5888
-      return 0; // :5889
+      return 0; // :5888-5889
     } else {
-      // :5891
+      // :5888-5891
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -3888,7 +3888,7 @@ async function dog_kojo_0(rand) {
           ); // :5905
           await era.printAndWait(`「嗯…哈……就这样射精……让${sc()}怀孕吧～♪」`); // :5906
         } else {
-          // :5907
+          // :5906-5907
           await era.printAndWait(`「狗狗大人……请往我的小穴里注入精液吧……♪」`); // :5908
           await era.printAndWait(
             `${target_name}渴望被雄犬填满，打开双腿向野狗发出邀请`,
@@ -3905,7 +3905,7 @@ async function dog_kojo_0(rand) {
           await era.print(
             `「交配…狗狗大人…更多的……在${sc()}的子宫里…用精液播种吧…♪」`,
           ); // :5913
-        } // :5914
+        } // :5913-5914
         // CFLAG:322  = 7（变量语义：CFLAG 族，322） // :5915
         era.set(`cflag:${target}:322`, 7); // :5915
       } else if (
@@ -3950,10 +3950,10 @@ async function dog_kojo_0(rand) {
 
         // CFLAG:322  = 2（变量语义：CFLAG 族，322） // :5936
         era.set(`cflag:${target}:322`, 2); // :5936
-      } // :5937
-      return 0; // :5938
-    } // :5939
-  } // :5940
+      } // :5936-5937
+      return 0; // :5936-5938
+    } // :5936-5939
+  } // :5936-5940
 
   if (era_flag.selectcom === 27) {
     // :5945
@@ -3984,14 +3984,14 @@ async function dog_kojo_0(rand) {
         // :5960
         await era.printAndWait(`「明明和魔王大人做会更好……」`); // :5961
       } else {
-        // :5963
+        // :5961-5963
         await era.printAndWait(`「咿呀啊啊啊啊！！」`); // :5964
-      } // :5965
+      } // :5964-5965
       // CFLAG:TARGET:328  = 1（变量语义：CFLAG 族，TARGET:328） // :5966
       era.set(`cflag:${target}:328`, 1); // :5966
-      return 0; // :5967
+      return 0; // :5966-5967
     } else {
-      // :5969
+      // :5966-5969
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -4024,7 +4024,7 @@ async function dog_kojo_0(rand) {
             `「请射在里面…野兽的精液……把${sc()}的直肠都染白吧♪」`,
           ); // :5981
         } else {
-          // :5982
+          // :5981-5982
           await era.print(
             `${target_name}纤细的腰被野兽抱着，野狗阴茎从背后贯穿了肛门`,
           ); // :5983
@@ -4037,7 +4037,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `「嗯…啊啊～腰部完全停不下来…脑袋变得迷迷糊糊起来了…唔啊啊啊啊……！」`,
           ); // :5986
-        } // :5987
+        } // :5986-5987
         // CFLAG:328  = 7（变量语义：CFLAG 族，328） // :5988
         era.set(`cflag:${target}:328`, 7); // :5988
       } else if (
@@ -4050,9 +4050,9 @@ async function dog_kojo_0(rand) {
           // :5991
           await era.printAndWait(`「和小狗狗也行吧……啊啊～」`); // :5992
         } else {
-          // :5993
+          // :5992-5993
           await era.printAndWait(`「小狗狗……也行吧……」`); // :5994
-        } // :5995
+        } // :5994-5995
         // CFLAG:328  = 6（变量语义：CFLAG 族，328） // :5996
         era.set(`cflag:${target}:328`, 6); // :5996
       } else if (
@@ -4065,9 +4065,9 @@ async function dog_kojo_0(rand) {
           // :5999
           await era.printAndWait(`「明明不是和魔王大人做……竟然有感觉了……」`); // :6000
         } else {
-          // :6001
+          // :6000-6001
           await era.printAndWait(`「嗯啊啊啊～！　屁股要融化了～」`); // :6002
-        } // :6003
+        } // :6002-6003
         // CFLAG:328  = 5（变量语义：CFLAG 族，328） // :6004
         era.set(`cflag:${target}:328`, 5); // :6004
       } else if (
@@ -4094,10 +4094,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「不要、不要啊啊啊啊！」`); // :6015
         // CFLAG:328  = 2（变量语义：CFLAG 族，328） // :6016
         era.set(`cflag:${target}:328`, 2); // :6016
-      } // :6017
-      return 0; // :6018
-    } // :6019
-  } // :6020
+      } // :6016-6017
+      return 0; // :6016-6018
+    } // :6016-6019
+  } // :6016-6020
 
   if (era_flag.selectcom === 30) {
     // :6025
@@ -4115,14 +4115,14 @@ async function dog_kojo_0(rand) {
         // :6035
         await era.printAndWait(`「我做……」`); // :6036
       } else {
-        // :6038
+        // :6036-6038
         await era.printAndWait(`「咿～……讨厌！」`); // :6039
-      } // :6040
+      } // :6039-6040
       // CFLAG:TARGET:331  = 1（变量语义：CFLAG 族，TARGET:331） // :6041
       era.set(`cflag:${target}:331`, 1); // :6041
-      return 0; // :6042
+      return 0; // :6041-6042
     } else {
-      // :6044
+      // :6041-6044
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -4145,7 +4145,7 @@ async function dog_kojo_0(rand) {
             `${target_name}的瞳孔完全染上了欲望的颜色，手上的动作越来越激烈……`,
           ); // :6051
         } else {
-          // :6052
+          // :6051-6052
           await era.printAndWait(`「好厉害……一颤一颤的……好像会很美味的样子」`); // :6053
           await era.printAndWait(
             `${target_name}脸上一片绯红，感受着手里乱跳的野狗阴茎触感`,
@@ -4156,7 +4156,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `毫无保留得奉献自己，${target_name}越发尽力地为野狗手交`,
           ); // :6056
-        } // :6057
+        } // :6056-6057
         // CFLAG:331  = 7（变量语义：CFLAG 族，331） // :6058
         era.set(`cflag:${target}:331`, 7); // :6058
       } else if (
@@ -4169,9 +4169,9 @@ async function dog_kojo_0(rand) {
           // :6061
           await era.printAndWait(`「舒服吗……？」`); // :6062
         } else {
-          // :6063
+          // :6062-6063
           await era.printAndWait(`「舒服吗……？」`); // :6064
-        } // :6065
+        } // :6064-6065
         // CFLAG:331  = 6（变量语义：CFLAG 族，331） // :6066
         era.set(`cflag:${target}:331`, 6); // :6066
       } else if (
@@ -4184,9 +4184,9 @@ async function dog_kojo_0(rand) {
           // :6069
           await era.printAndWait(`「舒服吗……？」`); // :6070
         } else {
-          // :6071
+          // :6070-6071
           await era.printAndWait(`「舒服吗……？」`); // :6072
-        } // :6073
+        } // :6072-6073
         // CFLAG:331  = 5（变量语义：CFLAG 族，331） // :6074
         era.set(`cflag:${target}:331`, 5); // :6074
       } else if (
@@ -4215,10 +4215,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「讨厌……抽泣～」`); // :6085
         // CFLAG:331  = 2（变量语义：CFLAG 族，331） // :6086
         era.set(`cflag:${target}:331`, 2); // :6086
-      } // :6087
-      return 0; // :6088
-    } // :6089
-  } // :6090
+      } // :6086-6087
+      return 0; // :6086-6088
+    } // :6086-6089
+  } // :6086-6090
 
   if (era_flag.selectcom === 31) {
     // :6095
@@ -4252,14 +4252,14 @@ async function dog_kojo_0(rand) {
         // :6113
         await era.printAndWait(`「是、我做……我做……」`); // :6114
       } else {
-        // :6116
+        // :6114-6116
         await era.printAndWait(`「讨厌……讨厌、呜诶诶……」`); // :6117
-      } // :6118
+      } // :6117-6118
       // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332） // :6119
       era.set(`cflag:${target}:332`, 1); // :6119
-      return 0; // :6120
+      return 0; // :6119-6120
     } else {
-      // :6122
+      // :6119-6122
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -4280,7 +4280,7 @@ async function dog_kojo_0(rand) {
             `「好像很舒服的动着呢～啾呜…请射在${sc()}嘴里…嗯……」`,
           ); // :6129
         } else {
-          // :6130
+          // :6129-6130
           await era.print(`「狗狗大人～♪${sc()}的舌头舒服吗？」`); // :6131
           await era.print(`${target_name}将头探到野狗下腹，含住了半勃起的阴茎`); // :6132
           await era.print(`「咕唔……野兽的气味…唔啾……真令人上瘾…」`); // :6133
@@ -4290,7 +4290,7 @@ async function dog_kojo_0(rand) {
           await era.print(
             `「好像已经要到极限了…哈……来吧狗狗大人♪请全都射出来……咕啾…」`,
           ); // :6135
-        } // :6136
+        } // :6135-6136
         // CFLAG:332  = 7（变量语义：CFLAG 族，332） // :6137
         era.set(`cflag:${target}:332`, 7); // :6137
       } else if (
@@ -4336,10 +4336,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「呜诶……讨厌」`); // :6157
         // CFLAG:332  = 2（变量语义：CFLAG 族，332） // :6158
         era.set(`cflag:${target}:332`, 2); // :6158
-      } // :6159
-      return 0; // :6160
-    } // :6161
-  } // :6162
+      } // :6158-6159
+      return 0; // :6158-6160
+    } // :6158-6161
+  } // :6158-6162
 
   if (era_flag.selectcom === 34) {
     // :6167
@@ -4392,11 +4392,11 @@ async function dog_kojo_0(rand) {
           // :6189
           await era.printAndWait(`「明明是想献给主人的……」`); // :6190
         } else {
-          // :6192
+          // :6190-6192
           await era.printAndWait(`「呜呜呜……」`); // :6193
-        } // :6194
+        } // :6193-6194
       } else {
-        // :6196
+        // :6193-6196
 
         if (era.get(`talent:${target}:136`) === 1) {
           // :6198
@@ -4440,15 +4440,15 @@ async function dog_kojo_0(rand) {
           // :6214
           await era.printAndWait(`「小狗狗……没事吧？」`); // :6215
         } else {
-          // :6217
+          // :6215-6217
           await era.printAndWait(`「呜呜呜……」`); // :6218
-        } // :6219
-      } // :6220
+        } // :6218-6219
+      } // :6218-6220
       // CFLAG:TARGET:335  = 1（变量语义：CFLAG 族，TARGET:335） // :6221
       era.set(`cflag:${target}:335`, 1); // :6221
-      return 0; // :6222
+      return 0; // :6221-6222
     } else {
-      // :6224
+      // :6221-6224
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -4491,7 +4491,7 @@ async function dog_kojo_0(rand) {
             `「哈嗯啊啊…啊啊啊嗯…小穴好舒服……最喜欢狗狗大人的肉棒了…」`,
           ); // :6239
         } else {
-          // :6240
+          // :6239-6240
           await era.printAndWait(`「我要把狗狗大人的精液榨光～……♪」`); // :6241
           await era.printAndWait(
             `${target_name}跨起着野狗发出下流的宣言，一点也没有圣女该有的模样`,
@@ -4508,7 +4508,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `「嗯哈…就这样射到最深处……要来了…咿呀……！精子…好烫……！」`,
           ); // :6246
-        } // :6247
+        } // :6246-6247
         // CFLAG:335  = 7（变量语义：CFLAG 族，335） // :6248
         era.set(`cflag:${target}:335`, 7); // :6248
       } else if (
@@ -4523,9 +4523,9 @@ async function dog_kojo_0(rand) {
           // :6253
           await era.printAndWait(`「嗯……呼呜……小狗狗……」`); // :6254
         } else {
-          // :6255
+          // :6254-6255
           await era.printAndWait(`「被小狗狗弄得有感觉了……这样下去……」`); // :6256
-        } // :6257
+        } // :6256-6257
         // CFLAG:335  = 6（变量语义：CFLAG 族，335） // :6258
         era.set(`cflag:${target}:335`, 6); // :6258
       } else if (
@@ -4540,9 +4540,9 @@ async function dog_kojo_0(rand) {
           // :6263
           await era.printAndWait(`「嗯……呼呜……小狗狗……」`); // :6264
         } else {
-          // :6265
+          // :6264-6265
           await era.printAndWait(`「被小狗狗弄得有感觉了……这样下去……」`); // :6266
-        } // :6267
+        } // :6266-6267
         // CFLAG:335  = 5（变量语义：CFLAG 族，335） // :6268
         era.set(`cflag:${target}:335`, 5); // :6268
       } else if (
@@ -4558,9 +4558,9 @@ async function dog_kojo_0(rand) {
           // :6273
           await era.printAndWait(`「不行……这样下去……」`); // :6274
         } else {
-          // :6275
+          // :6274-6275
           await era.printAndWait(`「不会吧……这样下去……」`); // :6276
-        } // :6277
+        } // :6276-6277
         // CFLAG:335  = 4（变量语义：CFLAG 族，335） // :6278
         era.set(`cflag:${target}:335`, 4); // :6278
       } else if (
@@ -4579,10 +4579,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「讨厌、不要……绝对不要！」`); // :6285
         // CFLAG:335  = 2（变量语义：CFLAG 族，335） // :6286
         era.set(`cflag:${target}:335`, 2); // :6286
-      } // :6287
-      return 0; // :6288
-    } // :6289
-  } // :6290
+      } // :6286-6287
+      return 0; // :6286-6288
+    } // :6286-6289
+  } // :6286-6290
 
   if (era_flag.selectcom === 37) {
     // :6295
@@ -4594,14 +4594,14 @@ async function dog_kojo_0(rand) {
         // :6299
         await era.printAndWait(`「要舔小狗狗的屁股……！？」`); // :6300
       } else {
-        // :6302
+        // :6300-6302
         await era.printAndWait(`「讨厌……讨厌、呜呜……」`); // :6303
-      } // :6304
+      } // :6303-6304
       // CFLAG:TARGET:338  = 1（变量语义：CFLAG 族，TARGET:338） // :6305
       era.set(`cflag:${target}:338`, 1); // :6305
-      return 0; // :6306
+      return 0; // :6305-6306
     } else {
-      // :6308
+      // :6305-6308
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -4619,7 +4619,7 @@ async function dog_kojo_0(rand) {
             `「味道…有些奇怪呢……不过${sc()}会努力奉仕的…啾……」`,
           ); // :6314
         } else {
-          // :6315
+          // :6314-6315
           await era.print(`「哈啊哈啊…狗狗大人…果然很喜欢${sc()}的舌头吧～♪」`); // :6316
           await era.printAndWait(
             `${target_name}用舌尖探入野狗的肛门，仔细得爱抚着肠壁上的褶皱`,
@@ -4630,7 +4630,7 @@ async function dog_kojo_0(rand) {
           await era.printAndWait(
             `故意发出着下流的声音，${target_name}完全沉浸在侍奉野狗的快感中了`,
           ); // :6319
-        } // :6320
+        } // :6319-6320
         // CFLAG:338  = 6（变量语义：CFLAG 族，338） // :6321
         era.set(`cflag:${target}:338`, 6); // :6321
       } else if (
@@ -4669,10 +4669,10 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「呜呜呜……讨厌……狗屁股什么的……」`); // :6338
         // CFLAG:338  = 2（变量语义：CFLAG 族，338） // :6339
         era.set(`cflag:${target}:338`, 2); // :6339
-      } // :6340
-      return 0; // :6341
-    } // :6342
-  } // :6343
+      } // :6339-6340
+      return 0; // :6339-6341
+    } // :6339-6342
+  } // :6339-6343
 
   if (era_flag.selectcom === 43 && era.get(`tequip:${target}:43`)) {
     // :6349
@@ -4694,14 +4694,14 @@ async function dog_kojo_0(rand) {
         // :6361
         await era.printAndWait(`「什么……？　要干什么……？`); // :6362
       } else {
-        // :6364
+        // :6362-6364
         await era.printAndWait(`「到底要干什么啊……住手……不要啊！！」`); // :6365
-      } // :6366
+      } // :6365-6366
       // CFLAG:TARGET:344  = 1（变量语义：CFLAG 族，TARGET:344） // :6367
       era.set(`cflag:${target}:344`, 1); // :6367
-      return 0; // :6368
+      return 0; // :6367-6368
     } else {
-      // :6370
+      // :6367-6370
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -4782,9 +4782,9 @@ async function dog_kojo_0(rand) {
         await era.printAndWait(`「咿～咿～……咿～～」`); // :6406
         // CFLAG:TARGET:344  = 2（变量语义：CFLAG 族，TARGET:344） // :6407
         era.set(`cflag:${target}:344`, 2); // :6407
-      } // :6408
-      return 0; // :6409
-    } // :6410
+      } // :6407-6408
+      return 0; // :6407-6409
+    } // :6407-6410
   } else if (
     era_flag.selectcom === 43 &&
     era.get(`tequip:${target}:43`) === 0
@@ -4830,9 +4830,9 @@ async function dog_kojo_0(rand) {
       await era.printAndWait(`「好可怕……被狗那啥的」`); // :6430
       // CFLAG:444  = 1（变量语义：CFLAG 族，444） // :6431
       era.set(`cflag:${target}:444`, 1); // :6431
-    } // :6432
-    return 0; // :6433
-  } // :6434
+    } // :6431-6432
+    return 0; // :6431-6433
+  } // :6431-6434
 
   if (era_flag.selectcom === 56) {
     // :6440
@@ -4874,17 +4874,17 @@ async function dog_kojo_0(rand) {
             `「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」`,
           ); // :6459
         } else {
-          // :6461
+          // :6459-6461
           await era.printAndWait(
             `「你们好……${sc()}……接下来……要和这个小狗狗……呜呜～、救、救救我吧～」`,
           ); // :6462
-        } // :6463
-      } // :6464
+        } // :6462-6463
+      } // :6462-6464
       // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :6465
       era.set(`cflag:${target}:357`, 1); // :6465
-      return 0; // :6466
+      return 0; // :6465-6466
     } else {
-      // :6468
+      // :6465-6468
       if (era.get(`tequip:${target}:53`)) {
         // :6469
 
@@ -4947,13 +4947,13 @@ async function dog_kojo_0(rand) {
           ); // :6491
           // CFLAG:357  = 2（变量语义：CFLAG 族，357） // :6492
           era.set(`cflag:${target}:357`, 2); // :6492
-        } // :6493
-      } // :6494
-      return 0; // :6495
-    } // :6496
-  } // :6497
+        } // :6492-6493
+      } // :6492-6494
+      return 0; // :6492-6495
+    } // :6492-6496
+  } // :6492-6497
 
-  return 0; // :6500
+  return 0; // :6492-6500
 }
 
 /* eslint-enable no-irregular-whitespace */
@@ -4965,7 +4965,7 @@ dog_kojo_family.register(0, dog_kojo_0);
  * @KOJO_MESSAGE_PALAMCNG_0（:6505-6754）：参数变动后口上。
  *
  * 六道守卫（:6510-6528）：助手调教 → 口塞 → 失神 → 崩坏 → 兽奸 → 触手 → 死斗场
- * （草稿缺死斗场？原文 :6528 有，见产物）。之后按 PALAM 首次超过 LV2
+ * （草稿缺死斗场？原文 :6527-6528 有，见产物）。之后按 PALAM 首次超过 LV2
  * （:6537-6710，CFLAG:221-228 记录首次）与处女丧失（:6715-6749，
  * CFLAG:229）触发首次口上；素质 85（爱慕）/76（淫乱）分档；selectcom
  * 50/51 给药分支。
@@ -4980,39 +4980,39 @@ async function kojo_message_palamcng_0() {
   const kojo = chara(target).kojo;
 
   if (era_flag.assi > 0 && era_flag.assiplay) {
-    // :6510
-    return 0; // :6510
-  } // :6510
+    // :6509-6510
+    return 0; // :6509-6510
+  } // :6509-6510
 
   if (era.get(`tequip:${target}:45`)) {
-    // :6513
-    return 0; // :6513
-  } // :6513
+    // :6512-6513
+    return 0; // :6512-6513
+  } // :6512-6513
 
   if (era.get('tflag:899') || 0) {
-    // :6516
-    return 0; // :6516
-  } // :6516
+    // :6515-6516
+    return 0; // :6515-6516
+  } // :6515-6516
 
   if (era.get(`talent:${target}:9`) === 1) {
-    // :6519
-    return 0; // :6519
-  } // :6519
+    // :6518-6519
+    return 0; // :6518-6519
+  } // :6518-6519
 
   if (era.get(`tequip:${target}:89`)) {
-    // :6522
-    return 0; // :6522
-  } // :6522
+    // :6521-6522
+    return 0; // :6521-6522
+  } // :6521-6522
 
   if (era.get(`tequip:${target}:90`)) {
-    // :6525
-    return 0; // :6525
-  } // :6525
+    // :6524-6525
+    return 0; // :6524-6525
+  } // :6524-6525
 
   if (era.get(`tequip:${target}:55`)) {
-    // :6528
-    return 0; // :6528
-  } // :6528
+    // :6527-6528
+    return 0; // :6527-6528
+  } // :6527-6528
 
   let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量; // :6537
   if (
@@ -5029,28 +5029,28 @@ async function kojo_message_palamcng_0() {
         await era.printAndWait(`「还有这种黏糊糊的液体呢………」`); // :6543
         await era.printAndWait(`―――润滑度初次超过LV2了。`); // :6544
       } else {
-        // :6546
+        // :6544-6546
         await era.printAndWait(
           `「啊～…嗯～…讨、讨厌…漏出来了…诶、这是用来润滑的东西吗…？」`,
         ); // :6547
         await era.printAndWait(`―――润滑度初次超过LV2了。`); // :6548
-      } // :6549
+      } // :6548-6549
     } else {
-      // :6551
+      // :6548-6551
 
       if (era_flag.selectcom === 50) {
         // :6553
         await era.printAndWait(`「咿呀～…又、又凉又湿的…感觉变的好奇怪………」`); // :6554
         await era.printAndWait(`―――润滑度初次超过LV2了。`); // :6555
       } else {
-        // :6557
+        // :6555-6557
         await era.printAndWait(`「啊～哈啊啊…全部…湿掉了………」`); // :6558
         await era.printAndWait(`―――润滑度初次超过LV2了。`); // :6559
-      } // :6560
-    } // :6561
+      } // :6559-6560
+    } // :6559-6561
     // CFLAG:TARGET:221  = 1（变量语义：CFLAG 族，TARGET:221） // :6562
     kojo.首次润滑Lv2 = 1; // :6562
-  } // :6563
+  } // :6562-6563
 
   p = (era.get(`palam:${target}:5`) || 0) + chara(target).train.欲情增量; // :6568
   if (
@@ -5067,28 +5067,28 @@ async function kojo_message_palamcng_0() {
         await era.printAndWait(`「哈呜～…就算不用这种药…啊啊～…身体～………」`); // :6574
         await era.printAndWait(`―――欲情初次超过LV2了。`); // :6575
       } else {
-        // :6577
+        // :6575-6577
         await era.printAndWait(
           `「嗯～…那、那个…总觉得身体变的好烫…感觉好奇怪………」`,
         ); // :6578
         await era.printAndWait(`―――欲情初次超过LV2了。`); // :6579
-      } // :6580
+      } // :6579-6580
     } else {
-      // :6582
+      // :6579-6582
 
       if (era_flag.selectcom === 51) {
         // :6584
         await era.printAndWait(`「嗯～…不、不行…用了药的话…啊啊～」`); // :6585
         await era.printAndWait(`―――欲情初次超过LV2了。`); // :6586
       } else {
-        // :6588
+        // :6586-6588
         await era.printAndWait(`「啊啊…身体好烫…心跳的好厉害平静不下来………」`); // :6589
         await era.printAndWait(`―――欲情初次超过LV2了。`); // :6590
-      } // :6591
-    } // :6592
+      } // :6590-6591
+    } // :6590-6592
     // CFLAG:222  = 1（变量语义：CFLAG 族，222） // :6593
     kojo.首次欲情Lv2 = 1; // :6593
-  } // :6594
+  } // :6593-6594
 
   p = (era.get(`palam:${target}:8`) || 0) + chara(target).train.耻情增量; // :6599
   if (
@@ -5102,13 +5102,13 @@ async function kojo_message_palamcng_0() {
       await era.printAndWait(`「啊啊…不要再做这种羞人的事情了………」`); // :6603
       await era.printAndWait(`―――耻情初次超过LV2了。`); // :6604
     } else {
-      // :6606
+      // :6604-6606
       await era.printAndWait(`「啊啊啊…好害羞…不要………」`); // :6607
       await era.printAndWait(`―――耻情初次超过LV2了。`); // :6608
-    } // :6609
+    } // :6608-6609
     // CFLAG:223  = 1（变量语义：CFLAG 族，223） // :6610
     kojo.首次耻情Lv2 = 1; // :6610
-  } // :6611
+  } // :6610-6611
 
   p = (era.get(`palam:${target}:10`) || 0) + chara(target).train.恐怖增量; // :6616
   if (
@@ -5122,13 +5122,13 @@ async function kojo_message_palamcng_0() {
       await era.printAndWait(`「咿～…不要再做…这么可怕的事情了…好可怕………」`); // :6620
       await era.printAndWait(`―――恐怖初次超过LV2了。`); // :6621
     } else {
-      // :6623
+      // :6621-6623
       await era.printAndWait(`「咿～～～…！不、不要啊……！」`); // :6624
       await era.printAndWait(`―――恐怖初次超过LV2了。`); // :6625
-    } // :6626
+    } // :6625-6626
     // CFLAG:224  = 1（变量语义：CFLAG 族，224） // :6627
     kojo.首次恐怖Lv2 = 1; // :6627
-  } // :6628
+  } // :6627-6628
 
   if (
     (era.get(`nowex:${target}:0`) || 0) > 0 &&
@@ -5143,17 +5143,17 @@ async function kojo_message_palamcng_0() {
         `好像${target_name}因为对阴蒂的刺激而第一次达到了绝顶。`,
       ); // :6637
     } else {
-      // :6639
+      // :6637-6639
       await era.printAndWait(
         `「啊～啊啊～啊～！…好像一阵厉害的浪潮涌过来了…啊啊啊…啊………♪」`,
       ); // :6640
       await era.printAndWait(
         `好像${target_name}因为对阴蒂的刺激而第一次达到了绝顶。`,
       ); // :6641
-    } // :6642
+    } // :6641-6642
     // CFLAG:225  = 1（变量语义：CFLAG 族，225） // :6643
     kojo.首次C绝顶 = 1; // :6643
-  } // :6644
+  } // :6643-6644
 
   if (
     (era.get(`nowex:${target}:1`) || 0) > 0 &&
@@ -5186,7 +5186,7 @@ async function kojo_message_palamcng_0() {
         `${target_name}初次用阴道绝顶的样子…她幸福的露出了放松的高潮脸………`,
       ); // :6661
     } else {
-      // :6663
+      // :6661-6663
       await era.printAndWait(
         `「啊～啊啊啊～！不行不行！再这样下去的话会变得奇怪的…」`,
       ); // :6664
@@ -5196,10 +5196,10 @@ async function kojo_message_palamcng_0() {
       await era.printAndWait(
         `${target_name}初次用阴道绝顶的样子…是注意到视线了吗、把身体靠向了${player_name}………`,
       ); // :6666
-    } // :6667
+    } // :6666-6667
     // CFLAG:TARGET:226  = 1（变量语义：CFLAG 族，TARGET:226） // :6668
     kojo.首次V绝顶 = 1; // :6668
-  } // :6669
+  } // :6668-6669
 
   if (
     (era.get(`nowex:${target}:2`) || 0) > 0 &&
@@ -5236,7 +5236,7 @@ async function kojo_message_palamcng_0() {
         `${target_name}初次用肛门绝顶的样子、脸色通红害羞的颤抖着身体………`,
       ); // :6686
     } else {
-      // :6688
+      // :6686-6688
       await era.printAndWait(
         `「呜啊啊～…不要～不要啊…明明…不想用那个地方…高潮的…」`,
       ); // :6689
@@ -5246,10 +5246,10 @@ async function kojo_message_palamcng_0() {
       await era.printAndWait(
         `${target_name}初次用肛门绝顶的样子、一边流下了屈辱的眼泪一边又好像有点愉悦的样子………`,
       ); // :6691
-    } // :6692
+    } // :6691-6692
     // CFLAG:227  = 1（变量语义：CFLAG 族，227） // :6693
     kojo.首次A绝顶 = 1; // :6693
-  } // :6694
+  } // :6693-6694
 
   if (
     (era.get(`nowex:${target}:3`) || 0) > 0 &&
@@ -5264,17 +5264,17 @@ async function kojo_message_palamcng_0() {
         `${target_name}由于对胸部的刺激初次达到绝顶的样子………`,
       ); // :6703
     } else {
-      // :6705
+      // :6703-6705
       await era.printAndWait(
         `「啊～啊啊～啊啊啊啊…乳房…好舒服…呢………${heart(1)}」`,
       ); // :6706
       await era.printAndWait(
         `${target_name}由于对胸部的刺激初次达到绝顶的样子………`,
       ); // :6707
-    } // :6708
+    } // :6707-6708
     // CFLAG:TARGET:228  = 1（变量语义：CFLAG 族，TARGET:228） // :6709
     kojo.首次B绝顶 = 1; // :6709
-  } // :6710
+  } // :6709-6710
 
   let a = chara(target).train.反感增量 + chara(target).train.不快增量; // :6715
   if (
@@ -5311,14 +5311,14 @@ async function kojo_message_palamcng_0() {
         ); // :6727
         await era.printAndWait(`${target_name}露出开心的表情抱住了你………`); // :6728
       } else {
-        // :6730
+        // :6728-6730
         await era.printAndWait(
           `「这样一来…已经…${sc()}就…呜呜～…呜～…呜呜………」`,
         ); // :6731
         await era.printAndWait(`${target_name}不去看你的脸低下头泣不成声………`); // :6732
-      } // :6733
+      } // :6732-6733
     } else {
-      // :6735
+      // :6732-6735
 
       if (era.get(`talent:${target}:76`) === 1) {
         // :6737
@@ -5326,15 +5326,15 @@ async function kojo_message_palamcng_0() {
       } else if (era.get(`talent:${target}:85`) === 1) {
         // :6740
       } else {
-        // :6744
+        // :6740-6744
         await era.printAndWait(
           `「哈啊哈啊…这么一来……${sc()}就…再也不是圣女了………」`,
         ); // :6745
-      } // :6746
-    } // :6747
+      } // :6745-6746
+    } // :6745-6747
     // CFLAG:TARGET:229  = 1（变量语义：CFLAG 族，TARGET:229） // :6748
     kojo.处女丧失 = 1; // :6748
-  } // :6749
+  } // :6748-6749
 }
 
 // @KOJO_MESSAGE_MARKCNG_0 // :6756
@@ -5353,34 +5353,34 @@ async function kojo_message_markcng_0() {
   const kojo = chara(target).kojo;
 
   if (era_flag.assi > 0 && era_flag.assiplay) {
-    // :6759
-    return 0; // :6759
-  } // :6759
+    // :6758-6759
+    return 0; // :6758-6759
+  } // :6758-6759
 
   if (era.get(`tequip:${target}:45`)) {
-    // :6762
-    return 0; // :6762
-  } // :6762
+    // :6761-6762
+    return 0; // :6761-6762
+  } // :6761-6762
 
   if (era.get('tflag:899') || 0) {
-    // :6765
-    return 0; // :6765
-  } // :6765
+    // :6764-6765
+    return 0; // :6764-6765
+  } // :6764-6765
 
   if (era.get(`tequip:${target}:89`)) {
-    // :6768
-    return 0; // :6768
-  } // :6768
+    // :6767-6768
+    return 0; // :6767-6768
+  } // :6767-6768
 
   if (era.get(`tequip:${target}:90`)) {
-    // :6771
-    return 0; // :6771
-  } // :6771
+    // :6770-6771
+    return 0; // :6770-6771
+  } // :6770-6771
 
   if (era.get(`talent:${target}:9`) === 1) {
-    // :6774
-    return 0; // :6774
-  } // :6774
+    // :6773-6774
+    return 0; // :6773-6774
+  } // :6773-6774
 
   if (
     game.system.苦痛刻印变动 === 3 &&
@@ -5392,12 +5392,12 @@ async function kojo_message_markcng_0() {
       // :6781
       await era.printAndWait(`「咕呜～…呜～…啊啊啊…痛…好痛…咕呜呜………」`); // :6782
     } else {
-      // :6783
+      // :6782-6783
       await era.printAndWait(`「痛…好痛哦…求求你…不要…再这样下去了………」`); // :6784
-    } // :6785
+    } // :6784-6785
     // CFLAG:297  = 1（变量语义：CFLAG 族，297） // :6786
     kojo.苦痛刻印Lv3 = 1; // :6786
-  } // :6787
+  } // :6786-6787
 
   if (
     game.system.快乐刻印变动 === 3 &&
@@ -5411,14 +5411,14 @@ async function kojo_message_markcng_0() {
         `「啊～啊啊～…身体里感觉好舒服～…啊～啊啊～哈啊啊～♪」`,
       ); // :6795
     } else {
-      // :6796
+      // :6795-6796
       await era.printAndWait(
         `「啊啊～啊～哈啊啊啊…这、这是怎么回事…好爽啊～…好奇怪…呢………」`,
       ); // :6797
-    } // :6798
+    } // :6797-6798
     // CFLAG:298  = 1（变量语义：CFLAG 族，298） // :6799
     kojo.快乐刻印Lv3 = 1; // :6799
-  } // :6800
+  } // :6799-6800
 
   if (
     game.system.屈服刻印变动 === 3 &&
@@ -5432,12 +5432,12 @@ async function kojo_message_markcng_0() {
         `「啊～啊啊啊…${sc()}是…绝对…不会反抗的…所以………」`,
       ); // :6808
     } else {
-      // :6809
+      // :6808-6809
       await era.printAndWait(`「不行了…真的…没法…反抗了………」`); // :6810
-    } // :6811
+    } // :6810-6811
     // CFLAG:299  = 1（变量语义：CFLAG 族，299） // :6812
     kojo.屈服刻印Lv3 = 1; // :6812
-  } // :6813
+  } // :6812-6813
 
   if (
     game.system.反抗刻印变动 === 3 &&
@@ -5449,12 +5449,12 @@ async function kojo_message_markcng_0() {
       // :6820
       await era.printAndWait(`「呜～…咕～…过份…太过份了！」`); // :6821
     } else {
-      // :6822
+      // :6821-6822
       await era.printAndWait(`「为什么…做…这种事…呜！」`); // :6823
-    } // :6824
+    } // :6823-6824
     // CFLAG:300  = 1（变量语义：CFLAG 族，300） // :6825
     kojo.反抗刻印Lv3 = 1; // :6825
-  } // :6826
+  } // :6825-6826
 }
 
 /**

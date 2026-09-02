@@ -44,38 +44,38 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6510',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6509-6510',
+        any: [/SIF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6513',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6512-6513',
+        any: [/SIF\ TEQUIP:45/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6516',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6515-6516',
+        any: [/SIF\ TFLAG:899/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6519',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6518-6519',
+        any: [/SIF\ TALENT:TARGET:9\ ==\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6522',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6521-6522',
+        any: [/SIF\ TEQUIP:89/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6525',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6524-6525',
+        any: [/SIF\ TEQUIP:90/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6528',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6527-6528',
+        any: [/SIF\ TEQUIP:55/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -109,8 +109,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6546',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6544-6546',
+        any: [/―――润滑度初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -124,13 +124,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6549',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6548-6549',
+        any: [/―――润滑度初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6551',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6548-6551',
+        any: [/―――润滑度初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -149,8 +149,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6557',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6555-6557',
+        any: [/―――润滑度初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -164,13 +164,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6560',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6559-6560',
+        any: [/―――润滑度初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6561',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6559-6561',
+        any: [/―――润滑度初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -179,8 +179,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6563',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6562-6563',
+        any: [/CFLAG:TARGET:221\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -214,8 +214,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6577',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6575-6577',
+        any: [/―――欲情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -229,13 +229,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6580',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6579-6580',
+        any: [/―――欲情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6582',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6579-6582',
+        any: [/―――欲情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -254,8 +254,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6588',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6586-6588',
+        any: [/―――欲情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -269,13 +269,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6591',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6590-6591',
+        any: [/―――欲情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6592',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6590-6592',
+        any: [/―――欲情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -284,8 +284,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6594',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6593-6594',
+        any: [/CFLAG:222\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -314,8 +314,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6606',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6604-6606',
+        any: [/―――耻情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -329,8 +329,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6609',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6608-6609',
+        any: [/―――耻情初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -339,8 +339,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6611',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6610-6611',
+        any: [/CFLAG:223\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -369,8 +369,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6623',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6621-6623',
+        any: [/―――恐怖初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -384,8 +384,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6626',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6625-6626',
+        any: [/―――恐怖初次超过LV2了。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -394,8 +394,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6628',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6627-6628',
+        any: [/CFLAG:224\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -419,8 +419,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6639',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6637-6639',
+        any: [/好像%SAVESTR:TARGET%因为对阴蒂的刺激而第一次达到了绝顶。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -434,8 +434,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6642',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6641-6642',
+        any: [/好像%SAVESTR:TARGET%因为对阴蒂的刺激而第一次达到了绝顶。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -444,8 +444,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6644',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6643-6644',
+        any: [/CFLAG:225\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -510,8 +510,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6663',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6661-6663',
+        any: [
+          /%SAVESTR:TARGET%初次用阴道绝顶的样子…她幸福的露出了放松的高潮脸/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -534,8 +536,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6667',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6666-6667',
+        any: [
+          /%SAVESTR:TARGET%初次用阴道绝顶的样子…是注意到视线了吗、把身体靠/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -544,8 +548,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6669',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6668-6669',
+        any: [/CFLAG:TARGET:226\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -616,8 +620,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6688',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6686-6688',
+        any: [
+          /%SAVESTR:TARGET%初次用肛门绝顶的样子、脸色通红害羞的颤抖着身体…/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -638,8 +644,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6692',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6691-6692',
+        any: [
+          /%SAVESTR:TARGET%初次用肛门绝顶的样子、一边流下了屈辱的眼泪一边又/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -648,8 +656,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6694',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6693-6694',
+        any: [/CFLAG:227\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -673,8 +681,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6705',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6703-6705',
+        any: [/%SAVESTR:TARGET%由于对胸部的刺激初次达到絶頂的样子………/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -690,8 +698,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6708',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6707-6708',
+        any: [/%SAVESTR:TARGET%由于对胸部的刺激初次达到絶頂的样子………/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -700,8 +708,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6710',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6709-6710',
+        any: [/CFLAG:TARGET:228\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -768,8 +776,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6730',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6728-6730',
+        any: [/%SAVESTR:TARGET%露出开心的表情抱住了你………/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -783,13 +791,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6733',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6732-6733',
+        any: [/%SAVESTR:TARGET%不去看你的脸低下头泣不成声………/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6735',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6732-6735',
+        any: [/%SAVESTR:TARGET%不去看你的脸低下头泣不成声………/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -808,8 +816,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6744',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6740-6744',
+        any: [/ELSEIF\ TALENT:TARGET:85\ ==\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -820,13 +828,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6746',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6745-6746',
+        any: [/「哈啊哈啊…这么一来……%SELF_CALL\(TARGET\)%就…再也不是聖女了/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6747',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6745-6747',
+        any: [/「哈啊哈啊…这么一来……%SELF_CALL\(TARGET\)%就…再也不是聖女了/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -835,8 +843,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6749',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6748-6749',
+        any: [/CFLAG:TARGET:229\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -845,33 +853,33 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6759',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6758-6759',
+        any: [/SIF\ ASSI\ >\ 0\ \&\&\ ASSIPLAY/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6762',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6761-6762',
+        any: [/SIF\ TEQUIP:45/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6765',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6764-6765',
+        any: [/SIF\ TFLAG:899/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6768',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6767-6768',
+        any: [/SIF\ TEQUIP:89/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6771',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6770-6771',
+        any: [/SIF\ TEQUIP:90/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6774',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6773-6774',
+        any: [/SIF\ TALENT:TARGET:9\ ==\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -890,8 +898,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6783',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6782-6783',
+        any: [/「咕呜～…呜～…啊啊啊…痛…好痛…咕呜呜………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -900,8 +908,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6785',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6784-6785',
+        any: [/「痛…好痛哦…求求你…不要…再这样下去了………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -910,8 +918,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6787',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6786-6787',
+        any: [/CFLAG:297\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -930,8 +938,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6796',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6795-6796',
+        any: [/「啊～啊啊～…身体里感觉好舒服～…啊～啊啊～哈啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -940,8 +948,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6798',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6797-6798',
+        any: [/「啊啊～啊～哈啊啊啊…这、这是怎么回事…好爽啊～…好奇怪…呢………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -950,8 +958,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6800',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6799-6800',
+        any: [/CFLAG:298\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -970,8 +978,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6809',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6808-6809',
+        any: [/「啊～啊啊啊…%SELF_CALL\(TARGET\)%是…絶対…不会反抗的…所以…/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -980,8 +988,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6811',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6810-6811',
+        any: [/「不行了…真的…没法…反抗了………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -990,8 +998,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6813',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6812-6813',
+        any: [/CFLAG:299\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1010,8 +1018,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6822',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6821-6822',
+        any: [/「呜～…咕～…过份…太过份了！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1020,8 +1028,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6824',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6823-6824',
+        any: [/「为什么…做…这种事…呜！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1030,8 +1038,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6826',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6825-6826',
+        any: [/CFLAG:300\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1060,8 +1068,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5493',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5491-5493',
+        any: [/「是、是……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1070,8 +1078,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5495',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5494-5495',
+        any: [/「讨厌！　你要、你要干什么……！？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1080,13 +1088,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5497',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5496-5497',
+        any: [/CFLAG:301\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5499',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5496-5499',
+        any: [/CFLAG:301\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1184,8 +1192,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5517',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5516-5517',
+        any: [/「请……更加地…用喜欢的方式来…抚摸%SELF_CALL\(TARGET\)%吧～」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1218,8 +1226,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5523',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5522-5523',
+        any: [
+          /粗糙的舌头驾轻就熟地爱抚着全身，%SAVESTR:TARGET%的呻吟越发甜美高/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1307,23 +1317,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5545',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5544-5545',
+        any: [/CFLAG:301\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5546',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5544-5546',
+        any: [/CFLAG:301\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5547',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5544-5547',
+        any: [/CFLAG:301\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5548',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5544-5548',
+        any: [/CFLAG:301\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1347,8 +1357,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5560',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5558-5560',
+        any: [/「怎么会……不要啊」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1357,8 +1367,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5562',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5561-5562',
+        any: [/「怎么会……不要啊」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1367,13 +1377,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5564',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5563-5564',
+        any: [/CFLAG:302\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5566',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5563-5566',
+        any: [/CFLAG:302\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1455,8 +1465,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5582',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5581-5582',
+        any: [
+          /%SAVESTR:TARGET%的呻吟越发甜美起来，受到鼓舞的野狗努力将舌头刺的/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1496,8 +1508,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5589',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5588-5589',
+        any: [/「啊啊啊啊…！这种玩法…好厉害……啊……不行…已…已经…！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1575,23 +1587,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5608',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5607-5608',
+        any: [/CFLAG:302\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5609',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5607-5609',
+        any: [/CFLAG:302\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5610',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5607-5610',
+        any: [/CFLAG:302\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5611',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5607-5611',
+        any: [/CFLAG:302\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1615,8 +1627,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5624',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5622-5624',
+        any: [/「……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1625,8 +1637,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5626',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5625-5626',
+        any: [/「呜……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1635,13 +1647,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5628',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5627-5628',
+        any: [/CFLAG:TARGET:306\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5630',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5627-5630',
+        any: [/CFLAG:TARGET:306\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1679,8 +1691,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5638',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5637-5638',
+        any: [/%SAVESTR:TARGET%陶醉地闭上双眼，胸部不断起伏配合着野狗的动作/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1708,8 +1720,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5643',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5642-5643',
+        any: [
+          /%SAVESTR:TARGET%被野狗爱抚着胸部，露出陶醉的神情，喉咙里溢出快乐/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1782,23 +1796,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5661',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5660-5661',
+        any: [/CFLAG:306\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5662',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5660-5662',
+        any: [/CFLAG:306\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5663',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5660-5663',
+        any: [/CFLAG:306\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5664',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5660-5664',
+        any: [/CFLAG:306\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1906,8 +1920,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5692',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5690-5692',
+        any: [/「明明想把初吻献给魔王大人的……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1916,8 +1930,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5694',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5693-5694',
+        any: [/「讨厌、把初吻给狗什么的……真是恶梦啊……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -1926,8 +1940,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5696',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5695-5696',
+        any: [/CFLAG:307\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2002,8 +2016,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5715',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5713-5715',
+        any: [/「和狗吗……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2012,8 +2026,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5717',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5716-5717',
+        any: [/「讨厌、和狗接吻什么的……真是恶梦啊……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2022,13 +2036,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5719',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5718-5719',
+        any: [/CFLAG:307\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5721',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5718-5721',
+        any: [/CFLAG:307\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2102,8 +2116,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5735',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5734-5735',
+        any: [/「唔啊…吻我…咕…哈啾……好喜欢…我的狗狗大人…最喜欢你了……！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2146,8 +2160,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5743',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5742-5743',
+        any: [/%SAVESTR:TARGET%被野狗深吻着，露出全然陶醉的幸福表情/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2220,23 +2234,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5761',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5760-5761',
+        any: [/CFLAG:307\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5762',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5760-5762',
+        any: [/CFLAG:307\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5763',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5760-5763',
+        any: [/CFLAG:307\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5764',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5760-5764',
+        any: [/CFLAG:307\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2302,8 +2316,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5786',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5784-5786',
+        any: [/「唔嗯～……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2312,8 +2326,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5788',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5787-5788',
+        any: [/「不要……不要舔……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2322,13 +2336,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5790',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5789-5790',
+        any: [/CFLAG:TARGET:310\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5792',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5789-5792',
+        any: [/CFLAG:TARGET:310\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2395,8 +2409,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5805',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5804-5805',
+        any: [/难耐得摇晃着腰，%SAVESTR:TARGET%享受着被侵犯肛门的快感/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2422,8 +2436,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5810',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5809-5810',
+        any: [/「要去了…后面的穴……也已经要被狗狗大人玩坏了……咿呀…！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2496,23 +2510,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5828',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5827-5828',
+        any: [/CFLAG:310\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5829',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5827-5829',
+        any: [/CFLAG:310\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5830',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5827-5830',
+        any: [/CFLAG:310\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5831',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5827-5831',
+        any: [/CFLAG:310\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2612,8 +2626,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5861',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5858-5861',
+        any: [/「明明想把第一次献给魔王大人的……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2622,13 +2636,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5863',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5862-5863',
+        any: [/「咿、咿呀啊啊啊啊啊啊！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5865',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5862-5865',
+        any: [/「咿、咿呀啊啊啊啊啊啊！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2708,8 +2722,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5884',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5882-5884',
+        any: [/「和魔王大人做感觉会更好呢……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2718,13 +2732,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5886',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5885-5886',
+        any: [/「不要、不要啊啊啊啊啊！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5887',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5885-5887',
+        any: [/「不要、不要啊啊啊啊啊！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2733,13 +2747,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5889',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5888-5889',
+        any: [/CFLAG:322\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5891',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5888-5891',
+        any: [/CFLAG:322\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2823,8 +2837,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5907',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5906-5907',
+        any: [/「嗯…哈……就这样射精……让%SELF_CALL\(TARGET\)%怀孕吧～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2862,8 +2876,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5914',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5913-5914',
+        any: [/「交配…狗狗大人…更多的……在%SELF_CALL\(TARGET\)%的子宫里…用/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -2953,23 +2967,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5937',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5936-5937',
+        any: [/CFLAG:322\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5938',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5936-5938',
+        any: [/CFLAG:322\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5939',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5936-5939',
+        any: [/CFLAG:322\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5940',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5936-5940',
+        any: [/CFLAG:322\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3042,8 +3056,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5963',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5961-5963',
+        any: [/「明明和魔王大人做会更好……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3052,8 +3066,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5965',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5964-5965',
+        any: [/「咿呀啊啊啊啊！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3062,13 +3076,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5967',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '5966-5967',
+        any: [/CFLAG:TARGET:328\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5969',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5966-5969',
+        any: [/CFLAG:TARGET:328\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3137,8 +3151,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5982',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5981-5982',
+        any: [/「请射在里面…野兽的精液……把%SELF_CALL\(TARGET\)%的直肠都染白/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3164,8 +3178,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5987',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5986-5987',
+        any: [
+          /「嗯…啊啊～腰部完全停不下来…脑袋变得迷迷糊糊起来了…唔啊啊啊啊……！」/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3191,8 +3207,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5993',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '5992-5993',
+        any: [/「和小狗狗也行吧……啊啊～」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3201,8 +3217,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '5995',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '5994-5995',
+        any: [/「小狗狗……也行吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3228,8 +3244,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6001',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6000-6001',
+        any: [/「明明不是和魔王大人做……竟然有感觉了……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3238,8 +3254,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6003',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6002-6003',
+        any: [/「嗯啊啊啊～！　屁股要融化了～」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3295,23 +3311,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6017',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6016-6017',
+        any: [/CFLAG:328\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6018',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6016-6018',
+        any: [/CFLAG:328\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6019',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6016-6019',
+        any: [/CFLAG:328\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6020',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6016-6020',
+        any: [/CFLAG:328\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3355,8 +3371,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6038',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6036-6038',
+        any: [/「我做……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3365,8 +3381,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6040',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6039-6040',
+        any: [/「咿～……讨厌！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3375,13 +3391,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6042',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6041-6042',
+        any: [/CFLAG:TARGET:331\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6044',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6041-6044',
+        any: [/CFLAG:TARGET:331\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3421,8 +3437,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6052',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6051-6052',
+        any: [
+          /%SAVESTR:TARGET%的瞳孔完全染上了欲望的颜色，手上的动作越来越激烈/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3446,8 +3464,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6057',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6056-6057',
+        any: [/毫无保留得奉献自己，%SAVESTR:TARGET%越发尽力地为野狗手交/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3473,8 +3491,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6063',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6062-6063',
+        any: [/「舒服吗……？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3483,8 +3501,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6065',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6064-6065',
+        any: [/「舒服吗……？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3510,8 +3528,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6071',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6070-6071',
+        any: [/「舒服吗……？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3520,8 +3538,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6073',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6072-6073',
+        any: [/「舒服吗……？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3579,23 +3597,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6087',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6086-6087',
+        any: [/CFLAG:331\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6088',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6086-6088',
+        any: [/CFLAG:331\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6089',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6086-6089',
+        any: [/CFLAG:331\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6090',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6086-6090',
+        any: [/CFLAG:331\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3674,8 +3692,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6116',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6114-6116',
+        any: [/「是、我做……我做……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3684,8 +3702,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6118',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6117-6118',
+        any: [/「讨厌……讨厌、呜诶诶……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3694,13 +3712,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6120',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6119-6120',
+        any: [/CFLAG:TARGET:332\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6122',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6119-6122',
+        any: [/CFLAG:TARGET:332\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3740,8 +3758,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6130',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6129-6130',
+        any: [/「好像很舒服的动着呢～啾呜…请射在%SELF_CALL\(TARGET\)%嘴里…嗯/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3772,8 +3790,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6136',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6135-6136',
+        any: [/「好像已经要到极限了…哈……来吧狗狗大人♪请全都射出来……咕啾…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -3870,23 +3888,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6159',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6158-6159',
+        any: [/CFLAG:332\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6160',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6158-6160',
+        any: [/CFLAG:332\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6161',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6158-6161',
+        any: [/CFLAG:332\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6162',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6158-6162',
+        any: [/CFLAG:332\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4001,8 +4019,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6192',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6190-6192',
+        any: [/「明明是想献给主人的……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4011,13 +4029,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6194',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6193-6194',
+        any: [/「呜呜呜……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6196',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6193-6196',
+        any: [/「呜呜呜……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4113,8 +4131,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6217',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6215-6217',
+        any: [/「小狗狗……没事吧？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4123,13 +4141,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6219',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6218-6219',
+        any: [/「呜呜呜……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6220',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6218-6220',
+        any: [/「呜呜呜……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4138,13 +4156,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6222',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6221-6222',
+        any: [/CFLAG:TARGET:335\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6224',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6221-6224',
+        any: [/CFLAG:TARGET:335\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4234,8 +4252,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6240',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6239-6240',
+        any: [/「哈嗯啊啊…啊啊啊嗯…小穴好舒服……最喜欢狗狗大人的肉棒了…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4273,8 +4291,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6247',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6246-6247',
+        any: [/「嗯哈…就这样射到最深处……要来了…咿呀……！精子…好烫……！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4310,8 +4328,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6255',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6254-6255',
+        any: [/「嗯……呼呜……小狗狗……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4320,8 +4338,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6257',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6256-6257',
+        any: [/「被小狗狗弄得有感觉了……这样下去……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4357,8 +4375,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6265',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6264-6265',
+        any: [/「嗯……呼呜……小狗狗……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4367,8 +4385,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6267',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6266-6267',
+        any: [/「被小狗狗弄得有感觉了……这样下去……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4404,8 +4422,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6275',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6274-6275',
+        any: [/「不行……这样下去……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4414,8 +4432,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6277',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6276-6277',
+        any: [/「不会吧……这样下去……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4454,23 +4472,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6287',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6286-6287',
+        any: [/CFLAG:335\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6288',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6286-6288',
+        any: [/CFLAG:335\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6289',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6286-6289',
+        any: [/CFLAG:335\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6290',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6286-6290',
+        any: [/CFLAG:335\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4494,8 +4512,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6302',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6300-6302',
+        any: [/「要舔小狗狗的屁股……！？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4504,8 +4522,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6304',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6303-6304',
+        any: [/「讨厌……讨厌、呜呜……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4514,13 +4532,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6306',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6305-6306',
+        any: [/CFLAG:TARGET:338\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6308',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6305-6308',
+        any: [/CFLAG:TARGET:338\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4553,8 +4571,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6315',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6314-6315',
+        any: [/「味道…有些奇怪呢……不过%SELF_CALL\(TARGET\)%会努力奉仕的…啾/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4582,8 +4600,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6320',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6319-6320',
+        any: [
+          /故意发出着下流的声音，%SAVESTR:TARGET%完全沉浸在侍奉野狗的快感中/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4668,23 +4688,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6340',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6339-6340',
+        any: [/CFLAG:338\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6341',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6339-6341',
+        any: [/CFLAG:338\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6342',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6339-6342',
+        any: [/CFLAG:338\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6343',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6339-6343',
+        any: [/CFLAG:338\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4738,8 +4758,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6364',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6362-6364',
+        any: [/「什么……？　要干什么……？/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4748,8 +4768,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6366',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6365-6366',
+        any: [/「到底要干什么啊……住手……不要啊！！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4758,13 +4778,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6368',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6367-6368',
+        any: [/CFLAG:TARGET:344\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6370',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6367-6370',
+        any: [/CFLAG:TARGET:344\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -4922,18 +4942,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6408',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6407-6408',
+        any: [/CFLAG:TARGET:344\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6409',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6407-6409',
+        any: [/CFLAG:TARGET:344\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6410',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6407-6410',
+        any: [/CFLAG:TARGET:344\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5025,18 +5045,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6432',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6431-6432',
+        any: [/CFLAG:444\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6433',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6431-6433',
+        any: [/CFLAG:444\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6434',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6431-6434',
+        any: [/CFLAG:444\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5127,8 +5147,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6461',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6459-6461',
+        any: [
+          /「也许和小狗狗做会有些怪、但还是希望各位能一边撸着大鸡鸡一边观赏吧」/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5139,13 +5161,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6463',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6462-6463',
+        any: [/「你们好……%SELF_CALL\(TARGET\)%……接下来……要和这个小狗狗…/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6464',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6462-6464',
+        any: [/「你们好……%SELF_CALL\(TARGET\)%……接下来……要和这个小狗狗…/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5154,13 +5176,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6466',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6465-6466',
+        any: [/CFLAG:357\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6468',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '6465-6468',
+        any: [/CFLAG:357\ =\ 1/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5277,33 +5299,33 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6493',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6492-6493',
+        any: [/CFLAG:357\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6494',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6492-6494',
+        any: [/CFLAG:357\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6495',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6492-6495',
+        any: [/CFLAG:357\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6496',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6492-6496',
+        any: [/CFLAG:357\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6497',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '6492-6497',
+        any: [/CFLAG:357\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '6500',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '6492-6500',
+        any: [/CFLAG:357\ =\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5313,7 +5335,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '6510-6528',
-        any: [/^\s*RETURN 0\s*$/m],
+        any: [/SIF TEQUIP:45/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -5333,7 +5355,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '6759-6774',
-        any: [/^\s*RETURN 0\s*$/m],
+        any: [/SIF TEQUIP:45/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6676,8 +6698,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7248',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7247-7248',
+        any: [/「………好吧、尽管来吧」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6725,8 +6747,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7265',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7264-7265',
+        any: [/「…至今为止为爱而活着的生活就这样…结束了吗…？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6735,13 +6757,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7268',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7267-7268',
+        any: [/「要做什么…这样…不对…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7269',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7267-7269',
+        any: [/「要做什么…这样…不对…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6760,8 +6782,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7276',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7275-7276',
+        any: [/「………什么也…不想相信了」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6811,8 +6833,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7293',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7292-7293',
+        any: [/「已经再也见不到…阳光了吗…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6821,18 +6843,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7296',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7295-7296',
+        any: [/「你们没有一点爱心吗…？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7297',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7295-7297',
+        any: [/「你们没有一点爱心吗…？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7299',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7295-7299',
+        any: [/「你们没有一点爱心吗…？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6856,13 +6878,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7314',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7313-7314',
+        any: [/（………究竟能…守到什么时候呢…）/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7315',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7313-7315',
+        any: [/（………究竟能…守到什么时候呢…）/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6883,8 +6905,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7321',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7320-7321',
+        any: [/「屁股…被玩坏了……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6898,8 +6920,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7330',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7329-7330',
+        any: [/「这东西…简直不是人喝的…哦诶诶」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6918,13 +6940,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7337',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7336-7337',
+        any: [/「够了…不要…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7338',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7336-7338',
+        any: [/「够了…不要…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6943,8 +6965,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7344',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7343-7344',
+        any: [/「好难受…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6965,8 +6987,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7349',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7348-7349',
+        any: [/「屁股…被玩坏了……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -6980,8 +7002,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7358',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7357-7358',
+        any: [/「这样喝下去的话…咳咳～」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7037,8 +7059,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8140',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8139-8140',
+        any: [/可以奖励我与馬/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7107,8 +7129,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8160',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8159-8160',
+        any: [/「赢了的话…我想要…童贞的处男～」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7167,8 +7189,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8182',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8181-8182',
+        any: [/「啊啊～！被小狗狗侵犯屁股了～…啊～啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7177,8 +7199,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8184',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8183-8184',
+        any: [/「啊啊～！被小狗狗侵犯了～…啊～啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7197,8 +7219,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8190',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8189-8190',
+        any: [/「啊啊～！被小猪猪侵犯屁股了…啊～啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7207,8 +7229,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8192',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8191-8192',
+        any: [/「啊啊～！被小猪猪侵犯了…啊～啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7227,8 +7249,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8198',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8197-8198',
+        any: [/「啊啊～！被马先生侵犯屁股了…啊～啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7237,8 +7259,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8200',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8199-8200',
+        any: [/「啊啊～！被马先生侵犯了…啊～啊啊～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7267,8 +7289,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8210',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8208-8210',
+        any: [/「啊～～！再抱我…再抱紧我～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7277,8 +7299,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8212',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8211-8212',
+        any: [/「还要～！把屁股…干壊为止～！继续做吧～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7307,8 +7329,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8221',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8220-8221',
+        any: [/「啊哈啊…再来…再来啊～…%UNICODE\(0x2661\)\ \*1%」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7317,8 +7339,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8223',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8222-8223',
+        any: [/「啊哈啊…再来…再来啊～…%UNICODE\(0x2661\)\ \*1%」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7349,8 +7371,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8233',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8231-8233',
+        any: [
+          /「呵呵呵、这就是女人的味道哦。第一次能被我%SELF_CALL\(A\)%收下真是太/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7361,23 +7385,31 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8235',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8234-8235',
+        any: [
+          /「能用屁股拿走你的初体验、真是很不错的経験呢%UNICODE\(0x2661\)\ \*/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8236',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8234-8236',
+        any: [
+          /「能用屁股拿走你的初体验、真是很不错的経験呢%UNICODE\(0x2661\)\ \*/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8237',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8234-8237',
+        any: [
+          /「能用屁股拿走你的初体验、真是很不错的経験呢%UNICODE\(0x2661\)\ \*/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8238',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8234-8238',
+        any: [
+          /「能用屁股拿走你的初体验、真是很不错的経験呢%UNICODE\(0x2661\)\ \*/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7406,8 +7438,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8251',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8250-8251',
+        any: [/「哈咿～～！哔哩哔哩～哔哩哔哩的好爽啊～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7416,8 +7448,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8253',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8252-8253',
+        any: [/「啊～咿～！饶命啊～！请饶了我吧咿咿咿～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7438,8 +7470,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8259',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8258-8259',
+        any: [/「啊啊～…大家请看%UNICODE\(0x2661\)\ \*1%\ 请好好看%SELF_/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7450,8 +7482,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8261',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8260-8261',
+        any: [
+          /「不、不行…请、请不要看…%SELF_CALL\(A\)%的那个地方…不要看…啊啊～/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7472,8 +7506,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8267',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8266-8267',
+        any: [
+          /「啊啊啊～♪一边被看着这么羞人的样子一边自慰…为什么会这么爽呢～%UNICODE/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7482,8 +7518,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8269',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8268-8269',
+        any: [/「呜呜～…被看到了…被看到了～…不要看…不要看啊………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7504,8 +7540,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8275',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8274-8275',
+        any: [
+          /「啊～～！啊～！啊啊～%UNICODE\(0x2661\)\ \*1%\ 请更多～…更多的/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7514,8 +7552,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8277',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8276-8277',
+        any: [/「咿～～～！不要～不要啊～！好痛～不要～！呜咕～咕呜唔～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7536,8 +7574,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8283',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8282-8283',
+        any: [
+          /「啊哈啊～～…再多把小便淋到我身上吧%UNICODE\(0x2661\)\ \*1%\ 对/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7546,8 +7586,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8285',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8284-8285',
+        any: [/「对不起对不起对不起………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7593,8 +7633,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8298',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8297-8298',
+        any: [/「～～♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7645,8 +7685,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7450',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7448-7450',
+        any: [/「让我来施舍你们吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7655,8 +7695,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7452',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7451-7452',
+        any: [/「讨厌……连这些家伙……也要施舍吗？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7707,8 +7747,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7468',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7466-7468',
+        any: [/「让我来施舍妳们吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7717,8 +7757,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7470',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7469-7470',
+        any: [/「讨厌……与不认识的女人做爱什么的……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7779,8 +7819,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7488',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7486-7488',
+        any: [/「这是……施舍」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7789,8 +7829,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7490',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7489-7490',
+        any: [/「住手……不要啊」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7856,8 +7896,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7509',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7507-7509',
+        any: [/「让我来施舍吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7866,8 +7906,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7511',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7510-7511',
+        any: [/「不，不要啊！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7933,8 +7973,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7530',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7528-7530',
+        any: [/「让我来施舍吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7943,8 +7983,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7532',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7531-7532',
+        any: [/「不，不要啊！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8010,8 +8050,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7551',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7549-7551',
+        any: [/「让我来施舍吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8020,8 +8060,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7553',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7552-7553',
+        any: [/「不，不要啊！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8087,8 +8127,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7572',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7570-7572',
+        any: [/「让我来施舍吧……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8097,8 +8137,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7574',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7573-7574',
+        any: [/「不，不要啊！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8169,8 +8209,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7595',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7593-7595',
+        any: [/「讨厌……这个、会在哪里公映呢……？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8179,8 +8219,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7597',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7596-7597',
+        any: [/「住手……不要拍～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8241,8 +8281,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7615',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7613-7615',
+        any: [/「大家好……呜呜～……%SELF_CALL\(A\)%……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8251,8 +8291,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7617',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7616-7617',
+        any: [/「住手……不要拍～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8295,8 +8335,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7629',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7627-7629',
+        any: [/「大家好……%SELF_CALL\(A\)%现在……受主人大人命令正在当便器哦♪」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8305,18 +8345,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7631',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7630-7631',
+        any: [/「呜呜……被这么样对待的话……活不下去了啦……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7632',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7630-7632',
+        any: [/「呜呜……被这么样对待的话……活不下去了啦……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7634',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7630-7634',
+        any: [/「呜呜……被这么样对待的话……活不下去了啦……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8335,8 +8375,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7373',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7371-7373',
+        any: [/「……就这样吧」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8367,8 +8407,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7381',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7380-7381',
+        any: [/「为世界带来和平…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8377,8 +8417,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7383',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7382-7383',
+        any: [/「我是不会输的！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8392,13 +8432,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7390',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7388-7390',
+        any: [/「虽然这么说…呜呜」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7391',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7388-7391',
+        any: [/「虽然这么说…呜呜」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8422,8 +8462,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7398',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7397-7398',
+        any: [/「将和平…」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8432,13 +8472,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7400',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7399-7400',
+        any: [/「没事的…没事的」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7402',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7399-7402',
+        any: [/「没事的…没事的」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8454,8 +8494,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7407',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7406-7407',
+        any: [/（光有爱是赢不了的吗…？）/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8464,13 +8504,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7410',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7409-7410',
+        any: [/「看好了！　这就是爱的力量！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7412',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7409-7412',
+        any: [/「看好了！　这就是爱的力量！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8489,8 +8529,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7649',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7647-7649',
+        any: [/「……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8531,8 +8571,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7660',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7659-7660',
+        any: [/「不懂愛的家伙哦！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8541,8 +8581,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7662',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7661-7662',
+        any: [/「倒下吧！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8571,8 +8611,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7673',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7672-7673',
+        any: [/「咿～～、爸爸……救救我……」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8581,18 +8621,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7675',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7674-7675',
+        any: [/「咿～～、请倒下吧！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7677',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7674-7677',
+        any: [/「咿～～、请倒下吧！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7678',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7674-7678',
+        any: [/「咿～～、请倒下吧！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8616,8 +8656,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7685',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7684-7685',
+        any: [/「对不起…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8626,18 +8666,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7687',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7686-7687',
+        any: [/「抱歉…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7689',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7686-7689',
+        any: [/「抱歉…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7690',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7686-7690',
+        any: [/「抱歉…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8651,8 +8691,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7697',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7695-7697',
+        any: [/「……这是命令」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8683,8 +8723,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7705',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7704-7705',
+        any: [/「好可爱啊、你还不知道真正的爱是什么吧～」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8693,8 +8733,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7707',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7706-7707',
+        any: [/「让你清醒一下吧」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8708,13 +8748,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7714',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7712-7714',
+        any: [/「为什么……不明白这份爱呢」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7715',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7712-7715',
+        any: [/「为什么……不明白这份爱呢」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8738,8 +8778,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7722',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7721-7722',
+        any: [/「什么是美妙的事情……让我好好教教你吧」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8748,23 +8788,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7724',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7723-7724',
+        any: [/「让我教教你什么是爱吧……真正的愛」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7726',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7723-7726',
+        any: [/「让我教教你什么是爱吧……真正的愛」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7727',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7723-7727',
+        any: [/「让我教教你什么是爱吧……真正的愛」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7729',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7723-7729',
+        any: [/「让我教教你什么是爱吧……真正的愛」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8818,8 +8858,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8319',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8318-8319',
+        any: [/……呜呜。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8843,8 +8883,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8326',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8325-8326',
+        any: [/哟。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8853,13 +8893,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8328',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8327-8328',
+        any: [/呢。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8329',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8327-8329',
+        any: [/呢。/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8895,8 +8935,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8073',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '8072-8073',
+        any: [/「%SELF_CALL\(A\)%的愛能打倒魔王吗…？」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8905,19 +8945,15 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8076',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8075-8076',
+        any: [/「用%SELF_CALL\(A\)%的愛…让世界恢复和平！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '8079-8121',
         any: [/IF CFLAG:A:604 > 0 && CFLAG:A:605 > 0/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8121',
-        any: [/^\s*ENDIF\s*$/m],
-      },
+
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '7870',
@@ -8942,8 +8978,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7877',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7876-7877',
+        any: [
+          /「饶、饶了我吧…不要再继续了…啊～啊啊啊～！…对不起…魔王大人…………」/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8952,8 +8990,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7879',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7878-7879',
+        any: [/「啊啊～…无论如何…咿～咿啊～…啊啊～！请原谅我～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8979,8 +9017,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7885',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7884-7885',
+        any: [
+          /「嗯咿～～！屁股眼…被撑的太大啦…啊啊～啊…咿～…咿～～！不、不要…再这样下去的/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -8989,8 +9029,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7887',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7886-7887',
+        any: [/「这、这样…不、不行啊～…啊啊～…饶了我吧～啊～啊啊啊～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9026,8 +9066,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7895',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7894-7895',
+        any: [/「啊～…啊啊～…求你了…救救我…请救救我…魔王大人………」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9036,8 +9076,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7897',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7896-7897',
+        any: [/「大家…不要看我…请不要看我啊…啊～啊啊啊～…讨厌啊～！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9063,8 +9103,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7903',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7902-7903',
+        any: [/「啊啊～！好爽…好爽啊～%UNICODE\(0x2661\)\ \*1%\ 更多的…侵犯我/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9075,8 +9115,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7905',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7904-7905',
+        any: [/「啊啊～…好深…好深啊～…咿～…咿～～…%SELF_CALL\(TARGET\)%…/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9102,8 +9142,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7911',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7910-7911',
+        any: [
+          /「啊哈啊…请更多的侵犯我吧…请净化被魔王玷污过的%SELF_CALL\(TARGE/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9114,8 +9156,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7913',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7912-7913',
+        any: [/「啊～～…请大家…惩罚…屈服于魔王軍的背叛者%SELF_CALL\(TARGET\)/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9141,8 +9183,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7919',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7918-7919',
+        any: [/「嗯噗呜…是…请下一个…%SELF_CALL\(TARGET\)%的小穴只要１０Ｇ…/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9153,8 +9195,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7921',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7920-7921',
+        any: [/「更多的…更多的玷污吧…将%SELF_CALL\(TARGET\)%的肮脏身体…更多/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9180,8 +9222,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7927',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7926-7927',
+        any: [
+          /「嗯哈啊…狂王大人的东西好美味啊…好想一直奉仕下去呢%UNICODE\(0x266/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9192,8 +9236,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7929',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7928-7929',
+        any: [/「是…%SELF_CALL\(TARGET\)%是狂王大人専用的肉便器～…所以请让我/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9224,8 +9268,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7936',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7935-7936',
+        any: [/「呜咕～咿咕～…魔王大人和%SELF_CALL\(TARGET\)%的小宝宝…啊啊啊/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9236,13 +9280,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7938',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7937-7938',
+        any: [/「啊呜～呜呜～…对不起、对不起…%SELF_CALL\(TARGET\)%的可爱宝宝/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7939',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7937-7939',
+        any: [/「啊呜～呜呜～…对不起、对不起…%SELF_CALL\(TARGET\)%的可爱宝宝/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9253,18 +9297,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7941',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7940-7941',
+        any: [/「哈啊哈啊…是、%SELF_CALL\(TARGET\)%的子宮是狂王大人的専用孕袋/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7942',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7940-7942',
+        any: [/「哈啊哈啊…是、%SELF_CALL\(TARGET\)%的子宮是狂王大人的専用孕袋/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7943',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7940-7943',
+        any: [/「哈啊哈啊…是、%SELF_CALL\(TARGET\)%的子宮是狂王大人的専用孕袋/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9308,8 +9352,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7960',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7958-7960',
+        any: [/ELSEIF\ TFLAG:16\ ==\ 7/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9413,8 +9457,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7995',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7993-7995',
+        any: [/ELSEIF\ TFLAG:500\ ==\ 9/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9468,8 +9512,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8016',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8014-8016',
+        any: [/ELSEIF\ TFLAG:510\ ==\ 4/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9505,8 +9549,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8031',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8029-8031',
+        any: [/ELSEIF\ TFLAG:520\ ==\ 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9580,8 +9624,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8058',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '8056-8058',
+        any: [/ELSEIF\ TFLAG:530\ ==\ 6/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9600,8 +9644,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7743',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7742-7743',
+        any: [/%SAVESTR:TARGET%虽然站着但好像已经没有力气了的样子……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9612,18 +9656,24 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7745',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7744-7745',
+        any: [
+          /%SAVESTR:TARGET%因为竞技场的灼热气氛与接下来的战斗对手而颤抖不已/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7746',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7744-7746',
+        any: [
+          /%SAVESTR:TARGET%因为竞技场的灼热气氛与接下来的战斗对手而颤抖不已/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7747',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7744-7747',
+        any: [
+          /%SAVESTR:TARGET%因为竞技场的灼热气氛与接下来的战斗对手而颤抖不已/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9652,8 +9702,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7758',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7757-7758',
+        any: [/%SAVESTR:TARGET%放下武器请求饶恕……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9667,13 +9717,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7761',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7760-7761',
+        any: [/%SAVESTR:TARGET%放下武器请求饶恕……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7762',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7760-7762',
+        any: [/%SAVESTR:TARGET%放下武器请求饶恕……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9694,8 +9744,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7767',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7766-7767',
+        any: [/%SAVESTR:TARGET%看着被%NAME:MASTER%命令而武装起来的/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9709,23 +9759,23 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7770',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7769-7770',
+        any: [/%SAVESTR:TARGET%已经失去了身为勇者的気概、对战斗怕的不得了……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7771',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7769-7771',
+        any: [/%SAVESTR:TARGET%已经失去了身为勇者的気概、对战斗怕的不得了……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7772',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7769-7772',
+        any: [/%SAVESTR:TARGET%已经失去了身为勇者的気概、对战斗怕的不得了……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7773',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7769-7773',
+        any: [/%SAVESTR:TARGET%已经失去了身为勇者的気概、对战斗怕的不得了……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9764,8 +9814,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7788',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7787-7788',
+        any: [/%SAVESTR:TARGET%露出了愉悦的表情……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9779,18 +9829,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7791',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7790-7791',
+        any: [/%SAVESTR:TARGET%舔舐并吞咽着发出令人作呕气味的阴茎……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7792',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7790-7792',
+        any: [/%SAVESTR:TARGET%舔舐并吞咽着发出令人作呕气味的阴茎……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7793',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7790-7793',
+        any: [/%SAVESTR:TARGET%舔舐并吞咽着发出令人作呕气味的阴茎……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9814,8 +9864,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7802',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7801-7802',
+        any: [/%SAVESTR:TARGET%就这样被爱抚着……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9829,18 +9879,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7805',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7804-7805',
+        any: [/%SAVESTR:TARGET%被用力揉着胸发出了痛苦的呻吟声……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7806',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7804-7806',
+        any: [/%SAVESTR:TARGET%被用力揉着胸发出了痛苦的呻吟声……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7807',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7804-7807',
+        any: [/%SAVESTR:TARGET%被用力揉着胸发出了痛苦的呻吟声……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9896,8 +9946,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7825',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7824-7825',
+        any: [
+          /可怜的%SAVESTR:TARGET%一边发出蛤蟆似的坏掉的的声音一边被巨魔侵犯/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9911,18 +9963,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7828',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7827-7828',
+        any: [/%SAVESTR:TARGET%就这样被怪物侵犯着……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7829',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7827-7829',
+        any: [/%SAVESTR:TARGET%就这样被怪物侵犯着……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7830',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7827-7830',
+        any: [/%SAVESTR:TARGET%就这样被怪物侵犯着……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9978,8 +10030,10 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7849',
-        any: [/^\s*ELSE\s*$/m],
+        ref: '7848-7849',
+        any: [
+          /可怜的%SAVESTR:TARGET%一边发出蛤蟆似的坏掉的的声音一边被巨魔侵犯/,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -9993,18 +10047,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7852',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7851-7852',
+        any: [/%SAVESTR:TARGET%就这样被怪物侵犯着肛门……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7853',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7851-7853',
+        any: [/%SAVESTR:TARGET%就这样被怪物侵犯着肛门……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7854',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7851-7854',
+        any: [/%SAVESTR:TARGET%就这样被怪物侵犯着肛门……/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -10018,18 +10072,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7861',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7860-7861',
+        any: [/「啊咕呜～…这、这是…媚、媚薬吗…啊啊～…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7862',
-        any: [/^\s*ENDIF\s*$/m],
+        ref: '7860-7862',
+        any: [/「啊咕呜～…这、这是…媚、媚薬吗…啊啊～…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '7863',
-        any: [/^\s*RETURN 0\s*$/m],
+        ref: '7860-7863',
+        any: [/「啊咕呜～…这、这是…媚、媚薬吗…啊啊～…！」/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
