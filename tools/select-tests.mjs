@@ -66,7 +66,7 @@
 //   --root <dir> / --ledger-dir <dir>              测试夹具用
 //
 // --no-locks 是给红绿切片的内环用的：那时只想知道「我这个模块还对不对」，
-// 全局锁那 18 个文件（含两份对拍）是纯等待。交付闸（T2）与验收（T3）**不许去锁**。
+// 全局锁那 19 个文件（含两份对拍）是纯等待。交付闸（T2）与验收（T3）**不许去锁**。
 // 输出分流：**stdout 是文件列表（每行一个），stderr 是报告**——
 // `node tools/select-tests.mjs` 的输出可以直接喂给别的命令。
 // 退出码：不带 --run 恒为 0；带 --run 时透传 node --test 的退出码。
@@ -109,6 +109,7 @@ const LOCKS = [
   'kojo-family-wiring', // 口上模块接线对账：新 kojo-* 模块漏进 main-loop 即红（#282）
   'kojo-text-fidelity', // 口上 D 文与 ERB 逐字保真：新口上文件必查
   'top-level-wiring', // 跨模块顶层 require：主启动图清单里的族模块被别处顶层 require 即红（#288）
+  'conflict-marker-check', // 已提交的冲突标记：prettier 洗净的 markdown 形态也要红（#299）
 ];
 
 // —— 参数 ——

@@ -723,6 +723,13 @@ const cstr = {
       ':2445 CSTR:(ARG:1):3 = %SAVESTR:(ARG:0)%',
     ),
   ),
+  // 初吻对象名：原作口上里把对象名抄进 CSTR:4（如 EVENT_K8_スペード.ERB
+  // :393 简易助手三人关系初吻分支；page-info-exp.js 读它显示）。属主 train
+  // （ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
+  4: named_tail(
+    '初吻对象名',
+    erb('口上/EVENT_K8_スペード.ERB', ':393 CSTR:TARGET:4 = %SAVESTR:ASSI%'),
+  ),
 };
 
 // —— DELTA：UP/DOWN 的 ere 等价物（移植自建，#90）——

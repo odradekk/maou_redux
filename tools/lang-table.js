@@ -670,6 +670,12 @@ const EXEMPT_STRINGS = [
     why: '原作函数名（SYSTEM ver1.0.3.ERB:590 的 CALL 自動處刑，繁体）。存根占位行携带原作函数名供检索（docs/stub-registry.md 的检索约定），归一成「自动处刑」会切断与 target/ 的对应。#114 收录。',
   },
   {
+    value: '「很快就要生出来了、请安心期待吧、亲・爱・的${heart(1)}」',
+
+    where: 'ere/kojo/kojo-k10-club.js',
+    why: 'EVENT_K10_クラブ.ERB:6412 的育儿室台词，・ 是原作刻意用的停顿分隔样式（「亲・爱・的」的逐字顿挫），非日文假名——与 DUNGEON_RYOUZYOKU.ERB:1895「好好感・受・吧」同款样式。整串豁免，改写时失配变红。#241 收录。',
+  },
+  {
     value: '个中滋味 好好感・受・吧』',
     where: 'ere/kojo/kojo-dungeon-ravish.js',
     why: 'DUNGEON_RYOUZYOKU.ERB:1895 的 GIRL_RYOU 处女封印台词，・ 是原作刻意用的停顿分隔样式（「好好感・受・吧」的逐字顿挫），非日文假名。lang-normalize 头注明言「・ 用作分隔样式时会有意红一次」——此处是那个「有意」：整串豁免，改写时失配变红。#182 收录。',
@@ -713,6 +719,11 @@ const EXEMPT_STRINGS = [
       '「出，出来了啊啊${heart(1)}　别，别看了……脏东西要喷出来了啊……${heart(1)}　啊゛啊゛啊゛啊゛啊啊……${heart(1)}」',
     where: 'ere/kojo/kojo-k6-wicked.js',
     why: 'EVENT_K6_悪女.ERB:4128 灌肠肛塞淫乱档原作浊点 ゛（U+309B）是拟声延长，非日文假名词。归一成「啊啊」会切断与源文的 1:1；整串豁免，改写时失配变红。#237 收录。',
+  },
+  {
+    value: '${player_name}向上挺着腰侵犯着${target_name}肛门……・',
+    where: 'ere/kojo/kojo-k8-spade.js',
+    why: 'EVENT_K8_スペード.ERB:3935 的 PRINTFORMW 行尾多打了一个・（非分隔样式，前面已是句末省略号「……」，此处纯属误触），1:1 保真原样照抄（#239 收录）。整串豁免，改写时失配变红。',
   },
 ];
 

@@ -82,6 +82,8 @@ const PRINTFORM_RE =
 const ERB_TOKEN_RULES = [
   [/^SAVESTR:TARGET$/, 'TARGET'],
   [/^SAVESTR:PLAYER$/, 'PLAYER'],
+  [/^SAVESTR:player$/, 'PLAYER'], // #241：K10 源文若干处误写小写 player，语义同 PLAYER（原作缺陷 1:1 保留）
+
   [/^SAVESTR:ASSI$/, 'ASSI'],
   [/^NAME:MASTER$/, 'MASTER'],
   [/^CALLNAME:MASTER$/, 'MASTER'], // #235：K4 冷徹 :152/:160/:162（呼び名，MASTER 恒角色 0）
@@ -155,6 +157,12 @@ const ERB_TOKEN_RULES = [
     /^RAND:2 == 0 \? %SAVESTR:TARGET%四肢都贴在地上，抬起屁股左右晃着祈求两人的肉棒。 # %SAVESTR:TARGET%躺在地上分开大腿，用手指插进小穴和肛门狠狠的搅动着、引诱着%SAVESTR:PLAYER%和%SAVESTR:ASSI%。$/,
     'TERN_POSE',
   ], // :569（RAND:2 三目：整句二选一，JS 侧预算两支再用单个 ${} 包一层三目取值）
+  // —— #241：K10 俱乐部口上补充 ——
+  [/^\(CFLAG:42 == 83\) \? 扶了扶眼镜 # 向这边转了过来$/, 'TERN_GLASSES'], // :646
+  [/^A$/, 'A_COUNT'], // :6066（单字母全局变量 A，UP:11+UP:12，kojo_message_palamcng_10 写入）
+  [/^\(A > 1\) \? 射精多次后 # 射精后$/, 'TERN_A_EJACULATE'], // :6098
+  [/^\(A > 1\) \? 迎来多次絶頂的 # 迎来絶頂的$/, 'TERN_A_CLIMAX1'], // :6105
+  [/^\(A > 1\) \? 不断迎来絶頂 # 迎来絶頂$/, 'TERN_A_CLIMAX2'], // :6120
 ];
 
 const JS_TOKEN_RULES = [
@@ -232,11 +240,22 @@ const JS_TOKEN_RULES = [
   // —— #238：K7 金红桃口上补充 ——
   [/^s$/, 'S_COUNT'],
   [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
+  // —— #239：K8 银黑桃口上的局部名（记号沿用上面的规范名，勿另起） ——
+  [/^a_name$/, 'ANAME'], // 迎击奖赏两函数承载 %SAVESTR:A%
+  [/^today_or_night$/, 'TERN_TIME_NIGHT'],
+  [/^today_or_eve$/, 'TERN_TIME_TONIGHT'],
+  [/^s \|\| 0$/, 'S_COUNT'],
   [/^time_word$/, 'TERN_TIME_NIGHT'],
   [/^time_word2$/, 'TERN_TIME_TONIGHT'],
   [/^hole_word$/, 'TERN_HOLE'],
   [/^visit_count$/, 'VISIT_COUNT'],
   [/^rand_n\(2\) === 0 \? pose_a : pose_b$/, 'TERN_POSE'],
+  // —— #241：K10 俱乐部口上补充 ——
+  [/^glasses_word$/, 'TERN_GLASSES'],
+  [/^a_count$/, 'A_COUNT'],
+  [/^a_count > 1 \? '射精多次后' : '射精后'$/, 'TERN_A_EJACULATE'],
+  [/^a_count > 1 \? '迎来多次绝顶的' : '迎来绝顶的'$/, 'TERN_A_CLIMAX1'],
+  [/^a_count > 1 \? '不断迎来绝顶' : '迎来绝顶'$/, 'TERN_A_CLIMAX2'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
