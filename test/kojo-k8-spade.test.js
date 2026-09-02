@@ -2321,12 +2321,349 @@ test('SELECTCOM 42 针，二回目以降·それ以外：CFLAG:343 推进到 2',
   assert.equal(fixture.store.get('cflag:31:343'), 2, 'CFLAG:343 推进到 2');
 });
 
-test('骨架期：SELECTCOM 43（未实现分支）落 KOJO_MESSAGE_COM_8 占位行', async () => {
+test('SELECTCOM 43 眼罩·開始時，初めて（TEQUIP:43 已装）：CFLAG:344 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:43', 1);
+  }, 43);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、拷问也好调教也好、遮断感觉都是常用手段呢」',
+    '银黑桃呼的一笑，戴上了眼罩………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:344'), 1, 'CFLAG:344 推进到 1');
+});
+
+test('SELECTCOM 43 眼罩·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上：CFLAG:344 推进到 9', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:43', 1);
+    f.store.set('cflag:31:344', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+  }, 43);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「不光蒙眼…也用绳子把我帮上的话我会很高兴的…啊啊♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:344'), 9, 'CFLAG:344 推进到 9');
+});
+
+test('SELECTCOM 43 眼罩·開始時，二回目以降·受虐狂っ気Lv3以上：CFLAG:344 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:43', 1);
+    f.store.set('cflag:31:344', 1);
+    f.store.set('abl:31:21', 3);
+  }, 43);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊、蒙着眼真好…来吧、玩弄我的身体吧………♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:344'), 3, 'CFLAG:344 推进到 3');
+});
+
+test('SELECTCOM 43 眼罩·開始時，二回目以降·それ以外：CFLAG:344 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:43', 1);
+    f.store.set('cflag:31:344', 1);
+  }, 43);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「呵呵呵、还要蒙着眼玩吗？」']);
+  assert.equal(fixture.store.get('cflag:31:344'), 2, 'CFLAG:344 推进到 2');
+});
+
+test('SELECTCOM 43 眼罩·終了時（TEQUIP:43 已摘）·淫乱：CFLAG:380 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  }, 43);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「呵呵呵、玩得很高兴」']);
+  assert.equal(fixture.store.get('cflag:31:380'), 3, 'CFLAG:380 推进到 3');
+});
+
+test('SELECTCOM 43 眼罩·終了時·爱慕：CFLAG:380 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+  }, 43);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「呵呵呵、玩得很高兴」']);
+  assert.equal(fixture.store.get('cflag:31:380'), 2, 'CFLAG:380 推进到 2');
+});
+
+test('SELECTCOM 43 眼罩·終了時·それ以外：CFLAG:380 推进到 1', async () => {
   const fixture = await setup_k8(undefined, 43);
-  await speak_k8(fixture, seq_rand());
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('@KOJO_MESSAGE_COM_8')),
-    '占位行含 @KOJO_MESSAGE_COM_8',
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「呵呵呵、玩得很高兴」']);
+  assert.equal(fixture.store.get('cflag:31:380'), 1, 'CFLAG:380 推进到 1');
+});
+
+test('SELECTCOM 44 绳子·開始時，初めて（TEQUIP:44 已装）：CFLAG:345 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:44', 1);
+  }, 44);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、你束缚还真熟练呢」',
+    '「啊啊…不过如果不绑的更紧的话，我很容易就能从绳子里出来哦？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:345'), 1, 'CFLAG:345 推进到 1');
+});
+
+test('SELECTCOM 44 绳子·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上：CFLAG:345 推进到 9', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:44', 1);
+    f.store.set('cflag:31:345', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+  }, 44);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…更多的触碰…我被束缚的身体…啊嗯…感受我吧…♡」',
+    '银黑桃的身体被绳子束缚住、乳房像要飞出来一样被绳子挤在一起………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:345'), 9, 'CFLAG:345 推进到 9');
+});
+
+test('SELECTCOM 44 绳子·開始時，二回目以降·それ以外：CFLAG:345 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:44', 1);
+    f.store.set('cflag:31:345', 1);
+  }, 44);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…呵呵呵、果然被这么紧的绑住的话…啊啊…还真是逃不了呢」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:345'), 2, 'CFLAG:345 推进到 2');
+});
+
+test('SELECTCOM 44 绳子·終了時（TEQUIP:44 已解开）·淫乱：CFLAG:385 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  }, 44);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「啊嗯…还不要解开绳子啊！」']);
+  assert.equal(fixture.store.get('cflag:31:385'), 2, 'CFLAG:385 推进到 2');
+});
+
+test('SELECTCOM 44 绳子·終了時·爱慕：CFLAG:385 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+  }, 44);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「明明还想继续被绑起来…」']);
+  assert.equal(fixture.store.get('cflag:31:385'), 2, 'CFLAG:385 推进到 2');
+});
+
+test('SELECTCOM 44 绳子·終了時·それ以外：CFLAG:385 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 44);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「这就解开了么？」']);
+  assert.equal(fixture.store.get('cflag:31:385'), 1, 'CFLAG:385 推进到 1');
+});
+
+test('SELECTCOM 45 口塞·開始時，初めて（TEQUIP:45 已装）：CFLAG:346 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…就这样让我戴上口枷…要做很过分的事吗………♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:346'), 1, 'CFLAG:346 推进到 1');
+});
+
+test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上，眼罩已戴：拼接嘴的缝隙台词，CFLAG:346 推进到 9', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('cflag:31:346', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+    f.store.set('tequip:31:43', 1);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我舒服起来之后一直都很吵呢…没办法呢……♡」',
+    '银黑桃自己戴上了口枷',
+    '嘴的缝隙里，漏出了灼热的吐息………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:346'), 9, 'CFLAG:346 推进到 9');
+});
+
+test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上，眼罩未戴：拼接眼神快融化了台词', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('cflag:31:346', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:21', 5);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我舒服起来之后一直都很吵呢…没办法呢……♡」',
+    '银黑桃自己戴上了口枷',
+    '眼神快融化了………',
+  ]);
+});
+
+test('SELECTCOM 45 口塞·開始時，二回目以降·爱＋受虐狂っ気Lv5以上，眼罩未戴：源作误写此档缺"了"字（与淫乱两档"眼神快融化了………"不同），1:1 保真', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('cflag:31:346', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:21', 5);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯…恩…嗯咕………！」',
+    '银黑桃被按上了口塞',
+    '眼神快融化………',
+  ]);
+});
+
+test('SELECTCOM 45 口塞·開始時，二回目以降·受虐狂っ気Lv3以上，眼罩已戴：拼接嘴的缝隙台词，CFLAG:346 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('cflag:31:346', 1);
+    f.store.set('abl:31:21', 3);
+    f.store.set('tequip:31:43', 1);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…被装上口枷的话，总觉得脑袋都要变成傻瓜了………」',
+    '银黑桃被按上了口塞',
+    '嘴的缝隙里，漏出了灼热的吐息………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:346'), 3, 'CFLAG:346 推进到 3');
+});
+
+test('SELECTCOM 45 口塞·開始時，二回目以降·それ以外：CFLAG:346 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('cflag:31:346', 1);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊咕…嗯…」',
+    '银黑桃被口塞堵住的嘴的缝隙里，漏出了声音………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:346'), 2, 'CFLAG:346 推进到 2');
+});
+
+test('SELECTCOM 45 口塞·終了時（TEQUIP:45 已取下）·淫乱：CFLAG:386 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…嗯啊………」',
+    '取下了口塞的银黑桃的嘴里，流下了唾液………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:386'), 3, 'CFLAG:386 推进到 3');
+});
+
+test('SELECTCOM 45 口塞·終了時·爱慕：文本与淫乱档相同，CFLAG:386 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+  }, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯…嗯啊………」',
+    '取下了口塞的银黑桃的嘴里，流下了唾液………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:386'), 2, 'CFLAG:386 推进到 2');
+});
+
+test('SELECTCOM 45 口塞·終了時·それ以外：CFLAG:386 推进到 1', async () => {
+  const fixture = await setup_k8(undefined, 45);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呼啊…嗯啊…」',
+    '取下了口塞的银黑桃的嘴里，流下了唾液………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:386'), 1, 'CFLAG:386 推进到 1');
+});
+
+test('SELECTCOM 46 灌肠肛塞，初めて（TEQUIP:46 已装）：CFLAG:347 推进到 1', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:46', 1);
+  }, 46);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…嗯啊啊啊…！肚子…啊啊啊…好痛苦…嗯…嗯…快…快停下！」',
+    '就算是银黑桃，被这样大量的灌肠也开始哭着请求你的原谅。',
+    '「求、求你了…至少…厕所…呀…啊咕！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:347'), 1, 'CFLAG:347 推进到 1');
+});
+
+test('SELECTCOM 46 灌肠肛塞，二回目以降·淫乱＋A感觉Lv3以上＋受虐狂っ気Lv3以上：CFLAG:347 推进到 7', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:46', 1);
+    f.store.set('cflag:31:347', 1);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+  }, 46);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊！继续…继续把灌肠液灌进来！到我的肚子撑起来为止♡」',
+    '你如银黑桃所愿一次次的灌着肠、插着肛塞的肛门附近，肚子越来越鼓。',
+    '「啊啊…啊啊啊…这个拔掉的话…会很厉害的喷出来吧…啊啊…啊啊嗯啊♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:347'), 7, 'CFLAG:347 推进到 7');
+});
+
+test('SELECTCOM 46 灌肠肛塞，二回目以降·爱＋A感觉Lv3以上＋受虐狂っ気Lv3以上：源作误写"全时灌肠液"应为"全是灌肠液"，1:1 保真，CFLAG:347 推进到 5', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:46', 1);
+    f.store.set('cflag:31:347', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+  }, 46);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…啊嗯嗯！肚子里…全时灌肠液…嗯啊…这样我还有感觉什么的…♡」',
+    '银黑桃一边喘着粗气一边感受着灌肠液的刺激。',
+    '「啊啊…你的话即使要看我最害羞的地方…啊啊也可以啊！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:347'), 5, 'CFLAG:347 推进到 5');
+});
+
+test('SELECTCOM 46 灌肠肛塞，二回目以降·A感觉Lv3以上＋受虐狂っ気Lv3以上：CFLAG:347 推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:46', 1);
+    f.store.set('cflag:31:347', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+  }, 46);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…啊嗯！…我的肚子…啊啊…咕噜咕噜的响着…啊啊…啊嗯嗯嗯——！」',
+    '银黑桃在灌肠液的刺激下，一边流着汗，一边漏出了喘息。',
+    '而插上肛塞的时候，发出的声音格外的响………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:347'), 3, 'CFLAG:347 推进到 3');
+});
+
+test('SELECTCOM 46 灌肠肛塞，二回目以降·それ以外：CFLAG:347 推进到 2', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:46', 1);
+    f.store.set('cflag:31:347', 1);
+  }, 46);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「不要…啊啊不要！啊啊…！不要这样！」',
+    '银黑桃和想起了以前的屈辱而哭泣着，你毫不留情的灌了肠，并把肛塞塞进了肛门………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:347'), 2, 'CFLAG:347 推进到 2');
+});
+
+test('SELECTCOM 46 灌肠肛塞，源作无終了時分支：TEQUIP:46 未装时不打印任何文本、CFLAG:347 不变，1:1 保真', async () => {
+  const fixture = await setup_k8(undefined, 46);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [], '源作无对应分支：不打印任何文本');
+  assert.equal(
+    fixture.store.get('cflag:31:347'),
+    undefined,
+    'CFLAG:347 未写入',
   );
 });
 

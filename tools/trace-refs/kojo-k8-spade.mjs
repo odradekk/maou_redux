@@ -15895,6 +15895,960 @@ export const FILES = [
         ref: '4223',
         any: [/CFLAG:TARGET:343 = 2/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4233-4276',
+        any: [
+          /PRINTFORMW 「呵呵呵、拷问也好调教也好、遮断感觉都是常用手段呢」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4236-4237',
+        any: [
+          /PRINTFORMW 「呵呵呵、拷问也好调教也好、遮断感觉都是常用手段呢」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4236',
+        any: [
+          /PRINTFORMW 「呵呵呵、拷问也好调教也好、遮断感觉都是常用手段呢」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4237',
+        any: [/PRINTFORMW %SAVESTR:TARGET%呼的一笑，戴上了眼罩………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4238',
+        any: [/CFLAG:TARGET:344 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4241-4274',
+        any: [
+          /PRINTFORMW 「不光蒙眼…也用绳子把我帮上的话我会很高兴的…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4244',
+        any: [
+          /PRINTFORMW 「不光蒙眼…也用绳子把我帮上的话我会很高兴的…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4245',
+        any: [/CFLAG:TARGET:344 = 9/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4248',
+        any: [/PRINTFORMW 「蒙上眼的话…啊啊…敏感度好像确实提高了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4249',
+        any: [/CFLAG:TARGET:344 = 8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4252',
+        any: [/PRINTFORMW 「啊啊、好像兴奋起来了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4253',
+        any: [/CFLAG:TARGET:344 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4256',
+        any: [
+          /PRINTFORMW 「不光蒙眼…也用绳子把我帮上的话我会很高兴的…啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4257',
+        any: [/CFLAG:TARGET:344 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4260',
+        any: [/PRINTFORMW 「蒙上眼的话…啊啊…敏感度好像确实提高了…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4261',
+        any: [/CFLAG:TARGET:344 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4264',
+        any: [/PRINTFORMW 「想对我恶作剧吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4265',
+        any: [/CFLAG:TARGET:344 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4268',
+        any: [/PRINTFORMW 「啊啊、蒙着眼真好…来吧、玩弄我的身体吧………♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4269',
+        any: [/CFLAG:TARGET:344 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4272',
+        any: [/PRINTFORMW 「呵呵呵、还要蒙着眼玩吗？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4273',
+        any: [/CFLAG:TARGET:344 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4278-4292',
+        any: [/ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4281',
+        any: [/PRINTFORMW 「呵呵呵、玩得很高兴」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4282',
+        any: [/CFLAG:380 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4285',
+        any: [/PRINTFORMW 「呵呵呵、玩得很高兴」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4286',
+        any: [/CFLAG:380 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4287-4290',
+        any: [/ELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4289',
+        any: [/PRINTFORMW 「呵呵呵、玩得很高兴」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4290',
+        any: [/CFLAG:380 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4299-4348',
+        any: [/PRINTFORMW 「呵呵呵、你束缚还真熟练呢」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4302-4303',
+        any: [/PRINTFORMW 「呵呵呵、你束缚还真熟练呢」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4302',
+        any: [/PRINTFORMW 「呵呵呵、你束缚还真熟练呢」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4303',
+        any: [
+          /PRINTFORMW 「啊啊…不过如果不绑的更紧的话，我很容易就能从绳子里出来哦？」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4304',
+        any: [/CFLAG:TARGET:345 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4307-4346',
+        any: [
+          /PRINTFORMW 「啊啊…更多的触碰…我被束缚的身体…啊嗯…感受我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4310-4311',
+        any: [
+          /PRINTFORMW 「啊啊…更多的触碰…我被束缚的身体…啊嗯…感受我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4310',
+        any: [
+          /PRINTFORMW 「啊啊…更多的触碰…我被束缚的身体…啊嗯…感受我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4311',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的身体被绳子束缚住、乳房像要飞出来一样被绳子挤在一起………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4312',
+        any: [/CFLAG:TARGET:345 = 9/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4315-4316',
+        any: [
+          /PRINTFORMW 「啊啊…被这么紧的绑住的话…啊啊…就算是我也…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4315',
+        any: [
+          /PRINTFORMW 「啊啊…被这么紧的绑住的话…啊啊…就算是我也…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4316',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被绳子束缚着，漏出了快融化一样的表情………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4317',
+        any: [/CFLAG:TARGET:345 = 8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4320-4321',
+        any: [/PRINTFORMW 「呵呵呵、让我更尽兴吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4320',
+        any: [/PRINTFORMW 「呵呵呵、让我更尽兴吧♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4321',
+        any: [/PRINTFORMW %SAVESTR:TARGET%被绳子绑了起来………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4322',
+        any: [/CFLAG:TARGET:345 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4325-4326',
+        any: [
+          /PRINTFORMW 「喂…我漂亮吗…？ 被你用绳子绑起来…啊啊…没法反抗………%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4325',
+        any: [
+          /PRINTFORMW 「喂…我漂亮吗…？ 被你用绳子绑起来…啊啊…没法反抗………%UNICODE\(0x2661\) \*1%/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4326',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%的身体被绳子束缚住、乳房像要飞出来一样被绳子挤在一起………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4327',
+        any: [/CFLAG:TARGET:345 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4330-4331',
+        any: [
+          /PRINTFORMW 「啊啊…被绑起来的话…我也、啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4330',
+        any: [
+          /PRINTFORMW 「啊啊…被绑起来的话…我也、啊…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4331',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被绳子束缚着，漏出了快融化一样的表情………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4332',
+        any: [/CFLAG:TARGET:345 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4335-4336',
+        any: [
+          /PRINTFORMW 「啊啊…如果是以前我很快就能从绳子里出来…被你绑的话就什么都办不到了………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4335',
+        any: [
+          /PRINTFORMW 「啊啊…如果是以前我很快就能从绳子里出来…被你绑的话就什么都办不到了………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4336',
+        any: [/PRINTFORMW %SAVESTR:TARGET%因为被绳子绑着而陶醉着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4337',
+        any: [/CFLAG:TARGET:345 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4340-4341',
+        any: [/PRINTFORMW 「啊啊啊、绳子勒得好紧…啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4340',
+        any: [/PRINTFORMW 「啊啊啊、绳子勒得好紧…啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4341',
+        any: [/PRINTFORMW %SAVESTR:TARGET%因为被绳子绑着而陶醉着………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4342',
+        any: [/CFLAG:TARGET:345 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4345',
+        any: [
+          /PRINTFORMW 「嗯…呵呵呵、果然被这么紧的绑住的话…啊啊…还真是逃不了呢」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4351-4364',
+        any: [/ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4354',
+        any: [/PRINTFORMW 「啊嗯…还不要解开绳子啊！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4355',
+        any: [/CFLAG:385 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4358',
+        any: [/PRINTFORMW 「明明还想继续被绑起来…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4359',
+        any: [/CFLAG:385 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4361-4362',
+        any: [/ELSEIF CFLAG:385 < 1 \|\| FLAG:7 == 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4362',
+        any: [/PRINTFORMW 「这就解开了么？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4363',
+        any: [/CFLAG:385 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4372-4456',
+        any: [/PRINTFORMW 「啊啊…就这样让我戴上口枷…要做很过分的事吗………♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4375',
+        any: [/PRINTFORMW 「啊啊…就这样让我戴上口枷…要做很过分的事吗………♪」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4376',
+        any: [/CFLAG:TARGET:346 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4379-4454',
+        any: [
+          /PRINTFORMW 「我舒服起来之后一直都很吵呢…没办法呢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4382-4388',
+        any: [
+          /PRINTFORMW 「我舒服起来之后一直都很吵呢…没办法呢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4382',
+        any: [
+          /PRINTFORMW 「我舒服起来之后一直都很吵呢…没办法呢……%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4383',
+        any: [/PRINTFORM %SAVESTR:TARGET%自己戴上了口枷/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4385',
+        any: [/PRINTW 嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4387',
+        any: [/PRINTW 眼神快融化了………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4389',
+        any: [/CFLAG:TARGET:346 = 9/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4392-4398',
+        any: [/PRINTFORMW 「啊啊、带上这个…总觉得怪怪的…嗯咕………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4392',
+        any: [/PRINTFORMW 「啊啊、带上这个…总觉得怪怪的…嗯咕………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4393',
+        any: [/PRINTFORM %SAVESTR:TARGET%被按上了口塞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4395',
+        any: [/PRINTW 嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4397',
+        any: [/PRINTW 眼神快融化了………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4399',
+        any: [/CFLAG:TARGET:346 = 8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4402-4408',
+        any: [/PRINTFORMW 「我的嘴想要的明明不是这个…嗯…嗯咕…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4402',
+        any: [/PRINTFORMW 「我的嘴想要的明明不是这个…嗯…嗯咕…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4403',
+        any: [/PRINTFORM %SAVESTR:TARGET%被戴上了口塞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4405',
+        any: [/PRINTW 嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4407',
+        any: [/PRINTW 皱着眉看着%SAVESTR:PLAYER%………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4409',
+        any: [/CFLAG:TARGET:346 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4412-4418',
+        any: [/PRINTFORMW 「啊嗯…恩…嗯咕………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4412',
+        any: [/PRINTFORMW 「啊嗯…恩…嗯咕………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4413',
+        any: [/PRINTFORM %SAVESTR:TARGET%被按上了口塞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4415',
+        any: [/PRINTW 嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4417',
+        any: [/PRINTW 眼神快融化………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4419',
+        any: [/CFLAG:TARGET:346 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4422-4428',
+        any: [/PRINTFORMW 「啊嗯…恩…嗯咕………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4422',
+        any: [/PRINTFORMW 「啊嗯…恩…嗯咕………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4423',
+        any: [/PRINTFORM %SAVESTR:TARGET%被按上了口塞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4425',
+        any: [/PRINTW 嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4427',
+        any: [/PRINTW 眼神快融化………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4429',
+        any: [/CFLAG:TARGET:346 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4432-4438',
+        any: [/PRINTFORMW 「啊嗯…恩…嗯咕………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4432',
+        any: [/PRINTFORMW 「啊嗯…恩…嗯咕………！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4433',
+        any: [/PRINTFORM %SAVESTR:TARGET%被按上了口塞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4435',
+        any: [/PRINTW 嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4437',
+        any: [/PRINTW 皱着眉看着%SAVESTR:PLAYER%………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4439',
+        any: [/CFLAG:TARGET:346 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4442-4448',
+        any: [
+          /PRINTFORMW 「嗯啊…被装上口枷的话，总觉得脑袋都要变成傻瓜了………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4442',
+        any: [
+          /PRINTFORMW 「嗯啊…被装上口枷的话，总觉得脑袋都要变成傻瓜了………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4443',
+        any: [/PRINTFORM %SAVESTR:TARGET%被按上了口塞/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4445',
+        any: [/PRINTW  嘴的缝隙里，漏出了灼热的吐息………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4447',
+        any: [/PRINTW 眼神快融化………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4449',
+        any: [/CFLAG:TARGET:346 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4452-4453',
+        any: [/PRINTFORMW 「啊咕…嗯…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4452',
+        any: [/PRINTFORMW 「啊咕…嗯…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4453',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%被口塞堵住的嘴的缝隙里，漏出了声音………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4454',
+        any: [/CFLAG:TARGET:346 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4459-4476',
+        any: [/ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4462-4463',
+        any: [/PRINTFORMW 「啊啊…嗯…嗯啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4462',
+        any: [/PRINTFORMW 「啊啊…嗯…嗯啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4463',
+        any: [/PRINTFORMW 取下了口塞的%SAVESTR:TARGET%的嘴里，流下了唾液………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4464',
+        any: [/CFLAG:386 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4467-4468',
+        any: [/PRINTFORMW 「啊啊…嗯…嗯啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4467',
+        any: [/PRINTFORMW 「啊啊…嗯…嗯啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4468',
+        any: [/PRINTFORMW 取下了口塞的%SAVESTR:TARGET%的嘴里，流下了唾液………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4469',
+        any: [/CFLAG:386 = 2/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4472-4473',
+        any: [/PRINTFORMW 「呼啊…嗯啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4472',
+        any: [/PRINTFORMW 「呼啊…嗯啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4473',
+        any: [/PRINTFORMW 取下了口塞的%SAVESTR:TARGET%的嘴里，流下了唾液………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4474',
+        any: [/CFLAG:386 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4483-4529',
+        any: [
+          /PRINTFORMW 「啊啊…嗯啊啊啊…！肚子…啊啊啊…好痛苦…嗯…嗯…快…快停下！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4486-4488',
+        any: [
+          /PRINTFORMW 「啊啊…嗯啊啊啊…！肚子…啊啊啊…好痛苦…嗯…嗯…快…快停下！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4486',
+        any: [
+          /PRINTFORMW 「啊啊…嗯啊啊啊…！肚子…啊啊啊…好痛苦…嗯…嗯…快…快停下！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4487',
+        any: [
+          /PRINTFORMW 就算是%SAVESTR:TARGET%，被这样大量的灌肠也开始哭着请求%SAVESTR:PLAYE/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4488',
+        any: [/PRINTFORMW 「求、求你了…至少…厕所…呀…啊咕！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4489',
+        any: [/CFLAG:TARGET:347 = 1/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4492-4527',
+        any: [
+          /PRINTFORMW 「啊啊！继续…继续把灌肠液灌进来！到我的肚子撑起来为止%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4495-4497',
+        any: [
+          /PRINTFORMW 「啊啊！继续…继续把灌肠液灌进来！到我的肚子撑起来为止%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4495',
+        any: [
+          /PRINTFORMW 「啊啊！继续…继续把灌肠液灌进来！到我的肚子撑起来为止%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4496',
+        any: [
+          /PRINTFORMW %SAVESTR:PLAYER%如%SAVESTR:TARGET%所愿一次次的灌着肠、插着肛塞的肛/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4497',
+        any: [
+          /PRINTFORMW 「啊啊…啊啊啊…这个拔掉的话…会很厉害的喷出来吧…啊啊…啊啊嗯啊%UNICODE\(0x2661\) /,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4498',
+        any: [/CFLAG:347 = 7/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4501-4503',
+        any: [/PRINTFORMW 「啊呜…肚子…啊啊…这么…难受…啊啊…嗯啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4501',
+        any: [/PRINTFORMW 「啊呜…肚子…啊啊…这么…难受…啊啊…嗯啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4502',
+        any: [/PRINTFORMW %SAVESTR:TARGET%带着痛苦的表情忍耐着灌肠液的热度。/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4503',
+        any: [/PRINTFORMW 「啊啊…我最害羞的地方…被盯着…啊啊啊………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4504',
+        any: [/CFLAG:347 = 6/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4507-4509',
+        any: [
+          /PRINTFORMW 「啊…啊嗯嗯！肚子里…全时灌肠液…嗯啊…这样我还有感觉什么的…%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4507',
+        any: [
+          /PRINTFORMW 「啊…啊嗯嗯！肚子里…全时灌肠液…嗯啊…这样我还有感觉什么的…%UNICODE\(0x2661\) \*/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4508',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边喘着粗气一边感受着灌肠液的刺激。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4509',
+        any: [
+          /PRINTFORMW 「啊啊…你的话即使要看我最害羞的地方…啊啊也可以啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4510',
+        any: [/CFLAG:347 = 5/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4513-4515',
+        any: [/PRINTFORMW 「啊啊…求你了…只、只有你…啊啊不想让你看见！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4513',
+        any: [/PRINTFORMW 「啊啊…求你了…只、只有你…啊啊不想让你看见！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4514',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%一边流着泪，一边恳求着%SAVESTR:PLAYER%。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4515',
+        any: [/PRINTFORMW 「啊咕…灌、灌肠液好热！…啊啊…啊啊咕！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4516',
+        any: [/CFLAG:347 = 4/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4519-4521',
+        any: [
+          /PRINTFORMW 「嗯啊…啊嗯！…我的肚子…啊啊…咕噜咕噜的响着…啊啊…啊嗯嗯嗯——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4519',
+        any: [
+          /PRINTFORMW 「嗯啊…啊嗯！…我的肚子…啊啊…咕噜咕噜的响着…啊啊…啊嗯嗯嗯——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4520',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%在灌肠液的刺激下，一边流着汗，一边漏出了喘息。/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4521',
+        any: [/PRINTFORMW 而插上肛塞的时候，发出的声音格外的响………/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4522',
+        any: [/CFLAG:347 = 3/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4525-4526',
+        any: [/PRINTFORMW 「不要…啊啊不要！啊啊…！不要这样！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4525',
+        any: [/PRINTFORMW 「不要…啊啊不要！啊啊…！不要这样！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4526',
+        any: [
+          /PRINTFORMW %SAVESTR:TARGET%和想起了以前的屈辱而哭泣着，%SAVESTR:PLAYER%毫不留/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4527',
+        any: [/CFLAG:347 = 2/],
+      },
     ],
   },
 ];

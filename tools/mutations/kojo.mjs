@@ -2468,4 +2468,63 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 2',
   },
+  {
+    desc: 'M1903 K8 SELECTCOM 43 眼罩開始時淫乱＋受虐狂っ気Lv5以上推进写错（CFLAG:344 = 9 改 8，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.眼罩 = 9; // :4245 CFLAG:TARGET:344 = 9',
+    replace: '      kojo.眼罩 = 8; // :4245（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 9',
+  },
+  {
+    desc: 'M1904 K8 SELECTCOM 43 眼罩終了時淫乱推进写错（CFLAG:380 = 3 改 2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.眼罩着脱 = 3; // :4282 CFLAG:380 = 3',
+    replace: '      kojo.眼罩着脱 = 2; // :4282（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1905 K8 SELECTCOM 44 绳子開始時それ以外推进写错（CFLAG:345 = 2 改 1，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.绳子 = 2; // :4345 CFLAG:TARGET:345 = 2',
+    replace: '      kojo.绳子 = 1; // :4345（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
+  {
+    desc: 'M1906 K8 SELECTCOM 45 口塞開始時 TEQUIP:43 分岔丢失（首档恒不进已戴分支，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      await era.print(`${target_name}自己戴上了口枷`); // :4383\n      if (era0(`tequip:${target}:43`)) {\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4385',
+    replace:
+      '      await era.print(`${target_name}自己戴上了口枷`); // :4383\n      if (false) {\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4385',
+    tests: ['kojo-k8-spade'],
+    must_mention: '嘴的缝隙里',
+  },
+  {
+    desc: 'M1907 K8 SELECTCOM 45 口塞終了時爱慕分档丢失（TALENT:85==1 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (\n      era0(`talent:${target}:85`) == 1 &&\n      (kojo.口塞着脱 < 2 || game.kojo.口上开关 == 2)\n    ) {\n      // :4467-4468 爱慕',
+    replace:
+      '    } else if (\n      false &&\n      (kojo.口塞着脱 < 2 || game.kojo.口上开关 == 2)\n    ) {\n      // :4467-4468 爱慕（变异：判定删除）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 1',
+  },
+  {
+    desc: 'M1908 K8 SELECTCOM 46 灌肠肛塞淫乱＋A感觉Lv3以上＋受虐狂っ気Lv3以上推进写错（CFLAG:347 = 7 改 6，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.灌肠肛塞 = 7; // :4498 CFLAG:347 = 7',
+    replace: '      kojo.灌肠肛塞 = 6; // :4498（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 7',
+  },
+  {
+    desc: 'M1909 K8 SELECTCOM 46 灌肠肛塞 A感觉Lv3以上＋受虐狂っ気Lv3以上守卫丢失（ABL:3>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (\n      era0(`abl:${target}:3`) >= 3 &&\n      era0(`abl:${target}:21`) >= 3 &&\n      (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 == 2)\n    ) {',
+    replace:
+      '    } else if (\n      false &&\n      era0(`abl:${target}:21`) >= 3 &&\n      (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 == 2)\n    ) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
 ];
