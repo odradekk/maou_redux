@@ -2704,6 +2704,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2342 EVENTTRAIN 主体 FLAG:7 <= 0 守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -2711,6 +2712,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }`,
     replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    const kojo = chara(target).kojo;
     if (false) {
       // 变异：FLAG:7 <= 0 守卫删
       return 0;
@@ -2725,6 +2727,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2343 EVENTTRAIN 主体 TALENT:171 != 1 守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -2732,6 +2735,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }`,
     replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -2747,12 +2751,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2344 姉妹判定 CFLAG:TARGET:21 姐姐标记写错（317 改 316）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi > 0 && assi == 17) {
-      era.set(\`cflag:\${target}:21\`, 317);
-      era.set(\`cflag:\${assi}:21\`, 224);
+      kojo.肉亲_0 = 317;
+      chara(assi).kojo.肉亲_0 = 224;
     }`,
     replace: `    if (assi > 0 && assi == 17) {
-      era.set(\`cflag:\${target}:21\`, 316); // 变异
-      era.set(\`cflag:\${assi}:21\`, 224);
+      kojo.肉亲_0 = 316; // 变异
+      chara(assi).kojo.肉亲_0 = 224;
     }`,
     tests: ['kojo-k11-lily'],
     must_mention:
@@ -2762,12 +2766,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2345 姉妹判定 CFLAG:ASSI:21 妹妹标记写错（224 改 223）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi > 0 && assi == 17) {
-      era.set(\`cflag:\${target}:21\`, 317);
-      era.set(\`cflag:\${assi}:21\`, 224);
+      kojo.肉亲_0 = 317;
+      chara(assi).kojo.肉亲_0 = 224;
     }`,
     replace: `    if (assi > 0 && assi == 17) {
-      era.set(\`cflag:\${target}:21\`, 317);
-      era.set(\`cflag:\${assi}:21\`, 223); // 变异
+      kojo.肉亲_0 = 317;
+      chara(assi).kojo.肉亲_0 = 223; // 变异
     }`,
     tests: ['kojo-k11-lily'],
     must_mention:
@@ -2777,10 +2781,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2346 初调教推进 CFLAG:201 写错（1 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      }
-      era.set(\`cflag:\${target}:201\`, 1);
+      kojo.初调教 = 1;
       return 1;`,
     replace: `      }
-      era.set(\`cflag:\${target}:201\`, 2); // 变异
+      kojo.初调教 = 2; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention:
@@ -2791,11 +2795,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      // 魔族化（１回のみ，初回调教后、陷落前）
       await era.printAndWait(''); // :186-187 PRINTFORMW 空行
-      era.set(\`cflag:\${target}:400\`, 2);
+      kojo.魔族化_K11 = 2;
       return 1;`,
     replace: `      // 魔族化（１回のみ，初回调教后、陷落前）
       await era.printAndWait(''); // :186-187 PRINTFORMW 空行
-      era.set(\`cflag:\${target}:400\`, 1); // 变异
+      kojo.魔族化_K11 = 1; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention:
@@ -2807,7 +2811,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: `      if (era0(\`talent:\${target}:85\`) || era0(\`talent:\${target}:76\`)) {
         era.drawLine();
         await era.printAndWait(''); // :196-198 PRINTFORMW 空行
-        era.set(\`cflag:\${target}:650\`, 0);
+        kojo.NTR再捕获 = 0;
       } else {`,
     replace: `      if (era0(\`talent:\${target}:85\`) || era0(\`talent:\${target}:76\`)) {
         era.drawLine();
@@ -2822,10 +2826,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2349 屈服刻印Lv1推进写错（2 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      ); // :215
-      era.set(\`cflag:\${target}:201\`, 2);
+      kojo.初调教 = 2;
       return 1;`,
     replace: `      ); // :215
-      era.set(\`cflag:\${target}:201\`, 3); // 变异
+      kojo.初调教 = 3; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
@@ -2834,10 +2838,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2350 屈服刻印Lv2推进写错（3 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      ); // :224
-      era.set(\`cflag:\${target}:201\`, 3);
+      kojo.初调教 = 3;
       return 1;`,
     replace: `      ); // :224
-      era.set(\`cflag:\${target}:201\`, 4); // 变异
+      kojo.初调教 = 4; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
@@ -2846,10 +2850,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2351 屈服刻印Lv3推进写错（4 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      ); // :235
-      era.set(\`cflag:\${target}:201\`, 4);
+      kojo.初调教 = 4;
       return 1;`,
     replace: `      ); // :235
-      era.set(\`cflag:\${target}:201\`, 5); // 变异
+      kojo.初调教 = 5; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
@@ -2858,10 +2862,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2352 淫乱推进写错（5 改 6）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      }
-      era.set(\`cflag:\${target}:201\`, 5);
+      kojo.初调教 = 5;
       return 1;`,
     replace: `      }
-      era.set(\`cflag:\${target}:201\`, 6); // 变异
+      kojo.初调教 = 6; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention: '淫乱：CFLAG:201 = 5，处女附注按 TALENT:0 分档',
@@ -2871,11 +2875,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          await era.printAndWait(\`\${target_name}的双眼却露出了期待的光芒…\`); // :271-275
         }
-        era.set(\`cflag:\${target}:201\`, 6);
+        kojo.初调教 = 6;
         return 1;`,
     replace: `          await era.printAndWait(\`\${target_name}的双眼却露出了期待的光芒…\`); // :271-275
         }
-        era.set(\`cflag:\${target}:201\`, 7); // 变异
+        kojo.初调教 = 7; // 变异
         return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention:
@@ -2885,10 +2889,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2354 爱慕推进写错（7 改 6）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      }
-      era.set(\`cflag:\${target}:201\`, 7);
+      kojo.初调教 = 7;
       return 1;`,
     replace: `      }
-      era.set(\`cflag:\${target}:201\`, 6); // 变异
+      kojo.初调教 = 6; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention: '爱慕：CFLAG:201 = 7',
@@ -2897,10 +2901,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2355 崩坏推进写错（9 改 8）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      await era.printAndWait(\`「啊哈…呼呼…啊……哈哈……」\`); // :366
-      era.set(\`cflag:\${target}:201\`, 9);
+      kojo.初调教 = 9;
       return 1;`,
     replace: `      await era.printAndWait(\`「啊哈…呼呼…啊……哈哈……」\`); // :366
-      era.set(\`cflag:\${target}:201\`, 8); // 变异
+      kojo.初调教 = 8; // 变异
       return 1;`,
     tests: ['kojo-k11-lily'],
     must_mention: '崩坏（TALENT:9 == 1 && CFLAG:201 < 9）：CFLAG:201 = 9',
@@ -2962,10 +2966,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2360 助手玛奥初めて それ以外 CFLAG:202 推进写错（1 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `          era.set(\`cflag:\${target}:202\`, 1);
+    find: `          kojo.简易助手_0 = 1;
         }
         return 1;`,
-    replace: `          era.set(\`cflag:\${target}:202\`, 2); // 变异
+    replace: `          kojo.简易助手_0 = 2; // 变异
         }
         return 1;`,
     tests: ['kojo-k11-lily'],
@@ -2976,14 +2980,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `            ); // :407
           }
-          era.set(\`cflag:\${target}:202\`, 2);
-        } else if (
-          era0(\`talent:\${target}:76\`) == 1 &&`,
+          kojo.简易助手_0 = 2;
+        } else if (era0(\`talent:\${target}:76\`) == 1 && kojo.初调教 >= 5) {`,
     replace: `            ); // :407
           }
-          era.set(\`cflag:\${target}:202\`, 1); // 变异
-        } else if (
-          era0(\`talent:\${target}:76\`) == 1 &&`,
+          kojo.简易助手_0 = 1; // 变异
+        } else if (era0(\`talent:\${target}:76\`) == 1 && kojo.初调教 >= 5) {`,
     tests: ['kojo-k11-lily'],
     must_mention:
       '助手玛奥初めて：已持爱慕且 CFLAG:201>=5 时陷落事件分档，CFLAG:202 = 2',
@@ -2993,11 +2995,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `            \`看着已经彻底变样了的姐姐，\${assi_name}微笑了起来………\`,
           ); // :464
-          era.set(\`cflag:\${target}:202\`, 2);
+          kojo.简易助手_0 = 2;
         } else if (era0(\`talent:\${target}:76\`) == 1) {`,
     replace: `            \`看着已经彻底变样了的姐姐，\${assi_name}微笑了起来………\`,
           ); // :464
-          era.set(\`cflag:\${target}:202\`, 1); // 变异
+          kojo.简易助手_0 = 1; // 变异
         } else if (era0(\`talent:\${target}:76\`) == 1) {`,
     tests: ['kojo-k11-lily'],
     must_mention:
@@ -3044,12 +3046,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2366 K11_KOJO2 屈服刻印Lv3＋爱慕/淫乱無し CFLAG:202 分档条件颠倒（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    era.drawLine();
-    if (era0(\`cflag:\${target}:202\`) >= 1) {
+    if (kojo.简易助手_0 >= 1) {
       if (rand_n(2) == 0) {
         await era.printAndWait(
           \`「原来你就是用这种方式……把我的妹妹……变成那个样子的吗……」\`,`,
     replace: `    era.drawLine();
-    if (era0(\`cflag:\${target}:202\`) < 1) {
+    if (kojo.简易助手_0 < 1) {
       // 变异：条件颠倒
       if (rand_n(2) == 0) {
         await era.printAndWait(
@@ -3084,6 +3086,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2369 EVENTEND 主体 FLAG:7 <= 0 守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -3094,6 +3097,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }`,
     replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    const kojo = chara(target).kojo;
     if (false) {
       // 变异：FLAG:7 <= 0 守卫删
       return 0;
@@ -3111,6 +3115,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2370 EVENTEND 主体 TALENT:171 != 1 守卫删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -3121,6 +3126,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }`,
     replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -3171,10 +3177,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2373 EVENTEND 反発刻印Lv3+爱慕无 CFLAG:202 分档条件颠倒（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.drawLine();
-      if (era0(\`cflag:\${target}:202\`) >= 1) {
+      if (kojo.简易助手_0 >= 1) {
         await era.printAndWait(\`「我，我是绝对不会认输的……」\`); // :674`,
     replace: `      era.drawLine();
-      if (era0(\`cflag:\${target}:202\`) < 1) {
+      if (kojo.简易助手_0 < 1) {
         // 变异：条件颠倒
         await era.printAndWait(\`「我，我是绝对不会认输的……」\`); // :674`,
     tests: ['kojo-k11-lily'],
@@ -4172,7 +4178,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM3 二回目：非助手玛奥 + それ以外推进到 2',
   },
   // —— #242（续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 SELECTCOM 5
-  // （M2418-M2429 号段） ——
+  // （M2418-M2419 号段；原 M2420-M2429 十条撞了 #231 的 M2420-M2599 分配，
+  // #295 唯一性门合并即红，已改号至 M2800-M2809，见文件后段） ——
   {
     desc: 'M2418 COM5 初めて助手玛奥判据颠倒（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -4192,8 +4199,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM5 初めて：非助手玛奥分档',
   },
+  // —— #242（续轮）：K11 莉莉口上 SELECTCOM 5 续段，改号自 M2420-M2429
+  // （#295 唯一性门冲突 #231 的 M2420-M2599，见上方号段说明） ——
   {
-    desc: 'M2420 COM5 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2800 COM5 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -4209,7 +4218,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2421 COM5 二回目 助手玛奥淫乱 CFLAG:306 写错（5 改 4，#242）',
+    desc: 'M2801 COM5 二回目 助手玛奥淫乱 CFLAG:306 写错（5 改 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.胸爱抚 = 5; // :1228`,
     replace: `      kojo.胸爱抚 = 4; // 变异`,
@@ -4217,7 +4226,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2422 COM5 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2802 COM5 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4233,7 +4242,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2423 COM5 二回目 助手玛奥B感覚Lv3以上判据错格（>=3 改 >=2，#242）',
+    desc: 'M2803 COM5 二回目 助手玛奥B感覚Lv3以上判据错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         chara(target).system.乳房感觉 >= 3 &&
@@ -4250,7 +4259,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM5 二回目：助手玛奥 + 乳房感觉恰为 Lv2（未达 Lv3）不误入 B感覚 分档',
   },
   {
-    desc: 'M2424 COM5 二回目 助手玛奥それ以外 CFLAG:306 写错（2 改 1，#242）',
+    desc: 'M2804 COM5 二回目 助手玛奥それ以外 CFLAG:306 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.胸爱抚 = 2; // :1249`,
     replace: `        kojo.胸爱抚 = 1; // 变异`,
@@ -4258,7 +4267,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2425 COM5 二回目 非助手玛奥淫乱 RAND:2 三目分支写反（TERN_MOAN，#242）',
+    desc: 'M2805 COM5 二回目 非助手玛奥淫乱 RAND:2 三目分支写反（TERN_MOAN，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      const moan_word = rand_n(2) ? '继续、继续' : '去了、要去了';`,
     replace: `      const moan_word = rand_n(2) ? '去了、要去了' : '继续、继续'; // 变异：分支写反`,
@@ -4267,7 +4276,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM5 二回目：非助手玛奥 + 淫乱，RAND:2 三目分岔可控，推进到 5',
   },
   {
-    desc: 'M2426 COM5 二回目 非助手玛奥淫乱 CFLAG:306 写错（5 改 4，#242）',
+    desc: 'M2806 COM5 二回目 非助手玛奥淫乱 CFLAG:306 写错（5 改 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.胸爱抚 = 5; // :1256-1257`,
     replace: `      kojo.胸爱抚 = 4; // 变异`,
@@ -4276,7 +4285,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM5 二回目：非助手玛奥 + 淫乱，RAND:2 三目分岔可控，推进到 5',
   },
   {
-    desc: 'M2427 COM5 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2807 COM5 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:85\`) === 1 &&
       (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
@@ -4290,7 +4299,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2428 COM5 二回目 非助手玛奥B感覚Lv3以上 CFLAG:306 写错（3 改 2，#242）',
+    desc: 'M2808 COM5 二回目 非助手玛奥B感覚Lv3以上 CFLAG:306 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.胸爱抚 = 3; // :1268-1269`,
     replace: `      kojo.胸爱抚 = 2; // 变异`,
@@ -4298,7 +4307,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：非助手玛奥 + B感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M2429 COM5 二回目 非助手玛奥それ以外 CFLAG:306 写错（2 改 1，#242）',
+    desc: 'M2809 COM5 二回目 非助手玛奥それ以外 CFLAG:306 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.胸爱抚 = 2; // :1273-1274`,
     replace: `      kojo.胸爱抚 = 1; // 变异`,

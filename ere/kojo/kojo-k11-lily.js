@@ -16,6 +16,12 @@
  *     自慰/胸爱抚，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与
  *     刻印分档）
  *
+ * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
+ * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
+ * `chara(target).kojo.<字段>`（肉亲_0/初调教/简易助手_0/魔族化_K11/
+ * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
+ * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
+ *
  * 本票剩余工作（未落地，占全文 13468 行的约 90.5%）：@KOJO_MESSAGE_COM_11 的
  * SELECTCOM 6 起（源文件第 1283 至 10657 行，约 48 条剩余分支，见源文件内
  * `IF SELECTCOM ==` 逐条列表）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，
@@ -126,6 +132,7 @@ on(
     const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
     const assi = era_flag.assi; // NO:ASSI（ere 角色 ID 直接对应）
     const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -135,11 +142,11 @@ on(
 
     // 姉妹判定（助手是玛奥 → 互标肉亲关系）
     if (assi > 0 && assi == 17) {
-      era.set(`cflag:${target}:21`, 317);
-      era.set(`cflag:${assi}:21`, 224);
+      kojo.肉亲_0 = 317;
+      chara(assi).kojo.肉亲_0 = 224;
     }
 
-    if (era0(`cflag:${target}:201`) == 0) {
+    if (kojo.初调教 == 0) {
       era.drawLine();
       if (assi > 0 && assi == 17) {
         // 姉妹相认（助手是玛奥）
@@ -170,7 +177,7 @@ on(
           `看着姐姐的样子，${assi_name}却不满地翘起了嘴，用谁也听不到的声音嘟囔着。`,
         ); // :152
         await era.printAndWait(`『真是的，姐姐只会做多余的事………』`); // :153
-        era.set(`cflag:${target}:202`, 1);
+        kojo.简易助手_0 = 1;
       } else {
         // 寻妹对峙（无玛奥或助手非玛奥）
         await era.print(`「我的妹妹呢！把我的妹妹还给我！」`); // :164
@@ -207,50 +214,41 @@ on(
         await era.print(`「骗……骗人……不要啊……不要过来……」」`); // :177
         await era.printAndWait(`那么，是时候为姐妹重聚的最终舞台做准备了。`); // :178
       }
-      era.set(`cflag:${target}:201`, 1);
+      kojo.初调教 = 1;
       return 1;
     } else if (
-      era0(`cflag:${target}:201`) < 5 &&
-      era0(`cflag:${target}:400`) == 0 &&
+      kojo.初调教 < 5 &&
+      kojo.魔族化_K11 == 0 &&
       era0(`talent:${target}:314`) == 9 &&
       era0(`talent:${target}:85`) == 0 &&
       era0(`talent:${target}:76`) == 0
     ) {
       // 魔族化（１回のみ，初回调教后、陷落前）
       await era.printAndWait(''); // :186-187 PRINTFORMW 空行
-      era.set(`cflag:${target}:400`, 2);
+      kojo.魔族化_K11 = 2;
       return 1;
-    } else if (
-      era0(`cflag:${target}:201`) >= 1 &&
-      era0(`cflag:${target}:650`) == 1
-    ) {
+    } else if (kojo.初调教 >= 1 && kojo.NTR再捕获 == 1) {
       // NTR 再捕获
       if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
         era.drawLine();
         await era.printAndWait(''); // :196-198 PRINTFORMW 空行
-        era.set(`cflag:${target}:650`, 0);
+        kojo.NTR再捕获 = 0;
       } else {
         era.drawLine();
         await era.printAndWait(''); // :201-203 PRINTFORMW 空行
-        era.set(`cflag:${target}:650`, 0);
+        kojo.NTR再捕获 = 0;
       }
       return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 2 &&
-      era0(`mark:${target}:2`) == 1
-    ) {
+    } else if (kojo.初调教 < 2 && era0(`mark:${target}:2`) == 1) {
       // 屈服刻印Lv1
       era.drawLine();
       await era.printAndWait(`「呼…呼…这样的调教，才，才没有什么……」`); // :214
       await era.printAndWait(
         `在屈辱的调教中，${target_name}闭上了眼睛，似乎还在坚持着反抗的心态………`,
       ); // :215
-      era.set(`cflag:${target}:201`, 2);
+      kojo.初调教 = 2;
       return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 3 &&
-      era0(`mark:${target}:2`) == 2
-    ) {
+    } else if (kojo.初调教 < 3 && era0(`mark:${target}:2`) == 2) {
       // 屈服刻印Lv2
       era.drawLine();
       await era.printAndWait(`「都是因为救不了妹妹…我才会受到这样的惩罚」`); // :222
@@ -260,10 +258,10 @@ on(
       await era.printAndWait(
         `从${target_name}为自己接受调教进行辩解开始，就可以开始进行更进一步的内容了………`,
       ); // :224
-      era.set(`cflag:${target}:201`, 3);
+      kojo.初调教 = 3;
       return 1;
     } else if (
-      era0(`cflag:${target}:201`) < 4 &&
+      kojo.初调教 < 4 &&
       era0(`mark:${target}:2`) == 3 &&
       era0(`talent:${target}:85`) == 0
     ) {
@@ -282,10 +280,10 @@ on(
       await era.printAndWait(
         `${player_name}愉快的听着${target_name}的威胁逐渐变成了略带享受的喘息。还有更多的可以期待。`,
       ); // :235
-      era.set(`cflag:${target}:201`, 4);
+      kojo.初调教 = 4;
       return 1;
     } else if (
-      era0(`cflag:${target}:201`) < 5 &&
+      kojo.初调教 < 5 &&
       era0(`talent:${target}:85`) == 0 &&
       era0(`talent:${target}:76`) == 1 &&
       era0(`talent:${target}:314`) != 9
@@ -320,17 +318,17 @@ on(
         ); // :250-251
         await era.printAndWait(`${target_name}的双眼却露出了期待的光芒………`); // :252
       }
-      era.set(`cflag:${target}:201`, 5);
+      kojo.初调教 = 5;
       return 1;
     } else if (
       era0(`talent:${target}:314`) == 9 &&
-      era0(`cflag:${target}:201`) < 6 &&
+      kojo.初调教 < 6 &&
       era0(`talent:${target}:85`) == 0 &&
       era0(`talent:${target}:76`) == 1
     ) {
       // 淫乱+魔族化（调教前从魔族/初回调教后魔族/陥落后魔族三档）
       era.drawLine();
-      if (era0(`cflag:${target}:400`) == 1) {
+      if (kojo.魔族化_K11 == 1) {
         await era.printAndWait(
           `「啊哈…嗯啊……别，别再摸我了、真是一点都不想见到你的脸…嗯…啊啊…哈啊…」`,
         ); // :260-261
@@ -359,9 +357,9 @@ on(
           ); // :270
           await era.printAndWait(`${target_name}的双眼却露出了期待的光芒…`); // :271-275
         }
-        era.set(`cflag:${target}:201`, 6);
+        kojo.初调教 = 6;
         return 1;
-      } else if (era0(`cflag:${target}:400`) == 2) {
+      } else if (kojo.魔族化_K11 == 2) {
         await era.printAndWait(
           `「啊哈…嗯啊……别，别再摸我了、真是一点都不想见到你的脸…嗯…啊啊…哈啊…」`,
         ); // :276-277
@@ -390,15 +388,15 @@ on(
           ); // :286-286
           await era.printAndWait(`${target_name}的双眼却露出了期待的光芒…`); // :287-291
         }
-        era.set(`cflag:${target}:201`, 6);
+        kojo.初调教 = 6;
         return 1;
       } else {
         await era.printAndWait(''); // :289-293 PRINTFORMW 空行（陥落后に魔族）
-        era.set(`cflag:${target}:201`, 6);
+        kojo.初调教 = 6;
         return 1;
       }
     } else if (
-      era0(`cflag:${target}:201`) < 7 &&
+      kojo.初调教 < 7 &&
       era0(`talent:${target}:85`) == 1 &&
       era0(`talent:${target}:314`) != 9 &&
       era0(`talent:${target}:76`) == 0
@@ -439,17 +437,17 @@ on(
           `${target_name}已经完全沦为${player_name}爱的奴隶了、比起妹妹，更想要和${player_name}在一起……`,
         ); // :312-313
       }
-      era.set(`cflag:${target}:201`, 7);
+      kojo.初调教 = 7;
       return 1;
     } else if (
       era0(`talent:${target}:314`) == 9 &&
-      era0(`cflag:${target}:201`) < 8 &&
+      kojo.初调教 < 8 &&
       era0(`talent:${target}:85`) == 1 &&
       era0(`talent:${target}:76`) == 0
     ) {
       // 爱慕+魔族化（调教前从魔族/初回调教后魔族/陥落后魔族三档）
       era.drawLine();
-      if (era0(`cflag:${target}:400`) == 1) {
+      if (kojo.魔族化_K11 == 1) {
         await era.printAndWait(
           `${target_name}靠在${player_name}的身边，轻轻地耳语着。`,
         ); // :320-321
@@ -484,9 +482,9 @@ on(
             `${target_name}已经完全沦为${player_name}爱的奴隶了、比起妹妹，更想要和${player_name}在一起……`,
           ); // :333-337
         }
-        era.set(`cflag:${target}:201`, 8);
+        kojo.初调教 = 8;
         return 1;
-      } else if (era0(`cflag:${target}:400`) == 2) {
+      } else if (kojo.魔族化_K11 == 2) {
         await era.printAndWait(
           `${target_name}靠在${player_name}的身边，轻轻地耳语着。`,
         ); // :338-339
@@ -521,17 +519,14 @@ on(
             `${target_name}已经完全沦为${player_name}爱的奴隶了、比起妹妹，更想要和${player_name}在一起……`,
           ); // :351-355
         }
-        era.set(`cflag:${target}:201`, 8);
+        kojo.初调教 = 8;
         return 1;
       } else {
         await era.printAndWait(''); // :353-357 PRINTFORMW 空行（陥落后に魔族）
-        era.set(`cflag:${target}:201`, 8);
+        kojo.初调教 = 8;
         return 1;
       }
-    } else if (
-      era0(`talent:${target}:9`) == 1 &&
-      era0(`cflag:${target}:201`) < 9
-    ) {
+    } else if (era0(`talent:${target}:9`) == 1 && kojo.初调教 < 9) {
       // 崩坏
       era.drawLine();
       await era.printAndWait(`${target_name}的眼睛失去了光彩。`); // :364
@@ -539,7 +534,7 @@ on(
         `因为过度的调教，看上去精神和身体都崩溃了的样子。`,
       ); // :365
       await era.printAndWait(`「啊哈…呼呼…啊……哈哈……」`); // :366
-      era.set(`cflag:${target}:201`, 9);
+      kojo.初调教 = 9;
       return 1;
     } else if (era0(`talent:${target}:9`) == 1) {
       // 崩坏后（已崩坏，二回目以降）
@@ -553,12 +548,9 @@ on(
     } else if (assi == 17) {
       // 简易助手口上（助手是玛奥）：CFLAG:202 三阶
       era.drawLine();
-      if (era0(`cflag:${target}:202`) == 0) {
+      if (kojo.简易助手_0 == 0) {
         // 初めて
-        if (
-          era0(`talent:${target}:85`) == 1 &&
-          era0(`cflag:${target}:201`) >= 5
-        ) {
+        if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
           // 已持爱慕，爱慕取得时初口上（陷落事件）已发生过
           await era.printAndWait(
             `「玛…玛奥！你没事，真的是太好了……但，但为什么你穿成这个样子……」`,
@@ -601,11 +593,8 @@ on(
               `看着${target_name}话语自相矛盾，羞得满脸通红的样子、${player_name}和${assi_name}脸上浮现出了笑容………`,
             ); // :407
           }
-          era.set(`cflag:${target}:202`, 2);
-        } else if (
-          era0(`talent:${target}:76`) == 1 &&
-          era0(`cflag:${target}:201`) >= 5
-        ) {
+          kojo.简易助手_0 = 2;
+        } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
           // 已持淫乱，淫乱取得时初口上（陷落事件）已发生过
           await era.printAndWait(`「玛…玛奥！我们终于见面了…${heart(1)}」`); // :412
           await era.printAndWait(
@@ -646,7 +635,7 @@ on(
               `对于${assi_name}的提议，${target_name}笑颜满面地答应了………`,
             ); // :427
           }
-          era.set(`cflag:${target}:202`, 2);
+          kojo.简易助手_0 = 2;
         } else {
           // それ以外（未持爱慕/淫乱，或未曾陷落）
           await era.printAndWait(
@@ -685,11 +674,11 @@ on(
           await era.printAndWait(
             `看着和过去判若两人的${assi_name}，${target_name}泣不成声………`,
           ); // :447
-          era.set(`cflag:${target}:202`, 1);
+          kojo.简易助手_0 = 1;
         }
         return 1;
       } else if (
-        era0(`cflag:${target}:202`) == 1 &&
+        kojo.简易助手_0 == 1 &&
         era0('flag:7') == 2 &&
         (era0(`talent:${target}:85`) == 1 || era0(`talent:${target}:76`) == 1)
       ) {
@@ -715,7 +704,7 @@ on(
           await era.printAndWait(
             `看着已经彻底变样了的姐姐，${assi_name}微笑了起来………`,
           ); // :464
-          era.set(`cflag:${target}:202`, 2);
+          kojo.简易助手_0 = 2;
         } else if (era0(`talent:${target}:76`) == 1) {
           // 淫乱
           await era.print(`『咦，姐姐怎么了？身体看上去很难受的样子呀？』`); // :468
@@ -746,10 +735,10 @@ on(
           await era.printAndWait(
             `就这样，${target_name}和${assi_name}姐妹完全成为${player_name}的性奴宠物了………`,
           ); // :477
-          era.set(`cflag:${target}:202`, 2);
+          kojo.简易助手_0 = 2;
         }
         return 1;
-      } else if (era0(`cflag:${target}:202`) >= 2 && era0('flag:7') == 2) {
+      } else if (kojo.简易助手_0 >= 2 && era0('flag:7') == 2) {
         // 二回目以降（CFLAG:202 >= 2）
         if (era0(`talent:${target}:85`) == 1) {
           await era.printAndWait(
@@ -809,6 +798,7 @@ async function k11_kojo2() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const kojo = chara(target).kojo;
 
   if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {
     // 崩坏
@@ -856,7 +846,7 @@ async function k11_kojo2() {
   ) {
     // 屈服刻印Lv3＋爱慕/淫乱無し（按 CFLAG:202 是否见过妹妹分档）
     era.drawLine();
-    if (era0(`cflag:${target}:202`) >= 1) {
+    if (kojo.简易助手_0 >= 1) {
       if (rand_n(2) == 0) {
         await era.printAndWait(
           `「原来你就是用这种方式……把我的妹妹……变成那个样子的吗……」`,
@@ -1045,6 +1035,7 @@ on(
     const target = era_flag.target;
     const target_name = chara_callname(target); // %SAVESTR:TARGET%
     const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+    const kojo = chara(target).kojo;
     if (era0('flag:7') <= 0) {
       return 0;
     }
@@ -1067,7 +1058,7 @@ on(
     ) {
       // 反発刻印Lv3+爱慕无
       era.drawLine();
-      if (era0(`cflag:${target}:202`) >= 1) {
+      if (kojo.简易助手_0 >= 1) {
         await era.printAndWait(`「我，我是绝对不会认输的……」`); // :674
         await era.printAndWait(
           `虽然跪在${player_name}的面前，但是${target_name}丝毫不掩盖眼神里的反抗……`,
@@ -1087,7 +1078,7 @@ on(
     ) {
       // 屈服刻印Lv1以下+爱慕无
       era.drawLine();
-      if (era0(`cflag:${target}:202`) >= 1) {
+      if (kojo.简易助手_0 >= 1) {
         await era.printAndWait(`「终于结，结束了…」`); // :686
         await era.printAndWait(`${target_name}松了口气，稍微安心了一些。`); // :687
       } else {
@@ -1103,7 +1094,7 @@ on(
     ) {
       // 屈服刻印Lv2+爱慕无
       era.drawLine();
-      if (era0(`cflag:${target}:202`) >= 1) {
+      if (kojo.简易助手_0 >= 1) {
         await era.printAndWait(
           `「这，这样就能满足魔王大人了吗……那，是不是可以放过我的妹妹了？」`,
         ); // :698
