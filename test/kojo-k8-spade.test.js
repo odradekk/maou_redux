@@ -3403,6 +3403,176 @@ test('COLOSSEUM_KOJO_8 SC51 媚药史莱姆：单行台词', async () => {
     '「啊啊…史莱姆么…嗯…连这种地方都进来了…啊啊！」',
   ]);
 });
+
+// —— KOJO_MESSAGE_PALAMCNG_8（参数变动口上） ——
+
+async function speak_palamcng_k8(fixture, rand) {
+  const { kojo_message_palamcng_family } =
+    fixture.load_module('kojo/kojo-system');
+  return kojo_message_palamcng_family.call(8, { args: [rand] });
+}
+
+test('PALAMCNG：头部守卫 TEQUIP:45（口塞）跳过', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:45', 1);
+    f.store.set('palam:31:3', 501);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('PALAMCNG：首次润滑 Lv2 爱慕+润滑液（SELECTCOM==50）写 CFLAG:221', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('palam:31:3', 501);
+    ef.selectcom = 50;
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…润滑液黏糊糊的…啊嗯」',
+    '―――润滑初次超过LV2。',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:221'), 1, '首次润滑Lv2');
+});
+
+test('PALAMCNG：首次欲情 Lv2 それ以外+非媚药写 CFLAG:222', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('palam:31:5', 501);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、身体稍微变得热起来的样子了…啊啊…啊啊啊………」',
+    '―――欲情初次超过LV2。',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:222'), 1, '首次欲情Lv2');
+});
+
+test('PALAMCNG：首次耻情 Lv2 爱慕写 CFLAG:223', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('palam:31:8', 501);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…太羞耻了…不要看啊…」',
+    '―――耻情初次超过LV2。',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:223'), 1, '首次耻情Lv2');
+});
+
+test('PALAMCNG：首次恐怖 Lv2 それ以外写 CFLAG:224', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('palam:31:10', 501);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我才没有…害怕呢…咕」',
+    '―――恐怖初次超过LV2。',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:224'), 1, '首次恐怖Lv2');
+});
+
+test('PALAMCNG：首次阴蒂绝顶 それ以外写 CFLAG:225', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('nowex:31:0', 1);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…啊啊！？不、不行…再继续弄的话…啊…嗯…呜啊！？」',
+    '银黑桃在阴蒂的强烈刺激下发出了悲鸣。但是很容易就能明白，那悲鸣里混杂着甜美和快乐。',
+    '然后银黑桃张开漂亮的喉咙，发出了绝顶的娇喘。',
+    '「啊…嗯…不、不要啊…这样…被强迫着去了什么的…啊啊不行…啊…咕…嗯…呀啊啊啊！」',
+    '「嗯啊………这种…屈辱…嗯嗯嗯」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:225'), 1, '首次C绝顶');
+});
+
+test('PALAMCNG：首次私处绝顶 淫乱写 CFLAG:226', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('nowex:31:1', 1);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…继续侵犯…我的小穴…♡ 啊啊…要去…要去了♡」',
+    '银黑桃下流的张开双腿，蜜裂抽搐着。那个姿态已经完全不是帅气的女忍者的身姿了。',
+    '「我…去了…用小穴…用小穴去了♡ 啊啊…啊嗯…啊啊啊♡」',
+    '银黑桃全身痉挛着，迎来了第一次私处绝顶………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:226'), 1, '首次V绝顶');
+});
+
+test('PALAMCNG：私处绝顶二回目·淫乱+插着不拔（TFLAG:60）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('nowex:31:1', 1);
+    f.store.set('cflag:31:226', 1);
+    f.store.set('tflag:60', 1);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊…我的小穴…被你的阴茎插的…啊啊…变成马上就回去的淫乱小穴了♡」',
+    '银黑桃的深处每次被侵犯，腔口都会痉挛着包裹住你的阴茎。',
+    '「来…继续插进来…啊啊…嗯…啊嗯…啊啊——♡」',
+    '「啊…啊啊…这样…这样好舒服…用你的阴茎…啊…去了去了…啊啊啊啊——♡」',
+    '然后银黑桃发出着格外高亢的娇喘、高潮了………',
+  ]);
+});
+
+test('PALAMCNG：肛门绝顶二回目·それ以外', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('nowex:31:2', 1);
+    f.store.set('cflag:31:227', 1);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「不行…再继续的话…我…我的…肛门要…变得奇怪了…啊啊——！」',
+    '银黑桃的肛门好几次颤抖着绝顶了、精疲力尽的身体横躺到了一旁。',
+    '「啊啊…已经…回不去了…我…已经不行了………」',
+  ]);
+});
+
+test('PALAMCNG：乳房绝顶二回目·弄乳狂（TALENT:78）RAND==0 分档', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('nowex:31:3', 1);
+    f.store.set('cflag:31:228', 1);
+    f.store.set('talent:31:78', 1);
+  });
+  await speak_palamcng_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…啊啊啊…胸部…要去…要去了…啊啊啊…我的胸部…好奇怪啊♡」',
+    '「啊嗯…恩…啊啊…胸部要融化了…要融化了…啊啊啊♡」',
+    '银黑桃的乳房被刺激着好像快疯了、乳头通红的充着血勃起着，嘴里不停的流着口水。',
+    '「啊嗯…啊…啊…啊啊…啊啊…继续…欺负胸部…啊嗯…啊啊啊♡」',
+  ]);
+});
+
+test('PALAMCNG：处女丧失·主人导致·淫乱且未获反抗刻印写 CFLAG:229', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('tflag:3', 1);
+    f.store.set('tflag:20', 1);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊嗯…终于成为你的东西了…啊嗯…啊啊…啊…我…想要你的阴茎想要得不得了♡」',
+    '银黑桃无视破瓜残留的疼痛，就这样被你贯穿着发出了甜甜的声音。',
+    '「这样的话就会…开始咕啾咕啾的侵犯我的小穴…并开始调教吧？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:229'), 1, '处女丧失');
+});
+
+test('PALAMCNG：处女丧失·主人以外·それ以外', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tflag:3', 1);
+    f.store.set('tflag:20', 0);
+  });
+  await speak_palamcng_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯啊…这样的话还不如干脆用自己的手…来做就好了………」',
+    '银黑桃因为破瓜之痛而带着痛苦的表情嘟囔着………',
+  ]);
+});
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
