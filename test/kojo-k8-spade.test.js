@@ -349,13 +349,19 @@ test('头部守卫：失神（TFLAG:899）跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('头部守卫：兽奸（TEQUIP:89）岔去 DOG_KOJO_8 真身（骨架期打占位）', async () => {
+test('头部守卫：兽奸（TEQUIP:89）岔去 DOG_KOJO_8 真身（源作对白全为空参数，仅状态机推进，1:1 保真）', async () => {
   const fixture = await setup_k8();
   fixture.store.set('tequip:31:89', 1);
   await speak_k8(fixture);
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('@DOG_KOJO_8')),
-    '占位行含 @DOG_KOJO_8',
+  assert.deepEqual(
+    fixture.text_lines(),
+    [''],
+    'DOG_KOJO_8 それ以外档打印一行空文本（源作空参数 PRINTFORMW，未落到主 COM_8 的真实对白）',
+  );
+  assert.equal(
+    fixture.store.get('cflag:31:301'),
+    1,
+    'CFLAG:301 推进到 1（DOG_KOJO_8 初めて档）',
   );
 });
 
@@ -3088,6 +3094,157 @@ test('SELECTCOM 87 穿环，二回目以降·助手在场：不打印任何文�
     1,
     'CFLAG:348 保持 1，未推进',
   );
+});
+
+// —— DOG_KOJO_8（兽奸专用口上，源作对白全为空参数，仅验证状态机 + 路由 + 罕见分支） ——
+
+test('DOG_KOJO_8 SC0 爱撫 二回目·牝犬（TALENT:136）：CFLAG:301 推进到 7', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('cflag:31:301', 1);
+    f.store.set('talent:31:136', 1);
+    ef.selectcom = 0;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:301'), 7, 'CFLAG:301 推进到 7');
+});
+
+test('DOG_KOJO_8 SC6 キス 初吻（CFLAG:307==0 且 TFLAG:13）·淫乱：CFLAG:307 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tflag:13', 1);
+    f.store.set('talent:31:76', 1);
+    ef.selectcom = 6;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(
+    fixture.store.get('cflag:31:307'),
+    1,
+    'CFLAG:307 推进到 1（初吻档）',
+  );
+});
+
+test('DOG_KOJO_8 SC6 キス（調教で和）初めて（无 TFLAG:13）·それ以外：CFLAG:307 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 6;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(
+    fixture.store.get('cflag:31:307'),
+    1,
+    'CFLAG:307 推进到 1（調教で和初めて档）',
+  );
+});
+
+test('DOG_KOJO_8 SC21 背后位 初めて·处女·淫乱：CFLAG:322 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('talent:31:0', 1);
+    f.store.set('talent:31:76', 1);
+    ef.selectcom = 21;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:322'), 1, 'CFLAG:322 推进到 1');
+});
+
+test('DOG_KOJO_8 SC21 背后位 二回目·牝犬：RAND 三选一均打印空文本，CFLAG:322 推进到 7', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('cflag:31:322', 1);
+    f.store.set('talent:31:136', 1);
+    ef.selectcom = 21;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8(() => 1); // rand_n 恒非 0，落到 ELSE 档
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:322'), 7, 'CFLAG:322 推进到 7');
+});
+
+test('DOG_KOJO_8 SC31 口交 二回目·爱＋侍奉精神Lv5：PRINTFORML+PRINTFORMW 各打印一行空文本', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('cflag:31:332', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('abl:31:16', 5);
+    ef.selectcom = 31;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['', '']);
+  assert.equal(fixture.store.get('cflag:31:332'), 4, 'CFLAG:332 推进到 4');
+});
+
+test('DOG_KOJO_8 SC43 眼罩 開始時（TEQUIP:43）·初めて·牝犬：CFLAG:344 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tequip:31:43', 1);
+    f.store.set('talent:31:136', 1);
+    ef.selectcom = 43;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:344'), 1, 'CFLAG:344 推进到 1');
+});
+
+test('DOG_KOJO_8 SC43 眼罩 終了時（TEQUIP:43 == 0）·牝犬：源作守卫误读 CFLAG:338 而非 CFLAG:444，1:1 保真', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('flag:7', 1); // 关闭上限旁路，令 CFLAG 阈值真正生效（默认 2 会短路掉本测试要验的条件）
+    f.store.set('talent:31:136', 1);
+    f.store.set('cflag:31:338', 5); // 肛门侍奉计数偏高，源作 bug 命中此档的守卫读的是它而非 CFLAG:444
+    ef.selectcom = 43;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(
+    fixture.text_lines(),
+    [''],
+    'CFLAG:338 = 5（>= 3）令牝犬档守卫判假，源作 bug 使其跌落到それ以外档而非牝犬档',
+  );
+  assert.equal(
+    fixture.store.get('cflag:31:444'),
+    1,
+    'CFLAG:444 落到それ以外档的值 1，而非牝犬档应有的 4（源作 bug，1:1 保真）',
+  );
+});
+
+test('DOG_KOJO_8 SC43 眼罩 終了時·牝犬·CFLAG:338 未被推高：正常触发，CFLAG:444 推进到 4', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('talent:31:136', 1);
+    ef.selectcom = 43;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:444'), 4, 'CFLAG:444 推进到 4');
+});
+
+test('DOG_KOJO_8 SC56 会話 初めて·无摄像（TEQUIP:53 == 0）：不打印任何文本，CFLAG:357 仍推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 56;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '狗不能对话，无摄像时源作直接跳过（IF TEQUIP:53 内层判定）',
+  );
+  assert.equal(fixture.store.get('cflag:31:357'), 1, 'CFLAG:357 推进到 1');
+});
+
+test('DOG_KOJO_8 SC56 会話 初めて·有摄像（TEQUIP:53）·淫乱：CFLAG:357 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:76', 1);
+    ef.selectcom = 56;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:357'), 1, 'CFLAG:357 推进到 1');
 });
 // —— 存根清单核对 ——
 
