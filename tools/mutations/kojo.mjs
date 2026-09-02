@@ -3236,4 +3236,55 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: 'ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一',
   },
+  {
+    desc: 'M1994 K8 GOHOUBI_REQUEST 兽奸档合并守卫漏掉马（1||2||3 改 1||2，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  } else if (gohoubi == 1 || gohoubi == 2 || gohoubi == 3) {',
+    replace: '  } else if (gohoubi == 1 || gohoubi == 2) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:504==3 兽奸要求',
+  },
+  {
+    desc: 'M1995 K8 GOHOUBI_REQUEST 兽名串档（猪 → 犬，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      await era.print(`猪`); // :7748',
+    replace: '      await era.print(`犬`); // :7748（变异：串档）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'CFLAG:504==2 兽奸要求',
+  },
+  {
+    desc: 'M1996 K8 GOHOUBI_REQUEST キス档被补上源作没有的旁白行（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    await era.printAndWait(`「回来之后想要魔王大人的吻…想要认真的吻」`); // :7756',
+    replace:
+      '    await era.printAndWait(`「回来之后想要魔王大人的吻…想要认真的吻」`); // :7756\n' +
+      '    await era.printAndWait(`${a_name}要求接吻作为报酬。`); // 变异：补旁白',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'キス档源作没有旁白行',
+  },
+  {
+    desc: 'M1997 K8 GOHOUBI_AFTER 放置 PLAY 档守卫写错（choice == 0 改 == 1，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  if (choice == 0) {',
+    replace: '  if (choice == 1) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'GOHOUBI_AFTER：choice 0/1 各一行，choice 越界静默',
+  },
+  {
+    desc: 'M1998 K8 GOHOUBI_AFTER キス旁白的汉化重复被「修正」（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        `就这样${a_name}和你反复的接吻了十分钟以上１０分以上………`,',
+    replace: '        `就这样${a_name}和你反复的接吻了十分钟以上………`,',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'キス档旁白的「十分钟以上１０分以上」是汉化重复，1:1 保真',
+  },
+  {
+    desc: 'M1999 K8 GOHOUBI_AFTER 童贞狩档膣/肛门两支被串成同文（#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '        await era.printAndWait(`「怎么样、我的身体是最棒的吧？」`); // :7848',
+    replace:
+      '        await era.printAndWait(`「屁股小穴里插着新品阴茎最棒了♪」`); // :7848（变异：串支）',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一条）',
+  },
 ];

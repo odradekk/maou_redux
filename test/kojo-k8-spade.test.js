@@ -4547,6 +4547,182 @@ test('ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一', async () => {
   ]);
 });
 
+// —— GOHOUBI_REQUEST_KOUJO_K8 / GOHOUBI_AFTER_KOUJO_K8（迎击奖赏） ——
+
+async function speak_gohoubi_request_k8(fixture) {
+  const { gohoubi_request_koujo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  return gohoubi_request_koujo_family.call(8, { args: [] });
+}
+
+async function speak_gohoubi_after_k8(fixture, choice) {
+  const { gohoubi_after_koujo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  return gohoubi_after_koujo_family.call(8, { args: [31, choice] });
+}
+
+test('GOHOUBI_REQUEST：CFLAG:504==0 要钱两行', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 0);
+  });
+  await speak_gohoubi_request_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「雇用我这种等级的忍者就要支付相应的金钱」',
+    '银黑桃的要求是奖金。',
+  ]);
+});
+
+test('GOHOUBI_REQUEST：兽奸三档只换中间那个兽名（犬/猪/马）', async () => {
+  for (const [lv, beast] of [
+    [1, '犬'],
+    [2, '猪'],
+    [3, '马'],
+  ]) {
+    const fixture = await setup_k8((f) => {
+      f.store.set('cflag:31:504', lv);
+    });
+    await speak_gohoubi_request_k8(fixture);
+    assert.deepEqual(
+      fixture.text_lines(),
+      ['「我呢，想要和', beast, '交尾的那种♡」', '银黑桃要求兽奸作为报酬。'],
+      `CFLAG:504==${lv} 兽奸要求`,
+    );
+  }
+});
+
+test('GOHOUBI_REQUEST：キス档只有一行（无旁白），童贞狩档两行', async () => {
+  const kiss = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 4);
+  });
+  await speak_gohoubi_request_k8(kiss);
+  assert.deepEqual(
+    kiss.text_lines(),
+    ['「回来之后想要魔王大人的吻…想要认真的吻」'],
+    'キス档源作没有旁白行',
+  );
+
+  const virgin_hunt = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 9);
+  });
+  await speak_gohoubi_request_k8(virgin_hunt);
+  assert.deepEqual(virgin_hunt.text_lines(), [
+    '「呐、叫个合适的处男来吧」',
+    '银黑桃要求童贞狩猎作为报酬。',
+  ]);
+});
+
+test('GOHOUBI_AFTER：choice 0/1 各一行，choice 越界静默', async () => {
+  const idle = await setup_k8();
+  await speak_gohoubi_after_k8(idle, 0);
+  assert.deepEqual(idle.text_lines(), ['「………知道了、我就这样退下了」']);
+
+  const medal = await setup_k8();
+  await speak_gohoubi_after_k8(medal, 1);
+  assert.deepEqual(medal.text_lines(), ['「呵呵呵、很高兴获得勋章」']);
+
+  const oob = await setup_k8();
+  await speak_gohoubi_after_k8(oob, 3);
+  assert.deepEqual(oob.text_lines(), [], 'TFLAG:18 越界静默');
+});
+
+test('GOHOUBI_AFTER：choice==2 按 CFLAG:504 分十支（钱/犬/キス/精液）', async () => {
+  const money = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 0);
+  });
+  await speak_gohoubi_after_k8(money, 2);
+  assert.deepEqual(money.text_lines(), ['「嗯、勇者捕获的报酬确实收到了」']);
+
+  const dog = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 1);
+  });
+  await speak_gohoubi_after_k8(dog, 2);
+  assert.deepEqual(dog.text_lines(), [
+    '「嗯嗯！啊啊！果然连声音都不一样…被狗侵犯…我快不行了♡」',
+  ]);
+
+  const kiss = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 4);
+  });
+  await speak_gohoubi_after_k8(kiss, 2);
+  assert.deepEqual(
+    kiss.text_lines(),
+    [
+      '「嗯…嗯…不行、还想再要点奖励…嗯…嗯呼♡」',
+      '就这样银黑桃和你反复的接吻了十分钟以上１０分以上………',
+    ],
+    'キス档旁白的「十分钟以上１０分以上」是汉化重复，1:1 保真',
+  );
+
+  const semen = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 6);
+  });
+  await speak_gohoubi_after_k8(semen, 2);
+  assert.deepEqual(semen.text_lines(), [
+    '「呵呵、魔王大人的精液是最好的报酬♡」',
+  ]);
+});
+
+test('GOHOUBI_AFTER：兽奸/性交/乱交三处源作分岔两支同文（1:1 保真）', async () => {
+  for (const lv of [1, 2, 3, 7]) {
+    const virgin = await setup_k8((f) => {
+      f.store.set('cflag:31:504', lv);
+      f.store.set('talent:31:0', 1);
+    });
+    await speak_gohoubi_after_k8(virgin, 2);
+
+    const nonvirgin = await setup_k8((f) => {
+      f.store.set('cflag:31:504', lv);
+    });
+    await speak_gohoubi_after_k8(nonvirgin, 2);
+
+    assert.deepEqual(
+      virgin.text_lines(),
+      nonvirgin.text_lines(),
+      `CFLAG:504==${lv} 的处女判两支同文（源作如此）`,
+    );
+  }
+
+  const v_sex = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 5);
+    f.store.set('abl:31:2', 3);
+    f.store.set('abl:31:3', 1);
+  });
+  await speak_gohoubi_after_k8(v_sex, 2);
+
+  const a_sex = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 5);
+    f.store.set('abl:31:2', 1);
+    f.store.set('abl:31:3', 3);
+  });
+  await speak_gohoubi_after_k8(a_sex, 2);
+
+  assert.deepEqual(
+    v_sex.text_lines(),
+    a_sex.text_lines(),
+    'CFLAG:504==5 的 ABL:2 > ABL:3 判两支同文（源作如此）',
+  );
+});
+
+test('GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一条）', async () => {
+  const v = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 9);
+    f.store.set('abl:31:2', 3);
+    f.store.set('abl:31:3', 1);
+  });
+  await speak_gohoubi_after_k8(v, 2);
+  assert.deepEqual(v.text_lines(), ['「怎么样、我的身体是最棒的吧？」']);
+
+  const a = await setup_k8((f) => {
+    f.store.set('cflag:31:504', 9);
+    f.store.set('abl:31:2', 1);
+    f.store.set('abl:31:3', 3);
+  });
+  await speak_gohoubi_after_k8(a, 2);
+  assert.deepEqual(a.text_lines(), ['「屁股小穴里插着新品阴茎最棒了♪」']);
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
