@@ -2,7 +2,7 @@
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
  *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12，issue #242，WIP 续轮，进行中）。
+ *       11/12/13，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,14 +12,16 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12 十二支 :786-2066——
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13 十三支 :786-2191——
  *     爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/振动宝石/
- *     壶虫/振动杖，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印
- *     分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/
- *     非处女文案分岔 TALENT:0，SELECTCOM 11 另含 TEQUIP:11 装备/脱着两态
- *     （脱着时用独立 CFLAG:372 计数，且初めて阶段自身再按处女/非处女分岔
- *     文案），SELECTCOM 12 结构与 SELECTCOM 9 同构（淫乱→爱慕→屈服刻印
- *     Lv3→それ以外简单四选，不含组合判据）
+ *     壶虫/振动杖/肛门虫，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质
+ *     与刻印分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含
+ *     处女/非处女文案分岔 TALENT:0，SELECTCOM 11 另含 TEQUIP:11 装备/脱着
+ *     两态（脱着时用独立 CFLAG:372 计数，且初めて阶段自身再按处女/非处女
+ *     分岔文案），SELECTCOM 12 结构与 SELECTCOM 9 同构（淫乱→爱慕→屈服
+ *     刻印Lv3→それ以外简单四选，不含组合判据），SELECTCOM 13 另含
+ *     TEQUIP:13 装备/脱着两态（脱着时用独立 CFLAG:374 计数，二回目以降层
+ *     淫乱/爱慕各再按 A感覚Lv3以上（ABL:3）二分，六选一档）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -27,8 +29,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 84.7%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 13 起（源文件第 2072 至 10657 行，约 41 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 83.8%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 14 起（源文件第 2197 至 10657 行，约 40 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -51,12 +53,12 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 963 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
- * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12（本轮新增七支）起改用
+ * trace-refs/kojo-k11-lily.mjs 的 1025 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12/13（本轮新增八支）起改用
  * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
  * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：883 条恰好命中 1 行/1 段，可视为具备真实
+ * 条锚在源全文里做精确子串计数：945 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
  * 80 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
@@ -72,7 +74,7 @@
  * 1770，初めて层淫乱/爱慕两支、二回目以降助手玛奥/非助手玛奥それ以外
  * 分档里各一对逐字重复的对白句）；2 条来自 SELECTCOM 11（:1927/1932，
  * 助手玛奥二回目以降淫乱/爱慕两支共用同一句反问台词）。SELECTCOM
- * 3/5/6/7/8/9/10/11/12 内非 print 语句
+ * 3/5/6/7/8/9/10/11/12/13 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
@@ -1289,6 +1291,14 @@ on(
  * （不含组合判据）。初めて（CFLAG:313 == 0）按「助手玛奥／淫乱／爱慕／
  * それ以外」四选写 1；二回目以降先分「助手玛奥」再各自按「淫乱→爱慕→
  * 屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构对称。
+ *
+ * SELECTCOM 13（肛门虫 CFLAG:314／着脱 CFLAG:374，:2072-2191）：TEQUIP:13
+ * 装备/脱着两态。已装（初めて，CFLAG:314 == 0）按「助手玛奥／淫乱／爱慕／
+ * それ以外・ABL:3（肛门感觉）Lv3以上／それ以外・それ以外」五选写 1；二回目
+ * 以降先分「助手玛奥」再各自按「淫乱＋ABL:3 Lv3以上→淫乱→爱慕＋ABL:3
+ * Lv3以上→爱慕→ABL:3 Lv3以上→それ以外」六选写 6/6/5/4/3/2，两支结构对称。
+ * 脱着态（TEQUIP:13 == 0）是独立四选一（淫乱/爱慕/ABL:3 Lv3以上/それ以外），
+ * 用另一枚 CFLAG:374 计数，写 4/3/2/1，无助手玛奥分档。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -3569,6 +3579,235 @@ async function kojo_message_com_11(rand) {
       kojo.振动杖 = 2; // :2060-2061
     }
     return 0; // :2061-2064
+  }
+
+  // :2072-2191 IF SELECTCOM == 13（肛门虫 CFLAG:314／着脱 CFLAG:374，
+  // TEQUIP:13 判定已装/未装两态）
+  if (era_flag.selectcom === 13) {
+    if (era.get(`tequip:${target}:13`)) {
+      // :2074-2100 初めて（CFLAG:314 == 0，开始时）
+      if (kojo.肛门虫 === 0) {
+        if (assi_mao) {
+          await era.printAndWait(
+            `『接下来这个，姐姐一定会喜欢的，嘿嘿嘿、放松，放松………』`,
+          ); // :2077
+          await era.printAndWait(
+            `「这，这种东西，无论如何也不可能会喜欢的吧！住，住手啊！呜呜呜…不要啊…求求你…！」`,
+          ); // :2078
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            `「哈啊…哈啊………肛门要被这样的东西侵犯了………这个感觉…嗯啊啊${heart(1)}」`,
+          ); // :2082
+          await era.printAndWait(
+            `蠕虫钻入${target_name}的肛门时，她惊呼了一声，随即变成了享受的喘息………`,
+          ); // :2083
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            `「如果…如果是魔王大人希望这样的话…我会…我会…呃呃…呃嗯…」`,
+          ); // :2086
+          await era.printAndWait(
+            `${target_name}抿着嘴唇，浑身颤抖地忍耐着蠕虫钻入肛门的强烈不适感……`,
+          ); // :2087
+        } else if (chara(target).system.肛门感觉 >= 3) {
+          // それ以外・A感覚Lv3以上
+          await era.printAndWait(
+            `「这，这种东西……不行不行不行啊！屁股里不可能容纳得了的啊！啊啊…呃呃啊啊！」`,
+          ); // :2091
+          await era.printAndWait(
+            `虽然语气上抗拒强烈，但是${target_name}已经被充分调教过的肛门，很自然地扩张开来，让蠕虫顺利地爬了进去，并且开始感受到异样的快感……`,
+          ); // :2092
+        } else {
+          // それ以外・それ以外
+          await era.printAndWait(
+            `「不，不要啊！屁股…怎么能让这种东西进去啊啊！呃啊啊啊…拿掉啊…拿掉啊啊！」`,
+          ); // :2094
+          await era.printAndWait(
+            `${target_name}剧烈地反抗着，然而毫无意义，${player_name}压着她的身体，将虫子强行塞了进去………`,
+          ); // :2095
+        }
+        kojo.肛门虫 = 1; // :2099
+        return 0; // :2099-2100
+      }
+
+      // :2102-2169 二回目以降
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱＋A感覚Lv3以上
+          await era.printAndWait(
+            `「哈啊…哈啊！虫子…完全进去了${heart(1)} 哈啊…呀呀…呀啊啊…姐姐的肛门……舒服得…要说不出话来了！」`,
+          ); // :2107
+          await era.printAndWait(
+            `『哎哎，再怎么舒服，也不能发出那么淫荡的声音吧姐姐♪』`,
+          ); // :2108
+          kojo.肛门虫 = 6; // :2108-2109
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱
+          await era.printAndWait(
+            `「哎…哎哟…稍微，稍微温柔一点啦…哈啊…啊啊！」`,
+          ); // :2112
+          await era.printAndWait(
+            `『没关系啦、反正姐姐马上就会舒服得上天了的』`,
+          ); // :2113
+          kojo.肛门虫 = 6; // :2113-2114
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.肛门虫 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕＋A感覚Lv3以上
+          await era.printAndWait(
+            `「啊……哈啊…稍微…稍微慢一点…这样，这样就已经很舒服了！不，不需要再深入了！啊哈…啊啊…呀啊啊」`,
+          ); // :2117
+          await era.printAndWait(
+            `『姐姐的肛门已经开发得这么彻底了…这舒服的表情真是可爱呢${heart(1)}』`,
+          ); // :2118
+          kojo.肛门虫 = 5; // :2118-2119
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.肛门虫 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕
+          await era.printAndWait(
+            `「饶，饶了我吧，不要再欺负姐姐了…这样的东西…真的…不喜啊啊啊…啊哈…啊…！」`,
+          ); // :2122
+          await era.printAndWait(
+            `『什么欺负不欺负的，姐姐给我高高兴兴地把这东西吸进屁股里吧…嘻嘻嘻』`,
+          ); // :2123
+          kojo.肛门虫 = 4; // :2123-2124
+        } else if (
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.肛门虫 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // A感覚Lv3以上
+          await era.printAndWait(
+            `「哈…哈啊…进，进来…不，不可以…哈啊…呀呀…呀啊啊！」`,
+          ); // :2127
+          await era.printAndWait(
+            `『亲爱的姐姐不要口是心非啦，才进去一半，都已经舒服成这个样子了？』`,
+          ); // :2128
+          kojo.肛门虫 = 3; // :2128-2129
+        } else if (kojo.肛门虫 <= 1 || game.kojo.口上开关 === 2) {
+          // それ以外
+          await era.printAndWait(
+            `「好痛…好痛…好难受啊啊啊！快把它拿掉，姐姐求求你了！」`,
+          ); // :2132
+          await era.printAndWait(
+            `『放松，放松，姐姐很快就会习惯并且爱上它的♪』`,
+          ); // :2133
+          kojo.肛门虫 = 2; // :2133-2134
+        }
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱＋A感覚Lv3以上
+        await era.printAndWait(
+          `「哈…哈啊${heart(1)} 全部，全部进到肛门里面了${heart(1)} 啊哈…啊啊…舒服得…要说不出话了${heart(1)}」`,
+        ); // :2139
+        await era.printAndWait(
+          `${target_name}感受着蠕虫慢慢钻入自己的肛门里，已经忍不住快感，忘我地娇喘了起来………`,
+        ); // :2140
+        kojo.肛门虫 = 6; // :2140-2141
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `「哈啊…再，再稍微温柔一些…还是有点…哈啊，啊啊${heart(1)}」`,
+        ); // :2144
+        await era.printAndWait(
+          `${target_name}的肛门还没有完全适应蠕虫的刺激，从喉咙底发出无所适从的喘息……`,
+        ); // :2145
+        kojo.肛门虫 = 6; // :2145-2146
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.肛门虫 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋A感覚Lv3以上
+        await era.printAndWait(
+          `「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊…舒服得…要说不出话了${heart(1)}」`,
+        ); // :2149
+        await era.printAndWait(
+          `${target_name}感受着蠕虫在自己肛门里爬动，忍不住发出了舒服的呻吟………`,
+        ); // :2150
+        kojo.肛门虫 = 5; // :2150-2151
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.肛门虫 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          `「呃…还，还是有点害怕，但如果是魔王大人的要求的话…我会，我会——嗯啊啊啊…啊啊！」`,
+        ); // :2154
+        await era.printAndWait(
+          `${target_name}感受着蠕虫慢慢钻入自己肛门中，抿着嘴拼命忍耐着不适感………`,
+        ); // :2155
+        kojo.肛门虫 = 4; // :2155-2156
+      } else if (
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.肛门虫 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // A感覚Lv3以上
+        await era.printAndWait(
+          `「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊${heart(1)}」`,
+        ); // :2159
+        await era.printAndWait(
+          `${target_name}被充分调教，开发过的肛门，轻易就接纳了蠕虫的侵犯，并且已经感受到了快感………`,
+        ); // :2160
+        kojo.肛门虫 = 3; // :2160-2161
+      } else if (kojo.肛门虫 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(
+          `「啊啊啊！不要啊！求求你，不要让这东西进来啊！求求你，求求你！」`,
+        ); // :2164
+        await era.printAndWait(
+          `${target_name}无谓地抵抗着，但被${player_name}压着她的身体，将虫子强行塞了进去………`,
+        ); // :2165
+        kojo.肛门虫 = 2; // :2165-2166
+      }
+      return 0; // :2166-2169
+    }
+
+    // :2172-2190 脱着時（TEQUIP:13 == 0）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.肛门虫着脱 < 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(`「哎啊啊！真，真是的，不要拔得那么快………」`); // :2175
+      kojo.肛门虫着脱 = 4; // :2176
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.肛门虫着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(`「呼…呼呼…下次…魔王大人…可以再温柔一点吗？」`); // :2179
+      kojo.肛门虫着脱 = 3; // :2180
+    } else if (
+      chara(target).system.肛门感觉 >= 3 &&
+      (kojo.肛门虫着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // A感覚Lv3以上
+      await era.printAndWait(`「哈啊…啊啊…屁股感觉，好空虚………」`); // :2183
+      kojo.肛门虫着脱 = 2; // :2184
+    } else if (kojo.肛门虫着脱 < 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「啊…啊…屁股…会坏掉的……」`); // :2187
+      kojo.肛门虫着脱 = 1; // :2188
+    }
+    return 0; // :2188-2190
   }
 
   return 0;

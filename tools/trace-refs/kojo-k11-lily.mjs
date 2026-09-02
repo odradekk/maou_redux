@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-2066',
+        ref: '786-2191',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -6263,6 +6263,420 @@ export const FILES = [
         any: [
           /^\s*CFLAG:313 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
         ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2072-2191',
+        any: [
+          /^\s*IF SELECTCOM == 13 && TEQUIP:13\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:314 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『接下来这个，姐姐一定会喜欢的，嘿嘿嘿、放松，放松………』\s*$\s*^\s*PRINTFORMW 「这，这种东西，无论如何也不可能会喜欢的吧！住，住手啊！呜呜呜…不要啊…求求你…！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2074-2100',
+        any: [
+          /^\s*IF CFLAG:TARGET:314 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『接下来这个，姐姐一定会喜欢的，嘿嘿嘿、放松，放松………』\s*$\s*^\s*PRINTFORMW 「这，这种东西，无论如何也不可能会喜欢的吧！住，住手啊！呜呜呜…不要啊…求求你…！」\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2077',
+        any: [
+          /^\s*PRINTFORMW 『接下来这个，姐姐一定会喜欢的，嘿嘿嘿、放松，放松………』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2078',
+        any: [
+          /^\s*PRINTFORMW 「这，这种东西，无论如何也不可能会喜欢的吧！住，住手啊！呜呜呜…不要啊…求求你…！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2082',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…哈啊………肛门要被这样的东西侵犯了………这个感觉…嗯啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2083',
+        any: [
+          /^\s*PRINTFORMW 蠕虫钻入%SAVESTR:TARGET%的肛门时，她惊呼了一声，随即变成了享受的喘息………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2086',
+        any: [
+          /^\s*PRINTFORMW 「如果…如果是魔王大人希望这样的话…我会…我会…呃呃…呃嗯…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2087',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%抿着嘴唇，浑身颤抖地忍耐着蠕虫钻入肛门的强烈不适感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2091',
+        any: [
+          /^\s*PRINTFORMW 「这，这种东西……不行不行不行啊！屁股里不可能容纳得了的啊！啊啊…呃呃啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2092',
+        any: [
+          /^\s*PRINTFORMW 虽然语气上抗拒强烈，但是%SAVESTR:TARGET%已经被充分调教过的肛门，很自然地扩张开来，让蠕虫顺利地爬了进去，并且开始感受到异样的快感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2094',
+        any: [
+          /^\s*PRINTFORMW 「不，不要啊！屁股…怎么能让这种东西进去啊啊！呃啊啊啊…拿掉啊…拿掉啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2095',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%剧烈地反抗着，然而毫无意义，%SAVESTR:PLAYER%压着她的身体，将虫子强行塞了进去………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2099',
+        any: [/^\s*CFLAG:TARGET:314 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2099-2100',
+        any: [/^\s*CFLAG:TARGET:314 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2102-2169',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:314 <= 6 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哈啊…哈啊！虫子…完全进去了%UNICODE\(0x2661\) \*1% 哈啊…呀呀…呀啊啊…姐姐的肛门……舒服得…要说不出话来了！」\s*$\s*^\s*PRINTFORMW 『哎哎，再怎么舒服，也不能发出那么淫荡的声音吧姐姐♪』\s*$\s*^\s*CFLAG:314 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2107',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…哈啊！虫子…完全进去了%UNICODE\(0x2661\) \*1% 哈啊…呀呀…呀啊啊…姐姐的肛门……舒服得…要说不出话来了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2108',
+        any: [
+          /^\s*PRINTFORMW 『哎哎，再怎么舒服，也不能发出那么淫荡的声音吧姐姐♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2108-2109',
+        any: [
+          /^\s*PRINTFORMW 『哎哎，再怎么舒服，也不能发出那么淫荡的声音吧姐姐♪』\s*$\s*^\s*CFLAG:314 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2112',
+        any: [
+          /^\s*PRINTFORMW 「哎…哎哟…稍微，稍微温柔一点啦…哈啊…啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2113',
+        any: [
+          /^\s*PRINTFORMW 『没关系啦、反正姐姐马上就会舒服得上天了的』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2113-2114',
+        any: [
+          /^\s*PRINTFORMW 『没关系啦、反正姐姐马上就会舒服得上天了的』\s*$\s*^\s*CFLAG:314 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2117',
+        any: [
+          /^\s*PRINTFORMW 「啊……哈啊…稍微…稍微慢一点…这样，这样就已经很舒服了！不，不需要再深入了！啊哈…啊啊…呀啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2118',
+        any: [
+          /^\s*PRINTFORMW 『姐姐的肛门已经开发得这么彻底了…这舒服的表情真是可爱呢%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2118-2119',
+        any: [
+          /^\s*PRINTFORMW 『姐姐的肛门已经开发得这么彻底了…这舒服的表情真是可爱呢%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*CFLAG:314 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2122',
+        any: [
+          /^\s*PRINTFORMW 「饶，饶了我吧，不要再欺负姐姐了…这样的东西…真的…不喜啊啊啊…啊哈…啊…！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2123',
+        any: [
+          /^\s*PRINTFORMW 『什么欺负不欺负的，姐姐给我高高兴兴地把这东西吸进屁股里吧…嘻嘻嘻』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2123-2124',
+        any: [
+          /^\s*PRINTFORMW 『什么欺负不欺负的，姐姐给我高高兴兴地把这东西吸进屁股里吧…嘻嘻嘻』\s*$\s*^\s*CFLAG:314 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2127',
+        any: [
+          /^\s*PRINTFORMW 「哈…哈啊…进，进来…不，不可以…哈啊…呀呀…呀啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2128',
+        any: [
+          /^\s*PRINTFORMW 『亲爱的姐姐不要口是心非啦，才进去一半，都已经舒服成这个样子了？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2128-2129',
+        any: [
+          /^\s*PRINTFORMW 『亲爱的姐姐不要口是心非啦，才进去一半，都已经舒服成这个样子了？』\s*$\s*^\s*CFLAG:314 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2132',
+        any: [
+          /^\s*PRINTFORMW 「好痛…好痛…好难受啊啊啊！快把它拿掉，姐姐求求你了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2133',
+        any: [
+          /^\s*PRINTFORMW 『放松，放松，姐姐很快就会习惯并且爱上它的♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2133-2134',
+        any: [
+          /^\s*PRINTFORMW 『放松，放松，姐姐很快就会习惯并且爱上它的♪』\s*$\s*^\s*CFLAG:314 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2139',
+        any: [
+          /^\s*PRINTFORMW 「哈…哈啊%UNICODE\(0x2661\) \*1% 全部，全部进到肛门里面了%UNICODE\(0x2661\) \*1% 啊哈…啊啊…舒服得…要说不出话了%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2140',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫慢慢钻入自己的肛门里，已经忍不住快感，忘我地娇喘了起来………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2140-2141',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫慢慢钻入自己的肛门里，已经忍不住快感，忘我地娇喘了起来………\s*$\s*^\s*CFLAG:314 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2144',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…再，再稍微温柔一些…还是有点…哈啊，啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2145',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的肛门还没有完全适应蠕虫的刺激，从喉咙底发出无所适从的喘息……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2145-2146',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的肛门还没有完全适应蠕虫的刺激，从喉咙底发出无所适从的喘息……\s*$\s*^\s*CFLAG:314 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2149',
+        any: [
+          /^\s*PRINTFORMW 「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊…舒服得…要说不出话了%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2150',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫在自己肛门里爬动，忍不住发出了舒服的呻吟………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2150-2151',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫在自己肛门里爬动，忍不住发出了舒服的呻吟………\s*$\s*^\s*CFLAG:314 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2154',
+        any: [
+          /^\s*PRINTFORMW 「呃…还，还是有点害怕，但如果是魔王大人的要求的话…我会，我会——嗯啊啊啊…啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2155',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫慢慢钻入自己肛门中，抿着嘴拼命忍耐着不适感………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2155-2156',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着蠕虫慢慢钻入自己肛门中，抿着嘴拼命忍耐着不适感………\s*$\s*^\s*CFLAG:314 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2159',
+        any: [
+          /^\s*PRINTFORMW 「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2160',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被充分调教，开发过的肛门，轻易就接纳了蠕虫的侵犯，并且已经感受到了快感………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2160-2161',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被充分调教，开发过的肛门，轻易就接纳了蠕虫的侵犯，并且已经感受到了快感………\s*$\s*^\s*CFLAG:314 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2164',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊！不要啊！求求你，不要让这东西进来啊！求求你，求求你！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2165',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%无谓地抵抗着，但被%SAVESTR:PLAYER%压着她的身体，将虫子强行塞了进去………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2165-2166',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%无谓地抵抗着，但被%SAVESTR:PLAYER%压着她的身体，将虫子强行塞了进去………\s*$\s*^\s*CFLAG:314 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2166-2169',
+        any: [
+          /^\s*CFLAG:314 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2172-2190',
+        any: [
+          /^\s*ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:374 < 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哎啊啊！真，真是的，不要拔得那么快………」\s*$\s*^\s*CFLAG:374 = 4\s*$\s*^\s*;爱慕\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:374 < 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「呼…呼呼…下次…魔王大人…可以再温柔一点吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2175',
+        any: [/^\s*PRINTFORMW 「哎啊啊！真，真是的，不要拔得那么快………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2176',
+        any: [/^\s*CFLAG:374 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2179',
+        any: [
+          /^\s*PRINTFORMW 「呼…呼呼…下次…魔王大人…可以再温柔一点吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2180',
+        any: [/^\s*CFLAG:374 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2183',
+        any: [/^\s*PRINTFORMW 「哈啊…啊啊…屁股感觉，好空虚………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2184',
+        any: [/^\s*CFLAG:374 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2187',
+        any: [/^\s*PRINTFORMW 「啊…啊…屁股…会坏掉的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2188',
+        any: [/^\s*CFLAG:374 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2188-2190',
+        any: [/^\s*CFLAG:374 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
       },
     ],
   },

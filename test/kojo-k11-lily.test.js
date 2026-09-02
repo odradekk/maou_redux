@@ -2687,3 +2687,290 @@ test('COM12 二回目：非助手玛奥 + それ以外推进到 2', async () => 
   );
   assert.equal(fixture.store.get(`cflag:${LILY}:313`), 2);
 });
+
+test('COM13 初めて（TEQUIP:13）：助手玛奥推进到 1', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '『接下来这个，姐姐一定会喜欢的，嘿嘿嘿、放松，放松………』',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 1);
+});
+
+test('COM13 初めて：非助手玛奥 + 淫乱推进到 1', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊…哈啊………肛门要被这样的东西侵犯了………这个感觉…嗯啊啊♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 1);
+});
+
+test('COM13 初めて：非助手玛奥 + 爱慕推进到 1', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「如果…如果是魔王大人希望这样的话…我会…我会…呃呃…呃嗯…」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 1);
+});
+
+test('COM13 初めて：それ以外 + A感覚Lv3以上推进到 1', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「这，这种东西……不行不行不行啊！屁股里不可能容纳得了的啊！啊啊…呃呃啊啊！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 1);
+});
+
+test('COM13 初めて：それ以外 + それ以外推进到 1', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「不，不要啊！屁股…怎么能让这种东西进去啊啊！呃啊啊啊…拿掉啊…拿掉啊啊！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 1);
+});
+
+test('COM13 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊…哈啊！虫子…完全进去了♡ 哈啊…呀呀…呀啊啊…姐姐的肛门……舒服得…要说不出话来了！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 6);
+});
+
+test('COM13 二回目：助手玛奥 + 淫乱推进到 6', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哎…哎哟…稍微，稍微温柔一点啦…哈啊…啊啊！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 6);
+});
+
+test('COM13 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「啊……哈啊…稍微…稍微慢一点…这样，这样就已经很舒服了！不，不需要再深入了！啊哈…啊啊…呀啊啊」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 5);
+});
+
+test('COM13 二回目：助手玛奥 + 爱慕推进到 4', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「饶，饶了我吧，不要再欺负姐姐了…这样的东西…真的…不喜啊啊啊…啊哈…啊…！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 4);
+});
+
+test('COM13 二回目：助手玛奥 + A感覚Lv3以上推进到 3', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈…哈啊…进，进来…不，不可以…哈啊…呀呀…呀啊啊！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 3);
+});
+
+test('COM13 二回目：助手玛奥 + それ以外推进到 2', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「好痛…好痛…好难受啊啊啊！快把它拿掉，姐姐求求你了！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 2);
+});
+
+test('COM13 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈…哈啊♡ 全部，全部进到肛门里面了♡ 啊哈…啊啊…舒服得…要说不出话了♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 6);
+});
+
+test('COM13 二回目：非助手玛奥 + 淫乱推进到 6', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊…再，再稍微温柔一些…还是有点…哈啊，啊啊♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 6);
+});
+
+test('COM13 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊…舒服得…要说不出话了♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 5);
+});
+
+test('COM13 二回目：非助手玛奥 + 爱慕推进到 4', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「呃…还，还是有点害怕，但如果是魔王大人的要求的话…我会，我会——嗯啊啊啊…啊啊！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 4);
+});
+
+test('COM13 二回目：非助手玛奥 + A感覚Lv3以上推进到 3', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 3);
+});
+
+test('COM13 二回目：非助手玛奥 + それ以外推进到 2', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:13`, 1);
+    f.store.set(`cflag:${LILY}:314`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「啊啊啊！不要啊！求求你，不要让这东西进来啊！求求你，求求你！」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:314`), 2);
+});
+
+test('COM13 脱着時（TEQUIP:13 == 0）：淫乱推进到 4', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「哎啊啊！真，真是的，不要拔得那么快………」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:374`), 4);
+});
+
+test('COM13 脱着時：爱慕推进到 3', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「呼…呼呼…下次…魔王大人…可以再温柔一点吗？」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:374`), 3);
+});
+
+test('COM13 脱着時：A感覚Lv3以上推进到 2', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「哈啊…啊啊…屁股感觉，好空虚………」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:374`), 2);
+});
+
+test('COM13 脱着時：それ以外推进到 1', async () => {
+  const fixture = setup_lily(() => {}, 13);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「啊…啊…屁股…会坏掉的……」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:374`), 1);
+});
