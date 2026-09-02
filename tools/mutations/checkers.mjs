@@ -576,14 +576,14 @@ export default [
     find: 'if (overflowing.length > 0) {',
     replace: 'if (false && overflowing.length > 0) { // 变异：鉴别力门焊死',
     tests: ['trace-check'],
-    must_mention: '必须点名 js 与 :N',
+    must_mention: '鉴别力检查对弱锚失明',
   },
   {
     desc: 'M2701 鉴别力基线核对焊死（改小一位不再红——只减不增不在退出码语义里）（#298）',
     file: 'tools/trace-check.mjs',
-    find: 'if (quality_weak_total > ANCHOR_QUALITY_BASELINE) {',
+    find: 'if (FROZEN_WEAK_SUM > ANCHOR_QUALITY_BASELINE) {',
     replace:
-      'if (false && quality_weak_total > ANCHOR_QUALITY_BASELINE) { // 变异：基线核对焊死',
+      'if (false && FROZEN_WEAK_SUM > ANCHOR_QUALITY_BASELINE) { // 变异：基线核对焊死',
     tests: ['trace-check'],
     must_mention: '基线改小一位必须非 0',
   },

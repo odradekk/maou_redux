@@ -2,7 +2,7 @@
  * @file trace-check 的行为锁（issue #63）：工具不只「表内一致」，还要
  * 「表外即红」——五条行为在此固定；#290 起锚表按 js 文件分片，再加两条；
  * #298 起再加鉴别力：ENDIF 一类弱锚必须红、平行复现与空 PRINTFORM 整行
- * 锚放行、基线只减不增、`--anchor-quality` 给出可引用的量法。
+ * 锚放行、基线只减不增、默认路径只量未冻结文件、`--anchor-quality` 打印分布（`--all` 才全文量）。
  *
  *   1. 全绿运行：tools/trace-check.mjs 退出码 0（锚校验 + 两侧扫描完整性
  *      + 豁免核对全过）。本用例把工具并入 npm test——锚表烂掉、完整性
@@ -742,15 +742,37 @@ test('鉴别力基线只能变短：把冻结数改小一位，工具必须红',
   );
 });
 
+test('默认路径不打印全文量分布（存量冻结面不进 npm test）', () => {
+  const { status, output } = run_tool();
+  assert.equal(status, 0, `默认路径在真树上必须全绿：\n${output}`);
+  assert.ok(
+    !output.includes('命中 1 处'),
+    `默认路径不该跑全文量（那是 --anchor-quality 的事）：\n${output}`,
+  );
+});
+
 test('--anchor-quality 给出可引用的量法（命中分布，不必另起扫描）', () => {
-  const { status, output } = run_tool(['--anchor-quality']);
-  assert.equal(status, 0, `--anchor-quality 在真树上必须全绿：\n${output}`);
-  assert.ok(
-    output.includes('鉴别力') && /命中\s*1\s*处/.test(output),
-    `--anchor-quality 必须报出命中 1 处的条数，agent 才能写进完成报告：\n${output}`,
-  );
-  assert.ok(
-    output.includes('弱锚') && /基线/.test(output),
-    `--anchor-quality 必须报出弱锚数与基线，防止再引错成「trace-check 全绿」：\n${output}`,
-  );
+  const root = probe_repo();
+  const probe = write_quality_probe(root, {
+    js_rel: 'ere/__quality_report__.js',
+    src_rel: 'target/ERB/__quality_report__.ERB',
+    src_text: ['@PROBE_REPORT', 'PRINTFORMW 唯一一句有正文的台词', ''].join(
+      '\n',
+    ),
+    refs: [{ ref: '2', any: String.raw`/PRINTFORMW 唯一一句有正文的台词/` }],
+  });
+  try {
+    const { status, output } = run_tool_in(root, ['--anchor-quality']);
+    assert.equal(status, 0, `--anchor-quality 必须全绿：\n${output}`);
+    assert.ok(
+      output.includes('鉴别力') && /命中\s*1\s*处/.test(output),
+      `--anchor-quality 必须报出命中 1 处的条数：\n${output}`,
+    );
+    assert.ok(
+      output.includes('弱锚') && /基线/.test(output),
+      `--anchor-quality 必须报出弱锚数与基线：\n${output}`,
+    );
+  } finally {
+    probe.cleanup();
+  }
 });

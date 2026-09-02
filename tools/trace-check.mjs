@@ -62,20 +62,18 @@
 //     不回头改已合并模块，但让它们再也涨不上去。
 // 量法并进第 2 步的现有遍历，不另起扫描。
 //
-// 耗时（#298 验收）：鉴别力把整次 trace-check 从 ~5s 抬到 ~14s。热点不是
-// 「每条锚对整份源文件正则全扫」——(src, source, flags) 已去重，真扫的是
-// ~3.7 万个 unique 正则 × 源文件（约 12 GB 的正则扫描、约 3.5s）。建议的
-// 「行内容 → 行号」索引帮不上：unique 正则里整行字面量只有 1.5%，82% 是
-// 子串字面量（`/PRINTFORMW 「…」/`），建索引几乎零命中；indexOf 快路径
-// 与 RegExp 持平。倍数里剩下的是给 PRINTFORM 一类高命中锚物化全部窗口、
-// 以及同一正则被多条引用重复分类。所以这里只做两件事：分类结果按 unique
-// 正则缓存；分类时流式比窗口，判定 diff 之后不再切片。3.5s 的正则扫描
-// 是「全文量鉴别力」本身的价格，不值得为它上 Aho-Corasick。
+// 默认路径**只量未冻结文件**（#298 验收：合上 K8 后全文量是 master 的 4.2
+// 倍、每次 npm test +19s）。ANCHOR_QUALITY_BY_FILE 里的文件存量已冻结，
+// 默认不再重算——弱锚涨只可能来自新文件，ENDIF 探针也是新文件。
+// `--anchor-quality` 打印本次量到的分布；`--anchor-quality --all` 才全文量
+// 并核对总基线（消化弱锚后基线一并改小）。完成报告用带 `--all` 的那条。
 //
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
 //       node tools/trace-check.mjs --anchor-quality
-//         另打印鉴别力分布（命中 1 处 / 平行复现 / 空 PRINTFORM 整行锚 /
-//         弱锚），供完成报告引用；不要再引「trace-check 全绿」当鉴别力。
+//         打印本次鉴别力分布（默认只含未冻结文件）。
+//       node tools/trace-check.mjs --anchor-quality --all
+//         全文量并打印分布（命中 1 处 / 平行复现 / 空 PRINTFORM 整行锚 /
+//         弱锚），供完成报告引用；不要再引「trace-check 全绿」。
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -94,6 +92,7 @@ const SAMPLES = samples_module.SAMPLES;
 const EMUERA_LOG = 'target/emuera.log';
 
 const WANT_QUALITY_REPORT = process.argv.includes('--anchor-quality');
+const WANT_QUALITY_ALL = process.argv.includes('--all');
 
 // #282 注释自身的引用（本文件注释里写了 emuera.log:26，被完整性扫描
 // 扫到；登记后自洽）——条目仍挂本文件，不跟锚表一起搬走。
@@ -256,9 +255,81 @@ function unique_nonblank_in_slice(lines, a, b) {
   return out;
 }
 
+const ANCHOR_QUALITY_BASELINE = 4795; // #298 冻结：弱锚只减不增；#239 K8 并入 +500
+const ANCHOR_QUALITY_BY_FILE = {
+  'ere/chara/chara-make.js': 35,
+  'ere/data/equip-database.js': 2,
+  'ere/dungeon/dungeon-after.js': 3,
+  'ere/dungeon/dungeon-battle.js': 12,
+  'ere/dungeon/dungeon-battle2.js': 8,
+  'ere/dungeon/dungeon-party.js': 1,
+  'ere/dungeon/dungeon-quest.js': 11,
+  'ere/dungeon/dungeon-room.js': 40,
+  'ere/dungeon/dungeon-town.js': 15,
+  'ere/dungeon/dungeon-trap.js': 63,
+  'ere/dungeon/dungeon.js': 36,
+  'ere/dungeon/labo-dungeon-map.js': 10,
+  'ere/dungeon/labo-map.js': 1,
+  'ere/dungeon/labo.js': 7,
+  'ere/dungeon/monster-data.js': 3,
+  'ere/event/enter-enemy.js': 30,
+  'ere/event/event-aftertrain.js': 2,
+  'ere/event/event-beforetrain.js': 1,
+  'ere/event/event-comend.js': 4,
+  'ere/event/event-end.js': 2,
+  'ere/event/event-endcheck.js': 5,
+  'ere/event/event-ending.js': 2,
+  'ere/event/event-nextday.js': 9,
+  'ere/event/event-turnend.js': 2,
+  'ere/event/first-setting.js': 1,
+  'ere/event/source-check.js': 23,
+  'ere/kojo/kojo-dungeon-bitch-log.js': 15,
+  'ere/kojo/kojo-dungeon-bitch.js': 50,
+  'ere/kojo/kojo-dungeon-ravish-man.js': 84,
+  'ere/kojo/kojo-dungeon-ravish.js': 193,
+  'ere/kojo/kojo-k1-confident.js': 784,
+  'ere/kojo/kojo-k10-club.js': 32,
+  'ere/kojo/kojo-k2-timid.js': 566,
+  'ere/kojo/kojo-k3-noble.js': 742,
+  'ere/kojo/kojo-k4-stoic.js': 18,
+  'ere/kojo/kojo-k5-mao.js': 468,
+  'ere/kojo/kojo-k6-wicked.js': 564,
+  'ere/kojo/kojo-k7-heart.js': 109,
+  'ere/kojo/kojo-k8-spade.js': 500,
+  'ere/kojo/kojo-k9-diamond.js': 23,
+  'ere/page/page-clothtype.js': 2,
+  'ere/page/page-dungeon-setup.js': 1,
+  'ere/page/page-invasion.js': 5,
+  'ere/page/page-main-menu.js': 4,
+  'ere/page/page-save-load.js': 18,
+  'ere/page/page-train.js': 2,
+  'ere/system/equip/equip-curse.js': 1,
+  'ere/system/equip/equip-lookup.js': 1,
+  'ere/system/equip/equip-print.js': 3,
+  'ere/system/train/benki.js': 4,
+  'ere/system/train/cloth.js': 1,
+  'ere/system/train/com-analsex.js': 12,
+  'ere/system/train/com-caress.js': 81,
+  'ere/system/train/com-colosseum.js': 36,
+  'ere/system/train/com-condom.js': 17,
+  'ere/system/train/com-hardcore.js': 2,
+  'ere/system/train/com-register.js': 7,
+  'ere/system/train/com-sex.js': 1,
+  'ere/system/train/com-sm.js': 63,
+  'ere/system/train/com-special.js': 1,
+  'ere/system/train/com-tentacle.js': 4,
+  'ere/system/train/com-toy.js': 3,
+  'ere/system/train/com-vaginasex.js': 22,
+  'ere/system/train/juel-check.js': 1,
+  'ere/system/train/passout.js': 17,
+  'ere/system/train/seiin.js': 2,
+  'ere/system/train/train-message.js': 4,
+  'ere/system/train/v-able.js': 1,
+  'ere/system/turnend-settle.js': 3,
+};
+
 let failures = 0;
 let checked = 0;
-
 const quality_counts = {
   unique: 0,
   ident_payload: 0,
@@ -297,28 +368,35 @@ for (const { js, refs } of FILES) {
       failures += 1;
       continue;
     }
-    // 2b) 鉴别力（#298）：在命中声明切片的 alternatives 里取最好的一条
-    let best = null;
-    for (const anchor of matching) {
-      const rec = {
-        ...classify_anchor(src, anchor, pack),
-        source: anchor.source,
-      };
-      if (!best || QUALITY_RANK[rec.kind] < QUALITY_RANK[best.kind]) best = rec;
-    }
-    quality_counts[best.kind] += 1;
-    if (best.kind === 'ident_no_payload' || best.kind === 'diff') {
-      this_weak += 1;
-      quality_new_weak.push({
-        js,
-        src,
-        ref,
-        kind: best.kind,
-        hits: best.hits,
-        source: best.source,
-        a,
-        b,
-      });
+    // 2b) 鉴别力（#298）：默认 / `--anchor-quality` 只量未冻结文件；
+    // `--all` 才全文量。
+    const want_quality =
+      (WANT_QUALITY_REPORT && WANT_QUALITY_ALL) ||
+      !(js in ANCHOR_QUALITY_BY_FILE);
+    if (want_quality) {
+      let best = null;
+      for (const anchor of matching) {
+        const rec = {
+          ...classify_anchor(src, anchor, pack),
+          source: anchor.source,
+        };
+        if (!best || QUALITY_RANK[rec.kind] < QUALITY_RANK[best.kind])
+          best = rec;
+      }
+      quality_counts[best.kind] += 1;
+      if (best.kind === 'ident_no_payload' || best.kind === 'diff') {
+        this_weak += 1;
+        quality_new_weak.push({
+          js,
+          src,
+          ref,
+          kind: best.kind,
+          hits: best.hits,
+          source: best.source,
+          a,
+          b,
+        });
+      }
     }
   }
   quality_weak_by_file.set(js, (quality_weak_by_file.get(js) ?? 0) + this_weak);
@@ -1059,80 +1137,20 @@ for (const [rel, refs] of Object.entries(ERB_EXEMPT)) {
 //
 // 弱锚 = 全文命中 >1 且（窗口彼此不同，或窗口无正文）。平行复现（窗口
 // 逐字相同且有正文）与空 PRINTFORM 整行锚不进这张表。扩基线必须显式改
-// 下面两份常量——冻结不是不可变，是「改动必须发生在标着冻结的地方」。
+// 上面两份常量——冻结不是不可变，是「改动必须发生在标着冻结的地方」。
+// 默认路径只核对新文件（不在 ANCHOR_QUALITY_BY_FILE 里的）超出 0；
+// 总基线只在 `--anchor-quality --all` 全文量时核对。
 
-const ANCHOR_QUALITY_BASELINE = 4795; // #298 冻结：弱锚只减不增；#239 K8 并入 +500
-const ANCHOR_QUALITY_BY_FILE = {
-  'ere/chara/chara-make.js': 35,
-  'ere/data/equip-database.js': 2,
-  'ere/dungeon/dungeon-after.js': 3,
-  'ere/dungeon/dungeon-battle.js': 12,
-  'ere/dungeon/dungeon-battle2.js': 8,
-  'ere/dungeon/dungeon-party.js': 1,
-  'ere/dungeon/dungeon-quest.js': 11,
-  'ere/dungeon/dungeon-room.js': 40,
-  'ere/dungeon/dungeon-town.js': 15,
-  'ere/dungeon/dungeon-trap.js': 63,
-  'ere/dungeon/dungeon.js': 36,
-  'ere/dungeon/labo-dungeon-map.js': 10,
-  'ere/dungeon/labo-map.js': 1,
-  'ere/dungeon/labo.js': 7,
-  'ere/dungeon/monster-data.js': 3,
-  'ere/event/enter-enemy.js': 30,
-  'ere/event/event-aftertrain.js': 2,
-  'ere/event/event-beforetrain.js': 1,
-  'ere/event/event-comend.js': 4,
-  'ere/event/event-end.js': 2,
-  'ere/event/event-endcheck.js': 5,
-  'ere/event/event-ending.js': 2,
-  'ere/event/event-nextday.js': 9,
-  'ere/event/event-turnend.js': 2,
-  'ere/event/first-setting.js': 1,
-  'ere/event/source-check.js': 23,
-  'ere/kojo/kojo-dungeon-bitch-log.js': 15,
-  'ere/kojo/kojo-dungeon-bitch.js': 50,
-  'ere/kojo/kojo-dungeon-ravish-man.js': 84,
-  'ere/kojo/kojo-dungeon-ravish.js': 193,
-  'ere/kojo/kojo-k1-confident.js': 784,
-  'ere/kojo/kojo-k10-club.js': 32,
-  'ere/kojo/kojo-k2-timid.js': 566,
-  'ere/kojo/kojo-k3-noble.js': 742,
-  'ere/kojo/kojo-k4-stoic.js': 18,
-  'ere/kojo/kojo-k5-mao.js': 468,
-  'ere/kojo/kojo-k6-wicked.js': 564,
-  'ere/kojo/kojo-k7-heart.js': 109,
-  'ere/kojo/kojo-k8-spade.js': 500,
-  'ere/kojo/kojo-k9-diamond.js': 23,
-  'ere/page/page-clothtype.js': 2,
-  'ere/page/page-dungeon-setup.js': 1,
-  'ere/page/page-invasion.js': 5,
-  'ere/page/page-main-menu.js': 4,
-  'ere/page/page-save-load.js': 18,
-  'ere/page/page-train.js': 2,
-  'ere/system/equip/equip-curse.js': 1,
-  'ere/system/equip/equip-lookup.js': 1,
-  'ere/system/equip/equip-print.js': 3,
-  'ere/system/train/benki.js': 4,
-  'ere/system/train/cloth.js': 1,
-  'ere/system/train/com-analsex.js': 12,
-  'ere/system/train/com-caress.js': 81,
-  'ere/system/train/com-colosseum.js': 36,
-  'ere/system/train/com-condom.js': 17,
-  'ere/system/train/com-hardcore.js': 2,
-  'ere/system/train/com-register.js': 7,
-  'ere/system/train/com-sex.js': 1,
-  'ere/system/train/com-sm.js': 63,
-  'ere/system/train/com-special.js': 1,
-  'ere/system/train/com-tentacle.js': 4,
-  'ere/system/train/com-toy.js': 3,
-  'ere/system/train/com-vaginasex.js': 22,
-  'ere/system/train/juel-check.js': 1,
-  'ere/system/train/passout.js': 17,
-  'ere/system/train/seiin.js': 2,
-  'ere/system/train/train-message.js': 4,
-  'ere/system/train/v-able.js': 1,
-  'ere/system/turnend-settle.js': 3,
-};
+const FROZEN_WEAK_SUM = Object.values(ANCHOR_QUALITY_BY_FILE).reduce(
+  (sum, n) => sum + n,
+  0,
+);
+if (FROZEN_WEAK_SUM > ANCHOR_QUALITY_BASELINE) {
+  console.log(
+    `✗ 分文件弱锚基线合计 ${FROZEN_WEAK_SUM}，超出总基线 ${ANCHOR_QUALITY_BASELINE}（#298 只减不增）`,
+  );
+  failures += 1;
+}
 
 const quality_weak_total =
   quality_counts.ident_no_payload + quality_counts.diff;
@@ -1181,7 +1199,11 @@ if (overflowing.length > 0) {
   }
 }
 
-if (quality_weak_total > ANCHOR_QUALITY_BASELINE) {
+if (
+  WANT_QUALITY_REPORT &&
+  WANT_QUALITY_ALL &&
+  quality_weak_total > ANCHOR_QUALITY_BASELINE
+) {
   console.log(
     `✗ 鉴别力弱锚 ${quality_weak_total} 条，超出 #298 基线 ${ANCHOR_QUALITY_BASELINE}（只减不增：消化 = 收窄锚后基线一并改小；新弱锚不许进）`,
   );
