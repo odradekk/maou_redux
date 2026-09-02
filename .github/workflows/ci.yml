@@ -97,8 +97,22 @@ jobs:
       # 截断、随即 exit 1，是进程被杀的形态而非某条变异判红）。每个隔离副本
       # 自己还会按核数并发跑 node --test，4 副本 × 4 核 = 16 个 node，每个都
       # 要把 42 MB 的 asar 解析进内存——内存而不是 CPU 才是这里的约束。
+      # 失败时自诊断：--jobs 4 与 --jobs 2 两次都在**一条 ✓ 输出中途截断、
+      # 随即 exit 1**，没有汇总行也没有任何 ✗——那是进程被杀的形态，不是
+      # 某条变异判红。两次截断点还不同（M351 / M886），所以也不是某条坏条目。
+      # 下面这一步把退出码、内存、磁盘、内核 OOM 记录都打出来，下次失败
+      # 直接有证据，不用再猜。
       - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
-        run: node tools/mutation-check.mjs --jobs 2
+        run: |
+          set +e
+          node tools/mutation-check.mjs --jobs 2
+          rc=$?
+          echo "=== 退出码 $rc ==="
+          free -h
+          df -h / "$RUNNER_TEMP"
+          sudo dmesg 2>/dev/null | grep -iE "out of memory|oom-kill|killed process" | tail -20 \
+            || echo "dmesg 里没有 OOM 记录（或读不到 dmesg）"
+          exit $rc
       - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）
         run: |
           git status --porcelain > /tmp/tree-after.txt
