@@ -94,6 +94,7 @@ require('#/kojo/kojo-k1-confident');
 require('#/kojo/kojo-k4-stoic');
 require('#/kojo/kojo-k6-wicked');
 require('#/kojo/kojo-k7-heart');
+require('#/kojo/kojo-k9-diamond');
 require('#/kojo/kojo-k11-lily');
 
 /**
