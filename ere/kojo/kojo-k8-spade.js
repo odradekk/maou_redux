@@ -82,6 +82,7 @@ const {
   self_kojo_family,
   dungeon_victory_family,
   dungeon_attack_family,
+  benki_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -103,7 +104,6 @@ const era0 = (k) => era.get(k) || 0;
  * 'KOJO_MESSAGE_COM_8' 一个占位名，各非调教函数各占一名，随填充逐条划掉。
  */
 const STUBBED_CALLS = [
-  'BENKI_KOUJO_K8',
   'NTR_KOUJO_K8',
   'EXUCUTION_KOUJO_K8',
   'MUSEUM_KOUJO_K8',
@@ -11733,15 +11733,164 @@ dungeon_victory_family.register(8, dungeon_victory_k8);
 dungeon_attack_family.register(8, dungeon_attack_k8);
 
 /**
- * @BENKI_KOUJO_K8（:7199-7300）：肉便器口上（TARGET = A）。
- * TODO(#239)：待填充。
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @BENKI_KOUJO_K8（:7199-7298）：肉便器口上（角色即 A）。
+ *
+ * FLAG:62（肉便器行动，详细在 BENKI.ERB）分六档：0 最下层居民凌辱 /
+ * 1 レズ便器 / 2 獣姦 / 3 A+V プレイ / 4 V プレイ / 5 A プレイ。
+ * 每档内按 TALENT:76 淫乱 → TALENT:85 爱慕 → ABL:16 侍奉精神 Lv5 以上 →
+ * それ以外 四选一，条件序与原文一致。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
-// eslint-disable-next-line no-unused-vars
 async function benki_koujo_k8(rand) {
-  stub_line('BENKI_KOUJO_K8', '肉便器口上', '本票分段填充');
+  void rand;
+  const a = era_flag.target;
+  const target_name = chara_callname(a); // %SAVESTR:TARGET%
+
+  if (game.train.肉便器行动 == 0) {
+    // :7205 最下层居民凌辱
+    if (era0(`talent:${a}:76`) == 1) {
+      // :7206 淫乱
+      await era.printAndWait(
+        `「请快点给我更多阴茎！啊…啊啊…啊嗯啊啊啊啊${heart(1)}」`,
+      ); // :7208
+    } else if (era0(`talent:${a}:85`)) {
+      // :7209 爱慕
+      await era.printAndWait(
+        `「啊啊…我是魔王大人的…嗯…快、快停下…嗯…啊啊啊——！」`,
+      ); // :7211
+    } else if (era0(`abl:${a}:16`) >= 5) {
+      // :7212 侍奉精神Lv5以上
+      await era.printAndWait(`「请、请让我服侍大家的阴茎…嗯…嗯咕！？」`); // :7214
+    } else {
+      // :7215 それ以外
+      await era.printAndWait(`「呀！不要碰我！好脏…啊啊！不、不要…啊啊——！」`); // :7217
+    }
+  } else if (game.train.肉便器行动 == 1) {
+    // :7220 レズ便器
+    if (era0(`talent:${a}:76`) == 1) {
+      // :7221 淫乱
+      await era.printAndWait(
+        `「请给我更多的尿吧…啊啊啊啊…我会全喝下粗（去）的…咕噜咕噜${heart(1)}」`,
+      ); // :7223
+    } else if (era0(`talent:${a}:85`)) {
+      // :7224 爱慕
+      await era.printAndWait(
+        `「啊啊…被弄得这么脏的话、会再也见不到那个人了吧………」`,
+      ); // :7226
+      await era.printAndWait(
+        `面对${target_name}的叹息，周围的女魔族冷冷的笑着………`,
+      ); // :7227
+    } else if (era0(`abl:${a}:16`) >= 5) {
+      // :7228 侍奉精神Lv5以上
+      await era.printAndWait(
+        `「我会好好奉仕的…啊嗯…再手下留情一点…嗯咕…嗯咕………」`,
+      ); // :7230
+    } else {
+      // :7231 それ以外
+      await era.printAndWait(
+        `「不要…我可没有被做这种事还高兴的诶兴趣…啊…嗯咕！」`,
+      ); // :7233
+    }
+  } else if (game.train.肉便器行动 == 2) {
+    // :7236 獣姦
+    if (era0(`talent:${a}:76`) == 1) {
+      // :7237 淫乱
+      await era.printAndWait(
+        `「啊啊——！这个粗大的野兽已经好棒…啊——啊啊啊啊啊————${heart(1)}」`,
+      ); // :7239
+    } else if (era0(`talent:${a}:85`)) {
+      // :7240 爱慕
+      await era.printAndWait(
+        `「呀啊！这样的话…要坏了要坏到了…我快坏掉了啊！啊啊啊——！」`,
+      ); // :7242
+    } else if (era0(`abl:${a}:16`) >= 5) {
+      // :7243 侍奉精神Lv5以上
+      await era.printAndWait(
+        `「啊啊…别这么贪心啊…嗯…啊啊！我会老老实实的…啊…啊啊！呜、好粗！」`,
+      ); // :7245
+    } else {
+      // :7246 それ以外
+      await era.printAndWait(
+        `「不要…不要…竟然被野兽侵犯什么的…嗯咕！嗯！还、还射在里面…啊啊！还这么大！」`,
+      ); // :7248
+    }
+  } else if (game.train.肉便器行动 == 3) {
+    // :7251 A+Vプレイ
+    if (era0(`talent:${a}:76`) == 1) {
+      // :7252 淫乱
+      await era.printAndWait(
+        `「啊啊啊…我的小穴和肛门都舒服的快要融化了…继续侵犯我吧…${heart(1)}」`,
+      ); // :7254
+    } else if (era0(`talent:${a}:85`)) {
+      // :7255 爱慕
+      await era.printAndWait(
+        `「啊啊——！坏掉了…要坏掉了…饶、饶了我吧…啊…啊啊——！」`,
+      ); // :7257
+      await era.printAndWait(
+        `周围的男性们看着悲鸣越来越大的${target_name}的身姿，阴茎挺得更高了………`,
+      ); // :7258
+    } else if (era0(`abl:${a}:16`) >= 5) {
+      // :7259 侍奉精神Lv5以上
+      // :7261 源作句末多打了一个引号（啊嗯啊」」），1:1 保真原样保留
+      await era.printAndWait(
+        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」」`,
+      ); // :7261
+    } else {
+      // :7262 それ以外
+      await era.printAndWait(
+        `「啊…啊…啊啊啊啊…我的下半身…已经什么都感觉不到了…啊…不、不行再继续的话…啊啊啊啊——！」`,
+      ); // :7264
+    }
+  } else if (game.train.肉便器行动 == 4) {
+    // :7267 Vプレイ
+    if (era0(`talent:${a}:76`) == 1) {
+      // :7268 淫乱
+      await era.printAndWait(
+        `「啊嗯…啊嗯啊${heart(1)} 继续侵犯我的小穴…满满的射出精液吧…${heart(1)}」`,
+      ); // :7270
+    } else if (era0(`talent:${a}:85`)) {
+      // :7271 爱慕
+      await era.printAndWait(
+        `「不、不行啊…只有中出…啊、呀！在里面…满满的…射出来了…啊啊…我明明…嗯咕！」`,
+      ); // :7273
+    } else if (era0(`abl:${a}:16`) >= 5) {
+      // :7274 侍奉精神Lv5以上
+      await era.printAndWait(
+        `「啊啊嗯！啊啊…好好的在我里面射出来…变得舒服…啊…嗯、嗯啊！」`,
+      ); // :7276
+    } else {
+      // :7277 それ以外
+      await era.printAndWait(`「不要…不要…啊啊——！不要射在里面…啊啊啊——！」`); // :7279
+    }
+  } else if (game.train.肉便器行动 == 5) {
+    // :7282 Aプレイ
+    if (era0(`talent:${a}:76`) == 1) {
+      // :7283 淫乱
+      await era.printAndWait(
+        `「嗯…谢谢你在我的肛门里慢慢的射了出来…啊、啊啊…阴、阴茎又来了${heart(1)}」`,
+      ); // :7285
+    } else if (era0(`talent:${a}:85`)) {
+      // :7286 爱慕
+      await era.printAndWait(
+        `「嗯、嗯…呀…我的屁股…已经不行了…啊啊…不、不要啊………」`,
+      ); // :7288
+    } else if (era0(`abl:${a}:16`) >= 5) {
+      // :7289 侍奉精神Lv5以上
+      await era.printAndWait(`「嗯…呀…我是最喜欢肛门的变态便器…啊啊啊…」`); // :7291
+    } else {
+      // :7292 それ以外
+      await era.printAndWait(
+        `「啊啊啊——…要坏掉了…我的屁股要坏掉了…啊啊啊啊………」`,
+      ); // :7294
+    }
+  }
+
   return 0;
 }
+
+// 注册进肉便器口上族（TRYCALLFORM BENKI_KOUJO_K8 的等价物）
+benki_koujo_family.register(8, benki_koujo_k8);
 
 /**
  * @COLOSSEUM_KOJO_8（:7304-7446）：死斗场专用口上（头部守卫 TEQUIP:55 岔入）。

@@ -24879,6 +24879,327 @@ export const FILES = [
         ref: '7192',
         any: [/PRINTFORMW 「早点认输，一起变得舒服起来吧………♪」/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7199-7298',
+        any: [/@BENKI_KOUJO_K8/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7205',
+        any: [/;最下层居民凌辱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7206',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7208',
+        any: [
+          /PRINTFORMW 「请快点给我更多阴茎！啊…啊啊…啊嗯啊啊啊啊%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7209',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7211',
+        any: [/PRINTFORMW 「啊啊…我是魔王大人的…嗯…快、快停下…嗯…啊啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7212',
+        any: [/;侍奉精神Lv5以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7214',
+        any: [/PRINTFORMW 「请、请让我服侍大家的阴茎…嗯…嗯咕！？」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7215',
+        any: [/;それ以外/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7217',
+        any: [/PRINTFORMW 「呀！不要碰我！好脏…啊啊！不、不要…啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7220',
+        any: [/;レズ便器/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7221',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7223',
+        any: [
+          /PRINTFORMW 「请给我更多的尿吧…啊啊啊啊…我会全喝下粗（去）的…咕噜咕噜%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7224',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7226',
+        any: [
+          /PRINTFORMW 「啊啊…被弄得这么脏的话、会再也见不到那个人了吧………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7227',
+        any: [
+          /PRINTFORMW 面对%SAVESTR:TARGET%的叹息，周围的女魔族冷冷的笑着………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7228',
+        any: [/;侍奉精神Lv5以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7230',
+        any: [/PRINTFORMW 「我会好好奉仕的…啊嗯…再手下留情一点…嗯咕…嗯咕………」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7231',
+        any: [/;それ以外/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7233',
+        any: [/PRINTFORMW 「不要…我可没有被做这种事还高兴的诶兴趣…啊…嗯咕！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7236',
+        any: [/;獣姦/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7237',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7239',
+        any: [
+          /PRINTFORMW 「啊啊——！这个粗大的野兽已经好棒…啊——啊啊啊啊啊————%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7240',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7242',
+        any: [
+          /PRINTFORMW 「呀啊！这样的话…要坏了要坏到了…我快坏掉了啊！啊啊啊——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7243',
+        any: [/;侍奉精神Lv5以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7245',
+        any: [
+          /PRINTFORMW 「啊啊…别这么贪心啊…嗯…啊啊！我会老老实实的…啊…啊啊！呜、好粗！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7246',
+        any: [/;それ以外/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7248',
+        any: [
+          /PRINTFORMW 「不要…不要…竟然被野兽侵犯什么的…嗯咕！嗯！还、还射在里面…啊啊！还这么大！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7251',
+        any: [/;A\+Vプレイ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7252',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7254',
+        any: [
+          /PRINTFORMW 「啊啊啊…我的小穴和肛门都舒服的快要融化了…继续侵犯我吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7255',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7257',
+        any: [
+          /PRINTFORMW 「啊啊——！坏掉了…要坏掉了…饶、饶了我吧…啊…啊啊——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7258',
+        any: [
+          /PRINTFORMW 周围的男性们看着悲鸣越来越大的%SAVESTR:TARGET%的身姿，阴茎挺得更高了………/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7259',
+        any: [/;侍奉精神Lv5以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7261',
+        any: [
+          /PRINTFORMW 「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7262',
+        any: [/;それ以外/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7264',
+        any: [
+          /PRINTFORMW 「啊…啊…啊啊啊啊…我的下半身…已经什么都感觉不到了…啊…不、不行再继续的话…啊啊啊啊——！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7267',
+        any: [/;Vプレイ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7268',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7270',
+        any: [
+          /PRINTFORMW 「啊嗯…啊嗯啊%UNICODE\(0x2661\) \*1% 继续侵犯我的小穴…满满的射出精液吧…%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7271',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7273',
+        any: [
+          /PRINTFORMW 「不、不行啊…只有中出…啊、呀！在里面…满满的…射出来了…啊啊…我明明…嗯咕！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7274',
+        any: [/;侍奉精神Lv5以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7276',
+        any: [
+          /PRINTFORMW 「啊啊嗯！啊啊…好好的在我里面射出来…变得舒服…啊…嗯、嗯啊！」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7277',
+        any: [/;それ以外/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7279',
+        any: [/PRINTFORMW 「不要…不要…啊啊——！不要射在里面…啊啊啊——！」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7282',
+        any: [/;Aプレイ/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7283',
+        any: [/;淫乱/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7285',
+        any: [
+          /PRINTFORMW 「嗯…谢谢你在我的肛门里慢慢的射了出来…啊、啊啊…阴、阴茎又来了%UNICODE\(0x2661\) \*1%」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7286',
+        any: [/;爱慕/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7288',
+        any: [
+          /PRINTFORMW 「嗯、嗯…呀…我的屁股…已经不行了…啊啊…不、不要啊………」/,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7289',
+        any: [/;侍奉精神Lv5以上/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7291',
+        any: [/PRINTFORMW 「嗯…呀…我是最喜欢肛门的变态便器…啊啊啊…」/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7292',
+        any: [/;それ以外/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '7294',
+        any: [/PRINTFORMW 「啊啊啊——…要坏掉了…我的屁股要坏掉了…啊啊啊啊………」/],
+      },
     ],
   },
 ];
