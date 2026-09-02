@@ -2426,4 +2426,46 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '推进到 3',
   },
+  {
+    desc: 'M1898 K8 SELECTCOM 40 打屁股淫乱＋受虐狂っ気Lv3推进写错（CFLAG:341 = 5 改 4，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.打屁股 = 5; // :4088 CFLAG:TARGET:341 = 5',
+    replace: '      kojo.打屁股 = 4; // :4088（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 5',
+  },
+  {
+    desc: 'M1899 K8 SELECTCOM 40 打屁股苦痛刻印Lv3+屈服刻印Lv3守卫丢失（MARK:0==3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`mark:${target}:0`) == 3 &&\n      era0(`mark:${target}:2`) == 3 &&\n      (kojo.打屁股 <= 2 || game.kojo.口上开关 == 2)',
+    replace:
+      '      false &&\n      era0(`mark:${target}:2`) == 3 &&\n      (kojo.打屁股 <= 2 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1900 K8 SELECTCOM 41 鞭淫乱＋受虐狂っ気Lv5以上推进写错（CFLAG:342 = 9 改 8，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.鞭 = 9; // :4128 CFLAG:TARGET:342 = 9',
+    replace: '      kojo.鞭 = 8; // :4128（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 9',
+  },
+  {
+    desc: 'M1901 K8 SELECTCOM 41 鞭受虐狂っ気Lv3以上守卫丢失（ABL:21>=3 改 false，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (\n      era0(`abl:${target}:21`) >= 3 &&\n      (kojo.鞭 <= 2 || game.kojo.口上开关 == 2)\n    ) {',
+    replace:
+      '    } else if (\n      false &&\n      (kojo.鞭 <= 2 || game.kojo.口上开关 == 2)\n    ) {',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 3',
+  },
+  {
+    desc: 'M1902 K8 SELECTCOM 42 针それ以外推进写错（CFLAG:343 = 2 改 1，#239）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.针 = 2; // :4223 CFLAG:TARGET:343 = 2',
+    replace: '      kojo.针 = 1; // :4223（变异：推进写错）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '推进到 2',
+  },
 ];
