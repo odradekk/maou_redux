@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5，issue
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6，issue
  *       #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
@@ -12,9 +12,9 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5 五支 :786-1278——爱抚/舔阴/肛门爱抚/
- *     自慰/胸爱抚，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与
- *     刻印分档）
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6 六支 :786-1433——爱抚/舔阴/肛门爱抚/
+ *     自慰/胸爱抚/接吻，各含初めて/二回目以降、助手玛奥/非助手玛奥、素质与
+ *     刻印分档，SELECTCOM 6 另含首吻专属分支 TFLAG:13）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -22,9 +22,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 90.5%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 6 起（源文件第 1283 至 10657 行，约 48 条剩余分支，见源文件内
- * `IF SELECTCOM ==` 逐条列表）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，
+ * 本票剩余工作（未落地，占全文 13468 行的约 89.4%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 7 起（源文件第 1434 至 10657 行，约 47 条剩余分支，见源文件内
  * 存根已占位）、@KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
  * 11881 至 12261 行），以及死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
@@ -46,25 +45,27 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 558 条锚全部用源文件片段的逐字转义文本
- * （而非宽松的占位正则），并对每条锚在源全文里做精确子串计数：494 条恰好
- * 命中 1 行/1 段，可视为具备真实鉴别力。余下 64 条命中 >1 处，且经验证
- * 无法在不破坏 text-fidelity 逐句绑定（find_printform 要求 n..m 窗口内首条
- * PRINTFORM 系行即目标句，向前/向后扩窗只要越过相邻语句自身的 PRINTFORM
- * 行就会误绑定）的前提下继续收窄——60 条来自 WIP 1/N 交付范围（存在标志/
- * @EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），落在 CFLAG:400 魔族化分支
- * 与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，按 issue 讨论保持现状、
- * 不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/1022，姉妹相认/魔族化
- * 前后两套台词在平行分支里逐字复现）。SELECTCOM 3/5（本轮新增）经同法
- * 扩窗后无残留非唯一锚。@KOJO_MESSAGE_COM_11 头部 7 项守卫与 SELECTCOM
- * 0/1/2/3/5
- * 内非 print 语句自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿
- * K9（#240 commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
- * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-fidelity
- * 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 64 条即便行号漂移，
- * 落点也只会落到另一处内容完全相同的复现段落，不会静默通过成不相关
- * 文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者才是真正的
- * 零鉴别力。
+ * trace-refs/kojo-k11-lily.mjs 的 646 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6（本轮新增）起改用 K10（#241）的逐行
+ * 独立锚定法——区间内每条非空白源码行各自包一层 `^\s*...\s*$`（大区间只取
+ * 开头 8 行），真正多行、鉴别力更强，两种生成法在文件内并存，旧锚未随
+ * 本轮重新生成（避免无关格式化改动）。全部锚对每条锚在源全文里做精确
+ * 子串计数：578 条恰好命中 1 行/1 段，可视为具备真实鉴别力。余下 68 条
+ * 命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定（find_printform
+ * 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/向后扩窗只要越过
+ * 相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续收窄——60 条来自
+ * WIP 1/N 交付范围（存在标志/@EVENTTRAIN/@K11_KOJO2/@EVENTEND，:100-748），
+ * 落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档里逐句复现的对白段落内，
+ * 按 issue 讨论保持现状、不再动；4 条来自 SELECTCOM 0/1/2（:811/818/826/
+ * 1022，姉妹相认/魔族化前后两套台词在平行分支里逐字复现）；4 条来自
+ * SELECTCOM 6（:1304/1310/1314/1389，首吻/二回目以降两层里各一对逐字
+ * 重复的对白句）。SELECTCOM 3/5/6 内非 print 语句自身收尾行的锚（守卫
+ * SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240 commit 9716dee）的整改法
+ * 向外扩窗到唯一邻行——只有 era.print(/ era.printAndWait( 语句自己收尾行
+ * 的 `:N` 锚绝不参与扩窗（kojo-text-fidelity 靠它做逐语句字面量绑定，
+ * 扩窗会误绑邻行台词）。这 68 条即便行号漂移，落点也只会落到另一处
+ * 内容完全相同的复现段落，不会静默通过成不相关文本——风险画像与结构性
+ * 关键字锚（如裸 `RETURN 0`）不同，后者才是真正的零鉴别力。
  */
 
 'use strict';
@@ -1182,7 +1183,7 @@ on(
 
 /**
  * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
- * SELECTCOM 0/1/2/3/5，其余编号留续轮）。
+ * SELECTCOM 0/1/2/3/5/6，其余编号留续轮）。
  *
  * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
@@ -1224,6 +1225,16 @@ on(
  * 变量，同 SELECTCOM 1 的 lick_line_* 先例）。ABL:1 乳房感觉经
  * `chara(target).system.乳房感觉` 门面读取。
  *
+ * SELECTCOM 6（接吻 CFLAG:307，:1283-1433）：三层结构。首吻专属分档
+ * （CFLAG:307 == 0 && TFLAG:13 初吻与自我口上）按「淫乱且非助手陪玩／
+ * 爱慕且非助手陪玩／助手玛奥（内部再按淫乱→爱慕→それ以外）／それ以外」
+ * 四分档写 1，前两支另受 TEQUIP:89/90（兽奸/触手）排除，但头部守卫已把
+ * 这两条路由到存根，本分支执行时恒为 0（1:1 保留原判断）；普通初めて
+ * （CFLAG:307 == 0 非首吻）按「助手玛奥（内部淫乱→爱慕→それ以外）／
+ * 淫乱→爱慕→それ以外」写 1；二回目以降先分「助手玛奥」再各自按
+ * 「淫乱→爱慕→従順Lv2以上→それ以外」写 5/4/3/2，两支结构对称（与
+ * SELECTCOM 0/5 同款）。本支起 trace-refs 新锚改用 K10 逐行独立锚定法
+ * （见文件头「锚鉴别力自查」）。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -2178,6 +2189,283 @@ async function kojo_message_com_11(rand) {
       kojo.胸爱抚 = 2; // :1273-1274
     }
     return 0; // :1273-1276 隐式（原作 RETURN 0）
+  }
+
+  // :1283-1433 IF SELECTCOM == 6（接吻 CFLAG:307）
+  if (era_flag.selectcom === 6) {
+    // :1285-1328 ファーストキス（CFLAG:307 == 0 && TFLAG:13）
+    if (kojo.接吻 === 0 && game.train.初吻与自我口上) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        !era_flag.assiplay &&
+        chara(target).train.兽奸 === 0 &&
+        chara(target).train.触手 === 0
+      ) {
+        // 淫乱かつ主人
+        await era.printAndWait(
+          `「呣呣…呣呒…魔王大人…魔王大人…呣啾啾${heart(1)}」`,
+        ); // :1288
+        await era.printAndWait(
+          `${target_name}一脸沉醉的表情，与${player_name}激吻着，舌头互相缠绕，交换、品尝着彼此的唾液。`,
+        ); // :1289
+        await era.printAndWait(
+          `「呣呣…呣…我的初吻${heart(1)} 尝起来味道怎么样啊…${heart(1)}」`,
+        ); // :1290
+        await era.printAndWait(
+          `${target_name}的双瞳里透着情欲的光芒，凝视着${player_name}，又投入新一轮激吻中………`,
+        ); // :1291
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        !era_flag.assiplay &&
+        chara(target).train.兽奸 === 0 &&
+        chara(target).train.触手 === 0
+      ) {
+        // 爱慕かつ主人
+        await era.printAndWait(`「呣呣呣呒…魔王大人？？呣啾啾${heart(1)}」`); // :1294
+        await era.printAndWait(
+          `${target_name}的初吻被${player_name}夺走时，露出了惊讶的表情，但这惊讶随即变成了惊喜，然后是沉醉。`,
+        ); // :1295
+        await era.printAndWait(
+          `「呣呣…啾啾${heart(1)} 我的初吻属于您了魔王大人…嗯哈…呣呣${heart(1)}」`,
+        ); // :1296
+        await era.printAndWait(
+          `${target_name}带着如梦似幻的陶醉表情，继续品尝着${player_name}的吻………`,
+        ); // :1297
+      } else if (assi_mao) {
+        // それ以外 → 助手玛奥
+        if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(`『嘿嘿嘿，和姐姐亲亲了${heart(1)}呣呣呣呒』`); // :1304
+          await era.printAndWait(`「呣呣呣、接吻舒服吧？这可是我的初吻哦…」`); // :1305
+          await era.printAndWait(
+            `『是真的吗姐姐，那我可太高兴了♪ 呣呣呣…姐姐的舌头…伸进来了…呣呣呣呒♪』`,
+          ); // :1306
+          await era.printAndWait(
+            `${target_name}和${player_name}无比淫靡的深吻着，边互相爱抚，对两人亲生姐妹的身份没有丝毫顾忌。`,
+          ); // :1307
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(`『嘿嘿嘿，和姐姐亲亲了${heart(1)}呣呣呣呒』`); // :1310
+          await era.printAndWait(
+            `「本来是想把初吻奉献给魔王大人的………（不过${player_name}的话也不是不行）」`,
+          ); // :1311
+          await era.printAndWait(
+            `『啊？姐姐还没和魔王大人……？为什么呢，姐姐？』`,
+          ); // :1312
+          await era.printAndWait(`「不，没什么。我们继续吧…呣呣呣…呣啾啾♪」`); // :1313
+          await era.printAndWait(
+            `${target_name}与${player_name}热烈地拥吻着，对两人亲生姐妹的身份没有丝毫顾忌。`,
+          ); // :1314
+        } else {
+          // それ以外
+          await era.printAndWait(
+            `${player_name}刚刚把自己的嘴唇从${target_name}的唇上挪开，却猛然发现${target_name}正在不住地哭泣着。`,
+          ); // :1317
+          await era.printAndWait(
+            `『啊咧…姐姐为什么在哭呢？难道…那是姐姐的初吻？哎呀呀，初吻给亲妹妹不是更好吗，姐妹相爱最棒了♪』`,
+          ); // :1318
+          await era.printAndWait(`「这…这种不伦的事情…呜呜呜…」`); // :1319
+          await era.printAndWait(
+            `${player_name}笑着安慰着她，但${target_name}只是哭得更伤心了………`,
+          ); // :1320
+        }
+      } else {
+        // それ以外 → 非助手玛奥
+        await era.printAndWait(`「我，我的…初吻…呜呜…呜呜呜…」`); // :1323
+        await era.printAndWait(
+          `${target_name}正像一个纯洁到不经人事的乡下姑娘一样，为自己失去的初吻而潸然泪下，………`,
+        ); // :1324
+      }
+      kojo.接吻 = 1; // :1324-1327
+      return 0; // :1328-1331
+    }
+
+    // :1330-1374 （調教では）初めて（CFLAG:307 == 0，非首吻）
+    if (kojo.接吻 === 0) {
+      if (assi_mao) {
+        if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(`『最喜欢姐姐了♪』`); // :1335
+          await era.printAndWait(
+            `「啊啊，我也最喜欢妹妹你了…呣呣呣…啾啾…舌头，再伸进来一些${heart(1)}」`,
+          ); // :1336
+          await era.printAndWait(
+            `${target_name}与${player_name}无比热烈地拥吻着，吸吮着彼此交缠的舌头。像这样的事情，在她们还生活在村子里时，恐怕连想都是不敢想的吧。`,
+          ); // :1337
+          await era.printAndWait(
+            `直到嘴唇依依不舍地分开，流淌在两人的嘴角上的唾液还粘连在一起………`,
+          ); // :1338
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            `「不，不要啦，${player_name}…这种事…一点都不想做」`,
+          ); // :1341
+          await era.printAndWait(
+            `『就是要，就是要。因为${player_name}我……最喜欢姐姐了♪』`,
+          ); // :1342
+          await era.printAndWait(
+            `”最喜欢姐姐了”这句以前${player_name}经常用来调戏${target_name}的话，在这种别样的场合，却异常的有效。`,
+          ); // :1343
+          await era.printAndWait(
+            `${target_name}眼中的抗拒立即消失得无影无踪，和${player_name}，唇对着唇开始亲吻，彼此舌头伸入对方的嘴中，相互交缠着。`,
+          ); // :1344
+          await era.printAndWait(`『呣呣呣…啾啾…姐姐，姐姐，最喜欢你了。』`); // :1345
+        } else {
+          // それ以外
+          await era.printAndWait(`「不，不要啊…我们，是姐妹啊…！」`); // :1348
+          await era.printAndWait(
+            `『姐姐的口里说不要，但是嘴唇可没在反抗哦…呣呣呣…啾啾♪』`,
+          ); // :1349
+          await era.printAndWait(
+            `${target_name}的手被${player_name}紧紧抓住，按在床上。如果是以前的，${target_name}大概轻易就可以挣脱，但如今……`,
+          ); // :1350
+          await era.printAndWait(
+            `但是一心牵挂着${player_name}的${target_name}却没办法逃走，更无力反抗，任由${player_name}摆布着。`,
+          ); // :1351
+        }
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          `「呣呣呣…呣呒…魔王大人嘴里的味道…真好${heart(1)}呣呣呣…」`,
+        ); // :1356
+        await era.printAndWait(
+          `${target_name}带着一脸沉醉的表情与${player_name}激吻着，交缠的舌头分享，品尝着彼此的唾液。`,
+        ); // :1357
+        await era.printAndWait(
+          `「哈啊…呣呒…魔王大人${heart(1)} 再吻得的激烈一点好吗…${heart(1)}」`,
+        ); // :1358
+        await era.printAndWait(
+          `${target_name}注视着${player_name}的双瞳里透着情欲的光芒，抓着${player_name}的手伸向自己的股间………`,
+        ); // :1359
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // 爱慕
+        await era.printAndWait(
+          `「唔？！呣呣呒…魔，魔王大人…呣啾啾${heart(1)}」`,
+        ); // :1362
+        await era.printAndWait(
+          `${target_name}被${player_name}吻上的时候，露出了些许惊讶的表情，在反应过来后就立即沉醉于期间，回以更热烈的吻。`,
+        ); // :1363
+        await era.printAndWait(
+          `「呣啾…呣啾${heart(1)} 魔王大人…我的唇…味道好吗${heart(1)}呣呣」`,
+        ); // :1364
+        await era.printAndWait(
+          `${target_name}怀着梦幻般的愉悦心情，与${player_name}继续接吻着………`,
+        ); // :1365
+      } else {
+        // それ以外
+        await era.printAndWait(`「不，不要啊！放过我吧，求求你……呣呣呣…呣呒」`); // :1368
+        await era.printAndWait(
+          `${target_name}被${player_name}按住双手的手腕，强行吻在了唇上。`,
+        ); // :1369
+        await era.printAndWait(`${target_name}的眼泪已经夺眶而出………`); // :1370
+      }
+      kojo.接吻 = 1; // :1370-1373
+      return 0; // :1373-1377
+    }
+
+    // :1376-1431 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `「呣呣…舌头进来了、呣呣呣…跟姐姐亲亲舒服吗？${heart(1)}」`,
+        ); // :1381
+        await era.printAndWait(
+          `『啊啊，姐姐的接吻技术…太棒了！嗯呣…呣呣呣${heart(1)} 姐姐的舌头…${player_name}还想要更多…呣啾啾${heart(1)}』`,
+        ); // :1382
+        await era.printAndWait(
+          `${target_name}和${player_name}无比淫靡的深吻着，边互相爱抚身体，对两人亲姐妹的关系没有丝毫顾忌。`,
+        ); // :1383
+        kojo.接吻 = 5; // :1383-1384
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(`『姐姐，好喜欢你…最喜欢了♪』`); // :1387
+        await era.printAndWait(
+          `「啊啊、真的吗？…呣呣呣…呣嗯…姐姐好高兴${heart(1)}」`,
+        ); // :1388
+        await era.printAndWait(
+          `${target_name}与${player_name}热烈地拥吻着，对两人亲生姐妹的身份没有丝毫顾忌。`,
+        ); // :1389
+        kojo.接吻 = 4; // :1389-1390
+      } else if (
+        chara(target).system.顺从 >= 2 &&
+        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 従順Lv2以上
+        await era.printAndWait(`『来、姐姐，来亲亲♪』`); // :1393
+        await era.printAndWait(
+          `「啊啊…好，好的，但这是最后一次了…呣呣呣…呣嗯…！」`,
+        ); // :1394
+        await era.printAndWait(
+          `${target_name}与${player_name}手牵着手，亲吻着………`,
+        ); // :1395
+        kojo.接吻 = 3; // :1395-1396
+      } else if (kojo.接吻 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(`『姐姐、来接吻吧？』`); // :1399
+        await era.printAndWait(`「不行啊、我们是姐妹啊…不可以——呣呣呣！」`); // :1400
+        kojo.接吻 = 2; // :1400-1401
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「吻我…魔王大人…呣呣…呣呒……再激烈一点…我想品尝魔王大人的，呣呣…呣呒，味道${heart(1)}」`,
+      ); // :1406
+      await era.printAndWait(
+        `${target_name}带着陶醉的表情与${player_name}激吻着，舌头交缠，呼吸灼热。`,
+      ); // :1407
+      await era.printAndWait(
+        `「呣呣…呣啾啾${heart(1)}光是，呣呣，被魔王大人吻着…呣呣呣${heart(1)} 就好像要高潮了一样…${heart(1)}」`,
+      ); // :1408
+      await era.printAndWait(
+        `${target_name}用炽烈的眼神与${player_name}四目相望，拉着${player_name}的手伸向自己已经湿透的股间………`,
+      ); // :1409
+      kojo.接吻 = 5; // :1409-1410
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(`「唔——呣呣呒…魔，魔王大人…呣啾啾${heart(1)}」`); // :1413
+      await era.printAndWait(
+        `${target_name}被${player_name}吻着，露出全然陶醉的幸福表情。`,
+      ); // :1414
+      await era.printAndWait(
+        `「呣呣…呣啾啾${heart(1)} 魔王大人的吻…好喜欢…最喜欢了！呣呣…呣呒…想要，还想要${heart(1)}」`,
+      ); // :1415
+      await era.printAndWait(
+        `在${target_name}的恳求下，${player_name}继续深吻着她………`,
+      ); // :1416
+      kojo.接吻 = 4; // :1416-1417
+    } else if (
+      chara(target).system.顺从 >= 2 &&
+      (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 従順Lv2以上
+      await era.printAndWait(`「呣呣…呣嗯…哈啊，终，终于结束了吗…」`); // :1420
+      await era.printAndWait(
+        `看到${target_name}在擦拭着自己的嘴唇，${player_name}抓着了${target_name}的双手，再次强吻了上去。`,
+      ); // :1421
+      await era.printAndWait(`「呣呣…呣呒…！又……又来…呣恩恩…」`); // :1422
+      kojo.接吻 = 3; // :1422-1423
+    } else if (kojo.接吻 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「这样…就行了吧？可以…放我走了吗？」`); // :1426
+      await era.printAndWait(
+        `${target_name}用手背擦拭着自己的嘴唇，眼角流出了屈辱的泪水………`,
+      ); // :1427
+      kojo.接吻 = 2; // :1427-1428
+    }
+    return 0; // :1428-1431 隐式（原作 RETURN 0）
   }
 
   return 0;

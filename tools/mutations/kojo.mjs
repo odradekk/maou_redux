@@ -4314,6 +4314,303 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM5 二回目：非助手玛奥 + それ以外推进到 2',
   },
+
+  // —— #242（续轮）：K11 莉莉口上 SELECTCOM 6（接吻 CFLAG:307） ——
+  {
+    desc: 'M2810 COM6 首吻 淫乱かつ主人判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        !era_flag.assiplay &&
+        chara(target).train.兽奸 === 0 &&
+        chara(target).train.触手 === 0
+      ) {
+        // 淫乱かつ主人`,
+    replace: `      if (
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        !era_flag.assiplay &&
+        chara(target).train.兽奸 === 0 &&
+        chara(target).train.触手 === 0
+      ) {
+        // 淫乱かつ主人`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 首吻：淫乱且非助手陪玩',
+  },
+  {
+    desc: 'M2811 COM6 首吻 爱慕かつ主人判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        !era_flag.assiplay &&
+        chara(target).train.兽奸 === 0 &&
+        chara(target).train.触手 === 0
+      ) {
+        // 爱慕かつ主人`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        !era_flag.assiplay &&
+        chara(target).train.兽奸 === 0 &&
+        chara(target).train.触手 === 0
+      ) {
+        // 爱慕かつ主人`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 首吻：爱慕且非助手陪玩',
+  },
+  {
+    desc: 'M2812 COM6 首吻 助手玛奥淫乱 sub-branch 判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // それ以外 → 助手玛奥
+        if (era.get(\`talent:\${target}:76\`) === 1) {
+          // 淫乱`,
+    replace: `        // それ以外 → 助手玛奥
+        if (era.get(\`talent:\${target}:85\`) === 1) {
+          // 变异：判据错格（原 76）`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 首吻：助手玛奥 + 淫乱',
+  },
+  {
+    desc: 'M2813 COM6 首吻 助手玛奥爱慕 sub-branch 判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          ); // :1307
+        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          // 爱慕`,
+    replace: `          ); // :1307
+        } else if (era.get(\`talent:\${target}:76\`) === 1) {
+          // 变异：判据错格（原 85）`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 首吻：助手玛奥 + 爱慕',
+  },
+  {
+    desc: 'M2814 COM6 首吻 CFLAG:307 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.接吻 = 1; // :1324-1327`,
+    replace: `      kojo.接吻 = 0; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 首吻：非助手玛奥 + それ以外',
+  },
+  {
+    desc: 'M2815 COM6 初めて 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (assi_mao) {
+        if (era.get(\`talent:\${target}:76\`) === 1) {
+          // 淫乱
+          await era.printAndWait(\`『最喜欢姐姐了♪』\`); // :1335`,
+    replace: `      if (assi_mao) {
+        if (era.get(\`talent:\${target}:85\`) === 1) {
+          // 变异：判据错格（原 76）
+          await era.printAndWait(\`『最喜欢姐姐了♪』\`); // :1335`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 初めて：助手玛奥 + 淫乱',
+  },
+  {
+    desc: 'M2816 COM6 初めて 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            \`「不，不要啦，\${player_name}…这种事…一点都不想做」\`,`,
+    replace: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
+          // 变异：判据错格（原 85）
+          await era.printAndWait(
+            \`「不，不要啦，\${player_name}…这种事…一点都不想做」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 初めて：助手玛奥 + 爱慕',
+  },
+  {
+    desc: 'M2817 COM6 初めて 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          \`「呣呣呣…呣呒…魔王大人嘴里的味道…真好\${heart(1)}呣呣呣…」\`,`,
+    replace: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
+        // 变异：判据错格（原 76）
+        await era.printAndWait(
+          \`「呣呣呣…呣呒…魔王大人嘴里的味道…真好\${heart(1)}呣呣呣…」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 初めて：非助手玛奥 + 淫乱',
+  },
+  {
+    desc: 'M2818 COM6 初めて 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
+        // 爱慕
+        await era.printAndWait(
+          \`「唔？！呣呣呒…魔，魔王大人…呣啾啾\${heart(1)}」\`,`,
+    replace: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
+        // 变异：判据错格（原 85）
+        await era.printAndWait(
+          \`「唔？！呣呣呒…魔，魔王大人…呣啾啾\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 初めて：非助手玛奥 + 爱慕',
+  },
+  {
+    desc: 'M2819 COM6 初めて CFLAG:307 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.接吻 = 1; // :1370-1373`,
+    replace: `      kojo.接吻 = 0; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 初めて：非助手玛奥 + それ以外',
+  },
+  {
+    desc: 'M2820 COM6 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`「呣呣…舌头进来了、呣呣呣…跟姐姐亲亲舒服吗？\${heart(1)}」\`,`,
+    replace: `      if (
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`「呣呣…舌头进来了、呣呣呣…跟姐姐亲亲舒服吗？\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2821 COM6 二回目 助手玛奥淫乱 CFLAG:307 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.接吻 = 5; // :1383-1384`,
+    replace: `        kojo.接吻 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2822 COM6 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(\`『姐姐，好喜欢你…最喜欢了♪』\`); // :1387`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(\`『姐姐，好喜欢你…最喜欢了♪』\`); // :1387`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2823 COM6 二回目 助手玛奥爱慕 CFLAG:307 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.接吻 = 4; // :1389-1390`,
+    replace: `        kojo.接吻 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2824 COM6 二回目 助手玛奥従順Lv2以上判据错格（>=2 改 >=1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        chara(target).system.顺从 >= 2 &&
+        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 従順Lv2以上
+        await era.printAndWait(\`『来、姐姐，来亲亲♪』\`); // :1393`,
+    replace: `      } else if (
+        chara(target).system.顺从 >= 1 && // 变异：判据错格
+        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 従順Lv2以上
+        await era.printAndWait(\`『来、姐姐，来亲亲♪』\`); // :1393`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM6 二回目：助手玛奥 + 顺从恰为 Lv1（未达 Lv2）不误入従順分档',
+  },
+  {
+    desc: 'M2825 COM6 二回目 助手玛奥従順Lv2以上 CFLAG:307 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.接吻 = 3; // :1395-1396`,
+    replace: `        kojo.接吻 = 2; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：助手玛奥 + 従順Lv2以上推进到 3',
+  },
+  {
+    desc: 'M2826 COM6 二回目 助手玛奥それ以外 CFLAG:307 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.接吻 = 2; // :1400-1401`,
+    replace: `        kojo.接吻 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：助手玛奥 + それ以外推进到 2',
+  },
+  {
+    desc: 'M2827 COM6 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        \`「吻我…魔王大人…呣呣…呣呒……再激烈一点…我想品尝魔王大人的，呣呣…呣呒，味道\${heart(1)}」\`,`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+      (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        \`「吻我…魔王大人…呣呣…呣呒……再激烈一点…我想品尝魔王大人的，呣呣…呣呒，味道\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：非助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2828 COM6 二回目 非助手玛奥淫乱 CFLAG:307 写错（5 改 4，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.接吻 = 5; // :1409-1410`,
+    replace: `      kojo.接吻 = 4; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：非助手玛奥 + 淫乱推进到 5',
+  },
+  {
+    desc: 'M2829 COM6 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(\`「唔——呣呣呒…魔，魔王大人…呣啾啾\${heart(1)}」\`); // :1413`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(\`「唔——呣呣呒…魔，魔王大人…呣啾啾\${heart(1)}」\`); // :1413`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：非助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2830 COM6 二回目 非助手玛奥爱慕 CFLAG:307 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.接吻 = 4; // :1416-1417`,
+    replace: `      kojo.接吻 = 3; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：非助手玛奥 + 爱慕推进到 4',
+  },
+  {
+    desc: 'M2831 COM6 二回目 非助手玛奥従順Lv2以上 CFLAG:307 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.接吻 = 3; // :1422-1423`,
+    replace: `      kojo.接吻 = 2; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：非助手玛奥 + 従順Lv2以上推进到 3',
+  },
+  {
+    desc: 'M2832 COM6 二回目 非助手玛奥それ以外 CFLAG:307 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.接吻 = 2; // :1427-1428`,
+    replace: `      kojo.接吻 = 1; // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM6 二回目：非助手玛奥 + それ以外推进到 2',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

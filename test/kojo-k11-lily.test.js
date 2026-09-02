@@ -1260,3 +1260,268 @@ test('COM5 二回目：非助手玛奥 + それ以外推进到 2', async () => {
   );
   assert.equal(fixture.store.get(`cflag:${LILY}:306`), 2);
 });
+
+// —— SELECTCOM 6（接吻 CFLAG:307） ——
+
+// 首吻（CFLAG:307 == 0 && TFLAG:13 初吻与自我口上）
+
+test('COM6 首吻：淫乱且非助手陪玩', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('tflag:13', 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「呣呣…呣呒…魔王大人…魔王大人…呣啾啾♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 首吻：爱慕且非助手陪玩', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('tflag:13', 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「呣呣呣呒…魔王大人？？呣啾啾♡」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 首吻：助手玛奥 + 淫乱', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('tflag:13', 1);
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[1],
+    '「呣呣呣、接吻舒服吧？这可是我的初吻哦…」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 首吻：助手玛奥 + 爱慕', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('tflag:13', 1);
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[1],
+    '「本来是想把初吻奉献给魔王大人的………（不过你的话也不是不行）」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 首吻：助手玛奥 + それ以外', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('tflag:13', 1);
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '你刚刚把自己的嘴唇从莉莉的唇上挪开，却猛然发现莉莉正在不住地哭泣着。',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 首吻：非助手玛奥 + それ以外', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('tflag:13', 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「我，我的…初吻…呜呜…呜呜呜…」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+// 普通初めて（CFLAG:307 == 0，非首吻）
+
+test('COM6 初めて：助手玛奥 + 淫乱', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '『最喜欢姐姐了♪』');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 初めて：助手玛奥 + 爱慕', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「不，不要啦，你…这种事…一点都不想做」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 初めて：助手玛奥 + それ以外', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「不，不要啊…我们，是姐妹啊…！」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 初めて：非助手玛奥 + 淫乱', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「呣呣呣…呣呒…魔王大人嘴里的味道…真好♡呣呣呣…」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 初めて：非助手玛奥 + 爱慕', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「唔？！呣呣呒…魔，魔王大人…呣啾啾♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+test('COM6 初めて：非助手玛奥 + それ以外', async () => {
+  const fixture = setup_lily(null, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「不，不要啊！放过我吧，求求你……呣呣呣…呣呒」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+});
+
+// 二回目以降
+
+test('COM6 二回目：助手玛奥 + 淫乱推进到 5', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「呣呣…舌头进来了、呣呣呣…跟姐姐亲亲舒服吗？♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 5);
+});
+
+test('COM6 二回目：助手玛奥 + 爱慕推进到 4', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '『姐姐，好喜欢你…最喜欢了♪』');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 4);
+});
+
+test('COM6 二回目：助手玛奥 + 従順Lv2以上推进到 3', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`abl:${LILY}:10`, 2);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '『来、姐姐，来亲亲♪』');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 3);
+});
+
+test('COM6 二回目：助手玛奥 + 顺从恰为 Lv1（未达 Lv2）不误入従順分档', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`abl:${LILY}:10`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '『姐姐、来接吻吧？』');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 2);
+});
+
+test('COM6 二回目：助手玛奥 + それ以外推进到 2', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:307`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '『姐姐、来接吻吧？』');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 2);
+});
+
+test('COM6 二回目：非助手玛奥 + 淫乱推进到 5', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「吻我…魔王大人…呣呣…呣呒……再激烈一点…我想品尝魔王大人的，呣呣…呣呒，味道♡」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 5);
+});
+
+test('COM6 二回目：非助手玛奥 + 爱慕推进到 4', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「唔——呣呣呒…魔，魔王大人…呣啾啾♡」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 4);
+});
+
+test('COM6 二回目：非助手玛奥 + 従順Lv2以上推进到 3', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    f.store.set(`cflag:${LILY}:307`, 1);
+    f.store.set(`abl:${LILY}:10`, 2);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(
+    fixture.text_lines()[0],
+    '「呣呣…呣嗯…哈啊，终，终于结束了吗…」',
+  );
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 3);
+});
+
+test('COM6 二回目：非助手玛奥 + それ以外推进到 2', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支
+    f.store.set(`cflag:${LILY}:307`, 1);
+  }, 6);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.text_lines()[0], '「这样…就行了吧？可以…放我走了吗？」');
+  assert.equal(fixture.store.get(`cflag:${LILY}:307`), 2);
+});
