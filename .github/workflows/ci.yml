@@ -77,7 +77,7 @@ jobs:
   # 「变异逐字节还原」，不是「仓库本来干净」。
   #
   # 超时按实测定：条目表 1270 条、本机 4 核约 1740s（且随每张口上票增长）；
-  # CI 上 --jobs 2 更慢，60 分钟是留了余量的上限，跑通后按实测收紧。
+  # CI 上是串行，更慢；60 分钟是留了余量的上限，跑通后按实测收紧。
   # 工具零第三方依赖，无需 npm ci。
   mutation:
     runs-on: ubuntu-latest
@@ -97,21 +97,27 @@ jobs:
       # 截断、随即 exit 1，是进程被杀的形态而非某条变异判红）。每个隔离副本
       # 自己还会按核数并发跑 node --test，4 副本 × 4 核 = 16 个 node，每个都
       # 要把 42 MB 的 asar 解析进内存——内存而不是 CPU 才是这里的约束。
-      # 失败时自诊断：--jobs 4 与 --jobs 2 两次都在**一条 ✓ 输出中途截断、
-      # 随即 exit 1**，没有汇总行也没有任何 ✗——那是进程被杀的形态，不是
-      # 某条变异判红。两次截断点还不同（M351 / M886），所以也不是某条坏条目。
-      # 下面这一步把退出码、内存、磁盘、内核 OOM 记录都打出来，下次失败
-      # 直接有证据，不用再猜。
+      # --jobs 1：并行模式在 CI 上会死，串行不会（详见下面的取证）。
+      #
+      # 三次失败的形态一致：在一条 ✓ 输出**中途截断**、随即 exit 1，既没有
+      # 汇总行也没有任何 ✗。截断点随并行度变化（--jobs 4 停在 M351，
+      # --jobs 2 两次都停在 M886），说明取决于工作划分而不是某条坏条目。
+      # 取证排除了资源：失败时 15 GB 内存里空闲 10 GB、磁盘余 86 GB。
+      # 同一份代码在本机 --jobs 2 跑得通（拦截 1270 / 跳过 0 / 红 0，1326s）。
+      #
+      # 所以这是并行模式在 CI 上的一个真问题，已单独记票；本 job 先用串行
+      # 拿到「自动执行点」这件事本身——公开仓库分钟数免费，慢一点不要紧。
+      # 下面的自诊断保留，串行若也死就直接有证据。
       - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
         run: |
           set +e
-          node tools/mutation-check.mjs --jobs 2
+          node tools/mutation-check.mjs --jobs 1
           rc=$?
           echo "=== 退出码 $rc ==="
           free -h
           df -h / "$RUNNER_TEMP"
-          sudo dmesg 2>/dev/null | grep -iE "out of memory|oom-kill|killed process" | tail -20 \
-            || echo "dmesg 里没有 OOM 记录（或读不到 dmesg）"
+          oom=$(sudo dmesg 2>/dev/null | grep -iE "out of memory|oom-kill|killed process" | tail -20)
+          echo "${oom:-dmesg 里没有 OOM 记录（或读不到 dmesg）}"
           exit $rc
       - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）
         run: |
