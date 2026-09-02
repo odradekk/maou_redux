@@ -4229,6 +4229,164 @@ test('BENKI：FLAG:62==5 侍奉支；FLAG:62 越界（6）整段静默', async (
   assert.deepEqual(oob.text_lines(), [], 'FLAG:62 越界时六档全不命中');
 });
 
+// —— NTR_KOUJO_K8（NTR 口上，P 1-7 / 20） ——
+
+async function speak_ntr_k8(fixture, p) {
+  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  return ntr_koujo_family.call(8, { args: [p] });
+}
+
+test('NTR：入口无条件补 CFLAG:650（NTR 再捕获位）', async () => {
+  const fixture = await setup_k8();
+  await speak_ntr_k8(fixture, 0);
+  assert.equal(fixture.store.get('cflag:31:650'), 1, 'NTR 再捕获 CFLAG:650');
+  assert.deepEqual(fixture.text_lines(), [], 'P 不在 1-7/20 内时整段静默');
+});
+
+test('NTR：P==1 陥落済支走巨根（FLAG:500==0），记 CFLAG:651', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('flag:500', 0);
+  });
+  await speak_ntr_k8(fixture, 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「狂王…我不能把我的处女给你…咕…呜…不、不要…我已经找到了新的主君了…」',
+    '说着强气的台词的银黑桃被狂王捆住，束缚着自由、两只脚被大大的分开着。',
+    '然后、狂王的巨根',
+    '慢慢的插进了银黑桃的秘裂。在镜头下银黑桃还不知道男人的蜜壶被插进了深处。',
+    '从蜜裂留到屁股上的破瓜之血。在屈辱和疼痛下，即使是刚强的银黑桃也只能流下眼泪。',
+    '「对不起…对不起………」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:651'), 1, 'NTR_651 CFLAG:651');
+});
+
+test('NTR：P==1 それ以外支且 FLAG:500==1 走按摩棒', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:500', 1);
+  });
+  await speak_ntr_k8(fixture, 1);
+  assert.deepEqual(
+    fixture.text_lines().slice(0, 3),
+    [
+      '还是处女的银黑桃的秘裂被',
+      '特大号的按摩棒',
+      '深深的插了进去。破瓜之血从秘裂里流了出来。',
+    ],
+    'FLAG:500==1 走按摩棒',
+  );
+});
+
+test('NTR：P==2 陥落済支六行 + CFLAG:652', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('flag:500', 2); // 0·2 同为扶她
+  });
+  await speak_ntr_k8(fixture, 2);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呵呵呵、我才不会…嗯…啊嗯…因为这点程度就屈服…啊…啊啊！」',
+    '狂王从后边把银黑桃绑起来，从后面有条不紊的插进了肛门。',
+    '大概是好几次灌肠和扩张的原因，银黑桃通红的充着血的肛门缠了回去。',
+    '「啊…嗯、太大了…这、这个…啊啊…啊…啊啊啊——！」',
+    '狂王的巨根',
+    '在银黑桃的肛门里转动着、银黑桃露出了喘息的声音………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:652'), 1, 'NTR_652 CFLAG:652');
+});
+
+test('NTR：P==3 兽奸秀 TALENT:136 优先于淫乱/爱慕', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:136', 1);
+    f.store.set('talent:31:76', 1); // 同时置位，136 必须先命中
+  });
+  await speak_ntr_k8(fixture, 3);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊——♡ 被野狗大人侵犯最棒了…啊嗯…啊…啊啊——♡」',
+    '银黑桃一边被周围的观众嘲笑着、一边沉浸在被狗侵犯的快感里………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:653'), 1, 'NTR_653 CFLAG:653');
+});
+
+test('NTR：P==4 それ以外支末行源作无省略号（1:1 保真）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:500', 0);
+  });
+  await speak_ntr_k8(fixture, 4);
+  const lines = fixture.text_lines();
+  assert.equal(
+    lines[lines.length - 1],
+    '水晶球录下了好几个银黑桃被狂王抱着不停绝顶的画面',
+    'P==4 それ以外末行源作无省略号',
+  );
+  assert.equal(fixture.store.get('cflag:31:654'), 1, 'NTR_654 CFLAG:654');
+});
+
+test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具，1:1 保真）', async () => {
+  const zero = await setup_k8((f) => {
+    f.store.set('flag:500', 0);
+  });
+  await speak_ntr_k8(zero, 5);
+  assert.deepEqual(zero.text_lines(), [
+    '「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」',
+    '银黑桃的蜜裂和肛门被',
+    '阴茎搅动着、精液不停的溢了出来………',
+  ]);
+  assert.equal(zero.store.get('cflag:31:655'), 1, 'NTR_655 CFLAG:655');
+
+  const two = await setup_k8((f) => {
+    f.store.set('flag:500', 2);
+  });
+  await speak_ntr_k8(two, 5);
+  assert.equal(
+    two.text_lines()[2],
+    '假阳具搅动着、爱液不停的溢了出来………',
+    'FLAG:500==2 在本支走假阳具（与同函数其余各处的 0 或 2 判定不同）',
+  );
+});
+
+test('NTR：P==6 / P==7 各记一位', async () => {
+  const p6 = await setup_k8();
+  await speak_ntr_k8(p6, 6);
+  assert.deepEqual(p6.text_lines(), [
+    '「啊嗯…更多的使用作为便所的我把…现在免费使用小穴也可以…啊嗯啊嗯♪」',
+    '银黑桃凭空动着腰诱惑着其他男人。看到这里的男人们一边嘲笑着银黑桃一边聚集了起来………',
+  ]);
+  assert.equal(p6.store.get('cflag:31:656'), 1, 'NTR_656 CFLAG:656');
+
+  const p7 = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_ntr_k8(p7, 7);
+  assert.equal(p7.store.get('cflag:31:657'), 1, 'NTR_657 CFLAG:657');
+});
+
+test('NTR：P==20 公开生产按 CFLAG:102 分岔，且本支不记位', async () => {
+  const master_child = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:102', 1); // 妊娠相手 = 主人
+  });
+  await speak_ntr_k8(master_child, 20);
+  assert.deepEqual(master_child.text_lines(), [
+    '「啊啊…让我抱抱我的孩子…求你了…啊啊啊…」',
+    '银黑桃生出来的你的孩子被观众们包围着。',
+    '被还回来的时候不可能还是正常的状态吧………',
+  ]);
+  assert.equal(
+    master_child.store.get('cflag:31:658'),
+    undefined,
+    'P==20 源作不记位',
+  );
+
+  const other = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_ntr_k8(other, 20);
+  assert.deepEqual(other.text_lines(), [
+    '「啊嗯…恩…嗯…我的出产秀怎么样魔王大人、看得高兴吗？」',
+    '银黑桃一边隔着摄像机看着你一边说着。',
+    '「今后也会生下很多小宝宝的…敬请期待♡」',
+  ]);
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
