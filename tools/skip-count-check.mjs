@@ -1,6 +1,5 @@
-// 无引擎跳过数守护（issue #92）：CI 上没有引擎，引擎依赖用例整组
-// test.skip 退场——这个数字不许隐形。本工具读 `npm run test:ci` 落盘的
-// TAP 报告，把摘要里的跳过数与 test/engine-skip-baseline.txt 的基线核对：
+// 跳过数守护（issue #92；#302 起两侧都用）：跳过的用例数不许隐形。
+// 本工具读 `npm run test:ci` 落盘的 TAP 报告，把摘要里的跳过数与基线核对：
 //
 //   一致 → 退出 0，把「跳过 N/总数」打在 CI 日志（有 GITHUB_STEP_SUMMARY
 //          时同时写进度摘要）；
@@ -16,8 +15,14 @@
 // 退出码：0 核对通过；1 核对失败（数字偏离基线）；2 输入不可用（TAP
 // 缺摘要、文件缺失、基线烂——测试运行器异常退出不该被当成核对通过）。
 //
-// 只在无引擎环境（CI、未放置 ere-4.8.0 的裸克隆）有意义。引擎在场时
-// 跳过数为 0，对基线必然红——那是提醒你跑错了环境，不是基线错了。
+// **两侧各有一份基线，别混用**（#302）：
+//   test/engine-skip-baseline.txt（现 72）—— 无引擎环境（CI 的 engineless
+//     job、未放置 ere-4.8.0 的裸克隆）。守「引擎缺席的代价必须是看得见的
+//     数字」，新增引擎依赖用例必须同步改基线。
+//   test/engine-present-skip-baseline.txt（只能是 0）—— 有引擎环境（CI 的
+//     engine / mutation job、本机）。守「引擎装上了却还有东西被跳过」，
+//     那意味着门控条件写错或 asar 没被 locate_asar 认出来。
+// 拿其中一份去核对另一种环境必然红——那是提醒你跑错了环境，不是基线错了。
 //
 // 用法：node tools/skip-count-check.mjs [TAP 文件] [--baseline <基线文件>]
 //   TAP 文件默认 test-report.tap（package.json 的 test:ci 落盘位置）；
@@ -139,10 +144,10 @@ function main() {
       : `${summary.skipped}`;
 
   if (summary.skipped === baseline) {
-    const line = `✓ 无引擎跳过 ${total_part}，与基线一致（${options.baseline}）`;
+    const line = `✓ 跳过 ${total_part}，与基线一致（${options.baseline}）`;
     console.log(line);
     write_step_summary(
-      `### 无引擎跳过数\n跳过 ${total_part}，与基线（\`${path.relative(REPO_ROOT, options.baseline)}\`）一致`,
+      `### 跳过数\n跳过 ${total_part}，与基线（\`${path.relative(REPO_ROOT, options.baseline)}\`）一致`,
     );
     return;
   }
@@ -154,13 +159,18 @@ function main() {
         '上调基线并在 PR 里说明覆盖面变化；若无意，这个用例在 CI 上根本没跑。'
       : '跳过变少：引擎依赖用例被删、去引擎化，或 skip 门本身失效（引擎' +
         '缺失时它真的在跑？）。若有意，下调基线。';
+  const wrong_env =
+    baseline === 0
+      ? '\n  基线为 0 = 有引擎环境：跳过不为 0 多半是 asar 没被 locate_asar 认出来，' +
+        '或该用例的门控条件写错了。'
+      : '';
   console.error(
-    `✗ 无引擎跳过数偏离基线：基线 ${baseline}，实际 ${summary.skipped}` +
-      `（${delta > 0 ? '+' : ''}${delta}）\n  ${direction}\n` +
+    `✗ 跳过数偏离基线：基线 ${baseline}，实际 ${summary.skipped}` +
+      `（${delta > 0 ? '+' : ''}${delta}）\n  ${direction}${wrong_env}\n` +
       `  基线文件：${options.baseline}`,
   );
   write_step_summary(
-    `### 无引擎跳过数\n跳过 ${total_part}，**偏离基线 ${baseline}（${
+    `### 跳过数\n跳过 ${total_part}，**偏离基线 ${baseline}（${
       delta > 0 ? '+' : ''
     }${delta}）**——本步已红`,
   );
