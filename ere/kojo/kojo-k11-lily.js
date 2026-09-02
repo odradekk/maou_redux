@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9，
+ *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10，
  *       issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
@@ -12,10 +12,10 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9 九支 :786-1776——爱抚/舔阴/
- *     肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛，各含初めて/二回目以
- *     降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属
- *     分支 TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0）
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10 十支 :786-1853——爱抚/舔阴/
+ *     肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/振动宝石，各含初めて/
+ *     二回目以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含
+ *     首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0）
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -23,8 +23,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 86.8%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 10 起（源文件第 1781 至 10657 行，约 44 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 86.3%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 11 起（源文件第 1859 至 10657 行，约 43 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -47,12 +47,13 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 828 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
- * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9（本轮新增四支）起改用 K10（#241）
- * 的逐行独立锚定法——区间内每条非空白源码行各自包一层 `^\s*...\s*$`（大
- * 区间只取开头 8 行），真正多行、鉴别力更强，两种生成法在文件内并存，
- * 旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每条锚在源全文里
- * 做精确子串计数：750 条恰好命中 1 行/1 段，可视为具备真实鉴别力。余下
+ * trace-refs/kojo-k11-lily.mjs 的 864 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10（本轮新增五支）起改用 K10
+ * （#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
+ * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
+ * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
+ * 条锚在源全文里做精确子串计数：786 条恰好命中 1 行/1 段，可视为具备真实
+ * 鉴别力。余下
  * 78 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
@@ -65,7 +66,7 @@
  * （:1485/1486/1534/1547/1586/1587，处女/非处女子分档与二回目以降两层
  * 里各一对逐字重复的对白句）；4 条来自 SELECTCOM 9（:1709/1713/1748/
  * 1770，初めて层淫乱/爱慕两支、二回目以降助手玛奥/非助手玛奥それ以外
- * 分档里各一对逐字重复的对白句）。SELECTCOM 3/5/6/7/8/9 内非 print 语句
+ * 分档里各一对逐字重复的对白句）。SELECTCOM 3/5/6/7/8/9/10 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
@@ -1262,6 +1263,12 @@ on(
  * 按「助手玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手
  * 玛奥」再各自按「淫乱→爱慕→屈服刻印Lv3→それ以外」写 5/4/3/2，两支
  * 结构对称。
+ *
+ * SELECTCOM 10（振动宝石 CFLAG:311，:1781-1853）：与 SELECTCOM 8 同构，含
+ * 屈服刻印Lv3+爱慕的组合判据。初めて（CFLAG:311 == 0）按「助手玛奥／淫乱／
+ * 屈服刻印Lv3+爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
+ * 按「淫乱→爱慕＋屈服刻印Lv3→屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构
+ * 对称。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -3071,6 +3078,119 @@ async function kojo_message_com_11(rand) {
       kojo.舔肛 = 2; // :1768-1771
     }
     return 0; // :1771-1774
+  }
+
+  // :1781-1853 IF SELECTCOM == 10（振动宝石 CFLAG:311）
+  if (era_flag.selectcom === 10) {
+    // :1783-1801 初めて（CFLAG:311 == 0）
+    if (kojo.振动宝石 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(`『这种震动玩具，很容易上瘾的哦，姐姐～♪』`); // :1786
+        await era.printAndWait(`「呜啊！快…快拿开，${player_name}！啊啊啊」`); // :1787
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        // 淫乱
+        await era.printAndWait(
+          `「啊啊，这样的震动…真让人…欲仙欲死${heart(1)}」`,
+        ); // :1791
+      } else if (mark(2) === 3 && era.get(`talent:${target}:85`) === 1) {
+        // 屈服刻印Lv3+爱慕
+        await era.printAndWait(
+          `「呜啊！这，这是什么？啊啊啊震得太…太厉害了！」`,
+        ); // :1794
+      } else {
+        // それ以外
+        await era.printAndWait(`「呃？这、这是什么！？快拿开，好难受！」`); // :1797
+      }
+      kojo.振动宝石 = 1; // :1800
+      return 0; // :1800-1801
+    }
+
+    // :1803-1852 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `『这么简单的道具就能让姐姐舒服成这个样子，姐姐的身体，已经完全变得淫乱了呢${heart(1)}』`,
+        ); // :1808
+        await era.printAndWait(
+          `「哈啊！是，是啊…这种能让姐姐阴蒂舒服的东西…最喜欢了…嗯啊啊，再，再压紧一点${heart(1)}…呼呼…啊啊啊」`,
+        ); // :1809
+        await era.printAndWait(`『真的好像已经高潮了呢，淫荡的姐姐………』`); // :1810
+        kojo.振动宝石 = 5; // :1810-1811
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        mark(2) === 3 &&
+        (kojo.振动宝石 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋屈服刻印Lv3
+        await era.printAndWait(
+          `「真，真是的！为什么老要对姐姐、做，做恶作剧…嗯啊啊啊！」`,
+        ); // :1814
+        await era.printAndWait(
+          `『因为人家想看到姐姐高潮时的脸嘛…你看你看，就是这个表情♪』`,
+        ); // :1815
+        kojo.振动宝石 = 4; // :1815-1816
+      } else if (
+        mark(2) === 3 &&
+        (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(`『姐姐变得老实多了呢，是不是已经有快感了？』`); // :1819
+        await era.printAndWait(`「哈啊…胡，胡说，才没有那种—呃啊啊」`); // :1820
+        kojo.振动宝石 = 3; // :1820-1821
+      } else if (kojo.振动宝石 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(`『你看，很舒服吧？姐姐老实点不要乱动啊』`); // :1824
+        await era.printAndWait(`「呜呜…拿…拿开啊…那种东西…！嗯啊啊」`); // :1825
+        kojo.振动宝石 = 2; // :1825-1826
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「呜啊啊！好舒服……小豆豆…好舒服！哈啊…嗯啊啊${heart(1)}」`,
+      ); // :1831
+      await era.printAndWait(
+        `${target_name}在宝石激烈的震动刺激下，整个腰身都弓了起来，不住地呻吟、娇喘………`,
+      ); // :1832
+      kojo.振动宝石 = 5; // :1832-1833
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      mark(2) === 3 &&
+      (kojo.振动宝石 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕＋屈服刻印Lv3
+      await era.printAndWait(
+        `「哈…啊…不，不需要那种东西啦…我，我更想要你的手指…嗯啊啊！」`,
+      ); // :1836
+      await era.printAndWait(
+        `${target_name}在宝石的刺激下不住地随快感扭着腰，娇媚地呻吟着………`,
+      ); // :1837
+      kojo.振动宝石 = 4; // :1837-1838
+    } else if (
+      mark(2) === 3 &&
+      (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3
+      await era.printAndWait(`「呜呜！又，又是这个！关掉，关掉啊…呜啊啊！」`); // :1841
+      await era.printAndWait(
+        `${target_name}被震动宝石连续刺激着阴蒂、只能咬牙忍耐着………`,
+      ); // :1842
+      kojo.振动宝石 = 3; // :1842-1843
+    } else if (kojo.振动宝石 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「住，住手啊…！这种东西…！呜呜呜！」`); // :1846
+      await era.printAndWait(
+        `无处躲避的${target_name}被震动宝石连续刺激着阴蒂，发出了屈辱的哀鸣………`,
+      ); // :1847
+      kojo.振动宝石 = 2; // :1847-1848
+    }
+    return 0; // :1848-1851
   }
 
   return 0;

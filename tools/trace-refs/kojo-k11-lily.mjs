@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-1776',
+        ref: '786-1853',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -5361,6 +5361,240 @@ export const FILES = [
         ref: '1771-1774',
         any: [
           /^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1781-1853',
+        any: [
+          /^\s*IF SELECTCOM == 10\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:311 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『这种震动玩具，很容易上瘾的哦，姐姐～♪』\s*$\s*^\s*PRINTFORMW 「呜啊！快…快拿开，%SAVESTR:PLAYER%！啊啊啊」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1783-1801',
+        any: [
+          /^\s*IF CFLAG:TARGET:311 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『这种震动玩具，很容易上瘾的哦，姐姐～♪』\s*$\s*^\s*PRINTFORMW 「呜啊！快…快拿开，%SAVESTR:PLAYER%！啊啊啊」\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1786',
+        any: [/^\s*PRINTFORMW 『这种震动玩具，很容易上瘾的哦，姐姐～♪』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1787',
+        any: [
+          /^\s*PRINTFORMW 「呜啊！快…快拿开，%SAVESTR:PLAYER%！啊啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1791',
+        any: [
+          /^\s*PRINTFORMW 「啊啊，这样的震动…真让人…欲仙欲死%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1794',
+        any: [
+          /^\s*PRINTFORMW 「呜啊！这，这是什么？啊啊啊震得太…太厉害了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1797',
+        any: [/^\s*PRINTFORMW 「呃？这、这是什么！？快拿开，好难受！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1800',
+        any: [/^\s*CFLAG:TARGET:311 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1800-1801',
+        any: [/^\s*CFLAG:TARGET:311 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1803-1852',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:311 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 『这么简单的道具就能让姐姐舒服成这个样子，姐姐的身体，已经完全变得淫乱了呢%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*PRINTFORMW 「哈啊！是，是啊…这种能让姐姐阴蒂舒服的东西…最喜欢了…嗯啊啊，再，再压紧一点%UNICODE\(0x2661\) \*1%…呼呼…啊啊啊」\s*$\s*^\s*PRINTFORMW 『真的好像已经高潮了呢，淫荡的姐姐………』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1808',
+        any: [
+          /^\s*PRINTFORMW 『这么简单的道具就能让姐姐舒服成这个样子，姐姐的身体，已经完全变得淫乱了呢%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1809',
+        any: [
+          /^\s*PRINTFORMW 「哈啊！是，是啊…这种能让姐姐阴蒂舒服的东西…最喜欢了…嗯啊啊，再，再压紧一点%UNICODE\(0x2661\) \*1%…呼呼…啊啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1810',
+        any: [/^\s*PRINTFORMW 『真的好像已经高潮了呢，淫荡的姐姐………』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1810-1811',
+        any: [
+          /^\s*PRINTFORMW 『真的好像已经高潮了呢，淫荡的姐姐………』\s*$\s*^\s*CFLAG:311 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1814',
+        any: [
+          /^\s*PRINTFORMW 「真，真是的！为什么老要对姐姐、做，做恶作剧…嗯啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1815',
+        any: [
+          /^\s*PRINTFORMW 『因为人家想看到姐姐高潮时的脸嘛…你看你看，就是这个表情♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1815-1816',
+        any: [
+          /^\s*PRINTFORMW 『因为人家想看到姐姐高潮时的脸嘛…你看你看，就是这个表情♪』\s*$\s*^\s*CFLAG:311 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1819',
+        any: [
+          /^\s*PRINTFORMW 『姐姐变得老实多了呢，是不是已经有快感了？』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1820',
+        any: [/^\s*PRINTFORMW 「哈啊…胡，胡说，才没有那种—呃啊啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1820-1821',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…胡，胡说，才没有那种—呃啊啊」\s*$\s*^\s*CFLAG:311 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1824',
+        any: [/^\s*PRINTFORMW 『你看，很舒服吧？姐姐老实点不要乱动啊』\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1825',
+        any: [/^\s*PRINTFORMW 「呜呜…拿…拿开啊…那种东西…！嗯啊啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1825-1826',
+        any: [
+          /^\s*PRINTFORMW 「呜呜…拿…拿开啊…那种东西…！嗯啊啊」\s*$\s*^\s*CFLAG:311 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1831',
+        any: [
+          /^\s*PRINTFORMW 「呜啊啊！好舒服……小豆豆…好舒服！哈啊…嗯啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1832',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%在宝石激烈的震动刺激下，整个腰身都弓了起来，不住地呻吟、娇喘………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1832-1833',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%在宝石激烈的震动刺激下，整个腰身都弓了起来，不住地呻吟、娇喘………\s*$\s*^\s*CFLAG:311 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1836',
+        any: [
+          /^\s*PRINTFORMW 「哈…啊…不，不需要那种东西啦…我，我更想要你的手指…嗯啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1837',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%在宝石的刺激下不住地随快感扭着腰，娇媚地呻吟着………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1837-1838',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%在宝石的刺激下不住地随快感扭着腰，娇媚地呻吟着………\s*$\s*^\s*CFLAG:311 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1841',
+        any: [
+          /^\s*PRINTFORMW 「呜呜！又，又是这个！关掉，关掉啊…呜啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1842',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被震动宝石连续刺激着阴蒂、只能咬牙忍耐着………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1842-1843',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被震动宝石连续刺激着阴蒂、只能咬牙忍耐着………\s*$\s*^\s*CFLAG:311 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1846',
+        any: [/^\s*PRINTFORMW 「住，住手啊…！这种东西…！呜呜呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1847',
+        any: [
+          /^\s*PRINTFORMW 无处躲避的%SAVESTR:TARGET%被震动宝石连续刺激着阴蒂，发出了屈辱的哀鸣………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1847-1848',
+        any: [
+          /^\s*PRINTFORMW 无处躲避的%SAVESTR:TARGET%被震动宝石连续刺激着阴蒂，发出了屈辱的哀鸣………\s*$\s*^\s*CFLAG:311 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '1848-1851',
+        any: [
+          /^\s*CFLAG:311 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
         ],
       },
     ],
