@@ -535,6 +535,8 @@ export default [
     replace: "  const wrong_env = '';",
     tests: ['skip-count-check'],
     must_mention: '基线为 0 时应提示 asar',
+  },
+
   // —— #304：并行模式的输出、计数与子进程参数 ——
   {
     desc: 'M2900 并行汇总吞掉判红子进程的计数（一条红就丢它那一整片 caught）（#304）',
