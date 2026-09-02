@@ -83,10 +83,12 @@ require('#/system/train/com-tentacle');
 // 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）
 require('#/system/turnend-settle');
 // 口上（#46）：公共底座（@EVENTSHOP 总开关 / @GET_KOJO_NUM / 指令口上
-// 分发族）与口上模块（K1 自信家、K2 気弱、K3 高貴、K4 冷徹、K5 マオ、K6 悪女、
-// K7 金红桃、K8 银黑桃、K10 俱乐部——各带 @EVENTTRAIN 存在标志与
-// @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层目录（docs/skeleton.md）
+// 分发族）与口上模块（K0 慈爱、K1 自信家、K2 気弱、K3 高貴、K4 冷徹、
+// K5 マオ、K6 悪女、K7 金红桃、K8 银黑桃、K9 方片、K10 俱乐部——各带
+// @EVENTTRAIN 存在标志与 @KOJO_MESSAGE_COM_N 注册）。口上是独立顶层
+// 目录（docs/skeleton.md）
 require('#/kojo/kojo-system');
+require('#/kojo/kojo-k0-tender');
 require('#/kojo/kojo-k2-timid');
 require('#/kojo/kojo-k3-noble');
 require('#/kojo/kojo-k5-mao');
