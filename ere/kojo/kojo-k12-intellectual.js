@@ -6444,21 +6444,23 @@ async function kojo_message_palamcng_12(rand) {
   // UP:11 + UP:12（源 :4516）
   const A =
     (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0); // :4516 A = UP:11 + UP:12
-  if (era.get('tflag:3') == 1 && kojo.处女丧失 == 0) {
+  if (game.train.处女丧失 == 1 && kojo.处女丧失 == 0) {
+    // tflag:3 处女丧失事件
     // :4517
 
-    if (era.get('tflag:20') == 1) {
+    if (game.train.主人导致处女丧失 == 1) {
+      // tflag:20
       // :4519
 
       if (
         era.get(`talent:${target}:76`) == 1 &&
-        (A < 500 || era.get('tflag:150') == 1)
+        (A < 500 || game.system.反抗刻印回避 == 1) // tflag:150
       ) {
         // :4521
         await era.printAndWait(`「${sc()}、终于成为大人了呢……！」`); // :4522
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
-        (A < 500 || era.get('tflag:150') == 1)
+        (A < 500 || game.system.反抗刻印回避 == 1) // tflag:150
       ) {
         // :4524
         await era.printAndWait(`「尽情的、为怀上孩子而做爱吧……！」`); // :4525
@@ -7161,7 +7163,8 @@ async function dungeon_attack_k12(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
-  if (era.get(`cflag:${target}:1`) == 2) {
+  if (chara(target).invasion.状态 == 2) {
+    // CFLAG:1 角色状态（2 = 侵攻中）
     // :5337
 
     if (
@@ -7795,7 +7798,8 @@ async function colosseum_kojo_12(rand) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       // :5486
       await era.printAndWait(''); // :5487
-    } else if (era.get('tflag:400') == 206) {
+    } else if (game.train.死斗场敌种 == 206) {
+      // tflag:400
       // :5489
       await era.printAndWait(''); // :5490
     } else {
@@ -7811,7 +7815,8 @@ async function colosseum_kojo_12(rand) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       // :5502
       await era.printAndWait(''); // :5503
-    } else if (era.get('tflag:400') == 206) {
+    } else if (game.train.死斗场敌种 == 206) {
+      // tflag:400
       // :5505
       await era.printAndWait(''); // :5506
     } else {

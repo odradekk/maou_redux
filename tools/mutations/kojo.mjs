@@ -8667,4 +8667,46 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k12-intellectual'],
     must_mention: 'benki_koujo_k12 FLAG:62==0（最下层奉仕）淫乱',
   },
+  {
+    desc: 'M3230 K12 KOJO_MESSAGE_COM_12 守卫③ TEQUIP:89（兽奸岔入 DOG）删松',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '  if (era.get(`tequip:${target}:89`)) {',
+    replace: '  if (false) { // 变异：兽奸岔入守卫删松',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '头部守卫③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身',
+  },
+  {
+    desc: 'M3231 K12 KOJO_MESSAGE_COM_12 守卫④ TEQUIP:55（死斗场岔入 COLOSSEUM）删松',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '  if (era.get(`tequip:${target}:55`)) {',
+    replace: '  if (false) { // 变异：死斗场岔入守卫删松',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '头部守卫④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身',
+  },
+  {
+    desc: 'M3232 K12 MARKCNG 苦痛刻印 Lv3 首超判据删松',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {',
+    replace: '  if (false) { // 变异：苦痛刻印首超判据删松',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: 'kojo_message_markcng_12 苦痛刻印Lv3 取得',
+  },
+  {
+    desc: 'M3233 K12 EVENTTRAIN #PRI 存在标志置位删除（FLAG:112 = 1）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '    game.kojo.口上存在_12 = 1; // :69 FLAG:112 = 1（K12 口上存在标志）',
+    replace: '    // 变异：存在标志置位删除',
+    tests: ['kojo-k12-intellectual'],
+    must_mention:
+      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）',
+  },
+  {
+    desc: 'M3234 K12 EVENTEND #LATER 存在标志清除删除（FLAG:112 = 0）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '    game.kojo.口上存在_12 = 0; // :75',
+    replace: '    // 变异：存在标志清除删除',
+    tests: ['kojo-k12-intellectual'],
+    must_mention:
+      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）',
+  },
 ];

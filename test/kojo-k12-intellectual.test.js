@@ -914,3 +914,27 @@ test('benki_koujo_k12 FLAG:62==0 常识改写（FLAG:63）合并 CALL 称呼', a
     '「感谢前来协助我的『研究』♪我也会更努力的、可以继续帮助我做更多『实验』吗？拜托咯…♪」',
   ]);
 });
+
+test('kojo_message_markcng_12 苦痛刻印Lv3 取得（TFLAG:22==3）', async () => {
+  const fixture = await setup_k12((f) => {
+    const { game } = f.load_module('facade/game');
+    game.system.苦痛刻印变动 = 3;
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.kojo_message_markcng_12();
+  assert.deepEqual(fixture.text_lines(), ['「啊嘎嘎、啊嘎啊～、痛～」']);
+  assert.equal(fixture.store.get('cflag:20:297'), 1);
+});
+
+test('kojo_message_markcng_12 快乐刻印Lv3 取得（TFLAG:23==3）', async () => {
+  const fixture = await setup_k12((f) => {
+    const { game } = f.load_module('facade/game');
+    game.system.快乐刻印变动 = 3;
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.kojo_message_markcng_12();
+  assert.deepEqual(fixture.text_lines(), [
+    '「不行、不行了、好、好有感觉啊～！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:298'), 1);
+});
