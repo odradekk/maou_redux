@@ -320,14 +320,13 @@ test('KOJO_MESSAGE_COM_12 头部守卫② TFLAG:899（失神）跳过', async ()
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('KOJO_MESSAGE_COM_12 头部守卫③ TEQUIP:89（兽奸）占位存根', async () => {
+test('KOJO_MESSAGE_COM_12 头部守卫③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('tequip:20:89', 1);
   }, 0);
   await speak_k12(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '（兽奸调教中的专用口上尚未移植，此处为占位——原作 @DOG_KOJO_12，见 docs/stub-registry.md。）',
-  ]);
+  assert.deepEqual(fixture.text_lines(), ['「讨厌！　不要啊！　住手～！！」']);
+  assert.equal(fixture.store.get('cflag:20:301'), 1);
 });
 
 test('KOJO_MESSAGE_COM_12 头部守卫④ TEQUIP:55（死斗场）占位存根', async () => {
@@ -752,4 +751,35 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
   }, 87);
   await speak_k12(fixture);
   assert.equal(fixture.store.get('cflag:20:348'), 1);
+});
+
+test('dog_kojo_12 SELECTCOM 0 二回目淫乱：推进到 6', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:89', 1);
+    f.store.set('cflag:20:301', 1);
+    f.store.set('talent:20:76', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「涂上黄油会更好些吧」']);
+  assert.equal(fixture.store.get('cflag:20:301'), 6);
+});
+
+test('dog_kojo_12 SELECTCOM 1（舔阴）初回处女', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:89', 1);
+    f.store.set('talent:20:0', 1);
+  }, 1);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「呜呜……这么重要的地方被舔了」']);
+  assert.equal(fixture.store.get('cflag:20:302'), 1);
+});
+
+test('dog_kojo_12 SELECTCOM 5 二回目牝犬（TALENT:136）：推进到 6', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:89', 1);
+    f.store.set('cflag:20:306', 1);
+    f.store.set('talent:20:136', 1);
+  }, 5);
+  await speak_k12(fixture);
+  assert.equal(fixture.store.get('cflag:20:306'), 6);
 });
