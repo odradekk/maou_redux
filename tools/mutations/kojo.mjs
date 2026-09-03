@@ -8758,6 +8758,372 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 第二次抽样独立于第一次',
   },
+  // ---- SELECTCOM 26（正常位肛交 CFLAG:327，#242） ----
+  {
+    desc: 'M4218 COM26 初めて CFLAG:327 写错（1 改 0）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 1; // :3826`,
+    replace: `kojo.正常位肛交 = 0; // :3826`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 初めて：助手玛奥 + 淫乱',
+  },
+  {
+    desc: 'M4219 COM26 助手玛奥淫乱＋A感覚Lv3以上 CFLAG:327 写错（7 改 6）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 7; // :3848-3850`,
+    replace: `kojo.正常位肛交 = 6; // :3848-3850`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM26 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M4220 COM26 助手玛奥淫乱 CFLAG:327 写错（6 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 6; // :3863-3864`,
+    replace: `kojo.正常位肛交 = 5; // :3863-3864`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + 淫乱，推进到 6',
+  },
+  {
+    desc: 'M4221 COM26 助手玛奥爱慕＋A感覚Lv3以上 CFLAG:327 写错（5 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 5; // :3881-3883`,
+    replace: `kojo.正常位肛交 = 4; // :3881-3883`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上，推进到 5',
+  },
+  {
+    desc: 'M4222 COM26 助手玛奥爱慕 CFLAG:327 写错（4 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 4; // :3896-3897`,
+    replace: `kojo.正常位肛交 = 3; // :3896-3897`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + 爱慕，推进到 4',
+  },
+  {
+    desc: 'M4223 COM26 助手玛奥 A感覚Lv3以上 CFLAG:327 写错（3 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 3; // :3909-3910`,
+    replace: `kojo.正常位肛交 = 2; // :3909-3910`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + A感覚Lv3以上，推进到 3',
+  },
+  {
+    desc: 'M4224 COM26 助手玛奥それ以外 CFLAG:327 写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 2; // :3922-3923`,
+    replace: `kojo.正常位肛交 = 1; // :3922-3923`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + それ以外，推进到 2',
+  },
+  {
+    desc: 'M4225 COM26 非助手玛奥淫乱＋A感覚Lv3以上 CFLAG:327 写错（7 改 6）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 7; // :3943-3945`,
+    replace: `kojo.正常位肛交 = 6; // :3943-3945`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上，推进到 7',
+  },
+  {
+    desc: 'M4226 COM26 非助手玛奥淫乱 CFLAG:327 写错（6 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 6; // :3951-3952`,
+    replace: `kojo.正常位肛交 = 5; // :3951-3952`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 淫乱，推进到 6',
+  },
+  {
+    desc: 'M4227 COM26 非助手玛奥爱慕＋A感覚Lv3以上 CFLAG:327 写错（5 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 5; // :3969-3971`,
+    replace: `kojo.正常位肛交 = 4; // :3969-3971`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上，推进到 5',
+  },
+  {
+    desc: 'M4228 COM26 非助手玛奥爱慕 CFLAG:327 写错（4 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 4; // :3977-3978`,
+    replace: `kojo.正常位肛交 = 3; // :3977-3978`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 爱慕，推进到 4',
+  },
+  {
+    desc: 'M4229 COM26 非助手玛奥 A感覚Lv3以上 CFLAG:327 写错（3 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 3; // :3985-3986`,
+    replace: `kojo.正常位肛交 = 2; // :3985-3986`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + A感覚Lv3以上，推进到 3',
+  },
+  {
+    desc: 'M4230 COM26 それ以外 CFLAG:327 写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.正常位肛交 = 2; // :3997-3998`,
+    replace: `kojo.正常位肛交 = 1; // :3997-3998`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：それ以外，推进到 2',
+  },
+  {
+    desc: 'M4231 COM26 助手玛奥淫乱＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`「好舒服……已经舒服得……没有办法思考了啊啊啊\${heart(1)}」\`,
+          ); // :3835`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        chara(target).system.肛门感觉 >= 4 &&
+        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`「好舒服……已经舒服得……没有办法思考了啊啊啊\${heart(1)}」\`,
+          ); // :3835`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM26 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M4232 COM26 助手玛奥爱慕＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.正常位肛交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`「不，不行了……肛门……舒服得……要上天了啊啊啊\${heart(1)}」\`,
+          ); // :3868`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        chara(target).system.肛门感觉 >= 4 &&
+        (kojo.正常位肛交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`「不，不行了……肛门……舒服得……要上天了啊啊啊\${heart(1)}」\`,
+          ); // :3868`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上，推进到 5',
+  },
+  {
+    desc: 'M4233 COM26 非助手玛奥淫乱＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            \`「哈啊……嗯啊啊\${heart(1)} 淫荡的肛门……得到魔王大人的……疼爱了\${heart(1)}」\`,`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        chara(target).system.肛门感觉 >= 4 &&
+        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            \`「哈啊……嗯啊啊\${heart(1)} 淫荡的肛门……得到魔王大人的……疼爱了\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上，推进到 7',
+  },
+  {
+    desc: 'M4234 COM26 非助手玛奥爱慕＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.正常位肛交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(\`「肛交……太棒了……真的是世界上最棒的事情了啊啊啊」\`); // :3956`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        chara(target).system.肛门感觉 >= 4 &&
+        (kojo.正常位肛交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(\`「肛交……太棒了……真的是世界上最棒的事情了啊啊啊」\`); // :3956`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上，推进到 5',
+  },
+  {
+    desc: 'M4235 COM26 助手玛奥 A感覚Lv3以上守卫 肛门感觉>=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.正常位肛交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // A感覚Lv3以上
+        await era.print(
+          \`「好舒服……已经舒服得……没有办法思考了啊啊啊\${heart(1)}」\`,
+        ); // :3900`,
+    replace: `        chara(target).system.肛门感觉 >= 4 &&
+        (kojo.正常位肛交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // A感覚Lv3以上
+        await era.print(
+          \`「好舒服……已经舒服得……没有办法思考了啊啊啊\${heart(1)}」\`,
+        ); // :3900`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + A感覚Lv3以上，推进到 3',
+  },
+  {
+    desc: 'M4236 COM26 非助手玛奥 A感覚Lv3以上守卫 肛门感觉>=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.正常位肛交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // A感覚Lv3以上
+        await era.printAndWait(\`「呜……呜啊啊……插……插进屁股里了……！」\`); // :3981`,
+    replace: `        chara(target).system.肛门感觉 >= 4 &&
+        (kojo.正常位肛交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // A感覚Lv3以上
+        await era.printAndWait(\`「呜……呜啊啊……插……插进屁股里了……！」\`); // :3981`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + A感覚Lv3以上，推进到 3',
+  },
+  {
+    desc: 'M4237 COM26 助手玛奥淫乱（非A感覚）talent:76 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.print(
+          \`『这次一定要让姐姐的肛门高潮\${heart(1)} 姐姐的肛门实在是太棒了\${heart(1)} ！』\`,`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 0 &&
+        (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.print(
+          \`『这次一定要让姐姐的肛门高潮\${heart(1)} 姐姐的肛门实在是太棒了\${heart(1)} ！』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + 淫乱，推进到 6',
+  },
+  {
+    desc: 'M4238 COM26 助手玛奥爱慕（非A感覚）talent:85 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.正常位肛交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.print(
+          \`『姐姐感觉到舒服了吗\${heart(1)} 我可是很舒服呢\${heart(1)} 嘿嘿嘿！』\`,`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 0 &&
+        (kojo.正常位肛交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.print(
+          \`『姐姐感觉到舒服了吗\${heart(1)} 我可是很舒服呢\${heart(1)} 嘿嘿嘿！』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + 爱慕，推进到 4',
+  },
+  {
+    desc: 'M4239 COM26 非助手玛奥淫乱（非A感覚）talent:76 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`「呜，呜啊\${heart(1)} 魔……魔王大人的阴茎……插进屁股里了\${heart(1)}」\`,`,
+    replace: `        era.get(\`talent:\${target}:76\`) === 0 &&
+        (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`「呜，呜啊\${heart(1)} 魔……魔王大人的阴茎……插进屁股里了\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 淫乱，推进到 6',
+  },
+  {
+    desc: 'M4240 COM26 非助手玛奥爱慕（非A感覚）talent:85 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.正常位肛交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          \`「呜……还……还是有点点痛……不过，不要紧的……请魔王大人……尽情的……！」\`,`,
+    replace: `        era.get(\`talent:\${target}:85\`) === 0 &&
+        (kojo.正常位肛交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          \`「呜……还……还是有点点痛……不过，不要紧的……请魔王大人……尽情的……！」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：非助手玛奥 + 爱慕，推进到 4',
+  },
+  {
+    desc: 'M4241 COM26 初めて 非助手玛奥淫乱 肛门感觉守卫 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          if (chara(target).system.肛门感觉 >= 3) {
+            await era.printAndWait(
+              \`经过充分调教和开发的肛门，好像主动吸住了\${player_name}的阴茎一般。\`,
+            ); // :3795`,
+    replace: `          if (chara(target).system.肛门感觉 >= 4) {
+            await era.printAndWait(
+              \`经过充分调教和开发的肛门，好像主动吸住了\${player_name}的阴茎一般。\`,
+            ); // :3795`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 初めて：非助手玛奥 + 淫乱，ABL:3 达门槛走 if',
+  },
+  {
+    desc: 'M4242 COM26 初めて 非助手玛奥それ以外 肛门感觉守卫 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          if (chara(target).system.肛门感觉 >= 3) {
+            await era.printAndWait(
+              \`「不，不行啊啊……那种地方……不，不是用来……呜啊啊！」\`,`,
+    replace: `          if (chara(target).system.肛门感觉 >= 4) {
+            await era.printAndWait(
+              \`「不，不行啊啊……那种地方……不，不是用来……呜啊啊！」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 初めて：非助手玛奥 + それ以外，ABL:3 二态分岔可控',
+  },
+  {
+    desc: 'M4243 COM26 助手玛奥淫乱＋A感覚Lv3以上 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 淫乱＋A感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`「好舒服……已经舒服得……没有办法思考了啊啊啊\${heart(1)}」\`,
+          ); // :3835`,
+    replace: `        // 淫乱＋A感覚Lv3以上
+        if (rand_n(3) === 1) {
+          await era.print(
+            \`「好舒服……已经舒服得……没有办法思考了啊啊啊\${heart(1)}」\`,
+          ); // :3835`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM26 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上，RAND:3 三选一可控',
+  },
+  {
+    desc: 'M4244 COM26 それ以外 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        if (rand_n(3) === 0) {
+          await era.printAndWait(\`「不可以，不可以啊啊啊！！！」\`); // :3916`,
+    replace: `        if (rand_n(3) === 1) {
+          await era.printAndWait(\`「不可以，不可以啊啊啊！！！」\`); // :3916`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：それ以外，推进到 2',
+  },
+  {
+    desc: 'M4245 COM26 助手玛奥 A感覚Lv3以上 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        if (rand_n(3) === 0) {
+          await era.printAndWait(\`「哈啊……啊啊……太，太激烈了啊啊！」\`); // :3904`,
+    replace: `        if (rand_n(3) === 1) {
+          await era.printAndWait(\`「哈啊……啊啊……太，太激烈了啊啊！」\`); // :3904`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM26 二回目：助手玛奥 + A感覚Lv3以上，推进到 3',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

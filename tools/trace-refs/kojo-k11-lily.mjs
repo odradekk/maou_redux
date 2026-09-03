@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-3758',
+        ref: '786-4002',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -12345,6 +12345,980 @@ export const FILES = [
         ref: '3753-3758',
         any: [
           /^\s*CFLAG:324 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3763-4002',
+        any: [
+          /^\s*IF SELECTCOM == 26\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:327 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORML 『姐姐还没体会过肛交吗%UNICODE\(0x2661\) \*1% 保证会让你舒服上天的%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3764-3825',
+        any: [
+          /^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:327 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORML 『姐姐还没体会过肛交吗%UNICODE\(0x2661\) \*1% 保证会让你舒服上天的%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$\s*^\s*PRINTFORMW %SAVESTR:PLAYER%抓着%SAVESTR:TARGET%的腰，将\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@慢慢地插入了肛门之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3770',
+        any: [
+          /^\s*PRINTFORML 『姐姐还没体会过肛交吗%UNICODE\(0x2661\) \*1% 保证会让你舒服上天的%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3771',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抓着%SAVESTR:TARGET%的腰，将\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@慢慢地插入了肛门之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3772',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊啊……肛门……被撑开的感觉……啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3773',
+        any: [
+          /^\s*PRINTFORMW 被亲妹妹侵犯着肛门，却只让%SAVESTR:TARGET%更加兴奋和享受地娇喘着。而姐姐的反应也让%SAVESTR:PLAYER%更加兴奋而激烈地抽插着%SAVESTR:TARGET%的肛门。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3774',
+        any: [
+          /^\s*PRINTFORMW 『最喜欢姐姐了%UNICODE\(0x2661\) \*1% 给我用肛门高潮吧%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3777',
+        any: [
+          /^\s*PRINTFORML 『姐姐还没体会过肛交吗%UNICODE\(0x2661\) \*1% 保证会让你舒服上天的%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3778',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@慢慢贯入了肛门之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3779',
+        any: [/^\s*PRINTFORMW 「呜……呜啊啊……稍微……再温柔一点啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3780',
+        any: [
+          /^\s*PRINTFORML 『实在是对不起了……但是姐姐的肛门……实在太诱人了，实在是让人忍不住！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3781',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%丝毫没有减慢动作，反而更激烈地侵犯着姐姐的肛门。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3784',
+        any: [
+          /^\s*PRINTFORML 『姐姐还没体会过肛交吗%UNICODE\(0x2661\) \*1% 保证会让你舒服上天的%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3785',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%强行抱着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@慢慢贯入了肛门之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3786',
+        any: [
+          /^\s*PRINTFORMW 「不，不要啊啊！快，快住手……我们是……亲姐妹啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3787',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被妹妹侵犯着肛门，却无力抗拒，哭泣了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3792',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊……啊啊啊 %UNICODE\(0x2661\) \*1% %SAVESTR:TARGET%的肛，肛门……%UNICODE\(0x2661\) \*1% 终于得到魔王大人的临幸了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3793',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%体验着第一次肛交的快感，发出了享受的娇喘。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3795',
+        any: [
+          /^\s*PRINTFORMW 经过充分调教和开发的肛门，好像主动吸住了%SAVESTR:PLAYER%的阴茎一般。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3797',
+        any: [
+          /^\s*PRINTFORMW 尚未充分开发的肛门被%SAVESTR:PLAYER%的阴茎用力地抽插着。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3799',
+        any: [
+          /^\s*PRINTFORMW 「尽……尽情地侵犯人家的肛门吧……啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3802',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊……啊啊%UNICODE\(0x2661\) \*1% 插进来了……%SAVESTR:TARGET%的肛门……终于得到魔王大人的临幸了……！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3804',
+        any: [
+          /^\s*PRINTFORMW 经过充分调教和开发的肛门，主动地吸住了%SAVESTR:PLAYER%的阴茎一般。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3805',
+        any: [
+          /^\s*PRINTFORMW 「哈啊……哈啊…%UNICODE\(0x2661\) \*1%……%SAVESTR:PLAYER%的肛门……彻底属于魔王大人了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3806',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用双腿缠住了%SAVESTR:PLAYER%的腰，脸上露出了幸福的笑容………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3808',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%尚未充分开发的肛门，被%SAVESTR:PLAYER%的阴茎侵犯着。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3809',
+        any: [
+          /^\s*PRINTFORMW 「呜啊……呜啊啊……肛门……有点痛，但是……也很舒服%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3810',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%体验着初次肛交带来的快感和痛楚，脸上的表情让%SAVESTR:PLAYER%更加兴奋………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3815',
+        any: [
+          /^\s*PRINTFORMW 「不，不行啊啊……那种地方……不，不是用来……呜啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3816',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被充分调教和开发过的肛门，却主动地接纳了%SAVESTR:PLAYER%阴茎的插入。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3817',
+        any: [
+          /^\s*PRINTFORMW 肛交的快感让%SAVESTR:TARGET%后仰着头，呻吟了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3818',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊……啊啊啊……为什么……会这么舒服的啊啊…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3820',
+        any: [
+          /^\s*PRINTFORMW 「住，住手啊……这样插进去……屁股会裂开的啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3821',
+        any: [
+          /^\s*PRINTFORMW 尚未充分开发和调教的肛门被%SAVESTR:TARGET%无情地侵犯着，%SAVESTR:PLAYER%痛苦地哀鸣着。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3822',
+        any: [
+          /^\s*PRINTFORMW 「好痛，好痛啊啊啊啊……会死的，真的会死的……呜啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3826',
+        any: [/^\s*CFLAG:TARGET:327 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3826-3827',
+        any: [/^\s*CFLAG:TARGET:327 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3828-4001',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 6 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF RAND:3 == 0\s*$\s*^\s*PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3835',
+        any: [
+          /^\s*PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3836',
+        any: [
+          /^\s*PRINTFORML 『%SAVESTR:PLAYER%最喜欢姐姐了%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3837',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰身，持续地侵犯着肛门。%SAVESTR:PLAYER%被充分开发和调教的肛门与\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@的交合处传来一阵阵淫秽不堪的声音。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3838',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊……啊啊啊%UNICODE\(0x2661\) \*1% 我……我也是最喜欢被%SAVESTR:PLAYER%侵犯肛门了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3840',
+        any: [
+          /^\s*PRINTFORML 「不，不行了……肛门……舒服得……要上天了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3841',
+        any: [
+          /^\s*PRINTFORML 『哈，哈啊%UNICODE\(0x2661\) \*1% 姐姐的肛门……完全变成性器了呢！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3842',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%前后动着腰，持续地侵犯着%SAVESTR:TARGET%的肛门。%SAVESTR:PLAYER%被充分开发和调教的肛门与\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@的交合处传来一阵阵淫秽不堪的声音。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3843',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊……啊啊啊%UNICODE\(0x2661\) \*1% 姐姐是个喜欢被%SAVESTR:PLAYER%侵犯肛，肛门的变态啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3845',
+        any: [
+          /^\s*PRINTFORML 『原来姐姐被侵犯肛门时，会发出这么下流的声音呀%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3846',
+        any: [
+          /^\s*PRINTFORMW 「呜啊……啊啊啊%UNICODE\(0x2661\) \*1% 真的是……太舒服了%UNICODE\(0x2661\) \*1% 被%SAVESTR:PLAYER%侵犯肛门……的感觉……太棒了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3847',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着肛门被%SAVESTR:PLAYER%用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@侵犯的快感，发出一阵阵淫浪的娇喘。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3848',
+        any: [
+          /^\s*PRINTFORML 「尽情……尽情地把%SAVESTR:TARGET%的肛门……侵犯到坏掉吧啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3848-3850',
+        any: [
+          /^\s*PRINTFORML 「尽情……尽情地把%SAVESTR:TARGET%的肛门……侵犯到坏掉吧啊啊啊%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3853',
+        any: [
+          /^\s*PRINTFORML 『这次一定要让姐姐的肛门高潮%UNICODE\(0x2661\) \*1% 姐姐的肛门实在是太棒了%UNICODE\(0x2661\) \*1% ！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3854',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@慢慢贯入了肛门之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3856',
+        any: [
+          /^\s*PRINTFORMW 「呜……呜啊！肛门……被撑得满满的了……%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3858',
+        any: [
+          /^\s*PRINTFORMW 「呜啊啊%UNICODE\(0x2661\) \*1% 不，不要……那么激烈的抽插啊……肛门……感觉好奇怪啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3860',
+        any: [
+          /^\s*PRINTFORMW 「呜……呜啊……肛门…感觉好奇怪%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3862',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被妹妹侵犯着肛门，发出了混杂和欣喜和痛苦的呻吟，让%SAVESTR:PLAYER%更加兴奋起来了\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3863',
+        any: [
+          /^\s*PRINTFORMW 『最喜欢姐姐了%UNICODE\(0x2661\) \*1% 给我用肛门高潮吧%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3863-3864',
+        any: [
+          /^\s*PRINTFORMW 『最喜欢姐姐了%UNICODE\(0x2661\) \*1% 给我用肛门高潮吧%UNICODE\(0x2661\) \*1%』\s*$\s*^\s*CFLAG:327 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3868',
+        any: [
+          /^\s*PRINTFORML 「不，不行了……肛门……舒服得……要上天了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3869',
+        any: [
+          /^\s*PRINTFORML 『哎嘿嘿，人家好喜欢姐姐现在这个样子%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3870',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰身，抽插着肛门。被充分开发和调教的肛门也紧紧地吸着%SAVESTR:PLAYER%的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3871',
+        any: [
+          /^\s*PRINTFORMW 「哈……哈啊……不，不要当着魔王大人的面……侵犯姐姐的肛门啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3873',
+        any: [
+          /^\s*PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3874',
+        any: [
+          /^\s*PRINTFORML 『哇啊%UNICODE\(0x2661\) \*1% 姐姐的肛门……已经变成名器了！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3875',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%前后动着腰，持续地侵犯着%SAVESTR:TARGET%的肛门。%SAVESTR:PLAYER%被充分开发和调教的肛门与\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@的交合处传来一阵阵淫秽不堪的声音。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3876',
+        any: [
+          /^\s*PRINTFORMW 「不要……取笑姐姐啦%UNICODE\(0x2661\) \*1% 嗯啊……啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3878',
+        any: [
+          /^\s*PRINTFORML 『原来姐姐被侵犯肛门时，会发出这么下流的声音呀%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3879',
+        any: [
+          /^\s*PRINTFORML 「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3880',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着肛门被%SAVESTR:PLAYER%用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@侵犯的快感，忍不住娇喘了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3881',
+        any: [
+          /^\s*PRINTFORMW 「不……不要……这么激烈%UNICODE\(0x2661\) \*1% %SAVESTR:PLAYER%把姐姐的肛门……弄得要去了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3881-3883',
+        any: [
+          /^\s*PRINTFORMW 「不……不要……这么激烈%UNICODE\(0x2661\) \*1% %SAVESTR:PLAYER%把姐姐的肛门……弄得要去了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3886',
+        any: [
+          /^\s*PRINTFORML 『姐姐感觉到舒服了吗%UNICODE\(0x2661\) \*1% 我可是很舒服呢%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3887',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@贯入肛门之中抽插了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3889',
+        any: [/^\s*PRINTFORMW 「呜啊……有……有点痛……啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3891',
+        any: [
+          /^\s*PRINTFORMW 「啊……啊啊……慢，慢一点……姐姐的屁股……要裂开了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3893',
+        any: [/^\s*PRINTFORMW 「停，停下来啊……拜托了……让姐姐……缓一下！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3895',
+        any: [
+          /^\s*PRINTFORML 『太用力了吗，真是不好意思……都是因为姐姐的肛门实在是让人太舒服了！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3896',
+        any: [
+          /^\s*PRINTFORMW 虽然这么说着，但是%SAVESTR:PLAYER%丝毫没有减慢动作，反而更激烈地侵犯着%SAVESTR:TARGET%的肛门。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3896-3897',
+        any: [
+          /^\s*PRINTFORMW 虽然这么说着，但是%SAVESTR:PLAYER%丝毫没有减慢动作，反而更激烈地侵犯着%SAVESTR:TARGET%的肛门。\s*$\s*^\s*CFLAG:327 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3900',
+        any: [
+          /^\s*PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3901',
+        any: [
+          /^\s*PRINTFORML 『哎嘿嘿，姐姐看起来已经很享受肛交的样子了呢%UNICODE\(0x2661\) \*1% 我也为姐姐感到开心呀%UNICODE\(0x2661\) \*1%』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3902',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@贯入肛门之中抽插了起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3904',
+        any: [/^\s*PRINTFORMW 「哈啊……啊啊……太，太激烈了啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3906',
+        any: [/^\s*PRINTFORMW 「稍，稍微……慢一点……让姐姐……缓口气……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3908',
+        any: [
+          /^\s*PRINTFORMW 「不，不是这样的！才没……没有享受什么的啊啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3909-3910',
+        any: [/^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3913',
+        any: [
+          /^\s*PRINTFORML 『姐姐%UNICODE\(0x2661\) \*1% 肛交的感觉舒服吗%UNICODE\(0x2661\) \*1% 嘿嘿嘿！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3914',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%强行抱着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎\\@慢慢贯入了肛门之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3916',
+        any: [/^\s*PRINTFORMW 「不可以，不可以啊啊啊！！！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3918',
+        any: [/^\s*PRINTFORMW 「好，好痛啊啊……屁股……会坏掉的啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3920',
+        any: [/^\s*PRINTFORMW 「停，快停下来……好痛，好痛啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3922',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着被妹妹强暴着肛门的屈辱和痛苦，哭泣着。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3922-3923',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着被妹妹强暴着肛门的屈辱和痛苦，哭泣着。\s*$\s*^\s*CFLAG:327 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3929',
+        any: [
+          /^\s*PRINTFORMW 「哈啊……嗯啊啊%UNICODE\(0x2661\) \*1% 淫荡的肛门……得到魔王大人的……疼爱了%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3930',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%尽情享受着%SAVESTR:PLAYER%的肛交，无比享受地娇喘着\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3931',
+        any: [
+          /^\s*PRINTFORMW 被彻底调教，开发过的肛门，紧紧夹着%SAVESTR:PLAYER%的阴茎，主动地摩擦着。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3932',
+        any: [
+          /^\s*PRINTFORML 「不，不行了……肛门……舒服得……要上天了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3933',
+        any: [
+          /^\s*PRINTFORMW 阴茎与%SAVESTR:TARGET%肛门交合时发出的下流的声音让%SAVESTR:PLAYER%更加兴奋地抽插着………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3935',
+        any: [
+          /^\s*PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3936',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着肛交的极度快感，发出一阵阵淫浪的娇喘。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3937',
+        any: [
+          /^\s*PRINTFORMW 「哈……哈啊……魔王大人……把人家的淫肛……撑得满满的%UNICODE\(0x2661\) \*1% 」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3938',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%向%SAVESTR:PLAYER%露出了淫媚的笑容，完全沉浸在肛交的快感之中………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3940',
+        any: [
+          /^\s*PRINTFORML 「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3941',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%的肛门被%SAVESTR:TARGET%激烈的抽插着，淫荡的交合声不绝于耳。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3942',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人……请尽，尽情侵犯人家的肛门吧啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3943',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%已经完全沦为沉浸在肛交快感中的性奴了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3943-3945',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%已经完全沦为沉浸在肛交快感中的性奴了………\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3948',
+        any: [
+          /^\s*PRINTFORMW 「呜，呜啊%UNICODE\(0x2661\) \*1% 魔……魔王大人的阴茎……插进屁股里了%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3949',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%边呻吟着，边用肛门努力接纳着%SAVESTR:PLAYER%的阴茎。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3950',
+        any: [/^\s*PRINTFORML 「呜啊……屁股……原来也能这么舒服啊啊啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3951',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着肛门被慢慢撑开的奇异快感，呻吟了起来\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3951-3952',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%感受着肛门被慢慢撑开的奇异快感，呻吟了起来\s*$\s*^\s*CFLAG:327 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3956',
+        any: [
+          /^\s*PRINTFORML 「肛交……太棒了……真的是世界上最棒的事情了啊啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3957',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%尽情地享受着%SAVESTR:PLAYER%的肛交。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3958',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊……啊啊啊%UNICODE\(0x2661\) \*1% 让%SAVESTR:TARGET%的肛门……永远当魔王大人的……专用飞机杯吧%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3959',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着幸福得要融化了一般的笑容，用双腿缠住了%SAVESTR:PLAYER%的腰………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3961',
+        any: [
+          /^\s*PRINTFORMW 「哈……哈啊……用肛门接受……魔王大人的……疼爱了呢……%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3962',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%向%SAVESTR:PLAYER%露出幸福的笑容，已经成为性感带的肛门紧紧夹吸着阴茎。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3963',
+        any: [
+          /^\s*PRINTFORML 「不，不行了……肛门……舒服得……要上天了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3964',
+        any: [
+          /^\s*PRINTFORMW 肛交的快感让%SAVESTR:TARGET%的幸福娇喘在%SAVESTR:PLAYER%的耳边不断响起………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3966',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%在交合中不断撞击着%SAVESTR:TARGET%的腰身，聆听着%SAVESTR:TARGET%幸福的娇喘。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3967',
+        any: [
+          /^\s*PRINTFORML 「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3968',
+        any: [
+          /^\s*PRINTFORMW 作为回应，%SAVESTR:TARGET%用双腿缠住了%SAVESTR:PLAYER%的腰，肛门也紧紧吸吮着阴茎。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3969',
+        any: [
+          /^\s*PRINTFORMW 「魔，魔王大人……请尽情在……肛门里射精吧%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3969-3971',
+        any: [
+          /^\s*PRINTFORMW 「魔，魔王大人……请尽情在……肛门里射精吧%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3974',
+        any: [
+          /^\s*PRINTFORMW 「呜……还……还是有点点痛……不过，不要紧的……请魔王大人……尽情的……！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3975',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%有些吃痛地呻吟着，努力用肛门接纳着%SAVESTR:PLAYER%的阴茎。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3976',
+        any: [
+          /^\s*PRINTFORML 「呜……呜呜……直肠壁……被这么摩擦着……感觉……好奇怪！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3977',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被慢慢撑开的肛门却传来了奇特的满足感，让她忍不住呻吟了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3977-3978',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被慢慢撑开的肛门却传来了奇特的满足感，让她忍不住呻吟了起来……\s*$\s*^\s*CFLAG:327 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3981',
+        any: [/^\s*PRINTFORMW 「呜……呜啊啊……插……插进屁股里了……！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3982',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被充分开发的肛门，已经完全接纳了%SAVESTR:PLAYER%的阴茎。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3983',
+        any: [
+          /^\s*PRINTFORML 「侵犯得……太激烈了……但，但是……感觉……又好奇怪啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3984',
+        any: [
+          /^\s*PRINTFORMW 感受着肛交的快感，%SAVESTR:TARGET%后仰着头，呻吟了起来。。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3985',
+        any: [/^\s*PRINTFORMW 「为，为什么……屁股也会……这么舒服的啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3985-3986',
+        any: [
+          /^\s*PRINTFORMW 「为，为什么……屁股也会……这么舒服的啊啊！」\s*$\s*^\s*CFLAG:327 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3990',
+        any: [/^\s*PRINTFORMW 「呜……呜呜……好痛啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3992',
+        any: [/^\s*PRINTFORMW 「放……放开我啊啊……！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3994',
+        any: [/^\s*PRINTFORMW 「屁股……会坏掉的啊啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3996',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%压在身下，侵犯着尚未经过充分调教和开发的肛门。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3997',
+        any: [
+          /^\s*PRINTFORMW 意识到自己没有任何逃脱的机会，只能闭上眼睛拼命忍耐着\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3997-3998',
+        any: [
+          /^\s*PRINTFORMW 意识到自己没有任何逃脱的机会，只能闭上眼睛拼命忍耐着\s*$\s*^\s*CFLAG:327 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '3998-4003',
+        any: [
+          /^\s*CFLAG:327 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
         ],
       },
     ],
