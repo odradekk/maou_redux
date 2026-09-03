@@ -59,6 +59,21 @@ class StrongholdFacade {
   }
 
   /**
+   * 已性转（cflag:cid:70 ↔ CFLAG:70）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行309 CFLAG:70 = 性転換済（0:NO 1:YES)
+   * @returns {number}
+   */
+  get 已性转() {
+    return era.get(`cflag:${this.cid}:70`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 已性转(v) {
+    era.set(`cflag:${this.cid}:70`, v);
+  }
+
+  /**
    * 迷宫内行动（cflag:cid:500 ↔ CFLAG:500）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行385 CFLAG:500 = ダンジョン内行動(0:内職 1:売春 2:罠補充 3:施設拡張 4:潜入)
    * @returns {number}
