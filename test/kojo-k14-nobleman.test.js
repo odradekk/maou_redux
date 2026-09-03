@@ -1,0 +1,262 @@
+/**
+ * ere/kojo/kojo-k14-nobleman.js 的行为测试（issue #245：J35 口上·K14 貴公子）。
+ *
+ * 缝 = test/helpers/era-fixture.js。世界底座：貴公子（性格素质 174 →
+ * GET_KOJO_NUM = 114 → 分发 key 14）。
+ */
+
+'use strict';
+
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
+
+const { create_era_fixture } = require('./helpers/era-fixture');
+const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
+
+// 世界底座：貴公子（素质 174 → GET_KOJO_NUM = 114 → 分发 key 14）入列调教
+async function setup_k14(seed) {
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 20, '貴公子');
+  fixture.era.beginTrain(0, 20);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 20;
+  era_flag.player = 0;
+  era_flag.assi = -1;
+  era_flag.assiplay = 0;
+  fixture.store.set('talent:20:174', 1); // 貴公子 → GET_KOJO_NUM = 114
+  fixture.store.set('flag:114', 1); // K14 存在标志
+  fixture.store.set('flag:7', 2); // 口上总开关默认
+  if (seed) {
+    seed(fixture, era_flag);
+  }
+  fixture.load_module('kojo/kojo-system');
+  fixture.load_module('kojo/kojo-k14-nobleman');
+  return fixture;
+}
+
+// —— @EVENTTRAIN / @EVENTEND：存在标志一对 ——
+
+test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K14 一对）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.delete('flag:114');
+    f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机（避免打印）
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('flag:114'), 1); // K14 存在标志
+  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
+  await emit('EVENTEND');
+  assert.equal(fixture.store.get('flag:114'), 0);
+});
+
+test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('flag:7', 0);
+    f.store.set('cflag:20:201', 9); // 越过状态机
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('flag:7'), 2);
+});
+
+// —— @EVENTTRAIN：自身守卫 ——
+
+test('EVENTTRAIN 守卫①口上开关<0（玩家显式关掉）静默跳过', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('flag:7', -1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:20:201'), undefined);
+});
+
+test('EVENTTRAIN 守卫②TALENT:174!=1 静默跳过', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:174', 0);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:20:201'), undefined);
+});
+
+// —— @EVENTTRAIN：初调教 CFLAG:201 状态机 ——
+
+test('初调教（CFLAG:201==0）通常男（TALENT:122）：置 201=1，无 RETURN 1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:122', 1); // 男
+    f.store.set('talent:20:314', 0);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「可…可恶啊！！！你这个肮脏的魔王！！我郑重告诉你！我是绝对不会屈服于你的…！！」',
+    '怒目圆睁的眼睛中，隐约可以窥见他内心的恐惧……',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+  assert.equal(fixture.store.get('cflag:20:370'), undefined); // 男魔族分支才置 370
+});
+
+test('初调教 男魔族（TALENT:122 && 314==9）：置 201=1 且 370=1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:122', 1);
+    f.store.set('talent:20:314', 9); // 魔族
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+  assert.equal(fixture.store.get('cflag:20:370'), 1); // 魔族スイッチ１
+});
+
+test('初调教 已性转（CFLAG:70=1 && !TALENT:122）：RETURN 1（完整过场）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:122', 0);
+    f.store.set('cflag:20:70', 1); // 性転換済
+    f.store.set('talent:20:0', 1); // 处女（可选分档）
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('被改造成了女性的肉体')),
+    fixture.text_lines().join('\n'),
+  );
+  // 已性转档有 RETURN 1（与前面几档不同）
+});
+
+test('魔族化仅一次（201<5 && 370==0 && 魔族 && 无爱无淫乱）：置 370=2', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 1);
+    f.store.set('cflag:20:370', 0);
+    f.store.set('talent:20:314', 9);
+    f.store.set('talent:20:85', 0);
+    f.store.set('talent:20:76', 0);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('cflag:20:370'), 2);
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+});
+
+test('NTR 再捕获（201>=1 && CFLAG:650==1）愛/淫乱档：清 650=0', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 1);
+    f.store.set('cflag:20:650', 1);
+    f.store.set('talent:20:85', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('cflag:20:650'), 0);
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+});
+
+test('屈服刻印 Lv1（201<2 && MARK:2==1）：推进到 2', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 1);
+    f.store.set('mark:20:2', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('cflag:20:201'), 2);
+});
+
+test('屈服刻印 Lv2（201<3 && MARK:2==2）男档：推进到 3', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 2);
+    f.store.set('mark:20:2', 2);
+    f.store.set('talent:20:122', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「呃…，今天也要继续做那种事情啊…！？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 3);
+});
+
+test('爱（201<6 && 85）：男档台词 + 推进到 6', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 5);
+    f.store.set('talent:20:85', 1);
+    f.store.set('talent:20:122', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('cflag:20:201'), 6);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('已经绝对不会再反抗您了')),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+// —— @K14_KOJO2：二回目以降（经 EVENTTRAIN 尾档进入） ——
+
+test('无助手时 EVENTTRAIN 尾档 CALL K14_KOJO2：反抗刻印Lv3 分档台词', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 9); // 越过前段全部状态机分档
+    f.store.set('mark:20:3', 3); // 反抗刻印Lv3
+    f.store.set('talent:20:85', 0);
+    f.store.set('talent:20:76', 0);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「去死一死吧！！你这个又脏又可恶的魔王！！」',
+  ]);
+});
+
+test('K14_KOJO2 淫乱档：RAND 三选一（rand=0 时首句）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:201', 9);
+    f.store.set('talent:20:76', 1);
+    f.store.set('talent:20:85', 0);
+    f.store.set('talent:20:122', 1);
+  });
+  const { k14_kojo2 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await k14_kojo2(() => 0); // rand 恒 0 → 首句
+  assert.equal(
+    fixture.text_lines()[0],
+    '「啊~，魔王大人~，我啊…，一直都在这里等待着您的到来呢~」',
+  );
+});
+
+// —— @EVENTEND：调教结束 ——
+
+test('EVENTEND 守卫①口上开关<0 静默跳过', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('flag:7', -1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('EVENTEND 反発刻印Lv3+愛なし：去死台词', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('mark:20:3', 3);
+    f.store.set('mark:20:2', 3);
+    f.store.set('talent:20:85', 0);
+    f.store.set('talent:20:122', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), ['「嘁…！给我去死啊…！！！」']);
+});
+
+test('EVENTEND 爱（85）体力 500 未満：感谢台词（非魔族档）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:85', 1);
+    f.store.set('base:20:0', 300);
+    f.store.set('talent:20:314', 0);
+    f.store.set('talent:20:122', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」',
+  ]);
+});
