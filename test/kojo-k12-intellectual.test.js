@@ -704,3 +704,39 @@ test('SELECTCOM==37（肛门侍奉）初回 ABL:16>=3：推进到 1', async () =
   ]);
   assert.equal(fixture.store.get('cflag:20:338'), 1);
 });
+
+test('SELECTCOM==40（打屁股）初回：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {}, 40);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呀啊～、好痛、住手～、饶了我吧！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:341'), 1);
+});
+
+test('SELECTCOM==41（鞭）初回淫乱：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:76', 1);
+  }, 41);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「咿呀啊啊啊！　好有效～……」']);
+  assert.equal(fixture.store.get('cflag:20:342'), 1);
+});
+
+test('SELECTCOM==43（乳头轻咬）装/脱初回：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:43', 1);
+    f.store.set('talent:20:85', 1);
+  }, 43);
+  await speak_k12(fixture);
+  assert.equal(fixture.store.get('cflag:20:344'), 1);
+});
+
+test('SELECTCOM==55（交谈）爱慕：推进', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:85', 1);
+  }, 55);
+  await speak_k12(fixture);
+  assert.ok(fixture.text_lines().length >= 1);
+  assert.ok(fixture.store.get('cflag:20:356') > 0);
+});
