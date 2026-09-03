@@ -2092,3 +2092,133 @@ test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', asyn
     );
   }
 });
+
+async function ravish_k15(fixture) {
+  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
+    fixture.load_module('kojo/kojo-dungeon-ravish');
+  return { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family };
+}
+
+test('DUNGEON_RYOUZYOKU 处女それ以外；AFTER 处女', async () => {
+  const fixture = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:0`, 1);
+  });
+  const { ryouzyoku_kojo_family } = await ravish_k15(fixture);
+  await ryouzyoku_kojo_family.call(KEY, { args: [] });
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('第一次要被你们这些残渣')),
+    '凌辱前处女それ以外',
+  );
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('最低级的垃圾')),
+    '凌辱前处女それ以外收束',
+  );
+
+  const after = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:0`, 1);
+  });
+  const after_fams = await ravish_k15(after);
+  await after_fams.ryouzyoku_after_kojo_family.call(KEY, { args: [] });
+  assert.ok(
+    after.text_lines().some((l) => l.includes('处女还在')),
+    '凌辱后处女',
+  );
+});
+
+test('DUNGEON_VICTORY それ以外 RAND；ATTACK 侵攻中それ以外', async () => {
+  const win = await setup_k15((f) => {
+    f.store.set(`base:${CID}:0`, 80);
+    f.store.set(`maxbase:${CID}:0`, 100);
+    f.store.set(`base:${CID}:1`, 80);
+    f.store.set(`maxbase:${CID}:1`, 100);
+  });
+  const { dungeon_victory_family } = win.load_module('kojo/kojo-system');
+  await dungeon_victory_family.call(KEY, { args: [seq_rand(0)] });
+  assert.ok(win.text_lines().includes(''), '胜利空 PRINTFORMW 决台词');
+  assert.ok(
+    win.text_lines().some((l) => l.includes('跟这种杂鱼战斗')),
+    '胜利それ以外 RAND:3==0',
+  );
+  assert.ok(
+    win.text_lines().some((l) => l.includes('真像纸糊的一样')),
+    '胜利余裕',
+  );
+
+  const atk = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:1`, 2);
+  });
+  const atk_sys = atk.load_module('kojo/kojo-system');
+  await atk_sys.dungeon_attack_family.call(KEY, { args: [seq_rand(0)] });
+  assert.ok(
+    atk.text_lines().some((l) => l.includes('别做无谓的抵抗')),
+    '攻击侵攻中それ以外',
+  );
+});
+
+test('BENKI FLAG:62==0 空 PRINTFORMW；NTR P==1 推进 650/651', async () => {
+  const benki = await setup_k15();
+  const { game } = benki.load_module('facade/game');
+  game.train.肉便器行动 = 0;
+  const { benki_koujo_family } = benki.load_module('kojo/kojo-system');
+  await benki_koujo_family.call(KEY, { args: [] });
+  assert.ok(benki.text_lines().includes(''), 'BENKI 空 PRINTFORMW');
+
+  const ntr = await setup_k15();
+  const ntr_sys = ntr.load_module('kojo/kojo-system');
+  await ntr_sys.ntr_koujo_family.call(KEY, { args: [() => 0, 1] });
+  assert.ok(ntr.text_lines().includes(''), 'NTR P==1 空 PRINTFORMW');
+  assert.equal(ntr.store.get(`cflag:${CID}:650`), 1, 'NTR再捕获');
+  assert.equal(ntr.store.get(`cflag:${CID}:651`), 1, 'NTR_651');
+});
+
+test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI 宽容', async () => {
+  const enter = await setup_k15();
+  const { enterenemy_koujo_family } = enter.load_module('kojo/kojo-system');
+  await enterenemy_koujo_family.call(KEY, { args: [] });
+  assert.ok(
+    enter.text_lines().some((l) => l.includes('也一定有击倒的办法')),
+    'ENTERENEMY それ以外',
+  );
+
+  const req = await setup_k15();
+  const { gohoubi_request_koujo_family } = req.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  await gohoubi_request_koujo_family.call(KEY, { args: [CID, undefined] });
+  assert.ok(
+    req.text_lines().some((l) => l.includes('想要一笔赏金')),
+    'GOHOUBI_REQUEST 钱',
+  );
+
+  const after = await setup_k15();
+  const { gohoubi_after_koujo_family, osioski_koujo_family } =
+    after.load_module('kojo/kojo-dungeon-after');
+  await gohoubi_after_koujo_family.call(KEY, { args: [CID, 1] });
+  assert.ok(
+    after.text_lines().some((l) => l.includes('能得到您的肯定')),
+    'GOHOUBI_AFTER 勋章',
+  );
+  const before = after.text_lines().length;
+  await osioski_koujo_family.call(KEY, { args: [CID, 0] });
+  assert.ok(
+    after
+      .text_lines()
+      .slice(before)
+      .some((l) => l.includes('您是如此的宽容')),
+    'OSIOKI 何もしない',
+  );
+});
+
+test('GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW', async () => {
+  const gobi = await setup_k15();
+  const { gobi_koujo_family } = gobi.load_module('kojo/kojo-system');
+  await gobi_koujo_family.call(KEY, { args: [1, () => 0] });
+  assert.deepEqual(gobi.text_lines(), ['♪']);
+
+  const exe = await setup_k15();
+  const { game } = exe.load_module('facade/game');
+  game.event.犬射精或处刑口上 = 4;
+  const exe_sys = exe.load_module('kojo/kojo-system');
+  await exe_sys.exucution_koujo_family.call(KEY, { args: [] });
+  assert.ok(exe.text_lines().includes(''), 'EXUCUTION 空 PRINTFORMW');
+});
