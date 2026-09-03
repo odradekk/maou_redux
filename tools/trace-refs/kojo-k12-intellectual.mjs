@@ -17374,8 +17374,886 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5024-5277',
+        any: [/^\s*@BENKI_KOUJO_K12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5043',
+        any: [/^\s*IF FLAG:62 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5046',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5047',
+        any: [
+          /^\s*PRINTFORMW 「感谢前来协助%SELF_CALL\(A\)%的『研究』♪%SELF_CALL\(A\)%也会更努力的、可以继续帮助%SELF_CALL\(A\)%做更多『実験』吗？拜托咯…♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5049',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5050',
+        any: [
+          /^\s*PRINTFORMW 「你们的龟头垢、一会儿能让我进行回収吗？　看起来能好好研究一下呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5052',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5053',
+        any: [/^\s*PRINTFORMW 「喂喂、再坚持一下。再过一会儿就射精了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5055',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5056',
+        any: [/^\s*PRINTFORMW 「把精液全射出来吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5058-5059',
+        any: [/^\s*PRINTFORMW 「呜呜……不潔啊……好汚」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5059',
+        any: [/^\s*PRINTFORMW 「呜呜……不潔啊……好汚」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5060-5061',
+        any: [/^\s*ELSEIF FLAG:62 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5061',
+        any: [/^\s*ELSEIF FLAG:62 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5064',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5065',
+        any: [
+          /^\s*PRINTFORMW 「比起雄性的阴茎还是女孩子的身体更有趣啊…%SELF_CALL\(A\)%、可以进行这项『研究』真是太『幸福』啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5066',
+        any: [
+          /^\s*PRINTFORMW 「刚听说常识被改变了的时候还是有些抵触的…可认真一想『女孩子之间做快乐的事是普通的』什么的、那不是理所当然的吗♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5067',
+        any: [
+          /^\s*PRINTFORMW 「真是不知道该怎么感谢、赐予了这么『美妙』的催眠的魔王大人呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5069',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5070',
+        any: [/^\s*PRINTFORMW 「哈啊哈啊……再抱紧一点……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5072',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5073',
+        any: [/^\s*PRINTFORMW 「真是好孩子……再把我抱紧一点……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5075',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5076',
+        any: [/^\s*PRINTFORMW 「让我亲亲吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5078-5079',
+        any: [/^\s*PRINTFORMW 「是女人吗……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5079',
+        any: [/^\s*PRINTFORMW 「是女人吗……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5080-5081',
+        any: [/^\s*ELSEIF FLAG:62 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5081',
+        any: [/^\s*ELSEIF FLAG:62 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5084',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5085',
+        any: [
+          /^\s*PRINTFORMW 「…之前便开始作为牝犬家畜的肉便器、像这样和野兽重复着『交配实验』的『研究』…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5086',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(A\)%对于负责这项『研究』还是『十分满足』的来着…难道有什么疑虑吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5087',
+        any: [
+          /^\s*PRINTFORMW 「常识改变？…真搞不懂到底在说什么玩意…这可是『%SELF_CALL\(A\)%自愿参与』的哦？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5089',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5090',
+        any: [/^\s*PRINTFORMW 「噗唏、噗唏！　噗唏～……哈啊哈啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5092',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5093',
+        any: [/^\s*PRINTFORMW 「汪、汪！　汪～……哈啊哈啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5095',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5096',
+        any: [/^\s*PRINTFORMW 「让我蹭一蹭吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5098-5099',
+        any: [/^\s*PRINTFORMW 「呜呜……动物的臭味……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5099',
+        any: [/^\s*PRINTFORMW 「呜呜……动物的臭味……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5100-5101',
+        any: [/^\s*ELSEIF  FLAG:62 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5101',
+        any: [/^\s*ELSEIF  FLAG:62 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5104',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '5106-5172',
         any: [/^\s*CALL BENKI_PLAYER_NAME\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5107',
+        any: [
+          /^\s*PRINTFORMW 的帮助、使用肛门和性器的『交配实验』得以进行咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5108',
+        any: [
+          /^\s*PRINTFORMW 「虽然被魔王大人做了肉便器洗脑、但是拜托%SELF_CALL\(A\)%新的『研究』的魔王大人真是太温柔了呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5109',
+        any: [
+          /^\s*PRINTFORMW 「这副身体到底能给多少雄性做快活的事呢…每天都可以做『实验』『实在是太爽了』啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5111',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5112',
+        any: [/^\s*PRINTFORMW 「哈啊哈啊……里面……被摩擦着呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5114',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5115',
+        any: [/^\s*PRINTFORMW 「哈啊哈啊……里面……被摩擦着呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5117',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5118',
+        any: [/^\s*PRINTFORMW 「换我来吧……拜托了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5120-5121',
+        any: [/^\s*PRINTFORMW 「呜呜……两边都被……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5121',
+        any: [/^\s*PRINTFORMW 「呜呜……两边都被……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5122-5123',
+        any: [/^\s*ELSEIF  FLAG:62 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5123',
+        any: [/^\s*ELSEIF  FLAG:62 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5126',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5129',
+        any: [
+          /^\s*PRINTFORMW 的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5130',
+        any: [
+          /^\s*PRINTFORMW 「虽然被魔王大人做了肉便器洗脑、但是拜托%SELF_CALL\(A\)%新的『研究』的魔王大人真是太温柔了呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5131',
+        any: [
+          /^\s*PRINTFORMW 「为了了解性器到底能让大家多舒服、于是直接向大家『发表』啦…每天都可以做『实验』『实在是太爽了』啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5133',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5134',
+        any: [/^\s*PRINTFORMW 「阴道……被扩张了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5136',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5137',
+        any: [/^\s*PRINTFORMW 「阴道……被扩张了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5139',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5140',
+        any: [/^\s*PRINTFORMW 「后面可不行哦、把前面给你弄吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5142-5143',
+        any: [/^\s*PRINTFORMW 「呜呜、您的奉仕我就收下了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5143',
+        any: [/^\s*PRINTFORMW 「呜呜、您的奉仕我就收下了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5144-5145',
+        any: [/^\s*ELSEIF  FLAG:62 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5145',
+        any: [/^\s*ELSEIF  FLAG:62 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5148',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5151',
+        any: [
+          /^\s*PRINTFORMW 的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5152',
+        any: [
+          /^\s*PRINTFORMW 「虽然被魔王大人做了肉便器洗脑、但是拜托%SELF_CALL\(A\)%新的『研究』的魔王大人真是太温柔了呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5153',
+        any: [
+          /^\s*PRINTFORMW 「『用肛门做爱很正常』嘛『没什么好羞耻』的啊…每天都可以做『实验』『实在是太爽了』啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5155',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5156',
+        any: [/^\s*PRINTFORMW 「肛门、湿漉漉的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5158',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5159',
+        any: [/^\s*PRINTFORMW 「肛门、湿漉漉的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5161',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5162',
+        any: [/^\s*PRINTFORMW 「您的肛交奉仕我就收下了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5164-5165',
+        any: [/^\s*PRINTFORMW 「呜呜……屁股被……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5165',
+        any: [/^\s*PRINTFORMW 「呜呜……屁股被……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5166-5167',
+        any: [/^\s*ELSEIF  FLAG:62 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5167',
+        any: [/^\s*ELSEIF  FLAG:62 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5170',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5173',
+        any: [
+          /^\s*PRINTFORMW 的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5174',
+        any: [
+          /^\s*PRINTFORMW 「虽然被魔王大人做了肉便器洗脑、但是拜托%SELF_CALL\(A\)%新的『研究』的魔王大人真是太温柔了呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5175',
+        any: [
+          /^\s*PRINTFORMW 「眼前的阴茎、传来那股『非它不可的香味』啦…每天都可以做『实验』『实在是太爽了』啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5177',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5178',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5180',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5181',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5183',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5184',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5186-5187',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5187',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5188-5189',
+        any: [/^\s*ELSEIF  FLAG:62 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5189',
+        any: [/^\s*ELSEIF  FLAG:62 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5192',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5193',
+        any: [/^\s*PRINTFORMW 「大家好、元\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5194',
+        any: [/^\s*IF TALENT:A:122 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5195',
+        any: [/^\s*PRINTFORM 勇者\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5196',
+        any: [/^\s*ELSEIF TALENT:A:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5197',
+        any: [/^\s*PRINTFORM 冒险者\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5198-5199',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%哟♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5199',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%哟♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5200',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(A\)%败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5201',
+        any: [
+          /^\s*PRINTFORMW 「现在正作为对野兽阴茎感兴趣的大变态、在魔王大人手下做『研究』呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5202',
+        any: [
+          /^\s*PRINTFORMW 「这种『异种交配实验』绝对会变成厉害的玩意的…所以想让更多的人看到%SELF_CALL\(A\)%交尾着的样子啊♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5204',
+        any: [/^\s*ELSEIF TALENT:A:牝犬\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5205',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5207',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5208',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5210',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5211',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5213',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5214',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5216-5217',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5217',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5218-5219',
+        any: [/^\s*ELSEIF  FLAG:62 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5219',
+        any: [/^\s*ELSEIF  FLAG:62 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5222',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5223',
+        any: [/^\s*PRINTFORMW 「大家好、元\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5224',
+        any: [/^\s*IF TALENT:A:122 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5225',
+        any: [/^\s*PRINTFORM 勇者\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5226',
+        any: [/^\s*ELSEIF TALENT:A:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5227',
+        any: [/^\s*PRINTFORM 冒险者\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5228-5229',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%哟♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5229',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%哟♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5230',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(A\)%败给了伟大的魔王大人之后…被彻头彻尾地调教并洗脑咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5231',
+        any: [
+          /^\s*PRINTFORMW 「现在作为喜欢在野外裸体的露出狂、在魔王大人手下做『研究』呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5232',
+        any: [
+          /^\s*PRINTFORMW 「这种『野外研究』非常浅显易懂…让别人看见自己裸体的样子真是件非常舒服的事啊♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5234',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5235',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5237',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5238',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5240',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5241',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5243-5244',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5244',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5245-5246',
+        any: [/^\s*ELSEIF  FLAG:62 == 12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5246',
+        any: [/^\s*ELSEIF  FLAG:62 == 12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5249',
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5250',
+        any: [/^\s*PRINTFORMW 「大家好、元\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5251',
+        any: [/^\s*IF TALENT:A:122 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5252',
+        any: [/^\s*PRINTFORM 勇者\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5253',
+        any: [/^\s*ELSEIF TALENT:A:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5254',
+        any: [/^\s*PRINTFORM 冒险者\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5255-5256',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%哟♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5256',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%哟♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5257',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(A\)%被伟大的魔王大人打败了之后…毫无抵抗的被开发了身体的每个角落啦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5258',
+        any: [
+          /^\s*PRINTFORMW 「现在成了除了自慰什么都不会思考的自慰狂、一直一个人做着『研究』哦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5259',
+        any: [
+          /^\s*PRINTFORMW 「啊啊、大家正在看着%SELF_CALL\(A\)%的『研究』啊…只是这么想想就又要绝顶了的样子啊♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5261',
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5262',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5264',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5265',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5267',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5268',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5270-5271',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5271',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5272-5277',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5273-5277',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5275-5277',
+        any: [/^\s*;-----------------------------------\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',

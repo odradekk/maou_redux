@@ -888,3 +888,29 @@ test('ntr_koujo_k12 P=4（授精）无淫乱/爱慕', async () => {
   ]);
   assert.equal(fixture.store.get('cflag:20:654'), 1);
 });
+
+test('benki_koujo_k12 FLAG:62==0（最下层奉仕）淫乱', async () => {
+  const fixture = await setup_k12((f) => {
+    const { game } = f.load_module('facade/game');
+    game.train.肉便器行动 = 0;
+    f.store.set('talent:20:76', 1);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.benki_koujo_k12();
+  assert.deepEqual(fixture.text_lines(), [
+    '「你们的龟头垢、一会儿能让我进行回收吗？　看起来能好好研究一下呢」',
+  ]);
+});
+
+test('benki_koujo_k12 FLAG:62==0 常识改写（FLAG:63）合并 CALL 称呼', async () => {
+  const fixture = await setup_k12((f) => {
+    const { game } = f.load_module('facade/game');
+    game.train.肉便器行动 = 0;
+    game.dungeon.肉便器常识改写 = 1;
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.benki_koujo_k12();
+  assert.deepEqual(fixture.text_lines(), [
+    '「感谢前来协助我的『研究』♪我也会更努力的、可以继续帮助我做更多『实验』吗？拜托咯…♪」',
+  ]);
+});

@@ -8659,6 +8659,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ["kojo-k12-intellectual"],
     must_mention: "ntr_koujo_k12 P=1（处女献出）",
   },
-
+  {
+    desc: "M3229 K12 BENKI 肉便器行动分档删松（FLAG:62==0 改恒 false）",
+    file: "ere/kojo/kojo-k12-intellectual.js",
+    find: "  if (game.train.肉便器行动 == 0) {",
+    replace: "  if (false) { // 变异：肉便器行动分档删松",
+    tests: ["kojo-k12-intellectual"],
+    must_mention: "benki_koujo_k12 FLAG:62==0（最下层奉仕）淫乱",
+  },
 
 ];

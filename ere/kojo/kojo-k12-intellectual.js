@@ -78,6 +78,7 @@ const {
   gohoubi_request_koujo_family,
   gobi_koujo_family,
   ntr_koujo_family,
+  benki_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -6564,6 +6565,7 @@ osioski_koujo_family.register(12, (cid, choice) =>
 );
 gobi_koujo_family.register(12, gobi_koujo_k12);
 ntr_koujo_family.register(12, ntr_koujo_k12);
+benki_koujo_family.register(12, benki_koujo_k12);
 exucution_koujo_family.register(12, exucution_koujo_k12);
 museum_koujo_family.register(12, museum_koujo_k12);
 banishment_koujo_family.register(12, banishment_koujo_k12);
@@ -7944,6 +7946,328 @@ async function ntr_koujo_k12(rand, P) {
   return 0; // :5600-5602
 }
 
+// @BENKI_KOUJO_K12（:5024-5277）：肉便器行动口上（benki_koujo_family）。A = 目标角色
+// （era_flag.target）。FLAG:62 行动类型 0-12 档 × 常识改写（FLAG:63==1）/淫乱/爱慕/
+// 侍奉Lv5/それ以外 五选一。CALL BENKI_PLAYER_NAME 输出玩家称呼——真身
+// ere/system/train/benki.js 的 benki_player_name() 返回字符串，调用点自行 print
+// （K3 同款延迟 require）。
+async function benki_koujo_k12(rand) {
+  void rand;
+  const target = era_flag.target;
+  const a = era_flag.target; // 源 A（肉便器行动对象）
+  const target_name = chara_callname(a); // %SAVESTR:A%（初稿已展开）
+  const sc = (x = target) => self_call(x); // %SELF_CALL(A)%
+  const benki_player_name = () =>
+    require('#/system/train/benki').benki_player_name(); // CALL BENKI_PLAYER_NAME
+  if (game.train.肉便器行动 == 0) {
+    // :5043
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5046
+      await era.printAndWait(
+        `「感谢前来协助${sc(a)}的『研究』♪${sc(a)}也会更努力的、可以继续帮助${sc(a)}做更多『实验』吗？拜托咯…♪」`,
+      ); // :5047
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5049
+      await era.printAndWait(
+        `「你们的龟头垢、一会儿能让我进行回收吗？　看起来能好好研究一下呢」`,
+      ); // :5050
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5052
+      await era.printAndWait(`「喂喂、再坚持一下。再过一会儿就射精了」`); // :5053
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5055
+      await era.printAndWait(`「把精液全射出来吧……」`); // :5056
+    } else {
+      // :5058-5059
+      await era.printAndWait(`「呜呜……不洁啊……好污」`); // :5059
+    } // :5060-5061
+  } else if (game.train.肉便器行动 == 1) {
+    // :5061
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5064
+      await era.printAndWait(
+        `「比起雄性的阴茎还是女孩子的身体更有趣啊…${sc(a)}、可以进行这项『研究』真是太『幸福』啦♪」`,
+      ); // :5065
+      await era.printAndWait(
+        `「刚听说常识被改变了的时候还是有些抵触的…可认真一想『女孩子之间做快乐的事是普通的』什么的、那不是理所当然的吗♪」`,
+      ); // :5066
+      await era.printAndWait(
+        `「真是不知道该怎么感谢、赐予了这么『美妙』的催眠的魔王大人呢♪」`,
+      ); // :5067
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5069
+      await era.printAndWait(`「哈啊哈啊……再抱紧一点……」`); // :5070
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5072
+      await era.printAndWait(`「真是好孩子……再把我抱紧一点……」`); // :5073
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5075
+      await era.printAndWait(`「让我亲亲吧……」`); // :5076
+    } else {
+      // :5078-5079
+      await era.printAndWait(`「是女人吗……」`); // :5079
+    } // :5080-5081
+  } else if (game.train.肉便器行动 == 2) {
+    // :5081
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5084
+      await era.printAndWait(
+        `「…之前便开始作为牝犬家畜的肉便器、像这样和野兽重复着『交配实验』的『研究』…」`,
+      ); // :5085
+      await era.printAndWait(
+        `「${sc(a)}对于负责这项『研究』还是『十分满足』的来着…难道有什么疑虑吗？」`,
+      ); // :5086
+      await era.printAndWait(
+        `「常识改变？…真搞不懂到底在说什么玩意…这可是『${sc(a)}自愿参与』的哦？」`,
+      ); // :5087
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5089
+      await era.printAndWait(`「噗唏、噗唏！　噗唏～……哈啊哈啊」`); // :5090
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5092
+      await era.printAndWait(`「汪、汪！　汪～……哈啊哈啊」`); // :5093
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5095
+      await era.printAndWait(`「让我蹭一蹭吧……」`); // :5096
+    } else {
+      // :5098-5099
+      await era.printAndWait(`「呜呜……动物的臭味……」`); // :5099
+    } // :5100-5101
+  } else if (game.train.肉便器行动 == 3) {
+    // :5101
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5104
+      await era.printAndWait(
+        '「多亏' +
+          benki_player_name() +
+          `的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,
+      ); // :5107
+      await era.printAndWait(
+        `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
+      ); // :5108
+      await era.printAndWait(
+        `「这副身体到底能给多少雄性做快活的事呢…每天都可以做『实验』『实在是太爽了』啦♪」`,
+      ); // :5109
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5111
+      await era.printAndWait(`「哈啊哈啊……里面……被摩擦着呢……」`); // :5112
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5114
+      await era.printAndWait(`「哈啊哈啊……里面……被摩擦着呢……」`); // :5115
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5117
+      await era.printAndWait(`「换我来吧……拜托了」`); // :5118
+    } else {
+      // :5120-5121
+      await era.printAndWait(`「呜呜……两边都被……」`); // :5121
+    } // :5122-5123
+  } else if (game.train.肉便器行动 == 4) {
+    // :5123
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5126
+      await era.printAndWait(
+        '「多亏' +
+          benki_player_name() +
+          `的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」`,
+      ); // :5129
+      await era.printAndWait(
+        `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
+      ); // :5130
+      await era.printAndWait(
+        `「为了了解性器到底能让大家多舒服、于是直接向大家『发表』啦…每天都可以做『实验』『实在是太爽了』啦♪」`,
+      ); // :5131
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5133
+      await era.printAndWait(`「阴道……被扩张了……」`); // :5134
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5136
+      await era.printAndWait(`「阴道……被扩张了……」`); // :5137
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5139
+      await era.printAndWait(`「后面可不行哦、把前面给你弄吧……」`); // :5140
+    } else {
+      // :5142-5143
+      await era.printAndWait(`「呜呜、您的奉仕我就收下了……」`); // :5143
+    } // :5144-5145
+  } else if (game.train.肉便器行动 == 5) {
+    // :5145
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5148
+      await era.printAndWait(
+        '「多亏' +
+          benki_player_name() +
+          `的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」`,
+      ); // :5151
+      await era.printAndWait(
+        `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
+      ); // :5152
+      await era.printAndWait(
+        `「『用肛门做爱很正常』嘛『没什么好羞耻』的啊…每天都可以做『实验』『实在是太爽了』啦♪」`,
+      ); // :5153
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5155
+      await era.printAndWait(`「肛门、湿漉漉的……」`); // :5156
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5158
+      await era.printAndWait(`「肛门、湿漉漉的……」`); // :5159
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5161
+      await era.printAndWait(`「您的肛交奉仕我就收下了……」`); // :5162
+    } else {
+      // :5164-5165
+      await era.printAndWait(`「呜呜……屁股被……」`); // :5165
+    } // :5166-5167
+  } else if (game.train.肉便器行动 == 6) {
+    // :5167
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5170
+      await era.printAndWait(
+        '「多亏' +
+          benki_player_name() +
+          `的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,
+      ); // :5173
+      await era.printAndWait(
+        `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
+      ); // :5174
+      await era.printAndWait(
+        `「眼前的阴茎、传来那股『非它不可的香味』啦…每天都可以做『实验』『实在是太爽了』啦♪」`,
+      ); // :5175
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5177
+      await era.printAndWait(''); // :5178
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5180
+      await era.printAndWait(''); // :5181
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5183
+      await era.printAndWait(''); // :5184
+    } else {
+      // :5186-5187
+      await era.printAndWait(''); // :5187
+    } // :5188-5189
+  } else if (game.train.肉便器行动 == 7) {
+    // :5189
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5192
+      await era.printAndWait(`「大家好、元`); // :5193
+      if (era.get(`talent:${a}:122`) == 0) {
+        // :5194
+        await era.print(`勇者`); // :5195
+      } else if (era.get(`talent:${a}:122`)) {
+        // :5196
+        await era.print(`冒险者`); // :5197
+      } // :5198-5199
+      await era.print(`${target_name}哟♪」`); // :5199
+      await era.printAndWait(
+        `「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,
+      ); // :5200
+      await era.printAndWait(
+        `「现在正作为对野兽阴茎感兴趣的大变态、在魔王大人手下做『研究』呢♪」`,
+      ); // :5201
+      await era.printAndWait(
+        `「这种『异种交配实验』绝对会变成厉害的玩意的…所以想让更多的人看到${sc(a)}交尾着的样子啊♪」`,
+      ); // :5202
+    } else if (era.get(`talent:${a}:牝犬`)) {
+      // :5204
+      await era.printAndWait(''); // :5205
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5207
+      await era.printAndWait(''); // :5208
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5210
+      await era.printAndWait(''); // :5211
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5213
+      await era.printAndWait(''); // :5214
+    } else {
+      // :5216-5217
+      await era.printAndWait(''); // :5217
+    } // :5218-5219
+  } else if (game.train.肉便器行动 == 9) {
+    // :5219
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5222
+      await era.printAndWait(`「大家好、元`); // :5223
+      if (era.get(`talent:${a}:122`) == 0) {
+        // :5224
+        await era.print(`勇者`); // :5225
+      } else if (era.get(`talent:${a}:122`)) {
+        // :5226
+        await era.print(`冒险者`); // :5227
+      } // :5228-5229
+      await era.print(`${target_name}哟♪」`); // :5229
+      await era.printAndWait(
+        `「${sc(a)}败给了伟大的魔王大人之后…被彻头彻尾地调教并洗脑咯♪」`,
+      ); // :5230
+      await era.printAndWait(
+        `「现在作为喜欢在野外裸体的露出狂、在魔王大人手下做『研究』呢♪」`,
+      ); // :5231
+      await era.printAndWait(
+        `「这种『野外研究』非常浅显易懂…让别人看见自己裸体的样子真是件非常舒服的事啊♪」`,
+      ); // :5232
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5234
+      await era.printAndWait(''); // :5235
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5237
+      await era.printAndWait(''); // :5238
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5240
+      await era.printAndWait(''); // :5241
+    } else {
+      // :5243-5244
+      await era.printAndWait(''); // :5244
+    } // :5245-5246
+  } else if (game.train.肉便器行动 == 12) {
+    // :5246
+
+    if (game.dungeon.肉便器常识改写 == 1) {
+      // :5249
+      await era.printAndWait(`「大家好、元`); // :5250
+      if (era.get(`talent:${a}:122`) == 0) {
+        // :5251
+        await era.print(`勇者`); // :5252
+      } else if (era.get(`talent:${a}:122`)) {
+        // :5253
+        await era.print(`冒险者`); // :5254
+      } // :5255-5256
+      await era.print(`${target_name}哟♪」`); // :5256
+      await era.printAndWait(
+        `「${sc(a)}被伟大的魔王大人打败了之后…毫无抵抗的被开发了身体的每个角落啦♪」`,
+      ); // :5257
+      await era.printAndWait(
+        `「现在成了除了自慰什么都不会思考的自慰狂、一直一个人做着『研究』哦♪」`,
+      ); // :5258
+      await era.printAndWait(
+        `「啊啊、大家正在看着${sc(a)}的『研究』啊…只是这么想想就又要绝顶了的样子啊♪」`,
+      ); // :5259
+    } else if (era.get(`talent:${a}:76`) == 1) {
+      // :5261
+      await era.printAndWait(''); // :5262
+    } else if (era.get(`talent:${a}:85`)) {
+      // :5264
+      await era.printAndWait(''); // :5265
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :5267
+      await era.printAndWait(''); // :5268
+    } else {
+      // :5270-5271
+      await era.printAndWait(''); // :5271
+    } // :5272-5277
+  } // :5273-5277
+
+  return 0; // :5275-5277
+}
+
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
@@ -7965,6 +8289,7 @@ module.exports = {
   osioki_koujo_k12,
   gobi_koujo_k12,
   ntr_koujo_k12,
+  benki_koujo_k12,
   colosseum_kojo_12,
   dog_kojo_12,
   STUBBED_CALLS,
