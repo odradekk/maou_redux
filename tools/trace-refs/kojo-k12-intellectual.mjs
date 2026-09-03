@@ -16303,8 +16303,703 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4618',
+        any: [/^\s*IF TFLAG:13 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4620',
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4621',
+        any: [/^\s*PRINTFORMW 「啊哈、啊哈哈、啊哈哈哈」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4623',
+        any: [/^\s*ELSEIF Q == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4624',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%……一想到女孩子的裸体……就自慰起来了呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4626',
+        any: [/^\s*ELSEIF Q == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4627',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%……果然对和異種交配……很有兴趣呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4629-4630',
+        any: [/^\s*;淫乱\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4631',
+        any: [/^\s*IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4632',
+        any: [/^\s*PRINTFORMW 「不行了、停不下来了～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4633',
+        any: [/^\s*CFLAG:261 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4635',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:261 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4636',
+        any: [/^\s*PRINTFORMW 「啊啊、停不下来了、变成猴子了～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4637',
+        any: [/^\s*CFLAG:261 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4639',
+        any: [
+          /^\s*ELSEIF ABL:31 >= 3 && \(CFLAG:261 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4640',
+        any: [/^\s*PRINTFORMW 「这样自慰下去的话……要变成白痴了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4641',
+        any: [/^\s*CFLAG:261 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4643',
+        any: [/^\s*ELSEIF CFLAG:261 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4644',
+        any: [/^\s*PRINTFORMW 「嗯、咕呜……呜嗯……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4645',
+        any: [/^\s*CFLAG:261 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4646-4650',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4647-4650',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4648-4650',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4653',
+        any: [/^\s*IF TFLAG:13 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4655',
+        any: [/^\s*IF TALENT:76 && \(CFLAG:262 < 5 \|\| FLAG:7 == 2\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4656',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4657',
+        any: [/^\s*CFLAG:262 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4659',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:262 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4660',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4661',
+        any: [/^\s*CFLAG:262 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4663',
+        any: [
+          /^\s*ELSEIF ABL:33 >= 3 && \(CFLAG:262 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4664',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4665',
+        any: [/^\s*CFLAG:262 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4667',
+        any: [
+          /^\s*ELSEIF ABL:22 >= 3 && \(CFLAG:262 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4668',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4669',
+        any: [/^\s*CFLAG:262 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4671',
+        any: [/^\s*ELSEIF CFLAG:262 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4672',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4673',
+        any: [/^\s*CFLAG:262 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4674-4677',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4675-4677',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4680',
+        any: [/^\s*IF TFLAG:13 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4682',
+        any: [
+          /^\s*IF TALENT:76 == 1 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4683',
+        any: [
+          /^\s*PRINTFORMW 「早上好。啊啊、生理现象……就交给%SELF_CALL\(TARGET\)%吧♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4684',
+        any: [/^\s*CFLAG:263 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4686',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4687',
+        any: [
+          /^\s*PRINTFORMW 「早上好。虽然早了点、开始研究吧。早上的话脑细胞会活性化呦」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4688',
+        any: [/^\s*CFLAG:263 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4690',
+        any: [
+          /^\s*ELSEIF ABL:16 >= 5 && \(CFLAG:263 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4691',
+        any: [
+          /^\s*PRINTFORMW 「嗯、%SELF_CALL\(TARGET\)%的好意。你就不用动了」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4692',
+        any: [/^\s*CFLAG:263 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4694',
+        any: [/^\s*ELSEIF CFLAG:263 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4695',
+        any: [/^\s*PRINTFORMW 「不要在意。只是我一时兴起」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4696',
+        any: [/^\s*CFLAG:263 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4697-4700',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4698-4700',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4703',
+        any: [/^\s*IF TFLAG:13 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4705',
+        any: [/^\s*IF ABL:2 >= 4 && \(CFLAG:264 < 2 \|\| FLAG:7 == 2\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4706',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4707',
+        any: [/^\s*CFLAG:264 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4709',
+        any: [/^\s*ELSEIF CFLAG:264 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4710',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4711',
+        any: [/^\s*CFLAG:264 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4712-4715',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4713-4715',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4718',
+        any: [/^\s*IF TFLAG:13 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4719',
+        any: [/^\s*IF CFLAG:265 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4720',
+        any: [
+          /^\s*PRINTFORMW 「呵呵、能陪我加一下班吗？　你和%SELF_CALL\(TARGET\)%的……淫乱的实验♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4721',
+        any: [/^\s*CFLAG:265 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4722-4725',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4723-4725',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4728',
+        any: [/^\s*IF TFLAG:13 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4730',
+        any: [/^\s*IF TALENT:85 && MARK:3 < 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4731',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4733',
+        any: [/^\s*ELSEIF MARK:3 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4734',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4736',
+        any: [/^\s*ELSEIF TALENT:76\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4737',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4739-4740',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4740',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4741-4742',
+        any: [/^\s*SIF TALENT:122 != 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '4743',
         any: [/^\s*CALL SELL_MATURO_K0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4744-4746',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4749',
+        any: [/^\s*IF TFLAG:13 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4750-4751',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4751',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4752-4755',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4753-4755',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4758',
+        any: [/^\s*IF TFLAG:13 == 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4759-4760',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4760',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4761-4764',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4762-4764',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4768',
+        any: [/^\s*IF TFLAG:13 == 11\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4770-4771',
+        any: [/^\s*;崩坏してしまった場合\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4772',
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4773',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4774',
+        any: [/^\s*PRINTFORMW 「不研究不研究的话……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4776',
+        any: [/^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4777',
+        any: [/^\s*PRINTFORMW 「来摸一下肚子……这是和你的爱的结晶哦……♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4779',
+        any: [/^\s*ELSEIF TALENT:136 && CFLAG:102 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4780',
+        any: [
+          /^\s*PRINTFORMW 「终于……作为交尾的结果、怀上来狗的孩子了……♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4782-4783',
+        any: [/^\s*PRINTFORMW 「原来如此、怀上孩子了啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4783',
+        any: [/^\s*PRINTFORMW 「原来如此、怀上孩子了啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4784-4785',
+        any: [/^\s*CFLAG:271 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4785',
+        any: [/^\s*CFLAG:271 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4786-4788',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4792',
+        any: [/^\s*IF TFLAG:13 == 12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4794-4795',
+        any: [/^\s*;崩坏している場合\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4796',
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4797',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4799',
+        any: [/^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4800',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4802-4803',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4803',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4804-4805',
+        any: [/^\s*CFLAG:272 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4805',
+        any: [/^\s*CFLAG:272 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4806-4808',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4811',
+        any: [/^\s*IF TFLAG:13 == 999\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4813',
+        any: [/^\s*IF TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4814',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4816-4817',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4817',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4818-4821',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4819-4821',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4824',
+        any: [/^\s*IF TFLAG:13 == 998\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4826',
+        any: [/^\s*IF TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4827',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4829-4830',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4830',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4831-4834',
+        any: [/^\s*;--------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4832-4834',
+        any: [/^\s*;--------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4837',
+        any: [/^\s*TFLAG:13 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4839-4841',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',

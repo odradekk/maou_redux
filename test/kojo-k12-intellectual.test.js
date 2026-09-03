@@ -783,3 +783,31 @@ test('dog_kojo_12 SELECTCOM 5 二回目牝犬（TALENT:136）：推进到 6', as
   await speak_k12(fixture);
   assert.equal(fixture.store.get('cflag:20:306'), 6);
 });
+
+test('self_kojo_k12 TFLAG:13==1（调教后自慰）q=1 百合妄想', async () => {
+  const fixture = await setup_k12((f) => {
+    const { game } = f.load_module('facade/game');
+    game.train.初吻与自我口上 = 1;
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.self_kojo_k12(undefined, 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我……一想到女孩子的裸体……就自慰起来了呢……」',
+  ]);
+  assert.equal(fixture.store.get('tflag:13'), 0);
+});
+
+test('self_kojo_k12 TFLAG:13==11（妊娠发觉）爱慕+主人种', async () => {
+  const fixture = await setup_k12((f) => {
+    const { game } = f.load_module('facade/game');
+    game.train.初吻与自我口上 = 11;
+    f.store.set('talent:20:85', 1);
+    f.store.set('cflag:20:102', 1);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.self_kojo_k12(undefined, 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「来摸一下肚子……这是和你的爱的结晶哦……♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:271'), 1);
+});

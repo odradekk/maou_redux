@@ -66,6 +66,7 @@ const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
   kojo_message_markcng_family,
+  self_kojo_family,
 } = require('#/kojo/kojo-system');
 
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
@@ -6535,12 +6536,308 @@ async function kojo_message_markcng_12(rand) {
 kojo_message_com_family.register(12, kojo_message_com_12);
 kojo_message_palamcng_family.register(12, kojo_message_palamcng_12);
 kojo_message_markcng_family.register(12, kojo_message_markcng_12);
+self_kojo_family.register(12, self_kojo_k12);
+
+// @SELF_KOJO_K12（:4614-4869）：事件口上（self_kojo family）。TFLAG:13 事件
+// 类型分档：1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 /
+// 6 成熟出售（SELL_MATURO_K0 存根）/ 9-10 妊娠发觉前段 / 11 妊娠发觉 /
+// 12 生产 / 999-998 育儿室·亲离。q 为自慰妄想对象（kojo-system.self_kojo 传）。
+// 空 PRINTFORMW 台词槽源留空，1:1 保留。
+async function self_kojo_k12(rand, q) {
+  const target = era_flag.target;
+  const kojo = chara(target).kojo;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  void rand;
+  void q;
+
+  if (game.train.初吻与自我口上 == 1) {
+    // :4618
+
+    if (era.get(`talent:${target}:9`) == 1) {
+      // :4620
+      await era.printAndWait(`「啊哈、啊哈哈、啊哈哈哈」`); // :4621
+    } else if (q == 1) {
+      // :4623
+      await era.printAndWait(
+        `「${sc()}……一想到女孩子的裸体……就自慰起来了呢……」`,
+      ); // :4624
+    } else if (q == 2) {
+      // :4626
+      await era.printAndWait(`「${sc()}……果然对和异种交配……很有兴趣呢」`); // :4627
+    } else {
+      // :4629-4630
+
+      if (
+        era.get(`talent:${target}:76`) &&
+        (kojo.调教后自慰 < 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4631
+        await era.printAndWait(`「不行了、停不下来了～」`); // :4632
+        // CFLAG:261  = 4（变量语义：CFLAG 族，261） // :4633
+        kojo.调教后自慰 = 4; // :4633
+      } else if (
+        era.get(`talent:${target}:85`) &&
+        (kojo.调教后自慰 < 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4635
+        await era.printAndWait(`「啊啊、停不下来了、变成猴子了～！」`); // :4636
+        // CFLAG:261  = 3（变量语义：CFLAG 族，261） // :4637
+        kojo.调教后自慰 = 3; // :4637
+      } else if (
+        era.get(`abl:${target}:31`) >= 3 &&
+        (kojo.调教后自慰 < 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4639
+        await era.printAndWait(`「这样自慰下去的话……要变成白痴了……」`); // :4640
+        // CFLAG:261  = 2（变量语义：CFLAG 族，261） // :4641
+        kojo.调教后自慰 = 2; // :4641
+      } else if (kojo.调教后自慰 < 1 || game.kojo.口上开关 == 2) {
+        // :4643
+        await era.printAndWait(`「嗯、咕呜……呜嗯……」`); // :4644
+        // CFLAG:261  = 1（变量语义：CFLAG 族，261） // :4645
+        kojo.调教后自慰 = 1; // :4645
+      } // :4646-4650
+    } // :4647-4650
+  } // :4648-4650
+
+  if (game.train.初吻与自我口上 == 2) {
+    // :4653
+
+    if (
+      era.get(`talent:${target}:76`) &&
+      (kojo.百合PLAY < 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :4655
+      await era.printAndWait(''); // :4656
+      // CFLAG:262  = 5（变量语义：CFLAG 族，262） // :4657
+      kojo.百合PLAY = 5; // :4657
+    } else if (
+      era.get(`talent:${target}:85`) &&
+      (kojo.百合PLAY < 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :4659
+      await era.printAndWait(''); // :4660
+      // CFLAG:262  = 4（变量语义：CFLAG 族，262） // :4661
+      kojo.百合PLAY = 4; // :4661
+    } else if (
+      era.get(`abl:${target}:33`) >= 3 &&
+      (kojo.百合PLAY < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4663
+      await era.printAndWait(''); // :4664
+      // CFLAG:262  = 3（变量语义：CFLAG 族，262） // :4665
+      kojo.百合PLAY = 3; // :4665
+    } else if (
+      era.get(`abl:${target}:22`) >= 3 &&
+      (kojo.百合PLAY < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4667
+      await era.printAndWait(''); // :4668
+      // CFLAG:262  = 2（变量语义：CFLAG 族，262） // :4669
+      kojo.百合PLAY = 2; // :4669
+    } else if (kojo.百合PLAY < 1 || game.kojo.口上开关 == 2) {
+      // :4671
+      await era.printAndWait(''); // :4672
+      // CFLAG:262  = 1（变量语义：CFLAG 族，262） // :4673
+      kojo.百合PLAY = 1; // :4673
+    } // :4674-4677
+  } // :4675-4677
+
+  if (game.train.初吻与自我口上 == 3) {
+    // :4680
+
+    if (
+      era.get(`talent:${target}:76`) == 1 &&
+      (kojo.朝口交 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4682
+      await era.printAndWait(`「早上好。啊啊、生理现象……就交给${sc()}吧♪」`); // :4683
+      // CFLAG:263  = 3（变量语义：CFLAG 族，263） // :4684
+      kojo.朝口交 = 3; // :4684
+    } else if (
+      era.get(`talent:${target}:85`) &&
+      (kojo.朝口交 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4686
+      await era.printAndWait(
+        `「早上好。虽然早了点、开始研究吧。早上的话脑细胞会活性化呦」`,
+      ); // :4687
+      // CFLAG:263  = 3（变量语义：CFLAG 族，263） // :4688
+      kojo.朝口交 = 3; // :4688
+    } else if (
+      era.get(`abl:${target}:16`) >= 5 &&
+      (kojo.朝口交 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4690
+      await era.printAndWait(`「嗯、${sc()}的好意。你就不用动了」`); // :4691
+      // CFLAG:263  = 2（变量语义：CFLAG 族，263） // :4692
+      kojo.朝口交 = 2; // :4692
+    } else if (kojo.朝口交 < 1 || game.kojo.口上开关 == 2) {
+      // :4694
+      await era.printAndWait(`「不要在意。只是我一时兴起」`); // :4695
+      // CFLAG:263  = 1（变量语义：CFLAG 族，263） // :4696
+      kojo.朝口交 = 1; // :4696
+    } // :4697-4700
+  } // :4698-4700
+
+  if (game.train.初吻与自我口上 == 4) {
+    // :4703
+
+    if (
+      era.get(`abl:${target}:2`) >= 4 &&
+      (kojo.调教后性交 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4705
+      await era.printAndWait(''); // :4706
+      // CFLAG:264  = 2（变量语义：CFLAG 族，264） // :4707
+      kojo.调教后性交 = 2; // :4707
+    } else if (kojo.调教后性交 < 1 || game.kojo.口上开关 == 2) {
+      // :4709
+      await era.printAndWait(''); // :4710
+      // CFLAG:264  = 1（变量语义：CFLAG 族，264） // :4711
+      kojo.调教后性交 = 1; // :4711
+    } // :4712-4715
+  } // :4713-4715
+
+  if (game.train.初吻与自我口上 == 5) {
+    // :4718
+    if (kojo.夜袭 < 1 || game.kojo.口上开关 == 2) {
+      // :4719
+      await era.printAndWait(
+        `「呵呵、能陪我加一下班吗？　你和${sc()}的……淫乱的实验♪」`,
+      ); // :4720
+      // CFLAG:265  = 1（变量语义：CFLAG 族，265） // :4721
+      kojo.夜袭 = 1; // :4721
+    } // :4722-4725
+  } // :4723-4725
+
+  if (game.train.初吻与自我口上 == 6) {
+    // :4728
+
+    if (era.get(`talent:${target}:85`) && era.get(`mark:${target}:3`) < 3) {
+      // :4730
+      await era.printAndWait(''); // :4731
+    } else if (era.get(`mark:${target}:3`) == 3) {
+      // :4733
+      await era.printAndWait(''); // :4734
+    } else if (era.get(`talent:${target}:76`)) {
+      // :4736
+      await era.printAndWait(''); // :4737
+    } else {
+      // :4739-4740
+      await era.printAndWait(''); // :4740
+    } // :4741-4742
+    if (era.get(`talent:${target}:122`) != 1) {
+      // :4743
+      // CALL SELL_MATURO_K0 // :4743
+    } // :4743
+  } // :4744-4746
+
+  if (game.train.初吻与自我口上 == 9) {
+    // :4749
+    era.drawLine(); // :4750-4751
+    await era.printAndWait(''); // :4751
+    era.drawLine(); // :4752-4755
+  } // :4753-4755
+
+  if (game.train.初吻与自我口上 == 10) {
+    // :4758
+    era.drawLine(); // :4759-4760
+    await era.printAndWait(''); // :4760
+    era.drawLine(); // :4761-4764
+  } // :4762-4764
+
+  if (game.train.初吻与自我口上 == 11) {
+    // :4768
+    if (kojo.妊娠发觉 >= 1) {
+      // :4770-4771
+      return 0; // :4770-4771
+    } // :4770-4771
+
+    if (era.get(`talent:${target}:9`) == 1) {
+      // :4772
+      await era.printAndWait(''); // :4773
+      await era.printAndWait(`「不研究不研究的话……」`); // :4774
+    } else if (
+      era.get(`talent:${target}:85`) &&
+      chara(target).event.妊娠相手 == 1
+    ) {
+      // :4776
+      await era.printAndWait(`「来摸一下肚子……这是和你的爱的结晶哦……♪」`); // :4777
+    } else if (
+      era.get(`talent:${target}:136`) &&
+      chara(target).event.妊娠相手 == 5
+    ) {
+      // :4779
+      await era.printAndWait(`「终于……作为交尾的结果、怀上来狗的孩子了……♪」`); // :4780
+    } else {
+      // :4782-4783
+      await era.printAndWait(`「原来如此、怀上孩子了啊……」`); // :4783
+    } // :4784-4785
+    // CFLAG:271  = 1（变量语义：CFLAG 族，271） // :4785
+    kojo.妊娠发觉 = 1; // :4785
+  } // :4786-4788
+
+  if (game.train.初吻与自我口上 == 12) {
+    // :4792
+    if (kojo.生产 >= 1) {
+      // :4794-4795
+      return 0; // :4794-4795
+    } // :4794-4795
+
+    if (era.get(`talent:${target}:9`) == 1) {
+      // :4796
+      await era.printAndWait(''); // :4797
+    } else if (
+      era.get(`talent:${target}:85`) &&
+      chara(target).event.妊娠相手 == 1
+    ) {
+      // :4799
+      await era.printAndWait(''); // :4800
+    } else {
+      // :4802-4803
+      await era.printAndWait(''); // :4803
+    } // :4804-4805
+    // CFLAG:272  = 1（变量语义：CFLAG 族，272） // :4805
+    kojo.生产 = 1; // :4805
+  } // :4806-4808
+
+  if (game.train.初吻与自我口上 == 999) {
+    // :4811
+
+    if (era.get(`talent:${target}:85`)) {
+      // :4813
+      await era.printAndWait(''); // :4814
+    } else {
+      // :4816-4817
+      await era.printAndWait(''); // :4817
+    } // :4818-4821
+  } // :4819-4821
+
+  if (game.train.初吻与自我口上 == 998) {
+    // :4824
+
+    if (era.get(`talent:${target}:85`)) {
+      // :4826
+      await era.printAndWait(''); // :4827
+    } else {
+      // :4829-4830
+      await era.printAndWait(''); // :4830
+    } // :4831-4834
+  } // :4832-4834
+
+  // TFLAG:13  = 0（变量语义：TFLAG 族，13） // :4837
+  game.train.初吻与自我口上 = 0; // :4837
+
+  return 0; // :4839-4841
+}
 
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
   kojo_message_palamcng_12,
   kojo_message_markcng_12,
+  self_kojo_k12,
   dog_kojo_12,
   STUBBED_CALLS,
 };
