@@ -5451,7 +5451,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
   },
   {
-    desc: 'M3184 COM10 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M4000 COM10 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -5467,7 +5467,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
   },
   {
-    desc: 'M3185 COM10 二回目 非助手玛奥屈服刻印Lv3 CFLAG:311 写错（3 改 2，#242）',
+    desc: 'M4001 COM10 二回目 非助手玛奥屈服刻印Lv3 CFLAG:311 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.振动宝石 = 3; // :1842-1843`,
     replace: `      kojo.振动宝石 = 2; // 变异`,
@@ -5475,7 +5475,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
   },
   {
-    desc: 'M3186 COM10 二回目 非助手玛奥それ以外 CFLAG:311 写错（2 改 1，#242）',
+    desc: 'M4002 COM10 二回目 非助手玛奥それ以外 CFLAG:311 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.振动宝石 = 2; // :1847-1848`,
     replace: `      kojo.振动宝石 = 1; // 变异`,
@@ -5483,7 +5483,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M3187 COM11 初めて 处女判据错格（TALENT:0 == 1 改 == 0，#242）',
+    desc: 'M4003 COM11 初めて 处女判据错格（TALENT:0 == 1 改 == 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 11) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -6043,7 +6043,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 13（肛门虫 CFLAG:314／着脱 CFLAG:374，#242） ----
   {
-    desc: 'M3188 COM13 TEQUIP:13 已装/未装判据取反（#242）',
+    desc: 'M4004 COM13 TEQUIP:13 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'if (era.get(`tequip:${target}:13`)) {',
     replace: 'if (!era.get(`tequip:${target}:13`)) {',
@@ -6051,7 +6051,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて（TEQUIP:13）：助手玛奥推进到 1',
   },
   {
-    desc: 'M3189 COM13 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4005 COM13 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱
@@ -6067,7 +6067,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M3190 COM13 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4006 COM13 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
@@ -6083,7 +6083,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて：非助手玛奥 + 爱慕推进到 1',
   },
   {
-    desc: 'M3191 COM13 初めて それ以外・A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4007 COM13 初めて それ以外・A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (chara(target).system.肛门感觉 >= 3) {
           // それ以外・A感覚Lv3以上`,
@@ -6093,7 +6093,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて：それ以外 + A感覚Lv3以上推进到 1',
   },
   {
-    desc: 'M3192 COM13 初めて CFLAG:314 写错（1 改 0，#242）',
+    desc: 'M4008 COM13 初めて CFLAG:314 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 1; // :2099`,
     replace: `        kojo.肛门虫 = 0; // :2099`,
@@ -6102,7 +6102,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M3193 COM13 二回目 助手玛奥淫乱＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4009 COM13 二回目 助手玛奥淫乱＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (
           era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6126,7 +6126,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6',
   },
   {
-    desc: 'M3194 COM13 二回目 助手玛奥淫乱＋A感覚Lv3以上 CFLAG:314 写错（6 改 5，#242）',
+    desc: 'M4010 COM13 二回目 助手玛奥淫乱＋A感覚Lv3以上 CFLAG:314 写错（6 改 5，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.肛门虫 = 6; // :2108-2109`,
     replace: `          kojo.肛门虫 = 5; // :2108-2109`,
@@ -6134,7 +6134,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6',
   },
   {
-    desc: 'M3195 COM13 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4011 COM13 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6156,7 +6156,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M3196 COM13 二回目 助手玛奥淫乱 CFLAG:314 写错（6 改 5，#242）',
+    desc: 'M4012 COM13 二回目 助手玛奥淫乱 CFLAG:314 写错（6 改 5，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.肛门虫 = 6; // :2113-2114`,
     replace: `          kojo.肛门虫 = 5; // :2113-2114`,
@@ -6164,7 +6164,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M3197 COM13 二回目 助手玛奥爱慕＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4013 COM13 二回目 助手玛奥爱慕＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6188,7 +6188,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3198 COM13 二回目 助手玛奥爱慕＋A感覚Lv3以上 CFLAG:314 写错（5 改 4，#242）',
+    desc: 'M4014 COM13 二回目 助手玛奥爱慕＋A感覚Lv3以上 CFLAG:314 写错（5 改 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.肛门虫 = 5; // :2118-2119`,
     replace: `          kojo.肛门虫 = 4; // :2118-2119`,
@@ -6196,7 +6196,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3199 COM13 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4015 COM13 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6218,7 +6218,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M3200 COM13 二回目 助手玛奥爱慕 CFLAG:314 写错（4 改 3，#242）',
+    desc: 'M4016 COM13 二回目 助手玛奥爱慕 CFLAG:314 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.肛门虫 = 4; // :2123-2124`,
     replace: `          kojo.肛门虫 = 3; // :2123-2124`,
@@ -6226,7 +6226,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M3201 COM13 二回目 助手玛奥A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4017 COM13 二回目 助手玛奥A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           chara(target).system.肛门感觉 >= 3 &&
@@ -6248,7 +6248,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3202 COM13 二回目 助手玛奥A感覚Lv3以上 CFLAG:314 写错（3 改 2，#242）',
+    desc: 'M4018 COM13 二回目 助手玛奥A感覚Lv3以上 CFLAG:314 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.肛门虫 = 3; // :2128-2129`,
     replace: `          kojo.肛门虫 = 2; // :2128-2129`,
@@ -6256,7 +6256,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3203 COM13 二回目 助手玛奥それ以外 CFLAG:314 写错（2 改 1，#242）',
+    desc: 'M4019 COM13 二回目 助手玛奥それ以外 CFLAG:314 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.肛门虫 = 2; // :2133-2134
         }
@@ -6277,7 +6277,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M3204 COM13 二回目 非助手玛奥淫乱＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4020 COM13 二回目 非助手玛奥淫乱＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6301,7 +6301,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6',
   },
   {
-    desc: 'M3205 COM13 二回目 非助手玛奥淫乱＋A感覚Lv3以上 CFLAG:314 写错（6 改 5，#242）',
+    desc: 'M4021 COM13 二回目 非助手玛奥淫乱＋A感覚Lv3以上 CFLAG:314 写错（6 改 5，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 6; // :2140-2141`,
     replace: `        kojo.肛门虫 = 5; // :2140-2141`,
@@ -6309,7 +6309,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6',
   },
   {
-    desc: 'M3206 COM13 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4022 COM13 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6331,7 +6331,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M3207 COM13 二回目 非助手玛奥淫乱 CFLAG:314 写错（6 改 5，#242）',
+    desc: 'M4023 COM13 二回目 非助手玛奥淫乱 CFLAG:314 写错（6 改 5，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 6; // :2145-2146`,
     replace: `        kojo.肛门虫 = 5; // :2145-2146`,
@@ -6339,7 +6339,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M3208 COM13 二回目 非助手玛奥爱慕＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4024 COM13 二回目 非助手玛奥爱慕＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6363,7 +6363,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3209 COM13 二回目 非助手玛奥爱慕＋A感覚Lv3以上 CFLAG:314 写错（5 改 4，#242）',
+    desc: 'M4025 COM13 二回目 非助手玛奥爱慕＋A感覚Lv3以上 CFLAG:314 写错（5 改 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 5; // :2150-2151`,
     replace: `        kojo.肛门虫 = 4; // :2150-2151`,
@@ -6371,7 +6371,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3210 COM13 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4026 COM13 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6393,7 +6393,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M3211 COM13 二回目 非助手玛奥爱慕 CFLAG:314 写错（4 改 3，#242）',
+    desc: 'M4027 COM13 二回目 非助手玛奥爱慕 CFLAG:314 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 4; // :2155-2156`,
     replace: `        kojo.肛门虫 = 3; // :2155-2156`,
@@ -6401,7 +6401,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M3212 COM13 二回目 非助手玛奥A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4028 COM13 二回目 非助手玛奥A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         chara(target).system.肛门感觉 >= 3 &&
@@ -6423,7 +6423,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3213 COM13 二回目 非助手玛奥A感覚Lv3以上 CFLAG:314 写错（3 改 2，#242）',
+    desc: 'M4029 COM13 二回目 非助手玛奥A感覚Lv3以上 CFLAG:314 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 3; // :2160-2161`,
     replace: `        kojo.肛门虫 = 2; // :2160-2161`,
@@ -6431,7 +6431,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3214 COM13 二回目 非助手玛奥それ以外 CFLAG:314 写错（2 改 1，#242）',
+    desc: 'M4030 COM13 二回目 非助手玛奥それ以外 CFLAG:314 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛门虫 = 2; // :2165-2166
       }
@@ -6444,7 +6444,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:13 == 0） ----
   {
-    desc: 'M3215 COM13 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4031 COM13 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    // :2172-2190 脱着時（TEQUIP:13 == 0）
     if (
@@ -6460,7 +6460,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時（TEQUIP:13 == 0）：淫乱推进到 4',
   },
   {
-    desc: 'M3216 COM13 脱着時 淫乱 CFLAG:374 写错（4 改 3，#242）',
+    desc: 'M4032 COM13 脱着時 淫乱 CFLAG:374 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛门虫着脱 = 4; // :2176`,
     replace: `      kojo.肛门虫着脱 = 3; // :2176`,
@@ -6468,7 +6468,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時（TEQUIP:13 == 0）：淫乱推进到 4',
   },
   {
-    desc: 'M3217 COM13 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4033 COM13 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6482,7 +6482,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時：爱慕推进到 3',
   },
   {
-    desc: 'M3218 COM13 脱着時 爱慕 CFLAG:374 写错（3 改 2，#242）',
+    desc: 'M4034 COM13 脱着時 爱慕 CFLAG:374 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛门虫着脱 = 3; // :2180`,
     replace: `      kojo.肛门虫着脱 = 2; // :2180`,
@@ -6490,7 +6490,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時：爱慕推进到 3',
   },
   {
-    desc: 'M3219 COM13 脱着時 A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4035 COM13 脱着時 A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       chara(target).system.肛门感觉 >= 3 &&
@@ -6504,7 +6504,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時：A感覚Lv3以上推进到 2',
   },
   {
-    desc: 'M3220 COM13 脱着時 A感覚Lv3以上 CFLAG:374 写错（2 改 1，#242）',
+    desc: 'M4036 COM13 脱着時 A感覚Lv3以上 CFLAG:374 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛门虫着脱 = 2; // :2184`,
     replace: `      kojo.肛门虫着脱 = 1; // :2184`,
@@ -6512,7 +6512,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時：A感覚Lv3以上推进到 2',
   },
   {
-    desc: 'M3221 COM13 脱着時 それ以外 CFLAG:374 写错（1 改 0，#242）',
+    desc: 'M4037 COM13 脱着時 それ以外 CFLAG:374 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛门虫着脱 = 1; // :2188
     }
@@ -6525,7 +6525,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 14（阴蒂夹 CFLAG:315／着脱 CFLAG:375，#242） ----
   {
-    desc: 'M3222 COM14 TEQUIP:14 已装/未装判据取反（#242）',
+    desc: 'M4038 COM14 TEQUIP:14 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'if (era.get(`tequip:${target}:14`)) {',
     replace: 'if (!era.get(`tequip:${target}:14`)) {',
@@ -6533,7 +6533,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M3223 COM14 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4039 COM14 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱
@@ -6549,7 +6549,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M3224 COM14 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4040 COM14 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
@@ -6565,7 +6565,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 初めて：非助手玛奥 + 爱慕推进到 1',
   },
   {
-    desc: 'M3225 COM14 初めて CFLAG:315 写错（1 改 0，#242）',
+    desc: 'M4041 COM14 初めて CFLAG:315 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.阴蒂夹 = 1; // :2220`,
     replace: `        kojo.阴蒂夹 = 0; // :2220`,
@@ -6574,7 +6574,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M3226 COM14 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4042 COM14 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (
           era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6596,7 +6596,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3227 COM14 二回目 助手玛奥淫乱 CFLAG:315 写错（4 改 3，#242）',
+    desc: 'M4043 COM14 二回目 助手玛奥淫乱 CFLAG:315 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.阴蒂夹 = 4; // :2229-2230`,
     replace: `          kojo.阴蒂夹 = 3; // :2229-2230`,
@@ -6604,7 +6604,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3228 COM14 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4044 COM14 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6626,7 +6626,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3229 COM14 二回目 助手玛奥爱慕 CFLAG:315 写错（3 改 2，#242）',
+    desc: 'M4045 COM14 二回目 助手玛奥爱慕 CFLAG:315 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.阴蒂夹 = 3; // :2234-2235`,
     replace: `          kojo.阴蒂夹 = 2; // :2234-2235`,
@@ -6634,7 +6634,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3230 COM14 二回目 助手玛奥それ以外 CFLAG:315 写错（2 改 1，#242）',
+    desc: 'M4046 COM14 二回目 助手玛奥それ以外 CFLAG:315 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.阴蒂夹 = 2; // :2239-2240`,
     replace: `          kojo.阴蒂夹 = 1; // :2239-2240`,
@@ -6643,7 +6643,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M3231 COM14 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4047 COM14 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6665,7 +6665,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3232 COM14 二回目 非助手玛奥淫乱 CFLAG:315 写错（4 改 3，#242）',
+    desc: 'M4048 COM14 二回目 非助手玛奥淫乱 CFLAG:315 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.阴蒂夹 = 4; // :2246-2247`,
     replace: `        kojo.阴蒂夹 = 3; // :2246-2247`,
@@ -6673,7 +6673,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3233 COM14 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4049 COM14 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6695,7 +6695,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：非助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3234 COM14 二回目 非助手玛奥爱慕 CFLAG:315 写错（3 改 2，#242）',
+    desc: 'M4050 COM14 二回目 非助手玛奥爱慕 CFLAG:315 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.阴蒂夹 = 3; // :2251-2252`,
     replace: `        kojo.阴蒂夹 = 2; // :2251-2252`,
@@ -6703,7 +6703,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：非助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3235 COM14 二回目 非助手玛奥それ以外 CFLAG:315 写错（2 改 1，#242）',
+    desc: 'M4051 COM14 二回目 非助手玛奥それ以外 CFLAG:315 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.阴蒂夹 = 2; // :2256-2257`,
     replace: `        kojo.阴蒂夹 = 1; // :2256-2257`,
@@ -6712,7 +6712,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:14 == 0） ----
   {
-    desc: 'M3236 COM14 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4052 COM14 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    // :2263-2277 脱着時（TEQUIP:14 == 0）
     if (
@@ -6728,7 +6728,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 脱着時（TEQUIP:14 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M3237 COM14 脱着時 淫乱 CFLAG:375 写错（3 改 2，#242）',
+    desc: 'M4053 COM14 脱着時 淫乱 CFLAG:375 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.阴蒂夹着脱 = 3; // :2267`,
     replace: `      kojo.阴蒂夹着脱 = 2; // :2267`,
@@ -6736,7 +6736,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 脱着時（TEQUIP:14 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M3238 COM14 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4054 COM14 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6750,7 +6750,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 脱着時：爱慕推进到 2',
   },
   {
-    desc: 'M3239 COM14 脱着時 爱慕 CFLAG:375 写错（2 改 1，#242）',
+    desc: 'M4055 COM14 脱着時 爱慕 CFLAG:375 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.阴蒂夹着脱 = 2; // :2271`,
     replace: `      kojo.阴蒂夹着脱 = 1; // :2271`,
@@ -6758,7 +6758,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 脱着時：爱慕推进到 2',
   },
   {
-    desc: 'M3240 COM14 脱着時 それ以外 CFLAG:375 写错（1 改 0，#242）',
+    desc: 'M4056 COM14 脱着時 それ以外 CFLAG:375 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.阴蒂夹着脱 = 1; // :2275
     }
@@ -6771,7 +6771,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 15（乳头夹 CFLAG:316／着脱 CFLAG:376，#242） ----
   {
-    desc: 'M3241 COM15 TEQUIP:15 已装/未装判据取反（#242）',
+    desc: 'M4057 COM15 TEQUIP:15 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'if (era.get(`tequip:${target}:15`)) {',
     replace: 'if (!era.get(`tequip:${target}:15`)) {',
@@ -6779,7 +6779,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M3242 COM15 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4058 COM15 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱
@@ -6795,7 +6795,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M3243 COM15 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4059 COM15 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
@@ -6811,7 +6811,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 初めて：非助手玛奥 + 爱慕推进到 1',
   },
   {
-    desc: 'M3244 COM15 初めて CFLAG:316 写错（1 改 0，#242）',
+    desc: 'M4060 COM15 初めて CFLAG:316 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.乳头夹 = 1; // :2307`,
     replace: `        kojo.乳头夹 = 0; // :2307`,
@@ -6820,7 +6820,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M3245 COM15 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4061 COM15 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (
           era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6842,7 +6842,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3246 COM15 二回目 助手玛奥淫乱 CFLAG:316 写错（4 改 3，#242）',
+    desc: 'M4062 COM15 二回目 助手玛奥淫乱 CFLAG:316 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.乳头夹 = 4; // :2316-2317`,
     replace: `          kojo.乳头夹 = 3; // :2316-2317`,
@@ -6850,7 +6850,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3247 COM15 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4063 COM15 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6872,7 +6872,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3248 COM15 二回目 助手玛奥爱慕 CFLAG:316 写错（3 改 2，#242）',
+    desc: 'M4064 COM15 二回目 助手玛奥爱慕 CFLAG:316 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.乳头夹 = 3; // :2321-2322`,
     replace: `          kojo.乳头夹 = 2; // :2321-2322`,
@@ -6880,7 +6880,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3249 COM15 二回目 助手玛奥それ以外 CFLAG:316 写错（2 改 1，#242）',
+    desc: 'M4065 COM15 二回目 助手玛奥それ以外 CFLAG:316 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.乳头夹 = 2; // :2326-2327`,
     replace: `          kojo.乳头夹 = 1; // :2326-2327`,
@@ -6889,7 +6889,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M3250 COM15 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4066 COM15 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6911,7 +6911,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3251 COM15 二回目 非助手玛奥淫乱 CFLAG:316 写错（4 改 3，#242）',
+    desc: 'M4067 COM15 二回目 非助手玛奥淫乱 CFLAG:316 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.乳头夹 = 4; // :2333-2334`,
     replace: `        kojo.乳头夹 = 3; // :2333-2334`,
@@ -6919,7 +6919,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3252 COM15 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4068 COM15 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6941,7 +6941,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：非助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3253 COM15 二回目 非助手玛奥爱慕 CFLAG:316 写错（3 改 2，#242）',
+    desc: 'M4069 COM15 二回目 非助手玛奥爱慕 CFLAG:316 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.乳头夹 = 3; // :2338-2339`,
     replace: `        kojo.乳头夹 = 2; // :2338-2339`,
@@ -6949,7 +6949,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：非助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3254 COM15 二回目 非助手玛奥それ以外 CFLAG:316 写错（2 改 1，#242）',
+    desc: 'M4070 COM15 二回目 非助手玛奥それ以外 CFLAG:316 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.乳头夹 = 2; // :2343-2344`,
     replace: `        kojo.乳头夹 = 1; // :2343-2344`,
@@ -6958,7 +6958,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:15 == 0） ----
   {
-    desc: 'M3255 COM15 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4071 COM15 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    // :2350-2363 脱着時（TEQUIP:15 == 0）
     if (
@@ -6974,7 +6974,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 脱着時（TEQUIP:15 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M3256 COM15 脱着時 淫乱 CFLAG:376 写错（3 改 2，#242）',
+    desc: 'M4072 COM15 脱着時 淫乱 CFLAG:376 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.乳头夹着脱 = 3; // :2354`,
     replace: `      kojo.乳头夹着脱 = 2; // :2354`,
@@ -6982,7 +6982,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 脱着時（TEQUIP:15 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M3257 COM15 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4073 COM15 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6996,7 +6996,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 脱着時：爱慕推进到 2',
   },
   {
-    desc: 'M3258 COM15 脱着時 爱慕 CFLAG:376 写错（2 改 1，#242）',
+    desc: 'M4074 COM15 脱着時 爱慕 CFLAG:376 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.乳头夹着脱 = 2; // :2358`,
     replace: `      kojo.乳头夹着脱 = 1; // :2358`,
@@ -7004,7 +7004,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 脱着時：爱慕推进到 2',
   },
   {
-    desc: 'M3259 COM15 脱着時 それ以外 CFLAG:376 写错（1 改 0，#242）',
+    desc: 'M4075 COM15 脱着時 それ以外 CFLAG:376 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.乳头夹着脱 = 1; // :2362
     }
@@ -7017,7 +7017,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 16（榨乳器 CFLAG:317／着脱 CFLAG:377，#242） ----
   {
-    desc: 'M3260 COM16 TEQUIP:16 已装/未装判据取反（#242）',
+    desc: 'M4076 COM16 TEQUIP:16 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'if (era.get(`tequip:${target}:16`)) {',
     replace: 'if (!era.get(`tequip:${target}:16`)) {',
@@ -7025,7 +7025,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M3261 COM16 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4077 COM16 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱
@@ -7041,7 +7041,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M3262 COM16 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4078 COM16 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
@@ -7057,7 +7057,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 初めて：非助手玛奥 + 爱慕推进到 1',
   },
   {
-    desc: 'M3263 COM16 初めて CFLAG:317 写错（1 改 0，#242）',
+    desc: 'M4079 COM16 初めて CFLAG:317 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.榨乳器 = 1; // :2393`,
     replace: `        kojo.榨乳器 = 0; // :2393`,
@@ -7066,7 +7066,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M3264 COM16 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4080 COM16 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (
           era.get(\`talent:\${target}:76\`) === 1 &&
@@ -7089,7 +7089,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
   },
   {
-    desc: 'M3265 COM16 二回目 助手玛奥淫乱 RAND:2 判据取反（#242）',
+    desc: 'M4081 COM16 二回目 助手玛奥淫乱 RAND:2 判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          if (rand_n(2)) {
             // :2402-2406`,
@@ -7100,7 +7100,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
   },
   {
-    desc: 'M3266 COM16 二回目 助手玛奥淫乱 CFLAG:317 写错（4 改 3，#242）',
+    desc: 'M4082 COM16 二回目 助手玛奥淫乱 CFLAG:317 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.榨乳器 = 4; // :2407-2408`,
     replace: `          kojo.榨乳器 = 3; // :2407-2408`,
@@ -7109,7 +7109,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
   },
   {
-    desc: 'M3267 COM16 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4083 COM16 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           era.get(\`talent:\${target}:85\`) === 1 &&
@@ -7131,7 +7131,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3268 COM16 二回目 助手玛奥爱慕 CFLAG:317 写错（3 改 2，#242）',
+    desc: 'M4084 COM16 二回目 助手玛奥爱慕 CFLAG:317 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.榨乳器 = 3; // :2413-2414`,
     replace: `          kojo.榨乳器 = 2; // :2413-2414`,
@@ -7139,7 +7139,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3269 COM16 二回目 助手玛奥それ以外 CFLAG:317 写错（2 改 1，#242）',
+    desc: 'M4085 COM16 二回目 助手玛奥それ以外 CFLAG:317 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          kojo.榨乳器 = 2; // :2418-2420`,
     replace: `          kojo.榨乳器 = 1; // :2418-2420`,
@@ -7148,7 +7148,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M3270 COM16 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4086 COM16 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -7170,7 +7170,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3271 COM16 二回目 非助手玛奥淫乱 CFLAG:317 写错（4 改 3，#242）',
+    desc: 'M4087 COM16 二回目 非助手玛奥淫乱 CFLAG:317 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.榨乳器 = 4; // :2427-2428`,
     replace: `        kojo.榨乳器 = 3; // :2427-2428`,
@@ -7178,7 +7178,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M3272 COM16 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4088 COM16 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -7200,7 +7200,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：非助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3273 COM16 二回目 非助手玛奥爱慕 CFLAG:317 写错（3 改 2，#242）',
+    desc: 'M4089 COM16 二回目 非助手玛奥爱慕 CFLAG:317 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.榨乳器 = 3; // :2433-2434`,
     replace: `        kojo.榨乳器 = 2; // :2433-2434`,
@@ -7208,7 +7208,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：非助手玛奥 + 爱慕推进到 3',
   },
   {
-    desc: 'M3274 COM16 二回目 非助手玛奥それ以外 CFLAG:317 写错（2 改 1，#242）',
+    desc: 'M4090 COM16 二回目 非助手玛奥それ以外 CFLAG:317 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.榨乳器 = 2; // :2437-2439`,
     replace: `        kojo.榨乳器 = 1; // :2437-2439`,
@@ -7217,7 +7217,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:16 == 0） ----
   {
-    desc: 'M3275 COM16 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4091 COM16 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    // :2445-2459 脱着時（TEQUIP:16 == 0）
     if (
@@ -7233,7 +7233,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 脱着時（TEQUIP:16 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M3276 COM16 脱着時 淫乱 CFLAG:377 写错（3 改 2，#242）',
+    desc: 'M4092 COM16 脱着時 淫乱 CFLAG:377 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.榨乳器着脱 = 3; // :2449`,
     replace: `      kojo.榨乳器着脱 = 2; // :2449`,
@@ -7241,7 +7241,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 脱着時（TEQUIP:16 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M3277 COM16 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4093 COM16 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -7255,7 +7255,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 脱着時：爱慕推进到 2',
   },
   {
-    desc: 'M3278 COM16 脱着時 爱慕 CFLAG:377 写错（2 改 1，#242）',
+    desc: 'M4094 COM16 脱着時 爱慕 CFLAG:377 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.榨乳器着脱 = 2; // :2453`,
     replace: `      kojo.榨乳器着脱 = 1; // :2453`,
@@ -7263,7 +7263,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 脱着時：爱慕推进到 2',
   },
   {
-    desc: 'M3279 COM16 脱着時 それ以外 CFLAG:377 写错（1 改 0，#242）',
+    desc: 'M4095 COM16 脱着時 それ以外 CFLAG:377 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.榨乳器着脱 = 1; // :2457
     }
@@ -7276,7 +7276,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 19（肛珠 CFLAG:320／脱着 CFLAG:379，#242） ----
   {
-    desc: 'M3280 COM19 TEQUIP:19 已装/未装判据取反（#242）',
+    desc: 'M4096 COM19 TEQUIP:19 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'if (era.get(`tequip:${target}:19`)) {',
     replace: 'if (!era.get(`tequip:${target}:19`)) {',
@@ -7284,7 +7284,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M3281 COM19 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4097 COM19 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱
@@ -7298,7 +7298,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M3282 COM19 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4098 COM19 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
@@ -7312,7 +7312,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 初めて：非助手玛奥 + 爱慕推进到 1',
   },
   {
-    desc: 'M3283 COM19 初めて CFLAG:320 写错（1 改 0，#242）',
+    desc: 'M4099 COM19 初めて CFLAG:320 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 1; // :2543`,
     replace: `        kojo.肛珠 = 0; // :2543`,
@@ -7321,7 +7321,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M3284 COM19 二回目 助手玛奥淫乱＋A感覚判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4100 COM19 二回目 助手玛奥淫乱＋A感覚判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -7337,7 +7337,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 7',
   },
   {
-    desc: 'M3285 COM19 二回目 助手玛奥淫乱＋A感覚 ABL 阈值错格（>=3 改 >=4，#242）',
+    desc: 'M4101 COM19 二回目 助手玛奥淫乱＋A感覚 ABL 阈值错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -7353,7 +7353,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 7',
   },
   {
-    desc: 'M3286 COM19 二回目 助手玛奥淫乱＋A感覚 CFLAG:320 写错（7 改 6，#242）',
+    desc: 'M4102 COM19 二回目 助手玛奥淫乱＋A感覚 CFLAG:320 写错（7 改 6，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 7; // :2553-2554`,
     replace: `        kojo.肛珠 = 6; // :2553-2554`,
@@ -7361,7 +7361,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 7',
   },
   {
-    desc: 'M3287 COM19 二回目 助手玛奥淫乱 CFLAG:320 写错（6 改 5，#242）',
+    desc: 'M4103 COM19 二回目 助手玛奥淫乱 CFLAG:320 写错（6 改 5，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 6; // :2558-2559`,
     replace: `        kojo.肛珠 = 5; // :2558-2559`,
@@ -7369,7 +7369,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M3288 COM19 二回目 助手玛奥爱慕＋A感覚判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4104 COM19 二回目 助手玛奥爱慕＋A感覚判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:85\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -7385,7 +7385,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3289 COM19 二回目 助手玛奥爱慕＋A感覚 CFLAG:320 写错（5 改 4，#242）',
+    desc: 'M4105 COM19 二回目 助手玛奥爱慕＋A感覚 CFLAG:320 写错（5 改 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 5; // :2564-2565`,
     replace: `        kojo.肛珠 = 4; // :2564-2565`,
@@ -7393,7 +7393,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3290 COM19 二回目 助手玛奥爱慕 CFLAG:320 写错（4 改 3，#242）',
+    desc: 'M4106 COM19 二回目 助手玛奥爱慕 CFLAG:320 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 4; // :2570-2571`,
     replace: `        kojo.肛珠 = 3; // :2570-2571`,
@@ -7401,7 +7401,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M3291 COM19 二回目 助手玛奥 A感覚 ABL 阈值错格（>=3 改 >=4，#242）',
+    desc: 'M4107 COM19 二回目 助手玛奥 A感覚 ABL 阈值错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        chara(target).system.肛门感觉 >= 3 &&
         (kojo.肛珠 <= 2 || game.kojo.口上开关 === 2)
@@ -7415,7 +7415,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3292 COM19 二回目 助手玛奥 A感覚 CFLAG:320 写错（3 改 2，#242）',
+    desc: 'M4108 COM19 二回目 助手玛奥 A感覚 CFLAG:320 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 3; // :2576-2577`,
     replace: `        kojo.肛珠 = 2; // :2576-2577`,
@@ -7423,7 +7423,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3293 COM19 二回目 助手玛奥それ以外 CFLAG:320 写错（2 改 1，#242）',
+    desc: 'M4109 COM19 二回目 助手玛奥それ以外 CFLAG:320 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        kojo.肛珠 = 2; // :2582-2583`,
     replace: `        kojo.肛珠 = 1; // :2582-2583`,
@@ -7432,7 +7432,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M3294 COM19 二回目 非助手玛奥淫乱＋A感覚判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4110 COM19 二回目 非助手玛奥淫乱＋A感覚判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -7448,7 +7448,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上推进到 7',
   },
   {
-    desc: 'M3295 COM19 二回目 非助手玛奥淫乱＋A感覚 CFLAG:320 写错（7 改 6，#242）',
+    desc: 'M4111 COM19 二回目 非助手玛奥淫乱＋A感覚 CFLAG:320 写错（7 改 6，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠 = 7; // :2589-2590`,
     replace: `      kojo.肛珠 = 6; // :2589-2590`,
@@ -7456,7 +7456,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上推进到 7',
   },
   {
-    desc: 'M3296 COM19 二回目 非助手玛奥淫乱 CFLAG:320 写错（6 改 5，#242）',
+    desc: 'M4112 COM19 二回目 非助手玛奥淫乱 CFLAG:320 写错（6 改 5，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠 = 6; // :2594-2595`,
     replace: `      kojo.肛珠 = 5; // :2594-2595`,
@@ -7464,7 +7464,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M3297 COM19 二回目 非助手玛奥爱慕＋A感覚判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4113 COM19 二回目 非助手玛奥爱慕＋A感覚判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:85\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -7480,7 +7480,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3298 COM19 二回目 非助手玛奥爱慕＋A感覚 CFLAG:320 写错（5 改 4，#242）',
+    desc: 'M4114 COM19 二回目 非助手玛奥爱慕＋A感覚 CFLAG:320 写错（5 改 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠 = 5; // :2599-2600`,
     replace: `      kojo.肛珠 = 4; // :2599-2600`,
@@ -7488,7 +7488,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M3299 COM19 二回目 非助手玛奥爱慕 CFLAG:320 写错（4 改 3，#242）',
+    desc: 'M4115 COM19 二回目 非助手玛奥爱慕 CFLAG:320 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠 = 4; // :2604-2605`,
     replace: `      kojo.肛珠 = 3; // :2604-2605`,
@@ -7496,7 +7496,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M3300 COM19 二回目 非助手玛奥 A感覚 CFLAG:320 写错（3 改 2，#242）',
+    desc: 'M4116 COM19 二回目 非助手玛奥 A感覚 CFLAG:320 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠 = 3; // :2609-2610`,
     replace: `      kojo.肛珠 = 2; // :2609-2610`,
@@ -7504,7 +7504,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + A感覚Lv3以上推进到 3',
   },
   {
-    desc: 'M3301 COM19 二回目 非助手玛奥それ以外 CFLAG:320 写错（2 改 1，#242）',
+    desc: 'M4117 COM19 二回目 非助手玛奥それ以外 CFLAG:320 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠 = 2; // :2614-2615`,
     replace: `      kojo.肛珠 = 1; // :2614-2615`,
@@ -7513,7 +7513,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:19 == 0） ----
   {
-    desc: 'M3302 COM19 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4118 COM19 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    // :2621-2644 脱着時（TEQUIP:19 == 0）
     if (
@@ -7529,7 +7529,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時（TEQUIP:19 == 0）：淫乱推进到 4',
   },
   {
-    desc: 'M3303 COM19 脱着時 淫乱 CFLAG:379 写错（4 改 3，#242）',
+    desc: 'M4119 COM19 脱着時 淫乱 CFLAG:379 写错（4 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠着脱 = 4; // :2626`,
     replace: `      kojo.肛珠着脱 = 3; // :2626`,
@@ -7537,7 +7537,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時（TEQUIP:19 == 0）：淫乱推进到 4',
   },
   {
-    desc: 'M3304 COM19 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4120 COM19 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -7551,7 +7551,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時：爱慕推进到 3',
   },
   {
-    desc: 'M3305 COM19 脱着時 爱慕 CFLAG:379 写错（3 改 2，#242）',
+    desc: 'M4121 COM19 脱着時 爱慕 CFLAG:379 写错（3 改 2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠着脱 = 3; // :2631`,
     replace: `      kojo.肛珠着脱 = 2; // :2631`,
@@ -7559,7 +7559,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時：爱慕推进到 3',
   },
   {
-    desc: 'M3306 COM19 脱着時 A感覚 ABL 阈值错格（>=3 改 >=4，#242）',
+    desc: 'M4122 COM19 脱着時 A感覚 ABL 阈值错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       chara(target).system.肛门感觉 >= 3 &&
@@ -7573,7 +7573,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時：A感覚Lv3以上推进到 2',
   },
   {
-    desc: 'M3307 COM19 脱着時 A感覚 CFLAG:379 写错（2 改 1，#242）',
+    desc: 'M4123 COM19 脱着時 A感覚 CFLAG:379 写错（2 改 1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠着脱 = 2; // :2636`,
     replace: `      kojo.肛珠着脱 = 1; // :2636`,
@@ -7581,7 +7581,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時：A感覚Lv3以上推进到 2',
   },
   {
-    desc: 'M3308 COM19 脱着時 それ以外 CFLAG:379 写错（1 改 0，#242）',
+    desc: 'M4124 COM19 脱着時 それ以外 CFLAG:379 写错（1 改 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      kojo.肛珠着脱 = 1; // :2641`,
     replace: `      kojo.肛珠着脱 = 0; // :2641`,
@@ -7590,7 +7590,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 20（正常位 CFLAG:321，#242） ----
   {
-    desc: 'M3309 COM20 weapon 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
+    desc: 'M4125 COM20 weapon 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const weapon =
       era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
@@ -7607,7 +7607,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：weapon 三目条件为 &&——TALENT:121/122 一 0 一 1 时须选阴茎',
   },
   {
-    desc: 'M3310 COM20 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4126 COM20 初めて 处女判据 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (kojo.正常位 === 0) {
       // :2651-2757 初めて
@@ -7619,7 +7619,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 初めて：处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M3311 COM20 初めて CFLAG:321 写错（1 改 0）（#242）',
+    desc: 'M4127 COM20 初めて CFLAG:321 写错（1 改 0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 1; // :2756`,
     replace: `kojo.正常位 = 0; // :2756`,
@@ -7627,7 +7627,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 初めて：处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M3312 COM20 助手玛奥淫乱 CFLAG:321 写错（6 改 5）（#242）',
+    desc: 'M4128 COM20 助手玛奥淫乱 CFLAG:321 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 6; // :2790-2792`,
     replace: `kojo.正常位 = 5; // :2790-2792`,
@@ -7635,7 +7635,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：助手玛奥 + 淫乱',
   },
   {
-    desc: 'M3313 COM20 助手玛奥爱慕 CFLAG:321 写错（5 改 4）（#242）',
+    desc: 'M4129 COM20 助手玛奥爱慕 CFLAG:321 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 5; // :2818-2820`,
     replace: `kojo.正常位 = 4; // :2818-2820`,
@@ -7643,7 +7643,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3314 COM20 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:321 写错（4 改 3）（#242）',
+    desc: 'M4130 COM20 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:321 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 4; // :2840-2842`,
     replace: `kojo.正常位 = 3; // :2840-2842`,
@@ -7652,7 +7652,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3315 COM20 助手玛奥屈服刻印Lv3 CFLAG:321 写错（3 改 2）（#242）',
+    desc: 'M4131 COM20 助手玛奥屈服刻印Lv3 CFLAG:321 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 3; // :2849-2850`,
     replace: `kojo.正常位 = 2; // :2849-2850`,
@@ -7660,7 +7660,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3316 COM20 助手玛奥それ以外 CFLAG:321 写错（2 改 1）（#242）',
+    desc: 'M4132 COM20 助手玛奥それ以外 CFLAG:321 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 2; // :2857-2858`,
     replace: `kojo.正常位 = 1; // :2857-2858`,
@@ -7668,7 +7668,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：助手玛奥 + それ以外，推进到 2',
   },
   {
-    desc: 'M3317 COM20 非助手玛奥淫乱 CFLAG:321 写错（6 改 5）（#242）',
+    desc: 'M4133 COM20 非助手玛奥淫乱 CFLAG:321 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 6; // :2884-2886`,
     replace: `kojo.正常位 = 5; // :2884-2886`,
@@ -7676,7 +7676,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：非助手玛奥 + 淫乱，推进到 6',
   },
   {
-    desc: 'M3318 COM20 非助手玛奥爱慕 CFLAG:321 写错（5 改 4）（#242）',
+    desc: 'M4134 COM20 非助手玛奥爱慕 CFLAG:321 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 5; // :2911-2913`,
     replace: `kojo.正常位 = 4; // :2911-2913`,
@@ -7684,7 +7684,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3319 COM20 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:321 写错（4 改 3）（#242）',
+    desc: 'M4135 COM20 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:321 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 4; // :2930-2932`,
     replace: `kojo.正常位 = 3; // :2930-2932`,
@@ -7693,7 +7693,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:3 分岔推进到 4',
   },
   {
-    desc: 'M3320 COM20 非助手玛奥屈服刻印Lv3 CFLAG:321 写错（3 改 2）（#242）',
+    desc: 'M4136 COM20 非助手玛奥屈服刻印Lv3 CFLAG:321 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 3; // :2938-2939`,
     replace: `kojo.正常位 = 2; // :2938-2939`,
@@ -7701,7 +7701,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3321 COM20 非助手玛奥それ以外 CFLAG:321 写错（2 改 1）（#242）',
+    desc: 'M4137 COM20 非助手玛奥それ以外 CFLAG:321 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.正常位 = 2; // :2945-2946`,
     replace: `kojo.正常位 = 1; // :2945-2946`,
@@ -7709,7 +7709,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M3322 COM20 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4138 COM20 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        mark(2) === 3 &&
         chara(target).system.私处感觉 >= 3 &&
@@ -7726,7 +7726,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3323 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4139 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(2) === 3 &&
       chara(target).system.私处感觉 >= 3 &&
@@ -7743,7 +7743,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:3 分岔推进到 4',
   },
   {
-    desc: 'M3324 COM20 助手玛奥 屈服刻印Lv3＋V感覚层守卫 私处感觉>=3 改 >=4（#242）',
+    desc: 'M4140 COM20 助手玛奥 屈服刻印Lv3＋V感覚层守卫 私处感觉>=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        mark(2) === 3 &&
         chara(target).system.私处感觉 >= 3 &&
@@ -7760,7 +7760,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3325 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 私处感觉>=3 改 >=4（#242）',
+    desc: 'M4141 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 私处感觉>=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(2) === 3 &&
       chara(target).system.私处感觉 >= 3 &&
@@ -7777,7 +7777,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:3 分岔推进到 4',
   },
   {
-    desc: 'M3326 COM20 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4142 COM20 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        mark(2) === 3 &&
         (kojo.正常位 <= 2 || game.kojo.口上开关 === 2)
@@ -7791,7 +7791,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3327 COM20 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4143 COM20 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(2) === 3 &&
       (kojo.正常位 <= 2 || game.kojo.口上开关 === 2)
@@ -7805,7 +7805,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3328 COM20 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4144 COM20 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (rand_n(3) === 0) {
           await era.print(
@@ -7818,7 +7818,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉门槛可控',
   },
   {
-    desc: 'M3329 COM20 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4145 COM20 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (rand_n(3) === 0) {
         await era.printAndWait(
@@ -7830,7 +7830,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：weapon 三目——玩家持 TALENT:121 时改用阴茎',
   },
   {
-    desc: 'M3330 COM20 非助手玛奥屈服刻印Lv3＋V感覚 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4146 COM20 非助手玛奥屈服刻印Lv3＋V感覚 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (rand_n(3) === 0) {
         await era.printAndWait(\`「哈啊…嗯啊啊…插，插进来了…」\`); // :2917
@@ -7844,7 +7844,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 21（背后位 CFLAG:322，#242） ----
   {
-    desc: 'M3331 COM21 weapon_doggy 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
+    desc: 'M4147 COM21 weapon_doggy 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const weapon_doggy =
       era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
@@ -7858,7 +7858,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 初めて：非处女 + 助手玛奥 + 爱慕',
   },
   {
-    desc: 'M3332 COM21 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4148 COM21 初めて 处女判据 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      // :2958-3061 初めて
       const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -7869,7 +7869,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 初めて：处女 + 助手玛奥 + 淫乱，weapon_doggy 三目震动假阳具支',
   },
   {
-    desc: 'M3333 COM21 初めて CFLAG:322 写错（1 改 0）（#242）',
+    desc: 'M4149 COM21 初めて CFLAG:322 写错（1 改 0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 1; // :3057-3060`,
     replace: `kojo.背后位 = 0; // :3057-3060`,
@@ -7878,7 +7878,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 初めて：处女 + 助手玛奥 + 淫乱，weapon_doggy 三目震动假阳具支',
   },
   {
-    desc: 'M3334 COM21 助手玛奥淫乱 CFLAG:322 写错（6 改 5）（#242）',
+    desc: 'M4150 COM21 助手玛奥淫乱 CFLAG:322 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 6; // :3102-3105`,
     replace: `kojo.背后位 = 5; // :3102-3105`,
@@ -7887,7 +7887,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
   },
   {
-    desc: 'M3335 COM21 助手玛奥爱慕 CFLAG:322 写错（5 改 4）（#242）',
+    desc: 'M4151 COM21 助手玛奥爱慕 CFLAG:322 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 5; // :3143-3146`,
     replace: `kojo.背后位 = 4; // :3143-3146`,
@@ -7895,7 +7895,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3336 COM21 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:322 写错（4 改 3）（#242）',
+    desc: 'M4152 COM21 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:322 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 4; // :3166-3168`,
     replace: `kojo.背后位 = 3; // :3166-3168`,
@@ -7904,7 +7904,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3337 COM21 助手玛奥屈服刻印Lv3 CFLAG:322 写错（3 改 2）（#242）',
+    desc: 'M4153 COM21 助手玛奥屈服刻印Lv3 CFLAG:322 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 3; // :3175-3176`,
     replace: `kojo.背后位 = 2; // :3175-3176`,
@@ -7912,7 +7912,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3338 COM21 助手玛奥それ以外 CFLAG:322 写错（2 改 1）（#242）',
+    desc: 'M4154 COM21 助手玛奥それ以外 CFLAG:322 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 2; // :3183-3184`,
     replace: `kojo.背后位 = 1; // :3183-3184`,
@@ -7920,7 +7920,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：助手玛奥 + それ以外，推进到 2',
   },
   {
-    desc: 'M3339 COM21 非助手玛奥淫乱 CFLAG:322 写错（6 改 5）（#242）',
+    desc: 'M4155 COM21 非助手玛奥淫乱 CFLAG:322 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 6; // :3217-3220`,
     replace: `kojo.背后位 = 5; // :3217-3220`,
@@ -7928,7 +7928,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 淫乱，推进到 6',
   },
   {
-    desc: 'M3340 COM21 非助手玛奥爱慕 CFLAG:322 写错（5 改 4）（#242）',
+    desc: 'M4156 COM21 非助手玛奥爱慕 CFLAG:322 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 5; // :3251-3254`,
     replace: `kojo.背后位 = 4; // :3251-3254`,
@@ -7936,7 +7936,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3341 COM21 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:322 写错（4 改 3）（#242）',
+    desc: 'M4157 COM21 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:322 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 4; // :3271-3273`,
     replace: `kojo.背后位 = 3; // :3271-3273`,
@@ -7945,7 +7945,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3342 COM21 非助手玛奥屈服刻印Lv3 CFLAG:322 写错（3 改 2）（#242）',
+    desc: 'M4158 COM21 非助手玛奥屈服刻印Lv3 CFLAG:322 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 3; // :3279-3280`,
     replace: `kojo.背后位 = 2; // :3279-3280`,
@@ -7953,7 +7953,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3343 COM21 それ以外 CFLAG:322 写错（2 改 1）（#242）',
+    desc: 'M4159 COM21 それ以外 CFLAG:322 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背后位 = 2; // :3286-3287`,
     replace: `kojo.背后位 = 1; // :3286-3287`,
@@ -7961,7 +7961,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M3344 COM21 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4160 COM21 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -7980,7 +7980,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3345 COM21 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4161 COM21 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -7999,7 +7999,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3346 COM21 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4162 COM21 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8015,7 +8015,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3347 COM21 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4163 COM21 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -8031,7 +8031,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3348 COM21 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4164 COM21 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -8048,7 +8048,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
   },
   {
-    desc: 'M3349 COM21 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4165 COM21 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -8064,7 +8064,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3350 COM21 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4166 COM21 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (rand_n(3) === 0) {
           await era.print(
@@ -8077,7 +8077,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
   },
   {
-    desc: 'M3351 COM21 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4167 COM21 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (rand_n(3) === 0) {
         await era.printAndWait(
@@ -8089,7 +8089,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 淫乱，推进到 6',
   },
   {
-    desc: 'M3352 COM21 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    desc: 'M4168 COM21 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          if (chara(target).system.私处感觉 >= 3) {
             await era.printAndWait(
@@ -8103,7 +8103,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 22（对面座位 CFLAG:323，#242） ----
   {
-    desc: 'M3353 COM22 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4169 COM22 初めて 处女判据 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      // :3300-3340 初めて
       const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -8113,7 +8113,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 初めて：非处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M3354 COM22 初めて CFLAG:323 写错（1 改 0）（#242）',
+    desc: 'M4170 COM22 初めて CFLAG:323 写错（1 改 0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 1; // :3339`,
     replace: `kojo.对面座位 = 0; // :3339`,
@@ -8121,7 +8121,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 初めて：处女支为空模板骨架，无输出但仍推进 CFLAG:323',
   },
   {
-    desc: 'M3355 COM22 助手玛奥淫乱 CFLAG:323 写错（6 改 5）（#242）',
+    desc: 'M4171 COM22 助手玛奥淫乱 CFLAG:323 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 6; // :3373-3375`,
     replace: `kojo.对面座位 = 5; // :3373-3375`,
@@ -8130,7 +8130,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉门槛可控',
   },
   {
-    desc: 'M3356 COM22 助手玛奥爱慕 CFLAG:323 写错（5 改 4）（#242）',
+    desc: 'M4172 COM22 助手玛奥爱慕 CFLAG:323 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 5; // :3407-3409`,
     replace: `kojo.对面座位 = 4; // :3407-3409`,
@@ -8138,7 +8138,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3357 COM22 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:323 写错（4 改 3）（#242）',
+    desc: 'M4173 COM22 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:323 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 4; // :3419-3421`,
     replace: `kojo.对面座位 = 3; // :3419-3421`,
@@ -8147,7 +8147,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3358 COM22 助手玛奥屈服刻印Lv3 CFLAG:323 写错（3 改 2）（#242）',
+    desc: 'M4174 COM22 助手玛奥屈服刻印Lv3 CFLAG:323 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 3; // :3426-3427`,
     replace: `kojo.对面座位 = 2; // :3426-3427`,
@@ -8155,7 +8155,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3359 COM22 助手玛奥それ以外 CFLAG:323 写错（2 改 1）（#242）',
+    desc: 'M4175 COM22 助手玛奥それ以外 CFLAG:323 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 2; // :3432-3433`,
     replace: `kojo.对面座位 = 1; // :3432-3433`,
@@ -8163,7 +8163,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：助手玛奥 + それ以外，推进到 2',
   },
   {
-    desc: 'M3360 COM22 非助手玛奥淫乱 CFLAG:323 写错（6 改 5）（#242）',
+    desc: 'M4176 COM22 非助手玛奥淫乱 CFLAG:323 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 6; // :3455-3457`,
     replace: `kojo.对面座位 = 5; // :3455-3457`,
@@ -8172,7 +8172,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：非助手玛奥 + 淫乱，两次独立 RAND:3 各自决定开场句与收尾句',
   },
   {
-    desc: 'M3361 COM22 非助手玛奥爱慕 CFLAG:323 写错（5 改 4）（#242）',
+    desc: 'M4177 COM22 非助手玛奥爱慕 CFLAG:323 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 5; // :3477-3479`,
     replace: `kojo.对面座位 = 4; // :3477-3479`,
@@ -8180,7 +8180,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3362 COM22 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:323 写错（4 改 3）（#242）',
+    desc: 'M4178 COM22 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:323 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 4; // :3488-3490`,
     replace: `kojo.对面座位 = 3; // :3488-3490`,
@@ -8189,7 +8189,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3363 COM22 非助手玛奥屈服刻印Lv3 CFLAG:323 写错（3 改 2）（#242）',
+    desc: 'M4179 COM22 非助手玛奥屈服刻印Lv3 CFLAG:323 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 3; // :3494-3495`,
     replace: `kojo.对面座位 = 2; // :3494-3495`,
@@ -8197,7 +8197,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3364 COM22 それ以外 CFLAG:323 写错（2 改 1）（#242）',
+    desc: 'M4180 COM22 それ以外 CFLAG:323 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.对面座位 = 2; // :3499-3500`,
     replace: `kojo.对面座位 = 1; // :3499-3500`,
@@ -8205,7 +8205,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M3365 COM22 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4181 COM22 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8230,7 +8230,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3366 COM22 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4182 COM22 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8253,7 +8253,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M3367 COM22 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4183 COM22 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8273,7 +8273,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3368 COM22 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4184 COM22 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8291,7 +8291,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3369 COM22 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4185 COM22 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -8308,7 +8308,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉门槛可控',
   },
   {
-    desc: 'M3370 COM22 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4186 COM22 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -8330,7 +8330,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3371 COM22 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4187 COM22 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // 淫乱
         if (rand_n(3) === 0) {
@@ -8345,7 +8345,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉门槛可控',
   },
   {
-    desc: 'M3372 COM22 非助手玛奥淫乱 开场 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4188 COM22 非助手玛奥淫乱 开场 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (rand_n(3) === 0) {
           await era.printAndWait(
@@ -8358,7 +8358,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：非助手玛奥 + 淫乱，两次独立 RAND:3 各自决定开场句与收尾句',
   },
   {
-    desc: 'M3373 COM22 非助手玛奥淫乱 收尾 RAND:3 阈值 === 0 改 === 1（第二次独立抽样，#242）',
+    desc: 'M4189 COM22 非助手玛奥淫乱 收尾 RAND:3 阈值 === 0 改 === 1（第二次独立抽样，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (rand_n(3) === 0) {
           await era.printAndWait(
@@ -8373,7 +8373,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：非助手玛奥 + 淫乱，两次独立 RAND:3 各自决定开场句与收尾句',
   },
   {
-    desc: 'M3374 COM22 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    desc: 'M4190 COM22 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          if (chara(target).system.私处感觉 >= 3) {
             await era.printAndWait(
@@ -8387,7 +8387,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 23（背面座位 CFLAG:324，#242） ----
   {
-    desc: 'M3375 COM23 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4191 COM23 初めて 处女判据 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      // :3512-3556 初めて
       const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -8397,7 +8397,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 初めて：非处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M3376 COM23 初めて CFLAG:324 写错（1 改 0）（#242）',
+    desc: 'M4192 COM23 初めて CFLAG:324 写错（1 改 0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 1; // :3557`,
     replace: `kojo.背面座位 = 0; // :3557`,
@@ -8405,7 +8405,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 初めて：处女支为空模板骨架，无输出但仍推进 CFLAG:324',
   },
   {
-    desc: 'M3377 COM23 助手玛奥淫乱 CFLAG:324 写错（6 改 5）（#242）',
+    desc: 'M4193 COM23 助手玛奥淫乱 CFLAG:324 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 6; // :3594-3597`,
     replace: `kojo.背面座位 = 5; // :3594-3597`,
@@ -8414,7 +8414,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
   },
   {
-    desc: 'M3378 COM23 助手玛奥爱慕 CFLAG:324 写错（5 改 4）（#242）',
+    desc: 'M4194 COM23 助手玛奥爱慕 CFLAG:324 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 5; // :3629-3632`,
     replace: `kojo.背面座位 = 4; // :3629-3632`,
@@ -8422,7 +8422,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3379 COM23 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:324 写错（4 改 3）（#242）',
+    desc: 'M4195 COM23 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:324 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 4; // :3642-3643`,
     replace: `kojo.背面座位 = 3; // :3642-3643`,
@@ -8431,7 +8431,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
   },
   {
-    desc: 'M3380 COM23 助手玛奥屈服刻印Lv3 CFLAG:324 写错（3 改 2）（#242）',
+    desc: 'M4196 COM23 助手玛奥屈服刻印Lv3 CFLAG:324 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 3; // :3648-3650`,
     replace: `kojo.背面座位 = 2; // :3648-3650`,
@@ -8439,7 +8439,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3381 COM23 助手玛奥それ以外 CFLAG:324 写错（2 改 1）（#242）',
+    desc: 'M4197 COM23 助手玛奥それ以外 CFLAG:324 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 2; // :3655-3657`,
     replace: `kojo.背面座位 = 1; // :3655-3657`,
@@ -8447,7 +8447,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：助手玛奥 + それ以外，推进到 2',
   },
   {
-    desc: 'M3382 COM23 非助手玛奥淫乱 CFLAG:324 写错（6 改 5）（#242）',
+    desc: 'M4198 COM23 非助手玛奥淫乱 CFLAG:324 写错（6 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 6; // :3690-3693`,
     replace: `kojo.背面座位 = 5; // :3690-3693`,
@@ -8456,7 +8456,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 淫乱，RAND:3==0 开场句 + ABL:2 达门槛',
   },
   {
-    desc: 'M3383 COM23 非助手玛奥爱慕 CFLAG:324 写错（5 改 4）（#242）',
+    desc: 'M4199 COM23 非助手玛奥爱慕 CFLAG:324 写错（5 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 5; // :3724-3727`,
     replace: `kojo.背面座位 = 4; // :3724-3727`,
@@ -8464,7 +8464,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3384 COM23 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:324 写错（4 改 3）（#242）',
+    desc: 'M4200 COM23 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:324 写错（4 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 4; // :3741-3742`,
     replace: `kojo.背面座位 = 3; // :3741-3742`,
@@ -8473,7 +8473,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
   },
   {
-    desc: 'M3385 COM23 非助手玛奥屈服刻印Lv3 CFLAG:324 写错（3 改 2）（#242）',
+    desc: 'M4201 COM23 非助手玛奥屈服刻印Lv3 CFLAG:324 写错（3 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 3; // :3746-3748`,
     replace: `kojo.背面座位 = 2; // :3746-3748`,
@@ -8481,7 +8481,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3386 COM23 それ以外 CFLAG:324 写错（2 改 1）（#242）',
+    desc: 'M4202 COM23 それ以外 CFLAG:324 写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `kojo.背面座位 = 2; // :3751-3753`,
     replace: `kojo.背面座位 = 1; // :3751-3753`,
@@ -8489,7 +8489,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M3387 COM23 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4203 COM23 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8512,7 +8512,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
   },
   {
-    desc: 'M3388 COM23 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4204 COM23 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8537,7 +8537,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
   },
   {
-    desc: 'M3389 COM23 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4205 COM23 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8557,7 +8557,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3390 COM23 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4206 COM23 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -8575,7 +8575,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M3391 COM23 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4207 COM23 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -8598,7 +8598,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
   },
   {
-    desc: 'M3392 COM23 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4208 COM23 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -8620,7 +8620,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3393 COM23 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4209 COM23 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // 淫乱
         if (rand_n(3) === 0) {
@@ -8635,7 +8635,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
   },
   {
-    desc: 'M3394 COM23 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    desc: 'M4210 COM23 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          ); // :3566
           if (chara(target).system.私处感觉 >= 3) {
@@ -8650,7 +8650,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 + ABL:2 达门槛时选中体感句',
   },
   {
-    desc: 'M3395 COM23 助手玛奥爱慕 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4211 COM23 助手玛奥爱慕 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // 爱慕
         if (rand_n(3) === 0) {
@@ -8666,7 +8666,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3396 COM23 助手玛奥屈服刻印Lv3＋V感覚 RAND:2 阈值 === 0 改 === 1（#242）',
+    desc: 'M4212 COM23 助手玛奥屈服刻印Lv3＋V感覚 RAND:2 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // 屈服刻印Lv3＋V感覚Lv3以上
         if (rand_n(2) === 0) {
@@ -8679,7 +8679,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
   },
   {
-    desc: 'M3397 COM23 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4213 COM23 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        if (rand_n(3) === 0) {
           await era.printAndWait(
@@ -8692,7 +8692,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 淫乱，RAND:3==0 开场句 + ABL:2 达门槛',
   },
   {
-    desc: 'M3398 COM23 非助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    desc: 'M4214 COM23 非助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          ); // :3663
           if (chara(target).system.私处感觉 >= 3) {
@@ -8705,7 +8705,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 淫乱，RAND:3==0 开场句 + ABL:2 达门槛',
   },
   {
-    desc: 'M3399 COM23 非助手玛奥爱慕 RAND:3 阈值 === 0 改 === 1（#242）',
+    desc: 'M4215 COM23 非助手玛奥爱慕 RAND:3 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // 爱慕
         if (rand_n(3) === 0) {
@@ -8719,7 +8719,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：非助手玛奥 + 爱慕，推进到 5',
   },
   {
-    desc: 'M3400 COM23 非助手玛奥屈服刻印Lv3＋V感覚 第一次独立 RAND:2 阈值 === 0 改 === 1（#242）',
+    desc: 'M4216 COM23 非助手玛奥屈服刻印Lv3＋V感覚 第一次独立 RAND:2 阈值 === 0 改 === 1（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // 屈服刻印Lv3＋V感覚Lv3以上
         if (rand_n(2) === 0) {
@@ -8746,7 +8746,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
   },
   {
-    desc: 'M3401 COM23 非助手玛奥屈服刻印Lv3＋V感覚 第二次独立 RAND:2 阈值 === 0 改 === 1（第二次独立抽样，#242）',
+    desc: 'M4217 COM23 非助手玛奥屈服刻印Lv3＋V感覚 第二次独立 RAND:2 阈值 === 0 改 === 1（第二次独立抽样，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        }
         if (rand_n(2) === 0) {
