@@ -433,3 +433,65 @@ test('BENKI FLAG:62==9 野外露出配信（常识改写）：填了的台词 + 
   );
   assert.ok(!lines.some((l) => l.includes('%SELF_CALL')), lines.join('\n'));
 });
+
+// —— S4：NTR / 处刑系 / ENTERENEMY / 迎击奖惩 / GOBI ——
+
+test('NTR 再捕获（P==1 处女丧失档）：CFLAG:650 置 1、场景 651 置 1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:76', 1); // 陥落済
+  });
+  const { ntr_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await ntr_koujo_k14(() => 0, 1);
+  assert.equal(fixture.store.get('cflag:20:650'), 1);
+  assert.equal(fixture.store.get('cflag:20:651'), 1);
+});
+
+test('ENTERENEMY 反抗的（TALENT:11）：威势台词', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:11', 1);
+  });
+  const { enterenemy_koujo_k14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await enterenemy_koujo_k14(() => 0);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('不可原谅')),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+test('GOHOUBI_REQUEST CFLAG:504==4：接吻奖励台词（%SAVESTR:A% 渲染）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:504', 4);
+  });
+  const { gohoubi_request_koujo_k14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await gohoubi_request_koujo_k14(() => 0);
+  const lines = fixture.text_lines();
+  assert.ok(
+    lines.some((l) => l.includes('接吻')),
+    lines.join('\n'),
+  );
+  assert.ok(!lines.some((l) => l.includes('%SAVESTR')), lines.join('\n'));
+});
+
+test('GOBI 语尾 ARG:0==1（得意）：哦~♪', async () => {
+  const fixture = await setup_k14();
+  const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await gobi_koujo_k14(1, () => 0);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('哦~♪')),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+test('GOBI 语尾 ARG:0==0 随机三选（rand=0 → 啦。）', async () => {
+  const fixture = await setup_k14();
+  const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await gobi_koujo_k14(0, () => 0);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('啦。')),
+    fixture.text_lines().join('\n'),
+  );
+});
