@@ -12,30 +12,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '41',
-        any: [
-          /^\s*FLAG:114 = 1\s*$/m,
-        ],
+        any: [/^\s*FLAG:114 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '43',
-        any: [
-          /^\s*FLAG:7 = 2\s*$/m,
-        ],
+        any: [/^\s*FLAG:7 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '45-48',
-        any: [
-          /^\s*@EVENTEND\s*$\n^\s*#LATER\s*$\n^\s*FLAG:114 = 0\s*$/m,
-        ],
+        any: [/^\s*@EVENTEND\s*$\n^\s*#LATER\s*$\n^\s*FLAG:114 = 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '47',
-        any: [
-          /^\s*FLAG:114 = 0\s*$/m,
-        ],
+        any: [/^\s*FLAG:114 = 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -47,9 +39,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '54-55',
-        any: [
-          /^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -61,23 +51,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '56-57',
-        any: [
-          /^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '62',
-        any: [
-          /^\s*IF CFLAG:201 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:201 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '62-63',
-        any: [
-          /^\s*IF CFLAG:201 == 0\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:201 == 0\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -89,9 +73,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '65',
-        any: [
-          /^\s*IF TALENT:TARGET:122 && TALENT:TARGET:314 == 9\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:122 && TALENT:TARGET:314 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -138,16 +120,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '72',
-        any: [
-          /^\s*CFLAG:201 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '74',
-        any: [
-          /^\s*CFLAG:370 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:370 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -208,23 +186,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '85',
-        any: [
-          /^\s*CFLAG:201 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '87',
-        any: [
-          /^\s*CFLAG:370 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:370 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '90',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -243,16 +215,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '93',
-        any: [
-          /^\s*CFLAG:201 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '96',
-        any: [
-          /^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -306,23 +274,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '104',
-        any: [
-          /^\s*CFLAG:201 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '104-105',
-        any: [
-          /^\s*CFLAG:201 = 1\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 1\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '104-106',
-        any: [
-          /^\s*CFLAG:201 = 1\s*$\n^\s*RETURN 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 1\s*$\n^\s*RETURN 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -341,9 +303,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '112',
-        any: [
-          /^\s*PRINTFORMW 注意到来到房间了的你，不知所措地看着你。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 注意到来到房间了的你，不知所措地看着你。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -362,16 +322,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '116',
-        any: [
-          /^\s*CFLAG:370 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:370 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '116-117',
-        any: [
-          /^\s*CFLAG:370 = 2\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:370 = 2\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -390,9 +346,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '123-124',
-        any: [
-          /^\s*;愛・淫乱\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*;愛・淫乱\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -404,58 +358,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '127',
-        any: [
-          /^\s*CFLAG:650 = 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:650 = 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '127-128',
-        any: [
-          /^\s*CFLAG:650 = 0\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*CFLAG:650 = 0\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '129-130',
-        any: [
-          /^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「嗛…怎么又是你啊…！」\s*$/m,
-        ],
+        any: [/^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「嗛…怎么又是你啊…！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '130',
-        any: [
-          /^\s*PRINTFORMW 「嗛…怎么又是你啊…！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「嗛…怎么又是你啊…！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '132',
-        any: [
-          /^\s*CFLAG:650 = 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:650 = 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '132-133',
-        any: [
-          /^\s*CFLAG:650 = 0\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:650 = 0\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '132-134',
-        any: [
-          /^\s*CFLAG:650 = 0\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:650 = 0\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '139-140',
-        any: [
-          /^\s*ELSEIF CFLAG:201 < 2 && MARK:2 == 1\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:201 < 2 && MARK:2 == 1\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -481,23 +419,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '142',
-        any: [
-          /^\s*CFLAG:201 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '142-143',
-        any: [
-          /^\s*CFLAG:201 = 2\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 2\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '146-147',
-        any: [
-          /^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -516,9 +448,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '149',
-        any: [
-          /^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -544,16 +474,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '154',
-        any: [
-          /^\s*CFLAG:201 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '154-155',
-        any: [
-          /^\s*CFLAG:201 = 3\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 3\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -607,16 +533,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '166',
-        any: [
-          /^\s*CFLAG:201 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '166-167',
-        any: [
-          /^\s*CFLAG:201 = 4\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 4\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -670,16 +592,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '179',
-        any: [
-          /^\s*CFLAG:201 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '179-180',
-        any: [
-          /^\s*CFLAG:201 = 5\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 5\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -733,9 +651,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '253',
-        any: [
-          /^\s*PRINTFORMW 「好的…，那么就如魔王大人所愿。。。」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「好的…，那么就如魔王大人所愿。。。」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -817,16 +733,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '266',
-        any: [
-          /^\s*CFLAG:201 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '266-267',
-        any: [
-          /^\s*CFLAG:201 = 6\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 6\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -915,16 +827,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '283',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '283-284',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -999,16 +907,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '295',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '295-296',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1062,23 +966,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '306',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '306-307',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '306-308',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1118,9 +1016,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '316',
-        any: [
-          /^\s*PRINTFORMW 「按照魔王大人所愿去做的…」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「按照魔王大人所愿去做的…」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1153,16 +1049,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '321',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '321-322',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1237,16 +1129,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '333',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '333-334',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1300,23 +1188,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '344',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '344-345',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '344-346',
-        any: [
-          /^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1335,16 +1217,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '359-360',
-        any: [
-          /^\s*ELSEIF ASSI < 0\s*$\n^\s*CALL K14_KOJO2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ASSI < 0\s*$\n^\s*CALL K14_KOJO2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '360',
-        any: [
-          /^\s*CALL K14_KOJO2\s*$/m,
-        ],
+        any: [/^\s*CALL K14_KOJO2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1356,23 +1234,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '419-420',
-        any: [
-          /^\s*ELSE\s*$\n^\s*CALL K14_KOJO2\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*CALL K14_KOJO2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '420',
-        any: [
-          /^\s*CALL K14_KOJO2\s*$/m,
-        ],
+        any: [/^\s*CALL K14_KOJO2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '420-421',
-        any: [
-          /^\s*CALL K14_KOJO2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CALL K14_KOJO2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1384,9 +1256,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '429-430',
-        any: [
-          /^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1412,9 +1282,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '435-436',
-        any: [
-          /^\s*ELSEIF MARK:2 == 0 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*ELSEIF MARK:2 == 0 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1426,9 +1294,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '437',
-        any: [
-          /^\s*PRINTFORMW 「不…不要在过来了！！快住手啊！！！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不…不要在过来了！！快住手啊！！！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1440,9 +1306,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '441-442',
-        any: [
-          /^\s*ELSEIF MARK:2 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*ELSEIF MARK:2 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1468,9 +1332,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '447-448',
-        any: [
-          /^\s*ELSEIF MARK:2 == 2 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m,
-        ],
+        any: [/^\s*ELSEIF MARK:2 == 2 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1489,9 +1351,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '450',
-        any: [
-          /^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1594,9 +1454,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '472',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1608,9 +1466,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '474',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1629,9 +1485,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '477',
-        any: [
-          /^\s*PRINTFORMW 「嗯…，我已经等您好久了呢~♪」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「嗯…，我已经等您好久了呢~♪」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1671,9 +1525,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '485',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1685,16 +1537,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '487',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '488',
-        any: [
-          /^\s*PRINTFORMW 「就按照魔王大人想做的…，来进行调教吧…」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「就按照魔王大人想做的…，来进行调教吧…」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1741,9 +1589,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '501-502',
-        any: [
-          /^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1755,9 +1601,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '503-504',
-        any: [
-          /^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1783,9 +1627,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '516',
-        any: [
-          /^\s*PRINTFORMW 「嘁…！给我去死啊…！！！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「嘁…！给我去死啊…！！！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1811,16 +1653,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '522',
-        any: [
-          /^\s*PRINTFORMW 「哼…，总算是结束了呢…」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「哼…，总算是结束了呢…」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '522-523',
-        any: [
-          /^\s*PRINTFORMW 「哼…，总算是结束了呢…」\s*$\n^\s*RETURN 1\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「哼…，总算是结束了呢…」\s*$\n^\s*RETURN 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1846,9 +1684,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '529',
-        any: [
-          /^\s*PRINTFORMW 「哈啊…嗯…，结…结束了么…？」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「哈啊…嗯…，结…结束了么…？」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -1902,9 +1738,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '540',
-        any: [
-          /^\s*PRINTFORMW 「请…请放过我吧…！！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「请…请放过我吧…！！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2070,9 +1904,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '573',
-        any: [
-          /^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2084,9 +1916,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '575',
-        any: [
-          /^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2238,72 +2068,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '605',
-        any: [
-          /^\s*;SIF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*;SIF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '608-609',
-        any: [
-          /^\s*SIF TEQUIP:45 && SELECTCOM != 45\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF TEQUIP:45 && SELECTCOM != 45\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '612-613',
-        any: [
-          /^\s*RETURN 0\s*$\n^\s*;獣姦プレイ中は専用口上\s*$/m,
-        ],
+        any: [/^\s*RETURN 0\s*$\n^\s*;獣姦プレイ中は専用口上\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '614',
-        any: [
-          /^\s*IF TEQUIP:89\s*$/m,
-        ],
+        any: [/^\s*IF TEQUIP:89\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '615',
-        any: [
-          /^\s*CALL DOG_KOJO_14\s*$/m,
-        ],
+        any: [/^\s*CALL DOG_KOJO_14\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '615-616',
-        any: [
-          /^\s*CALL DOG_KOJO_14\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CALL DOG_KOJO_14\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '617-618',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;コロシアム中は専用口上\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;コロシアム中は専用口上\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '619',
-        any: [
-          /^\s*IF TEQUIP:55\s*$/m,
-        ],
+        any: [/^\s*IF TEQUIP:55\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '620',
-        any: [
-          /^\s*CALL COLOSSEUM_KOJO_14\s*$/m,
-        ],
+        any: [/^\s*CALL COLOSSEUM_KOJO_14\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '620-621',
-        any: [
-          /^\s*CALL COLOSSEUM_KOJO_14\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CALL COLOSSEUM_KOJO_14\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2315,30 +2125,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '630',
-        any: [
-          /^\s*IF SELECTCOM == 0\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '632',
-        any: [
-          /^\s*IF CFLAG:301 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:301 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '634',
-        any: [
-          /^\s*IF MARK:2 >= 2\s*$/m,
-        ],
+        any: [/^\s*IF MARK:2 >= 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '635',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2350,9 +2152,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '638',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2364,9 +2164,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '640',
-        any: [
-          /^\s*CFLAG:301 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2392,16 +2190,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '646',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '647',
-        any: [
-          /^\s*CFLAG:301 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2413,16 +2207,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '650',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '651',
-        any: [
-          /^\s*CFLAG:301 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2434,16 +2224,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '654',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '655',
-        any: [
-          /^\s*CFLAG:301 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2455,16 +2241,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '658',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '659',
-        any: [
-          /^\s*CFLAG:301 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2476,16 +2258,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '662',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '663',
-        any: [
-          /^\s*CFLAG:301 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2518,30 +2296,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '673',
-        any: [
-          /^\s*IF SELECTCOM == 1\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '675',
-        any: [
-          /^\s*IF CFLAG:302 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:302 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '677',
-        any: [
-          /^\s*IF TALENT:TARGET:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '678',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2553,9 +2323,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '681',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2567,9 +2335,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '683',
-        any: [
-          /^\s*CFLAG:302 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2595,16 +2361,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '689',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '690',
-        any: [
-          /^\s*CFLAG:302 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2616,16 +2378,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '693',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '694',
-        any: [
-          /^\s*CFLAG:302 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2637,37 +2395,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '697',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '698',
-        any: [
-          /^\s*CFLAG:302 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '700',
-        any: [
-          /^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '701',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '702',
-        any: [
-          /^\s*CFLAG:302 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2700,37 +2448,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '711',
-        any: [
-          /^\s*IF SELECTCOM == 2\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '713',
-        any: [
-          /^\s*IF CFLAG:303 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:303 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '714',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '715',
-        any: [
-          /^\s*CFLAG:TARGET:303 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:303 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '715-716',
-        any: [
-          /^\s*CFLAG:TARGET:303 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:303 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2742,9 +2480,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '719',
-        any: [
-          /^\s*P = PALAM:3 \+ UP:3\s*$/m,
-        ],
+        any: [/^\s*P = PALAM:3 \+ UP:3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2756,16 +2492,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '722',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '723',
-        any: [
-          /^\s*CFLAG:303 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2777,16 +2509,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '726',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '727',
-        any: [
-          /^\s*CFLAG:303 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2798,16 +2526,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '730',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '731',
-        any: [
-          /^\s*CFLAG:303 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2819,16 +2543,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '734',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '735',
-        any: [
-          /^\s*CFLAG:303 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2840,51 +2560,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '738',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '739',
-        any: [
-          /^\s*CFLAG:303 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '741',
-        any: [
-          /^\s*ELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '742',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '743',
-        any: [
-          /^\s*CFLAG:303 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '743-744',
-        any: [
-          /^\s*CFLAG:303 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '743-745',
-        any: [
-          /^\s*CFLAG:303 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:303 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2903,44 +2609,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '752',
-        any: [
-          /^\s*IF SELECTCOM == 3\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '754',
-        any: [
-          /^\s*IF CFLAG:304 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:304 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '755',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '756',
-        any: [
-          /^\s*CFLAG:TARGET:304 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:304 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '756-757',
-        any: [
-          /^\s*CFLAG:TARGET:304 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:304 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '759-760',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱＋処女\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;淫乱＋処女\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2952,16 +2646,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '762',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '763',
-        any: [
-          /^\s*CFLAG:304 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -2973,30 +2663,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '767',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '768',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '769',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '770',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3008,23 +2690,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '772',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '773-774',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:304 = 8\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:304 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '774',
-        any: [
-          /^\s*CFLAG:304 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3036,16 +2712,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '778',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '779',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3057,23 +2729,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '781',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '782-783',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:304 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:304 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '783',
-        any: [
-          /^\s*CFLAG:304 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3085,16 +2751,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '786',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '787',
-        any: [
-          /^\s*CFLAG:304 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3106,30 +2768,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '791',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '792',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '793',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '794',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3141,23 +2795,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '796',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '797-798',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:304 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:304 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '798',
-        any: [
-          /^\s*CFLAG:304 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3169,16 +2817,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '802',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '803',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3190,23 +2834,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '805',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '806-807',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:304 = 4\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:304 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '807',
-        any: [
-          /^\s*CFLAG:304 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3218,16 +2856,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '811',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '812',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3239,44 +2873,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '814',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '815-816',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:304 = 3\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:304 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '816',
-        any: [
-          /^\s*CFLAG:304 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '818',
-        any: [
-          /^\s*ELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '820',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '821',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3288,37 +2910,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '823',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '824-825',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:304 = 2\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:304 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '825',
-        any: [
-          /^\s*CFLAG:304 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '825-826',
-        any: [
-          /^\s*CFLAG:304 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '825-827',
-        any: [
-          /^\s*CFLAG:304 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:304 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3337,30 +2949,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '835',
-        any: [
-          /^\s*IF SELECTCOM == 5\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '837',
-        any: [
-          /^\s*IF CFLAG:306 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:306 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '839',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '840',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3372,9 +2976,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '843',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3386,9 +2988,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '845',
-        any: [
-          /^\s*CFLAG:TARGET:306 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:306 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3414,16 +3014,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '851',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '852',
-        any: [
-          /^\s*CFLAG:306 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3435,16 +3031,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '855',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '856',
-        any: [
-          /^\s*CFLAG:306 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3456,37 +3048,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '859',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '860',
-        any: [
-          /^\s*CFLAG:306 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '862',
-        any: [
-          /^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '863',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '864',
-        any: [
-          /^\s*CFLAG:306 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3519,16 +3101,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '873',
-        any: [
-          /^\s*IF SELECTCOM == 6\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '875',
-        any: [
-          /^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3540,9 +3118,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '878',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3575,58 +3151,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '881',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '884',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '886',
-        any: [
-          /^\s*CFLAG:307 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '889',
-        any: [
-          /^\s*ELSEIF CFLAG:307 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:307 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '891',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '892',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '894',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '895',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3638,9 +3198,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '898',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3652,9 +3210,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '900',
-        any: [
-          /^\s*CFLAG:307 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3680,16 +3236,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '906',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '907',
-        any: [
-          /^\s*CFLAG:307 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3701,16 +3253,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '910',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '911',
-        any: [
-          /^\s*CFLAG:307 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3722,37 +3270,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '914',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '915',
-        any: [
-          /^\s*CFLAG:307 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '917',
-        any: [
-          /^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '918',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '919',
-        any: [
-          /^\s*CFLAG:307 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3785,44 +3323,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '929',
-        any: [
-          /^\s*IF SELECTCOM == 7\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '931',
-        any: [
-          /^\s*IF CFLAG:308 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:308 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '933',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '934',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '936',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '937',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3834,30 +3360,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '940',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '941-942',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:308 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:308 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '942',
-        any: [
-          /^\s*CFLAG:TARGET:308 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:308 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '942-943',
-        any: [
-          /^\s*CFLAG:TARGET:308 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:308 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3876,16 +3394,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '948',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '949',
-        any: [
-          /^\s*CFLAG:306 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3897,16 +3411,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '952',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '953',
-        any: [
-          /^\s*CFLAG:306 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3918,16 +3428,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '956',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '957',
-        any: [
-          /^\s*CFLAG:306 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3946,23 +3452,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '959',
-        any: [
-          /^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '960',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '961',
-        any: [
-          /^\s*CFLAG:306 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -3981,44 +3481,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '971',
-        any: [
-          /^\s*IF SELECTCOM == 8\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '973',
-        any: [
-          /^\s*IF CFLAG:TARGET:309 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:309 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '975',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '976',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '978',
-        any: [
-          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '979',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4030,30 +3518,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '982',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '983-984',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:309 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:309 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '984',
-        any: [
-          /^\s*CFLAG:TARGET:309 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:309 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '984-985',
-        any: [
-          /^\s*CFLAG:TARGET:309 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:309 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4072,16 +3552,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '990',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '991',
-        any: [
-          /^\s*CFLAG:309 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:309 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4093,16 +3569,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '994',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '995',
-        any: [
-          /^\s*CFLAG:309 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:309 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4114,51 +3586,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '998',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '999',
-        any: [
-          /^\s*CFLAG:309 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:309 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1001',
-        any: [
-          /^\s*ELSEIF CFLAG:309 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:309 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1002',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1003',
-        any: [
-          /^\s*CFLAG:309 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:309 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1003-1004',
-        any: [
-          /^\s*CFLAG:309 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:309 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1003-1005',
-        any: [
-          /^\s*CFLAG:309 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:309 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4177,44 +3635,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1012',
-        any: [
-          /^\s*IF SELECTCOM == 9\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1014',
-        any: [
-          /^\s*IF CFLAG:310 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:310 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1016',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1017',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1019',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1020',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4226,9 +3672,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1023',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4240,9 +3684,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1025',
-        any: [
-          /^\s*CFLAG:TARGET:310 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:310 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4268,16 +3710,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1031',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1032',
-        any: [
-          /^\s*CFLAG:310 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4289,16 +3727,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1035',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1036',
-        any: [
-          /^\s*CFLAG:310 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4310,37 +3744,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1039',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1040',
-        any: [
-          /^\s*CFLAG:310 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1042',
-        any: [
-          /^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1043',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1044',
-        any: [
-          /^\s*CFLAG:310 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4373,44 +3797,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1053',
-        any: [
-          /^\s*IF SELECTCOM == 10\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 10\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1055',
-        any: [
-          /^\s*IF CFLAG:TARGET:311 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:311 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1057',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1058',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1060',
-        any: [
-          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1061',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4422,30 +3834,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1064',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1065-1066',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:311 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:311 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1066',
-        any: [
-          /^\s*CFLAG:TARGET:311 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:311 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1066-1067',
-        any: [
-          /^\s*CFLAG:TARGET:311 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:311 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4464,16 +3868,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1072',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1073',
-        any: [
-          /^\s*CFLAG:311 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:311 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4485,16 +3885,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1076',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1077',
-        any: [
-          /^\s*CFLAG:311 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:311 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4506,51 +3902,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1080',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1081',
-        any: [
-          /^\s*CFLAG:311 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:311 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1083',
-        any: [
-          /^\s*ELSEIF CFLAG:311 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:311 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1084',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1085',
-        any: [
-          /^\s*CFLAG:311 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:311 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1085-1086',
-        any: [
-          /^\s*CFLAG:311 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:311 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1085-1087',
-        any: [
-          /^\s*CFLAG:311 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:311 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4569,16 +3951,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1096',
-        any: [
-          /^\s*IF SELECTCOM == 11 && TEQUIP:11\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 11 && TEQUIP:11\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1098',
-        any: [
-          /^\s*IF CFLAG:TARGET:312 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:312 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4597,44 +3975,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1100',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1102',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1103',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1105',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1106',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1109',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4646,30 +4012,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1114',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1115',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1117',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1118',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4681,37 +4039,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1121',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1122-1124',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:312 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:312 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1123-1124',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:312 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:312 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1124',
-        any: [
-          /^\s*CFLAG:312 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1124-1125',
-        any: [
-          /^\s*CFLAG:312 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4730,16 +4078,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1130',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1131',
-        any: [
-          /^\s*CFLAG:312 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4751,16 +4095,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1134',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1135',
-        any: [
-          /^\s*CFLAG:312 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4772,51 +4112,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1138',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1139',
-        any: [
-          /^\s*CFLAG:312 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1141',
-        any: [
-          /^\s*ELSEIF CFLAG:312 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:312 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1142',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1143',
-        any: [
-          /^\s*CFLAG:312 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1143-1144',
-        any: [
-          /^\s*CFLAG:312 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1143-1145',
-        any: [
-          /^\s*CFLAG:312 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:312 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4828,9 +4154,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1148',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4842,16 +4166,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1151',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1152',
-        any: [
-          /^\s*CFLAG:372 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:372 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4863,51 +4183,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1155',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1156',
-        any: [
-          /^\s*CFLAG:372 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:372 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1158',
-        any: [
-          /^\s*ELSEIF CFLAG:372 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:372 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1159',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1160',
-        any: [
-          /^\s*CFLAG:372 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:372 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1160-1161',
-        any: [
-          /^\s*CFLAG:372 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:372 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1160-1162',
-        any: [
-          /^\s*CFLAG:372 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:372 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4919,44 +4225,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1168',
-        any: [
-          /^\s*IF SELECTCOM == 12\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 12\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1170',
-        any: [
-          /^\s*IF CFLAG:313 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:313 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1172',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1173',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1175',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1176',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -4968,30 +4262,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1179',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1180-1181',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:313 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:313 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1181',
-        any: [
-          /^\s*CFLAG:313 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1181-1182',
-        any: [
-          /^\s*CFLAG:313 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5010,16 +4296,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1187',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1188',
-        any: [
-          /^\s*CFLAG:313 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5031,16 +4313,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1191',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1192',
-        any: [
-          /^\s*CFLAG:313 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5052,51 +4330,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1195',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1196',
-        any: [
-          /^\s*CFLAG:313 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1198',
-        any: [
-          /^\s*ELSEIF CFLAG:313 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:313 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1199',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1200',
-        any: [
-          /^\s*CFLAG:313 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1200-1201',
-        any: [
-          /^\s*CFLAG:313 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1200-1202',
-        any: [
-          /^\s*CFLAG:313 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:313 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5115,44 +4379,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1210',
-        any: [
-          /^\s*IF SELECTCOM == 13 && TEQUIP:13\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 13 && TEQUIP:13\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1212',
-        any: [
-          /^\s*IF CFLAG:TARGET:314 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:314 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1214',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1215',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1217',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1218',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5164,30 +4416,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1221',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1222-1223',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:314 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:314 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1223',
-        any: [
-          /^\s*CFLAG:TARGET:314 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:314 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1223-1224',
-        any: [
-          /^\s*CFLAG:TARGET:314 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:314 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5206,16 +4450,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1229',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1230',
-        any: [
-          /^\s*CFLAG:314 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5227,16 +4467,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1233',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1234',
-        any: [
-          /^\s*CFLAG:314 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5248,16 +4484,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1237',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1238',
-        any: [
-          /^\s*CFLAG:314 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5269,16 +4501,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1241',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1242',
-        any: [
-          /^\s*CFLAG:314 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5290,51 +4518,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1245',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1246',
-        any: [
-          /^\s*CFLAG:314 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1248',
-        any: [
-          /^\s*ELSEIF  CFLAG:314 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:314 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1249',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1250',
-        any: [
-          /^\s*CFLAG:314 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1250-1251',
-        any: [
-          /^\s*CFLAG:314 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1250-1252',
-        any: [
-          /^\s*CFLAG:314 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:314 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5346,9 +4560,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1255',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5360,16 +4572,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1258',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1259',
-        any: [
-          /^\s*CFLAG:374 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:374 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5381,16 +4589,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1262',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1263',
-        any: [
-          /^\s*CFLAG:374 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:374 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5402,51 +4606,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1266',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1267',
-        any: [
-          /^\s*CFLAG:374 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:374 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1269',
-        any: [
-          /^\s*ELSEIF CFLAG:374 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:374 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1270',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1271',
-        any: [
-          /^\s*CFLAG:374 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:374 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1271-1272',
-        any: [
-          /^\s*CFLAG:374 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:374 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1271-1273',
-        any: [
-          /^\s*CFLAG:374 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:374 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5458,44 +4648,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1444',
-        any: [
-          /^\s*IF SELECTCOM == 17 && TEQUIP:17\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 17 && TEQUIP:17\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1446',
-        any: [
-          /^\s*IF CFLAG:318 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:318 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1448',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1449',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1451',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1452',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5507,30 +4685,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1455',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1456-1457',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:318 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:318 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1457',
-        any: [
-          /^\s*CFLAG:318 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1457-1458',
-        any: [
-          /^\s*CFLAG:318 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5549,16 +4719,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1463',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1464',
-        any: [
-          /^\s*CFLAG:318 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5570,51 +4736,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1467',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1468',
-        any: [
-          /^\s*CFLAG:318 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1470',
-        any: [
-          /^\s*ELSEIF CFLAG:318 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:318 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1471',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1472',
-        any: [
-          /^\s*CFLAG:318 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1472-1473',
-        any: [
-          /^\s*CFLAG:318 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1472-1474',
-        any: [
-          /^\s*CFLAG:318 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:318 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5626,9 +4778,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1477',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 17 && TEQUIP:17 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 17 && TEQUIP:17 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5640,16 +4790,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1480',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1481',
-        any: [
-          /^\s*CFLAG:378 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:378 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5661,51 +4807,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1484',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1485',
-        any: [
-          /^\s*CFLAG:378 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:378 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1487',
-        any: [
-          /^\s*ELSEIF CFLAG:378 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:378 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1488',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1489',
-        any: [
-          /^\s*CFLAG:378 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:378 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1489-1490',
-        any: [
-          /^\s*CFLAG:378 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:378 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1489-1491',
-        any: [
-          /^\s*CFLAG:378 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:378 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5717,44 +4849,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1498',
-        any: [
-          /^\s*IF SELECTCOM == 19 && TEQUIP:19\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 19 && TEQUIP:19\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1500',
-        any: [
-          /^\s*IF CFLAG:TARGET:320 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:320 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1502',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1503',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1505',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1506',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5766,30 +4886,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1509',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1510-1511',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:320 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:320 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1511',
-        any: [
-          /^\s*CFLAG:TARGET:320 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:320 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1511-1512',
-        any: [
-          /^\s*CFLAG:TARGET:320 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:320 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5808,16 +4920,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1517',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1518',
-        any: [
-          /^\s*CFLAG:320 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5829,16 +4937,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1521',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1522',
-        any: [
-          /^\s*CFLAG:320 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5850,16 +4954,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1525',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1526',
-        any: [
-          /^\s*CFLAG:320 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5871,16 +4971,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1529',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1530',
-        any: [
-          /^\s*CFLAG:320 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5892,51 +4988,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1533',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1534',
-        any: [
-          /^\s*CFLAG:320 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1536',
-        any: [
-          /^\s*ELSEIF  CFLAG:320 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:320 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1537',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1538',
-        any: [
-          /^\s*CFLAG:320 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1538-1539',
-        any: [
-          /^\s*CFLAG:320 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1538-1540',
-        any: [
-          /^\s*CFLAG:320 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:320 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5948,9 +5030,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1543',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 19 && TEQUIP:19 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 19 && TEQUIP:19 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5962,16 +5042,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1546',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1547',
-        any: [
-          /^\s*CFLAG:379 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:379 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -5983,16 +5059,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1550',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1551',
-        any: [
-          /^\s*CFLAG:379 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:379 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6004,51 +5076,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1554',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1555',
-        any: [
-          /^\s*CFLAG:379 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:379 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1557',
-        any: [
-          /^\s*ELSEIF CFLAG:379 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:379 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1558',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1559',
-        any: [
-          /^\s*CFLAG:379 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:379 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1559-1560',
-        any: [
-          /^\s*CFLAG:379 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:379 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1559-1561',
-        any: [
-          /^\s*CFLAG:379 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:379 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6060,44 +5118,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1568',
-        any: [
-          /^\s*IF SELECTCOM == 20\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 20\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1570',
-        any: [
-          /^\s*IF CFLAG:TARGET:321 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:321 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1572',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1574',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1575',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1577',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6123,44 +5169,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1578',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1581',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1585',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1586',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1588',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1589',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6172,37 +5206,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1592',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1593-1595',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:321 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:321 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1594-1595',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:321 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:321 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1595',
-        any: [
-          /^\s*CFLAG:321 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1595-1596',
-        any: [
-          /^\s*CFLAG:321 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6221,16 +5245,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1601',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1602',
-        any: [
-          /^\s*CFLAG:321 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6242,16 +5262,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1605',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1606',
-        any: [
-          /^\s*CFLAG:321 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6263,16 +5279,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1609',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1610',
-        any: [
-          /^\s*CFLAG:321 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6284,51 +5296,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1613',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1614',
-        any: [
-          /^\s*CFLAG:321 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1616',
-        any: [
-          /^\s*ELSEIF CFLAG:321 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:321 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1617',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1618',
-        any: [
-          /^\s*CFLAG:321 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1618-1619',
-        any: [
-          /^\s*CFLAG:321 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1618-1620',
-        any: [
-          /^\s*CFLAG:321 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:321 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6361,58 +5359,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1628',
-        any: [
-          /^\s*IF SELECTCOM == 21\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 21\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1630',
-        any: [
-          /^\s*IF CFLAG:TARGET:322 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:322 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1632',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1634',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1635',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1637',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1638',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1642',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6424,30 +5406,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1647',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1648',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1650',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1651',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6459,9 +5433,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1654',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6480,9 +5452,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1657',
-        any: [
-          /^\s*CFLAG:322 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6536,44 +5506,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1663',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1664',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1665',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1666',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1668',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1670',
-        any: [
-          /^\s*CFLAG:322 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6585,44 +5543,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1673',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1674',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1675',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1676',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1678',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1680',
-        any: [
-          /^\s*CFLAG:322 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6634,16 +5580,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1683',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1684',
-        any: [
-          /^\s*CFLAG:322 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6655,37 +5597,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1687',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1688',
-        any: [
-          /^\s*CFLAG:322 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1690',
-        any: [
-          /^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1691',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1693',
-        any: [
-          /^\s*CFLAG:322 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6718,16 +5650,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1703',
-        any: [
-          /^\s*IF SELECTCOM == 22\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 22\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1704',
-        any: [
-          /^\s*IF CFLAG:TARGET:323 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:323 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6746,44 +5674,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1706',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1708',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1709',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1711',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1712',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1715',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6795,30 +5711,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1720',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1721',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1723',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1724',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6830,37 +5738,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1727',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1728-1730',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:323 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:323 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1729-1730',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:323 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:323 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1730',
-        any: [
-          /^\s*CFLAG:323 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1730-1731',
-        any: [
-          /^\s*CFLAG:323 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6879,30 +5777,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1736',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1737',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1738',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1739',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6914,23 +5804,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1741',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1742-1743',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:323 = 6\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:323 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1743',
-        any: [
-          /^\s*CFLAG:323 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6942,30 +5826,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1746',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1747',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1748',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1749',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -6977,23 +5853,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1751',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1752-1753',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:323 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:323 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1753',
-        any: [
-          /^\s*CFLAG:323 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7005,16 +5875,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1756',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1757',
-        any: [
-          /^\s*CFLAG:323 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7026,51 +5892,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1760',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1761',
-        any: [
-          /^\s*CFLAG:323 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1763',
-        any: [
-          /^\s*ELSEIF CFLAG:323 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:323 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1764',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1765',
-        any: [
-          /^\s*CFLAG:323 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1765-1766',
-        any: [
-          /^\s*CFLAG:323 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1765-1767',
-        any: [
-          /^\s*CFLAG:323 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:323 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7089,16 +5941,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1775',
-        any: [
-          /^\s*IF SELECTCOM == 23\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 23\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1776',
-        any: [
-          /^\s*IF CFLAG:TARGET:324 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:324 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7117,44 +5965,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1778',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1780',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1781',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1783',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1784',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1787',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7166,30 +6002,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1792',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1793',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1795',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1796',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7201,37 +6029,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1799',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1800-1802',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:324 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:324 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1801-1802',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:324 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:324 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1802',
-        any: [
-          /^\s*CFLAG:324 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1802-1803',
-        any: [
-          /^\s*CFLAG:324 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7250,30 +6068,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1808',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1809',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1810',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1811',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7285,23 +6095,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1813',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1814-1815',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:324 = 6\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:324 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1815',
-        any: [
-          /^\s*CFLAG:324 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7313,30 +6117,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1818',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1819',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1820',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1821',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7348,23 +6144,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1823',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1824-1825',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:324 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:324 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1825',
-        any: [
-          /^\s*CFLAG:324 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7376,16 +6166,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1828',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1829',
-        any: [
-          /^\s*CFLAG:324 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7397,51 +6183,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1832',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1833',
-        any: [
-          /^\s*CFLAG:324 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1835',
-        any: [
-          /^\s*ELSEIF CFLAG:324 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:324 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1836',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1837',
-        any: [
-          /^\s*CFLAG:324 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1837-1838',
-        any: [
-          /^\s*CFLAG:324 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1837-1839',
-        any: [
-          /^\s*CFLAG:324 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:324 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7460,44 +6232,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1846',
-        any: [
-          /^\s*IF SELECTCOM == 26\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 26\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1848',
-        any: [
-          /^\s*IF CFLAG:TARGET:327 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:327 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1850',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1851',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1853',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1854',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7509,30 +6269,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1857',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1858-1859',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:327 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:327 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1859',
-        any: [
-          /^\s*CFLAG:TARGET:327 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:327 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1859-1860',
-        any: [
-          /^\s*CFLAG:TARGET:327 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:327 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7551,30 +6303,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1865',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1866',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1867',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1868',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7586,23 +6330,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1870',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1871-1872',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:327 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:327 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1872',
-        any: [
-          /^\s*CFLAG:327 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7614,16 +6352,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1875',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1876',
-        any: [
-          /^\s*CFLAG:327 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7642,37 +6376,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1879',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1880',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1882',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1883-1884',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:327 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:327 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1884',
-        any: [
-          /^\s*CFLAG:327 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7684,16 +6408,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1887',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1888',
-        any: [
-          /^\s*CFLAG:327 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7705,51 +6425,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1891',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1892',
-        any: [
-          /^\s*CFLAG:327 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1894',
-        any: [
-          /^\s*ELSEIF  CFLAG:327 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:327 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1895',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1896',
-        any: [
-          /^\s*CFLAG:327 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1896-1897',
-        any: [
-          /^\s*CFLAG:327 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1896-1898',
-        any: [
-          /^\s*CFLAG:327 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:327 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7768,44 +6474,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1905',
-        any: [
-          /^\s*IF SELECTCOM == 27\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 27\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1907',
-        any: [
-          /^\s*IF CFLAG:TARGET:328 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:328 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1909',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1910',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1912',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1913',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7817,9 +6511,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1916',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7831,9 +6523,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1918',
-        any: [
-          /^\s*CFLAG:TARGET:328 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:328 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7873,30 +6563,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1924',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1925',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1927',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1929',
-        any: [
-          /^\s*CFLAG:328 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7908,16 +6590,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1932',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1933',
-        any: [
-          /^\s*CFLAG:328 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7929,37 +6607,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1936',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1937',
-        any: [
-          /^\s*CFLAG:328 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1939',
-        any: [
-          /^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1940',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1941',
-        any: [
-          /^\s*CFLAG:328 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -7992,44 +6660,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1950',
-        any: [
-          /^\s*IF SELECTCOM == 28\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 28\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1952',
-        any: [
-          /^\s*IF CFLAG:TARGET:329 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:329 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1954',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1955',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1957',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1958',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8041,30 +6697,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1961',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1962-1963',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:329 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:329 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1963',
-        any: [
-          /^\s*CFLAG:TARGET:329 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:329 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1963-1964',
-        any: [
-          /^\s*CFLAG:TARGET:329 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:329 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8083,30 +6731,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1969',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1970',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1971',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1972',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8118,23 +6758,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1974',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1975-1976',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:329 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:329 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1976',
-        any: [
-          /^\s*CFLAG:329 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8146,16 +6780,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1979',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1980',
-        any: [
-          /^\s*CFLAG:329 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8174,37 +6804,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1983',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1984',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1986',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1987-1988',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:329 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:329 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1988',
-        any: [
-          /^\s*CFLAG:329 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8216,16 +6836,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1991',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1992',
-        any: [
-          /^\s*CFLAG:329 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8237,51 +6853,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1995',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1996',
-        any: [
-          /^\s*CFLAG:329 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1998',
-        any: [
-          /^\s*ELSEIF  CFLAG:329 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:329 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1999',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2000',
-        any: [
-          /^\s*CFLAG:329 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2000-2001',
-        any: [
-          /^\s*CFLAG:329 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2000-2002',
-        any: [
-          /^\s*CFLAG:329 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:329 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8300,44 +6902,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2009',
-        any: [
-          /^\s*IF SELECTCOM == 29\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 29\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2011',
-        any: [
-          /^\s*IF CFLAG:TARGET:330 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:330 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2013',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2014',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2016',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2017',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8349,30 +6939,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2020',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2021-2022',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:330 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:330 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2022',
-        any: [
-          /^\s*CFLAG:TARGET:330 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:330 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2022-2023',
-        any: [
-          /^\s*CFLAG:TARGET:330 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:330 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8398,37 +6980,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2028',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2029',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2031',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2032-2033',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:330 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:330 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2033',
-        any: [
-          /^\s*CFLAG:330 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8440,16 +7012,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2036',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2037',
-        any: [
-          /^\s*CFLAG:330 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8468,37 +7036,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2040',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2041',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2043',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2044-2045',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:330 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:330 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2045',
-        any: [
-          /^\s*CFLAG:330 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8510,16 +7068,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2048',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2049',
-        any: [
-          /^\s*CFLAG:330 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8531,51 +7085,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2052',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2053',
-        any: [
-          /^\s*CFLAG:330 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2055',
-        any: [
-          /^\s*ELSEIF  CFLAG:330 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:330 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2056',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2057',
-        any: [
-          /^\s*CFLAG:330 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2057-2058',
-        any: [
-          /^\s*CFLAG:330 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2057-2059',
-        any: [
-          /^\s*CFLAG:330 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:330 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8594,58 +7134,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2066',
-        any: [
-          /^\s*IF SELECTCOM == 30\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 30\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2068',
-        any: [
-          /^\s*IF CFLAG:TARGET:331 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:331 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2070',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2071',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2073',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2074',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2076',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2077',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8657,9 +7181,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2080',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8671,9 +7193,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2082',
-        any: [
-          /^\s*CFLAG:TARGET:331 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:331 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8727,30 +7247,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2088',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2089',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2091',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2093',
-        any: [
-          /^\s*CFLAG:331 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8762,30 +7274,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2096',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2097',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2099',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2101',
-        any: [
-          /^\s*CFLAG:331 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8797,16 +7301,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2104',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2105',
-        any: [
-          /^\s*CFLAG:331 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8818,37 +7318,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2108',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2109',
-        any: [
-          /^\s*CFLAG:331 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2111',
-        any: [
-          /^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2112',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2113',
-        any: [
-          /^\s*CFLAG:331 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8881,58 +7371,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2122',
-        any: [
-          /^\s*IF SELECTCOM == 31\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2124',
-        any: [
-          /^\s*IF CFLAG:TARGET:332 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:332 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2126',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2127',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2129',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2130',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2132',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2133',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8944,9 +7418,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2136',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8958,9 +7430,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2138',
-        any: [
-          /^\s*CFLAG:TARGET:332 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:332 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -8986,16 +7456,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2144',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2145',
-        any: [
-          /^\s*CFLAG:332 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9007,16 +7473,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2148',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2149',
-        any: [
-          /^\s*CFLAG:332 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9028,23 +7490,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2152',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2153',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2154',
-        any: [
-          /^\s*CFLAG:332 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9056,44 +7512,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2157',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2158',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2159',
-        any: [
-          /^\s*CFLAG:332 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2161',
-        any: [
-          /^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2162',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2163',
-        any: [
-          /^\s*CFLAG:332 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9126,58 +7570,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2173',
-        any: [
-          /^\s*IF SELECTCOM == 32\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2175',
-        any: [
-          /^\s*IF CFLAG:TARGET:333 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:333 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2177',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2178',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2180',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2181',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2183',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2184',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9189,30 +7617,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2187',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2188-2189',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:333 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:333 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2189',
-        any: [
-          /^\s*CFLAG:TARGET:333 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:333 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2189-2190',
-        any: [
-          /^\s*CFLAG:TARGET:333 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:333 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9238,37 +7658,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2195',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2196',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2198',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2199-2200',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:333 = 6\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:333 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2200',
-        any: [
-          /^\s*CFLAG:333 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9280,16 +7690,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2203',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2204',
-        any: [
-          /^\s*CFLAG:333 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9308,37 +7714,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2207',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2208',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2210',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2211-2212',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:333 = 4\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:333 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2212',
-        any: [
-          /^\s*CFLAG:333 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9350,51 +7746,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2215',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2216',
-        any: [
-          /^\s*CFLAG:333 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2218',
-        any: [
-          /^\s*ELSEIF  CFLAG:333 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:333 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2219',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2220',
-        any: [
-          /^\s*CFLAG:333 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2220-2221',
-        any: [
-          /^\s*CFLAG:333 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2220-2222',
-        any: [
-          /^\s*CFLAG:333 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:333 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9413,44 +7795,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2229',
-        any: [
-          /^\s*IF SELECTCOM == 33\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 33\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2231',
-        any: [
-          /^\s*IF CFLAG:TARGET:334 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:334 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2233',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2234',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2236',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2237',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9462,37 +7832,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2240',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2241-2242',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:334 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:334 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2242',
-        any: [
-          /^\s*CFLAG:TARGET:334 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:334 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2242-2243',
-        any: [
-          /^\s*CFLAG:TARGET:334 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:334 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2245-2246',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱\+処女\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;淫乱\+処女\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9504,16 +7864,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2248',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2249',
-        any: [
-          /^\s*CFLAG:334 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9525,16 +7881,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2252',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2253',
-        any: [
-          /^\s*CFLAG:334 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9546,23 +7898,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2256',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2257',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2258',
-        any: [
-          /^\s*CFLAG:334 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9574,58 +7920,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2261',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2262',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2263',
-        any: [
-          /^\s*CFLAG:334 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2265',
-        any: [
-          /^\s*ELSEIF CFLAG:334 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:334 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2266',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2267',
-        any: [
-          /^\s*CFLAG:334 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2267-2268',
-        any: [
-          /^\s*CFLAG:334 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2267-2269',
-        any: [
-          /^\s*CFLAG:334 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:334 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9658,58 +7988,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2277',
-        any: [
-          /^\s*IF SELECTCOM == 34\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 34\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2279',
-        any: [
-          /^\s*IF CFLAG:TARGET:335 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:335 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2281',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2283',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2284',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2286',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2287',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2290',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9721,30 +8035,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2295',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2296',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2298',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2299',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9756,9 +8062,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2302',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9777,9 +8081,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2305',
-        any: [
-          /^\s*CFLAG:TARGET:335 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9833,58 +8135,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2311',
-        any: [
-          /^\s*IF RAND:4 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2312',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2313',
-        any: [
-          /^\s*ELSEIF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2314',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2315',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2316',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2318',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2320',
-        any: [
-          /^\s*CFLAG:335 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9896,58 +8182,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2323',
-        any: [
-          /^\s*IF RAND:4 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2324',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2325',
-        any: [
-          /^\s*ELSEIF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2326',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2327',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2328',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2330',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2332',
-        any: [
-          /^\s*CFLAG:335 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -9959,44 +8229,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2335',
-        any: [
-          /^\s*IF RAND:4 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2336',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2337',
-        any: [
-          /^\s*ELSEIF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2338',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2339',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2340',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10008,9 +8266,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2342',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10022,9 +8278,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2344',
-        any: [
-          /^\s*CFLAG:335 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10036,44 +8290,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2347',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2348',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2349',
-        any: [
-          /^\s*CFLAG:335 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2351',
-        any: [
-          /^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2352',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2353',
-        any: [
-          /^\s*CFLAG:335 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10106,30 +8348,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2362',
-        any: [
-          /^\s*IF SELECTCOM == 35\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 35\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2364',
-        any: [
-          /^\s*IF CFLAG:TARGET:336 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:336 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2366',
-        any: [
-          /^\s*IF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2367',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10141,30 +8375,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2370',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2371-2372',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:336 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:336 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2372',
-        any: [
-          /^\s*CFLAG:TARGET:336 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:336 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2372-2373',
-        any: [
-          /^\s*CFLAG:TARGET:336 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:336 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10183,16 +8409,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2378',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2379',
-        any: [
-          /^\s*CFLAG:336 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:336 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10204,16 +8426,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2382',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2383',
-        any: [
-          /^\s*CFLAG:336 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:336 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10225,51 +8443,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2386',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2387',
-        any: [
-          /^\s*CFLAG:336 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:336 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2389',
-        any: [
-          /^\s*ELSEIF  CFLAG:336 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:336 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2390',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2391',
-        any: [
-          /^\s*CFLAG:336 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:336 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2391-2392',
-        any: [
-          /^\s*CFLAG:336 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:336 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2391-2393',
-        any: [
-          /^\s*CFLAG:336 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:336 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10288,44 +8492,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2400',
-        any: [
-          /^\s*IF SELECTCOM == 36\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 36\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2402',
-        any: [
-          /^\s*IF CFLAG:TARGET:337 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:337 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2404',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2405',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2407',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2408',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10337,30 +8529,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2411',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2412-2413',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:337 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:337 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2413',
-        any: [
-          /^\s*CFLAG:TARGET:337 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:337 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2413-2414',
-        any: [
-          /^\s*CFLAG:TARGET:337 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:337 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10386,37 +8570,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2419',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2420',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2422',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2423-2424',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:337 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:337 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2424',
-        any: [
-          /^\s*CFLAG:337 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10428,16 +8602,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2427',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2428',
-        any: [
-          /^\s*CFLAG:337 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10456,37 +8626,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2431',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2432',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2434',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2435-2436',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:337 = 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:337 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2436',
-        any: [
-          /^\s*CFLAG:337 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10498,16 +8658,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2439',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2440',
-        any: [
-          /^\s*CFLAG:337 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10519,51 +8675,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2443',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2444',
-        any: [
-          /^\s*CFLAG:337 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2446',
-        any: [
-          /^\s*ELSEIF  CFLAG:337 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:337 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2447',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2448',
-        any: [
-          /^\s*CFLAG:337 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2448-2449',
-        any: [
-          /^\s*CFLAG:337 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2448-2450',
-        any: [
-          /^\s*CFLAG:337 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:337 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10582,30 +8724,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2457',
-        any: [
-          /^\s*IF SELECTCOM == 37\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 37\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2459',
-        any: [
-          /^\s*IF CFLAG:TARGET:338 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:338 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2461',
-        any: [
-          /^\s*IF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2462',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10617,9 +8751,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2465',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10631,9 +8763,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2467',
-        any: [
-          /^\s*CFLAG:TARGET:338 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:338 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10659,16 +8789,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2473',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2474',
-        any: [
-          /^\s*CFLAG:338 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10680,16 +8806,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2477',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2478',
-        any: [
-          /^\s*CFLAG:338 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10701,37 +8823,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2481',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2482',
-        any: [
-          /^\s*CFLAG:338 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2484',
-        any: [
-          /^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2485',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2486',
-        any: [
-          /^\s*CFLAG:338 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10764,44 +8876,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2495',
-        any: [
-          /^\s*IF SELECTCOM == 40\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 40\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2497',
-        any: [
-          /^\s*IF CFLAG:TARGET:341 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:341 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2498',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2499',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2499-2500',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2502-2503',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱＋マゾっ気Lv3\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;淫乱＋マゾっ気Lv3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10813,16 +8913,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2505',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2506',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10834,23 +8930,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2509',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2510',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2510-2511',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 4\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 4\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10862,58 +8952,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2514',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2515',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2515-2516',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 3\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 3\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2518',
-        any: [
-          /^\s*ELSEIF CFLAG:341 <= 1 && FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:341 <= 1 && FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2519',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2520',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2520-2521',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2520-2522',
-        any: [
-          /^\s*CFLAG:TARGET:341 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:341 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10932,44 +9006,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2529',
-        any: [
-          /^\s*IF SELECTCOM == 41\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 41\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2531',
-        any: [
-          /^\s*IF CFLAG:TARGET:342 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:342 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2533',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2534',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2536',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2537',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -10981,30 +9043,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2540',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2541-2542',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:342 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:342 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2542',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2542-2543',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11023,16 +9077,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2548',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2549',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11044,16 +9094,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2552',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2553',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11065,16 +9111,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2556',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2557',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11086,16 +9128,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2560',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2561',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11107,16 +9145,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2564',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2565',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11128,16 +9162,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2568',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2569',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11149,51 +9179,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2572',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2573',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2575',
-        any: [
-          /^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2576',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2577',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2577-2578',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2577-2579',
-        any: [
-          /^\s*CFLAG:TARGET:342 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:342 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11212,44 +9228,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2586',
-        any: [
-          /^\s*IF SELECTCOM == 42\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 42\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2588',
-        any: [
-          /^\s*IF CFLAG:TARGET:343 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:343 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2590',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2591',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2593',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2594',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11261,30 +9265,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2597',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2598-2599',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:343 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:343 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2599',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2599-2600',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11303,16 +9299,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2605',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2606',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11324,16 +9316,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2609',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2610',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11345,16 +9333,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2613',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2614',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11366,16 +9350,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2617',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2618',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11387,16 +9367,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2621',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2622',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11408,16 +9384,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2625',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2626',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11429,51 +9401,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2629',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2630',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2632',
-        any: [
-          /^\s*ELSEIF CFLAG:343 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:343 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2633',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2634',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2634-2635',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2634-2636',
-        any: [
-          /^\s*CFLAG:TARGET:343 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:343 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11492,44 +9450,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2644',
-        any: [
-          /^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2646',
-        any: [
-          /^\s*IF CFLAG:TARGET:344 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:344 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2648',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2649',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2651',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2652',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11541,9 +9487,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2655',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11555,9 +9499,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2657',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11583,16 +9525,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2663',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2664',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11604,16 +9542,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2667',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2668',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11625,16 +9559,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2671',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2672',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11646,16 +9576,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2675',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2676',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11667,16 +9593,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2679',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2680',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11688,16 +9610,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2683',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2684',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11709,37 +9627,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2687',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2688',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2690',
-        any: [
-          /^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2691',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2692',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11765,9 +9673,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2697',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11779,16 +9685,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2700',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2701',
-        any: [
-          /^\s*CFLAG:380 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:380 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11800,51 +9702,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2704',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2705',
-        any: [
-          /^\s*CFLAG:380 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:380 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2707',
-        any: [
-          /^\s*ELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2708',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2709',
-        any: [
-          /^\s*CFLAG:380 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:380 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2709-2710',
-        any: [
-          /^\s*CFLAG:380 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:380 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2709-2711',
-        any: [
-          /^\s*CFLAG:380 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:380 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11856,44 +9744,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2718',
-        any: [
-          /^\s*IF SELECTCOM == 44 && TEQUIP:44\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 44 && TEQUIP:44\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2720',
-        any: [
-          /^\s*IF CFLAG:TARGET:345 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:345 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2722',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2723',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2725',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2726',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11905,30 +9781,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2729',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2730-2731',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:345 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:345 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2731',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2731-2732',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11947,16 +9815,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2737',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2738',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11968,16 +9832,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2741',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2742',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -11989,16 +9849,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2745',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2746',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12010,16 +9866,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2749',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2750',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12031,16 +9883,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2753',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2754',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12052,16 +9900,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2757',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2758',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12073,51 +9917,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2761',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2762',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2764',
-        any: [
-          /^\s*ELSEIF CFLAG:345 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:345 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2765',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2766',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2766-2767',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2766-2768',
-        any: [
-          /^\s*CFLAG:TARGET:345 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:345 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12129,9 +9959,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2771',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12143,16 +9971,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2774',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2775',
-        any: [
-          /^\s*CFLAG:385 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:385 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12164,51 +9988,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2778',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2779',
-        any: [
-          /^\s*CFLAG:385 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:385 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2781',
-        any: [
-          /^\s*ELSEIF CFLAG:385 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:385 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2782',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2783',
-        any: [
-          /^\s*CFLAG:385 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:385 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2783-2784',
-        any: [
-          /^\s*CFLAG:385 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:385 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2783-2785',
-        any: [
-          /^\s*CFLAG:385 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:385 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12220,44 +10030,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2792',
-        any: [
-          /^\s*IF SELECTCOM == 45 && TEQUIP:45\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 45 && TEQUIP:45\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2794',
-        any: [
-          /^\s*IF CFLAG:TARGET:346 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:346 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2796',
-        any: [
-          /^\s*IF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2797',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2799',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2800',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12269,30 +10067,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2803',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2804-2805',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:346 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:346 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2805',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2805-2806',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12311,16 +10101,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2811',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2812',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12332,16 +10118,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2815',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2816',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12353,16 +10135,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2819',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2820',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12374,16 +10152,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2823',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2824',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12395,16 +10169,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2827',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2828',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12416,16 +10186,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2831',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2832',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12437,51 +10203,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2835',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2836',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2838',
-        any: [
-          /^\s*ELSEIF CFLAG:346 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:346 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2839',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2840',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2840-2841',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2840-2842',
-        any: [
-          /^\s*CFLAG:TARGET:346 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:346 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12493,9 +10245,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2845',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12507,16 +10257,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2848',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2849',
-        any: [
-          /^\s*CFLAG:386 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:386 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12528,51 +10274,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2852',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2853',
-        any: [
-          /^\s*CFLAG:386 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:386 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2855',
-        any: [
-          /^\s*ELSEIF CFLAG:386 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:386 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2856',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2857',
-        any: [
-          /^\s*CFLAG:386 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:386 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2857-2858',
-        any: [
-          /^\s*CFLAG:386 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:386 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2857-2859',
-        any: [
-          /^\s*CFLAG:386 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:386 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12584,44 +10316,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2866',
-        any: [
-          /^\s*IF SELECTCOM == 46 && TEQUIP:46\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 46 && TEQUIP:46\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2868',
-        any: [
-          /^\s*IF CFLAG:TARGET:347 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:347 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2870',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2871',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2873',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2874',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12633,37 +10353,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2877',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2878-2879',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:347 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:347 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2879',
-        any: [
-          /^\s*CFLAG:TARGET:347 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:347 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2879-2880',
-        any: [
-          /^\s*CFLAG:TARGET:347 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:347 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2882-2883',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱＋A感覚Lv3以上＋マゾっ気Lv3以上\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;淫乱＋A感覚Lv3以上＋マゾっ気Lv3以上\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12675,16 +10385,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2885',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2886',
-        any: [
-          /^\s*CFLAG:347 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12696,16 +10402,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2889',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2890',
-        any: [
-          /^\s*CFLAG:347 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12717,16 +10419,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2893',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2894',
-        any: [
-          /^\s*CFLAG:347 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12738,16 +10436,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2897',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2898',
-        any: [
-          /^\s*CFLAG:347 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12759,51 +10453,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2901',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2902',
-        any: [
-          /^\s*CFLAG:347 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2904',
-        any: [
-          /^\s*ELSEIF  CFLAG:347 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:347 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2905',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2906',
-        any: [
-          /^\s*CFLAG:347 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2906-2907',
-        any: [
-          /^\s*CFLAG:347 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2906-2908',
-        any: [
-          /^\s*CFLAG:347 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:347 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12822,30 +10502,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2915',
-        any: [
-          /^\s*IF SELECTCOM == 55\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 55\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2917',
-        any: [
-          /^\s*IF CFLAG:356 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:356 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2919',
-        any: [
-          /^\s*IF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2920',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12857,37 +10529,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2923',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2924-2925',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:356 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:356 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2925',
-        any: [
-          /^\s*CFLAG:356 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2925-2926',
-        any: [
-          /^\s*CFLAG:356 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2928-2929',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;愛＋欲情Lv3以上\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;愛＋欲情Lv3以上\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12899,16 +10561,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2931',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2932',
-        any: [
-          /^\s*CFLAG:356 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -12920,51 +10578,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2935',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2936',
-        any: [
-          /^\s*CFLAG:356 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2938',
-        any: [
-          /^\s*ELSEIF CFLAG:356 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:356 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2939',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2940',
-        any: [
-          /^\s*CFLAG:356 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2940-2941',
-        any: [
-          /^\s*CFLAG:356 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2940-2942',
-        any: [
-          /^\s*CFLAG:356 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:356 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13004,86 +10648,62 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2950',
-        any: [
-          /^\s*IF SELECTCOM == 56\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 56\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2952',
-        any: [
-          /^\s*IF CFLAG:357 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:357 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2953',
-        any: [
-          /^\s*IF TEQUIP:53\s*$/m,
-        ],
+        any: [/^\s*IF TEQUIP:53\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2956',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2957',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2959',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2960',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2963',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2967',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2968',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2970',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2971',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13095,9 +10715,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2974',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13116,9 +10734,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2977',
-        any: [
-          /^\s*CFLAG:357 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13137,9 +10753,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2981',
-        any: [
-          /^\s*IF TEQUIP:53\s*$/m,
-        ],
+        any: [/^\s*IF TEQUIP:53\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13151,16 +10765,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2985',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2986',
-        any: [
-          /^\s*CFLAG:357 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13172,37 +10782,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2989',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2990',
-        any: [
-          /^\s*CFLAG:357 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2992',
-        any: [
-          /^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2993',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2994',
-        any: [
-          /^\s*CFLAG:357 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13228,16 +10828,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2999',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3000',
-        any: [
-          /^\s*CFLAG:357 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13249,37 +10845,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3003',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3004',
-        any: [
-          /^\s*CFLAG:357 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3006',
-        any: [
-          /^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3007',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3008',
-        any: [
-          /^\s*CFLAG:357 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13319,58 +10905,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3017',
-        any: [
-          /^\s*IF SELECTCOM == 123\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 123\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3019',
-        any: [
-          /^\s*IF CFLAG:TARGET:360 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:360 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3021',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3022',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3024',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3025',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3027',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3028',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13382,30 +10952,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3031',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3032-3033',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:360 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:360 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3033',
-        any: [
-          /^\s*CFLAG:TARGET:360 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:360 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3033-3034',
-        any: [
-          /^\s*CFLAG:TARGET:360 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:360 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13424,16 +10986,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3039',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3040',
-        any: [
-          /^\s*CFLAG:360 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:360 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13445,16 +11003,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3043',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3044',
-        any: [
-          /^\s*CFLAG:360 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:360 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13466,51 +11020,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3047',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3048',
-        any: [
-          /^\s*CFLAG:360 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:360 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3050',
-        any: [
-          /^\s*ELSEIF CFLAG:360 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:360 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3051',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3052',
-        any: [
-          /^\s*CFLAG:360 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:360 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3052-3053',
-        any: [
-          /^\s*CFLAG:360 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:360 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3052-3054',
-        any: [
-          /^\s*CFLAG:360 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:360 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13529,58 +11069,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3060',
-        any: [
-          /^\s*IF SELECTCOM == 114\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 114\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3062',
-        any: [
-          /^\s*IF CFLAG:TARGET:361 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:361 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3064',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3065',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3067',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3068',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3070',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3071',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13592,30 +11116,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3074',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3075-3076',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:361 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:361 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3076',
-        any: [
-          /^\s*CFLAG:TARGET:361 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:361 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3076-3077',
-        any: [
-          /^\s*CFLAG:TARGET:361 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:361 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13634,16 +11150,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3082',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3083',
-        any: [
-          /^\s*CFLAG:361 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:361 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13655,16 +11167,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3086',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3087',
-        any: [
-          /^\s*CFLAG:361 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:361 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13676,51 +11184,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3090',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3091',
-        any: [
-          /^\s*CFLAG:361 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:361 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3093',
-        any: [
-          /^\s*ELSEIF CFLAG:361 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:361 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3094',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3095',
-        any: [
-          /^\s*CFLAG:361 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:361 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3095-3096',
-        any: [
-          /^\s*CFLAG:361 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:361 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3095-3097',
-        any: [
-          /^\s*CFLAG:361 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:361 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13739,58 +11233,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3104',
-        any: [
-          /^\s*IF SELECTCOM == 126\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 126\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3106',
-        any: [
-          /^\s*IF CFLAG:TARGET:362 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:362 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3108',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3109',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3111',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3112',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3114',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3115',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13802,30 +11280,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3118',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3119-3120',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:362 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:362 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3120',
-        any: [
-          /^\s*CFLAG:TARGET:362 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:362 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3120-3121',
-        any: [
-          /^\s*CFLAG:TARGET:362 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:362 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13844,16 +11314,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3126',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3127',
-        any: [
-          /^\s*CFLAG:362 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:362 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13865,16 +11331,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3130',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3131',
-        any: [
-          /^\s*CFLAG:362 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:362 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13886,51 +11348,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3134',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3135',
-        any: [
-          /^\s*CFLAG:362 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:362 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3137',
-        any: [
-          /^\s*ELSEIF CFLAG:362 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:362 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3138',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3139',
-        any: [
-          /^\s*CFLAG:362 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:362 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3139-3140',
-        any: [
-          /^\s*CFLAG:362 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:362 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3139-3141',
-        any: [
-          /^\s*CFLAG:362 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:362 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -13949,58 +11397,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3148',
-        any: [
-          /^\s*IF SELECTCOM == 127\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 127\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3150',
-        any: [
-          /^\s*IF CFLAG:TARGET:363 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:363 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3152',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3153',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3155',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3156',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3158',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3159',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14012,30 +11444,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3162',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3163-3164',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:363 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:363 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3164',
-        any: [
-          /^\s*CFLAG:TARGET:363 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:363 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3164-3165',
-        any: [
-          /^\s*CFLAG:TARGET:363 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:363 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14054,16 +11478,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3170',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3171',
-        any: [
-          /^\s*CFLAG:363 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:363 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14075,16 +11495,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3174',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3175',
-        any: [
-          /^\s*CFLAG:363 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:363 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14096,44 +11512,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3178',
-        any: [
-          /^\s*CFLAG:363 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:363 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3180',
-        any: [
-          /^\s*ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3181',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3182',
-        any: [
-          /^\s*CFLAG:363 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:363 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3182-3183',
-        any: [
-          /^\s*CFLAG:363 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:363 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3182-3184',
-        any: [
-          /^\s*CFLAG:363 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:363 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14152,58 +11556,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3191',
-        any: [
-          /^\s*IF SELECTCOM == 69\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 69\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3193',
-        any: [
-          /^\s*IF CFLAG:TARGET:364 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:364 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3195',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3196',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3198',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3199',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3201',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3202',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14215,30 +11603,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3205',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3206-3207',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:364 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:364 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3207',
-        any: [
-          /^\s*CFLAG:TARGET:364 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:364 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3207-3208',
-        any: [
-          /^\s*CFLAG:TARGET:364 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:364 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14257,16 +11637,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3213',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3214',
-        any: [
-          /^\s*CFLAG:364 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:364 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14278,16 +11654,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3217',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3218',
-        any: [
-          /^\s*CFLAG:364 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:364 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14299,51 +11671,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3221',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3222',
-        any: [
-          /^\s*CFLAG:364 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:364 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3224',
-        any: [
-          /^\s*ELSEIF CFLAG:364 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:364 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3225',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3226',
-        any: [
-          /^\s*CFLAG:364 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:364 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3226-3227',
-        any: [
-          /^\s*CFLAG:364 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:364 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3226-3228',
-        any: [
-          /^\s*CFLAG:364 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:364 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14362,58 +11720,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3235',
-        any: [
-          /^\s*IF SELECTCOM == 124\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 124\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3237',
-        any: [
-          /^\s*IF CFLAG:TARGET:365 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:365 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3239',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3240',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3242',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3243',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3245',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3246',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14425,30 +11767,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3249',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3250-3251',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:365 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:365 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3251',
-        any: [
-          /^\s*CFLAG:TARGET:365 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:365 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3251-3252',
-        any: [
-          /^\s*CFLAG:TARGET:365 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:365 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14467,16 +11801,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3257',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3258',
-        any: [
-          /^\s*CFLAG:365 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:365 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14488,16 +11818,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3261',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3262',
-        any: [
-          /^\s*CFLAG:365 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:365 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14509,51 +11835,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3265',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3266',
-        any: [
-          /^\s*CFLAG:365 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:365 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3268',
-        any: [
-          /^\s*ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3269',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3270',
-        any: [
-          /^\s*CFLAG:365 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:365 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3270-3271',
-        any: [
-          /^\s*CFLAG:365 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:365 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3270-3272',
-        any: [
-          /^\s*CFLAG:365 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:365 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14572,44 +11884,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3279',
-        any: [
-          /^\s*IF SELECTCOM == 80\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 80\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3281',
-        any: [
-          /^\s*IF CFLAG:TARGET:381 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:381 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3283',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3284',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3286',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3287',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14621,30 +11921,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3290',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3291-3292',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:381 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:381 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3292',
-        any: [
-          /^\s*CFLAG:TARGET:381 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:381 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3292-3293',
-        any: [
-          /^\s*CFLAG:TARGET:381 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:381 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14663,16 +11955,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3298',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3299',
-        any: [
-          /^\s*CFLAG:381 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:381 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14684,16 +11972,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3302',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3303',
-        any: [
-          /^\s*CFLAG:381 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:381 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14705,51 +11989,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3306',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3307',
-        any: [
-          /^\s*CFLAG:381 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:381 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3309',
-        any: [
-          /^\s*ELSEIF CFLAG:381 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:381 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3310',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3311',
-        any: [
-          /^\s*CFLAG:381 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:381 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3311-3312',
-        any: [
-          /^\s*CFLAG:381 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:381 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3311-3313',
-        any: [
-          /^\s*CFLAG:381 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:381 = 2\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14768,16 +12038,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3322',
-        any: [
-          /^\s*IF SELECTCOM == 87\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 87\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3325',
-        any: [
-          /^\s*IF CFLAG:TARGET:348 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:348 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -14817,240 +12083,172 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3327',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3328',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3330',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3332',
-        any: [
-          /^\s*IF CFLAG:7 & P\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3333',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3335',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3336',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3338',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3339',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3341',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3342',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3344',
-        any: [
-          /^\s*ELSEIF P == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3346',
-        any: [
-          /^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3347',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3349',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3352',
-        any: [
-          /^\s*ELSEIF P == 16\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 16\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3353',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3355',
-        any: [
-          /^\s*ELSEIF P == 32\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3356',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3358',
-        any: [
-          /^\s*ELSEIF P == 64\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 64\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3359',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3363',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3366',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3368',
-        any: [
-          /^\s*IF CFLAG:7 & P\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3369',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3371',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3372',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3374',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3375',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3377',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3378',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3380',
-        any: [
-          /^\s*ELSEIF P == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3382',
-        any: [
-          /^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3383',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15062,9 +12260,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3385',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15076,44 +12272,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3388',
-        any: [
-          /^\s*ELSEIF P == 16\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 16\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3389',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3391',
-        any: [
-          /^\s*ELSEIF P == 32\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3392',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3394',
-        any: [
-          /^\s*ELSEIF P == 64\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 64\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3395',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15132,9 +12316,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3399',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15153,79 +12335,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3404',
-        any: [
-          /^\s*IF CFLAG:7 & P\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3405',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3407',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3408',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3410',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3411',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3413',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3414',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3416',
-        any: [
-          /^\s*ELSEIF P == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3418',
-        any: [
-          /^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3419',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15237,9 +12397,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3421',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15251,44 +12409,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3424',
-        any: [
-          /^\s*ELSEIF P == 16\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 16\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3425',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3427',
-        any: [
-          /^\s*ELSEIF P == 32\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3428',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3430',
-        any: [
-          /^\s*ELSEIF P == 64\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 64\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3431',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15307,37 +12453,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3435',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3436-3438',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:348 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:348 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3437-3438',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:348 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:348 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3438',
-        any: [
-          /^\s*CFLAG:TARGET:348 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:348 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3438-3439',
-        any: [
-          /^\s*CFLAG:TARGET:348 = 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:348 = 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15349,16 +12485,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3443',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3444',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15377,79 +12509,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3448',
-        any: [
-          /^\s*IF CFLAG:7 & P\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3450',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3451',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3453',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3454',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3456',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3457',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3459',
-        any: [
-          /^\s*ELSEIF P == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3461',
-        any: [
-          /^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3462',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3464',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15461,44 +12571,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3467',
-        any: [
-          /^\s*ELSEIF P == 16\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 16\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3468',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3470',
-        any: [
-          /^\s*ELSEIF P == 32\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3471',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3473',
-        any: [
-          /^\s*ELSEIF P == 64\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 64\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3474',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15517,23 +12615,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3478',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3479-3480',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:348 = 4\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:348 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3480',
-        any: [
-          /^\s*CFLAG:348 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:348 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15552,79 +12644,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3484',
-        any: [
-          /^\s*IF CFLAG:7 & P\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3486',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3487',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3489',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3490',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3492',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3493',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3495',
-        any: [
-          /^\s*ELSEIF P == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3496',
-        any: [
-          /^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3497',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3499',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15636,44 +12706,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3502',
-        any: [
-          /^\s*ELSEIF P == 16\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 16\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3503',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3505',
-        any: [
-          /^\s*ELSEIF P == 32\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3506',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3508',
-        any: [
-          /^\s*ELSEIF P == 64\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 64\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3509',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15692,30 +12750,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3513',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3514-3515',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:348 = 3\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:348 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3515',
-        any: [
-          /^\s*CFLAG:348 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:348 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3517',
-        any: [
-          /^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15727,79 +12777,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3519',
-        any: [
-          /^\s*IF CFLAG:7 & P\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3521',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3522',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3524',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3525',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3527',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3528',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3530',
-        any: [
-          /^\s*ELSEIF P == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3532',
-        any: [
-          /^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3533',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3535',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15811,44 +12839,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3538',
-        any: [
-          /^\s*ELSEIF P == 16\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 16\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3539',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3541',
-        any: [
-          /^\s*ELSEIF P == 32\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 32\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3542',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3544',
-        any: [
-          /^\s*ELSEIF P == 64\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 64\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3545',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15867,37 +12883,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3549',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3550-3551',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:348 = 2\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:348 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3551',
-        any: [
-          /^\s*CFLAG:348 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:348 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3551-3552',
-        any: [
-          /^\s*CFLAG:348 = 2\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:348 = 2\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3551-3553',
-        any: [
-          /^\s*CFLAG:348 = 2\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:348 = 2\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15923,30 +12929,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3568',
-        any: [
-          /^\s*IF SELECTCOM == 0\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3570',
-        any: [
-          /^\s*IF CFLAG:301 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:301 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3572',
-        any: [
-          /^\s*IF MARK:2 >= 2\s*$/m,
-        ],
+        any: [/^\s*IF MARK:2 >= 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3573',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15958,9 +12956,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3576',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -15972,9 +12968,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3578',
-        any: [
-          /^\s*CFLAG:301 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16000,16 +12994,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3584',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3585',
-        any: [
-          /^\s*CFLAG:301 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16021,16 +13011,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3588',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3589',
-        any: [
-          /^\s*CFLAG:301 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16042,16 +13028,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3592',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3593',
-        any: [
-          /^\s*CFLAG:301 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16063,16 +13045,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3596',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3597',
-        any: [
-          /^\s*CFLAG:301 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16084,16 +13062,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3600',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3601',
-        any: [
-          /^\s*CFLAG:301 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16105,16 +13079,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3604',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3605',
-        any: [
-          /^\s*CFLAG:301 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:301 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16147,30 +13117,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3614',
-        any: [
-          /^\s*IF SELECTCOM == 1\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3616',
-        any: [
-          /^\s*IF CFLAG:302 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:302 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3618',
-        any: [
-          /^\s*IF TALENT:TARGET:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3619',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16182,9 +13144,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3622',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16196,9 +13156,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3624',
-        any: [
-          /^\s*CFLAG:302 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16224,16 +13182,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3630',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3631',
-        any: [
-          /^\s*CFLAG:302 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16245,16 +13199,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3634',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3635',
-        any: [
-          /^\s*CFLAG:302 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16266,16 +13216,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3638',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3639',
-        any: [
-          /^\s*CFLAG:302 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16287,37 +13233,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3642',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3643',
-        any: [
-          /^\s*CFLAG:302 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3645',
-        any: [
-          /^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3646',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3647',
-        any: [
-          /^\s*CFLAG:302 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:302 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16350,30 +13286,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3657',
-        any: [
-          /^\s*IF SELECTCOM == 5\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3659',
-        any: [
-          /^\s*IF CFLAG:306 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:306 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3661',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3662',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16385,9 +13313,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3665',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16399,9 +13325,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3667',
-        any: [
-          /^\s*CFLAG:TARGET:306 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:306 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16427,16 +13351,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3673',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3674',
-        any: [
-          /^\s*CFLAG:306 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16448,16 +13368,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3677',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3678',
-        any: [
-          /^\s*CFLAG:306 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16469,16 +13385,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3681',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3682',
-        any: [
-          /^\s*CFLAG:306 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16490,37 +13402,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3685',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3686',
-        any: [
-          /^\s*CFLAG:306 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3688',
-        any: [
-          /^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3689',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3690',
-        any: [
-          /^\s*CFLAG:306 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:306 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16574,121 +13476,87 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3699',
-        any: [
-          /^\s*IF SELECTCOM == 6\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3701',
-        any: [
-          /^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3703',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3704',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3706',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3707',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3709',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3710',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3713',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3715',
-        any: [
-          /^\s*CFLAG:307 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3718',
-        any: [
-          /^\s*ELSEIF CFLAG:307 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:307 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3720',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3721',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3723',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3724',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3726',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3727',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16700,9 +13568,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3730',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16714,9 +13580,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3732',
-        any: [
-          /^\s*CFLAG:307 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16742,16 +13606,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3738',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3739',
-        any: [
-          /^\s*CFLAG:307 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16763,16 +13623,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3742',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3743',
-        any: [
-          /^\s*CFLAG:307 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16784,16 +13640,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3746',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3747',
-        any: [
-          /^\s*CFLAG:307 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16805,37 +13657,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3750',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3751',
-        any: [
-          /^\s*CFLAG:307 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3753',
-        any: [
-          /^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3754',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3755',
-        any: [
-          /^\s*CFLAG:307 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:307 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16868,58 +13710,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3764',
-        any: [
-          /^\s*IF SELECTCOM == 9\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3766',
-        any: [
-          /^\s*IF CFLAG:310 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:310 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3768',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3769',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3771',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3772',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3774',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3775',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16931,9 +13757,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3778',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16945,9 +13769,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3780',
-        any: [
-          /^\s*CFLAG:TARGET:310 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:310 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16973,16 +13795,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3786',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3787',
-        any: [
-          /^\s*CFLAG:310 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -16994,16 +13812,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3790',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3791',
-        any: [
-          /^\s*CFLAG:310 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17015,16 +13829,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3794',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3795',
-        any: [
-          /^\s*CFLAG:310 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17036,37 +13846,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3798',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3799',
-        any: [
-          /^\s*CFLAG:310 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3801',
-        any: [
-          /^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3802',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3803',
-        any: [
-          /^\s*CFLAG:310 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:310 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17113,72 +13913,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3812',
-        any: [
-          /^\s*IF SELECTCOM == 21\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 21\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3814',
-        any: [
-          /^\s*IF CFLAG:TARGET:322 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:322 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3816',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3818',
-        any: [
-          /^\s*IF TALENT:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3819',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3821',
-        any: [
-          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3822',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3824',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3825',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3829',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17190,44 +13970,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3834',
-        any: [
-          /^\s*IF TALENT:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3835',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3837',
-        any: [
-          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3838',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3840',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3841',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17239,9 +14007,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3844',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17260,9 +14026,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3847',
-        any: [
-          /^\s*CFLAG:322 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17288,30 +14052,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3853',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3854',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3855',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3856',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17323,23 +14079,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3858',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3859-3860',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:322 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:322 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3860',
-        any: [
-          /^\s*CFLAG:322 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17379,44 +14129,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3863',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3864',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3865',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3866',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3868',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3870',
-        any: [
-          /^\s*CFLAG:322 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17428,44 +14166,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3873',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3874',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3875',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3876',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3878',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3880',
-        any: [
-          /^\s*CFLAG:322 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17477,16 +14203,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3883',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3884',
-        any: [
-          /^\s*CFLAG:322 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17498,37 +14220,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3887',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3888',
-        any: [
-          /^\s*CFLAG:322 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3890',
-        any: [
-          /^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3891',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3893',
-        any: [
-          /^\s*CFLAG:322 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:322 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17561,58 +14273,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3902',
-        any: [
-          /^\s*IF SELECTCOM == 27\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 27\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3904',
-        any: [
-          /^\s*IF CFLAG:TARGET:328 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:328 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3906',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3907',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3909',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3910',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3912',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3913',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17624,9 +14320,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3916',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17638,9 +14332,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3918',
-        any: [
-          /^\s*CFLAG:TARGET:328 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:328 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17652,9 +14344,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3921-3922',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;牝犬＋A感覚Lv3以上\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;牝犬＋A感覚Lv3以上\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17673,37 +14363,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3924',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3925',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3927',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3928-3929',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:328 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:328 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3929',
-        any: [
-          /^\s*CFLAG:328 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17722,37 +14402,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3932',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3933',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3935',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3936-3937',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:328 = 6\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:328 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3937',
-        any: [
-          /^\s*CFLAG:328 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17778,30 +14448,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3940',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3941',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3943',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3945',
-        any: [
-          /^\s*CFLAG:328 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17813,16 +14475,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3948',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3949',
-        any: [
-          /^\s*CFLAG:328 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17834,37 +14492,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3952',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3953',
-        any: [
-          /^\s*CFLAG:328 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3955',
-        any: [
-          /^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3956',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3957',
-        any: [
-          /^\s*CFLAG:328 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:328 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17897,58 +14545,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3966',
-        any: [
-          /^\s*IF SELECTCOM == 30\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 30\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3968',
-        any: [
-          /^\s*IF CFLAG:TARGET:331 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:331 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3970',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3971',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3973',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3974',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3976',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3977',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17960,9 +14592,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3980',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17974,9 +14604,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3982',
-        any: [
-          /^\s*CFLAG:TARGET:331 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:331 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -17988,9 +14616,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3985-3986',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv3以上\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18009,37 +14635,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3988',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3989',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3991',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3992-3993',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:331 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:331 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3993',
-        any: [
-          /^\s*CFLAG:331 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18079,30 +14695,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3996',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3997',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3999',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4001',
-        any: [
-          /^\s*CFLAG:331 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18114,30 +14722,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4004',
-        any: [
-          /^\s*IF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4005',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4007',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4009',
-        any: [
-          /^\s*CFLAG:331 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18149,16 +14749,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4012',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4013',
-        any: [
-          /^\s*CFLAG:331 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18170,37 +14766,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4016',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4017',
-        any: [
-          /^\s*CFLAG:331 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4019',
-        any: [
-          /^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4020',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4021',
-        any: [
-          /^\s*CFLAG:331 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:331 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18233,58 +14819,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4030',
-        any: [
-          /^\s*IF SELECTCOM == 31\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4032',
-        any: [
-          /^\s*IF CFLAG:TARGET:332 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:332 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4034',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4035',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4037',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4038',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4040',
-        any: [
-          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4041',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18296,9 +14866,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4044',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18310,9 +14878,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4046',
-        any: [
-          /^\s*CFLAG:TARGET:332 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:332 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18338,16 +14904,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4052',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4053',
-        any: [
-          /^\s*CFLAG:332 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18359,16 +14921,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4056',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4057',
-        any: [
-          /^\s*CFLAG:332 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18380,16 +14938,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4060',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4061',
-        any: [
-          /^\s*CFLAG:332 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18401,23 +14955,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4064',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4065',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4066',
-        any: [
-          /^\s*CFLAG:332 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18429,44 +14977,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4069',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4070',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4071',
-        any: [
-          /^\s*CFLAG:332 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4073',
-        any: [
-          /^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4074',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4075',
-        any: [
-          /^\s*CFLAG:332 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:332 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18513,72 +15049,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4084',
-        any: [
-          /^\s*IF SELECTCOM == 34\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 34\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4086',
-        any: [
-          /^\s*IF CFLAG:TARGET:335 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:335 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4088',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4090',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4091',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4093',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4094',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4096',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4097',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4100',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18590,44 +15106,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4105',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4106',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4108',
-        any: [
-          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4109',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4111',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4112',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18639,9 +15143,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4115',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18660,9 +15162,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4118',
-        any: [
-          /^\s*CFLAG:TARGET:335 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18688,30 +15188,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4124',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4125',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4126',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4127',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18723,23 +15215,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4129',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4130-4131',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:335 = 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:335 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4131',
-        any: [
-          /^\s*CFLAG:335 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18779,58 +15265,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4134',
-        any: [
-          /^\s*IF RAND:4 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4135',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4136',
-        any: [
-          /^\s*ELSEIF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4137',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4138',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4139',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4141',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4143',
-        any: [
-          /^\s*CFLAG:335 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18842,58 +15312,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4146',
-        any: [
-          /^\s*IF RAND:4 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4147',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4148',
-        any: [
-          /^\s*ELSEIF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4149',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4150',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4151',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4153',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4155',
-        any: [
-          /^\s*CFLAG:335 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18905,44 +15359,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4158',
-        any: [
-          /^\s*IF RAND:4 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4159',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4160',
-        any: [
-          /^\s*ELSEIF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4161',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4162',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4163',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18954,9 +15396,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4165',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18968,9 +15408,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4167',
-        any: [
-          /^\s*CFLAG:335 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -18982,44 +15420,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4170',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4171',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4172',
-        any: [
-          /^\s*CFLAG:335 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4174',
-        any: [
-          /^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4175',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4176',
-        any: [
-          /^\s*CFLAG:335 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:335 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19052,30 +15478,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4185',
-        any: [
-          /^\s*IF SELECTCOM == 37\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 37\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4187',
-        any: [
-          /^\s*IF CFLAG:TARGET:338 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:338 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4189',
-        any: [
-          /^\s*IF ABL:TARGET:16 >= 3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4190',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19087,9 +15505,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4193',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19101,9 +15517,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4195',
-        any: [
-          /^\s*CFLAG:TARGET:338 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:338 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19129,16 +15543,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4201',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4202',
-        any: [
-          /^\s*CFLAG:338 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19150,16 +15560,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4205',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4206',
-        any: [
-          /^\s*CFLAG:338 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19171,16 +15577,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4209',
-        any: [
-          /^\s*PRINTFORML\s*$/m,
-        ],
+        any: [/^\s*PRINTFORML\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4210',
-        any: [
-          /^\s*CFLAG:338 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19192,37 +15594,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4213',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4214',
-        any: [
-          /^\s*CFLAG:338 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4216',
-        any: [
-          /^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4217',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4218',
-        any: [
-          /^\s*CFLAG:338 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:338 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19255,58 +15647,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4228',
-        any: [
-          /^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4230',
-        any: [
-          /^\s*IF CFLAG:TARGET:344 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:TARGET:344 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4232',
-        any: [
-          /^\s*IF TALENT:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4233',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4235',
-        any: [
-          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4236',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4238',
-        any: [
-          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4239',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19318,9 +15694,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4242',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19332,9 +15706,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4244',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19360,16 +15732,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4250',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4251',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 10\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 10\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19381,16 +15749,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4254',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4255',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 9\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19402,16 +15766,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4258',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4259',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 8\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19423,16 +15783,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4262',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4263',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 7\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19444,16 +15800,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4266',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4267',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 6\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19465,16 +15817,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4270',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4271',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19486,16 +15834,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4274',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4275',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19507,37 +15851,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4278',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4279',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4281',
-        any: [
-          /^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4282',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4283',
-        any: [
-          /^\s*CFLAG:TARGET:344 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:344 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19563,9 +15897,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4288',
-        any: [
-          /^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19577,16 +15909,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4291',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4292',
-        any: [
-          /^\s*CFLAG:444 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:444 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19598,16 +15926,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4295',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4296',
-        any: [
-          /^\s*CFLAG:444 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:444 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19619,51 +15943,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4299',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4300',
-        any: [
-          /^\s*CFLAG:444 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:444 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4302',
-        any: [
-          /^\s*ELSEIF CFLAG:444 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:444 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4303',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4304',
-        any: [
-          /^\s*CFLAG:444 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:444 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4304-4305',
-        any: [
-          /^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4304-4306',
-        any: [
-          /^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19675,65 +15985,47 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4313',
-        any: [
-          /^\s*IF SELECTCOM == 56\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 56\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4315',
-        any: [
-          /^\s*IF CFLAG:357 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:357 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4316',
-        any: [
-          /^\s*IF TEQUIP:53\s*$/m,
-        ],
+        any: [/^\s*IF TEQUIP:53\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4319',
-        any: [
-          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4320',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4322',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4323',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4325',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4326',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19745,9 +16037,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4329',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19766,9 +16056,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4332',
-        any: [
-          /^\s*CFLAG:357 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19787,9 +16075,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4336',
-        any: [
-          /^\s*IF TEQUIP:53\s*$/m,
-        ],
+        any: [/^\s*IF TEQUIP:53\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19801,16 +16087,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4340',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4341',
-        any: [
-          /^\s*CFLAG:357 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19822,16 +16104,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4344',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4345',
-        any: [
-          /^\s*CFLAG:357 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19843,37 +16121,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4348',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4349',
-        any: [
-          /^\s*CFLAG:357 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4351',
-        any: [
-          /^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4352',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4353',
-        any: [
-          /^\s*CFLAG:357 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:357 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19941,16 +16209,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4385',
-        any: [
-          /^\s*P = PALAM:3 \+ UP:3\s*$/m,
-        ],
+        any: [/^\s*P = PALAM:3 \+ UP:3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4386',
-        any: [
-          /^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$/m,
-        ],
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -19969,30 +16233,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4388',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4390',
-        any: [
-          /^\s*IF SELECTCOM == 50\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 50\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4391',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4394',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20004,16 +16260,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4399',
-        any: [
-          /^\s*IF SELECTCOM == 50\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 50\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4400',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20025,51 +16277,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4403',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4404-4406',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4405-4406',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4406',
-        any: [
-          /^\s*CFLAG:TARGET:221 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4406-4407',
-        any: [
-          /^\s*CFLAG:TARGET:221 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4412',
-        any: [
-          /^\s*P = PALAM:5 \+ UP:5\s*$/m,
-        ],
+        any: [/^\s*P = PALAM:5 \+ UP:5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4413',
-        any: [
-          /^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$/m,
-        ],
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20088,30 +16326,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4415',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4417',
-        any: [
-          /^\s*IF SELECTCOM == 51\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4418',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4421',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20123,16 +16353,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4426',
-        any: [
-          /^\s*IF SELECTCOM == 51\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4427',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20144,65 +16370,47 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4430',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4431-4433',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4432-4433',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4433',
-        any: [
-          /^\s*CFLAG:222 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:222 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4433-4434',
-        any: [
-          /^\s*CFLAG:222 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:222 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4439',
-        any: [
-          /^\s*P = PALAM:8 \+ UP:8\s*$/m,
-        ],
+        any: [/^\s*P = PALAM:8 \+ UP:8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4440',
-        any: [
-          /^\s*IF P > PALAMLV:2 && CFLAG:223 == 0\s*$/m,
-        ],
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:223 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4442',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4443',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20214,58 +16422,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4446',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4447-4448',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:223 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:223 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4448',
-        any: [
-          /^\s*CFLAG:223 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:223 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4448-4449',
-        any: [
-          /^\s*CFLAG:223 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:223 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4454',
-        any: [
-          /^\s*P = PALAM:10 \+ UP:10\s*$/m,
-        ],
+        any: [/^\s*P = PALAM:10 \+ UP:10\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4455',
-        any: [
-          /^\s*IF P > PALAMLV:2 && CFLAG:224 == 0\s*$/m,
-        ],
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:224 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4457',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4458',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20277,51 +16469,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4461',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4462-4463',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:224 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:224 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4463',
-        any: [
-          /^\s*CFLAG:224 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:224 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4463-4464',
-        any: [
-          /^\s*CFLAG:224 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:224 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4469',
-        any: [
-          /^\s*IF NOWEX:0 > 0 && CFLAG:214 == 0\s*$/m,
-        ],
+        any: [/^\s*IF NOWEX:0 > 0 && CFLAG:214 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4471',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4472',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20333,65 +16511,47 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4475',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4476-4477',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:214 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:214 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4477',
-        any: [
-          /^\s*CFLAG:214 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:214 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4477-4478',
-        any: [
-          /^\s*CFLAG:214 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:214 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4483',
-        any: [
-          /^\s*IF NOWEX:1 > 0 && CFLAG:226 == 0\s*$/m,
-        ],
+        any: [/^\s*IF NOWEX:1 > 0 && CFLAG:226 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4485',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4486',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4488',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4489',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20403,121 +16563,87 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4492',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4493-4494',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:226 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:226 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4494',
-        any: [
-          /^\s*CFLAG:TARGET:226 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:226 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4494-4495',
-        any: [
-          /^\s*CFLAG:TARGET:226 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:226 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4500',
-        any: [
-          /^\s*IF NOWEX:2 > 0 && CFLAG:227 == 0\s*$/m,
-        ],
+        any: [/^\s*IF NOWEX:2 > 0 && CFLAG:227 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4502',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4503',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4505',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4506',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4508-4509',
-        any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW 「咕……啊啊」\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*PRINTFORMW 「咕……啊啊」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4509',
-        any: [
-          /^\s*PRINTFORMW 「咕……啊啊」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「咕……啊啊」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4509-4510',
-        any: [
-          /^\s*PRINTFORMW 「咕……啊啊」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「咕……啊啊」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4511',
-        any: [
-          /^\s*CFLAG:227 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:227 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4511-4512',
-        any: [
-          /^\s*CFLAG:227 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:227 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4517',
-        any: [
-          /^\s*IF NOWEX:3 > 0 && CFLAG:228 == 0\s*$/m,
-        ],
+        any: [/^\s*IF NOWEX:3 > 0 && CFLAG:228 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4519',
-        any: [
-          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4520',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20529,51 +16655,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4523',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4524-4525',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:228 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:228 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4525',
-        any: [
-          /^\s*CFLAG:TARGET:228 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:228 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4525-4526',
-        any: [
-          /^\s*CFLAG:TARGET:228 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:228 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4531',
-        any: [
-          /^\s*A = UP:11 \+ UP:12\s*$/m,
-        ],
+        any: [/^\s*A = UP:11 \+ UP:12\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4532',
-        any: [
-          /^\s*IF TFLAG:3 == 1 && CFLAG:229 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:3 == 1 && CFLAG:229 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4534',
-        any: [
-          /^\s*IF TFLAG:20 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:20 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20585,9 +16697,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4537',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20606,16 +16716,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4540',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4543',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20627,37 +16733,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4545-4546',
-        any: [
-          /^\s*;主人以外による処女喪失（再生処女含む）\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*;主人以外による処女喪失（再生処女含む）\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4548',
-        any: [
-          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4549',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4551',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4552',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20669,37 +16765,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4555',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4556-4558',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4557-4558',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4558',
-        any: [
-          /^\s*CFLAG:TARGET:229 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4558-4559',
-        any: [
-          /^\s*CFLAG:TARGET:229 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20718,23 +16804,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4576',
-        any: [
-          /^\s*IF TFLAG:22 == 3 && CFLAG:297 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:22 == 3 && CFLAG:297 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4578',
-        any: [
-          /^\s*IF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4579',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20746,51 +16826,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4581',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4582-4583',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:297 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:297 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4583',
-        any: [
-          /^\s*CFLAG:297 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:297 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4583-4584',
-        any: [
-          /^\s*CFLAG:297 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:297 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4589',
-        any: [
-          /^\s*IF TFLAG:23 == 3 && CFLAG:298 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:23 == 3 && CFLAG:298 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4591',
-        any: [
-          /^\s*IF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4592',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20802,51 +16868,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4594',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4595-4596',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:298 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:298 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4596',
-        any: [
-          /^\s*CFLAG:298 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:298 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4596-4597',
-        any: [
-          /^\s*CFLAG:298 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:298 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4602',
-        any: [
-          /^\s*IF TFLAG:24 == 3 && CFLAG:299 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:24 == 3 && CFLAG:299 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4604',
-        any: [
-          /^\s*IF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4605',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20858,51 +16910,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4607',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4608-4609',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:299 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:299 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4609',
-        any: [
-          /^\s*CFLAG:299 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:299 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4609-4610',
-        any: [
-          /^\s*CFLAG:299 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:299 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4615',
-        any: [
-          /^\s*IF TFLAG:21 == 3 && CFLAG:300 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:21 == 3 && CFLAG:300 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4617',
-        any: [
-          /^\s*IF TALENT:85 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4618',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20914,30 +16952,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4620',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4621-4622',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:300 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:300 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4622',
-        any: [
-          /^\s*CFLAG:300 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:300 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4622-4623',
-        any: [
-          /^\s*CFLAG:300 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:300 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -20949,51 +16979,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4633',
-        any: [
-          /^\s*IF TFLAG:13 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4635',
-        any: [
-          /^\s*IF TALENT:9 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4636',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4638',
-        any: [
-          /^\s*ELSEIF Q == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF Q == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4639',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4641',
-        any: [
-          /^\s*ELSEIF Q == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF Q == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4642',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21005,23 +17021,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4646',
-        any: [
-          /^\s*IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4647',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4648',
-        any: [
-          /^\s*CFLAG:261 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:261 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21033,16 +17043,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4651',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4652',
-        any: [
-          /^\s*CFLAG:261 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:261 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21054,51 +17060,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4655',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4656',
-        any: [
-          /^\s*CFLAG:261 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:261 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4658',
-        any: [
-          /^\s*ELSEIF CFLAG:261 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:261 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4659',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4660',
-        any: [
-          /^\s*CFLAG:261 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:261 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4660-4661',
-        any: [
-          /^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4660-4662',
-        any: [
-          /^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21110,30 +17102,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4668',
-        any: [
-          /^\s*IF TFLAG:13 == 2\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4670',
-        any: [
-          /^\s*IF TALENT:76 && \(CFLAG:262 < 5 \|\| FLAG:7 == 2\)\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 && \(CFLAG:262 < 5 \|\| FLAG:7 == 2\)\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4671',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4672',
-        any: [
-          /^\s*CFLAG:262 = 5\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21145,16 +17129,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4675',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4676',
-        any: [
-          /^\s*CFLAG:262 = 4\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21166,16 +17146,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4679',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4680',
-        any: [
-          /^\s*CFLAG:262 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21187,58 +17163,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4683',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4684',
-        any: [
-          /^\s*CFLAG:262 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4686',
-        any: [
-          /^\s*ELSEIF CFLAG:262 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:262 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4687',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4688',
-        any: [
-          /^\s*CFLAG:262 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4688-4689',
-        any: [
-          /^\s*CFLAG:262 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4688-4690',
-        any: [
-          /^\s*CFLAG:262 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:262 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4695',
-        any: [
-          /^\s*IF TFLAG:13 == 3\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21250,16 +17210,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4698',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4699',
-        any: [
-          /^\s*CFLAG:263 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:263 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21271,16 +17227,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4702',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4703',
-        any: [
-          /^\s*CFLAG:263 = 3\s*$/m,
-        ],
+        any: [/^\s*CFLAG:263 = 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21292,198 +17244,142 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4706',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4707',
-        any: [
-          /^\s*CFLAG:263 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:263 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4709',
-        any: [
-          /^\s*ELSEIF CFLAG:263 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:263 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4710',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4711',
-        any: [
-          /^\s*CFLAG:263 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:263 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4711-4712',
-        any: [
-          /^\s*CFLAG:263 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:263 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4711-4713',
-        any: [
-          /^\s*CFLAG:263 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:263 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4718',
-        any: [
-          /^\s*IF TFLAG:13 == 4\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4720',
-        any: [
-          /^\s*IF ABL:2 >= 4 && \(CFLAG:264 < 2 \|\| FLAG:7 == 2\)\s*$/m,
-        ],
+        any: [/^\s*IF ABL:2 >= 4 && \(CFLAG:264 < 2 \|\| FLAG:7 == 2\)\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4721',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4722',
-        any: [
-          /^\s*CFLAG:264 = 2\s*$/m,
-        ],
+        any: [/^\s*CFLAG:264 = 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4724',
-        any: [
-          /^\s*ELSEIF CFLAG:264 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:264 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4725',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4726',
-        any: [
-          /^\s*CFLAG:264 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:264 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4726-4727',
-        any: [
-          /^\s*CFLAG:264 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:264 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4726-4728',
-        any: [
-          /^\s*CFLAG:264 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:264 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4733',
-        any: [
-          /^\s*IF TFLAG:13 == 5\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4734',
-        any: [
-          /^\s*IF CFLAG:265 < 1 \|\| FLAG:7 == 2\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:265 < 1 \|\| FLAG:7 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4735',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4736',
-        any: [
-          /^\s*CFLAG:265 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:265 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4736-4737',
-        any: [
-          /^\s*CFLAG:265 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:265 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4736-4738',
-        any: [
-          /^\s*CFLAG:265 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:265 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4743',
-        any: [
-          /^\s*IF TFLAG:13 == 6\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4745',
-        any: [
-          /^\s*IF TALENT:85 && MARK:3 < 3\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85 && MARK:3 < 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4746',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4748',
-        any: [
-          /^\s*ELSEIF MARK:3 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF MARK:3 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4749',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4751',
-        any: [
-          /^\s*ELSEIF TALENT:76\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:76\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21502,16 +17398,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4752',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4755',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21523,44 +17415,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4764',
-        any: [
-          /^\s*IF TFLAG:13 == 11\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 11\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4765-4766',
-        any: [
-          /^\s*SIF CFLAG:271 >= 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF CFLAG:271 >= 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4768',
-        any: [
-          /^\s*IF TALENT:9 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4769',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4771',
-        any: [
-          /^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4772',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21572,72 +17452,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4775',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4776-4777',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:271 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:271 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4777',
-        any: [
-          /^\s*CFLAG:271 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:271 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4777-4778',
-        any: [
-          /^\s*CFLAG:271 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:271 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4784',
-        any: [
-          /^\s*IF TFLAG:13 == 12\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 12\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4785-4786',
-        any: [
-          /^\s*SIF CFLAG:272 >= 1\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*SIF CFLAG:272 >= 1\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4788',
-        any: [
-          /^\s*IF TALENT:9 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4789',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4791',
-        any: [
-          /^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4792',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21649,121 +17509,87 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4795',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4796-4797',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:272 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:272 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4797',
-        any: [
-          /^\s*CFLAG:272 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:272 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4797-4798',
-        any: [
-          /^\s*CFLAG:272 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:272 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4803',
-        any: [
-          /^\s*IF TFLAG:13 == 13\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 13\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4805',
-        any: [
-          /^\s*IF TALENT:153\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:153\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4806',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4808',
-        any: [
-          /^\s*ELSEIF TALENT:154\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:154\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4809',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4810-4811',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:273 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:273 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4811',
-        any: [
-          /^\s*CFLAG:273 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:273 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4811-4812',
-        any: [
-          /^\s*CFLAG:273 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:273 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4817',
-        any: [
-          /^\s*IF TFLAG:13 == 14\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 14\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4818',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4819',
-        any: [
-          /^\s*CFLAG:274 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:274 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4819-4820',
-        any: [
-          /^\s*CFLAG:274 = 1\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*CFLAG:274 = 1\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4825',
-        any: [
-          /^\s*IF TFLAG:13 == 999\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 999\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21775,23 +17601,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4827',
-        any: [
-          /^\s*IF TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4828',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4831',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21810,9 +17630,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4838',
-        any: [
-          /^\s*IF TFLAG:13 == 998\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:13 == 998\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21824,23 +17642,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4840',
-        any: [
-          /^\s*IF TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4841',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4844',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21859,16 +17671,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4851',
-        any: [
-          /^\s*TFLAG:13 = 0\s*$/m,
-        ],
+        any: [/^\s*TFLAG:13 = 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4851-4853',
-        any: [
-          /^\s*TFLAG:13 = 0\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*TFLAG:13 = 0\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21908,30 +17716,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4889',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4891',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4893',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4896',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21943,23 +17743,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4902',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4906',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4910',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -21971,51 +17765,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4916',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4918',
-        any: [
-          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4921',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4926',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4931',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4933',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4936',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22034,23 +17814,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4942',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4946',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4950',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22062,23 +17836,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4956',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4958',
-        any: [
-          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4961',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22090,9 +17858,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4966',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22139,65 +17905,47 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4979',
-        any: [
-          /^\s*IF TALENT:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4981',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4983',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4986',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4992',
-        any: [
-          /^\s*IF EXP:1 > 20\s*$/m,
-        ],
+        any: [/^\s*IF EXP:1 > 20\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4993',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4994',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4999',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5003',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22209,23 +17957,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5006',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5008',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5011',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22237,16 +17979,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5014-5016',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;膣を苛められすぎた感想\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;膣を苛められすぎた感想\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5017',
-        any: [
-          /^\s*IF EXP:0 > 20\s*$/m,
-        ],
+        any: [/^\s*IF EXP:0 > 20\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22265,51 +18003,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5018',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5019',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5023',
-        any: [
-          /^\s*IF EXP:1 > 20\s*$/m,
-        ],
+        any: [/^\s*IF EXP:1 > 20\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5024',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5025',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5030',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5034',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22335,79 +18059,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5058',
-        any: [
-          /^\s*IF FLAG:62 == 0\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:62 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5061',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5062',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5064',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5065',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5067',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5068',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5070',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5071',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5073',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5074',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22419,93 +18121,67 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5077',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5078-5079',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5079',
-        any: [
-          /^\s*ELSEIF FLAG:62 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF FLAG:62 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5082',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5083',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5085',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5086',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5088',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5089',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5091',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5092',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5094',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5095',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22517,93 +18193,67 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5098',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5099-5100',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 2\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5100',
-        any: [
-          /^\s*ELSEIF FLAG:62 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF FLAG:62 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5103',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5104',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5106',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5107',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5109',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5110',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5112',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5113',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5115',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5116',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22615,79 +18265,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5119',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5120-5121',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 3\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5121',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5124',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5125',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5127',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5128',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5130',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5131',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5133',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5134',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22699,79 +18327,57 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5137',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5138-5139',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 4\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5139',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5142',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5143',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5145',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5146',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5148',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5149',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5151',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5152',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22783,30 +18389,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5155',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5156-5157',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 5\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5157',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5160',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22818,65 +18416,47 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5161',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5163',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5164',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5166',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5167',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5169',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5170',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5172',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5173',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22888,93 +18468,67 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5176',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5177-5178',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 6\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5178',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5181',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5182',
-        any: [
-          /^\s*PRINTFORM\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5184',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5185',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5187',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5188',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5190',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5191',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5193',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5194',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -22986,93 +18540,67 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5197',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5198-5199',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 7\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5199',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5202',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5203',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5205',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5206',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5208',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5209',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5211',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5212',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5214',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5215',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23084,30 +18612,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5218',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5219-5220',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 9\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5220',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 9\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5223',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23140,9 +18660,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5229',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23175,44 +18693,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5235',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5236',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5238',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5239',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5241',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5242',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23224,93 +18730,67 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5245',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5246-5247',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 12\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 12\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5247',
-        any: [
-          /^\s*ELSEIF  FLAG:62 == 12\s*$/m,
-        ],
+        any: [/^\s*ELSEIF  FLAG:62 == 12\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5250',
-        any: [
-          /^\s*IF FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5251',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5253',
-        any: [
-          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5254',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5256',
-        any: [
-          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5257',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5259',
-        any: [
-          /^\s*ELSEIF TALENT:A:85\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5260',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5262',
-        any: [
-          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5263',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23322,9 +18802,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5266',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23364,30 +18842,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5278',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5280',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5283',
-        any: [
-          /^\s*PRINTFORMW 「……哈」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……哈」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5283-5285',
-        any: [
-          /^\s*PRINTFORMW 「……哈」\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……哈」\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23399,65 +18869,47 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5289',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5290',
-        any: [
-          /^\s*PRINTFORMW 「……真是污秽」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……真是污秽」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5291',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5292',
-        any: [
-          /^\s*PRINTFORMW 「魔力什么的，没有必要」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「魔力什么的，没有必要」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5292-5293',
-        any: [
-          /^\s*PRINTFORMW 「魔力什么的，没有必要」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「魔力什么的，没有必要」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5294',
-        any: [
-          /^\s*PRINTFORMW 「消灭了吗」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「消灭了吗」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5294-5295',
-        any: [
-          /^\s*PRINTFORMW 「消灭了吗」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「消灭了吗」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5297',
-        any: [
-          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5300',
-        any: [
-          /^\s*PRINTFORMW 「魔の力、これほどとは……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「魔の力、これほどとは……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23476,51 +18928,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5306',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5307',
-        any: [
-          /^\s*PRINTFORMW 「这是光明的胜利！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「这是光明的胜利！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5308',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5309',
-        any: [
-          /^\s*PRINTFORMW 「光明不灭！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「光明不灭！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5309-5310',
-        any: [
-          /^\s*PRINTFORMW 「光明不灭！」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「光明不灭！」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5311',
-        any: [
-          /^\s*PRINTFORMW 「怎么可能输给不净之物……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「怎么可能输给不净之物……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5311-5312',
-        any: [
-          /^\s*PRINTFORMW 「怎么可能输给不净之物……」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「怎么可能输给不净之物……」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23539,30 +18977,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5318',
-        any: [
-          /^\s*PRINTFORMW （果不其然，真是强大……）\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW （果不其然，真是强大……）\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5318-5319',
-        any: [
-          /^\s*PRINTFORMW （果不其然，真是强大……）\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW （果不其然，真是强大……）\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5321',
-        any: [
-          /^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5321-5322',
-        any: [
-          /^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23581,30 +19011,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5332',
-        any: [
-          /^\s*IF CFLAG:1 == 2\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:1 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5334',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5337',
-        any: [
-          /^\s*PRINTFORMW 「……准备咯」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……准备咯」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5337-5339',
-        any: [
-          /^\s*PRINTFORMW 「……准备咯」\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……准备咯」\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23616,72 +19038,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5343',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5344',
-        any: [
-          /^\s*PRINTFORMW 「怪物！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「怪物！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5345',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5346',
-        any: [
-          /^\s*PRINTFORMW 「不净之物！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不净之物！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5346-5347',
-        any: [
-          /^\s*PRINTFORMW 「不净之物！」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不净之物！」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5348',
-        any: [
-          /^\s*PRINTFORMW 「……消失吧！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……消失吧！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5348-5349',
-        any: [
-          /^\s*PRINTFORMW 「……消失吧！」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……消失吧！」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5351',
-        any: [
-          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5354',
-        any: [
-          /^\s*PRINTFORMW 「切，不净之物……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「切，不净之物……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5354-5356',
-        any: [
-          /^\s*PRINTFORMW 「切，不净之物……」\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「切，不净之物……」\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23693,86 +19095,62 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5360',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5361',
-        any: [
-          /^\s*PRINTFORMW 「毁灭吧！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「毁灭吧！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5362',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5363',
-        any: [
-          /^\s*PRINTFORMW 「可不能输！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「可不能输！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5363-5364',
-        any: [
-          /^\s*PRINTFORMW 「可不能输！」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「可不能输！」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5365',
-        any: [
-          /^\s*PRINTFORMW 「光明啊！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「光明啊！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5365-5366',
-        any: [
-          /^\s*PRINTFORMW 「光明啊！」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「光明啊！」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5368-5370',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*ELSE\s*$\n^\s*;その他・迎撃中\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*ELSE\s*$\n^\s*;その他・迎撃中\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5369-5370',
-        any: [
-          /^\s*ELSE\s*$\n^\s*;その他・迎撃中\s*$/m,
-        ],
+        any: [/^\s*ELSE\s*$\n^\s*;その他・迎撃中\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5371',
-        any: [
-          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5374',
-        any: [
-          /^\s*PRINTFORMW 「……准备咯♪」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……准备咯♪」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5374-5376',
-        any: [
-          /^\s*PRINTFORMW 「……准备咯♪」\s*$\n^\s*RETURN 0\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「……准备咯♪」\s*$\n^\s*RETURN 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23784,44 +19162,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5380',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5381',
-        any: [
-          /^\s*PRINTFORMW 「这就是魔力吗！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「这就是魔力吗！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5382',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5383',
-        any: [
-          /^\s*PRINTFORMW 「真是美妙的力量……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「真是美妙的力量……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5383-5384',
-        any: [
-          /^\s*PRINTFORMW 「真是美妙的力量……」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「真是美妙的力量……」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5385',
-        any: [
-          /^\s*PRINTFORMW 「好强……竟可以强成这样，魔力真是……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「好强……竟可以强成这样，魔力真是……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23833,16 +19199,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5388',
-        any: [
-          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5391',
-        any: [
-          /^\s*PRINTFORMW 「切，魔力开始侵蚀了吗……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「切，魔力开始侵蚀了吗……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23861,51 +19223,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5397',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5398',
-        any: [
-          /^\s*PRINTFORMW 「消失吧！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「消失吧！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5399',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5400',
-        any: [
-          /^\s*PRINTFORMW 「黑暗啊！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「黑暗啊！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5400-5401',
-        any: [
-          /^\s*PRINTFORMW 「黑暗啊！」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「黑暗啊！」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5402',
-        any: [
-          /^\s*PRINTFORMW 「堕入黑暗吧……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「堕入黑暗吧……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5402-5403',
-        any: [
-          /^\s*PRINTFORMW 「堕入黑暗吧……」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「堕入黑暗吧……」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23938,23 +19286,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5420',
-        any: [
-          /^\s*IF SELECTCOM == 55\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 55\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5422',
-        any: [
-          /^\s*IF BASE:1 <= 0\s*$/m,
-        ],
+        any: [/^\s*IF BASE:1 <= 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5423',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -23966,9 +19308,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5425',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24015,51 +19355,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5432',
-        any: [
-          /^\s*IF SELECTCOM == 56\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 56\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5434',
-        any: [
-          /^\s*IF BASE:1 <= 0\s*$/m,
-        ],
+        any: [/^\s*IF BASE:1 <= 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5436',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5437',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5439',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5443',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5444',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24071,9 +19397,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5446',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24113,30 +19437,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5455',
-        any: [
-          /^\s*IF SELECTCOM == 31\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5457',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5458',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5460',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24169,30 +19485,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5467',
-        any: [
-          /^\s*IF SELECTCOM == 5\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5469',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5470',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5472',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24218,37 +19526,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5479',
-        any: [
-          /^\s*IF SELECTCOM == 21\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 21\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5481',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5482',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5484',
-        any: [
-          /^\s*ELSEIF TFLAG:400 == 206\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:400 == 206\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5485',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24260,9 +19558,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5487',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24288,37 +19584,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5495',
-        any: [
-          /^\s*IF SELECTCOM == 27\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 27\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5497',
-        any: [
-          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
-        ],
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5498',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5500',
-        any: [
-          /^\s*ELSEIF TFLAG:400 == 206\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:400 == 206\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5501',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24330,9 +19616,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5503',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24372,16 +19656,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5511',
-        any: [
-          /^\s*IF SELECTCOM == 51\s*$/m,
-        ],
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5512',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24400,16 +19680,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5526',
-        any: [
-          /^\s*CFLAG:650 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:650 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5529',
-        any: [
-          /^\s*IF P == 1\s*$/m,
-        ],
+        any: [/^\s*IF P == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24421,58 +19697,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5531',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5532',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5534',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5535-5536',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:651 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:651 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5536',
-        any: [
-          /^\s*CFLAG:651 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:651 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5538',
-        any: [
-          /^\s*ELSEIF P == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5539',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5540',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24484,30 +19744,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5542',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5543-5544',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:652 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:652 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5544',
-        any: [
-          /^\s*CFLAG:652 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:652 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5546',
-        any: [
-          /^\s*ELSEIF P == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24519,58 +19771,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5547',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5548',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5550',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5551-5552',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:653 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:653 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5552',
-        any: [
-          /^\s*CFLAG:653 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:653 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5554',
-        any: [
-          /^\s*ELSEIF P == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5555',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5556',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24582,30 +19818,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5558',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5559-5560',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:654 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:654 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5560',
-        any: [
-          /^\s*CFLAG:654 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:654 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5562',
-        any: [
-          /^\s*ELSEIF P == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24617,44 +19845,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5563',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5564',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5566',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5567-5568',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:655 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:655 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5568',
-        any: [
-          /^\s*CFLAG:655 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:655 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5570',
-        any: [
-          /^\s*ELSEIF P == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24666,44 +19882,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5571',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5572',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5574',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5575-5576',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:656 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:656 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5576',
-        any: [
-          /^\s*CFLAG:656 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:656 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5578',
-        any: [
-          /^\s*ELSEIF P == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24715,44 +19919,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5579',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5580',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5582',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5583-5584',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:657 = 1\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*CFLAG:657 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5584',
-        any: [
-          /^\s*CFLAG:657 = 1\s*$/m,
-        ],
+        any: [/^\s*CFLAG:657 = 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5586',
-        any: [
-          /^\s*ELSEIF P == 20\s*$/m,
-        ],
+        any: [/^\s*ELSEIF P == 20\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24771,23 +19963,17 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5587',
-        any: [
-          /^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5588',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5590',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24820,51 +20006,37 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5602',
-        any: [
-          /^\s*IF TFLAG:16 == 2\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:16 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5603',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5605',
-        any: [
-          /^\s*ELSEIF TFLAG:16 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:16 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5606',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5608',
-        any: [
-          /^\s*ELSEIF TFLAG:16 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:16 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5609',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5611',
-        any: [
-          /^\s*ELSEIF TFLAG:16 == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:16 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24876,9 +20048,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5612',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24890,58 +20060,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5620',
-        any: [
-          /^\s*IF TFLAG:500 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:500 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5621',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5623',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5624',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5626',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5627',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5629',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5630',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -24953,72 +20107,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5632',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5633',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5635',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5636',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5638',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5639',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5641',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5642',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5644',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5645',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25030,9 +20164,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5647',
-        any: [
-          /^\s*ELSEIF TFLAG:500 == 9\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:500 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25044,58 +20176,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5648',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5656',
-        any: [
-          /^\s*IF TFLAG:510 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:510 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5657',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5659',
-        any: [
-          /^\s*ELSEIF TFLAG:510 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:510 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5660',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5662',
-        any: [
-          /^\s*ELSEIF TFLAG:510 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:510 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5663',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5665',
-        any: [
-          /^\s*ELSEIF TFLAG:510 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:510 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25107,44 +20223,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5666',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5674',
-        any: [
-          /^\s*IF TFLAG:520 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:520 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5675',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5677',
-        any: [
-          /^\s*ELSEIF TFLAG:520 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:520 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5678',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5680',
-        any: [
-          /^\s*ELSEIF TFLAG:520 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:520 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25156,9 +20260,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5681',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25170,93 +20272,67 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5689',
-        any: [
-          /^\s*IF TFLAG:530 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:530 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5690',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5692',
-        any: [
-          /^\s*ELSEIF TFLAG:530 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:530 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5693',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5695',
-        any: [
-          /^\s*ELSEIF TFLAG:530 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:530 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5696',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5698',
-        any: [
-          /^\s*ELSEIF TFLAG:530 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:530 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5699',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5701',
-        any: [
-          /^\s*ELSEIF TFLAG:530 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:530 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5702',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5704',
-        any: [
-          /^\s*ELSEIF TFLAG:530 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:530 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5705',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5707',
-        any: [
-          /^\s*ELSEIF TFLAG:530 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:530 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25268,9 +20344,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5708',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25282,16 +20356,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5715',
-        any: [
-          /^\s*IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5717',
-        any: [
-          /^\s*PRINTFORMW 「魔王……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「魔王……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25303,44 +20373,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5720',
-        any: [
-          /^\s*PRINTFORMW 「魔王！　不可原谅！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「魔王！　不可原谅！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5721',
-        any: [
-          /^\s*ELSEIF TALENT:A:10 == 1 \|\| TALENT:A:26 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TALENT:A:10 == 1 \|\| TALENT:A:26 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5723',
-        any: [
-          /^\s*PRINTFORMW 「不可原谅啊，魔王……」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不可原谅啊，魔王……」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5723-5724',
-        any: [
-          /^\s*PRINTFORMW 「不可原谅啊，魔王……」\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「不可原谅啊，魔王……」\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5726',
-        any: [
-          /^\s*PRINTFORMW 「打个魔王来看看！」\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「打个魔王来看看！」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5726-5727',
-        any: [
-          /^\s*PRINTFORMW 「打个魔王来看看！」\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 「打个魔王来看看！」\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25359,16 +20417,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5733',
-        any: [
-          /^\s*IF CFLAG:A:504 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:A:504 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5735',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:A%提出了想要钱当报酬。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW %SAVESTR:A%提出了想要钱当报酬。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25380,72 +20434,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5738',
-        any: [
-          /^\s*PRINTFORM %SAVESTR:A%提出了想要和\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM %SAVESTR:A%提出了想要和\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5739',
-        any: [
-          /^\s*IF CFLAG:A:504 == 1\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:A:504 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5740',
-        any: [
-          /^\s*PRINT 狗\s*$/m,
-        ],
+        any: [/^\s*PRINT 狗\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5741',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5742',
-        any: [
-          /^\s*PRINT 猪\s*$/m,
-        ],
+        any: [/^\s*PRINT 猪\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5743',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5744',
-        any: [
-          /^\s*PRINT 马\s*$/m,
-        ],
+        any: [/^\s*PRINT 马\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5744-5745',
-        any: [
-          /^\s*PRINT 马\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINT 马\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5746',
-        any: [
-          /^\s*PRINTFORMW 进行交配的奖励。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 进行交配的奖励。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5747',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25457,72 +20491,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5750',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5752',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:A%提出了想与你做爱的奖励。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW %SAVESTR:A%提出了想与你做爱的奖励。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5753',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5755',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:A%提出了想要精液的奖励。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW %SAVESTR:A%提出了想要精液的奖励。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5756',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5758',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:A%提出了想要海天盛筵的奖励。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW %SAVESTR:A%提出了想要海天盛筵的奖励。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5759',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5761',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:A%提出了饮用圣水的奖励。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW %SAVESTR:A%提出了饮用圣水的奖励。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5762',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 9\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5764',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:A%提出了童贞狩猎的奖励。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW %SAVESTR:A%提出了童贞狩猎的奖励。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25541,37 +20555,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5774',
-        any: [
-          /^\s*IF TFLAG:18 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:18 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5775',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5776-5777',
-        any: [
-          /^\s*RETURN 0\s*$\n^\s*;勲章授与\s*$/m,
-        ],
+        any: [/^\s*RETURN 0\s*$\n^\s*;勲章授与\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5778',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5779',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25583,44 +20587,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5781',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5783',
-        any: [
-          /^\s*IF CFLAG:A:504 == 0\s*$/m,
-        ],
+        any: [/^\s*IF CFLAG:A:504 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5784',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5786',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5788',
-        any: [
-          /^\s*IF TALENT:A:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5789',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25632,37 +20624,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5791',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5792-5793',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;豚と獣姦\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;豚と獣姦\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5794',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5796',
-        any: [
-          /^\s*IF TALENT:A:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5797',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25674,16 +20656,12 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5799',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5800-5801',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;馬と獣姦\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;馬と獣姦\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25695,30 +20673,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5802',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5804',
-        any: [
-          /^\s*IF TALENT:A:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5805',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5807',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25730,44 +20700,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5810',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5811',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5813',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5815',
-        any: [
-          /^\s*IF ABL:A:2 > ABL:A:3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:2 > ABL:A:3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5816',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5817-5818',
-        any: [
-          /^\s*;アナルとペニス\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*;アナルとペニス\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25779,44 +20737,32 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5819',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5822',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5823',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5825',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5827',
-        any: [
-          /^\s*IF TALENT:A:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5828',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25828,58 +20774,42 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5830',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5831-5832',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;おしっこ\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;おしっこ\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5833',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5834',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5836',
-        any: [
-          /^\s*ELSEIF CFLAG:A:504 == 9\s*$/m,
-        ],
+        any: [/^\s*ELSEIF CFLAG:A:504 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5838',
-        any: [
-          /^\s*IF ABL:A:2 > ABL:A:3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:2 > ABL:A:3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5839',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5840-5841',
-        any: [
-          /^\s*;アナル\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*;アナル\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25898,9 +20828,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5842',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25926,37 +20854,27 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5854',
-        any: [
-          /^\s*IF TFLAG:18 == 0\s*$/m,
-        ],
+        any: [/^\s*IF TFLAG:18 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5855',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5857',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 1\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5859',
-        any: [
-          /^\s*IF ABL:A:21 >= 3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:21 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5860',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -25968,121 +20886,87 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5862',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5863-5864',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;路上自慰刑\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;路上自慰刑\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5865',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5867',
-        any: [
-          /^\s*IF ABL:A:17 >= 4\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:17 >= 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5867-5869',
-        any: [
-          /^\s*IF ABL:A:17 >= 4\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:17 >= 4\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5868',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5870',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5871-5872',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;路上脱糞刑\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;路上脱糞刑\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5873',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5875',
-        any: [
-          /^\s*IF ABL:A:17 >= 6\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:17 >= 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5875-5877',
-        any: [
-          /^\s*IF ABL:A:17 >= 6\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:17 >= 6\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5876',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5878',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5879-5880',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;鞭打ち刑\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;鞭打ち刑\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5881',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5883',
-        any: [
-          /^\s*IF ABL:A:21 >= 3\s*$/m,
-        ],
+        any: [/^\s*IF ABL:A:21 >= 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5884',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -26094,30 +20978,22 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5886',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5887-5888',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;人間小便器刑\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;人間小便器刑\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5889',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5891',
-        any: [
-          /^\s*IF TALENT:A:88 == 1 \|\| TALENT:A:76 == 1\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:A:88 == 1 \|\| TALENT:A:76 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -26129,72 +21005,52 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5892',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5894',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5895-5896',
-        any: [
-          /^\s*ENDIF\s*$\n^\s*;トイレ掃除刑\s*$/m,
-        ],
+        any: [/^\s*ENDIF\s*$\n^\s*;トイレ掃除刑\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5897',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 6\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 6\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5898',
-        any: [
-          /^\s*PRINT\s*$/m,
-        ],
+        any: [/^\s*PRINT\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5900',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 7\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 7\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5901',
-        any: [
-          /^\s*PRINT\s*$/m,
-        ],
+        any: [/^\s*PRINT\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5903',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 8\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 8\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5904',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5906',
-        any: [
-          /^\s*ELSEIF TFLAG:18 == 9\s*$/m,
-        ],
+        any: [/^\s*ELSEIF TFLAG:18 == 9\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -26206,9 +21062,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5907',
-        any: [
-          /^\s*PRINTFORMW\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
@@ -26220,135 +21074,97 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5914',
-        any: [
-          /^\s*IF ARG:0 == 1\s*$/m,
-        ],
+        any: [/^\s*IF ARG:0 == 1\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5916',
-        any: [
-          /^\s*PRINTFORM 哦~♪\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 哦~♪\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5917',
-        any: [
-          /^\s*ELSEIF ARG:0 == 2\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ARG:0 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5919',
-        any: [
-          /^\s*PRINTFORM 哦！\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 哦！\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5920',
-        any: [
-          /^\s*ELSEIF ARG:0 == 3\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ARG:0 == 3\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5922',
-        any: [
-          /^\s*PRINTFORM 啦……。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 啦……。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5923',
-        any: [
-          /^\s*ELSEIF ARG:0 == 4\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ARG:0 == 4\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5925',
-        any: [
-          /^\s*PRINTFORM 什么的……。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 什么的……。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5926',
-        any: [
-          /^\s*ELSEIF ARG:0 == 5\s*$/m,
-        ],
+        any: [/^\s*ELSEIF ARG:0 == 5\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5928',
-        any: [
-          /^\s*PRINTFORM 什么啊……。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 什么啊……。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5928-5929',
-        any: [
-          /^\s*PRINTFORM 什么啊……。\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 什么啊……。\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5932',
-        any: [
-          /^\s*IF RAND:3 == 0\s*$/m,
-        ],
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5933',
-        any: [
-          /^\s*PRINTFORM 啦。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 啦。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5934',
-        any: [
-          /^\s*ELSEIF RAND:2 == 0\s*$/m,
-        ],
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5935',
-        any: [
-          /^\s*PRINTFORM 嘛。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 嘛。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5935-5936',
-        any: [
-          /^\s*PRINTFORM 嘛。\s*$\n^\s*ELSE\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 嘛。\s*$\n^\s*ELSE\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5937',
-        any: [
-          /^\s*PRINTFORM 的啦。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 的啦。\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5937-5938',
-        any: [
-          /^\s*PRINTFORM 的啦。\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 的啦。\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5937-5939',
-        any: [
-          /^\s*PRINTFORM 的啦。\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
-        ],
+        any: [/^\s*PRINTFORM 的啦。\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',

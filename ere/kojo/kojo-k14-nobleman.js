@@ -104,7 +104,8 @@
  *     chara_callname(a)）+ GOHOUBI_AFTER（:5768-5846）/OSIOKI
  *     （:5848-5909，读 TFLAG:18，choice 参数传入不使用）+ GOBI
  *     （:5911-5944，语尾 PRINTFORM，ARG:0 分档 + 随机三选）。
- *   S5：家族注册与 main-loop 接线。
+ *   S5（本片）：全家族注册（key 14）+ main-loop require 接线 +
+ *     gen-facade strict-list 补 kojo-k14-nobleman.js。
  *
  * 本票无 SELL_MATURO_K0 调用（SELF_KOJO 卖却分支为空模板，无 CALL 行）。
  */
@@ -120,6 +121,32 @@ const { game } = require('#/facade/game');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { piercing_state } = require('#/system/train/piercing-state');
+const {
+  kojo_message_com_family,
+  self_kojo_family,
+  kojo_message_palamcng_family,
+  kojo_message_markcng_family,
+  benki_koujo_family,
+  enterenemy_koujo_family,
+  dungeon_victory_family,
+  dungeon_attack_family,
+  ntr_koujo_family,
+  exucution_koujo_family,
+  museum_koujo_family,
+  banishment_koujo_family,
+  public_exucution_koujo_family,
+  grotesque_koujo_family,
+  gohoubi_request_koujo_family,
+  gobi_koujo_family,
+} = require('#/kojo/kojo-system');
+const {
+  gohoubi_after_koujo_family,
+  osioski_koujo_family,
+} = require('#/kojo/kojo-dungeon-after');
+const {
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
+} = require('#/kojo/kojo-dungeon-ravish');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -8030,6 +8057,32 @@ async function gobi_koujo_k14(arg, rand) {
 
   return 0; // :5937-5941
 }
+
+// —— 家族注册（key 14；随 main-loop require 生效）——
+kojo_message_com_family.register(14, kojo_message_com_14);
+self_kojo_family.register(14, self_kojo_k14);
+kojo_message_palamcng_family.register(14, kojo_message_palamcng_14);
+kojo_message_markcng_family.register(14, kojo_message_markcng_14);
+gohoubi_after_koujo_family.register(14, (cid, choice) =>
+  gohoubi_after_koujo_k14(undefined, cid, choice),
+);
+osioski_koujo_family.register(14, (cid, choice) =>
+  osioski_koujo_k14(undefined, cid, choice),
+);
+gohoubi_request_koujo_family.register(14, () => gohoubi_request_koujo_k14());
+ryouzyoku_kojo_family.register(14, dungeon_ryouzyoku_k14);
+ryouzyoku_after_kojo_family.register(14, dungeon_ryouzyoku_after_k14);
+gobi_koujo_family.register(14, gobi_koujo_k14);
+benki_koujo_family.register(14, benki_koujo_k14);
+enterenemy_koujo_family.register(14, enterenemy_koujo_k14);
+dungeon_victory_family.register(14, dungeon_victory_k14);
+dungeon_attack_family.register(14, dungeon_attack_k14);
+ntr_koujo_family.register(14, ntr_koujo_k14);
+exucution_koujo_family.register(14, exucution_koujo_k14);
+museum_koujo_family.register(14, museum_koujo_k14);
+banishment_koujo_family.register(14, banishment_koujo_k14);
+public_exucution_koujo_family.register(14, public_exucution_koujo_k14);
+grotesque_koujo_family.register(14, grotesque_koujo_k14);
 
 module.exports = {
   STUBBED_CALLS,
