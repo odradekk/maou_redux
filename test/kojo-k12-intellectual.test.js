@@ -480,3 +480,78 @@ test('SELECTCOM==6（接吻）二回目顺从Lv2：推进到 3', async () => {
   ]);
   assert.equal(fixture.store.get('cflag:20:307'), 3);
 });
+
+test('SELECTCOM==7（自己扒开）初回淫乱：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:76', 1);
+  }, 7);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我的大受欢迎的地方、想被更多的看着呢♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:308'), 1);
+});
+
+test('SELECTCOM==7 二回目淫乱：原作缺陷 1:1（判据读 308、写入 306）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:308', 1);
+    f.store.set('talent:20:76', 1);
+  }, 7);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「怎么样、我性器的开发情况……♪　想让阴核变的多大呢？」',
+  ]);
+  // 原作 :806 写 CFLAG:306 = 5（缺陷 1:1，非 308）
+  assert.equal(fixture.store.get('cflag:20:306'), 5);
+  assert.equal(fixture.store.get('cflag:20:308'), 1);
+});
+
+test('SELECTCOM==8（插入手指）初回屈服刻印Lv3+爱：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('mark:20:2', 3);
+    f.store.set('talent:20:85', 1);
+  }, 8);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「想通过你的手、来做个彻底的放松呢」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:309'), 1);
+});
+
+test('SELECTCOM==10（振动宝石）二回目屈服刻印Lv3：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:311', 2);
+    f.store.set('mark:20:2', 3);
+  }, 10);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「道具的性能已经清楚了……但是、可以不把这个按在阴核上吗」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:311'), 3);
+});
+
+test('SELECTCOM==11（壶虫）装着初回非处女淫乱：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:11', 1);
+    f.store.set('talent:20:0', 0);
+    f.store.set('talent:20:76', 1);
+  }, 11);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「原来如此、将寄生虫家畜化吗。有意思……真想快点放进阴道品尝一下滋味呢♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:312'), 1);
+});
+
+test('SELECTCOM==11（壶虫）脱着时淫乱：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:11', 0);
+    f.store.set('cflag:20:312', 1);
+    f.store.set('talent:20:76', 1);
+  }, 11);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「实验已经结束了吗？　再多蹂躙一会儿也可以哦」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:372'), 3);
+});
