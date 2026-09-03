@@ -15497,8 +15497,804 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4355-4356',
+        any: [/^\s*;失神時には口上をスキップする\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4358-4360',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4366',
+        any: [/^\s*P = PALAM:3 \+ UP:3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4367',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4369',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4371',
+        any: [/^\s*IF SELECTCOM == 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4372',
+        any: [
+          /^\s*PRINTFORMW 「用这样的粘液……涂在%SELF_CALL\(TARGET\)%的身体上吗」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4373',
+        any: [/^\s*ELSEIF TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4374',
+        any: [
+          /^\s*PRINTFORMW 「从%SELF_CALL\(TARGET\)%的阴茎里……分泌出了粘液！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4376-4377',
+        any: [
+          /^\s*PRINTFORMW 「从%SELF_CALL\(TARGET\)%的阴道里……分泌出了粘液！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4377',
+        any: [
+          /^\s*PRINTFORMW 「从%SELF_CALL\(TARGET\)%的阴道里……分泌出了粘液！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4378-4379',
+        any: [/^\s*;それ以外\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4380-4381',
+        any: [/^\s*;润滑液を使った場合\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4382',
+        any: [/^\s*IF SELECTCOM == 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4383',
+        any: [
+          /^\s*PRINTFORMW 「用这样的粘液……涂在%SELF_CALL\(TARGET\)%的身体上吗」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4384',
+        any: [/^\s*ELSEIF TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4385',
+        any: [
+          /^\s*PRINTFORMW 「从%SELF_CALL\(TARGET\)%的阴茎里……分泌出了粘液！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4387-4388',
+        any: [
+          /^\s*PRINTFORMW 「从%SELF_CALL\(TARGET\)%的阴道里……分泌出了粘液！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4388',
+        any: [
+          /^\s*PRINTFORMW 「从%SELF_CALL\(TARGET\)%的阴道里……分泌出了粘液！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4389-4391',
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4390-4391',
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4391',
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4392-4394',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4397',
+        any: [/^\s*P = PALAM:5 \+ UP:5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4398',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4400',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4402',
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4403',
+        any: [
+          /^\s*PRINTFORMW 「竟用……这样的薬物……%SELF_CALL\(TARGET\)%的思考乱成了一团」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4405-4406',
+        any: [/^\s*PRINTFORMW 「脳内的麻薬分泌吗……没法停止呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4406',
+        any: [/^\s*PRINTFORMW 「脳内的麻薬分泌吗……没法停止呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4407-4408',
+        any: [/^\s*;それ以外\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4409-4410',
+        any: [/^\s*;しあわせ草を使った場合\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4411',
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4412',
+        any: [
+          /^\s*PRINTFORMW 「竟用……这样的薬物……%SELF_CALL\(TARGET\)%的思考乱成了一团」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4414-4415',
+        any: [/^\s*PRINTFORMW 「脳内的麻薬分泌吗……没法停止呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4415',
+        any: [/^\s*PRINTFORMW 「脳内的麻薬分泌吗……没法停止呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4416-4418',
+        any: [/^\s*CFLAG:222 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4417-4418',
+        any: [/^\s*CFLAG:222 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4418',
+        any: [/^\s*CFLAG:222 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4419-4421',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4424',
+        any: [/^\s*P = PALAM:8 \+ UP:8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4425',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:223 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4427',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4428',
+        any: [
+          /^\s*PRINTFORMW 「停手吧、这么羞恥的事情……%SELF_CALL\(TARGET\)%、要变的奇怪了」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4430-4431',
+        any: [
+          /^\s*PRINTFORMW 「停手吧、这么羞恥的事情……%SELF_CALL\(TARGET\)%、要变的奇怪了」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4431',
+        any: [
+          /^\s*PRINTFORMW 「停手吧、这么羞恥的事情……%SELF_CALL\(TARGET\)%、要变的奇怪了」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4432-4433',
+        any: [/^\s*CFLAG:223 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4433',
+        any: [/^\s*CFLAG:223 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4434-4436',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4439',
+        any: [/^\s*P = PALAM:10 \+ UP:10\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4440',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:224 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4442',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4443',
+        any: [/^\s*PRINTFORMW 「呀啊啊、快住手、好可怕」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4445-4446',
+        any: [/^\s*PRINTFORMW 「呀啊啊、快住手、好可怕」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4446',
+        any: [/^\s*PRINTFORMW 「呀啊啊、快住手、好可怕」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4447-4448',
+        any: [/^\s*CFLAG:224 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4448',
+        any: [/^\s*CFLAG:224 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4449-4451',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4454',
+        any: [/^\s*IF NOWEX:0 > 0 && CFLAG:225 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4456',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4457',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%、要高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4459-4460',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%、要高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4460',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%、要高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4461-4462',
+        any: [/^\s*CFLAG:225 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4462',
+        any: [/^\s*CFLAG:225 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4463-4465',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4468',
+        any: [/^\s*IF NOWEX:1 > 0 && CFLAG:226 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4470',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4471',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%的阴道、痙攣的停不下来啦～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4473',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4474',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%的阴道、痙攣的停不下来啦～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4476-4477',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%的阴道、痙攣的停不下来啦～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4477',
+        any: [
+          /^\s*PRINTFORMW 「啊啊～、不行了、%SELF_CALL\(TARGET\)%的阴道、痙攣的停不下来啦～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4478-4479',
+        any: [/^\s*CFLAG:TARGET:226 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4479',
+        any: [/^\s*CFLAG:TARGET:226 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4480-4482',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4485',
+        any: [/^\s*IF NOWEX:2 > 0 && CFLAG:227 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4487',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4488',
+        any: [
+          /^\s*PRINTFORMW 「不行、不要啊啊～！　%SELF_CALL\(TARGET\)%的肛门要、肛门要、高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4490',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4491',
+        any: [
+          /^\s*PRINTFORMW 「不行、不要啊啊～！　%SELF_CALL\(TARGET\)%的肛门要、肛门要、高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4493-4494',
+        any: [
+          /^\s*PRINTFORMW 「不行、不要啊啊～！　%SELF_CALL\(TARGET\)%的肛门要、肛门要、高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4494',
+        any: [
+          /^\s*PRINTFORMW 「不行、不要啊啊～！　%SELF_CALL\(TARGET\)%的肛门要、肛门要、高潮了～！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4495-4496',
+        any: [/^\s*CFLAG:227 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4496',
+        any: [/^\s*CFLAG:227 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4497-4499',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4502',
+        any: [/^\s*IF NOWEX:3 > 0 && CFLAG:228 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4504',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4505',
+        any: [/^\s*PRINTFORMW 「这不可能、胸部、胸部也要高潮了啊～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4507-4508',
+        any: [/^\s*PRINTFORMW 「这不可能、胸部、胸部也要高潮了啊～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4508',
+        any: [/^\s*PRINTFORMW 「这不可能、胸部、胸部也要高潮了啊～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4509-4510',
+        any: [/^\s*CFLAG:TARGET:228 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4510',
+        any: [/^\s*CFLAG:TARGET:228 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4511-4513',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4516',
+        any: [/^\s*A = UP:11 \+ UP:12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4517',
+        any: [/^\s*IF TFLAG:3 == 1 && CFLAG:229 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4519',
+        any: [/^\s*IF TFLAG:20 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4521',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4522',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、终于成为大人了呢……！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4524',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4525',
+        any: [/^\s*PRINTFORMW 「尽情的、为怀上孩子而做爱吧……！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4527-4528',
+        any: [/^\s*PRINTFORMW 「咿呀～、咿呀啊～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4528',
+        any: [/^\s*PRINTFORMW 「咿呀～、咿呀啊～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4529-4530',
+        any: [/^\s*;主人以外による处女喪失（再生处女含む）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4531-4532',
+        any: [/^\s*;淫乱\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4533',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4534',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、终于成为大人了呢……！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4536',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4537',
+        any: [/^\s*PRINTFORMW 「讨厌、才不想和你生孩子呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4539-4540',
+        any: [/^\s*PRINTFORMW 「咿呀～、咿呀啊～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4540',
+        any: [/^\s*PRINTFORMW 「咿呀～、咿呀啊～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4541-4543',
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4542-4543',
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4543',
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4544-4546',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '4551-4613',
         any: [/^\s*@KOJO_MESSAGE_MARKCNG_12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4557-4558',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4561',
+        any: [/^\s*IF TFLAG:22 == 3 && CFLAG:297 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4563',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4564',
+        any: [/^\s*PRINTFORMW 「啊嘎嘎、啊嘎啊～、痛～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4565-4566',
+        any: [/^\s*PRINTFORMW 「啊嘎嘎、啊嘎啊～、痛～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4566',
+        any: [/^\s*PRINTFORMW 「啊嘎嘎、啊嘎啊～、痛～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4567-4568',
+        any: [/^\s*CFLAG:297 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4568',
+        any: [/^\s*CFLAG:297 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4569-4571',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4574',
+        any: [/^\s*IF TFLAG:23 == 3 && CFLAG:298 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4576',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4577',
+        any: [/^\s*PRINTFORMW 「不行、不行了、好、好有感觉啊～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4578-4579',
+        any: [/^\s*PRINTFORMW 「不行、不行了、好、好有感觉啊～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4579',
+        any: [/^\s*PRINTFORMW 「不行、不行了、好、好有感觉啊～！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4580-4581',
+        any: [/^\s*CFLAG:298 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4581',
+        any: [/^\s*CFLAG:298 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4582-4584',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4587',
+        any: [/^\s*IF TFLAG:24 == 3 && CFLAG:299 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4589',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4590',
+        any: [/^\s*PRINTFORMW 「再、再也不会反抗你了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4591-4592',
+        any: [/^\s*PRINTFORMW 「再、再也不会反抗你了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4592',
+        any: [/^\s*PRINTFORMW 「再、再也不会反抗你了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4593-4594',
+        any: [/^\s*CFLAG:299 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4594',
+        any: [/^\s*CFLAG:299 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4595-4597',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4600',
+        any: [/^\s*IF TFLAG:21 == 3 && CFLAG:300 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4602',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4603',
+        any: [/^\s*PRINTFORMW 「去死吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4604-4605',
+        any: [/^\s*PRINTFORMW 「去死吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4605',
+        any: [/^\s*PRINTFORMW 「去死吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4606-4607',
+        any: [/^\s*CFLAG:300 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4607',
+        any: [/^\s*CFLAG:300 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4608-4611',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',

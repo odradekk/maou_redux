@@ -62,6 +62,11 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
+const {
+  kojo_message_com_family,
+  kojo_message_palamcng_family,
+  kojo_message_markcng_family,
+} = require('#/kojo/kojo-system');
 
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
@@ -6218,9 +6223,324 @@ async function dog_kojo_12(rand) {
   return 0; // :4342-4344
 }
 
+// @KOJO_MESSAGE_PALAMCNG_12（源段）：参数变动口上（PALAM 首超 Lv2/首绝顶）→ kojo_message_palamcng_12
+// 家族分发：kojo_message_palamcng_family.register(12, …)
+async function kojo_message_palamcng_12(rand) {
+  const target = era_flag.target;
+  const kojo = chara(target).kojo;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  void rand;
+  if (era.get(`tequip:${target}:45`)) {
+    // :4355-4356
+    return 0; // :4355-4356
+  } // :4355-4356
+
+  if (game.train.失神) {
+    // :4358-4360
+    return 0; // :4358-4360
+  } // :4358-4360
+
+  // PALAM:3 + UP:3（源 :4366）
+  const P1 =
+    (era.get(`palam:${target}:3`) || 0) + (era.get(`delta:${target}:3`) || 0);
+  if (P1 > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {
+    // :4367
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4369
+
+      if (era_flag.selectcom == 50) {
+        // :4371
+        await era.printAndWait(`「用这样的粘液……涂在${sc()}的身体上吗」`); // :4372
+      } else if (era.get(`talent:${target}:122`)) {
+        // :4373
+        await era.printAndWait(`「从${sc()}的阴茎里……分泌出了粘液！？」`); // :4374
+      } else {
+        // :4376-4377
+        await era.printAndWait(`「从${sc()}的阴道里……分泌出了粘液！？」`); // :4377
+      } // :4378-4379
+    } else {
+      // :4380-4381
+
+      if (era_flag.selectcom == 50) {
+        // :4382
+        await era.printAndWait(`「用这样的粘液……涂在${sc()}的身体上吗」`); // :4383
+      } else if (era.get(`talent:${target}:122`)) {
+        // :4384
+        await era.printAndWait(`「从${sc()}的阴茎里……分泌出了粘液！？」`); // :4385
+      } else {
+        // :4387-4388
+        await era.printAndWait(`「从${sc()}的阴道里……分泌出了粘液！？」`); // :4388
+      } // :4389-4391
+    } // :4390-4391
+    // CFLAG:TARGET:221  = 1（变量语义：CFLAG 族，TARGET:221） // :4391
+    kojo.首次润滑Lv2 = 1; // :4391
+  } // :4392-4394
+
+  // PALAM:5 + UP:5（源 :4397）
+  const P2 =
+    (era.get(`palam:${target}:5`) || 0) + (era.get(`delta:${target}:5`) || 0);
+  if (P2 > PALAMLV[2] && kojo.首次欲情Lv2 == 0) {
+    // :4398
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4400
+
+      if (era_flag.selectcom == 51) {
+        // :4402
+        await era.printAndWait(`「竟用……这样的薬物……${sc()}的思考乱成了一团」`); // :4403
+      } else {
+        // :4405-4406
+        await era.printAndWait(`「脑内的麻薬分泌吗……没法停止呢……」`); // :4406
+      } // :4407-4408
+    } else {
+      // :4409-4410
+
+      if (era_flag.selectcom == 51) {
+        // :4411
+        await era.printAndWait(`「竟用……这样的薬物……${sc()}的思考乱成了一团」`); // :4412
+      } else {
+        // :4414-4415
+        await era.printAndWait(`「脑内的麻薬分泌吗……没法停止呢……」`); // :4415
+      } // :4416-4418
+    } // :4417-4418
+    // CFLAG:222  = 1（变量语义：CFLAG 族，222） // :4418
+    kojo.首次欲情Lv2 = 1; // :4418
+  } // :4419-4421
+
+  // PALAM:8 + UP:8（源 :4424）
+  const P3 =
+    (era.get(`palam:${target}:8`) || 0) + (era.get(`delta:${target}:8`) || 0);
+  if (P3 > PALAMLV[2] && kojo.首次耻情Lv2 == 0) {
+    // :4425
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4427
+      await era.printAndWait(
+        `「停手吧、这么羞耻的事情……${sc()}、要变的奇怪了」`,
+      ); // :4428
+    } else {
+      // :4430-4431
+      await era.printAndWait(
+        `「停手吧、这么羞耻的事情……${sc()}、要变的奇怪了」`,
+      ); // :4431
+    } // :4432-4433
+    // CFLAG:223  = 1（变量语义：CFLAG 族，223） // :4433
+    kojo.首次耻情Lv2 = 1; // :4433
+  } // :4434-4436
+
+  // PALAM:10 + UP:10（源 :4439）
+  const P4 =
+    (era.get(`palam:${target}:10`) || 0) + (era.get(`delta:${target}:10`) || 0);
+  if (P4 > PALAMLV[2] && kojo.首次恐怖Lv2 == 0) {
+    // :4440
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4442
+      await era.printAndWait(`「呀啊啊、快住手、好可怕」`); // :4443
+    } else {
+      // :4445-4446
+      await era.printAndWait(`「呀啊啊、快住手、好可怕」`); // :4446
+    } // :4447-4448
+    // CFLAG:224  = 1（变量语义：CFLAG 族，224） // :4448
+    kojo.首次恐怖Lv2 = 1; // :4448
+  } // :4449-4451
+
+  if (era.get(`nowex:${target}:0`) || (0 > 0 && kojo.首次C绝顶 == 0)) {
+    // :4454
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4456
+      await era.printAndWait(`「啊啊～、不行了、${sc()}、要高潮了～！」`); // :4457
+    } else {
+      // :4459-4460
+      await era.printAndWait(`「啊啊～、不行了、${sc()}、要高潮了～！」`); // :4460
+    } // :4461-4462
+    // CFLAG:225  = 1（变量语义：CFLAG 族，225） // :4462
+    kojo.首次C绝顶 = 1; // :4462
+  } // :4463-4465
+
+  if (era.get(`nowex:${target}:1`) || (0 > 0 && kojo.首次V绝顶 == 0)) {
+    // :4468
+
+    if (era.get(`talent:${target}:76`) == 1) {
+      // :4470
+      await era.printAndWait(
+        `「啊啊～、不行了、${sc()}的阴道、痉挛的停不下来啦～！」`,
+      ); // :4471
+    } else if (era.get(`talent:${target}:85`) == 1) {
+      // :4473
+      await era.printAndWait(
+        `「啊啊～、不行了、${sc()}的阴道、痉挛的停不下来啦～！」`,
+      ); // :4474
+    } else {
+      // :4476-4477
+      await era.printAndWait(
+        `「啊啊～、不行了、${sc()}的阴道、痉挛的停不下来啦～！」`,
+      ); // :4477
+    } // :4478-4479
+    // CFLAG:TARGET:226  = 1（变量语义：CFLAG 族，TARGET:226） // :4479
+    kojo.首次V绝顶 = 1; // :4479
+  } // :4480-4482
+
+  if (era.get(`nowex:${target}:2`) || (0 > 0 && kojo.首次A绝顶 == 0)) {
+    // :4485
+
+    if (era.get(`talent:${target}:76`) == 1) {
+      // :4487
+      await era.printAndWait(
+        `「不行、不要啊啊～！　${sc()}的肛门要、肛门要、高潮了～！」`,
+      ); // :4488
+    } else if (era.get(`talent:${target}:85`) == 1) {
+      // :4490
+      await era.printAndWait(
+        `「不行、不要啊啊～！　${sc()}的肛门要、肛门要、高潮了～！」`,
+      ); // :4491
+    } else {
+      // :4493-4494
+      await era.printAndWait(
+        `「不行、不要啊啊～！　${sc()}的肛门要、肛门要、高潮了～！」`,
+      ); // :4494
+    } // :4495-4496
+    // CFLAG:227  = 1（变量语义：CFLAG 族，227） // :4496
+    kojo.首次A绝顶 = 1; // :4496
+  } // :4497-4499
+
+  if (era.get(`nowex:${target}:3`) || (0 > 0 && kojo.首次B绝顶 == 0)) {
+    // :4502
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4504
+      await era.printAndWait(`「这不可能、胸部、胸部也要高潮了啊～！」`); // :4505
+    } else {
+      // :4507-4508
+      await era.printAndWait(`「这不可能、胸部、胸部也要高潮了啊～！」`); // :4508
+    } // :4509-4510
+    // CFLAG:TARGET:228  = 1（变量语义：CFLAG 族，TARGET:228） // :4510
+    kojo.首次B绝顶 = 1; // :4510
+  } // :4511-4513
+
+  // UP:11 + UP:12（源 :4516）
+  const A =
+    (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0); // :4516 A = UP:11 + UP:12
+  if (era.get('tflag:3') == 1 && kojo.处女丧失 == 0) {
+    // :4517
+
+    if (era.get('tflag:20') == 1) {
+      // :4519
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (A < 500 || era.get('tflag:150') == 1)
+      ) {
+        // :4521
+        await era.printAndWait(`「${sc()}、终于成为大人了呢……！」`); // :4522
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (A < 500 || era.get('tflag:150') == 1)
+      ) {
+        // :4524
+        await era.printAndWait(`「尽情的、为怀上孩子而做爱吧……！」`); // :4525
+      } else {
+        // :4527-4528
+        await era.printAndWait(`「咿呀～、咿呀啊～」`); // :4528
+      } // :4529-4530
+    } else {
+      // :4531-4532
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :4533
+        await era.printAndWait(`「${sc()}、终于成为大人了呢……！」`); // :4534
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :4536
+        await era.printAndWait(`「讨厌、才不想和你生孩子呢」`); // :4537
+      } else {
+        // :4539-4540
+        await era.printAndWait(`「咿呀～、咿呀啊～」`); // :4540
+      } // :4541-4543
+    } // :4542-4543
+    // CFLAG:TARGET:229  = 1（变量语义：CFLAG 族，TARGET:229） // :4543
+    kojo.处女丧失 = 1; // :4543
+  } // :4544-4546
+}
+
+// @KOJO_MESSAGE_MARKCNG_12（源段）：参数变动口上（PALAM 首超 Lv2/首绝顶）→ kojo_message_palamcng_12
+// 家族分发：kojo_message_palamcng_family.register(12, …)
+async function kojo_message_markcng_12(rand) {
+  const target = era_flag.target;
+  const kojo = chara(target).kojo;
+  void rand;
+  if (era.get(`tequip:${target}:45`)) {
+    // :4557-4558
+    return 0; // :4557-4558
+  } // :4557-4558
+
+  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {
+    // :4561
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4563
+      await era.printAndWait(`「啊嘎嘎、啊嘎啊～、痛～」`); // :4564
+    } else {
+      // :4565-4566
+      await era.printAndWait(`「啊嘎嘎、啊嘎啊～、痛～」`); // :4566
+    } // :4567-4568
+    // CFLAG:297  = 1（变量语义：CFLAG 族，297） // :4568
+    kojo.苦痛刻印Lv3 = 1; // :4568
+  } // :4569-4571
+
+  if (game.system.快乐刻印变动 == 3 && kojo.快乐刻印Lv3 == 0) {
+    // :4574
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4576
+      await era.printAndWait(`「不行、不行了、好、好有感觉啊～！」`); // :4577
+    } else {
+      // :4578-4579
+      await era.printAndWait(`「不行、不行了、好、好有感觉啊～！」`); // :4579
+    } // :4580-4581
+    // CFLAG:298  = 1（变量语义：CFLAG 族，298） // :4581
+    kojo.快乐刻印Lv3 = 1; // :4581
+  } // :4582-4584
+
+  if (game.system.屈服刻印变动 == 3 && kojo.屈服刻印Lv3 == 0) {
+    // :4587
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4589
+      await era.printAndWait(`「再、再也不会反抗你了……」`); // :4590
+    } else {
+      // :4591-4592
+      await era.printAndWait(`「再、再也不会反抗你了……」`); // :4592
+    } // :4593-4594
+    // CFLAG:299  = 1（变量语义：CFLAG 族，299） // :4594
+    kojo.屈服刻印Lv3 = 1; // :4594
+  } // :4595-4597
+
+  if (game.system.反抗刻印变动 == 3 && kojo.反抗刻印Lv3 == 0) {
+    // :4600
+
+    if (era.get(`talent:${target}:85`) == 1) {
+      // :4602
+      await era.printAndWait(`「去死吧……」`); // :4603
+    } else {
+      // :4604-4605
+      await era.printAndWait(`「去死吧……」`); // :4605
+    } // :4606-4607
+    // CFLAG:300  = 1（变量语义：CFLAG 族，300） // :4607
+    kojo.反抗刻印Lv3 = 1; // :4607
+  } // :4608-4611
+}
+
+kojo_message_com_family.register(12, kojo_message_com_12);
+kojo_message_palamcng_family.register(12, kojo_message_palamcng_12);
+kojo_message_markcng_family.register(12, kojo_message_markcng_12);
+
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
+  kojo_message_palamcng_12,
+  kojo_message_markcng_12,
   dog_kojo_12,
   STUBBED_CALLS,
 };
