@@ -811,3 +811,44 @@ test('self_kojo_k12 TFLAG:13==11（妊娠发觉）爱慕+主人种', async () =>
   ]);
   assert.equal(fixture.store.get('cflag:20:271'), 1);
 });
+
+test('dungeon_ryouzyoku_k12 处女×刚强系：认输台词 + RETURN', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:0', 1);
+    f.store.set('talent:20:11', 1);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.dungeon_ryouzyoku_k12();
+  assert.deepEqual(fixture.text_lines(), [
+    '「噫～、请你们、冷、冷静一点……」',
+    '「怎、怎么能认输啊！　区区凌辱……我是绝对不会认输的！」',
+  ]);
+});
+
+test('dungeon_ryouzyoku_after_k12 非处女 EXP:0>20：小穴感想', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:0', 0);
+    f.store.set('exp:20:0', 25);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.dungeon_ryouzyoku_after_k12();
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('小穴……再也变不回去了')),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+test('dungeon_victory_k12 源 A（target）HP 低分支', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('base:20:0', 30);
+    f.store.set('maxbase:20:0', 100);
+    f.store.set('base:20:1', 30);
+    f.store.set('maxbase:20:1', 100);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.dungeon_victory_k12(() => 0);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('预料外的攻击')),
+    fixture.text_lines().join('\n'),
+  );
+});

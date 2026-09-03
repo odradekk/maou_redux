@@ -17003,13 +17003,830 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4870-4959',
+        any: [/^\s*@DUNGEON_RYOUZYOKU_K12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '4870-5957',
         any: [/^\s*@DUNGEON_RYOUZYOKU_K12\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4875',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4877',
+        any: [/^\s*PRINTFORMW 「噫～、请你们、冷、冷静一点……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4879',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4882',
+        any: [/^\s*PRINTFORMW 「救命啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4884-4885',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4885',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4888',
+        any: [
+          /^\s*PRINTFORMW 「你、你们、快看、我还是处女哦。所以、请至少饶我一命……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4892',
+        any: [/^\s*PRINTFORMW 「不、不管怎么用我的肛门都可以哦……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4896',
+        any: [
+          /^\s*PRINTFORMW 「口交的经验我有、一定、一定能满足你们的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4898',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4902',
+        any: [
+          /^\s*PRINTFORMW 「怎、怎么能认输啊！　区区凌辱……%SELF_CALL\(TARGET\)%是絶対不会认输的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4904',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4907',
+        any: [/^\s*PRINTFORMW 「已、已经完蛋了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4909-4911',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4912',
+        any: [
+          /^\s*PRINTFORMW 「你、你们……能商量一下吗。如果听得懂的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4914-4916',
+        any: [/^\s*;非处女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4915-4916',
+        any: [/^\s*;非处女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4917',
+        any: [
+          /^\s*PRINTFORMW 「不、不好意思。能请你们、冷、冷静一下吗……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4919',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4922',
+        any: [/^\s*PRINTFORMW 「拜托了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4924-4925',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4925',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4928',
+        any: [
+          /^\s*PRINTFORMW 「做、做爱的经验我有哦。一定能满足你们的。所以、请至少饶我一命……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4932',
+        any: [/^\s*PRINTFORMW 「肛、肛门的话随便怎么用都可以……所以……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4936',
+        any: [
+          /^\s*PRINTFORMW 「口交的经验我有、一定、一定能满足你们的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4938',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4942',
+        any: [
+          /^\s*PRINTFORMW 「怎、怎么能认输啊！　区区凌辱……%SELF_CALL\(TARGET\)%是絶対不会认输的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4944',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4947',
+        any: [/^\s*PRINTFORMW 「已、已经完蛋了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4949-4951',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4952',
+        any: [
+          /^\s*PRINTFORMW 「你、你们……能商量一下吗。如果听得懂的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4954-4959',
+        any: [
+          /^\s*;-------------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4955-4959',
+        any: [
+          /^\s*;-------------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4957-4959',
+        any: [
+          /^\s*;-------------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4960-5023',
+        any: [/^\s*@DUNGEON_RYOUZYOKU_AFTER_K12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4965',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4967',
+        any: [/^\s*PRINTFORMW （得救了……连贞洁也、守住了吗……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4969',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4972',
+        any: [/^\s*PRINTFORMW 「……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4974-4977',
+        any: [/^\s*;アナルを弄られすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4975-4977',
+        any: [/^\s*;アナルを弄られすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4978',
+        any: [/^\s*IF EXP:1 > 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4979',
+        any: [/^\s*PRINTFORMW 「肛门……咿呀～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4980',
+        any: [/^\s*PRINTFORMW 「已经破破烂烂的了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4981-4983',
+        any: [/^\s*;フェラしすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4985',
+        any: [/^\s*PRINTFORMW 「啊、下巴……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4989',
+        any: [/^\s*PRINTFORMW 「呜欸欸……这就是精液的味道吗……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4990-4991',
+        any: [/^\s*;非处女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4992',
+        any: [/^\s*PRINTFORMW （只有小命还在、算是得救了吗……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4994',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4997',
+        any: [/^\s*PRINTFORMW 「……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '4999-5002',
+        any: [/^\s*;膣を苛められすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5000-5002',
+        any: [/^\s*;膣を苛められすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5003',
+        any: [/^\s*IF EXP:0 > 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5004',
+        any: [/^\s*PRINTFORMW 「小穴……再也变不回去了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5005-5007',
+        any: [/^\s*;アナルを弄られすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5008',
+        any: [/^\s*IF EXP:1 > 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5009',
+        any: [/^\s*PRINTFORMW 「肛门……咿呀～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5010',
+        any: [/^\s*PRINTFORMW 「已经破破烂烂的了……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5011-5013',
+        any: [/^\s*;フェラしすぎた感想\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5015',
+        any: [/^\s*PRINTFORMW 「啊、下巴……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5019',
+        any: [/^\s*PRINTFORMW 「呜欸欸……这就是精液的味道吗……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5020-5023',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5022-5023',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '5106-5172',
         any: [/^\s*CALL BENKI_PLAYER_NAME\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5278-5331',
+        any: [/^\s*@DUNGEON_VICTORY_K12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5283',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%的勝率达到了95％哦」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5285',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5288',
+        any: [/^\s*PRINTFORMW 「这是毋庸置疑的」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5290-5291',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5291',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5294',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5295',
+        any: [/^\s*PRINTFORMW 「你们最好再多动动脑筋呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5296',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5297',
+        any: [/^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%的計算是完美的」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5298-5299',
+        any: [/^\s*PRINTFORMW 「不管模拟几次结果都是一样的」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5299',
+        any: [/^\s*PRINTFORMW 「不管模拟几次结果都是一样的」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5300-5302',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5302',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5305',
+        any: [/^\s*PRINTFORMW 「应该、没问题吧、没问题……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5307-5310',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5308-5310',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5311',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5312',
+        any: [/^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%没有输的理由」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5313',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5314',
+        any: [/^\s*PRINTFORMW 「下次模拟一下新战术试试吧」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5315-5316',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%每次戦斗后都会有进步呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5316',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%每次戦斗后都会有进步呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5317-5321',
+        any: [
+          /^\s*IF \(BASE:A:0 \* 100 [/] MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 [/] MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5319-5321',
+        any: [
+          /^\s*IF \(BASE:A:0 \* 100 [/] MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 [/] MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5321',
+        any: [
+          /^\s*IF \(BASE:A:0 \* 100 [/] MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 [/] MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5323',
+        any: [
+          /^\s*PRINTFORMW 「……然而、这是预料外的攻撃……如果修正計算公式的话」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5324-5325',
+        any: [/^\s*;余裕余裕\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5326',
+        any: [/^\s*PRINTFORMW 「这种程度的攻撃、完全在预料的範囲内」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5327-5331',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5329-5331',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5332-5420',
+        any: [/^\s*@DUNGEON_ATTACK_K12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5337',
+        any: [/^\s*IF CFLAG:1 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5339',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5342',
+        any: [/^\s*PRINTFORMW 「……我要上了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5344-5345',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5345',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5348',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5349',
+        any: [
+          /^\s*PRINTFORMW 「虽然只是計算、这个攻撃应该是无法闪避的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5350',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5351',
+        any: [/^\s*PRINTFORMW 「来吧、还要攻撃几次才会死呢？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5352-5353',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是絶対不会输的哦！　証明给你看！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5353',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是絶対不会输的哦！　証明给你看！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5354-5356',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5356',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5359',
+        any: [/^\s*PRINTFORMW 「这种程度、也在预料範囲内哦！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5361-5364',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5362-5364',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5365',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5366',
+        any: [/^\s*PRINTFORMW 「你的勝率连万分之一也没有哦！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5367',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5368',
+        any: [
+          /^\s*PRINTFORMW 「躲躲看吧！　试着超越%SELF_CALL\(TARGET\)%的計算吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5369-5370',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是……絶対无法战勝的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5370',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是……絶対无法战勝的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5371-5375',
+        any: [/^\s*;その他・迎撃中\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5373-5375',
+        any: [/^\s*;その他・迎撃中\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5374-5375',
+        any: [/^\s*;その他・迎撃中\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5376',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5379',
+        any: [/^\s*PRINTFORMW 「……我要上了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5381-5382',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5382',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5385',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5386',
+        any: [/^\s*PRINTFORMW 「要我来帮你算一算失败的几率吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5387',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5388',
+        any: [
+          /^\s*PRINTFORMW 「好想教育一下无知的你呢、用这个美妙的世界！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5389-5390',
+        any: [
+          /^\s*PRINTFORMW 「你是絶対勝不了的……让%SELF_CALL\(TARGET\)%来証明这一点吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5390',
+        any: [
+          /^\s*PRINTFORMW 「你是絶対勝不了的……让%SELF_CALL\(TARGET\)%来証明这一点吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5391-5393',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5393',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5396',
+        any: [/^\s*PRINTFORMW 「这种程度、也在预料範囲内哦！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5398-5401',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5399-5401',
+        any: [/^\s*;その他何か適当に性格によって\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5402',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5403',
+        any: [/^\s*PRINTFORMW 「魔族的优秀之处……真想从你那学习一下呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5404',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5405',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%的勝率超过9成了呢！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5406-5407',
+        any: [/^\s*PRINTFORMW 「計算之中的行动……真无聊呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5407',
+        any: [/^\s*PRINTFORMW 「計算之中的行动……真无聊呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5408-5417',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5410-5417',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5411-5417',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5415-5417',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
       },
     ],
   },

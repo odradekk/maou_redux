@@ -67,7 +67,13 @@ const {
   kojo_message_palamcng_family,
   kojo_message_markcng_family,
   self_kojo_family,
+  dungeon_victory_family,
+  dungeon_attack_family,
 } = require('#/kojo/kojo-system');
+const {
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
+} = require('#/kojo/kojo-dungeon-ravish');
 
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
@@ -6537,6 +6543,10 @@ kojo_message_com_family.register(12, kojo_message_com_12);
 kojo_message_palamcng_family.register(12, kojo_message_palamcng_12);
 kojo_message_markcng_family.register(12, kojo_message_markcng_12);
 self_kojo_family.register(12, self_kojo_k12);
+ryouzyoku_kojo_family.register(12, dungeon_ryouzyoku_k12);
+ryouzyoku_after_kojo_family.register(12, dungeon_ryouzyoku_after_k12);
+dungeon_victory_family.register(12, dungeon_victory_k12);
+dungeon_attack_family.register(12, dungeon_attack_k12);
 
 // @SELF_KOJO_K12（:4614-4869）：事件口上（self_kojo family）。TFLAG:13 事件
 // 类型分档：1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 /
@@ -6832,12 +6842,422 @@ async function self_kojo_k12(rand, q) {
   return 0; // :4839-4841
 }
 
+// @DUNGEON_RYOUZYOKU_K12（:4870-4959）：迷宫凌辱前口上（ryouzyoku family）。处女/非处女 × 性格素质分档（冷漠/低姿态/刚强/胆怯等），含 A敏感/口交经验追加句。
+async function dungeon_ryouzyoku_k12() {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  if (era.get(`talent:${target}:0`) == 1) {
+    // :4875
+
+    await era.printAndWait(`「噫～、请你们、冷、冷静一点……」`); // :4877
+
+    if (
+      era.get(`talent:${target}:21`) == 1 ||
+      era.get(`talent:${target}:22`) == 1
+    ) {
+      // :4879
+
+      await era.printAndWait(`「救命啊……」`); // :4882
+
+      return 0; // :4884-4885
+    } else if (
+      era.get(`talent:${target}:17`) == 1 ||
+      era.get(`talent:${target}:31`) == 1 ||
+      era.get(`talent:${target}:36`) == 1
+    ) {
+      // :4885
+
+      await era.printAndWait(
+        `「你、你们、快看、我还是处女哦。所以、请至少饶我一命……」`,
+      ); // :4888
+
+      if (
+        era.get(`talent:${target}:106`) == 1 ||
+        era.get(`exp:${target}:1`) > 0
+      ) {
+        // :4892
+        await era.printAndWait(`「不、不管怎么用我的肛门都可以哦……」`); // :4892
+      } // :4892
+
+      if (era.get(`exp:${target}:22`) > 0) {
+        // :4896
+        await era.printAndWait(`「口交的经验我有、一定、一定能满足你们的！」`); // :4896
+      } // :4896
+    } else if (
+      era.get(`talent:${target}:11`) == 1 ||
+      era.get(`talent:${target}:12`) == 1 ||
+      era.get(`talent:${target}:15`) == 1 ||
+      era.get(`talent:${target}:30`) == 1 ||
+      era.get(`talent:${target}:34`) == 1
+    ) {
+      // :4898
+
+      await era.printAndWait(
+        `「怎、怎么能认输啊！　区区凌辱……${sc()}是绝对不会认输的！」`,
+      ); // :4902
+    } else if (
+      era.get(`talent:${target}:10`) == 1 ||
+      era.get(`talent:${target}:26`) == 1
+    ) {
+      // :4904
+
+      await era.printAndWait(`「已、已经完蛋了……」`); // :4907
+    } else {
+      // :4909-4911
+
+      await era.printAndWait(`「你、你们……能商量一下吗。如果听得懂的话……」`); // :4912
+    } // :4914-4916
+  } else {
+    // :4915-4916
+
+    await era.printAndWait(`「不、不好意思。能请你们、冷、冷静一下吗……」`); // :4917
+
+    if (
+      era.get(`talent:${target}:21`) == 1 ||
+      era.get(`talent:${target}:22`) == 1
+    ) {
+      // :4919
+
+      await era.printAndWait(`「拜托了……」`); // :4922
+
+      return 0; // :4924-4925
+    } else if (
+      era.get(`talent:${target}:17`) == 1 ||
+      era.get(`talent:${target}:31`) == 1 ||
+      era.get(`talent:${target}:36`) == 1
+    ) {
+      // :4925
+
+      await era.printAndWait(
+        `「做、做爱的经验我有哦。一定能满足你们的。所以、请至少饶我一命……」`,
+      ); // :4928
+
+      if (
+        era.get(`talent:${target}:106`) == 1 ||
+        era.get(`exp:${target}:1`) > 0
+      ) {
+        // :4932
+        await era.printAndWait(`「肛、肛门的话随便怎么用都可以……所以……」`); // :4932
+      } // :4932
+
+      if (era.get(`exp:${target}:22`) > 0) {
+        // :4936
+        await era.printAndWait(`「口交的经验我有、一定、一定能满足你们的！」`); // :4936
+      } // :4936
+    } else if (
+      era.get(`talent:${target}:11`) == 1 ||
+      era.get(`talent:${target}:12`) == 1 ||
+      era.get(`talent:${target}:15`) == 1 ||
+      era.get(`talent:${target}:30`) == 1 ||
+      era.get(`talent:${target}:34`) == 1
+    ) {
+      // :4938
+
+      await era.printAndWait(
+        `「怎、怎么能认输啊！　区区凌辱……${sc()}是绝对不会认输的！」`,
+      ); // :4942
+    } else if (
+      era.get(`talent:${target}:10`) == 1 ||
+      era.get(`talent:${target}:26`) == 1
+    ) {
+      // :4944
+
+      await era.printAndWait(`「已、已经完蛋了……」`); // :4947
+    } else {
+      // :4949-4951
+
+      await era.printAndWait(`「你、你们……能商量一下吗。如果听得懂的话……」`); // :4952
+    } // :4954-4959
+  } // :4955-4959
+
+  return 0; // :4957-4959
+}
+
+// @DUNGEON_RYOUZYOKU_AFTER_K12（:4960-5023）：迷宫凌辱后口上。处女/非处女 × EXP 经验分档感想。
+async function dungeon_ryouzyoku_after_k12() {
+  const target = era_flag.target;
+  if (era.get(`talent:${target}:0`) == 1) {
+    // :4965
+
+    await era.printAndWait(`（得救了……连贞洁也、守住了吗……）`); // :4967
+
+    if (
+      era.get(`talent:${target}:21`) == 1 ||
+      era.get(`talent:${target}:22`) == 1
+    ) {
+      // :4969
+
+      await era.printAndWait(`「……」`); // :4972
+
+      return 0; // :4974-4977
+    } // :4975-4977
+
+    if (era.get(`exp:${target}:1`) > 20) {
+      // :4978
+      await era.printAndWait(`「肛门……咿呀～」`); // :4979
+      await era.printAndWait(`「已经破破烂烂的了……」`); // :4980
+    } // :4981-4983
+
+    if (era.get(`exp:${target}:22`) > 20) {
+      // :4985
+      await era.printAndWait(`「啊、下巴……」`); // :4985
+    } // :4985
+
+    if (era.get(`exp:${target}:20`) > 20) {
+      // :4989
+      await era.printAndWait(`「呜欸欸……这就是精液的味道吗……」`); // :4989
+    } // :4989
+  } else {
+    // :4990-4991
+
+    await era.printAndWait(`（只有小命还在、算是得救了吗……）`); // :4992
+
+    if (
+      era.get(`talent:${target}:21`) == 1 ||
+      era.get(`talent:${target}:22`) == 1
+    ) {
+      // :4994
+
+      await era.printAndWait(`「……」`); // :4997
+
+      return 0; // :4999-5002
+    } // :5000-5002
+
+    if (era.get(`exp:${target}:0`) > 20) {
+      // :5003
+      await era.printAndWait(`「小穴……再也变不回去了」`); // :5004
+    } // :5005-5007
+
+    if (era.get(`exp:${target}:1`) > 20) {
+      // :5008
+      await era.printAndWait(`「肛门……咿呀～」`); // :5009
+      await era.printAndWait(`「已经破破烂烂的了……」`); // :5010
+    } // :5011-5013
+
+    if (era.get(`exp:${target}:22`) > 20) {
+      // :5015
+      await era.printAndWait(`「啊、下巴……」`); // :5015
+    } // :5015
+
+    if (era.get(`exp:${target}:20`) > 20) {
+      // :5019
+      await era.printAndWait(`「呜欸欸……这就是精液的味道吗……」`); // :5019
+    } // :5019
+  } // :5020-5023
+
+  return 0; // :5022-5023
+}
+
+// @DUNGEON_VICTORY_K12（:5278-5331）：迷宫胜利口上（victory family）。
+async function dungeon_victory_k12(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const a = era_flag.target; // 源 A（迷宫胜利时目标角色，K10 dungeon_victory_k10 同款）
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  await era.printAndWait(`「${sc()}的胜率达到了95％哦」`); // :5283
+
+  if (
+    era.get(`talent:${target}:21`) == 1 ||
+    era.get(`talent:${target}:22`) == 1
+  ) {
+    // :5285
+
+    await era.printAndWait(`「这是毋庸置疑的」`); // :5288
+
+    return 0; // :5290-5291
+  } else if (
+    era.get(`talent:${target}:11`) == 1 ||
+    era.get(`talent:${target}:12`) == 1 ||
+    era.get(`talent:${target}:15`) == 1 ||
+    era.get(`talent:${target}:30`) == 1 ||
+    era.get(`talent:${target}:34`) == 1
+  ) {
+    // :5291
+
+    if (rand_n(3) == 0) {
+      // :5294
+      await era.printAndWait(`「你们最好再多动动脑筋呢」`); // :5295
+    } else if (rand_n(2) == 0) {
+      // :5296
+      await era.printAndWait(`「${sc()}的计算是完美的」`); // :5297
+    } else {
+      // :5298-5299
+      await era.printAndWait(`「不管模拟几次结果都是一样的」`); // :5299
+    } // :5300-5302
+  } else if (
+    era.get(`talent:${target}:10`) == 1 ||
+    era.get(`talent:${target}:26`) == 1
+  ) {
+    // :5302
+
+    await era.printAndWait(`「应该、没问题吧、没问题……」`); // :5305
+
+    return 0; // :5307-5310
+  } else {
+    // :5308-5310
+
+    if (rand_n(3) == 0) {
+      // :5311
+      await era.printAndWait(`「${sc()}没有输的理由」`); // :5312
+    } else if (rand_n(2) == 0) {
+      // :5313
+      await era.printAndWait(`「下次模拟一下新战术试试吧」`); // :5314
+    } else {
+      // :5315-5316
+      await era.printAndWait(`「${sc()}每次战斗后都会有进步呢」`); // :5316
+    } // :5317-5321
+  } // :5319-5321
+
+  if (
+    (era.get(`base:${a}:0`) * 100) / era.get(`maxbase:${a}:0`) < 50 ||
+    (era.get(`base:${a}:1`) * 100) / era.get(`maxbase:${a}:1`) < 50
+  ) {
+    // :5321
+
+    await era.printAndWait(
+      `「……然而、这是预料外的攻击……如果修正计算公式的话」`,
+    ); // :5323
+  } else {
+    // :5324-5325
+
+    await era.printAndWait(`「这种程度的攻击、完全在预料的范围内」`); // :5326
+  } // :5327-5331
+
+  return 0; // :5329-5331
+}
+
+// @DUNGEON_ATTACK_K12（:5332-5420）：迷宫袭击口上（attack family）。
+async function dungeon_attack_k12(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  if (era.get(`cflag:${target}:1`) == 2) {
+    // :5337
+
+    if (
+      era.get(`talent:${target}:21`) == 1 ||
+      era.get(`talent:${target}:22`) == 1
+    ) {
+      // :5339
+
+      await era.printAndWait(`「……我要上了」`); // :5342
+
+      return 0; // :5344-5345
+    } else if (
+      era.get(`talent:${target}:11`) == 1 ||
+      era.get(`talent:${target}:12`) == 1 ||
+      era.get(`talent:${target}:15`) == 1 ||
+      era.get(`talent:${target}:30`) == 1 ||
+      era.get(`talent:${target}:34`) == 1
+    ) {
+      // :5345
+
+      if (rand_n(3) == 0) {
+        // :5348
+        await era.printAndWait(`「虽然只是计算、这个攻击应该是无法闪避的！」`); // :5349
+      } else if (rand_n(2) == 0) {
+        // :5350
+        await era.printAndWait(`「来吧、还要攻击几次才会死呢？」`); // :5351
+      } else {
+        // :5352-5353
+        await era.printAndWait(`「${sc()}是绝对不会输的哦！　证明给你看！」`); // :5353
+      } // :5354-5356
+    } else if (
+      era.get(`talent:${target}:10`) == 1 ||
+      era.get(`talent:${target}:26`) == 1
+    ) {
+      // :5356
+
+      await era.printAndWait(`「这种程度、也在预料范围内哦！」`); // :5359
+
+      return 0; // :5361-5364
+    } else {
+      // :5362-5364
+
+      if (rand_n(3) == 0) {
+        // :5365
+        await era.printAndWait(`「你的胜率连万分之一也没有哦！」`); // :5366
+      } else if (rand_n(2) == 0) {
+        // :5367
+        await era.printAndWait(`「躲躲看吧！　试着超越${sc()}的计算吧！」`); // :5368
+      } else {
+        // :5369-5370
+        await era.printAndWait(`「${sc()}是……绝对无法战胜的！」`); // :5370
+      } // :5371-5375
+    } // :5373-5375
+  } else {
+    // :5374-5375
+
+    if (
+      era.get(`talent:${target}:21`) == 1 ||
+      era.get(`talent:${target}:22`) == 1
+    ) {
+      // :5376
+
+      await era.printAndWait(`「……我要上了」`); // :5379
+
+      return 0; // :5381-5382
+    } else if (
+      era.get(`talent:${target}:11`) == 1 ||
+      era.get(`talent:${target}:12`) == 1 ||
+      era.get(`talent:${target}:15`) == 1 ||
+      era.get(`talent:${target}:30`) == 1 ||
+      era.get(`talent:${target}:34`) == 1
+    ) {
+      // :5382
+
+      if (rand_n(3) == 0) {
+        // :5385
+        await era.printAndWait(`「要我来帮你算一算失败的几率吗？」`); // :5386
+      } else if (rand_n(2) == 0) {
+        // :5387
+        await era.printAndWait(
+          `「好想教育一下无知的你呢、用这个美妙的世界！」`,
+        ); // :5388
+      } else {
+        // :5389-5390
+        await era.printAndWait(
+          `「你是绝对胜不了的……让${sc()}来证明这一点吧！」`,
+        ); // :5390
+      } // :5391-5393
+    } else if (
+      era.get(`talent:${target}:10`) == 1 ||
+      era.get(`talent:${target}:26`) == 1
+    ) {
+      // :5393
+
+      await era.printAndWait(`「这种程度、也在预料范围内哦！」`); // :5396
+
+      return 0; // :5398-5401
+    } else {
+      // :5399-5401
+
+      if (rand_n(3) == 0) {
+        // :5402
+        await era.printAndWait(`「魔族的优秀之处……真想从你那学习一下呢」`); // :5403
+      } else if (rand_n(2) == 0) {
+        // :5404
+        await era.printAndWait(`「${sc()}的胜率超过9成了呢！」`); // :5405
+      } else {
+        // :5406-5407
+        await era.printAndWait(`「计算之中的行动……真无聊呢」`); // :5407
+      } // :5408-5417
+    } // :5410-5417
+  } // :5411-5417
+
+  return 0; // :5415-5417
+}
+
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
   kojo_message_palamcng_12,
   kojo_message_markcng_12,
   self_kojo_k12,
+  dungeon_ryouzyoku_k12,
+  dungeon_ryouzyoku_after_k12,
+  dungeon_victory_k12,
+  dungeon_attack_k12,
   dog_kojo_12,
   STUBBED_CALLS,
 };
