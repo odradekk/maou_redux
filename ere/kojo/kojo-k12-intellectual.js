@@ -1499,6 +1499,316 @@ async function kojo_message_com_12(rand) {
     return 0; // :1028-1031
   } // :1029-1031
 
+  if (era_flag.selectcom == 12) {
+    // :1034
+
+    if (kojo.振动杖 == 0) {
+      // :1036
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :1038
+        await era.printAndWait(`「有趣的道具呢！　动力有多少？」`); // :1039
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :1041
+        await era.printAndWait(`「这个是……什么用途的道具呢？　淫具……吗？」`); // :1042
+      } else {
+        // :1044-1045
+        await era.printAndWait(`「哼、拿着这种道具到底意欲何为？」`); // :1045
+      } // :1046-1047
+      // CFLAG:313  = 1（变量语义：CFLAG 族，313） // :1047
+      kojo.振动杖 = 1; // :1047
+      return 0; // :1048-1049
+    } else {
+      // :1050-1051
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.振动杖 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :1052
+        await era.printAndWait(`「啊啊啊……好棒、发麻了……下次借给我吧……♪」`); // :1053
+        // CFLAG:313  = 5（变量语义：CFLAG 族，313） // :1054
+        kojo.振动杖 = 5; // :1054
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.振动杖 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :1056
+        await era.printAndWait(`「研究疲劳的时候使用……有不错的保健效果呢」`); // :1057
+        // CFLAG:313  = 4（变量语义：CFLAG 族，313） // :1058
+        kojo.振动杖 = 4; // :1058
+      } else if (
+        era.get(`mark:${target}:2`) == 3 &&
+        (kojo.振动杖 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :1060
+        await era.printAndWait(`「咕～、机械的振动……一直传到腰骨上了……嗯」`); // :1061
+        // CFLAG:313  = 3（变量语义：CFLAG 族，313） // :1062
+        kojo.振动杖 = 3; // :1062
+      } else if (kojo.振动杖 <= 1 || game.kojo.口上开关 == 2) {
+        // :1064
+        await era.printAndWait(
+          `「这种程度的、脑内物质分泌……对我没有效果呢……嗯」`,
+        ); // :1065
+        // CFLAG:313  = 2（变量语义：CFLAG 族，313） // :1066
+        kojo.振动杖 = 2; // :1066
+      } // :1067-1072
+      return 0; // :1068-1072
+    } // :1069-1072
+  } // :1070-1072
+
+  if (era_flag.selectcom == 13 && era.get(`tequip:${target}:13`)) {
+    // :1076
+
+    if (kojo.肛门虫 == 0) {
+      // :1078
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :1080
+        await era.printAndWait(
+          `「好大的寄生虫呢……难道说、要把这个放进去？　好期待呢♪」`,
+        ); // :1081
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :1083
+        await era.printAndWait(`「在肠内生活的寄生虫吗……有意思的生物」`); // :1084
+      } else {
+        // :1086-1087
+        await era.printAndWait(
+          `「原始的寄生虫吗……哼、据说体液有催淫作用呢……」`,
+        ); // :1087
+      } // :1088-1089
+      // CFLAG:TARGET:314  = 1（变量语义：CFLAG 族，TARGET:314） // :1089
+      kojo.肛门虫 = 1; // :1089
+      return 0; // :1090-1091
+    } else {
+      // :1092-1093
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛门虫 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :1094
+        await era.printAndWait(
+          `「咕呜～、直肠…･･･被钻进去了～。停、停不下来了……♪」`,
+        ); // :1095
+        // CFLAG:314  = 6（变量语义：CFLAG 族，314） // :1096
+        kojo.肛门虫 = 6; // :1096
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.肛门虫 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :1098
+        await era.printAndWait(
+          `「在直肠内运动着呢……据说有催淫作用、快点生效吧」`,
+        ); // :1099
+        // CFLAG:314  = 6（变量语义：CFLAG 族，314） // :1100
+        kojo.肛门虫 = 6; // :1100
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛门虫 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :1102
+        await era.printAndWait(
+          `「被这样的、下等生物……挖掘着直肠、有感觉了……嗯♪」`,
+        ); // :1103
+        // CFLAG:314  = 5（变量语义：CFLAG 族，314） // :1104
+        kojo.肛门虫 = 5; // :1104
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.肛门虫 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :1106
+        await era.printAndWait(
+          `「这样很难有感觉呢……不过据说寄生虫对健康有益」`,
+        ); // :1107
+        // CFLAG:314  = 4（变量语义：CFLAG 族，314） // :1108
+        kojo.肛门虫 = 4; // :1108
+      } else if (
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛门虫 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :1110
+        await era.printAndWait(`「这、这种下等生物……嗯」`); // :1111
+        // CFLAG:314  = 3（变量语义：CFLAG 族，314） // :1112
+        kojo.肛门虫 = 3; // :1112
+      } else if (kojo.肛门虫 <= 1 || game.kojo.口上开关 == 2) {
+        // :1114
+        await era.printAndWait(`「好恶心的寄生虫……就好像你一样」`); // :1115
+        // CFLAG:314  = 2（变量语义：CFLAG 族，314） // :1116
+        kojo.肛门虫 = 2; // :1116
+      } // :1117-1120
+      return 0; // :1118-1120
+    } // :1119-1120
+  } else if (era_flag.selectcom == 13 && era.get(`tequip:${target}:13`) == 0) {
+    // :1121
+
+    if (
+      era.get(`talent:${target}:76`) == 1 &&
+      (kojo.肛门虫着脱 < 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1123
+      await era.printAndWait(
+        `「肛门括约筋变的松弛下来了呢……♪　还想被继续开发呢」`,
+      ); // :1124
+      // CFLAG:374  = 4（变量语义：CFLAG 族，374） // :1125
+      kojo.肛门虫着脱 = 4; // :1125
+    } else if (
+      era.get(`talent:${target}:85`) == 1 &&
+      (kojo.肛门虫着脱 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1127
+      await era.printAndWait(`「异物感不见了、有点寂寞呢」`); // :1128
+      // CFLAG:374  = 3（变量语义：CFLAG 族，374） // :1129
+      kojo.肛门虫着脱 = 3; // :1129
+    } else if (
+      era.get(`abl:${target}:3`) >= 3 &&
+      (kojo.肛门虫着脱 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1131
+      await era.printAndWait(`「咕呜～、肛门括约筋……麻麻的～……」`); // :1132
+      // CFLAG:374  = 2（变量语义：CFLAG 族，374） // :1133
+      kojo.肛门虫着脱 = 2; // :1133
+    } else if (kojo.肛门虫着脱 < 1 || game.kojo.口上开关 == 2) {
+      // :1135
+      await era.printAndWait(`「哈啊～……真是恶心的生物……」`); // :1136
+      // CFLAG:374  = 1（变量语义：CFLAG 族，374） // :1137
+      kojo.肛门虫着脱 = 1; // :1137
+    } // :1138-1142
+    return 0; // :1139-1142
+  } // :1140-1142
+
+  if (era_flag.selectcom == 19 && era.get(`tequip:${target}:19`)) {
+    // :1362
+
+    if (kojo.肛珠 == 0) {
+      // :1364
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :1366
+        await era.printAndWait(`「要把这个全部放进去吗？　好期待呢」`); // :1367
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :1369
+        await era.printAndWait(`「一个一个的好好放进去哦」`); // :1370
+      } else {
+        // :1372-1373
+        await era.printAndWait(`「这样变态的器具……难以理解呢」`); // :1373
+      } // :1374-1375
+      // CFLAG:TARGET:320  = 1（变量语义：CFLAG 族，TARGET:320） // :1375
+      kojo.肛珠 = 1; // :1375
+      return 0; // :1376-1377
+    } else {
+      // :1378-1379
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛珠 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :1380
+        await era.printAndWait(
+          `「嗯～……一个接一个的、放进去了呢……好期待拔出来的时候呢」`,
+        ); // :1381
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :1382
+
+          await era.printAndWait(
+            `${target_name}的屁股后面、另一条下流的尾巴摇动着。`,
+          ); // :1384
+        } // :1385-1386
+        // CFLAG:320  = 7（变量语义：CFLAG 族，320） // :1386
+        kojo.肛珠 = 7; // :1386
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.肛珠 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :1388
+        await era.printAndWait(
+          `「这可真是……有趣的道具呢。肚子里面塞得满满的呢」`,
+        ); // :1389
+        // CFLAG:320  = 6（变量语义：CFLAG 族，320） // :1390
+        kojo.肛珠 = 6; // :1390
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛珠 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :1392
+        await era.printAndWait(
+          `「呼呜～…哈啊～、全、全部放进去了吧？　想被一口气拔出来呢」`,
+        ); // :1393
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :1394
+
+          await era.printAndWait(
+            `${target_name}的屁股后面、另一条下流的尾巴摇动着。`,
+          ); // :1396
+        } // :1397-1398
+        // CFLAG:320  = 5（变量语义：CFLAG 族，320） // :1398
+        kojo.肛珠 = 5; // :1398
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.肛珠 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :1400
+        await era.printAndWait(`「想一个一个地被你的手放进去呢」`); // :1401
+        // CFLAG:320  = 4（变量语义：CFLAG 族，320） // :1402
+        kojo.肛珠 = 4; // :1402
+      } else if (
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛珠 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :1404
+        await era.printAndWait(`「嗯～、咕～……哈啊～、肛、肛门……」`); // :1405
+        // CFLAG:320  = 3（变量语义：CFLAG 族，320） // :1406
+        kojo.肛珠 = 3; // :1406
+      } else if (kojo.肛珠 <= 1 || game.kojo.口上开关 == 2) {
+        // :1408
+        await era.printAndWait(`「对这样的器具拿出干劲什么的……做不到呢」`); // :1409
+        // CFLAG:320  = 2（变量语义：CFLAG 族，320） // :1410
+        kojo.肛珠 = 2; // :1410
+      } // :1411-1414
+      return 0; // :1412-1414
+    } // :1413-1414
+  } else if (era_flag.selectcom == 19 && era.get(`tequip:${target}:19`) == 0) {
+    // :1415
+
+    if (
+      era.get(`talent:${target}:76`) == 1 &&
+      (kojo.肛珠着脱 < 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :1417
+      await era.printAndWait(
+        `「嗯哈啊～♪　这个、太棒了……♪　滑溜溜的拔出来了～」`,
+      ); // :1418
+      // CFLAG:379  = 4（变量语义：CFLAG 族，379） // :1419
+      kojo.肛珠着脱 = 4; // :1419
+    } else if (
+      era.get(`talent:${target}:85`) == 1 &&
+      (kojo.肛珠着脱 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :1421
+      await era.printAndWait(`「拔出来了……总觉得、好像在产卵呢」`); // :1422
+      // CFLAG:379  = 3（变量语义：CFLAG 族，379） // :1423
+      kojo.肛珠着脱 = 3; // :1423
+    } else if (
+      era.get(`abl:${target}:3`) >= 3 &&
+      (kojo.肛珠着脱 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :1425
+      await era.printAndWait(`「嗯～……咕～、哈啊～、哈啊～……」`); // :1426
+      // CFLAG:379  = 2（变量语义：CFLAG 族，379） // :1427
+      kojo.肛珠着脱 = 2; // :1427
+    } else if (kojo.肛珠着脱 < 1 || game.kojo.口上开关 == 2) {
+      // :1429
+      await era.printAndWait(`「结束了吗……？　只感到难受呢」`); // :1430
+      // CFLAG:379  = 1（变量语义：CFLAG 族，379） // :1431
+      kojo.肛珠着脱 = 1; // :1431
+    } // :1432-1436
+    return 0; // :1433-1436
+  } // :1434-1436
+
   return 0;
 }
 

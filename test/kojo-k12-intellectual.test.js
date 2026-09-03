@@ -555,3 +555,56 @@ test('SELECTCOM==11（壶虫）脱着时淫乱：推进到 3', async () => {
   ]);
   assert.equal(fixture.store.get('cflag:20:372'), 3);
 });
+
+test('SELECTCOM==12（振动杖）二回目屈服刻印Lv3：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:313', 2);
+    f.store.set('mark:20:2', 3);
+  }, 12);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「咕～、机械的振动……一直传到腰骨上了……嗯」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:313'), 3);
+});
+
+test('SELECTCOM==13（肛门虫）装着初回爱慕：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:13', 1);
+    f.store.set('talent:20:85', 1);
+  }, 13);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「在肠内生活的寄生虫吗……有意思的生物」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:314'), 1);
+});
+
+test('SELECTCOM==13（肛门虫）脱着时淫乱：推进到 4', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:13', 0);
+    f.store.set('cflag:20:314', 1);
+    f.store.set('talent:20:76', 1);
+  }, 13);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「肛门括约筋变的松弛下来了呢……♪　还想被继续开发呢」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:374'), 4);
+});
+
+test('SELECTCOM==19（肛珠）装着二回目淫乱+A感覚Lv3：推进到 7（人狼尾句）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:19', 1);
+    f.store.set('cflag:20:320', 6);
+    f.store.set('talent:20:76', 1);
+    f.store.set('abl:20:3', 3);
+    f.store.set('talent:20:种族', 2);
+  }, 19);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯～……一个接一个的、放进去了呢……好期待拔出来的时候呢」',
+    '智慧的屁股后面、另一条下流的尾巴摇动着。',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:320'), 7);
+});
