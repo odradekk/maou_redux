@@ -333,3 +333,103 @@ test('COM 穿环初回 淫乱＋未装（CFLAG:7 & P==0）：进入装着分档�
   await kojo_message_com_14(() => 0);
   assert.ok(fixture.text_lines().length >= 1); // 空模板分档至少 1 行
 });
+
+// —— S3：DOG / PALAMCNG / MARKCNG / SELF / 迷宫 / 肉便器 / 胜利 / 攻击 / 死斗场 ——
+
+test('COM 兽奸守卫（TEQUIP:89）CALL DOG：走兽奸计数器（爱抚初回→301=1）', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 0;
+    f.store.set('tequip:20:89', 1);
+    f.store.set('mark:20:2', 1); // 屈服刻印Lv1（兽奸爱抚初回·それ以外）
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:301'), 1);
+});
+
+test('COM 死斗场守卫（TEQUIP:55）CALL COLOSSEUM：55 号指令空行返回', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 55;
+    f.store.set('tequip:20:55', 1);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.ok(fixture.text_lines().length >= 1);
+});
+
+test('PALAMCNG 首次润滑超Lv2（P1>500 && CFLAG:221==0）：置 221=1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('palam:20:3', 600);
+    f.store.set('delta:20:3', 0);
+    f.store.set('talent:20:85', 1);
+  });
+  const { kojo_message_palamcng_14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await kojo_message_palamcng_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:221'), 1);
+});
+
+test('MARKCNG 苦痛刻印 Lv3 初回（TFLAG:22==3 && CFLAG:297==0）：置 297=1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('tflag:22', 3);
+  });
+  const { kojo_message_markcng_14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await kojo_message_markcng_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:297'), 1);
+});
+
+test('SELF 调教后性交（TFLAG:13==4）空模板：置 CFLAG:264=1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('tflag:13', 4);
+  });
+  const { self_kojo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await self_kojo_k14(() => 0, 0);
+  assert.equal(fixture.store.get('cflag:20:264'), 1);
+});
+
+test('DUNGEON_VICTORY 臆病（TALENT:10）：弱气台词（整句日文已归一）', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('talent:20:10', 1);
+  });
+  const { dungeon_victory_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await dungeon_victory_k14(() => 0);
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((l) => l.includes('魔的力量、居然强大到了这种地步')),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+test('DUNGEON_ATTACK 侵攻中（CFLAG:1==2）反抗的（TALENT:11）：威势台词', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('cflag:20:1', 2);
+    f.store.set('talent:20:11', 1);
+  });
+  const { dungeon_attack_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await dungeon_attack_k14(() => 0);
+  assert.ok(fixture.text_lines().length >= 1);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('怪物') || l.includes('不净')),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+test('BENKI FLAG:62==9 野外露出配信（常识改写）：填了的台词 + %SELF_CALL(A)% 渲染', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('flag:62', 9);
+    f.store.set('flag:63', 1);
+    f.store.set('talent:20:122', 0);
+  });
+  const { benki_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await benki_koujo_k14(() => 0);
+  const lines = fixture.text_lines();
+  assert.ok(
+    lines.some((l) => l.includes('元冒险者的')),
+    lines.join('\n'),
+  );
+  assert.ok(!lines.some((l) => l.includes('%SELF_CALL')), lines.join('\n'));
+});

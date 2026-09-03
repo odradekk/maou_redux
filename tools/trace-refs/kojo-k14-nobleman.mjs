@@ -41,7 +41,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '53-425',
         any: [
-          /^\s*@EVENTTRAIN\s*$\n^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$/m,
+          /^\s*@EVENTTRAIN\s*$\n^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;初調教時 CFLAG:201\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF CFLAG:201 == 0\s*$\n^\s*DRAWLINE\s*$/m,
         ],
       },
       {
@@ -83,7 +83,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '62-106',
         any: [
-          /^\s*IF CFLAG:201 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*;男魔族\s*$\n^\s*IF TALENT:TARGET:122 && TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 经过多次改造后，%SAVESTR:TARGET%转生成为魔族了。\s*$\n^\s*PRINTFORMW %NAME:MASTER%前来看看情况，就看到%SAVESTR:TARGET%一脸焦虑地烦恼着发生在自己身上的事。\s*$/m,
+          /^\s*IF CFLAG:201 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*;男魔族\s*$\n^\s*IF TALENT:TARGET:122 && TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 经过多次改造后，%SAVESTR:TARGET%转生成为魔族了。\s*$\n^\s*PRINTFORMW %NAME:MASTER%前来看看情况，就看到%SAVESTR:TARGET%一脸焦虑地烦恼着发生在自己身上的事。\s*$\n^\s*PRINTFORMW （这种不可言喻的感觉…，啊！！这…这难道就是…暗之魔力…吗！！？）\s*$\n^\s*PRINTFORMW 「啊…魔、魔王大人…，嗯唔…！？魔…魔王…！！！不…！%SELF_CALL\(TARGET\)%是不会对你…！？啊…这…这绝对不可能…，我竟然会对你…！」\s*$\n^\s*PRINTFORMW 成为魔族了的%SAVESTR:TARGET%，想要发泄对于转生成魔族的怨恨。\s*$\n^\s*PRINTFORMW 但对于魔族之王的你的忠诚已经深刻于心，从心底感觉到无法违抗………\s*$/m,
         ],
       },
       {
@@ -328,7 +328,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '110-117',
         any: [
-          /^\s*ELSEIF CFLAG:201 < 5 && CFLAG:370 == 0 && TALENT:TARGET:314 == 9 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0\s*$\n^\s*PRINTFORMW 经过多次改造后完全成为魔族的%SAVESTR:TARGET%对自己的模样感到绝望…\s*$\n^\s*PRINTFORMW 注意到来到房间了的你，不知所措地看着你。\s*$\n^\s*PRINTFORMW 「可恶的…魔王…！！赶快把%SELF_CALL\(TARGET\)%的身体…，彻彻底底的变回去…！」\s*$\n^\s*PRINTFORMW 成为魔族的%SELF_CALL\(TARGET\)%，已经开始从本能上感觉到无法违抗身为魔族之王的你了………\s*$\n^\s*;魔族スイッチ２\s*$/m,
+          /^\s*ELSEIF CFLAG:201 < 5 && CFLAG:370 == 0 && TALENT:TARGET:314 == 9 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0\s*$\n^\s*PRINTFORMW 经过多次改造后完全成为魔族的%SAVESTR:TARGET%对自己的模样感到绝望…\s*$\n^\s*PRINTFORMW 注意到来到房间了的你，不知所措地看着你。\s*$\n^\s*PRINTFORMW 「可恶的…魔王…！！赶快把%SELF_CALL\(TARGET\)%的身体…，彻彻底底的变回去…！」\s*$\n^\s*PRINTFORMW 成为魔族的%SELF_CALL\(TARGET\)%，已经开始从本能上感觉到无法违抗身为魔族之王的你了………\s*$\n^\s*;魔族スイッチ２\s*$\n^\s*CFLAG:370 = 2\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -377,7 +377,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '121-134',
         any: [
-          /^\s*ELSEIF CFLAG:201 >= 1 && CFLAG:650 == 1\s*$\n^\s*IF TALENT:85 \|\| TALENT:76\s*$\n^\s*;愛・淫乱\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「还…还真是抱歉呢…，因为%SELF_CALL\(TARGET\)%我…好像有点太容易就败给诱惑了呢…」\s*$\n^\s*;NTRスイッチ解除\s*$/m,
+          /^\s*ELSEIF CFLAG:201 >= 1 && CFLAG:650 == 1\s*$\n^\s*IF TALENT:85 \|\| TALENT:76\s*$\n^\s*;愛・淫乱\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「还…还真是抱歉呢…，因为%SELF_CALL\(TARGET\)%我…好像有点太容易就败给诱惑了呢…」\s*$\n^\s*;NTRスイッチ解除\s*$\n^\s*CFLAG:650 = 0\s*$\n^\s*ELSE\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「嗛…怎么又是你啊…！」\s*$/m,
         ],
       },
       {
@@ -468,7 +468,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '139-167',
         any: [
-          /^\s*ELSEIF CFLAG:201 < 2 && MARK:2 == 1\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「可恶的…魔王…！%SELF_CALL\(TARGET\)%是绝对不会输给你的…也不会顺从你的！！」\s*$\n^\s*CFLAG:201 = 2\s*$\n^\s*RETURN 1\s*$\n^\s*;屈服刻印Lv2\s*$/m,
+          /^\s*ELSEIF CFLAG:201 < 2 && MARK:2 == 1\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「可恶的…魔王…！%SELF_CALL\(TARGET\)%是绝对不会输给你的…也不会顺从你的！！」\s*$\n^\s*CFLAG:201 = 2\s*$\n^\s*RETURN 1\s*$\n^\s*;屈服刻印Lv2\s*$\n^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$/m,
         ],
       },
       {
@@ -503,7 +503,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '146-155',
         any: [
-          /^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
+          /^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「啊…，这种快乐而且微妙的感觉…真的是好棒啊…，但…但是…」\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:201 = 3\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -566,7 +566,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '158-167',
         any: [
-          /^\s*ELSEIF CFLAG:201 < 4 && MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「抱歉了…大家…，因为%SELF_CALL\(TARGET\)%已经…已经快要…」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
+          /^\s*ELSEIF CFLAG:201 < 4 && MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「抱歉了…大家…，因为%SELF_CALL\(TARGET\)%已经…已经快要…」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「像这种舒适的快感…，%SELF_CALL\(TARGET\)%感觉到…好像已经、已经完全的要沦陷成为真正的女人了啊…」\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:201 = 4\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -629,7 +629,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '170-179',
         any: [
-          /^\s*ELSEIF CFLAG:201 < 5 && TALENT:TARGET:76 == 1 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*;通常\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「啊~，魔王大人~，%SELF_CALL\(TARGET\)%啊…，一直都在这里等待着您的到来呢~」\s*$\n^\s*;性転換済み\s*$/m,
+          /^\s*ELSEIF CFLAG:201 < 5 && TALENT:TARGET:76 == 1 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*;通常\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「啊~，魔王大人~，%SELF_CALL\(TARGET\)%啊…，一直都在这里等待着您的到来呢~」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「啊~，魔王大人~，%SELF_CALL\(TARGET\)%啊…，一直都在这里等待着您的到来呢~」\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:201 = 5\s*$/m,
         ],
       },
       {
@@ -685,7 +685,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '182-245',
         any: [
-          /^\s*;淫乱\+魔族化\s*$\n^\s*;ELSEIF TALENT:TARGET:314 == 9 && CFLAG:201 < 6 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 1\s*$\n^\s*;	DRAWLINE\s*$\n^\s*;	IF TALENT:TARGET:122\s*$\n^\s*;		;調教前から魔族\s*$\n^\s*;		IF CFLAG:370 == 1\s*$/m,
+          /^\s*;淫乱\+魔族化\s*$\n^\s*;ELSEIF TALENT:TARGET:314 == 9 && CFLAG:201 < 6 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 1\s*$\n^\s*;	DRAWLINE\s*$\n^\s*;	IF TALENT:TARGET:122\s*$\n^\s*;		;調教前から魔族\s*$\n^\s*;		IF CFLAG:370 == 1\s*$\n^\s*;			PRINTFORMW\s*$\n^\s*;			PRINTFORMW\s*$\n^\s*;			PRINTFORMW\s*$\n^\s*;			PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -699,7 +699,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '247-267',
         any: [
-          /^\s*ELSEIF CFLAG:201 < 6 && TALENT:TARGET:85 == 1\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「魔…魔王大人…，%SELF_CALL\(TARGET\)%…，已经绝对不会再反抗您了。所…所以…」\s*$\n^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、想要尽可能的帮上魔王大人的忙…想要在呆我所尊敬的魔王大人身边、支持着您…可以吗…！？」\s*$\n^\s*PRINTFORMW 你听了%SAVESTR:TARGET%的愿望之后、向他传达了既然如此今后就好好侍奉的意思…\s*$/m,
+          /^\s*ELSEIF CFLAG:201 < 6 && TALENT:TARGET:85 == 1\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「魔…魔王大人…，%SELF_CALL\(TARGET\)%…，已经绝对不会再反抗您了。所…所以…」\s*$\n^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、想要尽可能的帮上魔王大人的忙…想要在呆我所尊敬的魔王大人身边、支持着您…可以吗…！？」\s*$\n^\s*PRINTFORMW 你听了%SAVESTR:TARGET%的愿望之后、向他传达了既然如此今后就好好侍奉的意思…\s*$\n^\s*PRINTFORMW 「好的…，那么就如魔王大人所愿。。。」\s*$\n^\s*PRINTFORMW 套弄抚摸着%SAVESTR:TARGET%已经勃起了的阴茎、你脸上浮现了扭曲的笑容…\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
         ],
       },
       {
@@ -748,7 +748,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '256-264',
         any: [
-          /^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「魔…魔王大人…，%SELF_CALL\(TARGET\)%…，已经绝对不会再反抗您了。所…所以…」\s*$\n^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、想要尽自己全部的能力帮助魔王大人…，所以…我为了尊敬的魔王大人、不管是什么事情我都愿意去做！」\s*$\n^\s*PRINTFORMW 「就连这副身体…也请随便使用吧…、啊…！但是…像%SELF_CALL\(TARGET\)%这样原来是男人的女人…真的能接受么…？」\s*$\n^\s*PRINTFORMW 你听了%SAVESTR:TARGET%的愿望之后、向他传达了既然如此今后就好好侍奉的意思…\s*$\n^\s*PRINTFORMW 「好的…如魔王大人所愿%UNICODE\(0x2661\) \*1%」\s*$/m,
+          /^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「魔…魔王大人…，%SELF_CALL\(TARGET\)%…，已经绝对不会再反抗您了。所…所以…」\s*$\n^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、想要尽自己全部的能力帮助魔王大人…，所以…我为了尊敬的魔王大人、不管是什么事情我都愿意去做！」\s*$\n^\s*PRINTFORMW 「就连这副身体…也请随便使用吧…、啊…！但是…像%SELF_CALL\(TARGET\)%这样原来是男人的女人…真的能接受么…？」\s*$\n^\s*PRINTFORMW 你听了%SAVESTR:TARGET%的愿望之后、向他传达了既然如此今后就好好侍奉的意思…\s*$\n^\s*PRINTFORMW 「好的…如魔王大人所愿%UNICODE\(0x2661\) \*1%」\s*$\n^\s*SIF TALENT:TARGET:0 == 1\s*$\n^\s*PRINTFORMW 「%SAVESTR:TARGET%的『第一次』、因为想被魔王大人夺走…所以有在好好的为您保存着呢哦…%UNICODE\(0x2661\) \*1%」\s*$\n^\s*PRINTFORMW 爱抚着满心欢喜的%SAVESTR:TARGET%的雌性身体、你脸上浮现了扭曲的笑容…\s*$/m,
         ],
       },
       {
@@ -839,21 +839,21 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '270-347',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:314 == 9 && CFLAG:201 < 8 && TALENT:TARGET:85 == 1 && TALENT:TARGET:76 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*;調教前から魔族\s*$\n^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:314 == 9 && CFLAG:201 < 8 && TALENT:TARGET:85 == 1 && TALENT:TARGET:76 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*;調教前から魔族\s*$\n^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「所以说不管是什么样的命令…%SAVESTR:TARGET%全部都会、按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:77 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '272-308',
         any: [
-          /^\s*IF TALENT:TARGET:122\s*$\n^\s*;調教前から魔族\s*$\n^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$/m,
+          /^\s*IF TALENT:TARGET:122\s*$\n^\s*;調教前から魔族\s*$\n^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「所以说不管是什么样的命令…%SAVESTR:TARGET%全部都会、按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:77 == 1\s*$\n^\s*PRINTFORMW 「%SAVESTR:TARGET%已经开发完全的菊穴、也请魔王大人毫不客气的使用吧…%UNICODE\(0x2661\) \*1%」\s*$\n^\s*PRINTFORMW 不久前还叫嚣着要讨灭你的男冒险者、现在完全转生成了誓死效忠你的魔族了。\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '274-284',
         any: [
-          /^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「所以说不管是什么样的命令…%SAVESTR:TARGET%全部都会、按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:77 == 1\s*$/m,
+          /^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「所以说不管是什么样的命令…%SAVESTR:TARGET%全部都会、按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:77 == 1\s*$\n^\s*PRINTFORMW 「%SAVESTR:TARGET%已经开发完全的菊穴、也请魔王大人毫不客气的使用吧…%UNICODE\(0x2661\) \*1%」\s*$\n^\s*PRINTFORMW 不久前还叫嚣着要讨灭你的男冒险者、现在完全转生成了誓死效忠你的魔族了。\s*$\n^\s*PRINTFORMW 你抱紧了%SAVESTR:TARGET%的身体、脸上浮现扭曲的笑容…\s*$\n^\s*CFLAG:201 = 8\s*$/m,
         ],
       },
       {
@@ -930,7 +930,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '286-296',
         any: [
-          /^\s*ELSEIF CFLAG:370 == 2\s*$\n^\s*PRINTFORMW 「嗯…？啊…！魔…魔王大人…！！%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%虽然还有点迷茫、但还是跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「嗯…，伟大的魔王大人啊…%SELF_CALL\(TARGET\)%从现在开始再也不会迷茫了…因为我已经完全的接受了身为魔族的一切了、所以我愿时刻陪伴在您左右」\s*$\n^\s*PRINTFORMW 「所以…就对%SELF_CALL_FIRST\(TARGET\)%、对%SELF_CALL\(TARGET\)%…，更加的…更加多的来疼爱我吧…！」\s*$\n^\s*SIF TALENT:TARGET:77 == 1\s*$/m,
+          /^\s*ELSEIF CFLAG:370 == 2\s*$\n^\s*PRINTFORMW 「嗯…？啊…！魔…魔王大人…！！%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%虽然还有点迷茫、但还是跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「嗯…，伟大的魔王大人啊…%SELF_CALL\(TARGET\)%从现在开始再也不会迷茫了…因为我已经完全的接受了身为魔族的一切了、所以我愿时刻陪伴在您左右」\s*$\n^\s*PRINTFORMW 「所以…就对%SELF_CALL_FIRST\(TARGET\)%、对%SELF_CALL\(TARGET\)%…，更加的…更加多的来疼爱我吧…！」\s*$\n^\s*SIF TALENT:TARGET:77 == 1\s*$\n^\s*PRINTFORMW 「所以也请魔王大人来更多的使用、%SAVESTR:TARGET%那已经开发完全的菊穴…！」\s*$\n^\s*PRINTFORMW 你、轻轻地抱住了几乎要哭出来的%SAVESTR:TARGET%。\s*$\n^\s*PRINTFORMW 从调教的结果来看、%SAVESTR:TARGET%似乎对你产生了爱慕之情…\s*$\n^\s*CFLAG:201 = 8\s*$/m,
         ],
       },
       {
@@ -979,7 +979,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '292-298',
         any: [
-          /^\s*PRINTFORMW 「所以也请魔王大人来更多的使用、%SAVESTR:TARGET%那已经开发完全的菊穴…！」\s*$\n^\s*PRINTFORMW 你、轻轻地抱住了几乎要哭出来的%SAVESTR:TARGET%。\s*$\n^\s*PRINTFORMW 从调教的结果来看、%SAVESTR:TARGET%似乎对你产生了爱慕之情…\s*$\n^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*;陥落後に魔族\s*$/m,
+          /^\s*PRINTFORMW 「所以也请魔王大人来更多的使用、%SAVESTR:TARGET%那已经开发完全的菊穴…！」\s*$\n^\s*PRINTFORMW 你、轻轻地抱住了几乎要哭出来的%SAVESTR:TARGET%。\s*$\n^\s*PRINTFORMW 从调教的结果来看、%SAVESTR:TARGET%似乎对你产生了爱慕之情…\s*$\n^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*;陥落後に魔族\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
@@ -1084,14 +1084,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '310-346',
         any: [
-          /^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*;調教前から魔族\s*$\n^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$/m,
+          /^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*;調教前から魔族\s*$\n^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:0 == 1\s*$\n^\s*PRINTFORMW 「%SAVESTR:TARGET%的『第一次』、可是为了献给魔王大人…才一直留到现在的哦…%UNICODE\(0x2661\) \*1%」\s*$\n^\s*PRINTFORMW あなたの目の前でうっとりとした表情で跪く女性が、少し前まであなたに刃を向けようとしていた男勇者とは誰も思わないだろう。\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '312-322',
         any: [
-          /^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:0 == 1\s*$/m,
+          /^\s*IF CFLAG:370 == 1\s*$\n^\s*PRINTFORMW 「啊啊…魔王大人…，之所以把%SELF_CALL\(TARGET\)%转化成了魔族的原因、其实就是为了这个对吧…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%正带着温柔的表情跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「伟大的魔王大人啊…，%SELF_CALL\(TARGET\)%我…，已经完全的接受了身为魔族的一切了哦…，并且…会永远…与您相伴到最后的…」\s*$\n^\s*PRINTFORMW 「按照魔王大人所愿去做的…」\s*$\n^\s*SIF TALENT:TARGET:0 == 1\s*$\n^\s*PRINTFORMW 「%SAVESTR:TARGET%的『第一次』、可是为了献给魔王大人…才一直留到现在的哦…%UNICODE\(0x2661\) \*1%」\s*$\n^\s*PRINTFORMW あなたの目の前でうっとりとした表情で跪く女性が、少し前まであなたに刃を向けようとしていた男勇者とは誰も思わないだろう。\s*$\n^\s*PRINTFORMW 你抱紧了%SAVESTR:TARGET%的身体、脸上浮现扭曲的笑容…\s*$\n^\s*CFLAG:201 = 8\s*$/m,
         ],
       },
       {
@@ -1168,7 +1168,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '324-334',
         any: [
-          /^\s*ELSEIF CFLAG:370 == 2\s*$\n^\s*PRINTFORMW 「嗯…？啊…！魔…魔王大人…！！%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%虽然还有点迷茫、但还是跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「嗯…，伟大的魔王大人啊…%SELF_CALL\(TARGET\)%从现在开始再也不会迷茫了…因为我已经完全的接受了身为魔族的一切了、所以我愿时刻陪伴在您左右」\s*$\n^\s*PRINTFORMW 「所以…就对%SELF_CALL_FIRST\(TARGET\)%、对%SELF_CALL\(TARGET\)%…，更加的…更加多的来疼爱我吧…！」\s*$\n^\s*SIF TALENT:TARGET:0 == 1\s*$/m,
+          /^\s*ELSEIF CFLAG:370 == 2\s*$\n^\s*PRINTFORMW 「嗯…？啊…！魔…魔王大人…！！%SELF_CALL_FIRST\(TARGET\)%、%SELF_CALL\(TARGET\)%…」\s*$\n^\s*PRINTFORMW 你进入房间的时候、%SAVESTR:TARGET%虽然还有点迷茫、但还是跪在地上迎接你的到来。\s*$\n^\s*PRINTFORMW 「嗯…，伟大的魔王大人啊…%SELF_CALL\(TARGET\)%从现在开始再也不会迷茫了…因为我已经完全的接受了身为魔族的一切了、所以我愿时刻陪伴在您左右」\s*$\n^\s*PRINTFORMW 「所以…就对%SELF_CALL_FIRST\(TARGET\)%、对%SELF_CALL\(TARGET\)%…，更加的…更加多的来疼爱我吧…！」\s*$\n^\s*SIF TALENT:TARGET:0 == 1\s*$\n^\s*PRINTFORMW 「%SAVESTR:TARGET%的『第一次』、如果不是魔王大人的话…那可是绝对不允许的哦…！！」\s*$\n^\s*PRINTFORMW 你、轻轻地抱住了几乎要哭出来的%SAVESTR:TARGET%。\s*$\n^\s*PRINTFORMW 从调教的结果来看、%SAVESTR:TARGET%似乎对你产生了爱慕之情…\s*$\n^\s*CFLAG:201 = 8\s*$/m,
         ],
       },
       {
@@ -1217,7 +1217,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '330-336',
         any: [
-          /^\s*PRINTFORMW 「%SAVESTR:TARGET%的『第一次』、如果不是魔王大人的话…那可是绝对不允许的哦…！！」\s*$\n^\s*PRINTFORMW 你、轻轻地抱住了几乎要哭出来的%SAVESTR:TARGET%。\s*$\n^\s*PRINTFORMW 从调教的结果来看、%SAVESTR:TARGET%似乎对你产生了爱慕之情…\s*$\n^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*;陥落後に魔族\s*$/m,
+          /^\s*PRINTFORMW 「%SAVESTR:TARGET%的『第一次』、如果不是魔王大人的话…那可是绝对不允许的哦…！！」\s*$\n^\s*PRINTFORMW 你、轻轻地抱住了几乎要哭出来的%SAVESTR:TARGET%。\s*$\n^\s*PRINTFORMW 从调教的结果来看、%SAVESTR:TARGET%似乎对你产生了爱慕之情…\s*$\n^\s*CFLAG:201 = 8\s*$\n^\s*RETURN 1\s*$\n^\s*;陥落後に魔族\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
@@ -1329,7 +1329,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '349-357',
         any: [
-          /^\s*;崩壊\s*$\n^\s*;ELSEIF TALENT:TARGET:9 == 1 && CFLAG:201 < 9\s*$\n^\s*;	DRAWLINE\s*$\n^\s*;	PRINTFORMW\s*$\n^\s*;	PRINTFORMW\s*$\n^\s*;	PRINTFORMW\s*$/m,
+          /^\s*;崩壊\s*$\n^\s*;ELSEIF TALENT:TARGET:9 == 1 && CFLAG:201 < 9\s*$\n^\s*;	DRAWLINE\s*$\n^\s*;	PRINTFORMW\s*$\n^\s*;	PRINTFORMW\s*$\n^\s*;	PRINTFORMW\s*$\n^\s*;	CFLAG:201 = 9\s*$\n^\s*;	RETURN 1\s*$/m,
         ],
       },
       {
@@ -1378,7 +1378,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '427-494',
         any: [
-          /^\s*@K14_KOJO2\s*$\n^\s*;反発刻印Lv3\s*$\n^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「去死一死吧！！你这个又脏又可恶的魔王！！」\s*$\n^\s*RETURN 1\s*$/m,
+          /^\s*@K14_KOJO2\s*$\n^\s*;反発刻印Lv3\s*$\n^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「去死一死吧！！你这个又脏又可恶的魔王！！」\s*$\n^\s*RETURN 1\s*$\n^\s*;屈服刻印Lv0\s*$\n^\s*ELSEIF MARK:2 == 0 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*PRINTFORMW 「不…不要在过来了！！快住手啊！！！」\s*$/m,
         ],
       },
       {
@@ -1476,7 +1476,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '447-455',
         any: [
-          /^\s*ELSEIF MARK:2 == 2 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
+          /^\s*ELSEIF MARK:2 == 2 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「呃…，今天也要继续做那种事情啊…！？」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「咕呜…！我…我是不可能就这么轻易的输给快感的…！但…但是…」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -1532,7 +1532,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '458-466',
         any: [
-          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「我明白了…，那么你想干什么就随你喜欢好了…」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「我明白了…，那么你想干什么就随你喜欢好了…」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「既然…我已经没有办法再次变回男人的话…，那么…！魔…魔王大人…！就请您再给%SELF_CALL\(TARGET\)%、传授更多的快乐吧…」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -1588,7 +1588,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '469-479',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW 「啊~，魔王大人~，%SELF_CALL\(TARGET\)%啊…，一直都在这里等待着您的到来呢~」\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW 「啊~，魔王大人~，%SELF_CALL\(TARGET\)%啊…，一直都在这里等待着您的到来呢~」\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW 「那么…魔王大人？今天的话…您打算对我做什么事情呢~？」\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW 「嗯…，我已经等您好久了呢~♪」\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
@@ -1658,14 +1658,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '482-492',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW 「啊…！魔…魔王大人…！！您来了啊！！好开心呢…」\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW 「啊…！魔…魔王大人…！！您来了啊！！好开心呢…」\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW 「就按照魔王大人想做的…，来进行调教吧…」\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW 「如果是魔王大人的话…，不管是对我做什么都是可以的哦…」\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '482-494',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW 「啊…！魔…魔王大人…！！您来了啊！！好开心呢…」\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2\s*$\n^\s*DRAWLINE\s*$\n^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW 「啊…！魔…魔王大人…！！您来了啊！！好开心呢…」\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW 「就按照魔王大人想做的…，来进行调教吧…」\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW 「如果是魔王大人的话…，不管是对我做什么都是可以的哦…」\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
@@ -1735,7 +1735,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '500-597',
         any: [
-          /^\s*@EVENTEND\s*$\n^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$\n^\s*;キャラ死亡時は口上をスキップ\s*$/m,
+          /^\s*@EVENTEND\s*$\n^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$\n^\s*;キャラ死亡時は口上をスキップ\s*$\n^\s*SIF BASE:0 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*;--------------------------------------------------\s*$\n^\s*;調教終了時のセリフ\s*$/m,
         ],
       },
       {
@@ -1749,7 +1749,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '501-508',
         any: [
-          /^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$\n^\s*;キャラ死亡時は口上をスキップ\s*$\n^\s*SIF BASE:0 <= 0\s*$/m,
+          /^\s*SIF FLAG:7 <= 0\s*$\n^\s*RETURN 0\s*$\n^\s*SIF TALENT:174 != 1\s*$\n^\s*RETURN 0\s*$\n^\s*;キャラ死亡時は口上をスキップ\s*$\n^\s*SIF BASE:0 <= 0\s*$\n^\s*RETURN 0\s*$/m,
         ],
       },
       {
@@ -1833,7 +1833,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '526-534',
         any: [
-          /^\s*ELSEIF MARK:2 == 2 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「哈啊…嗯…，结…结束了么…？」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
+          /^\s*ELSEIF MARK:2 == 2 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「哈啊…嗯…，结…结束了么…？」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「哈…呀啊…，这…这种快乐…、总觉得…要上瘾了啊…，咿嗯…！？%SELF_CALL\(TARGET\)%…！到底在说什么呢…！！」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -1889,7 +1889,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '537-545',
         any: [
-          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「请…请放过我吧…！！」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$/m,
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$\n^\s*DRAWLINE\s*$\n^\s*IF TALENT:TARGET:122\s*$\n^\s*PRINTFORMW 「请…请放过我吧…！！」\s*$\n^\s*;性転換済み\s*$\n^\s*ELSEIF CFLAG:TARGET:70 && TALENT:TARGET:122 == 0\s*$\n^\s*PRINTFORMW 「呼啊…啊哈哈…，这种感觉…真的…，好棒呢…哈啊…」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -1945,7 +1945,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '548-556',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 >= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「哈…！？只是这样就结束了么…！？喂…，魔王大人啊，不带你这个样子的吧…？」\s*$\n^\s*ELSE\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 >= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「哈…！？只是这样就结束了么…！？喂…，魔王大人啊，不带你这个样子的吧…？」\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW 「哈…！？只是这样就结束了么…！？喂…，魔王大人啊，不带你这个样子的吧…？」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -2001,7 +2001,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '558-566',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 <= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「啊呜…哈啊…嗯…，%SELF_CALL\(TARGET\)%…，感觉…真的是太满足了呢~」\s*$\n^\s*ELSE\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 <= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「啊呜…哈啊…嗯…，%SELF_CALL\(TARGET\)%…，感觉…真的是太满足了呢~」\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW 「啊呜…哈啊…嗯…，%SELF_CALL\(TARGET\)%…，感觉…真的是太满足了呢~」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 1\s*$/m,
         ],
       },
       {
@@ -2057,7 +2057,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '569-581',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 >= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9 && TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$\n^\s*ELSEIF TALENT:TARGET:122 == 1\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 >= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9 && TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$\n^\s*ELSEIF TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「已经结束了么…？啊…我明白了…」\s*$\n^\s*ELSEIF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「已经结束了么…？明明还想要更多的再亲爱一会的说…」\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
@@ -2141,14 +2141,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '583-595',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9 && TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」\s*$\n^\s*ELSEIF TALENT:TARGET:122 == 1\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9 && TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」\s*$\n^\s*ELSEIF TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」\s*$\n^\s*ELSEIF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「啊…嗯哼~，像这个样子来疼爱我…还真的是感谢了呢~！那么…明天也要继续来才行哦…！%UNICODE\(0x2661\) \*1%」\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '583-597',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9 && TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」\s*$\n^\s*ELSEIF TALENT:TARGET:122 == 1\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500\s*$\n^\s*DRAWLINE\s*$\n^\s*;魔族\s*$\n^\s*IF TALENT:TARGET:314 == 9 && TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」\s*$\n^\s*ELSEIF TALENT:TARGET:122 == 1\s*$\n^\s*PRINTFORMW 「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」\s*$\n^\s*ELSEIF TALENT:TARGET:314 == 9\s*$\n^\s*PRINTFORMW 「啊…嗯哼~，像这个样子来疼爱我…还真的是感谢了呢~！那么…明天也要继续来才行哦…！%UNICODE\(0x2661\) \*1%」\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
@@ -2232,7 +2232,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '603-3561',
         any: [
-          /^\s*@KOJO_MESSAGE_COM_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする\s*$\n^\s*SIF TEQUIP:45 && SELECTCOM != 45\s*$/m,
+          /^\s*@KOJO_MESSAGE_COM_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする\s*$\n^\s*SIF TEQUIP:45 && SELECTCOM != 45\s*$\n^\s*RETURN 0\s*$\n^\s*;失神時には口上をスキップする\s*$\n^\s*SIF TFLAG:899\s*$\n^\s*RETURN 0\s*$/m,
         ],
       },
       {
@@ -2344,7 +2344,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '637-645',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:301 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:301 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -2358,7 +2358,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '639-645',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:301 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:301 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -2547,7 +2547,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '680-688',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:302 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:302 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -2561,7 +2561,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '682-688',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:302 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:302 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -3366,7 +3366,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '842-850',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:306 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:306 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -3380,7 +3380,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '844-850',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:306 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:306 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -3569,7 +3569,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '880-887',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$/m,
         ],
       },
       {
@@ -3632,7 +3632,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '897-905',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -3646,7 +3646,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '899-905',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -4220,7 +4220,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1022-1030',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:310 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:310 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -4234,7 +4234,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1024-1030',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:310 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:310 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -4584,14 +4584,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1098-1108',
         any: [
-          /^\s*IF CFLAG:TARGET:312 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*IF CFLAG:TARGET:312 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1098-1110',
         any: [
-          /^\s*IF CFLAG:TARGET:312 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*IF CFLAG:TARGET:312 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$/m,
         ],
       },
       {
@@ -4640,7 +4640,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1112-1124',
         any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$/m,
+          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -6117,7 +6117,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1577-1584',
         any: [
-          /^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+          /^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;非処女\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
@@ -6348,14 +6348,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1625-1641',
         any: [
-          /^\s*;後背位 CFLAG:322\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 21\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:322 == 0\s*$/m,
+          /^\s*;後背位 CFLAG:322\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 21\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:322 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1625-1643',
         any: [
-          /^\s*;後背位 CFLAG:322\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 21\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:322 == 0\s*$/m,
+          /^\s*;後背位 CFLAG:322\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 21\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:322 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$/m,
         ],
       },
       {
@@ -6418,7 +6418,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1645-1662',
         any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$/m,
+          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -6453,7 +6453,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1653-1662',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -6467,14 +6467,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1655-1662',
         any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1656-1662',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -6516,21 +6516,21 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1662-1669',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1662-1677',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 6\s*$\n^\s*;愛\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1662-1679',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 6\s*$\n^\s*;愛\s*$/m,
         ],
       },
       {
@@ -6733,14 +6733,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1704-1714',
         any: [
-          /^\s*IF CFLAG:TARGET:323 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*IF CFLAG:TARGET:323 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1704-1716',
         any: [
-          /^\s*IF CFLAG:TARGET:323 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*IF CFLAG:TARGET:323 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$/m,
         ],
       },
       {
@@ -6789,7 +6789,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1718-1730',
         any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$/m,
+          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -7104,14 +7104,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1776-1786',
         any: [
-          /^\s*IF CFLAG:TARGET:324 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*IF CFLAG:TARGET:324 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1776-1788',
         any: [
-          /^\s*IF CFLAG:TARGET:324 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*IF CFLAG:TARGET:324 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$/m,
         ],
       },
       {
@@ -7160,7 +7160,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1790-1802',
         any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$/m,
+          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -7811,7 +7811,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1915-1923',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:328 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:328 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;愛＋A感覚Lv3以上\s*$\n^\s*IF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -7825,7 +7825,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '1917-1923',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:328 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;愛＋A感覚Lv3以上\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:328 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;愛＋A感覚Lv3以上\s*$\n^\s*IF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -8651,7 +8651,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2079-2087',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:331 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:331 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv3以上\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -8665,7 +8665,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2081-2087',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:331 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv3以上\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:331 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv3以上\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -8714,14 +8714,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2087-2098',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:331 = 6\s*$\n^\s*;愛＋奉仕精神Lv5\s*$\n^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2087-2100',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:331 = 6\s*$\n^\s*;愛＋奉仕精神Lv5\s*$\n^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$/m,
         ],
       },
       {
@@ -8938,7 +8938,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2135-2143',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:332 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:332 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -8952,7 +8952,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2137-2143',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:332 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv5\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:332 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -9645,14 +9645,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2274-2289',
         any: [
-          /^\s*;騎乗位 CFLAG:335\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 34\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:335 == 0\s*$/m,
+          /^\s*;騎乗位 CFLAG:335\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 34\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:335 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2274-2291',
         any: [
-          /^\s*;騎乗位 CFLAG:335\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 34\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:335 == 0\s*$/m,
+          /^\s*;騎乗位 CFLAG:335\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;オトコ無し\s*$\n^\s*IF SELECTCOM == 34\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:335 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1\s*$/m,
         ],
       },
       {
@@ -9715,7 +9715,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2293-2310',
         any: [
-          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$/m,
+          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -9750,7 +9750,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2301-2310',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -9764,14 +9764,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2303-2310',
         any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2304-2310',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -9806,28 +9806,28 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2310-2317',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2310-2319',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2310-2329',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2310-2331',
         any: [
-          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$/m,
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
@@ -10002,7 +10002,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2341-2360',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:335 = 4\s*$\n^\s*;屈服刻印Lv3\s*$\n^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:335 = 4\s*$\n^\s*;屈服刻印Lv3\s*$\n^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*PRINTFORML\s*$\n^\s*PRINTFORMW\s*$\n^\s*CFLAG:335 = 3\s*$\n^\s*;それ以外（愛無し、従順Lv5未満）\s*$/m,
         ],
       },
       {
@@ -10016,7 +10016,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2343-2360',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:335 = 4\s*$\n^\s*;屈服刻印Lv3\s*$\n^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*PRINTFORML\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:335 = 4\s*$\n^\s*;屈服刻印Lv3\s*$\n^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*PRINTFORML\s*$\n^\s*PRINTFORMW\s*$\n^\s*CFLAG:335 = 3\s*$\n^\s*;それ以外（愛無し、従順Lv5未満）\s*$\n^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -10611,7 +10611,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2464-2472',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:338 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:338 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -10625,7 +10625,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2466-2472',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:338 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv5\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:338 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -11535,7 +11535,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2654-2662',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:344 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:344 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋マゾっ気Lv5以上\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -11549,7 +11549,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2656-2662',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:344 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋マゾっ気Lv5以上\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:344 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;淫乱＋マゾっ気Lv5以上\s*$\n^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -11745,7 +11745,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2693-2699',
         any: [
-          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;終了時\s*$\n^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;終了時\s*$\n^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:380 < 3 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -12984,21 +12984,21 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2948-2962',
         any: [
-          /^\s*;「会話」はある意味最も口上が生きるコマンドかも\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:357 == 0\s*$\n^\s*IF TEQUIP:53\s*$/m,
+          /^\s*;「会話」はある意味最も口上が生きるコマンドかも\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:357 == 0\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2948-2964',
         any: [
-          /^\s*;「会話」はある意味最も口上が生きるコマンドかも\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:357 == 0\s*$\n^\s*IF TEQUIP:53\s*$/m,
+          /^\s*;「会話」はある意味最も口上が生きるコマンドかも\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:357 == 0\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2948-2965',
         any: [
-          /^\s*;「会話」はある意味最も口上が生きるコマンドかも\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:357 == 0\s*$\n^\s*IF TEQUIP:53\s*$/m,
+          /^\s*;「会話」はある意味最も口上が生きるコマンドかも\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:357 == 0\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -13089,7 +13089,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2973-2984',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$/m,
         ],
       },
       {
@@ -13103,14 +13103,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2975-2984',
         any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2976-2984',
         any: [
-          /^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -13124,7 +13124,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '2978-2984',
         any: [
-          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
         ],
       },
       {
@@ -13285,7 +13285,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3009-3015',
         any: [
-          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;パイズリフェラ CFLAG:360\s*$/m,
         ],
       },
       {
@@ -14783,35 +14783,35 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3325-3348',
         any: [
-          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3325-3350',
         any: [
-          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3325-3360',
         any: [
-          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3325-3362',
         any: [
-          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3325-3364',
         any: [
-          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+          /^\s*IF CFLAG:TARGET:348 == 0\s*$\n^\s*;助手\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$/m,
         ],
       },
       {
@@ -15056,7 +15056,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3384-3438',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$/m,
         ],
       },
       {
@@ -15070,7 +15070,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3386-3438',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$\n^\s*ELSEIF P == 64\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -15119,14 +15119,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3396-3438',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;取り外し\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;それ以外\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;取り外し\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3398-3438',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*;装着する\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$/m,
         ],
       },
       {
@@ -15140,14 +15140,14 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3400-3438',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;おへそ\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3402-3438',
         any: [
-          /^\s*ELSE\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$/m,
+          /^\s*ELSE\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*PRINTFORMW\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;おへそ\s*$\n^\s*ELSEIF P == 2\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -15231,7 +15231,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3420-3438',
         any: [
-          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$/m,
         ],
       },
       {
@@ -15245,7 +15245,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3422-3438',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$\n^\s*ELSEIF P == 64\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -15294,7 +15294,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3432-3438',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;取り外し\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;取り外し\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:348 = 1\s*$/m,
         ],
       },
       {
@@ -15371,7 +15371,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3446-3463',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;おへそ\s*$\n^\s*ELSEIF P == 2\s*$\n^\s*PRINTFORMW\s*$\n^\s*;ラビア\s*$/m,
         ],
       },
       {
@@ -15455,7 +15455,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3465-3480',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$\n^\s*ELSEIF P == 64\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -15546,7 +15546,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3482-3498',
         any: [
-          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:348 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:348 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;おへそ\s*$\n^\s*ELSEIF P == 2\s*$\n^\s*PRINTFORMW\s*$\n^\s*;ラビア\s*$/m,
         ],
       },
       {
@@ -15630,7 +15630,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3500-3515',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$\n^\s*ELSEIF P == 64\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -15721,7 +15721,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3517-3534',
         any: [
-          /^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$\n^\s*;装着する\s*$\n^\s*IF CFLAG:7 & P\s*$\n^\s*;両乳首\s*$\n^\s*IF P == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;おへそ\s*$\n^\s*ELSEIF P == 2\s*$\n^\s*PRINTFORMW\s*$\n^\s*;ラビア\s*$/m,
         ],
       },
       {
@@ -15805,7 +15805,7 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3536-3551',
         any: [
-          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$/m,
+          /^\s*ENDIF\s*$\n^\s*;舌先\s*$\n^\s*ELSEIF P == 16\s*$\n^\s*PRINTFORMW\s*$\n^\s*;唇\s*$\n^\s*ELSEIF P == 32\s*$\n^\s*PRINTFORMW\s*$\n^\s*;鼻穴\s*$\n^\s*ELSEIF P == 64\s*$\n^\s*PRINTFORMW\s*$/m,
         ],
       },
       {
@@ -15917,56 +15917,7539 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '3563-4366',
         any: [
-          /^\s*@DOG_KOJO_14\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦愛撫 CFLAG:301\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 0\s*$\n^\s*;初めて\s*$/m,
+          /^\s*@DOG_KOJO_14\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦愛撫 CFLAG:301\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 0\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:301 == 0\s*$\n^\s*;屈服刻印Lv2以上\s*$\n^\s*IF MARK:2 >= 2\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3568',
+        any: [
+          /^\s*IF SELECTCOM == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3570',
+        any: [
+          /^\s*IF CFLAG:301 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3572',
+        any: [
+          /^\s*IF MARK:2 >= 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3573',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3575-3583',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:301 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3576',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3577-3583',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:301 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3578',
+        any: [
+          /^\s*CFLAG:301 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3579-3583',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3581-3583',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3583',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3584',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3585',
+        any: [
+          /^\s*CFLAG:301 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3587',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3588',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3589',
+        any: [
+          /^\s*CFLAG:301 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3591',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3592',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3593',
+        any: [
+          /^\s*CFLAG:301 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3595',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3596',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3597',
+        any: [
+          /^\s*CFLAG:301 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3599',
+        any: [
+          /^\s*ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3600',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3601',
+        any: [
+          /^\s*CFLAG:301 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3603',
+        any: [
+          /^\s*ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3604',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3605',
+        any: [
+          /^\s*CFLAG:301 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3606-3612',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3607-3612',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3608-3612',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3609-3612',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3614',
+        any: [
+          /^\s*IF SELECTCOM == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3616',
+        any: [
+          /^\s*IF CFLAG:302 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3618',
+        any: [
+          /^\s*IF TALENT:TARGET:0 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3619',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3621-3629',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:302 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3622',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3623-3629',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:302 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3624',
+        any: [
+          /^\s*CFLAG:302 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3625-3629',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3627-3629',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3629',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3630',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3631',
+        any: [
+          /^\s*CFLAG:302 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3633',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3634',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3635',
+        any: [
+          /^\s*CFLAG:302 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3637',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3638',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3639',
+        any: [
+          /^\s*CFLAG:302 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3641',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3642',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3643',
+        any: [
+          /^\s*CFLAG:302 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3645',
+        any: [
+          /^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3646',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3647',
+        any: [
+          /^\s*CFLAG:302 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3648-3655',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦胸愛撫 CFLAG:306\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3649-3655',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦胸愛撫 CFLAG:306\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3650-3655',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦胸愛撫 CFLAG:306\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3651-3655',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦胸愛撫 CFLAG:306\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3657',
+        any: [
+          /^\s*IF SELECTCOM == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3659',
+        any: [
+          /^\s*IF CFLAG:306 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3661',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3662',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3664-3672',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:306 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3665',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3666-3672',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:306 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3667',
+        any: [
+          /^\s*CFLAG:TARGET:306 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3668-3672',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3670-3672',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3672',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3673',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3674',
+        any: [
+          /^\s*CFLAG:306 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3676',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3677',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3678',
+        any: [
+          /^\s*CFLAG:306 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3680',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3681',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3682',
+        any: [
+          /^\s*CFLAG:306 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3684',
+        any: [
+          /^\s*ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3685',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3686',
+        any: [
+          /^\s*CFLAG:306 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3688',
+        any: [
+          /^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3689',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3690',
+        any: [
+          /^\s*CFLAG:306 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3691-3697',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦キス CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3692-3697',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦キス CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3693-3697',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦キス CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3694-3697',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦キス CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3697-3712',
+        any: [
+          /^\s*;獣姦キス CFLAG:307\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 6\s*$\n^\s*;ファーストキス\s*$\n^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3697-3714',
+        any: [
+          /^\s*;獣姦キス CFLAG:307\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 6\s*$\n^\s*;ファーストキス\s*$\n^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3697-3716',
+        any: [
+          /^\s*;獣姦キス CFLAG:307\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 6\s*$\n^\s*;ファーストキス\s*$\n^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3699',
+        any: [
+          /^\s*IF SELECTCOM == 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3701',
+        any: [
+          /^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3703',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3704',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3706',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3707',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3709',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3710',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3713',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3715',
+        any: [
+          /^\s*CFLAG:307 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3718',
+        any: [
+          /^\s*ELSEIF CFLAG:307 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3720',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3721',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3723',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3724',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3726',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3727',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3729-3737',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3730',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3731-3737',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:307 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3732',
+        any: [
+          /^\s*CFLAG:307 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3733-3737',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3735-3737',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3737',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3738',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3739',
+        any: [
+          /^\s*CFLAG:307 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3741',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3742',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3743',
+        any: [
+          /^\s*CFLAG:307 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3745',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3746',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3747',
+        any: [
+          /^\s*CFLAG:307 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3749',
+        any: [
+          /^\s*ELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3750',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3751',
+        any: [
+          /^\s*CFLAG:307 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3753',
+        any: [
+          /^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3754',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3755',
+        any: [
+          /^\s*CFLAG:307 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3756-3762',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3757-3762',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3758-3762',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3759-3762',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3764',
+        any: [
+          /^\s*IF SELECTCOM == 9\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3766',
+        any: [
+          /^\s*IF CFLAG:310 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3768',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3769',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3771',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3772',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3774',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3775',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3777-3785',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:310 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3778',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3779-3785',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:310 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3780',
+        any: [
+          /^\s*CFLAG:TARGET:310 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3781-3785',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3783-3785',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3785',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3786',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3787',
+        any: [
+          /^\s*CFLAG:310 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3789',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3790',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3791',
+        any: [
+          /^\s*CFLAG:310 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3793',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:310 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3794',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3795',
+        any: [
+          /^\s*CFLAG:310 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3797',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:310 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3798',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3799',
+        any: [
+          /^\s*CFLAG:310 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3801',
+        any: [
+          /^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3802',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3803',
+        any: [
+          /^\s*CFLAG:310 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3804-3810',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3805-3810',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3806-3810',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3807-3810',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3810-3828',
+        any: [
+          /^\s*;獣姦後背位 CFLAG:322\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 21\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:322 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:136 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3810-3830',
+        any: [
+          /^\s*;獣姦後背位 CFLAG:322\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 21\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:322 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:136 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3812',
+        any: [
+          /^\s*IF SELECTCOM == 21\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3814',
+        any: [
+          /^\s*IF CFLAG:TARGET:322 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3816',
+        any: [
+          /^\s*IF TALENT:0 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3818',
+        any: [
+          /^\s*IF TALENT:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3819',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3821',
+        any: [
+          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3822',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3824',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3825',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3829',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3832-3852',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:136 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3834',
+        any: [
+          /^\s*IF TALENT:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3835',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3837',
+        any: [
+          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3838',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3840',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3841',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3843-3852',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3844',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3845-3852',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3846-3852',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:322 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3847',
+        any: [
+          /^\s*CFLAG:322 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3848-3852',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3850-3852',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3852',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3853',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3854',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3855',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3856',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3857-3860',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3858',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3859-3860',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:322 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3860',
+        any: [
+          /^\s*CFLAG:322 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3862',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3862-3867',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3862-3869',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3862-3877',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 6\s*$\n^\s*;愛\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3862-3879',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:322 = 6\s*$\n^\s*;愛\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3863',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3864',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3865',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3866',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3868',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3870',
+        any: [
+          /^\s*CFLAG:322 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3872',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3873',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3874',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3875',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3876',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3878',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3880',
+        any: [
+          /^\s*CFLAG:322 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3882',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:322 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3883',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3884',
+        any: [
+          /^\s*CFLAG:322 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3886',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:322 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3887',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3888',
+        any: [
+          /^\s*CFLAG:322 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3890',
+        any: [
+          /^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3891',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3893',
+        any: [
+          /^\s*CFLAG:322 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3894-3900',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3895-3900',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3896-3900',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3897-3900',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3902',
+        any: [
+          /^\s*IF SELECTCOM == 27\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3904',
+        any: [
+          /^\s*IF CFLAG:TARGET:328 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3906',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3907',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3909',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3910',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3912',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3913',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3915-3922',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:328 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3916',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3917-3922',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:328 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3918',
+        any: [
+          /^\s*CFLAG:TARGET:328 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3919-3922',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3921-3922',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3923',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3923-3926',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3924',
+        any: [
+          /^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3925',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3927',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3928-3929',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:328 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3929',
+        any: [
+          /^\s*CFLAG:328 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3931',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3931-3934',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3932',
+        any: [
+          /^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3933',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3935',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3936-3937',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:328 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3937',
+        any: [
+          /^\s*CFLAG:328 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3939',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3939-3942',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3939-3944',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3940',
+        any: [
+          /^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3941',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3943',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3945',
+        any: [
+          /^\s*CFLAG:328 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3947',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3948',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3949',
+        any: [
+          /^\s*CFLAG:328 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3951',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3952',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3953',
+        any: [
+          /^\s*CFLAG:328 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3955',
+        any: [
+          /^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3956',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3957',
+        any: [
+          /^\s*CFLAG:328 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3958-3964',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3959-3964',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3960-3964',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3961-3964',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3966',
+        any: [
+          /^\s*IF SELECTCOM == 30\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3968',
+        any: [
+          /^\s*IF CFLAG:TARGET:331 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3970',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3971',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3973',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3974',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3976',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3977',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3979-3986',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:331 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3980',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3981-3986',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:331 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3982',
+        any: [
+          /^\s*CFLAG:TARGET:331 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3983-3986',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3985-3986',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3987',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3987-3990',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3988',
+        any: [
+          /^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3989',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3991',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3992-3993',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:331 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3993',
+        any: [
+          /^\s*CFLAG:331 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3995',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3995-3998',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3995-4000',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3995-4006',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:331 = 6\s*$\n^\s*;愛＋奉仕精神Lv5\s*$\n^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3995-4008',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:331 = 6\s*$\n^\s*;愛＋奉仕精神Lv5\s*$\n^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3996',
+        any: [
+          /^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3997',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '3999',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4001',
+        any: [
+          /^\s*CFLAG:331 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4003',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4004',
+        any: [
+          /^\s*IF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4005',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4007',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4009',
+        any: [
+          /^\s*CFLAG:331 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4011',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4012',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4013',
+        any: [
+          /^\s*CFLAG:331 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4015',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4016',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4017',
+        any: [
+          /^\s*CFLAG:331 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4019',
+        any: [
+          /^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4020',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4021',
+        any: [
+          /^\s*CFLAG:331 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4022-4028',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4023-4028',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4024-4028',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4025-4028',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4030',
+        any: [
+          /^\s*IF SELECTCOM == 31\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4032',
+        any: [
+          /^\s*IF CFLAG:TARGET:332 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4034',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4035',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4037',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4038',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4040',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4041',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4043-4051',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:332 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4044',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4045-4051',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:332 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4046',
+        any: [
+          /^\s*CFLAG:TARGET:332 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4047-4051',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4049-4051',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4051',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4052',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4053',
+        any: [
+          /^\s*CFLAG:332 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4055',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4056',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4057',
+        any: [
+          /^\s*CFLAG:332 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4059',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4060',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4061',
+        any: [
+          /^\s*CFLAG:332 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4063',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4064',
+        any: [
+          /^\s*PRINTFORML\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4065',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4066',
+        any: [
+          /^\s*CFLAG:332 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4068',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4069',
+        any: [
+          /^\s*PRINTFORML\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4070',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4071',
+        any: [
+          /^\s*CFLAG:332 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4073',
+        any: [
+          /^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4074',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4075',
+        any: [
+          /^\s*CFLAG:332 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4076-4082',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4077-4082',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4078-4082',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4079-4082',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4082-4099',
+        any: [
+          /^\s*;獣姦騎乗位 CFLAG:335\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 34\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:335 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4082-4101',
+        any: [
+          /^\s*;獣姦騎乗位 CFLAG:335\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 34\s*$\n^\s*;初めて\s*$\n^\s*IF CFLAG:TARGET:335 == 0\s*$\n^\s*;処女\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4084',
+        any: [
+          /^\s*IF SELECTCOM == 34\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4086',
+        any: [
+          /^\s*IF CFLAG:TARGET:335 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4088',
+        any: [
+          /^\s*IF TALENT:0 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4090',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4091',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4093',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4094',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4096',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4097',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4100',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4103-4123',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:85 == 1\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4105',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4106',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4108',
+        any: [
+          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4109',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4111',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4112',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4114-4123',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4115',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4116-4123',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4117-4123',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:335 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4118',
+        any: [
+          /^\s*CFLAG:TARGET:335 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4119-4123',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4121-4123',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4123',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4124',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4125',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4126',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4127',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4128-4131',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:335 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4129',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4130-4131',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:335 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4131',
+        any: [
+          /^\s*CFLAG:335 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4133',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4133-4140',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4133-4142',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4133-4152',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4133-4154',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$\n^\s*IF RAND:4 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:3 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSEIF RAND:2 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4134',
+        any: [
+          /^\s*IF RAND:4 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4135',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4136',
+        any: [
+          /^\s*ELSEIF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4137',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4138',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4139',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4141',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4143',
+        any: [
+          /^\s*CFLAG:335 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4145',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4146',
+        any: [
+          /^\s*IF RAND:4 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4147',
+        any: [
+          /^\s*PRINTFORML\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4148',
+        any: [
+          /^\s*ELSEIF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4149',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4150',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4151',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4153',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4155',
+        any: [
+          /^\s*CFLAG:335 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4157',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4158',
+        any: [
+          /^\s*IF RAND:4 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4159',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4160',
+        any: [
+          /^\s*ELSEIF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4161',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4162',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4163',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4164-4183',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:335 = 4\s*$\n^\s*;屈服刻印Lv3\s*$\n^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*PRINTFORML\s*$\n^\s*PRINTFORMW\s*$\n^\s*CFLAG:335 = 3\s*$\n^\s*;それ以外（愛無し、従順Lv5未満）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4165',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4166-4183',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:335 = 4\s*$\n^\s*;屈服刻印Lv3\s*$\n^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$\n^\s*PRINTFORML\s*$\n^\s*PRINTFORMW\s*$\n^\s*CFLAG:335 = 3\s*$\n^\s*;それ以外（愛無し、従順Lv5未満）\s*$\n^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4167',
+        any: [
+          /^\s*CFLAG:335 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4169',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4170',
+        any: [
+          /^\s*PRINTFORML\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4171',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4172',
+        any: [
+          /^\s*CFLAG:335 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4174',
+        any: [
+          /^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4175',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4176',
+        any: [
+          /^\s*CFLAG:335 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4177-4183',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4178-4183',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4179-4183',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4180-4183',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4185',
+        any: [
+          /^\s*IF SELECTCOM == 37\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4187',
+        any: [
+          /^\s*IF CFLAG:TARGET:338 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4189',
+        any: [
+          /^\s*IF ABL:TARGET:16 >= 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4190',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4192-4200',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:338 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4193',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4194-4200',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:338 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4195',
+        any: [
+          /^\s*CFLAG:TARGET:338 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4196-4200',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4198-4200',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬＋奉仕精神Lv5\s*$\n^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4200',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4201',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4202',
+        any: [
+          /^\s*CFLAG:338 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4204',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4205',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4206',
+        any: [
+          /^\s*CFLAG:338 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4208',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4209',
+        any: [
+          /^\s*PRINTFORML\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4210',
+        any: [
+          /^\s*CFLAG:338 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4212',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4213',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4214',
+        any: [
+          /^\s*CFLAG:338 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4216',
+        any: [
+          /^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4217',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4218',
+        any: [
+          /^\s*CFLAG:338 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4219-4225',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アイマスク CFLAG:344　CFLAG:444\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4220-4225',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アイマスク CFLAG:344　CFLAG:444\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4221-4225',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アイマスク CFLAG:344　CFLAG:444\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4222-4225',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;獣姦アイマスク CFLAG:344　CFLAG:444\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4228',
+        any: [
+          /^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4230',
+        any: [
+          /^\s*IF CFLAG:TARGET:344 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4232',
+        any: [
+          /^\s*IF TALENT:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4233',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4235',
+        any: [
+          /^\s*ELSEIF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4236',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4238',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4239',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4241-4249',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:344 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4242',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4243-4249',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:344 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4244',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4245-4249',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4247-4249',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4249',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4250',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4251',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 10\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4253',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4254',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4255',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 9\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4257',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4258',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4259',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 8\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4261',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:344 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4262',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4263',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4265',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4266',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4267',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4269',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4270',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4271',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4273',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4274',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4275',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4277',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4278',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4279',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4281',
+        any: [
+          /^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4282',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4283',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4284-4290',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;終了時\s*$\n^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4285-4290',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;終了時\s*$\n^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4286-4290',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;終了時\s*$\n^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4288',
+        any: [
+          /^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4290',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4291',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4292',
+        any: [
+          /^\s*CFLAG:444 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4294',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4295',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4296',
+        any: [
+          /^\s*CFLAG:444 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4298',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:338 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4299',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4300',
+        any: [
+          /^\s*CFLAG:444 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4302',
+        any: [
+          /^\s*ELSEIF CFLAG:444 < 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4303',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4304',
+        any: [
+          /^\s*CFLAG:444 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4304-4305',
+        any: [
+          /^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4304-4306',
+        any: [
+          /^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4304-4307',
+        any: [
+          /^\s*CFLAG:444 = 1\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4313',
+        any: [
+          /^\s*IF SELECTCOM == 56\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4315',
+        any: [
+          /^\s*IF CFLAG:357 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4316',
+        any: [
+          /^\s*IF TEQUIP:53\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4319',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4320',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4322',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4323',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4325',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4326',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4328-4339',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4329',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4330-4339',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4331-4339',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:357 = 1\s*$\n^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4332',
+        any: [
+          /^\s*CFLAG:357 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4333-4339',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;二回目以降\s*$\n^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4335-4339',
+        any: [
+          /^\s*ELSE\s*$\n^\s*IF TEQUIP:53\s*$\n^\s*;ビデオ自己紹介\s*$\n^\s*;牝犬\s*$\n^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4336',
+        any: [
+          /^\s*IF TEQUIP:53\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4339',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4340',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4341',
+        any: [
+          /^\s*CFLAG:357 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4343',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4344',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4345',
+        any: [
+          /^\s*CFLAG:357 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4347',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:357 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4348',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4349',
+        any: [
+          /^\s*CFLAG:357 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4351',
+        any: [
+          /^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4352',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4353',
+        any: [
+          /^\s*CFLAG:357 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4354-4364',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@KOJO_MESSAGE_PALAMCNG関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4355-4364',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@KOJO_MESSAGE_PALAMCNG関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4356-4364',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@KOJO_MESSAGE_PALAMCNG関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4357-4364',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@KOJO_MESSAGE_PALAMCNG関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4358-4364',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@KOJO_MESSAGE_PALAMCNG関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4361-4364',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@KOJO_MESSAGE_PALAMCNG関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4368-4374',
+        any: [
+          /^\s*@KOJO_MESSAGE_PALAMCNG_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする\s*$\n^\s*SIF TEQUIP:45\s*$\n^\s*RETURN 0\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4368-4564',
         any: [
-          /^\s*@KOJO_MESSAGE_PALAMCNG_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする\s*$\n^\s*SIF TEQUIP:45\s*$/m,
+          /^\s*@KOJO_MESSAGE_PALAMCNG_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする\s*$\n^\s*SIF TEQUIP:45\s*$\n^\s*RETURN 0\s*$\n^\s*;失神時には口上をスキップする\s*$\n^\s*SIF TFLAG:899\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4377-4380',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;パラメータ変動時のセリフ CFLAG 221～260を使用\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4385',
+        any: [
+          /^\s*P = PALAM:3 \+ UP:3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4386',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4386-4393',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$\n^\s*;愛\s*$\n^\s*IF TALENT:TARGET:85 == 1\s*$\n^\s*;ローションを使った場合\s*$\n^\s*IF SELECTCOM == 50\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4386-4395',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$\n^\s*;愛\s*$\n^\s*IF TALENT:TARGET:85 == 1\s*$\n^\s*;ローションを使った場合\s*$\n^\s*IF SELECTCOM == 50\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4388',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4390',
+        any: [
+          /^\s*IF SELECTCOM == 50\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4391',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4394',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4397-4406',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;ローションを使った場合\s*$\n^\s*IF SELECTCOM == 50\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4399',
+        any: [
+          /^\s*IF SELECTCOM == 50\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4400',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4402-4406',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4403',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4404-4406',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4405-4406',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:221 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4406',
+        any: [
+          /^\s*CFLAG:TARGET:221 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4406-4407',
+        any: [
+          /^\s*CFLAG:TARGET:221 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4412',
+        any: [
+          /^\s*P = PALAM:5 \+ UP:5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4413',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4413-4420',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$\n^\s*;愛\s*$\n^\s*IF TALENT:TARGET:85 == 1\s*$\n^\s*;しあわせ草を使った場合\s*$\n^\s*IF SELECTCOM == 51\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4413-4422',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$\n^\s*;愛\s*$\n^\s*IF TALENT:TARGET:85 == 1\s*$\n^\s*;しあわせ草を使った場合\s*$\n^\s*IF SELECTCOM == 51\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4415',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4417',
+        any: [
+          /^\s*IF SELECTCOM == 51\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4418',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4421',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4424-4433',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;しあわせ草を使った場合\s*$\n^\s*IF SELECTCOM == 51\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4426',
+        any: [
+          /^\s*IF SELECTCOM == 51\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4427',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4429-4433',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4430',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4431-4433',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4432-4433',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:222 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4433',
+        any: [
+          /^\s*CFLAG:222 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4433-4434',
+        any: [
+          /^\s*CFLAG:222 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4439',
+        any: [
+          /^\s*P = PALAM:8 \+ UP:8\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4440',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:223 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4442',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4443',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4445-4448',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:223 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4446',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4447-4448',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:223 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4448',
+        any: [
+          /^\s*CFLAG:223 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4448-4449',
+        any: [
+          /^\s*CFLAG:223 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4454',
+        any: [
+          /^\s*P = PALAM:10 \+ UP:10\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4455',
+        any: [
+          /^\s*IF P > PALAMLV:2 && CFLAG:224 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4457',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4458',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4460-4463',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:224 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4461',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4462-4463',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:224 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4463',
+        any: [
+          /^\s*CFLAG:224 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4463-4464',
+        any: [
+          /^\s*CFLAG:224 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4469',
+        any: [
+          /^\s*IF NOWEX:0 > 0 && CFLAG:214 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4471',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4472',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4474-4477',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:214 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4475',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4476-4477',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:214 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4477',
+        any: [
+          /^\s*CFLAG:214 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4477-4478',
+        any: [
+          /^\s*CFLAG:214 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4483',
+        any: [
+          /^\s*IF NOWEX:1 > 0 && CFLAG:226 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4485',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4486',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4488',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4489',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4491-4494',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:226 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4492',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4493-4494',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:226 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4494',
+        any: [
+          /^\s*CFLAG:TARGET:226 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4494-4495',
+        any: [
+          /^\s*CFLAG:TARGET:226 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4500',
+        any: [
+          /^\s*IF NOWEX:2 > 0 && CFLAG:227 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4502',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4503',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4505',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4506',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4508-4509',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW 「咕……啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4509',
+        any: [
+          /^\s*PRINTFORMW 「咕……啊啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4509-4510',
+        any: [
+          /^\s*PRINTFORMW 「咕……啊啊」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4511',
+        any: [
+          /^\s*CFLAG:227 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4511-4512',
+        any: [
+          /^\s*CFLAG:227 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4517',
+        any: [
+          /^\s*IF NOWEX:3 > 0 && CFLAG:228 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4519',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4520',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4522-4525',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:228 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4523',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4524-4525',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:228 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4525',
+        any: [
+          /^\s*CFLAG:TARGET:228 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4525-4526',
+        any: [
+          /^\s*CFLAG:TARGET:228 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4531',
+        any: [
+          /^\s*A = UP:11 \+ UP:12\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4532',
+        any: [
+          /^\s*IF TFLAG:3 == 1 && CFLAG:229 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4534',
+        any: [
+          /^\s*IF TFLAG:20 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4536',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4537',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4539',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4539-4542',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4540',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4543',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4544-4545',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;主人以外による処女喪失（再生処女含む）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4545-4546',
+        any: [
+          /^\s*;主人以外による処女喪失（再生処女含む）\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4548',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4549',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4551',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4552',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4554-4558',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4555',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4556-4558',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4557-4558',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:TARGET:229 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4558',
+        any: [
+          /^\s*CFLAG:TARGET:229 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4558-4559',
+        any: [
+          /^\s*CFLAG:TARGET:229 = 1\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4566-4627',
         any: [
-          /^\s*@KOJO_MESSAGE_MARKCNG_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）\s*$\n^\s*SIF TEQUIP:45\s*$/m,
+          /^\s*@KOJO_MESSAGE_MARKCNG_14\s*$\n^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\n^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\n^\s*;	RETURN 0\s*$\n^\s*;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）\s*$\n^\s*SIF TEQUIP:45\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;苦痛刻印Lv3取得 CFLAG:297\s*$\n^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4570-4572',
+        any: [
+          /^\s*;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）\s*$\n^\s*SIF TEQUIP:45\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4576',
+        any: [
+          /^\s*IF TFLAG:22 == 3 && CFLAG:297 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4578',
+        any: [
+          /^\s*IF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4579',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4580-4583',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:297 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4581',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4582-4583',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:297 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4583',
+        any: [
+          /^\s*CFLAG:297 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4583-4584',
+        any: [
+          /^\s*CFLAG:297 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4589',
+        any: [
+          /^\s*IF TFLAG:23 == 3 && CFLAG:298 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4591',
+        any: [
+          /^\s*IF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4592',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4593-4596',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:298 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4594',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4595-4596',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:298 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4596',
+        any: [
+          /^\s*CFLAG:298 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4596-4597',
+        any: [
+          /^\s*CFLAG:298 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4602',
+        any: [
+          /^\s*IF TFLAG:24 == 3 && CFLAG:299 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4604',
+        any: [
+          /^\s*IF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4605',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4606-4609',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:299 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4607',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4608-4609',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:299 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4609',
+        any: [
+          /^\s*CFLAG:299 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4609-4610',
+        any: [
+          /^\s*CFLAG:299 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4615',
+        any: [
+          /^\s*IF TFLAG:21 == 3 && CFLAG:300 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4617',
+        any: [
+          /^\s*IF TALENT:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4618',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4619-4622',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:300 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4620',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4621-4622',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:300 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4622',
+        any: [
+          /^\s*CFLAG:300 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4622-4623',
+        any: [
+          /^\s*CFLAG:300 = 1\s*$\n^\s*ENDIF\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4629-4882',
         any: [
-          /^\s*@SELF_KOJO_K14\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;調教後自慰 CFLAG:261\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF TFLAG:13 == 1\s*$\n^\s*;崩壊してしまった場合\s*$/m,
+          /^\s*@SELF_KOJO_K14\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;調教後自慰 CFLAG:261\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF TFLAG:13 == 1\s*$\n^\s*;崩壊してしまった場合\s*$\n^\s*IF TALENT:9 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛がなくかつ助手とのレズセックス後ならレズっ気×20%で助手\s*$\n^\s*ELSEIF Q == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4633',
+        any: [
+          /^\s*IF TFLAG:13 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4635',
+        any: [
+          /^\s*IF TALENT:9 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4636',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4638',
+        any: [
+          /^\s*ELSEIF Q == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4639',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4641',
+        any: [
+          /^\s*ELSEIF Q == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4642',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4644-4646',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;淫乱\s*$\n^\s*IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4646',
+        any: [
+          /^\s*IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4647',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4648',
+        any: [
+          /^\s*CFLAG:261 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4650',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:261 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4651',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4652',
+        any: [
+          /^\s*CFLAG:261 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4654',
+        any: [
+          /^\s*ELSEIF ABL:31 >= 3 && \(CFLAG:261 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4655',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4656',
+        any: [
+          /^\s*CFLAG:261 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4658',
+        any: [
+          /^\s*ELSEIF CFLAG:261 < 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4659',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4660',
+        any: [
+          /^\s*CFLAG:261 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4660-4661',
+        any: [
+          /^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4660-4662',
+        any: [
+          /^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4660-4663',
+        any: [
+          /^\s*CFLAG:261 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4668',
+        any: [
+          /^\s*IF TFLAG:13 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4670',
+        any: [
+          /^\s*IF TALENT:76 && \(CFLAG:262 < 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4671',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4672',
+        any: [
+          /^\s*CFLAG:262 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4674',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:262 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4675',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4676',
+        any: [
+          /^\s*CFLAG:262 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4678',
+        any: [
+          /^\s*ELSEIF ABL:33 >= 3 && \(CFLAG:262 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4679',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4680',
+        any: [
+          /^\s*CFLAG:262 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4682',
+        any: [
+          /^\s*ELSEIF ABL:22 >= 3 && \(CFLAG:262 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4683',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4684',
+        any: [
+          /^\s*CFLAG:262 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4686',
+        any: [
+          /^\s*ELSEIF CFLAG:262 < 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4687',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4688',
+        any: [
+          /^\s*CFLAG:262 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4688-4689',
+        any: [
+          /^\s*CFLAG:262 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4688-4690',
+        any: [
+          /^\s*CFLAG:262 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4695',
+        any: [
+          /^\s*IF TFLAG:13 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4697',
+        any: [
+          /^\s*IF TALENT:76 == 1 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4698',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4699',
+        any: [
+          /^\s*CFLAG:263 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4701',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4702',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4703',
+        any: [
+          /^\s*CFLAG:263 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4705',
+        any: [
+          /^\s*ELSEIF ABL:16 >= 5 && \(CFLAG:263 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4706',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4707',
+        any: [
+          /^\s*CFLAG:263 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4709',
+        any: [
+          /^\s*ELSEIF CFLAG:263 < 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4710',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4711',
+        any: [
+          /^\s*CFLAG:263 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4711-4712',
+        any: [
+          /^\s*CFLAG:263 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4711-4713',
+        any: [
+          /^\s*CFLAG:263 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4718',
+        any: [
+          /^\s*IF TFLAG:13 == 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4720',
+        any: [
+          /^\s*IF ABL:2 >= 4 && \(CFLAG:264 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4721',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4722',
+        any: [
+          /^\s*CFLAG:264 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4724',
+        any: [
+          /^\s*ELSEIF CFLAG:264 < 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4725',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4726',
+        any: [
+          /^\s*CFLAG:264 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4726-4727',
+        any: [
+          /^\s*CFLAG:264 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4726-4728',
+        any: [
+          /^\s*CFLAG:264 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4733',
+        any: [
+          /^\s*IF TFLAG:13 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4734',
+        any: [
+          /^\s*IF CFLAG:265 < 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4735',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4736',
+        any: [
+          /^\s*CFLAG:265 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4736-4737',
+        any: [
+          /^\s*CFLAG:265 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4736-4738',
+        any: [
+          /^\s*CFLAG:265 = 1\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4743',
+        any: [
+          /^\s*IF TFLAG:13 == 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4745',
+        any: [
+          /^\s*IF TALENT:85 && MARK:3 < 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4746',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4748',
+        any: [
+          /^\s*ELSEIF MARK:3 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4749',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4751',
+        any: [
+          /^\s*ELSEIF TALENT:76\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4751-4754',
+        any: [
+          /^\s*ELSEIF TALENT:76\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4751-4756',
+        any: [
+          /^\s*ELSEIF TALENT:76\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4752',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4755',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4757-4761',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;妊娠発覚 CFLAG:271\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4764',
+        any: [
+          /^\s*IF TFLAG:13 == 11\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4765-4766',
+        any: [
+          /^\s*SIF CFLAG:271 >= 1\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4768',
+        any: [
+          /^\s*IF TALENT:9 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4769',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4771',
+        any: [
+          /^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4772',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4774-4777',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:271 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4775',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4776-4777',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:271 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4777',
+        any: [
+          /^\s*CFLAG:271 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4777-4778',
+        any: [
+          /^\s*CFLAG:271 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4784',
+        any: [
+          /^\s*IF TFLAG:13 == 12\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4785-4786',
+        any: [
+          /^\s*SIF CFLAG:272 >= 1\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4788',
+        any: [
+          /^\s*IF TALENT:9 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4789',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4791',
+        any: [
+          /^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4792',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4794-4797',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*CFLAG:272 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4795',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4796-4797',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:272 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4797',
+        any: [
+          /^\s*CFLAG:272 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4797-4798',
+        any: [
+          /^\s*CFLAG:272 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4803',
+        any: [
+          /^\s*IF TFLAG:13 == 13\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4805',
+        any: [
+          /^\s*IF TALENT:153\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4806',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4808',
+        any: [
+          /^\s*ELSEIF TALENT:154\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4809',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4810-4811',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*CFLAG:273 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4811',
+        any: [
+          /^\s*CFLAG:273 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4811-4812',
+        any: [
+          /^\s*CFLAG:273 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4817',
+        any: [
+          /^\s*IF TFLAG:13 == 14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4818',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4819',
+        any: [
+          /^\s*CFLAG:274 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4819-4820',
+        any: [
+          /^\s*CFLAG:274 = 1\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4825',
+        any: [
+          /^\s*IF TFLAG:13 == 999\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4825-4830',
+        any: [
+          /^\s*IF TFLAG:13 == 999\s*$\n^\s*;愛\s*$\n^\s*IF TALENT:85\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4827',
+        any: [
+          /^\s*IF TALENT:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4828',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4831',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4832-4836',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;寿命による消滅\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4833-4836',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;寿命による消滅\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4838',
+        any: [
+          /^\s*IF TFLAG:13 == 998\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4838-4843',
+        any: [
+          /^\s*IF TFLAG:13 == 998\s*$\n^\s*;愛\s*$\n^\s*IF TALENT:85\s*$\n^\s*PRINTFORMW\s*$\n^\s*;それ以外\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4840',
+        any: [
+          /^\s*IF TALENT:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4841',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4844',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4845-4849',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*;--------------------------------------------------\s*$\n^\s*;フラグ初期化\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4846-4849',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;--------------------------------------------------\s*$\n^\s*;フラグ初期化\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4851',
+        any: [
+          /^\s*TFLAG:13 = 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4851-4853',
+        any: [
+          /^\s*TFLAG:13 = 0\s*$\n^\s*RETURN 0\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '4884-5037',
         any: [
-          /^\s*@DUNGEON_RYOUZYOKU_K14\s*$\n^\s*;-------------------------------------------------------\s*$\n^\s*;ダンジョンで陵辱される前の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*@DUNGEON_RYOUZYOKU_K14\s*$\n^\s*;-------------------------------------------------------\s*$\n^\s*;ダンジョンで陵辱される前の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4886-4898',
+        any: [
+          /^\s*;ダンジョンで陵辱される前の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4886-4923',
+        any: [
+          /^\s*;ダンジョンで陵辱される前の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$\n^\s*;プライド低い・貞操無頓着・恥薄いなら身体を売って命乞いをする\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4886-4928',
+        any: [
+          /^\s*;ダンジョンで陵辱される前の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$\n^\s*;プライド低い・貞操無頓着・恥薄いなら身体を売って命乞いをする\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4886-4929',
+        any: [
+          /^\s*;ダンジョンで陵辱される前の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$\n^\s*;プライド低い・貞操無頓着・恥薄いなら身体を売って命乞いをする\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4889',
+        any: [
+          /^\s*IF TALENT:0 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4891',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4893',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4896',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4899',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4902',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4906',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4910',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4912',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4916',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4918',
+        any: [
+          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4921',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4926',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4931',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4933',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4936',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4938-4974',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$\n^\s*;プライド低い・貞操無頓着・恥薄いなら身体を売って命乞いをする\s*$\n^\s*PRINTFORMW\s*$\n^\s*;A敏感もしくはA経験有りならならアナルを使うことを提案する\s*$\n^\s*SIF TALENT:106 == 1 \|\| EXP:1 > 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*;フェラ経験有りならなら口での奉仕をアピールする\s*$\n^\s*SIF EXP:22 > 0\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4939',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4942',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4946',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4950',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4952',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4956',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4958',
+        any: [
+          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4961',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4963-4974',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;その他何か適当に性格によって\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------------\s*$\n^\s*@DUNGEON_RYOUZYOKU_AFTER_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4966',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4968-4974',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------------\s*$\n^\s*@DUNGEON_RYOUZYOKU_AFTER_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4969-4974',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------------\s*$\n^\s*@DUNGEON_RYOUZYOKU_AFTER_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4971-4974',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------------\s*$\n^\s*@DUNGEON_RYOUZYOKU_AFTER_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4976-4988',
+        any: [
+          /^\s*;ダンジョンで陵辱された後の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4976-4989',
+        any: [
+          /^\s*;ダンジョンで陵辱された後の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4976-4995',
+        any: [
+          /^\s*;ダンジョンで陵辱された後の一言\s*$\n^\s*IF TALENT:0 == 1\s*$\n^\s*;処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;アナルを弄られすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4979',
+        any: [
+          /^\s*IF TALENT:0 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4981',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4983',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4986',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4992',
+        any: [
+          /^\s*IF EXP:1 > 20\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4993',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4994',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '4999',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5003',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5004-5016',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;非処女\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;膣を苛められすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5006',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5008',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5011',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5013-5016',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;膣を苛められすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5014-5016',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;膣を苛められすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5017',
+        any: [
+          /^\s*IF EXP:0 > 20\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5017-5020',
+        any: [
+          /^\s*IF EXP:0 > 20\s*$\n^\s*PRINTFORMW\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5017-5026',
+        any: [
+          /^\s*IF EXP:0 > 20\s*$\n^\s*PRINTFORMW\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*;アナルを弄られすぎた感想\s*$\n^\s*IF EXP:1 > 20\s*$\n^\s*PRINTFORMW\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5018',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5019',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5023',
+        any: [
+          /^\s*IF EXP:1 > 20\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5024',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5025',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5030',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5034',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5035-5039',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@BENKI_KOUJO_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5037-5039',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@BENKI_KOUJO_K14\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5039-5271',
         any: [
-          /^\s*@BENKI_KOUJO_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;肉便器口上。キャラはA\s*$\n^\s*;FLAG:62を使用。行動の詳細はBENKI\.ERBで\s*$\n^\s*;FLAG:62 = 0 最下層モンスター奉仕\s*$\n^\s*;FLAG:62 = 1 レズ便器\s*$/m,
+          /^\s*@BENKI_KOUJO_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;肉便器口上。キャラはA\s*$\n^\s*;FLAG:62を使用。行動の詳細はBENKI\.ERBで\s*$\n^\s*;FLAG:62 = 0 最下層モンスター奉仕\s*$\n^\s*;FLAG:62 = 1 レズ便器\s*$\n^\s*;FLAG:62 = 2 獣姦便器\s*$\n^\s*;FLAG:62 = 3 両穴便器\s*$\n^\s*;FLAG:62 = 4 膣便器\s*$\n^\s*;FLAG:62 = 5 アナル便器\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5058',
+        any: [
+          /^\s*IF FLAG:62 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5061',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5062',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5064',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5065',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5067',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5068',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5070',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5071',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5073',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5074',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5076-5079',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5077',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5078-5079',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5079',
+        any: [
+          /^\s*ELSEIF FLAG:62 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5082',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5083',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5085',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5086',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5088',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5089',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5091',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5092',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5094',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5095',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5097-5100',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5098',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5099-5100',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF FLAG:62 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5100',
+        any: [
+          /^\s*ELSEIF FLAG:62 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5103',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5104',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5106',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5107',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5109',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5110',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5112',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5113',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5115',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5116',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5118-5121',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5119',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5120-5121',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5121',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5124',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5125',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5127',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5128',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5130',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5131',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5133',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5134',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5136-5139',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5137',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5138-5139',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5139',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5142',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5143',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5145',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5146',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5148',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5149',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5151',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5152',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5154-5157',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5155',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5156-5157',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5157',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5160',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5160-5175',
         any: [
-          /^\s*IF FLAG:63 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;常識改変\(オトコ\)\s*$\n^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$/m,
+          /^\s*IF FLAG:63 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;常識改変\(オトコ\)\s*$\n^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;淫乱\s*$\n^\s*ELSEIF TALENT:A:76 == 1\s*$\n^\s*PRINTFORMW\s*$\n^\s*;愛\s*$\n^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5161',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5163',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5164',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5166',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5167',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5169',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5170',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5172',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5173',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5175-5178',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5176',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5177-5178',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5178',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5181',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5182',
+        any: [
+          /^\s*PRINTFORM\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5184',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5185',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5187',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5188',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5190',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5191',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5193',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5194',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5196-5199',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5197',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5198-5199',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5199',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5202',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5203',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5205',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5206',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5208',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5209',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5211',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5212',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5214',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5215',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5217-5220',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 9\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5218',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5219-5220',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 9\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5220',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 9\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5223',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5224',
+        any: [
+          /^\s*PRINTFORMW 「啊、那个…元冒险者的%SAVESTR:TARGET%、来着」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5225',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(A\)%败给了伟大的魔王大人…虽然身心都被彻底的玩弄了、但不会就此屈服的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5226',
+        any: [
+          /^\s*PRINTFORMW 「然后啊、今天啊…是要让大家『看看原生态的%SELF_CALL\(A\)%』啊…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5227',
+        any: [
+          /^\s*PRINTFORMW 「虽然看『男人的身体』也没啥意思啦…但是%SELF_CALL\(A\)%会竭尽全力的、请好好看着咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5229',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5230',
+        any: [
+          /^\s*PRINTFORMW 「啊、那个…元冒险者的%SAVESTR:TARGET%、来着」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5231',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(A\)%败给了伟大的魔王大人…虽然身心都被彻底的玩弄了、但不会就此屈服的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5232',
+        any: [
+          /^\s*PRINTFORMW 「然后啊、今天啊…是要让大家『看看原生态的%SELF_CALL\(A\)%』啊…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5233',
+        any: [
+          /^\s*PRINTFORMW 「虽然看『男人的身体』也没啥意思啦…但是%SELF_CALL\(A\)%会竭尽全力的、请好好看着咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5235',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5236',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5238',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5239',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5241',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5242',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5244-5247',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 12\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5245',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5246-5247',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSEIF  FLAG:62 == 12\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5247',
+        any: [
+          /^\s*ELSEIF  FLAG:62 == 12\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5250',
+        any: [
+          /^\s*IF FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5251',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5253',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:122 && FLAG:63 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5254',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5256',
+        any: [
+          /^\s*ELSEIF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5257',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5259',
+        any: [
+          /^\s*ELSEIF TALENT:A:85\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5260',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5262',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5263',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5265-5273',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@DUNGEON_VICTORY_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5266',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5267-5273',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@DUNGEON_VICTORY_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5268-5273',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@DUNGEON_VICTORY_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5270-5273',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@DUNGEON_VICTORY_K14\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5273-5326',
+        any: [
+          /^\s*@DUNGEON_VICTORY_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;戦闘勝利時\s*$\n^\s*;決め台詞\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW 「……哈」\s*$\n^\s*RETURN 0\s*$\n^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5273-5414',
         any: [
-          /^\s*@DUNGEON_VICTORY_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;戦闘勝利時\s*$\n^\s*;決め台詞\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+          /^\s*@DUNGEON_VICTORY_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;戦闘勝利時\s*$\n^\s*;決め台詞\s*$\n^\s*PRINTFORMW\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW 「……哈」\s*$\n^\s*RETURN 0\s*$\n^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5278',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5280',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5283',
+        any: [
+          /^\s*PRINTFORMW 「……哈」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5283-5285',
+        any: [
+          /^\s*PRINTFORMW 「……哈」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5286',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5289',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5290',
+        any: [
+          /^\s*PRINTFORMW 「……真是污秽」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5291',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5292',
+        any: [
+          /^\s*PRINTFORMW 「魔力什么的，没有必要」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5292-5293',
+        any: [
+          /^\s*PRINTFORMW 「魔力什么的，没有必要」\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5294',
+        any: [
+          /^\s*PRINTFORMW 「消灭了吗」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5294-5295',
+        any: [
+          /^\s*PRINTFORMW 「消灭了吗」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5297',
+        any: [
+          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
         ],
       },
       {
@@ -15978,51 +23461,975 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5300-5302',
+        any: [
+          /^\s*PRINTFORMW 「魔の力、これほどとは……」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5300-5303',
+        any: [
+          /^\s*PRINTFORMW 「魔の力、これほどとは……」\s*$\n^\s*RETURN 0\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5306',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5307',
+        any: [
+          /^\s*PRINTFORMW 「这是光明的胜利！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5308',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5309',
+        any: [
+          /^\s*PRINTFORMW 「光明不灭！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5309-5310',
+        any: [
+          /^\s*PRINTFORMW 「光明不灭！」\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5311',
+        any: [
+          /^\s*PRINTFORMW 「怎么可能输给不净之物……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5311-5312',
+        any: [
+          /^\s*PRINTFORMW 「怎么可能输给不净之物……」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5314-5316',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*IF \(BASE:A:0 \* 100 \/ MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 \/ MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5316',
+        any: [
+          /^\s*IF \(BASE:A:0 \* 100 \/ MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 \/ MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5318',
+        any: [
+          /^\s*PRINTFORMW （果不其然，真是强大……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5318-5319',
+        any: [
+          /^\s*PRINTFORMW （果不其然，真是强大……）\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5321',
+        any: [
+          /^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5321-5322',
+        any: [
+          /^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5321-5324',
+        any: [
+          /^\s*PRINTFORMW 「不净的力量，抹杀之」\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5327-5411',
+        any: [
+          /^\s*@DUNGEON_ATTACK_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;攻撃時のセリフ\s*$\n^\s*;最初に一言\s*$\n^\s*IF CFLAG:1 == 2\s*$\n^\s*;侵攻中\s*$\n^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW 「……准备咯」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5332',
+        any: [
+          /^\s*IF CFLAG:1 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5334',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5337',
+        any: [
+          /^\s*PRINTFORMW 「……准备咯」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5337-5339',
+        any: [
+          /^\s*PRINTFORMW 「……准备咯」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5340',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5343',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5344',
+        any: [
+          /^\s*PRINTFORMW 「怪物！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5345',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5346',
+        any: [
+          /^\s*PRINTFORMW 「不净之物！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5346-5347',
+        any: [
+          /^\s*PRINTFORMW 「不净之物！」\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5348',
+        any: [
+          /^\s*PRINTFORMW 「……消失吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5348-5349',
+        any: [
+          /^\s*PRINTFORMW 「……消失吧！」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5351',
+        any: [
+          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5354',
+        any: [
+          /^\s*PRINTFORMW 「切，不净之物……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5354-5356',
+        any: [
+          /^\s*PRINTFORMW 「切，不净之物……」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5354-5357',
+        any: [
+          /^\s*PRINTFORMW 「切，不净之物……」\s*$\n^\s*RETURN 0\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5360',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5361',
+        any: [
+          /^\s*PRINTFORMW 「毁灭吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5362',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5363',
+        any: [
+          /^\s*PRINTFORMW 「可不能输！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5363-5364',
+        any: [
+          /^\s*PRINTFORMW 「可不能输！」\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5365',
+        any: [
+          /^\s*PRINTFORMW 「光明啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5365-5366',
+        any: [
+          /^\s*PRINTFORMW 「光明啊！」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5368-5370',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ELSE\s*$\n^\s*;その他・迎撃中\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5369-5370',
+        any: [
+          /^\s*ELSE\s*$\n^\s*;その他・迎撃中\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5371',
+        any: [
+          /^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5374',
+        any: [
+          /^\s*PRINTFORMW 「……准备咯♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5374-5376',
+        any: [
+          /^\s*PRINTFORMW 「……准备咯♪」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5377',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5380',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5381',
+        any: [
+          /^\s*PRINTFORMW 「这就是魔力吗！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5382',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5383',
+        any: [
+          /^\s*PRINTFORMW 「真是美妙的力量……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5383-5384',
+        any: [
+          /^\s*PRINTFORMW 「真是美妙的力量……」\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5385',
+        any: [
+          /^\s*PRINTFORMW 「好强……竟可以强成这样，魔力真是……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5385-5386',
+        any: [
+          /^\s*PRINTFORMW 「好强……竟可以强成这样，魔力真是……」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5388',
+        any: [
+          /^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5391',
+        any: [
+          /^\s*PRINTFORMW 「切，魔力开始侵蚀了吗……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5391-5393',
+        any: [
+          /^\s*PRINTFORMW 「切，魔力开始侵蚀了吗……」\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5391-5394',
+        any: [
+          /^\s*PRINTFORMW 「切，魔力开始侵蚀了吗……」\s*$\n^\s*RETURN 0\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5397',
+        any: [
+          /^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5398',
+        any: [
+          /^\s*PRINTFORMW 「消失吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5399',
+        any: [
+          /^\s*ELSEIF RAND:2 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5400',
+        any: [
+          /^\s*PRINTFORMW 「黑暗啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5400-5401',
+        any: [
+          /^\s*PRINTFORMW 「黑暗啊！」\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5402',
+        any: [
+          /^\s*PRINTFORMW 「堕入黑暗吧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5402-5403',
+        any: [
+          /^\s*PRINTFORMW 「堕入黑暗吧……」\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5402-5405',
+        any: [
+          /^\s*PRINTFORMW 「堕入黑暗吧……」\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5402-5406',
+        any: [
+          /^\s*PRINTFORMW 「堕入黑暗吧……」\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5410-5413',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;@COLOSSEUM_KOJO関係（X1をキャラ番号に置換）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5416-5519',
         any: [
-          /^\s*@COLOSSEUM_KOJO_14\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;何もしない\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 55\s*$\n^\s*;気力０以下\s*$/m,
+          /^\s*@COLOSSEUM_KOJO_14\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;何もしない\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 55\s*$\n^\s*;気力０以下\s*$\n^\s*IF BASE:1 <= 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5420',
+        any: [
+          /^\s*IF SELECTCOM == 55\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5422',
+        any: [
+          /^\s*IF BASE:1 <= 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5423',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5424-5430',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;会話する\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5425',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5426-5430',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;会話する\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5427-5430',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;会話する\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5428-5430',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;会話する\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5430-5438',
+        any: [
+          /^\s*;会話する\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;気力０以下\s*$\n^\s*IF BASE:1 <= 0\s*$\n^\s*;助手が調教中の場合\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5430-5440',
+        any: [
+          /^\s*;会話する\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;気力０以下\s*$\n^\s*IF BASE:1 <= 0\s*$\n^\s*;助手が調教中の場合\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5430-5441',
+        any: [
+          /^\s*;会話する\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 56\s*$\n^\s*;気力０以下\s*$\n^\s*IF BASE:1 <= 0\s*$\n^\s*;助手が調教中の場合\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5432',
+        any: [
+          /^\s*IF SELECTCOM == 56\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5434',
+        any: [
+          /^\s*IF BASE:1 <= 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5436',
+        any: [
+          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5437',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5439',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5443',
+        any: [
+          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5444',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5445-5453',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;フェラチオ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5446',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5447-5453',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;フェラチオ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5448-5453',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;フェラチオ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5449-5453',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;フェラチオ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5450-5453',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;フェラチオ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5453-5459',
+        any: [
+          /^\s*;フェラチオ\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 31\s*$\n^\s*;助手が調教中の場合\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5455',
+        any: [
+          /^\s*IF SELECTCOM == 31\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5457',
+        any: [
+          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5458',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5460',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5461-5465',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;胸愛撫\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5462-5465',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;胸愛撫\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5463-5465',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;胸愛撫\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5465-5471',
+        any: [
+          /^\s*;胸愛撫\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 5\s*$\n^\s*;助手が調教中の場合\s*$\n^\s*IF ASSI > 0 && ASSIPLAY\s*$\n^\s*PRINTFORMW\s*$\n^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5467',
+        any: [
+          /^\s*IF SELECTCOM == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5469',
+        any: [
+          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5470',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5472',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5473-5477',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5474-5477',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5475-5477',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5479',
+        any: [
+          /^\s*IF SELECTCOM == 21\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5481',
+        any: [
+          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5482',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5484',
+        any: [
+          /^\s*ELSEIF TFLAG:400 == 206\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5485',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5486-5493',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位アナル\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5487',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5488-5493',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位アナル\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5489-5493',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位アナル\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5490-5493',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;後背位アナル\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5495',
+        any: [
+          /^\s*IF SELECTCOM == 27\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5497',
+        any: [
+          /^\s*IF ASSI > 0 && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5498',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5500',
+        any: [
+          /^\s*ELSEIF TFLAG:400 == 206\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5501',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5502-5509',
+        any: [
+          /^\s*ELSE\s*$\n^\s*PRINTFORMW\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;媚薬スライム（しあわせ草）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5503',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5504-5509',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;媚薬スライム（しあわせ草）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5505-5509',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;媚薬スライム（しあわせ草）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5506-5509',
+        any: [
+          /^\s*ENDIF\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*;媚薬スライム（しあわせ草）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5509-5513',
+        any: [
+          /^\s*;媚薬スライム（しあわせ草）\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 51\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5509-5514',
+        any: [
+          /^\s*;媚薬スライム（しあわせ草）\s*$\n^\s*;-------------------------------------------------\s*$\n^\s*IF SELECTCOM == 51\s*$\n^\s*PRINTFORMW\s*$\n^\s*RETURN 0\s*$\n^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5511',
+        any: [
+          /^\s*IF SELECTCOM == 51\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5512',
+        any: [
+          /^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
+        ref: '5517-5521',
+        any: [
+          /^\s*RETURN 0\s*$\n^\s*;-----------------------------------\s*$\n^\s*@NTR_KOUJO_K14\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5521-5596',
         any: [
-          /^\s*@NTR_KOUJO_K14\s*$\n^\s*;プレイ内容はNTR\.ERBを参照してください。\s*$\n^\s*;-----------------------------------\s*$\n^\s*;NTRフラグ\s*$\n^\s*SIF CFLAG:650 == 0\s*$\n^\s*CFLAG:650 = 1\s*$/m,
+          /^\s*@NTR_KOUJO_K14\s*$\n^\s*;プレイ内容はNTR\.ERBを参照してください。\s*$\n^\s*;-----------------------------------\s*$\n^\s*;NTRフラグ\s*$\n^\s*SIF CFLAG:650 == 0\s*$\n^\s*CFLAG:650 = 1\s*$\n^\s*;処女喪失\s*$\n^\s*IF P == 1\s*$\n^\s*;陥落済\s*$\n^\s*IF TALENT:76 \|\| TALENT:85\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5598-5710',
         any: [
-          /^\s*@EXUCUTION_KOUJO_K14\s*$\n^\s*;処刑内容はEXUCUTION\.ERBを参照してください。\s*$\n^\s*;-----------------------------------\s*$\n^\s*;肉便器刑\s*$\n^\s*IF TFLAG:16 == 2\s*$\n^\s*PRINTFORMW\s*$/m,
+          /^\s*@EXUCUTION_KOUJO_K14\s*$\n^\s*;処刑内容はEXUCUTION\.ERBを参照してください。\s*$\n^\s*;-----------------------------------\s*$\n^\s*;肉便器刑\s*$\n^\s*IF TFLAG:16 == 2\s*$\n^\s*PRINTFORMW\s*$\n^\s*;戦闘員化\s*$\n^\s*ELSEIF TFLAG:16 == 5\s*$\n^\s*PRINTFORMW\s*$\n^\s*;晒し台刑\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5712-5728',
         any: [
-          /^\s*@ENTERENEMY_KOUJO_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;ダンジョン攻略開始時\s*$\n^\s*IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW 「魔王……」\s*$/m,
+          /^\s*@ENTERENEMY_KOUJO_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;ダンジョン攻略開始時\s*$\n^\s*IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1\s*$\n^\s*;無関心・感情乏しいなら何か言って終了\s*$\n^\s*PRINTFORMW 「魔王……」\s*$\n^\s*ELSEIF TALENT:A:11 == 1 \|\| TALENT:A:12 == 1 \|\| TALENT:A:15 == 1 \|\| TALENT:A:30 == 1 \|\| TALENT:A:34 == 1\s*$\n^\s*;反抗的・気丈・プライド高い・貞操観念・抵抗\s*$\n^\s*PRINTFORMW 「魔王！　不可原谅！」\s*$\n^\s*ELSEIF TALENT:A:10 == 1 \|\| TALENT:A:26 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5730-5846',
         any: [
-          /^\s*@GOHOUBI_REQUEST_KOUJO_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;迎撃時のご褒美要求\s*$\n^\s*IF CFLAG:A:504 == 0\s*$\n^\s*;お金\s*$\n^\s*PRINTFORMW %SAVESTR:A%提出了想要钱当报酬。\s*$/m,
+          /^\s*@GOHOUBI_REQUEST_KOUJO_K14\s*$\n^\s*;-----------------------------------\s*$\n^\s*;迎撃時のご褒美要求\s*$\n^\s*IF CFLAG:A:504 == 0\s*$\n^\s*;お金\s*$\n^\s*PRINTFORMW %SAVESTR:A%提出了想要钱当报酬。\s*$\n^\s*ELSEIF CFLAG:A:504 == 1 \|\| CFLAG:A:504 == 2 \|\| CFLAG:A:504 == 3\s*$\n^\s*;獣姦要求\s*$\n^\s*PRINTFORM %SAVESTR:A%提出了想要和\s*$\n^\s*IF CFLAG:A:504 == 1\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5848-5909',
         any: [
-          /^\s*@OSIOKI_KOUJO_K14\s*$\n^\s*;-----------------------------\s*$\n^\s*;迎撃失敗時のおしおき\s*$\n^\s*;DUNGEON_AFTER\.ERBを参照\s*$\n^\s*;何もしない\s*$\n^\s*IF TFLAG:18 == 0\s*$/m,
+          /^\s*@OSIOKI_KOUJO_K14\s*$\n^\s*;-----------------------------\s*$\n^\s*;迎撃失敗時のおしおき\s*$\n^\s*;DUNGEON_AFTER\.ERBを参照\s*$\n^\s*;何もしない\s*$\n^\s*IF TFLAG:18 == 0\s*$\n^\s*PRINTFORMW\s*$\n^\s*;弱電気椅子刑\s*$\n^\s*ELSEIF TFLAG:18 == 1\s*$\n^\s*;マゾっ気Lv3以上\s*$/m,
         ],
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5911-5944',
         any: [
-          /^\s*@GOBI_KOUJO_K14, ARG:0\s*$\n^\s*;-----------------------------\s*$\n^\s*IF ARG:0 == 1\s*$\n^\s*;喜んで誇らしげに\s*$\n^\s*PRINTFORM 哦~♪\s*$\n^\s*ELSEIF ARG:0 == 2\s*$/m,
+          /^\s*@GOBI_KOUJO_K14, ARG:0\s*$\n^\s*;-----------------------------\s*$\n^\s*IF ARG:0 == 1\s*$\n^\s*;喜んで誇らしげに\s*$\n^\s*PRINTFORM 哦~♪\s*$\n^\s*ELSEIF ARG:0 == 2\s*$\n^\s*;怒って\s*$\n^\s*PRINTFORM 哦！\s*$\n^\s*ELSEIF ARG:0 == 3\s*$\n^\s*;悲しんで\s*$/m,
         ],
       },
     ],
