@@ -6,8 +6,9 @@
  *     标志 FLAG:115）@EVENTEND #LATER（:35-37，清标志）@EVENTTRAIN
  *     （:43-239，调教开始口上 CFLAG:201 + NTR 再捕获 + 屈服/淫乱/爱慕/
  *     崩坏 + K15_KOJO2 二回目以降）@K15_KOJO2（:245-310）@EVENTEND
- *     （:316-400，调教结束口上）@KOJO_MESSAGE_COM_15（:406 起，本切片落地
- *     四道头部守卫 + SELECTCOM 0–87；其余随后续切片）。
+ *     （:316-400，调教结束口上）@KOJO_MESSAGE_COM_15（:406 起，四道头部
+ *     守卫 + SELECTCOM 0–87）@DOG_KOJO_15（:4027-4888）@COLOSSEUM_KOJO_15
+ *     （:5796-5919）。其余随后续切片。
 
  * == 守卫（K15 与模板七条不同，逐文件 1:1） ==
  *
@@ -552,73 +553,1455 @@ on('EVENTEND', async () => {
 
 /**
  * @DOG_KOJO_15（:4027 起）：兽奸 PLAY 专用口上（TEQUIP:89 时由
- * kojo_message_com_15 头部守卫岔入）。本切片只落地 SELECTCOM 0 初回，
- * 其余分支随后续切片。
+ * kojo_message_com_15 头部守卫岔入）。
  *
+ * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */
-async function dog_kojo_15() {
+async function dog_kojo_15(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
-  const target_name = chara_callname(target);
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   const kojo = chara(target).kojo;
 
   if (era_flag.selectcom == 0) {
-    // :4030-4032
+    // :4032
+
     if (kojo.爱抚 == 0) {
-      // :4030-4034
+      // :4034
+
       if (era0(`mark:${target}:2`) >= 2) {
-        // :4036-4038
-        await era.printAndWait(`「…………」`); // :4037-4038
+        // :4036
+        await era.printAndWait(`「…………」`); // :4037
         await era.printAndWait(`${target_name}皱着眉头，忍耐着狗的磨蹭……`); // :4038
       } else {
-        // :4040-4042
-
+        // :4039-4041
         await era.printAndWait(`「不……别靠过来！恶心！……」`); // :4041
         await era.printAndWait(
           `当狗磨蹭到裸露的皮肤时，${target_name}忍不住怒斥了起来……`,
         ); // :4042
-      } // :4042-4043
-      kojo.爱抚 = 1; // :4042-4044
-      return 0; // :4042-4045
-    } // :4046-4082 二回目以降随后续切片
-  } // :4041-4079
+      } // :4042-4044
+      kojo.爱抚 = 1; // :4044
+      return 0; // :4042-4048
+    } else {
+      // :4045-4049
 
-  return 0;
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.爱抚 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4049
+        await era.printAndWait(`「狗狗的皮毛好舒服……其他的地方也……♡」`); // :4050
+        await era.printAndWait(
+          `${target_name}就像是一条合格的母狗一样，万分自然地与狗相互磨蹭着……`,
+        ); // :4051
+        kojo.爱抚 = 7; // :4052
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4054
+        await era.printAndWait(`「即使对象是狗狗……也很舒服呢……♡」`); // :4055
+        await era.printAndWait(`${target_name}毫不在乎地与狗相互磨蹭着……`); // :4056
+        kojo.爱抚 = 6; // :4057
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4059
+        if (!era_flag.assiplay) {
+          await era.printAndWait(`「如果您希望${sc()}跟狗狗亲近的话………」`); // :4061
+        } // :4061
+        await era.printAndWait(`${target_name}顺从地与狗相互磨蹭着……`); // :4062
+        kojo.爱抚 = 5; // :4063
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        (kojo.爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4065
+        await era.printAndWait(`「………唔……嗯……」`); // :4066
+        kojo.爱抚 = 4; // :4067
+      } else if (
+        era0(`mark:${target}:2`) == 2 &&
+        (kojo.爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4069
+        await era.printAndWait(`「……唔………不……」`); // :4070
+        kojo.爱抚 = 3; // :4071
+      } else if (
+        era0(`mark:${target}:2`) <= 1 &&
+        (kojo.爱抚 <= 1 || game.kojo.口上开关 == 2)
+      ) {
+        // :4073
+        await era.printAndWait(`「都说不要了……走开啊！」`); // :4074
+        kojo.爱抚 = 2; // :4075
+      } // :4074-4078
+      return 0; // :4074-4080
+    } // :4074-4082
+  } // :4076-4082
+
+  if (era_flag.selectcom == 1) {
+    // :4084
+
+    if (kojo.舔阴 == 0) {
+      // :4086
+
+      if (era0(`talent:${target}:0`) == 1) {
+        // :4088
+        await era.printAndWait(`「不！那里是……不可以啊！啊啊啊！」`); // :4089
+        await era.printAndWait(`${target_name}发出了歇斯底里的大叫……`); // :4090
+      } else {
+        // :4091-4093
+        await era.printAndWait(`「不……好脏……不要啊！」`); // :4093
+        await era.printAndWait(`${target_name}厌恶地怒吼着……`); // :4094
+      } // :4094-4096
+      kojo.舔阴 = 1; // :4096
+      return 0; // :4094-4100
+    } else {
+      // :4097-4101
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.舔阴 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4101
+        await era.printAndWait(`「嗯～啊啊♡……好……好棒♡……湿了……要去了啊～♡♡」`); // :4102
+        kojo.舔阴 = 6; // :4103
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.舔阴 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4105
+        await era.printAndWait(`「那里……嗯…啊啊♡…被狗狗舔了呢～♡♡」`); // :4106
+        kojo.舔阴 = 5; // :4107
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.舔阴 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4109
+        await era.printAndWait(`「呜……这里…不行……是魔王大人的……唔……」`); // :4110
+        kojo.舔阴 = 4; // :4111
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        (kojo.舔阴 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4113
+        await era.printAndWait(`「……唔……不……不要………」`); // :4114
+        kojo.舔阴 = 3; // :4115
+      } else if (kojo.舔阴 <= 1 || game.kojo.口上开关 == 2) {
+        // :4117
+        await era.printAndWait(`「脏死了！走开！走开啊啊啊！」`); // :4118
+        kojo.舔阴 = 2; // :4119
+      } // :4118-4122
+      return 0; // :4118-4124
+    } // :4118-4126
+  } // :4119-4127
+
+  if (era_flag.selectcom == 5) {
+    // :4129
+
+    if (kojo.胸爱抚 == 0) {
+      // :4131
+
+      if (era0(`talent:${target}:85`) == 1) {
+        // :4133
+        await era.printAndWait(`「在魔王大人面前……呜……」`); // :4134
+      } else {
+        // :4135-4137
+        await era.printAndWait(`「别……别碰那里！……走开啊！」`); // :4137
+      } // :4137-4139
+      kojo.胸爱抚 = 1; // :4139
+      return 0; // :4137-4143
+    } else {
+      // :4140-4144
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.胸爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4144
+        await era.printAndWait(`「嗯～好……好棒……啊啊……嗯嗯……啊啊啊～♡♡」`); // :4145
+        kojo.胸爱抚 = 6; // :4146
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4148
+        await era.printAndWait(`「嗯…啊啊～狗狗……真乖呢♡……嗯嗯……啊啊～♡♡」`); // :4149
+        kojo.胸爱抚 = 5; // :4150
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4152
+        await era.printAndWait(
+          `「唔……不…不行……${sc()}的身体……是魔王大人的……啊…」`,
+        ); // :4153
+        kojo.胸爱抚 = 4; // :4154
+      } else if (
+        era0(`abl:${target}:1`) >= 3 &&
+        (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4156
+        await era.printAndWait(`「啊……不……不可以……」`); // :4157
+        kojo.胸爱抚 = 3; // :4158
+      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // :4160
+        await era.printAndWait(`「恶心！走开………不……不要！」`); // :4161
+        kojo.胸爱抚 = 2; // :4162
+      } // :4161-4165
+      return 0; // :4161-4167
+    } // :4161-4169
+  } // :4163-4169
+
+  if (era_flag.selectcom == 6) {
+    // :4171
+
+    if (kojo.接吻 == 0 && game.train.初吻与自我口上) {
+      // :4173
+
+      if (era0(`talent:${target}:136`) == 1) {
+        // :4175
+        await era.printAndWait(`「嗯啊……咕……啾……嗯……嗯」`); // :4176
+        await era.printAndWait(
+          `${target_name}连自己是初吻的事情都忘了，只是痴迷地与狗进行舌吻……`,
+        ); // :4177
+      } else if (era0(`talent:${target}:76`) == 1) {
+        // :4179
+        await era.printAndWait(`「初吻的对象是狗狗吗？魔王大人真是鬼畜呢～♡」`); // :4180
+        await era.printAndWait(
+          `尽管${target_name}这么说，却是毫不抵抗地遵从了命令……`,
+        ); // :4181
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4183
+        await era.printAndWait(
+          `「${sc()}是属于魔王大人的……如果是您的命令…就算是初吻也……」`,
+        ); // :4184
+        await era.printAndWait(
+          `${target_name}似乎有点消沉的样子，但还是顺从地执行着命令……`,
+        ); // :4185
+      } else {
+        // :4186-4188
+        await era.printAndWait(`「真…真不敢相信……${sc()}…${sc()}的…初吻！」`); // :4188
+        await era.printAndWait(
+          `${target_name}厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……`,
+        ); // :4189
+      } // :4188-4192
+      kojo.接吻 = 1; // :4191
+      return 0; // :4189-4195
+    } else if (kojo.接吻 == 0) {
+      // :4194
+
+      if (era0(`talent:${target}:136`) == 1) {
+        // :4196
+        await era.printAndWait(`「嗯啊……咕……啾……嗯……嗯～♡♡」`); // :4197
+        await era.printAndWait(
+          `${target_name}淫荡地摇着屁股，痴迷地与狗进行着舌吻……`,
+        ); // :4198
+      } else if (era0(`talent:${target}:76`) == 1) {
+        // :4200
+        await era.printAndWait(`「呵呵……好啊……没有试过呢……嗯……啾……」`); // :4201
+        await era.printAndWait(`${target_name}毫不抵抗地遵从了命令……`); // :4202
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4204
+        await era.printAndWait(`「${sc()}是属于魔王大人的……如果是您的命令……」`); // :4205
+        await era.printAndWait(`${target_name}顺从地执行着命令……`); // :4206
+      } else {
+        // :4207-4209
+        await era.printAndWait(`「真…真不敢相信……不……不要！」`); // :4209
+        await era.printAndWait(
+          `${target_name}厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……`,
+        ); // :4210
+      } // :4209-4213
+      kojo.接吻 = 1; // :4212
+      return 0; // :4210-4216
+    } else {
+      // :4213-4217
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.接吻 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4217
+        await era.printAndWait(`「嗯啊…好……好棒…咕……啾……嗯……嗯～♡♡」`); // :4218
+        await era.printAndWait(
+          `${target_name}一边流着口水，一边痴迷地与狗进行着舌吻……`,
+        ); // :4219
+        kojo.接吻 = 6; // :4220
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.接吻 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4222
+        await era.printAndWait(`「嗯……唔……咕……啾……嗯～♡♡」`); // :4223
+        await era.printAndWait(
+          `即使对象是狗，${target_name}似乎也无所谓的样子……`,
+        ); // :4224
+        kojo.接吻 = 5; // :4225
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.接吻 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4227
+        await era.printAndWait(`「嗯……唔……咕……啾……嗯……」`); // :4228
+        await era.printAndWait(`（一切……都是要让……魔王大人开心……）`); // :4229
+        await era.printAndWait(`${target_name}顺从地执行着命令……`); // :4230
+        kojo.接吻 = 4; // :4231
+      } else if (
+        era0(`abl:${target}:10`) >= 2 &&
+        (kojo.接吻 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4233
+        await era.printAndWait(`「不……唔………」`); // :4234
+        kojo.接吻 = 3; // :4235
+      } else if (kojo.接吻 <= 1 || game.kojo.口上开关 == 2) {
+        // :4237
+        await era.printAndWait(`「讨厌！……恶心死了！……不……不要！」`); // :4238
+        kojo.接吻 = 2; // :4239
+      } // :4238-4242
+      return 0; // :4238-4244
+    } // :4238-4246
+  } // :4240-4246
+
+  if (era_flag.selectcom == 9) {
+    // :4248
+
+    if (kojo.舔肛 == 0) {
+      // :4250
+
+      if (era0(`talent:${target}:136`) == 1) {
+        // :4252
+        await era.printAndWait(`「嗯啊…哈啊……好……好棒……狗狗的舌头♡」`); // :4253
+      } else if (era0(`talent:${target}:76`) == 1) {
+        // :4255
+        await era.printAndWait(`「呵呵……舔这个地方……真是坏狗狗♡」`); // :4256
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4258
+        await era.printAndWait(`「唔……狗狗……不可以……啊……」`); // :4259
+      } else {
+        // :4260-4262
+        await era.printAndWait(`「好脏……不要……走开…走开啊啊啊！」`); // :4262
+      } // :4262-4264
+      kojo.舔肛 = 1; // :4264
+      return 0; // :4262-4268
+    } else {
+      // :4265-4269
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.舔肛 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4269
+        await era.printAndWait(
+          `「啊啊…舌头…伸到里面了♡……好…好棒♡……啊啊……嗯啊啊～♡」`,
+        ); // :4270
+        kojo.舔肛 = 6; // :4271
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.舔肛 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4273
+        await era.printAndWait(`「狗狗……也很……厉害呢…嗯啊啊～♡」`); // :4274
+        kojo.舔肛 = 5; // :4275
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.舔肛 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4277
+        await era.printAndWait(`「啊……在魔王大人的视线下……呜……好羞耻啊……」`); // :4278
+        kojo.舔肛 = 4; // :4279
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        (kojo.舔肛 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4281
+        await era.printAndWait(`「……不………不………」`); // :4282
+        kojo.舔肛 = 3; // :4283
+      } else if (kojo.舔肛 <= 1 || game.kojo.口上开关 == 2) {
+        // :4285
+        await era.printAndWait(`「走开！不……不可以……不要舔啊！」`); // :4286
+        kojo.舔肛 = 2; // :4287
+      } // :4286-4290
+      return 0; // :4286-4292
+    } // :4286-4294
+  } // :4288-4294
+
+  if (era_flag.selectcom == 21) {
+    // :4296
+
+    if (kojo.背后位 == 0) {
+      // :4298
+
+      if (era0(`talent:${target}:0`) == 1) {
+        // :4300
+
+        if (era0(`talent:${target}:136`) == 1) {
+          // :4302
+          await era.printAndWait(
+            `「是的…是的…${sc()}的一切都是狗狗大人的…啊啊……嗯啊啊～♡」`,
+          ); // :4303
+          await era.printAndWait(
+            `${target_name}兴奋地摇晃着屁股，就像是一条发情的母狗……`,
+          ); // :4304
+        } else if (era0(`talent:${target}:76`) == 1) {
+          // :4306
+          await era.printAndWait(`「能摆脱处女就好……嗯……狗狗……快来呀～♡」`); // :4307
+          await era.printAndWait(
+            `${target_name}毫不在乎第一次的对象是狗狗的样子……`,
+          ); // :4308
+        } else if (era0(`talent:${target}:85`) == 1) {
+          // :4310
+          await era.printAndWait(
+            `「但是${sc()}…${sc()}是…不…没事……如果魔王大人想看的话………」`,
+          ); // :4311
+          await era.printAndWait(
+            `${target_name}似乎无法把话说完…只是低头温驯地听从了命令……`,
+          ); // :4312
+        } else {
+          // :4312-4316
+          await era.printAndWait(
+            `「不！不要呀！啊啊！绝对…绝对……要杀了你们！啊啊啊！！」`,
+          ); // :4315
+          await era.printAndWait(
+            `惨遭兽奸破处的${target_name}发出了崩溃似的嘶喊……`,
+          ); // :4316
+        } // :4316-4318
+      } else {
+        // :4317-4321
+
+        if (era0(`talent:${target}:136`) == 1) {
+          // :4321
+          await era.printAndWait(
+            `「是的…是的…${sc()}的一切都是狗狗大人的…啊啊……嗯啊啊～♡」`,
+          ); // :4322
+          await era.printAndWait(
+            `${target_name}兴奋地摇晃着屁股，就像是一条发情的母狗……`,
+          ); // :4323
+        } else if (era0(`talent:${target}:76`) == 1) {
+          // :4325
+          await era.printAndWait(
+            `「跟狗狗交配啊……呵呵……好新奇呢……也许很棒哦♡」`,
+          ); // :4326
+          await era.printAndWait(
+            `${target_name}的双眼发光，露出了很感兴趣的表情……`,
+          ); // :4327
+        } else if (era0(`talent:${target}:85`) == 1) {
+          // :4329
+          await era.printAndWait(`「好……好的…如果…魔王大人想…想看的话……」`); // :4330
+          await era.printAndWait(`${target_name}低头温驯地听从了命令……`); // :4331
+        } else {
+          // :4331-4335
+          await era.printAndWait(
+            `「不！不要呀！啊啊！绝对…绝对……要杀了你们！啊啊啊！！」`,
+          ); // :4334
+          await era.printAndWait(
+            `惨遭兽奸的${target_name}发出了崩溃似的嘶喊……`,
+          ); // :4335
+        } // :4335-4337
+      } // :4335-4339
+      kojo.背后位 = 1; // :4338
+      return 0; // :4336-4342
+    } else {
+      // :4339-4343
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.背后位 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4343
+        await era.print(
+          [
+            `「好想受精♡……啊啊……请……请灌满…精液吧…啊啊……嗯啊啊～♡」`,
+            `「嗯啊啊～狗狗大人的肉棒！…全都进来了♡…啊啊……嗯啊啊～♡」`,
+            `「是的！是的！${sc()}就是最喜欢被狗交配的母狗♡…啊啊……嗯啊啊～♡」`,
+          ][rand_n(3)],
+        ); // :4344-4348 PRINTDATAL
+        await era.printAndWait(
+          `${target_name}流着口水双眼翻白，脑子除了狗狗的肉棒之外什么都不知道了……`,
+        ); // :4349
+        kojo.背后位 = 7; // :4350
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.背后位 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4352
+        await era.print(
+          [
+            `「嗯嗯～啊啊……狗狗的…进的好深呢♡♡…啊啊……嗯啊啊～♡」`,
+            `「嗯啊啊～好烫啊……狗狗的肉棒♡……啊啊……嗯啊啊～♡」`,
+            `「啊啊～好……好舒服～♡…狗狗好厉害啊…嗯啊……嗯啊啊～♡」`,
+          ][rand_n(3)],
+        ); // :4353-4357 PRINTDATAL
+        await era.printAndWait(
+          `即使是跟狗交配，但是沉醉在肉欲的${target_name}一点也不在乎的样子……`,
+        ); // :4358
+        kojo.背后位 = 6; // :4359
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.背后位 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4361
+        await era.print(
+          [
+            `「嗯嗯…啊…不…不可以射在里面……啊啊……嗯啊啊……」`,
+            `「嗯啊啊…好烫…狗狗的肉棒…不…不……啊啊……嗯啊啊……」`,
+            `「啊啊…太……太深了…狗狗…不…不可以…嗯…啊啊……」`,
+          ][rand_n(3)],
+        ); // :4362-4366 PRINTDATAL
+        await era.printAndWait(`（为了魔王大人…就算…就算对象是狗…也……）`); // :4367
+        await era.printAndWait(
+          `${target_name}一边与狗交配，一边想着魔王大人的事情……`,
+        ); // :4368
+        kojo.背后位 = 5; // :4369
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        era0(`abl:${target}:2`) >= 3 &&
+        (kojo.背后位 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4371
+        await era.printAndWait(
+          `「嗯嗯…啊…不…不……好奇怪…不要了……不……嗯啊啊……」`,
+        ); // :4372
+        await era.printAndWait(
+          `明明是屈辱的兽交，${target_name}却不由自主地扭动着身体……`,
+        ); // :4373
+        kojo.背后位 = 4; // :4374
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        (kojo.背后位 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4376
+        await era.printAndWait(`「不……不要啊……饶了${sc()}了……唔……嗯啊啊……」`); // :4377
+        await era.printAndWait(
+          `雌伏在狗身下的${target_name}，发出了痛苦的呻吟……`,
+        ); // :4378
+        kojo.背后位 = 3; // :4379
+      } else if (kojo.背后位 <= 1 || game.kojo.口上开关 == 2) {
+        // :4381
+        await era.print(
+          [
+            `「走开！去死啊！啊啊！啊啊啊！！」`,
+            `「不！不要啊……住手！……啊啊啊！！」`,
+            `「可恶！一定要杀了你！啊！啊啊啊！」`,
+          ][rand_n(3)],
+        ); // :4382-4386 PRINTDATAL
+        await era.printAndWait(`被狗奸淫的${target_name}，发出了凄厉地悲鸣……`); // :4387
+        kojo.背后位 = 2; // :4388
+      } // :4387-4391
+      return 0; // :4387-4393
+    } // :4387-4395
+  } // :4389-4395
+
+  if (era_flag.selectcom == 27) {
+    // :4397
+
+    if (kojo.背后位肛交 == 0) {
+      // :4399
+
+      if (era0(`talent:${target}:136`) == 1) {
+        // :4401
+        await era.printAndWait(
+          `「好的…好的…屁股也请狗狗大人宠幸吧…啊啊……嗯啊啊～♡」`,
+        ); // :4402
+        await era.printAndWait(
+          `${target_name}兴奋地摇晃着屁股，就像是一条发情的母狗……`,
+        ); // :4403
+      } else if (era0(`talent:${target}:76`) == 1) {
+        // :4405
+        await era.printAndWait(`「跟狗狗肛交吗……没试过呢……也许很棒哦♡」`); // :4406
+        await era.printAndWait(
+          `${target_name}的双眼发光，露出了很感兴趣的表情……`,
+        ); // :4407
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4409
+        await era.printAndWait(
+          `「欸？…没…没事…可以哦……如果…魔王大人想…想看的话……」`,
+        ); // :4410
+        await era.printAndWait(`${target_name}低头温驯地听从了命令……`); // :4411
+      } else {
+        // :4412-4414
+        await era.printAndWait(
+          `「怎么可能！不！不要！去死……去死啊！啊啊啊！！」`,
+        ); // :4414
+        await era.printAndWait(
+          `被强迫与狗肛交的${target_name}发出了崩溃似的嘶喊……`,
+        ); // :4415
+      } // :4415-4417
+      kojo.背后位肛交 = 1; // :4417
+      return 0; // :4415-4421
+    } else {
+      // :4419-4421
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        era0(`abl:${target}:3`) >= 3 &&
+        (kojo.背后位肛交 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4422
+        await era.print(
+          [
+            `「好棒♡……好棒啊……屁股…是…狗狗大人的形状了…啊啊……嗯啊啊～♡」`,
+            `「嗯啊啊～狗狗大人的肉棒！…全都进来了♡…啊啊……嗯啊啊～♡」`,
+            `「嗯啊啊！请…请在屁股里射精…留下记号吧♡……啊啊……嗯啊啊～♡」`,
+          ][rand_n(3)],
+        ); // :4423-4427 PRINTDATAL
+        await era.printAndWait(
+          `${target_name}流着口水双眼翻白，脑子除了狗狗的肉棒之外什么都不知道了……`,
+        ); // :4428
+        kojo.背后位肛交 = 7; // :4429
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        era0(`abl:${target}:3`) >= 3 &&
+        (kojo.背后位肛交 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4431
+        await era.print(
+          [
+            `「嗯嗯～啊啊……狗狗的…插进屁股里面了♡♡…啊啊……嗯啊啊～♡」`,
+            `「嗯啊啊～好烫啊……狗狗的肉棒♡……啊啊……嗯啊啊～♡」`,
+            `「啊啊～好……好舒服～♡…狗狗好厉害啊…嗯啊……嗯啊啊～♡」`,
+          ][rand_n(3)],
+        ); // :4432-4436 PRINTDATAL
+        await era.printAndWait(
+          `即使是跟狗肛交，但是沉醉在肉欲的${target_name}一点也不在乎的样子……`,
+        ); // :4437
+        kojo.背后位肛交 = 6; // :4438
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:3`) >= 3 &&
+        (kojo.背后位肛交 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4440
+        await era.print(
+          [
+            `「嗯嗯…啊…後面…好奇怪…不…不可以……啊啊……嗯啊啊……」`,
+            `「嗯啊啊…好烫…狗狗的肉棒…不…不……啊啊……嗯啊啊……」`,
+            `「啊啊…太……太深了…狗狗…不…不可以…嗯…啊啊……」`,
+          ][rand_n(3)],
+        ); // :4441-4445 PRINTDATAL
+        await era.printAndWait(`（明明不是魔王大人…为…为什么会……）`); // :4446
+        await era.printAndWait(
+          `${target_name}一边与狗肛交，一边想着魔王大人的事情……`,
+        ); // :4447
+        kojo.背后位肛交 = 5; // :4448
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.背后位肛交 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4450
+        await era.print(
+          [
+            `「嗯嗯…啊…後面……啊啊……嗯啊啊……」`,
+            `「嗯啊啊…进……进来了……啊啊……嗯啊啊……」`,
+            `「啊啊…不……那里会……嗯…啊啊……」`,
+          ][rand_n(3)],
+        ); // :4451-4455 PRINTDATAL
+        await era.printAndWait(`（为了魔王大人…就算…就算对象是狗…也……）`); // :4456
+        await era.printAndWait(
+          `${target_name}一边与狗肛交，一边想着魔王大人的事情……`,
+        ); // :4457
+        kojo.背后位肛交 = 4; // :4458
+      } else if (
+        era0(`abl:${target}:3`) >= 3 &&
+        (kojo.背后位肛交 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4460
+        await era.printAndWait(
+          `「嗯嗯…啊…不…不……好奇怪…不要了……不……嗯啊啊……」`,
+        ); // :4461
+        await era.printAndWait(
+          `明明是屈辱的兽交，${target_name}却不由自主地扭动着身体……`,
+        ); // :4462
+        kojo.背后位肛交 = 3; // :4463
+      } else if (kojo.背后位肛交 <= 1 || game.kojo.口上开关 == 2) {
+        // :4465
+        await era.print(
+          [
+            `「走开！去死啊！啊啊！啊啊啊！！」`,
+            `「不！不要啊……住手！……啊啊啊！！」`,
+            `「可恶！一定要杀了你！啊！啊啊啊！」`,
+          ][rand_n(3)],
+        ); // :4466-4470 PRINTDATAL
+        await era.printAndWait(`被狗奸淫的${target_name}，发出了凄厉地悲鸣……`); // :4471
+        kojo.背后位肛交 = 2; // :4472
+      } // :4471-4475
+      return 0; // :4471-4477
+    } // :4471-4479
+  } // :4473-4479
+
+  if (era_flag.selectcom == 30) {
+    // :4481
+
+    if (kojo.手淫 == 0) {
+      // :4483
+
+      if (era0(`talent:${target}:76`) == 1) {
+        // :4485
+        await era.printAndWait(''); // :4486
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4488
+        await era.printAndWait(''); // :4489
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        // :4491
+        await era.printAndWait(''); // :4492
+      } else {
+        // :4491-4497
+        await era.printAndWait(''); // :4495
+      } // :4495-4497
+      kojo.手淫 = 1; // :4497
+      return 0; // :4495-4501
+    } else {
+      // :4499-4501
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        era0(`abl:${target}:16`) >= 3 &&
+        (kojo.手淫 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4502
+        if (rand_n(2) == 0) {
+          // :4503
+          await era.printAndWait(''); // :4504
+        } else {
+          // :4502-4508
+          await era.printAndWait(''); // :4506
+        } // :4506-4508
+        kojo.手淫 = 7; // :4508
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        era0(`abl:${target}:16`) >= 3 &&
+        (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4510
+        if (rand_n(2) == 0) {
+          // :4511
+          await era.printAndWait(''); // :4512
+        } else {
+          // :4510-4516
+          await era.printAndWait(''); // :4514
+        } // :4514-4516
+        kojo.手淫 = 6; // :4516
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:16`) == 5 &&
+        (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4518
+        if (rand_n(2) == 0) {
+          // :4519
+          await era.printAndWait(''); // :4520
+        } else {
+          // :4518-4524
+          await era.printAndWait(''); // :4522
+        } // :4522-4524
+        kojo.手淫 = 5; // :4524
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:16`) >= 3 &&
+        (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4526
+        await era.printAndWait(''); // :4527
+        kojo.手淫 = 4; // :4528
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:16`) >= 3 &&
+        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4530
+        await era.printAndWait(''); // :4531
+        kojo.手淫 = 3; // :4532
+      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {
+        // :4534
+        await era.printAndWait(''); // :4535
+        kojo.手淫 = 2; // :4536
+      } // :4535-4539
+      return 0; // :4535-4541
+    } // :4535-4543
+  } // :4537-4543
+
+  if (era_flag.selectcom == 31) {
+    // :4545
+
+    if (kojo.口交_奴 == 0) {
+      // :4547
+
+      if (era0(`talent:${target}:76`) == 1) {
+        // :4549
+        await era.printAndWait(''); // :4550
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4552
+        await era.printAndWait(''); // :4553
+      } else if (era0(`abl:${target}:16`) >= 3) {
+        // :4555
+        await era.printAndWait(''); // :4556
+      } else {
+        // :4555-4561
+        await era.printAndWait(''); // :4559
+      } // :4559-4561
+      kojo.口交_奴 = 1; // :4561
+      return 0; // :4559-4565
+    } else {
+      // :4562-4566
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        era0(`abl:${target}:16`) >= 5 &&
+        (kojo.口交_奴 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4566
+        await era.printAndWait(''); // :4567
+        kojo.口交_奴 = 7; // :4568
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        era0(`abl:${target}:16`) >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4570
+        await era.printAndWait(''); // :4571
+        kojo.口交_奴 = 6; // :4572
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4574
+        await era.printAndWait(''); // :4575
+        kojo.口交_奴 = 5; // :4576
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:16`) == 5 &&
+        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4578
+        await era.print(''); // :4579
+        await era.printAndWait(''); // :4580
+        kojo.口交_奴 = 4; // :4581
+      } else if (
+        era0(`abl:${target}:16`) >= 3 &&
+        (kojo.口交_奴 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4583
+        await era.print(''); // :4584
+        await era.printAndWait(''); // :4585
+        kojo.口交_奴 = 3; // :4586
+      } else if (kojo.口交_奴 <= 1 || game.kojo.口上开关 == 2) {
+        // :4588
+        await era.printAndWait(''); // :4589
+        kojo.口交_奴 = 2; // :4590
+      } // :4589-4593
+      return 0; // :4589-4595
+    } // :4589-4597
+  } // :4591-4597
+
+  if (era_flag.selectcom == 34) {
+    // :4599
+
+    if (kojo.骑乘位 == 0) {
+      // :4601
+
+      if (era0(`talent:${target}:0`) == 1) {
+        // :4603
+
+        if (era0(`talent:${target}:136`) == 1) {
+          // :4605
+          await era.printAndWait(''); // :4606
+        } else if (era0(`talent:${target}:76`) == 1) {
+          // :4608
+          await era.printAndWait(''); // :4609
+        } else if (era0(`talent:${target}:85`) == 1) {
+          // :4611
+          await era.printAndWait(''); // :4612
+        } else {
+          // :4611-4617
+          await era.printAndWait(''); // :4615
+        } // :4615-4617
+      } else {
+        // :4616-4620
+
+        if (era0(`talent:${target}:136`) == 1) {
+          // :4620
+          await era.printAndWait(''); // :4621
+        } else if (era0(`talent:${target}:76`) == 1) {
+          // :4623
+          await era.printAndWait(''); // :4624
+        } else if (era0(`talent:${target}:85`) == 1) {
+          // :4626
+          await era.printAndWait(''); // :4627
+        } else {
+          // :4626-4632
+          await era.printAndWait(''); // :4630
+        } // :4629-4633
+      } // :4630-4634
+      kojo.骑乘位 = 1; // :4633
+      return 0; // :4631-4637
+    } else {
+      // :4634-4638
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.骑乘位 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4638
+        if (rand_n(3) == 0) {
+          // :4639
+          await era.printAndWait(''); // :4640
+        } else if (rand_n(2) == 0) {
+          // :4641
+          await era.printAndWait(''); // :4642
+        } else {
+          // :4640-4646
+          await era.printAndWait(''); // :4644
+        } // :4644-4646
+        kojo.骑乘位 = 7; // :4646
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.骑乘位 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4648
+        if (rand_n(4) == 0) {
+          // :4649
+          await era.printAndWait(''); // :4650
+        } else if (rand_n(3) == 0) {
+          // :4651
+          await era.printAndWait(''); // :4652
+        } else if (rand_n(2) == 0) {
+          // :4653
+          await era.printAndWait(''); // :4654
+        } else {
+          // :4652-4658
+          await era.printAndWait(''); // :4656
+        } // :4656-4658
+        kojo.骑乘位 = 6; // :4658
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.骑乘位 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4660
+        if (rand_n(4) == 0) {
+          // :4661
+          await era.print(''); // :4662
+        } else if (rand_n(3) == 0) {
+          // :4663
+          await era.printAndWait(''); // :4664
+        } else if (rand_n(2) == 0) {
+          // :4665
+          await era.printAndWait(''); // :4666
+        } else {
+          // :4664-4670
+          await era.printAndWait(''); // :4668
+        } // :4668-4670
+        kojo.骑乘位 = 5; // :4670
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        era0(`abl:${target}:2`) >= 3 &&
+        (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4672
+        if (rand_n(4) == 0) {
+          // :4673
+          await era.printAndWait(''); // :4674
+        } else if (rand_n(3) == 0) {
+          // :4675
+          await era.printAndWait(''); // :4676
+        } else if (rand_n(2) == 0) {
+          // :4677
+          await era.printAndWait(''); // :4678
+        } else {
+          // :4676-4682
+          await era.printAndWait(''); // :4680
+        } // :4680-4682
+        kojo.骑乘位 = 4; // :4682
+      } else if (
+        era0(`mark:${target}:2`) == 3 &&
+        (kojo.骑乘位 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4684
+        await era.print(''); // :4685
+        await era.printAndWait(''); // :4686
+        kojo.骑乘位 = 3; // :4687
+      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+        // :4689
+        await era.printAndWait(''); // :4690
+        kojo.骑乘位 = 2; // :4691
+      } // :4690-4694
+      return 0; // :4690-4696
+    } // :4690-4698
+  } // :4692-4698
+
+  if (era_flag.selectcom == 37) {
+    // :4700
+
+    if (kojo.肛门侍奉 == 0) {
+      // :4702
+
+      if (era0(`abl:${target}:16`) >= 3) {
+        // :4704
+        await era.printAndWait(''); // :4705
+      } else {
+        // :4698-4716
+        await era.printAndWait(''); // :4708
+      } // :4698-4720
+      kojo.肛门侍奉 = 1; // :4710
+      return 0; // :4708-4714
+    } else {
+      // :4711-4715
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        era0(`abl:${target}:16`) == 5 &&
+        (kojo.肛门侍奉 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4715
+        await era.printAndWait(''); // :4716
+        kojo.肛门侍奉 = 6; // :4717
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        era0(`abl:${target}:16`) == 5 &&
+        (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4719
+        await era.printAndWait(''); // :4720
+        kojo.肛门侍奉 = 5; // :4721
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:16`) == 5 &&
+        (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4723
+        await era.print(''); // :4724
+        kojo.肛门侍奉 = 4; // :4725
+      } else if (
+        era0(`abl:${target}:16`) >= 3 &&
+        (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4727
+        await era.printAndWait(''); // :4728
+        kojo.肛门侍奉 = 3; // :4729
+      } else if (kojo.肛门侍奉 <= 1 || game.kojo.口上开关 == 2) {
+        // :4731
+        await era.printAndWait(''); // :4732
+        kojo.肛门侍奉 = 2; // :4733
+      } // :4719-4749
+      return 0; // :4719-4751
+    } // :4732-4740
+  } // :4734-4740
+
+  if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`)) {
+    // :4743
+
+    if (kojo.眼罩 == 0) {
+      // :4745
+
+      if (era0(`talent:${target}:136`) == 1) {
+        // :4747
+        await era.printAndWait(''); // :4748
+      } else if (era0(`talent:${target}:76`) == 1) {
+        // :4750
+        await era.printAndWait(''); // :4751
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :4753
+        await era.printAndWait(''); // :4754
+      } else {
+        // :4747-4765
+        await era.printAndWait(''); // :4757
+      } // :4747-4769
+      kojo.眼罩 = 1; // :4759
+      return 0; // :4757-4763
+    } else {
+      // :4760-4764
+
+      if (
+        era0(`talent:${target}:136`) == 1 &&
+        (kojo.眼罩 <= 9 || game.kojo.口上开关 == 2)
+      ) {
+        // :4764
+        await era.printAndWait(''); // :4765
+        kojo.眼罩 = 10; // :4766
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        era0(`abl:${target}:21`) >= 5 &&
+        (kojo.眼罩 <= 8 || game.kojo.口上开关 == 2)
+      ) {
+        // :4768
+        await era.printAndWait(''); // :4769
+        kojo.眼罩 = 9; // :4770
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        era0(`abl:${target}:21`) >= 3 &&
+        (kojo.眼罩 <= 7 || game.kojo.口上开关 == 2)
+      ) {
+        // :4772
+        await era.printAndWait(''); // :4773
+        kojo.眼罩 = 8; // :4774
+      } else if (
+        era0(`talent:${target}:76`) == 1 &&
+        (kojo.眼罩 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :4776
+        await era.printAndWait(''); // :4777
+        kojo.眼罩 = 7; // :4778
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:21`) >= 5 &&
+        (kojo.眼罩 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :4780
+        await era.printAndWait(''); // :4781
+        kojo.眼罩 = 6; // :4782
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        era0(`abl:${target}:21`) >= 3 &&
+        (kojo.眼罩 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :4784
+        await era.printAndWait(''); // :4785
+        kojo.眼罩 = 5; // :4786
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (kojo.眼罩 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :4788
+        await era.printAndWait(''); // :4789
+        kojo.眼罩 = 4; // :4790
+      } else if (
+        era0(`abl:${target}:21`) >= 3 &&
+        (kojo.眼罩 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :4792
+        await era.printAndWait(''); // :4793
+        kojo.眼罩 = 3; // :4794
+      } else if (kojo.眼罩 <= 1 || game.kojo.口上开关 == 2) {
+        // :4796
+        await era.printAndWait(''); // :4797
+        kojo.眼罩 = 2; // :4798
+      } // :4799-4804
+      return 0; // :4800-4804
+    } // :4798-4804
+  } else if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`) == 0) {
+    // :4803
+
+    if (
+      era0(`talent:${target}:136`) == 1 &&
+      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4805
+      await era.printAndWait(''); // :4806
+      kojo.兽奸眼罩 = 4; // :4807
+    } else if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :4809
+      await era.printAndWait(''); // :4810
+      kojo.兽奸眼罩 = 3; // :4811
+    } else if (
+      era0(`talent:${target}:85`) == 1 &&
+      (kojo.肛门侍奉 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :4813
+      await era.printAndWait(''); // :4814
+      kojo.兽奸眼罩 = 2; // :4815
+    } else if (kojo.兽奸眼罩 < 1 || game.kojo.口上开关 == 2) {
+      // :4817
+      await era.printAndWait(''); // :4818
+      kojo.兽奸眼罩 = 1; // :4819
+    } // :4819-4821
+    return 0; // :4819-4823
+  } // :4819-4825
+
+  if (era_flag.selectcom == 56) {
+    // :4828
+
+    if (kojo.交谈 == 0) {
+      // :4830
+      if (era0(`tequip:${target}:53`)) {
+        // :4831
+
+        if (era0(`talent:${target}:136`) == 1) {
+          // :4834
+          await era.printAndWait(
+            `「啊！终于要开拍了吗？这个地方已经等不及想被狗狗射精了呢！」`,
+          ); // :4835
+          await era.printAndWait(
+            `「那么，请大家好好观赏${sc()}跟狗狗的爱爱哦！」`,
+          ); // :4836
+          await era.printAndWait(
+            `${target_name}四肢着地趴在地板上摇晃着屁股，简直就像是条发情的母狗……`,
+          ); // :4837
+        } else if (era0(`talent:${target}:76`) == 1) {
+          // :4839
+          await era.printAndWait(
+            `「普通的做爱影像相信各位观众也都看腻了吧？」`,
+          ); // :4840
+          await era.printAndWait(
+            `「那么，接下来就好好期待人狗交配的场景哦！」`,
+          ); // :4841
+          await era.printAndWait(
+            `${target_name}露出期待的表情，像是迫不及待地舔了舔嘴唇……`,
+          ); // :4842
+        } else if (era0(`talent:${target}:85`) == 1) {
+          // :4844
+          await era.printAndWait(
+            `「如果……魔王大人开心的话…就算是……跟狗……也……」`,
+          ); // :4845
+          await era.printAndWait(
+            `${target_name}低下头来掩饰自己的表情，配合地说着自${sc()}介绍的台词……`,
+          ); // :4846
+        } else {
+          // :4847-4849
+          await era.printAndWait(`「可恶……别拍！变态！去死啊！」`); // :4849
+          await era.printAndWait(
+            `${target_name}十分抗拒被拍摄这件事，愤怒的怒吼着……`,
+          ); // :4850
+        } // :4850-4852
+      } // :4850-4854
+      kojo.交谈 = 1; // :4853
+      return 0; // :4850-4858
+    } else {
+      // :4853-4859
+      if (era0(`tequip:${target}:53`)) {
+        // :4857
+
+        if (
+          era0(`talent:${target}:136`) == 1 &&
+          (kojo.交谈 <= 4 || game.kojo.口上开关 == 2)
+        ) {
+          // :4860
+          await era.printAndWait(
+            `「嘿嘿～跟狗狗交配很舒服哦～只要试过就上瘾了呢♡」`,
+          ); // :4861
+          await era.printAndWait(
+            `${target_name}露出痴迷的表情，像条母狗一样不停地摇摆着屁股……`,
+          ); // :4862
+          kojo.交谈 = 5; // :4863
+        } else if (
+          era0(`talent:${target}:76`) == 1 &&
+          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)
+        ) {
+          // :4865
+          await era.printAndWait(
+            `「偶而换换不同的种族交配也很有意思喔！请尽情地观赏吧♡」`,
+          ); // :4866
+          await era.printAndWait(
+            `「如果大家喜欢这次影像的话，那${sc()}会很开心的呢～」`,
+          ); // :4867
+          await era.printAndWait(
+            `${target_name}摆出诱惑的姿势，熟练地说着介绍的台词……`,
+          ); // :4868
+          kojo.交谈 = 4; // :4869
+        } else if (
+          era0(`talent:${target}:85`) == 1 &&
+          (kojo.交谈 <= 2 || game.kojo.口上开关 == 2)
+        ) {
+          // :4871
+          await era.printAndWait(
+            `「魔王大人……喜欢这种影像吗？那么……${sc()}也……会努力的……」`,
+          ); // :4872
+          await era.printAndWait(
+            `${target_name}露出了微笑，流畅地说着介绍的台词……`,
+          ); // :4873
+          kojo.交谈 = 3; // :4874
+        } else if (kojo.交谈 <= 1 || game.kojo.口上开关 == 2) {
+          // :4876
+          await era.printAndWait(
+            `「这种变态行为还要${sc()}说什么？可以请你去死吗？」`,
+          ); // :4877
+          await era.printAndWait(
+            `${target_name}因为怒气腾腾，对着水晶球恶言恶语着……`,
+          ); // :4878
+          kojo.交谈 = 2; // :4879
+        } // :4878-4882
+      } // :4878-4884
+      return 0; // :4878-4886
+    } // :4879-4887
+  } // :4879-4888
+
+  return 0; // :4879-4888
 }
 
 /**
  * @COLOSSEUM_KOJO_15（:5796 起）：死斗场本地函数（非 family 分发，由
- * kojo_message_com_15 头部守卫 TEQUIP:55 直接调用）。本切片只落地
- * SELECTCOM 55，其余随后续切片。
+ * kojo_message_com_15 头部守卫 TEQUIP:55 直接调用）。
  *
  * @returns {Promise<number>} 0
  */
 async function colosseum_kojo_15() {
   const target = era_flag.target;
-  const target_name = chara_callname(target);
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const assi = era_flag.assi;
+  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+  const sc = () => self_call(target); // %SELF_CALL(A)%：EVENT_K 分发前 TARGET=A（#233）
 
   if (era_flag.selectcom == 55) {
-    // :5800-5803
+    // :5800
+
     if (era0(`base:${target}:1`) <= 0) {
-      // :5802-5803
+      // :5802
       await era.printAndWait(
         `${target_name}摇摇晃晃地站着，好像随时会倒下的样子……`,
       ); // :5803
     } else {
-      // :5803-5804
+      // :5803-5805
       await era.printAndWait(
         `${target_name}强行让自己冷静下来，试图摆脱死斗场气氛的影响……`,
       ); // :5805
-    } // :5805-5806
-    return 0; // :5805-5807
-  } // :5808-5811
+    } // :5805-5807
+    return 0; // :5805-5809
+  } // :5806-5810
 
-  return 0;
+  if (era_flag.selectcom == 56) {
+    // :5812
+
+    if (era0(`base:${target}:1`) <= 0) {
+      // :5814
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :5816
+        await era.printAndWait(`「${assi_name}，这种打斗有意义吗？」`); // :5817
+        await era.printAndWait(
+          `${target_name}已经筋疲力尽，露出了无奈的表情……`,
+        ); // :5818
+      } else {
+        // :5818-5820
+        await era.printAndWait(`「居……居然……要被这种怪物……不！」`); // :5820
+        await era.printAndWait(
+          `一想到呆会可能会发生的景象，筋疲力尽的${target_name}挣扎地想要离开这里……`,
+        ); // :5821
+      } // :5821-5823
+    } else {
+      // :5822-5824
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :5825
+        await era.printAndWait(`「${assi_name}，是你要作为${sc()}的对手吗？」`); // :5826
+        await era.printAndWait(
+          `${target_name}露出疑惑的表情，看着${assi_name}……`,
+        ); // :5827
+      } else {
+        // :5827-5829
+        await era.printAndWait(`「开什么玩笑？要跟这种怪物打斗？」`); // :5829
+        await era.printAndWait(
+          `${target_name}看着对面蠢蠢欲动的怪物，不由自主地皱起了眉头……`,
+        ); // :5830
+      } // :5830-5832
+    } // :5830-5834
+    return 0; // :5830-5836
+  } // :5831-5837
+
+  if (era_flag.selectcom == 31) {
+    // :5839
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5841
+      await era.printAndWait(`「不…唔……唔唔……嗯……啊……不！呜！」`); // :5842
+      await era.print(`${assi_name}粗暴地拉起${target_name}的头发，得意地用`); // :5843
+      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
+        await era.print(`阴茎`); // :5845
+      } // :5845
+      if (
+        era0(`talent:${assi}:121`) != 1 &&
+        era0(`talent:${assi}:122`) != 1 &&
+        era0('item:PBAND') == 1
+      ) {
+        await era.print(`假阳具`); // :5847
+      } // :5847
+      await era.printAndWait(`侵犯着对方的口腔……`); // :5848
+    } else {
+      // :5848-5850
+      await era.printAndWait(`「不…唔……唔唔……嗯……啊……不！呜！」`); // :5850
+      await era.printAndWait(
+        `无力反抗的${target_name}，嘴巴正被怪物们腥臭的肉棒侵犯着……`,
+      ); // :5851
+    } // :5851-5853
+    return 0; // :5851-5855
+  } // :5852-5856
+
+  if (era_flag.selectcom == 5) {
+    // :5858
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5860
+      await era.printAndWait(`「放…放手！……啊！……不……别摸了！……呜！」`); // :5861
+      await era.printAndWait(
+        `${assi_name}像是展示那样，故意粗暴地揉捏着${target_name}的乳房……`,
+      ); // :5862
+    } else {
+      // :5862-5864
+      await era.printAndWait(`「放…放手！……啊！……真……真是恶心！……呜！」`); // :5864
+      await era.printAndWait(
+        `无力反抗的${target_name}，那柔软的乳房正被怪物们揉捏成各种形状……`,
+      ); // :5865
+    } // :5865-5867
+    return 0; // :5865-5869
+  } // :5866-5870
+
+  if (era_flag.selectcom == 21) {
+    // :5872
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5874
+      await era.printAndWait(`「不！不要再插进来了！唔！不……不要啊！！」`); // :5875
+      await era.printAndWait(
+        `无视${target_name}的悲鸣，${assi_name}毫不留情地用力摆动着胯部抽插着……`,
+      ); // :5876
+    } else if (game.train.死斗场敌种 == 206) {
+      // :5878
+      await era.printAndWait(`「不！不要啊！啊啊啊！！坏…坏掉了…啊啊啊！！」`); // :5879
+      await era.printAndWait(
+        `${target_name}发出凄厉的惨叫，肚子鼓成了巨人肉棒的形状……`,
+      ); // :5880
+    } else {
+      // :5879-5883
+      await era.printAndWait(
+        `「不！不要啊！痛！不……不行……不要射在里面……啊啊啊！！」`,
+      ); // :5882
+      await era.printAndWait(
+        `${target_name}的蜜穴被怪物凌虐着，腥臭的精液源源不断地灌进子宫深处的地方……`,
+      ); // :5883
+    } // :5883-5885
+    return 0; // :5883-5887
+  } // :5883-5889
+
+  if (era_flag.selectcom == 27) {
+    // :5891
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5893
+      await era.printAndWait(`「不！不要再插进来了！唔！不……不要啊！！」`); // :5894
+      await era.printAndWait(
+        `无视${target_name}的悲鸣，${assi_name}毫不留情地用力摆动着胯部抽插着……`,
+      ); // :5895
+    } else if (game.train.死斗场敌种 == 206) {
+      // :5897
+      await era.printAndWait(`「不！不要啊！啊啊啊！！坏…坏掉了…啊啊啊！！」`); // :5898
+      await era.printAndWait(
+        `${target_name}发出凄厉的惨叫，肚子鼓成了巨人肉棒的形状……`,
+      ); // :5899
+    } else {
+      // :5898-5902
+      await era.printAndWait(
+        `「不！不要啊！痛！不……不行……不要射在里面……啊啊啊！！」`,
+      ); // :5901
+      await era.printAndWait(
+        `${target_name}的肛穴被怪物凌虐着，腥臭的精液源源不断地灌进直肠深处的地方……`,
+      ); // :5902
+    } // :5902-5904
+    return 0; // :5902-5906
+  } // :5902-5908
+
+  if (era_flag.selectcom == 51) {
+    // :5910
+    await era.printAndWait(`「身体……好……好热！……难道是……媚药？不！啊啊～」`); // :5911
+    return 0; // :5911-5913
+  } // :5911-5915
+
+  return 0; // :5912-5919
 }
 
 /**
  * @KOJO_MESSAGE_COM_15（:406 起）：指令口上。本切片落地四道头部守卫 +
- * SELECTCOM 0–87；其余 SELECTCOM 随后续切片。
+ * SELECTCOM 0–87；DOG / COLOSSEUM 全量已落地。其余随后续切片。
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */

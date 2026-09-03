@@ -1718,3 +1718,140 @@ test('穿环（SELECTCOM 87）：初回助手空 PRINTFORMW；二回目爱慕写
   assert.equal(later.store.get(`cflag:${CID}:348`), 3, '二回目爱慕写 3');
   piercing_state.p = 0;
 });
+
+// —— 切片 6：DOG_KOJO_15 / COLOSSEUM_KOJO_15 全量 ——
+
+test('兽奸爱抚二回目牝犬 + 舔阴初回处女', async () => {
+  const later = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`talent:${CID}:136`, 1);
+    f.store.set(`cflag:${CID}:301`, 1);
+  });
+  await speak_k15(later, seq_rand(0));
+  assert.ok(
+    later.text_lines().some((l) => l.includes('狗狗的皮毛')),
+    '兽奸爱抚二回目牝犬',
+  );
+  assert.equal(later.store.get(`cflag:${CID}:301`), 7, '牝犬 → 7');
+
+  const kuni = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`talent:${CID}:0`, 1);
+  }, 1);
+  await speak_k15(kuni, seq_rand(0));
+  assert.ok(
+    kuni.text_lines().some((l) => l.includes('不可以啊')),
+    '兽奸舔阴初回处女',
+  );
+  assert.equal(kuni.store.get(`cflag:${CID}:302`), 1, '兽奸舔阴初回 → 1');
+});
+
+test('兽奸舔肛写 CFLAG:310；背后位肛交写 CFLAG:328', async () => {
+  const lick = await setup_k15((f) => f.store.set(`tequip:${CID}:89`, 1), 9);
+  await speak_k15(lick, seq_rand(0));
+  assert.ok(
+    lick.text_lines().some((l) => l.includes('好脏')),
+    '兽奸舔肛それ以外',
+  );
+  assert.equal(
+    lick.store.get(`cflag:${CID}:310`),
+    1,
+    '兽奸舔肛写 CFLAG:310（舔肛）',
+  );
+
+  const anal = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`talent:${CID}:136`, 1);
+  }, 27);
+  await speak_k15(anal, seq_rand(0));
+  assert.ok(
+    anal.text_lines().some((l) => l.includes('屁股也请狗狗大人')),
+    '兽奸背后位肛交牝犬',
+  );
+  assert.equal(
+    anal.store.get(`cflag:${CID}:328`),
+    1,
+    '兽奸背后位肛交 → CFLAG:328',
+  );
+});
+
+test('兽奸骑乘位空 PRINTFORMW 仍推进；交谈录像牝犬', async () => {
+  const ride = await setup_k15((f) => f.store.set(`tequip:${CID}:89`, 1), 34);
+  await speak_k15(ride, seq_rand(0));
+  assert.equal(ride.store.get(`cflag:${CID}:335`), 1, '兽奸骑乘位初回 → 1');
+
+  const talk = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`tequip:${CID}:53`, 1);
+    f.store.set(`talent:${CID}:136`, 1);
+  }, 56);
+  await speak_k15(talk, seq_rand(0));
+  assert.ok(
+    talk.text_lines().some((l) => l.includes('终于要开拍了吗')),
+    '兽奸交谈录像牝犬',
+  );
+  assert.equal(talk.store.get(`cflag:${CID}:357`), 1, '兽奸交谈初回 → 1');
+});
+
+test('死斗场交谈：気力>0 助手用 SELF_CALL(A)；非助手骂怪物', async () => {
+  const assi = await setup_k15((f, era_flag) => {
+    f.store.set(`tequip:${CID}:55`, 1);
+    f.store.set(`base:${CID}:1`, 100);
+    era_flag.assi = CID;
+    era_flag.assiplay = 1;
+  }, 56);
+  await speak_k15(assi, seq_rand(0));
+  assert.ok(
+    assi.text_lines().some((l) => l.includes('作为') && l.includes('的对手')),
+    '死斗场交谈助手 SELF_CALL(A)',
+  );
+
+  const solo = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:55`, 1);
+    f.store.set(`base:${CID}:1`, 100);
+  }, 56);
+  await speak_k15(solo, seq_rand(0));
+  assert.ok(
+    solo.text_lines().some((l) => l.includes('这种怪物打斗')),
+    '死斗场交谈非助手',
+  );
+});
+
+test('死斗场口交 PRINT 拼接 + PBAND；背后位巨魔 TFLAG:400==206', async () => {
+  const assi = await setup_k15((f, era_flag) => {
+    f.store.set(`tequip:${CID}:55`, 1);
+    f.store.set('item:PBAND', 1);
+    era_flag.assi = CID;
+    era_flag.assiplay = 1;
+  }, 31);
+  await speak_k15(assi, seq_rand(0));
+  assert.ok(
+    assi.text_lines().some((l) => l.includes('假阳具')),
+    '死斗场口交助手无 121/122 + PBAND → 假阳具',
+  );
+  assert.ok(
+    assi.text_lines().some((l) => l.includes('侵犯着对方的口腔')),
+    'PRINTFORM 拼接尾',
+  );
+
+  const troll = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:55`, 1);
+    f.store.set('tflag:400', 206);
+  }, 21);
+  await speak_k15(troll, seq_rand(0));
+  assert.ok(
+    troll.text_lines().some((l) => l.includes('巨人肉棒')),
+    '死斗场背后位巨魔',
+  );
+});
+
+test('死斗场媚药（SELECTCOM 51）', async () => {
+  const fixture = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:55`, 1);
+  }, 51);
+  await speak_k15(fixture, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('媚药')),
+    '死斗场媚药',
+  );
+});
