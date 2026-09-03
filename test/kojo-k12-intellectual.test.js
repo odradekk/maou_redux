@@ -851,3 +851,17 @@ test('dungeon_victory_k12 源 A（target）HP 低分支', async () => {
     fixture.text_lines().join('\n'),
   );
 });
+
+test('kojo_message_palamcng_12 首超润滑 Lv2（PALAM:3+UP:3 > PALAMLV:2）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('palam:20:3', 300);
+    f.store.set('delta:20:3', 300); // UP:3，合 600 > PALAMLV[2]=500
+    f.store.set('talent:20:85', 1);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.kojo_message_palamcng_12();
+  assert.deepEqual(fixture.text_lines(), [
+    '「从我的阴道里……分泌出了粘液！？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:221'), 1);
+});
