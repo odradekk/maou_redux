@@ -69,6 +69,13 @@ const {
   self_kojo_family,
   dungeon_victory_family,
   dungeon_attack_family,
+  exucution_koujo_family,
+  museum_koujo_family,
+  banishment_koujo_family,
+  public_exucution_koujo_family,
+  grotesque_koujo_family,
+  enterenemy_koujo_family,
+  gohoubi_request_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -6543,6 +6550,13 @@ kojo_message_com_family.register(12, kojo_message_com_12);
 kojo_message_palamcng_family.register(12, kojo_message_palamcng_12);
 kojo_message_markcng_family.register(12, kojo_message_markcng_12);
 self_kojo_family.register(12, self_kojo_k12);
+exucution_koujo_family.register(12, exucution_koujo_k12);
+museum_koujo_family.register(12, museum_koujo_k12);
+banishment_koujo_family.register(12, banishment_koujo_k12);
+public_exucution_koujo_family.register(12, public_exucution_koujo_k12);
+grotesque_koujo_family.register(12, grotesque_koujo_k12);
+enterenemy_koujo_family.register(12, enterenemy_koujo_k12);
+gohoubi_request_koujo_family.register(12, gohoubi_request_koujo_k12);
 ryouzyoku_kojo_family.register(12, dungeon_ryouzyoku_k12);
 ryouzyoku_after_kojo_family.register(12, dungeon_ryouzyoku_after_k12);
 dungeon_victory_family.register(12, dungeon_victory_k12);
@@ -7248,6 +7262,226 @@ async function dungeon_attack_k12(rand) {
   return 0; // :5415-5417
 }
 
+// @EXUCUTION_KOUJO_K12（:5603-5620）：处刑口上。
+async function exucution_koujo_k12(rand) {
+  void rand;
+  const target = era_flag.target;
+  const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
+  if (game.event.犬射精或处刑口上 == 4) {
+    // :5607
+    await era.printAndWait(`「不要啊、${sc()}、要变成白痴了……」`); // :5608
+  } else if (game.event.犬射精或处刑口上 == 5) {
+    // :5610
+    await era.printAndWait(`「嗯……知道了」`); // :5611
+  } else if (game.event.犬射精或处刑口上 == 6) {
+    // :5613
+    await era.printAndWait(`「这样子、好讨厌！」`); // :5614
+  } else if (game.event.犬射精或处刑口上 == 7) {
+    // :5616
+    await era.printAndWait(''); // :5617
+  } // :5618-5620
+}
+
+// @MUSEUM_KOUJO_K12（:5621-5656）：博物馆口上（TFLAG:500 分档）。
+async function museum_koujo_k12(rand) {
+  void rand;
+  if (game.event.博物馆口上 == 0) {
+    // :5625
+    await era.printAndWait(`「不要啊、变成石头什么的……」`); // :5626
+  } else if (game.event.博物馆口上 == 1) {
+    // :5628
+    await era.printAndWait(`「救命！」`); // :5629
+  } else if (game.event.博物馆口上 == 2) {
+    // :5631
+    await era.printAndWait(`「咕、咕欸欸……」`); // :5632
+  } else if (game.event.博物馆口上 == 3) {
+    // :5634
+    await era.printAndWait(`「真是被要求摆出了耻辱的姿势呢…这样就行了吧？」`); // :5635
+  } else if (game.event.博物馆口上 == 4) {
+    // :5637
+    await era.printAndWait(
+      `「身、身体、结构被改变……的感觉、什么的…真是稀奇的…体…验」`,
+    ); // :5638
+  } else if (game.event.博物馆口上 == 5) {
+    // :5640
+    await era.printAndWait(''); // :5641
+  } else if (game.event.博物馆口上 == 6) {
+    // :5643
+    await era.printAndWait(''); // :5644
+  } else if (game.event.博物馆口上 == 7) {
+    // :5646
+    await era.printAndWait(''); // :5647
+  } else if (game.event.博物馆口上 == 8) {
+    // :5649
+    await era.printAndWait(''); // :5650
+  } else if (game.event.博物馆口上 == 9) {
+    // :5652
+    await era.printAndWait(''); // :5653
+  } // :5654-5656
+}
+
+// @BANISHMENT_KOUJO_K12（:5657-5677?）：流放口上（TFLAG:510）。
+async function banishment_koujo_k12(rand) {
+  void rand;
+  const target = era_flag.target;
+  const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
+  if (game.event.流放口上 == 0) {
+    // :5661
+    await era.printAndWait(`「${sc()}的研究、就到此为止了吗……」`); // :5662
+  } else if (game.event.流放口上 == 1) {
+    // :5664
+    await era.printAndWait(''); // :5665
+  } else if (game.event.流放口上 == 2) {
+    // :5667
+    await era.printAndWait(''); // :5668
+  } else if (game.event.流放口上 == 3) {
+    // :5670
+    await era.printAndWait(''); // :5671
+  } else if (game.event.流放口上 == 4) {
+    // :5673
+    await era.printAndWait(''); // :5674
+  } // :5675-5677
+}
+
+// @PUBLIC_EXUCUTION_KOUJO_K12（:5678-5692?）：公开处刑口上（TFLAG:520）。
+async function public_exucution_koujo_k12(rand) {
+  void rand;
+  if (game.event.公开处刑口上 == 0) {
+    // :5682
+    await era.printAndWait(`「咿呀啊～！　救命啊～！」`); // :5683
+  } else if (game.event.公开处刑口上 == 1) {
+    // :5685
+    await era.printAndWait(`「我不想死……谁来救救我……」`); // :5686
+  } else if (game.event.公开处刑口上 == 2) {
+    // :5688
+    await era.printAndWait(''); // :5689
+  } // :5690-5692
+}
+
+// @GROTESQUE_KOUJO_K12（:5693-5719?）：猎奇处刑口上（TFLAG:530）。
+async function grotesque_koujo_k12(rand) {
+  void rand;
+  if (game.event.猎奇处刑口上 == 0) {
+    // :5697
+    await era.printAndWait(''); // :5698
+  } else if (game.event.猎奇处刑口上 == 1) {
+    // :5700
+    await era.printAndWait(''); // :5701
+  } else if (game.event.猎奇处刑口上 == 2) {
+    // :5703
+    await era.printAndWait(''); // :5704
+  } else if (game.event.猎奇处刑口上 == 3) {
+    // :5706
+    await era.printAndWait(''); // :5707
+  } else if (game.event.猎奇处刑口上 == 4) {
+    // :5709
+    await era.printAndWait(''); // :5710
+  } else if (game.event.猎奇处刑口上 == 5) {
+    // :5712
+    await era.printAndWait(''); // :5713
+  } else if (game.event.猎奇处刑口上 == 6) {
+    // :5715
+    await era.printAndWait(''); // :5716
+  } // :5717-5719
+}
+
+// @ENTERENEMY_KOUJO_K12（:5720-5737?）：遭遇敌人口上。
+async function enterenemy_koujo_k12(rand) {
+  void rand;
+  const target = era_flag.target;
+  const a = era_flag.target; // 源 A（目标角色）
+  const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
+  if (era.get(`talent:${a}:21`) == 1 || era.get(`talent:${a}:22`) == 1) {
+    // :5723
+
+    await era.printAndWait(`「${sc(a)}的计算是不会错的」`); // :5725
+  } else if (
+    era.get(`talent:${a}:11`) == 1 ||
+    era.get(`talent:${a}:12`) == 1 ||
+    era.get(`talent:${a}:15`) == 1 ||
+    era.get(`talent:${a}:30`) == 1 ||
+    era.get(`talent:${a}:34`) == 1
+  ) {
+    // :5726
+
+    await era.printAndWait(
+      `「${sc(a)}的计算如果无误的话、魔王的失败已经确定下来了！」`,
+    ); // :5728
+  } else if (era.get(`talent:${a}:10`) == 1 || era.get(`talent:${a}:26`) == 1) {
+    // :5729
+
+    await era.printAndWait(`「如果能再稍微多做点研究就好了……」`); // :5731
+  } else {
+    // :5732-5733
+
+    await era.printAndWait(`「${sc(a)}的胜率有98％哦」`); // :5734
+  } // :5735-5737
+}
+
+// @GOHOUBI_REQUEST_KOUJO_K12（:5738-5783?）：请求褒美口上。
+async function gohoubi_request_koujo_k12(rand) {
+  void rand;
+  const target = era_flag.target;
+  const a = era_flag.target; // 源 A（目标角色）
+  const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
+  if (chara(a).stronghold.要求奖赏 == 0) {
+    // :5741
+
+    await era.printAndWait(`${chara_callname(a)}想要钱的样子`); // :5743
+    await era.printAndWait(`「请给我研究资金！」`); // :5744
+  } else if (
+    chara(a).stronghold.要求奖赏 == 1 ||
+    chara(a).stronghold.要求奖赏 == 2 ||
+    chara(a).stronghold.要求奖赏 == 3
+  ) {
+    // :5745
+
+    await era.print(`${chara_callname(a)}提出了与`); // :5747
+    if (chara(a).stronghold.要求奖赏 == 1) {
+      // :5748
+      await era.print(`狗`); // :5749
+    } else if (chara(a).stronghold.要求奖赏 == 2) {
+      // :5750
+      await era.print(`猪`); // :5751
+    } else if (chara(a).stronghold.要求奖赏 == 3) {
+      // :5752
+      await era.print(`马`); // :5753
+    } // :5754-5755
+    await era.printAndWait(`交尾的要求`); // :5755
+    await era.printAndWait(`「想要继续进行异种交配实验」`); // :5756
+  } else if (chara(a).stronghold.要求奖赏 == 4) {
+    // :5757
+
+    await era.printAndWait(`${chara_callname(a)}想要归来的吻`); // :5759
+    await era.printAndWait(`「你的吻对研究很有帮助」`); // :5760
+  } else if (chara(a).stronghold.要求奖赏 == 5) {
+    // :5761
+
+    await era.printAndWait(`${chara_callname(a)}想要和你做爱`); // :5763
+    await era.printAndWait(`「想要你的精液呢」`); // :5764
+  } else if (chara(a).stronghold.要求奖赏 == 6) {
+    // :5765
+
+    await era.printAndWait(`${chara_callname(a)}想要精液`); // :5767
+    await era.printAndWait(`「一喝下你的精液、头脑就格外清晰呢」`); // :5768
+  } else if (chara(a).stronghold.要求奖赏 == 7) {
+    // :5769
+
+    await era.printAndWait(`${chara_callname(a)}想要开乱交派对`); // :5771
+    await era.printAndWait(`「偶尔也想开开派对试试呢」`); // :5772
+  } else if (chara(a).stronghold.要求奖赏 == 8) {
+    // :5773
+
+    await era.printAndWait(`${chara_callname(a)}想要你的尿液作为报酬`); // :5775
+    await era.printAndWait(`「只要是你的东西不管是什么我都会很开心呢」`); // :5776
+  } else if (chara(a).stronghold.要求奖赏 == 9) {
+    // :5777
+
+    await era.printAndWait(`${chara_callname(a)}想要处男作为报酬`); // :5779
+    await era.printAndWait(`「对不懂性知识的家伙进行教育是${sc(a)}的义务呢」`); // :5780
+  } // :5781-5783
+}
+
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
@@ -7258,6 +7492,13 @@ module.exports = {
   dungeon_ryouzyoku_after_k12,
   dungeon_victory_k12,
   dungeon_attack_k12,
+  exucution_koujo_k12,
+  museum_koujo_k12,
+  banishment_koujo_k12,
+  public_exucution_koujo_k12,
+  grotesque_koujo_k12,
+  enterenemy_koujo_k12,
+  gohoubi_request_koujo_k12,
   dog_kojo_12,
   STUBBED_CALLS,
 };
