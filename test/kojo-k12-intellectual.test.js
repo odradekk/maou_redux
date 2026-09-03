@@ -608,3 +608,59 @@ test('SELECTCOM==19（肛珠）装着二回目淫乱+A感覚Lv3：推进到 7（
   ]);
   assert.equal(fixture.store.get('cflag:20:320'), 7);
 });
+
+test('SELECTCOM==20（正常位）初回处女淫乱：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:0', 1);
+    f.store.set('talent:20:76', 1);
+  }, 20);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「这个我知道、是叫做深度授精式吧？　请让我头一次的受精吧」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:321'), 1);
+});
+
+test('SELECTCOM==21（背后位）妊娠淫乱 RAND=0：推进到 6（人狼尾句）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:322', 1);
+    f.store.set('talent:20:153', 1);
+    f.store.set('talent:20:76', 1);
+    f.store.set('talent:20:种族', 2);
+  }, 21);
+  await speak_k12(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「原来还有会给怀孕的雌性授精的雄性呢……♪」',
+    '智慧完全抛弃了狼人的的自尊心、沦为一头纯粹的母兽了。',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:322'), 6);
+});
+
+test('SELECTCOM==27（背后位肛交）二回目淫乱+A感覚Lv3：原作缺陷写 327', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:328', 1);
+    f.store.set('talent:20:76', 1);
+    f.store.set('abl:20:3', 3);
+  }, 27);
+  await speak_k12(fixture, () => 0);
+  // 源 :1855-1863 判据与写入都是 CFLAG:327（原作缺陷 1:1，非 328）
+  assert.deepEqual(fixture.text_lines(), [
+    '「这、这样子好喜欢～！　野生的、非文明的、下流的姿势……像这样地、被操肛门！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:327'), 7);
+  assert.equal(fixture.store.get('cflag:20:328'), 1);
+});
+
+test('SELECTCOM==30（手淫）爱+侍奉精神Lv5：player 鸡巴四档 RAND=0', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:331', 5);
+    f.store.set('talent:20:85', 1);
+    f.store.set('abl:20:16', 5);
+    f.store.set('talent:0:318', 1); // 玩家鸡巴尺寸 1
+  }, 30);
+  await speak_k12(fixture, () => 0);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('远超平均值的鸡巴')),
+    fixture.text_lines().join('\n'),
+  );
+});
