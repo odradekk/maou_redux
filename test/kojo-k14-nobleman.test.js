@@ -268,12 +268,17 @@ test('EVENTEND 爱（85）体力 500 未満：感谢台词（非魔族档）', a
 
 test('COM 守卫①口塞（TEQUIP:45 && SELECTCOM!=45）return 0', async () => {
   const fixture = await setup_k14((f, era_flag) => {
-    era_flag.selectcom = 45;
+    era_flag.selectcom = 0; // 爱抚（若守卫失效会被推进）
     f.store.set('tequip:20:45', 1);
+    f.store.set('mark:20:2', 2);
   });
   const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
   await kojo_message_com_14(() => 0);
-  assert.equal(fixture.store.get('cflag:20:301'), undefined);
+  assert.equal(
+    fixture.store.get('cflag:20:301'),
+    undefined,
+    '口塞守卫：爱抚不得推进（守卫删松即红）',
+  );
 });
 
 test('COM 守卫②失神（TFLAG:899）return 0', async () => {
@@ -321,7 +326,7 @@ test('COM 肛门爱抚二回目 润滑 Lv2 未満（P<500）：置 303=2（そ�
   assert.equal(fixture.store.get('cflag:20:303'), 2);
 });
 
-test('COM 穿环初回 淫乱＋未装（CFLAG:7 & P==0）：进入装着分档、不置 CFLAG:348', async () => {
+test('COM 穿环初回 淫乱＋未装（CFLAG:7 & P==0）：置 CFLAG:348 = 1', async () => {
   const fixture = await setup_k14((f, era_flag) => {
     era_flag.selectcom = 87;
     f.store.set('talent:20:76', 1);
@@ -332,6 +337,11 @@ test('COM 穿环初回 淫乱＋未装（CFLAG:7 & P==0）：进入装着分档�
   ps.piercing_state.p = 1; // 両乳首
   await kojo_message_com_14(() => 0);
   assert.ok(fixture.text_lines().length >= 1); // 空模板分档至少 1 行
+  assert.equal(
+    fixture.store.get('cflag:20:348'),
+    1,
+    '穿环初回写回 CFLAG:348 = 1',
+  );
 });
 
 // —— S3：DOG / PALAMCNG / MARKCNG / SELF / 迷宫 / 肉便器 / 胜利 / 攻击 / 死斗场 ——
@@ -454,9 +464,10 @@ test('ENTERENEMY 反抗的（TALENT:11）：威势台词', async () => {
     'kojo/kojo-k14-nobleman',
   );
   await enterenemy_koujo_k14(() => 0);
-  assert.ok(
-    fixture.text_lines().some((l) => l.includes('不可原谅')),
-    fixture.text_lines().join('\n'),
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['「魔王！　不可原谅！」'],
+    'ENTERENEMY 反抗的档原文',
   );
 });
 
@@ -468,30 +479,23 @@ test('GOHOUBI_REQUEST CFLAG:504==4：接吻奖励台词（%SAVESTR:A% 渲染）'
     'kojo/kojo-k14-nobleman',
   );
   await gohoubi_request_koujo_k14(() => 0);
-  const lines = fixture.text_lines();
-  assert.ok(
-    lines.some((l) => l.includes('接吻')),
-    lines.join('\n'),
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['貴公子提出了回来之后想与你接吻的奖励。'],
+    'GOHOUBI_REQUEST 接吻(4)档原文（%SAVESTR:A% → 角色称呼）',
   );
-  assert.ok(!lines.some((l) => l.includes('%SAVESTR')), lines.join('\n'));
 });
 
 test('GOBI 语尾 ARG:0==1（得意）：哦~♪', async () => {
   const fixture = await setup_k14();
   const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
   await gobi_koujo_k14(1, () => 0);
-  assert.ok(
-    fixture.text_lines().some((l) => l.includes('哦~♪')),
-    fixture.text_lines().join('\n'),
-  );
+  assert.deepEqual(fixture.text_lines(), ['哦~♪'], 'GOBI 得意档语尾原文');
 });
 
 test('GOBI 语尾 ARG:0==0 随机三选（rand=0 → 啦。）', async () => {
   const fixture = await setup_k14();
   const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
   await gobi_koujo_k14(0, () => 0);
-  assert.ok(
-    fixture.text_lines().some((l) => l.includes('啦。')),
-    fixture.text_lines().join('\n'),
-  );
+  assert.deepEqual(fixture.text_lines(), ['啦。'], 'GOBI 默认档首支原文');
 });
