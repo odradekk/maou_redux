@@ -2867,6 +2867,561 @@ async function kojo_message_com_12(rand) {
     } // :2076-2079
   } // :2077-2079
 
+  if (era_flag.selectcom == 31) {
+    // :2082
+
+    if (kojo.口交_奴 == 0) {
+      // :2084
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :2086
+        await era.printAndWait(`「${sc()}的口活、还没试过吧？」`); // :2087
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :2089
+        await era.printAndWait(`「精液、直接喝下去了呢」`); // :2090
+      } else if (era.get(`abl:${target}:16`) >= 3) {
+        // :2092
+        await era.printAndWait(`「我知道了、口交就行了是吧」`); // :2093
+      } else {
+        // :2095-2096
+        await era.printAndWait(`「这样子去舔什么的……呜诶～」`); // :2096
+      } // :2097-2098
+      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332） // :2098
+      kojo.口交_奴 = 1; // :2098
+      return 0; // :2099-2100
+    } else {
+      // :2101-2102
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2103
+        await era.print(`「嗞噜～、嗞噜～、嗞啾～～……噗哈啊」`); // :2104
+        await era.printAndWait(`${target_name}发出了下流的声音贪求着阴茎`); // :2105
+        // CFLAG:332  = 6（变量语义：CFLAG 族，332） // :2106
+        kojo.口交_奴 = 6; // :2106
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2108
+        await era.printAndWait(`「我要多多练习口交、想学会厉害的口活呢」`); // :2109
+        // CFLAG:332  = 5（变量语义：CFLAG 族，332） // :2110
+        kojo.口交_奴 = 5; // :2110
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2112
+        await era.print(`「哈啊、这个阴茎、刚才也忍不住喷出了精液的样子呢……」`); // :2113
+        await era.printAndWait(`${target_name}发出了下流的声音贪求着阴茎`); // :2114
+        // CFLAG:332  = 4（变量语义：CFLAG 族，332） // :2115
+        kojo.口交_奴 = 4; // :2115
+      } else if (
+        era.get(`abl:${target}:16`) >= 3 &&
+        (kojo.口交_奴 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2117
+        await era.print(`「口交、变的挺擅长了呢」`); // :2118
+        await era.printAndWait(`${target_name}一边这样说着一边用嘴巴含着阴茎`); // :2119
+        // CFLAG:332  = 3（变量语义：CFLAG 族，332） // :2120
+        kojo.口交_奴 = 3; // :2120
+      } else if (kojo.口交_奴 <= 1 || game.kojo.口上开关 == 2) {
+        // :2122
+        await era.printAndWait(
+          `「呜诶……为什么会一跳一跳的呢。不可思议的肉块……」`,
+        ); // :2123
+        // CFLAG:332  = 2（变量语义：CFLAG 族，332） // :2124
+        kojo.口交_奴 = 2; // :2124
+      } // :2125-2130
+      return 0; // :2126-2130
+    } // :2127-2130
+  } // :2128-2130
+
+  if (era_flag.selectcom == 32) {
+    // :2133
+
+    if (kojo.乳交 == 0) {
+      // :2135
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :2137
+        await era.printAndWait(`「${sc()}的乳房、还挺管用的吧」`); // :2138
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :2140
+        await era.printAndWait(`「乳房好用的话、${sc()}、就尽情的使劲蹭了哦」`); // :2141
+      } else if (era.get(`abl:${target}:16`) >= 3) {
+        // :2143
+        await era.printAndWait(`「用乳房摩擦还可以吧……」`); // :2144
+      } else {
+        // :2146-2147
+        await era.printAndWait(`「用胸部来！？　变、变态！」`); // :2147
+      } // :2148-2149
+      // CFLAG:TARGET:333  = 1（变量语义：CFLAG 族，TARGET:333） // :2149
+      kojo.乳交 = 1; // :2149
+      return 0; // :2150-2151
+    } else {
+      // :2152-2153
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2154
+        if (rand_n(2) == 0) {
+          // :2155
+          await era.printAndWait(`「这样挤压着会舒服吗？」`); // :2156
+        } else {
+          // :2157-2158
+          await era.printAndWait(`「快看快看快看。乳房把你的阴茎吞进去了哦」`); // :2158
+        } // :2159-2160
+        // CFLAG:333  = 6（变量语义：CFLAG 族，333） // :2160
+        kojo.乳交 = 6; // :2160
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :2162
+        await era.printAndWait(`「好难啊……你、真的会舒服吗？」`); // :2163
+        // CFLAG:333  = 5（变量语义：CFLAG 族，333） // :2164
+        kojo.乳交 = 5; // :2164
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.乳交 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2166
+        if (rand_n(2) == 0) {
+          // :2167
+          await era.printAndWait(
+            `「我会竭尽全力来奉仕的哦。用${sc()}柔软的乳房！」`,
+          ); // :2168
+        } else {
+          // :2169-2170
+          await era.printAndWait(`「Biu的射出来也行哦？」`); // :2170
+        } // :2171-2172
+        // CFLAG:333  = 4（变量语义：CFLAG 族，333） // :2172
+        kojo.乳交 = 4; // :2172
+      } else if (
+        era.get(`abl:${target}:16`) >= 3 &&
+        (kojo.乳交 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2174
+        await era.printAndWait(`「你、真的有感觉吗？　那就好……」`); // :2175
+        // CFLAG:333  = 3（变量语义：CFLAG 族，333） // :2176
+        kojo.乳交 = 3; // :2176
+      } else if (kojo.乳交 <= 1 || game.kojo.口上开关 == 2) {
+        // :2178
+        await era.printAndWait(`「呜呜、这样子到底有什么好高兴的嘛……」`); // :2179
+        // CFLAG:333  = 2（变量语义：CFLAG 族，333） // :2180
+        kojo.乳交 = 2; // :2180
+      } // :2181-2186
+      return 0; // :2182-2186
+    } // :2183-2186
+  } // :2184-2186
+
+  if (era_flag.selectcom == 33) {
+    // :2189
+
+    if (kojo.股间性交 == 0) {
+      // :2191
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :2193
+        await era.printAndWait(`「快看快看、要进到${sc()}的阴道里去了哦？」`); // :2194
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :2196
+        await era.printAndWait(`「只在表面摩擦吗……好想进到里面去呢」`); // :2197
+      } else {
+        // :2199-2200
+        await era.printAndWait(`「这样摩擦到底有什么好高兴的……」`); // :2200
+      } // :2201-2202
+      // CFLAG:TARGET:334  = 1（变量语义：CFLAG 族，TARGET:334） // :2202
+      kojo.股间性交 = 1; // :2202
+      return 0; // :2203-2204
+    } else {
+      // :2205-2206
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`talent:${target}:0`) == 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2207
+        await era.printAndWait(
+          `「呐、只在表面摩擦你会觉得舒服吗？　${sc()}……对这不是很了解呢」`,
+        ); // :2208
+        // CFLAG:334  = 6（变量语义：CFLAG 族，334） // :2209
+        kojo.股间性交 = 6; // :2209
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.股间性交 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :2211
+        await era.printAndWait(
+          `「呐、只在表面摩擦你会觉得舒服吗？　${sc()}……有点遗憾呢」`,
+        ); // :2212
+        // CFLAG:334  = 5（变量语义：CFLAG 族，334） // :2213
+        kojo.股间性交 = 5; // :2213
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`talent:${target}:0`) == 1 &&
+        (kojo.股间性交 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2215
+        await era.printAndWait(
+          `「${sc()}已经到极限了……明明好想被插进去、明明好想……被插到里面啊！」`,
+        ); // :2216
+        // CFLAG:334  = 4（变量语义：CFLAG 族，334） // :2217
+        kojo.股间性交 = 4; // :2217
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.股间性交 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2219
+        await era.printAndWait(
+          `「假如你、一不小心把你的阴茎插进了${sc()}的阴道里的话……该怎么办呢？　啊哈哈～」`,
+        ); // :2220
+        // CFLAG:334  = 3（变量语义：CFLAG 族，334） // :2221
+        kojo.股间性交 = 3; // :2221
+      } else if (kojo.股间性交 <= 1 || game.kojo.口上开关 == 2) {
+        // :2223
+        await era.printAndWait(`「看起来这样的摩擦让你很高兴嘛……」`); // :2224
+        // CFLAG:334  = 2（变量语义：CFLAG 族，334） // :2225
+        kojo.股间性交 = 2; // :2225
+      } // :2226-2231
+      return 0; // :2227-2231
+    } // :2228-2231
+  } // :2229-2231
+
+  if (era_flag.selectcom == 34) {
+    // :2234
+
+    if (kojo.骑乘位 == 0) {
+      // :2236
+
+      if (era.get(`talent:${target}:0`) == 1) {
+        // :2238
+
+        if (era.get(`talent:${target}:76`) == 1) {
+          // :2240
+          await era.printAndWait(`「我期待已久了！　把你的阴茎、交给我吧」`); // :2241
+        } else if (era.get(`talent:${target}:85`) == 1) {
+          // :2243
+          await era.printAndWait(
+            `「终于、想要让我${sc()}怀孕了吗！　好开心哦」`,
+          ); // :2244
+        } else {
+          // :2246-2247
+          await era.printAndWait(`「让我自己来……你实在太无耻了」`); // :2247
+        } // :2248-2249
+      } else {
+        // :2250-2251
+
+        if (era.get(`talent:${target}:76`) == 1) {
+          // :2252
+          await era.printAndWait(`「嘿诶、这么想让${sc()}来吗」`); // :2253
+        } else if (era.get(`talent:${target}:85`) == 1) {
+          // :2255
+          await era.printAndWait(`「这样子嘎吱嘎吱的……并不讨厌哦」`); // :2256
+        } else {
+          // :2258-2259
+          await era.printAndWait(`「让我自己来……可恶」`); // :2259
+        } // :2260-2262
+      } // :2261-2262
+      // CFLAG:TARGET:335  = 1（变量语义：CFLAG 族，TARGET:335） // :2262
+      kojo.骑乘位 = 1; // :2262
+      return 0; // :2263-2264
+    } else {
+      // :2265-2266
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.骑乘位 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2267
+        if (rand_n(4) == 0) {
+          // :2268
+          await era.printAndWait(`「来吧来吧、更多的从下面来插${sc()}吧！」`); // :2269
+        } else if (rand_n(3) == 0) {
+          // :2270
+          await era.printAndWait(`「${sc()}扭腰的样子、请多多欣赏吧」`); // :2271
+        } else if (rand_n(2) == 0) {
+          // :2272
+          await era.printAndWait(`「停不下来了、你也多用阴茎来顶我吧」`); // :2273
+        } else {
+          // :2274-2275
+          await era.printAndWait(`「哈啊～、从下面、操我吧～♪」`); // :2275
+        } // :2276-2277
+        // CFLAG:335  = 6（变量语义：CFLAG 族，335） // :2277
+        kojo.骑乘位 = 6; // :2277
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.骑乘位 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :2279
+        if (rand_n(4) == 0) {
+          // :2280
+          await era.printAndWait(`「要把精液一滴不剩的榨干哦♪」`); // :2281
+        } else if (rand_n(3) == 0) {
+          // :2282
+          await era.printAndWait(`「快看快看、要出来了哦、精液！」`); // :2283
+        } else if (rand_n(2) == 0) {
+          // :2284
+          await era.printAndWait(`「想更多的被阴茎操呢、啊哈哈～」`); // :2285
+        } else {
+          // :2286-2287
+          await era.printAndWait(
+            `「出来了～！　把精液、更多的、射进来吧！　啊啊啊～♪」`,
+          ); // :2287
+        } // :2288-2289
+        // CFLAG:335  = 5（变量语义：CFLAG 族，335） // :2289
+        kojo.骑乘位 = 5; // :2289
+      } else if (
+        era.get(`mark:${target}:2`) == 3 &&
+        era.get(`abl:${target}:2`) >= 3 &&
+        (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2291
+        if (rand_n(4) == 0) {
+          // :2292
+          await era.printAndWait(`「不行了、${sc()}的腰、自己动起来了！」`); // :2293
+        } else if (rand_n(3) == 0) {
+          // :2294
+          await era.printAndWait(`「竟然……让${sc()}这样做……不过……」`); // :2295
+        } else if (rand_n(2) == 0) {
+          // :2296
+          await era.printAndWait(`「哈啊～、哈啊～、咕呜～♪」`); // :2297
+        } else {
+          // :2298-2299
+          await era.printAndWait(`「不行啊、这样子……往上顶……」`); // :2299
+        } // :2300-2301
+        // CFLAG:335  = 4（变量语义：CFLAG 族，335） // :2301
+        kojo.骑乘位 = 4; // :2301
+      } else if (
+        era.get(`mark:${target}:2`) == 3 &&
+        (kojo.骑乘位 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2303
+        await era.printAndWait(`「唔～……我知道了。跨在你身上就行了吧？」`); // :2304
+        // CFLAG:335  = 3（变量语义：CFLAG 族，335） // :2305
+        kojo.骑乘位 = 3; // :2305
+      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+        // :2307
+        await era.printAndWait(`「竟让${sc()}……这样做……好屈辱～」`); // :2308
+        // CFLAG:335  = 2（变量语义：CFLAG 族，335） // :2309
+        kojo.骑乘位 = 2; // :2309
+      } // :2310-2315
+      return 0; // :2311-2315
+    } // :2312-2315
+  } // :2313-2315
+
+  if (era_flag.selectcom == 35) {
+    // :2318
+
+    if (kojo.全身擦洗 == 0) {
+      // :2320
+
+      if (era.get(`abl:${target}:16`) >= 3) {
+        // :2322
+        await era.printAndWait(`「你喜欢提供这种服务的店吗……？」`); // :2323
+      } else {
+        // :2325-2326
+        await era.printAndWait(`「跟按摩女似的……额」`); // :2326
+      } // :2327-2328
+      // CFLAG:TARGET:336  = 1（变量语义：CFLAG 族，TARGET:336） // :2328
+      kojo.全身擦洗 = 1; // :2328
+      return 0; // :2329-2330
+    } else {
+      // :2331-2332
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.全身擦洗 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :2333
+        await era.printAndWait(
+          `「快看快看、被${sc()}的肌肤哧溜哧溜的摩擦着哦～♪　舒服吗？」`,
+        ); // :2334
+        // CFLAG:336  = 5（变量语义：CFLAG 族，336） // :2335
+        kojo.全身擦洗 = 5; // :2335
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.全身擦洗 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2337
+        await era.printAndWait(`「这身体是只属于你的哦、为了你……嫩呼呼的呢」`); // :2338
+        // CFLAG:336  = 4（变量语义：CFLAG 族，336） // :2339
+        kojo.全身擦洗 = 4; // :2339
+      } else if (
+        era.get(`abl:${target}:16`) >= 3 &&
+        (kojo.全身擦洗 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2341
+        await era.printAndWait(`「变的全是泡泡了呢……舒服吗？」`); // :2342
+        // CFLAG:336  = 3（变量语义：CFLAG 族，336） // :2343
+        kojo.全身擦洗 = 3; // :2343
+      } else if (kojo.全身擦洗 <= 1 || game.kojo.口上开关 == 2) {
+        // :2345
+        await era.printAndWait(`「喂、这样做应该可以了吧……真是的」`); // :2346
+        // CFLAG:336  = 2（变量语义：CFLAG 族，336） // :2347
+        kojo.全身擦洗 = 2; // :2347
+      } // :2348-2353
+      return 0; // :2349-2353
+    } // :2350-2353
+  } // :2351-2353
+
+  if (era_flag.selectcom == 36) {
+    // :2356
+
+    if (kojo.骑乘位肛交 == 0) {
+      // :2358
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :2360
+        await era.printAndWait(`「这样骑在你的身上就好像做梦一样呢」`); // :2361
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :2363
+        await era.printAndWait(`「呜嗯～……用肛门裹住了呢……♪」`); // :2364
+      } else {
+        // :2366-2367
+        await era.printAndWait(`「这么卑劣的肛交还是第一次……」`); // :2367
+      } // :2368-2369
+      // CFLAG:TARGET:337  = 1（变量语义：CFLAG 族，TARGET:337） // :2369
+      kojo.骑乘位肛交 = 1; // :2369
+      return 0; // :2370-2371
+    } else {
+      // :2372-2373
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.骑乘位肛交 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :2374
+        if (rand_n(2) == 0) {
+          // :2375
+          await era.printAndWait(`「不行了、${sc()}的肛门要溶化了啊！」`); // :2376
+        } else {
+          // :2377-2378
+          await era.printAndWait(
+            `「${sc()}、一被串刺着……从肛门到大脑、都在回响！」`,
+          ); // :2378
+        } // :2379-2380
+        // CFLAG:337  = 7（变量语义：CFLAG 族，337） // :2380
+        kojo.骑乘位肛交 = 7; // :2380
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.骑乘位肛交 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2382
+        await era.printAndWait(`「${sc()}一动起来、你就盯着不放呢♪」`); // :2383
+        // CFLAG:337  = 6（变量语义：CFLAG 族，337） // :2384
+        kojo.骑乘位肛交 = 6; // :2384
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.骑乘位肛交 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :2386
+        if (rand_n(2) == 0) {
+          // :2387
+          await era.printAndWait(`「啊啊、难以置信、肛门要溶化了♪」`); // :2388
+        } else {
+          // :2389-2390
+          await era.printAndWait(`「肛、肛门、肛门要……不行～、太有感觉了～♪」`); // :2390
+        } // :2391-2392
+        // CFLAG:337  = 5（变量语义：CFLAG 族，337） // :2392
+        kojo.骑乘位肛交 = 5; // :2392
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.骑乘位肛交 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2394
+        await era.printAndWait(`「肛门含住阴茎的样子、好好看看吧」`); // :2395
+        // CFLAG:337  = 4（变量语义：CFLAG 族，337） // :2396
+        kojo.骑乘位肛交 = 4; // :2396
+      } else if (
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.骑乘位肛交 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2398
+        await era.printAndWait(
+          `「咕呜、像这样的肛交什么的……尽管让${sc()}做吧」`,
+        ); // :2399
+        // CFLAG:337  = 3（变量语义：CFLAG 族，337） // :2400
+        kojo.骑乘位肛交 = 3; // :2400
+      } else if (kojo.骑乘位肛交 <= 1 || game.kojo.口上开关 == 2) {
+        // :2402
+        await era.printAndWait(`「痛、好疼、好痛啊……${sc()}已经不想再做了啊」`); // :2403
+        // CFLAG:337  = 2（变量语义：CFLAG 族，337） // :2404
+        kojo.骑乘位肛交 = 2; // :2404
+      } // :2405-2410
+      return 0; // :2406-2410
+    } // :2407-2410
+  } // :2408-2410
+
+  if (era_flag.selectcom == 37) {
+    // :2413
+
+    if (kojo.肛门侍奉 == 0) {
+      // :2415
+
+      if (era.get(`abl:${target}:16`) >= 3) {
+        // :2417
+        await era.printAndWait(`「竟然要我舔这么脏的地方……你真是变态呢」`); // :2418
+      } else {
+        // :2420-2421
+        await era.printAndWait(`「讨、讨厌、竟然要我舔那种地方……呜呜～」`); // :2421
+      } // :2422-2423
+      // CFLAG:TARGET:338  = 1（变量语义：CFLAG 族，TARGET:338） // :2423
+      kojo.肛门侍奉 = 1; // :2423
+      return 0; // :2424-2425
+    } else {
+      // :2426-2427
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :2428
+        await era.printAndWait(`「这样把舌头伸进肛门、你喜欢吗？」`); // :2429
+        // CFLAG:338  = 5（变量语义：CFLAG 族，338） // :2430
+        kojo.肛门侍奉 = 5; // :2430
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:16`) >= 5 &&
+        (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2432
+        await era.print(`「你的肛门……被${sc()}弄干净了哦♪」`); // :2433
+        // CFLAG:338  = 4（变量语义：CFLAG 族，338） // :2434
+        kojo.肛门侍奉 = 4; // :2434
+      } else if (
+        era.get(`abl:${target}:16`) >= 3 &&
+        (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :2436
+        await era.printAndWait(`「我知道了……舔就行了吧？　有好好洗过吗？」`); // :2437
+        // CFLAG:338  = 3（变量语义：CFLAG 族，338） // :2438
+        kojo.肛门侍奉 = 3; // :2438
+      } else if (kojo.肛门侍奉 <= 1 || game.kojo.口上开关 == 2) {
+        // :2440
+        await era.printAndWait(`「呜呜……咕呜～、呜呜……」`); // :2441
+        // CFLAG:338  = 2（变量语义：CFLAG 族，338） // :2442
+        kojo.肛门侍奉 = 2; // :2442
+      } // :2443-2448
+      return 0; // :2444-2448
+    } // :2445-2448
+  } // :2446-2448
+
   return 0;
 }
 

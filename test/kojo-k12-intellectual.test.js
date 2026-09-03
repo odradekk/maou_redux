@@ -664,3 +664,43 @@ test('SELECTCOM==30（手淫）爱+侍奉精神Lv5：player 鸡巴四档 RAND=0'
     fixture.text_lines().join('\n'),
   );
 });
+
+test('SELECTCOM==32（乳交）原作缺陷：二回目前支判据读 CFLAG:332', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:333', 2);
+    f.store.set('talent:20:76', 1);
+  }, 32);
+  await speak_k12(fixture);
+  // 源 :2154-2164：前两支判据用 CFLAG:332<=5/<=4（口交_奴计数）
+  assert.deepEqual(fixture.text_lines(), ['「好难啊……你、真的会舒服吗？」']);
+  assert.equal(fixture.store.get('cflag:20:333'), 5);
+});
+
+test('SELECTCOM==32（乳交）二回目非淫乱 ABL:16>=3：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:333', 2);
+    f.store.set('abl:20:16', 3);
+  }, 32);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「你、真的有感觉吗？　那就好……」']);
+  assert.equal(fixture.store.get('cflag:20:333'), 3);
+});
+
+test('SELECTCOM==34（骑乘位）初回淫乱：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:76', 1);
+  }, 34);
+  await speak_k12(fixture);
+  assert.equal(fixture.store.get('cflag:20:335'), 1);
+});
+
+test('SELECTCOM==37（肛门侍奉）初回 ABL:16>=3：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('abl:20:16', 3);
+  }, 37);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「竟然要我舔这么脏的地方……你真是变态呢」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:338'), 1);
+});

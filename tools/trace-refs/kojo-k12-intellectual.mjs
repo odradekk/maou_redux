@@ -6896,6 +6896,1459 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2082',
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2084',
+        any: [/^\s*IF CFLAG:TARGET:332 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2086',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2087',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%的口活、还没试过吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2089',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2090',
+        any: [/^\s*PRINTFORMW 「精液、直接喝下去了呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2092',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2093',
+        any: [/^\s*PRINTFORMW 「我知道了、口交就行了是吧」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2095-2096',
+        any: [/^\s*PRINTFORMW 「这样子去舔什么的……呜诶～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2096',
+        any: [/^\s*PRINTFORMW 「这样子去舔什么的……呜诶～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2097-2098',
+        any: [/^\s*CFLAG:TARGET:332 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2098',
+        any: [/^\s*CFLAG:TARGET:332 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2099-2100',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2101-2102',
+        any: [/^\s*;淫乱＋侍奉精神Lv5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2103',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2104',
+        any: [/^\s*PRINTFORML 「嗞噜～、嗞噜～、嗞啾～～……噗哈啊」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2105',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%发出了下流的声音贪求着阴茎\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2106',
+        any: [/^\s*CFLAG:332 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2108',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2109',
+        any: [/^\s*PRINTFORMW 「我要多多练习口交、想学会厉害的口活呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2110',
+        any: [/^\s*CFLAG:332 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2112',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2113',
+        any: [
+          /^\s*PRINTFORML 「哈啊、这个阴茎、刚才也忍不住喷出了精液的样子呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2114',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%发出了下流的声音贪求着阴茎\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2115',
+        any: [/^\s*CFLAG:332 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2117',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2118',
+        any: [/^\s*PRINTFORML 「口交、变的挺擅长了呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2119',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边这样说着一边用嘴巴含着阴茎\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2120',
+        any: [/^\s*CFLAG:332 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2122',
+        any: [/^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2123',
+        any: [
+          /^\s*PRINTFORMW 「呜诶……为什么会一跳一跳的呢。不可思議的肉塊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2124',
+        any: [/^\s*CFLAG:332 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2125-2130',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2126-2130',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2127-2130',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2128-2130',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2133',
+        any: [/^\s*IF SELECTCOM == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2135',
+        any: [/^\s*IF CFLAG:TARGET:333 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2137',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2138',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%的乳房、还挺管用的吧」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2140',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2141',
+        any: [
+          /^\s*PRINTFORMW 「乳房好用的话、%SELF_CALL\(TARGET\)%、就尽情的使劲蹭了哦」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2143',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2144',
+        any: [/^\s*PRINTFORMW 「用乳房摩擦还可以吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2146-2147',
+        any: [/^\s*PRINTFORMW 「用胸部来！？　变、変態！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2147',
+        any: [/^\s*PRINTFORMW 「用胸部来！？　变、変態！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2148-2149',
+        any: [/^\s*CFLAG:TARGET:333 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2149',
+        any: [/^\s*CFLAG:TARGET:333 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2150-2151',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2152-2153',
+        any: [/^\s*;淫乱＋侍奉精神Lv5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2154',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2155',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2156',
+        any: [/^\s*PRINTFORMW 「这样挤压着会舒服吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2157-2158',
+        any: [/^\s*PRINTFORMW 「快看快看快看。乳房把你的阴茎吞进去了哦」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2158',
+        any: [/^\s*PRINTFORMW 「快看快看快看。乳房把你的阴茎吞进去了哦」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2159-2160',
+        any: [/^\s*CFLAG:333 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2160',
+        any: [/^\s*CFLAG:333 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2162',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2163',
+        any: [/^\s*PRINTFORMW 「好难啊……你、真的会舒服吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2164',
+        any: [/^\s*CFLAG:333 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2166',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:333 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2167',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2168',
+        any: [
+          /^\s*PRINTFORMW 「我会竭尽全力来奉仕的哦。用%SELF_CALL\(TARGET\)%柔软的乳房！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2169-2170',
+        any: [/^\s*PRINTFORMW 「Biu的射出来也行哦？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2170',
+        any: [/^\s*PRINTFORMW 「Biu的射出来也行哦？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2171-2172',
+        any: [/^\s*CFLAG:333 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2172',
+        any: [/^\s*CFLAG:333 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2174',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:333 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2175',
+        any: [/^\s*PRINTFORMW 「你、真的有感觉吗？　那就好……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2176',
+        any: [/^\s*CFLAG:333 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2178',
+        any: [/^\s*ELSEIF  CFLAG:333 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2179',
+        any: [/^\s*PRINTFORMW 「呜呜、这样子到底有什么好高兴的嘛……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2180',
+        any: [/^\s*CFLAG:333 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2181-2186',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2182-2186',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2183-2186',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2184-2186',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2189',
+        any: [/^\s*IF SELECTCOM == 33\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2191',
+        any: [/^\s*IF CFLAG:TARGET:334 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2193',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2194',
+        any: [
+          /^\s*PRINTFORMW 「快看快看、要进到%SELF_CALL\(TARGET\)%的阴道里去了哦？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2196',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2197',
+        any: [/^\s*PRINTFORMW 「只在表面摩擦吗……好想进到里面去呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2199-2200',
+        any: [/^\s*PRINTFORMW 「这样摩擦到底有什么好高兴的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2200',
+        any: [/^\s*PRINTFORMW 「这样摩擦到底有什么好高兴的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2201-2202',
+        any: [/^\s*CFLAG:TARGET:334 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2202',
+        any: [/^\s*CFLAG:TARGET:334 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2203-2204',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2205-2206',
+        any: [/^\s*;淫乱\+处女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2207',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2208',
+        any: [
+          /^\s*PRINTFORMW 「呐、只在表面摩擦你会觉得舒服吗？　%SELF_CALL\(TARGET\)%……对这不是很了解呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2209',
+        any: [/^\s*CFLAG:334 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2211',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:334 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2212',
+        any: [
+          /^\s*PRINTFORMW 「呐、只在表面摩擦你会觉得舒服吗？　%SELF_CALL\(TARGET\)%……有点遗憾呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2213',
+        any: [/^\s*CFLAG:334 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2215',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2216',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%已经到极限了……明明好想被插进去、明明好想……被插到里面啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2217',
+        any: [/^\s*CFLAG:334 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2219',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:334 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2220',
+        any: [
+          /^\s*PRINTFORMW 「假如你、一不小心把你的阴茎插进了%SELF_CALL\(TARGET\)%的阴道里的话……该怎么办呢？　啊哈哈～」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2221',
+        any: [/^\s*CFLAG:334 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2223',
+        any: [/^\s*ELSEIF CFLAG:334 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2224',
+        any: [/^\s*PRINTFORMW 「看起来这样的摩擦让你很高兴嘛……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2225',
+        any: [/^\s*CFLAG:334 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2226-2231',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2227-2231',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2228-2231',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2229-2231',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2234',
+        any: [/^\s*IF SELECTCOM == 34\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2236',
+        any: [/^\s*IF CFLAG:TARGET:335 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2238',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2240',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2241',
+        any: [/^\s*PRINTFORMW 「我期待已久了！　把你的阴茎、交给我吧」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2243',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2244',
+        any: [
+          /^\s*PRINTFORMW 「终于、想要让我%SELF_CALL\(TARGET\)%怀孕了吗！　好开心哦」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2246-2247',
+        any: [/^\s*PRINTFORMW 「让我自己来……你实在太无耻了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2247',
+        any: [/^\s*PRINTFORMW 「让我自己来……你实在太无耻了」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2248-2249',
+        any: [/^\s*;非处女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2250-2251',
+        any: [/^\s*;淫乱\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2252',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2253',
+        any: [
+          /^\s*PRINTFORMW 「嘿诶、这么想让%SELF_CALL\(TARGET\)%来吗」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2255',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2256',
+        any: [/^\s*PRINTFORMW 「这样子嘎吱嘎吱的……并不讨厌哦」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2258-2259',
+        any: [/^\s*PRINTFORMW 「让我自己来……可恶」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2259',
+        any: [/^\s*PRINTFORMW 「让我自己来……可恶」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2260-2262',
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2261-2262',
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2262',
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2263-2264',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2265-2266',
+        any: [/^\s*;淫乱\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2267',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2268',
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2269',
+        any: [
+          /^\s*PRINTFORMW 「来吧来吧、更多的从下面来插%SELF_CALL\(TARGET\)%吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2270',
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2271',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%扭腰的样子、请多多欣赏吧」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2272',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2273',
+        any: [/^\s*PRINTFORMW 「停不下来了、你也多用阴茎来顶我吧」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2274-2275',
+        any: [/^\s*PRINTFORMW 「哈啊～、从下面、操我吧～♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2275',
+        any: [/^\s*PRINTFORMW 「哈啊～、从下面、操我吧～♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2276-2277',
+        any: [/^\s*CFLAG:335 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2277',
+        any: [/^\s*CFLAG:335 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2279',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2280',
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2281',
+        any: [/^\s*PRINTFORMW 「要把精液一滴不剩的榨干哦♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2282',
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2283',
+        any: [/^\s*PRINTFORMW 「快看快看、要出来了哦、精液！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2284',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2285',
+        any: [/^\s*PRINTFORMW 「想更多的被阴茎操呢、啊哈哈～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2286-2287',
+        any: [
+          /^\s*PRINTFORMW 「出来了～！　把精液、更多的、射进来吧！　啊啊啊～♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2287',
+        any: [
+          /^\s*PRINTFORMW 「出来了～！　把精液、更多的、射进来吧！　啊啊啊～♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2288-2289',
+        any: [/^\s*CFLAG:335 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2289',
+        any: [/^\s*CFLAG:335 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2291',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2292',
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2293',
+        any: [
+          /^\s*PRINTFORMW 「不行了、%SELF_CALL\(TARGET\)%的腰、自己动起来了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2294',
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2295',
+        any: [
+          /^\s*PRINTFORMW 「竟然……让%SELF_CALL\(TARGET\)%这样做……不过……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2296',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2297',
+        any: [/^\s*PRINTFORMW 「哈啊～、哈啊～、咕呜～♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2298-2299',
+        any: [/^\s*PRINTFORMW 「不行啊、这样子……往上顶……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2299',
+        any: [/^\s*PRINTFORMW 「不行啊、这样子……往上顶……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2300-2301',
+        any: [/^\s*CFLAG:335 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2301',
+        any: [/^\s*CFLAG:335 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2303',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2304',
+        any: [/^\s*PRINTFORMW 「唔～……我知道了。跨在你身上就行了吧？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2305',
+        any: [/^\s*CFLAG:335 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2307',
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2308',
+        any: [
+          /^\s*PRINTFORMW 「竟让%SELF_CALL\(TARGET\)%……这样做……好屈辱～」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2309',
+        any: [/^\s*CFLAG:335 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2310-2315',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2311-2315',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2312-2315',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2313-2315',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2318',
+        any: [/^\s*IF SELECTCOM == 35\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2320',
+        any: [/^\s*IF CFLAG:TARGET:336 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2322',
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2323',
+        any: [/^\s*PRINTFORMW 「你喜欢提供这种服务的店吗……？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2325-2326',
+        any: [/^\s*PRINTFORMW 「跟按摩女似的……额」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2326',
+        any: [/^\s*PRINTFORMW 「跟按摩女似的……额」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2327-2328',
+        any: [/^\s*CFLAG:TARGET:336 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2328',
+        any: [/^\s*CFLAG:TARGET:336 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2329-2330',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2331-2332',
+        any: [/^\s*;淫乱＋侍奉精神Lv5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2333',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:336 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2334',
+        any: [
+          /^\s*PRINTFORMW 「快看快看、被%SELF_CALL\(TARGET\)%的肌肤哧溜哧溜的摩擦着哦～♪　舒服吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2335',
+        any: [/^\s*CFLAG:336 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2337',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:336 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2338',
+        any: [
+          /^\s*PRINTFORMW 「这身体是只属于你的哦、为了你……嫩呼呼的呢」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2339',
+        any: [/^\s*CFLAG:336 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2341',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:336 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2342',
+        any: [/^\s*PRINTFORMW 「变的全是泡泡了呢……舒服吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2343',
+        any: [/^\s*CFLAG:336 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2345',
+        any: [/^\s*ELSEIF  CFLAG:336 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2346',
+        any: [/^\s*PRINTFORMW 「喂、这样做应该可以了吧……真是的」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2347',
+        any: [/^\s*CFLAG:336 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2348-2353',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2349-2353',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2350-2353',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2351-2353',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2356',
+        any: [/^\s*IF SELECTCOM == 36\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2358',
+        any: [/^\s*IF CFLAG:TARGET:337 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2360',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2361',
+        any: [/^\s*PRINTFORMW 「这样骑在你的身上就好像做梦一样呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2363',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2364',
+        any: [/^\s*PRINTFORMW 「呜嗯～……用肛門裹住了呢……♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2366-2367',
+        any: [/^\s*PRINTFORMW 「这么卑劣的肛交还是第一次……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2367',
+        any: [/^\s*PRINTFORMW 「这么卑劣的肛交还是第一次……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2368-2369',
+        any: [/^\s*CFLAG:TARGET:337 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2369',
+        any: [/^\s*CFLAG:TARGET:337 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2370-2371',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2372-2373',
+        any: [/^\s*;淫乱＋A感覚Lv3以上\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2374',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2375',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2376',
+        any: [
+          /^\s*PRINTFORMW 「不行了、%SELF_CALL\(TARGET\)%的肛门要溶化了啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2377-2378',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、一被串刺着……从肛门到大脑、都在回响！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2378',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、一被串刺着……从肛门到大脑、都在回响！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2379-2380',
+        any: [/^\s*CFLAG:337 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2380',
+        any: [/^\s*CFLAG:337 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2382',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:337 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2383',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%一动起来、你就盯着不放呢♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2384',
+        any: [/^\s*CFLAG:337 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2386',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2387',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2388',
+        any: [/^\s*PRINTFORMW 「啊啊、难以置信、肛门要溶化了♪」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2389-2390',
+        any: [
+          /^\s*PRINTFORMW 「肛、肛门、肛门要……不行～、太有感觉了～♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2390',
+        any: [
+          /^\s*PRINTFORMW 「肛、肛门、肛门要……不行～、太有感觉了～♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2391-2392',
+        any: [/^\s*CFLAG:337 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2392',
+        any: [/^\s*CFLAG:337 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2394',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:337 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2395',
+        any: [/^\s*PRINTFORMW 「肛門含住阴茎的样子、好好看看吧」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2396',
+        any: [/^\s*CFLAG:337 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2398',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:337 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2399',
+        any: [
+          /^\s*PRINTFORMW 「咕呜、像这样的肛交什么的……尽管让%SELF_CALL\(TARGET\)%做吧」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2400',
+        any: [/^\s*CFLAG:337 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2402',
+        any: [/^\s*ELSEIF  CFLAG:337 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2403',
+        any: [
+          /^\s*PRINTFORMW 「痛、好疼、好痛啊……%SELF_CALL\(TARGET\)%已经不想再做了啊」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2404',
+        any: [/^\s*CFLAG:337 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2405-2410',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2406-2410',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2407-2410',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2408-2410',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2413',
+        any: [/^\s*IF SELECTCOM == 37\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2415',
+        any: [/^\s*IF CFLAG:TARGET:338 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2417',
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2418',
+        any: [/^\s*PRINTFORMW 「竟然要我舔这么脏的地方……你真是变态呢」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2420-2421',
+        any: [/^\s*PRINTFORMW 「讨、讨厌、竟然要我舔那种地方……呜呜～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2421',
+        any: [/^\s*PRINTFORMW 「讨、讨厌、竟然要我舔那种地方……呜呜～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2422-2423',
+        any: [/^\s*CFLAG:TARGET:338 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2423',
+        any: [/^\s*CFLAG:TARGET:338 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2424-2425',
+        any: [/^\s*;二回目以降\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2426-2427',
+        any: [/^\s*;淫乱＋侍奉精神Lv5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2428',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2429',
+        any: [/^\s*PRINTFORMW 「这样把舌头伸进肛门、你喜欢吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2430',
+        any: [/^\s*CFLAG:338 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2432',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2433',
+        any: [
+          /^\s*PRINTFORML 「你的肛门……被%SELF_CALL\(TARGET\)%弄干净了哦♪」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2434',
+        any: [/^\s*CFLAG:338 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2436',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2437',
+        any: [/^\s*PRINTFORMW 「我知道了……舔就行了吧？　有好好洗过吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2438',
+        any: [/^\s*CFLAG:338 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2440',
+        any: [/^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2441',
+        any: [/^\s*PRINTFORMW 「呜呜……咕呜～、呜呜……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2442',
+        any: [/^\s*CFLAG:338 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2443-2448',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2444-2448',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2445-2448',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '2446-2448',
+        any: [/^\s*;-------------------------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '3538-4348',
         any: [/^\s*@DOG_KOJO_12\s*$/m],
       },
