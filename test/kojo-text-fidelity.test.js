@@ -177,7 +177,11 @@ const ERB_TOKEN_RULES = [
   [
     /^TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎$/,
     'TERN_WEAPON',
-  ], // #242：K11 リリィ 正常位（CFLAG:321），全支复用同一枚局部 weapon
+  ], // #242：K11 リリィ 正常位（CFLAG:321），全支复用同一枚局部 weapon；後背位（CFLAG:322）复用同一记号
+  [
+    /^TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 震动假阳具 # 阴茎$/,
+    'TERN_WEAPON_DOGGY',
+  ], // #242：K11 リリィ 後背位（CFLAG:322），初めて层与二回目助手玛奥淫乱 RAND:2 支用「震动假阳具」变体
 ];
 
 const JS_TOKEN_RULES = [
@@ -276,7 +280,8 @@ const JS_TOKEN_RULES = [
   [/^a_count > 1 \? '射精多次后' : '射精后'$/, 'TERN_A_EJACULATE'],
   [/^a_count > 1 \? '迎来多次绝顶的' : '迎来绝顶的'$/, 'TERN_A_CLIMAX1'],
   [/^a_count > 1 \? '不断迎来绝顶' : '迎来绝顶'$/, 'TERN_A_CLIMAX2'],
-  [/^weapon$/, 'TERN_WEAPON'], // #242：K11 リリィ 正常位（CFLAG:321）
+  [/^weapon$/, 'TERN_WEAPON'], // #242：K11 リリィ 正常位（CFLAG:321）、後背位（CFLAG:322）复用
+  [/^weapon_doggy$/, 'TERN_WEAPON_DOGGY'], // #242：K11 リリィ 後背位（CFLAG:322），震动假阳具变体
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */

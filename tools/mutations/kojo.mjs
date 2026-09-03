@@ -7592,8 +7592,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3309 COM20 weapon 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0`,
-    replace: `      era0(\`talent:\${player}:121\`) === 0 || era0(\`talent:\${player}:122\`) === 0`,
+    find: `    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
+        ? '电动假阳具'
+        : '阴茎';
+    if (kojo.正常位 === 0) {`,
+    replace: `    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 || era0(\`talent:\${player}:122\`) === 0
+        ? '电动假阳具'
+        : '阴茎';
+    if (kojo.正常位 === 0) {`,
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM20 二回目：weapon 三目条件为 &&——TALENT:121/122 一 0 一 1 时须选阴茎',
@@ -7833,6 +7841,265 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM20 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:3 分岔推进到 4',
+  },
+  // ---- SELECTCOM 21（背后位 CFLAG:322，#242） ----
+  {
+    desc: 'M3331 COM21 weapon_doggy 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    const weapon_doggy =
+      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
+        ? '震动假阳具'
+        : '阴茎';`,
+    replace: `    const weapon_doggy =
+      era0(\`talent:\${player}:121\`) === 0 || era0(\`talent:\${player}:122\`) === 0
+        ? '震动假阳具'
+        : '阴茎';`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 初めて：非处女 + 助手玛奥 + 爱慕',
+  },
+  {
+    desc: 'M3332 COM21 初めて 处女判据 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      // :2958-3061 初めて
+      const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
+    replace: `      // :2958-3061 初めて
+      const virgin = era.get(\`talent:\${target}:0\`) === 0;`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 初めて：处女 + 助手玛奥 + 淫乱，weapon_doggy 三目震动假阳具支',
+  },
+  {
+    desc: 'M3333 COM21 初めて CFLAG:322 写错（1 改 0）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 1; // :3057-3060`,
+    replace: `kojo.背后位 = 0; // :3057-3060`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 初めて：处女 + 助手玛奥 + 淫乱，weapon_doggy 三目震动假阳具支',
+  },
+  {
+    desc: 'M3334 COM21 助手玛奥淫乱 CFLAG:322 写错（6 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 6; // :3102-3105`,
+    replace: `kojo.背后位 = 5; // :3102-3105`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
+  },
+  {
+    desc: 'M3335 COM21 助手玛奥爱慕 CFLAG:322 写错（5 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 5; // :3143-3146`,
+    replace: `kojo.背后位 = 4; // :3143-3146`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3336 COM21 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:322 写错（4 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 4; // :3166-3168`,
+    replace: `kojo.背后位 = 3; // :3166-3168`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
+  },
+  {
+    desc: 'M3337 COM21 助手玛奥屈服刻印Lv3 CFLAG:322 写错（3 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 3; // :3175-3176`,
+    replace: `kojo.背后位 = 2; // :3175-3176`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3338 COM21 助手玛奥それ以外 CFLAG:322 写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 2; // :3183-3184`,
+    replace: `kojo.背后位 = 1; // :3183-3184`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：助手玛奥 + それ以外，推进到 2',
+  },
+  {
+    desc: 'M3339 COM21 非助手玛奥淫乱 CFLAG:322 写错（6 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 6; // :3217-3220`,
+    replace: `kojo.背后位 = 5; // :3217-3220`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：非助手玛奥 + 淫乱，推进到 6',
+  },
+  {
+    desc: 'M3340 COM21 非助手玛奥爱慕 CFLAG:322 写错（5 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 5; // :3251-3254`,
+    replace: `kojo.背后位 = 4; // :3251-3254`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：非助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3341 COM21 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:322 写错（4 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 4; // :3271-3273`,
+    replace: `kojo.背后位 = 3; // :3271-3273`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
+  },
+  {
+    desc: 'M3342 COM21 非助手玛奥屈服刻印Lv3 CFLAG:322 写错（3 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 3; // :3279-3280`,
+    replace: `kojo.背后位 = 2; // :3279-3280`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3343 COM21 それ以外 CFLAG:322 写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位 = 2; // :3286-3287`,
+    replace: `kojo.背后位 = 1; // :3286-3287`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：それ以外，推进到 2',
+  },
+  {
+    desc: 'M3344 COM21 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上`,
+    replace: `      } else if (
+        mark(2) === 2 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
+  },
+  {
+    desc: 'M3345 COM21 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      mark(2) === 3 &&
+      chara(target).system.私处感觉 >= 3 &&
+      (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3＋V感覚Lv3以上`,
+    replace: `    } else if (
+      mark(2) === 2 &&
+      chara(target).system.私处感觉 >= 3 &&
+      (kojo.背后位 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3＋V感覚Lv3以上`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
+  },
+  {
+    desc: 'M3346 COM21 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        (kojo.背后位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3`,
+    replace: `      } else if (
+        mark(2) === 2 &&
+        (kojo.背后位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3347 COM21 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      mark(2) === 3 &&
+      (kojo.背后位 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3`,
+    replace: `    } else if (
+      mark(2) === 2 &&
+      (kojo.背后位 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3348 COM21 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.背后位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱`,
+    replace: `      if (
+        era.get(\`talent:\${target}:76\`) === 0 &&
+        (kojo.背后位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
+  },
+  {
+    desc: 'M3349 COM21 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.背后位 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 0 &&
+      (kojo.背后位 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：非助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3350 COM21 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        if (rand_n(3) === 0) {
+          await era.print(
+            \`『哈啊…姐姐的蜜穴…全部由我来填满吧啊啊啊啊…\${heart(1)}』\`,`,
+    replace: `        if (rand_n(3) === 1) {
+          await era.print(
+            \`『哈啊…姐姐的蜜穴…全部由我来填满吧啊啊啊啊…\${heart(1)}』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
+  },
+  {
+    desc: 'M3351 COM21 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (rand_n(3) === 0) {
+        await era.printAndWait(
+          \`「呜……呜啊……这种姿势……好像……狗在交配一样\${heart(1)} 但是……好棒……好舒服\${heart(1)}」\`,`,
+    replace: `      if (rand_n(3) === 1) {
+        await era.printAndWait(
+          \`「呜……呜啊……这种姿势……好像……狗在交配一样\${heart(1)} 但是……好棒……好舒服\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM21 二回目：非助手玛奥 + 淫乱，推进到 6',
+  },
+  {
+    desc: 'M3352 COM21 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              \`「啊啊…哈啊…\${player_name}好厉害\${heart(1)} 我从来不知道…被自己的妹妹侵犯…是这么……舒服的事情啊啊\${heart(1)}」\`,`,
+    replace: `          if (chara(target).system.私处感觉 >= 4) {
+            await era.printAndWait(
+              \`「啊啊…哈啊…\${player_name}好厉害\${heart(1)} 我从来不知道…被自己的妹妹侵犯…是这么……舒服的事情啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
   },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
