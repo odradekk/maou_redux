@@ -55,10 +55,12 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { PALAMLV } = require('#/era-utils/palam-level');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
+const { stub_line } = require('#/utils/stub-line');
 
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
@@ -480,7 +482,323 @@ on('EVENTEND', async () => {
   return 0; // :395-397
 });
 
+/**
+ * @KOJO_MESSAGE_COM_12（:401-3537，指令口上状态机）：SELECTCOM 指令台词，
+ * CFLAG:301 起的计数器（kojo.<字段>）。守卫（:402-426 与 K3/K10 顺序
+ * 不同）：助手跳过守卫整行被注释（1:1 不启用，K12 助手调教不跳过）；
+ * 实际生效：① TEQUIP:45 口塞（SELECTCOM!=45）→ 跳过；② TFLAG:899
+ * 失神 → 跳过；③ TEQUIP:89 → DOG_KOJO_12 真身；④ TEQUIP:55 →
+ * COLOSSEUM_KOJO_12 真身。无崩坏/触手守卫（源如此，1:1）。
+ *
+ * @param {(n: number) => number} [rand] RAND:N 的随机源（缺省均匀随机）
+ * @returns {Promise<number>} 0（TRYCALLFORM 不读返回值）
+ */
+async function kojo_message_com_12(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const kojo = chara(target).kojo;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
+  void target_name; // 后续 SELECTCOM 分支使用（当前 0-2 无正文引用）
+  void rand_n; // 后续 SELECTCOM 分支使用（当前 0-2 无随机支）
+
+  // :404-406 助手跳过守卫整行注释（1:1 不启用）
+  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {
+    // :407-408
+    return 0; // :407-408
+  } // :407-408
+
+  if (game.train.失神) {
+    // :410-411
+    return 0; // :410-411
+  } // :410-411
+
+  if (era.get(`tequip:${target}:89`)) {
+    // :412-415
+    stub_line('DOG_KOJO_12', '兽奸调教中的专用口上');
+    return 0; // :414-416
+  } // :415-416
+
+  if (era.get(`tequip:${target}:55`)) {
+    // :417-420
+    stub_line('COLOSSEUM_KOJO_12', '死斗场调教中的专用口上');
+    return 0; // :419-422
+  } // :420-422
+
+  if (era_flag.selectcom == 0) {
+    // :428
+
+    if (kojo.爱抚 == 0) {
+      // :430
+
+      if (mark(2) >= 2) {
+        // :432
+        await era.printAndWait(
+          `「你知道这个理论吗？　一开始要先抚摸女性的肌肤呢」`,
+        ); // :433
+      } else {
+        // :435-436
+        await era.printAndWait(`「哼、真无聊呢。跟教科书一样的步骤呢」`); // :436
+      } // :437-438
+      // CFLAG:301 = 1
+      kojo.爱抚 = 1; // :438
+      return 0; // :439-440
+    } else if (
+      era.get(`talent:${target}:153`) &&
+      chara(target).event.孩子父亲 == 0
+    ) {
+      // :441 怀孕（主人之子，CFLAG:111==0）特例
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :443
+        await era.printAndWait(`「孩子还在里面看着呢。还请温柔点哦」`); // :444
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :445
+          // 人狼
+          await era.printAndWait(
+            `「如果是像${sc()}一样活泼可爱的孩子就好啦♪」`,
+          ); // :447
+        } // :448-449
+        // CFLAG:301 = 6
+        kojo.爱抚 = 6; // :449
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :451
+        await era.printAndWait(`「又长大了呢、好想快点生下来啊♪」`); // :452
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :453
+          // 人狼
+          await era.printAndWait(
+            `「嗯……就这么抚摸${sc()}的头。叨着『谢谢你怀上孩子哦』」`,
+          ); // :455
+        } else {
+          // :456-457
+          await era.printAndWait(
+            `「嗯……${sc()}好想多做做脚部按摩啊。挺着大肚子可累了」`,
+          ); // :457
+        } // :458-459
+        // CFLAG:301 = 5
+        kojo.爱抚 = 5; // :459
+      } else if (mark(2) == 3 && (kojo.爱抚 <= 3 || game.kojo.口上开关 == 2)) {
+        // :461
+        await era.printAndWait(
+          `「老用这种方式来抚摸、要忍受这种待遇的……可是你的孩子啊。就不能更小心翼翼一些吗？」`,
+        ); // :462
+        // CFLAG:301 = 4
+        kojo.爱抚 = 4; // :463
+      } else if (mark(2) == 2 && (kojo.爱抚 <= 2 || game.kojo.口上开关 == 2)) {
+        // :465
+        await era.printAndWait(`「嗯、咕……别、别摸了啦……」`); // :466
+        // CFLAG:301 = 3
+        kojo.爱抚 = 3; // :467
+      } else if (mark(2) <= 1 && (kojo.爱抚 <= 1 || game.kojo.口上开关 == 2)) {
+        // :469
+        await era.printAndWait(`「就算怀上了你的孩子……也别想让${sc()}动心」`); // :470
+        // CFLAG:301 = 2
+        kojo.爱抚 = 2; // :471
+      } // :472-474
+      return 0; // :473-474
+    } else {
+      // :475-476
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :477
+        await era.printAndWait(
+          `「不要再挑逗我了……明明知道单是这样子已经无法满足我了」`,
+        ); // :478
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :479
+          // 人狼
+          await era.printAndWait(
+            `「知道${sc()}感觉舒服的地方吗？　想让你抚摸喉咙呢♪」`,
+          ); // :481
+        } // :482-483
+        // CFLAG:301 = 6
+        kojo.爱抚 = 6; // :483
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :485
+        await era.printAndWait(`「最近很疲劳呢。谢谢你为我按摩」`); // :486
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :487
+          // 人狼
+          await era.printAndWait(
+            `「嗯……多按摩一下${sc()}的脚吧。散步有些累了」`,
+          ); // :489
+        } else {
+          // :490-491
+          await era.printAndWait(
+            `「嗯……多按摩一下${sc()}的腰吧。在桌子边坐得有些累了」`,
+          ); // :491
+        } // :492-493
+        // CFLAG:301 = 5
+        kojo.爱抚 = 5; // :493
+      } else if (mark(2) == 3 && (kojo.爱抚 <= 3 || game.kojo.口上开关 == 2)) {
+        // :495
+        await era.printAndWait(
+          `「只是被你的手摸着、就想向你屈服了呢……看来${sc()}的计算错误了呢」`,
+        ); // :496
+        // CFLAG:301 = 4
+        kojo.爱抚 = 4; // :497
+      } else if (mark(2) == 2 && (kojo.爱抚 <= 2 || game.kojo.口上开关 == 2)) {
+        // :499
+        await era.printAndWait(`「嗯、唔～……继、继续吧……」`); // :500
+        // CFLAG:301 = 3
+        kojo.爱抚 = 3; // :501
+      } else if (mark(2) <= 1 && (kojo.爱抚 <= 1 || game.kojo.口上开关 == 2)) {
+        // :503
+        await era.printAndWait(
+          `「这种程度全在预料之中呢。${sc()}的心是不会动摇的」`,
+        ); // :504
+        // CFLAG:301 = 2
+        kojo.爱抚 = 2; // :505
+      } // :506-511
+      return 0; // :507-511
+    } // :508-511
+  } // :509-511
+
+  if (era_flag.selectcom == 1) {
+    // :514
+    if (kojo.舔阴 == 0) {
+      // :516
+      if (era.get(`talent:${target}:0`) == 1) {
+        // :518
+        await era.printAndWait(`「哼、性器没被男人碰过真是对不住呢……」`); // :519
+      } else {
+        // :521-522
+        await era.printAndWait(
+          `「喂、不要舔性器！　再怎么说那也是排泄器官！」`,
+        ); // :522
+      } // :523-524
+      // CFLAG:302 = 1
+      kojo.舔阴 = 1; // :524
+      return 0; // :525-526
+    } else {
+      // :527-528
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.舔阴 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :529
+        await era.printAndWait(`「再用力点吸吸淫核……呵呵、勃起来了吧？」`); // :530
+        // CFLAG:302 = 5
+        kojo.舔阴 = 5; // :531
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.舔阴 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :533
+        await era.printAndWait(`「我可以一边看书吗？　这样会轻松点……」`); // :534
+        // CFLAG:302 = 4
+        kojo.舔阴 = 4; // :535
+      } else if (mark(2) == 3 && (kojo.舔阴 <= 2 || game.kojo.口上开关 == 2)) {
+        // :537
+        await era.printAndWait(
+          `「喜欢的话就随便舔吧。${sc()}已经不会再反抗了……」`,
+        ); // :538
+        // CFLAG:302 = 3
+        kojo.舔阴 = 3; // :539
+      } else if (kojo.舔阴 <= 1 || game.kojo.口上开关 == 2) {
+        // :541
+        await era.printAndWait(`「住、住手！　那里的粘膜很敏感啊！」`); // :542
+        // CFLAG:302 = 2
+        kojo.舔阴 = 2; // :543
+      } // :544-549
+      return 0; // :545-549
+    } // :546-549
+  } // :547-549
+
+  if (era_flag.selectcom == 2) {
+    // :552
+    if (kojo.肛门爱抚 == 0) {
+      // :554
+      await era.printAndWait(`「这是在做肛交的准备吗、变态」`); // :555
+      // CFLAG:TARGET:303 = 1
+      kojo.肛门爱抚 = 1; // :556
+      return 0; // :557-558
+    } else {
+      // :559-560
+      const P =
+        (era.get(`palam:${target}:3`) || 0) +
+        (era.get(`delta:${target}:3`) || 0); // :560 PALAM:3 + UP:3
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        P >= PALAMLV[2] &&
+        (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :562
+        await era.printAndWait(
+          `「啊啊～、已经做好肛交的准备了哦！　排泄……不、已经变成性器啦♪」`,
+        ); // :563
+        // CFLAG:303 = 7
+        kojo.肛门爱抚 = 7; // :564
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        P < PALAMLV[2] &&
+        (kojo.肛门爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :566
+        await era.printAndWait(`「抱歉、还很紧……最好、再润滑一下呢」`); // :567
+        // CFLAG:303 = 6
+        kojo.肛门爱抚 = 6; // :568
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        P >= PALAMLV[2] &&
+        (kojo.肛门爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :570
+        await era.printAndWait(
+          `「怎么样、${sc()}的第二性器……这样一来就能肛交了呢♪」`,
+        ); // :571
+        // CFLAG:303 = 5
+        kojo.肛门爱抚 = 5; // :572
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        P < PALAMLV[2] &&
+        (kojo.肛门爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :574
+        await era.printAndWait(`「你、能让我再湿一点吗……里面还没放松下来呢」`); // :575
+        // CFLAG:303 = 4
+        kojo.肛门爱抚 = 4; // :576
+      } else if (
+        P >= PALAMLV[2] &&
+        era.get(`abl:${target}:3`) >= 3 &&
+        (kojo.肛门爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :578
+        await era.printAndWait(
+          `「咕呜～、不行啊……这么湿漉漉下去的话……性器、会变成性器的啊……」`,
+        ); // :579
+        // CFLAG:303 = 3
+        kojo.肛门爱抚 = 3; // :580
+      } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 == 2) {
+        // :582
+        await era.printAndWait(
+          `「不管再怎么玩弄排泄器官、都不会有什么快感的」`,
+        ); // :583
+        // CFLAG:303 = 2
+        kojo.肛门爱抚 = 2; // :584
+      } // :585-590
+      return 0; // :586-590
+    } // :587-590
+  } // :588-590
+
+  return 0;
+}
+
 module.exports = {
   k12_kojo2,
+  kojo_message_com_12,
   STUBBED_CALLS,
 };

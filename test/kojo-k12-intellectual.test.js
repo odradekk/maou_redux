@@ -295,3 +295,123 @@ test('EVENTEND 爱慕低体力：回到研究桌继续工作', async () => {
     '智慧就那样以调教中的姿势回到了研究中的桌子旁，继续开始了工作。',
   ]);
 });
+
+// —— @KOJO_MESSAGE_COM_12：指令口上（S2a：守卫 + SELECTCOM 0/1/2） ——
+
+async function speak_k12(fixture, rand) {
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  return mod.kojo_message_com_12(rand);
+}
+
+test('KOJO_MESSAGE_COM_12 头部守卫① TEQUIP:45（口塞）且 SELECTCOM!=45 跳过', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:45', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:20:301'), undefined);
+});
+
+test('KOJO_MESSAGE_COM_12 头部守卫② TFLAG:899（失神）跳过', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tflag:899', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('KOJO_MESSAGE_COM_12 头部守卫③ TEQUIP:89（兽奸）占位存根', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:89', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '（兽奸调教中的专用口上尚未移植，此处为占位——原作 @DOG_KOJO_12，见 docs/stub-registry.md。）',
+  ]);
+});
+
+test('KOJO_MESSAGE_COM_12 头部守卫④ TEQUIP:55（死斗场）占位存根', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('tequip:20:55', 1);
+  }, 55);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '（死斗场调教中的专用口上尚未移植，此处为占位——原作 @COLOSSEUM_KOJO_12，见 docs/stub-registry.md。）',
+  ]);
+});
+
+test('SELECTCOM==0（爱抚）初回：MARK:2>=2 分档，推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('mark:20:2', 2);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「你知道这个理论吗？　一开始要先抚摸女性的肌肤呢」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:301'), 1);
+});
+
+test('SELECTCOM==0（爱抚）初回：MARK:2<2 分档', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('mark:20:2', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「哼、真无聊呢。跟教科书一样的步骤呢」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:301'), 1);
+});
+
+test('SELECTCOM==0 怀孕分支（TALENT:153 && CFLAG:111==0）爱慕：推进到 5', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:301', 3);
+    f.store.set('talent:20:153', 1);
+    f.store.set('cflag:20:111', 0); // 孩子父亲 = 主人
+    f.store.set('talent:20:85', 1);
+    f.store.set('talent:20:种族', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「又长大了呢、好想快点生下来啊♪」',
+    '「嗯……我好想多做做脚部按摩啊。挺着大肚子可累了」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:301'), 5);
+});
+
+test('SELECTCOM==0 二回目以降淫乱：推进到 6', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:301', 5);
+    f.store.set('talent:20:76', 1);
+    f.store.set('talent:20:种族', 1);
+  }, 0);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「不要再挑逗我了……明明知道单是这样子已经无法满足我了」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:301'), 6);
+});
+
+test('SELECTCOM==1（舔阴）初回处女分档：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:0', 1);
+  }, 1);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「哼、性器没被男人碰过真是对不住呢……」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:302'), 1);
+});
+
+test('SELECTCOM==2（肛门爱抚）二回目淫乱+润滑Lv2：推进到 7', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:303', 1);
+    f.store.set('talent:20:76', 1);
+    f.store.set('palam:20:3', 600);
+    f.store.set('delta:20:3', 0);
+  }, 2);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊～、已经做好肛交的准备了哦！　排泄……不、已经变成性器啦♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:303'), 7);
+});
