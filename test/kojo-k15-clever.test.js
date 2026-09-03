@@ -625,3 +625,418 @@ test('爱抚阶段耗尽后（FLAG:7==1）静默；FLAG:7==2 旁路重出声', a
   );
   assert.equal(repeat.store.get(`cflag:${CID}:301`), 6, '已到顶，不再动');
 });
+
+// —— SELECTCOM 1–12：指令口上（切片 3） ——
+
+test('舔阴初回（CFLAG:302==0）：处女 / 非处女分档 + 推进到 1', async () => {
+  const virgin = await setup_k15((f) => f.store.set(`talent:${CID}:0`, 1), 1);
+  await speak_k15(virgin, seq_rand(0));
+  assert.ok(
+    virgin.text_lines().some((l) => l.includes('真是不敢相信')),
+    '舔阴初回处女台词',
+  );
+  assert.equal(virgin.store.get(`cflag:${CID}:302`), 1, '舔阴初回推进到 1');
+
+  const other = await setup_k15(undefined, 1);
+  await speak_k15(other, seq_rand(0));
+  assert.ok(
+    other.text_lines().some((l) => l.includes('离') && l.includes('远点')),
+    '舔阴初回非处女台词',
+  );
+  assert.equal(
+    other.store.get(`cflag:${CID}:302`),
+    1,
+    '舔阴初回非处女推进到 1',
+  );
+});
+
+test('舔阴二回目以降：淫乱 / 爱慕 / 屈服Lv3 / それ以外', async () => {
+  const whore = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:302`, 1);
+  }, 1);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('湿答答')),
+    '舔阴淫乱台词',
+  );
+  assert.equal(whore.store.get(`cflag:${CID}:302`), 5, '淫乱 → CFLAG:302 = 5');
+
+  const love = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`cflag:${CID}:302`, 1);
+  }, 1);
+  await speak_k15(love, seq_rand(0));
+  assert.ok(
+    love.text_lines().some((l) => l.includes('会流出来')),
+    '舔阴爱慕台词',
+  );
+  assert.equal(love.store.get(`cflag:${CID}:302`), 4, '爱慕 → CFLAG:302 = 4');
+
+  const sub3 = await setup_k15((f) => {
+    f.store.set(`mark:${CID}:2`, 3);
+    f.store.set(`cflag:${CID}:302`, 1);
+  }, 1);
+  await speak_k15(sub3, seq_rand(0));
+  assert.ok(
+    sub3.text_lines().some((l) => l.includes('那个地方')),
+    '舔阴屈服Lv3台词',
+  );
+  assert.equal(sub3.store.get(`cflag:${CID}:302`), 3, '屈服Lv3 → 3');
+
+  const other = await setup_k15((f) => f.store.set(`cflag:${CID}:302`, 1), 1);
+  await speak_k15(other, seq_rand(0));
+  assert.ok(
+    other
+      .text_lines()
+      .some((l) => l.includes('恶心死了') || l.includes('令人作呕')),
+    '舔阴それ以外 PRINTDATAL',
+  );
+  assert.equal(other.store.get(`cflag:${CID}:302`), 2, 'それ以外 → 2');
+});
+
+test('肛门爱抚初回（CFLAG:303==0）推进到 1', async () => {
+  const fixture = await setup_k15(undefined, 2);
+  await speak_k15(fixture, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('在摸哪里')),
+    '肛门爱抚初回台词',
+  );
+  assert.equal(
+    fixture.store.get(`cflag:${CID}:303`),
+    1,
+    '肛门爱抚初回推进到 1',
+  );
+});
+
+test('肛门爱抚二回目以降：润滑分档 + それ以外读 CFLAG:223（源缺陷 1:1）', async () => {
+  const whore_wet = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:303`, 1);
+    f.store.set(`palam:${CID}:3`, 500);
+  }, 2);
+  await speak_k15(whore_wet, seq_rand(0));
+  assert.ok(
+    whore_wet.text_lines().some((l) => l.includes('还想要更多')),
+    '肛门爱抚淫乱+润滑Lv2以上',
+  );
+  assert.equal(
+    whore_wet.store.get(`cflag:${CID}:303`),
+    7,
+    '淫乱+润滑Lv2以上 → CFLAG:303 = 7',
+  );
+
+  const whore_dry = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:303`, 1);
+  }, 2);
+  await speak_k15(whore_dry, seq_rand(0));
+  assert.ok(
+    whore_dry.text_lines().some((l) => l.includes('再伸进来一点')),
+    '肛门爱抚淫乱+润滑Lv2未満',
+  );
+  assert.equal(
+    whore_dry.store.get(`cflag:${CID}:303`),
+    6,
+    '淫乱+润滑Lv2未満 → CFLAG:303 = 6',
+  );
+
+  const other = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:303`, 1);
+    f.store.set(`cflag:${CID}:223`, 2);
+    f.store.set('flag:7', 1);
+  }, 2);
+  await speak_k15(other, seq_rand(0));
+  assert.deepEqual(
+    other.text_lines(),
+    [],
+    '肛门爱抚それ以外读 CFLAG:223：已推进且 FLAG:7==1 时不出声',
+  );
+  assert.equal(
+    other.store.get(`cflag:${CID}:303`),
+    1,
+    'CFLAG:303 状态不动（源读 223 而非 303）',
+  );
+});
+
+test('自慰初回（CFLAG:304==0）推进到 1', async () => {
+  const fixture = await setup_k15(undefined, 3);
+  await speak_k15(fixture, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('怎么会有这种要求')),
+    '自慰初回台词',
+  );
+  assert.equal(fixture.store.get(`cflag:${CID}:304`), 1, '自慰初回推进到 1');
+});
+
+test('自慰二回目以降：淫乱处女 / RAND:2 / それ以外', async () => {
+  const virgin = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`talent:${CID}:0`, 1);
+    f.store.set(`cflag:${CID}:304`, 1);
+  }, 3);
+  await speak_k15(virgin, seq_rand(0));
+  assert.ok(
+    virgin.text_lines().some((l) => l.includes('还没开苞')),
+    '自慰淫乱处女台词',
+  );
+  assert.equal(virgin.store.get(`cflag:${CID}:304`), 9, '淫乱处女 → 9');
+
+  const addict = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`abl:${CID}:31`, 3);
+    f.store.set(`cflag:${CID}:304`, 1);
+  }, 3);
+  await speak_k15(addict, seq_rand(1));
+  assert.ok(
+    addict.text_lines().some((l) => l.includes('被人看着自慰')),
+    '自慰淫乱中毒Lv3 RAND:2 真值臂',
+  );
+  assert.equal(addict.store.get(`cflag:${CID}:304`), 8, '淫乱中毒Lv3 → 8');
+
+  const other = await setup_k15((f) => f.store.set(`cflag:${CID}:304`, 1), 3);
+  await speak_k15(other, seq_rand(0));
+  assert.ok(
+    other.text_lines().some((l) => l.includes('喜欢看这种事情')),
+    '自慰それ以外 RAND:2==0',
+  );
+  assert.equal(other.store.get(`cflag:${CID}:304`), 2, 'それ以外 → 2');
+});
+
+test('胸爱抚初回（CFLAG:306==0）：爱慕 / それ以外', async () => {
+  const love = await setup_k15((f) => f.store.set(`talent:${CID}:85`, 1), 5);
+  await speak_k15(love, seq_rand(0));
+  assert.ok(
+    love.text_lines().some((l) => l.includes('有点害羞')),
+    '胸爱抚初回爱慕台词',
+  );
+  assert.equal(love.store.get(`cflag:${CID}:306`), 1, '胸爱抚初回推进到 1');
+
+  const other = await setup_k15(undefined, 5);
+  await speak_k15(other, seq_rand(0));
+  assert.ok(
+    other.text_lines().some((l) => l.includes('痴汉')),
+    '胸爱抚初回それ以外台词',
+  );
+  assert.equal(
+    other.store.get(`cflag:${CID}:306`),
+    1,
+    '胸爱抚初回非爱慕推进到 1',
+  );
+});
+
+test('胸爱抚二回目以降：淫乱 / 爱慕+ASSIPLAY 不写计数器 / B感覚', async () => {
+  const whore = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:306`, 1);
+  }, 5);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('再') && l.includes('用力')),
+    '胸爱抚淫乱台词',
+  );
+  assert.equal(whore.store.get(`cflag:${CID}:306`), 5, '淫乱 → 5');
+
+  const assi = await setup_k15((f, era_flag) => {
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`cflag:${CID}:306`, 1);
+    era_flag.assiplay = 1;
+  }, 5);
+  await speak_k15(assi, seq_rand(0));
+  assert.ok(
+    assi.text_lines().some((l) => l.includes('注视')),
+    '胸爱抚爱慕+ASSIPLAY 台词',
+  );
+  assert.equal(
+    assi.store.get(`cflag:${CID}:306`),
+    1,
+    '爱慕+ASSIPLAY 不写 CFLAG:306（源未赋值）',
+  );
+
+  const sense = await setup_k15((f) => {
+    f.store.set(`abl:${CID}:1`, 3);
+    f.store.set(`cflag:${CID}:306`, 1);
+  }, 5);
+  await speak_k15(sense, seq_rand(0));
+  assert.ok(
+    sense
+      .text_lines()
+      .some((l) => l.includes('不要再捏乳头') || l.includes('不要再揉胸部')),
+    '胸爱抚 B感覚Lv3 PRINTDATAL',
+  );
+  assert.equal(sense.store.get(`cflag:${CID}:306`), 3, 'B感覚Lv3 → 3');
+});
+
+test('接吻初吻（CFLAG:307==0 && TFLAG:13）：淫乱 / それ以外拼接', async () => {
+  const whore = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set('tflag:13', 1);
+  }, 6);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('早就想跟主人接吻')),
+    '接吻初吻淫乱台词',
+  );
+  assert.equal(whore.store.get(`cflag:${CID}:307`), 1, '初吻推进到 1');
+
+  const other = await setup_k15((f) => f.store.set('tflag:13', 1), 6);
+  await speak_k15(other, seq_rand(0));
+  assert.ok(
+    other.text_lines().some((l) => l.includes('用手模擦')),
+    '接吻初吻それ以外无口塞：拼接擦嘴台词',
+  );
+  assert.ok(
+    other.text_lines().some((l) => l.includes('夺走了初吻')),
+    '接吻初吻それ以外旁白',
+  );
+
+  const gag = await setup_k15((f) => {
+    f.store.set('tflag:13', 1);
+    f.store.set(`tequip:${CID}:44`, 1);
+  }, 6);
+  await speak_k15(gag, seq_rand(0));
+  assert.ok(
+    !gag.text_lines().some((l) => l.includes('用手模擦')),
+    '绳子束缚时 SIF !TEQUIP:44 不拼接擦嘴',
+  );
+});
+
+test('接吻调教初回（CFLAG:307==0 无 TFLAG:13）与二回目以降', async () => {
+  const first = await setup_k15(undefined, 6);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(
+    first.text_lines().some((l) => l.includes('谁要跟你这种')),
+    '接吻调教初回それ以外',
+  );
+  assert.equal(first.store.get(`cflag:${CID}:307`), 1, '调教初回推进到 1');
+
+  const whore = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:307`, 1);
+  }, 6);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('还要')),
+    '接吻二回目淫乱台词',
+  );
+  assert.equal(whore.store.get(`cflag:${CID}:307`), 5, '淫乱 → 5');
+});
+
+test('自己扒开初回推进 CFLAG:308=1；二回目以降误写 CFLAG:306（源缺陷 1:1）', async () => {
+  const first = await setup_k15(undefined, 7);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(
+    first.text_lines().some((l) => l.includes('做这种事情')),
+    '自己扒开初回それ以外',
+  );
+  assert.equal(first.store.get(`cflag:${CID}:308`), 1, '自己扒开初回推进到 1');
+
+  const whore = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:308`, 1);
+  }, 7);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('看清楚里面')),
+    '自己扒开淫乱台词',
+  );
+  assert.equal(
+    whore.store.get(`cflag:${CID}:306`),
+    5,
+    '源误写 CFLAG:306=5（非 308）',
+  );
+  assert.equal(
+    whore.store.get(`cflag:${CID}:308`),
+    1,
+    'CFLAG:308 保持不变（二回目未写）',
+  );
+});
+
+test('插入手指 / 舔肛 / 振动宝石：空 PRINTFORMW 仍推进计数器', async () => {
+  const finger = await setup_k15(undefined, 8);
+  await speak_k15(finger, seq_rand(0));
+  assert.ok(finger.text_lines().includes(''), '插入手指初回空 PRINTFORMW');
+  assert.equal(finger.store.get(`cflag:${CID}:309`), 1, '插入手指初回 → 1');
+
+  const finger2 = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:309`, 1);
+  }, 8);
+  await speak_k15(finger2, seq_rand(0));
+  assert.equal(finger2.store.get(`cflag:${CID}:309`), 5, '插入手指淫乱 → 5');
+
+  const lick = await setup_k15(undefined, 9);
+  await speak_k15(lick, seq_rand(0));
+  assert.equal(lick.store.get(`cflag:${CID}:310`), 1, '舔肛初回 → 1');
+
+  const rotor = await setup_k15(undefined, 10);
+  await speak_k15(rotor, seq_rand(0));
+  assert.equal(rotor.store.get(`cflag:${CID}:311`), 1, '振动宝石初回 → 1');
+});
+
+test('壶虫开始（SELECTCOM 11 && TEQUIP:11）：处女 / 非处女分档', async () => {
+  const virgin = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:11`, 1);
+    f.store.set(`talent:${CID}:0`, 1);
+  }, 11);
+  await speak_k15(virgin, seq_rand(0));
+  assert.ok(
+    virgin.text_lines().some((l) => l.includes('被壶虫破处')),
+    '壶虫处女それ以外台词',
+  );
+  assert.equal(virgin.store.get(`cflag:${CID}:312`), 1, '壶虫初回 → 1');
+
+  const used = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:11`, 1);
+    f.store.set(`talent:${CID}:76`, 1);
+  }, 11);
+  await speak_k15(used, seq_rand(0));
+  assert.ok(
+    used.text_lines().some((l) => l.includes('在里面动')),
+    '壶虫非处女淫乱台词',
+  );
+  assert.equal(used.store.get(`cflag:${CID}:312`), 1, '壶虫非处女初回 → 1');
+});
+
+test('壶虫着脱（SELECTCOM 11 && TEQUIP:11==0）：CFLAG:372', async () => {
+  const whore = await setup_k15((f) => f.store.set(`talent:${CID}:76`, 1), 11);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('拔出来了')),
+    '壶虫着脱淫乱台词',
+  );
+  assert.equal(
+    whore.store.get(`cflag:${CID}:372`),
+    3,
+    '着脱淫乱 → CFLAG:372 = 3',
+  );
+
+  const other = await setup_k15(undefined, 11);
+  await speak_k15(other, seq_rand(0));
+  assert.ok(
+    other.text_lines().some((l) => l.includes('终于')),
+    '壶虫着脱それ以外台词',
+  );
+  assert.equal(other.store.get(`cflag:${CID}:372`), 1, '着脱それ以外 → 1');
+});
+
+test('振动杖初回 / 二回目以降分档', async () => {
+  const first = await setup_k15(undefined, 12);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(
+    first.text_lines().some((l) => l.includes('借助道具')),
+    '振动杖初回それ以外',
+  );
+  assert.equal(first.store.get(`cflag:${CID}:313`), 1, '振动杖初回 → 1');
+
+  const whore = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:313`, 1);
+  }, 12);
+  await speak_k15(whore, seq_rand(0));
+  assert.ok(
+    whore.text_lines().some((l) => l.includes('好有感觉')),
+    '振动杖淫乱台词',
+  );
+  assert.equal(whore.store.get(`cflag:${CID}:313`), 5, '淫乱 → 5');
+});
