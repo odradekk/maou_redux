@@ -706,7 +706,7 @@ test('SELECTCOM==37（肛门侍奉）初回 ABL:16>=3：推进到 1', async () =
 });
 
 test('SELECTCOM==40（打屁股）初回：推进到 1', async () => {
-  const fixture = await setup_k12((f) => {}, 40);
+  const fixture = await setup_k12(() => {}, 40);
   await speak_k12(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '「呀啊～、好痛、住手～、饶了我吧！」',
@@ -739,4 +739,17 @@ test('SELECTCOM==55（交谈）爱慕：推进', async () => {
   await speak_k12(fixture);
   assert.ok(fixture.text_lines().length >= 1);
   assert.ok(fixture.store.get('cflag:20:356') > 0);
+});
+
+test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', async () => {
+  const fixture = await setup_k12(async (f) => {
+    const { piercing_state } = await f.load_module(
+      'system/train/piercing-state',
+    );
+    piercing_state.p = 1;
+    f.store.set('cflag:20:7', 1); // 穿环状态 & p 命中（装着中）
+    f.store.set('talent:20:76', 1);
+  }, 87);
+  await speak_k12(fixture);
+  assert.equal(fixture.store.get('cflag:20:348'), 1);
 });
