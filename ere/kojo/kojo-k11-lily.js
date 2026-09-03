@@ -2,7 +2,7 @@
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
  *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12/13/14/15/16/19/20/21，issue #242，WIP 续轮，进行中）。
+ *       11/12/13/14/15/16/19/20/21/22，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,9 +12,10 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21
- *     二十支 :786-3292——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/
- *     舔肛/振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器/肛珠/正常位/背后位，各含
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22
+ *     二十支 :786-3505——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/
+ *     舔肛/振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器/肛珠/正常位/背后位/
+ *     对面座位，各含
  *     初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6
  *     另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔
  *     TALENT:0，SELECTCOM 11 另含 TEQUIP:11 装备/脱着两态（脱着时用独立
@@ -54,6 +55,18 @@
  *     二回目以降淫乱支的 RAND:2 分支改用第二枚局部 weapon_doggy（同判据，
  *     震动假阳具/阴茎，:2967），源文件里两处三目运算式仅措辞不同（电动/
  *     震动）、判据完全相同，本移植按证据分别保留两枚局部常量，不做归并。
+ *     SELECTCOM 22（对面座位 CFLAG:323，:3298-3505）初めて层处女支
+ *     （TALENT:0）的 PRINTFORMW 原作为空、未填写的模板骨架，本移植按证据
+ *     保留空输出（不落地任何台词）；非处女支按助手玛奥/非助手玛奥×淫乱/
+ *     爱慕/それ以外三选一（6 支平行，比 SELECTCOM 20/21 少一层处女分岔，
+ *     因处女支本身不再按助手玛奥二分）。二回目以降层助手玛奥/非助手玛奥
+ *     两支各按「淫乱→爱慕→屈服刻印Lv3+V感覚Lv3以上→屈服刻印Lv3→それ以外」
+ *     五选一档：助手玛奥支的淫乱/爱慕档为 RAND:3 三选一开场句 + 嵌套 ABL:2
+ *     私处感觉二态追问句，与 SELECTCOM 21 同构；但非助手玛奥支的淫乱/爱慕
+ *     档改为三段式——独立 RAND:3 三选一开场句、独立 ABL:2 二态追问句、
+ *     再一次独立 RAND:3 三选一收尾句，三次判据互不共享同一次随机结果
+ *     （原作字面两次单独的 IF RAND:3==0...ELSEIF RAND:2==0...ELSE 结构，
+ *     本移植对应两次独立 rand_n(3) 调用，1:1 保真，不做合并缓存）。
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -61,8 +74,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 75.6%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 22 起（源文件第 3293 至 10657 行，约 29 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 74.0%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 23 起（源文件第 3506 至 10657 行，约 28 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -85,14 +98,14 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 1625 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * trace-refs/kojo-k11-lily.mjs 的 1726 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
  * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12/13/14/15/16（本轮新增十一支）起改用
  * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
  * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：1434 条恰好命中 1 行/1 段，可视为具备真实
+ * 条锚在源全文里做精确子串计数：1524 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
- * 191 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
+ * 202 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
  * 收窄——60 条来自 WIP 1/N 交付范围（存在标志/@EVENTTRAIN/@K11_KOJO2/
@@ -127,12 +140,23 @@
  * 助手玛奥/非助手玛奥两支的淫乱/爱慕/屈服刻印各档 RAND:3/RAND:2 分岔内，
  * 共用「扶着…的腰，从背后进入了…的蜜穴之中」「一口气贯入到了最里面」等
  * 后背位动作描写的段落，且部分与 SELECTCOM 20 的正常位描写逐字重复，各自
- * 跟随不同的 CFLAG:322 写值与素质判据，无法合并）。SELECTCOM
- * 3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21 内非 print 语句
+ * 跟随不同的 CFLAG:322 写值与素质判据，无法合并）；11 条来自 SELECTCOM 22
+ * （:3300-3340 为初めて层段级概览锚，前 8 行与其余口上文件里同样未填写的
+ * 处女支模板骨架逐字相同，属已知的跨文件模板重复；:3302 为该模板骨架自身
+ * 的空 PRINTFORMW 行，源文件里空 PRINTFORMW 出现 285 处，按 #235 先例整行
+ * 锚定即可、不强求唯一；:3311/3316/3321 为初めて层非处女支助手玛奥三档
+ * 共用同一句「被…抱在腿上，吸吮着乳头的同时侵犯着蜜穴……」收尾描写；
+ * :3426/3432 为二回目以降层助手玛奥それ以外档与非助手玛奥それ以外档共用
+ * 同一句「被…抱在腿上，肆意玩弄着双乳，蜜穴也被持续侵犯着……」；
+ * :3446/3448/3468/3470 为二回目以降层非助手玛奥淫乱/爱慕两档共用同一对
+ * ABL:2 二态追问句「不，不行了……小穴……舒服得……要上天了啊啊啊」/
+ * 「呜啊……小穴……实在是太舒服了啊啊啊」，各自跟随不同的 CFLAG:323 写值
+ * 与素质判据，无法合并）。SELECTCOM
+ * 3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
- * fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 191 条即便
+ * fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 202 条即便
  * 行号漂移，落点也只会落到另一处内容完全相同的复现段落，不会静默通过
  * 成不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者
  * 才是真正的零鉴别力。
@@ -5926,6 +5950,391 @@ async function kojo_message_com_11(rand) {
       kojo.背后位 = 2; // :3286-3287
     }
     return 0; // :3287-3290
+  }
+
+  // :3298-3505 IF SELECTCOM == 22（对面座位 CFLAG:323）
+  if (era_flag.selectcom === 22) {
+    if (kojo.对面座位 === 0) {
+      // :3300-3340 初めて
+      const virgin = era.get(`talent:${target}:0`) === 1;
+      if (virgin) {
+        // 处女（原作模板骨架未填写，PRINTFORMW 无正文）
+        await era.printAndWait(''); // :3302
+      } else {
+        // 非处女
+        if (assi_mao) {
+          if (era.get(`talent:${target}:76`) === 1) {
+            // 淫乱
+            await era.printAndWait(
+              `「呜……呜啊……${heart(1)} ${player_name}……请……请再……${heart(1)}」`,
+            ); // :3309
+            await era.printAndWait(
+              `『啧啧，姐姐哟姐姐${heart(1)} 被这样一舔乳头，下面就夹得更紧了呀${heart(1)}』`,
+            ); // :3310
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在腿上，吸吮着乳头的同时侵犯着蜜穴……`,
+            ); // :3311
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // 爱慕
+            await era.printAndWait(
+              `「呜…呜啊啊……不，不可以……同时进攻……蜜穴和乳头啊啊！」`,
+            ); // :3314
+            await era.printAndWait(
+              `『啧啧，姐姐哟姐姐${heart(1)} 下面就夹得这么紧，乳头是弱点呢${heart(1)}』`,
+            ); // :3315
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在腿上，吸吮着乳头的同时侵犯着蜜穴……`,
+            ); // :3316
+          } else {
+            // それ以外
+            await era.printAndWait(
+              `『姐姐的胸部真可爱，这样被同时侵犯着，感觉很舒服吧♪』`,
+            ); // :3319
+            await era.printAndWait(`「呜……呜呜……为，为什么要……这样！」`); // :3320
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在腿上，吸吮着乳头的同时侵犯着蜜穴……`,
+            ); // :3321
+          }
+        } else {
+          // 淫乱
+          if (era.get(`talent:${target}:76`) === 1) {
+            await era.printAndWait(
+              `「嗯啊……啊啊……顶，顶到最里面了啊啊${heart(1)} 」`,
+            ); // :3326
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在大腿上，随着阴茎一次次顶入蜜穴最深处娇喘着……`,
+            ); // :3327
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // 爱慕
+            await era.printAndWait(
+              `「抱，抱紧我……魔王大人……嗯啊……啊啊${heart(1)}」`,
+            ); // :3330
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在腿上，在交合中不住地喘息着`,
+            ); // :3331
+          } else {
+            // それ以外
+            await era.printAndWait(`「好……好难受……这样姿势……呜呜！」`); // :3334
+            await era.printAndWait(`${target_name}在你的腿上悲惨地呻吟着………`); // :3335
+          }
+        }
+      }
+      kojo.对面座位 = 1; // :3339
+      return 0; // :3339-3340
+    }
+    // :3341-3502 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.对面座位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            `「哈……哈啊……！这样……这样好舒服……${heart(1)} 继续……舔姐姐的乳头吧……${player_name}${heart(1)}」`,
+          ); // :3348
+          await era.print(
+            `『哎呀呀，姐姐居然已经这么淫乱了${heart(1)} 下面吸得紧紧的，真的有那么舒服吗${heart(1)}』`,
+          ); // :3349
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「是……是的……姐姐就是一只淫乱的……母狗啊啊啊…${heart(1)}」`,
+            ); // :3351
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在大腿上，吸吮，舔舐着敏感的乳头，蜜穴也被连续的侵犯着，感受着双倍的快感……`,
+            ); // :3352
+          } else {
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在腿上，同时侵犯着双乳和蜜穴……`,
+            ); // :3354
+          }
+        } else if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「嗯啊……啊啊${heart(1)} 好，好舒服……这个姿势……${heart(1)} 啊啊啊${heart(1)}」`,
+          ); // :3357
+          await era.print(
+            `『我也是啊……这样边抱着边侵犯姐姐……嗯啊啊${heart(1)}』`,
+          ); // :3358
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「再，再深一点……${heart(1)} 顶进姐姐的子宫……也可以的${heart(1)} 啊啊……好棒${heart(1)}」`,
+            ); // :3360
+            await era.printAndWait(
+              `${target_name}蜜穴已经被开发，调教得无比敏感，传来的快感随着妹妹每次挺起腰而愈发强烈……`,
+            ); // :3361
+          } else {
+            await era.printAndWait(
+              `${player_name}抱着${target_name}，一次次挺起腰侵犯着姐姐的蜜穴……`,
+            ); // :3363
+          }
+        } else {
+          await era.printAndWait(
+            `「呜啊……啊啊……不，不行了${heart(1)} 好舒服，好舒服啊啊${heart(1)}」`,
+          ); // :3366
+          await era.print(
+            `『唔哇哇，姐姐不要老是乱动啊，这样插不到最里面了哇！』`,
+          ); // :3367
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「好……好的……我会乖乖的${heart(1)}嗯啊啊……要，要去了……要被妹妹侵犯得……高潮了啊啊${heart(1)}」`,
+            ); // :3369
+            await era.printAndWait(
+              `${target_name}被自己的妹妹侵犯得痴态毕露，已经完全抛却任何尊严了……`,
+            ); // :3370
+          } else {
+            await era.printAndWait(
+              `${player_name}一边抱怨着，一边动着腰，继续侵犯着${target_name}的蜜穴……`,
+            ); // :3372
+          }
+        }
+        kojo.对面座位 = 6; // :3373-3375
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.对面座位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            `「嗯啊……不，不行啊……一边侵犯蜜穴……一边吸着乳头……是犯规的啊啊${heart(1)}」`,
+          ); // :3379
+          await era.print(
+            `『哎嘿嘿${heart(1)} 发现姐姐弱点了呢，胸部一被攻击，小穴就夹得紧紧的${heart(1)}』`,
+          ); // :3380
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「不，不是这样的……呜啊啊……但是，但是……真的好舒服啊啊啊${heart(1)}」`,
+            ); // :3382
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在大腿上，吸吮，舔舐着敏感的乳头，蜜穴也被连续的侵犯着，整个人几乎融化在连绵的快感中了……`,
+            ); // :3383
+          } else {
+            await era.printAndWait(
+              `「才没，没有那样的弱点……呜啊……啊啊${heart(1)}」`,
+            ); // :3385
+            await era.printAndWait(
+              `${target_name}被${player_name}抱在腿上，继续同时侵犯着双乳和蜜穴……`,
+            ); // :3386
+          }
+        } else if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「呜啊……不，不要再，再往里顶了，${player_name}……姐姐的小穴……会坏掉的啊啊！」`,
+          ); // :3389
+          await era.print(
+            `『吓？真的是这样吗？嘴上这么说着，但是我怎么觉得姐姐的下面夹得更紧了呢	？』`,
+          ); // :3390
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「才，才没有……嗯啊……啊啊啊！！插，插到最里面了……好，好舒服啊啊${heart(1)}」`,
+            ); // :3392
+            await era.print(
+              `『嘿嘿，果然很舒服嘛，接下来就要顶到姐姐的子宫口了哦！』`,
+            ); // :3393
+            await era.printAndWait(
+              `${player_name}嬉笑着，挺起腰，继续把阴茎顶入到${target_name}蜜穴更深处……`,
+            ); // :3394
+          } else {
+            await era.printAndWait(
+              `${target_name}交织着痛苦与舒服的表情，与${player_name}尽情享受着的笑颜相映着……`,
+            ); // :3396
+          }
+        } else {
+          await era.printAndWait(
+            `「呜……呜啊啊！被${player_name}……侵犯得……要升天了啊啊${heart(1)}！」`,
+          ); // :3399
+          await era.print(
+            `『哎呀呀，姐姐都舒服成这个样子了，这么喜欢被抱在腿上侵犯吗？』`,
+          ); // :3400
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「嗯啊啊……不，不只是因为这个……更，更因为是被妹妹……被我最爱的${player_name}侵犯着……才更加舒服啊啊！」`,
+            ); // :3402
+            await era.print(
+              `『哎呀呀，听到姐姐这么说，人家很高兴呢，再给姐姐一点奖励好了！顶到子宫口的奖励!${heart(1)}』`,
+            ); // :3403
+            await era.printAndWait(
+              `${player_name}嬉笑着挺起腰，往${target_name}蜜穴的更深处顶入……`,
+            ); // :3404
+          } else {
+            await era.printAndWait(
+              `${target_name}交织着苦闷与舒服的表情，与${player_name}尽情享受着的笑颜相映着……`,
+            ); // :3406
+          }
+        }
+        kojo.对面座位 = 5; // :3407-3409
+      } else if (
+        mark(2) === 3 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.对面座位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「嗯啊……咿啊啊……为，为什么……会这么舒服的！」`,
+          ); // :3413
+          await era.print(
+            `『嘿嘿，姐姐终于坦率地面对自己的欲望了么，我也为姐姐高兴呢${heart(1)}』`,
+          ); // :3414
+          await era.printAndWait(
+            `${player_name}嬉笑着，将${target_name}抱在腿上，更加用力地侵犯着姐姐的蜜穴……`,
+          ); // :3415
+        } else {
+          await era.print(`『姐姐准备被我侵犯到高潮吧♪』`); // :3417
+          await era.printAndWait(
+            `「呜啊……嗯啊啊……感觉好，好奇怪……但是好舒服啊啊！」`,
+          ); // :3418
+          await era.printAndWait(
+            `${target_name}被自己的妹妹持续侵犯着蜜穴，在背德感与快感的双重折磨中呻吟了起来……`,
+          ); // :3419
+        }
+        kojo.对面座位 = 4; // :3419-3421
+      } else if (
+        mark(2) === 3 &&
+        (kojo.对面座位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(
+          `「求，求你了……稍微温柔一点吧……看在我是你的姐姐的份上……」`,
+        ); // :3424
+        await era.print(`『身体放松些啦姐姐，很快就会舒服起来的！』`); // :3425
+        await era.printAndWait(
+          `${target_name}被${player_name}抱在腿上，肆意玩弄着双乳，蜜穴也被持续侵犯着……`,
+        ); // :3426
+        kojo.对面座位 = 3; // :3426-3427
+      } else if (kojo.对面座位 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.print(
+          `『唔哇哇……边侵犯姐姐边把脸埋在姐姐淫乱的大胸部里面……真是太棒了！』`,
+        ); // :3430
+        await era.printAndWait(
+          `「呜……呜呜……求求你了……不要再折磨姐姐了……呜呜呜」`,
+        ); // :3431
+        await era.printAndWait(
+          `${target_name}被${player_name}抱在腿上，肆意玩弄着双乳，蜜穴也被持续侵犯着……`,
+        ); // :3432
+        kojo.对面座位 = 2; // :3432-3433
+      }
+    } else {
+      // 淫乱
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.对面座位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            `「呜……呜啊啊……尽情地，侵犯人家的淫穴吧魔王大人……侵犯到人家彻底坏掉吧啊啊啊${heart(1)} 」`,
+          ); // :3439
+        } else if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「嗯啊……啊啊……顶，顶到最里面了……魔王大人的阴茎……顶到人家的子宫口了啊啊${heart(1)}」`,
+          ); // :3441
+        } else {
+          await era.printAndWait(
+            `「哈啊……哈啊……这样抱着魔王大人做爱……好舒服啊啊${heart(1)}」`,
+          ); // :3443
+        }
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.print(
+            `「不，不行了……小穴……舒服得……要上天了啊啊啊${heart(1)}」`,
+          ); // :3446
+        } else {
+          await era.print(`「呜啊……小穴……实在是太舒服了啊啊啊」`); // :3448
+        }
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在腿上，淫浪的娇喘声伴随着每一次交合响彻整个房间……`,
+          ); // :3451
+        } else if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `${target_name}紧抱着${player_name}，双乳在${player_name}的胸膛上摩擦着……`,
+          ); // :3453
+        } else {
+          await era.printAndWait(
+            `${target_name}享受着交合的极度快感，娇喘声连绵不绝。……`,
+          ); // :3455
+        }
+        kojo.对面座位 = 6; // :3455-3457
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.对面座位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            `「呜……呜啊啊……魔王大人，魔王大人，尽情的侵犯你的性奴${target_name}吧${heart(1)}」`,
+          ); // :3461
+        } else if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「呜啊……顶，顶到……子宫口了啊啊啊${heart(1)}」`,
+          ); // :3463
+        } else {
+          await era.printAndWait(`「魔，魔王大人……在吻我……好幸福……呣呣……」`); // :3465
+        }
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.print(`「呜呜……要，要去了，要去了啊啊啊${heart(1)}」`); // :3468
+        } else {
+          await era.print(`「呜啊……小穴……实在是太舒服了啊啊啊」`); // :3470
+        }
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在腿上，娇喘着享受着交合的快感………`,
+          ); // :3473
+        } else if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `甜美地娇喘声中，${target_name}紧紧抱着${player_name}的身体……`,
+          ); // :3475
+        } else {
+          await era.printAndWait(
+            `${target_name}感受着交合的快感，表情仿佛要融化了一般………`,
+          ); // :3477
+        }
+        kojo.对面座位 = 5; // :3477-3479
+      } else if (
+        mark(2) === 3 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.对面座位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        await era.printAndWait(
+          `「好舒服……已经舒服得……没有办法思考了啊啊啊${heart(1)}」`,
+        ); // :3482
+        if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「呜……呜啊啊……再这样下去……身体就，就再也回不到……以前的样子了……」`,
+          ); // :3484
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在怀里无法挣脱，只能任由阴茎在自己的蜜穴里肆虐着……`,
+          ); // :3485
+        } else {
+          await era.printAndWait(
+            `「呜啊……嗯啊啊……感觉好奇怪……脑袋也是，身体也是……要，要不行了！」`,
+          ); // :3487
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在怀中、随着蜜穴被阴茎一次次顶入，快感也一波波传递向大脑……`,
+          ); // :3488
+        }
+        kojo.对面座位 = 4; // :3488-3490
+      } else if (
+        mark(2) === 3 &&
+        (kojo.对面座位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(`「饶，饶了我吧……魔王大人……已经不行了……」`); // :3493
+        await era.printAndWait(
+          `${target_name}被${player_name}强行抱在怀里蹂躏着蜜穴，只能边呻吟边拼命忍耐着`,
+        ); // :3494
+        kojo.对面座位 = 3; // :3494-3495
+      } else if (kojo.对面座位 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(
+          `「呜……呜啊啊，好痛……不，不能再进去了……呜呜！」`,
+        ); // :3498
+        await era.printAndWait(
+          `${player_name}过于激烈的动作让${target_name}痛苦地悲鸣了起来……`,
+        ); // :3499
+        kojo.对面座位 = 2; // :3499-3500
+      }
+    }
+    return 0; // :3500-3503
   }
 
   return 0;
