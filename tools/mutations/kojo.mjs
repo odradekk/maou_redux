@@ -8385,6 +8385,379 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       'COM22 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉门槛可控',
   },
+  // ---- SELECTCOM 23（背面座位 CFLAG:324，#242） ----
+  {
+    desc: 'M3375 COM23 初めて 处女判据 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      // :3512-3556 初めて
+      const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
+    replace: `      // :3512-3556 初めて
+      const virgin = era.get(\`talent:\${target}:0\`) === 0;`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 初めて：非处女 + 助手玛奥 + 淫乱',
+  },
+  {
+    desc: 'M3376 COM23 初めて CFLAG:324 写错（1 改 0）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 1; // :3557`,
+    replace: `kojo.背面座位 = 0; // :3557`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 初めて：处女支为空模板骨架，无输出但仍推进 CFLAG:324',
+  },
+  {
+    desc: 'M3377 COM23 助手玛奥淫乱 CFLAG:324 写错（6 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 6; // :3594-3597`,
+    replace: `kojo.背面座位 = 5; // :3594-3597`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
+  },
+  {
+    desc: 'M3378 COM23 助手玛奥爱慕 CFLAG:324 写错（5 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 5; // :3629-3632`,
+    replace: `kojo.背面座位 = 4; // :3629-3632`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3379 COM23 助手玛奥屈服刻印Lv3＋V感覚 CFLAG:324 写错（4 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 4; // :3642-3643`,
+    replace: `kojo.背面座位 = 3; // :3642-3643`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M3380 COM23 助手玛奥屈服刻印Lv3 CFLAG:324 写错（3 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 3; // :3648-3650`,
+    replace: `kojo.背面座位 = 2; // :3648-3650`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3381 COM23 助手玛奥それ以外 CFLAG:324 写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 2; // :3655-3657`,
+    replace: `kojo.背面座位 = 1; // :3655-3657`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：助手玛奥 + それ以外，推进到 2',
+  },
+  {
+    desc: 'M3382 COM23 非助手玛奥淫乱 CFLAG:324 写错（6 改 5）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 6; // :3690-3693`,
+    replace: `kojo.背面座位 = 5; // :3690-3693`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 淫乱，RAND:3==0 开场句 + ABL:2 达门槛',
+  },
+  {
+    desc: 'M3383 COM23 非助手玛奥爱慕 CFLAG:324 写错（5 改 4）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 5; // :3724-3727`,
+    replace: `kojo.背面座位 = 4; // :3724-3727`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：非助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3384 COM23 非助手玛奥屈服刻印Lv3＋V感覚 CFLAG:324 写错（4 改 3）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 4; // :3741-3742`,
+    replace: `kojo.背面座位 = 3; // :3741-3742`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
+  },
+  {
+    desc: 'M3385 COM23 非助手玛奥屈服刻印Lv3 CFLAG:324 写错（3 改 2）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 3; // :3746-3748`,
+    replace: `kojo.背面座位 = 2; // :3746-3748`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3386 COM23 それ以外 CFLAG:324 写错（2 改 1）（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位 = 2; // :3751-3753`,
+    replace: `kojo.背面座位 = 1; // :3751-3753`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：それ以外，推进到 2',
+  },
+  {
+    desc: 'M3387 COM23 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.背面座位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.print(\`「好舒服……已经没有办法思考了啊啊啊\${heart(1)}」\`); // :3636`,
+    replace: `      } else if (
+        mark(2) === 2 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.背面座位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.print(\`「好舒服……已经没有办法思考了啊啊啊\${heart(1)}」\`); // :3636`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M3388 COM23 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.背面座位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.print(
+            \`「不，不行了……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,`,
+    replace: `      } else if (
+        mark(2) === 2 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.背面座位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.print(
+            \`「不，不行了……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
+  },
+  {
+    desc: 'M3389 COM23 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        (kojo.背面座位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(
+          \`「呜……呜啊……不，不能再往里顶了……会，会坏掉的！」\`,`,
+    replace: `      } else if (
+        mark(2) === 2 &&
+        (kojo.背面座位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(
+          \`「呜……呜啊……不，不能再往里顶了……会，会坏掉的！」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3390 COM23 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        mark(2) === 3 &&
+        (kojo.背面座位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(\`「饶，饶了我吧……真的要……坏掉了！」\`); // :3745`,
+    replace: `      } else if (
+        mark(2) === 2 &&
+        (kojo.背面座位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.printAndWait(\`「饶，饶了我吧……真的要……坏掉了！」\`); // :3745`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
+  },
+  {
+    desc: 'M3391 COM23 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.背面座位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`『双腿分开些啊姐姐，好好让魔王大人看看你的淫乱模样♪』\`,`,
+    replace: `      if (
+        era.get(\`talent:\${target}:76\`) === 0 &&
+        (kojo.背面座位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`『双腿分开些啊姐姐，好好让魔王大人看看你的淫乱模样♪』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
+  },
+  {
+    desc: 'M3392 COM23 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.背面座位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            \`「呜啊……魔王大人……不，不可以……同时攻击胸部和小穴……啊啊啊\${heart(1)}」\`,`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 0 &&
+        (kojo.背面座位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            \`「呜啊……魔王大人……不，不可以……同时攻击胸部和小穴……啊啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：非助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3393 COM23 助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 淫乱
+        if (rand_n(3) === 0) {
+          await era.print(
+            \`『双腿分开些啊姐姐，好好让魔王大人看看你的淫乱模样♪』\`,`,
+    replace: `        // 淫乱
+        if (rand_n(3) === 1) {
+          await era.print(
+            \`『双腿分开些啊姐姐，好好让魔王大人看看你的淫乱模样♪』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
+  },
+  {
+    desc: 'M3394 COM23 助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          ); // :3566
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              \`「不，不行了……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,`,
+    replace: `          ); // :3566
+          if (chara(target).system.私处感觉 >= 4) {
+            await era.printAndWait(
+              \`「不，不行了……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 + ABL:2 达门槛时选中体感句',
+  },
+  {
+    desc: 'M3395 COM23 助手玛奥爱慕 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 爱慕
+        if (rand_n(3) === 0) {
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.print(
+              \`「嗯啊啊……啊啊……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,`,
+    replace: `        // 爱慕
+        if (rand_n(3) === 1) {
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.print(
+              \`「嗯啊啊……啊啊……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3396 COM23 助手玛奥屈服刻印Lv3＋V感覚 RAND:2 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.print(\`「好舒服……已经没有办法思考了啊啊啊\${heart(1)}」\`); // :3636`,
+    replace: `        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 1) {
+          await era.print(\`「好舒服……已经没有办法思考了啊啊啊\${heart(1)}」\`); // :3636`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
+  },
+  {
+    desc: 'M3397 COM23 非助手玛奥淫乱 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            \`「呜……呜啊…\${heart(1)} 顶，顶到最里面了啊啊…\${heart(1)}」\`,`,
+    replace: `        if (rand_n(3) === 1) {
+          await era.printAndWait(
+            \`「呜……呜啊…\${heart(1)} 顶，顶到最里面了啊啊…\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 淫乱，RAND:3==0 开场句 + ABL:2 达门槛',
+  },
+  {
+    desc: 'M3398 COM23 非助手玛奥淫乱 ABL:2 私处感觉门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          ); // :3663
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.print(\`「呜呜……要，要去了，要去了啊啊啊\${heart(1)}」\`); // :3665`,
+    replace: `          ); // :3663
+          if (chara(target).system.私处感觉 >= 4) {
+            await era.print(\`「呜呜……要，要去了，要去了啊啊啊\${heart(1)}」\`); // :3665`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 淫乱，RAND:3==0 开场句 + ABL:2 达门槛',
+  },
+  {
+    desc: 'M3399 COM23 非助手玛奥爱慕 RAND:3 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 爱慕
+        if (rand_n(3) === 0) {
+          await era.printAndWait(
+            \`「呜啊……魔王大人……不，不可以……同时攻击胸部和小穴……啊啊啊\${heart(1)}」\`,`,
+    replace: `        // 爱慕
+        if (rand_n(3) === 1) {
+          await era.printAndWait(
+            \`「呜啊……魔王大人……不，不可以……同时攻击胸部和小穴……啊啊啊\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM23 二回目：非助手玛奥 + 爱慕，推进到 5',
+  },
+  {
+    desc: 'M3400 COM23 非助手玛奥屈服刻印Lv3＋V感覚 第一次独立 RAND:2 阈值 === 0 改 === 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 0) {
+          await era.print(
+            \`「不，不行了……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,
+          ); // :3731
+        } else {
+          await era.print(\`「侵犯得……太激烈了……但，但是……真的好舒服啊啊！」\`); // :3733
+        }
+        if (rand_n(2) === 0) {
+          await era.print(\`「呜？！不，不可以同时……攻击胸部啊啊！」\`); // :3736`,
+    replace: `        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(2) === 1) {
+          await era.print(
+            \`「不，不行了……小穴……舒服得……要上天了啊啊啊\${heart(1)}」\`,
+          ); // :3731
+        } else {
+          await era.print(\`「侵犯得……太激烈了……但，但是……真的好舒服啊啊！」\`); // :3733
+        }
+        if (rand_n(2) === 0) {
+          await era.print(\`「呜？！不，不可以同时……攻击胸部啊啊！」\`); // :3736`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
+  },
+  {
+    desc: 'M3401 COM23 非助手玛奥屈服刻印Lv3＋V感覚 第二次独立 RAND:2 阈值 === 0 改 === 1（第二次独立抽样，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        }
+        if (rand_n(2) === 0) {
+          await era.print(\`「呜？！不，不可以同时……攻击胸部啊啊！」\`); // :3736`,
+    replace: `        }
+        if (rand_n(2) === 1) {
+          await era.print(\`「呜？！不，不可以同时……攻击胸部啊啊！」\`); // :3736`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 第二次抽样独立于第一次',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
