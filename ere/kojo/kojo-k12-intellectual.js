@@ -500,8 +500,10 @@ async function kojo_message_com_12(rand) {
   const kojo = chara(target).kojo;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
-  void target_name; // 后续 SELECTCOM 分支使用（当前 0-2 无正文引用）
-  void rand_n; // 后续 SELECTCOM 分支使用（当前 0-2 无随机支）
+  // %阴核(TARGET)%（魔改新增/文本校正.ERB @阴核，K0 kojo-k0-tender.js:5484 同款）：
+  // TALENT:122 则「阴茎」否则「阴核」
+  const clitoris_word = (cid) =>
+    (era.get(`talent:${cid}:122`) || 0) !== 0 ? '阴茎' : '阴核';
 
   // :404-406 助手跳过守卫整行注释（1:1 不启用）
   if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {
@@ -793,6 +795,325 @@ async function kojo_message_com_12(rand) {
       return 0; // :586-590
     } // :587-590
   } // :588-590
+
+  if (era_flag.selectcom == 3) {
+    // :593
+
+    if (kojo.自慰 == 0) {
+      // :595
+      await era.printAndWait(`「自慰什么的谁都有过吧。诶、让${sc()}来……」`); // :596
+      // CFLAG:TARGET:304  = 1（变量语义：CFLAG 族，TARGET:304） // :597
+      kojo.自慰 = 1; // :597
+      return 0; // :598-599
+    } else {
+      // :600-601
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`talent:${target}:0`) == 1 &&
+        (kojo.自慰 <= 8 || game.kojo.口上开关 == 2)
+      ) {
+        // :602
+        await era.printAndWait(
+          `「没有被男人碰过的这个小穴、会疼也是没办法的……什么时候都可以给你哦」`,
+        ); // :603
+        // CFLAG:304  = 9（变量语义：CFLAG 族，304） // :604
+        kojo.自慰 = 9; // :604
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:31`) >= 3 &&
+        (kojo.自慰 <= 7 || game.kojo.口上开关 == 2)
+      ) {
+        // :606
+
+        if (rand_n(4) == 0) {
+          // :608
+          await era.printAndWait(
+            `「${sc()}的痴态、没有被记录下来吗……？　想作为下次自慰的参考呢」`,
+          ); // :609
+        } else if (rand_n(3) == 0) {
+          // :610
+          await era.printAndWait(
+            `「猴子……要变成猴子了！　变成自慰猴子了啊！」`,
+          ); // :611
+        } else if (rand_n(2) == 0) {
+          // :612
+          await era.printAndWait(
+            `「看吧……像猴子一样玩弄${clitoris_word(target)}的${sc()}的姿态……！」`,
+          ); // :613
+        } else {
+          // :614-615
+          await era.printAndWait(
+            `「啊～、啊～、去了、去了、去了……像猴子一样揉着阴部去了啊」`,
+          ); // :615
+        } // :616-617
+        // CFLAG:304  = 8（变量语义：CFLAG 族，304） // :617
+        kojo.自慰 = 8; // :617
+      } else if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era.get(`abl:${target}:31`) < 3 &&
+        (kojo.自慰 <= 6 || game.kojo.口上开关 == 2)
+      ) {
+        // :619
+
+        if (rand_n(2) == 0) {
+          // :621
+          await era.printAndWait(`「${sc()}对自慰已经很擅长了！」`); // :622
+        } else {
+          // :623-624
+          await era.printAndWait(`「这个身体已经快要研究透了呢」`); // :624
+        } // :625-626
+        // CFLAG:304  = 7（变量语义：CFLAG 族，304） // :626
+        kojo.自慰 = 7; // :626
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`talent:${target}:0`) == 1 &&
+        (kojo.自慰 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :628
+        await era.printAndWait(`「请看、想吞下你阴茎的性器躁动得没办法了呢」`); // :629
+        // CFLAG:304  = 6（变量语义：CFLAG 族，304） // :630
+        kojo.自慰 = 6; // :630
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:31`) >= 3 &&
+        (kojo.自慰 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :632
+
+        if (rand_n(3) == 0) {
+          // :634
+          await era.printAndWait(`「来吧……拜托了、都一边自慰一边求你了啊」`); // :635
+        } else if (rand_n(2) == 0) {
+          // :636
+          await era.printAndWait(
+            `「因为实在太想你了、${clitoris_word(target)}好像都快磨破了呢」`,
+          ); // :637
+        } else {
+          // :638-639
+          await era.printAndWait(
+            `「已经习惯了呢、${clitoris_word(target)}已经元气十足地勃起来了哦」`,
+          ); // :639
+        } // :640-641
+        // CFLAG:304  = 5（变量语义：CFLAG 族，304） // :641
+        kojo.自慰 = 5; // :641
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era.get(`abl:${target}:31`) < 3 &&
+        (kojo.自慰 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :643
+
+        if (rand_n(2) == 0) {
+          // :645
+          await era.printAndWait(
+            `「自慰什么的很正常啊。研究的间隙也会想去做呢」`,
+          ); // :646
+        } else {
+          // :647-648
+          await era.printAndWait(`「嘿欸、你还有这样的癖好呢」`); // :648
+        } // :649-650
+        // CFLAG:304  = 4（变量语义：CFLAG 族，304） // :650
+        kojo.自慰 = 4; // :650
+      } else if (
+        era.get(`mark:${target}:2`) == 3 &&
+        era.get(`abl:${target}:31`) >= 1 &&
+        (kojo.自慰 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :652
+
+        if (rand_n(2) == 0) {
+          // :654
+          await era.printAndWait(`「啊～、啊～……好爽～……」`); // :655
+        } else {
+          // :656-657
+          await era.printAndWait(
+            `「自慰过度${clitoris_word(target)}可能会肥大化的……」`,
+          ); // :657
+        } // :658-659
+        // CFLAG:304  = 3（变量语义：CFLAG 族，304） // :659
+        kojo.自慰 = 3; // :659
+      } else if (kojo.自慰 <= 1 || game.kojo.口上开关 == 2) {
+        // :661
+
+        if (rand_n(2) == 0) {
+          // :663
+          await era.printAndWait(`「无意义的行为呢……白白浪费脑细胞」`); // :664
+        } else {
+          // :665-666
+          await era.printAndWait(`「没有收益的行为呢、没有意义」`); // :666
+        } // :667-668
+        // CFLAG:304  = 2（变量语义：CFLAG 族，304） // :668
+        kojo.自慰 = 2; // :668
+      } // :669-674
+      return 0; // :670-674
+    } // :671-674
+  } // :672-674
+
+  if (era_flag.selectcom == 5) {
+    // :677
+
+    if (kojo.胸爱抚 == 0) {
+      // :679
+
+      if (era.get(`talent:${target}:85`) == 1) {
+        // :681
+        await era.printAndWait(`「这么喜欢胸部……你是小孩子吗」`); // :682
+      } else {
+        // :684-685
+        await era.printAndWait(`「一般意义上说乳头并不是性感带哦」`); // :685
+      } // :686-687
+      // CFLAG:TARGET:306  = 1（变量语义：CFLAG 族，TARGET:306） // :687
+      kojo.胸爱抚 = 1; // :687
+      return 0; // :688-689
+    } else {
+      // :690-691
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :692
+        if (rand_n(2) == 0) {
+          // :693
+          await era.printAndWait(`「连胸部也成性器了你打算怎么样嘛♪」`); // :694
+        } else {
+          // :695-696
+          await era.printAndWait(`「呵呵、发生幼儿退化现象了吗……？」`); // :696
+        } // :697-698
+        // CFLAG:306  = 5（变量语义：CFLAG 族，306） // :698
+        kojo.胸爱抚 = 5; // :698
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :700
+        if (rand_n(2) == 0) {
+          // :701
+          await era.printAndWait(`「胸部已经完全被开发好了呢。都是你的错呢」`); // :702
+        } else {
+          // :703-704
+          await era.printAndWait(`「这就是、母性萌发的现象吗……」`); // :704
+        } // :705-706
+        // CFLAG:306  = 4（变量语义：CFLAG 族，306） // :706
+        kojo.胸爱抚 = 4; // :706
+      } else if (
+        era.get(`abl:${target}:1`) >= 3 &&
+        (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :708
+        await era.printAndWait(`「胸部……乳头好有感觉啊～！」`); // :709
+        // CFLAG:306  = 3（变量语义：CFLAG 族，306） // :710
+        kojo.胸爱抚 = 3; // :710
+      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // :712
+        await era.printAndWait(`「果然呢、胸部一点感觉都没有」`); // :713
+        // CFLAG:306  = 2（变量语义：CFLAG 族，306） // :714
+        kojo.胸爱抚 = 2; // :714
+      } // :715-720
+      return 0; // :716-720
+    } // :717-720
+  } // :718-720
+
+  if (era_flag.selectcom == 6) {
+    // :723
+
+    if (kojo.接吻 == 0 && game.train.初吻与自我口上) {
+      // :725
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        era_flag.assiplay == 0 &&
+        era.get(`tequip:${target}:89`) == 0 &&
+        era.get(`tequip:${target}:90`) == 0
+      ) {
+        // :727
+        await era.printAndWait(
+          `「初吻什么的、感伤的感情是不必要的……不过还不错」`,
+        ); // :728
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        era_flag.assiplay == 0 &&
+        era.get(`tequip:${target}:89`) == 0 &&
+        era.get(`tequip:${target}:90`) == 0
+      ) {
+        // :730
+        await era.printAndWait(`「今天是和你的纪念日呢♪」`); // :731
+      } else {
+        // :733-734
+        await era.printAndWait(`「初吻什么的、带上感情是无意义的」`); // :734
+      } // :735-736
+      // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :736
+      kojo.接吻 = 1; // :736
+      return 0; // :737-738
+    } else if (kojo.接吻 == 0) {
+      // :739
+
+      if (era.get(`talent:${target}:76`) == 1) {
+        // :741
+        await era.printAndWait(
+          `「通过唾液交换来做性爱的相性确认……你合格了哦♪」`,
+        ); // :742
+      } else if (era.get(`talent:${target}:85`) == 1) {
+        // :744
+        await era.printAndWait(`「终于可以和你做唾液交换了呢♪」`); // :745
+      } else {
+        // :747-748
+        await era.printAndWait(`「既没有气氛也没有技巧……0分呢」`); // :748
+      } // :749-750
+      // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :750
+      kojo.接吻 = 1; // :750
+      return 0; // :751-752
+    } else {
+      // :753-754
+
+      if (
+        era.get(`talent:${target}:76`) == 1 &&
+        (kojo.接吻 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :755
+        await era.printAndWait(`「更多的交换唾液吧……你的体液、想要更多」`); // :756
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :757
+
+          await era.printAndWait(
+            `${target_name}虽然闭着眼、但耳朵却立了起来bikobiko的动着。`,
+          ); // :759
+        } // :760-761
+        // CFLAG:307  = 5（变量语义：CFLAG 族，307） // :761
+        kojo.接吻 = 5; // :761
+      } else if (
+        era.get(`talent:${target}:85`) == 1 &&
+        (kojo.接吻 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :763
+        await era.printAndWait(`「把你的全部……都给${sc()}吧」`); // :764
+        if (era.get(`talent:${target}:种族`) == 2) {
+          // :765
+
+          await era.printAndWait(
+            `${target_name}虽然闭着眼、但耳朵却立了起来bikobiko的动着。`,
+          ); // :767
+        } // :768-769
+        // CFLAG:307  = 4（变量语义：CFLAG 族，307） // :769
+        kojo.接吻 = 4; // :769
+      } else if (
+        era.get(`abl:${target}:10`) >= 2 &&
+        (kojo.接吻 <= 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :771
+        await era.printAndWait(`「好吧、体液交换这种程度的事情没有问题」`); // :772
+        // CFLAG:307  = 3（变量语义：CFLAG 族，307） // :773
+        kojo.接吻 = 3; // :773
+      } else if (kojo.接吻 <= 1 || game.kojo.口上开关 == 2) {
+        // :775
+        await era.printAndWait(`「呜～……你、在磨牙吗？」`); // :776
+        // CFLAG:307  = 2（变量语义：CFLAG 族，307） // :777
+        kojo.接吻 = 2; // :777
+      } // :778-783
+      return 0; // :779-783
+    } // :780-783
+  } // :781-783
 
   return 0;
 }

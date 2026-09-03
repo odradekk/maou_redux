@@ -415,3 +415,68 @@ test('SELECTCOM==2（肛门爱抚）二回目淫乱+润滑Lv2：推进到 7', as
   ]);
   assert.equal(fixture.store.get('cflag:20:303'), 7);
 });
+
+test('SELECTCOM==3（自慰）淫乱+自慰中毒Lv3：RAND 推进到 8', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:304', 7);
+    f.store.set('talent:20:76', 1);
+    f.store.set('abl:20:31', 3);
+  }, 3);
+  await speak_k12(fixture, () => 0);
+  assert.equal(fixture.store.get('cflag:20:304'), 8);
+  assert.ok(
+    fixture.text_lines()[0].includes('痴态'),
+    fixture.text_lines().join('\n'),
+  );
+});
+
+test('SELECTCOM==3（自慰）淫乱+自慰中毒Lv3：RAND=1 第二支 + clitoris_word 展开', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:304', 7);
+    f.store.set('talent:20:76', 1);
+    f.store.set('abl:20:31', 3);
+  }, 3);
+  // rand_n(4)!=0 且 rand_n(3)==0 → 第二支「猴子……要变成猴子」
+  await speak_k12(fixture, (n) => (n === 3 ? 0 : 1));
+  assert.equal(fixture.store.get('cflag:20:304'), 8);
+  assert.deepEqual(fixture.text_lines(), [
+    '「猴子……要变成猴子了！　变成自慰猴子了啊！」',
+  ]);
+});
+
+test('SELECTCOM==5（胸爱抚）二回目 B感覚Lv3：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:306', 2);
+    f.store.set('abl:20:1', 3);
+  }, 5);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「胸部……乳头好有感觉啊～！」']);
+  assert.equal(fixture.store.get('cflag:20:306'), 3);
+});
+
+test('SELECTCOM==6（接吻）初吻（TFLAG:13）淫乱主人：推进到 1', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:76', 1);
+    f.store.set('tequip:20:89', 0);
+    f.store.set('tequip:20:90', 0);
+    const { game } = f.load_module('facade/game');
+    game.train.初吻与自我口上 = 13;
+  }, 6);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「初吻什么的、感伤的感情是不必要的……不过还不错」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:307'), 1);
+});
+
+test('SELECTCOM==6（接吻）二回目顺从Lv2：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:307', 2);
+    f.store.set('abl:20:10', 2);
+  }, 6);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「好吧、体液交换这种程度的事情没有问题」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:307'), 3);
+});
