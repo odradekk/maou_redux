@@ -77,6 +77,7 @@ const {
   enterenemy_koujo_family,
   gohoubi_request_koujo_family,
   gobi_koujo_family,
+  ntr_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
@@ -6562,6 +6563,7 @@ osioski_koujo_family.register(12, (cid, choice) =>
   osioki_koujo_k12(undefined, cid, choice),
 );
 gobi_koujo_family.register(12, gobi_koujo_k12);
+ntr_koujo_family.register(12, ntr_koujo_k12);
 exucution_koujo_family.register(12, exucution_koujo_k12);
 museum_koujo_family.register(12, museum_koujo_k12);
 banishment_koujo_family.register(12, banishment_koujo_k12);
@@ -7826,6 +7828,122 @@ async function colosseum_kojo_12(rand) {
   return 0; // :5522-5525
 }
 
+// @NTR_KOUJO_K12（:5526-5602）：NTR 事件口上（ntr_koujo_family）。P = NTR 事件
+// 类型（1 处女献出 / 2 肛门 / 3 家畜 / 4 授精 / 5+ 绝顶等），记位 CFLAG:650-657。
+async function ntr_koujo_k12(rand, P) {
+  void rand;
+  const target = era_flag.target;
+  const kojo = chara(target).kojo;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  P = P ?? 0;
+  if (kojo.NTR再捕获 == 0) {
+    // :5531
+    // CFLAG:650  = 1（变量语义：CFLAG 族，650） // :5531
+    kojo.NTR再捕获 = 1; // :5531
+  } // :5531
+
+  if (P == 1) {
+    // :5534
+
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5536
+      await era.printAndWait(
+        `「看到了吗？　魔王大人……${sc()}、把处女献出去了哦」`,
+      ); // :5537
+    } else {
+      // :5538-5539
+      await era.printAndWait(`「好开心……${sc()}、把处女献出去了」`); // :5539
+    } // :5540-5541
+    // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :5541
+    kojo.NTR_651 = 1; // :5541
+  } else if (P == 2) {
+    // :5543
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5544
+      await era.printAndWait(
+        `「看到了吗？　魔王大人……${sc()}的肛门、因为狂王大人……而觉醒了哦」`,
+      ); // :5545
+    } else {
+      // :5546-5547
+      await era.printAndWait(`「好开心……${sc()}的身体是狂王大人的东西了……」`); // :5547
+    } // :5548-5549
+    // CFLAG:652  = 1（变量语义：CFLAG 族，652） // :5549
+    kojo.NTR_652 = 1; // :5549
+  } else if (P == 3) {
+    // :5551
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5552
+      await era.printAndWait(
+        `「魔王大人看到了吗？　${sc()}、变成狂王大人的家畜了哦……」`,
+      ); // :5553
+    } else {
+      // :5554-5555
+      await era.printAndWait(`「${sc()}是狂王大人的……家畜哦……」`); // :5555
+    } // :5556-5557
+    // CFLAG:653  = 1（变量语义：CFLAG 族，653） // :5557
+    kojo.NTR_653 = 1; // :5557
+  } else if (P == 4) {
+    // :5559
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5560
+      await era.printAndWait(
+        `「魔王大人快看吧、${sc()}被狂王大人授精的地方……」`,
+      ); // :5561
+    } else {
+      // :5562-5563
+      await era.printAndWait(`「${sc()}、要怀上……狂王大人的孩子了！」`); // :5563
+    } // :5564-5565
+    // CFLAG:654  = 1（变量语义：CFLAG 族，654） // :5565
+    kojo.NTR_654 = 1; // :5565
+  } else if (P == 5) {
+    // :5567
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5568
+      await era.printAndWait(`「好厉害啊、狂王大人、好厉害啊！」`); // :5569
+    } else {
+      // :5570-5571
+      await era.printAndWait(`「好厉害啊、狂王大人、好厉害啊！」`); // :5571
+    } // :5572-5573
+    // CFLAG:655  = 1（变量语义：CFLAG 族，655） // :5573
+    kojo.NTR_655 = 1; // :5573
+  } else if (P == 6) {
+    // :5575
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5576
+      await era.printAndWait(`「好厉害啊、狂王大人、好厉害啊！」`); // :5577
+    } else {
+      // :5578-5579
+      await era.printAndWait(`「好厉害啊、狂王大人、好厉害啊！」`); // :5579
+    } // :5580-5581
+    // CFLAG:656  = 1（变量语义：CFLAG 族，656） // :5581
+    kojo.NTR_656 = 1; // :5581
+  } else if (P == 7) {
+    // :5583
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5584
+      await era.printAndWait(`「让我全心全意的奉仕您吧……」`); // :5585
+    } else {
+      // :5586-5587
+      await era.printAndWait(`「让我全心全意的奉仕您吧……」`); // :5587
+    } // :5588-5589
+    // CFLAG:657  = 1（变量语义：CFLAG 族，657） // :5589
+    kojo.NTR_657 = 1; // :5589
+  } else if (P == 20) {
+    // :5591
+    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
+      // :5592
+      await era.printAndWait(
+        `「魔王大人快看吧！　${sc()}生出狂王大人孩子的地方……」`,
+      ); // :5593
+    } else {
+      // :5594-5595
+      await era.printAndWait(`「能生下狂王大人的孩子真是荣幸呢……」`); // :5595
+    } // :5596-5602
+  } // :5598-5602
+
+  return 0; // :5600-5602
+}
+
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
@@ -7846,6 +7964,7 @@ module.exports = {
   gohoubi_after_koujo_k12,
   osioki_koujo_k12,
   gobi_koujo_k12,
+  ntr_koujo_k12,
   colosseum_kojo_12,
   dog_kojo_12,
   STUBBED_CALLS,

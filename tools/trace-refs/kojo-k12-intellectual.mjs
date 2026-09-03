@@ -18171,6 +18171,327 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5526-5602',
+        any: [/^\s*@NTR_KOUJO_K12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5531',
+        any: [/^\s*CFLAG:650 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5534',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5536',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5537',
+        any: [
+          /^\s*PRINTFORMW 「看到了吗？　魔王大人……%SELF_CALL\(TARGET\)%、把处女献出去了哦」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5538-5539',
+        any: [
+          /^\s*PRINTFORMW 「好开心……%SELF_CALL\(TARGET\)%、把处女献出去了」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5539',
+        any: [
+          /^\s*PRINTFORMW 「好开心……%SELF_CALL\(TARGET\)%、把处女献出去了」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5540-5541',
+        any: [/^\s*CFLAG:651 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5541',
+        any: [/^\s*CFLAG:651 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5543',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5544',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5545',
+        any: [
+          /^\s*PRINTFORMW 「看到了吗？　魔王大人……%SELF_CALL\(TARGET\)%的肛門、因为狂王大人……而覚醒了哦」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5546-5547',
+        any: [
+          /^\s*PRINTFORMW 「好开心……%SELF_CALL\(TARGET\)%的身体是狂王大人的东西了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5547',
+        any: [
+          /^\s*PRINTFORMW 「好开心……%SELF_CALL\(TARGET\)%的身体是狂王大人的东西了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5548-5549',
+        any: [/^\s*CFLAG:652 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5549',
+        any: [/^\s*CFLAG:652 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5551',
+        any: [/^\s*ELSEIF P == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5552',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5553',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人看到了吗？　%SELF_CALL\(TARGET\)%、变成狂王大人的家畜了哦……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5554-5555',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是狂王大人的……家畜哦……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5555',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是狂王大人的……家畜哦……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5556-5557',
+        any: [/^\s*CFLAG:653 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5557',
+        any: [/^\s*CFLAG:653 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5559',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5560',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5561',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人快看吧、%SELF_CALL\(TARGET\)%被狂王大人授精的地方……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5562-5563',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、要怀上……狂王大人的孩子了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5563',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%、要怀上……狂王大人的孩子了！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5564-5565',
+        any: [/^\s*CFLAG:654 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5565',
+        any: [/^\s*CFLAG:654 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5567',
+        any: [/^\s*ELSEIF P == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5568',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5569',
+        any: [/^\s*PRINTFORMW 「好厉害啊、狂王大人、好厉害啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5570-5571',
+        any: [/^\s*PRINTFORMW 「好厉害啊、狂王大人、好厉害啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5571',
+        any: [/^\s*PRINTFORMW 「好厉害啊、狂王大人、好厉害啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5572-5573',
+        any: [/^\s*CFLAG:655 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5573',
+        any: [/^\s*CFLAG:655 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5575',
+        any: [/^\s*ELSEIF P == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5576',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5577',
+        any: [/^\s*PRINTFORMW 「好厉害啊、狂王大人、好厉害啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5578-5579',
+        any: [/^\s*PRINTFORMW 「好厉害啊、狂王大人、好厉害啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5579',
+        any: [/^\s*PRINTFORMW 「好厉害啊、狂王大人、好厉害啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5580-5581',
+        any: [/^\s*CFLAG:656 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5581',
+        any: [/^\s*CFLAG:656 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5583',
+        any: [/^\s*ELSEIF P == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5584',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5585',
+        any: [/^\s*PRINTFORMW 「让我全心全意的奉仕您吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5586-5587',
+        any: [/^\s*PRINTFORMW 「让我全心全意的奉仕您吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5587',
+        any: [/^\s*PRINTFORMW 「让我全心全意的奉仕您吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5588-5589',
+        any: [/^\s*CFLAG:657 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5589',
+        any: [/^\s*CFLAG:657 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5591',
+        any: [/^\s*ELSEIF P == 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5592',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5593',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人快看吧！　%SELF_CALL\(TARGET\)%生出狂王大人孩子的地方……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5594-5595',
+        any: [/^\s*PRINTFORMW 「能生下狂王大人的孩子真是荣幸呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5595',
+        any: [/^\s*PRINTFORMW 「能生下狂王大人的孩子真是荣幸呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5596-5602',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5598-5602',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5600-5602',
+        any: [/^\s*;-----------------------------------\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '5603-5620',
         any: [/^\s*@EXUCUTION_KOUJO_K12\s*$/m],
       },

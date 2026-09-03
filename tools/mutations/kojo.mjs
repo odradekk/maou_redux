@@ -8651,4 +8651,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k12-intellectual'],
     must_mention: '首超润滑 Lv2',
   },
+  {
+    desc: "M3228 K12 NTR P=1 CFLAG:650 记位删除",
+    file: "ere/kojo/kojo-k12-intellectual.js",
+    find: "    kojo.NTR再捕获 = 1; // :5531",
+    replace: "    // 变异：CFLAG:650 记位删除",
+    tests: ["kojo-k12-intellectual"],
+    must_mention: "ntr_koujo_k12 P=1（处女献出）",
+  },
+
+
 ];

@@ -865,3 +865,26 @@ test('kojo_message_palamcng_12 首超润滑 Lv2（PALAM:3+UP:3 > PALAMLV:2）', 
   ]);
   assert.equal(fixture.store.get('cflag:20:221'), 1);
 });
+
+test('ntr_koujo_k12 P=1（处女献出）淫乱/爱慕：CFLAG:650 记位', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:76', 1);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.ntr_koujo_k12(undefined, 1);
+  assert.deepEqual(fixture.text_lines(), [
+    '「看到了吗？　魔王大人……我、把处女献出去了哦」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:650'), 1);
+  assert.equal(fixture.store.get('cflag:20:651'), 1);
+});
+
+test('ntr_koujo_k12 P=4（授精）无淫乱/爱慕', async () => {
+  const fixture = await setup_k12(() => {});
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.ntr_koujo_k12(undefined, 4);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我、要怀上……狂王大人的孩子了！」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:654'), 1);
+});
