@@ -2,7 +2,7 @@
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
  *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12/13/14/15/16，issue #242，WIP 续轮，进行中）。
+ *       11/12/13/14/15/16/19，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,10 +12,10 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16 十六支
- *     :786-2460——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/
- *     振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器，各含初めて/二回目以降、
- *     助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属分支
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19 十七支
+ *     :786-2644——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/
+ *     振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器/肛珠，各含初めて/二回目
+ *     以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属分支
  *     TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0，SELECTCOM 11
  *     另含 TEQUIP:11 装备/脱着两态（脱着时用独立 CFLAG:372 计数，且初めて
  *     阶段自身再按处女/非处女分岔文案），SELECTCOM 12 结构与 SELECTCOM 9
@@ -25,7 +25,15 @@
  *     SELECTCOM 14/15 结构均与 SELECTCOM 9/12 同构（简单四/三选，不含
  *     组合判据），SELECTCOM 16 结构亦与 SELECTCOM 9/12 同构（简单四/三选），
  *     但二回目以降层唯一新增 RAND:2 随机文案分岔（淫乱支下 rand_n(2) 二选一
- *     台词，不影响 CFLAG:317 计数取值）
+ *     台词，不影响 CFLAG:317 计数取值）。SELECTCOM 17（オナホール CFLAG:318／
+ *     着脱 CFLAG:378，:2464-2519）在原作里整段以 `;` 注释掉（连 IF 判断本身
+ *     也被注释），属死代码，PRINTFORMW 台词全部留空未填，本移植按证据不落地
+ *     任何行为、不占用真实指令号，跳过后直落 SELECTCOM 19（肛珠 CFLAG:320／
+ *     脱着 CFLAG:379）：结构与 SELECTCOM 13 同构（TEQUIP:19 装备/脱着两态，
+ *     脱着时用独立 CFLAG:379 计数），但初めて层只按「助手玛奥／淫乱／爱慕／
+ *     それ以外」简单四选（不含 A感覚 组合判据），二回目以降层才先分「助手
+ *     玛奥」再各自按「淫乱＋A感覚Lv3以上→淫乱→爱慕＋A感覚Lv3以上→爱慕→
+ *     A感覚Lv3以上→それ以外」六选一档，助手玛奥/非助手玛奥两支结构对称
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -33,8 +41,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 81.7%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 17 起（源文件第 2461 至 10657 行，约 37 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 80.4%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 20 起（源文件第 2650 至 10657 行，约 31 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -62,7 +70,7 @@
  * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
  * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：1065 条恰好命中 1 行/1 段，可视为具备真实
+ * 条锚在源全文里做精确子串计数：1135 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
  * 89 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
@@ -83,7 +91,7 @@
  * 2438，「夹在……乳房上的榨乳机，正在毫不留情地挤榨着母乳………」这句通用描写
  * 在初めて/二回目以降助手玛奥/非助手玛奥六个分支里逐字复现，且各自跟随不同
  * 的 CFLAG:317 写值，无法合并）。SELECTCOM
- * 3/5/6/7/8/9/10/11/12/13/14/15/16 内非 print 语句
+ * 3/5/6/7/8/9/10/11/12/13/14/15/16/19 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
@@ -1330,6 +1338,21 @@ on(
  * RAND:2 二选一台词分岔（`rand_n(2)` 落地，不影响 CFLAG:317 写值）。脱着态
  * （TEQUIP:16 == 0）是独立三选一（淫乱/爱慕/それ以外），用另一枚 CFLAG:377
  * 计数，写 3/2/1，无助手玛奥分档。
+ *
+ * SELECTCOM 17（オナホール CFLAG:318／着脱 CFLAG:378，:2464-2519）在原作里
+ * 整段以 `;` 注释掉（连 `IF SELECTCOM == 17` 本身也被注释），SELECTCOM 数字
+ * 因此从未被判定为真，属于死代码——PRINTFORMW 台词也全部留空未填。原作从未
+ * 执行过此分支，本移植按证据不落地任何行为，直接跳过、不占用真实指令号。
+ *
+ * SELECTCOM 19（肛珠 CFLAG:320／脱着 CFLAG:379，:2521-2644）：结构与
+ * SELECTCOM 13 同构（TEQUIP:19 装备/脱着两态，脱着时用独立 CFLAG:379
+ * 计数）。初めて（TEQUIP:19 已装且 CFLAG:320 == 0）按「助手玛奥／淫乱／
+ * 爱慕／それ以外」简单四选写 1（不含 A感覚 组合判据）；二回目以降先分
+ * 「助手玛奥」再各自按「淫乱＋A感覚Lv3以上→淫乱→爱慕＋A感覚Lv3以上→
+ * 爱慕→A感覚Lv3以上→それ以外」六选一档写 7/6/5/4/3/2，助手玛奥/非助手
+ * 玛奥两支结构对称。脱着态（TEQUIP:19 == 0）是独立四选一（淫乱/爱慕/
+ * A感覚Lv3以上/それ以外），用另一枚 CFLAG:379 计数，写 4/3/2/1，无助手
+ * 玛奥分档。
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序）
  * @returns {Promise<number>} 0（RETURN 0；TRYCALLFORM 不读返回值）
@@ -4269,6 +4292,250 @@ async function kojo_message_com_11(rand) {
       kojo.榨乳器着脱 = 1; // :2457
     }
     return 0; // :2457-2459
+  }
+
+  // :2464-2519 SELECTCOM 17（オナホール CFLAG:318／着脱 CFLAG:378）在原作
+  // 里整段以 `;` 注释掉（连 `IF SELECTCOM == 17` 本身也被注释），SELECTCOM 数字
+  // 因此从未被判定为真，属于死代码——PRINTFORMW 台词也全部留空未填。原作
+  // 从未执行过此分支，本移植按证据不落地任何行为，直接跳过、不占用真实指令号。
+
+  // :2521-2644 IF SELECTCOM == 19（肛珠 CFLAG:320／脱着 CFLAG:379，
+  // TEQUIP:19 判定已装/未装两态）
+  if (era_flag.selectcom === 19) {
+    if (era.get(`tequip:${target}:19`)) {
+      if (kojo.肛珠 === 0) {
+        // :2522-2544 初めて
+        if (assi_mao) {
+          await era.printAndWait(
+            `『嘿嘿嘿，待会儿一口气全部拔出来，保证姐姐舒服得上天…』`,
+          ); // :2526
+          await era.printAndWait(`「住…住手啊！不，不能再塞进去了…啊啊！」`); // :2527
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            `「哈啊…哈呼…又，又进来一颗${heart(1)}一会儿…再一下全部拔出去…♪」`,
+          ); // :2531
+          await era.printAndWait(
+            `${target_name}用手抱着张开的双腿，感受着小珠一颗颗被肛门吞入的异样快感……`,
+          ); // :2532
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            `「这个姿势真是…好害羞…呃啊…稍…稍微温柔一点…魔王大人……嗯啊…啊啊！」`,
+          ); // :2535
+          await era.printAndWait(
+            `${player_name}让${target_name}趴在，撅起光洁的臀部，将肛珠一颗颗从肛门塞了进去………`,
+          ); // :2536
+        } else {
+          // それ以外
+          await era.printAndWait(
+            `「为什么我就偏要遇上这种事！放，放开我！不，不要碰我的屁股啊——！！」`,
+          ); // :2539
+          await era.printAndWait(
+            `${player_name}把一直挣扎着的${target_name}用力按住，不由分说地将肛珠一颗颗塞了进去……`,
+          ); // :2540
+        }
+        kojo.肛珠 = 1; // :2543
+        return 0; // :2543-2544
+      }
+
+      // :2545-2618 二回目以降
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.肛珠 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱＋A感覚Lv3以上
+          await era.printAndWait(
+            `「啊哈…啊啊${heart(1)} 全，全部塞进去了呢！姐姐已经准备好了…一口气全部拔出来…让姐姐上天吧${heart(1)}」`,
+          ); // :2551
+          await era.printAndWait(
+            `『不行呐，姐姐。这么轻易就拔出去太没意思了？ 先忍一忍哦♪』`,
+          ); // :2552
+          await era.printAndWait(
+            `「不要，不要就这么…晾着啊！明明以前姐姐说什么你都会听的！」`,
+          ); // :2553
+          kojo.肛珠 = 7; // :2553-2554
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.肛珠 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱
+          await era.printAndWait(`「呃啊啊…居然…全部都塞进来了…呼…呼…」`); // :2557
+          await era.printAndWait(`『本来就是这么打算的哦姐姐♪』`); // :2558
+          kojo.肛珠 = 6; // :2558-2559
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.肛珠 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕＋A感覚Lv3以上
+          await era.printAndWait(`「哈啊…啊啊${heart(1)} 全，全部塞进来了」`); // :2562
+          await era.printAndWait(
+            `『是啊，多亏我们好好调教、开发了姐姐的肛门，才能把这么多珠子全部塞进去哦${heart(1)}、那么，姐姐是不是应该表示一下感谢呢？』`,
+          ); // :2563
+          await era.printAndWait(
+            `「是，是的……感谢魔王大人，和${player_name}大人…调教${target_name}的肛门…」`,
+          ); // :2564
+          kojo.肛珠 = 5; // :2564-2565
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.肛珠 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕
+          await era.printAndWait(
+            `「呃啊…啊啊啊…不，不行了…不能再放进去了…${player_name}，快停下…求求你…」`,
+          ); // :2568
+          await era.printAndWait(
+            `『半途而废可是不行的哦姐姐，乖乖全部用肛门吃下去吧${heart(1)}』`,
+          ); // :2569
+          await era.printAndWait(
+            `「啊啊！屁股里…真的已经塞满了啊啊…真的…饶了姐姐吧！」`,
+          ); // :2570
+          kojo.肛珠 = 4; // :2570-2571
+        } else if (
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.肛珠 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // A感覚Lv3以上
+          await era.printAndWait(
+            `『哎呀，姐姐的肛门现在这么厉害了，全部都塞进去了呢♪』`,
+          ); // :2574
+          await era.printAndWait(`「不，不要欺负姐姐啦…」`); // :2575
+          await era.printAndWait(
+            `『才不是欺负呢，姐姐真的很厉害～下次就来用更大号的肛门珠吧♪』`,
+          ); // :2576
+          kojo.肛珠 = 3; // :2576-2577
+        } else if (kojo.肛珠 <= 1 || game.kojo.口上开关 === 2) {
+          // それ以外
+          await era.printAndWait(
+            `『才这么几颗就已经塞不进去了啊、姐姐的肛门还是缺乏调教啊♪』`,
+          ); // :2580
+          await era.printAndWait(`「呃啊啊！不行了，真的不行了！好痛！」`); // :2581
+          await era.printAndWait(
+            `「真是没办法啊，屁股外面还露着这么长一串，倒是很像猫咪的尾巴呢${heart(1)}」`,
+          ); // :2582
+          kojo.肛珠 = 2; // :2582-2583
+        }
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.肛珠 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱＋A感覚Lv3以上
+        await era.printAndWait(
+          `「哎啊啊${heart(1)}…又，又进来一颗${heart(1)} 肛门好舒服${heart(1)} 舒服得要去了${heart(1)}」`,
+        ); // :2588
+        await era.printAndWait(
+          `${target_name}像母狗一样趴在地上，翘着屁股，被充分调教和开发过的肛门，主动地开始一张一合将一颗颗珠子吞入，脸上的表情充满了享受与快意…`,
+        ); // :2589
+        kojo.肛珠 = 7; // :2589-2590
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.肛珠 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          `「又，又有一颗更大的，进来了${heart(1)} 哈啊，哈啊，感觉…好奇怪${heart(1)}」`,
+        ); // :2593
+        await era.printAndWait(
+          `${target_name}像母狗一样趴在地上，翘着屁股，感受着珠子一颗接一颗地塞入自己的肛门时带来的别样的快感…`,
+        ); // :2594
+        kojo.肛珠 = 6; // :2594-2595
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.肛珠 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕＋A感覚Lv3以上
+        await era.printAndWait(
+          `「哈啊…啊啊…好，好羞耻啊…但如果是魔王大人的要求…再塞多少颗进来…都可以${heart(1)}」`,
+        ); // :2598
+        await era.printAndWait(
+          `${target_name}遵循着${player_name}的命令，像母狗一样趴在地上，翘着屁股。被充分调教和开发过的肛门，主动地开始一张一合将一颗颗珠子吞入，脸上的表情充满了享受与快意……`,
+        ); // :2599
+        kojo.肛珠 = 5; // :2599-2600
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.肛珠 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          `「啊啊…${target_name}的肛门…很敏感的，哈啊，哈啊，请魔王大人…塞珠子的时候…再稍微…温柔一点！」`,
+        ); // :2603
+        await era.printAndWait(
+          `${player_name}遵循着${player_name}的命令，像母狗一样趴在地上，翘着屁股，感受着珠子一颗接一颗地塞入自己的肛门时带来的别样的快感…`,
+        ); // :2604
+        kojo.肛珠 = 4; // :2604-2605
+      } else if (
+        chara(target).system.肛门感觉 >= 3 &&
+        (kojo.肛珠 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // A感覚Lv3以上
+        await era.printAndWait(
+          `「为，为什么会这么舒服的…哈啊…啊啊…明明…完全不想…但是，真的好舒服啊${heart(1)}」`,
+        ); // :2608
+        await era.printAndWait(
+          `${player_name}按着趴在地上的${target_name}的腰，将肛珠一颗接一颗塞进了肛门之中，聆听着${target_name}忍耐不住快感而发出的甘甜的喘息声………`,
+        ); // :2609
+        kojo.肛珠 = 3; // :2609-2610
+      } else if (kojo.肛珠 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.printAndWait(`「住，住手啊…这样欺负屁股，真的会坏掉的！」`); // :2613
+        await era.printAndWait(
+          `${player_name}用力按住挣扎着的${target_name}，将连串的肛珠强行塞入了肛门之中…`,
+        ); // :2614
+        kojo.肛珠 = 2; // :2614-2615
+      }
+
+      return 0; // :2613-2618
+    }
+
+    // :2621-2644 脱着時（TEQUIP:19 == 0）
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.肛珠着脱 < 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      await era.printAndWait(
+        `「这，这就要——呃啊啊啊！${target_name}的肛门${heart(1)} 舒服得要登天了${heart(1)}」`,
+      ); // :2624
+      await era.printAndWait(
+        `${target_name}肛门里的珠串被一口气全部拔了出来，极度的快感让她忍不住发出了淫浪的尖叫，腰身颤抖个不停，肛门痉挛得一张一合着………`,
+      ); // :2625
+      kojo.肛珠着脱 = 4; // :2626
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.肛珠着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      await era.printAndWait(
+        `「哈啊…哈啊…不，不要这样…拔出几颗……就停下来一次…${target_name}的肛门…会受不了的…啊啊啊！」`,
+      ); // :2629
+      await era.printAndWait(
+        `${player_name}故意时缓时急地抽弄着${target_name}肛门里的珠串，欣赏着${target_name}拼命忍耐的表情，再一下子突然全部抽出，看着${target_name}因为极度的快感刺激而全身脱力，瘫倒在地上，敏感的肛门还在一张一合……`,
+      ); // :2630
+      kojo.肛珠着脱 = 3; // :2631
+    } else if (
+      chara(target).system.肛门感觉 >= 3 &&
+      (kojo.肛珠着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // A感覚Lv3以上
+      await era.printAndWait(`「不……不能这样……一次全部拔出去啊啊啊！」`); // :2634
+      await era.printAndWait(
+        `${target_name}肛门里的珠串被一口气全部拔了出来，肛门极度的快感让她忍不住发出淫浪的尖叫声，双手紧紧地抓着床单，几乎要岔过气去…`,
+      ); // :2635
+      kojo.肛珠着脱 = 2; // :2636
+    } else if (kojo.肛珠着脱 < 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「好痛啊啊啊啊！会坏掉的，真的会坏掉的！」`); // :2639
+      await era.printAndWait(
+        `${target_name}肛门里的珠串被一口气强行拔了出来，整个人因为过度的刺激而脱力，瘫倒在地上，眼泪和口水全部流了出来，红肿的肛门还在一张一合……`,
+      ); // :2640
+      kojo.肛珠着脱 = 1; // :2641
+    }
+    return 0; // :2639-2643
   }
 
   return 0;
