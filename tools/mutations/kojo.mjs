@@ -8458,6 +8458,466 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
   },
   {
+    desc: 'M3300 K13 EVENTTRAIN #PRI 存在标志写错值（FLAG:113=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    game.kojo.口上存在_13 = 1; // :73 FLAG:113 = 1（K13 口上存在标志）`,
+    replace: `    game.kojo.口上存在_13 = 2; // :73（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'K13 一对',
+  },
+  {
+    desc: 'M3301 K13 EVENTTRAIN #PRI 口上开关补 0 判据改错（===0 改 ===1，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2; // :75
+    }`,
+    replace: `    if (game.kojo.口上开关 === 1) { // 变异
+      game.kojo.口上开关 = 2; // :75
+    }`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'K13 一对',
+  },
+  {
+    desc: 'M3302 K13 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    game.kojo.口上存在_13 = 0; // :79`,
+    replace: `    game.kojo.口上存在_13 = 1; // :79（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'K13 一对',
+  },
+  {
+    desc: 'M3303 K13 EVENTTRAIN 自身守卫①口上开关判据反转（<=0 改 >0，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (game.kojo.口上开关 <= 0) {
+    // :83-87
+    return 0; // :83-87
+  } // :83-87`,
+    replace: `  if (game.kojo.口上开关 > 0) { // 变异
+    // :83-87
+    return 0; // :83-87
+  } // :83-87`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '自身守卫①口上开关',
+  },
+  {
+    desc: 'M3304 K13 EVENTTRAIN 自身守卫②TALENT:173 判据反转（!=1 改 ==1，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (era0(\`talent:\${target}:173\`) != 1) {
+    // :89-92
+    return 0; // :89-92
+  } // :89-92`,
+    replace: `  if (era0(\`talent:\${target}:173\`) == 1) { // 变异
+    // :89-92
+    return 0; // :89-92
+  } // :89-92`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '自身守卫②TALENT:173',
+  },
+  {
+    desc: 'M3305 K13 初调教==0 推进值写错（=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.初调教 = 1; // :126`,
+    replace: `    kojo.初调教 = 2; // :126（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '初调教推进到 1',
+  },
+  {
+    desc: 'M3306 K13 NTR 再捕获解除写错（CFLAG:650=0 改 1，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      kojo.NTR再捕获 = 0; // :138`,
+    replace: `      kojo.NTR再捕获 = 1; // :138（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'NTR 开关解除',
+  },
+  {
+    desc: 'M3307 K13 屈服刻印 Lv1 推进值写错（初调教=2 改 3，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.初调教 = 2; // :172`,
+    replace: `    kojo.初调教 = 3; // :172（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '屈服Lv1 推进到 2',
+  },
+  {
+    desc: 'M3308 K13 屈服刻印 Lv2 推进值写错（初调教=3 改 4，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.初调教 = 3; // :191`,
+    replace: `    kojo.初调教 = 4; // :191（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '屈服Lv2 推进到 3',
+  },
+  {
+    desc: 'M3309 K13 屈服刻印 Lv3 推进值写错（初调教=4 改 5，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.初调教 = 4; // :210`,
+    replace: `    kojo.初调教 = 5; // :210（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '屈服Lv3 推进到 4',
+  },
+  {
+    desc: 'M3310 K13 淫乱推进值写错（初调教=5 改 6，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.初调教 = 5; // :229`,
+    replace: `    kojo.初调教 = 6; // :229（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '淫乱推进到 5',
+  },
+  {
+    desc: 'M3311 K13 爱慕推进值写错（初调教=6 改 7，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.初调教 = 6; // :252`,
+    replace: `    kojo.初调教 = 7; // :252（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '爱慕推进到 6',
+  },
+  {
+    desc: 'M3312 K13 屈服Lv2 原作 &&/|| 优先级「修好」（先 AND 后 OR 改成先 OR，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  } else if (kojo.初调教 < 3 && era0(\`mark:\${target}:2\`) == 2) {
+    // :176
+    era.drawLine(); // :176-177
+    if (
+      (era0(\`talent:\${target}:157\`) && era0(\`talent:\${target}:110\`)) ||
+      era0(\`talent:\${target}:114\`) ||
+      era0(\`talent:\${target}:119\`)
+    ) {`,
+    replace: `  } else if (kojo.初调教 < 3 && era0(\`mark:\${target}:2\`) == 2) {
+    // :176
+    era.drawLine(); // :176-177
+    if (
+      era0(\`talent:\${target}:157\`) &&
+      (era0(\`talent:\${target}:110\`) ||
+        era0(\`talent:\${target}:114\`) ||
+        era0(\`talent:\${target}:119\`))
+    ) {`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '原作缺陷：157 && 110 || 114 || 119 先 AND 后 OR',
+  },
+  {
+    desc: 'M3313 K13 K13_KOJO2 反抗刻印Lv3 判据改错（MARK:3==3 改 ==2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (era0(\`mark:\${target}:3\`) == 3 && game.kojo.口上开关 == 2) {`,
+    replace: `  if (era0(\`mark:\${target}:3\`) == 2 && game.kojo.口上开关 == 2) { // 变异`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'K13_KOJO2 反抗刻印Lv3',
+  },
+  {
+    desc: 'M3314 K13 EVENTEND 角色死亡守卫删松（BASE:0<=0 改恒 false，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (era0(\`base:\${target}:0\`) <= 0) {
+    // :445-446
+    return 0; // :445-446
+  } // :445-446`,
+    replace: `  if (false) { // 变异
+    // :445-446
+    return 0; // :445-446
+  } // :445-446`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'EVENTEND BASE:0<=0（角色死亡）静默跳过',
+  },
+  {
+    desc: 'M3315 K13 EVENTEND 淫乱体力>=500 臂「补上 RETURN 1」（原作缺陷被修好，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await era.printAndWait(\`「哎呀、已经结束了哎……明天也请您多多关照了……♪」\`); // :508
+    await era.printAndWait(\`「\${sc()}会翘首以待的♪」\`); // :509
+  } else if (`,
+    replace: `    await era.printAndWait(\`「哎呀、已经结束了哎……明天也请您多多关照了……♪」\`); // :508
+    await era.printAndWait(\`「\${sc()}会翘首以待的♪」\`); // :509
+    return 1; // 变异：补上原作没有的 RETURN 1
+  } else if (`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '淫乱体力>=500 无 RETURN 1（原作缺陷 1:1）',
+  },
+  {
+    desc: 'M3316 K13 COM 口塞守卫删（TEQUIP:45 不再跳过，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    // :541-542
+    return 0; // :541-542
+  } // :541-542`,
+    replace: `  if (false && era_flag.selectcom != 45) { // 变异
+    // :541-542
+    return 0; // :541-542
+  } // :541-542`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
+  },
+  {
+    desc: 'M3317 K13 COM 失神守卫删（TFLAG:899 不再跳过，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (game.train.失神) {
+    // :545-546
+    return 0; // :545-546
+  } // :545-546`,
+    replace: `  if (false) { // 变异
+    // :545-546
+    return 0; // :545-546
+  } // :545-546`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '失神（TFLAG:899）：静默跳过',
+  },
+  {
+    desc: 'M3318 K13 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_13，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await dog_kojo_13(rand_n); // :548 CALL DOG_KOJO_13
+    return 0; // :548-549
+  } // :550-551`,
+    replace: `    return 0; // :548-549（变异：不调 DOG_KOJO_13）
+  } // :550-551`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_13',
+  },
+  {
+    desc: 'M3319 K13 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_13，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await colosseum_kojo_13(rand_n); // :553 CALL COLOSSEUM_KOJO_13
+    return 0; // :553-554
+  } // :553-555`,
+    replace: `    return 0; // :553-554（变异：不调 COLOSSEUM_KOJO_13）
+  } // :553-555`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_13',
+  },
+  {
+    desc: 'M3320 K13 爱抚初回推进值写错（CFLAG:301=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      kojo.爱抚 = 1; // :577`,
+    replace: `      kojo.爱抚 = 2; // :577（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '爱抚初回推进到 1',
+  },
+  {
+    desc: 'M3321 K13 爱抚初回刻印分档删（MARK:2>=2 改 >=3，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      if (era0(\`mark:\${target}:2\`) >= 2) {
+        // :567
+        await era.printAndWait(\`「噫、再这样摸下去的话……不行了！」\`); // :568`,
+    replace: `      if (era0(\`mark:\${target}:2\`) >= 3) { // 变异
+        // :567
+        await era.printAndWait(\`「噫、再这样摸下去的话……不行了！」\`); // :568`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '爱抚初回刻印推进到 1',
+  },
+  {
+    desc: 'M3322 K13 爱抚淫乱档推进写错（CFLAG:301=6 改 5，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `        kojo.爱抚 = 6; // :584`,
+    replace: `        kojo.爱抚 = 5; // :584（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '淫乱分支推进到 6',
+  },
+  {
+    desc: 'M3323 K13 爱抚爱慕档推进写错（CFLAG:301=5 改 4，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `        kojo.爱抚 = 5; // :590`,
+    replace: `        kojo.爱抚 = 4; // :590（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '爱慕分支推进到 5',
+  },
+  {
+    desc: 'M3324 K13 爱抚屈服Lv3 档推进写错（CFLAG:301=4 改 3，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `        kojo.爱抚 = 4; // :596`,
+    replace: `        kojo.爱抚 = 3; // :596（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '屈服Lv3 分支推进到 4',
+  },
+  {
+    desc: 'M3325 K13 爱抚屈服Lv2 档推进写错（CFLAG:301=3 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `        kojo.爱抚 = 3; // :600`,
+    replace: `        kojo.爱抚 = 2; // :600（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '屈服Lv2 分支推进到 3',
+  },
+  {
+    desc: 'M3326 K13 爱抚それ以外推进写错（CFLAG:301=2 改 1，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `        kojo.爱抚 = 2; // :604`,
+    replace: `        kojo.爱抚 = 1; // :604（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'それ以外推进到 2',
+  },
+  {
+    desc: 'M3327 K13 阈值闸旁路删松（FLAG:7==2 改恒 false，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `        era0(\`talent:\${target}:76\`) == 1 &&
+        (kojo.爱抚 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :582`,
+    replace: `        era0(\`talent:\${target}:76\`) == 1 &&
+        (kojo.爱抚 <= 5 || false)
+      ) {
+        // :582`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '阈值闸 FLAG:7==2 旁路重出声',
+  },
+  {
+    desc: 'M3328 K13 主启动图删 K13 庇护者口上注册（KOJO 13 不进实际运行图，#244）',
+    file: 'ere/system/flow/main-loop.js',
+    find: `require('#/kojo/kojo-k13-protector');`,
+    replace: `// 变异：K13 庇护者口上不在主启动图注册`,
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图漏装：kojo-k13-protector',
+  },
+  {
+    desc: 'M3329 K13 存根清单漏登 SELL_MATURO_K0（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `const STUBBED_CALLS = ['SELL_MATURO_K0'];`,
+    replace: `const STUBBED_CALLS = [];`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'SELL_MATURO_K0',
+  },
+  {
+    desc: 'M3330 K13 PALAMCNG 口塞守卫删（TEQUIP:45 不再跳过，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (era0(\`tequip:\${target}:45\`)) {
+    // :4442-4448
+    return 0; // :4442-4448
+  } // :4442-4448`,
+    replace: `  if (false) { // 变异
+    // :4442-4448
+    return 0; // :4442-4448
+  } // :4442-4448`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'PALAMCNG 口塞守卫',
+  },
+  {
+    desc: 'M3331 K13 PALAMCNG 首次润滑推进写错（CFLAG:221=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.首次润滑Lv2 = 1; // :4480`,
+    replace: `    kojo.首次润滑Lv2 = 2; // :4480（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'PALAMCNG 首次润滑Lv2 推进到 1',
+  },
+  {
+    desc: 'M3332 K13 PALAMCNG 首次C绝顶推进写错（CFLAG:225=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.首次C绝顶 = 1; // :4551`,
+    replace: `    kojo.首次C绝顶 = 2; // :4551（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'PALAMCNG 首次C绝顶推进到 1',
+  },
+  {
+    desc: 'M3333 K13 MARKCNG 苦痛刻印Lv3 推进写错（CFLAG:297=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.苦痛刻印Lv3 = 1; // :4705`,
+    replace: `    kojo.苦痛刻印Lv3 = 2; // :4705（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'MARKCNG 苦痛刻印Lv3 推进到 1',
+  },
+  {
+    desc: 'M3334 K13 正常位初回推进写错（CFLAG:321=1 改 2，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      kojo.正常位 = 1; // :1536`,
+    replace: `      kojo.正常位 = 2; // :1536（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '正常位初回推进到 1',
+  },
+  {
+    desc: 'M3335 K13 SELF_KOJO 卖却分支存根丢（SELL_MATURO_K0 不落，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      stub_line('SELL_MATURO_K0', '卖却分支（成熟贩卖）', '随售却票'); // :4880`,
+    replace: `      // 变异：SELL_MATURO_K0 存根丢`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'SELF_KOJO 卖却分支存根 SELL_MATURO_K0',
+  },
+  {
+    desc: 'M3336 K13 DUNGEON_VICTORY 低体力闸删松（<50 改 <0，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    (era0(\`base:\${a}:0\`) * 100) / era0(\`maxbase:\${a}:0\`) < 50 ||`,
+    replace: `    (era0(\`base:\${a}:0\`) * 100) / era0(\`maxbase:\${a}:0\`) < 0 ||`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'DUNGEON_VICTORY 低体力追加',
+  },
+  {
+    desc: 'M3337 K13 DUNGEON_ATTACK 侵略状态==2 判据反转（==2 改 ==1，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `  if (chara(target).invasion.状态 == 2) {`,
+    replace: `  if (chara(target).invasion.状态 == 1) { // 变异`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'DUNGEON_ATTACK 侵略状态==2',
+  },
+  {
+    desc: 'M3338 K13 GOHOUBI_AFTER choice==0 台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await era.printAndWait(\`「这样啊……真失望」\`); // :5834`,
+    replace: `    await era.printAndWait(\`「这样啊……真高兴」\`); // :5834（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'GOHOUBI_AFTER choice==0',
+  },
+  {
+    desc: 'M3339 K13 NTR P==1 首次开关写错（CFLAG:650=1 改 0，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    kojo.NTR再捕获 = 1; // :5506`,
+    replace: `    kojo.NTR再捕获 = 0; // :5506（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'NTR 开关 CFLAG:650',
+  },
+  {
+    desc: 'M3340 K13 GOBI ARG:0==1 语尾改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await era.print(\`嗯♪\`); // :5975`,
+    replace: `    await era.print(\`哦！\`); // :5975（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'GOBI ARG:0==1',
+  },
+  {
+    desc: 'M3341 K13 ENTERENEMY 默认档台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await era.printAndWait(\`「呵呵、\${self_call(a)}、会努力的♪」\`); // :5777`,
+    replace: `    await era.printAndWait(\`「呵呵、\${self_call(a)}不会努力的♪」\`); // :5777（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'ENTERENEMY 默认档',
+  },
+  {
+    desc: 'M3342 K13 EXUCUTION 档4 台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await era.printAndWait(\`「噫、有谁……可以救救我」\`); // :5651`,
+    replace: `    await era.printAndWait(\`「噫、没人……可以救救我」\`); // :5651（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'EXUCUTION 档 4',
+  },
+  {
+    desc: 'M3343 K13 MUSEUM 档3 台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      \`「啊啦啊啦、\${sc()}的这副样子被看到的话…真是很困扰呢」\`,`,
+    replace: `      \`「啊啦啊啦、\${sc()}的这副样子被看到的话…真是很开心呢」\`,`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'MUSEUM 档 3',
+  },
+  {
+    desc: 'M3344 K13 DUNGEON_RYOUZYOKU 处女默认档台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `    await era.printAndWait(\`「怎么会这样……\${sc()}的……第一次……」\`); // :5007`,
+    replace: `    await era.printAndWait(\`「怎么会这样……\${sc()}的……第二次……」\`); // :5007（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'DUNGEON_RYOUZYOKU 处女默认档',
+  },
+  {
+    desc: 'M3345 K13 BENKI 肉便器行动==0 默认档台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `      await era.printAndWait(\`「好的……会尽全力服侍的……」\`); // :5171`,
+    replace: `      await era.printAndWait(\`「好的……不会服侍的……」\`); // :5171（变异）`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'BENKI 肉便器行动==0',
+  },
+  {
+    desc: 'M3346 K13 GOHOUBI_REQUEST 金钱台词改错（#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `await era.printAndWait(\`「等\${sc()}存够了钱、我们一起出去旅游吧♪　呵呵」\`); // :5787`,
+    replace: `await era.printAndWait(\`「等\${sc()}存够了钱、我们一起出去不旅游吧♪　呵呵」\`); // :5787`,
+    tests: ['kojo-k13-protector'],
+    must_mention: 'GOHOUBI_REQUEST 金钱',
+  },
+  {
+    desc: 'M3347 K13 self_kojo 族漏注册（key 13 不进 self_kojo_family，#244）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: `self_kojo_family.register(13, self_kojo_k13);`,
+    replace: `// 变异：self_kojo_family 漏装 K13`,
+    tests: ['kojo-k13-protector'],
+    must_mention: '缺 K13 注册',
+  },
+  {
     desc: 'M3400 K14 EVENTTRAIN #PRI 存在标志写错值（口上存在_14=1 改 2，#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: `game.kojo.口上存在_14 = 1; // :41 FLAG:114 = 1（K14 口上存在标志）`,

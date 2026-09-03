@@ -403,6 +403,7 @@ test('口上样本里已有门面的读写不再拼 era.get/set 字符串', () =
     'kojo-k6-wicked.js',
     'kojo-k9-diamond.js',
     'kojo-k10-club.js',
+    'kojo-k13-protector.js',
     'kojo-k14-nobleman.js',
   ]) {
     const text = fs.readFileSync(
