@@ -329,14 +329,13 @@ test('KOJO_MESSAGE_COM_12 头部守卫③ TEQUIP:89（兽奸）岔去 dog_kojo_1
   assert.equal(fixture.store.get('cflag:20:301'), 1);
 });
 
-test('KOJO_MESSAGE_COM_12 头部守卫④ TEQUIP:55（死斗场）占位存根', async () => {
+test('KOJO_MESSAGE_COM_12 头部守卫④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('tequip:20:55', 1);
-  }, 55);
+    f.store.set('base:20:1', 10);
+  }, 56);
   await speak_k12(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '（死斗场调教中的专用口上尚未移植，此处为占位——原作 @COLOSSEUM_KOJO_12，见 docs/stub-registry.md。）',
-  ]);
+  assert.deepEqual(fixture.text_lines(), ['「我是绝对……不会认输的！」']);
 });
 
 test('SELECTCOM==0（爱抚）初回：MARK:2>=2 分档，推进到 1', async () => {

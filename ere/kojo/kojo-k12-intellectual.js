@@ -76,11 +76,16 @@ const {
   grotesque_koujo_family,
   enterenemy_koujo_family,
   gohoubi_request_koujo_family,
+  gobi_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
+const {
+  gohoubi_after_koujo_family,
+  osioski_koujo_family,
+} = require('#/kojo/kojo-dungeon-after');
 
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
@@ -545,7 +550,7 @@ async function kojo_message_com_12(rand) {
 
   if (era.get(`tequip:${target}:55`)) {
     // :417-420
-    stub_line('COLOSSEUM_KOJO_12', '死斗场调教中的专用口上');
+    await colosseum_kojo_12(rand_n); // :418 CALL COLOSSEUM_KOJO_12（真身）
     return 0; // :419-422
   } // :420-422
 
@@ -6550,6 +6555,13 @@ kojo_message_com_family.register(12, kojo_message_com_12);
 kojo_message_palamcng_family.register(12, kojo_message_palamcng_12);
 kojo_message_markcng_family.register(12, kojo_message_markcng_12);
 self_kojo_family.register(12, self_kojo_k12);
+gohoubi_after_koujo_family.register(12, (cid, choice) =>
+  gohoubi_after_koujo_k12(undefined, cid, choice),
+);
+osioski_koujo_family.register(12, (cid, choice) =>
+  osioki_koujo_k12(undefined, cid, choice),
+);
+gobi_koujo_family.register(12, gobi_koujo_k12);
 exucution_koujo_family.register(12, exucution_koujo_k12);
 museum_koujo_family.register(12, museum_koujo_k12);
 banishment_koujo_family.register(12, banishment_koujo_k12);
@@ -6753,7 +6765,7 @@ async function self_kojo_k12(rand, q) {
     } // :4741-4742
     if (era.get(`talent:${target}:122`) != 1) {
       // :4743
-      // CALL SELL_MATURO_K0 // :4743
+      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :4743
     } // :4743
   } // :4744-4746
 
@@ -7482,6 +7494,338 @@ async function gohoubi_request_koujo_k12(rand) {
   } // :5781-5783
 }
 
+// @GOHOUBI_AFTER_KOUJO_K12（:5784-5863）：奖赏结算后口上（choice 参数分档，原作 TFLAG:18 双语义槽裁定读 choice——kojo-dungeon-after.js:21）。
+async function gohoubi_after_koujo_k12(rand, cid, choice) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  void cid;
+  const target = era_flag.target;
+  const a = era_flag.target; // 源 A（分发方 gohoubi_after_koujo 已把 target 置为 cid）
+  const sc = (x = target) => self_call(x); // %SELF_CALL(A)%
+  void rand_n;
+  if (choice == 0) {
+    // :5790
+    await era.printAndWait(`「诶诶、怎么能这样」`); // :5791
+    return 0; // :5792-5793
+  } else if (choice == 1) {
+    // :5794
+    await era.printAndWait(
+      `「太棒了～！　下次${sc(a)}也得拿出什么研究成果呢！」`,
+    ); // :5795
+    return 0; // :5796-5797
+  } else if (choice == 2) {
+    // :5797
+
+    if (chara(a).stronghold.要求奖赏 == 0) {
+      // :5799
+      await era.printAndWait(`「太棒了～！　这样一来研究就能更进一步了」`); // :5800
+    } else if (chara(a).stronghold.要求奖赏 == 1) {
+      // :5802
+
+      if (era.get(`talent:${a}:0`) == 1) {
+        // :5804
+        await era.printAndWait(`「把处女献给狗什么的、不错的纪念日呢」`); // :5805
+      } else {
+        // :5806-5807
+        await era.printAndWait(`「太棒了～！　研究研究♪」`); // :5807
+      } // :5808-5809
+    } else if (chara(a).stronghold.要求奖赏 == 2) {
+      // :5810
+
+      if (era.get(`talent:${a}:0`) == 1) {
+        // :5812
+        await era.printAndWait(`「把处女献给猪什么的、不错的纪念日呢」`); // :5813
+      } else {
+        // :5814-5815
+        await era.printAndWait(`「太棒了～！　早就想研究猪的生殖行为试试了♪」`); // :5815
+      } // :5816-5817
+    } else if (chara(a).stronghold.要求奖赏 == 3) {
+      // :5818
+
+      if (era.get(`talent:${a}:0`) == 1) {
+        // :5820
+        await era.printAndWait(`「把处女献给马什么的、不错的纪念日呢」`); // :5821
+      } else {
+        // :5822-5823
+        await era.printAndWait(
+          `「太棒了～！　与马做爱阴道能不能承受住、就让我自己试试吧」`,
+        ); // :5823
+      } // :5824-5825
+    } else if (chara(a).stronghold.要求奖赏 == 4) {
+      // :5826
+      await era.printAndWait(`「亲脸蛋也行哦、啾的一下」`); // :5827
+    } else if (chara(a).stronghold.要求奖赏 == 5) {
+      // :5829
+
+      if (era.get(`abl:${a}:2`) > era.get(`abl:${a}:3`)) {
+        // :5831
+        await era.printAndWait(`「绝对要受精哦！　好期待呢！」`); // :5832
+      } else {
+        // :5834-5835
+        await era.printAndWait(`「无论何时都想受精呢……这次也拜托了」`); // :5835
+      } // :5836-5837
+    } else if (chara(a).stronghold.要求奖赏 == 6) {
+      // :5838
+      await era.printAndWait(`「这可以用来美容呢、在研究中。谢谢」`); // :5839
+    } else if (chara(a).stronghold.要求奖赏 == 7) {
+      // :5841
+
+      if (era.get(`talent:${a}:0`) == 1) {
+        // :5843
+        await era.printAndWait(`「偶尔把研究忘掉、来做爱吧～！」`); // :5844
+      } else {
+        // :5845-5846
+        await era.printAndWait(`「偶尔把研究忘掉、来做爱吧～！」`); // :5846
+      } // :5847-5848
+    } else if (chara(a).stronghold.要求奖赏 == 8) {
+      // :5849
+      await era.printAndWait(`「饮尿疗法究竟效果如何、下次就研究看看吧」`); // :5850
+    } else if (chara(a).stronghold.要求奖赏 == 9) {
+      // :5852
+
+      if (era.get(`abl:${a}:2`) > era.get(`abl:${a}:3`)) {
+        // :5854
+        await era.printAndWait(`「你、觉得怎样？　这可是女人的阴部哦」`); // :5855
+      } else {
+        // :5857-5858
+        await era.printAndWait(`「你、觉得怎样？　这可是女人的肛门哦」`); // :5858
+      } // :5859-5863
+    } else {
+      // :5860-5863
+    } // :5861-5863
+  } // :5862-5863
+}
+
+// @OSIOKI_KOUJO_K12（:5864-5926）：惩罚结算后口上（choice 参数分档，同 gohoubi_after 裁定）。
+async function osioki_koujo_k12(rand, cid, choice) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  void cid;
+  const target = era_flag.target;
+  const a = era_flag.target; // 源 A（分发方 gohoubi_after_koujo 已把 target 置为 cid）
+  const sc = (x = target) => self_call(x); // %SELF_CALL(A)%
+  void rand_n;
+  if (choice == 0) {
+    // :5870
+    await era.printAndWait(`「请你、不要吓我……」`); // :5871
+  } else if (choice == 1) {
+    // :5873
+
+    if (era.get(`abl:${a}:21`) >= 3) {
+      // :5875
+      await era.printAndWait(`「痛觉转换成了快感……好有效啊啊啊啊♪」`); // :5876
+    } else {
+      // :5877-5878
+      await era.printAndWait(`「呀啊啊啊啊啊！」`); // :5878
+    } // :5879-5880
+  } else if (choice == 2) {
+    // :5881
+
+    if (era.get(`abl:${a}:17`) >= 4) {
+      // :5883
+      await era.printAndWait(`「没有一点知性的母猪般的自慰……好好看着吧♪」`); // :5884
+    } else {
+      // :5885-5886
+      await era.printAndWait(`「呜呜～、这样没有一点知性的行为……」`); // :5886
+    } // :5887-5888
+  } else if (choice == 3) {
+    // :5889
+
+    if (era.get(`abl:${a}:17`) >= 6) {
+      // :5891
+      await era.printAndWait(`「在路上排泄、${sc(a)}、可真是个笨蛋啊～♪」`); // :5892
+    } else {
+      // :5893-5894
+      await era.printAndWait(`「呜呜～、这样没有一点知性的行为……」`); // :5894
+    } // :5895-5896
+  } else if (choice == 4) {
+    // :5897
+
+    if (era.get(`abl:${a}:21`) >= 3) {
+      // :5899
+      await era.printAndWait(`「再更多的、更多的用力鞭笞我吧♪　啊呜～♪」`); // :5900
+    } else {
+      // :5901-5902
+      await era.printAndWait(`「唔……天才、必须在痛苦中学习～」`); // :5902
+    } // :5903-5904
+  } else if (choice == 5) {
+    // :5905
+
+    if (era.get(`talent:${a}:88`) == 1 || era.get(`talent:${a}:76`) == 1) {
+      // :5907
+      await era.printAndWait(
+        `「啊啊啊、这样尿出来、要变成白痴了♪　${sc(a)}、要变成白痴了啊♪」`,
+      ); // :5908
+    } else {
+      // :5909-5910
+      await era.printAndWait(`「太不卫生了……${sc(a)}好失败呢」`); // :5910
+    } // :5911-5912
+  } else if (choice == 6) {
+    // :5913
+    await era.print(`「唉、扫厕所吗……」`); // :5914
+  } else if (choice == 7) {
+    // :5916
+    await era.print(`「明明对研究来说体力是必要的……」`); // :5917
+  } else if (choice == 8) {
+    // :5919
+    await era.printAndWait(`「薬物的影响……也当成一种研究的话……」`); // :5920
+  } else if (choice == 9) {
+    // :5922
+    await era.printAndWait(''); // :5923
+  } // :5924-5926
+}
+
+// @GOBI_KOUJO_K12（:5927-5957）：语尾口上（gobi family，ARG:0 → arg0 参数）。
+async function gobi_koujo_k12(arg0, rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  if (arg0 == 1) {
+    // :5930
+
+    await era.print(`的哟♪`); // :5932
+  } else if (arg0 == 2) {
+    // :5933
+
+    await era.print(`的呢！`); // :5935
+  } else if (arg0 == 3) {
+    // :5936
+
+    await era.print(`的哟……。`); // :5938
+  } else if (arg0 == 4) {
+    // :5939
+
+    await era.print(`的样子……呢。`); // :5941
+  } else if (arg0 == 5) {
+    // :5942
+
+    await era.print(`的哟……。`); // :5944
+  } else {
+    // :5945-5946
+
+    if (rand_n(3) == 0) {
+      // :5948
+      await era.print(`的哟。`); // :5949
+    } else if (rand_n(2) == 0) {
+      // :5950
+      await era.print(`的样子哦。`); // :5951
+    } else {
+      // :5952-5953
+      await era.print(`什么的。`); // :5953
+    }
+  }
+}
+
+// @COLOSSEUM_KOJO_12（:5421-5525）：死斗场专用口上（TEQUIP:55 时由守卫岔来）。
+// 本地函数不进 family 分发（同 dog_kojo_12）。
+async function colosseum_kojo_12(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  void rand_n;
+  if (era_flag.selectcom == 55) {
+    // :5425
+
+    if (era.get(`base:${target}:1`) <= 0) {
+      // :5427
+      await era.printAndWait(''); // :5428
+    } else {
+      // :5429-5430
+      await era.printAndWait(''); // :5430
+    } // :5431-5434
+    return 0; // :5432-5434
+  } // :5433-5434
+
+  if (era_flag.selectcom == 56) {
+    // :5437
+
+    if (era.get(`base:${target}:1`) <= 0) {
+      // :5439
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :5441
+        await era.printAndWait(`「已经不行了……要完了……」`); // :5442
+      } else {
+        // :5443-5444
+        await era.printAndWait(`「已经不行了……要完了……」`); // :5444
+      } // :5445-5447
+    } else {
+      // :5446-5447
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :5448
+        await era.printAndWait(`「${sc()}是绝对……不会认输的！」`); // :5449
+      } else {
+        // :5450-5451
+        await era.printAndWait(`「${sc()}是绝对……不会认输的！」`); // :5451
+      } // :5452-5457
+    } // :5453-5457
+    return 0; // :5454-5457
+  } // :5455-5457
+
+  if (era_flag.selectcom == 31) {
+    // :5460
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5462
+      await era.printAndWait(''); // :5463
+    } else {
+      // :5464-5465
+      await era.printAndWait(''); // :5465
+    } // :5466-5469
+    return 0; // :5467-5469
+  } // :5468-5469
+
+  if (era_flag.selectcom == 5) {
+    // :5472
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5474
+      await era.printAndWait(''); // :5475
+    } else {
+      // :5476-5477
+      await era.printAndWait(''); // :5477
+    } // :5478-5481
+    return 0; // :5479-5481
+  } // :5480-5481
+
+  if (era_flag.selectcom == 21) {
+    // :5484
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5486
+      await era.printAndWait(''); // :5487
+    } else if (era.get('tflag:400') == 206) {
+      // :5489
+      await era.printAndWait(''); // :5490
+    } else {
+      // :5491-5492
+      await era.printAndWait(''); // :5492
+    } // :5493-5497
+    return 0; // :5494-5497
+  } // :5495-5497
+
+  if (era_flag.selectcom == 27) {
+    // :5500
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :5502
+      await era.printAndWait(''); // :5503
+    } else if (era.get('tflag:400') == 206) {
+      // :5505
+      await era.printAndWait(''); // :5506
+    } else {
+      // :5507-5508
+      await era.printAndWait(''); // :5508
+    } // :5509-5513
+    return 0; // :5510-5513
+  } // :5511-5513
+
+  if (era_flag.selectcom == 51) {
+    // :5516
+    await era.printAndWait(''); // :5517
+    return 0; // :5518-5525
+  } // :5519-5525
+
+  return 0; // :5522-5525
+}
+
 module.exports = {
   k12_kojo2,
   kojo_message_com_12,
@@ -7499,6 +7843,10 @@ module.exports = {
   grotesque_koujo_k12,
   enterenemy_koujo_k12,
   gohoubi_request_koujo_k12,
+  gohoubi_after_koujo_k12,
+  osioki_koujo_k12,
+  gobi_koujo_k12,
+  colosseum_kojo_12,
   dog_kojo_12,
   STUBBED_CALLS,
 };
