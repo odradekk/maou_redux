@@ -8457,4 +8457,907 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
   },
+  {
+    desc: 'M3500 K15 EVENTTRAIN #PRI 存在标志写错值（FLAG:115=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    game.kojo.口上存在_15 = 1; // :31 FLAG:115 = 1（K15 口上存在标志）`,
+    replace: `    game.kojo.口上存在_15 = 2; // :31（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'K15 存在标志 FLAG:115',
+  },
+  {
+    desc: 'M3501 K15 EVENTTRAIN #PRI 口上开关补 0 判据改错（===0 改 ===1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    if (game.kojo.口上开关 === 0) {
+      game.kojo.口上开关 = 2; // :33
+    }`,
+    replace: `    if (game.kojo.口上开关 === 1) {  // 变异
+      game.kojo.口上开关 = 2; // :33
+    }`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）',
+  },
+  {
+    desc: 'M3502 K15 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    game.kojo.口上存在_15 = 0; // :37`,
+    replace: `    game.kojo.口上存在_15 = 1; // :37（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'EVENTEND #LATER 清 FLAG:115',
+  },
+  {
+    desc: 'M3503 K15 EVENTTRAIN 自身守卫①口上开关判据反转（<=0 改 >0，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if ((game.kojo.口上开关 || 0) <= 0) {
+    return 0; // :43-47
+  } // :43-47`,
+    replace: `  if ((game.kojo.口上开关 || 0) > 0) {  // 变异
+    return 0; // :43-47
+  } // :43-47`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'EVENTTRAIN 自身守卫①口上开关<0（玩家显式关掉）静默跳过',
+  },
+  {
+    desc: 'M3504 K15 EVENTTRAIN 自身守卫②TALENT:175 判据反转（!=1 改 ==1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`talent:\${target}:175\`) != 1) {
+    return 0; // :43-47
+  } // :43-47`,
+    replace: `  if (era0(\`talent:\${target}:175\`) == 1) {  // 变异
+    return 0; // :43-47
+  } // :43-47`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'EVENTTRAIN 自身守卫②TALENT:175!=1 静默跳过',
+  },
+  {
+    desc: 'M3505 K15 初调教推进值写错（CFLAG:201=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 1; // :91 CFLAG:201 = 1`,
+    replace: `    kojo.初调教 = 2; // :91（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '初调教暗器：选 2 偏头闪躲 → 恭顺珠 +50、CFLAG:201=1',
+  },
+  {
+    desc: 'M3506 K15 屈服刻印 Lv1 推进值写错（初调教=2 改 3，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 2; // :119`,
+    replace: `    kojo.初调教 = 3; // :119（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '屈服 Lv1 推进到 2',
+  },
+  {
+    desc: 'M3507 K15 屈服刻印 Lv2 推进值写错（初调教=3 改 4，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 3; // :127`,
+    replace: `    kojo.初调教 = 4; // :127（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '屈服 Lv2 推进到 3',
+  },
+  {
+    desc: 'M3508 K15 屈服刻印 Lv3 推进值写错（初调教=4 改 5，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 4; // :135`,
+    replace: `    kojo.初调教 = 5; // :135（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '屈服 Lv3 推进到 4',
+  },
+  {
+    desc: 'M3509 K15 淫乱推进值写错（初调教=5 改 6，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 5; // :144`,
+    replace: `    kojo.初调教 = 6; // :144（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '淫乱推进到 5',
+  },
+  {
+    desc: 'M3510 K15 爱慕推进值写错（初调教=6 改 7，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 6; // :166`,
+    replace: `    kojo.初调教 = 7; // :166（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '爱慕推进到 6',
+  },
+  {
+    desc: 'M3511 K15 崩坏推进值写错（初调教=9 改 8，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.初调教 = 9; // :174`,
+    replace: `    kojo.初调教 = 8; // :174（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '崩坏推进到 9',
+  },
+  {
+    desc: 'M3512 K15 NTR 再捕获爱慕臂解除值改错（CFLAG:650=0 改 1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.NTR再捕获 = 0; // :99-102`,
+    replace: `      kojo.NTR再捕获 = 1; // :99-102（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'NTR 开关解除',
+  },
+  {
+    desc: 'M3513 K15 EVENTEND 死亡守卫判据反转（BASE:0<=0 改 >0，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`base:\${target}:0\`) <= 0) {
+    return 0; // :316-324
+  } // :316-324`,
+    replace: `  if (era0(\`base:\${target}:0\`) > 0) {  // 变异
+    return 0; // :316-324
+  } // :316-324`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'EVENTEND 死亡（BASE:0<=0）静默跳过',
+  },
+  {
+    desc: 'M3514 K15 COM 头部守卫①TEQUIP:45 判据改错（#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
+    return 0; // :411-412
+  } // :411-412`,
+    replace: `  if (era0(\`tequip:\${target}:46\`) && era_flag.selectcom != 45) {  // 变异
+    return 0; // :411-412
+  } // :411-412`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
+  },
+  {
+    desc: 'M3515 K15 COM 头部守卫②失神判据反转（#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (game.train.失神) {
+    // :414-415 TFLAG:899（跨域读走门面）
+    return 0; // :414-415
+  } // :414-415`,
+    replace: `  if (!game.train.失神) {  // 变异
+    // :414-415 TFLAG:899（跨域读走门面）
+    return 0; // :414-415
+  } // :414-415`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '失神守卫跳过',
+  },
+  {
+    desc: 'M3516 K15 COM 头部守卫③TEQUIP:89 分发对象改错（DOG 改 COLOSSEUM，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    await dog_kojo_15(rand_n); // :418 CALL DOG_KOJO_15`,
+    replace: `    await colosseum_kojo_15(rand_n); // 变异：调用对象改错`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_15',
+  },
+  {
+    desc: 'M3517 K15 COM 头部守卫④TEQUIP:55 分发对象改错（COLOSSEUM 改 DOG，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    await colosseum_kojo_15(rand_n); // :423 CALL COLOSSEUM_KOJO_15`,
+    replace: `    await dog_kojo_15(rand_n); // 变异：调用对象改错`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_15',
+  },
+  {
+    desc: 'M3518 K15 COM 头部被插入 ASSI 守卫（源 :408-410 整行注释，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  const kojo = chara(target).kojo;
+
+  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {`,
+    replace: `  const kojo = chara(target).kojo;
+
+  if (era_flag.assi > 0 && era_flag.assiplay) {
+    return 0; // 变异：插入 ASSI 守卫
+  }
+  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'K15 无 ASSI 守卫，助手调教也出声',
+  },
+  {
+    desc: 'M3519 K15 COM 头部被插入 TALENT:9 守卫（源无此道，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    await colosseum_kojo_15(rand_n); // :423 CALL COLOSSEUM_KOJO_15
+    return 0; // :423-424
+  } // :423-425
+
+  if (era_flag.selectcom == 0) {`,
+    replace: `    await colosseum_kojo_15(rand_n); // :423 CALL COLOSSEUM_KOJO_15
+    return 0; // :423-424
+  } // :423-425
+  if (era0(\`talent:\${target}:9\`) == 1) {
+    return 0; // 变异：插入 TALENT:9 守卫
+  }
+
+  if (era_flag.selectcom == 0) {`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'K15 无 TALENT:9 守卫',
+  },
+  {
+    desc: 'M3520 K15 COM 头部被插入 TEQUIP:90 守卫（源无此道，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (game.train.失神) {
+    // :414-415 TFLAG:899（跨域读走门面）
+    return 0; // :414-415
+  } // :414-415
+  if (era0(\`tequip:\${target}:89\`)) {`,
+    replace: `  if (game.train.失神) {
+    // :414-415 TFLAG:899（跨域读走门面）
+    return 0; // :414-415
+  } // :414-415
+  if (era0(\`tequip:\${target}:90\`)) {
+    return 0; // 变异：插入 TEQUIP:90 守卫
+  }
+  if (era0(\`tequip:\${target}:89\`)) {`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'K15 无 TEQUIP:90 守卫',
+  },
+  {
+    desc: 'M3521 K15 COM 族注册 key 改错（15 改 16，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `kojo_message_com_family.register(15, kojo_message_com_15);`,
+    replace: `kojo_message_com_family.register(16, kojo_message_com_15);  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'COM 族缺 K15 注册',
+  },
+  {
+    desc: 'M3522 K15 爱抚首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.爱抚 = 1; // :443-445`,
+    replace: `      kojo.爱抚 = 2; // :443-445`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '爱抚初回（CFLAG:301==0 且 MARK:2<2）',
+  },
+  {
+    desc: 'M3523 K15 舔阴首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.舔阴 = 1; // :502-505`,
+    replace: `      kojo.舔阴 = 2; // :502-505`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '舔阴初回推进到 1',
+  },
+  {
+    desc: 'M3524 K15 肛门爱抚首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.肛门爱抚 = 1; // :545`,
+    replace: `      kojo.肛门爱抚 = 2; // :545`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '肛门爱抚初回推进到 1',
+  },
+  {
+    desc: 'M3525 K15 自慰首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.自慰 = 1; // :601`,
+    replace: `      kojo.自慰 = 2; // :601`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '自慰初回推进到 1',
+  },
+  {
+    desc: 'M3526 K15 胸爱抚首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.胸爱抚 = 1; // :693-696`,
+    replace: `      kojo.胸爱抚 = 2; // :693-696`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '胸爱抚初回推进到 1',
+  },
+  {
+    desc: 'M3527 K15 接吻调教首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.接吻 = 1; // :781-784`,
+    replace: `      kojo.接吻 = 2; // :781-784`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '调教初回推进到 1',
+  },
+  {
+    desc: 'M3528 K15 自己扒开首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.自己扒开 = 1; // :840`,
+    replace: `      kojo.自己扒开 = 2; // :840`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '自己扒开初回推进到 1',
+  },
+  {
+    desc: 'M3529 K15 插入手指首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.插入手指 = 1; // :886`,
+    replace: `      kojo.插入手指 = 2; // :886`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '插入手指初回 → 1',
+  },
+  {
+    desc: 'M3530 K15 舔肛首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.舔肛 = 1; // :925-928`,
+    replace: `      kojo.舔肛 = 2; // :925-928`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '舔肛初回 → 1',
+  },
+  {
+    desc: 'M3531 K15 振动宝石首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.振动宝石 = 1; // :968`,
+    replace: `      kojo.振动宝石 = 2; // :968`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '振动宝石初回 → 1',
+  },
+  {
+    desc: 'M3532 K15 壶虫首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.壶虫 = 1; // :1031`,
+    replace: `      kojo.壶虫 = 2; // :1031`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '壶虫初回 → 1',
+  },
+  {
+    desc: 'M3533 K15 振动杖首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.振动杖 = 1; // :1100`,
+    replace: `      kojo.振动杖 = 2; // :1100`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '振动杖初回 → 1',
+  },
+  {
+    desc: 'M3534 K15 肛门虫首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.肛门虫 = 1; // :1146`,
+    replace: `      kojo.肛门虫 = 2; // :1146`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '肛门虫初回 → 1',
+  },
+  {
+    desc: 'M3535 K15 肛珠首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.肛珠 = 1; // :1445`,
+    replace: `      kojo.肛珠 = 2; // :1445`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '肛珠初回 → 1',
+  },
+  {
+    desc: 'M3536 K15 正常位首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.正常位 = 1; // :1553`,
+    replace: `      kojo.正常位 = 2; // :1553`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '正常位初回 → 1',
+  },
+  {
+    desc: 'M3537 K15 对面座位首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.对面座位 = 1; // :1781`,
+    replace: `      kojo.对面座位 = 2; // :1781`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '对面座位初回 → 1',
+  },
+  {
+    desc: 'M3538 K15 正常位肛交首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.正常位肛交 = 1; // :1991`,
+    replace: `      kojo.正常位肛交 = 2; // :1991`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '正常位肛交初回 → 1',
+  },
+  {
+    desc: 'M3539 K15 对面座位肛交首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.对面座位肛交 = 1; // :2207`,
+    replace: `      kojo.对面座位肛交 = 2; // :2207`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '对面座位肛交初回 → 1',
+  },
+  {
+    desc: 'M3540 K15 背面座位肛交首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.背面座位肛交 = 1; // :2311`,
+    replace: `      kojo.背面座位肛交 = 2; // :2311`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '背面座位肛交初回 → 1',
+  },
+  {
+    desc: 'M3541 K15 手淫首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.手淫 = 1; // :2417`,
+    replace: `      kojo.手淫 = 2; // :2417`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '手淫初回 → 1',
+  },
+  {
+    desc: 'M3542 K15 口交_奴首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.口交_奴 = 1; // :2472`,
+    replace: `      kojo.口交_奴 = 2; // :2472`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '口交初回 → 1',
+  },
+  {
+    desc: 'M3543 K15 乳交覆盖首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.乳交 = 1; // :2530`,
+    replace: `      kojo.乳交 = 2; // :2530`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '初回淫乱先写 5 再被 CFLAG:TARGET:333=1 覆盖',
+  },
+  {
+    desc: 'M3544 K15 股间性交首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.股间性交 = 1; // :2593`,
+    replace: `      kojo.股间性交 = 2; // :2593`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '股间性交初回 → 1',
+  },
+  {
+    desc: 'M3545 K15 骑乘位首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.骑乘位 = 1; // :2669`,
+    replace: `      kojo.骑乘位 = 2; // :2669`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '骑乘位 / 骑乘位肛交：初回それ以外 + 二回目淫乱',
+  },
+  {
+    desc: 'M3546 K15 全身擦洗首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.全身擦洗 = 1; // :2734`,
+    replace: `      kojo.全身擦洗 = 2; // :2734`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '全身擦洗初回 → 1',
+  },
+  {
+    desc: 'M3547 K15 骑乘位肛交首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.骑乘位肛交 = 1; // :2778`,
+    replace: `      kojo.骑乘位肛交 = 2; // :2778`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '骑乘位肛交初回 → 1',
+  },
+  {
+    desc: 'M3548 K15 肛门侍奉首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.肛门侍奉 = 1; // :2854`,
+    replace: `      kojo.肛门侍奉 = 2; // :2854`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '肛门侍奉初回 → 1',
+  },
+  {
+    desc: 'M3549 K15 打屁股首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.打屁股 = 1; // :2887`,
+    replace: `      kojo.打屁股 = 2; // :2887`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '打屁股初回 → 1',
+  },
+  {
+    desc: 'M3550 K15 鞭首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.鞭 = 1; // :2933`,
+    replace: `      kojo.鞭 = 2; // :2933`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '鞭初回 → 1',
+  },
+  {
+    desc: 'M3551 K15 针首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.针 = 1; // :2990`,
+    replace: `      kojo.针 = 2; // :2990`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '针初回 → 1',
+  },
+  {
+    desc: 'M3552 K15 眼罩开始首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.眼罩 = 1; // :3048`,
+    replace: `      kojo.眼罩 = 2; // :3048`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '眼罩开始初回 → 1',
+  },
+  {
+    desc: 'M3553 K15 绳子开始首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.绳子 = 1; // :3122`,
+    replace: `      kojo.绳子 = 2; // :3122`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '绳子开始初回 → 1',
+  },
+  {
+    desc: 'M3554 K15 口塞开始首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.口塞 = 1; // :3196`,
+    replace: `      kojo.口塞 = 2; // :3196`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '口塞开始初回 → 1',
+  },
+  {
+    desc: 'M3555 K15 灌肠肛塞首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.灌肠肛塞 = 1; // :3273`,
+    replace: `      kojo.灌肠肛塞 = 2; // :3273`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '灌肠开始初回 → 1',
+  },
+  {
+    desc: 'M3556 K15 放置PLAY首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.放置PLAY = 1; // :3355`,
+    replace: `      kojo.放置PLAY = 2; // :3355`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '放置PLAY 初回 → 1',
+  },
+  {
+    desc: 'M3557 K15 交谈首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.交谈 = 1; // :3426`,
+    replace: `      kojo.交谈 = 2; // :3426`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '交谈（SELECTCOM 56）：录像 / 爱慕 ASSIPLAY / 二回目それ以外',
+  },
+  {
+    desc: 'M3558 K15 深喉首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.深喉 = 1; // :3715`,
+    replace: `      kojo.深喉 = 2; // :3715`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '深喉初回 → 1',
+  },
+  {
+    desc: 'M3559 K15 穿环首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.穿环 = 1; // :3902`,
+    replace: `      kojo.穿环 = 2; // :3902`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '穿环初回 → 1',
+  },
+  {
+    desc: 'M3560 K15 眼罩着脱首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.眼罩着脱 = 1; // :3100`,
+    replace: `      kojo.眼罩着脱 = 2; // :3100`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '眼罩着脱それ以外 → 1',
+  },
+  {
+    desc: 'M3561 K15 绳子着脱首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.绳子着脱 = 1; // :3174`,
+    replace: `      kojo.绳子着脱 = 2; // :3174`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '绳子着脱それ以外 → 1',
+  },
+  {
+    desc: 'M3562 K15 口塞着脱首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.口塞着脱 = 1; // :3248`,
+    replace: `      kojo.口塞着脱 = 2; // :3248`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '口塞着脱それ以外 → 1',
+  },
+  {
+    desc: 'M3563 K15 乳夹口交首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.乳夹口交 = 1; // :3497`,
+    replace: `      kojo.乳夹口交 = 2; // :3497`,
+    tests: ['kojo-k15-clever'],
+    must_mention:
+      '乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 强制口交：空 PRINTFORMW 仍推进',
+  },
+  {
+    desc: 'M3564 K15 兽奸爱抚首次状态推进写错（=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.爱抚 = 1; // :4044`,
+    replace: `      kojo.爱抚 = 2; // :4044`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '兽奸爱抚初回推进 CFLAG:301=1',
+  },
+  {
+    desc: 'M3565 K15 肛门爱抚それ以外读位改回肛门爱抚（原文读首次耻情Lv2/CFLAG:223，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 == 2) {
+        // :576 源读 CFLAG:223，不是 303——1:1 保留`,
+    replace: `      } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 == 2) {  // 变异：读位改回 303
+        // :576 源读 CFLAG:223，不是 303——1:1 保留`,
+    tests: ['kojo-k15-clever'],
+    must_mention:
+      '肛门爱抚二回目以降：润滑分档 + それ以外读 CFLAG:223（源缺陷 1:1）',
+  },
+  {
+    desc: 'M3566 K15 自己扒开二回目误写胸爱抚改回自己扒开（原文写 CFLAG:306，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `        kojo.胸爱抚 = 5; // :847-848 源误写 CFLAG:306`,
+    replace: `        kojo.自己扒开 = 5; // :847-848（变异：修好误写）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '源误写 CFLAG:306=5（非 308）',
+  },
+  {
+    desc: 'M3567 K15 胸爱抚爱慕+ASSIPLAY 臂判据反转（源不写计数器，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2) &&
+        era_flag.assiplay`,
+    replace: `        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2) &&
+        !era_flag.assiplay  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '胸爱抚二回目以降：淫乱 / 爱慕+ASSIPLAY 不写计数器 / B感覚',
+  },
+  {
+    desc: 'M3568 K15 乳交二回目读位改回乳交（原文读口交_奴/CFLAG:332，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `        era0(\`abl:\${target}:16\`) >= 5 &&
+        (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2535`,
+    replace: `        era0(\`abl:\${target}:16\`) >= 5 &&
+        (kojo.乳交 <= 5 || game.kojo.口上开关 == 2)  // 变异：读位改回 333
+      ) {
+        // :2535`,
+    tests: ['kojo-k15-clever'],
+    must_mention:
+      '乳交：初回淫乱先写 5 再被外层写成 1；二回目读 CFLAG:332（源缺陷 1:1）',
+  },
+  {
+    desc: 'M3569 K15 打屁股初回去掉 !(淫乱||爱慕)（源 1:1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.打屁股 == 0 &&
+      !(era0(\`talent:\${target}:76\`) || era0(\`talent:\${target}:85\`))`,
+    replace: `      kojo.打屁股 == 0  // 变异：去掉 !(淫乱||爱慕)`,
+    tests: ['kojo-k15-clever'],
+    must_mention:
+      '初回淫乱跳过 IF CFLAG:341==0 && !(76||85)，落入二回目淫乱+被虐Lv3',
+  },
+  {
+    desc: 'M3570 K15 鞭それ以外读位改回鞭（原文读骑乘位/CFLAG:335，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+        // :2966`,
+    replace: `      } else if (kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {  // 变异：读位改回 342
+        // :2966`,
+    tests: ['kojo-k15-clever'],
+    must_mention:
+      '鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外读 CFLAG:335（源缺陷 1:1）',
+  },
+  {
+    desc: 'M3571 K15 深喉二回目读位改回深喉（原文读真空口交/CFLAG:363，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `        (kojo.真空口交 <= 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :3720`,
+    replace: `        (kojo.深喉 <= 4 || game.kojo.口上开关 == 2)  // 变异：读位改回 365
+      ) {
+        // :3720`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '读 CFLAG:363 已 6 且 FLAG:7==1 → 全部臂不进，365 保持 1',
+  },
+  {
+    desc: 'M3572 K15 兽奸眼罩着脱读位改回兽奸眼罩（原文读肛门侍奉/CFLAG:338，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      era0(\`talent:\${target}:136\`) == 1 &&
+      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)`,
+    replace: `      era0(\`talent:\${target}:136\`) == 1 &&
+      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 == 2)  // 变异：读位改回 444`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '读 CFLAG:338 已 3 且 FLAG:7==1 → 牝犬臂不进，444 保持 1',
+  },
+  {
+    desc: 'M3573 K15 兽奸眼罩着脱それ以外推进值写错（CFLAG:444=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      kojo.兽奸眼罩 = 1; // :4819`,
+    replace: `      kojo.兽奸眼罩 = 2; // :4819（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '兽奸眼罩着脱それ以外 → CFLAG:444=1',
+  },
+  {
+    desc: 'M3574 K15 PALAMCNG 口塞守卫判据改错（TEQUIP:45 改 46，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`tequip:\${target}:45\`)) {
+    return 0; // :4898-4902
+  } // :4898-4902`,
+    replace: `  if (era0(\`tequip:\${target}:46\`)) {  // 变异
+    return 0; // :4898-4902
+  } // :4898-4902`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'PALAMCNG 口塞守卫跳过润滑',
+  },
+  {
+    desc: 'M3575 K15 PALAMCNG 首次润滑判据抬档（PALAMLV[2] 改 [3]，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (P_lube > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {`,
+    replace: `  if (P_lube > PALAMLV[3] && kojo.首次润滑Lv2 == 0) {  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '润滑首次超 LV2 → 221=1',
+  },
+  {
+    desc: 'M3576 K15 PALAMCNG C绝顶阴茎分档判据改错（TALENT:121 改 123，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      if (era0(\`talent:\${target}:121\`) || era0(\`talent:\${target}:122\`)) {
+        // :4998`,
+    replace: `      if (era0(\`talent:\${target}:123\`) || era0(\`talent:\${target}:122\`)) {  // 变异
+        // :4998`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'C绝顶阴茎分档',
+  },
+  {
+    desc: 'M3577 K15 PALAMCNG 处女丧失推进值写错（CFLAG:229=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.处女丧失 = 1; // :5097`,
+    replace: `    kojo.处女丧失 = 2; // :5097（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '处女丧失 → 229=1',
+  },
+  {
+    desc: 'M3578 K15 MARKCNG 口塞守卫判据改错（TEQUIP:45 改 46，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`tequip:\${target}:45\`)) {
+    return 0; // :5109-5113
+  } // :5109-5113`,
+    replace: `  if (era0(\`tequip:\${target}:46\`)) {  // 变异
+    return 0; // :5109-5113
+  } // :5109-5113`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'MARKCNG 口塞守卫跳过苦痛',
+  },
+  {
+    desc: 'M3579 K15 MARKCNG 苦痛刻印Lv3 推进值写错（CFLAG:297=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.苦痛刻印Lv3 = 1; // :5122`,
+    replace: `    kojo.苦痛刻印Lv3 = 2; // :5122（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '苦痛刻印Lv3 → 297=1',
+  },
+  {
+    desc: 'M3580 K15 MARKCNG 快乐刻印Lv3 推进值写错（CFLAG:298=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.快乐刻印Lv3 = 1; // :5135`,
+    replace: `    kojo.快乐刻印Lv3 = 2; // :5135（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '快乐刻印Lv3 → 298=1',
+  },
+  {
+    desc: 'M3581 K15 MARKCNG 屈服刻印Lv3 推进值写错（CFLAG:299=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.屈服刻印Lv3 = 1; // :5148`,
+    replace: `    kojo.屈服刻印Lv3 = 2; // :5148（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '屈服刻印Lv3 → 299=1',
+  },
+  {
+    desc: 'M3582 K15 MARKCNG 反抗刻印Lv3 推进值写错（CFLAG:300=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.反抗刻印Lv3 = 1; // :5161`,
+    replace: `    kojo.反抗刻印Lv3 = 2; // :5161（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '反抗刻印Lv3 → 300=1',
+  },
+  {
+    desc: 'M3583 K15 SELF_KOJO leftover_q 助手判据改错（Q==1 改 ==2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    } else if (Q == 1) {`,
+    replace: `    } else if (Q == 2) {  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'SELF_KOJO leftover_q 助手',
+  },
+  {
+    desc: 'M3584 K15 SELF_KOJO 调教后自慰推进值写错（CFLAG:261=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.调教后自慰 = 1; // :5203`,
+    replace: `    kojo.调教后自慰 = 2; // :5203（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '调教后自慰 → 261=1',
+  },
+  {
+    desc: 'M3585 K15 SELF_KOJO 夜袭推进值写错（CFLAG:265=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.夜袭 = 1; // :5283`,
+    replace: `    kojo.夜袭 = 2; // :5283（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '夜袭 → 265=1',
+  },
+  {
+    desc: 'M3586 K15 SELF_KOJO SELL_MATURO 存根调用删除（#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :5317`,
+    replace: `      void 0; // 变异：删除 SELL_MATURO 存根`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'SELL_MATURO_K0 存根行',
+  },
+  {
+    desc: 'M3587 K15 SELF_KOJO 妊娠发觉推进值写错（CFLAG:271=1 改 2，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    kojo.妊娠发觉 = 1; // :5338`,
+    replace: `    kojo.妊娠发觉 = 2; // :5338（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '妊娠发觉 → 271=1',
+  },
+  {
+    desc: 'M3588 K15 SELF_KOJO 族注册 key 改错（15 改 16，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `self_kojo_family.register(15, self_kojo_k15);`,
+    replace: `self_kojo_family.register(16, self_kojo_k15);  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'SELF_KOJO 族缺 K15 注册',
+  },
+  {
+    desc: 'M3589 K15 DUNGEON_RYOUZYOKU 处女判据反转（TALENT:0==1 改 ==0，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`talent:\${target}:0\`) == 1) {
+    // :5447`,
+    replace: `  if (era0(\`talent:\${target}:0\`) == 0) {  // 变异
+    // :5447`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'DUNGEON_RYOUZYOKU 处女それ以外；AFTER 处女',
+  },
+  {
+    desc: 'M3590 K15 DUNGEON_RYOUZYOKU_AFTER 处女判据反转（TALENT:0==1 改 ==0，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (era0(\`talent:\${target}:0\`) == 1) {
+    // :5510`,
+    replace: `  if (era0(\`talent:\${target}:0\`) == 0) {  // 变异
+    // :5510`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '凌辱后处女',
+  },
+  {
+    desc: 'M3591 K15 DUNGEON_VICTORY それ以外 RAND 判据改错（==0 改 ==1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    if (rand_n(3) == 0) {
+      // :5686
+      await era.printAndWait(\`「跟这种杂鱼战斗，根本没有悬念。」\`); // :5687`,
+    replace: `    if (rand_n(3) == 1) {  // 变异
+      // :5686
+      await era.printAndWait(\`「跟这种杂鱼战斗，根本没有悬念。」\`); // :5687`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '胜利それ以外 RAND:3==0',
+  },
+  {
+    desc: 'M3592 K15 DUNGEON_ATTACK 侵攻中判据改错（状态==2 改 ==1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (chara(target).invasion.状态 == 2) {`,
+    replace: `  if (chara(target).invasion.状态 == 1) {  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '攻击侵攻中それ以外',
+  },
+  {
+    desc: 'M3593 K15 BENKI 肉便器行动判据改错（==0 改 ==99，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (game.train.肉便器行动 == 0) {`,
+    replace: `  if (game.train.肉便器行动 == 99) {  // 变异`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'BENKI 空 PRINTFORMW',
+  },
+  {
+    desc: 'M3594 K15 NTR 再捕获首次标记写错值（CFLAG:650=1 改 0，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    chara(target).kojo.NTR再捕获 = 1; // :5925`,
+    replace: `    chara(target).kojo.NTR再捕获 = 0; // :5925（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'NTR再捕获',
+  },
+  {
+    desc: 'M3595 K15 NTR P==1 分支写入字段改错（CFLAG:651 改 652，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    chara(target).kojo.NTR_651 = 1; // :5935`,
+    replace: `    chara(target).kojo.NTR_652 = 1; // :5935（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'NTR_651',
+  },
+  {
+    desc: 'M3596 K15 GOHOUBI_REQUEST 要求奖赏判据改错（==0 改 ==1，#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (chara(a).stronghold.要求奖赏 == 0) {
+    // :6135`,
+    replace: `  if (chara(a).stronghold.要求奖赏 == 1) {  // 变异
+    // :6135`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'GOHOUBI_REQUEST 钱',
+  },
+  {
+    desc: 'M3597 K15 GOHOUBI_AFTER choice==1 判据改错（#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  } else if (choice == 1) {
+    // :6180`,
+    replace: `  } else if (choice == 2) {  // 变异
+    // :6180`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'GOHOUBI_AFTER 勋章',
+  },
+  {
+    desc: 'M3598 K15 OSIOKI choice==0 判据改错（#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `  if (choice == 0) {
+    // :6274`,
+    replace: `  if (choice == 1) {  // 变异
+    // :6274`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'OSIOKI 何もしない',
+  },
+  {
+    desc: 'M3599 K15 GOBI arg0==1 输出文案改错（#246）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `    await era.print(\`♪\`); // :6340`,
+    replace: `    await era.print(\`！\`); // :6340（变异）`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW',
+  },
 ];

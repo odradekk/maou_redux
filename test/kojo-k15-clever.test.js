@@ -1776,6 +1776,38 @@ test('兽奸舔肛写 CFLAG:310；背后位肛交写 CFLAG:328', async () => {
   );
 });
 
+test('兽奸眼罩着脱读 CFLAG:338 写 CFLAG:444（源缺陷 1:1）', async () => {
+  const first = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`tequip:${CID}:43`, 0);
+  }, 43);
+  await speak_k15(first, seq_rand(0));
+  assert.equal(
+    first.store.get(`cflag:${CID}:444`),
+    1,
+    '兽奸眼罩着脱それ以外 → CFLAG:444=1',
+  );
+  assert.equal(
+    first.store.get(`cflag:${CID}:380`) || 0,
+    0,
+    '兽奸眼罩不写 CFLAG:380',
+  );
+
+  const later = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`tequip:${CID}:43`, 0);
+    f.store.set(`talent:${CID}:136`, 1);
+    f.store.set(`cflag:${CID}:338`, 3);
+    f.store.set(`cflag:${CID}:444`, 1);
+    f.store.set('flag:7', 1);
+  }, 43);
+  await speak_k15(later, seq_rand(0));
+  assert.equal(
+    later.store.get(`cflag:${CID}:444`),
+    1,
+    '读 CFLAG:338 已 3 且 FLAG:7==1 → 牝犬臂不进，444 保持 1',
+  );
+});
 test('兽奸骑乘位空 PRINTFORMW 仍推进；交谈录像牝犬', async () => {
   const ride = await setup_k15((f) => f.store.set(`tequip:${CID}:89`, 1), 34);
   await speak_k15(ride, seq_rand(0));
