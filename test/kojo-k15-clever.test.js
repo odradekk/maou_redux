@@ -1420,3 +1420,301 @@ test('骑乘位 / 骑乘位肛交：初回それ以外 + 二回目淫乱', async
   );
   assert.equal(aw.store.get(`cflag:${CID}:337`), 7, '淫乱+A感覚 → 7');
 });
+
+// —— 切片 5：SELECTCOM 40–87（含源文夹在 56/69 之间的 123–127）——
+
+test('打屁股（SELECTCOM 40）：初回需 !(淫乱||爱慕)；二回目淫乱+被虐Lv3 → 5', async () => {
+  const first = await setup_k15(undefined, 40);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(
+    first.text_lines().some((l) => l.includes('居然……打')),
+    '初回非淫乱非爱慕台词',
+  );
+  assert.equal(first.store.get(`cflag:${CID}:341`), 1, '打屁股初回 → 1');
+
+  const skip = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`abl:${CID}:21`, 3);
+  }, 40);
+  await speak_k15(skip, seq_rand(0));
+  assert.ok(
+    skip.text_lines().some((l) => l.includes('太棒了')),
+    '初回淫乱跳过 IF CFLAG:341==0 && !(76||85)，落入二回目淫乱+被虐Lv3',
+  );
+  assert.equal(skip.store.get(`cflag:${CID}:341`), 5, '淫乱+被虐Lv3 → 5');
+
+  const later = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:341`, 1);
+  }, 40);
+  await speak_k15(later, seq_rand(0));
+  assert.ok(
+    later.text_lines().some((l) => l.includes('混帐')),
+    '二回目それ以外',
+  );
+  assert.equal(later.store.get(`cflag:${CID}:341`), 2, 'それ以外 → 2');
+});
+
+test('鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外读 CFLAG:335（源缺陷 1:1）', async () => {
+  const first = await setup_k15(undefined, 41);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(first.text_lines().includes(''), '鞭初回空 PRINTFORMW');
+  assert.equal(first.store.get(`cflag:${CID}:342`), 1, '鞭初回 → 1');
+
+  const later = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:342`, 1);
+    f.store.set(`cflag:${CID}:335`, 6);
+    f.store.set('flag:7', 1);
+  }, 41);
+  await speak_k15(later, seq_rand(0));
+  assert.deepEqual(
+    later.text_lines(),
+    [],
+    '读 CFLAG:335 已 6 且 FLAG:7==1 → 不出声',
+  );
+  assert.equal(
+    later.store.get(`cflag:${CID}:342`),
+    1,
+    'CFLAG:342 不动（源读 335）',
+  );
+
+  const later_ok = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:342`, 1);
+    f.store.set(`cflag:${CID}:335`, 1);
+    f.store.set('flag:7', 1);
+  }, 41);
+  await speak_k15(later_ok, seq_rand(0));
+  assert.equal(
+    later_ok.store.get(`cflag:${CID}:342`),
+    2,
+    'CFLAG:335<=1 时写 342=2',
+  );
+});
+
+test('针 / 眼罩 / 绳子 / 口塞：空 PRINTFORMW 仍推进；着脱写 380/385/386', async () => {
+  const needle = await setup_k15(undefined, 42);
+  await speak_k15(needle, seq_rand(0));
+  assert.equal(needle.store.get(`cflag:${CID}:343`), 1, '针初回 → 1');
+
+  const mask = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:43`, 1);
+  }, 43);
+  await speak_k15(mask, seq_rand(0));
+  assert.equal(mask.store.get(`cflag:${CID}:344`), 1, '眼罩开始初回 → 1');
+
+  const mask_off = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:43`, 0);
+  }, 43);
+  await speak_k15(mask_off, seq_rand(0));
+  assert.equal(
+    mask_off.store.get(`cflag:${CID}:380`),
+    1,
+    '眼罩着脱それ以外 → 1',
+  );
+
+  const rope = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:44`, 1);
+  }, 44);
+  await speak_k15(rope, seq_rand(0));
+  assert.equal(rope.store.get(`cflag:${CID}:345`), 1, '绳子开始初回 → 1');
+
+  const rope_off = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:44`, 0);
+  }, 44);
+  await speak_k15(rope_off, seq_rand(0));
+  assert.equal(
+    rope_off.store.get(`cflag:${CID}:385`),
+    1,
+    '绳子着脱それ以外 → 1',
+  );
+
+  const gag = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:45`, 1);
+  }, 45);
+  await speak_k15(gag, seq_rand(0));
+  assert.equal(gag.store.get(`cflag:${CID}:346`), 1, '口塞开始初回 → 1');
+
+  const gag_off = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:45`, 0);
+  }, 45);
+  await speak_k15(gag_off, seq_rand(0));
+  assert.equal(
+    gag_off.store.get(`cflag:${CID}:386`),
+    1,
+    '口塞着脱それ以外 → 1',
+  );
+});
+
+test('灌肠肛塞（SELECTCOM 46）：开始有台词；结束不写 CFLAG:347', async () => {
+  const first = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:46`, 1);
+  }, 46);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(
+    first.text_lines().some((l) => l.includes('下作的事情')),
+    '灌肠开始初回それ以外',
+  );
+  assert.equal(first.store.get(`cflag:${CID}:347`), 1, '灌肠开始初回 → 1');
+
+  const later = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:46`, 1);
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`abl:${CID}:3`, 3);
+    f.store.set(`abl:${CID}:21`, 3);
+    f.store.set(`cflag:${CID}:347`, 1);
+  }, 46);
+  await speak_k15(later, seq_rand(0));
+  assert.ok(
+    later.text_lines().some((l) => l.includes('灌满的感觉')),
+    '淫乱+A+被虐',
+  );
+  assert.equal(later.store.get(`cflag:${CID}:347`), 7, '灌肠淫乱+A+被虐 → 7');
+
+  const off = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:46`, 0);
+    f.store.set(`cflag:${CID}:347`, 1);
+  }, 46);
+  await speak_k15(off, seq_rand(0));
+  assert.ok(
+    off.text_lines().some((l) => l.includes('不要看')),
+    '灌肠结束それ以外',
+  );
+  assert.equal(
+    off.store.get(`cflag:${CID}:347`),
+    1,
+    '结束段不写 CFLAG:347（源 1:1）',
+  );
+});
+
+test('放置PLAY（SELECTCOM 55）：空 PRINTFORMW 仍推进；爱+欲情Lv3 读 PALAMLV[3]', async () => {
+  const first = await setup_k15(undefined, 55);
+  await speak_k15(first, seq_rand(0));
+  assert.equal(first.store.get(`cflag:${CID}:356`), 1, '放置PLAY 初回 → 1');
+
+  const later = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`palam:${CID}:5`, 3000);
+    f.store.set(`cflag:${CID}:356`, 1);
+  }, 55);
+  await speak_k15(later, seq_rand(0));
+  assert.equal(later.store.get(`cflag:${CID}:356`), 4, '爱+欲情Lv3 → 4');
+});
+
+test('交谈（SELECTCOM 56）：录像 / 爱慕 ASSIPLAY / 二回目それ以外', async () => {
+  const video = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:53`, 1);
+  }, 56);
+  await speak_k15(video, seq_rand(0));
+  assert.ok(
+    video.text_lines().some((l) => l.includes('魔物被勇者消灭')),
+    '交谈初回录像それ以外',
+  );
+  assert.equal(video.store.get(`cflag:${CID}:357`), 1, '交谈初回 → 1');
+
+  const assi = await setup_k15((f, era_flag) => {
+    f.store.set(`talent:${CID}:85`, 1);
+    era_flag.assiplay = 1;
+  }, 56);
+  await speak_k15(assi, seq_rand(0));
+  assert.ok(
+    assi.text_lines().some((l) => l.includes('同在魔王大人麾下')),
+    '交谈初回爱慕+ASSIPLAY',
+  );
+  assert.equal(
+    assi.store.get(`cflag:${CID}:357`),
+    1,
+    'ASSIPLAY 仍写 1（分支外统一）',
+  );
+
+  const later = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:357`, 1);
+  }, 56);
+  await speak_k15(later, seq_rand(0));
+  assert.ok(
+    later.text_lines().some((l) => l.includes('残渣')),
+    '交谈二回目それ以外',
+  );
+  assert.equal(later.store.get(`cflag:${CID}:357`), 2, '交谈それ以外 → 2');
+});
+
+test('乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 强制口交：空 PRINTFORMW 仍推进', async () => {
+  for (const [com, cflag, label] of [
+    [123, 360, '乳夹口交'],
+    [125, 361, '口交时自慰'],
+    [126, 362, '手搓口交'],
+    [127, 363, '真空口交'],
+    [69, 364, '六九式'],
+    [80, 381, '强制口交'],
+  ]) {
+    const first = await setup_k15(undefined, com);
+    await speak_k15(first, seq_rand(0));
+    assert.equal(
+      first.store.get(`cflag:${CID}:${cflag}`),
+      1,
+      `${label} 初回 → 1`,
+    );
+
+    const later = await setup_k15((f) => {
+      f.store.set(`talent:${CID}:76`, 1);
+      f.store.set(`cflag:${CID}:${cflag}`, 1);
+    }, com);
+    await speak_k15(later, seq_rand(0));
+    assert.equal(
+      later.store.get(`cflag:${CID}:${cflag}`),
+      5,
+      `${label} 二回目淫乱 → 5`,
+    );
+  }
+});
+
+test('深喉（SELECTCOM 124）：二回目读 CFLAG:363 写 CFLAG:365（源缺陷 1:1）', async () => {
+  const first = await setup_k15(undefined, 124);
+  await speak_k15(first, seq_rand(0));
+  assert.equal(first.store.get(`cflag:${CID}:365`), 1, '深喉初回 → 1');
+
+  const later = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:365`, 1);
+    f.store.set(`cflag:${CID}:363`, 6);
+    f.store.set('flag:7', 1);
+  }, 124);
+  await speak_k15(later, seq_rand(0));
+  assert.equal(
+    later.store.get(`cflag:${CID}:365`),
+    1,
+    '读 CFLAG:363 已 6 且 FLAG:7==1 → 全部臂不进，365 保持 1',
+  );
+
+  const later_ok = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:365`, 1);
+    f.store.set(`cflag:${CID}:363`, 1);
+  }, 124);
+  await speak_k15(later_ok, seq_rand(0));
+  assert.equal(
+    later_ok.store.get(`cflag:${CID}:365`),
+    5,
+    'CFLAG:363<=4 时淫乱写 5',
+  );
+});
+
+test('穿环（SELECTCOM 87）：初回助手空 PRINTFORMW；二回目爱慕写 3', async () => {
+  const { piercing_state } = require('../ere/system/train/piercing-state');
+  piercing_state.p = 1;
+
+  const first = await setup_k15((f, era_flag) => {
+    era_flag.assi = CID;
+    era_flag.assiplay = 1;
+  }, 87);
+  await speak_k15(first, seq_rand(0));
+  assert.ok(first.text_lines().includes(''), '穿环初回助手空 PRINTFORMW');
+  assert.equal(first.store.get(`cflag:${CID}:348`), 1, '穿环初回 → 1');
+
+  const later = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`cflag:${CID}:348`, 1);
+    f.store.set(`cflag:${CID}:7`, 1);
+  }, 87);
+  await speak_k15(later, seq_rand(0));
+  assert.equal(later.store.get(`cflag:${CID}:348`), 3, '二回目爱慕写 3');
+  piercing_state.p = 0;
+});
