@@ -493,6 +493,15 @@ const cflag = {
   ),
   504: named_tail('要求奖赏', src(SRC_FLAG, 'CFLAG:504 = 要求したご褒美')),
   602: named_tail('结婚爱情', src(SRC_FLAG, ':465 CFLAG:602 = 結婚愛情')),
+  // #245（J35 K14 貴公子）：口上读性転換済（male→female 改造完成标志，
+  // SHOP_LABO ver1.0.2.ERB:2310 的 CFLAG:T:70 = 1 写入；K14 全篇在
+  // 「性転換済み」分支读它，随 TALENT:122 == 0 一起判性别转换后的女性身体）——
+  // 跨域读走 chara(cid).stronghold 门面（owner stronghold，见
+  // ownership/cflag-ownership.yml "70-71"）
+  70: named_tail(
+    '已性转',
+    src(SRC_FLAG, ':309 CFLAG:70 = 性転換済（0:NO 1:YES)'),
+  ),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——
