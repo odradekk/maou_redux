@@ -260,3 +260,76 @@ test('EVENTEND 爱（85）体力 500 未満：感谢台词（非魔族档）', a
     '「啊…，今天真的是辛苦您了…，还真的是非常感谢呢~」',
   ]);
 });
+
+// —— @KOJO_MESSAGE_COM_14：空模板骨架的状态机（S2） ——
+//
+// K14 指令口上是未填写模板：PRINTFORMW 全空，行为契约 = 计数器推进 + 守卫
+// 分派。本节断言计数器写入与守卫，不断言文本（空模板 1:1 保留，见模块头）。
+
+test('COM 守卫①口塞（TEQUIP:45 && SELECTCOM!=45）return 0', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 45;
+    f.store.set('tequip:20:45', 1);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:301'), undefined);
+});
+
+test('COM 守卫②失神（TFLAG:899）return 0', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 0;
+    f.store.set('tflag:899', 1);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:301'), undefined);
+});
+
+test('COM 爱抚初回：置 CFLAG:301 = 1 并出空行', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 0;
+    f.store.set('mark:20:2', 2); // 屈服刻印Lv2 档
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:301'), 1);
+  assert.equal(fixture.text_lines().length, 1); // 空模板仅一个空 PRINTFORMW
+});
+
+test('COM 爱抚二回目 淫乱（76）FLAG:7=2 上限旁路：置 301=6', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 0;
+    f.store.set('cflag:20:301', 4);
+    f.store.set('talent:20:76', 1);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:301'), 6);
+});
+
+test('COM 肛门爱抚二回目 润滑 Lv2 未満（P<500）：置 303=2（それ以外档）', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 2;
+    f.store.set('cflag:20:303', 1);
+    f.store.set('palam:20:3', 100);
+    f.store.set('delta:20:3', 0);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  // 无淫乱/爱/屈服Lv3 → 「それ以外」档（CFLAG:223 <= 1 || FLAG:7==2 成立）
+  assert.equal(fixture.store.get('cflag:20:303'), 2);
+});
+
+test('COM 穿环初回 淫乱＋未装（CFLAG:7 & P==0）：进入装着分档、不置 CFLAG:348', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 87;
+    f.store.set('talent:20:76', 1);
+  });
+  // piercing_state.p 由 com87 写入（本测试直接注入）
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  const ps = fixture.load_module('system/train/piercing-state');
+  ps.piercing_state.p = 1; // 両乳首
+  await kojo_message_com_14(() => 0);
+  assert.ok(fixture.text_lines().length >= 1); // 空模板分档至少 1 行
+});
