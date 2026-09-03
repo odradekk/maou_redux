@@ -1,0 +1,297 @@
+/**
+ * ere/kojo/kojo-k12-intellectual.js 的行为测试（issue #243：J33 口上·K12 知的）。
+ *
+ * 缝 = test/helpers/era-fixture.js。世界底座：智慧（性格素质 172 →
+ * GET_KOJO_NUM = 112 → 分发 key 12）。
+ */
+
+'use strict';
+
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
+
+const { create_era_fixture } = require('./helpers/era-fixture');
+const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
+
+// 世界底座：智慧（素质 172 → GET_KOJO_NUM = 112 → 分发 key 12）入列调教
+async function setup_k12(seed, selectcom = 0) {
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 20, '智慧');
+  fixture.era.beginTrain(0, 20);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 20;
+  era_flag.player = 0;
+  era_flag.assi = -1;
+  era_flag.assiplay = 0;
+  era_flag.selectcom = selectcom;
+  fixture.store.set('talent:20:172', 1); // 智慧 → GET_KOJO_NUM = 112
+  fixture.store.set('flag:112', 1); // K12 存在标志
+  fixture.store.set('flag:7', 2); // 口上总开关默认
+  if (seed) {
+    seed(fixture, era_flag);
+  }
+  fixture.load_module('kojo/kojo-system');
+  fixture.load_module('kojo/kojo-k12-intellectual');
+  return fixture;
+}
+
+// —— @EVENTTRAIN：存在标志一对 ——
+
+test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.delete('flag:112');
+    f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('flag:112'), 1); // K12 存在标志
+  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
+  await emit('EVENTEND');
+  assert.equal(fixture.store.get('flag:112'), 0);
+});
+
+test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('flag:7', 0);
+    f.store.set('cflag:20:201', 9); // 越过状态机
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.store.get('flag:7'), 2);
+});
+
+test('EVENTTRAIN 自身守卫①口上开关<=0（玩家显式关掉）静默跳过', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('flag:7', -1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:20:201'), undefined);
+});
+
+test('EVENTTRAIN 自身守卫②TALENT:172!=1 静默跳过', async () => {
+  const fixture = await setup_k12((f) => f.store.set('talent:20:172', 0));
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('cflag:20:201'), undefined);
+});
+
+// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+
+test('初调教（CFLAG:201==0）人狼分档（TALENT:种族==2）：CFLAG:201=1', async () => {
+  const fixture = await setup_k12((f) => f.store.set('talent:20:种族', 2));
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「就表扬你一下吧。这是超出了我预想的力量」',
+    '「但是没用的哦。我作为自豪的人狼、还拥有最高的智能……」',
+    '智慧虽然带着清爽的表情逞强着、但轻飘飘的耳朵害怕的低了下来。',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+});
+
+test('初调教（CFLAG:201==0）非人狼分档：CFLAG:201=1', async () => {
+  const fixture = await setup_k12((f) => f.store.set('talent:20:种族', 1));
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「看起来你比我更厉害呢」',
+    '「但我可是接受过特殊训练的。不管对我做什么都是没用的」',
+    '智慧表情冷淡强装镇定、声音微微发颤',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 1);
+});
+
+test('NTR 再捕获（CFLAG:201>=1 && CFLAG:650==1）爱慕侧：解 NTR 标志', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 1);
+    f.store.set('cflag:20:650', 1);
+    f.store.set('talent:20:85', 1);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「对不住了呢……在其他人的身体上做了活塞运动的确是事实呢」',
+    '「但是从生物学上看这并没有什么问题、只是感情上的问题哦、所以原谅我吧」',
+    '智慧低着头小声辩解道',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:650'), 0);
+});
+
+test('NTR 再捕获（CFLAG:201>=1 && CFLAG:650==1）非爱慕侧：解 NTR 标志', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 1);
+    f.store.set('cflag:20:650', 1);
+    f.store.set('talent:20:85', 0);
+    f.store.set('talent:20:76', 0);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「又被抓住了呢……我的运气真不好」',
+    '「是要继续调教我吗？　还是当成肉便器处理？　随便你吧」',
+    '智慧冷冷的看着你',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:650'), 0);
+});
+
+test('屈服刻印 Lv1（CFLAG:201<2 && MARK:2==1）：推进到 2', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 1);
+    f.store.set('mark:20:2', 1);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「看起来你的能力好像比资料上要高呢……」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 2);
+});
+
+test('屈服刻印 Lv2（CFLAG:201<3 && MARK:2==2）：推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 2);
+    f.store.set('mark:20:2', 2);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「你到底是……何方神圣、能把我逼到这种地步……」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 3);
+});
+
+test('屈服刻印 Lv3（CFLAG:201<4 && MARK:2==3 && 爱无）：推进到 4', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 3);
+    f.store.set('mark:20:2', 3);
+    f.store.set('talent:20:85', 0);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「难以置信……这样的情况、不管是数据还是资料上都从未见过呢！？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 4);
+});
+
+test('淫乱（CFLAG:201<5 && TALENT:76==1 && 爱无）：推进到 5', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 4);
+    f.store.set('talent:20:76', 1);
+    f.store.set('talent:20:85', 0);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「竟然还存在着如此美妙的新世界……让我更多地对此进行研究吧、拜托了！」',
+    '「想尝试一下、我的身体能淫靡化到什么地步……已经、睡不着了！」',
+    '智慧一边流着口水一边用腰蹭着你的腿',
+    '她的脑海中已经填满了对性知识的渴求了……',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 5);
+});
+
+test('爱慕（CFLAG:201<6 && TALENT:85==1）：推进到 6', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 5);
+    f.store.set('talent:20:85', 1);
+  });
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「竟然还存在着如此美妙的新世界……拜托了！　让我和你一起来研究吧」',
+    '「魔界的动植物和文化、魔法……全都是我还不懂的东西呢」',
+    '进入房间的智慧正专心致志地在笔记本上写着什么',
+    '完全被魔之知识迷住了的样子……',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:201'), 6);
+});
+
+// —— @K12_KOJO2：二回目以降 ——
+
+test('K12_KOJO2 反抗刻印 Lv3（MARK:3==3）：进入视线的拒绝', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 9); // 越过前段状态机
+    f.store.set('mark:20:3', 3);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.deepEqual(fixture.text_lines(), [
+    '「不要再进入我的视线里……我很不高兴」',
+  ]);
+});
+
+test('K12_KOJO2 淫乱（TALENT:76==1）rand=0 分档', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 9);
+    f.store.set('talent:20:76', 1);
+    f.store.set('talent:20:85', 0);
+    f.store.set('talent:20:种族', 2);
+  });
+  // 直接驱动 k12_kojo2（rand 固定 0 → rand_n(3)==0 第一支）
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  await mod.k12_kojo2(() => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「今天要研究什么Play呢、好期待啊♪」',
+    '智慧像狗一样伸出舌头，吐出慌乱的吐息迎接了出来。',
+  ]);
+});
+
+test('K12_KOJO2 爱慕（TALENT:85==1）rand=1（rand_n(3)=1 → 第二支）', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('cflag:20:201', 9);
+    f.store.set('talent:20:85', 1);
+    f.store.set('talent:20:76', 0);
+    f.store.set('talent:20:种族', 1);
+  });
+  const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+  // rand_n(3): 用 n=>Math.floor(n*0.4)? 不确定，直接驱动使第二支命中：
+  // rand_n(3)=1 需 rand 返回 3..5 区间——用一个只在 n>=3 返回 1 的函数不方便；
+  // 这里固定 rand = (n)=>Math.floor(n/3)（3→1,2→0）。爱慕第一层 rand_n(3)：floor(3/3)=1 中第二支。
+  await mod.k12_kojo2((n) => Math.floor(n / 3));
+  assert.deepEqual(fixture.text_lines(), [
+    '「今天的研究进展很大。好想被表扬呢」',
+    '智慧从研究中的桌子旁站了起来，迎了出来。',
+  ]);
+});
+
+// —— @EVENTEND：调教结束口上 ——
+
+test('EVENTEND 死亡跳过（BASE:0<=0）静默', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('base:20:0', 0);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('EVENTEND 爱慕低体力：回到研究桌继续工作', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('talent:20:85', 1);
+    f.store.set('talent:20:76', 0);
+    f.store.set('talent:20:种族', 1);
+    f.store.set('base:20:0', 400);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), [
+    '「果然、这种程度的体力消耗、是对研究的一大障碍呢……」',
+    '智慧就那样以调教中的姿势回到了研究中的桌子旁，继续开始了工作。',
+  ]);
+});
