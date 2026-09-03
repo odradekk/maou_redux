@@ -20,7 +20,8 @@
  *   4. TEQUIP:55（死斗场）→ 岔去本文件真身 COLOSSEUM_KOJO_15。
  * ASSI/ASSIPLAY 整行注释、无 TALENT:9、无 TEQUIP:90。
  *
- * 这张票存根（docs/stub-registry.md）：后续切片接 SELL_MATURO_K0。
+ * 这张票存根（docs/stub-registry.md）：`SELL_MATURO_K0`（成熟出售口上，
+ * 随售却票）。
  */
 
 'use strict';
@@ -39,6 +40,8 @@ const { self_call } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { stub_line } = require('#/utils/stub-line');
+const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
@@ -47,7 +50,7 @@ const era0 = (k) => era.get(k) || 0;
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [];
+const STUBBED_CALLS = ['SELL_MATURO_K0'];
 
 // @EVENTTRAIN #PRI（:29-33）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -7594,12 +7597,346 @@ async function kojo_message_markcng_15() {
 }
 
 /**
- * @SELF_KOJO_K15（:5168 起）：事件口上。本切片只注册分发号。
+ * @SELF_KOJO_K15（:5168 起）：事件口上。TFLAG:13 分派调教后自慰 /
+ * 百合 PLAY / 朝口交 / 调教后性交 / 夜袭 / 出售 / 妊娠发觉 / 生产 /
+ * 育儿室 / 亲离 / 死亡 / 寿命。Q 走 peek_aftertrain_q()。
  *
+ * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */
-async function self_kojo_k15() {
-  return 0;
+async function self_kojo_k15(rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const assi_name = chara_callname(era_flag.assi); // %SAVESTR:ASSI%
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  const kojo = chara(target).kojo;
+  const Q = peek_aftertrain_q();
+
+  if (game.train.初吻与自我口上 == 1) {
+    // :5172
+
+    if (era0(`talent:${target}:9`) == 1) {
+      // :5174
+      await era.printAndWait(
+        `${target_name}神情恍惚，一边喘息着流出了口水，一边不停地用手摩擦自己的下身……`,
+      ); // :5175
+    } else if (Q == 1) {
+      // :5177
+      await era.printAndWait(
+        `「啊！${assi_name}……${assi_name}……好想要……嗯啊！啊啊～♡」`,
+      ); // :5178
+      await era.printAndWait(
+        `${target_name}呢喃着叫唤${assi_name}的名字，一边忘情地进行自慰……`,
+      ); // :5179
+    } else if (Q == 2) {
+      // :5181
+      await era.printAndWait(
+        `「一想到狗狗的肉棒……啊啊！怎么办？手停不下来了啊！嗯啊啊～♡」`,
+      ); // :5182
+      await era.printAndWait(
+        `${target_name}饥渴地摇晃起屁股，一边自慰着一边做着宛如母狗求欢的姿势……`,
+      ); // :5183
+    } else {
+      // :5184-5186
+
+      if (
+        era0(`talent:${target}:76`) &&
+        (kojo.调教后自慰 < 4 || game.kojo.口上开关 == 2)
+      ) {
+        // :5187
+        await era.printAndWait(`「这里…好想要啊♡……想要……更粗的…东西♡♡…」`); // :5188
+        await era.printAndWait(
+          `${target_name}的双眼因为情欲而通红，像是欲求不满似地不停自慰着……`,
+        ); // :5189
+        kojo.调教后自慰 = 4; // :5190
+      } else if (
+        era0(`talent:${target}:85`) &&
+        (kojo.调教后自慰 < 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :5192
+        await era.print(`「下身……已经湿的不像样了……但…但是……还是好想要啊～♡」`); // :5193
+        await era.printAndWait(
+          `${target_name}一边喘息着自慰，一边用甜腻的声音呻吟着……`,
+        ); // :5194
+        kojo.调教后自慰 = 3; // :5195
+      } else if (
+        era0(`abl:${target}:31`) >= 3 &&
+        (kojo.调教后自慰 < 2 || game.kojo.口上开关 == 2)
+      ) {
+        // :5197
+        await era.printAndWait(
+          `「明明……已经……呜！不……不行……停不下来了！嗯啊啊～♡」`,
+        ); // :5198
+        kojo.调教后自慰 = 2; // :5199
+      } else if (kojo.调教后自慰 < 1 || game.kojo.口上开关 == 2) {
+        // :5201
+        await era.printAndWait(`「不……不行……呜啊……好…好热……啊啊……」`); // :5202
+        kojo.调教后自慰 = 1; // :5203
+      } // :5203-5205
+    } // :5203-5207
+  } // :5204-5208
+
+  if (game.train.初吻与自我口上 == 2) {
+    // :5211
+
+    if (
+      era0(`talent:${target}:76`) &&
+      (kojo.百合PLAY < 5 || game.kojo.口上开关 == 2)
+    ) {
+      // :5213
+      await era.printAndWait(''); // :5214
+      kojo.百合PLAY = 5; // :5215
+    } else if (
+      era0(`talent:${target}:85`) &&
+      (kojo.百合PLAY < 4 || game.kojo.口上开关 == 2)
+    ) {
+      // :5217
+      await era.printAndWait(''); // :5218
+      kojo.百合PLAY = 4; // :5219
+    } else if (
+      era0(`abl:${target}:33`) >= 3 &&
+      (kojo.百合PLAY < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5221
+      await era.printAndWait(''); // :5222
+      kojo.百合PLAY = 3; // :5223
+    } else if (
+      era0(`abl:${target}:22`) >= 3 &&
+      (kojo.百合PLAY < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5225
+      await era.printAndWait(''); // :5226
+      kojo.百合PLAY = 2; // :5227
+    } else if (kojo.百合PLAY < 1 || game.kojo.口上开关 == 2) {
+      // :5229
+      await era.printAndWait(''); // :5230
+      kojo.百合PLAY = 1; // :5231
+    } // :5231-5233
+  } // :5231-5235
+
+  if (game.train.初吻与自我口上 == 3) {
+    // :5238
+
+    if (
+      era0(`talent:${target}:76`) == 1 &&
+      (kojo.朝口交 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5240
+      await era.printAndWait(''); // :5241
+      kojo.朝口交 = 3; // :5242
+    } else if (
+      era0(`talent:${target}:85`) &&
+      (kojo.朝口交 < 3 || game.kojo.口上开关 == 2)
+    ) {
+      // :5244
+      await era.printAndWait(''); // :5245
+      kojo.朝口交 = 3; // :5246
+    } else if (
+      era0(`abl:${target}:16`) >= 5 &&
+      (kojo.朝口交 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5248
+      await era.printAndWait(''); // :5249
+      kojo.朝口交 = 2; // :5250
+    } else if (kojo.朝口交 < 1 || game.kojo.口上开关 == 2) {
+      // :5252
+      await era.printAndWait(''); // :5253
+      kojo.朝口交 = 1; // :5254
+    } // :5254-5256
+  } // :5254-5258
+
+  if (game.train.初吻与自我口上 == 4) {
+    // :5261
+
+    if (
+      era0(`abl:${target}:2`) >= 4 &&
+      (kojo.调教后性交 < 2 || game.kojo.口上开关 == 2)
+    ) {
+      // :5263
+      await era.printAndWait(
+        `「这里还是好空虚，还想要更多更大的东西来填满！」`,
+      ); // :5264
+      kojo.调教后性交 = 2; // :5265
+    } else if (kojo.调教后性交 < 1 || game.kojo.口上开关 == 2) {
+      // :5267
+      await era.printAndWait(`「身体还是好热，可以……再继续吗？」`); // :5268
+      kojo.调教后性交 = 1; // :5269
+    } // :5269-5271
+  } // :5269-5273
+
+  if (game.train.初吻与自我口上 == 5) {
+    // :5276
+    if (kojo.夜袭 < 1 || game.kojo.口上开关 == 2) {
+      // :5277
+      await era.print(
+        [
+          `「夜晚好冷，想跟魔王大人一起睡呢……」`,
+          `「一起睡的话，可以做做『运动』也可以相拥取暖，不觉得是个好主意吗？」`,
+        ][rand_n(2)],
+      ); // :5278-5281 PRINTDATAL
+      await era.printAndWait(''); // :5282
+      kojo.夜袭 = 1; // :5283
+    } // :5283-5285
+  } // :5283-5287
+
+  if (game.train.初吻与自我口上 == 6) {
+    // :5290
+
+    if (era0(`talent:${target}:85`) && era0(`mark:${target}:3`) < 3) {
+      // :5292
+      await era.printAndWait(
+        `在你打算卖掉${target_name}之前，${target_name}慌慌张张地来到了你的面前……`,
+      ); // :5293
+      await era.printAndWait(
+        `一向注重仪表的${target_name}，发丝凌乱双颊通红并带着急促的喘息。`,
+      ); // :5294
+      await era.printAndWait(`「魔…魔王大人……您……您……」`); // :5295
+      await era.printAndWait(
+        `${target_name}的情绪起伏过大，平时灵活的口才现在却哽咽地连话也说不完整……`,
+      ); // :5296
+      await era.printAndWait(
+        `似乎想对你露出笑容，无奈嘴角只能勾出扭曲的形状，眼泪不停地沿着脸颊垂落而下……`,
+      ); // :5297
+      await era.printAndWait(`「以后…请您……多多保重……」`); // :5298
+      await era.printAndWait(
+        `${target_name}深深地鞠躬，转身踉踉跄跄地随着商人离去了……`,
+      ); // :5299
+    } else if (era0(`mark:${target}:3`) == 3) {
+      // :5301
+      await era.printAndWait(`「居然……敢把${sc()}当成商品一样地贩卖……」`); // :5302
+      await era.printAndWait(
+        `${target_name}瞪视过来的眼神带着愤怒与杀意，但是无论他再怎么地反抗，最后还是被商人捆绑带走了……`,
+      ); // :5303
+    } else if (era0(`talent:${target}:76`)) {
+      // :5305
+      await era.printAndWait(
+        `「虽然有点不舍，但是，这个淫荡的身体如果能对魔王大人有所贡献的话……」`,
+      ); // :5306
+      await era.printAndWait(`${target_name}眯起了眼睛露出了魅惑的笑容。`); // :5307
+      await era.printAndWait(
+        `「因为您，${sc()}才能真正体验到所谓无上的『欢愉』，所以………」`,
+      ); // :5308
+      await era.printAndWait(
+        `「以后就算在新的地方，${sc()}也会好好地发挥所学的本领……」`,
+      ); // :5309
+      await era.printAndWait(
+        `${target_name}潇洒地挥挥手与你告别，挽着商人的手随之离去了……`,
+      ); // :5310
+    } else {
+      // :5311-5313
+      await era.printAndWait(
+        `「从一个垃圾堆换到另一个垃圾堆？反正都是一样……」`,
+      ); // :5313
+      await era.printAndWait(
+        `${target_name}似乎毫不在乎，平淡地随着商人离去了……`,
+      ); // :5314
+    } // :5314-5316
+    if (!era0(`talent:${target}:122`)) {
+      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :5317
+    } // :5317
+  } // :5317-5319
+
+  if (game.train.初吻与自我口上 == 11) {
+    // :5325
+    if (kojo.妊娠发觉 >= 1) {
+      return 0; // :5326-5328
+    } // :5326-5328
+
+    if (era0(`talent:${target}:9`) == 1) {
+      // :5329
+      await era.printAndWait(
+        `「好像有奇怪的东西在肚子里面……一定是生病了吧？」`,
+      ); // :5330
+    } else if (
+      era0(`talent:${target}:85`) &&
+      chara(target).event.妊娠相手 == 1
+    ) {
+      // :5332
+      await era.printAndWait(`「会长的像谁呢？呵呵，好期待啊～」`); // :5333
+    } else {
+      // :5334-5336
+      await era.printAndWait(`「不……这…这不是真的！」`); // :5336
+    } // :5336-5338
+    kojo.妊娠发觉 = 1; // :5338
+  } // :5338-5340
+
+  if (game.train.初吻与自我口上 == 12) {
+    // :5345
+    if (kojo.生产 >= 1) {
+      return 0; // :5346-5348
+    } // :5346-5348
+
+    if (era0(`talent:${target}:9`) == 1) {
+      // :5349
+      await era.printAndWait(
+        `「有什么东西要从肚子出来了……不……怪物……是怪物啊！」`,
+      ); // :5350
+    } else if (
+      era0(`talent:${target}:85`) &&
+      chara(target).event.妊娠相手 == 1
+    ) {
+      // :5352
+      await era.printAndWait(`「真是个健康可爱的宝宝呢，对吧？」`); // :5353
+      await era.printAndWait(
+        `${target_name}亲昵地亲吻着孩子的脸颊，露出了幸福的笑容。`,
+      ); // :5354
+    } else {
+      // :5355-5357
+      await era.printAndWait(`「这样的孩子……」`); // :5357
+      await era.printAndWait(
+        `${target_name}用双手捂住了自己的脸庞，试着掩饰心中复杂的情绪……`,
+      ); // :5358
+    } // :5358-5360
+    kojo.生产 = 1; // :5360
+  } // :5360-5362
+
+  if (game.train.初吻与自我口上 == 13) {
+    // :5366
+
+    if (era0(`talent:${target}:153`)) {
+      // :5368
+      await era.printAndWait(''); // :5369
+    } else if (era0(`talent:${target}:154`)) {
+      // :5371
+      await era.printAndWait(''); // :5372
+    } // :5372-5374
+    kojo.育儿室 = 1; // :5374
+  } // :5374-5376
+
+  if (game.train.初吻与自我口上 == 14) {
+    // :5380
+    await era.printAndWait(''); // :5381
+    kojo.亲离 = 1; // :5382
+  } // :5382-5384
+
+  if (game.train.初吻与自我口上 == 999) {
+    // :5388
+
+    if (era0(`talent:${target}:85`)) {
+      // :5390
+      await era.printAndWait(''); // :5391
+    } else {
+      // :5388-5398
+      await era.printAndWait(''); // :5394
+    } // :5392-5398
+  } // :5394-5398
+
+  if (game.train.初吻与自我口上 == 998) {
+    // :5401
+
+    if (era0(`talent:${target}:85`)) {
+      // :5403
+      await era.printAndWait(''); // :5404
+    } else {
+      // :5401-5411
+      await era.printAndWait(''); // :5407
+    } // :5405-5411
+  } // :5407-5411
+
+  game.train.初吻与自我口上 = 0; // :5414
+
+  return 0; // :5414-5416
 }
 
 kojo_message_com_family.register(15, kojo_message_com_15);
@@ -7615,4 +7952,5 @@ module.exports = {
   colosseum_kojo_15,
   kojo_message_palamcng_15,
   kojo_message_markcng_15,
+  self_kojo_k15,
 };

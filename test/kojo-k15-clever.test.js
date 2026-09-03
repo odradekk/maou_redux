@@ -13,8 +13,9 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
-
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
@@ -2002,4 +2003,92 @@ test('MARKCNG 口塞守卫跳过；苦痛/快乐/屈服/反抗 Lv3', async () =>
     '反抗刻印Lv3 それ以外',
   );
   assert.equal(revolt.store.get(`cflag:${CID}:300`), 1, '反抗刻印Lv3 → 300=1');
+});
+
+async function self_k15(fixture, rand) {
+  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  return self_kojo_family.call(KEY, { args: [rand] });
+}
+
+test('SELF_KOJO 调教后自慰：それ以外写 CFLAG:261；Q==1 助手', async () => {
+  const solo = await setup_k15((f) => f.store.set('tflag:13', 1));
+  await self_k15(solo);
+  assert.ok(
+    solo.text_lines().some((l) => l.includes('好…好热')),
+    'SELF_KOJO 自慰それ以外',
+  );
+  assert.equal(solo.store.get(`cflag:${CID}:261`), 1, '调教后自慰 → 261=1');
+  assert.equal(solo.store.get('tflag:13'), 0, 'SELF_KOJO 末行清 TFLAG:13');
+
+  const assi = await setup_k15((f, era_flag) => {
+    join_slave_chara(f, 1, '助手');
+    era_flag.assi = 1;
+  });
+  const after = assi.load_module('event/event-aftertrain');
+  assi.store.set(`abl:${CID}:0`, 3);
+  assi.store.set(`abl:${CID}:11`, 2);
+  assi.store.set(`abl:${CID}:31`, 2);
+  assi.store.set(`abl:${CID}:22`, 4);
+  assi.store.set(`base:${CID}:0`, 1000);
+  await after.aftertrain_masturbation_check(0, 1, () => 2);
+  assert.equal(after.peek_aftertrain_q(), 1, 'leftover_q == 1');
+  assert.ok(
+    assi.text_lines().some((l) => l.includes('好想要')),
+    'SELF_KOJO leftover_q 助手',
+  );
+});
+
+test('SELF_KOJO 夜袭 PRINTDATAL；出售爱慕 + SELL_MATURO 存根', async () => {
+  const night = await setup_k15((f) => f.store.set('tflag:13', 5));
+  await self_k15(night, seq_rand(0));
+  assert.ok(
+    night.text_lines().some((l) => l.includes('夜晚好冷')),
+    '夜袭 PRINTDATAL',
+  );
+  assert.ok(night.text_lines().includes(''), '夜袭空 PRINTFORMW');
+  assert.equal(night.store.get(`cflag:${CID}:265`), 1, '夜袭 → 265=1');
+
+  const sell = await setup_k15((f) => {
+    f.store.set('tflag:13', 6);
+    f.store.set(`talent:${CID}:85`, 1);
+  });
+  await self_k15(sell);
+  assert.ok(
+    sell.text_lines().some((l) => l.includes('以后…请您')),
+    '出售爱慕',
+  );
+  assert.ok(
+    sell.text_lines().some((l) => l.includes('@SELL_MATURO_K0')),
+    'SELL_MATURO_K0 存根行',
+  );
+});
+
+test('SELF_KOJO 妊娠发觉：爱慕+主人 CFLAG:102==1', async () => {
+  const fixture = await setup_k15((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`cflag:${CID}:102`, 1);
+  });
+  await self_k15(fixture);
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('会长的像谁呢')),
+    '妊娠发觉爱慕主人',
+  );
+  assert.equal(fixture.store.get(`cflag:${CID}:271`), 1, '妊娠发觉 → 271=1');
+});
+
+test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', async () => {
+  const fixture = create_era_fixture();
+  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k15-clever');
+  const registry = fs.readFileSync(
+    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
+    'utf8',
+  );
+  assert.deepEqual(STUBBED_CALLS, ['SELL_MATURO_K0']);
+  for (const name of STUBBED_CALLS) {
+    assert.ok(
+      registry.includes(name),
+      `docs/stub-registry.md 必须收录 ${name}`,
+    );
+  }
 });
