@@ -174,6 +174,10 @@ const ERB_TOKEN_RULES = [
   [/^\(A > 1\) \? 射精多次后 # 射精后$/, 'TERN_A_EJACULATE'], // :6098
   [/^\(A > 1\) \? 迎来多次絶頂的 # 迎来絶頂的$/, 'TERN_A_CLIMAX1'], // :6105
   [/^\(A > 1\) \? 不断迎来絶頂 # 迎来絶頂$/, 'TERN_A_CLIMAX2'], // :6120
+  [
+    /^TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 电动假阳具 # 阴茎$/,
+    'TERN_WEAPON',
+  ], // #242：K11 リリィ 正常位（CFLAG:321），全支复用同一枚局部 weapon
 ];
 
 const JS_TOKEN_RULES = [
@@ -272,6 +276,7 @@ const JS_TOKEN_RULES = [
   [/^a_count > 1 \? '射精多次后' : '射精后'$/, 'TERN_A_EJACULATE'],
   [/^a_count > 1 \? '迎来多次绝顶的' : '迎来绝顶的'$/, 'TERN_A_CLIMAX1'],
   [/^a_count > 1 \? '不断迎来绝顶' : '迎来绝顶'$/, 'TERN_A_CLIMAX2'],
+  [/^weapon$/, 'TERN_WEAPON'], // #242：K11 リリィ 正常位（CFLAG:321）
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */

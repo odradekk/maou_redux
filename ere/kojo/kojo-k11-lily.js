@@ -2,7 +2,7 @@
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
  *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12/13/14/15/16/19，issue #242，WIP 续轮，进行中）。
+ *       11/12/13/14/15/16/19/20，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,28 +12,37 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19 十七支
- *     :786-2644——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/舔肛/
- *     振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器/肛珠，各含初めて/二回目
- *     以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6 另含首吻专属分支
- *     TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔 TALENT:0，SELECTCOM 11
- *     另含 TEQUIP:11 装备/脱着两态（脱着时用独立 CFLAG:372 计数，且初めて
- *     阶段自身再按处女/非处女分岔文案），SELECTCOM 12 结构与 SELECTCOM 9
- *     同构（淫乱→爱慕→屈服刻印Lv3→それ以外简单四选，不含组合判据），
- *     SELECTCOM 13 另含 TEQUIP:13 装备/脱着两态（脱着时用独立 CFLAG:374
- *     计数，二回目以降层淫乱/爱慕各再按 A感覚Lv3以上二分，六选一档），
- *     SELECTCOM 14/15 结构均与 SELECTCOM 9/12 同构（简单四/三选，不含
- *     组合判据），SELECTCOM 16 结构亦与 SELECTCOM 9/12 同构（简单四/三选），
- *     但二回目以降层唯一新增 RAND:2 随机文案分岔（淫乱支下 rand_n(2) 二选一
- *     台词，不影响 CFLAG:317 计数取值）。SELECTCOM 17（オナホール CFLAG:318／
- *     着脱 CFLAG:378，:2464-2519）在原作里整段以 `;` 注释掉（连 IF 判断本身
- *     也被注释），属死代码，PRINTFORMW 台词全部留空未填，本移植按证据不落地
- *     任何行为、不占用真实指令号，跳过后直落 SELECTCOM 19（肛珠 CFLAG:320／
- *     脱着 CFLAG:379）：结构与 SELECTCOM 13 同构（TEQUIP:19 装备/脱着两态，
- *     脱着时用独立 CFLAG:379 计数），但初めて层只按「助手玛奥／淫乱／爱慕／
- *     それ以外」简单四选（不含 A感覚 组合判据），二回目以降层才先分「助手
- *     玛奥」再各自按「淫乱＋A感覚Lv3以上→淫乱→爱慕＋A感覚Lv3以上→爱慕→
- *     A感覚Lv3以上→それ以外」六选一档，助手玛奥/非助手玛奥两支结构对称
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20
+ *     十八支 :786-2951——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/
+ *     舔肛/振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器/肛珠/正常位，各含
+ *     初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6
+ *     另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔
+ *     TALENT:0，SELECTCOM 11 另含 TEQUIP:11 装备/脱着两态（脱着时用独立
+ *     CFLAG:372 计数，且初めて阶段自身再按处女/非处女分岔文案），SELECTCOM 12
+ *     结构与 SELECTCOM 9 同构（淫乱→爱慕→屈服刻印Lv3→それ以外简单四选，
+ *     不含组合判据），SELECTCOM 13 另含 TEQUIP:13 装备/脱着两态（脱着时用
+ *     独立 CFLAG:374 计数，二回目以降层淫乱/爱慕各再按 A感覚Lv3以上二分，
+ *     六选一档），SELECTCOM 14/15 结构均与 SELECTCOM 9/12 同构（简单四/
+ *     三选，不含组合判据），SELECTCOM 16 结构亦与 SELECTCOM 9/12 同构（简单
+ *     四/三选），但二回目以降层唯一新增 RAND:2 随机文案分岔（淫乱支下
+ *     rand_n(2) 二选一台词，不影响 CFLAG:317 计数取值）。SELECTCOM 17
+ *     （オナホール CFLAG:318／着脱 CFLAG:378，:2464-2519）在原作里整段以
+ *     `;` 注释掉（连 IF 判断本身也被注释），属死代码，PRINTFORMW 台词全部
+ *     留空未填，本移植按证据不落地任何行为、不占用真实指令号，跳过后直落
+ *     SELECTCOM 19（肛珠 CFLAG:320／脱着 CFLAG:379）：结构与 SELECTCOM 13
+ *     同构（TEQUIP:19 装备/脱着两态，脱着时用独立 CFLAG:379 计数），但
+ *     初めて层只按「助手玛奥／淫乱／爱慕／それ以外」简单四选（不含 A感覚
+ *     组合判据），二回目以降层才先分「助手玛奥」再各自按「淫乱＋A感覚Lv3
+ *     以上→淫乱→爱慕＋A感覚Lv3以上→爱慕→A感覚Lv3以上→それ以外」六选一档，
+ *     助手玛奥/非助手玛奥两支结构对称。SELECTCOM 20（正常位 CFLAG:321，
+ *     :2650-2951）初めて层先按处女/非处女（TALENT:0）分岔，各自再按助手
+ *     玛奥/非助手玛奥、淫乱/爱慕/それ以外三选一（共 12 支平行文案）；二回目
+ *     以降层先分助手玛奥/非助手玛奥两支，各自按「淫乱（RAND:3 三选一 +
+ *     ABL:2 私处感觉>=3 追加句）→爱慕（同构）→屈服刻印Lv3+V感覚Lv3以上
+ *     （RAND:3 三选一）→屈服刻印Lv3→それ以外」五选一档，结构对称。全支
+ *     复用同一枚局部 weapon（TALENT:PLAYER:121/122 判定电动假阳具/阴茎，
+ *     :2647-2648），本条是文件内首次出现 PRINTFORML（era.print）与
+ *     ABL:2（私处感觉，chara(target).system.私处感觉）阈值判据。
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -41,8 +50,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 80.4%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 20 起（源文件第 2650 至 10657 行，约 31 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 78.1%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 21 起（源文件第 2952 至 10657 行，约 30 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -65,14 +74,14 @@
  *
  * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 1154 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * trace-refs/kojo-k11-lily.mjs 的 1416 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
  * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12/13/14/15/16（本轮新增十一支）起改用
  * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
  * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：1135 条恰好命中 1 行/1 段，可视为具备真实
+ * 条锚在源全文里做精确子串计数：1278 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
- * 89 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
+ * 138 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
  * 收窄——60 条来自 WIP 1/N 交付范围（存在标志/@EVENTTRAIN/@K11_KOJO2/
@@ -90,12 +99,20 @@
  * 阴蒂夹刺激描写）；7 条来自 SELECTCOM 16（:2382/2386/2390/2407/2413/2419/
  * 2438，「夹在……乳房上的榨乳机，正在毫不留情地挤榨着母乳………」这句通用描写
  * 在初めて/二回目以降助手玛奥/非助手玛奥六个分支里逐字复现，且各自跟随不同
- * 的 CFLAG:317 写值，无法合并）。SELECTCOM
- * 3/5/6/7/8/9/10/11/12/13/14/15/16/19 内非 print 语句
+ * 的 CFLAG:317 写值，无法合并）；49 条来自 SELECTCOM 20（:2662/2663/2664/
+ * 2669/2671/2672/2673/2678/2680/2681/2682/2689/2692/2696/2699/2714/2715/
+ * 2717/2718/2721/2722/2728/2729/2738/2739/2744/2745/2766/2768/2769/2774/
+ * 2775/2784/2797/2805/2806/2813/2814/2828/2834/2846/2866/2871/2881/2891/
+ * 2892/2918/2923/2928，初めて层处女/非处女×助手玛奥/非助手玛奥×淫乱/爱慕/
+ * それ以外多支共用同一句「被…一口气突入了」「处女的蜜穴被…贯通到底」
+ * 「插进姐姐的小穴里了」等动作描写，二回目以降层助手玛奥/非助手玛奥两支的
+ * 淫乱/爱慕/屈服刻印各档 RAND:3 分岔内同样共用「压在身下…一口气贯通到底」
+ * 等描写，各自跟随不同的 CFLAG:321 写值与素质判据，无法合并）。SELECTCOM
+ * 3/5/6/7/8/9/10/11/12/13/14/15/16/19/20 内非 print 语句
  * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
  * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
  * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
- * fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 89 条即便
+ * fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 138 条即便
  * 行号漂移，落点也只会落到另一处内容完全相同的复现段落，不会静默通过
  * 成不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者
  * 才是真正的零鉴别力。
@@ -4536,6 +4553,660 @@ async function kojo_message_com_11(rand) {
       kojo.肛珠着脱 = 1; // :2641
     }
     return 0; // :2639-2643
+  }
+
+  // :2650-2951 IF SELECTCOM == 20（正常位 CFLAG:321）
+  if (era_flag.selectcom === 20) {
+    // :2647-2648 \@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\@
+    const weapon =
+      era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
+        ? '电动假阳具'
+        : '阴茎';
+    if (kojo.正常位 === 0) {
+      // :2651-2757 初めて
+      const virgin = era.get(`talent:${target}:0`) === 1;
+      if (virgin) {
+        // 处女
+        if (assi_mao) {
+          if (era.get(`talent:${target}:76`) === 1) {
+            // 淫乱
+            await era.printAndWait(
+              `『哎哎，有点激动呢～姐姐的第一次，就由我收下了哦！』`,
+            ); // :2659
+            await era.printAndWait(
+              `${target_name}被${player_name}压在身下，分开的双腿之间，少女最私密的堡垒与最后的防线被${weapon}一口气突入了。`,
+            ); // :2660
+            await era.printAndWait(
+              `「啊啊啊！插…插进来了…哈啊…哈啊${heart(1)} ${player_name}…姐姐现在开始就…成为女人了…第一次给了自己妹妹的感觉…好奇怪${heart(1)}」`,
+            ); // :2661
+            await era.printAndWait(
+              `${target_name}处女的蜜穴被${player_name}一口气贯通到底。`,
+            ); // :2662
+            await era.printAndWait(
+              `${player_name}大声喘息着，完全陶醉于夺走姐姐处女之身的强烈的心理快感中。`,
+            ); // :2663
+            await era.printAndWait(
+              `『姐姐的处女……被我夺走了${heart(1)} 从今以后，姐姐就是属于我的了${heart(1)}』`,
+            ); // :2664
+            await era.printAndWait(
+              `「哈啊…啊啊…已经…没法思考了。尽情地…侵犯姐姐吧…姐姐是属于${player_name}的东西了…哈啊…啊啊啊${heart(1)}」`,
+            ); // :2665
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // 爱慕
+            await era.printAndWait(
+              `『哎哎，有点激动呢～姐姐的第一次，就由我收下了哦！！』`,
+            ); // :2668
+            await era.printAndWait(
+              `${target_name}被${player_name}强行压在身下，分开的双腿之间，少女最私密的堡垒与最后的防线被${weapon}一口气突入了。`,
+            ); // :2669
+            await era.printAndWait(
+              `「住手，住手啊！放开我！！我的处女…是属于魔王大人的啊！不要啊啊啊啊——」`,
+            ); // :2670
+            await era.printAndWait(
+              `${target_name}处女的蜜穴被${player_name}一口气贯通到底。`,
+            ); // :2671
+            await era.printAndWait(
+              `${player_name}大声喘息着，完全陶醉于夺走姐姐处女之身的强烈的心理快感中。`,
+            ); // :2672
+            await era.printAndWait(
+              `『姐姐的处女……被我夺走了${heart(1)} 从今以后，姐姐就是属于我的了${heart(1)}』`,
+            ); // :2673
+            await era.printAndWait(
+              `「为…为什么要这么做…魔王大人…为什么……呜呜呜呜」`,
+            ); // :2674
+          } else {
+            // それ以外
+            await era.printAndWait(
+              `『嘿嘿嘿…魔王大人答应把姐姐的第一次赏给我了！』`,
+            ); // :2677
+            await era.printAndWait(
+              `${target_name}被${player_name}强行压在身下，分开的双腿之间，少女最私密的堡垒与最后的防线被${weapon}一口气突入了。`,
+            ); // :2678
+            await era.printAndWait(
+              `「放开我，放开我！不要，不要啊！我们是姐妹啊，不可以这——啊啊啊好痛，痛死了！！救命啊…来人救救我！！」`,
+            ); // :2679
+            await era.printAndWait(
+              `${target_name}处女的蜜穴被${player_name}一口气贯通到底。`,
+            ); // :2680
+            await era.printAndWait(
+              `${player_name}大声喘息着，完全陶醉于夺走姐姐处女之身的强烈的心理快感中。`,
+            ); // :2681
+            await era.printAndWait(
+              `『姐姐的处女……被我夺走了${heart(1)} 从今以后，姐姐就是属于我的了${heart(1)}』`,
+            ); // :2682
+            await era.printAndWait(
+              `「好痛…痛死了啊啊……拔出去，拔出去啊，求求你了！！」`,
+            ); // :2683
+          }
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            `「哈啊…啊啊${heart(1)} 终于…终于等到这一刻了${heart(1)} 啊啊…呃啊啊 ${heart(1)}」`,
+          ); // :2688
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在身下，分开的双腿之间，少女最私密的堡垒与最后的防线被一口气贯通到底。`,
+          ); // :2689
+          await era.printAndWait(
+            `${player_name}丝毫没有顾虑${target_name}是第一次，无情地侵犯，蹂躏着身下的娇躯，而${target_name}则回以淫媚的笑颜和极尽享受的娇声浪喘。`,
+          ); // :2690
+          await era.printAndWait(
+            `「原来…做爱…是这么美妙的…事情…啊啊！你应该早一点让我领略的啊啊啊…干我…用力干我…再用力${heart(1)}」`,
+          ); // :2691
+          await era.printAndWait(
+            `随着最后一处阵地的沦陷，${target_name}在${player_name}的侵犯中彻底蜕变，堕落。那个曾经纯洁无暇的乡下少女，终于彻底消失了……`,
+          ); // :2692
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            `「哈啊…啊啊${heart(1)}…魔王大人…我准备好了${heart(1)}」`,
+          ); // :2695
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在身下，分开的双腿之间，少女最私密的堡垒与最后的防线被一口气贯通到底。`,
+          ); // :2696
+          await era.printAndWait(
+            `${player_name}丝毫没有顾虑${target_name}是第一次，无情地侵犯，蹂躏着身下的娇躯，而${target_name}则回以欣喜的笑颜和痛苦与享受交织的喘息。`,
+          ); // :2697
+          await era.printAndWait(
+            `「呃啊啊…啊啊${heart(1)} 虽然…有点痛…魔王大人…从现在开始…我就永远属于你了…${heart(1)}」`,
+          ); // :2698
+          await era.printAndWait(
+            `${target_name}处女膜破裂，初经人事的痛楚，被与${player_name}第一次交合的感动与爱意淹没了………`,
+          ); // :2699
+        } else {
+          // それ以外
+          await era.printAndWait(
+            `「住手，住手啊…放开我，快放开我！不——要——啊啊啊啊啊！」`,
+          ); // :2702
+          await era.printAndWait(
+            `${target_name}被${player_name}强行抱在身下，分开的双腿之间，少女最私密的堡垒与最后的防线被一口气贯通到底。`,
+          ); // :2703
+          await era.printAndWait(
+            `${player_name}丝毫没有顾虑${target_name}是第一次，无情地侵犯，蹂躏着身下的娇躯，聆听着${target_name}因为极度痛苦和屈辱而尖叫着。`,
+          ); // :2704
+          await era.printAndWait(
+            `「啊啊…好痛，好痛。终于…要结，结束了吗？…什…什么！？不要…不要射在里面！不要！！！放开我！！」`,
+          ); // :2705
+        }
+      } else {
+        // 非处女
+        if (assi_mao) {
+          if (era.get(`talent:${target}:76`) === 1) {
+            // 淫乱
+            await era.printAndWait(
+              `『哈啊，${player_name}插进姐姐的小穴里了${heart(1)}』`,
+            ); // :2714
+            await era.printAndWait(
+              `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+            ); // :2715
+            await era.printAndWait(
+              `「啊啊…嗯啊啊…蜜穴…被塞的满满的了${heart(1)} 才刚刚插进来…就已经感觉…要高潮了一样${heart(1)}」`,
+            ); // :2716
+            await era.printAndWait(
+              `${target_name}与${player_name}的身体交缠在一起，沉沦在姐妹乱伦的心理和生理双重快感之中。`,
+            ); // :2717
+            await era.printAndWait(
+              `『${player_name}最喜欢姐姐的蜜穴了…和魔王的肉棒一样喜欢${heart(1)}』`,
+            ); // :2718
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // 爱慕
+            await era.printAndWait(
+              `『哈啊，${player_name}插进姐姐的小穴里了${heart(1)}』`,
+            ); // :2721
+            await era.printAndWait(
+              `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+            ); // :2722
+            await era.printAndWait(
+              `「啊啊啊…插…插进来了…不，不要那么用力，${player_name}…姐姐下面…撑得难受！」`,
+            ); // :2723
+            await era.printAndWait(
+              `${target_name}被${player_name}压在身下，持续地侵犯着蜜穴。`,
+            ); // :2724
+            await era.printAndWait(
+              `『姐姐说什么呢？这样侵犯姐姐，我可是舒服得很呐，姐姐也应该学会享受才对${heart(1)}』`,
+            ); // :2725
+          } else {
+            // それ以外
+            await era.printAndWait(
+              `『哈啊，${player_name}插进姐姐的小穴里了${heart(1)}』`,
+            ); // :2728
+            await era.printAndWait(
+              `${target_name}被${player_name}压在身下，张开的双腿之间，少女的蜜穴被${weapon}一口气贯通到底。`,
+            ); // :2729
+            await era.printAndWait(
+              `「啊啊…好痛啊，饶了姐姐吧，求你了…不要再欺负姐姐了…」`,
+            ); // :2730
+            await era.printAndWait(
+              `${player_name}对${target_name}的哀求置若罔闻，继续侵犯着${target_name}的蜜穴。`,
+            ); // :2731
+            await era.printAndWait(
+              `『这怎么能算是欺负呢？姐姐应该学会享受才对${heart(1)}』`,
+            ); // :2732
+          }
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            `「哈啊…啊啊啊…再用力一点，再深一点…魔王大人…请像对待最下流的婊子那样粗暴地对待我吧${heart(1)}」`,
+          ); // :2737
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在身下，分开的双腿之间，爱液泛滥的蜜穴被一口气贯通到底。`,
+          ); // :2738
+          await era.printAndWait(
+            `而作为回应，${target_name}的蜜穴也紧紧裹住${player_name}的阴茎，像是在主动吸吮着一般。`,
+          ); // :2739
+          await era.printAndWait(
+            `「啊啊啊…尽情地侵犯${target_name}的蜜穴吧…哈啊…啊啊…毫不留情地…顶到子宫口吧！」`,
+          ); // :2740
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            `「哈啊…啊啊啊…魔王大人…抱紧我…侵犯我${heart(1)}」`,
+          ); // :2743
+          await era.printAndWait(
+            `${target_name}被${player_name}抱在身下，分开的双腿之间，爱液泛滥的蜜穴被一口气贯通到底。`,
+          ); // :2744
+          await era.printAndWait(
+            `而作为回应，${target_name}的蜜穴也紧紧裹住${player_name}的阴茎，像是在主动吸吮着一般。`,
+          ); // :2745
+          await era.printAndWait(
+            `「嗯啊…啊啊${heart(1)} 舒服得…整个人…感觉…都要融化了…${heart(1)}」`,
+          ); // :2746
+        } else {
+          // それ以外
+          await era.printAndWait(
+            `「住手，住手啊啊…不要啊！啊啊啊插进来了…又插进来了……」`,
+          ); // :2749
+          await era.printAndWait(
+            `${target_name}被${player_name}强行抱在身下，分开的双腿之间，少女的蜜穴被一口气贯通到底。`,
+          ); // :2750
+          await era.printAndWait(
+            `${player_name}毫不留情地侵犯，蹂躏着${target_name}的娇躯，聆听着${target_name}因为痛苦和屈辱的尖叫和悲泣。`,
+          ); // :2751
+          await era.printAndWait(
+            `「好痛，好痛啊啊啊！放过我吧，求求你，放过我吧！」`,
+          ); // :2752
+        }
+      }
+      kojo.正常位 = 1; // :2756
+      return 0; // :2756-2757
+    }
+
+    // :2758-2949 二回目以降
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.正常位 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        if (rand_n(3) === 0) {
+          await era.print(
+            `『姐姐的蜜穴……真是舒服得让人无法忍受啊啊${heart(1)}』`,
+          ); // :2765
+          await era.printAndWait(
+            `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+          ); // :2766
+          await era.printAndWait(
+            `「啊啊…嗯啊啊…姐姐的…蜜穴，被${player_name}塞得慢慢的了…哈啊…哈啊${heart(1)}」`,
+          ); // :2767
+          await era.printAndWait(
+            `${target_name}与${player_name}的身体交缠在一起，沉沦在姐妹乱伦的心理和生理双重快感之中。`,
+          ); // :2768
+          await era.printAndWait(
+            `『${player_name}最喜欢姐姐的蜜穴了…和魔王的肉棒一样喜欢${heart(1)}』`,
+          ); // :2769
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「呼呼…哈啊…姐姐也是…舒服得…要说不出话了${heart(1)} 蜜穴被${player_name}侵犯的感觉…太棒了${heart(1)} 啊啊啊${heart(1)}」`,
+            ); // :2771
+          }
+        } else if (rand_n(2) === 0) {
+          await era.print(`『哈啊啊…插进去了哦，姐姐…${heart(1)}』`); // :2773
+          await era.printAndWait(
+            `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+          ); // :2774
+          await era.printAndWait(
+            `紧接着，${player_name}动起腰，开始在${target_name}的蜜穴里连续地快速抽插着。`,
+          ); // :2775
+          await era.printAndWait(`「哈啊…嗯啊啊…好，好厉害…啊啊${heart(1)}」`); // :2776
+          await era.printAndWait(
+            `『哈啊…姐姐口水眼泪都一起出来了呢${heart(1)} 一副要登顶了一样的表情呢♪』`,
+          ); // :2777
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.print(
+              `「什，什么表情啊…哈啊…嗯啊啊…不，不行了……舒服得…说，说不出话了${heart(1)}」`,
+            ); // :2779
+            await era.printAndWait(`『哈啊…就是现在的表情啊！』`); // :2780
+          }
+        } else {
+          await era.print(`『啊哈…插到姐姐的…小穴里了${heart(1)}姐姐…姐姐…』`); // :2783
+          await era.printAndWait(
+            `${player_name}将${target_name}压在身下，在${target_name}的蜜穴里一口气顶到了最深处。`,
+          ); // :2784
+          await era.printAndWait(
+            `${weapon}抽插蜜穴时发出的不堪入耳的声音在房间里回荡着。`,
+          ); // :2785
+          await era.printAndWait(
+            `「嗯啊啊…啊 啊${heart(1)} ${player_name}${heart(1)} ${player_name}${heart(1)} 啊啊啊${heart(1)}」`,
+          ); // :2786
+          await era.printAndWait(
+            `${target_name}和${player_name}的身体交缠在一起，互相呼唤着对方，，沉沦在姐妹乱伦的心理和生理双重快感之中。`,
+          ); // :2787
+          await era.printAndWait(
+            `『${player_name}好舒服啊……你感觉舒服吗，姐姐？』`,
+          ); // :2788
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「啊啊啊${heart(1)} 舒服得…快说不出话了…${heart(1)} 整个人…好像要疯了一样${heart(1)}」`,
+            ); // :2790
+          }
+        }
+        kojo.正常位 = 6; // :2790-2792
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.正常位 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        if (rand_n(3) === 0) {
+          await era.print(
+            `『啊啊啊，姐姐的蜜穴…真是舒服得让人无法忍受啊啊${heart(1)}』`,
+          ); // :2796
+          await era.printAndWait(
+            `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+          ); // :2797
+          await era.printAndWait(
+            `「哈啊…嗯啊啊…${player_name}…稍微…不要那么粗暴……」`,
+          ); // :2798
+          await era.printAndWait(
+            `${player_name}对${target_name}的话置若罔闻，只顾动着腰，毫不留情地侵犯着${target_name}的蜜穴。`,
+          ); // :2799
+          await era.printAndWait(`『要往更深的地方去了哦、姐姐♪』`); // :2800
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「哎啊啊…别…别…呃啊啊…子宫口…被顶到了啊啊…这个感觉…好奇怪啊啊${heart(1)}」`,
+            ); // :2802
+          }
+        } else if (rand_n(2) === 0) {
+          await era.print(`『哈啊……插到姐姐的…小穴里了…${heart(1)}』`); // :2804
+          await era.printAndWait(
+            `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+          ); // :2805
+          await era.printAndWait(
+            `紧接着，${player_name}动起腰，开始在${target_name}的蜜穴里连续地快速抽插着。`,
+          ); // :2806
+          await era.printAndWait(
+            `「哈啊…太…太激烈了…${player_name}…让姐姐…缓，缓一缓…！」`,
+          ); // :2807
+          await era.printAndWait(
+            `『姐姐明明一脸很舒服的表情呢，别装含蓄啦，大声一点喊出来，让魔王大人也欣赏一下姐姐叫床的样子吧？』`,
+          ); // :2808
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「啊啊…哈啊…啊啊啊，${player_name}…干得姐姐…好舒服…舒服得…要上天了……${heart(1)}」`,
+            ); // :2810
+          }
+        } else {
+          await era.print(
+            `『姐姐${heart(1)} 姐姐${heart(1)}人家喜欢你啊啊啊！！』`,
+          ); // :2812
+          await era.printAndWait(
+            `${player_name}将${target_name}压在身下，在${target_name}的蜜穴里一口气顶到了最深处。`,
+          ); // :2813
+          await era.printAndWait(
+            `${weapon}在蜜穴抽插时发出的不堪入耳的声音在房间里回荡着。`,
+          ); // :2814
+          await era.printAndWait(
+            `「哈啊…哈啊…快…不行了…蜜穴…感觉好奇怪…啊啊…呜啊啊！」`,
+          ); // :2815
+          await era.printAndWait(`『你看、变得更舒服了哦姐姐！姐姐！』`); // :2816
+          if (chara(target).system.私处感觉 >= 3) {
+            await era.printAndWait(
+              `「啊啊…哈啊…啊啊啊，姐姐…好舒服…舒服得…要上天了……${heart(1)}」`,
+            ); // :2818
+          }
+        }
+        kojo.正常位 = 5; // :2818-2820
+      } else if (
+        mark(2) === 3 &&
+        chara(target).system.私处感觉 >= 3 &&
+        (kojo.正常位 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3＋V感覚Lv3以上
+        if (rand_n(3) === 0) {
+          await era.print(
+            `『姐姐的小穴已经变得这么色情了，一下子就插到里面去了${heart(1)}』`,
+          ); // :2824
+          await era.printAndWait(
+            `${target_name}爱液泛滥的蜜穴已经完全接纳了${player_name}的${weapon}。`,
+          ); // :2825
+          await era.printAndWait(
+            `「说，说什么呐…哈啊…哈啊…哪有…那种事…嗯啊啊啊！」`,
+          ); // :2826
+          await era.print(
+            `『哎哎，都已经舒服成这样了、姐姐为什么就不肯坦率点呢${heart(1)}』`,
+          ); // :2827
+          await era.printAndWait(
+            `蜜穴的强烈快感冲击下下，${target_name}无力的辩解被呻吟和娇喘取代`,
+          ); // :2828
+        } else if (rand_n(2) === 0) {
+          await era.print(
+            `『哇哇哇，姐姐的色情小穴、吸得…这么紧呐${heart(1)}』`,
+          ); // :2830
+          await era.printAndWait(
+            `${target_name}爱液泛滥的蜜穴紧紧包裹着${player_name}的${weapon}。`,
+          ); // :2831
+          await era.printAndWait(`「不行…不行啊…快拔出去…哈啊…嗯啊啊！」`); // :2832
+          await era.print(
+            `『从姐姐这么色情的小穴里拔出去？啊哈哈，别开玩笑了！我还没真正发力呢！』`,
+          ); // :2833
+          await era.printAndWait(
+            `蜜穴的强烈快感冲击下下，${target_name}无力的辩解被呻吟和娇喘取代`,
+          ); // :2834
+        } else {
+          await era.printAndWait(
+            `「饶，饶了姐姐吧…啊啊…哈啊…真的…快不行了！」`,
+          ); // :2836
+          await era.print(
+            `『姐姐都舒服成这个样子了，怎么就说不行了呢♪ 我继续了哦！』`,
+          ); // :2837
+          await era.printAndWait(
+            `${target_name}爱液泛滥的蜜穴正在接受，或者说享受着${player_name}的${weapon}的连续蹂躏。`,
+          ); // :2838
+          await era.printAndWait(`「舒服什么的……才没有啊啊…哈啊……嗯啊啊啊！」`); // :2839
+          await era.printAndWait(
+            `『嘿嘿，上面的嘴还逞强，下面那张可是已经认输了${heart(1)}』`,
+          ); // :2840
+        }
+        kojo.正常位 = 4; // :2840-2842
+      } else if (
+        mark(2) === 3 &&
+        (kojo.正常位 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 屈服刻印Lv3
+        await era.print(
+          `『哈啊！姐姐，我要进去了哦${heart(1)}姐姐${heart(1)}』`,
+        ); // :2845
+        await era.printAndWait(
+          `${target_name}被${player_name}压在身下，张开的双腿之间，少女的蜜穴被${weapon}一口气贯通到底。`,
+        ); // :2846
+        await era.printAndWait(`「为…为什么…这种事…呜呜呜」`); // :2847
+        await era.printAndWait(
+          `${target_name}已经完全放弃了抵抗，任由${player_name}侵犯着自己的蜜穴，只是从喉咙底发出哽咽的声音。`,
+        ); // :2848
+        await era.printAndWait(
+          `『呼呼…啊哈哈，姐姐终于变得老实了，终于感觉到快感了吗？』`,
+        ); // :2849
+        kojo.正常位 = 3; // :2849-2850
+      } else if (kojo.正常位 <= 1 || game.kojo.口上开关 === 2) {
+        // それ以外
+        await era.print(
+          `『哈啊…哈啊…侵犯姐姐的蜜穴，无论多少次都让人这么心情愉快呢${heart(1)}』`,
+        ); // :2853
+        await era.printAndWait(
+          `${target_name}被${player_name}强行压在身下，张开的双腿之间，少女的蜜穴被${weapon}一口气贯通到底。`,
+        ); // :2854
+        await era.printAndWait(
+          `「住，住手啊…呜呜呜…为什么…要这么对待姐姐，欺负姐姐…」`,
+        ); // :2855
+        await era.printAndWait(
+          `面对${player_name}对蜜穴的侵犯，${target_name}只能在口头上做着无力的抵抗`,
+        ); // :2856
+        await era.printAndWait(
+          `『欺负？才不是呢！姐姐没有也感觉到舒服吗${heart(1)}』`,
+        ); // :2857
+        kojo.正常位 = 2; // :2857-2858
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.正常位 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      // 淫乱
+      if (rand_n(3) === 0) {
+        await era.printAndWait(
+          `「哈啊…啊啊…还可以…再，再深一点…再往里一点…${heart(1)}」`,
+        ); // :2864
+        await era.printAndWait(
+          `${target_name}被${player_name}抱在身下，爱液泛滥的蜜穴被贯通直入。`,
+        ); // :2865
+        await era.printAndWait(
+          `而作为回应，${target_name}的蜜穴，将${player_name}的阴茎紧紧裹住，好像主动吸吮起来了一般。`,
+        ); // :2866
+        await era.printAndWait(
+          `「尽情地侵犯我吧魔王大人…请毫不客气地…把${target_name}的蜜穴搞得一塌糊涂吧！」`,
+        ); // :2867
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.printAndWait(
+            `「呜啊啊…不行了…蜜穴…好舒服啊啊…舒服的…整个人都要疯了${heart(1)}」`,
+          ); // :2869
+        }
+      } else if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `${target_name}被${player_name}压在身下，张开的双腿之间，爱液泛滥的蜜穴被${weapon}一口气贯通到底。`,
+        ); // :2871
+        await era.printAndWait(
+          `随后，${player_name}对着${target_name}的蜜穴深处，开始了连续的抽插，每一次都顶到了最底。`,
+        ); // :2872
+        await era.printAndWait(
+          `「啊啊啊…太…太激烈了啊啊…哈啊啊${heart(1)} 魔王大人…原来…这么厉害${heart(1)}」`,
+        ); // :2873
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.printAndWait(
+            `被充分调教，开发的蜜穴传来的极度的快感，完全冲垮了${target_name}的理性，让她变得语无伦次。`,
+          ); // :2875
+          await era.printAndWait(
+            `「呼哈哈……肉穴肉穴肉穴爽上天了啊啊啊${heart(1)} 但是…还想要更多${heart(1)} 不要停，不要停呀啊啊${heart(1)}」`,
+          ); // :2876
+        }
+      } else {
+        await era.printAndWait(`「哈啊…啊啊啊…好厉害…魔王大人…${heart(1)}」`); // :2879
+        await era.printAndWait(
+          `${player_name}将${target_name}压在身下，毫不留情地侵犯着爱液泛滥的蜜穴。`,
+        ); // :2880
+        await era.printAndWait(
+          `${weapon}在蜜穴抽插时发出的不堪入耳的声音在房间里回荡着。`,
+        ); // :2881
+        await era.printAndWait(
+          `「咿呀…哈啊…蜜穴…舒服得${heart(1)} 说不出话来了啊啊啊${heart(1)}」`,
+        ); // :2882
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.printAndWait(
+            `「魔王大人…请毫不留情地…侵犯${target_name}，把${target_name}的蜜穴弄坏吧${heart(1)} 把里面搅得一团糟${heart(1)} 怎样都好…让…${target_name}登天吧${heart(1)}」`,
+          ); // :2884
+        }
+      }
+      kojo.正常位 = 6; // :2884-2886
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.正常位 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      // 爱慕
+      if (rand_n(3) === 0) {
+        await era.printAndWait(
+          `「哈啊……哈啊……${target_name}准备好迎接魔王大人…的阴茎了${heart(1)}」`,
+        ); // :2890
+        await era.printAndWait(
+          `${target_name}被${player_name}抱在身下，爱液泛滥的蜜穴被贯通至底。`,
+        ); // :2891
+        await era.printAndWait(
+          `而作为回应，${target_name}的蜜穴，将${player_name}的阴茎紧紧裹住，好像主动吸吮起来了一般。`,
+        ); // :2892
+        await era.printAndWait(
+          `「啊哈…呜啊啊${heart(1)}好舒服…整个人…好像要融化……了一样${heart(1)}」`,
+        ); // :2893
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.printAndWait(
+            `「呜啊啊！不，不行了…太…舒服了…嗯啊…啊啊啊${heart(1)}」`,
+          ); // :2895
+        }
+      } else if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `${player_name}抱着身下的${target_name}，对着爱液泛滥的蜜穴开始缓慢而有节奏地抽送着。`,
+        ); // :2897
+        await era.printAndWait(
+          `「呜啊…魔王大人…为什么……要这么…慢慢的…哈啊${heart(1)}」`,
+        ); // :2898
+        await era.printAndWait(
+          `似乎是等不及了一般，${target_name}的蜜穴，将${player_name}的阴茎紧紧裹住，好像主动吸吮，摩擦了起来。`,
+        ); // :2899
+        await era.printAndWait(
+          `「拜，拜托了…魔王大人…请…请再快点…再用力点……疼爱…${target_name}的淫穴吧${heart(1)}」`,
+        ); // :2900
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.printAndWait(
+            `${player_name}听着身下娇躯的恳求，也终于认真了起来，突然加快了抽插的速度和力道。`,
+          ); // :2902
+          await era.printAndWait(
+            `「哈啊…啊啊啊！感，感觉到了魔王大人的…爱意了！哈啊…啊啊…好舒服啊${heart(1)} 啊啊啊${heart(1)}」`,
+          ); // :2903
+        }
+      } else {
+        await era.printAndWait(
+          `${player_name}将${target_name}压在身下，对着爱液泛滥的蜜穴，一口气贯通到了最深处。`,
+        ); // :2906
+        await era.printAndWait(
+          `阴茎与蜜穴结合的地方连续撞击着，发出了“啪嗒”“啪嗒”的不堪入耳的淫秽声响。`,
+        ); // :2907
+        if (chara(target).system.私处感觉 >= 3) {
+          await era.printAndWait(
+            `「哈啊…呜啊啊…蜜穴…好舒服…舒服得要上天了…${heart(1)}」`,
+          ); // :2909
+        }
+        await era.printAndWait(
+          `「啊啊啊…呜啊啊…魔王大人…我爱你…我爱你${heart(1)} 啊啊啊${heart(1)}」`,
+        ); // :2910
+        await era.printAndWait(
+          `${target_name}被${player_name}紧抱着的身体，因为生理和心理上极度的快感而不住地颤抖了起来。`,
+        ); // :2911
+      }
+      kojo.正常位 = 5; // :2911-2913
+    } else if (
+      mark(2) === 3 &&
+      chara(target).system.私处感觉 >= 3 &&
+      (kojo.正常位 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3＋V感覚Lv3以上
+      if (rand_n(3) === 0) {
+        await era.printAndWait(`「哈啊…嗯啊啊…插，插进来了…」`); // :2917
+        await era.printAndWait(
+          `${target_name}被${player_name}抱在身下，爱液泛滥的蜜穴被贯通至底。`,
+        ); // :2918
+        await era.printAndWait(
+          `似乎已经接受了自己的命运，${target_name}不再反抗，而是发出了甘甜的娇喘，享受着交媾的快感。`,
+        ); // :2919
+        await era.printAndWait(`「唔啊啊……哈啊…请稍微…稍微温柔一点……」`); // :2920
+      } else if (rand_n(2) === 0) {
+        await era.printAndWait(`「再稍…稍等一下啊啊…呜啊啊…哈啊」`); // :2922
+        await era.printAndWait(
+          `${target_name}被${player_name}压在身下，阴茎径直插入了爱液泛滥的蜜穴最深处。`,
+        ); // :2923
+        await era.printAndWait(
+          `「呜啊啊…啊啊！蜜穴被…被撑…得满满的……感觉…啊啊！」`,
+        ); // :2924
+        await era.printAndWait(
+          `${target_name}蜜穴被${player_name}抽插的声音很快就被她自己因为快感而放声的娇喘盖过去了………`,
+        ); // :2925
+      } else {
+        await era.printAndWait(
+          `「呜啊啊…！一下就插到……最里面去了…！哈啊！呀啊啊啊！」`,
+        ); // :2927
+        await era.printAndWait(
+          `${target_name}被${player_name}压在身下，阴茎径直插入了爱液泛滥的蜜穴最深处。`,
+        ); // :2928
+        await era.printAndWait(
+          `${target_name}被充分调教，开发过的蜜穴，将${player_name}的阴茎紧紧裹住，好像主动吸吮起来了一般。`,
+        ); // :2929
+        await era.printAndWait(`「哈啊…唔啊啊…为什么…会这么舒服的……」`); // :2930
+      }
+      kojo.正常位 = 4; // :2930-2932
+    } else if (
+      mark(2) === 3 &&
+      (kojo.正常位 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      // 屈服刻印Lv3
+      await era.printAndWait(`「呜啊啊…啊啊…插，插进来了……啊啊！」`); // :2935
+      await era.printAndWait(
+        `${target_name}被${player_name}抱在身下，少女的蜜穴被贯通至底。`,
+      ); // :2936
+      await era.printAndWait(
+        `丝毫没有顾忌${target_name}的感受，${player_name}毫不留情地抽插了起来，持续侵犯着${target_name}的蜜穴。`,
+      ); // :2937
+      await era.printAndWait(
+        `「呜啊啊…会，会痛的啊…请…请温柔一点…拜托了……！」`,
+      ); // :2938
+      kojo.正常位 = 3; // :2938-2939
+    } else if (kojo.正常位 <= 1 || game.kojo.口上开关 === 2) {
+      // それ以外
+      await era.printAndWait(`「放开我！放开我！住手啊…不要——插进来啊啊啊！」`); // :2942
+      await era.printAndWait(
+        `${target_name}被${player_name}强行压在身下，阴茎径直插入了蜜穴最深处。`,
+      ); // :2943
+      await era.printAndWait(
+        `丝毫不顾忌身下的${target_name}痛苦的哀鸣，${player_name}毫不留情地抽插了起来，持续侵犯着${target_name}的蜜穴。`,
+      ); // :2944
+      await era.printAndWait(
+        `「啊啊啊啊…好痛啊啊！放过我吧，求求你，放过我吧！呜啊啊啊！」`,
+      ); // :2945
+      kojo.正常位 = 2; // :2945-2946
+    }
+    return 0; // :2946-2949
   }
 
   return 0;
