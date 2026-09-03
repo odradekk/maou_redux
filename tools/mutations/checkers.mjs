@@ -571,6 +571,32 @@ export default [
     must_mention: '父进程应如实累加两片的计数',
   },
   {
+    desc: 'M2700 鉴别力门焊死（新弱锚不再按文件报出——ENDIF 探针必须抓到失明）（#298）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (overflowing.length > 0) {',
+    replace: 'if (false && overflowing.length > 0) { // 变异：鉴别力门焊死',
+    tests: ['trace-check'],
+    must_mention: '鉴别力检查对弱锚失明',
+  },
+  {
+    desc: 'M2701 鉴别力基线核对焊死（改小一位不再红——只减不增不在退出码语义里）（#298）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (FROZEN_WEAK_SUM > ANCHOR_QUALITY_BASELINE) {',
+    replace:
+      'if (false && FROZEN_WEAK_SUM > ANCHOR_QUALITY_BASELINE) { // 变异：基线核对焊死',
+    tests: ['trace-check'],
+    must_mention: '基线改小一位必须非 0',
+  },
+  {
+    desc: 'M2702 鉴别力分类一律当唯一（ENDIF 命中多处也放行——门必须非 0）（#298）',
+    file: 'tools/trace-check.mjs',
+    find: "  if (n <= 1) return { kind: 'unique', hits: n || 1 };",
+    replace:
+      "  if (true) return { kind: 'unique', hits: n || 1 }; // 变异：分类一律唯一",
+    tests: ['trace-check'],
+    must_mention: '鉴别力检查对弱锚失明',
+  },
+  {
     desc: 'M2740 原始冲突标记识别被拆（行首开始/分隔/结束标记不再报——#299 探针必须抓到失明）',
     file: 'tools/conflict-marker-check.mjs',
     find: "      hits.push({ kind: '原始标记', line: i + 1, text: line.trim() });",
