@@ -7,8 +7,9 @@
  *     （:43-239，调教开始口上 CFLAG:201 + NTR 再捕获 + 屈服/淫乱/爱慕/
  *     崩坏 + K15_KOJO2 二回目以降）@K15_KOJO2（:245-310）@EVENTEND
  *     （:316-400，调教结束口上）@KOJO_MESSAGE_COM_15（:406 起，四道头部
- *     守卫 + SELECTCOM 0–87）@DOG_KOJO_15（:4027-4888）@COLOSSEUM_KOJO_15
- *     （:5796-5919）。其余随后续切片。
+ *     守卫 + SELECTCOM 0–87）@DOG_KOJO_15（:4027-4888）
+ *     @KOJO_MESSAGE_PALAMCNG_15（:4894-5098）@KOJO_MESSAGE_MARKCNG_15
+ *     （:5105-5162）@COLOSSEUM_KOJO_15（:5796-5919）。其余随后续切片。
 
  * == 守卫（K15 与模板七条不同，逐文件 1:1） ==
  *
@@ -30,6 +31,8 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
+  kojo_message_palamcng_family,
+  kojo_message_markcng_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const { self_call } = require('#/kojo/kojo-text');
@@ -1175,7 +1178,7 @@ async function dog_kojo_15(rand) {
         // :4440
         await era.print(
           [
-            `「嗯嗯…啊…後面…好奇怪…不…不可以……啊啊……嗯啊啊……」`,
+            `「嗯嗯…啊…后面…好奇怪…不…不可以……啊啊……嗯啊啊……」`,
             `「嗯啊啊…好烫…狗狗的肉棒…不…不……啊啊……嗯啊啊……」`,
             `「啊啊…太……太深了…狗狗…不…不可以…嗯…啊啊……」`,
           ][rand_n(3)],
@@ -1192,7 +1195,7 @@ async function dog_kojo_15(rand) {
         // :4450
         await era.print(
           [
-            `「嗯嗯…啊…後面……啊啊……嗯啊啊……」`,
+            `「嗯嗯…啊…后面……啊啊……嗯啊啊……」`,
             `「嗯啊啊…进……进来了……啊啊……嗯啊啊……」`,
             `「啊啊…不……那里会……嗯…啊啊……」`,
           ][rand_n(3)],
@@ -3571,7 +3574,7 @@ async function kojo_message_com_15(rand) {
             [
               `「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」`,
               `「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」`,
-              `「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」`,
+              `「这里是…属于魔王大人的……请…请打上精液的印记～♡♡」`,
             ][rand_n(3)],
           ); // :1573-1577 PRINTDATAL
           await era.print(
@@ -3731,7 +3734,7 @@ async function kojo_message_com_15(rand) {
         // :1673
         await era.print(
           [
-            `「果然……从後面来……是最……最深的了♡嗯…嗯啊啊啊～♡♡」`,
+            `「果然……从后面来……是最……最深的了♡嗯…嗯啊啊啊～♡♡」`,
             `「还……还要啊！……唔……好……好棒……快……快点啊♡嗯…嗯啊啊啊～♡♡」`,
             `「可…可以射在里面哦♡…想…想要……满满的……精液♡嗯…嗯啊啊啊～♡♡」`,
           ][rand_n(3)],
@@ -3762,7 +3765,7 @@ async function kojo_message_com_15(rand) {
             [
               `「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」`,
               `「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」`,
-              `「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」`,
+              `「这里是…属于魔王大人的……请…请打上精液的印记～♡♡」`,
             ][rand_n(3)],
           ); // :1688-1692 PRINTDATAL
           await era.print(
@@ -3949,7 +3952,7 @@ async function kojo_message_com_15(rand) {
             [
               `「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」`,
               `「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」`,
-              `「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」`,
+              `「这里是…属于魔王大人的……请…请打上精液的印记～♡♡」`,
             ][rand_n(3)],
           ); // :1801-1805 PRINTDATAL
           await era.print(
@@ -4112,7 +4115,7 @@ async function kojo_message_com_15(rand) {
         // :1900
         await era.print(
           [
-            `「果然……从後面来……是最……最深的了♡嗯…嗯啊啊啊～♡♡」`,
+            `「果然……从后面来……是最……最深的了♡嗯…嗯啊啊啊～♡♡」`,
             `「还……还要啊！……唔……好……好棒……快……快点啊♡嗯…嗯啊啊啊～♡♡」`,
             `「可…可以射在里面哦♡…想…想要……满满的……精液♡嗯…嗯啊啊啊～♡♡」`,
           ][rand_n(3)],
@@ -4143,7 +4146,7 @@ async function kojo_message_com_15(rand) {
             [
               `「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」`,
               `「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」`,
-              `「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」`,
+              `「这里是…属于魔王大人的……请…请打上精液的印记～♡♡」`,
             ][rand_n(3)],
           ); // :1915-1919 PRINTDATAL
           await era.print(
@@ -4269,7 +4272,7 @@ async function kojo_message_com_15(rand) {
         // :1996
         await era.print(
           [
-            `「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
+            `「后面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
             `「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」`,
             `「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」`,
           ][rand_n(3)],
@@ -4320,8 +4323,8 @@ async function kojo_message_com_15(rand) {
           ); // :2020-2024 PRINTDATAL
           await era.print(
             [
-              `来自後穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
-              `${target_name}因为後穴的快感，一边呻吟一边向${player_name}求饶着……`,
+              `来自后穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
+              `${target_name}因为后穴的快感，一边呻吟一边向${player_name}求饶着……`,
               `${target_name}想要专心致意地服侍${player_name}，但是快感太过强烈，似乎让他忘记了自己的目的……`,
             ][rand_n(3)],
           ); // :2025-2029 PRINTDATAL
@@ -4366,7 +4369,7 @@ async function kojo_message_com_15(rand) {
           [
             `「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」`,
             `「太……太深了……不……不行！嗯……啊…啊啊啊！」`,
-            `「停……停下来啊……後面…会…会……啊…啊啊啊！」`,
+            `「停……停下来啊……后面…会…会……啊…啊啊啊！」`,
           ][rand_n(3)],
         ); // :2053-2057 PRINTDATAL
         kojo.正常位肛交 = 3; // :2058
@@ -4450,7 +4453,7 @@ async function kojo_message_com_15(rand) {
         // :2107
         await era.print(
           [
-            `「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
+            `「后面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
             `「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」`,
             `「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」`,
           ][rand_n(3)],
@@ -4501,8 +4504,8 @@ async function kojo_message_com_15(rand) {
           ); // :2131-2135 PRINTDATAL
           await era.print(
             [
-              `来自後穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
-              `${target_name}因为後穴的快感，一边呻吟一边向${player_name}求饶着……`,
+              `来自后穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
+              `${target_name}因为后穴的快感，一边呻吟一边向${player_name}求饶着……`,
               `${target_name}一心想要服侍${player_name}，但是快感太过强烈，似乎让他忘记了自己的目的……`,
             ][rand_n(3)],
           ); // :2136-2140 PRINTDATAL
@@ -4547,7 +4550,7 @@ async function kojo_message_com_15(rand) {
           [
             `「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」`,
             `「太……太深了……不……不行！嗯……啊…啊啊啊！」`,
-            `「停……停下来啊……後面…会…会……啊…啊啊啊！」`,
+            `「停……停下来啊……后面…会…会……啊…啊啊啊！」`,
           ][rand_n(3)],
         ); // :2164-2168 PRINTDATAL
         kojo.背后位肛交 = 3; // :2169
@@ -4617,7 +4620,7 @@ async function kojo_message_com_15(rand) {
         // :2212
         await era.print(
           [
-            `「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
+            `「后面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
             `「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」`,
             `「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」`,
           ][rand_n(3)],
@@ -4665,8 +4668,8 @@ async function kojo_message_com_15(rand) {
           ); // :2235-2239 PRINTDATAL
           await era.print(
             [
-              `来自後穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
-              `${target_name}因为後穴的快感，一边呻吟一边向${player_name}求饶着……`,
+              `来自后穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
+              `${target_name}因为后穴的快感，一边呻吟一边向${player_name}求饶着……`,
               `${target_name}一心想要服侍${player_name}，但是快感太过强烈，似乎让他忘记了自己的目的……`,
             ][rand_n(3)],
           ); // :2240-2244 PRINTDATAL
@@ -4711,7 +4714,7 @@ async function kojo_message_com_15(rand) {
           [
             `「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」`,
             `「太……太深了……不……不行！嗯……啊…啊啊啊！」`,
-            `「停……停下来啊……後面…会…会……啊…啊啊啊！」`,
+            `「停……停下来啊……后面…会…会……啊…啊啊啊！」`,
           ][rand_n(3)],
         ); // :2268-2272 PRINTDATAL
         kojo.对面座位肛交 = 3; // :2273
@@ -4781,7 +4784,7 @@ async function kojo_message_com_15(rand) {
         // :2316
         await era.print(
           [
-            `「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
+            `「后面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」`,
             `「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」`,
             `「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」`,
           ][rand_n(3)],
@@ -4829,8 +4832,8 @@ async function kojo_message_com_15(rand) {
           ); // :2339-2343 PRINTDATAL
           await era.print(
             [
-              `来自後穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
-              `${target_name}因为後穴的快感，一边呻吟一边向${player_name}求饶着……`,
+              `来自后穴的快感，让${target_name}恍惚失神甚至语无论次了起来……`,
+              `${target_name}因为后穴的快感，一边呻吟一边向${player_name}求饶着……`,
               `${target_name}一心想要服侍${player_name}，但是快感太过强烈，似乎让他忘记了自己的目的……`,
             ][rand_n(3)],
           ); // :2344-2348 PRINTDATAL
@@ -4875,7 +4878,7 @@ async function kojo_message_com_15(rand) {
           [
             `「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」`,
             `「太……太深了……不……不行！嗯……啊…啊啊啊！」`,
-            `「停……停下来啊……後面…会…会……啊…啊啊啊！」`,
+            `「停……停下来啊……后面…会…会……啊…啊啊啊！」`,
           ][rand_n(3)],
         ); // :2372-2376 PRINTDATAL
         kojo.背面座位肛交 = 3; // :2377
@@ -7265,6 +7268,332 @@ async function kojo_message_com_15(rand) {
 }
 
 /**
+ * @KOJO_MESSAGE_PALAMCNG_15（:4894 起）：参数变动口上。ASSI/ASSIPLAY
+ * 整行注释，仅 TEQUIP:45 口塞守卫。P = PALAM+UP vs PALAMLV[2]。
+ *
+ * @returns {Promise<number>} 0
+ */
+async function kojo_message_palamcng_15() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  const kojo = chara(target).kojo;
+
+  if (era0(`tequip:${target}:45`)) {
+    return 0; // :4898-4902
+  } // :4898-4902
+
+  const P_lube =
+    (era.get(`palam:${target}:3`) || 0) + (era.get(`delta:${target}:3`) || 0);
+  if (P_lube > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {
+    // :4909
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :4911
+
+      if (era_flag.selectcom == 50) {
+        // :4913
+        await era.printAndWait(''); // :4914
+      } else {
+        // :4913-4919
+        await era.printAndWait(''); // :4917
+      } // :4915-4921
+    } else {
+      // :4919-4921
+
+      if (era_flag.selectcom == 50) {
+        // :4922
+        await era.printAndWait(''); // :4923
+      } else {
+        // :4922-4928
+        await era.printAndWait(''); // :4926
+      } // :4925-4929
+    } // :4927-4929
+    kojo.首次润滑Lv2 = 1; // :4929
+  } // :4929-4931
+
+  const P_lust =
+    (era.get(`palam:${target}:5`) || 0) + (era.get(`delta:${target}:5`) || 0);
+  if (P_lust > PALAMLV[2] && kojo.首次欲情Lv2 == 0) {
+    // :4936
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :4938
+
+      if (era_flag.selectcom == 51) {
+        // :4940
+        await era.printAndWait(''); // :4941
+      } else {
+        // :4940-4946
+        await era.printAndWait(''); // :4944
+      } // :4942-4948
+    } else {
+      // :4946-4948
+
+      if (era_flag.selectcom == 51) {
+        // :4949
+        await era.printAndWait(''); // :4950
+      } else {
+        // :4949-4955
+        await era.printAndWait(''); // :4953
+      } // :4952-4956
+    } // :4954-4956
+    kojo.首次欲情Lv2 = 1; // :4956
+  } // :4956-4958
+
+  const P_shame =
+    (era.get(`palam:${target}:8`) || 0) + (era.get(`delta:${target}:8`) || 0);
+  if (P_shame > PALAMLV[2] && kojo.首次耻情Lv2 == 0) {
+    // :4963
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :4965
+      await era.printAndWait(''); // :4966
+    } else {
+      // :4965-4971
+      await era.printAndWait(''); // :4969
+    } // :4969-4971
+    kojo.首次耻情Lv2 = 1; // :4971
+  } // :4971-4973
+
+  const P_fear =
+    (era.get(`palam:${target}:10`) || 0) + (era.get(`delta:${target}:10`) || 0);
+  if (P_fear > PALAMLV[2] && kojo.首次恐怖Lv2 == 0) {
+    // :4978
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :4980
+      await era.printAndWait(''); // :4981
+    } else {
+      // :4980-4986
+      await era.printAndWait(''); // :4984
+    } // :4984-4986
+    kojo.首次恐怖Lv2 = 1; // :4986
+  } // :4986-4988
+
+  if (era0(`nowex:${target}:0`) > 0 && kojo.首次C绝顶 == 0) {
+    // :4992
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :4994
+      await era.printAndWait(''); // :4995
+    } else {
+      // :4996-4998
+      if (era0(`talent:${target}:121`) || era0(`talent:${target}:122`)) {
+        // :4998
+        await era.printAndWait(`「不！不要！呜！要……要射了……唔!……啊…啊～♡」`); // :4999
+        await era.printAndWait(
+          `${target_name}第一次在调教中，因为阴茎的快感太过强烈而射精了！！`,
+        ); // :5000
+      } else {
+        // :5000-5002
+        await era.printAndWait(`「不！不要！呜！要……要去了呀……唔!……啊…啊～♡」`); // :5002
+        await era.printAndWait(
+          `${target_name}第一次在调教中，因为阴蒂的快感太过强烈而高潮了！！`,
+        ); // :5003
+      } // :5003-5005
+      await era.printAndWait(
+        `${target_name}睁大着眼睛满面红霞，不知道是因为羞愤？还是太有感觉造成的呢？`,
+      ); // :5005
+    } // :5005-5007
+    kojo.首次C绝顶 = 1; // :5007
+  } // :5007-5009
+
+  if (era0(`nowex:${target}:1`) > 0 && kojo.首次V绝顶 == 0) {
+    // :5013
+
+    if (era0(`talent:${target}:76`) == 1) {
+      // :5015
+      await era.printAndWait(''); // :5016
+    } else if (era0(`talent:${target}:85`) == 1) {
+      // :5018
+      await era.printAndWait(''); // :5019
+    } else {
+      // :5020-5022
+      await era.printAndWait(`「不！不要！呜！要……要去了呀……唔!……啊…啊～♡」`); // :5022
+      await era.printAndWait(
+        `${target_name}第一次在调教中，因为蜜穴的快感太过强烈而高潮了！！`,
+      ); // :5023
+      await era.printAndWait(
+        `${target_name}睁大着眼睛满面红霞，不知道是因为羞愤？还是太有感觉造成的呢？`,
+      ); // :5024
+    } // :5024-5026
+    kojo.首次V绝顶 = 1; // :5026
+  } // :5026-5028
+
+  if (era0(`nowex:${target}:2`) > 0 && kojo.首次A绝顶 == 0) {
+    // :5032
+
+    if (era0(`talent:${target}:76`) == 1) {
+      // :5034
+      await era.printAndWait(''); // :5035
+    } else if (era0(`talent:${target}:85`) == 1) {
+      // :5037
+      await era.printAndWait(''); // :5038
+    } else {
+      // :5039-5041
+      await era.printAndWait(
+        `「不！不要！呜！怎……怎么会用这种地方……唔!……啊…啊～♡」`,
+      ); // :5041
+      await era.printAndWait(
+        `${target_name}第一次在调教中，因为肛门的快感太过强烈而高潮了！！`,
+      ); // :5042
+      await era.printAndWait(
+        `${target_name}睁大着眼睛满面红霞，不知道是因为羞愤？还是太有感觉造成的呢？`,
+      ); // :5043
+    } // :5043-5045
+    kojo.首次A绝顶 = 1; // :5045
+  } // :5045-5047
+
+  if (era0(`nowex:${target}:3`) > 0 && kojo.首次B绝顶 == 0) {
+    // :5051
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :5053
+      await era.printAndWait(''); // :5054
+    } else {
+      // :5055-5057
+      await era.printAndWait(
+        `「不！不要！呜！胸部…胸部要……啊！嗯啊……啊啊啊～♡」`,
+      ); // :5057
+      await era.printAndWait(
+        `${target_name}第一次在调教中，因为胸部的快感太过强烈而高潮了！！`,
+      ); // :5058
+      await era.printAndWait(
+        `${target_name}睁大着眼睛满面红霞，不知道是因为羞愤？还是太有感觉造成的呢？`,
+      ); // :5059
+    } // :5059-5061
+    kojo.首次B绝顶 = 1; // :5061
+  } // :5061-5063
+
+  const A =
+    (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0);
+  if (game.train.处女丧失 == 1 && kojo.处女丧失 == 0) {
+    // :5068
+
+    if (game.train.主人导致处女丧失 == 1) {
+      // :5070
+
+      if (
+        era0(`talent:${target}:76`) == 1 &&
+        (A < 500 || game.system.反抗刻印回避 == 1)
+      ) {
+        // :5072
+        await era.printAndWait(
+          `「啊～终于能摆脱处女了……嘿嘿♡……再多做一点开心的事情吧？」`,
+        ); // :5073
+        await era.printAndWait(
+          `听那期待的语气，看来破处的些许的疼痛早被${target_name}置之脑后了……`,
+        ); // :5074
+      } else if (
+        era0(`talent:${target}:85`) == 1 &&
+        (A < 500 || game.system.反抗刻印回避 == 1)
+      ) {
+        // :5076
+        await era.printAndWait(
+          `「本来就是留给魔王大人的东西，所以…尽管有一点痛，但是很幸福♡」`,
+        ); // :5077
+        await era.printAndWait(
+          `${target_name}眯起了眼睛，露出了满足而幸福的微笑。`,
+        ); // :5078
+      } else {
+        // :5079-5081
+        await era.printAndWait(`「尽管${sc()}也没天真到以为能保住……但是……」`); // :5081
+        await era.printAndWait(
+          `${target_name}的语调虽然冰冷平淡…但是眼神当中却满溢着汹涌的杀意……`,
+        ); // :5082
+      } // :5082-5084
+    } else {
+      // :5084-5086
+
+      if (era0(`talent:${target}:76`) == 1) {
+        // :5087
+        await era.printAndWait(
+          `「唔…能摆脱处女就好…这样～可以玩的花样更多了呢♡♡」`,
+        ); // :5088
+      } else if (era0(`talent:${target}:85`) == 1) {
+        // :5090
+        await era.printAndWait(`「明明希望第一次是给魔王大人的……」`); // :5091
+      } else {
+        // :5092-5094
+        await era.printAndWait(`「果然还是……呜……」`); // :5094
+      } // :5094-5096
+    } // :5095-5097
+    kojo.处女丧失 = 1; // :5097
+  } // :5097-5099
+}
+
+/**
+ * @KOJO_MESSAGE_MARKCNG_15（:5105 起）：刻印变动口上。ASSI/ASSIPLAY
+ * 整行注释，仅 TEQUIP:45 口塞守卫。
+ *
+ * @returns {Promise<number>} 0
+ */
+async function kojo_message_markcng_15() {
+  const target = era_flag.target;
+  const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  const kojo = chara(target).kojo;
+
+  if (era0(`tequip:${target}:45`)) {
+    return 0; // :5109-5113
+  } // :5109-5113
+
+  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {
+    // :5115
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :5117
+      await era.printAndWait(`「痛……但…但是……如果是您的话……没有关系……」`); // :5118
+    } else {
+      // :5118-5120
+      await era.printAndWait(`「啊！不！不要了……好痛！饶了${sc()}吧……」`); // :5120
+    } // :5120-5122
+    kojo.苦痛刻印Lv3 = 1; // :5122
+  } // :5122-5124
+
+  if (game.system.快乐刻印变动 == 3 && kojo.快乐刻印Lv3 == 0) {
+    // :5128
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :5130
+      await era.printAndWait(`「这…这是……好……好棒……太……太舒服了……啊啊～♡」`); // :5131
+    } else {
+      // :5131-5133
+      await era.printAndWait(`「这…这是………不……不……这样……不行……啊啊～♡」`); // :5133
+    } // :5133-5135
+    kojo.快乐刻印Lv3 = 1; // :5135
+  } // :5135-5137
+
+  if (game.system.屈服刻印变动 == 3 && kojo.屈服刻印Lv3 == 0) {
+    // :5141
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :5143
+      await era.printAndWait(''); // :5144
+    } else {
+      // :5144-5146
+      await era.printAndWait(`「再…怎么抵抗……也是……没用的吧……」`); // :5146
+    } // :5146-5148
+    kojo.屈服刻印Lv3 = 1; // :5148
+  } // :5148-5150
+
+  if (game.system.反抗刻印变动 == 3 && kojo.反抗刻印Lv3 == 0) {
+    // :5154
+
+    if (era0(`talent:${target}:85`) == 1) {
+      // :5156
+      await era.printAndWait(''); // :5157
+    } else {
+      // :5157-5159
+      await era.printAndWait(
+        `「可恶！真是……不敢相信！这个世上怎么会有像你这样的垃圾呢！？」`,
+      ); // :5159
+    } // :5159-5161
+    kojo.反抗刻印Lv3 = 1; // :5161
+  } // :5161-5162
+}
+
+/**
  * @SELF_KOJO_K15（:5168 起）：事件口上。本切片只注册分发号。
  *
  * @returns {Promise<number>} 0
@@ -7274,6 +7603,8 @@ async function self_kojo_k15() {
 }
 
 kojo_message_com_family.register(15, kojo_message_com_15);
+kojo_message_palamcng_family.register(15, kojo_message_palamcng_15);
+kojo_message_markcng_family.register(15, kojo_message_markcng_15);
 self_kojo_family.register(15, self_kojo_k15);
 
 module.exports = {
@@ -7282,4 +7613,6 @@ module.exports = {
   k15_kojo2,
   dog_kojo_15,
   colosseum_kojo_15,
+  kojo_message_palamcng_15,
+  kojo_message_markcng_15,
 };

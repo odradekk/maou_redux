@@ -1855,3 +1855,151 @@ test('死斗场媚药（SELECTCOM 51）', async () => {
     '死斗场媚药',
   );
 });
+
+async function palam_k15(fixture) {
+  const { kojo_message_palamcng_family } =
+    fixture.load_module('kojo/kojo-system');
+  return kojo_message_palamcng_family.call(KEY, { args: [] });
+}
+
+async function mark_k15(fixture) {
+  const { kojo_message_markcng_family } =
+    fixture.load_module('kojo/kojo-system');
+  return kojo_message_markcng_family.call(KEY, { args: [] });
+}
+
+test('PALAMCNG 口塞守卫跳过；润滑 PALAM+UP > PALAMLV[2] 写 CFLAG:221', async () => {
+  const gag = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:45`, 1);
+    f.store.set(`palam:${CID}:3`, 600);
+  });
+  await palam_k15(gag);
+  assert.equal(
+    gag.store.get(`cflag:${CID}:221`),
+    undefined,
+    'PALAMCNG 口塞守卫跳过润滑',
+  );
+
+  const wet = await setup_k15((f) => {
+    f.store.set(`palam:${CID}:3`, 400);
+    f.store.set(`delta:${CID}:3`, 200);
+  }, 50);
+  await palam_k15(wet);
+  assert.equal(wet.store.get(`cflag:${CID}:221`), 1, '润滑首次超 LV2 → 221=1');
+  assert.ok(wet.text_lines().includes(''), '润滑空 PRINTFORMW 仍推进');
+});
+
+test('PALAMCNG 首次 C 绝顶：阴茎 / 阴蒂分档；爱慕空 PRINTFORMW', async () => {
+  const penis = await setup_k15((f) => {
+    f.store.set(`nowex:${CID}:0`, 1);
+    f.store.set(`talent:${CID}:121`, 1);
+  });
+  await palam_k15(penis);
+  assert.ok(
+    penis.text_lines().some((l) => l.includes('因为阴茎的快感')),
+    'C绝顶阴茎分档',
+  );
+  assert.equal(penis.store.get(`cflag:${CID}:225`), 1, '首次C绝顶 → 225=1');
+
+  const clitoris = await setup_k15((f) => {
+    f.store.set(`nowex:${CID}:0`, 1);
+  });
+  await palam_k15(clitoris);
+  assert.ok(
+    clitoris.text_lines().some((l) => l.includes('因为阴蒂的快感')),
+    'C绝顶阴蒂分档',
+  );
+
+  const love = await setup_k15((f) => {
+    f.store.set(`nowex:${CID}:0`, 1);
+    f.store.set(`talent:${CID}:85`, 1);
+  });
+  await palam_k15(love);
+  assert.equal(love.store.get(`cflag:${CID}:225`), 1, '爱慕 C绝顶仍写 225');
+  assert.ok(
+    love.text_lines().every((l) => !l.includes('快感')),
+    '爱慕 C绝顶空 PRINTFORMW',
+  );
+});
+
+test('PALAMCNG 处女丧失：主人淫乱 / 主人以外爱慕', async () => {
+  const master = await setup_k15((f) => {
+    f.store.set('tflag:3', 1);
+    f.store.set('tflag:20', 1);
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`delta:${CID}:11`, 100);
+  });
+  await palam_k15(master);
+  assert.ok(
+    master.text_lines().some((l) => l.includes('终于能摆脱处女')),
+    '主人破处淫乱',
+  );
+  assert.equal(master.store.get(`cflag:${CID}:229`), 1, '处女丧失 → 229=1');
+
+  const other = await setup_k15((f) => {
+    f.store.set('tflag:3', 1);
+    f.store.set('tflag:20', 0);
+    f.store.set(`talent:${CID}:85`, 1);
+  });
+  await palam_k15(other);
+  assert.ok(
+    other.text_lines().some((l) => l.includes('明明希望第一次是给魔王大人')),
+    '非主人破处爱慕',
+  );
+});
+
+test('MARKCNG 口塞守卫跳过；苦痛/快乐/屈服/反抗 Lv3', async () => {
+  const gag = await setup_k15((f) => {
+    f.store.set(`tequip:${CID}:45`, 1);
+    f.store.set('tflag:22', 3);
+  });
+  await mark_k15(gag);
+  assert.equal(
+    gag.store.get(`cflag:${CID}:297`),
+    undefined,
+    'MARKCNG 口塞守卫跳过苦痛',
+  );
+
+  const pain = await setup_k15((f) => {
+    f.store.set('tflag:22', 3);
+    f.store.set(`talent:${CID}:85`, 1);
+  });
+  await mark_k15(pain);
+  assert.ok(
+    pain.text_lines().some((l) => l.includes('如果是您的话')),
+    '苦痛刻印Lv3 爱慕',
+  );
+  assert.equal(pain.store.get(`cflag:${CID}:297`), 1, '苦痛刻印Lv3 → 297=1');
+
+  const pleasure = await setup_k15((f) => f.store.set('tflag:23', 3));
+  await mark_k15(pleasure);
+  assert.ok(
+    pleasure.text_lines().some((l) => l.includes('这样……不行')),
+    '快乐刻印Lv3 それ以外',
+  );
+  assert.equal(
+    pleasure.store.get(`cflag:${CID}:298`),
+    1,
+    '快乐刻印Lv3 → 298=1',
+  );
+
+  const yield_mark = await setup_k15((f) => f.store.set('tflag:24', 3));
+  await mark_k15(yield_mark);
+  assert.ok(
+    yield_mark.text_lines().some((l) => l.includes('怎么抵抗')),
+    '屈服刻印Lv3 それ以外',
+  );
+  assert.equal(
+    yield_mark.store.get(`cflag:${CID}:299`),
+    1,
+    '屈服刻印Lv3 → 299=1',
+  );
+
+  const revolt = await setup_k15((f) => f.store.set('tflag:21', 3));
+  await mark_k15(revolt);
+  assert.ok(
+    revolt.text_lines().some((l) => l.includes('像你这样的垃圾')),
+    '反抗刻印Lv3 それ以外',
+  );
+  assert.equal(revolt.store.get(`cflag:${CID}:300`), 1, '反抗刻印Lv3 → 300=1');
+});
