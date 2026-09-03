@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-2364',
+        ref: '786-2460',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -7211,6 +7211,317 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
         ref: '2362-2363',
         any: [/^\s*CFLAG:376 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2371-2460',
+        any: [
+          /^\s*IF SELECTCOM == 16 && TEQUIP:16\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:317 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『啊嘿嘿，姐姐的大胸部，挤出来的奶一定很值钱♪』\s*$\s*^\s*PRINTFORMW 「不，不可以啊啊，乳汁是留给小宝宝的，怎么能拿去卖……呜呜！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2373-2394',
+        any: [
+          /^\s*IF CFLAG:317 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『啊嘿嘿，姐姐的大胸部，挤出来的奶一定很值钱♪』\s*$\s*^\s*PRINTFORMW 「不，不可以啊啊，乳汁是留给小宝宝的，怎么能拿去卖……呜呜！」\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2376',
+        any: [
+          /^\s*PRINTFORMW 『啊嘿嘿，姐姐的大胸部，挤出来的奶一定很值钱♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2377',
+        any: [
+          /^\s*PRINTFORMW 「不，不可以啊啊，乳汁是留给小宝宝的，怎么能拿去卖……呜呜！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2381',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊……分泌出乳汁了……不过感觉……好舒服%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2382',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2385',
+        any: [
+          /^\s*PRINTFORMW 「啊啊……乳汁，乳汁满满地出来了%UNICODE\(0x2661\) \*1% 感觉……好奇怪……但是好舒服……%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2386',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2389',
+        any: [
+          /^\s*PRINTFORMW 「拿，拿掉啊啊！这不是……给母牛用的吗……好痛，好痛……呜呜呜！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2390',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2393',
+        any: [/^\s*CFLAG:317 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2393-2394',
+        any: [/^\s*CFLAG:317 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2396-2442',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1 && \(CFLAG:317 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 『哎嘿嘿，我又来给母牛姐姐挤奶了哦，这对淫乱的大胸部，不用来挤奶，真是太浪费了！』\s*$\s*^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「请……请吧……姐姐的胸部……想要怎么玩都可以%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2401',
+        any: [
+          /^\s*PRINTFORMW 『哎嘿嘿，我又来给母牛姐姐挤奶了哦，这对淫乱的大胸部，不用来挤奶，真是太浪费了！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2402-2406',
+        any: [
+          /^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「请……请吧……姐姐的胸部……想要怎么玩都可以%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「呜啊啊%UNICODE\(0x2661\) \*1% 居然，居然会这么舒服啊啊%UNICODE\(0x2661\) \*1%」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2403',
+        any: [
+          /^\s*PRINTFORMW 「请……请吧……姐姐的胸部……想要怎么玩都可以%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2405',
+        any: [
+          /^\s*PRINTFORMW 「呜啊啊%UNICODE\(0x2661\) \*1% 居然，居然会这么舒服啊啊%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2407',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2407-2408',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$\s*^\s*CFLAG:317 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2411',
+        any: [
+          /^\s*PRINTFORMW 『哎嘿嘿，姐姐的乳汁，一会儿我会全部好好喝光的哦♪』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2412',
+        any: [
+          /^\s*PRINTFORMW 「想，想要喝的话直接吸……不就行了……为什么还要用这种东西……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2413',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2413-2414',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$\s*^\s*CFLAG:317 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2417',
+        any: [
+          /^\s*PRINTFORMW 『哎嘿嘿，姐姐的胸部好像被乳汁涨得满满的了，让我来给姐姐放松一下』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2418',
+        any: [
+          /^\s*PRINTFORMW 「住，住手啊，%SAVESTR:PLAYER%！求你了……好痛！好痛啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2419',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2418-2420',
+        any: [
+          /^\s*PRINTFORMW 「住，住手啊，%SAVESTR:PLAYER%！求你了……好痛！好痛啊啊！」\s*$\s*^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$\s*^\s*CFLAG:317 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2425',
+        any: [
+          /^\s*PRINTFORMW 「啊啊……开始习惯这种感觉了呢%UNICODE\(0x2661\) \*1% 其实……还挺舒服的%UNICODE\(0x2661\) \*1% 」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2426',
+        any: [
+          /^\s*PRINTFORMW 「啊啊啊……又出来了……乳汁%UNICODE\(0x2661\) \*1%」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2427',
+        any: [
+          /^\s*PRINTFORMW 搾夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2427-2428',
+        any: [
+          /^\s*PRINTFORMW 搾夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$\s*^\s*CFLAG:317 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2431',
+        any: [
+          /^\s*PRINTFORMW 「明明是给宝宝喝的东西、不过……如果魔王大人想要品尝的话，我也不介意啦%UNICODE\(0x2661\) \*1%！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2432',
+        any: [/^\s*PRINTFORMW 「不过……一定不能拿去卖哦！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2433',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%说着一点说服力都没有的话，然而夹在%SAVESTR:TARGET%乳房上的榨乳机，依旧在毫不留情地挤榨着母乳………………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2433-2434',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%说着一点说服力都没有的话，然而夹在%SAVESTR:TARGET%乳房上的榨乳机，依旧在毫不留情地挤榨着母乳………………\s*$\s*^\s*CFLAG:317 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2437',
+        any: [
+          /^\s*PRINTFORMW 「饶，饶了我吧……再这样挤下去……胸部……真的会坏掉的……呜呜呜！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2438',
+        any: [
+          /^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2437-2439',
+        any: [
+          /^\s*PRINTFORMW 「饶，饶了我吧……再这样挤下去……胸部……真的会坏掉的……呜呜呜！」\s*$\s*^\s*PRINTFORMW 夹在%SAVESTR:TARGET%乳房上的榨乳机，正在毫不留情地挤榨着母乳………\s*$\s*^\s*CFLAG:317 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2439-2442',
+        any: [
+          /^\s*CFLAG:317 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2445-2459',
+        any: [
+          /^\s*ELSEIF SELECTCOM == 16 && TEQUIP:16 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:377 < 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「哈啊……哈啊……这些就是我分泌的乳汁……好多啊……」\s*$\s*^\s*CFLAG:377 = 3\s*$\s*^\s*;爱慕\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:377 < 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「品尝一下可以……但是一定不能拿去卖啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2448',
+        any: [
+          /^\s*PRINTFORMW 「哈啊……哈啊……这些就是我分泌的乳汁……好多啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2449',
+        any: [/^\s*CFLAG:377 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2452',
+        any: [/^\s*PRINTFORMW 「品尝一下可以……但是一定不能拿去卖啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2453',
+        any: [/^\s*CFLAG:377 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2456',
+        any: [/^\s*PRINTFORMW 「呜呜呜……人家明明不是奶牛………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2457',
+        any: [/^\s*CFLAG:377 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '2457-2459',
+        any: [/^\s*CFLAG:377 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
       },
     ],
   },

@@ -7015,6 +7015,265 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM15 脱着時：それ以外推进到 1',
   },
+  // ---- SELECTCOM 16（榨乳器 CFLAG:317／着脱 CFLAG:377，#242） ----
+  {
+    desc: 'M3260 COM16 TEQUIP:16 已装/未装判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'if (era.get(`tequip:${target}:16`)) {',
+    replace: 'if (!era.get(`tequip:${target}:16`)) {',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 初めて：助手玛奥推进到 1',
+  },
+  {
+    desc: 'M3261 COM16 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            \`「啊啊啊……分泌出乳汁了……不过感觉……好舒服\${heart(1)}」\`,
+          ); // :2381`,
+    replace: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          // 淫乱
+          await era.printAndWait(
+            \`「啊啊啊……分泌出乳汁了……不过感觉……好舒服\${heart(1)}」\`,
+          ); // :2381`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 初めて：非助手玛奥 + 淫乱推进到 1',
+  },
+  {
+    desc: 'M3262 COM16 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            \`「啊啊……乳汁，乳汁满满地出来了\${heart(1)} 感觉……好奇怪……但是好舒服……\${heart(1)}」\`,
+          ); // :2385`,
+    replace: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
+          // 爱慕
+          await era.printAndWait(
+            \`「啊啊……乳汁，乳汁满满地出来了\${heart(1)} 感觉……好奇怪……但是好舒服……\${heart(1)}」\`,
+          ); // :2385`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 初めて：非助手玛奥 + 爱慕推进到 1',
+  },
+  {
+    desc: 'M3263 COM16 初めて CFLAG:317 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.榨乳器 = 1; // :2393`,
+    replace: `        kojo.榨乳器 = 0; // :2393`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 初めて：それ以外推进到 1',
+  },
+  // ---- 二回目以降・助手玛奥 ----
+  {
+    desc: 'M3264 COM16 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱
+          await era.printAndWait(
+            \`『哎嘿嘿，我又来给母牛姐姐挤奶了哦，这对淫乱的大胸部，不用来挤奶，真是太浪费了！』\`,
+          ); // :2401`,
+    replace: `        if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // 淫乱
+          await era.printAndWait(
+            \`『哎嘿嘿，我又来给母牛姐姐挤奶了哦，这对淫乱的大胸部，不用来挤奶，真是太浪费了！』\`,
+          ); // :2401`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
+  },
+  {
+    desc: 'M3265 COM16 二回目 助手玛奥淫乱 RAND:2 判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          if (rand_n(2)) {
+            // :2402-2406`,
+    replace: `          if (!rand_n(2)) {
+            // :2402-2406`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
+  },
+  {
+    desc: 'M3266 COM16 二回目 助手玛奥淫乱 CFLAG:317 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.榨乳器 = 4; // :2407-2408`,
+    replace: `          kojo.榨乳器 = 3; // :2407-2408`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
+  },
+  {
+    desc: 'M3267 COM16 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕
+          await era.printAndWait(
+            \`『哎嘿嘿，姐姐的乳汁，一会儿我会全部好好喝光的哦♪』\`,
+          ); // :2411`,
+    replace: `        } else if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // 爱慕
+          await era.printAndWait(
+            \`『哎嘿嘿，姐姐的乳汁，一会儿我会全部好好喝光的哦♪』\`,
+          ); // :2411`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：助手玛奥 + 爱慕推进到 3',
+  },
+  {
+    desc: 'M3268 COM16 二回目 助手玛奥爱慕 CFLAG:317 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.榨乳器 = 3; // :2413-2414`,
+    replace: `          kojo.榨乳器 = 2; // :2413-2414`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：助手玛奥 + 爱慕推进到 3',
+  },
+  {
+    desc: 'M3269 COM16 二回目 助手玛奥それ以外 CFLAG:317 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.榨乳器 = 2; // :2418-2420`,
+    replace: `          kojo.榨乳器 = 1; // :2418-2420`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：助手玛奥 + それ以外推进到 2',
+  },
+  // ---- 二回目以降・非助手玛奥 ----
+  {
+    desc: 'M3270 COM16 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`「啊啊……开始习惯这种感觉了呢\${heart(1)} 其实……还挺舒服的\${heart(1)} 」\`,
+        ); // :2425`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // 淫乱
+        await era.printAndWait(
+          \`「啊啊……开始习惯这种感觉了呢\${heart(1)} 其实……还挺舒服的\${heart(1)} 」\`,
+        ); // :2425`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：非助手玛奥 + 淫乱推进到 4',
+  },
+  {
+    desc: 'M3271 COM16 二回目 非助手玛奥淫乱 CFLAG:317 写错（4 改 3，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.榨乳器 = 4; // :2427-2428`,
+    replace: `        kojo.榨乳器 = 3; // :2427-2428`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：非助手玛奥 + 淫乱推进到 4',
+  },
+  {
+    desc: 'M3272 COM16 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (
+        era.get(\`talent:\${target}:85\`) === 1 &&
+        (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          \`「明明是给宝宝喝的东西、不过……如果魔王大人想要品尝的话，我也不介意啦\${heart(1)}！」\`,
+        ); // :2431`,
+    replace: `      } else if (
+        era.get(\`talent:\${target}:76\`) === 1 &&
+        (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // 爱慕
+        await era.printAndWait(
+          \`「明明是给宝宝喝的东西、不过……如果魔王大人想要品尝的话，我也不介意啦\${heart(1)}！」\`,
+        ); // :2431`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：非助手玛奥 + 爱慕推进到 3',
+  },
+  {
+    desc: 'M3273 COM16 二回目 非助手玛奥爱慕 CFLAG:317 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.榨乳器 = 3; // :2433-2434`,
+    replace: `        kojo.榨乳器 = 2; // :2433-2434`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：非助手玛奥 + 爱慕推进到 3',
+  },
+  {
+    desc: 'M3274 COM16 二回目 非助手玛奥それ以外 CFLAG:317 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        kojo.榨乳器 = 2; // :2437-2439`,
+    replace: `        kojo.榨乳器 = 1; // :2437-2439`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 二回目：非助手玛奥 + それ以外推进到 2',
+  },
+  // ---- 脱着時（TEQUIP:16 == 0） ----
+  {
+    desc: 'M3275 COM16 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    // :2445-2459 脱着時（TEQUIP:16 == 0）
+    if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.榨乳器着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {`,
+    replace: `    // :2445-2459 脱着時（TEQUIP:16 == 0）
+    if (
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.榨乳器着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 脱着時（TEQUIP:16 == 0）：淫乱推进到 3',
+  },
+  {
+    desc: 'M3276 COM16 脱着時 淫乱 CFLAG:377 写错（3 改 2，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.榨乳器着脱 = 3; // :2449`,
+    replace: `      kojo.榨乳器着脱 = 2; // :2449`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 脱着時（TEQUIP:16 == 0）：淫乱推进到 3',
+  },
+  {
+    desc: 'M3277 COM16 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    } else if (
+      era.get(\`talent:\${target}:85\`) === 1 &&
+      (kojo.榨乳器着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {`,
+    replace: `    } else if (
+      era.get(\`talent:\${target}:76\`) === 1 &&
+      (kojo.榨乳器着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 脱着時：爱慕推进到 2',
+  },
+  {
+    desc: 'M3278 COM16 脱着時 爱慕 CFLAG:377 写错（2 改 1，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.榨乳器着脱 = 2; // :2453`,
+    replace: `      kojo.榨乳器着脱 = 1; // :2453`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 脱着時：爱慕推进到 2',
+  },
+  {
+    desc: 'M3279 COM16 脱着時 それ以外 CFLAG:377 写错（1 改 0，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      kojo.榨乳器着脱 = 1; // :2457
+    }
+    return 0; // :2457-2459`,
+    replace: `      kojo.榨乳器着脱 = 0; // :2457
+    }
+    return 0; // :2457-2459`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM16 脱着時：それ以外推进到 1',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
