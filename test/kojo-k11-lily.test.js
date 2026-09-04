@@ -5808,3 +5808,107 @@ test('COM32 二回目：两处淫乱守卫 1:1 误读前一支 CFLAG:332', async
     );
   }
 });
+
+// —— SELECTCOM 33（素股 CFLAG:334）——
+
+test('COM33 初めて：助手玛奥与非助手玛奥三档', async () => {
+  const cases = [
+    {
+      assi: true,
+      expected: '『姐姐那里都湿透了呢，哈哈，用那里摩擦着小鸡鸡很舒服吧♪』',
+    },
+    {
+      talent: 76,
+      expected:
+        '「虽，虽然只在外面摩擦……但是……碰到的都是敏感点……魔王大人的阴茎好厉害啊啊♡」',
+    },
+    {
+      talent: 85,
+      expected:
+        '「哈啊……啊啊！魔，魔王大人的阴茎……好热……光是摩擦着……人家的蜜穴就像要融化了一样♡」',
+    },
+    {
+      expected:
+        '「呜呜！可，可以停下了吗……做这种奇怪的事情……真的会感觉舒服吗……」',
+    },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 33);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.text_lines()[0],
+      item.expected,
+      `COM33 初次第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:334`),
+      1,
+      `COM33 初次第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM33 二回目：助手玛奥五档推进', async () => {
+  const cases = [
+    { talent: 76, virgin: true, expected: 6 },
+    { talent: 76, expected: 5 },
+    { talent: 85, virgin: true, expected: 4 },
+    { talent: 85, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:334`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.virgin) f.store.set(`talent:${LILY}:0`, 1);
+    }, 33);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:334`),
+      item.expected,
+      `COM33 助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM33 二回目：非助手玛奥五档推进', async () => {
+  const cases = [
+    { talent: 76, virgin: true, expected: 6 },
+    { talent: 76, expected: 5 },
+    { talent: 85, virgin: true, expected: 4 },
+    { talent: 85, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:334`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.virgin) f.store.set(`talent:${LILY}:0`, 1);
+    }, 33);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:334`),
+      item.expected,
+      `COM33 非助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});

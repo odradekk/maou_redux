@@ -9229,6 +9229,150 @@ async function kojo_message_com_11(rand) {
     return 0;
   }
 
+  // :5016-5100 IF SELECTCOM == 33（素股 CFLAG:334）
+  if (era_flag.selectcom === 33) {
+    if (kojo.股间性交 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(
+          `『姐姐那里都湿透了呢，哈哈，用那里摩擦着小鸡鸡很舒服吧♪』`,
+        ); // :5021
+        await era.printAndWait(
+          `「这，这种事情……不要说出来啦！到底……还要多久……」`,
+        ); // :5022
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「虽，虽然只在外面摩擦……但是……碰到的都是敏感点……魔王大人的阴茎好厉害啊啊${heart(1)}」`,
+        ); // :5026
+        await era.printAndWait(
+          `${target_name}在${player_name}的命令下用蜜穴口摩擦着阴茎，口中已经不住地娇喘起来……`,
+        ); // :5027
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        await era.printAndWait(
+          `「哈啊……啊啊！魔，魔王大人的阴茎……好热……光是摩擦着……人家的蜜穴就像要融化了一样${heart(1)}」`,
+        ); // :5030
+        await era.printAndWait(
+          `${target_name}带着陶醉的表情，用蜜穴摩擦着的${player_name}的阴茎……`,
+        ); // :5031
+      } else {
+        await era.printAndWait(
+          `「呜呜！可，可以停下了吗……做这种奇怪的事情……真的会感觉舒服吗……」`,
+        ); // :5034
+        await era.printAndWait(`${target_name}泪流满面地用股间侍奉着阴茎………`); // :5035
+      }
+      kojo.股间性交 = 1; // :5038
+      return 0;
+    }
+
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        era.get(`talent:${target}:0`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          `「嗯啊……啊啊……干脆把姐姐的处女……也夺走好了……这样在外面摩擦，真的忍受不了了啊啊！」`,
+        ); // :5046
+        await era.printAndWait(
+          `『哎呀，姐姐都淫乱成这个样子了……这样挑逗妹妹真的好吗♪』`,
+        ); // :5047
+        kojo.股间性交 = 6; // :5048
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.股间性交 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          `「哎哎……不要光在外面摩擦啦${heart(1)} 快点插进来不行吗${heart(1)}」`,
+        ); // :5051
+        await era.printAndWait(
+          `『还不行呢姐姐，我还没感到舒服，不会插进去的哦♪』`,
+        ); // :5052
+        kojo.股间性交 = 5; // :5053
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        era.get(`talent:${target}:0`) === 1 &&
+        (kojo.股间性交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          `『哎呀呀，姐姐的处女小穴，要是不小心插进去了怎么办？嘻嘻！』`,
+        ); // :5056
+        await era.printAndWait(
+          `「不要说这种蠢话啦……啊啊……光这么摩擦就已经要，要去了！」`,
+        ); // :5057
+        kojo.股间性交 = 4; // :5058
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.股间性交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(`『啊啊……姐姐的股间侍奉，超级舒服啊』`); // :5061
+        await era.printAndWait(
+          `「哈啊……这么说……姐姐很高兴……啊啊……要，要射精了吗！」`,
+        ); // :5062
+        kojo.股间性交 = 3; // :5063
+      } else if (kojo.股间性交 <= 1 || game.kojo.口上开关 === 2) {
+        await era.printAndWait(`「可，可以停下了么……呜呜！」`); // :5066
+        await era.printAndWait(
+          `『姐姐的股间侍奉，超级舒服啊，我要发射了${heart(1)}』`,
+        ); // :5067
+        kojo.股间性交 = 2; // :5068
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      era.get(`talent:${target}:0`) === 1 &&
+      (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「嗯啊……哎啊！求你了，快点来夺走人家的处女吧……小穴里面比这样摩擦服多了啦${heart(1)}」`,
+      ); // :5073
+      await era.printAndWait(
+        `${target_name}用敏感的蜜穴口摩擦着${player_name}的阴茎就已经兴奋了起来，不顾廉耻地说着诱惑的话……`,
+      ); // :5074
+      kojo.股间性交 = 6; // :5075
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.股间性交 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「呜啊……啊啊！阴茎不插进去，就在外面摩擦敏感点…魔王大人好厉害啊啊${heart(1)}」`,
+      ); // :5078
+      await era.printAndWait(
+        `${target_name}的蜜穴口被${player_name}的阴茎摩擦着，忍不住已经娇喘了起来……`,
+      ); // :5079
+      kojo.股间性交 = 5; // :5080
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      era.get(`talent:${target}:0`) === 1 &&
+      (kojo.股间性交 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「哈啊……啊啊${heart(1)} 要是控制不住了……像骑马这样坐下去……就可以献出处女了呢${heart(1)}」`,
+      ); // :5083
+      await era.printAndWait(
+        `${target_name}边用股间侍奉着阴茎边开玩笑似地说道，但是眼神却是认真的……`,
+      ); // :5084
+      kojo.股间性交 = 4; // :5085
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.股间性交 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        `「哈啊……啊啊……阴茎……热热的${heart(1)} 感觉……蜜穴要被融化了一样${heart(1)}」`,
+      ); // :5088
+      await era.printAndWait(
+        `${target_name}一脸陶醉的表情，用股间侍奉着${player_name}的阴茎……`,
+      ); // :5089
+      kojo.股间性交 = 3; // :5090
+    } else if (kojo.股间性交 <= 1 || game.kojo.口上开关 === 2) {
+      await era.printAndWait(
+        `「呜……呜啊！为，为什么会……有奇怪的感觉……好像很舒服……」`,
+      ); // :5093
+      await era.printAndWait(
+        `${target_name}敏感的蜜穴摩擦着阴茎，忍不住呻吟了起来……`,
+      ); // :5094
+      kojo.股间性交 = 2; // :5095
+    }
+    return 0;
+  }
+
   return 0;
 }
 

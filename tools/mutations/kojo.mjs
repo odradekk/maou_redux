@@ -10039,6 +10039,58 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM32 非助手误读仍可输出',
   },
+  ...[
+    [4358, '初次', '1', '2', '5038', 'COM33 初次第 1 档推进'],
+    [4359, '助手淫乱处女', '6', '5', '5048', 'COM33 助手玛奥第 1 档推进'],
+    [4360, '助手淫乱', '5', '4', '5053', 'COM33 助手玛奥第 2 档推进'],
+    [4361, '助手爱慕处女', '4', '3', '5058', 'COM33 助手玛奥第 3 档推进'],
+    [4362, '助手爱慕', '3', '2', '5063', 'COM33 助手玛奥第 4 档推进'],
+    [4363, '助手其余', '2', '1', '5068', 'COM33 助手玛奥第 5 档推进'],
+    [4364, '非助手淫乱处女', '6', '5', '5075', 'COM33 非助手玛奥第 1 档推进'],
+    [4365, '非助手淫乱', '5', '4', '5080', 'COM33 非助手玛奥第 2 档推进'],
+    [4366, '非助手爱慕处女', '4', '3', '5085', 'COM33 非助手玛奥第 3 档推进'],
+    [4367, '非助手爱慕', '3', '2', '5090', 'COM33 非助手玛奥第 4 档推进'],
+    [4368, '非助手其余', '2', '1', '5095', 'COM33 非助手玛奥第 5 档推进'],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM33 ${tier} CFLAG:334 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.股间性交 = ${value}; // :${ref}`,
+    replace: `kojo.股间性交 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4369 COM33 助手淫乱处女判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:0\`) === 1 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          \`「嗯啊……啊啊……干脆把姐姐的处女`,
+    replace: `        era.get(\`talent:\${target}:0\`) === 0 &&
+        (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          \`「嗯啊……啊啊……干脆把姐姐的处女`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM33 助手玛奥第 1 档推进',
+  },
+  {
+    desc: 'M4370 COM33 非助手淫乱处女判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era.get(\`talent:\${target}:0\`) === 1 &&
+      (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        \`「嗯啊……哎啊！求你了`,
+    replace: `      era.get(\`talent:\${target}:0\`) === 0 &&
+      (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(
+        \`「嗯啊……哎啊！求你了`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM33 非助手玛奥第 1 档推进',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
