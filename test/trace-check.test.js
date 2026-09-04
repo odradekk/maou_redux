@@ -155,6 +155,53 @@ test('trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，�
   );
 });
 
+test('K19 错锚证伪：登记号随引用漂移，静态正文锚仍须判红', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', 'kojo', 'kojo-k19-fia.js');
+  const shard_path = path.join(root, 'tools', 'trace-refs', 'kojo-k19-fia.mjs');
+  const js_text = fs.readFileSync(js_path, 'utf8');
+  const shard_text = fs.readFileSync(shard_path, 'utf8');
+  const js_anchor = '// :3001';
+  const ref_anchor = "ref: '3001',";
+  assert.equal(
+    js_text.split(js_anchor).length - 1,
+    1,
+    'K19 证伪引用 :3001 必须唯一',
+  );
+  assert.equal(
+    shard_text.split(ref_anchor).length - 1,
+    1,
+    'K19 分片必须逐条静态登记 :3001，不能在装载期从源文生成锚',
+  );
+  try {
+    fs.writeFileSync(js_path, js_text.replace(js_anchor, '// :3006'), 'utf8');
+    fs.writeFileSync(
+      shard_path,
+      shard_text.replace(ref_anchor, "ref: '3006',"),
+      'utf8',
+    );
+    const { status, output } = run_tool_in(root);
+    assert.notEqual(
+      status,
+      0,
+      'K19 引用漂到内容不同的 :3006，即使登记号同步修改也必须被正文锚拦下',
+    );
+    assert.ok(
+      output.includes('kojo-k19-fia.js :3006') &&
+        output.includes('未命中任何锚'),
+      `K19 错锚必须点名 :3006 与锚失配：\n${output}`,
+    );
+  } finally {
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  const restored = run_tool_in(root);
+  assert.equal(
+    restored.status,
+    0,
+    `K19 错锚探针还原后必须复绿：\n${restored.output}`,
+  );
+});
+
 test('探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且报出位置（自动纳入后来者）', () => {
   const root = probe_repo();
   const probe = path.join(root, 'ere', '__trace_probe__.js');
