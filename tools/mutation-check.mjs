@@ -209,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 2730; // #242 +10（M4384-M4393，SELECTCOM 35，泡踊り CFLAG:336）；#242 +13（M4371-M4383，SELECTCOM 34）；merge origin/master（d5ca345）：整表加载实测 2682。
+const LEDGER_COUNT_BASELINE = 2732; // merge origin/master（ca5161a）+2（M3703-M3704，--ids 点名用例提速）；#242 +10（M4384-M4393，SELECTCOM 35）；合并后整表加载实测 2732。
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -311,6 +311,11 @@ function parse_args(argv) {
 }
 
 // —— 条目表装载与稳定短号 ——
+
+/** 把一段字面量转成只匹配它自己的正则源码（供 --test-name-pattern 用） */
+function escape_regexp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 /** desc 的内容哈希短号：引用锚点 [M-xxxxxxxx]，desc 变则号变，无需人工分配 */
 function stable_id(desc) {
@@ -594,12 +599,25 @@ function run_one(root, m) {
   try {
     fs.writeFileSync(full, original.replace(m.find, m.replace), 'utf8');
     const files = m.tests.map((t) => `test/${t}.test.js`);
-    const run = spawnSync(process.execPath, ['--test', ...files], {
-      cwd: root,
-      encoding: 'utf8',
-      maxBuffer: 16 * 1024 * 1024,
-      env: clean_env(),
-    });
+    const run_tests = (extra) =>
+      spawnSync(process.execPath, ['--test', ...extra, ...files], {
+        cwd: root,
+        encoding: 'utf8',
+        maxBuffer: 16 * 1024 * 1024,
+        env: clean_env(),
+      });
+    // 先只跑 must_mention 点名的那个用例（#242）。条目表的主流写法就是
+    // 「must_mention 逐字等于测试名」，所以这个模式通常恰好命中一条，
+    // 而整份测试文件在口上票里已经涨到几百个用例：K11 实测跑全文 5.9s、
+    // 只跑一条 0.35s，`--files ere/kojo/kojo-k11-lily.js` 从 51 分钟落到 3 分钟。
+    //
+    // **判定不会因此变松**：只有「过滤跑已经红了」才走快路，其余一律照旧
+    // 重跑全文再判。模式一条也没匹配上时 node --test 退 0（实测），于是
+    // 同样落回全文——最坏情况等于今天的行为多花 0.2 秒。
+    let run = m.must_mention
+      ? run_tests([`--test-name-pattern=${escape_regexp(m.must_mention)}`])
+      : null;
+    if (!run || run.status === 0) run = run_tests([]);
     output = `${run.stdout || ''}${run.stderr || ''}`;
     if (run.status !== 0) {
       failed_as_expected = true;
