@@ -94,6 +94,7 @@ const ERB_TOKEN_RULES = [
   [/^SELF_CALL_FIRST\(TARGET\)$/, 'SCF'],
   [/^SAVESTR\s*:\s*TARGET$/, 'TARGET'],
   [/^GET_LOOK_INFO\(TARGET,\s*"种族"\)$/, 'RACE'],
+  [/^GET_LOOK_INFO\(TARGET,\s*"成为勇者前的生活"\)$/, 'FORMER_LIFE'], // #244：K13 :3003/:3020
   [/^SELF_CALL_FIRST\(A\)$/, 'SCFA'],
   [/^CSTR:2$/, 'CSTR2'],
   [/^SAVESTR:A$/, 'ANAME'],
@@ -190,11 +191,13 @@ const JS_TOKEN_RULES = [
   [/^assi_name$/, 'ASSI'],
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
+  [/^sc\(a\)$/, 'SC'], // #243 K12：enterenemy 等以 A 为目标的 SELF_CALL(A)
   [/^self_call\(a\)$/, 'SC'],
   [/^self_call\(assi\)$/, 'SC_ASSI'], // #231 K0：${self_call(assi)}
   [/^scf\(\)$/, 'SCF'],
   [/^clitoris_word\(target\)$/, 'CLITORIS'], // #231 K0：${clitoris_word(target)}
   [/^get_look_info\(target,\s*'种族'\)$/, 'RACE'],
+  [/^get_look_info\(target,\s*'成为勇者前的生活'\)$/, 'FORMER_LIFE'], // #244：K13 :3003/:3020
   [/^self_call_first\(a\)$/, 'SCFA'],
   [/^cstr2$/, 'CSTR2'],
   [/^chara_callname\(a\)$/, 'ANAME'],

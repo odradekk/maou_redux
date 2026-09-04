@@ -1,0 +1,23936 @@
+// 源: tools/trace-check.mjs  @FILES/@LOG_REFS/@SAMPLE_LOG_REFS
+// issue #246 按 js 文件拆出：kojo-k15-clever.mjs
+//
+// 锚由 target/ERB/口上/EVENT_K15_伶俐.ERB 对应行内容生成，整行锚定
+// （^…$ + m 标志）。区间内合并非空白行（最多 8 行）以提升区分度。
+// 空 PRINTFORM 整行锚按 #235/#298 放行。
+
+export const FILES = [
+  {
+    js: 'ere/kojo/kojo-k15-clever.js',
+    refs: [
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '29-33',
+        any: [
+          /^\s*@EVENTTRAIN\s*$\s*^\s*#PRI\s*$\s*^\s*FLAG:115 = 1\s*$\s*^\s*SIF FLAG:7 == 0\s*$\s*^\s*FLAG:7 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '31',
+        any: [/^\s*FLAG:115 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '33',
+        any: [/^\s*FLAG:7 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '35-37',
+        any: [/^\s*@EVENTEND\s*$\s*^\s*#LATER\s*$\s*^\s*FLAG:115 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '37',
+        any: [/^\s*FLAG:115 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '43-47',
+        any: [
+          /^\s*@EVENTTRAIN\s*$\s*^\s*SIF FLAG:7 <= 0\s*$\s*^\s*RETURN 0\s*$\s*^\s*SIF TALENT:175 != 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '43-239',
+        any: [
+          /^\s*@EVENTTRAIN\s*$\s*^\s*SIF FLAG:7 <= 0\s*$\s*^\s*RETURN 0\s*$\s*^\s*SIF TALENT:175 != 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;初調教時 CFLAG:201\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '52',
+        any: [/^\s*IF CFLAG:201 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '52-53',
+        any: [/^\s*IF CFLAG:201 == 0\s*$\s*^\s*DRAWLINE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '54',
+        any: [
+          /^\s*IF !\(TALENT:314 == 9 \|\| TALENT:319 == 9 \|\| TALENT:319 == 8 \)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '55',
+        any: [
+          /^\s*PRINTFORMW 才刚走进牢房里，一枚带着光明气息的暗器就这样朝你的眼眸激射而来！！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '56',
+        any: [/^\s*PRINTFORMW （请按数字键 \+ Enter 选择行动！）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '57',
+        any: [/^\s*SETCOLOR 152,250,105\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '57-58',
+        any: [/^\s*SETCOLOR 152,250,105\s*$\s*^\s*PRINTL\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '59',
+        any: [/^\s*PRINTL 『1』不闪不避 \( 按 1 \+ Enter \)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '60-61',
+        any: [
+          /^\s*PRINTL\s*$\s*^\s*PRINTL 『2』偏头闪躲 \( 按 2 \+ Enter \)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '61',
+        any: [/^\s*PRINTL 『2』偏头闪躲 \( 按 2 \+ Enter \)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '62-63',
+        any: [/^\s*PRINTL\s*$\s*^\s*RESETCOLOR\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '63',
+        any: [/^\s*RESETCOLOR\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '64',
+        any: [/^\s*TINPUT 1000, 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '65',
+        any: [/^\s*IF RESULT == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '66',
+        any: [
+          /^\s*PRINTFORMW 你稍微一偏头，就让那枚费尽%SAVESTR:TARGET%苦心筹谋的暗器打空了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '67',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎有点惊讶你的反应如此敏锐的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '68',
+        any: [/^\s*PRINTFORMW 恭顺点数 \+ 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '69',
+        any: [/^\s*JUEL:4 \+= 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '70',
+        any: [/^\s*ELSEIF RESULT == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '71',
+        any: [
+          /^\s*PRINTFORMW 你不闪不避，那枚费尽%SAVESTR:TARGET%苦心筹谋的暗器打在你的眼皮上，造成了輕微的擦傷……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '71-72',
+        any: [
+          /^\s*PRINTFORMW 你不闪不避，那枚费尽%SAVESTR:TARGET%苦心筹谋的暗器打在你的眼皮上，造成了輕微的擦傷……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '73',
+        any: [
+          /^\s*PRINTFORMW 好奇地将掉落在地的暗器捡起，发觉那不过是一枚尖端稍微被打磨过的小石片。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '74',
+        any: [
+          /^\s*PRINTFORMW 再观察一下牢房，在栅栏四周的阴影处，有老旧的捆绳与橡皮绳构成的简易弓弦似的陷阱……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '75',
+        any: [
+          /^\s*PRINTFORMW 哼，还颇有意思的，但是，这种小伎俩怎可能对魔王造成巨大的伤害呢？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '76',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '77',
+        any: [
+          /^\s*PRINTFORMW 「你，难道是魔王吗？所以暗器……才会无法造成伤害。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '78',
+        any: [
+          /^\s*PRINTFORMW 本来只是对小喽喽用的陷阱，无奈直接遇上了魔王过来，这也是能算是运气不好吧？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '79',
+        any: [
+          /^\s*PRINTFORMW 所以看到陷阱失败，牢裡的%SAVESTR:TARGET%不由自主地叹了口气，似乎有点失望的样子。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '79-80',
+        any: [
+          /^\s*PRINTFORMW 所以看到陷阱失败，牢裡的%SAVESTR:TARGET%不由自主地叹了口气，似乎有点失望的样子。\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '81-82',
+        any: [
+          /^\s*PRINTFORML\s*$\s*^\s*PRINTFORMW 「别以为只要囚禁%SELF_CALL\(TARGET\)%，就能让%SELF_CALL\(TARGET\)%屈服。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '82',
+        any: [
+          /^\s*PRINTFORMW 「别以为只要囚禁%SELF_CALL\(TARGET\)%，就能让%SELF_CALL\(TARGET\)%屈服。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '83',
+        any: [
+          /^\s*PRINTFORMW 「被抓之後会有怎样的遭遇%SELF_CALL\(TARGET\)%早有耳闻。只不过让人失望的是，明明身为魔王却用这种下流卑劣的手段。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '84',
+        any: [
+          /^\s*PRINTFORMW 「调教？哼…真是低级。该怎么评价好呢？真是………忧患魔界的未来啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '85',
+        any: [/^\s*IF !\(TALENT:10 \|\| TALENT:17\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '86',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%抬头露出不屑的表情，用嘲讽的眼神看着你。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '86-87',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%抬头露出不屑的表情，用嘲讽的眼神看着你。\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '88',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%紧握着拳头，试着让自己保持镇定。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '88-89',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%紧握着拳头，试着让自己保持镇定。\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '90',
+        any: [
+          /^\s*PRINTFORMW 明明成为了阶下囚，%SAVESTR:TARGET%却是不急不缓并义正严词地说着挑衅的话语……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '91',
+        any: [/^\s*CFLAG:201 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '91-92',
+        any: [/^\s*CFLAG:201 = 1\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '96',
+        any: [/^\s*ELSEIF CFLAG:201 >= 1 && CFLAG:650 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '97',
+        any: [/^\s*IF TALENT:85 \|\| TALENT:76\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '97-98',
+        any: [/^\s*IF TALENT:85 \|\| TALENT:76\s*$\s*^\s*DRAWLINE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '99',
+        any: [
+          /^\s*PRINTFORMW 「真是非常抱歉…因为%SELF_CALL\(TARGET\)%的身体…就是被调教到如此淫乱…所以…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '99-102',
+        any: [
+          /^\s*PRINTFORMW 「真是非常抱歉…因为%SELF_CALL\(TARGET\)%的身体…就是被调教到如此淫乱…所以…」\s*$\s*^\s*PRINTFORMW %SELF_CALL\(TARGET\)%自嘲地笑著，露出了無奈的表情……\s*$\s*^\s*;NTRスイッチ解除\s*$\s*^\s*CFLAG:650 = 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '100',
+        any: [
+          /^\s*PRINTFORMW %SELF_CALL\(TARGET\)%自嘲地笑著，露出了無奈的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '103-105',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*DRAWLINE\s*$\s*^\s*PRINTFORMW 「哼！反正不管在哪，做的事情都是一样！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '104-105',
+        any: [
+          /^\s*DRAWLINE\s*$\s*^\s*PRINTFORMW 「哼！反正不管在哪，做的事情都是一样！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '105',
+        any: [/^\s*PRINTFORMW 「哼！反正不管在哪，做的事情都是一样！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '105-108',
+        any: [
+          /^\s*PRINTFORMW 「哼！反正不管在哪，做的事情都是一样！」\s*$\s*^\s*PRINTFORMW %SELF_CALL\(TARGET\)%轉過頭去，露出了不甘心的表情……\s*$\s*^\s*;NTRスイッチ解除\s*$\s*^\s*CFLAG:650 = 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '105-110',
+        any: [
+          /^\s*PRINTFORMW 「哼！反正不管在哪，做的事情都是一样！」\s*$\s*^\s*PRINTFORMW %SELF_CALL\(TARGET\)%轉過頭去，露出了不甘心的表情……\s*$\s*^\s*;NTRスイッチ解除\s*$\s*^\s*CFLAG:650 = 0\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '106',
+        any: [
+          /^\s*PRINTFORMW %SELF_CALL\(TARGET\)%轉過頭去，露出了不甘心的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '106-109',
+        any: [
+          /^\s*PRINTFORMW %SELF_CALL\(TARGET\)%轉過頭去，露出了不甘心的表情……\s*$\s*^\s*;NTRスイッチ解除\s*$\s*^\s*CFLAG:650 = 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '115',
+        any: [/^\s*ELSEIF CFLAG:201 < 2 && MARK:2 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '115-116',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 2 && MARK:2 == 1\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '117',
+        any: [
+          /^\s*PRINTFORMW 「看來，只会用这些小手段来折磨%SELF_CALL\(TARGET\)%的身体，这就是魔王大人的本事啊？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '118',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一幅漫不经心的样子，脸上带着不以为然的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '119',
+        any: [/^\s*CFLAG:201 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '119-120',
+        any: [/^\s*CFLAG:201 = 2\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '123',
+        any: [/^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '123-124',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 3 && MARK:2 == 2\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '125',
+        any: [
+          /^\s*PRINTFORMW 「这些反应只是因为习惯而已！别天真地以为这样就能让%SELF_CALL\(TARGET\)%屈服了啊…！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '126',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%紧握着拳头，微微颤抖的声音似乎泄漏了他真正的心情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '127',
+        any: [/^\s*CFLAG:201 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '127-128',
+        any: [/^\s*CFLAG:201 = 3\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '131',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 4 && MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '131-132',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 4 && MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '133',
+        any: [
+          /^\s*PRINTFORMW 「难道%SELF_CALL\(TARGET\)%是…不…不会的，怎么可能…！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '134',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%喃喃地自言自语，露出了无法置信的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '135',
+        any: [/^\s*CFLAG:201 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '135-136',
+        any: [/^\s*CFLAG:201 = 4\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '139',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 5 && TALENT:TARGET:76 == 1 && TALENT:TARGET:85 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '139-140',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 5 && TALENT:TARGET:76 == 1 && TALENT:TARGET:85 == 0\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '141',
+        any: [
+          /^\s*PRINTFORMW 「直到遇见了魔王大人，%SELF_CALL\(TARGET\)%才真正体会到什么叫做『欢愉』……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '142',
+        any: [
+          /^\s*PRINTFORMW 「以前的事情回想起来，发觉%SELF_CALL\(TARGET\)%真是太愚昧了，早点坦然地接受您的调教就好了，真是浪费了美好的时光……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '143',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%对你露出了媚笑，正伸出手暧昧地抚摸你的下身……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '144',
+        any: [/^\s*CFLAG:201 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '144-145',
+        any: [/^\s*CFLAG:201 = 5\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '148',
+        any: [/^\s*ELSEIF CFLAG:201 < 6 && TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '148-149',
+        any: [
+          /^\s*ELSEIF CFLAG:201 < 6 && TALENT:TARGET:85 == 1\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '150',
+        any: [/^\s*PRINTFORMW 「您来了啊？敬爱的魔王大人。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '151',
+        any: [/^\s*IF TALENT:TARGET:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '152',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一看见你就宛如被和煦的春风吹拂，露出了温柔的微笑。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '152-153',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一看见你就宛如被和煦的春风吹拂，露出了温柔的微笑。\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '154',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一看见你就宛如花朵盛开般地展颜，露出了美丽无暇的微笑。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '154-155',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一看见你就宛如花朵盛开般地展颜，露出了美丽无暇的微笑。\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '156',
+        any: [
+          /^\s*PRINTFORMW 「那个，如果可以的话，有些事情想要跟您说……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '157',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%不自然地清了一下喉咙，似乎有点羞涩，不敢直视你的眼神。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '158',
+        any: [
+          /^\s*PRINTFORMW 「以前被『正义』所奴役，只会说着尖酸刻薄的话，那个愚昧的%SELF_CALL\(TARGET\)%……求求您忘记吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '159',
+        any: [
+          /^\s*PRINTFORMW 「现在想起来，简直……如此愚蠢的样子居然还不知耻地在您的面前放肆……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '160',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%想起了黑历史，似乎羞愧得无法自拔……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '161',
+        any: [
+          /^\s*PRINTFORMW 稍微冷静一会儿之後，%SAVESTR:TARGET%带着专注且期盼的眼神缓缓地说着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '162',
+        any: [
+          /^\s*PRINTFORMW 「遇见您让%SELF_CALL\(TARGET\)%感觉像是重生了一样，也唯独只有您让%SELF_CALL\(TARGET\)%有这样的感受。如果可以的话…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '163',
+        any: [
+          /^\s*PRINTFORMW 「能让卑微的%SELF_CALL\(TARGET\)%留在您的身边，替您分忧解劳吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '164',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%的身心都是完全属於您的，请您尽情地使用。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '165',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%谦卑地跪在你的面前，虔诚地亲吻着你的手背……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '166',
+        any: [/^\s*CFLAG:201 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '166-167',
+        any: [/^\s*CFLAG:201 = 6\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '169',
+        any: [/^\s*ELSEIF TALENT:TARGET:9 == 1 && CFLAG:201 < 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '169-170',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:9 == 1 && CFLAG:201 < 9\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '171',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%正面对着墙壁自言自语。\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '172',
+        any: [
+          /^\s*PRINTFORMW 一会儿微笑一会儿又怒吼着，甚至还会以头撞墙………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '173',
+        any: [/^\s*PRINTFORMW 看来，%SAVESTR:TARGET%果然是被玩坏了………\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '174',
+        any: [/^\s*CFLAG:201 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '174-175',
+        any: [/^\s*CFLAG:201 = 9\s*$\s*^\s*RETURN 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '177',
+        any: [/^\s*ELSEIF ASSI < 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '177-178',
+        any: [/^\s*ELSEIF ASSI < 0\s*$\s*^\s*CALL K15_KOJO2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '236-237',
+        any: [
+          /^\s*;口上のある助手が居ない場合は、通常の二回目以降の口上へ飛ぶ\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '237-238',
+        any: [/^\s*ELSE\s*$\s*^\s*CALL K15_KOJO2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '237-239',
+        any: [/^\s*ELSE\s*$\s*^\s*CALL K15_KOJO2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '245-310',
+        any: [
+          /^\s*@K15_KOJO2\s*$\s*^\s*;反発刻印Lv3\s*$\s*^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$\s*^\s*PRINTFORMW 「魔界的脸皮是不值钱的吧？因為連身為領導的魔王都只会用这些下三濫的技俩啊？」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%毫不留情地冷嘲热讽着………\s*$\s*^\s*RETURN 1\s*$\s*^\s*;屈服刻印Lv0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '247',
+        any: [/^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '247-248',
+        any: [/^\s*IF MARK:3 == 3 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '249',
+        any: [
+          /^\s*PRINTFORMW 「魔界的脸皮是不值钱的吧？因為連身為領導的魔王都只会用这些下三濫的技俩啊？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '250',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%毫不留情地冷嘲热讽着………\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '250-251',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%毫不留情地冷嘲热讽着………\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '254',
+        any: [/^\s*ELSEIF MARK:2 == 0 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '254-255',
+        any: [/^\s*ELSEIF MARK:2 == 0 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '256-259',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「可以劳驾尊贵的魔王大人优雅且安静地滚开吗？」\s*$\s*^\s*DATAFORM 「也许，换一只猴子来代替您来调教，效果会更好呢？」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '260',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%嗤之以鼻地说着………\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '260-261',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%嗤之以鼻地说着………\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '264',
+        any: [/^\s*ELSEIF MARK:2 == 1 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '264-265',
+        any: [/^\s*ELSEIF MARK:2 == 1 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '266',
+        any: [
+          /^\s*PRINTFORMW 「哦？魔王都是这么闲的吗？只做这些无用的事情？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '267',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%无奈地摆摆手，用怀疑的语气说着………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '267-268',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%无奈地摆摆手，用怀疑的语气说着………\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '271',
+        any: [/^\s*ELSEIF MARK:2 == 2 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '271-272',
+        any: [/^\s*ELSEIF MARK:2 == 2 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '273',
+        any: [
+          /^\s*PRINTFORMW 「只是习惯而已，难道还真以为那些手段会有用吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '274',
+        any: [
+          /^\s*PRINTFORMW 像是想要说服自己那样，%SAVESTR:TARGET%紧握着拳头………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '274-275',
+        any: [
+          /^\s*PRINTFORMW 像是想要说服自己那样，%SAVESTR:TARGET%紧握着拳头………\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '278',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0 && FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '278-279',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0 && TALENT:TARGET:76 == 0 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '280',
+        any: [
+          /^\s*PRINTFORMW 「反正不管说什么也没有用，%SELF_CALL\(TARGET\)%也就不想要白费力气了…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '281',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是放弃了那样，转过了头………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '281-282',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是放弃了那样，转过了头………\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '285',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '285-286',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '288-291',
+        any: [
+          /^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「今天要玩些什么呢？不瞒您说，%SELF_CALL\(TARGET\)%这淫乱的身体早已经等不及了……」\s*$\s*^\s*PRINTFORMW 「这个姿势可以看清楚吗？您看，这里变得这么的湿，这么热……」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%似乎已经忘记什么叫做廉耻，正大张着双腿做出勾引的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '289',
+        any: [
+          /^\s*PRINTFORMW 「今天要玩些什么呢？不瞒您说，%SELF_CALL\(TARGET\)%这淫乱的身体早已经等不及了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '290',
+        any: [
+          /^\s*PRINTFORMW 「这个姿势可以看清楚吗？您看，这里变得这么的湿，这么热……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '291',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎已经忘记什么叫做廉耻，正大张着双腿做出勾引的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '291-292',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎已经忘记什么叫做廉耻，正大张着双腿做出勾引的动作……\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '293',
+        any: [
+          /^\s*PRINTFORMW 「最近新学到一些……嗯，算是新的知识吧？可以的话，魔王大人愿意陪%SELF_CALL\(TARGET\)%来『实验』一下吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '294',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了意味深长的笑容，将身体紧贴着你并缓缓地摩擦着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '294-295',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了意味深长的笑容，将身体紧贴着你并缓缓地摩擦着……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '294-296',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了意味深长的笑容，将身体紧贴着你并缓缓地摩擦着……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '299',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '299-300',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && FLAG:7 == 2\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '302-303',
+        any: [
+          /^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「如果您允许的话，真想一直陪伴在您的身边，无论做什么事都可以……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '303',
+        any: [
+          /^\s*PRINTFORMW 「如果您允许的话，真想一直陪伴在您的身边，无论做什么事都可以……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '303-304',
+        any: [
+          /^\s*PRINTFORMW 「如果您允许的话，真想一直陪伴在您的身边，无论做什么事都可以……」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '305',
+        any: [
+          /^\s*PRINTFORMW 「一见到您，不知为何就幸福地想露出微笑，真是一种很奇妙的感觉。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '305-306',
+        any: [
+          /^\s*PRINTFORMW 「一见到您，不知为何就幸福地想露出微笑，真是一种很奇妙的感觉。」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '307',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸色微红地说着，露出期待的眼神凝视着你……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '307-308',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸色微红地说着，露出期待的眼神凝视着你……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '307-309',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸色微红地说着，露出期待的眼神凝视着你……\s*$\s*^\s*RETURN 1\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '307-310',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸色微红地说着，露出期待的眼神凝视着你……\s*$\s*^\s*RETURN 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '316-324',
+        any: [
+          /^\s*@EVENTEND\s*$\s*^\s*SIF FLAG:7 <= 0\s*$\s*^\s*RETURN 0\s*$\s*^\s*SIF TALENT:175 != 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;キャラ死亡時は口上をスキップ\s*$\s*^\s*SIF BASE:0 <= 0\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '316-400',
+        any: [
+          /^\s*@EVENTEND\s*$\s*^\s*SIF FLAG:7 <= 0\s*$\s*^\s*RETURN 0\s*$\s*^\s*SIF TALENT:175 != 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;キャラ死亡時は口上をスキップ\s*$\s*^\s*SIF BASE:0 <= 0\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '330',
+        any: [/^\s*IF MARK:3 == 3 && TALENT:TARGET:85 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '330-331',
+        any: [
+          /^\s*IF MARK:3 == 3 && TALENT:TARGET:85 == 0\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '332',
+        any: [
+          /^\s*PRINTFORMW 「真是人渣…！喔…抱歉，忘了你不是人族了，应该说人渣不如才对！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '333',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用冰冷且尖锐的言语怒骂了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '333-334',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用冰冷且尖锐的言语怒骂了起来……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '337',
+        any: [/^\s*ELSEIF MARK:2 <= 1 && TALENT:TARGET:85 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '337-338',
+        any: [
+          /^\s*ELSEIF MARK:2 <= 1 && TALENT:TARGET:85 == 0\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '339',
+        any: [/^\s*PRINTFORMW 「就这…？再怎么做也是没用的！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '342',
+        any: [
+          /^\s*PRINTFORMW （为了那个人，%SELF_CALL\(TARGET\)%一定要逃离这个鬼地方才行！）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '343',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%皱着眉头咬着手指，似乎在思考什么的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '343-344',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%皱着眉头咬着手指，似乎在思考什么的样子……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '347',
+        any: [/^\s*ELSEIF MARK:2 == 2 && TALENT:TARGET:85 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '347-348',
+        any: [
+          /^\s*ELSEIF MARK:2 == 2 && TALENT:TARGET:85 == 0\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '349',
+        any: [/^\s*PRINTFORMW 「唔…嗯…总算是结束了…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '352',
+        any: [
+          /^\s*PRINTFORMW （就算是被做了这种事……为了那个人，%SELF_CALL\(TARGET\)%也不能放弃！）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '353',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%叹了一口气，露出若有所思的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '353-354',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%叹了一口气，露出若有所思的表情……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '357',
+        any: [/^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '357-358',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 0\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '359',
+        any: [/^\s*PRINTFORMW 「如果再这样下去的话…该不会…已经……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '362',
+        any: [
+          /^\s*PRINTFORMW （这样的%SELF_CALL\(TARGET\)%……已经无法再回到那个人的身边了吧？）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '363',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低着头喃喃自语着，露出了放弃的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '363-364',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低着头喃喃自语着，露出了放弃的表情……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '367',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 >= 500\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '367-368',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 >= 500\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '367-369',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 >= 500\s*$\s*^\s*DRAWLINE\s*$\s*^\s*PRINTFORMW 「咦…！？结束了吗…？呵呵…魔王大人您今天的状态不行哦…？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '370-371',
+        any: [
+          /^\s*PRINTFORMW 「开玩笑的啦！别生气喔？因为是魔王大人，%SELF_CALL\(TARGET\)%才会依依不舍啊！」\s*$\s*^\s*PRINTFORMW 尚有体力的%SAVESTR:TARGET%，正在想着呆会该如何解决自己身体的火热……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '371',
+        any: [
+          /^\s*PRINTFORMW 尚有体力的%SAVESTR:TARGET%，正在想着呆会该如何解决自己身体的火热……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '371-372',
+        any: [
+          /^\s*PRINTFORMW 尚有体力的%SAVESTR:TARGET%，正在想着呆会该如何解决自己身体的火热……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '374',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 <= 500\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '374-375',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && BASE:0 <= 500\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '376-379',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「呼……只有魔王大人能把%SELF_CALL\(TARGET\)%弄成这样乱七八糟的样子呢~」\s*$\s*^\s*DATAFORM 「嗯啊…啊…嗯…真不愧是魔王大人，%SELF_CALL\(TARGET\)%被调教到腰都软了呢~」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '380',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%的眼角带着情慾未退的潮红，喘息地向你求饶着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '380-381',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%的眼角带着情慾未退的潮红，喘息地向你求饶着……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '384',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 >= 500\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '384-385',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 >= 500\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '384-386',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 >= 500\s*$\s*^\s*DRAWLINE\s*$\s*^\s*PRINTFORMW 「咦…！？结束了吗…？呵呵…魔王大人您今天的状态不行哦…？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '387-388',
+        any: [
+          /^\s*PRINTFORMW 「开玩笑的啦！别生气喔？因为是魔王大人，%SELF_CALL\(TARGET\)%才会依依不舍啊！」\s*$\s*^\s*PRINTFORMW 尚有体力的%SAVESTR:TARGET%，正拉着你的袖子露出讨好的笑容，似乎很不舍得就这样与你分开……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '388',
+        any: [
+          /^\s*PRINTFORMW 尚有体力的%SAVESTR:TARGET%，正拉着你的袖子露出讨好的笑容，似乎很不舍得就这样与你分开……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '388-389',
+        any: [
+          /^\s*PRINTFORMW 尚有体力的%SAVESTR:TARGET%，正拉着你的袖子露出讨好的笑容，似乎很不舍得就这样与你分开……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '391',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '391-392',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && BASE:0 <= 500\s*$\s*^\s*DRAWLINE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '393-396',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「唔…好想就这样一直和您合而为一啊…！」\s*$\s*^\s*DATAFORM 「%SELF_CALL\(TARGET\)%这体力真是不行，不知您觉得还满意吗？」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '397',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%的眼角带着情慾未退的潮红，亲昵地抱着你说着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '397-398',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%的眼角带着情慾未退的潮红，亲昵地抱着你说着……\s*$\s*^\s*RETURN 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '397-399',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%的眼角带着情慾未退的潮红，亲昵地抱着你说着……\s*$\s*^\s*RETURN 1\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '397-400',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%的眼角带着情慾未退的潮红，亲昵地抱着你说着……\s*$\s*^\s*RETURN 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '406',
+        any: [/^\s*@KOJO_MESSAGE_COM_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '408-425',
+        any: [
+          /^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\s*^\s*;	RETURN 0\s*$\s*^\s*;ボールギャグ着用時には口上をスキップする\s*$\s*^\s*SIF TEQUIP:45 && SELECTCOM != 45\s*$\s*^\s*RETURN 0\s*$\s*^\s*;失神時には口上をスキップする\s*$\s*^\s*SIF TFLAG:899\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '411-412',
+        any: [/^\s*SIF TEQUIP:45 && SELECTCOM != 45\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '414-415',
+        any: [/^\s*SIF TFLAG:899\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '417',
+        any: [/^\s*IF TEQUIP:89\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '418',
+        any: [/^\s*CALL DOG_KOJO_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '418-419',
+        any: [/^\s*CALL DOG_KOJO_15\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '420-421',
+        any: [/^\s*ENDIF\s*$\s*^\s*;コロシアム中は専用口上\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '422',
+        any: [/^\s*IF TEQUIP:55\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '423',
+        any: [/^\s*CALL COLOSSEUM_KOJO_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '423-424',
+        any: [/^\s*CALL COLOSSEUM_KOJO_15\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '423-425',
+        any: [
+          /^\s*CALL COLOSSEUM_KOJO_15\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '431-433',
+        any: [
+          /^\s*;愛撫 CFLAG:301\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '435-438',
+        any: [
+          /^\s*IF CFLAG:301 == 0\s*$\s*^\s*;屈服刻印Lv2以上\s*$\s*^\s*IF MARK:2 >= 2\s*$\s*^\s*PRINTFORMW 「不……不要摸……唔……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '437-438',
+        any: [
+          /^\s*IF MARK:2 >= 2\s*$\s*^\s*PRINTFORMW 「不……不要摸……唔……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '438',
+        any: [/^\s*PRINTFORMW 「不……不要摸……唔……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '439',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭起眼睛，咬牙地忍耐着身体浮现的感觉……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '441-443',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这样触碰的话，除了恶心之外没有其他感觉。」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%似乎很厌恶被触摸的样子，露出了嫌弃的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '442',
+        any: [
+          /^\s*PRINTFORMW 「这样触碰的话，除了恶心之外没有其他感觉。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '443',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎很厌恶被触摸的样子，露出了嫌弃的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '443-444',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎很厌恶被触摸的样子，露出了嫌弃的表情……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '443-445',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎很厌恶被触摸的样子，露出了嫌弃的表情……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:301 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '443-446',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎很厌恶被触摸的样子，露出了嫌弃的表情……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:301 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '448-450',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '450',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '451-454',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊……好…好舒服……这样子……摸的话…会…会很快高潮的…嗯…啊啊～♡」\s*$\s*^\s*DATAFORM 「啊……嗯啊啊～身体好热……变得好想要了呢～♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '455',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的眼角染上情慾的红晕，主动将身体贴近%SAVESTR:PLAYER%了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '455-456',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的眼角染上情慾的红晕，主动将身体贴近%SAVESTR:PLAYER%了……\s*$\s*^\s*CFLAG:301 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '458',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '459-462',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯……好…好舒服……请随意地……抚摸……嗯…啊啊～♡」\s*$\s*^\s*DATAFORM 「啊……嗯啊啊～身体好热……好喜欢被这样子抚摸～♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '463',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的双颊晕红，主动将身体贴近%SAVESTR:PLAYER%了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '463-464',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的双颊晕红，主动将身体贴近%SAVESTR:PLAYER%了……\s*$\s*^\s*CFLAG:301 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '466-467',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「啊！……啊……嗯啊！……这种感觉……唔！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '467',
+        any: [/^\s*PRINTFORMW 「啊！……啊……嗯啊！……这种感觉……唔！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '468',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的脸颊带着可疑的红晕，似乎无法承受%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '468-469',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的脸颊带着可疑的红晕，似乎无法承受%SAVESTR:PLAYER%的动作……\s*$\s*^\s*CFLAG:301 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '471-472',
+        any: [
+          /^\s*ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「不……就算是这样……也是没有用的……唔！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '472',
+        any: [/^\s*PRINTFORMW 「不……就算是这样……也是没有用的……唔！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '473',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%咬紧牙关，转过头去忍耐着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '473-474',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%咬紧牙关，转过头去忍耐着%SAVESTR:PLAYER%的动作……\s*$\s*^\s*CFLAG:301 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '476-478',
+        any: [
+          /^\s*ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「住手！这么摸很恶心……不……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '477-481',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「住手！这么摸很恶心……不……」\s*$\s*^\s*DATAFORM 「技术这么差！难道没有自觉吗？」\s*$\s*^\s*DATAFORM 「一点也不舒服！可以劳驾您把脏手拿开吗？」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '482',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，露出了厌恶的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '482-483',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，露出了厌恶的表情……\s*$\s*^\s*CFLAG:301 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '482-484',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，露出了厌恶的表情……\s*$\s*^\s*CFLAG:301 = 2\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '482-485',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，露出了厌恶的表情……\s*$\s*^\s*CFLAG:301 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '482-486',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，露出了厌恶的表情……\s*$\s*^\s*CFLAG:301 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '487-490',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '492-497',
+        any: [
+          /^\s*IF SELECTCOM == 1\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:302 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:TARGET:0 == 1\s*$\s*^\s*PRINTFORMW 「走…走开啊！这……这…真是不敢相信！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '495-497',
+        any: [
+          /^\s*;処女\s*$\s*^\s*IF TALENT:TARGET:0 == 1\s*$\s*^\s*PRINTFORMW 「走…走开啊！这……这…真是不敢相信！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '497',
+        any: [/^\s*PRINTFORMW 「走…走开啊！这……这…真是不敢相信！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '498',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎没想过会有人做出这种行为，露出了愤怒又觉得不可思议的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '499-501',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！居…居然……离%SELF_CALL\(TARGET\)%远点啊！走开！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '501',
+        any: [
+          /^\s*PRINTFORMW 「不！居…居然……离%SELF_CALL\(TARGET\)%远点啊！走开！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '502',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%的行为让%SAVESTR:TARGET%羞愤异常地怒吼着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '502-503',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%的行为让%SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '502-505',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%的行为让%SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:302 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '502-507',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:PLAYER%的行为让%SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:302 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '505-509',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '509',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '510',
+        any: [
+          /^\s*PRINTFORMW 「里面……都……都湿答答的了……舌头……再……进去一点……啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '511',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的快感，让情慾高涨的%SAVESTR:TARGET%发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '511-512',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的快感，让情慾高涨的%SAVESTR:TARGET%发出了淫荡的呻吟……\s*$\s*^\s*CFLAG:302 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '514',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '515',
+        any: [
+          /^\s*PRINTFORMW 「这样…会…会流出来的呀…嗯……啊啊♡……真是坏心眼」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '516',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的快感，让%SAVESTR:TARGET%不由自主地发出了动情的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '516-517',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的快感，让%SAVESTR:TARGET%不由自主地发出了动情的呻吟……\s*$\s*^\s*CFLAG:302 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '518-520',
+        any: [
+          /^\s*;屈服刻印Lv3\s*$\s*^\s*ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「唔！那…那个地方……不！不要……啊！啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '520',
+        any: [/^\s*PRINTFORMW 「唔！那…那个地方……不！不要……啊！啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '521',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的羞耻感，让%SAVESTR:TARGET%面色通红地扭动着身体……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '521-522',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的羞耻感，让%SAVESTR:TARGET%面色通红地扭动着身体……\s*$\s*^\s*CFLAG:302 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '523-525',
+        any: [
+          /^\s*;それ以外（屈服刻印Lv3未満）\s*$\s*^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$\s*^\s*PRINTDATAL\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '525-529',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「恶心死了！滚开啊！」\s*$\s*^\s*DATAFORM 「不要！可恶！走开啊！听不懂人话吗！」\s*$\s*^\s*DATAFORM 「可恶！做的事情真是令人作呕！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '525-538',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「恶心死了！滚开啊！」\s*$\s*^\s*DATAFORM 「不要！可恶！走开啊！听不懂人话吗！」\s*$\s*^\s*DATAFORM 「可恶！做的事情真是令人作呕！」\s*$\s*^\s*ENDDATA\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '530',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '530-531',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:302 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '530-533',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '530-535',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '532-538',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;アナル愛撫 CFLAG:303\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '540',
+        any: [/^\s*IF SELECTCOM == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '542',
+        any: [/^\s*IF CFLAG:303 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '543',
+        any: [/^\s*PRINTFORMW 「你……你……在摸哪里？居然……不！……住手啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '544',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%先是呆愣了一下，後来马上羞愤地怒吼着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '545',
+        any: [/^\s*CFLAG:TARGET:303 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '545-546',
+        any: [/^\s*CFLAG:TARGET:303 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '547-549',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*P = PALAM:3 \+ UP:3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '548-549',
+        any: [/^\s*ELSE\s*$\s*^\s*P = PALAM:3 \+ UP:3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '551',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '552',
+        any: [
+          /^\s*PRINTFORMW 「啊！啊…不够…嗯……啊啊♡…还想要更多！快点！弄坏%SELF_CALL\(TARGET\)%吧♡♡…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '553',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%那湿润的後穴就像是调教好的性器，饥渴地收缩着，似乎想要被更巨大的东西侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '554',
+        any: [/^\s*CFLAG:303 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '556',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '557',
+        any: [/^\s*PRINTFORMW 「啊！手指…再伸进来一点…嗯……啊啊♡……啊～♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '558',
+        any: [
+          /^\s*PRINTFORMW 即使是尚未完全润滑好的後穴，也让%SAVESTR:TARGET%发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '559',
+        any: [/^\s*CFLAG:303 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '561',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && P >= PALAMLV:2 && \(CFLAG:303 <= 4 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '562',
+        any: [
+          /^\s*PRINTFORMW 「啊～在…里面搅动着♡…嗯……啊啊♡……别这样欺负%SELF_CALL\(TARGET\)%啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '563',
+        any: [
+          /^\s*PRINTFORMW 从後孔传来的快感，让%SAVESTR:TARGET%不由自主地发出了动情的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '564',
+        any: [/^\s*CFLAG:303 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '566',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && P < PALAMLV:2 && \(CFLAG:303 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '567',
+        any: [
+          /^\s*PRINTFORMW 「虽然…里面还没有很湿……啊…这种感觉……好奇怪啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '568',
+        any: [
+          /^\s*PRINTFORMW 即使是尚未完全润滑好的後穴，也似乎让%SAVESTR:TARGET%渐渐有了感觉……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '569',
+        any: [/^\s*CFLAG:303 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '571',
+        any: [
+          /^\s*ELSEIF P >= PALAMLV:2 && ABL:3 >= 3 && \(CFLAG:303 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '572',
+        any: [/^\s*PRINTFORMW 「唔！那…那个地方……不！不要……啊！啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '573',
+        any: [
+          /^\s*PRINTFORMW 从下身传来的羞耻感，让%SAVESTR:TARGET%面色通红地扭动着身体……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '574',
+        any: [/^\s*CFLAG:303 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '576',
+        any: [/^\s*ELSEIF CFLAG:223 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '577-583',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「恶心死了！這麼喜歡屁股的話，不會摸你自己的嗎！」\s*$\s*^\s*DATAFORM 「不要！可恶！走开啊！听不懂人话吗！」\s*$\s*^\s*DATAFORM 「可恶！做的事情真是令人作呕！」\s*$\s*^\s*DATAFORM 「为何要摸这种地方？简直变态！」\s*$\s*^\s*DATAFORM 「对这个地方有兴趣？真不愧是变态中的翘楚呢！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '584',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '585',
+        any: [/^\s*CFLAG:303 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '585-586',
+        any: [/^\s*CFLAG:303 = 2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '585-588',
+        any: [
+          /^\s*CFLAG:303 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '585-590',
+        any: [
+          /^\s*CFLAG:303 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '586-592',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;自慰 CFLAG304\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '594',
+        any: [/^\s*IF SELECTCOM == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '596',
+        any: [/^\s*IF CFLAG:304 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '597',
+        any: [
+          /^\s*PRINTFORMW 「什……什么？真是不敢相信！怎么会有这种要求……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '598',
+        any: [
+          /^\s*PRINTFORMW 「看來魔界的字典是沒有『羞恥』這兩個字對吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '599',
+        any: [
+          /^\s*PRINTFORMW 「可惡！%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%……居然要……嗚……嗯……唔……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '600',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%笨拙地抚摸着自己的下身，露出了屈辱的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '601',
+        any: [/^\s*CFLAG:TARGET:304 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '601-602',
+        any: [/^\s*CFLAG:TARGET:304 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '603-605',
+        any: [/^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋処女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '606',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '607',
+        any: [
+          /^\s*PRINTFORMW 「虽然还没开苞…但…但是……您看？这里……湿的不像样了♡…嗯啊…啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '608',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%明明还是处女，却淫荡豪放地张开了大腿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '609',
+        any: [/^\s*CFLAG:304 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '611',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '612-614',
+        any: [
+          /^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\s*^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「被人看着自慰……真是太棒了♡…嗯啊…啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '614',
+        any: [
+          /^\s*PRINTFORMW 「被人看着自慰……真是太棒了♡…嗯啊…啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '614-615',
+        any: [
+          /^\s*PRINTFORMW 「被人看着自慰……真是太棒了♡…嗯啊…啊…啊啊♡♡！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '616',
+        any: [
+          /^\s*PRINTFORMW 「看啊！…这个…地方都不知廉耻地…流出蜜汁了♡…嗯啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '616-617',
+        any: [
+          /^\s*PRINTFORMW 「看啊！…这个…地方都不知廉耻地…流出蜜汁了♡…嗯啊…啊啊♡♡！」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '618',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%深怕别人看不清楚自己发情的样子，夸张地张开了大腿并淫荡地呻吟着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '619',
+        any: [/^\s*CFLAG:304 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '621',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '622-624',
+        any: [
+          /^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\s*^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「看见了吗？下面的样子♡嗯～啊啊～但是好像不够呢？想要……好想要啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '624',
+        any: [
+          /^\s*PRINTFORMW 「看见了吗？下面的样子♡嗯～啊啊～但是好像不够呢？想要……好想要啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '624-625',
+        any: [
+          /^\s*PRINTFORMW 「看见了吗？下面的样子♡嗯～啊啊～但是好像不够呢？想要……好想要啊啊♡♡！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '626',
+        any: [
+          /^\s*PRINTFORMW 「肉棒不进来吗？要%SELF_CALL\(TARGET\)%自己来什么的……真是坏心眼啊！唔！嗯嗯！啊啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '626-627',
+        any: [
+          /^\s*PRINTFORMW 「肉棒不进来吗？要%SELF_CALL\(TARGET\)%自己来什么的……真是坏心眼啊！唔！嗯嗯！啊啊啊♡♡！」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '628',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%虽然想要的不是这个，但是还是听话地自慰了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '629',
+        any: [/^\s*CFLAG:304 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '631',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:304 <= 5 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '632',
+        any: [
+          /^\s*PRINTFORMW 「这……这么羞耻的样子…如果想看的话…嗯啊…啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '633',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%明明还是处女，却仍面红耳赤地张开了大腿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '634',
+        any: [/^\s*CFLAG:304 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '636',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:31 >= 3 && \(CFLAG:304 <= 4 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '637-639',
+        any: [
+          /^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\s*^\s*IF RAND:2\s*$\s*^\s*PRINTFORMW 「嗯～♡啊啊……看到了吗…已经这么湿……满手……都是♡♡……嗯啊～啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '639',
+        any: [
+          /^\s*PRINTFORMW 「嗯～♡啊啊……看到了吗…已经这么湿……满手……都是♡♡……嗯啊～啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '639-640',
+        any: [
+          /^\s*PRINTFORMW 「嗯～♡啊啊……看到了吗…已经这么湿……满手……都是♡♡……嗯啊～啊…啊啊♡♡！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '641',
+        any: [
+          /^\s*PRINTFORMW 「看……看清楚了吗……%SELF_CALL\(TARGET\)%……自慰着发情的样子♡♡……嗯啊～啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '641-642',
+        any: [
+          /^\s*PRINTFORMW 「看……看清楚了吗……%SELF_CALL\(TARGET\)%……自慰着发情的样子♡♡……嗯啊～啊…啊啊♡♡！」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '643',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%急促地喘息着，似乎沉醉在自慰的快感里面了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '644',
+        any: [/^\s*CFLAG:304 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '646',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:31 < 3 && \(CFLAG:304 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '647-649',
+        any: [
+          /^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\s*^\s*IF RAND:2 == 0\s*$\s*^\s*PRINTFORMW 「就……就这么喜欢看…%SELF_CALL\(TARGET\)%……羞耻的样子吗？…嗯啊…啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '649',
+        any: [
+          /^\s*PRINTFORMW 「就……就这么喜欢看…%SELF_CALL\(TARGET\)%……羞耻的样子吗？…嗯啊…啊…啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '649-650',
+        any: [
+          /^\s*PRINTFORMW 「就……就这么喜欢看…%SELF_CALL\(TARGET\)%……羞耻的样子吗？…嗯啊…啊…啊啊♡♡！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '651',
+        any: [
+          /^\s*PRINTFORMW 「这……这里…能看清楚吗？……可……可以吗……唔！啊啊！啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '651-652',
+        any: [
+          /^\s*PRINTFORMW 「这……这里…能看清楚吗？……可……可以吗……唔！啊啊！啊啊♡♡！」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '653',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%虽然面红耳赤，但是还是柔顺地张开了大腿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '654',
+        any: [/^\s*CFLAG:304 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '656',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 &&ABL:31 >= 1 && \(CFLAG:304 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '657-659',
+        any: [
+          /^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\s*^\s*IF RAND:2 == 0\s*$\s*^\s*PRINTFORMW 「呜……不……这个样子……嗯…啊…啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '659',
+        any: [/^\s*PRINTFORMW 「呜……不……这个样子……嗯…啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '659-660',
+        any: [
+          /^\s*PRINTFORMW 「呜……不……这个样子……嗯…啊…啊啊！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '661',
+        any: [/^\s*PRINTFORMW 「不……为什么会…唔！……嗯…啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '661-662',
+        any: [
+          /^\s*PRINTFORMW 「不……为什么会…唔！……嗯…啊…啊啊！」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '663',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎因为自慰而有了感觉，面红耳赤地闭起了眼睛……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '664',
+        any: [/^\s*CFLAG:304 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '666',
+        any: [/^\s*ELSEIF CFLAG:304 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '667-669',
+        any: [
+          /^\s*;ランダムで口上が変化する（使わない場合はすべて同じにすればよい）\s*$\s*^\s*IF RAND:2 == 0\s*$\s*^\s*PRINTFORMW 「喜欢看这种事情？果然真是有病！嗯……唔！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '669',
+        any: [/^\s*PRINTFORMW 「喜欢看这种事情？果然真是有病！嗯……唔！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '669-670',
+        any: [
+          /^\s*PRINTFORMW 「喜欢看这种事情？果然真是有病！嗯……唔！」\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '671',
+        any: [
+          /^\s*PRINTFORMW 「無須勞煩您的尊駕，%SELF_CALL\(TARGET\)%自己来好多了！嗯……唔！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '671-672',
+        any: [
+          /^\s*PRINTFORMW 「無須勞煩您的尊駕，%SELF_CALL\(TARGET\)%自己来好多了！嗯……唔！」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '673',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边不满地抗议，一边羞愤地进行着自慰……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '674',
+        any: [/^\s*CFLAG:304 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '674-675',
+        any: [/^\s*CFLAG:304 = 2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '674-677',
+        any: [
+          /^\s*CFLAG:304 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '674-679',
+        any: [
+          /^\s*CFLAG:304 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '675-681',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;胸愛撫 CFLAG:306\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '681-684',
+        any: [
+          /^\s*;胸愛撫 CFLAG:306\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 5\s*$\s*^\s*;初めて\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '683-687',
+        any: [
+          /^\s*IF SELECTCOM == 5\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:306 == 0\s*$\s*^\s*;愛\s*$\s*^\s*IF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '687',
+        any: [/^\s*IF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '688',
+        any: [
+          /^\s*PRINTFORMW 「有…有点害羞……但是……很舒服……请再……再……嗯…啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '689',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的耳根羞红，顺从地任由%SAVESTR:PLAYER%的双手在胸部上游移……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '690-692',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这…这种痴汉似的举动……可真……配得上你的身份啊！……唔！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '692',
+        any: [
+          /^\s*PRINTFORMW 「这…这种痴汉似的举动……可真……配得上你的身份啊！……唔！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '693',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%咬牙切齿地说着…只可惜那断断续续的语句早没有了威吓的效果……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '693-694',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%咬牙切齿地说着…只可惜那断断续续的语句早没有了威吓的效果……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '693-696',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%咬牙切齿地说着…只可惜那断断续续的语句早没有了威吓的效果……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:306 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '693-698',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%咬牙切齿地说着…只可惜那断断续续的语句早没有了威吓的效果……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:306 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '696-700',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '700',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '701',
+        any: [
+          /^\s*PRINTFORMW 「嗯…啊啊……好……好棒……再……用力……用力……嗯～啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '702',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%那柔软的胸部被任意搓揉着，随着传来的快感发出了高亢的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '702-703',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%那柔软的胸部被任意搓揉着，随着传来的快感发出了高亢的呻吟……\s*$\s*^\s*CFLAG:306 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '705',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\) && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '706',
+        any: [/^\s*PRINTFORMW 「嗯…啊啊……唔！……嗯……啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '707',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%在%NAME:MASTER%的注视之下，被%SAVESTR:PLAYER%玩弄着胸部……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '708',
+        any: [
+          /^\s*PRINTFORMW 尽管努力地忍耐着不想发出声音，但是无奈身体的快感太过强烈，还是泄露出来呻吟的声音……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '708-709',
+        any: [
+          /^\s*PRINTFORMW 尽管努力地忍耐着不想发出声音，但是无奈身体的快感太过强烈，还是泄露出来呻吟的声音……\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '710',
+        any: [
+          /^\s*PRINTFORMW 「嗯…啊啊……很…很舒服……嗯……想…还想要……嗯～啊啊♡♡！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '711',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%满面红晕地看着%SAVESTR:PLAYER%的动作，发出了急促的喘息……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '711-712',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%满面红晕地看着%SAVESTR:PLAYER%的动作，发出了急促的喘息……\s*$\s*^\s*CFLAG:306 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '713-715',
+        any: [
+          /^\s*;B感覚Lv3以上\s*$\s*^\s*ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTDATAL\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '715-718',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不！不要再捏乳头了！会……唔～嗯……啊啊啊～」\s*$\s*^\s*DATAFORM 「不！不要再揉胸部了！会……唔～嗯……啊啊啊～」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '719-722',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%扭动着身体想要抵抗那异样的快感……\s*$\s*^\s*DATAFORM 揉捏胸部似乎让%SAVESTR:TARGET%非常有感觉的样子……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '722-723',
+        any: [/^\s*ENDDATA\s*$\s*^\s*CFLAG:306 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '724-726',
+        any: [
+          /^\s*;それ以外（愛無し、B感覚Lv3未満）\s*$\s*^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$\s*^\s*PRINTDATAL\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '726-731',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不要！可恶！走开啊！听不懂人话吗！」\s*$\s*^\s*DATAFORM 「可恶！做的事情真是令人作呕！」\s*$\s*^\s*DATAFORM 「脏死了！不要碰%SELF_CALL\(TARGET\)%！」\s*$\s*^\s*DATAFORM 「住手！恶心死了！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '732',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '732-733',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:306 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '732-735',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '732-737',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '732-739',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤异常地怒吼着……\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '734-740',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;キスする CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '740-743',
+        any: [
+          /^\s*;キスする CFLAG:307\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 6\s*$\s*^\s*;ファーストキス\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '743-745',
+        any: [
+          /^\s*;ファーストキス\s*$\s*^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$\s*^\s*;淫乱かつ主人\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '746',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '747',
+        any: [
+          /^\s*PRINTFORMW 「啾！嗯～早就想跟主人接吻了～果然…主人是最棒的♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '748',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是意犹未尽的舔着嘴唇，但是眼神却游移地看着%SAVESTR:PLAYER%，似乎还想要更『刺激』的东西……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '750',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ASSIPLAY == 0 && TEQUIP:89 == 0 && TEQUIP:90 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '751',
+        any: [
+          /^\s*PRINTFORMW 「啾！嗯～早就想跟主人接吻了～果然…真的好幸福呢♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '752',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%满足地眯起了眼睛，露出幸福的表情倚靠在%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '753-755',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「嗯……不！…别……可恶！……恶……恶心！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '755',
+        any: [/^\s*PRINTFORMW 「嗯……不！…别……可恶！……恶……恶心！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '756',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%拼命地想把头转过去，然而下巴却被%SAVESTR:PLAYER%紧紧捏住而无法躲避，就这样子被夺走了初吻……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '757',
+        any: [
+          /^\s*PRINTFORMW 「是不是没人想跟你接吻，所以只能用强迫的手段？真是卑劣！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '758',
+        any: [/^\s*PRINTFORM %SAVESTR:TARGET%\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '760',
+        any: [
+          /^\s*PRINTFORM 像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '761',
+        any: [/^\s*PRINTFORMW 恼怒地说着挑衅着话语……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '761-762',
+        any: [/^\s*PRINTFORMW 恼怒地说着挑衅着话语……\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '761-764',
+        any: [
+          /^\s*PRINTFORMW 恼怒地说着挑衅着话语……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '761-766',
+        any: [
+          /^\s*PRINTFORMW 恼怒地说着挑衅着话语……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;（調教では）初めて\s*$\s*^\s*ELSEIF CFLAG:307 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '765-767',
+        any: [
+          /^\s*;（調教では）初めて\s*$\s*^\s*ELSEIF CFLAG:307 == 0\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '767-769',
+        any: [
+          /^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW 「嗯…咕啾…啊啊…舌……舌头♡……嗯……好…好棒～嗯啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '769',
+        any: [
+          /^\s*PRINTFORMW 「嗯…咕啾…啊啊…舌……舌头♡……嗯……好…好棒～嗯啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '770',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%任由%SAVESTR:PLAYER%的舌头深入口腔中肆虐，激烈的亲吻让银丝从嘴角流下……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '772',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '773',
+        any: [/^\s*PRINTFORMW 「如果……这是主人……的命令…唔…唔…嗯…嗯」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '774',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%顺从与%SAVESTR:PLAYER%亲吻着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '774-775',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%顺从与%SAVESTR:PLAYER%亲吻着……\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '776',
+        any: [/^\s*PRINTFORMW 「嗯……啊……嗯嗯～啾♡～啊～嘻嘻…好高兴…♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '777',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%面带红晕，高兴地眯起了眼睛，沉醉在与%SAVESTR:PLAYER%的亲吻之中……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '778-780',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「谁要跟你这种……唔！…不……唔……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '780',
+        any: [/^\s*PRINTFORMW 「谁要跟你这种……唔！…不……唔……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '781',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%非常抗拒%SAVESTR:PLAYER%亲吻的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '781-782',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%非常抗拒%SAVESTR:PLAYER%亲吻的样子……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '781-784',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%非常抗拒%SAVESTR:PLAYER%亲吻的样子……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '781-786',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%非常抗拒%SAVESTR:PLAYER%亲吻的样子……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '784-788',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '788',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '789',
+        any: [
+          /^\s*PRINTFORMW 「嗯～啊………好……好棒♡……还……还要……啾～咕啾～嗯…～嗯啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '790',
+        any: [/^\s*IF TEQUIP:44\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '791',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地伸出舌头与%SAVESTR:PLAYER%交缠着，饥渴地与对方交换着唾液……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '791-792',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地伸出舌头与%SAVESTR:PLAYER%交缠着，饥渴地与对方交换着唾液……\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '793',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地伸出舌头与%SAVESTR:PLAYER%交缠着，双手在对方身上激烈的抚弄着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '793-794',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地伸出舌头与%SAVESTR:PLAYER%交缠着，双手在对方身上激烈的抚弄着……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '794-795',
+        any: [/^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '797',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\) && ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '798',
+        any: [/^\s*PRINTFORMW 「嗯…啊…这……唔……啾……唔…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '799',
+        any: [/^\s*PRINTFORMW （这样子做……主人会开心吗……？）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '800',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%心神不宁地想着%NAME:MASTER%的事情，顺从与%SAVESTR:PLAYER%亲吻着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '800-801',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%心神不宁地想着%NAME:MASTER%的事情，顺从与%SAVESTR:PLAYER%亲吻着……\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '802',
+        any: [/^\s*PRINTFORMW 「嗯…啊……喜……喜欢♡……啾……好……幸福♡♡……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '803',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%閉上眼睛柔顺地迎合着%SAVESTR:PLAYER%的亲吻。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '804',
+        any: [
+          /^\s*PRINTFORMW 同時像是挑逗一樣伸出了舌尖試探，兩人像是怎樣都親吻不夠似地熱吻著……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '804-805',
+        any: [
+          /^\s*PRINTFORMW 同時像是挑逗一樣伸出了舌尖試探，兩人像是怎樣都親吻不夠似地熱吻著……\s*$\s*^\s*CFLAG:307 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '806-808',
+        any: [
+          /^\s*;従順Lv2以上\s*$\s*^\s*ELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW 「唔……嗯嗯……算了………嗯……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '808',
+        any: [/^\s*PRINTFORMW 「唔……嗯嗯……算了………嗯……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '809',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是放弃了抵抗，皱着眉头忍受着%SAVESTR:PLAYER%的亲吻……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '809-810',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是放弃了抵抗，皱着眉头忍受着%SAVESTR:PLAYER%的亲吻……\s*$\s*^\s*CFLAG:307 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '811-813',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$\s*^\s*PRINTFORMW 「居然……又……唔！…不…不要……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '813',
+        any: [/^\s*PRINTFORMW 「居然……又……唔！…不…不要……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '814',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%露出了厌恶至极的表情……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '814-815',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了厌恶至极的表情……\s*$\s*^\s*CFLAG:307 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '814-817',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了厌恶至极的表情……\s*$\s*^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '814-819',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了厌恶至极的表情……\s*$\s*^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '814-821',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了厌恶至极的表情……\s*$\s*^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '816-822',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;秘貝開帳 CFLAG:308\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '824',
+        any: [/^\s*IF SELECTCOM == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '826',
+        any: [/^\s*IF CFLAG:308 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '827-829',
+        any: [
+          /^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW 「嗯？很想看吗？可以哦♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '829',
+        any: [/^\s*PRINTFORMW 「嗯？很想看吗？可以哦♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '830',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地用手指拨开着阴唇，大方地展示着那最私密的地方……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '831-833',
+        any: [
+          /^\s*;愛\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW 「虽然很羞耻……但是……如果是魔王大人想看的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '833',
+        any: [
+          /^\s*PRINTFORMW 「虽然很羞耻……但是……如果是魔王大人想看的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '834',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的耳根通红，顺从地用手指拨开着阴唇，展示着那最私密的地方……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '835-837',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「居……居然……让%SELF_CALL\(TARGET\)%……做这种事情……可恶！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '837',
+        any: [
+          /^\s*PRINTFORMW 「居……居然……让%SELF_CALL\(TARGET\)%……做这种事情……可恶！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '838',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%不甘愿且笨拙地用手指拨开了自己下身的阴唇……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '838-839',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%不甘愿且笨拙地用手指拨开了自己下身的阴唇……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '840',
+        any: [/^\s*CFLAG:TARGET:308 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '840-841',
+        any: [/^\s*CFLAG:TARGET:308 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '841-845',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:308 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '845',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:308 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '846',
+        any: [
+          /^\s*PRINTFORMW 「嗯……这样……有看清楚里面吗？……啊…在收缩着哦♡…很想要的样子……嘿嘿♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '847',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地用手指拨开着阴唇，让%SAVESTR:PLAYER%完全看清处里面肉壁收缩着的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '847-848',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地用手指拨开着阴唇，让%SAVESTR:PLAYER%完全看清处里面肉壁收缩着的样子……\s*$\s*^\s*CFLAG:306 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '850',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:308 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '851',
+        any: [
+          /^\s*PRINTFORMW 「嗯……请…请看吧……这个姿势能看清楚吗……嗯～嗯啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '852',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%顺从地用手指拨开着阴唇，让%SAVESTR:PLAYER%完全看清处里面肉壁收缩着的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '852-853',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%顺从地用手指拨开着阴唇，让%SAVESTR:PLAYER%完全看清处里面肉壁收缩着的样子……\s*$\s*^\s*CFLAG:306 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '855',
+        any: [
+          /^\s*ELSEIF ABL:17 >= 3 && \(CFLAG:308 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '856',
+        any: [/^\s*PRINTFORMW 「嗯……不……再这样盯着看……会……唔！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '857',
+        any: [
+          /^\s*PRINTFORMW （明明……不想要这样的，这…这种奇怪的感觉……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '858',
+        any: [
+          /^\s*PRINTFORMW 感受到视线集中到那私密的地方的时候，%SAVESTR:TARGET%似乎有了特别的感觉……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '858-859',
+        any: [
+          /^\s*PRINTFORMW 感受到视线集中到那私密的地方的时候，%SAVESTR:TARGET%似乎有了特别的感觉……\s*$\s*^\s*CFLAG:306 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '860-861',
+        any: [
+          /^\s*;それ以外（愛無し、露出癖Lv3未満）\s*$\s*^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '862',
+        any: [/^\s*PRINTFORMW 「这样……够了吧！别……别再看了！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '863',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤地转过了头去，那拨开阴唇的手指正微微地颤抖着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '863-864',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤地转过了头去，那拨开阴唇的手指正微微地颤抖着……\s*$\s*^\s*CFLAG:306 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '863-866',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤地转过了头去，那拨开阴唇的手指正微微地颤抖着……\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '863-868',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤地转过了头去，那拨开阴唇的手指正微微地颤抖着……\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '863-870',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%羞愤地转过了头去，那拨开阴唇的手指正微微地颤抖着……\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '865-871',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;指挿入れ CFLAG:309\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '873',
+        any: [/^\s*IF SELECTCOM == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '875',
+        any: [/^\s*IF CFLAG:TARGET:309 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '875-878',
+        any: [
+          /^\s*IF CFLAG:TARGET:309 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '875-884',
+        any: [
+          /^\s*IF CFLAG:TARGET:309 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;屈服刻印Lv3\+愛\s*$\s*^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '878',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '880-886',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:309 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '881',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '884',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '884-886',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:309 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '886',
+        any: [/^\s*CFLAG:TARGET:309 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '886-887',
+        any: [/^\s*CFLAG:TARGET:309 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '887-891',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:309 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '891',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:309 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '892',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '893',
+        any: [/^\s*CFLAG:309 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '895',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && MARK:2 == 3 && \(CFLAG:309 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '896',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '897',
+        any: [/^\s*CFLAG:309 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '899',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:309 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '900',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '901',
+        any: [/^\s*CFLAG:309 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '903',
+        any: [/^\s*ELSEIF CFLAG:309 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '904',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '905',
+        any: [/^\s*CFLAG:309 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '905-906',
+        any: [/^\s*CFLAG:309 = 2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '905-908',
+        any: [
+          /^\s*CFLAG:309 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '905-910',
+        any: [
+          /^\s*CFLAG:309 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '906-912',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '912-915',
+        any: [
+          /^\s*;アナル舐め CFLAG:310\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 9\s*$\s*^\s*;初めて\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '915-917',
+        any: [/^\s*;初めて\s*$\s*^\s*IF CFLAG:310 == 0\s*$\s*^\s*;淫乱\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '916-919',
+        any: [
+          /^\s*IF CFLAG:310 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '918-923',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;愛\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（愛無し）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '919',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '921-927',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:310 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '922',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '925',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '925-927',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:310 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '925-928',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:310 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '925-930',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:310 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '928-932',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '932',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '933',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '933-934',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '935-937',
+        any: [
+          /^\s*;愛\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:310 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '937',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '937-938',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '939-941',
+        any: [
+          /^\s*;屈服刻印Lv3\s*$\s*^\s*ELSEIF MARK:2 == 3 && \(CFLAG:310 <= 2 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '941',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '941-942',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '943-945',
+        any: [
+          /^\s*;それ以外（屈服刻印Lv3未満）\s*$\s*^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '945',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '945-946',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '945-948',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '945-950',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '945-952',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '947-953',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;ローター CFLAG:311\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '955',
+        any: [/^\s*IF SELECTCOM == 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '957',
+        any: [/^\s*IF CFLAG:TARGET:311 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '957-960',
+        any: [
+          /^\s*IF CFLAG:TARGET:311 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '957-966',
+        any: [
+          /^\s*IF CFLAG:TARGET:311 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;屈服刻印Lv3\+愛\s*$\s*^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '960',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '962-968',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:311 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '963',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '966',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '966-968',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:311 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '968',
+        any: [/^\s*CFLAG:TARGET:311 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '968-969',
+        any: [/^\s*CFLAG:TARGET:311 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '969-973',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:311 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '973',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:311 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '974',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '975',
+        any: [/^\s*CFLAG:311 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '977',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && MARK:2 == 3 && \(CFLAG:311 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '978',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '979',
+        any: [/^\s*CFLAG:311 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '981',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:311 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '982',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '983',
+        any: [/^\s*CFLAG:311 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '985',
+        any: [/^\s*ELSEIF CFLAG:311 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '986',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '987',
+        any: [/^\s*CFLAG:311 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '987-988',
+        any: [/^\s*CFLAG:311 = 2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '987-990',
+        any: [
+          /^\s*CFLAG:311 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '987-992',
+        any: [
+          /^\s*CFLAG:311 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '988-994',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;壺ワーム CFLAG:312　CFLAG:372\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '997',
+        any: [/^\s*IF SELECTCOM == 11 && TEQUIP:11\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '999',
+        any: [/^\s*IF CFLAG:TARGET:312 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '999-1002',
+        any: [
+          /^\s*IF CFLAG:TARGET:312 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1002-1004',
+        any: [
+          /^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「嗯…啊……啊……钻…钻进来了呢♡♡……啊……啊啊…嗯…～嗯啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1004',
+        any: [
+          /^\s*PRINTFORMW 「嗯…啊……啊……钻…钻进来了呢♡♡……啊……啊啊…嗯…～嗯啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1005',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%毫不介意自己被壶虫所破处，甚至还发出了欢愉的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1006-1008',
+        any: [
+          /^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW 「主人不想要%SELF_CALL\(TARGET\)%的处女吗？……唔……%SELF_CALL\(TARGET\)%明白了…嗯……啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1008',
+        any: [
+          /^\s*PRINTFORMW 「主人不想要%SELF_CALL\(TARGET\)%的处女吗？……唔……%SELF_CALL\(TARGET\)%明白了…嗯……啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1009',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎有点失望的样子，但还是顺从地任由壶虫钻入了那处女的小穴之中……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1010-1012',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「居…居然让这么脏的东西…不！不要再钻进去了！啊！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1012',
+        any: [
+          /^\s*PRINTFORMW 「居…居然让这么脏的东西…不！不要再钻进去了！啊！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1013',
+        any: [
+          /^\s*PRINTFORMW 被壶虫破处的%SAVESTR:TARGET%难以置信地张大双眼，发出了凄厉的悲鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1013-1014',
+        any: [
+          /^\s*PRINTFORMW 被壶虫破处的%SAVESTR:TARGET%难以置信地张大双眼，发出了凄厉的悲鸣……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1013-1018',
+        any: [
+          /^\s*PRINTFORMW 被壶虫破处的%SAVESTR:TARGET%难以置信地张大双眼，发出了凄厉的悲鸣……\s*$\s*^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1017-1019',
+        any: [
+          /^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「哈啊～嗯…啊……啊～在…在里面动呢♡……啊！…钻得…好深♡……～嗯啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1019',
+        any: [
+          /^\s*PRINTFORMW 「哈啊～嗯…啊……啊～在…在里面动呢♡……啊！…钻得…好深♡……～嗯啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1020',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%满脸带着情慾的红晕，似乎很享受壶虫带来的快感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1021-1023',
+        any: [
+          /^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW 「嗯～唔……不……不要用这个……欺负%SELF_CALL\(TARGET\)%嘛……唔……啊～嗯啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1023',
+        any: [
+          /^\s*PRINTFORMW 「嗯～唔……不……不要用这个……欺负%SELF_CALL\(TARGET\)%嘛……唔……啊～嗯啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1024',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%看似不太愿意的样子，但是那身体似乎已经感到了快感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1025-1027',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「居…居然让这么脏的东西…不！不要再钻进去了！啊！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1027',
+        any: [
+          /^\s*PRINTFORMW 「居…居然让这么脏的东西…不！不要再钻进去了！啊！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1028',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%难以置信地张大双眼，发出了凄厉的悲鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1028-1029',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%难以置信地张大双眼，发出了凄厉的悲鸣……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1029-1031',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:312 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1031',
+        any: [/^\s*CFLAG:312 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1031-1032',
+        any: [/^\s*CFLAG:312 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1032-1036',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:312 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1036',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:312 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1037',
+        any: [
+          /^\s*PRINTFORMW 「哈啊～嗯啊……好…好棒……看…看见了吗？钻进去了喔♡～呵呵♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1038',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是发情地呻吟着，下身也因为壶虫的进出与小穴肉壁的摩擦，不停地发出淫糜的水音……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1039',
+        any: [/^\s*CFLAG:312 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1041',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:312 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1042',
+        any: [
+          /^\s*PRINTFORMW 「啊～进…进来了…不……不可以…钻这么深啊…啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1043',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%面色红晕地喘息着，下身也因为壶虫的进出与小穴肉壁的摩擦，不停地发出淫糜的水音……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1044',
+        any: [/^\s*CFLAG:312 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1046',
+        any: [
+          /^\s*ELSEIF ABL:2 >= 3 && \(CFLAG:312 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1047',
+        any: [
+          /^\s*PRINTFORMW 「啊…哈啊……不…不行！里面会……嗯啊…啊啊啊～」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1048',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎想要抗拒壶虫带来的感觉，扭动着身体也无法阻止那从小穴发出的淫糜水音……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1049',
+        any: [/^\s*CFLAG:312 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1051',
+        any: [/^\s*ELSEIF CFLAG:312 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1052',
+        any: [
+          /^\s*PRINTFORMW 「不……不要虫子！拿…拿走啊！唔……啊…啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1053',
+        any: [
+          /^\s*PRINTFORMW 即使%SAVESTR:TARGET%拼命地挣扎，还是被硬生生地被%SAVESTR:PLAYER%掰开了大腿，任由壶虫钻了进去……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1054',
+        any: [/^\s*CFLAG:312 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1054-1055',
+        any: [/^\s*CFLAG:312 = 2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1054-1057',
+        any: [
+          /^\s*CFLAG:312 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1055-1059',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;脱着時\s*$\s*^\s*ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1059',
+        any: [/^\s*ELSEIF SELECTCOM == 11 && TEQUIP:11 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1061',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:372 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1062',
+        any: [
+          /^\s*PRINTFORMW 随着壶虫的拔除，带着透明的淫丝牵连带出，一股股蜜液正从那小穴流出打湿了大腿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1063',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊啊～拔出来了呢♡……总觉得……有点……寂寞呢♡♡？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1064',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%喘息着沉浸在壶虫带来的余韵之中，大腿像是故意那样地张开展示着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1065',
+        any: [/^\s*CFLAG:372 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1067',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:372 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1068',
+        any: [
+          /^\s*PRINTFORMW 随着壶虫的拔除，带着透明的淫丝牵连带出，一股股蜜液正从那小穴流出打湿了大腿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1069',
+        any: [
+          /^\s*PRINTFORMW 「这…是因为太想要主人了……所以…抱…抱歉……擅自流出…这么多……呜」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1070',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%满脸羞红，拼命地想要解释下身为何如此不像话的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1071',
+        any: [/^\s*CFLAG:372 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1073',
+        any: [/^\s*ELSEIF CFLAG:372 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1074',
+        any: [/^\s*PRINTFORMW 「呜……终於……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1075',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%松了一口气，身体仍带着刺激过後的颤抖……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1076',
+        any: [/^\s*CFLAG:372 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1076-1077',
+        any: [/^\s*CFLAG:372 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1076-1079',
+        any: [
+          /^\s*CFLAG:372 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1076-1081',
+        any: [
+          /^\s*CFLAG:372 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1084',
+        any: [/^\s*IF SELECTCOM == 12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1086',
+        any: [/^\s*IF CFLAG:313 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1087-1089',
+        any: [
+          /^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「这个道具看起来真刺激……好…好有趣啊！嗯啊♡…啊……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1089',
+        any: [
+          /^\s*PRINTFORMW 「这个道具看起来真刺激……好…好有趣啊！嗯啊♡…啊……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1090',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用期待的眼神看着%SAVESTR:PLAYER%手中的道具，相当配合地任由摆弄……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1091-1093',
+        any: [
+          /^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW 「这个道具是？啊！……震…震的好厉害啊！嗯啊♡…啊……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1093',
+        any: [
+          /^\s*PRINTFORMW 「这个道具是？啊！……震…震的好厉害啊！嗯啊♡…啊……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1094',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%顺从地任由%SAVESTR:PLAYER%摆弄着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1095-1097',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「哼！借助道具？这就是你的本事吗？不！拿…拿开啊……啊…啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1097',
+        any: [
+          /^\s*PRINTFORMW 「哼！借助道具？这就是你的本事吗？不！拿…拿开啊……啊…啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1098',
+        any: [
+          /^\s*PRINTFORMW 无视%SAVESTR:TARGET%的冷嘲热讽与抗议，%SAVESTR:PLAYER%将振动着的道具紧贴着%SAVESTR:TARGET%的股间……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1098-1099',
+        any: [
+          /^\s*PRINTFORMW 无视%SAVESTR:TARGET%的冷嘲热讽与抗议，%SAVESTR:PLAYER%将振动着的道具紧贴着%SAVESTR:TARGET%的股间……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1100',
+        any: [/^\s*CFLAG:313 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1100-1101',
+        any: [/^\s*CFLAG:313 = 1\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1101-1105',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1 && \(CFLAG:313 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1105',
+        any: [
+          /^\s*IF TALENT:76 == 1 && \(CFLAG:313 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1106',
+        any: [
+          /^\s*PRINTFORMW 「啊！这…好有感觉……再这样……这里就要♡……嗯啊♡……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1107',
+        any: [/^\s*CFLAG:313 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1109',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1 && \(CFLAG:313 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1110',
+        any: [
+          /^\s*PRINTFORMW 「就算不用道具…只要对象是魔王大人…%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%也会…嗯啊♡……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1111',
+        any: [/^\s*CFLAG:313 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1113',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:313 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1114',
+        any: [/^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1115',
+        any: [/^\s*CFLAG:313 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1117',
+        any: [/^\s*ELSEIF CFLAG:313 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1118',
+        any: [/^\s*PRINTFORMW 「不！拿…拿开啊！不要再震了……啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1119',
+        any: [/^\s*CFLAG:313 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1119-1120',
+        any: [/^\s*CFLAG:313 = 2\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1119-1122',
+        any: [
+          /^\s*CFLAG:313 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1119-1123',
+        any: [
+          /^\s*CFLAG:313 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1129',
+        any: [/^\s*IF SELECTCOM == 13 && TEQUIP:13\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1131',
+        any: [/^\s*IF CFLAG:TARGET:314 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1133',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1134',
+        any: [
+          /^\s*PRINTFORMW 「让虫子进来？没试过呢～可以哦♡………嗯……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1135',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎很感兴趣的样子，迫不及待地掰开了臀瓣配合着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1137',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1138',
+        any: [
+          /^\s*PRINTFORMW 「为何……要用虫子欺负这里…好…好奇怪啊…嗯……啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1139',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%似乎有点紧张，但是还是听话顺从地配合着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1140-1142',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「什么？如此肮脏的虫子要……不……拜托……不要这样…啊！不行！不要啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1142',
+        any: [
+          /^\s*PRINTFORMW 「什么？如此肮脏的虫子要……不……拜托……不要这样…啊！不行！不要啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1143',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊恐地挣扎着，但是还是被压制住并塞入了肛门虫……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1144',
+        any: [
+          /^\s*PRINTFORMW 那虫子在肠内蠕动的感觉，让%SAVESTR:TARGET%发出了歇斯底里的悲鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1144-1146',
+        any: [
+          /^\s*PRINTFORMW 那虫子在肠内蠕动的感觉，让%SAVESTR:TARGET%发出了歇斯底里的悲鸣……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:314 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1146',
+        any: [/^\s*CFLAG:TARGET:314 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1146-1148',
+        any: [
+          /^\s*CFLAG:TARGET:314 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1147-1151',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:314 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1151',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:314 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1152',
+        any: [
+          /^\s*PRINTFORMW 「嗯～啊啊……宝贝♡好…好乖啊……在里面钻着呢♡呵呵～嗯…啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1153',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%沉迷在肛门虫带来的快感，满足地抚摸着屁股并发出了动情的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1154',
+        any: [/^\s*CFLAG:314 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1156',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:314 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1157',
+        any: [
+          /^\s*PRINTFORMW 「又要用这个来欺负%SELF_CALL\(TARGET\)%吗？呵呵～真坏……嗯…啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1158',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%熟练地拨开臀瓣，积极地迎接着肛门虫的进入……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1159',
+        any: [/^\s*CFLAG:314 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1161',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:314 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1162',
+        any: [
+          /^\s*PRINTFORMW 「嗯～啊啊…抱…抱歉……屁股擅自就有了感觉♡但…但是……嗯…啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1163',
+        any: [
+          /^\s*PRINTFORMW 屁股正被肛门虫侵犯的%SAVESTR:TARGET%想试着解释些什么，但是都被那欢愉的呻吟打断了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1164',
+        any: [/^\s*CFLAG:314 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1166',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:314 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1167',
+        any: [
+          /^\s*PRINTFORMW 「比…比起这个……%SELF_CALL\(TARGET\)%……比较喜欢魔王大人的……唔…嗯…啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1168',
+        any: [
+          /^\s*PRINTFORMW 即使屁股正在被肛门虫侵犯着，%SAVESTR:TARGET%仍断断续续地试着表达对魔王的爱意……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1169',
+        any: [/^\s*CFLAG:314 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1171',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:314 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1172',
+        any: [/^\s*PRINTFORMW 「不……别……嗯啊啊！里面……嗯…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1173',
+        any: [
+          /^\s*PRINTFORMW 从後穴里面传来的异样快感，让%SAVESTR:TARGET%皱着眉头发出了断断续续的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1174',
+        any: [/^\s*CFLAG:314 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1176',
+        any: [/^\s*ELSEIF  CFLAG:314 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1177',
+        any: [/^\s*PRINTFORMW 「不…不要虫子……拜托……不…不要啊！！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1178',
+        any: [
+          /^\s*PRINTFORMW 从後穴里面传来的异物感以及蠕动感，让%SAVESTR:TARGET%发出了惊恐的悲鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1179',
+        any: [/^\s*CFLAG:314 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1179-1181',
+        any: [/^\s*CFLAG:314 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1179-1183',
+        any: [
+          /^\s*CFLAG:314 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;脱着時\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1180-1184',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;脱着時\s*$\s*^\s*ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1184',
+        any: [/^\s*ELSEIF SELECTCOM == 13 && TEQUIP:13 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1186',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:374 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1187',
+        any: [/^\s*PRINTFORMW 「欸……要拿走了吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1188',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%露出了有点不舍的表情……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1189',
+        any: [/^\s*CFLAG:374 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1191',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:374 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1192',
+        any: [/^\s*PRINTFORMW 「啊！等等……不……没事……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1193',
+        any: [
+          /^\s*PRINTFORMW 当%SAVESTR:PLAYER%移除肛门虫之後，%SAVESTR:TARGET%似乎欲言又止的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1194',
+        any: [/^\s*CFLAG:374 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1196',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:374 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1197',
+        any: [/^\s*PRINTFORMW 「唔……终於……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1198',
+        any: [
+          /^\s*PRINTFORMW 虽然移除肛门虫让%SAVESTR:TARGET%松了口气，但是後穴又隐隐传来了空虚的感觉……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1199',
+        any: [/^\s*CFLAG:374 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1201',
+        any: [/^\s*ELSEIF CFLAG:374 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1202',
+        any: [/^\s*PRINTFORMW 「呼……呜……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1203',
+        any: [
+          /^\s*PRINTFORMW 移除了让%SAVESTR:TARGET%抓狂的肛门虫之後，那过度的刺激让他心有余悸地颤抖着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1204',
+        any: [/^\s*CFLAG:374 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1204-1206',
+        any: [/^\s*CFLAG:374 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1204-1208',
+        any: [
+          /^\s*CFLAG:374 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1204-1210',
+        any: [
+          /^\s*CFLAG:374 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;クリキャップ CFLAG:315　CFLAG:375\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1429',
+        any: [/^\s*IF SELECTCOM == 19 && TEQUIP:19\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1431',
+        any: [/^\s*IF CFLAG:TARGET:320 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1433',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1434',
+        any: [
+          /^\s*PRINTFORMW 「这个？要塞进屁股吗？呵呵～真有意思呢……嗯……好啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1435',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%饶有兴致地看着肛珠，主动地拨开了自己的臀瓣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1437',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1438',
+        any: [
+          /^\s*PRINTFORMW 「欸？这个……要塞进去……好……%SELF_CALL\(TARGET\)%……知道了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1439',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎有点紧张，但仍然顺从地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1440-1442',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这个癖好也太恶心了……为什么要用道具玩弄这个地方……呜」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1442',
+        any: [
+          /^\s*PRINTFORMW 「这个癖好也太恶心了……为什么要用道具玩弄这个地方……呜」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1443',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地挣扎着，但是即使激烈抵抗，那肛珠还是一颗颗地塞入了体内……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1443-1445',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地挣扎着，但是即使激烈抵抗，那肛珠还是一颗颗地塞入了体内……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:320 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1445',
+        any: [/^\s*CFLAG:TARGET:320 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1445-1447',
+        any: [
+          /^\s*CFLAG:TARGET:320 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1446-1450',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:320 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1450',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:320 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1451',
+        any: [
+          /^\s*PRINTFORMW 「嗯…哈啊～里面…塞的满满的喔♡真的好舒服呢～…嗯…啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1452',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%发出动情的浪叫，沉醉在肛珠带来的快感之中。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1453',
+        any: [/^\s*CFLAG:320 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1455',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:320 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1456',
+        any: [
+          /^\s*PRINTFORMW 「道具啊～嗯……那就来吧……啊～再…再放进去一点嘛～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1457',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地拨开自己的臀瓣，配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1458',
+        any: [/^\s*CFLAG:320 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1460',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:320 <= 4 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1461',
+        any: [
+          /^\s*PRINTFORMW 「嗯…啊啊～区区…道具…是比不上魔王大人的！…嗯…啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1462',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%这么说着，但是那扭动的身体与发出的呻吟，怎么看都像是很有感觉的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1463',
+        any: [/^\s*CFLAG:320 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1465',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:320 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1466',
+        any: [
+          /^\s*PRINTFORMW 「怎么就喜欢用道具欺负%SELF_CALL\(TARGET\)%呢……真拿魔王大人没办法……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1467',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%尽管这么说，但仍然顺从地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1468',
+        any: [/^\s*CFLAG:320 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1470',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:320 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1471',
+        any: [/^\s*PRINTFORMW 「不…不……才…才没有感觉呢…呜……可恶……啊…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1472',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%说着拒绝以及讨厌的话，但是那扭動的身体却似乎已经背叛了意志产生了快感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1473',
+        any: [/^\s*CFLAG:320 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1475',
+        any: [/^\s*ELSEIF  CFLAG:320 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1476',
+        any: [
+          /^\s*PRINTFORMW 「就……就算用这种方式折辱%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%也……唔！……可恶……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1477',
+        any: [
+          /^\s*PRINTFORMW 即使%SAVESTR:TARGET%厌恶地挣扎着，那肛珠依然一颗颗地塞入了体内……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1478',
+        any: [/^\s*CFLAG:320 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1478-1480',
+        any: [/^\s*CFLAG:320 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1478-1482',
+        any: [
+          /^\s*CFLAG:320 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;脱着時\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1479-1483',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;脱着時\s*$\s*^\s*ELSEIF SELECTCOM == 19 && TEQUIP:19 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1483',
+        any: [/^\s*ELSEIF SELECTCOM == 19 && TEQUIP:19 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1485',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:379 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1486',
+        any: [
+          /^\s*PRINTFORMW 随着肛珠一颗颗的拔出，%SAVESTR:TARGET%发出难忍的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1487',
+        any: [/^\s*PRINTFORMW 「等等可以放更『大』的东西进来吗？呵呵♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1488',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%轻轻地抚摸着自己的屁股，意犹未尽地询问着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1489',
+        any: [/^\s*CFLAG:379 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1491',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:379 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1492',
+        any: [
+          /^\s*PRINTFORMW 随着肛珠一颗颗的拔出，%SAVESTR:TARGET%发出难忍的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1493',
+        any: [/^\s*PRINTFORMW 「这种道具……还是比不上……魔王大人的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1494',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%面色微红抚摸着自己的屁股，说出了心中的感想……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1495',
+        any: [/^\s*CFLAG:379 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1497',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:379 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1498',
+        any: [/^\s*PRINTFORMW 「唔……终於……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1499',
+        any: [
+          /^\s*PRINTFORMW 虽然移除肛珠让%SAVESTR:TARGET%松了口气，但是後穴又隐隐传来了空虚的感觉……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1500',
+        any: [/^\s*CFLAG:379 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1502',
+        any: [/^\s*ELSEIF CFLAG:379 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1503',
+        any: [/^\s*PRINTFORMW 「………唔」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1504',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%呼出了一口氣，放开了已经紧握到发白的掌心……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1505',
+        any: [/^\s*CFLAG:379 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1505-1507',
+        any: [/^\s*CFLAG:379 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1505-1509',
+        any: [
+          /^\s*CFLAG:379 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1505-1511',
+        any: [
+          /^\s*CFLAG:379 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;正常位 CFLAG:321\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1513',
+        any: [/^\s*IF SELECTCOM == 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1515',
+        any: [/^\s*IF CFLAG:TARGET:321 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1515-1543',
+        any: [
+          /^\s*IF CFLAG:TARGET:321 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%迫不及待地搂住了%SAVESTR:PLAYER%的脖子，主动将身体靠进过去……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1515-1549',
+        any: [
+          /^\s*IF CFLAG:TARGET:321 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%迫不及待地搂住了%SAVESTR:PLAYER%的脖子，主动将身体靠进过去……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1517',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1519',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1520',
+        any: [
+          /^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1521',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%迫不及待地搂住了%SAVESTR:PLAYER%的脖子，主动将身体靠进过去……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1523',
+        any: [/^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1524',
+        any: [
+          /^\s*PRINTFORMW 「能…能够将第一次献给魔王大人，真的，真的非常地开心…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1525',
+        any: [
+          /^\s*PRINTFORMW 「听说第一次都会很痛的样子，但是，是魔王大人的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1526',
+        any: [
+          /^\s*PRINTFORMW 「就算是疼痛，也一定会被幸福感覆盖过去的呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1527',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%露出信任的笑容，伸手主动搂住了%SAVESTR:PLAYER%的脖子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1530',
+        any: [
+          /^\s*PRINTFORMW 「不！第一次居然…要跟你这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1531',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1532-1536',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵…让%SELF_CALL\(TARGET\)%看看你的技巧如何吧？……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1535',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1536',
+        any: [
+          /^\s*PRINTFORMW 「呵呵…让%SELF_CALL\(TARGET\)%看看你的技巧如何吧？……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1538',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1539',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1540',
+        any: [
+          /^\s*PRINTFORMW 「如果……魔王大人想要观赏的话……那么…请…请……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1541',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1541-1543',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这样可以看清楚魔王大人的表情呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1543',
+        any: [/^\s*PRINTFORMW 「这样可以看清楚魔王大人的表情呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1543-1549',
+        any: [
+          /^\s*PRINTFORMW 「这样可以看清楚魔王大人的表情呢……」\s*$\s*^\s*PRINTFORMW 「感觉……好幸福又有点害羞……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1544',
+        any: [/^\s*PRINTFORMW 「感觉……好幸福又有点害羞……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1544-1552',
+        any: [
+          /^\s*PRINTFORMW 「感觉……好幸福又有点害羞……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1545',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1549',
+        any: [
+          /^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1549-1553',
+        any: [
+          /^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:321 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1550',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1551-1553',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:321 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1553',
+        any: [/^\s*CFLAG:321 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1553-1555',
+        any: [
+          /^\s*CFLAG:321 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1554-1558',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:321 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1558',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:321 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1559-1563',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「果然……这种快感……是最……最棒的了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「还……还要啊！……唔……好……好棒……快……快点啊♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「可…可以射在里面哦♡…想…想要……满满的……精液♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1564',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫荡地扭动着腰部，正因快感而不知廉耻地浪叫着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1565',
+        any: [/^\s*CFLAG:321 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1567',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:321 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1568',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1569',
+        any: [
+          /^\s*PRINTFORMW 「嗯……啊啊～进……进来了……%SAVESTR:PLAYER%的…那里不行……嗯啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1569-1575',
+        any: [
+          /^\s*PRINTFORMW 「嗯……啊啊～进……进来了……%SAVESTR:PLAYER%的…那里不行……嗯啊～♡」\s*$\s*^\s*PRINTFORMW （明明不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%却………）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1570',
+        any: [
+          /^\s*PRINTFORMW （明明不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%却………）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1571',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1573-1577',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1578-1582',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%被心爱的魔王大人拥抱，不自觉地说着肉麻的情话……\s*$\s*^\s*DATAFORM 能跟心爱的魔王大人交合，%SAVESTR:TARGET%露出了幸福无比的笑容……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%带着崇敬又爱慕的眼神，不停地对%SAVESTR:PLAYER%倾诉着爱语……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1582-1584',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:321 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1584',
+        any: [/^\s*CFLAG:321 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1586',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:321 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1587-1591',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好…好奇怪……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……这……这是什么！唔！……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「明明……不想要的……但……但是……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1592-1596',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%脸上带着异样的嫣红，似乎渐渐从性交中得到了快感……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%像是在忍耐着什么一样，渐渐发出了断断续续的呻吟……\s*$\s*^\s*DATAFORM 身体的快感背叛了%SAVESTR:TARGET%的意志，让他不由自主地发出了呻吟……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1597',
+        any: [/^\s*CFLAG:321 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1599',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:321 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1600-1604',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……不……不要这样……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1605',
+        any: [/^\s*CFLAG:321 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1607',
+        any: [/^\s*ELSEIF CFLAG:321 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1608-1612',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不！不要…放开%SELF_CALL\(TARGET\)%！出去！拔出去啊！…啊……啊啊！」\s*$\s*^\s*DATAFORM 「这种侵犯很有意思吗？混……混帐…！不！不要啊！！」\s*$\s*^\s*DATAFORM 「不！不要过来！唔！啊啊！不行……啊啊啊！！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1613-1617',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1618',
+        any: [/^\s*CFLAG:321 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1618-1620',
+        any: [/^\s*CFLAG:321 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1618-1622',
+        any: [
+          /^\s*CFLAG:321 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1618-1624',
+        any: [
+          /^\s*CFLAG:321 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1619-1625',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1627',
+        any: [/^\s*IF SELECTCOM == 21\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1629',
+        any: [/^\s*IF CFLAG:TARGET:322 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1629-1657',
+        any: [
+          /^\s*IF CFLAG:TARGET:322 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%露出了迫不及待的表情，主动地拨开了自己的臀瓣……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1629-1663',
+        any: [
+          /^\s*IF CFLAG:TARGET:322 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%露出了迫不及待的表情，主动地拨开了自己的臀瓣……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1631',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1633',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1634',
+        any: [
+          /^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1635',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%露出了迫不及待的表情，主动地拨开了自己的臀瓣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1637',
+        any: [/^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1638',
+        any: [
+          /^\s*PRINTFORMW 「能…能够将第一次献给魔王大人，真的，真的非常地开心…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1639',
+        any: [
+          /^\s*PRINTFORMW 「听说第一次都会很痛的样子，但是，是魔王大人的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1640',
+        any: [
+          /^\s*PRINTFORMW 「就算是疼痛，也一定会被幸福感覆盖过去的呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1641',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%露出信任的笑容，主动地拨开了自己的臀瓣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1644',
+        any: [
+          /^\s*PRINTFORMW 「不！第一次居然…要跟你这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1645',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1646-1650',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵…用这个姿势好刺激呢……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1649',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1650',
+        any: [/^\s*PRINTFORMW 「呵呵…用这个姿势好刺激呢……快点进来啊～♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1652',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1653',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1654',
+        any: [/^\s*PRINTFORMW 「用……用这个姿势吗？…好…好的……那么……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1655',
+        any: [
+          /^\s*PRINTFORMW （这体位……看不见脸……就把对方当成魔王大人吧……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1656',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1656-1658',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这样看不见魔王大人的表情呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1658',
+        any: [/^\s*PRINTFORMW 「这样看不见魔王大人的表情呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1659',
+        any: [
+          /^\s*PRINTFORMW 「但是，这姿势似乎……可以进得很深的样子……♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1659-1663',
+        any: [
+          /^\s*PRINTFORMW 「但是，这姿势似乎……可以进得很深的样子……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1659-1667',
+        any: [
+          /^\s*PRINTFORMW 「但是，这姿势似乎……可以进得很深的样子……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1660',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1664',
+        any: [
+          /^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1664-1668',
+        any: [
+          /^\s*PRINTFORMW 「不！谁要跟你做这种……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:322 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1665',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1665-1669',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:322 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1666-1672',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:322 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1668',
+        any: [/^\s*CFLAG:322 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1669-1673',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1673',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1674-1678',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「果然……从後面来……是最……最深的了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「还……还要啊！……唔……好……好棒……快……快点啊♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「可…可以射在里面哦♡…想…想要……满满的……精液♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1679',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫荡地扭动着腰部，正因快感而不知廉耻地浪叫着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1680',
+        any: [/^\s*CFLAG:322 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1682',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1683',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1684',
+        any: [
+          /^\s*PRINTFORMW 「嗯……啊啊～从後面……进……进来了……%SAVESTR:PLAYER%的………嗯啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1685',
+        any: [
+          /^\s*PRINTFORMW （这……这不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%不可以………）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1685-1689',
+        any: [
+          /^\s*PRINTFORMW （这……这不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%不可以………）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1686',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1688-1692',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1693-1697',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%被心爱的魔王大人拥抱，不自觉地说着肉麻的情话……\s*$\s*^\s*DATAFORM 能跟心爱的魔王大人交合，%SAVESTR:TARGET%露出了幸福无比的笑容……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%带着崇敬又爱慕的眼神，不停地对%SAVESTR:PLAYER%倾诉着爱语……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1697-1699',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:322 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1699',
+        any: [/^\s*CFLAG:322 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1701',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:322 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1702-1706',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好…好奇怪……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……这……这是什么！唔！……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「明明……不想要的……但……但是……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1707-1711',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%脸上带着异样的嫣红，似乎渐渐从性交中得到了快感……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%像是在忍耐着什么一样，渐渐发出了断断续续的呻吟……\s*$\s*^\s*DATAFORM 身体的快感背叛了%SAVESTR:TARGET%的意志，让他不由自主地发出了呻吟……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1712',
+        any: [/^\s*CFLAG:322 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1714',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:322 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1715-1719',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……不……不要这样……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1720',
+        any: [/^\s*CFLAG:322 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1722',
+        any: [/^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1723-1727',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不！不要…放开%SELF_CALL\(TARGET\)%！出去！拔出去啊！…啊……啊啊！」\s*$\s*^\s*DATAFORM 「这种侵犯很有意思吗？混……混帐…！不！不要啊！！」\s*$\s*^\s*DATAFORM 「不！不要过来！唔！啊啊！不行……啊啊啊！！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1728-1732',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1732-1736',
+        any: [
+          /^\s*ENDDATA\s*$\s*^\s*CFLAG:322 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1732-1738',
+        any: [
+          /^\s*ENDDATA\s*$\s*^\s*CFLAG:322 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1732-1740',
+        any: [
+          /^\s*ENDDATA\s*$\s*^\s*CFLAG:322 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;対面座位 CFLAG:323\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1733',
+        any: [/^\s*CFLAG:322 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1734-1740',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;対面座位 CFLAG:323\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1742',
+        any: [/^\s*IF SELECTCOM == 22\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1743',
+        any: [/^\s*IF CFLAG:TARGET:323 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1743-1771',
+        any: [
+          /^\s*IF CFLAG:TARGET:323 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%迫不及待地搂住了%SAVESTR:PLAYER%的脖子，主动将身体靠进过去……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1743-1777',
+        any: [
+          /^\s*IF CFLAG:TARGET:323 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%迫不及待地搂住了%SAVESTR:PLAYER%的脖子，主动将身体靠进过去……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1745',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1747',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1748',
+        any: [
+          /^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1749',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%迫不及待地搂住了%SAVESTR:PLAYER%的脖子，主动将身体靠进过去……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1751',
+        any: [/^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1752',
+        any: [
+          /^\s*PRINTFORMW 「能…能够将第一次献给魔王大人，真的，真的非常地开心…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1753',
+        any: [
+          /^\s*PRINTFORMW 「听说第一次都会很痛的样子，但是，是魔王大人的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1754',
+        any: [
+          /^\s*PRINTFORMW 「就算是疼痛，也一定会被幸福感覆盖过去的呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1755',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%露出信任的笑容，伸手主动搂住了%SAVESTR:PLAYER%的脖子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1758',
+        any: [
+          /^\s*PRINTFORMW 「不！第一次居然…要跟你这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1759',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1760-1764',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵…这样抱着两人贴得很紧呢♡……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1763',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1764',
+        any: [
+          /^\s*PRINTFORMW 「呵呵…这样抱着两人贴得很紧呢♡……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1766',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1767',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1768',
+        any: [/^\s*PRINTFORMW 「这都是为了……魔王大人…所以…所以…请……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1769',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1769-1771',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这样被抱着可以看清楚魔王大人的表情呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1771',
+        any: [/^\s*PRINTFORMW 「这样被抱着可以看清楚魔王大人的表情呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1771-1777',
+        any: [
+          /^\s*PRINTFORMW 「这样被抱着可以看清楚魔王大人的表情呢……」\s*$\s*^\s*PRINTFORMW 「感觉……好幸福又有点害羞……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1772',
+        any: [/^\s*PRINTFORMW 「感觉……好幸福又有点害羞……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1772-1780',
+        any: [
+          /^\s*PRINTFORMW 「感觉……好幸福又有点害羞……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1773',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1777',
+        any: [
+          /^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1777-1781',
+        any: [
+          /^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:323 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1778',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1779-1781',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:323 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1781',
+        any: [/^\s*CFLAG:323 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1781-1783',
+        any: [
+          /^\s*CFLAG:323 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1782-1786',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:323 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1786',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:323 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1787-1791',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「果然……这种快感……是最……最棒的了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「还……还要啊！……唔……好……好棒……快……快点啊♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「可…可以射在里面哦♡…想…想要……满满的……精液♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1792',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫荡地扭动着腰部，正因快感而不知廉耻地浪叫着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1793',
+        any: [/^\s*CFLAG:323 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1795',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:323 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1796',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1797',
+        any: [
+          /^\s*PRINTFORMW 「嗯……啊啊～顶……顶进来了……%SAVESTR:PLAYER%的…不……嗯啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1797-1803',
+        any: [
+          /^\s*PRINTFORMW 「嗯……啊啊～顶……顶进来了……%SAVESTR:PLAYER%的…不……嗯啊～♡」\s*$\s*^\s*PRINTFORMW （明明不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%却………）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1798',
+        any: [
+          /^\s*PRINTFORMW （明明不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%却………）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1799',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1801-1805',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1806-1810',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%被心爱的魔王大人拥抱，不自觉地说着肉麻的情话……\s*$\s*^\s*DATAFORM 能跟心爱的魔王大人交合，%SAVESTR:TARGET%露出了幸福无比的笑容……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%带着崇敬又爱慕的眼神，不停地对%SAVESTR:PLAYER%倾诉着爱语……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1810-1812',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:323 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1812',
+        any: [/^\s*CFLAG:323 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1814',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:323 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1815-1819',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好…好奇怪……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……这……这是什么！唔！……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「明明……不想要的……但……但是……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1820-1824',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%脸上带着异样的嫣红，似乎渐渐从性交中得到了快感……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%像是在忍耐着什么一样，渐渐发出了断断续续的呻吟……\s*$\s*^\s*DATAFORM 身体的快感背叛了%SAVESTR:TARGET%的意志，让他不由自主地发出了呻吟……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1825',
+        any: [/^\s*CFLAG:323 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1827',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:323 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1828-1832',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……不……不要这样……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1833',
+        any: [/^\s*CFLAG:323 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1835',
+        any: [/^\s*ELSEIF CFLAG:323 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1836-1840',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不！不要…放开%SELF_CALL\(TARGET\)%！出去！拔出去啊！…啊……啊啊！」\s*$\s*^\s*DATAFORM 「这种侵犯很有意思吗？混……混帐…！不！不要啊！！」\s*$\s*^\s*DATAFORM 「不！不要过来！唔！啊啊！不行……啊啊啊！！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1841-1845',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1846',
+        any: [/^\s*CFLAG:323 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1846-1848',
+        any: [/^\s*CFLAG:323 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1846-1850',
+        any: [
+          /^\s*CFLAG:323 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1846-1852',
+        any: [
+          /^\s*CFLAG:323 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1847-1853',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;背面座位 CFLAG:324\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1855',
+        any: [/^\s*IF SELECTCOM == 23\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1856',
+        any: [/^\s*IF CFLAG:TARGET:324 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1856-1884',
+        any: [
+          /^\s*IF CFLAG:TARGET:324 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%露出了迫不及待的表情，主动地拨开了自己的臀瓣……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1856-1890',
+        any: [
+          /^\s*IF CFLAG:TARGET:324 == 0\s*$\s*^\s*;処女\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$\s*^\s*PRINTFORMW 	%SAVESTR:TARGET%露出了迫不及待的表情，主动地拨开了自己的臀瓣……\s*$\s*^\s*;愛＋従順Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1858',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1860',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1861',
+        any: [
+          /^\s*PRINTFORMW 「呵呵～终於能摆脱处女了呢……好期待哦……快点来呀～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1862',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%露出了迫不及待的表情，主动地拨开了自己的臀瓣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1864',
+        any: [/^\s*ELSEIF TALENT:85 == 1 && ABL:10 >= 5 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1865',
+        any: [
+          /^\s*PRINTFORMW 「能…能够将第一次献给魔王大人，真的，真的非常地开心…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1866',
+        any: [
+          /^\s*PRINTFORMW 「听说第一次都会很痛的样子，但是，是魔王大人的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1867',
+        any: [
+          /^\s*PRINTFORMW 「就算是疼痛，也一定会被幸福感覆盖过去的呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1868',
+        any: [
+          /^\s*PRINTFORMW 	%SAVESTR:TARGET%露出信任的笑容，主动地拨开了自己的臀瓣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1871',
+        any: [
+          /^\s*PRINTFORMW 「不！第一次居然…要跟你这种……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1872',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1873-1877',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「呵呵…这样被抱着，很清楚的能感受的性器的样子喔？……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1876',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1877',
+        any: [
+          /^\s*PRINTFORMW 「呵呵…这样被抱着，很清楚的能感受的性器的样子喔？……快点进来啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1879',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1880',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1881',
+        any: [/^\s*PRINTFORMW 「如果……这是魔王大人的命令……那么…请…请……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1882',
+        any: [
+          /^\s*PRINTFORMW （这体位……看不见脸……就把对方当成魔王大人吧……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1883',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1883-1885',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低垂的睫毛掩盖了神情，顺从地接受了%SAVESTR:PLAYER%的进入……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这样被魔王大人抱着好幸福呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1885',
+        any: [/^\s*PRINTFORMW 「这样被魔王大人抱着好幸福呢……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1886',
+        any: [
+          /^\s*PRINTFORMW 「而且，從後面來的話……可以进得很深的样子……♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1886-1890',
+        any: [
+          /^\s*PRINTFORMW 「而且，從後面來的話……可以进得很深的样子……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1886-1894',
+        any: [
+          /^\s*PRINTFORMW 「而且，從後面來的話……可以进得很深的样子……♡」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1887',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脸颊晕红地露出了幸福的微笑……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1891',
+        any: [
+          /^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1891-1895',
+        any: [
+          /^\s*PRINTFORMW 「不！放手！你想要做什么……不！…走！走开啊！啊啊啊！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:324 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1892',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%惊怒地拼命挣扎着，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1893-1895',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:324 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1895',
+        any: [/^\s*CFLAG:324 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1895-1897',
+        any: [
+          /^\s*CFLAG:324 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1896-1900',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:324 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1900',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:324 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1901-1905',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「果然……从後面来……是最……最深的了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「还……还要啊！……唔……好……好棒……快……快点啊♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「可…可以射在里面哦♡…想…想要……满满的……精液♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1906',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫荡地扭动着腰部，正因快感而不知廉耻地浪叫着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1907',
+        any: [/^\s*CFLAG:324 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1909',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:324 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1910',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1911',
+        any: [
+          /^\s*PRINTFORMW 「嗯……啊啊～从後面……进……进来了……%SAVESTR:PLAYER%的………嗯啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1912',
+        any: [
+          /^\s*PRINTFORMW （明明……不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%不可以………）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1912-1916',
+        any: [
+          /^\s*PRINTFORMW （明明……不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%不可以………）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1913',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%脑子想着魔王大人的事情，身体却和%SAVESTR:PLAYER%紧紧交合着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1915-1919',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好……好厉害……还……还想要……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「想要……魔王大人的孩子…请……请射在里面吧？…嗯…啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里是…属於魔王大人的……请…请打上精液的印记～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1920-1924',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%被心爱的魔王大人拥抱，不自觉地说着肉麻的情话……\s*$\s*^\s*DATAFORM 能跟心爱的魔王大人交合，%SAVESTR:TARGET%露出了幸福无比的笑容……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%带着崇敬又爱慕的眼神，不停地对%SAVESTR:PLAYER%倾诉着爱语……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1924-1926',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:324 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1926',
+        any: [/^\s*CFLAG:324 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1928',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:324 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1929-1933',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好…好奇怪……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……这……这是什么！唔！……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「明明……不想要的……但……但是……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1934-1938',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%脸上带着异样的嫣红，似乎渐渐从性交中得到了快感……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%像是在忍耐着什么一样，渐渐发出了断断续续的呻吟……\s*$\s*^\s*DATAFORM 身体的快感背叛了%SAVESTR:TARGET%的意志，让他不由自主地发出了呻吟……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1939',
+        any: [/^\s*CFLAG:324 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1941',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:324 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1942-1946',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……再这样动会……唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……不……不要这样……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1947',
+        any: [/^\s*CFLAG:324 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1949',
+        any: [/^\s*ELSEIF CFLAG:324 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1950-1954',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不！不要…放开%SELF_CALL\(TARGET\)%！出去！拔出去啊！…啊……啊啊！」\s*$\s*^\s*DATAFORM 「这种侵犯很有意思吗？混……混帐…！不！不要啊！！」\s*$\s*^\s*DATAFORM 「不！不要过来！唔！啊啊！不行……啊啊啊！！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1955-1959',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1960',
+        any: [/^\s*CFLAG:324 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1960-1962',
+        any: [/^\s*CFLAG:324 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1960-1964',
+        any: [
+          /^\s*CFLAG:324 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1960-1966',
+        any: [
+          /^\s*CFLAG:324 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1961-1967',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;正常位アナル CFLAG:327\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1969',
+        any: [/^\s*IF SELECTCOM == 26\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1971',
+        any: [/^\s*IF CFLAG:TARGET:327 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1973',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1974',
+        any: [
+          /^\s*PRINTFORMW 「欸？要用这个体位侵犯屁股吗？……嗯……虽然没试过……但是……可以哦～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1975',
+        any: [
+          /^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是积极地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1977',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1978',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1979',
+        any: [
+          /^\s*PRINTFORMW 「请……请用…但是…可以…不要看%SELF_CALL\(TARGET\)%的脸吗？……嗯…啊啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1980',
+        any: [
+          /^\s*PRINTFORMW （因为是命令……所以……应该……不会让魔王大人不悦吧……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1981',
+        any: [
+          /^\s*PRINTFORMW 尽管是听从命令进行著肛交，%SAVESTR:TARGET%还是一边思慕着魔王一边配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1981-1983',
+        any: [
+          /^\s*PRINTFORMW 尽管是听从命令进行著肛交，%SAVESTR:TARGET%还是一边思慕着魔王一边配合着%SAVESTR:PLAYER%的动作……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%全身上下都属於魔王大人的……喜欢这里的话……也……嗯……啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1983',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%全身上下都属於魔王大人的……喜欢这里的话……也……嗯……啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1983-1987',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%全身上下都属於魔王大人的……喜欢这里的话……也……嗯……啊啊啊～♡♡」\s*$\s*^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是露出欣喜的表情地配合着%SAVESTR:PLAYER%的动作……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1984',
+        any: [
+          /^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是露出欣喜的表情地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1986-1988',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「用这里……做？……真不敢相信……变态！去死！……不！！不要！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1988',
+        any: [
+          /^\s*PRINTFORMW 「用这里……做？……真不敢相信……变态！去死！……不！！不要！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1989',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1989-1991',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:327 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1991',
+        any: [/^\s*CFLAG:TARGET:327 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1991-1993',
+        any: [
+          /^\s*CFLAG:TARGET:327 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1992-1996',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1996',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '1997-2001',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2002',
+        any: [
+          /^\s*PRINTFORMW 从屁股传来激烈的快感，让%SAVESTR:TARGET%失神地发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2003',
+        any: [/^\s*CFLAG:327 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2005',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:327 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2006-2010',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「真是…喜…喜欢……用这里吗？…唔…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不…不要……太…用力哦…就…就是这样♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不……不可以…太深了……轻…轻点呀♡……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2011',
+        any: [
+          /^\s*PRINTFORMW 明明被侵犯着屁股，%SAVESTR:TARGET%也还是扭动着身体发出了呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2012',
+        any: [/^\s*CFLAG:327 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2014',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2014-2024',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:327 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$\s*^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2015',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2016',
+        any: [
+          /^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2017',
+        any: [/^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2018',
+        any: [
+          /^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2020-2024',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「啊～因为…是魔王大人……所以即使是……这种地方也……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里…也…想要热腾腾的……啊！%SELF_CALL\(TARGET\)%…真是太贪心了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2025-2029',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 来自後穴的快感，让%SAVESTR:TARGET%恍惚失神甚至语无论次了起来……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%因为後穴的快感，一边呻吟一边向%SAVESTR:PLAYER%求饶着……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%想要专心致意地服侍%SAVESTR:PLAYER%，但是快感太过强烈，似乎让他忘记了自己的目的……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2029-2031',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2031',
+        any: [/^\s*CFLAG:327 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2033',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:327 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2033-2043',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:327 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$\s*^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2034',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2035',
+        any: [/^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2036',
+        any: [/^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2037',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2039-2043',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「虽然…用…这里…承欢……很羞耻…但是…只要您喜欢的话……%SELF_CALL\(TARGET\)%……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用这个…污秽的地方……伺候尊贵的魔王大人…真的可以吗？……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2044-2048',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 比起自己肉体的愉悦，%SAVESTR:TARGET%似乎先顾虑着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%努力地摆动着腰身，竭尽全力地想要让%SAVESTR:PLAYER%觉得舒服……\s*$\s*^\s*DATAFORM 尽管%SAVESTR:TARGET%气喘吁吁，但仍时不时观察照顾着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2048-2050',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:327 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2050',
+        any: [/^\s*CFLAG:327 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2052',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:327 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2053-2057',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……後面…会…会……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2058',
+        any: [/^\s*CFLAG:327 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2060',
+        any: [/^\s*ELSEIF  CFLAG:327 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2061-2065',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「喜欢侵犯屁股的变态！去死！……唔！……不……好痛！……啊啊！」\s*$\s*^\s*DATAFORM 「拔…拔出去啊！好痛！不…不要再进来了！……啊！……啊啊！」\s*$\s*^\s*DATAFORM 「不！不要啊！要……要坏掉了……唔！……不……好痛！……啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2066-2070',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2071',
+        any: [/^\s*CFLAG:327 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2071-2073',
+        any: [/^\s*CFLAG:327 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2071-2075',
+        any: [
+          /^\s*CFLAG:327 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2071-2077',
+        any: [
+          /^\s*CFLAG:327 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2072-2078',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2080',
+        any: [/^\s*IF SELECTCOM == 27\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2082',
+        any: [/^\s*IF CFLAG:TARGET:328 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2084',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2085',
+        any: [
+          /^\s*PRINTFORMW 「欸？要从背後侵犯屁股吗？看不到表请有点紧张呢……但是……可以哦～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2086',
+        any: [
+          /^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是积极地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2088',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2089',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2090',
+        any: [
+          /^\s*PRINTFORMW 「虽然……用这里…这体位…是第一次……但是……嗯…啊啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2091',
+        any: [
+          /^\s*PRINTFORMW （这个姿势看不见表情……把对方当成魔王大人就可以了吧……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2092',
+        any: [
+          /^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是顺从地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2092-2094',
+        any: [
+          /^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是顺从地配合着%SAVESTR:PLAYER%的动作……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「虽然看不见魔王大人的表情……有点紧张……但是……可以哦～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2094',
+        any: [
+          /^\s*PRINTFORMW 「虽然看不见魔王大人的表情……有点紧张……但是……可以哦～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2094-2098',
+        any: [
+          /^\s*PRINTFORMW 「虽然看不见魔王大人的表情……有点紧张……但是……可以哦～♡♡」\s*$\s*^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是露出欣喜的表情地配合着%SAVESTR:PLAYER%的动作……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2095',
+        any: [
+          /^\s*PRINTFORMW 尽管是第一次用这个体位进行肛交，%SAVESTR:TARGET%还是露出欣喜的表情地配合着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2097-2099',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这个……姿势？……该不会要……变态！去死！……不！！不要！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2099',
+        any: [
+          /^\s*PRINTFORMW 「这个……姿势？……该不会要……变态！去死！……不！！不要！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2100',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2100-2102',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:328 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2100-2106',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:328 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2102',
+        any: [/^\s*CFLAG:TARGET:328 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2103-2107',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2107',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2108-2112',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2113',
+        any: [
+          /^\s*PRINTFORMW 从屁股传来激烈的快感，让%SAVESTR:TARGET%失神地发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2114',
+        any: [/^\s*CFLAG:328 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2116',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2117-2121',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「真是…喜…喜欢……用这里吗？…唔…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不…不要……太…用力哦…就…就是这样♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不……不可以…太深了……轻…轻点呀♡……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2122',
+        any: [
+          /^\s*PRINTFORMW 明明被侵犯着屁股，%SAVESTR:TARGET%也还是扭动着身体发出了呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2123',
+        any: [/^\s*CFLAG:328 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2125',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2125-2135',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$\s*^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2126',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2127',
+        any: [
+          /^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2128',
+        any: [/^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2129',
+        any: [
+          /^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2131-2135',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「啊～因为…是魔王大人……所以即使是……这种地方也……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里…也…想要热腾腾的……啊！%SELF_CALL\(TARGET\)%…真是太贪心了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2136-2140',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 来自後穴的快感，让%SAVESTR:TARGET%恍惚失神甚至语无论次了起来……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%因为後穴的快感，一边呻吟一边向%SAVESTR:PLAYER%求饶着……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%一心想要服侍%SAVESTR:PLAYER%，但是快感太过强烈，似乎让他忘记了自己的目的……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2140-2142',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:328 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2142',
+        any: [/^\s*CFLAG:328 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2144',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2144-2154',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$\s*^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2145',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2146',
+        any: [/^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2147',
+        any: [/^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2148',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2150-2154',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「虽然…用…这里…承欢……很羞耻…但是…只要您喜欢的话……%SELF_CALL\(TARGET\)%……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用这个…污秽的地方……伺候尊贵的魔王大人…真的可以吗？……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2155-2159',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 比起自己肉体的愉悦，%SAVESTR:TARGET%似乎先顾虑着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%努力地摆动着腰身，竭尽全力地想要让%SAVESTR:PLAYER%觉得舒服……\s*$\s*^\s*DATAFORM 尽管%SAVESTR:TARGET%气喘吁吁，但仍时不时观察照顾着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2159-2161',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:328 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2161',
+        any: [/^\s*CFLAG:328 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2163',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2164-2168',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……後面…会…会……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2169',
+        any: [/^\s*CFLAG:328 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2171',
+        any: [/^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2172-2176',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「喜欢侵犯屁股的变态！去死！……唔！……不……好痛！……啊啊！」\s*$\s*^\s*DATAFORM 「拔…拔出去啊！好痛！不…不要再进来了！……啊！……啊啊！」\s*$\s*^\s*DATAFORM 「不！不要啊！要……要坏掉了……唔！……不……好痛！……啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2177-2181',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2181-2185',
+        any: [
+          /^\s*ENDDATA\s*$\s*^\s*CFLAG:328 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2181-2187',
+        any: [
+          /^\s*ENDDATA\s*$\s*^\s*CFLAG:328 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2181-2189',
+        any: [
+          /^\s*ENDDATA\s*$\s*^\s*CFLAG:328 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;対面座位アナル CFLAG:329\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2182',
+        any: [/^\s*CFLAG:328 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2183-2189',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;対面座位アナル CFLAG:329\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2191',
+        any: [/^\s*IF SELECTCOM == 28\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2193',
+        any: [/^\s*IF CFLAG:TARGET:329 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2195',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2196',
+        any: [
+          /^\s*PRINTFORMW 「这样抱着是怕%SELF_CALL\(TARGET\)%跑掉吗？呵呵…性爱的滋味如此美妙，%SELF_CALL\(TARGET\)%怎么舍得离开呢♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2197',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着期待的笑容，积极地回应着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2199',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2200',
+        any: [
+          /^\s*PRINTFORMW 「这样被抱着…感觉很幸福呢♡……当然……要做什么都可以哦？%SELF_CALL\(TARGET\)%的魔王大人♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2201',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%心情很好地微笑着，任凭%SAVESTR:PLAYER%摆布……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2202-2204',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「放%SELF_CALL\(TARGET\)%下去！混帐！到底是要做什么…该不会…不！！不要！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2204',
+        any: [
+          /^\s*PRINTFORMW 「放%SELF_CALL\(TARGET\)%下去！混帐！到底是要做什么…该不会…不！！不要！啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2205',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2205-2207',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%惊怒地拼命挣扎，但是还是无法抵抗%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:329 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2207',
+        any: [/^\s*CFLAG:TARGET:329 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2207-2209',
+        any: [
+          /^\s*CFLAG:TARGET:329 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2208-2212',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2212',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2213-2217',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2218',
+        any: [
+          /^\s*PRINTFORMW 从屁股传来激烈的快感，让%SAVESTR:TARGET%失神地发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2219',
+        any: [/^\s*CFLAG:329 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2221',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:329 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2222-2226',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「真是…喜…喜欢……用这里吗？…唔…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不…不要……太…用力哦…就…就是这样♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不……不可以…太深了……轻…轻点呀♡……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2227',
+        any: [/^\s*CFLAG:329 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2229',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2229-2239',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:329 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$\s*^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2230',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2231',
+        any: [
+          /^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2232',
+        any: [/^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2233',
+        any: [
+          /^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2235-2239',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「啊～因为…是魔王大人……所以即使是……这种地方也……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里…也…想要热腾腾的……啊！%SELF_CALL\(TARGET\)%…真是太贪心了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2240-2244',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 来自後穴的快感，让%SAVESTR:TARGET%恍惚失神甚至语无论次了起来……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%因为後穴的快感，一边呻吟一边向%SAVESTR:PLAYER%求饶着……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%一心想要服侍%SAVESTR:PLAYER%，但是快感太过强烈，似乎让他忘记了自己的目的……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2244-2246',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:329 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2246',
+        any: [/^\s*CFLAG:329 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2248',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:329 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2248-2258',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:329 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$\s*^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2249',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2250',
+        any: [/^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2251',
+        any: [/^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2252',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2254-2258',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「虽然…用…这里…承欢……很羞耻…但是…只要您喜欢的话……%SELF_CALL\(TARGET\)%……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用这个…污秽的地方……伺候尊贵的魔王大人…真的可以吗？……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2259-2263',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 比起自己肉体的愉悦，%SAVESTR:TARGET%似乎先顾虑着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%努力地摆动着腰身，竭尽全力地想要让%SAVESTR:PLAYER%觉得舒服……\s*$\s*^\s*DATAFORM 尽管%SAVESTR:TARGET%气喘吁吁，但仍时不时观察照顾着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2263-2265',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:329 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2265',
+        any: [/^\s*CFLAG:329 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2267',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:329 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2268-2272',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……後面…会…会……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2273',
+        any: [/^\s*CFLAG:329 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2275',
+        any: [/^\s*ELSEIF  CFLAG:329 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2276-2280',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「喜欢侵犯屁股的变态！去死！……唔！……不……好痛！……啊啊！」\s*$\s*^\s*DATAFORM 「拔…拔出去啊！好痛！不…不要再进来了！……啊！……啊啊！」\s*$\s*^\s*DATAFORM 「不！不要啊！要……要坏掉了……唔！……不……好痛！……啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2281-2285',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2286',
+        any: [/^\s*CFLAG:329 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2286-2288',
+        any: [/^\s*CFLAG:329 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2286-2290',
+        any: [
+          /^\s*CFLAG:329 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2286-2292',
+        any: [
+          /^\s*CFLAG:329 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2287-2293',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;背面座位アナル CFLAG:330\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2295',
+        any: [/^\s*IF SELECTCOM == 29\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2297',
+        any: [/^\s*IF CFLAG:TARGET:330 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2299',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2300',
+        any: [
+          /^\s*PRINTFORMW 「想玩後面也可以喔！这个姿势…嗯……应该很美妙吧♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2301',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着期待的笑容，积极地回应着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2303',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2304',
+        any: [
+          /^\s*PRINTFORMW 「想从後面…嗯……好……好啊……只要是魔王大人……怎样都可以♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2305',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着羞涩的笑容，顺从地回应着%SAVESTR:PLAYER%的动作……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2306-2308',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「後面…好像有什么……该不会……不！放开%SELF_CALL\(TARGET\)%！……不要……好痛！……啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2308',
+        any: [
+          /^\s*PRINTFORMW 「後面…好像有什么……该不会……不！放开%SELF_CALL\(TARGET\)%！……不要……好痛！……啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2309',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的腰部被%SAVESTR:PLAYER%的双臂牢牢地固定，就这样从後面贯穿至%SAVESTR:TARGET%的体内……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2309-2311',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的腰部被%SAVESTR:PLAYER%的双臂牢牢地固定，就这样从後面贯穿至%SAVESTR:TARGET%的体内……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:330 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2311',
+        any: [/^\s*CFLAG:TARGET:330 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2311-2313',
+        any: [
+          /^\s*CFLAG:TARGET:330 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2312-2316',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:330 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2316',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:330 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2317-2321',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「後面…被…塞得满满的感觉……真是…太棒了♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「弄…弄坏也……可以…用力……还……还要♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用屁股……高潮的话……是不是很……变态？但……但是♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2322',
+        any: [
+          /^\s*PRINTFORMW 从屁股传来激烈的快感，让%SAVESTR:TARGET%失神地发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2323',
+        any: [/^\s*CFLAG:330 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2325',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:330 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2326-2330',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「真是…喜…喜欢……用这里吗？…唔…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不…不要……太…用力哦…就…就是这样♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「不……不可以…太深了……轻…轻点呀♡……嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2331',
+        any: [/^\s*CFLAG:330 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2333',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:330 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2333-2343',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:330 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$\s*^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2334',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2335',
+        any: [
+          /^\s*PRINTFORMW 「唔！啊啊～再这样子会……会…不可以……嗯♡…嗯啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2336',
+        any: [/^\s*PRINTFORMW （不行……这不是魔王大人……不能……但……但是……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2337',
+        any: [
+          /^\s*PRINTFORMW 从被侵犯的後穴传来了强烈的快感，%SAVESTR:TARGET%一边想着魔王大人一边咬牙承受着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2339-2343',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯！呀！抱…抱歉…实在…是因为…太舒服了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「啊～因为…是魔王大人……所以即使是……这种地方也……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「这里…也…想要热腾腾的……啊！%SELF_CALL\(TARGET\)%…真是太贪心了…嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2344-2348',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 来自後穴的快感，让%SAVESTR:TARGET%恍惚失神甚至语无论次了起来……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%因为後穴的快感，一边呻吟一边向%SAVESTR:PLAYER%求饶着……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%一心想要服侍%SAVESTR:PLAYER%，但是快感太过强烈，似乎让他忘记了自己的目的……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2348-2350',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:330 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2350',
+        any: [/^\s*CFLAG:330 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2352',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:330 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2352-2362',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:330 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$\s*^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2353',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2354',
+        any: [/^\s*PRINTFORMW 「唔！嗯……嗯啊…不……呀！……啊…啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2355',
+        any: [/^\s*PRINTFORMW （这个身体是取悦魔王大人的，所以……所以……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2356',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭上了眼睛，顺从地承受%SAVESTR:PLAYER%的侵犯……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2358-2362',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「啊！魔王大人…喜…喜欢这里吗？那…那么……用坏了也没关系♡嗯…嗯啊啊啊～♡♡」\s*$\s*^\s*DATAFORM 「虽然…用…这里…承欢……很羞耻…但是…只要您喜欢的话……%SELF_CALL\(TARGET\)%……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*DATAFORM 「用这个…污秽的地方……伺候尊贵的魔王大人…真的可以吗？……嗯♡…嗯啊…啊啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2363-2367',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 比起自己肉体的愉悦，%SAVESTR:TARGET%似乎先顾虑着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%努力地摆动着腰身，竭尽全力地想要让%SAVESTR:PLAYER%觉得舒服……\s*$\s*^\s*DATAFORM 尽管%SAVESTR:TARGET%气喘吁吁，但仍时不时观察照顾着%SAVESTR:PLAYER%的感受……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2367-2369',
+        any: [/^\s*ENDDATA\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:330 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2369',
+        any: [/^\s*CFLAG:330 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2371',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:330 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2372-2376',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「不…不要……屁股…感觉好奇怪啊…唔！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「太……太深了……不……不行！嗯……啊…啊啊啊！」\s*$\s*^\s*DATAFORM 「停……停下来啊……後面…会…会……啊…啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2377',
+        any: [/^\s*CFLAG:330 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2379',
+        any: [/^\s*ELSEIF  CFLAG:330 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2380-2384',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「喜欢侵犯屁股的变态！去死！……唔！……不……好痛！……啊啊！」\s*$\s*^\s*DATAFORM 「拔…拔出去啊！好痛！不…不要再进来了！……啊！……啊啊！」\s*$\s*^\s*DATAFORM 「不！不要啊！要……要坏掉了……唔！……不……好痛！……啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2385-2389',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM %SAVESTR:TARGET%发出了凄惨的悲鸣……\s*$\s*^\s*DATAFORM 挣扎无用的%SAVESTR:TARGET%流下了屈辱的泪水……\s*$\s*^\s*DATAFORM 即使%SAVESTR:TARGET%死命的挣扎，也无法改变被侵犯的事实……\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2390',
+        any: [/^\s*CFLAG:330 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2390-2392',
+        any: [/^\s*CFLAG:330 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2390-2394',
+        any: [
+          /^\s*CFLAG:330 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2390-2396',
+        any: [
+          /^\s*CFLAG:330 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2391-2397',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2399',
+        any: [/^\s*IF SELECTCOM == 30\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2401',
+        any: [/^\s*IF CFLAG:TARGET:331 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2403',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2404',
+        any: [/^\s*PRINTFORMW 「欸？用手就可以了吗？呵呵……真可惜呢……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2406',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2407',
+        any: [
+          /^\s*PRINTFORMW 「用……手吗？好的……%SELF_CALL\(TARGET\)%会努力……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2409',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2410',
+        any: [
+          /^\s*PRINTFORMW 「一定要%SELF_CALL\(TARGET\)%来吗？……算了……如果只是用手的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2411',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，随意地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2412-2414',
+        any: [
+          /^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「想让%SELF_CALL\(TARGET\)%碰这种脏东西？哼……就不怕被%SELF_CALL\(TARGET\)%折断吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2414',
+        any: [
+          /^\s*PRINTFORMW 「想让%SELF_CALL\(TARGET\)%碰这种脏东西？哼……就不怕被%SELF_CALL\(TARGET\)%折断吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2415',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，十分嫌弃又笨拙地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2415-2417',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，十分嫌弃又笨拙地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:331 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2415-2421',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，十分嫌弃又笨拙地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:331 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2417',
+        any: [/^\s*CFLAG:TARGET:331 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2419-2421',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2422',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2423',
+        any: [/^\s*PRINTFORMW 「嗯…要快点变大喔……然後……呵呵……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2424',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%抱着热切的期待，积极地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2425',
+        any: [/^\s*CFLAG:331 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2427',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2428',
+        any: [/^\s*PRINTFORMW 「果然…还是魔王大人的……最棒呢♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2429',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出痴迷崇敬的眼神，宛如膜拜似地服侍着%SAVESTR:PLAYER%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2430',
+        any: [/^\s*CFLAG:331 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2432',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2433',
+        any: [
+          /^\s*PRINTFORMW 「能为魔王大人服务，是%SELF_CALL\(TARGET\)%的荣幸……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2434',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的手指动作灵活又细致，面带微笑地关注着%SAVESTR:PLAYER%的感受……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2435',
+        any: [/^\s*CFLAG:331 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2437',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2438',
+        any: [/^\s*PRINTFORMW 「……这样………够了没……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2439',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，像是想要赶快结束那样，草率地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2440',
+        any: [/^\s*CFLAG:331 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2442',
+        any: [/^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2443',
+        any: [/^\s*PRINTFORMW 「难道你不会自己弄吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2444',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了嫌弃的表情，非常不情愿地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2444-2448',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了嫌弃的表情，非常不情愿地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$\s*^\s*CFLAG:331 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2444-2450',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了嫌弃的表情，非常不情愿地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$\s*^\s*CFLAG:331 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2444-2452',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了嫌弃的表情，非常不情愿地抚弄着%SAVESTR:PLAYER%的阴茎……\s*$\s*^\s*CFLAG:331 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2445',
+        any: [/^\s*CFLAG:331 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2446-2452',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2454',
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2456',
+        any: [/^\s*IF CFLAG:TARGET:332 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2458',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2459',
+        any: [
+          /^\s*PRINTFORMW 「欸？用嘴来吗？呵呵……真好奇是什么味道呢……♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2461',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2462',
+        any: [
+          /^\s*PRINTFORMW 「用……嘴吗？是魔王大人的话……%SELF_CALL\(TARGET\)%很乐意……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2464',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2465',
+        any: [/^\s*PRINTFORMW 「……舔……可以了吧……不要整个塞进来……唔！……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2466',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，勉强地舔舐着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2467-2469',
+        any: [
+          /^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这么脏的东西要%SELF_CALL\(TARGET\)%……？……呜……不……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2469',
+        any: [
+          /^\s*PRINTFORMW 「这么脏的东西要%SELF_CALL\(TARGET\)%……？……呜……不……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2470',
+        any: [
+          /^\s*PRINTFORMW 还不等%SAVESTR:TARGET%把话说完，%SAVESTR:PLAYER%的阴茎就强硬地抵住了他的嘴巴……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2470-2472',
+        any: [
+          /^\s*PRINTFORMW 还不等%SAVESTR:TARGET%把话说完，%SAVESTR:PLAYER%的阴茎就强硬地抵住了他的嘴巴……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:332 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2470-2476',
+        any: [
+          /^\s*PRINTFORMW 还不等%SAVESTR:TARGET%把话说完，%SAVESTR:PLAYER%的阴茎就强硬地抵住了他的嘴巴……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:332 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2472',
+        any: [/^\s*CFLAG:TARGET:332 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2473-2477',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv5\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2477',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2478',
+        any: [
+          /^\s*PRINTFORMW 「嗯…咕啾……唔……好渴啊……可以……射给%SELF_CALL\(TARGET\)%……解渴吗……♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2479',
+        any: [/^\s*CFLAG:332 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2481',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2482',
+        any: [/^\s*PRINTFORMW 「嗯…咕啾……唔……在嘴巴里面……变大了呢……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2483',
+        any: [/^\s*CFLAG:332 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2485',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\) && !ASSIPLAY\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2486-2490',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯…咕啾……唔…好……好喜欢……魔王大人的………♡」\s*$\s*^\s*DATAFORM 「嗯…咕啾……唔……魔王大人……舒服吗………♡」\s*$\s*^\s*DATAFORM 「因为是魔王大人……所以…唔…咕啾……射…进嘴巴……也可以……♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2491',
+        any: [/^\s*CFLAG:332 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2493',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2494',
+        any: [/^\s*PRINTFORML 「嗯…咕啾……唔……呼……可…可以了吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2495',
+        any: [/^\s*CFLAG:332 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2497',
+        any: [/^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2498',
+        any: [/^\s*PRINTFORMW 「咳！不……不要……唔……嗯……不……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2499',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%死命地想要拒绝，但是头部被%SAVESTR:PLAYER%用手固定後被强迫着进行着口交……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2499-2503',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%死命地想要拒绝，但是头部被%SAVESTR:PLAYER%用手固定後被强迫着进行着口交……\s*$\s*^\s*CFLAG:332 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2499-2505',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%死命地想要拒绝，但是头部被%SAVESTR:PLAYER%用手固定後被强迫着进行着口交……\s*$\s*^\s*CFLAG:332 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2499-2507',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%死命地想要拒绝，但是头部被%SAVESTR:PLAYER%用手固定後被强迫着进行着口交……\s*$\s*^\s*CFLAG:332 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;パイズリ CFLAG:333\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2500',
+        any: [/^\s*CFLAG:332 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2501-2507',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;パイズリ CFLAG:333\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2509',
+        any: [/^\s*IF SELECTCOM == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2511',
+        any: [/^\s*IF CFLAG:TARGET:333 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2513',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2514',
+        any: [
+          /^\s*PRINTFORMW 「用胸部摩擦就会硬的话……那么……就来做吧～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2515',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%饶有兴致地配合着%SAVESTR:PLAYER%的指示进行乳交……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2516',
+        any: [/^\s*CFLAG:333 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2518',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2519',
+        any: [
+          /^\s*PRINTFORMW 「为了魔王大人，用胸部的服务的技巧……的确是有学习的必要呢！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2520',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地配合着%SAVESTR:PLAYER%的指示进行乳交……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2522',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2523',
+        any: [/^\s*PRINTFORMW 「随便……你开心就好……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2524',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，笨拙地照着%SAVESTR:PLAYER%的指示进行乳交……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2525-2527',
+        any: [
+          /^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「要%SELF_CALL\(TARGET\)%……用胸部？……真是变态的玩法呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2527',
+        any: [
+          /^\s*PRINTFORMW 「要%SELF_CALL\(TARGET\)%……用胸部？……真是变态的玩法呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2528',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着鄙视的眼神，心不甘情不愿地进行着乳交……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2528-2530',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着鄙视的眼神，心不甘情不愿地进行着乳交……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:333 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2530',
+        any: [/^\s*CFLAG:TARGET:333 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2530-2532',
+        any: [
+          /^\s*CFLAG:TARGET:333 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2531-2535',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv5\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2535',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2536-2540',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯啊～啊啊♡……光是用这里摩擦……就舒服到…想要高潮呢～♡♡」\s*$\s*^\s*DATAFORM 「啊啊…变得好大…这么烫♡……快点啊……好想要呢～♡♡」\s*$\s*^\s*DATAFORM 「还不能射吗？嗯……嗯啊～♡…好…想要热腾腾的牛奶啊～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2541',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边进行乳交，一边发出淫荡又高亢的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2542',
+        any: [/^\s*CFLAG:333 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2544',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2545',
+        any: [/^\s*PRINTFORMW 「嗯……唔……快点变大哦……呵呵……好期待啊～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2546',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用期待的眼神，看着夹在乳房中间渐渐勃起的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2548',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:333 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2549',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2550',
+        any: [/^\s*PRINTFORMW 「如果这样子……感觉会更舒服吗？……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2551',
+        any: [
+          /^\s*PRINTFORMW （为了能更好地服侍魔王大人……%SELF_CALL\(TARGET\)%要更加努力……让技巧更好才可以！）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2552',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%认真的用乳房服侍摩擦着%SAVESTR:PLAYER%勃起的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2552-2554',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%认真的用乳房服侍摩擦着%SAVESTR:PLAYER%勃起的阴茎……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2554-2558',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「能服侍魔王大人实在是太幸福了！……嗯啊！这个热度……好棒……好舒服呢～♡♡」\s*$\s*^\s*DATAFORM 「魔王大人觉得舒服吗？%SELF_CALL\(TARGET\)%觉得很舒服哦！似乎……一直做下去也可以呢～♡♡」\s*$\s*^\s*DATAFORM 「这样子夹可以吗？如果……想要射在上面…也可以的哦～♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2559',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎非常开心，满脸通红热切地用乳房服侍着%SAVESTR:PLAYER%勃起的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2559-2561',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎非常开心，满脸通红热切地用乳房服侍着%SAVESTR:PLAYER%勃起的阴茎……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:333 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2561',
+        any: [/^\s*CFLAG:333 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2563',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:333 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2564',
+        any: [/^\s*PRINTFORMW 「唔……变大了……在胸部上面……好烫……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2565',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，用乳房摩擦着%SAVESTR:PLAYER%勃起的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2566',
+        any: [/^\s*CFLAG:333 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2568',
+        any: [/^\s*ELSEIF  CFLAG:333 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2569',
+        any: [/^\s*PRINTFORMW 「这样……感觉……真是恶心……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2570',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%十分嫌弃地用乳房摩擦着%SAVESTR:PLAYER%的阴茎……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2571',
+        any: [/^\s*CFLAG:333 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2571-2573',
+        any: [/^\s*CFLAG:333 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2571-2575',
+        any: [
+          /^\s*CFLAG:333 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2571-2577',
+        any: [
+          /^\s*CFLAG:333 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2572-2578',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;素股 CFLAG:334\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2580',
+        any: [/^\s*IF SELECTCOM == 33\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2582',
+        any: [/^\s*IF CFLAG:TARGET:334 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2584',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2585',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2587',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2587-2593',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:334 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2588',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2591',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2591-2593',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:334 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2593',
+        any: [/^\s*CFLAG:TARGET:334 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2593-2595',
+        any: [
+          /^\s*CFLAG:TARGET:334 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2595-2597',
+        any: [/^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\+処女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2598',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2599',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2600',
+        any: [/^\s*CFLAG:334 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2602',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:334 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2603',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2604',
+        any: [/^\s*CFLAG:334 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2606',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && TALENT:TARGET:0 == 1 && \(CFLAG:334 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2607',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2608',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2609',
+        any: [/^\s*CFLAG:334 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2611',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:334 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2612',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2613',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2614',
+        any: [/^\s*CFLAG:334 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2616',
+        any: [/^\s*ELSEIF CFLAG:334 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2617',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2618',
+        any: [/^\s*CFLAG:334 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2618-2620',
+        any: [/^\s*CFLAG:334 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2618-2622',
+        any: [
+          /^\s*CFLAG:334 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2618-2624',
+        any: [
+          /^\s*CFLAG:334 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2619-2625',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2627',
+        any: [/^\s*IF SELECTCOM == 34\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2629',
+        any: [/^\s*IF CFLAG:TARGET:335 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2631',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2633',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2634',
+        any: [
+          /^\s*PRINTFORMW 「用骑乘位吗？能摆脱处女的话，什么姿势都可以哦～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2635',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%迫不及待地跨在%SAVESTR:PLAYER%的身上，对准阴茎之後，义无反顾地坐了下去……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2637',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2638',
+        any: [/^\s*PRINTFORMW 「能将处女奉献给魔王大人……真的很幸福……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2639',
+        any: [
+          /^\s*PRINTFORMW 听见要骑乘位的命令，%SAVESTR:TARGET%尽管没有做过，但还是露出了开心的笑容。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2640',
+        any: [
+          /^\s*PRINTFORMW 「但是……因为是第一次……如果……做不好的地方……还请您多多『指教』哦♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2641',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%小心翼翼地跨在%SAVESTR:PLAYER%的身上，对准阴茎之後，义无反顾地坐了下去……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2642-2644',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「要%SELF_CALL\(TARGET\)%坐上去自己动？居……居然……可恶！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2644',
+        any: [
+          /^\s*PRINTFORMW 「要%SELF_CALL\(TARGET\)%坐上去自己动？居……居然……可恶！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2645',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎是气过头了，失去了平时的伶牙俐齿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2646',
+        any: [
+          /^\s*PRINTFORMW 尽管再怎么不愿意，但是如果不自己来的话，可能会有更可怕的後果……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2647',
+        any: [
+          /^\s*PRINTFORMW 「算了……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%……呜……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2648',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%明明还是处女，却像是自暴自弃那样，骑在了%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2648-2650',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%明明还是处女，却像是自暴自弃那样，骑在了%SAVESTR:PLAYER%的身上……\s*$\s*^\s*ENDIF\s*$\s*^\s*;非処女\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2648-2654',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%明明还是处女，却像是自暴自弃那样，骑在了%SAVESTR:PLAYER%的身上……\s*$\s*^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW 「这个姿势%SELF_CALL\(TARGET\)%很喜欢……关於技术嘛…呵呵……不妨试试看～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2653',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2654',
+        any: [
+          /^\s*PRINTFORMW 「这个姿势%SELF_CALL\(TARGET\)%很喜欢……关於技术嘛…呵呵……不妨试试看～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2655',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%迫不及待地跨在%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2657',
+        any: [/^\s*ELSEIF TALENT:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2658',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人……喜欢这个姿势？那么……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%当然……可以……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2659',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%双颊通红，顺从地跨在%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2660-2662',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「要%SELF_CALL\(TARGET\)%坐上去自己动？居……居然……可恶！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2662',
+        any: [
+          /^\s*PRINTFORMW 「要%SELF_CALL\(TARGET\)%坐上去自己动？居……居然……可恶！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2663',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎是气过头了，失去了平时的伶牙俐齿……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2664',
+        any: [
+          /^\s*PRINTFORMW 尽管再怎么不愿意，但是如果不自己来的话，可能会有更可怕的後果……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2665',
+        any: [
+          /^\s*PRINTFORMW 「算了……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%……呜……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2666',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是自暴自弃那样，骑在了%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2666-2668',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是自暴自弃那样，骑在了%SAVESTR:PLAYER%的身上……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2666-2670',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%像是自暴自弃那样，骑在了%SAVESTR:PLAYER%的身上……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:335 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2667-2673',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:335 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2669',
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2670-2674',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2674',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2675-2679',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯…哈啊…好…好棒♡…快…快点…射进来啊♡…嗯…嗯啊……啊啊♡♡」\s*$\s*^\s*DATAFORM 「嗯…啊啊♡……顶……顶进来了♡……好…好烫……还…还要！…嗯♡……啊啊♡♡」\s*$\s*^\s*DATAFORM 「全部…都……都进来了♡嗯……啊！好……好舒服…嗯…嗯啊……啊啊♡♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2680',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫糜地摆动着腰肢，贪婪地榨取着%SAVESTR:PLAYER%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2681',
+        any: [/^\s*CFLAG:335 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2683',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2683-2693',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORML 「唔…啊……嗯……啊啊……」\s*$\s*^\s*PRINTFORMW （在魔王大人面前……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%居然坐在别人身上……呜）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%闭着眼睛不敢看%SAVESTR:MASTER%的表情，只是顺从地骑在%SAVESTR:PLAYER%身上扭摆着腰肢……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「魔王大人……觉得舒服吗？如果想要快一点……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%也……嗯……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2684',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2685',
+        any: [/^\s*PRINTFORML 「唔…啊……嗯……啊啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2686',
+        any: [
+          /^\s*PRINTFORMW （在魔王大人面前……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%居然坐在别人身上……呜）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2687',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭着眼睛不敢看%SAVESTR:MASTER%的表情，只是顺从地骑在%SAVESTR:PLAYER%身上扭摆着腰肢……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2689-2693',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「魔王大人……觉得舒服吗？如果想要快一点……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%也……嗯……啊啊♡」\s*$\s*^\s*DATAFORM 「嗯…啊啊……顶……顶进来了♡……魔王大人…%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%……嗯♡……啊啊♡♡」\s*$\s*^\s*DATAFORM 「全部…都……都进来了♡嗯……啊！好……好舒服…不愧是……魔王大人的……嗯……啊啊♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2694',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫糜地摆动着腰肢，竭尽全力地取悦着%SAVESTR:PLAYER%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2694-2696',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫糜地摆动着腰肢，竭尽全力地取悦着%SAVESTR:PLAYER%……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2696',
+        any: [/^\s*CFLAG:335 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2698',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2699-2703',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「唔…不……不要这么…顶…%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%会……嗯……啊啊……不……」\s*$\s*^\s*DATAFORM 「嗯…啊啊……顶……顶进来了……好…深……不……不行……啊啊」\s*$\s*^\s*DATAFORM 「要…要被顶穿了……嗯……啊啊！不…不可以动……嗯……啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2704',
+        any: [
+          /^\s*PRINTFORMW 来自下身的强烈快感，让%SAVESTR:TARGET%呼吸急促地呻吟了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2705',
+        any: [/^\s*CFLAG:335 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2707',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2708',
+        any: [
+          /^\s*PRINTFORML 「就…就当是坐在按摩椅上面……唔！……嗯……啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2709',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，咬牙地在%SAVESTR:PLAYER%身上起伏着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2710',
+        any: [/^\s*CFLAG:335 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2712',
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2713',
+        any: [/^\s*PRINTFORMW 「不……不要看！唔……别……别顶了……不要……呜」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2714',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%屈辱地用手遮住了自己的脸庞，摇摇晃晃地骑在了的%SAVESTR:PLAYER%身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2714-2718',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%屈辱地用手遮住了自己的脸庞，摇摇晃晃地骑在了的%SAVESTR:PLAYER%身上……\s*$\s*^\s*CFLAG:335 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2714-2720',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%屈辱地用手遮住了自己的脸庞，摇摇晃晃地骑在了的%SAVESTR:PLAYER%身上……\s*$\s*^\s*CFLAG:335 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2714-2722',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%屈辱地用手遮住了自己的脸庞，摇摇晃晃地骑在了的%SAVESTR:PLAYER%身上……\s*$\s*^\s*CFLAG:335 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;泡踊り CFLAG:336\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2715',
+        any: [/^\s*CFLAG:335 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2716-2722',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;泡踊り CFLAG:336\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2724',
+        any: [/^\s*IF SELECTCOM == 35\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2726',
+        any: [/^\s*IF CFLAG:TARGET:336 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2728',
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2728-2734',
+        any: [
+          /^\s*IF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:336 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2729',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2732',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2732-2734',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:336 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2734',
+        any: [/^\s*CFLAG:TARGET:336 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2734-2736',
+        any: [
+          /^\s*CFLAG:TARGET:336 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2735-2739',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv5\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:336 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2739',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:336 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2740',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2741',
+        any: [/^\s*CFLAG:336 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2743',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:336 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2744',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2745',
+        any: [/^\s*CFLAG:336 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2747',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:336 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2748',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2749',
+        any: [/^\s*CFLAG:336 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2751',
+        any: [/^\s*ELSEIF  CFLAG:336 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2752',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2753',
+        any: [/^\s*CFLAG:336 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2753-2755',
+        any: [/^\s*CFLAG:336 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2753-2757',
+        any: [
+          /^\s*CFLAG:336 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2753-2759',
+        any: [
+          /^\s*CFLAG:336 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2754-2760',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;騎乗位アナル CFLAG:337\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2762',
+        any: [/^\s*IF SELECTCOM == 36\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2764',
+        any: [/^\s*IF CFLAG:TARGET:337 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2766',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2767',
+        any: [
+          /^\s*PRINTFORMW 「用这个姿势肛交……光想就决得很刺激♡…好啊……试试看♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2768',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%迫不及待地跨在%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2770',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1 && !ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2771',
+        any: [
+          /^\s*PRINTFORMW 「如果是魔王的命令……那么……当然很乐意为您服务……♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2772',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%没有骑乘式肛交的经验，但他还是小心翼翼地跨坐在%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2773-2775',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「居……居然…要%SELF_CALL\(TARGET\)%自己……真是变态！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2775',
+        any: [
+          /^\s*PRINTFORMW 「居……居然…要%SELF_CALL\(TARGET\)%自己……真是变态！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2776',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出痛恨的表情，不情不愿地跨坐在%SAVESTR:PLAYER%的身上……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2776-2778',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出痛恨的表情，不情不愿地跨坐在%SAVESTR:PLAYER%的身上……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:337 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2778',
+        any: [/^\s*CFLAG:TARGET:337 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2778-2780',
+        any: [
+          /^\s*CFLAG:TARGET:337 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2779-2783',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2783',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2784',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2785',
+        any: [
+          /^\s*PRINTFORMW 「啊啊！……好棒♡停…停不下来啊……嗯啊……啊啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2785-2787',
+        any: [
+          /^\s*PRINTFORMW 「啊啊！……好棒♡停…停不下来啊……嗯啊……啊啊啊♡♡」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「要……要用屁股高潮了♡……啊啊……快点……快射进来♡……啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2787',
+        any: [
+          /^\s*PRINTFORMW 「要……要用屁股高潮了♡……啊啊……快点……快射进来♡……啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2787-2789',
+        any: [
+          /^\s*PRINTFORMW 「要……要用屁股高潮了♡……啊啊……快点……快射进来♡……啊啊♡♡」\s*$\s*^\s*ENDIF\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%沉醉在後穴带来的快感里，淫荡地扭动着腰肢呻吟着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2789',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%沉醉在後穴带来的快感里，淫荡地扭动着腰肢呻吟着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2790',
+        any: [/^\s*CFLAG:337 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2792',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:337 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2793',
+        any: [
+          /^\s*PRINTFORMW 「真……没想到……屁股……也能有这种快感……嗯啊……啊啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2794',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%积极地在%SAVESTR:PLAYER%的身上起伏着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2795',
+        any: [/^\s*CFLAG:337 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2797',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:337 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2798',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2799',
+        any: [
+          /^\s*PRINTFORML 「唔…啊……嗯……啊啊……不……不行……这样下去…嗯啊……啊啊啊♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2800',
+        any: [
+          /^\s*PRINTFORMW （明明不是魔王大人……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%却……啊啊……）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2801',
+        any: [
+          /^\s*PRINTFORMW 强烈的快感贯穿了%SAVESTR:TARGET%，让他忘记了对象是谁，只能淫荡地摆动着腰肢……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2801-2803',
+        any: [
+          /^\s*PRINTFORMW 强烈的快感贯穿了%SAVESTR:TARGET%，让他忘记了对象是谁，只能淫荡地摆动着腰肢……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2803-2807',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「魔王大人…太…太棒了♡…抱…抱歉…要…要高潮了♡……啊……啊啊啊♡♡」\s*$\s*^\s*DATAFORM 「嗯…啊啊……顶……顶进来了♡……魔王大人…请…请射在里面♡……嗯♡……啊啊♡♡」\s*$\s*^\s*DATAFORM 「屁股…好奇怪啊♡嗯……啊！好……好棒…不愧是……魔王大人的……嗯……啊啊♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2808',
+        any: [
+          /^\s*PRINTFORMW 强烈的快感让%SAVESTR:TARGET%忘情地%SAVESTR:PLAYER%在身上起伏着，发出了急促高昂的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2808-2810',
+        any: [
+          /^\s*PRINTFORMW 强烈的快感让%SAVESTR:TARGET%忘情地%SAVESTR:PLAYER%在身上起伏着，发出了急促高昂的呻吟……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:337 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2810',
+        any: [/^\s*CFLAG:337 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2812',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:337 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2812-2822',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:337 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF ASSIPLAY\s*$\s*^\s*PRINTFORML 「唔…啊……嗯……啊啊……」\s*$\s*^\s*PRINTFORMW （在魔王大人面前……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%居然坐在别人身上……呜）\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%闭着眼睛不敢看%SAVESTR:MASTER%的表情，只是顺从地骑在%SAVESTR:PLAYER%身上扭摆着腰肢……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「魔王大人……觉得舒服吗？如果想要快一点……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%也……嗯……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2813',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2814',
+        any: [/^\s*PRINTFORML 「唔…啊……嗯……啊啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2815',
+        any: [
+          /^\s*PRINTFORMW （在魔王大人面前……%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%居然坐在别人身上……呜）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2816',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭着眼睛不敢看%SAVESTR:MASTER%的表情，只是顺从地骑在%SAVESTR:PLAYER%身上扭摆着腰肢……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2818-2822',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「魔王大人……觉得舒服吗？如果想要快一点……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%也……嗯……啊啊♡」\s*$\s*^\s*DATAFORM 「嗯…啊啊……顶……顶进来了♡……魔王大人…%SELF_CALL\(TARGET\)%……%SELF_CALL\(TARGET\)%……嗯♡……啊啊♡♡」\s*$\s*^\s*DATAFORM 「全部…都……都进来了♡嗯……啊！好……好舒服♡…不愧是……魔王大人的……嗯……啊啊♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2823',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫糜地摆动着腰肢，竭尽全力地取悦着%SAVESTR:PLAYER%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2823-2825',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫糜地摆动着腰肢，竭尽全力地取悦着%SAVESTR:PLAYER%……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:337 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2825',
+        any: [/^\s*CFLAG:337 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2827',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:337 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2828',
+        any: [/^\s*PRINTFORMW 「唔……这……这种感觉……不……不行……嗯……啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2829',
+        any: [
+          /^\s*PRINTFORMW 从後穴传来的异样感，让%SAVESTR:TARGET%忍不住发出了呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2830',
+        any: [/^\s*CFLAG:337 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2832',
+        any: [/^\s*ELSEIF  CFLAG:337 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2833',
+        any: [/^\s*PRINTFORMW 「不……好痛……不行了……要坏掉了……啊啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2834',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出痛苦的表情，艰难地在%SAVESTR:PLAYER%的身上起伏着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2835',
+        any: [/^\s*CFLAG:337 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2835-2837',
+        any: [/^\s*CFLAG:337 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2835-2839',
+        any: [
+          /^\s*CFLAG:337 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2835-2841',
+        any: [
+          /^\s*CFLAG:337 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2836-2842',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2842-2860',
+        any: [
+          /^\s*;アナル奉仕 CFLAG:338\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 37\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:338 == 0\s*$\s*^\s*;奉仕精神Lv3以上\s*$\s*^\s*IF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2842-2864',
+        any: [
+          /^\s*;アナル奉仕 CFLAG:338\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 37\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:338 == 0\s*$\s*^\s*;奉仕精神Lv3以上\s*$\s*^\s*IF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2844',
+        any: [/^\s*IF SELECTCOM == 37\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2846',
+        any: [/^\s*IF CFLAG:TARGET:338 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2848',
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2849',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2852',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2852-2858',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:338 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2854',
+        any: [/^\s*CFLAG:TARGET:338 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2855-2859',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋奉仕精神Lv5\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2859',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2859-2877',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*CFLAG:338 = 5\s*$\s*^\s*;愛＋奉仕精神Lv5\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORML\s*$\s*^\s*CFLAG:338 = 4\s*$\s*^\s*;奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2860',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2861',
+        any: [/^\s*CFLAG:338 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2863',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2864',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2865',
+        any: [/^\s*CFLAG:338 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2867',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2868',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2869',
+        any: [/^\s*CFLAG:338 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2871',
+        any: [/^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2872',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2873',
+        any: [/^\s*CFLAG:338 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2882',
+        any: [/^\s*IF SELECTCOM == 40\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2884',
+        any: [
+          /^\s*IF CFLAG:TARGET:341 == 0 && !\(TALENT:TARGET:76 \|\| TALENT:TARGET:85\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2885',
+        any: [/^\s*PRINTFORMW 「居……居然……打……可恶！放开……唔！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2886',
+        any: [
+          /^\s*PRINTFORMW 宛如惩罚小孩子一样地被拍打着屁股，%SAVESTR:TARGET%羞恼地瞪大了眼睛……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2887',
+        any: [/^\s*CFLAG:TARGET:341 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2887-2889',
+        any: [
+          /^\s*CFLAG:TARGET:341 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2889-2891',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2892',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:341 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2893',
+        any: [
+          /^\s*PRINTFORMW 「哈啊……啊……太…太棒了♡…用……用力……啊啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2894',
+        any: [
+          /^\s*PRINTFORMW 随着拍打屁股的啪啪声，%SAVESTR:TARGET%却因为疼痛渐渐兴奋了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2895',
+        any: [/^\s*CFLAG:TARGET:341 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2897',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:341 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2898',
+        any: [
+          /^\s*PRINTFORMW 「哈啊……啊……好……好痛♡……但是……也…好舒服～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2899',
+        any: [
+          /^\s*PRINTFORMW 随着拍打屁股的啪啪声，%SAVESTR:TARGET%却因为疼痛渐渐兴奋了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2900',
+        any: [/^\s*CFLAG:TARGET:341 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2900-2902',
+        any: [
+          /^\s*CFLAG:TARGET:341 = 4\s*$\s*^\s*RETURN 0\s*$\s*^\s*;苦痛刻印Lv3\+屈服刻印Lv3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2903',
+        any: [
+          /^\s*ELSEIF MARK:0 == 3 && MARK:2 == 3 && \(CFLAG:341 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2904',
+        any: [/^\s*PRINTFORMW 「唔！………不……啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2905',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%紧闭着眼睛，身体因忍耐疼痛与屈辱而微微颤抖着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2906',
+        any: [/^\s*CFLAG:TARGET:341 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2906-2908',
+        any: [
+          /^\s*CFLAG:TARGET:341 = 3\s*$\s*^\s*RETURN 0\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2909',
+        any: [/^\s*ELSEIF CFLAG:341 <= 1 && FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2910',
+        any: [
+          /^\s*PRINTFORMW 「混……混帐！……放……放开%SELF_CALL\(TARGET\)%！……啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2911',
+        any: [/^\s*CFLAG:TARGET:341 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2911-2913',
+        any: [
+          /^\s*CFLAG:TARGET:341 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2911-2915',
+        any: [
+          /^\s*CFLAG:TARGET:341 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2911-2917',
+        any: [
+          /^\s*CFLAG:TARGET:341 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2912-2918',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;鞭 CFLAG:342\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2920',
+        any: [/^\s*IF SELECTCOM == 41\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2922',
+        any: [/^\s*IF CFLAG:TARGET:342 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2924',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2925',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2927',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2927-2933',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:342 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2928',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2931',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2931-2933',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:342 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2933',
+        any: [/^\s*CFLAG:TARGET:342 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2933-2935',
+        any: [
+          /^\s*CFLAG:TARGET:342 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2934-2938',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv5以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2938',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2939',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2940',
+        any: [/^\s*CFLAG:TARGET:342 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2942',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:342 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2943',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2944',
+        any: [/^\s*CFLAG:TARGET:342 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2946',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:342 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2947',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2948',
+        any: [/^\s*CFLAG:TARGET:342 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2950',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:342 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2951',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2952',
+        any: [/^\s*CFLAG:TARGET:342 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2954',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:342 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2955',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2956',
+        any: [/^\s*CFLAG:TARGET:342 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2958',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:342 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2959',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2960',
+        any: [/^\s*CFLAG:TARGET:342 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2962',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:342 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2963',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2964',
+        any: [/^\s*CFLAG:TARGET:342 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2966',
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2967',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2968',
+        any: [/^\s*CFLAG:TARGET:342 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2968-2970',
+        any: [
+          /^\s*CFLAG:TARGET:342 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2968-2972',
+        any: [
+          /^\s*CFLAG:TARGET:342 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2968-2974',
+        any: [
+          /^\s*CFLAG:TARGET:342 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2969-2975',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;針 CFLAG:343\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2977',
+        any: [/^\s*IF SELECTCOM == 42\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2979',
+        any: [/^\s*IF CFLAG:TARGET:343 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2981',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2982',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2984',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2984-2990',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:343 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2985',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2988',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2988-2990',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:343 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2990',
+        any: [/^\s*CFLAG:TARGET:343 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2990-2992',
+        any: [
+          /^\s*CFLAG:TARGET:343 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2991-2995',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv5以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2995',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2996',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2997',
+        any: [/^\s*CFLAG:TARGET:343 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '2999',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:343 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3000',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3001',
+        any: [/^\s*CFLAG:TARGET:343 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3003',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:343 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3004',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3005',
+        any: [/^\s*CFLAG:TARGET:343 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3007',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:343 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3008',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3009',
+        any: [/^\s*CFLAG:TARGET:343 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3011',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:343 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3012',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3013',
+        any: [/^\s*CFLAG:TARGET:343 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3015',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:343 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3016',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3017',
+        any: [/^\s*CFLAG:TARGET:343 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3019',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:343 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3020',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3021',
+        any: [/^\s*CFLAG:TARGET:343 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3023',
+        any: [/^\s*ELSEIF CFLAG:343 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3024',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3025',
+        any: [/^\s*CFLAG:TARGET:343 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3025-3027',
+        any: [
+          /^\s*CFLAG:TARGET:343 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3025-3029',
+        any: [
+          /^\s*CFLAG:TARGET:343 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3025-3031',
+        any: [
+          /^\s*CFLAG:TARGET:343 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3026-3032',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;アイマスク CFLAG:344　CFLAG:380\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3035',
+        any: [/^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3037',
+        any: [/^\s*IF CFLAG:TARGET:344 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3037-3053',
+        any: [
+          /^\s*IF CFLAG:TARGET:344 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3037-3057',
+        any: [
+          /^\s*IF CFLAG:TARGET:344 == 0\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3039',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3040',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3042',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3043',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3046',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3046-3052',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:344 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv5以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3048',
+        any: [/^\s*CFLAG:TARGET:344 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3049-3053',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv5以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3053',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3054',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3055',
+        any: [/^\s*CFLAG:TARGET:344 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3057',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3058',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3059',
+        any: [/^\s*CFLAG:TARGET:344 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3061',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:344 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3062',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3063',
+        any: [/^\s*CFLAG:TARGET:344 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3065',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3066',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3067',
+        any: [/^\s*CFLAG:TARGET:344 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3069',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3070',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3071',
+        any: [/^\s*CFLAG:TARGET:344 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3073',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3074',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3075',
+        any: [/^\s*CFLAG:TARGET:344 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3077',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3078',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3079',
+        any: [/^\s*CFLAG:TARGET:344 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3081',
+        any: [/^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3082',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3083',
+        any: [/^\s*CFLAG:TARGET:344 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3083-3089',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3084-3089',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3085-3089',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3088',
+        any: [/^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3090',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:380 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3091',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3092',
+        any: [/^\s*CFLAG:380 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3094',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:380 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3095',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3096',
+        any: [/^\s*CFLAG:380 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3098',
+        any: [/^\s*ELSEIF CFLAG:380 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3099',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3100',
+        any: [/^\s*CFLAG:380 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3100-3102',
+        any: [/^\s*CFLAG:380 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3100-3104',
+        any: [
+          /^\s*CFLAG:380 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3100-3106',
+        any: [
+          /^\s*CFLAG:380 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;縄 CFLAG345　CFLAG:385\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3109',
+        any: [/^\s*IF SELECTCOM == 44 && TEQUIP:44\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3111',
+        any: [/^\s*IF CFLAG:TARGET:345 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3113',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3114',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3116',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3116-3122',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:345 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3117',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3120',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3120-3122',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:345 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3122',
+        any: [/^\s*CFLAG:TARGET:345 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3122-3124',
+        any: [
+          /^\s*CFLAG:TARGET:345 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3123-3127',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv5以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3127',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3128',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3129',
+        any: [/^\s*CFLAG:TARGET:345 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3131',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:345 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3132',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3133',
+        any: [/^\s*CFLAG:TARGET:345 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3135',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:345 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3136',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3137',
+        any: [/^\s*CFLAG:TARGET:345 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3139',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:345 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3140',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3141',
+        any: [/^\s*CFLAG:TARGET:345 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3143',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:345 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3144',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3145',
+        any: [/^\s*CFLAG:TARGET:345 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3147',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:345 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3148',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3149',
+        any: [/^\s*CFLAG:TARGET:345 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3151',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:345 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3152',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3153',
+        any: [/^\s*CFLAG:TARGET:345 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3155',
+        any: [/^\s*ELSEIF CFLAG:345 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3156',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3157',
+        any: [/^\s*CFLAG:TARGET:345 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3157-3159',
+        any: [
+          /^\s*CFLAG:TARGET:345 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3157-3161',
+        any: [
+          /^\s*CFLAG:TARGET:345 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3158-3162',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3162',
+        any: [/^\s*ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3164',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:385 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3165',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3166',
+        any: [/^\s*CFLAG:385 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3168',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:385 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3169',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3170',
+        any: [/^\s*CFLAG:385 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3172',
+        any: [/^\s*ELSEIF CFLAG:385 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3173',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3174',
+        any: [/^\s*CFLAG:385 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3174-3176',
+        any: [/^\s*CFLAG:385 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3174-3178',
+        any: [
+          /^\s*CFLAG:385 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3174-3180',
+        any: [
+          /^\s*CFLAG:385 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;ボールギャグ CFLAG346　CFLAG:386\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3183',
+        any: [/^\s*IF SELECTCOM == 45 && TEQUIP:45\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3185',
+        any: [/^\s*IF CFLAG:TARGET:346 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3187',
+        any: [/^\s*IF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3188',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3190',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3190-3196',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:346 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3191',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3194',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3194-3196',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:346 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3196',
+        any: [/^\s*CFLAG:TARGET:346 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3196-3198',
+        any: [
+          /^\s*CFLAG:TARGET:346 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3197-3201',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋マゾっ気Lv5以上\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:346 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3201',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:346 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3202',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3203',
+        any: [/^\s*CFLAG:TARGET:346 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3205',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:346 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3206',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3207',
+        any: [/^\s*CFLAG:TARGET:346 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3209',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:346 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3210',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3211',
+        any: [/^\s*CFLAG:TARGET:346 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3213',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:346 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3214',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3215',
+        any: [/^\s*CFLAG:TARGET:346 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3217',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:346 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3218',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3219',
+        any: [/^\s*CFLAG:TARGET:346 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3221',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:346 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3222',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3223',
+        any: [/^\s*CFLAG:TARGET:346 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3225',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:346 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3226',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3227',
+        any: [/^\s*CFLAG:TARGET:346 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3229',
+        any: [/^\s*ELSEIF CFLAG:346 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3230',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3231',
+        any: [/^\s*CFLAG:TARGET:346 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3231-3233',
+        any: [
+          /^\s*CFLAG:TARGET:346 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3231-3235',
+        any: [
+          /^\s*CFLAG:TARGET:346 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3232-3236',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3236',
+        any: [/^\s*ELSEIF SELECTCOM == 45 && TEQUIP:45 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3238',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:386 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3239',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3240',
+        any: [/^\s*CFLAG:386 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3242',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:386 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3243',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3244',
+        any: [/^\s*CFLAG:386 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3246',
+        any: [/^\s*ELSEIF CFLAG:386 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3247',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3248',
+        any: [/^\s*CFLAG:386 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3248-3250',
+        any: [/^\s*CFLAG:386 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3248-3252',
+        any: [
+          /^\s*CFLAG:386 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3248-3254',
+        any: [
+          /^\s*CFLAG:386 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;浣腸器＋プラグ CFLAG:347\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3257',
+        any: [/^\s*IF SELECTCOM == 46 && TEQUIP:46\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3259',
+        any: [/^\s*IF CFLAG:TARGET:347 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3261',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3262',
+        any: [
+          /^\s*PRINTFORMW 「灌肠……吗？欸……这没试过呢……好哦……来吧～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3263',
+        any: [
+          /^\s*PRINTFORMW 对於没试过的『花样』，%SAVESTR:TARGET%都很感兴趣的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3265',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3266',
+        any: [
+          /^\s*PRINTFORMW 「为了魔王大人，清洁身体是必要的…但…但是……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3267',
+        any: [
+          /^\s*PRINTFORMW 「这种丑态……有点……不想让魔王大人看见呢………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3268',
+        any: [
+          /^\s*PRINTFORMW 比起灌肠的痛苦，%SAVESTR:TARGET%似乎更在意%NAME:MASTER%的观感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3269-3271',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「去……去死！……你脑子里只有这些下作的事情？…不！…啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3271',
+        any: [
+          /^\s*PRINTFORMW 「去……去死！……你脑子里只有这些下作的事情？…不！…啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3271-3273',
+        any: [
+          /^\s*PRINTFORMW 「去……去死！……你脑子里只有这些下作的事情？…不！…啊啊啊！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:347 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3273',
+        any: [/^\s*CFLAG:TARGET:347 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3273-3275',
+        any: [
+          /^\s*CFLAG:TARGET:347 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3275-3277',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱＋A感覚Lv3以上＋マゾっ気Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3278',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3279',
+        any: [
+          /^\s*PRINTFORMW 「哈啊……啊…屁股…肚子…灌满的感觉♡…啊……好……好棒～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3280',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%狼狈地喘息着，似乎沉醉在屁股撑开胀满的快感之中了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3281',
+        any: [/^\s*CFLAG:347 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3283',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:347 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3284',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊…好…好胀……感觉……随时都要排……出来了……啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3285',
+        any: [
+          /^\s*PRINTFORMW 屁股被撑开胀满的感觉，%SAVESTR:TARGET%不停喘息呻吟着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3286',
+        any: [/^\s*CFLAG:347 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3288',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3289',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊…不……不行……这种沉醉在屁股……的丑态♡……啊啊…魔王大人～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3290',
+        any: [
+          /^\s*PRINTFORMW 由於屁股被撑开胀满的快感太过强烈，%SAVESTR:TARGET%不由自主地呼唤魔王大人的名字……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3291',
+        any: [/^\s*CFLAG:347 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3293',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:347 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3294',
+        any: [
+          /^\s*PRINTFORMW 「哈啊…啊…好…好胀……这……这都是为了魔王大人……唔……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3295',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%冒着冷汗，咬牙地忍耐着强烈的排泄感……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3296',
+        any: [/^\s*CFLAG:347 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3298',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && ABL:21 >= 3 && \(CFLAG:347 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3299',
+        any: [/^\s*PRINTFORMW 「哈啊…啊……不……不……这样……唔！……啊啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3300',
+        any: [
+          /^\s*PRINTFORMW 异样的鼓胀与快感让%SAVESTR:TARGET%咬牙地忍耐着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3301',
+        any: [/^\s*CFLAG:347 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3303',
+        any: [/^\s*ELSEIF  CFLAG:347 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3304',
+        any: [
+          /^\s*PRINTFORMW 「这……这种羞辱……总…总有一天……唔！啊啊啊！」			PRINTFORMW 异样的鼓胀与痛苦，让%SAVESTR:TARGET%发出屈辱的叫喊……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3305',
+        any: [/^\s*CFLAG:347 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3305-3307',
+        any: [/^\s*CFLAG:347 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3305-3309',
+        any: [
+          /^\s*CFLAG:347 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3306-3310',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 46 && TEQUIP:46 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3310',
+        any: [/^\s*ELSEIF SELECTCOM == 46 && TEQUIP:46 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3312',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3314',
+        any: [/^\s*IF ABL:3 >= 3 && ABL:21 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3315',
+        any: [
+          /^\s*PRINTFORMW 「呀啊啊！看……看啊……都…排……排出来了哦♡……啊……啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3316',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%不知廉耻地展示当场排泄的丑态，甚至还因为宣泄的快感而淫荡地呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3318',
+        any: [
+          /^\s*PRINTFORM 从那已经完全扩张开来的地方，似乎还能看见痙攣收缩的肠壁……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3318-3320',
+        any: [
+          /^\s*PRINTFORM 从那已经完全扩张开来的地方，似乎还能看见痙攣收缩的肠壁……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「呜……啊啊啊……排……排出来了……呜……都弄脏了呢……♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3320',
+        any: [
+          /^\s*PRINTFORMW 「呜……啊啊啊……排……排出来了……呜……都弄脏了呢……♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3321',
+        any: [
+          /^\s*PRINTFORMW 尽管丑态尽现，%SAVESTR:TARGET%比起羞耻，似乎更苦恼身体弄脏了的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3321-3323',
+        any: [
+          /^\s*PRINTFORMW 尽管丑态尽现，%SAVESTR:TARGET%比起羞耻，似乎更苦恼身体弄脏了的样子……\s*$\s*^\s*ENDIF\s*$\s*^\s*;愛\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3324',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3326',
+        any: [/^\s*IF ABL:3 >= 3 && ABL:21 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3327',
+        any: [
+          /^\s*PRINTFORMW 「啊啊…出…出来了…抱…抱歉…但…但是…好…好舒服啊…啊啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3328',
+        any: [
+          /^\s*PRINTFORMW 宣泄的快感让%SAVESTR:TARGET%不由自主地呻吟了起来，忘记了自己丑态尽现的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3328-3330',
+        any: [
+          /^\s*PRINTFORMW 宣泄的快感让%SAVESTR:TARGET%不由自主地呻吟了起来，忘记了自己丑态尽现的样子……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「啊啊……出……出来了……请……请别看…这…这种……呜……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3330',
+        any: [
+          /^\s*PRINTFORMW 「啊啊……出……出来了……请……请别看…这…这种……呜……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3331',
+        any: [
+          /^\s*PRINTFORMW 在魔王大人面前丑态尽现，%SAVESTR:TARGET%似乎感到十分地懊恼羞愧……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3331-3333',
+        any: [
+          /^\s*PRINTFORMW 在魔王大人面前丑态尽现，%SAVESTR:TARGET%似乎感到十分地懊恼羞愧……\s*$\s*^\s*ENDIF\s*$\s*^\s*;A感覚Lv3以上＋マゾっ気Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3334',
+        any: [/^\s*ELSEIF ABL:3 >= 3 && ABL:21 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3335',
+        any: [/^\s*PRINTFORMW 「啊啊……不……不行……嗯……啊啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3336',
+        any: [
+          /^\s*PRINTFORMW 奇异的宣泄感与羞耻交织着，让%SAVESTR:TARGET%发出了模糊的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3336-3338',
+        any: [
+          /^\s*PRINTFORMW 奇异的宣泄感与羞耻交织着，让%SAVESTR:TARGET%发出了模糊的呻吟……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要！……啊啊啊！！不…不要看啊……啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3338',
+        any: [
+          /^\s*PRINTFORMW 「不！不要！……啊啊啊！！不…不要看啊……啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3339',
+        any: [
+          /^\s*PRINTFORMW 被迫当场排泄的%SAVESTR:TARGET%，发出了崩溃似的惨叫……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3339-3341',
+        any: [
+          /^\s*PRINTFORMW 被迫当场排泄的%SAVESTR:TARGET%，发出了崩溃似的惨叫……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3339-3343',
+        any: [
+          /^\s*PRINTFORMW 被迫当场排泄的%SAVESTR:TARGET%，发出了崩溃似的惨叫……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;何もしない CFLAG:356\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3345',
+        any: [/^\s*IF SELECTCOM == 55\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3347',
+        any: [/^\s*IF CFLAG:356 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3349',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3349-3355',
+        any: [
+          /^\s*IF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:356 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3350',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3353',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3353-3355',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:356 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3355',
+        any: [/^\s*CFLAG:356 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3355-3357',
+        any: [
+          /^\s*CFLAG:356 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3357-3359',
+        any: [/^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;愛＋欲情Lv3以上\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3361',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3362',
+        any: [/^\s*CFLAG:356 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3364',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1 && \(CFLAG:356 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3365',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3366',
+        any: [/^\s*CFLAG:356 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3368',
+        any: [/^\s*ELSEIF CFLAG:356 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3369',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3370',
+        any: [/^\s*CFLAG:356 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3370-3372',
+        any: [/^\s*CFLAG:356 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3370-3374',
+        any: [
+          /^\s*CFLAG:356 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3370-3376',
+        any: [
+          /^\s*CFLAG:356 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3371-3377',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;会話する CFLAG:357\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3380',
+        any: [/^\s*IF SELECTCOM == 56\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3382',
+        any: [/^\s*IF CFLAG:357 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3383',
+        any: [/^\s*IF TEQUIP:53\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3386',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3387',
+        any: [
+          /^\s*PRINTFORMW 「正在录像吗？嘿嘿～正好♡來宣揚魔王大人的偉大吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3388',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%熟练地摆出了一个性感的姿势，露出了魅惑的微笑。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3389',
+        any: [
+          /^\s*PRINTFORMW 「还在地面上苦苦挣扎的人们啊，如果有幸能看到这个影像，这就是魔神对你们的眷顾。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3390',
+        any: [
+          /^\s*PRINTFORMW 「只在魔王的身边才有无上的欢愉，而非虚伪的正义。所谓『正义』也不过是中二病的口号。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3391',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%也不想浪费时间，既然口说无凭，请大家接下來眼见为实吧～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3392',
+        any: [
+          /^\s*PRINTFORMW 说完之後，%SAVESTR:TARGET%的双颊染上了情慾的红晕，看来已经开始期待接下来的调教内容了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3394',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3395',
+        any: [
+          /^\s*PRINTFORMW 「正在录像吗？那么不妨來宣揚魔王大人的偉大吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3396',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%仔细地摆好了虔诚的姿势，端庄地宛如要举行祭祀典礼一般。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3397',
+        any: [
+          /^\s*PRINTFORMW 「还在地面上苦苦挣扎的人们啊，如果有幸能看到这个影像，这就是魔神对你们的眷顾。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3398',
+        any: [
+          /^\s*PRINTFORMW 「以前%SELF_CALL\(TARGET\)%也是被所谓的『正义』蒙蔽的一员，然而这个虚伪的名词至今仍在迫害着你们。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3399',
+        any: [
+          /^\s*PRINTFORMW 「唯有来到魔王的身边，才有真正的『自由与爱』，只要大家了解这点，才能有和平的一天。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3400',
+        any: [
+          /^\s*PRINTFORMW 说完之後，%SAVESTR:TARGET%露出崇拜的眼神，已经迫不及待将『真正的爱』揭露在大众面前了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3401-3403',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「有这闲工夫，怎不去拍拍迷宫中魔物被勇者消灭的影像？那还比较有观赏价值呢！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3403',
+        any: [
+          /^\s*PRINTFORMW 「有这闲工夫，怎不去拍拍迷宫中魔物被勇者消灭的影像？那还比较有观赏价值呢！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3404',
+        any: [
+          /^\s*PRINTFORMW 除了冷嘲热讽之外，%SAVESTR:TARGET%完全不想说其他的话语……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3404-3406',
+        any: [
+          /^\s*PRINTFORMW 除了冷嘲热讽之外，%SAVESTR:TARGET%完全不想说其他的话语……\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3404-3408',
+        any: [
+          /^\s*PRINTFORMW 除了冷嘲热讽之外，%SAVESTR:TARGET%完全不想说其他的话语……\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3408',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3409',
+        any: [
+          /^\s*PRINTFORMW 「欸？这个时候聊天？呵呵……该不会是想要训练『淫语』的技能？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3410',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了恍然大悟的神情，意味深长地看着%SAVESTR:PLAYER%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3412',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3413',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3414',
+        any: [
+          /^\s*PRINTFORMW 「嗯？同在魔王大人麾下，也许交流一下也不错吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3415',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%思考了一下谈话的内容，与%SAVESTR:PLAYER%聊了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3415-3417',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%思考了一下谈话的内容，与%SAVESTR:PLAYER%聊了起来……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「嗯？聊天吗？好啊……想知道什么都可以哦！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3417',
+        any: [/^\s*PRINTFORMW 「嗯？聊天吗？好啊……想知道什么都可以哦！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3418',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的眼睛开心的眯起，柔顺地倚在%SAVESTR:PLAYER%的身边轻声细语着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3418-3420',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的眼睛开心的眯起，柔顺地倚在%SAVESTR:PLAYER%的身边轻声细语着……\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3420-3422',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「抱歉…请恕%SELF_CALL\(TARGET\)%没有点亮跟垃圾交流的技巧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3422',
+        any: [
+          /^\s*PRINTFORMW 「抱歉…请恕%SELF_CALL\(TARGET\)%没有点亮跟垃圾交流的技巧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3423',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%转过了头去，冷淡地发挥着毒舌的本领……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3423-3425',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%转过了头去，冷淡地发挥着毒舌的本领……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3423-3427',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%转过了头去，冷淡地发挥着毒舌的本领……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:357 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3423-3431',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%转过了头去，冷淡地发挥着毒舌的本领……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:357 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*IF TEQUIP:53\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3426',
+        any: [/^\s*CFLAG:357 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3426-3432',
+        any: [
+          /^\s*CFLAG:357 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*IF TEQUIP:53\s*$\s*^\s*;ビデオ自己紹介\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3430',
+        any: [/^\s*IF TEQUIP:53\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3433',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3434',
+        any: [
+          /^\s*PRINTFORMW 「看了上次的水晶球影像，不知大家的『下身』是否有感受到魔神带来的欢愉呢？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3435',
+        any: [
+          /^\s*PRINTFORMW 「如果是的话，那%SELF_CALL\(TARGET\)%也很为你们感受到庆幸，来吧，这边随时敞开欢迎哦～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3436',
+        any: [
+          /^\s*PRINTFORMW 「当然，如果没有感受到的话，那么，也请接下来睁大眼睛继续看吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3437',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎很热心地用身体进行着魔王的传教活动……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3438',
+        any: [/^\s*CFLAG:357 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3440',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:357 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3441',
+        any: [
+          /^\s*PRINTFORMW 「身体的反应最是诚实，就像饿了要吃，冷了要取暖一样。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3442',
+        any: [
+          /^\s*PRINTFORMW 「几句道德伦理凭什么来拘束%SELF_CALL\(TARGET\)%们本来就具有的天性呢？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3443',
+        any: [
+          /^\s*PRINTFORMW 「请不要再被洗脑了，唯有魔王是你们解放与自由的皈依。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3444',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎热衷於把口才发挥在魔王的传教活动上面……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3445',
+        any: [/^\s*CFLAG:357 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3447',
+        any: [/^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3448',
+        any: [
+          /^\s*PRINTFORMW 「难道是因为找不到对象，才只会用逼迫的手段吗？哦……真是可悲呢……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3449',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%依然是平淡地说着气死人不偿命的话……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3450',
+        any: [/^\s*CFLAG:357 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3450-3452',
+        any: [/^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3450-3454',
+        any: [
+          /^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3454',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3455',
+        any: [
+          /^\s*PRINTFORMW 「欸？%SELF_CALL\(TARGET\)%都这个样子了……要聊些什么呢？还不如……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3456',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%抚弄着自己火热发烫的身体，用无奈的表情看着%SAVESTR:PLAYER%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3457',
+        any: [/^\s*CFLAG:357 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3459',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:357 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3460',
+        any: [/^\s*IF ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3461',
+        any: [
+          /^\s*PRINTFORMW 「嗯？好啊，交流一下如何服侍好魔王大人的技巧吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3462',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%思考了一下谈话的内容，与%SAVESTR:PLAYER%聊了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3462-3464',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%思考了一下谈话的内容，与%SAVESTR:PLAYER%聊了起来……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「嗯？聊天吗？好啊……%SELF_CALL\(TARGET\)%还想知道更多您的事情！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3464',
+        any: [
+          /^\s*PRINTFORMW 「嗯？聊天吗？好啊……%SELF_CALL\(TARGET\)%还想知道更多您的事情！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3465',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的眼睛开心的眯起，柔顺地倚在%SAVESTR:PLAYER%的身边轻声细语着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3465-3467',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的眼睛开心的眯起，柔顺地倚在%SAVESTR:PLAYER%的身边轻声细语着……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:357 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3467',
+        any: [/^\s*CFLAG:357 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3469',
+        any: [/^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3470',
+        any: [/^\s*PRINTFORMW 「可以的话，不想浪费力气跟残渣说话。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3471',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%依然是平淡地说着气死人不偿命的话……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3471-3475',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%依然是平淡地说着气死人不偿命的话……\s*$\s*^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3471-3477',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%依然是平淡地说着气死人不偿命的话……\s*$\s*^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3472',
+        any: [/^\s*CFLAG:357 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3472-3478',
+        any: [
+          /^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3473-3479',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;パイズリフェラ CFLAG:360\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3475-3479',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;パイズリフェラ CFLAG:360\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3481',
+        any: [/^\s*IF SELECTCOM == 123\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3483',
+        any: [/^\s*IF CFLAG:TARGET:360 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3485',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3486',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3488',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3489',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3491',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3491-3497',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:360 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3492',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3495',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3495-3497',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:360 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3497',
+        any: [/^\s*CFLAG:TARGET:360 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3497-3499',
+        any: [
+          /^\s*CFLAG:TARGET:360 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3498-3502',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:360 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3502',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:360 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3503',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3504',
+        any: [/^\s*CFLAG:360 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3506',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:360 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3507',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3508',
+        any: [/^\s*CFLAG:360 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3510',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:360 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3511',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3512',
+        any: [/^\s*CFLAG:360 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3514',
+        any: [/^\s*ELSEIF CFLAG:360 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3515',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3516',
+        any: [/^\s*CFLAG:360 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3516-3518',
+        any: [/^\s*CFLAG:360 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3516-3520',
+        any: [
+          /^\s*CFLAG:360 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3516-3522',
+        any: [
+          /^\s*CFLAG:360 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;フェラ自慰 CFLAG:361\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3518-3522',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;フェラ自慰 CFLAG:361\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3524',
+        any: [/^\s*IF SELECTCOM == 125\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3526',
+        any: [/^\s*IF CFLAG:TARGET:361 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3528',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3529',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3531',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3532',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3534',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3534-3540',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:361 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3535',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3538',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3538-3540',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:361 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3540',
+        any: [/^\s*CFLAG:TARGET:361 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3540-3542',
+        any: [
+          /^\s*CFLAG:TARGET:361 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3541-3545',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:361 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3545',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:361 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3546',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3547',
+        any: [/^\s*CFLAG:361 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3549',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:361 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3550',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3551',
+        any: [/^\s*CFLAG:361 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3553',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:361 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3554',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3555',
+        any: [/^\s*CFLAG:361 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3557',
+        any: [/^\s*ELSEIF CFLAG:361 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3558',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3559',
+        any: [/^\s*CFLAG:361 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3559-3561',
+        any: [/^\s*CFLAG:361 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3559-3563',
+        any: [
+          /^\s*CFLAG:361 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3559-3565',
+        any: [
+          /^\s*CFLAG:361 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3560-3566',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;手コキフェラ CFLAG:362\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3568',
+        any: [/^\s*IF SELECTCOM == 126\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3570',
+        any: [/^\s*IF CFLAG:TARGET:362 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3572',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3573',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3575',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3576',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3578',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3578-3584',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:362 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3579',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3582',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3582-3584',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:362 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3584',
+        any: [/^\s*CFLAG:TARGET:362 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3584-3586',
+        any: [
+          /^\s*CFLAG:TARGET:362 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3585-3589',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:362 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3589',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:362 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3590',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3591',
+        any: [/^\s*CFLAG:362 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3593',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:362 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3594',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3595',
+        any: [/^\s*CFLAG:362 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3597',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:362 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3598',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3599',
+        any: [/^\s*CFLAG:362 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3601',
+        any: [/^\s*ELSEIF CFLAG:362 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3602',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3603',
+        any: [/^\s*CFLAG:362 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3603-3605',
+        any: [/^\s*CFLAG:362 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3603-3607',
+        any: [
+          /^\s*CFLAG:362 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3603-3609',
+        any: [
+          /^\s*CFLAG:362 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3604-3610',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;バキュームフェラ CFLAG:363\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3612',
+        any: [/^\s*IF SELECTCOM == 127\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3614',
+        any: [/^\s*IF CFLAG:TARGET:363 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3616',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3617',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3619',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3620',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3622',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3622-3628',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:363 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3623',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3626',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3626-3628',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:363 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3628',
+        any: [/^\s*CFLAG:TARGET:363 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3628-3630',
+        any: [
+          /^\s*CFLAG:TARGET:363 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3628-3634',
+        any: [
+          /^\s*CFLAG:TARGET:363 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3633',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3634',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3635',
+        any: [/^\s*CFLAG:363 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3637',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:363 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3638',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3639',
+        any: [/^\s*CFLAG:363 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3641',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:363 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3642',
+        any: [/^\s*CFLAG:363 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3644',
+        any: [/^\s*ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3645',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3646',
+        any: [/^\s*CFLAG:363 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3646-3648',
+        any: [/^\s*CFLAG:363 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3646-3650',
+        any: [
+          /^\s*CFLAG:363 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3646-3652',
+        any: [
+          /^\s*CFLAG:363 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3647-3653',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;シックスナイン CFLAG:364\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3655',
+        any: [/^\s*IF SELECTCOM == 69\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3657',
+        any: [/^\s*IF CFLAG:TARGET:364 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3659',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3660',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3662',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3663',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3665',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3665-3671',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:364 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3666',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3669',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3669-3671',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:364 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3671',
+        any: [/^\s*CFLAG:TARGET:364 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3671-3673',
+        any: [
+          /^\s*CFLAG:TARGET:364 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3672-3676',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:364 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3676',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:364 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3677',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3678',
+        any: [/^\s*CFLAG:364 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3680',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:364 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3681',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3682',
+        any: [/^\s*CFLAG:364 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3684',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:364 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3685',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3686',
+        any: [/^\s*CFLAG:364 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3688',
+        any: [/^\s*ELSEIF CFLAG:364 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3689',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3690',
+        any: [/^\s*CFLAG:364 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3690-3692',
+        any: [/^\s*CFLAG:364 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3690-3694',
+        any: [
+          /^\s*CFLAG:364 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3690-3696',
+        any: [
+          /^\s*CFLAG:364 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3691-3697',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;ディープスロート CFLAG:365\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3699',
+        any: [/^\s*IF SELECTCOM == 124\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3701',
+        any: [/^\s*IF CFLAG:TARGET:365 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3703',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3704',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3706',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3707',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3709',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3709-3715',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:365 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3710',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3713',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3713-3715',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:365 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3715',
+        any: [/^\s*CFLAG:TARGET:365 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3715-3717',
+        any: [
+          /^\s*CFLAG:TARGET:365 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3715-3721',
+        any: [
+          /^\s*CFLAG:TARGET:365 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3720',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:363 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3721',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3722',
+        any: [/^\s*CFLAG:365 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3724',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:363 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3725',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3726',
+        any: [/^\s*CFLAG:365 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3728',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:363 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3729',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3730',
+        any: [/^\s*CFLAG:365 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3732',
+        any: [/^\s*ELSEIF CFLAG:363 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3733',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3734',
+        any: [/^\s*CFLAG:365 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3734-3736',
+        any: [/^\s*CFLAG:365 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3734-3738',
+        any: [
+          /^\s*CFLAG:365 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3734-3740',
+        any: [
+          /^\s*CFLAG:365 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3735-3741',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;イラマチオ CFLAG:381\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3743',
+        any: [/^\s*IF SELECTCOM == 80\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3745',
+        any: [/^\s*IF CFLAG:TARGET:381 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3747',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3748',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3750',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3750-3756',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:381 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3751',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3754',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3754-3756',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:381 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3756',
+        any: [/^\s*CFLAG:TARGET:381 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3756-3758',
+        any: [
+          /^\s*CFLAG:TARGET:381 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3757-3761',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:381 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3761',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(CFLAG:381 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3762',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3763',
+        any: [/^\s*CFLAG:381 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3765',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:381 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3766',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3767',
+        any: [/^\s*CFLAG:381 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3769',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:381 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3770',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3771',
+        any: [/^\s*CFLAG:381 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3773',
+        any: [/^\s*ELSEIF CFLAG:381 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3774',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3775',
+        any: [/^\s*CFLAG:381 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3775-3777',
+        any: [/^\s*CFLAG:381 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3775-3779',
+        any: [
+          /^\s*CFLAG:381 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3775-3781',
+        any: [
+          /^\s*CFLAG:381 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;--------------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3777-3781',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;--------------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3786',
+        any: [/^\s*IF SELECTCOM == 87\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3791',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3792',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3794',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3794-3830',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3794-3834',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3796',
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3797',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3799',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3800',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3802',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3803',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3805',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3806',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3808',
+        any: [/^\s*ELSEIF P == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3810',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3811',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3813',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3816',
+        any: [/^\s*ELSEIF P == 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3817',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3819',
+        any: [/^\s*ELSEIF P == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3820',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3822',
+        any: [/^\s*ELSEIF P == 64\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3823',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3823-3829',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;愛\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3824-3829',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;愛\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3827',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3827-3829',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;愛\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3830',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3830-3866',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3830-3870',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3832',
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3833',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3835',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3836',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3838',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3839',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3841',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3842',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3844',
+        any: [/^\s*ELSEIF P == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3846',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3847',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3849',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3852',
+        any: [/^\s*ELSEIF P == 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3853',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3855',
+        any: [/^\s*ELSEIF P == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3856',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3858',
+        any: [/^\s*ELSEIF P == 64\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3859',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3859-3865',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3860-3865',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3861-3867',
+        any: [
+          /^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*;装着する\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3863',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3865-3867',
+        any: [/^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*;装着する\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3866-3902',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3866-3906',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3868',
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3869',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3871',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3872',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3874',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3875',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3877',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3878',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3880',
+        any: [/^\s*ELSEIF P == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3882',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3883',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3885',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3888',
+        any: [/^\s*ELSEIF P == 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3889',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3891',
+        any: [/^\s*ELSEIF P == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3892',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3894',
+        any: [/^\s*ELSEIF P == 64\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3895',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3895-3901',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3896-3901',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3898-3902',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:348 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3899',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3900-3902',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:348 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3902',
+        any: [/^\s*CFLAG:TARGET:348 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3902-3904',
+        any: [
+          /^\s*CFLAG:TARGET:348 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3904-3906',
+        any: [/^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;助手\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3907',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3908',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3910',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3910-3944',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$\s*^\s*ELSEIF P == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3910-3948',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:348 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$\s*^\s*ELSEIF P == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3912',
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3914',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3915',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3917',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3918',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3920',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3921',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3923',
+        any: [/^\s*ELSEIF P == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3925',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3926',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3928',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3931',
+        any: [/^\s*ELSEIF P == 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3932',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3934',
+        any: [/^\s*ELSEIF P == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3935',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3937',
+        any: [/^\s*ELSEIF P == 64\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3938',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3938-3944',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3939-3944',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3942',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3942-3944',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3944',
+        any: [/^\s*CFLAG:348 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3946',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:348 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3948',
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3950',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3951',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3953',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3954',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3956',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3957',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3959',
+        any: [/^\s*ELSEIF P == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3959-3965',
+        any: [
+          /^\s*ELSEIF P == 8\s*$\s*^\s*IF TALENT:121 \|\| TALENT:122\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;舌先\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3959-3969',
+        any: [
+          /^\s*ELSEIF P == 8\s*$\s*^\s*IF TALENT:121 \|\| TALENT:122\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;舌先\s*$\s*^\s*ELSEIF P == 16\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3959-3989',
+        any: [
+          /^\s*ELSEIF P == 8\s*$\s*^\s*IF TALENT:121 \|\| TALENT:122\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;舌先\s*$\s*^\s*ELSEIF P == 16\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3960',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3961',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3963',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3966',
+        any: [/^\s*ELSEIF P == 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3967',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3969',
+        any: [/^\s*ELSEIF P == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3970',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3972',
+        any: [/^\s*ELSEIF P == 64\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3973',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3973-3979',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3977',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3977-3979',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3979',
+        any: [/^\s*CFLAG:348 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3981',
+        any: [/^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3981-4015',
+        any: [
+          /^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$\s*^\s*ELSEIF P == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3981-4019',
+        any: [
+          /^\s*ELSEIF CFLAG:348 <= 1 \|\| FLAG:7 == 2\s*$\s*^\s*;装着する\s*$\s*^\s*IF CFLAG:7 & P\s*$\s*^\s*;両乳首\s*$\s*^\s*IF P == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;おへそ\s*$\s*^\s*ELSEIF P == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3983',
+        any: [/^\s*IF CFLAG:7 & P\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3985',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3986',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3988',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3989',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3991',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3992',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3994',
+        any: [/^\s*ELSEIF P == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3996',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3997',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '3999',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4002',
+        any: [/^\s*ELSEIF P == 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4003',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4005',
+        any: [/^\s*ELSEIF P == 32\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4006',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4008',
+        any: [/^\s*ELSEIF P == 64\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4009',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4009-4015',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4010-4015',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;取り外し\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4013',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4013-4015',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:348 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4015',
+        any: [/^\s*CFLAG:348 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4015-4017',
+        any: [/^\s*CFLAG:348 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4015-4019',
+        any: [
+          /^\s*CFLAG:348 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4027',
+        any: [/^\s*@DOG_KOJO_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4027-4888',
+        any: [
+          /^\s*@DOG_KOJO_15\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦愛撫 CFLAG:301\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4032',
+        any: [/^\s*IF SELECTCOM == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4034',
+        any: [/^\s*IF CFLAG:301 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4036',
+        any: [/^\s*IF MARK:2 >= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4037',
+        any: [/^\s*PRINTFORMW 「…………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4038',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%皱着眉头，忍耐着狗的磨蹭……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4039-4041',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不……别靠过来！恶心！……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4041',
+        any: [/^\s*PRINTFORMW 「不……别靠过来！恶心！……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4042',
+        any: [
+          /^\s*PRINTFORMW 当狗磨蹭到裸露的皮肤时，%SAVESTR:TARGET%忍不住怒斥了起来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4042-4044',
+        any: [
+          /^\s*PRINTFORMW 当狗磨蹭到裸露的皮肤时，%SAVESTR:TARGET%忍不住怒斥了起来……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:301 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4042-4048',
+        any: [
+          /^\s*PRINTFORMW 当狗磨蹭到裸露的皮肤时，%SAVESTR:TARGET%忍不住怒斥了起来……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:301 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4044',
+        any: [/^\s*CFLAG:301 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4045-4049',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4049',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:301 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4050',
+        any: [/^\s*PRINTFORMW 「狗狗的皮毛好舒服……其他的地方也……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4051',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%就像是一条合格的母狗一样，万分自然地与狗相互磨蹭着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4052',
+        any: [/^\s*CFLAG:301 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4054',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:301 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4055',
+        any: [/^\s*PRINTFORMW 「即使对象是狗狗……也很舒服呢……♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4056',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%毫不在乎地与狗相互磨蹭着……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4057',
+        any: [/^\s*CFLAG:301 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4059',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:301 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4061',
+        any: [
+          /^\s*PRINTFORMW 「如果您希望%SELF_CALL\(TARGET\)%跟狗狗亲近的话………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4062',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%顺从地与狗相互磨蹭着……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4063',
+        any: [/^\s*CFLAG:301 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4065',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:301 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4066',
+        any: [/^\s*PRINTFORMW 「………唔……嗯……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4067',
+        any: [/^\s*CFLAG:301 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4069',
+        any: [
+          /^\s*ELSEIF MARK:2 == 2 && \(CFLAG:301 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4070',
+        any: [/^\s*PRINTFORMW 「……唔………不……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4071',
+        any: [/^\s*CFLAG:301 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4073',
+        any: [
+          /^\s*ELSEIF MARK:2 <= 1 && \(CFLAG:301 <= 1 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4074',
+        any: [/^\s*PRINTFORMW 「都说不要了……走开啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4074-4078',
+        any: [
+          /^\s*PRINTFORMW 「都说不要了……走开啊！」\s*$\s*^\s*CFLAG:301 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4074-4080',
+        any: [
+          /^\s*PRINTFORMW 「都说不要了……走开啊！」\s*$\s*^\s*CFLAG:301 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4074-4082',
+        any: [
+          /^\s*PRINTFORMW 「都说不要了……走开啊！」\s*$\s*^\s*CFLAG:301 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4075',
+        any: [/^\s*CFLAG:301 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4076-4082',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦クンニ CFLAG:302\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4084',
+        any: [/^\s*IF SELECTCOM == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4086',
+        any: [/^\s*IF CFLAG:302 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4088',
+        any: [/^\s*IF TALENT:TARGET:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4089',
+        any: [/^\s*PRINTFORMW 「不！那里是……不可以啊！啊啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4090',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%发出了歇斯底里的大叫……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4091-4093',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不……好脏……不要啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4093',
+        any: [/^\s*PRINTFORMW 「不……好脏……不要啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4094',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地怒吼着……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4094-4096',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:302 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4094-4100',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:302 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4096',
+        any: [/^\s*CFLAG:302 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4097-4101',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4101',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:302 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4102',
+        any: [
+          /^\s*PRINTFORMW 「嗯～啊啊♡……好……好棒♡……湿了……要去了啊～♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4103',
+        any: [/^\s*CFLAG:302 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4105',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:302 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4106',
+        any: [/^\s*PRINTFORMW 「那里……嗯…啊啊♡…被狗狗舔了呢～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4107',
+        any: [/^\s*CFLAG:302 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4109',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:302 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4110',
+        any: [/^\s*PRINTFORMW 「呜……这里…不行……是魔王大人的……唔……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4111',
+        any: [/^\s*CFLAG:302 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4113',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:302 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4114',
+        any: [/^\s*PRINTFORMW 「……唔……不……不要………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4115',
+        any: [/^\s*CFLAG:302 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4117',
+        any: [/^\s*ELSEIF CFLAG:302 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4118',
+        any: [/^\s*PRINTFORMW 「脏死了！走开！走开啊啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4118-4122',
+        any: [
+          /^\s*PRINTFORMW 「脏死了！走开！走开啊啊啊！」\s*$\s*^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4118-4124',
+        any: [
+          /^\s*PRINTFORMW 「脏死了！走开！走开啊啊啊！」\s*$\s*^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4118-4126',
+        any: [
+          /^\s*PRINTFORMW 「脏死了！走开！走开啊啊啊！」\s*$\s*^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4119',
+        any: [/^\s*CFLAG:302 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4119-4127',
+        any: [
+          /^\s*CFLAG:302 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦胸愛撫 CFLAG:306\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4129',
+        any: [/^\s*IF SELECTCOM == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4131',
+        any: [/^\s*IF CFLAG:306 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4133',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4134',
+        any: [/^\s*PRINTFORMW 「在魔王大人面前……呜……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4135-4137',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「别……别碰那里！……走开啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4137',
+        any: [/^\s*PRINTFORMW 「别……别碰那里！……走开啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4137-4139',
+        any: [
+          /^\s*PRINTFORMW 「别……别碰那里！……走开啊！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:306 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4137-4143',
+        any: [
+          /^\s*PRINTFORMW 「别……别碰那里！……走开啊！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:306 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4139',
+        any: [/^\s*CFLAG:TARGET:306 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4140-4144',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4144',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:306 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4145',
+        any: [/^\s*PRINTFORMW 「嗯～好……好棒……啊啊……嗯嗯……啊啊啊～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4146',
+        any: [/^\s*CFLAG:306 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4148',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:306 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4149',
+        any: [/^\s*PRINTFORMW 「嗯…啊啊～狗狗……真乖呢♡……嗯嗯……啊啊～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4150',
+        any: [/^\s*CFLAG:306 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4152',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:306 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4153',
+        any: [
+          /^\s*PRINTFORMW 「唔……不…不行……%SELF_CALL\(TARGET\)%的身体……是魔王大人的……啊…」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4154',
+        any: [/^\s*CFLAG:306 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4156',
+        any: [
+          /^\s*ELSEIF ABL:1 >= 3 && \(CFLAG:306 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4157',
+        any: [/^\s*PRINTFORMW 「啊……不……不可以……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4158',
+        any: [/^\s*CFLAG:306 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4160',
+        any: [/^\s*ELSEIF CFLAG:306 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4161',
+        any: [/^\s*PRINTFORMW 「恶心！走开………不……不要！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4161-4165',
+        any: [
+          /^\s*PRINTFORMW 「恶心！走开………不……不要！」\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4161-4167',
+        any: [
+          /^\s*PRINTFORMW 「恶心！走开………不……不要！」\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4161-4169',
+        any: [
+          /^\s*PRINTFORMW 「恶心！走开………不……不要！」\s*$\s*^\s*CFLAG:306 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦キス CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4162',
+        any: [/^\s*CFLAG:306 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4163-4169',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦キス CFLAG:307\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4171',
+        any: [/^\s*IF SELECTCOM == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4173',
+        any: [/^\s*IF CFLAG:307 == 0 && TFLAG:13\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4175',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4176',
+        any: [/^\s*PRINTFORMW 「嗯啊……咕……啾……嗯……嗯」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4177',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%连自己是初吻的事情都忘了，只是痴迷地与狗进行舌吻……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4179',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4180',
+        any: [
+          /^\s*PRINTFORMW 「初吻的对象是狗狗吗？魔王大人真是鬼畜呢～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4181',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%这么说，却是毫不抵抗地遵从了命令……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4183',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4184',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是属於魔王大人的……如果是您的命令…就算是初吻也……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4185',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎有点消沉的样子，但还是顺从地执行着命令……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4186-4188',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「真…真不敢相信……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%的…初吻！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4188',
+        any: [
+          /^\s*PRINTFORMW 「真…真不敢相信……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%的…初吻！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4188-4192',
+        any: [
+          /^\s*PRINTFORMW 「真…真不敢相信……%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%的…初吻！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4189',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4189-4195',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;（調教では）初めて\s*$\s*^\s*ELSEIF CFLAG:307 == 0\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4191',
+        any: [/^\s*CFLAG:307 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4194',
+        any: [/^\s*ELSEIF CFLAG:307 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4196',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4197',
+        any: [/^\s*PRINTFORMW 「嗯啊……咕……啾……嗯……嗯～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4198',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%淫荡地摇着屁股，痴迷地与狗进行着舌吻……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4200',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4201',
+        any: [/^\s*PRINTFORMW 「呵呵……好啊……没有试过呢……嗯……啾……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4202',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%毫不抵抗地遵从了命令……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4204',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4205',
+        any: [
+          /^\s*PRINTFORMW 「%SELF_CALL\(TARGET\)%是属於魔王大人的……如果是您的命令……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4206',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%顺从地执行着命令……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4207-4209',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「真…真不敢相信……不……不要！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4209',
+        any: [/^\s*PRINTFORMW 「真…真不敢相信……不……不要！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4209-4213',
+        any: [
+          /^\s*PRINTFORMW 「真…真不敢相信……不……不要！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4210',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4210-4216',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%厌恶地不停擦拭着嘴唇，那神情恍惚的样子似乎受到了打击……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:307 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4212',
+        any: [/^\s*CFLAG:307 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4213-4217',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4217',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:307 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4218',
+        any: [/^\s*PRINTFORMW 「嗯啊…好……好棒…咕……啾……嗯……嗯～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4219',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边流着口水，一边痴迷地与狗进行着舌吻……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4220',
+        any: [/^\s*CFLAG:307 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4222',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:307 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4223',
+        any: [/^\s*PRINTFORMW 「嗯……唔……咕……啾……嗯～♡♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4224',
+        any: [
+          /^\s*PRINTFORMW 即使对象是狗，%SAVESTR:TARGET%似乎也无所谓的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4225',
+        any: [/^\s*CFLAG:307 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4227',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:307 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4228',
+        any: [/^\s*PRINTFORMW 「嗯……唔……咕……啾……嗯……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4229',
+        any: [/^\s*PRINTFORMW （一切……都是要让……魔王大人开心……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4230',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%顺从地执行着命令……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4231',
+        any: [/^\s*CFLAG:307 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4233',
+        any: [
+          /^\s*ELSEIF ABL:10 >=2 && \(CFLAG:307 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4234',
+        any: [/^\s*PRINTFORMW 「不……唔………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4235',
+        any: [/^\s*CFLAG:307 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4237',
+        any: [/^\s*ELSEIF CFLAG:307 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4238',
+        any: [/^\s*PRINTFORMW 「讨厌！……恶心死了！……不……不要！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4238-4242',
+        any: [
+          /^\s*PRINTFORMW 「讨厌！……恶心死了！……不……不要！」\s*$\s*^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4238-4244',
+        any: [
+          /^\s*PRINTFORMW 「讨厌！……恶心死了！……不……不要！」\s*$\s*^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4238-4246',
+        any: [
+          /^\s*PRINTFORMW 「讨厌！……恶心死了！……不……不要！」\s*$\s*^\s*CFLAG:307 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4239',
+        any: [/^\s*CFLAG:307 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4240-4246',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦アナル舐め CFLAG:310\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4248',
+        any: [/^\s*IF SELECTCOM == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4250',
+        any: [/^\s*IF CFLAG:310 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4252',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4253',
+        any: [/^\s*PRINTFORMW 「嗯啊…哈啊……好……好棒……狗狗的舌头♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4255',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4256',
+        any: [/^\s*PRINTFORMW 「呵呵……舔这个地方……真是坏狗狗♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4258',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4259',
+        any: [/^\s*PRINTFORMW 「唔……狗狗……不可以……啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4260-4262',
+        any: [
+          /^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「好脏……不要……走开…走开啊啊啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4262',
+        any: [/^\s*PRINTFORMW 「好脏……不要……走开…走开啊啊啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4262-4264',
+        any: [
+          /^\s*PRINTFORMW 「好脏……不要……走开…走开啊啊啊！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:310 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4262-4268',
+        any: [
+          /^\s*PRINTFORMW 「好脏……不要……走开…走开啊啊啊！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:310 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4264',
+        any: [/^\s*CFLAG:TARGET:310 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4265-4269',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4269',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:310 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4270',
+        any: [
+          /^\s*PRINTFORMW 「啊啊…舌头…伸到里面了♡……好…好棒♡……啊啊……嗯啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4271',
+        any: [/^\s*CFLAG:310 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4273',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:310 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4274',
+        any: [/^\s*PRINTFORMW 「狗狗……也很……厉害呢…嗯啊啊～♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4275',
+        any: [/^\s*CFLAG:310 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4277',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:310 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4278',
+        any: [/^\s*PRINTFORMW 「啊……在魔王大人的视线下……呜……好羞耻啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4279',
+        any: [/^\s*CFLAG:310 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4281',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:310 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4282',
+        any: [/^\s*PRINTFORMW 「……不………不………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4283',
+        any: [/^\s*CFLAG:310 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4285',
+        any: [/^\s*ELSEIF CFLAG:310 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4286',
+        any: [/^\s*PRINTFORMW 「走开！不……不可以……不要舔啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4286-4290',
+        any: [
+          /^\s*PRINTFORMW 「走开！不……不可以……不要舔啊！」\s*$\s*^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4286-4292',
+        any: [
+          /^\s*PRINTFORMW 「走开！不……不可以……不要舔啊！」\s*$\s*^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4286-4294',
+        any: [
+          /^\s*PRINTFORMW 「走开！不……不可以……不要舔啊！」\s*$\s*^\s*CFLAG:310 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4287',
+        any: [/^\s*CFLAG:310 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4288-4294',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦後背位 CFLAG:322\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4296',
+        any: [/^\s*IF SELECTCOM == 21\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4298',
+        any: [/^\s*IF CFLAG:TARGET:322 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4300',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4302',
+        any: [/^\s*IF TALENT:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4303',
+        any: [
+          /^\s*PRINTFORMW 「是的…是的…%SELF_CALL\(TARGET\)%的一切都是狗狗大人的…啊啊……嗯啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4304',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%兴奋地摇晃着屁股，就像是一条发情的母狗……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4306',
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4307',
+        any: [/^\s*PRINTFORMW 「能摆脱处女就好……嗯……狗狗……快来呀～♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4308',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%毫不在乎第一次的对象是狗狗的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4310',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4311',
+        any: [
+          /^\s*PRINTFORMW 「但是%SELF_CALL\(TARGET\)%…%SELF_CALL\(TARGET\)%是…不…没事……如果魔王大人想看的话………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4312',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎无法把话说完…只是低头温驯地听从了命令……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4312-4316',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎无法把话说完…只是低头温驯地听从了命令……\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要呀！啊啊！绝对…绝对……要杀了你们！啊啊啊！！」\s*$\s*^\s*PRINTFORMW 惨遭兽奸破处的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4315',
+        any: [
+          /^\s*PRINTFORMW 「不！不要呀！啊啊！绝对…绝对……要杀了你们！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4316',
+        any: [
+          /^\s*PRINTFORMW 惨遭兽奸破处的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4316-4318',
+        any: [
+          /^\s*PRINTFORMW 惨遭兽奸破处的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$\s*^\s*ENDIF\s*$\s*^\s*;非処女\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4317-4321',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4321',
+        any: [/^\s*IF TALENT:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4322',
+        any: [
+          /^\s*PRINTFORMW 「是的…是的…%SELF_CALL\(TARGET\)%的一切都是狗狗大人的…啊啊……嗯啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4323',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%兴奋地摇晃着屁股，就像是一条发情的母狗……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4325',
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4326',
+        any: [
+          /^\s*PRINTFORMW 「跟狗狗交配啊……呵呵……好新奇呢……也许很棒哦♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4327',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的双眼发光，露出了很感兴趣的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4329',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4330',
+        any: [/^\s*PRINTFORMW 「好……好的…如果…魔王大人想…想看的话……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4331',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%低头温驯地听从了命令……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4331-4335',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低头温驯地听从了命令……\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要呀！啊啊！绝对…绝对……要杀了你们！啊啊啊！！」\s*$\s*^\s*PRINTFORMW 惨遭兽奸的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4334',
+        any: [
+          /^\s*PRINTFORMW 「不！不要呀！啊啊！绝对…绝对……要杀了你们！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4335',
+        any: [
+          /^\s*PRINTFORMW 惨遭兽奸的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4335-4337',
+        any: [
+          /^\s*PRINTFORMW 惨遭兽奸的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4335-4339',
+        any: [
+          /^\s*PRINTFORMW 惨遭兽奸的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:322 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4336-4342',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:322 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4338',
+        any: [/^\s*CFLAG:322 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4339-4343',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4343',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:322 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4344-4348',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好想受精♡……啊啊……请……请灌满…精液吧…啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「嗯啊啊～狗狗大人的肉棒！…全都进来了♡…啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「是的！是的！%SELF_CALL\(TARGET\)%就是最喜欢被狗交配的母狗♡…啊啊……嗯啊啊～♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4349',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%流着口水双眼翻白，脑子除了狗狗的肉棒之外什么都不知道了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4350',
+        any: [/^\s*CFLAG:322 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4352',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:322 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4353-4357',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯嗯～啊啊……狗狗的…进的好深呢♡♡…啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「嗯啊啊～好烫啊……狗狗的肉棒♡……啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「啊啊～好……好舒服～♡…狗狗好厉害啊…嗯啊……嗯啊啊～♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4358',
+        any: [
+          /^\s*PRINTFORMW 即使是跟狗交配，但是沉醉在肉慾的%SAVESTR:TARGET%一点也不在乎的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4359',
+        any: [/^\s*CFLAG:322 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4361',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:322 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4362-4366',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯嗯…啊…不…不可以射在里面……啊啊……嗯啊啊……」\s*$\s*^\s*DATAFORM 「嗯啊啊…好烫…狗狗的肉棒…不…不……啊啊……嗯啊啊……」\s*$\s*^\s*DATAFORM 「啊啊…太……太深了…狗狗…不…不可以…嗯…啊啊……」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4367',
+        any: [/^\s*PRINTFORMW （为了魔王大人…就算…就算对象是狗…也……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4368',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边与狗交配，一边想着魔王大人的事情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4369',
+        any: [/^\s*CFLAG:322 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4371',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:322 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4372',
+        any: [
+          /^\s*PRINTFORMW 「嗯嗯…啊…不…不……好奇怪…不要了……不……嗯啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4373',
+        any: [
+          /^\s*PRINTFORMW 明明是屈辱的兽交，%SAVESTR:TARGET%却不由自主地扭动着身体……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4374',
+        any: [/^\s*CFLAG:322 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4376',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:322 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4377',
+        any: [
+          /^\s*PRINTFORMW 「不……不要啊……饶了%SELF_CALL\(TARGET\)%了……唔……嗯啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4378',
+        any: [
+          /^\s*PRINTFORMW 雌伏在狗身下的%SAVESTR:TARGET%，发出了痛苦的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4379',
+        any: [/^\s*CFLAG:322 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4381',
+        any: [/^\s*ELSEIF CFLAG:322 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4382-4386',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「走开！去死啊！啊啊！啊啊啊！！」\s*$\s*^\s*DATAFORM 「不！不要啊……住手！……啊啊啊！！」\s*$\s*^\s*DATAFORM 「可恶！一定要杀了你！啊！啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4387',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4387-4391',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$\s*^\s*CFLAG:322 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4387-4393',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$\s*^\s*CFLAG:322 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4387-4395',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$\s*^\s*CFLAG:322 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4388',
+        any: [/^\s*CFLAG:322 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4389-4395',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦後背位アナル CFLAG:328\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4397',
+        any: [/^\s*IF SELECTCOM == 27\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4399',
+        any: [/^\s*IF CFLAG:TARGET:328 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4401',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4402',
+        any: [
+          /^\s*PRINTFORMW 「好的…好的…屁股也请狗狗大人宠幸吧…啊啊……嗯啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4403',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%兴奋地摇晃着屁股，就像是一条发情的母狗……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4405',
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4406',
+        any: [/^\s*PRINTFORMW 「跟狗狗肛交吗……没试过呢……也许很棒哦♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4407',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的双眼发光，露出了很感兴趣的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4409',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4410',
+        any: [
+          /^\s*PRINTFORMW 「欸？…没…没事…可以哦……如果…魔王大人想…想看的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4411',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%低头温驯地听从了命令……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4412-4414',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「怎么可能！不！不要！去死……去死啊！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4414',
+        any: [
+          /^\s*PRINTFORMW 「怎么可能！不！不要！去死……去死啊！啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4415',
+        any: [
+          /^\s*PRINTFORMW 被强迫与狗肛交的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4415-4417',
+        any: [
+          /^\s*PRINTFORMW 被强迫与狗肛交的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:328 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4415-4421',
+        any: [
+          /^\s*PRINTFORMW 被强迫与狗肛交的%SAVESTR:TARGET%发出了崩溃似的嘶喊……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:328 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4417',
+        any: [/^\s*CFLAG:TARGET:328 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4419-4421',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋A感覚Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4422',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4423-4427',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「好棒♡……好棒啊……屁股…是…狗狗大人的形状了…啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「嗯啊啊～狗狗大人的肉棒！…全都进来了♡…啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「嗯啊啊！请…请在屁股里射精…留下记号吧♡……啊啊……嗯啊啊～♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4428',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%流着口水双眼翻白，脑子除了狗狗的肉棒之外什么都不知道了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4429',
+        any: [/^\s*CFLAG:328 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4431',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4432-4436',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯嗯～啊啊……狗狗的…插进屁股里面了♡♡…啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「嗯啊啊～好烫啊……狗狗的肉棒♡……啊啊……嗯啊啊～♡」\s*$\s*^\s*DATAFORM 「啊啊～好……好舒服～♡…狗狗好厉害啊…嗯啊……嗯啊啊～♡」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4437',
+        any: [
+          /^\s*PRINTFORMW 即使是跟狗肛交，但是沉醉在肉慾的%SAVESTR:TARGET%一点也不在乎的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4438',
+        any: [/^\s*CFLAG:328 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4440',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:3 >= 3 && \(CFLAG:328 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4441-4445',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯嗯…啊…後面…好奇怪…不…不可以……啊啊……嗯啊啊……」\s*$\s*^\s*DATAFORM 「嗯啊啊…好烫…狗狗的肉棒…不…不……啊啊……嗯啊啊……」\s*$\s*^\s*DATAFORM 「啊啊…太……太深了…狗狗…不…不可以…嗯…啊啊……」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4446',
+        any: [/^\s*PRINTFORMW （明明不是魔王大人…为…为什么会……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4447',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边与狗肛交，一边想着魔王大人的事情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4448',
+        any: [/^\s*CFLAG:328 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4450',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:328 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4451-4455',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「嗯嗯…啊…後面……啊啊……嗯啊啊……」\s*$\s*^\s*DATAFORM 「嗯啊啊…进……进来了……啊啊……嗯啊啊……」\s*$\s*^\s*DATAFORM 「啊啊…不……那里会……嗯…啊啊……」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4456',
+        any: [/^\s*PRINTFORMW （为了魔王大人…就算…就算对象是狗…也……）\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4457',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边与狗肛交，一边想着魔王大人的事情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4458',
+        any: [/^\s*CFLAG:328 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4460',
+        any: [
+          /^\s*ELSEIF ABL:3 >= 3 && \(CFLAG:328 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4461',
+        any: [
+          /^\s*PRINTFORMW 「嗯嗯…啊…不…不……好奇怪…不要了……不……嗯啊啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4462',
+        any: [
+          /^\s*PRINTFORMW 明明是屈辱的兽交，%SAVESTR:TARGET%却不由自主地扭动着身体……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4463',
+        any: [/^\s*CFLAG:328 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4465',
+        any: [/^\s*ELSEIF  CFLAG:328 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4466-4470',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「走开！去死啊！啊啊！啊啊啊！！」\s*$\s*^\s*DATAFORM 「不！不要啊……住手！……啊啊啊！！」\s*$\s*^\s*DATAFORM 「可恶！一定要杀了你！啊！啊啊啊！」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4471',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4471-4475',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$\s*^\s*CFLAG:328 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4471-4477',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$\s*^\s*CFLAG:328 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4471-4479',
+        any: [
+          /^\s*PRINTFORMW 被狗奸淫的%SAVESTR:TARGET%，发出了凄厉地悲鸣……\s*$\s*^\s*CFLAG:328 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4472',
+        any: [/^\s*CFLAG:328 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4473-4479',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦手淫 CFLAG:331\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4481',
+        any: [/^\s*IF SELECTCOM == 30\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4483',
+        any: [/^\s*IF CFLAG:TARGET:331 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4485',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4486',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4488',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4489',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4491',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4491-4497',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:331 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4492',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4495',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4495-4497',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:331 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4495-4501',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:331 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4497',
+        any: [/^\s*CFLAG:TARGET:331 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4499-4501',
+        any: [
+          /^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4502',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4502-4508',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 6 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:331 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4503',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4504',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4506',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4506-4508',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:331 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4508',
+        any: [/^\s*CFLAG:331 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4510',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4510-4516',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 5 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:331 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4511',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4512',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4514',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4514-4516',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:331 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4516',
+        any: [/^\s*CFLAG:331 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4518',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4518-4524',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:331 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*IF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:331 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4519',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4520',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4522',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4522-4524',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:331 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4524',
+        any: [/^\s*CFLAG:331 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4526',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4527',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4528',
+        any: [/^\s*CFLAG:331 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4530',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 >= 3 && \(CFLAG:331 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4531',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4532',
+        any: [/^\s*CFLAG:331 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4534',
+        any: [/^\s*ELSEIF CFLAG:331 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4535',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4535-4539',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:331 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4535-4541',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:331 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4535-4543',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:331 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4536',
+        any: [/^\s*CFLAG:331 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4537-4543',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦フェラチオ CFLAG:332\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4545',
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4547',
+        any: [/^\s*IF CFLAG:TARGET:332 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4549',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4550',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4552',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4553',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4555',
+        any: [/^\s*ELSEIF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4555-4561',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（奉仕精神Lv3未満）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:332 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4556',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4559',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4559-4561',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:332 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4559-4565',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:332 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋奉仕精神Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4561',
+        any: [/^\s*CFLAG:TARGET:332 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4562-4566',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋奉仕精神Lv5\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4566',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4567',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4568',
+        any: [/^\s*CFLAG:332 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4570',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 >= 5 && \(CFLAG:332 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4571',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4572',
+        any: [/^\s*CFLAG:332 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4574',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:332 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4575',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4576',
+        any: [/^\s*CFLAG:332 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4578',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:332 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4579',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4580',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4581',
+        any: [/^\s*CFLAG:332 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4583',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:332 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4584',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4585',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4586',
+        any: [/^\s*CFLAG:332 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4588',
+        any: [/^\s*ELSEIF CFLAG:332 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4589',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4589-4593',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:332 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4589-4595',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:332 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4589-4597',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:332 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4590',
+        any: [/^\s*CFLAG:332 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4591-4597',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦騎乗位 CFLAG:335\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4599',
+        any: [/^\s*IF SELECTCOM == 34\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4601',
+        any: [/^\s*IF CFLAG:TARGET:335 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4603',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4605',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4606',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4608',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4609',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4611',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4611-4617',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外（愛無し）\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;非処女\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4612',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4615',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4615-4617',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;非処女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4616-4620',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*;非処女\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4620',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4621',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4623',
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4624',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4626',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4626-4632',
+        any: [
+          /^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4627',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4629-4633',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:335 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4630',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4630-4634',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:335 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4631-4637',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:335 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4633',
+        any: [/^\s*CFLAG:TARGET:335 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4634-4638',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4638',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:335 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4639',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4640',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4640-4646',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSEIF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 7\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4641',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4642',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4644',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4644-4646',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4646',
+        any: [/^\s*CFLAG:335 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4648',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:335 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4649',
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4650',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4651',
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4652',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4652-4658',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSEIF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 6\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4653',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4654',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4656',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4656-4658',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4658',
+        any: [/^\s*CFLAG:335 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4660',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:335 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4661',
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4662',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4663',
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4664',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4664-4670',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSEIF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4665',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4666',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4668',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4668-4670',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4670',
+        any: [/^\s*CFLAG:335 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4672',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && ABL:2 >= 3 && \(CFLAG:335 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4673',
+        any: [/^\s*IF RAND:4 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4674',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4675',
+        any: [/^\s*ELSEIF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4676',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4676-4682',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSEIF RAND:2 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4677',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4678',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4680',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4680-4682',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:335 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4682',
+        any: [/^\s*CFLAG:335 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4684',
+        any: [
+          /^\s*ELSEIF MARK:2 == 3 && \(CFLAG:335 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4685',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4686',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4687',
+        any: [/^\s*CFLAG:335 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4689',
+        any: [/^\s*ELSEIF CFLAG:335 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4690',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4690-4694',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:335 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4690-4696',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:335 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4690-4698',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:335 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4691',
+        any: [/^\s*CFLAG:335 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4692-4698',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦アナル奉仕 CFLAG:338\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4698-4716',
+        any: [
+          /^\s*;獣姦アナル奉仕 CFLAG:338\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 37\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:338 == 0\s*$\s*^\s*;奉仕精神Lv3以上\s*$\s*^\s*IF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4698-4720',
+        any: [
+          /^\s*;獣姦アナル奉仕 CFLAG:338\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 37\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:TARGET:338 == 0\s*$\s*^\s*;奉仕精神Lv3以上\s*$\s*^\s*IF ABL:TARGET:16 >= 3\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4700',
+        any: [/^\s*IF SELECTCOM == 37\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4702',
+        any: [/^\s*IF CFLAG:TARGET:338 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4704',
+        any: [/^\s*IF ABL:TARGET:16 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4705',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4708',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4708-4714',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:338 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋奉仕精神Lv5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4710',
+        any: [/^\s*CFLAG:TARGET:338 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4711-4715',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬＋奉仕精神Lv5\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4715',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4716',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4717',
+        any: [/^\s*CFLAG:338 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4719',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4719-4749',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*CFLAG:338 = 5\s*$\s*^\s*;愛＋奉仕精神Lv5\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORML\s*$\s*^\s*CFLAG:338 = 4\s*$\s*^\s*;奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4719-4751',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 4 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*CFLAG:338 = 5\s*$\s*^\s*;愛＋奉仕精神Lv5\s*$\s*^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$\s*^\s*PRINTFORML\s*$\s*^\s*CFLAG:338 = 4\s*$\s*^\s*;奉仕精神Lv3以上\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4720',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4721',
+        any: [/^\s*CFLAG:338 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4723',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:TARGET:16 == 5 && \(CFLAG:338 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4724',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4725',
+        any: [/^\s*CFLAG:338 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4727',
+        any: [
+          /^\s*ELSEIF ABL:TARGET:16 >= 3 && \(CFLAG:338 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4728',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4729',
+        any: [/^\s*CFLAG:338 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4731',
+        any: [/^\s*ELSEIF CFLAG:338 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4732',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4732-4740',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*CFLAG:338 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦アイマスク CFLAG:344　CFLAG:444\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4733',
+        any: [/^\s*CFLAG:338 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4734-4740',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦アイマスク CFLAG:344　CFLAG:444\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4743',
+        any: [/^\s*IF SELECTCOM == 43 && TEQUIP:43\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4745',
+        any: [/^\s*IF CFLAG:TARGET:344 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4747',
+        any: [/^\s*IF TALENT:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4747-4765',
+        any: [
+          /^\s*IF TALENT:136 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;淫乱\s*$\s*^\s*ELSEIF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4747-4769',
+        any: [
+          /^\s*IF TALENT:136 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;淫乱\s*$\s*^\s*ELSEIF TALENT:76 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;愛\s*$\s*^\s*ELSEIF TALENT:85 == 1\s*$\s*^\s*PRINTFORMW\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4748',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4750',
+        any: [/^\s*ELSEIF TALENT:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4751',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4753',
+        any: [/^\s*ELSEIF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4754',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4757',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4757-4763',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:344 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4759',
+        any: [/^\s*CFLAG:TARGET:344 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4760-4764',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*;牝犬\s*$\s*^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4764',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:344 <= 9 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4765',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4766',
+        any: [/^\s*CFLAG:TARGET:344 = 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4768',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 8 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4769',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4770',
+        any: [/^\s*CFLAG:TARGET:344 = 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4772',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 7 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4773',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4774',
+        any: [/^\s*CFLAG:TARGET:344 = 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4776',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:344 <= 6 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4777',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4778',
+        any: [/^\s*CFLAG:TARGET:344 = 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4780',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 5 && \(CFLAG:344 <= 5 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4781',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4782',
+        any: [/^\s*CFLAG:TARGET:344 = 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4784',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && ABL:21 >= 3 && \(CFLAG:344 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4785',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4786',
+        any: [/^\s*CFLAG:TARGET:344 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4788',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:344 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4789',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4790',
+        any: [/^\s*CFLAG:TARGET:344 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4792',
+        any: [
+          /^\s*ELSEIF ABL:21 >= 3 && \(CFLAG:344 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4793',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4794',
+        any: [/^\s*CFLAG:TARGET:344 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4796',
+        any: [/^\s*ELSEIF CFLAG:344 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4797',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4798',
+        any: [/^\s*CFLAG:TARGET:344 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4798-4804',
+        any: [
+          /^\s*CFLAG:TARGET:344 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4799-4804',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4800-4804',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;終了時\s*$\s*^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4803',
+        any: [/^\s*ELSEIF SELECTCOM == 43 && TEQUIP:43 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4805',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4806',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4807',
+        any: [/^\s*CFLAG:444 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4809',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:338 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4810',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4811',
+        any: [/^\s*CFLAG:444 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4813',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:338 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4814',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4815',
+        any: [/^\s*CFLAG:444 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4817',
+        any: [/^\s*ELSEIF CFLAG:444 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4818',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4819',
+        any: [/^\s*CFLAG:444 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4819-4821',
+        any: [/^\s*CFLAG:444 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4819-4823',
+        any: [
+          /^\s*CFLAG:444 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4819-4825',
+        any: [
+          /^\s*CFLAG:444 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;獣姦会話 CFLAG:357\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4828',
+        any: [/^\s*IF SELECTCOM == 56\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4830',
+        any: [/^\s*IF CFLAG:357 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4831',
+        any: [/^\s*IF TEQUIP:53\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4834',
+        any: [/^\s*IF TALENT:TARGET:136 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4835',
+        any: [
+          /^\s*PRINTFORMW 「啊！终於要开拍了吗？这个地方已经等不及想被狗狗射精了呢！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4836',
+        any: [
+          /^\s*PRINTFORMW 「那么，请大家好好观赏%SELF_CALL\(TARGET\)%跟狗狗的爱爱哦！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4837',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地板上摇晃着屁股，简直就像是条发情的母狗……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4839',
+        any: [/^\s*ELSEIF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4840',
+        any: [
+          /^\s*PRINTFORMW 「普通的做爱影像相信各位观众也都看腻了吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4841',
+        any: [
+          /^\s*PRINTFORMW 「那么，接下来就好好期待人狗交配的场景哦！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4842',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出期待的表情，像是迫不及待地舔了舔嘴唇……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4844',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4845',
+        any: [
+          /^\s*PRINTFORMW 「如果……魔王大人开心的话…就算是……跟狗……也……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4846',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%低下头来掩饰自己的表情，配合地说着自%SELF_CALL\(TARGET\)%介绍的台词……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4847-4849',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「可恶……别拍！变态！去死啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4849',
+        any: [/^\s*PRINTFORMW 「可恶……别拍！变态！去死啊！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4850',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%十分抗拒被拍摄这件事，愤怒的怒吼着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4850-4852',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%十分抗拒被拍摄这件事，愤怒的怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4850-4854',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%十分抗拒被拍摄这件事，愤怒的怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:357 = 1\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4850-4858',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%十分抗拒被拍摄这件事，愤怒的怒吼着……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:357 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*IF TEQUIP:53\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4853',
+        any: [/^\s*CFLAG:357 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4853-4859',
+        any: [
+          /^\s*CFLAG:357 = 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;二回目以降\s*$\s*^\s*ELSE\s*$\s*^\s*IF TEQUIP:53\s*$\s*^\s*;ビデオ自己紹介\s*$\s*^\s*;牝犬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4857',
+        any: [/^\s*IF TEQUIP:53\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4860',
+        any: [
+          /^\s*IF TALENT:TARGET:136 == 1 && \(CFLAG:357 <= 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4861',
+        any: [
+          /^\s*PRINTFORMW 「嘿嘿～跟狗狗交配很舒服哦～只要试过就上瘾了呢♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4862',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出痴迷的表情，像条母狗一样不停地摇摆着屁股……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4863',
+        any: [/^\s*CFLAG:357 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4865',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:76 == 1 && \(CFLAG:357 <= 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4866',
+        any: [
+          /^\s*PRINTFORMW 「偶而换换不同的种族交配也很有意思喔！请尽情地观赏吧♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4867',
+        any: [
+          /^\s*PRINTFORMW 「如果大家喜欢这次影像的话，那%SELF_CALL\(TARGET\)%会很开心的呢～」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4868',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%摆出诱惑的姿势，熟练地说着介绍的台词……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4869',
+        any: [/^\s*CFLAG:357 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4871',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(CFLAG:357 <= 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4872',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人……喜欢这种影像吗？那么……%SELF_CALL\(TARGET\)%也……会努力的……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4873',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出了微笑，流畅地说着介绍的台词……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4874',
+        any: [/^\s*CFLAG:357 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4876',
+        any: [/^\s*ELSEIF CFLAG:357 <= 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4877',
+        any: [
+          /^\s*PRINTFORMW 「这种变态行为还要%SELF_CALL\(TARGET\)%说什么？可以请你去死吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4878',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%因为怒气腾腾，对着水晶球恶言恶语着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4878-4882',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%因为怒气腾腾，对着水晶球恶言恶语着……\s*$\s*^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4878-4884',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%因为怒气腾腾，对着水晶球恶言恶语着……\s*$\s*^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4878-4886',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%因为怒气腾腾，对着水晶球恶言恶语着……\s*$\s*^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4879',
+        any: [/^\s*CFLAG:357 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4879-4887',
+        any: [
+          /^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4879-4888',
+        any: [
+          /^\s*CFLAG:357 = 2\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4894',
+        any: [/^\s*@KOJO_MESSAGE_PALAMCNG_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4894-5098',
+        any: [
+          /^\s*@KOJO_MESSAGE_PALAMCNG_15\s*$\s*^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\s*^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\s*^\s*;	RETURN 0\s*$\s*^\s*;ボールギャグ着用時には口上をスキップする\s*$\s*^\s*SIF TEQUIP:45\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4898-4902',
+        any: [
+          /^\s*;ボールギャグ着用時には口上をスキップする\s*$\s*^\s*SIF TEQUIP:45\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4909',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:TARGET:221 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4911',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4913',
+        any: [/^\s*IF SELECTCOM == 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4913-4919',
+        any: [
+          /^\s*IF SELECTCOM == 50\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4914',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4915-4921',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*;ローションを使った場合\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4917',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4919-4921',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*;ローションを使った場合\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4922',
+        any: [/^\s*IF SELECTCOM == 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4922-4928',
+        any: [
+          /^\s*IF SELECTCOM == 50\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4923',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4925-4929',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:221 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4926',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4927-4929',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:221 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4929',
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4929-4931',
+        any: [/^\s*CFLAG:TARGET:221 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4936',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:222 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4938',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4940',
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4940-4946',
+        any: [
+          /^\s*IF SELECTCOM == 51\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4941',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4942-4948',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*;しあわせ草を使った場合\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4944',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4946-4948',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*;しあわせ草を使った場合\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4949',
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4949-4955',
+        any: [
+          /^\s*IF SELECTCOM == 51\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4950',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4952-4956',
+        any: [
+          /^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:222 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4953',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4954-4956',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:222 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4956',
+        any: [/^\s*CFLAG:222 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4956-4958',
+        any: [/^\s*CFLAG:222 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4963',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:223 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4965',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4965-4971',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:223 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4966',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4969',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4969-4971',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:223 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4971',
+        any: [/^\s*CFLAG:223 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4971-4973',
+        any: [/^\s*CFLAG:223 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4978',
+        any: [/^\s*IF P > PALAMLV:2 && CFLAG:224 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4980',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4980-4986',
+        any: [
+          /^\s*IF TALENT:TARGET:85 == 1\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:224 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4981',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4984',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4984-4986',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:224 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4986',
+        any: [/^\s*CFLAG:224 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4986-4988',
+        any: [/^\s*CFLAG:224 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4992',
+        any: [/^\s*IF NOWEX:0 > 0 && CFLAG:225 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4994',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4995',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4996-4998',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*IF TALENT:121 \|\| TALENT:122\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4998',
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '4999',
+        any: [
+          /^\s*PRINTFORMW 「不！不要！呜！要……要射了……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5000',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為陰莖的快感太過強烈而射精了！！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5000-5002',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為陰莖的快感太過強烈而射精了！！\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要！呜！要……要去了呀……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5002',
+        any: [
+          /^\s*PRINTFORMW 「不！不要！呜！要……要去了呀……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5003',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為陰蒂的快感太過強烈而高潮了！！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5003-5005',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為陰蒂的快感太過強烈而高潮了！！\s*$\s*^\s*ENDIF\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5005',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5005-5007',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:225 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5007',
+        any: [/^\s*CFLAG:225 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5007-5009',
+        any: [/^\s*CFLAG:225 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5013',
+        any: [/^\s*IF NOWEX:1 > 0 && CFLAG:226 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5015',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5016',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5018',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5019',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5020-5022',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要！呜！要……要去了呀……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5022',
+        any: [
+          /^\s*PRINTFORMW 「不！不要！呜！要……要去了呀……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5023',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為蜜穴的快感太過強烈而高潮了！！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5024',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5024-5026',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:226 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5026',
+        any: [/^\s*CFLAG:TARGET:226 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5026-5028',
+        any: [/^\s*CFLAG:TARGET:226 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5032',
+        any: [/^\s*IF NOWEX:2 > 0 && CFLAG:227 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5034',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5035',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5037',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5038',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5039-5041',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要！呜！怎……怎么会用这种地方……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5041',
+        any: [
+          /^\s*PRINTFORMW 「不！不要！呜！怎……怎么会用这种地方……唔!……啊…啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5042',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為肛門的快感太過強烈而高潮了！！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5043',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5043-5045',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:227 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5045',
+        any: [/^\s*CFLAG:227 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5045-5047',
+        any: [/^\s*CFLAG:227 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5051',
+        any: [/^\s*IF NOWEX:3 > 0 && CFLAG:228 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5053',
+        any: [/^\s*IF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5054',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5055-5057',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要！呜！胸部…胸部要……啊！嗯啊……啊啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5057',
+        any: [
+          /^\s*PRINTFORMW 「不！不要！呜！胸部…胸部要……啊！嗯啊……啊啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5058',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%第一次在調教中，因為胸部的快感太過強烈而高潮了！！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5059',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5059-5061',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%睜大著眼睛滿面紅霞，不知道是因為羞憤？還是太有感覺造成的呢？\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:228 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5061',
+        any: [/^\s*CFLAG:TARGET:228 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5061-5063',
+        any: [/^\s*CFLAG:TARGET:228 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5068',
+        any: [/^\s*IF TFLAG:3 == 1 && CFLAG:229 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5070',
+        any: [/^\s*IF TFLAG:20 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5072',
+        any: [
+          /^\s*IF TALENT:TARGET:76 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5073',
+        any: [
+          /^\s*PRINTFORMW 「啊～终於能摆脱处女了……嘿嘿♡……再多做一点开心的事情吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5074',
+        any: [
+          /^\s*PRINTFORMW 听那期待的语气，看来破处的些许的疼痛早被%SAVESTR:TARGET%置之脑後了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5076',
+        any: [
+          /^\s*ELSEIF TALENT:TARGET:85 == 1 && \(A < 500 \|\| TFLAG:150 == 1\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5077',
+        any: [
+          /^\s*PRINTFORMW 「本来就是留给魔王大人的东西，所以…尽管有一点痛，但是很幸福♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5078',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%眯起了眼睛，露出了满足而幸福的微笑。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5079-5081',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「尽管%SELF_CALL\(TARGET\)%也没天真到以为能保住……但是……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5081',
+        any: [
+          /^\s*PRINTFORMW 「尽管%SELF_CALL\(TARGET\)%也没天真到以为能保住……但是……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5082',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的语调虽然冰冷平淡…但是眼神当中却满溢着汹涌的杀意……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5082-5084',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的语调虽然冰冷平淡…但是眼神当中却满溢着汹涌的杀意……\s*$\s*^\s*ENDIF\s*$\s*^\s*;主人以外による処女喪失（再生処女含む）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5084-5086',
+        any: [
+          /^\s*;主人以外による処女喪失（再生処女含む）\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5087',
+        any: [/^\s*IF TALENT:TARGET:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5088',
+        any: [
+          /^\s*PRINTFORMW 「唔…能摆脱处女就好…这样～可以玩的花样更多了呢♡♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5090',
+        any: [/^\s*ELSEIF TALENT:TARGET:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5091',
+        any: [/^\s*PRINTFORMW 「明明希望第一次是给魔王大人的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5092-5094',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「果然还是……呜……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5094',
+        any: [/^\s*PRINTFORMW 「果然还是……呜……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5094-5096',
+        any: [
+          /^\s*PRINTFORMW 「果然还是……呜……」\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5095-5097',
+        any: [/^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:TARGET:229 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5097',
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5097-5099',
+        any: [/^\s*CFLAG:TARGET:229 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5105',
+        any: [/^\s*@KOJO_MESSAGE_MARKCNG_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5105-5162',
+        any: [
+          /^\s*@KOJO_MESSAGE_MARKCNG_15\s*$\s*^\s*;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）\s*$\s*^\s*;SIF ASSI > 0 && ASSIPLAY\s*$\s*^\s*;	RETURN 0\s*$\s*^\s*;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）\s*$\s*^\s*SIF TEQUIP:45\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5109-5113',
+        any: [
+          /^\s*;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）\s*$\s*^\s*SIF TEQUIP:45\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;苦痛刻印Lv3取得 CFLAG:297\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5115',
+        any: [/^\s*IF TFLAG:22 == 3 && CFLAG:297 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5117',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5118',
+        any: [/^\s*PRINTFORMW 「痛……但…但是……如果是您的话……没有关系……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5118-5120',
+        any: [
+          /^\s*PRINTFORMW 「痛……但…但是……如果是您的话……没有关系……」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「啊！不！不要了……好痛！饶了%SELF_CALL\(TARGET\)%吧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5120',
+        any: [
+          /^\s*PRINTFORMW 「啊！不！不要了……好痛！饶了%SELF_CALL\(TARGET\)%吧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5120-5122',
+        any: [
+          /^\s*PRINTFORMW 「啊！不！不要了……好痛！饶了%SELF_CALL\(TARGET\)%吧……」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:297 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5122',
+        any: [/^\s*CFLAG:297 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5122-5124',
+        any: [/^\s*CFLAG:297 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5128',
+        any: [/^\s*IF TFLAG:23 == 3 && CFLAG:298 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5130',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5131',
+        any: [
+          /^\s*PRINTFORMW 「这…这是……好……好棒……太……太舒服了……啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5131-5133',
+        any: [
+          /^\s*PRINTFORMW 「这…这是……好……好棒……太……太舒服了……啊啊～♡」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这…这是………不……不……这样……不行……啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5133',
+        any: [/^\s*PRINTFORMW 「这…这是………不……不……这样……不行……啊啊～♡」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5133-5135',
+        any: [
+          /^\s*PRINTFORMW 「这…这是………不……不……这样……不行……啊啊～♡」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:298 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5135',
+        any: [/^\s*CFLAG:298 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5135-5137',
+        any: [/^\s*CFLAG:298 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5141',
+        any: [/^\s*IF TFLAG:24 == 3 && CFLAG:299 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5143',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5144',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5144-5146',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「再…怎么抵抗……也是……没用的吧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5146',
+        any: [/^\s*PRINTFORMW 「再…怎么抵抗……也是……没用的吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5146-5148',
+        any: [
+          /^\s*PRINTFORMW 「再…怎么抵抗……也是……没用的吧……」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:299 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5148',
+        any: [/^\s*CFLAG:299 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5148-5150',
+        any: [/^\s*CFLAG:299 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5154',
+        any: [/^\s*IF TFLAG:21 == 3 && CFLAG:300 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5156',
+        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5157',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5157-5159',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「可恶！真是……不敢相信！这个世上怎么会有像你这样的垃圾呢！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5159',
+        any: [
+          /^\s*PRINTFORMW 「可恶！真是……不敢相信！这个世上怎么会有像你这样的垃圾呢！？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5159-5161',
+        any: [
+          /^\s*PRINTFORMW 「可恶！真是……不敢相信！这个世上怎么会有像你这样的垃圾呢！？」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:300 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5161',
+        any: [/^\s*CFLAG:300 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5161-5162',
+        any: [/^\s*CFLAG:300 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5168',
+        any: [/^\s*@SELF_KOJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5168-5416',
+        any: [
+          /^\s*@SELF_KOJO_K15\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;調教後自慰 CFLAG:261\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF TFLAG:13 == 1\s*$\s*^\s*;崩壊してしまった場合\s*$\s*^\s*IF TALENT:9 == 1\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%神情恍惚，一边喘息着流出了口水，一边不停地用手摩擦自己的下身……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5172',
+        any: [/^\s*IF TFLAG:13 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5174',
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5175',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%神情恍惚，一边喘息着流出了口水，一边不停地用手摩擦自己的下身……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5177',
+        any: [/^\s*ELSEIF Q == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5178',
+        any: [
+          /^\s*PRINTFORMW 「啊！%SAVESTR:ASSI%……%SAVESTR:ASSI%……好想要……嗯啊！啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5179',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%呢喃着叫唤%SAVESTR:ASSI%的名字，一边忘情地进行自慰……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5181',
+        any: [/^\s*ELSEIF Q == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5182',
+        any: [
+          /^\s*PRINTFORMW 「一想到狗狗的肉棒……啊啊！怎么办？手停不下来了啊！嗯啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5183',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%饥渴地摇晃起屁股，一边自慰着一边做着宛如母狗求欢的姿势……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5184-5186',
+        any: [/^\s*;その他\s*$\s*^\s*ELSE\s*$\s*^\s*;淫乱\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5187',
+        any: [/^\s*IF TALENT:76 && \(CFLAG:261 < 4 \|\| FLAG:7 == 2\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5188',
+        any: [/^\s*PRINTFORMW 「这里…好想要啊♡……想要……更粗的…东西♡♡…」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5189',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的双眼因为情慾而通红，像是欲求不满似地不停自慰着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5190',
+        any: [/^\s*CFLAG:261 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5192',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:261 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5193',
+        any: [
+          /^\s*PRINTFORML 「下身……已经湿的不像样了……但…但是……还是好想要啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5194',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边喘息着自慰，一边用甜腻的声音呻吟着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5195',
+        any: [/^\s*CFLAG:261 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5197',
+        any: [
+          /^\s*ELSEIF ABL:31 >= 3 && \(CFLAG:261 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5198',
+        any: [
+          /^\s*PRINTFORMW 「明明……已经……呜！不……不行……停不下来了！嗯啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5199',
+        any: [/^\s*CFLAG:261 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5201',
+        any: [/^\s*ELSEIF CFLAG:261 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5202',
+        any: [/^\s*PRINTFORMW 「不……不行……呜啊……好…好热……啊啊……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5203',
+        any: [/^\s*CFLAG:261 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5203-5205',
+        any: [/^\s*CFLAG:261 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5203-5207',
+        any: [
+          /^\s*CFLAG:261 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5204-5208',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5211',
+        any: [/^\s*IF TFLAG:13 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5213',
+        any: [/^\s*IF TALENT:76 && \(CFLAG:262 < 5 \|\| FLAG:7 == 2\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5214',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5215',
+        any: [/^\s*CFLAG:262 = 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5217',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:262 < 4 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5218',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5219',
+        any: [/^\s*CFLAG:262 = 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5221',
+        any: [
+          /^\s*ELSEIF ABL:33 >= 3 && \(CFLAG:262 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5222',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5223',
+        any: [/^\s*CFLAG:262 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5225',
+        any: [
+          /^\s*ELSEIF ABL:22 >= 3 && \(CFLAG:262 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5226',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5227',
+        any: [/^\s*CFLAG:262 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5229',
+        any: [/^\s*ELSEIF CFLAG:262 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5230',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5231',
+        any: [/^\s*CFLAG:262 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5231-5233',
+        any: [/^\s*CFLAG:262 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5231-5235',
+        any: [
+          /^\s*CFLAG:262 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5238',
+        any: [/^\s*IF TFLAG:13 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5240',
+        any: [
+          /^\s*IF TALENT:76 == 1 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5241',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5242',
+        any: [/^\s*CFLAG:263 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5244',
+        any: [
+          /^\s*ELSEIF TALENT:85 && \(CFLAG:263 < 3 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5245',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5246',
+        any: [/^\s*CFLAG:263 = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5248',
+        any: [
+          /^\s*ELSEIF ABL:16 >= 5 && \(CFLAG:263 < 2 \|\| FLAG:7 == 2\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5249',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5250',
+        any: [/^\s*CFLAG:263 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5252',
+        any: [/^\s*ELSEIF CFLAG:263 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5253',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5254',
+        any: [/^\s*CFLAG:263 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5254-5256',
+        any: [/^\s*CFLAG:263 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5254-5258',
+        any: [
+          /^\s*CFLAG:263 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5261',
+        any: [/^\s*IF TFLAG:13 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5263',
+        any: [/^\s*IF ABL:2 >= 4 && \(CFLAG:264 < 2 \|\| FLAG:7 == 2\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5264',
+        any: [
+          /^\s*PRINTFORMW 「这里还是好空虚，还想要更多更大的东西来填满！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5265',
+        any: [/^\s*CFLAG:264 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5267',
+        any: [/^\s*ELSEIF CFLAG:264 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5268',
+        any: [/^\s*PRINTFORMW 「身体还是好热，可以……再继续吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5269',
+        any: [/^\s*CFLAG:264 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5269-5271',
+        any: [/^\s*CFLAG:264 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5269-5273',
+        any: [
+          /^\s*CFLAG:264 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5276',
+        any: [/^\s*IF TFLAG:13 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5277',
+        any: [/^\s*IF CFLAG:265 < 1 \|\| FLAG:7 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5278-5281',
+        any: [
+          /^\s*PRINTDATAL\s*$\s*^\s*DATAFORM 「夜晚好冷，想跟魔王大人一起睡呢……」\s*$\s*^\s*DATAFORM 「一起睡的话，可以做做『运动』也可以相拥取暖，不觉得是个好主意吗？」\s*$\s*^\s*ENDDATA\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5282',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5283',
+        any: [/^\s*CFLAG:265 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5283-5285',
+        any: [/^\s*CFLAG:265 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5283-5287',
+        any: [
+          /^\s*CFLAG:265 = 1\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5290',
+        any: [/^\s*IF TFLAG:13 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5292',
+        any: [/^\s*IF TALENT:85 && MARK:3 < 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5293',
+        any: [
+          /^\s*PRINTFORMW 在你打算卖掉%SAVESTR:TARGET%之前，%SAVESTR:TARGET%慌慌张张地来到了你的面前……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5294',
+        any: [
+          /^\s*PRINTFORMW 一向注重仪表的%SAVESTR:TARGET%，发丝凌乱双颊通红并带着急促的喘息。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5295',
+        any: [/^\s*PRINTFORMW 「魔…魔王大人……您……您……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5296',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的情绪起伏过大，平时灵活的口才现在却哽咽地连话也说不完整……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5297',
+        any: [
+          /^\s*PRINTFORMW 似乎想对你露出笑容，无奈嘴角只能勾出扭曲的形状，眼泪不停地沿着脸颊垂落而下……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5298',
+        any: [/^\s*PRINTFORMW 「以後…请您……多多保重……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5299',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%深深地鞠躬，转身踉踉跄跄地随着商人离去了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5301',
+        any: [/^\s*ELSEIF MARK:3 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5302',
+        any: [
+          /^\s*PRINTFORMW 「居然……敢把%SELF_CALL\(TARGET\)%当成商品一样地贩卖……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5303',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%瞪视过来的眼神带着愤怒与杀意，但是无论他再怎么地反抗，最後还是被商人捆绑带走了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5305',
+        any: [/^\s*ELSEIF TALENT:76\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5306',
+        any: [
+          /^\s*PRINTFORMW 「虽然有点不舍，但是，这个淫荡的身体如果能对魔王大人有所贡献的话……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5307',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%眯起了眼睛露出了魅惑的笑容。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5308',
+        any: [
+          /^\s*PRINTFORMW 「因为您，%SELF_CALL\(TARGET\)%才能真正体验到所谓无上的『欢愉』，所以………」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5309',
+        any: [
+          /^\s*PRINTFORMW 「以後就算在新的地方，%SELF_CALL\(TARGET\)%也会好好地发挥所学的本领……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5310',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%潇洒地挥挥手与你告别，挽着商人的手随之离去了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5311-5313',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「从一个垃圾堆换到另一个垃圾堆？反正都是一样……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5313',
+        any: [
+          /^\s*PRINTFORMW 「从一个垃圾堆换到另一个垃圾堆？反正都是一样……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5314',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎毫不在乎，平淡地随着商人离去了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5314-5316',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%似乎毫不在乎，平淡地随着商人离去了……\s*$\s*^\s*ENDIF\s*$\s*^\s*SIF !TALENT:122\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5317',
+        any: [/^\s*CALL SELL_MATURO_K0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5317-5319',
+        any: [/^\s*CALL SELL_MATURO_K0\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5325',
+        any: [/^\s*IF TFLAG:13 == 11\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5326-5328',
+        any: [
+          /^\s*SIF CFLAG:271 >= 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;崩壊してしまった場合\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5329',
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5330',
+        any: [
+          /^\s*PRINTFORMW 「好像有奇怪的东西在肚子里面……一定是生病了吧？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5332',
+        any: [/^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5333',
+        any: [/^\s*PRINTFORMW 「会长的像谁呢？呵呵，好期待啊～」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5334-5336',
+        any: [
+          /^\s*;その他\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不……这…这不是真的！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5336',
+        any: [/^\s*PRINTFORMW 「不……这…这不是真的！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5336-5338',
+        any: [
+          /^\s*PRINTFORMW 「不……这…这不是真的！」\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:271 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5338',
+        any: [/^\s*CFLAG:271 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5338-5340',
+        any: [/^\s*CFLAG:271 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5345',
+        any: [/^\s*IF TFLAG:13 == 12\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5346-5348',
+        any: [
+          /^\s*SIF CFLAG:272 >= 1\s*$\s*^\s*RETURN 0\s*$\s*^\s*;崩壊している場合\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5349',
+        any: [/^\s*IF TALENT:9 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5350',
+        any: [
+          /^\s*PRINTFORMW 「有什么东西要从肚子出来了……不……怪物……是怪物啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5352',
+        any: [/^\s*ELSEIF TALENT:85 && CFLAG:102 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5353',
+        any: [/^\s*PRINTFORMW 「真是个健康可爱的宝宝呢，对吧？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5354',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%亲昵地亲吻着孩子的脸颊，露出了幸福的笑容。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5355-5357',
+        any: [
+          /^\s*;その他\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这样的孩子……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5357',
+        any: [/^\s*PRINTFORMW 「这样的孩子……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5358',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用双手摀住了自己的脸庞，试着掩饰心中复杂的情绪……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5358-5360',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%用双手摀住了自己的脸庞，试着掩饰心中复杂的情绪……\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:272 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5360',
+        any: [/^\s*CFLAG:272 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5360-5362',
+        any: [/^\s*CFLAG:272 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5366',
+        any: [/^\s*IF TFLAG:13 == 13\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5368',
+        any: [/^\s*IF TALENT:153\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5369',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5371',
+        any: [/^\s*ELSEIF TALENT:154\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5372',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5372-5374',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:273 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5374',
+        any: [/^\s*CFLAG:273 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5374-5376',
+        any: [/^\s*CFLAG:273 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5380',
+        any: [/^\s*IF TFLAG:13 == 14\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5381',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5382',
+        any: [/^\s*CFLAG:274 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5382-5384',
+        any: [/^\s*CFLAG:274 = 1\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5388',
+        any: [/^\s*IF TFLAG:13 == 999\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5388-5398',
+        any: [
+          /^\s*IF TFLAG:13 == 999\s*$\s*^\s*;愛\s*$\s*^\s*IF TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5390',
+        any: [/^\s*IF TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5391',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5392-5398',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5394',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5394-5398',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5401',
+        any: [/^\s*IF TFLAG:13 == 998\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5401-5411',
+        any: [
+          /^\s*IF TFLAG:13 == 998\s*$\s*^\s*;愛\s*$\s*^\s*IF TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5403',
+        any: [/^\s*IF TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5404',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5405-5411',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;--------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5407',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5407-5411',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;--------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5414',
+        any: [/^\s*TFLAG:13 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5414-5416',
+        any: [/^\s*TFLAG:13 = 0\s*$\s*^\s*RETURN 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5442',
+        any: [/^\s*@DUNGEON_RYOUZYOKU_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5442-5503',
+        any: [
+          /^\s*@DUNGEON_RYOUZYOKU_K15\s*$\s*^\s*;-------------------------------------------------------\s*$\s*^\s*;ダンジョンで陵辱される前の一言\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;処女\s*$\s*^\s*PRINTFORMW 「可恶！走…走开！为什么%SELF_CALL\(TARGET\)%的第一次要被你们这些残渣……呜！」\s*$\s*^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\s*^\s*;無関心・感情乏しいなら何か言って終了\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5447',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5449',
+        any: [
+          /^\s*PRINTFORMW 「可恶！走…走开！为什么%SELF_CALL\(TARGET\)%的第一次要被你们这些残渣……呜！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5449-5457',
+        any: [
+          /^\s*PRINTFORMW 「可恶！走…走开！为什么%SELF_CALL\(TARGET\)%的第一次要被你们这些残渣……呜！」\s*$\s*^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\s*^\s*;無関心・感情乏しいなら何か言って終了\s*$\s*^\s*PRINTFORMW 「…………可惡!」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$\s*^\s*;プライド低い・貞操無頓着・恥薄いなら身体を売って命乞いをする\s*$\s*^\s*PRINTFORMW 「反正你们只是要泄欲吧……只要不伤性命的话，这个身体…就随便用好了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5450',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5452',
+        any: [/^\s*PRINTFORMW 「…………可惡!」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5454',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5456',
+        any: [
+          /^\s*PRINTFORMW 「反正你们只是要泄欲吧……只要不伤性命的话，这个身体…就随便用好了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5459',
+        any: [
+          /^\s*PRINTFORMW 「如果可以放过%SELF_CALL\(TARGET\)%的前面，用後面这里也很紧，不想试试吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5459-5481',
+        any: [
+          /^\s*PRINTFORMW 「如果可以放过%SELF_CALL\(TARGET\)%的前面，用後面这里也很紧，不想试试吗？」\s*$\s*^\s*;フェラ経験有りならなら口での奉仕をアピールする\s*$\s*^\s*SIF EXP:22 > 0\s*$\s*^\s*PRINTFORMW 「或者喜欢从嘴巴来的话，也可以帮忙舔的……」\s*$\s*^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$\s*^\s*;反抗的・気丈・プライド高い・貞操観念・抵抗なら\s*$\s*^\s*;チ○ポになんか絶対負けない！系の精神的抵抗をする\s*$\s*^\s*PRINTFORMW 「滚开！……敢动%SELF_CALL\(TARGET\)%的话……一定……一定会杀了你们！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5462',
+        any: [/^\s*PRINTFORMW 「或者喜欢从嘴巴来的话，也可以帮忙舔的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5463',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5466',
+        any: [
+          /^\s*PRINTFORMW 「滚开！……敢动%SELF_CALL\(TARGET\)%的话……一定……一定会杀了你们！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5467',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5469',
+        any: [/^\s*PRINTFORMW 「难道……这次……真的要被…………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5472',
+        any: [/^\s*PRINTFORMW 「这种行为……真不愧是最低级的垃圾！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5472-5474',
+        any: [
+          /^\s*PRINTFORMW 「这种行为……真不愧是最低级的垃圾！」\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5473-5475',
+        any: [/^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*;非処女\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5476',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5476-5484',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\s*^\s*;無関心・感情乏しいなら何か言って終了\s*$\s*^\s*PRINTFORMW 「…………可惡!」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$\s*^\s*;プライド低い・貞操無頓着・恥薄いなら身体を売って命乞いをする\s*$\s*^\s*PRINTFORMW 「反正你们只是要泄欲吧……只要不伤性命的话，这个身体…就随便用好了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5477',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5479',
+        any: [/^\s*PRINTFORMW 「…………可惡!」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5481',
+        any: [
+          /^\s*ELSEIF TALENT:17 ==1 \|\| TALENT:31 == 1 \|\| TALENT:36 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5483',
+        any: [
+          /^\s*PRINTFORMW 「反正你们只是要泄欲吧……只要不伤性命的话，这个身体…就随便用好了……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5486',
+        any: [
+          /^\s*PRINTFORMW 「如果可以放过%SELF_CALL\(TARGET\)%的話，後面这里也很紧，不想试试吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5486-5508',
+        any: [
+          /^\s*PRINTFORMW 「如果可以放过%SELF_CALL\(TARGET\)%的話，後面这里也很紧，不想试试吗？」\s*$\s*^\s*;フェラ経験有りならなら口での奉仕をアピールする\s*$\s*^\s*SIF EXP:22 > 0\s*$\s*^\s*PRINTFORMW 「或者喜欢从嘴巴来的话，也可以帮忙舔的……」\s*$\s*^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$\s*^\s*;反抗的・気丈・プライド高い・貞操観念・抵抗なら\s*$\s*^\s*;チ○ポになんか絶対負けない！系の精神的抵抗をする\s*$\s*^\s*PRINTFORMW 「滚开！……敢动%SELF_CALL\(TARGET\)%的话……一定……一定会杀了你们！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5489',
+        any: [/^\s*PRINTFORMW 「或者喜欢从嘴巴来的话，也可以帮忙舔的……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5490',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5493',
+        any: [
+          /^\s*PRINTFORMW 「滚开！……敢动%SELF_CALL\(TARGET\)%的话……一定……一定会杀了你们！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5494',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5496',
+        any: [/^\s*PRINTFORMW 「难道……这次……真的要被…………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5499',
+        any: [/^\s*PRINTFORMW 「这种行为……真不愧是最低级的垃圾！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5499-5501',
+        any: [
+          /^\s*PRINTFORMW 「这种行为……真不愧是最低级的垃圾！」\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5499-5503',
+        any: [
+          /^\s*PRINTFORMW 「这种行为……真不愧是最低级的垃圾！」\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5501-5505',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-------------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5506',
+        any: [/^\s*@DUNGEON_RYOUZYOKU_AFTER_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5506-5551',
+        any: [
+          /^\s*@DUNGEON_RYOUZYOKU_AFTER_K15\s*$\s*^\s*;-------------------------------------------------------\s*$\s*^\s*;ダンジョンで陵辱された後の一言\s*$\s*^\s*IF TALENT:0 == 1\s*$\s*^\s*;処女\s*$\s*^\s*PRINTFORMW 「还好%SELF_CALL\(TARGET\)%的处女还在…不然…一定要杀了你们…！！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%\s*$\s*^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5510',
+        any: [/^\s*IF TALENT:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5512',
+        any: [
+          /^\s*PRINTFORMW 「还好%SELF_CALL\(TARGET\)%的处女还在…不然…一定要杀了你们…！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5513',
+        any: [/^\s*PRINTFORMW %SAVESTR:TARGET%\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5514',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5515-5519',
+        any: [
+          /^\s*;無関心・感情乏しいなら何か言って終了\s*$\s*^\s*PRINTFORMW 「不……不………呜！」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;アナルを弄られすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5516',
+        any: [/^\s*PRINTFORMW 「不……不………呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5517-5519',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;アナルを弄られすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5521',
+        any: [
+          /^\s*PRINTFORMW 「合不起来……可恶！……居然…居然全部都射在里面！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5522',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%那被多次凌辱的肛穴一时无法合拢，白浊腥臭的体液正从其中泊泊地流出……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5525',
+        any: [/^\s*PRINTFORMW 「咳咳…呕…呕……不行……满嘴……都是……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5526',
+        any: [
+          /^\s*PRINTFORMW 被怪物多次侵犯口腔的%SAVESTR:TARGET%，带着泪光试着将灌进去的精液催吐出来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5526-5528',
+        any: [
+          /^\s*PRINTFORMW 被怪物多次侵犯口腔的%SAVESTR:TARGET%，带着泪光试着将灌进去的精液催吐出来……\s*$\s*^\s*ELSE\s*$\s*^\s*;非処女\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5529',
+        any: [/^\s*PRINTFORMW 「太过分了……到底……要几次……才会停止……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5531',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5532-5536',
+        any: [
+          /^\s*;無関心・感情乏しいなら何か言って終了\s*$\s*^\s*PRINTFORMW 「不……不………呜！」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;膣を苛められすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5533',
+        any: [/^\s*PRINTFORMW 「不……不………呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5534-5536',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;膣を苛められすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5537',
+        any: [/^\s*IF EXP:0 > 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5538',
+        any: [
+          /^\s*PRINTFORMW 「那里……要…要坏掉了……什么东西……呜……要流出来了啊！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5539',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被多次地奸淫，双腿几乎无法合拢，白浊腥臭的体液正从股间泊泊地流出……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5539-5541',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被多次地奸淫，双腿几乎无法合拢，白浊腥臭的体液正从股间泊泊地流出……\s*$\s*^\s*ENDIF\s*$\s*^\s*;アナルを弄られすぎた感想\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5543',
+        any: [
+          /^\s*PRINTFORMW 「合不起来……可恶！居…居然全部都射在里面！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5544',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%那被多次凌辱的肛穴一时无法合拢，白浊腥臭的体液正从其中泊泊地流出……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5547',
+        any: [/^\s*PRINTFORMW 「咳咳…呕…呕……不行……满嘴……都是……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5548',
+        any: [
+          /^\s*PRINTFORMW 被怪物多次侵犯口腔的%SAVESTR:TARGET%，带着泪光试着将灌进去的精液催吐出来……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5548-5550',
+        any: [
+          /^\s*PRINTFORMW 被怪物多次侵犯口腔的%SAVESTR:TARGET%，带着泪光试着将灌进去的精液催吐出来……\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5549-5553',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*@BENKI_KOUJO_K15\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5553',
+        any: [/^\s*@BENKI_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5553-5650',
+        any: [
+          /^\s*@BENKI_KOUJO_K15\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;肉便器口上。キャラはA\s*$\s*^\s*;FLAG:62を使用。行動の詳細はBENKI\.ERBで\s*$\s*^\s*IF FLAG:62 == 0\s*$\s*^\s*;最下層民凌辱\s*$\s*^\s*;淫乱\s*$\s*^\s*IF TALENT:A:76 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5558',
+        any: [/^\s*IF FLAG:62 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5561',
+        any: [/^\s*IF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5562',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5564',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5565',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5567',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5567-5573',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF FLAG:62 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5568',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5571',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5571-5573',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF FLAG:62 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5573',
+        any: [/^\s*ELSEIF FLAG:62 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5576',
+        any: [/^\s*IF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5577',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5579',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5580',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5582',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5582-5588',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF FLAG:62 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5583',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5586',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5586-5588',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF FLAG:62 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5588',
+        any: [/^\s*ELSEIF FLAG:62 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5591',
+        any: [/^\s*IF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5592',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5594',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5595',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5597',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5597-5603',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF  FLAG:62 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5598',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5601',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5601-5603',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF  FLAG:62 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5603',
+        any: [/^\s*ELSEIF  FLAG:62 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5606',
+        any: [/^\s*IF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5607',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5609',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5610',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5612',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5612-5618',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF  FLAG:62 == 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5613',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5616',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5616-5618',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF  FLAG:62 == 4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5618',
+        any: [/^\s*ELSEIF  FLAG:62 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5621',
+        any: [/^\s*IF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5622',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5624',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5625',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5627',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5627-5633',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF  FLAG:62 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5628',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5631',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5631-5633',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSEIF  FLAG:62 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5633',
+        any: [/^\s*ELSEIF  FLAG:62 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5636',
+        any: [/^\s*IF TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5637',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5639',
+        any: [/^\s*ELSEIF TALENT:A:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5640',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5642',
+        any: [/^\s*ELSEIF ABL:A:16 >= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5642-5648',
+        any: [
+          /^\s*ELSEIF ABL:A:16 >= 5\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5643',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5644-5650',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5644-5652',
+        any: [
+          /^\s*;それ以外\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5646',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5647-5653',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*@DUNGEON_VICTORY_K15\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5653',
+        any: [/^\s*@DUNGEON_VICTORY_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5653-5704',
+        any: [
+          /^\s*@DUNGEON_VICTORY_K15\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;戦闘勝利時\s*$\s*^\s*;決め台詞\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\s*^\s*;無関心・感情乏しいなら何か言って終了\s*$\s*^\s*PRINTFORMW 「胜利是理所当然。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5658',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5660',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5663',
+        any: [/^\s*PRINTFORMW 「胜利是理所当然。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5663-5667',
+        any: [
+          /^\s*PRINTFORMW 「胜利是理所当然。」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5666',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5669',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5670',
+        any: [/^\s*PRINTFORMW 「去地狱反省吧！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5671',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5672',
+        any: [/^\s*PRINTFORMW 「一群废物！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5672-5674',
+        any: [
+          /^\s*PRINTFORMW 「一群废物！」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「全部都消失吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5674',
+        any: [/^\s*PRINTFORMW 「全部都消失吧！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5674-5676',
+        any: [/^\s*PRINTFORMW 「全部都消失吧！」\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5677',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5680',
+        any: [/^\s*PRINTFORMW 「呼……好歹是赢了。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5680-5684',
+        any: [
+          /^\s*PRINTFORMW 「呼……好歹是赢了。」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5680-5686',
+        any: [
+          /^\s*PRINTFORMW 「呼……好歹是赢了。」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSE\s*$\s*^\s*;その他何か適当に性格によって\s*$\s*^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5686',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5687',
+        any: [/^\s*PRINTFORMW 「跟这种杂鱼战斗，根本没有悬念。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5688',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5689',
+        any: [/^\s*PRINTFORMW 「不废吹灰之力。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5689-5691',
+        any: [
+          /^\s*PRINTFORMW 「不废吹灰之力。」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「嗯？这就胜利了吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5691',
+        any: [/^\s*PRINTFORMW 「嗯？这就胜利了吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5691-5693',
+        any: [/^\s*PRINTFORMW 「嗯？这就胜利了吗？」\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5692-5696',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*IF \(BASE:A:0 \* 100 \/ MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 \/ MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5696',
+        any: [
+          /^\s*IF \(BASE:A:0 \* 100 \/ MAXBASE:A:0 < 50\) \|\| \(BASE:A:1 \* 100 \/ MAXBASE:A:1 < 50\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5698',
+        any: [/^\s*PRINTFORMW 「一点皮肉伤，不算什么。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5698-5700',
+        any: [
+          /^\s*PRINTFORMW 「一点皮肉伤，不算什么。」\s*$\s*^\s*ELSE\s*$\s*^\s*;余裕余裕\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5701',
+        any: [/^\s*PRINTFORMW 「这么弱的敌人，真像纸糊的一样。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5701-5703',
+        any: [
+          /^\s*PRINTFORMW 「这么弱的敌人，真像纸糊的一样。」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5701-5707',
+        any: [
+          /^\s*PRINTFORMW 「这么弱的敌人，真像纸糊的一样。」\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*@DUNGEON_ATTACK_K15\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5707',
+        any: [/^\s*@DUNGEON_ATTACK_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5707-5790',
+        any: [
+          /^\s*@DUNGEON_ATTACK_K15\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;攻撃時のセリフ\s*$\s*^\s*;最初に一言\s*$\s*^\s*IF CFLAG:1 == 2\s*$\s*^\s*;侵攻中\s*$\s*^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$\s*^\s*;無関心・感情乏しいなら何か言って終了\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5712',
+        any: [/^\s*IF CFLAG:1 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5714',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5717',
+        any: [/^\s*PRINTFORMW 「…………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5717-5721',
+        any: [
+          /^\s*PRINTFORMW 「…………」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5720',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5723',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5724',
+        any: [/^\s*PRINTFORMW 「哼！……这是什么玩意？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5725',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5726',
+        any: [/^\s*PRINTFORMW 「白费力气！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5726-5728',
+        any: [
+          /^\s*PRINTFORMW 「白费力气！」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「真碍眼！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5728',
+        any: [/^\s*PRINTFORMW 「真碍眼！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5728-5730',
+        any: [/^\s*PRINTFORMW 「真碍眼！」\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5731',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5734',
+        any: [/^\s*PRINTFORMW 「放弃吧……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5734-5738',
+        any: [
+          /^\s*PRINTFORMW 「放弃吧……」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5734-5740',
+        any: [
+          /^\s*PRINTFORMW 「放弃吧……」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSE\s*$\s*^\s*;その他何か適当に性格によって\s*$\s*^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5740',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5741',
+        any: [/^\s*PRINTFORMW 「别做无谓的抵抗。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5742',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5743',
+        any: [/^\s*PRINTFORMW 「邪不胜正。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5743-5745',
+        any: [
+          /^\s*PRINTFORMW 「邪不胜正。」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「残渣。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5745',
+        any: [/^\s*PRINTFORMW 「残渣。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5745-5747',
+        any: [/^\s*PRINTFORMW 「残渣。」\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5746-5750',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*;その他・迎撃中\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5748-5750',
+        any: [/^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*;その他・迎撃中\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5751',
+        any: [/^\s*IF TALENT:21 == 1 \|\| TALENT:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5754',
+        any: [/^\s*PRINTFORMW 「魔王大人的命令是绝对的。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5754-5758',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人的命令是绝对的。」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5757',
+        any: [
+          /^\s*ELSEIF TALENT:11 == 1 \|\| TALENT:12 == 1 \|\| TALENT:15 == 1 \|\| TALENT:30 == 1 \|\| TALENT:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5760',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5761',
+        any: [/^\s*PRINTFORMW 「哼！一群蝼蚁！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5762',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5763',
+        any: [/^\s*PRINTFORMW 「真是螳臂挡车。」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5763-5765',
+        any: [
+          /^\s*PRINTFORMW 「真是螳臂挡车。」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不自量力！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5765',
+        any: [/^\s*PRINTFORMW 「不自量力！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5765-5767',
+        any: [/^\s*PRINTFORMW 「不自量力！」\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5768',
+        any: [/^\s*ELSEIF TALENT:10 == 1 \|\| TALENT:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5771',
+        any: [/^\s*PRINTFORMW 「为了魔王大人……！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5771-5775',
+        any: [
+          /^\s*PRINTFORMW 「为了魔王大人……！」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5771-5777',
+        any: [
+          /^\s*PRINTFORMW 「为了魔王大人……！」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSE\s*$\s*^\s*;その他何か適当に性格によって\s*$\s*^\s*IF RAND:3 == 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5777',
+        any: [/^\s*IF RAND:3 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5778',
+        any: [/^\s*PRINTFORMW 「就这种程度吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5779',
+        any: [/^\s*ELSEIF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5780',
+        any: [/^\s*PRINTFORMW 「来这种地方还想全身而退吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5780-5782',
+        any: [
+          /^\s*PRINTFORMW 「来这种地方还想全身而退吗？」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「做好觉悟吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5782',
+        any: [/^\s*PRINTFORMW 「做好觉悟吧！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5782-5784',
+        any: [/^\s*PRINTFORMW 「做好觉悟吧！」\s*$\s*^\s*ENDIF\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5782-5788',
+        any: [
+          /^\s*PRINTFORMW 「做好觉悟吧！」\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5782-5790',
+        any: [
+          /^\s*PRINTFORMW 「做好觉悟吧！」\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5796',
+        any: [/^\s*@COLOSSEUM_KOJO_15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5796-5919',
+        any: [
+          /^\s*@COLOSSEUM_KOJO_15\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;何もしない\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*IF SELECTCOM == 55\s*$\s*^\s*;気力０以下\s*$\s*^\s*IF BASE:1 <= 0\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%摇摇晃晃地站着，好像随时会倒下的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5800',
+        any: [/^\s*IF SELECTCOM == 55\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5802',
+        any: [/^\s*IF BASE:1 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5803',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%摇摇晃晃地站着，好像随时会倒下的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5803-5805',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%摇摇晃晃地站着，好像随时会倒下的样子……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%强行让自己冷静下来，试图摆脱死斗场气氛的影响……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5805',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%强行让自己冷静下来，试图摆脱死斗场气氛的影响……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5805-5807',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%强行让自己冷静下来，试图摆脱死斗场气氛的影响……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5805-5809',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%强行让自己冷静下来，试图摆脱死斗场气氛的影响……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5806-5810',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;会話する\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5812',
+        any: [/^\s*IF SELECTCOM == 56\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5814',
+        any: [/^\s*IF BASE:1 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5816',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5817',
+        any: [/^\s*PRINTFORMW 「%SAVESTR:ASSI%，这种打斗有意义吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5818',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%已经筋疲力尽，露出了无奈的表情……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5818-5820',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%已经筋疲力尽，露出了无奈的表情……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「居……居然……要被这种怪物……不！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5820',
+        any: [/^\s*PRINTFORMW 「居……居然……要被这种怪物……不！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5821',
+        any: [
+          /^\s*PRINTFORMW 一想到呆会可能会发生的景象，筋疲力尽的%SAVESTR:TARGET%挣扎地想要离开这里……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5821-5823',
+        any: [
+          /^\s*PRINTFORMW 一想到呆会可能会发生的景象，筋疲力尽的%SAVESTR:TARGET%挣扎地想要离开这里……\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5822-5824',
+        any: [/^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*;助手が調教中の場合\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5825',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5826',
+        any: [
+          /^\s*PRINTFORMW 「%SAVESTR:ASSI%，是你要作为%SELF_CALL\(A\)%的对手吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5827',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出疑惑的表情，看着%SAVESTR:ASSI%……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5827-5829',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%露出疑惑的表情，看着%SAVESTR:ASSI%……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「开什么玩笑？要跟这种怪物打斗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5829',
+        any: [/^\s*PRINTFORMW 「开什么玩笑？要跟这种怪物打斗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5830',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%看着对面蠢蠢欲动的怪物，不由自主地皱起了眉头……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5830-5832',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%看着对面蠢蠢欲动的怪物，不由自主地皱起了眉头……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5830-5834',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%看着对面蠢蠢欲动的怪物，不由自主地皱起了眉头……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5830-5836',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%看着对面蠢蠢欲动的怪物，不由自主地皱起了眉头……\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5831-5837',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;フェラチオ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5839',
+        any: [/^\s*IF SELECTCOM == 31\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5841',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5842',
+        any: [/^\s*PRINTFORMW 「不…唔……唔唔……嗯……啊……不！呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5843',
+        any: [
+          /^\s*PRINTFORM %SAVESTR:ASSI%粗暴地拉起%SAVESTR:TARGET%的头发，得意地用\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5845',
+        any: [/^\s*PRINT 阴茎\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5847',
+        any: [/^\s*PRINT 假阳具\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5848',
+        any: [/^\s*PRINTFORMW 侵犯着对方的口腔……\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5848-5850',
+        any: [
+          /^\s*PRINTFORMW 侵犯着对方的口腔……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不…唔……唔唔……嗯……啊……不！呜！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5850',
+        any: [/^\s*PRINTFORMW 「不…唔……唔唔……嗯……啊……不！呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5851',
+        any: [
+          /^\s*PRINTFORMW 	无力反抗的%SAVESTR:TARGET%，嘴巴正被怪物们腥臭的肉棒侵犯着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5851-5853',
+        any: [
+          /^\s*PRINTFORMW 	无力反抗的%SAVESTR:TARGET%，嘴巴正被怪物们腥臭的肉棒侵犯着……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5851-5855',
+        any: [
+          /^\s*PRINTFORMW 	无力反抗的%SAVESTR:TARGET%，嘴巴正被怪物们腥臭的肉棒侵犯着……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5852-5856',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;胸愛撫\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5858',
+        any: [/^\s*IF SELECTCOM == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5860',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5861',
+        any: [/^\s*PRINTFORMW 「放…放手！……啊！……不……别摸了！……呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5862',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:ASSI%像是展示那样，故意粗暴地揉捏着%SAVESTR:TARGET%的乳房……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5862-5864',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:ASSI%像是展示那样，故意粗暴地揉捏着%SAVESTR:TARGET%的乳房……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「放…放手！……啊！……真……真是恶心！……呜！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5864',
+        any: [/^\s*PRINTFORMW 「放…放手！……啊！……真……真是恶心！……呜！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5865',
+        any: [
+          /^\s*PRINTFORMW 无力反抗的%SAVESTR:TARGET%，那柔软的乳房正被怪物们揉捏成各种形状……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5865-5867',
+        any: [
+          /^\s*PRINTFORMW 无力反抗的%SAVESTR:TARGET%，那柔软的乳房正被怪物们揉捏成各种形状……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5865-5869',
+        any: [
+          /^\s*PRINTFORMW 无力反抗的%SAVESTR:TARGET%，那柔软的乳房正被怪物们揉捏成各种形状……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5866-5870',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;後背位\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5872',
+        any: [/^\s*IF SELECTCOM == 21\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5874',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5875',
+        any: [/^\s*PRINTFORMW 「不！不要再插进来了！唔！不……不要啊！！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5876',
+        any: [
+          /^\s*PRINTFORMW 无视%SAVESTR:TARGET%的悲鸣，%SAVESTR:ASSI%毫不留情地用力摆动着胯部抽插着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5878',
+        any: [/^\s*ELSEIF TFLAG:400 == 206\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5879',
+        any: [
+          /^\s*PRINTFORMW 「不！不要啊！啊啊啊！！坏…坏掉了…啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5879-5883',
+        any: [
+          /^\s*PRINTFORMW 「不！不要啊！啊啊啊！！坏…坏掉了…啊啊啊！！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%发出凄厉的惨叫，肚子鼓成了巨人肉棒的形状……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要啊！痛！不……不行……不要射在里面……啊啊啊！！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被怪物凌虐着，腥臭的精液源源不断地灌进子宫深处的地方……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5880',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%发出凄厉的惨叫，肚子鼓成了巨人肉棒的形状……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5882',
+        any: [
+          /^\s*PRINTFORMW 「不！不要啊！痛！不……不行……不要射在里面……啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5883',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被怪物凌虐着，腥臭的精液源源不断地灌进子宫深处的地方……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5883-5885',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被怪物凌虐着，腥臭的精液源源不断地灌进子宫深处的地方……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5883-5887',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被怪物凌虐着，腥臭的精液源源不断地灌进子宫深处的地方……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5883-5889',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的蜜穴被怪物凌虐着，腥臭的精液源源不断地灌进子宫深处的地方……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;後背位アナル\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5891',
+        any: [/^\s*IF SELECTCOM == 27\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5893',
+        any: [/^\s*IF ASSI > 0 && ASSIPLAY\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5894',
+        any: [/^\s*PRINTFORMW 「不！不要再插进来了！唔！不……不要啊！！」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5895',
+        any: [
+          /^\s*PRINTFORMW 无视%SAVESTR:TARGET%的悲鸣，%SAVESTR:ASSI%毫不留情地用力摆动着胯部抽插着……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5897',
+        any: [/^\s*ELSEIF TFLAG:400 == 206\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5898',
+        any: [
+          /^\s*PRINTFORMW 「不！不要啊！啊啊啊！！坏…坏掉了…啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5898-5902',
+        any: [
+          /^\s*PRINTFORMW 「不！不要啊！啊啊啊！！坏…坏掉了…啊啊啊！！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%发出凄厉的惨叫，肚子鼓成了巨人肉棒的形状……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不！不要啊！痛！不……不行……不要射在里面……啊啊啊！！」\s*$\s*^\s*PRINTFORMW %SAVESTR:TARGET%的肛穴被怪物凌虐着，腥臭的精液源源不断地灌进直肠深处的地方……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5899',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%发出凄厉的惨叫，肚子鼓成了巨人肉棒的形状……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5901',
+        any: [
+          /^\s*PRINTFORMW 「不！不要啊！痛！不……不行……不要射在里面……啊啊啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5902',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的肛穴被怪物凌虐着，腥臭的精液源源不断地灌进直肠深处的地方……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5902-5904',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的肛穴被怪物凌虐着，腥臭的精液源源不断地灌进直肠深处的地方……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5902-5906',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的肛穴被怪物凌虐着，腥臭的精液源源不断地灌进直肠深处的地方……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5902-5908',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%的肛穴被怪物凌虐着，腥臭的精液源源不断地灌进直肠深处的地方……\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*;-------------------------------------------------\s*$\s*^\s*;媚薬スライム（しあわせ草）\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5910',
+        any: [/^\s*IF SELECTCOM == 51\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5911',
+        any: [
+          /^\s*PRINTFORMW 「身体……好……好热！……难道是……媚药？不！啊啊～」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5911-5913',
+        any: [
+          /^\s*PRINTFORMW 「身体……好……好热！……难道是……媚药？不！啊啊～」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5911-5915',
+        any: [
+          /^\s*PRINTFORMW 「身体……好……好热！……难道是……媚药？不！啊啊～」\s*$\s*^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5912-5919',
+        any: [
+          /^\s*RETURN 0\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5920',
+        any: [/^\s*@NTR_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5920-5994',
+        any: [
+          /^\s*@NTR_KOUJO_K15\s*$\s*^\s*;プレイ内容はNTR\.ERBを参照してください。\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;NTRフラグ\s*$\s*^\s*SIF CFLAG:650 == 0\s*$\s*^\s*CFLAG:650 = 1\s*$\s*^\s*;処女喪失\s*$\s*^\s*IF P == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5925',
+        any: [/^\s*CFLAG:650 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5928',
+        any: [/^\s*IF P == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5929-5935',
+        any: [
+          /^\s*;陥落済\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:651 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5930',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5931',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5933',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5933-5935',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:651 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5935',
+        any: [/^\s*CFLAG:651 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5937',
+        any: [/^\s*ELSEIF P == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5937-5943',
+        any: [
+          /^\s*ELSEIF P == 2\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:652 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5938',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5939',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5941',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5941-5943',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:652 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5943',
+        any: [/^\s*CFLAG:652 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5945',
+        any: [/^\s*ELSEIF P == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5945-5951',
+        any: [
+          /^\s*ELSEIF P == 3\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:653 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5946',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5947',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5949',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5949-5951',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:653 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5951',
+        any: [/^\s*CFLAG:653 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5953',
+        any: [/^\s*ELSEIF P == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5953-5959',
+        any: [
+          /^\s*ELSEIF P == 4\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:654 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5954',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5955',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5957',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5957-5959',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:654 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5959',
+        any: [/^\s*CFLAG:654 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5961',
+        any: [/^\s*ELSEIF P == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5961-5967',
+        any: [
+          /^\s*ELSEIF P == 5\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:655 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5962',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5963',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5965',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5965-5967',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:655 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5967',
+        any: [/^\s*CFLAG:655 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5969',
+        any: [/^\s*ELSEIF P == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5969-5975',
+        any: [
+          /^\s*ELSEIF P == 6\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:656 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5970',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5971',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5973',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5973-5975',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:656 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5975',
+        any: [/^\s*CFLAG:656 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5977',
+        any: [/^\s*ELSEIF P == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5977-5983',
+        any: [
+          /^\s*ELSEIF P == 7\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:657 = 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5978',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5979',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5981',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5981-5983',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*CFLAG:657 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5983',
+        any: [/^\s*CFLAG:657 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5985',
+        any: [/^\s*ELSEIF P == 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5985-5991',
+        any: [
+          /^\s*ELSEIF P == 20\s*$\s*^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5986',
+        any: [/^\s*IF TALENT:76 \|\| TALENT:85\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5986-5994',
+        any: [
+          /^\s*IF TALENT:76 \|\| TALENT:85\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5987',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5987-5997',
+        any: [
+          /^\s*PRINTFORMW\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*@EXUCUTION_KOUJO_K15\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5989',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5991-5997',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*RETURN 0\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*@EXUCUTION_KOUJO_K15\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5997',
+        any: [/^\s*@EXUCUTION_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5997-6012',
+        any: [
+          /^\s*@EXUCUTION_KOUJO_K15\s*$\s*^\s*;処刑内容はEXUCUTION\.ERBを参照してください。\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;肉便器刑\s*$\s*^\s*IF TFLAG:16 == 4\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;戦闘員化\s*$\s*^\s*ELSEIF TFLAG:16 == 5\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6001',
+        any: [/^\s*IF TFLAG:16 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6002',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6004',
+        any: [/^\s*ELSEIF TFLAG:16 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6005',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6007',
+        any: [/^\s*ELSEIF TFLAG:16 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6008',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6010',
+        any: [/^\s*ELSEIF TFLAG:16 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6010-6014',
+        any: [
+          /^\s*ELSEIF TFLAG:16 == 7\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6011',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6015',
+        any: [/^\s*@MUSEUM_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6015-6048',
+        any: [
+          /^\s*@MUSEUM_KOUJO_K15\s*$\s*^\s*;内容はMUSEUM\.ERBを参照してください。\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;石化\s*$\s*^\s*IF TFLAG:500 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;剥製化\s*$\s*^\s*ELSEIF TFLAG:500 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6019',
+        any: [/^\s*IF TFLAG:500 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6020',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6022',
+        any: [/^\s*ELSEIF TFLAG:500 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6023',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6025',
+        any: [/^\s*ELSEIF TFLAG:500 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6026',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6028',
+        any: [/^\s*ELSEIF TFLAG:500 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6029',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6031',
+        any: [/^\s*ELSEIF TFLAG:500 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6032',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6034',
+        any: [/^\s*ELSEIF TFLAG:500 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6035',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6037',
+        any: [/^\s*ELSEIF TFLAG:500 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6038',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6040',
+        any: [/^\s*ELSEIF TFLAG:500 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6041',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6043',
+        any: [/^\s*ELSEIF TFLAG:500 == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6044',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6046',
+        any: [/^\s*ELSEIF TFLAG:500 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6046-6050',
+        any: [
+          /^\s*ELSEIF TFLAG:500 == 9\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6047',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6051',
+        any: [/^\s*@BANISHMENT_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6051-6069',
+        any: [
+          /^\s*@BANISHMENT_KOUJO_K15\s*$\s*^\s*;処刑内容はBANISHMENT\.ERBを参照してください。\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;追放\s*$\s*^\s*IF TFLAG:510 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;男体化\s*$\s*^\s*ELSEIF TFLAG:510 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6055',
+        any: [/^\s*IF TFLAG:510 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6056',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6058',
+        any: [/^\s*ELSEIF TFLAG:510 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6059',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6061',
+        any: [/^\s*ELSEIF TFLAG:510 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6062',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6064',
+        any: [/^\s*ELSEIF TFLAG:510 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6065',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6067',
+        any: [/^\s*ELSEIF TFLAG:510 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6067-6071',
+        any: [
+          /^\s*ELSEIF TFLAG:510 == 4\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6068',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6072',
+        any: [/^\s*@PUBLIC_EXUCUTION_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6072-6084',
+        any: [
+          /^\s*@PUBLIC_EXUCUTION_KOUJO_K15\s*$\s*^\s*;処刑内容はPUBLIC_EXUCUTION\.ERBを参照してください。\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;陵辱処刑\s*$\s*^\s*IF TFLAG:520 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;絞首刑\s*$\s*^\s*ELSEIF TFLAG:520 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6076',
+        any: [/^\s*IF TFLAG:520 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6077',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6079',
+        any: [/^\s*ELSEIF TFLAG:520 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6080',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6082',
+        any: [/^\s*ELSEIF TFLAG:520 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6082-6086',
+        any: [
+          /^\s*ELSEIF TFLAG:520 == 2\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6083',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6087',
+        any: [/^\s*@GROTESQUE_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6087-6111',
+        any: [
+          /^\s*@GROTESQUE_KOUJO_K15\s*$\s*^\s*;内容はGROTESQUE\.ERBを参照してください。\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;四肢切断刑\s*$\s*^\s*IF TFLAG:530 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*;内臓陵辱刑\s*$\s*^\s*ELSEIF TFLAG:530 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6091',
+        any: [/^\s*IF TFLAG:530 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6092',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6094',
+        any: [/^\s*ELSEIF TFLAG:530 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6095',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6097',
+        any: [/^\s*ELSEIF TFLAG:530 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6098',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6100',
+        any: [/^\s*ELSEIF TFLAG:530 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6101',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6103',
+        any: [/^\s*ELSEIF TFLAG:530 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6104',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6106',
+        any: [/^\s*ELSEIF TFLAG:530 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6107',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6109',
+        any: [/^\s*ELSEIF TFLAG:530 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6109-6113',
+        any: [
+          /^\s*ELSEIF TFLAG:530 == 6\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;-----------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6110',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6114',
+        any: [/^\s*@ENTERENEMY_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6114-6129',
+        any: [
+          /^\s*@ENTERENEMY_KOUJO_K15\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;ダンジョン攻略開始時\s*$\s*^\s*IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1\s*$\s*^\s*;無関心・感情乏しいなら何か言って終了\s*$\s*^\s*PRINTFORMW 「魔王…吗………」\s*$\s*^\s*ELSEIF TALENT:A:11 == 1 \|\| TALENT:A:12 == 1 \|\| TALENT:A:15 == 1 \|\| TALENT:A:30 == 1 \|\| TALENT:A:34 == 1\s*$\s*^\s*;反抗的・気丈・プライド高い・貞操観念・抵抗\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6117',
+        any: [/^\s*IF TALENT:A:21 == 1 \|\| TALENT:A:22 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6119',
+        any: [/^\s*PRINTFORMW 「魔王…吗………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6120',
+        any: [
+          /^\s*ELSEIF TALENT:A:11 == 1 \|\| TALENT:A:12 == 1 \|\| TALENT:A:15 == 1 \|\| TALENT:A:30 == 1 \|\| TALENT:A:34 == 1\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6122',
+        any: [
+          /^\s*PRINTFORMW 「就让%SELF_CALL\(A\)%来看看魔王有什么本事吧！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6123',
+        any: [/^\s*ELSEIF TALENT:A:10 == 1 \|\| TALENT:A:26 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6125',
+        any: [/^\s*PRINTFORMW 「魔王…是不应该现世的………」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6125-6127',
+        any: [
+          /^\s*PRINTFORMW 「魔王…是不应该现世的………」\s*$\s*^\s*ELSE\s*$\s*^\s*;その他何か適当に性格によって\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6128',
+        any: [/^\s*PRINTFORMW 「就算是魔王……也一定有击倒的办法……」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6128-6130',
+        any: [
+          /^\s*PRINTFORMW 「就算是魔王……也一定有击倒的办法……」\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6132',
+        any: [/^\s*@GOHOUBI_REQUEST_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6132-6167',
+        any: [
+          /^\s*@GOHOUBI_REQUEST_KOUJO_K15\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;迎撃時のご褒美要求\s*$\s*^\s*IF CFLAG:A:504 == 0\s*$\s*^\s*;お金\s*$\s*^\s*PRINTFORMW 「迎击成功的话，%SELF_CALL\(TARGET\)%想要一笔赏金！」\s*$\s*^\s*ELSEIF CFLAG:A:504 == 1 \|\| CFLAG:A:504 == 2 \|\| CFLAG:A:504 == 3\s*$\s*^\s*;獣姦要求\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6135',
+        any: [/^\s*IF CFLAG:A:504 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6137',
+        any: [
+          /^\s*PRINTFORMW 「迎击成功的话，%SELF_CALL\(TARGET\)%想要一笔赏金！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6138',
+        any: [
+          /^\s*ELSEIF CFLAG:A:504 == 1 \|\| CFLAG:A:504 == 2 \|\| CFLAG:A:504 == 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6140',
+        any: [/^\s*PRINTFORM 「迎击成功的话，请让%SELF_CALL\(TARGET\)%跟\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6141',
+        any: [/^\s*IF CFLAG:A:504 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6142',
+        any: [/^\s*PRINT 狗\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6143',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6144',
+        any: [/^\s*PRINT 猪\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6145',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6146',
+        any: [/^\s*PRINT 馬\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6146-6148',
+        any: [
+          /^\s*PRINT 馬\s*$\s*^\s*ENDIF\s*$\s*^\s*PRINTFORMW 进行交配好吗？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6148',
+        any: [/^\s*PRINTFORMW 进行交配好吗？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6149',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6151',
+        any: [
+          /^\s*PRINTFORMW 「迎击成功的话，能否请魔王大人给%SELF_CALL\(TARGET\)%一个吻呢？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6152',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6154',
+        any: [
+          /^\s*PRINTFORMW 「迎击成功的话，想要让魔王大人射在%SELF_CALL\(TARGET\)%身体里面！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6155',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6157',
+        any: [
+          /^\s*PRINTFORMW 「迎击成功的话，魔王大人能否将精液赏赐给%SELF_CALL\(TARGET\)%呢？」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6158',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6160',
+        any: [
+          /^\s*PRINTFORMW 「迎击成功的话，%SELF_CALL\(TARGET\)%想被很多人一起轮奸！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6161',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6163',
+        any: [
+          /^\s*PRINTFORMW 「迎击成功的话，%SELF_CALL\(TARGET\)%想要品嚐魔王大人的『黄金甘露』！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6164',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6166',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:A%提出了想要狩猎童貞作为迎击成功的报酬\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6166-6168',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:A%提出了想要狩猎童貞作为迎击成功的报酬\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6170',
+        any: [/^\s*@GOHOUBI_AFTER_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6170-6266',
+        any: [
+          /^\s*@GOHOUBI_AFTER_KOUJO_K15\s*$\s*^\s*;-----------------------------------\s*$\s*^\s*;迎撃成功時\s*$\s*^\s*;DUNGEON_AFTER\.ERBを参照\s*$\s*^\s*;何もしない\s*$\s*^\s*IF TFLAG:18 == 0\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*RETURN 0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6176',
+        any: [/^\s*IF TFLAG:18 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6177',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6177-6179',
+        any: [/^\s*PRINTFORMW\s*$\s*^\s*RETURN 0\s*$\s*^\s*;勲章授与\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6180',
+        any: [/^\s*ELSEIF TFLAG:18 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6181',
+        any: [
+          /^\s*PRINTFORMW 「能得到您的肯定，是%SELF_CALL\(TARGET\)%最大的荣幸。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6182',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%慎重地将勳章别在胸前，露出了满足的微笑。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6182-6184',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%慎重地将勳章别在胸前，露出了满足的微笑。\s*$\s*^\s*RETURN 0\s*$\s*^\s*ELSEIF TFLAG:18 == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6184',
+        any: [/^\s*ELSEIF TFLAG:18 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6186',
+        any: [/^\s*IF CFLAG:A:504 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6187',
+        any: [
+          /^\s*PRINTFORMW 「这样就能买礼物送给魔王大人了，会期待吗？呵呵」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6188',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%笑着将食指点在唇上，做了个礼物要保密的表情。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6190',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6192',
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6193',
+        any: [
+          /^\s*PRINTFORMW 「第一次就让野狗侵犯…啊！啊啊…果然…插的好深啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6194',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，尽管大腿还流淌着处女的血液，却像只母狗那样摇摆着屁股……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6194-6196',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，尽管大腿还流淌着处女的血液，却像只母狗那样摇摆着屁股……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「野狗的肉棒…呜啊！好…好棒啊♡！嗯啊…要……要射在里面了～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6196',
+        any: [
+          /^\s*PRINTFORMW 「野狗的肉棒…呜啊！好…好棒啊♡！嗯啊…要……要射在里面了～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6197',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，流着口水像只发情的母狗，淫荡地摇着屁股迎合肉棒的抽插……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6197-6199',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，流着口水像只发情的母狗，淫荡地摇着屁股迎合肉棒的抽插……\s*$\s*^\s*ENDIF\s*$\s*^\s*;豚と獣姦\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6200',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6202',
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6203',
+        any: [
+          /^\s*PRINTFORMW 「第一次就让猪侵犯…啊！啊啊…果然…插的好深啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6204',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，尽管大腿还流淌着处女的血液，却像只母猪那样摇摆着屁股…\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6204-6206',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，尽管大腿还流淌着处女的血液，却像只母猪那样摇摆着屁股…\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「猪的肉棒…呜啊！好…好棒啊♡！嗯啊…要……要射在里面了～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6206',
+        any: [
+          /^\s*PRINTFORMW 「猪的肉棒…呜啊！好…好棒啊♡！嗯啊…要……要射在里面了～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6207',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，流着口水像只发情的母猪，淫荡地摇着屁股迎合肉棒的抽插……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6207-6209',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，流着口水像只发情的母猪，淫荡地摇着屁股迎合肉棒的抽插……\s*$\s*^\s*ENDIF\s*$\s*^\s*;馬と獣姦\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6210',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6212',
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6213',
+        any: [
+          /^\s*PRINTFORMW 「第一次就让马侵犯…啊！啊啊…果然…插的好深啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6214',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，尽管大腿还流淌着处女的血液，却像只母马那样摇摆着屁股…\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6214-6216',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，尽管大腿还流淌着处女的血液，却像只母马那样摇摆着屁股…\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「马的肉棒…呜啊！好…好棒啊♡！嗯啊…要……要射在里面了～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6216',
+        any: [
+          /^\s*PRINTFORMW 「马的肉棒…呜啊！好…好棒啊♡！嗯啊…要……要射在里面了～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6217',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，流着口水像只发情的母马，淫荡地摇着屁股迎合肉棒的抽插……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6217-6219',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%四肢着地趴在地上，流着口水像只发情的母马，淫荡地摇着屁股迎合肉棒的抽插……\s*$\s*^\s*ENDIF\s*$\s*^\s*;キス\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6220',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6221',
+        any: [
+          /^\s*PRINTFORMW 「嗯嗯……啾……啊……%SELF_CALL\(TARGET\)%的魔王大人～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6222',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%闭起眼睛，沉醉在与你的深吻之中……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6224',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6226',
+        any: [/^\s*IF ABL:A:2 > ABL:A:3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6227',
+        any: [
+          /^\s*PRINTFORMW 「嗯嗯……啊……好棒……%SELF_CALL\(TARGET\)%的魔王大人～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6228',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%忘情地用双腿夹紧你的腰部，在你的抽插之下很快地高潮了……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6229-6231',
+        any: [
+          /^\s*;アナルとペニス\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「魔王大人…请…请尽情使用这淫荡的屁股吧……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6231',
+        any: [
+          /^\s*PRINTFORMW 「魔王大人…请…请尽情使用这淫荡的屁股吧……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6232',
+        any: [
+          /^\s*PRINTFORMW 你狠狠地将整根肉棒完全没入%SAVESTR:TARGET%那饥渴的肛穴之中捣弄\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6233',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着满足的表情，发出了淫媚的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6233-6235',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%带着满足的表情，发出了淫媚的呻吟……\s*$\s*^\s*ENDIF\s*$\s*^\s*;ザーメン\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6236',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6237',
+        any: [
+          /^\s*PRINTFORMW 「唔……咕噜……咕噜……啊…感谢魔王大人的款待～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6238',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%意犹未尽地舔着嘴角，露出了满足的笑容……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6240',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6242',
+        any: [/^\s*IF TALENT:A:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6243',
+        any: [
+          /^\s*PRINTFORMW 「啊！……啊啊……又…又进来了…好……好棒……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6244',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%大腿还流淌着处女的血液，却像个熟练的妓女那样沉迷在乱交的派对当中……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6244-6246',
+        any: [
+          /^\s*PRINTFORMW 尽管%SAVESTR:TARGET%大腿还流淌着处女的血液，却像个熟练的妓女那样沉迷在乱交的派对当中……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「啊！……啊啊……又…又进来了…好……好棒……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6246',
+        any: [
+          /^\s*PRINTFORMW 「啊！……啊啊……又…又进来了…好……好棒……啊啊♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6247',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边被操干着一边进行口交，像个熟练的妓女那样沉迷在乱交的派对当中……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6247-6249',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%一边被操干着一边进行口交，像个熟练的妓女那样沉迷在乱交的派对当中……\s*$\s*^\s*ENDIF\s*$\s*^\s*;おしっこ\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6250',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6251',
+        any: [
+          /^\s*PRINTFORMW 「唔……咕噜……咕噜……啊…感谢魔王大人的款待～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6252',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%意犹未尽地舔着嘴角，露出了满足的笑容……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6254',
+        any: [/^\s*ELSEIF CFLAG:A:504 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6256',
+        any: [/^\s*IF ABL:A:2 > ABL:A:3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6257',
+        any: [
+          /^\s*PRINTFORMW 「这青涩的肉棒……呵呵……就让%SELF_CALL\(TARGET\)%好好地引导吧～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6258',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%熟练地摆动着腰肢，用蜜穴饥渴地榨取着那纯洁处男的精液……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6259-6261',
+        any: [
+          /^\s*;アナル\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「这青涩的肉棒……呵呵……就让%SELF_CALL\(TARGET\)%好好地引导吧～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6261',
+        any: [
+          /^\s*PRINTFORMW 「这青涩的肉棒……呵呵……就让%SELF_CALL\(TARGET\)%好好地引导吧～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6262',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%熟练地摆动着腰肢，用肛穴饥渴地榨取着那纯洁处男的精液……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6262-6264',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%熟练地摆动着腰肢，用肛穴饥渴地榨取着那纯洁处男的精液……\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6262-6266',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%熟练地摆动着腰肢，用肛穴饥渴地榨取着那纯洁处男的精液……\s*$\s*^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6263-6267',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ELSE\s*$\s*^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6265-6267',
+        any: [
+          /^\s*ENDIF\s*$\s*^\s*ENDIF\s*$\s*^\s*;------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6268',
+        any: [/^\s*@OSIOKI_KOUJO_K15\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6268-6332',
+        any: [
+          /^\s*@OSIOKI_KOUJO_K15\s*$\s*^\s*;-----------------------------\s*$\s*^\s*;迎撃失敗時のおしおき\s*$\s*^\s*;DUNGEON_AFTER\.ERBを参照\s*$\s*^\s*;何もしない\s*$\s*^\s*IF TFLAG:18 == 0\s*$\s*^\s*PRINTFORMW 「您是如此的宽容！下次%SELF_CALL\(TARGET\)%一定会更加努力。」\s*$\s*^\s*SIF ABL:A:21 >= 3\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6274',
+        any: [/^\s*IF TFLAG:18 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6275',
+        any: [
+          /^\s*PRINTFORMW 「您是如此的宽容！下次%SELF_CALL\(TARGET\)%一定会更加努力。」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6277',
+        any: [
+          /^\s*PRINTFORMW 明明没有处罚，不知为何%SAVESTR:TARGET%却露出有点失落的样子……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6279',
+        any: [/^\s*ELSEIF TFLAG:18 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6281',
+        any: [/^\s*IF ABL:A:21 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6282',
+        any: [
+          /^\s*PRINTFORMW 「呀啊！啊啊！这～这种感觉～唔～要～要高潮了！啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6283',
+        any: [
+          /^\s*PRINTFORMW 明明是电椅的处罚，%SAVESTR:TARGET%却发出了淫荡的呻吟……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6283-6285',
+        any: [
+          /^\s*PRINTFORMW 明明是电椅的处罚，%SAVESTR:TARGET%却发出了淫荡的呻吟……\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「唔！啊！不～不行了～啊！魔王大人…请…请饶了%SELF_CALL\(TARGET\)%吧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6285',
+        any: [
+          /^\s*PRINTFORMW 「唔！啊！不～不行了～啊！魔王大人…请…请饶了%SELF_CALL\(TARGET\)%吧……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6286',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%因电椅的痛苦，眼角闪着泪光说着求饶的话语……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6286-6288',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:TARGET%因电椅的痛苦，眼角闪着泪光说着求饶的话语……\s*$\s*^\s*ENDIF\s*$\s*^\s*;路上自慰刑\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6289',
+        any: [/^\s*ELSEIF TFLAG:18 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6291',
+        any: [/^\s*IF ABL:A:17 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6292',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊！啊啊！要……要高潮了……贴近一点看……也可以的喔～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6292-6294',
+        any: [
+          /^\s*PRINTFORMW 「嗯啊！啊啊！要……要高潮了……贴近一点看……也可以的喔～♡」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「唔……啊啊……你们……走…走开啊！……不……不要看啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6294',
+        any: [
+          /^\s*PRINTFORMW 「唔……啊啊……你们……走…走开啊！……不……不要看啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6294-6296',
+        any: [
+          /^\s*PRINTFORMW 「唔……啊啊……你们……走…走开啊！……不……不要看啊……」\s*$\s*^\s*ENDIF\s*$\s*^\s*;路上脱糞刑\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6297',
+        any: [/^\s*ELSEIF TFLAG:18 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6299',
+        any: [/^\s*IF ABL:A:17 >= 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6300',
+        any: [
+          /^\s*PRINTFORMW 「啊！……唔啊！要…要出来了！……排泄的样子…被看见了啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6300-6302',
+        any: [
+          /^\s*PRINTFORMW 「啊！……唔啊！要…要出来了！……排泄的样子…被看见了啊～♡」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「唔……啊啊……你们……走…走开啊！……不……不要看啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6302',
+        any: [
+          /^\s*PRINTFORMW 「唔……啊啊……你们……走…走开啊！……不……不要看啊……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6302-6304',
+        any: [
+          /^\s*PRINTFORMW 「唔……啊啊……你们……走…走开啊！……不……不要看啊……」\s*$\s*^\s*ENDIF\s*$\s*^\s*;鞭打ち刑\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6305',
+        any: [/^\s*ELSEIF TFLAG:18 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6307',
+        any: [/^\s*IF ABL:A:21 >= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6308',
+        any: [
+          /^\s*PRINTFORMW 「痛！……唔啊！……可是……为何这么舒服呢？啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6308-6310',
+        any: [
+          /^\s*PRINTFORMW 「痛！……唔啊！……可是……为何这么舒服呢？啊啊～♡」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「痛！……唔啊！……原…原谅%SELF_CALL\(TARGET\)%吧……啊！啊…！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6310',
+        any: [
+          /^\s*PRINTFORMW 「痛！……唔啊！……原…原谅%SELF_CALL\(TARGET\)%吧……啊！啊…！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6310-6312',
+        any: [
+          /^\s*PRINTFORMW 「痛！……唔啊！……原…原谅%SELF_CALL\(TARGET\)%吧……啊！啊…！」\s*$\s*^\s*ENDIF\s*$\s*^\s*;人間小便器刑\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6313',
+        any: [/^\s*ELSEIF TFLAG:18 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6315',
+        any: [/^\s*IF TALENT:A:88 == 1 \|\| TALENT:A:76 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6316',
+        any: [
+          /^\s*PRINTFORMW 「唔……请…请将尿液……施舍给下贱的%SAVESTR:TARGET%～啊！好棒～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6316-6318',
+        any: [
+          /^\s*PRINTFORMW 「唔……请…请将尿液……施舍给下贱的%SAVESTR:TARGET%～啊！好棒～♡」\s*$\s*^\s*ELSE\s*$\s*^\s*PRINTFORMW 「不……拜托……不要这样…啊！不行！不要啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6318',
+        any: [
+          /^\s*PRINTFORMW 「不……拜托……不要这样…啊！不行！不要啊！！」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6318-6320',
+        any: [
+          /^\s*PRINTFORMW 「不……拜托……不要这样…啊！不行！不要啊！！」\s*$\s*^\s*ENDIF\s*$\s*^\s*;トイレ掃除刑\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6321',
+        any: [/^\s*ELSEIF TFLAG:18 == 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6322',
+        any: [
+          /^\s*PRINT 「这里……也太脏了吧…到底都在厕所里做些什么啊…真是……唉……」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6324',
+        any: [/^\s*ELSEIF TFLAG:18 == 7\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6325',
+        any: [/^\s*PRINT 「唉～好饿啊～不如……做些什么来转移注意力吧？」\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6327',
+        any: [/^\s*ELSEIF TFLAG:18 == 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6328',
+        any: [
+          /^\s*PRINTFORMW 「唔！啊啊……啊…忍不下去…谁……谁都可以…快…快来操%SAVESTR:TARGET%吧……啊啊～♡」\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6330',
+        any: [/^\s*ELSEIF TFLAG:18 == 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6330-6334',
+        any: [
+          /^\s*ELSEIF TFLAG:18 == 9\s*$\s*^\s*PRINTFORMW\s*$\s*^\s*ENDIF\s*$\s*^\s*;------------------------------\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6331',
+        any: [/^\s*PRINTFORMW\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6335',
+        any: [/^\s*@GOBI_KOUJO_K15, ARG:0\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6335-6357',
+        any: [
+          /^\s*@GOBI_KOUJO_K15, ARG:0\s*$\s*^\s*;-----------------------------\s*$\s*^\s*IF ARG:0 == 1\s*$\s*^\s*;喜んで誇らしげに\s*$\s*^\s*PRINTFORM ♪\s*$\s*^\s*ELSEIF ARG:0 == 2\s*$\s*^\s*;怒って\s*$\s*^\s*PRINTFORM ！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6338',
+        any: [/^\s*IF ARG:0 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6340',
+        any: [/^\s*PRINTFORM ♪\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6341',
+        any: [/^\s*ELSEIF ARG:0 == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6343',
+        any: [/^\s*PRINTFORM ！\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6344',
+        any: [/^\s*ELSEIF ARG:0 == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6346',
+        any: [/^\s*PRINTFORM ……。\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6347',
+        any: [/^\s*ELSEIF ARG:0 == 4\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6349',
+        any: [/^\s*PRINTFORM ……。\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6350',
+        any: [/^\s*ELSEIF ARG:0 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6352',
+        any: [/^\s*PRINTFORM ……。\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6352-6354',
+        any: [/^\s*PRINTFORM ……。\s*$\s*^\s*ELSE\s*$\s*^\s*;デフォルト\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6356',
+        any: [/^\s*PRINTFORM 。\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '6356-6357',
+        any: [/^\s*PRINTFORM 。\s*$\s*^\s*ENDIF\s*$/m],
+      },
+    ],
+  },
+];
+
+export const LOG_REFS = [];
+
+export const SAMPLE_LOG_REFS = {};

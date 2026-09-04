@@ -493,6 +493,25 @@ const cflag = {
   ),
   504: named_tail('要求奖赏', src(SRC_FLAG, 'CFLAG:504 = 要求したご褒美')),
   602: named_tail('结婚爱情', src(SRC_FLAG, ':465 CFLAG:602 = 結婚愛情')),
+  // #245（J35 K14 貴公子）：口上读性転換済（male→female 改造完成标志，
+  // SHOP_LABO ver1.0.2.ERB:2310 的 CFLAG:T:70 = 1 写入；K14 全篇在
+  // 「性転換済み」分支读它，随 TALENT:122 == 0 一起判性别转换后的女性身体）——
+  // 跨域读走 chara(cid).stronghold 门面（owner stronghold，见
+  // ownership/cflag-ownership.yml "70-71"）
+  70: named_tail(
+    '已性转',
+    src(SRC_FLAG, ':309 CFLAG:70 = 性転換済（0:NO 1:YES)'),
+  ),
+  // #243（J33 K12 知的）：爱抚怀孕分支读父亲位（K12 口上 EVENT_K12_知的.ERB:441
+  //   `TALENT:153 && CFLAG:111 == 0` = 怀着主人之子），预产日一并具名供后续使用
+  110: named_tail('预产日', src(SRC_FLAG, 'CFLAG:110 = 出産予定日')),
+  111: named_tail(
+    '孩子父亲',
+    src(
+      SRC_FLAG,
+      'CFLAG:111 = 父親のキャラ番号（-1なら娼館の客, -2ならノラ犬, -3ならモンスターの子供, -4なら狂王）',
+    ),
+  ),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

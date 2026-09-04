@@ -1,6 +1,8 @@
 // 内联行号引用校核器（issue #44 验收整改；#48 验收整改起纳入 emuera.log；
 // #63 起 ERB 侧补齐同款扫描完整性；#156 起多样本：引用前缀按样本名派生；
-// #290 起锚表按 js 文件拆进 tools/trace-refs/，本文件只留校核）。
+// #290 起锚表按 js 文件拆进 tools/trace-refs/，本文件只留校核；
+// #298 起量鉴别力：命中 1 处 / 平行复现放行 / 空 PRINTFORM 整行锚放行，
+// 其余弱锚冻结成只减不增的基线）。
 //
 // 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释，以及 #48 起
 // tools/compare 等处指向黄金样本 target/emuera.log 的 `log:N` 注释。文件头
@@ -46,7 +48,32 @@
 // tools/trace-refs/，加载器按目录扫描、新增分片即入账。按域合成不够——
 // 二十张口上票全落 kojo.mjs 仍互撞。本文件只留校核。
 //
+// #298：第 1–2 步只回答「:N 登记了吗、声明切片上能命中吗」，不看锚有没有
+// 鉴别力。ENDIF / 裸 PRINTFORMW / 无锚定正则命中几十上百行，行号漂了仍绿
+// ——这正是 #44 成片偏移时工具该抓却抓不到的那一类。关键词黑名单永远追
+// 不全，所以直接量：把锚拿到源文件**全文**上跑（段级多行锚按单行逐行会
+// 得到 0 命中，见 kojo-k10-club.mjs 头注）。判据：
+//   - 命中 1 处 = 满分；
+//   - 命中 N 处但窗口逐字相同且有正文 = 平行复现，放行（#242：漂移落到
+//     内容相同的另一处，无从产生错误绑定）；
+//   - 空 PRINTFORM 整行锚 `/^\s*PRINTFORMW\s*$/m` 放行（#235）；
+//   - 其余（窗口不同，或窗口无正文）= 弱锚。存量冻结成
+//     ANCHOR_QUALITY_BASELINE / ANCHOR_QUALITY_BY_FILE，只减不增——
+//     不回头改已合并模块，但让它们再也涨不上去。
+// 量法并进第 2 步的现有遍历，不另起扫描。
+//
+// 默认路径**只量未冻结文件**（#298 验收：合上 K8 后全文量是 master 的 4.2
+// 倍、每次 npm test +19s）。ANCHOR_QUALITY_BY_FILE 里的文件存量已冻结，
+// 默认不再重算——弱锚涨只可能来自新文件，ENDIF 探针也是新文件。
+// `--anchor-quality` 打印本次量到的分布；`--anchor-quality --all` 才全文量
+// 并核对总基线（消化弱锚后基线一并改小）。完成报告用带 `--all` 的那条。
+//
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
+//       node tools/trace-check.mjs --anchor-quality
+//         打印本次鉴别力分布（默认只含未冻结文件）。
+//       node tools/trace-check.mjs --anchor-quality --all
+//         全文量并打印分布（命中 1 处 / 平行复现 / 空 PRINTFORM 整行锚 /
+//         弱锚），供完成报告引用；不要再引「trace-check 全绿」。
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -64,6 +91,9 @@ const SAMPLES = samples_module.SAMPLES;
 
 const EMUERA_LOG = 'target/emuera.log';
 
+const WANT_QUALITY_REPORT = process.argv.includes('--anchor-quality');
+const WANT_QUALITY_ALL = process.argv.includes('--all');
+
 // #282 注释自身的引用（本文件注释里写了 emuera.log:26，被完整性扫描
 // 扫到；登记后自洽）——条目仍挂本文件，不跟锚表一起搬走。
 const { FILES, LOG_REFS, SAMPLE_LOG_REFS } = await load_trace_refs(
@@ -73,6 +103,8 @@ const { FILES, LOG_REFS, SAMPLE_LOG_REFS } = await load_trace_refs(
 // —— 校核 ——
 
 const source_cache = new Map();
+const source_pack_cache = new Map();
+const classify_cache = new Map();
 function load_source(rel) {
   if (!source_cache.has(rel)) {
     source_cache.set(
@@ -83,12 +115,239 @@ function load_source(rel) {
   return source_cache.get(rel);
 }
 
+function load_source_pack(rel) {
+  if (!source_pack_cache.has(rel)) {
+    const lines = load_source(rel);
+    const text = lines.join('\n');
+    const starts = [0];
+    for (let i = 0; i < text.length; i += 1) {
+      if (text.charCodeAt(i) === 10) starts.push(i + 1);
+    }
+    source_pack_cache.set(rel, { lines, text, starts });
+  }
+  return source_pack_cache.get(rel);
+}
+
+function pos_to_line(starts, pos) {
+  let lo = 0;
+  let hi = starts.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (starts[mid] <= pos) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo + 1;
+}
+
+function with_global_m(anchor) {
+  let flags = anchor.flags.replaceAll('g', '');
+  if (!flags.includes('m')) flags += 'm';
+  return new RegExp(anchor.source, `${flags}g`);
+}
+
+function* iter_regex_hits(pack, anchor) {
+  const re = with_global_m(anchor);
+  let m;
+  let guard = 0;
+  while ((m = re.exec(pack.text)) !== null) {
+    yield [m.index, m.index + m[0].length];
+    if (m[0].length === 0) re.lastIndex += 1;
+    guard += 1;
+    if (guard > 200000) return;
+  }
+}
+
+function window_at(pack, start, end) {
+  const line_from = pos_to_line(pack.starts, start);
+  const line_to = pos_to_line(
+    pack.starts,
+    Math.max(start, end - (end > start ? 1 : 0)),
+  );
+  return pack.lines.slice(line_from - 1, line_to).join('\n');
+}
+
+function normalize_window(s) {
+  return s
+    .split('\n')
+    .map((line) => line.replace(/[ \t]+/g, ' ').trim())
+    .join('\n')
+    .trim();
+}
+
+const EMPTY_PRINT_CMD_RE =
+  /^(PRINTFORMW|PRINTFORML|PRINTFORM|PRINTDATA|PRINT)$/i;
+
+function is_whole_line_empty_print(anchor) {
+  const s = anchor.source
+    .replace(/^\^/, '')
+    .replace(/\$$/, '')
+    .replace(/\\s\*/g, '')
+    .replace(/\\s\+/g, '')
+    .trim();
+  return EMPTY_PRINT_CMD_RE.test(s);
+}
+
+function window_has_payload(window) {
+  const s = window.trim();
+  if (!s) return false;
+  const m = s.match(
+    /^(PRINTFORMW|PRINTFORML|PRINTFORM|PRINTDATA|PRINT|DRAWLINE|SIF|IF|ELSEIF|ELSE|ENDIF|RETURN|REND|ENDSELECT|SELECTCASE|CASE|REPEAT|FOR|NEXT|WHILE|WEND|BREAK|CONTINUE|TIMES|VARSET|CALL|GOTO|BEGIN|TRYCALL|TRYCCALL|CATCH|ENDCATCH|#PRI|#LATER|#DIM|#DIMS|#FUNCTION|#FUNCTIONS)\b[ \t]*(.*)$/is,
+  );
+  if (!m) return true;
+  const rest = m[2].trim();
+  if (!rest) return false;
+  if (/^RETURN$/i.test(m[1]) && /^[01]$/.test(rest)) return false;
+  return true;
+}
+
+const QUALITY_RANK = {
+  unique: 0,
+  ident_payload: 1,
+  ident_empty_print: 2,
+  ident_no_payload: 3,
+  diff: 4,
+};
+
+function classify_hits(n, first_norm, all_same, anchor) {
+  if (n <= 1) return { kind: 'unique', hits: n || 1 };
+  if (!all_same) return { kind: 'diff', hits: n };
+  if (window_has_payload(first_norm)) {
+    return { kind: 'ident_payload', hits: n };
+  }
+  if (
+    is_whole_line_empty_print(anchor) &&
+    EMPTY_PRINT_CMD_RE.test(first_norm)
+  ) {
+    return { kind: 'ident_empty_print', hits: n };
+  }
+  return { kind: 'ident_no_payload', hits: n };
+}
+
+function classify_anchor(src, anchor, pack) {
+  const key = `${src}\0${anchor.source}\0${anchor.flags}`;
+  if (classify_cache.has(key)) return classify_cache.get(key);
+  let n = 0;
+  let first_norm = null;
+  let all_same = true;
+  for (const [start, end] of iter_regex_hits(pack, anchor)) {
+    n += 1;
+    if (!all_same) continue;
+    const w = normalize_window(window_at(pack, start, end));
+    if (n === 1) first_norm = w;
+    else if (w !== first_norm) all_same = false;
+  }
+  const rec = classify_hits(n, first_norm, all_same, anchor);
+  classify_cache.set(key, rec);
+  return rec;
+}
+
+function unique_nonblank_in_slice(lines, a, b) {
+  const out = [];
+  const seen = new Set();
+  for (let i = a - 1; i < b && i < lines.length; i += 1) {
+    const t = lines[i].trim();
+    if (!t) continue;
+    if (seen.has(t)) continue;
+    seen.add(t);
+    out.push({ line: i + 1, text: t });
+    if (out.length >= 5) break;
+  }
+  return out;
+}
+
+const ANCHOR_QUALITY_BASELINE = 5159; // #298 冻结：弱锚只减不增；#239 K8 并入 +500；#231 K0 并入 +364
+const ANCHOR_QUALITY_BY_FILE = {
+  'ere/chara/chara-make.js': 35,
+  'ere/data/equip-database.js': 2,
+  'ere/dungeon/dungeon-after.js': 3,
+  'ere/dungeon/dungeon-battle.js': 12,
+  'ere/dungeon/dungeon-battle2.js': 8,
+  'ere/dungeon/dungeon-party.js': 1,
+  'ere/dungeon/dungeon-quest.js': 11,
+  'ere/dungeon/dungeon-room.js': 40,
+  'ere/dungeon/dungeon-town.js': 15,
+  'ere/dungeon/dungeon-trap.js': 63,
+  'ere/dungeon/dungeon.js': 36,
+  'ere/dungeon/labo-dungeon-map.js': 10,
+  'ere/dungeon/labo-map.js': 1,
+  'ere/dungeon/labo.js': 7,
+  'ere/dungeon/monster-data.js': 3,
+  'ere/event/enter-enemy.js': 30,
+  'ere/event/event-aftertrain.js': 2,
+  'ere/event/event-beforetrain.js': 1,
+  'ere/event/event-comend.js': 4,
+  'ere/event/event-end.js': 2,
+  'ere/event/event-endcheck.js': 5,
+  'ere/event/event-ending.js': 2,
+  'ere/event/event-nextday.js': 9,
+  'ere/event/event-turnend.js': 2,
+  'ere/event/first-setting.js': 1,
+  'ere/event/source-check.js': 23,
+  'ere/kojo/kojo-dungeon-bitch-log.js': 15,
+  'ere/kojo/kojo-dungeon-bitch.js': 50,
+  'ere/kojo/kojo-dungeon-ravish-man.js': 84,
+  'ere/kojo/kojo-dungeon-ravish.js': 193,
+  // K0 与 K8 一样，是在本门存在之前合的（#231 / #239），弱锚按存量冻结。
+  // 这两份的 `ELSEIF TALENT:TARGET:76 == 1` 一类锚一条命中几十处，正是本门
+  // 要拦的形态——冻结只表示「不追溯」，消化时收窄锚、把这两个数一并改小。
+  'ere/kojo/kojo-k0-tender.js': 364,
+  'ere/kojo/kojo-k1-confident.js': 784,
+  'ere/kojo/kojo-k10-club.js': 32,
+  'ere/kojo/kojo-k2-timid.js': 566,
+  'ere/kojo/kojo-k3-noble.js': 742,
+  'ere/kojo/kojo-k4-stoic.js': 18,
+  'ere/kojo/kojo-k5-mao.js': 468,
+  'ere/kojo/kojo-k6-wicked.js': 564,
+  'ere/kojo/kojo-k7-heart.js': 109,
+  'ere/kojo/kojo-k8-spade.js': 500,
+  'ere/kojo/kojo-k9-diamond.js': 23,
+  'ere/page/page-clothtype.js': 2,
+  'ere/page/page-dungeon-setup.js': 1,
+  'ere/page/page-invasion.js': 5,
+  'ere/page/page-main-menu.js': 4,
+  'ere/page/page-save-load.js': 18,
+  'ere/page/page-train.js': 2,
+  'ere/system/equip/equip-curse.js': 1,
+  'ere/system/equip/equip-lookup.js': 1,
+  'ere/system/equip/equip-print.js': 3,
+  'ere/system/train/benki.js': 4,
+  'ere/system/train/cloth.js': 1,
+  'ere/system/train/com-analsex.js': 12,
+  'ere/system/train/com-caress.js': 81,
+  'ere/system/train/com-colosseum.js': 36,
+  'ere/system/train/com-condom.js': 17,
+  'ere/system/train/com-hardcore.js': 2,
+  'ere/system/train/com-register.js': 7,
+  'ere/system/train/com-sex.js': 1,
+  'ere/system/train/com-sm.js': 63,
+  'ere/system/train/com-special.js': 1,
+  'ere/system/train/com-tentacle.js': 4,
+  'ere/system/train/com-toy.js': 3,
+  'ere/system/train/com-vaginasex.js': 22,
+  'ere/system/train/juel-check.js': 1,
+  'ere/system/train/passout.js': 17,
+  'ere/system/train/seiin.js': 2,
+  'ere/system/train/train-message.js': 4,
+  'ere/system/train/v-able.js': 1,
+  'ere/system/turnend-settle.js': 3,
+};
+
 let failures = 0;
 let checked = 0;
+const quality_counts = {
+  unique: 0,
+  ident_payload: 0,
+  ident_empty_print: 0,
+  ident_no_payload: 0,
+  diff: 0,
+};
+const quality_weak_by_file = new Map();
+const quality_new_weak = [];
 
 for (const { js, refs } of FILES) {
   const js_path = path.join(REPO, js);
   const js_text = fs.readFileSync(js_path, 'utf8');
+  let this_weak = 0;
   for (const { src, ref, any } of refs) {
     checked += 1;
     const label = `${js} :${ref} ↔ ${src}`;
@@ -102,18 +361,50 @@ for (const { js, refs } of FILES) {
       continue;
     }
     // 2) 源侧：所引行命中锚（防行号偏移/源漂移）
-    const lines = load_source(src);
+    const pack = load_source_pack(src);
     const [a, b = a] = ref.split('-').map(Number);
-    const slice = lines.slice(a - 1, b).join('\n');
-    if (!any.some((anchor) => anchor.test(slice))) {
+    const slice = pack.lines.slice(a - 1, b).join('\n');
+    const matching = any.filter((anchor) => anchor.test(slice));
+    if (matching.length === 0) {
       console.log(
         `✗ ${label} —— 源文件 ${a}${b === a ? '' : `-${b}`} 行未命中任何锚`,
       );
       failures += 1;
+      continue;
+    }
+    // 2b) 鉴别力（#298）：默认 / `--anchor-quality` 只量未冻结文件；
+    // `--all` 才全文量。
+    const want_quality =
+      (WANT_QUALITY_REPORT && WANT_QUALITY_ALL) ||
+      !(js in ANCHOR_QUALITY_BY_FILE);
+    if (want_quality) {
+      let best = null;
+      for (const anchor of matching) {
+        const rec = {
+          ...classify_anchor(src, anchor, pack),
+          source: anchor.source,
+        };
+        if (!best || QUALITY_RANK[rec.kind] < QUALITY_RANK[best.kind])
+          best = rec;
+      }
+      quality_counts[best.kind] += 1;
+      if (best.kind === 'ident_no_payload' || best.kind === 'diff') {
+        this_weak += 1;
+        quality_new_weak.push({
+          js,
+          src,
+          ref,
+          kind: best.kind,
+          hits: best.hits,
+          source: best.source,
+          a,
+          b,
+        });
+      }
     }
   }
+  quality_weak_by_file.set(js, (quality_weak_by_file.get(js) ?? 0) + this_weak);
 }
-
 // —— emuera.log 引用：同款两道校验（presence 用带 log: 前缀的更严形态，
 //    单值引用不得被区间引用的「log:N-M」前缀冒名满足）——
 
@@ -844,6 +1135,89 @@ for (const [rel, refs] of Object.entries(ERB_EXEMPT)) {
       failures += 1;
     }
   }
+}
+
+// —— #298 鉴别力：弱锚只减不增 ——
+//
+// 弱锚 = 全文命中 >1 且（窗口彼此不同，或窗口无正文）。平行复现（窗口
+// 逐字相同且有正文）与空 PRINTFORM 整行锚不进这张表。扩基线必须显式改
+// 上面两份常量——冻结不是不可变，是「改动必须发生在标着冻结的地方」。
+// 默认路径只核对新文件（不在 ANCHOR_QUALITY_BY_FILE 里的）超出 0；
+// 总基线只在 `--anchor-quality --all` 全文量时核对。
+
+const FROZEN_WEAK_SUM = Object.values(ANCHOR_QUALITY_BY_FILE).reduce(
+  (sum, n) => sum + n,
+  0,
+);
+if (FROZEN_WEAK_SUM > ANCHOR_QUALITY_BASELINE) {
+  console.log(
+    `✗ 分文件弱锚基线合计 ${FROZEN_WEAK_SUM}，超出总基线 ${ANCHOR_QUALITY_BASELINE}（#298 只减不增）`,
+  );
+  failures += 1;
+}
+
+const quality_weak_total =
+  quality_counts.ident_no_payload + quality_counts.diff;
+
+const overflowing = [];
+for (const [js, actual] of quality_weak_by_file.entries()) {
+  const allowed = ANCHOR_QUALITY_BY_FILE[js] ?? 0;
+  if (actual > allowed) overflowing.push({ js, actual, allowed });
+}
+
+const REPORT_CAP = 30;
+if (overflowing.length > 0) {
+  const overflow_files = new Set(overflowing.map((x) => x.js));
+  const extras = quality_new_weak.filter((w) => overflow_files.has(w.js));
+  let shown = 0;
+  for (const w of extras) {
+    if (shown >= REPORT_CAP) {
+      console.log(
+        `✗ 鉴别力弱锚另有 ${extras.length - shown} 条未列出（#298；先修上面这些）`,
+      );
+      break;
+    }
+    const pack = load_source_pack(w.src);
+    const candidates = unique_nonblank_in_slice(pack.lines, w.a, w.b).filter(
+      (c) => window_has_payload(c.text),
+    );
+    const cand_text =
+      candidates.length > 0
+        ? `窗口内候选行：${candidates.map((c) => `${c.line} ${c.text}`).join(' / ')}`
+        : '窗口内无更高鉴别力候选';
+    const why =
+      w.kind === 'ident_no_payload' ? '窗口无正文' : '命中窗口彼此不同';
+    console.log(
+      `✗ ${w.js} :${w.ref} —— 弱锚（鉴别力）：/${w.source}/ 命中 ${w.hits} 处，${why}（#298）。${cand_text}`,
+    );
+    shown += 1;
+    failures += 1;
+  }
+  for (const { js, actual, allowed } of overflowing) {
+    if (extras.every((w) => w.js !== js)) {
+      console.log(
+        `✗ ${js} —— 弱锚 ${actual} 条，超出 #298 基线 ${allowed}（只减不增）`,
+      );
+      failures += 1;
+    }
+  }
+}
+
+if (
+  WANT_QUALITY_REPORT &&
+  WANT_QUALITY_ALL &&
+  quality_weak_total > ANCHOR_QUALITY_BASELINE
+) {
+  console.log(
+    `✗ 鉴别力弱锚 ${quality_weak_total} 条，超出 #298 基线 ${ANCHOR_QUALITY_BASELINE}（只减不增：消化 = 收窄锚后基线一并改小；新弱锚不许进）`,
+  );
+  failures += 1;
+}
+
+const quality_line = `鉴别力：命中 1 处 ${quality_counts.unique}；平行复现 ${quality_counts.ident_payload}；空 PRINTFORM 整行锚 ${quality_counts.ident_empty_print}；弱锚 ${quality_weak_total} / 基线 ${ANCHOR_QUALITY_BASELINE}（#298 只减不增）`;
+
+if (WANT_QUALITY_REPORT) {
+  console.log(quality_line);
 }
 
 console.log(
