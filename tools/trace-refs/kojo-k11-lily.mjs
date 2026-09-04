@@ -25855,6 +25855,126 @@ export const FILES = [
         ['9336', 'CFLAG:369 = 3'],
         ['9339', 'PRINTFORMW'],
         ['9340', 'CFLAG:369 = 2'],
+        ['9352', 'IF SELECTCOM == 123'],
+        [
+          '9357',
+          'PRINTFORMW 「光是用胸部…和嘴巴…碰到阴茎…就好舒服了啊…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9358',
+          'PRINTFORMW %SAVESTR:TARGET%带着淫媚的笑容，用双乳夹住了%SAVESTR:PLAYER%的阴茎，低下头开始吸吮露出的龟头…',
+        ],
+        [
+          '9361',
+          'PRINTFORMW 「啊啊……身体好兴奋……嘴巴和胸部也好舒服……被魔王大人的阴茎摩擦的感觉%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9362',
+          'PRINTFORMW %SAVESTR:TARGET%带着浓浓的爱意，低下头，继续用双乳和舌尖侍奉着%SAVESTR:PLAYER%的阴茎……',
+        ],
+        ['9365', 'PRINTFORMW 「魔王大人……这样舒服吗？♪」'],
+        [
+          '9366',
+          'PRINTFORMW %SAVESTR:TARGET%眼眶微微有些湿润，但还是努力地用双乳和嘴巴侍奉着%SAVESTR:PLAYER%的阴茎……',
+        ],
+        ['9369', 'PRINTFORMW 「这种事情……到底有什么好的………」'],
+        [
+          '9370',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%要求回答进行乳交侍奉的感想，一脸嫌恶地答道……',
+        ],
+        ['9372', 'CFLAG:TARGET:360 = 1'],
+        [
+          '9380',
+          'PRINTFORMW 「嘿嘿，被我的胸部和嘴巴这样服务，%SAVESTR:PLAYER%的小鸡鸡很舒服吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9381',
+          'PRINTFORMW %SAVESTR:TARGET%微笑着，继续低下头舔着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        ['9382', 'PRINTFORMW 「哇……阴茎颤抖得好厉害，要射了吗？」'],
+        [
+          '9383',
+          'PRINTFORMW 『嗯啊……是啊……姐姐快把嘴张开，我要射在你的舌头上%UNICODE(0x2661) *1%』',
+        ],
+        ['9384', 'CFLAG:360 = 5'],
+        [
+          '9387',
+          'PRINTFORMW %SAVESTR:TARGET%眨着眼睛，用丰满的双乳夹着%SAVESTR:PLAYER%的阴茎，灵巧的舌头也卖力地舔舐着。',
+        ],
+        [
+          '9388',
+          'PRINTFORMW 「啊啊……这样摩擦着……我的胸部也好舒服，%SAVESTR:PLAYER%的阴茎……好烫好硬啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9389',
+          'PRINTFORMW 『人家……也很舒服啊%UNICODE(0x2661) *1% 啊啊啊姐姐张开嘴……我要射了，你要全部喝下去啊%UNICODE(0x2661) *1%』',
+        ],
+        ['9390', 'CFLAG:360 = 4'],
+        ['9393', 'PRINTFORMW 「这，这样会很舒服吗……呣呣……呣呣♪」'],
+        [
+          '9394',
+          'PRINTFORMW 『嘿嘿，姐姐终于肯老老实实地侍奉我和魔王大人了吗，一会儿精液也得全部喝下去啊！』',
+        ],
+        [
+          '9395',
+          'PRINTFORMW %SAVESTR:TARGET%眼里含着泪水，但还是努力用双乳夹着%SAVESTR:PLAYER%的阴茎，吸吮着龟头………',
+        ],
+        ['9396', 'CFLAG:360 = 3'],
+        [
+          '9399',
+          'PRINTFORMW 『哇啊啊……被姐姐这对淫荡的大胸部乳交起来真舒服啊……不过嘴也不能闲着，得好好舔啊？』',
+        ],
+        [
+          '9400',
+          'PRINTFORMW 「呜呜呜……一点都不舒服……为什么要让姐姐……做这么恶心的事情……」',
+        ],
+        [
+          '9401',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%要求回答进行乳交侍奉的感想，一脸嫌恶地答道……',
+        ],
+        ['9402', 'CFLAG:360 = 2'],
+        [
+          '9407',
+          'PRINTFORMW 「嘿嘿……魔王大人，阴茎被人家的胸部和嘴巴侍奉的舒服吗%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9408',
+          'PRINTFORMW %SAVESTR:TARGET%脸上露出沉醉的笑意，继续用双乳夹着%SAVESTR:PLAYER%的阴茎，低下头用舌尖舔着。',
+        ],
+        [
+          '9409',
+          'PRINTFORMW 「呣呣……呣呣……人家的乳沟小穴，一点都不输给下面的两个淫穴吧？」',
+        ],
+        [
+          '9410',
+          'PRINTFORMW 「魔王大人要射精的话……记得全部射在我的嘴里哦%UNICODE(0x2661) *1%」',
+        ],
+        ['9411', 'CFLAG:360 = 5'],
+        [
+          '9414',
+          'PRINTFORMW %SAVESTR:TARGET%眨着充满爱意的眼睛，继续用双乳夹着%SAVESTR:PLAYER%的阴茎，低下头用舌尖舔着。',
+        ],
+        [
+          '9415',
+          'PRINTFORMW 「啊啊……连自己都兴奋起来了……这样用胸部摩擦着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9416',
+          'PRINTFORMW 「唔呣……唔呣……唔呣%UNICODE(0x2661) *1% 魔王大人这次想要射在什么地方呢%UNICODE(0x2661) *1%」',
+        ],
+        ['9417', 'CFLAG:360 = 4'],
+        ['9420', 'PRINTFORMW 「呜呜……魔王大人……这样舒服吗？♪」'],
+        [
+          '9421',
+          'PRINTFORMW %SAVESTR:TARGET%眼眶微微有些湿润，但还是努力地用双乳和嘴巴侍奉着%SAVESTR:PLAYER%的阴茎……',
+        ],
+        ['9422', 'CFLAG:360 = 3'],
+        ['9425', 'PRINTFORMW 「呜呜呜……这种事情……到底有什么好的………」'],
+        [
+          '9426',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%要求回答进行乳交侍奉的感想，一脸嫌恶地答道……',
+        ],
+        ['9427', 'CFLAG:360 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

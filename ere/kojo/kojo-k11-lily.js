@@ -19005,6 +19005,174 @@ async function kojo_message_com_11(rand) {
     } // :9344
   } // :9345
 
+  if (era_flag.selectcom === 123) {
+    // :9352
+
+    if (kojo.乳夹口交 === 0) {
+      // :9354
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :9356
+        await era.printAndWait(
+          `「光是用胸部…和嘴巴…碰到阴茎…就好舒服了啊…${heart(1)}」`,
+        ); // :9357
+        await era.printAndWait(
+          `${target_name}带着淫媚的笑容，用双乳夹住了${player_name}的阴茎，低下头开始吸吮露出的龟头…`,
+        ); // :9358
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :9360
+        await era.printAndWait(
+          `「啊啊……身体好兴奋……嘴巴和胸部也好舒服……被魔王大人的阴茎摩擦的感觉${heart(1)}」`,
+        ); // :9361
+        await era.printAndWait(
+          `${target_name}带着浓浓的爱意，低下头，继续用双乳和舌尖侍奉着${player_name}的阴茎……`,
+        ); // :9362
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        // :9364
+        await era.printAndWait(`「魔王大人……这样舒服吗？♪」`); // :9365
+        await era.printAndWait(
+          `${target_name}眼眶微微有些湿润，但还是努力地用双乳和嘴巴侍奉着${player_name}的阴茎……`,
+        ); // :9366
+      } else {
+        // :9368
+        await era.printAndWait(`「这种事情……到底有什么好的………」`); // :9369
+        await era.printAndWait(
+          `${target_name}被${player_name}要求回答进行乳交侍奉的感想，一脸嫌恶地答道……`,
+        ); // :9370
+      } // :9371
+      // CFLAG:TARGET:360  = 1（变量语义：CFLAG 族，TARGET:360） // :9372
+      kojo.乳夹口交 = 1; // :9372
+      return 0; // :9373
+    } else {
+      // :9375
+
+      if (assi_mao) {
+        // :9377
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.乳夹口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9379
+          await era.printAndWait(
+            `「嘿嘿，被我的胸部和嘴巴这样服务，${player_name}的小鸡鸡很舒服吧${heart(1)}」`,
+          ); // :9380
+          await era.printAndWait(
+            `${target_name}微笑着，继续低下头舔着${player_name}的阴茎。`,
+          ); // :9381
+          await era.printAndWait(`「哇……阴茎颤抖得好厉害，要射了吗？」`); // :9382
+          await era.printAndWait(
+            `『嗯啊……是啊……姐姐快把嘴张开，我要射在你的舌头上${heart(1)}』`,
+          ); // :9383
+          // CFLAG:360  = 5（变量语义：CFLAG 族，360） // :9384
+          kojo.乳夹口交 = 5; // :9384
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.乳夹口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9386
+          await era.printAndWait(
+            `${target_name}眨着眼睛，用丰满的双乳夹着${player_name}的阴茎，灵巧的舌头也卖力地舔舐着。`,
+          ); // :9387
+          await era.printAndWait(
+            `「啊啊……这样摩擦着……我的胸部也好舒服，${player_name}的阴茎……好烫好硬啊${heart(1)}」`,
+          ); // :9388
+          await era.printAndWait(
+            `『人家……也很舒服啊${heart(1)} 啊啊啊姐姐张开嘴……我要射了，你要全部喝下去啊${heart(1)}』`,
+          ); // :9389
+          // CFLAG:360  = 4（变量语义：CFLAG 族，360） // :9390
+          kojo.乳夹口交 = 4; // :9390
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.乳夹口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9392
+          await era.printAndWait(`「这，这样会很舒服吗……呣呣……呣呣♪」`); // :9393
+          await era.printAndWait(
+            `『嘿嘿，姐姐终于肯老老实实地侍奉我和魔王大人了吗，一会儿精液也得全部喝下去啊！』`,
+          ); // :9394
+          await era.printAndWait(
+            `${target_name}眼里含着泪水，但还是努力用双乳夹着${player_name}的阴茎，吸吮着龟头………`,
+          ); // :9395
+          // CFLAG:360  = 3（变量语义：CFLAG 族，360） // :9396
+          kojo.乳夹口交 = 3; // :9396
+        } else if (kojo.乳夹口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9398
+          await era.printAndWait(
+            `『哇啊啊……被姐姐这对淫荡的大胸部乳交起来真舒服啊……不过嘴也不能闲着，得好好舔啊？』`,
+          ); // :9399
+          await era.printAndWait(
+            `「呜呜呜……一点都不舒服……为什么要让姐姐……做这么恶心的事情……」`,
+          ); // :9400
+          await era.printAndWait(
+            `${target_name}被${player_name}要求回答进行乳交侍奉的感想，一脸嫌恶地答道……`,
+          ); // :9401
+          // CFLAG:360  = 2（变量语义：CFLAG 族，360） // :9402
+          kojo.乳夹口交 = 2; // :9402
+        } // :9403
+      } else {
+        // :9404
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.乳夹口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9406
+          await era.printAndWait(
+            `「嘿嘿……魔王大人，阴茎被人家的胸部和嘴巴侍奉的舒服吗${heart(1)}」`,
+          ); // :9407
+          await era.printAndWait(
+            `${target_name}脸上露出沉醉的笑意，继续用双乳夹着${player_name}的阴茎，低下头用舌尖舔着。`,
+          ); // :9408
+          await era.printAndWait(
+            `「呣呣……呣呣……人家的乳沟小穴，一点都不输给下面的两个淫穴吧？」`,
+          ); // :9409
+          await era.printAndWait(
+            `「魔王大人要射精的话……记得全部射在我的嘴里哦${heart(1)}」`,
+          ); // :9410
+          // CFLAG:360  = 5（变量语义：CFLAG 族，360） // :9411
+          kojo.乳夹口交 = 5; // :9411
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.乳夹口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9413
+          await era.printAndWait(
+            `${target_name}眨着充满爱意的眼睛，继续用双乳夹着${player_name}的阴茎，低下头用舌尖舔着。`,
+          ); // :9414
+          await era.printAndWait(
+            `「啊啊……连自己都兴奋起来了……这样用胸部摩擦着${heart(1)}」`,
+          ); // :9415
+          await era.printAndWait(
+            `「唔呣……唔呣……唔呣${heart(1)} 魔王大人这次想要射在什么地方呢${heart(1)}」`,
+          ); // :9416
+          // CFLAG:360  = 4（变量语义：CFLAG 族，360） // :9417
+          kojo.乳夹口交 = 4; // :9417
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.乳夹口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9419
+          await era.printAndWait(`「呜呜……魔王大人……这样舒服吗？♪」`); // :9420
+          await era.printAndWait(
+            `${target_name}眼眶微微有些湿润，但还是努力地用双乳和嘴巴侍奉着${player_name}的阴茎……`,
+          ); // :9421
+          // CFLAG:360  = 3（变量语义：CFLAG 族，360） // :9422
+          kojo.乳夹口交 = 3; // :9422
+        } else if (kojo.乳夹口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9424
+          await era.printAndWait(`「呜呜呜……这种事情……到底有什么好的………」`); // :9425
+          await era.printAndWait(
+            `${target_name}被${player_name}要求回答进行乳交侍奉的感想，一脸嫌恶地答道……`,
+          ); // :9426
+          // CFLAG:360  = 2（变量语义：CFLAG 族，360） // :9427
+          kojo.乳夹口交 = 2; // :9427
+        } // :9428
+      } // :9429
+      return 0; // :9430
+    } // :9431
+  } // :9432
+
   return 0;
 }
 
