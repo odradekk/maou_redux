@@ -492,4 +492,10 @@ const era_exflag = {
 //   - 开局播种 70（SYSTEM ver1.0.3.ERB:62，@EVENTFIRST，event-first.js）；
 //   - 每次侵略结算 +2（INVASION.ERB:978，page/page-invasion.js）；出兵效率
 //     按区间打折（INVASION.ERB:269-293）。
+//
+// @KOJO_MESSAGE_COM 的 EX 口上存在判定以动态下标读取 EX_FLAG:(LOCAL-900)，
+// 不能落到某个固定语义访问器。这个方法只供该分发入口使用。
+era_exflag.get = (index) => era.get(`exflag:${index}`) || 0;
+era_exflag.set = (index, value) => era.set(`exflag:${index}`, value);
+
 module.exports = era_exflag;

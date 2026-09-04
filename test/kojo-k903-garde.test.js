@@ -424,7 +424,7 @@ test('原作缺陷：331 门槛错位、333 误读 332、341 使用 AND、342 �
   );
 
   const breast = await setup_k903((f) => {
-    f.store.set(`cflag:${CID}:333`, 5);
+    f.store.set(`cflag:${CID}:333`, 4);
     f.store.set(`cflag:${CID}:332`, 9);
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set('flag:7', 1);

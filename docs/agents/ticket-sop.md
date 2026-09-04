@@ -152,10 +152,17 @@ orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --wor
 worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.sh 包一层
 （并发时不把机器压死）。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
 
-**别在红绿切片的内环里跑全量**。内环用 bash tools/capped.sh npm run test:inner
-（只跑改动相关，去全局锁），交付前一次 bash tools/capped.sh npm run test:related
-＋ eslint ＋ prettier ＋ **node tools/mutation-check.mjs --files <本票改动的文件>**。
+**内环只跑本票那一个测试文件**：node --test test/<本票>.test.js（口上票约 6s）
+＋ **node tools/mutation-check.mjs --ids <你这一轮新加的编号>**（如 --ids M4246-M4273，
+每条约 0.35s）。改动面确实跨了多个文件时才用 bash tools/capped.sh npm run test:inner。
+交付前一次 bash tools/capped.sh npm run test:related ＋ eslint ＋ prettier。
 全量 npm test、无引擎重跑、全量变异都由 CI 在每次 push 上跑，你不必跑。
+
+**npm run test:related 不是内环，--files 也不是。** 两者都按「交付面」而非「本轮改了什么」
+选面，代价随交付面线性增长，到票的中段就把开发节奏压死：#242 实测 K11 的 test:related
+选中 78 个测试文件（test:inner 也有 68 个，光 docs/stub-registry.md 一个文件就反查出 46 个），
+一轮 20 分钟；--files 选中 526 条条目，一轮 51 分钟。而每加一条指令只新增二十几条条目。
+--ids 只跑点名的那几条，编号在表里不存在时工具当场报错，不会静默跑 0 条。
 
 **--files 那一步不许用 --verify 代替**：--verify 只查条目表结构、不执行任何变异。
 #231 只跑了它就交付，全量一跑出来 7 条「红=false」——变异改下去没有任何测试变红。
@@ -231,8 +238,8 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 | 层     | 谁     | 何时         | 内容                                                                                                             | 实测                     |
 | ------ | ------ | ------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **T1** | agent  | 每个红绿切片 | `npm run test:inner`                                                                                             | 8.5s                     |
-| **T2** | agent  | 提交前一次   | `test:related` ＋ eslint ＋ prettier ＋ `mutation-check --files <本票改动的文件>`                                | 约 1.5 分                |
+| **T1** | agent  | 每个红绿切片 | 本票那一个测试文件 ＋ `mutation-check --ids <本轮新加的编号>`                                                    | 6s ＋ 每条 0.35s         |
+| **T2** | agent  | 提交前一次   | `test:related` ＋ eslint ＋ prettier                                                                             | 交付面越大越贵，见 §4    |
 | **T3** | CI     | 每次 push    | `engineless`（无引擎＋跳过数守护＋eslint＋prettier）／`engine`（有引擎，跳过恒 0）／`mutation`（有引擎全量变异） | 3 分／2 分／**20–35 分** |
 | **T4** | 派单人 | 阶段收口     | 引擎手工验收 ＋ 对拍，见 §5.6                                                                                    | 约 5 分                  |
 
