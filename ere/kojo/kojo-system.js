@@ -90,6 +90,12 @@ const kojo_message_com_family = new DispatchFamily(
   DECLARED_KOJO_COM_IDS,
 );
 
+/** @KOJO_EVENT_COM_{N}：指令结束事件口上族；原作注记当前未使用。 */
+const kojo_event_com_family = new DispatchFamily(
+  'KOJO_EVENT_COM',
+  DECLARED_KOJO_COM_IDS,
+);
+
 /** @SELF_KOJO_K{N}：事件口上族（随各口上票落地） */
 const self_kojo_family = new DispatchFamily('SELF_KOJO', DECLARED_KOJO_COM_IDS);
 
@@ -419,6 +425,7 @@ module.exports = {
   kojo_handler_id,
   kojo_message_com,
   kojo_message_com_family,
+  kojo_event_com_family,
   kojo_message_palamcng,
   kojo_message_palamcng_family,
   kojo_message_markcng,

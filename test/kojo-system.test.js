@@ -120,6 +120,16 @@ test('GET_KOJO_NUM：扩展素质 102 映射到 K902，存在判定读取 EX_FLA
   assert.deepEqual(fixture.text_lines(), ['K902 扩展口上']);
 });
 
+test('EX_FLAG 门面：动态下标读写落到指定的 EX_FLAG', async () => {
+  const fixture = await setup_kojo();
+  const era_exflag = fixture.load_module('era-utils/era-exflag');
+
+  era_exflag.set(102, 7);
+  assert.equal(fixture.store.get('exflag:102'), 7, '动态写入 EX_FLAG:102');
+  assert.equal(era_exflag.get(102), 7, '动态读取 EX_FLAG:102');
+  assert.equal(fixture.store.has('exflag:103'), false, '不偏移到 EX_FLAG:103');
+});
+
 test('分发：性格命中唯一实现；空间内缺失（K4 冷徹未移植）静默', async () => {
   // 高貴 163 + FLAG:103 → K3
   const k3 = await setup_kojo((f) => {
