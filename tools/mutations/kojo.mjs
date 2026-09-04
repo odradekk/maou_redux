@@ -3263,17 +3263,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM_11 守卫：失神中静默跳过',
   },
   {
-    desc: 'M2380 COM_11 兽奸守卫改走真实台词而非存根（#242）',
+    desc: 'M2380 COM_11 兽奸守卫被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `  if (era.get(\`tequip:\${target}:89\`)) {
-    stub_line('DOG_KOJO_11', '兽奸调教中的专用口上');
-    return 0;
-  }`,
-    replace: `  if (era.get(\`tequip:\${target}:89\`)) {
-    // 变异：兽奸守卫改走 COM0 分支
-  }`,
+    find: `  // :764-767 獣姦プレイ中は専用口上
+  if (era.get(\`tequip:\${target}:89\`)) {`,
+    replace: `  // :764-767 獣姦プレイ中は専用口上
+  if (false) { // 变异：删除兽奸守卫`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：兽奸中改走存根占位（DOG_KOJO_11）',
+    must_mention: 'COM_11 守卫：兽奸中改走 DOG_KOJO_11 真身',
   },
   {
     desc: 'M2381 COM_11 死斗场守卫改走真实台词而非存根（#242）',
@@ -9994,6 +9991,62 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM87 初めて：七种穿环部位的装上与取下分支均推进到 1',
   },
+  {
+    desc: 'M4663 DOG_KOJO_11 分发被删除（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '    return dog_kojo_11(rand_n);',
+    replace: '    return 0; // 变异：删除兽奸专用口上分发',
+    tests: ['kojo-k11-lily'],
+    must_mention: '兽奸中改走 DOG_KOJO_11 真身',
+  },
+  ...[
+    [4664, '爱抚', '10673'],
+    [4665, '舔阴', '10719'],
+    [4666, '胸爱抚', '10762'],
+    [4667, '接吻', '10810'],
+    [4668, '接吻', '10827'],
+    [4669, '舔肛', '10875'],
+    [4670, '背后位', '10942'],
+    [4671, '背后位肛交', '11013'],
+    [4672, '手淫', '11077'],
+    [4673, '口交_奴', '11141'],
+    [4674, '骑乘位', '11213'],
+    [4675, '肛门侍奉', '11290'],
+    [4676, '眼罩', '11339'],
+    [4677, '交谈', '11427'],
+  ].map(([id, state, ref]) => ({
+    desc: `M${id} DOG_KOJO_11 ${state}首次状态写错（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.${state} = 1; // :${ref}`,
+    replace: `kojo.${state} = 99; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      state === '接吻'
+        ? '接吻首吻与普通首次两条入口都推进 CFLAG:307'
+        : '十三个 SELECTCOM 首次状态均推进到 1',
+  })),
+  ...[
+    [4678, '爱抚', 7, '10680'],
+    [4679, '背后位', 7, '10955'],
+    [4680, '背后位肛交', 7, '11024'],
+    [4681, '手淫', 7, '11088'],
+    [4682, '口交_奴', 4, '11161'],
+    [4683, '肛门侍奉', 6, '11297'],
+    [4684, '兽奸眼罩', 4, '11387'],
+    [4685, '交谈', 5, '11436'],
+  ].map(([id, state, value, ref]) => ({
+    desc: `M${id} DOG_KOJO_11 ${state}后续高档写错（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.${state} = ${value}; // :${ref}`,
+    replace: `kojo.${state} = 99; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      state === '兽奸眼罩'
+        ? '眼罩取下前三档按原作误读 CFLAG:338，写 CFLAG:444'
+        : state === '交谈'
+          ? '录像交谈后续牝犬档推进 CFLAG:357=5'
+          : '牝犬与复合素质的后续高档推进',
+  })),
   {
     desc: 'M4284 COM28 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',

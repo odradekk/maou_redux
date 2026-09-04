@@ -498,7 +498,7 @@ test('K11_KOJO2：爱慕分档（RAND 三选一，落到隐式 RETURN 0 前提�
   );
 });
 
-// —— 存根清单核对（DOG_KOJO_11/COLOSSEUM_KOJO_11，待各自认领点补真身） ——
+// —— 存根清单核对（COLOSSEUM_KOJO_11，待认领点补真身） ——
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
   const fs = require('node:fs');
@@ -807,10 +807,11 @@ test('COM_11 守卫：助手非玛奥调教时静默跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('COM_11 守卫：兽奸中改走存根占位（DOG_KOJO_11）', async () => {
+test('COM_11 守卫：兽奸中改走 DOG_KOJO_11 真身', async () => {
   const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:89`, 1));
   await speak_com11(fixture, seq_rand());
-  assert.ok(fixture.text_lines()[0].includes('DOG_KOJO_11'));
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get(`cflag:${LILY}:301`), 1);
 });
 
 test('COM_11 守卫：死斗场中改走存根占位（COLOSSEUM_KOJO_11）', async () => {
@@ -7499,6 +7500,95 @@ test('COM87 二回目：三档遍历七种部位的装上与取下分支', async
       }
     }
   }
+});
+
+// —— @DOG_KOJO_11（汉化版对白全为空参数，验证状态机与路由）——
+
+test('DOG_KOJO_11 十三个 SELECTCOM 首次状态均推进到 1', async () => {
+  const commands = [
+    [0, 301],
+    [1, 302],
+    [5, 306],
+    [6, 307],
+    [9, 310],
+    [21, 322],
+    [27, 328],
+    [30, 331],
+    [31, 332],
+    [34, 335],
+    [37, 338],
+    [43, 344],
+    [56, 357],
+  ];
+  for (const [selectcom, cflag] of commands) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:89`, 1);
+      if (selectcom === 43) f.store.set(`tequip:${LILY}:43`, 1);
+    }, selectcom);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:${cflag}`),
+      1,
+      `SELECTCOM ${selectcom} / CFLAG:${cflag}`,
+    );
+  }
+});
+
+test('DOG_KOJO_11 牝犬与复合素质的后续高档推进', async () => {
+  const cases = [
+    { selectcom: 0, cflag: 301, talent: 136, expected: 7 },
+    { selectcom: 21, cflag: 322, talent: 136, expected: 7 },
+    { selectcom: 27, cflag: 328, talent: 136, abl: [3, 3], expected: 7 },
+    { selectcom: 30, cflag: 331, talent: 136, abl: [16, 3], expected: 7 },
+    { selectcom: 31, cflag: 332, talent: 85, abl: [16, 5], expected: 4 },
+    { selectcom: 37, cflag: 338, talent: 136, abl: [16, 5], expected: 6 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:89`, 1);
+      f.store.set(`cflag:${LILY}:${item.cflag}`, 1);
+      f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl) f.store.set(`abl:${LILY}:${item.abl[0]}`, item.abl[1]);
+    }, item.selectcom);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:${item.cflag}`),
+      item.expected,
+    );
+  }
+});
+
+test('DOG_KOJO_11 接吻首吻与普通首次两条入口都推进 CFLAG:307', async () => {
+  for (const first_kiss of [true, false]) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:89`, 1);
+      if (first_kiss) f.store.set('tflag:13', 1);
+    }, 6);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:307`), 1);
+  }
+});
+
+test('DOG_KOJO_11 眼罩取下前三档按原作误读 CFLAG:338，写 CFLAG:444', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:89`, 1);
+    f.store.set(`talent:${LILY}:136`, 1);
+    f.store.set(`cflag:${LILY}:338`, 0);
+    f.store.set(`cflag:${LILY}:444`, 9);
+  }, 43);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.store.get(`cflag:${LILY}:444`), 4);
+});
+
+test('DOG_KOJO_11 录像交谈后续牝犬档推进 CFLAG:357=5', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`tequip:${LILY}:89`, 1);
+    f.store.set(`tequip:${LILY}:53`, 1);
+    f.store.set(`talent:${LILY}:136`, 1);
+    f.store.set(`cflag:${LILY}:357`, 1);
+  }, 56);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.store.get(`cflag:${LILY}:357`), 5);
 });
 
 // —— SELECTCOM 56（交谈 CFLAG:357）——
