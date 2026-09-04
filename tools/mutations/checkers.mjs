@@ -644,4 +644,20 @@ export default [
     tests: ['mutation-check'],
     must_mention: '--ids 是子集档，不该核对跳过基线，实际退出',
   },
+  {
+    desc: 'M3703 用例过滤被拆（每条变异都重跑整份测试文件——口上票里那是每条几秒，K11 实测 51 分钟）',
+    file: 'tools/mutation-check.mjs',
+    find: '    let run = m.must_mention',
+    replace: '    let run = false && m.must_mention',
+    tests: ['mutation-check'],
+    must_mention: '过滤跑已经红了就该收手；旁支用例留了痕',
+  },
+  {
+    desc: 'M3704 过滤跑没红时不再落回全文（must_mention 不是测试名的条目会被判成漏网——快路不许改判定）',
+    file: 'tools/mutation-check.mjs',
+    find: '    if (!run || run.status === 0) run = run_tests([]);',
+    replace: '    if (!run) run = run_tests([]);',
+    tests: ['mutation-check'],
+    must_mention: '落回全文后仍应拦下，实际退出',
+  },
 ];
