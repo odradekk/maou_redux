@@ -1,6 +1,6 @@
 /**
- * ere/kojo/kojo-k11-lily.js 的行为测试（issue #242：J32 口上·K11 リリィ，
- * WIP 1/N：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 + @EVENTEND）。
+ * ere/kojo/kojo-k11-lily.js 的行为测试（issue #242：J32 口上·K11 莉莉，
+ * 覆盖调教开始/结束、全指令、专用口上、状态变化与非调教族）。
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：莉莉（角色 24，性格素质 171 →
  * GET_KOJO_NUM = 111 → 分发 key 11）；姉妹判定另需玛奥（角色 17，
@@ -513,25 +513,6 @@ test('K11_KOJO2：爱慕分档（RAND 三选一，落到隐式 RETURN 0 前提�
       ),
     '爱慕含魔族化分支自身台词出声（而非落到体力分档等后续分支）',
   );
-});
-
-// —— 存根清单核对（COLOSSEUM_KOJO_11，待认领点补真身） ——
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
-  const fs = require('node:fs');
-  const path = require('node:path');
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k11-lily');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 // —— @EVENTEND ——

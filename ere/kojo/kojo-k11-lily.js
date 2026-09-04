@@ -1,8 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 /**
- * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
- *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12/13/14/15/16/19/20/21/22/23/26/27/28/29/30/31，issue #242，WIP 续轮，进行中）。
+ * @file 村娘口上 K11 莉莉：EVENTTRAIN / EVENTEND、全指令口上、兽奸与
+ *       死斗场专用口上、参数/刻印/事件口上及非调教族全量移植（issue #242）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -111,14 +110,11 @@
  *     非助手玛奥各四档；二回目层两侧各按淫乱、爱慕、奉仕精神Lv3以上、
  *     其余四档，非助手前三档分别带三选一、三选一、二选一随机文案。
  *
- * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
+ * 门面迁移（issue #242 复核补做）：既有前段 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
  * `chara(target).kojo.<字段>`（肉亲_0/初调教/简易助手_0/魔族化_K11/
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
- *
- * 本票剩余工作：死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
- * 口上（第 12262 至 13468 行）。见 issue #242 的进度评论获取认领点。
  *
  * == 姉妹判定（TARGET 是姐姐莉莉，NO:ASSI == 17 是妹妹玛奥） ==
  *
@@ -146,7 +142,7 @@
  * 264 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
- * 收窄——60 条来自 WIP 1/N 交付范围（存在标志/@EVENTTRAIN/@K11_KOJO2/
+ * 收窄——60 条来自既有前段（存在标志/@EVENTTRAIN/@K11_KOJO2/
  * @EVENTEND，:100-748），落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档
  * 里逐句复现的对白段落内，按 issue 讨论保持现状、不再动；4 条来自
  * SELECTCOM 0/1/2（:811/818/826/1022，姉妹相认/魔族化前后两套台词在平行
@@ -268,12 +264,6 @@ const era0 = (k) => era.get(k) || 0;
 const rand_n = (n) => Math.floor(Math.random() * n);
 /** MASTER 恒为角色 0（K1 kojo-k1-confident.js 同款先例） */
 const MASTER = 0;
-
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:100-105）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -1410,7 +1400,8 @@ on(
  * （CFLAG:307 == 0 && TFLAG:13 初吻与自我口上）按「淫乱且非助手陪玩／
  * 爱慕且非助手陪玩／助手玛奥（内部再按淫乱→爱慕→それ以外）／それ以外」
  * 四分档写 1，前两支另受 TEQUIP:89/90（兽奸/触手）排除，但头部守卫已把
- * 这两条路由到存根，本分支执行时恒为 0（1:1 保留原判断）；普通初めて
+ * 这两条已在头部分别路由兽奸专用口上或静默跳过，本分支执行时恒为 0
+ * （1:1 保留原判断）；普通初めて
  * （CFLAG:307 == 0 非首吻）按「助手玛奥（内部淫乱→爱慕→それ以外）／
  * 淫乱→爱慕→それ以外」写 1；二回目以降先分「助手玛奥」再各自按
  * 「淫乱→爱慕→従順Lv2以上→それ以外」写 5/4/3/2，两支结构对称（与
@@ -24963,7 +24954,6 @@ osioski_koujo_family.register(11, (cid, choice) =>
 );
 
 module.exports = {
-  STUBBED_CALLS,
   aegi_k11,
   colosseum_kojo_11,
   dungeon_attack_k11,
