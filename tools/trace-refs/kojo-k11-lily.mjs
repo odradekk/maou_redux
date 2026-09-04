@@ -19104,6 +19104,107 @@ export const FILES = [
         ],
         ['5764', 'CFLAG:337 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      exact_line('5774-5848', 'IF SELECTCOM == 37'),
+      ...[
+        [
+          '5779',
+          'PRINTFORMW 『哎啊啊…姐姐居然在舔我的肛门！这感觉真是太棒了，整个人都兴奋起来了呢！』',
+        ],
+        ['5780', 'PRINTFORMW 「呜呜……饶，饶了姐姐吧……求你了……呜唔呣…」'],
+        [
+          '5781',
+          'PRINTFORMW %SAVESTR:TARGET%泪流满面，却无可奈何继续用舌头舔舐着%SAVESTR:PLAYER%的肛门………',
+        ],
+        [
+          '5785',
+          'PRINTFORMW 「唔呣呣……呣呣……这都是，都是为了……救出妹妹才这么做的……所以，所以……呣呣呣」',
+        ],
+        [
+          '5786',
+          'PRINTFORMW %SAVESTR:TARGET%带着麻木的表情，边喃喃自语，边舔舐着%SAVESTR:PLAYER%的肛门。',
+        ],
+        [
+          '5789',
+          'PRINTFORMW 「唔呣呣……好脏……但是，但是……这都是，都是为了……救出妹妹才这么做的……！」',
+        ],
+        [
+          '5790',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头费力而迟钝地舔着%SAVESTR:PLAYER%的肛门、被感到不耐烦的%SAVESTR:PLAYER%按住头，强行和肛门接吻了………',
+        ],
+        ['5793', 'CFLAG:TARGET:338 = 1'],
+        [
+          '5801',
+          'PRINTFORMW 「唔呣…唔呣……%SAVESTR:PLAYER%的肛门……姐姐会帮你舔得干干净净的%UNICODE(0x2661) *1%」',
+        ],
+        ['5802', 'PRINTFORMW 『姐姐的舌头真灵巧啊，那么喜欢舔妹妹的肛门吗？』'],
+        [
+          '5803',
+          'PRINTFORMW 「是啊……最喜欢了%UNICODE(0x2661) *1% 会一直舔的%UNICODE(0x2661) *1%」',
+        ],
+        ['5804', 'CFLAG:338 = 5'],
+        [
+          '5807',
+          'PRINTFORMW 「唔呣…唔呣……%SAVESTR:PLAYER%的肛门……姐姐会帮你舔得干干净净的…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5808',
+          'PRINTFORMW 『哎嘿嘿，姐姐舔肛门已经舔得这么熟练了啊，那么喜欢妹妹的屁股吗？』',
+        ],
+        [
+          '5809',
+          'PRINTFORMW 「都…都是为了你……才学会这种害羞的事情的啦………%UNICODE(0x2661) *1%」',
+        ],
+        ['5810', 'CFLAG:338 = 4'],
+        ['5813', 'PRINTFORMW 「唔呣……唔呣……这，这种事……唔呣！」'],
+        [
+          '5814',
+          'PRINTFORMW 『哎呀，姐姐现在舔肛舔得很熟练了呢，是不是感觉兴奋起来了！』',
+        ],
+        ['5815', 'PRINTFORMW 「…这种夸奖……一点都不觉得高兴啊！」'],
+        ['5816', 'CFLAG:338 = 3'],
+        [
+          '5819',
+          'PRINTFORMW 「唔呣……唔呣……饶了姐姐吧，求求你了，%SAVESTR:PLAYER%………」',
+        ],
+        [
+          '5820',
+          'PRINTFORMW 『在胡说什么呢，明明舔妹妹的屁股舔得都兴奋起来了啊，别以为我没发现！？姐姐就要堕落啦啦啦』',
+        ],
+        ['5821', 'CFLAG:338 = 2'],
+        [
+          '5826',
+          'PRINTFORMW 「咕呣……咕呣%UNICODE(0x2661) *1% %SAVESTR:TARGET%的舌头这样舔感觉舒服吗，魔王大人%UNICODE(0x2661) *1% 咕呣……唔呣……除了肛门之外……还想舔魔王大人的其他地方呢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5827',
+          'PRINTFORMW %SAVESTR:TARGET%就着自己的口水，仔细地舔舐着%SAVESTR:PLAYER%的肛门，每一处皱褶都舔得干干净净……',
+        ],
+        ['5828', 'CFLAG:338 = 5'],
+        [
+          '5831',
+          'PRINTFORMW 「咕呣……咕呣……为魔王大人……进行舔肛侍奉……是%SAVESTR:TARGET%的荣幸%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5832',
+          'PRINTFORMW %SAVESTR:TARGET%用舌尖探入到%SAVESTR:PLAYER%的肛门里，仔细地舔舐着………',
+        ],
+        ['5833', 'CFLAG:338 = 4'],
+        [
+          '5836',
+          'PRINTFORMW 「咕呣……咕呣……舔这种地方……是对我的惩罚吗……咕呣…」',
+        ],
+        [
+          '5837',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头继续舔舐着%SAVESTR:PLAYER%的肛门……',
+        ],
+        ['5838', 'CFLAG:338 = 3'],
+        ['5841', 'PRINTFORMW 「是…是的……我会好好舔的……咕呣……咕呣……」'],
+        [
+          '5842',
+          'PRINTFORMW %SAVESTR:TARGET%虽然泪流满面，但仍然明智地舔舐着%SAVESTR:PLAYER%的肛门……',
+        ],
+        ['5843', 'CFLAG:338 = 2'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];

@@ -10672,6 +10672,144 @@ async function kojo_message_com_11(rand) {
     }
   }
 
+  // :5774-5848 IF SELECTCOM === 37（肛门侍奉 CFLAG:338）
+  if (era_flag.selectcom === 37) {
+    if (kojo.肛门侍奉 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(
+          `『哎啊啊…姐姐居然在舔我的肛门！这感觉真是太棒了，整个人都兴奋起来了呢！』`,
+        ); // :5779
+        await era.printAndWait(`「呜呜……饶，饶了姐姐吧……求你了……呜唔呣…」`); // :5780
+        await era.printAndWait(
+          `${target_name}泪流满面，却无可奈何继续用舌头舔舐着${player_name}的肛门………`,
+        ); // :5781
+      } else {
+        if (chara(target).system.侍奉精神 >= 3) {
+          await era.printAndWait(
+            `「唔呣呣……呣呣……这都是，都是为了……救出妹妹才这么做的……所以，所以……呣呣呣」`,
+          ); // :5785
+          await era.printAndWait(
+            `${target_name}带着麻木的表情，边喃喃自语，边舔舐着${player_name}的肛门。`,
+          ); // :5786
+        } else {
+          await era.printAndWait(
+            `「唔呣呣……好脏……但是，但是……这都是，都是为了……救出妹妹才这么做的……！」`,
+          ); // :5789
+          await era.printAndWait(
+            `${target_name}用舌头费力而迟钝地舔着${player_name}的肛门、被感到不耐烦的${player_name}按住头，强行和肛门接吻了………`,
+          ); // :5790
+        }
+      }
+      // CFLAG:TARGET:338  = 1（变量语义：CFLAG 族，TARGET:338）
+      kojo.肛门侍奉 = 1; // :5793
+      return 0;
+    } else {
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「唔呣…唔呣……${player_name}的肛门……姐姐会帮你舔得干干净净的${heart(1)}」`,
+          ); // :5801
+          await era.printAndWait(
+            `『姐姐的舌头真灵巧啊，那么喜欢舔妹妹的肛门吗？』`,
+          ); // :5802
+          await era.printAndWait(
+            `「是啊……最喜欢了${heart(1)} 会一直舔的${heart(1)}」`,
+          ); // :5803
+          // CFLAG:338  = 5（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 5; // :5804
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「唔呣…唔呣……${player_name}的肛门……姐姐会帮你舔得干干净净的…${heart(1)}」`,
+          ); // :5807
+          await era.printAndWait(
+            `『哎嘿嘿，姐姐舔肛门已经舔得这么熟练了啊，那么喜欢妹妹的屁股吗？』`,
+          ); // :5808
+          await era.printAndWait(
+            `「都…都是为了你……才学会这种害羞的事情的啦………${heart(1)}」`,
+          ); // :5809
+          // CFLAG:338  = 4（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 4; // :5810
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(`「唔呣……唔呣……这，这种事……唔呣！」`); // :5813
+          await era.printAndWait(
+            `『哎呀，姐姐现在舔肛舔得很熟练了呢，是不是感觉兴奋起来了！』`,
+          ); // :5814
+          await era.printAndWait(`「…这种夸奖……一点都不觉得高兴啊！」`); // :5815
+          // CFLAG:338  = 3（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 3; // :5816
+        } else if (kojo.肛门侍奉 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(
+            `「唔呣……唔呣……饶了姐姐吧，求求你了，${player_name}………」`,
+          ); // :5819
+          await era.printAndWait(
+            `『在胡说什么呢，明明舔妹妹的屁股舔得都兴奋起来了啊，别以为我没发现！？姐姐就要堕落啦啦啦』`,
+          ); // :5820
+          // CFLAG:338  = 2（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 2; // :5821
+        }
+      } else {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.肛门侍奉 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「咕呣……咕呣${heart(1)} ${target_name}的舌头这样舔感觉舒服吗，魔王大人${heart(1)} 咕呣……唔呣……除了肛门之外……还想舔魔王大人的其他地方呢${heart(1)}」`,
+          ); // :5826
+          await era.printAndWait(
+            `${target_name}就着自己的口水，仔细地舔舐着${player_name}的肛门，每一处皱褶都舔得干干净净……`,
+          ); // :5827
+          // CFLAG:338  = 5（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 5; // :5828
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「咕呣……咕呣……为魔王大人……进行舔肛侍奉……是${target_name}的荣幸${heart(1)}」`,
+          ); // :5831
+          await era.printAndWait(
+            `${target_name}用舌尖探入到${player_name}的肛门里，仔细地舔舐着………`,
+          ); // :5832
+          // CFLAG:338  = 4（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 4; // :5833
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「咕呣……咕呣……舔这种地方……是对我的惩罚吗……咕呣…」`,
+          ); // :5836
+          await era.printAndWait(
+            `${target_name}用舌头继续舔舐着${player_name}的肛门……`,
+          ); // :5837
+          // CFLAG:338  = 3（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 3; // :5838
+        } else if (kojo.肛门侍奉 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(`「是…是的……我会好好舔的……咕呣……咕呣……」`); // :5841
+          await era.printAndWait(
+            `${target_name}虽然泪流满面，但仍然明智地舔舐着${player_name}的肛门……`,
+          ); // :5842
+          // CFLAG:338  = 2（变量语义：CFLAG 族，338）
+          kojo.肛门侍奉 = 2; // :5843
+        }
+      }
+      return 0;
+    }
+  }
+
   return 0;
 }
 

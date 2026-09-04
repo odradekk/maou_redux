@@ -10256,6 +10256,41 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM36 初めて：助手玛奥与非助手玛奥三档',
   },
+  ...[
+    [4408, '初次', '1', '2', '5793'],
+    [4409, '助手淫乱＋奉仕精神', '5', '4', '5804'],
+    [4410, '助手爱慕＋奉仕精神', '4', '3', '5810'],
+    [4411, '助手奉仕精神', '3', '2', '5816'],
+    [4412, '助手其余', '2', '1', '5821'],
+    [4413, '非助手淫乱＋奉仕精神', '5', '4', '5828'],
+    [4414, '非助手爱慕＋奉仕精神', '4', '3', '5833'],
+    [4415, '非助手奉仕精神', '3', '2', '5838'],
+    [4416, '非助手其余', '2', '1', '5843'],
+  ].map(([id, tier, value, replacement, ref]) => ({
+    desc: `M${id} COM37 ${tier} CFLAG:338 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.肛门侍奉 = ${value}; // :${ref}`,
+    replace: `kojo.肛门侍奉 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      id === 4408
+        ? 'COM37 初めて：助手玛奥与非助手玛奥奉仕精神分档'
+        : id <= 4412
+          ? 'COM37 二回目：助手玛奥四档推进'
+          : 'COM37 二回目：非助手玛奥四档推进',
+  })),
+  {
+    desc: 'M4417 COM37 初次助手玛奥判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (kojo.肛门侍奉 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(`,
+    replace: `    if (kojo.肛门侍奉 === 0) {
+      if (!assi_mao) {
+        await era.printAndWait(`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM37 初めて：助手玛奥与非助手玛奥奉仕精神分档',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
