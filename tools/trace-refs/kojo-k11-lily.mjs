@@ -20565,6 +20565,273 @@ export const FILES = [
         ['7001', 'PRINTFORMW 「应，应该回答什么…？」'],
         ['7003', 'PRINTFORML 的语言挑逗、%SAVESTR:TARGET%听清楚了吗…'],
         ['7004', 'PRINTFORMW 「…不，不太想说话…」'],
+        ['7014', 'IF SELECTCOM == 63'],
+        [
+          '7019',
+          'PRINTFORMW 『啊啊……这样好舒服啊啊……姐姐%UNICODE(0x2661) *1% 姐姐%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7020',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，紧贴着彼此的下体摩擦着，爱液不断地从两人的交合处流出。',
+        ],
+        [
+          '7023',
+          'PRINTFORMW 「是……是啊……真的很舒服啊啊……已，已经……要去了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7024',
+          'PRINTFORMW %SAVESTR:TARGET%也显得十分兴奋，继续和%SAVESTR:PLAYER%用蜜穴和阴蒂相互摩擦着……',
+        ],
+        [
+          '7027',
+          'PRINTFORMW 「好，好害羞啦……但是，但是……真的……好舒服啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '7028',
+          'PRINTFORMW 虽然满脸通红地摇着头，但是面对%SAVESTR:PLAYER%更起劲的摩擦着，%SAVESTR:TARGET%也忍不住娇喘了起来……',
+        ],
+        [
+          '7031',
+          'PRINTFORMW 「不，不可以这样做啊，%SAVESTR:PLAYER%！ 快放开我啊！！」',
+        ],
+        [
+          '7032',
+          'PRINTFORMW 与妹妹的性器相互摩擦的背德感让%SAVESTR:TARGET%无比内疚，却怎么也逃不脱%SAVESTR:PLAYER%的手掌心……',
+        ],
+        [
+          '7037',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，紧贴着彼此的下体摩擦着，爱液不断地从两人的交合处流出。',
+        ],
+        [
+          '7038',
+          'PRINTFORMW 「嗯啊……啊啊%UNICODE(0x2661) *1% 好……好舒服……%UNICODE(0x2661) *1% 和魔王大人……百合……真是太舒服了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7039',
+          'PRINTFORMW %SAVESTR:TARGET%尽情的娇喘着，享受着和%SAVESTR:PLAYER%蜜穴相互摩擦的极度快感……',
+        ],
+        [
+          '7042',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，紧贴着彼此的下体摩擦着，爱液不断地从两人的交合处流出。',
+        ],
+        [
+          '7043',
+          'PRINTFORMW 「啊啊……这样的姿势……好，好害羞……不过好舒服啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7044',
+          'PRINTFORMW %SAVESTR:TARGET%完全沉浸在与%SAVESTR:PLAYER%用下体相互摩擦的快感之中，发出了甘甜的娇喘。',
+        ],
+        [
+          '7047',
+          'PRINTFORMW %SAVESTR:PLAYER%强行分开%SAVESTR:TARGET%的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。',
+        ],
+        ['7048', 'PRINTFORMW 「放，放开我……这样……这样好脏的……呜呜呜！」'],
+        ['7049', 'PRINTFORMW 无力抵抗的%SAVESTR:TARGET%只能边抽噎边忍受着……'],
+        ['7052', 'CFLAG:TARGET:364 = 1'],
+        [
+          '7060',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。',
+        ],
+        [
+          '7061',
+          'PRINTFORMW 『呜哇，姐姐你动得比我还激烈啊%UNICODE(0x2661) *1% 啊啊……好舒服%UNICODE(0x2661) *1% 嗯啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7062',
+          'PRINTFORMW 「我，我也很舒服啊啊%UNICODE(0x2661) *1% 和%SAVESTR:PLAYER%姐妹百合……真的是太舒服了%UNICODE(0x2661) *1% 嗯啊啊……要，要去了啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '7063',
+          'PRINTFORMW 两人摇着腰肢，尽情享受着姐妹百合之爱，娇喘声连绵不绝。',
+        ],
+        ['7064', 'CFLAG:TARGET:364 = 9'],
+        [
+          '7067',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。',
+        ],
+        [
+          '7068',
+          'PRINTFORMW 『嗯啊……姐姐这样舒服吗%UNICODE(0x2661) *1% 我可是很舒服呢……啊啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7069',
+          'PRINTFORMW 「是，是啊…姐姐……也很兴奋%UNICODE(0x2661) *1% 很舒服啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        ['7070', 'PRINTFORMW 两人摇着腰肢，享受着姐妹百合之爱'],
+        ['7071', 'CFLAG:TARGET:364 = 8'],
+        [
+          '7074',
+          'PRINTFORMW %SAVESTR:PLAYER%强行分开%SAVESTR:TARGET%的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。',
+        ],
+        ['7075', 'PRINTFORMW 『怎么样，这样很舒服吧，姐姐！嗯啊啊……』'],
+        [
+          '7076',
+          'PRINTFORMW 「怎，怎么这样啦%UNICODE(0x2661) *1% 好，好害羞……姐妹做这样的事！」',
+        ],
+        [
+          '7077',
+          'PRINTFORMW 虽然嘴上这么说，但是%SAVESTR:TARGET%还是逐渐兴奋了起来，享受着和%SAVESTR:PLAYER%摩擦下体的快感……',
+        ],
+        ['7078', 'CFLAG:TARGET:364 = 7'],
+        [
+          '7081',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。',
+        ],
+        [
+          '7082',
+          'PRINTFORMW 『呜哇，姐姐你动得比我还激烈啊%UNICODE(0x2661) *1% 啊啊……好舒服%UNICODE(0x2661) *1% 嗯啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7083',
+          'PRINTFORMW 「是……是啊，能和我最心爱的%SAVESTR:PLAYER%百合……真的是太幸福……太舒服了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7084',
+          'PRINTFORMW 两人摇着腰肢，尽情享受着姐妹百合之爱，娇喘声连绵不绝。',
+        ],
+        ['7085', 'CFLAG:TARGET:364 = 6'],
+        [
+          '7088',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。',
+        ],
+        [
+          '7089',
+          'PRINTFORMW 『嗯啊……姐姐这样舒服吗%UNICODE(0x2661) *1% 我可是很舒服呢……啊啊啊%UNICODE(0x2661) *1%』',
+        ],
+        ['7090', 'PRINTFORMW 「是的……我也……我也……%UNICODE(0x2661) *1%」'],
+        [
+          '7091',
+          'PRINTFORMW %SAVESTR:TARGET%满脸通红地享受着和妹妹的百合之爱……',
+        ],
+        ['7092', 'CFLAG:TARGET:364 = 5'],
+        [
+          '7095',
+          'PRINTFORMW %SAVESTR:PLAYER%强行分开%SAVESTR:TARGET%的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。',
+        ],
+        ['7096', 'PRINTFORMW 『怎么样，这样很舒服吧，姐姐！嗯啊啊……！』'],
+        [
+          '7097',
+          'PRINTFORMW 「不，不要啦……姐妹……怎么可以做这种事……而且魔王大人……还在看着呢！」',
+        ],
+        [
+          '7098',
+          'PRINTFORMW 虽然嘴上这么说者，而且脸也红到了耳根，但是相互摩擦着的蜜穴传来的快感还是让%SAVESTR:PLAYER%忍不住娇喘了起来',
+        ],
+        ['7099', 'CFLAG:TARGET:364 = 4'],
+        [
+          '7102',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。',
+        ],
+        ['7103', 'PRINTFORMW 『怎么样，这样很舒服吧，姐姐！嗯啊啊……！』'],
+        ['7104', 'PRINTFORMW 「不要啊，不可以这样……但，但是……好舒服！」'],
+        [
+          '7105',
+          'PRINTFORMW 随着%SAVESTR:PLAYER%晃动着腰肢，%SAVESTR:TARGET%被摩擦着的蜜穴逐渐传来了难以忍耐的快感……',
+        ],
+        ['7106', 'CFLAG:TARGET:364 = 3'],
+        [
+          '7109',
+          'PRINTFORMW %SAVESTR:PLAYER%强行分开%SAVESTR:TARGET%的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。',
+        ],
+        [
+          '7110',
+          'PRINTFORMW 『这样明明最舒服了，为什么姐姐还要做出讨厌的表情呢！』',
+        ],
+        [
+          '7111',
+          'PRINTFORMW 「一，一点都不舒服……快放开……我们，我们是姐妹啊……不可以……呜呜呜！」」',
+        ],
+        ['7112', 'CFLAG:TARGET:364 = 2'],
+        [
+          '7117',
+          'PRINTFORMW  %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着敏感的蜜穴和阴蒂。',
+        ],
+        [
+          '7118',
+          'PRINTFORMW 「嗯啊……啊啊%UNICODE(0x2661) *1% 好舒服%UNICODE(0x2661) *1% 和魔王大人……百合%UNICODE(0x2661) *1% 真的是太棒了啊啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        ['7119', 'PRINTFORMW %SAVESTR:TARGET%尽情扭动着腰身，享受着百合之乐……'],
+        ['7120', 'CFLAG:TARGET:364 = 9'],
+        [
+          '7123',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着蜜穴和阴蒂。',
+        ],
+        [
+          '7124',
+          'PRINTFORMW 「哈啊……哈啊……魔王大人%UNICODE(0x2661) *1%让人家……当你的百合性奴吧%UNICODE(0x2661) *1% 嗯啊……啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '7125',
+          'PRINTFORMW %SAVESTR:TARGET%与%SAVESTR:PLAYER%继续扭动着腰身，寻求着更多的快感。',
+        ],
+        ['7126', 'CFLAG:TARGET:364 = 8'],
+        [
+          '7129',
+          'PRINTFORMW  %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体紧贴着，相互摩擦着蜜穴和阴蒂，爱液不住的流出。',
+        ],
+        [
+          '7130',
+          'PRINTFORMW 「嗯啊……啊啊%UNICODE(0x2661) *1% 好舒服……%UNICODE(0x2661) *1% 原来……百合……是这么舒服的事情%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7131',
+          'PRINTFORMW %SAVESTR:TARGET%娇喘着，享受着蜜穴被摩擦传来的阵阵快感……',
+        ],
+        ['7132', 'CFLAG:TARGET:364 = 7'],
+        [
+          '7135',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着敏感的蜜穴和阴蒂。',
+        ],
+        [
+          '7136',
+          'PRINTFORMW 「呜啊……啊啊%UNICODE(0x2661) *1% 魔王大人……让，让%SAVESTR:TARGET%永远当你的百合性奴吧……%UNICODE(0x2661) *1%」',
+        ],
+        ['7137', 'PRINTFORMW %SAVESTR:TARGET%尽情扭动着腰身，享受着百合之乐……'],
+        ['7138', 'CFLAG:TARGET:364 = 6'],
+        [
+          '7141',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着蜜穴和阴蒂。',
+        ],
+        [
+          '7142',
+          'PRINTFORMW 「呜啊……嗯啊啊%UNICODE(0x2661) *1% 不，不行了……太舒服了%UNICODE(0x2661) *1% 要，要去了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7143',
+          'PRINTFORMW %SAVESTR:TARGET%与%SAVESTR:PLAYER%继续扭动着腰身，寻求着更多的快感。',
+        ],
+        ['7144', 'CFLAG:TARGET:364 = 5'],
+        [
+          '7147',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。',
+        ],
+        [
+          '7148',
+          'PRINTFORMW 「呜……嗯啊啊%UNICODE(0x2661) *1% 和魔王大人……这样摩擦小穴……也好棒啊啊！」',
+        ],
+        [
+          '7149',
+          'PRINTFORMW %SAVESTR:TARGET%红着脸，完全沉浸在百合之乐的快感中……',
+        ],
+        ['7150', 'CFLAG:TARGET:364 = 4'],
+        [
+          '7153',
+          'PRINTFORMW %SAVESTR:PLAYER%和%SAVESTR:TARGET%岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着蜜穴和阴蒂。',
+        ],
+        ['7154', 'PRINTFORMW 「嗯啊……啊啊……为，为什么……会这么舒服啊啊！」'],
+        [
+          '7155',
+          'PRINTFORMW %SAVESTR:TARGET%与%SAVESTR:PLAYER%继续扭动着腰身，寻求着更多的快感。',
+        ],
+        ['7156', 'CFLAG:TARGET:364 = 3'],
+        [
+          '7159',
+          'PRINTFORMW %SAVESTR:PLAYER%强行分开%SAVESTR:TARGET%的双腿，紧贴着彼此的小穴相互摩擦起来。',
+        ],
+        ['7160', 'PRINTFORMW 「不，不要！好恶心！放开我啊啊！」'],
+        ['7161', 'PRINTFORMW %SAVESTR:TARGET%无力抵抗，只能哭泣着忍受……'],
+        ['7162', 'CFLAG:TARGET:364 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

@@ -6822,6 +6822,65 @@ test('COM56 二回目：复用交谈分档且不改写 CFLAG:357', async () => {
   );
 });
 
+// —— SELECTCOM 63（贝合 CFLAG:364）——
+
+test('COM63 初めて：助手玛奥与非助手各三档', async () => {
+  for (const assistant of [true, false]) {
+    for (const talent of [76, 85, undefined]) {
+      const fixture = setup_lily((f, era_flag) => {
+        if (assistant) {
+          preset_chara_17(f);
+          f.era.addCharacter(MAO);
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        if (talent !== undefined) f.store.set(`talent:${LILY}:${talent}`, 1);
+      }, 63);
+      await speak_com11(fixture, seq_rand());
+      assert.equal(
+        fixture.store.get(`cflag:${LILY}:364`),
+        1,
+        'COM63 首次推进 CFLAG:364=1',
+      );
+    }
+  }
+});
+
+for (const [label, assistant] of [
+  ['助手玛奥', true],
+  ['非助手玛奥', false],
+]) {
+  test(`COM63 二回目：${label}八档推进`, async () => {
+    const cases = [
+      { talent: 76, level: 5, expected: 9 },
+      { talent: 76, level: 3, expected: 8 },
+      { talent: 76, level: 0, expected: 7 },
+      { talent: 85, level: 5, expected: 6 },
+      { talent: 85, level: 3, expected: 5 },
+      { talent: 85, level: 0, expected: 4 },
+      { level: 3, expected: 3 },
+      { level: 0, expected: 2 },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        f.store.set('flag:7', 1);
+        f.store.set(`cflag:${LILY}:364`, 1);
+        f.store.set(`abl:${LILY}:22`, item.level);
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (assistant) {
+          preset_chara_17(f);
+          f.era.addCharacter(MAO);
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+      }, 63);
+      await speak_com11(fixture, seq_rand());
+      assert.equal(fixture.store.get(`cflag:${LILY}:364`), item.expected);
+    }
+  });
+}
+
 test('COM44 取下：淫乱、爱慕与其余三档推进', async () => {
   const cases = [
     { talent: 76, expected: 2 },

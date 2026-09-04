@@ -13255,6 +13255,365 @@ async function kojo_message_com_11(rand) {
     } // :7009
   } // :7010
 
+  // :7014-7167 IF SELECTCOM == 63（贝合 CFLAG:364）
+  if (era_flag.selectcom === 63) {
+    // :7014
+
+    if (kojo.六九式 === 0) {
+      // :7016
+
+      if (assi_mao) {
+        // :7018
+        await era.printAndWait(
+          `『啊啊……这样好舒服啊啊……姐姐${heart(1)} 姐姐${heart(1)}』`,
+        ); // :7019
+        await era.printAndWait(
+          `${player_name}和${target_name}岔开双腿，紧贴着彼此的下体摩擦着，爱液不断地从两人的交合处流出。`,
+        ); // :7020
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :7022
+          await era.printAndWait(
+            `「是……是啊……真的很舒服啊啊……已，已经……要去了啊啊${heart(1)}」`,
+          ); // :7023
+          await era.printAndWait(
+            `${target_name}也显得十分兴奋，继续和${player_name}用蜜穴和阴蒂相互摩擦着……`,
+          ); // :7024
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :7026
+          await era.printAndWait(
+            `「好，好害羞啦……但是，但是……真的……好舒服啊啊${heart(1)}！」`,
+          ); // :7027
+          await era.printAndWait(
+            `虽然满脸通红地摇着头，但是面对${player_name}更起劲的摩擦着，${target_name}也忍不住娇喘了起来……`,
+          ); // :7028
+        } else {
+          // :7030
+          await era.printAndWait(
+            `「不，不可以这样做啊，${player_name}！ 快放开我啊！！」`,
+          ); // :7031
+          await era.printAndWait(
+            `与妹妹的性器相互摩擦的背德感让${target_name}无比内疚，却怎么也逃不脱${player_name}的手掌心……`,
+          ); // :7032
+        } // :7033
+      } else {
+        // :7034
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :7036
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，紧贴着彼此的下体摩擦着，爱液不断地从两人的交合处流出。`,
+          ); // :7037
+          await era.printAndWait(
+            `「嗯啊……啊啊${heart(1)} 好……好舒服……${heart(1)} 和魔王大人……百合……真是太舒服了啊啊${heart(1)}」`,
+          ); // :7038
+          await era.printAndWait(
+            `${target_name}尽情的娇喘着，享受着和${player_name}蜜穴相互摩擦的极度快感……`,
+          ); // :7039
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :7041
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，紧贴着彼此的下体摩擦着，爱液不断地从两人的交合处流出。`,
+          ); // :7042
+          await era.printAndWait(
+            `「啊啊……这样的姿势……好，好害羞……不过好舒服啊啊${heart(1)}」`,
+          ); // :7043
+          await era.printAndWait(
+            `${target_name}完全沉浸在与${player_name}用下体相互摩擦的快感之中，发出了甘甜的娇喘。`,
+          ); // :7044
+        } else {
+          // :7046
+          await era.printAndWait(
+            `${player_name}强行分开${target_name}的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。`,
+          ); // :7047
+          await era.printAndWait(`「放，放开我……这样……这样好脏的……呜呜呜！」`); // :7048
+          await era.printAndWait(
+            `无力抵抗的${target_name}只能边抽噎边忍受着……`,
+          ); // :7049
+        } // :7050
+      } // :7051
+      // CFLAG:TARGET:364  = 1（变量语义：CFLAG 族，TARGET:364） // :7052
+      kojo.六九式 = 1; // :7052
+      return 0; // :7053
+    } else {
+      // :7055
+
+      if (assi_mao) {
+        // :7057
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).chara.百合气质 >= 5 &&
+          (kojo.六九式 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :7059
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。`,
+          ); // :7060
+          await era.printAndWait(
+            `『呜哇，姐姐你动得比我还激烈啊${heart(1)} 啊啊……好舒服${heart(1)} 嗯啊啊${heart(1)}』`,
+          ); // :7061
+          await era.printAndWait(
+            `「我，我也很舒服啊啊${heart(1)} 和${player_name}姐妹百合……真的是太舒服了${heart(1)} 嗯啊啊……要，要去了啊啊${heart(1)} 」`,
+          ); // :7062
+          await era.printAndWait(
+            `两人摇着腰肢，尽情享受着姐妹百合之爱，娇喘声连绵不绝。`,
+          ); // :7063
+          // CFLAG:TARGET:364  = 9（变量语义：CFLAG 族，TARGET:364） // :7064
+          kojo.六九式 = 9; // :7064
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.六九式 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :7066
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。`,
+          ); // :7067
+          await era.printAndWait(
+            `『嗯啊……姐姐这样舒服吗${heart(1)} 我可是很舒服呢……啊啊啊${heart(1)}』`,
+          ); // :7068
+          await era.printAndWait(
+            `「是，是啊…姐姐……也很兴奋${heart(1)} 很舒服啊啊${heart(1)} 」`,
+          ); // :7069
+          await era.printAndWait(`两人摇着腰肢，享受着姐妹百合之爱`); // :7070
+          // CFLAG:TARGET:364  = 8（变量语义：CFLAG 族，TARGET:364） // :7071
+          kojo.六九式 = 8; // :7071
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.六九式 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :7073
+          await era.printAndWait(
+            `${player_name}强行分开${target_name}的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。`,
+          ); // :7074
+          await era.printAndWait(`『怎么样，这样很舒服吧，姐姐！嗯啊啊……』`); // :7075
+          await era.printAndWait(
+            `「怎，怎么这样啦${heart(1)} 好，好害羞……姐妹做这样的事！」`,
+          ); // :7076
+          await era.printAndWait(
+            `虽然嘴上这么说，但是${target_name}还是逐渐兴奋了起来，享受着和${player_name}摩擦下体的快感……`,
+          ); // :7077
+          // CFLAG:TARGET:364  = 7（变量语义：CFLAG 族，TARGET:364） // :7078
+          kojo.六九式 = 7; // :7078
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).chara.百合气质 >= 5 &&
+          (kojo.六九式 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :7080
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。`,
+          ); // :7081
+          await era.printAndWait(
+            `『呜哇，姐姐你动得比我还激烈啊${heart(1)} 啊啊……好舒服${heart(1)} 嗯啊啊${heart(1)}』`,
+          ); // :7082
+          await era.printAndWait(
+            `「是……是啊，能和我最心爱的${player_name}百合……真的是太幸福……太舒服了${heart(1)}」`,
+          ); // :7083
+          await era.printAndWait(
+            `两人摇着腰肢，尽情享受着姐妹百合之爱，娇喘声连绵不绝。`,
+          ); // :7084
+          // CFLAG:TARGET:364  = 6（变量语义：CFLAG 族，TARGET:364） // :7085
+          kojo.六九式 = 6; // :7085
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.六九式 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :7087
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。`,
+          ); // :7088
+          await era.printAndWait(
+            `『嗯啊……姐姐这样舒服吗${heart(1)} 我可是很舒服呢……啊啊啊${heart(1)}』`,
+          ); // :7089
+          await era.printAndWait(`「是的……我也……我也……${heart(1)}」`); // :7090
+          await era.printAndWait(
+            `${target_name}满脸通红地享受着和妹妹的百合之爱……`,
+          ); // :7091
+          // CFLAG:TARGET:364  = 5（变量语义：CFLAG 族，TARGET:364） // :7092
+          kojo.六九式 = 5; // :7092
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.六九式 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :7094
+          await era.printAndWait(
+            `${player_name}强行分开${target_name}的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。`,
+          ); // :7095
+          await era.printAndWait(`『怎么样，这样很舒服吧，姐姐！嗯啊啊……！』`); // :7096
+          await era.printAndWait(
+            `「不，不要啦……姐妹……怎么可以做这种事……而且魔王大人……还在看着呢！」`,
+          ); // :7097
+          await era.printAndWait(
+            `虽然嘴上这么说者，而且脸也红到了耳根，但是相互摩擦着的蜜穴传来的快感还是让${player_name}忍不住娇喘了起来`,
+          ); // :7098
+          // CFLAG:TARGET:364  = 4（变量语义：CFLAG 族，TARGET:364） // :7099
+          kojo.六九式 = 4; // :7099
+        } else if (
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.六九式 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :7101
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。`,
+          ); // :7102
+          await era.printAndWait(`『怎么样，这样很舒服吧，姐姐！嗯啊啊……！』`); // :7103
+          await era.printAndWait(`「不要啊，不可以这样……但，但是……好舒服！」`); // :7104
+          await era.printAndWait(
+            `随着${player_name}晃动着腰肢，${target_name}被摩擦着的蜜穴逐渐传来了难以忍耐的快感……`,
+          ); // :7105
+          // CFLAG:TARGET:364  = 3（变量语义：CFLAG 族，TARGET:364） // :7106
+          kojo.六九式 = 3; // :7106
+        } else if (kojo.六九式 <= 1 || game.kojo.口上开关 === 2) {
+          // :7108
+          await era.printAndWait(
+            `${player_name}强行分开${target_name}的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。`,
+          ); // :7109
+          await era.printAndWait(
+            `『这样明明最舒服了，为什么姐姐还要做出讨厌的表情呢！』`,
+          ); // :7110
+          await era.printAndWait(
+            `「一，一点都不舒服……快放开……我们，我们是姐妹啊……不可以……呜呜呜！」」`,
+          ); // :7111
+          // CFLAG:TARGET:364  = 2（变量语义：CFLAG 族，TARGET:364） // :7112
+          kojo.六九式 = 2; // :7112
+        } // :7113
+      } else {
+        // :7114
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).chara.百合气质 >= 5 &&
+          (kojo.六九式 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :7116
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着敏感的蜜穴和阴蒂。`,
+          ); // :7117
+          await era.printAndWait(
+            `「嗯啊……啊啊${heart(1)} 好舒服${heart(1)} 和魔王大人……百合${heart(1)} 真的是太棒了啊啊啊${heart(1)} 」`,
+          ); // :7118
+          await era.printAndWait(
+            `${target_name}尽情扭动着腰身，享受着百合之乐……`,
+          ); // :7119
+          // CFLAG:TARGET:364  = 9（变量语义：CFLAG 族，TARGET:364） // :7120
+          kojo.六九式 = 9; // :7120
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.六九式 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :7122
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着蜜穴和阴蒂。`,
+          ); // :7123
+          await era.printAndWait(
+            `「哈啊……哈啊……魔王大人${heart(1)}让人家……当你的百合性奴吧${heart(1)} 嗯啊……啊啊${heart(1)} 」`,
+          ); // :7124
+          await era.printAndWait(
+            `${target_name}与${player_name}继续扭动着腰身，寻求着更多的快感。`,
+          ); // :7125
+          // CFLAG:TARGET:364  = 8（变量语义：CFLAG 族，TARGET:364） // :7126
+          kojo.六九式 = 8; // :7126
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.六九式 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :7128
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体紧贴着，相互摩擦着蜜穴和阴蒂，爱液不住的流出。`,
+          ); // :7129
+          await era.printAndWait(
+            `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 原来……百合……是这么舒服的事情${heart(1)}」`,
+          ); // :7130
+          await era.printAndWait(
+            `${target_name}娇喘着，享受着蜜穴被摩擦传来的阵阵快感……`,
+          ); // :7131
+          // CFLAG:TARGET:364  = 7（变量语义：CFLAG 族，TARGET:364） // :7132
+          kojo.六九式 = 7; // :7132
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).chara.百合气质 >= 5 &&
+          (kojo.六九式 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :7134
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着敏感的蜜穴和阴蒂。`,
+          ); // :7135
+          await era.printAndWait(
+            `「呜啊……啊啊${heart(1)} 魔王大人……让，让${target_name}永远当你的百合性奴吧……${heart(1)}」`,
+          ); // :7136
+          await era.printAndWait(
+            `${target_name}尽情扭动着腰身，享受着百合之乐……`,
+          ); // :7137
+          // CFLAG:TARGET:364  = 6（变量语义：CFLAG 族，TARGET:364） // :7138
+          kojo.六九式 = 6; // :7138
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.六九式 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :7140
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着蜜穴和阴蒂。`,
+          ); // :7141
+          await era.printAndWait(
+            `「呜啊……嗯啊啊${heart(1)} 不，不行了……太舒服了${heart(1)} 要，要去了啊啊${heart(1)}」`,
+          ); // :7142
+          await era.printAndWait(
+            `${target_name}与${player_name}继续扭动着腰身，寻求着更多的快感。`,
+          ); // :7143
+          // CFLAG:TARGET:364  = 5（变量语义：CFLAG 族，TARGET:364） // :7144
+          kojo.六九式 = 5; // :7144
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.六九式 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :7146
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着。`,
+          ); // :7147
+          await era.printAndWait(
+            `「呜……嗯啊啊${heart(1)} 和魔王大人……这样摩擦小穴……也好棒啊啊！」`,
+          ); // :7148
+          await era.printAndWait(
+            `${target_name}红着脸，完全沉浸在百合之乐的快感中……`,
+          ); // :7149
+          // CFLAG:TARGET:364  = 4（变量语义：CFLAG 族，TARGET:364） // :7150
+          kojo.六九式 = 4; // :7150
+        } else if (
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.六九式 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :7152
+          await era.printAndWait(
+            `${player_name}和${target_name}岔开双腿，彼此的下体如同接吻一样紧贴着，借着爱液的润滑相互摩擦着蜜穴和阴蒂。`,
+          ); // :7153
+          await era.printAndWait(
+            `「嗯啊……啊啊……为，为什么……会这么舒服啊啊！」`,
+          ); // :7154
+          await era.printAndWait(
+            `${target_name}与${player_name}继续扭动着腰身，寻求着更多的快感。`,
+          ); // :7155
+          // CFLAG:TARGET:364  = 3（变量语义：CFLAG 族，TARGET:364） // :7156
+          kojo.六九式 = 3; // :7156
+        } else if (kojo.六九式 <= 1 || game.kojo.口上开关 === 2) {
+          // :7158
+          await era.printAndWait(
+            `${player_name}强行分开${target_name}的双腿，紧贴着彼此的小穴相互摩擦起来。`,
+          ); // :7159
+          await era.printAndWait(`「不，不要！好恶心！放开我啊啊！」`); // :7160
+          await era.printAndWait(`${target_name}无力抵抗，只能哭泣着忍受……`); // :7161
+          // CFLAG:TARGET:364  = 2（变量语义：CFLAG 族，TARGET:364） // :7162
+          kojo.六九式 = 2; // :7162
+        } // :7163
+      } // :7164
+      return 0; // :7165
+    } // :7166
+  } // :7167
+
   return 0;
 }
 
