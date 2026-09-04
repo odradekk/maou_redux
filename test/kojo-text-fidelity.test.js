@@ -183,6 +183,18 @@ const ERB_TOKEN_RULES = [
     /^TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 \? 震动假阳具 # 阴茎$/,
     'TERN_WEAPON_DOGGY',
   ], // #242：K11 リリィ 後背位（CFLAG:322），初めて层与二回目助手玛奥淫乱 RAND:2 支用「震动假阳具」变体
+  [
+    /^TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 \? 电动假阳具 # 阴茎$/,
+    'TERN_ASSI_WEAPON',
+  ], // #242：K11 リリィ 三人 PLAY，助手玛奥的性器名
+  [
+    /^TALENT:MASTER:121 == 0 && TALENT:MASTER:122 == 0 \? 电动假阳具 # 阴茎$/,
+    'TERN_MASTER_WEAPON',
+  ], // #242：K11 リリィ 三人 PLAY，魔王的性器名
+  [/^LOCALS:0$/, 'LOCALS0'],
+  [/^LOCALS:1$/, 'LOCALS1'],
+  [/^LOCALS:2$/, 'LOCALS2'],
+  [/^LOCALS:3$/, 'LOCALS3'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -265,6 +277,7 @@ const JS_TOKEN_RULES = [
   [/^cid_name$/, 'ANAME'], // 与 :89 的 SAVESTR:A→ANAME 配对（#238 合并时统一，勿再另起记号）
   // —— #239：K8 银黑桃口上的局部名（记号沿用上面的规范名，勿另起） ——
   [/^a_name$/, 'ANAME'], // 迎击奖赏两函数承载 %SAVESTR:A%
+  [/^name$/, 'ANAME'], // #242：K11 奖赏请求局部名承载 %SAVESTR:A%
   [/^today_or_night$/, 'TERN_TIME_NIGHT'],
   [/^today_or_eve$/, 'TERN_TIME_TONIGHT'],
   [/^s \|\| 0$/, 'S_COUNT'],
@@ -286,6 +299,12 @@ const JS_TOKEN_RULES = [
   [/^a_count > 1 \? '不断迎来绝顶' : '迎来绝顶'$/, 'TERN_A_CLIMAX2'],
   [/^weapon$/, 'TERN_WEAPON'], // #242：K11 リリィ 正常位（CFLAG:321）、後背位（CFLAG:322）复用
   [/^weapon_doggy$/, 'TERN_WEAPON_DOGGY'], // #242：K11 リリィ 後背位（CFLAG:322），震动假阳具变体
+  [/^assi_weapon$/, 'TERN_ASSI_WEAPON'], // #242：K11 リリィ 三人 PLAY，助手玛奥的性器名
+  [/^master_weapon$/, 'TERN_MASTER_WEAPON'], // #242：K11 リリィ 三人 PLAY，魔王的性器名
+  [/^locals_0$/, 'LOCALS0'],
+  [/^locals_1$/, 'LOCALS1'],
+  [/^locals_2$/, 'LOCALS2'],
+  [/^locals_3$/, 'LOCALS3'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */

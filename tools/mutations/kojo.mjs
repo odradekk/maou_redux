@@ -10162,9 +10162,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4723 K11 NTR 假阳具判据漏掉 FLAG:500==2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "        era0('flag:500') === 0 || era0('flag:500') === 2\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
+    find: '  const king_has_penis =\n    game.system.狂王性别 === 0 || game.system.狂王性别 === 2;',
     replace:
-      "        era0('flag:500') === 0 || era0('flag:500') === 9\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
+      '  const king_has_penis =\n    game.system.狂王性别 === 0 || game.system.狂王性别 === 9; // 变异',
     tests: ['kojo-k11-lily'],
     must_mention: 'FLAG:500 在肉棒与假阳具称呼间分岔',
   },
@@ -10287,8 +10287,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4686 PALAMCNG_11 非玛奥助手守卫被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    // :11466',
-    replace: '  if (false) {\n    // :11466 变异：删除非玛奥助手守卫',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    // :11465-11466',
+    replace: '  if (false) {\n    // :11465-11466 变异：删除非玛奥助手守卫',
     tests: ['kojo-k11-lily'],
     must_mention: '非玛奥助手参与调教时整段静默跳过',
   },
@@ -10321,8 +10321,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4697 MARKCNG_11 非玛奥助手守卫被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    // :11797',
-    replace: '  if (false) {\n    // :11797 变异：删除非玛奥助手守卫',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    // :11796-11797',
+    replace: '  if (false) {\n    // :11796-11797 变异：删除非玛奥助手守卫',
     tests: ['kojo-k11-lily'],
     must_mention: 'MARKCNG_11 非玛奥助手参与调教时整段静默跳过',
   },

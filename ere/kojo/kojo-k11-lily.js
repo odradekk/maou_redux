@@ -10840,17 +10840,17 @@ async function kojo_message_com_11(rand) {
           `${target_name}被妹妹狠狠打着屁股，屈辱得泪流满面……`,
         ); // :5860
       } else {
-        // :5861
+        // :5860-5861
         await era.printAndWait(`「住，住手啊！好痛……屁股好痛啊啊！」`); // :5862
         await era.printAndWait(
           `${target_name}被${player_name}被妹妹狠狠打着屁股，痛得眼泪都出来了……`,
         ); // :5863
-      } // :5864
+      } // :5863-5864
       // CFLAG:TARGET:341  = 1（变量语义：CFLAG 族，TARGET:341） // :5865
       kojo.打屁股 = 1; // :5865
-      return 0; // :5866
+      return 0; // :5865-5866
     } else {
-      // :5868
+      // :5867-5868
 
       if (assi_mao) {
         // :5870
@@ -10911,9 +10911,9 @@ async function kojo_message_com_11(rand) {
           ); // :5893
           // CFLAG:TARGET:341  = 2（变量语义：CFLAG 族，TARGET:341） // :5894
           kojo.打屁股 = 2; // :5894
-        } // :5895
+        } // :5894-5895
       } else {
-        // :5896
+        // :5896-5897
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -10965,11 +10965,11 @@ async function kojo_message_com_11(rand) {
           ); // :5915
           // CFLAG:TARGET:341  = 2（变量语义：CFLAG 族，TARGET:341） // :5916
           kojo.打屁股 = 2; // :5916
-        } // :5917
-      } // :5918
-      return 0; // :5919
-    } // :5920
-  } // :5921
+        } // :5916-5917
+      } // :5916-5918
+      return 0; // :5916-5919
+    } // :5920-5923
+  } // :5921-5923
 
   // :5926-6062 IF SELECTCOM == 41（鞭 CFLAG:342）
   if (era_flag.selectcom === 41) {
@@ -10986,7 +10986,7 @@ async function kojo_message_com_11(rand) {
           `鞭子抽击的声音中还夹杂着${player_name}歇斯底里的笑声和${target_name}痛苦的悲鸣……`,
         ); // :5933
       } else {
-        // :5934
+        // :5933-5934
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :5936
@@ -11001,16 +11001,16 @@ async function kojo_message_com_11(rand) {
             `${player_name}丝毫不敢反抗，忍受着${target_name}挥下的鞭子，满足着${player_name}的嗜虐心……`,
           ); // :5942
         } else {
-          // :5944
+          // :5943-5944
           await era.printAndWait(`「呜啊啊……住，住手啊啊啊！」`); // :5945
           await era.printAndWait(`${target_name}在鞭子下痛苦地惨叫着……`); // :5946
-        } // :5947
-      } // :5948
+        } // :5946-5947
+      } // :5948-5949
       // CFLAG:TARGET:342  = 1（变量语义：CFLAG 族，TARGET:342） // :5949
       kojo.鞭 = 1; // :5949
-      return 0; // :5950
+      return 0; // :5949-5950
     } else {
-      // :5952
+      // :5951-5952
 
       if (assi_mao) {
         // :5954
@@ -11139,9 +11139,9 @@ async function kojo_message_com_11(rand) {
           ); // :6008
           // CFLAG:TARGET:342  = 2（变量语义：CFLAG 族，TARGET:342） // :6009
           kojo.鞭 = 2; // :6009
-        } // :6010
+        } // :6009-6010
       } else {
-        // :6011
+        // :6011-6012
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -11256,11 +11256,11 @@ async function kojo_message_com_11(rand) {
           ); // :6056
           // CFLAG:TARGET:342  = 2（变量语义：CFLAG 族，TARGET:342） // :6057
           kojo.鞭 = 2; // :6057
-        } // :6058
-      } // :6059
-      return 0; // :6060
-    } // :6061
-  } // :6062
+        } // :6057-6058
+      } // :6057-6059
+      return 0; // :6057-6060
+    } // :6061-6064
+  } // :6062-6064
 
   // :6067-6188 IF SELECTCOM == 42（针 CFLAG:343）
   if (era_flag.selectcom === 42) {
@@ -11277,7 +11277,7 @@ async function kojo_message_com_11(rand) {
           `${target_name}娇嫩的肌肤被细针刺破，忍不住惨叫了起来……`,
         ); // :6074
       } else {
-        // :6075
+        // :6074-6075
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :6077
@@ -11296,20 +11296,20 @@ async function kojo_message_com_11(rand) {
             `${target_name}娇嫩的肌肤被细针刺破，忍不住惨叫了起来……`,
           ); // :6083
         } else {
-          // :6085
+          // :6084-6085
           await era.printAndWait(
             `「骗……骗人……这么多根针……扎进去……会死的……啊啊啊！」`,
           ); // :6086
           await era.printAndWait(
             `${target_name}娇嫩的肌肤被细针刺破，忍不住惨叫了起来……`,
           ); // :6087
-        } // :6088
-      } // :6089
+        } // :6087-6088
+      } // :6089-6090
       // CFLAG:TARGET:343  = 1（变量语义：CFLAG 族，TARGET:343） // :6090
       kojo.针 = 1; // :6090
-      return 0; // :6091
+      return 0; // :6090-6091
     } else {
-      // :6093
+      // :6092-6093
 
       if (assi_mao) {
         // :6095
@@ -11413,9 +11413,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`「住，住手啊啊！好痛！」`); // :6138
           // CFLAG:TARGET:343  = 2（变量语义：CFLAG 族，TARGET:343） // :6139
           kojo.针 = 2; // :6139
-        } // :6140
+        } // :6139-6140
       } else {
-        // :6141
+        // :6141-6142
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -11526,11 +11526,11 @@ async function kojo_message_com_11(rand) {
           ); // :6182
           // CFLAG:TARGET:343  = 2（变量语义：CFLAG 族，TARGET:343） // :6183
           kojo.针 = 2; // :6183
-        } // :6184
-      } // :6185
-      return 0; // :6186
-    } // :6187
-  } // :6188
+        } // :6183-6184
+      } // :6183-6185
+      return 0; // :6183-6186
+    } // :6187-6190
+  } // :6188-6190
 
   // :6194-6262 SELECTCOM 43（眼罩 CFLAG:344 / CFLAG:380）
   if (era_flag.selectcom === 43 && era0(`tequip:${target}:43`) !== 0) {
@@ -11546,14 +11546,14 @@ async function kojo_message_com_11(rand) {
         // :6201
         await era.printAndWait(`「不，不要这样欺负人家啦………」`); // :6202
       } else {
-        // :6204
+        // :6203-6204
         await era.printAndWait(`「这，这是要做什么？！」`); // :6205
-      } // :6206
+      } // :6205-6206
       // CFLAG:TARGET:344  = 1（变量语义：CFLAG 族，TARGET:344） // :6207
       kojo.眼罩 = 1; // :6207
-      return 0; // :6208
+      return 0; // :6207-6208
     } else {
-      // :6210
+      // :6209-6210
 
       if (
         era.get(`talent:${target}:76`) === 1 &&
@@ -11630,9 +11630,9 @@ async function kojo_message_com_11(rand) {
         await era.printAndWait(`「才，才不会害怕呢……」`); // :6241
         // CFLAG:TARGET:344  = 2（变量语义：CFLAG 族，TARGET:344） // :6242
         kojo.眼罩 = 2; // :6242
-      } // :6243
-      return 0; // :6244
-    } // :6245
+      } // :6242-6243
+      return 0; // :6242-6244
+    } // :6245-6246
   } else if (era_flag.selectcom === 43 && era0(`tequip:${target}:43`) === 0) {
     // :6247
 
@@ -11659,9 +11659,9 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(`「呼……呼…」`); // :6258
       // CFLAG:380  = 1（变量语义：CFLAG 族，380） // :6259
       kojo.眼罩着脱 = 1; // :6259
-    } // :6260
-    return 0; // :6261
-  } // :6262
+    } // :6259-6260
+    return 0; // :6259-6261
+  } // :6262-6264
 
   // :6268-6404 SELECTCOM 44（绳 CFLAG:345 / CFLAG:385）
   if (era_flag.selectcom === 44 && era0(`tequip:${target}:44`) !== 0) {
@@ -11676,7 +11676,7 @@ async function kojo_message_com_11(rand) {
         await era.printAndWait(`「勒……勒得太紧了……稍微放松一点不行吗……」`); // :6274
         await era.printAndWait(`『想得美，这可不是过家家哦姐姐』`); // :6275
       } else {
-        // :6276
+        // :6275-6276
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :6278
@@ -11695,20 +11695,20 @@ async function kojo_message_com_11(rand) {
             `被${player_name}用绳子粗暴地捆住了手脚和身体，${target_name}发出了吃痛的呻吟……`,
           ); // :6284
         } else {
-          // :6286
+          // :6285-6286
           await era.printAndWait(
             `「绑，绑成这个样子……有什么意义！好，好痛啊！」`,
           ); // :6287
           await era.printAndWait(
             `${target_name}痛苦的呻吟被完全无视了，绳子一圈圈地将她牢牢捆成了魔王想要的造型……`,
           ); // :6288
-        } // :6289
-      } // :6290
+        } // :6288-6289
+      } // :6290-6291
       // CFLAG:TARGET:345  = 1（变量语义：CFLAG 族，TARGET:345） // :6291
       kojo.绳子 = 1; // :6291
-      return 0; // :6292
+      return 0; // :6291-6292
     } else {
-      // :6294
+      // :6293-6294
 
       if (assi_mao) {
         // :6296
@@ -11816,9 +11816,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`「放，放开我啊啊！」`); // :6339
           // CFLAG:TARGET:345  = 2（变量语义：CFLAG 族，TARGET:345） // :6340
           kojo.绳子 = 2; // :6340
-        } // :6341
+        } // :6340-6341
       } else {
-        // :6342
+        // :6342-6343
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -11919,10 +11919,10 @@ async function kojo_message_com_11(rand) {
           ); // :6381
           // CFLAG:TARGET:345  = 2（变量语义：CFLAG 族，TARGET:345） // :6382
           kojo.绳子 = 2; // :6382
-        } // :6383
-      } // :6384
-      return 0; // :6385
-    } // :6386
+        } // :6382-6383
+      } // :6382-6384
+      return 0; // :6385-6387
+    } // :6386-6387
   } else if (era_flag.selectcom === 44 && era0(`tequip:${target}:44`) === 0) {
     // :6388
 
@@ -11949,9 +11949,9 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(`「终……终于……能轻松一些了」`); // :6399
       // CFLAG:385  = 1（变量语义：CFLAG 族，385） // :6400
       kojo.绳子着脱 = 1; // :6400
-    } // :6401
-    return 0; // :6402
-  } // :6403
+    } // :6400-6401
+    return 0; // :6400-6402
+  } // :6403-6405
 
   // :6409-6491 SELECTCOM 45（口塞 CFLAG:346 / CFLAG:386）
   if (era_flag.selectcom === 45 && era0(`tequip:${target}:45`) !== 0) {
@@ -11971,17 +11971,17 @@ async function kojo_message_com_11(rand) {
           `${target_name}的声音被口球堵住，变成了无力的呻吟……`,
         ); // :6419
       } else {
-        // :6421
+        // :6420-6421
         await era.printAndWait(`「唔，这，这是——呣呣……呣呣呣！？」`); // :6422
         await era.printAndWait(
           `${target_name}被${player_name}强行塞进口球，只能发出含糊的痛苦呻吟……`,
         ); // :6423
-      } // :6424
+      } // :6423-6424
       // CFLAG:TARGET:346  = 1（变量语义：CFLAG 族，TARGET:346） // :6425
       kojo.口塞 = 1; // :6425
-      return 0; // :6426
+      return 0; // :6425-6426
     } else {
-      // :6428
+      // :6427-6428
 
       if (
         era.get(`talent:${target}:76`) === 1 &&
@@ -12076,9 +12076,9 @@ async function kojo_message_com_11(rand) {
         ); // :6467
         // CFLAG:TARGET:346  = 2（变量语义：CFLAG 族，TARGET:346） // :6468
         kojo.口塞 = 2; // :6468
-      } // :6469
-      return 0; // :6470
-    } // :6471
+      } // :6468-6469
+      return 0; // :6468-6470
+    } // :6471-6472
   } else if (era_flag.selectcom === 45 && era0(`tequip:${target}:45`) === 0) {
     // :6473
 
@@ -12106,9 +12106,9 @@ async function kojo_message_com_11(rand) {
       await era.printAndWait(`口水还在慢慢地从${target_name}的嘴边流出……`); // :6487
       // CFLAG:386  = 1（变量语义：CFLAG 族，386） // :6488
       kojo.口塞着脱 = 1; // :6488
-    } // :6489
-    return 0; // :6490
-  } // :6491
+    } // :6488-6489
+    return 0; // :6488-6490
+  } // :6491-6493
 
   // :6497-6683 SELECTCOM 46（灌肠肛塞 CFLAG:347）
   if (era_flag.selectcom === 46 && era0(`tequip:${target}:46`) !== 0) {
@@ -12124,16 +12124,16 @@ async function kojo_message_com_11(rand) {
             `『忍住啊姐姐，一定要忍住忍住再忍住——等到终于忍不住了再突然一次全部排出去，那个感觉可是不输给小穴高潮的哦${heart(1)}』`,
           ); // :6504
         } else {
-          // :6505
+          // :6504-6505
           await era.printAndWait(`『忍住啊姐姐，这种感觉要慢慢体验呢……』`); // :6506
-        } // :6507
+        } // :6506-6507
         await era.printAndWait(
           `${player_name}舔着嘴唇，抚摸着${target_name}胀起的小腹，和塞住肛门的木栓。`,
         ); // :6508
         await era.printAndWait(`「不，不行了……真的，真的已经不行了！」`); // :6509
         await era.printAndWait(`『别说笑话啦姐姐，游戏才刚刚开始呢。』`); // :6510
       } else {
-        // :6511
+        // :6510-6511
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :6513
@@ -12148,20 +12148,20 @@ async function kojo_message_com_11(rand) {
             `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，她还得忍上好一会儿呢……`,
           ); // :6519
         } else {
-          // :6521
+          // :6520-6521
           await era.printAndWait(
             `「肚……肚子好痛……要，要死了……让人家上厕所吧，求你了！」`,
           ); // :6522
           await era.printAndWait(
             `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，可不会那么轻易就让她解放啊。`,
           ); // :6523
-        } // :6524
-      } // :6525
+        } // :6523-6524
+      } // :6525-6526
       // CFLAG:TARGET:347  = 1（变量语义：CFLAG 族，TARGET:347） // :6526
       kojo.灌肠肛塞 = 1; // :6526
-      return 0; // :6527
+      return 0; // :6526-6527
     } else {
-      // :6529
+      // :6528-6529
 
       if (assi_mao) {
         // :6531
@@ -12263,9 +12263,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`「呜……呜呜……快，快点让姐姐上厕所吧……」`); // :6567
           // CFLAG:347  = 2（变量语义：CFLAG 族，347） // :6568
           kojo.灌肠肛塞 = 2; // :6568
-        } // :6569
+        } // :6568-6569
       } else {
-        // :6570
+        // :6570-6571
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -12343,10 +12343,10 @@ async function kojo_message_com_11(rand) {
           ); // :6599
           // CFLAG:347  = 2（变量语义：CFLAG 族，347） // :6600
           kojo.灌肠肛塞 = 2; // :6600
-        } // :6601
-      } // :6602
-      return 0; // :6603
-    } // :6604
+        } // :6600-6601
+      } // :6600-6602
+      return 0; // :6603-6605
+    } // :6604-6605
   } else if (era_flag.selectcom === 46 && era0(`tequip:${target}:46`) === 0) {
     // :6606
 
@@ -12369,7 +12369,7 @@ async function kojo_message_com_11(rand) {
             `排泄完的${target_name}边喘息着，边点头同意着妹妹的话……`,
           ); // :6615
         } else {
-          // :6616
+          // :6615-6616
           await era.printAndWait(`「出，出来了，全部出来了啊……呜啊啊！」`); // :6617
           await era.printAndWait(
             `${target_name}激烈地排泄着，脸上露出了痛苦和耻辱的表情。`,
@@ -12377,7 +12377,7 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `『哎哎，姐姐看上去还不是很习惯啊，那就再来灌一次肠吧，可以吗，魔王大人？』`,
           ); // :6619
-        } // :6620
+        } // :6619-6620
       } else if (era.get(`talent:${target}:85`) === 1) {
         // :6622
 
@@ -12396,7 +12396,7 @@ async function kojo_message_com_11(rand) {
             `${target_name}忍耐到扭曲了的脸一下子松弛了，甚至可以说是享受地喘息着………`,
           ); // :6627
         } else {
-          // :6628
+          // :6627-6628
           await era.printAndWait(
             `「${player_name}，魔王大人！不，不要看啊啊！！！」`,
           ); // :6629
@@ -12406,9 +12406,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `${target_name}脱力地跪倒在地上，羞耻得泪流满面……`,
           ); // :6631
-        } // :6632
+        } // :6631-6632
       } else {
-        // :6634
+        // :6633-6634
 
         if (
           chara(target).system.肛门感觉 >= 3 &&
@@ -12423,7 +12423,7 @@ async function kojo_message_com_11(rand) {
           ); // :6638
           await era.printAndWait(`『哎呀呀，姐姐这个样子，是想再来一次吗？』`); // :6639
         } else {
-          // :6640
+          // :6639-6640
           await era.printAndWait(`「不，不要看，不要看啊啊啊！」`); // :6641
           await era.printAndWait(
             `${target_name}在痛苦的呻吟中排泄了出来。${player_name}捂着鼻子皱起了眉头。`,
@@ -12431,10 +12431,10 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `『哎呀，肚子里攒了这么多脏东西啊姐姐，看来还得再来一次呢！』`,
           ); // :6643
-        } // :6644
-      } // :6645
+        } // :6643-6644
+      } // :6643-6645
     } else {
-      // :6646
+      // :6646-6647
 
       if (era.get(`talent:${target}:76`) === 1) {
         // :6648
@@ -12450,13 +12450,13 @@ async function kojo_message_com_11(rand) {
           ); // :6652
           await era.printAndWait(`「好……好舒服啊啊${heart(1)}」`); // :6653
         } else {
-          // :6654
+          // :6653-6654
           await era.printAndWait(`「出，出来了，全部出来了啊啊啊！」`); // :6655
           await era.printAndWait(
             `${target_name}激烈地排泄着，脸上露出了痛苦和耻辱的表情。`,
           ); // :6656
           await era.printAndWait(`「呼啊……呼啊……好，好累，好难受……」`); // :6657
-        } // :6658
+        } // :6657-6658
       } else if (era.get(`talent:${target}:85`) === 1) {
         // :6660
 
@@ -12473,14 +12473,14 @@ async function kojo_message_com_11(rand) {
           ); // :6664
           await era.printAndWait(`「啊……啊啊……排泄的感觉……好舒服${heart(1)}」`); // :6665
         } else {
-          // :6666
+          // :6665-6666
           await era.printAndWait(`「不，不要看，不要看啊啊啊……」`); // :6667
           await era.printAndWait(
             `被强制当着你的面排泄的${target_name}羞耻地哭泣了起来……`,
           ); // :6668
-        } // :6669
+        } // :6668-6669
       } else {
-        // :6671
+        // :6670-6671
 
         if (
           chara(target).system.肛门感觉 >= 3 &&
@@ -12494,14 +12494,14 @@ async function kojo_message_com_11(rand) {
             `${target_name}的排泄声，和呻吟娇喘的声音交织在了一起。`,
           ); // :6675
         } else {
-          // :6676
+          // :6675-6676
           await era.printAndWait(`「忍，忍不住了！不要看，不要看啊啊啊！」`); // :6677
           await era.printAndWait(`${target_name}在痛苦的呻吟中排泄了出来`); // :6678
-        } // :6679
-      } // :6680
-    } // :6681
-    return 0; // :6682
-  } // :6683
+        } // :6678-6679
+      } // :6678-6680
+    } // :6678-6681
+    return 0; // :6682-6685
+  } // :6683-6685
 
   // :6688-6829 IF SELECTCOM == 55（放置PLAY CFLAG:356）
   if (era_flag.selectcom === 55) {
@@ -12515,9 +12515,9 @@ async function kojo_message_com_11(rand) {
         // :6695
         await era.printAndWait(`「为，为什么不继续了呢？」`); // :6696
       } else {
-        // :6698
+        // :6697-6698
         await era.printAndWait(`「不，不要用那种眼神看着人家………」`); // :6699
-      } // :6700
+      } // :6699-6700
 
       if (era.get(`tequip:${target}:11`)) {
         // :6703
@@ -12598,9 +12598,9 @@ async function kojo_message_com_11(rand) {
       } // :6736
       // CFLAG:356  = 1（变量语义：CFLAG 族，356） // :6737
       kojo.放置PLAY = 1; // :6737
-      return 0; // :6738
+      return 0; // :6737-6738
     } else {
-      // :6740
+      // :6739-6740
 
       if (assi_mao) {
         // :6742
@@ -12656,9 +12656,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`『哎呀，别用那样的眼神瞪我嘛……』`); // :6763
           // CFLAG:356  = 2（变量语义：CFLAG 族，356） // :6764
           kojo.放置PLAY = 2; // :6764
-        } // :6765
+        } // :6764-6765
       } else {
-        // :6766
+        // :6766-6767
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -12707,8 +12707,8 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`「别，别用那样的眼神看人家……」`); // :6787
           // CFLAG:356  = 2（变量语义：CFLAG 族，356） // :6788
           kojo.放置PLAY = 2; // :6788
-        } // :6789
-      } // :6790
+        } // :6788-6789
+      } // :6790-6791
 
       if (era.get(`tequip:${target}:11`)) {
         // :6793
@@ -12787,9 +12787,9 @@ async function kojo_message_com_11(rand) {
         // :6826
         await era.printAndWait(`水晶球忠实的记录下${target_name}此刻的身姿……`); // :6826
       } // :6826
-      return 0; // :6827
-    } // :6828
-  } // :6829
+      return 0; // :6826-6827
+    } // :6826-6828
+  } // :6829-6831
 
   // :6835-7010 IF SELECTCOM == 56（交谈 CFLAG:357）
   if (era_flag.selectcom === 56) {
@@ -12847,7 +12847,7 @@ async function kojo_message_com_11(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6856
           game.kojo.录像内容 |= 2; // :6856
         } else {
-          // :6857
+          // :6856-6857
           await era.printAndWait(
             `${target_name}瞪视着水晶球，一副极不情愿的样子。`,
           ); // :6858
@@ -12855,9 +12855,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `还没有说完，就抿着嘴沉默了，看来还需要继续调教……`,
           ); // :6860
-        } // :6861
+        } // :6860-6861
       } else {
-        // :6862
+        // :6862-6863
 
         if (assi_mao) {
           // :6864
@@ -12913,7 +12913,7 @@ async function kojo_message_com_11(rand) {
             ) {
               // :6876
               await era.print(`无比痛苦`); // :6877
-            } // :6878
+            } // :6877-6878
             await era.print(`地回应着。`); // :6879
             await era.printAndWait(`「不，不要再，再对姐姐恶作剧了」`); // :6880
           } else if (
@@ -12938,15 +12938,15 @@ async function kojo_message_com_11(rand) {
               `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,
             ); // :6886
           } else {
-            // :6887
+            // :6886-6887
             await era.print(
               `的语言羞辱，${target_name}只是红着脸，低着头听着…`,
             ); // :6888
             await era.printAndWait(`「为，为什么……会变成这个样子…」`); // :6889
             await era.printAndWait(`「对不起……${player_name}…真的对不起…」`); // :6890
-          } // :6891
+          } // :6890-6891
         } else {
-          // :6892
+          // :6892-6893
           await era.print(`${player_name}`); // :6893
           if (
             chara(target).train.欲情 >= era0('palamlv:4') &&
@@ -12999,7 +12999,7 @@ async function kojo_message_com_11(rand) {
             ) {
               // :6904
               await era.print(`无比痛苦`); // :6905
-            } // :6906
+            } // :6905-6906
             await era.print(`地努力回答着`); // :6907
             await era.printAndWait(
               `「呜啊啊！人，人家没关系的……请，请魔王大人……随意调教！」`,
@@ -13022,17 +13022,17 @@ async function kojo_message_com_11(rand) {
             await era.print(`的语言挑逗、${target_name}结结巴巴地回答着`); // :6913
             await era.printAndWait(`「应，应该回答什么…？」`); // :6914
           } else {
-            // :6915
+            // :6914-6915
             await era.print(`的语言挑逗、${target_name}听清楚了吗…`); // :6916
             await era.printAndWait(`「…不，不太想说话…」`); // :6917
-          } // :6918
-        } // :6919
-      } // :6920
+          } // :6917-6918
+        } // :6917-6919
+      } // :6920-6921
       // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :6921
       kojo.交谈 = 1; // :6921
-      return 0; // :6922
+      return 0; // :6921-6922
     } else {
-      // :6924
+      // :6923-6924
       if (era.get(`tequip:${target}:53`) === 1) {
         // :6925
 
@@ -13083,7 +13083,7 @@ async function kojo_message_com_11(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6943
           game.kojo.录像内容 |= 2; // :6943
         } else {
-          // :6944
+          // :6943-6944
           await era.printAndWait(
             `${target_name}瞪视着水晶球，一副极不情愿的样子。`,
           ); // :6945
@@ -13091,9 +13091,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `还没有说完，就抿着嘴沉默了，看来还需要继续调教……`,
           ); // :6947
-        } // :6948
+        } // :6947-6948
       } else {
-        // :6949
+        // :6949-6950
 
         if (assi_mao) {
           // :6951
@@ -13149,7 +13149,7 @@ async function kojo_message_com_11(rand) {
             ) {
               // :6963
               await era.print(`无比痛苦`); // :6964
-            } // :6965
+            } // :6964-6965
             await era.print(`地回应着`); // :6966
             await era.printAndWait(`「不，不要再，再对姐姐恶作剧了」`); // :6967
           } else if (
@@ -13174,15 +13174,15 @@ async function kojo_message_com_11(rand) {
               `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,
             ); // :6973
           } else {
-            // :6974
+            // :6973-6974
             await era.print(
               `的语言羞辱，${target_name}只是红着脸，低着头听着…`,
             ); // :6975
             await era.printAndWait(`「为，为什么……会变成这个样子…」`); // :6976
             await era.printAndWait(`「对不起……${player_name}…真的对不起…」`); // :6977
-          } // :6978
+          } // :6977-6978
         } else {
-          // :6979
+          // :6979-6980
           await era.print(`面对${player_name}`); // :6980
           if (
             chara(target).train.欲情 >= era0('palamlv:4') &&
@@ -13235,7 +13235,7 @@ async function kojo_message_com_11(rand) {
             ) {
               // :6991
               await era.print(`无比痛苦`); // :6992
-            } // :6993
+            } // :6992-6993
             await era.print(`地努力回答着`); // :6994
             await era.printAndWait(
               `「呜啊啊！人，人家没关系的……请，请魔王大人……随意调教！」`,
@@ -13258,15 +13258,15 @@ async function kojo_message_com_11(rand) {
             await era.print(`的语言挑逗、${target_name}结结巴巴地回答着`); // :7000
             await era.printAndWait(`「应，应该回答什么…？」`); // :7001
           } else {
-            // :7002
+            // :7001-7002
             await era.print(`的语言挑逗、${target_name}听清楚了吗…`); // :7003
             await era.printAndWait(`「…不，不太想说话…」`); // :7004
-          } // :7005
-        } // :7006
-      } // :7007
-      return 0; // :7008
-    } // :7009
-  } // :7010
+          } // :7004-7005
+        } // :7004-7006
+      } // :7004-7007
+      return 0; // :7008-7011
+    } // :7009-7011
+  } // :7010-7011
 
   // :7014-7167 IF SELECTCOM == 63（贝合 CFLAG:364）
   if (era_flag.selectcom === 63) {
@@ -13301,16 +13301,16 @@ async function kojo_message_com_11(rand) {
             `虽然满脸通红地摇着头，但是面对${player_name}更起劲的摩擦着，${target_name}也忍不住娇喘了起来……`,
           ); // :7028
         } else {
-          // :7030
+          // :7029-7030
           await era.printAndWait(
             `「不，不可以这样做啊，${player_name}！ 快放开我啊！！」`,
           ); // :7031
           await era.printAndWait(
             `与妹妹的性器相互摩擦的背德感让${target_name}无比内疚，却怎么也逃不脱${player_name}的手掌心……`,
           ); // :7032
-        } // :7033
+        } // :7032-7033
       } else {
-        // :7034
+        // :7034-7035
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :7036
@@ -13335,7 +13335,7 @@ async function kojo_message_com_11(rand) {
             `${target_name}完全沉浸在与${player_name}用下体相互摩擦的快感之中，发出了甘甜的娇喘。`,
           ); // :7044
         } else {
-          // :7046
+          // :7045-7046
           await era.printAndWait(
             `${player_name}强行分开${target_name}的双腿，紧贴着彼此的下体摩擦起来，爱液不断地从两人的交合处流出。`,
           ); // :7047
@@ -13343,13 +13343,13 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `无力抵抗的${target_name}只能边抽噎边忍受着……`,
           ); // :7049
-        } // :7050
-      } // :7051
+        } // :7049-7050
+      } // :7051-7052
       // CFLAG:TARGET:364  = 1（变量语义：CFLAG 族，TARGET:364） // :7052
       kojo.六九式 = 1; // :7052
-      return 0; // :7053
+      return 0; // :7052-7053
     } else {
-      // :7055
+      // :7054-7055
 
       if (assi_mao) {
         // :7057
@@ -13492,9 +13492,9 @@ async function kojo_message_com_11(rand) {
           ); // :7111
           // CFLAG:TARGET:364  = 2（变量语义：CFLAG 族，TARGET:364） // :7112
           kojo.六九式 = 2; // :7112
-        } // :7113
+        } // :7112-7113
       } else {
-        // :7114
+        // :7114-7115
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -13621,11 +13621,11 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`${target_name}无力抵抗，只能哭泣着忍受……`); // :7161
           // CFLAG:TARGET:364  = 2（变量语义：CFLAG 族，TARGET:364） // :7162
           kojo.六九式 = 2; // :7162
-        } // :7163
-      } // :7164
-      return 0; // :7165
-    } // :7166
-  } // :7167
+        } // :7162-7163
+      } // :7162-7164
+      return 0; // :7162-7165
+    } // :7166-7168
+  } // :7167-7168
 
   // :7179-8814 IF SELECTCOM == 64（3P CFLAG:391）
   if (era_flag.selectcom === 64) {
@@ -13698,7 +13698,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :7204
             } else {
-              // :7205
+              // :7204-7205
               await era.printAndWait(
                 `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
               ); // :7206
@@ -13711,7 +13711,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
               ); // :7209
-            } // :7210
+            } // :7209-7210
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -13756,7 +13756,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :7226
             } else {
-              // :7227
+              // :7226-7227
               await era.print(
                 `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
               ); // :7228
@@ -13772,7 +13772,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
               ); // :7232
-            } // :7233
+            } // :7232-7233
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -13822,7 +13822,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
               ); // :7250
             } else {
-              // :7251
+              // :7250-7251
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7252
               await era.printAndWait(
                 `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
@@ -13841,7 +13841,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7259
-            } // :7260
+            } // :7259-7260
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -13891,7 +13891,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
               ); // :7277
             } else {
-              // :7278
+              // :7277-7278
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7279
               await era.printAndWait(
                 `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
@@ -13914,7 +13914,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7286
-            } // :7287
+            } // :7286-7287
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -13958,7 +13958,7 @@ async function kojo_message_com_11(rand) {
                 `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
               ); // :7302
             } else {
-              // :7303
+              // :7302-7303
               await era.printAndWait(
                 `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
               ); // :7304
@@ -13977,7 +13977,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
               ); // :7309
-            } // :7310
+            } // :7309-7310
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -14024,7 +14024,7 @@ async function kojo_message_com_11(rand) {
                 `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
               ); // :7326
             } else {
-              // :7327
+              // :7326-7327
               await era.printAndWait(
                 `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
               ); // :7328
@@ -14043,13 +14043,13 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
               ); // :7333
-            } // :7334
+            } // :7333-7334
           } else {
-            // :7335
+            // :7335-7336
             await era.printAndWait(`出错了？`); // :7336
-          } // :7337
+          } // :7336-7337
         } else {
-          // :7339
+          // :7338-7339
 
           if (
             game.train.三人PLAY主人部位 === 1 &&
@@ -14093,7 +14093,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :7355
             } else {
-              // :7356
+              // :7355-7356
               await era.printAndWait(
                 `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
               ); // :7357
@@ -14106,7 +14106,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
               ); // :7360
-            } // :7361
+            } // :7360-7361
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -14151,7 +14151,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :7377
             } else {
-              // :7378
+              // :7377-7378
               await era.print(
                 `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
               ); // :7379
@@ -14167,7 +14167,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
               ); // :7383
-            } // :7384
+            } // :7383-7384
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -14217,7 +14217,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
               ); // :7401
             } else {
-              // :7402
+              // :7401-7402
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7403
               await era.printAndWait(
                 `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
@@ -14236,7 +14236,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7410
-            } // :7411
+            } // :7410-7411
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -14286,7 +14286,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
               ); // :7428
             } else {
-              // :7429
+              // :7428-7429
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7430
               await era.printAndWait(
                 `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
@@ -14309,7 +14309,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7437
-            } // :7438
+            } // :7437-7438
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -14353,7 +14353,7 @@ async function kojo_message_com_11(rand) {
                 `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
               ); // :7453
             } else {
-              // :7454
+              // :7453-7454
               await era.printAndWait(
                 `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
               ); // :7455
@@ -14372,7 +14372,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
               ); // :7460
-            } // :7461
+            } // :7460-7461
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -14419,7 +14419,7 @@ async function kojo_message_com_11(rand) {
                 `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
               ); // :7477
             } else {
-              // :7478
+              // :7477-7478
               await era.printAndWait(
                 `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
               ); // :7479
@@ -14438,13 +14438,13 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
               ); // :7484
-            } // :7485
+            } // :7484-7485
           } else {
-            // :7486
-          } // :7488
-        } // :7489
+            // :7486-7487
+          } // :7487-7488
+        } // :7489-7490
       } else {
-        // :7491
+        // :7490-7491
 
         if (assi_mao) {
           // :7493
@@ -14489,7 +14489,7 @@ async function kojo_message_com_11(rand) {
                 `「好，好舒服${heart(1)}…… 被两根阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
               ); // :7507
             } else {
-              // :7508
+              // :7507-7508
               await era.printAndWait(
                 `「饶，饶了我吧……求求你们了……这样会裂开的，真的会裂开的啊啊！」`,
               ); // :7509
@@ -14502,7 +14502,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}这么说着，边配合着${master_name}的动作，扭着腰开始激烈地侵犯${target_name}的肛门……`,
               ); // :7512
-            } // :7513
+            } // :7512-7513
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -14543,7 +14543,7 @@ async function kojo_message_com_11(rand) {
                 `「好，好舒服${heart(1)}……被两人的阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
               ); // :7527
             } else {
-              // :7528
+              // :7527-7528
               await era.print(
                 `『哎嘿嘿，魔王大人说姐姐的肛门很适合调教成性器呢${heart(1)}』`,
               ); // :7529
@@ -14559,7 +14559,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，坏笑着开始更加激烈地侵犯着${target_name}……`,
               ); // :7533
-            } // :7534
+            } // :7533-7534
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -14610,7 +14610,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
               ); // :7552
             } else {
-              // :7553
+              // :7552-7553
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7554
               await era.printAndWait(
                 `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头顶入了蜜穴中。`,
@@ -14631,7 +14631,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7561
-            } // :7562
+            } // :7561-7562
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -14682,7 +14682,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
               ); // :7580
             } else {
-              // :7581
+              // :7580-7581
               await era.printAndWait(
                 `「唔呣……不，不可以……这样……太，太羞耻了啊啊！」`,
               ); // :7582
@@ -14707,7 +14707,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7589
-            } // :7590
+            } // :7589-7590
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -14751,7 +14751,7 @@ async function kojo_message_com_11(rand) {
                 `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
               ); // :7605
             } else {
-              // :7606
+              // :7605-7606
               await era.printAndWait(
                 `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
               ); // :7607
@@ -14770,7 +14770,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
               ); // :7612
-            } // :7613
+            } // :7612-7613
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -14817,7 +14817,7 @@ async function kojo_message_com_11(rand) {
                 `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
               ); // :7629
             } else {
-              // :7630
+              // :7629-7630
               await era.printAndWait(
                 `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
               ); // :7631
@@ -14836,13 +14836,13 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
               ); // :7636
-            } // :7637
+            } // :7636-7637
           } else {
-            // :7638
+            // :7638-7639
             await era.printAndWait(`出错了？`); // :7639
-          } // :7640
+          } // :7639-7640
         } else {
-          // :7642
+          // :7641-7642
 
           if (
             game.train.三人PLAY主人部位 === 1 &&
@@ -14884,7 +14884,7 @@ async function kojo_message_com_11(rand) {
                 `「好，好舒服${heart(1)}…… 被两根阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
               ); // :7656
             } else {
-              // :7657
+              // :7656-7657
               await era.printAndWait(
                 `「饶，饶了我吧……求求你们了……这样会裂开的，真的会裂开的啊啊！」`,
               ); // :7658
@@ -14897,7 +14897,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}这么说着，边配合着${master_name}的动作，扭着腰开始激烈地侵犯${target_name}的肛门……`,
               ); // :7661
-            } // :7662
+            } // :7661-7662
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -14938,7 +14938,7 @@ async function kojo_message_com_11(rand) {
                 `「好，好舒服${heart(1)}……被两人的阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
               ); // :7676
             } else {
-              // :7677
+              // :7676-7677
               await era.print(
                 `『哎嘿嘿，魔王大人说姐姐的肛门很适合调教成性器呢${heart(1)}』`,
               ); // :7678
@@ -14954,7 +14954,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，坏笑着开始更加激烈地侵犯着${target_name}……`,
               ); // :7682
-            } // :7683
+            } // :7682-7683
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -15005,7 +15005,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
               ); // :7701
             } else {
-              // :7702
+              // :7701-7702
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7703
               await era.printAndWait(
                 `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头顶入了蜜穴中。`,
@@ -15026,7 +15026,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7710
-            } // :7711
+            } // :7710-7711
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -15077,7 +15077,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
               ); // :7729
             } else {
-              // :7730
+              // :7729-7730
               await era.printAndWait(
                 `「唔呣……不，不可以……这样……太，太羞耻了啊啊！」`,
               ); // :7731
@@ -15102,7 +15102,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7738
-            } // :7739
+            } // :7738-7739
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -15146,7 +15146,7 @@ async function kojo_message_com_11(rand) {
                 `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
               ); // :7754
             } else {
-              // :7755
+              // :7754-7755
               await era.printAndWait(
                 `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
               ); // :7756
@@ -15165,7 +15165,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
               ); // :7761
-            } // :7762
+            } // :7761-7762
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -15212,7 +15212,7 @@ async function kojo_message_com_11(rand) {
                 `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
               ); // :7778
             } else {
-              // :7779
+              // :7778-7779
               await era.printAndWait(
                 `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
               ); // :7780
@@ -15231,17 +15231,17 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
               ); // :7785
-            } // :7786
+            } // :7785-7786
           } else {
-            // :7787
-          } // :7789
-        } // :7790
-      } // :7791
+            // :7787-7788
+          } // :7788-7789
+        } // :7788-7790
+      } // :7791-7792
       // CFLAG:TARGET:391  = 1（变量语义：CFLAG 族，TARGET:391） // :7792
       kojo.三人PLAY = 1; // :7792
-      return 0; // :7793
+      return 0; // :7792-7793
     } else {
-      // :7795
+      // :7794-7795
 
       if (assi_mao) {
         // :7797
@@ -15291,7 +15291,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :7815
             } else {
-              // :7816
+              // :7815-7816
               await era.printAndWait(
                 `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
               ); // :7817
@@ -15304,7 +15304,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
               ); // :7820
-            } // :7821
+            } // :7820-7821
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -15349,7 +15349,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :7837
             } else {
-              // :7838
+              // :7837-7838
               await era.print(
                 `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
               ); // :7839
@@ -15365,7 +15365,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
               ); // :7843
-            } // :7844
+            } // :7843-7844
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -15415,7 +15415,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
               ); // :7861
             } else {
-              // :7862
+              // :7861-7862
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7863
               await era.printAndWait(
                 `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
@@ -15434,7 +15434,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7870
-            } // :7871
+            } // :7870-7871
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -15484,7 +15484,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
               ); // :7888
             } else {
-              // :7889
+              // :7888-7889
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7890
               await era.printAndWait(
                 `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
@@ -15507,7 +15507,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :7897
-            } // :7898
+            } // :7897-7898
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -15534,7 +15534,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}顺从地吸吮着${assi_name}的${assi_weapon}，边让${master_name}侵犯着自己敏感的肛门………`,
                 ); // :7908
               } else {
-                // :7909
+                // :7908-7909
                 await era.printAndWait(
                   `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
                 ); // :7910
@@ -15550,7 +15550,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着姐姐为妹妹口交侍奉的羞耻姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
                 ); // :7914
-              } // :7915
+              } // :7914-7915
             } else if (era.get(`talent:${target}:76`)) {
               // :7916
 
@@ -15569,7 +15569,7 @@ async function kojo_message_com_11(rand) {
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :7922
               } else {
-                // :7923
+                // :7922-7923
                 await era.printAndWait(
                   `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
                 ); // :7924
@@ -15582,9 +15582,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :7927
-              } // :7928
+              } // :7927-7928
             } else {
-              // :7929
+              // :7929-7930
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :7931
@@ -15604,7 +15604,7 @@ async function kojo_message_com_11(rand) {
                   `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着。`,
                 ); // :7936
               } else {
-                // :7937
+                // :7936-7937
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :7938
@@ -15617,8 +15617,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着。`,
                 ); // :7941
-              } // :7942
-            } // :7943
+              } // :7941-7942
+            } // :7943-7944
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -15645,7 +15645,7 @@ async function kojo_message_com_11(rand) {
                   `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
                 ); // :7953
               } else {
-                // :7954
+                // :7953-7954
                 await era.printAndWait(
                   `「呜……啊啊啊，不，不可以啊……这样被侵犯屁股的话……没有办法……好好为魔王大人口交了唔呣呣！」`,
                 ); // :7955
@@ -15661,7 +15661,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
                 ); // :7959
-              } // :7960
+              } // :7959-7960
             } else if (era.get(`talent:${target}:76`)) {
               // :7961
 
@@ -15683,7 +15683,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
                 ); // :7968
               } else {
-                // :7969
+                // :7968-7969
                 await era.printAndWait(
                   `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
                 ); // :7970
@@ -15699,9 +15699,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `被${target_name}不知廉耻的宣言刺激得更加兴奋的${assi_name}和${master_name}，更加激烈地侵犯，抽插着${target_name}的喉咙和肛门……`,
                 ); // :7974
-              } // :7975
+              } // :7974-7975
             } else {
-              // :7976
+              // :7976-7977
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :7978
@@ -15724,7 +15724,7 @@ async function kojo_message_com_11(rand) {
                   `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
                 ); // :7984
               } else {
-                // :7985
+                // :7984-7985
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :7986
@@ -15740,13 +15740,13 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
                 ); // :7990
-              } // :7991
-            } // :7992
+              } // :7990-7991
+            } // :7990-7992
           } else {
-            // :7993
-          } // :7995
+            // :7993-7994
+          } // :7994-7995
         } else {
-          // :7997
+          // :7996-7997
 
           if (
             game.train.三人PLAY主人部位 === 1 &&
@@ -15777,7 +15777,7 @@ async function kojo_message_com_11(rand) {
                   `「呜呜……啊啊啊……不，不行了……舒服得已经没有办法思考了……魔王大人，还有${assi_name}……请尽情地把${target_name}侵犯得一塌糊涂吧啊啊啊！」`,
                 ); // :8007
               } else {
-                // :8008
+                // :8007-8008
                 await era.printAndWait(
                   `「哎哎？要，要两个人一起吗……是叫做三明治什么的玩法吗${heart(1)}」`,
                 ); // :8009
@@ -15793,7 +15793,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呜……啊啊……不，不可以这么激烈啊……会，会坏掉的${heart(1)}！」`,
                 ); // :8013
-              } // :8014
+              } // :8013-8014
             } else if (era.get(`talent:${target}:76`)) {
               // :8015
 
@@ -15818,7 +15818,7 @@ async function kojo_message_com_11(rand) {
                   `「好，好舒服……太舒服了${heart(1)}都怪你们，把姐姐调教得……不做爱就活不下去了啊啊啊${heart(1)}」`,
                 ); // :8022
               } else {
-                // :8023
+                // :8022-8023
                 await era.printAndWait(
                   `「哎哎……被，被两人的阴茎这样一起侵犯……呜啊啊${heart(1)}」`,
                 ); // :8024
@@ -15834,9 +15834,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「嗯啊……啊啊啊……请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
                 ); // :8028
-              } // :8029
+              } // :8028-8029
             } else {
-              // :8030
+              // :8030-8031
 
               if (
                 chara(target).system.私处感觉 >= 3 &&
@@ -15859,7 +15859,7 @@ async function kojo_message_com_11(rand) {
                   `「太，太激烈了……姐姐会……会坏掉的啊啊……！」`,
                 ); // :8037
               } else {
-                // :8038
+                // :8037-8038
                 await era.printAndWait(
                   `「两，两个人一起……不，不可以啊……那，那样会坏掉的……真的会坏掉的！」`,
                 ); // :8039
@@ -15872,8 +15872,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的肛门………`,
                 ); // :8042
-              } // :8043
-            } // :8044
+              } // :8042-8043
+            } // :8044-8045
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -15903,7 +15903,7 @@ async function kojo_message_com_11(rand) {
                   `「呜啊……嗯啊啊${heart(1)}……好舒服……好舒服啊啊${heart(1)} 这样被同时侵犯着……一下子……就要去了啊啊${heart(1)}」`,
                 ); // :8054
               } else {
-                // :8055
+                // :8054-8055
                 await era.printAndWait(
                   `「请，请稍微温柔一点……拜托了……还有${assi_name}…不要兴奋成那个样子啊！」`,
                 ); // :8056
@@ -15919,7 +15919,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呜啊啊……太，太激烈了……感，感觉好奇怪……整个人……都要变得奇怪了啊啊！」`,
                 ); // :8060
-              } // :8061
+              } // :8060-8061
             } else if (era.get(`talent:${target}:76`)) {
               // :8062
 
@@ -15944,7 +15944,7 @@ async function kojo_message_com_11(rand) {
                   `「呜啊……嗯啊啊……好舒服……实在是太舒服了${heart(1)} 真的要……高潮得……一塌糊涂了啊啊啊${heart(1)}」`,
                 ); // :8069
               } else {
-                // :8070
+                // :8069-8070
                 await era.printAndWait(
                   `「咦咦，要两个人一起上吗……好，好吧。其实还有点……期待呢${heart(1)}」`,
                 ); // :8071
@@ -15960,9 +15960,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呜……呜啊啊${heart(1)} ${assi_name}！魔王大人！请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
                 ); // :8075
-              } // :8076
+              } // :8075-8076
             } else {
-              // :8077
+              // :8077-8078
 
               if (
                 chara(target).system.私处感觉 >= 3 &&
@@ -15985,7 +15985,7 @@ async function kojo_message_com_11(rand) {
                   `「才，才不是……变态！呜……呜啊啊${heart(1)}……可，可是……真的好舒服……舒服得……不行了啊啊啊！」`,
                 ); // :8084
               } else {
-                // :8085
+                // :8084-8085
                 await era.printAndWait(
                   `「放，放开我啊……两个人一起……这种事情……怎么可以啊啊啊！」`,
                 ); // :8086
@@ -15998,8 +15998,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的蜜穴………`,
                 ); // :8089
-              } // :8090
-            } // :8091
+              } // :8089-8090
+            } // :8091-8092
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -16026,7 +16026,7 @@ async function kojo_message_com_11(rand) {
                   `「唔呣……唔呣${heart(1)}…… 的，的确是这样啊啊……能被魔王大人和${assi_name}这样疼爱……真的是太幸福了${heart(1)} 」`,
                 ); // :8101
               } else {
-                // :8102
+                // :8101-8102
                 await era.printAndWait(
                   `「唔呣……唔呣……${assi_name}的阴茎……味道好好……好喜欢${heart(1)} 还有……魔王大人，请吧……人家已经准备好了${heart(1)}」`,
                 ); // :8103
@@ -16051,7 +16051,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}就这样被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
                 ); // :8110
-              } // :8111
+              } // :8110-8111
             } else if (era.get(`talent:${target}:76`)) {
               // :8112
 
@@ -16073,7 +16073,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}含糊不清地娇喘着，享受着心理和生理的双重快感……`,
                 ); // :8119
               } else {
-                // :8120
+                // :8119-8120
                 await era.printAndWait(
                   `「呜啊啊……在，在人家口交的时候……侵犯小穴……魔王大人……太狡猾了${heart(1)}」`,
                 ); // :8121
@@ -16093,9 +16093,9 @@ async function kojo_message_com_11(rand) {
                 await era.print(
                   `被两人的阴茎一前一后侵犯着的${target_name}，因为心里和生理的双重快感而含糊不清地呻吟着………`,
                 ); // :8127
-              } // :8128
+              } // :8127-8128
             } else {
-              // :8129
+              // :8129-8130
 
               if (chara(target).system.私处感觉 >= 3) {
                 // :8131
@@ -16118,7 +16118,7 @@ async function kojo_message_com_11(rand) {
                   `蜜穴传来的极度快感让${target_name}几乎无法思考………`,
                 ); // :8137
               } else {
-                // :8138
+                // :8137-8138
                 await era.printAndWait(
                   `「不，不可以在口交的时候……侵犯小穴啊……唔呣呣……呣呣……」`,
                 ); // :8139
@@ -16137,8 +16137,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
                 ); // :8144
-              } // :8145
-            } // :8146
+              } // :8144-8145
+            } // :8146-8147
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -16169,7 +16169,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}自己积极的寻求着阴茎、被${master_name}和${assi_name}前后一起侵犯着………`,
                 ); // :8158
               } else {
-                // :8159
+                // :8158-8159
                 await era.printAndWait(
                   `「不，不可以……在这个时候……侵犯小穴啊……会没有办法好好为魔王大人口交的！」`,
                 ); // :8160
@@ -16188,7 +16188,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
                 ); // :8165
-              } // :8166
+              } // :8165-8166
             } else if (era.get(`talent:${target}:76`)) {
               // :8167
 
@@ -16216,7 +16216,7 @@ async function kojo_message_com_11(rand) {
                   `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
                 ); // :8176
               } else {
-                // :8177
+                // :8176-8177
                 await era.printAndWait(
                   `「呜啊啊……要边口交边被侵犯小穴了……好期待${heart(1)}」`,
                 ); // :8178
@@ -16238,9 +16238,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `被两人的阴茎一前一后侵犯着的${target_name}，身体在难以言喻的快感中颤抖着……`,
                 ); // :8184
-              } // :8185
+              } // :8184-8185
             } else {
-              // :8186
+              // :8186-8187
 
               if (chara(target).system.私处感觉 >= 3) {
                 // :8188
@@ -16266,7 +16266,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}泪流满面，却又无可奈何地忍耐着两人的侵犯和肆虐………`,
                 ); // :8195
               } else {
-                // :8196
+                // :8195-8196
                 await era.printAndWait(
                   `「呜呜呜……求求你们了……饶了我吧……真的……唔呣呣？！呣呣……唔呣……」`,
                 ); // :8197
@@ -16288,8 +16288,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}怎么挣扎都无法挣脱，只能泪流满面地任由两人激烈地侵犯着自己……`,
                 ); // :8203
-              } // :8204
-            } // :8205
+              } // :8203-8204
+            } // :8205-8206
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -16316,7 +16316,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}拼命忍耐着快感，继续努力地吸吮着${assi_name}的${assi_weapon}………`,
                 ); // :8215
               } else {
-                // :8216
+                // :8215-8216
                 await era.printAndWait(
                   `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
                 ); // :8217
@@ -16332,7 +16332,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
                 ); // :8221
-              } // :8222
+              } // :8221-8222
             } else if (era.get(`talent:${target}:76`)) {
               // :8223
 
@@ -16351,7 +16351,7 @@ async function kojo_message_com_11(rand) {
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :8229
               } else {
-                // :8230
+                // :8229-8230
                 await era.printAndWait(
                   `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
                 ); // :8231
@@ -16364,9 +16364,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :8234
-              } // :8235
+              } // :8234-8235
             } else {
-              // :8236
+              // :8236-8237
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :8238
@@ -16386,7 +16386,7 @@ async function kojo_message_com_11(rand) {
                   `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着`,
                 ); // :8243
               } else {
-                // :8244
+                // :8243-8244
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :8245
@@ -16399,8 +16399,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着`,
                 ); // :8248
-              } // :8249
-            } // :8250
+              } // :8248-8249
+            } // :8250-8251
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -16427,7 +16427,7 @@ async function kojo_message_com_11(rand) {
                   `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
                 ); // :8260
               } else {
-                // :8261
+                // :8260-8261
                 await era.printAndWait(
                   `「呜……啊啊……不，不可以……在这个时候插进来啊啊${heart(1)} 没有办法……好好为魔王大人口交了……唔呣……唔呣……呜啊啊啊」`,
                 ); // :8262
@@ -16443,7 +16443,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
                 ); // :8266
-              } // :8267
+              } // :8266-8267
             } else if (era.get(`talent:${target}:76`)) {
               // :8268
 
@@ -16465,7 +16465,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
                 ); // :8275
               } else {
-                // :8276
+                // :8275-8276
                 await era.printAndWait(
                   `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
                 ); // :8277
@@ -16481,9 +16481,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}兴奋不已地抓着${target_name}的腰，更加激烈地侵犯着姐姐的肛门，强烈的快感让${target_name}更加忘我地为${master_name}口交着……`,
                 ); // :8281
-              } // :8282
+              } // :8281-8282
             } else {
-              // :8283
+              // :8283-8284
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :8285
@@ -16506,7 +16506,7 @@ async function kojo_message_com_11(rand) {
                   `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
                 ); // :8291
               } else {
-                // :8292
+                // :8291-8292
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :8293
@@ -16522,15 +16522,15 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
                 ); // :8297
-              } // :8298
-            } // :8299
+              } // :8297-8298
+            } // :8297-8299
           } else {
-            // :8300
-          } // :8302
-        } // :8303
-        return 0; // :8304
+            // :8300-8301
+          } // :8301-8302
+        } // :8301-8303
+        return 0; // :8304-8306
       } else {
-        // :8305
+        // :8305-8306
 
         if (era.get(`talent:${target}:0`) === 1) {
           // :8307
@@ -16577,7 +16577,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :8323
             } else {
-              // :8324
+              // :8323-8324
               await era.printAndWait(
                 `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
               ); // :8325
@@ -16590,7 +16590,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
               ); // :8328
-            } // :8329
+            } // :8328-8329
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -16635,7 +16635,7 @@ async function kojo_message_com_11(rand) {
                 `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
               ); // :8345
             } else {
-              // :8346
+              // :8345-8346
               await era.print(
                 `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
               ); // :8347
@@ -16651,7 +16651,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
               ); // :8351
-            } // :8352
+            } // :8351-8352
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -16701,7 +16701,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
               ); // :8369
             } else {
-              // :8370
+              // :8369-8370
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :8371
               await era.printAndWait(
                 `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
@@ -16720,7 +16720,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :8378
-            } // :8379
+            } // :8378-8379
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -16770,7 +16770,7 @@ async function kojo_message_com_11(rand) {
                 `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
               ); // :8396
             } else {
-              // :8397
+              // :8396-8397
               await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :8398
               await era.printAndWait(
                 `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
@@ -16793,7 +16793,7 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
               ); // :8405
-            } // :8406
+            } // :8405-8406
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -16820,7 +16820,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}会老实的一边舔${assi_name}的${assi_weapon}一边被${master_name}侵犯肛门的………`,
                 ); // :8416
               } else {
-                // :8417
+                // :8416-8417
                 await era.printAndWait(
                   `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
                 ); // :8418
@@ -16836,7 +16836,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
                 ); // :8422
-              } // :8423
+              } // :8422-8423
             } else if (era.get(`talent:${target}:76`)) {
               // :8424
 
@@ -16855,7 +16855,7 @@ async function kojo_message_com_11(rand) {
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :8430
               } else {
-                // :8431
+                // :8430-8431
                 await era.printAndWait(
                   `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
                 ); // :8432
@@ -16868,9 +16868,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :8435
-              } // :8436
+              } // :8435-8436
             } else {
-              // :8437
+              // :8437-8438
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :8439
@@ -16890,7 +16890,7 @@ async function kojo_message_com_11(rand) {
                   `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着`,
                 ); // :8444
               } else {
-                // :8445
+                // :8444-8445
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :8446
@@ -16903,8 +16903,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着`,
                 ); // :8449
-              } // :8450
-            } // :8451
+              } // :8449-8450
+            } // :8451-8452
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -16931,7 +16931,7 @@ async function kojo_message_com_11(rand) {
                   `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
                 ); // :8461
               } else {
-                // :8462
+                // :8461-8462
                 await era.printAndWait(
                   `「啊呜…唔…魔王大人${heart(1)} 咕啾咕啾…啊、嗯！肛门不行啊…啊啊啊！」`,
                 ); // :8463
@@ -16947,7 +16947,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
                 ); // :8467
-              } // :8468
+              } // :8467-8468
             } else if (era.get(`talent:${target}:76`)) {
               // :8469
 
@@ -16969,7 +16969,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
                 ); // :8476
               } else {
-                // :8477
+                // :8476-8477
                 await era.printAndWait(
                   `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
                 ); // :8478
@@ -16985,9 +16985,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}兴奋地抓住${target_name}的腰不停地反复抽送着。然后${target_name}输给了肛门被侵犯的快感，继续舔着${master_name}的股间………`,
                 ); // :8482
-              } // :8483
+              } // :8482-8483
             } else {
-              // :8484
+              // :8484-8485
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :8486
@@ -17010,7 +17010,7 @@ async function kojo_message_com_11(rand) {
                   `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
                 ); // :8492
               } else {
-                // :8493
+                // :8492-8493
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :8494
@@ -17026,13 +17026,13 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
                 ); // :8498
-              } // :8499
-            } // :8500
+              } // :8498-8499
+            } // :8498-8500
           } else {
-            // :8501
-          } // :8503
+            // :8501-8502
+          } // :8502-8503
         } else {
-          // :8505
+          // :8504-8505
 
           if (
             game.train.三人PLAY主人部位 === 1 &&
@@ -17063,7 +17063,7 @@ async function kojo_message_com_11(rand) {
                   `「呜呜……啊啊啊……不，不行了……舒服得已经没有办法思考了……魔王大人，还有${assi_name}……请尽情地把${target_name}侵犯得一塌糊涂吧啊啊啊！」`,
                 ); // :8515
               } else {
-                // :8516
+                // :8515-8516
                 await era.printAndWait(
                   `「哎哎？要，要两个人一起吗……是叫做三明治什么的玩法吗${heart(1)}」`,
                 ); // :8517
@@ -17079,7 +17079,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呜……啊啊……不，不可以这么激烈啊……会，会坏掉的${heart(1)}！」`,
                 ); // :8521
-              } // :8522
+              } // :8521-8522
             } else if (era.get(`talent:${target}:76`)) {
               // :8523
 
@@ -17104,7 +17104,7 @@ async function kojo_message_com_11(rand) {
                   `「好，好舒服……太舒服了${heart(1)}都怪你们，把姐姐调教得……不做爱就活不下去了啊啊啊${heart(1)}」`,
                 ); // :8530
               } else {
-                // :8531
+                // :8530-8531
                 await era.printAndWait(
                   `「哎哎……被，被两人的阴茎这样一起侵犯……呜啊啊${heart(1)}」`,
                 ); // :8532
@@ -17120,9 +17120,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「嗯啊……啊啊啊……请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
                 ); // :8536
-              } // :8537
+              } // :8536-8537
             } else {
-              // :8538
+              // :8538-8539
 
               if (
                 chara(target).system.私处感觉 >= 3 &&
@@ -17145,7 +17145,7 @@ async function kojo_message_com_11(rand) {
                   `「太，太激烈了……姐姐会……会坏掉的啊啊……！」`,
                 ); // :8545
               } else {
-                // :8546
+                // :8545-8546
                 await era.printAndWait(
                   `「两，两个人一起……不，不可以啊……那，那样会坏掉的……真的会坏掉的！」`,
                 ); // :8547
@@ -17158,8 +17158,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的肛门………`,
                 ); // :8550
-              } // :8551
-            } // :8552
+              } // :8550-8551
+            } // :8552-8553
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 1
@@ -17189,7 +17189,7 @@ async function kojo_message_com_11(rand) {
                   `「呜啊……嗯啊啊${heart(1)}……好舒服……好舒服啊啊${heart(1)} 这样被同时侵犯着……一下子……就要去了啊啊${heart(1)}」`,
                 ); // :8562
               } else {
-                // :8563
+                // :8562-8563
                 await era.printAndWait(
                   `「请，请稍微温柔一点……拜托了……还有${assi_name}…不要兴奋成那个样子啊！」`,
                 ); // :8564
@@ -17205,7 +17205,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呜啊啊……太，太激烈了……感，感觉好奇怪……整个人……都要变得奇怪了啊啊！」`,
                 ); // :8568
-              } // :8569
+              } // :8568-8569
             } else if (era.get(`talent:${target}:76`)) {
               // :8570
 
@@ -17230,7 +17230,7 @@ async function kojo_message_com_11(rand) {
                   `「呜啊……嗯啊啊……好舒服……实在是太舒服了${heart(1)} 真的要……高潮得……一塌糊涂了啊啊啊${heart(1)}」`,
                 ); // :8577
               } else {
-                // :8578
+                // :8577-8578
                 await era.printAndWait(
                   `「咦咦，要两个人一起上吗……好，好吧。其实还有点……期待呢${heart(1)}」`,
                 ); // :8579
@@ -17246,9 +17246,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呜……呜啊啊${heart(1)} ${assi_name}！魔王大人！请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
                 ); // :8583
-              } // :8584
+              } // :8583-8584
             } else {
-              // :8585
+              // :8585-8586
 
               if (
                 chara(target).system.私处感觉 >= 3 &&
@@ -17271,7 +17271,7 @@ async function kojo_message_com_11(rand) {
                   `「才，才不是……变态！呜……呜啊啊${heart(1)}……可，可是……真的好舒服……舒服得……不行了啊啊啊！」`,
                 ); // :8592
               } else {
-                // :8593
+                // :8592-8593
                 await era.printAndWait(
                   `「放，放开我啊……两个人一起……这种事情……怎么可以啊啊啊！」`,
                 ); // :8594
@@ -17284,8 +17284,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的蜜穴………`,
                 ); // :8597
-              } // :8598
-            } // :8599
+              } // :8597-8598
+            } // :8599-8600
           } else if (
             game.train.三人PLAY主人部位 === 1 &&
             game.train.三人PLAY助手部位 === 3
@@ -17312,7 +17312,7 @@ async function kojo_message_com_11(rand) {
                   `「唔呣……唔呣${heart(1)}…… 的，的确是这样啊啊……能被魔王大人和${assi_name}这样疼爱……真的是太幸福了${heart(1)} 」`,
                 ); // :8609
               } else {
-                // :8610
+                // :8609-8610
                 await era.printAndWait(
                   `「唔呣……唔呣……${assi_name}的阴茎……味道好好……好喜欢${heart(1)} 还有……魔王大人，请吧……人家已经准备好了${heart(1)}」`,
                 ); // :8611
@@ -17337,7 +17337,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}就这样被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
                 ); // :8618
-              } // :8619
+              } // :8618-8619
             } else if (era.get(`talent:${target}:76`)) {
               // :8620
 
@@ -17359,7 +17359,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}含糊不清地娇喘着，享受着心理和生理的双重快感……`,
                 ); // :8627
               } else {
-                // :8628
+                // :8627-8628
                 await era.printAndWait(
                   `「呜啊啊……在，在人家口交的时候……侵犯小穴……魔王大人……太狡猾了${heart(1)}」`,
                 ); // :8629
@@ -17379,9 +17379,9 @@ async function kojo_message_com_11(rand) {
                 await era.print(
                   `被两人的阴茎一前一后侵犯着的${target_name}，因为心里和生理的双重快感而含糊不清地呻吟着………`,
                 ); // :8635
-              } // :8636
+              } // :8635-8636
             } else {
-              // :8637
+              // :8637-8638
 
               if (chara(target).system.私处感觉 >= 3) {
                 // :8639
@@ -17404,7 +17404,7 @@ async function kojo_message_com_11(rand) {
                   `蜜穴传来的极度快感让${target_name}几乎无法思考………`,
                 ); // :8645
               } else {
-                // :8646
+                // :8645-8646
                 await era.printAndWait(
                   `「不，不可以在口交的时候……侵犯小穴啊……唔呣呣……呣呣……」`,
                 ); // :8647
@@ -17423,8 +17423,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
                 ); // :8652
-              } // :8653
-            } // :8654
+              } // :8652-8653
+            } // :8654-8655
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 1
@@ -17454,7 +17454,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}感受生理和心理的双重快感，任凭${master_name}好${assi_name}一前一后地侵犯着自己……`,
                 ); // :8665
               } else {
-                // :8666
+                // :8665-8666
                 await era.printAndWait(
                   `「不，不可以……在这个时候……侵犯小穴啊……会没有办法好好为魔王大人口交的！」`,
                 ); // :8667
@@ -17473,7 +17473,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
                 ); // :8672
-              } // :8673
+              } // :8672-8673
             } else if (era.get(`talent:${target}:76`)) {
               // :8674
 
@@ -17501,7 +17501,7 @@ async function kojo_message_com_11(rand) {
                   `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
                 ); // :8683
               } else {
-                // :8684
+                // :8683-8684
                 await era.printAndWait(
                   `「呜啊啊……要边口交边被侵犯小穴了……好期待${heart(1)}」`,
                 ); // :8685
@@ -17523,9 +17523,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `被两人的阴茎一前一后侵犯着的${target_name}，身体在难以言喻的快感中颤抖着……`,
                 ); // :8691
-              } // :8692
+              } // :8691-8692
             } else {
-              // :8693
+              // :8693-8694
 
               if (chara(target).system.私处感觉 >= 3) {
                 // :8695
@@ -17551,7 +17551,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}泪流满面，却又无可奈何地忍耐着两人的侵犯和肆虐………`,
                 ); // :8702
               } else {
-                // :8703
+                // :8702-8703
                 await era.printAndWait(
                   `「呜呜呜……求求你们了……饶了我吧……真的……唔呣呣？！呣呣……唔呣……」`,
                 ); // :8704
@@ -17573,8 +17573,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}怎么挣扎都无法挣脱，只能泪流满面地任由两人激烈地侵犯着自己……………`,
                 ); // :8710
-              } // :8711
-            } // :8712
+              } // :8710-8711
+            } // :8712-8713
           } else if (
             game.train.三人PLAY主人部位 === 2 &&
             game.train.三人PLAY助手部位 === 3
@@ -17601,7 +17601,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}老老实实地忍受，应该说是享受着${assi_name}和${master_name}两人对自己的同时侵犯………`,
                 ); // :8722
               } else {
-                // :8723
+                // :8722-8723
                 await era.printAndWait(
                   `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
                 ); // :8724
@@ -17617,7 +17617,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
                 ); // :8728
-              } // :8729
+              } // :8728-8729
             } else if (era.get(`talent:${target}:76`)) {
               // :8730
 
@@ -17636,7 +17636,7 @@ async function kojo_message_com_11(rand) {
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :8736
               } else {
-                // :8737
+                // :8736-8737
                 await era.printAndWait(
                   `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
                 ); // :8738
@@ -17649,9 +17649,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
                 ); // :8741
-              } // :8742
+              } // :8741-8742
             } else {
-              // :8743
+              // :8743-8744
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :8745
@@ -17671,7 +17671,7 @@ async function kojo_message_com_11(rand) {
                   `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着`,
                 ); // :8750
               } else {
-                // :8751
+                // :8750-8751
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :8752
@@ -17684,8 +17684,8 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着`,
                 ); // :8755
-              } // :8756
-            } // :8757
+              } // :8755-8756
+            } // :8757-8758
           } else if (
             game.train.三人PLAY主人部位 === 3 &&
             game.train.三人PLAY助手部位 === 2
@@ -17712,7 +17712,7 @@ async function kojo_message_com_11(rand) {
                   `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
                 ); // :8767
               } else {
-                // :8768
+                // :8767-8768
                 await era.printAndWait(
                   `「不，不可以……这样……同时侵犯肛门啊啊${heart(1)} 没有办法……好好为魔王大人口交了……唔呣呣……呜啊啊！」`,
                 ); // :8769
@@ -17728,7 +17728,7 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
                 ); // :8773
-              } // :8774
+              } // :8773-8774
             } else if (era.get(`talent:${target}:76`)) {
               // :8775
 
@@ -17750,7 +17750,7 @@ async function kojo_message_com_11(rand) {
                   `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
                 ); // :8782
               } else {
-                // :8783
+                // :8782-8783
                 await era.printAndWait(
                   `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
                 ); // :8784
@@ -17766,9 +17766,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${assi_name}兴奋不已地抱着${target_name}的腰，激烈地侵犯着姐姐的肛门。强烈的快感让${target_name}更加忘我地为${master_name}口交着………`,
                 ); // :8788
-              } // :8789
+              } // :8788-8789
             } else {
-              // :8790
+              // :8790-8791
 
               if (chara(target).system.肛门感觉 >= 3) {
                 // :8792
@@ -17791,7 +17791,7 @@ async function kojo_message_com_11(rand) {
                   `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
                 ); // :8798
               } else {
-                // :8799
+                // :8798-8799
                 await era.printAndWait(
                   `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
                 ); // :8800
@@ -17807,16 +17807,16 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
                 ); // :8804
-              } // :8805
-            } // :8806
+              } // :8804-8805
+            } // :8804-8806
           } else {
-            // :8807
-          } // :8809
-        } // :8810
-      } // :8811
-      return 0; // :8812
-    } // :8813
-  } // :8814
+            // :8807-8808
+          } // :8808-8809
+        } // :8808-8810
+      } // :8808-8811
+      return 0; // :8812-8815
+    } // :8813-8815
+  } // :8814-8815
 
   if (era_flag.selectcom === 65) {
     // :8818
@@ -17827,7 +17827,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         // :8824
 
-        if (era.get(`cflag:${player}:15`) === 305) {
+        if (chara(player).train.初体验对象 === 305) {
           // :8827
 
           if (era.get(`talent:${target}:76`) === 1) {
@@ -17873,7 +17873,7 @@ async function kojo_message_com_11(rand) {
               `从${player_name}的蜜穴里慢慢淌出了纯洁的处女之血……`,
             ); // :8845
           } else {
-            // :8847
+            // :8846-8847
             await era.printAndWait(
               `『啊啊……被，被姐姐夺去处女了啊啊${heart(1)}』`,
             ); // :8848
@@ -17889,9 +17889,9 @@ async function kojo_message_com_11(rand) {
             await era.printAndWait(
               `从${player_name}的蜜穴里慢慢淌出了纯洁的处女之血……`,
             ); // :8852
-          } // :8853
+          } // :8852-8853
         } else {
-          // :8854
+          // :8854-8855
 
           if (era.get(`talent:${target}:76`) === 1) {
             // :8856
@@ -17929,7 +17929,7 @@ async function kojo_message_com_11(rand) {
             ); // :8870
             await era.printAndWait(`『哈啊……舒服多了……姐姐好棒啊！』`); // :8871
           } else {
-            // :8873
+            // :8872-8873
             await era.printAndWait(
               `${target_name}在你的命令下，不得不开始侵犯自己的妹妹。`,
             ); // :8874
@@ -17946,14 +17946,14 @@ async function kojo_message_com_11(rand) {
             await era.printAndWait(
               `${player_name}毫无廉耻的态度和语气让${target_name}羞得满脸通红，无奈地加快了抽插的速度………`,
             ); // :8879
-          } // :8880
-        } // :8881
-      } // :8882
+          } // :8879-8880
+        } // :8879-8881
+      } // :8882-8883
       // CFLAG:TARGET:366  = 1（变量语义：CFLAG 族，TARGET:366） // :8883
       kojo.侵犯助手 = 1; // :8883
-      return 0; // :8884
+      return 0; // :8883-8884
     } else {
-      // :8886
+      // :8885-8886
 
       if (assi_mao) {
         // :8888
@@ -18105,11 +18105,11 @@ async function kojo_message_com_11(rand) {
           ); // :8945
           // CFLAG:TARGET:366  = 2（变量语义：CFLAG 族，TARGET:366） // :8946
           kojo.侵犯助手 = 2; // :8946
-        } // :8947
-      } // :8948
-      return 0; // :8949
-    } // :8950
-  } // :8951
+        } // :8946-8947
+      } // :8946-8948
+      return 0; // :8946-8949
+    } // :8950-8952
+  } // :8951-8952
 
   if (era_flag.selectcom === 66) {
     // :8957
@@ -18161,7 +18161,7 @@ async function kojo_message_com_11(rand) {
             `『啊啊……姐姐的舌头……好棒${heart(1)} 光是这么舔着……人家就已经要射了啊啊${heart(1)}』`,
           ); // :8979
         } else {
-          // :8981
+          // :8980-8981
           await era.printAndWait(
             `「一，一定要两个人一起来吗（明明……是这么讨厌的事情……为什么……视线完全移不开？）」`,
           ); // :8982
@@ -18181,9 +18181,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `${master_name}用勃起的阴茎在${target_name}脸上来回摩擦着，${target_name}的眼神黯淡了下去，露出完全屈服的表情，开始用嘴巴侍奉着${master_name}的阴茎……`,
           ); // :8988
-        } // :8989
+        } // :8988-8989
       } else {
-        // :8990
+        // :8990-8991
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :8992
@@ -18192,15 +18192,15 @@ async function kojo_message_com_11(rand) {
           // :8995
           await era.printAndWait(''); // :8996
         } else {
-          // :8998
+          // :8997-8998
           await era.printAndWait(''); // :8999
-        } // :9000
-      } // :9001
+        } // :8999-9000
+      } // :9001-9002
       // CFLAG:TARGET:367  = 1（变量语义：CFLAG 族，TARGET:367） // :9002
       kojo.双人口交 = 1; // :9002
-      return 0; // :9003
+      return 0; // :9002-9003
     } else {
-      // :9005
+      // :9004-9005
 
       if (assi_mao) {
         // :9007
@@ -18277,9 +18277,9 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `在妹妹的称赞下得到极大心理满足的${target_name}向${master_name}露出娇媚而得意的表情，转而开始吸吮${master_name}的阴茎……`,
               ); // :9031
-              break; // :9032
-            } // :9032
-          } // :9032
+              break; // :9031-9032
+            } // :9031-9032
+          } // :9031-9032
           // CFLAG:367  = 5（变量语义：CFLAG 族，367） // :9033
           kojo.双人口交 = 5; // :9033
         } else if (
@@ -18349,9 +18349,9 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${target_name}低着头，用舌尖缠卷着龟头，继续用嘴和喉咙侍奉着两人的阴茎……`,
               ); // :9056
-              break; // :9057
-            } // :9057
-          } // :9057
+              break; // :9056-9057
+            } // :9056-9057
+          } // :9056-9057
           // CFLAG:367  = 4（变量语义：CFLAG 族，367） // :9058
           kojo.双人口交 = 4; // :9058
         } else if (
@@ -18398,9 +18398,9 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `${target_name}只能通过努力口交来回避这种怎么回答都是错误的问题……`,
               ); // :9074
-              break; // :9075
-            } // :9075
-          } // :9075
+              break; // :9074-9075
+            } // :9074-9075
+          } // :9074-9075
           // CFLAG:367  = 3（变量语义：CFLAG 族，367） // :9076
           kojo.双人口交 = 3; // :9076
         } else if (kojo.双人口交 <= 1 || game.kojo.口上开关 === 2) {
@@ -18439,14 +18439,14 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `「然，然后轮到魔王大人了吗……咕呣……咕呣！」`,
               ); // :9091
-              break; // :9092
-            } // :9092
-          } // :9092
+              break; // :9091-9092
+            } // :9091-9092
+          } // :9091-9092
           // CFLAG:367  = 2（变量语义：CFLAG 族，367） // :9093
           kojo.双人口交 = 2; // :9093
-        } // :9094
+        } // :9093-9094
       } else {
-        // :9095
+        // :9095-9096
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -18477,11 +18477,11 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(''); // :9110
           // CFLAG:367  = 2（变量语义：CFLAG 族，367） // :9111
           kojo.双人口交 = 2; // :9111
-        } // :9112
-      } // :9113
-      return 0; // :9114
-    } // :9115
-  } // :9116
+        } // :9111-9112
+      } // :9111-9113
+      return 0; // :9111-9114
+    } // :9111-9115
+  } // :9116-9119
 
   if (era_flag.selectcom === 68) {
     // :9124
@@ -18544,7 +18544,7 @@ async function kojo_message_com_11(rand) {
             `在两人卖力地用嘴，舌头和喉咙侍奉下，${master_name}的阴茎更加坚挺了……`,
           ); // :9149
         } else {
-          // :9151
+          // :9150-9151
           await era.printAndWait(
             `姐妹两人跪在${master_name}的腿前，一同用嘴侍奉着${master_name}的阴茎。`,
           ); // :9152
@@ -18563,9 +18563,9 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(
             `${target_name}带着些许悲伤和绝望的神情、和妹妹继续进行口交侍奉……`,
           ); // :9159
-        } // :9160
+        } // :9159-9160
       } else {
-        // :9161
+        // :9161-9162
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :9163
@@ -18577,15 +18577,15 @@ async function kojo_message_com_11(rand) {
           // :9169
           await era.printAndWait(''); // :9170
         } else {
-          // :9172
+          // :9171-9172
           await era.printAndWait(''); // :9173
-        } // :9174
-      } // :9175
+        } // :9173-9174
+      } // :9175-9176
       // CFLAG:TARGET:369  = 1（变量语义：CFLAG 族，TARGET:369） // :9176
       kojo.双人侍奉口交 = 1; // :9176
-      return 0; // :9177
+      return 0; // :9176-9177
     } else {
-      // :9179
+      // :9178-9179
 
       if (assi_mao) {
         // :9181
@@ -18668,9 +18668,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「呣呣？${heart(1)} 魔王大人……请一定要射在我的嘴里啊${heart(1)} 在${target_name}的嘴巴小穴里射的满满的吧${heart(1)}」`,
                 ); // :9208
-                break; // :9209
-              } // :9209
-            } // :9209
+                break; // :9208-9209
+              } // :9208-9209
+            } // :9208-9209
           } else if (era.get(`talent:${era_flag.assi}:76`)) {
             // :9211
             switch (
@@ -18743,10 +18743,10 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `『啊啊——魔王大人要射精了吗${heart(1)} 请把精液赏给这淫乱的嘴巴小穴吧${heart(1)}』`,
                 ); // :9234
-                break; // :9235
-              } // :9235
-            } // :9235
-          } // :9236
+                break; // :9234-9235
+              } // :9234-9235
+            } // :9234-9235
+          } // :9236-9237
           // CFLAG:369  = 5（变量语义：CFLAG 族，369） // :9237
           kojo.双人侍奉口交 = 5; // :9237
         } else if (
@@ -18821,9 +18821,9 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「魔王大人……如果您感觉满意的话…${heart(1)} 请射在我们的嘴里，让我们姐妹喝下您的精液吧${heart(1)}」`,
                 ); // :9262
-                break; // :9263
-              } // :9263
-            } // :9263
+                break; // :9262-9263
+              } // :9262-9263
+            } // :9262-9263
           } else if (era.get(`talent:${era_flag.assi}:76`)) {
             // :9265
             switch (
@@ -18887,10 +18887,10 @@ async function kojo_message_com_11(rand) {
                 await era.printAndWait(
                   `「唔呣？！魔王大人的阴茎……在嘴里一跳一跳…${heart(1)} 啊啊～ 请尽情的把精液射在${target_name}的舌头上吧${heart(1)}」`,
                 ); // :9285
-                break; // :9286
-              } // :9286
-            } // :9286
-          } // :9287
+                break; // :9285-9286
+              } // :9285-9286
+            } // :9285-9286
+          } // :9287-9288
           // CFLAG:369  = 4（变量语义：CFLAG 族，369） // :9288
           kojo.双人侍奉口交 = 4; // :9288
         } else if (
@@ -18934,9 +18934,9 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(
                 `姐妹两人跪在${master_name}的身前，用嘴和舌头努力为阴茎服务着`,
               ); // :9303
-              break; // :9304
-            } // :9304
-          } // :9304
+              break; // :9303-9304
+            } // :9303-9304
+          } // :9303-9304
           // CFLAG:369  = 3（变量语义：CFLAG 族，369） // :9305
           kojo.双人侍奉口交 = 3; // :9305
         } else if (kojo.双人侍奉口交 <= 1 || game.kojo.口上开关 === 2) {
@@ -18973,14 +18973,14 @@ async function kojo_message_com_11(rand) {
                 `『哎嘿嘿，姐姐接下来就交给你来吸吮了哦，我就来舔其他部位好了♪』`,
               ); // :9319
               await era.printAndWait(`「这，这种事情……才不要……呜呜呜！」`); // :9320
-              break; // :9321
-            } // :9321
-          } // :9321
+              break; // :9320-9321
+            } // :9320-9321
+          } // :9320-9321
           // CFLAG:369  = 2（变量语义：CFLAG 族，369） // :9322
           kojo.双人侍奉口交 = 2; // :9322
-        } // :9323
+        } // :9322-9323
       } else {
-        // :9324
+        // :9324-9325
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -19011,11 +19011,11 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(''); // :9339
           // CFLAG:369  = 2（变量语义：CFLAG 族，369） // :9340
           kojo.双人侍奉口交 = 2; // :9340
-        } // :9341
-      } // :9342
-      return 0; // :9343
-    } // :9344
-  } // :9345
+        } // :9340-9341
+      } // :9340-9342
+      return 0; // :9340-9343
+    } // :9340-9344
+  } // :9345-9349
 
   if (era_flag.selectcom === 123) {
     // :9352
@@ -19046,17 +19046,17 @@ async function kojo_message_com_11(rand) {
           `${target_name}眼眶微微有些湿润，但还是努力地用双乳和嘴巴侍奉着${player_name}的阴茎……`,
         ); // :9366
       } else {
-        // :9368
+        // :9367-9368
         await era.printAndWait(`「这种事情……到底有什么好的………」`); // :9369
         await era.printAndWait(
           `${target_name}被${player_name}要求回答进行乳交侍奉的感想，一脸嫌恶地答道……`,
         ); // :9370
-      } // :9371
+      } // :9370-9371
       // CFLAG:TARGET:360  = 1（变量语义：CFLAG 族，TARGET:360） // :9372
       kojo.乳夹口交 = 1; // :9372
-      return 0; // :9373
+      return 0; // :9372-9373
     } else {
-      // :9375
+      // :9374-9375
 
       if (assi_mao) {
         // :9377
@@ -19121,9 +19121,9 @@ async function kojo_message_com_11(rand) {
           ); // :9401
           // CFLAG:360  = 2（变量语义：CFLAG 族，360） // :9402
           kojo.乳夹口交 = 2; // :9402
-        } // :9403
+        } // :9402-9403
       } else {
-        // :9404
+        // :9404-9405
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -19179,11 +19179,11 @@ async function kojo_message_com_11(rand) {
           ); // :9426
           // CFLAG:360  = 2（变量语义：CFLAG 族，360） // :9427
           kojo.乳夹口交 = 2; // :9427
-        } // :9428
-      } // :9429
-      return 0; // :9430
-    } // :9431
-  } // :9432
+        } // :9427-9428
+      } // :9427-9429
+      return 0; // :9427-9430
+    } // :9431-9433
+  } // :9432-9433
 
   if (era_flag.selectcom === 125) {
     // :9436
@@ -19220,19 +19220,19 @@ async function kojo_message_com_11(rand) {
           `${target_name}遵循着${player_name}的命令，顺从地张开嘴含住了${player_name}的肉棒，仔细地舔吮着，手也伸到了自己的下体开始自慰……`,
         ); // :9452
       } else {
-        // :9454
+        // :9453-9454
         await era.printAndWait(
           `「别，别催了…我，我会照做的……这样…这种事情…就能让你满足了吗？」`,
         ); // :9455
         await era.printAndWait(
           `${target_name}在命令下，不情愿地张开嘴含住了${player_name}的肉棒，手也伸到了自己的下体开始自慰。`,
         ); // :9456
-      } // :9457
+      } // :9456-9457
       // CFLAG:TARGET:361  = 1（变量语义：CFLAG 族，TARGET:361） // :9458
       kojo.口交时自慰 = 1; // :9458
-      return 0; // :9459
+      return 0; // :9458-9459
     } else {
-      // :9461
+      // :9460-9461
 
       if (assi_mao) {
         // :9463
@@ -19314,9 +19314,9 @@ async function kojo_message_com_11(rand) {
           ); // :9494
           // CFLAG:361  = 2（变量语义：CFLAG 族，361） // :9495
           kojo.口交时自慰 = 2; // :9495
-        } // :9496
+        } // :9495-9496
       } else {
-        // :9497
+        // :9497-9498
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -19393,11 +19393,11 @@ async function kojo_message_com_11(rand) {
           ); // :9526
           // CFLAG:361  = 2（变量语义：CFLAG 族，361） // :9527
           kojo.口交时自慰 = 2; // :9527
-        } // :9528
-      } // :9529
-      return 0; // :9530
-    } // :9531
-  } // :9532
+        } // :9527-9528
+      } // :9527-9529
+      return 0; // :9527-9530
+    } // :9531-9534
+  } // :9532-9534
 
   if (era_flag.selectcom === 126) {
     // :9537
@@ -19434,7 +19434,7 @@ async function kojo_message_com_11(rand) {
           `${player_name}微笑着说道，已经从侍奉${target_name}的过程中感到了愉悦感……`,
         ); // :9555
       } else {
-        // :9557
+        // :9556-9557
         await era.printAndWait(`「唔唔……唔唔……唔呣！」`); // :9558
         await era.printAndWait(
           `${target_name}还不习惯同时用手和嘴侍奉阴茎，动作十分笨拙。`,
@@ -19445,12 +19445,12 @@ async function kojo_message_com_11(rand) {
         await era.printAndWait(
           `「呜……呜呜……对，对不起……请饶了我吧……我会好好学习的！」`,
         ); // :9561
-      } // :9562
+      } // :9561-9562
       // CFLAG:TARGET:362  = 1（变量语义：CFLAG 族，TARGET:362） // :9563
       kojo.手搓口交 = 1; // :9563
-      return 0; // :9564
+      return 0; // :9563-9564
     } else {
-      // :9566
+      // :9565-9566
 
       if (assi_mao) {
         // :9568
@@ -19528,9 +19528,9 @@ async function kojo_message_com_11(rand) {
           ); // :9597
           // CFLAG:362  = 2（变量语义：CFLAG 族，362） // :9598
           kojo.手搓口交 = 2; // :9598
-        } // :9599
+        } // :9598-9599
       } else {
-        // :9600
+        // :9600-9601
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -19602,11 +19602,11 @@ async function kojo_message_com_11(rand) {
           ); // :9628
           // CFLAG:362  = 2（变量语义：CFLAG 族，362） // :9629
           kojo.手搓口交 = 2; // :9629
-        } // :9630
-      } // :9631
-      return 0; // :9632
-    } // :9633
-  } // :9634
+        } // :9629-9630
+      } // :9629-9631
+      return 0; // :9629-9632
+    } // :9633-9636
+  } // :9634-9636
 
   if (era_flag.selectcom === 127) {
     // :9639
@@ -19642,17 +19642,17 @@ async function kojo_message_com_11(rand) {
           `一声声不堪入耳的下流声音从${target_name}的口中冒出……`,
         ); // :9656
       } else {
-        // :9658
+        // :9657-9658
         await era.printAndWait(`「唔呣……唔呣！咕啾……咕啾……唔唔」`); // :9659
         await era.printAndWait(
           `${target_name}泪流满面地继续吸吮着口中的阴茎……`,
         ); // :9660
-      } // :9661
+      } // :9660-9661
       // CFLAG:TARGET:363  = 1（变量语义：CFLAG 族，TARGET:363） // :9662
       kojo.真空口交 = 1; // :9662
-      return 0; // :9663
+      return 0; // :9662-9663
     } else {
-      // :9665
+      // :9664-9665
 
       if (assi_mao) {
         // :9667
@@ -19727,9 +19727,9 @@ async function kojo_message_com_11(rand) {
           ); // :9695
           // CFLAG:363  = 2（变量语义：CFLAG 族，363） // :9696
           kojo.真空口交 = 2; // :9696
-        } // :9697
+        } // :9696-9697
       } else {
-        // :9698
+        // :9698-9699
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -19795,11 +19795,11 @@ async function kojo_message_com_11(rand) {
           ); // :9724
           // CFLAG:363  = 2（变量语义：CFLAG 族，363） // :9725
           kojo.真空口交 = 2; // :9725
-        } // :9726
-      } // :9727
-      return 0; // :9728
-    } // :9729
-  } // :9730
+        } // :9725-9726
+      } // :9725-9727
+      return 0; // :9725-9728
+    } // :9729-9732
+  } // :9730-9732
 
   let locals_0 = ''; // LOCALS:0，调教者性器
   let locals_1 = ''; // LOCALS:1，调教者敏感部位
@@ -19821,10 +19821,10 @@ async function kojo_message_com_11(rand) {
         locals_0 = '阴茎'; // :9740
         locals_1 = '阴茎'; // :9741
       } else {
-        // :9742
+        // :9741-9742
         locals_0 = '蜜穴'; // :9743
         locals_1 = '阴蒂'; // :9744
-      } // :9745
+      } // :9744-9745
 
       if (
         era.get(`talent:${target}:121`) === 1 ||
@@ -19834,10 +19834,10 @@ async function kojo_message_com_11(rand) {
         locals_2 = '阴茎'; // :9748
         locals_3 = '阴茎'; // :9749
       } else {
-        // :9750
+        // :9749-9750
         locals_2 = '蜜穴'; // :9751
         locals_3 = '阴蒂'; // :9752
-      } // :9753
+      } // :9752-9753
 
       if (assi_mao) {
         // :9755
@@ -19867,16 +19867,16 @@ async function kojo_message_com_11(rand) {
             `『啊啊……和姐姐互相舔下体……好棒……好舒服啊啊${heart(1)} 』`,
           ); // :9767
         } else {
-          // :9769
+          // :9768-9769
           await era.printAndWait(
             `「唔呣……唔呣……呜呜呜，为什么……要做这种下流的事……！」`,
           ); // :9770
           await era.printAndWait(
             `『啊哈……姐姐的${locals_1}一抖一抖的，好可爱……我舔得很舒服吧${heart(1)} 但是姐姐你也不能偷懒啊♪』`,
           ); // :9771
-        } // :9772
+        } // :9771-9772
       } else {
-        // :9773
+        // :9771-9773
 
         if (era.get(`talent:${target}:76`) === 1) {
           // :9776
@@ -19903,20 +19903,20 @@ async function kojo_message_com_11(rand) {
             `${target_name}忍耐着快感，努力用舌头舔舐着${player_name}的${locals_0}……`,
           ); // :9786
         } else {
-          // :9788
+          // :9787-9788
           await era.printAndWait(
             `「唔呣……唔呣……？！不，不可以咬那里啊啊啊啊！」`,
           ); // :9789
           await era.printAndWait(
             `嫌弃${target_name}舔舐的动作太敷衍，${player_name}微微用牙齿咬了咬${target_name}的阴蒂，立即听到一阵痛苦的悲鸣……`,
           ); // :9790
-        } // :9791
-      } // :9792
+        } // :9790-9791
+      } // :9792-9793
       // CFLAG:TARGET:370  = 1（变量语义：CFLAG 族，TARGET:370） // :9793
       kojo.魔族化 = 1; // :9793
-      return 0; // :9794
+      return 0; // :9793-9794
     } else {
-      // :9796
+      // :9795-9796
 
       if (assi_mao) {
         // :9798
@@ -19982,9 +19982,9 @@ async function kojo_message_com_11(rand) {
           ); // :9821
           // CFLAG:370  = 2（变量语义：CFLAG 族，370） // :9822
           kojo.魔族化 = 2; // :9822
-        } // :9823
+        } // :9822-9823
       } else {
-        // :9824
+        // :9824-9825
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -20047,11 +20047,11 @@ async function kojo_message_com_11(rand) {
           ); // :9847
           // CFLAG:370  = 2（变量语义：CFLAG 族，370） // :9848
           kojo.魔族化 = 2; // :9848
-        } // :9849
-      } // :9850
-      return 0; // :9851
-    } // :9852
-  } // :9853
+        } // :9848-9849
+      } // :9848-9850
+      return 0; // :9848-9851
+    } // :9852-9855
+  } // :9853-9855
 
   if (era_flag.selectcom === 124) {
     // :9858
@@ -20082,17 +20082,17 @@ async function kojo_message_com_11(rand) {
           `${target_name}带着些许兴奋的表情，将${player_name}的阴茎含到了喉咙最深处……`,
         ); // :9872
       } else {
-        // :9874
+        // :9873-9874
         await era.printAndWait(`「要……要用喉咙吗……呜呜……咕呜……咕呣……！」`); // :9875
         await era.printAndWait(
           `${target_name}带着些许犹豫的表情，将${player_name}的阴茎含到了喉咙最深处……`,
         ); // :9876
-      } // :9877
+      } // :9876-9877
       // CFLAG:TARGET:365  = 1（变量语义：CFLAG 族，TARGET:365） // :9878
       kojo.深喉 = 1; // :9878
-      return 0; // :9879
+      return 0; // :9878-9879
     } else {
-      // :9881
+      // :9880-9881
 
       if (assi_mao) {
         // :9883
@@ -20156,9 +20156,9 @@ async function kojo_message_com_11(rand) {
           ); // :9906
           // CFLAG:365  = 2（变量语义：CFLAG 族，365） // :9907
           kojo.深喉 = 2; // :9907
-        } // :9908
+        } // :9907-9908
       } else {
-        // :9909
+        // :9909-9910
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -20217,11 +20217,11 @@ async function kojo_message_com_11(rand) {
           ); // :9932
           // CFLAG:365  = 2（变量语义：CFLAG 族，365） // :9933
           kojo.深喉 = 2; // :9933
-        } // :9934
-      } // :9935
-      return 0; // :9936
-    } // :9937
-  } // :9938
+        } // :9933-9934
+      } // :9933-9935
+      return 0; // :9933-9936
+    } // :9937-9940
+  } // :9938-9940
 
   if (era_flag.selectcom === 80) {
     // :9943
@@ -20254,19 +20254,19 @@ async function kojo_message_com_11(rand) {
           `${target_name}喉咙深处被${player_name}的阴茎持续侵犯抽插着，只能拼命忍耐着窒息一般的痛苦………`,
         ); // :9957
       } else {
-        // :9959
+        // :9958-9959
         await era.printAndWait(
           `「唔呣……唔唔唔……嗯唔……咳咳咳……求求你，饶了我吧——唔唔唔」`,
         ); // :9960
         await era.printAndWait(
           `${target_name}喉咙深处被${player_name}的阴茎持续侵犯抽插着，窒息的痛苦让她泪水口水都流了出来………`,
         ); // :9961
-      } // :9962
+      } // :9961-9962
       // CFLAG:TARGET:381  = 1（变量语义：CFLAG 族，TARGET:381） // :9963
       kojo.强制口交 = 1; // :9963
-      return 0; // :9964
+      return 0; // :9963-9964
     } else {
-      // :9966
+      // :9965-9966
 
       if (assi_mao) {
         // :9968
@@ -20336,9 +20336,9 @@ async function kojo_message_com_11(rand) {
           ); // :9993
           // CFLAG:381  = 2（变量语义：CFLAG 族，381） // :9994
           kojo.强制口交 = 2; // :9994
-        } // :9995
+        } // :9994-9995
       } else {
-        // :9996
+        // :9996-9997
 
         if (
           era.get(`talent:${target}:76`) === 1 &&
@@ -20404,11 +20404,11 @@ async function kojo_message_com_11(rand) {
           await era.printAndWait(`「唔唔……唔呣……已经要，要死了……呕呕呕……」`); // :10021
           // CFLAG:381  = 2（变量语义：CFLAG 族，381） // :10022
           kojo.强制口交 = 2; // :10022
-        } // :10023
-      } // :10024
-      return 0; // :10025
-    } // :10026
-  } // :10027
+        } // :10022-10023
+      } // :10022-10024
+      return 0; // :10022-10025
+    } // :10026-10029
+  } // :10027-10029
 
   if (era_flag.selectcom === 87) {
     // :10034
@@ -20437,14 +20437,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
               ); // :10051
             } else {
-              // :10052
+              // :10051-10052
               await era.printAndWait(
                 `「哈……哈啊……可以用这个拉着乳头${heart(1)} 好像会很舒服的样子……♪」`,
               ); // :10053
               await era.printAndWait(
                 `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
               ); // :10054
-            } // :10055
+            } // :10054-10055
           } else if (p === 2) {
             // :10057
 
@@ -20458,12 +20458,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10062
             } else {
-              // :10063
+              // :10062-10063
               await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10064
               await era.printAndWait(
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10065
-            } // :10066
+            } // :10065-10066
           } else if (p === 4) {
             // :10068
 
@@ -20479,12 +20479,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
               ); // :10073
             } else {
-              // :10074
+              // :10073-10074
               await era.printAndWait(`「下面穿上银环之后……好像更好看了…？」`); // :10075
               await era.printAndWait(
                 `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
               ); // :10076
-            } // :10077
+            } // :10076-10077
           } else if (p === 8) {
             // :10079
 
@@ -20506,16 +20506,16 @@ async function kojo_message_com_11(rand) {
                   `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
                 ); // :10086
               } else {
-                // :10087
+                // :10086-10087
                 await era.printAndWait(
                   `「哈……自己的阴茎被穿环，居然会这么兴奋呢…${heart(1)}」`,
                 ); // :10088
                 await era.printAndWait(
                   `${target_name}在忍受痛苦的同时兴奋了起来，阴茎充血勃起了……`,
                 ); // :10089
-              } // :10090
+              } // :10089-10090
             } else {
-              // :10091
+              // :10091-10092
 
               if (assi_mao) {
                 // :10093
@@ -20529,15 +20529,15 @@ async function kojo_message_com_11(rand) {
                   `${target_name}充血勃起的阴蒂被穿上了银环……`,
                 ); // :10096
               } else {
-                // :10097
+                // :10096-10097
                 await era.printAndWait(
                   `「啊啊……轻轻碰一碰上面的环${heart(1)} 阴蒂就已经有感觉了啊${heart(1)}」`,
                 ); // :10098
                 await era.printAndWait(
                   `${target_name}充血勃起的阴蒂被穿上了银环……`,
                 ); // :10099
-              } // :10100
-            } // :10101
+              } // :10099-10100
+            } // :10101-10102
           } else if (p === 16) {
             // :10103
 
@@ -20549,14 +20549,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
               ); // :10108
             } else {
-              // :10109
+              // :10108-10109
               await era.printAndWait(
                 `「嘻嘻，以后再舌吻好像会很舒服呢${heart(1)}」`,
               ); // :10110
               await era.printAndWait(
                 `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
               ); // :10111
-            } // :10112
+            } // :10111-10112
           } else if (p === 32) {
             // :10114
 
@@ -20568,12 +20568,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10119
             } else {
-              // :10120
+              // :10119-10120
               await era.printAndWait(`「呣呣，好像挺合适的？」`); // :10121
               await era.printAndWait(
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10122
-            } // :10123
+            } // :10122-10123
           } else if (p === 64) {
             // :10125
 
@@ -20587,19 +20587,19 @@ async function kojo_message_com_11(rand) {
                 `${target_name}欣赏着自己鼻翼上穿着的银环……`,
               ); // :10130
             } else {
-              // :10131
+              // :10130-10131
               await era.printAndWait(`「意外的好看呢♪」`); // :10132
               await era.printAndWait(
                 `${target_name}欣赏着自己鼻翼上穿着的银环……`,
               ); // :10133
-            } // :10134
-          } // :10135
+            } // :10133-10134
+          } // :10135-10136
         } else {
-          // :10137
+          // :10136-10137
           await era.printAndWait(
             `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
           ); // :10138
-        } // :10139
+        } // :10138-10139
       } else if (era.get(`talent:${target}:85`) === 1) {
         // :10141
 
@@ -20621,12 +20621,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10152
             } else {
-              // :10153
+              // :10152-10153
               await era.printAndWait(`「怎么样，好像很合适呢？${heart(1)}」`); // :10154
               await era.printAndWait(
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10155
-            } // :10156
+            } // :10155-10156
           } else if (p === 2) {
             // :10158
 
@@ -20640,12 +20640,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10163
             } else {
-              // :10164
+              // :10163-10164
               await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10165
               await era.printAndWait(
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10166
-            } // :10167
+            } // :10166-10167
           } else if (p === 4) {
             // :10169
 
@@ -20657,12 +20657,12 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(`「别这样直盯盯地看啦……真不好意思♪」`); // :10173
               await era.printAndWait(`${target_name}的蜜穴里被穿入了银环……`); // :10174
             } else {
-              // :10175
+              // :10174-10175
               await era.printAndWait(`「请，请魔王大人尽情欣赏吧${heart(1)}」`); // :10176
               await era.printAndWait(
                 `${target_name}害羞地分开自己的蜜穴，展露着穿在里面的两个银环……`,
               ); // :10177
-            } // :10178
+            } // :10177-10178
           } else if (p === 8) {
             // :10180
 
@@ -20684,16 +20684,16 @@ async function kojo_message_com_11(rand) {
                   `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
                 ); // :10187
               } else {
-                // :10188
+                // :10187-10188
                 await era.printAndWait(
                   `「请，请魔王大人欣赏人家的穿环阴茎吧${heart(1)}」`,
                 ); // :10189
                 await era.printAndWait(
                   `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
                 ); // :10190
-              } // :10191
+              } // :10190-10191
             } else {
-              // :10192
+              // :10192-10193
 
               if (assi_mao) {
                 // :10194
@@ -20707,15 +20707,15 @@ async function kojo_message_com_11(rand) {
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10197
               } else {
-                // :10198
+                // :10197-10198
                 await era.printAndWait(
                   `「阴蒂被穿上这样的环，以后就正式成为魔王大人的性奴了呢…${heart(1)}」`,
                 ); // :10199
                 await era.printAndWait(
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10200
-              } // :10201
-            } // :10202
+              } // :10200-10201
+            } // :10202-10203
           } else if (p === 16) {
             // :10204
 
@@ -20729,14 +20729,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
               ); // :10209
             } else {
-              // :10210
+              // :10209-10210
               await era.printAndWait(
                 `「这样接吻……会很舒服吧，魔王大人${heart(1)}」`,
               ); // :10211
               await era.printAndWait(
                 `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
               ); // :10212
-            } // :10213
+            } // :10212-10213
           } else if (p === 32) {
             // :10215
 
@@ -20748,12 +20748,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10220
             } else {
-              // :10221
+              // :10220-10221
               await era.printAndWait(`「魔王大人，来接吻吧…${heart(1)}」`); // :10222
               await era.printAndWait(
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10223
-            } // :10224
+            } // :10223-10224
           } else if (p === 64) {
             // :10226
 
@@ -20767,21 +20767,21 @@ async function kojo_message_com_11(rand) {
               ); // :10230
               await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10231
             } else {
-              // :10232
+              // :10231-10232
               await era.printAndWait(
                 `「感觉……有点怪怪的……不过，变成魔王大人的母牛性奴……也很高兴呢」`,
               ); // :10233
               await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10234
-            } // :10235
-          } // :10236
+            } // :10234-10235
+          } // :10236-10237
         } else {
-          // :10238
+          // :10237-10238
           await era.printAndWait(
             `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
           ); // :10239
-        } // :10240
+        } // :10239-10240
       } else {
-        // :10242
+        // :10241-10242
 
         if (chara(target).train.穿环状态 & p) {
           // :10244
@@ -20802,12 +20802,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10254
             } else {
-              // :10255
+              // :10254-10255
               await era.printAndWait(`「好痛……取，取下来啊……求求你」`); // :10256
               await era.printAndWait(
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10257
-            } // :10258
+            } // :10257-10258
           } else if (p === 2) {
             // :10260
 
@@ -20819,12 +20819,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10265
             } else {
-              // :10266
+              // :10265-10266
               await era.printAndWait(`「呜……已，已经好了吗？」`); // :10267
               await era.printAndWait(
                 `${target_name}吃痛地抚摸着自己肚脐上上闪闪发光的银环……`,
               ); // :10268
-            } // :10269
+            } // :10268-10269
           } else if (p === 4) {
             // :10271
 
@@ -20838,12 +20838,12 @@ async function kojo_message_com_11(rand) {
                 `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
               ); // :10276
             } else {
-              // :10277
+              // :10276-10277
               await era.printAndWait(`「不要……不要看啊啊！」`); // :10278
               await era.printAndWait(
                 `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
               ); // :10279
-            } // :10280
+            } // :10279-10280
           } else if (p === 8) {
             // :10282
 
@@ -20865,14 +20865,14 @@ async function kojo_message_com_11(rand) {
                   `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
                 ); // :10289
               } else {
-                // :10290
+                // :10289-10290
                 await era.printAndWait(`「呜呜……不，不要这样用力……摩擦啊啊」`); // :10291
                 await era.printAndWait(
                   `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
                 ); // :10292
-              } // :10293
+              } // :10292-10293
             } else {
-              // :10294
+              // :10294-10295
 
               if (assi_mao) {
                 // :10296
@@ -20884,15 +20884,15 @@ async function kojo_message_com_11(rand) {
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10299
               } else {
-                // :10300
+                // :10299-10300
                 await era.printAndWait(
                   `「不，不要啊……那个部位……不可以……呜呜呜」`,
                 ); // :10301
                 await era.printAndWait(
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10302
-              } // :10303
-            } // :10304
+              } // :10302-10303
+            } // :10304-10305
           } else if (p === 16) {
             // :10306
 
@@ -20904,14 +20904,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，痛得呜咽了起来……`,
               ); // :10311
             } else {
-              // :10312
+              // :10311-10312
               await era.printAndWait(
                 `「不，不要啊……呜呜呜……以后会没办法……好好吃饭的……」`,
               ); // :10313
               await era.printAndWait(
                 `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，呜咽着说着什么……`,
               ); // :10314
-            } // :10315
+            } // :10314-10315
           } else if (p === 32) {
             // :10317
 
@@ -20923,12 +20923,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10322
             } else {
-              // :10323
+              // :10322-10323
               await era.printAndWait(`「呜呜……感觉好奇怪……一点都不习惯」`); // :10324
               await era.printAndWait(
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10325
-            } // :10326
+            } // :10325-10326
           } else if (p === 64) {
             // :10328
 
@@ -20940,23 +20940,23 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(`「不，不要再说了……呜呜呜…」`); // :10332
               await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10333
             } else {
-              // :10334
+              // :10333-10334
               await era.printAndWait(`「呜呜……鼻子好痛…」`); // :10335
               await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10336
-            } // :10337
-          } // :10338
+            } // :10336-10337
+          } // :10338-10339
         } else {
-          // :10340
+          // :10339-10340
           await era.printAndWait(
             `${target_name}流着泪水，轻轻地擦拭着穿环处留下的血迹……`,
           ); // :10341
-        } // :10342
-      } // :10343
+        } // :10341-10342
+      } // :10343-10344
       // CFLAG:TARGET:348  = 1（变量语义：CFLAG 族，TARGET:348） // :10344
       kojo.穿环 = 1; // :10344
-      return 0; // :10345
+      return 0; // :10344-10345
     } else {
-      // :10347
+      // :10346-10347
 
       if (
         era.get(`talent:${target}:76`) === 1 &&
@@ -20977,14 +20977,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
               ); // :10357
             } else {
-              // :10358
+              // :10357-10358
               await era.printAndWait(
                 `「哈……哈啊……可以用这个拉着乳头${heart(1)} 好像会很舒服的样子……♪」`,
               ); // :10359
               await era.printAndWait(
                 `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
               ); // :10360
-            } // :10361
+            } // :10360-10361
           } else if (p === 2) {
             // :10363
 
@@ -20998,12 +20998,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10368
             } else {
-              // :10369
+              // :10368-10369
               await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10370
               await era.printAndWait(
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10371
-            } // :10372
+            } // :10371-10372
           } else if (p === 4) {
             // :10374
 
@@ -21019,12 +21019,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
               ); // :10379
             } else {
-              // :10380
+              // :10379-10380
               await era.printAndWait(`「下面穿上银环之后……好像更好看了…？」`); // :10381
               await era.printAndWait(
                 `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
               ); // :10382
-            } // :10383
+            } // :10382-10383
           } else if (p === 8) {
             // :10385
 
@@ -21046,16 +21046,16 @@ async function kojo_message_com_11(rand) {
                   `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
                 ); // :10392
               } else {
-                // :10393
+                // :10392-10393
                 await era.printAndWait(
                   `「哈……自己的阴茎被穿环，居然会这么兴奋呢…${heart(1)}」`,
                 ); // :10394
                 await era.printAndWait(
                   `${target_name}在忍受痛苦的同时兴奋了起来，阴茎充血勃起了……`,
                 ); // :10395
-              } // :10396
+              } // :10395-10396
             } else {
-              // :10397
+              // :10397-10398
 
               if (assi_mao) {
                 // :10399
@@ -21069,15 +21069,15 @@ async function kojo_message_com_11(rand) {
                   `${target_name}充血勃起的阴蒂被穿上了银环……`,
                 ); // :10402
               } else {
-                // :10403
+                // :10402-10403
                 await era.printAndWait(
                   `「啊啊……轻轻碰一碰上面的环${heart(1)} 阴蒂就已经有感觉了啊${heart(1)}」`,
                 ); // :10404
                 await era.printAndWait(
                   `${target_name}充血勃起的阴蒂被穿上了银环……`,
                 ); // :10405
-              } // :10406
-            } // :10407
+              } // :10405-10406
+            } // :10407-10408
           } else if (p === 16) {
             // :10409
 
@@ -21089,14 +21089,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
               ); // :10414
             } else {
-              // :10415
+              // :10414-10415
               await era.printAndWait(
                 `「嘻嘻，以后再舌吻好像会很舒服呢${heart(1)}」`,
               ); // :10416
               await era.printAndWait(
                 `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
               ); // :10417
-            } // :10418
+            } // :10417-10418
           } else if (p === 32) {
             // :10420
 
@@ -21108,12 +21108,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10425
             } else {
-              // :10426
+              // :10425-10426
               await era.printAndWait(`「呣呣，好像挺合适的？」`); // :10427
               await era.printAndWait(
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10428
-            } // :10429
+            } // :10428-10429
           } else if (p === 64) {
             // :10431
 
@@ -21127,19 +21127,19 @@ async function kojo_message_com_11(rand) {
                 `${target_name}欣赏着自己鼻翼上穿着的银环……`,
               ); // :10436
             } else {
-              // :10437
+              // :10436-10437
               await era.printAndWait(`「意外的好看呢♪」`); // :10438
               await era.printAndWait(
                 `${target_name}欣赏着自己鼻翼上穿着的银环……`,
               ); // :10439
-            } // :10440
-          } // :10441
+            } // :10439-10440
+          } // :10441-10442
         } else {
-          // :10443
+          // :10442-10443
           await era.printAndWait(
             `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
           ); // :10444
-        } // :10445
+        } // :10444-10445
         // CFLAG:348  = 4（变量语义：CFLAG 族，348） // :10446
         kojo.穿环 = 4; // :10446
       } else if (
@@ -21162,12 +21162,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10457
             } else {
-              // :10458
+              // :10457-10458
               await era.printAndWait(`「怎么样，好像很合适呢？${heart(1)}」`); // :10459
               await era.printAndWait(
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10460
-            } // :10461
+            } // :10460-10461
           } else if (p === 2) {
             // :10463
 
@@ -21181,12 +21181,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10468
             } else {
-              // :10469
+              // :10468-10469
               await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10470
               await era.printAndWait(
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10471
-            } // :10472
+            } // :10471-10472
           } else if (p === 4) {
             // :10474
 
@@ -21198,12 +21198,12 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(`「别这样直盯盯地看啦……真不好意思♪」`); // :10478
               await era.printAndWait(`${target_name}的蜜穴里被穿入了银环……`); // :10479
             } else {
-              // :10480
+              // :10479-10480
               await era.printAndWait(`「请，请魔王大人尽情欣赏吧${heart(1)}」`); // :10481
               await era.printAndWait(
                 `${target_name}害羞地分开自己的蜜穴，展露着穿在里面的两个银环……`,
               ); // :10482
-            } // :10483
+            } // :10482-10483
           } else if (p === 8) {
             // :10485
 
@@ -21225,16 +21225,16 @@ async function kojo_message_com_11(rand) {
                   `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
                 ); // :10492
               } else {
-                // :10493
+                // :10492-10493
                 await era.printAndWait(
                   `「请，请魔王大人欣赏人家的穿环阴茎吧${heart(1)}」`,
                 ); // :10494
                 await era.printAndWait(
                   `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
                 ); // :10495
-              } // :10496
+              } // :10495-10496
             } else {
-              // :10497
+              // :10497-10498
 
               if (assi_mao) {
                 // :10499
@@ -21248,15 +21248,15 @@ async function kojo_message_com_11(rand) {
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10502
               } else {
-                // :10503
+                // :10502-10503
                 await era.printAndWait(
                   `「阴蒂被穿上这样的环，以后就正式成为魔王大人的性奴了呢…${heart(1)}」`,
                 ); // :10504
                 await era.printAndWait(
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10505
-              } // :10506
-            } // :10507
+              } // :10505-10506
+            } // :10507-10508
           } else if (p === 16) {
             // :10509
 
@@ -21270,14 +21270,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
               ); // :10514
             } else {
-              // :10515
+              // :10514-10515
               await era.printAndWait(
                 `「这样接吻……会很舒服吧，魔王大人${heart(1)}」`,
               ); // :10516
               await era.printAndWait(
                 `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
               ); // :10517
-            } // :10518
+            } // :10517-10518
           } else if (p === 32) {
             // :10520
 
@@ -21289,12 +21289,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10525
             } else {
-              // :10526
+              // :10525-10526
               await era.printAndWait(`「魔王大人，来接吻吧…${heart(1)}」`); // :10527
               await era.printAndWait(
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10528
-            } // :10529
+            } // :10528-10529
           } else if (p === 64) {
             // :10531
 
@@ -21308,19 +21308,19 @@ async function kojo_message_com_11(rand) {
               ); // :10535
               await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10536
             } else {
-              // :10537
+              // :10536-10537
               await era.printAndWait(
                 `「感觉……有点怪怪的……不过，变成魔王大人的母牛性奴……也很高兴呢」`,
               ); // :10538
               await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10539
-            } // :10540
-          } // :10541
+            } // :10539-10540
+          } // :10541-10542
         } else {
-          // :10543
+          // :10542-10543
           await era.printAndWait(
             `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
           ); // :10544
-        } // :10545
+        } // :10544-10545
         // CFLAG:348  = 3（变量语义：CFLAG 族，348） // :10546
         kojo.穿环 = 3; // :10546
       } else if (kojo.穿环 <= 1 || game.kojo.口上开关 === 2) {
@@ -21340,12 +21340,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10557
             } else {
-              // :10558
+              // :10557-10558
               await era.printAndWait(`「好痛……取，取下来啊……求求你」`); // :10559
               await era.printAndWait(
                 `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
               ); // :10560
-            } // :10561
+            } // :10560-10561
           } else if (p === 2) {
             // :10563
 
@@ -21357,12 +21357,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}的肚脐上穿入了闪闪发光的银环……`,
               ); // :10568
             } else {
-              // :10569
+              // :10568-10569
               await era.printAndWait(`「呜……已，已经好了吗？」`); // :10570
               await era.printAndWait(
                 `${target_name}吃痛地抚摸着自己肚脐上上闪闪发光的银环……`,
               ); // :10571
-            } // :10572
+            } // :10571-10572
           } else if (p === 4) {
             // :10574
 
@@ -21376,12 +21376,12 @@ async function kojo_message_com_11(rand) {
                 `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
               ); // :10579
             } else {
-              // :10580
+              // :10579-10580
               await era.printAndWait(`「不要……不要看啊啊！」`); // :10581
               await era.printAndWait(
                 `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
               ); // :10582
-            } // :10583
+            } // :10582-10583
           } else if (p === 8) {
             // :10585
 
@@ -21403,14 +21403,14 @@ async function kojo_message_com_11(rand) {
                   `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
                 ); // :10592
               } else {
-                // :10593
+                // :10592-10593
                 await era.printAndWait(`「呜呜……不，不要这样用力……摩擦啊啊」`); // :10594
                 await era.printAndWait(
                   `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
                 ); // :10595
-              } // :10596
+              } // :10595-10596
             } else {
-              // :10597
+              // :10597-10598
 
               if (assi_mao) {
                 // :10599
@@ -21422,15 +21422,15 @@ async function kojo_message_com_11(rand) {
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10602
               } else {
-                // :10603
+                // :10602-10603
                 await era.printAndWait(
                   `「不，不要啊……那个部位……不可以……呜呜呜」`,
                 ); // :10604
                 await era.printAndWait(
                   `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
                 ); // :10605
-              } // :10606
-            } // :10607
+              } // :10605-10606
+            } // :10607-10608
           } else if (p === 16) {
             // :10609
 
@@ -21442,14 +21442,14 @@ async function kojo_message_com_11(rand) {
                 `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，痛得呜咽了起来……`,
               ); // :10614
             } else {
-              // :10615
+              // :10614-10615
               await era.printAndWait(
                 `「不，不要啊……呜呜呜……以后会没办法……好好吃饭的……」`,
               ); // :10616
               await era.printAndWait(
                 `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，呜咽着说着什么……`,
               ); // :10617
-            } // :10618
+            } // :10617-10618
           } else if (p === 32) {
             // :10620
 
@@ -21461,12 +21461,12 @@ async function kojo_message_com_11(rand) {
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10625
             } else {
-              // :10626
+              // :10625-10626
               await era.printAndWait(`「呜呜……感觉好奇怪……一点都不习惯」`); // :10627
               await era.printAndWait(
                 `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
               ); // :10628
-            } // :10629
+            } // :10628-10629
           } else if (p === 64) {
             // :10631
 
@@ -21478,27 +21478,28 @@ async function kojo_message_com_11(rand) {
               await era.printAndWait(`「不，不要再说了……呜呜呜…」`); // :10635
               await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10636
             } else {
-              // :10637
+              // :10636-10637
               await era.printAndWait(`「呜呜……鼻子好痛…」`); // :10638
               await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10639
-            } // :10640
-          } // :10641
+            } // :10639-10640
+          } // :10641-10642
         } else {
-          // :10643
+          // :10642-10643
           await era.printAndWait(
             `${target_name}流着泪水，轻轻地擦拭着穿环处留下的血迹……`,
           ); // :10644
-        } // :10645
+        } // :10644-10645
         // CFLAG:348  = 2（变量语义：CFLAG 族，348） // :10646
         kojo.穿环 = 2; // :10646
-      } // :10647
-    } // :10648
-    return 0; // :10649
-  } // :10650
+      } // :10646-10647
+    } // :10646-10648
+    return 0; // :10646-10649
+  } // :10646-10650
 
   return 0;
 }
 
+// :10658
 async function dog_kojo_11(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -21514,14 +21515,14 @@ async function dog_kojo_11(rand) {
         // :10667
         await era.printAndWait(''); // :10668
       } else {
-        // :10670
+        // :10669-10670
         await era.printAndWait(''); // :10671
-      } // :10672
+      } // :10671-10672
       // CFLAG:301  = 1（变量语义：CFLAG 族，301） // :10673
       kojo.爱抚 = 1; // :10673
-      return 0; // :10674
+      return 0; // :10673-10674
     } else {
-      // :10676
+      // :10675-10676
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -21571,10 +21572,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :10699
         // CFLAG:301  = 2（变量语义：CFLAG 族，301） // :10700
         kojo.爱抚 = 2; // :10700
-      } // :10701
-      return 0; // :10702
-    } // :10703
-  } // :10704
+      } // :10700-10701
+      return 0; // :10700-10702
+    } // :10700-10703
+  } // :10704-10706
 
   if (era_flag.selectcom === 1) {
     // :10709
@@ -21586,14 +21587,14 @@ async function dog_kojo_11(rand) {
         // :10713
         await era.printAndWait(''); // :10714
       } else {
-        // :10716
+        // :10715-10716
         await era.printAndWait(''); // :10717
-      } // :10718
+      } // :10717-10718
       // CFLAG:302  = 1（变量语义：CFLAG 族，302） // :10719
       kojo.舔阴 = 1; // :10719
-      return 0; // :10720
+      return 0; // :10719-10720
     } else {
-      // :10722
+      // :10721-10722
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -21632,10 +21633,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :10741
         // CFLAG:302  = 2（变量语义：CFLAG 族，302） // :10742
         kojo.舔阴 = 2; // :10742
-      } // :10743
-      return 0; // :10744
-    } // :10745
-  } // :10746
+      } // :10742-10743
+      return 0; // :10742-10744
+    } // :10742-10745
+  } // :10746-10749
 
   if (era_flag.selectcom === 5) {
     // :10752
@@ -21647,14 +21648,14 @@ async function dog_kojo_11(rand) {
         // :10756
         await era.printAndWait(''); // :10757
       } else {
-        // :10759
+        // :10758-10759
         await era.printAndWait(''); // :10760
-      } // :10761
+      } // :10760-10761
       // CFLAG:TARGET:306  = 1（变量语义：CFLAG 族，TARGET:306） // :10762
       kojo.胸爱抚 = 1; // :10762
-      return 0; // :10763
+      return 0; // :10762-10763
     } else {
-      // :10765
+      // :10764-10765
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -21693,15 +21694,15 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :10784
         // CFLAG:306  = 2（变量语义：CFLAG 族，306） // :10785
         kojo.胸爱抚 = 2; // :10785
-      } // :10786
-      return 0; // :10787
-    } // :10788
-  } // :10789
+      } // :10785-10786
+      return 0; // :10785-10787
+    } // :10785-10788
+  } // :10789-10791
 
   if (era_flag.selectcom === 6) {
     // :10794
 
-    if (kojo.接吻 === 0 && era.get('tflag:13')) {
+    if (kojo.接吻 === 0 && game.train.初吻与自我口上) {
       // :10796
 
       if (era.get(`talent:${target}:136`) === 1) {
@@ -21714,12 +21715,12 @@ async function dog_kojo_11(rand) {
         // :10804
         await era.printAndWait(''); // :10805
       } else {
-        // :10807
+        // :10806-10807
         await era.printAndWait(''); // :10808
-      } // :10809
+      } // :10808-10809
       // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :10810
       kojo.接吻 = 1; // :10810
-      return 0; // :10811
+      return 0; // :10810-10811
     } else if (kojo.接吻 === 0) {
       // :10813
 
@@ -21733,14 +21734,14 @@ async function dog_kojo_11(rand) {
         // :10821
         await era.printAndWait(''); // :10822
       } else {
-        // :10824
+        // :10823-10824
         await era.printAndWait(''); // :10825
-      } // :10826
+      } // :10825-10826
       // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :10827
       kojo.接吻 = 1; // :10827
-      return 0; // :10828
+      return 0; // :10827-10828
     } else {
-      // :10830
+      // :10829-10830
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -21779,10 +21780,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :10849
         // CFLAG:307  = 2（变量语义：CFLAG 族，307） // :10850
         kojo.接吻 = 2; // :10850
-      } // :10851
-      return 0; // :10852
-    } // :10853
-  } // :10854
+      } // :10850-10851
+      return 0; // :10850-10852
+    } // :10850-10853
+  } // :10854-10856
 
   if (era_flag.selectcom === 9) {
     // :10859
@@ -21800,14 +21801,14 @@ async function dog_kojo_11(rand) {
         // :10869
         await era.printAndWait(''); // :10870
       } else {
-        // :10872
+        // :10871-10872
         await era.printAndWait(''); // :10873
-      } // :10874
+      } // :10873-10874
       // CFLAG:TARGET:310  = 1（变量语义：CFLAG 族，TARGET:310） // :10875
       kojo.舔肛 = 1; // :10875
-      return 0; // :10876
+      return 0; // :10875-10876
     } else {
-      // :10878
+      // :10877-10878
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -21846,10 +21847,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :10897
         // CFLAG:310  = 2（变量语义：CFLAG 族，310） // :10898
         kojo.舔肛 = 2; // :10898
-      } // :10899
-      return 0; // :10900
-    } // :10901
-  } // :10902
+      } // :10898-10899
+      return 0; // :10898-10900
+    } // :10898-10901
+  } // :10902-10904
 
   if (era_flag.selectcom === 21) {
     // :10907
@@ -21870,11 +21871,11 @@ async function dog_kojo_11(rand) {
           // :10919
           await era.printAndWait(''); // :10920
         } else {
-          // :10923
+          // :10922-10923
           await era.printAndWait(''); // :10924
-        } // :10925
+        } // :10924-10925
       } else {
-        // :10927
+        // :10926-10927
 
         if (era.get(`talent:${target}:136`) === 1) {
           // :10929
@@ -21886,15 +21887,15 @@ async function dog_kojo_11(rand) {
           // :10935
           await era.printAndWait(''); // :10936
         } else {
-          // :10938
+          // :10937-10938
           await era.printAndWait(''); // :10939
-        } // :10940
-      } // :10941
+        } // :10939-10940
+      } // :10941-10942
       // CFLAG:322  = 1（变量语义：CFLAG 族，322） // :10942
       kojo.背后位 = 1; // :10942
-      return 0; // :10943
+      return 0; // :10942-10943
     } else {
-      // :10945
+      // :10944-10945
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -21908,9 +21909,9 @@ async function dog_kojo_11(rand) {
           // :10950
           await era.printAndWait(''); // :10951
         } else {
-          // :10952
+          // :10951-10952
           await era.printAndWait(''); // :10953
-        } // :10954
+        } // :10953-10954
         // CFLAG:322  = 7（变量语义：CFLAG 族，322） // :10955
         kojo.背后位 = 7; // :10955
       } else if (
@@ -21925,9 +21926,9 @@ async function dog_kojo_11(rand) {
           // :10960
           await era.printAndWait(''); // :10961
         } else {
-          // :10962
+          // :10961-10962
           await era.printAndWait(''); // :10963
-        } // :10964
+        } // :10963-10964
         // CFLAG:322  = 6（变量语义：CFLAG 族，322） // :10965
         kojo.背后位 = 6; // :10965
       } else if (
@@ -21942,9 +21943,9 @@ async function dog_kojo_11(rand) {
           // :10970
           await era.printAndWait(''); // :10971
         } else {
-          // :10972
+          // :10971-10972
           await era.printAndWait(''); // :10973
-        } // :10974
+        } // :10973-10974
         // CFLAG:322  = 5（变量语义：CFLAG 族，322） // :10975
         kojo.背后位 = 5; // :10975
       } else if (
@@ -21970,10 +21971,10 @@ async function dog_kojo_11(rand) {
 
         // CFLAG:322  = 2（变量语义：CFLAG 族，322） // :10988
         kojo.背后位 = 2; // :10988
-      } // :10989
-      return 0; // :10990
-    } // :10991
-  } // :10992
+      } // :10988-10989
+      return 0; // :10988-10990
+    } // :10988-10991
+  } // :10992-10994
 
   if (era_flag.selectcom === 27) {
     // :10997
@@ -21991,14 +21992,14 @@ async function dog_kojo_11(rand) {
         // :11007
         await era.printAndWait(''); // :11008
       } else {
-        // :11010
+        // :11009-11010
         await era.printAndWait(''); // :11011
-      } // :11012
+      } // :11011-11012
       // CFLAG:TARGET:328  = 1（变量语义：CFLAG 族，TARGET:328） // :11013
       kojo.背后位肛交 = 1; // :11013
-      return 0; // :11014
+      return 0; // :11013-11014
     } else {
-      // :11016
+      // :11015-11016
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -22010,9 +22011,9 @@ async function dog_kojo_11(rand) {
           // :11019
           await era.printAndWait(''); // :11020
         } else {
-          // :11021
+          // :11020-11021
           await era.printAndWait(''); // :11022
-        } // :11023
+        } // :11022-11023
         // CFLAG:328  = 7（变量语义：CFLAG 族，328） // :11024
         kojo.背后位肛交 = 7; // :11024
       } else if (
@@ -22025,9 +22026,9 @@ async function dog_kojo_11(rand) {
           // :11027
           await era.printAndWait(''); // :11028
         } else {
-          // :11029
+          // :11028-11029
           await era.printAndWait(''); // :11030
-        } // :11031
+        } // :11030-11031
         // CFLAG:328  = 6（变量语义：CFLAG 族，328） // :11032
         kojo.背后位肛交 = 6; // :11032
       } else if (
@@ -22040,9 +22041,9 @@ async function dog_kojo_11(rand) {
           // :11035
           await era.printAndWait(''); // :11036
         } else {
-          // :11037
+          // :11036-11037
           await era.printAndWait(''); // :11038
-        } // :11039
+        } // :11038-11039
         // CFLAG:328  = 5（变量语义：CFLAG 族，328） // :11040
         kojo.背后位肛交 = 5; // :11040
       } else if (
@@ -22066,10 +22067,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :11051
         // CFLAG:328  = 2（变量语义：CFLAG 族，328） // :11052
         kojo.背后位肛交 = 2; // :11052
-      } // :11053
-      return 0; // :11054
-    } // :11055
-  } // :11056
+      } // :11052-11053
+      return 0; // :11052-11054
+    } // :11052-11055
+  } // :11056-11058
 
   if (era_flag.selectcom === 30) {
     // :11061
@@ -22087,14 +22088,14 @@ async function dog_kojo_11(rand) {
         // :11071
         await era.printAndWait(''); // :11072
       } else {
-        // :11074
+        // :11073-11074
         await era.printAndWait(''); // :11075
-      } // :11076
+      } // :11075-11076
       // CFLAG:TARGET:331  = 1（变量语义：CFLAG 族，TARGET:331） // :11077
       kojo.手淫 = 1; // :11077
-      return 0; // :11078
+      return 0; // :11077-11078
     } else {
-      // :11080
+      // :11079-11080
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -22106,9 +22107,9 @@ async function dog_kojo_11(rand) {
           // :11083
           await era.printAndWait(''); // :11084
         } else {
-          // :11085
+          // :11084-11085
           await era.printAndWait(''); // :11086
-        } // :11087
+        } // :11086-11087
         // CFLAG:331  = 7（变量语义：CFLAG 族，331） // :11088
         kojo.手淫 = 7; // :11088
       } else if (
@@ -22121,9 +22122,9 @@ async function dog_kojo_11(rand) {
           // :11091
           await era.printAndWait(''); // :11092
         } else {
-          // :11093
+          // :11092-11093
           await era.printAndWait(''); // :11094
-        } // :11095
+        } // :11094-11095
         // CFLAG:331  = 6（变量语义：CFLAG 族，331） // :11096
         kojo.手淫 = 6; // :11096
       } else if (
@@ -22136,9 +22137,9 @@ async function dog_kojo_11(rand) {
           // :11099
           await era.printAndWait(''); // :11100
         } else {
-          // :11101
+          // :11100-11101
           await era.printAndWait(''); // :11102
-        } // :11103
+        } // :11102-11103
         // CFLAG:331  = 5（变量语义：CFLAG 族，331） // :11104
         kojo.手淫 = 5; // :11104
       } else if (
@@ -22164,10 +22165,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :11115
         // CFLAG:331  = 2（变量语义：CFLAG 族，331） // :11116
         kojo.手淫 = 2; // :11116
-      } // :11117
-      return 0; // :11118
-    } // :11119
-  } // :11120
+      } // :11116-11117
+      return 0; // :11116-11118
+    } // :11116-11119
+  } // :11120-11122
 
   if (era_flag.selectcom === 31) {
     // :11125
@@ -22185,14 +22186,14 @@ async function dog_kojo_11(rand) {
         // :11135
         await era.printAndWait(''); // :11136
       } else {
-        // :11138
+        // :11137-11138
         await era.printAndWait(''); // :11139
-      } // :11140
+      } // :11139-11140
       // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332） // :11141
       kojo.口交_奴 = 1; // :11141
-      return 0; // :11142
+      return 0; // :11141-11142
     } else {
-      // :11144
+      // :11143-11144
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -22244,10 +22245,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :11169
         // CFLAG:332  = 2（变量语义：CFLAG 族，332） // :11170
         kojo.口交_奴 = 2; // :11170
-      } // :11171
-      return 0; // :11172
-    } // :11173
-  } // :11174
+      } // :11170-11171
+      return 0; // :11170-11172
+    } // :11170-11173
+  } // :11174-11176
 
   if (era_flag.selectcom === 34) {
     // :11179
@@ -22268,11 +22269,11 @@ async function dog_kojo_11(rand) {
           // :11191
           await era.printAndWait(''); // :11192
         } else {
-          // :11194
+          // :11193-11194
           await era.printAndWait(''); // :11195
-        } // :11196
+        } // :11195-11196
       } else {
-        // :11198
+        // :11197-11198
 
         if (era.get(`talent:${target}:136`) === 1) {
           // :11200
@@ -22284,15 +22285,15 @@ async function dog_kojo_11(rand) {
           // :11206
           await era.printAndWait(''); // :11207
         } else {
-          // :11209
+          // :11208-11209
           await era.printAndWait(''); // :11210
-        } // :11211
-      } // :11212
+        } // :11210-11211
+      } // :11212-11213
       // CFLAG:TARGET:335  = 1（变量语义：CFLAG 族，TARGET:335） // :11213
       kojo.骑乘位 = 1; // :11213
-      return 0; // :11214
+      return 0; // :11213-11214
     } else {
-      // :11216
+      // :11215-11216
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -22306,9 +22307,9 @@ async function dog_kojo_11(rand) {
           // :11221
           await era.printAndWait(''); // :11222
         } else {
-          // :11223
+          // :11222-11223
           await era.printAndWait(''); // :11224
-        } // :11225
+        } // :11224-11225
         // CFLAG:335  = 7（变量语义：CFLAG 族，335） // :11226
         kojo.骑乘位 = 7; // :11226
       } else if (
@@ -22326,9 +22327,9 @@ async function dog_kojo_11(rand) {
           // :11233
           await era.printAndWait(''); // :11234
         } else {
-          // :11235
+          // :11234-11235
           await era.printAndWait(''); // :11236
-        } // :11237
+        } // :11236-11237
         // CFLAG:335  = 6（变量语义：CFLAG 族，335） // :11238
         kojo.骑乘位 = 6; // :11238
       } else if (
@@ -22346,9 +22347,9 @@ async function dog_kojo_11(rand) {
           // :11245
           await era.printAndWait(''); // :11246
         } else {
-          // :11247
+          // :11246-11247
           await era.printAndWait(''); // :11248
-        } // :11249
+        } // :11248-11249
         // CFLAG:335  = 5（变量语义：CFLAG 族，335） // :11250
         kojo.骑乘位 = 5; // :11250
       } else if (
@@ -22367,9 +22368,9 @@ async function dog_kojo_11(rand) {
           // :11257
           await era.printAndWait(''); // :11258
         } else {
-          // :11259
+          // :11258-11259
           await era.printAndWait(''); // :11260
-        } // :11261
+        } // :11260-11261
         // CFLAG:335  = 4（变量语义：CFLAG 族，335） // :11262
         kojo.骑乘位 = 4; // :11262
       } else if (
@@ -22386,10 +22387,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :11270
         // CFLAG:335  = 2（变量语义：CFLAG 族，335） // :11271
         kojo.骑乘位 = 2; // :11271
-      } // :11272
-      return 0; // :11273
-    } // :11274
-  } // :11275
+      } // :11271-11272
+      return 0; // :11271-11273
+    } // :11271-11274
+  } // :11275-11277
 
   if (era_flag.selectcom === 37) {
     // :11280
@@ -22401,14 +22402,14 @@ async function dog_kojo_11(rand) {
         // :11284
         await era.printAndWait(''); // :11285
       } else {
-        // :11287
+        // :11286-11287
         await era.printAndWait(''); // :11288
-      } // :11289
+      } // :11288-11289
       // CFLAG:TARGET:338  = 1（变量语义：CFLAG 族，TARGET:338） // :11290
       kojo.肛门侍奉 = 1; // :11290
-      return 0; // :11291
+      return 0; // :11290-11291
     } else {
-      // :11293
+      // :11292-11293
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -22450,10 +22451,10 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :11312
         // CFLAG:338  = 2（变量语义：CFLAG 族，338） // :11313
         kojo.肛门侍奉 = 2; // :11313
-      } // :11314
-      return 0; // :11315
-    } // :11316
-  } // :11317
+      } // :11313-11314
+      return 0; // :11313-11315
+    } // :11313-11316
+  } // :11317-11319
 
   if (era_flag.selectcom === 43 && era.get(`tequip:${target}:43`)) {
     // :11323
@@ -22471,14 +22472,14 @@ async function dog_kojo_11(rand) {
         // :11333
         await era.printAndWait(''); // :11334
       } else {
-        // :11336
+        // :11335-11336
         await era.printAndWait(''); // :11337
-      } // :11338
+      } // :11337-11338
       // CFLAG:TARGET:344  = 1（变量语义：CFLAG 族，TARGET:344） // :11339
       kojo.眼罩 = 1; // :11339
-      return 0; // :11340
+      return 0; // :11339-11340
     } else {
-      // :11342
+      // :11341-11342
 
       if (
         era.get(`talent:${target}:136`) === 1 &&
@@ -22553,9 +22554,9 @@ async function dog_kojo_11(rand) {
         await era.printAndWait(''); // :11377
         // CFLAG:TARGET:344  = 2（变量语义：CFLAG 族，TARGET:344） // :11378
         kojo.眼罩 = 2; // :11378
-      } // :11379
-      return 0; // :11380
-    } // :11381
+      } // :11378-11379
+      return 0; // :11378-11380
+    } // :11381-11382
   } else if (era_flag.selectcom === 43 && era0(`tequip:${target}:43`) === 0) {
     // :11383
 
@@ -22588,9 +22589,9 @@ async function dog_kojo_11(rand) {
       await era.printAndWait(''); // :11398
       // CFLAG:444  = 1（变量语义：CFLAG 族，444） // :11399
       kojo.兽奸眼罩 = 1; // :11399
-    } // :11400
-    return 0; // :11401
-  } // :11402
+    } // :11399-11400
+    return 0; // :11399-11401
+  } // :11402-11404
 
   if (era_flag.selectcom === 56) {
     // :11408
@@ -22610,15 +22611,15 @@ async function dog_kojo_11(rand) {
           // :11420
           await era.printAndWait(''); // :11421
         } else {
-          // :11423
+          // :11422-11423
           await era.printAndWait(''); // :11424
-        } // :11425
-      } // :11426
+        } // :11424-11425
+      } // :11426-11427
       // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :11427
       kojo.交谈 = 1; // :11427
-      return 0; // :11428
+      return 0; // :11427-11428
     } else {
-      // :11430
+      // :11429-11430
       if (era.get(`tequip:${target}:53`)) {
         // :11431
 
@@ -22651,13 +22652,13 @@ async function dog_kojo_11(rand) {
           await era.printAndWait(''); // :11447
           // CFLAG:357  = 2（变量语义：CFLAG 族，357） // :11448
           kojo.交谈 = 2; // :11448
-        } // :11449
-      } // :11450
-      return 0; // :11451
-    } // :11452
-  } // :11453
+        } // :11448-11449
+      } // :11448-11450
+      return 0; // :11448-11451
+    } // :11448-11452
+  } // :11448-11453
 
-  return 0; // :11456
+  return 0; // :11456-11458
 }
 
 /**
@@ -22670,46 +22671,46 @@ async function kojo_message_palamcng_11(rand) {
   const player = era_flag.player;
   const player_name = chara_callname(player);
   const kojo = chara(target).kojo;
-  const weapon =
+  const weapon_doggy =
     era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
       ? '震动假阳具'
       : '阴茎';
   void rand;
 
   if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
-    // :11466
-    return 0; // :11466
-  } // :11466
+    // :11465-11466
+    return 0; // :11465-11466
+  } // :11465-11466
 
   if (era.get(`tequip:${target}:45`)) {
-    // :11469
-    return 0; // :11469
-  } // :11469
+    // :11468-11469
+    return 0; // :11468-11469
+  } // :11468-11469
 
   if (game.train.失神) {
-    // :11472
-    return 0; // :11472
-  } // :11472
+    // :11471-11472
+    return 0; // :11471-11472
+  } // :11471-11472
 
   if (era.get(`tequip:${target}:89`)) {
-    // :11475
-    return 0; // :11475
-  } // :11475
+    // :11474-11475
+    return 0; // :11474-11475
+  } // :11474-11475
 
   if (era.get(`tequip:${target}:90`)) {
-    // :11478
-    return 0; // :11478
-  } // :11478
+    // :11477-11478
+    return 0; // :11477-11478
+  } // :11477-11478
 
   if (era.get(`tequip:${target}:55`)) {
     // :11480
-    return 0; // :11481
-  } // :11482
+    return 0; // :11480-11481
+  } // :11482-11483
 
   if (era.get(`talent:${target}:9`) === 1) {
-    // :11485
-    return 0; // :11485
-  } // :11485
+    // :11484-11485
+    return 0; // :11484-11485
+  } // :11484-11485
 
   const p1 = era0(`palam:${target}:3`) + era0(`delta:${target}:3`); // :11493
   if (p1 > PALAMLV[2] && kojo.首次润滑Lv2 === 0) {
@@ -22726,7 +22727,7 @@ async function kojo_message_palamcng_11(rand) {
         await era.printAndWait(`「其……其实不需要这个啦……」`); // :11500
         await era.printAndWait(`―――润滑首次超过Lv2。`); // :11501
       } else {
-        // :11503
+        // :11502-11503
         await era.printAndWait(
           `${target_name}的蜜穴里，爱液正如注般地流出，连肛门也被浸润了。`,
         ); // :11504
@@ -22734,9 +22735,9 @@ async function kojo_message_palamcng_11(rand) {
           `「人，人家已经准备好……接受魔王大人的疼爱了…♪」`,
         ); // :11505
         await era.printAndWait(`―――润滑首次超过Lv2。`); // :11506
-      } // :11507
+      } // :11506-11507
     } else {
-      // :11509
+      // :11508-11509
 
       if (era_flag.selectcom === 50) {
         // :11511
@@ -22746,17 +22747,17 @@ async function kojo_message_palamcng_11(rand) {
         await era.printAndWait(`「这，这是什么啊啊…！」`); // :11513
         await era.printAndWait(`―――润滑首次超过Lv2。`); // :11514
       } else {
-        // :11516
+        // :11515-11516
         await era.printAndWait(
           `${target_name}的蜜穴里，爱液正如注般地流出，连肛门也被浸润了。`,
         ); // :11517
         await era.printAndWait(`「好……好丢人……不要看啊……！」`); // :11518
         await era.printAndWait(`―――润滑首次超过Lv2。`); // :11519
-      } // :11520
-    } // :11521
+      } // :11519-11520
+    } // :11521-11522
     // CFLAG:TARGET:221  = 1（变量语义：CFLAG 族，TARGET:221） // :11522
     kojo.首次润滑Lv2 = 1; // :11522
-  } // :11523
+  } // :11522-11523
 
   const p2 = era0(`palam:${target}:5`) + era0(`delta:${target}:5`); // :11528
   if (p2 > PALAMLV[2] && kojo.首次欲情Lv2 === 0) {
@@ -22777,15 +22778,15 @@ async function kojo_message_palamcng_11(rand) {
         ); // :11537
         await era.printAndWait(`―――情欲首次超过Lv2。`); // :11538
       } else {
-        // :11540
+        // :11539-11540
         await era.printAndWait(
           `「魔，魔王大人………快点……开始调教，侵犯人家吧！」`,
         ); // :11541
         await era.printAndWait(`${target_name}的身体完全屈从于欲望了。`); // :11542
         await era.printAndWait(`―――情欲首次超过Lv2。`); // :11543
-      } // :11544
+      } // :11543-11544
     } else {
-      // :11546
+      // :11545-11546
 
       if (era_flag.selectcom === 51) {
         // :11548
@@ -22798,15 +22799,15 @@ async function kojo_message_palamcng_11(rand) {
         ); // :11551
         await era.printAndWait(`―――情欲首次超过Lv2。`); // :11552
       } else {
-        // :11554
+        // :11553-11554
         await era.printAndWait(`「身……身体好热……感觉好奇怪……」`); // :11555
         await era.printAndWait(`${target_name}脸色潮红，呼吸也加快了。`); // :11556
         await era.printAndWait(`―――情欲首次超过Lv2。`); // :11557
-      } // :11558
-    } // :11559
+      } // :11557-11558
+    } // :11559-11560
     // CFLAG:222  = 1（变量语义：CFLAG 族，222） // :11560
     kojo.首次欲情Lv2 = 1; // :11560
-  } // :11561
+  } // :11560-11561
 
   const p3 = era0(`palam:${target}:8`) + era0(`delta:${target}:8`); // :11566
   if (p3 > PALAMLV[2] && kojo.首次耻情Lv2 === 0) {
@@ -22818,14 +22819,14 @@ async function kojo_message_palamcng_11(rand) {
       await era.printAndWait(`${target_name}半掩着脸，露出了害羞的笑容。`); // :11571
       await era.printAndWait(`―――耻情首次超过Lv2。`); // :11572
     } else {
-      // :11574
+      // :11573-11574
       await era.printAndWait(`「不要啊啊，这，这样……太羞耻了！」`); // :11575
       await era.printAndWait(`${target_name}羞耻得涨红了脸，眼神里满是屈辱。`); // :11576
       await era.printAndWait(`―――耻情首次超过Lv2`); // :11577
-    } // :11578
+    } // :11577-11578
     // CFLAG:223  = 1（变量语义：CFLAG 族，223） // :11579
     kojo.首次耻情Lv2 = 1; // :11579
-  } // :11580
+  } // :11579-11580
 
   const p4 = era0(`palam:${target}:10`) + era0(`delta:${target}:10`); // :11585
   if (p4 > PALAMLV[2] && kojo.首次恐怖Lv2 === 0) {
@@ -22837,16 +22838,16 @@ async function kojo_message_palamcng_11(rand) {
       await era.printAndWait(`${target_name}害怕得闭上了眼睛……`); // :11590
       await era.printAndWait(`―――恐惧首次超过Lv2。`); // :11591
     } else {
-      // :11593
+      // :11592-11593
       await era.printAndWait(`「不，不要啊……这种事情……太可怕了……！」`); // :11594
       await era.printAndWait(
         `${target_name}害怕得脸皱成一团，眼睛都不敢睁开………`,
       ); // :11595
       await era.printAndWait(`―――恐惧首次超过Lv2。`); // :11596
-    } // :11597
+    } // :11596-11597
     // CFLAG:224  = 1（变量语义：CFLAG 族，224） // :11598
     kojo.首次恐怖Lv2 = 1; // :11598
-  } // :11599
+  } // :11598-11599
 
   if (era0(`nowex:${target}:0`) > 0 && kojo.首次C绝顶 === 0) {
     // :11604
@@ -22862,7 +22863,7 @@ async function kojo_message_palamcng_11(rand) {
       await era.printAndWait(`「可，可是身，身体……更热了……更想要了…」`); // :11609
       await era.printAndWait(`${target_name}弓起腰身，渴望着更多的快感………`); // :11610
     } else {
-      // :11612
+      // :11611-11612
       await era.printAndWait(
         `「不，不能……再摸那里了……！阴蒂的感觉……好奇怪啊啊啊！」`,
       ); // :11613
@@ -22871,10 +22872,10 @@ async function kojo_message_palamcng_11(rand) {
       ); // :11614
       await era.printAndWait(`「为……为什么……会这么舒服啊啊啊！」`); // :11615
       await era.printAndWait(`${target_name}的身体还沉浸在阴蒂高潮的余韵中………`); // :11616
-    } // :11617
+    } // :11616-11617
     // CFLAG:225  = 1（变量语义：CFLAG 族，225） // :11618
     kojo.首次C绝顶 = 1; // :11618
-  } // :11619
+  } // :11618-11619
 
   if (era0(`nowex:${target}:1`) > 0 && kojo.首次V绝顶 === 0) {
     // :11624
@@ -22909,7 +22910,7 @@ async function kojo_message_palamcng_11(rand) {
         `${target_name}当着${player_name}的面，第一次品尝到了蜜穴高潮的极度快感。`,
       ); // :11637
     } else {
-      // :11639
+      // :11638-11639
       await era.printAndWait(
         `「呜啊啊啊……不行了……已，已经……忍不住了……啊啊啊！」`,
       ); // :11640
@@ -22922,7 +22923,7 @@ async function kojo_message_palamcng_11(rand) {
       await era.printAndWait(
         `${target_name}当着${player_name}的面，第一次品尝到了蜜穴高潮的极度快感。`,
       ); // :11643
-    } // :11644
+    } // :11643-11644
     // CFLAG:TARGET:226  = 1（变量语义：CFLAG 族，TARGET:226） // :11645
     kojo.首次V绝顶 = 1; // :11645
   } else if (era0(`nowex:${target}:1`) > 0 && kojo.首次V绝顶 === 1) {
@@ -22934,7 +22935,7 @@ async function kojo_message_palamcng_11(rand) {
         `「哈啊${heart(1)} ……啊啊${heart(1)} 蜜穴${heart(1)} 舒服得……要疯了${heart(1)}」`,
       ); // :11650
       await era.printAndWait(
-        `${target_name}的蜜穴在${weapon}的侵犯下，很快迎来了高潮。`,
+        `${target_name}的蜜穴在${weapon_doggy}的侵犯下，很快迎来了高潮。`,
       ); // :11651
       await era.print(
         `「啊啊……淫穴${heart(1)} ${target_name}的淫穴${heart(1)} 去了啊啊啊${heart(1)}」`,
@@ -22951,7 +22952,7 @@ async function kojo_message_palamcng_11(rand) {
         `「呜啊……啊啊啊！要……要疯了……蜜穴……舒服……得……要疯了啊啊啊${heart(1)}」`,
       ); // :11656
       await era.printAndWait(
-        `${target_name}的蜜穴被${weapon}连续侵犯着，交合处发出一声声不堪入耳的响声。`,
+        `${target_name}的蜜穴被${weapon_doggy}连续侵犯着，交合处发出一声声不堪入耳的响声。`,
       ); // :11657
       await era.print(
         `「哈啊……哈啊……${heart(1)} 要……要去了……蜜穴${heart(1)} 高潮了啊啊啊${heart(1)}」`,
@@ -22964,8 +22965,8 @@ async function kojo_message_palamcng_11(rand) {
       await era.print(`「呜啊……啊啊啊……蜜穴……为什么……会这么舒服啊啊！」`); // :11662
       await era.print(`「哈啊……啊啊啊！已经……忍不住了啊啊啊！！！！」`); // :11663
       await era.printAndWait(`${target_name}在高潮中不住地颤抖着……`); // :11664
-    } // :11665
-  } // :11666
+    } // :11664-11665
+  } // :11664-11666
 
   if (era0(`nowex:${target}:2`) > 0 && kojo.首次A绝顶 === 0) {
     // :11671
@@ -22999,7 +23000,7 @@ async function kojo_message_palamcng_11(rand) {
         `${target_name}羞耻地蜷起了身子，却无法忍住舒服的娇喘，品味着人生第一次肛门高潮………`,
       ); // :11683
     } else {
-      // :11685
+      // :11684-11685
       await era.printAndWait(
         `「啊啊……屁股……感觉……越来越奇怪了……合，合不上了啊啊……呜呜！」`,
       ); // :11686
@@ -23010,7 +23011,7 @@ async function kojo_message_palamcng_11(rand) {
       await era.printAndWait(
         `${target_name}的身体蜷成一团，不住地呻吟着，品味着人生第一次肛门高潮。`,
       ); // :11689
-    } // :11690
+    } // :11689-11690
     // CFLAG:227  = 1（变量语义：CFLAG 族，227） // :11691
     kojo.首次A绝顶 = 1; // :11691
   } else if (era0(`nowex:${target}:2`) > 0 && kojo.首次A绝顶 === 1) {
@@ -23043,7 +23044,7 @@ async function kojo_message_palamcng_11(rand) {
         `${target_name}满脸通红，肛门在极度的快感刺激下高潮了……`,
       ); // :11705
     } else {
-      // :11707
+      // :11706-11707
       await era.print(`「不，不可以再欺负……屁股了啊啊……真的……嗯啊啊啊！」`); // :11708
       await era.printAndWait(
         `${target_name}的肛门已经脱离了意志的控制，反复地一张一合着。`,
@@ -23052,8 +23053,8 @@ async function kojo_message_palamcng_11(rand) {
         `「哈啊……啊啊……不，不行了……要，要用屁股……这种……肮脏的地方……高潮了啊啊！」`,
       ); // :11710
       await era.printAndWait(`${target_name}的肛门在极度的快感刺激下高潮了……`); // :11711
-    } // :11712
-  } // :11713
+    } // :11711-11712
+  } // :11711-11713
 
   if (era0(`nowex:${target}:3`) > 0 && kojo.首次B绝顶 === 0) {
     // :11718
@@ -23095,7 +23096,7 @@ async function kojo_message_palamcng_11(rand) {
         `${target_name}向${player_name}露出了要融化般的笑容………`,
       ); // :11734
     } else {
-      // :11736
+      // :11735-11736
       await era.printAndWait(
         `「不，不可以……再这么玩……乳头了！都……都已经肿起来了啊啊……」`,
       ); // :11737
@@ -23107,10 +23108,10 @@ async function kojo_message_palamcng_11(rand) {
         `―――${target_name}第一次感受到了乳头高潮，极度的快感让整个身体脱力地颤抖着。`,
       ); // :11740
       await era.printAndWait(`「明明，都说了……不行了…」`); // :11741
-    } // :11742
+    } // :11741-11742
     // CFLAG:TARGET:228  = 1（变量语义：CFLAG 族，TARGET:228） // :11743
     kojo.首次B绝顶 = 1; // :11743
-  } // :11744
+  } // :11743-11744
 
   const pain = era0(`delta:${target}:11`) + era0(`delta:${target}:12`); // :11749
   if (game.train.处女丧失 === 1 && kojo.处女丧失 === 0) {
@@ -23128,7 +23129,7 @@ async function kojo_message_palamcng_11(rand) {
           `「第一次……献给了魔王大人……真是……开心${heart(1)}」`,
         ); // :11755
         await era.printAndWait(
-          `「虽然……这次只是单纯的觉的痛而已、不过大概多被${weapon}侵犯几次就会舒服起来了吧！」`,
+          `「虽然……这次只是单纯的觉的痛而已、不过大概多被${weapon_doggy}侵犯几次就会舒服起来了吧！」`,
         ); // :11756
         await era.printAndWait(
           `${target_name}一点都没有惋惜自己失去处女身这件事，反而发自心底地期待着对蜜穴的进一步调教………`,
@@ -23148,7 +23149,7 @@ async function kojo_message_palamcng_11(rand) {
           `${target_name}不住地流着泪水，去向${player_name}强作着笑容……`,
         ); // :11762
       } else {
-        // :11764
+        // :11763-11764
         await era.printAndWait(
           `「住，住手啊啊啊！放开我，放开我！快点拔出去啊啊啊！！！」`,
         ); // :11765
@@ -23156,9 +23157,9 @@ async function kojo_message_palamcng_11(rand) {
         await era.printAndWait(
           `${target_name}承受着破处的痛苦和屈辱，咬着双唇呜咽了起来………`,
         ); // :11767
-      } // :11768
+      } // :11767-11768
     } else {
-      // :11770
+      // :11769-11770
 
       if (era.get(`talent:${target}:76`) === 1) {
         // :11772
@@ -23180,18 +23181,18 @@ async function kojo_message_palamcng_11(rand) {
           `${target_name}看着从自己蜜穴里流出来的处女血，悲伤得无以复加`,
         ); // :11779
       } else {
-        // :11781
+        // :11780-11781
         await era.printAndWait(
           `「住，住手啊！求求你，拔出去啊！我还是处女啊啊啊啊——」`,
         ); // :11782
         await era.printAndWait(
           `${target_name}承受着破处的痛苦和屈辱，咬着双唇呜咽了起来………`,
         ); // :11783
-      } // :11784
-    } // :11785
+      } // :11783-11784
+    } // :11785-11786
     // CFLAG:TARGET:229  = 1（变量语义：CFLAG 族，TARGET:229） // :11786
     kojo.处女丧失 = 1; // :11786
-  } // :11787
+  } // :11786-11787
 }
 
 /** @KOJO_MESSAGE_MARKCNG_11（:11794-11880）：四类 Lv3 刻印取得口上。 */
@@ -23203,39 +23204,39 @@ async function kojo_message_markcng_11(rand) {
   void rand;
 
   if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
-    // :11797
-    return 0; // :11797
-  } // :11797
+    // :11796-11797
+    return 0; // :11796-11797
+  } // :11796-11797
 
   if (era.get(`tequip:${target}:45`)) {
-    // :11800
-    return 0; // :11800
-  } // :11800
+    // :11799-11800
+    return 0; // :11799-11800
+  } // :11799-11800
 
   if (game.train.失神) {
-    // :11803
-    return 0; // :11803
-  } // :11803
+    // :11802-11803
+    return 0; // :11802-11803
+  } // :11802-11803
 
   if (era.get(`tequip:${target}:89`)) {
-    // :11806
-    return 0; // :11806
-  } // :11806
+    // :11805-11806
+    return 0; // :11805-11806
+  } // :11805-11806
 
   if (era.get(`tequip:${target}:90`)) {
-    // :11809
-    return 0; // :11809
-  } // :11809
+    // :11808-11809
+    return 0; // :11808-11809
+  } // :11808-11809
 
   if (era.get(`talent:${target}:9`) === 1) {
-    // :11812
-    return 0; // :11812
-  } // :11812
+    // :11811-11812
+    return 0; // :11811-11812
+  } // :11811-11812
 
   if (era.get(`tequip:${target}:55`)) {
-    // :11815
-    return 0; // :11815
-  } // :11815
+    // :11814-11815
+    return 0; // :11814-11815
+  } // :11814-11815
 
   if (game.system.苦痛刻印变动 === 3 && kojo.苦痛刻印Lv3 === 0) {
     // :11819
@@ -23252,17 +23253,17 @@ async function kojo_message_markcng_11(rand) {
         `${target_name}痛苦得表情都扭曲了，眼泪口水都流了出来………`,
       ); // :11823
     } else {
-      // :11824
+      // :11823-11824
       await era.printAndWait(
         `「啊啊啊……好痛，好痛啊啊！！饶了我吧，求求你，饶了我吧！」`,
       ); // :11825
       await era.printAndWait(
         `${target_name}痛苦得表情都扭曲了，眼泪口水都流了出来………`,
       ); // :11826
-    } // :11827
+    } // :11826-11827
     // CFLAG:297  = 1（变量语义：CFLAG 族，297） // :11828
     kojo.苦痛刻印Lv3 = 1; // :11828
-  } // :11829
+  } // :11828-11829
 
   if (game.system.快乐刻印变动 === 3 && kojo.快乐刻印Lv3 === 0) {
     // :11834
@@ -23285,7 +23286,7 @@ async function kojo_message_markcng_11(rand) {
         `${target_name}的身体沉沦在快乐之中，已经再也无法自拔了……`,
       ); // :11840
     } else {
-      // :11841
+      // :11840-11841
       await era.printAndWait(
         `「哈啊……啊啊啊……身体……为什么……会变成这个样子了……不可以啊啊！」`,
       ); // :11842
@@ -23296,10 +23297,10 @@ async function kojo_message_markcng_11(rand) {
       await era.printAndWait(
         `${target_name}的身体沉沦在快乐之中，已经再也无法自拔了……`,
       ); // :11845
-    } // :11846
+    } // :11845-11846
     // CFLAG:298  = 1（变量语义：CFLAG 族，298） // :11847
     kojo.快乐刻印Lv3 = 1; // :11847
-  } // :11848
+  } // :11847-11848
 
   if (game.system.屈服刻印变动 === 3 && kojo.屈服刻印Lv3 === 0) {
     // :11853
@@ -23317,7 +23318,7 @@ async function kojo_message_markcng_11(rand) {
     ); // :11857
     // CFLAG:299  = 1（变量语义：CFLAG 族，299） // :11858
     kojo.屈服刻印Lv3 = 1; // :11858
-  } // :11859
+  } // :11858-11859
 
   if (game.system.反抗刻印变动 === 3 && kojo.反抗刻印Lv3 === 0) {
     // :11864
@@ -23333,16 +23334,16 @@ async function kojo_message_markcng_11(rand) {
         `${target_name}愣愣地看着床，一副被重要的人背叛了的表情……`,
       ); // :11869
     } else {
-      // :11870
+      // :11869-11870
       await era.printAndWait(`「绝，绝对不会原谅你的……」`); // :11871
       await era.printAndWait(`「你，你给我记住……呜呜呜」`); // :11872
       await era.printAndWait(
         `${target_name}紧紧咬着嘴唇，双眼瞪视着${player_name}……`,
       ); // :11873
-    } // :11874
+    } // :11873-11874
     // CFLAG:300  = 1（变量语义：CFLAG 族，300） // :11875
     kojo.反抗刻印Lv3 = 1; // :11875
-  } // :11876
+  } // :11875-11876
 }
 
 /** @SELF_KOJO_K11（:11881-12261）：调教后、晨间与妊娠事件口上。 */
@@ -23383,7 +23384,7 @@ async function self_kojo_k11(rand) {
         `${target_name}妄想着自己正在兽交的样子，边自慰着……`,
       ); // :11897
     } else {
-      // :11899
+      // :11898-11899
 
       if (
         era.get(`talent:${target}:76`) &&
@@ -23447,9 +23448,9 @@ async function self_kojo_k11(rand) {
         ); // :11925
         // CFLAG:261  = 1（变量语义：CFLAG 族，261） // :11926
         kojo.调教后自慰 = 1; // :11926
-      } // :11927
-    } // :11928
-  } // :11929
+      } // :11926-11927
+    } // :11926-11928
+  } // :11929-11931
 
   if (game.train.初吻与自我口上 === 2) {
     // :11934
@@ -23529,8 +23530,8 @@ async function self_kojo_k11(rand) {
       ); // :11968
       // CFLAG:262  = 1（变量语义：CFLAG 族，262） // :11969
       kojo.百合PLAY = 1; // :11969
-    } // :11970
-  } // :11971
+    } // :11969-11970
+  } // :11969-11971
 
   if (game.train.初吻与自我口上 === 3) {
     // :11976
@@ -23602,8 +23603,8 @@ async function self_kojo_k11(rand) {
       ); // :12004
       // CFLAG:263  = 1（变量语义：CFLAG 族，263） // :12005
       kojo.朝口交 = 1; // :12005
-    } // :12006
-  } // :12007
+    } // :12005-12006
+  } // :12005-12007
 
   if (game.train.初吻与自我口上 === 4) {
     // :12012
@@ -23624,11 +23625,11 @@ async function self_kojo_k11(rand) {
           `「用力地侵犯这个淫荡的小穴吧……妹妹，村子什么的……已经统统不重要了！」`,
         ); // :12020
       } else {
-        // :12021
+        // :12020-12021
         await era.printAndWait(
           `「再，再用力一点……再深一点……把人家的淫穴……搞得乱七八糟吧！」`,
         ); // :12022
-      } // :12023
+      } // :12022-12023
       await era.printAndWait(
         `${target_name}被${player_name}紧紧抱在身下侵犯着，随着快感激烈地扭动着腰肢，口中不住地娇喘着`,
       ); // :12024
@@ -23669,8 +23670,8 @@ async function self_kojo_k11(rand) {
       ); // :12038
       // CFLAG:264  = 1（变量语义：CFLAG 族，264） // :12039
       kojo.调教后性交 = 1; // :12039
-    } // :12040
-  } // :12041
+    } // :12039-12040
+  } // :12039-12041
 
   if (game.train.初吻与自我口上 === 5) {
     // :12046
@@ -23687,7 +23688,7 @@ async function self_kojo_k11(rand) {
       // CFLAG:265  = 2（变量语义：CFLAG 族，265） // :12051
       kojo.夜袭 = 2; // :12051
     } else {
-      // :12052
+      // :12051-12052
       await era.printAndWait(
         `「以前都是和妹妹一起睡的……现在只剩下一个人……有点寂寞。魔王大人，可不可以……陪${target_name}一起睡？」`,
       ); // :12053
@@ -23703,15 +23704,15 @@ async function self_kojo_k11(rand) {
           `${target_name}拉着${master_name}的手伸向自己的双腿之间，爱抚着已经湿透了的蜜穴………`,
         ); // :12057
       } else {
-        // :12058
+        // :12057-12058
         await era.printAndWait(
           `${target_name}拉着${master_name}的手伸向自己的双腿之间，爱抚着已经被爱液浸润的肛门………`,
         ); // :12059
-      } // :12060
+      } // :12059-12060
       // CFLAG:265  = 1（变量语义：CFLAG 族，265） // :12061
       kojo.夜袭 = 1; // :12061
-    } // :12062
-  } // :12063
+    } // :12061-12062
+  } // :12061-12063
 
   if (game.train.初吻与自我口上 === 6) {
     // :12068
@@ -23726,10 +23727,10 @@ async function self_kojo_k11(rand) {
       // :12076
       await era.printAndWait(''); // :12077
     } else {
-      // :12079
+      // :12078-12079
       await era.printAndWait(''); // :12080
-    } // :12081
-  } // :12082
+    } // :12080-12081
+  } // :12080-12082
 
   if (game.train.初吻与自我口上 === 11) {
     // :12089
@@ -23790,15 +23791,15 @@ async function self_kojo_k11(rand) {
           `「怀，怀上狂王大人的孩子了……好像还要公开妊娠表演……这，这种事情！」`,
         ); // :12115
       } else {
-        // :12117
+        // :12116-12117
         await era.printAndWait(
           `「被侵犯得怀孕了……呜呜……可是，也没有办法了……」`,
         ); // :12118
-      } // :12119
+      } // :12118-12119
       // CFLAG:271  = 1（变量语义：CFLAG 族，271） // :12120
       kojo.妊娠发觉 = 1; // :12120
     } else {
-      // :12121
+      // :12120-12121
 
       if (era.get(`talent:${target}:9`) === 1) {
         // :12123
@@ -23854,15 +23855,15 @@ async function self_kojo_k11(rand) {
           `「怀，怀上狂王大人的孩子了……好像还要公开妊娠表演……这，这种事情！」`,
         ); // :12146
       } else {
-        // :12148
+        // :12147-12148
         await era.printAndWait(
           `「被侵犯得怀孕了……呜呜……可是，也没有办法了……」`,
         ); // :12149
-      } // :12150
+      } // :12149-12150
       // CFLAG:271  = 1（变量语义：CFLAG 族，271） // :12151
       kojo.妊娠发觉 = 1; // :12151
-    } // :12152
-  } // :12153
+    } // :12151-12152
+  } // :12151-12153
 
   if (game.train.初吻与自我口上 === 12) {
     // :12159
@@ -23885,13 +23886,13 @@ async function self_kojo_k11(rand) {
         ); // :12167
         await era.printAndWait(`${target_name}抱着你的孩子，幸福地笑了……`); // :12168
       } else {
-        // :12170
+        // :12169-12170
         await era.printAndWait(`「呼，呼……孩，孩子出生了……」`); // :12171
-      } // :12172
+      } // :12171-12172
       // CFLAG:272  = 1（变量语义：CFLAG 族，272） // :12173
       kojo.生产 = 1; // :12173
     } else {
-      // :12174
+      // :12173-12174
 
       if (era.get(`talent:${target}:9`) === 1) {
         // :12176
@@ -23909,13 +23910,13 @@ async function self_kojo_k11(rand) {
         await era.printAndWait(`「看，这是我们又一个孩子呢……嘻嘻」`); // :12181
         await era.printAndWait(`${target_name}抱着你的孩子，幸福地笑了……`); // :12182
       } else {
-        // :12184
+        // :12183-12184
         await era.printAndWait(`「呼，呼……孩，孩子出生了……」`); // :12185
-      } // :12186
+      } // :12185-12186
       // CFLAG:272  = 1（变量语义：CFLAG 族，272） // :12187
       kojo.生产 = 1; // :12187
-    } // :12188
-  } // :12189
+    } // :12187-12188
+  } // :12187-12189
 
   if (game.train.初吻与自我口上 === 13) {
     // :12194
@@ -23935,18 +23936,18 @@ async function self_kojo_k11(rand) {
         // :12202
         await era.printAndWait(`「看，魔王大人来探望你了，快点打个招呼吧？」`); // :12203
         await era.printAndWait(`${target_name}哄着孩子……`); // :12204
-      } // :12205
-    } // :12206
+      } // :12204-12205
+    } // :12206-12207
     // CFLAG:273  = 1（变量语义：CFLAG 族，273） // :12207
     kojo.育儿室 = 1; // :12207
-  } // :12208
+  } // :12207-12208
 
   if (game.train.初吻与自我口上 === 14) {
     // :12213
     await era.printAndWait(`「啊啊、那孩子走了………」`); // :12214
     // CFLAG:274  = 1（变量语义：CFLAG 族，274） // :12215
     kojo.亲离 = 1; // :12215
-  } // :12216
+  } // :12215-12216
 
   if (game.train.初吻与自我口上 === 999) {
     // :12221
@@ -23955,15 +23956,15 @@ async function self_kojo_k11(rand) {
       // :12223
       await era.printAndWait(''); // :12224
     } else {
-      // :12226
+      // :12225-12226
       await era.printAndWait(''); // :12227
-    } // :12228
-  } // :12229
+    } // :12227-12228
+  } // :12227-12229
 
   // TFLAG:13  = 0（变量语义：TFLAG 族，13） // :12234
   game.train.初吻与自我口上 = 0; // :12234
 
-  return 0; // :12236
+  return 0; // :12234-12236
 }
 
 async function dungeon_ryouzyoku_k11() {
@@ -23980,7 +23981,7 @@ async function dungeon_ryouzyoku_k11() {
       `${target_name}卑微地乞求着怪物的饶恕，然后被无情地凌辱了……`,
     ); // :12270
   } else {
-    // :12271
+    // :12270-12271
 
     await era.printAndWait(
       `「不，不要啊……求求你们，饶我一命吧……让我做什么都可以！」`,
@@ -23988,9 +23989,9 @@ async function dungeon_ryouzyoku_k11() {
     await era.printAndWait(
       `${target_name}卑微地乞求着怪物的饶恕，然后被无情地凌辱了……`,
     ); // :12274
-  } // :12275
+  } // :12274-12275
 
-  return 0; // :12277
+  return 0; // :12277-12279
 }
 
 // @DUNGEON_RYOUZYOKU_AFTER_K11 // :12280
@@ -24011,7 +24012,7 @@ async function dungeon_ryouzyoku_after_k11() {
       await era.printAndWait(
         `${target_name}的肛门被虐待，侵犯得几乎合不上，精液和污物从里面慢慢流出来……`,
       ); // :12293
-    } // :12294
+    } // :12293-12294
 
     if (era.get(`exp:${target}:22`) > 20) {
       // :12296
@@ -24020,7 +24021,7 @@ async function dungeon_ryouzyoku_after_k11() {
         `「呜……呜啊……嘴巴好酸，下巴好像要脱臼了一样，好难受……呕呕呕呕」`,
       ); // :12298
       await era.printAndWait(`${target_name}一边哭着将精液呕吐了出来……`); // :12299
-    } // :12300
+    } // :12299-12300
 
     if (era.get(`exp:${target}:20`) > 20) {
       // :12302
@@ -24031,9 +24032,9 @@ async function dungeon_ryouzyoku_after_k11() {
       await era.printAndWait(
         `${target_name}的脸被怪物按到了地板上，强迫她舔着地上的精液………`,
       ); // :12305
-    } // :12306
+    } // :12305-12306
   } else {
-    // :12307
+    // :12307-12308
 
     await era.printAndWait(
       `「呜……呜呜……身体，被弄得乱七八糟了……哈，哈啊……啊啊」`,
@@ -24045,7 +24046,7 @@ async function dungeon_ryouzyoku_after_k11() {
       await era.print(''); // :12313
       await era.printAndWait(`「呜……呜啊啊……好痛……蜜穴好痛………呜呜呜」`); // :12314
       await era.printAndWait(`${target_name}被侵犯的蜜穴里流出了精液和尿……`); // :12315
-    } // :12316
+    } // :12315-12316
 
     if (era.get(`exp:${target}:1`) > 20) {
       // :12318
@@ -24054,7 +24055,7 @@ async function dungeon_ryouzyoku_after_k11() {
       await era.printAndWait(
         `${target_name}的肛门被虐待，侵犯得几乎合不上，精液和污物从里面慢慢流出来……`,
       ); // :12321
-    } // :12322
+    } // :12321-12322
 
     if (era.get(`exp:${target}:22`) > 20) {
       // :12324
@@ -24063,7 +24064,7 @@ async function dungeon_ryouzyoku_after_k11() {
         `「呜……呜啊……嘴巴好酸，下巴好像要脱臼了一样，好难受……呕呕呕呕」`,
       ); // :12326
       await era.printAndWait(`${target_name}一边哭着将精液呕吐了出来……`); // :12327
-    } // :12328
+    } // :12327-12328
 
     if (era.get(`exp:${target}:20`) > 20) {
       // :12330
@@ -24074,10 +24075,10 @@ async function dungeon_ryouzyoku_after_k11() {
       await era.printAndWait(
         `${target_name}的脸被怪物按到了地板上，强迫她舔着地上的精液………`,
       ); // :12333
-    } // :12334
-  } // :12335
+    } // :12333-12334
+  } // :12333-12335
 
-  return 0; // :12337
+  return 0; // :12337-12338
 }
 
 // @BENKI_KOUJO_K11 // :12339
@@ -24098,9 +24099,9 @@ async function benki_koujo_k11(rand) {
       // :12353
       await era.printAndWait(''); // :12354
     } else {
-      // :12356
+      // :12355-12356
       await era.printAndWait(''); // :12357
-    } // :12358
+    } // :12357-12358
   } else if (game.train.肉便器行动 === 1) {
     // :12359
 
@@ -24114,9 +24115,9 @@ async function benki_koujo_k11(rand) {
       // :12368
       await era.printAndWait(''); // :12369
     } else {
-      // :12371
+      // :12370-12371
       await era.printAndWait(''); // :12372
-    } // :12373
+    } // :12372-12373
   } else if (game.train.肉便器行动 === 2) {
     // :12374
 
@@ -24130,9 +24131,9 @@ async function benki_koujo_k11(rand) {
       // :12383
       await era.printAndWait(''); // :12384
     } else {
-      // :12386
+      // :12385-12386
       await era.printAndWait(''); // :12387
-    } // :12388
+    } // :12387-12388
   } else if (game.train.肉便器行动 === 3) {
     // :12389
 
@@ -24146,9 +24147,9 @@ async function benki_koujo_k11(rand) {
       // :12398
       await era.printAndWait(''); // :12399
     } else {
-      // :12401
+      // :12400-12401
       await era.printAndWait(''); // :12402
-    } // :12403
+    } // :12402-12403
   } else if (game.train.肉便器行动 === 4) {
     // :12404
 
@@ -24162,9 +24163,9 @@ async function benki_koujo_k11(rand) {
       // :12413
       await era.printAndWait(''); // :12414
     } else {
-      // :12416
+      // :12415-12416
       await era.printAndWait(''); // :12417
-    } // :12418
+    } // :12417-12418
   } else if (game.train.肉便器行动 === 5) {
     // :12419
 
@@ -24178,12 +24179,12 @@ async function benki_koujo_k11(rand) {
       // :12428
       await era.printAndWait(''); // :12429
     } else {
-      // :12431
+      // :12430-12431
       await era.printAndWait(''); // :12432
-    } // :12433
-  } // :12434
+    } // :12432-12433
+  } // :12432-12434
 
-  return 0; // :12436
+  return 0; // :12436-12438
 }
 
 // @DUNGEON_VICTORY_K11 // :12439
@@ -24198,9 +24199,9 @@ async function dungeon_victory_k11(rand) {
     // :12446
     await era.printAndWait(`「原来我也这么能干呢。」`); // :12447
   } else {
-    // :12448
+    // :12447-12448
     await era.printAndWait(`「就这样趁胜进击吧！」`); // :12449
-  } // :12450
+  } // :12449-12450
 
   if (
     (era.get(`base:${a}:0`) * 100) / era.get(`maxbase:${a}:0`) < 50 ||
@@ -24210,12 +24211,12 @@ async function dungeon_victory_k11(rand) {
 
     await era.printAndWait(`「伤口有点痛呢……稍微休息一下好了。」`); // :12454
   } else {
-    // :12455
+    // :12454-12455
 
     await era.printAndWait(`「嘛，这点小伤痛，没什么大不了的！」`); // :12457
-  } // :12458
+  } // :12457-12458
 
-  return 0; // :12460
+  return 0; // :12460-12462
 }
 
 // @DUNGEON_ATTACK_K11 // :12463
@@ -24233,11 +24234,11 @@ async function dungeon_attack_k11(rand) {
       // :12471
       await era.printAndWait(`「那里——！！」`); // :12472
     } else {
-      // :12473
+      // :12472-12473
       await era.printAndWait(`「嘿！」`); // :12474
-    } // :12475
+    } // :12474-12475
   } else {
-    // :12476
+    // :12476-12477
 
     if (random(3) === 0) {
       // :12478
@@ -24246,11 +24247,11 @@ async function dungeon_attack_k11(rand) {
       // :12480
       await era.printAndWait(`「别碍事！」`); // :12481
     } else {
-      // :12482
+      // :12481-12482
       await era.printAndWait(`「得手了！」`); // :12483
-    } // :12484
-  } // :12485
-  return 0; // :12486
+    } // :12483-12484
+  } // :12483-12485
+  return 0; // :12486-12488
 }
 
 // @COLOSSEUM_KOJO_11 // :12492
@@ -24265,11 +24266,11 @@ async function colosseum_kojo_11(rand) {
       // :12498
       await era.printAndWait(''); // :12499
     } else {
-      // :12500
+      // :12499-12500
       await era.printAndWait(''); // :12501
-    } // :12502
-    return 0; // :12503
-  } // :12504
+    } // :12501-12502
+    return 0; // :12501-12503
+  } // :12504-12505
 
   if (era_flag.selectcom === 56) {
     // :12508
@@ -24281,22 +24282,22 @@ async function colosseum_kojo_11(rand) {
         // :12512
         await era.printAndWait(''); // :12513
       } else {
-        // :12514
+        // :12513-12514
         await era.printAndWait(''); // :12515
-      } // :12516
+      } // :12515-12516
     } else {
-      // :12517
+      // :12517-12518
 
       if (era_flag.assi > 0 && era_flag.assiplay) {
         // :12519
         await era.printAndWait(''); // :12520
       } else {
-        // :12521
+        // :12520-12521
         await era.printAndWait(''); // :12522
-      } // :12523
-    } // :12524
-    return 0; // :12525
-  } // :12526
+      } // :12522-12523
+    } // :12522-12524
+    return 0; // :12522-12525
+  } // :12526-12528
 
   if (era_flag.selectcom === 31) {
     // :12531
@@ -24305,11 +24306,11 @@ async function colosseum_kojo_11(rand) {
       // :12533
       await era.printAndWait(''); // :12534
     } else {
-      // :12535
+      // :12534-12535
       await era.printAndWait(''); // :12536
-    } // :12537
-    return 0; // :12538
-  } // :12539
+    } // :12536-12537
+    return 0; // :12536-12538
+  } // :12539-12540
 
   if (era_flag.selectcom === 5) {
     // :12543
@@ -24318,11 +24319,11 @@ async function colosseum_kojo_11(rand) {
       // :12545
       await era.printAndWait(''); // :12546
     } else {
-      // :12547
+      // :12546-12547
       await era.printAndWait(''); // :12548
-    } // :12549
-    return 0; // :12550
-  } // :12551
+    } // :12548-12549
+    return 0; // :12548-12550
+  } // :12551-12552
 
   if (era_flag.selectcom === 21) {
     // :12555
@@ -24330,15 +24331,15 @@ async function colosseum_kojo_11(rand) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       // :12557
       await era.printAndWait(''); // :12558
-    } else if (era.get('tflag:400') === 206) {
+    } else if (game.train.死斗场敌种 === 206) {
       // :12560
       await era.printAndWait(''); // :12561
     } else {
-      // :12562
+      // :12561-12562
       await era.printAndWait(''); // :12563
-    } // :12564
-    return 0; // :12565
-  } // :12566
+    } // :12563-12564
+    return 0; // :12563-12565
+  } // :12566-12568
 
   if (era_flag.selectcom === 27) {
     // :12571
@@ -24346,23 +24347,23 @@ async function colosseum_kojo_11(rand) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       // :12573
       await era.printAndWait(''); // :12574
-    } else if (era.get('tflag:400') === 206) {
+    } else if (game.train.死斗场敌种 === 206) {
       // :12576
       await era.printAndWait(''); // :12577
     } else {
-      // :12578
+      // :12577-12578
       await era.printAndWait(''); // :12579
-    } // :12580
-    return 0; // :12581
-  } // :12582
+    } // :12579-12580
+    return 0; // :12579-12581
+  } // :12582-12584
 
   if (era_flag.selectcom === 51) {
     // :12587
     await era.printAndWait(''); // :12588
-    return 0; // :12589
-  } // :12590
+    return 0; // :12588-12589
+  } // :12588-12590
 
-  return 0; // :12593
+  return 0; // :12593-12596
 }
 
 // @NTR_KOUJO_K11 // :12597
@@ -24372,6 +24373,8 @@ async function ntr_koujo_k11(_rand, p = 0) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const king_has_penis =
+    game.system.狂王性别 === 0 || game.system.狂王性别 === 2;
 
   if (chara(target).kojo.NTR再捕获 === 0) {
     chara(target).kojo.NTR再捕获 = 1; // :12602 CFLAG:650
@@ -24383,11 +24386,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
       await era.print(
         `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用`,
       ); // :12609
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `双腿之间的巨根`
-          : `粗大的假阳具`,
-      ); // :12610-12614
+      if (king_has_penis) {
+        await era.print(`双腿之间的巨根`); // :12611
+      } else {
+        await era.print(`粗大的假阳具`); // :12613
+      }
       await era.printAndWait(`径直插入了${target_name}的处女蜜穴之中。`); // :12615
       await era.printAndWait(
         `「啊……啊啊！！一，一点都不痛！完全不痛……呜呜……啊啊啊啊」`,
@@ -24406,11 +24409,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
       await era.print(
         `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用`,
       ); // :12622
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `双腿之间的巨根`
-          : `粗大的假阳具`,
-      ); // :12623-12627
+      if (king_has_penis) {
+        await era.print(`双腿之间的巨根`); // :12624
+      } else {
+        await era.print(`粗大的假阳具`); // :12626
+      }
       await era.printAndWait(`径直插入了${target_name}的蜜穴之中。`); // :12628
       await era.printAndWait(
         `「讨，讨厌啊啊！不，不要动得那么……激烈啊啊啊啊！！」`,
@@ -24429,11 +24432,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
         `「”只有下贱的女人才会有肛门快感”这种事情什么……怎么可能…呜啊……啊啊啊！」`,
       ); // :12637
       await era.print(`${target_name}被`); // :12638
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `狂王的巨根`
-          : `粗大的假阳具`,
-      ); // :12639-12643
+      if (king_has_penis) {
+        await era.print(`狂王的巨根`); // :12640
+      } else {
+        await era.print(`粗大的假阳具`); // :12642
+      }
       await era.printAndWait(
         `撑开肛门，径直插了进去。在狂王的持续侵犯下，${target_name}不住地呻吟了起来。`,
       ); // :12644
@@ -24460,11 +24463,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
         `「呜……呜啊啊……不，不可以这样……侵犯……肛门啊……屁股，会合不上的啊啊啊！」`,
       ); // :12654
       await era.print(`${target_name}的肛门被`); // :12655
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `狂王的巨根`
-          : `粗大的假阳具`,
-      ); // :12656-12660
+      if (king_has_penis) {
+        await era.print(`狂王的巨根`); // :12657
+      } else {
+        await era.print(`粗大的假阳具`); // :12659
+      }
       await era.printAndWait(`撑开了肛门，插了进去。`); // :12661
       await era.printAndWait(
         `${target_name}被强行扩张的肛门痛得像要裂开了一样，但狂王只是更加乐在其中，继续侵犯着${target_name}……`,
@@ -24500,11 +24503,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
       await era.printAndWait(
         `「哈……哈啊……插到……最里面了……子宫口……啊啊……嗯啊啊${heart(1)}」`,
       ); // :12681
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `狂王的巨根`
-          : `粗大的假阳具`,
-      ); // :12682-12686
+      if (king_has_penis) {
+        await era.print(`狂王的巨根`); // :12683
+      } else {
+        await era.print(`粗大的假阳具`); // :12685
+      }
       await era.printAndWait(
         `持续地侵犯着${target_name}的蜜穴，${target_name}感受着交媾的快感，发出了甘甜的娇喘。`,
       ); // :12687
@@ -24531,11 +24534,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
       }
     } else {
       await era.printAndWait(`「呜……啊啊！太，太激烈……了，要坏掉了啊啊♪」`); // :12698
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `狂王的巨根`
-          : `粗大的假阳具`,
-      ); // :12699-12703
+      if (king_has_penis) {
+        await era.print(`狂王的巨根`); // :12700
+      } else {
+        await era.print(`粗大的假阳具`); // :12702
+      }
       await era.printAndWait(
         `持续地侵犯着${target_name}的蜜穴，${target_name}不住地呻吟着。`,
       ); // :12704
@@ -24568,11 +24571,11 @@ async function ntr_koujo_k11(_rand, p = 0) {
     } else {
       await era.printAndWait(`「呜……呜啊啊……这样……太激烈了啊♪ 嗯啊……啊啊♪」`); // :12721
       await era.print(`${target_name}的蜜穴和肛门`); // :12722
-      await era.print(
-        era0('flag:500') === 0 || era0('flag:500') === 2
-          ? `被不同的阴茎持续侵犯着，精液一次次注入又漏出…`
-          : `被假阳具持续地侵犯着，爱液不住地渗出……`,
-      ); // :12723-12727
+      if (king_has_penis) {
+        await era.print(`被不同的阴茎持续侵犯着，精液一次次注入又漏出…`); // :12724
+      } else {
+        await era.print(`被假阳具持续地侵犯着，爱液不住地渗出……`); // :12726
+      }
     }
     chara(target).kojo.NTR_655 = 1; // :12729 CFLAG:655
   } else if (p === 6) {
@@ -24657,7 +24660,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
     }
   }
 
-  return 0; // :12776
+  return 0; // :12776-12778
 }
 
 /** 处刑/展示类原作仅保留空台词槽；按各自事件编号输出一行空文本。 */
@@ -24718,18 +24721,18 @@ async function gohoubi_request_koujo_k11() {
     await era.print(`${name}提出了和`); // :12915
     await era.print(['', '狗', '猪', '马'][request]); // :12916-12922
     await era.printAndWait(`进行兽交的请求`); // :12923
-  } else {
-    const descriptions = {
-      4: '要求了归还的吻',
-      5: '想要和魔王交媾',
-      6: '想要品尝精液',
-      7: '想要进行一次乱交',
-      8: '想要品尝尿液',
-      9: '想要和童贞的魔族少年交媾',
-    };
-    if (descriptions[request]) {
-      await era.printAndWait(`${name}${descriptions[request]}`); // :12924-12941
-    }
+  } else if (request === 4) {
+    await era.printAndWait(`${name}要求了归还的吻`); // :12926
+  } else if (request === 5) {
+    await era.printAndWait(`${name}想要和魔王交媾`); // :12929
+  } else if (request === 6) {
+    await era.printAndWait(`${name}想要品尝精液`); // :12932
+  } else if (request === 7) {
+    await era.printAndWait(`${name}想要进行一次乱交`); // :12935
+  } else if (request === 8) {
+    await era.printAndWait(`${name}想要品尝尿液`); // :12938
+  } else if (request === 9) {
+    await era.printAndWait(`${name}想要和童贞的魔族少年交媾`); // :12941
   }
 }
 
@@ -24926,7 +24929,7 @@ function aegi_k11(args, arg = 0, rand) {
       result += ['！！', '！'][random(2)];
     }
   }
-  return result; // :13468 RETURNF LOCALS
+  return result; // :13466-13468 RETURNF LOCALS
 }
 
 kojo_message_com_family.register(11, kojo_message_com_11);
