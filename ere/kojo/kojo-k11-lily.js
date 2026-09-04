@@ -10810,6 +10810,154 @@ async function kojo_message_com_11(rand) {
     }
   }
 
+  // :5853-5921 IF SELECTCOM == 40（打屁股 CFLAG:341）
+  if (era_flag.selectcom === 40) {
+    if (kojo.打屁股 === 0) {
+      // :5855
+
+      if (assi_mao) {
+        // :5857
+        await era.printAndWait(
+          `『姐姐以前还打过我的屁股，现在轮到妹妹十倍奉还了哈哈哈哈！』`,
+        ); // :5858
+        await era.printAndWait(
+          `「住，住手啊——！好痛，好痛！饶了姐姐吧求你了！」`,
+        ); // :5859
+        await era.printAndWait(
+          `${target_name}被妹妹狠狠打着屁股，屈辱得泪流满面……`,
+        ); // :5860
+      } else {
+        // :5861
+        await era.printAndWait(`「住，住手啊！好痛……屁股好痛啊啊！」`); // :5862
+        await era.printAndWait(
+          `${target_name}被${player_name}被妹妹狠狠打着屁股，痛得眼泪都出来了……`,
+        ); // :5863
+      } // :5864
+      // CFLAG:TARGET:341  = 1（变量语义：CFLAG 族，TARGET:341） // :5865
+      kojo.打屁股 = 1; // :5865
+      return 0; // :5866
+    } else {
+      // :5868
+
+      if (assi_mao) {
+        // :5870
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.打屁股 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :5872
+          await era.printAndWait(
+            `「嗯啊……啊啊！狠狠得……打姐姐的屁股吧……打到通红为止${heart(1)}」`,
+          ); // :5873
+          await era.printAndWait(
+            `『这么喜欢被妹妹打屁股，哼，这根本已经不是原来的姐姐了，只是一只母猪而已呀！看招！啪！啪！』`,
+          ); // :5874
+          await era.printAndWait(
+            `「啊啊……哎啊……就是这样……姐姐……就是一只母猪性奴啊啊${heart(1)}」`,
+          ); // :5875
+          // CFLAG:TARGET:341  = 5（变量语义：CFLAG 族，TARGET:341） // :5876
+          kojo.打屁股 = 5; // :5876
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.打屁股 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :5878
+          await era.printAndWait(
+            `「呜……呜啊……不可以……再打了……啊啊${heart(1)}」`,
+          ); // :5879
+          await era.printAndWait(
+            `『哼，虽然嘴上这么说，但是屁股却一晃一晃的，分明是没被打够嘛？』`,
+          ); // :5880
+          await era.printAndWait(`「不，不是的，是因为被打了才会……嗯啊啊……」`); // :5881
+          // CFLAG:TARGET:341  = 4（变量语义：CFLAG 族，TARGET:341） // :5882
+          kojo.打屁股 = 4; // :5882
+        } else if (
+          chara(target).system.苦痛刻印 === 3 &&
+          chara(target).system.屈服刻印 === 3 &&
+          (kojo.打屁股 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :5884
+          await era.printAndWait(
+            `『嘿嘿，姐姐已经这么老实了？屁股被打得有感觉了吗？』`,
+          ); // :5885
+          await era.printAndWait(`「饶，饶了姐姐吧……求你了！」`); // :5886
+          await era.printAndWait(
+            `${target_name}在痛苦和恐惧的支配下，对${player_name}完全屈服了。`,
+          ); // :5887
+          // CFLAG:TARGET:341  = 3（变量语义：CFLAG 族，TARGET:341） // :5888
+          kojo.打屁股 = 3; // :5888
+        } else if (kojo.打屁股 <= 1 && game.kojo.口上开关 === 2) {
+          // :5890
+          await era.printAndWait(`『不听话的话还要打哦♪』`); // :5891
+          await era.printAndWait(`「快停下啊……我是你姐姐啊……啊啊啊……好痛！」`); // :5892
+          await era.printAndWait(
+            `${target_name}被妹妹狠狠打着屁股，流下了屈辱的泪水……`,
+          ); // :5893
+          // CFLAG:TARGET:341  = 2（变量语义：CFLAG 族，TARGET:341） // :5894
+          kojo.打屁股 = 2; // :5894
+        } // :5895
+      } else {
+        // :5896
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.打屁股 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :5898
+          await era.printAndWait(
+            `「嗯啊……啊啊……被这样打着……更加有感觉了啊啊${heart(1)} 狠狠地惩罚${target_name}下贱的臀部吧${heart(1)}」`,
+          ); // :5899
+          await era.printAndWait(
+            `${target_name}被${player_name}狠狠拍打着屁股，却发出了享受的娇喘……`,
+          ); // :5900
+          // CFLAG:TARGET:341  = 5（变量语义：CFLAG 族，TARGET:341） // :5901
+          kojo.打屁股 = 5; // :5901
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.打屁股 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :5903
+          await era.printAndWait(
+            `「呜啊……请，请继续打把！被${player_name}惩罚……是奴隶的本分……${heart(1)}」`,
+          ); // :5904
+          await era.printAndWait(
+            `${target_name}红着脸边呻吟着边被${player_name}打着屁股……`,
+          ); // :5905
+          // CFLAG:TARGET:341  = 4（变量语义：CFLAG 族，TARGET:341） // :5906
+          kojo.打屁股 = 4; // :5906
+        } else if (
+          chara(target).system.苦痛刻印 === 3 &&
+          chara(target).system.屈服刻印 === 3 &&
+          (kojo.打屁股 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :5908
+          await era.printAndWait(
+            `「呜啊啊……好痛，好痛啊……饶了我吧……饶了我吧……我会好好听话的。」`,
+          ); // :5909
+          await era.printAndWait(
+            `${target_name}在痛苦和恐惧的支配下，对${player_name}完全屈服了。`,
+          ); // :5910
+          // CFLAG:TARGET:341  = 3（变量语义：CFLAG 族，TARGET:341） // :5911
+          kojo.打屁股 = 3; // :5911
+        } else if (kojo.打屁股 <= 1 && game.kojo.口上开关 === 2) {
+          // :5913
+          await era.printAndWait(`「啊啊啊！好痛……好痛……住手啊啊！！」`); // :5914
+          await era.printAndWait(
+            `${target_name}的臀部被${player_name}拍打得通红，发出了痛苦不堪的悲鸣……`,
+          ); // :5915
+          // CFLAG:TARGET:341  = 2（变量语义：CFLAG 族，TARGET:341） // :5916
+          kojo.打屁股 = 2; // :5916
+        } // :5917
+      } // :5918
+      return 0; // :5919
+    } // :5920
+  } // :5921
+
   return 0;
 }
 

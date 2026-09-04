@@ -10291,6 +10291,43 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM37 初めて：助手玛奥与非助手玛奥奉仕精神分档',
   },
+  ...[
+    [4418, '初次', '1', '2', '5865'],
+    [4419, '助手淫乱＋抖M气质', '5', '4', '5876'],
+    [4420, '助手爱慕＋抖M气质', '4', '3', '5882'],
+    [4421, '助手双刻印', '3', '2', '5888'],
+    [4422, '助手其余', '2', '1', '5894'],
+    [4423, '非助手淫乱＋抖M气质', '5', '4', '5901'],
+    [4424, '非助手爱慕＋抖M气质', '4', '3', '5906'],
+    [4425, '非助手双刻印', '3', '2', '5911'],
+    [4426, '非助手其余', '2', '1', '5916'],
+  ].map(([id, tier, value, replacement, ref]) => ({
+    desc: `M${id} COM40 ${tier} CFLAG:341 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.打屁股 = ${value}; // :${ref}`,
+    replace: `kojo.打屁股 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      id === 4418
+        ? 'COM40 初めて：助手玛奥与非助手玛奥分档'
+        : id <= 4422
+          ? 'COM40 二回目：助手玛奥四档推进'
+          : 'COM40 二回目：非助手玛奥四档推进',
+  })),
+  {
+    desc: 'M4427 COM40 初次助手玛奥判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (kojo.打屁股 === 0) {
+      // :5855
+
+      if (assi_mao) {`,
+    replace: `    if (kojo.打屁股 === 0) {
+      // :5855
+
+      if (!assi_mao) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM40 初めて：助手玛奥与非助手玛奥分档',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

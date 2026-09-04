@@ -6342,3 +6342,82 @@ test('COM37 二回目：非助手玛奥四档推进', async () => {
     );
   }
 });
+
+// —— SELECTCOM 40（スパンキング／打屁股 CFLAG:341）——
+
+test('COM40 初めて：助手玛奥与非助手玛奥分档', async () => {
+  const cases = [
+    {
+      assi: true,
+      expected: '『姐姐以前还打过我的屁股，现在轮到妹妹十倍奉还了哈哈哈哈！』',
+    },
+    { expected: '「住，住手啊！好痛……屁股好痛啊啊！」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+    }, 40);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+    assert.equal(fixture.store.get(`cflag:${LILY}:341`), 1);
+  }
+});
+
+test('COM40 二回目：助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 5 },
+    { talent: 85, abl: 3, expected: 4 },
+    { marks: true, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set('flag:7', 2);
+      f.store.set(`cflag:${LILY}:341`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:21`, item.abl);
+      if (item.marks) {
+        f.store.set(`mark:${LILY}:0`, 3);
+        f.store.set(`mark:${LILY}:2`, 3);
+      }
+    }, 40);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:341`), item.expected);
+  }
+});
+
+test('COM40 二回目：非助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 5 },
+    { talent: 85, abl: 3, expected: 4 },
+    { marks: true, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 2);
+      f.store.set(`cflag:${LILY}:341`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:21`, item.abl);
+      if (item.marks) {
+        f.store.set(`mark:${LILY}:0`, 3);
+        f.store.set(`mark:${LILY}:2`, 3);
+      }
+    }, 40);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:341`), item.expected);
+  }
+});

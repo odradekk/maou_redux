@@ -19205,6 +19205,97 @@ export const FILES = [
         ],
         ['5843', 'CFLAG:338 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      ...[
+        ['5853', 'IF SELECTCOM == 40'],
+        [
+          '5858',
+          'PRINTFORMW 『姐姐以前还打过我的屁股，现在轮到妹妹十倍奉还了哈哈哈哈！』',
+        ],
+        ['5859', 'PRINTFORMW 「住，住手啊——！好痛，好痛！饶了姐姐吧求你了！」'],
+        [
+          '5860',
+          'PRINTFORMW %SAVESTR:TARGET%被妹妹狠狠打着屁股，屈辱得泪流满面……',
+        ],
+        ['5862', 'PRINTFORMW 「住，住手啊！好痛……屁股好痛啊啊！」'],
+        [
+          '5863',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%被妹妹狠狠打着屁股，痛得眼泪都出来了……',
+        ],
+        ['5865', 'CFLAG:TARGET:341 = 1'],
+        [
+          '5873',
+          'PRINTFORMW 「嗯啊……啊啊！狠狠得……打姐姐的屁股吧……打到通红为止%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5874',
+          'PRINTFORMW 『这么喜欢被妹妹打屁股，哼，这根本已经不是原来的姐姐了，只是一只母猪而已呀！看招！啪！啪！』',
+        ],
+        [
+          '5875',
+          'PRINTFORMW 「啊啊……哎啊……就是这样……姐姐……就是一只母猪性奴啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['5876', 'CFLAG:TARGET:341 = 5'],
+        [
+          '5879',
+          'PRINTFORMW 「呜……呜啊……不可以……再打了……啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5880',
+          'PRINTFORMW 『哼，虽然嘴上这么说，但是屁股却一晃一晃的，分明是没被打够嘛？』',
+        ],
+        ['5881', 'PRINTFORMW 「不，不是的，是因为被打了才会……嗯啊啊……」'],
+        ['5882', 'CFLAG:TARGET:341 = 4'],
+        [
+          '5885',
+          'PRINTFORMW 『嘿嘿，姐姐已经这么老实了？屁股被打得有感觉了吗？』',
+        ],
+        ['5886', 'PRINTFORMW 「饶，饶了姐姐吧……求你了！」'],
+        [
+          '5887',
+          'PRINTFORMW %SAVESTR:TARGET%在痛苦和恐惧的支配下，对%SAVESTR:PLAYER%完全屈服了。',
+        ],
+        ['5888', 'CFLAG:TARGET:341 = 3'],
+        ['5891', 'PRINTFORMW 『不听话的话还要打哦♪』'],
+        ['5892', 'PRINTFORMW 「快停下啊……我是你姐姐啊……啊啊啊……好痛！」'],
+        [
+          '5893',
+          'PRINTFORMW %SAVESTR:TARGET%被妹妹狠狠打着屁股，流下了屈辱的泪水……',
+        ],
+        ['5894', 'CFLAG:TARGET:341 = 2'],
+        [
+          '5899',
+          'PRINTFORMW 「嗯啊……啊啊……被这样打着……更加有感觉了啊啊%UNICODE(0x2661) *1% 狠狠地惩罚%SAVESTR:TARGET%下贱的臀部吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5900',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%狠狠拍打着屁股，却发出了享受的娇喘……',
+        ],
+        ['5901', 'CFLAG:TARGET:341 = 5'],
+        [
+          '5904',
+          'PRINTFORMW 「呜啊……请，请继续打把！被%SAVESTR:PLAYER%惩罚……是奴隶的本分……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5905',
+          'PRINTFORMW %SAVESTR:TARGET%红着脸边呻吟着边被%SAVESTR:PLAYER%打着屁股……',
+        ],
+        ['5906', 'CFLAG:TARGET:341 = 4'],
+        [
+          '5909',
+          'PRINTFORMW 「呜啊啊……好痛，好痛啊……饶了我吧……饶了我吧……我会好好听话的。」',
+        ],
+        [
+          '5910',
+          'PRINTFORMW %SAVESTR:TARGET%在痛苦和恐惧的支配下，对%SAVESTR:PLAYER%完全屈服了。',
+        ],
+        ['5911', 'CFLAG:TARGET:341 = 3'],
+        ['5914', 'PRINTFORMW 「啊啊啊！好痛……好痛……住手啊啊！！」'],
+        [
+          '5915',
+          'PRINTFORMW %SAVESTR:TARGET%的臀部被%SAVESTR:PLAYER%拍打得通红，发出了痛苦不堪的悲鸣……',
+        ],
+        ['5916', 'CFLAG:TARGET:341 = 2'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];
