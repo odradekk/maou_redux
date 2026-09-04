@@ -103,6 +103,7 @@ require('#/kojo/kojo-k13-protector');
 require('#/kojo/kojo-k14-nobleman');
 require('#/kojo/kojo-k15-clever');
 require('#/kojo/kojo-k12-intellectual');
+require('#/kojo/kojo-k19-fia');
 require('#/kojo/kojo-k902-princess');
 
 /**
