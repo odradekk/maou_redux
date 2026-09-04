@@ -620,4 +620,28 @@ export default [
     tests: ['conflict-marker-check'],
     must_mention: 'setext 标题下划线不得报为冲突标记，实际退出',
   },
+  {
+    desc: 'M3700 --ids 过滤被拆（点名两条却跑全表——内环提速档必须真的只跑点名的）',
+    file: 'tools/mutation-check.mjs',
+    find: '  if (args.ids) {',
+    replace: '  if (false && args.ids) {',
+    tests: ['mutation-check'],
+    must_mention: '--ids 必须只跑点名的两条：三条都跑会是「拦截 3」',
+  },
+  {
+    desc: 'M3701 --ids 缺号不再报错（编号写错时静默跑 0 条——「选少了还不说」是本工具唯一不许有的行为）',
+    file: 'tools/mutation-check.mjs',
+    find: '    if (missing.length > 0) {',
+    replace: '    if (false && missing.length > 0) {',
+    tests: ['mutation-check'],
+    must_mention: '编号不存在必须退 1，实际',
+  },
+  {
+    desc: 'M3702 --ids 不算子集档（is_partial 漏它——无引擎处会撞 ENGINE_SKIP_BASELINE 假红）',
+    file: 'tools/mutation-check.mjs',
+    find: '    args.ids !== undefined ||',
+    replace: '    false ||',
+    tests: ['mutation-check'],
+    must_mention: '--ids 是子集档，不该核对跳过基线，实际退出',
+  },
 ];

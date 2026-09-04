@@ -40,6 +40,11 @@
 //   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档 / SOP 的 T4 阶段闸）
 //   --changed / --base <ref>  按 git 改动过滤条目的 file:（默认基线 origin/master）
 //   --files a.js,b.js         显式给靶文件列表（不走 git；测试夹具与诊断用）
+//   --ids M4246,M4250-M4260   只跑点名的 M 编号（agent 内环用：证明**刚加的**
+//                             那几条真能拦。`--files` 会把打同一个靶文件的条目
+//                             全跑一遍——K11 有 502 条 × 4.8s ≈ 40 分钟，每加一条
+//                             指令就重跑一遍整份，是 #242 实测的主要拖慢来源）。
+//                             点名的编号在表里不存在时当场报错，不静默跑 0 条。
 //   --root <dir>            变异所在的仓库根（默认本工具的上级；测试夹具用）
 //   --ledger-dir <dir>      条目表目录（默认 tools/mutations；测试夹具用）
 //   --baseline <n>          覆盖计数检查基线（测试夹具用）
@@ -204,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 1958; // #214 +26；#215 +24；#217 +17；#216 +40；#228 +20 −1；#223 +40；#230 +34；#219 +12；#218 +9；#221 +10；#218 补轮 +16；#226 +20；#224 +25（M1190-M1214）；#270 +5（M1310-M1314）；#222 +7（M1110-M1116）；#220 +15（M1060-M1074）；#274 +2（M1370-M1371）；#229 +20（M1450-M1469）；#225 +18（M1400-M1417）+1（M1418 incest 真身）；#227 +40（M1330-M1369）；#282 +2（M1520-M1521）；#233 +29（M1540-M1568）；#232 +42（M1650-M1691）；#235 +25（M1750-M1775）；#234 +31（M1700-M1730）；#236 +25（M1790-M1814）；#237 +27（M1780-M1806，#295 消重后：M1780-M1789 + M2119、M2121-M2136）；#288 +2（M2118、M2120，原 M1790-M1791，#295 消重后改号）；#290 +3（M2137-M2139，原 M1810-M1812，#295 消重后改号）；#238 +47（M2000-M2046）；#295 +2（M2080-M2081，唯一性门自身的自证——把门删掉，mutation-check/kojo-text-fidelity 的自测必须红；另消 37 处编号重号，只改后来者，条目总数不变）；#240 +40（M2200-M2239）；#241 +70（M2270-M2339）；#302 +2（M2770-M2771，有引擎侧基线与跑错环境的提示）；#239 +192（K8 银黑桃整份：M1815-M1999 与 M2500-M2507，后者为合并 master 时避 #236/#238 号段所改）+1（M2508 NTR 族实参约定）；#299 +3（M2740-M2742，冲突标记守卫）；#231 +276（M1600-M1649、M1790-M2015、M2420-M2460）；#298 +3（M2700-M2702，锚鉴别力门）；#244 +48（M3300-M3347，K13 庇护者）；#245 +30（M3400-M3429，K14 贵公子）；#246 +100（M3500-M3599，K15 伶俐）；#243 +31（M3200-M3234，K12 知的）
+const LEDGER_COUNT_BASELINE = 1961; // #214 +26；#215 +24；#217 +17；#216 +40；#228 +20 −1；#223 +40；#230 +34；#219 +12；#218 +9；#221 +10；#218 补轮 +16；#226 +20；#224 +25（M1190-M1214）；#270 +5（M1310-M1314）；#222 +7（M1110-M1116）；#220 +15（M1060-M1074）；#274 +2（M1370-M1371）；#229 +20（M1450-M1469）；#225 +18（M1400-M1417）+1（M1418 incest 真身）；#227 +40（M1330-M1369）；#282 +2（M1520-M1521）；#233 +29（M1540-M1568）；#232 +42（M1650-M1691）；#235 +25（M1750-M1775）；#234 +31（M1700-M1730）；#236 +25（M1790-M1814）；#237 +27（M1780-M1806，#295 消重后：M1780-M1789 + M2119、M2121-M2136）；#288 +2（M2118、M2120，原 M1790-M1791，#295 消重后改号）；#290 +3（M2137-M2139，原 M1810-M1812，#295 消重后改号）；#238 +47（M2000-M2046）；#295 +2（M2080-M2081，唯一性门自身的自证——把门删掉，mutation-check/kojo-text-fidelity 的自测必须红；另消 37 处编号重号，只改后来者，条目总数不变）；#240 +40（M2200-M2239）；#241 +70（M2270-M2339）；#302 +2（M2770-M2771，有引擎侧基线与跑错环境的提示）；#239 +192（K8 银黑桃整份：M1815-M1999 与 M2500-M2507，后者为合并 master 时避 #236/#238 号段所改）+1（M2508 NTR 族实参约定）；#299 +3（M2740-M2742，冲突标记守卫）；#231 +276（M1600-M1649、M1790-M2015、M2420-M2460）；#298 +3（M2700-M2702，锚鉴别力门）；#244 +48（M3300-M3347，K13 庇护者）；#245 +30（M3400-M3429，K14 贵公子）；#246 +100（M3500-M3599，K15 伶俐）；#243 +31（M3200-M3234，K12 知的）；#242 提速 +3（M3700-M3702，mutation-check 的 --ids 内环档）
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -288,6 +293,7 @@ function parse_args(argv) {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean);
+    else if (a === '--ids') out.ids = parse_ids(String(next()));
     else if (a === '--sample') out.sample = Number(next());
     else if (a === '--seed') out.seed = String(next());
     else if (a === '--jobs') out.jobs = Math.max(1, Number(next()));
@@ -319,6 +325,33 @@ function desc_rank(desc) {
 }
 
 // —— 三项检查 ——
+
+/** 命令行取值错误：顶层按「一行错误信息 + 退出码 1」收，不打栈。 */
+class ArgError extends Error {}
+
+/**
+ * `--ids` 的取值：逗号分隔的 M 编号与闭区间，`M` 前缀可省。
+ * `M4246,M4250-M4260` → Set{4246, 4250..4260}。
+ */
+function parse_ids(spec) {
+  const out = new Set();
+  for (const part of spec
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)) {
+    const m = /^M?(\d+)(?:-M?(\d+))?$/i.exec(part);
+    if (!m) {
+      throw new ArgError(
+        `✗ --ids 的 "${part}" 不是 M 编号或区间（如 M4246 / M4250-M4260）`,
+      );
+    }
+    const from = Number(m[1]);
+    const to = m[2] === undefined ? from : Number(m[2]);
+    for (let n = Math.min(from, to); n <= Math.max(from, to); n += 1)
+      out.add(n);
+  }
+  return out;
+}
 
 /** desc 开头的 M 编号（如 "M1790 ..." → "1790"）；无前缀（#113 遗留 4 条老条目）返回 null */
 function extract_m_number(desc) {
@@ -641,6 +674,23 @@ function changed_files(root, base) {
 }
 
 function select_entries(entries, args) {
+  if (args.ids) {
+    const picked = entries.filter((m) => {
+      const n = extract_m_number(m.desc);
+      return n !== null && args.ids.has(Number(n));
+    });
+    // 点名了却一条都没命中 = 编号写错或条目还没加。静默跑 0 条是这道工具
+    // 最不该有的行为（选少了还不说），所以当场报错退出。
+    const missing = [...args.ids].filter(
+      (n) => !picked.some((m) => Number(extract_m_number(m.desc)) === n),
+    );
+    if (missing.length > 0) {
+      throw new ArgError(
+        `✗ --ids 里这些编号在条目表里不存在：${missing.map((n) => `M${n}`).join(', ')}`,
+      );
+    }
+    return picked;
+  }
   if (args.files || args.base) {
     const files = args.files
       ? new Set(args.files)
@@ -685,6 +735,7 @@ function is_partial(args) {
     args.sample !== undefined ||
     args.slice !== undefined ||
     args.files !== undefined ||
+    args.ids !== undefined ||
     args.base !== undefined
   );
 }
@@ -895,6 +946,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(e?.stack || e);
+  console.error(e instanceof ArgError ? e.message : e?.stack || e);
   process.exitCode = 1;
 });
