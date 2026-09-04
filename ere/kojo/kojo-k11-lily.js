@@ -2,7 +2,7 @@
 /**
  * @file 村娘口上 K11 莉莉：存在标志一对 + @EVENTTRAIN 主体 + @K11_KOJO2 +
  *       @EVENTEND + @KOJO_MESSAGE_COM_11 前段（SELECTCOM 0/1/2/3/5/6/7/8/9/10/
- *       11/12/13/14/15/16/19/20/21/22/23/26/27/28/29，issue #242，WIP 续轮，进行中）。
+ *       11/12/13/14/15/16/19/20/21/22/23/26/27/28/29/30，issue #242，WIP 续轮，进行中）。
  *
  * 源: target/ERB/口上/EVENT_K11_リリィ.ERB  @EVENTTRAIN #PRI（:100-105，存在
  *     标志 FLAG:111 = 1）@EVENTEND #LATER（:106-113，清标志）
@@ -12,10 +12,10 @@
  *     @K11_KOJO2（:515-650，调教开始口上二回目以降）
  *     @EVENTEND（:651-748，普通档，调教结束口上）
  *     @KOJO_MESSAGE_COM_11（:749-10657，指令口上主体，本轮落地头部 7 项守卫
- *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22/23/26/27/28/29
- *     二十五支 :786-4671——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/
+ *     :754-778 与 SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22/23/26/27/28/29/30
+ *     二十六支 :786-4787——爱抚/舔阴/肛门爱抚/自慰/胸爱抚/接吻/自己扒开/指挿入/
  *     舔肛/振动宝石/壶虫/振动杖/肛门虫/阴蒂夹/乳头夹/榨乳器/肛珠/正常位/背后位/
- *     对面座位/背面座位/正常位肛交/背面座位肛交，各含
+ *     对面座位/背面座位/正常位肛交/背面座位肛交/手淫，各含
  *     初めて/二回目以降、助手玛奥/非助手玛奥、素质与刻印分档，SELECTCOM 6
  *     另含首吻专属分支 TFLAG:13，SELECTCOM 7 另含处女/非处女文案分岔
  *     TALENT:0，SELECTCOM 11 另含 TEQUIP:11 装备/脱着两态（脱着时用独立
@@ -103,6 +103,10 @@
  *     SELECTCOM 29（背面座位肛交 CFLAG:330，:4457-4671）同样沿用 COM26
  *     的初次六支与二回目六档结构，并复用 weapon 三目；二回目层助手玛奥
  *     淫乱＋A感覚档与非助手玛奥それ以外档各有一次独立 RAND:2 文案分支。
+ *     SELECTCOM 30（手淫 CFLAG:331，:4676-4787）初次层按助手玛奥/非助手
+ *     玛奥各分淫乱、爱慕、奉仕精神Lv3以上、其余四档；二回目层原作两侧
+ *     都把标作「奉仕精神Lv3以上」的 CFLAG=3 档误写成与前一档完全相同的
+ *     爱慕＋奉仕精神判据，因顺序遮蔽而不可达，本移植保留并以测试固定。
  *
  * 门面迁移（issue #242 复核补做）：WIP 1/N 范围内 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -110,8 +114,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 65.3%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 30 起（源文件第 4676 至 10657 行，约 23 条剩余分支，见源文件
+ * 本票剩余工作（未落地，占全文 13468 行的约 64.5%）：@KOJO_MESSAGE_COM_11 的
+ * SELECTCOM 31 起（源文件第 4792 至 10657 行，约 22 条剩余分支，见源文件
  * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸，存根已占位）、
  * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
  * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
@@ -7847,8 +7851,8 @@ async function kojo_message_com_11(rand) {
           ); // :4248
           kojo.背后位肛交 = 2; // :4247-4249
         }
+        return 0;
       }
-      return 0;
     }
   }
 
@@ -8668,6 +8672,196 @@ async function kojo_message_com_11(rand) {
           ); // :4665
           // CFLAG:330  = 2（变量语义：CFLAG 族，330）
           kojo.背面座位肛交 = 2; // :4666
+        }
+      }
+      return 0;
+    }
+  }
+
+  // :4676-4787 IF SELECTCOM == 30（手淫 CFLAG:331）
+  if (era_flag.selectcom === 30) {
+    if (kojo.手淫 === 0) {
+      if (assi_mao) {
+        if (era.get(`talent:${target}:76`) === 1) {
+          await era.printAndWait(
+            `『姐姐弄得人家的小肉棒好舒服啊啊${heart(1)}』`,
+          ); // :4683
+          await era.printAndWait(
+            `「哎嘿嘿，把精液射在姐姐的手上吧${heart(1)}」`,
+          ); // :4684
+          await era.printAndWait(
+            `『啊啊……最喜欢这么温柔的姐姐了……姐姐纤细的手指……太灵活了啊啊♪』`,
+          ); // :4685
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          await era.printAndWait(
+            `「居然会有给${player_name}……做这种事情的一天…」`,
+          ); // :4688
+          await era.printAndWait(
+            `『怎么样，漂亮吧♪，是魔王大人帮我装上去的哦』`,
+          ); // :4689
+          await era.printAndWait(`「真，真是的……为什么要做这种事………」`); // :4690
+        } else if (chara(target).system.侍奉精神 >= 3) {
+          await era.printAndWait(
+            `『姐姐，要好好侍奉人家的小鸡鸡啊${heart(1)}』`,
+          ); // :4693
+          await era.printAndWait(`「明，明白了……是要做这种事吧……」`); // :4694
+          await era.printAndWait(`『呼呼，姐姐的动作真温柔啊』`); // :4695
+        } else {
+          await era.printAndWait(`「为，为什么……你会长出这样的东西来啊啊！」`); // :4698
+          await era.printAndWait(
+            `『姐姐别哭了，快点给我——唔啊啊，被姐姐纤细的手指这么温柔地弄着……好像在做梦一样』`,
+          ); // :4699
+          await era.printAndWait(`「可，可是对我来说……是噩梦啊……呜呜呜…」`); // :4700
+        }
+      } else {
+        if (era.get(`talent:${target}:76`) === 1) {
+          await era.printAndWait(
+            `「啊啊……魔王大人的阴茎……雄伟地树立在人家面前${heart(1)}」`,
+          ); // :4705
+          await era.printAndWait(
+            `${target_name}舔了舔舌头，带着淫媚的表情，用手激烈地摩擦套弄着${player_name}的阴茎`,
+          ); // :4706
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          await era.printAndWait(
+            `「啊啊……魔王大人的阴茎……在人家的手里变得硬邦邦的了${heart(1)}」`,
+          ); // :4709
+          await era.printAndWait(
+            `${target_name}炽热地呼吸着，用纤细的手指温柔而仔细地按摩着${player_name}的阴茎………`,
+          ); // :4710
+        } else if (chara(target).system.侍奉精神 >= 3) {
+          await era.printAndWait(`「真是的……这种……黏糊糊的感觉……」`); // :4713
+          await era.printAndWait(
+            `${target_name}合拢十指，用不熟练的手法侍奉着${player_name}的阴茎……`,
+          ); // :4714
+        } else {
+          await era.printAndWait(`「完全不想做这，这种事情……呜呜呜！」`); // :4717
+          await era.printAndWait(
+            `${target_name}战战兢兢地用手侍奉着${player_name}的阴茎`,
+          ); // :4718
+        }
+      }
+      // CFLAG:TARGET:331  = 1（变量语义：CFLAG 族，TARGET:331）
+      kojo.手淫 = 1; // :4721
+      return 0;
+    } else {
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「啊啦啦、${player_name}的阴茎，让姐姐帮你变的更大吧${heart(1)}」`,
+          ); // :4729
+          await era.printAndWait(
+            `『啊啊啊……姐姐弄得人家的小鸡鸡舒服得……快要疯了啊啊♪』`,
+          ); // :4730
+          await era.printAndWait(`「来吧，在姐姐的手上射精吧${heart(1)}」`); // :4731
+          // CFLAG:331  = 5（变量语义：CFLAG 族，331）
+          kojo.手淫 = 5; // :4732
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `『嘿嘿，这个小鸡鸡可是魔王大人给我装上的哦，要温柔地对待呀♪』`,
+          ); // :4735
+          await era.printAndWait(`「哎哎，人家知道啦……这样弄可以吗？」`); // :4736
+          await era.printAndWait(
+            `『姐姐和小鸡鸡都好喜欢，但是最喜欢的还是给我侍奉小鸡鸡的姐姐，真是太棒了！』`,
+          ); // :4737
+          // CFLAG:331  = 4（变量语义：CFLAG 族，331）
+          kojo.手淫 = 4; // :4738
+
+          // 原作 :4740 重复上一档的「爱慕＋奉仕精神」判据，因此本档不可达。
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `『姐姐，要好好伺候人家的小鸡鸡啊${heart(1)}』`,
+          ); // :4741
+          await era.printAndWait(
+            `「就……就是要侍奉到射精为止对吧……可是……你为什么腿间会长出这种…」`,
+          ); // :4742
+          await era.printAndWait(`『唔唔，姐姐的指法真温柔……』`); // :4743
+          // CFLAG:331  = 3（变量语义：CFLAG 族，331）
+          kojo.手淫 = 3; // :4744
+        } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(`「可，可以停下了吗，${player_name}」`); // :4747
+          await era.printAndWait(`『说什么呐，要侍奉到射精为止啊笨蛋姐姐』`); // :4748
+          await era.printAndWait(`「呜呜呜……」`); // :4749
+          // CFLAG:331  = 2（变量语义：CFLAG 族，331）
+          kojo.手淫 = 2; // :4750
+        }
+      } else {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `「嘿嘿，${target_name}的手交侍奉如何呀…一会儿可要满满地射出来哦${heart(1)}」`,
+            ); // :4756
+            await era.printAndWait(
+              `${target_name}舔着嘴唇，带着一脸淫媚的表情，用手激烈地摩擦着${player_name}的阴茎……`,
+            ); // :4757
+          } else {
+            await era.printAndWait(
+              `「魔王大人这强烈的味道……弄得人家都晕乎乎的了${heart(1)} 真是的，不过好舒服啊${heart(1)} 」`,
+            ); // :4759
+            await era.printAndWait(
+              `${target_name}用力嗅着阴茎的味道，露出了仿佛要融化了的表情，用手激烈地摩擦着${player_name}的阴茎……`,
+            ); // :4760
+          }
+          // CFLAG:331  = 5（变量语义：CFLAG 族，331）
+          kojo.手淫 = 5; // :4762
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `「哈啊……魔王大人的阴茎，在${target_name}的手里……变得硬邦邦的了${heart(1)}」`,
+            ); // :4766
+            await era.printAndWait(
+              `${target_name}呼吸都变得炽热了起来，用纤细的手指仔细地爱抚，侍奉着${player_name}的阴茎。`,
+            ); // :4767
+          } else {
+            await era.printAndWait(
+              `「魔王大人……这样用手侍奉，感觉舒服吗…舒服的话就在${target_name}的手上射精吧${heart(1)}」`,
+            ); // :4769
+            await era.printAndWait(
+              `${target_name}认真侍奉着${player_name}的阴茎，边红着脸说着不知廉耻的台词……`,
+            ); // :4770
+          }
+          // CFLAG:331  = 4（变量语义：CFLAG 族，331）
+          kojo.手淫 = 4; // :4772
+
+          // 原作 :4774 同样重复上一档判据，因此本档不可达。
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「这，这样就行了吗……呜啊啊……阴茎在，在手中勃起了…！」`,
+          ); // :4775
+          await era.printAndWait(
+            `${target_name}虽然技术不娴熟，但是仍然努力的用手指侍奉着${player_name}的阴茎……`,
+          ); // :4776
+          // CFLAG:331  = 3（变量语义：CFLAG 族，331）
+          kojo.手淫 = 3; // :4777
+        } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(`「就，就像这样做吗？」`); // :4780
+          await era.printAndWait(
+            `${target_name}战战兢兢地用手指侍奉着${player_name}的阴茎……`,
+          ); // :4781
+          // CFLAG:331  = 2（变量语义：CFLAG 族，331）
+          kojo.手淫 = 2; // :4782
         }
       }
       return 0;

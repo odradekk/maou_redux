@@ -5404,3 +5404,140 @@ test('COM29 二回目：非助手玛奥それ以外 RAND 第二档', async () =>
     'COM29 非助手玛奥それ以外 RAND 第二档台词',
   );
 });
+
+// —— SELECTCOM 30（手淫 CFLAG:331）——
+
+test('COM30 初めて：助手玛奥与非助手玛奥各四档', async () => {
+  const cases = [
+    { assi: true, talent: 76, expected: '『姐姐弄得人家的小肉棒好舒服啊啊♡』' },
+    {
+      assi: true,
+      talent: 85,
+      expected: '「居然会有给你……做这种事情的一天…」',
+    },
+    { assi: true, abl: 3, expected: '『姐姐，要好好侍奉人家的小鸡鸡啊♡』' },
+    { assi: true, expected: '「为，为什么……你会长出这样的东西来啊啊！」' },
+    {
+      talent: 76,
+      expected: '「啊啊……魔王大人的阴茎……雄伟地树立在人家面前♡」',
+    },
+    {
+      talent: 85,
+      expected: '「啊啊……魔王大人的阴茎……在人家的手里变得硬邦邦的了♡」',
+    },
+    { abl: 3, expected: '「真是的……这种……黏糊糊的感觉……」' },
+    { expected: '「完全不想做这，这种事情……呜呜呜！」' },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined) {
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      }
+      if (item.abl !== undefined) {
+        f.store.set(`abl:${LILY}:16`, item.abl);
+      }
+    }, 30);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.text_lines()[0],
+      item.expected,
+      `COM30 初次第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:331`),
+      1,
+      `COM30 初次第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM30 二回目：助手玛奥可达档与原作被遮蔽的 CFLAG=3 档', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 5 },
+    { talent: 85, abl: 3, expected: 4 },
+    { abl: 3, expected: 2 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set(`cflag:${LILY}:331`, 1);
+      if (item.talent !== undefined) {
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      }
+      if (item.abl !== undefined) {
+        f.store.set(`abl:${LILY}:16`, item.abl);
+      }
+    }, 30);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:331`),
+      item.expected,
+      `COM30 助手玛奥可达第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM30 二回目：非助手玛奥可达档与原作被遮蔽的 CFLAG=3 档', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, abl: 3, expected: 4 },
+    { abl: 3, expected: 2 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`cflag:${LILY}:331`, 1);
+      if (item.talent !== undefined) {
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      }
+      if (item.abl !== undefined) {
+        f.store.set(`abl:${LILY}:16`, item.abl);
+      }
+    }, 30);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:331`),
+      item.expected,
+      `COM30 非助手玛奥可达第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM30 二回目：非助手玛奥淫乱 RAND 第一档', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:331`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  }, 30);
+  await speak_com11(fixture, seq_rand(0));
+  assert.equal(
+    fixture.text_lines()[0],
+    '「嘿嘿，莉莉的手交侍奉如何呀…一会儿可要满满地射出来哦♡」',
+    'COM30 非助手玛奥淫乱 RAND 第一档台词',
+  );
+});
+
+test('COM30 二回目：非助手玛奥爱慕 RAND 第二档', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:331`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+    f.store.set(`abl:${LILY}:16`, 3);
+  }, 30);
+  await speak_com11(fixture, seq_rand(1));
+  assert.equal(
+    fixture.text_lines()[0],
+    '「魔王大人……这样用手侍奉，感觉舒服吗…舒服的话就在莉莉的手上射精吧♡」',
+    'COM30 非助手玛奥爱慕 RAND 第二档台词',
+  );
+});

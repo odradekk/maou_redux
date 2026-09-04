@@ -9751,6 +9751,183 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM29 非助手玛奥それ以外 RAND 第二档台词',
   },
+  ...[
+    [4310, '初次', '1', '2', '4721', 'COM30 初次第 1 档推进'],
+    [4311, '助手淫乱', '5', '4', '4732', 'COM30 助手玛奥可达第 1 档推进'],
+    [4312, '助手爱慕', '4', '3', '4738', 'COM30 助手玛奥可达第 2 档推进'],
+    [4313, '助手それ以外', '2', '1', '4750', 'COM30 助手玛奥可达第 3 档推进'],
+    [4314, '非助手淫乱', '5', '4', '4762', 'COM30 非助手玛奥可达第 1 档推进'],
+    [4315, '非助手爱慕', '4', '3', '4772', 'COM30 非助手玛奥可达第 2 档推进'],
+    [
+      4316,
+      '非助手それ以外',
+      '2',
+      '1',
+      '4782',
+      'COM30 非助手玛奥可达第 3 档推进',
+    ],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM30 ${tier} CFLAG:331 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.手淫 = ${value}; // :${ref}`,
+    replace: `kojo.手淫 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4317 COM30 初次助手淫乱素质 76 改 75（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (assi_mao) {
+        if (era.get(\`talent:\${target}:76\`) === 1) {
+          await era.printAndWait(
+            \`『姐姐弄得人家的小肉棒好舒服啊啊\${heart(1)}』\`,
+          ); // :4683`,
+    replace: `      if (assi_mao) {
+        if (era.get(\`talent:\${target}:75\`) === 1) {
+          await era.printAndWait(
+            \`『姐姐弄得人家的小肉棒好舒服啊啊\${heart(1)}』\`,
+          ); // :4683`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 初次第 1 档台词',
+  },
+  {
+    desc: 'M4318 COM30 初次助手爱慕素质 85 改 84（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          await era.printAndWait(
+            \`「居然会有给\${player_name}……做这种事情的一天…」\`,
+          ); // :4688`,
+    replace: `        } else if (era.get(\`talent:\${target}:84\`) === 1) {
+          await era.printAndWait(
+            \`「居然会有给\${player_name}……做这种事情的一天…」\`,
+          ); // :4688`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 初次第 2 档台词',
+  },
+  {
+    desc: 'M4319 COM30 初次助手奉仕精神门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (chara(target).system.侍奉精神 >= 3) {
+          await era.printAndWait(
+            \`『姐姐，要好好侍奉人家的小鸡鸡啊\${heart(1)}』\`,
+          ); // :4693`,
+    replace: `        } else if (chara(target).system.侍奉精神 >= 4) {
+          await era.printAndWait(
+            \`『姐姐，要好好侍奉人家的小鸡鸡啊\${heart(1)}』\`,
+          ); // :4693`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 初次第 3 档台词',
+  },
+  {
+    desc: 'M4320 COM30 初次非助手淫乱素质 76 改 75（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else {
+        if (era.get(\`talent:\${target}:76\`) === 1) {
+          await era.printAndWait(
+            \`「啊啊……魔王大人的阴茎……雄伟地树立在人家面前\${heart(1)}」\`,
+          ); // :4705`,
+    replace: `      } else {
+        if (era.get(\`talent:\${target}:75\`) === 1) {
+          await era.printAndWait(
+            \`「啊啊……魔王大人的阴茎……雄伟地树立在人家面前\${heart(1)}」\`,
+          ); // :4705`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 初次第 5 档台词',
+  },
+  {
+    desc: 'M4321 COM30 初次非助手爱慕素质 85 改 84（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          await era.printAndWait(
+            \`「啊啊……魔王大人的阴茎……在人家的手里变得硬邦邦的了\${heart(1)}」\`,
+          ); // :4709`,
+    replace: `        } else if (era.get(\`talent:\${target}:84\`) === 1) {
+          await era.printAndWait(
+            \`「啊啊……魔王大人的阴茎……在人家的手里变得硬邦邦的了\${heart(1)}」\`,
+          ); // :4709`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 初次第 6 档台词',
+  },
+  {
+    desc: 'M4322 COM30 初次非助手奉仕精神门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (chara(target).system.侍奉精神 >= 3) {
+          await era.printAndWait(\`「真是的……这种……黏糊糊的感觉……」\`); // :4713`,
+    replace: `        } else if (chara(target).system.侍奉精神 >= 4) {
+          await era.printAndWait(\`「真是的……这种……黏糊糊的感觉……」\`); // :4713`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 初次第 7 档台词',
+  },
+  {
+    desc: 'M4323 COM30 助手淫乱奉仕精神门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.侍奉精神 >= 4 &&
+          (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 助手玛奥可达第 1 档推进',
+  },
+  {
+    desc: 'M4324 COM30 助手爱慕前档守卫收紧暴露原作遮蔽档（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            \`『嘿嘿，这个小鸡鸡可是魔王大人给我装上的哦，要温柔地对待呀♪』\`,`,
+    replace: `          (kojo.手淫 <= 0 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            \`『嘿嘿，这个小鸡鸡可是魔王大人给我装上的哦，要温柔地对待呀♪』\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '原作被遮蔽的 CFLAG=3 档',
+  },
+  {
+    desc: 'M4325 COM30 非助手爱慕前档守卫收紧暴露原作遮蔽档（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(2) === 0) {
+            await era.printAndWait(
+              \`「哈啊……魔王大人的阴茎，在\${target_name}的手里……变得硬邦邦的了\${heart(1)}」\`,`,
+    replace: `          (kojo.手淫 <= 0 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(2) === 0) {
+            await era.printAndWait(
+              \`「哈啊……魔王大人的阴茎，在\${target_name}的手里……变得硬邦邦的了\${heart(1)}」\`,`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '原作被遮蔽的 CFLAG=3 档',
+  },
+  {
+    desc: 'M4326 COM30 非助手淫乱 RAND:2 ===0 改 ===1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          if (rand_n(2) === 0) {
+            await era.printAndWait(
+              \`「嘿嘿，\${target_name}的手交侍奉如何呀…一会儿可要满满地射出来哦\${heart(1)}」\`,
+            ); // :4756`,
+    replace: `          if (rand_n(2) === 1) {
+            await era.printAndWait(
+              \`「嘿嘿，\${target_name}的手交侍奉如何呀…一会儿可要满满地射出来哦\${heart(1)}」\`,
+            ); // :4756`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 非助手玛奥淫乱 RAND 第一档台词',
+  },
+  {
+    desc: 'M4327 COM30 非助手爱慕 RAND:2 ===0 改 ===1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          if (rand_n(2) === 0) {
+            await era.printAndWait(
+              \`「哈啊……魔王大人的阴茎，在\${target_name}的手里……变得硬邦邦的了\${heart(1)}」\`,
+            ); // :4766`,
+    replace: `          if (rand_n(2) === 1) {
+            await era.printAndWait(
+              \`「哈啊……魔王大人的阴茎，在\${target_name}的手里……变得硬邦邦的了\${heart(1)}」\`,
+            ); // :4766`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM30 非助手玛奥爱慕 RAND 第二档台词',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
