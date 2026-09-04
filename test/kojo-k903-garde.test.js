@@ -493,6 +493,22 @@ test('原作缺陷：两处重复 TALENT:74，露出狂分支误读 TALENT:83', 
     false,
     '露出狂分支误读 TALENT:83，只有 TALENT:89 时不输出',
   );
+
+  const lewd_exposure = await setup_k903((f) => {
+    f.store.set(`cflag:${CID}:201`, 6);
+    f.store.set(`mark:${CID}:2`, 3);
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`talent:${CID}:89`, 1);
+  });
+  const { k903_kojo2: lewd_exposure_kojo } = lewd_exposure.load_module(
+    'kojo/kojo-k903-garde',
+  );
+  await lewd_exposure_kojo();
+  assert.equal(
+    lewd_exposure.text_lines().some((line) => line.includes('早点去外面')),
+    false,
+    '淫乱档的露出狂分支同样误读 TALENT:83',
+  );
 });
 
 test('GOHOUBI_REQUEST 保留 Y=0：奖励 2 不补公猪或雄马', async () => {

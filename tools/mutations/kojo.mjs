@@ -10595,4 +10595,106 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k903-garde'],
     must_mention: '原作缺陷：两处重复 TALENT:74',
   },
+  {
+    desc: 'M6429 K903 CFLAG:314 有 A 感觉支同样写 6（改 7）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '        chara(target).kojo.肛门虫 = 6; // :1188',
+    replace: '        chara(target).kojo.肛门虫 = 7; // :1188（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：303 误读 223',
+  },
+  {
+    desc: 'M6430 K903 CFLAG:314 无 A 感觉支同样写 6（改 5）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '        chara(target).kojo.肛门虫 = 6; // :1192',
+    replace: '        chara(target).kojo.肛门虫 = 5; // :1192（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：303 误读 223',
+  },
+  {
+    desc: 'M6431 K903 CFLAG:331 侍奉精神支误需 TALENT:85（删除要求）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `        era0(\`talent:\${target}:85\`) == 1 &&
+        era0(\`abl:\${target}:16\`) >= 3 &&
+        (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2163`,
+    replace: `        true &&
+        era0(\`abl:\${target}:16\`) >= 3 &&
+        (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)
+      ) {
+        // :2163（变异）`,
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：331 门槛错位',
+  },
+  {
+    desc: 'M6432 K903 CFLAG:333 淫乱支误读 332（改读 333）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `        (chara(target).kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2259`,
+    replace: `        (chara(target).kojo.乳交 <= 5 || game.kojo.口上开关 == 2)
+      ) {
+        // :2259（变异）`,
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：331 门槛错位',
+  },
+  {
+    desc: 'M6433 K903 CFLAG:341 末支误用 AND（改 OR）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '      } else if (chara(target).kojo.打屁股 <= 1 && game.kojo.口上开关 == 2) {',
+    replace:
+      '      } else if (chara(target).kojo.打屁股 <= 1 || game.kojo.口上开关 == 2) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：331 门槛错位',
+  },
+  {
+    desc: 'M6434 K903 CFLAG:342 末支误读 335（改读 342）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '      } else if (chara(target).kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {\n        // :2718',
+    replace:
+      '      } else if (chara(target).kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {\n        // :2718（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：331 门槛错位',
+  },
+  {
+    desc: 'M6435 K903 KOJO2 淫乱档露出狂同样误读 TALENT:83（改 89）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    if (era0(\`talent:\${target}:83\`)) {\n      // :350',
+    replace: '    if (era0(\`talent:\${target}:89\`)) {\n      // :350（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：两处重复 TALENT:74',
+  },
+  {
+    desc: 'M6436 K903 CFLAG:357 淫乱档误读 TALENT:85（改 76）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `          era0(\`talent:\${target}:85\`) == 1 &&
+          (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 == 2)
+        ) {
+          // :3160`,
+    replace: `          era0(\`talent:\${target}:76\`) == 1 &&
+          (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 == 2)
+        ) {
+          // :3160（变异）`,
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：357 淫乱条件误读爱慕',
+  },
+  {
+    desc: 'M6437 K903 死斗场 SELECTCOM:27 多余右引号删除（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '      await era.printAndWait(`「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」`); // :5446',
+    replace:
+      '      await era.printAndWait(`「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」`); // :5446（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：357 淫乱条件误读爱慕',
+  },
+  {
+    desc: 'M6438 K903 EVENTEND 无条件第二行与 RETURN 保留（改成受 SIF 约束）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  await era.printAndWait(`「啊……可恶……已经………………」`); // :473-474',
+    replace:
+      '  if (era0(`base:${target}:0`) <= 0) await era.printAndWait(`「啊……可恶……已经………………」`); // :473-474（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：357 淫乱条件误读爱慕',
+  },
 ];
