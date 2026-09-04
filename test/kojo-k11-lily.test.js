@@ -5092,3 +5092,154 @@ test('COM27 二回目：非助手玛奥爱慕 RAND:2 二选一可控', async () 
     'COM27 非助手玛奥爱慕 RAND 第一档',
   );
 });
+
+// —— SELECTCOM 28（对面座位肛交 CFLAG:329）——
+
+test('COM28 初めて：助手玛奥与非助手玛奥各三档', async () => {
+  const cases = [
+    {
+      assi: true,
+      talent: 76,
+      expected: `「哎嘿嘿……姐姐已经准备好了♡ 快点来侵犯，虐待这个淫乱的肛门吧♡」`,
+    },
+    {
+      assi: true,
+      talent: 85,
+      expected: '「呜啊啊……不，不要……那样突然停住啊啊！」',
+    },
+    {
+      assi: true,
+      expected:
+        '『哎哎，姐姐不要遮住脸啊，让我好好看看姐姐的肛门被侵犯时是什么表情的呀！』',
+    },
+    {
+      talent: 76,
+      expected:
+        '莉莉被你紧紧抱在大腿上侵犯着肛门，强烈的快感让她止不住地娇喘着。',
+    },
+    {
+      talent: 85,
+      expected: '莉莉被你抱在怀里，发出了甘甜的喘息声。',
+    },
+    {
+      expected: '莉莉的双手被你反扣在背上，就以这样的姿势被侵犯着肛门。',
+    },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined) {
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      }
+    }, 28);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.text_lines()[0],
+      item.expected,
+      `COM28 初次第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:329`),
+      1,
+      `COM28 初次第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM28 二回目：助手玛奥六档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 7 },
+    { talent: 76, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set(`cflag:${LILY}:329`, 1);
+      if (item.talent !== undefined) {
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      }
+      if (item.abl !== undefined) {
+        f.store.set(`abl:${LILY}:3`, item.abl);
+      }
+    }, 28);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:329`),
+      item.expected,
+      `COM28 助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM28 二回目：非助手玛奥六档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 7 },
+    { talent: 76, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`cflag:${LILY}:329`, 1);
+      if (item.talent !== undefined) {
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      }
+      if (item.abl !== undefined) {
+        f.store.set(`abl:${LILY}:3`, item.abl);
+      }
+    }, 28);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:329`),
+      item.expected,
+      `COM28 非助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM28 二回目：助手玛奥淫乱＋A感覚 RAND 第二档', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set(`cflag:${LILY}:329`, 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`abl:${LILY}:3`, 3);
+  }, 28);
+  fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+  fixture.era.addCharacter(MAO);
+  await speak_com11(fixture, seq_rand(1, 0));
+  assert.equal(
+    fixture.text_lines()[0],
+    '莉莉主动扭起了腰，如饥似渴地追求着更强烈的肛交快感。',
+    'COM28 助手玛奥淫乱＋A感覚 RAND 第二档台词',
+  );
+});
+
+test('COM28 二回目：非助手玛奥爱慕 RAND 第三档', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:329`, 1);
+    f.store.set(`talent:${LILY}:85`, 1);
+  }, 28);
+  await speak_com11(fixture, seq_rand(1, 1));
+  assert.equal(
+    fixture.text_lines()[1],
+    '「魔王大人……请尽情地把人家的肛门……当做性器那样侵犯吧♡」',
+    'COM28 非助手玛奥爱慕 RAND 第三档台词',
+  );
+});
