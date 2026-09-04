@@ -6591,3 +6591,65 @@ test('COM42 二回目：非助手玛奥八档推进', async () => {
     assert.equal(fixture.store.get(`cflag:${LILY}:343`), item.expected);
   }
 });
+
+// —— SELECTCOM 43（眼罩 CFLAG:344 / CFLAG:380）——
+
+test('COM43 装上初めて：淫乱、爱慕与其余三档', async () => {
+  const cases = [
+    { talent: 76, expected: '「啊啊……什么都看不见……身体反而更兴奋了♡」' },
+    { talent: 85, expected: '「不，不要这样欺负人家啦………」' },
+    { expected: '「这，这是要做什么？！」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:43`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 43);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+    assert.equal(fixture.store.get(`cflag:${LILY}:344`), 1);
+  }
+});
+
+test('COM43 装上二回目：八档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 5, expected: 9 },
+    { talent: 76, abl: 3, expected: 8 },
+    { talent: 76, expected: 7 },
+    { talent: 85, abl: 5, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 2);
+      f.store.set(`tequip:${LILY}:43`, 1);
+      f.store.set(`cflag:${LILY}:344`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:21`, item.abl);
+    }, 43);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:344`), item.expected);
+  }
+});
+
+test('COM43 取下：淫乱、爱慕与其余三档推进', async () => {
+  const cases = [
+    { talent: 76, expected: 3 },
+    { talent: 85, expected: 2 },
+    { expected: 1 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 2);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 43);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:380`), item.expected);
+  }
+});

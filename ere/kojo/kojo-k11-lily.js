@@ -11519,6 +11519,137 @@ async function kojo_message_com_11(rand) {
     } // :6187
   } // :6188
 
+  // :6194-6262 SELECTCOM 43（眼罩 CFLAG:344 / CFLAG:380）
+  if (era_flag.selectcom === 43 && era0(`tequip:${target}:43`) !== 0) {
+    if (kojo.眼罩 === 0) {
+      // :6196
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :6198
+        await era.printAndWait(
+          `「啊啊……什么都看不见……身体反而更兴奋了${heart(1)}」`,
+        ); // :6199
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6201
+        await era.printAndWait(`「不，不要这样欺负人家啦………」`); // :6202
+      } else {
+        // :6204
+        await era.printAndWait(`「这，这是要做什么？！」`); // :6205
+      } // :6206
+      // CFLAG:TARGET:344  = 1（变量语义：CFLAG 族，TARGET:344） // :6207
+      kojo.眼罩 = 1; // :6207
+      return 0; // :6208
+    } else {
+      // :6210
+
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        chara(target).system.抖M气质 >= 5 &&
+        (kojo.眼罩 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :6212
+        await era.printAndWait(
+          `「呜啊……${player_name}想，想要对人家做什么呢……只能靠想象……反而更兴奋起来了${heart(1)}」`,
+        ); // :6213
+        // CFLAG:TARGET:344  = 9（变量语义：CFLAG 族，TARGET:344） // :6214
+        kojo.眼罩 = 9; // :6214
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        chara(target).system.抖M气质 >= 3 &&
+        (kojo.眼罩 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :6216
+        await era.printAndWait(
+          `「啊啊……什么都看不见……更，更想被魔王大人调教了${heart(1)}」`,
+        ); // :6217
+        // CFLAG:TARGET:344  = 8（变量语义：CFLAG 族，TARGET:344） // :6218
+        kojo.眼罩 = 8; // :6218
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.眼罩 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :6220
+        await era.printAndWait(`「咦咦……魔王大人是想出了什么新玩法吗？」`); // :6221
+        // CFLAG:TARGET:344  = 7（变量语义：CFLAG 族，TARGET:344） // :6222
+        kojo.眼罩 = 7; // :6222
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        chara(target).system.抖M气质 >= 5 &&
+        (kojo.眼罩 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :6224
+        await era.printAndWait(
+          `「啊啊……什么都看不见……脑子里一片混乱……但，但是……好兴奋啊啊${heart(1)}」`,
+        ); // :6225
+        // CFLAG:TARGET:344  = 6（变量语义：CFLAG 族，TARGET:344） // :6226
+        kojo.眼罩 = 6; // :6226
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        chara(target).system.抖M气质 >= 3 &&
+        (kojo.眼罩 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :6228
+        await era.printAndWait(`「哈，哈啊……心扑通扑通的，跳得好快……♪」`); // :6229
+        // CFLAG:TARGET:344  = 5（变量语义：CFLAG 族，TARGET:344） // :6230
+        kojo.眼罩 = 5; // :6230
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.眼罩 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :6232
+        await era.printAndWait(
+          `「什，什么都看不见……有点害怕……你在哪里……魔王大人？」`,
+        ); // :6233
+        // CFLAG:TARGET:344  = 4（变量语义：CFLAG 族，TARGET:344） // :6234
+        kojo.眼罩 = 4; // :6234
+      } else if (
+        chara(target).system.抖M气质 >= 3 &&
+        (kojo.眼罩 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :6236
+        await era.printAndWait(
+          `「人，人家才……才没有兴奋……但，但是……你在哪里，魔王大人……」`,
+        ); // :6237
+        // CFLAG:TARGET:344  = 3（变量语义：CFLAG 族，TARGET:344） // :6238
+        kojo.眼罩 = 3; // :6238
+      } else if (kojo.眼罩 <= 1 || game.kojo.口上开关 === 2) {
+        // :6240
+        await era.printAndWait(`「才，才不会害怕呢……」`); // :6241
+        // CFLAG:TARGET:344  = 2（变量语义：CFLAG 族，TARGET:344） // :6242
+        kojo.眼罩 = 2; // :6242
+      } // :6243
+      return 0; // :6244
+    } // :6245
+  } else if (era_flag.selectcom === 43 && era0(`tequip:${target}:43`) === 0) {
+    // :6247
+
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.眼罩着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      // :6249
+      await era.printAndWait(
+        `「啊啊真是的……让人家……多沉浸在想象的世界里一会儿嘛……」`,
+      ); // :6250
+      // CFLAG:380  = 3（变量语义：CFLAG 族，380） // :6251
+      kojo.眼罩着脱 = 3; // :6251
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.眼罩着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :6253
+      await era.printAndWait(`「终于又能看见${player_name}的面貌了……」`); // :6254
+      // CFLAG:380  = 2（变量语义：CFLAG 族，380） // :6255
+      kojo.眼罩着脱 = 2; // :6255
+    } else if (kojo.眼罩着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :6257
+      await era.printAndWait(`「呼……呼…」`); // :6258
+      // CFLAG:380  = 1（变量语义：CFLAG 族，380） // :6259
+      kojo.眼罩着脱 = 1; // :6259
+    } // :6260
+    return 0; // :6261
+  } // :6262
+
   return 0;
 }
 
