@@ -9605,6 +9605,152 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM28 非助手玛奥爱慕 RAND 第三档台词',
   },
+  ...[
+    [4290, '初次', '1', '2', '4498', 'COM29 初次第 1 档推进'],
+    [4291, '助手淫乱＋A感覚', '7', '6', '4526', 'COM29 助手玛奥第 1 档推进'],
+    [4292, '助手淫乱', '6', '5', '4533', 'COM29 助手玛奥第 2 档推进'],
+    [4293, '助手爱慕＋A感覚', '5', '4', '4555', 'COM29 助手玛奥第 3 档推进'],
+    [4294, '助手爱慕', '4', '3', '4562', 'COM29 助手玛奥第 4 档推进'],
+    [4295, '助手A感覚', '3', '2', '4569', 'COM29 助手玛奥第 5 档推进'],
+    [4296, '助手それ以外', '2', '1', '4576', 'COM29 助手玛奥第 6 档推进'],
+    [
+      4297,
+      '非助手淫乱＋A感覚',
+      '7',
+      '6',
+      '4597',
+      'COM29 非助手玛奥第 1 档推进',
+    ],
+    [4298, '非助手淫乱', '6', '5', '4610', 'COM29 非助手玛奥第 2 档推进'],
+    [
+      4299,
+      '非助手爱慕＋A感覚',
+      '5',
+      '4',
+      '4629',
+      'COM29 非助手玛奥第 3 档推进',
+    ],
+    [4300, '非助手爱慕', '4', '3', '4642', 'COM29 非助手玛奥第 4 档推进'],
+    [4301, '非助手A感覚', '3', '2', '4655', 'COM29 非助手玛奥第 5 档推进'],
+    [4302, '非助手それ以外', '2', '1', '4666', 'COM29 非助手玛奥第 6 档推进'],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM29 ${tier} CFLAG:330 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背面座位肛交 = ${value}; // :${ref}`,
+    replace: `kojo.背面座位肛交 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4303 COM29 武器三目 && 改 ||（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :4457-4671 IF SELECTCOM == 29（背面座位肛交 CFLAG:330）
+  if (era_flag.selectcom === 29) {
+    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
+        ? '电动假阳具'
+        : '阴茎';`,
+    replace: `  // :4457-4671 IF SELECTCOM == 29（背面座位肛交 CFLAG:330）
+  if (era_flag.selectcom === 29) {
+    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 || era0(\`talent:\${player}:122\`) === 0
+        ? '电动假阳具'
+        : '阴茎';`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 武器三目单侧素质时使用阴茎',
+  },
+  {
+    desc: 'M4304 COM29 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (assi_mao) {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `      if (assi_mao) {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 4 &&
+          (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 助手玛奥第 1 档推进',
+  },
+  {
+    desc: 'M4305 COM29 助手爱慕＋A感覚门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背面座位肛交 = 6; // :4533
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&`,
+    replace: `          kojo.背面座位肛交 = 6; // :4533
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 4 &&`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 助手玛奥第 3 档推进',
+  },
+  {
+    desc: 'M4306 COM29 非助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `      } else {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 4 &&
+          (kojo.背面座位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 非助手玛奥第 1 档推进',
+  },
+  {
+    desc: 'M4307 COM29 非助手爱慕＋A感覚门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背面座位肛交 = 6; // :4610
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&`,
+    replace: `          kojo.背面座位肛交 = 6; // :4610
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 4 &&`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 非助手玛奥第 3 档推进',
+  },
+  {
+    desc: 'M4308 COM29 助手淫乱＋A感覚第二次 RAND:2 ===0 改 ===1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              \`「呜啊……嗯啊啊\${heart(1)} 肛交……好舒服……真的是太棒了啊啊\${heart(1)}」\`,
+            ); // :4513`,
+    replace: `          } else if (rand_n(2) === 1) {
+            await era.printAndWait(
+              \`「呜啊……嗯啊啊\${heart(1)} 肛交……好舒服……真的是太棒了啊啊\${heart(1)}」\`,
+            ); // :4513`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 助手玛奥淫乱＋A感覚 RAND 第二档台词',
+  },
+  {
+    desc: 'M4309 COM29 非助手それ以外第二次 RAND:2 ===0 改 ===1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              \`「不，不可以全部……插进来啊……好痛！好痛！！」\`,
+            ); // :4661`,
+    replace: `          } else if (rand_n(2) === 1) {
+            await era.printAndWait(
+              \`「不，不可以全部……插进来啊……好痛！好痛！！」\`,
+            ); // :4661`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM29 非助手玛奥それ以外 RAND 第二档台词',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
