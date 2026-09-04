@@ -28195,6 +28195,92 @@ export const FILES = [
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
+  {
+    src: K11_SOURCE,
+    ref: '11794-11880',
+    any: [
+      ...[
+        ['11794', '@KOJO_MESSAGE_MARKCNG_11'],
+        [
+          '11822',
+          'PRINTFORMW 「啊啊啊……好痛，好痛啊啊……魔，魔王大人……是在惩罚我嘛……呜啊啊！！」',
+        ],
+        [
+          '11823',
+          'PRINTFORMW %SAVESTR:TARGET%痛苦得表情都扭曲了，眼泪口水都流了出来………',
+        ],
+        [
+          '11825',
+          'PRINTFORMW 「啊啊啊……好痛，好痛啊啊！！饶了我吧，求求你，饶了我吧！」',
+        ],
+        [
+          '11826',
+          'PRINTFORMW %SAVESTR:TARGET%痛苦得表情都扭曲了，眼泪口水都流了出来………',
+        ],
+        ['11828', 'CFLAG:297 = 1'],
+        [
+          '11837',
+          'PRINTFORMW 「哈啊……啊啊啊%UNICODE(0x2661) *1% 身体……已经变成这个样子了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11838',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的调教下，感受到了无与伦比的快感，腰肢颤动着，表情更是仿佛要融化了一般。',
+        ],
+        [
+          '11839',
+          'PRINTFORMW 「已，已经……变成……没有魔王大人给予的快乐……就活不下去了……再也回不到，也不想回到……过去的样子了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11840',
+          'PRINTFORMW %SAVESTR:TARGET%的身体沉沦在快乐之中，已经再也无法自拔了……',
+        ],
+        [
+          '11842',
+          'PRINTFORMW 「哈啊……啊啊啊……身体……为什么……会变成这个样子了……不可以啊啊！」',
+        ],
+        [
+          '11843',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的调教下，感受着生理上无与伦比的快感，和心理抗拒的自相矛盾。',
+        ],
+        ['11844', 'PRINTFORMW 「已，已经……不行了……感觉再也……忘不掉……」'],
+        [
+          '11845',
+          'PRINTFORMW %SAVESTR:TARGET%的身体沉沦在快乐之中，已经再也无法自拔了……',
+        ],
+        ['11847', 'CFLAG:298 = 1'],
+        [
+          '11854',
+          'PRINTFORMW 「呜……呜呜……我，我会服从魔王大人的命令和要求的……」',
+        ],
+        [
+          '11855',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%连续的屈辱调教下，终于从精神上屈服了。',
+        ],
+        [
+          '11856',
+          'PRINTFORMW 「所，所以……拜托了，拜托了……请魔王大人调教的时候……稍微手下留情一些……呜呜呜」',
+        ],
+        [
+          '11857',
+          'PRINTFORMW %SAVESTR:TARGET%卑微屈膝的笑颜反而更加激起了%SAVESTR:PLAYER%的施虐心。',
+        ],
+        ['11858', 'CFLAG:299 = 1'],
+        ['11867', 'PRINTFORMW 「不，不要碰我……」'],
+        ['11868', 'PRINTFORMW 「为，为什么要对我做这种事………」'],
+        [
+          '11869',
+          'PRINTFORMW %SAVESTR:TARGET%愣愣地看着床，一副被重要的人背叛了的表情……',
+        ],
+        ['11871', 'PRINTFORMW 「绝，绝对不会原谅你的……」'],
+        ['11872', 'PRINTFORMW 「你，你给我记住……呜呜呜」'],
+        [
+          '11873',
+          'PRINTFORMW %SAVESTR:TARGET%紧紧咬着嘴唇，双眼瞪视着%SAVESTR:PLAYER%……',
+        ],
+        ['11875', 'CFLAG:300 = 1'],
+      ].map(([ref, line]) => exact_line(ref, line)),
+    ],
+  },
 ];
 
 export const LOG_REFS = [];

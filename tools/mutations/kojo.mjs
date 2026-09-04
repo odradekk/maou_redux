@@ -10082,6 +10082,27 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention,
   })),
   {
+    desc: 'M4697 MARKCNG_11 非玛奥助手守卫被删除（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) { // :11797',
+    replace: '  if (false) { // :11797 变异：删除非玛奥助手守卫',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'MARKCNG_11 非玛奥助手参与调教时整段静默跳过',
+  },
+  ...[
+    [4698, '苦痛刻印Lv3', '11828'],
+    [4699, '快乐刻印Lv3', '11847'],
+    [4700, '屈服刻印Lv3', '11858'],
+    [4701, '反抗刻印Lv3', '11875'],
+  ].map(([id, state, ref]) => ({
+    desc: `M${id} MARKCNG_11 ${state}状态写错（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.${state} = 1; // :${ref}`,
+    replace: `kojo.${state} = 99; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '四类 Lv3 刻印可在同轮依次取得并推进 CFLAG:297-300',
+  })),
+  {
     desc: 'M4284 COM28 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {

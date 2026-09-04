@@ -56,6 +56,12 @@ async function speak_palamcng11(fixture) {
   return kojo_message_palamcng_family.call(11, { args: [] });
 }
 
+async function speak_markcng11(fixture) {
+  const { kojo_message_markcng_family } =
+    fixture.load_module('kojo/kojo-system');
+  return kojo_message_markcng_family.call(11, { args: [] });
+}
+
 // RAND:N 定值序：draws 依次被消费，越界取模（K3 test 同款先例）
 const seq_rand =
   (...draws) =>
@@ -7667,6 +7673,38 @@ test('PALAMCNG_11 非玛奥助手参与调教时整段静默跳过', async () =>
   await speak_palamcng11(fixture);
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get(`cflag:${LILY}:221`), undefined);
+});
+
+// —— @KOJO_MESSAGE_MARKCNG_11 ——
+
+test('MARKCNG_11 四类 Lv3 刻印可在同轮依次取得并推进 CFLAG:297-300', async () => {
+  const fixture = setup_lily((f) => {
+    for (const flag of [21, 22, 23, 24]) {
+      f.store.set(`tflag:${flag}`, 3);
+    }
+  });
+  await speak_markcng11(fixture);
+  for (const flag of [297, 298, 299, 300]) {
+    assert.equal(fixture.store.get(`cflag:${LILY}:${flag}`), 1);
+  }
+});
+
+test('MARKCNG_11 刻印变动未到 Lv3 时不触发', async () => {
+  const fixture = setup_lily((f) => f.store.set('tflag:22', 2));
+  await speak_markcng11(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get(`cflag:${LILY}:297`), undefined);
+});
+
+test('MARKCNG_11 非玛奥助手参与调教时整段静默跳过', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = 7;
+    era_flag.assiplay = 1;
+    f.store.set('tflag:22', 3);
+  });
+  await speak_markcng11(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get(`cflag:${LILY}:297`), undefined);
 });
 
 // —— SELECTCOM 56（交谈 CFLAG:357）——

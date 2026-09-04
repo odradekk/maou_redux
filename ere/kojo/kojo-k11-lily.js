@@ -117,8 +117,8 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作：@KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
- * 11881 至 12261 行），以及死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
+ * 本票剩余工作：@SELF_KOJO_K11（第 11881 至 12261 行），以及死斗场/NTR/
+ * 处刑/展览/放逐/奖赏/惩罚等非调教
  * 口上（第 12262 至 13468 行）。见 issue #242 的进度评论获取认领点。
  *
  * == 姉妹判定（TARGET 是姐姐莉莉，NO:ASSI == 17 是妹妹玛奥） ==
@@ -231,6 +231,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
+  kojo_message_markcng_family,
   kojo_message_palamcng_family,
 } = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
@@ -23181,14 +23182,167 @@ async function kojo_message_palamcng_11(rand) {
   } // :11787
 }
 
-// @KOJO_MESSAGE_MARKCNG_11 // :11794
+/** @KOJO_MESSAGE_MARKCNG_11（:11794-11880）：四类 Lv3 刻印取得口上。 */
+async function kojo_message_markcng_11(rand) {
+  const target = era_flag.target;
+  const target_name = chara_callname(target);
+  const player_name = chara_callname(era_flag.player);
+  const kojo = chara(target).kojo;
+  void rand;
+
+  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
+    // :11797
+    return 0; // :11797
+  } // :11797
+
+  if (era.get(`tequip:${target}:45`)) {
+    // :11800
+    return 0; // :11800
+  } // :11800
+
+  if (game.train.失神) {
+    // :11803
+    return 0; // :11803
+  } // :11803
+
+  if (era.get(`tequip:${target}:89`)) {
+    // :11806
+    return 0; // :11806
+  } // :11806
+
+  if (era.get(`tequip:${target}:90`)) {
+    // :11809
+    return 0; // :11809
+  } // :11809
+
+  if (era.get(`talent:${target}:9`) === 1) {
+    // :11812
+    return 0; // :11812
+  } // :11812
+
+  if (era.get(`tequip:${target}:55`)) {
+    // :11815
+    return 0; // :11815
+  } // :11815
+
+  if (game.system.苦痛刻印变动 === 3 && kojo.苦痛刻印Lv3 === 0) {
+    // :11819
+
+    if (
+      era.get(`talent:${target}:85`) === 1 ||
+      era.get(`talent:${target}:76`) === 1
+    ) {
+      // :11821
+      await era.printAndWait(
+        `「啊啊啊……好痛，好痛啊啊……魔，魔王大人……是在惩罚我嘛……呜啊啊！！」`,
+      ); // :11822
+      await era.printAndWait(
+        `${target_name}痛苦得表情都扭曲了，眼泪口水都流了出来………`,
+      ); // :11823
+    } else {
+      // :11824
+      await era.printAndWait(
+        `「啊啊啊……好痛，好痛啊啊！！饶了我吧，求求你，饶了我吧！」`,
+      ); // :11825
+      await era.printAndWait(
+        `${target_name}痛苦得表情都扭曲了，眼泪口水都流了出来………`,
+      ); // :11826
+    } // :11827
+    // CFLAG:297  = 1（变量语义：CFLAG 族，297） // :11828
+    kojo.苦痛刻印Lv3 = 1; // :11828
+  } // :11829
+
+  if (game.system.快乐刻印变动 === 3 && kojo.快乐刻印Lv3 === 0) {
+    // :11834
+
+    if (
+      era.get(`talent:${target}:85`) === 1 ||
+      era.get(`talent:${target}:76`) === 1
+    ) {
+      // :11836
+      await era.printAndWait(
+        `「哈啊……啊啊啊${heart(1)} 身体……已经变成这个样子了啊啊${heart(1)}」`,
+      ); // :11837
+      await era.printAndWait(
+        `${target_name}在${player_name}的调教下，感受到了无与伦比的快感，腰肢颤动着，表情更是仿佛要融化了一般。`,
+      ); // :11838
+      await era.printAndWait(
+        `「已，已经……变成……没有魔王大人给予的快乐……就活不下去了……再也回不到，也不想回到……过去的样子了${heart(1)}」`,
+      ); // :11839
+      await era.printAndWait(
+        `${target_name}的身体沉沦在快乐之中，已经再也无法自拔了……`,
+      ); // :11840
+    } else {
+      // :11841
+      await era.printAndWait(
+        `「哈啊……啊啊啊……身体……为什么……会变成这个样子了……不可以啊啊！」`,
+      ); // :11842
+      await era.printAndWait(
+        `${target_name}在${player_name}的调教下，感受着生理上无与伦比的快感，和心理抗拒的自相矛盾。`,
+      ); // :11843
+      await era.printAndWait(`「已，已经……不行了……感觉再也……忘不掉……」`); // :11844
+      await era.printAndWait(
+        `${target_name}的身体沉沦在快乐之中，已经再也无法自拔了……`,
+      ); // :11845
+    } // :11846
+    // CFLAG:298  = 1（变量语义：CFLAG 族，298） // :11847
+    kojo.快乐刻印Lv3 = 1; // :11847
+  } // :11848
+
+  if (game.system.屈服刻印变动 === 3 && kojo.屈服刻印Lv3 === 0) {
+    // :11853
+    await era.printAndWait(
+      `「呜……呜呜……我，我会服从魔王大人的命令和要求的……」`,
+    ); // :11854
+    await era.printAndWait(
+      `${target_name}在${player_name}连续的屈辱调教下，终于从精神上屈服了。`,
+    ); // :11855
+    await era.printAndWait(
+      `「所，所以……拜托了，拜托了……请魔王大人调教的时候……稍微手下留情一些……呜呜呜」`,
+    ); // :11856
+    await era.printAndWait(
+      `${target_name}卑微屈膝的笑颜反而更加激起了${player_name}的施虐心。`,
+    ); // :11857
+    // CFLAG:299  = 1（变量语义：CFLAG 族，299） // :11858
+    kojo.屈服刻印Lv3 = 1; // :11858
+  } // :11859
+
+  if (game.system.反抗刻印变动 === 3 && kojo.反抗刻印Lv3 === 0) {
+    // :11864
+
+    if (
+      era.get(`talent:${target}:85`) === 1 ||
+      era.get(`talent:${target}:76`) === 1
+    ) {
+      // :11866
+      await era.printAndWait(`「不，不要碰我……」`); // :11867
+      await era.printAndWait(`「为，为什么要对我做这种事………」`); // :11868
+      await era.printAndWait(
+        `${target_name}愣愣地看着床，一副被重要的人背叛了的表情……`,
+      ); // :11869
+    } else {
+      // :11870
+      await era.printAndWait(`「绝，绝对不会原谅你的……」`); // :11871
+      await era.printAndWait(`「你，你给我记住……呜呜呜」`); // :11872
+      await era.printAndWait(
+        `${target_name}紧紧咬着嘴唇，双眼瞪视着${player_name}……`,
+      ); // :11873
+    } // :11874
+    // CFLAG:300  = 1（变量语义：CFLAG 族，300） // :11875
+    kojo.反抗刻印Lv3 = 1; // :11875
+  } // :11876
+}
+
+// @SELF_KOJO_K11 // :11881
 
 kojo_message_com_family.register(11, kojo_message_com_11);
 kojo_message_palamcng_family.register(11, kojo_message_palamcng_11);
+kojo_message_markcng_family.register(11, kojo_message_markcng_11);
 
 module.exports = {
   STUBBED_CALLS,
   k11_kojo2,
   kojo_message_com_11,
+  kojo_message_markcng_11,
   kojo_message_palamcng_11,
 };
