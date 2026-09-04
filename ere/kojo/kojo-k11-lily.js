@@ -11940,6 +11940,163 @@ async function kojo_message_com_11(rand) {
     return 0; // :6402
   } // :6403
 
+  // :6409-6491 SELECTCOM 45（口塞 CFLAG:346 / CFLAG:386）
+  if (era_flag.selectcom === 45 && era0(`tequip:${target}:45`) !== 0) {
+    if (kojo.口塞 === 0) {
+      // :6411
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :6413
+        await era.printAndWait(`「呣……呣呣呣——！」`); // :6414
+        await era.printAndWait(
+          `${target_name}似乎想要说什么，但最后只有口水从塞口球里流出来……`,
+        ); // :6415
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6417
+        await era.printAndWait(`「不，不要啦——呣呣……呣呣呣！」`); // :6418
+        await era.printAndWait(
+          `${target_name}的声音被口球堵住，变成了无力的呻吟……`,
+        ); // :6419
+      } else {
+        // :6421
+        await era.printAndWait(`「唔，这，这是——呣呣……呣呣呣！？」`); // :6422
+        await era.printAndWait(
+          `${target_name}被${player_name}强行塞进口球，只能发出含糊的痛苦呻吟……`,
+        ); // :6423
+      } // :6424
+      // CFLAG:TARGET:346  = 1（变量语义：CFLAG 族，TARGET:346） // :6425
+      kojo.口塞 = 1; // :6425
+      return 0; // :6426
+    } else {
+      // :6428
+
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        chara(target).system.抖M气质 >= 5 &&
+        (kojo.口塞 <= 8 || game.kojo.口上开关 === 2)
+      ) {
+        // :6430
+        await era.printAndWait(`「啊啊——呣……呣呣呣${heart(1)}」`); // :6431
+        await era.printAndWait(
+          `${target_name}张开嘴，顺从地让${player_name}把球形口塞粗暴地塞了进去，呻吟声随即变得模糊不清，呼吸也灼热了起来……`,
+        ); // :6432
+        // CFLAG:TARGET:346  = 9（变量语义：CFLAG 族，TARGET:346） // :6433
+        kojo.口塞 = 9; // :6433
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        chara(target).system.抖M气质 >= 3 &&
+        (kojo.口塞 <= 7 || game.kojo.口上开关 === 2)
+      ) {
+        // :6435
+        await era.printAndWait(`「好，好的——呣……呣呣呣${heart(1)}」`); // :6436
+        await era.printAndWait(
+          `${target_name}老实地让${player_name}把球形口塞粗暴地塞了进去，只有口水慢慢地从嘴角渗出……`,
+        ); // :6437
+        // CFLAG:TARGET:346  = 8（变量语义：CFLAG 族，TARGET:346） // :6438
+        kojo.口塞 = 8; // :6438
+      } else if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.口塞 <= 6 || game.kojo.口上开关 === 2)
+      ) {
+        // :6440
+        await era.printAndWait(`「人，人家不喜欢这个东西啦——呣……呣呣呣！」`); // :6441
+        await era.printAndWait(
+          `${target_name}的话音变成了无力的呻吟，只有口水慢慢地从嘴角渗出……`,
+        ); // :6442
+        // CFLAG:TARGET:346  = 7（变量语义：CFLAG 族，TARGET:346） // :6443
+        kojo.口塞 = 7; // :6443
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        chara(target).system.抖M气质 >= 5 &&
+        (kojo.口塞 <= 5 || game.kojo.口上开关 === 2)
+      ) {
+        // :6445
+        await era.printAndWait(
+          `「是，是的，魔王大人……请——呣……呣呣呣${heart(1)}」`,
+        ); // :6446
+        await era.printAndWait(
+          `${target_name}张开嘴，顺从地让${player_name}把球形口塞粗暴地塞了进去，呻吟声随即变得模糊不清，呼吸也灼热了起来……`,
+        ); // :6447
+        // CFLAG:TARGET:346  = 6（变量语义：CFLAG 族，TARGET:346） // :6448
+        kojo.口塞 = 6; // :6448
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        chara(target).system.抖M气质 >= 3 &&
+        (kojo.口塞 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        // :6450
+        await era.printAndWait(`「啊——呣……呣呣呣……${heart(1)}」`); // :6451
+        await era.printAndWait(
+          `${target_name}老实地张开嘴，让${player_name}把球形口塞粗暴地塞了进去……`,
+        ); // :6452
+        // CFLAG:TARGET:346  = 5（变量语义：CFLAG 族，TARGET:346） // :6453
+        kojo.口塞 = 5; // :6453
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.口塞 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :6455
+        await era.printAndWait(
+          `「虽，虽然不喜欢这个东西……但，但是只要魔王大人要求的话——呣……呣呣呣…！」`,
+        ); // :6456
+        await era.printAndWait(
+          `${target_name}的话音变成了无力的呻吟，只有口水从塞口球里慢慢流出来……`,
+        ); // :6457
+        // CFLAG:TARGET:346  = 4（变量语义：CFLAG 族，TARGET:346） // :6458
+        kojo.口塞 = 4; // :6458
+      } else if (
+        chara(target).system.抖M气质 >= 3 &&
+        (kojo.口塞 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :6460
+        await era.printAndWait(`「好，好的——呣……呣呣呣……」`); // :6461
+        await era.printAndWait(
+          `${target_name}老实地张开嘴，让${player_name}把球形口塞粗暴地塞了进去……`,
+        ); // :6462
+        // CFLAG:TARGET:346  = 3（变量语义：CFLAG 族，TARGET:346） // :6463
+        kojo.口塞 = 3; // :6463
+      } else if (kojo.口塞 <= 1 || game.kojo.口上开关 === 2) {
+        // :6465
+        await era.printAndWait(`「不，不要这个！？」`); // :6466
+        await era.printAndWait(
+          `${target_name}被${player_name}强行塞进口球，只能发出含糊的痛苦呻吟……`,
+        ); // :6467
+        // CFLAG:TARGET:346  = 2（变量语义：CFLAG 族，TARGET:346） // :6468
+        kojo.口塞 = 2; // :6468
+      } // :6469
+      return 0; // :6470
+    } // :6471
+  } else if (era_flag.selectcom === 45 && era0(`tequip:${target}:45`) === 0) {
+    // :6473
+
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.口塞着脱 < 3 || game.kojo.口上开关 === 2)
+    ) {
+      // :6475
+      await era.printAndWait(`「呜呜……呜啊……嘴巴好酸…」`); // :6476
+      await era.printAndWait(`口水还在慢慢地从${target_name}的嘴边流出……`); // :6477
+      // CFLAG:386  = 3（变量语义：CFLAG 族，386） // :6478
+      kojo.口塞着脱 = 3; // :6478
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.口塞着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :6480
+      await era.printAndWait(`「咳，咳……嘴巴好酸……」`); // :6481
+      await era.printAndWait(`口水还在慢慢地从${target_name}的嘴边流出……`); // :6482
+      // CFLAG:386  = 2（变量语义：CFLAG 族，386） // :6483
+      kojo.口塞着脱 = 2; // :6483
+    } else if (kojo.口塞着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :6485
+      await era.printAndWait(`「呜……呜呜……咳咳咳………」`); // :6486
+      await era.printAndWait(`口水还在慢慢地从${target_name}的嘴边流出……`); // :6487
+      // CFLAG:386  = 1（变量语义：CFLAG 族，386） // :6488
+      kojo.口塞着脱 = 1; // :6488
+    } // :6489
+    return 0; // :6490
+  } // :6491
+
   return 0;
 }
 
