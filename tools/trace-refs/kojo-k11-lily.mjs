@@ -18599,6 +18599,511 @@ export const FILES = [
         ],
         ['5498', 'CFLAG:336 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      exact_line('5508-5769', 'IF SELECTCOM == 36'),
+      ...[
+        ['5515', 'PRINTFORMW 「呜啊……啊啊……好，好舒服……%UNICODE(0x2661) *1%」'],
+        [
+          '5516',
+          'PRINTFORMW 感受着%SAVESTR:PLAYER%的阴茎在自己肛门内出入，%SAVESTR:TARGET%忍不住娇喘了起来。',
+        ],
+        [
+          '5517',
+          'PRINTFORML 『嘿嘿，我的小鸡鸡也很舒服啊，在姐姐热热的直肠里%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '5518',
+          'PRINTFORMW 「是，是啊！姐姐的屁股……要……要去了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5519',
+          'PRINTFORMW %SAVESTR:TARGET%扭动着腰，尽情地让妹妹的阴茎继续从下方侵犯着自己的肛门……',
+        ],
+        [
+          '5522',
+          'PRINTFORMW 「呜……呜啊……%SAVESTR:PLAYER%为什么会……长出这种奇怪的东西……！」',
+        ],
+        [
+          '5523',
+          'PRINTFORMW 感受着%SAVESTR:PLAYER%的阴茎在自己肛门内出入，%SAVESTR:TARGET%红着脸呻吟着。',
+        ],
+        [
+          '5524',
+          'PRINTFORML 『就是为了侵犯姐姐才让魔王大人给人家遍出来的啊！啊啊……好棒……和姐姐肛交的刚绝』',
+        ],
+        ['5525', 'PRINTFORMW 「唔啊……好粗……不行了，姐姐要不行了啊！」'],
+        [
+          '5526',
+          'PRINTFORMW %SAVESTR:TARGET%扭动着腰，感受着被妹妹的阴茎继续从下方侵犯着自己的肛门的背德快感……',
+        ],
+        ['5529', 'PRINTFORMW 「不，不可能……插进来啊啊…！」'],
+        [
+          '5530',
+          'PRINTFORMW 感受着%SAVESTR:PLAYER%的阴茎在自己肛门内出入，%SAVESTR:TARGET%吃力地呻吟着。',
+        ],
+        ['5531', 'PRINTFORML 『好好动起来啊笨蛋姐姐，就像骑马那样啊！』'],
+        [
+          '5532',
+          'PRINTFORMW 「明，明白了……姐姐会照做的……不，不要再顶得那么深了！」',
+        ],
+        [
+          '5533',
+          'PRINTFORMW %SAVESTR:TARGET%扭动着腰，感受着被妹妹的阴茎继续从下方侵犯着自己的肛门的感觉…',
+        ],
+        [
+          '5538',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%从下方径直插入到了深处。',
+        ],
+        [
+          '5539',
+          'PRINTFORMW 「嗯啊……啊啊啊%UNICODE(0x2661) *1% 好舒服%UNICODE(0x2661) *1% 肛交的感觉……好舒服啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5540',
+          'PRINTFORMW %SAVESTR:TARGET%扭动着腰，尽情地让%SAVESTR:PLAYER%的阴茎在自己的直肠里进出……',
+        ],
+        [
+          '5543',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%从下方径直插入到了深处',
+        ],
+        [
+          '5544',
+          'PRINTFORMW 「是，是的……我会自己……动起来的啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5545',
+          'PRINTFORMW %SAVESTR:TARGET%扭动着腰边娇喘着，享受着骑乘式肛交的快感……',
+        ],
+        [
+          '5548',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%从下方径直插入到了深处',
+        ],
+        ['5549', 'PRINTFORMW 「呜……呜呜……好胀，好难受！」'],
+        [
+          '5550',
+          'PRINTFORMW %SAVESTR:PLAYER%挺起腰，持续地侵犯着%SAVESTR:TARGET%…',
+        ],
+        ['5553', 'CFLAG:TARGET:337 = 1'],
+        [
+          '5562',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%从下方径直插入到了深处。',
+        ],
+        [
+          '5563',
+          'PRINTFORML 「嗯啊啊……啊啊……肛门被，被这么激烈地侵犯着%UNICODE(0x2661) *1%……」',
+        ],
+        [
+          '5564',
+          'PRINTFORML 『啊啊……和姐姐肛交……原来是这么舒服的事情啊啊%UNICODE(0x2661) *1% ！』',
+        ],
+        [
+          '5565',
+          'PRINTFORMW 「来吧……尽情地……%UNICODE(0x2661) *1% 把姐姐的肛门……侵犯得一塌糊涂吧，%SAVESTR:PLAYER%啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5566',
+          'PRINTFORMW %SAVESTR:TARGET%边扭动着腰，边发出一阵阵淫浪的娇喘，完全沉浸在肛交的快感中………',
+        ],
+        [
+          '5568',
+          'PRINTFORMW %SAVESTR:TARGET%咬着嘴唇，带着沉醉的表情上下扭动着身体。',
+        ],
+        [
+          '5569',
+          'PRINTFORML 『哎呀呀，姐姐这幅表情，完全变成喜欢肛交的母猪了吗！』',
+        ],
+        [
+          '5570',
+          'PRINTFORMW %SAVESTR:PLAYER%也挺着腰配合着%SAVESTR:TARGET%的动作，不断侵犯着%SAVESTR:TARGET%的肛门。',
+        ],
+        [
+          '5571',
+          'PRINTFORMW 「哈……谢谢……夸奖啊啊……姐姐……就是只让%SAVESTR:TARGET%和魔王大人肛交的母猪啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5572',
+          'PRINTFORMW 完全沉浸在肛交快感中的%SAVESTR:TARGET%，已经完全抛却任何尊严了……',
+        ],
+        [
+          '5574',
+          'PRINTFORMW %SAVESTR:TARGET%前后上下扭动着腰，寻求着更强烈的肛交快感。',
+        ],
+        [
+          '5575',
+          'PRINTFORML 「肛交……太棒了……真的是世界上最棒的事情了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5576',
+          'PRINTFORML 『哎呀呀，姐姐真的是完全堕落了呢♪ 下次一定要当着村子里的大家的面侵犯姐姐的肛门，大家一定会忍不住对着姐姐手淫的。』',
+        ],
+        [
+          '5577',
+          'PRINTFORMW 「啊啊……真，真是好主意%UNICODE(0x2661) *1% 魔王大人……下次……就按%SAVESTR:PLAYER%说的……在村子里对%SAVESTR:TARGET%进行公开肛门调教吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5578',
+          'PRINTFORMW 当着所有认识的人的面被侵犯，%SAVESTR:TARGET%光是这么想象着，就已经感觉无比兴奋了…',
+        ],
+        ['5580', 'CFLAG:337 = 7'],
+        [
+          '5583',
+          'PRINTFORMW 「呜……啊啊……全，全部进来了……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5584',
+          'PRINTFORMW 感受着%SAVESTR:PLAYER%的阴茎在自己肛门内出入，%SAVESTR:TARGET%忍不住呻吟了起来。',
+        ],
+        [
+          '5586',
+          'PRINTFORML 『啊啊，姐姐的直肠……好紧，好热%UNICODE(0x2661) *1%』',
+        ],
+        ['5587', 'PRINTFORMW 「嗯啊……啊啊，屁股感觉……好奇怪！」'],
+        [
+          '5589',
+          'PRINTFORML 『呜哇哇……把人家的鸡鸡夹得这么紧，有那么舒服吗！』',
+        ],
+        ['5590', 'PRINTFORMW 「是，是啊……姐姐……很舒服啊啊！」'],
+        ['5592', 'PRINTFORML 『嘿嘿，让我来检验一下姐姐肛门的开发程度！』'],
+        [
+          '5593',
+          'PRINTFORMW 「呜……呜啊！感觉……好奇怪……又好舒服……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5595',
+          'PRINTFORMW %SAVESTR:TARGET%扭动着腰，感受着被妹妹侵犯肛门的快感……',
+        ],
+        ['5596', 'CFLAG:337 = 6'],
+        [
+          '5600',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%从下方径直插入到了深处。',
+        ],
+        [
+          '5601',
+          'PRINTFORML 「呜呜……要，要去了，要用肛门……去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5602',
+          'PRINTFORML 『哎哎，听着姐姐这么舒服的娇喘，人家也要高潮了啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '5603',
+          'PRINTFORMW 「哎哎……来吧……和姐姐一起高潮吧，%SAVESTR:PLAYER%%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5604',
+          'PRINTFORMW %SAVESTR:TARGET%边扭动着腰，边发出一阵阵甜美的娇喘，完全沉浸在肛交的快感中………',
+        ],
+        [
+          '5606',
+          'PRINTFORMW %SAVESTR:TARGET%咬着嘴唇，带着沉醉的表情上下扭动着身体',
+        ],
+        ['5607', 'PRINTFORML 『嘿嘿，能让姐姐舒服，我很高兴啊！』'],
+        [
+          '5608',
+          'PRINTFORML 「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5609',
+          'PRINTFORMW 「都，都是你把姐姐的肛门……弄得和性器一样了，你可要负责啊%UNICODE(0x2661) *1%」',
+        ],
+        ['5610', 'PRINTFORMW %SAVESTR:TARGET%的嬉笑很快又变回了舒服的娇喘………'],
+        [
+          '5612',
+          'PRINTFORMW %SAVESTR:TARGET%前后上下扭动着腰，寻求着更强烈的肛交快感。',
+        ],
+        [
+          '5613',
+          'PRINTFORML 「肛交……太棒了……真的是世界上最棒的事情了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['5614', 'PRINTFORML 『哇哇……姐姐的动作好棒……好舒服……继续，不要停！』'],
+        [
+          '5615',
+          'PRINTFORMW 「啊啊%UNICODE(0x2661) *1% 要，要坏掉了……屁股舒服得要坏掉了啊啊………」',
+        ],
+        ['5616', 'PRINTFORMW %SAVESTR:TARGET%娇喘个不停，已经完全无法自拔了……'],
+        ['5618', 'CFLAG:337 = 5'],
+        [
+          '5621',
+          'PRINTFORMW 感受着%SAVESTR:PLAYER%的阴茎在自己肛门内出入，%SAVESTR:TARGET%红着脸呻吟着。',
+        ],
+        ['5623', 'PRINTFORMW 「呜……啊啊！插到……最里面了！」'],
+        [
+          '5624',
+          'PRINTFORML 『感觉如何，姐姐？要一直侵犯到姐姐的肛门合不上为止哦♪』',
+        ],
+        ['5625', 'PRINTFORMW 「不，不行啊……会，会坏掉的……魔王大人，救命呀！」'],
+        ['5627', 'PRINTFORMW 「呜啊……屁股被，被撑开了！」'],
+        [
+          '5628',
+          'PRINTFORML 『姐姐的肛门还得再让魔王大人好好开发一下啊，太紧了，虽然人家很舒服就是了%UNICODE(0x2661) *1%』',
+        ],
+        ['5629', 'PRINTFORMW 「不，不要啊……那里，又不是性器……！」'],
+        [
+          '5631',
+          'PRINTFORML 『哇哇……姐姐的肛门这么紧，这么舒服……会让人上瘾的♪』',
+        ],
+        ['5632', 'PRINTFORMW 「嗯啊……谢谢，夸奖……不过，还请温柔一点……」'],
+        [
+          '5634',
+          'PRINTFORMW %SAVESTR:TARGET%感受着被妹妹侵犯肛门的背德快感，身体更加燥热了………',
+        ],
+        ['5635', 'CFLAG:337 = 4'],
+        [
+          '5639',
+          'PRINTFORMW 感受着%SAVESTR:PLAYER%的阴茎在自己肛门内出入的快感，%SAVESTR:TARGET%忍不住娇喘了起来。',
+        ],
+        [
+          '5640',
+          'PRINTFORML 「尽情……尽情地把%SAVESTR:TARGET%的肛门……侵犯到坏掉吧啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5641',
+          'PRINTFORML 『嘿嘿，姐姐也要自己动起来啊，会更舒服的%UNICODE(0x2661) *1%』',
+        ],
+        ['5642', 'PRINTFORMW 「是……是吗……我，我会照做的……嗯啊啊！」'],
+        ['5643', 'PRINTFORMW %SAVESTR:TARGET%红着脸，主动扭起腰来……'],
+        [
+          '5645',
+          'PRINTFORML 「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5646',
+          'PRINTFORMW 骑在妹妹身上的%SAVESTR:TARGET%完全无法抗拒肛门的快感，大声娇喘了起来。',
+        ],
+        [
+          '5647',
+          'PRINTFORML 『嘿嘿，能让姐姐这么舒服，人家也很高兴啊%UNICODE(0x2661) *1%』',
+        ],
+        ['5648', 'PRINTFORMW 「不，不要盯着人家的脸看啦…啊啊……嗯啊啊！」'],
+        [
+          '5649',
+          'PRINTFORMW %SAVESTR:TARGET%羞红了脸，腰却不自觉地继续扭动着……',
+        ],
+        [
+          '5651',
+          'PRINTFORMW 肛门被%SAVESTR:PLAYER%的阴茎一次次顶入最深处，%SAVESTR:TARGET%的呻吟很快变成了大声的娇喘。',
+        ],
+        [
+          '5652',
+          'PRINTFORML 「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5653',
+          'PRINTFORMW %SAVESTR:PLAYER%欣赏着姐姐的痴态，舔着嘴唇，挺着腰继续侵犯着骑在自己身上的%SAVESTR:TARGET%。',
+        ],
+        [
+          '5654',
+          'PRINTFORML 『哈哈，要高潮了吧，姐姐，彻底变成一个会用肛门高潮的变态吧！』',
+        ],
+        [
+          '5655',
+          'PRINTFORMW 「呜，呜啊啊……太激烈了！但是……但是，要，要去了，%SAVESTR:PLAYER%，姐姐要去了啊啊！！」',
+        ],
+        ['5657', 'CFLAG:337 = 3'],
+        [
+          '5660',
+          'PRINTFORMW %SAVESTR:TARGET%流着眼泪呻吟着，感受着肛门被妹妹侵犯的生理和心理上的双重痛苦',
+        ],
+        ['5662', 'PRINTFORMW 「呜……啊啊……不，不能再进来了！」'],
+        [
+          '5663',
+          'PRINTFORML 『那姐姐就快点自己动起来啊，不然我就继续往里顶了哦！』',
+        ],
+        [
+          '5664',
+          'PRINTFORMW 「不……不行……真的会坏掉的……屁股会坏掉的……呜呜呜！」',
+        ],
+        ['5666', 'PRINTFORMW 「呜……啊啊……好痛，好痛……！」'],
+        [
+          '5667',
+          'PRINTFORML 『没关系没关系，人家的肛门也是这样被魔王大人调教的！』',
+        ],
+        [
+          '5668',
+          'PRINTFORMW 「不，不要再往里顶了……求你了……我，我会自己动的……！」',
+        ],
+        ['5670', 'PRINTFORMW 「呜……啊啊……太，太粗了……！」'],
+        [
+          '5671',
+          'PRINTFORML 『呜哇，姐姐的肛门这么紧，有成为名器的潜质呢%UNICODE(0x2661) *1%』',
+        ],
+        ['5672', 'PRINTFORMW 「不要羞辱姐姐了……求你了……」'],
+        [
+          '5674',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被妹妹一次次往上顶入到最深处……',
+        ],
+        ['5675', 'CFLAG:337 = 2'],
+        [
+          '5681',
+          'PRINTFORMW %SAVESTR:TARGET%被充分开发的肛门，将%SAVESTR:PLAYER%整根阴茎吞了进去。',
+        ],
+        [
+          '5682',
+          'PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5683',
+          'PRINTFORMW 「肛门……被魔王大人的……阴茎%UNICODE(0x2661) *1% 塞得满满的……好舒服啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5684',
+          'PRINTFORMW %SAVESTR:TARGET%淫浪的娇喘着，享受着，被身下的%SAVESTR:PLAYER%一次次顶入到肛门深处的快感…',
+        ],
+        [
+          '5686',
+          'PRINTFORML 「肛交……太棒了……真的是世界上最棒的事情了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5687',
+          'PRINTFORMW %SAVESTR:TARGET%发出一声声淫浪的娇喘，扭动着腰让%SAVESTR:PLAYER%的阴茎一次次在自己的肛门进出。',
+        ],
+        [
+          '5688',
+          'PRINTFORMW 丰满的双乳在胸前上下晃动着，整个人已经完全沉沦在快感之中了。',
+        ],
+        [
+          '5689',
+          'PRINTFORMW 「嗯啊啊%UNICODE(0x2661) *1% 好舒服……好想……一直被魔王大人……这么侵犯肛门啊啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '5691',
+          'PRINTFORMW %SAVESTR:TARGET%咬着嘴唇，上下扭动着腰身，寻求着更强烈的肛门快感。',
+        ],
+        [
+          '5692',
+          'PRINTFORML 「不，不行了……肛门……舒服得……要上天了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5693',
+          'PRINTFORMW 不绝于耳的淫浪娇喘让%SAVESTR:PLAYER%也变得更加兴奋了，阴茎变得更加坚挺。',
+        ],
+        [
+          '5694',
+          'PRINTFORMW 「啊啊啊……人家的肛门……能够让魔王大人满意%UNICODE(0x2661) *1% 好高兴啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['5696', 'CFLAG:337 = 7'],
+        [
+          '5699',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被%SAVESTR:PLAYER%从下面一次次顶入到深处。',
+        ],
+        [
+          '5701',
+          'PRINTFORMW 「嗯啊……啊啊啊%UNICODE(0x2661) *1% 尽情地……侵犯人家的肛门吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5703',
+          'PRINTFORMW 「呜啊……感觉好奇怪，但是好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5705',
+          'PRINTFORMW 「呜啊啊……魔王大人的阴茎，好热，好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5707',
+          'PRINTFORMW 骑在%SAVESTR:PLAYER%身上的%SAVESTR:TARGET%扭动着腰，尽情享受着肛交的快感……',
+        ],
+        ['5708', 'CFLAG:337 = 6'],
+        [
+          '5712',
+          'PRINTFORMW %SAVESTR:TARGET%被充分开发的肛门，将%SAVESTR:PLAYER%整根阴茎吞了进去。',
+        ],
+        [
+          '5713',
+          'PRINTFORML 「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5714',
+          'PRINTFORMW 「这种被一次次撑开的感觉……实在是太舒服啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5715',
+          'PRINTFORMW %SAVESTR:TARGET%带着被融化了一般的表情，发出一阵阵甘甜的娇喘、沉浸在肛交的快感中……',
+        ],
+        [
+          '5717',
+          'PRINTFORMW %SAVESTR:TARGET%带着陶醉的表情上下扭动着身体，渴求着更强烈的肛门快感。',
+        ],
+        [
+          '5718',
+          'PRINTFORML 「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5719',
+          'PRINTFORMW 「都怪魔王大人……把人家的肛门……调教得……没有快感，就活不下去了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5720',
+          'PRINTFORMW %SAVESTR:TARGET%的嬉笑很快被强烈的快感淹没，再次淫浪的娇喘起来……',
+        ],
+        [
+          '5722',
+          'PRINTFORMW %SAVESTR:TARGET%前后上下扭动着腰，寻求着更强烈的肛交快感，但%SAVESTR:PLAYER%却故意放慢了动作。',
+        ],
+        [
+          '5723',
+          'PRINTFORML 「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5724',
+          'PRINTFORMW 「魔，魔王大人……求，求你了……让，让人家的肛门……高潮吧%UNICODE(0x2661) *1%」',
+        ],
+        ['5725', 'PRINTFORMW %SAVESTR:TARGET%红着脸，大声乞求着……'],
+        ['5727', 'CFLAG:337 = 5'],
+        [
+          '5730',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门被身下的%SAVESTR:PLAYER%一次次顶入到深处。',
+        ],
+        [
+          '5732',
+          'PRINTFORMW 「好，好的……魔王大人……我，我会自己动起来的%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5734',
+          'PRINTFORMW 「啊啊……这个姿势……好羞耻……不过，好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5736',
+          'PRINTFORMW 「魔王大人，请……尽情侵犯%SAVESTR:TARGET%的肛门吧%UNICODE(0x2661) *1% ！」',
+        ],
+        [
+          '5738',
+          'PRINTFORMW %SAVESTR:TARGET%边扭着腰，边发出甜美的，放佛要融化了一般的喘息……',
+        ],
+        ['5739', 'CFLAG:337 = 4'],
+        [
+          '5742',
+          'PRINTFORMW %SAVESTR:TARGET%被充分开发的肛门，将%SAVESTR:PLAYER%整根阴茎吞了进去。',
+        ],
+        [
+          '5743',
+          'PRINTFORMW 「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['5745', 'PRINTFORMW 「为，为什么这么舒服……已经，停不下来了啊啊啊……」'],
+        [
+          '5747',
+          'PRINTFORMW 「呜呜……才，才不是因为……喜欢肛交……才动起来的……嗯啊啊」',
+        ],
+        ['5749', 'PRINTFORMW 「啊啊……再这样下去……肛门就会……变成性器了啊啊」'],
+        [
+          '5751',
+          'PRINTFORMW %SAVESTR:TARGET%在肛门快感的驱使下，红着脸又扭动起腰来……',
+        ],
+        ['5752', 'CFLAG:337 = 3'],
+        [
+          '5755',
+          'PRINTFORMW %SAVESTR:TARGET%流着眼泪呻吟着，肛门被强行撑开，顶了进去',
+        ],
+        ['5757', 'PRINTFORMW 「好痛……好难受……呜呜！」'],
+        [
+          '5759',
+          'PRINTFORMW 「呜呜……不，不要再顶进来了……我，我会自己动的……！」',
+        ],
+        ['5761', 'PRINTFORMW 「要，要坏掉了……饶了我吧……屁股真的会坏掉的！」'],
+        [
+          '5763',
+          'PRINTFORMW %SAVESTR:PLAYER%挺起腰，持续侵犯着骑在自己身上的%SAVESTR:TARGET%…',
+        ],
+        ['5764', 'CFLAG:337 = 2'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];

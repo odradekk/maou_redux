@@ -6135,3 +6135,111 @@ test('COM35 二回目：非助手玛奥四档推进', async () => {
     );
   }
 });
+
+// —— SELECTCOM 36（骑乘位肛交 CFLAG:337）——
+
+test('COM36 初めて：助手玛奥与非助手玛奥三档', async () => {
+  const cases = [
+    { assi: true, talent: 76, expected: '「呜啊……啊啊……好，好舒服……♡」' },
+    {
+      assi: true,
+      talent: 85,
+      expected: '「呜……呜啊……玛奥为什么会……长出这种奇怪的东西……！」',
+    },
+    { assi: true, expected: '「不，不可能……插进来啊啊…！」' },
+    {
+      talent: 76,
+      expected: '莉莉的肛门被你从下方径直插入到了深处。',
+    },
+    {
+      talent: 85,
+      expected: '莉莉的肛门被你从下方径直插入到了深处',
+    },
+    {
+      expected: '莉莉的肛门被你从下方径直插入到了深处',
+    },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+        era_flag.player = MAO;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 36);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.text_lines()[0],
+      item.expected,
+      `COM36 初次第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:337`),
+      1,
+      `COM36 初次第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM36 二回目：助手玛奥六档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 7 },
+    { talent: 76, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      era_flag.player = MAO;
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:337`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:3`, item.abl);
+    }, 36);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:337`),
+      item.expected,
+      `COM36 助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM36 二回目：非助手玛奥六档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 3, expected: 7 },
+    { talent: 76, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:337`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:3`, item.abl);
+    }, 36);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:337`),
+      item.expected,
+      `COM36 非助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});

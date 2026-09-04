@@ -10201,6 +10201,61 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM35 初次第 1 档台词',
   },
+  ...[
+    [4394, '初次', '1', '2', '5553', 'COM36 初次第 1 档推进'],
+    [4395, '助手淫乱＋肛门感觉', '7', '6', '5580', 'COM36 助手玛奥第 1 档推进'],
+    [4396, '助手淫乱', '6', '5', '5596', 'COM36 助手玛奥第 2 档推进'],
+    [4397, '助手爱慕＋肛门感觉', '5', '4', '5618', 'COM36 助手玛奥第 3 档推进'],
+    [4398, '助手爱慕', '4', '3', '5635', 'COM36 助手玛奥第 4 档推进'],
+    [4399, '助手肛门感觉', '3', '2', '5657', 'COM36 助手玛奥第 5 档推进'],
+    [4400, '助手其余', '2', '1', '5675', 'COM36 助手玛奥第 6 档推进'],
+    [
+      4401,
+      '非助手淫乱＋肛门感觉',
+      '7',
+      '6',
+      '5696',
+      'COM36 非助手玛奥第 1 档推进',
+    ],
+    [4402, '非助手淫乱', '6', '5', '5708', 'COM36 非助手玛奥第 2 档推进'],
+    [
+      4403,
+      '非助手爱慕＋肛门感觉',
+      '5',
+      '4',
+      '5727',
+      'COM36 非助手玛奥第 3 档推进',
+    ],
+    [4404, '非助手爱慕', '4', '3', '5739', 'COM36 非助手玛奥第 4 档推进'],
+    [4405, '非助手肛门感觉', '3', '2', '5752', 'COM36 非助手玛奥第 5 档推进'],
+    [4406, '非助手其余', '2', '1', '5764', 'COM36 非助手玛奥第 6 档推进'],
+  ].map(([id, tier, value, replacement, ref]) => ({
+    desc: `M${id} COM36 ${tier} CFLAG:337 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.骑乘位肛交 = ${value}; // :${ref}`,
+    replace: `kojo.骑乘位肛交 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      id === 4394
+        ? 'COM36 初めて：助手玛奥与非助手玛奥三档'
+        : id <= 4400
+          ? 'COM36 二回目：助手玛奥六档推进'
+          : 'COM36 二回目：非助手玛奥六档推进',
+  })),
+  {
+    desc: 'M4407 COM36 初次助手玛奥判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (kojo.骑乘位肛交 === 0) {
+      if (assi_mao) {
+        if (era.get(\`talent:\${target}:76\`) === 1) {
+          await era.printAndWait(\`「呜啊……啊啊……好，好舒服`,
+    replace: `    if (kojo.骑乘位肛交 === 0) {
+      if (!assi_mao) {
+        if (era.get(\`talent:\${target}:76\`) === 1) {
+          await era.printAndWait(\`「呜啊……啊啊……好，好舒服`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM36 初めて：助手玛奥与非助手玛奥三档',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

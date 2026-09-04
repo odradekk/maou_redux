@@ -10141,6 +10141,537 @@ async function kojo_message_com_11(rand) {
     }
   }
 
+  // :5508-5769 IF SELECTCOM === 36（骑乘位肛交 CFLAG:337）
+  if (era_flag.selectcom === 36) {
+    if (kojo.骑乘位肛交 === 0) {
+      if (assi_mao) {
+        if (era.get(`talent:${target}:76`) === 1) {
+          await era.printAndWait(`「呜啊……啊啊……好，好舒服……${heart(1)}」`); // :5515
+          await era.printAndWait(
+            `感受着${player_name}的阴茎在自己肛门内出入，${target_name}忍不住娇喘了起来。`,
+          ); // :5516
+          await era.print(
+            `『嘿嘿，我的小鸡鸡也很舒服啊，在姐姐热热的直肠里${heart(1)}』`,
+          ); // :5517
+          await era.printAndWait(
+            `「是，是啊！姐姐的屁股……要……要去了${heart(1)}」`,
+          ); // :5518
+          await era.printAndWait(
+            `${target_name}扭动着腰，尽情地让妹妹的阴茎继续从下方侵犯着自己的肛门……`,
+          ); // :5519
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          await era.printAndWait(
+            `「呜……呜啊……${player_name}为什么会……长出这种奇怪的东西……！」`,
+          ); // :5522
+          await era.printAndWait(
+            `感受着${player_name}的阴茎在自己肛门内出入，${target_name}红着脸呻吟着。`,
+          ); // :5523
+          await era.print(
+            `『就是为了侵犯姐姐才让魔王大人给人家遍出来的啊！啊啊……好棒……和姐姐肛交的刚绝』`,
+          ); // :5524
+          await era.printAndWait(`「唔啊……好粗……不行了，姐姐要不行了啊！」`); // :5525
+          await era.printAndWait(
+            `${target_name}扭动着腰，感受着被妹妹的阴茎继续从下方侵犯着自己的肛门的背德快感……`,
+          ); // :5526
+        } else {
+          await era.printAndWait(`「不，不可能……插进来啊啊…！」`); // :5529
+          await era.printAndWait(
+            `感受着${player_name}的阴茎在自己肛门内出入，${target_name}吃力地呻吟着。`,
+          ); // :5530
+          await era.print(`『好好动起来啊笨蛋姐姐，就像骑马那样啊！』`); // :5531
+          await era.printAndWait(
+            `「明，明白了……姐姐会照做的……不，不要再顶得那么深了！」`,
+          ); // :5532
+          await era.printAndWait(
+            `${target_name}扭动着腰，感受着被妹妹的阴茎继续从下方侵犯着自己的肛门的感觉…`,
+          ); // :5533
+        }
+      } else {
+        if (era.get(`talent:${target}:76`) === 1) {
+          await era.printAndWait(
+            `${target_name}的肛门被${player_name}从下方径直插入到了深处。`,
+          ); // :5538
+          await era.printAndWait(
+            `「嗯啊……啊啊啊${heart(1)} 好舒服${heart(1)} 肛交的感觉……好舒服啊啊${heart(1)}」`,
+          ); // :5539
+          await era.printAndWait(
+            `${target_name}扭动着腰，尽情地让${player_name}的阴茎在自己的直肠里进出……`,
+          ); // :5540
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          await era.printAndWait(
+            `${target_name}的肛门被${player_name}从下方径直插入到了深处`,
+          ); // :5543
+          await era.printAndWait(
+            `「是，是的……我会自己……动起来的啊啊啊${heart(1)}」`,
+          ); // :5544
+          await era.printAndWait(
+            `${target_name}扭动着腰边娇喘着，享受着骑乘式肛交的快感……`,
+          ); // :5545
+        } else {
+          await era.printAndWait(
+            `${target_name}的肛门被${player_name}从下方径直插入到了深处`,
+          ); // :5548
+          await era.printAndWait(`「呜……呜呜……好胀，好难受！」`); // :5549
+          await era.printAndWait(
+            `${player_name}挺起腰，持续地侵犯着${target_name}…`,
+          ); // :5550
+        }
+      }
+      // CFLAG:TARGET:337  = 1（变量语义：CFLAG 族，TARGET:337）
+      kojo.骑乘位肛交 = 1; // :5553
+      return 0;
+    } else {
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.骑乘位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `${target_name}的肛门被${player_name}从下方径直插入到了深处。`,
+            ); // :5562
+            await era.print(
+              `「嗯啊啊……啊啊……肛门被，被这么激烈地侵犯着${heart(1)}……」`,
+            ); // :5563
+            await era.print(
+              `『啊啊……和姐姐肛交……原来是这么舒服的事情啊啊${heart(1)} ！』`,
+            ); // :5564
+            await era.printAndWait(
+              `「来吧……尽情地……${heart(1)} 把姐姐的肛门……侵犯得一塌糊涂吧，${player_name}啊啊啊${heart(1)}」`,
+            ); // :5565
+            await era.printAndWait(
+              `${target_name}边扭动着腰，边发出一阵阵淫浪的娇喘，完全沉浸在肛交的快感中………`,
+            ); // :5566
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `${target_name}咬着嘴唇，带着沉醉的表情上下扭动着身体。`,
+            ); // :5568
+            await era.print(
+              `『哎呀呀，姐姐这幅表情，完全变成喜欢肛交的母猪了吗！』`,
+            ); // :5569
+            await era.printAndWait(
+              `${player_name}也挺着腰配合着${target_name}的动作，不断侵犯着${target_name}的肛门。`,
+            ); // :5570
+            await era.printAndWait(
+              `「哈……谢谢……夸奖啊啊……姐姐……就是只让${target_name}和魔王大人肛交的母猪啊啊${heart(1)}」`,
+            ); // :5571
+            await era.printAndWait(
+              `完全沉浸在肛交快感中的${target_name}，已经完全抛却任何尊严了……`,
+            ); // :5572
+          } else {
+            await era.printAndWait(
+              `${target_name}前后上下扭动着腰，寻求着更强烈的肛交快感。`,
+            ); // :5574
+            await era.print(
+              `「肛交……太棒了……真的是世界上最棒的事情了啊啊啊${heart(1)}」`,
+            ); // :5575
+            await era.print(
+              `『哎呀呀，姐姐真的是完全堕落了呢♪ 下次一定要当着村子里的大家的面侵犯姐姐的肛门，大家一定会忍不住对着姐姐手淫的。』`,
+            ); // :5576
+            await era.printAndWait(
+              `「啊啊……真，真是好主意${heart(1)} 魔王大人……下次……就按${player_name}说的……在村子里对${target_name}进行公开肛门调教吧${heart(1)}」`,
+            ); // :5577
+            await era.printAndWait(
+              `当着所有认识的人的面被侵犯，${target_name}光是这么想象着，就已经感觉无比兴奋了…`,
+            ); // :5578
+          }
+          // CFLAG:337  = 7（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 7; // :5580
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.骑乘位肛交 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(`「呜……啊啊……全，全部进来了……${heart(1)}」`); // :5583
+          await era.printAndWait(
+            `感受着${player_name}的阴茎在自己肛门内出入，${target_name}忍不住呻吟了起来。`,
+          ); // :5584
+          if (rand_n(3) === 0) {
+            await era.print(`『啊啊，姐姐的直肠……好紧，好热${heart(1)}』`); // :5586
+            await era.printAndWait(`「嗯啊……啊啊，屁股感觉……好奇怪！」`); // :5587
+          } else if (rand_n(2) === 0) {
+            await era.print(
+              `『呜哇哇……把人家的鸡鸡夹得这么紧，有那么舒服吗！』`,
+            ); // :5589
+            await era.printAndWait(`「是，是啊……姐姐……很舒服啊啊！」`); // :5590
+          } else {
+            await era.print(`『嘿嘿，让我来检验一下姐姐肛门的开发程度！』`); // :5592
+            await era.printAndWait(
+              `「呜……呜啊！感觉……好奇怪……又好舒服……${heart(1)}」`,
+            ); // :5593
+          }
+          await era.printAndWait(
+            `${target_name}扭动着腰，感受着被妹妹侵犯肛门的快感……`,
+          ); // :5595
+          // CFLAG:337  = 6（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 6; // :5596
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.骑乘位肛交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `${target_name}的肛门被${player_name}从下方径直插入到了深处。`,
+            ); // :5600
+            await era.print(
+              `「呜呜……要，要去了，要用肛门……去了啊啊啊${heart(1)}」`,
+            ); // :5601
+            await era.print(
+              `『哎哎，听着姐姐这么舒服的娇喘，人家也要高潮了啊${heart(1)}』`,
+            ); // :5602
+            await era.printAndWait(
+              `「哎哎……来吧……和姐姐一起高潮吧，${player_name}${heart(1)}」`,
+            ); // :5603
+            await era.printAndWait(
+              `${target_name}边扭动着腰，边发出一阵阵甜美的娇喘，完全沉浸在肛交的快感中………`,
+            ); // :5604
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `${target_name}咬着嘴唇，带着沉醉的表情上下扭动着身体`,
+            ); // :5606
+            await era.print(`『嘿嘿，能让姐姐舒服，我很高兴啊！』`); // :5607
+            await era.print(
+              `「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊${heart(1)}」`,
+            ); // :5608
+            await era.printAndWait(
+              `「都，都是你把姐姐的肛门……弄得和性器一样了，你可要负责啊${heart(1)}」`,
+            ); // :5609
+            await era.printAndWait(
+              `${target_name}的嬉笑很快又变回了舒服的娇喘………`,
+            ); // :5610
+          } else {
+            await era.printAndWait(
+              `${target_name}前后上下扭动着腰，寻求着更强烈的肛交快感。`,
+            ); // :5612
+            await era.print(
+              `「肛交……太棒了……真的是世界上最棒的事情了啊啊啊${heart(1)}」`,
+            ); // :5613
+            await era.print(`『哇哇……姐姐的动作好棒……好舒服……继续，不要停！』`); // :5614
+            await era.printAndWait(
+              `「啊啊${heart(1)} 要，要坏掉了……屁股舒服得要坏掉了啊啊………」`,
+            ); // :5615
+            await era.printAndWait(
+              `${target_name}娇喘个不停，已经完全无法自拔了……`,
+            ); // :5616
+          }
+          // CFLAG:337  = 5（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 5; // :5618
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.骑乘位肛交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `感受着${player_name}的阴茎在自己肛门内出入，${target_name}红着脸呻吟着。`,
+          ); // :5621
+          if (rand_n(3) === 0) {
+            await era.printAndWait(`「呜……啊啊！插到……最里面了！」`); // :5623
+            await era.print(
+              `『感觉如何，姐姐？要一直侵犯到姐姐的肛门合不上为止哦♪』`,
+            ); // :5624
+            await era.printAndWait(
+              `「不，不行啊……会，会坏掉的……魔王大人，救命呀！」`,
+            ); // :5625
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(`「呜啊……屁股被，被撑开了！」`); // :5627
+            await era.print(
+              `『姐姐的肛门还得再让魔王大人好好开发一下啊，太紧了，虽然人家很舒服就是了${heart(1)}』`,
+            ); // :5628
+            await era.printAndWait(`「不，不要啊……那里，又不是性器……！」`); // :5629
+          } else {
+            await era.print(
+              `『哇哇……姐姐的肛门这么紧，这么舒服……会让人上瘾的♪』`,
+            ); // :5631
+            await era.printAndWait(
+              `「嗯啊……谢谢，夸奖……不过，还请温柔一点……」`,
+            ); // :5632
+          }
+          await era.printAndWait(
+            `${target_name}感受着被妹妹侵犯肛门的背德快感，身体更加燥热了………`,
+          ); // :5634
+          // CFLAG:337  = 4（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 4; // :5635
+        } else if (
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.骑乘位肛交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `感受着${player_name}的阴茎在自己肛门内出入的快感，${target_name}忍不住娇喘了起来。`,
+            ); // :5639
+            await era.print(
+              `「尽情……尽情地把${target_name}的肛门……侵犯到坏掉吧啊啊啊${heart(1)}」`,
+            ); // :5640
+            await era.print(
+              `『嘿嘿，姐姐也要自己动起来啊，会更舒服的${heart(1)}』`,
+            ); // :5641
+            await era.printAndWait(`「是……是吗……我，我会照做的……嗯啊啊！」`); // :5642
+            await era.printAndWait(`${target_name}红着脸，主动扭起腰来……`); // :5643
+          } else if (rand_n(2) === 0) {
+            await era.print(
+              `「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊${heart(1)}」`,
+            ); // :5645
+            await era.printAndWait(
+              `骑在妹妹身上的${target_name}完全无法抗拒肛门的快感，大声娇喘了起来。`,
+            ); // :5646
+            await era.print(
+              `『嘿嘿，能让姐姐这么舒服，人家也很高兴啊${heart(1)}』`,
+            ); // :5647
+            await era.printAndWait(
+              `「不，不要盯着人家的脸看啦…啊啊……嗯啊啊！」`,
+            ); // :5648
+            await era.printAndWait(
+              `${target_name}羞红了脸，腰却不自觉地继续扭动着……`,
+            ); // :5649
+          } else {
+            await era.printAndWait(
+              `肛门被${player_name}的阴茎一次次顶入最深处，${target_name}的呻吟很快变成了大声的娇喘。`,
+            ); // :5651
+            await era.print(
+              `「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊${heart(1)}」`,
+            ); // :5652
+            await era.printAndWait(
+              `${player_name}欣赏着姐姐的痴态，舔着嘴唇，挺着腰继续侵犯着骑在自己身上的${target_name}。`,
+            ); // :5653
+            await era.print(
+              `『哈哈，要高潮了吧，姐姐，彻底变成一个会用肛门高潮的变态吧！』`,
+            ); // :5654
+            await era.printAndWait(
+              `「呜，呜啊啊……太激烈了！但是……但是，要，要去了，${player_name}，姐姐要去了啊啊！！」`,
+            ); // :5655
+          }
+          // CFLAG:337  = 3（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 3; // :5657
+        } else if (kojo.骑乘位肛交 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(
+            `${target_name}流着眼泪呻吟着，感受着肛门被妹妹侵犯的生理和心理上的双重痛苦`,
+          ); // :5660
+          if (rand_n(3) === 0) {
+            await era.printAndWait(`「呜……啊啊……不，不能再进来了！」`); // :5662
+            await era.print(
+              `『那姐姐就快点自己动起来啊，不然我就继续往里顶了哦！』`,
+            ); // :5663
+            await era.printAndWait(
+              `「不……不行……真的会坏掉的……屁股会坏掉的……呜呜呜！」`,
+            ); // :5664
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(`「呜……啊啊……好痛，好痛……！」`); // :5666
+            await era.print(
+              `『没关系没关系，人家的肛门也是这样被魔王大人调教的！』`,
+            ); // :5667
+            await era.printAndWait(
+              `「不，不要再往里顶了……求你了……我，我会自己动的……！」`,
+            ); // :5668
+          } else {
+            await era.printAndWait(`「呜……啊啊……太，太粗了……！」`); // :5670
+            await era.print(
+              `『呜哇，姐姐的肛门这么紧，有成为名器的潜质呢${heart(1)}』`,
+            ); // :5671
+            await era.printAndWait(`「不要羞辱姐姐了……求你了……」`); // :5672
+          }
+          await era.printAndWait(
+            `${target_name}的肛门被妹妹一次次往上顶入到最深处……`,
+          ); // :5674
+          // CFLAG:337  = 2（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 2; // :5675
+        }
+      } else {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.骑乘位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `${target_name}被充分开发的肛门，将${player_name}整根阴茎吞了进去。`,
+            ); // :5681
+            await era.print(
+              `「好舒服……已经舒服得……没有办法思考了啊啊啊${heart(1)}」`,
+            ); // :5682
+            await era.printAndWait(
+              `「肛门……被魔王大人的……阴茎${heart(1)} 塞得满满的……好舒服啊啊${heart(1)}」`,
+            ); // :5683
+            await era.printAndWait(
+              `${target_name}淫浪的娇喘着，享受着，被身下的${player_name}一次次顶入到肛门深处的快感…`,
+            ); // :5684
+          } else if (rand_n(2) === 0) {
+            await era.print(
+              `「肛交……太棒了……真的是世界上最棒的事情了啊啊啊${heart(1)}」`,
+            ); // :5686
+            await era.printAndWait(
+              `${target_name}发出一声声淫浪的娇喘，扭动着腰让${player_name}的阴茎一次次在自己的肛门进出。`,
+            ); // :5687
+            await era.printAndWait(
+              `丰满的双乳在胸前上下晃动着，整个人已经完全沉沦在快感之中了。`,
+            ); // :5688
+            await era.printAndWait(
+              `「嗯啊啊${heart(1)} 好舒服……好想……一直被魔王大人……这么侵犯肛门啊啊啊${heart(1)} 」`,
+            ); // :5689
+          } else {
+            await era.printAndWait(
+              `${target_name}咬着嘴唇，上下扭动着腰身，寻求着更强烈的肛门快感。`,
+            ); // :5691
+            await era.print(
+              `「不，不行了……肛门……舒服得……要上天了啊啊啊${heart(1)}」`,
+            ); // :5692
+            await era.printAndWait(
+              `不绝于耳的淫浪娇喘让${player_name}也变得更加兴奋了，阴茎变得更加坚挺。`,
+            ); // :5693
+            await era.printAndWait(
+              `「啊啊啊……人家的肛门……能够让魔王大人满意${heart(1)} 好高兴啊啊啊${heart(1)}」`,
+            ); // :5694
+          }
+          // CFLAG:337  = 7（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 7; // :5696
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.骑乘位肛交 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `${target_name}的肛门被${player_name}从下面一次次顶入到深处。`,
+          ); // :5699
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `「嗯啊……啊啊啊${heart(1)} 尽情地……侵犯人家的肛门吧${heart(1)}」`,
+            ); // :5701
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `「呜啊……感觉好奇怪，但是好舒服${heart(1)}」`,
+            ); // :5703
+          } else {
+            await era.printAndWait(
+              `「呜啊啊……魔王大人的阴茎，好热，好舒服${heart(1)}」`,
+            ); // :5705
+          }
+          await era.printAndWait(
+            `骑在${player_name}身上的${target_name}扭动着腰，尽情享受着肛交的快感……`,
+          ); // :5707
+          // CFLAG:337  = 6（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 6; // :5708
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.骑乘位肛交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `${target_name}被充分开发的肛门，将${player_name}整根阴茎吞了进去。`,
+            ); // :5712
+            await era.print(
+              `「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样${heart(1)}」`,
+            ); // :5713
+            await era.printAndWait(
+              `「这种被一次次撑开的感觉……实在是太舒服啊啊啊${heart(1)}」`,
+            ); // :5714
+            await era.printAndWait(
+              `${target_name}带着被融化了一般的表情，发出一阵阵甘甜的娇喘、沉浸在肛交的快感中……`,
+            ); // :5715
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `${target_name}带着陶醉的表情上下扭动着身体，渴求着更强烈的肛门快感。`,
+            ); // :5717
+            await era.print(
+              `「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样啊啊${heart(1)}」`,
+            ); // :5718
+            await era.printAndWait(
+              `「都怪魔王大人……把人家的肛门……调教得……没有快感，就活不下去了啊啊${heart(1)}」`,
+            ); // :5719
+            await era.printAndWait(
+              `${target_name}的嬉笑很快被强烈的快感淹没，再次淫浪的娇喘起来……`,
+            ); // :5720
+          } else {
+            await era.printAndWait(
+              `${target_name}前后上下扭动着腰，寻求着更强烈的肛交快感，但${player_name}却故意放慢了动作。`,
+            ); // :5722
+            await era.print(
+              `「嗯啊啊……啊啊……肛门……舒服得……像是要坏掉了一样啊啊${heart(1)}」`,
+            ); // :5723
+            await era.printAndWait(
+              `「魔，魔王大人……求，求你了……让，让人家的肛门……高潮吧${heart(1)}」`,
+            ); // :5724
+            await era.printAndWait(`${target_name}红着脸，大声乞求着……`); // :5725
+          }
+          // CFLAG:337  = 5（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 5; // :5727
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.骑乘位肛交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `${target_name}的肛门被身下的${player_name}一次次顶入到深处。`,
+          ); // :5730
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `「好，好的……魔王大人……我，我会自己动起来的${heart(1)}」`,
+            ); // :5732
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `「啊啊……这个姿势……好羞耻……不过，好舒服${heart(1)}」`,
+            ); // :5734
+          } else {
+            await era.printAndWait(
+              `「魔王大人，请……尽情侵犯${target_name}的肛门吧${heart(1)} ！」`,
+            ); // :5736
+          }
+          await era.printAndWait(
+            `${target_name}边扭着腰，边发出甜美的，放佛要融化了一般的喘息……`,
+          ); // :5738
+          // CFLAG:337  = 4（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 4; // :5739
+        } else if (
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.骑乘位肛交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `${target_name}被充分开发的肛门，将${player_name}整根阴茎吞了进去。`,
+          ); // :5742
+          await era.printAndWait(
+            `「呜……呜呜……直肠壁……被这么摩擦着……感觉太舒服了啊啊啊${heart(1)}」`,
+          ); // :5743
+          if (rand_n(3) === 0) {
+            await era.printAndWait(
+              `「为，为什么这么舒服……已经，停不下来了啊啊啊……」`,
+            ); // :5745
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `「呜呜……才，才不是因为……喜欢肛交……才动起来的……嗯啊啊」`,
+            ); // :5747
+          } else {
+            await era.printAndWait(
+              `「啊啊……再这样下去……肛门就会……变成性器了啊啊」`,
+            ); // :5749
+          }
+          await era.printAndWait(
+            `${target_name}在肛门快感的驱使下，红着脸又扭动起腰来……`,
+          ); // :5751
+          // CFLAG:337  = 3（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 3; // :5752
+        } else if (kojo.骑乘位肛交 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(
+            `${target_name}流着眼泪呻吟着，肛门被强行撑开，顶了进去`,
+          ); // :5755
+          if (rand_n(3) === 0) {
+            await era.printAndWait(`「好痛……好难受……呜呜！」`); // :5757
+          } else if (rand_n(2) === 0) {
+            await era.printAndWait(
+              `「呜呜……不，不要再顶进来了……我，我会自己动的……！」`,
+            ); // :5759
+          } else {
+            await era.printAndWait(
+              `「要，要坏掉了……饶了我吧……屁股真的会坏掉的！」`,
+            ); // :5761
+          }
+          await era.printAndWait(
+            `${player_name}挺起腰，持续侵犯着骑在自己身上的${target_name}…`,
+          ); // :5763
+          // CFLAG:337  = 2（变量语义：CFLAG 族，337）
+          kojo.骑乘位肛交 = 2; // :5764
+        }
+      }
+      return 0;
+    }
+  }
+
   return 0;
 }
 
