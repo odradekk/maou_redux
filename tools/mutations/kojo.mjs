@@ -20,7 +20,10 @@ export default [
     desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
     file: 'ere/kojo/kojo-system.js',
     find: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  if ((era.get(\`flag:\${local}\`) || 0) === 0) {`,
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0
+  ) {`,
     replace: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
   if (false) { // 变异：存在判定删除`,
     tests: ['kojo-system'],
@@ -10334,5 +10337,266 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k12-intellectual'],
     must_mention:
       '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）',
+  },
+  {
+    desc: 'M6200 K902 EVENTTRAIN EX_FLAG:102 置位删除（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    era_exflag.set(102, 1); // :19 EX_FLAG:102 = 普林希斯口上存在标志',
+    replace: '    // 变异：EX_FLAG:102 置位删除',
+    tests: ['kojo-k902-princess'],
+    must_mention: 'EVENTTRAIN #PRI 写 EX_FLAG:102、EVENTEND #LATER 清 0',
+  },
+  {
+    desc: 'M6201 K902 EVENTTRAIN EX_TALENT:102 守卫删除（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: `  if (era0(\`ex_talent:\${target}:102\`) != 1) {
+    // :34-35
+    return 0; // :34-35
+  } // :34-35`,
+    replace: `  if (false) { // 变异：EX_TALENT:102 守卫删除
+    // :35
+    return 0; // :35
+  } // :35`,
+    tests: ['kojo-k902-princess'],
+    must_mention: 'EX_TALENT:102 缺席不出初调教口上',
+  },
+  {
+    desc: 'M6202 K902 CFLAG:201 初调教初回写错（1 改 2）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    kojo.初调教 = 1; // :54',
+    replace: '    kojo.初调教 = 2; // :54（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '初调教推进到 1',
+  },
+  {
+    desc: 'M6203 K902 CFLAG:650 NTR 再捕获清除删除（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: `      // CFLAG:650  = 0（变量语义：CFLAG 族，650） // :68
+      kojo.NTR再捕获 = 0; // :68`,
+    replace: `      // CFLAG:650  = 0（变量语义：CFLAG 族，650） // :68
+      // 变异：NTR 再捕获清除删除`,
+    tests: ['kojo-k902-princess'],
+    must_mention: 'NTR 再捕获清 CFLAG:650',
+  },
+  {
+    desc: 'M6204 K902 CFLAG:201 屈服 Lv1 写错（2 改 3）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    kojo.初调教 = 2; // :84',
+    replace: '    kojo.初调教 = 3; // :84（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '屈服 Lv1推进到 2',
+  },
+  {
+    desc: 'M6205 K902 CFLAG:201 屈服 Lv2 写错（3 改 4）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    kojo.初调教 = 3; // :91',
+    replace: '    kojo.初调教 = 4; // :91（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '屈服 Lv2推进到 3',
+  },
+  {
+    desc: 'M6206 K902 CFLAG:201 屈服 Lv3 写错（4 改 5）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    kojo.初调教 = 4; // :98',
+    replace: '    kojo.初调教 = 5; // :98（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '屈服 Lv3推进到 4',
+  },
+  {
+    desc: 'M6207 K902 CFLAG:201 淫乱阶段写错（5 改 6）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    kojo.初调教 = 5; // :109',
+    replace: '    kojo.初调教 = 6; // :109（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '淫乱推进到 5',
+  },
+  {
+    desc: 'M6208 K902 CFLAG:201 爱慕阶段写错（6 改 7）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    kojo.初调教 = 6; // :120',
+    replace: '    kojo.初调教 = 7; // :120（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '爱慕推进到 6',
+  },
+  {
+    desc: 'M6209 K902 COM 守卫① TEQUIP:45 删松（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
+    replace: '  if (false) { // 变异：TEQUIP:45 口塞守卫删松',
+    tests: ['kojo-k902-princess'],
+    must_mention: '口塞守卫静默',
+  },
+  {
+    desc: 'M6210 K902 COM 守卫② TFLAG:899 失神删松（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: `  if (game.train.失神) {
+    // :498-499
+    return 0; // :498-499
+  } // :498-499`,
+    replace: `  if (false) { // 变异：TFLAG:899 失神守卫删松
+    // :498-499
+    return 0; // :498-499
+  } // :498-499`,
+    tests: ['kojo-k902-princess'],
+    must_mention: '失神守卫静默',
+  },
+  {
+    desc: 'M6211 K902 COM 守卫③ TEQUIP:89 DOG 分发删松（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (era0(`tequip:${target}:89`)) {',
+    replace: '  if (false) { // 变异：TEQUIP:89 DOG 分发守卫删松',
+    tests: ['kojo-k902-princess'],
+    must_mention: 'DOG_KOJO_902 真身台词',
+  },
+  {
+    desc: 'M6212 K902 COM 守卫④ TEQUIP:90 触手删松（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (era0(`tequip:${target}:90`)) {',
+    replace: '  if (false) { // 变异：TEQUIP:90 触手守卫删松',
+    tests: ['kojo-k902-princess'],
+    must_mention: '触手守卫静默',
+  },
+  {
+    desc: 'M6213 K902 COM 守卫⑤ TEQUIP:55 竞技场分发删松（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: `  if (era0(\`tequip:\${target}:55\`)) {
+    // :509
+    await colosseum_kojo_902(rand); // :510
+    return 0; // :510-511
+  } // :510-512`,
+    replace: `  if (false) { // 变异：TEQUIP:55 竞技场分发守卫删松
+    // :509
+    await colosseum_kojo_902(rand); // :510
+    return 0; // :511
+  } // :512`,
+    tests: ['kojo-k902-princess'],
+    must_mention: 'COM 守卫⑤ TEQUIP:55 转入 COLOSSEUM_KOJO_902 真身',
+  },
+  {
+    desc: 'M6214 K902 SELECTCOM:0 爱抚初回计数写错（1 改 2）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '      chara(target).kojo.爱抚 = 1; // :530',
+    replace: '      chara(target).kojo.爱抚 = 2; // :530（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '爱抚初回推进到 1',
+  },
+  {
+    desc: 'M6215 K902 SELECTCOM:0 爱抚淫乱计数写错（6 改 5）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '        chara(target).kojo.爱抚 = 6; // :537',
+    replace: '        chara(target).kojo.爱抚 = 5; // :537（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '爱抚淫乱推进到 6',
+  },
+  {
+    desc: 'M6216 K902 SELECTCOM:2 保留缺陷误读 CFLAG:223（改读 CFLAG:303）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '        chara(target).kojo.首次耻情Lv2 <= 1 ||',
+    replace: '        chara(target).kojo.肛门爱抚 <= 1 ||',
+    tests: ['kojo-k902-princess'],
+    must_mention: '耻情已触发会错误地压住肛门爱抚回退',
+  },
+  {
+    desc: 'M6217 K902 SELECTCOM:7 保留缺陷误写 CFLAG:306（改写 CFLAG:308）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '        chara(target).kojo.胸爱抚 = 5; // :849',
+    replace: '        chara(target).kojo.自己扒开 = 5; // :849（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '自己扒开计数器保持 1',
+  },
+  {
+    desc: 'M6218 K902 SELECTCOM:8 插入手指初回计数写错（1 改 2）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '      chara(target).kojo.插入手指 = 1; // :883',
+    replace: '      chara(target).kojo.插入手指 = 2; // :883（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '插入手指初回推进到 1',
+  },
+  {
+    desc: 'M6219 K902 PALAMCNG 润滑首超边界删严（> 改 >=）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (p_lube > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {',
+    replace: '  if (p_lube >= PALAMLV[2] && kojo.首次润滑Lv2 == 0) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: '等于阈值不算首超',
+  },
+  {
+    desc: 'M6220 K902 PALAMCNG NOWEX:0 首次 C 绝顶判据删松（>0 改 >1）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (era0(`nowex:${target}:0`) > 0 && kojo.首次C绝顶 == 0) {',
+    replace: '  if (era0(`nowex:${target}:0`) > 1 && kojo.首次C绝顶 == 0) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: 'NOWEX:TARGET:0 首次 C 绝顶',
+  },
+  {
+    desc: 'M6221 K902 MARKCNG 苦痛刻印 Lv3 首超判据删松（==3 改 ==4）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (game.system.苦痛刻印变动 == 3 && chara(target).kojo.苦痛刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.苦痛刻印变动 == 4 && chara(target).kojo.苦痛刻印Lv3 == 0) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: '苦痛刻印 Lv3 首次',
+  },
+  {
+    desc: 'M6222 K902 MARKCNG 快乐刻印 Lv3 首超判据删松（==3 改 ==4）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (game.system.快乐刻印变动 == 3 && chara(target).kojo.快乐刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.快乐刻印变动 == 4 && chara(target).kojo.快乐刻印Lv3 == 0) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: '快乐刻印 Lv3 首次',
+  },
+  {
+    desc: 'M6223 K902 MARKCNG 屈服刻印 Lv3 首超判据删松（==3 改 ==4）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (game.system.屈服刻印变动 == 3 && chara(target).kojo.屈服刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.屈服刻印变动 == 4 && chara(target).kojo.屈服刻印Lv3 == 0) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: '屈服刻印 Lv3 首次',
+  },
+  {
+    desc: 'M6224 K902 MARKCNG 反抗刻印 Lv3 首超判据删松（==3 改 ==4）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if (game.system.反抗刻印变动 == 3 && chara(target).kojo.反抗刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.反抗刻印变动 == 4 && chara(target).kojo.反抗刻印Lv3 == 0) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: '反抗刻印 Lv3 首次',
+  },
+  {
+    desc: 'M6225 K902 GOHOUBI_REQUEST 保留 Y 未赋值缺陷改为奖励 2（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  const y = 0;',
+    replace: '  const y = 2; // 变异：Y 未赋值误变为奖励 2',
+    tests: ['kojo-k902-princess'],
+    must_mention: 'Y 残留为 0，不补公猪或雄马',
+  },
+  {
+    desc: 'M6226 K902 PALAMCNG 首次耻情保留嘉德误称（改为普林希斯）（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '      await era.printAndWait(`但是嘉德已经涨红了脸，害羞得不得了了`); // :4384',
+    replace:
+      '      await era.printAndWait(`但是普林希斯已经涨红了脸，害羞得不得了了`); // :4384（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '保留 K902 台词误称嘉德',
+  },
+  {
+    desc: 'M6227 K902 KOJO2 首处重复 TALENT:74 判断保留（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    } else if (era0(`talent:${target}:74`)) {\n      // :279',
+    replace:
+      '    } else if (era0(`talent:${target}:75`)) {\n      // :279（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '重复 TALENT:74 压住第二支：湿嗒嗒',
+  },
+  {
+    desc: 'M6228 K902 KOJO2 第二处重复 TALENT:74 判断保留（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    } else if (era0(`talent:${target}:74`)) {\n      // :366',
+    replace:
+      '    } else if (era0(`talent:${target}:75`)) {\n      // :366（变异）',
+    tests: ['kojo-k902-princess'],
+    must_mention: '重复 TALENT:74 压住第二支：灵肉交汇',
   },
 ];

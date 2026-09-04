@@ -49,20 +49,18 @@
  *     台词分支在各口上 handler 内各自扩展（各文件 1:1，分支序/条件随
  *     ERB 原文）。
  *
- * == EX 口上待办（登记 docs/stub-registry.md，随 EX 口上票） ==
+ * == EX 口上 ==
  *
  * @GET_KOJO_NUM 的 LOCAL = GET_EX_KOJO_NUM(ARG)（EXCOM.ERB:31-38，扫
  * EX_TALENT 101-800，命中 +900）与 @KOJO_MESSAGE_COM 存在判定的
- * EX_FLAG:(LOCAL - 900) 臂（:156）都依赖 EX_TALENT / EX_FLAG 表——两张
- * 表未落 yml/（EX_TALENTNAME_INIT 登记在案），且 EX_TALENT 的唯一写入者
- * @ADDCHARA_EX 未移植，EX 口上编号当前不可达。省略后行为等价：普通口上
- * LOCAL < 140，原作在该臂读负下标恒 0。EX 口上落地时补这两处与
- * K902-K904 模块。
+ * EX_FLAG:(LOCAL - 900) 臂（:156）已接入。EX_TALENT:102 映射为
+ * LOCAL 1002，再分发到 K902；EX_FLAG:102 是独立的口上存在标志。
  */
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
@@ -171,15 +169,31 @@ function kojo_handler_id(arg = -1) {
  *
  * :137-140 FOR COUNT,160,180：素质 160-179（慈愛..貴公子等性格素质）逐格
  * 探测，**最后一格命中者胜**（原作无 BREAK，后写覆盖先写）。性格素质 →
- * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 半边
- * （:135 GET_EX_KOJO_NUM）待办，见文件头。
+ * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 素质
+ * 101-800 先映射为 1001-1700，后命中的普通性格素质会覆盖它。
  *
  * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）
- * @returns {number} 口上编号（100-119；无性格素质时 0）
+ * @returns {number} 口上编号（普通 100-119；EX 1001-1700；无命中时 0）
  */
+let get_ex_kojo_num_local = 0;
+
+/**
+ * @GET_EX_KOJO_NUM（EXCOM.ERB:31-38）：扩展素质 101-800 中最后一格命中者
+ * 映射为 1001-1700。LOCAL 是按函数名持久化的 public static；原作未在调用
+ * 开头清零，所以无命中时会残留上一次结果。该缺陷 1:1 保留。
+ */
+function get_ex_kojo_num(cid) {
+  for (let count = 101; count < 801; count += 1) {
+    if (era.get(`ex_talent:${cid}:${count}`)) {
+      get_ex_kojo_num_local = count + 900;
+    }
+  }
+  return get_ex_kojo_num_local;
+}
+
 function get_kojo_num(arg = -1) {
   const cid = arg < 0 ? era_flag.target : arg; // :89-91
-  let local = 0;
+  let local = get_ex_kojo_num(cid); // :135 EX 口上先判，普通素质后写覆盖
   for (let count = 160; count < 180; count += 1) {
     if (era.get(`talent:${cid}:${count}`)) {
       local = count - 60; // :139
@@ -191,8 +205,8 @@ function get_kojo_num(arg = -1) {
 /**
  * @KOJO_MESSAGE_COM（:150-162）：指令执行时的口上入口。
  *
- * 两道守卫（:151-152 总开关；:155-157 存在判定——EX_FLAG 臂待办见文件头，
- * 普通口上化简为 FLAG:LOCAL == 0）之后按编号分发（:160-161）。
+ * 两道守卫（:151-152 总开关；:155-157 存在判定：普通口上读
+ * FLAG:LOCAL，EX 口上读 EX_FLAG:(LOCAL - 900)）之后按编号分发（:160-161）。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源（返回 [0, n) 的
  *   整数；缺省均匀随机）。以参数注入而非测试钩子——随机源本就是引擎外
@@ -207,7 +221,10 @@ async function kojo_message_com(rand) {
 
   // :155-157 第二道守卫：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 臂）
   const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  if ((era.get(`flag:${local}`) || 0) === 0) {
+  if (
+    (era.get(`flag:${local}`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0
+  ) {
     return 0;
   }
 

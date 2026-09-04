@@ -97,6 +97,29 @@ test('GET_KOJO_NUM：素质 160-179 扫描，最后一格命中者胜', async ()
   assert.equal(get_kojo_num(17), 0);
 });
 
+test('GET_KOJO_NUM：扩展素质 102 映射到 K902，存在判定读取 EX_FLAG:102', async () => {
+  const fixture = await setup_kojo((f) => {
+    f.store.delete('talent:17:165');
+    f.store.set('ex_talent:17:102', 1);
+    f.store.set('exflag:102', 1);
+  });
+  const { get_kojo_num, kojo_message_com, kojo_message_com_family } =
+    fixture.load_module('kojo/kojo-system');
+  kojo_message_com_family.register(902, async () => {
+    await fixture.era.print('K902 扩展口上');
+    return 0;
+  });
+
+  assert.equal(get_kojo_num(17), 1002, 'EX_TALENT:102 → 口上编号 1002');
+  assert.equal(
+    get_kojo_num(18),
+    1002,
+    'GET_EX_KOJO_NUM 的 public static LOCAL 保留上次命中',
+  );
+  await kojo_message_com();
+  assert.deepEqual(fixture.text_lines(), ['K902 扩展口上']);
+});
+
 test('分发：性格命中唯一实现；空间内缺失（K4 冷徹未移植）静默', async () => {
   // 高貴 163 + FLAG:103 → K3
   const k3 = await setup_kojo((f) => {
