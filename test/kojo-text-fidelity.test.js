@@ -172,6 +172,7 @@ const JS_TOKEN_RULES = [
   [/^assi_name$/, 'ASSI'],
   [/^master_name$/, 'MASTER'],
   [/^sc\(\)$/, 'SC'],
+  [/^sc\(a\)$/, 'SC'], // #243 K12：enterenemy 等以 A 为目标的 SELF_CALL(A)
   [/^self_call\(a\)$/, 'SC'],
   [/^self_call\(assi\)$/, 'SC_ASSI'], // #231 K0：${self_call(assi)}
   [/^scf\(\)$/, 'SCF'],

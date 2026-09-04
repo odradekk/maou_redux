@@ -89,6 +89,36 @@ class EventFacade {
   }
 
   /**
+   * 预产日（cflag:cid:110 ↔ CFLAG:110）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:110 = 出産予定日
+   * @returns {number}
+   */
+  get 预产日() {
+    return era.get(`cflag:${this.cid}:110`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 预产日(v) {
+    era.set(`cflag:${this.cid}:110`, v);
+  }
+
+  /**
+   * 孩子父亲（cflag:cid:111 ↔ CFLAG:111）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:111 = 父親のキャラ番号（-1なら娼館の客, -2ならノラ犬, -3ならモンスターの子供, -4なら狂王）
+   * @returns {number}
+   */
+  get 孩子父亲() {
+    return era.get(`cflag:${this.cid}:111`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 孩子父亲(v) {
+    era.set(`cflag:${this.cid}:111`, v);
+  }
+
+  /**
    * 侵攻度（cflag:cid:502 ↔ CFLAG:502）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行387 CFLAG:502 侵攻度
    * @returns {number}
