@@ -63,8 +63,9 @@ const { chara_callname } = require('#/utils/callname-utils');
 const PBAND = 4; // ITEM:PBAND = ITEM:4（SYSTEM ver1.0.3.ERB:42）
 const era0 = (key) => era.get(key) || 0;
 
-// 反复出现的原作变量语义：TALENT:179 = 菲娅口上素质；TALENT:314 = 魔族种族；
-// TEQUIP:45/55/89/90 = 口塞/死斗场/兽奸/触手；TFLAG:899 = 失神状态。
+// 反复出现的原作变量语义：TALENT:9/76/85/179/314 = 崩坏/淫乱/爱慕/
+// 菲娅口上素质/魔族种族；MARK:2 = 屈服刻印；TEQUIP:45/55/89/90 =
+// 口塞/死斗场/兽奸/触手；TFLAG:899 = 失神状态。
 
 // @EVENTTRAIN // :51
 on(
