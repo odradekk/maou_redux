@@ -20,13 +20,8 @@ export default [
     desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
     file: 'ere/kojo/kojo-system.js',
     find: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  const exists =
-    local === 1003
-      ? era_exflag.kojo_gade_session
-      : era.get(\`flag:\${local}\`) || 0;
-  if (exists === 0) {`,
+  if ((era.get(\`flag:\${local}\`) || 0) === 0) {`,
     replace: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  const exists = 1; // 变异：存在判定删除
   if (false) { // 变异：存在判定删除`,
     tests: ['kojo-system'],
     must_mention: '存在判定',
