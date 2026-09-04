@@ -40,6 +40,11 @@
 //   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档 / SOP 的 T4 阶段闸）
 //   --changed / --base <ref>  按 git 改动过滤条目的 file:（默认基线 origin/master）
 //   --files a.js,b.js         显式给靶文件列表（不走 git；测试夹具与诊断用）
+//   --ids M4246,M4250-M4260   只跑点名的 M 编号（agent 内环用：证明**刚加的**
+//                             那几条真能拦。`--files` 会把打同一个靶文件的条目
+//                             全跑一遍——K11 有 502 条 × 4.8s ≈ 40 分钟，每加一条
+//                             指令就重跑一遍整份，是 #242 实测的主要拖慢来源）。
+//                             点名的编号在表里不存在时当场报错，不静默跑 0 条。
 //   --root <dir>            变异所在的仓库根（默认本工具的上级；测试夹具用）
 //   --ledger-dir <dir>      条目表目录（默认 tools/mutations；测试夹具用）
 //   --baseline <n>          覆盖计数检查基线（测试夹具用）
@@ -204,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 2524; // #242 +14（M4328-M4336、M4341-M4345，SELECTCOM 31，口交 CFLAG:332）； #242 +18（M4310-M4327，SELECTCOM 30，手淫 CFLAG:331）； #242 +20（M4290-M4309，SELECTCOM 29，背面座位肛交 CFLAG:330）； #242 +19（M4271-M4289，SELECTCOM 28，对面座位肛交 CFLAG:329）；#214 +26；#215 +24；#217 +17；#216 +40；#228 +20 −1；#223 +40；#230 +34；#219 +12；#218 +9；#221 +10；#218 补轮 +16；#226 +20；#224 +25（M1190-M1214）；#270 +5（M1310-M1314）；#222 +7（M1110-M1116）；#220 +15（M1060-M1074）；#274 +2（M1370-M1371）；#229 +20（M1450-M1469）；#225 +18（M1400-M1417）+1（M1418 incest 真身）；#227 +40（M1330-M1369）；#282 +2（M1520-M1521）；#233 +29（M1540-M1568）；#232 +42（M1650-M1691）；#235 +25（M1750-M1775）；#234 +31（M1700-M1730）；#236 +25（M1790-M1814）；#237 +27（M1780-M1806，#295 消重后：M1780-M1789 + M2119、M2121-M2136）；#288 +2（M2118、M2120，原 M1790-M1791，#295 消重后改号）；#290 +3（M2137-M2139，原 M1810-M1812，#295 消重后改号）；#238 +47（M2000-M2046）；#295 +2（M2080-M2081，唯一性门自身的自证——把门删掉，mutation-check/kojo-text-fidelity 的自测必须红；另消 37 处编号重号，只改后来者，条目总数不变）；#240 +40（M2200-M2239）；#241 +70（M2270-M2339）；#302 +2（M2770-M2771，有引擎侧基线与跑错环境的提示）；#239 +192（K8 银黑桃整份：M1815-M1999 与 M2500-M2507，后者为合并 master 时避 #236/#238 号段所改）+1（M2508 NTR 族实参约定）；#299 +3（M2740-M2742，冲突标记守卫）；#231 +276（M1600-M1649、M1790-M2015、M2420-M2460）；#304 +4（M2900-M2903，checkers.mjs 并行汇总/报告路径整改）；#242 +37（M2340-M2376）+25（M2377-M2401，SELECTCOM 0/1/2）+16（M2402-M2417，SELECTCOM 3）+2（M2418-M2419，SELECTCOM 5）+10（M2800-M2809，原 M2420-M2429，撞 #231 的 M2420-M2599 分配，#295 消重后改号）+23（M2810-M2832，SELECTCOM 6）+18（M2833-M2850，SELECTCOM 7）+1（M2851，COM1/COM7 virgin 变异去重）+17（M2852-M2868，SELECTCOM 8）+17（M2869-M2885，SELECTCOM 9）+14（M2886-M2899，SELECTCOM 10 前段，M2800-M2899 段至此用满）+3（M2900-M2902→改号 M4000-M4002，SELECTCOM 10 后段，原续接 M2900-M2999 撞 #304 的 checkers.mjs M2900-M2903，#295 消重后改号）+27（M2903-M2929→首条 M2903 改号 M4003，SELECTCOM 11，其余 M2904-M2929 不变）+18（M2930-M2947，SELECTCOM 12）；merge origin/master（3b5a7a8）：条目总数由两侧简单相加改记为脚本实测的 1974（分支历史非线性，逐笔相加会重复计入公共祖先），另发现并修正与 #304 的 4 处编号重号（M2900-M2903 改号 M4000-M4003，仅改本票后写入的一侧，条目总数不变）；#242 +34（M4004-M4037，SELECTCOM 13，肛门虫 CFLAG:314／着脱 CFLAG:374）+19（M4038-M4056，SELECTCOM 14，阴蒂夹 CFLAG:315／着脱 CFLAG:375）+19（M4057-M4075，SELECTCOM 15，乳头夹 CFLAG:316／着脱 CFLAG:376）+20（M4076-M4095，SELECTCOM 16，榨乳器 CFLAG:317／着脱 CFLAG:377）+29（M4096-M4124，SELECTCOM 19，肛珠 CFLAG:320／脱着 CFLAG:379；SELECTCOM 17 オナホール 在原作里整段注释掉，属死代码，本轮跳过不实现、不占用变异号段）+22（M4125-M4146，SELECTCOM 20，正常位 CFLAG:321）+22（M4147-M4168，SELECTCOM 21，背后位 CFLAG:322）+22（M4169-M4190，SELECTCOM 22，对面座位 CFLAG:323）+27（M4191-M4217，SELECTCOM 23，背面座位 CFLAG:324）；#242 号段平移：M3184-M3401 共 218 条按原顺序改号 M4000-M4217（避 #243 K12 的 M3200-M3299、#244 K13 的 M3300-M3347、#245 K14 的 M3400-M3401；本票此后号段为 M4000-M5999；条目总数不变）；#242 +28（M4218-M4245，SELECTCOM 26，正常位肛交 CFLAG:327）；#242 +25（M4246-M4270，SELECTCOM 27，背后位肛交 CFLAG:328）；merge origin/master（c590a29）：最终条目数以整表实测为准 2428（分支历史非线性，两侧账目逐笔相加会重复计入公共祖先；脚本实测 = 唯一权威），另并入 // #214 +26；#215 +24；#217 +17；#216 +40；#228 +20 −1；#223 +40；#230 +34；#219 +12；#218 +9；#221 +10；#218 补轮 +16；#226 +20；#224 +25（M1190-M1214）；#270 +5（M1310-M1314）；#222 +7（M1110-M1116）；#220 +15（M1060-M1074）；#274 +2（M1370-M1371）；#229 +20（M1450-M1469）；#225 +18（M1400-M1417）+1（M1418 incest 真身）；#227 +40（M1330-M1369）；#282 +2（M1520-M1521）；#233 +29（M1540-M1568）；#232 +42（M1650-M1691）；#235 +25（M1750-M1775）；#234 +31（M1700-M1730）；#236 +25（M1790-M1814）；#237 +27（M1780-M1806，#295 消重后：M1780-M1789 + M2119、M2121-M2136）；#288 +2（M2118、M2120，原 M1790-M1791，#295 消重后改号）；#290 +3（M2137-M2139，原 M1810-M1812，#295 消重后改号）；#238 +47（M2000-M2046）；#295 +2（M2080-M2081，唯一性门自身的自证——把门删掉，mutation-check/kojo-text-fidelity 的自测必须红；另消 37 处编号重号，只改后来者，条目总数不变）；#240 +40（M2200-M2239）；#241 +70（M2270-M2339）；#302 +2（M2770-M2771，有引擎侧基线与跑错环境的提示）；#239 +192（K8 银黑桃整份：M1815-M1999 与 M2500-M2507，后者为合并 master 时避 #236/#238 号段所改）+1（M2508 NTR 族实参约定）；#299 +3（M2740-M2742，冲突标记守卫）；#231 +276（M1600-M1649、M1790-M2015、M2420-M2460）；#298 +3（M2700-M2702，锚鉴别力门）；#244 +48（M3300-M3347，K13 庇护者）；#245 +30（M3400-M3429，K14 贵公子）；#246 +100（M3500-M3599，K15 伶俐）；#243 +31（M3200-M3234，K12 知的）
+const LEDGER_COUNT_BASELINE = 2682; // merge origin/master（d5ca345）：整表加载实测；含 2643 行静态 desc 与 kojo.mjs 五组映射展开后多出的 39 条。
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -288,6 +293,7 @@ function parse_args(argv) {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean);
+    else if (a === '--ids') out.ids = parse_ids(String(next()));
     else if (a === '--sample') out.sample = Number(next());
     else if (a === '--seed') out.seed = String(next());
     else if (a === '--jobs') out.jobs = Math.max(1, Number(next()));
@@ -319,6 +325,33 @@ function desc_rank(desc) {
 }
 
 // —— 三项检查 ——
+
+/** 命令行取值错误：顶层按「一行错误信息 + 退出码 1」收，不打栈。 */
+class ArgError extends Error {}
+
+/**
+ * `--ids` 的取值：逗号分隔的 M 编号与闭区间，`M` 前缀可省。
+ * `M4246,M4250-M4260` → Set{4246, 4250..4260}。
+ */
+function parse_ids(spec) {
+  const out = new Set();
+  for (const part of spec
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)) {
+    const m = /^M?(\d+)(?:-M?(\d+))?$/i.exec(part);
+    if (!m) {
+      throw new ArgError(
+        `✗ --ids 的 "${part}" 不是 M 编号或区间（如 M4246 / M4250-M4260）`,
+      );
+    }
+    const from = Number(m[1]);
+    const to = m[2] === undefined ? from : Number(m[2]);
+    for (let n = Math.min(from, to); n <= Math.max(from, to); n += 1)
+      out.add(n);
+  }
+  return out;
+}
 
 /** desc 开头的 M 编号（如 "M1790 ..." → "1790"）；无前缀（#113 遗留 4 条老条目）返回 null */
 function extract_m_number(desc) {
@@ -641,6 +674,23 @@ function changed_files(root, base) {
 }
 
 function select_entries(entries, args) {
+  if (args.ids) {
+    const picked = entries.filter((m) => {
+      const n = extract_m_number(m.desc);
+      return n !== null && args.ids.has(Number(n));
+    });
+    // 点名了却一条都没命中 = 编号写错或条目还没加。静默跑 0 条是这道工具
+    // 最不该有的行为（选少了还不说），所以当场报错退出。
+    const missing = [...args.ids].filter(
+      (n) => !picked.some((m) => Number(extract_m_number(m.desc)) === n),
+    );
+    if (missing.length > 0) {
+      throw new ArgError(
+        `✗ --ids 里这些编号在条目表里不存在：${missing.map((n) => `M${n}`).join(', ')}`,
+      );
+    }
+    return picked;
+  }
   if (args.files || args.base) {
     const files = args.files
       ? new Set(args.files)
@@ -685,6 +735,7 @@ function is_partial(args) {
     args.sample !== undefined ||
     args.slice !== undefined ||
     args.files !== undefined ||
+    args.ids !== undefined ||
     args.base !== undefined
   );
 }
@@ -895,6 +946,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(e?.stack || e);
+  console.error(e instanceof ArgError ? e.message : e?.stack || e);
   process.exitCode = 1;
 });

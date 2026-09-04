@@ -203,6 +203,7 @@ const JS_TOKEN_RULES = [
   [/^chara_callname\(a\)$/, 'ANAME'],
   [/^chara_callname\(cid\)$/, 'ANAME'], // #231 K0：GOHOUBI_AFTER 的 A 上下文
   [/^S$/, 'S'],
+  [/^peek_aftertrain_s\(\)$/, 'S'], // #247 K19：ERB 全局 S 由调教后事件读取器承载
 
   // —— #184：DUNGEON_BITCH 等带文本状态机的插值形态 ——
   [/^name_of\(arg\)$/, 'ARGNAME'],
