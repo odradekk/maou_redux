@@ -682,3 +682,109 @@ test('报告路径不许用 process.exit：管道上它会丢弃排队的 stdout
     '报告路径要用 process.exitCode 让事件循环自然退出，exit() 会截断管道输出',
   );
 });
+
+test('--ids 只跑点名的编号：区间与单号取并集，其余条目不跑', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（点名内）' },
+      { ...GOOD_ENTRY, desc: 'M9002 加倍系数改坏（点名内，区间端点）' },
+      // 点名之外的第三条：本身完全合法（跑起来也会被拦下），所以
+      // 「跑没跑它」只能从计数看——跑了就是 3，没跑才是 2。
+      {
+        ...GOOD_ENTRY,
+        desc: 'M9003 导出被拆（点名外）',
+        find: 'module.exports = { double };',
+        replace: 'const unused = { double };',
+      },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '3',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--ids',
+      'M9001,M9002',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `点名的两条应全拦，实际退出 ${status}：\n${output}`,
+    );
+    assert.match(
+      output,
+      /拦截 2 \//,
+      '--ids 必须只跑点名的两条：三条都跑会是「拦截 3」',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--ids 点名的编号不存在时当场报错退 1，不静默跑 0 条', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '1',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--ids',
+      'M9001,M9404',
+    ]);
+    assert.equal(status, 1, `编号不存在必须退 1，实际 ${status}：\n${output}`);
+    assert.match(
+      output,
+      /M9404/,
+      '报错必须点名那个不存在的编号，否则查不出是编号写错还是条目没加',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--ids 是子集档：不带 --skip-baseline 也不核对 ENGINE_SKIP_BASELINE', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏' },
+    ]);
+    // 故意不给 --skip-baseline：子集档没有期望跳过数，is_partial 必须认出
+    // --ids，否则无引擎处会拿 0 去比 ENGINE_SKIP_BASELINE 而假红（#256 的
+    // 「新的子集档位必须加进 is_partial」）。
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '1',
+      '--asar',
+      'none',
+      '--ids',
+      'M9001',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `--ids 是子集档，不该核对跳过基线，实际退出 ${status}：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
