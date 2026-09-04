@@ -10155,6 +10155,52 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM34 初次第 1 档台词',
   },
+  ...[
+    [4384, '初次', '1', '2', '5439', 'COM35 初次第 1 档推进'],
+    [4385, '助手淫乱＋奉仕精神', '5', '4', '5451', 'COM35 助手玛奥第 1 档推进'],
+    [4386, '助手爱慕＋奉仕精神', '4', '3', '5458', 'COM35 助手玛奥第 2 档推进'],
+    [4387, '助手奉仕精神', '3', '2', '5464', 'COM35 助手玛奥第 3 档推进'],
+    [4388, '助手其余', '2', '1', '5470', 'COM35 助手玛奥第 4 档推进'],
+    [
+      4389,
+      '非助手淫乱＋奉仕精神',
+      '5',
+      '4',
+      '5482',
+      'COM35 非助手玛奥第 1 档推进',
+    ],
+    [
+      4390,
+      '非助手爱慕＋奉仕精神',
+      '4',
+      '3',
+      '5488',
+      'COM35 非助手玛奥第 2 档推进',
+    ],
+    [4391, '非助手奉仕精神', '3', '2', '5493', 'COM35 非助手玛奥第 3 档推进'],
+    [4392, '非助手其余', '2', '1', '5498', 'COM35 非助手玛奥第 4 档推进'],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM35 ${tier} CFLAG:336 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.全身擦洗 = ${value}; // :${ref}`,
+    replace: `kojo.全身擦洗 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4393 COM35 初次助手玛奥判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `    if (kojo.全身擦洗 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(
+          \`『嘻嘻，和姐姐一起洗澡真高兴`,
+    replace: `    if (kojo.全身擦洗 === 0) {
+      if (!assi_mao) {
+        await era.printAndWait(
+          \`『嘻嘻，和姐姐一起洗澡真高兴`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM35 初次第 1 档台词',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

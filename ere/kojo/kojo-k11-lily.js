@@ -9981,6 +9981,166 @@ async function kojo_message_com_11(rand) {
     }
   }
 
+  // :5419-5503 IF SELECTCOM === 35（泡踊り／全身擦洗 CFLAG:336）
+  if (era_flag.selectcom === 35) {
+    if (kojo.全身擦洗 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(
+          `『嘻嘻，和姐姐一起洗澡真高兴，想起了以前的日子呢。不过一个人在这里的时候我也有好好洗澡呢，像这样♪』`,
+        ); // :5424
+        await era.printAndWait(
+          `「咦……咦……不，不要乱摸呀，好好的用毛巾洗澡不行吗……」`,
+        ); // :5425
+        await era.printAndWait(
+          `『说什么呢，姐姐也要好好学呀，除了用手之外，还要用你那大胸部还有淫乱的小穴帮我和魔王大人擦洗身体${heart(1)} 就像这样哦！～～』`,
+        ); // :5426
+        await era.printAndWait(`「呜啊啊……不，不要乱摸呀！」`); // :5427
+      } else {
+        if (chara(target).system.侍奉精神 >= 3) {
+          await era.printAndWait(`「啊啊，魔王大人的身体……好有魅力……！」`); // :5431
+          await era.printAndWait(
+            `伴着粘滑的肥皂水，${target_name}用自己的双手，还有胸前的巨乳来回擦拭着${player_name}的身体………`,
+          ); // :5432
+        } else {
+          await era.printAndWait(
+            `「是，是要人家帮你……擦拭身体嘛……我，我会照做的……！」`,
+          ); // :5435
+          await era.printAndWait(
+            `伴着粘滑的肥皂水，${target_name}用自己的双手战战兢兢地擦拭着${player_name}的身体……`,
+          ); // :5436
+        }
+      }
+      // CFLAG:TARGET:336  = 1（变量语义：CFLAG 族，TARGET:336）
+      kojo.全身擦洗 = 1; // :5439
+      return 0;
+    } else {
+      if (assi_mao) {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.全身擦洗 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `『啊啊……姐姐再帮人家擦一下背啦……用你那对淫乱大胸部！』`,
+          ); // :5447
+          await era.printAndWait(
+            `「知道啦……你平时被魔王大人调教完应该好好洗澡啊，你看，这里还有污垢留着……」`,
+          ); // :5448
+          await era.printAndWait(
+            `『那是魔王大人精液的痕迹啦……才不是污垢呢！』`,
+          ); // :5449
+          await era.printAndWait(
+            `不仔细去分辨哪些对话的话，${target_name}和${player_name}好像又变回了在村子里纯洁而和睦共处的样子……`,
+          ); // :5450
+          // CFLAG:336  = 5（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 5; // :5451
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.全身擦洗 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `『哎嘿嘿，姐姐平时也是这样给魔王大人洗澡的吗？』`,
+          ); // :5454
+          await era.printAndWait(
+            `「是，是呀……这也是侍奉魔王大人的工作的一部分呢${heart(1)}」`,
+          ); // :5455
+          await era.printAndWait(
+            `『嚯嚯，用这样的大胸部代替浴巾摩擦身体的话，即使是魔王大人也不一定忍耐得住吧……我摸我摸我摸！』`,
+          ); // :5456
+          await era.printAndWait(`「好好洗澡啦！不要乱摸啊${heart(1)}」`); // :5457
+          // CFLAG:336  = 4（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 4; // :5458
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.全身擦洗 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `『啊……被姐姐的手这样搓着背，好舒服…${heart(1)} 好像回到了村子里一样${heart(1)}』`,
+          ); // :5461
+          await era.printAndWait(
+            `「我……我也有这样的感觉呢……唉唉？！你的手在摸哪里呢？」`,
+          ); // :5462
+          await era.printAndWait(
+            `『嘻嘻，姐姐的大胸部，不就是用来给人摸的吗♪』`,
+          ); // :5463
+          // CFLAG:336  = 3（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 3; // :5464
+        } else if (kojo.全身擦洗 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(
+            `「好好洗澡啦，${player_name}……手，不要乱摸姐姐的身体啦…」`,
+          ); // :5467
+          await era.printAndWait(`『哎嘿嘿，不是乱摸，是帮姐姐洗白白啦～♪』`); // :5468
+          await era.printAndWait(`「不，不要恶作剧啦！」`); // :5469
+          // CFLAG:336  = 2（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 2; // :5470
+        }
+      } else {
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.全身擦洗 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `浴室里，${target_name}正用肥皂水冲洗着${player_name}和自己的身体，。`,
+          ); // :5475
+          await era.printAndWait(
+            `然后伸出手从后面抱住了${player_name}，开始用丰满的双乳上下摩擦着${player_name}的背。`,
+          ); // :5476
+          if (rand_n(2)) {
+            await era.printAndWait(
+              `「啊啊啊……这样用乳头摩擦着魔王大人的身体……好舒服${heart(1)} ！」`,
+            ); // :5478
+          } else {
+            await era.printAndWait(
+              `「魔王大人的身体……真是充满魅力${heart(1)} ！恐怕再没有比魔王大人更出色的男性了吧……」`,
+            ); // :5480
+          }
+          // CFLAG:336  = 5（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 5; // :5482
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.全身擦洗 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `${target_name}沐浴在肥皂水中，用双手，还有丰满的双乳仔细地擦拭着${player_name}的背部。`,
+          ); // :5485
+          await era.printAndWait(
+            `「哈啊……人家的胸部……光是这样接触到魔王大人的肌肤……就已经……舒服得不行了${heart(1)}」`,
+          ); // :5486
+          await era.printAndWait(
+            `${player_name}感受着${target_name}柔软的乳头在自己背上摩擦传来舒适感觉……`,
+          ); // :5487
+          // CFLAG:336  = 4（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 4; // :5488
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.全身擦洗 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          await era.printAndWait(
+            `「虽，虽然不愿意承认……但是魔王大人的身体……真的好有魅力……！」`,
+          ); // :5491
+          await era.printAndWait(
+            `在粘滑的肥皂水冲洗下，${target_name}用自己的双手，还有丰满的胸部仔细地擦拭着${player_name}的身体……`,
+          ); // :5492
+          // CFLAG:336  = 3（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 3; // :5493
+        } else if (kojo.全身擦洗 <= 1 || game.kojo.口上开关 === 2) {
+          await era.printAndWait(
+            `「要，要我用胸部帮你……擦身！？就不能……好好用毛巾吗……呜呜」`,
+          ); // :5496
+          await era.printAndWait(
+            `在粘滑的肥皂水冲洗下，${target_name}用自己的双手，还有丰满的胸部勉为其难地擦拭着${player_name}的身体……`,
+          ); // :5497
+          // CFLAG:336  = 2（变量语义：CFLAG 族，336）
+          kojo.全身擦洗 = 2; // :5498
+        }
+      }
+      return 0;
+    }
+  }
+
   return 0;
 }
 

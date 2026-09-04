@@ -6040,3 +6040,98 @@ test('COM34 二回目：非助手玛奥五档推进', async () => {
     );
   }
 });
+
+// —— SELECTCOM 35（泡踊り／全身擦洗 CFLAG:336）——
+
+test('COM35 初めて：助手玛奥与非助手玛奥奉仕精神分档', async () => {
+  const cases = [
+    {
+      assi: true,
+      expected:
+        '『嘻嘻，和姐姐一起洗澡真高兴，想起了以前的日子呢。不过一个人在这里的时候我也有好好洗澡呢，像这样♪』',
+    },
+    {
+      abl: 3,
+      expected: '「啊啊，魔王大人的身体……好有魅力……！」',
+    },
+    {
+      expected: '「是，是要人家帮你……擦拭身体嘛……我，我会照做的……！」',
+    },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 35);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.text_lines()[0],
+      item.expected,
+      `COM35 初次第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:336`),
+      1,
+      `COM35 初次第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM35 二回目：助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 5, expected: 5 },
+    { talent: 85, abl: 5, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:336`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 35);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:336`),
+      item.expected,
+      `COM35 助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM35 二回目：非助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 5, expected: 5 },
+    { talent: 85, abl: 5, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:336`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 35);
+    await speak_com11(fixture, seq_rand(1));
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:336`),
+      item.expected,
+      `COM35 非助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
