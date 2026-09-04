@@ -5470,6 +5470,7 @@ test('COM30 二回目：助手玛奥可达档与原作被遮蔽的 CFLAG=3 档',
     const fixture = setup_lily((f, era_flag) => {
       era_flag.assi = MAO;
       era_flag.assiplay = 1;
+      f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支，让 CFLAG 上界真正生效
       f.store.set(`cflag:${LILY}:331`, 1);
       if (item.talent !== undefined) {
         f.store.set(`talent:${LILY}:${item.talent}`, 1);
@@ -5498,6 +5499,7 @@ test('COM30 二回目：非助手玛奥可达档与原作被遮蔽的 CFLAG=3 �
   ];
   for (const [index, item] of cases.entries()) {
     const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 1); // 中和 || 口上开关===2 逃逸支，让 CFLAG 上界真正生效
       f.store.set(`cflag:${LILY}:331`, 1);
       if (item.talent !== undefined) {
         f.store.set(`talent:${LILY}:${item.talent}`, 1);
