@@ -26758,6 +26758,151 @@ export const FILES = [
         ],
         ['9932', 'PRINTFORMW 「呜……呜呜……进，进到喉咙最里面了……唔呣……唔呣！」'],
         ['9933', 'CFLAG:365 = 2'],
+        ['9943', 'IF SELECTCOM == 80'],
+        [
+          '9948',
+          'PRINTFORMW 「唔呣……唔唔唔……嗯唔～%UNICODE(0x2661) *1%（被侵犯喉咙了%UNICODE(0x2661) *1%）」',
+        ],
+        [
+          '9949',
+          'PRINTFORMW %SAVESTR:TARGET%尽情享受着喉咙深处被%SAVESTR:PLAYER%的阴茎持续抽插侵犯的感觉………',
+        ],
+        [
+          '9952',
+          'PRINTFORMW 「唔呣……唔唔唔……嗯唔……魔王大人，让我休——唔唔唔……嗯唔」',
+        ],
+        [
+          '9953',
+          'PRINTFORMW %SAVESTR:TARGET%喉咙深处被%SAVESTR:PLAYER%的阴茎持续侵犯抽插着，窒息得翻起了白眼………',
+        ],
+        [
+          '9956',
+          'PRINTFORMW 「唔呣……唔唔唔……嗯唔……咳咳咳……魔，魔王大人，让我缓一下——唔唔唔……嗯唔！」',
+        ],
+        [
+          '9957',
+          'PRINTFORMW %SAVESTR:TARGET%喉咙深处被%SAVESTR:PLAYER%的阴茎持续侵犯抽插着，只能拼命忍耐着窒息一般的痛苦………',
+        ],
+        [
+          '9960',
+          'PRINTFORMW 「唔呣……唔唔唔……嗯唔……咳咳咳……求求你，饶了我吧——唔唔唔」',
+        ],
+        [
+          '9961',
+          'PRINTFORMW %SAVESTR:TARGET%喉咙深处被%SAVESTR:PLAYER%的阴茎持续侵犯抽插着，窒息的痛苦让她泪水口水都流了出来………',
+        ],
+        ['9963', 'CFLAG:TARGET:381 = 1'],
+        [
+          '9971',
+          'PRINTFORMW 「咕唔唔——%UNICODE(0x2661) *1% 唔呣……还，还可以再深一点呜呜唔呣！」',
+        ],
+        [
+          '9972',
+          'PRINTFORMW %SAVESTR:TARGET%大张着嘴，迎接着%SAVESTR:PLAYER%的阴茎深入到喉咙深处！',
+        ],
+        [
+          '9973',
+          'PRINTFORMW 『那么想要的话，就侵犯到姐姐窒息为止吧！嘿嘿嘿！』',
+        ],
+        [
+          '9974',
+          'PRINTFORMW %SAVESTR:TARGET%喉咙深处被持续侵犯着，眼泪和口水不住往外流，表情都恍惚了…',
+        ],
+        ['9975', 'CFLAG:381 = 5'],
+        [
+          '9978',
+          'PRINTFORMW 「唔……唔呣……不，不行了……%SAVESTR:PLAYER%，让姐姐……缓……唔呣……唔唔唔！」',
+        ],
+        [
+          '9979',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的阴茎强行侵犯着喉咙深处，痛苦地翻起了白眼。',
+        ],
+        ['9980', 'PRINTFORMW 『嘴再张大一点，我觉得还能再进去一些呢！』'],
+        [
+          '9981',
+          'PRINTFORMW %SAVESTR:TARGET%在侵犯下，竭尽全力也保持不了呼吸，几乎要窒息过去了……',
+        ],
+        ['9982', 'CFLAG:381 = 4'],
+        [
+          '9985',
+          'PRINTFORMW 「呜呜……唔呣……稍，稍微……温柔一点……拜托了——唔唔唔……！」',
+        ],
+        [
+          '9986',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%用阴茎强制侵犯着嘴巴，在喉咙深处肆虐着',
+        ],
+        [
+          '9987',
+          'PRINTFORMW 『什么？要我温柔一点？才不呢，姐姐老老实实用喉咙当我的飞机杯啦！』',
+        ],
+        ['9988', 'CFLAG:381 = 3'],
+        [
+          '9991',
+          'PRINTFORMW 「呜呜……唔呣……呕……住，住手啊……饶了姐姐吧……唔唔唔——」',
+        ],
+        [
+          '9992',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%用阴茎强制侵犯着嘴巴和喉咙，痛苦得泪流满面',
+        ],
+        [
+          '9993',
+          'PRINTFORMW 『嘿嘿，再不好好侍奉的话还会倒更大的霉的，姐姐！』',
+        ],
+        ['9994', 'CFLAG:381 = 2'],
+        [
+          '9999',
+          'PRINTFORMW 「咕唔唔——%UNICODE(0x2661) *1% 唔呣……还，还可以再深一点呜呜唔呣！」',
+        ],
+        [
+          '10000',
+          'PRINTFORMW %SAVESTR:TARGET%大张着嘴，主动迎接着%SAVESTR:PLAYER%的阴茎深入到喉咙深处！',
+        ],
+        [
+          '10001',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1% 魔王大人……的阴茎……好厉害……唔唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '10002',
+          'PRINTFORMW %SAVESTR:TARGET%喉咙深处被持续侵犯着，眼泪和口水不住往外流，表情都恍惚了…',
+        ],
+        ['10003', 'CFLAG:381 = 5'],
+        [
+          '10006',
+          'PRINTFORMW 「唔……唔呣……不，不行了……魔王大人稍微……温柔一点……我会好好吸吮的%UNICODE(0x2661) *1% ——呜呜呜！」',
+        ],
+        [
+          '10007',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的阴茎强行侵犯着喉咙深处，痛苦地翻起了白眼。',
+        ],
+        [
+          '10008',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1% 可，可是……要好好侍奉魔王大人……唔唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '10009',
+          'PRINTFORMW %SAVESTR:TARGET%在侵犯下，竭尽全力也保持不了呼吸，几乎要窒息过去了……',
+        ],
+        ['10010', 'CFLAG:381 = 4'],
+        [
+          '10013',
+          'PRINTFORMW 「唔……唔呣……不，不行了……求你了……稍微拔出去一点……唔唔唔！」',
+        ],
+        [
+          '10014',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的阴茎强制侵犯到喉咙深处，痛苦地呻吟着。',
+        ],
+        ['10015', 'PRINTFORMW 「唔唔……唔呣……要，要死了……呕呕呕！」'],
+        ['10016', 'CFLAG:381 = 3'],
+        [
+          '10019',
+          'PRINTFORMW 「唔……唔呣……呕……唔唔……饶了我吧……求求你……呜呜……」',
+        ],
+        [
+          '10020',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%的阴茎强制侵犯到喉咙深处，痛苦得泪流满面。',
+        ],
+        ['10021', 'PRINTFORMW 「唔唔……唔呣……已经要，要死了……呕呕呕……」'],
+        ['10022', 'CFLAG:381 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

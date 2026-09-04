@@ -9874,6 +9874,65 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       'COM124 二回目门槛按原作读取真空口交 CFLAG:363，而非深喉 CFLAG:365',
   },
+  ...[
+    [4641, '初次', 1, '9963', 'COM80 初めて：淫乱、爱慕、侍奉精神与其余四档'],
+    [4642, '助手淫乱', 5, '9975', 'COM80 二回目：助手玛奥四档推进'],
+    [4643, '助手爱慕', 4, '9982', 'COM80 二回目：助手玛奥四档推进'],
+    [4644, '助手侍奉精神', 3, '9988', 'COM80 二回目：助手玛奥四档推进'],
+    [4645, '助手其余', 2, '9994', 'COM80 二回目：助手玛奥四档推进'],
+    [
+      4646,
+      '非助手淫乱',
+      5,
+      '10003',
+      'COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5',
+    ],
+    [
+      4647,
+      '非助手爱慕',
+      4,
+      '10010',
+      'COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5',
+    ],
+    [
+      4648,
+      '非助手侍奉精神',
+      3,
+      '10016',
+      'COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5',
+    ],
+    [
+      4649,
+      '非助手其余',
+      2,
+      '10022',
+      'COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5',
+    ],
+  ].map(([id, tier, value, ref, must_mention]) => ({
+    desc: `M${id} COM80 ${tier} CFLAG:381 写错（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.强制口交 = ${value}; // :${ref}`,
+    replace: `kojo.强制口交 = 99; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4650 COM80 非助手爱慕档删除侍奉精神 Lv5 门槛（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.强制口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :10005`,
+    replace: `        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          (kojo.强制口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :10005`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5',
+  },
   {
     desc: 'M4284 COM28 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',

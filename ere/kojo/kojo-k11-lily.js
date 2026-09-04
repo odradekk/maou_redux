@@ -20211,6 +20211,193 @@ async function kojo_message_com_11(rand) {
     } // :9937
   } // :9938
 
+  if (era_flag.selectcom === 80) {
+    // :9943
+
+    if (kojo.强制口交 === 0) {
+      // :9945
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :9947
+        await era.printAndWait(
+          `「唔呣……唔唔唔……嗯唔～${heart(1)}（被侵犯喉咙了${heart(1)}）」`,
+        ); // :9948
+        await era.printAndWait(
+          `${target_name}尽情享受着喉咙深处被${player_name}的阴茎持续抽插侵犯的感觉………`,
+        ); // :9949
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :9951
+        await era.printAndWait(
+          `「唔呣……唔唔唔……嗯唔……魔王大人，让我休——唔唔唔……嗯唔」`,
+        ); // :9952
+        await era.printAndWait(
+          `${target_name}喉咙深处被${player_name}的阴茎持续侵犯抽插着，窒息得翻起了白眼………`,
+        ); // :9953
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        // :9955
+        await era.printAndWait(
+          `「唔呣……唔唔唔……嗯唔……咳咳咳……魔，魔王大人，让我缓一下——唔唔唔……嗯唔！」`,
+        ); // :9956
+        await era.printAndWait(
+          `${target_name}喉咙深处被${player_name}的阴茎持续侵犯抽插着，只能拼命忍耐着窒息一般的痛苦………`,
+        ); // :9957
+      } else {
+        // :9959
+        await era.printAndWait(
+          `「唔呣……唔唔唔……嗯唔……咳咳咳……求求你，饶了我吧——唔唔唔」`,
+        ); // :9960
+        await era.printAndWait(
+          `${target_name}喉咙深处被${player_name}的阴茎持续侵犯抽插着，窒息的痛苦让她泪水口水都流了出来………`,
+        ); // :9961
+      } // :9962
+      // CFLAG:TARGET:381  = 1（变量语义：CFLAG 族，TARGET:381） // :9963
+      kojo.强制口交 = 1; // :9963
+      return 0; // :9964
+    } else {
+      // :9966
+
+      if (assi_mao) {
+        // :9968
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.强制口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9970
+          await era.printAndWait(
+            `「咕唔唔——${heart(1)} 唔呣……还，还可以再深一点呜呜唔呣！」`,
+          ); // :9971
+          await era.printAndWait(
+            `${target_name}大张着嘴，迎接着${player_name}的阴茎深入到喉咙深处！`,
+          ); // :9972
+          await era.printAndWait(
+            `『那么想要的话，就侵犯到姐姐窒息为止吧！嘿嘿嘿！』`,
+          ); // :9973
+          await era.printAndWait(
+            `${target_name}喉咙深处被持续侵犯着，眼泪和口水不住往外流，表情都恍惚了…`,
+          ); // :9974
+          // CFLAG:381  = 5（变量语义：CFLAG 族，381） // :9975
+          kojo.强制口交 = 5; // :9975
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.强制口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9977
+          await era.printAndWait(
+            `「唔……唔呣……不，不行了……${player_name}，让姐姐……缓……唔呣……唔唔唔！」`,
+          ); // :9978
+          await era.printAndWait(
+            `${target_name}被${player_name}的阴茎强行侵犯着喉咙深处，痛苦地翻起了白眼。`,
+          ); // :9979
+          await era.printAndWait(`『嘴再张大一点，我觉得还能再进去一些呢！』`); // :9980
+          await era.printAndWait(
+            `${target_name}在侵犯下，竭尽全力也保持不了呼吸，几乎要窒息过去了……`,
+          ); // :9981
+          // CFLAG:381  = 4（变量语义：CFLAG 族，381） // :9982
+          kojo.强制口交 = 4; // :9982
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.强制口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9984
+          await era.printAndWait(
+            `「呜呜……唔呣……稍，稍微……温柔一点……拜托了——唔唔唔……！」`,
+          ); // :9985
+          await era.printAndWait(
+            `${target_name}被${player_name}用阴茎强制侵犯着嘴巴，在喉咙深处肆虐着`,
+          ); // :9986
+          await era.printAndWait(
+            `『什么？要我温柔一点？才不呢，姐姐老老实实用喉咙当我的飞机杯啦！』`,
+          ); // :9987
+          // CFLAG:381  = 3（变量语义：CFLAG 族，381） // :9988
+          kojo.强制口交 = 3; // :9988
+        } else if (kojo.强制口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9990
+          await era.printAndWait(
+            `「呜呜……唔呣……呕……住，住手啊……饶了姐姐吧……唔唔唔——」`,
+          ); // :9991
+          await era.printAndWait(
+            `${target_name}被${player_name}用阴茎强制侵犯着嘴巴和喉咙，痛苦得泪流满面`,
+          ); // :9992
+          await era.printAndWait(
+            `『嘿嘿，再不好好侍奉的话还会倒更大的霉的，姐姐！』`,
+          ); // :9993
+          // CFLAG:381  = 2（变量语义：CFLAG 族，381） // :9994
+          kojo.强制口交 = 2; // :9994
+        } // :9995
+      } else {
+        // :9996
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.强制口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9998
+          await era.printAndWait(
+            `「咕唔唔——${heart(1)} 唔呣……还，还可以再深一点呜呜唔呣！」`,
+          ); // :9999
+          await era.printAndWait(
+            `${target_name}大张着嘴，主动迎接着${player_name}的阴茎深入到喉咙深处！`,
+          ); // :10000
+          await era.printAndWait(
+            `「唔呣……唔呣${heart(1)} 魔王大人……的阴茎……好厉害……唔唔唔……唔呣${heart(1)}」`,
+          ); // :10001
+          await era.printAndWait(
+            `${target_name}喉咙深处被持续侵犯着，眼泪和口水不住往外流，表情都恍惚了…`,
+          ); // :10002
+          // CFLAG:381  = 5（变量语义：CFLAG 族，381） // :10003
+          kojo.强制口交 = 5; // :10003
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.侍奉精神 >= 5 &&
+          (kojo.强制口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :10005
+          await era.printAndWait(
+            `「唔……唔呣……不，不行了……魔王大人稍微……温柔一点……我会好好吸吮的${heart(1)} ——呜呜呜！」`,
+          ); // :10006
+          await era.printAndWait(
+            `${target_name}被${player_name}的阴茎强行侵犯着喉咙深处，痛苦地翻起了白眼。`,
+          ); // :10007
+          await era.printAndWait(
+            `「唔呣……唔呣${heart(1)} 可，可是……要好好侍奉魔王大人……唔唔唔……唔呣${heart(1)}」`,
+          ); // :10008
+          await era.printAndWait(
+            `${target_name}在侵犯下，竭尽全力也保持不了呼吸，几乎要窒息过去了……`,
+          ); // :10009
+          // CFLAG:381  = 4（变量语义：CFLAG 族，381） // :10010
+          kojo.强制口交 = 4; // :10010
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.强制口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :10012
+          await era.printAndWait(
+            `「唔……唔呣……不，不行了……求你了……稍微拔出去一点……唔唔唔！」`,
+          ); // :10013
+          await era.printAndWait(
+            `${target_name}被${player_name}的阴茎强制侵犯到喉咙深处，痛苦地呻吟着。`,
+          ); // :10014
+          await era.printAndWait(`「唔唔……唔呣……要，要死了……呕呕呕！」`); // :10015
+          // CFLAG:381  = 3（变量语义：CFLAG 族，381） // :10016
+          kojo.强制口交 = 3; // :10016
+        } else if (kojo.强制口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :10018
+          await era.printAndWait(
+            `「唔……唔呣……呕……唔唔……饶了我吧……求求你……呜呜……」`,
+          ); // :10019
+          await era.printAndWait(
+            `${target_name}被${player_name}的阴茎强制侵犯到喉咙深处，痛苦得泪流满面。`,
+          ); // :10020
+          await era.printAndWait(`「唔唔……唔呣……已经要，要死了……呕呕呕……」`); // :10021
+          // CFLAG:381  = 2（变量语义：CFLAG 族，381） // :10022
+          kojo.强制口交 = 2; // :10022
+        } // :10023
+      } // :10024
+      return 0; // :10025
+    } // :10026
+  } // :10027
+
   return 0;
 }
 

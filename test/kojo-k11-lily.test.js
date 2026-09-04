@@ -7355,6 +7355,65 @@ test('COM124 二回目门槛按原作读取真空口交 CFLAG:363，而非深喉
   assert.equal(fixture.store.get(`cflag:${LILY}:365`), 5);
 });
 
+// —— SELECTCOM 80（强制口交 CFLAG:381）——
+
+test('COM80 初めて：淫乱、爱慕、侍奉精神与其余四档', async () => {
+  for (const item of [{ talent: 76 }, { talent: 85 }, { abl: 3 }, {}]) {
+    const fixture = setup_lily((f) => {
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 80);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0);
+    assert.equal(fixture.store.get(`cflag:${LILY}:381`), 1);
+  }
+});
+
+test('COM80 二回目：助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      f.store.set(`cflag:${LILY}:381`, 1);
+      preset_chara_17(f);
+      f.era.addCharacter(MAO);
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 80);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0);
+    assert.equal(fixture.store.get(`cflag:${LILY}:381`), item.expected);
+  }
+});
+
+test('COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, abl: 5, expected: 4 },
+    { talent: 85, abl: 4, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`cflag:${LILY}:381`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 80);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0);
+    assert.equal(fixture.store.get(`cflag:${LILY}:381`), item.expected);
+  }
+});
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {

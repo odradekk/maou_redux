@@ -209,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 2979; // #242 +10（M4631-M4640，SELECTCOM 124，深喉 CFLAG:365 与原作交叉门槛）；合并后整表加载实测 2979。
+const LEDGER_COUNT_BASELINE = 2989; // #242 +10（M4641-M4650，SELECTCOM 80，强制口交 CFLAG:381 与侍奉精神门槛）；合并后整表加载实测 2989。
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
