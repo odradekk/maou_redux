@@ -7414,6 +7414,93 @@ test('COM80 二回目：非助手玛奥的爱慕档还要求侍奉精神 Lv5', a
   }
 });
 
+// —— SELECTCOM 87（穿环 CFLAG:348；P 为 COM111 写入的位掩码）——
+
+test('COM87 初めて：七种穿环部位的装上与取下分支均推进到 1', async () => {
+  const part_fragments = new Map([
+    [1, '乳头'],
+    [2, '肚脐'],
+    [4, '蜜穴'],
+    [8, '阴蒂'],
+    [16, '舌尖'],
+    [32, '嘴唇'],
+    [64, '鼻'],
+  ]);
+  for (const p of [1, 2, 4, 8, 16, 32, 64]) {
+    for (const attached of [true, false]) {
+      const fixture = setup_lily((f) => {
+        f.store.set(`talent:${LILY}:76`, 1);
+        f.store.set(`cflag:${LILY}:7`, attached ? p : 0);
+      }, 87);
+      fixture.load_module('system/train/piercing-state').piercing_state.p = p;
+      await speak_com11(fixture, seq_rand());
+      assert.ok(fixture.text_lines().length > 0, `P=${p} attached=${attached}`);
+      if (attached) {
+        assert.ok(
+          fixture.text_lines().join('\n').includes(part_fragments.get(p)),
+          `P=${p} 应命中对应部位文案`,
+        );
+      }
+      assert.equal(fixture.store.get(`cflag:${LILY}:348`), 1);
+    }
+  }
+});
+
+test('COM87 初めて：爱慕与其余档、玛奥助手、阴茎穿环子分支', async () => {
+  const cases = [
+    { talent: 85, p: 1 },
+    { p: 2 },
+    { talent: 76, p: 1, assistant: true },
+    { talent: 76, p: 8, penis: true },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      f.store.set(`cflag:${LILY}:7`, item.p);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.penis) f.store.set(`talent:${LILY}:122`, 1);
+      if (item.assistant) {
+        preset_chara_17(f);
+        f.era.addCharacter(MAO);
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+    }, 87);
+    fixture.load_module('system/train/piercing-state').piercing_state.p =
+      item.p;
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0);
+    assert.equal(fixture.store.get(`cflag:${LILY}:348`), 1);
+  }
+});
+
+test('COM87 二回目：三档遍历七种部位的装上与取下分支', async () => {
+  const tiers = [
+    { talent: 76, expected: 4 },
+    { talent: 85, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of tiers) {
+    for (const p of [1, 2, 4, 8, 16, 32, 64]) {
+      for (const attached of [true, false]) {
+        const fixture = setup_lily((f) => {
+          f.store.set(`cflag:${LILY}:348`, 1);
+          f.store.set(`cflag:${LILY}:7`, attached ? p : 0);
+          if (item.talent !== undefined)
+            f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        }, 87);
+        fixture.load_module('system/train/piercing-state').piercing_state.p = p;
+        await speak_com11(fixture, seq_rand());
+        assert.ok(
+          fixture.text_lines().length > 0,
+          `P=${p} attached=${attached}`,
+        );
+        assert.equal(fixture.store.get(`cflag:${LILY}:348`), item.expected);
+      }
+    }
+  }
+});
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {

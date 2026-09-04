@@ -230,6 +230,7 @@
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
+const { piercing_state } = require('#/system/train/piercing-state');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { kojo_message_com_family } = require('#/kojo/kojo-system');
@@ -20397,6 +20398,1092 @@ async function kojo_message_com_11(rand) {
       return 0; // :10025
     } // :10026
   } // :10027
+
+  if (era_flag.selectcom === 87) {
+    // :10034
+    const p = piercing_state.p; // COM111 穿环着脱写入的跨模块位掩码 P
+
+    if (kojo.穿环 === 0) {
+      // :10037
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :10039
+
+        if (chara(target).train.穿环状态 & p) {
+          // :10041
+          await era.printAndWait(`打孔器在${target_name}的肌肤上穿出了小洞。`); // :10042
+          await era.printAndWait(`「呜……呜啊！」`); // :10043
+          await era.printAndWait(`第一次穿孔让${target_name}忍不住呻吟了出来`); // :10044
+
+          if (p === 1) {
+            // :10046
+
+            if (assi_mao) {
+              // :10048
+              await era.printAndWait(`『很适合你的淫乱大胸部哦姐姐！』`); // :10049
+              await era.printAndWait(`「是，是吗……谢谢${heart(1)}」`); // :10050
+              await era.printAndWait(
+                `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
+              ); // :10051
+            } else {
+              // :10052
+              await era.printAndWait(
+                `「哈……哈啊……可以用这个拉着乳头${heart(1)} 好像会很舒服的样子……♪」`,
+              ); // :10053
+              await era.printAndWait(
+                `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
+              ); // :10054
+            } // :10055
+          } else if (p === 2) {
+            // :10057
+
+            if (assi_mao) {
+              // :10059
+              await era.printAndWait(`『哎哎，姐姐看上去好可爱${heart(1)}』`); // :10060
+              await era.printAndWait(
+                `「是，是吗……你要不要也穿一个呢、${player_name}？」`,
+              ); // :10061
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10062
+            } else {
+              // :10063
+              await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10064
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10065
+            } // :10066
+          } else if (p === 4) {
+            // :10068
+
+            if (assi_mao) {
+              // :10070
+              await era.printAndWait(
+                `『哇哇，姐姐很适合穿环啊，小穴穿上环之后更漂亮了呢♪』`,
+              ); // :10071
+              await era.printAndWait(
+                `「嗯嗯，谢谢${player_name}、阿啦，魔王大人也来看看？」`,
+              ); // :10072
+              await era.printAndWait(
+                `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
+              ); // :10073
+            } else {
+              // :10074
+              await era.printAndWait(`「下面穿上银环之后……好像更好看了…？」`); // :10075
+              await era.printAndWait(
+                `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
+              ); // :10076
+            } // :10077
+          } else if (p === 8) {
+            // :10079
+
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :10081
+
+              if (assi_mao) {
+                // :10083
+                await era.printAndWait(
+                  `『哎呀呀姐姐，怎么穿环的时候勃起了呢${heart(1)}』`,
+                ); // :10084
+                await era.printAndWait(
+                  `「是啊……光是接触到这个环，姐姐就兴奋起来了呢${heart(1)}」`,
+                ); // :10085
+                await era.printAndWait(
+                  `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
+                ); // :10086
+              } else {
+                // :10087
+                await era.printAndWait(
+                  `「哈……自己的阴茎被穿环，居然会这么兴奋呢…${heart(1)}」`,
+                ); // :10088
+                await era.printAndWait(
+                  `${target_name}在忍受痛苦的同时兴奋了起来，阴茎充血勃起了……`,
+                ); // :10089
+              } // :10090
+            } else {
+              // :10091
+
+              if (assi_mao) {
+                // :10093
+                await era.printAndWait(
+                  `『哎呀呀，阴蒂穿上这样的东西，恐怕姐姐以后就没法过正常的生活了吧』`,
+                ); // :10094
+                await era.printAndWait(
+                  `「是，是啊……已经变得除了小穴之外……什么都不会想了${heart(1)}」`,
+                ); // :10095
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环……`,
+                ); // :10096
+              } else {
+                // :10097
+                await era.printAndWait(
+                  `「啊啊……轻轻碰一碰上面的环${heart(1)} 阴蒂就已经有感觉了啊${heart(1)}」`,
+                ); // :10098
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环……`,
+                ); // :10099
+              } // :10100
+            } // :10101
+          } else if (p === 16) {
+            // :10103
+
+            if (assi_mao) {
+              // :10105
+              await era.printAndWait(`『嘿嘿，姐姐舌头上也有位置呢♪』`); // :10106
+              await era.printAndWait(`「啊……还真的有点想试一下呢${heart(1)}」`); // :10107
+              await era.printAndWait(
+                `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
+              ); // :10108
+            } else {
+              // :10109
+              await era.printAndWait(
+                `「嘻嘻，以后再舌吻好像会很舒服呢${heart(1)}」`,
+              ); // :10110
+              await era.printAndWait(
+                `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
+              ); // :10111
+            } // :10112
+          } else if (p === 32) {
+            // :10114
+
+            if (assi_mao) {
+              // :10116
+              await era.printAndWait(`『啦啦，姐姐来亲亲吧…』`); // :10117
+              await era.printAndWait(`「呣呣……还要继续吗？」`); // :10118
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10119
+            } else {
+              // :10120
+              await era.printAndWait(`「呣呣，好像挺合适的？」`); // :10121
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10122
+            } // :10123
+          } else if (p === 64) {
+            // :10125
+
+            if (assi_mao) {
+              // :10127
+              await era.printAndWait(
+                `『嘿嘿嘿，在这里穿上环，姐姐就真的变成母牛了呢』`,
+              ); // :10128
+              await era.printAndWait(`「就，就是这样呢♪」`); // :10129
+              await era.printAndWait(
+                `${target_name}欣赏着自己鼻翼上穿着的银环……`,
+              ); // :10130
+            } else {
+              // :10131
+              await era.printAndWait(`「意外的好看呢♪」`); // :10132
+              await era.printAndWait(
+                `${target_name}欣赏着自己鼻翼上穿着的银环……`,
+              ); // :10133
+            } // :10134
+          } // :10135
+        } else {
+          // :10137
+          await era.printAndWait(
+            `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
+          ); // :10138
+        } // :10139
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :10141
+
+        if (chara(target).train.穿环状态 & p) {
+          // :10143
+          await era.printAndWait(`打孔器在${target_name}的肌肤上穿出了小洞。`); // :10144
+          await era.printAndWait(
+            `第一次穿孔的痛楚让${target_name}忍不住呻吟了出来。`,
+          ); // :10145
+
+          if (p === 1) {
+            // :10147
+
+            if (assi_mao) {
+              // :10149
+              await era.printAndWait(`『嘿嘿，很适合姐姐的淫乱大胸部呢』`); // :10150
+              await era.printAndWait(`「别这样直盯盯地看啦……真不好意思♪」`); // :10151
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10152
+            } else {
+              // :10153
+              await era.printAndWait(`「怎么样，好像很合适呢？${heart(1)}」`); // :10154
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10155
+            } // :10156
+          } else if (p === 2) {
+            // :10158
+
+            if (assi_mao) {
+              // :10160
+              await era.printAndWait(`『呼呼，好可爱呢${heart(1)}』`); // :10161
+              await era.printAndWait(
+                `「是，是吗……你要不要也穿一个呢、${player_name}？」`,
+              ); // :10162
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10163
+            } else {
+              // :10164
+              await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10165
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10166
+            } // :10167
+          } else if (p === 4) {
+            // :10169
+
+            if (assi_mao) {
+              // :10171
+              await era.printAndWait(
+                `『姐姐的蜜穴真的是很适合穿环啊，相性非常好哦♪』`,
+              ); // :10172
+              await era.printAndWait(`「别这样直盯盯地看啦……真不好意思♪」`); // :10173
+              await era.printAndWait(`${target_name}的蜜穴里被穿入了银环……`); // :10174
+            } else {
+              // :10175
+              await era.printAndWait(`「请，请魔王大人尽情欣赏吧${heart(1)}」`); // :10176
+              await era.printAndWait(
+                `${target_name}害羞地分开自己的蜜穴，展露着穿在里面的两个银环……`,
+              ); // :10177
+            } // :10178
+          } else if (p === 8) {
+            // :10180
+
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :10182
+
+              if (assi_mao) {
+                // :10184
+                await era.printAndWait(
+                  `『真厉害呢姐姐，穿环的时候都会兴奋得勃起呀${heart(1)}』`,
+                ); // :10185
+                await era.printAndWait(
+                  `「不，才不是呢……是因为，因为……啊啊真的很兴奋啊${heart(1)}」`,
+                ); // :10186
+                await era.printAndWait(
+                  `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
+                ); // :10187
+              } else {
+                // :10188
+                await era.printAndWait(
+                  `「请，请魔王大人欣赏人家的穿环阴茎吧${heart(1)}」`,
+                ); // :10189
+                await era.printAndWait(
+                  `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
+                ); // :10190
+              } // :10191
+            } else {
+              // :10192
+
+              if (assi_mao) {
+                // :10194
+                await era.printAndWait(
+                  `『哎呀呀，阴蒂穿上这样的东西，恐怕姐姐以后就没法过正常的生活了吧』`,
+                ); // :10195
+                await era.printAndWait(
+                  `「不，不要对姐姐恶作剧啦……不过，不过……真的很有感觉啊${heart(1)}」`,
+                ); // :10196
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10197
+              } else {
+                // :10198
+                await era.printAndWait(
+                  `「阴蒂被穿上这样的环，以后就正式成为魔王大人的性奴了呢…${heart(1)}」`,
+                ); // :10199
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10200
+              } // :10201
+            } // :10202
+          } else if (p === 16) {
+            // :10204
+
+            if (assi_mao) {
+              // :10206
+              await era.printAndWait(`『啊嘿嘿，姐姐的舌头也来一个环吧♪』`); // :10207
+              await era.printAndWait(
+                `「哎……那里也要吗……既然你这么希望的话……」`,
+              ); // :10208
+              await era.printAndWait(
+                `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
+              ); // :10209
+            } else {
+              // :10210
+              await era.printAndWait(
+                `「这样接吻……会很舒服吧，魔王大人${heart(1)}」`,
+              ); // :10211
+              await era.printAndWait(
+                `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
+              ); // :10212
+            } // :10213
+          } else if (p === 32) {
+            // :10215
+
+            if (assi_mao) {
+              // :10217
+              await era.printAndWait(`『呣呣，姐姐来试试带环接吻吧…』`); // :10218
+              await era.printAndWait(`「先，先让魔王大人来啦」`); // :10219
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10220
+            } else {
+              // :10221
+              await era.printAndWait(`「魔王大人，来接吻吧…${heart(1)}」`); // :10222
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10223
+            } // :10224
+          } else if (p === 64) {
+            // :10226
+
+            if (assi_mao) {
+              // :10228
+              await era.printAndWait(
+                `『哎嘿嘿，鼻子穿上环之后，姐姐就真的变成母牛性奴呢了』`,
+              ); // :10229
+              await era.printAndWait(
+                `「感觉……有点怪怪的……不过，变成魔王大人的母牛性奴……也很高兴呢」`,
+              ); // :10230
+              await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10231
+            } else {
+              // :10232
+              await era.printAndWait(
+                `「感觉……有点怪怪的……不过，变成魔王大人的母牛性奴……也很高兴呢」`,
+              ); // :10233
+              await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10234
+            } // :10235
+          } // :10236
+        } else {
+          // :10238
+          await era.printAndWait(
+            `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
+          ); // :10239
+        } // :10240
+      } else {
+        // :10242
+
+        if (chara(target).train.穿环状态 & p) {
+          // :10244
+          await era.printAndWait(`打孔器在${target_name}的肌肤上穿出了小洞。`); // :10245
+          await era.printAndWait(`「呜啊啊！」`); // :10246
+          await era.printAndWait(
+            `第一次穿孔的痛楚让${target_name}惨叫了出来。`,
+          ); // :10247
+
+          if (p === 1) {
+            // :10249
+
+            if (assi_mao) {
+              // :10251
+              await era.printAndWait(`『嘿嘿，很适合姐姐的淫乱大胸部呢』`); // :10252
+              await era.printAndWait(`「一点都不适合……快点拿下来啊……呜呜呜」`); // :10253
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10254
+            } else {
+              // :10255
+              await era.printAndWait(`「好痛……取，取下来啊……求求你」`); // :10256
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10257
+            } // :10258
+          } else if (p === 2) {
+            // :10260
+
+            if (assi_mao) {
+              // :10262
+              await era.printAndWait(`嘿嘿嘿，姐姐这样好可爱呢${heart(1)}』`); // :10263
+              await era.printAndWait(`「不，不要碰啊……好痛…」`); // :10264
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10265
+            } else {
+              // :10266
+              await era.printAndWait(`「呜……已，已经好了吗？」`); // :10267
+              await era.printAndWait(
+                `${target_name}吃痛地抚摸着自己肚脐上上闪闪发光的银环……`,
+              ); // :10268
+            } // :10269
+          } else if (p === 4) {
+            // :10271
+
+            if (assi_mao) {
+              // :10273
+              await era.printAndWait(
+                `『嘿嘿，姐姐真的是很合适穿环啊，特别是小穴这里♪』`,
+              ); // :10274
+              await era.printAndWait(`「不，不要那么用力啊……好痛！」`); // :10275
+              await era.printAndWait(
+                `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
+              ); // :10276
+            } else {
+              // :10277
+              await era.printAndWait(`「不要……不要看啊啊！」`); // :10278
+              await era.printAndWait(
+                `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
+              ); // :10279
+            } // :10280
+          } else if (p === 8) {
+            // :10282
+
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :10284
+
+              if (assi_mao) {
+                // :10286
+                await era.printAndWait(
+                  `『真厉害呢姐姐，穿环的时候都会兴奋得勃起呀${heart(1)}』`,
+                ); // :10287
+                await era.printAndWait(
+                  `「不，不是这样子的……都是因为你用手又拉又摩擦……才会勃起的……」`,
+                ); // :10288
+                await era.printAndWait(
+                  `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
+                ); // :10289
+              } else {
+                // :10290
+                await era.printAndWait(`「呜呜……不，不要这样用力……摩擦啊啊」`); // :10291
+                await era.printAndWait(
+                  `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
+                ); // :10292
+              } // :10293
+            } else {
+              // :10294
+
+              if (assi_mao) {
+                // :10296
+                await era.printAndWait(
+                  `『哎呀呀，阴蒂穿上这样的东西，恐怕姐姐以后就没法过正常的生活了吧』`,
+                ); // :10297
+                await era.printAndWait(`「求求你了……不要再欺负姐姐了……呜呜」`); // :10298
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10299
+              } else {
+                // :10300
+                await era.printAndWait(
+                  `「不，不要啊……那个部位……不可以……呜呜呜」`,
+                ); // :10301
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10302
+              } // :10303
+            } // :10304
+          } else if (p === 16) {
+            // :10306
+
+            if (assi_mao) {
+              // :10308
+              await era.printAndWait(`『啊嘿嘿，姐姐的舌头也来一个环吧♪』`); // :10309
+              await era.printAndWait(`「呜呜……不……不要拉啊啊……」`); // :10310
+              await era.printAndWait(
+                `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，痛得呜咽了起来……`,
+              ); // :10311
+            } else {
+              // :10312
+              await era.printAndWait(
+                `「不，不要啊……呜呜呜……以后会没办法……好好吃饭的……」`,
+              ); // :10313
+              await era.printAndWait(
+                `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，呜咽着说着什么……`,
+              ); // :10314
+            } // :10315
+          } else if (p === 32) {
+            // :10317
+
+            if (assi_mao) {
+              // :10319
+              await era.printAndWait(`『嘿嘿，姐姐以后接吻会很舒服的…』`); // :10320
+              await era.printAndWait(`「才，才没有那种事……好奇怪的感觉……」`); // :10321
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10322
+            } else {
+              // :10323
+              await era.printAndWait(`「呜呜……感觉好奇怪……一点都不习惯」`); // :10324
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10325
+            } // :10326
+          } else if (p === 64) {
+            // :10328
+
+            if (assi_mao) {
+              // :10330
+              await era.printAndWait(
+                `『哎嘿嘿，鼻子穿上环之后，姐姐就真的变成母牛性奴呢了』`,
+              ); // :10331
+              await era.printAndWait(`「不，不要再说了……呜呜呜…」`); // :10332
+              await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10333
+            } else {
+              // :10334
+              await era.printAndWait(`「呜呜……鼻子好痛…」`); // :10335
+              await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10336
+            } // :10337
+          } // :10338
+        } else {
+          // :10340
+          await era.printAndWait(
+            `${target_name}流着泪水，轻轻地擦拭着穿环处留下的血迹……`,
+          ); // :10341
+        } // :10342
+      } // :10343
+      // CFLAG:TARGET:348  = 1（变量语义：CFLAG 族，TARGET:348） // :10344
+      kojo.穿环 = 1; // :10344
+      return 0; // :10345
+    } else {
+      // :10347
+
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (kojo.穿环 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        // :10349
+
+        if (chara(target).train.穿环状态 & p) {
+          // :10351
+
+          if (p === 1) {
+            // :10353
+            if (assi_mao) {
+              // :10354
+              await era.printAndWait(`『很适合姐姐的淫乱大胸部哦！』`); // :10355
+              await era.printAndWait(`「是，是吗……谢谢${heart(1)}」`); // :10356
+              await era.printAndWait(
+                `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
+              ); // :10357
+            } else {
+              // :10358
+              await era.printAndWait(
+                `「哈……哈啊……可以用这个拉着乳头${heart(1)} 好像会很舒服的样子……♪」`,
+              ); // :10359
+              await era.printAndWait(
+                `${target_name}挺立的乳头上插入了闪闪发光的银环………`,
+              ); // :10360
+            } // :10361
+          } else if (p === 2) {
+            // :10363
+
+            if (assi_mao) {
+              // :10365
+              await era.printAndWait(`『哎哎，姐姐看上去好可爱${heart(1)}』`); // :10366
+              await era.printAndWait(
+                `「是，是吗……你要不要也穿一个呢、${player_name}？」`,
+              ); // :10367
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10368
+            } else {
+              // :10369
+              await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10370
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10371
+            } // :10372
+          } else if (p === 4) {
+            // :10374
+
+            if (assi_mao) {
+              // :10376
+              await era.printAndWait(
+                `『哇哇，姐姐很适合穿环啊，小穴穿上环之后更漂亮了呢♪』`,
+              ); // :10377
+              await era.printAndWait(
+                `「嗯嗯，谢谢${player_name}、阿啦，魔王大人也来看看？」`,
+              ); // :10378
+              await era.printAndWait(
+                `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
+              ); // :10379
+            } else {
+              // :10380
+              await era.printAndWait(`「下面穿上银环之后……好像更好看了…？」`); // :10381
+              await era.printAndWait(
+                `${target_name}用手指分开自己的蜜穴，对你展示着上面的银环……`,
+              ); // :10382
+            } // :10383
+          } else if (p === 8) {
+            // :10385
+
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :10387
+
+              if (assi_mao) {
+                // :10389
+                await era.printAndWait(
+                  `『哎呀呀姐姐，怎么穿环的时候勃起了呢${heart(1)}』`,
+                ); // :10390
+                await era.printAndWait(
+                  `「是啊……光是接触到这个环，姐姐就兴奋起来了呢${heart(1)}」`,
+                ); // :10391
+                await era.printAndWait(
+                  `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
+                ); // :10392
+              } else {
+                // :10393
+                await era.printAndWait(
+                  `「哈……自己的阴茎被穿环，居然会这么兴奋呢…${heart(1)}」`,
+                ); // :10394
+                await era.printAndWait(
+                  `${target_name}在忍受痛苦的同时兴奋了起来，阴茎充血勃起了……`,
+                ); // :10395
+              } // :10396
+            } else {
+              // :10397
+
+              if (assi_mao) {
+                // :10399
+                await era.printAndWait(
+                  `『哎呀呀，阴蒂穿上这样的东西，恐怕姐姐以后就没法过正常的生活了吧』`,
+                ); // :10400
+                await era.printAndWait(
+                  `「是，是啊……已经变得除了小穴之外……什么都不会想了${heart(1)}」`,
+                ); // :10401
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环……`,
+                ); // :10402
+              } else {
+                // :10403
+                await era.printAndWait(
+                  `「啊啊……轻轻碰一碰上面的环${heart(1)} 阴蒂就已经有感觉了啊${heart(1)}」`,
+                ); // :10404
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环……`,
+                ); // :10405
+              } // :10406
+            } // :10407
+          } else if (p === 16) {
+            // :10409
+
+            if (assi_mao) {
+              // :10411
+              await era.printAndWait(`『嘿嘿，姐姐舌头上也有位置呢♪』`); // :10412
+              await era.printAndWait(`「啊……还真的有点想试一下呢${heart(1)}」`); // :10413
+              await era.printAndWait(
+                `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
+              ); // :10414
+            } else {
+              // :10415
+              await era.printAndWait(
+                `「嘻嘻，以后再舌吻好像会很舒服呢${heart(1)}」`,
+              ); // :10416
+              await era.printAndWait(
+                `${target_name}被打了银钉的舌尖轻轻舔着嘴唇………`,
+              ); // :10417
+            } // :10418
+          } else if (p === 32) {
+            // :10420
+
+            if (assi_mao) {
+              // :10422
+              await era.printAndWait(`『啦啦，姐姐来亲亲吧…』`); // :10423
+              await era.printAndWait(`「呣呣……还要继续吗？」`); // :10424
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10425
+            } else {
+              // :10426
+              await era.printAndWait(`「呣呣，好像挺合适的？」`); // :10427
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10428
+            } // :10429
+          } else if (p === 64) {
+            // :10431
+
+            if (assi_mao) {
+              // :10433
+              await era.printAndWait(
+                `『嘿嘿嘿，在这里穿上环，姐姐就真的变成母牛了呢』`,
+              ); // :10434
+              await era.printAndWait(`「就，就是这样呢♪」`); // :10435
+              await era.printAndWait(
+                `${target_name}欣赏着自己鼻翼上穿着的银环……`,
+              ); // :10436
+            } else {
+              // :10437
+              await era.printAndWait(`「意外的好看呢♪」`); // :10438
+              await era.printAndWait(
+                `${target_name}欣赏着自己鼻翼上穿着的银环……`,
+              ); // :10439
+            } // :10440
+          } // :10441
+        } else {
+          // :10443
+          await era.printAndWait(
+            `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
+          ); // :10444
+        } // :10445
+        // CFLAG:348  = 4（变量语义：CFLAG 族，348） // :10446
+        kojo.穿环 = 4; // :10446
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.穿环 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        // :10448
+
+        if (chara(target).train.穿环状态 & p) {
+          // :10450
+
+          if (p === 1) {
+            // :10452
+
+            if (assi_mao) {
+              // :10454
+              await era.printAndWait(`『嘿嘿，很适合姐姐的淫乱大胸部呢』`); // :10455
+              await era.printAndWait(`「别这样直盯盯地看啦……真不好意思♪」`); // :10456
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10457
+            } else {
+              // :10458
+              await era.printAndWait(`「怎么样，好像很合适呢？${heart(1)}」`); // :10459
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10460
+            } // :10461
+          } else if (p === 2) {
+            // :10463
+
+            if (assi_mao) {
+              // :10465
+              await era.printAndWait(`『呼呼，好可爱呢${heart(1)}』`); // :10466
+              await era.printAndWait(
+                `「是，是吗……你要不要也穿一个呢、${player_name}？」`,
+              ); // :10467
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10468
+            } else {
+              // :10469
+              await era.printAndWait(`「呜哇，这个环好漂亮……」`); // :10470
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10471
+            } // :10472
+          } else if (p === 4) {
+            // :10474
+
+            if (assi_mao) {
+              // :10476
+              await era.printAndWait(
+                `『姐姐的蜜穴真的是很适合穿环啊，相性非常好哦♪』`,
+              ); // :10477
+              await era.printAndWait(`「别这样直盯盯地看啦……真不好意思♪」`); // :10478
+              await era.printAndWait(`${target_name}的蜜穴里被穿入了银环……`); // :10479
+            } else {
+              // :10480
+              await era.printAndWait(`「请，请魔王大人尽情欣赏吧${heart(1)}」`); // :10481
+              await era.printAndWait(
+                `${target_name}害羞地分开自己的蜜穴，展露着穿在里面的两个银环……`,
+              ); // :10482
+            } // :10483
+          } else if (p === 8) {
+            // :10485
+
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :10487
+
+              if (assi_mao) {
+                // :10489
+                await era.printAndWait(
+                  `『真厉害呢姐姐，穿环的时候都会兴奋得勃起呀${heart(1)}』`,
+                ); // :10490
+                await era.printAndWait(
+                  `「不，才不是呢……是因为，因为……啊啊真的很兴奋啊${heart(1)}」`,
+                ); // :10491
+                await era.printAndWait(
+                  `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
+                ); // :10492
+              } else {
+                // :10493
+                await era.printAndWait(
+                  `「请，请魔王大人欣赏人家的穿环阴茎吧${heart(1)}」`,
+                ); // :10494
+                await era.printAndWait(
+                  `${target_name}胯下的阴茎充血挺立了起来，摇晃着顶端穿入的银环………`,
+                ); // :10495
+              } // :10496
+            } else {
+              // :10497
+
+              if (assi_mao) {
+                // :10499
+                await era.printAndWait(
+                  `『哎呀呀，阴蒂穿上这样的东西，恐怕姐姐以后就没法过正常的生活了吧』`,
+                ); // :10500
+                await era.printAndWait(
+                  `「不，不要对姐姐恶作剧啦……不过，不过……真的很有感觉啊${heart(1)}」`,
+                ); // :10501
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10502
+              } else {
+                // :10503
+                await era.printAndWait(
+                  `「阴蒂被穿上这样的环，以后就正式成为魔王大人的性奴了呢…${heart(1)}」`,
+                ); // :10504
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10505
+              } // :10506
+            } // :10507
+          } else if (p === 16) {
+            // :10509
+
+            if (assi_mao) {
+              // :10511
+              await era.printAndWait(`『啊嘿嘿，姐姐的舌头也来一个环吧♪』`); // :10512
+              await era.printAndWait(
+                `「哎……那里也要吗……既然你这么希望的话……」`,
+              ); // :10513
+              await era.printAndWait(
+                `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
+              ); // :10514
+            } else {
+              // :10515
+              await era.printAndWait(
+                `「这样接吻……会很舒服吧，魔王大人${heart(1)}」`,
+              ); // :10516
+              await era.printAndWait(
+                `${target_name}有些害羞地用穿着银环的舌尖舔着嘴唇……`,
+              ); // :10517
+            } // :10518
+          } else if (p === 32) {
+            // :10520
+
+            if (assi_mao) {
+              // :10522
+              await era.printAndWait(`『呣呣，姐姐来试试带环接吻吧…』`); // :10523
+              await era.printAndWait(`「先，先让魔王大人来啦」`); // :10524
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10525
+            } else {
+              // :10526
+              await era.printAndWait(`「魔王大人，来接吻吧…${heart(1)}」`); // :10527
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10528
+            } // :10529
+          } else if (p === 64) {
+            // :10531
+
+            if (assi_mao) {
+              // :10533
+              await era.printAndWait(
+                `『哎嘿嘿，鼻子穿上环之后，姐姐就真的变成母牛性奴呢了』`,
+              ); // :10534
+              await era.printAndWait(
+                `「感觉……有点怪怪的……不过，变成魔王大人的母牛性奴……也很高兴呢」`,
+              ); // :10535
+              await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10536
+            } else {
+              // :10537
+              await era.printAndWait(
+                `「感觉……有点怪怪的……不过，变成魔王大人的母牛性奴……也很高兴呢」`,
+              ); // :10538
+              await era.printAndWait(`${target_name}轻轻抚摸着鼻子上的银环……`); // :10539
+            } // :10540
+          } // :10541
+        } else {
+          // :10543
+          await era.printAndWait(
+            `${target_name}轻轻地擦拭着穿环处留下的血迹……`,
+          ); // :10544
+        } // :10545
+        // CFLAG:348  = 3（变量语义：CFLAG 族，348） // :10546
+        kojo.穿环 = 3; // :10546
+      } else if (kojo.穿环 <= 1 || game.kojo.口上开关 === 2) {
+        // :10548
+
+        if (chara(target).train.穿环状态 & p) {
+          // :10550
+
+          if (p === 1) {
+            // :10552
+
+            if (assi_mao) {
+              // :10554
+              await era.printAndWait(`『嘿嘿，很适合姐姐的淫乱大胸部呢』`); // :10555
+              await era.printAndWait(`「一点都不适合……快点拿下来啊……呜呜呜」`); // :10556
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10557
+            } else {
+              // :10558
+              await era.printAndWait(`「好痛……取，取下来啊……求求你」`); // :10559
+              await era.printAndWait(
+                `${target_name}充血挺立起的乳头上，银环闪闪发光……`,
+              ); // :10560
+            } // :10561
+          } else if (p === 2) {
+            // :10563
+
+            if (assi_mao) {
+              // :10565
+              await era.printAndWait(`嘿嘿嘿，姐姐这样好可爱呢${heart(1)}』`); // :10566
+              await era.printAndWait(`「不，不要碰啊……好痛…」`); // :10567
+              await era.printAndWait(
+                `${target_name}的肚脐上穿入了闪闪发光的银环……`,
+              ); // :10568
+            } else {
+              // :10569
+              await era.printAndWait(`「呜……已，已经好了吗？」`); // :10570
+              await era.printAndWait(
+                `${target_name}吃痛地抚摸着自己肚脐上上闪闪发光的银环……`,
+              ); // :10571
+            } // :10572
+          } else if (p === 4) {
+            // :10574
+
+            if (assi_mao) {
+              // :10576
+              await era.printAndWait(
+                `『嘿嘿，姐姐真的是很合适穿环啊，特别是小穴这里♪』`,
+              ); // :10577
+              await era.printAndWait(`「不，不要那么用力啊……好痛！」`); // :10578
+              await era.printAndWait(
+                `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
+              ); // :10579
+            } else {
+              // :10580
+              await era.printAndWait(`「不要……不要看啊啊！」`); // :10581
+              await era.printAndWait(
+                `${player_name}用手指分开了${target_name}的蜜穴，欣赏着上面穿入的两个银环。`,
+              ); // :10582
+            } // :10583
+          } else if (p === 8) {
+            // :10585
+
+            if (
+              era.get(`talent:${target}:121`) ||
+              era.get(`talent:${target}:122`)
+            ) {
+              // :10587
+
+              if (assi_mao) {
+                // :10589
+                await era.printAndWait(
+                  `『真厉害呢姐姐，穿环的时候都会兴奋得勃起呀${heart(1)}』`,
+                ); // :10590
+                await era.printAndWait(
+                  `「不，不是这样子的……都是因为你用手又拉又摩擦……才会勃起的……」`,
+                ); // :10591
+                await era.printAndWait(
+                  `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
+                ); // :10592
+              } else {
+                // :10593
+                await era.printAndWait(`「呜呜……不，不要这样用力……摩擦啊啊」`); // :10594
+                await era.printAndWait(
+                  `${player_name}用手摩擦着${target_name}胯下的阴茎，摇晃着顶端穿入的银环………`,
+                ); // :10595
+              } // :10596
+            } else {
+              // :10597
+
+              if (assi_mao) {
+                // :10599
+                await era.printAndWait(
+                  `『哎呀呀，阴蒂穿上这样的东西，恐怕姐姐以后就没法过正常的生活了吧』`,
+                ); // :10600
+                await era.printAndWait(`「求求你了……不要再欺负姐姐了……呜呜」`); // :10601
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10602
+              } else {
+                // :10603
+                await era.printAndWait(
+                  `「不，不要啊……那个部位……不可以……呜呜呜」`,
+                ); // :10604
+                await era.printAndWait(
+                  `${target_name}充血勃起的阴蒂被穿上了银环，变得更加敏感了……`,
+                ); // :10605
+              } // :10606
+            } // :10607
+          } else if (p === 16) {
+            // :10609
+
+            if (assi_mao) {
+              // :10611
+              await era.printAndWait(`『啊嘿嘿，姐姐的舌头也来一个环吧♪』`); // :10612
+              await era.printAndWait(`「呜呜……不……不要拉啊啊……」`); // :10613
+              await era.printAndWait(
+                `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，痛得呜咽了起来……`,
+              ); // :10614
+            } else {
+              // :10615
+              await era.printAndWait(
+                `「不，不要啊……呜呜呜……以后会没办法……好好吃饭的……」`,
+              ); // :10616
+              await era.printAndWait(
+                `${target_name}被${player_name}强行拉扯着舌头，穿上了银环，呜咽着说着什么……`,
+              ); // :10617
+            } // :10618
+          } else if (p === 32) {
+            // :10620
+
+            if (assi_mao) {
+              // :10622
+              await era.printAndWait(`『嘿嘿，姐姐以后接吻会很舒服的…』`); // :10623
+              await era.printAndWait(`「才，才没有那种事……好奇怪的感觉……」`); // :10624
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10625
+            } else {
+              // :10626
+              await era.printAndWait(`「呜呜……感觉好奇怪……一点都不习惯」`); // :10627
+              await era.printAndWait(
+                `${target_name}娇嫩嘴唇上的银环在闪闪发亮…`,
+              ); // :10628
+            } // :10629
+          } else if (p === 64) {
+            // :10631
+
+            if (assi_mao) {
+              // :10633
+              await era.printAndWait(
+                `『哎嘿嘿，鼻子穿上环之后，姐姐就真的变成母牛性奴呢了』`,
+              ); // :10634
+              await era.printAndWait(`「不，不要再说了……呜呜呜…」`); // :10635
+              await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10636
+            } else {
+              // :10637
+              await era.printAndWait(`「呜呜……鼻子好痛…」`); // :10638
+              await era.printAndWait(`${target_name}痛苦地摸着鼻子上的银环……`); // :10639
+            } // :10640
+          } // :10641
+        } else {
+          // :10643
+          await era.printAndWait(
+            `${target_name}流着泪水，轻轻地擦拭着穿环处留下的血迹……`,
+          ); // :10644
+        } // :10645
+        // CFLAG:348  = 2（变量语义：CFLAG 族，348） // :10646
+        kojo.穿环 = 2; // :10646
+      } // :10647
+    } // :10648
+    return 0; // :10649
+  } // :10650
 
   return 0;
 }
