@@ -576,7 +576,7 @@ function find_printform(erb_lines, n, m) {
 
 /** 模块头注的「源: target/…ERB」→ 源文件相对路径 */
 function parse_source_erb(js_text) {
-  const match = js_text.match(/源:\s*(target\/[^\s*]+\.ERB)/);
+  const match = js_text.match(/源:\s*(target\/[^\r\n*]+?\.ERB)/);
   return match ? match[1] : null;
 }
 
