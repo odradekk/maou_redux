@@ -20,8 +20,13 @@ export default [
     desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
     file: 'ere/kojo/kojo-system.js',
     find: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  if ((era.get(\`flag:\${local}\`) || 0) === 0) {`,
+  const exists =
+    local === 1003
+      ? era_exflag.kojo_gade_session
+      : era.get(\`flag:\${local}\`) || 0;
+  if (exists === 0) {`,
     replace: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
+  const exists = 1; // 变异：存在判定删除
   if (false) { // 变异：存在判定删除`,
     tests: ['kojo-system'],
     must_mention: '存在判定',
@@ -10334,5 +10339,265 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k12-intellectual'],
     must_mention:
       '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）',
+  },
+  {
+    desc: 'M6400 K903 EVENTTRAIN EX_FLAG:103 置位删除（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    era_exflag.kojo_gade_session = 1; // :61 EX_FLAG:103 = 嘉德口上存在标志',
+    replace: '    // 变异：EX_FLAG:103 置位删除',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'EX_FLAG:103 生命周期',
+  },
+  {
+    desc: 'M6401 K903 EVENTTRAIN EX_TALENT:103 守卫删除（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `  if (era0(\`ex_talent:\${target}:103\`) != 1) {
+    // :76-77
+    return 0; // :76-77
+  } // :76-77`,
+    replace: `  if (false) { // 变异：EX_TALENT:103 守卫删除
+    // :77
+    return 0; // :77
+  } // :77`,
+    tests: ['kojo-k903-garde'],
+    must_mention: 'EX_TALENT:103 缺席',
+  },
+  {
+    desc: 'M6402 K903 CFLAG:201 初调教初回写错（1 改 2）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    kojo.初调教 = 1; // :96',
+    replace: '    kojo.初调教 = 2; // :96（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6403 K903 CFLAG:650 NTR 再捕获清除删除（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `      // CFLAG:650  = 0（变量语义：CFLAG 族，650） // :110
+      kojo.NTR再捕获 = 0; // :110`,
+    replace: `      // CFLAG:650  = 0（变量语义：CFLAG 族，650） // :110
+      // 变异：NTR 再捕获清除删除`,
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6404 K903 CFLAG:201 屈服 Lv1 写错（2 改 3）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    kojo.初调教 = 2; // :126',
+    replace: '    kojo.初调教 = 3; // :126（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6405 K903 CFLAG:201 屈服 Lv2 写错（3 改 4）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    kojo.初调教 = 3; // :133',
+    replace: '    kojo.初调教 = 4; // :133（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6406 K903 CFLAG:201 屈服 Lv3 写错（4 改 5）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    kojo.初调教 = 4; // :140',
+    replace: '    kojo.初调教 = 5; // :140（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6407 K903 CFLAG:201 淫乱阶段写错（5 改 6）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    kojo.初调教 = 5; // :151',
+    replace: '    kojo.初调教 = 6; // :151（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6408 K903 CFLAG:201 爱慕阶段写错（6 改 7）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    kojo.初调教 = 6; // :162',
+    replace: '    kojo.初调教 = 7; // :162（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'CFLAG:201：初调教',
+  },
+  {
+    desc: 'M6409 K903 COM 守卫① TEQUIP:45 删松（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
+    replace: '  if (false) { // 变异：TEQUIP:45 口塞守卫删松',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'COM 仅保留源中活动的五道守卫',
+  },
+  {
+    desc: 'M6410 K903 COM 守卫② TFLAG:899 失神删松（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `  if (game.train.失神) {
+    // :540-541
+    return 0; // :540-541
+  } // :540-541`,
+    replace: `  if (false) { // 变异：TFLAG:899 失神守卫删松
+    // :540-541
+    return 0; // :540-541
+  } // :540-541`,
+    tests: ['kojo-k903-garde'],
+    must_mention: 'COM 仅保留源中活动的五道守卫',
+  },
+  {
+    desc: 'M6411 K903 COM 守卫③ TEQUIP:89 DOG 分发删松（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (era0(`tequip:${target}:89`)) {',
+    replace: '  if (false) { // 变异：TEQUIP:89 DOG 分发守卫删松',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'COM 仅保留源中活动的五道守卫',
+  },
+  {
+    desc: 'M6412 K903 COM 守卫④ TEQUIP:90 触手删松（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (era0(`tequip:${target}:90`)) {',
+    replace: '  if (false) { // 变异：TEQUIP:90 触手守卫删松',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'COM 仅保留源中活动的五道守卫',
+  },
+  {
+    desc: 'M6413 K903 COM 守卫⑤ TEQUIP:55 竞技场分发删松（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `  if (era0(\`tequip:\${target}:55\`)) {
+    // :551
+    await colosseum_kojo_903(rand); // :552
+    return 0; // :552-553
+  } // :552-554`,
+    replace: `  if (false) { // 变异：TEQUIP:55 竞技场分发守卫删松
+    // :551
+    await colosseum_kojo_903(rand); // :552
+    return 0; // :553
+  } // :554`,
+    tests: ['kojo-k903-garde'],
+    must_mention: 'COM 仅保留源中活动的五道守卫',
+  },
+  {
+    desc: 'M6414 K903 SELECTCOM:0 爱抚初回计数写错（1 改 2）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '      chara(target).kojo.爱抚 = 1; // :572',
+    replace: '      chara(target).kojo.爱抚 = 2; // :572（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '全部活动 SELECTCOM',
+  },
+  {
+    desc: 'M6415 K903 SELECTCOM:0 爱抚淫乱计数写错（6 改 5）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '        chara(target).kojo.爱抚 = 6; // :579',
+    replace: '        chara(target).kojo.爱抚 = 5; // :579（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'SELECTCOM 二次状态',
+  },
+  {
+    desc: 'M6416 K903 SELECTCOM:2 保留缺陷误读 CFLAG:223（改读 CFLAG:303）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '        chara(target).kojo.首次耻情Lv2 <= 1 ||',
+    replace: '        chara(target).kojo.肛门爱抚 <= 1 ||',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：303 误读 223',
+  },
+  {
+    desc: 'M6417 K903 SELECTCOM:7 保留缺陷误写 CFLAG:306（改写 CFLAG:308）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '        chara(target).kojo.胸爱抚 = 5; // :891',
+    replace: '        chara(target).kojo.自己扒开 = 5; // :891（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：303 误读 223',
+  },
+  {
+    desc: 'M6418 K903 SELECTCOM:8 插入手指初回计数写错（1 改 2）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '      chara(target).kojo.插入手指 = 1; // :925',
+    replace: '      chara(target).kojo.插入手指 = 2; // :925（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '全部活动 SELECTCOM',
+  },
+  {
+    desc: 'M6419 K903 PALAMCNG 润滑首超边界删严（> 改 >=）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (p_lube > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {',
+    replace: '  if (p_lube >= PALAMLV[2] && kojo.首次润滑Lv2 == 0) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'PALAMCNG：221-229',
+  },
+  {
+    desc: 'M6420 K903 PALAMCNG NOWEX:0 首次 C 绝顶判据删松（>0 改 >1）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (era0(`nowex:${target}:0`) > 0 && kojo.首次C绝顶 == 0) {',
+    replace: '  if (era0(`nowex:${target}:0`) > 1 && kojo.首次C绝顶 == 0) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'PALAMCNG：221-229',
+  },
+  {
+    desc: 'M6421 K903 MARKCNG 苦痛刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (game.system.苦痛刻印变动 == 3 && chara(target).kojo.苦痛刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.苦痛刻印变动 == 4 && chara(target).kojo.苦痛刻印Lv3 == 0) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'MARKCNG：297-300',
+  },
+  {
+    desc: 'M6422 K903 MARKCNG 快乐刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (game.system.快乐刻印变动 == 3 && chara(target).kojo.快乐刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.快乐刻印变动 == 4 && chara(target).kojo.快乐刻印Lv3 == 0) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'MARKCNG：297-300',
+  },
+  {
+    desc: 'M6423 K903 MARKCNG 屈服刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (game.system.屈服刻印变动 == 3 && chara(target).kojo.屈服刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.屈服刻印变动 == 4 && chara(target).kojo.屈服刻印Lv3 == 0) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'MARKCNG：297-300',
+  },
+  {
+    desc: 'M6424 K903 MARKCNG 反抗刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  if (game.system.反抗刻印变动 == 3 && chara(target).kojo.反抗刻印Lv3 == 0) {',
+    replace:
+      '  if (game.system.反抗刻印变动 == 4 && chara(target).kojo.反抗刻印Lv3 == 0) {',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'MARKCNG：297-300',
+  },
+  {
+    desc: 'M6425 K903 GOHOUBI_REQUEST 保留 Y 未赋值缺陷改为奖励 2（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '  const y = 0;',
+    replace: '  const y = 2; // 变异：Y 未赋值误变为奖励 2',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'GOHOUBI_REQUEST 保留 Y=0',
+  },
+  {
+    desc: 'M6426 K903 KOJO2 露出狂误读 TALENT:83（改为 89）（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    if (era0(\`talent:\${target}:83\`)) {\n      // :436',
+    replace: '    if (era0(\`talent:\${target}:89\`)) {\n      // :436（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：两处重复 TALENT:74',
+  },
+  {
+    desc: 'M6427 K903 KOJO2 首处重复 TALENT:74 判断保留（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    } else if (era0(`talent:${target}:74`)) {\n      // :321',
+    replace:
+      '    } else if (era0(`talent:${target}:75`)) {\n      // :321（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：两处重复 TALENT:74',
+  },
+  {
+    desc: 'M6428 K903 KOJO2 第二处重复 TALENT:74 判断保留（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '    } else if (era0(`talent:${target}:74`)) {\n      // :408',
+    replace:
+      '    } else if (era0(`talent:${target}:75`)) {\n      // :408（变异）',
+    tests: ['kojo-k903-garde'],
+    must_mention: '原作缺陷：两处重复 TALENT:74',
   },
 ];

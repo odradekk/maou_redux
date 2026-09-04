@@ -703,6 +703,11 @@ const EXEMPT_STRINGS = [
     where: 'ere/kojo/kojo-dungeon-ravish.js',
     why: 'DUNGEON_RYOUZYOKU.ERB:1895 的 GIRL_RYOU 处女封印台词，・ 是原作刻意用的停顿分隔样式（「好好感・受・吧」的逐字顿挫），非日文假名。lang-normalize 头注明言「・ 用作分隔样式时会有意红一次」——此处是那个「有意」：整串豁免，改写时失配变红。#182 收录。',
   },
+  {
+    value: '好好地玩・一・玩吧♪」',
+    where: 'ere/kojo/kojo-k903-garde.js',
+    why: 'EVENT_K903_嘉德.ERB:5707 的奖赏请求台词，・ 刻意分隔「玩・一・玩」形成逐字顿挫，与 K10「亲・爱・的」同款样式；整串豁免以保留原文。#249 收录。',
+  },
   ...['正常位・接吻', '正常位・胸爱抚', '背后位・胸爱抚', '背后位・打屁股'].map(
     (value) => ({
       value,

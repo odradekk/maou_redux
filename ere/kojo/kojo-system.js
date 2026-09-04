@@ -63,6 +63,7 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
@@ -171,8 +172,9 @@ function kojo_handler_id(arg = -1) {
  *
  * :137-140 FOR COUNT,160,180：素质 160-179（慈愛..貴公子等性格素质）逐格
  * 探测，**最后一格命中者胜**（原作无 BREAK，后写覆盖先写）。性格素质 →
- * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 半边
- * （:135 GET_EX_KOJO_NUM）待办，见文件头。
+ * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 口上
+ * 先按 EX_TALENT:101-800 取最后命中的 COUNT + 900，随后仍由普通性格
+ * 素质覆盖，严格保持源顺序。
  *
  * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）
  * @returns {number} 口上编号（100-119；无性格素质时 0）
@@ -180,6 +182,12 @@ function kojo_handler_id(arg = -1) {
 function get_kojo_num(arg = -1) {
   const cid = arg < 0 ? era_flag.target : arg; // :89-91
   let local = 0;
+  for (let count = 101; count < 801; count += 1) {
+    if (era.get(`ex_talent:${cid}:${count}`)) {
+      // EVENT_K.ERB :135；原作在通常素质前先查询 EX 口上编号。
+      local = count + 900; // EXCOM.ERB:31-37 @GET_EX_KOJO_NUM
+    }
+  }
   for (let count = 160; count < 180; count += 1) {
     if (era.get(`talent:${cid}:${count}`)) {
       local = count - 60; // :139
@@ -191,8 +199,8 @@ function get_kojo_num(arg = -1) {
 /**
  * @KOJO_MESSAGE_COM（:150-162）：指令执行时的口上入口。
  *
- * 两道守卫（:151-152 总开关；:155-157 存在判定——EX_FLAG 臂待办见文件头，
- * 普通口上化简为 FLAG:LOCAL == 0）之后按编号分发（:160-161）。
+ * 两道守卫（:151-152 总开关；:155-157 存在判定——K903 走 EX_FLAG:103，
+ * 普通口上走 FLAG:LOCAL）之后按编号分发（:160-161）。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源（返回 [0, n) 的
  *   整数；缺省均匀随机）。以参数注入而非测试钩子——随机源本就是引擎外
@@ -207,7 +215,11 @@ async function kojo_message_com(rand) {
 
   // :155-157 第二道守卫：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 臂）
   const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  if ((era.get(`flag:${local}`) || 0) === 0) {
+  const exists =
+    local === 1003
+      ? era_exflag.kojo_gade_session
+      : era.get(`flag:${local}`) || 0;
+  if (exists === 0) {
     return 0;
   }
 
@@ -282,7 +294,11 @@ async function kojo_message_palamcng(rand) {
     return 0;
   }
   const local = get_kojo_num();
-  if ((era.get(`flag:${local}`) || 0) === 0) {
+  const exists =
+    local === 1003
+      ? era_exflag.kojo_gade_session
+      : era.get(`flag:${local}`) || 0;
+  if (exists === 0) {
     return 0;
   }
   return try_kojo_or_stub(
