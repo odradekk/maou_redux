@@ -20832,6 +20832,4081 @@ export const FILES = [
         ['7160', 'PRINTFORMW 「不，不要！好恶心！放开我啊啊！」'],
         ['7161', 'PRINTFORMW %SAVESTR:TARGET%无力抵抗，只能哭泣着忍受……'],
         ['7162', 'CFLAG:TARGET:364 = 2'],
+        ['7179', 'IF SELECTCOM == 64'],
+        ['7181-7182', 'SIF ASSI > 0 && NO:ASSI != 17'],
+        [
+          '7191',
+          'PRINTFORMW %SAVESTR:MASTER%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '7192',
+          'PRINTFORMW %SAVESTR:ASSI%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['7194', 'PRINTFORMW 「呜……啊啊……我的处女！」'],
+        [
+          '7195',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '7196',
+          'PRINTFORML 『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』',
+        ],
+        ['7197', 'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，激烈地侵犯着姐姐的后庭。'],
+        ['7198', 'PRINTFORMW 「啊啊……这样被夹击……一下子……就要去了啊啊啊！」'],
+        [
+          '7200',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7201',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        ['7202', 'PRINTFORML 『嘿嘿，姐姐，处女三明治的感觉如何啊？』'],
+        [
+          '7203',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，用阴茎激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '7204',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7206',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '7207',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '7208',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '7209',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7213',
+          'PRINTFORMW %SAVESTR:ASSI%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '7214',
+          'PRINTFORMW %SAVESTR:MASTER%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['7216', 'PRINTFORMW 「呜啊啊……我，我的第一次……啊啊啊！」'],
+        [
+          '7217',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '7218',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴！』',
+        ],
+        [
+          '7219',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        ['7220', 'PRINTFORMW 「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」'],
+        [
+          '7222',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1% 好……好奇怪的感觉啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7223',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        [
+          '7224',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7225',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        [
+          '7226',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7228',
+          'PRINTFORML 『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』',
+        ],
+        [
+          '7229',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '7230',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '7231',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '7232',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴',
+        ],
+        [
+          '7237',
+          'PRINTFORMW 「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊%UNICODE(0x2661) *1% 呣呣%UNICODE(0x2661) *1%……」',
+        ],
+        [
+          '7238',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7239',
+          'PRINTFORML 『哎嘿嘿，姐姐的处女今天正式属于魔王大人了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7240',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7241',
+          'PRINTFORMW 「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '7242',
+          'PRINTFORML 『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7243',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7245',
+          'PRINTFORMW 「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7246',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7247',
+          'PRINTFORML 『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7248',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7249',
+          'PRINTFORMW 「好舒服……唔呣……唔呣%UNICODE(0x2661) *1% 这样同时……侍奉两根阴茎……实在是太棒了唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7250',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        ['7252', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7253',
+          'PRINTFORMW %SAVESTR:TARGET%边被强迫为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        ['7254', 'PRINTFORMW 「不，不要啊啊！」'],
+        ['7255', 'PRINTFORML 『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』'],
+        [
+          '7256',
+          'PRINTFORMW %SAVESTR:ASSI%抓着%SAVESTR:TARGET%的头，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@强行侵犯着姐姐的喉咙。',
+        ],
+        [
+          '7257',
+          'PRINTFORMW  身后的%SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        ['7258', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7259',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7264',
+          'PRINTFORMW 「呜呜……唔呣%UNICODE(0x2661) *1%！%SAVESTR:ASSI%？！不，不可以……」',
+        ],
+        [
+          '7265',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7266',
+          'PRINTFORML 『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』',
+        ],
+        [
+          '7267',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7268',
+          'PRINTFORMW 「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」',
+        ],
+        [
+          '7269',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7271',
+          'PRINTFORMW 「唔呣……唔唔……我的处女……就这样……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7272',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7273',
+          'PRINTFORML 『啊啊，梦寐以求的姐姐的第一次，我就这么收下了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7274',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7275',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7276',
+          'PRINTFORMW 「唔呣……唔唔……%UNICODE(0x2661) *1% 这样……好舒服……唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7277',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，却感受到了心理和生理的双重快感……',
+        ],
+        ['7279', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7280',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头抵在蜜穴上。',
+        ],
+        [
+          '7281',
+          'PRINTFORML 『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』',
+        ],
+        ['7282', 'PRINTFORMW 「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」'],
+        [
+          '7283',
+          'PRINTFORMW %SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头，将阴茎插到了喉咙的最深处。',
+        ],
+        [
+          '7284',
+          'PRINTFORMW 身后的%SAVESTR:ASSI%也无情地夺去了%SAVESTR:TARGET%的处女身。',
+        ],
+        ['7285', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7286',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7291',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7292',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为%SAVESTR:ASSI%口交了啊！」',
+        ],
+        [
+          '7293',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』',
+        ],
+        [
+          '7294',
+          'PRINTFORMW 被妹妹的话羞辱得脸红满面的%SAVESTR:TARGET%只能努力集中精神，吸吮着%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '7295',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7296',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7298',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7299',
+          'PRINTFORMW 「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」',
+        ],
+        [
+          '7300',
+          'PRINTFORMW %SAVESTR:ASSI%用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的%SAVESTR:TARGET%。',
+        ],
+        [
+          '7301',
+          'PRINTFORML 『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』',
+        ],
+        [
+          '7302',
+          'PRINTFORMW %SAVESTR:ASSI%的话让%SAVESTR:MASTER%更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7304',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7305',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7306',
+          'PRINTFORML 『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』',
+        ],
+        [
+          '7307',
+          'PRINTFORMW %SAVESTR:ASSI%哼了一声，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始侵犯，抽插着姐姐的嘴和喉咙。',
+        ],
+        [
+          '7308',
+          'PRINTFORML 『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』',
+        ],
+        [
+          '7309',
+          'PRINTFORMW %SAVESTR:ASSI%的表情和语气让%SAVESTR:MASTER%忍不住笑了起来……',
+        ],
+        [
+          '7314',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7315',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」',
+        ],
+        [
+          '7316',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7317',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7318',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7319',
+          'PRINTFORMW %SAVESTR:TARGET%集中精神，忍耐着肛门的快感，努力吸吮着%SAVESTR:MASTER%的阴茎…',
+        ],
+        [
+          '7321',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7322',
+          'PRINTFORMW 「呜……呜啊啊……这样……太激烈了%UNICODE(0x2661) *1% 但是……好舒服……唔呣呣……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7323',
+          'PRINTFORML 『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』',
+        ],
+        [
+          '7324',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '7325',
+          'PRINTFORMW 「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7326',
+          'PRINTFORMW 肛交的极度快感让%SAVESTR:TARGET%几乎无法集中精神，吸吮%SAVESTR:MASTER%阴茎的动作也停了下来……',
+        ],
+        [
+          '7328',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7329',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7330',
+          'PRINTFORML 『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』',
+        ],
+        [
+          '7331',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        ['7332', 'PRINTFORML 『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』'],
+        [
+          '7333',
+          'PRINTFORMW 痛苦万分，又无力违抗的%SAVESTR:TARGET%只能边忍受着，边努力吸吮着的%SAVESTR:MASTER%的阴茎……',
+        ],
+        ['7336', 'PRINTW 出错了？'],
+        [
+          '7342',
+          'PRINTFORMW %SAVESTR:MASTER%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '7343',
+          'PRINTFORMW %SAVESTR:ASSI%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['7345', 'PRINTFORMW 「呜……啊啊……我的处女！」'],
+        [
+          '7346',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '7347',
+          'PRINTFORML 『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』',
+        ],
+        ['7348', 'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，激烈地侵犯着姐姐的后庭。'],
+        ['7349', 'PRINTFORMW 「啊啊……这样被夹击……一下子……就要去了啊啊啊！」'],
+        [
+          '7351',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7352',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        ['7353', 'PRINTFORML 『嘿嘿，姐姐，处女三明治的感觉如何啊？』'],
+        [
+          '7354',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，用阴茎激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '7355',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7357',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '7358',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '7359',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '7360',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7364',
+          'PRINTFORMW %SAVESTR:ASSI%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '7365',
+          'PRINTFORMW %SAVESTR:MASTER%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['7367', 'PRINTFORMW 「呜啊啊……我，我的第一次……啊啊啊！」'],
+        [
+          '7368',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '7369',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴！』',
+        ],
+        [
+          '7370',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        ['7371', 'PRINTFORMW 「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」'],
+        [
+          '7373',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1% 好……好奇怪的感觉啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7374',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        [
+          '7375',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7376',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        [
+          '7377',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7379',
+          'PRINTFORML 『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』',
+        ],
+        [
+          '7380',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '7381',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '7382',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '7383',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴',
+        ],
+        [
+          '7388',
+          'PRINTFORMW 「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊%UNICODE(0x2661) *1% 呣呣%UNICODE(0x2661) *1%……」',
+        ],
+        [
+          '7389',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7390',
+          'PRINTFORML 『哎嘿嘿，姐姐的处女今天正式属于魔王大人了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7391',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7392',
+          'PRINTFORMW 「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '7393',
+          'PRINTFORML 『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7394',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7396',
+          'PRINTFORMW 「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7397',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7398',
+          'PRINTFORML 『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7399',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7400',
+          'PRINTFORMW 「好舒服……唔呣……唔呣%UNICODE(0x2661) *1% 这样同时……侍奉两根阴茎……实在是太棒了唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7401',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        ['7403', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7404',
+          'PRINTFORMW %SAVESTR:TARGET%边被强迫为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        ['7405', 'PRINTFORMW 「不，不要啊啊！」'],
+        ['7406', 'PRINTFORML 『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』'],
+        [
+          '7407',
+          'PRINTFORMW %SAVESTR:ASSI%抓着%SAVESTR:TARGET%的头，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@强行侵犯着姐姐的喉咙。',
+        ],
+        [
+          '7408',
+          'PRINTFORMW  身后的%SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        ['7409', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7410',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7415',
+          'PRINTFORMW 「呜呜……唔呣%UNICODE(0x2661) *1%！%SAVESTR:ASSI%？！不，不可以……」',
+        ],
+        [
+          '7416',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7417',
+          'PRINTFORML 『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』',
+        ],
+        [
+          '7418',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7419',
+          'PRINTFORMW 「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」',
+        ],
+        [
+          '7420',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7422',
+          'PRINTFORMW 「唔呣……唔唔……我的处女……就这样……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7423',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7424',
+          'PRINTFORML 『啊啊，梦寐以求的姐姐的第一次，我就这么收下了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7425',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7426',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7427',
+          'PRINTFORMW 「唔呣……唔唔……%UNICODE(0x2661) *1% 这样……好舒服……唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7428',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，却感受到了心理和生理的双重快感……',
+        ],
+        ['7430', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7431',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头抵在蜜穴上。',
+        ],
+        [
+          '7432',
+          'PRINTFORML 『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』',
+        ],
+        ['7433', 'PRINTFORMW 「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」'],
+        [
+          '7434',
+          'PRINTFORMW %SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头，将阴茎插到了喉咙的最深处。',
+        ],
+        [
+          '7435',
+          'PRINTFORMW 身后的%SAVESTR:ASSI%也无情地夺去了%SAVESTR:TARGET%的处女身。',
+        ],
+        ['7436', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7437',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7442',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7443',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为%SAVESTR:ASSI%口交了啊！」',
+        ],
+        [
+          '7444',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』',
+        ],
+        [
+          '7445',
+          'PRINTFORMW 被妹妹的话羞辱得脸红满面的%SAVESTR:TARGET%只能努力集中精神，吸吮着%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '7446',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7447',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7449',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7450',
+          'PRINTFORMW 「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」',
+        ],
+        [
+          '7451',
+          'PRINTFORMW %SAVESTR:ASSI%用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的%SAVESTR:TARGET%。',
+        ],
+        [
+          '7452',
+          'PRINTFORML 『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』',
+        ],
+        [
+          '7453',
+          'PRINTFORMW %SAVESTR:ASSI%的话让%SAVESTR:MASTER%更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7455',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7456',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7457',
+          'PRINTFORML 『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』',
+        ],
+        [
+          '7458',
+          'PRINTFORMW %SAVESTR:ASSI%哼了一声，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始侵犯，抽插着姐姐的嘴和喉咙。',
+        ],
+        [
+          '7459',
+          'PRINTFORML 『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』',
+        ],
+        [
+          '7460',
+          'PRINTFORMW %SAVESTR:ASSI%的表情和语气让%SAVESTR:MASTER%忍不住笑了起来……',
+        ],
+        [
+          '7465',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7466',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」',
+        ],
+        [
+          '7467',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7468',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7469',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7470',
+          'PRINTFORMW %SAVESTR:TARGET%集中精神，忍耐着肛门的快感，努力吸吮着%SAVESTR:MASTER%的阴茎…',
+        ],
+        [
+          '7472',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7473',
+          'PRINTFORMW 「呜……呜啊啊……这样……太激烈了%UNICODE(0x2661) *1% 但是……好舒服……唔呣呣……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7474',
+          'PRINTFORML 『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』',
+        ],
+        [
+          '7475',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '7476',
+          'PRINTFORMW 「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7477',
+          'PRINTFORMW 肛交的极度快感让%SAVESTR:TARGET%几乎无法集中精神，吸吮%SAVESTR:MASTER%阴茎的动作也停了下来……',
+        ],
+        [
+          '7479',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7480',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7481',
+          'PRINTFORML 『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』',
+        ],
+        [
+          '7482',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        ['7483', 'PRINTFORML 『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』'],
+        [
+          '7484',
+          'PRINTFORMW 痛苦万分，又无力违抗的%SAVESTR:TARGET%只能边忍受着，边努力吸吮着的%SAVESTR:MASTER%的阴茎……',
+        ],
+        [
+          '7497',
+          'PRINTFORMW 「不，不行啊啊！这样……两人一起插入什么的……人家会受不了的啊啊啊！」',
+        ],
+        [
+          '7498',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。',
+        ],
+        [
+          '7499',
+          'PRINTFORML 『哼，不要得了便宜卖乖啊姐姐，能这样独占魔王大人！绝对不可饶恕！』',
+        ],
+        [
+          '7500',
+          'PRINTFORMW %SAVESTR:ASSI%嫉妒地扭着腰，激烈的侵犯着姐姐的肛门。',
+        ],
+        [
+          '7501',
+          'PRINTFORMW 「呜呜……饶，饶了我吧……屁股……这样会坏掉的啊啊啊！」',
+        ],
+        [
+          '7503',
+          'PRINTFORMW 「哈啊……哈啊%UNICODE(0x2661) *1% 被魔王大人和%SAVESTR:ASSI%的阴茎……一起插进来了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7504',
+          'PRINTFORMW 蜜穴与肛门被同时插入，极度的快感瞬间淹没了%SAVESTR:TARGET%。',
+        ],
+        [
+          '7505',
+          'PRINTFORML 『啊啊……姐姐的肛门……夹得这么紧……真的是名器啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7506',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，开始激烈地侵犯着%SAVESTR:TARGET%的肛门，搅动着直肠的敏感点。',
+        ],
+        [
+          '7507',
+          'PRINTFORMW 「好，好舒服%UNICODE(0x2661) *1%…… 被两根阴茎……同时在身体里抽插着%UNICODE(0x2661) *1%……一下子就要去了啊啊！」',
+        ],
+        [
+          '7509',
+          'PRINTFORMW 「饶，饶了我吧……求求你们了……这样会裂开的，真的会裂开的啊啊！」',
+        ],
+        [
+          '7510',
+          'PRINTFORMW 蜜穴和肛门被同时强行插入，完全不能适应这种玩法的%SAVESTR:TARGET%惨叫了起来。',
+        ],
+        [
+          '7511',
+          'PRINTFORML 『没关系，马上就会让姐姐舒服起来了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7512',
+          'PRINTFORMW %SAVESTR:ASSI%这么说着，边配合着%SAVESTR:MASTER%的动作，扭着腰开始激烈地侵犯%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7517',
+          'PRINTFORMW 「呜啊啊……这样……两人一起插进来……人家……会受不了的啊啊！」',
+        ],
+        [
+          '7518',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。',
+        ],
+        [
+          '7519',
+          'PRINTFORML 『哎呀呀，姐姐的肉穴……实在是太舒服了！舒服得人家完全停不下来啊啊！』',
+        ],
+        [
+          '7520',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，开始激烈地侵犯，蹂躏着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '7521',
+          'PRINTFORMW 「咿啊啊啊……屁股……还有小穴……都要被侵犯得一塌糊涂了啊啊啊！」',
+        ],
+        [
+          '7523',
+          'PRINTFORMW 「哈啊……哈啊%UNICODE(0x2661) *1% 被魔王大人和%SAVESTR:ASSI%的阴茎……一起插进来了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7524',
+          'PRINTFORMW 蜜穴与肛门被同时插入，极度的快感让%SAVESTR:TARGET%呼吸变得急促了起来，嘴也合不上了。',
+        ],
+        [
+          '7525',
+          'PRINTFORML 『啊啊……姐姐的蜜穴……好紧好舒服%UNICODE(0x2661) *1% 真的是名器啊啊！』',
+        ],
+        [
+          '7526',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着%SAVESTR:TARGET%。',
+        ],
+        [
+          '7527',
+          'PRINTFORMW 「好，好舒服%UNICODE(0x2661) *1%……被两人的阴茎……同时在身体里抽插着%UNICODE(0x2661) *1%……一下子就要去了啊啊！」',
+        ],
+        [
+          '7529',
+          'PRINTFORML 『哎嘿嘿，魔王大人说姐姐的肛门很适合调教成性器呢%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7530',
+          'PRINTFORMW 「不，不可以啊啊啊！这样同时插进来！姐姐真的会坏掉的啊啊！」',
+        ],
+        [
+          '7531',
+          'PRINTFORMW 蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的惨叫在调教室里回响着。',
+        ],
+        [
+          '7532',
+          'PRINTFORML 『哎哎，有什么好哭的呢，能被我和魔王大人这样抱在中间侵犯，明明是性奴姐姐的福气才是！给我好好享受起来啊！』',
+        ],
+        [
+          '7533',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，坏笑着开始更加激烈地侵犯着%SAVESTR:TARGET%……',
+        ],
+        [
+          '7538',
+          'PRINTFORMW 「唔呣呣……嘴巴里充满了%SAVESTR:ASSI%阴茎的味道……呣呣！」',
+        ],
+        [
+          '7539',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢顶入了蜜穴中。',
+        ],
+        [
+          '7540',
+          'PRINTFORML 『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎也得到了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7541',
+          'PRINTFORMW 身后%SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的紧致的蜜穴。',
+        ],
+        [
+          '7542',
+          'PRINTFORMW 「呜啊啊……被，被魔王大人顶到……子宫口了%UNICODE(0x2661) *1%……唔啊啊……唔呣……唔呣！」',
+        ],
+        [
+          '7543',
+          'PRINTFORMW %SAVESTR:ASSI%也毫不留情地用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着姐姐的嘴。',
+        ],
+        [
+          '7544',
+          'PRINTFORML 『不要光顾着享受魔王大人的阴茎，也要好好地给我口交啊！』',
+        ],
+        [
+          '7545',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7547',
+          'PRINTFORMW 「哈啊……唔呣……唔呣……这样……好舒服……呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7548',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢顶入了蜜穴中。',
+        ],
+        ['7549', 'PRINTFORML 『嘿嘿，姐姐好像很舒服啊………』'],
+        [
+          '7550',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7551',
+          'PRINTFORMW 「是……是啊……真的很舒服%UNICODE(0x2661) *1% 被这样同时侵犯着肛门和嘴巴小穴……真是太舒服了啊呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7552',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        ['7554', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7555',
+          'PRINTFORMW %SAVESTR:TARGET%边被强迫为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头顶入了蜜穴中。',
+        ],
+        ['7556', 'PRINTFORMW 「不，不行啊……这样前后一起侵犯……唔呣呣……呣呣！」'],
+        [
+          '7557',
+          'PRINTFORMW 无视%SAVESTR:TARGET%的哀求，%SAVESTR:MASTER%挺着腰，开始持续侵犯着紧致的蜜穴。',
+        ],
+        ['7558', 'PRINTFORML 『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』'],
+        [
+          '7559',
+          'PRINTFORMW %SAVESTR:ASSI%抓着%SAVESTR:TARGET%的头，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@强行侵犯着姐姐的喉咙。',
+        ],
+        ['7560', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7561',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7566',
+          'PRINTFORMW 「唔呣？不，不可以这样同时啊！%SAVESTR:ASSI%……稍微等一下……唔呣……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7567',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，顶入了敏感的蜜穴中。',
+        ],
+        ['7568', 'PRINTFORML 『啊啊……姐姐的蜜穴……好舒服啊啊！』'],
+        [
+          '7569',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7570',
+          'PRINTFORMW 「不，不要……顶的这么深啊啊……没有办法……好好给魔王大人……口交了啊唔……呣呣！」',
+        ],
+        [
+          '7571',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7572',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7574',
+          'PRINTFORMW 「啊啊……好棒……这样一前一后……同时用蜜穴和嘴巴小穴……侍奉%SAVESTR:ASSI%和魔王大人……唔呣……唔呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7575',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，顶入了敏感的蜜穴中。',
+        ],
+        [
+          '7576',
+          'PRINTFORML 『嘿啊，吸吮着魔王大人的阴茎有那么舒服吗，小穴夹得更紧了啊姐姐♪』',
+        ],
+        [
+          '7577',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7578',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7579',
+          'PRINTFORMW 「唔呣……唔唔……%UNICODE(0x2661) *1% 3p……好棒……好舒服……唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7580',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，却感受到了心理和生理的双重快感……',
+        ],
+        ['7582', 'PRINTFORMW 「唔呣……不，不可以……这样……太，太羞耻了啊啊！」'],
+        [
+          '7583',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:MASTER%口交着，边悲惨地感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头抵在蜜穴上。',
+        ],
+        [
+          '7584',
+          'PRINTFORML 『哎嘿嘿，魔王大人说姐姐的嘴巴小穴现在和蜜穴已经没有区别了呢，都变成淫乱性器了！』',
+        ],
+        [
+          '7585',
+          'PRINTFORMW 边嘲笑着%SAVESTR:TARGET%，%SAVESTR:ASSI%边开始毫不留情地侵犯着姐姐的蜜穴。',
+        ],
+        ['7586', 'PRINTFORMW 「呜呜！好痛！不要那么激烈……唔呣……唔呣！？」'],
+        [
+          '7587',
+          'PRINTFORMW %SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头，将阴茎插到了喉咙的最深处。',
+        ],
+        [
+          '7588',
+          'PRINTFORMW 『嘿嘿，姐姐给我老实用喉咙小穴和蜜穴同时高潮吧！』',
+        ],
+        [
+          '7589',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7594',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7595',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为%SAVESTR:ASSI%口交了啊！」',
+        ],
+        [
+          '7596',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』',
+        ],
+        [
+          '7597',
+          'PRINTFORMW 被妹妹的话羞辱得脸红满面的%SAVESTR:TARGET%只能努力集中精神，吸吮着%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '7598',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7599',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7601',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7602',
+          'PRINTFORMW 「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」',
+        ],
+        [
+          '7603',
+          'PRINTFORMW %SAVESTR:ASSI%用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的%SAVESTR:TARGET%。',
+        ],
+        [
+          '7604',
+          'PRINTFORML 『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』',
+        ],
+        [
+          '7605',
+          'PRINTFORMW %SAVESTR:ASSI%的话让%SAVESTR:MASTER%更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7607',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7608',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7609',
+          'PRINTFORML 『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』',
+        ],
+        [
+          '7610',
+          'PRINTFORMW %SAVESTR:ASSI%哼了一声，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始侵犯，抽插着姐姐的嘴和喉咙。',
+        ],
+        [
+          '7611',
+          'PRINTFORML 『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』',
+        ],
+        [
+          '7612',
+          'PRINTFORMW %SAVESTR:ASSI%的表情和语气让%SAVESTR:MASTER%忍不住笑了起来……',
+        ],
+        [
+          '7617',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7618',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」',
+        ],
+        [
+          '7619',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7620',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7621',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7622',
+          'PRINTFORMW %SAVESTR:TARGET%集中精神，忍耐着肛门的快感，努力吸吮着%SAVESTR:MASTER%的阴茎…',
+        ],
+        [
+          '7624',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7625',
+          'PRINTFORMW 「呜……呜啊啊……这样……太激烈了%UNICODE(0x2661) *1% 但是……好舒服……唔呣呣……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7626',
+          'PRINTFORML 『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』',
+        ],
+        [
+          '7627',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '7628',
+          'PRINTFORMW 「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7629',
+          'PRINTFORMW 肛交的极度快感让%SAVESTR:TARGET%几乎无法集中精神，吸吮%SAVESTR:MASTER%阴茎的动作也停了下来……',
+        ],
+        [
+          '7631',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7632',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7633',
+          'PRINTFORML 『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』',
+        ],
+        [
+          '7634',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        ['7635', 'PRINTFORML 『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』'],
+        [
+          '7636',
+          'PRINTFORMW 痛苦万分，又无力违抗的%SAVESTR:TARGET%只能边忍受着，边努力吸吮着的%SAVESTR:MASTER%的阴茎……',
+        ],
+        ['7639', 'PRINTW 出错了？'],
+        [
+          '7646',
+          'PRINTFORMW 「不，不行啊啊！这样……两人一起插入什么的……人家会受不了的啊啊啊！」',
+        ],
+        [
+          '7647',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。',
+        ],
+        [
+          '7648',
+          'PRINTFORML 『哼，不要得了便宜卖乖啊姐姐，能这样独占魔王大人！绝对不可饶恕！』',
+        ],
+        [
+          '7649',
+          'PRINTFORMW %SAVESTR:ASSI%嫉妒地扭着腰，激烈的侵犯着姐姐的肛门。',
+        ],
+        [
+          '7650',
+          'PRINTFORMW 「呜呜……饶，饶了我吧……屁股……这样会坏掉的啊啊啊！」',
+        ],
+        [
+          '7652',
+          'PRINTFORMW 「哈啊……哈啊%UNICODE(0x2661) *1% 被魔王大人和%SAVESTR:ASSI%的阴茎……一起插进来了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7653',
+          'PRINTFORMW 蜜穴与肛门被同时插入，极度的快感瞬间淹没了%SAVESTR:TARGET%。',
+        ],
+        [
+          '7654',
+          'PRINTFORML 『啊啊……姐姐的肛门……夹得这么紧……真的是名器啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7655',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，开始激烈地侵犯着%SAVESTR:TARGET%的肛门，搅动着直肠的敏感点。',
+        ],
+        [
+          '7656',
+          'PRINTFORMW 「好，好舒服%UNICODE(0x2661) *1%…… 被两根阴茎……同时在身体里抽插着%UNICODE(0x2661) *1%……一下子就要去了啊啊！」',
+        ],
+        [
+          '7658',
+          'PRINTFORMW 「饶，饶了我吧……求求你们了……这样会裂开的，真的会裂开的啊啊！」',
+        ],
+        [
+          '7659',
+          'PRINTFORMW 蜜穴和肛门被同时强行插入，完全不能适应这种玩法的%SAVESTR:TARGET%惨叫了起来。',
+        ],
+        [
+          '7660',
+          'PRINTFORML 『没关系，马上就会让姐姐舒服起来了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7661',
+          'PRINTFORMW %SAVESTR:ASSI%这么说着，边配合着%SAVESTR:MASTER%的动作，扭着腰开始激烈地侵犯%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7666',
+          'PRINTFORMW 「呜啊啊……这样……两人一起插进来……人家……会受不了的啊啊！」',
+        ],
+        [
+          '7667',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。',
+        ],
+        [
+          '7668',
+          'PRINTFORML 『哎呀呀，姐姐的肉穴……实在是太舒服了！舒服得人家完全停不下来啊啊！』',
+        ],
+        [
+          '7669',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，开始激烈地侵犯，蹂躏着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '7670',
+          'PRINTFORMW 「咿啊啊啊……屁股……还有小穴……都要被侵犯得一塌糊涂了啊啊啊！」',
+        ],
+        [
+          '7672',
+          'PRINTFORMW 「哈啊……哈啊%UNICODE(0x2661) *1% 被魔王大人和%SAVESTR:ASSI%的阴茎……一起插进来了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7673',
+          'PRINTFORMW 蜜穴与肛门被同时插入，极度的快感让%SAVESTR:TARGET%呼吸变得急促了起来，嘴也合不上了。',
+        ],
+        [
+          '7674',
+          'PRINTFORML 『啊啊……姐姐的蜜穴……好紧好舒服%UNICODE(0x2661) *1% 真的是名器啊啊！』',
+        ],
+        [
+          '7675',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着%SAVESTR:TARGET%。',
+        ],
+        [
+          '7676',
+          'PRINTFORMW 「好，好舒服%UNICODE(0x2661) *1%……被两人的阴茎……同时在身体里抽插着%UNICODE(0x2661) *1%……一下子就要去了啊啊！」',
+        ],
+        [
+          '7678',
+          'PRINTFORML 『哎嘿嘿，魔王大人说姐姐的肛门很适合调教成性器呢%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7679',
+          'PRINTFORMW 「不，不可以啊啊啊！这样同时插进来！姐姐真的会坏掉的啊啊！」',
+        ],
+        [
+          '7680',
+          'PRINTFORMW 蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的惨叫在调教室里回响着。',
+        ],
+        [
+          '7681',
+          'PRINTFORML 『哎哎，有什么好哭的呢，能被我和魔王大人这样抱在中间侵犯，明明是性奴姐姐的福气才是！给我好好享受起来啊！』',
+        ],
+        [
+          '7682',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，坏笑着开始更加激烈地侵犯着%SAVESTR:TARGET%……',
+        ],
+        [
+          '7687',
+          'PRINTFORMW 「唔呣呣……嘴巴里充满了%SAVESTR:ASSI%阴茎的味道……呣呣！」',
+        ],
+        [
+          '7688',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢顶入了蜜穴中。',
+        ],
+        [
+          '7689',
+          'PRINTFORML 『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎也得到了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7690',
+          'PRINTFORMW 身后%SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的紧致的蜜穴。',
+        ],
+        [
+          '7691',
+          'PRINTFORMW 「呜啊啊……被，被魔王大人顶到……子宫口了%UNICODE(0x2661) *1%……唔啊啊……唔呣……唔呣！」',
+        ],
+        [
+          '7692',
+          'PRINTFORMW %SAVESTR:ASSI%也毫不留情地用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着姐姐的嘴。',
+        ],
+        [
+          '7693',
+          'PRINTFORML 『不要光顾着享受魔王大人的阴茎，也要好好地给我口交啊！』',
+        ],
+        [
+          '7694',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7696',
+          'PRINTFORMW 「哈啊……唔呣……唔呣……这样……好舒服……呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7697',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢顶入了蜜穴中。',
+        ],
+        ['7698', 'PRINTFORML 『嘿嘿，姐姐好像很舒服啊………』'],
+        [
+          '7699',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7700',
+          'PRINTFORMW 「是……是啊……真的很舒服%UNICODE(0x2661) *1% 被这样同时侵犯着肛门和嘴巴小穴……真是太舒服了啊呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7701',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        ['7703', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7704',
+          'PRINTFORMW %SAVESTR:TARGET%边被强迫为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头顶入了蜜穴中。',
+        ],
+        ['7705', 'PRINTFORMW 「不，不行啊……这样前后一起侵犯……唔呣呣……呣呣！」'],
+        [
+          '7706',
+          'PRINTFORMW 无视%SAVESTR:TARGET%的哀求，%SAVESTR:MASTER%挺着腰，开始持续侵犯着紧致的蜜穴。',
+        ],
+        ['7707', 'PRINTFORML 『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』'],
+        [
+          '7708',
+          'PRINTFORMW %SAVESTR:ASSI%抓着%SAVESTR:TARGET%的头，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@强行侵犯着姐姐的喉咙。',
+        ],
+        ['7709', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7710',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7715',
+          'PRINTFORMW 「唔呣？不，不可以这样同时啊！%SAVESTR:ASSI%……稍微等一下……唔呣……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7716',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，顶入了敏感的蜜穴中。',
+        ],
+        ['7717', 'PRINTFORML 『啊啊……姐姐的蜜穴……好舒服啊啊！』'],
+        [
+          '7718',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7719',
+          'PRINTFORMW 「不，不要……顶的这么深啊啊……没有办法……好好给魔王大人……口交了啊唔……呣呣！」',
+        ],
+        [
+          '7720',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7721',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7723',
+          'PRINTFORMW 「啊啊……好棒……这样一前一后……同时用蜜穴和嘴巴小穴……侍奉%SAVESTR:ASSI%和魔王大人……唔呣……唔呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7724',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，顶入了敏感的蜜穴中。',
+        ],
+        [
+          '7725',
+          'PRINTFORML 『嘿啊，吸吮着魔王大人的阴茎有那么舒服吗，小穴夹得更紧了啊姐姐♪』',
+        ],
+        [
+          '7726',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7727',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7728',
+          'PRINTFORMW 「唔呣……唔唔……%UNICODE(0x2661) *1% 3p……好棒……好舒服……唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7729',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，却感受到了心理和生理的双重快感……',
+        ],
+        ['7731', 'PRINTFORMW 「唔呣……不，不可以……这样……太，太羞耻了啊啊！」'],
+        [
+          '7732',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:MASTER%口交着，边悲惨地感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头抵在蜜穴上。',
+        ],
+        [
+          '7733',
+          'PRINTFORML 『哎嘿嘿，魔王大人说姐姐的嘴巴小穴现在和蜜穴已经没有区别了呢，都变成淫乱性器了！』',
+        ],
+        [
+          '7734',
+          'PRINTFORMW 边嘲笑着%SAVESTR:TARGET%，%SAVESTR:ASSI%边开始毫不留情地侵犯着姐姐的蜜穴。',
+        ],
+        ['7735', 'PRINTFORMW 「呜呜！好痛！不要那么激烈……唔呣……唔呣！？」'],
+        [
+          '7736',
+          'PRINTFORMW %SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头，将阴茎插到了喉咙的最深处。',
+        ],
+        [
+          '7737',
+          'PRINTFORMW 『嘿嘿，姐姐给我老实用喉咙小穴和蜜穴同时高潮吧！』',
+        ],
+        [
+          '7738',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7743',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7744',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为%SAVESTR:ASSI%口交了啊！」',
+        ],
+        [
+          '7745',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』',
+        ],
+        [
+          '7746',
+          'PRINTFORMW 被妹妹的话羞辱得脸红满面的%SAVESTR:TARGET%只能努力集中精神，吸吮着%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '7747',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7748',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7750',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7751',
+          'PRINTFORMW 「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」',
+        ],
+        [
+          '7752',
+          'PRINTFORMW %SAVESTR:ASSI%用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的%SAVESTR:TARGET%。',
+        ],
+        [
+          '7753',
+          'PRINTFORML 『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』',
+        ],
+        [
+          '7754',
+          'PRINTFORMW %SAVESTR:ASSI%的话让%SAVESTR:MASTER%更加兴奋的蹂躏，侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7756',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，用勃起的阴茎插入了肛门中。',
+        ],
+        [
+          '7757',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7758',
+          'PRINTFORML 『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』',
+        ],
+        [
+          '7759',
+          'PRINTFORMW %SAVESTR:ASSI%哼了一声，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始侵犯，抽插着姐姐的嘴和喉咙。',
+        ],
+        [
+          '7760',
+          'PRINTFORML 『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』',
+        ],
+        [
+          '7761',
+          'PRINTFORMW %SAVESTR:ASSI%的表情和语气让%SAVESTR:MASTER%忍不住笑了起来……',
+        ],
+        [
+          '7766',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7767',
+          'PRINTFORMW 「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」',
+        ],
+        [
+          '7768',
+          'PRINTFORML 『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7769',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7770',
+          'PRINTFORMW 「我，我会……努力的……唔呣……唔呣%UNICODE(0x2661) *1%呣呣……不，不行了……屁股好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7771',
+          'PRINTFORMW %SAVESTR:TARGET%集中精神，忍耐着肛门的快感，努力吸吮着%SAVESTR:MASTER%的阴茎…',
+        ],
+        [
+          '7773',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7774',
+          'PRINTFORMW 「呜……呜啊啊……这样……太激烈了%UNICODE(0x2661) *1% 但是……好舒服……唔呣呣……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7775',
+          'PRINTFORML 『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』',
+        ],
+        [
+          '7776',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '7777',
+          'PRINTFORMW 「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7778',
+          'PRINTFORMW 肛交的极度快感让%SAVESTR:TARGET%几乎无法集中精神，吸吮%SAVESTR:MASTER%阴茎的动作也停了下来……',
+        ],
+        [
+          '7780',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，坚挺的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@插入了肛门中。',
+        ],
+        [
+          '7781',
+          'PRINTFORMW 「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」',
+        ],
+        [
+          '7782',
+          'PRINTFORML 『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』',
+        ],
+        [
+          '7783',
+          'PRINTFORMW %SAVESTR:ASSI%边嘲笑着%SAVESTR:TARGET%，边前后动着腰，更激烈地侵犯着姐姐的肛门。',
+        ],
+        ['7784', 'PRINTFORML 『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』'],
+        [
+          '7785',
+          'PRINTFORMW 痛苦万分，又无力违抗的%SAVESTR:TARGET%只能边忍受着，边努力吸吮着的%SAVESTR:MASTER%的阴茎……',
+        ],
+        ['7792', 'CFLAG:TARGET:391 = 1'],
+        [
+          '7802',
+          'PRINTFORMW %SAVESTR:MASTER%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '7803',
+          'PRINTFORMW %SAVESTR:ASSI%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['7805', 'PRINTFORMW 「呜……啊啊……我的处女！」'],
+        [
+          '7806',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '7807',
+          'PRINTFORML 『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』',
+        ],
+        ['7808', 'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，激烈地侵犯着姐姐的后庭。'],
+        ['7809', 'PRINTFORMW 「啊啊……这样被夹击……一下子……就要去了啊啊啊！」'],
+        [
+          '7811',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7812',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        ['7813', 'PRINTFORML 『嘿嘿，姐姐，处女三明治的感觉如何啊？』'],
+        [
+          '7814',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，用阴茎激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '7815',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7817',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '7818',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '7819',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '7820',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7824',
+          'PRINTFORMW %SAVESTR:ASSI%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '7825',
+          'PRINTFORMW %SAVESTR:MASTER%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['7827', 'PRINTFORMW 「呜啊啊……我，我的第一次……啊啊啊！」'],
+        [
+          '7828',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '7829',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴！』',
+        ],
+        [
+          '7830',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        ['7831', 'PRINTFORMW 「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」'],
+        [
+          '7833',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1% 好……好奇怪的感觉啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7834',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        [
+          '7835',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7836',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        [
+          '7837',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7839',
+          'PRINTFORML 『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』',
+        ],
+        [
+          '7840',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '7841',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '7842',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '7843',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴',
+        ],
+        [
+          '7848',
+          'PRINTFORMW 「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊%UNICODE(0x2661) *1% 呣呣%UNICODE(0x2661) *1%……」',
+        ],
+        [
+          '7849',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7850',
+          'PRINTFORML 『哎嘿嘿，姐姐的处女今天正式属于魔王大人了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7851',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7852',
+          'PRINTFORMW 「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '7853',
+          'PRINTFORML 『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7854',
+          'PRINTFORMW %SAVESTR:TARGET%%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7856',
+          'PRINTFORMW 「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7857',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7858',
+          'PRINTFORML 『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7859',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7860',
+          'PRINTFORMW 「好舒服……唔呣……唔呣%UNICODE(0x2661) *1% 这样同时……侍奉两根阴茎……实在是太棒了唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7861',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        ['7863', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7864',
+          'PRINTFORMW %SAVESTR:TARGET%边被强迫为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        ['7865', 'PRINTFORMW 「不，不要啊啊！」'],
+        ['7866', 'PRINTFORML 『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』'],
+        [
+          '7867',
+          'PRINTFORMW %SAVESTR:ASSI%抓着%SAVESTR:TARGET%的头，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@强行侵犯着姐姐的喉咙。',
+        ],
+        [
+          '7868',
+          'PRINTFORMW  身后的%SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        ['7869', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7870',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7875',
+          'PRINTFORMW 「呜呜……唔呣%UNICODE(0x2661) *1%！%SAVESTR:ASSI%？！不，不可以……」',
+        ],
+        [
+          '7876',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7877',
+          'PRINTFORML 『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』',
+        ],
+        [
+          '7878',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7879',
+          'PRINTFORMW 「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」',
+        ],
+        [
+          '7880',
+          'PRINTFORMW %SAVESTR:TARGET%%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '7882',
+          'PRINTFORMW 「唔呣……唔唔……我的处女……就这样……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7883',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '7884',
+          'PRINTFORML 『啊啊，梦寐以求的姐姐的第一次，我就这么收下了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '7885',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '7886',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '7887',
+          'PRINTFORMW 「唔呣……唔唔……%UNICODE(0x2661) *1% 这样……好舒服……唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7888',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，却感受到了心理和生理的双重快感……',
+        ],
+        ['7890', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '7891',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头抵在蜜穴上。',
+        ],
+        [
+          '7892',
+          'PRINTFORML 『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』',
+        ],
+        ['7893', 'PRINTFORMW 「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」'],
+        [
+          '7894',
+          'PRINTFORMW %SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头，将阴茎插到了喉咙的最深处。',
+        ],
+        [
+          '7895',
+          'PRINTFORMW 身后的%SAVESTR:ASSI%也无情地夺去了%SAVESTR:TARGET%的处女身。',
+        ],
+        ['7896', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '7897',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '7904',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！」',
+        ],
+        [
+          '7905',
+          'PRINTFORML 『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！』',
+        ],
+        [
+          '7906',
+          'PRINTFORMW %SAVESTR:ASSI%抱着%SAVESTR:TARGET%的脸，用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@肆意地侵犯着姐姐的喉咙。',
+        ],
+        [
+          '7907',
+          'PRINTFORMW 「唔呣……唔呣……对，对不起，%SAVESTR:ASSI%……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7908',
+          'PRINTFORMW %SAVESTR:TARGET%顺从地吸吮着%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@，边让%SAVESTR:MASTER%侵犯着自己敏感的肛门………',
+        ],
+        [
+          '7910',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '7911',
+          'PRINTFORML 『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪』',
+        ],
+        [
+          '7912',
+          'PRINTFORMW 被妹妹羞辱得面红耳赤的%SAVESTR:TARGET%，却依旧顺从地吸吮着%SAVESTR:ASSI%股间的的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '7913',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '7914',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐为妹妹口交侍奉的羞耻姿态，也兴奋地挺起腰，更加激烈地侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '7919',
+          'PRINTFORMW 「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣%UNICODE(0x2661) *1%……不，不行了，屁股舒服的要去了啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '7920',
+          'PRINTFORMW 肛门的强烈快感让%SAVESTR:TARGET%更加兴奋地为%SAVESTR:ASSI%口交着，整个人都忘乎所以了。',
+        ],
+        [
+          '7921',
+          'PRINTFORML 『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』',
+        ],
+        [
+          '7922',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '7924',
+          'PRINTFORMW 「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」',
+        ],
+        [
+          '7925',
+          'PRINTFORMW 感受着肛门的快感，%SAVESTR:TARGET%更加兴奋地为自己的妹妹口交着',
+        ],
+        [
+          '7926',
+          'PRINTFORML 『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』',
+        ],
+        [
+          '7927',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '7932',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '7933',
+          'PRINTFORMW %SAVESTR:TARGET%把脸埋在妹妹的腿间，吸吮着%SAVESTR:ASSI%的阴茎，然而肛门被%SAVESTR:MASTER%侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着',
+        ],
+        [
+          '7934',
+          'PRINTFORML 『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』',
+        ],
+        ['7935', 'PRINTFORMW 「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」'],
+        [
+          '7936',
+          'PRINTFORMW 话音未落，%SAVESTR:ASSI%就已经强行把阴茎插到了%SAVESTR:TARGET%的喉咙深处，强行侵犯着。',
+        ],
+        [
+          '7938',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '7939',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%持续侵犯着肛门的同时，被迫继续把脸埋在%SAVESTR:ASSI%的腿间，吸吮着妹妹的阴茎。',
+        ],
+        [
+          '7940',
+          'PRINTFORML 『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』',
+        ],
+        [
+          '7941',
+          'PRINTFORMW %SAVESTR:TARGET%绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着。',
+        ],
+        [
+          '7949',
+          'PRINTFORMW 「请……请两位随意地侵犯%SAVESTR:TARGET%的肛门和嘴巴小穴吧%UNICODE(0x2661) *1% ……唔呣？！……唔唔……呣呣呣%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '7950',
+          'PRINTFORML 『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』',
+        ],
+        [
+          '7951',
+          'PRINTFORMW %SAVESTR:ASSI%用手指肆意地玩弄了一会儿%SAVESTR:TARGET%的肛门，然后用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始持续地侵犯着姐姐的后庭。',
+        ],
+        [
+          '7952',
+          'PRINTFORMW 「呜呣呣%UNICODE(0x2661) *1% 好，好舒服啊啊啊%UNICODE(0x2661) *1% 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门%UNICODE(0x2661) *1%……不行了……已经舒服得没有办法思考了啊呣呣%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '7953',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己的亲妹妹侵犯肛门的下流姿态，边用\\@TALENT:MASTER:121 == 0 && TALENT:MASTER:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着%SAVESTR:TARGET%的喉咙深处……',
+        ],
+        [
+          '7955',
+          'PRINTFORMW 「呜……啊啊啊，不，不可以啊……这样被侵犯屁股的话……没有办法……好好为魔王大人口交了唔呣呣！」',
+        ],
+        [
+          '7956',
+          'PRINTFORML 『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』',
+        ],
+        [
+          '7957',
+          'PRINTFORMW 边羞辱着自己的姐姐，%SAVESTR:ASSI%边用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@更加激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '7958',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '7959',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己妹妹羞辱的姿态，更加兴奋的侵犯着%SAVESTR:TARGET%的嘴巴和喉咙。',
+        ],
+        [
+          '7964',
+          'PRINTFORMW 「来吧，魔王大人，还有%SAVESTR:ASSI%……请一起侵犯%SAVESTR:TARGET%淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7965',
+          'PRINTFORMW 肛门被侵犯的极度快感，让%SAVESTR:TARGET%整个人都颤抖了起来，更加兴奋而积极地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '7966',
+          'PRINTFORML 『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』',
+        ],
+        [
+          '7967',
+          'PRINTFORMW 「是……是啊%UNICODE(0x2661) *1% 姐姐的……肛门就是……专门服务%SAVESTR:ASSI%和魔王大人的淫乱性器啊啊%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7968',
+          'PRINTFORMW %SAVESTR:TARGET%淫乱的话语激起了%SAVESTR:ASSI%和%SAVESTR:MASTER%的兴致，更加激烈地一前一后侵犯着%SAVESTR:TARGET%……',
+        ],
+        [
+          '7970',
+          'PRINTFORMW 「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交%UNICODE(0x2661) *1%……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」',
+        ],
+        [
+          '7971',
+          'PRINTFORMW %SAVESTR:TARGET%身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '7972',
+          'PRINTFORML 『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』',
+        ],
+        [
+          '7973',
+          'PRINTFORMW 「是……是啊……姐姐是%SAVESTR:ASSI%和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7974',
+          'PRINTFORMW 被%SAVESTR:TARGET%不知廉耻的宣言刺激得更加兴奋的%SAVESTR:ASSI%和%SAVESTR:MASTER%，更加激烈地侵犯，抽插着%SAVESTR:TARGET%的喉咙和肛门……',
+        ],
+        [
+          '7979',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣……啊啊啊」',
+        ],
+        [
+          '7980',
+          'PRINTFORMW 敏感的肛门传来的快感让%SAVESTR:TARGET%几乎无法忍耐，大声地呻吟了起来，连为%SAVESTR:MASTER%口交的动作都停了下来。',
+        ],
+        [
+          '7981',
+          'PRINTFORML 『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』',
+        ],
+        [
+          '7982',
+          'PRINTFORMW 「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '7983',
+          'PRINTFORMW 已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了%SAVESTR:TARGET%',
+        ],
+        [
+          '7984',
+          'PRINTFORMW 几乎无法思考的%SAVESTR:TARGET%只能本能地搂着%SAVESTR:MASTER%的腰，吸吮着口中的阴茎',
+        ],
+        [
+          '7986',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '7987',
+          'PRINTFORMW 完全无视了%SAVESTR:TARGET%的哀求，%SAVESTR:ASSI%和%SAVESTR:MASTER%开始一前一后同时侵犯着%SAVESTR:TARGET%的肛门和嘴。',
+        ],
+        [
+          '7988',
+          'PRINTFORML 『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』',
+        ],
+        [
+          '7989',
+          'PRINTFORMW 「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」',
+        ],
+        [
+          '7990',
+          'PRINTFORMW %SAVESTR:TARGET%只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着%SAVESTR:MASTER%的阴茎……直到两人满意为止',
+        ],
+        [
+          '8003',
+          'PRINTFORMW 「请，请尽情地侵犯%SAVESTR:TARGET%的小穴吧……魔王大人%UNICODE(0x2661) *1% 什么……%SAVESTR:ASSI%也要一起么……当，当然可以……」',
+        ],
+        [
+          '8004',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没了。',
+        ],
+        ['8005', 'PRINTFORML 『唔哇哇……姐姐的淫乱肛门……完全变成性器了呢！』'],
+        [
+          '8006',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%挺着腰，激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '8007',
+          'PRINTFORMW 「呜呜……啊啊啊……不，不行了……舒服得已经没有办法思考了……魔王大人，还有%SAVESTR:ASSI%……请尽情地把%SAVESTR:TARGET%侵犯得一塌糊涂吧啊啊啊！」',
+        ],
+        [
+          '8009',
+          'PRINTFORMW 「哎哎？要，要两个人一起吗……是叫做三明治什么的玩法吗%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8010',
+          'PRINTFORMW 被夹在中间同时侵犯着肛门和蜜穴，%SAVESTR:TARGET%只能拼命忍耐着强烈的快感。',
+        ],
+        [
+          '8011',
+          'PRINTFORML 『唔哇哇……姐姐的淫乱肛门好紧好舒服……真的有成为名器的潜质呢！』',
+        ],
+        [
+          '8012',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，挺着腰，和%SAVESTR:MASTER%一同更加激烈地侵犯着%SAVESTR:TARGET%的肛门和蜜穴。',
+        ],
+        [
+          '8013',
+          'PRINTFORMW 「呜……啊啊……不，不可以这么激烈啊……会，会坏掉的%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8018',
+          'PRINTFORMW 「哎哎，要两人一起上？其实人家早已经等不及了啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8019',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下淫浪的娇喘。',
+        ],
+        [
+          '8020',
+          'PRINTFORML 『哎哎，姐姐真是贪心啊，居然一次要两人才能满足！』',
+        ],
+        [
+          '8021',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%挺着腰，激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '8022',
+          'PRINTFORMW 「好，好舒服……太舒服了%UNICODE(0x2661) *1%都怪你们，把姐姐调教得……不做爱就活不下去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8024',
+          'PRINTFORMW 「哎哎……被，被两人的阴茎这样一起侵犯……呜啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8025',
+          'PRINTFORMW 肛门和蜜穴被同时插入让%SAVESTR:TARGET%发出了灼热的呻吟。',
+        ],
+        [
+          '8026',
+          'PRINTFORML 『哎嘿嘿，姐姐的淫乱肛门好紧啊，有继续开发的必要呢！魔王大人，让我们一起把姐姐的前后两穴都弄得乱七八糟吧%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8027',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，挺着腰，和%SAVESTR:MASTER%一同更加激烈地侵犯着%SAVESTR:TARGET%的肛门和蜜穴。',
+        ],
+        [
+          '8028',
+          'PRINTFORMW 「嗯啊……啊啊啊……请，请尽情地……把%SAVESTR:TARGET%侵犯到坏掉吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8033',
+          'PRINTFORML 「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜……可，可是……好舒服……真的好舒服啊啊」',
+        ],
+        [
+          '8034',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没了。',
+        ],
+        ['8035', 'PRINTFORML 『哎嘿嘿，姐姐准备好了吗，接下来才是开始呢！』'],
+        [
+          '8036',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，动起腰，开始和%SAVESTR:MASTER%一同激烈地侵犯着%SAVESTR:TARGET%的肛门和蜜穴。',
+        ],
+        ['8037', 'PRINTFORMW 「太，太激烈了……姐姐会……会坏掉的啊啊……！」'],
+        [
+          '8039',
+          'PRINTFORMW 「两，两个人一起……不，不可以啊……那，那样会坏掉的……真的会坏掉的！」',
+        ],
+        [
+          '8040',
+          'PRINTFORMW %SAVESTR:TARGET%似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。',
+        ],
+        [
+          '8041',
+          'PRINTFORML 『加油啊姐姐，在你在两穴同时高潮之前，我们可是不会停下的哦♪』',
+        ],
+        [
+          '8042',
+          'PRINTFORMW %SAVESTR:ASSI%带着恶意的笑容，舔着嘴角，更加激烈地侵犯着%SAVESTR:TARGET%的肛门………',
+        ],
+        [
+          '8050',
+          'PRINTFORMW 「嗯啊啊……魔，魔王大人……这样激烈地侵犯着……我的肛门%UNICODE(0x2661) *1%小穴……也被%SAVESTR:ASSI%一起侵犯了……感觉好奇怪……但是好舒服啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8051',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着爱液泛滥的蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下甘甜的娇喘。',
+        ],
+        [
+          '8052',
+          'PRINTFORML 『呜哇啊，性奴姐姐的小穴已经被魔王大人开发的……这么棒了！』',
+        ],
+        [
+          '8053',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%挺起腰，激烈地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8054',
+          'PRINTFORMW 「呜啊……嗯啊啊%UNICODE(0x2661) *1%……好舒服……好舒服啊啊%UNICODE(0x2661) *1% 这样被同时侵犯着……一下子……就要去了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8056',
+          'PRINTFORMW 「请，请稍微温柔一点……拜托了……还有%SAVESTR:ASSI%…不要兴奋成那个样子啊！」',
+        ],
+        [
+          '8057',
+          'PRINTFORMW 话音未落，%SAVESTR:ASSI%已经迫不及待地插入了姐姐的蜜穴之中。',
+        ],
+        [
+          '8058',
+          'PRINTFORML 『哼哼，温柔，别开玩笑了！我和魔王大人今天就是打算把姐姐侵犯到彻底坏掉的呀！』',
+        ],
+        [
+          '8059',
+          'PRINTFORMW %SAVESTR:ASSI%坏笑着，挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8060',
+          'PRINTFORMW 「呜啊啊……太，太激烈了……感，感觉好奇怪……整个人……都要变得奇怪了啊啊！」',
+        ],
+        [
+          '8065',
+          'PRINTFORMW 「哈啊……哈啊……两人的阴茎……一起在身体里%UNICODE(0x2661) *1%……感觉实在是太棒了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8066',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下淫浪的娇喘。',
+        ],
+        ['8067', 'PRINTFORML 『给我用屁股和小穴同时高潮吧，淫乱的性奴姐姐！』'],
+        [
+          '8068',
+          'PRINTFORMW 兴奋不已%SAVESTR:ASSI%挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8069',
+          'PRINTFORMW 「呜啊……嗯啊啊……好舒服……实在是太舒服了%UNICODE(0x2661) *1% 真的要……高潮得……一塌糊涂了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8071',
+          'PRINTFORMW 「咦咦，要两个人一起上吗……好，好吧。其实还有点……期待呢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8072',
+          'PRINTFORMW 蜜穴和肛门被同时插入，%SAVESTR:TARGET%忍不住灼热地呻吟了起来。',
+        ],
+        [
+          '8073',
+          'PRINTFORML 『呼呼，姐姐的淫乱小穴……属于人家的啦啦啦！给我高潮吧！』',
+        ],
+        [
+          '8074',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8075',
+          'PRINTFORMW 「呜……呜啊啊%UNICODE(0x2661) *1% %SAVESTR:ASSI%！魔王大人！请，请尽情地……把%SAVESTR:TARGET%侵犯到坏掉吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8080',
+          'PRINTFORML 「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜，可，可是……为什么……感觉好舒服%UNICODE(0x2661) *1%…」',
+        ],
+        [
+          '8081',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下灼热的呻吟。',
+        ],
+        [
+          '8082',
+          'PRINTFORML 『嘴上说着不行，下面已经夹得这么紧了！被两人同时侵犯，更兴奋了吗，我的变态姐姐！』',
+        ],
+        [
+          '8083',
+          'PRINTFORMW 兴奋不已%SAVESTR:ASSI%挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8084',
+          'PRINTFORMW 「才，才不是……变态！呜……呜啊啊%UNICODE(0x2661) *1%……可，可是……真的好舒服……舒服得……不行了啊啊啊！」',
+        ],
+        [
+          '8086',
+          'PRINTFORMW 「放，放开我啊……两个人一起……这种事情……怎么可以啊啊啊！」',
+        ],
+        [
+          '8087',
+          'PRINTFORMW %SAVESTR:TARGET%似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。',
+        ],
+        [
+          '8088',
+          'PRINTFORML 『说什么呢姐姐，我们可是打算侵犯到姐姐两个淫穴一起高潮呢♪』',
+        ],
+        [
+          '8089',
+          'PRINTFORMW %SAVESTR:ASSI%带着恶意的笑容，舔着嘴角，更加激烈地侵犯着%SAVESTR:TARGET%的蜜穴………',
+        ],
+        [
+          '8097',
+          'PRINTFORMW 「呜……呜啊啊……这样边被魔王大人……侵犯着%UNICODE(0x2661) *1% ……边口交……感觉%SAVESTR:ASSI%的阴茎……更加美味了啊啊啊%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔♪」',
+        ],
+        [
+          '8098',
+          'PRINTFORMW 被%SAVESTR:MASTER%抽插着爱液泛滥的蜜穴、%SAVESTR:TARGET%更加兴奋不已地舔吮着妹妹的阴茎。',
+        ],
+        [
+          '8099',
+          'PRINTFORML 『嘿嘿，被我和魔王大人一起侵犯，身为性奴的姐姐一定感觉很幸福吧？』',
+        ],
+        [
+          '8100',
+          'PRINTFORMW %SAVESTR:TARGET%满脸通红地边点头，边继续努力地为妹妹口交着。',
+        ],
+        [
+          '8101',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1%…… 的，的确是这样啊啊……能被魔王大人和%SAVESTR:ASSI%这样疼爱……真的是太幸福了%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '8103',
+          'PRINTFORMW 「唔呣……唔呣……%SAVESTR:ASSI%的阴茎……味道好好……好喜欢%UNICODE(0x2661) *1% 还有……魔王大人，请吧……人家已经准备好了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8104',
+          'PRINTFORMW 正在为%SAVESTR:ASSI%口交的%SAVESTR:TARGET%，撅起的臀部一扭一扭地诱惑着%SAVESTR:MASTER%。',
+        ],
+        [
+          '8105',
+          'PRINTFORML 『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎要进来了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8106',
+          'PRINTFORMW %SAVESTR:MASTER%挺起腰，开始侵犯着%SAVESTR:TARGET%已经爱液泛滥的蜜穴。',
+        ],
+        [
+          '8107',
+          'PRINTFORMW 「呜啊……嗯啊啊%UNICODE(0x2661) *1%……魔王大人……一下子就顶到最里面了……好厉害啊啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8108',
+          'PRINTFORMW %SAVESTR:ASSI%也抱着%SAVESTR:TARGET%的脸，用阴茎顶着姐姐的口腔。',
+        ],
+        ['8109', 'PRINTFORML 『不要光顾着享受，嘴巴也要好好地给我吸吮啊！』'],
+        [
+          '8110',
+          'PRINTFORMW %SAVESTR:TARGET%就这样被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '8115',
+          'PRINTFORMW 「呜……啊啊啊……蜜穴……被魔王大人的阴茎……塞得满满的%UNICODE(0x2661) *1% 这样……边做爱……边口交……实在是太舒服了啊唔唔……唔呣……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8116',
+          'PRINTFORML 『呜哇哇……姐姐在被魔王大人侵犯的时候……口交居然比平时还厉害了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8117',
+          'PRINTFORMW %SAVESTR:ASSI%感受着姐姐激烈地吸吮着自己的阴茎，忍不住也呻吟了起来。',
+        ],
+        [
+          '8118',
+          'PRINTFORMW 「啊啊啊……魔王大人……更加激烈地侵犯……%SAVESTR:TARGET%的淫穴吧%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8119',
+          'PRINTFORMW %SAVESTR:TARGET%含糊不清地娇喘着，享受着心理和生理的双重快感……',
+        ],
+        [
+          '8121',
+          'PRINTFORMW 「呜啊啊……在，在人家口交的时候……侵犯小穴……魔王大人……太狡猾了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8122',
+          'PRINTFORMW 在%SAVESTR:TARGET%吸吮着自己妹妹的阴茎的时候，%SAVESTR:MASTER%趁机抱住了%SAVESTR:TARGET%的腰，将龟头抵入了蜜穴中。',
+        ],
+        [
+          '8123',
+          'PRINTFORML 『哎嘿嘿，姐姐一会儿享受的时候，嘴巴记得不要停下来哦♪』',
+        ],
+        [
+          '8124',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始激烈地侵犯着%SAVESTR:TARGET%爱液泛滥的蜜穴。',
+        ],
+        [
+          '8125',
+          'PRINTFORMW 「唔呣呣……唔唔%UNICODE(0x2661) *1% 不，不行了……这样……太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['8126', 'PRINTFORML 『啊啊……姐姐的口交……太厉害了……好舒服啊啊！』'],
+        [
+          '8127',
+          'PRINTFORM 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，因为心里和生理的双重快感而含糊不清地呻吟着………',
+        ],
+        [
+          '8132',
+          'PRINTFORMW 「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」',
+        ],
+        [
+          '8133',
+          'PRINTFORMW 敏感的小穴被%SAVESTR:MASTER%肆意地抽插着，%SAVESTR:TARGET%只能拼命忍耐着快感，同时还要努力为妹妹口交。',
+        ],
+        [
+          '8134',
+          'PRINTFORML 『哎嘿嘿，姐姐真不错呢，被魔王大人插得那么舒服，嘴巴还没有松懈♪』',
+        ],
+        [
+          '8135',
+          'PRINTFORMW 边嘲弄着%SAVESTR:TARGET%，%SAVESTR:ASSI%边用阴茎继续侵犯着姐姐的喉咙。',
+        ],
+        [
+          '8136',
+          'PRINTFORMW 「唔呣呣……唔呣呣……太，太激烈了%UNICODE(0x2661) *1%…呜啊啊……被魔王大人……顶到子宫口了唔呣呣呣！」',
+        ],
+        [
+          '8137',
+          'PRINTFORMW 蜜穴传来的极度快感让%SAVESTR:TARGET%几乎无法思考………',
+        ],
+        [
+          '8139',
+          'PRINTFORMW 「不，不可以在口交的时候……侵犯小穴啊……唔呣呣……呣呣……」',
+        ],
+        [
+          '8140',
+          'PRINTFORMW 正在为%SAVESTR:ASSI%口交的%SAVESTR:TARGET%，蜜穴突然被侵犯，一时惊慌失措。',
+        ],
+        ['8141', 'PRINTFORML 『别光顾着享受啊，笨蛋姐姐，给我好好口交啊！』'],
+        ['8142', 'PRINTFORMW 「不，不行啊……这样的事情……呜呜……唔呣！？」'],
+        [
+          '8143',
+          'PRINTFORMW %SAVESTR:ASSI%不满地抓着%SAVESTR:TARGET%的头发，用勃起的阴茎强行侵犯着姐姐的喉咙',
+        ],
+        [
+          '8144',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '8153',
+          'PRINTFORMW 「唔呣呣？在……在口交的时候……侵犯小穴……感觉……好奇怪……但是好舒服啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8154',
+          'PRINTFORMW %SAVESTR:TARGET%一边被妹妹侵犯着，一边把脸埋在%SAVESTR:MASTER%双腿之间，努力地吸吮着阴茎。',
+        ],
+        [
+          '8155',
+          'PRINTFORML 『哎嘿嘿，姐姐不知不觉之间已经完全适应性奴的身份了呢%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8156',
+          'PRINTFORMW %SAVESTR:ASSI%带着享受的表情，激烈地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8157',
+          'PRINTFORMW 「呜……呣呣……不，不要对姐姐恶作剧了啦……没有办法好好……为魔王大人口交了%UNICODE(0x2661) *1% 对，对不起……魔王大人……因为实在是太舒服了%UNICODE(0x2661) *1%我，我会努力的……咕呣……咕呣……呣呣呣」',
+        ],
+        [
+          '8158',
+          'PRINTFORMW %SAVESTR:TARGET%自己积极的寻求着阴茎、被%SAVESTR:MASTER%和%SAVESTR:ASSI%前后一起侵犯着………',
+        ],
+        [
+          '8160',
+          'PRINTFORMW 「不，不可以……在这个时候……侵犯小穴啊……会没有办法好好为魔王大人口交的！」',
+        ],
+        [
+          '8161',
+          'PRINTFORMW 正在为%SAVESTR:MASTER%口交的%SAVESTR:TARGET%，感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头顶入了蜜穴之中。',
+        ],
+        [
+          '8162',
+          'PRINTFORML 『其实人家还有点嫉妒姐姐呢，能同时享受两根阴茎……唔哇哇……姐姐的小穴好紧好舒服♪』',
+        ],
+        [
+          '8163',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8164',
+          'PRINTFORMW 「呜……呜啊啊……不，不能顶得这么深……唔呣呣……这样……边口交边被侵犯……感觉……整个人都要变得奇怪了啊啊——唔呣……呣呣呣……呣呣♪」',
+        ],
+        [
+          '8165',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '8170',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1%……这样……边口交……边被侵犯小穴……感觉……太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8171',
+          'PRINTFORMW 正在为%SAVESTR:MASTER%口交的%SAVESTR:TARGET%，感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头顶入了爱液泛滥的敏感蜜穴之中。',
+        ],
+        [
+          '8172',
+          'PRINTFORML 『唔哇哇……原来姐姐已经变得这么淫乱了……魔王大人真是调教有方啊！』',
+        ],
+        [
+          '8173',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8174',
+          'PRINTFORMW %SAVESTR:MASTER%也配合着%SAVESTR:ASSI%的动作，将阴茎顶到了%SAVESTR:TARGET%喉咙深处，开始抽插起来。',
+        ],
+        [
+          '8175',
+          'PRINTFORMW 「唔呣呣？！唔呣……唔呣……好，好舒服%UNICODE(0x2661) *1%……舒服得……已经没有办法思考了啊呣呣……呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8176',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        [
+          '8178',
+          'PRINTFORMW 「呜啊啊……要边口交边被侵犯小穴了……好期待%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8179',
+          'PRINTFORMW 正在为%SAVESTR:ASSI%口交的%SAVESTR:MASTER%，撅起的臀部一扭一扭地诱惑着%SAVESTR:TARGET%。',
+        ],
+        [
+          '8180',
+          'PRINTFORML 『看来姐姐已经准备好了呢……接下来就是要侵犯到姐姐失神为止喽！！』',
+        ],
+        [
+          '8181',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8182',
+          'PRINTFORMW %SAVESTR:MASTER%也配合着%SAVESTR:ASSI%的动作，将阴茎顶到了%SAVESTR:TARGET%喉咙深处，开始抽插起来。',
+        ],
+        [
+          '8183',
+          'PRINTFORMW 「唔呣呣……唔唔%UNICODE(0x2661) *1% 这样好舒服……比想象中的还要舒服啊啊……呣呣……呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8184',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在难以言喻的快感中颤抖着……',
+        ],
+        [
+          '8189',
+          'PRINTFORMW 「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」',
+        ],
+        [
+          '8190',
+          'PRINTFORMW %SAVESTR:TARGET%嘴里含着%SAVESTR:MASTER%的阴茎，拼命忍耐着被%SAVESTR:ASSI%从身后侵犯的强烈快感。',
+        ],
+        [
+          '8191',
+          'PRINTFORML 『不能光顾享受啊姐姐，要好好用你的淫乱嘴巴小穴服务魔王大人，听到了没！』',
+        ],
+        [
+          '8192',
+          'PRINTFORMW 「对，对不起……我，我会好好用嘴巴做的……唔呣……唔呣……唔唔！」',
+        ],
+        [
+          '8193',
+          'PRINTFORMW 不耐烦的%SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头发，将阴茎顶到了喉咙深处，肆意抽插着。',
+        ],
+        [
+          '8194',
+          'PRINTFORML 『哼，魔王大人已经不满意了，做好受惩罚的觉悟吧笨蛋姐姐！』',
+        ],
+        [
+          '8195',
+          'PRINTFORMW %SAVESTR:TARGET%泪流满面，却又无可奈何地忍耐着两人的侵犯和肆虐………',
+        ],
+        [
+          '8197',
+          'PRINTFORMW 「呜呜呜……求求你们了……饶了我吧……真的……唔呣呣？！呣呣……唔呣……」',
+        ],
+        [
+          '8198',
+          'PRINTFORMW 对%SAVESTR:TARGET%的求饶无动于衷，%SAVESTR:ASSI%和%SAVESTR:MASTER%开始一前一后，毫不留情地侵犯着%SAVESTR:TARGET%。',
+        ],
+        [
+          '8199',
+          'PRINTFORML 『啊哈哈……魔王大人好像很喜欢姐姐的淫乱嘴巴小穴呢♪』',
+        ],
+        ['8200', 'PRINTFORMW 「饶，饶了我吧……不能呼吸了……唔呣……呣呣……呣呣……」'],
+        [
+          '8201',
+          'PRINTFORMW %SAVESTR:MASTER%不满地抓着%SAVESTR:TARGET%的头发，用勃起的阴茎强行在喉咙里抽插着',
+        ],
+        [
+          '8202',
+          'PRINTFORML 『哎嘿，姐姐的喉咙小穴被魔王大人塞满了呢，人家有点嫉妒呢！』',
+        ],
+        [
+          '8203',
+          'PRINTFORMW %SAVESTR:TARGET%怎么挣扎都无法挣脱，只能泪流满面地任由两人激烈地侵犯着自己……',
+        ],
+        [
+          '8211',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '8212',
+          'PRINTFORML 『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！！』',
+        ],
+        [
+          '8213',
+          'PRINTFORMW %SAVESTR:ASSI%抱着%SAVESTR:TARGET%的脸，用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@肆意地侵犯着姐姐的喉咙。',
+        ],
+        [
+          '8214',
+          'PRINTFORMW 「唔呣……唔呣……对，对不起，%SAVESTR:ASSI%……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8215',
+          'PRINTFORMW %SAVESTR:TARGET%拼命忍耐着快感，继续努力地吸吮着%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@………',
+        ],
+        [
+          '8217',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '8218',
+          'PRINTFORML 『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪♪』',
+        ],
+        [
+          '8219',
+          'PRINTFORMW 被妹妹羞辱得面红耳赤的%SAVESTR:TARGET%，却依旧顺从地吸吮着%SAVESTR:ASSI%股间的的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '8220',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '8221',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '8226',
+          'PRINTFORMW 「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣%UNICODE(0x2661) *1%……不，不行了，屁股舒服的要去了啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8227',
+          'PRINTFORMW 肛门的强烈快感让%SAVESTR:TARGET%更加兴奋地为%SAVESTR:ASSI%口交着，整个人都忘乎所以了。',
+        ],
+        [
+          '8228',
+          'PRINTFORML 『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』',
+        ],
+        [
+          '8229',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '8231',
+          'PRINTFORMW 「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」',
+        ],
+        [
+          '8232',
+          'PRINTFORMW 感受着肛门的快感，%SAVESTR:TARGET%更加兴奋地为自己的妹妹口交着',
+        ],
+        [
+          '8233',
+          'PRINTFORML 『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』',
+        ],
+        [
+          '8234',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '8239',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '8240',
+          'PRINTFORMW %SAVESTR:TARGET%把脸埋在妹妹的腿间，吸吮着%SAVESTR:ASSI%的阴茎，然而肛门被%SAVESTR:MASTER%侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着',
+        ],
+        [
+          '8241',
+          'PRINTFORML 『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』',
+        ],
+        ['8242', 'PRINTFORMW 「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」'],
+        [
+          '8243',
+          'PRINTFORMW 话音未落，%SAVESTR:ASSI%就已经强行把阴茎插到了%SAVESTR:TARGET%的喉咙深处，强行侵犯着',
+        ],
+        [
+          '8245',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '8246',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%持续侵犯着肛门的同时，被迫继续把脸埋在%SAVESTR:ASSI%的腿间，吸吮着妹妹的阴茎。',
+        ],
+        [
+          '8247',
+          'PRINTFORML 『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』',
+        ],
+        [
+          '8248',
+          'PRINTFORMW %SAVESTR:TARGET%绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着',
+        ],
+        [
+          '8256',
+          'PRINTFORMW 「请……请两位随意地侵犯%SAVESTR:TARGET%的肛门和嘴巴小穴吧%UNICODE(0x2661) *1% ……唔呣……唔唔？！」',
+        ],
+        [
+          '8257',
+          'PRINTFORML 『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』',
+        ],
+        [
+          '8258',
+          'PRINTFORMW %SAVESTR:ASSI%用手指肆意地玩弄了一会儿%SAVESTR:TARGET%的肛门，然后用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始持续地侵犯着姐姐的后庭。',
+        ],
+        [
+          '8259',
+          'PRINTFORMW 「呜呣呣%UNICODE(0x2661) *1% 好，好舒服啊啊啊%UNICODE(0x2661) *1% 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门%UNICODE(0x2661) *1%……不行了……已经舒服得没有办法思考了啊呣呣%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8260',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己的亲妹妹侵犯肛门的下流姿态，边用\\@TALENT:MASTER:121 == 0 && TALENT:MASTER:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着%SAVESTR:TARGET%的喉咙深处……',
+        ],
+        [
+          '8262',
+          'PRINTFORMW 「呜……啊啊……不，不可以……在这个时候插进来啊啊%UNICODE(0x2661) *1% 没有办法……好好为魔王大人口交了……唔呣……唔呣……呜啊啊啊」',
+        ],
+        [
+          '8263',
+          'PRINTFORML 『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』',
+        ],
+        [
+          '8264',
+          'PRINTFORMW 边羞辱着自己的姐姐，%SAVESTR:ASSI%边用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@更加激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '8265',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '8266',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己妹妹羞辱的姿态，更加兴奋的侵犯着%SAVESTR:TARGET%的嘴巴和喉咙。',
+        ],
+        [
+          '8271',
+          'PRINTFORMW 「来吧，魔王大人，还有%SAVESTR:ASSI%……请一起侵犯%SAVESTR:TARGET%淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8272',
+          'PRINTFORMW 肛门被侵犯的极度快感，让%SAVESTR:TARGET%整个人都颤抖了起来，更加兴奋而积极地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '8273',
+          'PRINTFORML 『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』',
+        ],
+        [
+          '8274',
+          'PRINTFORMW 「是……是啊%UNICODE(0x2661) *1% 姐姐的……肛门就是……专门服务%SAVESTR:ASSI%和魔王大人的淫乱性器啊啊%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8275',
+          'PRINTFORMW %SAVESTR:TARGET%淫乱的话语激起了%SAVESTR:ASSI%和%SAVESTR:MASTER%的兴致，更加激烈地一前一后侵犯着%SAVESTR:TARGET%……',
+        ],
+        [
+          '8277',
+          'PRINTFORMW 「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交%UNICODE(0x2661) *1%……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」',
+        ],
+        [
+          '8278',
+          'PRINTFORMW %SAVESTR:TARGET%身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '8279',
+          'PRINTFORML 『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』',
+        ],
+        [
+          '8280',
+          'PRINTFORMW 「是……是啊……姐姐是%SAVESTR:ASSI%和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8281',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋不已地抓着%SAVESTR:TARGET%的腰，更加激烈地侵犯着姐姐的肛门，强烈的快感让%SAVESTR:TARGET%更加忘我地为%SAVESTR:MASTER%口交着……',
+        ],
+        [
+          '8286',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '8287',
+          'PRINTFORMW 敏感的肛门传来的快感让%SAVESTR:TARGET%几乎无法忍耐，大声地呻吟了起来，连为%SAVESTR:MASTER%口交的动作都停了下来。',
+        ],
+        [
+          '8288',
+          'PRINTFORML 『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』',
+        ],
+        [
+          '8289',
+          'PRINTFORMW 「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8290',
+          'PRINTFORMW 已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了%SAVESTR:TARGET%',
+        ],
+        [
+          '8291',
+          'PRINTFORMW 几乎无法思考的%SAVESTR:TARGET%只能本能地搂着%SAVESTR:MASTER%的腰，吸吮着口中的阴茎',
+        ],
+        [
+          '8293',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '8294',
+          'PRINTFORMW 完全无视了%SAVESTR:TARGET%的哀求，%SAVESTR:ASSI%和%SAVESTR:MASTER%开始一前一后同时侵犯着%SAVESTR:TARGET%的肛门和嘴。',
+        ],
+        [
+          '8295',
+          'PRINTFORML 『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』',
+        ],
+        [
+          '8296',
+          'PRINTFORMW 「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」',
+        ],
+        [
+          '8297',
+          'PRINTFORMW %SAVESTR:TARGET%只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着%SAVESTR:MASTER%的阴茎……直到两人满意为止',
+        ],
+        [
+          '8310',
+          'PRINTFORMW %SAVESTR:MASTER%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '8311',
+          'PRINTFORMW %SAVESTR:ASSI%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['8313', 'PRINTFORMW 「呜……啊啊……我的处女！」'],
+        [
+          '8314',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '8315',
+          'PRINTFORML 『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』',
+        ],
+        ['8316', 'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，激烈地侵犯着姐姐的后庭。'],
+        ['8317', 'PRINTFORMW 「啊啊……这样被夹击……一下子……就要去了啊啊啊！」'],
+        [
+          '8319',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8320',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        ['8321', 'PRINTFORML 『嘿嘿，姐姐，处女三明治的感觉如何啊？』'],
+        [
+          '8322',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，用阴茎激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '8323',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8325',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '8326',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '8327',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '8328',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的后庭。',
+        ],
+        [
+          '8332',
+          'PRINTFORMW %SAVESTR:ASSI%毫不留情地夺走了%SAVESTR:TARGET%的处女',
+        ],
+        [
+          '8333',
+          'PRINTFORMW %SAVESTR:MASTER%也兴奋不已地同时侵犯了%SAVESTR:TARGET%的肛门。',
+        ],
+        ['8335', 'PRINTFORMW 「呜啊啊……我，我的第一次……啊啊啊！」'],
+        [
+          '8336',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。',
+        ],
+        [
+          '8337',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴！』',
+        ],
+        [
+          '8338',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        ['8339', 'PRINTFORMW 「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」'],
+        [
+          '8341',
+          'PRINTFORMW 「呜啊啊……两人的阴茎……这样同时插进来%UNICODE(0x2661) *1% 好……好奇怪的感觉啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8342',
+          'PRINTFORMW %SAVESTR:TARGET%感受着肛门和处女蜜穴同时被插入的异样快感。',
+        ],
+        [
+          '8343',
+          'PRINTFORML 『啊啊啊姐姐的第一次，归我了！！%SAVESTR:ASSI%好高兴，好高兴%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8344',
+          'PRINTFORMW %SAVESTR:ASSI%带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。',
+        ],
+        [
+          '8345',
+          'PRINTFORMW 「好舒服……这样好舒服%UNICODE(0x2661) *1%被魔王大人和%SAVESTR:ASSI%的阴茎……同时在身体里搅动着%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8347',
+          'PRINTFORML 『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』',
+        ],
+        [
+          '8348',
+          'PRINTFORMW 「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」',
+        ],
+        [
+          '8349',
+          'PRINTFORMW 处女蜜穴和肛门被同时贯穿的痛苦，让%SAVESTR:TARGET%的哀叫在调教室里回响着。',
+        ],
+        [
+          '8350',
+          'PRINTFORML 『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』',
+        ],
+        [
+          '8351',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴',
+        ],
+        [
+          '8356',
+          'PRINTFORMW 「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊%UNICODE(0x2661) *1% 呣呣%UNICODE(0x2661) *1%……」',
+        ],
+        [
+          '8357',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '8358',
+          'PRINTFORML 『哎嘿嘿，姐姐的处女今天正式属于魔王大人了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8359',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '8360',
+          'PRINTFORMW 「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '8361',
+          'PRINTFORML 『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8362',
+          'PRINTFORMW %SAVESTR:TARGET%%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '8364',
+          'PRINTFORMW 「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8365',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '8366',
+          'PRINTFORML 『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8367',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '8368',
+          'PRINTFORMW 「好舒服……唔呣……唔呣%UNICODE(0x2661) *1% 这样同时……侍奉两根阴茎……实在是太棒了唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8369',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        ['8371', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '8372',
+          'PRINTFORMW %SAVESTR:TARGET%边被强迫为%SAVESTR:ASSI%口交着，边感受着身后的%SAVESTR:MASTER%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        ['8373', 'PRINTFORMW 「不，不要啊啊！」'],
+        ['8374', 'PRINTFORML 『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』'],
+        [
+          '8375',
+          'PRINTFORMW %SAVESTR:ASSI%抓着%SAVESTR:TARGET%的头，用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@强行侵犯着姐姐的喉咙。',
+        ],
+        [
+          '8376',
+          'PRINTFORMW  身后的%SAVESTR:MASTER%挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        ['8377', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '8378',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '8383',
+          'PRINTFORMW 「呜呜……唔呣%UNICODE(0x2661) *1%！%SAVESTR:ASSI%？！不，不可以……」',
+        ],
+        [
+          '8384',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '8385',
+          'PRINTFORML 『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』',
+        ],
+        [
+          '8386',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '8387',
+          'PRINTFORMW 「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」',
+        ],
+        [
+          '8388',
+          'PRINTFORMW %SAVESTR:TARGET%%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '8390',
+          'PRINTFORMW 「唔呣……唔唔……我的处女……就这样……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8391',
+          'PRINTFORMW %SAVESTR:TARGET%边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头慢慢捅穿了处女膜。',
+        ],
+        [
+          '8392',
+          'PRINTFORML 『啊啊，梦寐以求的姐姐的第一次，我就这么收下了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8393',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的处女蜜穴。',
+        ],
+        [
+          '8394',
+          'PRINTFORMW 像是在配合着%SAVESTR:ASSI%的动作一样，%SAVESTR:MASTER%也将阴茎插入到了%SAVESTR:TARGET%的喉咙深处。',
+        ],
+        [
+          '8395',
+          'PRINTFORMW 「唔呣……唔唔……%UNICODE(0x2661) *1% 这样……好舒服……唔唔……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8396',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，却感受到了心理和生理的双重快感……',
+        ],
+        ['8398', 'PRINTFORMW 「住，住手啊……唔呣……呜呜呜！」'],
+        [
+          '8399',
+          'PRINTFORMW %SAVESTR:TARGET%被强制边为%SAVESTR:MASTER%口交着，边感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头抵在蜜穴上。',
+        ],
+        [
+          '8400',
+          'PRINTFORML 『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』',
+        ],
+        ['8401', 'PRINTFORMW 「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」'],
+        [
+          '8402',
+          'PRINTFORMW %SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头，将阴茎插到了喉咙的最深处。',
+        ],
+        [
+          '8403',
+          'PRINTFORMW 身后的%SAVESTR:ASSI%也无情地夺去了%SAVESTR:TARGET%的处女身。',
+        ],
+        ['8404', 'PRINTFORMW 「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」'],
+        [
+          '8405',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '8412',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '8413',
+          'PRINTFORML 『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！！』',
+        ],
+        [
+          '8414',
+          'PRINTFORMW %SAVESTR:ASSI%抱着%SAVESTR:TARGET%的脸，用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@肆意地侵犯着姐姐的喉咙。',
+        ],
+        [
+          '8415',
+          'PRINTFORMW 「唔呣……唔呣……对，对不起，%SAVESTR:ASSI%……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8416',
+          'PRINTFORMW %SAVESTR:TARGET%会老实的一边舔%SAVESTR:ASSI%的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@一边被%SAVESTR:MASTER%侵犯肛门的………',
+        ],
+        [
+          '8418',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '8419',
+          'PRINTFORML 『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪♪』',
+        ],
+        [
+          '8420',
+          'PRINTFORMW 被妹妹羞辱得面红耳赤的%SAVESTR:TARGET%，却依旧顺从地吸吮着%SAVESTR:ASSI%股间的的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '8421',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '8422',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '8427',
+          'PRINTFORMW 「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣%UNICODE(0x2661) *1%……不，不行了，屁股舒服的要去了啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8428',
+          'PRINTFORMW 肛门的强烈快感让%SAVESTR:TARGET%更加兴奋地为%SAVESTR:ASSI%口交着，整个人都忘乎所以了。',
+        ],
+        [
+          '8429',
+          'PRINTFORML 『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』',
+        ],
+        [
+          '8430',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '8432',
+          'PRINTFORMW 「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」',
+        ],
+        [
+          '8433',
+          'PRINTFORMW 感受着肛门的快感，%SAVESTR:TARGET%更加兴奋地为自己的妹妹口交着',
+        ],
+        [
+          '8434',
+          'PRINTFORML 『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』',
+        ],
+        [
+          '8435',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '8440',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '8441',
+          'PRINTFORMW %SAVESTR:TARGET%把脸埋在妹妹的腿间，吸吮着%SAVESTR:ASSI%的阴茎，然而肛门被%SAVESTR:MASTER%侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着',
+        ],
+        [
+          '8442',
+          'PRINTFORML 『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』',
+        ],
+        ['8443', 'PRINTFORMW 「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」'],
+        [
+          '8444',
+          'PRINTFORMW 话音未落，%SAVESTR:ASSI%就已经强行把阴茎插到了%SAVESTR:TARGET%的喉咙深处，强行侵犯着',
+        ],
+        [
+          '8446',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '8447',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%持续侵犯着肛门的同时，被迫继续把脸埋在%SAVESTR:ASSI%的腿间，吸吮着妹妹的阴茎。',
+        ],
+        [
+          '8448',
+          'PRINTFORML 『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』',
+        ],
+        [
+          '8449',
+          'PRINTFORMW %SAVESTR:TARGET%绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着',
+        ],
+        [
+          '8457',
+          'PRINTFORMW 「请……请两位随意地侵犯%SAVESTR:TARGET%的肛门和嘴巴小穴吧%UNICODE(0x2661) *1% ……唔呣……唔唔？！」',
+        ],
+        [
+          '8458',
+          'PRINTFORML 『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』',
+        ],
+        [
+          '8459',
+          'PRINTFORMW %SAVESTR:ASSI%用手指肆意地玩弄了一会儿%SAVESTR:TARGET%的肛门，然后用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始持续地侵犯着姐姐的后庭。',
+        ],
+        [
+          '8460',
+          'PRINTFORMW 「呜呣呣%UNICODE(0x2661) *1% 好，好舒服啊啊啊%UNICODE(0x2661) *1% 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门%UNICODE(0x2661) *1%……不行了……已经舒服得没有办法思考了啊呣呣%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8461',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己的亲妹妹侵犯肛门的下流姿态，边用\\@TALENT:MASTER:121 == 0 && TALENT:MASTER:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着%SAVESTR:TARGET%的喉咙深处……',
+        ],
+        [
+          '8463',
+          'PRINTFORMW 「啊呜…唔…魔王大人%UNICODE(0x2661) *1% 咕啾咕啾…啊、嗯！肛门不行啊…啊啊啊！」',
+        ],
+        [
+          '8464',
+          'PRINTFORML 『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』',
+        ],
+        [
+          '8465',
+          'PRINTFORMW 边羞辱着自己的姐姐，%SAVESTR:ASSI%边用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@更加激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '8466',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '8467',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己妹妹羞辱的姿态，更加兴奋的侵犯着%SAVESTR:TARGET%的嘴巴和喉咙。',
+        ],
+        [
+          '8472',
+          'PRINTFORMW 「来吧，魔王大人，还有%SAVESTR:ASSI%……请一起侵犯%SAVESTR:TARGET%淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8473',
+          'PRINTFORMW 肛门被侵犯的极度快感，让%SAVESTR:TARGET%整个人都颤抖了起来，更加兴奋而积极地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '8474',
+          'PRINTFORML 『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』',
+        ],
+        [
+          '8475',
+          'PRINTFORMW 「是……是啊%UNICODE(0x2661) *1% 姐姐的……肛门就是……专门服务%SAVESTR:ASSI%和魔王大人的淫乱性器啊啊%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8476',
+          'PRINTFORMW %SAVESTR:TARGET%淫乱的话语激起了%SAVESTR:ASSI%和%SAVESTR:MASTER%的兴致，更加激烈地一前一后侵犯着%SAVESTR:TARGET%……',
+        ],
+        [
+          '8478',
+          'PRINTFORMW 「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交%UNICODE(0x2661) *1%……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」',
+        ],
+        [
+          '8479',
+          'PRINTFORMW %SAVESTR:TARGET%身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '8480',
+          'PRINTFORML 『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』',
+        ],
+        [
+          '8481',
+          'PRINTFORMW 「是……是啊……姐姐是%SAVESTR:ASSI%和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8482',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地抓住%SAVESTR:TARGET%的腰不停地反复抽送着。然后%SAVESTR:TARGET%输给了肛门被侵犯的快感，继续舔着%SAVESTR:MASTER%的股间………',
+        ],
+        [
+          '8487',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '8488',
+          'PRINTFORMW 敏感的肛门传来的快感让%SAVESTR:TARGET%几乎无法忍耐，大声地呻吟了起来，连为%SAVESTR:MASTER%口交的动作都停了下来。',
+        ],
+        [
+          '8489',
+          'PRINTFORML 『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』',
+        ],
+        [
+          '8490',
+          'PRINTFORMW 「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8491',
+          'PRINTFORMW 已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了%SAVESTR:TARGET%',
+        ],
+        [
+          '8492',
+          'PRINTFORMW 几乎无法思考的%SAVESTR:TARGET%只能本能地搂着%SAVESTR:MASTER%的腰，吸吮着口中的阴茎',
+        ],
+        [
+          '8494',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '8495',
+          'PRINTFORMW 完全无视了%SAVESTR:TARGET%的哀求，%SAVESTR:ASSI%和%SAVESTR:MASTER%开始一前一后同时侵犯着%SAVESTR:TARGET%的肛门和嘴。',
+        ],
+        [
+          '8496',
+          'PRINTFORML 『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』',
+        ],
+        [
+          '8497',
+          'PRINTFORMW 「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」',
+        ],
+        [
+          '8498',
+          'PRINTFORMW %SAVESTR:TARGET%只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着%SAVESTR:MASTER%的阴茎……直到两人满意为止',
+        ],
+        [
+          '8511',
+          'PRINTFORMW 「请，请尽情地侵犯%SAVESTR:TARGET%的小穴吧……魔王大人%UNICODE(0x2661) *1% 什么……%SAVESTR:ASSI%也要一起么……当，当然可以……」',
+        ],
+        [
+          '8512',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没了。',
+        ],
+        ['8513', 'PRINTFORML 『唔哇哇……姐姐的淫乱肛门……完全变成性器了呢！』'],
+        [
+          '8514',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%挺着腰，激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '8515',
+          'PRINTFORMW 「呜呜……啊啊啊……不，不行了……舒服得已经没有办法思考了……魔王大人，还有%SAVESTR:ASSI%……请尽情地把%SAVESTR:TARGET%侵犯得一塌糊涂吧啊啊啊！」',
+        ],
+        [
+          '8517',
+          'PRINTFORMW 「哎哎？要，要两个人一起吗……是叫做三明治什么的玩法吗%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8518',
+          'PRINTFORMW 被夹在中间同时侵犯着肛门和蜜穴，%SAVESTR:TARGET%只能拼命忍耐着强烈的快感。',
+        ],
+        [
+          '8519',
+          'PRINTFORML 『唔哇哇……姐姐的淫乱肛门好紧好舒服……真的有成为名器的潜质呢！』',
+        ],
+        [
+          '8520',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，挺着腰，和%SAVESTR:MASTER%一同更加激烈地侵犯着%SAVESTR:TARGET%的肛门和蜜穴。',
+        ],
+        [
+          '8521',
+          'PRINTFORMW 「呜……啊啊……不，不可以这么激烈啊……会，会坏掉的%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8526',
+          'PRINTFORMW 「哎哎，要两人一起上？其实人家早已经等不及了啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8527',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下淫浪的娇喘。',
+        ],
+        [
+          '8528',
+          'PRINTFORML 『哎哎，姐姐真是贪心啊，居然一次要两人才能满足！』',
+        ],
+        [
+          '8529',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%挺着腰，激烈地侵犯着姐姐的肛门。',
+        ],
+        [
+          '8530',
+          'PRINTFORMW 「好，好舒服……太舒服了%UNICODE(0x2661) *1%都怪你们，把姐姐调教得……不做爱就活不下去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8532',
+          'PRINTFORMW 「哎哎……被，被两人的阴茎这样一起侵犯……呜啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8533',
+          'PRINTFORMW 肛门和蜜穴被同时插入让%SAVESTR:TARGET%发出了灼热的呻吟。',
+        ],
+        [
+          '8534',
+          'PRINTFORML 『哎嘿嘿，姐姐的淫乱肛门好紧啊，有继续开发的必要呢！魔王大人，让我们一起把姐姐的前后两穴都弄得乱七八糟吧%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8535',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，挺着腰，和%SAVESTR:MASTER%一同更加激烈地侵犯着%SAVESTR:TARGET%的肛门和蜜穴。',
+        ],
+        [
+          '8536',
+          'PRINTFORMW 「嗯啊……啊啊啊……请，请尽情地……把%SAVESTR:TARGET%侵犯到坏掉吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8541',
+          'PRINTFORML 「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜……可，可是……好舒服……真的好舒服啊啊」',
+        ],
+        [
+          '8542',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没了。',
+        ],
+        ['8543', 'PRINTFORML 『哎嘿嘿，姐姐准备好了吗，接下来才是开始呢！』'],
+        [
+          '8544',
+          'PRINTFORMW %SAVESTR:ASSI%舔着嘴唇，动起腰，开始和%SAVESTR:MASTER%一同激烈地侵犯着%SAVESTR:TARGET%的肛门和蜜穴。',
+        ],
+        ['8545', 'PRINTFORMW 「太，太激烈了……姐姐会……会坏掉的啊啊……！」'],
+        [
+          '8547',
+          'PRINTFORMW 「两，两个人一起……不，不可以啊……那，那样会坏掉的……真的会坏掉的！」',
+        ],
+        [
+          '8548',
+          'PRINTFORMW %SAVESTR:TARGET%似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。',
+        ],
+        [
+          '8549',
+          'PRINTFORML 『加油啊姐姐，在你在两穴同时高潮之前，我们可是不会停下的哦♪』',
+        ],
+        [
+          '8550',
+          'PRINTFORMW %SAVESTR:ASSI%带着恶意的笑容，舔着嘴角，更加激烈地侵犯着%SAVESTR:TARGET%的肛门………',
+        ],
+        [
+          '8558',
+          'PRINTFORMW 「嗯啊啊……魔，魔王大人……这样激烈地侵犯着……我的肛门%UNICODE(0x2661) *1%小穴……也被%SAVESTR:ASSI%一起侵犯了……感觉好奇怪……但是好舒服啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8559',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着爱液泛滥的蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下甘甜的娇喘。',
+        ],
+        [
+          '8560',
+          'PRINTFORML 『呜哇啊，性奴姐姐的小穴已经被魔王大人开发的……这么棒了！』',
+        ],
+        [
+          '8561',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%挺起腰，激烈地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8562',
+          'PRINTFORMW 「呜啊……嗯啊啊%UNICODE(0x2661) *1%……好舒服……好舒服啊啊%UNICODE(0x2661) *1% 这样被同时侵犯着……一下子……就要去了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8564',
+          'PRINTFORMW 「请，请稍微温柔一点……拜托了……还有%SAVESTR:ASSI%…不要兴奋成那个样子啊！」',
+        ],
+        [
+          '8565',
+          'PRINTFORMW 话音未落，%SAVESTR:ASSI%已经迫不及待地插入了姐姐的蜜穴之中。',
+        ],
+        [
+          '8566',
+          'PRINTFORML 『哼哼，温柔，别开玩笑了！我和魔王大人今天就是打算把姐姐侵犯到彻底坏掉的呀！』',
+        ],
+        [
+          '8567',
+          'PRINTFORMW %SAVESTR:ASSI%坏笑着，挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8568',
+          'PRINTFORMW 「呜啊啊……太，太激烈了……感，感觉好奇怪……整个人……都要变得奇怪了啊啊！」',
+        ],
+        [
+          '8573',
+          'PRINTFORMW 「哈啊……哈啊……两人的阴茎……一起在身体里%UNICODE(0x2661) *1%……感觉实在是太棒了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8574',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下淫浪的娇喘。',
+        ],
+        ['8575', 'PRINTFORML 『给我用屁股和小穴同时高潮吧，淫乱的性奴姐姐！』'],
+        [
+          '8576',
+          'PRINTFORMW 兴奋不已%SAVESTR:ASSI%挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8577',
+          'PRINTFORMW 「呜啊……嗯啊啊……好舒服……实在是太舒服了%UNICODE(0x2661) *1% 真的要……高潮得……一塌糊涂了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8579',
+          'PRINTFORMW 「咦咦，要两个人一起上吗……好，好吧。其实还有点……期待呢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8580',
+          'PRINTFORMW 蜜穴和肛门被同时插入，%SAVESTR:TARGET%忍不住灼热地呻吟了起来。',
+        ],
+        [
+          '8581',
+          'PRINTFORML 『呼呼，姐姐的淫乱小穴……属于人家的啦啦啦！给我高潮吧！』',
+        ],
+        [
+          '8582',
+          'PRINTFORMW %SAVESTR:ASSI%嬉笑着，挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8583',
+          'PRINTFORMW 「呜……呜啊啊%UNICODE(0x2661) *1% %SAVESTR:ASSI%！魔王大人！请，请尽情地……把%SAVESTR:TARGET%侵犯到坏掉吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8588',
+          'PRINTFORML 「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜，可，可是……为什么……感觉好舒服%UNICODE(0x2661) *1%…」',
+        ],
+        [
+          '8589',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将%SAVESTR:TARGET%淹没，只剩下灼热的呻吟。',
+        ],
+        [
+          '8590',
+          'PRINTFORML 『嘴上说着不行，下面已经夹得这么紧了！被两人同时侵犯，更兴奋了吗，我的变态姐姐！』',
+        ],
+        [
+          '8591',
+          'PRINTFORMW 兴奋不已%SAVESTR:ASSI%挺起腰，配合着%SAVESTR:MASTER%的动作，开始一同激烈地侵犯着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '8592',
+          'PRINTFORMW 「才，才不是……变态！呜……呜啊啊%UNICODE(0x2661) *1%……可，可是……真的好舒服……舒服得……不行了啊啊啊！」',
+        ],
+        [
+          '8594',
+          'PRINTFORMW 「放，放开我啊……两个人一起……这种事情……怎么可以啊啊啊！」',
+        ],
+        [
+          '8595',
+          'PRINTFORMW %SAVESTR:TARGET%似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。',
+        ],
+        [
+          '8596',
+          'PRINTFORML 『说什么呢姐姐，我们可是打算侵犯到姐姐两个淫穴一起高潮呢♪』',
+        ],
+        [
+          '8597',
+          'PRINTFORMW %SAVESTR:ASSI%带着恶意的笑容，舔着嘴角，更加激烈地侵犯着%SAVESTR:TARGET%的蜜穴………',
+        ],
+        [
+          '8605',
+          'PRINTFORMW 「呜……呜啊啊……这样边被魔王大人……侵犯着%UNICODE(0x2661) *1% ……边口交……感觉%SAVESTR:ASSI%的阴茎……更加美味了啊啊啊%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔♪」',
+        ],
+        [
+          '8606',
+          'PRINTFORMW 被%SAVESTR:MASTER%抽插着爱液泛滥的蜜穴、%SAVESTR:TARGET%更加兴奋不已地舔吮着妹妹的阴茎。',
+        ],
+        [
+          '8607',
+          'PRINTFORML 『嘿嘿，被我和魔王大人一起侵犯，身为性奴的姐姐一定感觉很幸福吧？』',
+        ],
+        [
+          '8608',
+          'PRINTFORMW %SAVESTR:TARGET%满脸通红地边点头，边继续努力地为妹妹口交着。',
+        ],
+        [
+          '8609',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1%…… 的，的确是这样啊啊……能被魔王大人和%SAVESTR:ASSI%这样疼爱……真的是太幸福了%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '8611',
+          'PRINTFORMW 「唔呣……唔呣……%SAVESTR:ASSI%的阴茎……味道好好……好喜欢%UNICODE(0x2661) *1% 还有……魔王大人，请吧……人家已经准备好了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8612',
+          'PRINTFORMW 正在为%SAVESTR:ASSI%口交的%SAVESTR:TARGET%，撅起的臀部一扭一扭地诱惑着%SAVESTR:MASTER%。',
+        ],
+        [
+          '8613',
+          'PRINTFORML 『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎要进来了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8614',
+          'PRINTFORMW %SAVESTR:MASTER%挺起腰，开始侵犯着%SAVESTR:TARGET%已经爱液泛滥的蜜穴。',
+        ],
+        [
+          '8615',
+          'PRINTFORMW 「呜啊……嗯啊啊%UNICODE(0x2661) *1%……魔王大人……一下子就顶到最里面了……好厉害啊啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8616',
+          'PRINTFORMW %SAVESTR:ASSI%也抱着%SAVESTR:TARGET%的脸，用阴茎顶着姐姐的口腔。',
+        ],
+        ['8617', 'PRINTFORML 『不要光顾着享受，嘴巴也要好好地给我吸吮啊！』'],
+        [
+          '8618',
+          'PRINTFORMW %SAVESTR:TARGET%就这样被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '8623',
+          'PRINTFORMW 「呜……啊啊啊……蜜穴……被魔王大人的阴茎……塞得满满的%UNICODE(0x2661) *1% 这样……边做爱……边口交……实在是太舒服了啊唔唔……唔呣……唔呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8624',
+          'PRINTFORML 『呜哇哇……姐姐在被魔王大人侵犯的时候……口交居然比平时还厉害了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8625',
+          'PRINTFORMW %SAVESTR:ASSI%感受着姐姐激烈地吸吮着自己的阴茎，忍不住也呻吟了起来。',
+        ],
+        [
+          '8626',
+          'PRINTFORMW 「啊啊啊……魔王大人……更加激烈地侵犯……%SAVESTR:TARGET%的淫穴吧%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8627',
+          'PRINTFORMW %SAVESTR:TARGET%含糊不清地娇喘着，享受着心理和生理的双重快感……',
+        ],
+        [
+          '8629',
+          'PRINTFORMW 「呜啊啊……在，在人家口交的时候……侵犯小穴……魔王大人……太狡猾了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8630',
+          'PRINTFORMW 在%SAVESTR:TARGET%吸吮着自己妹妹的阴茎的时候，%SAVESTR:MASTER%趁机抱住了%SAVESTR:TARGET%的腰，将龟头抵入了蜜穴中。',
+        ],
+        [
+          '8631',
+          'PRINTFORML 『哎嘿嘿，姐姐一会儿享受的时候，嘴巴记得不要停下来哦♪』',
+        ],
+        [
+          '8632',
+          'PRINTFORMW %SAVESTR:MASTER%挺着腰，开始激烈地侵犯着%SAVESTR:TARGET%爱液泛滥的蜜穴。',
+        ],
+        [
+          '8633',
+          'PRINTFORMW 「唔呣呣……唔唔%UNICODE(0x2661) *1% 不，不行了……这样……太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['8634', 'PRINTFORML 『啊啊……姐姐的口交……太厉害了……好舒服啊啊！』'],
+        [
+          '8635',
+          'PRINTFORM 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，因为心里和生理的双重快感而含糊不清地呻吟着………',
+        ],
+        [
+          '8640',
+          'PRINTFORMW 「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」',
+        ],
+        [
+          '8641',
+          'PRINTFORMW 敏感的小穴被%SAVESTR:MASTER%肆意地抽插着，%SAVESTR:TARGET%只能拼命忍耐着快感，同时还要努力为妹妹口交。',
+        ],
+        [
+          '8642',
+          'PRINTFORML 『哎嘿嘿，姐姐真不错呢，被魔王大人插得那么舒服，嘴巴还没有松懈♪』',
+        ],
+        [
+          '8643',
+          'PRINTFORMW 边嘲弄着%SAVESTR:TARGET%，%SAVESTR:ASSI%边用阴茎继续侵犯着姐姐的喉咙。',
+        ],
+        [
+          '8644',
+          'PRINTFORMW 「唔呣呣……唔呣呣……太，太激烈了%UNICODE(0x2661) *1%…呜啊啊……被魔王大人……顶到子宫口了唔呣呣呣！」',
+        ],
+        [
+          '8645',
+          'PRINTFORMW 蜜穴传来的极度快感让%SAVESTR:TARGET%几乎无法思考………',
+        ],
+        [
+          '8647',
+          'PRINTFORMW 「不，不可以在口交的时候……侵犯小穴啊……唔呣呣……呣呣……」',
+        ],
+        [
+          '8648',
+          'PRINTFORMW 正在为%SAVESTR:ASSI%口交的%SAVESTR:TARGET%，蜜穴突然被侵犯，一时惊慌失措。',
+        ],
+        ['8649', 'PRINTFORML 『别光顾着享受啊，笨蛋姐姐，给我好好口交啊！』'],
+        ['8650', 'PRINTFORMW 「不，不行啊……这样的事情……呜呜……唔呣！？」'],
+        [
+          '8651',
+          'PRINTFORMW %SAVESTR:ASSI%不满地抓着%SAVESTR:TARGET%的头发，用勃起的阴茎强行侵犯着姐姐的喉咙',
+        ],
+        [
+          '8652',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，连悲鸣都发不出，只能忍受着痛苦与折磨………',
+        ],
+        [
+          '8660',
+          'PRINTFORMW 「唔呣呣？在……在口交的时候……侵犯小穴……感觉……好奇怪……但是好舒服啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8661',
+          'PRINTFORMW %SAVESTR:TARGET%一边被妹妹侵犯着，一边把脸埋在%SAVESTR:MASTER%双腿之间，努力地吸吮着阴茎。',
+        ],
+        [
+          '8662',
+          'PRINTFORML 『哎嘿嘿，姐姐不知不觉之间已经完全适应性奴的身份了呢%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8663',
+          'PRINTFORMW %SAVESTR:ASSI%带着享受的表情，激烈地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8664',
+          'PRINTFORMW 「呜……呣呣……不，不要对姐姐恶作剧了啦……没有办法好好……为魔王大人口交了%UNICODE(0x2661) *1% 对，对不起……魔王大人……因为实在是太舒服了%UNICODE(0x2661) *1%我，我会努力的……咕呣……咕呣……呣呣呣」',
+        ],
+        [
+          '8665',
+          'PRINTFORMW %SAVESTR:TARGET%感受生理和心理的双重快感，任凭%SAVESTR:MASTER%好%SAVESTR:ASSI%一前一后地侵犯着自己……',
+        ],
+        [
+          '8667',
+          'PRINTFORMW 「不，不可以……在这个时候……侵犯小穴啊……会没有办法好好为魔王大人口交的！」',
+        ],
+        [
+          '8668',
+          'PRINTFORMW 正在为%SAVESTR:MASTER%口交的%SAVESTR:TARGET%，感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头顶入了蜜穴之中。',
+        ],
+        [
+          '8669',
+          'PRINTFORML 『其实人家还有点嫉妒姐姐呢，能同时享受两根阴茎……唔哇哇……姐姐的小穴好紧好舒服♪』',
+        ],
+        [
+          '8670',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8671',
+          'PRINTFORMW 「呜……呜啊啊……不，不能顶得这么深……唔呣呣……这样……边口交边被侵犯……感觉……整个人都要变得奇怪了啊啊——唔呣……呣呣呣……呣呣♪」',
+        ],
+        [
+          '8672',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%和%SAVESTR:ASSI%当做性玩具一般，一前一后的侵犯着……',
+        ],
+        [
+          '8677',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1%……这样……边口交……边被侵犯小穴……感觉……太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8678',
+          'PRINTFORMW 正在为%SAVESTR:MASTER%口交的%SAVESTR:TARGET%，感受着身后的%SAVESTR:ASSI%抱着自己的腰，龟头顶入了爱液泛滥的敏感蜜穴之中。',
+        ],
+        [
+          '8679',
+          'PRINTFORML 『唔哇哇……原来姐姐已经变得这么淫乱了……魔王大人真是调教有方啊！』',
+        ],
+        [
+          '8680',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8681',
+          'PRINTFORMW %SAVESTR:MASTER%也配合着%SAVESTR:ASSI%的动作，将阴茎顶到了%SAVESTR:TARGET%喉咙深处，开始抽插起来。',
+        ],
+        [
+          '8682',
+          'PRINTFORMW 「唔呣呣？！唔呣……唔呣……好，好舒服%UNICODE(0x2661) *1%……舒服得……已经没有办法思考了啊呣呣……呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8683',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在心里和生理的双重快感中颤抖着……',
+        ],
+        [
+          '8685',
+          'PRINTFORMW 「呜啊啊……要边口交边被侵犯小穴了……好期待%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8686',
+          'PRINTFORMW 正在为%SAVESTR:ASSI%口交的%SAVESTR:MASTER%，撅起的臀部一扭一扭地诱惑着%SAVESTR:TARGET%。',
+        ],
+        [
+          '8687',
+          'PRINTFORML 『看来姐姐已经准备好了呢……接下来就是要侵犯到姐姐失神为止喽！！』',
+        ],
+        [
+          '8688',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋地挺着腰，开始持续地侵犯着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        [
+          '8689',
+          'PRINTFORMW %SAVESTR:MASTER%也配合着%SAVESTR:ASSI%的动作，将阴茎顶到了%SAVESTR:TARGET%喉咙深处，开始抽插起来。',
+        ],
+        [
+          '8690',
+          'PRINTFORMW 「唔呣呣……唔唔%UNICODE(0x2661) *1% 这样好舒服……比想象中的还要舒服啊啊……呣呣……呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8691',
+          'PRINTFORMW 被两人的阴茎一前一后侵犯着的%SAVESTR:TARGET%，身体在难以言喻的快感中颤抖着……',
+        ],
+        [
+          '8696',
+          'PRINTFORMW 「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」',
+        ],
+        [
+          '8697',
+          'PRINTFORMW %SAVESTR:TARGET%嘴里含着%SAVESTR:MASTER%的阴茎，拼命忍耐着被%SAVESTR:ASSI%从身后侵犯的强烈快感。',
+        ],
+        [
+          '8698',
+          'PRINTFORML 『不能光顾享受啊姐姐，要好好用你的淫乱嘴巴小穴服务魔王大人，听到了没！』',
+        ],
+        [
+          '8699',
+          'PRINTFORMW 「对，对不起……我，我会好好用嘴巴做的……唔呣……唔呣……唔唔！」',
+        ],
+        [
+          '8700',
+          'PRINTFORMW 不耐烦的%SAVESTR:MASTER%抓着%SAVESTR:TARGET%的头发，将阴茎顶到了喉咙深处，肆意抽插着。',
+        ],
+        [
+          '8701',
+          'PRINTFORML 『哼，魔王大人已经不满意了，做好受惩罚的觉悟吧笨蛋姐姐！』',
+        ],
+        [
+          '8702',
+          'PRINTFORMW %SAVESTR:TARGET%泪流满面，却又无可奈何地忍耐着两人的侵犯和肆虐………',
+        ],
+        [
+          '8704',
+          'PRINTFORMW 「呜呜呜……求求你们了……饶了我吧……真的……唔呣呣？！呣呣……唔呣……」',
+        ],
+        [
+          '8705',
+          'PRINTFORMW 对%SAVESTR:TARGET%的求饶无动于衷，%SAVESTR:ASSI%和%SAVESTR:MASTER%开始一前一后，毫不留情地侵犯着%SAVESTR:TARGET%。',
+        ],
+        [
+          '8706',
+          'PRINTFORML 『啊哈哈……魔王大人好像很喜欢姐姐的淫乱嘴巴小穴呢♪』',
+        ],
+        ['8707', 'PRINTFORMW 「饶，饶了我吧……不能呼吸了……唔呣……呣呣……呣呣……」'],
+        [
+          '8708',
+          'PRINTFORMW %SAVESTR:MASTER%不满地抓着%SAVESTR:TARGET%的头发，用勃起的阴茎强行在喉咙里抽插着',
+        ],
+        [
+          '8709',
+          'PRINTFORML 『哎嘿，姐姐的喉咙小穴被魔王大人塞满了呢，人家有点嫉妒呢！』',
+        ],
+        [
+          '8710',
+          'PRINTFORMW %SAVESTR:TARGET%怎么挣扎都无法挣脱，只能泪流满面地任由两人激烈地侵犯着自己……………',
+        ],
+        [
+          '8718',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '8719',
+          'PRINTFORML 『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！！』',
+        ],
+        [
+          '8720',
+          'PRINTFORMW %SAVESTR:ASSI%抱着%SAVESTR:TARGET%的脸，用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@肆意地侵犯着姐姐的喉咙。',
+        ],
+        [
+          '8721',
+          'PRINTFORMW 「唔呣……唔呣……对，对不起，%SAVESTR:ASSI%……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8722',
+          'PRINTFORMW %SAVESTR:TARGET%老老实实地忍受，应该说是享受着%SAVESTR:ASSI%和%SAVESTR:MASTER%两人对自己的同时侵犯………',
+        ],
+        [
+          '8724',
+          'PRINTFORMW 「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」',
+        ],
+        [
+          '8725',
+          'PRINTFORML 『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪♪』',
+        ],
+        [
+          '8726',
+          'PRINTFORMW 被妹妹羞辱得面红耳赤的%SAVESTR:TARGET%，却依旧顺从地吸吮着%SAVESTR:ASSI%股间的的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@。',
+        ],
+        [
+          '8727',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '8728',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着%SAVESTR:TARGET%的肛门……',
+        ],
+        [
+          '8733',
+          'PRINTFORMW 「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣%UNICODE(0x2661) *1%……不，不行了，屁股舒服的要去了啊啊%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8734',
+          'PRINTFORMW 肛门的强烈快感让%SAVESTR:TARGET%更加兴奋地为%SAVESTR:ASSI%口交着，整个人都忘乎所以了。',
+        ],
+        [
+          '8735',
+          'PRINTFORML 『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』',
+        ],
+        [
+          '8736',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '8738',
+          'PRINTFORMW 「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」',
+        ],
+        [
+          '8739',
+          'PRINTFORMW 感受着肛门的快感，%SAVESTR:TARGET%更加兴奋地为自己的妹妹口交着',
+        ],
+        [
+          '8740',
+          'PRINTFORML 『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』',
+        ],
+        [
+          '8741',
+          'PRINTFORMW 兴奋不已的%SAVESTR:ASSI%抓着%SAVESTR:TARGET%头发，更加激烈地侵犯着自己姐姐的喉咙，另一边%SAVESTR:MASTER%抽插肛门的节奏也加快了……',
+        ],
+        [
+          '8746',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '8747',
+          'PRINTFORMW %SAVESTR:TARGET%把脸埋在妹妹的腿间，吸吮着%SAVESTR:ASSI%的阴茎，然而肛门被%SAVESTR:MASTER%侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着',
+        ],
+        [
+          '8748',
+          'PRINTFORML 『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』',
+        ],
+        ['8749', 'PRINTFORMW 「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」'],
+        [
+          '8750',
+          'PRINTFORMW 话音未落，%SAVESTR:ASSI%就已经强行把阴茎插到了%SAVESTR:TARGET%的喉咙深处，强行侵犯着',
+        ],
+        [
+          '8752',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '8753',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:MASTER%持续侵犯着肛门的同时，被迫继续把脸埋在%SAVESTR:ASSI%的腿间，吸吮着妹妹的阴茎。',
+        ],
+        [
+          '8754',
+          'PRINTFORML 『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』',
+        ],
+        [
+          '8755',
+          'PRINTFORMW %SAVESTR:TARGET%绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着',
+        ],
+        [
+          '8763',
+          'PRINTFORMW 「请……请两位随意地侵犯%SAVESTR:TARGET%的肛门和嘴巴小穴吧%UNICODE(0x2661) *1% ……唔呣……唔唔？！」',
+        ],
+        [
+          '8764',
+          'PRINTFORML 『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』',
+        ],
+        [
+          '8765',
+          'PRINTFORMW %SAVESTR:ASSI%用手指肆意地玩弄了一会儿%SAVESTR:TARGET%的肛门，然后用自己双腿间的\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@开始持续地侵犯着姐姐的后庭。',
+        ],
+        [
+          '8766',
+          'PRINTFORMW 「呜呣呣%UNICODE(0x2661) *1% 好，好舒服啊啊啊%UNICODE(0x2661) *1% 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门%UNICODE(0x2661) *1%……不行了……已经舒服得没有办法思考了啊呣呣%UNICODE(0x2661) *1%！」',
+        ],
+        [
+          '8767',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己的亲妹妹侵犯肛门的下流姿态，边用\\@TALENT:MASTER:121 == 0 && TALENT:MASTER:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着%SAVESTR:TARGET%的喉咙深处……',
+        ],
+        [
+          '8769',
+          'PRINTFORMW 「不，不可以……这样……同时侵犯肛门啊啊%UNICODE(0x2661) *1% 没有办法……好好为魔王大人口交了……唔呣呣……呜啊啊！」',
+        ],
+        [
+          '8770',
+          'PRINTFORML 『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』',
+        ],
+        [
+          '8771',
+          'PRINTFORMW 边羞辱着自己的姐姐，%SAVESTR:ASSI%边用\\@TALENT:ASSI:121 == 0 && TALENT:ASSI:122 == 0 ? 电动假阳具 # 阴茎\\@更加激烈地侵犯着%SAVESTR:TARGET%的后庭。',
+        ],
+        [
+          '8772',
+          'PRINTFORMW 「不，不要说这种……害羞的话啊%UNICODE(0x2661) *1%唔呣……唔呣%UNICODE(0x2661) *1% 啊啊啊……整个人……都要变得奇怪了！」',
+        ],
+        [
+          '8773',
+          'PRINTFORMW %SAVESTR:MASTER%欣赏着%SAVESTR:TARGET%被自己妹妹羞辱的姿态，更加兴奋的侵犯着%SAVESTR:TARGET%的嘴巴和喉咙。',
+        ],
+        [
+          '8778',
+          'PRINTFORMW 「来吧，魔王大人，还有%SAVESTR:ASSI%……请一起侵犯%SAVESTR:TARGET%淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8779',
+          'PRINTFORMW 肛门被侵犯的极度快感，让%SAVESTR:TARGET%整个人都颤抖了起来，更加兴奋而积极地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '8780',
+          'PRINTFORML 『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』',
+        ],
+        [
+          '8781',
+          'PRINTFORMW 「是……是啊%UNICODE(0x2661) *1% 姐姐的……肛门就是……专门服务%SAVESTR:ASSI%和魔王大人的淫乱性器啊啊%UNICODE(0x2661) *1% 唔呣……唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8782',
+          'PRINTFORMW %SAVESTR:TARGET%淫乱的话语激起了%SAVESTR:ASSI%和%SAVESTR:MASTER%的兴致，更加激烈地一前一后侵犯着%SAVESTR:TARGET%……',
+        ],
+        [
+          '8784',
+          'PRINTFORMW 「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交%UNICODE(0x2661) *1%……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」',
+        ],
+        [
+          '8785',
+          'PRINTFORMW %SAVESTR:TARGET%身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着%SAVESTR:MASTER%的阴茎。',
+        ],
+        [
+          '8786',
+          'PRINTFORML 『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』',
+        ],
+        [
+          '8787',
+          'PRINTFORMW 「是……是啊……姐姐是%SAVESTR:ASSI%和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8788',
+          'PRINTFORMW %SAVESTR:ASSI%兴奋不已地抱着%SAVESTR:TARGET%的腰，激烈地侵犯着姐姐的肛门。强烈的快感让%SAVESTR:TARGET%更加忘我地为%SAVESTR:MASTER%口交着………',
+        ],
+        [
+          '8793',
+          'PRINTFORMW 「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」',
+        ],
+        [
+          '8794',
+          'PRINTFORMW 敏感的肛门传来的快感让%SAVESTR:TARGET%几乎无法忍耐，大声地呻吟了起来，连为%SAVESTR:MASTER%口交的动作都停了下来。',
+        ],
+        [
+          '8795',
+          'PRINTFORML 『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』',
+        ],
+        [
+          '8796',
+          'PRINTFORMW 「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8797',
+          'PRINTFORMW 已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了%SAVESTR:TARGET%',
+        ],
+        [
+          '8798',
+          'PRINTFORMW 几乎无法思考的%SAVESTR:TARGET%只能本能地搂着%SAVESTR:MASTER%的腰，吸吮着口中的阴茎',
+        ],
+        [
+          '8800',
+          'PRINTFORMW 「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」',
+        ],
+        [
+          '8801',
+          'PRINTFORMW 完全无视了%SAVESTR:TARGET%的哀求，%SAVESTR:ASSI%和%SAVESTR:MASTER%开始一前一后同时侵犯着%SAVESTR:TARGET%的肛门和嘴。',
+        ],
+        [
+          '8802',
+          'PRINTFORML 『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』',
+        ],
+        [
+          '8803',
+          'PRINTFORMW 「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」',
+        ],
+        [
+          '8804',
+          'PRINTFORMW %SAVESTR:TARGET%只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着%SAVESTR:MASTER%的阴茎……直到两人满意为止',
+        ],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

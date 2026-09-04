@@ -6729,6 +6729,118 @@ for (const [label, assistant] of [
   });
 }
 
+// —— SELECTCOM 64（3P CFLAG:391）——
+
+test('COM64 守卫：助手不是玛奥时静默跳过', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.seed_chara(18, { id: 18, name: '助手', callname: '助手' });
+    f.era.addCharacter(18);
+    era_flag.assi = 18;
+    era_flag.assiplay = 0;
+  }, 64);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [], 'COM64 非玛奥助手无输出');
+  assert.equal(fixture.store.get(`cflag:${LILY}:391`), undefined);
+});
+
+const three_person_parts = [
+  [1, 2],
+  [2, 1],
+  [1, 3],
+  [3, 1],
+  [2, 3],
+  [3, 2],
+];
+
+test('COM64 初めて：处女/非处女×玛奥助手/无助手×六种部位组合', async () => {
+  for (const virgin of [true, false]) {
+    for (const assistant of [true, false]) {
+      for (const [master_part, assi_part] of three_person_parts) {
+        const fixture = setup_lily((f, era_flag) => {
+          if (virgin) f.store.set(`talent:${LILY}:0`, 1);
+          f.store.set('tflag:40', master_part);
+          f.store.set('tflag:41', assi_part);
+          if (assistant) {
+            preset_chara_17(f);
+            f.era.addCharacter(MAO);
+            era_flag.assi = MAO;
+            era_flag.assiplay = 1;
+          }
+        }, 64);
+        await speak_com11(fixture, seq_rand());
+        assert.ok(
+          fixture.text_lines().length > 0,
+          'COM64 首次各部位组合均有输出',
+        );
+        assert.equal(
+          fixture.store.get(`cflag:${LILY}:391`),
+          1,
+          'COM64 首次推进 CFLAG:391=1',
+        );
+      }
+    }
+  }
+});
+
+test('COM64 二回目：处女/非处女×玛奥助手/无助手×六种部位组合', async () => {
+  for (const virgin of [true, false]) {
+    for (const assistant of [true, false]) {
+      for (const [master_part, assi_part] of three_person_parts) {
+        const fixture = setup_lily((f, era_flag) => {
+          f.store.set(`cflag:${LILY}:391`, 1);
+          if (virgin) f.store.set(`talent:${LILY}:0`, 1);
+          f.store.set('tflag:40', master_part);
+          f.store.set('tflag:41', assi_part);
+          if (assistant) {
+            preset_chara_17(f);
+            f.era.addCharacter(MAO);
+            era_flag.assi = MAO;
+            era_flag.assiplay = 1;
+          }
+        }, 64);
+        await speak_com11(fixture, seq_rand());
+        assert.ok(
+          fixture.text_lines().length > 0,
+          'COM64 二次各部位组合均有输出',
+        );
+        assert.equal(
+          fixture.store.get(`cflag:${LILY}:391`),
+          1,
+          'COM64 二次不改写 CFLAG:391',
+        );
+      }
+    }
+  }
+});
+
+test('COM64 根据主人和助手性器素质显示电动假阳具或阴茎', async () => {
+  for (const [talent_121, talent_122, expected] of [
+    [0, 0, '电动假阳具'],
+    [1, 0, '阴茎'],
+  ]) {
+    const fixture = setup_lily((f, era_flag) => {
+      preset_chara_17(f);
+      f.era.addCharacter(MAO);
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set('tflag:40', 3);
+      f.store.set('tflag:41', 2);
+      f.store.set(`cflag:${LILY}:391`, 1);
+      f.store.set(`talent:${LILY}:85`, 1);
+      f.store.set(`abl:${LILY}:3`, 3);
+      f.store.set(`talent:${MAO}:121`, talent_121);
+      f.store.set(`talent:${MAO}:122`, talent_122);
+      f.store.set(`talent:0:121`, talent_121);
+      f.store.set(`talent:0:122`, talent_122);
+    }, 64);
+    await speak_com11(fixture, seq_rand());
+    const output = fixture.text_lines().join('\n');
+    assert.ok(output.includes(`自己双腿间的${expected}开始持续地侵犯`));
+    assert.ok(output.includes(`边用${expected}侵犯着莉莉的喉咙深处`));
+    assert.doesNotMatch(output, /\\@TALENT:|%SAVESTR:/);
+  }
+});
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {

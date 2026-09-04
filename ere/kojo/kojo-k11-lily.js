@@ -1489,6 +1489,7 @@ async function kojo_message_com_11(rand) {
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(player); // %SAVESTR:PLAYER%
   const master_name = chara_callname(MASTER); // %SAVESTR:MASTER%
+  const assi_name = era_flag.assi >= 0 ? chara_callname(era_flag.assi) : ''; // %SAVESTR:ASSI%
   const kojo = chara(target).kojo;
   const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
   const assi_mao =
@@ -12490,7 +12491,7 @@ async function kojo_message_com_11(rand) {
     return 0; // :6682
   } // :6683
 
-  // :6688-6829 IF SELECTCOM === 55（放置PLAY CFLAG:356）
+  // :6688-6829 IF SELECTCOM == 55（放置PLAY CFLAG:356）
   if (era_flag.selectcom === 55) {
     if (kojo.放置PLAY === 0) {
       // :6690
@@ -13613,6 +13614,4197 @@ async function kojo_message_com_11(rand) {
       return 0; // :7165
     } // :7166
   } // :7167
+
+  // :7179-8814 IF SELECTCOM == 64（3P CFLAG:391）
+  if (era_flag.selectcom === 64) {
+    // :7179
+
+    if (era_flag.assi > 0 && era_flag.assi !== 17) {
+      // :7181-7182
+      return 0; // :7181-7182
+    } // :7181-7182
+
+    const assi_weapon =
+      era_flag.assi > 0 &&
+      era0(`talent:${era_flag.assi}:121`) === 0 &&
+      era0(`talent:${era_flag.assi}:122`) === 0
+        ? '电动假阳具'
+        : '阴茎';
+    const master_weapon =
+      era0(`talent:${MASTER}:121`) === 0 && era0(`talent:${MASTER}:122`) === 0
+        ? '电动假阳具'
+        : '阴茎';
+
+    if (kojo.三人PLAY === 0) {
+      // :7184
+
+      if (era.get(`talent:${target}:0`) === 1) {
+        // :7186
+
+        if (assi_mao) {
+          // :7188
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7190
+            await era.printAndWait(
+              `${master_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :7191
+            await era.printAndWait(
+              `${assi_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :7192
+            if (era.get(`talent:${target}:85`)) {
+              // :7193
+              await era.printAndWait(`「呜……啊啊……我的处女！」`); // :7194
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :7195
+              await era.print(
+                `『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』`,
+              ); // :7196
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，激烈地侵犯着姐姐的后庭。`,
+              ); // :7197
+              await era.printAndWait(
+                `「啊啊……这样被夹击……一下子……就要去了啊啊啊！」`,
+              ); // :7198
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7199
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)}」`,
+              ); // :7200
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :7201
+              await era.print(`『嘿嘿，姐姐，处女三明治的感觉如何啊？』`); // :7202
+              await era.printAndWait(
+                `${assi_name}嬉笑着，用阴茎激烈地侵犯着${target_name}的后庭。`,
+              ); // :7203
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :7204
+            } else {
+              // :7205
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :7206
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :7207
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :7208
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7209
+            } // :7210
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7212
+            await era.printAndWait(
+              `${assi_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :7213
+            await era.printAndWait(
+              `${master_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :7214
+            if (era.get(`talent:${target}:85`)) {
+              // :7215
+              await era.printAndWait(`「呜啊啊……我，我的第一次……啊啊啊！」`); // :7216
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :7217
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴！』`,
+              ); // :7218
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :7219
+              await era.printAndWait(
+                `「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」`,
+              ); // :7220
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7221
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)} 好……好奇怪的感觉啊啊${heart(1)}」`,
+              ); // :7222
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :7223
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴${heart(1)}』`,
+              ); // :7224
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :7225
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :7226
+            } else {
+              // :7227
+              await era.print(
+                `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
+              ); // :7228
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :7229
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :7230
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :7231
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
+              ); // :7232
+            } // :7233
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7235
+            if (era.get(`talent:${target}:85`)) {
+              // :7236
+              await era.printAndWait(
+                `「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊${heart(1)} 呣呣${heart(1)}……」`,
+              ); // :7237
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7238
+              await era.print(
+                `『哎嘿嘿，姐姐的处女今天正式属于魔王大人了${heart(1)}』`,
+              ); // :7239
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7240
+              await era.printAndWait(
+                `「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊${heart(1)} 」`,
+              ); // :7241
+              await era.print(
+                `『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊${heart(1)}』`,
+              ); // :7242
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7243
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7244
+              await era.printAndWait(
+                `「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊${heart(1)}」`,
+              ); // :7245
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7246
+              await era.print(
+                `『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀${heart(1)}』`,
+              ); // :7247
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7248
+              await era.printAndWait(
+                `「好舒服……唔呣……唔呣${heart(1)} 这样同时……侍奉两根阴茎……实在是太棒了唔唔${heart(1)}」`,
+              ); // :7249
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+              ); // :7250
+            } else {
+              // :7251
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7252
+              await era.printAndWait(
+                `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7253
+              await era.printAndWait(`「不，不要啊啊！」`); // :7254
+              await era.print(`『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』`); // :7255
+              await era.printAndWait(
+                `${assi_name}抓着${target_name}的头，用${assi_weapon}强行侵犯着姐姐的喉咙。`,
+              ); // :7256
+              await era.printAndWait(
+                `身后的${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7257
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7258
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7259
+            } // :7260
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7262
+            if (era.get(`talent:${target}:85`)) {
+              // :7263
+              await era.printAndWait(
+                `「呜呜……唔呣${heart(1)}！${assi_name}？！不，不可以……」`,
+              ); // :7264
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7265
+              await era.print(
+                `『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』`,
+              ); // :7266
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7267
+              await era.printAndWait(
+                `「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」`,
+              ); // :7268
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7269
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7270
+              await era.printAndWait(
+                `「唔呣……唔唔……我的处女……就这样……${heart(1)}」`,
+              ); // :7271
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7272
+              await era.print(
+                `『啊啊，梦寐以求的姐姐的第一次，我就这么收下了${heart(1)}』`,
+              ); // :7273
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7274
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7275
+              await era.printAndWait(
+                `「唔呣……唔唔……${heart(1)} 这样……好舒服……唔唔……唔呣${heart(1)}」`,
+              ); // :7276
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
+              ); // :7277
+            } else {
+              // :7278
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7279
+              await era.printAndWait(
+                `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
+              ); // :7280
+              await era.print(
+                `『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』`,
+              ); // :7281
+              await era.printAndWait(
+                `「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」`,
+              ); // :7282
+              await era.printAndWait(
+                `${master_name}抓着${target_name}的头，将阴茎插到了喉咙的最深处。`,
+              ); // :7283
+              await era.printAndWait(
+                `身后的${assi_name}也无情地夺去了${target_name}的处女身。`,
+              ); // :7284
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7285
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7286
+            } // :7287
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7289
+            if (era.get(`talent:${target}:85`)) {
+              // :7290
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7291
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为${assi_name}口交了啊！」`,
+              ); // :7292
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』`,
+              ); // :7293
+              await era.printAndWait(
+                `被妹妹的话羞辱得脸红满面的${target_name}只能努力集中精神，吸吮着${assi_name}的${assi_weapon}。`,
+              ); // :7294
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7295
+              await era.printAndWait(
+                `${master_name}欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7296
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7297
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7298
+              await era.printAndWait(
+                `「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」`,
+              ); // :7299
+              await era.printAndWait(
+                `${assi_name}用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的${target_name}。`,
+              ); // :7300
+              await era.print(
+                `『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』`,
+              ); // :7301
+              await era.printAndWait(
+                `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7302
+            } else {
+              // :7303
+              await era.printAndWait(
+                `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7304
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7305
+              await era.print(
+                `『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』`,
+              ); // :7306
+              await era.printAndWait(
+                `${assi_name}哼了一声，用${assi_weapon}开始侵犯，抽插着姐姐的嘴和喉咙。`,
+              ); // :7307
+              await era.print(
+                `『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』`,
+              ); // :7308
+              await era.printAndWait(
+                `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
+              ); // :7309
+            } // :7310
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7312
+            if (era.get(`talent:${target}:85`)) {
+              // :7313
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7314
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」`,
+              ); // :7315
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊${heart(1)}』`,
+              ); // :7316
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7317
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7318
+              await era.printAndWait(
+                `${target_name}集中精神，忍耐着肛门的快感，努力吸吮着${master_name}的阴茎…`,
+              ); // :7319
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7320
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7321
+              await era.printAndWait(
+                `「呜……呜啊啊……这样……太激烈了${heart(1)} 但是……好舒服……唔呣呣……唔唔${heart(1)}」`,
+              ); // :7322
+              await era.print(
+                `『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』`,
+              ); // :7323
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7324
+              await era.printAndWait(
+                `「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了${heart(1)}」`,
+              ); // :7325
+              await era.printAndWait(
+                `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
+              ); // :7326
+            } else {
+              // :7327
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7328
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7329
+              await era.print(
+                `『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』`,
+              ); // :7330
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7331
+              await era.print(
+                `『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』`,
+              ); // :7332
+              await era.printAndWait(
+                `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
+              ); // :7333
+            } // :7334
+          } else {
+            // :7335
+            await era.printAndWait(`出错了？`); // :7336
+          } // :7337
+        } else {
+          // :7339
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7341
+            await era.printAndWait(
+              `${master_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :7342
+            await era.printAndWait(
+              `${assi_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :7343
+            if (era.get(`talent:${target}:85`)) {
+              // :7344
+              await era.printAndWait(`「呜……啊啊……我的处女！」`); // :7345
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :7346
+              await era.print(
+                `『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』`,
+              ); // :7347
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，激烈地侵犯着姐姐的后庭。`,
+              ); // :7348
+              await era.printAndWait(
+                `「啊啊……这样被夹击……一下子……就要去了啊啊啊！」`,
+              ); // :7349
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7350
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)}」`,
+              ); // :7351
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :7352
+              await era.print(`『嘿嘿，姐姐，处女三明治的感觉如何啊？』`); // :7353
+              await era.printAndWait(
+                `${assi_name}嬉笑着，用阴茎激烈地侵犯着${target_name}的后庭。`,
+              ); // :7354
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :7355
+            } else {
+              // :7356
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :7357
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :7358
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :7359
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7360
+            } // :7361
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7363
+            await era.printAndWait(
+              `${assi_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :7364
+            await era.printAndWait(
+              `${master_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :7365
+            if (era.get(`talent:${target}:85`)) {
+              // :7366
+              await era.printAndWait(`「呜啊啊……我，我的第一次……啊啊啊！」`); // :7367
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :7368
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴！』`,
+              ); // :7369
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :7370
+              await era.printAndWait(
+                `「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」`,
+              ); // :7371
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7372
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)} 好……好奇怪的感觉啊啊${heart(1)}」`,
+              ); // :7373
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :7374
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴${heart(1)}』`,
+              ); // :7375
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :7376
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :7377
+            } else {
+              // :7378
+              await era.print(
+                `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
+              ); // :7379
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :7380
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :7381
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :7382
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
+              ); // :7383
+            } // :7384
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7386
+            if (era.get(`talent:${target}:85`)) {
+              // :7387
+              await era.printAndWait(
+                `「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊${heart(1)} 呣呣${heart(1)}……」`,
+              ); // :7388
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7389
+              await era.print(
+                `『哎嘿嘿，姐姐的处女今天正式属于魔王大人了${heart(1)}』`,
+              ); // :7390
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7391
+              await era.printAndWait(
+                `「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊${heart(1)} 」`,
+              ); // :7392
+              await era.print(
+                `『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊${heart(1)}』`,
+              ); // :7393
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7394
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7395
+              await era.printAndWait(
+                `「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊${heart(1)}」`,
+              ); // :7396
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7397
+              await era.print(
+                `『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀${heart(1)}』`,
+              ); // :7398
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7399
+              await era.printAndWait(
+                `「好舒服……唔呣……唔呣${heart(1)} 这样同时……侍奉两根阴茎……实在是太棒了唔唔${heart(1)}」`,
+              ); // :7400
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+              ); // :7401
+            } else {
+              // :7402
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7403
+              await era.printAndWait(
+                `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7404
+              await era.printAndWait(`「不，不要啊啊！」`); // :7405
+              await era.print(`『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』`); // :7406
+              await era.printAndWait(
+                `${assi_name}抓着${target_name}的头，用${assi_weapon}强行侵犯着姐姐的喉咙。`,
+              ); // :7407
+              await era.printAndWait(
+                `身后的${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7408
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7409
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7410
+            } // :7411
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7413
+            if (era.get(`talent:${target}:85`)) {
+              // :7414
+              await era.printAndWait(
+                `「呜呜……唔呣${heart(1)}！${assi_name}？！不，不可以……」`,
+              ); // :7415
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7416
+              await era.print(
+                `『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』`,
+              ); // :7417
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7418
+              await era.printAndWait(
+                `「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」`,
+              ); // :7419
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7420
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7421
+              await era.printAndWait(
+                `「唔呣……唔唔……我的处女……就这样……${heart(1)}」`,
+              ); // :7422
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7423
+              await era.print(
+                `『啊啊，梦寐以求的姐姐的第一次，我就这么收下了${heart(1)}』`,
+              ); // :7424
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7425
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7426
+              await era.printAndWait(
+                `「唔呣……唔唔……${heart(1)} 这样……好舒服……唔唔……唔呣${heart(1)}」`,
+              ); // :7427
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
+              ); // :7428
+            } else {
+              // :7429
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7430
+              await era.printAndWait(
+                `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
+              ); // :7431
+              await era.print(
+                `『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』`,
+              ); // :7432
+              await era.printAndWait(
+                `「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」`,
+              ); // :7433
+              await era.printAndWait(
+                `${master_name}抓着${target_name}的头，将阴茎插到了喉咙的最深处。`,
+              ); // :7434
+              await era.printAndWait(
+                `身后的${assi_name}也无情地夺去了${target_name}的处女身。`,
+              ); // :7435
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7436
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7437
+            } // :7438
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7440
+            if (era.get(`talent:${target}:85`)) {
+              // :7441
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7442
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为${assi_name}口交了啊！」`,
+              ); // :7443
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』`,
+              ); // :7444
+              await era.printAndWait(
+                `被妹妹的话羞辱得脸红满面的${target_name}只能努力集中精神，吸吮着${assi_name}的${assi_weapon}。`,
+              ); // :7445
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7446
+              await era.printAndWait(
+                `${master_name}欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7447
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7448
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7449
+              await era.printAndWait(
+                `「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」`,
+              ); // :7450
+              await era.printAndWait(
+                `${assi_name}用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的${target_name}。`,
+              ); // :7451
+              await era.print(
+                `『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』`,
+              ); // :7452
+              await era.printAndWait(
+                `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7453
+            } else {
+              // :7454
+              await era.printAndWait(
+                `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7455
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7456
+              await era.print(
+                `『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』`,
+              ); // :7457
+              await era.printAndWait(
+                `${assi_name}哼了一声，用${assi_weapon}开始侵犯，抽插着姐姐的嘴和喉咙。`,
+              ); // :7458
+              await era.print(
+                `『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』`,
+              ); // :7459
+              await era.printAndWait(
+                `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
+              ); // :7460
+            } // :7461
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7463
+            if (era.get(`talent:${target}:85`)) {
+              // :7464
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7465
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」`,
+              ); // :7466
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊${heart(1)}』`,
+              ); // :7467
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7468
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7469
+              await era.printAndWait(
+                `${target_name}集中精神，忍耐着肛门的快感，努力吸吮着${master_name}的阴茎…`,
+              ); // :7470
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7471
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7472
+              await era.printAndWait(
+                `「呜……呜啊啊……这样……太激烈了${heart(1)} 但是……好舒服……唔呣呣……唔唔${heart(1)}」`,
+              ); // :7473
+              await era.print(
+                `『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』`,
+              ); // :7474
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7475
+              await era.printAndWait(
+                `「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了${heart(1)}」`,
+              ); // :7476
+              await era.printAndWait(
+                `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
+              ); // :7477
+            } else {
+              // :7478
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7479
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7480
+              await era.print(
+                `『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』`,
+              ); // :7481
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7482
+              await era.print(
+                `『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』`,
+              ); // :7483
+              await era.printAndWait(
+                `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
+              ); // :7484
+            } // :7485
+          } else {
+            // :7486
+          } // :7488
+        } // :7489
+      } else {
+        // :7491
+
+        if (assi_mao) {
+          // :7493
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7495
+            if (era.get(`talent:${target}:85`)) {
+              // :7496
+              await era.printAndWait(
+                `「不，不行啊啊！这样……两人一起插入什么的……人家会受不了的啊啊啊！」`,
+              ); // :7497
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。`,
+              ); // :7498
+              await era.print(
+                `『哼，不要得了便宜卖乖啊姐姐，能这样独占魔王大人！绝对不可饶恕！』`,
+              ); // :7499
+              await era.printAndWait(
+                `${assi_name}嫉妒地扭着腰，激烈的侵犯着姐姐的肛门。`,
+              ); // :7500
+              await era.printAndWait(
+                `「呜呜……饶，饶了我吧……屁股……这样会坏掉的啊啊啊！」`,
+              ); // :7501
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7502
+              await era.printAndWait(
+                `「哈啊……哈啊${heart(1)} 被魔王大人和${assi_name}的阴茎……一起插进来了${heart(1)}」`,
+              ); // :7503
+              await era.printAndWait(
+                `蜜穴与肛门被同时插入，极度的快感瞬间淹没了${target_name}。`,
+              ); // :7504
+              await era.print(
+                `『啊啊……姐姐的肛门……夹得这么紧……真的是名器啊啊${heart(1)}』`,
+              ); // :7505
+              await era.printAndWait(
+                `${assi_name}嬉笑着，开始激烈地侵犯着${target_name}的肛门，搅动着直肠的敏感点。`,
+              ); // :7506
+              await era.printAndWait(
+                `「好，好舒服${heart(1)}…… 被两根阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
+              ); // :7507
+            } else {
+              // :7508
+              await era.printAndWait(
+                `「饶，饶了我吧……求求你们了……这样会裂开的，真的会裂开的啊啊！」`,
+              ); // :7509
+              await era.printAndWait(
+                `蜜穴和肛门被同时强行插入，完全不能适应这种玩法的${target_name}惨叫了起来。`,
+              ); // :7510
+              await era.print(
+                `『没关系，马上就会让姐姐舒服起来了哦${heart(1)}』`,
+              ); // :7511
+              await era.printAndWait(
+                `${assi_name}这么说着，边配合着${master_name}的动作，扭着腰开始激烈地侵犯${target_name}的肛门……`,
+              ); // :7512
+            } // :7513
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7515
+            if (era.get(`talent:${target}:85`)) {
+              // :7516
+              await era.printAndWait(
+                `「呜啊啊……这样……两人一起插进来……人家……会受不了的啊啊！」`,
+              ); // :7517
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。`,
+              ); // :7518
+              await era.print(
+                `『哎呀呀，姐姐的肉穴……实在是太舒服了！舒服得人家完全停不下来啊啊！』`,
+              ); // :7519
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，开始激烈地侵犯，蹂躏着${target_name}的蜜穴。`,
+              ); // :7520
+              await era.printAndWait(
+                `「咿啊啊啊……屁股……还有小穴……都要被侵犯得一塌糊涂了啊啊啊！」`,
+              ); // :7521
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7522
+              await era.printAndWait(
+                `「哈啊……哈啊${heart(1)} 被魔王大人和${assi_name}的阴茎……一起插进来了${heart(1)}」`,
+              ); // :7523
+              await era.printAndWait(
+                `蜜穴与肛门被同时插入，极度的快感让${target_name}呼吸变得急促了起来，嘴也合不上了。`,
+              ); // :7524
+              await era.print(
+                `『啊啊……姐姐的蜜穴……好紧好舒服${heart(1)} 真的是名器啊啊！』`,
+              ); // :7525
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着${target_name}。`,
+              ); // :7526
+              await era.printAndWait(
+                `「好，好舒服${heart(1)}……被两人的阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
+              ); // :7527
+            } else {
+              // :7528
+              await era.print(
+                `『哎嘿嘿，魔王大人说姐姐的肛门很适合调教成性器呢${heart(1)}』`,
+              ); // :7529
+              await era.printAndWait(
+                `「不，不可以啊啊啊！这样同时插进来！姐姐真的会坏掉的啊啊！」`,
+              ); // :7530
+              await era.printAndWait(
+                `蜜穴和肛门被同时贯穿的痛苦，让${target_name}的惨叫在调教室里回响着。`,
+              ); // :7531
+              await era.print(
+                `『哎哎，有什么好哭的呢，能被我和魔王大人这样抱在中间侵犯，明明是性奴姐姐的福气才是！给我好好享受起来啊！』`,
+              ); // :7532
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，坏笑着开始更加激烈地侵犯着${target_name}……`,
+              ); // :7533
+            } // :7534
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7536
+            if (era.get(`talent:${target}:85`)) {
+              // :7537
+              await era.printAndWait(
+                `「唔呣呣……嘴巴里充满了${assi_name}阴茎的味道……呣呣！」`,
+              ); // :7538
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢顶入了蜜穴中。`,
+              ); // :7539
+              await era.print(
+                `『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎也得到了哦${heart(1)}』`,
+              ); // :7540
+              await era.printAndWait(
+                `身后${master_name}挺着腰，开始持续地侵犯着${target_name}的紧致的蜜穴。`,
+              ); // :7541
+              await era.printAndWait(
+                `「呜啊啊……被，被魔王大人顶到……子宫口了${heart(1)}……唔啊啊……唔呣……唔呣！」`,
+              ); // :7542
+              await era.printAndWait(
+                `${assi_name}也毫不留情地用${assi_weapon}侵犯着姐姐的嘴。`,
+              ); // :7543
+              await era.print(
+                `『不要光顾着享受魔王大人的阴茎，也要好好地给我口交啊！』`,
+              ); // :7544
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7545
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7546
+              await era.printAndWait(
+                `「哈啊……唔呣……唔呣……这样……好舒服……呣呣${heart(1)}」`,
+              ); // :7547
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢顶入了蜜穴中。`,
+              ); // :7548
+              await era.print(`『嘿嘿，姐姐好像很舒服啊………』`); // :7549
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7550
+              await era.printAndWait(
+                `「是……是啊……真的很舒服${heart(1)} 被这样同时侵犯着肛门和嘴巴小穴……真是太舒服了啊呣呣${heart(1)}」`,
+              ); // :7551
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+              ); // :7552
+            } else {
+              // :7553
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7554
+              await era.printAndWait(
+                `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头顶入了蜜穴中。`,
+              ); // :7555
+              await era.printAndWait(
+                `「不，不行啊……这样前后一起侵犯……唔呣呣……呣呣！」`,
+              ); // :7556
+              await era.printAndWait(
+                `无视${target_name}的哀求，${master_name}挺着腰，开始持续侵犯着紧致的蜜穴。`,
+              ); // :7557
+              await era.print(`『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』`); // :7558
+              await era.printAndWait(
+                `${assi_name}抓着${target_name}的头，用${assi_weapon}强行侵犯着姐姐的喉咙。`,
+              ); // :7559
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7560
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7561
+            } // :7562
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7564
+            if (era.get(`talent:${target}:85`)) {
+              // :7565
+              await era.printAndWait(
+                `「唔呣？不，不可以这样同时啊！${assi_name}……稍微等一下……唔呣……唔呣${heart(1)}」`,
+              ); // :7566
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，顶入了敏感的蜜穴中。`,
+              ); // :7567
+              await era.print(`『啊啊……姐姐的蜜穴……好舒服啊啊！』`); // :7568
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7569
+              await era.printAndWait(
+                `「不，不要……顶的这么深啊啊……没有办法……好好给魔王大人……口交了啊唔……呣呣！」`,
+              ); // :7570
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7571
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7572
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7573
+              await era.printAndWait(
+                `「啊啊……好棒……这样一前一后……同时用蜜穴和嘴巴小穴……侍奉${assi_name}和魔王大人……唔呣……唔呣…${heart(1)}」`,
+              ); // :7574
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，顶入了敏感的蜜穴中。`,
+              ); // :7575
+              await era.print(
+                `『嘿啊，吸吮着魔王大人的阴茎有那么舒服吗，小穴夹得更紧了啊姐姐♪』`,
+              ); // :7576
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7577
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7578
+              await era.printAndWait(
+                `「唔呣……唔唔……${heart(1)} 3p……好棒……好舒服……唔唔……唔呣${heart(1)}」`,
+              ); // :7579
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
+              ); // :7580
+            } else {
+              // :7581
+              await era.printAndWait(
+                `「唔呣……不，不可以……这样……太，太羞耻了啊啊！」`,
+              ); // :7582
+              await era.printAndWait(
+                `${target_name}被强制边为${master_name}口交着，边悲惨地感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
+              ); // :7583
+              await era.print(
+                `『哎嘿嘿，魔王大人说姐姐的嘴巴小穴现在和蜜穴已经没有区别了呢，都变成淫乱性器了！』`,
+              ); // :7584
+              await era.printAndWait(
+                `边嘲笑着${target_name}，${assi_name}边开始毫不留情地侵犯着姐姐的蜜穴。`,
+              ); // :7585
+              await era.printAndWait(
+                `「呜呜！好痛！不要那么激烈……唔呣……唔呣！？」`,
+              ); // :7586
+              await era.printAndWait(
+                `${master_name}抓着${target_name}的头，将阴茎插到了喉咙的最深处。`,
+              ); // :7587
+              await era.printAndWait(
+                `『嘿嘿，姐姐给我老实用喉咙小穴和蜜穴同时高潮吧！』`,
+              ); // :7588
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7589
+            } // :7590
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7592
+            if (era.get(`talent:${target}:85`)) {
+              // :7593
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7594
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为${assi_name}口交了啊！」`,
+              ); // :7595
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』`,
+              ); // :7596
+              await era.printAndWait(
+                `被妹妹的话羞辱得脸红满面的${target_name}只能努力集中精神，吸吮着${assi_name}的${assi_weapon}。`,
+              ); // :7597
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7598
+              await era.printAndWait(
+                `${master_name}欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7599
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7600
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7601
+              await era.printAndWait(
+                `「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」`,
+              ); // :7602
+              await era.printAndWait(
+                `${assi_name}用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的${target_name}。`,
+              ); // :7603
+              await era.print(
+                `『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』`,
+              ); // :7604
+              await era.printAndWait(
+                `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7605
+            } else {
+              // :7606
+              await era.printAndWait(
+                `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7607
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7608
+              await era.print(
+                `『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』`,
+              ); // :7609
+              await era.printAndWait(
+                `${assi_name}哼了一声，用${assi_weapon}开始侵犯，抽插着姐姐的嘴和喉咙。`,
+              ); // :7610
+              await era.print(
+                `『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』`,
+              ); // :7611
+              await era.printAndWait(
+                `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
+              ); // :7612
+            } // :7613
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7615
+            if (era.get(`talent:${target}:85`)) {
+              // :7616
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7617
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」`,
+              ); // :7618
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊${heart(1)}』`,
+              ); // :7619
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7620
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7621
+              await era.printAndWait(
+                `${target_name}集中精神，忍耐着肛门的快感，努力吸吮着${master_name}的阴茎…`,
+              ); // :7622
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7623
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7624
+              await era.printAndWait(
+                `「呜……呜啊啊……这样……太激烈了${heart(1)} 但是……好舒服……唔呣呣……唔唔${heart(1)}」`,
+              ); // :7625
+              await era.print(
+                `『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』`,
+              ); // :7626
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7627
+              await era.printAndWait(
+                `「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了${heart(1)}」`,
+              ); // :7628
+              await era.printAndWait(
+                `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
+              ); // :7629
+            } else {
+              // :7630
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7631
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7632
+              await era.print(
+                `『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』`,
+              ); // :7633
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7634
+              await era.print(
+                `『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』`,
+              ); // :7635
+              await era.printAndWait(
+                `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
+              ); // :7636
+            } // :7637
+          } else {
+            // :7638
+            await era.printAndWait(`出错了？`); // :7639
+          } // :7640
+        } else {
+          // :7642
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7644
+            if (era.get(`talent:${target}:85`)) {
+              // :7645
+              await era.printAndWait(
+                `「不，不行啊啊！这样……两人一起插入什么的……人家会受不了的啊啊啊！」`,
+              ); // :7646
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。`,
+              ); // :7647
+              await era.print(
+                `『哼，不要得了便宜卖乖啊姐姐，能这样独占魔王大人！绝对不可饶恕！』`,
+              ); // :7648
+              await era.printAndWait(
+                `${assi_name}嫉妒地扭着腰，激烈的侵犯着姐姐的肛门。`,
+              ); // :7649
+              await era.printAndWait(
+                `「呜呜……饶，饶了我吧……屁股……这样会坏掉的啊啊啊！」`,
+              ); // :7650
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7651
+              await era.printAndWait(
+                `「哈啊……哈啊${heart(1)} 被魔王大人和${assi_name}的阴茎……一起插进来了${heart(1)}」`,
+              ); // :7652
+              await era.printAndWait(
+                `蜜穴与肛门被同时插入，极度的快感瞬间淹没了${target_name}。`,
+              ); // :7653
+              await era.print(
+                `『啊啊……姐姐的肛门……夹得这么紧……真的是名器啊啊${heart(1)}』`,
+              ); // :7654
+              await era.printAndWait(
+                `${assi_name}嬉笑着，开始激烈地侵犯着${target_name}的肛门，搅动着直肠的敏感点。`,
+              ); // :7655
+              await era.printAndWait(
+                `「好，好舒服${heart(1)}…… 被两根阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
+              ); // :7656
+            } else {
+              // :7657
+              await era.printAndWait(
+                `「饶，饶了我吧……求求你们了……这样会裂开的，真的会裂开的啊啊！」`,
+              ); // :7658
+              await era.printAndWait(
+                `蜜穴和肛门被同时强行插入，完全不能适应这种玩法的${target_name}惨叫了起来。`,
+              ); // :7659
+              await era.print(
+                `『没关系，马上就会让姐姐舒服起来了哦${heart(1)}』`,
+              ); // :7660
+              await era.printAndWait(
+                `${assi_name}这么说着，边配合着${master_name}的动作，扭着腰开始激烈地侵犯${target_name}的肛门……`,
+              ); // :7661
+            } // :7662
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7664
+            if (era.get(`talent:${target}:85`)) {
+              // :7665
+              await era.printAndWait(
+                `「呜啊啊……这样……两人一起插进来……人家……会受不了的啊啊！」`,
+              ); // :7666
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹夹在中间，拼命忍耐着肛门与蜜穴被同时侵犯的极度快感。`,
+              ); // :7667
+              await era.print(
+                `『哎呀呀，姐姐的肉穴……实在是太舒服了！舒服得人家完全停不下来啊啊！』`,
+              ); // :7668
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，开始激烈地侵犯，蹂躏着${target_name}的蜜穴。`,
+              ); // :7669
+              await era.printAndWait(
+                `「咿啊啊啊……屁股……还有小穴……都要被侵犯得一塌糊涂了啊啊啊！」`,
+              ); // :7670
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7671
+              await era.printAndWait(
+                `「哈啊……哈啊${heart(1)} 被魔王大人和${assi_name}的阴茎……一起插进来了${heart(1)}」`,
+              ); // :7672
+              await era.printAndWait(
+                `蜜穴与肛门被同时插入，极度的快感让${target_name}呼吸变得急促了起来，嘴也合不上了。`,
+              ); // :7673
+              await era.print(
+                `『啊啊……姐姐的蜜穴……好紧好舒服${heart(1)} 真的是名器啊啊！』`,
+              ); // :7674
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着${target_name}。`,
+              ); // :7675
+              await era.printAndWait(
+                `「好，好舒服${heart(1)}……被两人的阴茎……同时在身体里抽插着${heart(1)}……一下子就要去了啊啊！」`,
+              ); // :7676
+            } else {
+              // :7677
+              await era.print(
+                `『哎嘿嘿，魔王大人说姐姐的肛门很适合调教成性器呢${heart(1)}』`,
+              ); // :7678
+              await era.printAndWait(
+                `「不，不可以啊啊啊！这样同时插进来！姐姐真的会坏掉的啊啊！」`,
+              ); // :7679
+              await era.printAndWait(
+                `蜜穴和肛门被同时贯穿的痛苦，让${target_name}的惨叫在调教室里回响着。`,
+              ); // :7680
+              await era.print(
+                `『哎哎，有什么好哭的呢，能被我和魔王大人这样抱在中间侵犯，明明是性奴姐姐的福气才是！给我好好享受起来啊！』`,
+              ); // :7681
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，坏笑着开始更加激烈地侵犯着${target_name}……`,
+              ); // :7682
+            } // :7683
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7685
+            if (era.get(`talent:${target}:85`)) {
+              // :7686
+              await era.printAndWait(
+                `「唔呣呣……嘴巴里充满了${assi_name}阴茎的味道……呣呣！」`,
+              ); // :7687
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢顶入了蜜穴中。`,
+              ); // :7688
+              await era.print(
+                `『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎也得到了哦${heart(1)}』`,
+              ); // :7689
+              await era.printAndWait(
+                `身后${master_name}挺着腰，开始持续地侵犯着${target_name}的紧致的蜜穴。`,
+              ); // :7690
+              await era.printAndWait(
+                `「呜啊啊……被，被魔王大人顶到……子宫口了${heart(1)}……唔啊啊……唔呣……唔呣！」`,
+              ); // :7691
+              await era.printAndWait(
+                `${assi_name}也毫不留情地用${assi_weapon}侵犯着姐姐的嘴。`,
+              ); // :7692
+              await era.print(
+                `『不要光顾着享受魔王大人的阴茎，也要好好地给我口交啊！』`,
+              ); // :7693
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7694
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7695
+              await era.printAndWait(
+                `「哈啊……唔呣……唔呣……这样……好舒服……呣呣${heart(1)}」`,
+              ); // :7696
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢顶入了蜜穴中。`,
+              ); // :7697
+              await era.print(`『嘿嘿，姐姐好像很舒服啊………』`); // :7698
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7699
+              await era.printAndWait(
+                `「是……是啊……真的很舒服${heart(1)} 被这样同时侵犯着肛门和嘴巴小穴……真是太舒服了啊呣呣${heart(1)}」`,
+              ); // :7700
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+              ); // :7701
+            } else {
+              // :7702
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7703
+              await era.printAndWait(
+                `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头顶入了蜜穴中。`,
+              ); // :7704
+              await era.printAndWait(
+                `「不，不行啊……这样前后一起侵犯……唔呣呣……呣呣！」`,
+              ); // :7705
+              await era.printAndWait(
+                `无视${target_name}的哀求，${master_name}挺着腰，开始持续侵犯着紧致的蜜穴。`,
+              ); // :7706
+              await era.print(`『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』`); // :7707
+              await era.printAndWait(
+                `${assi_name}抓着${target_name}的头，用${assi_weapon}强行侵犯着姐姐的喉咙。`,
+              ); // :7708
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7709
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7710
+            } // :7711
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7713
+            if (era.get(`talent:${target}:85`)) {
+              // :7714
+              await era.printAndWait(
+                `「唔呣？不，不可以这样同时啊！${assi_name}……稍微等一下……唔呣……唔呣${heart(1)}」`,
+              ); // :7715
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，顶入了敏感的蜜穴中。`,
+              ); // :7716
+              await era.print(`『啊啊……姐姐的蜜穴……好舒服啊啊！』`); // :7717
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7718
+              await era.printAndWait(
+                `「不，不要……顶的这么深啊啊……没有办法……好好给魔王大人……口交了啊唔……呣呣！」`,
+              ); // :7719
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7720
+              await era.printAndWait(
+                `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7721
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7722
+              await era.printAndWait(
+                `「啊啊……好棒……这样一前一后……同时用蜜穴和嘴巴小穴……侍奉${assi_name}和魔王大人……唔呣……唔呣…${heart(1)}」`,
+              ); // :7723
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，顶入了敏感的蜜穴中。`,
+              ); // :7724
+              await era.print(
+                `『嘿啊，吸吮着魔王大人的阴茎有那么舒服吗，小穴夹得更紧了啊姐姐♪』`,
+              ); // :7725
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7726
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7727
+              await era.printAndWait(
+                `「唔呣……唔唔……${heart(1)} 3p……好棒……好舒服……唔唔……唔呣${heart(1)}」`,
+              ); // :7728
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
+              ); // :7729
+            } else {
+              // :7730
+              await era.printAndWait(
+                `「唔呣……不，不可以……这样……太，太羞耻了啊啊！」`,
+              ); // :7731
+              await era.printAndWait(
+                `${target_name}被强制边为${master_name}口交着，边悲惨地感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
+              ); // :7732
+              await era.print(
+                `『哎嘿嘿，魔王大人说姐姐的嘴巴小穴现在和蜜穴已经没有区别了呢，都变成淫乱性器了！』`,
+              ); // :7733
+              await era.printAndWait(
+                `边嘲笑着${target_name}，${assi_name}边开始毫不留情地侵犯着姐姐的蜜穴。`,
+              ); // :7734
+              await era.printAndWait(
+                `「呜呜！好痛！不要那么激烈……唔呣……唔呣！？」`,
+              ); // :7735
+              await era.printAndWait(
+                `${master_name}抓着${target_name}的头，将阴茎插到了喉咙的最深处。`,
+              ); // :7736
+              await era.printAndWait(
+                `『嘿嘿，姐姐给我老实用喉咙小穴和蜜穴同时高潮吧！』`,
+              ); // :7737
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7738
+            } // :7739
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7741
+            if (era.get(`talent:${target}:85`)) {
+              // :7742
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7743
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为${assi_name}口交了啊！」`,
+              ); // :7744
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，可是要惩罚的哦』`,
+              ); // :7745
+              await era.printAndWait(
+                `被妹妹的话羞辱得脸红满面的${target_name}只能努力集中精神，吸吮着${assi_name}的${assi_weapon}。`,
+              ); // :7746
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7747
+              await era.printAndWait(
+                `${master_name}欣赏着姐姐努力用嘴巴侍奉着妹妹的样子，更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7748
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7749
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7750
+              await era.printAndWait(
+                `「呜啊……啊啊……这样……边口交，边被侵犯着肛门……感觉太棒了啊啊………」`,
+              ); // :7751
+              await era.printAndWait(
+                `${assi_name}用嫉恨的眼神看着边为自己口交，边一脸幸福的表情享受着被魔王大人肛交的${target_name}。`,
+              ); // :7752
+              await era.print(
+                `『哎哎……看姐姐这么享受，我都不知道是该嫉妒姐姐呢还是嫉妒魔王大人？喂，姐姐的嘴巴也不能松懈啊，好好地给人家口交啊！』`,
+              ); // :7753
+              await era.printAndWait(
+                `${assi_name}的话让${master_name}更加兴奋的蹂躏，侵犯着${target_name}的肛门……`,
+              ); // :7754
+            } else {
+              // :7755
+              await era.printAndWait(
+                `${target_name}被强制边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，用勃起的阴茎插入了肛门中。`,
+              ); // :7756
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7757
+              await era.print(
+                `『哎呀，姐姐的屁股那么舒服吗？怎么肛门一被魔王大人插进去，嘴巴和舌头就不会动了呢！给我好好口交啊！』`,
+              ); // :7758
+              await era.printAndWait(
+                `${assi_name}哼了一声，用${assi_weapon}开始侵犯，抽插着姐姐的嘴和喉咙。`,
+              ); // :7759
+              await era.print(
+                `『哼，能被我们3p，是姐姐你的福气，再这样一脸不高兴，魔王大人可就真的要不高兴了哦？』`,
+              ); // :7760
+              await era.printAndWait(
+                `${assi_name}的表情和语气让${master_name}忍不住笑了起来……`,
+              ); // :7761
+            } // :7762
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7764
+            if (era.get(`talent:${target}:85`)) {
+              // :7765
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7766
+              await era.printAndWait(
+                `「呜啊啊……不，不行啊……这样侵犯着……屁股……没有办法好好为魔王大人口交了啊！」`,
+              ); // :7767
+              await era.print(
+                `『哎哎，姐姐别让魔王大人失望啊，连边被侵犯肛门边口交都做不好的话，证明还缺乏调教啊${heart(1)}』`,
+              ); // :7768
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7769
+              await era.printAndWait(
+                `「我，我会……努力的……唔呣……唔呣${heart(1)}呣呣……不，不行了……屁股好舒服${heart(1)}」`,
+              ); // :7770
+              await era.printAndWait(
+                `${target_name}集中精神，忍耐着肛门的快感，努力吸吮着${master_name}的阴茎…`,
+              ); // :7771
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7772
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7773
+              await era.printAndWait(
+                `「呜……呜啊啊……这样……太激烈了${heart(1)} 但是……好舒服……唔呣呣……唔唔${heart(1)}」`,
+              ); // :7774
+              await era.print(
+                `『哎呀呀，边被侵犯着肛门，边这么兴奋地吸着魔王大人的阴茎……姐姐真是变成淫乱便器了呢！』`,
+              ); // :7775
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7776
+              await era.printAndWait(
+                `「不，不行了……舒服得……已经没法思考了……也没办法……好好口交了……只能，只能让魔王大人自己……动了${heart(1)}」`,
+              ); // :7777
+              await era.printAndWait(
+                `肛交的极度快感让${target_name}几乎无法集中精神，吸吮${master_name}阴茎的动作也停了下来……`,
+              ); // :7778
+            } else {
+              // :7779
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，坚挺的${assi_weapon}插入了肛门中。`,
+              ); // :7780
+              await era.printAndWait(
+                `「不，不要啊……饶了我吧……求求你们了……唔唔……唔呣呣？！」`,
+              ); // :7781
+              await era.print(
+                `『哎嘿嘿，这样明明很舒服才对，边被侵犯肛门，边吸吮魔王大人的阴茎，不是吗，姐姐♪』`,
+              ); // :7782
+              await era.printAndWait(
+                `${assi_name}边嘲笑着${target_name}，边前后动着腰，更激烈地侵犯着姐姐的肛门。`,
+              ); // :7783
+              await era.print(
+                `『唔哇哇……姐姐的肛门夹得这么紧……真的是名器啊！』`,
+              ); // :7784
+              await era.printAndWait(
+                `痛苦万分，又无力违抗的${target_name}只能边忍受着，边努力吸吮着的${master_name}的阴茎……`,
+              ); // :7785
+            } // :7786
+          } else {
+            // :7787
+          } // :7789
+        } // :7790
+      } // :7791
+      // CFLAG:TARGET:391  = 1（变量语义：CFLAG 族，TARGET:391） // :7792
+      kojo.三人PLAY = 1; // :7792
+      return 0; // :7793
+    } else {
+      // :7795
+
+      if (assi_mao) {
+        // :7797
+
+        if (era.get(`talent:${target}:0`) === 1) {
+          // :7799
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7801
+            await era.printAndWait(
+              `${master_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :7802
+            await era.printAndWait(
+              `${assi_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :7803
+            if (era.get(`talent:${target}:85`)) {
+              // :7804
+              await era.printAndWait(`「呜……啊啊……我的处女！」`); // :7805
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :7806
+              await era.print(
+                `『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』`,
+              ); // :7807
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，激烈地侵犯着姐姐的后庭。`,
+              ); // :7808
+              await era.printAndWait(
+                `「啊啊……这样被夹击……一下子……就要去了啊啊啊！」`,
+              ); // :7809
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7810
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)}」`,
+              ); // :7811
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :7812
+              await era.print(`『嘿嘿，姐姐，处女三明治的感觉如何啊？』`); // :7813
+              await era.printAndWait(
+                `${assi_name}嬉笑着，用阴茎激烈地侵犯着${target_name}的后庭。`,
+              ); // :7814
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :7815
+            } else {
+              // :7816
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :7817
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :7818
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :7819
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :7820
+            } // :7821
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7823
+            await era.printAndWait(
+              `${assi_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :7824
+            await era.printAndWait(
+              `${master_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :7825
+            if (era.get(`talent:${target}:85`)) {
+              // :7826
+              await era.printAndWait(`「呜啊啊……我，我的第一次……啊啊啊！」`); // :7827
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :7828
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴！』`,
+              ); // :7829
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :7830
+              await era.printAndWait(
+                `「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」`,
+              ); // :7831
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7832
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)} 好……好奇怪的感觉啊啊${heart(1)}」`,
+              ); // :7833
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :7834
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴${heart(1)}』`,
+              ); // :7835
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :7836
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :7837
+            } else {
+              // :7838
+              await era.print(
+                `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
+              ); // :7839
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :7840
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :7841
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :7842
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
+              ); // :7843
+            } // :7844
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7846
+            if (era.get(`talent:${target}:85`)) {
+              // :7847
+              await era.printAndWait(
+                `「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊${heart(1)} 呣呣${heart(1)}……」`,
+              ); // :7848
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7849
+              await era.print(
+                `『哎嘿嘿，姐姐的处女今天正式属于魔王大人了${heart(1)}』`,
+              ); // :7850
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7851
+              await era.printAndWait(
+                `「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊${heart(1)} 」`,
+              ); // :7852
+              await era.print(
+                `『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊${heart(1)}』`,
+              ); // :7853
+              await era.printAndWait(
+                `${target_name}${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7854
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7855
+              await era.printAndWait(
+                `「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊${heart(1)}」`,
+              ); // :7856
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7857
+              await era.print(
+                `『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀${heart(1)}』`,
+              ); // :7858
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7859
+              await era.printAndWait(
+                `「好舒服……唔呣……唔呣${heart(1)} 这样同时……侍奉两根阴茎……实在是太棒了唔唔${heart(1)}」`,
+              ); // :7860
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+              ); // :7861
+            } else {
+              // :7862
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7863
+              await era.printAndWait(
+                `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7864
+              await era.printAndWait(`「不，不要啊啊！」`); // :7865
+              await era.print(`『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』`); // :7866
+              await era.printAndWait(
+                `${assi_name}抓着${target_name}的头，用${assi_weapon}强行侵犯着姐姐的喉咙。`,
+              ); // :7867
+              await era.printAndWait(
+                `身后的${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7868
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7869
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7870
+            } // :7871
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :7873
+            if (era.get(`talent:${target}:85`)) {
+              // :7874
+              await era.printAndWait(
+                `「呜呜……唔呣${heart(1)}！${assi_name}？！不，不可以……」`,
+              ); // :7875
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7876
+              await era.print(
+                `『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』`,
+              ); // :7877
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7878
+              await era.printAndWait(
+                `「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」`,
+              ); // :7879
+              await era.printAndWait(
+                `${target_name}${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :7880
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7881
+              await era.printAndWait(
+                `「唔呣……唔唔……我的处女……就这样……${heart(1)}」`,
+              ); // :7882
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :7883
+              await era.print(
+                `『啊啊，梦寐以求的姐姐的第一次，我就这么收下了${heart(1)}』`,
+              ); // :7884
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :7885
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :7886
+              await era.printAndWait(
+                `「唔呣……唔唔……${heart(1)} 这样……好舒服……唔唔……唔呣${heart(1)}」`,
+              ); // :7887
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
+              ); // :7888
+            } else {
+              // :7889
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :7890
+              await era.printAndWait(
+                `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
+              ); // :7891
+              await era.print(
+                `『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』`,
+              ); // :7892
+              await era.printAndWait(
+                `「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」`,
+              ); // :7893
+              await era.printAndWait(
+                `${master_name}抓着${target_name}的头，将阴茎插到了喉咙的最深处。`,
+              ); // :7894
+              await era.printAndWait(
+                `身后的${assi_name}也无情地夺去了${target_name}的处女身。`,
+              ); // :7895
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :7896
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :7897
+            } // :7898
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :7900
+            if (era.get(`talent:${target}:85`)) {
+              // :7901
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :7903
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！」`,
+                ); // :7904
+                await era.print(
+                  `『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！』`,
+                ); // :7905
+                await era.printAndWait(
+                  `${assi_name}抱着${target_name}的脸，用自己双腿间的${assi_weapon}肆意地侵犯着姐姐的喉咙。`,
+                ); // :7906
+                await era.printAndWait(
+                  `「唔呣……唔呣……对，对不起，${assi_name}……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊${heart(1)}」`,
+                ); // :7907
+                await era.printAndWait(
+                  `${target_name}顺从地吸吮着${assi_name}的${assi_weapon}，边让${master_name}侵犯着自己敏感的肛门………`,
+                ); // :7908
+              } else {
+                // :7909
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :7910
+                await era.print(
+                  `『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪』`,
+                ); // :7911
+                await era.printAndWait(
+                  `被妹妹羞辱得面红耳赤的${target_name}，却依旧顺从地吸吮着${assi_name}股间的的${assi_weapon}。`,
+                ); // :7912
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :7913
+                await era.printAndWait(
+                  `${master_name}欣赏着姐姐为妹妹口交侍奉的羞耻姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
+                ); // :7914
+              } // :7915
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7916
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :7918
+                await era.printAndWait(
+                  `「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣${heart(1)}……不，不行了，屁股舒服的要去了啊啊${heart(1)}！」`,
+                ); // :7919
+                await era.printAndWait(
+                  `肛门的强烈快感让${target_name}更加兴奋地为${assi_name}口交着，整个人都忘乎所以了。`,
+                ); // :7920
+                await era.print(
+                  `『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』`,
+                ); // :7921
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :7922
+              } else {
+                // :7923
+                await era.printAndWait(
+                  `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
+                ); // :7924
+                await era.printAndWait(
+                  `感受着肛门的快感，${target_name}更加兴奋地为自己的妹妹口交着`,
+                ); // :7925
+                await era.print(
+                  `『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』`,
+                ); // :7926
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :7927
+              } // :7928
+            } else {
+              // :7929
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :7931
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :7932
+                await era.printAndWait(
+                  `${target_name}把脸埋在妹妹的腿间，吸吮着${assi_name}的阴茎，然而肛门被${master_name}侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着`,
+                ); // :7933
+                await era.print(
+                  `『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』`,
+                ); // :7934
+                await era.printAndWait(
+                  `「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」`,
+                ); // :7935
+                await era.printAndWait(
+                  `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着。`,
+                ); // :7936
+              } else {
+                // :7937
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :7938
+                await era.printAndWait(
+                  `${target_name}被${master_name}持续侵犯着肛门的同时，被迫继续把脸埋在${assi_name}的腿间，吸吮着妹妹的阴茎。`,
+                ); // :7939
+                await era.print(
+                  `『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』`,
+                ); // :7940
+                await era.printAndWait(
+                  `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着。`,
+                ); // :7941
+              } // :7942
+            } // :7943
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7945
+            if (era.get(`talent:${target}:85`)) {
+              // :7946
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :7948
+                await era.printAndWait(
+                  `「请……请两位随意地侵犯${target_name}的肛门和嘴巴小穴吧${heart(1)} ……唔呣？！……唔唔……呣呣呣${heart(1)} 」`,
+                ); // :7949
+                await era.print(
+                  `『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』`,
+                ); // :7950
+                await era.printAndWait(
+                  `${assi_name}用手指肆意地玩弄了一会儿${target_name}的肛门，然后用自己双腿间的${assi_weapon}开始持续地侵犯着姐姐的后庭。`,
+                ); // :7951
+                await era.printAndWait(
+                  `「呜呣呣${heart(1)} 好，好舒服啊啊啊${heart(1)} 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门${heart(1)}……不行了……已经舒服得没有办法思考了啊呣呣${heart(1)}！」`,
+                ); // :7952
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
+                ); // :7953
+              } else {
+                // :7954
+                await era.printAndWait(
+                  `「呜……啊啊啊，不，不可以啊……这样被侵犯屁股的话……没有办法……好好为魔王大人口交了唔呣呣！」`,
+                ); // :7955
+                await era.print(
+                  `『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』`,
+                ); // :7956
+                await era.printAndWait(
+                  `边羞辱着自己的姐姐，${assi_name}边用${assi_weapon}更加激烈地侵犯着${target_name}的后庭。`,
+                ); // :7957
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :7958
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
+                ); // :7959
+              } // :7960
+            } else if (era.get(`talent:${target}:76`)) {
+              // :7961
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :7963
+                await era.printAndWait(
+                  `「来吧，魔王大人，还有${assi_name}……请一起侵犯${target_name}淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦${heart(1)}」`,
+                ); // :7964
+                await era.printAndWait(
+                  `肛门被侵犯的极度快感，让${target_name}整个人都颤抖了起来，更加兴奋而积极地吸吮着${master_name}的阴茎。`,
+                ); // :7965
+                await era.print(
+                  `『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』`,
+                ); // :7966
+                await era.printAndWait(
+                  `「是……是啊${heart(1)} 姐姐的……肛门就是……专门服务${assi_name}和魔王大人的淫乱性器啊啊${heart(1)} 唔呣……唔呣……唔唔唔${heart(1)}」`,
+                ); // :7967
+                await era.printAndWait(
+                  `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
+                ); // :7968
+              } else {
+                // :7969
+                await era.printAndWait(
+                  `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
+                ); // :7970
+                await era.printAndWait(
+                  `${target_name}身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着${master_name}的阴茎。`,
+                ); // :7971
+                await era.print(
+                  `『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』`,
+                ); // :7972
+                await era.printAndWait(
+                  `「是……是啊……姐姐是${assi_name}和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊${heart(1)}」`,
+                ); // :7973
+                await era.printAndWait(
+                  `被${target_name}不知廉耻的宣言刺激得更加兴奋的${assi_name}和${master_name}，更加激烈地侵犯，抽插着${target_name}的喉咙和肛门……`,
+                ); // :7974
+              } // :7975
+            } else {
+              // :7976
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :7978
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣……啊啊啊」`,
+                ); // :7979
+                await era.printAndWait(
+                  `敏感的肛门传来的快感让${target_name}几乎无法忍耐，大声地呻吟了起来，连为${master_name}口交的动作都停了下来。`,
+                ); // :7980
+                await era.print(
+                  `『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』`,
+                ); // :7981
+                await era.printAndWait(
+                  `「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊${heart(1)}」`,
+                ); // :7982
+                await era.printAndWait(
+                  `已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了${target_name}`,
+                ); // :7983
+                await era.printAndWait(
+                  `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
+                ); // :7984
+              } else {
+                // :7985
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :7986
+                await era.printAndWait(
+                  `完全无视了${target_name}的哀求，${assi_name}和${master_name}开始一前一后同时侵犯着${target_name}的肛门和嘴。`,
+                ); // :7987
+                await era.print(
+                  `『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』`,
+                ); // :7988
+                await era.printAndWait(
+                  `「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」`,
+                ); // :7989
+                await era.printAndWait(
+                  `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
+                ); // :7990
+              } // :7991
+            } // :7992
+          } else {
+            // :7993
+          } // :7995
+        } else {
+          // :7997
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :7999
+            if (era.get(`talent:${target}:85`)) {
+              // :8000
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8002
+                await era.printAndWait(
+                  `「请，请尽情地侵犯${target_name}的小穴吧……魔王大人${heart(1)} 什么……${assi_name}也要一起么……当，当然可以……」`,
+                ); // :8003
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没了。`,
+                ); // :8004
+                await era.print(
+                  `『唔哇哇……姐姐的淫乱肛门……完全变成性器了呢！』`,
+                ); // :8005
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}挺着腰，激烈地侵犯着姐姐的肛门。`,
+                ); // :8006
+                await era.printAndWait(
+                  `「呜呜……啊啊啊……不，不行了……舒服得已经没有办法思考了……魔王大人，还有${assi_name}……请尽情地把${target_name}侵犯得一塌糊涂吧啊啊啊！」`,
+                ); // :8007
+              } else {
+                // :8008
+                await era.printAndWait(
+                  `「哎哎？要，要两个人一起吗……是叫做三明治什么的玩法吗${heart(1)}」`,
+                ); // :8009
+                await era.printAndWait(
+                  `被夹在中间同时侵犯着肛门和蜜穴，${target_name}只能拼命忍耐着强烈的快感。`,
+                ); // :8010
+                await era.print(
+                  `『唔哇哇……姐姐的淫乱肛门好紧好舒服……真的有成为名器的潜质呢！』`,
+                ); // :8011
+                await era.printAndWait(
+                  `${assi_name}嬉笑着，挺着腰，和${master_name}一同更加激烈地侵犯着${target_name}的肛门和蜜穴。`,
+                ); // :8012
+                await era.printAndWait(
+                  `「呜……啊啊……不，不可以这么激烈啊……会，会坏掉的${heart(1)}！」`,
+                ); // :8013
+              } // :8014
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8015
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8017
+                await era.printAndWait(
+                  `「哎哎，要两人一起上？其实人家早已经等不及了啦${heart(1)}」`,
+                ); // :8018
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下淫浪的娇喘。`,
+                ); // :8019
+                await era.print(
+                  `『哎哎，姐姐真是贪心啊，居然一次要两人才能满足！』`,
+                ); // :8020
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}挺着腰，激烈地侵犯着姐姐的肛门。`,
+                ); // :8021
+                await era.printAndWait(
+                  `「好，好舒服……太舒服了${heart(1)}都怪你们，把姐姐调教得……不做爱就活不下去了啊啊啊${heart(1)}」`,
+                ); // :8022
+              } else {
+                // :8023
+                await era.printAndWait(
+                  `「哎哎……被，被两人的阴茎这样一起侵犯……呜啊啊${heart(1)}」`,
+                ); // :8024
+                await era.printAndWait(
+                  `肛门和蜜穴被同时插入让${target_name}发出了灼热的呻吟。`,
+                ); // :8025
+                await era.print(
+                  `『哎嘿嘿，姐姐的淫乱肛门好紧啊，有继续开发的必要呢！魔王大人，让我们一起把姐姐的前后两穴都弄得乱七八糟吧${heart(1)}』`,
+                ); // :8026
+                await era.printAndWait(
+                  `${assi_name}嬉笑着，挺着腰，和${master_name}一同更加激烈地侵犯着${target_name}的肛门和蜜穴。`,
+                ); // :8027
+                await era.printAndWait(
+                  `「嗯啊……啊啊啊……请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
+                ); // :8028
+              } // :8029
+            } else {
+              // :8030
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8032
+                await era.print(
+                  `「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜……可，可是……好舒服……真的好舒服啊啊」`,
+                ); // :8033
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没了。`,
+                ); // :8034
+                await era.print(
+                  `『哎嘿嘿，姐姐准备好了吗，接下来才是开始呢！』`,
+                ); // :8035
+                await era.printAndWait(
+                  `${assi_name}舔着嘴唇，动起腰，开始和${master_name}一同激烈地侵犯着${target_name}的肛门和蜜穴。`,
+                ); // :8036
+                await era.printAndWait(
+                  `「太，太激烈了……姐姐会……会坏掉的啊啊……！」`,
+                ); // :8037
+              } else {
+                // :8038
+                await era.printAndWait(
+                  `「两，两个人一起……不，不可以啊……那，那样会坏掉的……真的会坏掉的！」`,
+                ); // :8039
+                await era.printAndWait(
+                  `${target_name}似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。`,
+                ); // :8040
+                await era.print(
+                  `『加油啊姐姐，在你在两穴同时高潮之前，我们可是不会停下的哦♪』`,
+                ); // :8041
+                await era.printAndWait(
+                  `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的肛门………`,
+                ); // :8042
+              } // :8043
+            } // :8044
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :8046
+            if (era.get(`talent:${target}:85`)) {
+              // :8047
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8049
+                await era.printAndWait(
+                  `「嗯啊啊……魔，魔王大人……这样激烈地侵犯着……我的肛门${heart(1)}小穴……也被${assi_name}一起侵犯了……感觉好奇怪……但是好舒服啊啊啊${heart(1)}」`,
+                ); // :8050
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着爱液泛滥的蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下甘甜的娇喘。`,
+                ); // :8051
+                await era.print(
+                  `『呜哇啊，性奴姐姐的小穴已经被魔王大人开发的……这么棒了！』`,
+                ); // :8052
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}挺起腰，激烈地侵犯着${target_name}的蜜穴。`,
+                ); // :8053
+                await era.printAndWait(
+                  `「呜啊……嗯啊啊${heart(1)}……好舒服……好舒服啊啊${heart(1)} 这样被同时侵犯着……一下子……就要去了啊啊${heart(1)}」`,
+                ); // :8054
+              } else {
+                // :8055
+                await era.printAndWait(
+                  `「请，请稍微温柔一点……拜托了……还有${assi_name}…不要兴奋成那个样子啊！」`,
+                ); // :8056
+                await era.printAndWait(
+                  `话音未落，${assi_name}已经迫不及待地插入了姐姐的蜜穴之中。`,
+                ); // :8057
+                await era.print(
+                  `『哼哼，温柔，别开玩笑了！我和魔王大人今天就是打算把姐姐侵犯到彻底坏掉的呀！』`,
+                ); // :8058
+                await era.printAndWait(
+                  `${assi_name}坏笑着，挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8059
+                await era.printAndWait(
+                  `「呜啊啊……太，太激烈了……感，感觉好奇怪……整个人……都要变得奇怪了啊啊！」`,
+                ); // :8060
+              } // :8061
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8062
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8064
+                await era.printAndWait(
+                  `「哈啊……哈啊……两人的阴茎……一起在身体里${heart(1)}……感觉实在是太棒了啊啊啊${heart(1)}」`,
+                ); // :8065
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下淫浪的娇喘。`,
+                ); // :8066
+                await era.print(
+                  `『给我用屁股和小穴同时高潮吧，淫乱的性奴姐姐！』`,
+                ); // :8067
+                await era.printAndWait(
+                  `兴奋不已${assi_name}挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8068
+                await era.printAndWait(
+                  `「呜啊……嗯啊啊……好舒服……实在是太舒服了${heart(1)} 真的要……高潮得……一塌糊涂了啊啊啊${heart(1)}」`,
+                ); // :8069
+              } else {
+                // :8070
+                await era.printAndWait(
+                  `「咦咦，要两个人一起上吗……好，好吧。其实还有点……期待呢${heart(1)}」`,
+                ); // :8071
+                await era.printAndWait(
+                  `蜜穴和肛门被同时插入，${target_name}忍不住灼热地呻吟了起来。`,
+                ); // :8072
+                await era.print(
+                  `『呼呼，姐姐的淫乱小穴……属于人家的啦啦啦！给我高潮吧！』`,
+                ); // :8073
+                await era.printAndWait(
+                  `${assi_name}嬉笑着，挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8074
+                await era.printAndWait(
+                  `「呜……呜啊啊${heart(1)} ${assi_name}！魔王大人！请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
+                ); // :8075
+              } // :8076
+            } else {
+              // :8077
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8079
+                await era.print(
+                  `「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜，可，可是……为什么……感觉好舒服${heart(1)}…」`,
+                ); // :8080
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下灼热的呻吟。`,
+                ); // :8081
+                await era.print(
+                  `『嘴上说着不行，下面已经夹得这么紧了！被两人同时侵犯，更兴奋了吗，我的变态姐姐！』`,
+                ); // :8082
+                await era.printAndWait(
+                  `兴奋不已${assi_name}挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8083
+                await era.printAndWait(
+                  `「才，才不是……变态！呜……呜啊啊${heart(1)}……可，可是……真的好舒服……舒服得……不行了啊啊啊！」`,
+                ); // :8084
+              } else {
+                // :8085
+                await era.printAndWait(
+                  `「放，放开我啊……两个人一起……这种事情……怎么可以啊啊啊！」`,
+                ); // :8086
+                await era.printAndWait(
+                  `${target_name}似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。`,
+                ); // :8087
+                await era.print(
+                  `『说什么呢姐姐，我们可是打算侵犯到姐姐两个淫穴一起高潮呢♪』`,
+                ); // :8088
+                await era.printAndWait(
+                  `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的蜜穴………`,
+                ); // :8089
+              } // :8090
+            } // :8091
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :8093
+            if (era.get(`talent:${target}:85`)) {
+              // :8094
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8096
+                await era.printAndWait(
+                  `「呜……呜啊啊……这样边被魔王大人……侵犯着${heart(1)} ……边口交……感觉${assi_name}的阴茎……更加美味了啊啊啊${heart(1)} 唔呣……唔呣……唔唔唔♪」`,
+                ); // :8097
+                await era.printAndWait(
+                  `被${master_name}抽插着爱液泛滥的蜜穴、${target_name}更加兴奋不已地舔吮着妹妹的阴茎。`,
+                ); // :8098
+                await era.print(
+                  `『嘿嘿，被我和魔王大人一起侵犯，身为性奴的姐姐一定感觉很幸福吧？』`,
+                ); // :8099
+                await era.printAndWait(
+                  `${target_name}满脸通红地边点头，边继续努力地为妹妹口交着。`,
+                ); // :8100
+                await era.printAndWait(
+                  `「唔呣……唔呣${heart(1)}…… 的，的确是这样啊啊……能被魔王大人和${assi_name}这样疼爱……真的是太幸福了${heart(1)} 」`,
+                ); // :8101
+              } else {
+                // :8102
+                await era.printAndWait(
+                  `「唔呣……唔呣……${assi_name}的阴茎……味道好好……好喜欢${heart(1)} 还有……魔王大人，请吧……人家已经准备好了${heart(1)}」`,
+                ); // :8103
+                await era.printAndWait(
+                  `正在为${assi_name}口交的${target_name}，撅起的臀部一扭一扭地诱惑着${master_name}。`,
+                ); // :8104
+                await era.print(
+                  `『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎要进来了哦${heart(1)}』`,
+                ); // :8105
+                await era.printAndWait(
+                  `${master_name}挺起腰，开始侵犯着${target_name}已经爱液泛滥的蜜穴。`,
+                ); // :8106
+                await era.printAndWait(
+                  `「呜啊……嗯啊啊${heart(1)}……魔王大人……一下子就顶到最里面了……好厉害啊啊啊${heart(1)}！」`,
+                ); // :8107
+                await era.printAndWait(
+                  `${assi_name}也抱着${target_name}的脸，用阴茎顶着姐姐的口腔。`,
+                ); // :8108
+                await era.print(
+                  `『不要光顾着享受，嘴巴也要好好地给我吸吮啊！』`,
+                ); // :8109
+                await era.printAndWait(
+                  `${target_name}就这样被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+                ); // :8110
+              } // :8111
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8112
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8114
+                await era.printAndWait(
+                  `「呜……啊啊啊……蜜穴……被魔王大人的阴茎……塞得满满的${heart(1)} 这样……边做爱……边口交……实在是太舒服了啊唔唔……唔呣……唔呣${heart(1)}」`,
+                ); // :8115
+                await era.print(
+                  `『呜哇哇……姐姐在被魔王大人侵犯的时候……口交居然比平时还厉害了${heart(1)}』`,
+                ); // :8116
+                await era.printAndWait(
+                  `${assi_name}感受着姐姐激烈地吸吮着自己的阴茎，忍不住也呻吟了起来。`,
+                ); // :8117
+                await era.printAndWait(
+                  `「啊啊啊……魔王大人……更加激烈地侵犯……${target_name}的淫穴吧${heart(1)} 唔呣……唔呣……唔唔唔${heart(1)}」`,
+                ); // :8118
+                await era.printAndWait(
+                  `${target_name}含糊不清地娇喘着，享受着心理和生理的双重快感……`,
+                ); // :8119
+              } else {
+                // :8120
+                await era.printAndWait(
+                  `「呜啊啊……在，在人家口交的时候……侵犯小穴……魔王大人……太狡猾了${heart(1)}」`,
+                ); // :8121
+                await era.printAndWait(
+                  `在${target_name}吸吮着自己妹妹的阴茎的时候，${master_name}趁机抱住了${target_name}的腰，将龟头抵入了蜜穴中。`,
+                ); // :8122
+                await era.print(
+                  `『哎嘿嘿，姐姐一会儿享受的时候，嘴巴记得不要停下来哦♪』`,
+                ); // :8123
+                await era.printAndWait(
+                  `${master_name}挺着腰，开始激烈地侵犯着${target_name}爱液泛滥的蜜穴。`,
+                ); // :8124
+                await era.printAndWait(
+                  `「唔呣呣……唔唔${heart(1)} 不，不行了……这样……太舒服了啊啊啊${heart(1)}」`,
+                ); // :8125
+                await era.print(`『啊啊……姐姐的口交……太厉害了……好舒服啊啊！』`); // :8126
+                await era.print(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，因为心里和生理的双重快感而含糊不清地呻吟着………`,
+                ); // :8127
+              } // :8128
+            } else {
+              // :8129
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8131
+                await era.printAndWait(
+                  `「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」`,
+                ); // :8132
+                await era.printAndWait(
+                  `敏感的小穴被${master_name}肆意地抽插着，${target_name}只能拼命忍耐着快感，同时还要努力为妹妹口交。`,
+                ); // :8133
+                await era.print(
+                  `『哎嘿嘿，姐姐真不错呢，被魔王大人插得那么舒服，嘴巴还没有松懈♪』`,
+                ); // :8134
+                await era.printAndWait(
+                  `边嘲弄着${target_name}，${assi_name}边用阴茎继续侵犯着姐姐的喉咙。`,
+                ); // :8135
+                await era.printAndWait(
+                  `「唔呣呣……唔呣呣……太，太激烈了${heart(1)}…呜啊啊……被魔王大人……顶到子宫口了唔呣呣呣！」`,
+                ); // :8136
+                await era.printAndWait(
+                  `蜜穴传来的极度快感让${target_name}几乎无法思考………`,
+                ); // :8137
+              } else {
+                // :8138
+                await era.printAndWait(
+                  `「不，不可以在口交的时候……侵犯小穴啊……唔呣呣……呣呣……」`,
+                ); // :8139
+                await era.printAndWait(
+                  `正在为${assi_name}口交的${target_name}，蜜穴突然被侵犯，一时惊慌失措。`,
+                ); // :8140
+                await era.print(
+                  `『别光顾着享受啊，笨蛋姐姐，给我好好口交啊！』`,
+                ); // :8141
+                await era.printAndWait(
+                  `「不，不行啊……这样的事情……呜呜……唔呣！？」`,
+                ); // :8142
+                await era.printAndWait(
+                  `${assi_name}不满地抓着${target_name}的头发，用勃起的阴茎强行侵犯着姐姐的喉咙`,
+                ); // :8143
+                await era.printAndWait(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+                ); // :8144
+              } // :8145
+            } // :8146
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :8148
+
+            if (era.get(`talent:${target}:85`)) {
+              // :8150
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8152
+                await era.printAndWait(
+                  `「唔呣呣？在……在口交的时候……侵犯小穴……感觉……好奇怪……但是好舒服啊啊啊${heart(1)}」`,
+                ); // :8153
+                await era.printAndWait(
+                  `${target_name}一边被妹妹侵犯着，一边把脸埋在${master_name}双腿之间，努力地吸吮着阴茎。`,
+                ); // :8154
+                await era.print(
+                  `『哎嘿嘿，姐姐不知不觉之间已经完全适应性奴的身份了呢${heart(1)}』`,
+                ); // :8155
+                await era.printAndWait(
+                  `${assi_name}带着享受的表情，激烈地侵犯着${target_name}的蜜穴。`,
+                ); // :8156
+                await era.printAndWait(
+                  `「呜……呣呣……不，不要对姐姐恶作剧了啦……没有办法好好……为魔王大人口交了${heart(1)} 对，对不起……魔王大人……因为实在是太舒服了${heart(1)}我，我会努力的……咕呣……咕呣……呣呣呣」`,
+                ); // :8157
+                await era.printAndWait(
+                  `${target_name}自己积极的寻求着阴茎、被${master_name}和${assi_name}前后一起侵犯着………`,
+                ); // :8158
+              } else {
+                // :8159
+                await era.printAndWait(
+                  `「不，不可以……在这个时候……侵犯小穴啊……会没有办法好好为魔王大人口交的！」`,
+                ); // :8160
+                await era.printAndWait(
+                  `正在为${master_name}口交的${target_name}，感受着身后的${assi_name}抱着自己的腰，龟头顶入了蜜穴之中。`,
+                ); // :8161
+                await era.print(
+                  `『其实人家还有点嫉妒姐姐呢，能同时享受两根阴茎……唔哇哇……姐姐的小穴好紧好舒服♪』`,
+                ); // :8162
+                await era.printAndWait(
+                  `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的蜜穴。`,
+                ); // :8163
+                await era.printAndWait(
+                  `「呜……呜啊啊……不，不能顶得这么深……唔呣呣……这样……边口交边被侵犯……感觉……整个人都要变得奇怪了啊啊——唔呣……呣呣呣……呣呣♪」`,
+                ); // :8164
+                await era.printAndWait(
+                  `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+                ); // :8165
+              } // :8166
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8167
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8169
+                await era.printAndWait(
+                  `「唔呣……唔呣${heart(1)}……这样……边口交……边被侵犯小穴……感觉……太舒服了啊啊啊${heart(1)}」`,
+                ); // :8170
+                await era.printAndWait(
+                  `正在为${master_name}口交的${target_name}，感受着身后的${assi_name}抱着自己的腰，龟头顶入了爱液泛滥的敏感蜜穴之中。`,
+                ); // :8171
+                await era.print(
+                  `『唔哇哇……原来姐姐已经变得这么淫乱了……魔王大人真是调教有方啊！』`,
+                ); // :8172
+                await era.printAndWait(
+                  `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的蜜穴。`,
+                ); // :8173
+                await era.printAndWait(
+                  `${master_name}也配合着${assi_name}的动作，将阴茎顶到了${target_name}喉咙深处，开始抽插起来。`,
+                ); // :8174
+                await era.printAndWait(
+                  `「唔呣呣？！唔呣……唔呣……好，好舒服${heart(1)}……舒服得……已经没有办法思考了啊呣呣……呣呣${heart(1)}」`,
+                ); // :8175
+                await era.printAndWait(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+                ); // :8176
+              } else {
+                // :8177
+                await era.printAndWait(
+                  `「呜啊啊……要边口交边被侵犯小穴了……好期待${heart(1)}」`,
+                ); // :8178
+                await era.printAndWait(
+                  `正在为${assi_name}口交的${master_name}，撅起的臀部一扭一扭地诱惑着${target_name}。`,
+                ); // :8179
+                await era.print(
+                  `『看来姐姐已经准备好了呢……接下来就是要侵犯到姐姐失神为止喽！！』`,
+                ); // :8180
+                await era.printAndWait(
+                  `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的蜜穴。`,
+                ); // :8181
+                await era.printAndWait(
+                  `${master_name}也配合着${assi_name}的动作，将阴茎顶到了${target_name}喉咙深处，开始抽插起来。`,
+                ); // :8182
+                await era.printAndWait(
+                  `「唔呣呣……唔唔${heart(1)} 这样好舒服……比想象中的还要舒服啊啊……呣呣……呣呣${heart(1)}」`,
+                ); // :8183
+                await era.printAndWait(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，身体在难以言喻的快感中颤抖着……`,
+                ); // :8184
+              } // :8185
+            } else {
+              // :8186
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8188
+                await era.printAndWait(
+                  `「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」`,
+                ); // :8189
+                await era.printAndWait(
+                  `${target_name}嘴里含着${master_name}的阴茎，拼命忍耐着被${assi_name}从身后侵犯的强烈快感。`,
+                ); // :8190
+                await era.print(
+                  `『不能光顾享受啊姐姐，要好好用你的淫乱嘴巴小穴服务魔王大人，听到了没！』`,
+                ); // :8191
+                await era.printAndWait(
+                  `「对，对不起……我，我会好好用嘴巴做的……唔呣……唔呣……唔唔！」`,
+                ); // :8192
+                await era.printAndWait(
+                  `不耐烦的${master_name}抓着${target_name}的头发，将阴茎顶到了喉咙深处，肆意抽插着。`,
+                ); // :8193
+                await era.print(
+                  `『哼，魔王大人已经不满意了，做好受惩罚的觉悟吧笨蛋姐姐！』`,
+                ); // :8194
+                await era.printAndWait(
+                  `${target_name}泪流满面，却又无可奈何地忍耐着两人的侵犯和肆虐………`,
+                ); // :8195
+              } else {
+                // :8196
+                await era.printAndWait(
+                  `「呜呜呜……求求你们了……饶了我吧……真的……唔呣呣？！呣呣……唔呣……」`,
+                ); // :8197
+                await era.printAndWait(
+                  `对${target_name}的求饶无动于衷，${assi_name}和${master_name}开始一前一后，毫不留情地侵犯着${target_name}。`,
+                ); // :8198
+                await era.print(
+                  `『啊哈哈……魔王大人好像很喜欢姐姐的淫乱嘴巴小穴呢♪』`,
+                ); // :8199
+                await era.printAndWait(
+                  `「饶，饶了我吧……不能呼吸了……唔呣……呣呣……呣呣……」`,
+                ); // :8200
+                await era.printAndWait(
+                  `${master_name}不满地抓着${target_name}的头发，用勃起的阴茎强行在喉咙里抽插着`,
+                ); // :8201
+                await era.print(
+                  `『哎嘿，姐姐的喉咙小穴被魔王大人塞满了呢，人家有点嫉妒呢！』`,
+                ); // :8202
+                await era.printAndWait(
+                  `${target_name}怎么挣扎都无法挣脱，只能泪流满面地任由两人激烈地侵犯着自己……`,
+                ); // :8203
+              } // :8204
+            } // :8205
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :8207
+            if (era.get(`talent:${target}:85`)) {
+              // :8208
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8210
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :8211
+                await era.print(
+                  `『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！！』`,
+                ); // :8212
+                await era.printAndWait(
+                  `${assi_name}抱着${target_name}的脸，用自己双腿间的${assi_weapon}肆意地侵犯着姐姐的喉咙。`,
+                ); // :8213
+                await era.printAndWait(
+                  `「唔呣……唔呣……对，对不起，${assi_name}……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊${heart(1)}」`,
+                ); // :8214
+                await era.printAndWait(
+                  `${target_name}拼命忍耐着快感，继续努力地吸吮着${assi_name}的${assi_weapon}………`,
+                ); // :8215
+              } else {
+                // :8216
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :8217
+                await era.print(
+                  `『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪♪』`,
+                ); // :8218
+                await era.printAndWait(
+                  `被妹妹羞辱得面红耳赤的${target_name}，却依旧顺从地吸吮着${assi_name}股间的的${assi_weapon}。`,
+                ); // :8219
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :8220
+                await era.printAndWait(
+                  `${master_name}欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
+                ); // :8221
+              } // :8222
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8223
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8225
+                await era.printAndWait(
+                  `「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣${heart(1)}……不，不行了，屁股舒服的要去了啊啊${heart(1)}！」`,
+                ); // :8226
+                await era.printAndWait(
+                  `肛门的强烈快感让${target_name}更加兴奋地为${assi_name}口交着，整个人都忘乎所以了。`,
+                ); // :8227
+                await era.print(
+                  `『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』`,
+                ); // :8228
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :8229
+              } else {
+                // :8230
+                await era.printAndWait(
+                  `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
+                ); // :8231
+                await era.printAndWait(
+                  `感受着肛门的快感，${target_name}更加兴奋地为自己的妹妹口交着`,
+                ); // :8232
+                await era.print(
+                  `『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』`,
+                ); // :8233
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :8234
+              } // :8235
+            } else {
+              // :8236
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8238
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :8239
+                await era.printAndWait(
+                  `${target_name}把脸埋在妹妹的腿间，吸吮着${assi_name}的阴茎，然而肛门被${master_name}侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着`,
+                ); // :8240
+                await era.print(
+                  `『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』`,
+                ); // :8241
+                await era.printAndWait(
+                  `「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」`,
+                ); // :8242
+                await era.printAndWait(
+                  `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着`,
+                ); // :8243
+              } else {
+                // :8244
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :8245
+                await era.printAndWait(
+                  `${target_name}被${master_name}持续侵犯着肛门的同时，被迫继续把脸埋在${assi_name}的腿间，吸吮着妹妹的阴茎。`,
+                ); // :8246
+                await era.print(
+                  `『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』`,
+                ); // :8247
+                await era.printAndWait(
+                  `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着`,
+                ); // :8248
+              } // :8249
+            } // :8250
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :8252
+            if (era.get(`talent:${target}:85`)) {
+              // :8253
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8255
+                await era.printAndWait(
+                  `「请……请两位随意地侵犯${target_name}的肛门和嘴巴小穴吧${heart(1)} ……唔呣……唔唔？！」`,
+                ); // :8256
+                await era.print(
+                  `『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』`,
+                ); // :8257
+                await era.printAndWait(
+                  `${assi_name}用手指肆意地玩弄了一会儿${target_name}的肛门，然后用自己双腿间的${assi_weapon}开始持续地侵犯着姐姐的后庭。`,
+                ); // :8258
+                await era.printAndWait(
+                  `「呜呣呣${heart(1)} 好，好舒服啊啊啊${heart(1)} 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门${heart(1)}……不行了……已经舒服得没有办法思考了啊呣呣${heart(1)}！」`,
+                ); // :8259
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
+                ); // :8260
+              } else {
+                // :8261
+                await era.printAndWait(
+                  `「呜……啊啊……不，不可以……在这个时候插进来啊啊${heart(1)} 没有办法……好好为魔王大人口交了……唔呣……唔呣……呜啊啊啊」`,
+                ); // :8262
+                await era.print(
+                  `『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』`,
+                ); // :8263
+                await era.printAndWait(
+                  `边羞辱着自己的姐姐，${assi_name}边用${assi_weapon}更加激烈地侵犯着${target_name}的后庭。`,
+                ); // :8264
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :8265
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
+                ); // :8266
+              } // :8267
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8268
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8270
+                await era.printAndWait(
+                  `「来吧，魔王大人，还有${assi_name}……请一起侵犯${target_name}淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦${heart(1)}」`,
+                ); // :8271
+                await era.printAndWait(
+                  `肛门被侵犯的极度快感，让${target_name}整个人都颤抖了起来，更加兴奋而积极地吸吮着${master_name}的阴茎。`,
+                ); // :8272
+                await era.print(
+                  `『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』`,
+                ); // :8273
+                await era.printAndWait(
+                  `「是……是啊${heart(1)} 姐姐的……肛门就是……专门服务${assi_name}和魔王大人的淫乱性器啊啊${heart(1)} 唔呣……唔呣……唔唔唔${heart(1)}」`,
+                ); // :8274
+                await era.printAndWait(
+                  `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
+                ); // :8275
+              } else {
+                // :8276
+                await era.printAndWait(
+                  `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
+                ); // :8277
+                await era.printAndWait(
+                  `${target_name}身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着${master_name}的阴茎。`,
+                ); // :8278
+                await era.print(
+                  `『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』`,
+                ); // :8279
+                await era.printAndWait(
+                  `「是……是啊……姐姐是${assi_name}和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊${heart(1)}」`,
+                ); // :8280
+                await era.printAndWait(
+                  `${assi_name}兴奋不已地抓着${target_name}的腰，更加激烈地侵犯着姐姐的肛门，强烈的快感让${target_name}更加忘我地为${master_name}口交着……`,
+                ); // :8281
+              } // :8282
+            } else {
+              // :8283
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8285
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :8286
+                await era.printAndWait(
+                  `敏感的肛门传来的快感让${target_name}几乎无法忍耐，大声地呻吟了起来，连为${master_name}口交的动作都停了下来。`,
+                ); // :8287
+                await era.print(
+                  `『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』`,
+                ); // :8288
+                await era.printAndWait(
+                  `「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊${heart(1)}」`,
+                ); // :8289
+                await era.printAndWait(
+                  `已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了${target_name}`,
+                ); // :8290
+                await era.printAndWait(
+                  `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
+                ); // :8291
+              } else {
+                // :8292
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :8293
+                await era.printAndWait(
+                  `完全无视了${target_name}的哀求，${assi_name}和${master_name}开始一前一后同时侵犯着${target_name}的肛门和嘴。`,
+                ); // :8294
+                await era.print(
+                  `『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』`,
+                ); // :8295
+                await era.printAndWait(
+                  `「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」`,
+                ); // :8296
+                await era.printAndWait(
+                  `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
+                ); // :8297
+              } // :8298
+            } // :8299
+          } else {
+            // :8300
+          } // :8302
+        } // :8303
+        return 0; // :8304
+      } else {
+        // :8305
+
+        if (era.get(`talent:${target}:0`) === 1) {
+          // :8307
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :8309
+            await era.printAndWait(
+              `${master_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :8310
+            await era.printAndWait(
+              `${assi_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :8311
+            if (era.get(`talent:${target}:85`)) {
+              // :8312
+              await era.printAndWait(`「呜……啊啊……我的处女！」`); // :8313
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :8314
+              await era.print(
+                `『啊啊……姐姐的肛门……太舒服了，舒服得我的小鸡鸡停不下来了啦！』`,
+              ); // :8315
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，激烈地侵犯着姐姐的后庭。`,
+              ); // :8316
+              await era.printAndWait(
+                `「啊啊……这样被夹击……一下子……就要去了啊啊啊！」`,
+              ); // :8317
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8318
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)}」`,
+              ); // :8319
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :8320
+              await era.print(`『嘿嘿，姐姐，处女三明治的感觉如何啊？』`); // :8321
+              await era.printAndWait(
+                `${assi_name}嬉笑着，用阴茎激烈地侵犯着${target_name}的后庭。`,
+              ); // :8322
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :8323
+            } else {
+              // :8324
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :8325
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :8326
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :8327
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的后庭。`,
+              ); // :8328
+            } // :8329
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :8331
+            await era.printAndWait(
+              `${assi_name}毫不留情地夺走了${target_name}的处女`,
+            ); // :8332
+            await era.printAndWait(
+              `${master_name}也兴奋不已地同时侵犯了${target_name}的肛门。`,
+            ); // :8333
+            if (era.get(`talent:${target}:85`)) {
+              // :8334
+              await era.printAndWait(`「呜啊啊……我，我的第一次……啊啊啊！」`); // :8335
+              await era.printAndWait(
+                `${target_name}被${master_name}和妹妹抱着夹在中间，破处的痛苦和前后两穴同时传来的快感交织在一起。`,
+              ); // :8336
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴！』`,
+              ); // :8337
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :8338
+              await era.printAndWait(
+                `「嗯啊……那样……被两人同时侵犯……会不行的啊啊啊！」`,
+              ); // :8339
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8340
+              await era.printAndWait(
+                `「呜啊啊……两人的阴茎……这样同时插进来${heart(1)} 好……好奇怪的感觉啊啊${heart(1)}」`,
+              ); // :8341
+              await era.printAndWait(
+                `${target_name}感受着肛门和处女蜜穴同时被插入的异样快感。`,
+              ); // :8342
+              await era.print(
+                `『啊啊啊姐姐的第一次，归我了！！${assi_name}好高兴，好高兴${heart(1)}』`,
+              ); // :8343
+              await era.printAndWait(
+                `${assi_name}带着兴奋的表情，开始激烈地侵犯着着姐姐的处女蜜穴。`,
+              ); // :8344
+              await era.printAndWait(
+                `「好舒服……这样好舒服${heart(1)}被魔王大人和${assi_name}的阴茎……同时在身体里搅动着${heart(1)}」`,
+              ); // :8345
+            } else {
+              // :8346
+              await era.print(
+                `『啊啊啊姐姐的处女蜜穴……真是紧的让人无法忍受啊！』`,
+              ); // :8347
+              await era.printAndWait(
+                `「不，不行啊啊啊……要裂开了……真的会裂开的啊啊啊！」`,
+              ); // :8348
+              await era.printAndWait(
+                `处女蜜穴和肛门被同时贯穿的痛苦，让${target_name}的哀叫在调教室里回响着。`,
+              ); // :8349
+              await era.print(
+                `『别瞎喊了姐姐，吵死人了，学会好好享受我和魔王大人的阴茎吧，以后还要很多次的哦！』`,
+              ); // :8350
+              await era.printAndWait(
+                `${assi_name}舔着嘴唇，继续激烈地侵犯着姐姐的初经人事的蜜穴`,
+              ); // :8351
+            } // :8352
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :8354
+            if (era.get(`talent:${target}:85`)) {
+              // :8355
+              await era.printAndWait(
+                `「唔呣……唔呣……我的一次……奉献给魔王大人了啊啊啊${heart(1)} 呣呣${heart(1)}……」`,
+              ); // :8356
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :8357
+              await era.print(
+                `『哎嘿嘿，姐姐的处女今天正式属于魔王大人了${heart(1)}』`,
+              ); // :8358
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :8359
+              await era.printAndWait(
+                `「啊啊啊……魔王大人……魔王大人，从今天开始，我，我就是你的人了啊啊${heart(1)} 」`,
+              ); // :8360
+              await era.print(
+                `『哎哎姐姐不要光顾着高兴，给我认真吸吮小鸡鸡啊${heart(1)}』`,
+              ); // :8361
+              await era.printAndWait(
+                `${target_name}${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :8362
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8363
+              await era.printAndWait(
+                `「唔呣……唔呣……呜啊啊！？魔王大人……的阴茎……啊啊啊${heart(1)}」`,
+              ); // :8364
+              await era.printAndWait(
+                `${target_name}边为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :8365
+              await era.print(
+                `『哎嘿嘿，姐姐，被你最喜欢的魔王大人的阴茎破处的感觉如何呀${heart(1)}』`,
+              ); // :8366
+              await era.printAndWait(
+                `${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :8367
+              await era.printAndWait(
+                `「好舒服……唔呣……唔呣${heart(1)} 这样同时……侍奉两根阴茎……实在是太棒了唔唔${heart(1)}」`,
+              ); // :8368
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+              ); // :8369
+            } else {
+              // :8370
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :8371
+              await era.printAndWait(
+                `${target_name}边被强迫为${assi_name}口交着，边感受着身后的${master_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :8372
+              await era.printAndWait(`「不，不要啊啊！」`); // :8373
+              await era.print(`『姐姐，嘴巴不许停下啊，给我好好吸吮啊！』`); // :8374
+              await era.printAndWait(
+                `${assi_name}抓着${target_name}的头，用${assi_weapon}强行侵犯着姐姐的喉咙。`,
+              ); // :8375
+              await era.printAndWait(
+                `身后的${master_name}挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :8376
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :8377
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :8378
+            } // :8379
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :8381
+            if (era.get(`talent:${target}:85`)) {
+              // :8382
+              await era.printAndWait(
+                `「呜呜……唔呣${heart(1)}！${assi_name}？！不，不可以……」`,
+              ); // :8383
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :8384
+              await era.print(
+                `『啊嘿嘿，和魔王大人一起用阴茎把姐姐前后串起来了——姐姐的处女，我就收下了！』`,
+              ); // :8385
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :8386
+              await era.printAndWait(
+                `「不，不要啊……我是想留给……魔王大人的——唔唔……呣呣！」`,
+              ); // :8387
+              await era.printAndWait(
+                `${target_name}${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+              ); // :8388
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8389
+              await era.printAndWait(
+                `「唔呣……唔唔……我的处女……就这样……${heart(1)}」`,
+              ); // :8390
+              await era.printAndWait(
+                `${target_name}边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头慢慢捅穿了处女膜。`,
+              ); // :8391
+              await era.print(
+                `『啊啊，梦寐以求的姐姐的第一次，我就这么收下了${heart(1)}』`,
+              ); // :8392
+              await era.printAndWait(
+                `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的处女蜜穴。`,
+              ); // :8393
+              await era.printAndWait(
+                `像是在配合着${assi_name}的动作一样，${master_name}也将阴茎插入到了${target_name}的喉咙深处。`,
+              ); // :8394
+              await era.printAndWait(
+                `「唔呣……唔唔……${heart(1)} 这样……好舒服……唔唔……唔呣${heart(1)}」`,
+              ); // :8395
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，却感受到了心理和生理的双重快感……`,
+              ); // :8396
+            } else {
+              // :8397
+              await era.printAndWait(`「住，住手啊……唔呣……呜呜呜！」`); // :8398
+              await era.printAndWait(
+                `${target_name}被强制边为${master_name}口交着，边感受着身后的${assi_name}抱着自己的腰，龟头抵在蜜穴上。`,
+              ); // :8399
+              await era.print(
+                `『嘿嘿嘿，姐姐的第一次就由我收下了！这样同时被侵犯着嘴巴和处女蜜穴，很舒服吧！』`,
+              ); // :8400
+              await era.printAndWait(
+                `「怎，怎么可能会舒服……呜呜呜……唔呣……呣呣呣！？」`,
+              ); // :8401
+              await era.printAndWait(
+                `${master_name}抓着${target_name}的头，将阴茎插到了喉咙的最深处。`,
+              ); // :8402
+              await era.printAndWait(
+                `身后的${assi_name}也无情地夺去了${target_name}的处女身。`,
+              ); // :8403
+              await era.printAndWait(
+                `「饶，饶了我吧，求你们了……唔唔……呣呣呣……！」`,
+              ); // :8404
+              await era.printAndWait(
+                `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+              ); // :8405
+            } // :8406
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :8408
+            if (era.get(`talent:${target}:85`)) {
+              // :8409
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8411
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :8412
+                await era.print(
+                  `『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！！』`,
+                ); // :8413
+                await era.printAndWait(
+                  `${assi_name}抱着${target_name}的脸，用自己双腿间的${assi_weapon}肆意地侵犯着姐姐的喉咙。`,
+                ); // :8414
+                await era.printAndWait(
+                  `「唔呣……唔呣……对，对不起，${assi_name}……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊${heart(1)}」`,
+                ); // :8415
+                await era.printAndWait(
+                  `${target_name}会老实的一边舔${assi_name}的${assi_weapon}一边被${master_name}侵犯肛门的………`,
+                ); // :8416
+              } else {
+                // :8417
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :8418
+                await era.print(
+                  `『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪♪』`,
+                ); // :8419
+                await era.printAndWait(
+                  `被妹妹羞辱得面红耳赤的${target_name}，却依旧顺从地吸吮着${assi_name}股间的的${assi_weapon}。`,
+                ); // :8420
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :8421
+                await era.printAndWait(
+                  `${master_name}欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
+                ); // :8422
+              } // :8423
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8424
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8426
+                await era.printAndWait(
+                  `「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣${heart(1)}……不，不行了，屁股舒服的要去了啊啊${heart(1)}！」`,
+                ); // :8427
+                await era.printAndWait(
+                  `肛门的强烈快感让${target_name}更加兴奋地为${assi_name}口交着，整个人都忘乎所以了。`,
+                ); // :8428
+                await era.print(
+                  `『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』`,
+                ); // :8429
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :8430
+              } else {
+                // :8431
+                await era.printAndWait(
+                  `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
+                ); // :8432
+                await era.printAndWait(
+                  `感受着肛门的快感，${target_name}更加兴奋地为自己的妹妹口交着`,
+                ); // :8433
+                await era.print(
+                  `『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』`,
+                ); // :8434
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :8435
+              } // :8436
+            } else {
+              // :8437
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8439
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :8440
+                await era.printAndWait(
+                  `${target_name}把脸埋在妹妹的腿间，吸吮着${assi_name}的阴茎，然而肛门被${master_name}侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着`,
+                ); // :8441
+                await era.print(
+                  `『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』`,
+                ); // :8442
+                await era.printAndWait(
+                  `「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」`,
+                ); // :8443
+                await era.printAndWait(
+                  `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着`,
+                ); // :8444
+              } else {
+                // :8445
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :8446
+                await era.printAndWait(
+                  `${target_name}被${master_name}持续侵犯着肛门的同时，被迫继续把脸埋在${assi_name}的腿间，吸吮着妹妹的阴茎。`,
+                ); // :8447
+                await era.print(
+                  `『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』`,
+                ); // :8448
+                await era.printAndWait(
+                  `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着`,
+                ); // :8449
+              } // :8450
+            } // :8451
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :8453
+            if (era.get(`talent:${target}:85`)) {
+              // :8454
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8456
+                await era.printAndWait(
+                  `「请……请两位随意地侵犯${target_name}的肛门和嘴巴小穴吧${heart(1)} ……唔呣……唔唔？！」`,
+                ); // :8457
+                await era.print(
+                  `『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』`,
+                ); // :8458
+                await era.printAndWait(
+                  `${assi_name}用手指肆意地玩弄了一会儿${target_name}的肛门，然后用自己双腿间的${assi_weapon}开始持续地侵犯着姐姐的后庭。`,
+                ); // :8459
+                await era.printAndWait(
+                  `「呜呣呣${heart(1)} 好，好舒服啊啊啊${heart(1)} 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门${heart(1)}……不行了……已经舒服得没有办法思考了啊呣呣${heart(1)}！」`,
+                ); // :8460
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
+                ); // :8461
+              } else {
+                // :8462
+                await era.printAndWait(
+                  `「啊呜…唔…魔王大人${heart(1)} 咕啾咕啾…啊、嗯！肛门不行啊…啊啊啊！」`,
+                ); // :8463
+                await era.print(
+                  `『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』`,
+                ); // :8464
+                await era.printAndWait(
+                  `边羞辱着自己的姐姐，${assi_name}边用${assi_weapon}更加激烈地侵犯着${target_name}的后庭。`,
+                ); // :8465
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :8466
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
+                ); // :8467
+              } // :8468
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8469
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8471
+                await era.printAndWait(
+                  `「来吧，魔王大人，还有${assi_name}……请一起侵犯${target_name}淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦${heart(1)}」`,
+                ); // :8472
+                await era.printAndWait(
+                  `肛门被侵犯的极度快感，让${target_name}整个人都颤抖了起来，更加兴奋而积极地吸吮着${master_name}的阴茎。`,
+                ); // :8473
+                await era.print(
+                  `『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』`,
+                ); // :8474
+                await era.printAndWait(
+                  `「是……是啊${heart(1)} 姐姐的……肛门就是……专门服务${assi_name}和魔王大人的淫乱性器啊啊${heart(1)} 唔呣……唔呣……唔唔唔${heart(1)}」`,
+                ); // :8475
+                await era.printAndWait(
+                  `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
+                ); // :8476
+              } else {
+                // :8477
+                await era.printAndWait(
+                  `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
+                ); // :8478
+                await era.printAndWait(
+                  `${target_name}身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着${master_name}的阴茎。`,
+                ); // :8479
+                await era.print(
+                  `『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』`,
+                ); // :8480
+                await era.printAndWait(
+                  `「是……是啊……姐姐是${assi_name}和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊${heart(1)}」`,
+                ); // :8481
+                await era.printAndWait(
+                  `${assi_name}兴奋地抓住${target_name}的腰不停地反复抽送着。然后${target_name}输给了肛门被侵犯的快感，继续舔着${master_name}的股间………`,
+                ); // :8482
+              } // :8483
+            } else {
+              // :8484
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8486
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :8487
+                await era.printAndWait(
+                  `敏感的肛门传来的快感让${target_name}几乎无法忍耐，大声地呻吟了起来，连为${master_name}口交的动作都停了下来。`,
+                ); // :8488
+                await era.print(
+                  `『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』`,
+                ); // :8489
+                await era.printAndWait(
+                  `「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊${heart(1)}」`,
+                ); // :8490
+                await era.printAndWait(
+                  `已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了${target_name}`,
+                ); // :8491
+                await era.printAndWait(
+                  `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
+                ); // :8492
+              } else {
+                // :8493
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :8494
+                await era.printAndWait(
+                  `完全无视了${target_name}的哀求，${assi_name}和${master_name}开始一前一后同时侵犯着${target_name}的肛门和嘴。`,
+                ); // :8495
+                await era.print(
+                  `『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』`,
+                ); // :8496
+                await era.printAndWait(
+                  `「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」`,
+                ); // :8497
+                await era.printAndWait(
+                  `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
+                ); // :8498
+              } // :8499
+            } // :8500
+          } else {
+            // :8501
+          } // :8503
+        } else {
+          // :8505
+
+          if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :8507
+            if (era.get(`talent:${target}:85`)) {
+              // :8508
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8510
+                await era.printAndWait(
+                  `「请，请尽情地侵犯${target_name}的小穴吧……魔王大人${heart(1)} 什么……${assi_name}也要一起么……当，当然可以……」`,
+                ); // :8511
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没了。`,
+                ); // :8512
+                await era.print(
+                  `『唔哇哇……姐姐的淫乱肛门……完全变成性器了呢！』`,
+                ); // :8513
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}挺着腰，激烈地侵犯着姐姐的肛门。`,
+                ); // :8514
+                await era.printAndWait(
+                  `「呜呜……啊啊啊……不，不行了……舒服得已经没有办法思考了……魔王大人，还有${assi_name}……请尽情地把${target_name}侵犯得一塌糊涂吧啊啊啊！」`,
+                ); // :8515
+              } else {
+                // :8516
+                await era.printAndWait(
+                  `「哎哎？要，要两个人一起吗……是叫做三明治什么的玩法吗${heart(1)}」`,
+                ); // :8517
+                await era.printAndWait(
+                  `被夹在中间同时侵犯着肛门和蜜穴，${target_name}只能拼命忍耐着强烈的快感。`,
+                ); // :8518
+                await era.print(
+                  `『唔哇哇……姐姐的淫乱肛门好紧好舒服……真的有成为名器的潜质呢！』`,
+                ); // :8519
+                await era.printAndWait(
+                  `${assi_name}嬉笑着，挺着腰，和${master_name}一同更加激烈地侵犯着${target_name}的肛门和蜜穴。`,
+                ); // :8520
+                await era.printAndWait(
+                  `「呜……啊啊……不，不可以这么激烈啊……会，会坏掉的${heart(1)}！」`,
+                ); // :8521
+              } // :8522
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8523
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8525
+                await era.printAndWait(
+                  `「哎哎，要两人一起上？其实人家早已经等不及了啦${heart(1)}」`,
+                ); // :8526
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下淫浪的娇喘。`,
+                ); // :8527
+                await era.print(
+                  `『哎哎，姐姐真是贪心啊，居然一次要两人才能满足！』`,
+                ); // :8528
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}挺着腰，激烈地侵犯着姐姐的肛门。`,
+                ); // :8529
+                await era.printAndWait(
+                  `「好，好舒服……太舒服了${heart(1)}都怪你们，把姐姐调教得……不做爱就活不下去了啊啊啊${heart(1)}」`,
+                ); // :8530
+              } else {
+                // :8531
+                await era.printAndWait(
+                  `「哎哎……被，被两人的阴茎这样一起侵犯……呜啊啊${heart(1)}」`,
+                ); // :8532
+                await era.printAndWait(
+                  `肛门和蜜穴被同时插入让${target_name}发出了灼热的呻吟。`,
+                ); // :8533
+                await era.print(
+                  `『哎嘿嘿，姐姐的淫乱肛门好紧啊，有继续开发的必要呢！魔王大人，让我们一起把姐姐的前后两穴都弄得乱七八糟吧${heart(1)}』`,
+                ); // :8534
+                await era.printAndWait(
+                  `${assi_name}嬉笑着，挺着腰，和${master_name}一同更加激烈地侵犯着${target_name}的肛门和蜜穴。`,
+                ); // :8535
+                await era.printAndWait(
+                  `「嗯啊……啊啊啊……请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
+                ); // :8536
+              } // :8537
+            } else {
+              // :8538
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8540
+                await era.print(
+                  `「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜……可，可是……好舒服……真的好舒服啊啊」`,
+                ); // :8541
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没了。`,
+                ); // :8542
+                await era.print(
+                  `『哎嘿嘿，姐姐准备好了吗，接下来才是开始呢！』`,
+                ); // :8543
+                await era.printAndWait(
+                  `${assi_name}舔着嘴唇，动起腰，开始和${master_name}一同激烈地侵犯着${target_name}的肛门和蜜穴。`,
+                ); // :8544
+                await era.printAndWait(
+                  `「太，太激烈了……姐姐会……会坏掉的啊啊……！」`,
+                ); // :8545
+              } else {
+                // :8546
+                await era.printAndWait(
+                  `「两，两个人一起……不，不可以啊……那，那样会坏掉的……真的会坏掉的！」`,
+                ); // :8547
+                await era.printAndWait(
+                  `${target_name}似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。`,
+                ); // :8548
+                await era.print(
+                  `『加油啊姐姐，在你在两穴同时高潮之前，我们可是不会停下的哦♪』`,
+                ); // :8549
+                await era.printAndWait(
+                  `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的肛门………`,
+                ); // :8550
+              } // :8551
+            } // :8552
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :8554
+            if (era.get(`talent:${target}:85`)) {
+              // :8555
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8557
+                await era.printAndWait(
+                  `「嗯啊啊……魔，魔王大人……这样激烈地侵犯着……我的肛门${heart(1)}小穴……也被${assi_name}一起侵犯了……感觉好奇怪……但是好舒服啊啊啊${heart(1)}」`,
+                ); // :8558
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着爱液泛滥的蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下甘甜的娇喘。`,
+                ); // :8559
+                await era.print(
+                  `『呜哇啊，性奴姐姐的小穴已经被魔王大人开发的……这么棒了！』`,
+                ); // :8560
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}挺起腰，激烈地侵犯着${target_name}的蜜穴。`,
+                ); // :8561
+                await era.printAndWait(
+                  `「呜啊……嗯啊啊${heart(1)}……好舒服……好舒服啊啊${heart(1)} 这样被同时侵犯着……一下子……就要去了啊啊${heart(1)}」`,
+                ); // :8562
+              } else {
+                // :8563
+                await era.printAndWait(
+                  `「请，请稍微温柔一点……拜托了……还有${assi_name}…不要兴奋成那个样子啊！」`,
+                ); // :8564
+                await era.printAndWait(
+                  `话音未落，${assi_name}已经迫不及待地插入了姐姐的蜜穴之中。`,
+                ); // :8565
+                await era.print(
+                  `『哼哼，温柔，别开玩笑了！我和魔王大人今天就是打算把姐姐侵犯到彻底坏掉的呀！』`,
+                ); // :8566
+                await era.printAndWait(
+                  `${assi_name}坏笑着，挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8567
+                await era.printAndWait(
+                  `「呜啊啊……太，太激烈了……感，感觉好奇怪……整个人……都要变得奇怪了啊啊！」`,
+                ); // :8568
+              } // :8569
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8570
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8572
+                await era.printAndWait(
+                  `「哈啊……哈啊……两人的阴茎……一起在身体里${heart(1)}……感觉实在是太棒了啊啊啊${heart(1)}」`,
+                ); // :8573
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下淫浪的娇喘。`,
+                ); // :8574
+                await era.print(
+                  `『给我用屁股和小穴同时高潮吧，淫乱的性奴姐姐！』`,
+                ); // :8575
+                await era.printAndWait(
+                  `兴奋不已${assi_name}挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8576
+                await era.printAndWait(
+                  `「呜啊……嗯啊啊……好舒服……实在是太舒服了${heart(1)} 真的要……高潮得……一塌糊涂了啊啊啊${heart(1)}」`,
+                ); // :8577
+              } else {
+                // :8578
+                await era.printAndWait(
+                  `「咦咦，要两个人一起上吗……好，好吧。其实还有点……期待呢${heart(1)}」`,
+                ); // :8579
+                await era.printAndWait(
+                  `蜜穴和肛门被同时插入，${target_name}忍不住灼热地呻吟了起来。`,
+                ); // :8580
+                await era.print(
+                  `『呼呼，姐姐的淫乱小穴……属于人家的啦啦啦！给我高潮吧！』`,
+                ); // :8581
+                await era.printAndWait(
+                  `${assi_name}嬉笑着，挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8582
+                await era.printAndWait(
+                  `「呜……呜啊啊${heart(1)} ${assi_name}！魔王大人！请，请尽情地……把${target_name}侵犯到坏掉吧${heart(1)}」`,
+                ); // :8583
+              } // :8584
+            } else {
+              // :8585
+
+              if (
+                chara(target).system.私处感觉 >= 3 &&
+                chara(target).system.肛门感觉 >= 3
+              ) {
+                // :8587
+                await era.print(
+                  `「呜……呜啊啊……不，不可以这样同时……侵犯屁股和小穴！呜呜，可，可是……为什么……感觉好舒服${heart(1)}…」`,
+                ); // :8588
+                await era.printAndWait(
+                  `${target_name}被${master_name}和妹妹抱在中间，同时侵犯着蜜穴和肛门，双重的快感瞬间将${target_name}淹没，只剩下灼热的呻吟。`,
+                ); // :8589
+                await era.print(
+                  `『嘴上说着不行，下面已经夹得这么紧了！被两人同时侵犯，更兴奋了吗，我的变态姐姐！』`,
+                ); // :8590
+                await era.printAndWait(
+                  `兴奋不已${assi_name}挺起腰，配合着${master_name}的动作，开始一同激烈地侵犯着${target_name}的蜜穴和肛门。`,
+                ); // :8591
+                await era.printAndWait(
+                  `「才，才不是……变态！呜……呜啊啊${heart(1)}……可，可是……真的好舒服……舒服得……不行了啊啊啊！」`,
+                ); // :8592
+              } else {
+                // :8593
+                await era.printAndWait(
+                  `「放，放开我啊……两个人一起……这种事情……怎么可以啊啊啊！」`,
+                ); // :8594
+                await era.printAndWait(
+                  `${target_name}似乎还无法适应如此激烈的玩法，痛苦地哀鸣了起来。`,
+                ); // :8595
+                await era.print(
+                  `『说什么呢姐姐，我们可是打算侵犯到姐姐两个淫穴一起高潮呢♪』`,
+                ); // :8596
+                await era.printAndWait(
+                  `${assi_name}带着恶意的笑容，舔着嘴角，更加激烈地侵犯着${target_name}的蜜穴………`,
+                ); // :8597
+              } // :8598
+            } // :8599
+          } else if (
+            game.train.三人PLAY主人部位 === 1 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :8601
+            if (era.get(`talent:${target}:85`)) {
+              // :8602
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8604
+                await era.printAndWait(
+                  `「呜……呜啊啊……这样边被魔王大人……侵犯着${heart(1)} ……边口交……感觉${assi_name}的阴茎……更加美味了啊啊啊${heart(1)} 唔呣……唔呣……唔唔唔♪」`,
+                ); // :8605
+                await era.printAndWait(
+                  `被${master_name}抽插着爱液泛滥的蜜穴、${target_name}更加兴奋不已地舔吮着妹妹的阴茎。`,
+                ); // :8606
+                await era.print(
+                  `『嘿嘿，被我和魔王大人一起侵犯，身为性奴的姐姐一定感觉很幸福吧？』`,
+                ); // :8607
+                await era.printAndWait(
+                  `${target_name}满脸通红地边点头，边继续努力地为妹妹口交着。`,
+                ); // :8608
+                await era.printAndWait(
+                  `「唔呣……唔呣${heart(1)}…… 的，的确是这样啊啊……能被魔王大人和${assi_name}这样疼爱……真的是太幸福了${heart(1)} 」`,
+                ); // :8609
+              } else {
+                // :8610
+                await era.printAndWait(
+                  `「唔呣……唔呣……${assi_name}的阴茎……味道好好……好喜欢${heart(1)} 还有……魔王大人，请吧……人家已经准备好了${heart(1)}」`,
+                ); // :8611
+                await era.printAndWait(
+                  `正在为${assi_name}口交的${target_name}，撅起的臀部一扭一扭地诱惑着${master_name}。`,
+                ); // :8612
+                await era.print(
+                  `『哎嘿嘿，姐姐最喜欢的魔王大人的阴茎要进来了哦${heart(1)}』`,
+                ); // :8613
+                await era.printAndWait(
+                  `${master_name}挺起腰，开始侵犯着${target_name}已经爱液泛滥的蜜穴。`,
+                ); // :8614
+                await era.printAndWait(
+                  `「呜啊……嗯啊啊${heart(1)}……魔王大人……一下子就顶到最里面了……好厉害啊啊啊${heart(1)}！」`,
+                ); // :8615
+                await era.printAndWait(
+                  `${assi_name}也抱着${target_name}的脸，用阴茎顶着姐姐的口腔。`,
+                ); // :8616
+                await era.print(
+                  `『不要光顾着享受，嘴巴也要好好地给我吸吮啊！』`,
+                ); // :8617
+                await era.printAndWait(
+                  `${target_name}就这样被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+                ); // :8618
+              } // :8619
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8620
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8622
+                await era.printAndWait(
+                  `「呜……啊啊啊……蜜穴……被魔王大人的阴茎……塞得满满的${heart(1)} 这样……边做爱……边口交……实在是太舒服了啊唔唔……唔呣……唔呣${heart(1)}」`,
+                ); // :8623
+                await era.print(
+                  `『呜哇哇……姐姐在被魔王大人侵犯的时候……口交居然比平时还厉害了${heart(1)}』`,
+                ); // :8624
+                await era.printAndWait(
+                  `${assi_name}感受着姐姐激烈地吸吮着自己的阴茎，忍不住也呻吟了起来。`,
+                ); // :8625
+                await era.printAndWait(
+                  `「啊啊啊……魔王大人……更加激烈地侵犯……${target_name}的淫穴吧${heart(1)} 唔呣……唔呣……唔唔唔${heart(1)}」`,
+                ); // :8626
+                await era.printAndWait(
+                  `${target_name}含糊不清地娇喘着，享受着心理和生理的双重快感……`,
+                ); // :8627
+              } else {
+                // :8628
+                await era.printAndWait(
+                  `「呜啊啊……在，在人家口交的时候……侵犯小穴……魔王大人……太狡猾了${heart(1)}」`,
+                ); // :8629
+                await era.printAndWait(
+                  `在${target_name}吸吮着自己妹妹的阴茎的时候，${master_name}趁机抱住了${target_name}的腰，将龟头抵入了蜜穴中。`,
+                ); // :8630
+                await era.print(
+                  `『哎嘿嘿，姐姐一会儿享受的时候，嘴巴记得不要停下来哦♪』`,
+                ); // :8631
+                await era.printAndWait(
+                  `${master_name}挺着腰，开始激烈地侵犯着${target_name}爱液泛滥的蜜穴。`,
+                ); // :8632
+                await era.printAndWait(
+                  `「唔呣呣……唔唔${heart(1)} 不，不行了……这样……太舒服了啊啊啊${heart(1)}」`,
+                ); // :8633
+                await era.print(`『啊啊……姐姐的口交……太厉害了……好舒服啊啊！』`); // :8634
+                await era.print(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，因为心里和生理的双重快感而含糊不清地呻吟着………`,
+                ); // :8635
+              } // :8636
+            } else {
+              // :8637
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8639
+                await era.printAndWait(
+                  `「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」`,
+                ); // :8640
+                await era.printAndWait(
+                  `敏感的小穴被${master_name}肆意地抽插着，${target_name}只能拼命忍耐着快感，同时还要努力为妹妹口交。`,
+                ); // :8641
+                await era.print(
+                  `『哎嘿嘿，姐姐真不错呢，被魔王大人插得那么舒服，嘴巴还没有松懈♪』`,
+                ); // :8642
+                await era.printAndWait(
+                  `边嘲弄着${target_name}，${assi_name}边用阴茎继续侵犯着姐姐的喉咙。`,
+                ); // :8643
+                await era.printAndWait(
+                  `「唔呣呣……唔呣呣……太，太激烈了${heart(1)}…呜啊啊……被魔王大人……顶到子宫口了唔呣呣呣！」`,
+                ); // :8644
+                await era.printAndWait(
+                  `蜜穴传来的极度快感让${target_name}几乎无法思考………`,
+                ); // :8645
+              } else {
+                // :8646
+                await era.printAndWait(
+                  `「不，不可以在口交的时候……侵犯小穴啊……唔呣呣……呣呣……」`,
+                ); // :8647
+                await era.printAndWait(
+                  `正在为${assi_name}口交的${target_name}，蜜穴突然被侵犯，一时惊慌失措。`,
+                ); // :8648
+                await era.print(
+                  `『别光顾着享受啊，笨蛋姐姐，给我好好口交啊！』`,
+                ); // :8649
+                await era.printAndWait(
+                  `「不，不行啊……这样的事情……呜呜……唔呣！？」`,
+                ); // :8650
+                await era.printAndWait(
+                  `${assi_name}不满地抓着${target_name}的头发，用勃起的阴茎强行侵犯着姐姐的喉咙`,
+                ); // :8651
+                await era.printAndWait(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，连悲鸣都发不出，只能忍受着痛苦与折磨………`,
+                ); // :8652
+              } // :8653
+            } // :8654
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 1
+          ) {
+            // :8656
+            if (era.get(`talent:${target}:85`)) {
+              // :8657
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8659
+                await era.printAndWait(
+                  `「唔呣呣？在……在口交的时候……侵犯小穴……感觉……好奇怪……但是好舒服啊啊啊${heart(1)}」`,
+                ); // :8660
+                await era.printAndWait(
+                  `${target_name}一边被妹妹侵犯着，一边把脸埋在${master_name}双腿之间，努力地吸吮着阴茎。`,
+                ); // :8661
+                await era.print(
+                  `『哎嘿嘿，姐姐不知不觉之间已经完全适应性奴的身份了呢${heart(1)}』`,
+                ); // :8662
+                await era.printAndWait(
+                  `${assi_name}带着享受的表情，激烈地侵犯着${target_name}的蜜穴。`,
+                ); // :8663
+                await era.printAndWait(
+                  `「呜……呣呣……不，不要对姐姐恶作剧了啦……没有办法好好……为魔王大人口交了${heart(1)} 对，对不起……魔王大人……因为实在是太舒服了${heart(1)}我，我会努力的……咕呣……咕呣……呣呣呣」`,
+                ); // :8664
+                await era.printAndWait(
+                  `${target_name}感受生理和心理的双重快感，任凭${master_name}好${assi_name}一前一后地侵犯着自己……`,
+                ); // :8665
+              } else {
+                // :8666
+                await era.printAndWait(
+                  `「不，不可以……在这个时候……侵犯小穴啊……会没有办法好好为魔王大人口交的！」`,
+                ); // :8667
+                await era.printAndWait(
+                  `正在为${master_name}口交的${target_name}，感受着身后的${assi_name}抱着自己的腰，龟头顶入了蜜穴之中。`,
+                ); // :8668
+                await era.print(
+                  `『其实人家还有点嫉妒姐姐呢，能同时享受两根阴茎……唔哇哇……姐姐的小穴好紧好舒服♪』`,
+                ); // :8669
+                await era.printAndWait(
+                  `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的蜜穴。`,
+                ); // :8670
+                await era.printAndWait(
+                  `「呜……呜啊啊……不，不能顶得这么深……唔呣呣……这样……边口交边被侵犯……感觉……整个人都要变得奇怪了啊啊——唔呣……呣呣呣……呣呣♪」`,
+                ); // :8671
+                await era.printAndWait(
+                  `${target_name}被${master_name}和${assi_name}当做性玩具一般，一前一后的侵犯着……`,
+                ); // :8672
+              } // :8673
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8674
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8676
+                await era.printAndWait(
+                  `「唔呣……唔呣${heart(1)}……这样……边口交……边被侵犯小穴……感觉……太舒服了啊啊啊${heart(1)}」`,
+                ); // :8677
+                await era.printAndWait(
+                  `正在为${master_name}口交的${target_name}，感受着身后的${assi_name}抱着自己的腰，龟头顶入了爱液泛滥的敏感蜜穴之中。`,
+                ); // :8678
+                await era.print(
+                  `『唔哇哇……原来姐姐已经变得这么淫乱了……魔王大人真是调教有方啊！』`,
+                ); // :8679
+                await era.printAndWait(
+                  `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的蜜穴。`,
+                ); // :8680
+                await era.printAndWait(
+                  `${master_name}也配合着${assi_name}的动作，将阴茎顶到了${target_name}喉咙深处，开始抽插起来。`,
+                ); // :8681
+                await era.printAndWait(
+                  `「唔呣呣？！唔呣……唔呣……好，好舒服${heart(1)}……舒服得……已经没有办法思考了啊呣呣……呣呣${heart(1)}」`,
+                ); // :8682
+                await era.printAndWait(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，身体在心里和生理的双重快感中颤抖着……`,
+                ); // :8683
+              } else {
+                // :8684
+                await era.printAndWait(
+                  `「呜啊啊……要边口交边被侵犯小穴了……好期待${heart(1)}」`,
+                ); // :8685
+                await era.printAndWait(
+                  `正在为${assi_name}口交的${master_name}，撅起的臀部一扭一扭地诱惑着${target_name}。`,
+                ); // :8686
+                await era.print(
+                  `『看来姐姐已经准备好了呢……接下来就是要侵犯到姐姐失神为止喽！！』`,
+                ); // :8687
+                await era.printAndWait(
+                  `${assi_name}兴奋地挺着腰，开始持续地侵犯着${target_name}的蜜穴。`,
+                ); // :8688
+                await era.printAndWait(
+                  `${master_name}也配合着${assi_name}的动作，将阴茎顶到了${target_name}喉咙深处，开始抽插起来。`,
+                ); // :8689
+                await era.printAndWait(
+                  `「唔呣呣……唔唔${heart(1)} 这样好舒服……比想象中的还要舒服啊啊……呣呣……呣呣${heart(1)}」`,
+                ); // :8690
+                await era.printAndWait(
+                  `被两人的阴茎一前一后侵犯着的${target_name}，身体在难以言喻的快感中颤抖着……`,
+                ); // :8691
+              } // :8692
+            } else {
+              // :8693
+
+              if (chara(target).system.私处感觉 >= 3) {
+                // :8695
+                await era.printAndWait(
+                  `「饶，饶了我吧……不，不可以这样同时侵犯嘴巴和小穴啊……唔呣呣……唔呣……」`,
+                ); // :8696
+                await era.printAndWait(
+                  `${target_name}嘴里含着${master_name}的阴茎，拼命忍耐着被${assi_name}从身后侵犯的强烈快感。`,
+                ); // :8697
+                await era.print(
+                  `『不能光顾享受啊姐姐，要好好用你的淫乱嘴巴小穴服务魔王大人，听到了没！』`,
+                ); // :8698
+                await era.printAndWait(
+                  `「对，对不起……我，我会好好用嘴巴做的……唔呣……唔呣……唔唔！」`,
+                ); // :8699
+                await era.printAndWait(
+                  `不耐烦的${master_name}抓着${target_name}的头发，将阴茎顶到了喉咙深处，肆意抽插着。`,
+                ); // :8700
+                await era.print(
+                  `『哼，魔王大人已经不满意了，做好受惩罚的觉悟吧笨蛋姐姐！』`,
+                ); // :8701
+                await era.printAndWait(
+                  `${target_name}泪流满面，却又无可奈何地忍耐着两人的侵犯和肆虐………`,
+                ); // :8702
+              } else {
+                // :8703
+                await era.printAndWait(
+                  `「呜呜呜……求求你们了……饶了我吧……真的……唔呣呣？！呣呣……唔呣……」`,
+                ); // :8704
+                await era.printAndWait(
+                  `对${target_name}的求饶无动于衷，${assi_name}和${master_name}开始一前一后，毫不留情地侵犯着${target_name}。`,
+                ); // :8705
+                await era.print(
+                  `『啊哈哈……魔王大人好像很喜欢姐姐的淫乱嘴巴小穴呢♪』`,
+                ); // :8706
+                await era.printAndWait(
+                  `「饶，饶了我吧……不能呼吸了……唔呣……呣呣……呣呣……」`,
+                ); // :8707
+                await era.printAndWait(
+                  `${master_name}不满地抓着${target_name}的头发，用勃起的阴茎强行在喉咙里抽插着`,
+                ); // :8708
+                await era.print(
+                  `『哎嘿，姐姐的喉咙小穴被魔王大人塞满了呢，人家有点嫉妒呢！』`,
+                ); // :8709
+                await era.printAndWait(
+                  `${target_name}怎么挣扎都无法挣脱，只能泪流满面地任由两人激烈地侵犯着自己……………`,
+                ); // :8710
+              } // :8711
+            } // :8712
+          } else if (
+            game.train.三人PLAY主人部位 === 2 &&
+            game.train.三人PLAY助手部位 === 3
+          ) {
+            // :8714
+            if (era.get(`talent:${target}:85`)) {
+              // :8715
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8717
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :8718
+                await era.print(
+                  `『哎哎姐姐，肛交有那么舒服吗！怎么一被魔王大人侵犯屁股，嘴巴的动作就停下来了呢！真是的，还要人家自己动！！』`,
+                ); // :8719
+                await era.printAndWait(
+                  `${assi_name}抱着${target_name}的脸，用自己双腿间的${assi_weapon}肆意地侵犯着姐姐的喉咙。`,
+                ); // :8720
+                await era.printAndWait(
+                  `「唔呣……唔呣……对，对不起，${assi_name}……因为一边口交一边肛交的感觉……太舒服了……整个人都要变得奇怪了啊啊${heart(1)}」`,
+                ); // :8721
+                await era.printAndWait(
+                  `${target_name}老老实实地忍受，应该说是享受着${assi_name}和${master_name}两人对自己的同时侵犯………`,
+                ); // :8722
+              } else {
+                // :8723
+                await era.printAndWait(
+                  `「唔呣……唔呣……啊啊魔王大人，不，不能这样同时侵犯屁股啊啊！！」`,
+                ); // :8724
+                await era.print(
+                  `『哎嘿嘿，姐姐现在已经能熟练地一边被侵犯肛门一边口交了呢，完全变成我和魔王大人的性奴了呀♪♪』`,
+                ); // :8725
+                await era.printAndWait(
+                  `被妹妹羞辱得面红耳赤的${target_name}，却依旧顺从地吸吮着${assi_name}股间的的${assi_weapon}。`,
+                ); // :8726
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :8727
+                await era.printAndWait(
+                  `${master_name}欣赏着姐姐为妹妹口交侍奉的淫乱姿态，也兴奋地挺起腰，更加激烈地侵犯着${target_name}的肛门……`,
+                ); // :8728
+              } // :8729
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8730
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8732
+                await era.printAndWait(
+                  `「唔呣……唔呣……这样边吸吮着……阴茎……边被侵犯肛门……实在是……太舒服了啊呣呣${heart(1)}……不，不行了，屁股舒服的要去了啊啊${heart(1)}！」`,
+                ); // :8733
+                await era.printAndWait(
+                  `肛门的强烈快感让${target_name}更加兴奋地为${assi_name}口交着，整个人都忘乎所以了。`,
+                ); // :8734
+                await era.print(
+                  `『哎哎哎，姐姐已经这么淫荡了啊，完全变成我和魔王大人的性奴了呢！』`,
+                ); // :8735
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :8736
+              } else {
+                // :8737
+                await era.printAndWait(
+                  `「呜啊啊……这样被同时侵犯着……肛门和嘴巴小穴……感觉好奇怪……但是好舒服啊啊」`,
+                ); // :8738
+                await era.printAndWait(
+                  `感受着肛门的快感，${target_name}更加兴奋地为自己的妹妹口交着`,
+                ); // :8739
+                await era.print(
+                  `『啊啊姐姐！姐姐！就这样彻底变成我和魔王大人的性奴吧！』`,
+                ); // :8740
+                await era.printAndWait(
+                  `兴奋不已的${assi_name}抓着${target_name}头发，更加激烈地侵犯着自己姐姐的喉咙，另一边${master_name}抽插肛门的节奏也加快了……`,
+                ); // :8741
+              } // :8742
+            } else {
+              // :8743
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8745
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :8746
+                await era.printAndWait(
+                  `${target_name}把脸埋在妹妹的腿间，吸吮着${assi_name}的阴茎，然而肛门被${master_name}侵犯的快感很快就让她无法集中精神继续口交，只是无力地呻吟着`,
+                ); // :8747
+                await era.print(
+                  `『哎哎姐姐真没用，屁股再这么舒服，嘴巴的动作也不能停下来啊！！』`,
+                ); // :8748
+                await era.printAndWait(
+                  `「对，对不起……但是真的已经……唔呣……唔呣……呜呜！」`,
+                ); // :8749
+                await era.printAndWait(
+                  `话音未落，${assi_name}就已经强行把阴茎插到了${target_name}的喉咙深处，强行侵犯着`,
+                ); // :8750
+              } else {
+                // :8751
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :8752
+                await era.printAndWait(
+                  `${target_name}被${master_name}持续侵犯着肛门的同时，被迫继续把脸埋在${assi_name}的腿间，吸吮着妹妹的阴茎。`,
+                ); // :8753
+                await era.print(
+                  `『呵呵呵，嘴上说着不喜欢，但是吸吮阴茎却很卖力啊，那么喜欢口交吗我的好姐姐？』`,
+                ); // :8754
+                await era.printAndWait(
+                  `${target_name}绝望地摇着头，忍耐着肛门被侵犯的不适感，边屈服地为妹妹口交着`,
+                ); // :8755
+              } // :8756
+            } // :8757
+          } else if (
+            game.train.三人PLAY主人部位 === 3 &&
+            game.train.三人PLAY助手部位 === 2
+          ) {
+            // :8759
+            if (era.get(`talent:${target}:85`)) {
+              // :8760
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8762
+                await era.printAndWait(
+                  `「请……请两位随意地侵犯${target_name}的肛门和嘴巴小穴吧${heart(1)} ……唔呣……唔唔？！」`,
+                ); // :8763
+                await era.print(
+                  `『比比看看看是我先让姐姐的屁股高潮，还是姐姐先用嘴巴让魔王大人射精吧～加油啊姐姐♪』`,
+                ); // :8764
+                await era.printAndWait(
+                  `${assi_name}用手指肆意地玩弄了一会儿${target_name}的肛门，然后用自己双腿间的${assi_weapon}开始持续地侵犯着姐姐的后庭。`,
+                ); // :8765
+                await era.printAndWait(
+                  `「呜呣呣${heart(1)} 好，好舒服啊啊啊${heart(1)} 边吸吮着……魔王大人的阴茎……边被妹妹侵犯肛门${heart(1)}……不行了……已经舒服得没有办法思考了啊呣呣${heart(1)}！」`,
+                ); // :8766
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己的亲妹妹侵犯肛门的下流姿态，边用${master_weapon}侵犯着${target_name}的喉咙深处……`,
+                ); // :8767
+              } else {
+                // :8768
+                await era.printAndWait(
+                  `「不，不可以……这样……同时侵犯肛门啊啊${heart(1)} 没有办法……好好为魔王大人口交了……唔呣呣……呜啊啊！」`,
+                ); // :8769
+                await era.print(
+                  `『这样不行啊姐姐，不管是被侵犯肛门还是侵犯小穴，口交都不能停下来，这可是作为性奴的基本功呢♪』`,
+                ); // :8770
+                await era.printAndWait(
+                  `边羞辱着自己的姐姐，${assi_name}边用${assi_weapon}更加激烈地侵犯着${target_name}的后庭。`,
+                ); // :8771
+                await era.printAndWait(
+                  `「不，不要说这种……害羞的话啊${heart(1)}唔呣……唔呣${heart(1)} 啊啊啊……整个人……都要变得奇怪了！」`,
+                ); // :8772
+                await era.printAndWait(
+                  `${master_name}欣赏着${target_name}被自己妹妹羞辱的姿态，更加兴奋的侵犯着${target_name}的嘴巴和喉咙。`,
+                ); // :8773
+              } // :8774
+            } else if (era.get(`talent:${target}:76`)) {
+              // :8775
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8777
+                await era.printAndWait(
+                  `「来吧，魔王大人，还有${assi_name}……请一起侵犯${target_name}淫乱的肛门性器和嘴巴小穴吧……人家已经等不及了啦${heart(1)}」`,
+                ); // :8778
+                await era.printAndWait(
+                  `肛门被侵犯的极度快感，让${target_name}整个人都颤抖了起来，更加兴奋而积极地吸吮着${master_name}的阴茎。`,
+                ); // :8779
+                await era.print(
+                  `『啊啊……姐姐的肛门真的被魔王大人调教成名器了啊啊！侵犯起来好舒服！！』`,
+                ); // :8780
+                await era.printAndWait(
+                  `「是……是啊${heart(1)} 姐姐的……肛门就是……专门服务${assi_name}和魔王大人的淫乱性器啊啊${heart(1)} 唔呣……唔呣……唔唔唔${heart(1)}」`,
+                ); // :8781
+                await era.printAndWait(
+                  `${target_name}淫乱的话语激起了${assi_name}和${master_name}的兴致，更加激烈地一前一后侵犯着${target_name}……`,
+                ); // :8782
+              } else {
+                // :8783
+                await era.printAndWait(
+                  `「呜啊啊……居，居然……要边被侵犯肛门……边为魔王大人口交${heart(1)}……不过算了……这样也很舒服就是了——唔呣呣！？呣呣呣」`,
+                ); // :8784
+                await era.printAndWait(
+                  `${target_name}身体颤抖着，完全沉醉在肛交的快感之中，嘴也更加热情地吸吮着${master_name}的阴茎。`,
+                ); // :8785
+                await era.print(
+                  `『哎嘿嘿，姐姐完全变成淫乱性奴了呢，真是变态，我怎么会有你这样的姐姐！』`,
+                ); // :8786
+                await era.printAndWait(
+                  `「是……是啊……姐姐是${assi_name}和魔王大人的淫乱性奴……请随意地把姐姐……侵犯到坏掉吧啊啊啊${heart(1)}」`,
+                ); // :8787
+                await era.printAndWait(
+                  `${assi_name}兴奋不已地抱着${target_name}的腰，激烈地侵犯着姐姐的肛门。强烈的快感让${target_name}更加忘我地为${master_name}口交着………`,
+                ); // :8788
+              } // :8789
+            } else {
+              // :8790
+
+              if (chara(target).system.肛门感觉 >= 3) {
+                // :8792
+                await era.printAndWait(
+                  `「呜啊……不，不可以在口交的时候……侵犯屁股啊啊……但是……感觉好奇怪……好舒服……唔呣……唔呣」`,
+                ); // :8793
+                await era.printAndWait(
+                  `敏感的肛门传来的快感让${target_name}几乎无法忍耐，大声地呻吟了起来，连为${master_name}口交的动作都停了下来。`,
+                ); // :8794
+                await era.print(
+                  `『没用的姐姐，好好给魔王大人口交啊，难道你想挨罚吗？！♪』`,
+                ); // :8795
+                await era.printAndWait(
+                  `「对，对不起……我会好好……吸吮的……唔呣……唔呣……啊啊啊……不，不行了，屁股……真的不行了，舒服得……要去了啊啊啊${heart(1)}」`,
+                ); // :8796
+                await era.printAndWait(
+                  `已经被调教成性器的肛门依旧被自己的妹妹毫不留情地侵犯着，快感已经逐渐淹没了${target_name}`,
+                ); // :8797
+                await era.printAndWait(
+                  `几乎无法思考的${target_name}只能本能地搂着${master_name}的腰，吸吮着口中的阴茎`,
+                ); // :8798
+              } else {
+                // :8799
+                await era.printAndWait(
+                  `「呜呜……求你们了……放过我吧……真的，真的不要两个人一起上啊……唔呣……呣呣？！」`,
+                ); // :8800
+                await era.printAndWait(
+                  `完全无视了${target_name}的哀求，${assi_name}和${master_name}开始一前一后同时侵犯着${target_name}的肛门和嘴。`,
+                ); // :8801
+                await era.print(
+                  `『啊啊……姐姐的淫乱屁股小穴夹得这么紧，好舒服啊！』`,
+                ); // :8802
+                await era.printAndWait(
+                  `「呜呜……饶了我吧……真的，真的会坏掉的……唔呣！？唔唔……唔呣……」`,
+                ); // :8803
+                await era.printAndWait(
+                  `${target_name}只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着${master_name}的阴茎……直到两人满意为止`,
+                ); // :8804
+              } // :8805
+            } // :8806
+          } else {
+            // :8807
+          } // :8809
+        } // :8810
+      } // :8811
+      return 0; // :8812
+    } // :8813
+  } // :8814
 
   return 0;
 }

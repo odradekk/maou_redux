@@ -9568,6 +9568,44 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention,
   })),
   {
+    desc: 'M4555 COM64 非玛奥助手守卫判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'if (era_flag.assi > 0 && era_flag.assi !== 17) {\n      // :7181-7182',
+    replace:
+      'if (era_flag.assi > 0 && era_flag.assi === 17) {\n      // :7181-7182',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM64 守卫：助手不是玛奥时静默跳过',
+  },
+  {
+    desc: 'M4556 COM64 首次 CFLAG:391 推进写错（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'kojo.三人PLAY = 1; // :7792',
+    replace: 'kojo.三人PLAY = 2; // :7792',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM64 初めて：处女/非处女×玛奥助手/无助手×六种部位组合',
+  },
+  {
+    desc: 'M4557 COM64 助手性器三目 && 改 ||（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      era_flag.assi > 0 &&
+      era0(\`talent:\${era_flag.assi}:121\`) === 0 &&
+      era0(\`talent:\${era_flag.assi}:122\`) === 0`,
+    replace: `      era_flag.assi > 0 &&
+      (era0(\`talent:\${era_flag.assi}:121\`) === 0 ||
+        era0(\`talent:\${era_flag.assi}:122\`) === 0)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM64 根据主人和助手性器素质显示电动假阳具或阴茎',
+  },
+  {
+    desc: 'M4558 COM64 主人性器三目 && 改 ||（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'era0(`talent:${MASTER}:121`) === 0 && era0(`talent:${MASTER}:122`) === 0',
+    replace:
+      'era0(`talent:${MASTER}:121`) === 0 || era0(`talent:${MASTER}:122`) === 0',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM64 根据主人和助手性器素质显示电动假阳具或阴茎',
+  },
+  {
     desc: 'M4284 COM28 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {
