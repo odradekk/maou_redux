@@ -788,3 +788,93 @@ test('--ids 是子集档：不带 --skip-baseline 也不核对 ENGINE_SKIP_BASEL
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+/**
+ * 「只跑 must_mention 点名的用例」的判别式（#242）：夹具里放一个**留痕**的
+ * 旁支用例——它一跑就往夹具根写 ran-other，从工具外侧看得见整份文件跑没跑。
+ * 不这么做就只能看耗时，那是块表不是断言。
+ */
+function make_two_test_fixture() {
+  const root = make_fixture();
+  fs.writeFileSync(
+    path.join(root, 'test', 'calc.test.js'),
+    [
+      "const { test } = require('node:test');",
+      "const assert = require('node:assert/strict');",
+      "const fs = require('node:fs');",
+      "const path = require('node:path');",
+      "const { double } = require('../lib/calc');",
+      "test('加倍', () => {",
+      "  assert.equal(double(21), 42, '加倍系数必须是 2');",
+      '});',
+      "test('旁支：与本次变异无关，跑了就留痕', () => {",
+      "  fs.writeFileSync(path.join(__dirname, '..', 'ran-other'), '1');",
+      '});',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  return root;
+}
+
+test('must_mention 等于测试名时只跑那一个用例：同文件的旁支用例不跑', () => {
+  const root = make_two_test_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '1',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ]);
+    assert.equal(status, 0, `变异应被拦下，实际退出 ${status}：\n${output}`);
+    assert.equal(
+      fs.existsSync(path.join(root, 'ran-other')),
+      false,
+      '过滤跑已经红了就该收手；旁支用例留了痕，说明整份文件仍在跑（口上票里这是每条几秒的代价）',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('must_mention 不是测试名时落回整份文件：判定不变，仍拦得下', () => {
+  const root = make_two_test_fixture();
+  try {
+    // 断言消息而非测试名：过滤模式一条也匹配不上，node --test 退 0，
+    // 工具必须据此重跑全文——最坏等于过滤之前的行为，不许变成漏判。
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, must_mention: '加倍系数必须是 2' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '1',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `落回全文后仍应拦下，实际退出 ${status}：\n${output}`,
+    );
+    assert.equal(
+      fs.existsSync(path.join(root, 'ran-other')),
+      true,
+      '匹配不上就必须重跑整份文件，否则这条变异会被判成漏网',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
