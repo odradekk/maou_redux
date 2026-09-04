@@ -10243,6 +10243,48 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOHOUBI_AFTER 与 OSIOKI',
   },
   {
+    desc: 'M4736 K11 AEGI arg=0 默认段数少一段（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  const count = (arg === 0 ? 2 : arg) + random(2);',
+    replace: '  const count = (arg === 0 ? 1 : arg) + random(2); // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'arg=0 改为两段',
+  },
+  {
+    desc: 'M4737 K11 AEGI 阴道与肛门词库对调（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: "    args === '膣' ? VAGINAL_MOANS : args === '肛门' ? ANAL_MOANS : null;",
+    replace:
+      "    args === '膣' ? ANAL_MOANS : args === '肛门' ? VAGINAL_MOANS : null; // 变异",
+    tests: ['kojo-k11-lily'],
+    must_mention: '阴道与肛门词库按 RAND:56',
+  },
+  {
+    desc: 'M4738 K11 AEGI 词库随机上界少一项（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '    result += moans[random(56)];',
+    replace: '    result += moans[random(55)]; // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: '阴道与肛门词库按 RAND:56',
+  },
+  {
+    desc: 'M4739 K11 AEGI 爱慕未进入沦陷连接符分档（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  const fallen =\n    era0(`talent:${era_flag.target}:85`) ||\n    era0(`talent:${era_flag.target}:76`);',
+    replace:
+      '  const fallen =\n    era0(`talent:${era_flag.target}:185`) ||\n    era0(`talent:${era_flag.target}:76`); // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: '爱慕/淫乱使用心形连接',
+  },
+  {
+    desc: 'M4740 K11 AEGI 沦陷最终心形结尾错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: "      result += ['♪', heart(1), '！'][random(3)];",
+    replace: "      result += ['♪', '！', heart(1)][random(3)]; // 变异",
+    tests: ['kojo-k11-lily'],
+    must_mention: '爱慕/淫乱使用心形连接',
+  },
+  {
     desc: 'M4686 PALAMCNG_11 非玛奥助手守卫被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    // :11466',

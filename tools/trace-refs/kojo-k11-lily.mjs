@@ -28911,6 +28911,28 @@ export const FILES = [
       ['13083', 'ELSEIF TFLAG:18 == 9'],
     ].map(([ref, line]) => exact_line(ref, line)),
   },
+  {
+    src: K11_SOURCE,
+    ref: '13090-13468',
+    any: [
+      ['13090', '@AEGI_K11(ARGS, ARG)'],
+      ['13095', 'SIF ARG == 0'],
+      ['13096', 'ARG += RAND:2'],
+      ['13100', 'CASE "膣"'],
+      ['13101', 'SELECTCASE RAND:56'],
+      ['13103', 'LOCALS = %LOCALS%嗯啊啊…'],
+      ['13213', 'LOCALS = %LOCALS%更加…请更加激烈的侵犯这里…啊~…'],
+      ['13215', 'IF LOCAL < ARG - 1'],
+      ['13216', 'IF (TALENT:85 || TALENT:淫乱)'],
+      ['13227', 'LOCALS = %LOCALS%%UNICODE(0x2661) *1%　'],
+      ['13277', 'CASE "肛门"'],
+      ['13278', 'SELECTCASE RAND:56'],
+      ['13280', 'LOCALS = %LOCALS%嗯、噗呜…'],
+      ['13390', 'LOCALS = %LOCALS%更加…请更加激烈的侵犯这里…啊~…'],
+      ['13467', 'NEXT'],
+      ['13468', 'RETURNF LOCALS'],
+    ].map(([ref, line]) => exact_line(ref, line)),
+  },
 ];
 
 export const LOG_REFS = [];

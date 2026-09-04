@@ -6861,6 +6861,40 @@ test('GOHOUBI_AFTER 与 OSIOKI：choice 透传并保留原作空输出', async (
   assert.deepEqual(fixture.text_lines().slice(-2), ['', '']);
 });
 
+test('AEGI：阴道与肛门词库按 RAND:56 取对应首尾条目', () => {
+  const fixture = setup_lily();
+  const { aegi_k11 } = fixture.load_module('kojo/kojo-k11-lily');
+  assert.equal(aegi_k11('膣', 1, seq_rand(0, 55, 1)), '嗯啊啊…！');
+  assert.equal(
+    aegi_k11('膣', 1, seq_rand(0, 0, 0)),
+    '更加…请更加激烈的侵犯这里…啊~…！！',
+  );
+  assert.equal(aegi_k11('肛门', 1, seq_rand(0, 55, 1)), '嗯、噗呜…！');
+  assert.equal(
+    aegi_k11('肛门', 1, seq_rand(0, 0, 0)),
+    '更加…请更加激烈的侵犯这里…啊~…！！',
+  );
+});
+
+test('AEGI：arg=0 改为两段并由首个 RAND:2 决定是否增加第三段', () => {
+  const fixture = setup_lily();
+  const { aegi_k11 } = fixture.load_module('kojo/kojo-k11-lily');
+  assert.equal(
+    aegi_k11('膣', 0, seq_rand(1, 55, 0, 0, 54, 1, 6, 53, 0)),
+    '嗯啊啊…！！　呜啊啊……嗯啊……啊啊啊…！！',
+  );
+});
+
+test('AEGI：爱慕/淫乱使用心形连接与三选一结尾，未知部位返回空串', () => {
+  const fixture = setup_lily((f) => f.store.set(`talent:${LILY}:85`, 1));
+  const { aegi_k11 } = fixture.load_module('kojo/kojo-k11-lily');
+  assert.equal(
+    aegi_k11('肛门', 2, seq_rand(0, 55, 0, 6, 54, 1)),
+    '嗯、噗呜…♡　啊~咕唔…♡',
+  );
+  assert.equal(aegi_k11('口', 2, seq_rand()), '');
+});
+
 // —— SELECTCOM 64（3P CFLAG:391）——
 
 test('COM64 守卫：助手不是玛奥时静默跳过', async () => {
