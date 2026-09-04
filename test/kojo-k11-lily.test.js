@@ -6421,3 +6421,86 @@ test('COM40 二回目：非助手玛奥四档推进', async () => {
     assert.equal(fixture.store.get(`cflag:${LILY}:341`), item.expected);
   }
 });
+
+// —— SELECTCOM 41（鞭 CFLAG:342）——
+
+test('COM41 初めて：助手玛奥与非助手玛奥三档', async () => {
+  const cases = [
+    {
+      assi: true,
+      expected: '『哈哈哈哈，以后姐姐不听话，就要用这个鞭子狠狠抽打！』',
+    },
+    { talent: 76, expected: '「呜……呜啊啊……好痛啊啊……！」' },
+    { talent: 85, expected: '「我，我做错了什么吗——啊啊啊！！！」' },
+    { expected: '「呜啊啊……住，住手啊啊啊！」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 41);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+    assert.equal(fixture.store.get(`cflag:${LILY}:342`), 1);
+  }
+});
+
+test('COM41 二回目：助手玛奥八档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 5, expected: 9 },
+    { talent: 76, abl: 3, expected: 8 },
+    { talent: 76, expected: 7 },
+    { talent: 85, abl: 5, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set('flag:7', 2);
+      f.store.set(`cflag:${LILY}:342`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:21`, item.abl);
+    }, 41);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:342`), item.expected);
+  }
+});
+
+test('COM41 二回目：非助手玛奥八档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 5, expected: 9 },
+    { talent: 76, abl: 3, expected: 8 },
+    { talent: 76, expected: 7 },
+    { talent: 85, abl: 5, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 2);
+      f.store.set(`cflag:${LILY}:342`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:21`, item.abl);
+    }, 41);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:342`), item.expected);
+  }
+});

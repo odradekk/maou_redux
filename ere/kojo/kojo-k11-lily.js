@@ -10958,6 +10958,297 @@ async function kojo_message_com_11(rand) {
     } // :5920
   } // :5921
 
+  // :5926-6062 IF SELECTCOM == 41（鞭 CFLAG:342）
+  if (era_flag.selectcom === 41) {
+    if (kojo.鞭 === 0) {
+      // :5928
+
+      if (assi_mao) {
+        // :5930
+        await era.printAndWait(
+          `『哈哈哈哈，以后姐姐不听话，就要用这个鞭子狠狠抽打！』`,
+        ); // :5931
+        await era.printAndWait(`「呜啊啊……住，住手啊啊！」`); // :5932
+        await era.printAndWait(
+          `鞭子抽击的声音中还夹杂着${player_name}歇斯底里的笑声和${target_name}痛苦的悲鸣……`,
+        ); // :5933
+      } else {
+        // :5934
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :5936
+          await era.printAndWait(`「呜……呜啊啊……好痛啊啊……！」`); // :5937
+          await era.printAndWait(
+            `${target_name}在鞭子抽打下大声尖叫着，如同悦耳的乐声一样传入${player_name}的耳朵……`,
+          ); // :5938
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :5940
+          await era.printAndWait(`「我，我做错了什么吗——啊啊啊！！！」`); // :5941
+          await era.printAndWait(
+            `${player_name}丝毫不敢反抗，忍受着${target_name}挥下的鞭子，满足着${player_name}的嗜虐心……`,
+          ); // :5942
+        } else {
+          // :5944
+          await era.printAndWait(`「呜啊啊……住，住手啊啊啊！」`); // :5945
+          await era.printAndWait(`${target_name}在鞭子下痛苦地惨叫着……`); // :5946
+        } // :5947
+      } // :5948
+      // CFLAG:TARGET:342  = 1（变量语义：CFLAG 族，TARGET:342） // :5949
+      kojo.鞭 = 1; // :5949
+      return 0; // :5950
+    } else {
+      // :5952
+
+      if (assi_mao) {
+        // :5954
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :5956
+          await era.printAndWait(`「呜，呜啊，请再抽打我吧${heart(1)}」`); // :5957
+          await era.printAndWait(
+            `『被鞭子抽打得发情了吗？真是个变态呢！欠打！欠打！』`,
+          ); // :5958
+          await era.printAndWait(`「呜呜……啊啊啊……嗯啊啊！」`); // :5959
+          await era.printAndWait(
+            `${target_name}完全沉浸在妹妹施予的痛苦带来的扭曲的受虐快感中……`,
+          ); // :5960
+          // CFLAG:TARGET:342  = 9（变量语义：CFLAG 族，TARGET:342） // :5961
+          kojo.鞭 = 9; // :5961
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :5963
+          await era.printAndWait(`「呜……呜啊啊……嗯啊啊！」`); // :5964
+          await era.printAndWait(
+            `『哎哟，明明在被鞭笞，怎么会发出娇喘来呢姐姐？』`,
+          ); // :5965
+          await era.printAndWait(`「才……才不是娇喘呢！」`); // :5966
+          await era.printAndWait(
+            `『哈，明明听上去就是很舒服的样子嘛，变态，大变态！』`,
+          ); // :5967
+          await era.printAndWait(
+            `${player_name}更加兴奋地挥着鞭子狠狠抽打着${target_name}……`,
+          ); // :5968
+          // CFLAG:TARGET:342  = 8（变量语义：CFLAG 族，TARGET:342） // :5969
+          kojo.鞭 = 8; // :5969
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.鞭 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :5971
+          await era.printAndWait(
+            `「住，住手啊${player_name}！为，为什么要用鞭子打我！」`,
+          ); // :5972
+          await era.printAndWait(
+            `『姐姐明明只是个便器母猪，居然总能得到魔王大人的宠爱，真是让人不能忍，所以要狠狠地鞭笞你！』`,
+          ); // :5973
+          await era.printAndWait(`「呜啊啊……魔王大人……救我……啊啊啊！」`); // :5974
+          await era.printAndWait(
+            `而你只是微笑着，欣赏着${player_name}鞭笞着${target_name}的样子……`,
+          ); // :5975
+          // CFLAG:TARGET:342  = 7（变量语义：CFLAG 族，TARGET:342） // :5976
+          kojo.鞭 = 7; // :5976
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.鞭 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :5978
+          await era.printAndWait(
+            `「呜……呜啊啊……请，请尽情鞭打姐姐吧…${heart(1)}」`,
+          ); // :5979
+          await era.printAndWait(
+            `『哎哎，没搞错吧姐姐，我是在惩罚你，不是在侍奉你啊！真是个大变态呢！』`,
+          ); // :5980
+          await era.printAndWait(
+            `「是，是的……我是大变态，${player_name}大人${heart(1)}」`,
+          ); // :5981
+          await era.printAndWait(
+            `${player_name}带着吃惊的表情，更用力地抽打着自己的姐姐………`,
+          ); // :5982
+          // CFLAG:TARGET:342  = 6（变量语义：CFLAG 族，TARGET:342） // :5983
+          kojo.鞭 = 6; // :5983
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.鞭 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :5985
+          await era.printAndWait(
+            `『亲爱的姐姐，为什么被我打了还会露出高兴的表情呐？』`,
+          ); // :5986
+          await era.printAndWait(`「才……才没有……高兴的表情啊……」`); // :5987
+          await era.printAndWait(`『还说谎！再打多10鞭！』`); // :5988
+          await era.printAndWait(
+            `${player_name}带着嗜虐的笑容，朝${target_name}再次挥起鞭子……`,
+          ); // :5989
+          // CFLAG:TARGET:342  = 5（变量语义：CFLAG 族，TARGET:342） // :5990
+          kojo.鞭 = 5; // :5990
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.鞭 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :5992
+          await era.printAndWait(
+            `『姐姐居然也得到了魔王大人的宠爱，不可饶恕！要好好惩罚你♪』`,
+          ); // :5993
+          await era.printAndWait(`「在，在说什么啊……好痛！！好痛啊啊！！」`); // :5994
+          await era.printAndWait(
+            `『痛？被鞭子打当然会痛了，不然怎么叫惩罚！』`,
+          ); // :5995
+          await era.printAndWait(`${player_name}更加用力地挥动着鞭子……`); // :5996
+          // CFLAG:TARGET:342  = 4（变量语义：CFLAG 族，TARGET:342） // :5997
+          kojo.鞭 = 4; // :5997
+        } else if (
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.鞭 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :5999
+          await era.printAndWait(`『愿意好好听话了吗，母猪姐姐！？』`); // :6000
+          await era.printAndWait(`「呜，呜呜……住手啊！」`); // :6001
+          await era.printAndWait(
+            `${player_name}太过于沉迷挥动鞭子的感觉，没有听到${target_name}的哀叫中时不时带着享受的娇喘……`,
+          ); // :6002
+          // CFLAG:TARGET:342  = 3（变量语义：CFLAG 族，TARGET:342） // :6003
+          kojo.鞭 = 3; // :6003
+        } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 === 2) {
+          // :6005
+          await era.printAndWait(`『哈哈哈，姐姐变成我的奴隶吧！』`); // :6006
+          await era.printAndWait(`「呜啊啊啊！好痛！住手啊啊！」`); // :6007
+          await era.printAndWait(
+            `鞭子抽击的声音中还夹杂着${player_name}歇斯底里的笑声和${target_name}痛苦的悲鸣……`,
+          ); // :6008
+          // CFLAG:TARGET:342  = 2（变量语义：CFLAG 族，TARGET:342） // :6009
+          kojo.鞭 = 2; // :6009
+        } // :6010
+      } else {
+        // :6011
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :6013
+          await era.printAndWait(`「打我，再用力打我…嗯啊啊${heart(1)}」`); // :6014
+          await era.printAndWait(
+            `${target_name}的眼睛里闪烁着强烈的情欲，已经完全变成母猪受虐狂了。`,
+          ); // :6015
+          await era.printAndWait(
+            `随着${player_name}的鞭子打出新的伤痕，在${target_name}却不住地娇喘着。`,
+          ); // :6016
+          await era.printAndWait(
+            `「嗯啊……啊啊啊${heart(1)} 尽，尽情地打我吧${heart(1)} 呜啊啊啊${heart(1)}」`,
+          ); // :6017
+          // CFLAG:TARGET:342  = 9（变量语义：CFLAG 族，TARGET:342） // :6018
+          kojo.鞭 = 9; // :6018
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :6020
+          await era.printAndWait(
+            `「呜啊啊！被，被${player_name}鞭打的感觉……原来这么好！」`,
+          ); // :6021
+          await era.printAndWait(
+            `${target_name}每次被鞭子抽打，都会发出娇喘。`,
+          ); // :6022
+          await era.printAndWait(
+            `「哈啊……啊啊啊${heart(1)} 再继续打我${heart(1)}」`,
+          ); // :6023
+          // CFLAG:TARGET:342  = 8（变量语义：CFLAG 族，TARGET:342） // :6024
+          kojo.鞭 = 8; // :6024
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.鞭 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :6026
+          await era.printAndWait(
+            `「呜啊啊……好痛！好痛！不，不要做这种事情啦！」`,
+          ); // :6027
+          await era.printAndWait(
+            `${target_name}在鞭子抽打下发出了惨叫，${player_name}却乐在其中地欣赏着……`,
+          ); // :6028
+          // CFLAG:TARGET:342  = 7（变量语义：CFLAG 族，TARGET:342） // :6029
+          kojo.鞭 = 7; // :6029
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.鞭 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6031
+          await era.printAndWait(
+            `「呜啊啊……啊啊…${heart(1)} 还，还想要继续被魔王大人鞭打${heart(1)} 呜啊啊！」`,
+          ); // :6032
+          await era.printAndWait(
+            `${target_name}在${player_name}的鞭笞下不住地娇喘着，股间完全湿透了。`,
+          ); // :6033
+          await era.printAndWait(
+            `对${target_name}的受虐调教已经彻底完成，${player_name}正在被卑微屈膝地乞求着更多的鞭笞。`,
+          ); // :6034
+          await era.printAndWait(
+            `「呜哇……啊啊啊${heart(1)} 好痛……但是好舒服啊啊${heart(1)}」`,
+          ); // :6035
+          // CFLAG:TARGET:342  = 6（变量语义：CFLAG 族，TARGET:342） // :6036
+          kojo.鞭 = 6; // :6036
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.鞭 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6038
+          await era.printAndWait(`「呜……呜啊……啊啊啊，快……停下……已经……」`); // :6039
+          await era.printAndWait(
+            `${target_name}在${player_name}鞭笞下摩擦着双腿，发出了享受的娇喘。`,
+          ); // :6040
+          await era.printAndWait(`「哈……哈啊……不，不要这样对人家了啊啊……」`); // :6041
+          // CFLAG:TARGET:342  = 5（变量语义：CFLAG 族，TARGET:342） // :6042
+          kojo.鞭 = 5; // :6042
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.鞭 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6044
+          await era.printAndWait(
+            `「好痛！求，求你了……停手，停手啊啊啊！让${target_name}做什么其他事情都可以！」`,
+          ); // :6045
+          await era.printAndWait(
+            `${player_name}毫不留情地继续对${target_name}的身体挥着鞭子，满足着自己的施虐心………`,
+          ); // :6046
+          // CFLAG:TARGET:342  = 4（变量语义：CFLAG 族，TARGET:342） // :6047
+          kojo.鞭 = 4; // :6047
+        } else if (
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.鞭 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6049
+          await era.printAndWait(`「呜……呜啊……啊啊啊！」`); // :6050
+          await era.printAndWait(
+            `被${player_name}鞭笞着，${target_name}却在痛苦的喊叫中不时地发出了享受的娇喘`,
+          ); // :6051
+          // CFLAG:TARGET:342  = 3（变量语义：CFLAG 族，TARGET:342） // :6052
+          kojo.鞭 = 3; // :6052
+        } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 === 2) {
+          // :6054
+          await era.printAndWait(`「啊啊……饶了我吧……呜啊啊啊！」`); // :6055
+          await era.printAndWait(
+            `${player_name}的鞭笞下，${target_name}痛苦地悲鸣着……`,
+          ); // :6056
+          // CFLAG:TARGET:342  = 2（变量语义：CFLAG 族，TARGET:342） // :6057
+          kojo.鞭 = 2; // :6057
+        } // :6058
+      } // :6059
+      return 0; // :6060
+    } // :6061
+  } // :6062
+
   return 0;
 }
 

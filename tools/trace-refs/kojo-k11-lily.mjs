@@ -19296,6 +19296,193 @@ export const FILES = [
         ],
         ['5916', 'CFLAG:TARGET:341 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      ...[
+        ['5926', 'IF SELECTCOM == 41'],
+        [
+          '5931',
+          'PRINTFORMW 『哈哈哈哈，以后姐姐不听话，就要用这个鞭子狠狠抽打！』',
+        ],
+        ['5932', 'PRINTFORMW 「呜啊啊……住，住手啊啊！」'],
+        [
+          '5933',
+          'PRINTFORMW 鞭子抽击的声音中还夹杂着%SAVESTR:PLAYER%歇斯底里的笑声和%SAVESTR:TARGET%痛苦的悲鸣……',
+        ],
+        ['5937', 'PRINTFORMW 「呜……呜啊啊……好痛啊啊……！」'],
+        [
+          '5938',
+          'PRINTFORMW %SAVESTR:TARGET%在鞭子抽打下大声尖叫着，如同悦耳的乐声一样传入%SAVESTR:PLAYER%的耳朵……',
+        ],
+        ['5941', 'PRINTFORMW 「我，我做错了什么吗——啊啊啊！！！」'],
+        [
+          '5942',
+          'PRINTFORMW %SAVESTR:PLAYER%丝毫不敢反抗，忍受着%SAVESTR:TARGET%挥下的鞭子，满足着%SAVESTR:PLAYER%的嗜虐心……',
+        ],
+        ['5945', 'PRINTFORMW 「呜啊啊……住，住手啊啊啊！」'],
+        ['5946', 'PRINTFORMW %SAVESTR:TARGET%在鞭子下痛苦地惨叫着……'],
+        ['5949', 'CFLAG:TARGET:342 = 1'],
+        ['5957', 'PRINTFORMW 「呜，呜啊，请再抽打我吧%UNICODE(0x2661) *1%」'],
+        [
+          '5958',
+          'PRINTFORMW 『被鞭子抽打得发情了吗？真是个变态呢！欠打！欠打！』',
+        ],
+        ['5959', 'PRINTFORMW 「呜呜……啊啊啊……嗯啊啊！」'],
+        [
+          '5960',
+          'PRINTFORMW %SAVESTR:TARGET%完全沉浸在妹妹施予的痛苦带来的扭曲的受虐快感中……',
+        ],
+        ['5961', 'CFLAG:TARGET:342 = 9'],
+        ['5964', 'PRINTFORMW 「呜……呜啊啊……嗯啊啊！」'],
+        ['5965', 'PRINTFORMW 『哎哟，明明在被鞭笞，怎么会发出娇喘来呢姐姐？』'],
+        ['5966', 'PRINTFORMW 「才……才不是娇喘呢！」'],
+        [
+          '5967',
+          'PRINTFORMW 『哈，明明听上去就是很舒服的样子嘛，变态，大变态！』',
+        ],
+        [
+          '5968',
+          'PRINTFORMW %SAVESTR:PLAYER%更加兴奋地挥着鞭子狠狠抽打着%SAVESTR:TARGET%……',
+        ],
+        ['5969', 'CFLAG:TARGET:342 = 8'],
+        [
+          '5972',
+          'PRINTFORMW 「住，住手啊%SAVESTR:PLAYER%！为，为什么要用鞭子打我！」',
+        ],
+        [
+          '5973',
+          'PRINTFORMW 『姐姐明明只是个便器母猪，居然总能得到魔王大人的宠爱，真是让人不能忍，所以要狠狠地鞭笞你！』',
+        ],
+        ['5974', 'PRINTFORMW 「呜啊啊……魔王大人……救我……啊啊啊！」'],
+        [
+          '5975',
+          'PRINTFORMW 而你只是微笑着，欣赏着%SAVESTR:PLAYER%鞭笞着%SAVESTR:TARGET%的样子……',
+        ],
+        ['5976', 'CFLAG:TARGET:342 = 7'],
+        [
+          '5979',
+          'PRINTFORMW 「呜……呜啊啊……请，请尽情鞭打姐姐吧…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5980',
+          'PRINTFORMW 『哎哎，没搞错吧姐姐，我是在惩罚你，不是在侍奉你啊！真是个大变态呢！』',
+        ],
+        [
+          '5981',
+          'PRINTFORMW 「是，是的……我是大变态，%SAVESTR:PLAYER%大人%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5982',
+          'PRINTFORMW %SAVESTR:PLAYER%带着吃惊的表情，更用力地抽打着自己的姐姐………',
+        ],
+        ['5983', 'CFLAG:TARGET:342 = 6'],
+        [
+          '5986',
+          'PRINTFORMW 『亲爱的姐姐，为什么被我打了还会露出高兴的表情呐？』',
+        ],
+        ['5987', 'PRINTFORMW 「才……才没有……高兴的表情啊……」'],
+        ['5988', 'PRINTFORMW 『还说谎！再打多10鞭！』'],
+        [
+          '5989',
+          'PRINTFORMW %SAVESTR:PLAYER%带着嗜虐的笑容，朝%SAVESTR:TARGET%再次挥起鞭子……',
+        ],
+        ['5990', 'CFLAG:TARGET:342 = 5'],
+        [
+          '5993',
+          'PRINTFORMW 『姐姐居然也得到了魔王大人的宠爱，不可饶恕！要好好惩罚你♪』',
+        ],
+        ['5994', 'PRINTFORMW 「在，在说什么啊……好痛！！好痛啊啊！！」'],
+        ['5995', 'PRINTFORMW 『痛？被鞭子打当然会痛了，不然怎么叫惩罚！』'],
+        ['5996', 'PRINTFORMW %SAVESTR:PLAYER%更加用力地挥动着鞭子……'],
+        ['5997', 'CFLAG:TARGET:342 = 4'],
+        ['6000', 'PRINTFORMW 『愿意好好听话了吗，母猪姐姐！？』'],
+        ['6001', 'PRINTFORMW 「呜，呜呜……住手啊！」'],
+        [
+          '6002',
+          'PRINTFORMW %SAVESTR:PLAYER%太过于沉迷挥动鞭子的感觉，没有听到%SAVESTR:TARGET%的哀叫中时不时带着享受的娇喘……',
+        ],
+        ['6003', 'CFLAG:TARGET:342 = 3'],
+        ['6006', 'PRINTFORMW 『哈哈哈，姐姐变成我的奴隶吧！』'],
+        ['6007', 'PRINTFORMW 「呜啊啊啊！好痛！住手啊啊！」'],
+        [
+          '6008',
+          'PRINTFORMW 鞭子抽击的声音中还夹杂着%SAVESTR:PLAYER%歇斯底里的笑声和%SAVESTR:TARGET%痛苦的悲鸣……',
+        ],
+        ['6009', 'CFLAG:TARGET:342 = 2'],
+        ['6014', 'PRINTFORMW 「打我，再用力打我…嗯啊啊%UNICODE(0x2661) *1%」'],
+        [
+          '6015',
+          'PRINTFORMW %SAVESTR:TARGET%的眼睛里闪烁着强烈的情欲，已经完全变成母猪受虐狂了。',
+        ],
+        [
+          '6016',
+          'PRINTFORMW 随着%SAVESTR:PLAYER%的鞭子打出新的伤痕，在%SAVESTR:TARGET%却不住地娇喘着。',
+        ],
+        [
+          '6017',
+          'PRINTFORMW 「嗯啊……啊啊啊%UNICODE(0x2661) *1% 尽，尽情地打我吧%UNICODE(0x2661) *1% 呜啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['6018', 'CFLAG:TARGET:342 = 9'],
+        [
+          '6021',
+          'PRINTFORMW 「呜啊啊！被，被%SAVESTR:PLAYER%鞭打的感觉……原来这么好！」',
+        ],
+        ['6022', 'PRINTFORMW %SAVESTR:TARGET%每次被鞭子抽打，都会发出娇喘。'],
+        [
+          '6023',
+          'PRINTFORMW 「哈啊……啊啊啊%UNICODE(0x2661) *1% 再继续打我%UNICODE(0x2661) *1%」',
+        ],
+        ['6024', 'CFLAG:TARGET:342 = 8'],
+        ['6027', 'PRINTFORMW 「呜啊啊……好痛！好痛！不，不要做这种事情啦！」'],
+        [
+          '6028',
+          'PRINTFORMW %SAVESTR:TARGET%在鞭子抽打下发出了惨叫，%SAVESTR:PLAYER%却乐在其中地欣赏着……',
+        ],
+        ['6029', 'CFLAG:TARGET:342 = 7'],
+        [
+          '6032',
+          'PRINTFORMW 「呜啊啊……啊啊…%UNICODE(0x2661) *1% 还，还想要继续被魔王大人鞭打%UNICODE(0x2661) *1% 呜啊啊！」',
+        ],
+        [
+          '6033',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的鞭笞下不住地娇喘着，股间完全湿透了。',
+        ],
+        [
+          '6034',
+          'PRINTFORMW 对%SAVESTR:TARGET%的受虐调教已经彻底完成，%SAVESTR:PLAYER%正在被卑微屈膝地乞求着更多的鞭笞。',
+        ],
+        [
+          '6035',
+          'PRINTFORMW 「呜哇……啊啊啊%UNICODE(0x2661) *1% 好痛……但是好舒服啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['6036', 'CFLAG:TARGET:342 = 6'],
+        ['6039', 'PRINTFORMW 「呜……呜啊……啊啊啊，快……停下……已经……」'],
+        [
+          '6040',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%鞭笞下摩擦着双腿，发出了享受的娇喘。',
+        ],
+        ['6041', 'PRINTFORMW 「哈……哈啊……不，不要这样对人家了啊啊……」'],
+        ['6042', 'CFLAG:TARGET:342 = 5'],
+        [
+          '6045',
+          'PRINTFORMW 「好痛！求，求你了……停手，停手啊啊啊！让%SAVESTR:TARGET%做什么其他事情都可以！」',
+        ],
+        [
+          '6046',
+          'PRINTFORMW %SAVESTR:PLAYER%毫不留情地继续对%SAVESTR:TARGET%的身体挥着鞭子，满足着自己的施虐心………',
+        ],
+        ['6047', 'CFLAG:TARGET:342 = 4'],
+        ['6050', 'PRINTFORMW 「呜……呜啊……啊啊啊！」'],
+        [
+          '6051',
+          'PRINTFORMW 被%SAVESTR:PLAYER%鞭笞着，%SAVESTR:TARGET%却在痛苦的喊叫中不时地发出了享受的娇喘',
+        ],
+        ['6052', 'CFLAG:TARGET:342 = 3'],
+        ['6055', 'PRINTFORMW 「啊啊……饶了我吧……呜啊啊啊！」'],
+        [
+          '6056',
+          'PRINTFORMW %SAVESTR:PLAYER%的鞭笞下，%SAVESTR:TARGET%痛苦地悲鸣着……',
+        ],
+        ['6057', 'CFLAG:TARGET:342 = 2'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];
