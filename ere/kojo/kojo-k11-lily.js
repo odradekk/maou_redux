@@ -19596,6 +19596,199 @@ async function kojo_message_com_11(rand) {
     } // :9633
   } // :9634
 
+  if (era_flag.selectcom === 127) {
+    // :9639
+
+    if (kojo.真空口交 === 0) {
+      // :9641
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :9643
+        await era.printAndWait(
+          `「唔呣${heart(1)} 咕啾……咕啾……唔唔${heart(1)}」`,
+        ); // :9644
+        await era.printAndWait(
+          `${target_name}吸吮着${player_name}的阴茎，发出一阵阵下流的声音。`,
+        ); // :9645
+        await era.printAndWait(`完全沉浸在真空口交侍奉之中了……`); // :9646
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :9648
+        await era.printAndWait(
+          `「唔呣……唔呣${heart(1)} 咕啾……咕啾……唔唔${heart(1)}」`,
+        ); // :9649
+        await era.printAndWait(
+          `${target_name}如痴如醉地吸吮着${player_name}的阴茎，发出一阵阵下流的声音。`,
+        ); // :9650
+        await era.printAndWait(`脸颊都凹陷了进去，呼吸也变得急促了……`); // :9651
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        // :9653
+        await era.printAndWait(`「唔呣……唔呣！咕啾……咕啾……唔唔」`); // :9654
+        await era.printAndWait(
+          `${target_name}努力地吸吮着${player_name}的阴茎。`,
+        ); // :9655
+        await era.printAndWait(
+          `一声声不堪入耳的下流声音从${target_name}的口中冒出……`,
+        ); // :9656
+      } else {
+        // :9658
+        await era.printAndWait(`「唔呣……唔呣！咕啾……咕啾……唔唔」`); // :9659
+        await era.printAndWait(
+          `${target_name}泪流满面地继续吸吮着口中的阴茎……`,
+        ); // :9660
+      } // :9661
+      // CFLAG:TARGET:363  = 1（变量语义：CFLAG 族，TARGET:363） // :9662
+      kojo.真空口交 = 1; // :9662
+      return 0; // :9663
+    } else {
+      // :9665
+
+      if (assi_mao) {
+        // :9667
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9669
+          await era.printAndWait(
+            `「唔呣${heart(1)} 咕啾……咕啾……唔唔${heart(1)}」`,
+          ); // :9670
+          await era.printAndWait(
+            `${target_name}用口腔和喉咙吸吮着${player_name}的阴茎，故意发出一阵阵淫秽的声音。`,
+          ); // :9671
+          await era.printAndWait(`整个人完全沉浸在真空口交侍奉的快乐之中了。`); // :9672
+          await era.printAndWait(
+            `『姐姐跟母猪一样吸着人家的小鸡鸡，一点都不害臊吗，真是的！』`,
+          ); // :9673
+          await era.printAndWait(
+            `更加兴奋起来的${player_name}在姐姐的嘴里激烈地抽插着……`,
+          ); // :9674
+          // CFLAG:363  = 5（变量语义：CFLAG 族，363） // :9675
+          kojo.真空口交 = 5; // :9675
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9677
+          await era.printAndWait(
+            `「唔呣……唔呣${heart(1)} 咕啾……咕啾……唔唔${heart(1)}」`,
+          ); // :9678
+          await era.printAndWait(
+            `${target_name}如痴如醉地用口腔和喉咙吸吮着${player_name}的阴茎，连自己正在发出一阵阵下流的声音都丝毫没有觉察。`,
+          ); // :9679
+          await era.printAndWait(`脸颊都凹了进去，呼吸也急促了起来。`); // :9680
+          await era.printAndWait(
+            `『哎呀……哎呀……太激烈了${heart(1)} 吸得……人家要去了${heart(1)}』`,
+          ); // :9681
+          await era.printAndWait(
+            `「最，最喜欢${player_name}的阴茎了、让姐姐帮你把精液全部吸出来吧…${heart(1)}  咕啾……咕啾……唔唔${heart(1)}」`,
+          ); // :9682
+          // CFLAG:363  = 4（变量语义：CFLAG 族，363） // :9683
+          kojo.真空口交 = 4; // :9683
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.真空口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9685
+          await era.printAndWait(
+            `「还，还要继续吸吗……唔呣……唔呣！咕啾……咕啾……唔唔」`,
+          ); // :9686
+          await era.printAndWait(
+            `${target_name}拼命地用口腔和喉咙吸吮着${player_name}的阴茎。`,
+          ); // :9687
+          await era.printAndWait(
+            `『唔嘿嘿，人家的小鸡鸡那么好吃吗，还要吸得再深入一点啊，口交母猪姐姐！』`,
+          ); // :9688
+          await era.printAndWait(
+            `${target_name}被${player_name}用言语羞辱着，只能继续进行着口交侍奉………`,
+          ); // :9689
+          // CFLAG:363  = 3（变量语义：CFLAG 族，363） // :9690
+          kojo.真空口交 = 3; // :9690
+        } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9692
+          await era.printAndWait(`「唔呣……唔呣！咕啾……咕啾～！」`); // :9693
+          await era.printAndWait(
+            `『哎呀呀，姐姐吸吮得这么卖力，已经变成喜欢口交的母猪了，难道不是吗！』`,
+          ); // :9694
+          await era.printAndWait(
+            `${target_name}被自己深爱的妹妹如此嘲笑羞辱，泪流满面地继续口交着……`,
+          ); // :9695
+          // CFLAG:363  = 2（变量语义：CFLAG 族，363） // :9696
+          kojo.真空口交 = 2; // :9696
+        } // :9697
+      } else {
+        // :9698
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9700
+          await era.printAndWait(
+            `「唔呣${heart(1)} 咕啾……咕啾……唔唔${heart(1)}」`,
+          ); // :9701
+          await era.printAndWait(
+            `${target_name}用口腔和喉咙吸吮着${player_name}的阴茎，故意发出一阵阵淫秽的声音。`,
+          ); // :9702
+          await era.printAndWait(`整个人完全沉浸在真空口交侍奉的快乐之中了`); // :9703
+          await era.printAndWait(
+            `「咕唔唔${heart(1)}…咕啾……咕啾${heart(1)}想要……魔王大人的精液……好想要${heart(1)}」`,
+          ); // :9704
+          await era.printAndWait(
+            `${target_name}在阴茎强烈味道的刺激下，更加激烈的进行着真空口交侍奉………`,
+          ); // :9705
+          // CFLAG:363  = 5（变量语义：CFLAG 族，363） // :9706
+          kojo.真空口交 = 5; // :9706
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9708
+          await era.printAndWait(
+            `「唔呣……唔呣${heart(1)} 咕啾……咕啾……唔唔${heart(1)}」`,
+          ); // :9709
+          await era.printAndWait(
+            `${target_name}如痴如醉地用口腔和喉咙吸吮着${player_name}的阴茎，连自己正在发出一阵阵下流的声音都丝毫没有觉察。`,
+          ); // :9710
+          await era.printAndWait(`脸颊都凹了进去，呼吸也急促了起来。`); // :9711
+          await era.printAndWait(
+            `「唔唔……咕呜${heart(1)} 魔王大人的阴茎…${heart(1)} 味道太棒了……还想要更多……咕呜……咕呜${heart(1)}」`,
+          ); // :9712
+          await era.printAndWait(
+            `${target_name}完全沉浸在阴茎的味道之中，更加激烈的进行着真空口交侍奉………`,
+          ); // :9713
+          // CFLAG:363  = 4（变量语义：CFLAG 族，363） // :9714
+          kojo.真空口交 = 4; // :9714
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.真空口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9716
+          await era.printAndWait(
+            `「还，还要继续吸吗……唔呣……唔呣！咕啾……咕啾……唔唔」`,
+          ); // :9717
+          await era.printAndWait(
+            `${target_name}拼命地用口腔和喉咙吸吮着${player_name}的阴茎。`,
+          ); // :9718
+          await era.printAndWait(
+            `「唔呣……唔呣！咕啾……魔王大人……让我，让我休息一下吧……」`,
+          ); // :9719
+          // CFLAG:363  = 3（变量语义：CFLAG 族，363） // :9720
+          kojo.真空口交 = 3; // :9720
+        } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9722
+          await era.printAndWait(`「唔呣……唔呣！咕啾……咕啾～！」`); // :9723
+          await era.printAndWait(
+            `${target_name}被强迫进行着真空口交侍奉，屈辱得泪流满面…`,
+          ); // :9724
+          // CFLAG:363  = 2（变量语义：CFLAG 族，363） // :9725
+          kojo.真空口交 = 2; // :9725
+        } // :9726
+      } // :9727
+      return 0; // :9728
+    } // :9729
+  } // :9730
+
   return 0;
 }
 

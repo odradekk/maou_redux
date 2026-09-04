@@ -26323,6 +26323,155 @@ export const FILES = [
         ],
         ['9628', 'PRINTFORMW 「对，对不起……魔王大人……我，我会努力学的……」'],
         ['9629', 'CFLAG:362 = 2'],
+        ['9639', 'IF SELECTCOM == 127'],
+        [
+          '9644',
+          'PRINTFORMW 「唔呣%UNICODE(0x2661) *1% 咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9645',
+          'PRINTFORMW %SAVESTR:TARGET%吸吮着%SAVESTR:PLAYER%的阴茎，发出一阵阵下流的声音。',
+        ],
+        ['9646', 'PRINTFORMW 完全沉浸在真空口交侍奉之中了……'],
+        [
+          '9649',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1% 咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9650',
+          'PRINTFORMW %SAVESTR:TARGET%如痴如醉地吸吮着%SAVESTR:PLAYER%的阴茎，发出一阵阵下流的声音。',
+        ],
+        ['9651', 'PRINTFORMW 脸颊都凹陷了进去，呼吸也变得急促了……'],
+        ['9654', 'PRINTFORMW 「唔呣……唔呣！咕啾……咕啾……唔唔」'],
+        [
+          '9655',
+          'PRINTFORMW %SAVESTR:TARGET%努力地吸吮着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        [
+          '9656',
+          'PRINTFORMW 一声声不堪入耳的下流声音从%SAVESTR:TARGET%的口中冒出……',
+        ],
+        ['9659', 'PRINTFORMW 「唔呣……唔呣！咕啾……咕啾……唔唔」'],
+        ['9660', 'PRINTFORMW %SAVESTR:TARGET%泪流满面地继续吸吮着口中的阴茎……'],
+        ['9662', 'CFLAG:TARGET:363 = 1'],
+        [
+          '9670',
+          'PRINTFORMW 「唔呣%UNICODE(0x2661) *1% 咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9671',
+          'PRINTFORMW %SAVESTR:TARGET%用口腔和喉咙吸吮着%SAVESTR:PLAYER%的阴茎，故意发出一阵阵淫秽的声音。',
+        ],
+        ['9672', 'PRINTFORMW 整个人完全沉浸在真空口交侍奉的快乐之中了。'],
+        [
+          '9673',
+          'PRINTFORMW 『姐姐跟母猪一样吸着人家的小鸡鸡，一点都不害臊吗，真是的！』',
+        ],
+        [
+          '9674',
+          'PRINTFORMW 更加兴奋起来的%SAVESTR:PLAYER%在姐姐的嘴里激烈地抽插着……',
+        ],
+        ['9675', 'CFLAG:363 = 5'],
+        [
+          '9678',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1% 咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9679',
+          'PRINTFORMW %SAVESTR:TARGET%如痴如醉地用口腔和喉咙吸吮着%SAVESTR:PLAYER%的阴茎，连自己正在发出一阵阵下流的声音都丝毫没有觉察。',
+        ],
+        ['9680', 'PRINTFORMW 脸颊都凹了进去，呼吸也急促了起来。'],
+        [
+          '9681',
+          'PRINTFORMW 『哎呀……哎呀……太激烈了%UNICODE(0x2661) *1% 吸得……人家要去了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9682',
+          'PRINTFORMW 「最，最喜欢%SAVESTR:PLAYER%的阴茎了、让姐姐帮你把精液全部吸出来吧…%UNICODE(0x2661) *1%  咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        ['9683', 'CFLAG:363 = 4'],
+        [
+          '9686',
+          'PRINTFORMW 「还，还要继续吸吗……唔呣……唔呣！咕啾……咕啾……唔唔」',
+        ],
+        [
+          '9687',
+          'PRINTFORMW %SAVESTR:TARGET%拼命地用口腔和喉咙吸吮着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        [
+          '9688',
+          'PRINTFORMW 『唔嘿嘿，人家的小鸡鸡那么好吃吗，还要吸得再深入一点啊，口交母猪姐姐！』',
+        ],
+        [
+          '9689',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%用言语羞辱着，只能继续进行着口交侍奉………',
+        ],
+        ['9690', 'CFLAG:363 = 3'],
+        ['9693', 'PRINTFORMW 「唔呣……唔呣！咕啾……咕啾～！」'],
+        [
+          '9694',
+          'PRINTFORMW 『哎呀呀，姐姐吸吮得这么卖力，已经变成喜欢口交的母猪了，难道不是吗！』',
+        ],
+        [
+          '9695',
+          'PRINTFORMW %SAVESTR:TARGET%被自己深爱的妹妹如此嘲笑羞辱，泪流满面地继续口交着……',
+        ],
+        ['9696', 'CFLAG:363 = 2'],
+        [
+          '9701',
+          'PRINTFORMW 「唔呣%UNICODE(0x2661) *1% 咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9702',
+          'PRINTFORMW %SAVESTR:TARGET%用口腔和喉咙吸吮着%SAVESTR:PLAYER%的阴茎，故意发出一阵阵淫秽的声音。',
+        ],
+        ['9703', 'PRINTFORMW 整个人完全沉浸在真空口交侍奉的快乐之中了'],
+        [
+          '9704',
+          'PRINTFORMW 「咕唔唔%UNICODE(0x2661) *1%…咕啾……咕啾%UNICODE(0x2661) *1%想要……魔王大人的精液……好想要%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9705',
+          'PRINTFORMW %SAVESTR:TARGET%在阴茎强烈味道的刺激下，更加激烈的进行着真空口交侍奉………',
+        ],
+        ['9706', 'CFLAG:363 = 5'],
+        [
+          '9709',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1% 咕啾……咕啾……唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9710',
+          'PRINTFORMW %SAVESTR:TARGET%如痴如醉地用口腔和喉咙吸吮着%SAVESTR:PLAYER%的阴茎，连自己正在发出一阵阵下流的声音都丝毫没有觉察。',
+        ],
+        ['9711', 'PRINTFORMW 脸颊都凹了进去，呼吸也急促了起来。'],
+        [
+          '9712',
+          'PRINTFORMW 「唔唔……咕呜%UNICODE(0x2661) *1% 魔王大人的阴茎…%UNICODE(0x2661) *1% 味道太棒了……还想要更多……咕呜……咕呜%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9713',
+          'PRINTFORMW %SAVESTR:TARGET%完全沉浸在阴茎的味道之中，更加激烈的进行着真空口交侍奉………',
+        ],
+        ['9714', 'CFLAG:363 = 4'],
+        [
+          '9717',
+          'PRINTFORMW 「还，还要继续吸吗……唔呣……唔呣！咕啾……咕啾……唔唔」',
+        ],
+        [
+          '9718',
+          'PRINTFORMW %SAVESTR:TARGET%拼命地用口腔和喉咙吸吮着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        [
+          '9719',
+          'PRINTFORMW 「唔呣……唔呣！咕啾……魔王大人……让我，让我休息一下吧……」',
+        ],
+        ['9720', 'CFLAG:363 = 3'],
+        ['9723', 'PRINTFORMW 「唔呣……唔呣！咕啾……咕啾～！」'],
+        [
+          '9724',
+          'PRINTFORMW %SAVESTR:TARGET%被强迫进行着真空口交侍奉，屈辱得泪流满面…',
+        ],
+        ['9725', 'CFLAG:363 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
