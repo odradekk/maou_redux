@@ -25975,6 +25975,190 @@ export const FILES = [
           'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%要求回答进行乳交侍奉的感想，一脸嫌恶地答道……',
         ],
         ['9427', 'CFLAG:360 = 2'],
+        ['9436', 'IF SELECTCOM == 125'],
+        [
+          '9441',
+          'PRINTFORMW 「咕呣……咕呣……啊啊啊啊…边吸吮着魔王大人的肉棒，边自慰……这感觉真是太棒了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9442',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头缠卷着%SAVESTR:PLAYER%的阴茎，在口内吸吮着，而手已经忍不住伸到自己的下体自慰了起来。',
+        ],
+        [
+          '9443',
+          'PRINTFORMW 「唔唔唔%UNICODE(0x2661) *1% 不知道是魔王大人会先在%SAVESTR:TARGET%的嘴里射出来，还是%SAVESTR:TARGET%会自己先自慰到高潮呢？」',
+        ],
+        [
+          '9446',
+          'PRINTFORMW 「有…有点不好意思呢…魔王大人…不要这么盯着%SAVESTR:TARGET%看啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9447',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头缠卷着%SAVESTR:PLAYER%的阴茎，在口内吸吮着，同时手也伸到了自己的下体，慢慢开始自慰。',
+        ],
+        [
+          '9448',
+          'PRINTFORMW 「唔呣呣…边口交…边自慰%UNICODE(0x2661) *1% 比平时…更有感觉啊啊%UNICODE(0x2661) *1%」',
+        ],
+        ['9451', 'PRINTFORMW 「咕呣……咕呣……！」'],
+        [
+          '9452',
+          'PRINTFORMW %SAVESTR:TARGET%遵循着%SAVESTR:PLAYER%的命令，顺从地张开嘴含住了%SAVESTR:PLAYER%的肉棒，仔细地舔吮着，手也伸到了自己的下体开始自慰……',
+        ],
+        [
+          '9455',
+          'PRINTFORMW 「别，别催了…我，我会照做的……这样…这种事情…就能让你满足了吗？」',
+        ],
+        [
+          '9456',
+          'PRINTFORMW %SAVESTR:TARGET%在命令下，不情愿地张开嘴含住了%SAVESTR:PLAYER%的肉棒，手也伸到了自己的下体开始自慰。',
+        ],
+        ['9458', 'CFLAG:TARGET:361 = 1'],
+        [
+          '9466',
+          'PRINTFORMW 「哈啊啊……边吸吮%SAVESTR:PLAYER%的阴茎…边自慰…感觉比平时…还要棒呢……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9467',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头缠卷着%SAVESTR:PLAYER%的阴茎，在口内吸吮着，而手已经忍不住伸到自己的下体自慰了起来。',
+        ],
+        [
+          '9468',
+          'PRINTFORMW 「唔呣呣…%UNICODE(0x2661) *1% 比赛一下…谁能忍住高潮吧…？」',
+        ],
+        [
+          '9469',
+          'PRINTFORMW 『这样好了，姐姐先高潮的话，就要惩罚，让人家先高潮了，那就表扬%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9470',
+          'PRINTFORMW 「哈啊%UNICODE(0x2661) *1% 那我得好好努力了%UNICODE(0x2661) *1% 我开动了哦…唔呣呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9471',
+          'PRINTFORMW %SAVESTR:TARGET%再度张开嘴，将%SAVESTR:PLAYER%的阴茎含进口中卖力地吸吮起来………',
+        ],
+        ['9472', 'CFLAG:361 = 5'],
+        [
+          '9475',
+          'PRINTFORMW 「不要盯着人家看啦……怪难为情的…唔唔…唔呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9476',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头缠卷着%SAVESTR:PLAYER%的阴茎，在口内吸吮着，同时手也伸到了自己的下体，自慰了起来。',
+        ],
+        [
+          '9477',
+          'PRINTFORMW 「唔呣……咕呣%UNICODE(0x2661) *1% 哎哎……都说了不要用那样的眼神看着人家啦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9478',
+          'PRINTFORMW 『不能偷懒呀姐姐……继续给人家口交啊！在顾着自己舒服的时候，也要让人家舒服嘛！』',
+        ],
+        [
+          '9479',
+          'PRINTFORMW 「好啦，知道啦……咕呣……咕呣…%UNICODE(0x2661) *1%」',
+        ],
+        ['9480', 'CFLAG:361 = 4'],
+        ['9483', 'PRINTFORMW 「我，我知道了……唔呣……咕呣……！」'],
+        [
+          '9484',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。',
+        ],
+        ['9485', 'PRINTFORML 『姐姐有干劲一点嘛，不要一副心不在焉的样子。』'],
+        [
+          '9486',
+          'PRINTFORMW %SAVESTR:PLAYER%坏笑着用脚趾刺激着%SAVESTR:TARGET%的蜜穴。',
+        ],
+        ['9487', 'PRINTFORML 「不……不要恶作剧啊，%SAVESTR:PLAYER%！」'],
+        [
+          '9488',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的逗弄下不得不加快了动作……',
+        ],
+        ['9489', 'CFLAG:361 = 3'],
+        [
+          '9492',
+          'PRINTFORMW 「别催啦……我，我会照做的……咕呣……咕呣……这样……就可以了吧？」',
+        ],
+        [
+          '9493',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。',
+        ],
+        [
+          '9494',
+          'PRINTFORMW 『真是一点不行呢，这样敷衍了事的话，可是会受罚的哦♪』',
+        ],
+        ['9495', 'CFLAG:361 = 2'],
+        [
+          '9500',
+          'PRINTFORMW 「唔啊啊……能够边为魔王大人口交边自慰……真的是太幸福了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9501',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头舔舐着%SAVESTR:PLAYER%的阴茎，边激烈地自慰着。',
+        ],
+        [
+          '9502',
+          'PRINTFORMW 「咕呣……咕呣……%UNICODE(0x2661) *1% 已经……舒服得停不下来了……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9503',
+          'PRINTFORMW 「魔王大人……%UNICODE(0x2661) *1% 要记得射在人家的嘴里啊%UNICODE(0x2661) *1% 咕呣……咕呣……%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '9504',
+          'PRINTFORMW %SAVESTR:TARGET%继续卖力地吸吮着%SAVESTR:PLAYER%的阴茎，发出一阵阵淫秽不堪的声音……',
+        ],
+        ['9505', 'CFLAG:361 = 5'],
+        [
+          '9508',
+          'PRINTFORMW 「别，别这样盯着人家看啦……咕呣……咕呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9509',
+          'PRINTFORMW %SAVESTR:TARGET%用舌头舔舐着%SAVESTR:PLAYER%的阴茎，手伸到了下体开始自慰',
+        ],
+        [
+          '9510',
+          'PRINTFORMW 「要，要看也行……但是……不要用那样的眼神啦%UNICODE(0x2661) *1% 直勾勾地盯着……怪不好意思的%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9511',
+          'PRINTFORMW %SAVESTR:PLAYER%边享受着%SAVESTR:TARGET%的口交，边欣赏着对方的耻态，灼热的视线让%SAVESTR:TARGET%变得面红耳赤。',
+        ],
+        ['9512', 'PRINTFORMW 「好，好丢人……咕呣……咕呣%UNICODE(0x2661) *1%」'],
+        ['9513', 'CFLAG:361 = 4'],
+        ['9516', 'PRINTFORMW 「咕呣……咕呣……魔王大人……这，这样可以吗！」'],
+        [
+          '9517',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。',
+        ],
+        [
+          '9518',
+          'PRINTFORMW 但是还不满足的%SAVESTR:PLAYER%露出不怀好意的笑容，用脚趾刺激着%SAVESTR:TARGET%的蜜穴和肛门。',
+        ],
+        [
+          '9519',
+          'PRINTFORML 「唔？！不，不要对人家恶作剧啦，魔王大人……我，我会好好做的！」',
+        ],
+        [
+          '9520',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的逗弄下不得不加快了动作……',
+        ],
+        ['9521', 'CFLAG:361 = 3'],
+        [
+          '9524',
+          'PRINTFORMW 「别催啦……我，我会照做的……咕呣……咕呣……这样……就可以了吧？？」',
+        ],
+        [
+          '9525',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。',
+        ],
+        [
+          '9526',
+          'PRINTFORMW 「（为，为什么我会……做这样的事情…）唔呣……唔呣……还，还要这样多久？」',
+        ],
+        ['9527', 'CFLAG:361 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

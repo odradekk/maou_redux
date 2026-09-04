@@ -19173,6 +19173,220 @@ async function kojo_message_com_11(rand) {
     } // :9431
   } // :9432
 
+  if (era_flag.selectcom === 125) {
+    // :9436
+
+    if (kojo.口交时自慰 === 0) {
+      // :9438
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :9440
+        await era.printAndWait(
+          `「咕呣……咕呣……啊啊啊啊…边吸吮着魔王大人的肉棒，边自慰……这感觉真是太棒了${heart(1)}」`,
+        ); // :9441
+        await era.printAndWait(
+          `${target_name}用舌头缠卷着${player_name}的阴茎，在口内吸吮着，而手已经忍不住伸到自己的下体自慰了起来。`,
+        ); // :9442
+        await era.printAndWait(
+          `「唔唔唔${heart(1)} 不知道是魔王大人会先在${target_name}的嘴里射出来，还是${target_name}会自己先自慰到高潮呢？」`,
+        ); // :9443
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :9445
+        await era.printAndWait(
+          `「有…有点不好意思呢…魔王大人…不要这么盯着${target_name}看啦${heart(1)}」`,
+        ); // :9446
+        await era.printAndWait(
+          `${target_name}用舌头缠卷着${player_name}的阴茎，在口内吸吮着，同时手也伸到了自己的下体，慢慢开始自慰。`,
+        ); // :9447
+        await era.printAndWait(
+          `「唔呣呣…边口交…边自慰${heart(1)} 比平时…更有感觉啊啊${heart(1)}」`,
+        ); // :9448
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        // :9450
+        await era.printAndWait(`「咕呣……咕呣……！」`); // :9451
+        await era.printAndWait(
+          `${target_name}遵循着${player_name}的命令，顺从地张开嘴含住了${player_name}的肉棒，仔细地舔吮着，手也伸到了自己的下体开始自慰……`,
+        ); // :9452
+      } else {
+        // :9454
+        await era.printAndWait(
+          `「别，别催了…我，我会照做的……这样…这种事情…就能让你满足了吗？」`,
+        ); // :9455
+        await era.printAndWait(
+          `${target_name}在命令下，不情愿地张开嘴含住了${player_name}的肉棒，手也伸到了自己的下体开始自慰。`,
+        ); // :9456
+      } // :9457
+      // CFLAG:TARGET:361  = 1（变量语义：CFLAG 族，TARGET:361） // :9458
+      kojo.口交时自慰 = 1; // :9458
+      return 0; // :9459
+    } else {
+      // :9461
+
+      if (assi_mao) {
+        // :9463
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.口交时自慰 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9465
+          await era.printAndWait(
+            `「哈啊啊……边吸吮${player_name}的阴茎…边自慰…感觉比平时…还要棒呢……${heart(1)}」`,
+          ); // :9466
+          await era.printAndWait(
+            `${target_name}用舌头缠卷着${player_name}的阴茎，在口内吸吮着，而手已经忍不住伸到自己的下体自慰了起来。`,
+          ); // :9467
+          await era.printAndWait(
+            `「唔呣呣…${heart(1)} 比赛一下…谁能忍住高潮吧…？」`,
+          ); // :9468
+          await era.printAndWait(
+            `『这样好了，姐姐先高潮的话，就要惩罚，让人家先高潮了，那就表扬${heart(1)}』`,
+          ); // :9469
+          await era.printAndWait(
+            `「哈啊${heart(1)} 那我得好好努力了${heart(1)} 我开动了哦…唔呣呣…${heart(1)}」`,
+          ); // :9470
+          await era.printAndWait(
+            `${target_name}再度张开嘴，将${player_name}的阴茎含进口中卖力地吸吮起来………`,
+          ); // :9471
+          // CFLAG:361  = 5（变量语义：CFLAG 族，361） // :9472
+          kojo.口交时自慰 = 5; // :9472
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.口交时自慰 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9474
+          await era.printAndWait(
+            `「不要盯着人家看啦……怪难为情的…唔唔…唔呣呣${heart(1)}」`,
+          ); // :9475
+          await era.printAndWait(
+            `${target_name}用舌头缠卷着${player_name}的阴茎，在口内吸吮着，同时手也伸到了自己的下体，自慰了起来。`,
+          ); // :9476
+          await era.printAndWait(
+            `「唔呣……咕呣${heart(1)} 哎哎……都说了不要用那样的眼神看着人家啦${heart(1)}」`,
+          ); // :9477
+          await era.printAndWait(
+            `『不能偷懒呀姐姐……继续给人家口交啊！在顾着自己舒服的时候，也要让人家舒服嘛！』`,
+          ); // :9478
+          await era.printAndWait(`「好啦，知道啦……咕呣……咕呣…${heart(1)}」`); // :9479
+          // CFLAG:361  = 4（变量语义：CFLAG 族，361） // :9480
+          kojo.口交时自慰 = 4; // :9480
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.口交时自慰 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9482
+          await era.printAndWait(`「我，我知道了……唔呣……咕呣……！」`); // :9483
+          await era.printAndWait(
+            `${target_name}在${player_name}的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。`,
+          ); // :9484
+          await era.print(`『姐姐有干劲一点嘛，不要一副心不在焉的样子。』`); // :9485
+          await era.printAndWait(
+            `${player_name}坏笑着用脚趾刺激着${target_name}的蜜穴。`,
+          ); // :9486
+          await era.print(`「不……不要恶作剧啊，${player_name}！」`); // :9487
+          await era.printAndWait(
+            `${target_name}在${player_name}的逗弄下不得不加快了动作……`,
+          ); // :9488
+          // CFLAG:361  = 3（变量语义：CFLAG 族，361） // :9489
+          kojo.口交时自慰 = 3; // :9489
+        } else if (kojo.口交时自慰 <= 1 || game.kojo.口上开关 === 2) {
+          // :9491
+          await era.printAndWait(
+            `「别催啦……我，我会照做的……咕呣……咕呣……这样……就可以了吧？」`,
+          ); // :9492
+          await era.printAndWait(
+            `${target_name}在${player_name}的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。`,
+          ); // :9493
+          await era.printAndWait(
+            `『真是一点不行呢，这样敷衍了事的话，可是会受罚的哦♪』`,
+          ); // :9494
+          // CFLAG:361  = 2（变量语义：CFLAG 族，361） // :9495
+          kojo.口交时自慰 = 2; // :9495
+        } // :9496
+      } else {
+        // :9497
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.口交时自慰 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9499
+          await era.printAndWait(
+            `「唔啊啊……能够边为魔王大人口交边自慰……真的是太幸福了${heart(1)}」`,
+          ); // :9500
+          await era.printAndWait(
+            `${target_name}用舌头舔舐着${player_name}的阴茎，边激烈地自慰着。`,
+          ); // :9501
+          await era.printAndWait(
+            `「咕呣……咕呣……${heart(1)} 已经……舒服得停不下来了……${heart(1)}」`,
+          ); // :9502
+          await era.printAndWait(
+            `「魔王大人……${heart(1)} 要记得射在人家的嘴里啊${heart(1)} 咕呣……咕呣……${heart(1)} 」`,
+          ); // :9503
+          await era.printAndWait(
+            `${target_name}继续卖力地吸吮着${player_name}的阴茎，发出一阵阵淫秽不堪的声音……`,
+          ); // :9504
+          // CFLAG:361  = 5（变量语义：CFLAG 族，361） // :9505
+          kojo.口交时自慰 = 5; // :9505
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.口交时自慰 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9507
+          await era.printAndWait(
+            `「别，别这样盯着人家看啦……咕呣……咕呣${heart(1)}」`,
+          ); // :9508
+          await era.printAndWait(
+            `${target_name}用舌头舔舐着${player_name}的阴茎，手伸到了下体开始自慰`,
+          ); // :9509
+          await era.printAndWait(
+            `「要，要看也行……但是……不要用那样的眼神啦${heart(1)} 直勾勾地盯着……怪不好意思的${heart(1)}」`,
+          ); // :9510
+          await era.printAndWait(
+            `${player_name}边享受着${target_name}的口交，边欣赏着对方的耻态，灼热的视线让${target_name}变得面红耳赤。`,
+          ); // :9511
+          await era.printAndWait(`「好，好丢人……咕呣……咕呣${heart(1)}」`); // :9512
+          // CFLAG:361  = 4（变量语义：CFLAG 族，361） // :9513
+          kojo.口交时自慰 = 4; // :9513
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.口交时自慰 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9515
+          await era.printAndWait(`「咕呣……咕呣……魔王大人……这，这样可以吗！」`); // :9516
+          await era.printAndWait(
+            `${target_name}在${player_name}的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。`,
+          ); // :9517
+          await era.printAndWait(
+            `但是还不满足的${player_name}露出不怀好意的笑容，用脚趾刺激着${target_name}的蜜穴和肛门。`,
+          ); // :9518
+          await era.print(
+            `「唔？！不，不要对人家恶作剧啦，魔王大人……我，我会好好做的！」`,
+          ); // :9519
+          await era.printAndWait(
+            `${target_name}在${player_name}的逗弄下不得不加快了动作……`,
+          ); // :9520
+          // CFLAG:361  = 3（变量语义：CFLAG 族，361） // :9521
+          kojo.口交时自慰 = 3; // :9521
+        } else if (kojo.口交时自慰 <= 1 || game.kojo.口上开关 === 2) {
+          // :9523
+          await era.printAndWait(
+            `「别催啦……我，我会照做的……咕呣……咕呣……这样……就可以了吧？？」`,
+          ); // :9524
+          await era.printAndWait(
+            `${target_name}在${player_name}的命令下张开嘴含住了的阴茎，同时手也伸到了自己的下体，自慰了起来。`,
+          ); // :9525
+          await era.printAndWait(
+            `「（为，为什么我会……做这样的事情…）唔呣……唔呣……还，还要这样多久？」`,
+          ); // :9526
+          // CFLAG:361  = 2（变量语义：CFLAG 族，361） // :9527
+          kojo.口交时自慰 = 2; // :9527
+        } // :9528
+      } // :9529
+      return 0; // :9530
+    } // :9531
+  } // :9532
+
   return 0;
 }
 
