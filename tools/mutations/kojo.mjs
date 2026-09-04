@@ -9125,6 +9125,340 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：助手玛奥 + A感覚Lv3以上，推进到 3',
   },
   {
+    desc: 'M4246 COM27 背后位肛交计数推进 1 改 2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 1; // :4068-4072`,
+    replace: `kojo.背后位肛交 = 2; // :4068-4072`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 初次推进背后位肛交',
+  },
+  {
+    desc: 'M4247 COM27 背后位肛交计数推进 7 改 6（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 7; // :4098-4100`,
+    replace: `kojo.背后位肛交 = 6; // :4098-4100`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4248 COM27 背后位肛交计数推进 6 改 5（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 6; // :4112-4113`,
+    replace: `kojo.背后位肛交 = 5; // :4112-4113`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4249 COM27 背后位肛交计数推进 5 改 4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 5; // :4133-4135`,
+    replace: `kojo.背后位肛交 = 4; // :4133-4135`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4250 COM27 背后位肛交计数推进 4 改 3（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 4; // :4148-4150`,
+    replace: `kojo.背后位肛交 = 3; // :4148-4150`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4251 COM27 背后位肛交计数推进 3 改 2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 3; // :4162-4164`,
+    replace: `kojo.背后位肛交 = 2; // :4162-4164`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4252 COM27 背后位肛交计数推进 2 改 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 2; // :4175-4177`,
+    replace: `kojo.背后位肛交 = 1; // :4175-4177`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4253 COM27 背后位肛交计数推进 7 改 6（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 7; // :4197-4199`,
+    replace: `kojo.背后位肛交 = 6; // :4197-4199`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4254 COM27 背后位肛交计数推进 6 改 5（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 6; // :4204-4206`,
+    replace: `kojo.背后位肛交 = 5; // :4204-4206`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4255 COM27 背后位肛交计数推进 5 改 4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 5; // :4223-4225`,
+    replace: `kojo.背后位肛交 = 4; // :4223-4225`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4256 COM27 背后位肛交计数推进 4 改 3（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 4; // :4235-4236`,
+    replace: `kojo.背后位肛交 = 3; // :4235-4236`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4257 COM27 背后位肛交计数推进 3 改 2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 3; // :4241-4243`,
+    replace: `kojo.背后位肛交 = 2; // :4241-4243`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4258 COM27 背后位肛交计数推进 2 改 1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.背后位肛交 = 2; // :4247-4249`,
+    replace: `kojo.背后位肛交 = 1; // :4247-4249`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4259 COM27 助手淫乱＋A感覚原作错读正常位计数器改回本支（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (assi_mao) {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `      if (assi_mao) {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.背后位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：四处淫乱守卫保留误读 COM26 计数器',
+  },
+  {
+    desc: 'M4260 COM27 助手淫乱原作错读正常位计数器改回本支（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背后位肛交 = 7; // :4098-4100
+        } else if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `          kojo.背后位肛交 = 7; // :4098-4100
+        } else if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.背后位肛交 <= 5 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：四处淫乱守卫保留误读 COM26 计数器',
+  },
+  {
+    desc: 'M4261 COM27 非助手淫乱＋A感覚原作错读正常位计数器改回本支（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `      } else {
+        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.背后位肛交 <= 6 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：四处淫乱守卫保留误读 COM26 计数器',
+  },
+  {
+    desc: 'M4262 COM27 非助手淫乱原作错读正常位计数器改回本支（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背后位肛交 = 7; // :4197-4199
+        } else if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `          kojo.背后位肛交 = 7; // :4197-4199
+        } else if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.背后位肛交 <= 5 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：四处淫乱守卫保留误读 COM26 计数器',
+  },
+  {
+    desc: 'M4263 COM27 武器三目 && 改 ||（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :4008-4254 IF SELECTCOM == 27（背后位肛交 CFLAG:328）
+  if (era_flag.selectcom === 27) {
+    // 原作缺陷：源第 4079、4102、4181、4201 行的前两档误读 CFLAG:327
+    //（正常位肛交），1:1 保留。
+    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
+        ? '电动假阳具'
+        : '阴茎';`,
+    replace: `  // :4008-4254 IF SELECTCOM == 27（背后位肛交 CFLAG:328）
+  if (era_flag.selectcom === 27) {
+    // 原作缺陷：源第 4079、4102、4181、4201 行的前两档误读 CFLAG:327
+    //（正常位肛交），1:1 保留。
+    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 || era0(\`talent:\${player}:122\`) === 0
+        ? '电动假阳具'
+        : '阴茎';`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 初次助手玛奥使用三目武器名',
+  },
+  {
+    desc: 'M4264 COM27 初次爱慕肛门感觉 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          if (chara(target).system.肛门感觉 >= 3) {
+            await era.printAndWait(
+              \`\${target_name}被充分调教，开发的肛门和直肠紧紧夹着\${player_name}的阴茎，感受着来自背后的侵犯。\`,
+            ); // :4049`,
+    replace: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          if (chara(target).system.肛门感觉 >= 4) {
+            await era.printAndWait(
+              \`\${target_name}被充分调教，开发的肛门和直肠紧紧夹着\${player_name}的阴茎，感受着来自背后的侵犯。\`,
+            ); // :4049`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 初次爱慕肛门感觉达标',
+  },
+  {
+    desc: 'M4265 COM27 助手爱慕＋A感覚门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背后位肛交 = 6; // :4112-4113
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.背后位肛交 <= 4 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `          kojo.背后位肛交 = 6; // :4112-4113
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 4 &&
+          (kojo.背后位肛交 <= 4 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
+    desc: 'M4266 COM27 非助手爱慕＋A感覚门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背后位肛交 = 6; // :4204-4206
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          (kojo.背后位肛交 <= 4 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `          kojo.背后位肛交 = 6; // :4204-4206
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          chara(target).system.肛门感觉 >= 4 &&
+          (kojo.背后位肛交 <= 4 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：非助手玛奥六档推进',
+  },
+  {
+    desc: 'M4267 COM27 助手爱慕 RAND:3 ===0 改 ===1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          (kojo.背后位肛交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.print(\`『哎嘿嘿，姐姐的漂亮的小肛门……要开始侵犯了哦♪』\`); // :4138
+          await era.printAndWait(
+            \`\${player_name}坏笑着，前后动着腰，开始肆意地侵犯，蹂躏着\${target_name}的肛门。\`,
+          ); // :4139
+          if (rand_n(3) === 0) {`,
+    replace: `          (kojo.背后位肛交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          await era.print(\`『哎嘿嘿，姐姐的漂亮的小肛门……要开始侵犯了哦♪』\`); // :4138
+          await era.printAndWait(
+            \`\${player_name}坏笑着，前后动着腰，开始肆意地侵犯，蹂躏着\${target_name}的肛门。\`,
+          ); // :4139
+          if (rand_n(3) === 1) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 助手玛奥爱慕 RAND 第二档',
+  },
+  {
+    desc: 'M4268 COM27 非助手爱慕 RAND:2 ===0 改 ===1（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          await era.printAndWait(\`「拜……拜托了……魔王大人……请温柔一点！」\`); // :4228
+          await era.printAndWait(
+            \`\${target_name}还有点不适应肛交的感觉，整个背部都因为不适而弓了起来。\`,
+          ); // :4229
+          if (rand_n(2) === 0) {`,
+    replace: `          await era.printAndWait(\`「拜……拜托了……魔王大人……请温柔一点！」\`); // :4228
+          await era.printAndWait(
+            \`\${target_name}还有点不适应肛交的感觉，整个背部都因为不适而弓了起来。\`,
+          ); // :4229
+          if (rand_n(2) === 1) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 非助手玛奥爱慕 RAND 第一档',
+  },
+  {
+    desc: 'M4269 COM27 初次爱慕素质守卫 ===1 改 ===0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
+          if (chara(target).system.肛门感觉 >= 3) {
+            await era.printAndWait(
+              \`\${target_name}被充分调教，开发的肛门和直肠紧紧夹着\${player_name}的阴茎，感受着来自背后的侵犯。\`,
+            ); // :4049
+            await era.printAndWait(
+              \`「啊啊……啊啊啊……魔王大人全，全部插进来了……好……好厉害啊啊啊\${heart(1)}」\`,
+            ); // :4050
+            await era.printAndWait(
+              \`「尽，尽情侵，侵犯\${target_name}的肛门吧\${heart(1)}」\`,
+            ); // :4051
+            await era.printAndWait(
+              \`在\${target_name}一阵阵甘甜的娇喘声中、\${player_name}前后动着腰抽插着………\`,
+            ); // :4052
+          } else {`,
+    replace: `        } else if (era.get(\`talent:\${target}:85\`) === 0) {
+          if (chara(target).system.肛门感觉 >= 3) {
+            await era.printAndWait(
+              \`\${target_name}被充分调教，开发的肛门和直肠紧紧夹着\${player_name}的阴茎，感受着来自背后的侵犯。\`,
+            ); // :4049
+            await era.printAndWait(
+              \`「啊啊……啊啊啊……魔王大人全，全部插进来了……好……好厉害啊啊啊\${heart(1)}」\`,
+            ); // :4050
+            await era.printAndWait(
+              \`「尽，尽情侵，侵犯\${target_name}的肛门吧\${heart(1)}」\`,
+            ); // :4051
+            await era.printAndWait(
+              \`在\${target_name}一阵阵甘甜的娇喘声中、\${player_name}前后动着腰抽插着………\`,
+            ); // :4052
+          } else {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 初次爱慕肛门感觉达标',
+  },
+  {
+    desc: 'M4270 COM27 助手爱慕素质守卫 ===1 改 ===0（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `          kojo.背后位肛交 = 5; // :4133-4135
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 1 &&
+          (kojo.背后位肛交 <= 3 || game.kojo.口上开关 === 2)
+        ) {`,
+    replace: `          kojo.背后位肛交 = 5; // :4133-4135
+        } else if (
+          era.get(\`talent:\${target}:85\`) === 0 &&
+          (kojo.背后位肛交 <= 3 || game.kojo.口上开关 === 2)
+        ) {`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM27 二回目：助手玛奥六档推进',
+  },
+  {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `game.kojo.口上存在_10 = 1; // :64 FLAG:110 = 1（K10 口上存在标志）`,
