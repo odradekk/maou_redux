@@ -180,7 +180,12 @@ test('20 个分发族均注册 K903（key 903）', async () => {
       `${family.name || '分发族'} 缺 K903 注册`,
     );
   }
-  assert.equal(system.get_kojo_num(CID), 1003, 'EX_TALENT:103 映成 LOCAL=1003');
+});
+
+test('公共 EX 分发路径：EX_TALENT:103 映成 LOCAL=1003', async () => {
+  const fixture = await setup_k903();
+  const { get_kojo_num } = fixture.load_module('kojo/kojo-system');
+  assert.equal(get_kojo_num(CID), 1003);
 });
 
 test('全部活动 SELECTCOM 初次分支均可命中并推进对应 CFLAG（穿卸分列）', async () => {

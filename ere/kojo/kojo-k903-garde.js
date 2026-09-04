@@ -1,8 +1,24 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if, no-unreachable */
 /**
- * 嘉德（K903）口上。
- * 源: target/ERB/口上/EVENT_K903_嘉德.ERB
- * 范围: :59-6030
+ * @file 嘉德（K903）完整口上（issue #249）。
+ *
+ * 源: target/ERB/口上/EVENT_K903_嘉德.ERB  @EVENTTRAIN #PRI（:59-64）
+ *     @EVENTEND #LATER（:65-72）@EVENTTRAIN（:73-233）@K903_KOJO2
+ *     （:234-463）@EVENTEND（:464-531）@KOJO_MESSAGE_COM_903
+ *     （:532-3223）@DOG_KOJO_903（:3224-4340）
+ *     @KOJO_MESSAGE_PALAMCNG_903（:4341-4547）@KOJO_MESSAGE_MARKCNG_903
+ *     （:4548-4611）@SELF_KOJO_K903（:4612-4939）
+ *     @DUNGEON_RYOUZYOKU_K903（:4940-5029）
+ *     @DUNGEON_RYOUZYOKU_AFTER_K903（:5030-5095）@BENKI_KOUJO_K903
+ *     （:5096-5195）@DUNGEON_VICTORY_K903（:5196-5250）
+ *     @DUNGEON_ATTACK_K903（:5251-5342）@COLOSSEUM_KOJO_903
+ *     （:5343-5475）@NTR_KOUJO_K903（:5476-5556）@EXUCUTION_KOUJO_K903
+ *     （:5557-5576）@MUSEUM_KOUJO_K903（:5577-5612）
+ *     @BANISHMENT_KOUJO_K903（:5613-5630）@PUBLIC_EXUCUTION_KOUJO_K903
+ *     （:5631-5645）@GROTESQUE_KOUJO_K903（:5646-5673）
+ *     @ENTERENEMY_KOUJO_K903（:5674-5690）@GOHOUBI_REQUEST_KOUJO_K903
+ *     （:5691-5727）@GOHOUBI_AFTER_KOUJO_K903（:5728-5938）
+ *     @OSIOKI_KOUJO_K903（:5939-6001）@GOBI_KOUJO_K903（:6002-6030）。
  *
  * EX_TALENT:103 经 GET_EX_KOJO_NUM 映成 LOCAL=1003，分发键为 903。
  * 源中不可达段、错读计数器与空模板均按原样保留。
@@ -16,9 +32,7 @@
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
-const era_flag = require('#/era-utils/era-flag');
-const era_exflag = require('#/era-utils/era-exflag');
-const { PALAMLV } = require('#/era-utils/palam-level');
+const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -48,9 +62,11 @@ const {
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const era_exflag = require('#/era-utils/era-exflag');
+const era_flag = require('#/era-utils/era-flag');
+const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
-const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 
 const STUBBED_CALLS = ['SELL_MATURO_K0'];
 const default_rand = (n) => Math.floor(Math.random() * n);
