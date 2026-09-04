@@ -831,10 +831,10 @@ test('COM_11 守卫：兽奸中改走 DOG_KOJO_11 真身', async () => {
   assert.equal(fixture.store.get(`cflag:${LILY}:301`), 1);
 });
 
-test('COM_11 守卫：死斗场中改走存根占位（COLOSSEUM_KOJO_11）', async () => {
-  const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:55`, 1));
+test('COM_11 守卫：死斗场中改走 COLOSSEUM_KOJO_11 真身', async () => {
+  const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:55`, 1), 55);
   await speak_com11(fixture, seq_rand());
-  assert.ok(fixture.text_lines()[0].includes('COLOSSEUM_KOJO_11'));
+  assert.deepEqual(fixture.text_lines(), ['']);
 });
 
 test('COM_11 守卫：口塞中（非口塞指令）静默跳过', async () => {
@@ -7771,6 +7771,42 @@ test('SELF_KOJO_K11 妊娠发觉按 CFLAG:102 与 CSTR:2 插入生父称呼', as
   await speak_self11(fixture);
   assert.match(fixture.text_lines().join('\n'), /应该是玛奥的孩子/);
   assert.equal(fixture.store.get(`cflag:${LILY}:271`), 1);
+});
+
+// —— 迷宫、肉便器与死斗场口上 ——
+
+test('K11 迷宫凌辱前后口上注册进两个分发族', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`talent:${LILY}:0`, 1);
+    f.store.set(`exp:${LILY}:1`, 21);
+  });
+  const { ryouzyoku_after_kojo_family, ryouzyoku_kojo_family } =
+    fixture.load_module('kojo/kojo-dungeon-ravish');
+  await ryouzyoku_kojo_family.call(11, { args: [] });
+  await ryouzyoku_after_kojo_family.call(11, { args: [] });
+  assert.match(fixture.text_lines().join('\n'), /怪物的饶恕/);
+  assert.match(fixture.text_lines().join('\n'), /肛门被虐待/);
+});
+
+test('K11 肉便器、胜利与攻击口上注册进各自分发族', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:62', 0);
+    f.store.set(`base:${LILY}:0`, 100);
+    f.store.set(`maxbase:${LILY}:0`, 1000);
+    f.store.set(`base:${LILY}:1`, 1000);
+    f.store.set(`maxbase:${LILY}:1`, 1000);
+    f.store.set(`cflag:${LILY}:1`, 2);
+  });
+  const { benki_koujo_family, dungeon_attack_family, dungeon_victory_family } =
+    fixture.load_module('kojo/kojo-system');
+  await benki_koujo_family.call(11, { args: [seq_rand()] });
+  await dungeon_victory_family.call(11, { args: [seq_rand(0)] });
+  await dungeon_attack_family.call(11, { args: [seq_rand(0)] });
+  const text = fixture.text_lines().join('\n');
+  assert.equal(fixture.text_lines()[0], '');
+  assert.match(text, /哈，这就……胜利了/);
+  assert.match(text, /伤口有点痛/);
+  assert.match(text, /这边/);
 });
 
 // —— SELECTCOM 56（交谈 CFLAG:357）——

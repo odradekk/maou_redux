@@ -3273,17 +3273,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM_11 守卫：兽奸中改走 DOG_KOJO_11 真身',
   },
   {
-    desc: 'M2381 COM_11 死斗场守卫改走真实台词而非存根（#242）',
+    desc: 'M2381 COM_11 死斗场真身调用被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era.get(\`tequip:\${target}:55\`)) {
-    stub_line('COLOSSEUM_KOJO_11', '死斗场调教中的专用口上');
-    return 0;
+    return colosseum_kojo_11(rand_n);
   }`,
     replace: `  if (era.get(\`tequip:\${target}:55\`)) {
-    // 变异：死斗场守卫改走 COM0 分支
+    return 0; // 变异：删除死斗场真身调用
   }`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：死斗场中改走存根占位（COLOSSEUM_KOJO_11）',
+    must_mention: 'COM_11 守卫：死斗场中改走 COLOSSEUM_KOJO_11 真身',
   },
   {
     desc: 'M2382 COM_11 崩坏守卫删（#242）',
@@ -10088,6 +10087,61 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '  game.train.初吻与自我口上 = 1; // :12234（变异）',
     tests: ['kojo-k11-lily'],
     must_mention: '并清 TFLAG:13',
+  },
+  ...[
+    [
+      4714,
+      'ryouzyoku_kojo_family',
+      'dungeon_ryouzyoku_k11',
+      '迷宫凌辱前后口上注册进两个分发族',
+    ],
+    [
+      4715,
+      'ryouzyoku_after_kojo_family',
+      'dungeon_ryouzyoku_after_k11',
+      '迷宫凌辱前后口上注册进两个分发族',
+    ],
+    [
+      4716,
+      'benki_koujo_family',
+      'benki_koujo_k11',
+      '肉便器、胜利与攻击口上注册进各自分发族',
+    ],
+    [
+      4717,
+      'dungeon_victory_family',
+      'dungeon_victory_k11',
+      '肉便器、胜利与攻击口上注册进各自分发族',
+    ],
+    [
+      4718,
+      'dungeon_attack_family',
+      'dungeon_attack_k11',
+      '肉便器、胜利与攻击口上注册进各自分发族',
+    ],
+  ].map(([id, family, handler, must_mention]) => ({
+    desc: `M${id} K11 ${family} 注册号错位（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `${family}.register(11, ${handler});`,
+    replace: `${family}.register(12, ${handler}); // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4719 K11 胜利口上首个 RAND:3 分支失效（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  if (random(3) === 0) {\n    // :12444',
+    replace: '  if (random(3) === 9) {\n    // :12444 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: '肉便器、胜利与攻击口上注册进各自分发族',
+  },
+  {
+    desc: 'M4720 K11 攻击口上迎击状态判据错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  if (chara(target).invasion.状态 === 2) {\n    // :12467',
+    replace: '  if (chara(target).invasion.状态 === 3) {\n    // :12467 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: '肉便器、胜利与攻击口上注册进各自分发族',
   },
   {
     desc: 'M4686 PALAMCNG_11 非玛奥助手守卫被删除（#242）',

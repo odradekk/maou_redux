@@ -233,16 +233,22 @@ const {
   peek_aftertrain_s,
 } = require('#/event/event-aftertrain');
 const {
+  benki_koujo_family,
+  dungeon_attack_family,
+  dungeon_victory_family,
   kojo_message_com_family,
   kojo_message_markcng_family,
   kojo_message_palamcng_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
+const {
+  ryouzyoku_after_kojo_family,
+  ryouzyoku_kojo_family,
+} = require('#/kojo/kojo-dungeon-ravish');
 const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
@@ -255,7 +261,7 @@ const MASTER = 0;
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['COLOSSEUM_KOJO_11'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:100-105）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -1351,7 +1357,7 @@ on(
  * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
  * （TEQUIP:89）→ 专用口上（DOG_KOJO_11）；死斗场（TEQUIP:55）
- * → 专用口上（COLOSSEUM_KOJO_11，存根待认领）；崩坏（TALENT:9）→ 跳过；
+ * → 专用口上（COLOSSEUM_KOJO_11）；崩坏（TALENT:9）→ 跳过；
  * 触手（TEQUIP:90）→ 跳过。
  *
  * SELECTCOM 0（爱抚 CFLAG:301，:786-861）：初めて按「助手玛奥／屈服刻印
@@ -1518,8 +1524,7 @@ async function kojo_message_com_11(rand) {
   }
   // :769-772 コロシアム中は専用口上
   if (era.get(`tequip:${target}:55`)) {
-    stub_line('COLOSSEUM_KOJO_11', '死斗场调教中的专用口上');
-    return 0;
+    return colosseum_kojo_11(rand_n);
   }
   // :774-776 崩坏した場合は口上をスキップする
   if (era.get(`talent:${target}:9`) === 1) {
@@ -23958,15 +23963,424 @@ async function self_kojo_k11(rand) {
   return 0; // :12236
 }
 
-// @DUNGEON_RYOUZYOKU_K11 // :12262
+async function dungeon_ryouzyoku_k11() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target);
+
+  if (era.get(`talent:${target}:0`) === 1) {
+    // :12267
+
+    await era.printAndWait(
+      `「不，不要啊……求求你们，饶我一命吧……让我做什么都可以！」`,
+    ); // :12269
+    await era.printAndWait(
+      `${target_name}卑微地乞求着怪物的饶恕，然后被无情地凌辱了……`,
+    ); // :12270
+  } else {
+    // :12271
+
+    await era.printAndWait(
+      `「不，不要啊……求求你们，饶我一命吧……让我做什么都可以！」`,
+    ); // :12273
+    await era.printAndWait(
+      `${target_name}卑微地乞求着怪物的饶恕，然后被无情地凌辱了……`,
+    ); // :12274
+  } // :12275
+
+  return 0; // :12277
+}
+
+// @DUNGEON_RYOUZYOKU_AFTER_K11 // :12280
+async function dungeon_ryouzyoku_after_k11() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target);
+
+  if (era.get(`talent:${target}:0`) === 1) {
+    // :12285
+
+    await era.printAndWait(`「呜，呜呜……还好……处女身保住了……」`); // :12287
+    await era.printAndWait(`${target_name}被怪物凌辱之后，精神恍惚地傻笑着。`); // :12288
+
+    if (era.get(`exp:${target}:1`) > 20) {
+      // :12290
+      await era.print(''); // :12291
+      await era.printAndWait(`「呜……呜呜……屁股……被侵犯得一塌糊涂了……」`); // :12292
+      await era.printAndWait(
+        `${target_name}的肛门被虐待，侵犯得几乎合不上，精液和污物从里面慢慢流出来……`,
+      ); // :12293
+    } // :12294
+
+    if (era.get(`exp:${target}:22`) > 20) {
+      // :12296
+      await era.print(''); // :12297
+      await era.printAndWait(
+        `「呜……呜啊……嘴巴好酸，下巴好像要脱臼了一样，好难受……呕呕呕呕」`,
+      ); // :12298
+      await era.printAndWait(`${target_name}一边哭着将精液呕吐了出来……`); // :12299
+    } // :12300
+
+    if (era.get(`exp:${target}:20`) > 20) {
+      // :12302
+      await era.print(''); // :12303
+      await era.printAndWait(
+        `「唔……呜呜……放，放开我啊……味道好臭……不要啊啊！」`,
+      ); // :12304
+      await era.printAndWait(
+        `${target_name}的脸被怪物按到了地板上，强迫她舔着地上的精液………`,
+      ); // :12305
+    } // :12306
+  } else {
+    // :12307
+
+    await era.printAndWait(
+      `「呜……呜呜……身体，被弄得乱七八糟了……哈，哈啊……啊啊」`,
+    ); // :12309
+    await era.printAndWait(`${target_name}被怪物凌辱过后，精神恍惚地傻笑着`); // :12310
+
+    if (era.get(`exp:${target}:0`) > 20) {
+      // :12312
+      await era.print(''); // :12313
+      await era.printAndWait(`「呜……呜啊啊……好痛……蜜穴好痛………呜呜呜」`); // :12314
+      await era.printAndWait(`${target_name}被侵犯的蜜穴里流出了精液和尿……`); // :12315
+    } // :12316
+
+    if (era.get(`exp:${target}:1`) > 20) {
+      // :12318
+      await era.print(''); // :12319
+      await era.printAndWait(`「呜……呜呜……屁股……被侵犯得一塌糊涂了……」`); // :12320
+      await era.printAndWait(
+        `${target_name}的肛门被虐待，侵犯得几乎合不上，精液和污物从里面慢慢流出来……`,
+      ); // :12321
+    } // :12322
+
+    if (era.get(`exp:${target}:22`) > 20) {
+      // :12324
+      await era.print(''); // :12325
+      await era.printAndWait(
+        `「呜……呜啊……嘴巴好酸，下巴好像要脱臼了一样，好难受……呕呕呕呕」`,
+      ); // :12326
+      await era.printAndWait(`${target_name}一边哭着将精液呕吐了出来……`); // :12327
+    } // :12328
+
+    if (era.get(`exp:${target}:20`) > 20) {
+      // :12330
+      await era.print(''); // :12331
+      await era.printAndWait(
+        `「唔……呜呜……放，放开我啊……味道好臭……不要啊啊！」`,
+      ); // :12332
+      await era.printAndWait(
+        `${target_name}的脸被怪物按到了地板上，强迫她舔着地上的精液………`,
+      ); // :12333
+    } // :12334
+  } // :12335
+
+  return 0; // :12337
+}
+
+// @BENKI_KOUJO_K11 // :12339
+async function benki_koujo_k11(rand) {
+  const a = era_flag.target;
+  void rand;
+
+  if (game.train.肉便器行动 === 0) {
+    // :12344
+
+    if (era.get(`talent:${a}:76`) === 1) {
+      // :12347
+      await era.printAndWait(''); // :12348
+    } else if (era.get(`talent:${a}:85`)) {
+      // :12350
+      await era.printAndWait(''); // :12351
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :12353
+      await era.printAndWait(''); // :12354
+    } else {
+      // :12356
+      await era.printAndWait(''); // :12357
+    } // :12358
+  } else if (game.train.肉便器行动 === 1) {
+    // :12359
+
+    if (era.get(`talent:${a}:76`) === 1) {
+      // :12362
+      await era.printAndWait(''); // :12363
+    } else if (era.get(`talent:${a}:85`)) {
+      // :12365
+      await era.printAndWait(''); // :12366
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :12368
+      await era.printAndWait(''); // :12369
+    } else {
+      // :12371
+      await era.printAndWait(''); // :12372
+    } // :12373
+  } else if (game.train.肉便器行动 === 2) {
+    // :12374
+
+    if (era.get(`talent:${a}:76`) === 1) {
+      // :12377
+      await era.printAndWait(''); // :12378
+    } else if (era.get(`talent:${a}:85`)) {
+      // :12380
+      await era.printAndWait(''); // :12381
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :12383
+      await era.printAndWait(''); // :12384
+    } else {
+      // :12386
+      await era.printAndWait(''); // :12387
+    } // :12388
+  } else if (game.train.肉便器行动 === 3) {
+    // :12389
+
+    if (era.get(`talent:${a}:76`) === 1) {
+      // :12392
+      await era.printAndWait(''); // :12393
+    } else if (era.get(`talent:${a}:85`)) {
+      // :12395
+      await era.printAndWait(''); // :12396
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :12398
+      await era.printAndWait(''); // :12399
+    } else {
+      // :12401
+      await era.printAndWait(''); // :12402
+    } // :12403
+  } else if (game.train.肉便器行动 === 4) {
+    // :12404
+
+    if (era.get(`talent:${a}:76`) === 1) {
+      // :12407
+      await era.printAndWait(''); // :12408
+    } else if (era.get(`talent:${a}:85`)) {
+      // :12410
+      await era.printAndWait(''); // :12411
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :12413
+      await era.printAndWait(''); // :12414
+    } else {
+      // :12416
+      await era.printAndWait(''); // :12417
+    } // :12418
+  } else if (game.train.肉便器行动 === 5) {
+    // :12419
+
+    if (era.get(`talent:${a}:76`) === 1) {
+      // :12422
+      await era.printAndWait(''); // :12423
+    } else if (era.get(`talent:${a}:85`)) {
+      // :12425
+      await era.printAndWait(''); // :12426
+    } else if (era.get(`abl:${a}:16`) >= 5) {
+      // :12428
+      await era.printAndWait(''); // :12429
+    } else {
+      // :12431
+      await era.printAndWait(''); // :12432
+    } // :12433
+  } // :12434
+
+  return 0; // :12436
+}
+
+// @DUNGEON_VICTORY_K11 // :12439
+async function dungeon_victory_k11(rand) {
+  const random = rand ?? rand_n;
+  const a = era_flag.target;
+
+  if (random(3) === 0) {
+    // :12444
+    await era.printAndWait(`「哈，这就……胜利了？」`); // :12445
+  } else if (random(2) === 0) {
+    // :12446
+    await era.printAndWait(`「原来我也这么能干呢。」`); // :12447
+  } else {
+    // :12448
+    await era.printAndWait(`「就这样趁胜进击吧！」`); // :12449
+  } // :12450
+
+  if (
+    (era.get(`base:${a}:0`) * 100) / era.get(`maxbase:${a}:0`) < 50 ||
+    (era.get(`base:${a}:1`) * 100) / era.get(`maxbase:${a}:1`) < 50
+  ) {
+    // :12452
+
+    await era.printAndWait(`「伤口有点痛呢……稍微休息一下好了。」`); // :12454
+  } else {
+    // :12455
+
+    await era.printAndWait(`「嘛，这点小伤痛，没什么大不了的！」`); // :12457
+  } // :12458
+
+  return 0; // :12460
+}
+
+// @DUNGEON_ATTACK_K11 // :12463
+async function dungeon_attack_k11(rand) {
+  const random = rand ?? rand_n;
+  const target = era_flag.target;
+
+  if (chara(target).invasion.状态 === 2) {
+    // :12467
+
+    if (random(3) === 0) {
+      // :12469
+      await era.printAndWait(`「这边！」`); // :12470
+    } else if (random(2) === 0) {
+      // :12471
+      await era.printAndWait(`「那里——！！」`); // :12472
+    } else {
+      // :12473
+      await era.printAndWait(`「嘿！」`); // :12474
+    } // :12475
+  } else {
+    // :12476
+
+    if (random(3) === 0) {
+      // :12478
+      await era.printAndWait(`「对不起了，勇者大人！」`); // :12479
+    } else if (random(2) === 0) {
+      // :12480
+      await era.printAndWait(`「别碍事！」`); // :12481
+    } else {
+      // :12482
+      await era.printAndWait(`「得手了！」`); // :12483
+    } // :12484
+  } // :12485
+  return 0; // :12486
+}
+
+// @COLOSSEUM_KOJO_11 // :12492
+async function colosseum_kojo_11(rand) {
+  const target = era_flag.target;
+  void rand;
+
+  if (era_flag.selectcom === 55) {
+    // :12496
+
+    if (era.get(`base:${target}:1`) <= 0) {
+      // :12498
+      await era.printAndWait(''); // :12499
+    } else {
+      // :12500
+      await era.printAndWait(''); // :12501
+    } // :12502
+    return 0; // :12503
+  } // :12504
+
+  if (era_flag.selectcom === 56) {
+    // :12508
+
+    if (era.get(`base:${target}:1`) <= 0) {
+      // :12510
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :12512
+        await era.printAndWait(''); // :12513
+      } else {
+        // :12514
+        await era.printAndWait(''); // :12515
+      } // :12516
+    } else {
+      // :12517
+
+      if (era_flag.assi > 0 && era_flag.assiplay) {
+        // :12519
+        await era.printAndWait(''); // :12520
+      } else {
+        // :12521
+        await era.printAndWait(''); // :12522
+      } // :12523
+    } // :12524
+    return 0; // :12525
+  } // :12526
+
+  if (era_flag.selectcom === 31) {
+    // :12531
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :12533
+      await era.printAndWait(''); // :12534
+    } else {
+      // :12535
+      await era.printAndWait(''); // :12536
+    } // :12537
+    return 0; // :12538
+  } // :12539
+
+  if (era_flag.selectcom === 5) {
+    // :12543
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :12545
+      await era.printAndWait(''); // :12546
+    } else {
+      // :12547
+      await era.printAndWait(''); // :12548
+    } // :12549
+    return 0; // :12550
+  } // :12551
+
+  if (era_flag.selectcom === 21) {
+    // :12555
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :12557
+      await era.printAndWait(''); // :12558
+    } else if (era.get('tflag:400') === 206) {
+      // :12560
+      await era.printAndWait(''); // :12561
+    } else {
+      // :12562
+      await era.printAndWait(''); // :12563
+    } // :12564
+    return 0; // :12565
+  } // :12566
+
+  if (era_flag.selectcom === 27) {
+    // :12571
+
+    if (era_flag.assi > 0 && era_flag.assiplay) {
+      // :12573
+      await era.printAndWait(''); // :12574
+    } else if (era.get('tflag:400') === 206) {
+      // :12576
+      await era.printAndWait(''); // :12577
+    } else {
+      // :12578
+      await era.printAndWait(''); // :12579
+    } // :12580
+    return 0; // :12581
+  } // :12582
+
+  if (era_flag.selectcom === 51) {
+    // :12587
+    await era.printAndWait(''); // :12588
+    return 0; // :12589
+  } // :12590
+
+  return 0; // :12593
+}
+
+// @NTR_KOUJO_K11 // :12597
 
 kojo_message_com_family.register(11, kojo_message_com_11);
 kojo_message_palamcng_family.register(11, kojo_message_palamcng_11);
 kojo_message_markcng_family.register(11, kojo_message_markcng_11);
 self_kojo_family.register(11, self_kojo_k11);
+ryouzyoku_kojo_family.register(11, dungeon_ryouzyoku_k11);
+ryouzyoku_after_kojo_family.register(11, dungeon_ryouzyoku_after_k11);
+benki_koujo_family.register(11, benki_koujo_k11);
+dungeon_victory_family.register(11, dungeon_victory_k11);
+dungeon_attack_family.register(11, dungeon_attack_k11);
 
 module.exports = {
   STUBBED_CALLS,
+  colosseum_kojo_11,
+  dungeon_attack_k11,
+  dungeon_ryouzyoku_after_k11,
+  dungeon_ryouzyoku_k11,
+  dungeon_victory_k11,
   k11_kojo2,
   kojo_message_com_11,
   kojo_message_markcng_11,
